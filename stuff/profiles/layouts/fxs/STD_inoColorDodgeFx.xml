@@ -1,0 +1,6 @@
+<fxlayout help_file="ColorDodgeIno.pdf">
+  <page name="Color Dodge Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

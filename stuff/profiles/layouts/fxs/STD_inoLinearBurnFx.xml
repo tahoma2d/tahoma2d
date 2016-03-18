@@ -1,0 +1,6 @@
+<fxlayout help_file="LinearBurnIno.pdf">
+  <page name="Linear Burn Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

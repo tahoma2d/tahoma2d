@@ -1,0 +1,91 @@
+PAL analog, 768x576, 4/3
+
+PAL digital, 720x576, 4/3
+
+PAL 16/9, 1024x576, 16/9
+
+NTSC digital, 720x486, 4/3
+
+NTSC analog, 648x486, 4/3
+
+NTSC 16/9, 864x486, 16/9
+
+HD 1080, 1920x1080, 16/9
+
+HD 720, 1280x720, 16/9
+
+HD 480, 853x480, 16/9
+
+Academy Full Frame1 1K, 914x666, 1.37
+
+Academy Full Frame2 1K, 1024x746, 1.37
+
+Academy Full Frame1 2K, 1828x1332, 1.37
+
+Academy Full Frame2 2K, 2048x1494, 1.37
+
+Academy Full Frame1 4K, 3656x2664, 1.37
+
+Academy Full Frame2 4K, 4096x2988, 1.37
+
+Full Camera Aperture 1K, 1024x768, 4/3
+
+1K, 1024x768, 4/3
+
+Full Camera Aperture 2K, 2048x1536, 4/3
+
+2K, 2048x1536, 4/3
+
+3K, 3072x2304, 4/3
+
+Full Camera Aperture 4k, 4096x3072, 4/3
+
+4K, 4096x3072, 4/3
+
+Cineon Half Unsqueezed, 3675x1556, 2.36183
+
+Cineon Half, 1828x1556, 2.35
+
+Cineon Half Squeezed, 1828x1556, 2.36183
+
+Cineon Full, 3656x3112, 2.35
+
+Cineon Full, 4704x3112, 2.36183
+
+Academy Projection1 1K, 914x550, 1.66
+
+Academy Projection2 1K, 1024x617, 1.66
+
+Academy Projection1 2K, 1828x1102, 1.66
+
+Academy Projection2 2K, 2048x1229, 1.66
+
+Academy Projection1 4K, 3656x2202, 1.66
+
+Academy Projection2 4K, 4096x2468, 1.66
+
+Academy Projection1 1K, 914x494, 1.85
+
+Academy Projection2 1K, 1024x554, 1.85
+
+Academy Projection1 2K, 1828x988, 1.85
+
+Academy Projection2 2K, 2048x1107, 1.85
+
+Academy Projection1 4K, 3656x1976, 1.85
+
+Academy Projection2 4K, 4096x2214, 1.85
+
+Anamorphic Pre-squeezed, 1K 914x774, 1.18
+
+Anamorphic Pre-squeezed, 2K 1828x1550, 1.18
+
+Anamorphic Pre-squeezed, 4K 3656x3098, 1.18
+
+Anamorphic Un-squeezed, 1K 914x388, 2.35
+
+Anamorphic Un-squeezed, 2K 1828x778, 2.35
+
+Anamorphic Un-squeezed, 4K 3656x1556, 2.35
+
+

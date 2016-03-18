@@ -1,0 +1,14 @@
+<fxlayout>
+  <page name="Linear Gradient">
+     <control>period</control>
+     <control>color1</control>
+     <control>color2</control>
+     <rgb_link_button>color1 color2</rgb_link_button>
+<separator label="Distortion Wave"/>
+     <control>wave_amplitude</control>
+     <control>wave_frequency</control>
+     <control>wave_phase</control>
+
+  </page>
+
+</fxlayout>

@@ -1,0 +1,11 @@
+<fxlayout help_file="MaxMinIno.pdf">
+  <page name="Max Min Ino">
+    <control>max_min_select</control>
+    <control>radius</control>
+    <control>polygon_number</control>
+    <control>degree</control>
+    <control>alpha_rendering</control>
+    <separator label=""/>
+	<control>reference</control>
+  </page>
+</fxlayout>

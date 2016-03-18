@@ -1,0 +1,7 @@
+<fxlayout help_file="SubtractIno.pdf">
+  <page name="Subtract Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+    <control>alpha_rendering</control>
+  </page>
+</fxlayout>

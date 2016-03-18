@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Mosaic">
+    <control>size</control>
+    <control>distance</control>
+    <control>bg_color</control>
+    <control>shape</control>
+  </page>
+
+
+</fxlayout>

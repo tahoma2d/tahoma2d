@@ -1,0 +1,28 @@
+<fxlayout>
+  <page name="Adjust Levels">
+<separator label="RGB"/>
+    <control>in_rgb</control>
+    <control>out_rgb</control>
+<separator label="Red"/>
+    <control>in_r</control>
+    <control>out_r</control>
+<separator label="Green"/>
+    <control>in_g</control>
+    <control>out_g</control>
+<separator label="Blue"/>
+    <control>in_b</control>
+    <control>out_b</control>
+<separator label="Alpha"/>
+    <control>in_m</control>
+    <control>out_m</control>
+  </page>
+  <page name="Gamma">
+    <histogram/>
+    <control>gamma_rgb</control>
+    <control>gamma_r</control>
+    <control>gamma_g</control>
+    <control>gamma_b</control>
+    <control>gamma_m</control>
+  </page>
+
+</fxlayout>

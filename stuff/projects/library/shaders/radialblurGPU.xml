@@ -1,0 +1,87 @@
+<MainProgram>
+  <Name>
+    SHADER_radialblurGPU
+  </Name>
+  <ProgramFile>
+    "programs/radialblurGPU.frag"
+  </ProgramFile>
+</MainProgram>
+
+<InputPorts>
+  <InputPort>
+    "Source"
+  </InputPort>
+  
+  <PortsProgram>
+    <Name>
+      SHADER_radialblurGPU_ports
+    </Name>
+    <ProgramFile>
+      "programs/radialblurGPU_ports.vert"
+    </ProgramFile>
+  </PortsProgram>
+</InputPorts>
+
+<BBoxProgram>
+  <Name>
+    SHADER_radialblurGPU_bbox
+  </Name>
+  <ProgramFile>
+    "programs/radialblurGPU_bbox.vert"
+  </ProgramFile>
+</BBoxProgram>
+
+<HandledWorldTransforms>
+  isotropic
+</HandledWorldTransforms>
+  
+<Parameters>
+  <Parameter>
+    vec2 center
+    <Concept>
+      point_ui
+      <Name>
+        Center
+      </Name>
+    </Concept>
+  </Parameter>
+  
+  <Parameter>
+    float radius
+    <Concept>
+      length
+    </Concept>
+    <Default>
+      3
+    </Default>
+    <Range>
+      0 10000
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float blur
+    <Concept>
+      percent
+    </Concept>
+    <Default>
+      0.3
+    </Default>
+    <Range>
+      0 10000
+    </Range>
+  </Parameter>
+</Parameters>
+
+<Concept>
+  radius_ui
+  <Name>
+    Radius
+  </Name>
+  <Parameter>
+    radius
+  </Parameter>
+  <Parameter>
+    center
+  </Parameter>
+</Concept>

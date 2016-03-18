@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Solarize">
+    <control>maximum</control>
+    <control>peak_edge</control>
+  </page>
+ 
+</fxlayout>

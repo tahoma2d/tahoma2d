@@ -1,0 +1,13 @@
+<fxlayout help_file="HSVAddIno.pdf">
+  <page name="HSV Add Ino">
+    <control>from_rgba</control>
+    <control>offset</control>
+    <control>hue</control>
+    <control>saturation</control>
+    <control>value</control>
+    <control>alpha</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

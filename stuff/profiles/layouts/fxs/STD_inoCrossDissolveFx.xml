@@ -1,0 +1,6 @@
+<fxlayout help_file="CrossDissolveIno.pdf">
+  <page name="Cross Dissolve Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

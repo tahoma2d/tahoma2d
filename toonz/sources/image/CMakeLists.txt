@@ -1,0 +1,134 @@
+set(HEADERS
+    sgi/tiio_sgi.h
+    tif/tiio_tif.h
+    pli/pli_io.h
+    pli/tiio_pli.h
+    tga/tiio_tga.h
+    compatibility/inforegion.h
+    compatibility/tfile_io.h
+    compatibility/tnz4.h
+    quantel/filequantel.h
+    quantel/filequantelP.h
+    quantel/tiio_quantel.h
+    png/tiio_png.h
+    png/lpng124/png.h
+    png/lpng124/pngasmrd.h
+    png/lpng124/pngconf.h
+    psd/tiio_psd.h
+    svg/tiio_svg.h
+    tzp/tiio_plt.h
+    tzp/tiio_tzp.h
+    tzp/toonztags.h
+    tzl/tiio_tzl.h
+    ../include/tnzimage.h
+    mov/tiio_mov_proxy.h
+    3gp/tiio_3gp_proxy.h
+    mesh/tiio_mesh.h)
+
+set(SOURCES
+    tiio.cpp
+    sgi/filesgi.cpp
+    tif/tiio_tif.cpp
+    tif/tif_getimage_64.c
+    pli/pli_io.cpp
+    pli/tags.cpp
+    pli/tiio_pli.cpp
+    tga/tiio_tga.cpp
+    compatibility/inforegion.c
+    compatibility/tfile_io.c
+    compatibility/tnz4.c
+    compatibility/tnz4_cpp.cpp
+    quantel/filequantel.c
+    quantel/tiio_quantel.cpp
+    png/tiio_png.cpp
+    png/lpng124/png.c
+    png/lpng124/pngerror.c
+    png/lpng124/pnggccrd.c
+    png/lpng124/pngget.c
+    png/lpng124/pngmem.c
+    png/lpng124/pngpread.c
+    png/lpng124/pngread.c
+    png/lpng124/pngrio.c
+    png/lpng124/pngrtran.c
+    png/lpng124/pngrutil.c
+    png/lpng124/pngset.c
+    png/lpng124/pngtrans.c
+    png/lpng124/pngvcrd.c
+    png/lpng124/pngwio.c
+    png/lpng124/pngwrite.c
+    png/lpng124/pngwtran.c
+    png/lpng124/pngwutil.c
+    psd/tiio_psd.cpp
+    svg/tiio_svg.cpp
+    tzp/tiio_plt.cpp
+    tzp/tiio_tzp.cpp
+    tzp/avl.c
+    tzp/toonzrle.cpp
+    tzl/tiio_tzl.cpp
+    mov/tiio_mov_proxy.cpp
+    3gp/tiio_3gp_proxy.cpp
+    mesh/tiio_mesh.cpp)
+
+if (WIN32)
+    set(HEADERS ${HEADERS}
+        avi/tiio_avi.h
+        mov/tiio_mov.h
+        3gp/tiio_3gp.h)
+    set(SOURCES ${SOURCES}
+        avi/tiio_avi.cpp
+        mov/tiio_movW.cpp
+        3gp/tiio_3gpW.cpp)
+else ()
+    set(HEADERS ${HEADERS}
+        mov/tiio_movM.h
+        3gp/tiio_3gpM.h)
+    set(SOURCES ${SOURCES}
+        mov/tiio_movM.cpp
+        3gp/tiio_3gpM.cpp)
+endif ()
+
+add_library(image SHARED ${HEADERS} ${SOURCES})
+add_definitions(-DTNZIMAGE_DLL -D_USRDLL -DIMAGE_EXPORTS)
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.dylib")
+endif (APPLE)
+
+message("subdir: image")
+message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
+
+include_directories(
+    ${SDKROOT}/LibJPEG/jpeg-9
+    ${SDKROOT}/LibTIFF/tiff-4.0.3/libtiff)
+if (WIN32)
+    if(PLATFORM EQUAL 32)
+        include_directories(${SDKROOT}/quicktime/QT73SDK/CIncludes)
+    endif()
+endif()
+
+_find_toonz_library(TNZLIBS "tnzcore;tnzbase")
+
+if(WIN32)
+    set(EXTRA_LIBS
+        ${TNZLIBS}
+        vfw32.lib)
+else()
+    if (PLATFORM EQUAL 32)
+        find_library(CORE_SERVICES_LIB CoreServices)
+        set(OSX_10_6_SDK_PATH "")
+        if (NOT OSX_10_6_SDK_PATH)
+           message(FATAL_ERROR "Set variable 'OSX_10_6_SDK_PATH'")
+        endif()
+        find_library(QD_LIB
+          NAMES QD
+          PATHS OSX10_6_SDK_PATH)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -F ${OSX_10_6_SDK_PATH}")
+    endif()
+    set(EXTRA_LIBS
+        ${TNZLIBS}
+        ${QT_LIB}
+        ${CARBON_LIB}
+        ${CORE_SERVICES_LIB}
+        ${QD_LIB})
+endif()
+
+target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${EXTRA_LIBS})

@@ -1,0 +1,6 @@
+<fxlayout help_file="ColorBurnIno.pdf">
+  <page name="Color Burn Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

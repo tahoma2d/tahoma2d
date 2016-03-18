@@ -1,0 +1,6 @@
+<fxlayout help_file="HardLight.pdf">
+  <page name="Hard Light Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

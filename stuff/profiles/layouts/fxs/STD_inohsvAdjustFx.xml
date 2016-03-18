@@ -1,0 +1,19 @@
+<fxlayout help_file="HSVAdjustIno.pdf">
+  <page name="HSV Adjust Ino">
+    <separator label="Pivot"/>
+    <control>pivot_hue</control>
+    <control>pivot_saturation</control>
+    <control>pivot_value</control>
+    <separator label="Scale"/>
+    <control>scale_hue</control>
+    <control>scale_saturation</control>
+    <control>scale_value</control>
+    <separator label="Shift"/>
+    <control>shift_hue</control>
+    <control>shift_saturation</control>
+    <control>shift_value</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,96 @@
+  <menubar>
+
+
+    <menu>M_File</menu>
+ 
+    <item>MI_NewScene</item>
+    <item>MI_LoadScene</item>
+    <item>MI_SaveScene</item>
+    <item>MI_SaveSceneAs</item>
+    <separator/>	
+    <item>MI_LoadLevel </item>
+    <item>MI_SaveLevel</item>
+    <item>MI_SaveLevelAs</item>
+    <separator/>
+    <item>MI_Render</item>
+    <separator/>
+    <item>MI_ShortcutPopup</item> 
+    <separator/>
+    <item>MI_Quit</item> 
+
+
+
+    <menu>M_Edit</menu>
+ 
+    <item>MI_Undo</item>
+    <item>MI_Redo</item>
+    <separator/>
+    <item>MI_Cut</item>
+    <item>MI_Copy</item>
+    <item>MI_Paste</item>
+    <separator/>
+    <item>MI_Clear</item>
+    <item>MI_Insert</item> 
+
+
+    <menu>M_Level</menu>
+
+    <item>MI_AddFilmstripFramesPopup</item>
+    <item>MI_OpenRenumberPopup</item>
+    <item>MI_ConverttoVectors</item>
+    <separator/>
+    <item>MI_MovetoScene</item>
+    <item>MI_MovetoFilmstrip</item>
+    <separator/>
+    <item>MI_FileInfo</item>
+    <separator/>
+    <item>MI_RemoveUnused</item>
+
+    <menu>M_Xsheet</menu> 
+
+    <item>MI_SceneSettings</item>
+    <separator/>
+    <item>MI_OpenChild</item>
+    <item>MI_CloseChild</item>
+    <item>MI_Collapse</item>
+    <item>MI_SaveSubxsheetAs</item>
+    <item>MI_Resequence</item>
+
+    <menu>M_Cells</menu>
+
+    <item>MI_Reverse</item>
+    <item>MI_Swing </item>
+    <item>MI_Random </item>
+    <separator/>
+    <item>MI_Step2</item>
+    <item>MI_Step3</item>
+    <item>MI_Step4</item>
+    <item>MI_Each2</item>
+    <item>MI_Each3</item>
+    <item>MI_Each4</item>
+    <separator/>
+    <item>MI_Duplicate</item>
+    <item>MI_CloneLevel</item>
+  
+    <menu>M_View</menu> 
+
+    <item>MI_ViewTable</item>
+    <item>MI_FieldGuide</item>
+    <item>MI_SafeArea</item>
+    <separator/>
+    <item>MI_TCheck</item>
+
+    <menu>M_Windows</menu> 
+
+    <item>MI_OpenFileViewer</item>
+    <item>MI_OpenPltView</item>
+    <item>MI_OpenFileBrowser2</item>
+    <item>MI_OpenStyleControl</item>
+    <item>MI_OpenLevelView</item>
+    <item>MI_OpenXshView</item>
+
+
+    
+    
+  </menubar>
+

@@ -1,0 +1,108 @@
+
+
+#ifndef T32BITSRV_WRAP
+#define T32BITSRV_WRAP
+
+// TnzBase includes
+#include "tenv.h"
+
+// TnzCore includes
+#include "tcommon.h"
+#include "traster.h"
+#include "tipc.h"
+
+// Qt includes
+#include <QCoreApplication>
+#include <QDir>
+
+#undef DVAPI
+#undef DVVAR
+#ifdef TNZCORE_EXPORTS
+#define DVAPI DV_EXPORT_API
+#define DVVAR DV_EXPORT_VAR
+#else
+#define DVAPI DV_IMPORT_API
+#define DVVAR DV_IMPORT_VAR
+#endif
+
+/*
+  This file contains the platform-specific command lines and server names to
+  address 64-bit Toonz's background 32-bit process (used to deal with QuickTime,
+  to say one).
+*/
+
+namespace t32bitsrv
+{
+
+//*************************************************************************************
+//  Platform-specific Server Command Lines
+//*************************************************************************************
+
+static QString srvName()
+{
+	static QString name(tipc::applicationSpecificServerName("t32bitsrv"));
+	return name;
+}
+
+#ifdef WIN32
+static QString srvCmdline()
+{
+	static QString cmd("srv/t32bitsrv.exe " + srvName());
+	return cmd;
+}
+#else
+static QString srvCmdline()
+{
+	return "\"" + QCoreApplication::applicationDirPath() +
+		   "/t32bitsrv\" " + srvName();
+}
+#endif
+
+//*************************************************************************************
+//  Buffer data exchanger
+//*************************************************************************************
+
+class DVAPI BufferExchanger : public tipc::ShMemReader, public tipc::ShMemWriter
+{
+	UCHAR *m_buf;
+	UCHAR *m_data;
+
+public:
+	BufferExchanger(UCHAR *buf) : m_buf(buf), m_data(buf) {}
+	~BufferExchanger() {}
+
+	UCHAR *buffer() const { return m_buf; }
+
+	int read(const char *srcBuf, int len);
+	int write(char *dstBuf, int len);
+};
+
+//*************************************************************************************
+//  Raster data exchanger
+//*************************************************************************************
+
+template <typename PIXEL>
+class DVAPI RasterExchanger : public tipc::ShMemReader, public tipc::ShMemWriter
+{
+	typedef PIXEL pix_type;
+
+	TRasterPT<PIXEL> m_ras;
+	PIXEL *m_pix;
+
+public:
+	RasterExchanger(TRasterP ras) : m_ras(ras)
+	{
+		m_ras->lock();
+		m_pix = m_ras->pixels(0);
+	}
+	~RasterExchanger() { m_ras->unlock(); }
+
+	TRasterP raster() const { return m_ras; }
+
+	int read(const char *srcBuf, int len);
+	int write(char *dstBuf, int len);
+};
+
+} //namespace t32bitsrv
+
+#endif //T32BITSRV_WRAP

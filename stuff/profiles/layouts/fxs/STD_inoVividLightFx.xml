@@ -1,0 +1,6 @@
+<fxlayout help_file="VividLightIno.pdf">
+  <page name="Vivid Light Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

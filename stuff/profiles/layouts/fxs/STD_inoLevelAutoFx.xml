@@ -1,0 +1,9 @@
+<fxlayout help_file="LevelAutoIno.pdf">
+  <page name="Level Auto Ino">
+    <control>in_min_shift</control>
+    <control>in_max_shift</control>
+    <control>out_min</control>
+    <control>out_max</control>
+    <control>gamma</control>
+  </page>
+</fxlayout>

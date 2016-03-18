@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Adjust Exposure Iwa">
+    <control>hardness</control>
+    <control>scale</control>
+    <control>offset</control>
+  </page>
+</fxlayout>

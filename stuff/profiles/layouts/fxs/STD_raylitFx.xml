@@ -1,0 +1,13 @@
+<fxlayout>
+  <page name="Raylit">
+        <control>p</control>
+        <control>z</control>
+        <control>color</control>
+        <control>intensity</control>
+        <control>decay</control>
+        <control>smoothness</control>
+        <control>includeInput</control>
+        <control>invert</control>
+  </page>
+
+</fxlayout>

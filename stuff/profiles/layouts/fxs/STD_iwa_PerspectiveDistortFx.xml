@@ -1,0 +1,7 @@
+<fxlayout help_file="PerspectiveDistortIwa.html">
+  <page name="Perspective Distort Iwa">
+	<control>vanishingPoint</control>
+	<control>anchorPoint</control>
+	<control>precision</control>
+  </page>
+</fxlayout>

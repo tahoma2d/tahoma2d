@@ -1,0 +1,6 @@
+<fxlayout help_file="DarkenIno.pdf">
+  <page name="Darken Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

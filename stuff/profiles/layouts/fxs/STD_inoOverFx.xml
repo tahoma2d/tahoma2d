@@ -1,0 +1,6 @@
+<fxlayout help_file="OverIno.pdf">
+  <page name="Over Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

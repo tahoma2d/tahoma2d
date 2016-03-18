@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Light Spot">
+        <control>softness</control>
+        <control>a</control>
+        <control>b</control>
+        <control>color</control>
+  </page>
+
+</fxlayout>

@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Sunflare">
+    <control>color</control>
+    <control>blades</control>
+    <control>intensity</control>
+    <control>angle</control>
+    <control>bias</control>
+    <control>sharpness</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,61 @@
+<MainProgram>
+  <Name>
+    SHADER_sunflare
+  </Name>
+  <ProgramFile>
+    "programs/sunflare.frag"
+  </ProgramFile>
+</MainProgram>
+
+<Parameters>
+  <Parameter>
+    rgba color
+    <Default>
+      255 170 75 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    float angle
+    <Concept>
+      angle_ui
+    </Concept>
+  </Parameter>
+  
+  <Parameter>
+    int blades
+    <Default>
+      6
+    </Default>
+    <Range>
+      0 100
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float intensity
+    <Default>
+      1
+    </Default>
+    <Range>
+      0 10000
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float bias
+    <Default>
+      0
+    </Default>
+    <Range>
+      -100 100
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float sharpness
+    <Default>
+      3.0
+    </Default>
+  </Parameter>
+</Parameters>

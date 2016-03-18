@@ -1,0 +1,20 @@
+<brushes>
+  <brush>
+    variable_0_15 0 15 10 50 70
+  </brush>
+  <brush>
+    constant_10 10 10 10 50 70
+  </brush>
+  <brush>
+    constant_15 15 15 10 50 70
+  </brush>
+   <brush>
+    airbrush_20_100 20 100 100 20 30
+  </brush>
+  <brush>
+    ink_1_15 1 15 70 90 100
+  </brush>
+  <brush>
+    pencil_1_10 1 10 70 80 30 
+  </brush>
+</brushes>

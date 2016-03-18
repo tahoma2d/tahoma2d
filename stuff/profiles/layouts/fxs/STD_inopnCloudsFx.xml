@@ -1,0 +1,9 @@
+<fxlayout help_file="PNCloudsIno.pdf">
+  <page name="PN Clouds Ino">
+    <control>size</control>
+    <control>z</control>
+    <control>octaves</control>
+    <control>persistance</control>
+    <control>alpha_rendering</control>
+  </page>
+</fxlayout>

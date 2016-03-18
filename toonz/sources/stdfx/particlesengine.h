@@ -1,0 +1,71 @@
+
+
+#ifndef PARTICLESENGINE_H
+#define PARTICLESENGINE_H
+
+#include "tlevel.h"
+#include "particles.h"
+#include "particlesfx.h"
+
+class Particle;
+
+class Particles_Engine
+{
+public:
+	ParticlesFx *m_parent;
+	double m_frame;
+
+public:
+	Particles_Engine(ParticlesFx *parent, double frame);
+	~Particles_Engine(){};
+	//Destructor
+
+	void scramble_particles(void);
+	void fill_range_struct(struct particles_values &values,
+						   struct particles_ranges &ranges);
+	void fill_value_struct(struct particles_values &value, double frame);
+	void roll_particles(TTile *tile, std::map<int, TTile *> porttiles, const TRenderSettings &ri, std::list<Particle> &myParticles, struct particles_values &values,
+						float cx, float cy, int frame, int curr_frame, int level_n, bool *random_level, float dpi, vector<int> lastframe, int &totalparticles);
+	void normalize_values(struct particles_values &values, const TRenderSettings &ri);
+
+	void render_particles(
+		TFlash *flash, TTile *tile, std::vector<TRasterFxPort *> part_ports, const TRenderSettings &ri,
+		TDimension &p_size, TPointD &p_offset, std::map<int, TRasterFxPort *> ctrl_ports, vector<TLevelP> partLevel, float dpi,
+		int curr_frame, int shrink, double startx, double starty,
+		double endx, double endy, vector<int> lastframe, unsigned long fxId);
+
+	void do_render(
+		TFlash *flash, Particle *part, TTile *tile, std::vector<TRasterFxPort *> part_ports,
+		std::map<int, TTile *> porttiles, const TRenderSettings &ri,
+		TDimension &p_size, TPointD &p_offset, int lastframe, vector<TLevelP> partLevel,
+		struct particles_values &values, double opacity_range, int curr_frame,
+		std::map<std::pair<int, int>, double> &partScales);
+
+	bool port_is_used(int i, struct particles_values &values);
+
+	/*- do_source_gradationがONのとき、入力画像のアルファ値に比例して発生濃度を変える。
+		入力画像のHistogramを格納しながら領域を登録する -*/
+	void fill_regions(int frame, vector<vector<TPointD>> &myregions, TTile *ctrl1, bool multi, int thres,
+					  bool do_source_gradation,
+					  vector<vector<int>> &myHistogram);
+
+	void fill_single_region(vector<vector<TPointD>> &myregions, TTile *ctrl1, int thres,
+							bool do_source_gradation,
+							vector<vector<int>> &myHistogram);
+
+	/*-- Perspective DistributionがONのとき、Sizeに刺さったControlImageが粒子の発生分布を決める。
+		そのとき、SourceのControlが刺さっている場合は、マスクとして用いられる --*/
+	void fill_regions_with_size_map(vector<vector<TPointD>> &myregions,
+									vector<vector<int>> &myHistogram,
+									TTile *sizeTile,
+									TTile *sourceTile,
+									int thres);
+
+	void fill_subregions(int cont_index, vector<vector<TPointD>> &myregions, TTile *ctrl1, int thres);
+
+	void normalize_array(vector<vector<TPointD>> &myregions, TPointD pos, int lx, int ly, int regioncounter, vector<int> &myarray, vector<int> &lista, vector<int> &listb, vector<int> &final);
+
+	void fill_array(TTile *ctrl1, int &regioncount, vector<int> &myarray, vector<int> &lista, vector<int> &listb, int thres);
+};
+
+#endif

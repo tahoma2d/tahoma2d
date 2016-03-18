@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Gradient Warp Iwa">
+	<control>h_maxlen</control>
+	<control>v_maxlen</control>
+	<control>scale</control>
+  </page>
+</fxlayout>

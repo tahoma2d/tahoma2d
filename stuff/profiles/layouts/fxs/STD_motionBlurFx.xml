@@ -1,0 +1,6 @@
+<fxlayout>
+  <page name="Motion Blur">
+    <control>intensity</control>
+  </page>
+
+</fxlayout>

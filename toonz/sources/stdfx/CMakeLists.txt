@@ -1,0 +1,264 @@
+set(HEADERS
+    ../include/stdfx/shaderfx.h
+    ../include/stdfx/shaderinterface.h
+    ../include/stdfx/shadingcontext.h
+    gradients.h
+    hsvutil.h
+    offscreengl.h
+    particles.h
+    particlesengine.h
+    particlesfx.h
+    particlesmanager.h
+    perlinnoise.h
+    pins.h
+    stdfx.h
+    texturefxP.h
+    warp.h
+	motionawarebasefx.h
+	igs_color_blend.h
+igs_color_rgb_hls.h
+igs_color_rgb_hsv.h
+igs_density.h
+igs_fog.h
+igs_gaussian_blur.h
+igs_hls_add.h
+igs_hls_adjust.h
+igs_hls_noise.h
+igs_hls_noise_in_camera.h
+igs_hsv_add.h
+igs_hsv_adjust.h
+igs_hsv_noise.h
+igs_hsv_noise_in_camera.h
+igs_ifx_common.h
+igs_level_auto.h
+igs_level_auto_in_camera.h
+igs_levels.h
+igs_line_blur.h
+igs_math_random.h
+igs_maxmin.h
+igs_maxmin_getput.h
+igs_maxmin_lens_matrix.h
+igs_maxmin_multithread.h
+igs_maxmin_slrender.h
+igs_median_filter.h
+igs_median_filter_smooth.h
+igs_motion_blur.h
+igs_motion_wind.h
+igs_motion_wind_pixel.h
+igs_motion_wind_table.h
+igs_negate.h
+igs_os_type.h
+igs_perlin_noise.h
+igs_radial_blur.h
+igs_resource_msg_from_err.h
+igs_resource_multithread.h
+igs_resource_sleep.h
+igs_resource_thread.h
+igs_rotate_blur.h
+igs_warp.h
+ino_common.h
+	iwa_adjustexposurefx.h
+	iwa_directionalblurfx.h
+	iwa_gradientwarpfx.h
+	iwa_motionblurfx.h
+	iwa_particles.h
+	iwa_particlesengine.h
+	iwa_particlesfx.h
+	iwa_particlesmanager.h
+	iwa_perspectivedistortfx.h
+	iwa_spectrumfx.h
+	iwa_simplexnoise.h
+	iwa_noise1234.h
+	iwa_fresnel.h
+	iwa_pnperspectivefx.h)
+
+set(SOURCES
+    adjustlevelsfx.cpp
+    artcontourfx.cpp
+    backlitfx.cpp
+    blendtzfx.cpp
+    blurfx.cpp
+    bodyhighlightfx.cpp
+    bright_contfx.cpp
+    calligraphicfx.cpp
+    changecolorfx.cpp
+    channelmixerfx.cpp
+    cloudsfx.cpp
+    colorembossfx.cpp
+    cornerpinfx.cpp
+    despecklefx.cpp
+    diamondgradientfx.cpp
+    dissolvefx.cpp
+    embossfx.cpp
+    erodilatefx.cpp
+    externalpalettefx.cpp
+    fourpointsgradientfx.cpp
+    freedistortfx.cpp
+    gammafx.cpp
+    glowfx.cpp
+    gradients.cpp
+    hsvkeyfx.cpp
+    hsvscalefx.cpp
+    hsvutil.cpp
+    kaleido.cpp
+    linearwavefx.cpp
+    localblurfx.cpp
+    localtransparencyfx.cpp
+    mosaicfx.cpp
+    motionblurfx.cpp
+    multitonefx.cpp
+    noisefx.cpp
+    palettefilterfx.cpp
+    particles.cpp
+    particlesengine.cpp
+    particlesfx.cpp
+    particlesmanager.cpp
+    perlinnoise.cpp
+    perlinnoisefx.cpp
+    pins.cpp
+    posterizefx.cpp
+    premultiplyfx.cpp
+    radialblurfx.cpp
+    randomwavefx.cpp
+    raylitfx.cpp
+    rgbkeyfx.cpp
+    rgbmcutfx.cpp
+    rgbmfadefx.cpp
+    rgbmscalefx.cpp
+    ripplefx.cpp
+    rotationalblurfx.cpp
+    saltpeppernoisefx.cpp
+    shaderfx.cpp
+    shaderinterface.cpp
+    shadingcontext.cpp
+    sharpenfx.cpp
+    solarizefx.cpp
+    squaregradientfx.cpp
+    stdfx.cpp
+    targetspotfx.cpp
+    texturefx.cpp
+    tilefx.cpp
+    tonecurvefx.cpp
+    unmultiplyfx.cpp
+    warp.cpp
+    warpfx.cpp
+	igs_attenuation_distribution.cpp
+	igs_color_blend.cpp
+	igs_color_rgb_hls.cpp
+	igs_color_rgb_hsv.cpp
+	igs_density.cpp
+	igs_fog.cpp
+	igs_gauss_distribution.cpp
+	igs_gaussian_blur.cpp
+	igs_hls_add.cpp
+	igs_hls_adjust.cpp
+	igs_hls_noise.cpp
+	igs_hls_noise_in_camera.cpp
+	igs_hsv_add.cpp
+	igs_hsv_adjust.cpp
+	igs_hsv_noise.cpp
+	igs_hsv_noise_in_camera.cpp
+	igs_level_auto.cpp
+	igs_level_auto_in_camera.cpp
+	igs_levels.cpp
+	igs_line_blur.cpp
+	igs_math_random.cpp
+	igs_maxmin.cpp
+	igs_maxmin_lens_matrix.cpp
+	igs_maxmin_slrender.cpp
+	igs_median_filter.cpp
+	igs_median_filter_smooth.cpp
+	igs_motion_blur.cpp
+	igs_motion_wind.cpp
+	igs_motion_wind_pixel.cpp
+	igs_motion_wind_table.cpp
+	igs_negate.cpp
+	igs_perlin_noise.cpp
+	igs_radial_blur.cpp
+	igs_resource_msg_from_err.cpp
+	igs_resource_multithread.cpp
+	igs_resource_sleep.cpp
+	igs_resource_thread.cpp
+	igs_rotate_blur.cpp
+	igs_warp_hori.cpp
+	igs_warp_vert.cpp
+	ino_blend_add.cpp
+	ino_blend_color_burn.cpp
+	ino_blend_color_dodge.cpp
+	ino_blend_cross_dissolve.cpp
+	ino_blend_darken.cpp
+	ino_blend_darker_color.cpp
+	ino_blend_divide.cpp
+	ino_blend_hard_light.cpp
+	ino_blend_hard_mix.cpp
+	ino_blend_lighten.cpp
+	ino_blend_lighter_color.cpp
+	ino_blend_linear_burn.cpp
+	ino_blend_linear_dodge.cpp
+	ino_blend_linear_light.cpp
+	ino_blend_multiply.cpp
+	ino_blend_over.cpp
+	ino_blend_overlay.cpp
+	ino_blend_pin_light.cpp
+	ino_blend_screen.cpp
+	ino_blend_soft_light.cpp
+	ino_blend_subtract.cpp
+	ino_blend_vivid_light.cpp
+	ino_blur.cpp
+	ino_channel_selector.cpp
+	ino_common.cpp
+	ino_density.cpp
+	ino_fog.cpp
+	ino_hls_add.cpp
+	ino_hls_adjust.cpp
+	ino_hls_noise.cpp
+	ino_hsv_add.cpp
+	ino_hsv_adjust.cpp
+	ino_hsv_noise.cpp
+	ino_level_auto.cpp
+	ino_level_master.cpp
+	ino_level_rgba.cpp
+	ino_line_blur.cpp
+	ino_maxmin.cpp
+	ino_median.cpp
+	ino_median_filter.cpp
+	ino_motion_blur.cpp
+	ino_motion_wind.cpp
+	ino_negate.cpp
+	ino_pn_clouds.cpp
+	ino_radial_blur.cpp
+	ino_spin_blur.cpp
+	ino_warp_hv.cpp
+	iwa_adjustexposurefx.cpp
+	iwa_directionalblurfx.cpp
+	iwa_gradientwarpfx.cpp
+	iwa_motionblurfx.cpp
+	iwa_particles.cpp
+	iwa_particlesengine.cpp
+	iwa_particlesfx.cpp
+	iwa_particlesmanager.cpp
+	iwa_perspectivedistortfx.cpp
+	iwa_spectrumfx.cpp
+	iwa_tilefx.cpp
+	iwa_simplexnoise.cpp
+	iwa_noise1234.cpp
+	iwa_pnperspectivefx.cpp)
+
+add_library(tnzstdfx SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES})
+add_definitions(-D_USRDLL -DTNZSTDFX_EXPORTS)
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzstdfx.dylib")
+endif (APPLE)
+
+message("subdir: tnzstdfx")
+message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
+
+include_directories(${SDKROOT}/glew/glew-1.9.0/include)
+_find_toonz_library(TNZLIBS "tnzcore;tnzbase;toonzlib")
+
+if (APPLE)
+   find_library(ICONV_LIB iconv)
+   target_link_libraries(tnzstdfx Qt5::Core Qt5::Gui Qt5::OpenGL ${GL_LIB} ${GLEW_LIB} ${TNZLIBS} ${ICONV_LIB})
+else ()
+   target_link_libraries(tnzstdfx Qt5::Core Qt5::Gui Qt5::OpenGL ${GL_LIB} ${GLEW_LIB} ${TNZLIBS})
+endif ()
