@@ -389,7 +389,7 @@ Preferences::Preferences()
 #endif
 			if (fpName == QString("standard"))
 				m_currentStyleSheet = i;
-			m_styleSheetMaps[i] = path.getQString() + "/" + string;
+			m_styleSheetMaps[i] = "file:///" + path.getQString() + "/" + string;
 		}
 	} catch (...) {
 	}
