@@ -7,7 +7,11 @@
 #include "tsystem.h"
 #include "tutil.h"
 
+#if defined(LZ4_STATIC)
 #include "lz4frame_static.h"
+#else
+#include "lz4frame.h"
+#endif
 
 #include <sstream>
 

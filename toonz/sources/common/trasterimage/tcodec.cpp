@@ -10,7 +10,12 @@
 #include "trasterimage.h"
 
 //#include "snappy-c.h"
+#if defined(LZ4_STATIC)
 #include "lz4frame_static.h"
+#else
+#include "lz4frame.h"
+#endif
+
 #include <QDir>
 #include <QProcess>
 #include <QCoreApplication>

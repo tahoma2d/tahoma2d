@@ -3,6 +3,14 @@ project(OpenToonz)
 
 get_filename_component(SDKROOT ../../thirdparty/ ABSOLUTE)
 message("SDK Root:" ${SDKROOT})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "../cmake")
+if(APPLE)
+    set(THIRDPARTY_LIBS_HINTS "/usr/local/Cellar/" "/opt/include" ${SDKROOT})
+elseif(WIN32)
+    set(THIRDPARTY_LIBS_HINTS ${SDKROOT})
+endif()
+
+message("Thirdpary Library Search path:" ${THIRDPARTY_LIBS_HINTS})
 
 if (WIN32)
     message("Windows System")
@@ -22,7 +30,9 @@ elseif (APPLE)
     if (PLATFORM EQUAL 64)
         set(QT_PATH "~/Qt/5.5/clang_64/lib/")
         set(QT_LIB_PATH ${QT_PATH})
-        set(CMAKE_PREFIX_PATH ${QT_PATH}cmake/)
+        set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
+
+
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
         add_definitions(-DMACOSX -Di386)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
@@ -51,6 +61,8 @@ set(CMAKE_INSTALL_RPATH ${QT_LIB_PATH})
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 
+include_directories(include)
+
 # Find the QtWidgets library
 find_package(Qt5 REQUIRED
     Core
@@ -63,8 +75,6 @@ find_package(Qt5 REQUIRED
     Widgets
     PrintSupport
     LinguistTools)
-
-include_directories(include ${SDKROOT}/boost/boost_1_55_0/)
 
 if(WIN32)
     include_directories(
@@ -126,17 +136,50 @@ else()
     find_library(GLUT_LIB GLUT)
     find_library(GL_LIB OpenGL)
     find_library(Z_LIB z)
-    set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/libjpeg.a)
-    set(TIFF_LIB ${SDKROOT}/LibTIFF/tiff-4.0.3/lib/libtiff.a)
-    set(GLEW_LIB ${SDKROOT}/glew/glew-1.9.0/lib/libGLEW.dylib)
-    set(LZ4_LIB ${SDKROOT}/Lz4/Lz4_131/lib/liblz4.a)
-    set(SUPERLU_LIB ${SDKROOT}/superlu/libsuperlu_4.1.a)
+    find_library(TIFF_LIB TIFF)
+
+    # the libraries have not .pc nor preferred Find*.cmake. use custom modules.
+    find_package(GLEW)
+
+    find_package(SuperLU REQUIRED)
+    set(SUPERLU_INCLUDE_DIR ${SUPERLU_INCLUDE_DIR}/superlu)
+    set(SUPERLU_LIB ${SUPERLU_LIBRARY})
+    message("SuperLU:" ${SUPERLU_INCLUDE_DIR})
+
+    find_package(LZO REQUIRED)
+    message("LZO:" ${LZO_INCLUDE_DIR})
+
+    find_package(JPEG REQUIRED)
+
+    # the libraries have .pc
+    find_package(PkgConfig)
+    if(GLEW-NOTFOUND)
+        pkg_check_modules(GLEW REQUIRED glew)
+    endif()
+    set(GLEW_LIB ${GLEW_LIBRARIES})
+
+    pkg_check_modules(LZ4_LIB REQUIRED liblz4)
+
+    message("**************** lz4 lib:" ${LZ4_LIB_INCLUDE_DIRS})
+    find_path(LZ4_STATIC lz4frame_static.h PATH ${LZ4_LIB_INCLUDE_DIRS})
+    if(LZ4_STATIC-FOUND)
+       add_definitions(-DLZ4_STATIC)
+    endif()
+
+    pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
     set(OPENBLAS_LIB) # unused?
-    set(USB_LIB ${SDKROOT}/libusb/libusb-1.0.9/libusb/.libs/libusb-1.0.a)
     if (PLATFORM EQUAL 32)
         find_library(QT_LIB QuickTime)
     endif()
+
+    set(JPEG_LIB ${JPEG_LIBRARY})
+    set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
 endif()
+
+find_path(BOOST_ROOT include/boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
+find_package(Boost 1.55 EXACT REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIR} ${LZ4_LIB_INCLUDE_DIRS} ${USB_LIB_INCLUDE_DIRS} ${SUPERLU_INCLUDE_DIR} ${JPEG_INCLUDE_DIR})
 
 if(WIN32 AND PLATFORM EQUAL 64)
     add_definitions(-Dx64)
@@ -180,7 +223,11 @@ add_subdirectory(toonzqt)
 add_subdirectory(tnztools)
 add_subdirectory(toonz)
 
-add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
+find_path(LZODRIVER lzodriver HINTS ${THIRDPARTY_LIBS_HINTS})
+if(LZODRIVER-FOUND)
+    set(LZODRIVER-FOUND true)
+    add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
+endif()
 
 add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)

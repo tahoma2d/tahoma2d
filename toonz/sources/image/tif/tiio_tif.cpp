@@ -5,6 +5,8 @@
 #endif
 #define IS_TIFF_MAIN
 
+#include <unistd.h>
+
 #include "tiio.h"
 #include "tpixel.h"
 #include "tsystem.h"
@@ -92,7 +94,11 @@ TifReader::~TifReader()
 void TifReader::open(FILE *file)
 {
 	int fd = fileno(file);
+#if 0
 	m_tiff = TIFFFdOpenNoCloseProc(fd, "", "rb");
+#else
+	m_tiff = TIFFFdOpen(dup(fd), "", "rb");
+#endif
 	if (!m_tiff) {
 		string str("Tiff file closed");
 		throw(str);
@@ -772,7 +778,11 @@ void TifWriter::open(FILE *file, const TImageInfo &info)
 	assert(m_bpp == 1 || m_bpp == 8 || m_bpp == 16 || m_bpp == 24 || m_bpp == 32 || m_bpp == 48 || m_bpp == 64);
 
 	int fd = fileno(file);
+#if 0
 	m_tiff = TIFFFdOpenNoCloseProc(fd, "", mode.c_str());
+#else
+	m_tiff = TIFFFdOpen(dup(fd), "", mode.c_str());
+#endif
 	if (!m_tiff)
 		return;
 

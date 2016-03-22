@@ -4,6 +4,8 @@
 
 #include "tiff.h"
 #include "tiffio.h"
+#include <stdint.h>
+typedef uint64_t uint64;
 
 /* \file libtiff_64.h
 
