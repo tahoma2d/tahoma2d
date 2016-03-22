@@ -1845,8 +1845,8 @@ void MainWindow::defineActions()
 	//  createAction(MI_TestAnimation,     "Test Animation",   "Ctrl+Return");
 	//  createAction(MI_Export,            "Export",           "Ctrl+E");
 
-	createMenuWindowsAction(MI_OpenComboViewer, "&ComboViewer", "");
-	createMenuWindowsAction(MI_OpenHistoryPanel, "&History", "");
+	createMenuWindowsAction(MI_OpenComboViewer, tr("&ComboViewer"), "");
+	createMenuWindowsAction(MI_OpenHistoryPanel, tr("&History"), "");
 
 	createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"), "");
 

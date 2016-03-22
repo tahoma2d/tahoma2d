@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ja_JP">
 <context>
     <name>Preferences</name>
     <message>
         <source>Retas Level Format</source>
-        <translation></translation>
+        <translation>RETAS レベル形式</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>No restrictions for uncompressed avi video</source>
-        <translation>解凍されたaviビデオは無制限</translation>
+        <translation>非圧縮AVIビデオに制限はありません</translation>
     </message>
     <message>
         <source>video width must be a multiple of %1</source>
-        <translation>ビデオ幅は %1 の倍数でなければなりません。</translation>
+        <translation>ビデオ幅は %1 の倍数でなければなりません</translation>
     </message>
     <message>
         <source>video lenght must be a multiple of %1</source>
-        <translation>ビデオ長さは %1 の倍数でなければなりません。</translation>
+        <translation>ビデオの長さは %1 の倍数でなければなりません</translation>
     </message>
     <message>
         <source>No restrictions for this codec</source>
-        <translation>このコーデックには無制限</translation>
+        <translation>このコーデックに制限はありません</translation>
     </message>
     <message>
         <source>Resolution restrictions:</source>
-        <translation>解像制限:</translation>
+        <translation>ピクセルサイズの制限:</translation>
     </message>
     <message>
         <source>It is not possible to communicate with the codec.
  Probably the codec cannot work correctly.</source>
-        <translation>コーデックのエラーが発生しました。</translation>
+        <translation>コーデックの呼び出しができません。
+このコーデックは正常に動作しない恐れがあります。</translation>
     </message>
     <message>
         <source>%1-%2</source>
@@ -45,565 +46,565 @@
     </message>
     <message>
         <source>Expected %1 argument(s) in %2, got %3</source>
-        <translation></translation>
+        <translation>%2 に %1 引数を予想していましたが、%3 が入力されました</translation>
     </message>
     <message>
         <source>%1 is not a valid color (valid color names are &apos;red&apos;, &apos;transparent&apos;, &apos;#FF8800&apos;, ecc.)</source>
-        <translation></translation>
+        <translation>%1 は有効な色ではありません（有効な色名は&apos;red&apos;, &apos;transparent&apos;, &apos;#FF8800&apos; 等です）</translation>
     </message>
     <message>
         <source>Vectorization failed</source>
-        <translation></translation>
+        <translation>ベクター化に失敗しました</translation>
     </message>
     <message>
         <source>Argument doesn&apos;t look like a file path : %1</source>
-        <translation></translation>
+        <translation>引数はファイルパスではありません : %1</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image (not empty)</source>
-        <translation></translation>
+        <translation>不正な引数（%1）: 画像を指定する必要があります</translation>
     </message>
     <message>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
-        <translation></translation>
+        <translation>引数 &apos;%1&apos; は フレームインデックスではありません</translation>
     </message>
     <message>
         <source>First argument must be a scene : %1</source>
-        <translation></translation>
+        <translation>1番目の引数はシーンである必要があります : %1</translation>
     </message>
     <message>
         <source>Can&apos;t render empty scene</source>
-        <translation></translation>
+        <translation>空のシーンはレンダリングできません</translation>
     </message>
     <message>
         <source>New Camera  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>新規カメラ  %1</translation>
     </message>
     <message>
         <source>New Pegbar  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>新規タップ  %1</translation>
     </message>
     <message>
         <source>Set Active Camera  %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>アクティブカメラの変更  %1 &gt; %2</translation>
     </message>
     <message>
         <source>Remove Spline  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スプラインの削除  %1</translation>
     </message>
     <message>
         <source>New Motion Path  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>新規モーションパス  %1</translation>
     </message>
     <message>
         <source>Link Motion Path  %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>モーションパスをリンク  %1 &gt; %2</translation>
     </message>
     <message>
         <source>Remove Object  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オブジェクトを削除  %1</translation>
     </message>
     <message>
         <source>Remove Column  </source>
-        <translation type="unfinished"></translation>
+        <translation>列の削除</translation>
     </message>
     <message>
         <source>Load into Current Palette  &gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のパレット内に読み込み  &gt; %1</translation>
     </message>
     <message>
         <source>Replace with Current Palette  &gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のパレットで置き換え &gt; %1</translation>
     </message>
     <message>
         <source>Delete Studio Palette  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットを削除  : %1</translation>
     </message>
     <message>
         <source>Create Studio Palette  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットを作成  : %1</translation>
     </message>
     <message>
         <source>Delete Studio Palette Folder  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットフォルダの削除  : %1</translation>
     </message>
     <message>
         <source>Create Studio Palette Folder  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットフォルダの作成  : %1</translation>
     </message>
     <message>
         <source>Move Studio Palette Folder  : %1 : %2 &gt; %3</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットフォルダの移動  : %1 : %2 &gt; %3</translation>
     </message>
     <message>
         <source>Arrange Styles  in Palette %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルの並べ替え : パレット %1</translation>
     </message>
     <message>
         <source>Create Style#%1  in Palette %2</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル#%1 を作成 : パレット %2</translation>
     </message>
     <message>
         <source>Add Style  to Palette %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを追加 : パレット %1</translation>
     </message>
     <message>
         <source>Add Page %1 to Palette %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ページ %1 の追加 : パレット %2</translation>
     </message>
     <message>
         <source>Delete Page %1 from Palette %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ページ %1 の削除 : パレット %2</translation>
     </message>
     <message>
         <source>Load Color Model %1  to Palette %2</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーモデル %1 を読み込み : パレット %2</translation>
     </message>
     <message>
         <source>Move Page</source>
-        <translation type="unfinished"></translation>
+        <translation>ページを移動</translation>
     </message>
     <message>
         <source>Rename Page  %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ページのリネーム  %1 &gt; %2</translation>
     </message>
     <message>
         <source>Rename Style#%1 in Palette%2  : %3 &gt; %4</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル#%1 のリネーム : パレット %2  : %3 &gt; %4</translation>
     </message>
     <message>
         <source>Add Fx  : </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトを追加  : </translation>
     </message>
     <message>
         <source>Insert Fx  : </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトを挿入  : </translation>
     </message>
     <message>
         <source>Create Linked Fx  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクされたエフェクトを作成  : %1</translation>
     </message>
     <message>
         <source>Replace Fx  : </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトを置き換え  : </translation>
     </message>
     <message>
         <source>Unlink Fx  : %1 - - %2</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトのリンクを解除  : %1 - - %2</translation>
     </message>
     <message>
         <source>Make Macro Fx  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>マクロエフェクトの作成  : %1</translation>
     </message>
     <message>
         <source>Explode Macro Fx  : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>マクロエフェクトを展開  : %1</translation>
     </message>
     <message>
         <source>Create Output Fx</source>
-        <translation type="unfinished"></translation>
+        <translation>出力ノードを作成</translation>
     </message>
     <message>
         <source>Connect to Xsheet  : </source>
-        <translation type="unfinished"></translation>
+        <translation>タイムシートノードに接続  : </translation>
     </message>
     <message>
         <source>Disconnect from Xsheet  : </source>
-        <translation type="unfinished"></translation>
+        <translation>タイムシートノードから接続を解除 : </translation>
     </message>
     <message>
         <source>Delete Link</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクを削除</translation>
     </message>
     <message>
         <source>Delete Fx Node : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトノードを削除 : %1</translation>
     </message>
     <message>
         <source>Paste Fx  :  </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトを貼り付け : </translation>
     </message>
     <message>
         <source>Disconnect Fx</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトの接続を解除</translation>
     </message>
     <message>
         <source>Connect Fx : %1 - %2</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトを接続 : %1 - %2</translation>
     </message>
     <message>
         <source>Rename Fx : %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトをリネーム : %1 &gt; %2</translation>
     </message>
     <message>
         <source>Group Fx</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトをグループ化</translation>
     </message>
     <message>
         <source>Ungroup Fx</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトのグループを解除</translation>
     </message>
     <message>
         <source>Rename Group  : %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>グループをリネーム  : %1 &gt; %2</translation>
     </message>
     <message>
         <source>Set Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを設定</translation>
     </message>
     <message>
         <source>Remove Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを削除</translation>
     </message>
     <message>
         <source>Cycle</source>
-        <translation type="unfinished"></translation>
+        <translation>サイクル</translation>
     </message>
     <message>
         <source>The autocentering failed on the current drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の画像上で、自動センタリングが失敗しました。</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>移動</translation>
     </message>
     <message>
         <source>Edit Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>回転角を変更</translation>
     </message>
     <message>
         <source>Move E/W</source>
-        <translation type="unfinished"></translation>
+        <translation>左右に移動</translation>
     </message>
     <message>
         <source>Move N/S</source>
-        <translation type="unfinished"></translation>
+        <translation>上下に移動</translation>
     </message>
     <message>
         <source>Move Z</source>
-        <translation type="unfinished"></translation>
+        <translation>奥行き方向に移動</translation>
     </message>
     <message>
         <source>Edit Stack Order</source>
-        <translation type="unfinished"></translation>
+        <translation>重ね順を変更</translation>
     </message>
     <message>
         <source>Edit Scale W</source>
-        <translation type="unfinished"></translation>
+        <translation>横方向の倍率を変更</translation>
     </message>
     <message>
         <source>Edit Scale H</source>
-        <translation type="unfinished"></translation>
+        <translation>縦方向の倍率を変更</translation>
     </message>
     <message>
         <source>Edit Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>倍率を変更</translation>
     </message>
     <message>
         <source>Edit PosPath</source>
-        <translation type="unfinished"></translation>
+        <translation>パス上の位置を変更</translation>
     </message>
     <message>
         <source>Edit Shear X</source>
-        <translation type="unfinished"></translation>
+        <translation>横方向のシアーを変更</translation>
     </message>
     <message>
         <source>Edit Shear Y</source>
-        <translation type="unfinished"></translation>
+        <translation>縦方向のシアーを変更</translation>
     </message>
     <message>
         <source>%1  %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1  %2  フレーム : %3</translation>
     </message>
     <message>
         <source>Set Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを設定   %1  フレーム %2</translation>
     </message>
     <message>
         <source>Remove Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを消去   %1  フレーム %2</translation>
     </message>
     <message>
         <source>Move Center   %1  Frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation>センター位置を移動   %1  フレーム %2</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>絶対パス %1 を連結することができません</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 はディレクトリではありません</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ %1 を読み取ることができません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の最初のフレームを読み込みました</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像の読み取り中に想定外のエラーが発生しました</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished"></translation>
+        <translation>認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像の書き込み中に想定外のエラーが発生しました</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): ラスターまたはToonzラスターを指定する必要があります</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="unfinished"></translation>
+        <translation>イメージビルダー(%1 画像)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): 幾何変換を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 フレーム</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): ファイルパスまたは文字列を指定する必要があります</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル読み込みの例外 (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 はサポートされていません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="unfinished"></translation>
+        <translation>空のレベルを保存できません</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished"></translation>
+        <translation>認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームインデックス (%1) は数字でなくてはなりません</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームインデックス (%1)は範囲外です (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="unfinished"></translation>
+        <translation>2番目の引数 (%1) が画像ではありません</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 %1 をレベルに挿入できません</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 %1 をレベル %2 に挿入できません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="unfinished"></translation>
+        <translation>無効な色 : </translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ベクター画像ではありません: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ベクターレベルではありません: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="unfinished"></translation>
+        <translation>引数はベクターレベルまたは画像である必要があります : </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 にはパレットがありません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="unfinished"></translation>
+        <translation>不正なレベルタイプ (%1): ベクター、ラスターまたはToonzラスターである必要があります</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="unfinished"></translation>
+        <translation>レベルを追加できません: レベル名(%1)は既に使用されています</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>この形式のファイルをレベルとして読み込むことはできません : %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル %1 を読み込めませんでした</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>レベルはシーンに含まれていません : %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : レベルインスタンスまたはレベルではありません</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル &apos;%1&apos; はシーンに含まれていません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="unfinished"></translation>
+        <translation>レベル%1を変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームのないレベルは変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像%1を変換できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な引数 (%1): レベルまたはラスター画像を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>単位行列</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>移動(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>回転(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="unfinished"></translation>
+        <translation>拡大縮小(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="unfinished"></translation>
+        <translation>拡大縮小(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="unfinished"></translation>
+        <translation>幾何変換(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 </TS>
