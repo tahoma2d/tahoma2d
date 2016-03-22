@@ -17,7 +17,6 @@
 
 extern "C" {
 #include "tiffio.h"
-#include "tif_getimage_64.h"
 }
 
 #include "tiio_tif.h"

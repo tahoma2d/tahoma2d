@@ -435,6 +435,16 @@ extern int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
 extern int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
 extern void TIFFRGBAImageEnd(TIFFRGBAImage*);
 extern TIFF* TIFFOpen(const char*, const char*);
+
+/**************************************************************************
+ *   64-bit to 64-bit  TIFF support
+ **************************************************************************/
+
+int TIFFRGBAImageBegin_64(TIFFRGBAImage *img, TIFF *tif, int stop, char emsg[1024]);
+int TIFFRGBAImageGet_64(TIFFRGBAImage *img, uint64 *raster, uint32 w, uint32 h);
+int TIFFReadRGBAStrip_64(TIFF *tif, uint32 row, uint64 *raster);
+int TIFFReadRGBATile_64(TIFF *tif, uint32 x, uint32 y, uint64 *raster);
+
 # ifdef __WIN32__
 extern TIFF* TIFFOpenW(const wchar_t*, const char*);
 # endif /* __WIN32__ */

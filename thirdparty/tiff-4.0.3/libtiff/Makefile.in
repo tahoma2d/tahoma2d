@@ -141,7 +141,7 @@ am__libtiff_la_SOURCES_DIST = tif_aux.c tif_close.c tif_codec.c \
 	tif_color.c tif_compress.c tif_dir.c tif_dirinfo.c \
 	tif_dirread.c tif_dirwrite.c tif_dumpmode.c tif_error.c \
 	tif_extension.c tif_fax3.c tif_fax3sm.c tif_flush.c \
-	tif_getimage.c tif_jbig.c tif_jpeg.c tif_jpeg_12.c tif_luv.c \
+	tif_getimage.c tif_getimage_64.c tif_jbig.c tif_jpeg.c tif_jpeg_12.c tif_luv.c \
 	tif_lzma.c tif_lzw.c tif_next.c tif_ojpeg.c tif_open.c \
 	tif_packbits.c tif_pixarlog.c tif_predict.c tif_print.c \
 	tif_read.c tif_strip.c tif_swab.c tif_thunder.c tif_tile.c \
@@ -153,7 +153,7 @@ am_libtiff_la_OBJECTS = tif_aux.lo tif_close.lo tif_codec.lo \
 	tif_color.lo tif_compress.lo tif_dir.lo tif_dirinfo.lo \
 	tif_dirread.lo tif_dirwrite.lo tif_dumpmode.lo tif_error.lo \
 	tif_extension.lo tif_fax3.lo tif_fax3sm.lo tif_flush.lo \
-	tif_getimage.lo tif_jbig.lo tif_jpeg.lo tif_jpeg_12.lo \
+	tif_getimage.lo tif_getimage_64.lo tif_jbig.lo tif_jpeg.lo tif_jpeg_12.lo \
 	tif_luv.lo tif_lzma.lo tif_lzw.lo tif_next.lo tif_ojpeg.lo \
 	tif_open.lo tif_packbits.lo tif_pixarlog.lo tif_predict.lo \
 	tif_print.lo tif_read.lo tif_strip.lo tif_swab.lo \
@@ -411,7 +411,7 @@ nodist_libtiffinclude_HEADERS = \
 libtiff_la_SOURCES = tif_aux.c tif_close.c tif_codec.c tif_color.c \
 	tif_compress.c tif_dir.c tif_dirinfo.c tif_dirread.c \
 	tif_dirwrite.c tif_dumpmode.c tif_error.c tif_extension.c \
-	tif_fax3.c tif_fax3sm.c tif_flush.c tif_getimage.c tif_jbig.c \
+	tif_fax3.c tif_fax3sm.c tif_flush.c tif_getimage.c tif_getimage_64.c tif_jbig.c \
 	tif_jpeg.c tif_jpeg_12.c tif_luv.c tif_lzma.c tif_lzw.c \
 	tif_next.c tif_ojpeg.c tif_open.c tif_packbits.c \
 	tif_pixarlog.c tif_predict.c tif_print.c tif_read.c \
@@ -563,6 +563,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_fax3sm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_flush.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_getimage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_getimage_64.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_jbig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_jpeg_12.Plo@am__quote@

@@ -29,7 +29,6 @@ set(SOURCES
     tiio.cpp
     sgi/filesgi.cpp
     tif/tiio_tif.cpp
-    tif/tif_getimage_64.c
     pli/pli_io.cpp
     pli/tags.cpp
     pli/tiio_pli.cpp
