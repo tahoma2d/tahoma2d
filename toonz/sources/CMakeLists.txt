@@ -139,6 +139,7 @@ else()
     find_library(TIFF_LIB TIFF)
 
     # the libraries have not .pc nor preferred Find*.cmake. use custom modules.
+    find_package(PNG)
     find_package(GLEW)
 
     find_package(SuperLU REQUIRED)
