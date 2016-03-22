@@ -595,8 +595,10 @@ bool TProject::save(const TFilePath &projectPath)
 	pm->getFolderNames(foldernames);
 	for (int f = 0; f < foldernames.size(); f++) {
 		TFilePath folderpath = decode(getFolder(foldernames.at(f)));
-		if (folderpath.isEmpty())
+		if (folderpath.isEmpty()
+			||!isConstantFolder(f) )
 			continue;
+
 		TFilePath xmlPath = folderpath + "scenes.xml";
 		TFileStatus xmlfs(xmlPath);
 		if (xmlfs.doesExist() && !xmlfs.isWritable())
