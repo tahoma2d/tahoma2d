@@ -53,9 +53,6 @@ public:
 
 class DVAPI TFlash
 {
-	class Imp;
-	Imp *m_imp;
-
 public:
         static const wstring ConstantLines;
         static const wstring MixedLines;
@@ -102,11 +99,6 @@ public:
 	void endMask() {}
 	void drawHangedObjects() {}
 	void setGlobalScale(const TAffine &aff) {}
-
-private:
-	TFlash();
-	TFlash(const TFlash &);
-	TFlash &operator=(const TFlash &);
 };
 
 #endif
