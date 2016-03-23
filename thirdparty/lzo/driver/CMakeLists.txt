@@ -1,0 +1,20 @@
+project(lzotools)
+
+if (WIN32)
+	# use pre-built 2.03
+	get_filename_component(LZO_PATH ${SDKROOT}/lzo/2.03 ABSOLUTE)
+	link_directories(${LZO_PATH}/LZO_lib/)
+	if (CMAKE_SIZEOF_VOID_P EQUAL 8) 
+		set(PREFIX _64)
+	endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+else ()
+	get_filename_component(LZO_PATH ${SDKROOT}/lzo/lzo-2.09 ABSOLUTE)
+	link_directories(${LZO_PATH}/src/.libs/)
+endif ()
+
+include_directories(${LZO_PATH} ${LZO_PATH}/include)
+add_definitions(-DLZO_USE_ASM)
+add_executable(lzocompress  lzocompress.c)
+target_link_libraries(lzocompress lzo2${PREFIX})
+add_executable(lzodecompress  lzodecompress.c)
+target_link_libraries(lzodecompress lzo2${PREFIX})

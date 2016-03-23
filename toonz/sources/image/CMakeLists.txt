@@ -11,9 +11,6 @@ set(HEADERS
     quantel/filequantelP.h
     quantel/tiio_quantel.h
     png/tiio_png.h
-    png/lpng124/png.h
-    png/lpng124/pngasmrd.h
-    png/lpng124/pngconf.h
     psd/tiio_psd.h
     svg/tiio_svg.h
     tzp/tiio_plt.h
@@ -29,7 +26,6 @@ set(SOURCES
     tiio.cpp
     sgi/filesgi.cpp
     tif/tiio_tif.cpp
-    tif/tif_getimage_64.c
     pli/pli_io.cpp
     pli/tags.cpp
     pli/tiio_pli.cpp
@@ -41,23 +37,6 @@ set(SOURCES
     quantel/filequantel.c
     quantel/tiio_quantel.cpp
     png/tiio_png.cpp
-    png/lpng124/png.c
-    png/lpng124/pngerror.c
-    png/lpng124/pnggccrd.c
-    png/lpng124/pngget.c
-    png/lpng124/pngmem.c
-    png/lpng124/pngpread.c
-    png/lpng124/pngread.c
-    png/lpng124/pngrio.c
-    png/lpng124/pngrtran.c
-    png/lpng124/pngrutil.c
-    png/lpng124/pngset.c
-    png/lpng124/pngtrans.c
-    png/lpng124/pngvcrd.c
-    png/lpng124/pngwio.c
-    png/lpng124/pngwrite.c
-    png/lpng124/pngwtran.c
-    png/lpng124/pngwutil.c
     psd/tiio_psd.cpp
     svg/tiio_svg.cpp
     tzp/tiio_plt.cpp
@@ -97,8 +76,9 @@ message("subdir: image")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(
+    ${TIFF_INCLUDE_DIR}
     ${SDKROOT}/LibJPEG/jpeg-9
-    ${SDKROOT}/LibTIFF/tiff-4.0.3/libtiff)
+    ${SDKROOT}/libpng-1.6.21)
 if (WIN32)
     if(PLATFORM EQUAL 32)
         include_directories(${SDKROOT}/quicktime/QT73SDK/CIncludes)
@@ -131,4 +111,4 @@ else()
         ${QD_LIB})
 endif()
 
-target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${EXTRA_LIBS})
+target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${PNG_LIB} ${EXTRA_LIBS})

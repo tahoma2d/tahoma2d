@@ -14,5 +14,9 @@ Lz4_131
 libusb-1.0.9
 glew-1.9.0
 jpeg-9
-tiff-4.0.3
 .clang_complete
+Debug/
+Debug Library/
+Release/
+Release Library/
+ipch/

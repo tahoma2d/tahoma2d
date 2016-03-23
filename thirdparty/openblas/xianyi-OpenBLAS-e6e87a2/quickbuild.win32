@@ -1,0 +1,4 @@
+#!/bin/bash
+
+make BINARY=32 USE_THREAD=0 CC=x86_64-w64-mingw32-gcc FC=x86_64-w64-mingw32-gfortran RANLIB=x86_64-w64-mingw32-ranlib
+
