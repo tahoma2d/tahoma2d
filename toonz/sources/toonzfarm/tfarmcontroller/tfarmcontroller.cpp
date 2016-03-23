@@ -2384,7 +2384,7 @@ void ControllerService::onStart(int argc, char *argv[])
 
 	TFilePath globalRoot = getGlobalRoot();
 	if (globalRoot.isEmpty()) {
-		QString errMsg("Unable to get TFARMGLOBALROOT environment variable\n");
+		QString errMsg("Unable to get FARMROOT environment variable\n");
 		addToMessageLog(errMsg);
 
 		// exit the program
