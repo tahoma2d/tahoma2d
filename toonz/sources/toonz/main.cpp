@@ -599,11 +599,7 @@ int main(int argc, char *argv[])
 
 	// Carico lo styleSheet
 	QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
-	QFile file(currentStyle);
-	file.open(QFile::ReadOnly);
-	QString styleSheet = QString(file.readAll());
-	a.setStyleSheet(styleSheet);
-	file.close();
+	a.setStyleSheet(currentStyle);
 
 	TApp::instance()->setMainWindow(&w);
 	w.setWindowTitle(applicationFullName);

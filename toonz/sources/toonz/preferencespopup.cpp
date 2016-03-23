@@ -642,11 +642,7 @@ void PreferencesPopup::onStyleSheetTypeChanged(int index)
 	m_pref->setCurrentStyleSheet(index);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QString currentStyle = m_pref->getCurrentStyleSheet();
-	QFile file(currentStyle);
-	file.open(QFile::ReadOnly);
-	QString styleSheet = QString(file.readAll());
-	qApp->setStyleSheet(styleSheet);
-	file.close();
+	qApp->setStyleSheet(currentStyle);
 	QApplication::restoreOverrideCursor();
 }
 
