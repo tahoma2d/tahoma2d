@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ja_JP">
 <context>
     <name>QObject</name>
     <message>
         <source>colors</source>
-        <translation>メインの色</translation>
+        <translation>色</translation>
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation type="unfinished"></translation>
+        <translation>未定義のアクション</translation>
     </message>
 </context>
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
         <source>Constant</source>
-        <translation>固定</translation>
+        <translation>定数</translation>
     </message>
     <message>
         <source>Thickness</source>

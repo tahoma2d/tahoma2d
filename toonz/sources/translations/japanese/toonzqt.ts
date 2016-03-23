@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ja_JP">
 <context>
     <name>AddFxContextMenu</name>
     <message>
         <source>Insert FX</source>
-        <translation>挿入［FX］</translation>
+        <translation>エフェクトを挿入</translation>
     </message>
     <message>
         <source>Add FX</source>
-        <translation>追加［FX］</translation>
+        <translation>エフェクトを追加</translation>
     </message>
     <message>
         <source>Replace FX</source>
-        <translation>置き換え［FX］</translation>
+        <translation>エフェクトを置き換え</translation>
     </message>
     <message>
         <source>Insert </source>
-        <translation type="unfinished"></translation>
+        <translation>挿入</translation>
     </message>
     <message>
         <source>Add </source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <source>Replace </source>
-        <translation type="unfinished"></translation>
+        <translation>置き換え</translation>
     </message>
 </context>
 <context>
     <name>AdjustPaletteDialog</name>
     <message>
         <source>Adjust Current Level to This Palette</source>
-        <translation>現在レベルをパレットに合わせる</translation>
+        <translation>現在のレベルをこのパレットに合わせる</translation>
     </message>
     <message>
         <source>Tolerance</source>
-        <translation>しきい値</translation>
+        <translation>許容量</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -51,11 +51,11 @@
     <name>CameraPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>基準点をリセット</translation>
+        <translation>基準点をリセット (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Activate</source>
-        <translation>有効</translation>
+        <translation>有効にする (&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -82,25 +82,25 @@
     </message>
     <message>
         <source>Use Current Level Settings</source>
-        <translation>現在のレベルを使用する</translation>
+        <translation>現在のレベル設定を用いる</translation>
     </message>
     <message>
         <source>Bad camera preset</source>
-        <translation>カメラプリセットにはエラーが発生しました。</translation>
+        <translation>不正なカメラプリセット</translation>
     </message>
     <message>
         <source>&apos;%1&apos; doesn&apos;t seem a well formed camera preset. 
 Possibly the preset file has been corrupted</source>
-        <translation>%1 カメラプリセットにはエラーが発生しました。</translation>
+        <translation>&apos;%1&apos; は正しく整形されたカメラプリセットではありません。
+プリセットファイルが破損しているおそれがあります</translation>
     </message>
     <message>
         <source>Preset name</source>
-        <translation>プリセットの名前</translation>
+        <translation>プリセット名</translation>
     </message>
     <message>
         <source>Enter the name for %1</source>
-        <translation>%1の名前を入力して下さい。
-</translation>
+        <translation>%1の名前を入力して下さい</translation>
     </message>
     <message>
         <source>YPx:</source>
@@ -112,38 +112,38 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <source>Force Squared Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>正方ピクセルを保持</translation>
     </message>
 </context>
 <context>
     <name>ChannelHisto</name>
     <message>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>赤</translation>
     </message>
     <message>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>緑</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>青</translation>
     </message>
     <message>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ</translation>
     </message>
     <message>
         <source>RGBA</source>
-        <translation type="unfinished"></translation>
+        <translation>RGBA</translation>
     </message>
 </context>
 <context>
@@ -193,11 +193,11 @@ Possibly the preset file has been corrupted</source>
     <name>ColumnPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>基準点をリセット</translation>
+        <translation>基準点をリセット (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Open Subxsheet</source>
-        <translation>サブシーン編集モード</translation>
+        <translation>サブシートを開く (&amp;O)</translation>
     </message>
 </context>
 <context>
@@ -231,81 +231,81 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>H Range</source>
-        <translation>色相範囲：</translation>
+        <translation>色相の範囲</translation>
     </message>
     <message>
         <source>Line Width</source>
-        <translation>線の太さ：</translation>
+        <translation>線の太さ</translation>
     </message>
     <message>
         <source>Color Thres</source>
-        <translation type="unfinished"></translation>
+        <translation>色のしきい値</translation>
     </message>
     <message>
         <source>White Thres</source>
-        <translation type="unfinished"></translation>
+        <translation>明るさのしきい値</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="unfinished">太字</translation>
+        <translation>太字</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">斜体</translation>
+        <translation>斜体</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished">下線</translation>
+        <translation>下線</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="unfinished">左揃</translation>
+        <translation>左揃え</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="unfinished">中央揃</translation>
+        <translation>中央揃え</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="unfinished">右揃</translation>
+        <translation>右揃え</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="unfinished">ファイル名は次の記号のどれかを含むことができません： --- \ / : ? &quot; | --- </translation>
+        <translation>ファイル名は次の記号を含むことができません： /\:*?&quot;&lt;&gt;|</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ProgressDialog</name>
     <message>
         <source>Toonz</source>
-        <translation type="unfinished">TOONZ</translation>
+        <translation>OpenToonz</translation>
     </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
     <message>
         <source>Toonz</source>
-        <translation type="unfinished">TOONZ</translation>
+        <translation>OpenToonz</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="unfinished">チャンネル：</translation>
+        <translation>チャンネル：</translation>
     </message>
 </context>
 <context>
@@ -354,11 +354,11 @@ Possibly the preset file has been corrupted</source>
     <name>EaseInOutSegmentPage</name>
     <message>
         <source>Ease In:</source>
-        <translation>イージーイン：</translation>
+        <translation>スローイン：</translation>
     </message>
     <message>
         <source>Ease Out:</source>
-        <translation>イージーアウト：</translation>
+        <translation>スローアウト：</translation>
     </message>
 </context>
 <context>
@@ -399,11 +399,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Define Sub-camera</source>
-        <translation>サブカメラの範囲決定</translation>
+        <translation>サブカメラの範囲を指定</translation>
     </message>
     <message>
         <source>Background Colors</source>
-        <translation>背景色</translation>
+        <translation>プレビュー画像の背景</translation>
     </message>
     <message>
         <source>Framerate</source>
@@ -423,35 +423,35 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Histogram</source>
-        <translation>度数分布図</translation>
+        <translation>ヒストグラム</translation>
     </message>
     <message>
         <source>&amp;Save Images</source>
-        <translation>画像を保存</translation>
+        <translation>プレビュー画像を保存 (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Snapshot</source>
-        <translation>スナップショット</translation>
+        <translation>スナップショット (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Compare to Snapshot</source>
-        <translation>スナップショットと比較</translation>
+        <translation>スナップショットと比較 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Define Sub-camera</source>
-        <translation>サブカメラの範囲決定</translation>
+        <translation>サブカメラの範囲を指定 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;White Background</source>
-        <translation>白背景</translation>
+        <translation>白背景 (&amp;W)</translation>
     </message>
     <message>
         <source>&amp;Black Background</source>
-        <translation>黒背景</translation>
+        <translation>黒背景 (&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Checkered Background</source>
-        <translation>チェック柄背景</translation>
+        <translation>チェック柄背景 (&amp;C)</translation>
     </message>
     <message>
         <source>Set the playback frame rate</source>
@@ -459,11 +459,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;First Frame</source>
-        <translation>最初のフレーム</translation>
+        <translation>最初のフレーム (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Previous Frame</source>
-        <translation>前のフレーム</translation>
+        <translation>前のフレーム (&amp;P)</translation>
     </message>
     <message>
         <source>Pause</source>
@@ -475,15 +475,15 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Loop</source>
-        <translation>ルップ再生</translation>
+        <translation>ループ再生</translation>
     </message>
     <message>
         <source>&amp;Next frame</source>
-        <translation>次のフレーム</translation>
+        <translation>次のフレーム (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Last Frame</source>
-        <translation>最後のフレーム</translation>
+        <translation>最後のフレーム (&amp;L)</translation>
     </message>
     <message>
         <source>Red Channel</source>
@@ -491,7 +491,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Red Channel in Grayscale</source>
-        <translation>グレースケールに赤チャンネル</translation>
+        <translation>赤チャンネル(グレースケール)</translation>
     </message>
     <message>
         <source>Green Channel</source>
@@ -499,7 +499,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Green Channel in Grayscale</source>
-        <translation>グレースケールに緑チャンネル</translation>
+        <translation>緑チャンネル(グレースケール)</translation>
     </message>
     <message>
         <source>Blue Channel</source>
@@ -507,7 +507,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Blue Channel in Grayscale</source>
-        <translation>グレースケールに青チャンネル</translation>
+        <translation>青チャンネル(グレースケール)</translation>
     </message>
     <message>
         <source>Alpha Channel</source>
@@ -515,15 +515,15 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Soundtrack </source>
-        <translation>サウンドトラック</translation>
+        <translation>サウンドトラック (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Histogram</source>
-        <translation>度数分布図</translation>
+        <translation>ヒストグラム (&amp;H)</translation>
     </message>
     <message>
         <source> FPS	</source>
-        <translation>FPS</translation>
+        <translation>FPS→</translation>
     </message>
     <message>
         <source> Frame  </source>
@@ -535,7 +535,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Drag to play the animation</source>
-        <translation>ドラッグしてシーンを再生する</translation>
+        <translation>[ドラッグ]アニメーションを再生する</translation>
     </message>
     <message>
         <source>Define Loading Box</source>
@@ -547,19 +547,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Define Loading Box</source>
-        <translation>読み込みボックスを指定</translation>
+        <translation>読み込みボックスを指定 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Use Loading Box</source>
-        <translation>読み込みボックスを使用</translation>
+        <translation>読み込みボックスを使用 (&amp;U)</translation>
     </message>
     <message>
         <source>Display Areas as Filled</source>
-        <translation>塗りつぶししたとして表示</translation>
+        <translation>領域を塗りつぶししたとして表示</translation>
     </message>
     <message>
         <source>&amp;Display Areas as Filled</source>
-        <translation>塗りつぶししたとして表示</translation>
+        <translation>領域を塗りつぶししたとして表示 (&amp;D)</translation>
     </message>
 </context>
 <context>
@@ -577,7 +577,7 @@ Possibly the preset file has been corrupted</source>
     <name>FunctionExpressionSegmentPage</name>
     <message>
         <source>Expression:</source>
-        <translation>数式関数：</translation>
+        <translation>エクスプレッション：</translation>
     </message>
     <message>
         <source>Unit:</source>
@@ -585,7 +585,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation>補間の定義に循環参照があります。</translation>
+        <translation>補間の定義の中に循環参照があります。</translation>
     </message>
 </context>
 <context>
@@ -612,15 +612,15 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Activate Cycle</source>
-        <translation>サイクルの有効</translation>
+        <translation>サイクルを有効化</translation>
     </message>
     <message>
         <source>Deactivate Cycle</source>
-        <translation>サイクルの無効</translation>
+        <translation>サイクルを無効化</translation>
     </message>
     <message>
         <source>Linear Interpolation</source>
-        <translation>線形補間</translation>
+        <translation>リニア補間</translation>
     </message>
     <message>
         <source>Speed In / Speed Out Interpolation</source>
@@ -628,11 +628,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Ease In / Ease Out Interpolation</source>
-        <translation>イージーイン/イージーアウト補間</translation>
+        <translation>スローイン/スローアウト補間</translation>
     </message>
     <message>
         <source>Ease In / Ease Out (%) Interpolation</source>
-        <translation>イージーイン/イージーアウト［%］補間</translation>
+        <translation>スローイン/スローアウト(%)補間</translation>
     </message>
     <message>
         <source>Exponential Interpolation</source>
@@ -640,11 +640,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Expression Interpolation</source>
-        <translation>数式関数補間</translation>
+        <translation>エクスプレッション補間</translation>
     </message>
     <message>
         <source>File Interpolation</source>
-        <translation>ファイル補間</translation>
+        <translation>ファイルを用いて補間</translation>
     </message>
     <message>
         <source>Constant Interpolation</source>
@@ -652,11 +652,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Fit Selection</source>
-        <translation>ウィンドウに選択を表示</translation>
+        <translation>選択範囲をウィンドウに合わせてズーム</translation>
     </message>
     <message>
         <source>Fit</source>
-        <translation>ウィンドウに全体表示</translation>
+        <translation>ウィンドウに合わせてズーム</translation>
     </message>
     <message>
         <source>Similar Shape Interpolation</source>
@@ -664,35 +664,35 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>ステップ１［選択*1］</translation>
+        <translation>ステップ1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>ステップ２［選択*2］</translation>
+        <translation>ステップ2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>ステップ３［選択*3］</translation>
+        <translation>ステップ3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>ステップ４［選択*4］</translation>
+        <translation>ステップ4</translation>
     </message>
     <message>
         <source>Function Curves</source>
-        <translation type="unfinished"></translation>
+        <translation>グラフエディター</translation>
     </message>
     <message>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>滑らかに表示</translation>
     </message>
     <message>
         <source>Frame Based</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム毎の値を繋いで表示</translation>
     </message>
     <message>
         <source>Curve Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>グラフ形状</translation>
     </message>
 </context>
 <context>
@@ -707,11 +707,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation>イージーイン/イージーアウト</translation>
+        <translation>スローイン/スローアウト</translation>
     </message>
     <message>
         <source>Ease In / Ease Out %</source>
-        <translation>イージーイン/イージーアウト %</translation>
+        <translation>スローイン/スローアウト (%)</translation>
     </message>
     <message>
         <source>Exponential</source>
@@ -719,7 +719,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Expression</source>
-        <translation>数式関数</translation>
+        <translation>エクスプレッション</translation>
     </message>
     <message>
         <source>File</source>
@@ -747,54 +747,54 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <source>&lt; </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt; </translation>
     </message>
     <message>
         <source> &gt;</source>
-        <translation type="unfinished"></translation>
+        <translation> &gt;</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>スピード</translation>
     </message>
     <message>
         <source>Ease</source>
-        <translation type="unfinished"></translation>
+        <translation>スロー</translation>
     </message>
     <message>
         <source>Ease%</source>
-        <translation type="unfinished"></translation>
+        <translation>スロー％</translation>
     </message>
     <message>
         <source>Expo</source>
-        <translation type="unfinished"></translation>
+        <translation>指数</translation>
     </message>
     <message>
         <source>Expr</source>
-        <translation type="unfinished"></translation>
+        <translation>Expr</translation>
     </message>
     <message>
         <source>Const</source>
-        <translation type="unfinished"></translation>
+        <translation>定数</translation>
     </message>
     <message>
         <source>Similar</source>
-        <translation type="unfinished"></translation>
+        <translation>相似</translation>
     </message>
     <message>
         <source>????</source>
-        <translation type="unfinished"></translation>
+        <translation>????</translation>
     </message>
 </context>
 <context>
     <name>FunctionSelection</name>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation type="unfinished"></translation>
+        <translation>補間の定義に循環参照があります。</translation>
     </message>
 </context>
 <context>
@@ -809,7 +809,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Linear Interpolation</source>
-        <translation>線形補間</translation>
+        <translation>リニア補間</translation>
     </message>
     <message>
         <source>Speed In / Speed Out Interpolation</source>
@@ -817,19 +817,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Ease In / Ease Out Interpolation</source>
-        <translation>イージーイン/イージーアウト補間</translation>
+        <translation>スローイン/スローアウト補間</translation>
     </message>
     <message>
         <source>Ease In / Ease Out (%) Interpolation</source>
-        <translation>イージーイン/イージーアウト［%］補間</translation>
+        <translation>スローイン/スローアウト（%）補間</translation>
     </message>
     <message>
         <source>Expression Interpolation</source>
-        <translation>数式関数補間</translation>
+        <translation>エクスプレッション補間</translation>
     </message>
     <message>
         <source>File Interpolation</source>
-        <translation>ファイル補間</translation>
+        <translation>ファイルを用いて補間</translation>
     </message>
     <message>
         <source>Constant Interpolation</source>
@@ -841,19 +841,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>ステップ１［選択*1］</translation>
+        <translation>ステップ1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>ステップ２［選択*2］</translation>
+        <translation>ステップ2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>ステップ３［選択*3］</translation>
+        <translation>ステップ3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>ステップ４［選択*4］</translation>
+        <translation>ステップ4</translation>
     </message>
 </context>
 <context>
@@ -864,18 +864,18 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Function Editor Toggle</source>
-        <translation>パラメータ表示切り替え</translation>
+        <translation>パラメータ表示切り替え (&amp;F)</translation>
     </message>
 </context>
 <context>
     <name>FunctionTreeView</name>
     <message>
         <source>Save Curve</source>
-        <translation>曲線を保存</translation>
+        <translation>パラメータを保存</translation>
     </message>
     <message>
         <source>Load Curve</source>
-        <translation>曲線を取り込み</translation>
+        <translation>パラメータを取り込み</translation>
     </message>
     <message>
         <source>Export Data</source>
@@ -883,7 +883,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Show Animated Only</source>
-        <translation>アニメーションのみ表示</translation>
+        <translation>変化するパラメータのみ表示</translation>
     </message>
     <message>
         <source>Show All</source>
@@ -894,142 +894,150 @@ Possibly the preset file has been corrupted</source>
     <name>FxColumnPainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートから切り離す</translation>
+        <translation>タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートに接続</translation>
+        <translation>タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>貼り付け［追加］</translation>
+        <translation>貼り付けて追加 (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>プレビュー</translation>
+        <translation>プレビュー (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Open Subxsheet</source>
-        <translation>サブシート編集モード</translation>
+        <translation>サブシートを開く (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Uncache Fx</source>
-        <translation>非キャッシュFX</translation>
+        <translation>キャッシュを解除 (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Cache FX</source>
-        <translation>キャッシュFX</translation>
+        <translation>キャッシュ (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>FxOutputPainter</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>削除</translation>
+        <translation>削除 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Activate</source>
-        <translation>有効にする</translation>
+        <translation>有効にする (&amp;A)</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="vanished">Output</translation>
+    </message>
+    <message>
+        <source>Out</source>
+        <translation type="vanished">Out</translation>
     </message>
 </context>
 <context>
     <name>FxPainter</name>
     <message>
         <source>&amp;Open Group</source>
-        <translation>グループ編集モード</translation>
+        <translation>グループを開く (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Paste Replace</source>
-        <translation>貼り付け［交換］</translation>
+        <translation>貼り付けて置換 (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>貼り付け［追加］</translation>
+        <translation>貼り付けて追加 (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation>削除</translation>
+        <translation>削除 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートから切り離す</translation>
+        <translation>タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートに接続</translation>
+        <translation>タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Create Linked FX</source>
-        <translation>連結エフェクトを作成</translation>
+        <translation>リンクされたエフェクトを作成 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Unlink</source>
-        <translation>分離</translation>
+        <translation>リンクを解除 (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Make Macro FX</source>
-        <translation>マクロエフェクトを作成</translation>
+        <translation>マクロエフェクトを作成 (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Explode Macro FX</source>
-        <translation>マクロエフェクトを展開</translation>
+        <translation>マクロエフェクトを展開 (&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Open Macro FX</source>
-        <translation>マクロエフェクト編集モード</translation>
+        <translation>マクロエフェクトを開く (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Save As Preset...</source>
-        <translation>プリセットとして保存...</translation>
+        <translation>プリセットとして保存 (&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>プレビュー</translation>
+        <translation>プレビュー (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Uncache FX</source>
-        <translation>非キャッシュFX</translation>
+        <translation>キャッシュを解除 (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Cache FX</source>
-        <translation>キャッシュFX</translation>
+        <translation>キャッシュ (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>FxPalettePainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートから切り離す</translation>
+        <translation>タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートに接続</translation>
+        <translation>タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>プレビュー</translation>
+        <translation>プレビュー (&amp;P)</translation>
     </message>
 </context>
 <context>
     <name>FxSchematicLink</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>削除</translation>
+        <translation>削除 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert</source>
-        <translation>貼り付け［挿入］</translation>
+        <translation>貼り付けて挿入 (&amp;P)</translation>
     </message>
 </context>
 <context>
     <name>FxSchematicPort</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートから切り離す</translation>
+        <translation>タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートに接続</translation>
+        <translation>タイムシートノードに接続 (&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -1037,73 +1045,80 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Cannot Paste Insert a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>選択した無関係のFXノードを貼り付け［挿入］できません。
-コピーまたは切り取る前にFXノードと関連するリンクを選択してください。</translation>
+        <translation>接続されていない複数のエフェクトノードを「貼り付けて挿入」できません。
+コピーまたは切り取りを行う前に、FXノードと関連するリンクを選択してください。</translation>
     </message>
     <message>
         <source>Cannot Paste Add a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>選択した無関係のFXノードを貼り付け［追加］できません。
-貼り付けしたい選択物をコピーまたは切り取る前にFXノードと関連するリンクを選択してください。</translation>
+        <translation>接続されていない複数のエフェクトノードを「貼り付けて追加」できません。
+コピーまたは切り取りを行う前に、FXノードと関連するリンクを選択してください。</translation>
     </message>
     <message>
         <source>Cannot Paste Replace a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>選択した無関係のFXノードを貼り付け［交換］できません。
-コピーまたは切り取る前にFXノードと関連するリンクを選択してください。</translation>
+        <translation>接続されていない複数のエフェクトノードを「貼り付けて置換」できません。
+コピーまたは切り取りを行う前に、FXノードと関連するリンクを選択してください。</translation>
     </message>
 </context>
 <context>
     <name>FxSettings</name>
     <message>
         <source>&amp;Camera Preview</source>
-        <translation>カメラプレビュー</translation>
+        <translation>カメラプレビュー (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>プレビュー</translation>
+        <translation>プレビュー (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;White Background</source>
-        <translation>白背景</translation>
+        <translation>白背景 (&amp;W)</translation>
     </message>
     <message>
         <source>&amp;Black Background</source>
-        <translation>黒背景</translation>
+        <translation>黒背景 (&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Checkered Background</source>
-        <translation>チェック柄背景</translation>
+        <translation>チェック柄背景 (&amp;C)</translation>
     </message>
     <message>
         <source> : </source>
-        <translation type="unfinished"></translation>
+        <translation> : </translation>
     </message>
 </context>
 <context>
     <name>FxXSheetPainter</name>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>貼り付け［追加］</translation>
+        <translation>貼り付けて追加 (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>プレビュー</translation>
+        <translation>プレビュー (&amp;P)</translation>
+    </message>
+    <message>
+        <source>XSheet</source>
+        <translation type="vanished">XSheet</translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="vanished">X</translation>
     </message>
 </context>
 <context>
     <name>GroupPainter</name>
     <message>
         <source>&amp;Open Group</source>
-        <translation>グループ編集モード</translation>
+        <translation>グループを開く (&amp;O)</translation>
     </message>
 </context>
 <context>
     <name>Histogram</name>
     <message>
         <source>Logarithmic Scale</source>
-        <translation>計算尺
-</translation>
+        <translation>対数スケール</translation>
     </message>
 </context>
 <context>
@@ -1158,11 +1173,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>PaletteViewer</name>
     <message>
         <source>&amp;Save Palette As</source>
-        <translation>パレットを別名で保存...</translation>
+        <translation>パレットを別名で保存 (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Save Palette</source>
-        <translation>パレットを保存</translation>
+        <translation>パレットを保存 (&amp;S)</translation>
     </message>
     <message>
         <source>Options</source>
@@ -1170,27 +1185,27 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>&amp;Small Thumbnails View</source>
-        <translation>サムネイル［小］を表示</translation>
+        <translation>小サムネイル (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Large Thumbnails View</source>
-        <translation>サムネイル［大］を表示</translation>
+        <translation>大サムネイル (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;List View</source>
-        <translation>リスト表示</translation>
+        <translation>リスト表示 (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;New Page</source>
-        <translation>新規ページ</translation>
+        <translation>新規ページ (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Style</source>
-        <translation>新規スタイル</translation>
+        <translation>新規スタイル (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Move Palette</source>
-        <translation>パレットを移動</translation>
+        <translation>パレットを移動 (&amp;M)</translation>
     </message>
     <message>
         <source>Color Model: </source>
@@ -1198,7 +1213,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>&amp;Palette Gizmo</source>
-        <translation>パレット編集</translation>
+        <translation>スタイルをまとめて色調整 (&amp;P)</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -1230,70 +1245,70 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Lock Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットをロック</translation>
     </message>
     <message>
         <source>&amp;Lock Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットをロック (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;Medium Thumbnails View</source>
-        <translation type="unfinished"></translation>
+        <translation>中サムネイル (&amp;M)</translation>
     </message>
     <message>
         <source>Style Name</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル名</translation>
     </message>
     <message>
         <source>StudioPalette Name</source>
-        <translation type="unfinished"></translation>
+        <translation>リンク元のスタイル名</translation>
     </message>
     <message>
         <source>Both Names</source>
-        <translation type="unfinished"></translation>
+        <translation>両方の名前</translation>
     </message>
     <message>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>上書きする</translation>
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>上書きしない</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>更新する</translation>
     </message>
     <message>
         <source>Don&apos;t Update</source>
-        <translation type="unfinished"></translation>
+        <translation>更新しない</translation>
     </message>
     <message>
         <source>     (Color Model: </source>
-        <translation type="unfinished"></translation>
+        <translation>     (カラーモデル： </translation>
     </message>
     <message>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="unfinished"></translation>
+        <translation>- スタイルがありません -</translation>
     </message>
     <message>
         <source>Remove Links</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットとのリンクを消去</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="unfinished">新規スタイル</translation>
+        <translation>新規スタイル</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished">新規ページ</translation>
+        <translation>新規ページ</translation>
     </message>
 </context>
 <context>
@@ -1319,21 +1334,21 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>ParamViewer</name>
     <message>
         <source>Swatch Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>スウォッチビューア</translation>
     </message>
 </context>
 <context>
     <name>ParamsPageSet</name>
     <message>
         <source>Fx Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘルプ</translation>
     </message>
 </context>
 <context>
     <name>PegbarPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>基準点をリセット</translation>
+        <translation>基準点をリセット (&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -1344,7 +1359,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>X:</source>
-        <translation type="unfinished"></translation>
+        <translation>X:</translation>
     </message>
 </context>
 <context>
@@ -1362,11 +1377,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告：</translation>
+        <translation>警告</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>クリティカル</translation>
+        <translation>クリティカル警告</translation>
     </message>
     <message>
         <source>Question</source>
@@ -1375,12 +1390,12 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <source>Styles you are going to delete are used to paint lines and areas in the animation level.
 </source>
-        <translation>削除しようとするスタイルは、レベルの線と領域に使用されています。
+        <translation>削除しようとしているスタイルは、アニメーション・レベル内の線と塗りに使用されています。
 </translation>
     </message>
     <message>
         <source>How do you want to proceed?</source>
-        <translation>どのように継続しますか？</translation>
+        <translation>どのように処理しますか？</translation>
     </message>
     <message>
         <source>Delete Styles Only</source>
@@ -1388,7 +1403,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Delete Styles, Lines and Areas</source>
-        <translation>スタイル、線、および領域を削除</translation>
+        <translation>スタイルと、線および塗りを削除</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1396,27 +1411,27 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Cannot premultiply the selected file.</source>
-        <translation>選択したファイルを乗合成チャンネル［黒マット］することができません。</translation>
+        <translation>選択したファイルをチャンネル合成（プリマルチプライ）することができません。</translation>
     </message>
     <message>
         <source>Cannot premultiply a vector-based level.</source>
-        <translation>ベクター方式のレベルを乗合成チャンネル［黒マット］できません。</translation>
+        <translation>ベクター形式のレベルはチャンネル合成（プリマルチプライ）できません。</translation>
     </message>
     <message>
         <source>Level %1 premultiplied.</source>
-        <translation>%1 レベルは乗算済みされました。</translation>
+        <translation>%1 レベルはチャンネル合成されました。</translation>
     </message>
     <message>
         <source>Frame %1 : conversion failed!</source>
-        <translation>フレーム %1 ：変換は失敗しました。</translation>
+        <translation>フレーム %1 ：変換は失敗しました!</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>はい</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <source>Discard</source>
-        <translation>いいえ</translation>
+        <translation>変更を破棄</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -1428,11 +1443,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Stage Schematic</source>
-        <translation>スキマティック［ステージ］</translation>
+        <translation>ステージ・スキマティック</translation>
     </message>
     <message>
         <source>FX Schematic</source>
-        <translation>スキマティック［FX］</translation>
+        <translation>エフェクト・スキマティック</translation>
     </message>
     <message>
         <source>Fx Schematic</source>
@@ -1444,24 +1459,24 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Motion Path files (*.mpath)</source>
-        <translation>モーションパスファイル［*.mpath］</translation>
+        <translation>モーションパスファイル(*.mpath)</translation>
     </message>
     <message>
         <source>Load Motion Path</source>
-        <translation>モーションパスを読み込み</translation>
+        <translation>モーションパスを読み込む</translation>
     </message>
     <message>
         <source>Can&apos;t paste styles there</source>
-        <translation>スタイルを指定先に貼り付けできません。</translation>
+        <translation>スタイルを指定先に貼り付けできません</translation>
     </message>
     <message>
         <source>Can&apos;t modify color #0</source>
-        <translation>#0 色を変更できません。</translation>
+        <translation>スタイル#0 は変更できません</translation>
     </message>
     <message>
         <source>There are more cut/copied styles than selected. Paste anyway (adding styles)?</source>
-        <translation>選択スタイルが切り取りまたはコピーされたスタイルよりも多いです。
-すべて貼り付けを継続しますか？</translation>
+        <translation>切り取り/コピーされたスタイルの数が選択スタイルよりも多いです。
+貼り付けを継続しますか？（不足分のスタイルは追加されます）</translation>
     </message>
     <message>
         <source>Paste</source>
@@ -1502,7 +1517,7 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Owner:        </source>
-        <translation>オーナー：</translation>
+        <translation>所有者：</translation>
     </message>
     <message>
         <source>Size:         </source>
@@ -1510,11 +1525,11 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Created:      </source>
-        <translation>作成：</translation>
+        <translation>作成日時：</translation>
     </message>
     <message>
         <source>Modified:     </source>
-        <translation>編集：</translation>
+        <translation>更新日時：</translation>
     </message>
     <message>
         <source>Last Access:  </source>
@@ -1530,11 +1545,11 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Bits/Sample:  </source>
-        <translation>ビット／サンプル：</translation>
+        <translation>色深度：</translation>
     </message>
     <message>
         <source>Sample/Pixel: </source>
-        <translation>サンプル／ピクセル：</translation>
+        <translation>チャンネル数：</translation>
     </message>
     <message>
         <source>Dpi:          </source>
@@ -1558,7 +1573,7 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Codec:        </source>
-        <translation>こーデック：</translation>
+        <translation>コーデック：</translation>
     </message>
     <message>
         <source>Alpha Channel:</source>
@@ -1566,15 +1581,15 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Byte Ordering:</source>
-        <translation>バイトアーダー：</translation>
+        <translation>バイト順序：</translation>
     </message>
     <message>
         <source>H Pos:</source>
-        <translation>H 位置：</translation>
+        <translation>水平位置：</translation>
     </message>
     <message>
         <source>Palette Pages:</source>
-        <translation>パレットのパージ：</translation>
+        <translation>パレットのページ：</translation>
     </message>
     <message>
         <source>Palette Styles:</source>
@@ -1602,11 +1617,11 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Endianess:      </source>
-        <translation>インデェアン化：</translation>
+        <translation>エンディアン：</translation>
     </message>
     <message>
         <source>It is not possible to delete the style #</source>
-        <translation>スタイル # を削除できません。</translation>
+        <translation>スタイルを削除できません：スタイル#</translation>
     </message>
     <message>
         <source>It is not possible to delete styles #0 and #1.</source>
@@ -1614,15 +1629,15 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>It is not possible to find the %1 level.</source>
-        <translation>%1 レベルを見つけることができません。</translation>
+        <translation>レベル %1 を見つけることができません。</translation>
     </message>
     <message>
         <source>There was an error copying %1</source>
-        <translation>%1 をコピーする時、エラーが発生しました。</translation>
+        <translation>%1 をコピーする時、エラーが発生しました</translation>
     </message>
     <message>
         <source>It is not possible to find the level %1</source>
-        <translation>%1 レベルを見つけることができません。</translation>
+        <translation>レベル %1 を見つけることができません</translation>
     </message>
     <message>
         <source>Length:       </source>
@@ -1646,7 +1661,7 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>It is not possible to assing a shortcut with modifiers to the visualization commands.</source>
-        <translation>修飾子が備えたキーボードショートカットを視覚化コマンドに割り当てできません。</translation>
+        <translation>視覚化コマンドには、修飾キーと組み合わせたキーボードショートカットを割り当てできません。</translation>
     </message>
     <message>
         <source>It is not possible to save the motion path.</source>
@@ -1658,173 +1673,176 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>［カスタム］</translation>
+        <translation>&lt;カスタム&gt;</translation>
     </message>
     <message>
         <source>Toonz 7.1</source>
-        <translation>TOONZ 7.1ML</translation>
+        <translation>OpenToonz</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
-        <translation>ファイル名は空白にはできません。次の文字を入れることもできません:(new line) \ / : * ? &quot; |</translation>
+        <translation>ファイル名は空白にはできません。また、次の文字のいずれかを含むことはできません：
+\ / : * ? &quot; |</translation>
     </message>
     <message>
         <source>The source image seems not suitable for this kind of conversion</source>
-        <translation>元画像は、この変換には適していないようです</translation>
+        <translation>元の画像は、この変換に適したものではありません</translation>
     </message>
     <message>
         <source>Deleting &quot;%1&quot;.
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot;を削除します。
+よろしいですか？</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <source>Paste Style  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを貼り付け : パレット %1</translation>
     </message>
     <message>
         <source>Delete Style  from Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを削除 :パレット  %1</translation>
     </message>
     <message>
         <source>Cut Style  from Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを切り取り : パレット %1</translation>
     </message>
     <message>
         <source>  to Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>  パレットへ : %1</translation>
     </message>
     <message>
         <source>Paste Color &amp;&amp; Name%1</source>
-        <translation type="unfinished"></translation>
+        <translation>色と名前を貼り付け %1</translation>
     </message>
     <message>
         <source>Paste Name%1</source>
-        <translation type="unfinished"></translation>
+        <translation>名前を貼り付け %1</translation>
     </message>
     <message>
         <source>Paste Color%1</source>
-        <translation type="unfinished"></translation>
+        <translation>色を貼り付け %1</translation>
     </message>
     <message>
         <source>Paste%1</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け %1</translation>
     </message>
     <message>
         <source>Blend Colors  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>色を混合 : パレット %1</translation>
     </message>
     <message>
         <source>Toggle Link  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクを切り替え : パレット %1</translation>
     </message>
     <message>
         <source>Remove Link  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクを消去 : パレット %1</translation>
     </message>
     <message>
         <source>Get Color from Studio Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットからリンクされた色を取得</translation>
     </message>
     <message>
         <source>Paste Object  </source>
-        <translation type="unfinished"></translation>
+        <translation>オブジェクトを貼り付け</translation>
     </message>
     <message>
         <source>Copy Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームをコピー</translation>
     </message>
     <message>
         <source>Paste Keyframe  at Frame : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを貼り付け : フレーム %1</translation>
     </message>
     <message>
         <source>Delete Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを削除</translation>
     </message>
     <message>
         <source>Move Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを移動</translation>
     </message>
     <message>
         <source>Change Style   Palette : %1  Style#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを変更   パレット : %1 スタイル#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</translation>
     </message>
     <message>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>置き換え</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更 : %1</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 -&gt; %3</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更  %1 : %2 -&gt; %3</translation>
     </message>
     <message>
         <source>Modify Fx Param : </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更 : </translation>
     </message>
     <message>
         <source>ON : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オン : %1</translation>
     </message>
     <message>
         <source>OFF : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オフ : %1</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 Key</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更 : %1 : キーフレームを%2 </translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 Point</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更 : %1 : トーンカーブのポイントを%2 </translation>
     </message>
     <message>
         <source>%1 : Linear ON</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : トーンカーブ-線形 オン</translation>
     </message>
     <message>
         <source>%1 : Linear OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : トーンカーブ-線形 オフ</translation>
     </message>
     <message>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>上書きする</translation>
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>上書きしない</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Deletion of Lines and Areas from raster-based levels is not undoable.
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>ラスター形式のレベルから線と塗りを削除します。この操作は取り消しできません。
+よろしいですか？</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクトパラメータを変更 : キーフレームを%1 : %2  フレーム %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation type="unfinished"></translation>
+        <translation>設定</translation>
     </message>
 </context>
 <context>
@@ -1845,39 +1863,39 @@ Are you sure?</source>
     <name>SchematicViewer</name>
     <message>
         <source>&amp;Fit to Window</source>
-        <translation>ウィンドウに全体を表示</translation>
+        <translation>ウィンドウに全体を表示 (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Focus on Current</source>
-        <translation>現在のオブジェクトを中心に</translation>
+        <translation>現在のオブジェクトを中心に (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Reorder Nodes</source>
-        <translation>ノードを順序付ける</translation>
+        <translation>ノードを整列 (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Reset Size</source>
-        <translation>サイズをリセット</translation>
+        <translation>サイズをリセット (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Minimize Nodes</source>
-        <translation>ノードを縮小化する</translation>
+        <translation>ノードを最小化する (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Maximize Nodes</source>
-        <translation>ノードを最大化する</translation>
+        <translation>ノードを最大化する (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;New Pegbar</source>
-        <translation>新規タップ</translation>
+        <translation>新規タップ (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Camera</source>
-        <translation>新規カメラ</translation>
+        <translation>新規カメラ (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
-        <translation>新規モーションパス</translation>
+        <translation>新規モーションパス (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Schematic Toggle</source>
@@ -1888,14 +1906,14 @@ Are you sure?</source>
     <name>SchematicWindowEditor</name>
     <message>
         <source>&amp;Close Editor</source>
-        <translation>編集を閉じる</translation>
+        <translation>エディターを閉じる (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>SimilarShapeSegmentPage</name>
     <message>
         <source>Reference Curve:</source>
-        <translation>参照曲線：</translation>
+        <translation>参照するパラメータ：</translation>
     </message>
     <message>
         <source>Frame Offset:</source>
@@ -1903,19 +1921,18 @@ Are you sure?</source>
     </message>
     <message>
         <source>There is a syntax error in the definition of the interpolation.</source>
-        <translation>補間の定義に構文エラーがあります。</translation>
+        <translation>補間の定義の中に構文エラーがあります。</translation>
     </message>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation>補間の定義に循環参照があります。
-</translation>
+        <translation>補間の定義の中に循環参照があります。</translation>
     </message>
 </context>
 <context>
     <name>SpecialStyleChooserPage</name>
     <message>
         <source>Plain color</source>
-        <translation>標準色</translation>
+        <translation>通常の色</translation>
     </message>
 </context>
 <context>
@@ -1930,60 +1947,60 @@ Are you sure?</source>
     </message>
     <message>
         <source>First Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>始点の速度:</translation>
     </message>
     <message>
         <source>Handle:</source>
-        <translation type="unfinished"></translation>
+        <translation>ハンドル:</translation>
     </message>
     <message>
         <source>/</source>
-        <translation type="unfinished"></translation>
+        <translation>/</translation>
     </message>
     <message>
         <source>Last Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>終点の速度:</translation>
     </message>
     <message>
         <source>---</source>
-        <translation type="unfinished"></translation>
+        <translation>---</translation>
     </message>
 </context>
 <context>
     <name>SplinePainter</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>削除</translation>
+        <translation>削除 (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Save Motion Path...</source>
-        <translation>モーションパスを保存...</translation>
+        <translation>モーションパスを保存 (&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Load Motion Path...</source>
-        <translation>モーションパスを読み込み...</translation>
+        <translation>モーションパスを読み込み (&amp;L)...</translation>
     </message>
 </context>
 <context>
     <name>StageSchematicScene</name>
     <message>
         <source>&amp;New Pegbar</source>
-        <translation>新規タップ</translation>
+        <translation>新規タップ (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
-        <translation>新規モーションパス</translation>
+        <translation>新規モーションパス (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Camera</source>
-        <translation>新規カメラ</translation>
+        <translation>新規カメラ (&amp;N)</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>This folder is not empty. Delete anyway?</source>
-        <translation>このフォルダは空ではありません。 削除しますか?</translation>
+        <translation>このフォルダは空ではありません。 削除してよろしいですか?</translation>
     </message>
     <message>
         <source>New Palette</source>
@@ -2007,7 +2024,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Replace with Current Palette</source>
-        <translation>現在のパレットに置き換え</translation>
+        <translation>現在のパレットで置き換え</translation>
     </message>
     <message>
         <source>Delete Palette</source>
@@ -2027,7 +2044,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Convert to Studio Palette and Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットに変換して上書き保存</translation>
     </message>
 </context>
 <context>
@@ -2057,7 +2074,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Apply changes to current style</source>
-        <translation>現在のスタイルに変更点を適用</translation>
+        <translation>現在のスタイルに変更を適用</translation>
     </message>
     <message>
         <source>Auto</source>
@@ -2065,11 +2082,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Automatically update style changes</source>
-        <translation>スタイルの変更点を自動更新</translation>
+        <translation>スタイルの変更を自動で更新</translation>
     </message>
     <message>
         <source>Return To Previous Style</source>
-        <translation>前のスタイルに元に戻す</translation>
+        <translation>前のスタイルに戻る</translation>
     </message>
     <message>
         <source>Current Style</source>
@@ -2081,11 +2098,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Texture</source>
-        <translation>テキスチャ</translation>
+        <translation>テクスチャ</translation>
     </message>
     <message>
         <source>Special</source>
-        <translation>特別</translation>
+        <translation>特殊</translation>
     </message>
     <message>
         <source>Custom</source>
@@ -2093,7 +2110,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Vector Brush</source>
-        <translation>ベクトルブラシ</translation>
+        <translation>ベクターブラシ</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -2102,60 +2119,61 @@ Are you sure?</source>
     <message>
         <source>Auto  
 Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>自動で
+適用</translation>
     </message>
 </context>
 <context>
     <name>StyleEditorGUI::PlainColorPage</name>
     <message>
         <source>Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイール</translation>
     </message>
     <message>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <source>Matte</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ</translation>
     </message>
     <message>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
 </context>
 <context>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>トレース線として、自動塗りつぶし</translation>
+        <translation>色トレース線として、自動塗りつぶし</translation>
     </message>
 </context>
 <context>
     <name>StyleNameEditor</name>
     <message>
         <source>Name Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル名エディタ</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <source>Style Name</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル名</translation>
     </message>
     <message>
         <source>Name Editor: # %1</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイル名を編集: # %1</translation>
     </message>
 </context>
 <context>
@@ -2174,14 +2192,14 @@ Apply</source>
     </message>
     <message>
         <source> Clear </source>
-        <translation>リセット</translation>
+        <translation>クリア</translation>
     </message>
 </context>
 <context>
     <name>TablePainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>基準点をリセット</translation>
+        <translation>基準点をリセット (&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -2195,7 +2213,7 @@ Apply</source>
     <name>VectorBrushStyleChooserPage</name>
     <message>
         <source>Plain color</source>
-        <translation>%1 を削除できません。</translation>
+        <translation>通常の色</translation>
     </message>
 </context>
 </TS>

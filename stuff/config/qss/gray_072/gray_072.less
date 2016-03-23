@@ -1,8 +1,7 @@
 /* LESS Definitions */
 
 /*Image URL*/
-@base_url: "qss/gray_072";
-@image_url: "@{base_url}/imgs";
+@image_url: "imgs";
 
 /*Text Color*/
 @m_baseTxtColor: rgb(230,230,230);
@@ -273,19 +272,21 @@ QPushButton {
 	.base_outset;
 	border-width: 1px;
  	border-radius: 4px;
-   	.set_padding(20px, 3px);
-	
+   	.set_padding(15px, 3px);
+	&:checked {
+		.base_inset(light, 10%);
+	}
 	/*lighten lilttle bit when hover*/
 	&:hover {
 		.base_outset(light, 10%);
 		&:pressed {
 		    .base_inset(light, 10%);
 	    }
+    	&:checked {
+    		.base_inset(light, 5%);
+	    }
 	}
 	/*lighten lilttle bit when pressed*/
-	&:checked {
-		.base_inset(light, 10%);
-	}
 	&:disabled{
 		.base_outset(light, 5%);
 		color: rgb(80,80,80);

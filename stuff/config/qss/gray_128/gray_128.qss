@@ -80,10 +80,10 @@ QToolBar::separator:horizontal {
   margin_top: 1px;
   margin_left: 2px;
   margin_right: 2px;
-  image: url("qss/gray_128/imgs/bottomseparator.png");
+  image: url("imgs/bottomseparator.png");
 }
 QToolBar::separator:vertical {
-  image: url("qss/gray_128/imgs/separator.png");
+  image: url("imgs/separator.png");
 }
 QToolBar QToolButton {
   background-color: #808080;
@@ -94,11 +94,11 @@ QToolBar QToolButton {
   border-image: none;
 }
 QToolBar QToolButton:hover {
-  border-image: url("qss/gray_128/imgs/over.png") 2;
+  border-image: url("imgs/over.png") 2;
 }
 QToolBar QToolButton:checked,
 QToolBar QToolButton:pressed {
-  border-image: url("qss/gray_128/imgs/click.png") 2;
+  border-image: url("imgs/click.png") 2;
 }
 QToolBar QToolButton:disabled {
   border-image: none;
@@ -210,13 +210,13 @@ PaletteViewer #ToolBarContainer #keyFrameNavigator {
   /* if there is only one tab, we don't want overlapping margins */
 }
 #PaletteLockButton:hover {
-  border-image: url("qss/gray_128/imgs/over_yellow.png") 2;
+  border-image: url("imgs/over_yellow.png") 2;
 }
 #PaletteLockButton:checked {
-  border-image: url("qss/gray_128/imgs/click_pink.png") 2;
+  border-image: url("imgs/click_pink.png") 2;
 }
 #PaletteLockButton:checked:hover {
-  border-image: url("qss/gray_128/imgs/over_pressed_yellow.png") 2;
+  border-image: url("imgs/over_pressed_yellow.png") 2;
 }
 #PageViewer {
   qproperty-TextColor: black;
@@ -286,23 +286,23 @@ PaletteViewer #ToolBarContainer #keyFrameNavigator {
 }
 #colorSliderAddButton,
 #colorSliderSubButton {
-  border-image: url("qss/gray_128/imgs/colorslider_button_bg.png") 2;
+  border-image: url("imgs/colorslider_button_bg.png") 2;
   padding: 0px;
   margin: 0px;
   border: 2px;
   image-position: center center;
 }
 #colorSliderAddButton {
-  image: url("qss/gray_128/imgs/colorslider_add.png");
+  image: url("imgs/colorslider_add.png");
 }
 #colorSliderAddButton:pressed {
-  image: url("qss/gray_128/imgs/colorslider_add_pressed.png");
+  image: url("imgs/colorslider_add_pressed.png");
 }
 #colorSliderSubButton {
-  image: url("qss/gray_128/imgs/colorslider_sub.png");
+  image: url("imgs/colorslider_sub.png");
 }
 #colorSliderSubButton:pressed {
-  image: url("qss/gray_128/imgs/colorslider_sub_pressed.png");
+  image: url("imgs/colorslider_sub_pressed.png");
 }
 #PlainColorPageParts {
   border-width: 0px;
@@ -336,19 +336,19 @@ DvScrollWidget > QPushButton:pressed {
   max-width: 15px;
 }
 #ScrollLeftButton {
-  image: url("qss/gray_128/imgs/left_arrow_black.png");
+  image: url("imgs/left_arrow_black.png");
   border-right: 1px solid black;
 }
 #ScrollRightButton {
-  image: url("qss/gray_128/imgs/right_arrow_black.png");
+  image: url("imgs/right_arrow_black.png");
   border-left: 1px solid black;
 }
 #ScrollUpButton {
-  image: url("qss/gray_128/imgs/up_arrow_black.png");
+  image: url("imgs/up_arrow_black.png");
   border-bottom: 1px solid black;
 }
 #ScrollDownButton {
-  image: url("qss/gray_128/imgs/down_arrow_black.png");
+  image: url("imgs/down_arrow_black.png");
   border-top: 1px solid black;
 }
 /* ------ Viewer, Flipbook ------ */
@@ -382,30 +382,30 @@ FlipBook #ToolBarContainer {
   height: 21px;
 }
 #ViewerFpsSlider::handle {
-  border-image: url("qss/gray_128/imgs/handle_border.png") 6;
+  border-image: url("imgs/handle_border.png") 6;
   border-width: 6px;
   image: none;
   min-width: 5px;
 }
 #ViewerFpsSlider::add-line {
-  image: url("qss/gray_128/imgs/fpssb_g_rarrow.png");
+  image: url("imgs/fpssb_g_rarrow.png");
   width: 20px;
   subcontrol-position: right;
   subcontrol-origin: margin;
   margin: 0px;
 }
 #ViewerFpsSlider::add-line:pressed {
-  image: url("qss/gray_128/imgs/fpssb_g_rarrow_pressed.png");
+  image: url("imgs/fpssb_g_rarrow_pressed.png");
 }
 #ViewerFpsSlider::sub-line {
-  image: url("qss/gray_128/imgs/fpssb_g_larrow.png");
+  image: url("imgs/fpssb_g_larrow.png");
   width: 20px;
   subcontrol-position: left;
   subcontrol-origin: margin;
   margin: 0px;
 }
 #ViewerFpsSlider::sub-line:pressed {
-  image: url("qss/gray_128/imgs/fpssb_g_larrow_pressed.png");
+  image: url("imgs/fpssb_g_larrow_pressed.png");
 }
 #FlipConsolePlayToolBar {
   border: none;
@@ -415,8 +415,8 @@ FlipBook #ToolBarContainer {
 }
 FlipSlider {
   qproperty-PBHeight: 20;
-  qproperty-PBOverlay: url("qss/gray_128/imgs/flipslider.png");
-  qproperty-PBMarker: url("qss/gray_128/imgs/flipmarker.png");
+  qproperty-PBOverlay: url("imgs/flipslider.png");
+  qproperty-PBMarker: url("imgs/flipmarker.png");
   qproperty-PBColorMarginLeft: 1;
   qproperty-PBColorMarginTop: 1;
   qproperty-PBColorMarginRight: 1;
@@ -457,29 +457,29 @@ Ruler {
   margin: 0px;
 }
 #DirTreeView::branch:adjoins-item {
-  border-image: url("qss/gray_128/imgs/tree_branch-end.png") 0;
+  border-image: url("imgs/tree_branch-end.png") 0;
 }
 #DirTreeView::branch:has-siblings {
-  border-image: url("qss/gray_128/imgs/tree_vline.png") 0;
+  border-image: url("imgs/tree_vline.png") 0;
 }
 #DirTreeView::branch:has-siblings:adjoins-item {
-  border-image: url("qss/gray_128/imgs/tree_branch-more.png") 0;
+  border-image: url("imgs/tree_branch-more.png") 0;
 }
 #DirTreeView::branch:has-children:closed {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree_branch-closed_nosib.png");
+  image: url("imgs/tree_branch-closed_nosib.png");
 }
 #DirTreeView::branch:has-children:open {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree_branch-open_nosib.png");
+  image: url("imgs/tree_branch-open_nosib.png");
 }
 #DirTreeView::branch:has-children:has-siblings:closed {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree_branch-closed.png");
+  image: url("imgs/tree_branch-closed.png");
 }
 #DirTreeView::branch:has-children:has-siblings:open {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree_branch-open.png");
+  image: url("imgs/tree_branch-open.png");
 }
 DvItemViewerPanel {
   qproperty-TextColor: black;
@@ -523,14 +523,14 @@ DvDirTreeView {
   border-width: 2px;
   padding: 0px;
   margin: 0px;
-  border-image: url("qss/gray_128/imgs/handle_border.png") 5;
-  image: url("qss/gray_128/imgs/plus.png");
+  border-image: url("imgs/handle_border.png") 5;
+  image: url("imgs/plus.png");
   image-position: center center;
 }
 #CleanupSettingsShowButton:checked,
 #LoadLevelShowButton:checked,
 #FxSettingsPreviewShowButton:checked {
-  image: url("qss/gray_128/imgs/minus.png");
+  image: url("imgs/minus.png");
 }
 ParamsPage {
   qproperty-TextColor: black;
@@ -592,52 +592,52 @@ ParamsPage {
   image-position: center center;
 }
 #XsheetScrollBar::handle:vertical {
-  border-image: url("qss/gray_128/imgs/sb_g_vhandle.png") 4;
-  image: url("qss/gray_128/imgs/sb_g_vline.png");
+  border-image: url("imgs/sb_g_vhandle.png") 4;
+  image: url("imgs/sb_g_vline.png");
   min-height: 40px;
 }
 #XsheetScrollBar::handle:horizontal {
-  border-image: url("qss/gray_128/imgs/sb_g_hhandle.png") 4;
-  image: url("qss/gray_128/imgs/sb_g_hline.png");
+  border-image: url("imgs/sb_g_hhandle.png") 4;
+  image: url("imgs/sb_g_hline.png");
   min-width: 40px;
 }
 #XsheetScrollBar::add-line {
   subcontrol-origin: margin;
 }
 #XsheetScrollBar::add-line:vertical {
-  image: url("qss/gray_128/imgs/sb_g_downarrow.png");
+  image: url("imgs/sb_g_downarrow.png");
   height: 20px;
   subcontrol-position: bottom;
 }
 #XsheetScrollBar::add-line:vertical:pressed {
-  image: url("qss/gray_128/imgs/sb_g_downarrow_pressed.png");
+  image: url("imgs/sb_g_downarrow_pressed.png");
 }
 #XsheetScrollBar::add-line:horizontal {
-  image: url("qss/gray_128/imgs/sb_g_rarrow.png");
+  image: url("imgs/sb_g_rarrow.png");
   width: 20px;
   subcontrol-position: right;
 }
 #XsheetScrollBar::add-line:horizontal:pressed {
-  image: url("qss/gray_128/imgs/sb_g_rarrow_pressed.png");
+  image: url("imgs/sb_g_rarrow_pressed.png");
 }
 #XsheetScrollBar::sub-line {
   subcontrol-origin: margin;
 }
 #XsheetScrollBar::sub-line:vertical {
-  image: url("qss/gray_128/imgs/sb_g_uparrow.png");
+  image: url("imgs/sb_g_uparrow.png");
   height: 20px;
   subcontrol-position: top;
 }
 #XsheetScrollBar::sub-line:vertical:pressed {
-  image: url("qss/gray_128/imgs/sb_g_uparrow_pressed.png");
+  image: url("imgs/sb_g_uparrow_pressed.png");
 }
 #XsheetScrollBar::sub-line:horizontal {
-  image: url("qss/gray_128/imgs/sb_g_larrow.png");
+  image: url("imgs/sb_g_larrow.png");
   width: 20px;
   subcontrol-position: left;
 }
 #XsheetScrollBar::sub-line:horizontal:pressed {
-  image: url("qss/gray_128/imgs/sb_g_larrow_pressed.png");
+  image: url("imgs/sb_g_larrow_pressed.png");
 }
 #XsheetScrollBar::add-page {
   background: none;
@@ -704,35 +704,35 @@ XsheetViewer {
 }
 #FunctionEditorTree::branch:adjoins-item,
 #ShortcutTree::branch:adjoins-item {
-  border-image: url("qss/gray_128/imgs/tree17_branch-end.png") 0;
+  border-image: url("imgs/tree17_branch-end.png") 0;
 }
 #FunctionEditorTree::branch:has-siblings,
 #ShortcutTree::branch:has-siblings {
-  border-image: url("qss/gray_128/imgs/tree17_vline.png") 0;
+  border-image: url("imgs/tree17_vline.png") 0;
 }
 #FunctionEditorTree::branch:has-siblings:adjoins-item,
 #ShortcutTree::branch:has-siblings:adjoins-item {
-  border-image: url("qss/gray_128/imgs/tree17_branch-more.png") 0;
+  border-image: url("imgs/tree17_branch-more.png") 0;
 }
 #FunctionEditorTree::branch:has-children:closed,
 #ShortcutTree::branch:has-children:closed {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree17_branch-closed_nosib.png");
+  image: url("imgs/tree17_branch-closed_nosib.png");
 }
 #FunctionEditorTree::branch:has-children:open,
 #ShortcutTree::branch:has-children:open {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree17_branch-open_nosib.png");
+  image: url("imgs/tree17_branch-open_nosib.png");
 }
 #FunctionEditorTree::branch:has-children:has-siblings:closed,
 #ShortcutTree::branch:has-children:has-siblings:closed {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree17_branch-closed.png");
+  image: url("imgs/tree17_branch-closed.png");
 }
 #FunctionEditorTree::branch:has-children:has-siblings:open,
 #ShortcutTree::branch:has-children:has-siblings:open {
   border-image: none;
-  image: url("qss/gray_128/imgs/tree17_branch-open.png");
+  image: url("imgs/tree17_branch-open.png");
 }
 FunctionPanel {
   qproperty-BGColor: #e1e1e1;
@@ -784,7 +784,7 @@ SpreadsheetViewer {
 #FunctionSegmentViewerLinkButton {
   border: 2px;
   margin: 0px;
-  image: url("qss/gray_128/imgs/segment_unlinked.png");
+  image: url("imgs/segment_unlinked.png");
   background-color: #b3b3b3;
   border-style: outset;
   border-left-color: #ffffff;
@@ -793,7 +793,7 @@ SpreadsheetViewer {
   border-bottom-color: #737373;
 }
 #FunctionSegmentViewerLinkButton:checked {
-  image: url("qss/gray_128/imgs/segment_linked.png");
+  image: url("imgs/segment_linked.png");
   background-color: #b3b3b3;
   border-style: inset;
   border-left-color: #737373;
@@ -802,7 +802,7 @@ SpreadsheetViewer {
   border-bottom-color: #ffffff;
 }
 #FunctionSegmentViewerLinkButton:disabled {
-  image: url("qss/gray_128/imgs/segment_disabled.png");
+  image: url("imgs/segment_disabled.png");
   background-color: #9a9a9a;
   border-style: outset;
   border-left-color: #ffffff;
@@ -844,13 +844,13 @@ SpreadsheetViewer {
   height: 21px;
 }
 #CameraSettingsRadioButton::indicator:checked {
-  image: url("qss/gray_128/imgs/cam_lock.png");
+  image: url("imgs/cam_lock.png");
 }
 #CameraSettingsRadioButton::indicator:unchecked {
-  image: url("qss/gray_128/imgs/cam_unlock.png");
+  image: url("imgs/cam_unlock.png");
 }
 #CameraSettingsRadioButton::indicator:unchecked:hover {
-  image: url("qss/gray_128/imgs/cam_lock_hover.png");
+  image: url("imgs/cam_lock_hover.png");
 }
 #CameraSettingsDPI {
   color: #004000;
@@ -863,25 +863,25 @@ SpreadsheetViewer {
   height: 21px;
 }
 #CameraSettingsRadioButton_Small::indicator:checked {
-  image: url("qss/gray_128/imgs/cam_lock_small.png");
+  image: url("imgs/cam_lock_small.png");
 }
 #CameraSettingsRadioButton_Small::indicator:unchecked {
-  image: url("qss/gray_128/imgs/cam_unlock_small.png");
+  image: url("imgs/cam_unlock_small.png");
 }
 #CameraSettingsRadioButton_Small::indicator:unchecked:hover {
-  image: url("qss/gray_128/imgs/cam_lock_hover_small.png");
+  image: url("imgs/cam_lock_hover_small.png");
 }
 #ForceSquaredPixelButton {
   border: none;
   border-radius: 0px;
   padding: 0px;
-  image: url("qss/gray_128/imgs/fsp_released.png");
+  image: url("imgs/fsp_released.png");
 }
 #ForceSquaredPixelButton:hover {
-  image: url("qss/gray_128/imgs/fsp_hover.png");
+  image: url("imgs/fsp_hover.png");
 }
 #ForceSquaredPixelButton:checked {
-  image: url("qss/gray_128/imgs/fsp_pressed.png");
+  image: url("imgs/fsp_pressed.png");
 }
 /*------ Tool Options Bar------*/
 #EditToolLockButton {
@@ -894,16 +894,16 @@ SpreadsheetViewer {
   height: 21px;
 }
 #EditToolLockButton::indicator:unchecked {
-  image: url("qss/gray_128/imgs/cam_unlock.png");
+  image: url("imgs/cam_unlock.png");
 }
 #EditToolLockButton::indicator:unchecked:hover {
-  image: url("qss/gray_128/imgs/cam_unlock_hover.png");
+  image: url("imgs/cam_unlock_hover.png");
 }
 #EditToolLockButton::indicator:checked {
-  image: url("qss/gray_128/imgs/cam_lock.png");
+  image: url("imgs/cam_lock.png");
 }
 #EditToolLockButton::indicator:checked:hover {
-  image: url("qss/gray_128/imgs/cam_lock_hover.png");
+  image: url("imgs/cam_lock_hover.png");
 }
 /*------ Topbar and Menubar of the MainWindow ------*/
 #TopBar {
@@ -920,7 +920,7 @@ SpreadsheetViewer {
   padding: 0px;
 }
 #TopBarTab {
-  border-image: url("qss/gray_128/imgs/topbar_bg.png") 0 0 0 0 stretch stretch;
+  border-image: url("imgs/topbar_bg.png") 0 0 0 0 stretch stretch;
   /*background: qlineargradient(x1: 0,y1: 0, x2: 1, y2: 0, stop: 0 #a0a0a0, stop: 0.5 #404040);*/
   border: 0px;
   padding: 0px;
@@ -1004,21 +1004,21 @@ QDialog #dialogButtonFrame {
 #OutputSettingsShowButton {
   border: 2px;
   padding: 0px;
-  border-image: url("qss/gray_128/imgs/handle_border.png") 5;
-  image: url("qss/gray_128/imgs/plus.png");
+  border-image: url("imgs/handle_border.png") 5;
+  image: url("imgs/plus.png");
   image-position: center center;
 }
 #OutputSettingsShowButton:checked {
-  image: url("qss/gray_128/imgs/minus.png");
+  image: url("imgs/minus.png");
 }
 #IntPairField,
 #DoublePairField {
   qproperty-LightLineColor: white;
   qproperty-DarkLineColor: #808080;
-  qproperty-HandleLeftPixmap: url("qss/gray_128/imgs/h_slider_left.png");
-  qproperty-HandleRightPixmap: url("qss/gray_128/imgs/h_slider_right.png");
-  qproperty-HandleLeftGrayPixmap: url("qss/gray_128/imgs/h_slider_left_disabled.png");
-  qproperty-HandleRightGrayPixmap: url("qss/gray_128/imgs/h_slider_right_disabled.png");
+  qproperty-HandleLeftPixmap: url("imgs/h_slider_left.png");
+  qproperty-HandleRightPixmap: url("imgs/h_slider_right.png");
+  qproperty-HandleLeftGrayPixmap: url("imgs/h_slider_left_disabled.png");
+  qproperty-HandleRightGrayPixmap: url("imgs/h_slider_right_disabled.png");
 }
 #FxSettingsLabel {
   color: #004000;
