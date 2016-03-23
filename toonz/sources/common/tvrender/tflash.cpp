@@ -221,6 +221,19 @@ void computeOutlineBoundary(vector<TStroke *> &outlines, list<FlashPolyline> &po
 
 //-------------------------------------------------------------------
 
+//	TFlash::drawSegments and TFlash::drawquads cannot be inline defined
+//	since size of TSegment and TQuadratic are unkown in the header
+
+void TFlash::drawSegments(const vector<TSegment> segmentArray, bool isGradientColor)
+{
+}
+
+void TFlash::drawquads(const vector<TQuadratic> quadsArray)
+{
+}
+
+//-------------------------------------------------------------------
+
 bool PolyStyle::operator==(const PolyStyle &p) const
 {
 	if (m_type != p.m_type)
