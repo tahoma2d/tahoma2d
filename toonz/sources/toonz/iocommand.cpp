@@ -82,6 +82,7 @@
 // boost includes
 #include <boost/optional.hpp>
 #include <boost/algorithm/cxx11/all_of.hpp>
+#include <boost/utility/in_place_factory.hpp>
 
 //#define USE_SQLITE_HDPOOL
 
