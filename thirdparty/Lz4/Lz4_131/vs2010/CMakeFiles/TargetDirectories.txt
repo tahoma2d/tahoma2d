@@ -1,0 +1,3 @@
+C:/Libraries/C++/Lz4/bin/CMakeFiles/ALL_BUILD.dir
+C:/Libraries/C++/Lz4/bin/CMakeFiles/ZERO_CHECK.dir
+C:/Libraries/C++/Lz4/bin/CMakeFiles/liblz4.dir

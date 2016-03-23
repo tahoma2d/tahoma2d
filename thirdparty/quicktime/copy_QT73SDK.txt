@@ -1,0 +1,1 @@
+Copy QT73SDK to this directory.
