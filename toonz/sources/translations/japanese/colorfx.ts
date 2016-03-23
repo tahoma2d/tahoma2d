@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ja_JP">
 <context>
     <name>ArtisticSolidColor</name>
     <message>
@@ -39,7 +39,7 @@
     <name>OutlineViewerStyle</name>
     <message>
         <source>OutlineViewer(OnlyDebug)</source>
-        <translation>アウトラインビューア（デバッグだけ）</translation>
+        <translation>アウトラインビューア（デバッグのみ）</translation>
     </message>
     <message>
         <source>Control Point</source>
@@ -51,7 +51,7 @@
     </message>
     <message>
         <source>Outline Mode</source>
-        <translation>外側線モード</translation>
+        <translation>アウトラインモード</translation>
     </message>
     <message>
         <source>Distance</source>
@@ -85,7 +85,7 @@
     <name>ShadowStyle2</name>
     <message>
         <source>Plain Shadow</source>
-        <translation>標準影</translation>
+        <translation>影（標準）</translation>
     </message>
     <message>
         <source>Angle</source>
@@ -104,7 +104,7 @@
     </message>
     <message>
         <source>Blur value</source>
-        <translation>ぼかす価値</translation>
+        <translation>ぼかしの度合</translation>
     </message>
 </context>
 <context>
@@ -144,7 +144,7 @@
     <name>TBraidStrokeStyle</name>
     <message>
         <source>Plait</source>
-        <translation>プリーツ</translation>
+        <translation>編みひも</translation>
     </message>
     <message>
         <source>Twirl</source>
@@ -188,7 +188,7 @@
     </message>
     <message>
         <source>Border Fade</source>
-        <translation>ボーダーフェード</translation>
+        <translation>境界フェード</translation>
     </message>
     <message>
         <source>Density</source>
@@ -211,7 +211,7 @@
     <name>TCheckedFillStyle</name>
     <message>
         <source>Square</source>
-        <translation>正方形</translation>
+        <translation>四角模様</translation>
     </message>
     <message>
         <source>Horiz Dist</source>
@@ -257,15 +257,15 @@
     <name>TCircleStripeFillStyle</name>
     <message>
         <source>Concentric</source>
-        <translation>同心</translation>
+        <translation>同心円</translation>
     </message>
     <message>
         <source>X Position</source>
-        <translation>Xの位置</translation>
+        <translation>水平位置</translation>
     </message>
     <message>
         <source>Y Position</source>
-        <translation>Yの位置</translation>
+        <translation>垂直位置</translation>
     </message>
     <message>
         <source>Distance</source>
@@ -288,29 +288,29 @@
     </message>
     <message>
         <source>Opacity</source>
-        <translation>不透明</translation>
+        <translation>不透明度</translation>
     </message>
 </context>
 <context>
     <name>TDottedFillStyle</name>
     <message>
         <source>Polka Dots</source>
-        <translation>ポルカドット</translation>
+        <translation>水玉模様</translation>
     </message>
     <message>
         <source>Dot Size</source>
-        <translation>ドットサイズ</translation>
+        <translation>水玉のサイズ</translation>
     </message>
     <message>
         <source>Dot Distance</source>
-        <translation>ドット距離</translation>
+        <translation>水玉の距離</translation>
     </message>
 </context>
 <context>
     <name>TDottedLineStrokeStyle</name>
     <message>
         <source>Vanishing</source>
-        <translation>パニシング</translation>
+        <translation>減衰</translation>
     </message>
     <message>
         <source>Fade In</source>
@@ -318,7 +318,7 @@
     </message>
     <message>
         <source>Dash</source>
-        <translation>ダッシュ</translation>
+        <translation>線の部分</translation>
     </message>
     <message>
         <source>Fade Out</source>
@@ -326,7 +326,7 @@
     </message>
     <message>
         <source>Gap</source>
-        <translation>ギャップ</translation>
+        <translation>空白の部分</translation>
     </message>
 </context>
 <context>
@@ -359,7 +359,7 @@
     <name>TFurStrokeStyle</name>
     <message>
         <source>Herringbone</source>
-        <translation>ヘリンボン</translation>
+        <translation>ヘリンボーン</translation>
     </message>
     <message>
         <source>Angle</source>
@@ -374,7 +374,7 @@
     <name>TGraphicPenStrokeStyle</name>
     <message>
         <source>Dashes</source>
-        <translation>ダッシュ</translation>
+        <translation>ストローク</translation>
     </message>
     <message>
         <source>Density</source>
@@ -393,11 +393,11 @@
     </message>
     <message>
         <source>X Position</source>
-        <translation>Xの位置</translation>
+        <translation>水平位置</translation>
     </message>
     <message>
         <source>Y Position</source>
-        <translation>Yの位置</translation>
+        <translation>垂直位置</translation>
     </message>
     <message>
         <source>Smoothness</source>
@@ -426,7 +426,7 @@
     <name>TMosaicFillStyle</name>
     <message>
         <source>Stained Glass</source>
-        <translation>ステンドガラス</translation>
+        <translation>ステンドグラス</translation>
     </message>
     <message>
         <source>Size</source>
@@ -434,22 +434,22 @@
     </message>
     <message>
         <source>Distortion</source>
-        <translation>ひずみ</translation>
+        <translation>ゆがみ</translation>
     </message>
     <message>
         <source>Min Thick</source>
-        <translation>最小厚さ</translation>
+        <translation>厚さの最小値</translation>
     </message>
     <message>
         <source>Max Thick</source>
-        <translation>最大厚さ</translation>
+        <translation>厚さの最大値</translation>
     </message>
 </context>
 <context>
     <name>TMultiLineStrokeStyle2</name>
     <message>
         <source>Gouache</source>
-        <translation>グワッシュ画法</translation>
+        <translation>グワッシュ</translation>
     </message>
     <message>
         <source>Density</source>
@@ -479,19 +479,19 @@
     <name>TNormal2StrokeStyle</name>
     <message>
         <source>Bump</source>
-        <translation>衝突</translation>
+        <translation>バンプ</translation>
     </message>
     <message>
         <source>Light X Pos</source>
-        <translation>光　［Xの位置］</translation>
+        <translation>光源の水平位置</translation>
     </message>
     <message>
         <source>Light Y Pos</source>
-        <translation>光　［Yの位置］</translation>
+        <translation>光源の垂直位置</translation>
     </message>
     <message>
         <source>Shininess</source>
-        <translation>光沢</translation>
+        <translation>光沢度</translation>
     </message>
     <message>
         <source>Plastic</source>
@@ -502,7 +502,7 @@
     <name>TPatchFillStyle</name>
     <message>
         <source>Beehive</source>
-        <translation>ビーハイヴ</translation>
+        <translation>蜂の巣模様</translation>
     </message>
     <message>
         <source>Size</source>
@@ -510,7 +510,7 @@
     </message>
     <message>
         <source>Distortion</source>
-        <translation>ひずみ</translation>
+        <translation>ゆがみ</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -548,15 +548,15 @@
     </message>
     <message>
         <source>X Position</source>
-        <translation>Xの位置</translation>
+        <translation>水平位置</translation>
     </message>
     <message>
         <source>Y Position</source>
-        <translation>Yの位置</translation>
+        <translation>垂直位置</translation>
     </message>
     <message>
         <source>Radius</source>
-        <translation>レイディアス</translation>
+        <translation>半径</translation>
     </message>
     <message>
         <source>Smoothness</source>
@@ -589,7 +589,7 @@
     <name>TSawToothStrokeStyle</name>
     <message>
         <source>Jagged</source>
-        <translation>ぎざぎざ</translation>
+        <translation>ぎざぎざの度合</translation>
     </message>
     <message>
         <source>Distance</source>
@@ -604,14 +604,14 @@
     </message>
     <message>
         <source>Frequency</source>
-        <translation>頻度</translation>
+        <translation>周波数</translation>
     </message>
 </context>
 <context>
     <name>TSketchStrokeStyle</name>
     <message>
         <source>Fuzz</source>
-        <translation>ファズ</translation>
+        <translation>ぼかし具合</translation>
     </message>
     <message>
         <source>Density</source>
@@ -622,11 +622,11 @@
     <name>TSprayStrokeStyle</name>
     <message>
         <source>Circlets</source>
-        <translation>サークレット</translation>
+        <translation>小さい円</translation>
     </message>
     <message>
         <source>Border Fade</source>
-        <translation>ボーダーフェード</translation>
+        <translation>境界フェード</translation>
     </message>
     <message>
         <source>Density</source>
@@ -641,7 +641,7 @@
     <name>TStripeFillStyle</name>
     <message>
         <source>Banded</source>
-        <translation>結合</translation>
+        <translation>縞模様</translation>
     </message>
     <message>
         <source>Distance</source>
@@ -660,7 +660,7 @@
     <name>TTissueStrokeStyle</name>
     <message>
         <source>Gauze</source>
-        <translation>ガーゼ</translation>
+        <translation>網目模様</translation>
     </message>
     <message>
         <source>Density</source>
@@ -668,7 +668,7 @@
     </message>
     <message>
         <source>Border Size</source>
-        <translation>ボーダーサイズ</translation>
+        <translation>境界のサイズ</translation>
     </message>
 </context>
 <context>
@@ -683,7 +683,7 @@
     </message>
     <message>
         <source>Shade</source>
-        <translation>シェード</translation>
+        <translation>影</translation>
     </message>
 </context>
 <context>
@@ -701,19 +701,19 @@
     </message>
     <message>
         <source>Min Distance</source>
-        <translation>最小距離</translation>
+        <translation>距離の最小値</translation>
     </message>
     <message>
         <source>Max Distance</source>
-        <translation>最大距離</translation>
+        <translation>距離の最大値</translation>
     </message>
     <message>
         <source>Min Angle</source>
-        <translation>最小角度</translation>
+        <translation>角度の最大値</translation>
     </message>
     <message>
         <source>Max Angle</source>
-        <translation>最大角度</translation>
+        <translation>角度の最大値</translation>
     </message>
     <message>
         <source>Thickness</source>

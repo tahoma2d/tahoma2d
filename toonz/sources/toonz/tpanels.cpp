@@ -1300,7 +1300,7 @@ public:
 	{
 		ComboViewerPanel *panel = new ComboViewerPanel(parent);
 		panel->setObjectName(getPanelType());
-		panel->setWindowTitle("Combo Viewer");
+		panel->setWindowTitle(QObject::tr("Combo Viewer"));
 		panel->resize(700, 600);
 		return panel;
 	}
@@ -1333,7 +1333,7 @@ public:
 } cleanupSettingsFactory;
 
 //=============================================================================
-OpenFloatingPanel openCleanupSettingsDockCommand(MI_OpenCleanupSettings, "CleanupSettings", QObject::tr("Cleeanup Settings"));
+OpenFloatingPanel openCleanupSettingsDockCommand(MI_OpenCleanupSettings, "CleanupSettings", QObject::tr("Cleanup Settings"));
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -1354,5 +1354,5 @@ public:
 	}
 } historyPanelFactory;
 
-OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel", "History");
+OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel", QObject::tr("History"));
 //=============================================================================

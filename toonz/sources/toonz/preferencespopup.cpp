@@ -1045,8 +1045,8 @@ PreferencesPopup::PreferencesPopup()
 	showRasterImageDarkenBlendedInViewerCB->setChecked(m_pref->isShowRasterImagesDarkenBlendedInViewerEnabled());
 	showShowFrameNumberWithLettersCB->setChecked(m_pref->isShowFrameNumberWithLettersEnabled());
 	QStringList zoomCenters;
-	zoomCenters << "Mouse Cursor"
-				<< "Viewer Center";
+	zoomCenters << tr("Mouse Cursor")
+				<< tr("Viewer Center");
 	viewerZoomCenterComboBox->addItems(zoomCenters);
 	viewerZoomCenterComboBox->setCurrentIndex(m_pref->getViewerZoomCenter());
 
@@ -1116,9 +1116,9 @@ PreferencesPopup::PreferencesPopup()
 	m_defLevelDpi->setRange(0.1, (std::numeric_limits<double>::max)());
 	m_defLevelDpi->setValue(m_pref->getDefLevelDpi());
 	QStringList autocreationTypes;
-	autocreationTypes << "Disabled"
-					  << "Enabled"
-					  << "Use Xsheet as Animation Sheet";
+	autocreationTypes << tr("Disabled")
+					  << tr("Enabled")
+					  << tr("Use Xsheet as Animation Sheet");
 	m_autocreationType->addItems(autocreationTypes);
 	int autocreationType = m_pref->getAutocreationType();
 	m_autocreationType->setCurrentIndex(autocreationType);

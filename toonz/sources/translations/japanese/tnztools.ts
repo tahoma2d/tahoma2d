@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ja_JP">
 <context>
     <name>ArrowToolOptionsBox</name>
     <message>
         <source>Pick:</source>
-        <translation>自動選択：</translation>
+        <translation>選択オブジェクト：</translation>
     </message>
     <message>
         <source>Position</source>
@@ -13,19 +13,19 @@
     </message>
     <message>
         <source>E/W:</source>
-        <translation>X：</translation>
+        <translation>E/W:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation>Y：</translation>
+        <translation>N/S:</translation>
     </message>
     <message>
         <source>Z:</source>
-        <translation>Z：</translation>
+        <translation>Z:</translation>
     </message>
     <message>
         <source>SO:</source>
-        <translation>列オフセット：</translation>
+        <translation>重ね順:</translation>
     </message>
     <message>
         <source>Rotation</source>
@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>Scale</source>
-        <translation>拡大・縮小</translation>
+        <translation>拡大率</translation>
     </message>
     <message>
         <source>Global:</source>
@@ -41,19 +41,19 @@
     </message>
     <message>
         <source>H:</source>
-        <translation>横：</translation>
+        <translation>水平：</translation>
     </message>
     <message>
         <source>V:</source>
-        <translation>縦：</translation>
+        <translation>垂直：</translation>
     </message>
     <message>
         <source>Maintain:</source>
-        <translation>比率：</translation>
+        <translation>値を固定:</translation>
     </message>
     <message>
         <source>Shear</source>
-        <translation>変形</translation>
+        <translation>シアー</translation>
     </message>
     <message>
         <source>Center</source>
@@ -65,15 +65,15 @@
     </message>
     <message>
         <source>(</source>
-        <translation type="unfinished"></translation>
+        <translation>(</translation>
     </message>
     <message>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
     <message>
         <source>Center Position</source>
-        <translation type="unfinished">基準点位置</translation>
+        <translation>センター位置</translation>
     </message>
 </context>
 <context>
@@ -124,41 +124,41 @@
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ</translation>
     </message>
     <message>
         <source>Break</source>
-        <translation type="unfinished"></translation>
+        <translation>鋭角で線を分割</translation>
     </message>
     <message>
         <source>Pencil</source>
-        <translation type="unfinished"></translation>
+        <translation>鉛筆モード</translation>
     </message>
     <message>
         <source>Pressure</source>
-        <translation type="unfinished"></translation>
+        <translation>圧力感知</translation>
     </message>
 </context>
 <context>
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット名</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>ControlPointEditorTool</name>
     <message>
         <source>Auto Select Drawing</source>
-        <translation>列を自動選択</translation>
+        <translation>レベルをまたいで選択</translation>
     </message>
 </context>
 <context>
@@ -169,7 +169,7 @@
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation>カーブポイントに変更</translation>
+        <translation>スムーズポイントに変更</translation>
     </message>
 </context>
 <context>
@@ -236,7 +236,7 @@
     </message>
     <message>
         <source>SO</source>
-        <translation>列オフセット</translation>
+        <translation>重ね順</translation>
     </message>
     <message>
         <source>Rotation</source>
@@ -252,15 +252,15 @@
     </message>
     <message>
         <source>Shear</source>
-        <translation>変形</translation>
+        <translation>シアー</translation>
     </message>
     <message>
         <source>Center Position</source>
-        <translation>基準点位置</translation>
+        <translation>センター位置</translation>
     </message>
     <message>
         <source>Active Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>操作する軸</translation>
     </message>
 </context>
 <context>
@@ -279,8 +279,7 @@
     </message>
     <message>
         <source>Mode:</source>
-        <translation>モード：
-</translation>
+        <translation>モード：</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -323,7 +322,7 @@
     </message>
     <message>
         <source>Fill Depth</source>
-        <translation>色の浸透度</translation>
+        <translation>塗りの浸透度</translation>
     </message>
     <message>
         <source>Segment</source>
@@ -334,11 +333,11 @@
     <name>FingerTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">サイズ：</translation>
+        <translation>サイズ：</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">反転</translation>
+        <translation>反転</translation>
     </message>
 </context>
 <context>
@@ -349,7 +348,7 @@
     </message>
     <message>
         <source>Pressure Sensitivity</source>
-        <translation>圧力感度</translation>
+        <translation>圧力感知</translation>
     </message>
     <message>
         <source>Opacity:</source>
@@ -451,7 +450,7 @@
     </message>
     <message>
         <source>Rigid</source>
-        <translation>固定</translation>
+        <translation>剛体</translation>
     </message>
     <message>
         <source>Flex</source>
@@ -463,11 +462,11 @@
     </message>
     <message>
         <source>Vertex Name:</source>
-        <translation>頂点名前：</translation>
+        <translation>頂点名：</translation>
     </message>
     <message>
         <source>Allow Stretching</source>
-        <translation>ストレッチングを適用</translation>
+        <translation>ストレッチを許可</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -485,9 +484,9 @@
         <source>A group of skeletons already exists for current column. Replacing it will also substitute any existing vertex animation.
 
 Do you want to continue?</source>
-        <translation>列の作成されたボーンは、既に存在します。
-列の交換はさらに既存の頂点アニメーションも変わります。
-継続しますか？</translation>
+        <translation>現在の列には、既にボーンが存在します。
+ボーンを置き換えることで、既存の頂点アニメーションも変更されます。
+継続してよろしいですか？</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -515,7 +514,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>レストキーを設定</translation>
+        <translation>停止キーを設定</translation>
     </message>
     <message>
         <source>Set Global Key</source>
@@ -523,7 +522,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>グローバルレストキーを設定</translation>
+        <translation>グローバル停止キーを設定</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -531,23 +530,23 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Show Rigidity</source>
-        <translation>固定の表示</translation>
+        <translation>剛性の表示</translation>
     </message>
     <message>
         <source>Show SO</source>
-        <translation>SO表示</translation>
+        <translation>重ね順の表示</translation>
     </message>
     <message>
         <source>Show Skeleton Onion Skin</source>
-        <translation>ボーンオニオンスキン表示</translation>
+        <translation>ボーンをオニオンスキン表示</translation>
     </message>
     <message>
         <source>The previous vertex name will be discarded, and all associated keys will be lost.
 
 Do you want to proceed?</source>
-        <translation>前の頂点名は破棄し、関連するキーがすべて削除します。
+        <translation>既存の頂点名は破棄され、全ての関連するキーが削除されます。
 
-継続しますか？</translation>
+継続してよろしいですか？</translation>
     </message>
     <message>
         <source>Edit Mesh</source>
@@ -555,23 +554,23 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Snap To Mesh</source>
-        <translation>メッシュに合わせる</translation>
+        <translation>メッシュにスナップ</translation>
     </message>
     <message>
         <source>Angle Bounds</source>
-        <translation>角度制限を設定</translation>
+        <translation>角度の範囲を設定</translation>
     </message>
     <message>
         <source>Swap Edge</source>
-        <translation>エッジ（辺）を90度回転</translation>
+        <translation>エッジをスワップ</translation>
     </message>
     <message>
         <source>Collapse Edge</source>
-        <translation>エッジ（辺）を削除</translation>
+        <translation>エッジを削除</translation>
     </message>
     <message>
         <source>Split Edge</source>
-        <translation>エッジ（辺）を二分割</translation>
+        <translation>エッジを分割</translation>
     </message>
     <message>
         <source>Cut Mesh</source>
@@ -590,7 +589,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>SO</source>
-        <translation>列オフセット</translation>
+        <translation>重ね順</translation>
     </message>
     <message>
         <source>Angle</source>
@@ -621,11 +620,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Polygon Sides:</source>
-        <translation>多角形の面：</translation>
+        <translation>多角形の辺の数：</translation>
     </message>
     <message>
         <source>Auto Group</source>
-        <translation>自動グループ</translation>
+        <translation>自動グループ化</translation>
     </message>
     <message>
         <source>Auto Fill</source>
@@ -653,7 +652,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">サイズ：</translation>
+        <translation>サイズ：</translation>
     </message>
 </context>
 <context>
@@ -707,15 +706,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a Level column.</source>
-        <translation>現在のツールはレベルの列に使用できません。</translation>
+        <translation>現在のツールはレベルの列には使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Mesh column.</source>
-        <translation>現在のツールはメッシュ列に使用できません。</translation>
+        <translation>現在のツールはメッシュ列には使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used in Level Strip mode.</source>
-        <translation>現在のツールはレベルビューアモードに使用できません。</translation>
+        <translation>現在のツールはレベル編集モードでは使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used to edit a motion path.</source>
@@ -727,23 +726,23 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a Vector Level.</source>
-        <translation>現在のツールはベクトルレベルに使用できません。</translation>
+        <translation>現在のツールはベクトルレベルには使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Toonz Level.</source>
-        <translation>現在のツールはTOONZレベルに使用できません。</translation>
+        <translation>現在のツールはToonzレベルには使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Raster Level.</source>
-        <translation>現在のツールはラスターレベルに使用できません。</translation>
+        <translation>現在のツールはラスターレベルには使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Mesh Level.</source>
-        <translation>現在のツールはメッシュレベルに使用できません。</translation>
+        <translation>現在のツールはメッシュレベルには使用できません。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a mesh-deformed level</source>
-        <translation>現在のツールはメッシュ変形されたレベルに使用できません。</translation>
+        <translation>現在のツールはメッシュ変形されたレベルには使用できません</translation>
     </message>
     <message>
         <source>The current frame is locked: any editing is forbidden.</source>
@@ -759,51 +758,55 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け</translation>
     </message>
     <message>
         <source>Move Center</source>
-        <translation type="unfinished"></translation>
+        <translation>センター位置を移動</translation>
     </message>
     <message>
         <source>RGB Picker (R%1, G%2, B%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>RGBスポイトツール （R%1, G%2, B%3）</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化</translation>
     </message>
     <message>
         <source>Ungroup</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ解除</translation>
     </message>
     <message>
         <source>Move Group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを移動</translation>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
-        <translation type="unfinished"></translation>
+        <translation>エフェクト・ガジェットでパラメータを変更</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1   レベル : %2  フレーム : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>アイロンツール</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="unfinished"></translation>
+        <translation>スプラインを編集</translation>
     </message>
     <message>
         <source>Deform Raster</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を変形</translation>
     </message>
     <message>
         <source>Transform Raster</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を変形</translation>
+    </message>
+    <message>
+        <source>Set Save Box : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</source>
+        <translation>セーブボックスを設定 : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</translation>
     </message>
 </context>
 <context>
@@ -814,7 +817,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Passive Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>マウス位置の色を拾う</translation>
     </message>
 </context>
 <context>
@@ -828,11 +831,11 @@ Do you want to proceed?</source>
     <name>RasterSelectionTool</name>
     <message>
         <source>No Antialiasing</source>
-        <translation>二値化する</translation>
+        <translation>ハードな輪郭を維持</translation>
     </message>
     <message>
         <source>Modify Savebox</source>
-        <translation>セーブボックスを変更する</translation>
+        <translation>セーブボックス編集モード</translation>
     </message>
 </context>
 <context>
@@ -885,11 +888,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>E/W:</source>
-        <translation>X：</translation>
+        <translation>E/W:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation>Y：</translation>
+        <translation>N/S:</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -897,7 +900,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Link</source>
-        <translation>連結</translation>
+        <translation>縦横比を固定</translation>
     </message>
 </context>
 <context>
@@ -908,7 +911,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation>有効ボーンのみ表示</translation>
+        <translation>アクティブなボーンのみ表示</translation>
     </message>
     <message>
         <source>Mode:</source>
@@ -950,7 +953,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Vertical Orientation</source>
-        <translation>垂直方向</translation>
+        <translation>縦書きにする</translation>
     </message>
     <message>
         <source>Size:</source>
@@ -965,7 +968,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Preserve Thickness</source>
-        <translation>太さを保持</translation>
+        <translation>線の太さを保持</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -984,7 +987,7 @@ Do you want to proceed?</source>
     <name>VectorTapeTool</name>
     <message>
         <source>Smooth</source>
-        <translation>カーブで連結</translation>
+        <translation>滑らかに連結</translation>
     </message>
     <message>
         <source>Join Vectors</source>
