@@ -630,9 +630,19 @@ Param *RasterFxPluginHost::createParam(const toonz_param_desc_t *desc, bool from
 	/* pi は永続性があるので clone から呼ばれた場合は書き換えない */
 	if (!fromclone) {
 		// add to a map
-		pi_->params_.push_back(nullptr);
-		pi_->params_.back() = new Param(this, desc->key, toonz_param_type_enum(desc->traits_tag), desc);
-		return pi_->params_.back();
+		Param *param = nullptr;
+		for (auto const &p : pi_->params_) {
+			if (p->name() == desc->key) {
+				param = p;
+				break;
+			}
+		}
+		if (!param) {
+			pi_->params_.push_back(nullptr);
+			pi_->params_.back() = new Param(this, desc->key, toonz_param_type_enum(desc->traits_tag), desc);
+			param = pi_->params_.back();
+		}
+		return param;
 	}
 	return nullptr;
 }
