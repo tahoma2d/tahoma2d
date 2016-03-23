@@ -53,9 +53,6 @@ public:
 
 class DVAPI TFlash
 {
-	class Imp;
-	Imp *m_imp;
-
 public:
         static const wstring ConstantLines;
         static const wstring MixedLines;
@@ -78,8 +75,8 @@ public:
 	void drawRegion(const TRegion &r, int clippedShapes = 0) {}
 	void drawCenterline(const TStroke *s, bool drawAll) {}
 	bool drawOutline(TStroke *s) { return false; }
-	void drawSegments(const vector<TSegment> segmentArray, bool isGradientColor) {}
-	void drawquads(const vector<TQuadratic> quadsArray) {}
+	void drawSegments(const vector<TSegment> segmentArray, bool isGradientColor);
+	void drawquads(const vector<TQuadratic> quadsArray);
 	USHORT buildImage(const TImageP img, bool isMask) { return 0; }
 	void draw(const TImageP vi, const TColorFunction *cf) {}
 	void beginFrame(int frameIndex) {}
@@ -102,11 +99,6 @@ public:
 	void endMask() {}
 	void drawHangedObjects() {}
 	void setGlobalScale(const TAffine &aff) {}
-
-private:
-	TFlash();
-	TFlash(const TFlash &);
-	TFlash &operator=(const TFlash &);
 };
 
 #endif
