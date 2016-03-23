@@ -78,7 +78,7 @@ message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
     ${TIFF_INCLUDE_DIR}
     ${SDKROOT}/LibJPEG/jpeg-9
-    ${SDKROOT}/LibTIFF/tiff-4.0.3/libtiff)
+    ${SDKROOT}/libpng-1.6.21)
 if (WIN32)
     if(PLATFORM EQUAL 32)
         include_directories(${SDKROOT}/quicktime/QT73SDK/CIncludes)
@@ -111,4 +111,4 @@ else()
         ${QD_LIB})
 endif()
 
-target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIBRARY} ${PNG_LIB} ${EXTRA_LIBS})
+target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${PNG_LIB} ${EXTRA_LIBS})

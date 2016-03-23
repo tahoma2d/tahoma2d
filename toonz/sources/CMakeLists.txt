@@ -121,9 +121,13 @@ if(WIN32)
         optimized ${SDKROOT}/zlib/zlib-1.2.7/lib/zlib-1.2.7${PLATFORM2}.lib
         debug ${SDKROOT}/zlib/zlib-1.2.7/lib/zlib-1.2.7${PLATFORM2}d.lib)
     set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9${PLATFORM2}.lib)
+    set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.0.3/libtiff)
     set(TIFF_LIB
-        optimized ${SDKROOT}/LibTIFF/tiff-4.0.3/lib/LibTIFF-4.0.3${PLATFORM2}.lib
-        debug  ${SDKROOT}/LibTIFF/tiff-4.0.3/lib/LibTIFF-4.0.3${PLATFORM2}d.lib)
+        optimized ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3${PLATFORM2}.lib
+        debug  ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3${PLATFORM2}d.lib)
+    set(PNG_LIB
+        optimized ${SDKROOT}/libpng-1.6.21/lib/libpng16${PLATFORM2}.lib
+        debug  ${SDKROOT}/libpng-1.6.21/lib/libpng16${PLATFORM2}d.lib)
     set(GLEW_LIB ${SDKROOT}/glew/glew-1.9.0/lib/glew${PLATFORM}.lib)
     set(LZ4_LIB ${SDKROOT}/Lz4/Lz4_131/lz4_${PLATFORM}.lib)
     set(SUPERLU_LIB ${SDKROOT}/superlu/SuperLU_${PLATFORM}.lib)

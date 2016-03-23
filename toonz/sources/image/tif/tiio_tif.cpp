@@ -5,7 +5,11 @@
 #endif
 #define IS_TIFF_MAIN
 
+#if _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "tiio.h"
 #include "tpixel.h"

@@ -15,3 +15,8 @@ libusb-1.0.9
 glew-1.9.0
 jpeg-9
 .clang_complete
+Debug/
+Debug Library/
+Release/
+Release Library/
+ipch/
