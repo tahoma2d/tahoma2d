@@ -10,4 +10,5 @@ target_link_libraries(tcomposer
     tnzstdfx
     sound
     image
-    colorfx)
+    colorfx
+    toonzqt)

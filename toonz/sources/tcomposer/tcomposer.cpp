@@ -66,6 +66,9 @@
 #include "tvectorbrushstyle.h"
 #include "tpalette.h"
 
+// TnzQt includes
+#include "toonzqt/pluginloader.h"
+
 // Qt includes
 #include <QApplication>
 #include <QWaitCondition>
@@ -797,6 +800,9 @@ int main(int argc, char *argv[])
 		TFarmControllerFactory factory;
 		factory.create(FarmControllerName, FarmControllerPort, &FarmController);
 	}
+
+	while (!PluginLoader::load_entries(""))
+		app.processEvents();
 
 	std::pair<int, int> framePair(1, 0);
 
