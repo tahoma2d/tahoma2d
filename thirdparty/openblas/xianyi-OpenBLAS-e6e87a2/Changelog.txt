@@ -1,0 +1,155 @@
+OpenBLAS ChangeLog
+====================================================================
+Version 0.1.1
+29-Apr-2012
+common:
+	* Upgraded LAPACK to 3.4.1 version. (Thank Zaheer Chothia)
+	* Supported LAPACKE, a C interface to LAPACKE. (Thank Zaheer Chothia)
+	* Fixed the build bug (MD5 and download) on Mac OSX.
+	* Auto download CUnit 2.1.2-2 from SF.net with UTEST_CHECK=1.
+x86/x86_64:
+	* Auto-detect Intel Sandy Bridge Core i7-3xxx & Xeon E7 Westmere-EX.
+	* Test alpha=Nan in dscale.
+	* Fixed a SEGFAULT bug in samax on x86 windows.
+	
+====================================================================
+Version 0.1.0
+23-Mar-2012
+common:
+	* Set soname of shared library on Linux.
+	* Added LIBNAMESUFFIX flag in Makefile.rule. The user can use 
+	  this flag to control the library name, e.g. libopenblas.a, 
+	  libopenblas_ifort.a or libopenblas_omp.a.
+	* Added GEMM_MULTITHREAD_THRESHOLD flag in Makefile.rule.
+	  The lib use single thread in GEMM function with small matrices.
+x86/x86_64:
+	* Used GEMV SSE/SSE2 kernels on x86 32-bit.
+	* Exported CBLAS functions in Windows DLL.
+MIPS64:
+	* Completed Level-3 BLAS optimization on Loongson 3A CPU.
+	* Improved GEMV performance on Loongson 3A CPU.
+	* Improved Level-3 BLAS performance on Loongson 3B CPU. (EXPERIMENT)
+
+====================================================================
+Version 0.1 alpha2.5
+19-Feb-2012
+common:
+	* Fixed missing "#include <sched.h>" bug on Mac OS X.
+	  Thank Mike Nolta for the patch.
+	* Upgraded LAPACK to 3.4.0 version
+	* Fixed a bug on Mac OS X. Don't require SystemStubs on OS X.
+	  SystemStubs does not exist on Lion. Thank Stefan Karpinski.
+	* Improved README with using OpenMP. Check the internal threads
+	  count less than or equal to omp_get_max_threads()
+x86/x86_64:
+	* Auto-detect Intel Core i6/i7 (Sandy Bridge) CPU with Nehalem assembly kernels
+	* Fixed some bugs on MingW 64-bit including zgemv, cdot, zdot.
+
+====================================================================
+Version 0.1 alpha2.4
+18-Sep-2011
+common:
+	* Fixed a bug about installation. The header file "fblas77.h" 
+	  works fine now.
+	* Fixed #61 a building bug about setting TARGET and DYNAMIC_ARCH.
+	* Try to handle absolute path of shared library in OSX. (#57)
+	  Thank Dr Kane O'Donnell.
+	* Changed the installation folder layout to $(PREFIX)/include and
+	  $(PREFIX)/lib
+
+x86/x86_64:
+	* Fixed #58 zdot/xdot SEGFAULT bug with GCC-4.6 on x86. According 
+	  to i386 calling convention, The callee should remove the first 
+	  hidden parameter.Thank Mr. John for this patch. 
+
+====================================================================
+Version 0.1 alpha2.3
+5-Sep-2011
+
+x86/x86_64:
+	*  Added DTB_ENTRIES into dynamic arch setting parameters. Now, 
+	   it can read DTB_ENTRIES on runtime. (Refs issue #55 on github)
+
+====================================================================
+Version 0.1 alpha2.2
+14-Jul-2011
+
+common:
+	* Fixed a building bug when DYNAMIC_ARCH=1 & INTERFACE64=1. 
+	  (Refs issue #44 on github)
+
+====================================================================
+Version 0.1 alpha2.1
+28-Jun-2011
+
+common:
+	* Stop the build and output the error message when detecting 
+	  fortran compiler failed. (Refs issue #42 on github)
+
+====================================================================
+Version 0.1 alpha2
+23-Jun-2011
+
+common:
+	* Fixed blasint undefined bug in <cblas.h> file. Other software 
+	  could include this header successfully(Refs issue #13 on github)
+	* Fixed the SEGFAULT bug on 64 cores. On SMP server, the number 
+	  of CPUs or cores should be less than or equal to 64.(Refs issue #14 
+	  on github)
+	* Support "void goto_set_num_threads(int num_threads)" and "void
+	  openblas_set_num_threads(int num_threads)" when USE_OPENMP=1
+	* Added extern "C" to support C++. Thank Tasio for the patch(Refs 
+	  issue #21 on github)
+	* Provided an error message when the arch is not supported.(Refs 
+	  issue #19 on github)
+	* Fixed issue #23. Fixed a bug of f_check script about generating link flags.
+	* Added openblas_set_num_threads for Fortran.
+	* Fixed #25 a wrong result of rotmg.
+	* Fixed a bug about detecting underscore prefix in c_check.
+	* Print the wall time (cycles) with enabling FUNCTION_PROFILE
+	* Fixed #35 a build bug with NO_LAPACK=1 & DYNAMIC_ARCH=1
+	* Added install target. You can use "make install". (Refs #20)
+
+
+x86/x86_64:
+	* Fixed #28 a wrong result of dsdot on x86_64.
+	* Fixed #32 a SEGFAULT bug of zdotc with gcc-4.6.
+	* Fixed #33 ztrmm bug on Nehalem.
+	* Walk round #27 the low performance axpy issue with small imput size & multithreads.
+
+MIPS64:
+	* Fixed #28 a wrong result of dsdot on Loongson3A/MIPS64. 
+	* Optimized single/double precision BLAS Level3 on Loongson3A/MIPS64. (Refs #2)
+	* Optimized single/double precision axpy function on Loongson3A/MIPS64. (Refs #3)
+
+====================================================================
+Version 0.1 alpha1
+20-Mar-2011
+
+common:
+	* Support "make  NO_LAPACK=1" to build the library without 
+	  LAPACK functions.
+	* Fixed randomly SEGFAULT when nodemask==NULL with above Linux 2.6.34. 
+	  Thank Mr.Ei-ji Nakama providing this patch. (Refs issue #12 on github)
+	* Added DEBUG=1 rule in Makefile.rule to build debug version.
+	* Disable compiling quad precision in reference BLAS library(netlib BLAS).
+	* Added unit testcases in utest/ subdir. Used  CUnit framework.
+	* Supported OPENBLAS_* & GOTO_* environment variables (Pleas see README)
+	* Imported GotoBLAS2 1.13 BSD version
+
+x86/x86_64:
+	* On x86 32bits, fixed a bug in zdot_sse2.S line 191. This would casue 
+	  zdotu & zdotc failures.Instead,Walk around it. (Refs issue #8 #9 on github)
+	* Modified ?axpy functions to return same netlib BLAS results 
+	  when incx==0 or incy==0 (Refs issue #7 on github)
+	* Modified ?swap functions to return same netlib BLAS results 
+	  when incx==0 or incy==0 (Refs issue #6 on github)
+	* Modified ?rot functions to return same netlib BLAS results 
+	  when incx==0 or incy==0 (Refs issue #4 on github)
+	* Detect Intel Westmere,Intel Clarkdale and Intel Arrandale 
+	  to use Nehalem codes.
+	* Fixed a typo bug about compiling dynamic ARCH library.
+MIPS64:
+	* Improve daxpy performance on ICT Loongson 3A.
+	* Supported ICT Loongson 3A CPU (Refs issue #1 on github)
+====================================================================
