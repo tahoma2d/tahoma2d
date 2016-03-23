@@ -7,7 +7,6 @@
 #include "timagecache.h"
 #include "tgl.h"
 #include "trop.h"
-#include "glext.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
