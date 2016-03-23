@@ -1,5 +1,3 @@
-
-
 #if _MSC_VER >= 1400
 #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
@@ -11,25 +9,17 @@
 #include "tiio.h"
 #include "../compatibility/tfile_io.h"
 
-#define PNG_INTERNAL
-#include "lpng124/png.h"
+#include "png.h"
 
 #include "tpixel.h"
 
-// see http://www.libpng.org/pub/png/libpng-1.2.5-manual.html
 using namespace std;
 //------------------------------------------------------------
 
 extern "C" {
-void tnz_abort_handler(void)
-{
-	//throw "PNG error";
-}
-
 void tnz_error_fun(png_structp pngPtr, png_const_charp error_message)
 {
-	pngPtr->m_canDelete = 0;
-	//throw error_message;
+	*(int*)png_get_error_ptr(pngPtr) = 0;
 }
 }
 
@@ -63,16 +53,16 @@ class PngReader : public Tiio::Reader
 	bool m_is16bitEnabled;
 	unsigned char *m_rowBuffer;
 	unsigned char *m_tempBuffer; //Buffer temporaneo
+	int m_canDelete;
 public:
 	PngReader()
-		: m_chan(0), m_png_ptr(0), m_info_ptr(0), m_end_info_ptr(0), m_bit_depth(0), m_color_type(0), m_interlace_type(0), m_compression_type(0), m_filter_type(0), m_sig_read(0), m_y(0), m_is16bitEnabled(true), m_rowBuffer(0), m_tempBuffer(0)
+		: m_chan(0), m_png_ptr(0), m_info_ptr(0), m_end_info_ptr(0), m_bit_depth(0), m_color_type(0), m_interlace_type(0), m_compression_type(0), m_filter_type(0), m_sig_read(0), m_y(0), m_is16bitEnabled(true), m_rowBuffer(0), m_tempBuffer(0), m_canDelete(1)
 	{
 	}
 
 	~PngReader()
 	{
-		if (m_png_ptr && m_png_ptr->m_canDelete == 1) //se la png e' corrotta, liberarla faceva crashare in release!
-		{
+		if (m_canDelete == 1) {
 			try {
 				png_read_end(m_png_ptr, m_end_info_ptr);
 			} catch (...) {
@@ -109,7 +99,7 @@ public:
 			return;
 
 		m_png_ptr = png_create_read_struct(
-			PNG_LIBPNG_VER_STRING, 0, tnz_error_fun, 0);
+			PNG_LIBPNG_VER_STRING, &m_canDelete, tnz_error_fun, 0);
 		if (!m_png_ptr)
 			return;
 		m_info_ptr = png_create_info_struct(m_png_ptr);
@@ -122,6 +112,11 @@ public:
 		if (!m_end_info_ptr) {
 			png_destroy_read_struct(&m_png_ptr,
 									&m_info_ptr, (png_infopp)0);
+			return;
+		}
+
+		if (setjmp(png_jmpbuf(m_png_ptr))) {
+			/* don't abort() even if an error has occured */
 			return;
 		}
 
@@ -208,7 +203,7 @@ public:
 
 		if (m_color_type == PNG_COLOR_TYPE_GRAY &&
 			m_bit_depth < 8)
-			png_set_gray_1_2_4_to_8(m_png_ptr);
+			png_set_expand_gray_1_2_4_to_8(m_png_ptr);
 
 		if (png_get_valid(m_png_ptr, m_info_ptr,
 						  PNG_INFO_tRNS))
@@ -298,7 +293,7 @@ public:
 			}
 		}
 
-		if (m_png_ptr->interlaced == 1) {
+		if (png_get_interlace_type(m_png_ptr, m_info_ptr) == PNG_INTERLACE_ADAM7) {
 			readLineInterlace(&buffer[0], x0, x1, shrink);
 			m_y++;
 			if (m_tempBuffer && m_y == ly) {
@@ -547,11 +542,11 @@ public:
 	{
 
 		//m_png_ptr->row_number è l'indice di riga che scorre quando chiamo la png_read_row
-		int rowNumber = m_png_ptr->row_number;
+		int rowNumber = png_get_current_row_number(m_png_ptr);
 		//numRows è il numero di righe processate in ogni passo
-		int numRows = (m_png_ptr->height) / 8;
+		int numRows = (int)png_get_image_height(m_png_ptr, m_info_ptr) / 8;
 
-		int passPng = m_png_ptr->pass; //conosco il passo d'interlacciamento
+		int passPng = png_get_current_pass_number(m_png_ptr); 
 
 		int passRow = 5 + (m_y & 1); //passo desiderato per la riga corrente
 
@@ -566,9 +561,9 @@ public:
 														   // <             //del passo desiderato effettua tante volte le lettura della riga
 														   //quant'è il passo desiderato per quella riga
 		{
-			rowNumber = m_png_ptr->row_number;
+			rowNumber = png_get_current_row_number(m_png_ptr);
 			png_read_row(m_png_ptr, row_pointer, NULL);
-			numRows = m_png_ptr->num_rows;
+			numRows = png_get_image_height(m_png_ptr, m_info_ptr);
 			//devo memorizzare la riga letta nel buffer di appoggio in base al passo di riga
 			//e al blocchetto di appartenenza della riga
 
@@ -609,7 +604,7 @@ public:
 					copyPixel(lx, 0, 1, rowNumber * 2 + 1);
 			}
 
-			passPng = m_png_ptr->pass;
+			passPng = png_get_current_pass_number(m_png_ptr);
 		}
 
 		// fase di copia
@@ -634,11 +629,11 @@ public:
 	{
 
 		//m_png_ptr->row_number è l'indice di riga che scorre quando chiamo la png_read_row
-		int rowNumber = m_png_ptr->row_number;
+		int rowNumber = png_get_current_row_number(m_png_ptr);
 		//numRows è il numero di righe processate in ogni passo
-		int numRows = (m_png_ptr->height) / 8;
+		int numRows = png_get_image_height(m_png_ptr, m_info_ptr) / 8;
 
-		int passPng = m_png_ptr->pass; //conosco il passo d'interlacciamento
+		int passPng = png_get_current_pass_number(m_png_ptr); //conosco il passo d'interlacciamento
 
 		int passRow = 5 + (m_y & 1); //passo desiderato per la riga corrente
 
@@ -652,9 +647,9 @@ public:
 														  //del passo desiderato effettua tante volte le lettura della riga
 														  //quant'è il passo desiderato per quella riga
 		{
-			rowNumber = m_png_ptr->row_number;
+			rowNumber = png_get_current_row_number(m_png_ptr);
 			png_read_row(m_png_ptr, row_pointer, NULL);
-			numRows = m_png_ptr->num_rows;
+			numRows = png_get_image_height(m_png_ptr, m_info_ptr);
 			int lx = m_info.m_lx;
 
 			//devo memorizzare la riga letta nel buffer di appoggio in base al passo di riga
@@ -682,7 +677,7 @@ public:
 			else if (passPng == 6)
 				copyPixel(2 * lx, 0, 1, rowNumber * 2 + 1);
 
-			passPng = m_png_ptr->pass;
+			passPng = png_get_current_pass_number(m_png_ptr);
 		}
 
 		// fase di copia
@@ -838,11 +833,14 @@ void PngWriter::open(FILE *file, const TImageInfo &info)
 #endif
 
 	png_write_info(m_png_ptr, m_info_ptr);
-	png_write_pHYs(m_png_ptr, x_pixels_per_meter, y_pixels_per_meter, 1);
+	png_set_pHYs(m_png_ptr, m_info_ptr, x_pixels_per_meter, y_pixels_per_meter, 1);
 
 	if (m_colormap && m_matte) {
 		alpha[0] = 0;
-		png_write_tRNS(m_png_ptr, alpha, 0, 1, PNG_COLOR_TYPE_PALETTE);
+		//png_set_tRNS(m_png_ptr, m_info_ptr, alpha, 1, PNG_COLOR_TYPE_PALETTE);
+		png_color_16 bgcolor;
+		bgcolor.index = 0;
+		png_set_tRNS(m_png_ptr, m_info_ptr, alpha, 1, &bgcolor);
 	}
 }
 

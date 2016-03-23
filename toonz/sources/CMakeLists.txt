@@ -136,10 +136,13 @@ else()
     find_library(GLUT_LIB GLUT)
     find_library(GL_LIB OpenGL)
     find_library(Z_LIB z)
-    find_library(TIFF_LIB TIFF)
 
+    find_package(TIFF REQUIRED)
+    set(TIFF_LIB ${TIFF_LIBRARY})
     # the libraries have not .pc nor preferred Find*.cmake. use custom modules.
-    find_package(PNG)
+    find_package(PNG REQUIRED)
+    message("******* libpng:" ${PNG_LIBRARY})
+    set(PNG_LIB ${PNG_LIBRARY})
     find_package(GLEW)
 
     find_package(SuperLU REQUIRED)
@@ -177,7 +180,7 @@ else()
     set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
 endif()
 
-find_path(BOOST_ROOT include/boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
+find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
 find_package(Boost 1.55 EXACT REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR} ${LZ4_LIB_INCLUDE_DIRS} ${USB_LIB_INCLUDE_DIRS} ${SUPERLU_INCLUDE_DIR} ${JPEG_INCLUDE_DIR})
