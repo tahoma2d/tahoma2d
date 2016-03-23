@@ -50,6 +50,8 @@
 #include <boost/range/adaptor/adjacent_filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
+#include <boost/utility/in_place_factory.hpp>
+
 // STD includes
 #include <set>
 
