@@ -1,0 +1,383 @@
+ lzo2
+
+ Timestamp is 4d6e51c6 (Wed Mar 02 15:18:46 2011)
+
+ Preferred load address is 10000000
+
+ Start         Length     Name                   Class
+ 0001:00000000 00013a54H .text                   CODE
+ 0002:00000000 00000090H .idata$5                DATA
+ 0002:00000090 00000004H .CRT$XCA                DATA
+ 0002:00000094 00000004H .CRT$XCZ                DATA
+ 0002:00000098 00000004H .CRT$XIA                DATA
+ 0002:0000009c 00000004H .CRT$XIAA               DATA
+ 0002:000000a0 00000004H .CRT$XIZ                DATA
+ 0002:000000a8 00000748H .rdata                  DATA
+ 0002:000007f0 00000004H .rtc$IAA                DATA
+ 0002:000007f4 00000004H .rtc$IZZ                DATA
+ 0002:000007f8 00000004H .rtc$TAA                DATA
+ 0002:000007fc 00000004H .rtc$TZZ                DATA
+ 0002:00000800 00000064H .xdata$x                DATA
+ 0002:00000864 00000028H .idata$2                DATA
+ 0002:0000088c 00000014H .idata$3                DATA
+ 0002:000008a0 00000090H .idata$4                DATA
+ 0002:00000930 00000288H .idata$6                DATA
+ 0002:00000bc0 00000c6cH .edata                  DATA
+ 0003:00000000 00000010H .data                   DATA
+ 0003:00000010 00000350H .bss                    DATA
+
+  Address         Publics by Value              Rva+Base       Lib:Object
+
+ 0000:00000000       ___safe_se_handler_count   00000000     <absolute>
+ 0000:00000000       ___safe_se_handler_table   00000000     <absolute>
+ 0000:00000000       ___ImageBase               10000000     <linker-defined>
+ 0001:00000000       _lzo1a_info                10001000 f   lzo1a.obj
+ 0001:00000000       _lzo1_info                 10001000 f   lzo1.obj
+ 0001:00000030       _lzo1_decompress           10001030 f   lzo1.obj
+ 0001:00000490       _lzo1_compress             10001490 f   lzo1.obj
+ 0001:00000900       _lzo1_99_compress          10001900 f   lzo1_99.obj
+ 0001:00000970       _lzo1a_decompress          10001970 f   lzo1a.obj
+ 0001:00000e60       _lzo1a_compress            10001e60 f   lzo1a.obj
+ 0001:000012c0       _lzo1a_99_compress         100022c0 f   lzo1a_99.obj
+ 0001:00001640       _lzo1b_1_compress          10002640 f   lzo1b_1.obj
+ 0001:00001a10       _lzo1b_2_compress          10002a10 f   lzo1b_2.obj
+ 0001:00001e30       _lzo1b_3_compress          10002e30 f   lzo1b_3.obj
+ 0001:00002260       _lzo1b_4_compress          10003260 f   lzo1b_4.obj
+ 0001:00002700       _lzo1b_5_compress          10003700 f   lzo1b_5.obj
+ 0001:00002be0       _lzo1b_6_compress          10003be0 f   lzo1b_6.obj
+ 0001:00003090       _lzo1b_7_compress          10004090 f   lzo1b_7.obj
+ 0001:00003640       _lzo1b_8_compress          10004640 f   lzo1b_8.obj
+ 0001:00003a80       _lzo1b_9_compress          10004a80 f   lzo1b_9.obj
+ 0001:00003eb0       _lzo1b_99_compress         10004eb0 f   lzo1b_99.obj
+ 0001:000044e0       _lzo1b_999_compress_callback 100054e0 f   lzo1b_9x.obj
+ 0001:00004940       _lzo1b_999_compress        10005940 f   lzo1b_9x.obj
+ 0001:00004970       __lzo1c_do_compress        10005970 f   lzo1c_cc.obj
+ 0001:00004970       __lzo1b_do_compress        10005970 f   lzo1b_cc.obj
+ 0001:000049f0       _lzo1b_decompress          100059f0 f   lzo1b_d1.obj
+ 0001:00004bd0       _lzo1b_decompress_safe     10005bd0 f   lzo1b_d2.obj
+ 0001:00004f20       __lzo1b_store_run          10005f20 f   lzo1b_rr.obj
+ 0001:00004f20       __lzo1c_store_run          10005f20 f   lzo1c_rr.obj
+ 0001:00005030       _lzo1b_compress            10006030 f   lzo1b_xx.obj
+ 0001:000053b0       _lzo1c_1_compress          100063b0 f   lzo1c_1.obj
+ 0001:00005760       _lzo1c_2_compress          10006760 f   lzo1c_2.obj
+ 0001:00005bb0       _lzo1c_3_compress          10006bb0 f   lzo1c_3.obj
+ 0001:00005ff0       _lzo1c_4_compress          10006ff0 f   lzo1c_4.obj
+ 0001:00006420       _lzo1c_5_compress          10007420 f   lzo1c_5.obj
+ 0001:00006930       _lzo1c_6_compress          10007930 f   lzo1c_6.obj
+ 0001:00006da0       _lzo1c_7_compress          10007da0 f   lzo1c_7.obj
+ 0001:00007390       _lzo1c_8_compress          10008390 f   lzo1c_8.obj
+ 0001:000077f0       _lzo1c_9_compress          100087f0 f   lzo1c_9.obj
+ 0001:00007c50       _lzo1c_99_compress         10008c50 f   lzo1c_99.obj
+ 0001:00007df0       _lzo1c_999_compress_callback 10008df0 f   lzo1c_9x.obj
+ 0001:000082b0       _lzo1c_999_compress        100092b0 f   lzo1c_9x.obj
+ 0001:000082e0       _lzo1c_decompress          100092e0 f   lzo1c_d1.obj
+ 0001:000084f0       _lzo1c_decompress_safe     100094f0 f   lzo1c_d2.obj
+ 0001:00008860       _lzo1c_compress            10009860 f   lzo1c_xx.obj
+ 0001:00008c50       _lzo1f_1_compress          10009c50 f   lzo1f_1.obj
+ 0001:000092c0       _lzo1f_999_compress_callback 1000a2c0 f   lzo1f_9x.obj
+ 0001:000096d0       _lzo1f_999_compress        1000a6d0 f   lzo1f_9x.obj
+ 0001:00009700       _lzo1f_decompress          1000a700 f   lzo1f_d1.obj
+ 0001:000098b0       _lzo1f_decompress_safe     1000a8b0 f   lzo1f_d2.obj
+ 0001:00009ef0       _lzo1x_1_compress          1000aef0 f   lzo1x_1.obj
+ 0001:0000a310       _lzo1x_1_11_compress       1000b310 f   lzo1x_1k.obj
+ 0001:0000a720       _lzo1x_1_12_compress       1000b720 f   lzo1x_1l.obj
+ 0001:0000ab50       _lzo1x_1_15_compress       1000bb50 f   lzo1x_1o.obj
+ 0001:0000b0c0       _lzo1x_999_compress_internal 1000c0c0 f   lzo1x_9x.obj
+ 0001:0000b660       _lzo1x_999_compress_level  1000c660 f   lzo1x_9x.obj
+ 0001:0000b6e0       _lzo1x_999_compress_dict   1000c6e0 f   lzo1x_9x.obj
+ 0001:0000b710       _lzo1x_999_compress        1000c710 f   lzo1x_9x.obj
+ 0001:0000b740       _lzo1x_decompress          1000c740 f   lzo1x_d1.obj
+ 0001:0000b9b0       _lzo1x_decompress_safe     1000c9b0 f   lzo1x_d2.obj
+ 0001:0000bdd0       _lzo1x_decompress_dict_safe 1000cdd0 f   lzo1x_d3.obj
+ 0001:0000c2e0       _lzo1x_optimize            1000d2e0 f   lzo1x_o.obj
+ 0001:0000cbd0       _lzo1y_1_compress          1000dbd0 f   lzo1y_1.obj
+ 0001:0000d390       _lzo1y_999_compress_internal 1000e390 f   lzo1y_9x.obj
+ 0001:0000d930       _lzo1y_999_compress_level  1000e930 f   lzo1y_9x.obj
+ 0001:0000d9b0       _lzo1y_999_compress_dict   1000e9b0 f   lzo1y_9x.obj
+ 0001:0000d9e0       _lzo1y_999_compress        1000e9e0 f   lzo1y_9x.obj
+ 0001:0000da10       _lzo1y_decompress          1000ea10 f   lzo1y_d1.obj
+ 0001:0000dc80       _lzo1y_decompress_safe     1000ec80 f   lzo1y_d2.obj
+ 0001:0000e0a0       _lzo1y_decompress_dict_safe 1000f0a0 f   lzo1y_d3.obj
+ 0001:0000e590       _lzo1y_optimize            1000f590 f   lzo1y_o.obj
+ 0001:0000f280       _lzo1z_999_compress_internal 10010280 f   lzo1z_9x.obj
+ 0001:0000f840       _lzo1z_999_compress_level  10010840 f   lzo1z_9x.obj
+ 0001:0000f8c0       _lzo1z_999_compress_dict   100108c0 f   lzo1z_9x.obj
+ 0001:0000f8f0       _lzo1z_999_compress        100108f0 f   lzo1z_9x.obj
+ 0001:0000f920       _lzo1z_decompress          10010920 f   lzo1z_d1.obj
+ 0001:0000fbb0       _lzo1z_decompress_safe     10010bb0 f   lzo1z_d2.obj
+ 0001:00010000       _lzo1z_decompress_dict_safe 10011000 f   lzo1z_d3.obj
+ 0001:00010b10       _lzo2a_999_compress_callback 10011b10 f   lzo2a_9x.obj
+ 0001:000110c0       _lzo2a_999_compress        100120c0 f   lzo2a_9x.obj
+ 0001:000110f0       _lzo2a_decompress          100120f0 f   lzo2a_d1.obj
+ 0001:00011210       _lzo2a_decompress_safe     10012210 f   lzo2a_d2.obj
+ 0001:00011440       _lzo_get_crc32_table       10012440 f   lzo_crc.obj
+ 0001:00011450       _lzo_crc32                 10012450 f   lzo_crc.obj
+ 0001:00011610       __lzo_config_check         10012610 f   lzo_init.obj
+ 0001:00011670       ___lzo_init_v2             10012670 f   lzo_init.obj
+ 0001:00011710       ___lzo_ptr_linear          10012710 f   lzo_ptr.obj
+ 0001:00011720       ___lzo_align_gap           10012720 f   lzo_ptr.obj
+ 0001:00011740       _lzo_memcmp                10012740 f   lzo_str.obj
+ 0001:000117c0       _lzo_memcpy                100127c0 f   lzo_str.obj
+ 0001:000117d0       _lzo_memmove               100127d0 f   lzo_str.obj
+ 0001:000117e0       _lzo_memset                100127e0 f   lzo_str.obj
+ 0001:000117f0       _lzo_copyright             100127f0 f   lzo_util.obj
+ 0001:00011800       _lzo_version               10012800 f   lzo_util.obj
+ 0001:00011810       _lzo_version_string        10012810 f   lzo_util.obj
+ 0001:00011810       __lzo_version_string       10012810 f   lzo_util.obj
+ 0001:00011820       _lzo_version_date          10012820 f   lzo_util.obj
+ 0001:00011820       __lzo_version_date         10012820 f   lzo_util.obj
+ 0001:00011830       _lzo_adler32               10012830 f   lzo_util.obj
+ 0001:00011960       _lzo1c_decompress_asm      10012960     lzo1c_s1.obj
+ 0001:00011960       lzo1c_decompress_asm       10012960     lzo1c_s1.obj
+ 0001:00011a80       lzo1c_decompress_asm_safe  10012a80     lzo1c_s2.obj
+ 0001:00011a80       _lzo1c_decompress_asm_safe 10012a80     lzo1c_s2.obj
+ 0001:00011c50       lzo1f_decompress_asm_fast  10012c50     lzo1f_f1.obj
+ 0001:00011c50       _lzo1f_decompress_asm_fast 10012c50     lzo1f_f1.obj
+ 0001:00011d90       _lzo1f_decompress_asm_fast_safe 10012d90     lzo1f_f2.obj
+ 0001:00011d90       lzo1f_decompress_asm_fast_safe 10012d90     lzo1f_f2.obj
+ 0001:00011f40       lzo1x_decompress_asm_fast  10012f40     lzo1x_f1.obj
+ 0001:00011f40       _lzo1x_decompress_asm_fast 10012f40     lzo1x_f1.obj
+ 0001:00012100       lzo1x_decompress_asm_fast_safe 10013100     lzo1x_f2.obj
+ 0001:00012100       _lzo1x_decompress_asm_fast_safe 10013100     lzo1x_f2.obj
+ 0001:000123b0       lzo1x_decompress_asm       100133b0     lzo1x_s1.obj
+ 0001:000123b0       _lzo1x_decompress_asm      100133b0     lzo1x_s1.obj
+ 0001:00012590       lzo1x_decompress_asm_safe  10013590     lzo1x_s2.obj
+ 0001:00012590       _lzo1x_decompress_asm_safe 10013590     lzo1x_s2.obj
+ 0001:00012870       _lzo1y_decompress_asm_fast 10013870     lzo1y_f1.obj
+ 0001:00012870       lzo1y_decompress_asm_fast  10013870     lzo1y_f1.obj
+ 0001:00012a30       _lzo1y_decompress_asm_fast_safe 10013a30     lzo1y_f2.obj
+ 0001:00012a30       lzo1y_decompress_asm_fast_safe 10013a30     lzo1y_f2.obj
+ 0001:00012ce0       _lzo1y_decompress_asm      10013ce0     lzo1y_s1.obj
+ 0001:00012ce0       lzo1y_decompress_asm       10013ce0     lzo1y_s1.obj
+ 0001:00012ec0       lzo1y_decompress_asm_safe  10013ec0     lzo1y_s2.obj
+ 0001:00012ec0       _lzo1y_decompress_asm_safe 10013ec0     lzo1y_s2.obj
+ 0001:000131a0       _memcpy                    100141a0 f   MSVCRT:MSVCR90.dll
+ 0001:000131a6       _memset                    100141a6 f   MSVCRT:MSVCR90.dll
+ 0001:000131ac       @__security_check_cookie@4 100141ac f   MSVCRT:secchk.obj
+ 0001:0001320a       __CRT_INIT@12              1001420a f   MSVCRT:crtdll.obj
+ 0001:00013546       __DllMainCRTStartup@12     10014546 f   MSVCRT:crtdll.obj
+ 0001:00013569       ___report_gsfailure        10014569 f   MSVCRT:gs_report.obj
+ 0001:0001366f       ___clean_type_info_names   1001466f f   MSVCRT:tncleanup.obj
+ 0001:0001367b       __onexit                   1001467b f   MSVCRT:atonexit.obj
+ 0001:00013720       _atexit                    10014720 f   MSVCRT:atonexit.obj
+ 0001:00013737       __RTC_Initialize           10014737 f   MSVCRT:_initsect_.obj
+ 0001:0001375d       __RTC_Terminate            1001475d f   MSVCRT:_initsect_.obj
+ 0001:00013790       __ValidateImageBase        10014790 f   MSVCRT:pesect.obj
+ 0001:000137d0       __FindPESection            100147d0 f   MSVCRT:pesect.obj
+ 0001:00013820       __IsNonwritableInCurrentImage 10014820 f   MSVCRT:pesect.obj
+ 0001:000138de       __initterm                 100148de f   MSVCRT:MSVCR90.dll
+ 0001:000138e4       __initterm_e               100148e4 f   MSVCRT:MSVCR90.dll
+ 0001:000138ea       __amsg_exit                100148ea f   MSVCRT:MSVCR90.dll
+ 0001:000138f0       ___CppXcptFilter           100148f0 f   MSVCRT:MSVCR90.dll
+ 0001:000138f6       _DllMain@12                100148f6 f   MSVCRT:dllmain.obj
+ 0001:0001391c       __SEH_prolog4              1001491c f   MSVCRT:sehprolg4.obj
+ 0001:00013961       __SEH_epilog4              10014961 f   MSVCRT:sehprolg4.obj
+ 0001:00013975       __except_handler4          10014975 f   MSVCRT:chandler4gs.obj
+ 0001:0001399a       ___security_init_cookie    1001499a f   MSVCRT:gs_support.obj
+ 0001:00013a30       __crt_debugger_hook        10014a30 f   MSVCRT:MSVCR90.dll
+ 0001:00013a36       ___clean_type_info_names_internal 10014a36 f   MSVCRT:MSVCR90.dll
+ 0001:00013a3c       __unlock                   10014a3c f   MSVCRT:MSVCR90.dll
+ 0001:00013a42       ___dllonexit               10014a42 f   MSVCRT:MSVCR90.dll
+ 0001:00013a48       __lock                     10014a48 f   MSVCRT:MSVCR90.dll
+ 0001:00013a4e       __except_handler4_common   10014a4e f   MSVCRT:MSVCR90.dll
+ 0002:00000000       __imp__GetCurrentProcessId@0 10015000     kernel32:KERNEL32.dll
+ 0002:00000004       __imp__GetCurrentThreadId@0 10015004     kernel32:KERNEL32.dll
+ 0002:00000008       __imp__GetTickCount@0      10015008     kernel32:KERNEL32.dll
+ 0002:0000000c       __imp__QueryPerformanceCounter@4 1001500c     kernel32:KERNEL32.dll
+ 0002:00000010       __imp__DisableThreadLibraryCalls@4 10015010     kernel32:KERNEL32.dll
+ 0002:00000014       __imp__IsDebuggerPresent@0 10015014     kernel32:KERNEL32.dll
+ 0002:00000018       __imp__SetUnhandledExceptionFilter@4 10015018     kernel32:KERNEL32.dll
+ 0002:0000001c       __imp__UnhandledExceptionFilter@4 1001501c     kernel32:KERNEL32.dll
+ 0002:00000020       __imp__GetCurrentProcess@0 10015020     kernel32:KERNEL32.dll
+ 0002:00000024       __imp__TerminateProcess@8  10015024     kernel32:KERNEL32.dll
+ 0002:00000028       __imp__InterlockedCompareExchange@12 10015028     kernel32:KERNEL32.dll
+ 0002:0000002c       __imp__Sleep@4             1001502c     kernel32:KERNEL32.dll
+ 0002:00000030       __imp__InterlockedExchange@8 10015030     kernel32:KERNEL32.dll
+ 0002:00000034       __imp__GetSystemTimeAsFileTime@4 10015034     kernel32:KERNEL32.dll
+ 0002:00000038       \177KERNEL32_NULL_THUNK_DATA 10015038     kernel32:KERNEL32.dll
+ 0002:0000003c       __imp____clean_type_info_names_internal 1001503c     MSVCRT:MSVCR90.dll
+ 0002:00000040       __imp___unlock             10015040     MSVCRT:MSVCR90.dll
+ 0002:00000044       __imp___crt_debugger_hook  10015044     MSVCRT:MSVCR90.dll
+ 0002:00000048       __imp___lock               10015048     MSVCRT:MSVCR90.dll
+ 0002:0000004c       __imp___onexit             1001504c     MSVCRT:MSVCR90.dll
+ 0002:00000050       __imp___except_handler4_common 10015050     MSVCRT:MSVCR90.dll
+ 0002:00000054       __imp____CppXcptFilter     10015054     MSVCRT:MSVCR90.dll
+ 0002:00000058       __imp___adjust_fdiv        10015058     MSVCRT:MSVCR90.dll
+ 0002:0000005c       __imp___amsg_exit          1001505c     MSVCRT:MSVCR90.dll
+ 0002:00000060       __imp___initterm_e         10015060     MSVCRT:MSVCR90.dll
+ 0002:00000064       __imp___initterm           10015064     MSVCRT:MSVCR90.dll
+ 0002:00000068       __imp___decode_pointer     10015068     MSVCRT:MSVCR90.dll
+ 0002:0000006c       __imp___encoded_null       1001506c     MSVCRT:MSVCR90.dll
+ 0002:00000070       __imp__free                10015070     MSVCRT:MSVCR90.dll
+ 0002:00000074       __imp___malloc_crt         10015074     MSVCRT:MSVCR90.dll
+ 0002:00000078       __imp___encode_pointer     10015078     MSVCRT:MSVCR90.dll
+ 0002:0000007c       __imp__memmove             1001507c     MSVCRT:MSVCR90.dll
+ 0002:00000080       __imp__memset              10015080     MSVCRT:MSVCR90.dll
+ 0002:00000084       __imp____dllonexit         10015084     MSVCRT:MSVCR90.dll
+ 0002:00000088       __imp__memcpy              10015088     MSVCRT:MSVCR90.dll
+ 0002:0000008c       \177MSVCR90_NULL_THUNK_DATA 1001508c     MSVCRT:MSVCR90.dll
+ 0002:00000090       ___xc_a                    10015090     MSVCRT:cinitexe.obj
+ 0002:00000094       ___xc_z                    10015094     MSVCRT:cinitexe.obj
+ 0002:00000098       ___xi_a                    10015098     MSVCRT:cinitexe.obj
+ 0002:000000a0       ___xi_z                    100150a0     MSVCRT:cinitexe.obj
+ 0002:000000a8       __lzo1b_1_compress_func    100150a8     lzo1b_1.obj
+ 0002:000000ac       __lzo1b_2_compress_func    100150ac     lzo1b_2.obj
+ 0002:000000b0       __lzo1b_3_compress_func    100150b0     lzo1b_3.obj
+ 0002:000000b4       __lzo1b_4_compress_func    100150b4     lzo1b_4.obj
+ 0002:000000b8       __lzo1b_5_compress_func    100150b8     lzo1b_5.obj
+ 0002:000000bc       __lzo1b_6_compress_func    100150bc     lzo1b_6.obj
+ 0002:000000c0       __lzo1b_7_compress_func    100150c0     lzo1b_7.obj
+ 0002:000000c4       __lzo1b_8_compress_func    100150c4     lzo1b_8.obj
+ 0002:000000c8       __lzo1b_9_compress_func    100150c8     lzo1b_9.obj
+ 0002:000000cc       __lzo1b_99_compress_func   100150cc     lzo1b_99.obj
+ 0002:000000f4       __lzo1c_1_compress_func    100150f4     lzo1c_1.obj
+ 0002:000000f8       __lzo1c_2_compress_func    100150f8     lzo1c_2.obj
+ 0002:000000fc       __lzo1c_3_compress_func    100150fc     lzo1c_3.obj
+ 0002:00000100       __lzo1c_4_compress_func    10015100     lzo1c_4.obj
+ 0002:00000104       __lzo1c_5_compress_func    10015104     lzo1c_5.obj
+ 0002:00000108       __lzo1c_6_compress_func    10015108     lzo1c_6.obj
+ 0002:0000010c       __lzo1c_7_compress_func    1001510c     lzo1c_7.obj
+ 0002:00000110       __lzo1c_8_compress_func    10015110     lzo1c_8.obj
+ 0002:00000114       __lzo1c_9_compress_func    10015114     lzo1c_9.obj
+ 0002:00000118       __lzo1c_99_compress_func   10015118     lzo1c_99.obj
+ 0002:000007c8       ___lzo_copyright           100157c8     lzo_util.obj
+ 0002:000007d0       ??_C@_04HCNBLLKJ@2?403?$AA@ 100157d0     lzo_util.obj
+ 0002:000007d8       ??_C@_0M@BNDAPJCM@Apr?530?52008?$AA@ 100157d8     lzo_util.obj
+ 0002:000007e4       __pRawDllMain              100157e4     MSVCRT:crtdll.obj
+ 0002:000007e4       __pDefaultRawDllMain       100157e4     MSVCRT:crtdll.obj
+ 0002:000007f0       ___rtc_iaa                 100157f0     MSVCRT:_initsect_.obj
+ 0002:000007f4       ___rtc_izz                 100157f4     MSVCRT:_initsect_.obj
+ 0002:000007f8       ___rtc_taa                 100157f8     MSVCRT:_initsect_.obj
+ 0002:000007fc       ___rtc_tzz                 100157fc     MSVCRT:_initsect_.obj
+ 0002:00000864       __IMPORT_DESCRIPTOR_MSVCR90 10015864     MSVCRT:MSVCR90.dll
+ 0002:00000878       __IMPORT_DESCRIPTOR_KERNEL32 10015878     kernel32:KERNEL32.dll
+ 0002:0000088c       __NULL_IMPORT_DESCRIPTOR   1001588c     MSVCRT:MSVCR90.dll
+ 0003:00000000       ___security_cookie         10017000     MSVCRT:gs_cookie.obj
+ 0003:00000004       ___security_cookie_complement 10017004     MSVCRT:gs_cookie.obj
+ 0003:00000008       ___native_dllmain_reason   10017008     MSVCRT:natstart.obj
+ 0003:0000000c       ___native_vcclrit_reason   1001700c     MSVCRT:natstart.obj
+ 0003:00000010       ___lzo_init_done           10017010     lzo_init.obj
+ 0003:0000033c       __forceCRTManifestRTM      1001733c     MSVCRT:crtmanifestrtm.obj
+ 0003:00000340       ?__type_info_root_node@@3U__type_info_node@@A 10017340     MSVCRT:tncleanup.obj
+ 0003:00000348       __adjust_fdiv              10017348     <common>
+ 0003:0000034c       ___native_startup_state    1001734c     <common>
+ 0003:00000350       ___native_startup_lock     10017350     <common>
+ 0003:00000354       ___onexitend               10017354     <common>
+ 0003:00000358       ___onexitbegin             10017358     <common>
+ 0003:0000035c       ___dyn_tls_init_callback   1001735c     <common>
+
+ entry point at        0001:00013546
+
+ Static symbols
+
+ 0001:00000130       _store_run                 10001130 f   lzo1.obj
+ 0001:00000250       _do_compress               10001250 f   lzo1.obj
+ 0001:000004f0       _do_compress               100014f0 f   lzo1_99.obj
+ 0001:00000ad0       _store_run                 10001ad0 f   lzo1a.obj
+ 0001:00000be0       _do_compress               10001be0 f   lzo1a.obj
+ 0001:00000ec0       _do_compress               10001ec0 f   lzo1a_99.obj
+ 0001:00001330       _do_compress               10002330 f   lzo1b_1.obj
+ 0001:00001670       _do_compress               10002670 f   lzo1b_2.obj
+ 0001:00001a40       _do_compress               10002a40 f   lzo1b_3.obj
+ 0001:00001e60       _do_compress               10002e60 f   lzo1b_4.obj
+ 0001:00002290       _do_compress               10003290 f   lzo1b_5.obj
+ 0001:00002730       _do_compress               10003730 f   lzo1b_6.obj
+ 0001:00002c10       _do_compress               10003c10 f   lzo1b_7.obj
+ 0001:000030c0       _do_compress               100040c0 f   lzo1b_8.obj
+ 0001:00003670       _do_compress               10004670 f   lzo1b_9.obj
+ 0001:00003ab0       _do_compress               10004ab0 f   lzo1b_99.obj
+ 0001:00003ee0       _swd_insertdict            10004ee0 f   lzo1b_9x.obj
+ 0001:00003f60       _swd_init                  10004f60 f   lzo1b_9x.obj
+ 0001:00004080       _swd_getbyte               10005080 f   lzo1b_9x.obj
+ 0001:00004080       _swd_getbyte               10005080 f   lzo1b_9x.obj
+ 0001:00004080       _swd_getbyte               10005080 f   lzo1b_9x.obj
+ 0001:00004080       _swd_getbyte               10005080 f   lzo1b_9x.obj
+ 0001:00004100       _swd_accept                10005100 f   lzo1b_9x.obj
+ 0001:000041c0       _swd_search                100051c0 f   lzo1b_9x.obj
+ 0001:00004270       _swd_findbest              10005270 f   lzo1b_9x.obj
+ 0001:000043a0       _find_match                100053a0 f   lzo1b_9x.obj
+ 0001:00004430       _code_match                10005430 f   lzo1b_9x.obj
+ 0001:00005070       _do_compress               10006070 f   lzo1c_1.obj
+ 0001:000053e0       _do_compress               100063e0 f   lzo1c_2.obj
+ 0001:00005790       _do_compress               10006790 f   lzo1c_3.obj
+ 0001:00005be0       _do_compress               10006be0 f   lzo1c_4.obj
+ 0001:00006020       _do_compress               10007020 f   lzo1c_5.obj
+ 0001:00006450       _do_compress               10007450 f   lzo1c_6.obj
+ 0001:00006960       _do_compress               10007960 f   lzo1c_7.obj
+ 0001:00006dd0       _do_compress               10007dd0 f   lzo1c_8.obj
+ 0001:000073c0       _do_compress               100083c0 f   lzo1c_9.obj
+ 0001:00007820       _do_compress               10008820 f   lzo1c_99.obj
+ 0001:00007c80       _swd_insertdict            10008c80 f   lzo1c_9x.obj
+ 0001:00007c80       _swd_insertdict            10008c80 f   lzo1c_9x.obj
+ 0001:00007d30       _code_match                10008d30 f   lzo1c_9x.obj
+ 0001:000088a0       _do_compress               100098a0 f   lzo1f_1.obj
+ 0001:00008cd0       _swd_init                  10009cd0 f   lzo1f_9x.obj
+ 0001:00008cd0       _swd_init                  10009cd0 f   lzo1f_9x.obj
+ 0001:00008df0       _swd_accept                10009df0 f   lzo1f_9x.obj
+ 0001:00008df0       _swd_accept                10009df0 f   lzo1f_9x.obj
+ 0001:00008ec0       _swd_search                10009ec0 f   lzo1f_9x.obj
+ 0001:00008ec0       _swd_search                10009ec0 f   lzo1f_9x.obj
+ 0001:00008f80       _swd_findbest              10009f80 f   lzo1f_9x.obj
+ 0001:00008f80       _swd_findbest              10009f80 f   lzo1f_9x.obj
+ 0001:000090c0       _find_match                1000a0c0 f   lzo1f_9x.obj
+ 0001:000090c0       _find_match                1000a0c0 f   lzo1f_9x.obj
+ 0001:00009150       _code_match                1000a150 f   lzo1f_9x.obj
+ 0001:00009230       _STORE_RUN                 1000a230 f   lzo1f_9x.obj
+ 0001:00009bb0       _do_compress               1000abb0 f   lzo1x_1.obj
+ 0001:00009fe0       _do_compress               1000afe0 f   lzo1x_1k.obj
+ 0001:0000a400       _do_compress               1000b400 f   lzo1x_1l.obj
+ 0001:0000a810       _do_compress               1000b810 f   lzo1x_1o.obj
+ 0001:0000ac40       _swd_insertdict            1000bc40 f   lzo1x_9x.obj
+ 0001:0000ac40       _swd_insertdict            1000bc40 f   lzo1x_9x.obj
+ 0001:0000ac40       _swd_insertdict            1000bc40 f   lzo1x_9x.obj
+ 0001:0000ad20       _find_match                1000bd20 f   lzo1x_9x.obj
+ 0001:0000ad20       _find_match                1000bd20 f   lzo1x_9x.obj
+ 0001:0000ad20       _find_match                1000bd20 f   lzo1x_9x.obj
+ 0001:0000add0       _code_match                1000bdd0 f   lzo1x_9x.obj
+ 0001:0000afa0       _len_of_coded_match        1000bfa0 f   lzo1x_9x.obj
+ 0001:0000b030       _better_match              1000c030 f   lzo1x_9x.obj
+ 0001:0000c2b0       _copy3                     1000d2b0 f   lzo1x_o.obj
+ 0001:0000c2b0       _copy3                     1000d2b0 f   lzo1x_o.obj
+ 0001:0000c880       _do_compress               1000d880 f   lzo1y_1.obj
+ 0001:0000ccc0       _swd_remove_node           1000dcc0 f   lzo1y_9x.obj
+ 0001:0000ccc0       _swd_remove_node           1000dcc0 f   lzo1y_9x.obj
+ 0001:0000ccc0       _swd_remove_node           1000dcc0 f   lzo1y_9x.obj
+ 0001:0000cd40       _swd_accept                1000dd40 f   lzo1y_9x.obj
+ 0001:0000cd40       _swd_accept                1000dd40 f   lzo1y_9x.obj
+ 0001:0000cd40       _swd_accept                1000dd40 f   lzo1y_9x.obj
+ 0001:0000ce00       _swd_search2               1000de00 f   lzo1y_9x.obj
+ 0001:0000ce00       _swd_search2               1000de00 f   lzo1y_9x.obj
+ 0001:0000ce00       _swd_search2               1000de00 f   lzo1y_9x.obj
+ 0001:0000ce50       _swd_findbest              1000de50 f   lzo1y_9x.obj
+ 0001:0000ce50       _swd_findbest              1000de50 f   lzo1y_9x.obj
+ 0001:0000ce50       _swd_findbest              1000de50 f   lzo1y_9x.obj
+ 0001:0000cff0       _code_match                1000dff0 f   lzo1y_9x.obj
+ 0001:0000d1c0       _STORE_RUN                 1000e1c0 f   lzo1y_9x.obj
+ 0001:0000d1c0       _STORE_RUN                 1000e1c0 f   lzo1y_9x.obj
+ 0001:0000d270       _len_of_coded_match        1000e270 f   lzo1y_9x.obj
+ 0001:0000d300       _better_match              1000e300 f   lzo1y_9x.obj
+ 0001:0000eb30       _swd_initdict              1000fb30 f   lzo1z_9x.obj
+ 0001:0000eb30       _swd_initdict              1000fb30 f   lzo1z_9x.obj
+ 0001:0000eb30       _swd_initdict              1000fb30 f   lzo1z_9x.obj
+ 0001:0000eb90       _swd_init                  1000fb90 f   lzo1z_9x.obj
+ 0001:0000eb90       _swd_init                  1000fb90 f   lzo1z_9x.obj
+ 0001:0000eb90       _swd_init                  1000fb90 f   lzo1z_9x.obj
+ 0001:0000ece0       _swd_getbyte               1000fce0 f   lzo1z_9x.obj
+ 0001:0000ece0       _swd_getbyte               1000fce0 f   lzo1z_9x.obj
+ 0001:0000ece0       _swd_getbyte               1000fce0 f   lzo1z_9x.obj
+ 0001:0000ed90       _swd_search                1000fd90 f   lzo1z_9x.obj
+ 0001:0000ed90       _swd_search                1000fd90 f   lzo1z_9x.obj
+ 0001:0000ed90       _swd_search                1000fd90 f   lzo1z_9x.obj
+ 0001:0000ee80       _code_match                1000fe80 f   lzo1z_9x.obj
+ 0001:0000f080       _STORE_RUN                 10010080 f   lzo1z_9x.obj
+ 0001:0000f130       _len_of_coded_match        10010130 f   lzo1z_9x.obj
+ 0001:0000f1c0       _better_match              100101c0 f   lzo1z_9x.obj
+ 0001:00010510       _swd_insertdict            10011510 f   lzo2a_9x.obj
+ 0001:000105d0       _swd_init                  100115d0 f   lzo2a_9x.obj
+ 0001:00010710       _swd_remove_node           10011710 f   lzo2a_9x.obj
+ 0001:00010780       _swd_accept                10011780 f   lzo2a_9x.obj
+ 0001:00010880       _swd_search                10011880 f   lzo2a_9x.obj
+ 0001:00010940       _swd_findbest              10011940 f   lzo2a_9x.obj
+ 0001:00010a70       _find_match                10011a70 f   lzo2a_9x.obj
+ 0001:000131bb       _pre_c_init                100141bb f   MSVCRT:crtdll.obj
+ 0001:00013430       ___DllMainCRTStartup       10014430 f   MSVCRT:crtdll.obj
