@@ -17,6 +17,11 @@ using namespace std;
 //------------------------------------------------------------
 
 extern "C" {
+
+void tnz_abort(jmp_buf, int)
+{
+}
+
 void tnz_error_fun(png_structp pngPtr, png_const_charp error_message)
 {
 	*(int*)png_get_error_ptr(pngPtr) = 0;
@@ -27,10 +32,9 @@ void tnz_error_fun(png_structp pngPtr, png_const_charp error_message)
 TNZ_LITTLE_ENDIAN undefined !!
 #endif
 
-	//=========================================================
+//=========================================================
 
-	inline USHORT
-	mySwap(USHORT val)
+inline USHORT mySwap(USHORT val)
 {
 #if TNZ_LITTLE_ENDIAN
 	return ((val) | ((val & 0xff) << 8)); //((val>>8)|((val&0xff)<<8)); (vecchio codice)
@@ -56,27 +60,19 @@ class PngReader : public Tiio::Reader
 	int m_canDelete;
 public:
 	PngReader()
-		: m_chan(0), m_png_ptr(0), m_info_ptr(0), m_end_info_ptr(0), m_bit_depth(0), m_color_type(0), m_interlace_type(0), m_compression_type(0), m_filter_type(0), m_sig_read(0), m_y(0), m_is16bitEnabled(true), m_rowBuffer(0), m_tempBuffer(0), m_canDelete(1)
+		: m_chan(0), m_png_ptr(0), m_info_ptr(0), m_end_info_ptr(0), m_bit_depth(0), m_color_type(0), m_interlace_type(0), m_compression_type(0), m_filter_type(0), m_sig_read(0), m_y(0), m_is16bitEnabled(true), m_rowBuffer(0), m_tempBuffer(0), m_canDelete(0)
 	{
 	}
 
 	~PngReader()
 	{
 		if (m_canDelete == 1) {
-			try {
-				png_read_end(m_png_ptr, m_end_info_ptr);
-			} catch (...) {
-			}
-			try {
-				png_destroy_read_struct(&m_png_ptr, &m_info_ptr,
-										&m_end_info_ptr);
-			} catch (...) {
-			}
-		} //da quando leggiamo solo le info ho errori di tutti i tipi
+			png_destroy_read_struct(&m_png_ptr, &m_info_ptr, &m_end_info_ptr);
+		}
 		delete[] m_rowBuffer;
 		delete[] m_tempBuffer;
 	}
-
+	
 	virtual bool read16BitIsEnabled() const { return m_is16bitEnabled; }
 	virtual void enable16BitRead(bool enabled) { m_is16bitEnabled = enabled; }
 
@@ -102,6 +98,10 @@ public:
 			PNG_LIBPNG_VER_STRING, &m_canDelete, tnz_error_fun, 0);
 		if (!m_png_ptr)
 			return;
+
+		png_set_longjmp_fn(m_png_ptr, tnz_abort, sizeof(jmp_buf)); /* ignore all fatal errors */
+
+		m_canDelete = 1;
 		m_info_ptr = png_create_info_struct(m_png_ptr);
 		if (!m_info_ptr) {
 			png_destroy_read_struct(&m_png_ptr,
@@ -112,11 +112,6 @@ public:
 		if (!m_end_info_ptr) {
 			png_destroy_read_struct(&m_png_ptr,
 									&m_info_ptr, (png_infopp)0);
-			return;
-		}
-
-		if (setjmp(png_jmpbuf(m_png_ptr))) {
-			/* don't abort() even if an error has occured */
 			return;
 		}
 
@@ -140,13 +135,11 @@ public:
 		if (png_get_valid(m_png_ptr, m_info_ptr, PNG_INFO_pHYs)) {
 			png_uint_32 xdpi = png_get_x_pixels_per_meter(m_png_ptr, m_info_ptr);
 			png_uint_32 ydpi = png_get_y_pixels_per_meter(m_png_ptr, m_info_ptr);
-
 			m_info.m_dpix = tround(xdpi * 0.0254);
 			m_info.m_dpiy = tround(ydpi * 0.0254);
 		}
 
 		int rowBytes = png_get_rowbytes(m_png_ptr, m_info_ptr);
-
 		if (m_rowBuffer)
 			delete[] m_rowBuffer;
 		//m_rowBuffer = new unsigned char[rowBytes];
@@ -171,61 +164,41 @@ public:
 			m_rowBuffer = new unsigned char[rowBytes];
 		}
 
-		//if (m_interlace_type==1)
-		//    m_tempBuffer = new unsigned char[ly*rowBytes];
-
-		/* if (m_interlace_type==1)
-   {
-	   if (channels==1 || channels==2)
-	   {
-		   if (m_bit_depth < 8)                          // (m_bit_depth == 1 || m_bit_depth == 2 || m_bit_depth == 4)
-			   m_tempBuffer = new unsigned char[ly*lx*3];
-		   else
-			   m_tempBuffer = new unsigned char[ly*rowBytes*4];
-       }
-       else
-       {
-	       m_tempBuffer = new unsigned char[ly*rowBytes];
-       }     
-   }*/
-
-		/*if (m_color_type == PNG_COLOR_TYPE_PALETTE)
-	   {
-      png_destroy_read_struct(&m_png_ptr,
-           &m_info_ptr, (png_infopp)0);
-      return;
-     }*/
-
 		if (m_color_type == PNG_COLOR_TYPE_PALETTE) {
 			m_info.m_valid = true;
 			png_set_palette_to_rgb(m_png_ptr);
 		}
 
 		if (m_color_type == PNG_COLOR_TYPE_GRAY &&
-			m_bit_depth < 8)
+			m_bit_depth < 8) {
 			png_set_expand_gray_1_2_4_to_8(m_png_ptr);
+		}
 
-		if (png_get_valid(m_png_ptr, m_info_ptr,
-						  PNG_INFO_tRNS))
+		if (png_get_valid(m_png_ptr, m_info_ptr, PNG_INFO_tRNS)) {
 			png_set_tRNS_to_alpha(m_png_ptr);
+		}
 
-		if (m_bit_depth == 16 && !m_is16bitEnabled)
+		if (m_bit_depth == 16 && !m_is16bitEnabled) {
 			png_set_strip_16(m_png_ptr);
-
+		}
+	   
 #if defined(TNZ_MACHINE_CHANNEL_ORDER_BGRM)
 		if (m_color_type == PNG_COLOR_TYPE_RGB ||
-			m_color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+			m_color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
 			png_set_bgr(m_png_ptr);
+		}
 #elif defined(TNZ_MACHINE_CHANNEL_ORDER_MBGR)
-		if (m_color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+		if (m_color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
 			png_set_swap_alpha(m_png_ptr);
+		}
 #elif !defined(TNZ_MACHINE_CHANNEL_ORDER_RGBM) && !defined(TNZ_MACHINE_CHANNEL_ORDER_MRGB)
 		@unknow channel order
 #endif
 
 		if (m_color_type == PNG_COLOR_TYPE_GRAY ||
-			m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+			m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
 			png_set_gray_to_rgb(m_png_ptr);
+		}
 	}
 
 	void readLine(char *buffer, int x0, int x1, int shrink)
@@ -488,7 +461,6 @@ public:
 
 	void copyPixel(int count, int dstX, int dstDx, int dstY)
 	{
-
 		int channels = png_get_channels(m_png_ptr, m_info_ptr);
 		int rowBytes = png_get_rowbytes(m_png_ptr, m_info_ptr);
 		int lx = m_info.m_lx;
@@ -540,7 +512,6 @@ public:
 
 	void readLineInterlace(char *buffer, int x0, int x1, int shrink)
 	{
-
 		//m_png_ptr->row_number è l'indice di riga che scorre quando chiamo la png_read_row
 		int rowNumber = png_get_current_row_number(m_png_ptr);
 		//numRows è il numero di righe processate in ogni passo
@@ -627,7 +598,6 @@ public:
 
 	void readLineInterlace(short *buffer, int x0, int x1, int shrink)
 	{
-
 		//m_png_ptr->row_number è l'indice di riga che scorre quando chiamo la png_read_row
 		int rowNumber = png_get_current_row_number(m_png_ptr);
 		//numRows è il numero di righe processate in ogni passo
@@ -697,6 +667,7 @@ public:
 };
 
 //=========================================================
+
 
 Tiio::PngWriterProperties::PngWriterProperties()
 	: m_matte("Alpha Channel", true)
