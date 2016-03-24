@@ -61,6 +61,7 @@ StackedMenuBar::StackedMenuBar(QWidget *parent)
 void StackedMenuBar::createMenuBarByName(const QString &roomName)
 {
 	std::cout << "create " << roomName.toStdString() << std::endl;
+#if defined(_WIN32) || defined(_CYGWIN_)
 	if (roomName == "Cleanup")
 		createCleanupMenuBar();
 	else if (roomName == "PltEdit")
@@ -75,6 +76,10 @@ void StackedMenuBar::createMenuBarByName(const QString &roomName)
 		createBrowserMenuBar();
 	else /*-- どれにもあてはまらない場合は全てのコマンドの入ったメニューバーを作る --*/
 		createFullMenuBar();
+#else
+	/* OSX では stacked menu が動いていないのでとりあえず full のみ作成する */
+	createFullMenuBar();
+#endif
 }
 
 //---------------------------------------------------------------------------------
