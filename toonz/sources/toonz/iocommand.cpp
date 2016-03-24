@@ -1584,7 +1584,8 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	return false;
 #else
 	assert(sl);
-	if (!overwrite && TSystem::doesExistFileOrLevel(fp)) {
+	bool fileDoesExist = TSystem::doesExistFileOrLevel(fp);
+	if (!overwrite && fileDoesExist) {
 		QString question;
 		question = QObject::tr("The level %1 already exists.\nDo you want to overwrite it?").arg(toQString(fp));
 		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
@@ -1599,12 +1600,18 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	if (sl->getPalette() &&
 		sl->getPalette()->getAskOverwriteFlag() &&
 		sl->getPath().getType() != "pli") {
-		QString question;
-		question = "Palette " + QString::fromStdWString(sl->getPalette()->getPaletteName()) + ".tpl has been modified. Do you want to overwrite palette as well ?";
-		int ret = MsgBox(question,
-						 QObject::tr("Overwrite Palette") /*ret = 1*/, QObject::tr("Don't Overwrite Palette") /*ret = 2*/, 0);
-		if (ret == 1)
+		/*-- ファイルが存在しない場合はパレットも必ず保存する --*/
+		if (!fileDoesExist)
 			overwritePalette = true;
+		else
+		{
+			QString question;
+			question = "Palette " + QString::fromStdWString(sl->getPalette()->getPaletteName()) + ".tpl has been modified. Do you want to overwrite palette as well ?";
+			int ret = MsgBox(question,
+				QObject::tr("Overwrite Palette") /*ret = 1*/, QObject::tr("Don't Overwrite Palette") /*ret = 2*/, 0);
+			if (ret == 1)
+				overwritePalette = true;
+		}
 	}
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
