@@ -5203,7 +5203,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Replace Level after SaveLevelAs command</source>
-        <translation>レベルを別名で保存した後、レベルを置き換える</translation>
+        <translation type="vanished">レベルを別名で保存した後、レベルを置き換える</translation>
     </message>
     <message>
         <source>* Changes will take effect the next time you run Toonz</source>
@@ -5376,6 +5376,10 @@ Do you want to overwrite it?</source>
     <message>
         <source>Use Xsheet as Animation Sheet</source>
         <translation>タイムシートを動画シートとして用いる</translation>
+    </message>
+    <message>
+        <source>Replace Toonz Level after SaveLevelAs command</source>
+        <translation>Toonzレベルを別名で保存した後、レベルを置き換える</translation>
     </message>
 </context>
 <context>

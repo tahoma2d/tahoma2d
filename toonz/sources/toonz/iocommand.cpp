@@ -1596,7 +1596,8 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	// Confirmation of Overwrite palette
 	// open dialog IF  1) the level is dirty, and 2) confirmation of overwrite palette haven't been asked
 	// for PLI file, do nothing
-	if (sl->getPalette()->getAskOverwriteFlag() &&
+	if (sl->getPalette() &&
+		sl->getPalette()->getAskOverwriteFlag() &&
 		sl->getPath().getType() != "pli") {
 		QString question;
 		question = "Palette " + QString::fromStdWString(sl->getPalette()->getPaletteName()) + ".tpl has been modified. Do you want to overwrite palette as well ?";
