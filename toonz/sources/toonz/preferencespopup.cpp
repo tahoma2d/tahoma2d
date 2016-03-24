@@ -840,7 +840,7 @@ PreferencesPopup::PreferencesPopup()
 	CheckBox *minimizeRasterMemoryCB = new CheckBox(tr("Minimize Raster Memory Fragmentation *"), this);
 	CheckBox *autoSaveCB = new CheckBox(tr("Save Automatically Every Minutes"));
 	m_minuteFld = new IntLineEdit(this, 15, 1, 60);
-	CheckBox *replaceAfterSaveLevelAsCB = new CheckBox(tr("Replace Level after SaveLevelAs command"), this);
+	CheckBox *replaceAfterSaveLevelAsCB = new CheckBox(tr("Replace Toonz Level after SaveLevelAs command"), this);
 
 	m_cellsDragBehaviour = new QComboBox();
 	m_undoMemorySize = new DVGui::IntLineEdit(this, m_pref->getUndoMemorySize(), 0, 2000);

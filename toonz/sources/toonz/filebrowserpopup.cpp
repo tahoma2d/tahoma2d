@@ -1371,7 +1371,9 @@ bool SaveLevelAsPopup::execute()
 
 	// ask whether to expose the saved level in xsheet
 	bool doExpose = true;
-	if (ret && !Preferences::instance()->isReplaceAfterSaveLevelAsEnabled()) {
+	if (levelToBeReplaced->getType()& FULLCOLOR_TYPE)
+		doExpose = false;
+	else if (ret && !Preferences::instance()->isReplaceAfterSaveLevelAsEnabled()) {
 		QString question(QObject::tr("Do you want to expose the renamed level ?"));
 		int val = MsgBox(question,
 						 QObject::tr("Expose"),			  //val = 1
