@@ -199,6 +199,12 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
+if (MSVC AND MSVC_VERSION EQUAL 1800)
+    # Visual C++ 2013 cannot handle UTF-8 without BOM
+    # Non-ascii characters in comments would not be a problem
+    add_compile_options("/wd4819")
+endif()
+
 # generate Qt translations and messages
 set(LANGUAGES japanese italian french)
 
