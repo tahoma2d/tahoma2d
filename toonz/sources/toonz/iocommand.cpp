@@ -1600,7 +1600,7 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	if (sl->getPalette() &&
 		sl->getPalette()->getAskOverwriteFlag() &&
 		sl->getPath().getType() != "pli") {
-		/*--  --*/
+		/*-- ファイルが存在しない場合はパレットも必ず保存する --*/
 		if (!fileDoesExist)
 			overwritePalette = true;
 		else
