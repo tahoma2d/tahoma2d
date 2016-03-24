@@ -339,7 +339,7 @@ void initToonzEnv()
 
 int main(int argc, char *argv[])
 {
-#ifdef WIN32
+#ifdef Q_OS_WIN
 	//  Enable standard input/output on Windows Platform for debug
 	BOOL consoleAttached = ::AttachConsole(ATTACH_PARENT_PROCESS);
 	if (consoleAttached) {
@@ -363,6 +363,12 @@ int main(int argc, char *argv[])
 	}
 
 	QApplication a(argc, argv);
+
+#ifdef Q_OS_WIN
+	//	Since currently OpenToonz does not work with OpenGL of software or angle,
+	//	force Qt to use desktop OpenGL
+	a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
+#endif
 
 	// Some Qt objects are destroyed badly withouth a living qApp. So, we must enforce a way to either
 	// postpone the application destruction until the very end, OR ensure that sensible objects are
