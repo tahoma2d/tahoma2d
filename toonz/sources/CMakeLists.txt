@@ -79,7 +79,7 @@ find_package(Qt5 REQUIRED
 if(WIN32)
     include_directories(
         ${SDKROOT}/glut/3.7.6/include
-        ${SDKROOT}/zlib/zlib-1.2.7
+        ${SDKROOT}/zlib-1.2.8
         ${SDKROOT}/LibJPEG/jpeg-9)
     add_definitions(-DGLUT_NO_LIB_PRAGMA)
 endif()
@@ -118,8 +118,8 @@ if(WIN32)
     set(GLUT_LIB ${SDKROOT}/glut/3.7.6/lib/glut${PLATFORM}.lib)
     set(GL_LIB opengl32.lib)
     set(Z_LIB
-        optimized ${SDKROOT}/zlib/zlib-1.2.7/lib/zlib-1.2.7${PLATFORM2}.lib
-        debug ${SDKROOT}/zlib/zlib-1.2.7/lib/zlib-1.2.7${PLATFORM2}d.lib)
+        optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8${PLATFORM2}.lib
+        debug ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8${PLATFORM2}d.lib)
     set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9${PLATFORM2}.lib)
     set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.0.3/libtiff)
     set(TIFF_LIB
