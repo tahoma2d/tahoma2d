@@ -180,8 +180,8 @@ public:
 	bool setParamStructure(int n, toonz_param_page_t *descs, int &err, void *&pos);
 	bool addPortDesc(port_description_t &&);
 
-	Param *createParam(const toonz_param_desc_t *, bool fromclone = false);
-	Param *createParam(const char *name, toonz_param_type_enum e, bool fromclone = false);
+	Param *createParam(const toonz_param_desc_t *);
+	Param *createParam(const char *name, toonz_param_type_enum e);
 	Param *getParam(const char *name) const;
 	ParamView *createParamView();
 

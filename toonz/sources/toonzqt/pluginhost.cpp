@@ -450,7 +450,7 @@ TFx *RasterFxPluginHost::clone(bool recursive) const
 	/* ui_pages_, param_views_ は pi に移ったが createParam の呼び出しだけはしておかないと Fx Settings 構築時に assert failed になる */
 	for (auto const &param : params_) {
 		/* 古い createParam() は desc をとらず、コンストラクト時にデフォルト値を持つタイプの T*Param を再作成できない */
-		plugin->createParam(param->desc(), true);
+		plugin->createParam(param->desc());
 	}
 
 	return TFx::clone(plugin, recursive);
@@ -606,17 +606,17 @@ UIPage *RasterFxPluginHost::createUIPage(const char *name)
 }
 
 // deprecated. for migration.
-Param *RasterFxPluginHost::createParam(const char *name, toonz_param_type_enum e, bool fromclone)
+Param *RasterFxPluginHost::createParam(const char *name, toonz_param_type_enum e)
 {
 	toonz_param_desc_t *desc = new toonz_param_desc_t;
 	memset(desc, 0, sizeof(toonz_param_desc_t));
 	desc->base.ver = {1, 0};
 	desc->key = name;
 	desc->traits_tag = e;
-	return createParam(desc, fromclone);
+	return createParam(desc);
 }
 
-Param *RasterFxPluginHost::createParam(const toonz_param_desc_t *desc, bool fromclone)
+Param *RasterFxPluginHost::createParam(const toonz_param_desc_t *desc)
 {
 	TParamP p = parameter_factory(desc);
 	if (!p)
@@ -627,13 +627,8 @@ Param *RasterFxPluginHost::createParam(const toonz_param_desc_t *desc, bool from
 
 	bindParam(this, desc->key, p);
 
-	/* pi は永続性があるので clone から呼ばれた場合は書き換えない */
-	if (!fromclone) {
-		// add to a map
-		params_.push_back(std::make_shared<Param>(this, desc->key, toonz_param_type_enum(desc->traits_tag), desc));
-		return params_.back().get();
-	}
-	return nullptr;
+	params_.push_back(std::make_shared<Param>(this, desc->key, toonz_param_type_enum(desc->traits_tag), desc));
+	return params_.back().get();
 }
 
 Param *RasterFxPluginHost::getParam(const char *name) const
