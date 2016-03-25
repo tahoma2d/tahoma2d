@@ -1,1 +1,1 @@
-Copy QT73SDK to this directory.
+Copy folders in 'C:\Program Files (x86)\QuickTime SDK' to QT73SDK
