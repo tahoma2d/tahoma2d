@@ -21,7 +21,7 @@ https://opentoonz.github.io/ から最新版のインストーラーをダウン
 ### ライセンス
 
 - thirdpartyディレクトリ以外のファイル
-  - [修正BSD License](LICENSE.txt)
+  - [修正BSDライセンス](LICENSE.txt)
   - ライセンスに基づき、商用・非商用問わず、自由にソフトウェアの利用やソースコードの改変ができます
 - thirdpartyディレクトリ内のファイル
   - 各ディレクトリ内のREADMEやソースコードに記載されたライセンスに従ってください
