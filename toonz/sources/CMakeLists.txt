@@ -154,9 +154,6 @@ else()
     set(SUPERLU_LIB ${SUPERLU_LIBRARY})
     message("SuperLU:" ${SUPERLU_INCLUDE_DIR})
 
-    find_package(LZO REQUIRED)
-    message("LZO:" ${LZO_INCLUDE_DIR})
-
     find_package(JPEG REQUIRED)
 
     # the libraries have .pc
@@ -182,6 +179,9 @@ else()
 
     set(JPEG_LIB ${JPEG_LIBRARY})
     set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
+
+    find_package(LZO REQUIRED)
+    message("LZO:" ${LZO_INCLUDE_DIR})
 endif()
 
 find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
@@ -231,11 +231,7 @@ add_subdirectory(toonzqt)
 add_subdirectory(tnztools)
 add_subdirectory(toonz)
 
-find_path(LZODRIVER lzodriver HINTS ${THIRDPARTY_LIBS_HINTS})
-if(LZODRIVER-FOUND)
-    set(LZODRIVER-FOUND true)
-    add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
-endif()
+add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
 
 add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)

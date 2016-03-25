@@ -10,7 +10,7 @@
 
 /* portability layer */
 #define WANT_LZO_MALLOC 1
-#include "examples/portab.h"
+#include "lzo/lzoutil.h"
 #include <fcntl.h>
 
 
