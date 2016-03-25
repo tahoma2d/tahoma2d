@@ -1,5 +1,5 @@
-#ifndef TOONZ_PLUGIN_HELPER_RECT_H__
-#define TOONZ_PLUGIN_HELPER_RECT_H__
+#ifndef TOONZ_PLUGIN_HELPER_UTILS_RECT_HPP__
+#define TOONZ_PLUGIN_HELPER_UTILS_RECT_HPP__
 
 #include <algorithm>
 #include <cmath>

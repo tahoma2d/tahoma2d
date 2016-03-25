@@ -4,8 +4,8 @@
 #include <memory>
 #include <cmath>
 #include <limits>
-#include "toonz_plugin_helper_rect.h"
-#include "toonz_plugin_helper_affine.h"
+#include <utils/rect.hpp>
+#include <utils/affine.hpp>
 #include <utils/interf_holder.hpp>
 #include <utils/param_traits.hpp>
 

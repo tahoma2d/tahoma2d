@@ -5,8 +5,8 @@
 #include <cmath>
 #include <vector>
 #include "pixelop.hpp"
-#include "toonz_plugin_helper_rect.h"
 
+#include <utils/rect.hpp>
 #include <utils/interf_holder.hpp>
 #include <utils/param_traits.hpp>
 

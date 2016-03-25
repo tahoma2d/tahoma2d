@@ -1,11 +1,12 @@
-#ifndef TOONZ_PLUGIN_HELPER_AFFINE_H__
-#define TOONZ_PLUGIN_HELPER_AFFINE_H__
+#ifndef TOONZ_PLUGIN_HELPER_UTILS_AFFINE_HPP__
+#define TOONZ_PLUGIN_HELPER_UTILS_AFFINE_HPP__
 
 #include <cmath>
 #include <cfloat>
 #include <cassert>
-#include "toonz_plugin_helper_rect.h"
-#include "toonz_hostif.h"
+#include <toonz_hostif.h>
+#include "rect.hpp"
+
 class ToonzAffine
 {
 public:
