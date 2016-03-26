@@ -1061,11 +1061,19 @@ Tiio::AviWriterProperties::AviWriterProperties()
 				if (!rc)
 					break;
 				HIC hic = 0;
+#ifdef _MSC_VER
+				[&](){
+					__try {
+						hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_QUERY);
+					} __except (EXCEPTION_EXECUTE_HANDLER) {
+					}
+				}();
+#else
 				try {
 					hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_QUERY);
 				} catch (...) {
-					continue;
 				}
+#endif
 				if (hic) {
 					if (ICGetInfo(hic, &icinfo, sizeof(ICINFO)) == 0) // Find out the compressor name
 					{
