@@ -124,13 +124,13 @@ TVectorImageP MyInbetweener::tween(double t)
 }
 
 //=============================================================================
-// UndoInbeteween
+// UndoInbetween
 //-----------------------------------------------------------------------------
 
 namespace
 {
 
-class UndoInbeteween : public TUndo
+class UndoInbetween : public TUndo
 {
 	TXshSimpleLevelP m_level;
 	vector<TFrameId> m_fids;
@@ -138,7 +138,7 @@ class UndoInbeteween : public TUndo
 	FilmstripCmd::InbetweenInterpolation m_interpolation;
 
 public:
-	UndoInbeteween(
+	UndoInbetween(
 		TXshSimpleLevel *xl,
 		std::vector<TFrameId> fids,
 		FilmstripCmd::InbetweenInterpolation interpolation)
@@ -252,7 +252,7 @@ void FilmstripCmd::inbetween(TXshSimpleLevel *sl,
 			fids.push_back(*it);
 	}
 
-	TUndoManager::manager()->add(new UndoInbeteween(sl, fids, interpolation));
+	TUndoManager::manager()->add(new UndoInbetween(sl, fids, interpolation));
 
 	inbetweenWithoutUndo(sl, fid0, fid1, interpolation);
 	TApp::instance()->getCurrentScene()->setDirtyFlag(true);
