@@ -86,7 +86,7 @@ set(SOURCES
     ../common/txsheet/tcolumnset.cpp
     ../common/tfx/binaryFx.cpp
     texternfx.cpp
-    ../common/TFx/tfx.cpp
+    ../common/tfx/tfx.cpp
     ../common/tfx/tfxcachemanager.cpp
     ../common/tfx/tcacheresource.cpp
     ../common/tfx/tcacheresourcepool.cpp
@@ -98,7 +98,7 @@ set(SOURCES
     trasterfx.cpp
     ../common/tfx/trenderer.cpp
     ../common/tfx/trenderresourcemanager.cpp
-    ../common/TFx/ttzpimagefx.cpp
+    ../common/tfx/ttzpimagefx.cpp
     ../common/tfx/unaryFx.cpp
     ../common/tfx/zeraryFx.cpp
     ../common/tapptools/tcli.cpp
