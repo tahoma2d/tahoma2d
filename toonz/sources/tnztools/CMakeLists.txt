@@ -69,7 +69,7 @@ set(SOURCES
     rastererasertool.cpp
     rastertapetool.cpp
     rasterselectiontool.cpp
-    RGBpickertool.cpp
+    rgbpickertool.cpp
     selectiontool.cpp
     setsaveboxtool.cpp
     skeletonsubtools.cpp
