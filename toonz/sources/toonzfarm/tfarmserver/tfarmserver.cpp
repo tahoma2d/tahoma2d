@@ -49,6 +49,10 @@ using namespace std;
 #include <sys/sysctl.h> //To retrieve MAC HW infos
 #endif
 
+#ifdef LINUX
+#include <sys/sysctl.h> //For getting total memory
+#endif
+
 // forward declaration
 class FarmServer;
 
@@ -693,14 +697,24 @@ void FarmServer::queryHwInfo(HwInfo &hwInfo)
 	hwInfo.m_type = Irix;
 #else
 
-	int mib[2];
 	TINT64 physMemSize;
+
+#ifdef MACOSX
+	int mib[2];
 	size_t len;
 
 	mib[0] = CTL_HW;
 	mib[1] = HW_MEMSIZE;
 	len = sizeof(physMemSize);
 	sysctl(mib, 2, &physMemSize, &len, NULL, 0);
+
+#elif defined(LINUX)
+	physMemSize = (TINT64)sysconf(_SC_PHYS_PAGES) * (TINT64)sysconf(_SC_PAGE_SIZE);
+
+#else
+#warning "Unsupported platform!"
+	physMemSize = 500000000;
+#endif
 
 	hwInfo.m_cpuCount = TSystem::getProcessorCount();
 
