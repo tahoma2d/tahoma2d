@@ -15,7 +15,7 @@
 #include "tmsg.h"
 #include "copP.h"*/
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #define TRUE 1
 #define FALSE 0
 #endif

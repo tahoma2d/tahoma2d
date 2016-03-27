@@ -97,6 +97,11 @@
  * Platform Dependent Definitions and Typedefs                              *
  ****************************************************************************/
 
+
+#ifdef LINUX
+#include <wchar.h>
+#endif
+
 /* Microsoft C/C++ Compiler */
 #if defined(WIN32) || defined(WIN64) || defined(_WINDOWS)
 #define TWH_CMP_MSC

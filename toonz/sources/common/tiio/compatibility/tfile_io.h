@@ -9,7 +9,7 @@ extern "C" {
 
 #include <stdio.h>
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #include <stddef.h>
 #endif
 

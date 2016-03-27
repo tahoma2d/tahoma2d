@@ -13,6 +13,10 @@ extern "C" {
 #include <stddef.h>
 #endif
 
+#ifdef LINUX
+#include <wchar.h>
+#endif
+
 char *convertWCHAR2CHAR(const wchar_t *fname);
 
 #if defined(MACOSX) || defined(LINUX)
