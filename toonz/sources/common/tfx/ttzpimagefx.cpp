@@ -5,17 +5,13 @@
 
 #include "ttzpimagefx.h"
 
-#ifdef LINUX
-#define strtok_s strtok_r
-#endif
-
 //**********************************************************************************************
 //    Global  functions
 //**********************************************************************************************
 
 void parseIndexes(string indexes, vector<string> &items)
 {
-#ifndef MACOSX
+#ifdef WIN32
 	char seps[] = " ,;";
 	char *token;
 	if (indexes == "all" || indexes == "All" || indexes == "ALL")
@@ -43,7 +39,7 @@ void parseIndexes(string indexes, vector<string> &items)
 
 void insertIndexes(vector<string> items, PaletteFilterFxRenderData *t)
 {
-#ifndef MACOSX
+#ifdef WIN32
 	for (int i = 0; i < (int)items.size(); i++) {
 		char *starttoken, *endtoken;
 		char subseps[] = "-";
