@@ -5,8 +5,8 @@
 
 #include "tcommon.h"
 #include "tfilepath.h"
-#include <qstring>
-#include <qdatetime>
+#include <QString>
+#include <QDateTime>
 #include <map>
 #include <set>
 

@@ -4,7 +4,7 @@
 //#include "tfilepath.h"
 #include "tfilepath_io.h"
 
-#include <qdatetime>
+#include <QDateTime>
 
 #ifdef WIN32
 #pragma warning(disable : 4996)

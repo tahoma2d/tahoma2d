@@ -3,7 +3,7 @@
 #ifndef TFARMTASK_H
 #define TFARMTASK_H
 
-#include <qdatetime>
+#include <QDateTime>
 #include "tpersist.h"
 #include "tfarmplatforms.h"
 #include "tfilepath.h"

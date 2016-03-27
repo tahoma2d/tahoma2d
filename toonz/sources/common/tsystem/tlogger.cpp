@@ -8,7 +8,7 @@
 #include <fstream>
 #include <set>
 #include <vector>
-#include <qtime>
+#include <QTimer>
 
 using std::endl;
 

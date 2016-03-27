@@ -30,7 +30,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QApplication>
-#include <QMainwindow>
+#include <QMainWindow>
 #include <QPainter>
 
 using namespace DVGui;

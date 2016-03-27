@@ -7,7 +7,7 @@
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/tobjecthandle.h"
-#include "toonz/cleanupParameters.h"
+#include "toonz/cleanupparameters.h"
 #include "sceneviewer.h"
 #include "ruler.h"
 

@@ -15,7 +15,7 @@
 // TnzLib includes
 #include "toonz/txsheet.h"
 #include "toonz/toonzscene.h"
-#include "toonz/levelSet.h"
+#include "toonz/levelset.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshcell.h"

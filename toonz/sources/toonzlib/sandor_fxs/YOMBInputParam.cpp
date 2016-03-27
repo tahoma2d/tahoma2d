@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <search.h>
-#include "YombInputParam.h"
+#include "YOMBInputParam.h"
 //#include "tmsg.h"
 #ifdef WIN32
 #pragma warning(disable : 4996)
