@@ -3,10 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <memory>
-
-#if defined(LINUX)
 #include <cstring>
-#endif
 
 //blasint may either be common 4 bytes or extended 8 (long)...
 //Replace this and REBUILD the CBLAS with extended int if needed.
