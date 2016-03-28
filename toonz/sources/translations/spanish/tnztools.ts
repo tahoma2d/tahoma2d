@@ -5,996 +5,997 @@
     <name>ArrowToolOptionsBox</name>
     <message>
         <source>Pick:</source>
-        <translation type="unfinished">Seleziona Automaticamente:</translation>
+        <translation>Escoger:</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished">Posizione</translation>
+        <translation>Posición</translation>
     </message>
     <message>
         <source>E/W:</source>
-        <translation type="unfinished">E/O:</translation>
+        <translation>E/O:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation type="unfinished">N/S:</translation>
+        <translation>N/S:</translation>
     </message>
     <message>
         <source>Z:</source>
-        <translation type="unfinished">Z:</translation>
+        <translation>Z:</translation>
     </message>
     <message>
         <source>SO:</source>
-        <translation type="unfinished">OS:</translation>
+        <translation>OS:</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished">Ruotazione</translation>
+        <translation>Rotación</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation type="unfinished">Scala</translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <source>Global:</source>
-        <translation type="unfinished">Globale:</translation>
+        <translation>Global:</translation>
     </message>
     <message>
         <source>H:</source>
-        <translation type="unfinished">O:</translation>
+        <translation>H:</translation>
     </message>
     <message>
         <source>V:</source>
-        <translation type="unfinished">V:</translation>
+        <translation>V:</translation>
     </message>
     <message>
         <source>Maintain:</source>
-        <translation type="unfinished">Mantieni:</translation>
+        <translation>Mantener:</translation>
     </message>
     <message>
         <source>Shear</source>
-        <translation type="unfinished">Inclina</translation>
+        <translation>Inclinar</translation>
     </message>
     <message>
         <source>Center</source>
-        <translation type="unfinished">Centro</translation>
+        <translation>Centrar</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="unfinished">Blocca</translation>
+        <translation>Bloquear</translation>
     </message>
     <message>
         <source>(</source>
-        <translation type="unfinished"></translation>
+        <translation>(</translation>
     </message>
     <message>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
     <message>
         <source>Center Position</source>
-        <translation type="unfinished">Posizione del Centro</translation>
+        <translation>Centrar posición</translation>
     </message>
 </context>
 <context>
     <name>BrushTool</name>
     <message>
         <source>Thickness</source>
-        <translation type="unfinished">Spessore</translation>
+        <translation>Grosor</translation>
     </message>
     <message>
         <source>Hardness:</source>
-        <translation type="unfinished">Durezza:</translation>
+        <translation>Dureza:</translation>
     </message>
     <message>
         <source>Accuracy:</source>
-        <translation type="unfinished">Accuratezza:</translation>
+        <translation>Precisión:</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">Pennello Predefinito:</translation>
+        <translation>Ajuste:</translation>
     </message>
     <message>
         <source>Break Sharp Angles</source>
-        <translation type="unfinished">Spezza negli Angoli Acuti</translation>
+        <translation>Quebrar ángulos agudos</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation type="unfinished">Modalità Matita</translation>
+        <translation>Modo de la pluma</translation>
     </message>
     <message>
         <source>Pressure Sensitivity</source>
-        <translation type="unfinished">Sensibilità alla Pressione</translation>
+        <translation>Sensibilidad a la presión</translation>
     </message>
     <message>
         <source>Cap</source>
-        <translation type="unfinished">Estremo</translation>
+        <translation>Extremo</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation type="unfinished">Angolo</translation>
+        <translation>Unión</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation type="unfinished">Smusso:</translation>
+        <translation>Inglete:</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño</translation>
     </message>
     <message>
         <source>Break</source>
-        <translation type="unfinished"></translation>
+        <translation>Quebrar</translation>
     </message>
     <message>
         <source>Pencil</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluma</translation>
     </message>
     <message>
         <source>Pressure</source>
-        <translation type="unfinished"></translation>
+        <translation>Presión</translation>
     </message>
 </context>
 <context>
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del ajuste</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>ControlPointEditorTool</name>
     <message>
         <source>Auto Select Drawing</source>
-        <translation type="unfinished">Selezione Automatica dei Disegni</translation>
+        <translation>Seleccionar dibujo automáticamente</translation>
     </message>
 </context>
 <context>
     <name>ControlPointSelection</name>
     <message>
         <source>Set Linear Control Point</source>
-        <translation type="unfinished">Imposta un punto di Controllo Lineare</translation>
+        <translation>Definir punto de control lineal</translation>
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation type="unfinished">Imposta un punto di Controllo Non Lineare</translation>
+        <translation>Definir punto de control no lineal</translation>
     </message>
 </context>
 <context>
     <name>EditTool</name>
     <message>
         <source>Scale Constraint:</source>
-        <translation type="unfinished">Costrizione della Scala:</translation>
+        <translation>Restringir escala:</translation>
     </message>
     <message>
         <source>Auto Select Column</source>
-        <translation type="unfinished">Selezione Automatica della Colonna</translation>
+        <translation>Seleccionar columna automáticamente</translation>
     </message>
     <message>
         <source>Global Key</source>
-        <translation type="unfinished">Chiave Globale</translation>
+        <translation>Clave global</translation>
     </message>
     <message>
         <source>Lock Center E/W</source>
-        <translation type="unfinished">Blocca il Centro E/O</translation>
+        <translation>Bloquear al centro E/O</translation>
     </message>
     <message>
         <source>Lock Center N/S</source>
-        <translation type="unfinished">Blocca il Centro N/S</translation>
+        <translation>Bloquear al centro N/S</translation>
     </message>
     <message>
         <source>Lock Position E/W</source>
-        <translation type="unfinished">Blocca la Posizione E/O</translation>
+        <translation>Bloquear posición E/O</translation>
     </message>
     <message>
         <source>Lock Position N/S</source>
-        <translation type="unfinished">Blocca la Posizione N/S</translation>
+        <translation>Bloquear posición N/S</translation>
     </message>
     <message>
         <source>Lock Rotation</source>
-        <translation type="unfinished">Blocca la Rotazione</translation>
+        <translation>Bloquear rotación</translation>
     </message>
     <message>
         <source>Lock Shear H</source>
-        <translation type="unfinished">Blocca l&apos;Inclinazione O</translation>
+        <translation>Bloquear inclinación H</translation>
     </message>
     <message>
         <source>Lock Shear V</source>
-        <translation type="unfinished">Blocca l&apos;Inclinazione V</translation>
+        <translation>Bloquear inclinación V</translation>
     </message>
     <message>
         <source>Lock Scale H</source>
-        <translation type="unfinished">Blocca la Scalatura O</translation>
+        <translation>Bloquear escala H</translation>
     </message>
     <message>
         <source>Lock Scale V</source>
-        <translation type="unfinished">Blocca la Scalatura V</translation>
+        <translation>Bloquear escala V</translation>
     </message>
     <message>
         <source>Lock Global Scale</source>
-        <translation type="unfinished">Blocca la Scalatura Globale</translation>
+        <translation>Bloquear escala global</translation>
     </message>
     <message>
         <source>E/W and N/S Positions</source>
-        <translation type="unfinished">Posizioni E/O e N/S</translation>
+        <translation>Posiciones E/O y N/S</translation>
     </message>
     <message>
         <source>Z Position</source>
-        <translation type="unfinished">Posizione Z</translation>
+        <translation>Posición Z</translation>
     </message>
     <message>
         <source>SO</source>
-        <translation type="unfinished">OS</translation>
+        <translation>OS</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished">Rotazione</translation>
+        <translation>Rotación</translation>
     </message>
     <message>
         <source>Global Scale</source>
-        <translation type="unfinished">Scala Globale</translation>
+        <translation>Escala global</translation>
     </message>
     <message>
         <source>Horizontal and Vertical Scale</source>
-        <translation type="unfinished">Scala Orizzontale e Verticale</translation>
+        <translation>Escala horizontal y vertical</translation>
     </message>
     <message>
         <source>Shear</source>
-        <translation type="unfinished">Inclinazione</translation>
+        <translation>Inclinación</translation>
     </message>
     <message>
         <source>Center Position</source>
-        <translation type="unfinished">Posizione del Centro</translation>
+        <translation>Centrar posición</translation>
     </message>
     <message>
         <source>Active Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Eje activo</translation>
     </message>
 </context>
 <context>
     <name>EraserTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Hardness:</source>
-        <translation type="unfinished">Durezza:</translation>
+        <translation>Dureza:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Invertir</translation>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation type="unfinished">Modalità Matita</translation>
+        <translation>Modo de la pluma</translation>
     </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
         <source>Frame Range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Onion Skin</source>
-        <translation type="unfinished">Onion Skin</translation>
+        <translation>Piel de cebolla</translation>
     </message>
     <message>
         <source>Fill Depth</source>
-        <translation type="unfinished">Profondità di Riempimento</translation>
+        <translation>Profundidad de relleno</translation>
     </message>
     <message>
         <source>Segment</source>
-        <translation type="unfinished">Segmento</translation>
+        <translation>Segmento</translation>
     </message>
 </context>
 <context>
     <name>FingerTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Invertir</translation>
     </message>
 </context>
 <context>
     <name>FullColorBrushTool</name>
     <message>
         <source>Thickness</source>
-        <translation type="unfinished">Spessore</translation>
+        <translation>Grosor</translation>
     </message>
     <message>
         <source>Pressure Sensitivity</source>
-        <translation type="unfinished">Sensibilità alla Pressione</translation>
+        <translation>Sensibilidad a la presión</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacità:</translation>
+        <translation>Opacidad:</translation>
     </message>
     <message>
         <source>Hardness:</source>
-        <translation type="unfinished">Durezza:</translation>
+        <translation>Dureza:</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">Impostazioni Predefinite:</translation>
+        <translation>Ajuste:</translation>
     </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensioni:</translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacità:</translation>
+        <translation>Opacidad:</translation>
     </message>
     <message>
         <source>Hardness:</source>
-        <translation type="unfinished">Durezza:</translation>
+        <translation>Dureza:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Invertir</translation>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
 </context>
 <context>
     <name>HookTool</name>
     <message>
         <source>Snap</source>
-        <translation type="unfinished">Calamita</translation>
+        <translation>Adherir</translation>
     </message>
 </context>
 <context>
     <name>MagnetTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
 </context>
 <context>
     <name>PaintBrushTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
 </context>
 <context>
     <name>PinchTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Corner:</source>
-        <translation type="unfinished">Angolo:</translation>
+        <translation>Ángulo:</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">Manuale</translation>
+        <translation>Manual</translation>
     </message>
 </context>
 <context>
     <name>PlasticTool</name>
     <message>
         <source>Build Skeleton</source>
-        <translation type="unfinished">Costruire Scheletro</translation>
+        <translation>Crear esqueleto</translation>
     </message>
     <message>
         <source>Paint Rigid</source>
-        <translation type="unfinished">Disegnare Rigidità</translation>
+        <translation>Pintar rigidez</translation>
     </message>
     <message>
         <source>Animate</source>
-        <translation type="unfinished">Animare</translation>
+        <translation>Animar</translation>
     </message>
     <message>
         <source>Rigid</source>
-        <translation type="unfinished">Rigido</translation>
+        <translation>Rígido</translation>
     </message>
     <message>
         <source>Flex</source>
-        <translation type="unfinished">Flessibile</translation>
+        <translation>Flexible</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Vertex Name:</source>
-        <translation type="unfinished">Nome Vertice</translation>
+        <translation>Nombre del vértice:</translation>
     </message>
     <message>
         <source>Allow Stretching</source>
-        <translation type="unfinished">Permettere Estensione</translation>
+        <translation>Permitir estiramiento</translation>
     </message>
     <message>
         <source>Thickness</source>
-        <translation type="unfinished">Spessore</translation>
+        <translation>Grosor</translation>
     </message>
     <message>
         <source>Keep Distance</source>
-        <translation type="unfinished">Mantenere Distanza</translation>
+        <translation>Mantener distancia</translation>
     </message>
     <message>
         <source>Global Key</source>
-        <translation type="unfinished">Chiave Globale</translation>
+        <translation>Clave global</translation>
     </message>
     <message>
         <source>A group of skeletons already exists for current column. Replacing it will also substitute any existing vertex animation.
 
 Do you want to continue?</source>
-        <translation type="unfinished">Sulla colonna corrente esiste già un gruppo di scheletri, rimpiazzandolo tutte le animazioni dei vertici saranno sostituite.
-Continuare?</translation>
+        <translation>Ya existe un grupo de esqueletos para la columna actual. Reemplazarlo también sustituirá cualquier animación de vértices existente.
+
+¿Desea continuar?</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation type="unfinished">Copiare Scheletro</translation>
+        <translation>Copiar esqueleto</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation type="unfinished">Incollare Scheletro</translation>
+        <translation>Pegar esqueleto</translation>
     </message>
     <message>
         <source>Delete Vertex</source>
-        <translation type="unfinished">Cancellare Vertice</translation>
+        <translation>Borrar vértice</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation type="unfinished">Impostare Chiave</translation>
+        <translation>Definir clave</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation type="unfinished">Impostare Chiave di Riposo</translation>
+        <translation>Definir clave de reposo</translation>
     </message>
     <message>
         <source>Show Mesh</source>
-        <translation type="unfinished">Visualizzare Mesh</translation>
+        <translation>Mostrar malla</translation>
     </message>
     <message>
         <source>Show Rigidity</source>
-        <translation type="unfinished">Visualizzare Rigidità</translation>
+        <translation>Mostrar rigidez</translation>
     </message>
     <message>
         <source>Show SO</source>
-        <translation type="unfinished">Visualizzare Ordine Sovrapposizione</translation>
+        <translation>Mostrar orden de superposición</translation>
     </message>
     <message>
         <source>Show Skeleton Onion Skin</source>
-        <translation type="unfinished">Visualizzare Scheletro in Onion Skin</translation>
+        <translation>Mostrar esqueleto con piel de cebolla</translation>
     </message>
     <message>
         <source>The previous vertex name will be discarded, and all associated keys will be lost.
 
 Do you want to proceed?</source>
-        <translation type="unfinished">Il nome esistente del vertice sarà eliminato e le chiavi associate andranno perse.
+        <translation>Se descartará el nombre anterior del vértice, y se perderán todos los claves asociados al mismo.
 
-Procedere?</translation>
+¿Desea continuar?</translation>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation type="unfinished">Imposta Chiave Globale</translation>
+        <translation>Definir clave global</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation type="unfinished">Imposta Chiave Globale a Riposo</translation>
+        <translation>Definir clave global de reposo</translation>
     </message>
     <message>
         <source>Edit Mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar malla</translation>
     </message>
     <message>
         <source>Snap To Mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Adherir a la malla</translation>
     </message>
     <message>
         <source>Angle Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Límites de ángulo</translation>
     </message>
     <message>
         <source>Swap Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercambiar borde</translation>
     </message>
     <message>
         <source>Collapse Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Colapsar borde</translation>
     </message>
     <message>
         <source>Split Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividir borde</translation>
     </message>
     <message>
         <source>Cut Mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar malla</translation>
     </message>
 </context>
 <context>
     <name>PlasticToolOptionsBox</name>
     <message>
         <source>Create Mesh</source>
-        <translation type="unfinished">Creare Mesh</translation>
+        <translation>Crear malla</translation>
     </message>
     <message>
         <source>Skeleton:</source>
-        <translation type="unfinished">Scheletro:</translation>
+        <translation>Esqueleto:</translation>
     </message>
     <message>
         <source>SO</source>
-        <translation type="unfinished">OS</translation>
+        <translation>OS</translation>
     </message>
     <message>
         <source>Angle</source>
-        <translation type="unfinished">Angolo</translation>
+        <translation>Ángulo</translation>
     </message>
     <message>
         <source>Distance</source>
-        <translation type="unfinished">Distanza</translation>
+        <translation>Distancia</translation>
     </message>
 </context>
 <context>
     <name>PrimitiveParam</name>
     <message>
         <source>Shape:</source>
-        <translation type="unfinished">Forma:</translation>
+        <translation>Forma:</translation>
     </message>
     <message>
         <source>Thickness:</source>
-        <translation type="unfinished">Spessore:</translation>
+        <translation>Grosor:</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacità:</translation>
+        <translation>Opacidad:</translation>
     </message>
     <message>
         <source>Hardness:</source>
-        <translation type="unfinished">Durezza:</translation>
+        <translation>Dureza:</translation>
     </message>
     <message>
         <source>Polygon Sides:</source>
-        <translation type="unfinished">Lati del Poligono:</translation>
+        <translation>Lados del polígono:</translation>
     </message>
     <message>
         <source>Auto Group</source>
-        <translation type="unfinished">Raggruppa Automaticamente</translation>
+        <translation>Agrupar automáticamente</translation>
     </message>
     <message>
         <source>Auto Fill</source>
-        <translation type="unfinished">Riempimento Automatico</translation>
+        <translation>Rellenar automáticamente</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation type="unfinished">Modalità Matita</translation>
+        <translation>Modo de la pluma</translation>
     </message>
     <message>
         <source>Cap</source>
-        <translation type="unfinished">Estremo</translation>
+        <translation>Extremo</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation type="unfinished">Angolo</translation>
+        <translation>Unión</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation type="unfinished">Smusso:</translation>
+        <translation>Inglete:</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño:</translation>
     </message>
 </context>
 <context>
     <name>PumpTool</name>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>Accuracy:</source>
-        <translation type="unfinished">Precisione:</translation>
+        <translation>Precisión:</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>Min:</source>
-        <translation type="unfinished">Min:</translation>
+        <translation>Mín:</translation>
     </message>
     <message>
         <source>Max:</source>
-        <translation type="unfinished">Max:</translation>
+        <translation>Máx:</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sì</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>The copied selection cannot be pasted in the current drawing.</source>
-        <translation type="unfinished">La selezione copiata non può essere incollata nel disegno corrente.</translation>
+        <translation>La selección copiada no puede ser pegada en el dibujo actual.</translation>
     </message>
     <message>
         <source>The current column is locked.</source>
-        <translation type="unfinished">La colonna corrente è bloccata.</translation>
+        <translation>La columna actual está bloqueada.</translation>
     </message>
     <message>
         <source>The current column is not visible in Camera Stand.</source>
-        <translation type="unfinished">La colonna corrente non è visibile in Camera Stand.</translation>
+        <translation>La columna actual no se encuentra visible en la vista de cámara.</translation>
     </message>
     <message>
         <source>It is not possible to edit the audio column.</source>
-        <translation type="unfinished">Non è possibile modificare l&apos; audio della colonna.</translation>
+        <translation>No es posible editar la columna de audio.</translation>
     </message>
     <message>
         <source>It is not possible to edit the Magpie column.</source>
-        <translation type="unfinished">Non è possibile modificare la colonna Magpie.</translation>
+        <translation>No es posible editar la columna de Magpie.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Level column.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su una colonna Livello.</translation>
+        <translation>No es posible usar la herramienta actual en una columna de nivel.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Mesh column.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su una colonna Mesh.</translation>
+        <translation>No es posible usar la herramienta actual en una columna de malla.</translation>
     </message>
     <message>
         <source>The current tool cannot be used in Level Strip mode.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato in modalità Level Strip.</translation>
+        <translation>No es posible usar la herramienta actual en la cinta de nivel.</translation>
     </message>
     <message>
         <source>The current tool cannot be used to edit a motion path.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato per modificare una traiettoria.</translation>
+        <translation>No es posible usar la herramienta actual para editar una trayectoria de movimiento.</translation>
     </message>
     <message>
         <source>The current level is not editable.</source>
-        <translation type="unfinished">Il livello corrente non è editabile.</translation>
+        <translation>El nivel actual no es editable.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Vector Level.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su un livello vettoriale.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel vectorial.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Toonz Level.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su un livello Toonz Raster.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de Toonz.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Raster Level.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su un livello Raster.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de imagen.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Mesh Level.</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su un livello Mesh.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de malla.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a mesh-deformed level</source>
-        <translation type="unfinished">Lo strumento corrente non può essere utilizzato su un livello deformato da una Mesh.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel deformado por una malla.</translation>
     </message>
     <message>
         <source>The current frame is locked: any editing is forbidden.</source>
-        <translation type="unfinished">Il fotogramma corrente è bloccato: è vietato ogni tipo di modifica.</translation>
+        <translation>El fotograma actual está bloqueado: no se permite su edición.</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar</translation>
     </message>
     <message>
         <source>Move Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover centro</translation>
     </message>
     <message>
         <source>RGB Picker (R%1, G%2, B%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selector RVA (R%1, V%2, A%3)</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Agrupar</translation>
     </message>
     <message>
         <source>Ungroup</source>
-        <translation type="unfinished"></translation>
+        <translation>Desagrupar</translation>
     </message>
     <message>
         <source>Move Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover grupo</translation>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
-        <translation type="unfinished"></translation>
+        <translation>Modificar aparato de efectos</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1   Nivel : %2  Fotograma : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta Modificar trazo</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="unfinished"></translation>
+        <translation>Modificar curva</translation>
     </message>
     <message>
         <source>Deform Raster</source>
-        <translation type="unfinished"></translation>
+        <translation>Deformar imagen</translation>
     </message>
     <message>
         <source>Transform Raster</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar imagen</translation>
     </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Passive Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección pasiva</translation>
     </message>
 </context>
 <context>
     <name>RGBPickerToolOptionsBox</name>
     <message>
         <source>Pick Screen</source>
-        <translation type="unfinished">Pick Screen</translation>
+        <translation>Seleccionar de pantalla</translation>
     </message>
 </context>
 <context>
     <name>RasterSelectionTool</name>
     <message>
         <source>Modify Savebox</source>
-        <translation type="unfinished">Modificare Savebox</translation>
+        <translation>Modificar marco de seguridad</translation>
     </message>
     <message>
         <source>No Antialiasing</source>
-        <translation type="unfinished">Nessun Antialiasing</translation>
+        <translation>Sin suavizado de bordes</translation>
     </message>
 </context>
 <context>
     <name>RasterTapeTool</name>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Distance:</source>
-        <translation type="unfinished">Distanza:</translation>
+        <translation>Distancia:</translation>
     </message>
     <message>
         <source>Style Index:</source>
-        <translation type="unfinished">Indice dello Stile:</translation>
+        <translation>Índice de estilo:</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacità:</translation>
+        <translation>Opacidad:</translation>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
     <message>
         <source>Angle:</source>
-        <translation type="unfinished">Angolo:</translation>
+        <translation>Ángulo:</translation>
     </message>
 </context>
 <context>
     <name>SelectionTool</name>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
 </context>
 <context>
     <name>SelectionToolOptionsBox</name>
     <message>
         <source>H:</source>
-        <translation type="unfinished">O:</translation>
+        <translation>H:</translation>
     </message>
     <message>
         <source>V:</source>
-        <translation type="unfinished">V</translation>
+        <translation>V:</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished">Rotazione</translation>
+        <translation>Rotación</translation>
     </message>
     <message>
         <source>E/W:</source>
-        <translation type="unfinished">E/O:</translation>
+        <translation>E/O:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation type="unfinished">N/S:</translation>
+        <translation>N/S:</translation>
     </message>
     <message>
         <source>Thickness</source>
-        <translation type="unfinished">Spessore</translation>
+        <translation>Grosor</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation type="unfinished">Vincola</translation>
+        <translation>Vínculo</translation>
     </message>
 </context>
 <context>
     <name>SkeletonTool</name>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation type="unfinished">Mostra solo lo Scheletro Attivo</translation>
+        <translation>Mostrar solo el esqueleto activo</translation>
     </message>
     <message>
         <source>Global Key</source>
-        <translation type="unfinished">Chiave Globale</translation>
+        <translation>Clave global</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Reset Pinned Center</source>
-        <translation type="unfinished">Ripristina il centro bloccato</translation>
+        <translation>Restablecer el centro fijado</translation>
     </message>
 </context>
 <context>
     <name>TrackerTool</name>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>X:</source>
-        <translation type="unfinished">X:</translation>
+        <translation>X:</translation>
     </message>
     <message>
         <source>Y:</source>
-        <translation type="unfinished">Y:</translation>
+        <translation>Y:</translation>
     </message>
 </context>
 <context>
     <name>TypeTool</name>
     <message>
         <source>Font:</source>
-        <translation type="unfinished">Carattere:</translation>
+        <translation>Tipografía:</translation>
     </message>
     <message>
         <source>Style:</source>
-        <translation type="unfinished">Stile:</translation>
+        <translation>Estilo:</translation>
     </message>
     <message>
         <source>Vertical Orientation</source>
-        <translation type="unfinished">Orientazione Verticale</translation>
+        <translation>Orientación vertical</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Dimensione:</translation>
+        <translation>Tamaño:</translation>
     </message>
 </context>
 <context>
     <name>VectorSelectionTool</name>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Preserve Thickness</source>
-        <translation type="unfinished">Mantieni costante lo Spessore</translation>
+        <translation>Preservar grosor</translation>
     </message>
     <message>
         <source>Cap</source>
-        <translation type="unfinished">Estremo</translation>
+        <translation>Extremo</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation type="unfinished">Angolo</translation>
+        <translation>Unión</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation type="unfinished">Smusso:</translation>
+        <translation>Inglete:</translation>
     </message>
 </context>
 <context>
     <name>VectorTapeTool</name>
     <message>
         <source>Smooth</source>
-        <translation type="unfinished">Liscio</translation>
+        <translation>Suavizar</translation>
     </message>
     <message>
         <source>Join Vectors</source>
-        <translation type="unfinished">Unisci i Vettori</translation>
+        <translation>Unir vectores</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Sali di Un Livello</translation>
+        <translation>Tipo:</translation>
     </message>
 </context>
 </TS>
