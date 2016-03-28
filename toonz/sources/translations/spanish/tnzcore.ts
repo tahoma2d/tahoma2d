@@ -5,44 +5,44 @@
     <name>QObject</name>
     <message>
         <source>colors</source>
-        <translation type="unfinished">colori</translation>
+        <translation>colores</translation>
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Acción no definida</translation>
     </message>
 </context>
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
         <source>Constant</source>
-        <translation type="unfinished">Costante</translation>
+        <translation>Constante</translation>
     </message>
     <message>
         <source>Thickness</source>
-        <translation type="unfinished">Spessore</translation>
+        <translation>Grosor</translation>
     </message>
 </context>
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
         <source>Distance</source>
-        <translation type="unfinished">Distanza</translation>
+        <translation>Distancia</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished">Angolo</translation>
+        <translation>Rotación</translation>
     </message>
 </context>
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
         <source>Distance</source>
-        <translation type="unfinished">Distanza</translation>
+        <translation>Distancia</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished">Ruotazione</translation>
+        <translation>Rotación</translation>
     </message>
 </context>
 </TS>
