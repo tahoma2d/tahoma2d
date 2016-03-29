@@ -2101,8 +2101,8 @@ Are you sure?</source>
     <message>
         <source>Auto  
 Apply</source>
-        <translation>Auto  
-Aplicar</translation>
+        <translation type="unfinished">Aplicar  
+Autom.</translation>
     </message>
 </context>
 <context>
