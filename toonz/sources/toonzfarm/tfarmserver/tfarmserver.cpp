@@ -50,7 +50,7 @@ using namespace std;
 #endif
 
 #ifdef LINUX
-#include <sys/sysctl.h> //For getting total memory
+#include <sys/sysctl.h>
 #endif
 
 // forward declaration
@@ -697,23 +697,19 @@ void FarmServer::queryHwInfo(HwInfo &hwInfo)
 	hwInfo.m_type = Irix;
 #else
 
-	TINT64 physMemSize;
-
 #ifdef MACOSX
 	int mib[2];
+	TINT64 physMemSize;
 	size_t len;
 
 	mib[0] = CTL_HW;
 	mib[1] = HW_MEMSIZE;
 	len = sizeof(physMemSize);
 	sysctl(mib, 2, &physMemSize, &len, NULL, 0);
+#endif
 
-#elif defined(LINUX)
-	physMemSize = (TINT64)sysconf(_SC_PHYS_PAGES) * (TINT64)sysconf(_SC_PAGE_SIZE);
-
-#else
-#warning "Unsupported platform!"
-	physMemSize = 500000000;
+#ifdef LINUX
+	TINT64 physMemSize = (TINT64)sysconf(_SC_PHYS_PAGES) * (TINT64)sysconf(_SC_PAGE_SIZE);
 #endif
 
 	hwInfo.m_cpuCount = TSystem::getProcessorCount();
