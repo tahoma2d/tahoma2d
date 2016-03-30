@@ -25,3 +25,6 @@ https://opentoonz.github.io/ から最新版のインストーラーをダウン
   - ライセンスに基づき、商用・非商用問わず、自由にソフトウェアの利用やソースコードの改変ができます
 - thirdpartyディレクトリ内のファイル
   - 各ディレクトリ内のREADMEやソースコードに記載されたライセンスに従ってください
+
+### Special Thanks
+This Open Source Program is developed from Toonz, a software originally created by Digital Video, S.p.A., Rome Italy
