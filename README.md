@@ -10,16 +10,21 @@ Ghibli Version**, originally developed in Italy by
 
 ## Program Requirements
 
-Please refer to the OpenToonz site at <https://opentoonz.github.io>.
+Please refer to the OpenToonz site at <https://opentoonz.github.io/e/index.html>.
 
 ## Installation
 
-Please download and install OpenToonz from the installers at <https://opentoonz.github.io>.
+Please download and install OpenToonz from the installers at <https://opentoonz.github.io/e/index.html>.
 
 ## How to Build Locally
 
 - [Windows](./doc/how_to_build_win.md)
 - [OS X](./doc/how_to_build_macosx.md)
+
+## Community
+
+- To share tips or to troubleshoot, join the [Google OpenToonz Users forum](https://groups.google.com/forum/#!forum/opentoonz_en)
+- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/opentoonz/opentoonz/issues) and post there.
 
 ## Licensing
 
