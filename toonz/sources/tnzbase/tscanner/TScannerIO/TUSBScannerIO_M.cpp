@@ -48,7 +48,7 @@ TUSBScannerIOPD::TUSBScannerIOPD()
 
 namespace
 {
-void buf2printable(const unsigned char *buffer, const int size, ostrstream &os)
+void buf2printable(const unsigned char *buffer, const int size, ostringstream &os)
 {
 	int i = 0;
 	if ((size == 2) && (buffer[0] == 0x1b)) {
@@ -166,7 +166,7 @@ int TUSBScannerIO::receive(unsigned char *buffer, int size)
 	count = usb_bulk_read(m_data->m_handle, m_data->m_epR, (char *)buffer, size, 30 * 1000);
 
 	if (m_data->m_trace) {
-		ostrstream os;
+		ostringstream os;
 		os.freeze(false);
 		os << "receive: size=" << size << " got = " << count << " buf=";
 		buf2printable(buffer, count, os);
@@ -195,7 +195,7 @@ int TUSBScannerIO::send(unsigned char *buffer, int size)
 
 	count = usb_bulk_write(m_data->m_handle, m_data->m_epW, (char *)buffer, size, 30 * 1000);
 	if (m_data->m_trace) {
-		ostrstream os;
+		ostringstream os;
 		os.freeze(false);
 		os << "send: size=" << size << " wrote = " << count << " buf=";
 		buf2printable(buffer, size, os);

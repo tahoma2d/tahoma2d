@@ -22,7 +22,7 @@ string TFrameId::expand(FrameFormat format) const
 	else if (m_frame == NO_FRAME)
 		return "-";
 	char buffer[80];
-	ostrstream o_buff(buffer, sizeof(buffer));
+	ostringstream o_buff(buffer, sizeof(buffer));
 	if (format == FOUR_ZEROS) {
 		o_buff.fill('0');
 		o_buff.width(4);
