@@ -1,8 +1,10 @@
-# OpenToonz ([日本語](./doc/README_ja.md))
+# OpenToonz
+
+[日本語](./doc/README_ja.md)
 
 ## What is OpenToonz?
 
-OpenToonz is a 2D animation suite published by 
+OpenToonz is a 2D animation software published by 
 [DWANGO](http://dwango.co.jp/english/). It is based on **Toonz Studio
 Ghibli Version**, originally developed in Italy by
 [Digital Video, Inc.](http://www.toonz.com/), and customized by
