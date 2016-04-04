@@ -283,6 +283,7 @@ class StageSchematicNodeDock : public QObject, public QGraphicsItem
 
 	StageSchematicNode *m_parent;
 	StageSchematicNodePort *m_port;
+	SchematicHandleSpinBox* m_handleSpinBox;
 
 	bool m_isParentPort;
 	QTimer *m_timer;
@@ -314,6 +315,7 @@ protected slots:
 	void onPortClicked();
 	void onPortReleased(const QPointF &);
 	void onTimeOut();
+	void onModifyHandle(int);
 };
 
 //========================================================
@@ -366,7 +368,7 @@ protected:
 	bool m_isGroup;
 	QString m_name;
 	SchematicName *m_nameItem;
-
+	
 public:
 	StageSchematicNode(StageSchematicScene *scene, TStageObject *obj, int width, int height, bool isGroup = false);
 	~StageSchematicNode();
@@ -414,7 +416,6 @@ public:
 
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-	void updateChildDockPositions();
 
 protected:
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
@@ -439,7 +440,7 @@ public:
 
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-	void updateChildDockPositions();
+
 };
 
 //========================================================
@@ -471,7 +472,6 @@ public:
 
 private:
 	void updatePortsPosition();
-	void updateChildDockPositions();
 
 protected:
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
@@ -501,7 +501,6 @@ public:
 
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-	void updateChildDockPositions();
 
 protected:
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
