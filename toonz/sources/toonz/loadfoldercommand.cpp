@@ -440,7 +440,7 @@ struct import_Locals {
 void import(const ToonzScene &scene, std::vector<Resource> &resources,
 			IoCmd::LoadResourceArguments::ScopedBlock &sb)
 {
-	import_Locals locals = {scene};
+	import_Locals locals = {scene, std::auto_ptr<OverwriteDialog>()};
 
 	// Setup import GUI
 	int r, rCount = resources.size();
