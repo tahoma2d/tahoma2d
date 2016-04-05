@@ -30,12 +30,15 @@
 #include "tsystem.h"
 #include "tstream.h"
 #include "tstroke.h"
+#include "tenv.h"
 
 // Qt includes
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QFileDialog>
+
+TEnv::IntVar ShowLetterOnOutputPortOfStageNode("ShowLetterOnOutputPortOfStageNode", 0);
 
 namespace
 {
@@ -129,7 +132,7 @@ void TreeStageNode::sortChildren(int startIndex, int lastIndex)
 //==================================================================
 
 StageSchematicScene::StageSchematicScene(QWidget *parent)
-	: SchematicScene(parent), m_nextNodePos(0, 0), m_xshHandle(0), m_objHandle(0), m_colHandle(0), m_sceneHandle(0), m_frameHandle(0), m_gridDimension(eSmall)
+	: SchematicScene(parent), m_nextNodePos(0, 0), m_xshHandle(0), m_objHandle(0), m_colHandle(0), m_sceneHandle(0), m_frameHandle(0), m_gridDimension(eSmall), m_showLetterOnPortFlag(ShowLetterOnOutputPortOfStageNode!=0)
 {
 	QPointF sceneCenter = sceneRect().center();
 	m_firstPos = TPointD(sceneCenter.x(), sceneCenter.y());
@@ -704,7 +707,7 @@ void StageSchematicScene::placeNodes()
 	for (i = 0; i < pegTree->getSplineCount(); i++) {
 		TStageObjectSpline *spline = pegTree->getSpline(i);
 		spline->setDagNodePos(TPointD(maxXPos, yFirstPos + step));
-		maxXPos += 120;
+		maxXPos += (m_showLetterOnPortFlag) ? 150 : 120;
 	}
 
 	//delete the tree
@@ -760,7 +763,7 @@ void StageSchematicScene::makeTree(TreeStageNode *treeNode)
 void StageSchematicScene::placeChildren(TreeStageNode *treeNode, double &xPos, double &yPos, bool isCameraTree)
 {
 	int i;
-	xPos += 120;
+	xPos += (m_showLetterOnPortFlag)?150:120;
 	double xChildPos = xPos;
 	double xRefPos = xPos;
 	bool firstChild = true;
@@ -794,6 +797,7 @@ void StageSchematicScene::placeNode(StageSchematicNode *node)
 	double xPos = xFirstPos;
 	double yPos = yFirstPos;
 	int step = m_gridDimension == eLarge ? 100 : 50;
+	int hStep = (m_showLetterOnPortFlag) ? 150 : 120;
 
 	TStageObjectTree *pegTree = m_xshHandle->getXsheet()->getStageObjectTree();
 	QRectF nodeRect = node->boundingRect();
@@ -809,7 +813,7 @@ void StageSchematicScene::placeNode(StageSchematicNode *node)
 			if (parentObj->getDagNodePos() != TConst::nowhere) {
 				TPointD pos = parentObj->getDagNodePos();
 				yPos = pos.y;
-				xPos = pos.x + 120;
+				xPos = pos.x + hStep;
 			} else {
 				m_nodesToPlace[parentObjId].append(node);
 				return;
@@ -817,21 +821,21 @@ void StageSchematicScene::placeNode(StageSchematicNode *node)
 
 		} else {
 			yPos = yFirstPos;
-			xPos = xFirstPos + 120;
+			xPos = xFirstPos + hStep;
 		}
 	} else if (pegbar->getId().isColumn()) {
 		if (parentObj) {
 			if (parentObj->getDagNodePos() != TConst::nowhere) {
 				TPointD pos = parentObj->getDagNodePos();
 				yPos = pos.y;
-				xPos = pos.x + 120;
+				xPos = pos.x + hStep;
 			} else {
 				m_nodesToPlace[parentObjId].append(node);
 				return;
 			}
 		} else {
 			yPos = yFirstPos;
-			xPos = xFirstPos + (120 * 2);
+			xPos = xFirstPos + (hStep * 2);
 		}
 	}
 	QPointF initPos(xPos, yPos);
@@ -843,8 +847,8 @@ void StageSchematicScene::placeNode(StageSchematicNode *node)
 		QGraphicsView *view = views().at(0);
 		QRectF visibleRect = view->mapToScene(0, 0, view->width(), view->height()).boundingRect();
 		while (visibleRect.left() > nodeRect.left()) {
-			nodeRect.translate(120, 0);
-			xPos += 120;
+			nodeRect.translate(hStep, 0);
+			xPos += hStep;
 		}
 		while (visibleRect.bottom() < nodeRect.bottom()) {
 			nodeRect.translate(0, -step);
@@ -861,7 +865,7 @@ void StageSchematicScene::placeNode(StageSchematicNode *node)
 				found = true;
 				break;
 			} else {
-				xPos += 120;
+				xPos += hStep;
 				yPos = tmpPos.y();
 				nodeRect.moveTopLeft(QPointF(xPos, yPos));
 			}
@@ -900,7 +904,8 @@ void StageSchematicScene::placeSplineNode(StageSchematicSplineNode *splineNode)
 {
 	double xFirstPos = m_firstPos.x - 500;
 	double yFirstPos = m_firstPos.y + 500;
-	double xPos = xFirstPos + (120 * 2);
+	int hStep = (m_showLetterOnPortFlag) ? 150 : 120;
+	double xPos = xFirstPos + (hStep * 2);
 	int step = m_gridDimension == eLarge ? 100 : 50;
 	double yPos = yFirstPos + step;
 	QRectF nodeRect = splineNode->boundingRect();
@@ -908,8 +913,8 @@ void StageSchematicScene::placeSplineNode(StageSchematicSplineNode *splineNode)
 	nodeRect.translate(QPointF(xPos, yPos));
 
 	while (!isAnEmptyZone(nodeRect)) {
-		nodeRect.translate(120, 0);
-		xPos += 120;
+		nodeRect.translate(hStep, 0);
+		xPos += hStep;
 	}
 	spline->setDagNodePos(TPointD(xPos, yPos));
 	splineNode->setPos(xPos, yPos);
@@ -946,6 +951,15 @@ void StageSchematicScene::onCameraAdded()
 	QPointF clickedPos = qobject_cast<QAction *>(sender())->data().toPointF();
 
 	TStageObjectCmd::addNewCamera(m_xshHandle, m_objHandle, clickedPos);
+}
+
+//------------------------------------------------------------------
+
+void StageSchematicScene::onSwitchPortModeToggled(bool withLetter)
+{
+	m_showLetterOnPortFlag = withLetter;
+	ShowLetterOnOutputPortOfStageNode = (withLetter) ? 1 : 0;
+	updateScene();
 }
 
 //------------------------------------------------------------------

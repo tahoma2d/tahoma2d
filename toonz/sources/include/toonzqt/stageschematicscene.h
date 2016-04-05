@@ -101,6 +101,8 @@ class StageSchematicScene : public SchematicScene
 
 	QMap<TStageObjectId, QList<StageSchematicNode *>> m_nodesToPlace;
 
+	bool m_showLetterOnPortFlag;
+
 public:
 	StageSchematicScene(QWidget *parent);
 	~StageSchematicScene();
@@ -127,6 +129,8 @@ public:
 	TColumnHandle *getColumnHandle() { return m_colHandle; }
 	void updateNestedGroupEditors(StageSchematicNode *node, const QPointF &newPos);
 	void resizeNodes(bool maximizedNode);
+
+	bool isShowLetterOnPortFlagEnabled(){ return m_showLetterOnPortFlag; }
 
 private:
 	StageSchematicNode *addStageSchematicNode(TStageObject *pegbar);
@@ -200,6 +204,8 @@ protected slots:
 	void onCollapse(QList<TStageObjectId>);
 	void onOpenSubxsheet();
 	void onEditGroup();
+
+	void onSwitchPortModeToggled(bool withLetter);
 };
 
 #endif //STAGESCHEMATIC_H

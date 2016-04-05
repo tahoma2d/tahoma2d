@@ -595,7 +595,7 @@ void SchematicViewer::createActions()
 {
 	// Create all actions
 	QAction *addPegbar = 0, *addSpline = 0, *addCamera = 0,
-			*insertFx = 0, *addOutputFx = 0;
+			*insertFx = 0, *addOutputFx = 0, *switchPort = 0;
 	{
 		// Fit schematic
 		QIcon fitSchematicIcon = createQIconOnOffPNG("fit", false);
@@ -640,6 +640,14 @@ void SchematicViewer::createActions()
 			addSpline->setIcon(addSplineIcon);
 			connect(addSpline, SIGNAL(triggered()), m_stageScene, SLOT(onSplineAdded()));
 
+			//Switch display of stage schematic's output port
+			switchPort = new QAction(tr("&Swtich output port display mode"), m_stageToolbar);
+			switchPort->setCheckable(true);
+			switchPort->setChecked(m_stageScene->isShowLetterOnPortFlagEnabled());
+			QIcon switchPortIcon = createQIconOnOffPNG("switchport");
+			switchPort->setIcon(switchPortIcon);
+			connect(switchPort, SIGNAL(toggled(bool)), m_stageScene, SLOT(onSwitchPortModeToggled(bool)));
+			
 			// InsertFx
 			insertFx = CommandManager::instance()->getAction("MI_InsertFx");
 			if (insertFx) {
@@ -674,6 +682,8 @@ void SchematicViewer::createActions()
 	m_commonToolbar->addAction(m_fitSchematic);
 
 	if (m_fullSchematic) {
+		m_stageToolbar->addSeparator();
+		m_stageToolbar->addAction(switchPort);
 		m_stageToolbar->addSeparator();
 		m_stageToolbar->addAction(addSpline);
 		m_stageToolbar->addAction(addCamera);
