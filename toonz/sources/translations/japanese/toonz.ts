@@ -113,7 +113,7 @@
         <translation>列が選択されていないので、マッチラインを合成できません。</translation>
     </message>
     <message>
-        <source>It is not possible to apply the match lines because two columns have to be seleted.</source>
+        <source>It is not possible to apply the match lines because two columns have to be selected.</source>
         <translation>二つの列が選択されていないので、マッチラインを合成できません。</translation>
     </message>
 </context>
@@ -4209,7 +4209,7 @@ Do you want to create it?</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <source>&amp;Abount OpenToonz...</source>
+        <source>&amp;About OpenToonz...</source>
         <translation>OpenToonzについて (&amp;A)...</translation>
     </message>
     <message>
@@ -5895,7 +5895,7 @@ the level has to be saved first.</source>
     </message>
     <message>
         <source>It is not possible to track the level:
-undefinied error.</source>
+undefined error.</source>
         <translation>レベルを追跡できません：
 未定義のエラー。</translation>
     </message>
@@ -6710,7 +6710,7 @@ Are you sure to </source>
         <translation>レベルをシーンに移動 : レベル %1</translation>
     </message>
     <message>
-        <source>Inbeteween  : Level %1,  </source>
+        <source>Inbetween  : Level %1,  </source>
         <translation>中割り : レベル %1</translation>
     </message>
     <message>
@@ -6902,10 +6902,6 @@ Are you sure to </source>
     <message>
         <source>Combo Viewer</source>
         <translation>メインビューア</translation>
-    </message>
-    <message>
-        <source>Cleeanup Settings</source>
-        <translation type="vanished">トレース設定</translation>
     </message>
     <message>
         <source>Move Level to Cast Folder</source>
@@ -8522,7 +8518,7 @@ Click the arrow button to create a new sub-xsheet</source>
         <translation>失敗ステップ数：</translation>
     </message>
     <message>
-        <source>Successfull Steps:</source>
+        <source>Successful Steps:</source>
         <translation>成功ステップ数：</translation>
     </message>
     <message>

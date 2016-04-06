@@ -112,8 +112,8 @@
         <translation>Il n&apos;est pas possible d&apos;appliquer les lignes de correspondance, car aucune colonne a été sélectionné.</translation>
     </message>
     <message>
-        <source>It is not possible to apply the match lines because two columns have to be seleted.</source>
-        <translation>Il n&apos;est pas possible d&apos;appliquer les lignes de match parce que les deux colonnesdoivent être seleted.</translation>
+        <source>It is not possible to apply the match lines because two columns have to be selected.</source>
+        <translation>Il n&apos;est pas possible d&apos;appliquer les lignes de match parce que les deux colonnes doivent être sélectionnés.</translation>
     </message>
 </context>
 <context>
@@ -5804,7 +5804,7 @@ le niveau doit être enregistré d&apos;abord.</translation>
     </message>
     <message>
         <source>It is not possible to track the level:
-undefinied error.</source>
+undefined error.</source>
         <translation>Il n&apos;est pas possible de tracer le niveau:
 erreur indéfini.</translation>
     </message>
@@ -6634,7 +6634,7 @@ Are you sure to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Inbeteween  : Level %1,  </source>
+        <source>Inbetween  : Level %1,  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6824,10 +6824,6 @@ Are you sure to </source>
     </message>
     <message>
         <source>Combo Viewer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cleeanup Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8425,7 +8421,7 @@ Cliquez sur le bouton fléché pour créer un nouveau sub-xsheet</translation>
         <translation>Pas Échoués:</translation>
     </message>
     <message>
-        <source>Successfull Steps:</source>
+        <source>Successful Steps:</source>
         <translation>Pas réussis:</translation>
     </message>
     <message>

@@ -137,7 +137,7 @@ public:
 		std::set<int> indices = selection->getIndices();
 
 		if (indices.size() != 2) {
-			MsgBox(WARNING, tr("It is not possible to apply the match lines because two columns have to be seleted."));
+			MsgBox(WARNING, tr("It is not possible to apply the match lines because two columns have to be selected."));
 			return;
 		}
 
