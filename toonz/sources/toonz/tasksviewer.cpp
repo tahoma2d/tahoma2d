@@ -907,7 +907,7 @@ TaskSheet::TaskSheet(TasksViewer *owner)
 	//m_stepCount->setMaximumWidth(38);
 	::create(m_failedSteps, layout, tr("Failed Steps:"), row++);
 	// m_failedSteps->setMaximumWidth(38);
-	::create(m_succSteps, layout, tr("Successfull Steps:"), row++);
+	::create(m_succSteps, layout, tr("Successful Steps:"), row++);
 	// m_succSteps->setMaximumWidth(38);
 	::create(m_priority, layout, tr("Priority:"), row++);
 	// m_priority->setMaximumWidth(40);

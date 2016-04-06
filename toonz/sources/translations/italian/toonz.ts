@@ -112,7 +112,7 @@
         <translation>Impossibile applicare le match lines poichè non è stata selezionata nessuna colonna.</translation>
     </message>
     <message>
-        <source>It is not possible to apply the match lines because two columns have to be seleted.</source>
+        <source>It is not possible to apply the match lines because two columns have to be selected.</source>
         <translation>Impossibile applicare le match lines poichè devono essere selezionate due colonne.</translation>
     </message>
 </context>
@@ -5805,7 +5805,7 @@ il livello deve essere prima salvato.</translation>
     </message>
     <message>
         <source>It is not possible to track the level:
-undefinied error.</source>
+undefined error.</source>
         <translation>Non è possibile tracciare il livello:
 errore indefinito.</translation>
     </message>
@@ -6636,7 +6636,7 @@ Are you sure to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Inbeteween  : Level %1,  </source>
+        <source>Inbetween  : Level %1,  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6826,10 +6826,6 @@ Are you sure to </source>
     </message>
     <message>
         <source>Combo Viewer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cleeanup Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8427,7 +8423,7 @@ Clicca la freccia per creare un nuovo sub-xsheet</translation>
         <translation>Passi Falliti:</translation>
     </message>
     <message>
-        <source>Successfull Steps:</source>
+        <source>Successful Steps:</source>
         <translation>Passi Portati a termine con Successo:</translation>
     </message>
     <message>

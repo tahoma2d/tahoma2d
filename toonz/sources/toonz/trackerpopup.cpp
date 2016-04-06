@@ -793,7 +793,7 @@ QString Tracker::getErrorMessage(int errorCode)
 		errorMessage = QObject::tr("It is not possible to track specified regions:\nthe level has to be saved first.");
 		break;
 	default:
-		errorMessage = QObject::tr("It is not possible to track the level:\nundefinied error.");
+		errorMessage = QObject::tr("It is not possible to track the level:\nundefined error.");
 	}
 	return errorMessage;
 }

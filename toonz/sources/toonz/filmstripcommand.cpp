@@ -2477,13 +2477,13 @@ void FilmstripCmd::moveToScene(TXshSoundLevel *sl)
 }
 
 //=============================================================================
-// UndoInbeteween
+// UndoInbetween
 //-----------------------------------------------------------------------------
 
 namespace
 {
 
-class UndoInbeteween : public TUndo
+class UndoInbetween : public TUndo
 {
 	TXshSimpleLevelP m_level;
 	vector<TFrameId> m_fids;
@@ -2491,7 +2491,7 @@ class UndoInbeteween : public TUndo
 	FilmstripCmd::InbetweenInterpolation m_interpolation;
 
 public:
-	UndoInbeteween(
+	UndoInbetween(
 		TXshSimpleLevel *xl,
 		std::vector<TFrameId> fids,
 		FilmstripCmd::InbetweenInterpolation interpolation)
@@ -2530,7 +2530,7 @@ public:
 
 	QString getHistoryString()
 	{
-		QString str = QObject::tr("Inbeteween  : Level %1,  ")
+		QString str = QObject::tr("Inbetween  : Level %1,  ")
 						  .arg(QString::fromStdWString(m_level->getName()));
 		switch (m_interpolation) {
 		case FilmstripCmd::II_Linear:
@@ -2631,7 +2631,7 @@ void FilmstripCmd::inbetween(TXshSimpleLevel *sl,
 			fids.push_back(*it);
 	}
 
-	TUndoManager::manager()->add(new UndoInbeteween(sl, fids, interpolation));
+	TUndoManager::manager()->add(new UndoInbetween(sl, fids, interpolation));
 
 	inbetweenWithoutUndo(sl, fid0, fid1, interpolation);
 	TApp::instance()->getCurrentScene()->setDirtyFlag(true);
