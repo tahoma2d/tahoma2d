@@ -370,10 +370,10 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent, Q
 	changeWindowTitle();
 
 	//Connetto i comandi che sono in RoomTabWidget
-	//connect(roomTabWidget, SIGNAL(indexSwapped(int , int )), SLOT(onIndexSwapped(int ,int )));
-	//connect(roomTabWidget, SIGNAL(insertNewTabRoom()), SLOT(insertNewRoom()));
-	//connect(roomTabWidget, SIGNAL(deleteTabRoom(int)), SLOT(deleteRoom(int)));
-	//connect(roomTabWidget, SIGNAL(renameTabRoom(int, const QString)), SLOT(renameRoom(int, const QString)));
+	connect(roomTabWidget, SIGNAL(indexSwapped(int , int )), SLOT(onIndexSwapped(int ,int )));
+	connect(roomTabWidget, SIGNAL(insertNewTabRoom()), SLOT(insertNewRoom()));
+	connect(roomTabWidget, SIGNAL(deleteTabRoom(int)), SLOT(deleteRoom(int)));
+	connect(roomTabWidget, SIGNAL(renameTabRoom(int, const QString)), SLOT(renameRoom(int, const QString)));
 
 	setCommandHandler("MI_Quit", this, &MainWindow::onQuit);
 	setCommandHandler("MI_Undo", this, &MainWindow::onUndo);
@@ -651,6 +651,7 @@ void MainWindow::writeSettings()
 		rooms.push_back(room);
 		room->save();
 	}
+	writeRoomList(rooms);
 
 	//Current room settings
 	Tofstream os(ToonzFolder::getMyModuleDir() + currentRoomFileName);
