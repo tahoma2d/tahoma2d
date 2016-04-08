@@ -100,6 +100,7 @@ void StackedMenuBar::createCleanupMenuBar()
 	addMenuItem(filesMenu, MI_LoadScene);
 	addMenuItem(filesMenu, MI_SaveScene);
 	addMenuItem(filesMenu, MI_SaveSceneAs);
+    addMenuItem(filesMenu, MI_SaveAll);
 	addMenuItem(filesMenu, MI_OpenRecentScene);
 	addMenuItem(filesMenu, MI_RevertScene);
 	filesMenu->addSeparator();
@@ -233,6 +234,7 @@ void StackedMenuBar::createPltEditMenuBar()
 	addMenuItem(filesMenu, MI_LoadScene);
 	addMenuItem(filesMenu, MI_SaveScene);
 	addMenuItem(filesMenu, MI_SaveSceneAs);
+    addMenuItem(filesMenu, MI_SaveAll);
 	addMenuItem(filesMenu, MI_OpenRecentScene);
 	addMenuItem(filesMenu, MI_RevertScene);
 	filesMenu->addSeparator();
@@ -406,6 +408,7 @@ void StackedMenuBar::createInknPaintMenuBar()
 	addMenuItem(filesMenu, MI_LoadScene);
 	addMenuItem(filesMenu, MI_SaveScene);
 	addMenuItem(filesMenu, MI_SaveSceneAs);
+    addMenuItem(filesMenu, MI_SaveAll);
 	addMenuItem(filesMenu, MI_OpenRecentScene);
 	filesMenu->addSeparator();
 	addMenuItem(filesMenu, MI_NewScene);
@@ -557,6 +560,7 @@ void StackedMenuBar::createXsheetMenuBar()
 	addMenuItem(xsheetMenu, MI_LoadScene);
 	addMenuItem(xsheetMenu, MI_SaveScene);
 	addMenuItem(xsheetMenu, MI_SaveSceneAs);
+    addMenuItem(xsheetMenu, MI_SaveAll);
 	addMenuItem(xsheetMenu, MI_OpenRecentScene);
 	addMenuItem(xsheetMenu, MI_RevertScene);
 	xsheetMenu->addSeparator();
@@ -811,6 +815,7 @@ void StackedMenuBar::createFullMenuBar()
 	addMenuItem(fileMenu, MI_NewScene);
 	addMenuItem(fileMenu, MI_LoadScene);
 	addMenuItem(fileMenu, MI_SaveScene);
+    addMenuItem(fileMenu, MI_SaveAll);
 	addMenuItem(fileMenu, MI_SaveSceneAs);
 	addMenuItem(fileMenu, MI_OpenRecentScene);
 	addMenuItem(fileMenu, MI_RevertScene);
