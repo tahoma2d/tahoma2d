@@ -982,6 +982,13 @@ void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 
 	menu->exec(e->globalPos());
 	delete menu;
+#ifdef MACOSX
+	m_mouseButton = Qt::NoButton;
+	m_tabletEvent = false;
+	m_pressure = 0;
+	m_buttonClicked = false;
+#endif
+
 }
 
 //-----------------------------------------------------------------------------
