@@ -957,6 +957,15 @@ using namespace ImageUtils;
 
 void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 {
+
+#ifdef MACOSX
+        //cleaning-up mousePressedEvent on MacOSX instead of mouseReleaseEvent called
+	m_mouseButton = Qt::NoButton;
+	m_tabletEvent = false;
+	m_pressure = 0;
+	m_buttonClicked = false;
+#endif
+
 	if (m_freezedStatus != NO_FREEZED)
 		return;
 
@@ -982,13 +991,6 @@ void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 
 	menu->exec(e->globalPos());
 	delete menu;
-#ifdef MACOSX
-	m_mouseButton = Qt::NoButton;
-	m_tabletEvent = false;
-	m_pressure = 0;
-	m_buttonClicked = false;
-#endif
-
 }
 
 //-----------------------------------------------------------------------------
