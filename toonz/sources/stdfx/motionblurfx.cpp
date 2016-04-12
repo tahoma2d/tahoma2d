@@ -285,7 +285,7 @@ void doDirectionalBlur(TRasterPT<T> r, double blur, bool bidirectional)
 			do_filtering<T>(row + brad, buffer, lx, coeff, brad, blur, globmatte);
 	}
 
-	free(row);
+	delete row;
 	r->unlock();
 }
 
