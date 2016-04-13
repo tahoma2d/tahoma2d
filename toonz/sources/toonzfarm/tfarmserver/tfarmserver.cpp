@@ -515,10 +515,9 @@ FarmServer::~FarmServer()
 
 inline string toString(unsigned long value)
 {
-	ostrstream ss;
+	ostringstream ss;
 	ss << value << '\0';
 	string s = ss.str();
-	ss.freeze(false);
 	return s;
 }
 
@@ -796,7 +795,7 @@ bool loadServerData(const QString &hostname, QString &addr, int &port)
     is.getline(line, 256);
     */
 		string line = getLine(is);
-		istrstream iss(line.c_str());
+		istringstream iss(line.c_str());
 
 		char name[80];
 		char ipAddress[80];
@@ -967,7 +966,7 @@ void FarmServerService::onStart(int argc, char *argv[])
   while (!isAppCfgFile.eof())
   {
     string line = getLine(isAppCfgFile);
-    istrstream iss(line.c_str());
+    istringstream iss(line.c_str());
     TFilePath appPath = TFilePath(line);
     appPaths.push_back(appPath);
   }
