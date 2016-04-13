@@ -24,7 +24,7 @@
 #endif
 
 #include <string>
-#include <strstream>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -68,8 +68,8 @@ using std::wstring;
 using std::ostream;
 using std::istream;
 using std::iostream;
-using std::ostrstream;
-using std::istrstream;
+using std::ostringstream;
+using std::istringstream;
 using std::fstream;
 
 #if 0 && defined(__GNUC__)
