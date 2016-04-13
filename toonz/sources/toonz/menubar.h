@@ -24,6 +24,7 @@ class QPainterEvent;
 class QHBoxLayout;
 class SubXsheetRoomTabContainer;
 class QCheckBox;
+class QXmlStreamReader;
 
 //-----------------------------------------------------------------------------
 
@@ -154,6 +155,8 @@ public:
 	~StackedMenuBar(){};
 
 	void createMenuBarByName(const QString &roomName);
+	void loadAndAddMenubar(const TFilePath & fp);
+	bool readMenuRecursive( QXmlStreamReader&, QMenu*);
 
 	QMenu *addMenu(const QString &, QMenuBar *);
 	void addMenuItem(QMenu *, const char *);

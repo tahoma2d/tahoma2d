@@ -11,6 +11,7 @@
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/menubarcommand.h"
+#include "toonzqt/gutil.h"
 
 // TnzLib includes
 #include "toonz/toonzscene.h"
@@ -38,6 +39,8 @@
 #include <QShortcut>
 #include <QDesktopServices>
 #include <QCheckBox>
+#include <QtDebug>
+#include <QXmlStreamReader>
 
 void UrlOpener::open()
 {
@@ -235,6 +238,116 @@ void StackedMenuBar::createMenuBarByName(const QString &roomName)
 	/* OSX では stacked menu が動いていないのでとりあえず full のみ作成する */
 	addWidget(createFullMenuBar());
 #endif
+}
+//---------------------------------------------------------------------------------
+
+void StackedMenuBar::loadAndAddMenubar(const TFilePath & fp)
+{
+	std::wcout << fp.getWideString() << std::endl;
+
+	QFile file(toQString(fp));
+	if (!file.open(QFile::ReadOnly | QFile::Text)){
+		qDebug() << "Cannot read file" << file.errorString();
+		addWidget(createFullMenuBar());
+		return;
+	}
+
+	QXmlStreamReader reader(&file);
+
+	QMenuBar* menuBar = new QMenuBar(this);
+	if (reader.readNextStartElement())
+	{
+		if (reader.name() == "menubar")
+		{
+			while (reader.readNextStartElement())
+			{
+				if (reader.name() == "menu")
+				{
+					QString title = reader.attributes().value("title").toString();
+					/*- Menu title will be translated if the title is registered in translation file -*/
+					QMenu* menu = new QMenu(tr(title.toStdString().c_str()));
+
+					if (readMenuRecursive(reader, menu))
+						menuBar->addMenu(menu);
+					else
+					{
+						reader.raiseError(tr("Failed to load menu %1").arg(title));
+						delete menu;
+					}
+
+				}
+				else if (reader.name() == "command")
+				{
+					QString cmdName = reader.readElementText();
+
+					QAction *action = CommandManager::instance()->getAction(cmdName.toStdString().c_str());
+					if (action)
+						menuBar->addAction(action);
+					else
+						reader.raiseError(tr("Failed to add command  %1").arg(cmdName));
+				}
+				else
+					reader.skipCurrentElement();
+			}
+		}
+		else
+			reader.raiseError(QObject::tr("Incorrect file"));
+	}
+
+	if (reader.hasError())
+	{
+		delete menuBar;
+		addWidget(createFullMenuBar());
+	}
+	else
+		addWidget(menuBar);
+}
+
+//---------------------------------------------------------------------------------
+
+bool StackedMenuBar::readMenuRecursive( QXmlStreamReader& reader, QMenu* menu)
+{
+	while (reader.readNextStartElement())
+	{
+		if (reader.name() == "menu")
+		{
+			QString title = reader.attributes().value("title").toString();
+			QMenu* subMenu = new QMenu(tr(title.toStdString().c_str()));
+
+			if (readMenuRecursive(reader, subMenu))
+				menu->addMenu(subMenu);
+			else
+			{
+				reader.raiseError(tr("Failed to load menu %1").arg(title));
+				delete subMenu;
+				return false;
+			}
+
+		}
+		else if (reader.name() == "command")
+		{
+			QString cmdName = reader.readElementText();
+			addMenuItem(menu, cmdName.toStdString().c_str());
+		}
+		else if (reader.name() == "command_debug")
+		{
+#ifndef NDEBUG
+			QString cmdName = reader.readElementText();
+			addMenuItem(menu, cmdName.toStdString().c_str());
+#else
+			reader.skipCurrentElement();
+#endif
+		}
+		else if (reader.name() == "separator")
+		{
+			menu->addSeparator();
+			reader.skipCurrentElement();
+		}
+		else
+			reader.skipCurrentElement();
+	}
+	
+	return !reader.hasError();
 }
 
 //---------------------------------------------------------------------------------

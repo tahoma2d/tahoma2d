@@ -518,7 +518,9 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName)
 			m_stackedWidget->addWidget(room);
 			roomTabWidget->addTab(room->getName());
 
-			stackedMenuBar->createMenuBarByName(room->getName());
+			/*- ここでMenuBarファイルをロードする -*/
+			std::string mbFileName = roomPath.getName() + "_menubar.xml";
+			stackedMenuBar->loadAndAddMenubar(ToonzFolder::getModuleFile(mbFileName));
 
 			//room->setDockOptions(QMainWindow::DockOptions(
 			//  (QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks) & ~QMainWindow::AllowTabbedDocks));
@@ -529,6 +531,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName)
 	//Read the flipbook history
 	FlipBookPool::instance()->load(ToonzFolder::getMyModuleDir() + TFilePath("fliphistory.ini"));
 
+	/*- レイアウト設定ファイルが見つからなかった場合、初期Roomの生成 -*/
 	//Se leggendo i settings non ho inizializzato le stanze lo faccio ora.
 	// Puo' accadere se si buttano i file di inizializzazione.
 	if (rooms.empty()) {
@@ -567,11 +570,12 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName)
 		m_stackedWidget->addWidget(browserRoom);
 		rooms.push_back(browserRoom);
 		stackedMenuBar->createMenuBarByName(browserRoom->getName());
-
-		makePrivate(rooms);
-		writeRoomList(rooms);
 	}
 
+	/*- If the layout files were loaded from template, then save them as private ones -*/
+	makePrivate(rooms);
+	writeRoomList(rooms);
+	
 	// Imposto la stanza corrente
 	fp = ToonzFolder::getModuleFile(currentRoomFileName);
 	Tifstream is(fp);
