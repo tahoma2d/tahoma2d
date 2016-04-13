@@ -536,8 +536,8 @@ void tglDraw(const TRectD &rect, const TRaster32P &tex, bool blending)
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 		GL_BGRA;
 #else
-		@unknow channel order
 //   Error  PLATFORM NOT SUPPORTED
+#error "unknown channel order!"
 #endif
 
 	// Generate a texture id and bind it.
@@ -709,8 +709,8 @@ void tglDoneCurrent(TGlContext context)
 		reinterpret_cast<QGLContext *>(context)->doneCurrent();
 }
 
-#elif @unknow platform !
-
+#else
+#error "unknown platform!"
 #endif
 
 //-----------------------------------------------------------------------------
