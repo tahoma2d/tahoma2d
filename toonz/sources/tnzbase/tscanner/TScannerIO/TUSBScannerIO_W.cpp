@@ -96,7 +96,6 @@ int TUSBScannerIO::receive(unsigned char *buffer, int size)
 		DWORD waitRC = WaitForSingleObject(overlapped.hEvent, INFINITE);
 		if (m_data->m_trace) {
 			ostringstream os;
-			os.freeze(false);
 			os << "receive: size=" << size << " got = " << count << " buf=";
 			buf2printable(ptr, count, os);
 			os << '\n' << '\0';
@@ -128,7 +127,6 @@ int TUSBScannerIO::send(unsigned char *buffer, int size)
 
 		if (m_data->m_trace) {
 			ostringstream os;
-			os.freeze(false);
 			os << "send: size=" << size << " wrote = " << count << " buf=";
 			buf2printable(buffer, size, os);
 			os << '\n' << '\0';
