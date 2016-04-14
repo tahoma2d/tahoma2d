@@ -212,7 +212,6 @@ MeshTexturizer::MeshTexturizer()
 
 MeshTexturizer::~MeshTexturizer()
 {
-	delete m_imp;
 }
 
 //---------------------------------------------------------------------------------

@@ -445,7 +445,6 @@ PlasticDeformerStorage::PlasticDeformerStorage()
 
 PlasticDeformerStorage::~PlasticDeformerStorage()
 {
-	delete m_imp;
 }
 
 //----------------------------------------------------------------------------------

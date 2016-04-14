@@ -887,7 +887,6 @@ PlasticDeformer::PlasticDeformer()
 
 PlasticDeformer::~PlasticDeformer()
 {
-	delete m_imp;
 }
 
 //---------------------------------------------------------------------------------

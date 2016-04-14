@@ -149,7 +149,6 @@ PlasticSkeleton::PlasticSkeleton()
 
 PlasticSkeleton::~PlasticSkeleton()
 {
-	delete m_imp;
 }
 
 //------------------------------------------------------------------
