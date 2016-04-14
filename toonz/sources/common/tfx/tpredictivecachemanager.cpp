@@ -74,10 +74,9 @@ public:
 	{
 	}
 
-	void run(
-		TCacheResourceP &resource, const string &alias,
-			const TFxP &fx, double frame, const TRenderSettings &rs,
-			ResourceDeclaration *resData)
+	void run(TCacheResourceP &resource, const string &alias,
+		const TFxP &fx, double frame, const TRenderSettings &rs,
+		ResourceDeclaration *resData)
 	{
 		switch (m_renderStatus) {
 		case TRenderer::IDLE:

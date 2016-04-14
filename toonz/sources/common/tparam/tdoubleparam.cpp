@@ -351,16 +351,16 @@ public:
 
 	~Imp() {}
 
-	void copy(Imp& src)
+	void copy(std::unique_ptr<Imp> const& src)
 	{
-		m_grammar = src.m_grammar;
-		m_measureName = src.m_measureName;
-		m_measure = src.m_measure;
-		m_defaultValue = src.m_defaultValue;
-		m_minValue = src.m_minValue;
-		m_maxValue = src.m_maxValue;
-		m_keyframes = src.m_keyframes;
-		m_cycleEnabled = src.m_cycleEnabled;
+		m_grammar = src->m_grammar;
+		m_measureName = src->m_measureName;
+		m_measure = src->m_measure;
+		m_defaultValue = src->m_defaultValue;
+		m_minValue = src->m_minValue;
+		m_maxValue = src->m_maxValue;
+		m_keyframes = src->m_keyframes;
+		m_cycleEnabled = src->m_cycleEnabled;
 	}
 
 	void notify(const TParamChange &change)
@@ -496,7 +496,7 @@ TDoubleParam::TDoubleParam(double v)
 TDoubleParam::TDoubleParam(const TDoubleParam &src)
 	: TParam(src.getName()), m_imp(new TDoubleParam::Imp())
 {
-	m_imp->copy(*src.m_imp);
+	m_imp->copy(src.m_imp);
 }
 
 //---------------------------------------------------------
@@ -510,7 +510,7 @@ TDoubleParam::~TDoubleParam()
 TDoubleParam &TDoubleParam::operator=(const TDoubleParam &dp)
 {
 	setName(dp.getName());
-	m_imp->copy(*dp.m_imp);
+	m_imp->copy(dp.m_imp);
 	return *this;
 }
 
@@ -522,7 +522,7 @@ void TDoubleParam::copy(TParam *src)
 	if (!p)
 		throw TException("invalid source for copy");
 	setName(src->getName());
-	m_imp->copy(*p->m_imp);
+	m_imp->copy(p->m_imp);
 
 	m_imp->notify(TParamChange(this, 0, 0, true, false, false));
 }
