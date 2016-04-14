@@ -139,13 +139,9 @@ public:
 	std::vector<PlasticHandle> verticesToHandles() const;
 
 public:
-// RValues-related functions
-#ifndef BOOST_NO_RVALUE_REFERENCES
-
+	// RValues-related functions
 	PlasticSkeleton(PlasticSkeleton &&other);
 	PlasticSkeleton &operator=(PlasticSkeleton &&other);
-
-#endif
 
 private:
 	friend class PlasticSkeletonDeformation; // Skeleton deformations can register to be notified
