@@ -8,7 +8,7 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QLabel>
-#include <QScrollbar>
+#include <QScrollBar>
 #include <QPainter>
 #include <QGridLayout>
 #include <QPaintEvent>

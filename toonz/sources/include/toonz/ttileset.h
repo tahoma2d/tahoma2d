@@ -4,7 +4,7 @@
 #define TTILESET_HEADER
 
 #include "trastercm.h"
-#include <qstring>
+#include <QString>
 
 #undef DVAPI
 #undef DVVAR

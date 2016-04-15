@@ -3,11 +3,11 @@
 #ifndef BATCHES_H
 #define BATCHES_H
 
-#include <qobject>
+#include <QObject>
 #include <map>
 #include <set>
 #include <vector>
-#include <qstring>
+#include <QString>
 #include "tfarmtask.h"
 #include "tfilepath.h"
 #include "tthread.h"

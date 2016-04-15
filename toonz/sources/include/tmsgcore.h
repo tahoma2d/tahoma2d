@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <qobject>
+#include <QObject>
 #include <set>
 
 #include "tcommon.h"

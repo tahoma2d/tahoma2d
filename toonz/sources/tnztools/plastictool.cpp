@@ -37,7 +37,7 @@
 // Qt includes
 #include <QApplication>
 #include <QString>
-#include <QToolbar>
+#include <QToolBar>
 #include <QPushButton>
 #include <QLabel>
 #include <QClipboard>

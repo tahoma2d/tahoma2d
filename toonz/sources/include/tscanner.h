@@ -9,7 +9,7 @@
 
 #include "trasterimage.h"
 #include <set>
-#include <qstring>
+#include <QString>
 #undef DVAPI
 #undef DVVAR
 #ifdef TNZBASE_EXPORTS
