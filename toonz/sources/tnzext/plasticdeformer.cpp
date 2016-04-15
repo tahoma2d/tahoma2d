@@ -12,6 +12,8 @@
 
 #include "ext/plasticdeformer.h"
 
+#include <cstring>
+
 /*! \file plasticdeformer.cpp
 
   This file contains the implementation of a Mesh Deformer as specified in the

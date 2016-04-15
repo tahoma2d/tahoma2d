@@ -162,9 +162,9 @@ public:
 //----------------------------------------------------------------------------
 
 //!Applies a trasformation (echo, reverb, ect) to the object and returns the transformed soundtrack
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 	TSoundTrackP apply(TSoundTransform *transform);
-#else
+#else // WIN32
 	TSoundTrackP apply(TSoundTransform *transform)
 	{
 		assert(transform);

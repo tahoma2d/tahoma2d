@@ -14,7 +14,7 @@ fare resize e realloc size dello stack a 65000 unita'
 
 */
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #define TRUE 1
 #define FALSE 0
 #endif

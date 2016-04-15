@@ -97,7 +97,7 @@ extern "C" void CALLBACK myCombine(GLdouble coords[3], GLdouble *d[4],
 typedef GLvoid(CALLBACK *GluCallback)(void);
 #endif
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 
 typedef GLvoid (*GluCallback)();
 

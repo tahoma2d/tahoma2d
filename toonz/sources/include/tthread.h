@@ -35,7 +35,7 @@ void DVAPI shutdown();
 class ExecutorId; //Private
 class Runnable;
 
-#ifndef MACOSX
+#if !(defined(MACOSX) || defined(LINUX))
 template class TSmartPointerT<Runnable>;
 #endif
 typedef TSmartPointerT<Runnable> RunnableP;

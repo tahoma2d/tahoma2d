@@ -15,6 +15,10 @@
 
 #include <set>
 
+#if defined(LINUX)
+#include <typeinfo>
+#endif
+
 using namespace std;
 
 namespace
