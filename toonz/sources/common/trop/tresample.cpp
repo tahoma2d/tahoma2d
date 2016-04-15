@@ -861,7 +861,7 @@ wrap_in = wrap
 	UINT calc_value;
 	UCHAR *calc_byte = 0;
 	int goodcols;
-	int *col_height = new int[lu];
+	std::unique_ptr<int[]> col_height(new int[lu]);
 	int ref_u, ref_v;
 	int filter_diam_u = max_pix_ref_u - min_pix_ref_u + 1;
 	int filter_diam_v = max_pix_ref_v - min_pix_ref_v + 1;
@@ -873,7 +873,7 @@ wrap_in = wrap
 	assert(col_height);
 
 	CALC_VALUE_INIT
-	ch = col_height;
+	ch = col_height.get();
 	ch_end = ch + lu;
 
 	while (ch < ch_end) {
@@ -985,9 +985,6 @@ wrap_in = wrap
 		}
 	}
 	assert(!calc_byte || calc_byte == calc + calc_bytesize);
-
-	if (col_height)
-		delete[] col_height;
 }
 
 /*---------------------------------------------------------------------------*/

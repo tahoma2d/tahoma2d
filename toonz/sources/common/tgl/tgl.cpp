@@ -435,8 +435,7 @@ void tglDraw(const TCubic &cubic, int precision, GLenum pointOrLine)
 {
 	CHECK_ERRORS_BY_GL;
 	assert(pointOrLine == GL_POINT || pointOrLine == GL_LINE);
-	float(*ctrlPts)[3];
-	ctrlPts = new float[4][3];
+	float ctrlPts[4][3];
 
 	ctrlPts[0][0] = cubic.getP0().x;
 	ctrlPts[0][1] = cubic.getP0().y;
@@ -463,8 +462,6 @@ void tglDraw(const TCubic &cubic, int precision, GLenum pointOrLine)
 	CHECK_ERRORS_BY_GL;
 	glEvalMesh1(pointOrLine, 0, precision);
 	CHECK_ERRORS_BY_GL;
-
-	delete[] ctrlPts;
 }
 
 //-----------------------------------------------------------------------------

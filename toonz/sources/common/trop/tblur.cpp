@@ -866,7 +866,6 @@ void doBlurRgb(TRasterPT<T> &dstRas, TRasterPT<T> &srcRas, double blur, int dx, 
 		delete[] col1;
 		delete[] row1;
 		r1->unlock();
-		//delete[]fbuffer;
 	}
 }
 

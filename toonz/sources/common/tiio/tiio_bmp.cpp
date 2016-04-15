@@ -1,8 +1,8 @@
-
-
 #ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
+
+#include <memory>
 
 #include "tiio_bmp.h"
 // #include "bmp/filebmp.h"
@@ -109,7 +109,7 @@ class BmpReader : public Tiio::Reader
 	BMP_HEADER m_header;
 	char *m_line;
 	int m_lineSize;
-	TPixel *m_cmap;
+	std::unique_ptr<TPixel[]> m_cmap;
 	bool m_corrupted;
 	typedef int (BmpReader::*ReadLineMethod)(char *buffer, int x0, int x1, int shrink);
 	ReadLineMethod m_readLineMethod;
@@ -155,7 +155,9 @@ private:
 //---------------------------------------------------------
 
 BmpReader::BmpReader()
-	: m_chan(0), m_cmap(0), m_corrupted(false), m_readLineMethod(&BmpReader::readNoLine)
+	: m_chan(0)
+	, m_corrupted(false)
+	, m_readLineMethod(&BmpReader::readNoLine)
 {
 	memset(&m_header, 0, sizeof m_header);
 }
@@ -164,7 +166,6 @@ BmpReader::BmpReader()
 
 BmpReader::~BmpReader()
 {
-	delete[] m_cmap;
 }
 
 //---------------------------------------------------------
@@ -261,8 +262,8 @@ void BmpReader::readHeader()
 						  ? m_header.biClrUsed
 						  : 1 << m_header.biBitCount;
 		assert(cmaplen <= 256);
-		m_cmap = new TPixel[256];
-		TPixel32 *pix = m_cmap;
+		m_cmap.reset(new TPixel[256]);
+		TPixel32 *pix = m_cmap.get();
 		for (int i = 0; i < cmaplen; i++) {
 			pix->b = getc(m_chan);
 			pix->g = getc(m_chan);

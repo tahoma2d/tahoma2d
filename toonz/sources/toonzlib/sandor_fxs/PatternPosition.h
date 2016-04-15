@@ -55,10 +55,10 @@ public:
 				//			nbPat= nbPat>(int)(0.9*nbPixel) ?  (int)(0.9*nbPixel) : nbPat;
 				nbPat = nbPat > nbPixel ? nbPixel : nbPat;
 				if (nbPat > 0)
-					makeRandomPositions(nbPat, nbPixel, p.m_lX, p.m_lY, p.m_sel);
+					makeRandomPositions(nbPat, nbPixel, p.m_lX, p.m_lY, p.m_sel.get());
 			} else {
 				// Distance-driven position
-				makeDDPositions(p.m_lX, p.m_lY, p.m_sel, minD, maxD);
+				makeDDPositions(p.m_lX, p.m_lY, p.m_sel.get(), minD, maxD);
 			}
 		} catch (SMemAllocError) {
 			throw;

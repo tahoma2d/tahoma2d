@@ -20,6 +20,7 @@
 #endif
 #include <streambuf>
 #include <vector>
+#include <memory>
 
 #include <math.h>
 #include <memory.h>
@@ -35,29 +36,23 @@ template <class P>
 class CSTColSelPic : public CSTPic<P>
 {
 public:
-	UCHAR *m_sel;
+	std::shared_ptr<UCHAR> m_sel;
 
-	CSTColSelPic() : CSTPic<P>(), m_sel(0){};
+	CSTColSelPic() : CSTPic<P>() {}
 	virtual ~CSTColSelPic()
 	{
-		if (m_sel) {
-			delete[] m_sel, m_sel = 0;
-		}
 	};
 
 	void nullSel()
 	{
-		if (m_sel) {
-			delete[] m_sel;
-			m_sel = 0;
-		}
+		m_sel.reset();
 	}
 
 	void initSel() //throw(SMemAllocError)
 	{
 		nullSel();
 		if (CSTPic<P>::m_lX > 0 && CSTPic<P>::m_lY > 0) {
-			m_sel = new UCHAR[CSTPic<P>::m_lX * CSTPic<P>::m_lY];
+			m_sel.reset(new UCHAR[CSTPic<P>::m_lX * CSTPic<P>::m_lY], std::default_delete<UCHAR[]>());
 			if (!m_sel)
 				throw SMemAllocError(" in initColorSelection");
 		} else {
@@ -69,29 +64,17 @@ public:
 
 	void copySel(const UCHAR *sel)
 	{
-		memcpy(m_sel, sel, CSTPic<P>::m_lX * CSTPic<P>::m_lY * sizeof(UCHAR));
+		memcpy(m_sel.get(), sel, CSTPic<P>::m_lX * CSTPic<P>::m_lY * sizeof(UCHAR));
 	}
 
 	void copySel(const UCHAR sel)
 	{
-		memset(m_sel, sel, CSTPic<P>::m_lX * CSTPic<P>::m_lY * sizeof(UCHAR));
+		memset(m_sel.get(), sel, CSTPic<P>::m_lX * CSTPic<P>::m_lY * sizeof(UCHAR));
 	}
 
 	CSTColSelPic(const CSTColSelPic &csp) /*throw(SMemAllocError) */
 		: CSTPic<P>(csp)
-	/*  ,  m_sel(0) */
 	{
-		/*	
-	try {
-		if ( csp.m_sel && m_lX>0 m_lY>0) {
-			initSel();
-			copySel(csp.m_sel);
-		}
-	}
-	catch (SMemAllocError) {
-		throw;	
-	}
-*/
 	}
 
 	const CSTColSelPic<P> &operator=(const CSTColSelPic<P> &sp) // throw(SMemAllocError)
@@ -106,7 +89,7 @@ public:
 			*dpp = *spp;
 			if (sp.m_sel && CSTPic<P>::m_lX > 0 && CSTPic<P>::m_lY > 0) {
 				initSel();
-				copySel(sp.m_sel);
+				copySel(sp.m_sel.get());
 			}
 		} catch (SMemAllocError) {
 			throw;
@@ -125,7 +108,7 @@ public:
 	int makeSelectionCMAP32(const COLOR_INDEX_LIST &ink,
 							const COLOR_INDEX_LIST &paint)
 	{
-		UCHAR *pSel = m_sel;
+		UCHAR *pSel = m_sel.get();
 		P *pic = CSTPic<P>::m_pic;
 		int xy = 0, nbSel = 0;
 
