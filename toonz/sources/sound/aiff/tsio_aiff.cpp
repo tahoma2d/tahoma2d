@@ -242,7 +242,7 @@ ostream &operator<<(ostream &os, const TSSNDChunk &ssndChunk)
 
 void flipLong(unsigned char *ptrc)
 {
-	register unsigned char val;
+	unsigned char val;
 
 	val = *(ptrc);
 	*(ptrc) = *(ptrc + 3);

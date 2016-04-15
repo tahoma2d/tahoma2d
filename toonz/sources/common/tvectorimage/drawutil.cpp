@@ -248,7 +248,7 @@ for(UINT i=0; i<reg->getEdgeCount(); i++)
 void lefttRotateBits(UCHAR *buf, int bufferSize)
 {
 	UINT *buffer = (UINT *)buf;
-	register UINT app;
+	UINT app;
 	for (int i = 0; i < bufferSize; i++, buffer++) {
 		app = *buffer;
 		*buffer = app << 8 | app >> 24;

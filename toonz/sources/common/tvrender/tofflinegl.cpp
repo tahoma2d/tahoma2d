@@ -447,7 +447,7 @@ public:
 	void rightRotateBits(UCHAR *buf, int bufferSize)
 	{
 		UINT *buffer = (UINT *)buf;
-		register UINT app;
+		UINT app;
 		for (int i = 0; i < bufferSize; i++, buffer++) {
 			app = *buffer;
 			*buffer = app >> 8 | app << 24;
@@ -457,7 +457,7 @@ public:
 	void rightRotateBits(UCHAR *buf, int bufferSize)
 	{
 		UINT *buffer = (UINT *)buf;
-		register UINT app;
+		UINT app;
 		for (int i = 0; i < bufferSize; i++, buffer++) {
 			app = *buffer;
 			*buffer = (app >> 16 & 0x000000ff) | (app << 16 & 0x00ff0000) | (app & 0xff00ff00);
