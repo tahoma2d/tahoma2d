@@ -2431,26 +2431,26 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 
 #ifdef USE_STATIC_VARS
 	static TRop::ResampleFilterType current_flt_type = TRop::None;
-	static short *filter_array = 0;
+	static std::unique_ptr<short[]> filter_array;
 	static short *filter = 0;
 	static int min_filter_fg, max_filter_fg;
 	static int filter_array_size = 0;
 	static int n_pix = 0;
-	static int *pix_ref_u = 0;
-	static int *pix_ref_v = 0;
-	static int *pix_ref_f = 0;
-	static int *pix_ref_g = 0;
+	static std::unique_ptr<int[]> pix_ref_u;
+	static std::unique_ptr<int[]> pix_ref_v;
+	static std::unique_ptr<int[]> pix_ref_f;
+	static std::unique_ptr<int[]> pix_ref_g;
 	static int current_max_n_pix = 0;
 #else
-	short *filter_array = 0;
+	std::unique_ptr<short[]> filter_array;
 	short *filter = 0;
 	int min_filter_fg, max_filter_fg;
 	int filter_array_size = 0;
 	int n_pix = 0;
-	int *pix_ref_u = 0;
-	int *pix_ref_v = 0;
-	int *pix_ref_f = 0;
-	int *pix_ref_g = 0;
+	std::unique_ptr<int[]> pix_ref_u;
+	std::unique_ptr<int[]> pix_ref_v;
+	std::unique_ptr<int[]> pix_ref_f;
+	std::unique_ptr<int[]> pix_ref_g;
 	int current_max_n_pix = 0;
 #endif
 	int filter_st_radius;
@@ -2578,18 +2578,10 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 
 	if (max_n_pix > current_max_n_pix) {
 		current_max_n_pix = max_n_pix;
-		if (pix_ref_u)
-			delete[] pix_ref_u;
-		pix_ref_u = new int[current_max_n_pix];
-		if (pix_ref_v)
-			delete[] pix_ref_v;
-		pix_ref_v = new int[current_max_n_pix];
-		if (pix_ref_f)
-			delete[] pix_ref_f; //These will provide the images of the formers
-		pix_ref_f = new int[current_max_n_pix];
-		if (pix_ref_g)
-			delete[] pix_ref_g;
-		pix_ref_g = new int[current_max_n_pix];
+		pix_ref_u.reset(new int[current_max_n_pix]);
+		pix_ref_v.reset(new int[current_max_n_pix]);
+		pix_ref_f.reset(new int[current_max_n_pix]);
+		pix_ref_g.reset(new int[current_max_n_pix]);
 		assert(pix_ref_u && pix_ref_v && pix_ref_f && pix_ref_g);
 	}
 
@@ -2617,16 +2609,6 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 	n_pix = 0;
 
 	if (!pix_ref_u || !pix_ref_v || !pix_ref_f || !pix_ref_g) {
-#ifndef USE_STATIC_VARS
-		if (pix_ref_u)
-			delete[] pix_ref_u;
-		if (pix_ref_v)
-			delete[] pix_ref_v;
-		if (pix_ref_f)
-			delete[] pix_ref_f;
-		if (pix_ref_g)
-			delete[] pix_ref_g;
-#endif
 		throw TRopException("tresample.cpp line2640  function rop_resample_rgbm() : alloc pix_ref failed");
 	}
 
@@ -2684,13 +2666,11 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 		filter_size = max_filter_fg - min_filter_fg + 1;
 		if (filter_size > filter_array_size) //For the static vars case...
 		{
-			if (filter_array)
-				delete[] filter_array;
-			filter_array = new short[filter_size];
+			filter_array.reset(new short[filter_size]);
 			assert(filter_array);
 			filter_array_size = filter_size;
 		}
-		filter = filter_array - min_filter_fg; //Take the position corresponding to fg's (0,0) in the array
+		filter = filter_array.get() - min_filter_fg; //Take the position corresponding to fg's (0,0) in the array
 		filter[0] = MAX_FILTER_VAL;
 		for (f = 1, s_ = 1.0 / FILTER_RESOLUTION;
 			 f < filter_fg_radius;
@@ -2719,14 +2699,12 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 		if (filter_size > filter_array_size) {
 			//controllare!!
 			//TREALLOC (filter_array, filter_size)
-			if (filter_array)
-				delete[] filter_array;
-			filter_array = new short[filter_size];
+			filter_array.reset(new short[filter_size]);
 
 			assert(filter_array);
 			filter_array_size = filter_size;
 		}
-		filter = filter_array - min_filter_fg;
+		filter = filter_array.get() - min_filter_fg;
 		if (min_pix_out_fg < min_filter_fg) {
 			int delta = min_filter_fg - min_pix_out_fg;
 
@@ -2750,8 +2728,8 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 								   min_pix_ref_u, min_pix_ref_v,
 								   max_pix_ref_u, max_pix_ref_v,
 								   n_pix,
-								   pix_ref_u, pix_ref_v,
-								   pix_ref_f, pix_ref_g,
+								   pix_ref_u.get(), pix_ref_v.get(),
+								   pix_ref_f.get(), pix_ref_g.get(),
 								   filter);
 	else
 #endif
@@ -2761,8 +2739,8 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 			min_pix_ref_u, min_pix_ref_v,
 			max_pix_ref_u, max_pix_ref_v,
 			n_pix,
-			pix_ref_u, pix_ref_v,
-			pix_ref_f, pix_ref_g,
+			pix_ref_u.get(), pix_ref_v.get(),
+			pix_ref_f.get(), pix_ref_g.get(),
 			filter);
 	else
 		resample_main_rgbm<T, TINT32>(
@@ -2770,22 +2748,9 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 			min_pix_ref_u, min_pix_ref_v,
 			max_pix_ref_u, max_pix_ref_v,
 			n_pix,
-			pix_ref_u, pix_ref_v,
-			pix_ref_f, pix_ref_g,
+			pix_ref_u.get(), pix_ref_v.get(),
+			pix_ref_f.get(), pix_ref_g.get(),
 			filter);
-
-#ifndef USE_STATIC_VARS
-	if (filter_array)
-		delete[] filter_array;
-	if (pix_ref_u)
-		delete[] pix_ref_u;
-	if (pix_ref_v)
-		delete[] pix_ref_v;
-	if (pix_ref_f)
-		delete[] pix_ref_f;
-	if (pix_ref_g)
-		delete[] pix_ref_g;
-#endif
 
 	/////////////////////////////////////////////////////////
 	// INIZIO GESTIONE ALTRI TIPI RASTER DA IMPLEMENTARE
@@ -4829,26 +4794,26 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 
 #ifdef USE_STATIC_VARS
 	static TRop::ResampleFilterType current_flt_type = TRop::None;
-	static short *filter_array = 0;
+	static std::unique_ptr<short[]> filter_array;
 	static short *filter = 0;
 	static int min_filter_fg, max_filter_fg;
 	static int filter_array_size = 0;
 	static int n_pix = 0;
-	static int *pix_ref_u = 0;
-	static int *pix_ref_v = 0;
-	static int *pix_ref_f = 0;
-	static int *pix_ref_g = 0;
+	static std::unique_ptr<int[]> pix_ref_u;
+	static std::unique_ptr<int[]> pix_ref_v;
+	static std::unique_ptr<int[]> pix_ref_f;
+	static std::unique_ptr<int[]> pix_ref_g;
 	static int current_max_n_pix = 0;
 #else
-	short *filter_array = 0;
+	std::unique_ptr<short[]> filter_array;
 	short *filter = 0;
 	int min_filter_fg, max_filter_fg;
 	int filter_array_size = 0;
 	int n_pix = 0;
-	int *pix_ref_u = 0;
-	int *pix_ref_v = 0;
-	int *pix_ref_f = 0;
-	int *pix_ref_g = 0;
+	std::unique_ptr<int[]> pix_ref_u;
+	std::unique_ptr<int[]> pix_ref_v;
+	std::unique_ptr<int[]> pix_ref_f;
+	std::unique_ptr<int[]> pix_ref_g;
 	int current_max_n_pix = 0;
 #endif
 
@@ -4955,18 +4920,10 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 
 	if (max_n_pix > current_max_n_pix) {
 		current_max_n_pix = max_n_pix;
-		if (pix_ref_u)
-			delete[] pix_ref_u;
-		pix_ref_u = new int[current_max_n_pix];
-		if (pix_ref_v)
-			delete[] pix_ref_v;
-		pix_ref_v = new int[current_max_n_pix];
-		if (pix_ref_f)
-			delete[] pix_ref_f;
-		pix_ref_f = new int[current_max_n_pix];
-		if (pix_ref_g)
-			delete[] pix_ref_g;
-		pix_ref_g = new int[current_max_n_pix];
+		pix_ref_u.reset(new int[current_max_n_pix]);
+		pix_ref_v.reset(new int[current_max_n_pix]);
+		pix_ref_f.reset(new int[current_max_n_pix]);
+		pix_ref_g.reset(new int[current_max_n_pix]);
 		assert(pix_ref_u && pix_ref_v && pix_ref_f && pix_ref_g);
 	}
 
@@ -5022,13 +4979,11 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 		max_filter_fg = filter_fg_radius + FILTER_RESOLUTION * 3 / 2;
 		filter_size = max_filter_fg - min_filter_fg + 1;
 		if (filter_size > filter_array_size) {
-			if (filter_array)
-				delete[] filter_array;
-			filter_array = new short[filter_size];
+			filter_array.reset(new short[filter_size]);
 			assert(filter_array);
 			filter_array_size = filter_size;
 		}
-		filter = filter_array - min_filter_fg;
+		filter = filter_array.get() - min_filter_fg;
 		filter[0] = MAX_FILTER_VAL;
 		for (f = 1, s_ = 1.0 / FILTER_RESOLUTION;
 			 f < filter_fg_radius;
@@ -5054,14 +5009,12 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 		if (filter_size > filter_array_size) {
 			//controllare!!
 			//TREALLOC (filter_array, filter_size)
-			if (filter_array)
-				delete[] filter_array;
-			filter_array = new short[filter_size];
+			filter_array.reset(new short[filter_size]);
 
 			assert(filter_array);
 			filter_array_size = filter_size;
 		}
-		filter = filter_array - min_filter_fg;
+		filter = filter_array.get() - min_filter_fg;
 		if (min_pix_out_fg < min_filter_fg) {
 			int delta = min_filter_fg - min_pix_out_fg;
 
@@ -5086,8 +5039,8 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 											   min_pix_ref_u, min_pix_ref_v,
 											   max_pix_ref_u, max_pix_ref_v,
 											   n_pix,
-											   pix_ref_u, pix_ref_v,
-											   pix_ref_f, pix_ref_g,
+											   pix_ref_u.get(), pix_ref_v.get(),
+											   pix_ref_f.get(), pix_ref_g.get(),
 											   filter, palette);
 	else
 #endif
@@ -5095,22 +5048,9 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 								   min_pix_ref_u, min_pix_ref_v,
 								   max_pix_ref_u, max_pix_ref_v,
 								   n_pix,
-								   pix_ref_u, pix_ref_v,
-								   pix_ref_f, pix_ref_g,
+								   pix_ref_u.get(), pix_ref_v.get(),
+								   pix_ref_f.get(), pix_ref_g.get(),
 								   filter, palette);
-
-#ifndef USE_STATIC_VARS
-	if (filter_array)
-		delete[] filter_array;
-	if (pix_ref_u)
-		delete[] pix_ref_u;
-	if (pix_ref_v)
-		delete[] pix_ref_v;
-	if (pix_ref_f)
-		delete[] pix_ref_f;
-	if (pix_ref_g)
-		delete[] pix_ref_g;
-#endif
 
 	/////////////////////////////////////////////////////////
 	// INIZIO GESTIONE ALTRI TIPI RASTER DA IMPLEMENTARE

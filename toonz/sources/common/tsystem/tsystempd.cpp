@@ -1,10 +1,10 @@
-
-
 #ifdef _WIN32
 #ifndef UNICODE
 #define UNICODE
 #endif
 #endif
+
+#include <memory>
 
 #include "tsystem.h"
 //#include "tunicode.h"
@@ -122,12 +122,11 @@ wstring getFormattedMessage(DWORD lastError)
 	if (!wSize)
 		return wstring();
 
-	wchar_t *wBuffer = new wchar_t[wSize + 1];
-	MultiByteToWideChar(0, 0, (char *)lpMsgBuf, -1, wBuffer, wSize);
+	std::unique_ptr<wchar_t[]> wBuffer(new wchar_t[wSize + 1]);
+	MultiByteToWideChar(0, 0, (char *)lpMsgBuf, -1, wBuffer.get(), wSize);
 	wBuffer[wSize] = '\0';
-	wstring wmsg(wBuffer);
+	wstring wmsg(wBuffer.get());
 
-	delete[] wBuffer;
 	LocalFree(lpMsgBuf);
 	return wmsg;
 }

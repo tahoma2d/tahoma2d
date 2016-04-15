@@ -2210,13 +2210,13 @@ bool setSrcMixMuxControl(MIXERCONTROL mxc, DWORD componentTypeSrc)
 	// determino l'indice dell'item corrispondente alla linea sorgente
 	// di tipo componentTypeSrc
 
-	MIXERCONTROLDETAILS_LISTTEXT *pmxcdSelectText =
-		new MIXERCONTROLDETAILS_LISTTEXT[dwMultipleItems];
+	std::unique_ptr<MIXERCONTROLDETAILS_LISTTEXT[]>
+		pmxcdSelectText(new MIXERCONTROLDETAILS_LISTTEXT[dwMultipleItems]);
 
-	if (pmxcdSelectText != NULL) {
+	if (pmxcdSelectText) {
 		// estraggo le info su tutte le linee associate al controllo
 		ret = getControlDetails((HMIXEROBJ)0, dwSelectControlID,
-								dwMultipleItems, pmxcdSelectText);
+								dwMultipleItems, pmxcdSelectText.get());
 
 		if (ret == MMSYSERR_NOERROR) {
 			for (DWORD dwi = 0; dwi < dwMultipleItems; dwi++) {
@@ -2231,8 +2231,6 @@ bool setSrcMixMuxControl(MIXERCONTROL mxc, DWORD componentTypeSrc)
 			}
 		}
 
-		delete[] pmxcdSelectText;
-
 		if (!found)
 			return false;
 	}
@@ -2242,11 +2240,11 @@ bool setSrcMixMuxControl(MIXERCONTROL mxc, DWORD componentTypeSrc)
 
 	bool bRetVal = false;
 
-	MIXERCONTROLDETAILS_BOOLEAN *pmxcdSelectValue =
-		new MIXERCONTROLDETAILS_BOOLEAN[dwMultipleItems];
+	std::unique_ptr<MIXERCONTROLDETAILS_BOOLEAN[]>
+		pmxcdSelectValue(new MIXERCONTROLDETAILS_BOOLEAN[dwMultipleItems]);
 
-	if (pmxcdSelectValue != NULL) {
-		::ZeroMemory(pmxcdSelectValue, dwMultipleItems * sizeof(MIXERCONTROLDETAILS_BOOLEAN));
+	if (pmxcdSelectValue) {
+		::ZeroMemory(pmxcdSelectValue.get(), dwMultipleItems * sizeof(MIXERCONTROLDETAILS_BOOLEAN));
 
 		// impostazione del valore
 		pmxcdSelectValue[dwIndexLine].fValue = (TINT32)1; // lVal; //dovrebbe esser uno
@@ -2254,11 +2252,9 @@ bool setSrcMixMuxControl(MIXERCONTROL mxc, DWORD componentTypeSrc)
 		ret = setControlDetails((HMIXEROBJ)0,
 								dwSelectControlID,
 								dwMultipleItems,
-								pmxcdSelectValue);
+								pmxcdSelectValue.get());
 		if (ret == MMSYSERR_NOERROR)
 			bRetVal = true;
-
-		delete[] pmxcdSelectValue;
 	}
 	return bRetVal;
 }
