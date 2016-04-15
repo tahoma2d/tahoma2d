@@ -1,7 +1,7 @@
-
-
 #ifndef BATCHSERVERSVIEWER_H
 #define BATCHSERVERSVIEWER_H
+
+#include <memory>
 
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/doublefield.h"
@@ -9,6 +9,7 @@
 
 #include <QFrame>
 #include <QListWidget>
+#include <QMenu>
 
 class QComboBox;
 class FarmServerListView;
@@ -36,7 +37,7 @@ protected slots:
 private:
 	void openContextMenu(const QPoint &p);
 	void mousePressEvent(QMouseEvent *event);
-	QMenu *m_menu;
+	std::unique_ptr<QMenu> m_menu;
 };
 
 class BatchServersViewer : public QFrame

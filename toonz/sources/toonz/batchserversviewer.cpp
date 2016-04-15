@@ -32,7 +32,7 @@ public:
 //-----------------------------------------------------------------------------
 
 FarmServerListView::FarmServerListView(QWidget *parent)
-	: QListWidget(parent), m_menu(0)
+	: QListWidget(parent)
 {
 	setFrameStyle(QFrame::StyledPanel);
 }
@@ -102,10 +102,7 @@ void FarmServerListView::openContextMenu(const QPoint &p)
 	if (!item)
 		return;
 
-	if (m_menu)
-		delete m_menu;
-
-	m_menu = new QMenu(this);
+	m_menu.reset(new QMenu(this));
 
 	TFarmController *controller = getTFarmController();
 	ServerState state;

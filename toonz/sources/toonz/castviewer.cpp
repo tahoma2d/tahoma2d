@@ -483,7 +483,11 @@ CastBrowser::CastBrowser(QWidget *parent, Qt::WindowFlags flags)
 #else
 CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
 #endif
-	: QSplitter(parent), m_treeViewer(0), m_folderName(0), m_itemViewer(0), m_castItems(new CastItems())
+	: QSplitter(parent)
+	, m_treeViewer(0)
+	, m_folderName(0)
+	, m_itemViewer(0)
+	, m_castItems(new CastItems())
 {
 	// style sheet
 	setObjectName("CastBrowser");
@@ -555,7 +559,6 @@ CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
 
 CastBrowser::~CastBrowser()
 {
-	delete m_castItems;
 }
 
 //-----------------------------------------------------------------------------
