@@ -22,14 +22,14 @@ class CCallCircle
 {
 	double m_r;
 	int m_nb;
-	SXYDW *m_c;
+	std::unique_ptr<SXYDW[]> m_c;
 
 	void draw(UCHAR *drawB, const int lX, const int lY,
 			  const int xx, const int yy, const double r);
 	void null();
 
 public:
-	CCallCircle() : m_r(0.0), m_nb(0), m_c(0){};
+	CCallCircle() : m_r(0.0), m_nb(0) {}
 	CCallCircle(const double r);
 	virtual ~CCallCircle();
 	void print();

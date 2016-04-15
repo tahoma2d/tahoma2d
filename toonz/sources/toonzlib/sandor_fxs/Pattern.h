@@ -11,6 +11,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <memory>
 #include "STColSelPic.h"
 #include "SDef.h"
 #include "toonz4.6/pixel.h"
@@ -18,7 +19,7 @@
 class CPattern
 {
 	int m_lX, m_lY;
-	UC_PIXEL *m_pat;
+	std::unique_ptr<UC_PIXEL[]> m_pat;
 	char m_fn[1024];
 
 	void null();
@@ -37,7 +38,7 @@ class CPattern
 	void eraseBuffer(const int lX, const int lY, UC_PIXEL *buffer);
 
 public:
-	CPattern() : m_lX(0), m_lY(0), m_pat(0) { m_fn[0] = '\0'; };
+	CPattern() : m_lX(0), m_lY(0) { m_fn[0] = '\0'; };
 	CPattern(RASTER *imgContour);
 	virtual ~CPattern();
 	void rotate(const double angle);
@@ -132,7 +133,7 @@ public:
 					int x1 = I_ROUND(d2xx);
 					int y1 = I_ROUND(d2yy);
 					if (x1 >= 0 && x1 < m_lX && y1 >= 0 && y1 < m_lY) {
-						pucp = m_pat + y1 * m_lX + x1;
+						pucp = m_pat.get() + y1 * m_lX + x1;
 						pucp = (pucp->m) == (UCHAR)0 ? 0 : pucp;
 					}
 					// ----------------------------------------------------

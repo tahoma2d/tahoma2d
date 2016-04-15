@@ -1,7 +1,7 @@
-
-
 #if !defined(OBEJCTTRACKER_H_INCLUDED_)
 #define OBEJCTTRACKER_H_INCLUDED_
+
+#include <memory>
 
 #include "traster.h"
 #include "predict3d.h"
@@ -55,8 +55,8 @@ private:
 		short H_old;
 
 		//histogram
-		float *initHistogram;
-		float *weights_background;
+		std::unique_ptr<float[]> initHistogram;
+		std::unique_ptr<float[]> weights_background;
 
 		//template characterize
 		short X_temp;

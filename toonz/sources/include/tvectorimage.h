@@ -272,8 +272,8 @@ public:
 	//! Call the following method after stroke modification
 	void notifyChangedStrokes(int strokeIndex, TStroke *oldStroke = 0, bool isFlipped = false);
 
-	UINT getFillData(IntersectionBranch *&v);
-	void setFillData(IntersectionBranch *v, UINT size, bool doComputeRegions = true);
+	UINT getFillData(std::unique_ptr<IntersectionBranch[]>& v);
+	void setFillData(std::unique_ptr<IntersectionBranch[]> const& v, UINT size, bool doComputeRegions = true);
 
 	void drawAutocloses(const TVectorRenderData &rd) const; //debug method
 

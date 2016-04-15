@@ -1177,14 +1177,9 @@ void TVectorImage::putRegion(TRegion *region)
 
 void TVectorImage::Imp::cloneRegions(TVectorImage::Imp &out, bool doComputeRegions)
 {
-	IntersectionBranch *v;
-	UINT size;
-
-	size = getFillData(v);
+	std::unique_ptr<IntersectionBranch[]> v;
+	UINT size = getFillData(v);
 	out.setFillData(v, size, doComputeRegions);
-
-	if (size)
-		delete[] v;
 }
 
 //-----------------------------------------------------------------------------
@@ -1635,14 +1630,14 @@ void TVectorImage::invalidateBBox()
 */
 //-----------------------------------------------------------------------------
 
-void TVectorImage::setFillData(IntersectionBranch *v, UINT branchCount, bool doComputeRegions)
+void TVectorImage::setFillData(std::unique_ptr<IntersectionBranch[]> const& v, UINT branchCount, bool doComputeRegions)
 {
 	m_imp->setFillData(v, branchCount, doComputeRegions);
 }
 
 //-----------------------------------------------------------------------------
 
-UINT TVectorImage::getFillData(IntersectionBranch *&v)
+UINT TVectorImage::getFillData(std::unique_ptr<IntersectionBranch[]>& v)
 {
 	return m_imp->getFillData(v);
 }
