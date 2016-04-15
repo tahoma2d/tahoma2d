@@ -59,7 +59,7 @@ void TOfflineGL::setContextManager(TGLContextManager *contextManager)
 // WIN32Implementation : implementazione offlineGL  WIN32
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 namespace
 {

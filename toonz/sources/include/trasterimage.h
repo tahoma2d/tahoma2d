@@ -146,7 +146,7 @@ public:
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TRasterImage>;
 template class DVAPI TDerivedSmartPointerT<TRasterImage, TImage>;
 #endif

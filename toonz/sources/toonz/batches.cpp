@@ -1,6 +1,6 @@
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #define _WIN32_WINNT 0x0500 // per CreateJobObject e affini
 #endif
 

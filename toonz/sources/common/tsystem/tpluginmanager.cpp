@@ -5,7 +5,7 @@
 #include "tconvert.h"
 #include "tlogger.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 
@@ -34,7 +34,7 @@
 class TPluginManager::Plugin
 {
 public:
-#ifdef WIN32
+#ifdef _WIN32
 	typedef HINSTANCE Handle;
 #else
 	typedef void *Handle;
@@ -65,7 +65,7 @@ typedef const TPluginInfo *TnzLibMainProcType();
 namespace
 {
 const char *TnzLibMainProcName = "TLibMain";
-#if !defined(WIN32)
+#if !defined(_WIN32)
 const char *TnzLibMainProcName2 = "_TLibMain";
 #endif
 }
@@ -107,7 +107,7 @@ void TPluginManager::unloadPlugins()
 		 it != m_pluginTable.end(); ++it) {
 		Plugin::Handle handle = (*it)->getHandle();
 #ifndef LINUX
-#ifdef WIN32
+#ifdef _WIN32
 		FreeLibrary(handle);
 #else
 		dlclose(handle);
@@ -133,7 +133,7 @@ void TPluginManager::loadPlugin(const TFilePath &fp)
 	}
 
 	TLogger::debug() << "Loading " << fp;
-#ifdef WIN32
+#ifdef _WIN32
 	Plugin::Handle handle = LoadLibraryW(fp.getWideString().c_str());
 #else
 	wstring str_fp = fp.getWideString();
@@ -142,7 +142,7 @@ void TPluginManager::loadPlugin(const TFilePath &fp)
 	if (!handle) {
 		// non riesce a caricare la libreria;
 		TLogger::warning() << "Unable to load " << fp;
-#ifdef WIN32
+#ifdef _WIN32
 		wstring getFormattedMessage(DWORD lastError);
 		TLogger::warning() << toString(getFormattedMessage(GetLastError()));
 #else
@@ -154,7 +154,7 @@ void TPluginManager::loadPlugin(const TFilePath &fp)
 		m_pluginTable.push_back(plugin);
 		//cout << "loaded" << endl;
 		TnzLibMainProcType *tnzLibMain = 0;
-#ifdef WIN32
+#ifdef _WIN32
 		tnzLibMain = (TnzLibMainProcType *)
 			GetProcAddress(handle, TnzLibMainProcName);
 #else
@@ -168,7 +168,7 @@ void TPluginManager::loadPlugin(const TFilePath &fp)
 			// La libreria non esporta TLibMain;
 			TLogger::warning() << "Corrupted " << fp;
 
-#ifdef WIN32
+#ifdef _WIN32
 			FreeLibrary(handle);
 #else
 			dlclose(handle);
@@ -185,7 +185,7 @@ void TPluginManager::loadPlugin(const TFilePath &fp)
 
 void TPluginManager::loadPlugins(const TFilePath &dir)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
 	const string extension = "dll";
 #elif defined(LINUX) || defined(__sgi)
 	const string extension = "so";
@@ -204,7 +204,7 @@ void TPluginManager::loadPlugins(const TFilePath &dir)
 			continue;
 		wstring fullpath = fp.getWideString();
 
-#ifdef WIN32
+#ifdef _WIN32
 
 		bool isDebugLibrary = (fullpath.find(L".d.") == fullpath.size() - (extension.size() + 3));
 

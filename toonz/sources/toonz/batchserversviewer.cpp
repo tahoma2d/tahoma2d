@@ -159,7 +159,7 @@ void BatchServersViewer::updateServerInfo(const QString &id)
 		m_tasks->setText("");
 		m_cpu->setText(QString::number(TSystem::getProcessorCount()));
 
-#ifdef WIN32
+#ifdef _WIN32
 		//Please observe that the commented value is NOT the same reported by tfarmserver...
 		MEMORYSTATUSEX buff;
 		buff.dwLength = sizeof(MEMORYSTATUSEX);

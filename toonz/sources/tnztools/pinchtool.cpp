@@ -347,7 +347,7 @@ void PinchTool::leftButtonUp(const TPointD &pos,
 		m_undo = 0;
 
 // to avoid red line tool on stroke
-#ifdef WIN32
+#ifdef _WIN32
 		invalidate(status->stroke2change_->getBBox().enlarge(status->pixelSize_ * 13));
 #else
 		invalidate();

@@ -3,7 +3,7 @@
 // Pattern.cpp: implementation of the CPattern class.
 //
 //////////////////////////////////////////////////////////////////////
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
 

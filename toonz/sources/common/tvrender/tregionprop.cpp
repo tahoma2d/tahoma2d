@@ -15,7 +15,7 @@
 //#include "tdebugmessage.h"
 //#include "tflash.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define CALLBACK
 #endif
 

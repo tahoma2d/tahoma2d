@@ -368,7 +368,7 @@ DVAPI void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP 
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TVectorImage>;
 template class DVAPI TDerivedSmartPointerT<TVectorImage, TImage>;
 #endif
@@ -379,7 +379,7 @@ public:
 	TVectorImageP() {}
 	TVectorImageP(TVectorImage *image) : DerivedSmartPointer(image) {}
 	TVectorImageP(TImageP image) : DerivedSmartPointer(image) {}
-#if !defined(WIN32)
+#if !defined(_WIN32)
 	TVectorImageP(TImage *image) : DerivedSmartPointer(TImageP(image))
 	{
 	}

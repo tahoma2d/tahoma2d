@@ -95,7 +95,7 @@ private:
 	TProject &operator=(const TProject &);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TProject>;
 #endif
 typedef TSmartPointerT<TProject> TProjectP;

@@ -32,7 +32,7 @@
 
 #include <assert.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #include <windows.h>
 #else
@@ -291,7 +291,7 @@ static IMAGERGB *iopen(int fd, OpenMode openMode,
 			tablesize = image->ysize * image->zsize * (int)sizeof(TINT32);
 			lseek(f, 512L, 0);
 			if (read(f, image->rowstart, tablesize) != tablesize) {
-#ifdef WIN32
+#ifdef _WIN32
 				DWORD error;
 				error = GetLastError();
 #endif
@@ -302,7 +302,7 @@ static IMAGERGB *iopen(int fd, OpenMode openMode,
 			if (image->dorev)
 				cvtTINT32s(image->rowstart, tablesize);
 			if (read(f, image->rowsize, tablesize) != tablesize) {
-#ifdef WIN32
+#ifdef _WIN32
 				DWORD error;
 				error = GetLastError();
 #endif

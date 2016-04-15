@@ -31,7 +31,7 @@
 #include "toonz/multimediarenderer.h"
 #include "toutputproperties.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "avicodecrestrictions.h"
 #endif
 
@@ -530,7 +530,7 @@ void RenderCommand::rasterRender(bool isPreview)
 
 	string ext = m_fp.getType();
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (ext == "avi" && !isPreview) {
 		TPropertyGroup *props = scene->getProperties()->getOutputProperties()->getFileFormatProperties(ext);
 		string codecName = props->getProperty(0)->getValueAsString();
@@ -740,7 +740,7 @@ void RenderCommand::multimediaRender()
 	ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 	string ext = m_fp.getType();
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (ext == "avi") {
 		TPropertyGroup *props = scene->getProperties()->getOutputProperties()->getFileFormatProperties(ext);
 		string codecName = props->getProperty(0)->getValueAsString();

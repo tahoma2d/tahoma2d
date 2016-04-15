@@ -18,7 +18,7 @@
 
 using namespace TConsts;
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <emmintrin.h> // per SSE2
 #endif
 
@@ -841,7 +841,7 @@ inline void calcValueNoCalc(UINT &calc_value){
 //#define PIXVAL_EQ PIXVAL_EQ_EQUAL
 
 template <typename PixType>
-#ifdef WIN32
+#ifdef _WIN32
 __forceinline
 #endif
 	void
@@ -1511,7 +1511,7 @@ void resample_main_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 
 //---------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 namespace
 {
@@ -1808,7 +1808,7 @@ void inline blendBySSE2(__m128 &pix_out_packed,
 
 } // namespace
 
-#endif // WIN32
+#endif // _WIN32
 //---------------------------------------------------------------------------
 
 static void get_prow_gr8(const TRasterGR8P &rin,
@@ -2747,7 +2747,7 @@ void rop_resample_rgbm(TRasterPT<T> rout, const TRasterPT<T> &rin,
 		}
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	if ((TSystem::getCPUExtensions() & TSystem::CpuSupportsSse2) && T::maxChannelValue == 255)
 		resample_main_rgbm_SSE2<T>(rout, rin, aff_xy2uv, aff0_uv2fg,
 								   min_pix_ref_u, min_pix_ref_v,
@@ -3651,7 +3651,7 @@ void do_resample(TRasterCM32P rout, const TRasterCM32P &rin, const TAffine &aff)
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template <class T>
 void resample_main_cm32_rgbm_SSE2(TRasterPT<T> rout, const TRasterCM32P &rin,
 								  const TAffine &aff_xy2uv,
@@ -5082,7 +5082,7 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
 		}
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	TRaster32P rout32 = rout;
 	if ((TSystem::getCPUExtensions() & TSystem::CpuSupportsSse2) && rout32)
 		resample_main_cm32_rgbm_SSE2<TPixel32>(rout32, rin, aff_xy2uv, aff0_uv2fg,

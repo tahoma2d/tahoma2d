@@ -132,7 +132,7 @@ const char *applicationName = "OpenToonz";
 const char *applicationVersion = "1.0";
 const char *dllRelativePath = "./toonz6.app/Contents/Frameworks";
 
-#ifdef WIN32
+#ifdef _WIN32
 TEnv::StringVar EnvSoftwareCurrentFont("SoftwareCurrentFont", "Arial");
 #else
 TEnv::StringVar EnvSoftwareCurrentFont("SoftwareCurrentFont", "Hervetica");
@@ -201,7 +201,7 @@ extern "C" void licenseObserverCB(char *msg)
 
 void toonzRunOutOfContMemHandler(unsigned long size)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	static bool firstTime = true;
 	if (firstTime) {
 		MessageBox(NULL, (LPCWSTR)L"Run out of contiguous physical memory: please save all and restart Toonz!",
@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
 	std::auto_ptr<QObject> mainScope(new QObject(&a)); // A QObject destroyed before the qApp is therefore explicitly
 	mainScope->setObjectName("mainScope");			   // provided. It can be accessed by looking in the qApp's children.
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef x64
 	//Store the floating point control word. It will be re-set before Toonz initialization
 	//has ended.
@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	//At least on windows, Qt's 4.5.2 native windows feature tend to create
 	//weird flickering effects when dragging panel separators.
 	a.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -412,7 +412,7 @@ int main(int argc, char *argv[])
 
 	// splash screen
 	QPixmap splashPixmap(":Resources/splash.png");
-#ifdef WIN32
+#ifdef _WIN32
 	a.setFont(QFont("Arial", 10));
 #else
 	a.setFont(QFont("Helvetica", 10));
@@ -696,7 +696,7 @@ int main(int argc, char *argv[])
 		TUndoManager::manager(), SIGNAL(somethingChanged()),
 		TApp::instance()->getCurrentScene(), SLOT(setDirtyFlag()));
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef x64
 	//On 32-bit architecture, there could be cases in which initialization could alter the
 	//FPU floating point control word. I've seen this happen when loading some AVI coded (VFAPI),
@@ -716,7 +716,7 @@ int main(int argc, char *argv[])
 	TUndoManager::manager()->reset();
 	PreviewFxManager::instance()->reset();
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (consoleAttached) {
 		::FreeConsole();
 	}

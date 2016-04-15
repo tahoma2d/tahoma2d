@@ -1510,7 +1510,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp, bool ove
 			// Copy mesh level
 			sl->save(app);
 
-#ifdef WIN32
+#ifdef _WIN32
 
 			//hides files
 			oldFilePaths.clear();
@@ -1767,7 +1767,7 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp, bool overwrite
 		hookSet = getHookSet();
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	// Remove the hidden attribute (since TOStream's fopen fails on hidden files)
 	if (getType() == OVL_XSHLEVEL && !m_editableRange.empty())
 		SetFileAttributesW(hookFile.getWideString().c_str(), FILE_ATTRIBUTE_NORMAL);
@@ -1785,7 +1785,7 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp, bool overwrite
 		}
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (getType() == OVL_XSHLEVEL && !m_editableRange.empty())
 		TSystem::hideFileOrLevel(hookFile);
 #endif

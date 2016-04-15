@@ -1091,7 +1091,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index)
 		menu->addAction(cm->getAction(MI_LoadScene));
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	else if (files.size() == 1 && files[0].getType() == "scr") {
 		QAction *action;
 		action = new QAction(tr("Preview Screensaver"), menu);

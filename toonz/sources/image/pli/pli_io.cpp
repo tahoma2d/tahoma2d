@@ -19,7 +19,7 @@
 
 #if defined(MACOSX)
 #include <architecture/i386/io.h>
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #include <io.h>
 #endif
 
@@ -304,7 +304,7 @@ UINT TStyleParam::getSize()
 
 /*=====================================================================*/
 
-#ifdef WIN32
+#ifdef _WIN32
 #define CHECK_FOR_READ_ERROR(filePath)
 #else
 #define CHECK_FOR_READ_ERROR(filePath)                             \
@@ -545,7 +545,7 @@ ParsedPliImp::ParsedPliImp(const TFilePath &filename, bool readInfo)
 
 	// cerr<<m_filePath<<endl;
 
-	//#ifdef WIN32
+	//#ifdef _WIN32
 	m_iChan.open(filename);
 
 	//m_iChan.exceptions( ios::failbit | ios::badbit);

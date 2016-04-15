@@ -3,7 +3,7 @@
 #include "tsystem.h"
 #include "tconvert.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #define UNICODE // per le funzioni di conversione da/a UNC
 #include <windows.h>
 #include <lm.h>
@@ -22,7 +22,7 @@ bool TSystem::isUNC(const TFilePath &path)
 
 TFilePath TSystem::toUNC(const TFilePath &fp)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (QString::fromStdWString(fp.getWideString()).startsWith('+'))
 		return fp;
 	if (isUNC(fp))
@@ -146,7 +146,7 @@ TFilePath TSystem::toUNC(const TFilePath &fp)
 
 TFilePath TSystem::toLocalPath(const TFilePath &fp)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (!isUNC(fp))
 		return TFilePath(fp);
 

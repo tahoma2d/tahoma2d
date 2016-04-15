@@ -93,7 +93,7 @@
 
 #include <stdint.h> // for uintptr_t
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "avicodecrestrictions.h"
 #endif;
 
@@ -365,7 +365,7 @@ LoadImagesPopup::LoadImagesPopup(FlipBook *flip)
 		<< "rgb"
 		<< "nol";
 
-#ifdef WIN32
+#ifdef _WIN32
 	m_appendFilterTypes << "avi";
 #endif
 
@@ -609,7 +609,7 @@ bool FlipBook::doSaveImages(TFilePath fp)
 			return false;
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (ext == "avi") {
 		TPropertyGroup *props = outputSettings->getFileFormatProperties(ext);
 		string codecName = props->getProperty(0)->getValueAsString();

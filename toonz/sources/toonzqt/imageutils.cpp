@@ -14,7 +14,7 @@
 #include "toonz/tproject.h"
 #include "toonz/Naa2TlvConverter.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "avicodecrestrictions.h"
 #endif
 
@@ -602,7 +602,7 @@ void convert(const TFilePath &source, const TFilePath &dest,
 	TLevelReaderP lr(source);
 	TLevelP level = lr->loadInfo();
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (dstExt == "avi") {
 		TDimension res(0, 0);
 

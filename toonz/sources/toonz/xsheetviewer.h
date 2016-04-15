@@ -13,7 +13,7 @@
 #include "cellkeyframeselection.h"
 #include "toonzqt/spreadsheetviewer.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #define XSHEET_FONT_SIZE 9
 #define H_ADJUST 2
 #else

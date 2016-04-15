@@ -9,7 +9,7 @@
 #include "tcurves.h"
 
 #ifndef __sgi
-#ifdef WIN32
+#ifdef _WIN32
 #include <GL/glut.h>
 #elif defined(LINUX)
 #include <GL/glut.h>
@@ -669,7 +669,7 @@ void tglBuildMipmaps(std::vector<TRaster32P> &rasters,
 
 //-----------------------------------------------------------------------------
 //Forse si potrebbe togliere l'ifdef ed usare QT
-#if defined(WIN32)
+#if defined(_WIN32)
 
 TGlContext tglGetCurrentContext()
 {

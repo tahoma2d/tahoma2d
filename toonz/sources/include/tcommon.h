@@ -3,7 +3,7 @@
 #ifndef T_COMMON_INCLUDED
 #define T_COMMON_INCLUDED
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4786)
 #pragma warning(disable : 4251)
 #pragma warning(disable : 4146)
@@ -137,7 +137,7 @@ typedef unsigned short USHORT;
 typedef short SHORT;
 typedef unsigned int UINT;
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef unsigned char BYTE;
 #endif
 
@@ -232,7 +232,7 @@ const int c_minint = ~c_maxint;
 
 const unsigned int c_maxuint = (unsigned int)(~0U);
 
-#ifdef WIN32
+#ifdef _WIN32
 #define DV_EXPORT_API __declspec(dllexport)
 #define DV_IMPORT_API __declspec(dllimport)
 #define DV_EXPORT_VAR __declspec(dllexport)
@@ -244,7 +244,7 @@ const unsigned int c_maxuint = (unsigned int)(~0U);
 #define DV_IMPORT_VAR
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #define DV_ALIGNED(val) __declspec(align(val))
 #else
 #define DV_ALIGNED(val) __attribute__((aligned(val)))

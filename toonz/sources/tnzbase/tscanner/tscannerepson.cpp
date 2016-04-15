@@ -24,7 +24,7 @@ int scsi_maxlen()
 
 #define BW_USES_GRAYTONES
 
-#ifndef WIN32
+#ifndef _WIN32
 #define SWAPIT
 #endif
 

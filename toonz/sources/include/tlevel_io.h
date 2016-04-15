@@ -7,7 +7,7 @@
 #include "timage_io.h"
 #include "tproperty.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #pragma warning(disable : 4290)
 #pragma warning(disable : 4251)
@@ -113,7 +113,7 @@ private:
 
 //-----------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TLevelReader>;
 #endif
 
@@ -221,7 +221,7 @@ public:
 
 //-----------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TLevelWriter>;
 #endif
 

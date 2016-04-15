@@ -10,7 +10,7 @@
 #include <search.h>
 #include "YOMBInputParam.h"
 //#include "tmsg.h"
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
 //////////////////////////////////////////////////////////////////////

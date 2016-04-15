@@ -16,7 +16,7 @@
 #include <boost/range.hpp>
 
 // OS-specific includes
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #include <io.h>
 #endif

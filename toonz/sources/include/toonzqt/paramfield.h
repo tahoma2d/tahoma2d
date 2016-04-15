@@ -3,7 +3,7 @@
 #ifndef PARAMFIELD_H
 #define PARAMFIELD_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4251)
 #endif
 

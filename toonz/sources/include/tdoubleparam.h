@@ -40,7 +40,7 @@ class Grammar;
 class CalculatorNodeVisitor;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TPersistDeclarationT<TDoubleParam>;
 #endif
 

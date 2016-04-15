@@ -50,7 +50,7 @@ private:
 
 	QGridLayout *m_mainLayout;
 
-#ifdef WIN32
+#ifdef _WIN32
 
 	// AVI codec - related members
 	QLabel *m_codecRestriction;
@@ -66,7 +66,7 @@ private:
 	void buildPropertyLineEdit(int index, TPropertyGroup *props);
 	void showEvent(QShowEvent *se);
 
-#ifdef WIN32
+#ifdef _WIN32
 
 private slots:
 

@@ -1,6 +1,6 @@
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -35,7 +35,7 @@ TRaster::TRaster(int lx, int ly, int pixelSize)
 		//m_buffer = new UCHAR[lx*ly*pixelSize];
 
 		if (!m_buffer) {
-#ifdef WIN32
+#ifdef _WIN32
 			static bool firstTime = true;
 			if (firstTime) {
 				firstTime = false;
@@ -57,7 +57,7 @@ TRaster::TRaster(int lx, int ly, int pixelSize)
     m_buffer = BigMemoryManager.getMemoryChunk(lx*ly*pixelSize, this);
     //m_buffer = new UCHAR[lx*ly*pixelSize];
     m_totalMemory += ((lx*ly*pixelSize)>>10);
-    #ifdef WIN32
+    #ifdef _WIN32
     MessageBox( NULL, "Run out of contiguos phisical memory: please save all and restart toonz!", "Warning", MB_OK);
     #endif
     }*/

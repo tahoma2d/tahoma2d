@@ -92,7 +92,7 @@ private:
 	void updatePosPathKeyframes(TStroke *oldSpline, TStroke *newSpline);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class TSmartPointerT<TStageObjectSpline>;
 #endif
 

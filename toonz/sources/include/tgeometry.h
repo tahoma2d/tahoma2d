@@ -105,7 +105,7 @@ inline ostream &operator<<(ostream &out, const TPointT<T> &p)
 typedef TPointT<int> TPoint, TPointI;
 typedef TPointT<double> TPointD;
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TPointT<int>;
 template class DVAPI TPointT<double>;
 #endif
@@ -330,7 +330,7 @@ inline ostream &operator<<(ostream &out, const T3DPointT<T> &p)
 typedef T3DPointT<int> T3DPoint, T3DPointI;
 typedef T3DPointT<double> T3DPointD;
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI T3DPointT<int>;
 template class DVAPI T3DPointT<double>;
 #endif
@@ -618,7 +618,7 @@ inline ostream &operator<<(ostream &out, const TDimensionT<T> &p)
 	return out << "(" << p.lx << ", " << p.ly << ")";
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TDimensionT<int>;
 template class DVAPI TDimensionT<double>;
 #endif
@@ -786,7 +786,7 @@ public:
 typedef TRectT<int> TRect, TRectI;
 typedef TRectT<double> TRectD;
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TRectT<int>;
 template class DVAPI TRectT<double>;
 #endif

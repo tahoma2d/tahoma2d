@@ -127,7 +127,7 @@ void restoreGlobalSettings(CleanupParameters *cp)
 
 void fatalError(string msg)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	msg = "Application can't start:\n" + msg;
 	DVGui::MsgBox(CRITICAL, QString::fromStdString(msg));
 	//MessageBox(0,msg.c_str(),"Fatal error",MB_ICONERROR);

@@ -957,7 +957,7 @@ using namespace ImageUtils;
 
 void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 {
-#ifndef WIN32
+#ifndef _WIN32
 	/* On windows the widget receive the release event before the menu
 	   is shown, on linux and osx the release event is lost, never
 	   received by the widget */

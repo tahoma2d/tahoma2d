@@ -65,7 +65,7 @@ extern "C" {
 //    Preliminaries
 //****************************************************************************************
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DV_EXPORT_API TFxDeclarationT<TLevelColumnFx>;
 template class DV_EXPORT_API TFxDeclarationT<TZeraryColumnFx>;
 template class DV_EXPORT_API TFxDeclarationT<TXsheetFx>;

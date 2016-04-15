@@ -342,7 +342,7 @@ QString getExeName(bool isComposer)
 {
 	QString name = isComposer ? "tcomposer" : "tcleanup";
 
-#ifdef WIN32
+#ifdef _WIN32
 	return name + ".exe ";
 #else
 	return "\"./Toonz 7.1.app/Contents/MacOS/" + name + "\" ";

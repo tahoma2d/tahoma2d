@@ -3,7 +3,7 @@
 #ifndef TSCANNER_H
 #define TSCANNER_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #define NOMINMAX
 #endif
 

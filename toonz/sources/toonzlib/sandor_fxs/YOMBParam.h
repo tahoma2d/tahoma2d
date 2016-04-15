@@ -80,7 +80,7 @@ public:
 	void print();
 	void null();
 	void read(const CInputParam &ip);
-#ifdef WIN32
+#ifdef _WIN32
 	bool read(basic_ifstream<char> &in);
 #endif
 	void makeColorsUS();

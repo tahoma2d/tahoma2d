@@ -13,7 +13,7 @@
 #include "toonz/tcamera.h"
 #include "toutputproperties.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "avicodecrestrictions.h"
 #endif;
 
@@ -37,7 +37,7 @@
 FormatSettingsPopup::FormatSettingsPopup(
 	QWidget *parent, const std::string &format, TPropertyGroup *props)
 	: Dialog(parent), m_format(format), m_props(props), m_levelPath(TFilePath())
-#ifdef WIN32
+#ifdef _WIN32
 	  ,
 	  m_codecRestriction(0), m_codecComboBox(0), m_configureCodec(0)
 #endif
@@ -67,7 +67,7 @@ FormatSettingsPopup::FormatSettingsPopup(
 			assert(false);
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (format == "avi") {
 		m_codecRestriction = new QLabel(this);
 		m_codecRestriction->setMinimumHeight(70);
@@ -131,7 +131,7 @@ void FormatSettingsPopup::buildPropertyComboBox(int index, TPropertyGroup *props
 	m_mainLayout->addWidget(new QLabel(tr(prop->getName().c_str()) + ":", this), row, 0, Qt::AlignRight | Qt::AlignVCenter);
 	m_mainLayout->addWidget(comboBox, row, 1);
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (m_format == "avi")
 		m_codecComboBox = comboBox;
 #endif;
@@ -187,7 +187,7 @@ void FormatSettingsPopup::buildPropertyLineEdit(int index, TPropertyGroup *props
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void FormatSettingsPopup::onComboBoxIndexChanged(const QString codecName)
 {
@@ -214,7 +214,7 @@ void FormatSettingsPopup::onAviCodecConfigure()
 
 void FormatSettingsPopup::showEvent(QShowEvent *se)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (m_format == "avi") {
 		assert(m_codecComboBox);
 		m_codecComboBox->blockSignals(true);

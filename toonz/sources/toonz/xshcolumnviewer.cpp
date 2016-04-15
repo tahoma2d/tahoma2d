@@ -597,7 +597,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col)
 	TColumnSelection *selection = m_viewer->getColumnSelection();
 
 // Preparing painter
-#ifdef WIN32
+#ifdef _WIN32
 	QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 	QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);
@@ -942,7 +942,7 @@ void ColumnArea::drawPaletteColumnHead(QPainter &p, int col)
 {
 	TColumnSelection *selection = m_viewer->getColumnSelection();
 
-#ifdef WIN32
+#ifdef _WIN32
 	QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 	QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);

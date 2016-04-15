@@ -6,7 +6,7 @@
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void swapRedBlueChannels(void *buffer, int bufferSize) // Flips The Red And Blue Bytes (WidthxHeight)
 {
@@ -127,7 +127,7 @@ void QtOfflineGL::createContext(TDimension rasterSize, std::shared_ptr<TOfflineG
 
 	QGLFormat fmt;
 
-#ifdef WIN32
+#ifdef _WIN32
 	fmt.setAlphaBufferSize(8);
 	fmt.setAlpha(true);
 	fmt.setRgba(true);
@@ -280,7 +280,7 @@ void QtOfflineGLPBuffer::createContext(TDimension rasterSize)
 
 	QGLFormat fmt;
 
-#ifdef WIN32
+#ifdef _WIN32
 	fmt.setAlphaBufferSize(8);
 	fmt.setAlpha(false);
 	fmt.setRgba(true);

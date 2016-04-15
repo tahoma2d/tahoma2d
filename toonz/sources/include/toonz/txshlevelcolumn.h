@@ -90,7 +90,7 @@ private:
 	TXshLevelColumn &operator=(const TXshLevelColumn &);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DV_EXPORT_API TSmartPointerT<TXshLevelColumn>;
 #endif
 

@@ -41,7 +41,7 @@
 #include <deque>
 #include <numeric>
 #include <sstream>
-#ifdef WIN32
+#ifdef _WIN32
 #include <crtdbg.h>
 #endif
 
@@ -121,7 +121,7 @@ public:
 	bool m_modified;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<CacheItem>;
 #endif
 typedef TSmartPointerT<CacheItem> CacheItemP;
@@ -368,7 +368,7 @@ public:
 	TImageP m_image;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<UncompressedOnMemoryCacheItem>;
 template class DVAPI TDerivedSmartPointerT<UncompressedOnMemoryCacheItem, CacheItem>;
 #endif
@@ -417,7 +417,7 @@ public:
 	TRasterP m_compressedRas;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<CompressedOnMemoryCacheItem>;
 template class DVAPI TDerivedSmartPointerT<CompressedOnMemoryCacheItem, CacheItem>;
 #endif
@@ -518,7 +518,7 @@ public:
 	TFilePath m_fp;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<CompressedOnDiskCacheItem>;
 template class DVAPI TDerivedSmartPointerT<CompressedOnDiskCacheItem, CacheItem>;
 #endif
@@ -587,7 +587,7 @@ public:
 
 	TFilePath m_fp;
 };
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<UncompressedOnDiskCacheItem>;
 template class DVAPI TDerivedSmartPointerT<UncompressedOnDiskCacheItem, CacheItem>;
 #endif
@@ -854,7 +854,7 @@ void TImageCache::Imp::doCompress()
 		}
 		string id = it->first;
 
-#ifdef WIN32
+#ifdef _WIN32
 		assert(itu->first == it->second->m_historyCount);
 		itu = m_itemHistory.erase(itu);
 		m_itemsByImagePointer.erase(getPointer(item->getImage()));
@@ -939,7 +939,7 @@ void TImageCache::Imp::doCompress(string id)
 		return; // id not found: return
 
 // delete itu from m_itemHistory
-#ifdef WIN32
+#ifdef _WIN32
 	assert(itu->first == it->second->m_historyCount);
 	itu = m_itemHistory.erase(itu);
 	m_itemsByImagePointer.erase(getPointer(item->getImage()));
@@ -1044,7 +1044,7 @@ UCHAR *TImageCache::Imp::compressAndMalloc(TUINT32 size)
 			m_compressedItems[it->first] = newItem;
 		}
 
-#ifdef WIN32
+#ifdef _WIN32
 		assert(itu->first == it->second->m_historyCount);
 		itu = m_itemHistory.erase(itu);
 		m_itemsByImagePointer.erase(getPointer(item->getImage()));

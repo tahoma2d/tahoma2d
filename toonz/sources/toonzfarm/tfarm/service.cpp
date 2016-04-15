@@ -6,7 +6,7 @@
 
 #include "tfilepath.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #include <windows.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@
 
 #define SZDEPENDENCIES ""
 
-#ifdef WIN32
+#ifdef _WIN32
 
 //------------------------------------------------------------------------------
 
@@ -52,14 +52,14 @@ LPTSTR GetLastErrorText(LPTSTR lpszBuf, DWORD dwSize)
 	return lpszBuf;
 }
 
-#endif // WIN32
+#endif // _WIN32
 
 //------------------------------------------------------------------------------
 
 string getLastErrorText()
 {
 	string errText;
-#ifdef WIN32
+#ifdef _WIN32
 	char errBuff[256];
 	errText = GetLastErrorText(errBuff, sizeof(errBuff));
 #else
@@ -79,7 +79,7 @@ class TService::Imp
 public:
 	Imp() {}
 
-#ifdef WIN32
+#ifdef _WIN32
 	static void WINAPI serviceMain(DWORD dwArgc, LPTSTR *lpszArgv);
 	static void WINAPI serviceCtrl(DWORD dwCtrlCode);
 
@@ -93,7 +93,7 @@ public:
 	string m_displayName;
 	static bool m_console;
 
-#ifdef WIN32
+#ifdef _WIN32
 	static SERVICE_STATUS_HANDLE m_hService;
 	static SERVICE_STATUS m_ssStatus; // current status of the service
 	static DWORD m_dwErr;
@@ -101,7 +101,7 @@ public:
 #endif
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 SERVICE_STATUS_HANDLE TService::Imp::m_hService = 0;
 SERVICE_STATUS TService::Imp::m_ssStatus;
 DWORD TService::Imp::m_dwErr = 0;
@@ -140,7 +140,7 @@ TService *TService::m_instance = 0;
 
 void TService::setStatus(Status status, long exitCode, long waitHint)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (!isRunningAsConsoleApp())
 		TService::Imp::reportStatusToSCMgr(status, exitCode, waitHint);
 	else {
@@ -169,7 +169,7 @@ string TService::getDisplayName() const
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void WINAPI TService::Imp::serviceCtrl(DWORD dwCtrlCode)
 {
@@ -379,7 +379,7 @@ void TService::run(int argc, char *argv[], bool console)
 #endif
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (console) {
 		_tprintf(TEXT("Starting %s.\n"), TService::instance()->getDisplayName().c_str());
 
@@ -427,7 +427,7 @@ bool TService::isRunningAsConsoleApp() const
 
 void TService::install(const string &name, const string &displayName, const TFilePath &appPath)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	SC_HANDLE schService;
 	SC_HANDLE schSCManager;
 
@@ -469,7 +469,7 @@ void TService::install(const string &name, const string &displayName, const TFil
 
 void TService::remove(const string &name)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	string displayName = name;
 
 	SC_HANDLE schService;
@@ -531,7 +531,7 @@ void TService::addToMessageLog(const QString &msg)
 
 void TService::addToMessageLog(const string &msg)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	TCHAR szMsg[256];
 	HANDLE hEventSource;
 	LPCTSTR lpszStrings[2];
