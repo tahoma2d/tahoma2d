@@ -238,7 +238,7 @@ public:
 
 private:
 	// Not copyable
-	TOStream(const TOStream &) = delete;			      //!< Not implemented
+	TOStream(const TOStream &) = default;			      //!< Not implemented
 	TOStream &operator=(const TOStream &) = delete; //!< Not implemented
 };
 
