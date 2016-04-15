@@ -87,7 +87,7 @@ public:
 		: TOfflineGL::Imp(rasterSize.lx, rasterSize.ly)
 	{
 		m_offData = 0;
-		createContext(rasterSize, shared); //makeCurrent is called at the end of this
+		createContext(rasterSize, std::move(shared)); //makeCurrent is called at the end of this
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
