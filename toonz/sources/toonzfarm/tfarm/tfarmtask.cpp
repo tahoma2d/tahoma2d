@@ -17,7 +17,7 @@
 #include <QSettings>
 
 // MACOSX includes
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #include <netdb.h>	 // gethostbyname
 #include <arpa/inet.h> // inet_ntoa
 #endif

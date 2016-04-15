@@ -186,6 +186,11 @@ bool TSystem::memoryShortage()
 	// to be done...
 	return false;
 
+#elif defined(LINUX)
+
+	// to be done...
+	return false;
+
 #else
 
 	@ @ @ERROR : PLATFORM NOT SUPPORTED

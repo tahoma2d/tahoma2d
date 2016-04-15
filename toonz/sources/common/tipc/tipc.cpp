@@ -18,6 +18,9 @@
 #elif MACOSX
 #include <sys/sysctl.h>
 #include <unistd.h>
+#elif LINUX
+#include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #include "tipc.h"

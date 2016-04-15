@@ -10,26 +10,26 @@ using namespace std;
 
 #ifndef TNZCORE_LIGHT
 
-#include <qdatetime>
-#include <qstringlist>
-#include <qprocess>
-#include <qdir>
-#include <qfile>
-#include <qfileinfo>
-#include <qsettings>
-#include <qvariant>
-#include <qthread>
-#include <qurl>
-#include <qcoreapplication>
-#include <quuid.h>
+#include <QDateTime>
+#include <QStringList>
+#include <QProcess>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QSettings>
+#include <QVariant>
+#include <QThread>
+#include <QUrl>
+#include <QCoreApplication>
+#include <QUuid>
 
 #ifdef WIN32
 #include <qdesktopservices>
 #include <qhostinfo>
 #include <shlobj.h>
 #else
-#include <qdesktopservices>
-#include <qhostinfo>
+#include <QDesktopServices>
+#include <QHostInfo>
 #endif
 
 #include <QStringList>

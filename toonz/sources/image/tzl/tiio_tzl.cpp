@@ -21,7 +21,7 @@
 #include "tconvert.h"
 #include "trasterimage.h"
 
-#include "QByteArray.h"
+#include <QByteArray>
 
 #if !defined(TNZ_LITTLE_ENDIAN)
 TNZ_LITTLE_ENDIAN undefined !!

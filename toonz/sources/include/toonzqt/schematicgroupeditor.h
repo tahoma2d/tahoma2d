@@ -4,7 +4,7 @@
 #define SCHEMATICGROUPEDITOR_H
 
 #include "tcommon.h"
-#include <QGraphicsItem.h>
+#include <QGraphicsItem>
 #include "tgeometry.h"
 
 #undef DVAPI

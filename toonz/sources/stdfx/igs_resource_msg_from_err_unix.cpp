@@ -1,4 +1,5 @@
 #include <cerrno>
+#include <cstring>			/* memset */
 #include <vector>
 #include <stdexcept> // std::domain_error(-)
 #include <locale>

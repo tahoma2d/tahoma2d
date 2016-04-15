@@ -7,7 +7,7 @@
 #include "tsystem.h"
 
 #include <set>
-#include <qdatetime>
+#include <QDateTime>
 
 class History
 { // singleton

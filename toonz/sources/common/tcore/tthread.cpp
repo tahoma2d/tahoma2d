@@ -10,7 +10,7 @@
 #include "tatomicvar.h"
 
 #include "tthread.h"
-#include "tthreadP.h"
+#include "tthreadp.h"
 
 // STL includes
 #include <set>

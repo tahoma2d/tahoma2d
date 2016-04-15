@@ -11,12 +11,14 @@
 #ifndef __sgi
 #ifdef WIN32
 #include <GL/glut.h>
+#elif defined(LINUX)
+#include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
 #endif
 #endif
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #include <QGLContext>
 #endif
 

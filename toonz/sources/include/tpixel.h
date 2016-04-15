@@ -154,6 +154,8 @@ public:
 	Channel b, g, r, m;
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 	Channel m, r, g, b;
+#elif TNZ_MACHINE_CHANNEL_ORDER_RGBM
+	Channel r, g, b, m;
 #else
 undefined machine order !!!!
 #endif

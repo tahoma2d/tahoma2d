@@ -19,7 +19,7 @@
 #include "toonz/sceneproperties.h"
 #include "toonz/toonzfolders.h"
 #include "toonz/txsheet.h"
-#include <QApplication.h>
+#include <QApplication>
 
 #include "historytypes.h"
 

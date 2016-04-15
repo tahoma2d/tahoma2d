@@ -6,7 +6,7 @@
 #include "toonz/scriptbinding.h"
 #include "tfilepath.h"
 
-#include <qdatetime.h>
+#include <QDateTime>
 
 namespace TScriptBinding
 {
