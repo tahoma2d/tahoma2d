@@ -360,7 +360,7 @@ class TSoundOutputDeviceImp;
 */
 class DVAPI TSoundOutputDevice
 {
-	std::unique_ptr<TSoundOutputDeviceImp> m_imp;
+	std::shared_ptr<TSoundOutputDeviceImp> m_imp;
 
 public:
 	TSoundOutputDevice();
