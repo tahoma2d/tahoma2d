@@ -14,6 +14,8 @@
 
 #include "tpalette.h"
 
+#include <memory>
+
 PERSIST_IDENTIFIER(TPalette, "palette")
 
 TPersistDeclarationT<TPalette> auxPaletteDeclaration("vectorpalette");

@@ -16,6 +16,7 @@
 #include <map>
 #include <math.h>
 #include <functional>
+#include <memory>
 
 // Qt includes
 #include <QString>

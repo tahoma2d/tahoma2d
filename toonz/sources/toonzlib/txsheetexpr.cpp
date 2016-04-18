@@ -29,6 +29,8 @@
 
 #include "toonz/txsheetexpr.h"
 
+#include <memory>
+
 using namespace TSyntax;
 
 //******************************************************************************

@@ -14,6 +14,9 @@
 #include "tpaletteutil.h"
 #include "tthreadmessage.h"
 #include "tsimplecolorstyles.h"
+
+#include <memory>
+
 //=============================================================================
 typedef TVectorImage::IntersectionBranch IntersectionBranch;
 
