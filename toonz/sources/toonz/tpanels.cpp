@@ -274,7 +274,7 @@ public:
 	{
 		TFx *currentFx = TApp::instance()->getCurrentFx()->getFx();
 		if (!currentFx) {
-			MsgBox(WARNING, "Preview Fx : No Current Fx !");
+			DVGui::MsgBox(DVGui::WARNING, "Preview Fx : No Current Fx !");
 			return;
 		}
 		/*-- 
@@ -284,7 +284,7 @@ public:
 		TPaletteColumnFx *pfx = dynamic_cast<TPaletteColumnFx *>(currentFx);
 		TOutputFx *ofx = dynamic_cast<TOutputFx *>(currentFx);
 		if (pfx || ofx) {
-			MsgBox(WARNING, "Preview Fx command is not available on Palette or Output node !");
+			DVGui::MsgBox(DVGui::WARNING, "Preview Fx command is not available on Palette or Output node !");
 			return;
 		}
 
@@ -660,7 +660,7 @@ ColorFieldEditorController::ColorFieldEditorController()
 
 //-----------------------------------------------------------------------------
 
-void ColorFieldEditorController::edit(ColorField *colorField)
+void ColorFieldEditorController::edit(DVGui::ColorField *colorField)
 {
 	if (m_currentColorField && m_currentColorField->isEditing())
 		m_currentColorField->setIsEditing(false);
@@ -729,7 +729,7 @@ CleanupColorFieldEditorController::CleanupColorFieldEditorController()
 
 //-----------------------------------------------------------------------------
 
-void CleanupColorFieldEditorController::edit(CleanupColorField *colorField)
+void CleanupColorFieldEditorController::edit(DVGui::CleanupColorField *colorField)
 {
 	if (m_currentColorField && m_currentColorField->isEditing())
 		m_currentColorField->setIsEditing(false);

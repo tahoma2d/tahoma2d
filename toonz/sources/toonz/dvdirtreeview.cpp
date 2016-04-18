@@ -617,7 +617,7 @@ void DvDirTreeView::updateVersionControl(DvDirVersionControlNode *node)
 	if (rootNode) {
 		QString localPath = QString::fromStdWString(rootNode->getLocalPath());
 		if (!QFile::exists(localPath)) {
-			MsgBox(WARNING, tr("The local path does not exist:") + " " + localPath);
+			DVGui::MsgBox(DVGui::WARNING, tr("The local path does not exist:") + " " + localPath);
 			return;
 		}
 

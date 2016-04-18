@@ -233,7 +233,7 @@ TimeStretchPopup::TimeStretchPopup()
 	m_oldRange->setFixedSize(43, DVGui::WidgetHeight);
 	rangeLayout->addWidget(m_oldRange);
 	rangeLayout->addSpacing(10);
-	m_newRangeFld = new IntLineEdit(this);
+	m_newRangeFld = new DVGui::IntLineEdit(this);
 	rangeLayout->addWidget(new QLabel(tr("New Range:")), 1, Qt::AlignRight);
 	rangeLayout->addWidget(m_newRangeFld, 0, Qt::AlignRight);
 	addLayout(tr("Old Range:"), rangeLayout);

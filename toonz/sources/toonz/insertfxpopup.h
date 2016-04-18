@@ -14,13 +14,11 @@ class TFx;
 
 #include <QIcon>
 
-using namespace DVGui;
-
 //=============================================================================
 // InsertFxPopup
 //-----------------------------------------------------------------------------
 
-class InsertFxPopup : public Dialog
+class InsertFxPopup : public DVGui::Dialog
 {
 	Q_OBJECT
 

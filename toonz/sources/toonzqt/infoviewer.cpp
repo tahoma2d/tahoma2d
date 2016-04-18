@@ -584,7 +584,7 @@ bool InfoViewerImp::setItem(const TLevelP &level, TPalette *palette, const TFile
 		assert(!m_level);
 
 		if (!TSystem::doesExistFileOrLevel(m_path)) {
-			MsgBox(WARNING, QObject::tr("The file %1 does not exist.").arg(QString::fromStdWString(path.getWideString())));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("The file %1 does not exist.").arg(QString::fromStdWString(path.getWideString())));
 
 			return false;
 		}

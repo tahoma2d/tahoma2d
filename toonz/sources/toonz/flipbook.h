@@ -41,10 +41,10 @@ class LoadImagesPopup : public FileBrowserPopup
 {
 	Q_OBJECT
 
-	LineEdit *m_fromField;
-	LineEdit *m_toField;
-	LineEdit *m_stepField;
-	LineEdit *m_shrinkField;
+	DVGui::LineEdit *m_fromField;
+	DVGui::LineEdit *m_toField;
+	DVGui::LineEdit *m_stepField;
+	DVGui::LineEdit *m_shrinkField;
 
 	int m_minFrame, m_maxFrame;
 	int m_from, m_to, m_step, m_shrink;

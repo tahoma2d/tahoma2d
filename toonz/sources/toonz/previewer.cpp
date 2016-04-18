@@ -742,7 +742,7 @@ enum { eBegin,
 	   eIncrement,
 	   eEnd };
 
-static ProgressDialog *Pd = 0;
+static DVGui::ProgressDialog *Pd = 0;
 
 //-----------------------------------------------------------------------------
 
@@ -758,7 +758,7 @@ public:
 		switch (m_choice) {
 		case eBegin:
 			if (!Pd)
-				Pd = new ProgressDialog(QObject::tr("Saving previewed frames...."), QObject::tr("Cancel"), 0, m_val);
+				Pd = new DVGui::ProgressDialog(QObject::tr("Saving previewed frames...."), QObject::tr("Cancel"), 0, m_val);
 			else
 				Pd->setMaximum(m_val);
 			Pd->show();
@@ -837,12 +837,12 @@ bool Previewer::Imp::doSaveRenderedFrames(TFilePath fp)
 		fp = fp.withType(ext);
 	}
 	if (fp.getName() == "") {
-		MsgBox(WARNING, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
+		DVGui::MsgBox(DVGui::WARNING, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
 		return false;
 	}
 
 	if (!formats.contains(QString::fromStdString(ext))) {
-		MsgBox(WARNING, "Unsopporter raster format, cannot save");
+		DVGui::MsgBox(DVGui::WARNING, "Unsopporter raster format, cannot save");
 		return false;
 	}
 

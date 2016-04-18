@@ -1448,7 +1448,7 @@ bool IoCmd::saveScene(const TFilePath &path, int flags)
 		scene->save(scenePath, xsheet);
 		TApp::instance()->getPaletteController()->getCurrentLevelPalette()->notifyPaletteChanged(); //non toglieva l'asterisco alla paletta...forse non va qua? vinz
 	} catch (const TSystemException &se) {
-		MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
 	} catch (...) {
 		MsgBox(CRITICAL, QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
 	}
@@ -1620,7 +1620,7 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 		sl->save(fp, TFilePath(), overwritePalette);
 	} catch (TSystemException se) {
 		QApplication::restoreOverrideCursor();
-		MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
 		return false;
 	} catch (...) {
 		QApplication::restoreOverrideCursor();
@@ -1818,7 +1818,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 	if (!sceneProject) {
 		QString msg;
 		msg = QObject::tr("It is not possible to load the scene %1 because it does not belong to any project.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::MsgBox(DVGui::WARNING, msg);
 	}
 	if (sceneProject && !sceneProject->isCurrent()) {
 		QString currentProjectName =
@@ -1886,14 +1886,14 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 			msg = QObject::tr("The scene %1 was created with Toonz and cannot be loaded in LineTest.").arg(QString::fromStdWString(scenePath.getWideString()));
 		else
 			msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::MsgBox(DVGui::WARNING, msg);
 	}
 #endif
 	catch (...) {
 		printf("%s:%s Exception ...:\n", __FILE__, __FUNCTION__);
 		QString msg;
 		msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::MsgBox(DVGui::WARNING, msg);
 	}
 	printf("%s:%s end load:\n", __FILE__, __FUNCTION__);
 	TProject *project = scene->getProject();
@@ -1944,7 +1944,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 	if (forbiddenLevelCount > 0) {
 		QString msg;
 		msg = QObject::tr("There were problems loading the scene %1.\nSome levels have not been loaded because their version is not supported").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::MsgBox(DVGui::WARNING, msg);
 	}
 
 	bool exist = TSystem::doesExistFileOrLevel(scene->decodeFilePath(scene->getScenePath()));
@@ -2601,16 +2601,16 @@ public:
 #else
 		TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
 		if (!sl) {
-			MsgBox(WARNING, QObject::tr("No Current Level"));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("No Current Level"));
 			return;
 		}
 		if (!sl->getPalette()) {
-			MsgBox(WARNING, QObject::tr("Toonz cannot Save this Level"));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("Toonz cannot Save this Level"));
 			return;
 		}
 		ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 		if (!scene) {
-			MsgBox(WARNING, QObject::tr("No Current Scene"));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("No Current Scene"));
 			return; // non dovrebbe succedere mai
 		}
 		TFilePath levelPath = sl->getPath();
@@ -2649,7 +2649,7 @@ public:
 		try {
 			TProjectManager::instance()->saveTemplate(scene);
 		} catch (TSystemException se) {
-			MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+			DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
 			return;
 		}
 	}
@@ -2760,13 +2760,13 @@ public:
 
 		TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
 		if (!level) {
-			MsgBox(WARNING, "No current level.");
+			DVGui::MsgBox(DVGui::WARNING, "No current level.");
 			return;
 		}
 		TXshSimpleLevel *sl = level->getSimpleLevel();
 		TXshPaletteLevel *pl = level->getPaletteLevel();
 		if (!sl && !pl) {
-			MsgBox(WARNING, "Current level has no palette.");
+			DVGui::MsgBox(DVGui::WARNING, "Current level has no palette.");
 			return;
 		}
 		/*-- SimpleLevel/PaletteLevelの場合毎にパレット/パスの取得の仕方を変える --*/
@@ -2776,7 +2776,7 @@ public:
 		if (sl) {
 			palette = sl->getPalette();
 			if (!palette) {
-				MsgBox(WARNING, "No current palette");
+				DVGui::MsgBox(DVGui::WARNING, "No current palette");
 				return;
 			}
 			if (sl->getPath().getType() == "pli")
@@ -2788,12 +2788,12 @@ public:
 		else if (pl) {
 			palette = pl->getPalette();
 			if (!palette) {
-				MsgBox(WARNING, "No current palette");
+				DVGui::MsgBox(DVGui::WARNING, "No current palette");
 				return;
 			}
 			palettePath = pl->getPath();
 		} else {
-			MsgBox(WARNING, "This level is not SimpleLevel or PaletteLevel");
+			DVGui::MsgBox(DVGui::WARNING, "This level is not SimpleLevel or PaletteLevel");
 			return;
 		}
 

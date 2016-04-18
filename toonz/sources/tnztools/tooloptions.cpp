@@ -1016,7 +1016,7 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool, T
 	hLayout()->addWidget(m_scaleYField);
 	ret = ret && connect(m_scaleYField, SIGNAL(valueChange()), SLOT(onScaleYValueChanged()));
 	hLayout()->addSpacing(4);
-	m_scaleLink = new CheckBox(tr("Link"), this);
+	m_scaleLink = new DVGui::CheckBox(tr("Link"), this);
 	hLayout()->addWidget(m_scaleLink);
 
 	addSeparator();
@@ -1494,7 +1494,7 @@ public:
 		: Dialog(0, true)
 	{
 		setWindowTitle(tr("Preset Name"));
-		m_nameFld = new LineEdit();
+		m_nameFld = new DVGui::LineEdit();
 		addWidget(m_nameFld);
 
 		QPushButton *okBtn = new QPushButton(tr("OK"), this);

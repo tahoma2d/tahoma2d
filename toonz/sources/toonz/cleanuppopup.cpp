@@ -204,19 +204,19 @@ void addCleanupDefaultPalette(TXshSimpleLevelP sl)
 	TFileStatus pfs(palettePath);
 
 	if (!pfs.doesExist() || !pfs.isReadable()) {
-		MsgBox(WARNING, QString("CleanupDefaultPalette file: %1 is not found!").arg(QString::fromStdWString(palettePath.getWideString())));
+		DVGui::MsgBox(DVGui::WARNING, QString("CleanupDefaultPalette file: %1 is not found!").arg(QString::fromStdWString(palettePath.getWideString())));
 		return;
 	}
 
 	TIStream is(palettePath);
 	if (!is) {
-		MsgBox(WARNING, QString("CleanupDefaultPalette file: failed to get TIStream"));
+		DVGui::MsgBox(DVGui::WARNING, QString("CleanupDefaultPalette file: failed to get TIStream"));
 		return;
 	}
 
 	string tagName;
 	if (!is.matchTag(tagName) || tagName != "palette") {
-		MsgBox(WARNING, QString("CleanupDefaultPalette file: This is not palette file"));
+		DVGui::MsgBox(DVGui::WARNING, QString("CleanupDefaultPalette file: This is not palette file"));
 		return;
 	}
 
@@ -662,7 +662,7 @@ bool CleanupPopup::analyzeCleanupList()
 		}
 		question += QObject::tr("\nAre you sure ?");
 
-		int ret = MsgBox(question, QObject::tr("Delete"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Delete"), QObject::tr("Cancel"), 0);
 		if (ret == 0 || ret == 2) {
 			return false;
 		} else if (ret == 1) {
@@ -946,7 +946,7 @@ QString CleanupPopup::setupLevel()
 					TIStream is(targetPalettePath);
 					string tagName;
 					if (!is.matchTag(tagName) || tagName != "palette") {
-						MsgBox(WARNING, QString("CleanupDefaultPalette file: This is not palette file"));
+						DVGui::MsgBox(DVGui::WARNING, QString("CleanupDefaultPalette file: This is not palette file"));
 						return NULL;
 					}
 					m_originalPalette = new TPalette();

@@ -1271,7 +1271,7 @@ void TaskTreeModel::start(bool)
 				BatchesController::instance()->start(task->m_id);
 			}
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 
 	emit layoutChanged();
@@ -1304,7 +1304,7 @@ void TaskTreeModel::stop(bool)
 				BatchesController::instance()->stop(task->m_id);
 			}
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 
 	emit layoutChanged();

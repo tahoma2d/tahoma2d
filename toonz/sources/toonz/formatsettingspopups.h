@@ -46,7 +46,7 @@ private:
 	TPropertyGroup *m_props;
 	TFilePath m_levelPath;
 
-	QMap<std::string, PropertyWidget *> m_widgets; //!< Property name -> PropertyWidget
+	QMap<std::string, DVGui::PropertyWidget *> m_widgets; //!< Property name -> PropertyWidget
 
 	QGridLayout *m_mainLayout;
 
@@ -54,7 +54,7 @@ private:
 
 	// AVI codec - related members
 	QLabel *m_codecRestriction;
-	PropertyComboBox *m_codecComboBox;
+	DVGui::PropertyComboBox *m_codecComboBox;
 	QPushButton *m_configureCodec;
 
 #endif

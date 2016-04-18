@@ -771,7 +771,7 @@ void StudioPaletteTreeViewer::loadInCurrentPalette()
 		return;
 
 	if (palette->isLocked()) {
-		MsgBox(WARNING, "Palette is Locked!");
+		DVGui::MsgBox(DVGui::WARNING, "Palette is Locked!");
 		return;
 	}
 

@@ -140,11 +140,11 @@ void TMsgCore::readFromSocket(QTcpSocket *socket) //server side
 		QString str = messages.at(i).simplified();
 		str.chop(4); //rimuovo i "#END" alla fine
 		if (str.startsWith("ERROR"))
-			DVGui::MsgBox(CRITICAL, str.right(str.size() - 5));
+			DVGui::MsgBox(DVGui::CRITICAL, str.right(str.size() - 5));
 		else if (str.startsWith("WARNING"))
-			DVGui::MsgBox(WARNING, str.right(str.size() - 7));
+			DVGui::MsgBox(DVGui::WARNING, str.right(str.size() - 7));
 		else if (str.startsWith("INFO"))
-			DVGui::MsgBox(INFORMATION, str.right(str.size() - 4));
+			DVGui::MsgBox(DVGui::INFORMATION, str.right(str.size() - 4));
 		else
 			assert(false);
 	}
@@ -166,13 +166,13 @@ TMsgCore::~TMsgCore()
 
 //----------------------------------
 
-bool TMsgCore::send(MsgType type, const QString &message) //client side
+bool TMsgCore::send(DVGui::MsgType type, const QString &message) //client side
 {
 	if (receivers(SIGNAL(sendMessage(int, const QString &))) == 0) {
 		if (m_clientSocket == 0 || m_clientSocket->state() != QTcpSocket::ConnectedState)
 			return false;
 
-		QString socketMessage = (type == CRITICAL ? "#TMSG ERROR " : (type == WARNING ? "#TMSG WARNING " : "#TMSG INFO ")) + message + " #END\n";
+		QString socketMessage = (type == DVGui::CRITICAL ? "#TMSG ERROR " : (type == DVGui::WARNING ? "#TMSG WARNING " : "#TMSG INFO ")) + message + " #END\n";
 
 #if QT_VERSION >= 0x050000
 		m_clientSocket->write(socketMessage.toLatin1());

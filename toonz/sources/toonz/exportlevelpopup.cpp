@@ -72,7 +72,7 @@ struct MultiExportOverwriteCB : public IoCmd::OverwriteCallbacks {
 		if (m_stopped)
 			return false;
 
-		int ret = MsgBox(QObject::tr("Warning: file %1 already exists.").arg(toQString(fp)), QObject::tr("Continue Exporting"), QObject::tr("Continue to All"), QObject::tr("Stop Exporting"), 1);
+		int ret = DVGui::MsgBox(QObject::tr("Warning: file %1 already exists.").arg(toQString(fp)), QObject::tr("Continue Exporting"), QObject::tr("Continue to All"), QObject::tr("Stop Exporting"), 1);
 
 		m_yesToAll = (ret == 2);
 		m_stopped = (ret == 0) || (ret == 3);
@@ -84,7 +84,7 @@ struct MultiExportOverwriteCB : public IoCmd::OverwriteCallbacks {
 
 struct MultiExportProgressCB : public IoCmd::ProgressCallbacks {
 	QString m_processedName;
-	ProgressDialog m_pb;
+	DVGui::ProgressDialog m_pb;
 
 public:
 	MultiExportProgressCB() : m_pb("", QObject::tr("Cancel"), 0, 0) { m_pb.show(); }
@@ -235,7 +235,7 @@ ExportLevelPopup::ExportLevelPopup()
 	QLabel *formatLabel = new QLabel(tr("Format:"));
 	m_format = new QComboBox(this);
 	// Retas compliant checkbox
-	m_retas = new CheckBox(tr("Retas Compliant"));
+	m_retas = new DVGui::CheckBox(tr("Retas Compliant"));
 	// Format options button
 	m_formatOptions = new QPushButton(tr("Options"));
 	//-----
@@ -260,8 +260,8 @@ ExportLevelPopup::ExportLevelPopup()
 	m_levelFrameIndexHandle.setFrame(0);					  // Due to TFrameHandle's initialization, the initial frame
 	frameNavigator->setFrameHandle(&m_levelFrameIndexHandle); // is -1. Don't ask me why. Patching to 0.
 
-	formatLabel->setFixedHeight(WidgetHeight);
-	m_format->setFixedHeight(WidgetHeight);
+	formatLabel->setFixedHeight(DVGui::WidgetHeight);
+	m_format->setFixedHeight(DVGui::WidgetHeight);
 	m_format->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Maximum);
 
 	QStringList formats;
@@ -273,7 +273,7 @@ ExportLevelPopup::ExportLevelPopup()
 	formats.sort();
 	m_format->addItems(formats);
 
-	m_retas->setMinimumHeight(WidgetHeight);
+	m_retas->setMinimumHeight(DVGui::WidgetHeight);
 	m_formatOptions->setMinimumSize(60, 25);
 
 	//layout
@@ -647,7 +647,7 @@ bool ExportLevelPopup::execute()
 		return ret;
 	} else {
 		if (!isValidFileName(QString::fromStdString(fp.getName()))) {
-			MsgBox(CRITICAL, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
+			DVGui::MsgBox(DVGui::CRITICAL, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
 			return false;
 		}
 

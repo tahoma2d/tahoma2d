@@ -1314,7 +1314,7 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(QWidget *parent)
 	m_slider->setFixedHeight(14);
 	m_slider->setFixedWidth(100);
 
-	m_value = new IntLineEdit(this, 1, 1, 100);
+	m_value = new DVGui::IntLineEdit(this, 1, 1, 100);
 	/*m_value->setValidator(new QIntValidator (1, 100, m_value));
 m_value->setFixedHeight(16);
 m_value->setFixedWidth(30);

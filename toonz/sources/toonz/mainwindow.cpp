@@ -108,7 +108,7 @@ bool readRoomList(std::vector<TFilePath> &roomPaths,
 	if (!argumentLayoutFileName.isEmpty()) {
 		fp = ToonzFolder::getModuleFile(argumentLayoutFileName.toStdString());
 		if (!TFileStatus(fp).doesExist()) {
-			MsgBox(WARNING, "Room layout file " + argumentLayoutFileName + " not found!");
+			DVGui::MsgBox(DVGui::WARNING, "Room layout file " + argumentLayoutFileName + " not found!");
 			fp = ToonzFolder::getModuleFile(layoutsFileName);
 			if (!TFileStatus(fp).doesExist())
 				return false;

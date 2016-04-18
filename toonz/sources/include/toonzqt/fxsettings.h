@@ -50,8 +50,6 @@ class TXshLevelHandle;
 class TObjectHandle;
 class ToonzScene;
 
-using namespace DVGui;
-
 //=============================================================================
 /*! \brief ParamsPage. View a page with fx params.
 
@@ -132,7 +130,7 @@ class DVAPI ParamsPageSet : public QWidget
 	Q_OBJECT
 
 	TabBarContainter *m_tabBarContainer;
-	TabBar *m_tabBar;
+	DVGui::TabBar *m_tabBar;
 	QStackedWidget *m_pagesList;
 
 	ParamViewer *m_parent;

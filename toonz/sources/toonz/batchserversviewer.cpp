@@ -55,7 +55,7 @@ void FarmServerListView::update()
 			new MyListItem(sid.m_id, sid.m_name, this);
 		}
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 }
 
@@ -73,7 +73,7 @@ void FarmServerListView::activate()
 		BatchesController::instance()->update();
 		static_cast<BatchServersViewer *>(parentWidget())->updateSelected();
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 }
 
@@ -91,7 +91,7 @@ void FarmServerListView::deactivate()
 		BatchesController::instance()->update();
 		static_cast<BatchServersViewer *>(parentWidget())->updateSelected();
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 }
 //-----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void FarmServerListView::openContextMenu(const QPoint &p)
 	try {
 		state = controller->queryServerState2(item->m_id);
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 		return;
 	}
 
@@ -181,7 +181,7 @@ void BatchServersViewer::updateServerInfo(const QString &id)
 	try {
 		controller->queryServerInfo(id, info);
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 	}
 
 	switch (info.m_state) {
@@ -223,7 +223,7 @@ void BatchServersViewer::updateServerInfo(const QString &id)
 			m_tasks->setText("<" + task.m_id + "> " + task.m_name);
 		} catch (TException &e) {
 			m_tasks->setText("");
-			MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+			DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 		}
 	}
 
@@ -353,15 +353,15 @@ void BatchServersViewer::onProcessWith(int index)
 	try {
 		connected = TFarmStuff::testConnectionToController();
 	} catch (TMissingGRootEnvironmentVariable &) {
-		MsgBox(WARNING, QString(tr("In order to use the render farm you have to define the Farm Global Root first.")));
+		DVGui::MsgBox(DVGui::WARNING, QString(tr("In order to use the render farm you have to define the Farm Global Root first.")));
 		m_processWith->setCurrentIndex(0);
 		return;
 	} catch (TMissingGRootFolder &) {
-		MsgBox(WARNING, tr("The Farm Global Root folder doesn't exist\nPlease create this folder before using the render farm."));
+		DVGui::MsgBox(DVGui::WARNING, tr("The Farm Global Root folder doesn't exist\nPlease create this folder before using the render farm."));
 		m_processWith->setCurrentIndex(0);
 		return;
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
 		m_processWith->setCurrentIndex(0);
 		return;
 	}
@@ -377,7 +377,7 @@ void BatchServersViewer::onProcessWith(int index)
 						.arg(hostName)
 						.arg(QString::number(port)));
 
-		MsgBox(WARNING, msg);
+		DVGui::MsgBox(DVGui::WARNING, msg);
 		m_processWith->setCurrentIndex(0);
 		return;
 	}

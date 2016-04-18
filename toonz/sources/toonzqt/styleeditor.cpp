@@ -2883,7 +2883,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
 	TFilePath libraryPath = ToonzFolder::getLibraryFolder();
 	setRootPath(libraryPath);
 
-	m_styleBar = new TabBar(this);
+	m_styleBar = new DVGui::TabBar(this);
 	m_styleBar->setDrawBase(false);
 	m_styleBar->setObjectName("StyleEditorTabBar");
 
@@ -3004,8 +3004,8 @@ QFrame *StyleEditor::createBottomWidget()
 {
 	QFrame *bottomWidget = new QFrame(this);
 	m_autoButton = new QPushButton(tr("Auto  \nApply"));
-	m_oldColor = new StyleSample(this, 42, 20);
-	m_newColor = new StyleSample(this, 42, 20);
+	m_oldColor = new DVGui::StyleSample(this, 42, 20);
+	m_newColor = new DVGui::StyleSample(this, 42, 20);
 	m_applyButton = new QPushButton(tr("Apply"));
 
 	bottomWidget->setFrameStyle(QFrame::StyledPanel);

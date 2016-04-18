@@ -63,7 +63,7 @@ void checkPaperFormat(TScannerParameters *parameters)
 	if (parameters->getPaperOverflow()) {
 		TScanner *scanner = TScanner::instance();
 		QString scannerName = scanner ? scanner->getName() : "no scanner";
-		MsgBox(WARNING, QObject::tr("The selected paper format is not available for %1.").arg(scannerName));
+		DVGui::MsgBox(DVGui::WARNING, QObject::tr("The selected paper format is not available for %1.").arg(scannerName));
 	}
 }
 
@@ -78,7 +78,7 @@ bool defineScanner(const QString &scannerType)
 
 	try {
 		if (!TScanner::instance()->isDeviceAvailable()) {
-			MsgBox(WARNING, TScanner::m_isTwain ? QObject::tr("No TWAIN scanner is available") : QObject::tr("No scanner is available"));
+			DVGui::MsgBox(DVGui::WARNING, TScanner::m_isTwain ? QObject::tr("No TWAIN scanner is available") : QObject::tr("No scanner is available"));
 			/* FIXME: try/catch からの goto って合法じゃないだろ……。とりあえず応急処置したところ"例外ってナニ?"って感じになったのが
 		 indent も腐っておりつらいので後で直す */
 			//goto end;
@@ -87,7 +87,7 @@ bool defineScanner(const QString &scannerType)
 		}
 		TScanner::instance()->selectDevice();
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdWString(e.getMessage()));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(e.getMessage()));
 		QApplication::restoreOverrideCursor();
 		return false;
 		//goto end;
@@ -101,7 +101,7 @@ bool defineScanner(const QString &scannerType)
 	try {
 		scanParameters->adaptToCurrentScanner();
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdWString(e.getMessage()));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(e.getMessage()));
 		//goto end;
 		QApplication::restoreOverrideCursor();
 		return false;
@@ -645,12 +645,12 @@ MyScannerListener::MyScannerListener(const ScanList &scanList)
 void MyScannerListener::onImage(const TRasterImageP &rasImg)
 {
 	if (!rasImg || !rasImg->getRaster()) {
-		MsgBox(WARNING, tr("The pixel type is not supported."));
+		DVGui::MsgBox(DVGui::WARNING, tr("The pixel type is not supported."));
 		m_current += m_inc;
 		return;
 	}
 	if (!m_isPreview && (m_current < 0 || m_current >= m_scanList.getFrameCount())) {
-		MsgBox(WARNING, tr("The scanning process is completed."));
+		DVGui::MsgBox(DVGui::WARNING, tr("The scanning process is completed."));
 		return;
 	}
 	if (m_isPreview) {
@@ -665,7 +665,7 @@ void MyScannerListener::onImage(const TRasterImageP &rasImg)
 			cl->setParameters(cp);
 			TRasterImageP outImg = cl->autocenterOnly(rasImg, false, autocentered);
 			if (!autocentered)
-				MsgBox(WARNING, QObject::tr("The autocentering failed on the current drawing."));
+				DVGui::MsgBox(DVGui::WARNING, QObject::tr("The autocentering failed on the current drawing."));
 			else
 				rasImg->setRaster(outImg->getRaster());
 		}
@@ -696,7 +696,7 @@ void MyScannerListener::onError()
 {
 	if (m_progressDialog)
 		m_progressDialog->hide();
-	MsgBox(WARNING, tr("There was an error during the scanning process."));
+	DVGui::MsgBox(DVGui::WARNING, tr("There was an error during the scanning process."));
 }
 
 //-----------------------------------------------------------------------------
@@ -766,7 +766,7 @@ void doScan()
 		scanList.update(true);
 
 	if (scanList.getFrameCount() == 0) {
-		MsgBox(WARNING, QObject::tr("There are no frames to scan."));
+		DVGui::MsgBox(DVGui::WARNING, QObject::tr("There are no frames to scan."));
 		return;
 	}
 
@@ -775,7 +775,7 @@ void doScan()
 
 		int rc = scanner->isDeviceAvailable();
 		if (!rc) {
-			MsgBox(WARNING, QObject::tr("TWAIN is not available."));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("TWAIN is not available."));
 			return;
 		}
 
@@ -791,7 +791,7 @@ void doScan()
 		if (cropboxCheck->isEnabled())
 			cropboxCheck->uncheck();
 	} catch (TException &e) {
-		MsgBox(WARNING, QString::fromStdWString(e.getMessage()));
+		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(e.getMessage()));
 	}
 
 	//If some levels were scanned successfully, their renumber table must be updated.
@@ -870,7 +870,7 @@ public:
 
 			int rc = scanner->isDeviceAvailable();
 			if (!rc) {
-				MsgBox(WARNING, QObject::tr("TWAIN is not available."));
+				DVGui::MsgBox(DVGui::WARNING, QObject::tr("TWAIN is not available."));
 				return;
 			}
 
@@ -895,7 +895,7 @@ public:
 			if (resetCropAction)
 				resetCropAction->setDisabled(false);
 		} catch (TException &e) {
-			MsgBox(WARNING, QString::fromStdWString(e.getMessage()));
+			DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(e.getMessage()));
 		}
 	}
 } setCropboxCommand;

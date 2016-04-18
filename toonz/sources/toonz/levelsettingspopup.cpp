@@ -134,7 +134,7 @@ LevelSettingsPopup::LevelSettingsPopup()
 
 	//subsampling
 	m_subsamplingLabel = new QLabel(tr("Subsampling:"));
-	m_subsamplingFld = new IntLineEdit(this);
+	m_subsamplingFld = new DVGui::IntLineEdit(this);
 
 	m_doPremultiply = new CheckBox(tr("Premultiply"), this);
 
@@ -143,7 +143,7 @@ LevelSettingsPopup::LevelSettingsPopup()
 #endif
 
 	m_doAntialias = new CheckBox(tr("Add Antialiasing"), this);
-	m_antialiasSoftness = new IntLineEdit(0, 10, 0, 100);
+	m_antialiasSoftness = new DVGui::IntLineEdit(0, 10, 0, 100);
 
 	//----
 
@@ -773,11 +773,11 @@ void LevelSettingsPopup::onScanPathChanged()
 		if (cleanupLevelPath != TFilePath()) {
 			TFilePath codedCleanupLevelPath = TApp::instance()->getCurrentScene()->getScene()->codeFilePath(cleanupLevelPath);
 			if (m_sl->getPath().getParentDir() != cleanupLevelPath && m_sl->getPath().getParentDir() != codedCleanupLevelPath)
-				MsgBox(WARNING, "\"Save In\" path of the Cleanup Settings does not match.");
+				DVGui::MsgBox(DVGui::WARNING, "\"Save In\" path of the Cleanup Settings does not match.");
 		} else
-			MsgBox(WARNING, "Loading Cleanup Settings failed.");
+			DVGui::MsgBox(DVGui::WARNING, "Loading Cleanup Settings failed.");
 	} else
-		MsgBox(WARNING, ".cln file for the Scanned Level not found.");
+		DVGui::MsgBox(DVGui::WARNING, ".cln file for the Scanned Level not found.");
 
 	m_sl->setScannedPath(newScanPath);
 

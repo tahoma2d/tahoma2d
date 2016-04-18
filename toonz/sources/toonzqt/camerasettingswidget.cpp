@@ -199,8 +199,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
 	m_arFld = new SimpleExpField(this);
 
-	m_xResFld = new IntLineEdit();
-	m_yResFld = new IntLineEdit();
+	m_xResFld = new DVGui::IntLineEdit();
+	m_yResFld = new DVGui::IntLineEdit();
 	m_xDpiFld = new DoubleLineEdit();
 	m_yDpiFld = new DoubleLineEdit();
 

@@ -26,7 +26,7 @@ class TXsheet;
 
 //==================================================
 
-class MergeCmappedDialog : public Dialog
+class MergeCmappedDialog : public DVGui::Dialog
 {
 	Q_OBJECT
 
@@ -47,13 +47,13 @@ protected slots:
 
 //----------------------------------------------------------------
 
-class MatchlinesDialog : public Dialog
+class MatchlinesDialog : public DVGui::Dialog
 {
 	Q_OBJECT
 
 	QRadioButton *m_button1, *m_button2;
-	StyleIndexLineEdit *m_inkIndex;
-	IntField *m_inkPrevalence;
+	DVGui::StyleIndexLineEdit *m_inkIndex;
+	DVGui::IntField *m_inkPrevalence;
 	TPaletteHandle *m_pltHandle;
 
 	QPushButton *m_lup_noGapButton;
@@ -82,12 +82,12 @@ public:
 
 //----------------------------------------------------------------
 
-class DeleteInkDialog : public Dialog
+class DeleteInkDialog : public DVGui::Dialog
 {
 	Q_OBJECT
 
-	LineEdit *m_inkIndex;
-	LineEdit *m_frames;
+	DVGui::LineEdit *m_inkIndex;
+	DVGui::LineEdit *m_frames;
 
 public:
 	DeleteInkDialog(const QString &str, int inkIndex);

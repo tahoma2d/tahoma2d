@@ -178,10 +178,10 @@ LevelCreatePopup::LevelCreatePopup()
 	setWindowTitle(tr("New Level"));
 
 	m_nameFld = new LineEdit(this);
-	m_fromFld = new IntLineEdit(this);
-	m_toFld = new IntLineEdit(this);
-	m_stepFld = new IntLineEdit(this);
-	m_incFld = new IntLineEdit(this);
+	m_fromFld = new DVGui::IntLineEdit(this);
+	m_toFld = new DVGui::IntLineEdit(this);
+	m_stepFld = new DVGui::IntLineEdit(this);
+	m_incFld = new DVGui::IntLineEdit(this);
 	m_levelTypeOm = new QComboBox();
 
 	m_pathFld = new FileField(0);

@@ -613,7 +613,7 @@ void ExportScenePopup::onExport()
 		DvDirModelFileFolderNode *node = (DvDirModelFileFolderNode *)m_projectTreeView->getCurrentNode();
 		if (!node || !pm->isProject(node->getPath())) {
 			QApplication::restoreOverrideCursor();
-			MsgBox(WARNING, tr("The folder you selected is not a project."));
+			DVGui::MsgBox(DVGui::WARNING, tr("The folder you selected is not a project."));
 			return;
 		}
 		projectPath = pm->projectFolderToProjectPath(node->getPath());
@@ -639,7 +639,7 @@ void ExportScenePopup::onExport()
 	pm->setCurrentProjectPath(oldProjectPath);
 	if (newScenes.empty()) {
 		QApplication::restoreOverrideCursor();
-		MsgBox(WARNING, tr("There was an error exporting the scene."));
+		DVGui::MsgBox(DVGui::WARNING, tr("There was an error exporting the scene."));
 		return;
 	}
 	for (i = 0; i < newScenes.size(); i++)
@@ -656,17 +656,17 @@ TFilePath ExportScenePopup::createNewProject()
 	TProjectManager *pm = TProjectManager::instance();
 	TFilePath projectName(m_newProjectName->text().toStdWString());
 	if (projectName == TFilePath()) {
-		MsgBox(WARNING, tr("The project name cannot be empty or contain any of the following characters:(new line)   \\ / : * ? \"  |"));
+		DVGui::MsgBox(DVGui::WARNING, tr("The project name cannot be empty or contain any of the following characters:(new line)   \\ / : * ? \"  |"));
 		return TFilePath();
 	}
 	if (projectName.isAbsolute()) {
 		// bad project name
-		MsgBox(WARNING, tr("The project name cannot be empty or contain any of the following characters:(new line)   \\ / : * ? \"  |"));
+		DVGui::MsgBox(DVGui::WARNING, tr("The project name cannot be empty or contain any of the following characters:(new line)   \\ / : * ? \"  |"));
 		return TFilePath();
 	}
 	if (pm->getProjectPathByName(projectName) != TFilePath()) {
 		// project already exists
-		MsgBox(WARNING, tr("The project name you specified is already used."));
+		DVGui::MsgBox(DVGui::WARNING, tr("The project name you specified is already used."));
 		return TFilePath();
 	}
 

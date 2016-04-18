@@ -68,7 +68,7 @@ void mergeRasterColumns(const vector<MatchlinePair> &matchingLevels)
 		TRaster32P ras = img->getRaster();		  // img->getCMapped(false);
 		TRaster32P matchRas = match->getRaster(); // match->getCMapped(true);
 		if (!ras || !matchRas) {
-			MsgBox(WARNING, QObject::tr("The merge command is not available for greytones images."));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("The merge command is not available for greytones images."));
 			return;
 		}
 		TAffine aff = matchingLevels[i].m_imgAff.inv() * matchingLevels[i].m_matchAff;
@@ -321,14 +321,14 @@ void mergeColumns(int column, int mColumn, bool isRedo)
 		}
 
 		else if (level != cell[i].getSimpleLevel()) {
-			MsgBox(WARNING, QObject::tr("It is not possible to perform a merging involving more than one level per column."));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to perform a merging involving more than one level per column."));
 			return;
 		}
 
 		if (!mLevel)
 			mLevel = mCell[i].getSimpleLevel();
 		else if (mLevel != mCell[i].getSimpleLevel()) {
-			MsgBox(WARNING, QObject::tr("It is not possible to perform a merging involving more than one level per column."));
+			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to perform a merging involving more than one level per column."));
 			return;
 		}
 		TImageP img = cell[i].getImage(true);
@@ -347,17 +347,17 @@ void mergeColumns(int column, int mColumn, bool isRedo)
 
 			if (timg) {
 				if (!tmatch) {
-					MsgBox(WARNING, QObject::tr("Only raster levels can be merged to a raster level."));
+					DVGui::MsgBox(DVGui::WARNING, QObject::tr("Only raster levels can be merged to a raster level."));
 					return;
 				}
 				areRasters = true;
 			} else if (vimg) {
 				if (!vmatch) {
-					MsgBox(WARNING, QObject::tr("Only vector levels can be merged to a vector level."));
+					DVGui::MsgBox(DVGui::WARNING, QObject::tr("Only vector levels can be merged to a vector level."));
 					return;
 				}
 			} else {
-				MsgBox(WARNING, QObject::tr("It is possible to merge only Toonz vector levels or standard raster levels."));
+				DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is possible to merge only Toonz vector levels or standard raster levels."));
 				return;
 			}
 
@@ -375,7 +375,7 @@ void mergeColumns(int column, int mColumn, bool isRedo)
 	}
 
 	if (matchingLevels.empty()) {
-		MsgBox(WARNING, QObject::tr("It is possible to merge only Toonz vector levels or standard raster levels."));
+		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is possible to merge only Toonz vector levels or standard raster levels."));
 		return;
 	}
 

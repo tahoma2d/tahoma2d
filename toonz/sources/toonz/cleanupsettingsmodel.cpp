@@ -100,7 +100,7 @@ public:
 
 		savePath = savePath.withNoFrame().withType("cln"); //Just to be sure
 		if (TFileStatus(savePath).doesExist()) {
-			int ret = MsgBox(QObject::tr("The cleanup settings file for the %1 level already exists.\n Do you want to overwrite it?")
+			int ret = DVGui::MsgBox(QObject::tr("The cleanup settings file for the %1 level already exists.\n Do you want to overwrite it?")
 								 .arg(toQString(savePath.withoutParentDir())),
 							 QObject::tr("Overwrite"), QObject::tr("Don't Overwrite"), 0);
 
@@ -135,7 +135,7 @@ public:
 			return false;
 
 		if (!TSystem::doesExistFileOrLevel(loadPath)) {
-			error(tr("%1 does not exist.").arg(toQString(loadPath)));
+			DVGui::error(tr("%1 does not exist.").arg(toQString(loadPath)));
 			return false;
 		}
 
