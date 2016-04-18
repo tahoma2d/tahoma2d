@@ -1,11 +1,5 @@
-
-
 #ifndef TSCANNER_H
 #define TSCANNER_H
-
-#ifdef _WIN32
-#define NOMINMAX
-#endif
 
 #include "trasterimage.h"
 #include <set>

@@ -1,9 +1,3 @@
-
-
-#ifdef _WIN32
-#define NOMINMAX
-#endif
-
 #include "ext/Selector.h"
 #include "tgl.h"
 //#include "drawutil.h"

@@ -1,6 +1,3 @@
-#ifdef _MSC_VER
-#define NOMINMAX
-#endif
 #include <sstream>
 #include <string>
 #include <utility>

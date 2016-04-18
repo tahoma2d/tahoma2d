@@ -277,21 +277,21 @@ public:
 
 	bool isBetween(const I_PIXEL &a, const I_PIXEL &b, const I_PIXEL &c) const
 	{
-		if (c.r < min(a.r, b.r))
+		if (c.r < std::min(a.r, b.r))
 			return false;
-		if (c.r > max(a.r, b.r))
+		if (c.r > std::max(a.r, b.r))
 			return false;
-		if (c.g < min(a.g, b.g))
+		if (c.g < std::min(a.g, b.g))
 			return false;
-		if (c.g > max(a.g, b.g))
+		if (c.g > std::max(a.g, b.g))
 			return false;
-		if (c.b < min(a.b, b.b))
+		if (c.b < std::min(a.b, b.b))
 			return false;
-		if (c.b > max(a.b, b.b))
+		if (c.b > std::max(a.b, b.b))
 			return false;
-		if (c.m < min(a.m, b.m))
+		if (c.m < std::min(a.m, b.m))
 			return false;
-		if (c.m > max(a.m, b.m))
+		if (c.m > std::max(a.m, b.m))
 			return false;
 		/*
 //if ( c.m!=0 )
@@ -542,10 +542,10 @@ public:
 		for (int y = 0; y < CSTPic<P>::m_lY; y++)
 			for (int x = 0; x < CSTPic<P>::m_lX; x++, pSel++)
 				if (*pSel > (UCHAR)0) {
-					box.x0 = min(box.x0, x);
-					box.x1 = max(box.x1, x);
-					box.y0 = min(box.y0, y);
-					box.y1 = max(box.y1, y);
+					box.x0 = std::min(box.x0, x);
+					box.x1 = std::max(box.x1, x);
+					box.y0 = std::min(box.y0, y);
+					box.y1 = std::max(box.y1, y);
 				}
 	}
 

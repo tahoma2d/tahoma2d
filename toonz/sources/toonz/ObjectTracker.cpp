@@ -10,10 +10,6 @@ Compiler: Microsoft Visual Studio.net
 Luigi Sgaglione
 
 **********************************************************************/
-#ifdef _WIN32
-#define NOMINMAX
-#endif
-
 #include <memory>
 
 #include "ObjectTracker.h"

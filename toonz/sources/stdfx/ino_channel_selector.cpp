@@ -1,7 +1,3 @@
-#if defined _WIN32 && !defined NOMINMAX
-#define NOMINMAX
-#endif
-
 #include <sstream> /* std::ostringstream */
 /* Not use boost at toonz-6.1 */
 // #include <boost/shared_array.hpp> /* boost::shared_array<> */

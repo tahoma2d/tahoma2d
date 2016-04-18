@@ -1,8 +1,5 @@
-
-
 #ifdef _WIN32
 #pragma warning(disable : 4996)
-#define NOMINMAX
 #endif
 
 #include "ttzpimagefx.h"
