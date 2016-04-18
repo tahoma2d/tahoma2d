@@ -335,8 +335,8 @@ void MenuBarTree::contextMenuEvent(QContextMenuEvent * event)
 void MenuBarTree::insertMenu()
 {
 	QTreeWidgetItem* item = currentItem();
-
-	MenuBarSubmenuItem * insItem = new MenuBarSubmenuItem(0, tr("New Menu"));
+	QString title = tr("New Menu");
+	MenuBarSubmenuItem * insItem = new MenuBarSubmenuItem(0, title);
 	if (!item)
 		addTopLevelItem(insItem);
 	else if (indexOfTopLevelItem(item) >= 0)
