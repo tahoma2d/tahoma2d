@@ -17,8 +17,6 @@
 #include <array>
 #include <vector>
 
-using namespace std;
-
 //#define MSIZE 3
 
 typedef struct {

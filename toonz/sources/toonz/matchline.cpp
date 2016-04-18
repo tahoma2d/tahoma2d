@@ -875,19 +875,19 @@ bool contains(const vector<TFrameId> &v, const TFrameId &val)
 
 //-----------------------------------------------------------------------------
 
-QString indexes2string(const set<TFrameId> fids)
+QString indexes2string(const std::set<TFrameId> fids)
 {
 	if (fids.empty())
 		return "";
 
 	QString str;
 
-	set<TFrameId>::const_iterator it = fids.begin();
+	std::set<TFrameId>::const_iterator it = fids.begin();
 
 	str = QString::number(it->getNumber());
 
 	while (it != fids.end()) {
-		set<TFrameId>::const_iterator it1 = it;
+		std::set<TFrameId>::const_iterator it1 = it;
 		it1++;
 
 		int lastVal = it->getNumber();
@@ -1012,12 +1012,12 @@ void DeleteInkDialog::setRange(const QString &str)
 	 DeleteLinesコマンドから呼ばれる場合：chooseInkがtrue
 --*/
 
-void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool chooseInk)
+void doDeleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids, bool chooseInk)
 {
-	vector<int> indexes;
+	std::vector<int> indexes;
 	//vector<TToonzImageP> images;
-	vector<TFrameId> frames;
-	vector<TFrameId> fidsToProcess;
+	std::vector<TFrameId> frames;
+	std::vector<TFrameId> fidsToProcess;
 	int i;
 	if (chooseInk) {
 		TPaletteHandle *ph = TApp::instance()->getPaletteController()->getCurrentLevelPalette();
@@ -1088,12 +1088,12 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool cho
 
 //-----------------------------------------------------------------------------
 
-void deleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids)
+void deleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids)
 {
 	doDeleteMatchlines(sl, fids, false);
 }
 
-void deleteInk(TXshSimpleLevel *sl, const set<TFrameId> &fids)
+void deleteInk(TXshSimpleLevel *sl, const std::set<TFrameId> &fids)
 {
 	doDeleteMatchlines(sl, fids, true);
 }

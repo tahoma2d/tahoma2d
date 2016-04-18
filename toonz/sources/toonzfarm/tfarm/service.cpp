@@ -56,9 +56,9 @@ LPTSTR GetLastErrorText(LPTSTR lpszBuf, DWORD dwSize)
 
 //------------------------------------------------------------------------------
 
-string getLastErrorText()
+std::string getLastErrorText()
 {
-	string errText;
+	std::string errText;
 #ifdef _WIN32
 	char errBuff[256];
 	errText = GetLastErrorText(errBuff, sizeof(errBuff));
@@ -89,8 +89,8 @@ public:
 
 #endif
 
-	string m_name;
-	string m_displayName;
+	std::string m_name;
+	std::string m_displayName;
 	static bool m_console;
 
 #ifdef _WIN32
@@ -111,7 +111,7 @@ bool TService::Imp::m_console = false;
 
 //------------------------------------------------------------------------------
 
-TService::TService(const string &name, const string &displayName)
+TService::TService(const std::string &name, const std::string &displayName)
 	: m_imp(new Imp)
 {
 	m_imp->m_name = name;
@@ -155,14 +155,14 @@ void TService::setStatus(Status status, long exitCode, long waitHint)
 
 //------------------------------------------------------------------------------
 
-string TService::getName() const
+std::string TService::getName() const
 {
 	return m_imp->m_name;
 }
 
 //------------------------------------------------------------------------------
 
-string TService::getDisplayName() const
+std::string TService::getDisplayName() const
 {
 	return m_imp->m_displayName;
 }
@@ -388,7 +388,7 @@ void TService::run(int argc, char *argv[], bool console)
 	} else {
 		SERVICE_TABLE_ENTRY dispatchTable[2];
 
-		string name = TService::instance()->getName().c_str();
+		std::string name = TService::instance()->getName().c_str();
 
 		dispatchTable[0].lpServiceName = (char *)name.c_str();
 		dispatchTable[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)TService::Imp::serviceMain;
@@ -406,13 +406,13 @@ void TService::run(int argc, char *argv[], bool console)
 
 //------------------------------------------------------------------------------
 
-void TService::start(const string &name)
+void TService::start(const std::string &name)
 {
 }
 
 //------------------------------------------------------------------------------
 
-void TService::stop(const string &name)
+void TService::stop(const std::string &name)
 {
 }
 
@@ -425,7 +425,7 @@ bool TService::isRunningAsConsoleApp() const
 
 //------------------------------------------------------------------------------
 
-void TService::install(const string &name, const string &displayName, const TFilePath &appPath)
+void TService::install(const std::string &name, const std::string &displayName, const TFilePath &appPath)
 {
 #ifdef _WIN32
 	SC_HANDLE schService;
@@ -467,10 +467,10 @@ void TService::install(const string &name, const string &displayName, const TFil
 
 //------------------------------------------------------------------------------
 
-void TService::remove(const string &name)
+void TService::remove(const std::string &name)
 {
 #ifdef _WIN32
-	string displayName = name;
+	std::string displayName = name;
 
 	SC_HANDLE schService;
 	SC_HANDLE schSCManager;
@@ -529,7 +529,7 @@ void TService::addToMessageLog(const QString &msg)
 	addToMessageLog(msg.toStdString());
 }
 
-void TService::addToMessageLog(const string &msg)
+void TService::addToMessageLog(const std::string &msg)
 {
 #ifdef _WIN32
 	TCHAR szMsg[256];
@@ -561,7 +561,7 @@ void TService::addToMessageLog(const string &msg)
 			(VOID) DeregisterEventSource(hEventSource);
 		}
 	} else {
-		cout << msg.c_str();
+		std::cout << msg.c_str();
 	}
 #else
 	if (!TService::Imp::m_console) {

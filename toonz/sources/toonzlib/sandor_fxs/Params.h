@@ -21,13 +21,11 @@
 
 #define P(d) tmsg_info(" - %d -\n", d)
 
-using namespace std;
-
 template <class EParam>
 class CParams
 {
 public:
-	vector<EParam> m_params;
+	std::vector<EParam> m_params;
 	double m_scale;
 
 	CParams() : m_params(0), m_scale(1.0){};

@@ -22,8 +22,6 @@
 
 #define P(d) tmsg_info(" - %d -\n", d)
 
-using namespace std;
-
 class CYOMBParam
 {
 public:
@@ -81,7 +79,7 @@ public:
 	void null();
 	void read(const CInputParam &ip);
 #ifdef _WIN32
-	bool read(basic_ifstream<char> &in);
+	bool read(std::basic_ifstream<char> &in);
 #endif
 	void makeColorsUS();
 	void makeItUS();

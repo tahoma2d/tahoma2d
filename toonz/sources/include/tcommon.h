@@ -277,7 +277,7 @@ inline TINT32 swapTINT32(TINT32 val)
 }
 inline USHORT swapUshort(USHORT val) { return val >> 8 | val << 8; }
 
-inline ostream &operator<<(ostream &out, const string &s)
+inline std::ostream &operator<<(std::ostream &out, const std::string &s)
 {
 	return out << s.c_str();
 }

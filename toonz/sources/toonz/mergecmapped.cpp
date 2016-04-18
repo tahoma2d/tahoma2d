@@ -629,19 +629,19 @@ bool contains(const vector<TFrameId> &v, const TFrameId &val)
 
 //-----------------------------------------------------------------------------
 
-QString indexes2string(const set<TFrameId> fids)
+QString indexes2string(const std::set<TFrameId> fids)
 {
 	if (fids.empty())
 		return "";
 
 	QString str;
 
-	set<TFrameId>::const_iterator it = fids.begin();
+	std::set<TFrameId>::const_iterator it = fids.begin();
 
 	str = QString::number(it->getNumber());
 
 	while (it != fids.end()) {
-		set<TFrameId>::const_iterator it1 = it;
+		std::set<TFrameId>::const_iterator it1 = it;
 		it1++;
 
 		int lastVal = it->getNumber();

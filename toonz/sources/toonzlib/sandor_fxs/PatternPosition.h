@@ -18,8 +18,6 @@
 #include "SError.h"
 #include "SDef.h"
 
-using namespace std;
-
 class CPatternPosition
 {
 	bool isInSet(const int nbSet, const int *set, const int val);

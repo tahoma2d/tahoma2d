@@ -7,7 +7,6 @@
 #include "tvectorimage.h"
 #include "tregion.h"
 #include "tcurves.h"
-using namespace std;
 
 //-----------------------------------------------------------------------------
 

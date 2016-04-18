@@ -709,7 +709,7 @@ void EraserTool::erase(TVectorImageP vi, const TPointD &pos)
 		sortedWRanges.reserve(intersections.size() / 2);
 
 		for (UINT j = 0; j < intersections.size() - 1; j += 2)
-			sortedWRanges.push_back(make_pair(intersections[j], intersections[j + 1]));
+			sortedWRanges.push_back(std::make_pair(intersections[j], intersections[j + 1]));
 
 #ifdef _DEBUG
 

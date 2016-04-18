@@ -30,8 +30,6 @@
 #include "CIL.h"
 #include "SError.h"
 
-using namespace std;
-
 template <class P>
 class CSTColSelPic : public CSTPic<P>
 {

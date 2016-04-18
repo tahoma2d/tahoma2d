@@ -1489,7 +1489,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp, bool ove
 			sl->setPath(getScene()->codeFilePath(app));
 			sl->setType(getType());
 
-			set<TFrameId>::iterator eft, efEnd;
+			std::set<TFrameId>::iterator eft, efEnd;
 			for (eft = m_editableRange.begin(); eft != efEnd; ++eft) {
 				const TFrameId &fid = *eft;
 				sl->setFrame(fid, getFrame(fid, false));

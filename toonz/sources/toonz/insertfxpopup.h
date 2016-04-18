@@ -15,7 +15,6 @@ class TFx;
 #include <QIcon>
 
 using namespace DVGui;
-using namespace std;
 
 //=============================================================================
 // InsertFxPopup
