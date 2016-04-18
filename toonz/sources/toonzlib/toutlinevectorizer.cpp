@@ -18,6 +18,7 @@
 #include "tcg/tcg_function_types.h"
 
 // STD includes
+#include <cmath>
 #include <functional>
 
 #undef DEBUG
