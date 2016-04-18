@@ -322,7 +322,7 @@ void TScannerEpson::acquire(const TScannerParameters &params, int paperCount)
 
 			bytes_to_read = lines * counter;
 			if (stx != 0x02) {
-				ostringstream os;
+				ostrstream os;
 				os << "header corrupted (" << std::hex << stx << ")" << '\0';
 				throw TException(os.str());
 			}
@@ -651,7 +651,7 @@ if (!resetScanner())
 
 #ifdef _DEBUG
 	memcpy(&status, &(buffer2[1]), 1);
-	ostringstream os;
+	ostrstream os;
 	os.freeze(false);
 	os << "stx = " << stx << " status = " << status << " counter=" << counter << '\n' << '\0';
 #endif
@@ -777,7 +777,7 @@ bool TScannerEpson::expectACK()
 
 #ifdef _DEBUG
 	if (ack != ACK) {
-		ostringstream os;
+		ostrstream os;
 		os.freeze(false);
 		os << "ack fails ret = 0x" << std::hex << (int)ack << '\n' << '\0';
 		TSystem::outputDebug(os.str());
@@ -963,7 +963,7 @@ void TScannerEpson::ESCI_readLineData(unsigned char &stx, unsigned char &status,
 	status = buffer[1];
 
 #ifdef _DEBUG
-	ostringstream os;
+	ostrstream os;
 	os.freeze(false);
 
 	os << "fatal=" << fatalError;
@@ -999,7 +999,7 @@ void TScannerEpson::ESCI_readLineData2(unsigned char &stx, unsigned char &status
 	status = buffer[1];
 
 #ifdef _DEBUG
-	ostringstream os;
+	ostrstream os;
 	os.freeze(false);
 
 	os << "fatal=" << fatalError;

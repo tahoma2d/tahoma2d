@@ -406,7 +406,7 @@ string TTime::getDate() const
 string TTime::getTime() const
 { // hh:mm:ss
 	char buffer[10];
-	ostringstream buff_s(buffer, sizeof(buffer));
+	ostrstream buff_s(buffer, sizeof(buffer));
 	buff_s << "." << m_msec << '\0';
 	return getFormattedString("%X") + buffer;
 }
@@ -451,7 +451,7 @@ string TFileStatus::getGroup() const
 		return string(grp->gr_name);
 #endif
 	char buffer[1024];
-	ostringstream buff(buffer, sizeof(buffer));
+	ostrstream buff(buffer, sizeof(buffer));
 	buff << m_fStatus.st_gid;
 	return string(buffer, buff.pcount());
 }
@@ -466,7 +466,7 @@ string TFileStatus::getUser() const
 		return string(pw->pw_name);
 #endif
 	char buffer[1024];
-	ostringstream buff(buffer, sizeof(buffer));
+	ostrstream buff(buffer, sizeof(buffer));
 	buff << m_fStatus.st_uid;
 	return string(buffer, buff.pcount());
 }
