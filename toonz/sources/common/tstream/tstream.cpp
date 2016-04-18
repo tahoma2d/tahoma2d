@@ -260,7 +260,7 @@ TOStream::TOStream(const TFilePath &fp, bool compressed)
 TOStream::TOStream(std::shared_ptr<Imp> imp)
 	: m_imp(std::move(imp))
 {
-	assert(!imp->m_tagStack.empty());
+	assert(!m_imp->m_tagStack.empty());
 	ostream &os = *m_imp->m_os;
 	if (m_imp->m_justStarted == false)
 		cr();

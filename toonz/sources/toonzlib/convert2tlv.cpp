@@ -344,8 +344,8 @@ void Convert2Tlv::buildInksForNAAImage(TRasterCM32P &rout, const TRaster32P &rin
 		for (j = 0; j < rin->getLx(); j++, pixin++, pixout++) {
 			TPixel colorIn;
 
-			/*-白ピクセルを透明として扱う-*/
-			if (*pixin == TPixel(255, 255, 255)) {
+			/*- treat white/transparent pixels as transparent -*/
+			if (*pixin == TPixel(255, 255, 255) || *pixin == TPixel::Transparent) {
 				*pixout = TPixelCM32(0, 0, 255);
 				continue;
 			}
