@@ -719,7 +719,7 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying)
 // debug
 class DummyVisitor : public Visitor
 {
-	ostringstream m_ss;
+	ostrstream m_ss;
 
 public:
 	void onImage(const Stage::Player &data) { m_ss << "img "; }

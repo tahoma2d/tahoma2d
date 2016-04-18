@@ -75,25 +75,28 @@ wstring toWideString(int x)
 
 string toString(int value)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss << value << '\0';
 	string s = ss.str();
+	ss.freeze(false);
 	return s;
 }
 
 string toString(unsigned long value)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss << value << '\0';
 	string s = ss.str();
+	ss.freeze(false);
 	return s;
 }
 
 string toString(unsigned long long value)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss << value << '\0';
 	string s = ss.str();
+	ss.freeze(false);
 	return s;
 }
 
@@ -105,20 +108,22 @@ string toString(unsigned long long value)
 
 string toString(double value, int prec)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss.setf(std::ios_base::fixed, std::ios_base::floatfield);
 	if (prec >= 0)
 		ss.precision(prec);
 	ss << value << '\0';
 	string s = ss.str();
+	ss.freeze(0);
 	return s;
 }
 
 string toString(void *p)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss << p << '\0';
 	string s = ss.str();
+	ss.freeze(false);
 	return s;
 }
 
@@ -184,7 +189,7 @@ bool isDouble(wstring s) { return isDouble(toString(s)); }
 double toDouble(string str)
 {
 	double value;
-	istringstream ss(str.c_str());
+	istrstream ss(str.c_str(), (std::streamsize)str.length());
 	ss >> value;
 	return value;
 }

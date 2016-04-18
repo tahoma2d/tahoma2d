@@ -415,7 +415,7 @@ void printContainer(const T &c, int maxRow = MAX_ROW)
     
     typename T::const_iterator cit;
     cit = c.begin();
-    ostringstream  oss1;
+    ostrstream  oss1;
     oss1<<'['<<c.size()<<']'<<"=\n";
     TSystem::outputDebug( oss1.str() );
     oss1.freeze(false);
@@ -423,7 +423,7 @@ void printContainer(const T &c, int maxRow = MAX_ROW)
     int counter = 0;
     for( ; cit != c.end(); ++cit)
     {
-      ostringstream  oss;
+      ostrstream  oss;
       if( ++counter == maxRow-1)
       {
         oss<<'\n';

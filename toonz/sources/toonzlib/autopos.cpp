@@ -775,8 +775,9 @@ static int find_dots_bw(const TRasterP &img, int strip_width, PEGS_SIDE pegs_sid
 		vertical = TRUE;
 
 	DEFAULT : {
-		ostringstream os;
+		ostrstream os;
 		os << "find dots internal error: pegs_side = " << std::hex << pegs_side << '\0';
+		os.freeze(false);
 		throw TCleanupException(os.str());
 		x0 = y0 = xsize = ysize = vertical = 0;
 	}
@@ -903,9 +904,10 @@ static int find_dots_gr8(const TRasterGR8P &img, int strip_width, PEGS_SIDE pegs
 		vertical = TRUE;
 
 	DEFAULT : {
-		ostringstream os;
+		ostrstream os;
 		os << "find dots internal error: pegs_side = " << std::hex << pegs_side << '\0';
-		throw TCleanupException(os.str().c_str());
+		os.freeze(false);
+		throw TCleanupException(os.str());
 		x0 = y0 = xsize = ysize = vertical = 0;
 	}
 	}
@@ -1027,9 +1029,10 @@ static int find_dots_rgb(const TRaster32P &img, int strip_width, PEGS_SIDE pegs_
 		vertical = TRUE;
 
 	DEFAULT : {
-		ostringstream os;
+		ostrstream os;
 		os << "find dots internal error: pegs_side = " << std::hex << pegs_side << '\0';
-		throw TCleanupException(os.str().c_str());
+		os.freeze(false);
+		throw TCleanupException(os.str());
 		x0 = y0 = xsize = ysize = vertical = 0;
 	}
 	}
