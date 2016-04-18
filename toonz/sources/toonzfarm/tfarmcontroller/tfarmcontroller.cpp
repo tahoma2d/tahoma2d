@@ -751,7 +751,7 @@ void FarmController::loadServersData(const TFilePath &globalRoot)
 		is.getline(line, 80);
 
 		if (line[0] != '#' && QString(line) != "") {
-			istringstream iss(line);
+			istrstream iss(line);
 
 			char hostName[512];
 			char ipAddr[80];

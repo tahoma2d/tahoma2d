@@ -2735,7 +2735,7 @@ void printStrokes1(vector<VIStroke *> &v, int size)
 #ifdef _DEBUG
 static void printTime(TStopWatch &sw, string name)
 {
-	ostringstream ss;
+	ostrstream ss;
 	ss << name << " : ";
 	sw.print(ss);
 	ss << '\n' << '\0';

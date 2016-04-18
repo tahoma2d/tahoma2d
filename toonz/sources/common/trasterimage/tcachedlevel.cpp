@@ -169,7 +169,7 @@ private:
 
 			default:
 				char *sysErr = strerror(errorCode);
-				ostringstream os;
+				ostrstream os;
 				os << errorCode << '\0';
 				os.freeze(false);
 				return string(sysErr) + "(" + os.str() + ")";
