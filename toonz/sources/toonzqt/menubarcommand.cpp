@@ -424,6 +424,17 @@ void CommandManager::setToggleTexts(CommandId id, const QString &onText, const Q
 	}
 }
 
+//---------------------------------------------------------
+
+std::string CommandManager::getIdFromAction(QAction* action)
+{
+	std::map<QAction *, Node *>::iterator it = m_qactionTable.find(action);
+	if (it != m_qactionTable.end())
+		return it->second->m_id;
+	else
+		return "";
+}
+
 /*
 //---------------------------------------------------------
 

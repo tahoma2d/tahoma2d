@@ -72,6 +72,7 @@ set(MOC_HEADERS
     mainwindow.h
     matchline.h
     menubar.h
+	menubarpopup.h
     menubarcommandids.h
     meshifypopup.h
     messagepanel.h
@@ -159,6 +160,7 @@ set(SOURCES
     mainwindow.cpp
     matchline.cpp
     menubar.cpp
+	menubarpopup.cpp
     mergecolumns.cpp
     moviegenerator.cpp
     pane.cpp
