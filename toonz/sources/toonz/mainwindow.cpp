@@ -176,6 +176,7 @@ void makePrivate(Room *room)
 {
 	TFilePath layoutDir = ToonzFolder::getMyModuleDir();
 	TFilePath roomPath = room->getPath();
+	std::string mbSrcFileName = roomPath.getName() + "_menubar.xml";
 	if (roomPath == TFilePath() || roomPath.getParentDir() != layoutDir) {
 		int count = 1;
 		for (;;) {
@@ -186,6 +187,23 @@ void makePrivate(Room *room)
 		room->setPath(roomPath);
 		TSystem::touchParentDir(roomPath);
 		room->save();
+	}
+	/*- create private menubar settings if not exists -*/
+	std::string mbDstFileName = roomPath.getName() + "_menubar.xml";
+	TFilePath myMBPath = layoutDir + mbDstFileName;
+	if (!TFileStatus(myMBPath).isReadable())
+	{
+		TFilePath templateRoomMBPath = ToonzFolder::getTemplateModuleDir() + mbSrcFileName;
+		if (TFileStatus(templateRoomMBPath).doesExist())
+			TSystem::copyFile(myMBPath, templateRoomMBPath);
+		else
+		{
+			TFilePath templateFullMBPath = ToonzFolder::getTemplateModuleDir() + "menubar_template.xml";
+			if (TFileStatus(templateFullMBPath).doesExist())
+				TSystem::copyFile(myMBPath, templateFullMBPath);
+			else
+				DVGui::MsgBox(WARNING, QObject::tr("Cannot open menubar settings template file. Re-installing Toonz will solve this problem."));
+		}
 	}
 }
 
@@ -1127,6 +1145,11 @@ void MainWindow::deleteRoom(int index)
 		m_topBar->getRoomTabWidget()->insertTab(index, room->getName());
 		return;
 	}
+
+	/*- delete menubar settings file as well -*/
+	std::string mbFileName = fp.getName() + "_menubar.xml";
+	TFilePath mbFp = fp.getParentDir() + mbFileName;
+	TSystem::deleteFile(mbFp);
 
 	//The old room index must be updated if index < of it
 	if (index < m_oldRoomIndex)
