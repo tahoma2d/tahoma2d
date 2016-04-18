@@ -21,8 +21,8 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #include <vector>
 #include <algorithm>
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 
 //#include "SError.h"
 #include "BlurMatrix.h"
