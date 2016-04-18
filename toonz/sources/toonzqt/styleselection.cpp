@@ -36,7 +36,7 @@
 
 using namespace DVGui;
 
-const enum StyleType {
+enum StyleType {
 	NORMALSTYLE,
 	STUDIOSTYLE,
 	LINKEDSTYLE
