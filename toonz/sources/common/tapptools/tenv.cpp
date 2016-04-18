@@ -624,20 +624,18 @@ istream &operator>>(istream &is, TRect &rect)
 template <class T>
 string toString2(T value)
 {
-	ostrstream ss;
+	ostringstream ss;
 	ss << value << '\0';
 	string s(ss.str());
-	ss.freeze(false);
 	return s;
 }
 
 template <>
 string toString2(TRect value)
 {
-	ostrstream ss;
+	ostringstream ss;
 	ss << value.x0 << " " << value.y0 << " " << value.x1 << " " << value.y1 << '\0';
 	string s = ss.str();
-	ss.freeze(false);
 	return s;
 }
 
@@ -646,7 +644,7 @@ void fromString(string s, T &value)
 {
 	if (s.empty())
 		return;
-	istrstream is(s.c_str(), s.size());
+	istringstream is(s.c_str());
 	is >> value;
 }
 

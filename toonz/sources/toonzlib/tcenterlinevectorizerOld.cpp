@@ -2547,7 +2547,7 @@ void CenterLineVectorizer::vectorize()
 #ifdef DEBUG
 void printTime(TStopWatch &sw, string name)
 {
-	ostrstream ss;
+	ostringstream ss;
 	ss << name << " : ";
 	sw.print(ss);
 	ss << '\n' << '\0';

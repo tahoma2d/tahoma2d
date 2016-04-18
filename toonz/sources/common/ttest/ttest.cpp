@@ -172,7 +172,7 @@ void TTest::runTests(string name)
 	cout << "Test file : '" << testFile << "'" << endl;
 	char buffer[1024];
 	while (is.getline(buffer, sizeof(buffer))) {
-		istrstream ss(buffer);
+		istringstream ss(buffer);
 		while (ss) {
 			string s;
 			ss >> s;

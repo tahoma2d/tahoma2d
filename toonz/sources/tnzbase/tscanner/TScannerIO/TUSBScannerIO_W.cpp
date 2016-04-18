@@ -19,7 +19,7 @@ public:
 //-----------------------------------------------------------------------------
 namespace
 {
-void buf2printable(const unsigned char *buffer, const int size, ostrstream &os)
+void buf2printable(const unsigned char *buffer, const int size, ostringstream &os)
 {
 	int i = 0;
 	if ((size == 2) && (buffer[0] == 0x1b)) {
@@ -95,8 +95,7 @@ int TUSBScannerIO::receive(unsigned char *buffer, int size)
 		ReadFile(m_data->m_handle, ptr, bytesToRead, &count, &overlapped);
 		DWORD waitRC = WaitForSingleObject(overlapped.hEvent, INFINITE);
 		if (m_data->m_trace) {
-			ostrstream os;
-			os.freeze(false);
+			ostringstream os;
 			os << "receive: size=" << size << " got = " << count << " buf=";
 			buf2printable(ptr, count, os);
 			os << '\n' << '\0';
@@ -127,8 +126,7 @@ int TUSBScannerIO::send(unsigned char *buffer, int size)
 		WriteFile(m_data->m_handle, buffer, bytesToWrite, &count, 0);
 
 		if (m_data->m_trace) {
-			ostrstream os;
-			os.freeze(false);
+			ostringstream os;
 			os << "send: size=" << size << " wrote = " << count << " buf=";
 			buf2printable(buffer, size, os);
 			os << '\n' << '\0';

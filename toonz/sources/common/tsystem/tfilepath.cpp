@@ -51,7 +51,7 @@ string TFrameId::expand(FrameFormat format) const
 	else if (m_frame == NO_FRAME)
 		return "-";
 	char buffer[80];
-	ostrstream o_buff(buffer, sizeof(buffer));
+	ostringstream o_buff(buffer);
 	if (format == FOUR_ZEROS || format == UNDERSCORE_FOUR_ZEROS) {
 		o_buff.fill('0');
 		o_buff.width(4);
@@ -62,7 +62,7 @@ string TFrameId::expand(FrameFormat format) const
 	}
 	if (m_letter != '\0')
 		o_buff << m_letter;
-	int len = o_buff.pcount();
+	int len = o_buff.tellp();
 	return string(buffer, len);
 }
 
@@ -184,7 +184,7 @@ void append(string &out, wchar_t c)
   else if(c=='&') out.append("&amp;");
   else 
     {
-     ostrstream ss;
+     ostringstream ss;
      ss << "&#" <<  c << ";" << '\0';
      out += ss.str();
      ss.freeze(0);
