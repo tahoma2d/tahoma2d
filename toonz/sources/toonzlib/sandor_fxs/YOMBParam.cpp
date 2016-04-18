@@ -14,7 +14,7 @@
 #include <string.h>
 #include "YOMBParam.h"
 #include "InputParam.h"
-#include "YombInputParam.h"
+#include "YOMBInputParam.h"
 #include "STColSelPic.h"
 #include "BlurMatrix.h"
 #include "SDef.h"

@@ -4,7 +4,7 @@
 #define INSERTFXPOPUP_H
 
 #include "toonzqt/dvdialog.h"
-#include "tfilePath.h"
+#include "tfilepath.h"
 #include "tstream.h"
 
 // forward declaration

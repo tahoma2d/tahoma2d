@@ -4,7 +4,7 @@
 //#include "tfilepath.h"
 #include "tfilepath_io.h"
 
-#include <qdatetime>
+#include <QDateTime>
 
 #ifdef WIN32
 #pragma warning(disable : 4996)
@@ -210,7 +210,6 @@ TUserLogAppend::TUserLogAppend(const TFilePath &fp) : m_imp(new Imp(fp))
 
 TUserLogAppend::~TUserLogAppend()
 {
-	//delete m_imp;
 }
 
 //------------------------------------------------------------------------------

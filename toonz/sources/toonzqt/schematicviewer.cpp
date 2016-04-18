@@ -31,7 +31,7 @@
 // Qt includes
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
-#include <QGraphicsItem.h>
+#include <QGraphicsItem>
 #include <QToolBar>
 #include <QToolButton>
 #include <QMenu>

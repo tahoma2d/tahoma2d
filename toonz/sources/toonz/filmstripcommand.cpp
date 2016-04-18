@@ -16,7 +16,7 @@
 #include "drawingdata.h"
 #include "toonzqt/strokesdata.h"
 #include "toonzqt/rasterimagedata.h"
-#include "timageCache.h"
+#include "timagecache.h"
 #include "tools/toolutils.h"
 #include "toonzqt/icongenerator.h"
 

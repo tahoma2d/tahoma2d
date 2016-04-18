@@ -73,7 +73,7 @@ DVAPI wstring toUpper(wstring a);
 DVAPI wstring toLower(wstring a);
 
 #ifndef TNZCORE_LIGHT
-#include <qstring>
+#include <QString>
 
 inline bool fromStr(int &v, QString s)
 {

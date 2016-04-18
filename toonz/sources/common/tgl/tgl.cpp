@@ -11,12 +11,14 @@
 #ifndef __sgi
 #ifdef WIN32
 #include <GL/glut.h>
+#elif defined(LINUX)
+#include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
 #endif
 #endif
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #include <QGLContext>
 #endif
 
@@ -536,8 +538,8 @@ void tglDraw(const TRectD &rect, const TRaster32P &tex, bool blending)
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 		GL_BGRA;
 #else
-		@unknow channel order
 //   Error  PLATFORM NOT SUPPORTED
+#error "unknown channel order!"
 #endif
 
 	// Generate a texture id and bind it.
@@ -709,8 +711,8 @@ void tglDoneCurrent(TGlContext context)
 		reinterpret_cast<QGLContext *>(context)->doneCurrent();
 }
 
-#elif @unknow platform !
-
+#else
+#error "unknown platform!"
 #endif
 
 //-----------------------------------------------------------------------------

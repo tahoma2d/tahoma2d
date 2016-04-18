@@ -179,8 +179,8 @@ TPixel32 getAverageColor(const TRect &rect)
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 		GL_BGRA;
 #else
-		@unknow channel order
 //   Error  PLATFORM NOT SUPPORTED
+#error	"unknown channel order!"
 #endif
 	UINT r = 0, g = 0, b = 0, m = 0;
 	vector<TPixel32> buffer(rect.getLx() * rect.getLy());
@@ -209,8 +209,8 @@ TPixel32 getAverageColor(TStroke *stroke)
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 		GL_BGRA;
 #else
-		@unknow channel order
 //   Error  PLATFORM NOT SUPPORTED
+#error	"unknown channel order"
 #endif
 
 	//leggo il buffer e mi prendo i pixels

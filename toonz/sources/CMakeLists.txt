@@ -3,7 +3,7 @@ project(OpenToonz)
 
 get_filename_component(SDKROOT ../../thirdparty/ ABSOLUTE)
 message("SDK Root:" ${SDKROOT})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "../cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 if(APPLE)
     set(THIRDPARTY_LIBS_HINTS "/usr/local/Cellar/" "/opt/include" ${SDKROOT})
 elseif(WIN32)
@@ -184,7 +184,7 @@ else()
     message("LZO:" ${LZO_INCLUDE_DIR})
 endif()
 
-include_directories(BEFORE ${TIFF_INCLUDE_DIR})
+include_directories(BEFORE ${TIFF_INCLUDE_DIR} ${PNG_INCLUDE_DIRS})
 
 find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
 find_package(Boost 1.55 EXACT REQUIRED)

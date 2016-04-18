@@ -2,6 +2,7 @@
 #include <stdexcept>		/* std::domain_error(-) */
 #include <limits>			/* std::numeric_limits */
 #include <cmath>			/* pow(-),abs(-) */
+#include <cstring>			/* memmove */
 #include "igs_ifx_common.h" /* igs::image::rgba */
 #include "igs_motion_blur.h"
 

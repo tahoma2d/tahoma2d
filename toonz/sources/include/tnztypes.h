@@ -18,7 +18,7 @@ typedef uint32_t TUINT32;
 typedef int64_t TINT64;
 typedef uint64_t TUINT64;
 
-#elif defined(__LP64__)
+#elif defined(__LP64__) && (!defined(LINUX))
 
 #define TINT32 \
 	;          \

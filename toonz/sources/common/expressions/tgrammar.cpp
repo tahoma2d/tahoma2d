@@ -16,6 +16,7 @@
 #include <map>
 #include <math.h>
 #include <functional>
+#include <memory>
 
 // Qt includes
 #include <QString>
@@ -1319,7 +1320,6 @@ Grammar::Grammar()
 
 Grammar::~Grammar()
 {
-	delete m_imp;
 }
 
 void Grammar::addPattern(Pattern *pattern)

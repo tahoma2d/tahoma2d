@@ -14,6 +14,9 @@
 #include "tpaletteutil.h"
 #include "tthreadmessage.h"
 #include "tsimplecolorstyles.h"
+
+#include <memory>
+
 //=============================================================================
 typedef TVectorImage::IntersectionBranch IntersectionBranch;
 
@@ -104,8 +107,8 @@ TVectorImage::Imp::~Imp()
 //=============================================================================
 
 TVectorImage::TVectorImage(bool loaded)
+	: m_imp(new TVectorImage::Imp(this))
 {
-	m_imp = new TVectorImage::Imp(this);
 	if (loaded)
 		m_imp->m_justLoaded = true;
 }
@@ -114,7 +117,6 @@ TVectorImage::TVectorImage(bool loaded)
 
 TVectorImage::~TVectorImage()
 {
-	delete m_imp;
 }
 
 //-----------------------------------------------------------------------------

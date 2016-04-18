@@ -127,7 +127,7 @@ public:
 #elif defined(TNZ_MACHINE_CHANNEL_ORDER_MRGB)
 		png_set_swap_alpha(m_png_ptr);
 #elif !defined(TNZ_MACHINE_CHANNEL_ORDER_RGBM)
-		@unknow channel order
+#error	"unknown channel order"
 #endif
 
 		png_read_info(m_png_ptr, m_info_ptr);
@@ -192,7 +192,7 @@ public:
 			png_set_swap_alpha(m_png_ptr);
 		}
 #elif !defined(TNZ_MACHINE_CHANNEL_ORDER_RGBM) && !defined(TNZ_MACHINE_CHANNEL_ORDER_MRGB)
-		@unknow channel order
+#error	"unknown channel order"
 #endif
 
 		if (m_color_type == PNG_COLOR_TYPE_GRAY ||
@@ -344,7 +344,7 @@ public:
 					pix[j].g = m_rowBuffer[i = i + 2];
 					pix[j].r = m_rowBuffer[i = i + 2];
 #else
-					@unknow channel order
+#error				"unknown channel order"
 #endif
 				}
 			} else {
@@ -372,7 +372,7 @@ public:
 					pix[j].g = m_rowBuffer[i++];
 					pix[j].r = m_rowBuffer[i++];
 #else
-					@unknow channel order
+#error				"unknown channel order"
 #endif
 				}
 			}
@@ -391,7 +391,7 @@ public:
 					pix[j].g = m_rowBuffer[i = i + 2];
 					pix[j].r = m_rowBuffer[i = i + 2];
 #else
-					@unknow channel order
+#error				"unknown channel order"
 #endif
 					pix[j].m = 255;
 				}
@@ -408,7 +408,7 @@ public:
 					pix[j].g = m_rowBuffer[i++];
 					pix[j].r = m_rowBuffer[i++];
 #else
-					@unknow channel order
+#error				"unknown channel order"
 #endif
 					pix[j].m = 255;
 				}
@@ -434,7 +434,7 @@ public:
 				pix[j].r = mySwap(m_rowBuffer[i = i + 2]);
 				pix[j].m = mySwap(m_rowBuffer[i = i + 2]);
 #else
-				@unknow channel order
+#error			"unknown channel order"
 #endif
 				//pix[j].m = 255;
 			}
@@ -452,7 +452,7 @@ public:
 				pix[j].g = mySwap(m_rowBuffer[i = i + 2]);
 				pix[j].r = mySwap(m_rowBuffer[i = i + 2]);
 #else
-				@unknow channel order
+#error			"unknown channel order"
 #endif
 				pix[j].m = mySwap(255);
 			}
@@ -800,7 +800,7 @@ void PngWriter::open(FILE *file, const TImageInfo &info)
 #elif defined(TNZ_MACHINE_CHANNEL_ORDER_MRGB)
 	png_set_swap_alpha(m_png_ptr);
 #elif !defined(TNZ_MACHINE_CHANNEL_ORDER_RGBM)
-	@unknow channel order
+#error	"unknownchannel order"
 #endif
 
 	png_write_info(m_png_ptr, m_info_ptr);
@@ -844,7 +844,7 @@ void PngWriter::writeLine(short *buffer)
 			tmp[k++] = mySwap(pix->g);
 			tmp[k++] = mySwap(pix->r);
 #else
-			@unknow channel order
+#error		"unknown channel order"
 #endif
 			if (m_matte)
 				tmp[k++] = mySwap(pix->m);
@@ -882,7 +882,7 @@ void PngWriter::writeLine(char *buffer)
 			tmp[k++] = pix->g;
 			tmp[k++] = pix->r;
 #else
-			@unknow channel order
+#error		"unknown channel order"
 #endif
 
 			++pix;

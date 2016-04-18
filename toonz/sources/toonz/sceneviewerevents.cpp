@@ -957,6 +957,16 @@ using namespace ImageUtils;
 
 void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 {
+#ifndef WIN32
+	/* On windows the widget receive the release event before the menu
+	   is shown, on linux and osx the release event is lost, never
+	   received by the widget */
+	QMouseEvent fakeRelease(QEvent::MouseButtonRelease, e->pos(),
+		Qt::RightButton, Qt::NoButton, Qt::NoModifier);
+
+	QApplication::instance()->sendEvent(this, &fakeRelease);
+#endif
+
 	if (m_freezedStatus != NO_FREEZED)
 		return;
 

@@ -165,7 +165,10 @@ TXsheet::TXsheetImp::~TXsheetImp()
 // TXsheet
 
 TXsheet::TXsheet()
-	: TSmartObject(m_classCode), m_player(0), m_imp(new TXsheet::TXsheetImp), m_notes(new TXshNoteSet())
+	: TSmartObject(m_classCode)
+	, m_player(0)
+	, m_imp(new TXsheet::TXsheetImp)
+	, m_notes(new TXshNoteSet())
 {
 	//extern TSyntax::Grammar *createXsheetGrammar(TXsheet*);
 	m_soundProperties = new TXsheet::SoundProperties();
@@ -181,7 +184,6 @@ TXsheet::~TXsheet()
 	texture_utils::invalidateTextures(this);
 
 	assert(m_imp);
-	delete m_imp;
 	if (m_notes)
 		delete m_notes;
 	if (m_soundProperties)
@@ -939,7 +941,6 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type)
 		removeCells(r0 + nrows, col, nr - nrows);
 	}
 
-	int k;
 	for (int i = r0, k = 0; i < r0 + nrows; k++) {
 		for (int i1 = 0; i1 < type; i1++) {
 			if (cells[k].isEmpty())

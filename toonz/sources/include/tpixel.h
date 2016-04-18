@@ -154,6 +154,8 @@ public:
 	Channel b, g, r, m;
 #elif TNZ_MACHINE_CHANNEL_ORDER_MRGB
 	Channel m, r, g, b;
+#elif TNZ_MACHINE_CHANNEL_ORDER_RGBM
+	Channel r, g, b, m;
 #else
 undefined machine order !!!!
 #endif
@@ -248,7 +250,7 @@ public:
 		: r(rr), g(gg), b(bb), m(mm){};
 
 	inline bool operator==(const TPixelD &p) const { return r == p.r && g == p.g && b == p.b && m == p.m; };
-	inline bool operator<(const TPixelD &p) const { return r < p.r || r == p.r && (g < p.g || g == p.g && (b < p.b || b == p.b && (m < p.m))); };
+	inline bool operator<(const TPixelD &p) const { return r < p.r || (r == p.r && (g < p.g || (g == p.g && (b < p.b || (b == p.b && (m < p.m)))))); };
 
 	inline bool operator>=(const TPixelD &p) const { return !operator<(p); };
 	inline bool operator!=(const TPixelD &p) const { return !operator==(p); };

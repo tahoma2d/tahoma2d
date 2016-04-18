@@ -1,4 +1,4 @@
-
+#include <memory>
 
 #include "iocommand.h"
 
@@ -570,7 +570,7 @@ void substituteLevel(TXsheet *xsh, TXshLevel *srcLevel, TXshLevel *dstLevel)
 		xsh->getCells(r0, c, rowCount, &cells[0]);
 		bool changed = false;
 		for (int i = 0; i < rowCount; i++) {
-			if (!cells[i].isEmpty())
+			if (!cells[i].isEmpty()) {
 				if (cells[i].m_level.getPointer() == srcLevel) {
 					cells[i].m_level = dstLevel;
 					changed = true;
@@ -583,6 +583,7 @@ void substituteLevel(TXsheet *xsh, TXshLevel *srcLevel, TXshLevel *dstLevel)
 							substitutedSubs.insert(childLevel);
 						}
 				}
+			}
 		}
 		if (changed)
 			xsh->setCells(r0, c, rowCount, &cells[0]);
@@ -2176,7 +2177,7 @@ int loadPSDResource(IoCmd::LoadResourceArguments &args, bool updateRecentFile, P
 typedef IoCmd::LoadResourceArguments::ScopedBlock LoadScopedBlock;
 
 struct LoadScopedBlock::Data {
-	boost::scoped_ptr<DVGui::ProgressDialog>
+	std::unique_ptr<DVGui::ProgressDialog>
 		m_progressDialog; //!< Progress dialog displayed on multiple paths.
 	int m_loadedCount;	//!< Number of loaded levels.
 	bool m_hasSoundLevel; //!< Whether a sound level was loaded.

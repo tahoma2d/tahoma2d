@@ -15,7 +15,7 @@
 #include "STColSelPic.h"
 #include "SDef.h"
 #include "InputParam.h"
-#include "YombInputParam.h"
+#include "YOMBInputParam.h"
 #include "BlurMatrix.h"
 //#pragma warning(disable: 4786)
 //#include "tmsg.h"

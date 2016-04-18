@@ -21,7 +21,9 @@
 #include <dirent.h>
 #include <sys/dir.h>
 #include <sys/param.h> // for getfsstat
+#ifdef MACOSX
 #include <sys/ucred.h>
+#endif
 #include <sys/mount.h>
 #include <pwd.h>
 #include <dlfcn.h>
@@ -63,7 +65,7 @@ typedef const TPluginInfo *TnzLibMainProcType();
 namespace
 {
 const char *TnzLibMainProcName = "TLibMain";
-#ifdef MACOSX
+#if !defined(WIN32)
 const char *TnzLibMainProcName2 = "_TLibMain";
 #endif
 }

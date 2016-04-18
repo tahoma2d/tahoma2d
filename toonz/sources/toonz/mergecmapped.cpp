@@ -4,7 +4,7 @@
 #include "tpalette.h"
 #include "toonz/txsheet.h"
 #include "toonz/toonzscene.h"
-#include "toonz/levelSet.h"
+#include "toonz/levelset.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshcell.h"
@@ -635,7 +635,6 @@ QString indexes2string(const set<TFrameId> fids)
 		return "";
 
 	QString str;
-	int i;
 
 	set<TFrameId>::const_iterator it = fids.begin();
 

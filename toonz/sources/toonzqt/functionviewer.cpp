@@ -18,7 +18,7 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/tobjecthandle.h"
 #include "toonz/tfxhandle.h"
-#include "toonz/tcolumnHandle.h"
+#include "toonz/tcolumnhandle.h"
 #include "toonz/fxdag.h"
 #include "toonz/txshzeraryfxcolumn.h"
 #include "toonz/tcolumnfx.h"
@@ -42,7 +42,7 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QLabel>
-#include <QToolbar>
+#include <QToolBar>
 #include <QAction>
 
 using namespace DVGui;
