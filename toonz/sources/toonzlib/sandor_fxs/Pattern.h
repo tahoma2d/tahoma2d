@@ -51,7 +51,7 @@ public:
 			for (int x = 0; x < m_lX; x++)
 				if ((x + ox) < pic.m_lX && (y + oy) < pic.m_lY) {
 					P *p = pic.m_pic + (y + oy) * pic.m_lX + x + ox;
-					UC_PIXEL *pP = m_pat + y * m_lX + x;
+					UC_PIXEL *pP = m_pat.get() + y * m_lX + x;
 
 					if (pP->m > (UCHAR)0) {
 						double q = ((double)(pP->m) / 255.0) * ((double)eCol.m / 255.0);
