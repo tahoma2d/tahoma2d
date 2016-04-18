@@ -58,12 +58,14 @@ protected slots:
 	void addNewTab();
 	void deleteTab();
 	void setIsLocked(bool lock);
+	void onCustomizeMenuBar();
 
 signals:
 	void indexSwapped(int firstIndex, int secondIndex);
 	void insertNewTabRoom();
 	void deleteTabRoom(int index);
 	void renameTabRoom(int index, const QString name);
+	void customizeMenuBar(int index);
 };
 
 //-----------------------------------------------------------------------------
@@ -149,6 +151,7 @@ class StackedMenuBar : public QStackedWidget
 	QMenuBar* createBatchesMenuBar();
 	QMenuBar* createBrowserMenuBar();
 	QMenuBar* createFullMenuBar();
+	QMenuBar* loadMenuBar(const TFilePath & fp);
 
 public:
 	StackedMenuBar(QWidget *parent);
@@ -165,6 +168,7 @@ protected slots:
 	void onIndexSwapped(int firstIndex, int secondIndex);
 	void insertNewMenuBar();
 	void deleteMenuBar(int index);
+	void doCustomizeMenuBar(int index);
 };
 
 //-----------------------------------------------------------------------------

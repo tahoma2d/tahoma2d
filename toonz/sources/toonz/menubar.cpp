@@ -6,6 +6,8 @@
 #include "menubarcommandids.h"
 #include "tapp.h"
 #include "cellselection.h"
+#include "mainwindow.h"
+#include "menubarpopup.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -20,6 +22,7 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -29,6 +32,7 @@
 
 // TnzCore includes
 #include "tconvert.h"
+#include "tsystem.h"
 
 // Qt includes
 #include <QIcon>
@@ -151,11 +155,19 @@ void RoomTabWidget::contextMenuEvent(QContextMenuEvent *event)
 	connect(newRoom, SIGNAL(triggered()), SLOT(addNewTab()));
 
 	int index = tabAt(event->pos());
-	if (index != currentIndex() && index >= 0)
+	if (index >= 0)
 	{
 		m_tabToDeleteIndex = index;
-		QAction* deleteRoom = menu->addAction(tr("Delete Room %1").arg(tabText(index)));
-		connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
+		if (index != currentIndex())
+		{
+			QAction* deleteRoom = menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
+			connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
+		}
+#if defined(_WIN32) || defined(_CYGWIN_)
+		/*- customize menubar -*/
+		QAction* customizeMenuBar = menu->addAction(tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
+		connect(customizeMenuBar, SIGNAL(triggered()), SLOT(onCustomizeMenuBar()));
+#endif
 	}
 	menu->exec(event->globalPos());
 }
@@ -204,6 +216,16 @@ void RoomTabWidget::setIsLocked(bool lock)
 	LockRoomTabToggle = (lock) ? 1 : 0;
 }
 
+//-----------------------------------------------------------------------------
+
+void RoomTabWidget::onCustomizeMenuBar()
+{
+	/*- use m_tabToDeleteIndex for index of a room of which menubar is to be customized -*/
+	assert(m_tabToDeleteIndex != -1);
+
+	emit customizeMenuBar(m_tabToDeleteIndex);
+}
+
 //=============================================================================
 // StackedMenuBar
 //-----------------------------------------------------------------------------
@@ -239,17 +261,32 @@ void StackedMenuBar::createMenuBarByName(const QString &roomName)
 	addWidget(createFullMenuBar());
 #endif
 }
+
 //---------------------------------------------------------------------------------
 
 void StackedMenuBar::loadAndAddMenubar(const TFilePath & fp)
 {
-	std::wcout << fp.getWideString() << std::endl;
+#if defined(_WIN32) || defined(_CYGWIN_)
+	QMenuBar* menuBar = loadMenuBar(fp);
+	if (menuBar)
+		addWidget(menuBar);
+	else
+		addWidget(createFullMenuBar());
+#else
+	/* OSX では stacked menu が動いていないのでとりあえず full のみ作成する */
+	addWidget(createFullMenuBar());
+#endif
+}
+
+//---------------------------------------------------------------------------------
+
+QMenuBar* StackedMenuBar::loadMenuBar(const TFilePath & fp)
+{
 
 	QFile file(toQString(fp));
 	if (!file.open(QFile::ReadOnly | QFile::Text)){
 		qDebug() << "Cannot read file" << file.errorString();
-		addWidget(createFullMenuBar());
-		return;
+		return 0;
 	}
 
 	QXmlStreamReader reader(&file);
@@ -284,7 +321,7 @@ void StackedMenuBar::loadAndAddMenubar(const TFilePath & fp)
 					if (action)
 						menuBar->addAction(action);
 					else
-						reader.raiseError(tr("Failed to add command  %1").arg(cmdName));
+						reader.raiseError(tr("Failed to add command %1").arg(cmdName));
 				}
 				else
 					reader.skipCurrentElement();
@@ -297,10 +334,9 @@ void StackedMenuBar::loadAndAddMenubar(const TFilePath & fp)
 	if (reader.hasError())
 	{
 		delete menuBar;
-		addWidget(createFullMenuBar());
+		return 0;
 	}
-	else
-		addWidget(menuBar);
+	return  menuBar;
 }
 
 //---------------------------------------------------------------------------------
@@ -1394,6 +1430,45 @@ void StackedMenuBar::deleteMenuBar(int index)
 	delete menuBar;
 }
 
+//-----------------------------------------------------------------------------
+
+void StackedMenuBar::doCustomizeMenuBar(int index)
+{
+	MainWindow* mainWin = dynamic_cast<MainWindow*>(TApp::instance()->getMainWindow());
+	assert(mainWin);
+	Room* room = mainWin->getRoom(index);
+	if (!room) return;
+
+	MenuBarPopup mbPopup(room);
+
+	if (mbPopup.exec())
+	{
+		/*- OKが押され、roomname_menubar.xmlが更新された状態 -*/
+		/*- xmlファイルからメニューバーを作り直して格納 -*/
+		std::string mbFileName = room->getPath().getName() + "_menubar.xml";
+		TFilePath mbPath = ToonzFolder::getMyModuleDir() + mbFileName;
+		if (!TFileStatus(mbPath).isReadable())
+		{
+			DVGui::MsgBox(WARNING, tr("Cannot open menubar settings file %1").arg(QString::fromStdString(mbFileName)));
+			return;
+		}
+		QMenuBar* newMenu = loadMenuBar(mbPath); 
+		if (!newMenu)
+		{
+			DVGui::MsgBox(WARNING, tr("Failed to create menubar"));
+			return;
+		}
+		
+		QWidget* oldMenu = widget(index);
+		removeWidget(oldMenu);
+		insertWidget(index, newMenu);
+		delete oldMenu;
+		
+		setCurrentIndex(index);
+	}
+}
+
+
 //=============================================================================
 // DvTopBar
 //-----------------------------------------------------------------------------
@@ -1446,6 +1521,7 @@ TopBar::TopBar(QWidget *parent)
 	ret = ret && connect(m_roomTabBar, SIGNAL(indexSwapped(int, int)), m_stackedMenuBar, SLOT(onIndexSwapped(int, int)));
 	ret = ret && connect(m_roomTabBar, SIGNAL(insertNewTabRoom()), m_stackedMenuBar, SLOT(insertNewMenuBar()));
 	ret = ret && connect(m_roomTabBar, SIGNAL(deleteTabRoom(int)), m_stackedMenuBar, SLOT(deleteMenuBar(int)));
+	ret = ret && connect(m_roomTabBar, SIGNAL(customizeMenuBar(int)), m_stackedMenuBar, SLOT(doCustomizeMenuBar(int)));
 	ret = ret && connect(m_lockRoomCB, SIGNAL(toggled(bool)), m_roomTabBar, SLOT(setIsLocked(bool)));
 	assert(ret);
 }
