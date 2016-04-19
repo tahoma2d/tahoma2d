@@ -1449,13 +1449,13 @@ void StackedMenuBar::doCustomizeMenuBar(int index)
 		TFilePath mbPath = ToonzFolder::getMyModuleDir() + mbFileName;
 		if (!TFileStatus(mbPath).isReadable())
 		{
-			DVGui::MsgBox(WARNING, tr("Cannot open menubar settings file %1").arg(QString::fromStdString(mbFileName)));
+			DVGui::warning(tr("Cannot open menubar settings file %1").arg(QString::fromStdString(mbFileName)));
 			return;
 		}
 		QMenuBar* newMenu = loadMenuBar(mbPath); 
 		if (!newMenu)
 		{
-			DVGui::MsgBox(WARNING, tr("Failed to create menubar"));
+			DVGui::warning(tr("Failed to create menubar"));
 			return;
 		}
 		

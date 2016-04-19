@@ -202,7 +202,7 @@ void makePrivate(Room *room)
 			if (TFileStatus(templateFullMBPath).doesExist())
 				TSystem::copyFile(myMBPath, templateFullMBPath);
 			else
-				DVGui::MsgBox(WARNING, QObject::tr("Cannot open menubar settings template file. Re-installing Toonz will solve this problem."));
+				DVGui::warning(QObject::tr("Cannot open menubar settings template file. Re-installing Toonz will solve this problem."));
 		}
 	}
 }
