@@ -5,489 +5,490 @@
     <name>AddFilmstripFramesPopup</name>
     <message>
         <source>Add Frames</source>
-        <translation type="unfinished">Aggiungi Fotogrammi</translation>
+        <translation>Agregar fotogramas</translation>
     </message>
     <message>
         <source>From Frame:</source>
-        <translation type="unfinished">Da Fotogramma:</translation>
+        <translation>Desde fotograma:</translation>
     </message>
     <message>
         <source>To Frame:</source>
-        <translation type="unfinished">A Fotogramma:</translation>
+        <translation>Hasta fotograma:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Agregar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>AdjustLevelsPopup</name>
     <message>
         <source>Adjust Levels</source>
-        <translation type="unfinished">Aggiusta Livelli</translation>
+        <translation>Ajustar niveles</translation>
     </message>
     <message>
         <source>Clamp</source>
-        <translation type="unfinished">Clamp</translation>
+        <translation>Limitar</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="unfinished">Auto</translation>
+        <translation>Auto</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Reset</translation>
+        <translation>Restablecer</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>AdjustThicknessPopup</name>
     <message>
         <source>Adjust Thickness</source>
-        <translation type="unfinished">Regola spessore</translation>
+        <translation>Ajustar grosor</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Scale Thickness</source>
-        <translation type="unfinished">Scale Spessore</translation>
+        <translation>Escalar grosor</translation>
     </message>
     <message>
         <source>Add Thickness</source>
-        <translation type="unfinished">Aggiungi Spessore</translation>
+        <translation>Agregar grosor</translation>
     </message>
     <message>
         <source>Constant Thickness</source>
-        <translation type="unfinished">Spessore Costante</translation>
+        <translation>Grosor constante</translation>
     </message>
     <message>
         <source>Start:</source>
-        <translation type="unfinished">Inizio:</translation>
+        <translation>Inicio:</translation>
     </message>
     <message>
         <source>End:</source>
-        <translation type="unfinished">Fine:</translation>
+        <translation>Fin:</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>AntialiasPopup</name>
     <message>
         <source>Apply Antialias</source>
-        <translation type="unfinished">Applica Antialias</translation>
+        <translation>Aplicar suavizado de bordes</translation>
     </message>
     <message>
         <source>Threshold:</source>
-        <translation type="unfinished">Soglia:</translation>
+        <translation>Umbral:</translation>
     </message>
     <message>
         <source>Softness:</source>
-        <translation type="unfinished">Morbidezza:</translation>
+        <translation>Suavizado:</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>ApplyMatchlinesCommand</name>
     <message>
         <source>It is not possible to apply the match lines because no column was selected.</source>
-        <translation type="unfinished">Impossibile applicare le match lines poichè non è stata selezionata nessuna colonna.</translation>
+        <translation>No es posible aplicar las líneas de coincidencia porque no se ha seleccionado ninguna columna.</translation>
     </message>
     <message>
         <source>It is not possible to apply the match lines because two columns have to be seleted.</source>
-        <translation type="unfinished">Impossibile applicare le match lines poichè devono essere selezionate due colonne.</translation>
+        <translation>No es posible aplicar las líneas de coincidencia porque se deben seleccionar dos columnas.</translation>
     </message>
 </context>
 <context>
     <name>AutocenterPopup</name>
     <message>
         <source>Autocenter</source>
-        <translation type="unfinished">Autocentra</translation>
+        <translation>Centrado automático</translation>
     </message>
     <message>
         <source>Pegbar Holes:</source>
-        <translation type="unfinished">Fori Reggetta:</translation>
+        <translation>Huecos en barra de sujeción:</translation>
     </message>
     <message>
         <source>Field Guide:</source>
-        <translation type="unfinished">Field Guide:</translation>
+        <translation>Guía de campo:</translation>
     </message>
 </context>
 <context>
     <name>BatchServersViewer</name>
     <message>
         <source>Process with:</source>
-        <translation type="unfinished">Elabora con:</translation>
+        <translation>Procesar con:</translation>
     </message>
     <message>
         <source>Local</source>
-        <translation type="unfinished">Locale</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <source>Render Farm</source>
-        <translation type="unfinished">Render Farm</translation>
+        <translation>Granja de procesamiento</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished">Indirizzo IP:</translation>
+        <translation>Dirección IP:</translation>
     </message>
     <message>
         <source>Port Number:</source>
-        <translation type="unfinished">Numero Porta:</translation>
+        <translation>№ de puerto:</translation>
     </message>
     <message>
         <source>Tasks:</source>
-        <translation type="unfinished">Task:</translation>
+        <translation>Tareas:</translation>
     </message>
     <message>
         <source>State:</source>
-        <translation type="unfinished">Stato:</translation>
+        <translation>Estado:</translation>
     </message>
     <message>
         <source>Number of CPU:</source>
-        <translation type="unfinished">Numero di CPU:</translation>
+        <translation>Cantidad de CPUs:</translation>
     </message>
     <message>
         <source>Physical Memory:</source>
-        <translation type="unfinished">Memoria Fisica:</translation>
+        <translation>Memoria física:</translation>
     </message>
     <message>
         <source>Farm Global Root:</source>
-        <translation type="unfinished">Radice Globale della Farm:</translation>
+        <translation>Raíz global de la granja:</translation>
     </message>
     <message>
         <source>In order to use the render farm you have to define the Farm Global Root first.</source>
-        <translation type="unfinished">Per usare la render farm devi prima definire la Radice Globale della Farm.</translation>
+        <translation>Para poder usar la granja es necesario antes definir la Raíz global de la granja.</translation>
     </message>
     <message>
         <source>The Farm Global Root folder doesn&apos;t exist
 Please create this folder before using the render farm.</source>
-        <translation type="unfinished">La cartella della Radice Globale della Farm non esiste.
-Creare la cartella prima di usare la render farm.</translation>
+        <translation>La carpeta de la Raíz global de la granja no existe.
+Por favor crear esta carpeta antes de usar la granja de procesamiento.</translation>
     </message>
     <message>
         <source>Unable to connect to the ToonzFarm Controller
    The Controller should run on %1 at port %2
    Please start the Controller before using the ToonzFarm</source>
-        <translation type="unfinished">Impossibile connettersi al Controller della ToonzFarm.
-Il Controller dovrebbe girare sulla %1 alla porta %2.
-Avviare il Controller prima di usare la ToonzFarm.</translation>
+        <translation>No es posible conectarse al controlador ToonzFarm.
+   El controlador debe ejecutarse en %1 usando el puerto %2
+   Por favor iniciar el controlador antes de usar ToonzFarm</translation>
     </message>
 </context>
 <context>
     <name>BatchesController</name>
     <message>
         <source>Tasks</source>
-        <translation type="unfinished">Task</translation>
+        <translation>Tareas</translation>
     </message>
     <message>
         <source>The Task List is empty!</source>
-        <translation type="unfinished">La Lista dei Task è vuota.</translation>
+        <translation>La lista de tareas está vacía!</translation>
     </message>
     <message>
         <source>The current task list has been modified.
 Do you want to save your changes?</source>
-        <translation type="unfinished">Il task attuale è stato modificato.
-Si desiderano salvare i cambiamenti?</translation>
+        <translation>La lista de tareas actual ha sido modificada.
+¿Se desea guardar los cambios?</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Salva</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <source>Discard</source>
-        <translation type="unfinished">Scarta</translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>The %1 task is currently active.
 Stop it or wait for its completion before removing it.</source>
-        <translation type="unfinished">Il compito %1 è attivo. Bloccalo o attendi il suo completamento prima di rimuoverlo.</translation>
+        <translation>La tarea %1 se encuentra activa.
+Detenerla o esperar a su finalización antes de removerla.</translation>
     </message>
 </context>
 <context>
     <name>BinarizePopup</name>
     <message>
         <source>Binarize</source>
-        <translation type="unfinished">Binarizzare</translation>
+        <translation>Binarizar</translation>
     </message>
     <message>
         <source>Alpha</source>
-        <translation type="unfinished">Alfa</translation>
+        <translation>Alfa</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">Anteprima</translation>
+        <translation>Previsualizar</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <source>No raster frames selected</source>
-        <translation type="unfinished">Non ci sono immagini raster selezionate</translation>
+        <translation>Ningún fotograma de imagen seleccionado</translation>
     </message>
     <message>
         <source>Binarizing images</source>
-        <translation type="unfinished">Binarizza le immagini</translation>
+        <translation>Binarizando las imágenes</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>BrightnessAndContrastPopup</name>
     <message>
         <source>Brightness and Contrast</source>
-        <translation type="unfinished">Luminosità e Contrasto</translation>
+        <translation>Brillo y contraste</translation>
     </message>
     <message>
         <source>Brightness:</source>
-        <translation type="unfinished">Luminosità:</translation>
+        <translation>Brillo:</translation>
     </message>
     <message>
         <source>Contrast:</source>
-        <translation type="unfinished">Contrasto:</translation>
+        <translation>Contraste:</translation>
     </message>
 </context>
 <context>
     <name>BrowserPopup</name>
     <message>
         <source>Choose</source>
-        <translation type="unfinished">Scegli</translation>
+        <translation>Escoger</translation>
     </message>
     <message>
         <source>Path %1 doesn&apos;t exists.</source>
-        <translation type="unfinished">Il percorso %1 non esiste.</translation>
+        <translation>La ruta %1 no existe.</translation>
     </message>
 </context>
 <context>
     <name>CameraSettingsPopup</name>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Camera#%1 Settings</source>
-        <translation type="unfinished">Parametri Camera n. %1</translation>
+        <translation>Opciones de cámara №%1</translation>
     </message>
     <message>
         <source>Current Camera Settings</source>
-        <translation type="unfinished">Parametri Camera Corrente</translation>
+        <translation>Opciones de cámara actual</translation>
     </message>
 </context>
 <context>
     <name>CanvasSizePopup</name>
     <message>
         <source>Canvas Size</source>
-        <translation type="unfinished">Dimensione Quadro</translation>
+        <translation>Tamaño del lienzo</translation>
     </message>
     <message>
         <source>Current Size</source>
-        <translation type="unfinished">Dimensione Corrente:</translation>
+        <translation>Tamaño actual</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>New Size</source>
-        <translation type="unfinished">Nuova Dimensione</translation>
+        <translation>Nuevo tamaño</translation>
     </message>
     <message>
         <source>Unit:</source>
-        <translation type="unfinished">Unità:</translation>
+        <translation>Unidad:</translation>
     </message>
     <message>
         <source>Relative</source>
-        <translation type="unfinished">Relativo</translation>
+        <translation>Relativo</translation>
     </message>
     <message>
         <source>Anchor</source>
-        <translation type="unfinished">Ancora</translation>
+        <translation>Anclaje</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Resize</source>
-        <translation type="unfinished">Ridimensiona</translation>
+        <translation>Redimensionar</translation>
     </message>
     <message>
         <source>The new canvas size is smaller than the current one.
 Do you want to crop the canvas?</source>
-        <translation type="unfinished">La dimensione impostata per il Canvas è inferiore a quella attuale.
-Vuoi tagliare il canvas?</translation>
+        <translation>El nuevo tamaño del lienzo es más pequeño que el actual.
+¿Se desea recortar el lienzo?</translation>
     </message>
     <message>
         <source>Crop</source>
-        <translation type="unfinished">Tagliare</translation>
+        <translation>Recortar</translation>
     </message>
 </context>
 <context>
     <name>CaptureSettingsPopup</name>
     <message>
         <source>Define Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir dispositivo</translation>
     </message>
     <message>
         <source>V Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolución V</translation>
     </message>
     <message>
         <source>H Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolución H</translation>
     </message>
     <message>
         <source>White Calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Calibración de blancos</translation>
     </message>
     <message>
         <source>Capture</source>
-        <translation type="unfinished">Acquisizione</translation>
+        <translation>Capturar</translation>
     </message>
     <message>
         <source>Brightness:</source>
-        <translation type="unfinished">Luminosità:</translation>
+        <translation>Brillo:</translation>
     </message>
     <message>
         <source>Contrast:</source>
-        <translation type="unfinished">Contrasto:</translation>
+        <translation>Contraste:</translation>
     </message>
     <message>
         <source> Upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation> Dar vuelta</translation>
     </message>
     <message>
         <source>A Device is Connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se ha conectado un dispositivo.</translation>
     </message>
     <message>
         <source>No cameras found.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se han encontrado cámaras.</translation>
     </message>
     <message>
         <source>Device Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispositivo desconectado.</translation>
     </message>
     <message>
         <source>No Device Defined.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se ha definido un dispositivo.</translation>
     </message>
 </context>
 <context>
     <name>CastBrowser</name>
     <message>
         <source>It is not possible to edit the selected file.</source>
-        <translation type="unfinished">Non è possibile modificare il file selezionato.</translation>
+        <translation>No es posible editar el archivo seleccionado.</translation>
     </message>
     <message>
         <source>It is not possible to edit more than one file at once.</source>
-        <translation type="unfinished">Non è possibile modificare più di un file alla volta.</translation>
+        <translation>No es posible editar más de un archivo a la vez.</translation>
     </message>
     <message>
         <source>It is not possible to show the folder containing the selected file, as the file has not been saved yet.</source>
-        <translation type="unfinished">Impossibili mostrare la cartella contenente il file selezionato poichè il file non è ancora stato salvato.</translation>
+        <translation>No es posible mostrar la carpeta que contiene el archivo seleccionado, porque el archivo no ha sido guardado aún.</translation>
     </message>
     <message>
         <source>It is not possible to view the selected file, as the file has not been saved yet.</source>
-        <translation type="unfinished">Impossibile vedere il file selezionato poichè il file non è stato ancora salvato.</translation>
+        <translation>No es posible ver el archivo seleccionado, porque el mismo no ha sido guardado aún.</translation>
     </message>
     <message>
         <source>It is not possible to show the info of the selected file, as the file has not been saved yet.</source>
-        <translation type="unfinished">Impossibile mostrare le informazioni sul file selezionato poichè il file non è ancora stato salvato.</translation>
+        <translation>No es posible mostrar la información del archivo seleccionado, porque el mismo no ha sido guardado aún.</translation>
     </message>
 </context>
 <context>
     <name>CastTreeViewer</name>
     <message>
         <source>Delete folder </source>
-        <translation type="unfinished">Cancella la cartella</translation>
+        <translation>Borrar carpeta</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sì</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
 </context>
 <context>
     <name>ChooseCameraDialog</name>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>CleanupPopup</name>
     <message>
         <source>Do you want to cleanup this frame?</source>
-        <translation type="unfinished">Vuoi fare il cleanup di questo disegno?</translation>
+        <translation>¿Se desea limpiar este fotograma?</translation>
     </message>
     <message>
         <source>Cleanup</source>
-        <translation type="unfinished">Cleanup</translation>
+        <translation>Limpiar</translation>
     </message>
     <message>
         <source>Cleanup in progress</source>
-        <translation type="unfinished">Cleanup in corso</translation>
+        <translation>Limpieza en curso</translation>
     </message>
     <message>
         <source>Skip</source>
-        <translation type="unfinished">Salta</translation>
+        <translation>Saltear</translation>
     </message>
     <message>
         <source>Cleanup All</source>
-        <translation type="unfinished">Cleanup di Tutti</translation>
+        <translation>Limpiar todo</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Cleanup in progress: </source>
-        <translation type="unfinished">Cleanup in corso:</translation>
+        <translation>Limpieza en curso:</translation>
     </message>
     <message>
         <source>It is not possible to cleanup: the cleanup list is empty.</source>
-        <translation type="unfinished">Non è possibile fare il cleanup: la lista di cleanup è vuota.</translation>
+        <translation>No es posible realizar la limpieza: la lista de limpieza está vacía.</translation>
     </message>
     <message>
         <source>The resulting resolution of level &quot;%1&quot;
@@ -495,1972 +496,1967 @@ does not match with that of previously cleaned up level drawings.
 
 Please set the right camera resolution and closest field, or choose to delete
 the existing level and create a new one when running the cleanup process.</source>
-        <translation type="unfinished">La risoluzione risultante del livello &quot;%1&quot; non corrisponde con quella dei disegni del  livello precedentemente processato.
+        <translation>La resolución resultante del nivel &quot;%1&quot;
+no coincide con la de los dibujos limpiados anteriormente en el nivel.
 
-Per favore, imposta la risoluzione di camera e il Closest Field corretti o scegli di cancellare il livello esistente e di crearne uno nuovo.
-
-</translation>
+Por favor definir la resolución correcta de cámara y el campo más cercano, o borrar el nivel existente y crear uno nuevo al iniciar el proceso de limpieza.</translation>
     </message>
     <message>
         <source>Selected drawings will overwrite the original files after the cleanup process.
 Do you want to continue?</source>
-        <translation type="unfinished">I disegni selezionati sovrascriveranno i  file originali  dopo il Cleanup.
-Vuoi continuare?</translation>
+        <translation>Los dibujos seleccionados sobrescribirán a los archivos originales luego de completado el proceso de limpieza.
+¿Se desea continuar?</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>There were errors opening the existing level &quot;%1&quot;.
 
 Please choose to delete the existing level and create a new one
 when running the cleanup process.</source>
-        <translation type="unfinished">Ci sono stati degli errori di apertura del livello &quot;%1&quot;.
+        <translation>Hubo errores al abrir el nivel existente &quot;%1&quot;.
 
-Per favore scegliere di cancellare il livello esistente e crearne uno nuovo
-quando si avvia il processo di Cleanup.</translation>
+Por favor borrar el nivel existente y crear uno
+nuevo al iniciar el proceso de limpieza.</translation>
     </message>
     <message>
         <source>Couldn&apos;t create directory &quot;%1&quot;</source>
-        <translation type="unfinished">Non è possibile creare la cartella &quot;%1&quot;</translation>
+        <translation>No fue posible crear el directorio &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot; for write</source>
-        <translation type="unfinished">Non è possibile aprire &quot;%1&quot; per scrittura</translation>
+        <translation>No fue posible abrir &quot;%1&quot; para escritura</translation>
     </message>
     <message>
         <source>Couldn&apos;t remove file &quot;%1&quot;</source>
-        <translation type="unfinished">Non è possibile eliminare il file &quot;%1&quot;</translation>
+        <translation>No fue posible remover el archivo &quot;%1&quot;</translation>
     </message>
     <message>
         <source>View</source>
-        <translation type="unfinished">Visualizza</translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <source> : Cleanup in progress</source>
-        <translation type="unfinished"></translation>
+        <translation> : Limpieza en curso</translation>
     </message>
 </context>
 <context>
     <name>CleanupPopup::OverwriteDialog</name>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished">Attenzione!</translation>
+        <translation>¡Advertencia!</translation>
     </message>
     <message>
         <source>Cleanup all selected drawings overwriting those previously cleaned up.</source>
-        <translation type="unfinished">Processa tutti i disegni selezionati sovrascrivendo quelli processati precedentemente.</translation>
+        <translation>Limpiar todos los dibujos seleccionados sobrescribiendo los anteriormente limpiados.</translation>
     </message>
     <message>
         <source>Cleanup only non-cleaned up drawings and keep those previously cleaned up.</source>
-        <translation type="unfinished">Processa solo i disegni non ancora processati e mantieni quelli già processati.</translation>
+        <translation>Limpiar solo los dibujos no limpios, manteniendo los anteriormente limpiados.</translation>
     </message>
     <message>
         <source>Delete existing level and create a new level with selected drawings only.</source>
-        <translation type="unfinished">Cancella il livello esistente a crea un nuovo livello con i soli disegni selezionati.</translation>
+        <translation>Borrar el nivel existente y crear uno nuevo sólo con los dibujos seleccionados.</translation>
     </message>
     <message>
         <source>Rename the new level adding the suffix </source>
-        <translation type="unfinished">Rinomina il nuovo livello aggiungendo un suffisso</translation>
+        <translation>Renombrar el nuevo nivel agregándole el sufijo </translation>
     </message>
     <message>
         <source>File &quot;%1&quot; already exists.
 What do you want to do?</source>
-        <translation type="unfinished">Il File &quot;%1&quot; esiste già.
-Cosa vuoi fare?</translation>
+        <translation>El archivo &quot;%1&quot; ya existe.
+¿Qué se desea hacer?</translation>
     </message>
     <message>
         <source>Cleanup all selected drawings overwriting those previously cleaned up.*</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar todos los dibujos seleccionados sobrescribiendo los anteriormente limpiados.*</translation>
     </message>
     <message>
         <source>Cleanup only non-cleaned up drawings and keep those previously cleaned up.*</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar solo los dibujos no limpios, manteniendo los anteriormente limpiados.*</translation>
     </message>
     <message>
         <source>This is Re-Cleanup. Overwrite only to the no-paint files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto es una relimpieza. Sólo sobrescribir los archivos no pintados.</translation>
     </message>
     <message>
         <source>* Palette will not be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>* La paleta no será cambiada.</translation>
     </message>
 </context>
 <context>
     <name>CleanupSettings</name>
     <message>
         <source>Cleanup</source>
-        <translation type="unfinished">Cleanup</translation>
+        <translation>Limpieza</translation>
     </message>
     <message>
         <source>Processing</source>
-        <translation type="unfinished">Elaborazione</translation>
+        <translation>Procesamiento</translation>
     </message>
     <message>
         <source>Camera</source>
-        <translation type="unfinished">Camera</translation>
+        <translation>Cámara</translation>
     </message>
     <message>
         <source>Toggle Swatch Preview</source>
-        <translation type="unfinished">Attiva / Disattiva Anteprima</translation>
+        <translation>Alternar previsualización</translation>
     </message>
     <message>
         <source>Toggle Opacity Check</source>
-        <translation type="unfinished">Controllo dell&apos;Opacità</translation>
+        <translation>Alternar control de opacidad</translation>
     </message>
     <message>
         <source>Save Settings</source>
-        <translation type="unfinished">Salva le Impostazioni</translation>
+        <translation>Guardar opciones</translation>
     </message>
     <message>
         <source>Load Settings</source>
-        <translation type="unfinished">Carica le Impostazioni</translation>
+        <translation>Cargar opciones</translation>
     </message>
     <message>
         <source>Reset Settings</source>
-        <translation type="unfinished">Ripristina le Impostazioni </translation>
+        <translation>Restablecer opciones</translation>
     </message>
     <message>
         <source>Cleanup Settings</source>
-        <translation type="unfinished">Impostazioni di Cleanup</translation>
+        <translation>Opciones de limpieza</translation>
     </message>
     <message>
         <source>Cleanup Settings: %1</source>
-        <translation type="unfinished">Impostazioni di Cleanup: %1</translation>
+        <translation>Opciones de limpieza: %1</translation>
     </message>
 </context>
 <context>
     <name>CleanupSettingsPane</name>
     <message>
         <source>Horizontal</source>
-        <translation type="unfinished">Orizzontale</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="unfinished">Verticale</translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <source>MLAA Intensity:</source>
-        <translation type="unfinished">Intensità MLAA:</translation>
+        <translation>Intensidad MLAA:</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Salva</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Reset</translation>
+        <translation>Restablecer</translation>
     </message>
     <message>
         <source>Standard</source>
-        <translation type="unfinished">Standard</translation>
+        <translation>Estándar</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguna</translation>
     </message>
     <message>
         <source>Morphological</source>
-        <translation type="unfinished">Morfologico</translation>
+        <translation>Morfológica</translation>
     </message>
     <message>
         <source>Greyscale</source>
-        <translation type="unfinished">In Scala di Grigi</translation>
+        <translation>Escala de gris</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">A Colori</translation>
+        <translation>Color</translation>
     </message>
     <message>
         <source>Rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar</translation>
     </message>
     <message>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Dar vuelta</translation>
     </message>
     <message>
         <source>Line Processing:</source>
-        <translation type="unfinished">Elaborazione Linee:</translation>
+        <translation>Procesamiento de línea:</translation>
     </message>
     <message>
         <source>Antialias:</source>
-        <translation type="unfinished">Antialias:</translation>
+        <translation>Suavizado de bordes:</translation>
     </message>
     <message>
         <source>Sharpness:</source>
-        <translation type="unfinished">Nitidezza:</translation>
+        <translation>Nitidez:</translation>
     </message>
     <message>
         <source>Despeckling:</source>
-        <translation type="unfinished">Eliminazione Imperfezioni:</translation>
+        <translation>Desmanchado:</translation>
     </message>
     <message>
         <source>Cleanup Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de limpieza</translation>
     </message>
     <message>
         <source>Cleanup Settings: %1</source>
-        <translation type="unfinished">Impostazioni di Cleanup: %1</translation>
+        <translation>Opciones de limpieza: %1</translation>
     </message>
 </context>
 <context>
     <name>CleanupTab</name>
     <message>
         <source>Autocenter</source>
-        <translation type="unfinished">Autocentra</translation>
+        <translation>Centrado automático</translation>
     </message>
     <message>
         <source>Pegbar Holes:</source>
-        <translation type="unfinished">Buchi Reggetta:</translation>
+        <translation>Huecos en barra de sujeción:</translation>
     </message>
     <message>
         <source>Field Guide:</source>
-        <translation type="unfinished">Field Guide:</translation>
+        <translation>Guía de campo:</translation>
     </message>
     <message>
         <source>Rotate:</source>
-        <translation type="unfinished">Ruota:</translation>
+        <translation>Rotar:</translation>
     </message>
     <message>
         <source>Flip:</source>
-        <translation type="unfinished">Ribalta:</translation>
+        <translation>Dar vuelta:</translation>
     </message>
     <message>
         <source>Horizontal</source>
-        <translation type="unfinished">Orizzontale</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="unfinished">Verticale</translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva in:</translation>
+        <translation>Guardar en:</translation>
     </message>
 </context>
 <context>
     <name>ClipListViewer</name>
     <message>
         <source>Load Scene</source>
-        <translation type="unfinished">Carica Scena</translation>
+        <translation>Cargar escena</translation>
     </message>
 </context>
 <context>
     <name>CloneLevelUndo::LevelNamePopup</name>
     <message>
         <source>Clone Level</source>
-        <translation type="unfinished">Clona Livello</translation>
+        <translation>Clonar nivel</translation>
     </message>
     <message>
         <source>Level Name:</source>
-        <translation type="unfinished">Nome del Livello:</translation>
+        <translation>Nombre del nivel:</translation>
     </message>
 </context>
 <context>
     <name>ColorModelViewer</name>
     <message>
         <source>Color Model</source>
-        <translation type="unfinished">Modello di Colore</translation>
+        <translation>Modelo de color</translation>
     </message>
     <message>
         <source>Use Current Frame</source>
-        <translation type="unfinished">Usa il Forogramma Corrente</translation>
+        <translation>Usar fotograma actual</translation>
     </message>
     <message>
         <source>Remove Color Model</source>
-        <translation type="unfinished">Elimina il Modello di Colore</translation>
+        <translation>Eliminar modelo de color</translation>
     </message>
     <message>
         <source>It is not possible to retrieve the color model set for the current level.</source>
-        <translation type="unfinished">Non è possibile recuperare il modello di colore definito per il livello corrente.</translation>
+        <translation>No es posible recuperar el conjunto de modelo de color para el nivel actual.</translation>
     </message>
     <message>
         <source>Reset View</source>
-        <translation type="unfinished">Reset Visualizzazione</translation>
+        <translation>Restablecer vista</translation>
     </message>
     <message>
         <source>Fit to Window</source>
-        <translation type="unfinished">Adatta alla Finestra</translation>
+        <translation>Ajustar a la ventana</translation>
     </message>
 </context>
 <context>
     <name>ComboViewerPanel</name>
     <message>
         <source>GUI Show / Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar / Ocultar interfaz</translation>
     </message>
     <message>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de herramientas</translation>
     </message>
     <message>
         <source>Tool Options Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de opciones de herramientas</translation>
     </message>
     <message>
         <source>Console</source>
-        <translation type="unfinished"></translation>
+        <translation>Consola</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">Anteprima</translation>
+        <translation>Previsualizar</translation>
     </message>
     <message>
         <source>Sub-camera Preview</source>
-        <translation type="unfinished">Anteprima della Sotto-Camera</translation>
+        <translation>Previsualizar sub cámara</translation>
     </message>
     <message>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin título</translation>
     </message>
     <message>
         <source>Scene: </source>
-        <translation type="unfinished">Scena:</translation>
+        <translation>Escena: </translation>
     </message>
     <message>
         <source>   ::   Frame: </source>
-        <translation type="unfinished">   ::   Fotogramma: </translation>
+        <translation>   ::   Fotograma: </translation>
     </message>
     <message>
         <source>   ::   Level: </source>
-        <translation type="unfinished">   ::   Livello: </translation>
+        <translation>   ::   Nivel: </translation>
     </message>
     <message>
         <source>Level: </source>
-        <translation type="unfinished">Livello:</translation>
+        <translation>Nivel: </translation>
     </message>
 </context>
 <context>
     <name>ConflictWidget</name>
     <message>
         <source>Mine</source>
-        <translation type="unfinished">Mio</translation>
+        <translation>Mío</translation>
     </message>
     <message>
         <source>Theirs</source>
-        <translation type="unfinished">Loro</translation>
+        <translation>De otros</translation>
     </message>
 </context>
 <context>
     <name>ConvertPopup</name>
     <message>
         <source>Convert</source>
-        <translation type="unfinished">Converti</translation>
+        <translation>Convertir</translation>
     </message>
     <message>
         <source>Start:</source>
-        <translation type="unfinished">Inizio:</translation>
+        <translation>Inicio:</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva in:</translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Opzioni:</translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <source>File Format:</source>
-        <translation type="unfinished">Formato del File:</translation>
+        <translation>Formato de archivo:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Converting %1</source>
-        <translation type="unfinished">Conversione di %1 in corso</translation>
+        <translation>Convirtiendo %1</translation>
     </message>
     <message>
         <source>Convert... </source>
-        <translation type="unfinished">Converti...</translation>
+        <translation>Convertir... </translation>
     </message>
     <message>
         <source>Bg Color:</source>
-        <translation type="unfinished">Colore Sfondo:</translation>
+        <translation>Color Fdo:</translation>
     </message>
     <message>
         <source>Skip Existing Files</source>
-        <translation type="unfinished">Salta File Esistenti</translation>
+        <translation>Omitir archivos existentes</translation>
     </message>
     <message>
         <source>Convert 1 Level</source>
-        <translation type="unfinished">Converti un Livello</translation>
+        <translation>Convertir 1 nivel</translation>
     </message>
     <message>
         <source>Convert %1 Levels</source>
-        <translation type="unfinished">Converti %1 Livelli</translation>
+        <translation>Convertir %1 niveles</translation>
     </message>
     <message>
         <source>Converting level %1 of %2: %3</source>
-        <translation type="unfinished">Converti %1 livelli di %2: %3</translation>
+        <translation>Convirtiendo el nivel %1 de %2: %3</translation>
     </message>
     <message>
         <source>Unpainted File Folder:</source>
-        <translation type="unfinished">Cartella livelli non colorati:</translation>
+        <translation>Carpeta de archivos no pintados:</translation>
     </message>
     <message>
         <source> Unpainted File Suffix:</source>
-        <translation type="unfinished">Suffisso livelli non colorati:</translation>
+        <translation> Sufijo de archivos no pintados:</translation>
     </message>
     <message>
         <source>Apply Autoclose</source>
-        <translation type="unfinished">Applica chiusura automatica</translation>
+        <translation>Aplicar sellado automático</translation>
     </message>
     <message>
         <source>Keep Original Antialiasing</source>
-        <translation type="unfinished">Mantenere Antialias Originale</translation>
+        <translation>Mantener suavizado original de bordes</translation>
     </message>
     <message>
         <source>Add Antialiasing with Intensity:</source>
-        <translation type="unfinished">Aggiungere Antialias di Intensità:</translation>
+        <translation>Agregar suavizado de bordes con intensidad:</translation>
     </message>
     <message>
         <source>Remove Antialiasing using Threshold:</source>
-        <translation type="unfinished">Rimuovere Antialias usando la Soglia:</translation>
+        <translation>Remover suavizado de bordes mediante umbral:</translation>
     </message>
     <message>
         <source>                      Palette:</source>
-        <translation type="unfinished">	Palette:</translation>
+        <translation>                      Paleta:</translation>
     </message>
     <message>
         <source>Tolerance:</source>
-        <translation type="unfinished">Tolleranza:</translation>
+        <translation>Tolerancia:</translation>
     </message>
     <message>
         <source>File to convert:</source>
-        <translation type="unfinished">Immagine da Convertire:</translation>
+        <translation>Archivo a convertir:</translation>
     </message>
     <message>
         <source>Output Name:</source>
-        <translation type="unfinished">Nome Immagine in uscita:</translation>
+        <translation>Nombre de salida:</translation>
     </message>
     <message>
         <source>Same as Painted</source>
-        <translation type="unfinished">Medesimo Immagini Colorate</translation>
+        <translation>Igual que pintado</translation>
     </message>
     <message>
         <source>No unpainted suffix specified: cannot convert.</source>
-        <translation type="unfinished">Non è stato specificato il suffisso: non è possibile convertire.</translation>
+        <translation>No se ha especificado el sufijo de no pintado: no es posible convertir.</translation>
     </message>
     <message>
         <source>Level </source>
-        <translation type="unfinished">Livello</translation>
+        <translation>Nivel</translation>
     </message>
     <message>
         <source> already exists; skipped</source>
-        <translation type="unfinished">esiste già; saltato</translation>
+        <translation> ya existe; omitido</translation>
     </message>
     <message>
         <source>Generating level </source>
-        <translation type="unfinished">Scrittura livello in corso</translation>
+        <translation>Generando nivel</translation>
     </message>
     <message>
         <source> converted to tlv.</source>
-        <translation type="unfinished">convertito in TLV.</translation>
+        <translation> convertido a tlv.</translation>
     </message>
     <message>
         <source>No output filename specified: please choose a valid level name.</source>
-        <translation type="unfinished">Non è stato specificato un nome per i files in uscita: per favore scegliere un nome di livello valido.</translation>
+        <translation>No se especificó un nombre de archivo de salida: por favor escoger un nombre válido de nivel.</translation>
     </message>
     <message>
         <source>End:</source>
-        <translation type="unfinished">Fine:</translation>
+        <translation>Fin:</translation>
     </message>
     <message>
         <source>Level %1 converted to TLV Format</source>
-        <translation type="unfinished">Livello %1 convertito in formato TLV</translation>
+        <translation>Nivel %1 convertido a formato TLV</translation>
     </message>
     <message>
         <source>Warning: Level %1 NOT converted to TLV Format</source>
-        <translation type="unfinished">Avvertimento: Livello %1 non convertito in formato TLV</translation>
+        <translation>Advertencia: El nivel %1 NO ha sido convertido a formato TLV</translation>
     </message>
     <message>
         <source>Converted %1 out of %2 Levels to TLV Format</source>
-        <translation type="unfinished">Convertiti %1 di %2 livelli in formato TLV</translation>
+        <translation>Se han convertido %1 de %2 niveles a formato TLV</translation>
     </message>
     <message>
         <source>Level %1 already exists; skipped.</source>
-        <translation type="unfinished">Il livello %1 esiste già; saltato.</translation>
+        <translation>El nivel %1 ya existe; omitido.</translation>
     </message>
     <message>
         <source>Level %1 has no frame; skipped.</source>
-        <translation type="unfinished">Il livello %1 non ha fotogrammi; saltato.
-</translation>
+        <translation>El nivel %1 no contiene fotogramas; omitido.</translation>
     </message>
     <message>
         <source>Unpainted tlv</source>
-        <translation type="unfinished">TLV non colorata</translation>
+        <translation>TLV no pintado</translation>
     </message>
     <message>
         <source>Painted tlv from two images</source>
-        <translation type="unfinished">TLV colorata da due immagini</translation>
+        <translation>TLV pintado a partir de dos imágenes</translation>
     </message>
     <message>
         <source>Painted tlv from non AA source</source>
-        <translation type="unfinished">TLV colorata da sorgente senza Anti Alias</translation>
+        <translation>TLV pintado a partir de un original sin suavizado de bordes</translation>
     </message>
     <message>
         <source>Create new palette</source>
-        <translation type="unfinished">Crea nuova palette</translation>
+        <translation>Crear nueva paleta</translation>
     </message>
     <message>
         <source>Stroke Mode:</source>
-        <translation type="unfinished">Modalità Tratto:</translation>
+        <translation>Modo del trazo:</translation>
     </message>
     <message>
         <source>Centerline</source>
-        <translation type="unfinished">Linea Centrale</translation>
+        <translation>Línea centrada</translation>
     </message>
     <message>
         <source>Outline</source>
-        <translation type="unfinished">Contorno</translation>
+        <translation>Contorno</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Warning: Can&apos;t read palette &apos;%1&apos; </source>
-        <translation type="unfinished">Attenzione: Non è possibile leggere le palette &apos;%1&apos;</translation>
+        <translation>Advertencia: No es posible leer la paleta &apos;%1&apos; </translation>
     </message>
     <message>
         <source>Convert completed with %1 error(s) and %2 level(s) skipped</source>
-        <translation type="unfinished">Conversione completata con %1 errore(i) e %2 livello(i) saltato(i)</translation>
+        <translation>Se completó la conversión con %1 error(es) y %2 niveles omitidos</translation>
     </message>
     <message>
         <source>Convert completed with %1 error(s) </source>
-        <translation type="unfinished">Conversione completata con %1 errore(i)</translation>
+        <translation>Se completó la conversión con %1 error(es) </translation>
     </message>
     <message>
         <source>%1 level(s) skipped</source>
-        <translation type="unfinished">livello(i) %1 saltato(i)</translation>
+        <translation>%1 nivel(es) omitido(s)</translation>
     </message>
     <message>
         <source>Unpainted tlv from non AA source</source>
-        <translation type="unfinished"></translation>
+        <translation>TLV no pintado a partir de un original sin suavizado de bordes</translation>
     </message>
     <message>
         <source>Remove dot before frame number</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover el punto anterior al número de fotogramas</translation>
     </message>
     <message>
         <source>  End:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fin:</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Nome del File:</translation>
+        <translation>Nombre del archivo:</translation>
     </message>
     <message>
         <source>Save Backup to &quot;nopaint&quot; Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar respaldo en carpeta de &quot;no pintados&quot;</translation>
     </message>
     <message>
         <source>Antialias:</source>
-        <translation type="unfinished">Antialias:</translation>
+        <translation>Suavizado de bordes:</translation>
     </message>
     <message>
         <source>Palette:</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ProgressDialog</name>
     <message>
         <source>Loading &quot;%1&quot;...</source>
-        <translation type="unfinished">Sto caricando &quot;%1&quot;...</translation>
+        <translation>Cargando &quot;%1&quot;...</translation>
     </message>
     <message>
         <source>Importing &quot;%1&quot;...</source>
-        <translation type="unfinished">Sto importando &quot;%1&quot;...</translation>
+        <translation>Importando &quot;%1&quot;...</translation>
     </message>
 </context>
 <context>
     <name>DateChooserWidget</name>
     <message>
         <source>time ago.</source>
-        <translation type="unfinished">Tempo fa.</translation>
+        <translation>hace un tiempo.</translation>
     </message>
     <message>
         <source>days ago.</source>
-        <translation type="unfinished">Giorni fa.</translation>
+        <translation>hace días.</translation>
     </message>
     <message>
         <source>weeks ago.</source>
-        <translation type="unfinished">Settimane fa.</translation>
+        <translation>hace semanas.</translation>
     </message>
     <message>
         <source>( Custom date )</source>
-        <translation type="unfinished">(Data personalizzata)</translation>
+        <translation>( Fecha personalizada )</translation>
     </message>
 </context>
 <context>
     <name>DefineScannerPopup</name>
     <message>
         <source>Define Scanner</source>
-        <translation type="unfinished">Definisci uno Scanner</translation>
+        <translation>Definir escaner</translation>
     </message>
     <message>
         <source>Scanner Driver:</source>
-        <translation type="unfinished">Driver dello Scanner:</translation>
+        <translation>Controlador del escaner:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
 </context>
 <context>
     <name>DeleteInkDialog</name>
     <message>
         <source>Delete Lines</source>
-        <translation type="unfinished">Elimina le Linee</translation>
+        <translation>Borrar líneas</translation>
     </message>
     <message>
         <source>Style Index: </source>
-        <translation type="unfinished">Indice dello Stile:</translation>
+        <translation>Estilo de índice: </translation>
     </message>
     <message>
         <source>Apply to Frames: </source>
-        <translation type="unfinished">Applica ai Fotogrammi:</translation>
+        <translation>Aplicar a fotogramas: </translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Style Index:</source>
-        <translation type="unfinished"></translation>
+        <translation>Estilo de índice:</translation>
     </message>
     <message>
         <source>Apply to Frames:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar a fotogramas:</translation>
     </message>
 </context>
 <context>
     <name>DuplicatePopup</name>
     <message>
         <source>Repeat</source>
-        <translation type="unfinished">Ripeti</translation>
+        <translation>Repetir</translation>
     </message>
     <message>
         <source>Times:</source>
-        <translation type="unfinished">Per:</translation>
+        <translation>Veces:</translation>
     </message>
     <message>
         <source>Up to Frame:</source>
-        <translation type="unfinished">Fino al Fotogramma:</translation>
+        <translation>Hasta fotograma:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar:</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>DvDirTreeView</name>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Get</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Obtener</translation>
     </message>
     <message>
         <source>Put...</source>
-        <translation type="unfinished">Scarica...</translation>
+        <translation>Colocar...</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished">Aggiorna</translation>
+        <translation>Actualizar</translation>
     </message>
     <message>
         <source>Cleanup</source>
-        <translation type="unfinished">Pulisci</translation>
+        <translation>Limpiar</translation>
     </message>
     <message>
         <source>Delete folder </source>
-        <translation type="unfinished">Elimina la cartella</translation>
+        <translation>Borrar carpeta </translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sì</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Refresh operation failed:
 </source>
-        <translation type="unfinished">L&apos; operazione di aggiornamento è fallita:
+        <translation>Falló la actualización:
 </translation>
     </message>
     <message>
         <source>Purge</source>
-        <translation type="unfinished">Purifica</translation>
+        <translation>Purgar</translation>
     </message>
     <message>
         <source>It is not possible to delete the folder.</source>
-        <translation type="unfinished">Non è possibile eliminare la cartella.</translation>
+        <translation>No es posible borrar la carpeta.</translation>
     </message>
     <message>
         <source>Refreshing...</source>
-        <translation type="unfinished">Aggiornamento in corso</translation>
+        <translation>Actualizando...</translation>
     </message>
     <message>
         <source>There was an error copying %1 to %2</source>
-        <translation type="unfinished">Errore nella copia di %1 a %2</translation>
+        <translation>Se produjo un error al copiar %1 a %2</translation>
     </message>
     <message>
         <source>The local path does not exist:</source>
-        <translation type="unfinished">Il percorso locale non esiste:</translation>
+        <translation>La ruta local no existe:</translation>
     </message>
 </context>
 <context>
     <name>DvItemViewerButtonBar</name>
     <message>
         <source>Up One Level</source>
-        <translation type="unfinished">Sali di Un Livello</translation>
+        <translation>Al nivel superior</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="unfinished">Nuova Cartella</translation>
+        <translation>Nueva carpeta</translation>
     </message>
     <message>
         <source>Thumbnails View</source>
-        <translation type="unfinished">Visualizzazione per Miniature</translation>
+        <translation>Vista de miniaturas</translation>
     </message>
     <message>
         <source>List View</source>
-        <translation type="unfinished">Visualizzazione in Elenco</translation>
+        <translation>Vista de lista</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Atrás</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Adelante</translation>
     </message>
     <message>
         <source>Icons View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista de íconos</translation>
     </message>
     <message>
         <source>Export File List</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar lista de archivos</translation>
     </message>
 </context>
 <context>
     <name>DvItemViewerPanel</name>
     <message>
         <source>Save File List</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar lista de archivos</translation>
     </message>
     <message>
         <source>File List (*.csv)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lista de archivos (*.csv)</translation>
     </message>
 </context>
 <context>
     <name>DvTopBar</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">File</translation>
+        <translation>Archivo</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Scan &amp;&amp; Cleanup</source>
-        <translation type="unfinished">Scan &amp;&amp; Cleanup</translation>
+        <translation>Escanear y limpiar</translation>
     </message>
     <message>
         <source>Level</source>
-        <translation type="unfinished">Livello</translation>
+        <translation>Nivel</translation>
     </message>
     <message>
         <source>Xsheet</source>
-        <translation type="unfinished">Xsheet</translation>
+        <translation>Planilla</translation>
     </message>
     <message>
         <source>Cells</source>
-        <translation type="unfinished">Celle</translation>
+        <translation>Acetatos</translation>
     </message>
     <message>
         <source>View</source>
-        <translation type="unfinished">Visualizza</translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <source>Windows</source>
-        <translation type="unfinished">Finestre</translation>
+        <translation>Ventana</translation>
     </message>
     <message>
         <source>Scan</source>
-        <translation type="unfinished">Scannerizza</translation>
+        <translation>Escanear</translation>
     </message>
 </context>
 <context>
     <name>ExportCurvePopup</name>
     <message>
         <source>Export Curve</source>
-        <translation type="unfinished">Esporta la Curva</translation>
+        <translation>Exportar curva</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Exportar</translation>
     </message>
 </context>
 <context>
     <name>ExportLevelPopup</name>
     <message>
         <source>Export Level</source>
-        <translation type="unfinished">Esporta il Livello</translation>
+        <translation>Exportar nivel</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <source>Format:</source>
-        <translation type="unfinished">Formato:</translation>
+        <translation>Formato:</translation>
     </message>
     <message>
         <source>Retas Compliant</source>
-        <translation type="unfinished">Compatibile con Retas</translation>
+        <translation>Compatible con Retas</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Opzioni</translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <source>Export Options</source>
-        <translation type="unfinished">Esporta Opzioni</translation>
+        <translation>Opciones de exportación</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
-        <translation type="unfinished">Il nome del file non può essere vuoto o contenere i seguenti caratteri:
-\ / : * ? &quot;  |</translation>
+        <translation>El nombre de archivo no puede estar vacío o contener cualquiera de los siguientes caracteres:(nueva línea)  \ / : * ? &quot;  |</translation>
     </message>
     <message>
         <source>File Browser</source>
-        <translation type="unfinished">Browser dei Files</translation>
+        <translation>Explorador de archivos</translation>
     </message>
 </context>
 <context>
     <name>ExportLevelPopup::ExportOptions</name>
     <message>
         <source>Background Color:</source>
-        <translation type="unfinished">Colore Sfondo:</translation>
+        <translation>Color de fondo:</translation>
     </message>
     <message>
         <source>No Antialias</source>
-        <translation type="unfinished">Nessun Antialias</translation>
+        <translation>Sin suavizado de bordes</translation>
     </message>
     <message>
         <source>Vectors Export Box</source>
-        <translation type="unfinished">Info Esportazione Vettori</translation>
+        <translation>Diálogo de exportación vectorial</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>H Resolution:</source>
-        <translation type="unfinished">Risoluzione O:</translation>
+        <translation>Resolución H:</translation>
     </message>
     <message>
         <source>V Resolution:</source>
-        <translation type="unfinished">Risoluzione V:</translation>
+        <translation>Resolución V:</translation>
     </message>
     <message>
         <source>DPI: </source>
-        <translation type="unfinished">DPI:</translation>
+        <translation>PPP:</translation>
     </message>
     <message>
         <source>Scale:</source>
-        <translation type="unfinished">Scala:</translation>
+        <translation>Escala:</translation>
     </message>
     <message>
         <source>Vectors Thickness</source>
-        <translation type="unfinished">Spessore Vettori</translation>
+        <translation>Grosor de vectores</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Scale Thickness</source>
-        <translation type="unfinished">Scala Spessore</translation>
+        <translation>Escalar grosor</translation>
     </message>
     <message>
         <source>Add Thickness</source>
-        <translation type="unfinished">Aggiungi Spessore</translation>
+        <translation>Agregar grosor</translation>
     </message>
     <message>
         <source>Constant Thickness</source>
-        <translation type="unfinished">Spessore Costante</translation>
+        <translation>Grosor constante</translation>
     </message>
     <message>
         <source>Start:</source>
-        <translation type="unfinished">Inizio:</translation>
+        <translation>Inicio:</translation>
     </message>
     <message>
         <source>End:</source>
-        <translation type="unfinished">Fine:</translation>
+        <translation>Fin:</translation>
     </message>
 </context>
 <context>
     <name>ExportPanel</name>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva in:</translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Nome del File:</translation>
+        <translation>Nombre de archivo:</translation>
     </message>
     <message>
         <source>File Format:</source>
-        <translation type="unfinished">Formato:</translation>
+        <translation>Formato de archivo:</translation>
     </message>
     <message>
         <source>Use Markers</source>
-        <translation type="unfinished">Usa Marcatori</translation>
+        <translation>Usar marcadores</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Opzioni</translation>
+        <translation>Opciones</translation>
     </message>
 </context>
 <context>
     <name>ExportScenePopup</name>
     <message>
         <source>Export Scene</source>
-        <translation type="unfinished">Esporta la Scena</translation>
+        <translation>Exportar escena</translation>
     </message>
     <message>
         <source>Choose Existing Project</source>
-        <translation type="unfinished">Scegli un Progetto Esistente</translation>
+        <translation>Escoger proyecto existente</translation>
     </message>
     <message>
         <source>Create New Project</source>
-        <translation type="unfinished">Crea un Nuovo Progetto</translation>
+        <translation>Crear nuevo proyecto</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>The folder you selected is not a project.</source>
-        <translation type="unfinished">La cartella selezionata non è un progetto.</translation>
+        <translation>La carpeta seleccionada no contiene un proyecto.</translation>
     </message>
     <message>
         <source>There was an error exporting the scene.</source>
-        <translation type="unfinished">Errore durante l&apos;esportazione della scena.</translation>
+        <translation>Se produjo un erro al exportar la escena.</translation>
     </message>
     <message>
         <source>The project name cannot be empty or contain any of the following characters:(new line)   \ / : * ? &quot;  |</source>
-        <translation type="unfinished">Il nome del progetto non può essere vuoto o contenere i seguenti caratteri:
-\ / : * ? &quot;  |</translation>
+        <translation>El nombre de proyecto no puede estar vacío o contener cualquiera de los siguientes caracteres:(nueva línea)  \ / : * ? &quot;  |</translation>
     </message>
     <message>
         <source>The project name you specified is already used.</source>
-        <translation type="unfinished">Il nome del progetto specificato è già in uso.</translation>
+        <translation>El nombre de proyecto especificado ya está en uso.</translation>
     </message>
 </context>
 <context>
     <name>FarmServerListView</name>
     <message>
         <source>Activate</source>
-        <translation type="unfinished">Attiva</translation>
+        <translation>Activar</translation>
     </message>
     <message>
         <source>Deactivate</source>
-        <translation type="unfinished">Disattiva</translation>
+        <translation>Desactivar</translation>
     </message>
 </context>
 <context>
     <name>FileBrowser</name>
     <message>
         <source>Can&apos;t change file extension</source>
-        <translation type="unfinished">Non è possibile cambiare l&apos;estensione del file.</translation>
+        <translation>No es posible cambiar la extensión del archivo</translation>
     </message>
     <message>
         <source>Can&apos;t set a drawing number</source>
-        <translation type="unfinished">Non è possibile stabilire un numero per il disegno.</translation>
+        <translation>No es posible definir un número para el dibujo</translation>
     </message>
     <message>
         <source>Can&apos;t rename. File already exists: </source>
-        <translation type="unfinished">Non è possibile rinominare. Il file già esiste.</translation>
+        <translation>No es posible renombrar. El archivo ya existe: </translation>
     </message>
     <message>
         <source>Couldn&apos;t rename </source>
-        <translation type="unfinished">Non è possibile rinominare.</translation>
+        <translation>No fue posible renombrar </translation>
     </message>
     <message>
         <source>Preview Screensaver</source>
-        <translation type="unfinished">Anteprima del Salvaschermo</translation>
+        <translation>Previsualizar protector de pantalla</translation>
     </message>
     <message>
         <source>Install Screensaver</source>
-        <translation type="unfinished">Installa il Salvaschermo</translation>
+        <translation>Instalar protector de pantalla</translation>
     </message>
     <message>
         <source>Load As Sub-xsheet</source>
-        <translation type="unfinished">Carica come Sub-Xsheet</translation>
+        <translation>Cargar como sub-planilla</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished">Rinomina</translation>
+        <translation>Renombrar</translation>
     </message>
     <message>
         <source>Convert to Painted TLV</source>
-        <translation type="unfinished">Canverti in TLV Colorate</translation>
+        <translation>Convertir a TLV pintado</translation>
     </message>
     <message>
         <source>Convert to Unpainted TLV</source>
-        <translation type="unfinished">Converti in TLV non Colorate</translation>
+        <translation>Convertir a TLV no pintado</translation>
     </message>
     <message>
         <source>Version Control</source>
-        <translation type="unfinished">Controllo di Versione</translation>
+        <translation>Control de versiones</translation>
     </message>
     <message>
         <source>Save Scene</source>
-        <translation type="unfinished">Salva la Scena</translation>
+        <translation>Guardar escena</translation>
     </message>
     <message>
         <source>Scene name:</source>
-        <translation type="unfinished">Nome della Scena:</translation>
+        <translation>Nombre de la escena:</translation>
     </message>
     <message>
         <source>Warning: level %1 already exists; overwrite?</source>
-        <translation type="unfinished">Attenzione: il livello %1 esiste già; lo vuoi sovrascrivere?</translation>
+        <translation>Advertencia: el nivel %1 ya existe; ¿sobrescribirlo?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sì</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Done: All Levels  converted to TLV Format</source>
-        <translation type="unfinished">Fatto: Tutti i Livelli sono stati convertiti in Formato TLV</translation>
+        <translation>Hecho: Todos los niveles convertidos a formato TLV</translation>
     </message>
     <message>
         <source>Done: 2 Levels  converted to TLV Format</source>
-        <translation type="unfinished">Fatto: 2 Livelli convertiti in Formato TLV</translation>
+        <translation>Hecho: 2 niveles convertidos a formato TLV</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Edit Frame Range...</source>
-        <translation type="unfinished">Modifica l&apos;Intervallo di Fotogrammi...</translation>
+        <translation>Editar rango de fotogramas...</translation>
     </message>
     <message>
         <source>Put...</source>
-        <translation type="unfinished">Sottometti...</translation>
+        <translation>Colocar...</translation>
     </message>
     <message>
         <source>Revert</source>
-        <translation type="unfinished">Ripristina</translation>
+        <translation>Revertir</translation>
     </message>
     <message>
         <source>Get</source>
-        <translation type="unfinished">Ottieni</translation>
+        <translation>Obtener</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <source>Get Revision...</source>
-        <translation type="unfinished">Ottieni Revisione...</translation>
+        <translation>Obtener revisión...</translation>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished">Sblocca</translation>
+        <translation>Desbloquear</translation>
     </message>
     <message>
         <source>Edit Info</source>
-        <translation type="unfinished">Informazioni sulla Modificabilità del File</translation>
+        <translation>Editar información</translation>
     </message>
     <message>
         <source>Revision History...</source>
-        <translation type="unfinished">Cronologia delle Revisioni</translation>
+        <translation>Historia de revisiones...</translation>
     </message>
     <message>
         <source>Unlock Frame Range</source>
-        <translation type="unfinished">Sblocca un Intervallo di Fotogrammi</translation>
+        <translation>Desbloquear rango de fotogramas</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="unfinished">Nuova Cartella</translation>
+        <translation>Nueva carpeta</translation>
     </message>
     <message>
         <source>There was an error copying %1 to %2</source>
-        <translation type="unfinished">Errore dirante la copia di %1 a %2</translation>
+        <translation>Se produjo un error al copiar %1 a %2</translation>
     </message>
     <message>
         <source>Convert To Unpainted Tlv</source>
-        <translation type="unfinished">Converti in Unpainted Tlv</translation>
+        <translation>Convertir a TLV no pintado</translation>
     </message>
     <message>
         <source>Convert To Painted Tlv</source>
-        <translation type="unfinished">Converti in Painted Tlv</translation>
+        <translation>Convertir a TLV pintado</translation>
     </message>
     <message>
         <source>It is not possible to create the %1 folder.</source>
-        <translation type="unfinished">Impossibile creare la cartella %1.</translation>
+        <translation>No es posible crear la carpeta %1.</translation>
     </message>
     <message>
         <source>Some files that you want to edit are currently opened. Close them first.</source>
-        <translation type="unfinished">Alcuni file che si vuole modificare sono aperti. Chiuderli prima di procedere.</translation>
+        <translation>Algunos archivos que se desea editar se encuentran abiertos actualmente. Cerrarlos primero.</translation>
     </message>
     <message>
         <source>Some files that you want to unlock are currently opened. Close them first.</source>
-        <translation type="unfinished">Alcuni file che si vuole sbloccare sono aperti. Chiuderli prima di procedere.</translation>
+        <translation>Algunos archivos que se desea desbloquear se encuentran abiertos actualmente. Cerrarlos primero.</translation>
     </message>
     <message>
         <source>Open folder failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Fallo al abrir la carpeta</translation>
     </message>
     <message>
         <source>The input folder path was invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>La ruta a la carpeta de origen es inválida.</translation>
     </message>
 </context>
 <context>
     <name>FileBrowserPopup</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>File name:</source>
-        <translation type="unfinished">Nome del File:</translation>
+        <translation>Nombre de archivo:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Da:</translation>
+        <translation>Desde:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">A:</translation>
+        <translation>Hasta:</translation>
     </message>
     <message>
         <source>Invalid file</source>
-        <translation type="unfinished">File non Valido</translation>
+        <translation>Archivo inválido</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>FileData</name>
     <message>
         <source>It is not possible to find the %1 level.</source>
-        <translation type="unfinished">Impossibile trovare il livello %1.</translation>
+        <translation>No es posible encontrar el nivel %1.</translation>
     </message>
     <message>
         <source>There was an error copying %1</source>
-        <translation type="unfinished">Errore durante la copia di %1</translation>
+        <translation>Se produjo un error al copiar %1</translation>
     </message>
 </context>
 <context>
     <name>FileSelection</name>
     <message>
         <source>Abort</source>
-        <translation type="unfinished">Interrompi</translation>
+        <translation>Abortar</translation>
     </message>
     <message>
         <source>Collecting assets...</source>
-        <translation type="unfinished">Recupero componenti in corso</translation>
+        <translation>Recuperando elementos...</translation>
     </message>
     <message>
         <source>Importing scenes...</source>
-        <translation type="unfinished">Importazione delle scene in corso</translation>
+        <translation>Importando escenas...</translation>
     </message>
 </context>
 <context>
     <name>FileSettingsPopup</name>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>File Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de archivo:</translation>
     </message>
 </context>
 <context>
     <name>Filmstrip</name>
     <message>
         <source>Level Strip</source>
-        <translation type="unfinished">Level Strip</translation>
+        <translation>Cinta de nivel</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished">Livello:</translation>
+        <translation>Nivel: </translation>
     </message>
     <message>
         <source>- No Current Level -</source>
-        <translation type="unfinished"></translation>
+        <translation>- Sin nivel actual -</translation>
     </message>
 </context>
 <context>
     <name>FilmstripFrameHeadGadget</name>
     <message>
         <source>Click to Toggle Fixed Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic para alternar piel de cebolla fija</translation>
     </message>
     <message>
         <source>Click / Drag to Toggle Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic y arrastrar para alternar piel de cebolla</translation>
     </message>
     <message>
         <source>Drag to Extend Onion Skin, Double Click to Toggle All</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastrar para extender la piel de cebolla, doble clic para alternar todos</translation>
     </message>
 </context>
 <context>
     <name>FilmstripFrames</name>
     <message>
         <source>Linear</source>
-        <translation type="unfinished">Lineare</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <source>no icon</source>
-        <translation type="unfinished"></translation>
+        <translation>sin ícono</translation>
     </message>
 </context>
 <context>
     <name>FlipBook</name>
     <message>
         <source>Flipbook</source>
-        <translation type="unfinished">Flipbook</translation>
+        <translation>Folioscopio</translation>
     </message>
     <message>
         <source>It is not possible to save Flipbook content.</source>
-        <translation type="unfinished">Non è possibile salvare il contenuto del Flipbook.</translation>
+        <translation>No es posible guardar el contenido del folioscopio.</translation>
     </message>
     <message>
         <source>Saved %1 frames out of %2 in %3</source>
-        <translation type="unfinished">Sono stati salvati %1 fotogrammi su %2 in %3</translation>
+        <translation>Se guardaron %1 fotogramas de %2 en %3</translation>
     </message>
     <message>
         <source>Rendered Frames  ::  From %1 To %2  ::  Step %3</source>
-        <translation type="unfinished">Fotogrammi Renderizzati :: Da %1 A %2 :: Passo %3</translation>
+        <translation>Fotogramas procesados  ::  desde %1 hasta %2  ::  intervalo %3</translation>
     </message>
     <message>
         <source>  ::  Shrink </source>
-        <translation type="unfinished">:: Riduzione</translation>
+        <translation>  ::  Contraer </translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
-        <translation type="unfinished">Il nome del file non può essere vuoto o contenere i seguenti caratteri:
-\ / : * ? &quot;  |</translation>
+        <translation>El nombre de archivo no puede estar vacío o contener cualquiera de los siguientes caracteres:(nueva línea)  \ / : * ? &quot;  |</translation>
     </message>
     <message>
         <source>It is not possible to save because the selected file format is not supported.</source>
-        <translation type="unfinished">Impossibile salvare poichè il formato scelto non è supportato.</translation>
+        <translation>No es posible guardar porque el formato de archivo seleccionado no es soportado.</translation>
     </message>
     <message>
         <source>File %1 already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished">Il file %1 esiste già.
-Vuoi sovrascriverlo?</translation>
+        <translation>El archivo %1 ya existe.
+¿Se desea sobrescribirlo?</translation>
     </message>
     <message>
         <source>There are no rendered images to save.</source>
-        <translation type="unfinished">Nessuna immagine renderizzata da salvare.</translation>
+        <translation>No existen imágenes procesadas que guardar.</translation>
     </message>
     <message>
         <source>It is not possible to take or compare snapshots for Toonz vector levels.</source>
-        <translation type="unfinished">Impossibile prendere o confrontare gli snapshot per i Toonz vector levels.</translation>
+        <translation>No es posible tomar o comparar capturas de los niveles vectoriales de Toonz.</translation>
     </message>
 </context>
 <context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
-        <translation type="unfinished">Impostazioni del File</translation>
+        <translation>Opciones de archivo</translation>
     </message>
 </context>
 <context>
     <name>FrameHeadGadget</name>
     <message>
         <source>Current Frame</source>
-        <translation type="unfinished">Fotogramma Corrente</translation>
+        <translation>Fotograma actual</translation>
     </message>
     <message>
         <source>Relative Onion Skin Toggle</source>
-        <translation type="unfinished">Onion Skin Relativo</translation>
+        <translation>Alternar piel de cebolla relativa</translation>
     </message>
     <message>
         <source>Fixed Onion Skin Toggle</source>
-        <translation type="unfinished">Onion Skin Fisso</translation>
+        <translation>Alternar piel de cebolla fija</translation>
     </message>
 </context>
 <context>
     <name>FxParamEditorPopup</name>
     <message>
         <source>Fx Settings</source>
-        <translation type="unfinished">Impostazioni dell&apos;Effetto</translation>
+        <translation>Opciones de efectos</translation>
     </message>
 </context>
 <context>
     <name>ImageViewer</name>
     <message>
         <source>Flipbook Histogram</source>
-        <translation type="unfinished">Istogramma del Flipbook</translation>
+        <translation>Histograma del folioscopio</translation>
     </message>
     <message>
         <source>Clone Preview</source>
-        <translation type="unfinished">Clona l&apos; Anteprima</translation>
+        <translation>Clonar previsualización</translation>
     </message>
     <message>
         <source>Unfreeze Preview</source>
-        <translation type="unfinished">Attiva l&apos; aggiornamento dell&apos; Anteprima</translation>
+        <translation>Descongelar previsualización</translation>
     </message>
     <message>
         <source>Freeze Preview</source>
-        <translation type="unfinished">Disattiva l&apos; aggiornamento dell&apos; Anteprima</translation>
+        <translation>Congelar previsualización</translation>
     </message>
     <message>
         <source>Regenerate Preview</source>
-        <translation type="unfinished">Rigenera l&apos; Anteprima</translation>
+        <translation>Regenerar previsualización</translation>
     </message>
     <message>
         <source>Regenerate Frame Preview</source>
-        <translation type="unfinished">Rigenera l&apos; Anteprima del Fotogramma</translation>
+        <translation>Regenerar previsualización del fotograma</translation>
     </message>
     <message>
         <source>Reset View</source>
-        <translation type="unfinished">Ripristina la Visualizzazione </translation>
+        <translation>Restablecer vista</translation>
     </message>
     <message>
         <source>Fit To Window</source>
-        <translation type="unfinished">Adatta alla Finestra</translation>
+        <translation>Ajustar a la ventana</translation>
     </message>
     <message>
         <source>Exit Full Screen Mode</source>
-        <translation type="unfinished">Esci dalla Modalità a Schermo Intero</translation>
+        <translation>Salir del modo a pantalla completa</translation>
     </message>
     <message>
         <source>Full Screen Mode</source>
-        <translation type="unfinished">Modalità a Schermo Intero</translation>
+        <translation>Modo a pantalla completa</translation>
     </message>
     <message>
         <source>Load Images</source>
-        <translation type="unfinished">Carica delle Immagini</translation>
+        <translation>Cargar imágenes</translation>
     </message>
     <message>
         <source>Append Images</source>
-        <translation type="unfinished">Appendi delle Immagini</translation>
+        <translation>Anexar imágenes</translation>
     </message>
     <message>
         <source>Save Images</source>
-        <translation type="unfinished">Salva le Immagini</translation>
+        <translation>Guardar imágenes</translation>
     </message>
     <message>
         <source>Show Histogram</source>
-        <translation type="unfinished">Mostra l&apos; Istogramma</translation>
+        <translation>Mostrar histograma</translation>
     </message>
     <message>
         <source>Swap Compared Images</source>
-        <translation type="unfinished">Scambia le Immagini Confrontate</translation>
+        <translation>Intercambiar imágenes comparadas</translation>
     </message>
     <message>
         <source>  ::  Zoom : </source>
-        <translation type="unfinished">:: Zoom ::</translation>
+        <translation>  ::  Zoom : </translation>
     </message>
     <message>
         <source>Load / Append Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar / Anexar imágenes</translation>
     </message>
 </context>
 <context>
     <name>ImportMagpieFilePopup</name>
     <message>
         <source>Import Magpie File</source>
-        <translation type="unfinished">Importa un File da MagPie</translation>
+        <translation>Importar archivo de Magpie</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
-        <translation type="unfinished">%1 non esiste.</translation>
+        <translation>%1 no existe.</translation>
     </message>
 </context>
 <context>
     <name>InbetweenDialog</name>
     <message>
         <source>Inbetween</source>
-        <translation type="unfinished">Interpola</translation>
+        <translation>Intermedio</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation type="unfinished">Linear</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <source>Ease In</source>
-        <translation type="unfinished">Ease In</translation>
+        <translation>Desaceleración suave</translation>
     </message>
     <message>
         <source>Ease Out</source>
-        <translation type="unfinished">Ease Out</translation>
+        <translation>Aceleración suave</translation>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation type="unfinished">Ease In / Ease Out</translation>
+        <translation>Desaceleración / Aceleración suaves</translation>
     </message>
     <message>
         <source>Interpolation:</source>
-        <translation type="unfinished">Interpolazione:</translation>
+        <translation>interpolación:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>InsertFxPopup</name>
     <message>
         <source>FX Browser</source>
-        <translation type="unfinished">Browser degli Effetti</translation>
+        <translation>Explorador de efectos</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation type="unfinished">Inserisci</translation>
+        <translation>Insertar</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Agregar</translation>
     </message>
     <message>
         <source>Replace</source>
-        <translation type="unfinished">Rimpiazza</translation>
+        <translation>Reemplazar</translation>
     </message>
     <message>
         <source>Macro</source>
-        <translation type="unfinished">Macro</translation>
+        <translation>Macro</translation>
     </message>
     <message>
         <source>Remove Macro FX</source>
-        <translation type="unfinished">Elimina l&apos;Effetto Macro</translation>
+        <translation>Remover macro efecto</translation>
     </message>
     <message>
         <source>Remove Preset</source>
-        <translation type="unfinished">Elimina il l&apos;Effetto Predefinito</translation>
+        <translation>Remover ajuste</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sì</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Are you sure you want to delete %1?</source>
-        <translation type="unfinished">Se sicuro di volere eliminare %1?</translation>
+        <translation>¿Seguro se desea borrar %1?</translation>
     </message>
     <message>
         <source>It is not possible to delete %1.</source>
-        <translation type="unfinished">Non è possibile eliminare %1.</translation>
+        <translation>No es posible borrar %1.</translation>
     </message>
 </context>
 <context>
     <name>LevelCreatePopup</name>
     <message>
         <source>New Level</source>
-        <translation type="unfinished">Nuovo Livello</translation>
+        <translation>Nuevo nivel</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">A:</translation>
+        <translation>Hasta:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Da:</translation>
+        <translation>Desde:</translation>
     </message>
     <message>
         <source>Increment:</source>
-        <translation type="unfinished">Incremento:</translation>
+        <translation>Incremento:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva In:</translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>DPI:</source>
-        <translation type="unfinished">DPI:</translation>
+        <translation>PPP:</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished">Crea</translation>
+        <translation>Crear</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>No level name specified: please choose a valid level name</source>
-        <translation type="unfinished">Il nome del livello non è stato specificato: scegliere un nome di livello valido.</translation>
+        <translation>No se ha especificado un nombre de nivel: por favor escoger un nombre válido</translation>
     </message>
     <message>
         <source>Invalid frame range</source>
-        <translation type="unfinished">Intervallo di fotogrammi non valido</translation>
+        <translation>Rango de fotogramas inválido</translation>
     </message>
     <message>
         <source>Invalid increment value</source>
-        <translation type="unfinished">Valore di incremento non valido</translation>
+        <translation>Valor de incremento inválido</translation>
     </message>
     <message>
         <source>Invalid step value</source>
-        <translation type="unfinished">Valore di passo non vallido</translation>
+        <translation>Valor de intervalo inválido</translation>
     </message>
     <message>
         <source>The level name specified is already used: please choose a different level name</source>
-        <translation type="unfinished">Il nome del livello specificato è gia in uso: scegliere un nuovo nome di livello.</translation>
+        <translation>El nombre de nivel especificado ya está en uso: por favor escoger un nombre de nivel diferente</translation>
     </message>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation type="unfinished">La cartella %1 non esiste.
-Vuoi crearla?</translation>
+        <translation>La carpeta %1 no existe.
+¿Se desea crearla?</translation>
     </message>
     <message>
         <source>Unable to create</source>
-        <translation type="unfinished">Impossibile creare</translation>
+        <translation>No es posible crear</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <source>Save In:</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar en:</translation>
     </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
     <message>
         <source>Level Settings</source>
-        <translation type="unfinished">Impostazioni del Livello</translation>
+        <translation>Opciones de nivel</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Path:</source>
-        <translation type="unfinished">Percorso:</translation>
+        <translation>Ruta:</translation>
     </message>
     <message>
         <source>Scan Path:</source>
-        <translation type="unfinished">Percorso delle Immagini Scansionate:</translation>
+        <translation>Ruta de escaneo:</translation>
     </message>
     <message>
         <source>DPI:</source>
-        <translation type="unfinished">DPI:</translation>
+        <translation>PPP:</translation>
     </message>
     <message>
         <source>Forced Squared Pixel</source>
-        <translation type="unfinished">Forza il Pixel Quadrato</translation>
+        <translation>Forzar píxel cuadrado</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>Use Camera DPI</source>
-        <translation type="unfinished">Utilizzare il DPI di Camera</translation>
+        <translation>Usar PPP de cámara</translation>
     </message>
     <message>
         <source>Camera DPI:</source>
-        <translation type="unfinished">DPI della Camera:</translation>
+        <translation>PPP de la cámara:</translation>
     </message>
     <message>
         <source>Image DPI:</source>
-        <translation type="unfinished">DPI dell&apos; Immagine:</translation>
+        <translation>PPP de la imagen:</translation>
     </message>
     <message>
         <source>Image Resolution:</source>
-        <translation type="unfinished">Risoluzione dell&apos; Immagine:</translation>
+        <translation>Resolución de la imagen:</translation>
     </message>
     <message>
         <source>Premultiply</source>
-        <translation type="unfinished">Premoltiplica</translation>
+        <translation>Premultiplicar</translation>
     </message>
     <message>
         <source>White As Transparent</source>
-        <translation type="unfinished">Imposta il Bianco come Trasparente</translation>
+        <translation>Blanco como transparente</translation>
     </message>
     <message>
         <source>      Subsampling:</source>
-        <translation type="unfinished">     Sottocampionamento:</translation>
+        <translation>      Sub-muestreo:</translation>
     </message>
     <message>
         <source>The file %1 is not a sound level.</source>
-        <translation type="unfinished">Il file %1 non è un livello audio</translation>
+        <translation>El archivo %1 no es un nivel de sonido.</translation>
     </message>
     <message>
         <source>Add Antialiasing</source>
-        <translation type="unfinished">Aggiungere Antialiasing</translation>
+        <translation>Agregar suavizado de bordes</translation>
     </message>
     <message>
         <source>Antialias Softness:</source>
-        <translation type="unfinished">Morbidezza dell&apos; Antialias:</translation>
+        <translation>Suavizado de los bordes:</translation>
     </message>
     <message>
         <source>Subsampling:</source>
-        <translation type="unfinished">Sottocampionamento</translation>
+        <translation>Sub-muestreo:</translation>
     </message>
     <message>
         <source>Name &amp;&amp; Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre y ruta</translation>
     </message>
     <message>
         <source>DPI &amp;&amp; Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>PPP y resolución</translation>
     </message>
     <message>
         <source>Resolution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolución:</translation>
     </message>
 </context>
 <context>
     <name>LineTestCapturePane</name>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotograma:</translation>
     </message>
     <message>
         <source>Increment:</source>
-        <translation type="unfinished">Incremento:</translation>
+        <translation>Incremento:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>New     </source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo     </translation>
     </message>
     <message>
         <source>Overwite     </source>
-        <translation type="unfinished"></translation>
+        <translation>Sobrescribir </translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation type="unfinished">Inserisci</translation>
+        <translation>Insertar</translation>
     </message>
     <message>
         <source> Onion Skin  </source>
-        <translation type="unfinished"></translation>
+        <translation> Piel de cebolla  </translation>
     </message>
     <message>
         <source> View Frame</source>
-        <translation type="unfinished"></translation>
+        <translation> Ver fotograma</translation>
     </message>
     <message>
         <source>Fade:</source>
-        <translation type="unfinished">Dissolvenza</translation>
+        <translation>Desvanecimiento:</translation>
     </message>
     <message>
         <source> Connection</source>
-        <translation type="unfinished"></translation>
+        <translation> Conexión</translation>
     </message>
     <message>
         <source>       Capture       </source>
-        <translation type="unfinished"></translation>
+        <translation>       Capturar       </translation>
     </message>
     <message>
         <source>Capture Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de captura</translation>
     </message>
     <message>
         <source>   File Settings    </source>
-        <translation type="unfinished"></translation>
+        <translation>   Opciones de archivo    </translation>
     </message>
     <message>
         <source>Bad Selection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección errónea.</translation>
     </message>
     <message>
         <source>No Device Defined.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ningún dispositivo definido.</translation>
     </message>
     <message>
         <source>Cannot connect Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible conectar cámara</translation>
     </message>
     <message>
         <source>Device Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispositivo desconectado.</translation>
     </message>
     <message>
         <source>LineTest Capture</source>
-        <translation type="unfinished">LineTest Acquisizione</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LineTestPane</name>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">Anteprima</translation>
+        <translation>Previsualizar</translation>
     </message>
     <message>
         <source>Untitled</source>
-        <translation type="unfinished">Senzatitolo</translation>
+        <translation>Sin título</translation>
     </message>
     <message>
         <source>Scene: </source>
-        <translation type="unfinished">Scena:</translation>
+        <translation>Escena: </translation>
     </message>
     <message>
         <source>   ::   Frame: </source>
-        <translation type="unfinished">   ::   Fotogramma: </translation>
+        <translation>   ::   Fotograma: </translation>
     </message>
     <message>
         <source>   ::   Level: </source>
-        <translation type="unfinished">   ::   Livello: </translation>
+        <translation>   ::   Nivel: </translation>
     </message>
     <message>
         <source>Level: </source>
-        <translation type="unfinished">Livello:</translation>
+        <translation>Nivel: </translation>
     </message>
 </context>
 <context>
     <name>LinesFadePopup</name>
     <message>
         <source>Color Fade</source>
-        <translation type="unfinished">Colore Dissolvenza</translation>
+        <translation>Color de desvanecimiento</translation>
     </message>
     <message>
         <source>Fade:</source>
-        <translation type="unfinished">Dissolvenza</translation>
+        <translation>Desvanecimiento:</translation>
     </message>
     <message>
         <source>Intensity:</source>
-        <translation type="unfinished">Intensità:</translation>
+        <translation>Intensidad:</translation>
     </message>
 </context>
 <context>
     <name>LoadColorModelPopup</name>
     <message>
         <source>Load Color Model</source>
-        <translation type="unfinished">Carica Modello di Colore</translation>
+        <translation>Cargar modelo de color</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>Palette from Frame:</source>
-        <translation type="unfinished">Palette dal Fotogramma:</translation>
+        <translation>Paleta desde fotograma:</translation>
     </message>
     <message>
         <source>Frames :</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas:</translation>
     </message>
 </context>
 <context>
     <name>LoadCurvePopup</name>
     <message>
         <source>Load Curve</source>
-        <translation type="unfinished">Carica Curva</translation>
+        <translation>Cargar curva</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
 </context>
 <context>
     <name>LoadFolderPopup</name>
     <message>
         <source>Load Folder</source>
-        <translation type="unfinished">Carica Cartella</translation>
+        <translation>Cargar carpeta</translation>
     </message>
 </context>
 <context>
     <name>LoadImagesPopup</name>
     <message>
         <source>Load Images</source>
-        <translation type="unfinished">Carica le Immagini</translation>
+        <translation>Cargar imágenes</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Da:</translation>
+        <translation>Desde:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">A:</translation>
+        <translation>Hasta:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Shrink:</source>
-        <translation type="unfinished">Riduzione:</translation>
+        <translation>Contraer:</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>Append Images</source>
-        <translation type="unfinished">Appendi delle Immagini</translation>
+        <translation>Anexar imágenes</translation>
     </message>
     <message>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Anexar</translation>
     </message>
     <message>
         <source>Load / Append Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar / Anexar imágenes</translation>
     </message>
 </context>
 <context>
     <name>LoadLevelPopup</name>
     <message>
         <source>Load Level</source>
-        <translation type="unfinished">Carica un Livello</translation>
+        <translation>Cargar nivel</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
-        <translation type="unfinished">%1 non esiste.</translation>
+        <translation>%1 no existe.</translation>
     </message>
     <message>
         <source>TLV Caching Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamiento del caché TLV</translation>
     </message>
     <message>
         <source>Load Subsequence Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar nivel de sub-secuencia</translation>
     </message>
     <message>
         <source>Arrangement in Xsheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Orden en la planilla</translation>
     </message>
     <message>
         <source>(FILE DOES NOT EXIST)</source>
-        <translation type="unfinished"></translation>
+        <translation>(ARCHIVO INEXISTENTE)</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Da:</translation>
+        <translation>Desde:</translation>
     </message>
     <message>
         <source> To:</source>
-        <translation type="unfinished"></translation>
+        <translation> Hasta:</translation>
     </message>
     <message>
         <source> Step:</source>
-        <translation type="unfinished"></translation>
+        <translation> Intervalo:</translation>
     </message>
     <message>
         <source> Inc:</source>
@@ -2468,760 +2464,760 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>Level Name:</source>
-        <translation type="unfinished">Nome del Livello:</translation>
+        <translation>Nombre del nivel:</translation>
     </message>
     <message>
         <source> Frames:</source>
-        <translation type="unfinished"></translation>
+        <translation> Fotogramas:</translation>
     </message>
     <message>
         <source>::</source>
-        <translation type="unfinished"></translation>
+        <translation>::</translation>
     </message>
 </context>
 <context>
     <name>LoadScenePopup</name>
     <message>
         <source>Load Scene</source>
-        <translation type="unfinished">Carica Scena</translation>
+        <translation>Cargar escena</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source> is not a scene file.</source>
-        <translation type="unfinished">non è un file di scena.</translation>
+        <translation> no es un archivo de escena.</translation>
     </message>
     <message>
         <source> does not exist.</source>
-        <translation type="unfinished">non esiste.</translation>
+        <translation> no existe.</translation>
     </message>
 </context>
 <context>
     <name>LoadSettingsPopup</name>
     <message>
         <source>Load Cleanup Settings</source>
-        <translation type="unfinished">Carica le Impostazioni per il Cleanup</translation>
+        <translation>Cargar opciones de limpieza</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
-        <translation type="unfinished">%1 non esiste.</translation>
+        <translation>%1 no existe.</translation>
     </message>
 </context>
 <context>
     <name>LoadSubScenePopup</name>
     <message>
         <source>Load Sub-Xsheet</source>
-        <translation type="unfinished">Carica Sub-Xsheet</translation>
+        <translation>Cargar sub-planilla</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source> is not a scene file.</source>
-        <translation type="unfinished">non è un file di scena.</translation>
+        <translation> no es un archivo de escena.</translation>
     </message>
     <message>
         <source> does not exist.</source>
-        <translation type="unfinished">non esiste.</translation>
+        <translation> no existe.</translation>
     </message>
 </context>
 <context>
     <name>LoadTaskListPopup</name>
     <message>
         <source>Load Task List</source>
-        <translation type="unfinished">Carica la Lista dei Task</translation>
+        <translation>Cargar lista de tareas</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source> does not exist.</source>
-        <translation type="unfinished"> non esiste.</translation>
+        <translation> no existe.</translation>
     </message>
     <message>
         <source>It is possible to load only TNZBAT files.</source>
-        <translation type="unfinished">È possibile caricare solo i file TNZBAT.</translation>
+        <translation>Sólo es posible cargar archivos TNZBAT.</translation>
     </message>
 </context>
 <context>
     <name>LoadTaskPopup</name>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Agregar</translation>
     </message>
     <message>
         <source> does not exist.</source>
-        <translation type="unfinished">non esiste.</translation>
+        <translation> no existe.</translation>
     </message>
     <message>
         <source>Add Render Task to Batch List</source>
-        <translation type="unfinished">Aggiungi un Task di Render alla Lista di Batch</translation>
+        <translation>Agregar una tarea de procesamiento a la lista</translation>
     </message>
     <message>
         <source>Add Cleanup Task to Batch List</source>
-        <translation type="unfinished">Aggiungi un Task di Cleanup alla Lista di Batch</translation>
+        <translation>Agregar una tarea de limpieza a la lista</translation>
     </message>
     <message>
         <source>%1 is not a TNZ file.</source>
-        <translation type="unfinished">%1 non è un file TNZ.</translation>
+        <translation>%1 no es un archivo TNZ.</translation>
     </message>
     <message>
         <source> you can load only TNZ files for render task.</source>
-        <translation type="unfinished"></translation>
+        <translation> solo es posible cargar archivos TNZ para una tarea de procesamiento.</translation>
     </message>
     <message>
         <source> you can load only TNZ or CLN files for cleanup task.</source>
-        <translation type="unfinished"></translation>
+        <translation> solo es posible cargar archivos TNZ o CLN para una tarea de limpieza.</translation>
     </message>
 </context>
 <context>
     <name>MagpieFileImportPopup</name>
     <message>
         <source>Import Magpie File</source>
-        <translation type="unfinished">Importa un File da MagPie</translation>
+        <translation>Importar archivo de Magpie</translation>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">A:</translation>
+        <translation>Hasta:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Da:</translation>
+        <translation>Desde:</translation>
     </message>
     <message>
         <source>Animation Level</source>
-        <translation type="unfinished">Livello di Animazione</translation>
+        <translation>Nivel de animación</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished">Livello:</translation>
+        <translation>Nivel:</translation>
     </message>
     <message>
         <source>Phoneme</source>
-        <translation type="unfinished">Fonema</translation>
+        <translation>Fonema</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished">Importa</translation>
+        <translation>Importar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>The file path is missing.</source>
-        <translation type="unfinished">Il percorso non è stato definito.</translation>
+        <translation>Falta la ruta al archivo.</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>Cannot delete</source>
-        <translation type="unfinished">Impossibile da eliminare</translation>
+        <translation>No es posible borrar</translation>
     </message>
     <message>
         <source>Visit Web Site</source>
-        <translation type="unfinished">Visita il Sito Web</translation>
+        <translation>Visitar el sitio web</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>&amp;New Scene</source>
-        <translation type="unfinished">&amp;Nuova Scena</translation>
+        <translation>&amp;Nueva escena</translation>
     </message>
     <message>
         <source>&amp;Load Scene...</source>
-        <translation type="unfinished">&amp;Carica Scena...</translation>
+        <translation>&amp;Cargar escena...</translation>
     </message>
     <message>
         <source>&amp;Save Scene</source>
-        <translation type="unfinished">&amp;Salva la Scena</translation>
+        <translation>&amp;Guardar escena</translation>
     </message>
     <message>
         <source>&amp;Save Scene As...</source>
-        <translation type="unfinished">&amp;Salva la Scena Come...</translation>
+        <translation>&amp;Guardar escena como...</translation>
     </message>
     <message>
         <source>&amp;Revert Scene</source>
-        <translation type="unfinished">&amp;Ripristina la Scena</translation>
+        <translation>&amp;Revertir escena</translation>
     </message>
     <message>
         <source>&amp;Open Recent Scene File</source>
-        <translation type="unfinished">&amp;Apri i File di Scena Recenti</translation>
+        <translation>&amp;Abrir escena reciente</translation>
     </message>
     <message>
         <source>&amp;Open Recent Level File</source>
-        <translation type="unfinished">&amp;Apri i File di Livello Recenti</translation>
+        <translation>&amp;Abrir nivel reciente</translation>
     </message>
     <message>
         <source>&amp;Clear Recent Scene File List</source>
-        <translation type="unfinished">&amp;Svuota la Lista dei File di Scena recenti</translation>
+        <translation>&amp;Limpiar lista de escenas recientes</translation>
     </message>
     <message>
         <source>&amp;Clear Recent level File List</source>
-        <translation type="unfinished">&amp;Svuota la Lista dei File di Livello recenti</translation>
+        <translation>&amp;Limpiar lista de niveles recientes</translation>
     </message>
     <message>
         <source>&amp;New Level...</source>
-        <translation type="unfinished">&amp;Nuovo Livello...</translation>
+        <translation>&amp;Nuevo nivel...</translation>
     </message>
     <message>
         <source>&amp;Load Level...</source>
-        <translation type="unfinished">&amp;Carica il Livello...</translation>
+        <translation>&amp;Cargar nivel...</translation>
     </message>
     <message>
         <source>&amp;Save Level</source>
-        <translation type="unfinished">&amp;Salva il Livello</translation>
+        <translation>&amp;Guardar nivel</translation>
     </message>
     <message>
         <source>&amp;Save Level As...</source>
-        <translation type="unfinished">&amp;Salva il Livello Come...</translation>
+        <translation>&amp;Guardar nivel como...</translation>
     </message>
     <message>
         <source>&amp;Export Level...</source>
-        <translation type="unfinished">&amp;Esporta il Livello...</translation>
+        <translation>&amp;Exportar nivel...</translation>
     </message>
     <message>
         <source>&amp;Save Palette As...</source>
-        <translation type="unfinished">&amp;Salva la Palette Come...</translation>
+        <translation>&amp;Guardar paleta como...</translation>
     </message>
     <message>
         <source>&amp;Load Color Model...</source>
-        <translation type="unfinished">&amp;Carica un Modello di Colore...</translation>
+        <translation>&amp;Cargar modelo de color...</translation>
     </message>
     <message>
         <source>&amp;Import Magpie File...</source>
-        <translation type="unfinished">&amp;Importa un File da MagPie...</translation>
+        <translation>&amp;Importar archivo de Magpie...</translation>
     </message>
     <message>
         <source>&amp;New Project...</source>
-        <translation type="unfinished">&amp;Nuovo Progetto...</translation>
+        <translation>&amp;Nuevo proyecto...</translation>
     </message>
     <message>
         <source>&amp;Project Settings...</source>
-        <translation type="unfinished">&amp;Impostazioni del Progetto...</translation>
+        <translation>&amp;Opciones del proyecto...</translation>
     </message>
     <message>
         <source>&amp;Save Default Settings</source>
-        <translation type="unfinished">&amp;Salva i Parametri Predefiniti</translation>
+        <translation>&amp;Guardar opciones predefinidas</translation>
     </message>
     <message>
         <source>&amp;Output Settings...</source>
-        <translation type="unfinished">&amp;Parametri di Render...</translation>
+        <translation>&amp;Opciones de salida...</translation>
     </message>
     <message>
         <source>&amp;Preview Settings...</source>
-        <translation type="unfinished">&amp;Parametri per l&apos;Anteprima...</translation>
+        <translation>&amp;Opciones de previsualización...</translation>
     </message>
     <message>
         <source>&amp;Render</source>
-        <translation type="unfinished">&amp;Render</translation>
+        <translation>&amp;Procesar</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation type="unfinished">&amp;Anteprima</translation>
+        <translation>&amp;Previsualizar</translation>
     </message>
     <message>
         <source>&amp;Save Previewed Frames</source>
-        <translation type="unfinished">&amp;Salva l&apos;Anteprima</translation>
+        <translation>&amp;Guardar fotogramas previsualizados</translation>
     </message>
     <message>
         <source>&amp;Regenerate Preview</source>
-        <translation type="unfinished">&amp;Rigenera l&apos;Anteprima</translation>
+        <translation>&amp;Regenerar previsualización</translation>
     </message>
     <message>
         <source>&amp;Regenerate Frame Preview</source>
-        <translation type="unfinished">&amp;Rigenera  l&apos;Anteprima del Fotogramma</translation>
+        <translation>&amp;Regenerar previsualización de fotograma</translation>
     </message>
     <message>
         <source>&amp;Clone Preview</source>
-        <translation type="unfinished">&amp;Clona l&apos;Anteprima</translation>
+        <translation>&amp;Clonar previsualización</translation>
     </message>
     <message>
         <source>&amp;Freeze//Unfreeze Preview</source>
-        <translation type="unfinished">&amp;Attiva//Disattiva l&apos; aggiornamento dell&apos; Anteprima</translation>
+        <translation>&amp;Congelar//Descongelar previsualización</translation>
     </message>
     <message>
         <source>Freeze Preview</source>
-        <translation type="unfinished">Attiva l&apos;aggiornamento dell&apos;Anteprima</translation>
+        <translation>Congelar previsualización</translation>
     </message>
     <message>
         <source>Unfreeze Preview</source>
-        <translation type="unfinished">Disattiva l&apos;aggiornamento dell&apos;Anteprima</translation>
+        <translation>Descongelar previsualización</translation>
     </message>
     <message>
         <source>&amp;Save As Preset</source>
-        <translation type="unfinished">&amp;Salva come Effetto Predefinito</translation>
+        <translation>&amp;Guardar como ajuste</translation>
     </message>
     <message>
         <source>&amp;Preferences...</source>
-        <translation type="unfinished">&amp;Preferenze...</translation>
+        <translation>&amp;Preferencias...</translation>
     </message>
     <message>
         <source>&amp;Configure Shortcuts...</source>
-        <translation type="unfinished">&amp;Configura i Tasti di Scelta Rapida...</translation>
+        <translation>&amp;Configurar atajos de teclado...</translation>
     </message>
     <message>
         <source>&amp;Print Xsheet</source>
-        <translation type="unfinished">&amp;Stampa l&apos;Xsheet</translation>
+        <translation>&amp;Imprimir planilla</translation>
     </message>
     <message>
         <source>&amp;Print Current Frame...</source>
-        <translation type="unfinished">&amp;Stampa il Fotogramma Corrente...</translation>
+        <translation>&amp;Imprimir fotograma actual...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Esci</translation>
+        <translation>&amp;Salir</translation>
     </message>
     <message>
         <source>&amp;Select All</source>
-        <translation type="unfinished">&amp;Seleziona Tutto</translation>
+        <translation>&amp;Seleccionar todo</translation>
     </message>
     <message>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished">&amp;Inverti la Selezione</translation>
+        <translation>&amp;Invertir la selección</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Annulla</translation>
+        <translation>&amp;Deshacer</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Ripristina</translation>
+        <translation>&amp;Rehacer</translation>
     </message>
     <message>
         <source>&amp;Cut</source>
-        <translation type="unfinished">&amp;Taglia</translation>
+        <translation>&amp;Cortar</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Copia</translation>
+        <translation>&amp;Copiar</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Incolla</translation>
+        <translation>&amp;Pegar</translation>
     </message>
     <message>
         <source>&amp;Merge</source>
-        <translation type="unfinished">&amp;Unisci</translation>
+        <translation>&amp;Fusionar</translation>
     </message>
     <message>
         <source>&amp;Paste Into</source>
-        <translation type="unfinished">&amp;Incolla Dentro</translation>
+        <translation>&amp;Pegar en</translation>
     </message>
     <message>
         <source>Paste RGBA Values</source>
-        <translation type="unfinished">Incolla i Valori RGBA</translation>
+        <translation>Pegar valores RVAα</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Elimina</translation>
+        <translation>&amp;Borrar</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished">&amp;Inserisci</translation>
+        <translation>&amp;Insertar</translation>
     </message>
     <message>
         <source>&amp;Group</source>
-        <translation type="unfinished">&amp;Raggruppa</translation>
+        <translation>&amp;Agrupar</translation>
     </message>
     <message>
         <source>&amp;Ungroup</source>
-        <translation type="unfinished">&amp;Separa</translation>
+        <translation>&amp;Desagrupar</translation>
     </message>
     <message>
         <source>&amp;Bring to Front</source>
-        <translation type="unfinished">&amp;Porta in Primo Piano</translation>
+        <translation>&amp;Traer al frente</translation>
     </message>
     <message>
         <source>&amp;Bring Forward</source>
-        <translation type="unfinished">&amp;Porta Avanti</translation>
+        <translation>&amp;Traer hacia adelante</translation>
     </message>
     <message>
         <source>&amp;Send Back</source>
-        <translation type="unfinished">&amp;Porta Sotto</translation>
+        <translation>&amp;Enviar al fondo</translation>
     </message>
     <message>
         <source>&amp;Send Backward</source>
-        <translation type="unfinished">&amp;Porta Indietro</translation>
+        <translation>&amp;Enviar hacia atrás</translation>
     </message>
     <message>
         <source>&amp;Enter Group</source>
-        <translation type="unfinished">&amp;Entra nel Gruppo</translation>
+        <translation>&amp;Entrar al grupo</translation>
     </message>
     <message>
         <source>&amp;Exit Group</source>
-        <translation type="unfinished">&amp;Esci dal Gruppo</translation>
+        <translation>&amp;Salir del grupo</translation>
     </message>
     <message>
         <source>&amp;Remove Vector Overflow</source>
-        <translation type="unfinished">&amp;Rimuovi i vettori che Sbordano</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Define Scanner...</source>
-        <translation type="unfinished">&amp;Definisci uno Scanner...</translation>
+        <translation>&amp;Definir escaner...</translation>
     </message>
     <message>
         <source>&amp;Scan Settings...</source>
-        <translation type="unfinished">&amp;Parametri per la Scansione...</translation>
+        <translation>&amp;Opciones del escaner...</translation>
     </message>
     <message>
         <source>&amp;Scan</source>
-        <translation type="unfinished">&amp;Scansiona</translation>
+        <translation>&amp;Escanear</translation>
     </message>
     <message>
         <source>&amp;Set Cropbox</source>
-        <translation type="unfinished">&amp;Definisci l&apos;Area di Scansione</translation>
+        <translation>&amp;Definir marco de recorte</translation>
     </message>
     <message>
         <source>&amp;Reset Cropbox</source>
-        <translation type="unfinished">&amp;Ripristina l&apos;Area di Scansione</translation>
+        <translation>&amp;Restablecer marco de recorte</translation>
     </message>
     <message>
         <source>&amp;Cleanup Settings...</source>
-        <translation type="unfinished">&amp;Impostazioni per il Cleanup...</translation>
+        <translation>&amp;Opciones de limpieza...</translation>
     </message>
     <message>
         <source>&amp;Preview Cleanup</source>
-        <translation type="unfinished">&amp;Anteprima del Cleanup</translation>
+        <translation>&amp;Previsualizar limpieza</translation>
     </message>
     <message>
         <source>&amp;Camera Test</source>
-        <translation type="unfinished">&amp;Anteprima dell&apos;Inquadratura</translation>
+        <translation>&amp;Prueba de cámara</translation>
     </message>
     <message>
         <source>&amp;Cleanup</source>
-        <translation type="unfinished">&amp;Cleanup</translation>
+        <translation>&amp;Limpiar</translation>
     </message>
     <message>
         <source>&amp;Add Frames...</source>
-        <translation type="unfinished">&amp;Aggiungi dei Fotogrammi...</translation>
+        <translation>&amp;Agregar fotogramas...</translation>
     </message>
     <message>
         <source>&amp;Renumber...</source>
-        <translation type="unfinished">&amp;Rinumera</translation>
+        <translation>&amp;Renumerar...</translation>
     </message>
     <message>
         <source>&amp;Replace Level...</source>
-        <translation type="unfinished">&amp;Rimpiazza il Livello...</translation>
+        <translation>&amp;Reemplazar nivel...</translation>
     </message>
     <message>
         <source>&amp;Revert to Cleaned Up</source>
-        <translation type="unfinished">&amp;Ritorna ai Disegni Prodotti da Cleanup</translation>
+        <translation>&amp;Revertir a versión limpia</translation>
     </message>
     <message>
         <source>&amp;Revert to Last Saved Version</source>
-        <translation type="unfinished">&amp;Ricarica l&apos;Ultima Versione Salvata</translation>
+        <translation>&amp;Revertir a última versión guardada</translation>
     </message>
     <message>
         <source>&amp;Expose in Xsheet</source>
-        <translation type="unfinished">&amp;Esponi nell&apos;Xsheet</translation>
+        <translation>&amp;Exponer en planilla</translation>
     </message>
     <message>
         <source>&amp;Display in Level Strip</source>
-        <translation type="unfinished">&amp;Mostra nella Level Strip</translation>
+        <translation>&amp;Mostrar en cinta de nivel</translation>
     </message>
     <message>
         <source>&amp;Level Settings...</source>
-        <translation type="unfinished">&amp;Impostazioni del Livello...</translation>
+        <translation>&amp;Opciones del nivel...</translation>
     </message>
     <message>
         <source>&amp;Brightness and Contrast...</source>
-        <translation type="unfinished">&amp;Luminosità e Contrasto...</translation>
+        <translation>&amp;Brillo y contraste...</translation>
     </message>
     <message>
         <source>&amp;Color Fade...</source>
-        <translation type="unfinished">&amp;Sfuma verso il Colore...</translation>
+        <translation>&amp;Color de desvanecimiento...</translation>
     </message>
     <message>
         <source>&amp;Canvas Size...</source>
-        <translation type="unfinished">&amp;Dimensioni del Quadro...</translation>
+        <translation>&amp;Tamaño del lienzo...</translation>
     </message>
     <message>
         <source>&amp;Info...</source>
-        <translation type="unfinished">&amp;Informazioni...</translation>
+        <translation>&amp;Información...</translation>
     </message>
     <message>
         <source>&amp;View...</source>
-        <translation type="unfinished">&amp;Visualizza...</translation>
+        <translation>&amp;Ver...</translation>
     </message>
     <message>
         <source>&amp;Remove All Unused Levels</source>
-        <translation type="unfinished">&amp;Rimuovi Tutti i Livelli Inutilizzati</translation>
+        <translation>&amp;Remover niveles no usados</translation>
     </message>
     <message>
         <source>&amp;Scene Settings...</source>
-        <translation type="unfinished">&amp;Parametri della Scena...</translation>
+        <translation>&amp;Opciones de la escena...</translation>
     </message>
     <message>
         <source>&amp;Camera Settings...</source>
-        <translation type="unfinished">&amp;Parametri della Camera...</translation>
+        <translation>&amp;Opciones de la cámara...</translation>
     </message>
     <message>
         <source>&amp;Open Sub-xsheet</source>
-        <translation type="unfinished">&amp;Apri il Sub-xsheet</translation>
+        <translation>&amp;Abrir sub-planilla</translation>
     </message>
     <message>
         <source>&amp;Close Sub-xsheet</source>
-        <translation type="unfinished">&amp;Chiudi il Sub-xsheet</translation>
+        <translation>&amp;Cerrar sub-planilla</translation>
     </message>
     <message>
         <source>Explode Sub-xsheet</source>
-        <translation type="unfinished">Esplodi il Sub-xsheet</translation>
+        <translation>Explotar sub-planilla</translation>
     </message>
     <message>
         <source>Collapse</source>
-        <translation type="unfinished">Collassa</translation>
+        <translation>Colapsar</translation>
     </message>
     <message>
         <source>&amp;Save Sub-xsheet As...</source>
-        <translation type="unfinished">&amp;Salva il Sub-xsheet Come...</translation>
+        <translation>&amp;Guardar sub-planilla como...</translation>
     </message>
     <message>
         <source>Resequence</source>
-        <translation type="unfinished">Risequenzia</translation>
+        <translation>Resecuenciar</translation>
     </message>
     <message>
         <source>Clone Sub-xsheet</source>
-        <translation type="unfinished">Clona il Sub-xsheet</translation>
+        <translation>Clonar sub-planilla</translation>
     </message>
     <message>
         <source>&amp;Apply Match Lines...</source>
-        <translation type="unfinished">&amp;Applica le Match Lines...</translation>
+        <translation>&amp;Aplicar líneas de coincidencia...</translation>
     </message>
     <message>
         <source>&amp;Delete Match Lines</source>
-        <translation type="unfinished">&amp;Elimina le Match Lines</translation>
+        <translation>&amp;Borrar líneas de coincidencia</translation>
     </message>
     <message>
         <source>&amp;Delete Lines...</source>
-        <translation type="unfinished">&amp;Elimina le Linee...</translation>
+        <translation>&amp;Borrar líneas...</translation>
     </message>
     <message>
         <source>&amp;Merge Levels</source>
-        <translation type="unfinished">&amp;Unisci i Livelli</translation>
+        <translation>&amp;Fusionar niveles</translation>
     </message>
     <message>
         <source>&amp;New FX...</source>
-        <translation type="unfinished">&amp;Nuovo Effetto...</translation>
+        <translation>&amp;Nuevo efecto...</translation>
     </message>
     <message>
         <source>&amp;New Output</source>
-        <translation type="unfinished">&amp;Nuovo Nodo di Uscita</translation>
+        <translation>&amp;Nuevo nodo de salida</translation>
     </message>
     <message>
         <source>&amp;Edit FX...</source>
-        <translation type="unfinished">&amp;Modifica l&apos; Effetto...</translation>
+        <translation>&amp;Editar efecto...</translation>
     </message>
     <message>
         <source>Insert Frame</source>
-        <translation type="unfinished">Inserisci un Fotogramma</translation>
+        <translation>Insertar fotograma</translation>
     </message>
     <message>
         <source>Remove Frame</source>
-        <translation type="unfinished">Rimuovi un Fotogramma</translation>
+        <translation>Remover fotograma</translation>
     </message>
     <message>
         <source>Insert Multiple Keys</source>
-        <translation type="unfinished">Inserisci delle Chiavi Multiple</translation>
+        <translation>Insertar claves múltiples</translation>
     </message>
     <message>
         <source>Remove Multiple Keys</source>
-        <translation type="unfinished">Rimuovi le Chiavi Multiple</translation>
+        <translation>Remover claves múltiples</translation>
     </message>
     <message>
         <source>&amp;Reverse</source>
-        <translation type="unfinished">&amp;Inverti Ordine</translation>
+        <translation>&amp;Invertir</translation>
     </message>
     <message>
         <source>&amp;Swing</source>
-        <translation type="unfinished">&amp;Swing</translation>
+        <translation>&amp;Oscilar</translation>
     </message>
     <message>
         <source>&amp;Random</source>
-        <translation type="unfinished">&amp;Ordine Casuale</translation>
+        <translation>&amp;Aleatorio</translation>
     </message>
     <message>
         <source>&amp;Autoexpose</source>
-        <translation type="unfinished">&amp;Esponi Automaticamente</translation>
+        <translation>&amp;Exposición atomática</translation>
     </message>
     <message>
         <source>&amp;Repeat...</source>
-        <translation type="unfinished">&amp;Ripeti...</translation>
+        <translation>&amp;Repetir...</translation>
     </message>
     <message>
         <source>&amp;Step 2</source>
-        <translation type="unfinished">&amp;Passo 2</translation>
+        <translation>&amp;En 2</translation>
     </message>
     <message>
         <source>&amp;Step 3</source>
-        <translation type="unfinished">&amp;Passo 3</translation>
+        <translation>&amp;En 3</translation>
     </message>
     <message>
         <source>&amp;Step 4</source>
-        <translation type="unfinished">&amp;Passo 4</translation>
+        <translation>&amp;En 4</translation>
     </message>
     <message>
         <source>&amp;Each 2</source>
-        <translation type="unfinished">&amp;Ogni 2</translation>
+        <translation>&amp;Cada 2</translation>
     </message>
     <message>
         <source>&amp;Each 3</source>
-        <translation type="unfinished">&amp;Ogni 3</translation>
+        <translation>&amp;Cada 3</translation>
     </message>
     <message>
         <source>&amp;Each 4</source>
-        <translation type="unfinished">&amp;Ogni 4</translation>
+        <translation>&amp;Cada 4</translation>
     </message>
     <message>
         <source>&amp;Roll Up</source>
-        <translation type="unfinished">&amp;Scorri verso l&apos; Alto</translation>
+        <translation type="unfinished">&amp;Desplazar hacia arriba</translation>
     </message>
     <message>
         <source>&amp;Roll Down</source>
-        <translation type="unfinished">&amp;Scorri verso il Basso</translation>
+        <translation type="unfinished">&amp;Desplazar hacia abajo</translation>
     </message>
     <message>
         <source>&amp;Time Stretch...</source>
-        <translation type="unfinished">&amp;Dilata il Tempo...</translation>
+        <translation>&amp;Estirar tiempo...</translation>
     </message>
     <message>
         <source>&amp;Duplicate Drawing  </source>
-        <translation type="unfinished">&amp;Duplica il Disegno</translation>
+        <translation>&amp;Duplicar dibujo </translation>
     </message>
     <message>
         <source>&amp;Clone</source>
-        <translation type="unfinished">&amp;Clona</translation>
+        <translation>&amp;Clonar</translation>
     </message>
     <message>
         <source>&amp;Set Key</source>
-        <translation type="unfinished">&amp;Imposta una Chiave</translation>
+        <translation>&amp;Definir un clave</translation>
     </message>
     <message>
         <source>&amp;Camera Box</source>
-        <translation type="unfinished">&amp;Riquadro di Camera</translation>
+        <translation>&amp;Riquadro di Camera</translation>
     </message>
     <message>
         <source>&amp;Table</source>
-        <translation type="unfinished">&amp;Tavolo</translation>
+        <translation>&amp;Mesa</translation>
     </message>
     <message>
         <source>&amp;Field Guide</source>
-        <translation type="unfinished">&amp;Field Guide</translation>
+        <translation>&amp;Guía de campo</translation>
     </message>
     <message>
         <source>&amp;Safe Area</source>
-        <translation type="unfinished">&amp;Zona di Sicurezza</translation>
+        <translation>&amp;Área de seguridad</translation>
     </message>
     <message>
         <source>&amp;Camera BG Color</source>
-        <translation type="unfinished">&amp;Colore Fondale della Camera</translation>
+        <translation>&amp;Color de fondo de la cámara</translation>
     </message>
     <message>
         <source>&amp;Transparency Check  </source>
-        <translation type="unfinished">&amp;Controllo della Trasparenza</translation>
+        <translation>&amp;Comprobación de transparencia</translation>
     </message>
     <message>
         <source>&amp;Ink Check</source>
-        <translation type="unfinished">&amp;Controllo dell&apos; Inchiostro</translation>
+        <translation>&amp;Comprobación del entintado</translation>
     </message>
     <message>
         <source>&amp;Paint Check</source>
-        <translation type="unfinished">&amp;Controllo del Colore</translation>
+        <translation>&amp;Comprobación de la pintura</translation>
     </message>
     <message>
         <source>&amp;Fill Check</source>
-        <translation type="unfinished">&amp;Controllo delle Campiture</translation>
+        <translation>&amp;Comprobación del relleno</translation>
     </message>
     <message>
         <source>&amp;Black BG Check</source>
-        <translation type="unfinished">&amp;Controllo su Fondale Nero</translation>
+        <translation>&amp;Comrobación de fondo negro</translation>
     </message>
     <message>
         <source>&amp;Gap Check</source>
-        <translation type="unfinished">&amp;Controllo dei Buchi</translation>
+        <translation>&amp;Comprobación de huecos</translation>
     </message>
     <message>
         <source>&amp;Visualize Vector As Raster</source>
-        <translation type="unfinished">&amp;Visualizza i Vettori come Raster</translation>
+        <translation>&amp;Visualizar vectorial como imágenes</translation>
     </message>
     <message>
         <source>&amp;Histogram</source>
-        <translation type="unfinished">&amp;Istogramma</translation>
+        <translation>&amp;Histograma</translation>
     </message>
     <message>
         <source>&amp;Capture</source>
-        <translation type="unfinished">&amp;Acquisisci</translation>
+        <translation>&amp;Capturar</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished">Riproduci</translation>
+        <translation>Reproducir</translation>
     </message>
     <message>
         <source>Loop</source>
-        <translation type="unfinished">Ciclo Continuo</translation>
+        <translation>Ciclo</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">Pausa</translation>
+        <translation>Pausa</translation>
     </message>
     <message>
         <source>First Frame</source>
-        <translation type="unfinished">Primo Fotogramma</translation>
+        <translation>Fotograma inicial</translation>
     </message>
     <message>
         <source>Last Frame</source>
-        <translation type="unfinished">Ultimo Fotogramma</translation>
+        <translation>Fotograma final</translation>
     </message>
     <message>
         <source>Previous Frame</source>
-        <translation type="unfinished">Fotogramma Precedente</translation>
+        <translation>Fotograma anterior</translation>
     </message>
     <message>
         <source>Next Frame</source>
-        <translation type="unfinished">Prossimo Fotogramma</translation>
+        <translation>Fotograma siguiente</translation>
     </message>
     <message>
         <source>Red Channel</source>
-        <translation type="unfinished">Canale Rosso</translation>
+        <translation>Canal rojo</translation>
     </message>
     <message>
         <source>Green Channel</source>
-        <translation type="unfinished">Canale verde</translation>
+        <translation>Canal verde</translation>
     </message>
     <message>
         <source>Blue Channel</source>
-        <translation type="unfinished">Canale Blu</translation>
+        <translation>Canal azul</translation>
     </message>
     <message>
         <source>Matte Channel</source>
-        <translation type="unfinished">Canale Alfa</translation>
+        <translation>Canal alfa</translation>
     </message>
     <message>
         <source>Red Channel Greyscale</source>
-        <translation type="unfinished">Canale Rosso in Scala di Grigi</translation>
+        <translation>Canal rojo en gris</translation>
     </message>
     <message>
         <source>Green Channel Greyscale</source>
-        <translation type="unfinished">Canale Verde in Scala di Grigi</translation>
+        <translation>Canal verde en gris</translation>
     </message>
     <message>
         <source>Blue Channel Greyscale</source>
-        <translation type="unfinished">Canale Blu in Scala di Grigi</translation>
+        <translation>Canal azul en gris</translation>
     </message>
     <message>
         <source>&amp;Lock Room Panes</source>
@@ -3229,51 +3225,51 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>&amp;File Browser</source>
-        <translation type="unfinished">&amp;Browser dei Files</translation>
+        <translation>&amp;Explorador de archivos</translation>
     </message>
     <message>
         <source>&amp;Flipbook</source>
-        <translation type="unfinished">&amp;Flipbook</translation>
+        <translation>&amp;Folioscopio</translation>
     </message>
     <message>
         <source>&amp;Function Editor</source>
-        <translation type="unfinished">&amp;Editor delle Funzioni</translation>
+        <translation>&amp;Editor de curvas</translation>
     </message>
     <message>
         <source>&amp;Level Strip</source>
-        <translation type="unfinished">&amp;Level Strip</translation>
+        <translation>&amp;Cinta de nivel</translation>
     </message>
     <message>
         <source>&amp;Palette</source>
-        <translation type="unfinished">&amp;Palette</translation>
+        <translation>&amp;Paleta</translation>
     </message>
     <message>
         <source>&amp;Palette Gizmo</source>
-        <translation type="unfinished">&amp;Palette Gizmo</translation>
+        <translation type="unfinished">&amp;Control de paleta</translation>
     </message>
     <message>
         <source>&amp;Delete Unused Styles</source>
-        <translation type="unfinished">&amp;Elimina gli Stili Inutilizzati</translation>
+        <translation>&amp;Borrar estilos no usados</translation>
     </message>
     <message>
         <source>&amp;Tasks</source>
-        <translation type="unfinished">&amp;Tasks</translation>
+        <translation>&amp;Tareas</translation>
     </message>
     <message>
         <source>&amp;Batch Servers</source>
-        <translation type="unfinished">&amp;Batch Servers</translation>
+        <translation>&amp;Servidores por lotes</translation>
     </message>
     <message>
         <source>&amp;Color Model</source>
-        <translation type="unfinished">&amp;Modello di Colore</translation>
+        <translation>&amp;Modelo de color</translation>
     </message>
     <message>
         <source>&amp;Studio Palette</source>
-        <translation type="unfinished">&amp;Palette di Studio</translation>
+        <translation>&amp;Paleta de estudio</translation>
     </message>
     <message>
         <source>&amp;Schematic</source>
-        <translation type="unfinished">&amp;Diagramma</translation>
+        <translation>&amp;Diagrama</translation>
     </message>
     <message>
         <source>&amp;Scene Cast</source>
@@ -3281,19 +3277,19 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>&amp;Style Editor</source>
-        <translation type="unfinished">&amp;Editor dello Stile</translation>
+        <translation>&amp;Editor de estilos</translation>
     </message>
     <message>
         <source>&amp;Toolbar</source>
-        <translation type="unfinished">&amp;Barra degli Strumenti</translation>
+        <translation>&amp;Barra de herramientas</translation>
     </message>
     <message>
         <source>&amp;Tool Option Bar</source>
-        <translation type="unfinished">&amp;Barra delle Opzioni degli Strumenti</translation>
+        <translation>&amp;Barra de opciones de herramientas</translation>
     </message>
     <message>
         <source>&amp;Viewer</source>
-        <translation type="unfinished">&amp;Visualizzatore</translation>
+        <translation>&amp;Visor</translation>
     </message>
     <message>
         <source>&amp;LineTest Viewer</source>
@@ -3305,7 +3301,7 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>&amp;Xsheet</source>
-        <translation type="unfinished">&amp;Xsheet</translation>
+        <translation>&amp;Planilla</translation>
     </message>
     <message>
         <source>&amp;Reset to Default Rooms</source>
@@ -3313,792 +3309,791 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>Onion Skin</source>
-        <translation type="unfinished">Onion Skin</translation>
+        <translation>Piel de cebolla</translation>
     </message>
     <message>
         <source>Duplicate</source>
-        <translation type="unfinished">Duplica</translation>
+        <translation>Duplicar</translation>
     </message>
     <message>
         <source>Show Folder Contents</source>
-        <translation type="unfinished">Mostra il Contenuto della Cartella</translation>
+        <translation>Mostrar contenido de carpeta</translation>
     </message>
     <message>
         <source>Convert...</source>
-        <translation type="unfinished">Converti...</translation>
+        <translation>Convertir...</translation>
     </message>
     <message>
         <source>Collect Assets</source>
-        <translation type="unfinished">Recupera i Componenti</translation>
+        <translation>Recuperar elementos</translation>
     </message>
     <message>
         <source>Import Scene</source>
-        <translation type="unfinished">Importa la Scena</translation>
+        <translation>Importar escena</translation>
     </message>
     <message>
         <source>Export Scene...</source>
-        <translation type="unfinished">Esporta la Scena...</translation>
+        <translation>Exportar escena...</translation>
     </message>
     <message>
         <source>Premultiply</source>
-        <translation type="unfinished">Premoltiplica</translation>
+        <translation>Premultiplicar</translation>
     </message>
     <message>
         <source>Convert to Vectors...</source>
-        <translation type="unfinished">Converti in Vettori...</translation>
+        <translation>Convertir en vectorial...</translation>
     </message>
     <message>
         <source>Tracking...</source>
-        <translation type="unfinished">Traccia...</translation>
+        <translation>Rastreo...</translation>
     </message>
     <message>
         <source>Remove Level</source>
-        <translation type="unfinished">Rimuovi il Livello</translation>
+        <translation>Remover nivel</translation>
     </message>
     <message>
         <source>Add As Render Task</source>
-        <translation type="unfinished">Aggiungi Come Task di Render</translation>
+        <translation>Agregar como tarea de procesamiento</translation>
     </message>
     <message>
         <source>Add As Cleanup Task</source>
-        <translation type="unfinished">Aggiungi Come Task di Cleanup</translation>
+        <translation>Agregar como tarea de limpieza</translation>
     </message>
     <message>
         <source>Select All Keys in this Row</source>
-        <translation type="unfinished">Seleziona Tutte le Chiavi di questa Riga</translation>
+        <translation>Seleccionar todos los claves en esta fila</translation>
     </message>
     <message>
         <source>Select All Keys in this Column</source>
-        <translation type="unfinished">Seleziona Tutte le Chiavi di questa Colonna</translation>
+        <translation>Seleccionar todos los claves en esta columna</translation>
     </message>
     <message>
         <source>Select All Keys</source>
-        <translation type="unfinished">Seleziona Tutte le Chiavi</translation>
+        <translation>Seleccionar todos los claves</translation>
     </message>
     <message>
         <source>Select All Following Keys</source>
-        <translation type="unfinished">Seleziona Tutte le Chiavi Successive</translation>
+        <translation>Seleccionar todos los claves siguientes</translation>
     </message>
     <message>
         <source>Select All Previous Keys</source>
-        <translation type="unfinished">Seleziona Tutte le Chiavi Precedenti</translation>
+        <translation>Seleccionar todos los claves anteriores</translation>
     </message>
     <message>
         <source>Select Previous Keys in this Column</source>
-        <translation type="unfinished">Seleziona le Chiavi Precedenti di questa Colonna</translation>
+        <translation>Seleccionar los claves anteriores en esta columna</translation>
     </message>
     <message>
         <source>Select Following Keys in this Column</source>
-        <translation type="unfinished">Seleziona le Chiavi Successive di questa Colonna</translation>
+        <translation>Seleccionar los claves siguientes en esta columna</translation>
     </message>
     <message>
         <source>Select Previous Keys in this Row</source>
-        <translation type="unfinished">Seleziona le Chiavi Precedenti di questa Riga</translation>
+        <translation>Seleccionar los claves anteriores en esta fila</translation>
     </message>
     <message>
         <source>Select Following Keys in this Row</source>
-        <translation type="unfinished">Seleziona le Chiavi Successive di questa Riga</translation>
+        <translation>Seleccionar los claves siguientes en esta fila</translation>
     </message>
     <message>
         <source>Invert Key Selection</source>
-        <translation type="unfinished">Inverti la Selezione delle Chiavi</translation>
+        <translation>Invertir selección de claves</translation>
     </message>
     <message>
         <source>Set Acceleration</source>
-        <translation type="unfinished">Imposta l&apos;Accelerazione</translation>
+        <translation>Definir aceleración</translation>
     </message>
     <message>
         <source>Set Deceleration</source>
-        <translation type="unfinished">Imposta la Decelerazione</translation>
+        <translation>Definir desaceleración</translation>
     </message>
     <message>
         <source>Set Constant Speed</source>
-        <translation type="unfinished">Imposta la Velocità Costante</translation>
+        <translation>Definir velocidad constante</translation>
     </message>
     <message>
         <source>Reset Interpolation</source>
-        <translation type="unfinished">Ripristina l&apos;Interpolazione</translation>
+        <translation>Restablecer interpolación</translation>
     </message>
     <message>
         <source>Fold Column</source>
-        <translation type="unfinished">Ripiega le Colonne</translation>
+        <translation>Plegar columna</translation>
     </message>
     <message>
         <source>Activate this column only</source>
-        <translation type="unfinished">Mostra solo questa colonna</translation>
+        <translation>Activar solo esta columna</translation>
     </message>
     <message>
         <source>Activate selected columns</source>
-        <translation type="unfinished">Mostra le colonne Selezionate</translation>
+        <translation>Activar columnas seleccionadas</translation>
     </message>
     <message>
         <source>Activate all columns</source>
-        <translation type="unfinished">Mostra tutte le colonne</translation>
+        <translation>Activar todas las columnas</translation>
     </message>
     <message>
         <source>Deactivate selected columns</source>
-        <translation type="unfinished">Nascondi le colonne selezionate</translation>
+        <translation>Desactivar columnas seleccionadas</translation>
     </message>
     <message>
         <source>Deactivate all columns</source>
-        <translation type="unfinished">Nascondi tutte le Colonne</translation>
+        <translation>Desactivar todas las columnas</translation>
     </message>
     <message>
         <source>Toggle columns activation</source>
-        <translation type="unfinished">Inverti la visualizzazione delle colonne</translation>
+        <translation>Alternar activación de columnas</translation>
     </message>
     <message>
         <source>Enable this column only</source>
-        <translation type="unfinished">Attiva solo questa colonna</translation>
+        <translation>Habilitar solo esta columna</translation>
     </message>
     <message>
         <source>Enable selected columns</source>
-        <translation type="unfinished">Attiva le colonne selezionate</translation>
+        <translation>Habilitar columnas seleccionadas</translation>
     </message>
     <message>
         <source>Enable all columns</source>
-        <translation type="unfinished">Attiva tutte le colonne</translation>
+        <translation>Habilitar todas las columnas</translation>
     </message>
     <message>
         <source>Disable all columns</source>
-        <translation type="unfinished">Disattiva tutte le colonne</translation>
+        <translation>Deshabilitar todas las columnas</translation>
     </message>
     <message>
         <source>Disable selected columns</source>
-        <translation type="unfinished">Disattiva le colonne selezionate</translation>
+        <translation>Deshabilitar columnas seleccionadas</translation>
     </message>
     <message>
         <source>Swap enabled columns</source>
-        <translation type="unfinished">Inverti l&apos;Attivazione delle colonne</translation>
+        <translation>Invertir habilitación de columnas</translation>
     </message>
     <message>
         <source>Lock this column only</source>
-        <translation type="unfinished">Blocca solo questa colonna</translation>
+        <translation>Bloquear solo esta columna</translation>
     </message>
     <message>
         <source>Lock selected columns</source>
-        <translation type="unfinished">Blocca le colonne selezionate</translation>
+        <translation>Bloquear columnas seleccionadas</translation>
     </message>
     <message>
         <source>Lock all columns</source>
-        <translation type="unfinished">Blocca tutte le colonne</translation>
+        <translation>Bloquear todas las columnas</translation>
     </message>
     <message>
         <source>Unlock selected columns</source>
-        <translation type="unfinished">Sblocca le colonne selezionate</translation>
+        <translation>Desbloquear columnas seleccionadas</translation>
     </message>
     <message>
         <source>Unlock all columns</source>
-        <translation type="unfinished">Sblocca tutte le colonne</translation>
+        <translation>Desbloquear todas las columnas</translation>
     </message>
     <message>
         <source>Swap locked columns</source>
-        <translation type="unfinished">Inverti il blocco delle colonne</translation>
+        <translation>Invertir bloqueo de columnas</translation>
     </message>
     <message>
         <source>Edit Tool</source>
-        <translation type="unfinished">Strumento Animazione</translation>
+        <translation>Edición</translation>
     </message>
     <message>
         <source>Selection Tool</source>
-        <translation type="unfinished">Strumento Selezione</translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <source>Brush Tool</source>
-        <translation type="unfinished">Strumento Pennello</translation>
+        <translation>Pincel</translation>
     </message>
     <message>
         <source>Geometric Tool</source>
-        <translation type="unfinished">Strumento Forme Geometriche</translation>
+        <translation>Geometría</translation>
     </message>
     <message>
         <source>Type Tool</source>
-        <translation type="unfinished">Strumento Testo</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <source>Fill Tool</source>
-        <translation type="unfinished">Strumento Riempimento</translation>
+        <translation>Rellenar</translation>
     </message>
     <message>
         <source>Paint Brush Tool</source>
-        <translation type="unfinished">Strumento Pennello per Riempimenti</translation>
+        <translation>Pincel de pintura</translation>
     </message>
     <message>
         <source>Eraser Tool</source>
-        <translation type="unfinished">Strumento Gomma</translation>
+        <translation>Borrador</translation>
     </message>
     <message>
         <source>Tape Tool</source>
-        <translation type="unfinished">Strumento Nastro Adesivo</translation>
+        <translation>Cinta</translation>
     </message>
     <message>
         <source>Style Picker Tool</source>
-        <translation type="unfinished">Strumento Contagocce per Stili</translation>
+        <translation>Selector de estilo</translation>
     </message>
     <message>
         <source>RGB Picker Tool</source>
-        <translation type="unfinished">Strumento Contagocce</translation>
+        <translation>Selector de color</translation>
     </message>
     <message>
         <source>Control Point Editor Tool</source>
-        <translation type="unfinished">Strumento di Modifica dei Punti di Controllo</translation>
+        <translation>Editor de puntos de control</translation>
     </message>
     <message>
         <source>Pinch Tool</source>
-        <translation type="unfinished">Strumento Deformazione</translation>
+        <translation>Pellizcar</translation>
     </message>
     <message>
         <source>Pump Tool</source>
-        <translation type="unfinished">Strumento Pompa</translation>
+        <translation>Bombear</translation>
     </message>
     <message>
         <source>Magnet Tool</source>
-        <translation type="unfinished">Strumento Magnete</translation>
+        <translation>Imán</translation>
     </message>
     <message>
         <source>Bender Tool</source>
-        <translation type="unfinished">Strumento Tenaglia</translation>
+        <translation>Dobladora</translation>
     </message>
     <message>
         <source>Iron Tool</source>
-        <translation type="unfinished">Strumento Ferro da Stiro</translation>
+        <translation>Plancha</translation>
     </message>
     <message>
         <source>Cutter Tool</source>
-        <translation type="unfinished">Strumento Taglierino</translation>
+        <translation>Cortador</translation>
     </message>
     <message>
         <source>Skeleton Tool</source>
-        <translation type="unfinished">Strumento Scheletro</translation>
+        <translation>Esqueleto</translation>
     </message>
     <message>
         <source>Tracker Tool</source>
-        <translation type="unfinished">Strumento Tracciatore</translation>
+        <translation>Rastreador</translation>
     </message>
     <message>
         <source>Hook Tool</source>
-        <translation type="unfinished">Strumento Gancio</translation>
+        <translation>Gancho</translation>
     </message>
     <message>
         <source>Zoom Tool</source>
-        <translation type="unfinished">Strumento Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <source>Rotate Tool</source>
-        <translation type="unfinished">Strumento Rotazione</translation>
+        <translation>Rotar</translation>
     </message>
     <message>
         <source>Hand Tool</source>
-        <translation type="unfinished">Strumento Mano</translation>
+        <translation>Desplazar</translation>
     </message>
     <message>
         <source>Zoom In</source>
-        <translation type="unfinished">Zoom Avanti</translation>
+        <translation>Acercar</translation>
     </message>
     <message>
         <source>Zoom Out</source>
-        <translation type="unfinished">Zoom Indietro</translation>
+        <translation>Alejar</translation>
     </message>
     <message>
         <source>Reset View</source>
-        <translation type="unfinished">Ripristina la Visualizzazione</translation>
+        <translation>Restablecer vista</translation>
     </message>
     <message>
         <source>Fit to Window</source>
-        <translation type="unfinished">Adatta alla Finestra</translation>
+        <translation>Ajustar a ventana</translation>
     </message>
     <message>
         <source>Actual Pixel Size</source>
-        <translation type="unfinished">Pixel Reali</translation>
+        <translation>Tamaño real de píxel</translation>
     </message>
     <message>
         <source>Show//Hide Full Screen</source>
-        <translation type="unfinished">Mostra//Nascondi lo Schermo Intero</translation>
+        <translation>Mostrar//Ocultar a pantalla completa</translation>
     </message>
     <message>
         <source>Full Screen Mode</source>
-        <translation type="unfinished">Modalità a Schermo Intero</translation>
+        <translation>Modo a pantalla completa</translation>
     </message>
     <message>
         <source>Exit Full Screen Mode</source>
-        <translation type="unfinished">Esci dalla Modalità a Schermo Intero</translation>
+        <translation>Salir de pantalla completa</translation>
     </message>
     <message>
         <source>Global Key</source>
-        <translation type="unfinished">Chiave Globale</translation>
+        <translation>Clave global</translation>
     </message>
     <message>
         <source>Increase brush hardness</source>
-        <translation type="unfinished">Incrementa la Durezza del Pennello</translation>
+        <translation>Aumentar dureza del pincel</translation>
     </message>
     <message>
         <source>Decrease brush hardness</source>
-        <translation type="unfinished">Decrementa la Durezza del Pennello</translation>
+        <translation>Disminuir dureza del pincel</translation>
     </message>
     <message>
         <source>Auto Group</source>
-        <translation type="unfinished">Raggruppa Automaticamente</translation>
+        <translation>Agrupar automáticamente</translation>
     </message>
     <message>
         <source>Break sharp angles</source>
-        <translation type="unfinished">Spezza negli Angoli Acuti</translation>
+        <translation>Quebrar ángulos agudos</translation>
     </message>
     <message>
         <source>Frame range</source>
-        <translation type="unfinished">Intervallo di Fotogrammi</translation>
+        <translation>Rango de fotogramas</translation>
     </message>
     <message>
         <source>Inverse kinematics</source>
-        <translation type="unfinished">Cinematica Inversa</translation>
+        <translation>Cinemática inversa</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Invertir</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">Manuale</translation>
+        <translation>Manual</translation>
     </message>
     <message>
         <source>Onion skin</source>
-        <translation type="unfinished">Onion Skin</translation>
+        <translation>Piel de cebolla</translation>
     </message>
     <message>
         <source>Orientation</source>
-        <translation type="unfinished">Orientazione</translation>
+        <translation>Orientación</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation type="unfinished">Modalità Matita</translation>
+        <translation>Modo del pincel</translation>
     </message>
     <message>
         <source>Preserve Thickness</source>
-        <translation type="unfinished">Mantieni lo Spessore</translation>
+        <translation>Preservar el grosor</translation>
     </message>
     <message>
         <source>Pressure sensibility</source>
-        <translation type="unfinished">Sensibilità alla Pressione</translation>
+        <translation>Sensibilidad a la presión</translation>
     </message>
     <message>
         <source>Segment Ink</source>
-        <translation type="unfinished">Segmento di Inchiostro</translation>
+        <translation>Tinta del segmento</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selettivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Smooth</source>
-        <translation type="unfinished">Liscio</translation>
+        <translation>Suave</translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation type="unfinished">Effetto Calamita</translation>
+        <translation>Adherir</translation>
     </message>
     <message>
         <source>Auto Select Drawing</source>
-        <translation type="unfinished">Selezione Automatica dei Disegni</translation>
+        <translation>Seleccionar dibujo automáticamente</translation>
     </message>
     <message>
         <source>Auto Fill</source>
-        <translation type="unfinished">Riempimento Automatico</translation>
+        <translation>Relleno automático</translation>
     </message>
     <message>
         <source>Join Vectors</source>
-        <translation type="unfinished">Unisci i Vettori</translation>
+        <translation>Unir vectores</translation>
     </message>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation type="unfinished">Mostra solo lo Scheletro Attivo</translation>
+        <translation>Mostrar solo esqueleto activo</translation>
     </message>
     <message>
         <source>Brush Preset</source>
-        <translation type="unfinished">Pennello Predefinito</translation>
+        <translation>Ajuste de pincel</translation>
     </message>
     <message>
         <source>Geometric Shape</source>
-        <translation type="unfinished">Forma geometrica</translation>
+        <translation>Forma geométrica</translation>
     </message>
     <message>
         <source>Geometric Edge</source>
-        <translation type="unfinished">Numero di Lati</translation>
+        <translation>Borde geométrico</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished">Modalità</translation>
+        <translation>Modo</translation>
     </message>
     <message>
         <source>Areas Mode</source>
-        <translation type="unfinished">Modalità Aree</translation>
+        <translation>Modo de áreas</translation>
     </message>
     <message>
         <source>Lines Mode</source>
-        <translation type="unfinished">Modalità Linee</translation>
+        <translation>Modo de líneas</translation>
     </message>
     <message>
         <source>Lines &amp; Areas Mode</source>
-        <translation type="unfinished">Modalità Linee e Aree</translation>
+        <translation>Modo de líneas y áreas</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <source>Normal Type</source>
-        <translation type="unfinished">Tipo Normale</translation>
+        <translation>Tipo normal</translation>
     </message>
     <message>
         <source>Rectangular Type</source>
-        <translation type="unfinished">Tipo Rettangolare</translation>
+        <translation>Tipo rectangular</translation>
     </message>
     <message>
         <source>Freehand Type</source>
-        <translation type="unfinished">Tipo a Mano Libera</translation>
+        <translation>Tipo a mano alzada</translation>
     </message>
     <message>
         <source>Polyline Type</source>
-        <translation type="unfinished">Tipo Polilinea</translation>
+        <translation>Tipo línea poligonal</translation>
     </message>
     <message>
         <source>TypeTool Font</source>
-        <translation type="unfinished">Carattere Strumento Testo</translation>
+        <translation>Tipografía del texto</translation>
     </message>
     <message>
         <source>TypeTool Size</source>
-        <translation type="unfinished">Dimensione Strumento Testo</translation>
+        <translation>Tamaño del texto</translation>
     </message>
     <message>
         <source>TypeTool Style</source>
-        <translation type="unfinished">Stile Strumento Testo</translation>
+        <translation>Estilo del texto</translation>
     </message>
     <message>
         <source>Build Skeleton Mode</source>
-        <translation type="unfinished">Modalità di Costruzione dello Scheletro</translation>
+        <translation>Modo de creación de esqueleto</translation>
     </message>
     <message>
         <source>Animate Mode</source>
-        <translation type="unfinished">Modalità di Animazione</translation>
+        <translation>Modo de animación</translation>
     </message>
     <message>
         <source>Inverse Kinematics Mode</source>
-        <translation type="unfinished">Modalità Cinematica Inversa</translation>
+        <translation>Modo de cinemática inversa</translation>
     </message>
     <message>
         <source>None Pick Mode</source>
-        <translation type="unfinished">Nessuna Selezione Automatica</translation>
+        <translation>Modo de escoger ninguno</translation>
     </message>
     <message>
         <source>Column Pick Mode</source>
-        <translation type="unfinished">Selezione Automatica di Colonna</translation>
+        <translation>Modo de escoger columna</translation>
     </message>
     <message>
         <source>Pegbar Pick Mode</source>
-        <translation type="unfinished">Selezione Automatica di Reggetta</translation>
+        <translation>Modo de escoger barra de sujeción</translation>
     </message>
     <message>
         <source>Drawing</source>
-        <translation type="unfinished">Disegno</translation>
+        <translation>Dibujo</translation>
     </message>
     <message>
         <source>Animation</source>
-        <translation type="unfinished">Animazione</translation>
+        <translation>Animación</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished">Browser</translation>
+        <translation>Explorador</translation>
     </message>
     <message>
         <source>Pltedit</source>
-        <translation type="unfinished">Editor di Palette</translation>
+        <translation>EditorPlt</translation>
     </message>
     <message>
         <source>Farm</source>
-        <translation type="unfinished">Farm</translation>
+        <translation>Granja</translation>
     </message>
     <message>
         <source>&amp;Reset Step</source>
-        <translation type="unfinished">&amp;Ripristina il Passo</translation>
+        <translation>&amp;Restablecer intervalo</translation>
     </message>
     <message>
         <source>&amp;Increase Step</source>
-        <translation type="unfinished">&amp;Incrementa il Passo</translation>
+        <translation>&amp;Aumentar intervalo</translation>
     </message>
     <message>
         <source>&amp;Decrease Step</source>
-        <translation type="unfinished">&amp;Decrementa il Passo</translation>
+        <translation>&amp;Disminuir intervalo</translation>
     </message>
     <message>
         <source>Reload qss</source>
-        <translation type="unfinished">Ricarica qss</translation>
+        <translation type="unfinished">Recargar qss</translation>
     </message>
     <message>
         <source>&amp;Autocenter...</source>
-        <translation type="unfinished">&amp;Autocentra</translation>
+        <translation>&amp;Centrado automático...</translation>
     </message>
     <message>
         <source>&amp;Binarize...</source>
-        <translation type="unfinished">&amp;Binarizza</translation>
+        <translation>&amp;Binarizar...</translation>
     </message>
     <message>
         <source>&amp;Autorenumber</source>
-        <translation type="unfinished">&amp;Autorinumera</translation>
+        <translation>&amp;Renumeración automática</translation>
     </message>
     <message>
         <source>&amp;Field Guide in Capture Window</source>
-        <translation type="unfinished">Field Guide Finestra di Acquisizione</translation>
+        <translation>&amp;Guía de campo en ventana de captura</translation>
     </message>
     <message>
         <source>&amp;Guide</source>
-        <translation type="unfinished">&amp;Guida</translation>
+        <translation>&amp;Guía</translation>
     </message>
     <message>
         <source>&amp;Ruler</source>
-        <translation type="unfinished">&amp;Righello</translation>
+        <translation>&amp;Regla</translation>
     </message>
     <message>
         <source>Shift and Trace</source>
-        <translation type="unfinished">Sposta e Traccia</translation>
+        <translation>Desplazamiento y rastreo</translation>
     </message>
     <message>
         <source>Edit Shift</source>
-        <translation type="unfinished">Modifica Spostamento</translation>
+        <translation>Editar desplazamiento</translation>
     </message>
     <message>
         <source>No Shift</source>
-        <translation type="unfinished">Nessuno Spostamento</translation>
+        <translation>Sin desplazamiento</translation>
     </message>
     <message>
         <source>Reset Shift</source>
-        <translation type="unfinished">Resetta Spostamento</translation>
+        <translation>Restablecer desplazamiento</translation>
     </message>
     <message>
         <source>Next Drawing</source>
-        <translation type="unfinished">Disegno Successivo</translation>
+        <translation>Dibujo siguiente</translation>
     </message>
     <message>
         <source>Prev Drawing</source>
-        <translation type="unfinished">Disegno Precedente</translation>
+        <translation>Dibujo anterior</translation>
     </message>
     <message>
         <source>Toggle Autofill on Current Palette Color</source>
-        <translation type="unfinished">Abilita Riempimento Automatico sulla Palette Color Attuale</translation>
+        <translation>Alternar relleno automático en color actual de paleta</translation>
     </message>
     <message>
         <source>&amp;Export</source>
-        <translation type="unfinished">&amp;Esporta</translation>
+        <translation>&amp;Exportar</translation>
     </message>
     <message>
         <source>Increase max brush thickness</source>
-        <translation type="unfinished">Incrementa lo spessore massimo del pennello</translation>
+        <translation>Aumentar grosor máx. del pincel</translation>
     </message>
     <message>
         <source>Decrease max brush thickness</source>
-        <translation type="unfinished">Decrementa lo spessore massimo del pennello</translation>
+        <translation>Disminuir grosor máx. del pincel</translation>
     </message>
     <message>
         <source>Increase min brush thickness</source>
-        <translation type="unfinished">Incrementa lo spessore minimo del pennello</translation>
+        <translation>Aumentar grosor mín. del pincel</translation>
     </message>
     <message>
         <source>Decrease min brush thickness</source>
-        <translation type="unfinished">
-Decrementa lo spessore minimo del pennello</translation>
+        <translation>Disminuir grosor mín. del pincel</translation>
     </message>
     <message>
         <source>Pick Screen</source>
-        <translation type="unfinished">Scegli Schermo</translation>
+        <translation>Escoger pantalla</translation>
     </message>
     <message>
         <source>&amp;Blend colors</source>
-        <translation type="unfinished">Miscelare i colori</translation>
+        <translation>&amp;Mezclar colores</translation>
     </message>
     <message>
         <source>Linetest</source>
-        <translation type="unfinished">Linetest</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Load As Sub-xsheet...</source>
-        <translation type="unfinished">&amp;Carica Come Sub-xsheet...</translation>
+        <translation>&amp;Cargar como sub-planilla...</translation>
     </message>
     <message>
         <source>&amp;Convert File...</source>
-        <translation type="unfinished">&amp;Convertire File...</translation>
+        <translation>&amp;Convertir archivo...</translation>
     </message>
     <message>
         <source>Run Script...</source>
-        <translation type="unfinished">Avviare Script...</translation>
+        <translation>Ejecutar script...</translation>
     </message>
     <message>
         <source>Open Script Console...</source>
-        <translation type="unfinished">Aprire Script Consolle...</translation>
+        <translation>Abrir consola de scripts...</translation>
     </message>
     <message>
         <source>&amp;Antialias...</source>
-        <translation type="unfinished">&amp;Antialias...</translation>
+        <translation>&amp;Suavizado de bordes...</translation>
     </message>
     <message>
         <source>Adjust Levels...</source>
-        <translation type="unfinished">Aggiustare Levels...</translation>
+        <translation>Ajustar niveles...</translation>
     </message>
     <message>
         <source>&amp;Raster Bounding Box</source>
-        <translation type="unfinished">&amp;Riquadro di Delimitazione Raster</translation>
+        <translation>&amp;Marco delimitador de imagen</translation>
     </message>
     <message>
         <source>Link Flipbooks</source>
-        <translation type="unfinished">Collegare Flipbooks</translation>
+        <translation>Vincular folioscopios</translation>
     </message>
     <message>
         <source>&amp;Message Center</source>
-        <translation type="unfinished">&amp;Centro Messaggi</translation>
+        <translation>&amp;Centro de mensajes</translation>
     </message>
     <message>
         <source>&amp;Cleanup Settings</source>
-        <translation type="unfinished">&amp;Impostazioni Cleanup</translation>
+        <translation>&amp;Opciones de limpieza</translation>
     </message>
     <message>
         <source>Plastic Tool</source>
-        <translation type="unfinished">Strumento Plastic</translation>
+        <translation>Plástico</translation>
     </message>
     <message>
         <source>Create Mesh</source>
-        <translation type="unfinished">Creare Mesh</translation>
+        <translation>Crear malla</translation>
     </message>
     <message>
         <source>&amp;Merge Tlv Levels...</source>
-        <translation type="unfinished">&amp;Fondere livelli TLV...</translation>
+        <translation>&amp;Fusionar niveles TLV...</translation>
     </message>
     <message>
         <source>&amp;Load Folder...</source>
-        <translation type="unfinished">&amp;Carica Cartella...</translation>
+        <translation>&amp;Cargar carpeta...</translation>
     </message>
     <message>
         <source>Toggle &amp;Opacity Check</source>
-        <translation type="unfinished">Toggle &amp;Controllo Opacità</translation>
+        <translation>Alternar control de &amp;opacidad</translation>
     </message>
     <message>
         <source>Adjust Thickness...</source>
-        <translation type="unfinished">Regolare Spessore...</translation>
+        <translation>Ajustar grosor...</translation>
     </message>
     <message>
         <source>Inks &amp;Only</source>
-        <translation type="unfinished">Solo &amp;Inchiostri</translation>
+        <translation>&amp;Solo tintas</translation>
     </message>
     <message>
         <source>Next Step</source>
-        <translation type="unfinished">Passo Successivo</translation>
+        <translation>Intervalo siguiente</translation>
     </message>
     <message>
         <source>Prev Step</source>
-        <translation type="unfinished">Passo Precedente</translation>
+        <translation>Intervalo anterior</translation>
     </message>
     <message>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin título</translation>
     </message>
     <message>
         <source>Cleanup</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpieza</translation>
     </message>
     <message>
         <source>PltEdit</source>
-        <translation type="unfinished"></translation>
+        <translation>EditarPlt</translation>
     </message>
     <message>
         <source>InknPaint</source>
-        <translation type="unfinished"></translation>
+        <translation>EntintadoyPintura</translation>
     </message>
     <message>
         <source>Xsheet</source>
-        <translation type="unfinished">Xsheet</translation>
+        <translation>Planilla</translation>
     </message>
     <message>
         <source>&amp;Load Recent Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cargar imágenes recientes</translation>
     </message>
     <message>
         <source>&amp;Clear Recent Flipbook Image List</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Limpiar lista de imágenes de folioscopio</translation>
     </message>
     <message>
         <source>Preview Fx</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsualizar efecto</translation>
     </message>
     <message>
         <source>&amp;Insert Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pegar (insertar)</translation>
     </message>
     <message>
         <source>&amp;Paste Color &amp;&amp; Name</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pegar color y nombre</translation>
     </message>
     <message>
         <source>Paste Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar color</translation>
     </message>
     <message>
         <source>Paste Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar nombre</translation>
     </message>
     <message>
         <source>Get Color from Studio Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtener color desde paleta de estudio</translation>
     </message>
     <message>
         <source>&amp;Opacity Check</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Comprobar opacidad</translation>
     </message>
     <message>
         <source>&amp;Replace Parent Directory...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reemplazar directorio superior...</translation>
     </message>
     <message>
         <source>1&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>1s</translation>
     </message>
     <message>
         <source>2&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>2s</translation>
     </message>
     <message>
         <source>3&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>3s</translation>
     </message>
     <message>
         <source>4&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>4s</translation>
     </message>
     <message>
         <source>&amp;Ink#1 Check</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Comprobar tinta № 1</translation>
     </message>
     <message>
         <source>Compare to Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Comparar con captura</translation>
     </message>
     <message>
         <source>Show This Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sólo esto</translation>
     </message>
     <message>
         <source>Show Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar seleccionado</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar todo</translation>
     </message>
     <message>
         <source>Hide Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar seleccionado</translation>
     </message>
     <message>
         <source>Hide All</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar todo</translation>
     </message>
     <message>
         <source>Toggle Show/Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar mostrar/ocultar</translation>
     </message>
     <message>
         <source>ON This Only</source>
@@ -4126,87 +4121,87 @@ Decrementa lo spessore minimo del pennello</translation>
     </message>
     <message>
         <source>Lock This Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear sólo esto</translation>
     </message>
     <message>
         <source>Lock Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear seleccionado</translation>
     </message>
     <message>
         <source>Lock All</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear todo</translation>
     </message>
     <message>
         <source>Unlock Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Desbloquear seleccionado</translation>
     </message>
     <message>
         <source>Unlock All</source>
-        <translation type="unfinished"></translation>
+        <translation>Desbloquear todo</translation>
     </message>
     <message>
         <source>Swap Lock/Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar bloquear/desbloquear</translation>
     </message>
     <message>
         <source>Ruler Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Regla</translation>
     </message>
     <message>
         <source>Finger Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Dedo</translation>
     </message>
     <message>
         <source>Brush size - Increase max</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño pincel - Aumentar máx.</translation>
     </message>
     <message>
         <source>Brush size - Decrease max</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño pincel - Disminuir máx.</translation>
     </message>
     <message>
         <source>Brush size - Increase min</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño pincel - Aumentar mín.</translation>
     </message>
     <message>
         <source>Brush size - Decrease min</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño pincel - Disminuir mín.</translation>
     </message>
     <message>
         <source>Brush hardness - Increase</source>
-        <translation type="unfinished"></translation>
+        <translation>Dureza pincel - Aumentar</translation>
     </message>
     <message>
         <source>Brush hardness - Decrease</source>
-        <translation type="unfinished"></translation>
+        <translation>Dureza pincel - Disminuir</translation>
     </message>
     <message>
         <source>Mode - Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo - Áreas</translation>
     </message>
     <message>
         <source>Mode - Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo - Líneas</translation>
     </message>
     <message>
         <source>Mode - Lines &amp; Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo - Líneas y áreas</translation>
     </message>
     <message>
         <source>Type - Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo - Normal</translation>
     </message>
     <message>
         <source>Type - Rectangular</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo - Rectangular</translation>
     </message>
     <message>
         <source>Type - Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo - A mano alzada</translation>
     </message>
     <message>
         <source>Type - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo - Línea poligonal</translation>
     </message>
 </context>
 <context>
@@ -4221,19 +4216,19 @@ Decrementa lo spessore minimo del pennello</translation>
     </message>
     <message>
         <source>Use Style: </source>
-        <translation type="unfinished">Usa Stile:</translation>
+        <translation>Usar estilo: </translation>
     </message>
     <message>
         <source>Line Prevalence</source>
-        <translation type="unfinished">Prevalenza di Linea</translation>
+        <translation>Prevalencia de línea</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Apply Match Lines</source>
@@ -4245,86 +4240,88 @@ Decrementa lo spessore minimo del pennello</translation>
     </message>
     <message>
         <source>Use Ink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Usar tinta: </translation>
     </message>
     <message>
         <source>Ink Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Uso de tinta</translation>
     </message>
     <message>
         <source>Line Stacking Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Orden de líneas</translation>
     </message>
     <message>
         <source>L-Up R-Down</source>
-        <translation type="unfinished"></translation>
+        <translation>I-arriba D-abajo</translation>
     </message>
     <message>
         <source>L-Down R-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>I-abajo D-arriba</translation>
     </message>
     <message>
         <source>Keep
 Halftone</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantener
+Semitono</translation>
     </message>
     <message>
         <source>Fill
 Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>Rellenar
+Huecos</translation>
     </message>
 </context>
 <context>
     <name>MergeCmappedCommand</name>
     <message>
         <source>It is not possible to merge tlv columns because no column was selected.</source>
-        <translation type="unfinished">Non è possibile fondere le colonne perchè non ci sono colonne selezionate.</translation>
+        <translation>No es posible fusionar columnas TLV porque no se ha seleccionado ninguna.</translation>
     </message>
     <message>
         <source>It is not possible to merge tlv columns because at least two columns have to be selected.</source>
-        <translation type="unfinished">Non è possibile fondere le colonne perchè devono essere selezionate due colonne.</translation>
+        <translation>No es posible fusionar columnas TLV porque se deben seleccionar al menos dos de ellas.</translation>
     </message>
     <message>
         <source>Merging Tlv Levels...</source>
-        <translation type="unfinished">Fusiome livelli Tlv in corso...</translation>
+        <translation>Fusionando niveles TLV...</translation>
     </message>
 </context>
 <context>
     <name>MergeCmappedDialog</name>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source> Merge Tlv Levels</source>
-        <translation type="unfinished">Fondere livelli Tlv</translation>
+        <translation>Fusionar niveles TLV</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva in:</translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Nome del File:</translation>
+        <translation>Nombre de archivo:</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
     <name>MergeColumnsCommand</name>
     <message>
         <source>It is not possible to execute the merge column command because no column was selected.</source>
-        <translation type="unfinished">Impossibile eseguire il comando unisci colonne poichè nessuna colonna è stata selezionata.</translation>
+        <translation>No es posible ejecutar el comando de fusión de columnas porque no se seleccionó ninguna.</translation>
     </message>
     <message>
         <source>It is not possible to execute the merge column command  because only one columns is  selected.</source>
-        <translation type="unfinished">Impossibile eseguire il comando unisci colonne poichè è stata selezionata una sola colonna.</translation>
+        <translation>No es posible ejecutar el comando de fusión de columnas porque solo hay una seleccionada.</translation>
     </message>
 </context>
 <context>
@@ -4332,733 +4329,733 @@ Gaps</source>
     <message>
         <source>A level with the preferred path &quot;%1&quot; already exists.
 What do you want to do?</source>
-        <translation type="unfinished">Un livello con il percorso &quot;%1&quot; esiste già.
-Cosa vuoi fare?</translation>
+        <translation>Ya existe un nivel con la ruta indicada &quot;%1&quot;.
+¿Qué se desea hacer?</translation>
     </message>
     <message>
         <source>Delete the old level entirely</source>
-        <translation type="unfinished">Cancellare completamente il vecchio livello.</translation>
+        <translation>Borrar completamente el antiguo nivel</translation>
     </message>
     <message>
         <source>Keep the old level and overwrite processed frames</source>
-        <translation type="unfinished">mantenere il vecchio livello e sovrascrivere i disegni processati.</translation>
+        <translation>Mantener el antiguo nivel sobrescribiendo los fotogramas procesados</translation>
     </message>
     <message>
         <source>Choose a different path (%1)</source>
-        <translation type="unfinished">Sceglere un percorso differente (%1)</translation>
+        <translation>Escoger una ruta distinta (%1)</translation>
     </message>
     <message>
         <source>Create Mesh</source>
-        <translation type="unfinished">Creare Mesh</translation>
+        <translation>Crear malla</translation>
     </message>
     <message>
         <source>Mesh Edges Length:</source>
-        <translation type="unfinished">Lunghezza Bordi Mesh:</translation>
+        <translation>Longitud bordes malla:</translation>
     </message>
     <message>
         <source>Rasterization DPI:</source>
-        <translation type="unfinished">DPI Rasterizzazione:</translation>
+        <translation>PPP de conv. a imagen:</translation>
     </message>
     <message>
         <source>Mesh Margin (pixels):</source>
-        <translation type="unfinished">Margine Mesh (pixels):</translation>
+        <translation>Margen de malla (píxeles):</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <source>Mesh Creation in progress...</source>
-        <translation type="unfinished">Creazione Mesh in corso...</translation>
+        <translation>Creación de malla en curso...</translation>
     </message>
     <message>
         <source>Current selection contains mixed image and mesh level types</source>
-        <translation type="unfinished">La selezione corrente contiene immagini e livelli di tipo mesh</translation>
+        <translation>La selección actual contiene niveles de imagen y malla mezclados</translation>
     </message>
     <message>
         <source>Current selection contains no image or mesh level types</source>
-        <translation type="unfinished">La selezione corrente non contiene immagini o livelli di tipo mesh</translation>
+        <translation>La selección actual no contiene niveles de imagen o malla</translation>
     </message>
 </context>
 <context>
     <name>MyScannerListener</name>
     <message>
         <source>Scanning in progress: </source>
-        <translation type="unfinished">Scansione in corso:</translation>
+        <translation>Escaneo en curso: </translation>
     </message>
     <message>
         <source>The pixel type is not supported.</source>
-        <translation type="unfinished">Il tipo di pixel non è supportato.</translation>
+        <translation>El tipo de píxel no es soportado.</translation>
     </message>
     <message>
         <source>The scanning process is completed.</source>
-        <translation type="unfinished">Il processo di scansione è stato completato</translation>
+        <translation>El proceso de escaneo se ha completado.</translation>
     </message>
     <message>
         <source>There was an error during the scanning process.</source>
-        <translation type="unfinished">C&apos;è stato un errore durante il processo di scansione.</translation>
+        <translation>Se produjo un error durante el proceso de escaneo.</translation>
     </message>
     <message>
         <source>Please, place the next paper drawing on the scanner flatbed, then select the relevant command in the TWAIN interface.</source>
-        <translation type="unfinished">Per favore, posizionare il prossimo foglio di carta sul piatto dello scanner e scegliere il comando pertinente nell&apos;interfaccia TWAIN.</translation>
+        <translation>Por favor, colocar la hoja con el siguiente dibujo en el escaner, luego seleccionar el comando apropiado en la interfaz TWAIN.</translation>
     </message>
     <message>
         <source>Please, place the next paper drawing on the scanner flatbed, then click the Scan button.</source>
-        <translation type="unfinished">Per favore, posizionare il prossimo foglio di carta sul piatto dello scanner e premere il bottone Scan.</translation>
+        <translation>Por favor, colocar la hoja con el siguiente dibujo en el escaner, luego hacer clic en el botón Escanear.</translation>
     </message>
 </context>
 <context>
     <name>OutputSettingsPopup</name>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">Salva in:</translation>
+        <translation>Guardar en:</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Nome del File:</translation>
+        <translation>Nombre del archivo:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Opzioni</translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <source>File Format:</source>
-        <translation type="unfinished">Formato del File:</translation>
+        <translation>Formato de archivo:</translation>
     </message>
     <message>
         <source>Output Camera:</source>
-        <translation type="unfinished">Camera di Uscita:</translation>
+        <translation>Cámara de salida:</translation>
     </message>
     <message>
         <source>Use Sub-Camera</source>
-        <translation type="unfinished">Utilizzare la Sotto-Camera</translation>
+        <translation>Usar sub-cámara</translation>
     </message>
     <message>
         <source>To Frame:</source>
-        <translation type="unfinished">Al Frame:</translation>
+        <translation>Hasta fotograma:</translation>
     </message>
     <message>
         <source>From Frame:</source>
-        <translation type="unfinished">Dal Frame:</translation>
+        <translation>Desde fotograma:</translation>
     </message>
     <message>
         <source>Shrink:</source>
-        <translation type="unfinished">Riduzione:</translation>
+        <translation>Reducción:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <source>Fx Schematic Flows</source>
-        <translation type="unfinished">Flussi del Diagramma degli effetti</translation>
+        <translation>Flujos del diagrama de efectos</translation>
     </message>
     <message>
         <source>Fx Schematic Terminal Nodes</source>
-        <translation type="unfinished">Nodi Terminali del Diagramma degli effetti</translation>
+        <translation>Nodos terminales del diagrama de efectos</translation>
     </message>
     <message>
         <source>Multiple Rendering: </source>
-        <translation type="unfinished">Render Multiplo:</translation>
+        <translation>Procesamiento múltiple: </translation>
     </message>
     <message>
         <source>Apply Shrink to Main Viewer</source>
-        <translation type="unfinished">Applica la Riduzione al Visualizzatore Principale</translation>
+        <translation>Aplicar reducción a la vista principal</translation>
     </message>
     <message>
         <source>Standard</source>
-        <translation type="unfinished">Standard</translation>
+        <translation>Estándar</translation>
     </message>
     <message>
         <source>Improved</source>
-        <translation type="unfinished">Migliorata</translation>
+        <translation>Mejorada</translation>
     </message>
     <message>
         <source>High</source>
-        <translation type="unfinished">Alta</translation>
+        <translation>Alta</translation>
     </message>
     <message>
         <source>Resample Balance:</source>
-        <translation type="unfinished">Bilanciamento del Ricampionamento:</translation>
+        <translation>Balance del remuestreo:</translation>
     </message>
     <message>
         <source>Channel Width:</source>
-        <translation type="unfinished">Larghezza del canale:</translation>
+        <translation>Ancho del canal:</translation>
     </message>
     <message>
         <source>Gamma:</source>
-        <translation type="unfinished">Gamma:</translation>
+        <translation>Gama:</translation>
     </message>
     <message>
         <source>Odd (NTSC)</source>
-        <translation type="unfinished">Dispari (NTSC)</translation>
+        <translation>Impar (NTSC)</translation>
     </message>
     <message>
         <source>Even (PAL)</source>
-        <translation type="unfinished">Pari (PAL)</translation>
+        <translation>Par (PAL)</translation>
     </message>
     <message>
         <source>Dominant Field:</source>
-        <translation type="unfinished">Field Dominante:</translation>
+        <translation>Campo dominante:</translation>
     </message>
     <message>
         <source>to FPS:</source>
-        <translation type="unfinished">a FPS:</translation>
+        <translation>a FPS:</translation>
     </message>
     <message>
         <source>Stretch from FPS:</source>
-        <translation type="unfinished">Estendi dal FPS:</translation>
+        <translation>Estirar de FPS:</translation>
     </message>
     <message>
         <source>Single</source>
-        <translation type="unfinished">Singola</translation>
+        <translation>Uno solo</translation>
     </message>
     <message>
         <source>Half</source>
-        <translation type="unfinished">Metà</translation>
+        <translation>La mitad</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Tutte</translation>
+        <translation>Todos</translation>
     </message>
     <message>
         <source>Dedicated CPUs:</source>
-        <translation type="unfinished">CPU Dedicate:</translation>
+        <translation>Procesadores dedicados:</translation>
     </message>
     <message>
         <source>Large</source>
-        <translation type="unfinished">Grandi</translation>
+        <translation>Grandes</translation>
     </message>
     <message>
         <source>Medium</source>
-        <translation type="unfinished">Medi</translation>
+        <translation>Medianas</translation>
     </message>
     <message>
         <source>Small</source>
-        <translation type="unfinished">Piccoli</translation>
+        <translation>Pequeñas</translation>
     </message>
     <message>
         <source>Render Tile:</source>
-        <translation type="unfinished">Render a Quadrati:</translation>
+        <translation>Celdas de procesamiento:</translation>
     </message>
     <message>
         <source>Preview Settings</source>
-        <translation type="unfinished">Parametri per l&apos;Anteprima</translation>
+        <translation>Opciones de previsualización</translation>
     </message>
     <message>
         <source>Output Settings</source>
-        <translation type="unfinished">Parametri di Render</translation>
+        <translation>Opciones de salida</translation>
     </message>
     <message>
         <source>8 bits</source>
-        <translation type="unfinished">8 bit</translation>
+        <translation>8 bits</translation>
     </message>
     <message>
         <source>16 bits</source>
-        <translation type="unfinished">16 bit</translation>
+        <translation>16 bits</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished">Colonne</translation>
+        <translation>Columnas</translation>
     </message>
     <message>
         <source>Camera Shift:</source>
-        <translation type="unfinished">Spostamento Camera:</translation>
+        <translation>Desplazamiento de cámara:</translation>
     </message>
     <message>
         <source>Stereoscopic Render:</source>
-        <translation type="unfinished">Render Stereoscopico:</translation>
+        <translation>Procesamiento estereoscópico:</translation>
     </message>
     <message>
         <source>Camera Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de cámara</translation>
     </message>
     <message>
         <source>File Settings</source>
-        <translation type="unfinished">Impostazioni del File</translation>
+        <translation>Opciones de archivo</translation>
     </message>
     <message>
         <source>Other Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Otras opciones</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Agregar</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <source>Triangle filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro triangular</translation>
     </message>
     <message>
         <source>Mitchell-Netravali filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro Mitchell-Netravali</translation>
     </message>
     <message>
         <source>Cubic convolution, a = .5</source>
-        <translation type="unfinished"></translation>
+        <translation>Circunvolución cúbica, a = 0,5</translation>
     </message>
     <message>
         <source>Cubic convolution, a = .75</source>
-        <translation type="unfinished"></translation>
+        <translation>Circunvolución cúbica, a = 0,75</translation>
     </message>
     <message>
         <source>Cubic convolution, a = 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Circunvolución cúbica, a = 1</translation>
     </message>
     <message>
         <source>Hann window, rad = 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Hann, rad = 2</translation>
     </message>
     <message>
         <source>Hann window, rad = 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Hann, rad = 3</translation>
     </message>
     <message>
         <source>Hamming window, rad = 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Hamming, rad = 2</translation>
     </message>
     <message>
         <source>Hamming window, rad = 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Hamming, rad = 3</translation>
     </message>
     <message>
         <source>Lanczos window, rad = 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Lanczos, rad = 2</translation>
     </message>
     <message>
         <source>Lanczos window, rad = 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana Lanczos, rad = 3</translation>
     </message>
     <message>
         <source>Gaussian convolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Circunvolución Gaussiana</translation>
     </message>
     <message>
         <source>Closest Pixel (Nearest Neighbor)</source>
-        <translation type="unfinished"></translation>
+        <translation>Píxel más cercano</translation>
     </message>
     <message>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilineal</translation>
     </message>
     <message>
         <source>8 bit</source>
-        <translation type="unfinished"></translation>
+        <translation>8 bits</translation>
     </message>
     <message>
         <source>16 bit</source>
-        <translation type="unfinished"></translation>
+        <translation>16 bits</translation>
     </message>
     <message>
         <source>Presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes:</translation>
     </message>
     <message>
         <source>Frame Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotograma de inicio:</translation>
     </message>
     <message>
         <source>End:</source>
-        <translation type="unfinished">Fine:</translation>
+        <translation>Fin:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Frame Rate (linked to Scene Settings):</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de fotogramas (vinculado a opciones de escena):</translation>
     </message>
     <message>
         <source>  To:</source>
-        <translation type="unfinished"></translation>
+        <translation>  Hasta:</translation>
     </message>
     <message>
         <source>Multiple Rendering:</source>
-        <translation type="unfinished">Render Multiplo:</translation>
+        <translation>Procesamiento múltiple:</translation>
     </message>
     <message>
         <source>Add preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar ajuste</translation>
     </message>
     <message>
         <source>Enter the name for the output settings preset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingresar el nombre del ajuste de opciones de salida.</translation>
     </message>
     <message>
         <source>Add output settings preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar ajuste de opciones de salida</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;personalizado&gt;</translation>
     </message>
     <message>
         <source>Remove preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover ajuste</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Advertencia</translation>
     </message>
 </context>
 <context>
     <name>OverwriteDialog</name>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished">Attenzione!</translation>
+        <translation>¡Advertencia!</translation>
     </message>
     <message>
         <source>Keep existing file</source>
-        <translation type="unfinished">Mantieni i file esistenti</translation>
+        <translation>Mantener el archivo existente</translation>
     </message>
     <message>
         <source>Overwrite the existing file with the new one</source>
-        <translation type="unfinished">Sovrascrivi il file esistente con quello nuovo</translation>
+        <translation>Sobrescribir el archivo existente con el nuevo</translation>
     </message>
     <message>
         <source>Rename the new file adding the suffix</source>
-        <translation type="unfinished">Rinomina il nuovo file aggiugendo il suffisso</translation>
+        <translation>Renombrar el nuevo archivo agregándole el sufijo</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <source>Apply to All</source>
-        <translation type="unfinished">Applica a Tutto</translation>
+        <translation>Aplicar a todo</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>File %1 already exists.
 What do you want to do?</source>
-        <translation type="unfinished">Il file %1 esiste già.
-Cosa vuoi fare?</translation>
+        <translation>El archivo %1 ya existe.
+¿Qué se desea hacer?</translation>
     </message>
     <message>
         <source>The suffix field is empty. Please specify a suffix.</source>
-        <translation type="unfinished">Il campo del suffisso è vuoto. Specificare un suffisso.</translation>
+        <translation>El campo de sufijo se encuentra vacío. Por favor especificar uno.</translation>
     </message>
     <message>
         <source>File %1 exists as well; please choose a different suffix.</source>
-        <translation type="unfinished">Anche il file %1 esiste; si prega di selezionare un suffisso diverso.</translation>
+        <translation>El archivo %1 también existe; por favor escoger un sufijo distinto.</translation>
     </message>
     <message>
         <source>Level &quot;%1&quot; already exists.
 
 What do you want to do?</source>
-        <translation type="unfinished">Il livello &quot;%1&quot; esiste già-
+        <translation>El nivel &quot;%1&quot; ya existe.
 
-Cosa vuoi fare?</translation>
+¿Qué se desea hacer?</translation>
     </message>
     <message>
         <source>Overwrite</source>
-        <translation type="unfinished">Sovrascrivi</translation>
+        <translation>Sobrescribir</translation>
     </message>
     <message>
         <source>Skip</source>
-        <translation type="unfinished">Salta</translation>
+        <translation>Omitir</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished">Il file &quot;%1&quot; esiste già.
-Lo vuoi sovrascrivere?</translation>
+        <translation>El archivo &quot;%1&quot; ya existe.
+¿Se desea sobrescribirlo?</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; already exists.
 What do you want to do?</source>
-        <translation type="unfinished">Il file &quot;%1&quot; esiste già.
-Cosa vuoi fare?</translation>
+        <translation>El archivo &quot;%1&quot; ya existe.
+¿Qué se desea hacer?</translation>
     </message>
 </context>
 <context>
     <name>PltGizmoPopup</name>
     <message>
         <source>Palette Gizmo</source>
-        <translation type="unfinished">Palette Gizmo</translation>
+        <translation>Control de paleta</translation>
     </message>
     <message>
         <source>Luminance:</source>
-        <translation type="unfinished">Luminanza:</translation>
+        <translation>Luminancia:</translation>
     </message>
     <message>
         <source>Saturation:</source>
-        <translation type="unfinished">Saturazione:</translation>
+        <translation>Saturación:</translation>
     </message>
     <message>
         <source>Hue:</source>
-        <translation type="unfinished">Tinta:</translation>
+        <translation>Tono:</translation>
     </message>
     <message>
         <source>Transparency:</source>
-        <translation type="unfinished">Trasparenza:</translation>
+        <translation>Transparencia:</translation>
     </message>
     <message>
         <source>Fade to Color</source>
-        <translation type="unfinished">Sfuma verso il Colore</translation>
+        <translation>Desvanecer a un color</translation>
     </message>
     <message>
         <source>              Color:</source>
-        <translation type="unfinished">              Colore:</translation>
+        <translation>              Color:</translation>
     </message>
     <message>
         <source>Fade</source>
-        <translation type="unfinished">Sfuma</translation>
+        <translation>Desvanecer</translation>
     </message>
     <message>
         <source>Blend</source>
-        <translation type="unfinished">Miscelare</translation>
+        <translation>Mezclar</translation>
     </message>
     <message>
         <source>Full Matte</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad total</translation>
     </message>
     <message>
         <source>Zero Matte</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad nula</translation>
     </message>
     <message>
         <source>Scale (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala (%)</translation>
     </message>
     <message>
         <source>Shift (value)</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento (valor)</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valor</translation>
     </message>
     <message>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturación</translation>
     </message>
     <message>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Tono</translation>
     </message>
     <message>
         <source>Matte</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">A Colori</translation>
+        <translation>Color</translation>
     </message>
 </context>
 <context>
     <name>PreferencesPopup</name>
     <message>
         <source>Preferences</source>
-        <translation type="unfinished">Preferenze</translation>
+        <translation>Preferencias</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Use Default Viewer for Movie Formats</source>
-        <translation type="unfinished">Usa il Visualizzatore Predefinito per i Formati Video</translation>
+        <translation>Usar la vista predefinida para formatos de película</translation>
     </message>
     <message>
         <source>Minimize Raster Memory Fragmentation*</source>
-        <translation type="unfinished">Minimizza la Frammentazione della Memoria Raster*</translation>
+        <translation>Minimizar fragmentación de memoria de imágenes*</translation>
     </message>
     <message>
         <source>Save Automatically Every Minutes</source>
-        <translation type="unfinished">Salva Automaticamente Ogni Minuti</translation>
+        <translation>Guardar automáticamente cada minutos</translation>
     </message>
     <message>
         <source>Backup Animation Levels when Saving</source>
-        <translation type="unfinished">Crea una Copia dei Livelli di Animazione durante il Salvataggio</translation>
+        <translation>Respaldar niveles de animación al guardar</translation>
     </message>
     <message>
         <source>Cells Only</source>
-        <translation type="unfinished">Solo Celle</translation>
+        <translation>Solo acetatos</translation>
     </message>
     <message>
         <source>Cells and Column Data</source>
-        <translation type="unfinished">Celle e Colonne</translation>
+        <translation>Acetatos y datos de columna</translation>
     </message>
     <message>
         <source>Cell-dragging Behaviour:</source>
-        <translation type="unfinished">Comportamento del Trascinamento delle Celle:</translation>
+        <translation>Comportamiento de arrastre de acetatos:</translation>
     </message>
     <message>
         <source>Interface</source>
-        <translation type="unfinished">Interfaccia</translation>
+        <translation>Interfaz</translation>
     </message>
     <message>
         <source>Style:</source>
-        <translation type="unfinished">Stile:</translation>
+        <translation>Estilo:</translation>
     </message>
     <message>
         <source>Open Flipbook after Rendering</source>
-        <translation type="unfinished">Apri il Flipbook dopo il Render</translation>
+        <translation>Abrir folioscopio luego del procesamiento</translation>
     </message>
     <message>
         <source>Unit:</source>
-        <translation type="unfinished">Unità:</translation>
+        <translation>Unidades:</translation>
     </message>
     <message>
         <source>Camera Unit:</source>
-        <translation type="unfinished">Unità della Camera:</translation>
+        <translation>Unidades de la cámara:</translation>
     </message>
     <message>
         <source>Flipbook Shrink:</source>
-        <translation type="unfinished">Riduzione del Flipbook:</translation>
+        <translation>Reducir folioscopio:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="unfinished">Passo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Height*:</source>
-        <translation type="unfinished">Altezza*:</translation>
+        <translation>Altura*:</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished">Caricamento</translation>
+        <translation>Cargando</translation>
     </message>
     <message>
         <source>Expose Loaded Levels in Xsheet</source>
-        <translation type="unfinished">Esponi i Livelli Caricati nell&apos;Xsheet</translation>
+        <translation>Exponer niveles cargados en planilla</translation>
     </message>
     <message>
         <source>Create Sub-folder when Importing Sub-xsheet</source>
-        <translation type="unfinished">Crea una Sotto-cartella quando Importi un Sub-xsheet</translation>
+        <translation>Crear sub-carpeta al importar sub-planilla</translation>
     </message>
     <message>
         <source>Drawing</source>
-        <translation type="unfinished">Disegno</translation>
+        <translation>Dibujo</translation>
     </message>
     <message>
         <source>Keep Original Cleaned Up Drawings As Backup</source>
-        <translation type="unfinished">Mantieni i Disegni Processati Come BackUp</translation>
+        <translation>Mantener los dibujos originales limpios como respaldo</translation>
     </message>
     <message>
         <source>Animation</source>
-        <translation type="unfinished">Animazione</translation>
+        <translation>Animación</translation>
     </message>
     <message>
         <source>Default Interpolation: </source>
-        <translation type="unfinished">Interpolazione Predefinita:</translation>
+        <translation>Interpolación predefinida:</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation type="unfinished">Lineare</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <source>Speed In / Speed Out</source>
-        <translation type="unfinished">Speed In / Speed Out</translation>
+        <translation>Aceleración / Desaceleración rápida</translation>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation type="unfinished">Ease In / Ease Out</translation>
+        <translation>Aceleración / Desaceleración suave</translation>
     </message>
     <message>
         <source>Ease In / Ease Out %</source>
-        <translation type="unfinished">Ease In / Ease Out %</translation>
+        <translation>Aceleración / Desaceleración suave %</translation>
     </message>
     <message>
         <source>Animation Step:</source>
-        <translation type="unfinished">Step di Animazione:</translation>
+        <translation>Intervalo de animación:</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">Anteprima</translation>
+        <translation>Previsualización</translation>
     </message>
     <message>
         <source>Blank Frames:</source>
-        <translation type="unfinished">Fotogrammi Vuoti:</translation>
+        <translation>Fotogramas en blanco:</translation>
     </message>
     <message>
         <source>Blank Frames Color:</source>
-        <translation type="unfinished">Colore dei Fotogrammi Vuoti:</translation>
+        <translation>Color de fotogramas en blanco:</translation>
     </message>
     <message>
         <source>Display in a New Flipbook Window</source>
-        <translation type="unfinished">Mostra in una Nuova Finestra di Flipbook</translation>
+        <translation>Mostrar en nueva ventana de folioscopio</translation>
     </message>
     <message>
         <source>Rewind after Playback</source>
-        <translation type="unfinished">Riavvolgi alla fine della Riproduzione</translation>
+        <translation>Retroceder después de reproducir</translation>
     </message>
     <message>
         <source>Onion Skin</source>
-        <translation type="unfinished">Onion Skin</translation>
+        <translation>Piel de cebolla</translation>
     </message>
     <message>
         <source>   Following Frames Correction: </source>
-        <translation type="unfinished">  Correzione dei Fotogrammi Successivi:</translation>
+        <translation>   Corrección de fotogramas siguientes: </translation>
     </message>
     <message>
         <source>   Previous  Frames Correction: </source>
-        <translation type="unfinished">  Correzione dei Fotogrammi Precedenti:</translation>
+        <translation>   Corrección de fotogramas anteriores: </translation>
     </message>
     <message>
         <source>Display Lines Only </source>
-        <translation type="unfinished">Mostra solo le Linee</translation>
+        <translation>Sólo mostrar líneas</translation>
     </message>
     <message>
         <source>Version Control</source>
-        <translation type="unfinished">Controllo di Versione</translation>
+        <translation>Control de versiones</translation>
     </message>
     <message>
         <source>Automatically Refresh Folder Contents</source>
-        <translation type="unfinished">Aggiorna Automaticamente i Contenuti della Cartella</translation>
+        <translation>Actualizar contenido de carpeta automáticamente</translation>
     </message>
     <message>
         <source>Undo Memory Size (MB):</source>
-        <translation type="unfinished">Quantità di Memoria Dedicata all&apos;Annullamento (MB):</translation>
+        <translation>Tamaño de memoria de deshacer (MB):</translation>
     </message>
     <message>
         <source>Render Task Chunk Size:</source>
-        <translation type="unfinished">Dimensione degli Spezzoni dei Task di Render</translation>
+        <translation>Tamaño de porción de tarea de procesamiento:</translation>
     </message>
     <message>
         <source>Show Info in Rendered Frames</source>
-        <translation type="unfinished">Mostra le Informazioni sui Fotogrammi Renderizzati</translation>
+        <translation>Mostrar información en fotogramas procesados</translation>
     </message>
     <message>
         <source>*Changes will take effect the next time you run Toonz</source>
-        <translation type="unfinished">*I cambiamenti avranno effetto la prossima volta che Toonz verrà avviato.</translation>
+        <translation>*Los cambios entrarán en efecto la próxima vez que Toonz sea ejecutado.</translation>
     </message>
     <message>
         <source>Language*:</source>
-        <translation type="unfinished">Lingua*:</translation>
+        <translation>Idioma*:</translation>
     </message>
     <message>
         <source>cm</source>
-        <translation type="unfinished">cm</translation>
+        <translation>cm</translation>
     </message>
     <message>
         <source>mm</source>
-        <translation type="unfinished">mm</translation>
+        <translation>mm</translation>
     </message>
     <message>
         <source>inch</source>
-        <translation type="unfinished">pollici</translation>
+        <translation>pulgada</translation>
     </message>
     <message>
         <source>field</source>
-        <translation type="unfinished">field</translation>
+        <translation>campo</translation>
     </message>
     <message>
         <source>Xsheet Autopan during Playback</source>
-        <translation type="unfinished">Autopan dell&apos;Xsheet durante la Riproduzione</translation>
+        <translation>Desplazamiento automático de planilla al reproducir</translation>
     </message>
     <message>
         <source>Level Strip Frames Width*:</source>
@@ -5066,39 +5063,39 @@ Cosa vuoi fare?</translation>
     </message>
     <message>
         <source>Capture</source>
-        <translation type="unfinished">Acquisizione</translation>
+        <translation>Captura</translation>
     </message>
     <message>
         <source>        Frame Rate:</source>
-        <translation type="unfinished">          Numero di Fotogrammi al Secondo:</translation>
+        <translation>        Velocidad de fotogramas:</translation>
     </message>
     <message>
         <source>Scan File Format:</source>
-        <translation type="unfinished">Formato Scannerizzazione File:</translation>
+        <translation>Formato de archivo para escaneo:</translation>
     </message>
     <message>
         <source>Default Level Type:</source>
-        <translation type="unfinished">Tipo Livello Predefinito:</translation>
+        <translation>Tipo de nivel predefinido:</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Ancho:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>DPI:</source>
-        <translation type="unfinished">DPI:</translation>
+        <translation>PPP:</translation>
     </message>
     <message>
         <source>Autocreation:</source>
-        <translation type="unfinished">Autocreazione:</translation>
+        <translation>Creación automática:</translation>
     </message>
     <message>
         <source>Minimize Savebox after Editing</source>
-        <translation type="unfinished">Minimizza Savebox dopo la modifica</translation>
+        <translation type="unfinished">Minimizar marco de guardado luego de editar</translation>
     </message>
     <message>
         <source>Use the TLV Savebox to Limit Filling Operations</source>
@@ -5106,67 +5103,67 @@ Cosa vuoi fare?</translation>
     </message>
     <message>
         <source>Paper Thickness:</source>
-        <translation type="unfinished">Spessore Carta:</translation>
+        <translation>Grosor del papel:</translation>
     </message>
     <message>
         <source>Enable Version Control *</source>
-        <translation type="unfinished">Abilita Controllo Vesione *</translation>
+        <translation>Habilitar control de versiones *</translation>
     </message>
     <message>
         <source>Transparency Check</source>
-        <translation type="unfinished">Controllo della Trasparenza</translation>
+        <translation>Comprobar transparencia</translation>
     </message>
     <message>
         <source>   Ink Color on White Bg: </source>
-        <translation type="unfinished">Colore Inchiostro su Fondo Bianco:</translation>
+        <translation>   Color de tinta sobre fondo blanco: </translation>
     </message>
     <message>
         <source>   Ink Color on Black Bg: </source>
-        <translation type="unfinished">Colore Inchiostro su Fondo Nero:</translation>
+        <translation>   Color de tinta sobre fondo negro: </translation>
     </message>
     <message>
         <source> Paint Color: </source>
-        <translation type="unfinished">Colore Riempimento:</translation>
+        <translation> Color a pintar: </translation>
     </message>
     <message>
         <source>Fit to Flipbook</source>
-        <translation type="unfinished">Adatta al Flipbook</translation>
+        <translation>Ajustar a folioscopio</translation>
     </message>
     <message>
         <source>New Level Format</source>
-        <translation type="unfinished">Nuovo Formato Livello</translation>
+        <translation>Formato de nuevo nivel</translation>
     </message>
     <message>
         <source>Assign the new level format name:</source>
-        <translation type="unfinished">Assegna un nome al nuovo Formato di Livello:</translation>
+        <translation>Asignar formato al nombre del nuevo nivel:</translation>
     </message>
     <message>
         <source>New Format</source>
-        <translation type="unfinished">Nuovo Formato</translation>
+        <translation>Nuevo formato</translation>
     </message>
     <message>
         <source>Visualization</source>
-        <translation type="unfinished">Visualizzazione</translation>
+        <translation>Visualización</translation>
     </message>
     <message>
         <source>Show Lines with Thickness 0</source>
-        <translation type="unfinished">Mostra le linee con spessore 0</translation>
+        <translation>Mostrar líneas con grosor 0</translation>
     </message>
     <message>
         <source>Antialiased region boundaries</source>
-        <translation type="unfinished">Limiti Regioni Antialiasate</translation>
+        <translation>Límites de región con suavizado de bordes</translation>
     </message>
     <message>
         <source>Level Settings by File Format:</source>
-        <translation type="unfinished">Impostazioni di Livello per Formato File:</translation>
+        <translation>Opciones de nivel por formato de archivo:</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Xsheet</source>
-        <translation type="unfinished">Xsheet</translation>
+        <translation>Planilla</translation>
     </message>
     <message>
         <source>Next/Previous Step Frames:</source>
