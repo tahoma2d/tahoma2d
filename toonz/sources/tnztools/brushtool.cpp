@@ -1398,15 +1398,9 @@ bool BrushTool::onPropertyChanged(string propertyName)
 
 			m_minThick = m_thickness.getValue().first;
 			m_maxThick = m_thickness.getValue().second;
-		}
-
-		if (m_preset.getValue() != CUSTOM_WSTR)
-			m_preset.setValue(CUSTOM_WSTR);
-
+		}		
 	} else if (propertyName == m_accuracy.getName()) {
 		BrushAccuracy = m_accuracy.getValue();
-		if (m_preset.getValue() != CUSTOM_WSTR)
-			m_preset.setValue(CUSTOM_WSTR);
 	} else if (propertyName == m_preset.getName()) {
 		loadPreset();
 		notifyTool = true;
@@ -1441,7 +1435,7 @@ bool BrushTool::onPropertyChanged(string propertyName)
 		}
 	}
 
-	if (m_preset.getValue() != CUSTOM_WSTR) {
+	if (propertyName != m_preset.getName() && m_preset.getValue() != CUSTOM_WSTR) {
 		m_preset.setValue(CUSTOM_WSTR);
 		notifyTool = true;
 	}
