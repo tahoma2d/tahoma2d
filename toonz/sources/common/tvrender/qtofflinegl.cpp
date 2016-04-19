@@ -225,12 +225,6 @@ void QtOfflineGL::getRaster(TRaster32P raster)
 
 	raster->lock();
 	raster->copy( TRaster32P(lx, ly, m_fbo->width(), (TPixelRGBM32 *)m_fbo->toImage(false).bits(), false) );
-
-#ifdef WIN32
-	swapRedBlueChannels(raster->getRawData(), lx * ly);
-#elif MACOSX
-	//rightRotateBits(raster->getRawData(), lx * ly);
-#endif
 	raster->unlock();
 }
 
