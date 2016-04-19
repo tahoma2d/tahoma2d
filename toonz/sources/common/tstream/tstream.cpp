@@ -262,7 +262,7 @@ TOStream::TOStream(std::shared_ptr<Imp> imp)
 {
 	assert(!m_imp->m_tagStack.empty());
 	ostream &os = *m_imp->m_os;
-	if (m_imp->m_justStarted == false)
+	if (!m_imp->m_justStarted)
 		cr();
 	os << "<" << m_imp->m_tagStack.back() << ">";
 	m_imp->m_tab++;
@@ -270,10 +270,26 @@ TOStream::TOStream(std::shared_ptr<Imp> imp)
 	m_imp->m_justStarted = true;
 }
 
+TOStream::TOStream(TOStream&& that)
+	: m_imp(std::move(that.m_imp))
+{
+}
+
+TOStream& TOStream::operator = (TOStream && that)
+{
+	if (this != &that) {
+		this->m_imp = std::move(that.m_imp);
+	}
+	return *this;
+}
+
 //---------------------------------------------------------------
 
 TOStream::~TOStream()
 {
+	if (!m_imp) {
+		return;
+	}
 	try {
 		if (!m_imp->m_tagStack.empty()) {
 			string tagName = m_imp->m_tagStack.back();
@@ -501,7 +517,7 @@ TOStream TOStream::child(string tagName)
 {
 	assert(tagName != "");
 	m_imp->m_tagStack.push_back(tagName);
-	return m_imp;
+	return TOStream(m_imp);
 }
 
 //---------------------------------------------------------------

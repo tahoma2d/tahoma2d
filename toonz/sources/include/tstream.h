@@ -171,7 +171,10 @@ class DVAPI TOStream
 	std::shared_ptr<Imp> m_imp;
 
 private:
-	TOStream(std::shared_ptr<Imp> imp); //!< deprecated
+	explicit TOStream(std::shared_ptr<Imp> imp); //!< deprecated
+
+	TOStream(TOStream &&);
+	TOStream& operator=(TOStream &&);
 
 public:
 	/*!
@@ -238,7 +241,7 @@ public:
 
 private:
 	// Not copyable
-	TOStream(const TOStream &) = default;			      //!< Not implemented
+	TOStream(const TOStream &) = delete;			      //!< Not implemented
 	TOStream &operator=(const TOStream &) = delete; //!< Not implemented
 };
 
