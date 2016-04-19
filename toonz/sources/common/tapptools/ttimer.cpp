@@ -25,7 +25,7 @@ void CALLBACK ElapsedTimeCB(UINT uID, UINT uMsg,
 class TTimer::Imp
 {
 public:
-	Imp(string name, UINT timerRes, TTimer::Type type, TTimer *timer);
+	Imp(std::string name, UINT timerRes, TTimer::Type type, TTimer *timer);
 	~Imp();
 
 	void start(UINT delay)
@@ -52,11 +52,11 @@ public:
 		m_started = false;
 	}
 
-	string getName() { return m_name; }
+	std::string getName() { return m_name; }
 	TUINT64 getTicks() { return m_ticks; }
 	UINT getDelay() { return m_delay; }
 
-	string m_name;
+	std::string m_name;
 
 	UINT m_timerRes;
 	UINT m_type;
@@ -72,7 +72,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-TTimer::Imp::Imp(string name, UINT timerRes, TTimer::Type type, TTimer *timer)
+TTimer::Imp::Imp(std::string name, UINT timerRes, TTimer::Type type, TTimer *timer)
 	: m_name(name), m_timerRes(timerRes), m_timer(timer), m_type(type), m_timerID(NULL), m_ticks(0), m_delay(0), m_started(false), m_action(0)
 {
 
@@ -139,7 +139,7 @@ Uint32 ElapsedTimeCB(Uint32 interval, void *param);
 class TTimer::Imp
 {
 public:
-	Imp(string name, UINT timerRes, TTimer::Type type, TTimer *timer)
+	Imp(std::string name, UINT timerRes, TTimer::Type type, TTimer *timer)
 		: m_action(0), m_ticks(0)
 	{
 	}
@@ -160,11 +160,11 @@ public:
 		SDL_RemoveTimer(m_timerID);
 	}
 
-	string getName() { return m_name; }
+	std::string getName() { return m_name; }
 	TUINT64 getTicks() { return m_ticks; }
 	UINT getDelay() { return m_delay; }
 
-	string m_name;
+	std::string m_name;
 
 	UINT m_timerRes;
 	UINT m_type;
@@ -210,7 +210,7 @@ Uint32 ElapsedTimeCB(Uint32 interval, void *param)
 class TTimer::Imp
 {
 public:
-	Imp(string name, UINT timerRes, TTimer::Type type, TTimer *timer)
+	Imp(std::string name, UINT timerRes, TTimer::Type type, TTimer *timer)
 		: m_action(0) {}
 	~Imp() {}
 
@@ -227,11 +227,11 @@ public:
 		m_started = false;
 	}
 
-	string getName() { return m_name; }
+	std::string getName() { return m_name; }
 	TUINT64 getTicks() { return m_ticks; }
 	UINT getDelay() { return m_delay; }
 
-	string m_name;
+	std::string m_name;
 
 	UINT m_timerRes;
 	UINT m_type;
@@ -248,7 +248,7 @@ public:
 class TTimer::Imp
 {
 public:
-	Imp(string name, UINT timerRes, TTimer::Type type, TTimer *timer)
+	Imp(std::string name, UINT timerRes, TTimer::Type type, TTimer *timer)
 		: m_action(0) {}
 	~Imp() {}
 
@@ -265,11 +265,11 @@ public:
 		m_started = false;
 	}
 
-	string getName() { return m_name; }
+	std::string getName() { return m_name; }
 	TUINT64 getTicks() { return m_ticks; }
 	UINT getDelay() { return m_delay; }
 
-	string m_name;
+	std::string m_name;
 
 	UINT m_timerRes;
 	UINT m_type;
@@ -291,7 +291,7 @@ public:
 //
 //===============================================================================
 
-TTimer::TTimer(const string &name, UINT timerRes, Type type)
+TTimer::TTimer(const std::string &name, UINT timerRes, Type type)
 	: m_imp(new TTimer::Imp(name, timerRes, type, this))
 {
 }
@@ -325,7 +325,7 @@ void TTimer::stop()
 
 //--------------------------------------------------------------------------------
 
-string TTimer::getName() const
+std::string TTimer::getName() const
 {
 	return m_imp->getName();
 }

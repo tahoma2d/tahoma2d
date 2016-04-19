@@ -92,8 +92,8 @@ namespace
 {
 //=============================================================================
 
-const string layoutsFileName = "layouts.txt";
-const string currentRoomFileName = "currentRoom.txt";
+const std::string layoutsFileName = "layouts.txt";
+const std::string currentRoomFileName = "currentRoom.txt";
 bool scrambledRooms = false;
 
 //=============================================================================
@@ -597,7 +597,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName)
 	// Imposto la stanza corrente
 	fp = ToonzFolder::getModuleFile(currentRoomFileName);
 	Tifstream is(fp);
-	string currentRoomName;
+	std::string currentRoomName;
 	is >> currentRoomName;
 	if (currentRoomName != "") {
 		int count = m_stackedWidget->count();
