@@ -321,7 +321,7 @@ public:
 			}
 			break;
 		case eEnd: {
-			MsgBox(DVGui::INFORMATION, m_str);
+			DVGui::info(m_str);
 			delete Pd;
 			Pd = 0;
 		} break;
@@ -616,7 +616,7 @@ bool FlipBook::doSaveImages(TFilePath fp)
 		TDimension res = scene->getCurrentCamera()->getRes();
 		if (!AviCodecRestrictions::canWriteMovie(toWideString(codecName), res)) {
 			QString msg(QObject::tr("The resolution of the output camera does not fit with the options chosen for the output file format."));
-			DVGui::MsgBox(DVGui::WARNING, msg);
+			DVGui::warning(msg);
 			return false;
 		}
 	}
@@ -627,12 +627,12 @@ bool FlipBook::doSaveImages(TFilePath fp)
 		fp = fp.withType(ext);
 	}
 	if (fp.getName() == "") {
-		DVGui::MsgBox(DVGui::WARNING, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
+		DVGui::warning(tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
 		return false;
 	}
 
 	if (!formats.contains(QString::fromStdString(ext))) {
-		DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to save because the selected file format is not supported."));
+		DVGui::warning(tr("It is not possible to save because the selected file format is not supported."));
 		return false;
 	}
 
@@ -758,10 +758,10 @@ void FlipBook::onButtonPressed(FlipConsole::EGadget button)
 			TImageP img = getCurrentImage(m_flipConsole->getCurrentFrame());
 			m_loadbox = loadbox;
 			if (!img) {
-				DVGui::MsgBox(DVGui::WARNING, tr("There are no rendered images to save."));
+				DVGui::warning(tr("There are no rendered images to save."));
 				return;
 			} else if ((TVectorImageP)img) {
-				DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to take or compare snapshots for Toonz vector levels."));
+				DVGui::warning(tr("It is not possible to take or compare snapshots for Toonz vector levels."));
 				return;
 			}
 			TRasterImageP ri(img);
@@ -775,7 +775,7 @@ void FlipBook::onButtonPressed(FlipConsole::EGadget button)
 		}
 		CASE FlipConsole::eCompare : if ((TVectorImageP)getCurrentImage(m_flipConsole->getCurrentFrame()))
 		{
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to take or compare snapshots for Toonz vector levels."));
+			DVGui::warning(tr("It is not possible to take or compare snapshots for Toonz vector levels."));
 			m_flipConsole->setChecked(FlipConsole::eCompare, false);
 			return;
 		}
@@ -2194,7 +2194,7 @@ void viewFile(const TFilePath &path, int from, int to, int step, int shrink,
 		 path.getType() == "avi" ||
 		 path.getType() == "3gp") &&
 		path.isLevelName()) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("%1  has an invalid extension format.")
+		DVGui::warning(QObject::tr("%1  has an invalid extension format.")
 							.arg(QString::fromStdString(path.getLevelName())));
 		return;
 	}

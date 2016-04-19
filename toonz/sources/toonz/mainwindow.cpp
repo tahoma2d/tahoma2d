@@ -108,7 +108,7 @@ bool readRoomList(std::vector<TFilePath> &roomPaths,
 	if (!argumentLayoutFileName.isEmpty()) {
 		fp = ToonzFolder::getModuleFile(argumentLayoutFileName.toStdString());
 		if (!TFileStatus(fp).doesExist()) {
-			DVGui::MsgBox(DVGui::WARNING, "Room layout file " + argumentLayoutFileName + " not found!");
+			DVGui::warning("Room layout file " + argumentLayoutFileName + " not found!");
 			fp = ToonzFolder::getModuleFile(layoutsFileName);
 			if (!TFileStatus(fp).doesExist())
 				return false;
@@ -1073,7 +1073,7 @@ void MainWindow::resetRoomsLayout()
 		}
 	}
 
-	MsgBox(INFORMATION, QObject::tr("The rooms will be reset the next time you run Toonz."));
+	DVGui::info(QObject::tr("The rooms will be reset the next time you run Toonz."));
 }
 
 //-----------------------------------------------------------------------------
@@ -1297,7 +1297,7 @@ void MainWindow::onUpdateCheckerDone(bool error)
 				std::vector<QString> buttons;
 				buttons.push_back(QString(tr("Visit Web Site")));
 				buttons.push_back(QString(tr("Cancel")));
-				int ret = MsgBox(INFORMATION, QObject::tr("An update is available for this software.\nVisit the Web site for more information."), buttons);
+				int ret = DVGui::MsgBox(DVGui::INFORMATION, QObject::tr("An update is available for this software.\nVisit the Web site for more information."), buttons);
 				if (ret == 1)
 					QDesktopServices::openUrl(webPageUrl);
 
@@ -1324,8 +1324,7 @@ void MainWindow::onLicenseCheckerDone(bool error)
 {
 	if (!error) {
 		if (!m_licenseChecker->isLicenseValid()) {
-			MsgBox(CRITICAL,
-				   QObject::tr("The license validation process was not able to confirm the right to use this software on this computer.\n Please contact [ support@toonz.com ] for assistance."));
+			DVGui::error(QObject::tr("The license validation process was not able to confirm the right to use this software on this computer.\n Please contact [ support@toonz.com ] for assistance."));
 			qApp->exit(0);
 		}
 	}
@@ -1350,7 +1349,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 #ifdef BRAVODEMO
 	QString question;
 	question = "Quit: are you sure you want to quit?";
-	int ret = MsgBox(question, QObject::tr("Quit"), QObject::tr("Cancel"), 0);
+	int ret = DVGui::MsgBox(question, QObject::tr("Quit"), QObject::tr("Cancel"), 0);
 	if (ret == 0 || ret == 2) {
 		event->ignore();
 		return;

@@ -478,7 +478,7 @@ void BatchesController::removeTask(const QString &id)
 
 	TFarmTask *task = it->second;
 	if (task->m_status == Running || task->m_status == Waiting) {
-		DVGui::MsgBox(DVGui::WARNING, taskBusyStr().arg(task->m_name));
+		DVGui::warning(taskBusyStr().arg(task->m_name));
 		return;
 	}
 
@@ -531,7 +531,7 @@ void BatchesController::removeAllTasks()
 	for (tt = m_tasks.begin(); tt != tEnd; ++tt) {
 		TFarmTask *task = tt->second;
 		if (task->m_status == Running || task->m_status == Waiting) {
-			DVGui::MsgBox(DVGui::WARNING, taskBusyStr().arg(task->m_name));
+			DVGui::warning(taskBusyStr().arg(task->m_name));
 			return;
 		}
 	}
@@ -930,7 +930,7 @@ QString BatchesController::getListName() const
 void BatchesController::saveas()
 {
 	if (getTaskCount() == 0) {
-		DVGui::MsgBox(DVGui::WARNING, tr("The Task List is empty!"));
+		DVGui::warning(tr("The Task List is empty!"));
 		return;
 	}
 

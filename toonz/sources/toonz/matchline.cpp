@@ -709,7 +709,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 		/*-- 左カラムに複数のLevelが入っている場合、警告を出して抜ける --*/
 		else if (level != cell[i].getSimpleLevel()) {
 			getImageProgressBar->close();
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to apply match lines to a column containing more than one level."));
+			DVGui::warning(QObject::tr("It is not possible to apply match lines to a column containing more than one level."));
 			/*-- 前に遡ってキャッシュを消去 --*/
 			i--;
 			for (; i >= 0; i--) {
@@ -725,7 +725,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 			mLevel = mCell[i].getSimpleLevel();
 		else if (mLevel != mCell[i].getSimpleLevel()) {
 			getImageProgressBar->close();
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to use a match lines column containing more than one level."));
+			DVGui::warning(QObject::tr("It is not possible to use a match lines column containing more than one level."));
 			/*-- 前に遡ってキャッシュを消去 --*/
 			i--;
 			for (; i >= 0; i--) {
@@ -752,7 +752,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 			//ラスタLevelじゃないとき、エラーを返す
 			if (!timg || !tmatch) {
 				getImageProgressBar->close();
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("Match lines can be applied to Toonz raster levels only."));
+				DVGui::warning(QObject::tr("Match lines can be applied to Toonz raster levels only."));
 				/*-- 前に遡ってキャッシュを消去 --*/
 				i--;
 				for (; i >= 0; i--) {
@@ -779,7 +779,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 	getImageProgressBar->close();
 
 	if (matchingLevels.empty()) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("Match lines can be applied to Toonz raster levels only."));
+		DVGui::warning(QObject::tr("Match lines can be applied to Toonz raster levels only."));
 		return;
 	}
 
@@ -787,7 +787,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 	{
 		TPalette *plt = level->getPalette();
 		if (!plt) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("The level you are using has not a valid palette."));
+			DVGui::warning(QObject::tr("The level you are using has not a valid palette."));
 			return;
 		}
 
@@ -813,7 +813,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 
 			index = md->getInkIndex();
 			if (index >= styleCount)
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("The style index you specified is not available in the palette of the destination level."));
+				DVGui::warning(QObject::tr("The style index you specified is not available in the palette of the destination level."));
 			if (index != -1)
 				LastMatchlineIndex = index;
 		}
@@ -1037,13 +1037,13 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids, boo
 				return;
 			indexes = md->getInkIndexes();
 			if (indexes.empty()) {
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("The style index range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to indexes 4, 5, 6 and 7)."));
+				DVGui::warning(QObject::tr("The style index range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to indexes 4, 5, 6 and 7)."));
 				continue;
 			}
 
 			frames = md->getFrames();
 			if (frames.empty()) {
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("The frame range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to frames 4, 5, 6 and 7)."));
+				DVGui::warning(QObject::tr("The frame range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to frames 4, 5, 6 and 7)."));
 				continue;
 			}
 			for (i = 0; i < frames.size(); i++) {
@@ -1066,7 +1066,7 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids, boo
 	}
 
 	if (fidsToProcess.empty()) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("No drawing is available in the frame range you specified."));
+		DVGui::warning(QObject::tr("No drawing is available in the frame range you specified."));
 		return;
 	}
 

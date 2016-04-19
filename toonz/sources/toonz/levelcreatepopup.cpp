@@ -445,7 +445,7 @@ bool LevelCreatePopup::apply()
 		/*question = "Folder " +toQString(parentDir) +
 								 " doesn't exist.\nDo you want to create it?";*/
 		question = tr("Folder %1 doesn't exist.\nDo you want to create it?").arg(toQString(parentDir));
-		int ret = MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
+		int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
 		if (ret == 0 || ret == 2)
 			return false;
 		try {

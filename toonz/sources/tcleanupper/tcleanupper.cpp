@@ -129,7 +129,7 @@ void fatalError(string msg)
 {
 #ifdef _WIN32
 	msg = "Application can't start:\n" + msg;
-	DVGui::MsgBox(DVGui::CRITICAL, QString::fromStdString(msg));
+	DVGui::error(QString::fromStdString(msg));
 	//MessageBox(0,msg.c_str(),"Fatal error",MB_ICONERROR);
 	exit(1);
 #else
@@ -411,7 +411,7 @@ void cleanupLevel(TXshSimpleLevel *xl, std::set<TFrameId> fidsInXsheet,
 	string info = "cleanupping " + toString(xl->getPath());
 	LevelUpdater updater(xl);
 	m_userLog.info(info);
-	DVGui::MsgBox(DVGui::INFORMATION, QString::fromStdString(info));
+	DVGui::info(QString::fromStdString(info));
 	bool firstImage = true;
 	std::set<TFrameId>::iterator it = fidsInXsheet.begin();
 	for (it; it != fidsInXsheet.end(); it++) {
@@ -425,7 +425,7 @@ void cleanupLevel(TXshSimpleLevel *xl, std::set<TFrameId> fidsInXsheet,
 		if (0 != (status & TXshSimpleLevel::Cleanupped) && !overwrite) {
 			cout << "  skipped" << endl;
 			m_userLog.info("  skipped");
-			DVGui::MsgBox(DVGui::INFORMATION, QString("--skipped frame ") + QString::fromStdString(fid.expand()));
+			DVGui::info(QString("--skipped frame ") + QString::fromStdString(fid.expand()));
 			continue;
 		}
 		TRasterImageP original = xl->getFrameToCleanup(fid);
@@ -831,7 +831,7 @@ int main(int argc, char *argv[])
 		TImageCache::instance()->clear(true);
 	}
 
-	DVGui::MsgBox(DVGui::INFORMATION, "Cleanup Done.");
+	DVGui::info("Cleanup Done.");
 	return 0;
 }
 //------------------------------------------------------------------------

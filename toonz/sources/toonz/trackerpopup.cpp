@@ -234,7 +234,7 @@ bool TrackerPopup::apply()
 	m_tracker = new Tracker(threshold, sensibility, activeBackground,
 							manageOcclusion, variationWindow, frameStart, framesNumber);
 	if (m_tracker->getLastError() != 0) {
-		DVGui::MsgBox(DVGui::WARNING, m_tracker->getLastError());
+		DVGui::warning(m_tracker->getLastError());
 		return false;
 	}
 

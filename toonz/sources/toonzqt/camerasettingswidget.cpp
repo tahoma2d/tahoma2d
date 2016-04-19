@@ -1024,7 +1024,7 @@ void CameraSettingsWidget::removePreset()
 		return;
 
 	// confirmation dialog
-	int ret = MsgBox(QObject::tr("Deleting \"%1\".\nAre you sure?").arg(m_presetListOm->currentText()),
+	int ret = DVGui::MsgBox(QObject::tr("Deleting \"%1\".\nAre you sure?").arg(m_presetListOm->currentText()),
 					 QObject::tr("Delete"), QObject::tr("Cancel"));
 	if (ret == 0 || ret == 2)
 		return;

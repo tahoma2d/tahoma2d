@@ -647,7 +647,7 @@ bool ExportLevelPopup::execute()
 		return ret;
 	} else {
 		if (!isValidFileName(QString::fromStdString(fp.getName()))) {
-			DVGui::MsgBox(DVGui::CRITICAL, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
+			DVGui::error(tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
 			return false;
 		}
 

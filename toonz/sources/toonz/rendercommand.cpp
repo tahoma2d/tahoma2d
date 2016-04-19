@@ -196,7 +196,7 @@ public:
 	{
 		if (m_error) {
 			m_error = false;
-			MsgBox(DVGui::CRITICAL, QObject::tr("There was an error saving frames for the %1 level.").arg(QString::fromStdWString(m_fp.withoutParentDir().getWideString())));
+			DVGui::error(QObject::tr("There was an error saving frames for the %1 level.").arg(QString::fromStdWString(m_fp.withoutParentDir().getWideString())));
 		}
 
 		bool isPreview = (m_fp.getType() == "noext");
@@ -214,7 +214,7 @@ public:
 
 				if (!TSystem::showDocument(m_fp)) {
 					QString msg(QObject::tr("It is not possible to display the file %1: no player associated with its format").arg(QString::fromStdWString(m_fp.withoutParentDir().getWideString())));
-					DVGui::MsgBox(DVGui::WARNING, msg);
+					DVGui::warning(msg);
 				}
 
 			}
@@ -301,7 +301,7 @@ bool RenderCommand::init(bool isPreview)
 	if (m_r1 >= scene->getFrameCount())
 		m_r1 = scene->getFrameCount() - 1;
 	if (m_r1 < m_r0) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("The command cannot be executed because the scene is empty."));
+		DVGui::warning(QObject::tr("The command cannot be executed because the scene is empty."));
 		return false;
 		// throw TException("empty scene");
 		// non so perche', ma termina il programma
@@ -345,10 +345,10 @@ bool RenderCommand::init(bool isPreview)
 			TSystem::mkDir(parent);
 			DvDirModel::instance()->refreshFolder(parent.getParentDir());
 		} catch (TException &e) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to create folder : %1").arg(QString::fromStdString(toString(e.getMessage()))));
+			DVGui::warning(QObject::tr("It is not possible to create folder : %1").arg(QString::fromStdString(toString(e.getMessage()))));
 			return false;
 		} catch (...) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to create a folder."));
+			DVGui::warning(QObject::tr("It is not possible to create a folder."));
 			return false;
 		}
 	}
@@ -537,7 +537,7 @@ void RenderCommand::rasterRender(bool isPreview)
 		TDimension res = scene->getCurrentCamera()->getRes();
 		if (!AviCodecRestrictions::canWriteMovie(toWideString(codecName), res)) {
 			QString msg(QObject::tr("The resolution of the output camera does not fit with the options chosen for the output file format."));
-			DVGui::MsgBox(DVGui::WARNING, msg);
+			DVGui::warning(msg);
 			return;
 		}
 	}
@@ -747,7 +747,7 @@ void RenderCommand::multimediaRender()
 		TDimension res = scene->getCurrentCamera()->getRes();
 		if (!AviCodecRestrictions::canWriteMovie(toWideString(codecName), res)) {
 			QString msg(QObject::tr("The resolution of the output camera does not fit with the options chosen for the output file format."));
-			DVGui::MsgBox(DVGui::WARNING, msg);
+			DVGui::warning(msg);
 			return;
 		}
 	}
@@ -846,7 +846,7 @@ void RenderCommand::doRender(bool isPreview)
 	if (!isWritable) {
 		string str = "It is not possible to write the output:  the file";
 		str += isMultiFrame ? "s are read only." : " is read only.";
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(str));
+		DVGui::warning(QString::fromStdString(str));
 		return;
 	}
 
@@ -865,9 +865,9 @@ void RenderCommand::doRender(bool isPreview)
 			/*-- 通常のRendering --*/
 			rasterRender(isPreview);
 	} catch (TException &e) {
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(toString(e.getMessage())));
+		DVGui::warning(QString::fromStdString(toString(e.getMessage())));
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to complete the rendering."));
+		DVGui::warning(QObject::tr("It is not possible to complete the rendering."));
 	}
 }
 

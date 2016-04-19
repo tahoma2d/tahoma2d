@@ -1093,7 +1093,7 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor)
 	int dataStyleCount = data->getStyleCount();
 	if (dataStyleCount > (int)m_styleIndicesInPage.size()) {
 		QString question = QObject::tr("There are more cut/copied styles than selected. Paste anyway (adding styles)?");
-		int ret = MsgBox(question, QObject::tr("Paste"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Paste"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return;
 	}

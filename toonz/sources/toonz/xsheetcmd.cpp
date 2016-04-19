@@ -1683,7 +1683,7 @@ void PrintXsheetCommand::execute()
 	copyCss(fp);
 
 	QString str = QObject::tr("The %1 file has been generated").arg(toQString(fp));
-	DVGui::MsgBox(DVGui::WARNING, str);
+	DVGui::warning(str);
 
 	TSystem::showDocument(fp);
 }

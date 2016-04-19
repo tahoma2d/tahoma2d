@@ -232,7 +232,7 @@ void FileBrowserPopup::onOkPressed()
 			// history                                      // That means, TFilePath() represents
 			if (*pt == TFilePath() || !pt->isAbsolute()) // the History folder? Really? That's lame...
 			{
-				DVGui::MsgBox(DVGui::CRITICAL, tr("Invalid file"));
+				DVGui::error(tr("Invalid file"));
 				return;
 			}
 		} else {
@@ -276,7 +276,7 @@ void FileBrowserPopup::onApplyPressed()
 		if (folder == TFilePath()) {
 			// history
 			if (*it == TFilePath() || !it->isAbsolute()) {
-				DVGui::MsgBox(DVGui::CRITICAL, tr("Invalid file"));
+				DVGui::error(tr("Invalid file"));
 				return;
 			}
 		} else {
@@ -467,12 +467,12 @@ bool LoadScenePopup::execute()
 	const TFilePath &fp = *m_selectedPaths.begin();
 
 	if (fp.getType() != "tnz") {
-		DVGui::MsgBox(DVGui::CRITICAL, toQString(fp) + tr(" is not a scene file."));
+		DVGui::error(toQString(fp) + tr(" is not a scene file."));
 		return false;
 	}
 
 	if (!TFileStatus(fp).doesExist()) {
-		DVGui::MsgBox(DVGui::CRITICAL, toQString(fp) + tr(" does not exist."));
+		DVGui::error(toQString(fp) + tr(" does not exist."));
 		return false;
 	}
 
@@ -523,12 +523,12 @@ bool LoadSubScenePopup::execute()
 	const TFilePath &fp = *m_selectedPaths.begin();
 
 	if (fp.getType() != "tnz") {
-		DVGui::MsgBox(DVGui::CRITICAL, toQString(fp) + tr(" is not a scene file."));
+		DVGui::error(toQString(fp) + tr(" is not a scene file."));
 		return false;
 	}
 
 	if (!TFileStatus(fp).doesExist()) {
-		DVGui::MsgBox(DVGui::CRITICAL, toQString(fp) + tr(" does not exist."));
+		DVGui::error(toQString(fp) + tr(" does not exist."));
 		return false;
 	}
 
@@ -1512,7 +1512,7 @@ void ReplaceLevelPopup::show()
 	TCellSelection *cellSel = dynamic_cast<TCellSelection *>(sel);
 	TColumnSelection *columnSel = dynamic_cast<TColumnSelection *>(sel);
 	if ((!cellSel && !columnSel) || sel->isEmpty()) {
-		DVGui::MsgBox(DVGui::CRITICAL, tr("Nothing to replace: no cells selected."));
+		DVGui::error(tr("Nothing to replace: no cells selected."));
 		return;
 	}
 
@@ -1631,7 +1631,7 @@ bool SavePaletteAsPopup::execute()
 	TPalette *palette = paletteHandle->getPalette();
 
 	if (!palette) {
-		DVGui::MsgBox(DVGui::WARNING, "No current palette exists");
+		DVGui::warning("No current palette exists");
 		return true;
 	}
 
@@ -1776,7 +1776,7 @@ bool LoadColorModelPopup::execute()
 		QList<QString> list;
 		list.append(QObject::tr("Overwrite the destination palette."));
 		list.append(QObject::tr("Keep the destination palette and apply it to the color model."));
-		int ret = RadioButtonMsgBox(DVGui::WARNING, question, list);
+		int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
 		if (ret == 0)
 			return false;
 		if (ret == 2)
@@ -1847,7 +1847,7 @@ void ReplaceParentDirectoryPopup::show()
 	TCellSelection *cellSel = dynamic_cast<TCellSelection *>(sel);
 	TColumnSelection *columnSel = dynamic_cast<TColumnSelection *>(sel);
 	if ((!cellSel && !columnSel) || sel->isEmpty()) {
-		DVGui::MsgBox(DVGui::CRITICAL, tr("Nothing to replace: no cells or columns selected."));
+		DVGui::error(tr("Nothing to replace: no cells or columns selected."));
 		return;
 	}
 	if (cellSel) {
@@ -1970,7 +1970,7 @@ bool ImportMagpieFilePopup::execute()
 	const TFilePath &fp = *m_selectedPaths.begin();
 
 	if (!TSystem::doesExistFileOrLevel(fp)) {
-		DVGui::MsgBox(DVGui::CRITICAL, tr("%1 does not exist.").arg(toQString(fp)));
+		DVGui::error(tr("%1 does not exist.").arg(toQString(fp)));
 		return false;
 	}
 
@@ -2015,7 +2015,7 @@ bool BrowserPopup::execute()
 
 	if (!TSystem::doesExistFileOrLevel(fp)) {
 		const QString &msg = tr("Path %1 doesn't exists.").arg(toQString(fp));
-		MsgBox(DVGui::INFORMATION, msg);
+		DVGui::info(msg);
 
 		return false;
 	}

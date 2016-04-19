@@ -126,7 +126,7 @@ void TMessageRepository::messageReceived(int type, const QString &message)
 	}
 
 	if (type == DVGui::CRITICAL || (type == DVGui::WARNING && !TMessageViewer::isTMsgVisible()))
-		MsgBoxInPopup(DVGui::MsgType(type), message);
+		DVGui::MsgBoxInPopup(DVGui::MsgType(type), message);
 }
 
 //---------------------------------------------------------------------------------

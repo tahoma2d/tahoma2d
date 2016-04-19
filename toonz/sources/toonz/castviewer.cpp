@@ -458,7 +458,7 @@ void CastTreeViewer::deleteFolder()
 	QString itemName = item->data(0, Qt::DisplayRole).toString();
 	if (itemName == AudioFolderName)
 		return;
-	int ret = MsgBox(tr("Delete folder ") + item->text(0) + "?", tr("Yes"), tr("No"), 1);
+	int ret = DVGui::MsgBox(tr("Delete folder ") + item->text(0) + "?", tr("Yes"), tr("No"), 1);
 	if (ret == 2 || ret == 0)
 		return;
 	QTreeWidgetItem *parentItem = item->parent();

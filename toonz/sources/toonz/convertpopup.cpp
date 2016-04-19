@@ -117,7 +117,7 @@ void ConvertPopup::Converter::run()
 
 		if (TSystem::doesExistFileOrLevel(dstFilePath)) {
 			if (m_parent->m_skip->isChecked()) {
-				DVGui::MsgBox(DVGui::INFORMATION, tr("Level %1 already exists; skipped.").arg(levelName));
+				DVGui::info(tr("Level %1 already exists; skipped.").arg(levelName));
 				m_skippedCount++;
 				continue;
 			} else {
@@ -168,7 +168,7 @@ void ConvertPopup::Converter::convertLevel(const TFilePath &sourceFileFullPath)
 		popup->getFrameRange(sourceFileFullPath, from, to);
 
 		if (from == TFrameId() || to == TFrameId()) {
-			DVGui::MsgBox(DVGui::WARNING, tr("Level %1 has no frame; skipped.").arg(levelName));
+			DVGui::warning(tr("Level %1 has no frame; skipped.").arg(levelName));
 			popup->m_notifier->notifyError();
 
 			return;
@@ -212,7 +212,7 @@ void ConvertPopup::Converter::convertLevelWithConvert2Tlv(const TFilePath &sourc
 
 	string errorMessage;
 	if (!tlvConverter->init(errorMessage)) {
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(errorMessage));
+		DVGui::warning(QString::fromStdString(errorMessage));
 		tlvConverter->abort();
 	} else {
 		int count = tlvConverter->getFramesToConvertCount();
@@ -220,7 +220,7 @@ void ConvertPopup::Converter::convertLevelWithConvert2Tlv(const TFilePath &sourc
 		for (int j = 0; j < count && !stop; j++) {
 			if (!tlvConverter->convertNext(errorMessage)) {
 				stop = true;
-				DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(errorMessage));
+				DVGui::warning(QString::fromStdString(errorMessage));
 			}
 			if (popup->m_progressDialog->wasCanceled())
 				stop = true;
@@ -795,7 +795,7 @@ void ConvertPopup::convertToTlv(bool toPainted)
 		Convert2Tlv *converter = makeTlvConverter(m_srcFilePaths[i]);
 		if (TSystem::doesExistFileOrLevel(converter->m_levelOut)) {
 			if (m_skip->isChecked()) {
-				MsgBox(INFORMATION, QString(tr("Level ")) + QString::fromStdWString(converter->m_levelOut.withoutParentDir().getWideString()) + QString(tr(" already exists; skipped")));
+				DVGui::info(QString(tr("Level ")) + QString::fromStdWString(converter->m_levelOut.withoutParentDir().getWideString()) + QString(tr(" already exists; skipped")));
 				delete converter;
 				skipped++;
 				continue;
@@ -818,7 +818,7 @@ void ConvertPopup::convertToTlv(bool toPainted)
 		string errorMessage;
 		if (!converters[i]->init(errorMessage)) {
 			converters[i]->abort();
-			MsgBox(CRITICAL, QString::fromStdString(errorMessage));
+			DVGui::error(QString::fromStdString(errorMessage));
 			delete converters[i];
 			converters[i] = 0;
 			skipped++;
@@ -839,14 +839,14 @@ void ConvertPopup::convertToTlv(bool toPainted)
 					converters[i] = 0;
 				}
 				if (errorMessage != "")
-					MsgBox(CRITICAL, QString::fromStdString(errorMessage));
+					DVGui::error(QString::fromStdString(errorMessage));
 				QApplication::restoreOverrideCursor();
 				FileBrowser::refreshFolder(m_srcFilePaths[0].getParentDir());
 				TFilePath::setUnderscoreFormatAllowed(false);
 				return;
 			}
 			pb.setValue(++k);
-			MsgBox(INFORMATION, QString(tr("Level ")) + QString::fromStdWString(m_srcFilePaths[i].withoutParentDir().getWideString()) + QString(tr(" converted to tlv.")));
+			DVGui::info(QString(tr("Level ")) + QString::fromStdWString(m_srcFilePaths[i].withoutParentDir().getWideString()) + QString(tr(" converted to tlv.")));
 		}
 		TFilePath levelOut(converters[i]->m_levelOut);
 		delete converters[i];
@@ -860,11 +860,11 @@ void ConvertPopup::convertToTlv(bool toPainted)
 
 	if (m_srcFilePaths.size() == 1) {
 		if (skipped == 0)
-			MsgBox(INFORMATION, tr("Level %1 converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
+			DVGui::info(tr("Level %1 converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
 		else
-			DVGui::MsgBox(DVGui::WARNING, tr("Warning: Level %1 NOT converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
+			DVGui::warning(tr("Warning: Level %1 NOT converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
 	} else
-		MsgBox(skipped == 0 ? INFORMATION : WARNING, tr("Converted %1 out of %2 Levels to TLV Format").arg(QString::number(m_srcFilePaths.size() - skipped)).arg(QString::number(m_srcFilePaths.size())));
+		DVGui::MsgBox(skipped == 0 ? DVGui::INFORMATION : DVGui::WARNING, tr("Converted %1 out of %2 Levels to TLV Format").arg(QString::number(m_srcFilePaths.size() - skipped)).arg(QString::number(m_srcFilePaths.size())));
 
 	FileBrowser::refreshFolder(m_srcFilePaths[0].getParentDir());
 	TFilePath::setUnderscoreFormatAllowed(false);
@@ -914,7 +914,7 @@ TPalette *ConvertPopup::readUserProvidedPalette() const
 		is >> palette;
 		// note! refCount==0
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, tr("Warning: Can't read palette '%1' ").arg(m_palettePath->getPath()));
+		DVGui::warning(tr("Warning: Can't read palette '%1' ").arg(m_palettePath->getPath()));
 		if (palette) {
 			delete palette;
 			palette = 0;
@@ -964,14 +964,14 @@ void ConvertPopup::getFrameRange(const TFilePath &sourceFilePath,
 bool ConvertPopup::checkParameters() const
 {
 	if (m_srcFilePaths.size() == 1 && m_fileNameFld->text().isEmpty()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("No output filename specified: please choose a valid level name."));
+		DVGui::warning(tr("No output filename specified: please choose a valid level name."));
 		return false;
 	}
 
 	if (m_fileFormat->currentText() == TlvExtension) {
 		if (m_tlvMode->currentText() == TlvMode_PaintedFromTwoImages) {
 			if (m_unpaintedSuffix->text() == "") {
-				DVGui::MsgBox(DVGui::WARNING, tr("No unpainted suffix specified: cannot convert."));
+				DVGui::warning(tr("No unpainted suffix specified: cannot convert."));
 				return false;
 			}
 		}
@@ -1046,22 +1046,22 @@ void ConvertPopup::onConvertFinished()
 	int skippedCount = m_converter->getSkippedCount();
 	if (errorCount > 0) {
 		if (skippedCount > 0)
-			DVGui::MsgBox(DVGui::CRITICAL, tr("Convert completed with %1 error(s) and %2 level(s) skipped").arg(errorCount).arg(skippedCount));
+			DVGui::error(tr("Convert completed with %1 error(s) and %2 level(s) skipped").arg(errorCount).arg(skippedCount));
 		else
-			DVGui::MsgBox(DVGui::CRITICAL, tr("Convert completed with %1 error(s) ").arg(errorCount));
+			DVGui::error(tr("Convert completed with %1 error(s) ").arg(errorCount));
 	} else if (skippedCount > 0) {
-		DVGui::MsgBox(DVGui::WARNING, tr("%1 level(s) skipped").arg(skippedCount));
+		DVGui::warning(tr("%1 level(s) skipped").arg(skippedCount));
 	}
 	/*
   if (m_srcFilePaths.size()==1)
   {
     if (skipped==0)
-        MsgBox(INFORMATION, tr("Level %1 converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
+        DVGui::info(tr("Level %1 converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
     else
-        DVGui::MsgBox(DVGui::WARNING, tr("Warning: Level %1 NOT converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
+        DVGui::warning(tr("Warning: Level %1 NOT converted to TLV Format").arg(QString::fromStdWString(m_srcFilePaths[0].withoutParentDir().getWideString())));
   }
   else
-    MsgBox(skipped==0?INFORMATION:WARNING, tr("Converted %1 out of %2 Levels to TLV Format").arg( QString::number(m_srcFilePaths.size()-skipped)).arg(QString::number(m_srcFilePaths.size())));
+    DVGui::MsgBox(skipped==0?DVGui::INFORMATION:DVGui::WARNING, tr("Converted %1 out of %2 Levels to TLV Format").arg( QString::number(m_srcFilePaths.size()-skipped)).arg(QString::number(m_srcFilePaths.size())));
     */
 
 	//TFilePath parentDir = m_srcFilePaths[0].getParentDir();

@@ -520,7 +520,7 @@ void ProjectSettingsPopup::onFolderChanged()
 	try {
 		project->save();
 	} catch (TSystemException se) {
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::warning(QString::fromStdWString(se.getMessage()));
 		return;
 	}
 	DvDirModel::instance()->refreshFolder(project->getProjectFolder());
@@ -535,7 +535,7 @@ void ProjectSettingsPopup::onUseSceneChekboxChanged(int)
 	try {
 		project->save();
 	} catch (TSystemException se) {
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::warning(QString::fromStdWString(se.getMessage()));
 		return;
 	}
 	DvDirModel::instance()->refreshFolder(project->getProjectFolder());
@@ -631,9 +631,9 @@ void ProjectCreatePopup::createProject()
 	try {
 		bool isSaved = project->save(projectPath);
 		if (!isSaved)
-			MsgBox(CRITICAL, tr("It is not possible to create the %1 project.").arg(toQString(projectPath)));
+			DVGui::error(tr("It is not possible to create the %1 project.").arg(toQString(projectPath)));
 	} catch (TSystemException se) {
-		DVGui::MsgBox(DVGui::WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::warning(QString::fromStdWString(se.getMessage()));
 		return;
 	}
 	pm->setCurrentProjectPath(projectPath);

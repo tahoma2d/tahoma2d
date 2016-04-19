@@ -140,11 +140,11 @@ void TMsgCore::readFromSocket(QTcpSocket *socket) //server side
 		QString str = messages.at(i).simplified();
 		str.chop(4); //rimuovo i "#END" alla fine
 		if (str.startsWith("ERROR"))
-			DVGui::MsgBox(DVGui::CRITICAL, str.right(str.size() - 5));
+			DVGui::error(str.right(str.size() - 5));
 		else if (str.startsWith("WARNING"))
-			DVGui::MsgBox(DVGui::WARNING, str.right(str.size() - 7));
+			DVGui::warning(str.right(str.size() - 7));
 		else if (str.startsWith("INFO"))
-			DVGui::MsgBox(DVGui::INFORMATION, str.right(str.size() - 4));
+			DVGui::info(str.right(str.size() - 4));
 		else
 			assert(false);
 	}
@@ -213,19 +213,19 @@ void DVGui::MsgBox(MsgType type, const QString &text)
 
 void DVGui::error(const QString &msg)
 {
-	MsgBox(DVGui::CRITICAL, msg);
+	DVGui::MsgBox(DVGui::CRITICAL, msg);
 }
 
 //-----------------------------------------------------------------------------
 
 void DVGui::warning(const QString &msg)
 {
-	MsgBox(DVGui::WARNING, msg);
+	DVGui::MsgBox(DVGui::WARNING, msg);
 }
 
 //-----------------------------------------------------------------------------
 
 void DVGui::info(const QString &msg)
 {
-	MsgBox(DVGui::INFORMATION, msg);
+	DVGui::MsgBox(DVGui::INFORMATION, msg);
 }

@@ -1277,13 +1277,13 @@ bool meshifySelection(const MeshifyOptions &options)
 		CASE HAS_LEVEL_COLUMNS | HAS_MESH_COLUMNS :
 
 			// Error message
-			DVGui::MsgBox(DVGui::CRITICAL, MeshifyPopup::tr("Current selection contains mixed image and mesh level types"));
+			DVGui::error(MeshifyPopup::tr("Current selection contains mixed image and mesh level types"));
 		return false;
 
 	DEFAULT:
 
 		// Error message
-		DVGui::MsgBox(DVGui::CRITICAL, MeshifyPopup::tr("Current selection contains no image or mesh level types"));
+		DVGui::error(MeshifyPopup::tr("Current selection contains no image or mesh level types"));
 		return false;
 	}
 

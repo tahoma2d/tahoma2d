@@ -310,7 +310,7 @@ bool MyMovieRenderListener::onFrameCompleted(int frame)
 		msg = toString(fp.getWideString()) + " computed";
 	cout << msg << endl;
 	m_userLog->info(msg);
-	DVGui::MsgBox(DVGui::INFORMATION, QString::fromStdString(msg));
+	DVGui::info(QString::fromStdString(msg));
 	if (FarmController) {
 		try {
 			FarmController->taskProgress(TaskId, m_frameCompletedCount + m_frameFailedCount, m_frameCount, frame + 1, FrameDone);
@@ -1029,7 +1029,7 @@ int main(int argc, char *argv[])
 					  toString(TStopWatch::global(8).getTotalTime() / 1000.0, 2) + " seconds spent on rendering" + "\n";
 		cout << msg + msg2;
 		m_userLog->info(msg + msg2);
-		DVGui::MsgBox(DVGui::INFORMATION, QString::fromStdString(msg));
+		DVGui::info(QString::fromStdString(msg));
 		TImageCache::instance()->clear(true);
 		/*
     cout << "Compositing completed in " + toString(Sw1.getTotalTime()/1000.0, 2) + " seconds";

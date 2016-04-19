@@ -115,7 +115,7 @@ bool SaveCurvePopup::execute()
 		getCurve()->saveData(os);
 		return true;
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to save the curve."));
+		DVGui::warning(QObject::tr("It is not possible to save the curve."));
 		return false;
 	}
 }
@@ -160,7 +160,7 @@ bool LoadCurvePopup::execute()
 		curve->setDefaultValue(defaultValue);
 		TUndoManager::manager()->add(undo);
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to load the curve."));
+		DVGui::warning(QObject::tr("It is not possible to load the curve."));
 		return false;
 	}
 
@@ -227,7 +227,7 @@ bool ExportCurvePopup::execute()
 			os << curve->getValue(i) << std::endl;
 		}
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to export data."));
+		DVGui::warning(QObject::tr("It is not possible to export data."));
 		return false;
 	}
 

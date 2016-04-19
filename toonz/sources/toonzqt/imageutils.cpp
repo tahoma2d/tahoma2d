@@ -143,7 +143,7 @@ TFilePath duplicate(const TFilePath &levelPath)
 		return TFilePath();
 
 	if (!TSystem::doesExistFileOrLevel(levelPath)) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to find the %1 level.").arg(QString::fromStdWString(levelPath.getWideString())));
+		DVGui::warning(QObject::tr("It is not possible to find the %1 level.").arg(QString::fromStdWString(levelPath.getWideString())));
 		return TFilePath();
 	}
 
@@ -168,7 +168,7 @@ TFilePath duplicate(const TFilePath &levelPath)
 		}
 	} catch (...) {
 		QString msg = QObject::tr("There was an error copying %1").arg(toQString(levelPath));
-		DVGui::MsgBox(DVGui::CRITICAL, msg);
+		DVGui::error(msg);
 		return TFilePath();
 	}
 
@@ -176,7 +176,7 @@ TFilePath duplicate(const TFilePath &levelPath)
 	//                QString::fromStdWString(levelPath.withoutParentDir().getWideString()) +
 	//                QString(" to " +
 	//                QString::fromStdWString(levelPathOut.withoutParentDir().getWideString()));
-	//  MsgBox(INFORMATION,msg);
+	//  DVGui::info(msg);
 
 	return levelPathOut;
 }
@@ -189,21 +189,21 @@ void premultiply(const TFilePath &levelPath)
 		return;
 
 	if (!TSystem::doesExistFileOrLevel(levelPath)) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to find the level %1").arg(QString::fromStdWString(levelPath.getWideString())));
+		DVGui::warning(QObject::tr("It is not possible to find the level %1").arg(QString::fromStdWString(levelPath.getWideString())));
 		return;
 	}
 
 	TFileType::Type type = TFileType::getInfo(levelPath);
 	if (type == TFileType::CMAPPED_LEVEL) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("Cannot premultiply the selected file."));
+		DVGui::warning(QObject::tr("Cannot premultiply the selected file."));
 		return;
 	}
 	if (type == TFileType::VECTOR_LEVEL || type == TFileType::VECTOR_IMAGE) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("Cannot premultiply a vector-based level."));
+		DVGui::warning(QObject::tr("Cannot premultiply a vector-based level."));
 		return;
 	}
 	if (type != TFileType::RASTER_LEVEL && type != TFileType::RASTER_IMAGE) {
-		DVGui::MsgBox(DVGui::INFORMATION, QObject::tr("Cannot premultiply the selected file."));
+		DVGui::info(QObject::tr("Cannot premultiply the selected file."));
 		return;
 	}
 
@@ -267,14 +267,14 @@ void premultiply(const TFilePath &levelPath)
 			lw->save(level);
 		}
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("Cannot premultiply the selected file."));
+		DVGui::warning(QObject::tr("Cannot premultiply the selected file."));
 		QApplication::restoreOverrideCursor();
 		return;
 	}
 
 	QApplication::restoreOverrideCursor();
 	QString msg = QObject::tr("Level %1 premultiplied.").arg(QString::fromStdString(levelPath.getLevelName()));
-	DVGui::MsgBox(DVGui::INFORMATION, msg);
+	DVGui::info(msg);
 }
 
 //-----------------------------------------------------------------------------
@@ -405,7 +405,7 @@ void convertFromCM(const TLevelReaderP &lr, const TPaletteP &plt, const TLevelWr
 			}
 		} catch (...) {
 			//QString msg=QObject::tr("Frame %1 : conversion failed!").arg(QString::number(i+1));
-			//      MsgBox(INFORMATION,msg);
+			//      DVGui::info(msg);
 		}
 		/*-- これはプログレスバーを進めるものなので、動画番号ではなく、完了したフレームの枚数を投げる --*/
 		frameNotifier->notifyFrameCompleted(100 * (i + 1) / frames.size());
@@ -429,7 +429,7 @@ void convertFromVI(const TLevelReaderP &lr, const TPaletteP &plt, const TLevelWr
 			maxBbox += img->getBBox();
 		} catch (...) {
 			msg = QObject::tr("Frame %1 : conversion failed!").arg(QString::fromStdString(frames[i].expand()));
-			DVGui::MsgBox(DVGui::INFORMATION, msg);
+			DVGui::info(msg);
 		}
 	}
 	maxBbox = maxBbox.enlarge(2);
@@ -457,7 +457,7 @@ void convertFromVI(const TLevelReaderP &lr, const TPaletteP &plt, const TLevelWr
 			}
 		} catch (...) {
 			msg = QObject::tr("Frame %1 : conversion failed!").arg(QString::fromStdString(frames[i].expand()));
-			DVGui::MsgBox(DVGui::INFORMATION, msg);
+			DVGui::info(msg);
 		}
 		frameNotifier->notifyFrameCompleted(100 * (i + 1) / frames.size());
 	}
@@ -533,7 +533,7 @@ void convertFromFullRaster(const TLevelReaderP &lr, const TLevelWriterP &lw, con
 			}
 		} catch (...) {
 			//QString msg=QObject::tr("Frame %1 : conversion failed!").arg(QString::number(i+1));
-			//MsgBox(INFORMATION,msg);
+			//DVGui::info(msg);
 		}
 		/*-- これはプログレスバーを進めるものなので、動画番号ではなく、完了したフレームの枚数を投げる --*/
 		frameNotifier->notifyFrameCompleted(100 * (i + 1) / frames.size());
@@ -578,7 +578,7 @@ void convertFromVector(const TLevelReaderP &lr, const TLevelWriterP &lw, const v
 			}
 		} catch (...) {
 			//QString msg=QObject::tr("Frame %1 : conversion failed!").arg(QString::number(i+1));
-			//MsgBox(INFORMATION,msg);
+			//DVGui::info(msg);
 		}
 		frameNotifier->notifyFrameCompleted(100 * (i + 1) / frames.size());
 	}
@@ -696,7 +696,7 @@ void convertNaa2Tlv(
 				TImageWriterP iw = lw->getFrameWriter(frames[f]);
 				iw->save(dstImg);
 			} else {
-				MsgBox(DVGui::WARNING, QObject::tr(
+				DVGui::warning(QObject::tr(
 										   "The source image seems not suitable for this kind of conversion"));
 				frameNotifier->notifyError();
 			}

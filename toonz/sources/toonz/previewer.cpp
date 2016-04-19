@@ -773,7 +773,7 @@ public:
 			}
 			break;
 		case eEnd: {
-			MsgBox(DVGui::INFORMATION, m_str);
+			DVGui::info(m_str);
 			delete Pd;
 			Pd = 0;
 		} break;
@@ -837,12 +837,12 @@ bool Previewer::Imp::doSaveRenderedFrames(TFilePath fp)
 		fp = fp.withType(ext);
 	}
 	if (fp.getName() == "") {
-		DVGui::MsgBox(DVGui::WARNING, tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
+		DVGui::warning(tr("The file name cannot be empty or contain any of the following characters:(new line)  \\ / : * ? \"  |"));
 		return false;
 	}
 
 	if (!formats.contains(QString::fromStdString(ext))) {
-		DVGui::MsgBox(DVGui::WARNING, "Unsopporter raster format, cannot save");
+		DVGui::warning("Unsopporter raster format, cannot save");
 		return false;
 	}
 
@@ -869,7 +869,7 @@ bool Previewer::Imp::doSaveRenderedFrames(TFilePath fp)
 
 	if (TSystem::doesExistFileOrLevel(fp)) {
 		QString question(tr("File %1 already exists.\nDo you want to overwrite it?").arg(toQString(fp)));
-		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
 		if (ret == 2)
 			return false;
 	}

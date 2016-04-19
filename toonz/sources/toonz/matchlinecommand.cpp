@@ -102,12 +102,12 @@ public:
 		std::set<int> indices = selection ? selection->getIndices() : std::set<int>();
 
 		if (indices.empty()) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to execute the merge column command because no column was selected."));
+			DVGui::warning(tr("It is not possible to execute the merge column command because no column was selected."));
 			return;
 		}
 
 		if (indices.size() == 1) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to execute the merge column command  because only one columns is  selected."));
+			DVGui::warning(tr("It is not possible to execute the merge column command  because only one columns is  selected."));
 			return;
 		}
 
@@ -130,14 +130,14 @@ public:
 	{
 		TColumnSelection *selection = dynamic_cast<TColumnSelection *>(TSelection::getCurrent());
 		if (!selection) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to apply the match lines because no column was selected."));
+			DVGui::warning(tr("It is not possible to apply the match lines because no column was selected."));
 			return;
 		}
 
 		std::set<int> indices = selection->getIndices();
 
 		if (indices.size() != 2) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to apply the match lines because two columns have to be selected."));
+			DVGui::warning(tr("It is not possible to apply the match lines because two columns have to be selected."));
 			return;
 		}
 
@@ -177,11 +177,11 @@ bool checkColumnValidity(int column)
 			level = cell[i].getSimpleLevel();
 
 		if (cell[i].getSimpleLevel()->getType() != TZP_XSHLEVEL) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("Match lines can be applied to Toonz raster levels only."));
+			DVGui::warning(QObject::tr("Match lines can be applied to Toonz raster levels only."));
 			return false;
 		}
 		if (level != cell[i].getSimpleLevel()) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to merge tlv columns containing more than one level"));
+			DVGui::warning(QObject::tr("It is not possible to merge tlv columns containing more than one level"));
 			return false;
 		}
 	}
@@ -190,7 +190,7 @@ bool checkColumnValidity(int column)
 		return false;
 
 	if (!level->getPalette()) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("The level you are using has not a valid palette."));
+		DVGui::warning(QObject::tr("The level you are using has not a valid palette."));
 		return false;
 	}
 	return true;
@@ -402,14 +402,14 @@ public:
 	{
 		TColumnSelection *selection = dynamic_cast<TColumnSelection *>(TSelection::getCurrent());
 		if (!selection) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to merge tlv columns because no column was selected."));
+			DVGui::warning(tr("It is not possible to merge tlv columns because no column was selected."));
 			return;
 		}
 
 		std::set<int> indices = selection->getIndices();
 
 		if (indices.size() < 2) {
-			DVGui::MsgBox(DVGui::WARNING, tr("It is not possible to merge tlv columns because at least two columns have to be selected."));
+			DVGui::warning(tr("It is not possible to merge tlv columns because at least two columns have to be selected."));
 			return;
 		}
 
@@ -486,14 +486,14 @@ void doDeleteCommand(bool isMatchline)
 			TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 			return;
 		} else if (!columnSelection || (indices = columnSelection->getIndices()).size() != 1) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to delete lines because no column, cell or level strip frame was selected."));
+			DVGui::warning(QObject::tr("It is not possible to delete lines because no column, cell or level strip frame was selected."));
 			return;
 		}
 		int from, to;
 		int columnIndex = *indices.begin();
 		TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 		if (!xsh->getCellRange(*indices.begin(), from, to)) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("The selected column is empty."));
+			DVGui::warning(QObject::tr("The selected column is empty."));
 			return;
 		}
 		r.y0 = from;
@@ -503,7 +503,7 @@ void doDeleteCommand(bool isMatchline)
 		sel->getSelectedCells(r.y0, r.x0, r.y1, r.x1);
 
 	if (r.x0 != r.x1) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("Selected cells must be in the same column."));
+		DVGui::warning(QObject::tr("Selected cells must be in the same column."));
 		return;
 	}
 
@@ -514,11 +514,11 @@ void doDeleteCommand(bool isMatchline)
 	for (i = r.y0; i <= r.y1; i++) {
 		TXshCell cell = xsh->getCell(i, r.x0);
 		if (cell.isEmpty()) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to delete lines because no column, cell or level strip frame was selected."));
+			DVGui::warning(QObject::tr("It is not possible to delete lines because no column, cell or level strip frame was selected."));
 			return;
 		}
 		if (cell.m_level->getType() != TZP_XSHLEVEL) {
-			DVGui::MsgBox(DVGui::WARNING, QObject::tr("Match lines can be deleted from Toonz raster levels only"));
+			DVGui::warning(QObject::tr("Match lines can be deleted from Toonz raster levels only"));
 			return;
 		}
 	}

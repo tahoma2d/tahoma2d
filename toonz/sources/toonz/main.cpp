@@ -160,14 +160,14 @@ void qt_mac_set_menubar_merge(bool enable);
 
 void fatalError(QString msg)
 {
-	MsgBoxInPopup(CRITICAL, msg + "\n" + QObject::tr("Installing %1 again could fix the problem.").arg(applicationFullName));
+	DVGui::MsgBoxInPopup(CRITICAL, msg + "\n" + QObject::tr("Installing %1 again could fix the problem.").arg(applicationFullName));
 	exit(0);
 }
 //-----------------------------------------------------------------------------
 
 void lastWarningError(QString msg)
 {
-	MsgBox(CRITICAL, msg);
+	DVGui::error(msg);
 	//exit(0);
 }
 //-----------------------------------------------------------------------------
@@ -642,7 +642,7 @@ int main(int argc, char *argv[])
 	License::writeMacAddress();
 	//Controllo che la data della prima installazione contenuta nella sentinella sia minore della data corrente.
 	if (License::isTemporaryLicense(license) && !License::isValidSentinel(license)) {
-		MsgBox(CRITICAL, QObject::tr("System date tampered."));
+		DVGui::error(QObject::tr("System date tampered."));
 		return -1;
 	}
 	if (License::checkLicense(license) == License::INVALID_LICENSE ||

@@ -274,7 +274,7 @@ public:
 	{
 		TFx *currentFx = TApp::instance()->getCurrentFx()->getFx();
 		if (!currentFx) {
-			DVGui::MsgBox(DVGui::WARNING, "Preview Fx : No Current Fx !");
+			DVGui::warning("Preview Fx : No Current Fx !");
 			return;
 		}
 		/*-- 
@@ -284,7 +284,7 @@ public:
 		TPaletteColumnFx *pfx = dynamic_cast<TPaletteColumnFx *>(currentFx);
 		TOutputFx *ofx = dynamic_cast<TOutputFx *>(currentFx);
 		if (pfx || ofx) {
-			DVGui::MsgBox(DVGui::WARNING, "Preview Fx command is not available on Palette or Output node !");
+			DVGui::warning("Preview Fx command is not available on Palette or Output node !");
 			return;
 		}
 

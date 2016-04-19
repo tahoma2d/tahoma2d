@@ -144,7 +144,7 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button)
 		CASE FlipConsole::eSaveImg:
 		{
 			if (m_previewMode == NO_PREVIEW) {
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to save images in camera stand view."));
+				DVGui::warning(QObject::tr("It is not possible to save images in camera stand view."));
 				return;
 			}
 			TApp *app = TApp::instance();
@@ -152,7 +152,7 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button)
 
 			Previewer *previewer = Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW);
 			if (!previewer->isFrameReady(row)) {
-				DVGui::MsgBox(DVGui::WARNING, QObject::tr("The preview images are not ready yet."));
+				DVGui::warning(QObject::tr("The preview images are not ready yet."));
 				return;
 			}
 
@@ -474,7 +474,7 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event)
 	if (!tool || !tool->isEnabled()) {
 		if (!m_toolDisableReason.isEmpty() && m_mouseButton == Qt::LeftButton &&
 			!m_editPreviewSubCamera)
-			DVGui::MsgBox(DVGui::WARNING, m_toolDisableReason);
+			DVGui::warning(m_toolDisableReason);
 	}
 
 	if (m_freezedStatus != NO_FREEZED)

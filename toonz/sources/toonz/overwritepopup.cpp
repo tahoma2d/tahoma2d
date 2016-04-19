@@ -266,13 +266,13 @@ std::wstring OverwriteDialog::execute(ToonzScene *scene, const TFilePath &srcLev
 
 	if (m_rename->isChecked()) {
 		if (m_suffix->text() == "") {
-			DVGui::MsgBox(DVGui::WARNING, tr("The suffix field is empty. Please specify a suffix."));
+			DVGui::warning(tr("The suffix field is empty. Please specify a suffix."));
 			return execute(scene, srcLevelPath, multiload);
 		}
 		levelPath = addSuffix(srcLevelPath);
 		actualLevelPath = scene->decodeFilePath(levelPath);
 		if (TSystem::doesExistFileOrLevel(actualLevelPath)) {
-			DVGui::MsgBox(DVGui::WARNING, tr("File %1 exists as well; please choose a different suffix.").arg(toQString(levelPath)));
+			DVGui::warning(tr("File %1 exists as well; please choose a different suffix.").arg(toQString(levelPath)));
 			return execute(scene, srcLevelPath, multiload);
 		}
 		m_choice = RENAME;

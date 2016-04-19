@@ -452,7 +452,7 @@ void CleanupSettingsModel::processFrame(TXshSimpleLevel *sl, TFrameId fid)
 			m_cameraTestTransformed = cl->autocenterOnly(m_original.getPointer(), true, autocentered);
 
 			if (params->m_autocenterType != CleanupTypes::AUTOCENTER_NONE && !autocentered)
-				MsgBox(DVGui::WARNING, QObject::tr("The autocentering failed on the current drawing."));
+				DVGui::warning(QObject::tr("The autocentering failed on the current drawing."));
 		}
 	}
 }

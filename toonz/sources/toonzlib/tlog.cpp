@@ -216,7 +216,7 @@ TUserLogAppend::~TUserLogAppend()
 
 void TUserLogAppend::warning(const string &msg)
 {
-	DVGui::MsgBox(DVGui::WARNING, QString::fromStdString(msg));
+	DVGui::warning(QString::fromStdString(msg));
 
 	string fullMsg(myGetCurrentTime());
 	fullMsg += " WRN:";
@@ -230,7 +230,7 @@ void TUserLogAppend::warning(const string &msg)
 
 void TUserLogAppend::error(const string &msg)
 {
-	DVGui::MsgBox(DVGui::CRITICAL, QString::fromStdString(msg));
+	DVGui::error(QString::fromStdString(msg));
 	string fullMsg(myGetCurrentTime());
 	fullMsg += " ERR:";
 	fullMsg += "\n";
