@@ -35,7 +35,7 @@ const int RIGHT = LEFT + 1;
 class TSoundTrack;
 class TSoundTransform;
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TSoundTrack>;
 #endif
 

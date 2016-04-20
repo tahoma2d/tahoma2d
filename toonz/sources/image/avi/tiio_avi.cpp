@@ -156,7 +156,7 @@ private:
 //
 //===========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 
 TLevelWriterAvi::TLevelWriterAvi(const TFilePath &path, TPropertyGroup *winfo)
 	: TLevelWriter(path, winfo), m_aviFile(0), m_videoStream(0), m_audioStream(0), m_bitmapinfo(0), m_outputFmt(0), m_hic(0), m_initDone(false), IOError(0), m_st(0), m_bpp(32), m_maxDataSize(0), m_buffer(0), m_firstframe(-1)
@@ -647,10 +647,10 @@ private:
 //
 //===========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 TLevelReaderAvi::TLevelReaderAvi(const TFilePath &path)
 	: TLevelReader(path)
-#ifdef WIN32
+#ifdef _WIN32
 	  ,
 	  m_srcBitmapInfo(0), m_dstBitmapInfo(0), m_hic(0), IOError(0), m_prevFrame(-1), m_decompressedBuffer(0)
 #endif
@@ -1035,7 +1035,7 @@ TImageP TLevelReaderAvi::load(int frameIndex)
 //
 //===========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 Tiio::AviWriterProperties::AviWriterProperties()
 	: m_codec("Codec")
 {

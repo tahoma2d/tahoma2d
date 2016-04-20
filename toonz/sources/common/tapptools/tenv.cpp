@@ -69,7 +69,7 @@ public:
 
 	TFilePath getSystemVarPath(string varName)
 	{
-#ifdef WIN32
+#ifdef _WIN32
 		return m_registryRoot + varName;
 #else
 		QString settingsPath = QString::fromStdString(getApplicationName()) + QString("_") +
@@ -90,7 +90,7 @@ public:
 
 	string getSystemVarValue(string varName)
 	{
-#ifdef WIN32
+#ifdef _WIN32
 		return TSystem::getSystemValue(getSystemVarPath(varName)).toStdString();
 #else
 		TFilePath systemVarPath = getSystemVarPath(varName);
@@ -146,7 +146,7 @@ public:
 		m_applicationFullName = m_applicationName + " " + m_applicationVersion;
 		m_moduleName = m_applicationName;
 		m_rootVarName = toUpper(m_applicationName) + "ROOT";
-#ifdef WIN32
+#ifdef _WIN32
 		m_registryRoot = TFilePath("SOFTWARE\\OpenToonz\\") + m_applicationName + m_applicationVersion;
 #endif
 		m_systemVarPrefix = m_applicationName;

@@ -37,8 +37,6 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-using namespace std;
-
 //===================================================================
 
 //    Forward declarations

@@ -7,7 +7,6 @@
 #include "tvectorimage.h"
 #include "tregion.h"
 #include "tcurves.h"
-using namespace std;
 
 //-----------------------------------------------------------------------------
 
@@ -164,8 +163,8 @@ public:
 	void cloneRegions(TVectorImage::Imp &out, bool doComputeRegions = true);
 
 	void eraseIntersection(int index);
-	UINT getFillData(TVectorImage::IntersectionBranch *&v);
-	void setFillData(TVectorImage::IntersectionBranch *v, UINT branchCount, bool doComputeRegions = true);
+	UINT getFillData(std::unique_ptr<TVectorImage::IntersectionBranch[]>& v);
+	void setFillData(std::unique_ptr<TVectorImage::IntersectionBranch[]> const& v, UINT branchCount, bool doComputeRegions = true);
 	void notifyChangedStrokes(const vector<int> &strokeIndexArray, const vector<TStroke *> &oldVectorStrokeArray, bool areFlipped);
 	void insertStrokeAt(VIStroke *stroke, int strokeIndex, bool recomputeRegions = true);
 	void moveStroke(int fromIndex, int toIndex);

@@ -242,16 +242,11 @@ public:
 template <class T>
 class MultiArgumentT : public MultiArgument
 {
-	T *m_values;
+	std::unique_ptr<T[]> m_values;
 
 public:
 	MultiArgumentT(string name, string help)
-		: MultiArgument(name, help), m_values(0){};
-	~MultiArgumentT()
-	{
-		if (m_values)
-			delete[] m_values;
-	};
+		: MultiArgument(name, help) {}
 	T operator[](int index)
 	{
 		assert(0 <= index && index < m_count);
@@ -273,17 +268,13 @@ public:
 
 	void resetValue()
 	{
-		if (m_values)
-			delete[] m_values;
-		m_values = 0;
+		m_values.reset();
 		m_count = m_index = 0;
 	};
 
 	void allocate(int count)
 	{
-		if (m_values)
-			delete[] m_values;
-		m_values = count ? new T[count] : 0;
+		m_values.reset((count > 0) ? new T[count] : nullptr);
 		m_count = count;
 		m_index = 0;
 	};
@@ -298,7 +289,7 @@ typedef UsageElement *UsageElementPtr;
 class DVAPI UsageLine
 {
 protected:
-	UsageElementPtr *m_elements;
+	std::unique_ptr<UsageElementPtr[]> m_elements;
 	int m_count;
 
 public:

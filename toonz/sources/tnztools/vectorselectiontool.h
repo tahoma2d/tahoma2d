@@ -68,15 +68,15 @@ enum SelectionTarget //! Possible selection targets in a SelectionTool.
 class VectorFreeDeformer : public FreeDeformer
 {
 	TVectorImageP m_vi;
-	set<int> m_strokeIndexes;
-	vector<TStroke *> m_originalStrokes;
+	std::set<int> m_strokeIndexes;
+	std::vector<TStroke *> m_originalStrokes;
 
 	bool m_preserveThickness, m_computeRegion, m_flip;
 
 	TThickPoint deform(TThickPoint point);
 
 public:
-	VectorFreeDeformer(TVectorImageP vi, set<int> strokeIndexes);
+	VectorFreeDeformer(TVectorImageP vi, std::set<int> strokeIndexes);
 	~VectorFreeDeformer();
 
 	void setPreserveThickness(bool preserveThickness);

@@ -1015,7 +1015,7 @@ void SceneViewer::drawBackground()
 	if (glGetError() == GL_INVALID_FRAMEBUFFER_OPERATION) {
 		/* 起動時一回目になぜか GL_FRAMEBUFFER_COMPLETE なのに invalid operation が出る  */
 		GLenum status = 0;
-#if WIN32
+#ifdef _WIN32
 		PROC proc = wglGetProcAddress("glCheckFramebufferStatusEXT");
 		if (proc != nullptr)
 			status = reinterpret_cast<PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC>(proc)(GL_FRAMEBUFFER);
@@ -1028,7 +1028,7 @@ void SceneViewer::drawBackground()
 
 bool check_framebuffer_status()
 {
-#if WIN32
+#ifdef _WIN32
 	PROC proc = wglGetProcAddress("glCheckFramebufferStatusEXT");
 	if (proc == nullptr)
 		return true;

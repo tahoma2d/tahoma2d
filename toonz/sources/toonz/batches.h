@@ -20,7 +20,7 @@ class TFarmController;
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4786)
 #endif
@@ -147,7 +147,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

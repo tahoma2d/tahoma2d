@@ -57,7 +57,7 @@ protected:
 // MenuBarPopup
 //-----------------------------------------------------------------------------
 
-class MenuBarPopup : public Dialog
+class MenuBarPopup : public DVGui::Dialog
 {
 	Q_OBJECT
 	CommandListTree*	m_commandListTree;

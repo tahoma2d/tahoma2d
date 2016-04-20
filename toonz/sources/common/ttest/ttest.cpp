@@ -213,7 +213,7 @@ TFilePath getTestFile(string name)
 	TFilePath testFile;
 
 	TFilePath parentDir = TSystem::getBinDir().getParentDir();
-#ifndef WIN32
+#ifndef _WIN32
 	parentDir = parentDir.getParentDir();
 #endif
 

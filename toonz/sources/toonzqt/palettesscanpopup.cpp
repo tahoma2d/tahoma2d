@@ -27,7 +27,7 @@ PalettesScanPopup::PalettesScanPopup()
 	setWindowTitle(tr("Search for Palettes"));
 	setFixedWidth(250);
 
-	m_field = new FileField();
+	m_field = new DVGui::FileField();
 	addWidget(m_field);
 
 	m_label = new QLabel();

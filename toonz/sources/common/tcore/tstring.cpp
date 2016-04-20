@@ -8,7 +8,7 @@
 #include <QString>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #include "windows.h"
 #endif
@@ -206,7 +206,7 @@ wstring toWideString(double v, int p)
 
 string toUpper(string a)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return _strupr(const_cast<char *>(a.c_str()));
 #else
 	string ret = a;
@@ -218,7 +218,7 @@ string toUpper(string a)
 
 string toLower(string a)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return _strlwr(const_cast<char *>(a.c_str()));
 #else
 	string ret = a;
@@ -230,7 +230,7 @@ string toLower(string a)
 
 wstring toUpper(wstring a)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return _wcsupr(const_cast<wchar_t *>(a.c_str()));
 #else
 	wstring ret;
@@ -244,7 +244,7 @@ wstring toUpper(wstring a)
 
 wstring toLower(wstring a)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return _wcslwr(const_cast<wchar_t *>(a.c_str()));
 #else
 	wstring ret;

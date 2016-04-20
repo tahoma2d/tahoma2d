@@ -125,9 +125,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 	QFrame *cameraParametersBox;
 	if (!isPreview) {
 		//Save In
-		m_saveInFileFld = new FileField(0, QString(""));
+		m_saveInFileFld = new DVGui::FileField(0, QString(""));
 		//File Name
-		m_fileNameFld = new LineEdit(QString(""));
+		m_fileNameFld = new DVGui::LineEdit(QString(""));
 		//File Format
 		m_fileFormat = new QComboBox();
 		m_fileFormatButton = new QPushButton(tr("Options"));
@@ -143,18 +143,18 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 	if (isPreview) {
 #ifndef LINETEST
 		//Subcamera checkbox
-		m_subcameraChk = new CheckBox(tr("Use Sub-Camera"));
+		m_subcameraChk = new DVGui::CheckBox(tr("Use Sub-Camera"));
 #endif
 	}
 
 	//Frame Start-End
-	m_startFld = new IntLineEdit(this);
-	m_endFld = new IntLineEdit(this);
+	m_startFld = new DVGui::IntLineEdit(this);
+	m_endFld = new DVGui::IntLineEdit(this);
 	//Step-Shrink
-	m_stepFld = new IntLineEdit(this);
-	m_shrinkFld = new IntLineEdit(this);
+	m_stepFld = new DVGui::IntLineEdit(this);
+	m_shrinkFld = new DVGui::IntLineEdit(this);
 	if (isPreview)
-		m_applyShrinkChk = new CheckBox(tr("Apply Shrink to Main Viewer"), this);
+		m_applyShrinkChk = new DVGui::CheckBox(tr("Apply Shrink to Main Viewer"), this);
 	else
 		m_applyShrinkChk = 0;
 	//Resample Balance
@@ -176,7 +176,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 		otherSettingsFrame = new QFrame(this);
 
 		//Gamma
-		m_gammaFld = new DoubleLineEdit();
+		m_gammaFld = new DVGui::DoubleLineEdit();
 		//Dominant Field
 		m_dominantFieldOm = new QComboBox();
 
@@ -185,10 +185,10 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 
 		//Scene Settings FPS
 		double frameRate = getProperties()->getFrameRate();
-		m_frameRateFld = new DoubleLineEdit(this, frameRate);
+		m_frameRateFld = new DVGui::DoubleLineEdit(this, frameRate);
 
-		m_stretchFromFld = new DoubleLineEdit(this, rs.m_timeStretchFrom);
-		m_stretchToFld = new DoubleLineEdit(this, rs.m_timeStretchTo);
+		m_stretchFromFld = new DVGui::DoubleLineEdit(this, rs.m_timeStretchFrom);
+		m_stretchToFld = new DVGui::DoubleLineEdit(this, rs.m_timeStretchTo);
 		m_multimediaOm = new QComboBox(this);
 
 		showCameraSettingsButton = new QPushButton("", this);
@@ -196,8 +196,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 		removePresetButton = new QPushButton(tr("Remove"), this);
 		m_presetCombo = new QComboBox(this);
 
-		m_doStereoscopy = new CheckBox("Do stereoscopy", this);
-		m_stereoShift = new DoubleLineEdit(this, 0.05);
+		m_doStereoscopy = new DVGui::CheckBox("Do stereoscopy", this);
+		m_stereoShift = new DVGui::DoubleLineEdit(this, 0.05);
 	}
 	//Threads
 	m_threadsComboOm = new QComboBox();
@@ -878,7 +878,7 @@ void OutputSettingsPopup::onNameChanged()
 
 	QString name = m_fileNameFld->text();
 	if (!isValidFileName(name)) {
-		error("A filename cannot be empty or contain any of the following characters:\n \\ / : * ? \" < > |");
+		DVGui::error("A filename cannot be empty or contain any of the following characters:\n \\ / : * ? \" < > |");
 		TOutputProperties *prop = getProperties();
 		TFilePath fp = prop->getPath();
 		QString name = QString::fromStdString(fp.getName());
@@ -1186,7 +1186,7 @@ void OutputSettingsPopup::onDominantFieldChanged(int type)
 	TOutputProperties *prop = getProperties();
 	TRenderSettings rs = prop->getRenderSettings();
 	if (type != c_none && m_stretchFromFld->getValue() != m_stretchToFld->getValue()) {
-		error("Can't apply field rendering in a time stretched scene");
+		DVGui::error("Can't apply field rendering in a time stretched scene");
 		rs.m_fieldPrevalence = TRenderSettings::NoField;
 		m_dominantFieldOm->setCurrentIndex(c_none);
 	} else if (type == c_odd)
@@ -1215,7 +1215,7 @@ void OutputSettingsPopup::onStretchFldEditFinished()
 	TOutputProperties *prop = getProperties();
 	TRenderSettings rs = prop->getRenderSettings();
 	if (m_dominantFieldOm->currentIndex() != c_none) {
-		error("Can't stretch time in a field rendered scene\n");
+		DVGui::error("Can't stretch time in a field rendered scene\n");
 		m_stretchFromFld->setValue(rs.m_timeStretchFrom);
 		m_stretchToFld->setValue(rs.m_timeStretchTo);
 	} else {

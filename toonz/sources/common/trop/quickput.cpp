@@ -3941,9 +3941,9 @@ void doQuickResampleFilter_optimized(
 	UINT32 gColUpTmp;
 	UINT32 bColUpTmp;
 
-	register unsigned char rCol;
-	register unsigned char gCol;
-	register unsigned char bCol;
+	unsigned char rCol;
+	unsigned char gCol;
+	unsigned char bCol;
 
 	int xI;
 	int yI;
@@ -4209,9 +4209,9 @@ void doQuickResampleFilter_optimized(
 	int xWeight1;
 	int xWeight0;
 
-	register unsigned char rCol;
-	register unsigned char gCol;
-	register unsigned char bCol;
+	unsigned char rCol;
+	unsigned char gCol;
+	unsigned char bCol;
 
 	int xL;
 	int yI;

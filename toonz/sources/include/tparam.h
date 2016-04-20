@@ -153,14 +153,14 @@ private:
 
 //---------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TParam>;
 #endif
 typedef TSmartPointerT<TParam> TParamP;
 
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 #define DVAPI_PARAM_SMARTPOINTER(PARAM)         \
 	template class DVAPI TSmartPointerT<PARAM>; \
 	template class DVAPI TDerivedSmartPointerT<PARAM, TParam>;

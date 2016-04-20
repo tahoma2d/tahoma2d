@@ -156,11 +156,11 @@ inline bool isTooComplex(UINT n1, UINT n2, UINT maxSubsetNumber = 100)
 	if (n > (one << ((sizeof(UINT) * 8 - 1) / r)))
 		return true;
 
-	register UINT product1 = n; //product1 = n*(n-1)* ...(n-r+1)
-	for (register UINT i = 1; i < r; i++)
+	UINT product1 = n; //product1 = n*(n-1)* ...(n-r+1)
+	for (UINT i = 1; i < r; i++)
 		product1 *= --n;
 
-	register UINT rFact = r;
+	UINT rFact = r;
 
 	while (r > 1)
 		rFact *= --r;

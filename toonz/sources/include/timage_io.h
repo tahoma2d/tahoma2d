@@ -181,7 +181,7 @@ public:
 
 //-----------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TImageReader>;
 #endif
 
@@ -248,7 +248,7 @@ public:
 
 //-----------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TImageWriter>;
 #endif
 

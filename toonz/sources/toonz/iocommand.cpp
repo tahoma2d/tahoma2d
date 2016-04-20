@@ -1228,7 +1228,7 @@ bool IoCmd::saveSceneIfNeeded(QString msg)
 		question = QObject::tr("%1: the current scene has been modified.\n"
 							   "Do you want to save your changes?")
 					   .arg(msg);
-		int ret = MsgBox(question, QObject::tr("Save"), QObject::tr("Discard"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Save"), QObject::tr("Discard"), QObject::tr("Cancel"), 0);
 		if (ret == 0 || ret == 3) {
 			// cancel (or closed message box window)
 			return false;
@@ -1261,7 +1261,7 @@ bool IoCmd::saveSceneIfNeeded(QString msg)
 			}
 			question += QObject::tr("\nAre you sure to ") + msg + QObject::tr(" anyway ?");
 
-			int ret = MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
+			int ret = DVGui::MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
 			if (ret == 0 || ret == 2) {
 				// cancel (or closed message box window)
 				return false;
@@ -1275,7 +1275,7 @@ bool IoCmd::saveSceneIfNeeded(QString msg)
 		//--- If both the level and scene is clean, then open the quit confirmation dialog
 		if (!isLevelOrSceneIsDirty && msg == "Quit") {
 			QString question("Are you sure ?");
-			int ret = MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
+			int ret = DVGui::MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
 			if (ret == 0 || ret == 2) {
 				// cancel (or closed message box window)
 				return false;
@@ -1415,7 +1415,7 @@ bool IoCmd::saveScene(const TFilePath &path, int flags)
 		QString question;
 		question = QObject::tr("The scene %1 already exists.\nDo you want to overwrite it?").arg(QString::fromStdString(scenePath.getName()));
 
-		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return false;
 	}
@@ -1448,9 +1448,9 @@ bool IoCmd::saveScene(const TFilePath &path, int flags)
 		scene->save(scenePath, xsheet);
 		TApp::instance()->getPaletteController()->getCurrentLevelPalette()->notifyPaletteChanged(); //non toglieva l'asterisco alla paletta...forse non va qua? vinz
 	} catch (const TSystemException &se) {
-		MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::warning(QString::fromStdWString(se.getMessage()));
 	} catch (...) {
-		MsgBox(CRITICAL, QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
+		DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
 	}
 
 	cp->assign(&oldCP);
@@ -1589,7 +1589,7 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	if (!overwrite && fileDoesExist) {
 		QString question;
 		question = QObject::tr("The level %1 already exists.\nDo you want to overwrite it?").arg(toQString(fp));
-		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return false;
 	}
@@ -1608,7 +1608,7 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 		{
 			QString question;
 			question = "Palette " + QString::fromStdWString(sl->getPalette()->getPaletteName()) + ".tpl has been modified. Do you want to overwrite palette as well ?";
-			int ret = MsgBox(question,
+			int ret = DVGui::MsgBox(question,
 				QObject::tr("Overwrite Palette") /*ret = 1*/, QObject::tr("Don't Overwrite Palette") /*ret = 2*/, 0);
 			if (ret == 1)
 				overwritePalette = true;
@@ -1620,11 +1620,11 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 		sl->save(fp, TFilePath(), overwritePalette);
 	} catch (TSystemException se) {
 		QApplication::restoreOverrideCursor();
-		MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+		DVGui::warning(QString::fromStdWString(se.getMessage()));
 		return false;
 	} catch (...) {
 		QApplication::restoreOverrideCursor();
-		MsgBox(CRITICAL, QObject::tr("Couldn't save %1").arg(toQString(fp)));
+		DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(fp)));
 		return false;
 	}
 	IconGenerator::instance()->invalidate(fp);
@@ -1670,14 +1670,14 @@ bool IoCmd::saveSound(const TFilePath &fp, TXshSoundLevel *sl, bool overwrite)
 	if (!overwrite && TSystem::doesExistFileOrLevel(fp)) {
 		QString question;
 		question = QObject::tr("The soundtrack %1 already exists.\nDo you want to overwrite it?").arg(toQString(fp));
-		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return false;
 	}
 	try {
 		sl->save(fp);
 	} catch (...) {
-		MsgBox(CRITICAL, QObject::tr("Couldn't save %1").arg(toQString(fp)));
+		DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(fp)));
 		return false;
 	}
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1735,7 +1735,7 @@ bool IoCmd::loadColorModel(const TFilePath &fp, int frame)
 	list.append(QObject::tr("Overwrite the destination palette."));
 	list.append(QObject::tr("Keep the destination palette and apply it to the color model."));
 
-	int ret = RadioButtonMsgBox(DVGui::WARNING, question, list);
+	int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
 	if (ret == 0)
 		return false;
 
@@ -1810,7 +1810,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 	if (scenePath.getType() != "tnz") {
 		QString msg;
 		msg = QObject::tr("File %1 doesn't look like a TOONZ Scene").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(CRITICAL, msg);
+		DVGui::error(msg);
 		return false;
 	}
 	if (!TSystem::doesExistFileOrLevel(scenePath))
@@ -1821,7 +1821,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 	if (!sceneProject) {
 		QString msg;
 		msg = QObject::tr("It is not possible to load the scene %1 because it does not belong to any project.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 	}
 	if (sceneProject && !sceneProject->isCurrent()) {
 		QString currentProjectName =
@@ -1837,7 +1837,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 		QString importAnswer = QObject::tr("Import Scene");
 		QString switchProjectAnswer = QObject::tr("Change Project");
 		QString cancelAnswer = QObject::tr("Cancel");
-		int ret = MsgBox(question, importAnswer, switchProjectAnswer, cancelAnswer, 0);
+		int ret = DVGui::MsgBox(question, importAnswer, switchProjectAnswer, cancelAnswer, 0);
 		if (ret == 3 || ret == 0) {
 			newScene();
 			return false;
@@ -1889,14 +1889,14 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 			msg = QObject::tr("The scene %1 was created with Toonz and cannot be loaded in LineTest.").arg(QString::fromStdWString(scenePath.getWideString()));
 		else
 			msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 	}
 #endif
 	catch (...) {
 		printf("%s:%s Exception ...:\n", __FILE__, __FUNCTION__);
 		QString msg;
 		msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 	}
 	printf("%s:%s end load:\n", __FILE__, __FUNCTION__);
 	TProject *project = scene->getProject();
@@ -1947,7 +1947,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile, bool checkSa
 	if (forbiddenLevelCount > 0) {
 		QString msg;
 		msg = QObject::tr("There were problems loading the scene %1.\nSome levels have not been loaded because their version is not supported").arg(QString::fromStdWString(scenePath.getWideString()));
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 	}
 
 	bool exist = TSystem::doesExistFileOrLevel(scene->decodeFilePath(scene->getScenePath()));
@@ -2604,12 +2604,12 @@ public:
 #else
 		TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
 		if (!sl) {
-			MsgBox(WARNING, QObject::tr("No Current Level"));
+			DVGui::warning(QObject::tr("No Current Level"));
 			return;
 		}
 		ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 		if (!scene) {
-			MsgBox(WARNING, QObject::tr("No Current Scene"));
+			DVGui::warning(QObject::tr("No Current Scene"));
 			return; // non dovrebbe succedere mai
 		}
 		TFilePath levelPath = sl->getPath();
@@ -2641,14 +2641,14 @@ public:
 	{
 		QString question;
 		question = QObject::tr("Are you sure you want to save the Default Settings?");
-		int ret = MsgBox(question, QObject::tr("Save"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Save"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return;
 		ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 		try {
 			TProjectManager::instance()->saveTemplate(scene);
 		} catch (TSystemException se) {
-			MsgBox(WARNING, QString::fromStdWString(se.getMessage()));
+			DVGui::warning(QString::fromStdWString(se.getMessage()));
 			return;
 		}
 	}
@@ -2690,7 +2690,7 @@ public:
 		if (args.loadedLevels.empty()) {
 			QString msg;
 			msg = QObject::tr("It is not possible to load the %1 level.").arg(path);
-			MsgBox(CRITICAL, msg);
+			DVGui::error(msg);
 		}
 	}
 } openRecentLevelFileCommandHandler;
@@ -2733,11 +2733,11 @@ public:
 		TFilePath path = scene->getScenePath();
 		TFilePath decodePath = scene->decodeFilePath(scene->getScenePath());
 		if (!TSystem::doesExistFileOrLevel(decodePath)) {
-			MsgBox(DVGui::WARNING, QObject::tr("The scene %1 doesn't exist.").arg(toQString(decodePath)));
+			DVGui::warning(QObject::tr("The scene %1 doesn't exist.").arg(toQString(decodePath)));
 			return;
 		}
 		if (sceneHandle->getDirtyFlag()) {
-			int ret = MsgBox(QString(QObject::tr("Revert: the current scene has been modified.\nAre you sure you want to revert to previous version?")),
+			int ret = DVGui::MsgBox(QString(QObject::tr("Revert: the current scene has been modified.\nAre you sure you want to revert to previous version?")),
 							 QString(QObject::tr("Revert")), QString(QObject::tr("Cancel")));
 			if (ret == 2 || ret == 0)
 				return;
@@ -2759,13 +2759,13 @@ public:
 
 		TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
 		if (!level) {
-			MsgBox(WARNING, "No current level.");
+			DVGui::warning("No current level.");
 			return;
 		}
 		TXshSimpleLevel *sl = level->getSimpleLevel();
 		TXshPaletteLevel *pl = level->getPaletteLevel();
 		if (!sl && !pl) {
-			MsgBox(WARNING, "Current level has no palette.");
+			DVGui::warning("Current level has no palette.");
 			return;
 		}
 		/*-- SimpleLevel/PaletteLevelの場合毎にパレット/パスの取得の仕方を変える --*/
@@ -2775,7 +2775,7 @@ public:
 		if (sl) {
 			palette = sl->getPalette();
 			if (!palette) {
-				MsgBox(WARNING, "No current palette");
+				DVGui::warning("No current palette");
 				return;
 			}
 			if (sl->getPath().getType() == "pli")
@@ -2787,12 +2787,12 @@ public:
 		else if (pl) {
 			palette = pl->getPalette();
 			if (!palette) {
-				MsgBox(WARNING, "No current palette");
+				DVGui::warning("No current palette");
 				return;
 			}
 			palettePath = pl->getPath();
 		} else {
-			MsgBox(WARNING, "This level is not SimpleLevel or PaletteLevel");
+			DVGui::warning("This level is not SimpleLevel or PaletteLevel");
 			return;
 		}
 
@@ -2800,10 +2800,10 @@ public:
 		int ret;
 		if (sl && sl->getPath().getType() == "pli") {
 			question = "Saving " + toQString(palettePath) + "\nThis command will ovewrite the level data as well.  Are you sure ?";
-			ret = MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
+			ret = DVGui::MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"), 0);
 		} else {
 			question = "Do you want to overwrite current palette to " + toQString(palettePath) + " ?";
-			ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Don't Overwrite"), 0);
+			ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Don't Overwrite"), 0);
 		}
 		if (ret == 2 || ret == 0)
 			return;

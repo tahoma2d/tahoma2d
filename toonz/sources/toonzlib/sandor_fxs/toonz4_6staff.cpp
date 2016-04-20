@@ -5,7 +5,7 @@
 #include "tconvert.h"
 #include "toonz4.6/toonz.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
 //---------------------------------------------------------------------

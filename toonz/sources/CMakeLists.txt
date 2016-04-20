@@ -21,6 +21,7 @@ if (WIN32)
     endif()
     set(QT_LIB_PATH ${QT_PATH})
     set(CMAKE_PREFIX_PATH "${QT_PATH}/lib/cmake/")
+    add_definitions(-DNOMINMAX)
 elseif (APPLE)
     message("Apple System")
     if (NOT PLATFORM)
@@ -208,7 +209,7 @@ if (MSVC AND MSVC_VERSION EQUAL 1800)
 endif()
 
 # generate Qt translations and messages
-set(LANGUAGES japanese italian french)
+set(LANGUAGES japanese italian french spanish)
 
 function(add_translation module)
     set(translation)
@@ -237,10 +238,10 @@ add_subdirectory(colorfx)
 add_subdirectory(image)
 add_subdirectory(toonzqt)
 add_subdirectory(tnztools)
-add_subdirectory(toonz)
 
 add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
 
+add_subdirectory(toonz)
 add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)
 add_subdirectory(tconverter)

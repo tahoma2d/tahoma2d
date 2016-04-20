@@ -6,7 +6,7 @@
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void swapRedBlueChannels(void *buffer, int bufferSize) // Flips The Red And Blue Bytes (WidthxHeight)
 {
@@ -51,7 +51,7 @@ void swapRedBlueChannels(void *buffer, int bufferSize) // Flips The Red And Blue
 void rightRotateBits(UCHAR *buf, int bufferSize)
 {
 	UINT *buffer = (UINT *)buf;
-	register UINT app;
+	UINT app;
 	for (int i = 0; i < bufferSize; i++, buffer++) {
 		app = *buffer;
 		*buffer = app >> 8 | app << 24;
@@ -61,7 +61,7 @@ void rightRotateBits(UCHAR *buf, int bufferSize)
 void rightRotateBits(UCHAR *buf, int bufferSize)
 {
 	UINT *buffer = (UINT *)buf;
-	register UINT app;
+	UINT app;
 	for (int i = 0; i < bufferSize; i++, buffer++) {
 		app = *buffer;
 		*buffer = (app >> 16 & 0x000000ff) | (app << 16 & 0x00ff0000) | (app & 0xff00ff00);
@@ -127,7 +127,7 @@ void QtOfflineGL::createContext(TDimension rasterSize, std::shared_ptr<TOfflineG
 
 	QGLFormat fmt;
 
-#ifdef WIN32
+#ifdef _WIN32
 	fmt.setAlphaBufferSize(8);
 	fmt.setAlpha(true);
 	fmt.setRgba(true);
@@ -280,7 +280,7 @@ void QtOfflineGLPBuffer::createContext(TDimension rasterSize)
 
 	QGLFormat fmt;
 
-#ifdef WIN32
+#ifdef _WIN32
 	fmt.setAlphaBufferSize(8);
 	fmt.setAlpha(false);
 	fmt.setRgba(true);

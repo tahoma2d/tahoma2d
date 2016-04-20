@@ -1021,7 +1021,7 @@ void StageSchematicScene::onSaveSpline()
 			os << p.x << p.y << p.thick;
 		}
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to save the motion path."));
+		DVGui::warning(QObject::tr("It is not possible to save the motion path."));
 	}
 #endif
 }
@@ -1043,7 +1043,7 @@ void StageSchematicScene::onLoadSpline()
 		if (!TFileStatus(fp).doesExist()) {
 			QString msg;
 			msg = "Motion path " + toQString(fp) + " doesn't exists.";
-			MsgBox(DVGui::INFORMATION, msg);
+			DVGui::info(msg);
 			return;
 		}
 		assert(m_objHandle->isSpline());
@@ -1063,7 +1063,7 @@ void StageSchematicScene::onLoadSpline()
 			IconGenerator::instance()->invalidate(spline);
 		}
 	} catch (...) {
-		DVGui::MsgBox(DVGui::WARNING, QObject::tr("It is not possible to load the motion path."));
+		DVGui::warning(QObject::tr("It is not possible to load the motion path."));
 	}
 }
 

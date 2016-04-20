@@ -58,7 +58,7 @@ class DVAPI TStopWatch
 	START_USER m_startUser;		//process starting reference time (unit=100-nanosecond)
 	START_SYSTEM m_startSystem; //system starting reference time  (unit=100-nanosecond)
 
-#ifdef WIN32
+#ifdef _WIN32
 	LARGE_INTEGER m_hrStart; // high resolution starting reference (total) time
 #endif
 

@@ -19,7 +19,7 @@
 //-------------------------------------------------------------------
 
 class TData;
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TData>;
 #endif
 
@@ -55,7 +55,7 @@ public:
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
@@ -72,7 +72,7 @@ public:
 	TFilePath getFilePath(int i) const;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

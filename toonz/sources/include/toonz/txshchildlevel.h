@@ -92,7 +92,7 @@ private:
 	TXshChildLevel &operator=(const TXshChildLevel &);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DV_EXPORT_API TSmartPointerT<TXshChildLevel>;
 #endif
 typedef TSmartPointerT<TXshChildLevel> TXshChildLevelP;

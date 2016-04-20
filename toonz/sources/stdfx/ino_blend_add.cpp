@@ -1,7 +1,4 @@
 //------------------------------------------------------------
-#if defined _WIN32 && !defined NOMINMAX
-#define NOMINMAX
-#endif
 #include "tfxparam.h"
 #include "stdfx.h"
 

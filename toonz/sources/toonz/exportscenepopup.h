@@ -16,8 +16,6 @@ class QLabel;
 class ExportSceneTreeView;
 class QRadioButton;
 
-using namespace DVGui;
-
 //=============================================================================
 // ExportSceneDvDirModelFileFolderNode
 
@@ -142,7 +140,7 @@ signals:
 //=============================================================================
 // ExportScenePopup
 
-class ExportScenePopup : public Dialog
+class ExportScenePopup : public DVGui::Dialog
 {
 	Q_OBJECT
 

@@ -26,7 +26,7 @@ class TPixelParamP;
 
 //=============================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 class TSpectrumParam;
 template class DVAPI TPersistDeclarationT<TSpectrumParam>;
 #endif
@@ -93,7 +93,7 @@ public:
 	double keyframeIndexToFrame(int index) const;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TSpectrumParam>;
 template class DVAPI TDerivedSmartPointerT<TSpectrumParam, TParam>;
 #endif

@@ -42,7 +42,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
@@ -107,11 +107,11 @@ private:
 	TParamSetImp *m_imp;
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TParamSet>;
 template class DVAPI TDerivedSmartPointerT<TParamSet, TParam>;
 #endif
@@ -131,7 +131,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 class TPointParam;
 template class DVAPI TPersistDeclarationT<TPointParam>;
 #endif
@@ -173,7 +173,7 @@ DEFINE_PARAM_SMARTPOINTER(TPointParam, TPointD)
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 class TPixelParam;
 template class DVAPI TPersistDeclarationT<TPixelParam>;
 #endif
@@ -240,7 +240,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 class TRangeParam;
 template class DVAPI TPersistDeclarationT<TRangeParam>;
 #endif

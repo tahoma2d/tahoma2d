@@ -607,7 +607,7 @@ void FunctionExpressionSegmentPage::apply()
 	expr.setGrammar(curve->getGrammar());
 	expr.setText(expressionText);
 	if (dependsOn(expr, curve)) {
-		DVGui::MsgBox(DVGui::WARNING, tr("There is a circular reference in the definition of the interpolation."));
+		DVGui::warning(tr("There is a circular reference in the definition of the interpolation."));
 		return;
 	}
 
@@ -656,7 +656,7 @@ bool FunctionExpressionSegmentPage::getGuiValues(std::string &expressionText,
 	expr.setGrammar(curve->getGrammar());
 	expr.setText(expressionText);
 	if (dependsOn(expr, curve)) {
-		DVGui::MsgBox(DVGui::WARNING, tr("There is a circular reference in the definition of the interpolation."));
+		DVGui::warning(tr("There is a circular reference in the definition of the interpolation."));
 		return false;
 	}
 
@@ -884,11 +884,11 @@ void SimilarShapeSegmentPage::apply()
 	expr.setGrammar(curve->getGrammar());
 	expr.setText(expressionText);
 	if (!expr.isValid()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("There is a syntax error in the definition of the interpolation."));
+		DVGui::warning(tr("There is a syntax error in the definition of the interpolation."));
 		return;
 	}
 	if (dependsOn(expr, curve)) {
-		DVGui::MsgBox(DVGui::WARNING, tr("There is a circular reference in the definition of the interpolation."));
+		DVGui::warning(tr("There is a circular reference in the definition of the interpolation."));
 		return;
 	}
 	KeyframeSetter setter(curve, kIndex);

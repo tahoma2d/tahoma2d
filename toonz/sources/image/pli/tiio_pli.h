@@ -1,7 +1,7 @@
-
-
 #ifndef TTIO_PLI_INCLUDED
 #define TTIO_PLI_INCLUDED
+
+#include <memory>
 
 #include "tlevel_io.h"
 
@@ -33,7 +33,7 @@ private:
 class TLevelWriterPli : public TLevelWriter
 {
 	//! object to manage a pli
-	ParsedPli *m_pli;
+	std::unique_ptr<ParsedPli> m_pli;
 
 	//! number of frame in pli
 	UINT m_frameNumber;

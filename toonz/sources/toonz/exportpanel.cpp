@@ -246,12 +246,12 @@ void RenderController::generateMovie(TFilePath outPath, bool emitSignal)
 		else
 			msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(fp.getWideString()));
 
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 		return;
 	} catch (...) {
 		QString msg = QObject::tr("There were problems loading the scene %1.\n Some files may be missing.").arg(QString::fromStdWString(fp.getWideString()));
 
-		MsgBox(WARNING, msg);
+		DVGui::warning(msg);
 		return;
 	}
 
@@ -292,7 +292,7 @@ void RenderController::generateMovie(TFilePath outPath, bool emitSignal)
 				movieGenerator.addSoundtrack(scene, frameOffset, sceneFrames);
 			} catch (const TException&) {
 				QString text = tr("The %1 scene contains an audio file with different characteristics from the one used in the first exported scene.\nThe audio file will not be included in the rendered clip.").arg(QString::fromStdWString(fp.getLevelNameW()));
-				DVGui::MsgBox(DVGui::WARNING, text);
+				DVGui::warning(text);
 			}
 		}
 
@@ -315,7 +315,7 @@ void RenderController::generateMovie(TFilePath outPath, bool emitSignal)
 
 				if (!TSystem::showDocument(outPath)) {
 					QString msg(QObject::tr("It is not possible to display the file %1: no player associated with its format").arg(QString::fromStdWString(outPath.withoutParentDir().getWideString())));
-					MsgBox(WARNING, msg);
+					DVGui::warning(msg);
 				}
 			} else {
 				int r0 = 1, r1 = totalFrameCount, step = 1;

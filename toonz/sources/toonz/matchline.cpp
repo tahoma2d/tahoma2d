@@ -709,7 +709,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 		/*-- 左カラムに複数のLevelが入っている場合、警告を出して抜ける --*/
 		else if (level != cell[i].getSimpleLevel()) {
 			getImageProgressBar->close();
-			MsgBox(WARNING, QObject::tr("It is not possible to apply match lines to a column containing more than one level."));
+			DVGui::warning(QObject::tr("It is not possible to apply match lines to a column containing more than one level."));
 			/*-- 前に遡ってキャッシュを消去 --*/
 			i--;
 			for (; i >= 0; i--) {
@@ -725,7 +725,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 			mLevel = mCell[i].getSimpleLevel();
 		else if (mLevel != mCell[i].getSimpleLevel()) {
 			getImageProgressBar->close();
-			MsgBox(WARNING, QObject::tr("It is not possible to use a match lines column containing more than one level."));
+			DVGui::warning(QObject::tr("It is not possible to use a match lines column containing more than one level."));
 			/*-- 前に遡ってキャッシュを消去 --*/
 			i--;
 			for (; i >= 0; i--) {
@@ -752,7 +752,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 			//ラスタLevelじゃないとき、エラーを返す
 			if (!timg || !tmatch) {
 				getImageProgressBar->close();
-				MsgBox(WARNING, QObject::tr("Match lines can be applied to Toonz raster levels only."));
+				DVGui::warning(QObject::tr("Match lines can be applied to Toonz raster levels only."));
 				/*-- 前に遡ってキャッシュを消去 --*/
 				i--;
 				for (; i >= 0; i--) {
@@ -779,7 +779,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 	getImageProgressBar->close();
 
 	if (matchingLevels.empty()) {
-		MsgBox(WARNING, QObject::tr("Match lines can be applied to Toonz raster levels only."));
+		DVGui::warning(QObject::tr("Match lines can be applied to Toonz raster levels only."));
 		return;
 	}
 
@@ -787,7 +787,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 	{
 		TPalette *plt = level->getPalette();
 		if (!plt) {
-			MsgBox(WARNING, QObject::tr("The level you are using has not a valid palette."));
+			DVGui::warning(QObject::tr("The level you are using has not a valid palette."));
 			return;
 		}
 
@@ -813,7 +813,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence, int Mer
 
 			index = md->getInkIndex();
 			if (index >= styleCount)
-				MsgBox(WARNING, QObject::tr("The style index you specified is not available in the palette of the destination level."));
+				DVGui::warning(QObject::tr("The style index you specified is not available in the palette of the destination level."));
 			if (index != -1)
 				LastMatchlineIndex = index;
 		}
@@ -875,19 +875,19 @@ bool contains(const vector<TFrameId> &v, const TFrameId &val)
 
 //-----------------------------------------------------------------------------
 
-QString indexes2string(const set<TFrameId> fids)
+QString indexes2string(const std::set<TFrameId> fids)
 {
 	if (fids.empty())
 		return "";
 
 	QString str;
 
-	set<TFrameId>::const_iterator it = fids.begin();
+	std::set<TFrameId>::const_iterator it = fids.begin();
 
 	str = QString::number(it->getNumber());
 
 	while (it != fids.end()) {
-		set<TFrameId>::const_iterator it1 = it;
+		std::set<TFrameId>::const_iterator it1 = it;
 		it1++;
 
 		int lastVal = it->getNumber();
@@ -1012,12 +1012,12 @@ void DeleteInkDialog::setRange(const QString &str)
 	 DeleteLinesコマンドから呼ばれる場合：chooseInkがtrue
 --*/
 
-void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool chooseInk)
+void doDeleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids, bool chooseInk)
 {
-	vector<int> indexes;
+	std::vector<int> indexes;
 	//vector<TToonzImageP> images;
-	vector<TFrameId> frames;
-	vector<TFrameId> fidsToProcess;
+	std::vector<TFrameId> frames;
+	std::vector<TFrameId> fidsToProcess;
 	int i;
 	if (chooseInk) {
 		TPaletteHandle *ph = TApp::instance()->getPaletteController()->getCurrentLevelPalette();
@@ -1037,13 +1037,13 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool cho
 				return;
 			indexes = md->getInkIndexes();
 			if (indexes.empty()) {
-				MsgBox(WARNING, QObject::tr("The style index range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to indexes 4, 5, 6 and 7)."));
+				DVGui::warning(QObject::tr("The style index range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to indexes 4, 5, 6 and 7)."));
 				continue;
 			}
 
 			frames = md->getFrames();
 			if (frames.empty()) {
-				MsgBox(WARNING, QObject::tr("The frame range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to frames 4, 5, 6 and 7)."));
+				DVGui::warning(QObject::tr("The frame range you specified is not valid: please separate values with a comma (e.g. 1,2,5) or with a dash (e.g. 4-7 will refer to frames 4, 5, 6 and 7)."));
 				continue;
 			}
 			for (i = 0; i < frames.size(); i++) {
@@ -1066,7 +1066,7 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool cho
 	}
 
 	if (fidsToProcess.empty()) {
-		MsgBox(WARNING, QObject::tr("No drawing is available in the frame range you specified."));
+		DVGui::warning(QObject::tr("No drawing is available in the frame range you specified."));
 		return;
 	}
 
@@ -1088,12 +1088,12 @@ void doDeleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids, bool cho
 
 //-----------------------------------------------------------------------------
 
-void deleteMatchlines(TXshSimpleLevel *sl, const set<TFrameId> &fids)
+void deleteMatchlines(TXshSimpleLevel *sl, const std::set<TFrameId> &fids)
 {
 	doDeleteMatchlines(sl, fids, false);
 }
 
-void deleteInk(TXshSimpleLevel *sl, const set<TFrameId> &fids)
+void deleteInk(TXshSimpleLevel *sl, const std::set<TFrameId> &fids)
 {
 	doDeleteMatchlines(sl, fids, true);
 }

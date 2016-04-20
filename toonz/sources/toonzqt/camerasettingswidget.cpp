@@ -199,8 +199,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
 	m_arFld = new SimpleExpField(this);
 
-	m_xResFld = new IntLineEdit();
-	m_yResFld = new IntLineEdit();
+	m_xResFld = new DVGui::IntLineEdit();
+	m_yResFld = new DVGui::IntLineEdit();
 	m_xDpiFld = new DoubleLineEdit();
 	m_yDpiFld = new DoubleLineEdit();
 
@@ -1024,7 +1024,7 @@ void CameraSettingsWidget::removePreset()
 		return;
 
 	// confirmation dialog
-	int ret = MsgBox(QObject::tr("Deleting \"%1\".\nAre you sure?").arg(m_presetListOm->currentText()),
+	int ret = DVGui::MsgBox(QObject::tr("Deleting \"%1\".\nAre you sure?").arg(m_presetListOm->currentText()),
 					 QObject::tr("Delete"), QObject::tr("Cancel"));
 	if (ret == 0 || ret == 2)
 		return;

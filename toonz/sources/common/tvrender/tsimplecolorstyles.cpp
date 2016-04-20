@@ -28,7 +28,7 @@
 
 #include "tsimplecolorstyles.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define CALLBACK
 #endif
 
@@ -119,7 +119,7 @@ void drawAntialiasedOutline(const std::vector<TOutlinePoint> &_v, const TStroke 
 //    DisplayListManager  definition
 //*************************************************************************************
 
-#ifdef WIN32
+#ifdef _WIN32
 
 namespace
 {
@@ -292,7 +292,7 @@ public:
 
 } // namespace
 
-#endif // WIN32
+#endif // _WIN32
 
 //*************************************************************************************
 //    TSimpleStrokeStyle  implementation
@@ -1460,7 +1460,7 @@ void TVectorImagePatternStrokeStyle::computeTransformations(vector<TAffine> &tra
 
 void TVectorImagePatternStrokeStyle::clearGlDisplayLists()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	DisplayListManager *pmgr = DisplayListManager::instance();
 	assert(pmgr);
 	pmgr->clearLists();
@@ -1590,7 +1590,7 @@ void TVectorImagePatternStrokeStyle::drawStroke(const TVectorRenderData &rd, con
 			tglMultMatrix(totalTransformation);
 
 			CHECK_GL_ERROR
-#ifdef WIN32
+#ifdef _WIN32
 
 			GLuint listId = DisplayListManager::instance()->getDisplayListId(imgPointer, m_name, fid, rd);
 			if (listId != 0) {

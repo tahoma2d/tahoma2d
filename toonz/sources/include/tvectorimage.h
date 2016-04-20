@@ -272,8 +272,8 @@ public:
 	//! Call the following method after stroke modification
 	void notifyChangedStrokes(int strokeIndex, TStroke *oldStroke = 0, bool isFlipped = false);
 
-	UINT getFillData(IntersectionBranch *&v);
-	void setFillData(IntersectionBranch *v, UINT size, bool doComputeRegions = true);
+	UINT getFillData(std::unique_ptr<IntersectionBranch[]>& v);
+	void setFillData(std::unique_ptr<IntersectionBranch[]> const& v, UINT size, bool doComputeRegions = true);
 
 	void drawAutocloses(const TVectorRenderData &rd) const; //debug method
 
@@ -368,7 +368,7 @@ DVAPI void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP 
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TVectorImage>;
 template class DVAPI TDerivedSmartPointerT<TVectorImage, TImage>;
 #endif
@@ -379,7 +379,7 @@ public:
 	TVectorImageP() {}
 	TVectorImageP(TVectorImage *image) : DerivedSmartPointer(image) {}
 	TVectorImageP(TImageP image) : DerivedSmartPointer(image) {}
-#if !defined(WIN32)
+#if !defined(_WIN32)
 	TVectorImageP(TImage *image) : DerivedSmartPointer(TImageP(image))
 	{
 	}

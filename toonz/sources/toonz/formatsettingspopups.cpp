@@ -13,7 +13,7 @@
 #include "toonz/tcamera.h"
 #include "toutputproperties.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "avicodecrestrictions.h"
 #endif;
 
@@ -37,7 +37,7 @@
 FormatSettingsPopup::FormatSettingsPopup(
 	QWidget *parent, const std::string &format, TPropertyGroup *props)
 	: Dialog(parent), m_format(format), m_props(props), m_levelPath(TFilePath())
-#ifdef WIN32
+#ifdef _WIN32
 	  ,
 	  m_codecRestriction(0), m_codecComboBox(0), m_configureCodec(0)
 #endif
@@ -67,14 +67,14 @@ FormatSettingsPopup::FormatSettingsPopup(
 			assert(false);
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (format == "avi") {
 		m_codecRestriction = new QLabel(this);
 		m_codecRestriction->setMinimumHeight(70);
 		m_codecRestriction->setStyleSheet("border: 1px solid rgb(200,200,200);");
 		m_mainLayout->addWidget(m_codecRestriction, m_mainLayout->rowCount(), 0, 1, 2);
 		m_configureCodec = new QPushButton("Configure Codec", this);
-		m_configureCodec->setFixedSize(100, WidgetHeight);
+		m_configureCodec->setFixedSize(100, DVGui::WidgetHeight);
 		m_mainLayout->addWidget(m_configureCodec, m_mainLayout->rowCount(), 0, 1, 2);
 		connect(m_configureCodec, SIGNAL(released()), this, SLOT(onAviCodecConfigure()));
 	}
@@ -105,7 +105,7 @@ void FormatSettingsPopup::buildPropertyComboBox(int index, TPropertyGroup *props
 	TEnumProperty *prop = (TEnumProperty *)(props->getProperty(index));
 	assert(prop);
 
-	PropertyComboBox *comboBox = new PropertyComboBox(this, prop);
+	DVGui::PropertyComboBox *comboBox = new DVGui::PropertyComboBox(this, prop);
 	m_widgets[prop->getName()] = comboBox;
 	connect(comboBox, SIGNAL(currentIndexChanged(const QString)), this, SLOT(onComboBoxIndexChanged(const QString)));
 	TEnumProperty::Range range = prop->getRange();
@@ -131,7 +131,7 @@ void FormatSettingsPopup::buildPropertyComboBox(int index, TPropertyGroup *props
 	m_mainLayout->addWidget(new QLabel(tr(prop->getName().c_str()) + ":", this), row, 0, Qt::AlignRight | Qt::AlignVCenter);
 	m_mainLayout->addWidget(comboBox, row, 1);
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (m_format == "avi")
 		m_codecComboBox = comboBox;
 #endif;
@@ -144,7 +144,7 @@ void FormatSettingsPopup::buildValueField(int index, TPropertyGroup *props)
 	TIntProperty *prop = (TIntProperty *)(props->getProperty(index));
 	assert(prop);
 
-	PropertyIntField *v = new PropertyIntField(this, prop);
+	DVGui::PropertyIntField *v = new DVGui::PropertyIntField(this, prop);
 	m_widgets[prop->getName()] = v;
 
 	int row = m_mainLayout->rowCount();
@@ -161,7 +161,7 @@ void FormatSettingsPopup::buildPropertyCheckBox(int index, TPropertyGroup *props
 	TBoolProperty *prop = (TBoolProperty *)(props->getProperty(index));
 	assert(prop);
 
-	PropertyCheckBox *v = new PropertyCheckBox(tr(prop->getName().c_str()), this, prop);
+	DVGui::PropertyCheckBox *v = new DVGui::PropertyCheckBox(tr(prop->getName().c_str()), this, prop);
 	m_widgets[prop->getName()] = v;
 
 	m_mainLayout->addWidget(v, m_mainLayout->rowCount(), 1);
@@ -176,7 +176,7 @@ void FormatSettingsPopup::buildPropertyLineEdit(int index, TPropertyGroup *props
 	TStringProperty *prop = (TStringProperty *)(props->getProperty(index));
 	assert(prop);
 
-	PropertyLineEdit *lineEdit = new PropertyLineEdit(this, prop);
+	DVGui::PropertyLineEdit *lineEdit = new DVGui::PropertyLineEdit(this, prop);
 	m_widgets[prop->getName()] = lineEdit;
 	lineEdit->setText(tr(toString(prop->getValue()).c_str()));
 
@@ -187,7 +187,7 @@ void FormatSettingsPopup::buildPropertyLineEdit(int index, TPropertyGroup *props
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void FormatSettingsPopup::onComboBoxIndexChanged(const QString codecName)
 {
@@ -214,7 +214,7 @@ void FormatSettingsPopup::onAviCodecConfigure()
 
 void FormatSettingsPopup::showEvent(QShowEvent *se)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (m_format == "avi") {
 		assert(m_codecComboBox);
 		m_codecComboBox->blockSignals(true);

@@ -9,7 +9,7 @@
 #include "tcurves.h"
 
 #ifndef __sgi
-#ifdef WIN32
+#ifdef _WIN32
 #include <GL/glut.h>
 #elif defined(LINUX)
 #include <GL/glut.h>
@@ -435,8 +435,7 @@ void tglDraw(const TCubic &cubic, int precision, GLenum pointOrLine)
 {
 	CHECK_ERRORS_BY_GL;
 	assert(pointOrLine == GL_POINT || pointOrLine == GL_LINE);
-	float(*ctrlPts)[3];
-	ctrlPts = new float[4][3];
+	float ctrlPts[4][3];
 
 	ctrlPts[0][0] = cubic.getP0().x;
 	ctrlPts[0][1] = cubic.getP0().y;
@@ -463,8 +462,6 @@ void tglDraw(const TCubic &cubic, int precision, GLenum pointOrLine)
 	CHECK_ERRORS_BY_GL;
 	glEvalMesh1(pointOrLine, 0, precision);
 	CHECK_ERRORS_BY_GL;
-
-	delete[] ctrlPts;
 }
 
 //-----------------------------------------------------------------------------
@@ -669,7 +666,7 @@ void tglBuildMipmaps(std::vector<TRaster32P> &rasters,
 
 //-----------------------------------------------------------------------------
 //Forse si potrebbe togliere l'ifdef ed usare QT
-#if defined(WIN32)
+#if defined(_WIN32)
 
 TGlContext tglGetCurrentContext()
 {

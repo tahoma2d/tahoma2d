@@ -236,13 +236,11 @@ private:
 };
 
 //--------------------------------------------------------------------
-using namespace DVGui;
-
-class RenameAsToonzPopup : public Dialog
+class RenameAsToonzPopup : public DVGui::Dialog
 {
 	Q_OBJECT
 	QPushButton *m_okBtn, *m_cancelBtn;
-	LineEdit *m_name;
+	DVGui::LineEdit *m_name;
 	QCheckBox *m_overwrite;
 
 public:

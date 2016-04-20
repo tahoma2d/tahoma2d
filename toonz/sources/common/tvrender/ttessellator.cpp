@@ -12,7 +12,7 @@
 
 //#include "tlevel_io.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define CALLBACK
 #endif
 // To avoid linking problems with HP ZX2000
@@ -93,7 +93,7 @@ extern "C" void CALLBACK myCombine(GLdouble coords[3], GLdouble *d[4],
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 typedef GLvoid(CALLBACK *GluCallback)(void);
 #endif
 

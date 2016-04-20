@@ -49,7 +49,7 @@ private:
 	bool ESCI_command_2w(char cmd, unsigned short p0, unsigned short p1, bool checkACK);
 	bool ESCI_command_4w(char cmd, unsigned short p0, unsigned short p1, unsigned short p2, unsigned short p3, bool checkACK);
 
-	unsigned char *ESCI_read_data2(unsigned long &size);
+	std::unique_ptr<unsigned char[]> ESCI_read_data2(unsigned long &size);
 	void ESCI_readLineData(unsigned char &stx, unsigned char &status, unsigned short &counter, unsigned short &lines, bool &areaEnd);
 	void ESCI_readLineData2(unsigned char &stx, unsigned char &status, unsigned short &counter);
 

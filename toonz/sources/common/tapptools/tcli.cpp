@@ -205,7 +205,7 @@ void MultiArgument::fetch(int index, int &argc, char *argv[])
 //---------------------------------------------------------
 
 UsageLine::UsageLine()
-	: m_elements(0), m_count(0)
+	: m_count(0)
 {
 }
 
@@ -213,9 +213,6 @@ UsageLine::UsageLine()
 
 UsageLine::~UsageLine()
 {
-	if (m_elements) {
-		delete[] m_elements;
-	}
 }
 
 //---------------------------------------------------------
@@ -223,8 +220,8 @@ UsageLine::~UsageLine()
 UsageLine::UsageLine(const UsageLine &src)
 {
 	m_count = src.m_count;
-	m_elements = new UsageElementPtr[m_count];
-	::memcpy(m_elements, src.m_elements, m_count * sizeof(m_elements[0]));
+	m_elements.reset(new UsageElementPtr[m_count]);
+	::memcpy(m_elements.get(), src.m_elements.get(), m_count * sizeof(m_elements[0]));
 }
 
 //---------------------------------------------------------
@@ -232,9 +229,8 @@ UsageLine::UsageLine(const UsageLine &src)
 UsageLine &UsageLine::operator=(const UsageLine &src)
 {
 	if (src.m_elements != m_elements) {
-		delete[] m_elements;
-		m_elements = new UsageElementPtr[src.m_count];
-		::memcpy(m_elements, src.m_elements, src.m_count * sizeof(m_elements[0]));
+		m_elements.reset(new UsageElementPtr[src.m_count]);
+		::memcpy(m_elements.get(), src.m_elements.get(), src.m_count * sizeof(m_elements[0]));
 	}
 	m_count = src.m_count;
 	return *this;
@@ -245,8 +241,8 @@ UsageLine &UsageLine::operator=(const UsageLine &src)
 UsageLine::UsageLine(const UsageLine &src, UsageElement &elem)
 {
 	m_count = src.m_count;
-	m_elements = new UsageElementPtr[m_count + 1];
-	::memcpy(m_elements, src.m_elements, m_count * sizeof(m_elements[0]));
+	m_elements.reset(new UsageElementPtr[m_count + 1]);
+	::memcpy(m_elements.get(), src.m_elements.get(), m_count * sizeof(m_elements[0]));
 	m_elements[m_count++] = &elem;
 }
 
@@ -255,8 +251,8 @@ UsageLine::UsageLine(const UsageLine &src, UsageElement &elem)
 UsageLine::UsageLine(int count)
 {
 	m_count = count;
-	m_elements = new UsageElementPtr[m_count];
-	::memset(m_elements, 0, m_count * sizeof(m_elements[0]));
+	m_elements.reset(new UsageElementPtr[m_count]);
+	::memset(m_elements.get(), 0, m_count * sizeof(m_elements[0]));
 }
 
 //---------------------------------------------------------
@@ -264,7 +260,7 @@ UsageLine::UsageLine(int count)
 UsageLine::UsageLine(UsageElement &elem)
 {
 	m_count = 1;
-	m_elements = new UsageElementPtr[m_count];
+	m_elements.reset(new UsageElementPtr[m_count]);
 	m_elements[0] = &elem;
 }
 
@@ -273,7 +269,7 @@ UsageLine::UsageLine(UsageElement &elem)
 UsageLine::UsageLine(UsageElement &a, UsageElement &b)
 {
 	m_count = 2;
-	m_elements = new UsageElementPtr[m_count];
+	m_elements.reset(new UsageElementPtr[m_count]);
 	m_elements[0] = &a;
 	m_elements[1] = &b;
 }

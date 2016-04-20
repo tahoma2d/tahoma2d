@@ -1,6 +1,6 @@
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #define _WIN32_WINNT 0x0500 // per CreateJobObject e affini
 #endif
 
@@ -114,10 +114,10 @@ bool LoadTaskPopup::execute()
 		DVGui::error(toQString(fp) + tr(" does not exist."));
 		return false;
 	} else if (m_isRenderTask && fp.getType() != "tnz") {
-		error(toQString(fp) + tr(" you can load only TNZ files for render task."));
+		DVGui::error(toQString(fp) + tr(" you can load only TNZ files for render task."));
 		return false;
 	} else if (!m_isRenderTask && fp.getType() != "tnz" && fp.getType() != "cln") {
-		error(toQString(fp) + tr(" you can load only TNZ or CLN files for cleanup task."));
+		DVGui::error(toQString(fp) + tr(" you can load only TNZ or CLN files for cleanup task."));
 		return false;
 	}
 
@@ -478,7 +478,7 @@ void BatchesController::removeTask(const QString &id)
 
 	TFarmTask *task = it->second;
 	if (task->m_status == Running || task->m_status == Waiting) {
-		MsgBox(WARNING, taskBusyStr().arg(task->m_name));
+		DVGui::warning(taskBusyStr().arg(task->m_name));
 		return;
 	}
 
@@ -531,7 +531,7 @@ void BatchesController::removeAllTasks()
 	for (tt = m_tasks.begin(); tt != tEnd; ++tt) {
 		TFarmTask *task = tt->second;
 		if (task->m_status == Running || task->m_status == Waiting) {
-			MsgBox(WARNING, taskBusyStr().arg(task->m_name));
+			DVGui::warning(taskBusyStr().arg(task->m_name));
 			return;
 		}
 	}
@@ -826,7 +826,7 @@ void BatchesController::onExit(bool &ret)
 	int answer = 0;
 
 	if (m_dirtyFlag)
-		answer = MsgBox(QString(tr("The current task list has been modified.\nDo you want to save your changes?")), tr("Save"), tr("Discard"), tr("Cancel"), 1);
+		answer = DVGui::MsgBox(QString(tr("The current task list has been modified.\nDo you want to save your changes?")), tr("Save"), tr("Discard"), tr("Cancel"), 1);
 
 	ret = true;
 	if (answer == 3)
@@ -858,7 +858,7 @@ void BatchesController::loadTask(bool isRenderTask)
 void BatchesController::doLoad(const TFilePath &fp)
 {
 	if (m_dirtyFlag) {
-		int ret = MsgBox(QString(tr("The current task list has been modified.\nDo you want to save your changes?")), tr("Save"), tr("Discard"), tr("Cancel"));
+		int ret = DVGui::MsgBox(QString(tr("The current task list has been modified.\nDo you want to save your changes?")), tr("Save"), tr("Discard"), tr("Cancel"));
 		if (ret == 1)
 			save();
 		else if (ret == 3 || ret == 0)
@@ -930,7 +930,7 @@ QString BatchesController::getListName() const
 void BatchesController::saveas()
 {
 	if (getTaskCount() == 0) {
-		MsgBox(WARNING, tr("The Task List is empty!"));
+		DVGui::warning(tr("The Task List is empty!"));
 		return;
 	}
 

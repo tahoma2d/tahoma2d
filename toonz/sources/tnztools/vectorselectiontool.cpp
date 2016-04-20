@@ -128,12 +128,12 @@ inline void notifySelectionChanged()
 //    VectorFreeDeformer  implementation
 //********************************************************************************
 
-VectorFreeDeformer::VectorFreeDeformer(TVectorImageP vi, set<int> strokeIndexes)
+VectorFreeDeformer::VectorFreeDeformer(TVectorImageP vi, std::set<int> strokeIndexes)
 	: FreeDeformer(), m_vi(vi), m_strokeIndexes(strokeIndexes), m_preserveThickness(false), m_computeRegion(false), m_flip(false)
 {
 	TRectD r;
 
-	set<int>::iterator it, iEnd = m_strokeIndexes.end();
+	std::set<int>::iterator it, iEnd = m_strokeIndexes.end();
 	for (it = m_strokeIndexes.begin(); it != iEnd; ++it) {
 		TStroke *stroke = m_vi->getStroke(*it);
 		r += stroke->getBBox();
