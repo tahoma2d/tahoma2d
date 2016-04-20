@@ -237,10 +237,10 @@ add_subdirectory(colorfx)
 add_subdirectory(image)
 add_subdirectory(toonzqt)
 add_subdirectory(tnztools)
-add_subdirectory(toonz)
 
 add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
 
+add_subdirectory(toonz)
 add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)
 add_subdirectory(tconverter)
