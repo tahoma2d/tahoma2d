@@ -160,7 +160,7 @@ void PaletteViewer::setPaletteHandle(TPaletteHandle *paletteHandle)
 
 	bool ret = true;
 	if (m_paletteHandle)
-		ret = ret && disconnect(m_paletteHandle);
+		ret = ret && disconnect(m_paletteHandle,0,this,0);
 
 	m_paletteHandle = paletteHandle;
 
