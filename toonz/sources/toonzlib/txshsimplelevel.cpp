@@ -1134,7 +1134,7 @@ void TXshSimpleLevel::load()
 	if (!getScene())
 		return;
 
-	getProperties()->setDirtyFlag(false);
+	//getProperties()->setDirtyFlag(false);
 
 	m_isSubsequence = loadingLevelRange.isEnabled();
 

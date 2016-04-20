@@ -1631,11 +1631,14 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	FileBrowser::refreshFolder(fp.getParentDir());
 	History::instance()->addItem(fp);
 
-	if (overwritePalette ||
-		sl->getPath().getType() == "pli")
-		sl->getPalette()->setDirtyFlag(false);
-	else // ask only once for save palette
-		sl->getPalette()->setAskOverwriteFlag(false);
+	if (sl->getPalette())
+	{
+		if (overwritePalette ||
+			sl->getPath().getType() == "pli")
+			sl->getPalette()->setDirtyFlag(false);
+		else // ask only once for save palette
+			sl->getPalette()->setAskOverwriteFlag(false);
+	}
 
 	RecentFiles::instance()->addFilePath(toQString(fp), RecentFiles::Level);
 	QApplication::restoreOverrideCursor();
@@ -2602,10 +2605,6 @@ public:
 		TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
 		if (!sl) {
 			MsgBox(WARNING, QObject::tr("No Current Level"));
-			return;
-		}
-		if (!sl->getPalette()) {
-			MsgBox(WARNING, QObject::tr("Toonz cannot Save this Level"));
 			return;
 		}
 		ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();

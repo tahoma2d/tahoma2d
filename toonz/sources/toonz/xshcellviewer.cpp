@@ -756,9 +756,7 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated)
 		//check if the column is reference
 		bool isReference = true;
 		if (column) { // Verifico se la colonna e' una mask
-			if (column->isControl())
-				isReference = false;
-			if (column->isRendered())
+			if (column->isControl() || column->isRendered() || column->getMeshColumn())
 				isReference = false;
 		}
 
