@@ -973,7 +973,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference)
 	int y = m_viewer->rowToY(row);
 	QRect rect = QRect(x + 1, y + 1, ColumnWidth - 1, RowHeight - 1);
 	if (cell.isEmpty()) { // vuol dire che la precedente non e' vuota
-		p.setPen(XsheetGUI::LevelEndCrossColor);
+		QColor levelEndColor = m_viewer->getTextColor();
+		levelEndColor.setAlphaF(0.3);
+		p.setPen(levelEndColor);
 		p.drawLine(rect.topLeft(), rect.bottomRight());
 		p.drawLine(rect.topRight(), rect.bottomLeft());
 		return;
@@ -1010,7 +1012,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference)
 	//draw dot line if the column is locked
 	TXshColumn *column = xsh->getColumn(col);
 	if (column->isLocked()) {
-		p.setPen(QPen(Qt::gray, 2, Qt::DotLine));
+		p.setPen(QPen(cellColor, 2, Qt::DotLine));
 		p.drawLine(x + 3, y, x + 3, y + RowHeight);
 	}
 	// draw "end of the level"
@@ -1185,7 +1187,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col, bool isReference)
 	int y = m_viewer->rowToY(row);
 	QRect rect = QRect(x + 1, y + 1, ColumnWidth - 1, RowHeight - 1);
 	if (cell.isEmpty()) { // vuol dire che la precedente non e' vuota
-		p.setPen(XsheetGUI::LevelEndCrossColor);
+		QColor levelEndColor = m_viewer->getTextColor();
+		levelEndColor.setAlphaF(0.3);
+		p.setPen(levelEndColor);
 		p.drawLine(rect.topLeft(), rect.bottomRight());
 		p.drawLine(rect.topRight(), rect.bottomLeft());
 		return;
@@ -1205,7 +1209,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col, bool isReference)
 
 	TXshColumn *column = xsh->getColumn(col);
 	if (column->isLocked()) {
-		p.setPen(QPen(Qt::gray, 2, Qt::DotLine));
+		p.setPen(QPen(cellColor, 2, Qt::DotLine));
 		p.drawLine(x + 3, y, x + 3, y + RowHeight);
 	}
 
