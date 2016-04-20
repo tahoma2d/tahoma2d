@@ -641,7 +641,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col)
 	if (column) {
 		if (column->isControl())
 			usage = Control;
-		if (column->isRendered())
+		if (column->isRendered() || column->getMeshColumn())
 			usage = Normal;
 	}
 

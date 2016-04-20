@@ -1133,9 +1133,7 @@ void TXshSimpleLevel::load()
 	assert(getScene());
 	if (!getScene())
 		return;
-
-	getProperties()->setDirtyFlag(false);
-
+	
 	m_isSubsequence = loadingLevelRange.isEnabled();
 
 	TFilePath checkpath = getScene()->decodeFilePath(m_path);
