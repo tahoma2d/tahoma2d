@@ -26,7 +26,7 @@
 //  TNotAnimatableParamChange
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
@@ -185,7 +185,7 @@ public:
 //
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TNotAnimatableParam<int>;
 class TIntParam;
 template class DVAPI TPersistDeclarationT<TIntParam>;
@@ -220,7 +220,7 @@ DEFINE_PARAM_SMARTPOINTER(TIntParam, int)
 //
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TNotAnimatableParam<bool>;
 class TBoolParam;
 template class DVAPI TPersistDeclarationT<TBoolParam>;
@@ -248,7 +248,7 @@ DEFINE_PARAM_SMARTPOINTER(TBoolParam, bool)
 //
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TNotAnimatableParam<TFilePath>;
 class TFilePathParam;
 template class DVAPI TPersistDeclarationT<TFilePathParam>;
@@ -274,7 +274,7 @@ DEFINE_PARAM_SMARTPOINTER(TFilePathParam, TFilePath)
 //
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TNotAnimatableParam<std::wstring>;
 class TStringParam;
 template class DVAPI TPersistDeclarationT<TStringParam>;
@@ -358,7 +358,7 @@ public:
 //
 //=========================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TNotAnimatableParam<double>;
 class TNADoubleParam;
 template class DVAPI TPersistDeclarationT<TNADoubleParam>;
@@ -457,7 +457,7 @@ TUndo *TNotAnimatableParamChange<T>::createUndo() const
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

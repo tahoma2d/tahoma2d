@@ -11,13 +11,11 @@ class QPushButton;
 class QLabel;
 class TFilePath;
 
-using namespace DVGui;
-
 //=============================================================================
 // FileInfoPopup
 //-----------------------------------------------------------------------------
 
-class FileInfoPopup : public Dialog
+class FileInfoPopup : public DVGui::Dialog
 {
 	Q_OBJECT
 

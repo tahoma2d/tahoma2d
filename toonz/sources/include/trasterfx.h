@@ -20,7 +20,7 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4251)
 #endif
 
@@ -266,7 +266,7 @@ public:
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TRasterFx>;
 template class DVAPI TDerivedSmartPointerT<TRasterFx, TFx>;
 #endif
@@ -285,7 +285,7 @@ public:
 
 //===================================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TFxPortT<TRasterFx>;
 #endif
 typedef TFxPortT<TRasterFx> TRasterFxPort;
@@ -321,7 +321,7 @@ public:
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TGeometryFx>;
 template class DVAPI TDerivedSmartPointerT<TGeometryFx, TFx>;
 #endif
@@ -343,7 +343,7 @@ public:
 
 //===================================================================
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TFxPortT<TGeometryFx>;
 #endif
 
@@ -409,12 +409,12 @@ void DVAPI removeRenderCache(const std::string &alias);
 
 //-------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

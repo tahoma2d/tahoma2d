@@ -1048,7 +1048,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference)
 		isRed = true;
 	p.setPen(isRed ? m_viewer->getSelectedColumnTextColor() : m_viewer->getTextColor());
 
-#ifdef WIN32
+#ifdef _WIN32
 	static QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 	static QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);
@@ -1256,7 +1256,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col, bool isReference)
 		p.setPen(isRed ? m_viewer->getSelectedColumnTextColor() : m_viewer->getTextColor());
 // il nome va scritto se e' diverso dalla cella precedente oppure se
 // siamo su una marker line
-#ifndef WIN32
+#ifndef _WIN32
 		static QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 		static QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);

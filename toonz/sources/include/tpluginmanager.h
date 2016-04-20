@@ -55,7 +55,7 @@ public:
 //
 // L'entry point del plugin e' TLIBMAIN {....}
 //
-#ifdef WIN32
+#ifdef _WIN32
 #define TLIBMAIN                     \
 	extern "C" __declspec(dllexport) \
 		const TPluginInfo *          \

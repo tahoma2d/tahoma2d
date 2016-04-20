@@ -612,7 +612,7 @@ void TVectorImage::Imp::doEraseIntersection(int index, vector<int> *toBeDeleted)
 
 //-----------------------------------------------------------------------------
 
-UINT TVectorImage::Imp::getFillData(IntersectionBranch *&v)
+UINT TVectorImage::Imp::getFillData(std::unique_ptr<IntersectionBranch[]>& v)
 {
 	//print(m_intersectionData->m_intList, "C:\\temp\\intersectionPrimaSave.txt");
 
@@ -636,7 +636,7 @@ UINT TVectorImage::Imp::getFillData(IntersectionBranch *&v)
 		branchesBefore[currInt + 1] = branchesBefore[currInt] + strokeListSize;
 	}
 
-	v = new IntersectionBranch[size];
+	v.reset(new IntersectionBranch[size]);
 	currInt = 0;
 	p1 = m_intersectionData->m_intList.first();
 	for (; p1; p1 = p1->next(), currInt++) {
@@ -737,7 +737,7 @@ TStroke *reconstructAutocloseStroke(Intersection *p1,
 } //namespace
 //-----------------------------------------------------------------------------
 
-void TVectorImage::Imp::setFillData(IntersectionBranch *v, UINT branchCount, bool doComputeRegions)
+void TVectorImage::Imp::setFillData(std::unique_ptr<IntersectionBranch[]> const& v, UINT branchCount, bool doComputeRegions)
 {
 #ifdef _DEBUG
 /*ofstream of("C:\\temp\\fillDataIn.txt");

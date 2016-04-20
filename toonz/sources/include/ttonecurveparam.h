@@ -10,7 +10,7 @@
 
 #include <QList>
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4251)
 #endif
 
@@ -99,7 +99,7 @@ public:
 	void saveData(TOStream &os);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TSmartPointerT<TToneCurveParam>;
 template class DVAPI TDerivedSmartPointerT<TToneCurveParam, TParam>;
 #endif

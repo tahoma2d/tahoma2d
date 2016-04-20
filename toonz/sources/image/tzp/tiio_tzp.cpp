@@ -11,7 +11,7 @@
 //#include "tspecialstyleid.h"
 #include <set>
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4996)
 #include "windows.h"
 #endif

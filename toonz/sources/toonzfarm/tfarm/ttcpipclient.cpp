@@ -3,7 +3,7 @@
 #include "ttcpip.h"
 #include "tconvert.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Winsock2.h>
 #else
 #include <errno.h> /* obligatory includes */
@@ -17,7 +17,7 @@
 #include <netdb.h>
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 #define SOCKET_ERROR -1
 #endif
 
@@ -25,7 +25,7 @@
 
 TTcpIpClient::TTcpIpClient()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(1, 1);
 	int irc = WSAStartup(wVersionRequested, &wsaData);
@@ -36,7 +36,7 @@ TTcpIpClient::TTcpIpClient()
 
 TTcpIpClient::~TTcpIpClient()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	WSACleanup();
 #endif
 }
@@ -57,7 +57,7 @@ int TTcpIpClient::connect(const QString &hostName, const QString &addrStr, int p
 	struct hostent *he = gethostbyname(hostName.toAscii());
 #endif
 	if (!he) {
-#ifdef WIN32
+#ifdef _WIN32
 		int err = WSAGetLastError();
 #else
 #endif
@@ -76,7 +76,7 @@ int TTcpIpClient::connect(const QString &hostName, const QString &addrStr, int p
 	if (rcConnect == SOCKET_ERROR) {
 		sock = -1;
 
-#ifdef WIN32
+#ifdef _WIN32
 		int err = WSAGetLastError();
 		switch (err) {
 		case WSAECONNREFUSED:
@@ -108,7 +108,7 @@ int TTcpIpClient::connect(const string &hostName, const string &addrStr, int por
   struct hostent *he = gethostbyname (hostName.c_str());
   if (!he)
   {
-#ifdef WIN32
+#ifdef _WIN32
     int err = WSAGetLastError();
 #else
 #endif
@@ -127,7 +127,7 @@ int TTcpIpClient::connect(const string &hostName, const string &addrStr, int por
   if (rcConnect == SOCKET_ERROR)
   {
     sock = -1;
-#ifdef WIN32
+#ifdef _WIN32
     int err = WSAGetLastError();
     switch (err)
     {
@@ -152,7 +152,7 @@ int TTcpIpClient::connect(const string &hostName, const string &addrStr, int por
 
 int TTcpIpClient::disconnect(int sock)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	closesocket(sock);
 #else
 	close(sock);
@@ -178,7 +178,7 @@ int TTcpIpClient::send(int sock, const QString &data)
 	int nLeft = packet.size();
 	int idx = 0;
 	while (nLeft > 0) {
-#ifdef WIN32
+#ifdef _WIN32
 		int ret = ::send(sock, packet.c_str() + idx, nLeft, 0);
 #else
 		int ret = write(sock, packet.c_str() + idx, nLeft);
@@ -186,7 +186,7 @@ int TTcpIpClient::send(int sock, const QString &data)
 
 		if (ret == SOCKET_ERROR) {
 // Error
-#ifdef WIN32
+#ifdef _WIN32
 			int err = WSAGetLastError();
 #else
 #endif
@@ -208,7 +208,7 @@ int readData(int sock, QString &data)
 	char buff[1024];
 	memset(buff, 0, sizeof(buff));
 
-#ifdef WIN32
+#ifdef _WIN32
 	if ((cnt = recv(sock, buff, sizeof(buff), 0)) < 0) {
 		int err = WSAGetLastError();
 		// GESTIRE L'ERRORE SPECIFICO
@@ -243,7 +243,7 @@ int readData(int sock, QString &data)
 	while (size > 0) {
 		memset(buff, 0, sizeof(buff));
 
-#ifdef WIN32
+#ifdef _WIN32
 		if ((cnt = recv(sock, buff, sizeof(buff), 0)) < 0) {
 			int err = WSAGetLastError();
 			// GESTIRE L'ERRORE SPECIFICO
@@ -286,7 +286,7 @@ int readData(int sock, string &data)
   {
     memset (buff,0,sizeof(buff));
 
-#ifdef WIN32
+#ifdef _WIN32
     if (( cnt = recv(sock, buff, sizeof(buff), 0)) < 0 )
     {
       int err = WSAGetLastError();
@@ -327,7 +327,7 @@ int readData(int sock, string &data)
 	do {
 		memset(buff, 0, sizeof(buff));
 
-#ifdef WIN32
+#ifdef _WIN32
 		if ((cnt = recv(sock, buff, sizeof(buff), 0)) < 0) {
 			int err = WSAGetLastError();
 			// GESTIRE L'ERRORE SPECIFICO

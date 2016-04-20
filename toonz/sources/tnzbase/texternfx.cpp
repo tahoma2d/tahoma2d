@@ -293,7 +293,7 @@ void TExternalProgramFx::doCompute(TTile &tile, double frame, const TRenderSetti
 	// poi cancellare tutto
 	string expandedargs;
 	char buffer[1024];
-#ifdef WIN32
+#ifdef _WIN32
 	ExpandEnvironmentStrings(args.c_str(), buffer, 1024);
 
 	STARTUPINFO si;
@@ -486,7 +486,7 @@ void ExternalProgramFx::doCompute(TTile &tile, double frame, const TRenderSettin
 	arglist += " " + outname;
 	string cmdline = program + arglist;
 
-#ifdef WIN32
+#ifdef _WIN32
 	STARTUPINFO si;
 	PROCESS_INFORMATION pinfo;
 

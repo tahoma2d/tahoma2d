@@ -54,7 +54,7 @@ private:
 	friend class TFontManager;
 	Impl *m_pimpl;
 
-#ifdef WIN32
+#ifdef _WIN32
 	TFont(const LOGFONTW &, HDC hdc);
 #else
 	TFont(ATSUFontID, int size);

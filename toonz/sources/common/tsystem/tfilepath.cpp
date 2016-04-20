@@ -1,6 +1,6 @@
 
 
-#ifdef WIN32
+#ifdef _WIN32
 //#define UNICODE  // per le funzioni di conversione da/a UNC
 #include <windows.h>
 #include <lm.h>
@@ -128,7 +128,7 @@ bool isUncName = false;
      pos=2;
      if(path.length()==2 || !isSlash(path[pos])) m_path.append(1,slash);
     }
-#ifdef WIN32
+#ifdef _WIN32
   else  //se si tratta di un path in formato UNC e' del tipo "\\\\MachineName"
      	//RICONTROLLARE! SE SI HA IP ADDRESS FALLIVA!
     if (path.length() >= 3 && path[0] == '\\' &&  path[1] == '\\' && (isalpha(path[2]) || isdigit(path[2])) )
@@ -287,7 +287,7 @@ TFilePath::TFilePath(const QString &path)
 
 bool TFilePath::operator==(const TFilePath &fp) const
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return _wcsicmp(m_path.c_str(), fp.m_path.c_str()) == 0;
 #else
 	return m_path == fp.m_path;
@@ -304,7 +304,7 @@ bool TFilePath::operator<(const TFilePath &fp) const
 	int i2 = m_path.find(L"\\");
 	int j2 = fp.m_path.find(L"\\");
 	if (i2 == j2 && j2 == -1)
-#ifdef WIN32
+#ifdef _WIN32
 		return _wcsicmp(m_path.c_str(), fp.m_path.c_str()) < 0;
 #else
 		return m_path < fp.m_path;
@@ -323,7 +323,7 @@ bool TFilePath::operator<(const TFilePath &fp) const
 		jName = (j2 != -1) ? fp.m_path.substr(j1, j2 - j1) : fp.m_path;
 //se le due parti di path, conpresi tra slash sono uguali
 //itero il processo di confronto altrimenti ritorno
-#ifdef WIN32
+#ifdef _WIN32
 		char differ;
 		differ = _wcsicmp(iName.c_str(), jName.c_str());
 		if (differ != 0)
@@ -340,7 +340,7 @@ bool TFilePath::operator<(const TFilePath &fp) const
 
 	iName = m_path.substr(i1, m_path.size() - i1);
 	jName = fp.m_path.substr(j1, fp.m_path.size() - j1);
-#ifdef WIN32
+#ifdef _WIN32
 	return _wcsicmp(iName.c_str(), jName.c_str()) < 0;
 #else
 	return TFilePath(iName) < TFilePath(jName);

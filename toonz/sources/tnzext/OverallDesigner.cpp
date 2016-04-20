@@ -1,9 +1,3 @@
-
-
-#ifdef WIN32
-#define NOMINMAX
-#endif
-
 #include "ext/OverallDesigner.h"
 //#include "ext/StrokeParametricDeformer.h"
 #include "ext/StrokeDeformation.h"

@@ -16,7 +16,7 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
@@ -163,7 +163,7 @@ private:
 };
 
 //---------------------------------------------------------
-#ifdef WIN32
+#ifdef _WIN32
 template class DVAPI TRangeProperty<int>;
 template class DVAPI TRangeProperty<double>;
 #endif
@@ -503,7 +503,7 @@ private:
 
 //---------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

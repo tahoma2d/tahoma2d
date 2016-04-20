@@ -16,7 +16,7 @@
 #include <QFileInfo>
 #include <QDir>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <shlobj.h>
 #include <Winnetwk.h>
 #endif
@@ -32,7 +32,7 @@ namespace
 {
 TFilePath getMyDocumentsPath()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	WCHAR szPath[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, szPath, CSIDL_PERSONAL, 0)) {
 		return TFilePath(szPath);
@@ -1101,7 +1101,7 @@ void DvDirModelNetworkNode::refreshChildren()
 	if (!m_children.empty())
 		clearPointerContainer(m_children);
 
-#ifdef WIN32
+#ifdef _WIN32
 
 	// Enumerate network nodes
 	HANDLE enumHandle;
@@ -1179,7 +1179,7 @@ void DvDirModelRootNode::refreshChildren()
 	if (m_children.empty()) {
 		addChild(m_myComputerNode = new DvDirModelMyComputerNode(this));
 
-#ifdef WIN32
+#ifdef _WIN32
 		addChild(m_networkNode = new DvDirModelNetworkNode(this));
 #endif
 

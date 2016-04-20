@@ -17,7 +17,7 @@ TextureManager *TextureManager::instance()
 	return m_instance;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 TDimensionI TextureManager::getMaxSize(bool isRGBM)
 {
 	GLenum fmt, type;

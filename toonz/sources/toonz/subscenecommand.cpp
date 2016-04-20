@@ -2174,7 +2174,7 @@ void SubsceneCmd::collapse(std::set<int> &indices)
 	list.append(QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
 	list.append(QObject::tr("Include only selected columns in the sub-xsheet."));
 
-	int ret = RadioButtonMsgBox(DVGui::WARNING, question, list);
+	int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
 	if (ret == 0)
 		return;
 
@@ -2277,7 +2277,7 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs)
 	QList<QString> list;
 	list.append(QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
 	list.append(QObject::tr("Include only selected columns in the sub-xsheet."));
-	int ret = RadioButtonMsgBox(DVGui::WARNING, question, list);
+	int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
 	if (ret == 0)
 		return;
 
@@ -2351,7 +2351,7 @@ void SubsceneCmd::explode(int index)
 	QList<QString> list;
 	list.append(QObject::tr("Bring relevant pegbars in the main xsheet."));
 	list.append(QObject::tr("Bring only columns in the main xsheet."));
-	int ret = RadioButtonMsgBox(DVGui::WARNING, question, list);
+	int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
 	if (ret == 0)
 		return;
 

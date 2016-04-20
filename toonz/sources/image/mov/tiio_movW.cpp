@@ -326,7 +326,7 @@ Tiio::TifWriterProperties::TifWriterProperties()
 {
     m_byteOrdering.addValue(L"IBM PC");
     m_byteOrdering.addValue(L"Mac");
-#ifdef WIN32
+#ifdef _WIN32
   m_byteOrdering.setValue(L"IBM PC");
 #else
   m_byteOrdering.setValue(L"Mac");

@@ -6,9 +6,6 @@
 #ifdef _DEBUG
 #define _STLP_DEBUG 1
 #endif
-#ifdef WIN32
-#define NOMINMAX
-#endif
 
 #include "ext/StrokeDeformationImpl.h"
 #include "ext/StrokeDeformation.h"

@@ -232,7 +232,7 @@ public:
 	void setColorTag(int colorTag) { m_colorTag = colorTag; } //Usato solo in tabkids
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class DV_EXPORT_API TSmartPointerT<TXshColumn>;
 #endif
 typedef TSmartPointerT<TXshColumn> TXshColumnP;

@@ -1,5 +1,3 @@
-
-
 #include "tapp.h"
 #include "tpalette.h"
 #include "toonz/txsheet.h"
@@ -34,6 +32,8 @@
 #include "toonz/levelproperties.h"
 #include "toonz/toonzscene.h"
 #include "toonz/childstack.h"
+
+#include <algorithm>
 
 using namespace DVGui;
 
@@ -457,13 +457,13 @@ void mergeCmapped(int column, int mColumn, const QString &fullpath, bool isRedo)
 
 	if (start > end)
 		return;
-	vector<TXshCell> cell(max(end, mEnd) - min(start, mStart) + 1);
+	vector<TXshCell> cell(std::max(end, mEnd) - std::min(start, mStart) + 1);
 	vector<TXshCell> mCell(cell.size());
 
-	xsh->getCells(min(start, mStart), column, cell.size(), &(cell[0]));
+	xsh->getCells(std::min(start, mStart), column, cell.size(), &(cell[0]));
 
 	if (mColumn != -1)
-		xsh->getCells(min(start, mStart), mColumn, cell.size(), &(mCell[0]));
+		xsh->getCells(std::min(start, mStart), mColumn, cell.size(), &(mCell[0]));
 
 	TXshColumn *col = xsh->getColumn(column);
 	TXshColumn *mcol = xsh->getColumn(mColumn);
@@ -511,8 +511,8 @@ void mergeCmapped(int column, int mColumn, const QString &fullpath, bool isRedo)
 
 		TAffine imgAff, matchAff;
 
-		getColumnPlacement(imgAff, xsh, min(start, mStart) + i, column, false);
-		getColumnPlacement(matchAff, xsh, min(start, mStart) + i, mColumn, false);
+		getColumnPlacement(imgAff, xsh, std::min(start, mStart) + i, column, false);
+		getColumnPlacement(matchAff, xsh, std::min(start, mStart) + i, mColumn, false);
 
 		//std::map<TFrameId, TFrameId>::iterator it;
 		MergedPair mp(cell[i].isEmpty() ? TFrameId() : cell[i].getFrameId(),
@@ -629,19 +629,19 @@ bool contains(const vector<TFrameId> &v, const TFrameId &val)
 
 //-----------------------------------------------------------------------------
 
-QString indexes2string(const set<TFrameId> fids)
+QString indexes2string(const std::set<TFrameId> fids)
 {
 	if (fids.empty())
 		return "";
 
 	QString str;
 
-	set<TFrameId>::const_iterator it = fids.begin();
+	std::set<TFrameId>::const_iterator it = fids.begin();
 
 	str = QString::number(it->getNumber());
 
 	while (it != fids.end()) {
-		set<TFrameId>::const_iterator it1 = it;
+		std::set<TFrameId>::const_iterator it1 = it;
 		it1++;
 
 		int lastVal = it->getNumber();

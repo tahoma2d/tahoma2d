@@ -607,13 +607,13 @@ CaptureParameters *CaptureSettingsPopup::getCaptureParameters()
 void CaptureSettingsPopup::defineDevice()
 {
 	if (TnzCamera::instance()->isCameraConnected()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("A Device is Connected."));
+		DVGui::warning(tr("A Device is Connected."));
 		return;
 	}
 	QList<QString> cameras;
 	bool ret = TnzCamera::instance()->findConnectedCameras(cameras);
 	if (!ret) {
-		DVGui::MsgBox(DVGui::WARNING, tr("No cameras found."));
+		DVGui::warning(tr("No cameras found."));
 		return;
 	}
 
@@ -650,14 +650,14 @@ void CaptureSettingsPopup::onKeepWhiteImage()
 {
 	TnzCamera *camera = TnzCamera::instance();
 	if (!camera->isCameraConnected()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("Device Disconnected."));
+		DVGui::warning(tr("Device Disconnected."));
 		return;
 	}
 	TFilePath whiteImagePath = TEnv::getConfigDir() + TFilePath("whiteReferenceImage.0001.tif");
 	if (TSystem::doesExistFileOrLevel(whiteImagePath)) {
 		QString question;
 		question = "The White Image already exists.\nDo you want to overwrite it?";
-		int ret = MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
+		int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"), 0);
 		if (ret == 2 || ret == 0)
 			return;
 	}
@@ -670,7 +670,7 @@ void CaptureSettingsPopup::onImageWidthEditingFinished()
 {
 	CaptureParameters *parameters = getCaptureParameters();
 	if (parameters->getDeviceName().empty()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("No Device Defined."));
+		DVGui::warning(tr("No Device Defined."));
 		m_imageWidthLineEdit->setValue(parameters->getResolution().lx);
 		return;
 	}
@@ -691,7 +691,7 @@ void CaptureSettingsPopup::onImageHeightEditingFinished()
 {
 	CaptureParameters *parameters = getCaptureParameters();
 	if (parameters->getDeviceName().empty()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("No Device Defined."));
+		DVGui::warning(tr("No Device Defined."));
 		m_imageHeightLineEdit->setValue(parameters->getResolution().ly);
 		return;
 	}
@@ -1191,13 +1191,13 @@ void LineTestCapturePane::onConnectCheckboxStateChanged(int state)
 		wstring deviceName = sceneProperties->getCaptureParameters()->getDeviceName();
 
 		if (deviceName.empty()) {
-			DVGui::MsgBox(DVGui::WARNING, tr("No Device Defined."));
+			DVGui::warning(tr("No Device Defined."));
 			m_connectionCheckBox->setChecked(false);
 			return;
 		}
 		bool ret = TnzCamera::instance()->cameraConnect(deviceName);
 		if (!ret) {
-			DVGui::MsgBox(DVGui::WARNING, tr("Cannot connect Camera"));
+			DVGui::warning(tr("Cannot connect Camera"));
 			m_connectionCheckBox->setChecked(false);
 		} else
 			TnzCamera::instance()->onViewfinder(m_imageView);
@@ -1215,7 +1215,7 @@ void LineTestCapturePane::captureButton()
 		return;
 
 	if (!TnzCamera::instance()->isCameraConnected()) {
-		DVGui::MsgBox(DVGui::WARNING, tr("Device Disconnected."));
+		DVGui::warning(tr("Device Disconnected."));
 		return;
 	}
 	QString clickPath = QString::fromStdString(TEnv::getApplicationName()) + QString(" ") +

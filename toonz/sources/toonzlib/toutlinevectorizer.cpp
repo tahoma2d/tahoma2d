@@ -18,6 +18,7 @@
 #include "tcg/tcg_function_types.h"
 
 // STD includes
+#include <cmath>
 #include <functional>
 
 #undef DEBUG
@@ -59,7 +60,7 @@ public:
 };
 
 //---------------------------------------------------------
-#ifdef WIN32
+#ifdef _WIN32
 template class DV_EXPORT_API TSmartPointerT<TRasterT<DataPixel>>;
 #endif
 typedef TRasterPT<DataPixel> DataRasterP;

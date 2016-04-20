@@ -18,7 +18,7 @@ static const string PLUGIN_PREFIX("STD");
 public:                          \
 	const TPersistDeclaration *getDeclaration() const;
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #ifdef TNZSTDFX_EXPORTS
 

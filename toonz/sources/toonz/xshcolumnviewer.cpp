@@ -597,7 +597,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col)
 	TColumnSelection *selection = m_viewer->getColumnSelection();
 
 // Preparing painter
-#ifdef WIN32
+#ifdef _WIN32
 	QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 	QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);
@@ -942,7 +942,7 @@ void ColumnArea::drawPaletteColumnHead(QPainter &p, int col)
 {
 	TColumnSelection *selection = m_viewer->getColumnSelection();
 
-#ifdef WIN32
+#ifdef _WIN32
 	QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
 	QFont font("Helvetica", XSHEET_FONT_SIZE, QFont::Normal);
@@ -1314,7 +1314,7 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(QWidget *parent)
 	m_slider->setFixedHeight(14);
 	m_slider->setFixedWidth(100);
 
-	m_value = new IntLineEdit(this, 1, 1, 100);
+	m_value = new DVGui::IntLineEdit(this, 1, 1, 100);
 	/*m_value->setValidator(new QIntValidator (1, 100, m_value));
 m_value->setFixedHeight(16);
 m_value->setFixedWidth(30);

@@ -1177,14 +1177,9 @@ void TVectorImage::putRegion(TRegion *region)
 
 void TVectorImage::Imp::cloneRegions(TVectorImage::Imp &out, bool doComputeRegions)
 {
-	IntersectionBranch *v;
-	UINT size;
-
-	size = getFillData(v);
+	std::unique_ptr<IntersectionBranch[]> v;
+	UINT size = getFillData(v);
 	out.setFillData(v, size, doComputeRegions);
-
-	if (size)
-		delete[] v;
 }
 
 //-----------------------------------------------------------------------------
@@ -1635,14 +1630,14 @@ void TVectorImage::invalidateBBox()
 */
 //-----------------------------------------------------------------------------
 
-void TVectorImage::setFillData(IntersectionBranch *v, UINT branchCount, bool doComputeRegions)
+void TVectorImage::setFillData(std::unique_ptr<IntersectionBranch[]> const& v, UINT branchCount, bool doComputeRegions)
 {
 	m_imp->setFillData(v, branchCount, doComputeRegions);
 }
 
 //-----------------------------------------------------------------------------
 
-UINT TVectorImage::getFillData(IntersectionBranch *&v)
+UINT TVectorImage::getFillData(std::unique_ptr<IntersectionBranch[]>& v)
 {
 	return m_imp->getFillData(v);
 }
@@ -1667,7 +1662,7 @@ bool TVectorImage::isStrokeStyleEnabled(int index)
 
 //-----------------------------------------------------------------------------
 
-void TVectorImage::getUsedStyles(set<int> &styles) const
+void TVectorImage::getUsedStyles(std::set<int> &styles) const
 {
 	UINT strokeCount = getStrokeCount();
 	UINT i = 0;
@@ -2861,7 +2856,7 @@ bool TVectorImage::Imp::canMoveStrokes(int strokeIndex, int count, int moveBefor
 
 	int i, j = 0;
 
-	vector<TGroupId> groupsAfterMoving(m_strokes.size());
+	std::vector<TGroupId> groupsAfterMoving(m_strokes.size());
 	if (strokeIndex < moveBefore) {
 		for (i = 0; i < strokeIndex; i++)
 			groupsAfterMoving[j++] = m_strokes[i]->m_groupId;
@@ -2892,7 +2887,7 @@ bool TVectorImage::Imp::canMoveStrokes(int strokeIndex, int count, int moveBefor
 
 	i = 0;
 	TGroupId currGroupId;
-	set<TGroupId> groupSet;
+	std::set<TGroupId> groupSet;
 
 	while (i < (int)groupsAfterMoving.size()) {
 		currGroupId = groupsAfterMoving[i];
@@ -2912,11 +2907,11 @@ bool TVectorImage::Imp::canMoveStrokes(int strokeIndex, int count, int moveBefor
 
 //-----------------------------------------------------------------
 
-void TVectorImage::Imp::regroupGhosts(vector<int> &changedStrokes)
+void TVectorImage::Imp::regroupGhosts(std::vector<int> &changedStrokes)
 {
 	TGroupId currGroupId;
-	set<TGroupId> groupMap;
-	set<TGroupId>::iterator it;
+	std::set<TGroupId> groupMap;
+	std::set<TGroupId>::iterator it;
 	UINT i = 0;
 
 	while (i < m_strokes.size()) {

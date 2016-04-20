@@ -543,7 +543,7 @@ void InsertFxPopup::removePreset()
 	TFilePath path = TFilePath(itemRole.toStdWString());
 
 	QString question = QString(tr("Are you sure you want to delete %1?").arg(path.getName().c_str()));
-	int ret = MsgBox(question, tr("Yes"), tr("No"), 1);
+	int ret = DVGui::MsgBox(question, tr("Yes"), tr("No"), 1);
 	if (ret == 2 || ret == 0)
 		return;
 

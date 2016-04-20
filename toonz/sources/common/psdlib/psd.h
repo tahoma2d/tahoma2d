@@ -7,7 +7,6 @@
 #include "timage_io.h"
 
 #define REF_LAYER_BY_NAME
-using namespace std;
 
 class TRasterImageP;
 

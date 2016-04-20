@@ -51,7 +51,7 @@ void FileData::getFiles(TFilePath folder, std::vector<TFilePath> &newFiles) cons
 		TFilePath path = folder + TFilePath(oldPath.getLevelNameW());
 
 		if (!TSystem::doesExistFileOrLevel(oldPath)) {
-			MsgBox(WARNING, tr("It is not possible to find the %1 level.").arg(QString::fromStdWString(oldPath.getWideString())));
+			DVGui::warning(tr("It is not possible to find the %1 level.").arg(QString::fromStdWString(oldPath.getWideString())));
 			return;
 		}
 
@@ -67,7 +67,7 @@ void FileData::getFiles(TFilePath folder, std::vector<TFilePath> &newFiles) cons
 			newFiles.push_back(levelPathOut);
 		else {
 			QString msg = tr("There was an error copying %1").arg(toQString(oldPath));
-			MsgBox(CRITICAL, msg);
+			DVGui::error(msg);
 			return;
 		}
 	}

@@ -22,7 +22,7 @@
 
 #include "tthread.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <iostream>
 using namespace std;
 #else
@@ -33,7 +33,7 @@ using namespace std;
 
 //#define REDIRECT_OUPUT
 
-#ifdef WIN32
+#ifdef _WIN32
 #define QUOTE_STR "\""
 #define CASMPMETER "casmpmeter.exe"
 #else
@@ -41,7 +41,7 @@ using namespace std;
 #define CASMPMETER "casmpmeter"
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 #define NO_ERROR 0
 #endif
 
@@ -66,7 +66,7 @@ TFilePath getGlobalRoot()
 {
 	TFilePath rootDir;
 
-#ifdef WIN32
+#ifdef _WIN32
 	TFilePath name(L"SOFTWARE\\OpenToonz\\OpenToonz\\1.0\\FARMROOT");
 	rootDir = TFilePath(TSystem::getSystemValue(name).toStdString());
 #else
@@ -101,7 +101,7 @@ TFilePath getLocalRoot()
 {
 	TFilePath lroot;
 
-#ifdef WIN32
+#ifdef _WIN32
 	TFilePath name("SOFTWARE\\OpenToonz\\OpenToonz\\1.0\\TOONZROOT");
 	lroot = TFilePath(TSystem::getSystemValue(name).toStdString()) + TFilePath("toonzfarm");
 #else
@@ -140,7 +140,7 @@ TFilePath getAppsCfgFilePath()
 
 TFilePath getBinRoot()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	return TSystem::getBinDir();
 #else
 	return getLocalRoot() + "bin";
@@ -151,7 +151,7 @@ TFilePath getBinRoot()
 /*
 string myGetHostName()
 {
-#ifdef WIN32
+#ifdef _WIN32
   return TSystem::getHostName();
 #else
   char hostName[MAXHOSTNAMELEN];
@@ -165,7 +165,7 @@ string myGetHostName()
 bool dirExists(const TFilePath &dirFp)
 {
 	bool exists = false;
-#ifdef WIN32
+#ifdef _WIN32
 	TFileStatus fs(dirFp);
 	exists = fs.isDirectory();
 #else
@@ -180,7 +180,7 @@ bool dirExists(const TFilePath &dirFp)
 bool myDoesExists(const TFilePath &fp)
 {
 	bool exists = false;
-#ifdef WIN32
+#ifdef _WIN32
 	TFileStatus fs(fp);
 	exists = fs.doesExist();
 #else
@@ -217,7 +217,7 @@ public:
 	void onStop();
 
 	void loadControllerData(QString &hostName, string &ipAddr, int &port);
-#ifdef WIN32
+#ifdef _WIN32
 	void loadDiskMountingPoints(const TFilePath &fp);
 
 	void mountDisks();
@@ -421,7 +421,7 @@ void Task::run()
 
 // ===========
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (m_cmdline.contains("runcasm"))
 		service.mountDisks();
 #endif
@@ -648,7 +648,7 @@ int FarmServer::addTask(const QString &id, const QString &cmdline)
 
 int FarmServer::terminateTask(const QString &taskid)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	HANDLE hJob = OpenJobObject(
 		MAXIMUM_ALLOWED, // access right
 		TRUE,			 // inheritance state
@@ -681,7 +681,7 @@ int FarmServer::getTasks(vector<QString> &tasks)
 
 void FarmServer::queryHwInfo(HwInfo &hwInfo)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	MEMORYSTATUS buff;
 	GlobalMemoryStatus(&buff);
 
@@ -790,7 +790,7 @@ bool loadServerData(const QString &hostname, QString &addr, int &port)
 
 	TFilePath fp = rootDir + "config" + "servers.txt";
 
-#ifndef WIN32
+#ifndef _WIN32
 	int acc = access(toString(fp.getWideString()).c_str(), 00); // 00 == solo esistenza
 	bool fileExists = acc != -1;
 	if (!fileExists)
@@ -834,7 +834,7 @@ void FarmServerService::onStart(int argc, char *argv[])
 	// Initialize thread components
 	TThread::init();
 
-#ifdef WIN32
+#ifdef _WIN32
 //  DebugBreak();
 #endif
 
@@ -950,7 +950,7 @@ void FarmServerService::onStart(int argc, char *argv[])
 	} catch (TException & /*e*/) {
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	TFilePath diskMountingsFilePath = lRootDir + "config" + "diskmap.cfg";
 	if (myDoesExists(diskMountingsFilePath)) {
 		loadDiskMountingPoints(diskMountingsFilePath);
@@ -1008,7 +1008,7 @@ void FarmServerService::onStart(int argc, char *argv[])
 		string msg("An error occurred starting the ToonzFarm Server");
 		msg += "\n";
 
-#ifdef WIN32
+#ifdef _WIN32
 		LPVOID lpMsgBuf;
 		FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -1051,7 +1051,7 @@ void FarmServerService::onStop()
 // i dischi vengono montati al primo task di tipo "runcasm"
 // e smontati allo stop del servizio
 
-#ifdef WIN32
+#ifdef _WIN32
 	unmountDisks();
 #endif
 
@@ -1064,7 +1064,7 @@ void FarmServerService::onStop()
 	}
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 //------------------------------------------------------------------------------
 
@@ -1210,7 +1210,7 @@ int main(int argc, char **argv)
 		if (!usage.parse(argc, argv))
 			exit(1);
 
-#ifdef WIN32
+#ifdef _WIN32
 		if (installQualifier.isSelected()) {
 			char szPath[512];
 

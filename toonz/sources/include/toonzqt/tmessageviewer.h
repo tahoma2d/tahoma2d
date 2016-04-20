@@ -23,8 +23,6 @@ class MySortFilterProxyModel;
 class QCheckBox;
 class QStandardItemModel;
 
-using namespace DVGui;
-
 class DVAPI TMessageRepository : public QObject
 {
 	QStandardItemModel *m_sim;

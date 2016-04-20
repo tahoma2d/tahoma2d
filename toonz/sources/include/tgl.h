@@ -6,7 +6,7 @@
 //#include "tgeometry.h"
 #include "tmachine.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 //#endif
 
@@ -247,7 +247,7 @@ void DVAPI tglBuildMipmaps(std::vector<TRaster32P> &rasters,
 
 //-----------------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef _WIN32
 typedef std::pair<HDC, HGLRC> TGlContext;
 #else
 typedef void *TGlContext;

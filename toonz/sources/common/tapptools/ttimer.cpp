@@ -3,7 +3,7 @@
 #include "ttimer.h"
 #include "texception.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include <windows.h>
 
