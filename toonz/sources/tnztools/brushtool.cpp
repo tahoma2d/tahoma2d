@@ -573,6 +573,7 @@ BrushTool::BrushTool(std::string name, int targetType)
 #ifndef STUDENT
 	m_prop[0].bind(m_preset);
 	m_preset.setId("BrushPreset");
+	m_preset.addValue(CUSTOM_WSTR);
 #endif
 	m_pressure.setId("PressureSensibility");
 
@@ -1207,6 +1208,8 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e)
 
 		void addMinMax(TDoublePairProperty &prop, double add)
 		{
+			if (add == 0.0)
+				return;
 			const TDoublePairProperty::Range &range = prop.getRange();
 
 			TDoublePairProperty::Value value = prop.getValue();
@@ -1395,15 +1398,9 @@ bool BrushTool::onPropertyChanged(std::string propertyName)
 
 			m_minThick = m_thickness.getValue().first;
 			m_maxThick = m_thickness.getValue().second;
-		}
-
-		if (m_preset.getValue() != L"<custom>")
-			m_preset.setValue(L"<custom>");
-
+		}		
 	} else if (propertyName == m_accuracy.getName()) {
 		BrushAccuracy = m_accuracy.getValue();
-		if (m_preset.getValue() != L"<custom>")
-			m_preset.setValue(L"<custom>");
 	} else if (propertyName == m_preset.getName()) {
 		loadPreset();
 		notifyTool = true;
@@ -1438,7 +1435,7 @@ bool BrushTool::onPropertyChanged(std::string propertyName)
 		}
 	}
 
-	if (m_preset.getValue() != CUSTOM_WSTR) {
+	if (propertyName != m_preset.getName() && m_preset.getValue() != CUSTOM_WSTR) {
 		m_preset.setValue(CUSTOM_WSTR);
 		notifyTool = true;
 	}
