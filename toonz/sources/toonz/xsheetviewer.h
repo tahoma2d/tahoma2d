@@ -399,7 +399,7 @@ public:
 	QList<XsheetGUI::NoteWidget *> getNotesWidget() const;
 	void addNoteWidget(XsheetGUI::NoteWidget *w);
 	int getCurrentNoteIndex() const;
-	//! Clear notes widgets vector.
+	//! Clear notes widgets std::vector.
 	void clearNoteWidgets();
 	//! Update notes widgets and update cell.
 	void updateNoteWidgets();
