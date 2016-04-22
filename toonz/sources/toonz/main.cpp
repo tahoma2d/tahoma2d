@@ -449,7 +449,7 @@ int main(int argc, char *argv[])
 	// Initialize thread components
 	TThread::init();
 
-	string feature = selectedFeature.getValue();
+	std::string feature = selectedFeature.getValue();
 
 	TProjectManager *projectManager = TProjectManager::instance();
 	if (Preferences::instance()->isSVNEnabled()) {
@@ -676,12 +676,12 @@ int main(int argc, char *argv[])
 
 	QFont *myFont;
 
-	string family = EnvSoftwareCurrentFont;
+	std::string family = EnvSoftwareCurrentFont;
 	myFont = new QFont(QString(family.c_str()));
 
 	myFont->setPixelSize(EnvSoftwareCurrentFontSize);
 	/*-- フォントのBoldの指定 --*/
-	string weight = EnvSoftwareCurrentFontWeight;
+	std::string weight = EnvSoftwareCurrentFontWeight;
 	if (strcmp(weight.c_str(), "Yes") == 0)
 		myFont->setBold(true);
 	else

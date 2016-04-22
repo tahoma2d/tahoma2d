@@ -979,6 +979,8 @@ void createMeshifiedLevels(std::map<TXshLevel *, TXshSimpleLevel *> &meshLevels,
 
 			progressDialog->setValue(progressDialog->value() + 1);
 		}
+
+		ml->setDirtyFlag(true);
 	}
 }
 

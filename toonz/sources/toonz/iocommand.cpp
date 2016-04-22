@@ -200,7 +200,7 @@ public:
 			// override the folder
 			if (m_dstFolder != TFilePath()) {
 				// +drawings/oldfolder/level.pli => +drawings/xsheetfolder/oldfolder/level.pli
-				wstring head;
+				std::wstring head;
 				TFilePath tail;
 				dstPath.split(head, tail);
 				dstPath = TFilePath(head) + m_dstFolder + tail;
@@ -342,7 +342,7 @@ int getLevelType(const TFilePath &actualPath)
 	if (type == TFileType::RASTER_IMAGE ||
 		type == TFileType::RASTER_LEVEL ||
 		type == TFileType::CMAPPED_LEVEL) {
-		string ext = actualPath.getType();
+		std::string ext = actualPath.getType();
 		if (ext == "tzp" || ext == "tzu" || ext == "tzl" || ext == "tlv")
 			return TZP_XSHLEVEL;
 		else
@@ -646,7 +646,7 @@ void ChildLevelResourceImporter::process(TXshSimpleLevel *sl)
 	}
 
 	TFilePath slPath = sl->getPath();
-	string suffix = ResourceImporter::extractPsdSuffix(slPath);
+	std::string suffix = ResourceImporter::extractPsdSuffix(slPath);
 
 	TFilePath path = m_importStrategy.process(m_parentScene, m_childScene, slPath); // actualPath);
 	if (suffix != "")
@@ -654,7 +654,7 @@ void ChildLevelResourceImporter::process(TXshSimpleLevel *sl)
 
 	sl->setPath(path, false); // m_parentScene->codeFilePath(actualPath), false);
 	NameModifier nm(sl->getName());
-	wstring levelName;
+	std::wstring levelName;
 	for (;;) {
 		levelName = nm.getNext();
 		if (!parentLevelSet->hasLevel(levelName))
@@ -688,7 +688,7 @@ void ChildLevelResourceImporter::process(TXshPaletteLevel *pl)
 
 	pl->setPath(path);
 	NameModifier nm(pl->getName());
-	wstring levelName;
+	std::wstring levelName;
 	for (;;) {
 		levelName = nm.getNext();
 		if (!parentLevelSet->hasLevel(levelName))
@@ -716,7 +716,7 @@ void ChildLevelResourceImporter::process(TXshSoundLevel *sl)
 	TFilePath path = m_importStrategy.process(m_parentScene, m_childScene, sl->getPath());
 	sl->setPath(path);
 	NameModifier nm(sl->getName());
-	wstring levelName;
+	std::wstring levelName;
 	for (;;) {
 		levelName = nm.getNext();
 		if (!parentLevelSet->hasLevel(levelName))
@@ -755,7 +755,7 @@ TXshLevel *loadChildLevel(ToonzScene *parentScene, TFilePath actualPath, int row
 	ToonzScene scene;
 	scene.loadTnzFile(actualPath);
 	scene.setProject(project.getPointer());
-	wstring subSceneName = actualPath.getWideName();
+	std::wstring subSceneName = actualPath.getWideName();
 
 	// camera settings. get the child camera ...
 	TXsheet *childXsh = scene.getXsheet();
@@ -879,7 +879,7 @@ TXshLevel *loadLevel(
 
 	if (!xl) {
 		try {
-			string format = actualPath.getType();
+			std::string format = actualPath.getType();
 			if (format == "tzp" || format == "tzu")
 				convertingPopup->show();
 
@@ -1527,8 +1527,8 @@ bool IoCmd::saveLevel(const TFilePath &path)
 		dynamic_cast<TXshSimpleLevel *>(app->getCurrentLevel()->getLevel());
 	if (!sl)
 		return false;
-	string ext = sl->getPath().getType();
-	string dotts = sl->getPath().getDots();
+	std::string ext = sl->getPath().getType();
+	std::string dotts = sl->getPath().getDots();
 	TFilePath realPath = path;
 	if (realPath.getType() == "")
 		realPath = TFilePath(realPath.getWideString() + toWideString(dotts + ext));
@@ -1631,11 +1631,14 @@ bool IoCmd::saveLevel(const TFilePath &fp, TXshSimpleLevel *sl, bool overwrite)
 	FileBrowser::refreshFolder(fp.getParentDir());
 	History::instance()->addItem(fp);
 
-	if (overwritePalette ||
-		sl->getPath().getType() == "pli")
-		sl->getPalette()->setDirtyFlag(false);
-	else // ask only once for save palette
-		sl->getPalette()->setAskOverwriteFlag(false);
+	if (sl->getPalette())
+	{
+		if (overwritePalette ||
+			sl->getPath().getType() == "pli")
+			sl->getPalette()->setDirtyFlag(false);
+		else // ask only once for save palette
+			sl->getPalette()->setAskOverwriteFlag(false);
+	}
 
 	RecentFiles::instance()->addFilePath(toQString(fp), RecentFiles::Level);
 	QApplication::restoreOverrideCursor();
@@ -1742,7 +1745,7 @@ bool IoCmd::loadColorModel(const TFilePath &fp, int frame)
 
 	try {
 		path = importDialog.process(scene, 0, path);
-	} catch (string msg) {
+	} catch (std::string msg) {
 		error(QString::fromStdString(msg));
 		return true;
 	}
@@ -2370,7 +2373,7 @@ int IoCmd::loadResources(LoadResourceArguments &args,
 			try {
 				path = importDialog.process(scene, 0, path);
 				// path = scene->decodeFilePath(codedPath);
-			} catch (string msg) {
+			} catch (std::string msg) {
 				error(QString::fromStdString(msg));
 				continue;
 			}
@@ -2602,10 +2605,6 @@ public:
 		TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
 		if (!sl) {
 			DVGui::warning(QObject::tr("No Current Level"));
-			return;
-		}
-		if (!sl->getPalette()) {
-			DVGui::warning(QObject::tr("Toonz cannot Save this Level"));
 			return;
 		}
 		ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
