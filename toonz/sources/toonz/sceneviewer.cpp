@@ -1422,7 +1422,7 @@ void SceneViewer::paintGL()
 		/* QGLWidget の widget 生成/削除のタイミングで(platform によって?) GL_FRAMEBUFFER_UNDEFINED の状態で paintGL() が呼ばれてしまうようだ */
 		return;
 	}
-#ifndef MACOSX
+#ifdef WIN32
 	//following line is necessary to solve a problem Windows 7
 	SetWindowRgn((HWND)winId(), 0, FALSE);
 #else
