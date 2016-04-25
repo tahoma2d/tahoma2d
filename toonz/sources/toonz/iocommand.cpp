@@ -2864,10 +2864,6 @@ public:
     SaveAllCommandHandler() : MenuItemHandler(MI_SaveAll) {}
     void execute()
     {
-#ifdef BRAVODEMO
-        DVGui::featureNotAvelaible();
-#else
         IoCmd::saveAll();
-#endif
     }
 } saveAllCommandHandler;
