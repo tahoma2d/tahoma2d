@@ -320,6 +320,7 @@ void tglDraw(const TMeshImage &meshImage,
 			 const PlasticDeformerDataGroup &group)
 {
 #ifdef _WIN32
+	typedef void (*PFNGLBLENDFUNCSEPARATEPROC)(GLenum, GLenum, GLenum, GLenum);
 	static PFNGLBLENDFUNCSEPARATEPROC const glBlendFuncSeparate =
 		reinterpret_cast<PFNGLBLENDFUNCSEPARATEPROC>(::wglGetProcAddress("glBlendFuncSeparate"));
 #endif
