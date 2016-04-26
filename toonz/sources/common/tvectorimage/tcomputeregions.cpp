@@ -1817,12 +1817,7 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
 			if (s2->getChunkCount() == 1)
 				continue;
 
-#ifdef NEW_REGION_FILL
-			double autoTol = 0;
-#else
 			double autoTol = vi->getAutocloseTolerance();
-#endif
-
 			double enlarge1 = (autoTol + 0.7) * (s1->getMaxThickness() > 0 ? s1->getMaxThickness() : 2.5) + fac;
 			double enlarge2 = (autoTol + 0.7) * (s2->getMaxThickness() > 0 ? s2->getMaxThickness() : 2.5) + fac;
 
@@ -2752,10 +2747,6 @@ void printStrokes1(vector<VIStroke *> &v, int size);
 // Trova le regioni in una TVectorImage
 int TVectorImage::Imp::computeRegions()
 {
-#ifdef NEW_REGION_FILL
-	return 0;
-#endif
-
 #if defined(_DEBUG) && !defined(MACOSX)
 	TStopWatch stopWatch;
 	stopWatch.start(true);

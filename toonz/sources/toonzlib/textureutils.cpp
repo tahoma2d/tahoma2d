@@ -29,7 +29,6 @@
 
 namespace
 {
-
 TRasterImageP convert32(const TImageP &img)
 {
 	struct locals {
@@ -96,12 +95,10 @@ TRasterImageP getTexture(const TXshSimpleLevel *sl, const TFrameId &fid, int sub
 	}
 
 	// Vector case
-	std::string id = sl->getImageId(fid) + "_rasterized";
+	std::string const id = sl->getImageId(fid) + "_rasterized";
 
 	ImageLoader::BuildExtData extData(sl, fid);
-	TRasterImageP ri(ImageManager::instance()->getImage(id, ImageManager::dontPutInCache, &extData));
-
-	return ri;
+	return ImageManager::instance()->getImage(id, ImageManager::dontPutInCache, &extData);
 }
 
 } // namespace
@@ -130,10 +127,10 @@ DrawableTextureDataP texture_utils::getTextureData(
 	TRaster32P ras(ri->getRaster());
 	assert(ras);
 
-	TRectD geom(0, 0, ras->getLx(), ras->getLy());
-	geom = TScale(ri->getSubsampling()) *
-		   TTranslation(convert(ri->getOffset()) - ras->getCenterD()) *
-		   geom;
+	TRectD const geom
+		= TScale(ri->getSubsampling())
+		* TTranslation(convert(ri->getOffset()) - ras->getCenterD())
+		* TRectD(0, 0, ras->getLx(), ras->getLy());
 
 	return TTexturesStorage::instance()->loadTexture(texId, ras, geom);
 }

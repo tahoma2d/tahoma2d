@@ -295,9 +295,7 @@ TImageP TImageReaderPli::load()
 
 void readRegionVersion4x(IntersectionDataTag *tag, TVectorImage *img)
 {
-#ifndef NEW_REGION_FILL
 	img->setFillData(tag->m_branchArray, tag->m_branchCount);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -361,42 +359,34 @@ TImageP TImageReaderPli::doLoad()
 	CreateStrokeData strokeData;
 
 	// preparo l'immagine da restituire
-	TVectorImage
-		*outVectImage = new TVectorImage(true);
-	// fisso il colore di default a nero opaco
-	//TPixel currentColor=TPixel::Black;
-	//TStrokeStyle *currStyle = NULL;
-	// chiudo tutto dentro un blocco try per  cautelarmi
-	//  dalle eccezioni generate in lettura
-	//try
-	//{
-	// un contatore
-	UINT i;
+	TSmartPointerT<TVectorImage> outVectImage(new TVectorImage(true));
 	outVectImage->setAutocloseTolerance(m_lrp->m_pli->getAutocloseTolerance());
 
-	ImageTag *imageTag;
-
-	imageTag = m_lrp->m_pli->loadFrame(m_frameId);
-	if (!imageTag)
+	ImageTag* imageTag = m_lrp->m_pli->loadFrame(m_frameId);
+	if (!imageTag) {
 		throw TImageException(m_path, "Corrupted or invalid image data");
-
-	if (m_lrp->m_mapOfImage[m_frameId].second == false)
-		m_lrp->m_mapOfImage[m_frameId].second = true;
+	}
+	m_lrp->m_mapOfImage[m_frameId].second = true;
 
 	// per tutti gli oggetti presenti nel tag
-	for (i = 0; i < imageTag->m_numObjects; i++) {
+	for (UINT i = 0; i < imageTag->m_numObjects; i++) {
 		switch (imageTag->m_object[i]->m_type) {
-		case PliTag::GROUP_GOBJ: {
+		case PliTag::GROUP_GOBJ:
 			assert(((GroupTag *)imageTag->m_object[i])->m_type == GroupTag::STROKE);
-			createGroup((GroupTag *)imageTag->m_object[i], outVectImage, strokeData);
-		}
-			CASE PliTag::INTERSECTION_DATA_GOBJ : readRegionVersion4x((IntersectionDataTag *)imageTag->m_object[i], outVectImage);
+			createGroup((GroupTag *)imageTag->m_object[i], outVectImage.getPointer(), strokeData);
+			break;
 
+		case PliTag::INTERSECTION_DATA_GOBJ:
+			readRegionVersion4x((IntersectionDataTag *)imageTag->m_object[i], outVectImage.getPointer());
+			break;
+
+		case PliTag::THICK_QUADRATIC_CHAIN_GOBJ:
 			// aggiunge le stroke quadratiche
-			CASE PliTag::THICK_QUADRATIC_CHAIN_GOBJ : createStroke((ThickQuadraticChainTag *)imageTag->m_object[i], outVectImage, strokeData);
+			createStroke((ThickQuadraticChainTag *)imageTag->m_object[i], outVectImage.getPointer(), strokeData);
+			break;
 
+		case PliTag::COLOR_NGOBJ:
 			// aggiunge curve quadratiche con spessore costante
-			CASE PliTag::COLOR_NGOBJ:
 			{
 				ColorTag *colorTag = (ColorTag *)imageTag->m_object[i];
 
@@ -405,29 +395,20 @@ TImageP TImageReaderPli::doLoad()
 				// isSketch=(colorTag->m_color[0] < c_maxSketchColorNum);
 				// isSketch=(colorTag->m_color[0] < c_maxSketchColorNum);
 			}
+			break;
 
+		case PliTag::OUTLINE_OPTIONS_GOBJ:
 			// adds outline options data
-			CASE PliTag::OUTLINE_OPTIONS_GOBJ : strokeData.m_options = ((StrokeOutlineOptionsTag *)imageTag->m_object[i])->m_options;
-
-		DEFAULT:;
-		} // switch(groupTag->m_object[j]->m_type)
-	}	 // for (i=0; i<imageTag->m_numObjects; i++)
-
-//} // try
-
-//catch(...) // cosi' e' inutile o raccolgo qualcosa prima di rilanciare o lo elimino
-//{
-//  throw;
-// }
-
-//  if (regionsComputed) //WARNING !!! la seedFill mette il flag a ValidRegion a TRUE
-//    outVectImage->seedFill(); //le vecchie immagini hanno il seed (version<3.1)
+			strokeData.m_options = ((StrokeOutlineOptionsTag *)imageTag->m_object[i])->m_options;
+			break;
+		}
+	}
 
 #ifdef _DEBUG
 	outVectImage->checkIntersections();
 #endif
 
-	return TImageP(outVectImage);
+	return TImageP(outVectImage.releasePointer());
 }
 
 //-----------------------------------------------------------------------------
