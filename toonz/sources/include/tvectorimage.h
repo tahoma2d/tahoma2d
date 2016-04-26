@@ -21,6 +21,7 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+//#define NEW_REGION_FILL
 #define DISEGNO_OUTLINE 0
 
 //=============================================================================
@@ -349,6 +350,10 @@ public:
 #endif
 
 	void computeRegion(const TPointD &p, int styleId);
+
+#ifdef NEW_REGION_FILL
+	void resetRegionFinder();
+#endif
 
 private: //not implemented
 	TVectorImage(const TVectorImage &);

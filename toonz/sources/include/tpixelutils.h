@@ -356,25 +356,25 @@ DVAPI inline void premult(TPixel32 &pix)
 
 DVAPI inline void premult(TPixel64 &pix)
 {
-	pix.r = static_cast<TPixel64::Channel>(pix.r * pix.m / 65535.0);
-	pix.g = static_cast<TPixel64::Channel>(pix.g * pix.m / 65535.0);
-	pix.b = static_cast<TPixel64::Channel>(pix.b * pix.m / 65535.0);
+	pix.r = pix.r * pix.m / 65535.0;
+	pix.g = pix.g * pix.m / 65535.0;
+	pix.b = pix.b * pix.m / 65535.0;
 }
 
 DVAPI inline void depremult(TPixel32 &pix)
 {
 	float fac = 255.0f / pix.m;
-	pix.r = static_cast<TPixel32::Channel>(tmin(pix.r * fac, 255.0f));
-	pix.g = static_cast<TPixel32::Channel>(tmin(pix.g * fac, 255.0f));
-	pix.b = static_cast<TPixel32::Channel>(tmin(pix.b * fac, 255.0f));
+	pix.r = tmin(pix.r * fac, 255.0f);
+	pix.g = tmin(pix.g * fac, 255.0f);
+	pix.b = tmin(pix.b * fac, 255.0f);
 }
 
 DVAPI inline void depremult(TPixel64 &pix)
 {
 	double fac = 65535.0 / pix.m;
-	pix.r = static_cast<TPixel64::Channel>(tmin(pix.r * fac, 65535.0));
-	pix.g = static_cast<TPixel64::Channel>(tmin(pix.g * fac, 65535.0));
-	pix.b = static_cast<TPixel64::Channel>(tmin(pix.b * fac, 65535.0));
+	pix.r = tmin(pix.r * fac, 65535.0);
+	pix.g = tmin(pix.g * fac, 65535.0);
+	pix.b = tmin(pix.b * fac, 65535.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -402,27 +402,27 @@ DVAPI inline TPixel32 premultiply(const TPixel32 &pix)
 DVAPI inline TPixel64 premultiply(const TPixel64 &pix)
 {
 	return TPixel64(
-		static_cast<TPixel64::Channel>(pix.r * pix.m / 65535.0),
-		static_cast<TPixel64::Channel>(pix.g * pix.m / 65535.0),
-		static_cast<TPixel64::Channel>(pix.b * pix.m / 65535.0),
+		pix.r * pix.m / 65535.0,
+		pix.g * pix.m / 65535.0,
+		pix.b * pix.m / 65535.0,
 		pix.m);
 }
 
 DVAPI inline TPixel32 depremultiply(const TPixel32 &pix)
 {
 	return TPixel32(
-		static_cast<TPixel32::Channel>(pix.r * 255.0 / pix.m),
-		static_cast<TPixel32::Channel>(pix.g * 255.0 / pix.m),
-		static_cast<TPixel32::Channel>(pix.b * 255.0 / pix.m),
+		pix.r * 255.0 / pix.m,
+		pix.g * 255.0 / pix.m,
+		pix.b * 255.0 / pix.m,
 		pix.m);
 }
 
 DVAPI inline TPixel64 depremultiply(const TPixel64 &pix)
 {
 	return TPixel64(
-		static_cast<TPixel64::Channel>(pix.r * 65535.0 / pix.m),
-		static_cast<TPixel64::Channel>(pix.g * 65535.0 / pix.m),
-		static_cast<TPixel64::Channel>(pix.b * 65535.0 / pix.m),
+		pix.r * 65535.0 / pix.m,
+		pix.g * 65535.0 / pix.m,
+		pix.b * 65535.0 / pix.m,
 		pix.m);
 }
 

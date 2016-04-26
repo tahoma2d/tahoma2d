@@ -3,10 +3,13 @@
 #ifndef TGL_INCLUDED
 #define TGL_INCLUDED
 
+//#include "tgeometry.h"
 #include "tmachine.h"
 
 #ifdef _WIN32
 #include <windows.h>
+//#endif
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>

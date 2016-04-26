@@ -199,13 +199,16 @@ void makeChessBackground(const TRaster32P &ras)
 
 namespace
 {
-TRaster32P convertToIcon(TVectorImageP vimage, int frame,
-	TDimension const& iconSize, IconGenerator::Settings const& settings)
+TRaster32P convertToIcon(
+	TVectorImageP vimage,
+	int frame,
+	const TDimension &iconSize,
+	const IconGenerator::Settings &settings)
 {
 	if (!vimage)
 		return TRaster32P();
 
-	std::unique_ptr<TPalette> plt(vimage->getPalette()->clone());
+	TPalette *plt = vimage->getPalette()->clone();
 	if (!plt)
 		return TRaster32P();
 	plt->setFrame(frame);
@@ -234,31 +237,42 @@ TRaster32P convertToIcon(TVectorImageP vimage, int frame,
 	TAffine aff = TScale(sc).place(imageCenter, iconCenter);
 
 	// RenderData
-	TVectorRenderData rd(aff, TRect(iconSize), plt.get(), 0, true);
+	TVectorRenderData rd(
+		aff,
+		TRect(iconSize),
+		plt,
+		0, true);
+
 	rd.m_tcheckEnabled = settings.m_transparencyCheck;
 	rd.m_blackBgEnabled = settings.m_blackBgCheck;
 	rd.m_drawRegions = !settings.m_inksOnly;
-	rd.m_inkCheckEnabled = (settings.m_inkIndex != -1);
-	rd.m_paintCheckEnabled = (settings.m_paintIndex != -1);
+	rd.m_inkCheckEnabled = settings.m_inkIndex != -1;
+	rd.m_paintCheckEnabled = settings.m_paintIndex != -1;
 	rd.m_colorCheckIndex = rd.m_inkCheckEnabled ? settings.m_inkIndex : settings.m_paintIndex;
 	rd.m_isIcon = true;
 
 	// disegno l'immagine
 	glContext->makeCurrent();
-	glContext->clear(rd.m_blackBgEnabled ? TPixel32::Black : TPixel32::White);
+	glContext->clear(rd.m_blackBgEnabled ? TPixel::Black : TPixel32::White);
 	glContext->draw(vimage, rd);
 
 	TRaster32P ras(iconSize);
 	glContext->getRaster(ras);
+
 	glContext->doneCurrent();
+
+	delete plt;
 
 	return ras;
 }
 
 //-------------------------------------------------------------------------
 
-TRaster32P convertToIcon(TToonzImageP timage, int frame,
-	TDimension const& iconSize, IconGenerator::Settings const& settings)
+TRaster32P convertToIcon(
+	TToonzImageP timage,
+	int frame,
+	const TDimension &iconSize,
+	const IconGenerator::Settings &settings)
 {
 	if (!timage)
 		return TRaster32P();
