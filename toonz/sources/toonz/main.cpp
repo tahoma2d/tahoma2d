@@ -330,6 +330,9 @@ void initToonzEnv()
 	if (cacheDir.isEmpty())
 		cacheDir = TEnv::getStuffDir() + "cache";
 	TImageCache::instance()->setRootDir(cacheDir);
+
+	DV_IMPORT_API void initializeImageRasterizer();
+	initializeImageRasterizer();
 }
 
 //-----------------------------------------------------------------------------

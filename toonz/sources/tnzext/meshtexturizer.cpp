@@ -158,16 +158,15 @@ void MeshTexturizer::Imp::allocateTextures(int groupIdx, const TRaster32P &ras, 
 
 	// Test the specified texture allocation
 	if (testTextureAlloc(textureLx, textureLy)) {
-		TPointD const scale(
-			data->m_geom.getLx() / ras->getLx(),
-			data->m_geom.getLy() / ras->getLy());
-		TRectD const tileGeom(
+		TPointD scale(data->m_geom.getLx() / (double)ras->getLx(),
+					  data->m_geom.getLy() / (double)ras->getLy());
+		TRectD tileGeom(
 			TRectD(
-				scale.x * (x             - TOTAL_BORDER), scale.y * (y             - TOTAL_BORDER),
+				scale.x * (x - TOTAL_BORDER), scale.y * (y - TOTAL_BORDER),
 				scale.x * (x + textureLx + TOTAL_BORDER), scale.y * (y + textureLy + TOTAL_BORDER)) +
 			data->m_geom.getP00());
 
-		GLuint const texId = textureAlloc(ras, aux, x, y, textureLx, textureLy, premultiplied);
+		GLuint texId = textureAlloc(ras, aux, x, y, textureLx, textureLy, premultiplied);
 
 		TextureData::TileData td = {texId, tileGeom};
 		data->m_tileDatas.push_back(td);

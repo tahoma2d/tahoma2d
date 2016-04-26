@@ -167,12 +167,6 @@ public:
 
 	T *getPointer() const { return m_pointer; }
 
-	T* releasePointer() {
-		T* p = m_pointer;
-		m_pointer = nullptr;
-		return p;
-	}
-
 	bool operator!() const { return m_pointer == 0; }
 	operator bool() const { return m_pointer != 0; }
 

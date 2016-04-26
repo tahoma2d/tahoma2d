@@ -117,7 +117,7 @@ private:
 
 struct MeshTexturizer::TextureData {
 	struct TileData //!  Data structure for a texture tile.
-	{
+		{
 		GLuint m_textureId;	//!< OpenGL texture identifier.
 		TRectD m_tileGeometry; //!< The tile's world geometry.
 	};
@@ -132,15 +132,15 @@ public:
 
 	~TextureData()
 	{
-		for (auto const& tile : m_tileDatas) {
-			glDeleteTextures(1, &tile.m_textureId);
-		}
+		int t, tilesCount = m_tileDatas.size();
+		for (t = 0; t < tilesCount; ++t)
+			glDeleteTextures(1, &m_tileDatas[t].m_textureId);
 	}
 
 private:
 	// Not copyable
-	TextureData(const TextureData &) = delete;
-	TextureData &operator=(const TextureData &) = delete;
+	TextureData(const TextureData &);
+	TextureData &operator=(const TextureData &);
 };
 
 #endif // MESHTEXTURIZER_H

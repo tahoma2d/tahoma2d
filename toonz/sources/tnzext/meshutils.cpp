@@ -12,8 +12,6 @@
 
 #include "ext/meshutils.h"
 
-#include <array>
-
 //********************************************************************************************
 //    Templated drawing functions
 //********************************************************************************************
@@ -65,24 +63,23 @@ inline void tglDrawFaces(const TMeshImage &meshImage, ColorFunction colorFunctio
 {
 	glBegin(GL_TRIANGLES);
 
-	int i = 0;
-	for (auto const& mesh : meshImage.meshes()) {
-		tcg::list<TTextureVertex> const & vertices = mesh->vertices();
-		int const m = i++;
+	int m, mCount = meshImage.meshes().size();
+	for (m = 0; m != mCount; ++m) {
+		const TTextureMesh &mesh = *meshImage.meshes()[m];
+		const tcg::list<TTextureVertex> &vertices = mesh.vertices();
 
 		// Draw the mesh wireframe
-		int j = 0;
-		for (auto const& ft : mesh->faces()) {
-			int const index = j++;
+		TTextureMesh::faces_container::const_iterator ft, fEnd = mesh.faces().end();
 
+		for (ft = mesh.faces().begin(); ft != fEnd; ++ft) {
 			int v0, v1, v2;
-			mesh->faceVertices(index, v0, v1, v2);
+			mesh.faceVertices(ft.index(), v0, v1, v2);
 
-			TTextureVertex const& p0 = vertices[v0];
-			TTextureVertex const& p1 = vertices[v1];
-			TTextureVertex const& p2 = vertices[v2];
+			const TTextureVertex &p0 = vertices[v0];
+			const TTextureVertex &p1 = vertices[v1];
+			const TTextureVertex &p2 = vertices[v2];
 
-			colorFunction.faceColor(index, m);
+			colorFunction.faceColor(ft.index(), m);
 
 			colorFunction.vertexColor(v0, m), glVertex2d(p0.P().x, p0.P().y);
 			colorFunction.vertexColor(v1, m), glVertex2d(p1.P().x, p1.P().y);
@@ -101,33 +98,39 @@ inline void tglDrawFaces(const TMeshImage &meshImage, const PlasticDeformerDataG
 {
 	glBegin(GL_TRIANGLES);
 
+	// Draw faces according to the group's sorted faces list
+	typedef std::vector<std::pair<int, int>> SortedFacesVector;
+
+	const SortedFacesVector &sortedFaces = group->m_sortedFaces;
 	const std::vector<TTextureMeshP> &meshes = meshImage.meshes();
 
-	// Draw faces according to the group's sorted faces list
-	// Draw each face individually. Change tile and mesh data only if they change
 	int m = -1;
-	for (auto const& sft : group->m_sortedFaces) {
-		TTextureMesh const* mesh = nullptr;
-		double const* dstCoords = nullptr;
+	const TTextureMesh *mesh;
+	const double *dstCoords;
 
-		if (m != sft.second) {
-			m = sft.second;
+	int v0, v1, v2;
+
+	// Draw each face individually. Change tile and mesh data only if they change
+	SortedFacesVector::const_iterator sft, sfEnd(sortedFaces.end());
+	for (sft = sortedFaces.begin(); sft != sfEnd; ++sft) {
+		int f = sft->first, m_ = sft->second;
+
+		if (m != m_) {
+			m = m_;
+
 			mesh = meshes[m].getPointer();
 			dstCoords = group->m_datas[m].m_output.get();
 		}
 
-		int v0, v1, v2;
-		mesh->faceVertices(sft.first, v0, v1, v2);
+		mesh->faceVertices(f, v0, v1, v2);
 
-		double const * const d0 = dstCoords + (v0 << 1);
-		double const * const d1 = dstCoords + (v1 << 1);
-		double const * const d2 = dstCoords + (v2 << 1);
+		const double *d0 = dstCoords + (v0 << 1), *d1 = dstCoords + (v1 << 1), *d2 = dstCoords + (v2 << 1);
 
-		colorFunction.faceColor(sft.first, m);
+		colorFunction.faceColor(f, m);
 
-		colorFunction.vertexColor(v0, m), glVertex2d(d0[0], d0[1]);
-		colorFunction.vertexColor(v1, m), glVertex2d(d1[0], d1[1]);
-		colorFunction.vertexColor(v2, m), glVertex2d(d2[0], d2[1]);
+		colorFunction.vertexColor(v0, m), glVertex2d(*d0, *(d0 + 1));
+		colorFunction.vertexColor(v1, m), glVertex2d(*d1, *(d1 + 1));
+		colorFunction.vertexColor(v2, m), glVertex2d(*d2, *(d2 + 1));
 	}
 
 	glEnd();
@@ -319,134 +322,189 @@ void tglDraw(const TMeshImage &meshImage,
 			 const DrawableTextureData &texData, const TAffine &meshToTexAff,
 			 const PlasticDeformerDataGroup &group)
 {
-#ifdef _WIN32
-	static PFNGLBLENDFUNCSEPARATEPROC const glBlendFuncSeparate =
-		reinterpret_cast<PFNGLBLENDFUNCSEPARATEPROC>(::wglGetProcAddress("glBlendFuncSeparate"));
-#endif
+	typedef MeshTexturizer::TextureData::TileData TileData;
 
 	// Prepare OpenGL
 	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_LINE_BIT | GL_HINT_BIT); // Preserve original status bits
 
 	glEnable(GL_BLEND);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(1.0f);
 
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	glBlendFuncSeparate(
-		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-		GL_ONE      , GL_ONE_MINUS_SRC_ALPHA);
+	// Prepare variables
+	const std::vector<TTextureMeshP> &meshes = meshImage.meshes();
+	const TTextureMesh *mesh;
 
-	auto const& tiles = texData.m_textureData->m_tileDatas;
+	typedef std::vector<std::pair<int, int>> SortedFacesVector;
+	const SortedFacesVector &sortedFaces = group.m_sortedFaces;
+
+	const MeshTexturizer::TextureData *td = texData.m_textureData;
+	int t, tCount = td->m_tileDatas.size();
+
+	GLuint texId = -1;
+	int m = -1;
+	const double *dstCoords;
+
+	int v0, v1, v2;
+	int e1ovi, e2ovi; // Edge X's Other Vertex Index (see below)
 
 	// Prepare each tile's affine
-	std::unique_ptr<TAffine[]> tileAff(new TAffine[tiles.size()]);
-	{
-		std::size_t i = 0;
-		for (auto const& tile : tiles) {
-			TRectD const &rect = tile.m_tileGeometry;
-			TScale const scale(
-				1.0 / (rect.x1 - rect.x0),
-				1.0 / (rect.y1 - rect.y0));
-			TTranslation const translate(-rect.x0, -rect.y0);
-			tileAff[i] = scale * translate * meshToTexAff;
-		}
+	std::vector<TAffine> tileAff(tCount);
+	for (t = 0; t != tCount; ++t) {
+		const TileData &tileData = td->m_tileDatas[t];
+		const TRectD &tileRect = tileData.m_tileGeometry;
+
+		tileAff[t] = TScale(1.0 / (tileRect.x1 - tileRect.x0), 1.0 / (tileRect.y1 - tileRect.y0)) *
+					 TTranslation(-tileRect.x0, -tileRect.y0) *
+					 meshToTexAff;
 	}
 
 	// Draw each face individually, according to the group's sorted faces list.
 	// Change tile and mesh data only if they change - improves performance
-	int m = -1;
-	TTextureMesh const * mesh = nullptr;
-	double const * dstCoords = nullptr;
-	GLuint texId = -1;
-	for (auto const& sft : group.m_sortedFaces) {
-		if (m != sft.second) {
+
+	SortedFacesVector::const_iterator sft, sfEnd(sortedFaces.end());
+	for (sft = sortedFaces.begin(); sft != sfEnd; ++sft) {
+		int f = sft->first, m_ = sft->second;
+
+		if (m != m_) {
 			// Change mesh if different from current
-			m = sft.second;
-			mesh = meshImage.meshes()[m].getPointer();
+			m = m_;
+
+			mesh = meshes[m].getPointer();
 			dstCoords = group.m_datas[m].m_output.get();
 		}
 
 		// Draw each face
-		TTextureMesh::face_type const& fc = mesh->face(sft.first);
-		TTextureMesh::edge_type const& ed0 = mesh->edge(fc.edge(0));
-		TTextureMesh::edge_type const& ed1 = mesh->edge(fc.edge(1));
-		TTextureMesh::edge_type const& ed2 = mesh->edge(fc.edge(2));
+		const TTextureMesh::face_type &fc = mesh->face(f);
 
-		int const v0 = ed0.vertex(0);
-		int const v1 = ed0.vertex(1);
-		int const v2 = ed1.vertex((ed1.vertex(0) == v0) | (ed1.vertex(0) == v1));
+		const TTextureMesh::edge_type &ed0 = mesh->edge(fc.edge(0)),
+									  &ed1 = mesh->edge(fc.edge(1)),
+									  &ed2 = mesh->edge(fc.edge(2));
 
-		// Edge X's Other Vertex Index (see below)
-		int const f = (ed1.vertex(0) == v1) | (ed1.vertex(1) == v1); // ed1 and ed2 will refer to vertexes
-		int const g = 1 - f;									                       // with index 2 and these.
+		{
+			v0 = ed0.vertex(0);
+			v1 = ed0.vertex(1);
+			v2 = ed1.vertex((ed1.vertex(0) == v0) | (ed1.vertex(0) == v1));
 
-		TPointD const& p0 = mesh->vertex(v0).P();
-		TPointD const& p1 = mesh->vertex(v1).P();
-		TPointD const& p2 = mesh->vertex(v2).P();
+			e1ovi = (ed1.vertex(0) == v1) | (ed1.vertex(1) == v1); // ed1 and ed2 will refer to vertexes
+			e2ovi = 1 - e1ovi;									   // with index 2 and these.
+		}
 
-		// Draw face against tile
-		std::size_t i = 0;
-		for (auto const& tileData : tiles) {
+		const TPointD &p0 = mesh->vertex(v0).P(), &p1 = mesh->vertex(v1).P(), &p2 = mesh->vertex(v2).P();
+
+		for (t = 0; t != tCount; ++t) {
+			// Draw face against tile
+			const TileData &tileData = td->m_tileDatas[t];
+
 			// Map each face vertex to tile coordinates
-			std::array<TPointD, 3> const s = {
-				tileAff[i] * p0,
-				tileAff[i] * p1,
-				tileAff[i] * p2,
-			};
-			++i;
+			TPointD s[3] = {tileAff[t] * p0, tileAff[t] * p1, tileAff[t] * p2};
 
 			// Test the face bbox - tile intersection
-			if ( (tmin(s[0].x, s[1].x, s[2].x) > 1.0)
-				|| (tmin(s[0].y, s[1].y, s[2].y) > 1.0)
-				|| (tmax(s[0].x, s[1].x, s[2].x) < 0.0)
-				|| (tmax(s[0].y, s[1].y, s[2].y) < 0.0)) {
+			if (tmin(s[0].x, s[1].x, s[2].x) > 1.0 ||
+				tmin(s[0].y, s[1].y, s[2].y) > 1.0 ||
+				tmax(s[0].x, s[1].x, s[2].x) < 0.0 ||
+				tmax(s[0].y, s[1].y, s[2].y) < 0.0)
 				continue;
-			}
 
 			// If the tile has changed, interrupt the glBegin/glEnd block and bind the
 			// OpenGL texture corresponding to the new tile
-			if (texId != tileData.m_textureId) {
+			if (tileData.m_textureId != texId) {
 				texId = tileData.m_textureId;
 
-				// This must be OUTSIDE a glBegin/glEnd block
-				glBindTexture(GL_TEXTURE_2D, texId);
+				glBindTexture(GL_TEXTURE_2D, tileData.m_textureId); // This must be OUTSIDE a glBegin/glEnd block
 			}
 
-			std::array<double const *, 3> const d = {
-				dstCoords + (v0 << 1),
-				dstCoords + (v1 << 1),
-				dstCoords + (v2 << 1),
-			};
+			const double *d[3] = {dstCoords + (v0 << 1),
+								  dstCoords + (v1 << 1),
+								  dstCoords + (v2 << 1)};
+
+			/*
+        Now, draw primitives. A note about pixel arithmetic, here.
+        
+        Since line antialiasing in OpenGL just manipulates output fragments' alpha components,
+        we must require that the input texture is NONPREMULTIPLIED.
+
+        Furthermore, this function does not rely on the assumption that the output alpha component
+        is discarded (as it happens when drawing on screen). This means that just using a simple
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) is not an option, since this way THE INPUT
+        SRC ALPHA GETS MULTIPLIED BY ITSELF - see glBlendFunc's docs - and that shows.
+
+        The solution is to separate the rendering of RGB and M components - the formers use
+        GL_SRC_ALPHA, while the latter uses GL_ONE. The result is a PREMULTIPLIED image.
+      */
 
 			// First, draw antialiased face edges on the mesh border.
+			bool drawEd0 = (ed0.facesCount() < 2),
+				 drawEd1 = (ed1.facesCount() < 2),
+				 drawEd2 = (ed2.facesCount() < 2);
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+
 			glBegin(GL_LINES);
 			{
-				if (ed0.facesCount() < 2) {
-					glTexCoord2d(s[0].x, s[0].y), glVertex2d(d[0][0], d[0][1]);
-					glTexCoord2d(s[1].x, s[1].y), glVertex2d(d[1][0], d[1][1]);
+				if (drawEd0) {
+					glTexCoord2d(s[0].x, s[0].y), glVertex2d(*d[0], *(d[0] + 1));
+					glTexCoord2d(s[1].x, s[1].y), glVertex2d(*d[1], *(d[1] + 1));
 				}
 
-				if (ed1.facesCount() < 2) {
-					glTexCoord2d(s[f].x, s[f].y), glVertex2d(d[f][0], d[f][1]);
-					glTexCoord2d(s[2].x, s[2].y), glVertex2d(d[2][0], d[2][1]);
+				if (drawEd1) {
+					glTexCoord2d(s[e1ovi].x, s[e1ovi].y), glVertex2d(*d[e1ovi], *(d[e1ovi] + 1));
+					glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
 				}
 
-				if (ed2.facesCount() < 2) {
-					glTexCoord2d(s[g].x, s[g].y), glVertex2d(d[g][0], d[g][1]);
-					glTexCoord2d(s[2].x, s[2].y), glVertex2d(d[2][0], d[2][1]);
+				if (drawEd2) {
+					glTexCoord2d(s[e2ovi].x, s[e2ovi].y), glVertex2d(*d[e2ovi], *(d[e2ovi] + 1));
+					glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
+				}
+			}
+			glEnd();
+
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+
+			glBegin(GL_LINES);
+			{
+				if (drawEd0) {
+					glTexCoord2d(s[0].x, s[0].y), glVertex2d(*d[0], *(d[0] + 1));
+					glTexCoord2d(s[1].x, s[1].y), glVertex2d(*d[1], *(d[1] + 1));
+				}
+
+				if (drawEd1) {
+					glTexCoord2d(s[e1ovi].x, s[e1ovi].y), glVertex2d(*d[e1ovi], *(d[e1ovi] + 1));
+					glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
+				}
+
+				if (drawEd2) {
+					glTexCoord2d(s[e2ovi].x, s[e2ovi].y), glVertex2d(*d[e2ovi], *(d[e2ovi] + 1));
+					glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
 				}
 			}
 			glEnd();
 
 			// Finally, draw the face
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+
 			glBegin(GL_TRIANGLES);
 			{
-				glTexCoord2d(s[0].x, s[0].y), glVertex2d(d[0][0], d[0][1]);
-				glTexCoord2d(s[1].x, s[1].y), glVertex2d(d[1][0], d[1][1]);
-				glTexCoord2d(s[2].x, s[2].y), glVertex2d(d[2][0], d[2][1]);
+				glTexCoord2d(s[0].x, s[0].y), glVertex2d(*d[0], *(d[0] + 1));
+				glTexCoord2d(s[1].x, s[1].y), glVertex2d(*d[1], *(d[1] + 1));
+				glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
+			}
+			glEnd();
+
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+
+			glBegin(GL_TRIANGLES);
+			{
+				glTexCoord2d(s[0].x, s[0].y), glVertex2d(*d[0], *(d[0] + 1));
+				glTexCoord2d(s[1].x, s[1].y), glVertex2d(*d[1], *(d[1] + 1));
+				glTexCoord2d(s[2].x, s[2].y), glVertex2d(*d[2], *(d[2] + 1));
 			}
 			glEnd();
 		}

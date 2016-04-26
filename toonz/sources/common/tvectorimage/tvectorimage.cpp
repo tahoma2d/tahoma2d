@@ -86,7 +86,14 @@ TVectorImage::Imp: implementation of TVectorImage class
 
 TVectorImage::Imp::Imp(TVectorImage *vi)
 	: m_areValidRegions(false), m_notIntersectingStrokes(false), m_computeRegions(true), m_autocloseTolerance(c_newAutocloseTolerance), m_maxGroupId(1), m_maxGhostGroupId(1), m_mutex(new TThread::Mutex()), m_vi(vi), m_intersectionData(0), m_computedAlmostOnce(false), m_justLoaded(false), m_insideGroup(TGroupId()), m_minimizeEdges(true)
+#ifdef NEW_REGION_FILL
+	  ,
+	  m_regionFinder(0)
+#endif
 {
+#ifdef NEW_REGION_FILL
+	resetRegionFinder();
+#endif
 	initRegionsData();
 }
 
@@ -671,11 +678,13 @@ TRaster32P TVectorImage::render(bool onlyStrokes)
 
 TRegion *TVectorImage::getRegion(const TPointD &p)
 {
+#ifndef NEW_REGION_FILL
 	if (!isComputedRegionAlmostOnce())
 		return 0;
 
 	if (!m_imp->m_areValidRegions)
 		m_imp->computeRegions();
+#endif
 
 	return m_imp->getRegion(p);
 }
@@ -721,6 +730,15 @@ int TVectorImage::fillStrokes(const TPointD &p, int styleId)
 	return -1;
 }
 
+//-----------------------------------------------------------------------------
+
+#ifdef NEW_REGION_FILL
+
+void TVectorImage::resetRegionFinder()
+{
+	m_imp->resetRegionFinder();
+}
+#else
 //------------------------------------------------------------------
 
 int TVectorImage::fill(const TPointD &p, int newStyleId, bool onlyEmpty)
@@ -734,7 +752,41 @@ int TVectorImage::fill(const TPointD &p, int newStyleId, bool onlyEmpty)
 		m_imp->computeRegions();
 	return m_imp->fill(p, newStyleId);
 }
+#endif
 
+//-----------------------------------------------------------------------------
+/*
+void TVectorImage::autoFill(int styleId)
+{
+m_imp->autoFill(styleId, true);
+}
+
+void TVectorImage::Imp::autoFill(int styleId, bool oddLevel)
+{
+if (!m_areValidRegions)
+  computeRegions(); 
+for (UINT i = 0; i<m_regions.size(); i++)
+  {
+  if (oddLevel)
+    m_regions[i]->setStyle(styleId);
+  m_regions[i]->autoFill(styleId, !oddLevel);
+  }
+}
+*/
+//-----------------------------------------------------------------------------
+/*
+void TRegion::autoFill(int styleId, bool oddLevel)
+{
+for (UINT i = 0; i<getSubregionCount(); i++)
+  {
+  TRegion* r = getSubregion(i);
+  if (oddLevel)
+    r->setStyle(styleId);
+  r->autoFill(styleId, !oddLevel);
+  }
+
+}
+*/
 //-----------------------------------------------------------------------------
 
 int TVectorImage::Imp::fill(const TPointD &p, int styleId)
@@ -778,14 +830,12 @@ bool TVectorImage::Imp::selectFill(const TRectD &selArea, TStroke *s, int newSty
 		aux.findRegions();
 		for (UINT j = 0; j < aux.getRegionCount(); j++) {
 			TRegion *r0 = aux.getRegion(j);
-			if (fillAreas) {
+			if (fillAreas)
 				for (UINT i = 0; i < m_regions.size(); i++) {
 					TRegion *r1 = m_regions[i];
 
-					if ((m_insideGroup != TGroupId())
-						&& !m_insideGroup.isParentOf(m_strokes[r1->getEdge(0)->m_index]->m_groupId)) {
-							continue;
-					}
+					if (m_insideGroup != TGroupId() && !m_insideGroup.isParentOf(m_strokes[r1->getEdge(0)->m_index]->m_groupId))
+						continue;
 
 					if ((!onlyUnfilled || r1->getStyle() == 0) &&
 						r0->contains(*r1)) {
@@ -793,8 +843,7 @@ bool TVectorImage::Imp::selectFill(const TRectD &selArea, TStroke *s, int newSty
 						hitSome = true;
 					}
 				}
-			}
-			if (fillLines) {
+			if (fillLines)
 				for (UINT i = 0; i < m_strokes.size(); i++) {
 					if (!inCurrentGroup(i))
 						continue;
@@ -806,35 +855,40 @@ bool TVectorImage::Imp::selectFill(const TRectD &selArea, TStroke *s, int newSty
 						hitSome = true;
 					}
 				}
-			}
 		}
 		aux.removeStroke(0);
 		return hitSome;
 	}
 
 	// rect fill
-	if (fillAreas) {
-		for (std::size_t i = 0, size = m_regions.size(); i < size; i++) {
-			int index;
-			UINT j = 0;
 
-			do {
+	if (fillAreas)
+#ifndef NEW_REGION_FILL
+		for (UINT i = 0; i < m_regions.size(); i++) {
+			int index, j = 0;
+
+			do
 				index = m_regions[i]->getEdge(j++)->m_index;
-			}  while ((index < 0) && (j < m_regions[i]->getEdgeCount()));
-
-			// if index<0, means that the region is purely of autoclose strokes!
-			if ((m_insideGroup != TGroupId())
-				&& (index >= 0) && !m_insideGroup.isParentOf(m_strokes[index]->m_groupId)) {
+			while (index < 0 && j < (int)m_regions[i]->getEdgeCount());
+			//if index<0, means that the region is purely of autoclose strokes!
+			if (m_insideGroup != TGroupId() && index >= 0 && !m_insideGroup.isParentOf(m_strokes[index]->m_groupId))
 				continue;
-			}
-			if (onlyUnfilled && (m_regions[i]->getStyle() != 0)) {
-			} else {
+			if (!onlyUnfilled || m_regions[i]->getStyle() == 0)
 				hitSome |= m_regions[i]->selectFill(selArea, newStyleId);
-			}
 		}
-	}
+#else
 
-	if (fillLines) {
+		findRegions(selArea);
+
+	for (UINT i = 0; i < m_regions.size(); i++) {
+		if (m_insideGroup != TGroupId() && !m_insideGroup.isParentOf(m_strokes[m_regions[i]->getEdge(0)->m_index]->m_groupId))
+			continue;
+		if (!onlyUnfilled || m_regions[i]->getStyle() == 0)
+			hitSome |= m_regions[i]->selectFill(selArea, newStyleId);
+	}
+#endif
+
+	if (fillLines)
 		for (UINT i = 0; i < m_strokes.size(); i++) {
 			if (!inCurrentGroup(i))
 				continue;
@@ -846,8 +900,6 @@ bool TVectorImage::Imp::selectFill(const TRectD &selArea, TStroke *s, int newSty
 				hitSome = true;
 			}
 		}
-	}
-
 	return hitSome;
 }
 
