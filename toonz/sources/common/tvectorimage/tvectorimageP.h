@@ -199,11 +199,6 @@ public:
 
 #endif
 
-#ifdef NEW_REGION_FILL
-	TRegionFinder *m_regionFinder;
-	void resetRegionFinder();
-#endif
-
 private:
 	void findRegions(const TRectD &rect);
 	int computeIntersections();
