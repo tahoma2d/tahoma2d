@@ -136,7 +136,7 @@ struct TPSDHeaderInfo {
 
 struct dictentry {
 	int id;
-	char *key, *tag, *desc;
+	const char *key, *tag, *desc;
 	void (*func)(FILE *f, struct dictentry *dict, TPSDLayerInfo *li);
 };
 
