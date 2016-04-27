@@ -270,13 +270,6 @@ TImageP ImageRasterizer::build(int imFlags, void *extData)
 
 			TGlContext oldContext = tglGetCurrentContext();
 
-			if (!QOpenGLFramebufferObject::hasOpenGLFramebufferObjects()) {
-				TRaster32P ras(d);
-				TRasterImageP ri(ras);
-				ri->setOffset(off + ras->getCenter());
-				return ri;
-			}
-
 			// this is too slow.
 			{
 				QSurfaceFormat format;
