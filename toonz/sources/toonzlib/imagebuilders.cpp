@@ -287,7 +287,7 @@ TImageP ImageRasterizer::build(int imFlags, void *extData)
 				surface->create();
 
 				std::unique_ptr<QOpenGLContext> context(new QOpenGLContext());
-				context->moveToThread(QThread::currentThread());
+				context->create();
 				context->makeCurrent(surface.get());
 
 				TRaster32P ras(d);
@@ -339,6 +339,7 @@ TImageP ImageRasterizer::build(int imFlags, void *extData)
 				glPopAttrib();
 
 				context->doneCurrent();
+				tglMakeCurrent(oldContext);
 
 				TRasterImageP ri = TRasterImageP(ras);
 				ri->setOffset(off + ras->getCenter());
