@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="zh_CN">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AddFilmstripFramesPopup</name>
     <message>
@@ -1962,15 +1962,15 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Ease In</source>
-        <translation>渐入</translation>
+        <translation>缓入</translation>
     </message>
     <message>
         <source>Ease Out</source>
-        <translation>渐出</translation>
+        <translation>缓出</translation>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation>渐入/渐出</translation>
+        <translation>缓入/缓出</translation>
     </message>
     <message>
         <source>Interpolation:</source>
@@ -4978,11 +4978,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation>渐入/渐出</translation>
+        <translation>缓入/缓出</translation>
     </message>
     <message>
         <source>Ease In / Ease Out %</source>
-        <translation>渐入/渐出（%）</translation>
+        <translation>缓入/缓出（%）</translation>
     </message>
     <message>
         <source>Animation Step:</source>
