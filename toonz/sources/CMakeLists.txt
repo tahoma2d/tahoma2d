@@ -223,7 +223,7 @@ if (MSVC AND MSVC_VERSION EQUAL 1800)
 endif()
 
 # generate Qt translations and messages
-set(LANGUAGES japanese italian french spanish)
+set(LANGUAGES japanese italian french spanish chinese)
 
 function(add_translation module)
     set(translation)
