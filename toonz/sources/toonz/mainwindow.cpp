@@ -215,6 +215,42 @@ void makePrivate(std::vector<Room *> &rooms)
 		makePrivate(rooms[i]);
 }
 
+
+// major version  :  7 bits
+// minor version  :  8 bits
+// revision number: 16 bits
+int get_version_code_from(std::string ver)
+{
+	int version = 0;
+
+	// major version: assume that the major version is less than 127.
+	std::string::size_type const a = ver.find('.');
+	std::string const major
+		= (a == std::string::npos)
+		? ver
+		: ver.substr(0, a);
+	version += std::stoi(major) << 24;
+	if ((a == std::string::npos) || (a + 1 == ver.length())) {
+		return version;
+	}
+
+	// minor version: assume that the minor version is less than 255.
+	std::string::size_type const b = ver.find('.', a + 1);
+	std::string const minor
+		= (b == std::string::npos)
+		? ver.substr(a + 1)
+		: ver.substr(a + 1, b - a - 1);
+	version += std::stoi(minor) << 16;
+	if ((b == std::string::npos) || (b + 1 == ver.length())) {
+		return version;
+	}
+
+	// revision number: assume that the revision number is less than 32767.
+	version += std::stoi(ver.substr(b + 1));
+
+	return version;
+}
+
 } // namespace
 //=============================================================================
 
@@ -1029,7 +1065,10 @@ void MainWindow::onAbout()
 	dialog->setWindowTitle(tr("About OpenToonz"));
 	dialog->setTopMargin(0);
 	dialog->addWidget(label);
-	dialog->addWidget(new QLabel("OpenToonz (built " __DATE__ " " __TIME__ ")"));
+
+	QString name = QString::fromStdString(TEnv::getApplicationFullName());
+	name += " (built " __DATE__ " " __TIME__ ")";
+	dialog->addWidget(new QLabel(name));
 
 	QPushButton *button = new QPushButton(tr("Close"), dialog);
 	button->setDefault(true);
@@ -1243,16 +1282,12 @@ extern const char *applicationVersion;
 //-----------------------------------------------------------------------------
 void MainWindow::checkForUpdates()
 {
-/* FIXME: とりあえずアップデートチェックしないことにする */
-#if QT_VERSION < 0x050000
-	QString requestToServer = "http://www.toonz.com/cgi-shl/update/update.asp";
-	requestToServer = requestToServer + QString("?Application_Name=") + applicationName;
-	requestToServer = requestToServer + QString("&Version=") + applicationVersion;
-	requestToServer.remove(" ");
+	// Since there is only a single version of Opentoonz, we can do a simple check against a string
+	QString updateUrl("http://opentoonz.github.io/opentoonz-version.txt");
 
-	m_updateChecker = new UpdateChecker(requestToServer);
-	connect(m_updateChecker, SIGNAL(done(bool)), this, SLOT(onUpdateCheckerDone(bool)));
-#endif
+	m_updateChecker = new UpdateChecker(updateUrl);
+	connect(m_updateChecker, SIGNAL(done(bool)),
+		this, SLOT(onUpdateCheckerDone(bool)));
 }
 //-----------------------------------------------------------------------------
 #ifdef LINETEST
@@ -1272,52 +1307,26 @@ void MainWindow::checkForLicense()
 
 void MainWindow::onUpdateCheckerDone(bool error)
 {
-	if (!error) {
-		// Get the last update date
-		const TFilePath lastUpdateFilePath = TEnv::getConfigDir() + "lastUpdate.dat";
-		//QFile data(toQString(lastUpdateFilePath));
+	if (error) {
+		// Don't bother doing the update if there was an error
+		return;
+	}
 
-		QFile data(QString::fromStdWString(lastUpdateFilePath.getWideString()));
-		QString dateString;
-		if (data.open(QIODevice::ReadOnly)) {
-			QTextStream in(&data);
-			in >> dateString;
-		}
-		data.close();
-
-		// Last update Date
-		QDate lastUpdate = QDate::fromString(dateString, "MM/dd/yyyy");
-		// Current Update Date
-		QDate updateDate = m_updateChecker->getUpdateDate();
-		// Update web page
-		QUrl webPageUrl = m_updateChecker->getWebPageUrl();
-
-		// If the response 'make sense'
-		if (!updateDate.toString("MM/dd/yyyy").isEmpty() && !webPageUrl.toString().isEmpty()) {
-			if (!lastUpdate.isValid() || updateDate > lastUpdate) {
-				std::vector<QString> buttons;
-				buttons.push_back(QString(tr("Visit Web Site")));
-				buttons.push_back(QString(tr("Cancel")));
-				int ret = DVGui::MsgBox(DVGui::INFORMATION, QObject::tr("An update is available for this software.\nVisit the Web site for more information."), buttons);
-				if (ret == 1)
-					QDesktopServices::openUrl(webPageUrl);
-
-				// Write the new last date to file
-				QFile data(QString::fromStdWString(lastUpdateFilePath.getWideString()));
-				if (data.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-					QTextStream out(&data);
-					out << updateDate.toString("MM/dd/yyyy");
-					out.flush();
-				}
-				data.close();
-			}
+	int const software_version = get_version_code_from(TEnv::getApplicationVersion());
+	int const latest_version = get_version_code_from(m_updateChecker->getLatestVersion().toStdString());
+	if (software_version < latest_version) {
+		std::vector<QString> buttons;
+		buttons.push_back(QObject::tr("Visit Web Site"));
+		buttons.push_back(QObject::tr("Cancel"));
+		int ret = MsgBox(INFORMATION, QObject::tr("An update is available for this software.\nVisit the Web site for more information."), buttons);
+		if (ret == 1) {
+			// This URL can be "translated" to give a localised version to non-English users
+			QDesktopServices::openUrl(QObject::tr("https://opentoonz.github.io/e/"));
 		}
 	}
 
-#if QT_VERSION < 0x050000
 	disconnect(m_updateChecker);
 	m_updateChecker->deleteLater();
-#endif
 }
 //-----------------------------------------------------------------------------
 #ifdef LINETEST
