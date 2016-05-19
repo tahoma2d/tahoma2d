@@ -1894,7 +1894,7 @@ void FlipBook::showEvent(QShowEvent *e)
 		m_flipConsole->onPreferenceChanged();
 	}
 	m_flipConsole->setActive(true);
-	m_imageViewer->updateGL();
+	m_imageViewer->update();
 }
 
 //-------------------------------------------------------------------
