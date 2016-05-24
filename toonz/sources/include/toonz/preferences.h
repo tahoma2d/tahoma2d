@@ -428,6 +428,7 @@ public:
 	int getShmSeg() const { return m_shmseg; } //! \sa The \p sysctl unix command.
 	int getShmAll() const { return m_shmall; } //! \sa The \p sysctl unix command.
 	int getShmMni() const { return m_shmmni; } //! \sa The \p sysctl unix command.
+	std::string getLayerNameEncoding() const {return m_layerNameEncoding; };
 
 	Q_SIGNALS :
 
@@ -537,6 +538,7 @@ private:
 	int m_paletteTypeOnLoadRasterImageAsColorModel;
 
 	bool m_showKeyframesOnXsheetCellArea;
+	std::string m_layerNameEncoding = "SJIS"; // Fixed to SJIS for now. You can add interface if you wanna change encoding.
 
 private:
 	Preferences();
