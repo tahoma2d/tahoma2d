@@ -1099,7 +1099,7 @@ TFilePath getLevelPathAndSetNameWithPsdLevelName(TXshSimpleLevel *xshLevel)
 	if (list.size() >= 2 && list.at(1) != "frames") {
 		bool hasLayerId;
 		int layid = list.at(1).toInt(&hasLayerId);
-		QTextCodec* layerNameCodec = QTextCodec::codecForName( "SJIS" );
+		QTextCodec* layerNameCodec = QTextCodec::codecForName( Preferences::instance()->getLayerNameEncoding().c_str() );
 
 		if (hasLayerId) {
 			// An explicit photoshop layer id must be converted to the associated level name

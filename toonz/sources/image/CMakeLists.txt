@@ -85,7 +85,7 @@ if(WIN32)
     endif()
 endif()
 
-_find_toonz_library(TNZLIBS "tnzcore;tnzbase")
+_find_toonz_library(TNZLIBS "tnzcore;tnzbase;toonzlib")
 
 if(WIN32)
     set(EXTRA_LIBS
