@@ -1,8 +1,8 @@
-
-
 #include "tiio_psd.h"
 #include "trasterimage.h"
 #include "timageinfo.h"
+
+#include <QtCore>
 
 // forward declaration
 //class TImageReaderLayerPsd;
@@ -39,8 +39,9 @@ TLevelReaderPsd::TLevelReaderPsd(const TFilePath &path)
 
 #ifdef REF_LAYER_BY_NAME
 		if (layerStr != "frames") {
+			QTextCodec* layerNameCodec = QTextCodec::codecForName( "SJIS" );
 			TPSDParser psdparser(m_path);
-			m_layerId = psdparser.getLevelIdByName(layerStr.toStdString());
+			m_layerId = psdparser.getLevelIdByName(layerNameCodec->fromUnicode(layerStr).toStdString());
 		} else
 			m_layerId = layerStr.toInt();
 #else

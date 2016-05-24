@@ -1,5 +1,3 @@
-
-
 #include "toonz/txshsimplelevel.h"
 #include "imagebuilders.h"
 
@@ -40,6 +38,7 @@
 #include <QDir>
 #include <QRegExp>
 #include <QMessageBox>
+#include <QtCore>
 
 #include "../common/psdlib/psd.h"
 
@@ -1100,14 +1099,14 @@ TFilePath getLevelPathAndSetNameWithPsdLevelName(TXshSimpleLevel *xshLevel)
 	if (list.size() >= 2 && list.at(1) != "frames") {
 		bool hasLayerId;
 		int layid = list.at(1).toInt(&hasLayerId);
+		QTextCodec* layerNameCodec = QTextCodec::codecForName( "SJIS" );
 
 		if (hasLayerId) {
 			// An explicit photoshop layer id must be converted to the associated level name
 			TPSDParser psdparser(xshLevel->getScene()->decodeFilePath(retfp));
 			std::string levelName = psdparser.getLevelNameWithCounter(layid); // o_o  what about UNICODE names??
 
-			list[1] = QString::fromStdString(levelName);
-
+			list[1] = layerNameCodec->toUnicode(levelName.c_str());
 			std::wstring wLevelName = list.join("#").toStdWString();
 			retfp = retfp.withName(wLevelName);
 
