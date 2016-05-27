@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="de_DE">
 <context>
     <name>AddFxContextMenu</name>
     <message>
-        <source>Insert FX</source>
-        <translation>Inserisci un Effetto</translation>
+        <source>Insert Fx</source>
+        <translation type="vanished">FX einsetzen</translation>
     </message>
     <message>
         <source>Add FX</source>
-        <translation>Aggiungi un Effetto</translation>
+        <translation>Effekt hinzufügen</translation>
     </message>
     <message>
         <source>Replace FX</source>
-        <translation>Rimpiazza l&apos;Effetto</translation>
+        <translation>Effekt ersetzen</translation>
     </message>
     <message>
         <source>Insert </source>
-        <translation type="unfinished"></translation>
+        <translation>Einfügen</translation>
     </message>
     <message>
         <source>Add </source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <source>Replace </source>
+        <translation>Ersetzen</translation>
+    </message>
+    <message>
+        <source>Insert FX</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32,49 +36,45 @@
     <name>AdjustPaletteDialog</name>
     <message>
         <source>Adjust Current Level to This Palette</source>
-        <translation>Adatta il Livello Corrente a questa Palette</translation>
+        <translation>Aktuelle Ebene an diese Palette anpassen</translation>
     </message>
     <message>
         <source>Tolerance</source>
-        <translation>Tolleranza</translation>
+        <translation>Toleranz</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation>Applica</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
     <name>CameraPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>&amp;Ripristina il centro</translation>
+        <translation>Mitte zurücksetzen ((&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Activate</source>
-        <translation>&amp;Attiva</translation>
+        <translation>Aktivieren (&amp;A)</translation>
     </message>
 </context>
 <context>
     <name>CameraSettingsWidget</name>
     <message>
         <source>Width:</source>
-        <translation type="vanished">Larghezza:</translation>
+        <translation type="vanished">Breite:</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="vanished">Altezza:</translation>
+        <translation type="vanished">Höhe:</translation>
     </message>
     <message>
         <source>XPx:</source>
         <translation type="vanished">XPx:</translation>
-    </message>
-    <message>
-        <source>YPx:</source>
-        <translation type="vanished">YPx:</translation>
     </message>
     <message>
         <source>XDpi:</source>
@@ -86,25 +86,28 @@
     </message>
     <message>
         <source>Use Current Level Settings</source>
-        <translation>Utilizzare Impostazioni Livello Corrente</translation>
+        <translation>Aktuelle Ebenen-Einstellungen benutzen</translation>
     </message>
     <message>
         <source>Bad camera preset</source>
-        <translation>Errore nel Preset della Camera</translation>
+        <translation>Inkorrekte Kamera Vorgabe</translation>
     </message>
     <message>
         <source>&apos;%1&apos; doesn&apos;t seem a well formed camera preset. 
 Possibly the preset file has been corrupted</source>
-        <translation>%1 non sempbra essere un preset di camera corretto.
-E&apos; possibile che il file sia corrotto.</translation>
+        <translation>&apos;%1&apos; scheint keine korrekte Kamera-Vorgabe zu sein. Wahrscheinlich ist die Vorgabe-Datei korrupt</translation>
     </message>
     <message>
         <source>Preset name</source>
-        <translation>Nome predefinito</translation>
+        <translation>Vorgabenname</translation>
     </message>
     <message>
         <source>Enter the name for %1</source>
-        <translation>Inserire il nome per %1</translation>
+        <translation>Geben Sie den Namen für %1 ein</translation>
+    </message>
+    <message>
+        <source>YPx:</source>
+        <translation type="vanished">YPx:</translation>
     </message>
     <message>
         <source>AR:</source>
@@ -112,15 +115,15 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Force Squared Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratische Pixel erzwingen</translation>
     </message>
     <message>
         <source>Error : Preset Name is Invalid</source>
@@ -135,38 +138,38 @@ E&apos; possibile che il file sia corrotto.</translation>
     <name>ChannelHisto</name>
     <message>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Rot</translation>
     </message>
     <message>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Grün</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Blau</translation>
     </message>
     <message>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <source>RGBA</source>
-        <translation type="unfinished"></translation>
+        <translation>RGBA</translation>
     </message>
 </context>
 <context>
     <name>CleanupCameraSettingsWidget</name>
     <message>
         <source>Closest:</source>
-        <translation type="vanished">Closest:</translation>
+        <translation type="vanished">Nächste Position:</translation>
     </message>
     <message>
         <source>E/W:</source>
-        <translation type="vanished">E/O</translation>
+        <translation type="vanished">X:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation type="vanished">N/S</translation>
+        <translation type="vanished">Y:</translation>
     </message>
     <message>
         <source>DPI:</source>
@@ -174,15 +177,15 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="vanished">Nome:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
     <message>
         <source>Path:</source>
-        <translation type="vanished">Percorso:</translation>
+        <translation type="vanished">Pfad:</translation>
     </message>
     <message>
         <source>Field settings</source>
-        <translation type="vanished">Impostazioni dei Field</translation>
+        <translation type="vanished">Feld-Einstellungen</translation>
     </message>
     <message>
         <source>XPx:</source>
@@ -194,168 +197,172 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Resulting Level Info</source>
-        <translation type="vanished">Informazioni sul Livello</translation>
+        <translation type="vanished">Fertige Ebenen-Information</translation>
     </message>
 </context>
 <context>
     <name>ColumnPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>&amp;Ripristina il centro</translation>
+        <translation>Mitte zurücksetzen (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Open Subxsheet</source>
-        <translation>&amp;Apri il Sub-xsheet</translation>
+        <translation>Xsheet öffnen (&amp;O)</translation>
     </message>
 </context>
 <context>
     <name>DVGui</name>
     <message>
-        <source>OK</source>
-        <translation>OK</translation>
+        <source>Ok</source>
+        <translation type="vanished">Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DVGui::CleanupColorField</name>
     <message>
         <source>Brightness:</source>
-        <translation>Luminosità:</translation>
+        <translation>Helligkeit:</translation>
     </message>
     <message>
         <source>Contrast:</source>
-        <translation>Contrasto:</translation>
+        <translation>Kontrast:</translation>
     </message>
     <message>
         <source>Color Threshold</source>
-        <translation type="vanished">Soglia del Colore:</translation>
+        <translation type="vanished">Farb-Schwellenwert:</translation>
     </message>
     <message>
         <source>White Threshold</source>
-        <translation type="vanished">Soglia del Bianco:</translation>
+        <translation type="vanished">Weiß-Schwellenwert:</translation>
     </message>
     <message>
         <source>H Range</source>
-        <translation>Intervallo di Tinta:</translation>
+        <translation>Farbton-Bereich</translation>
     </message>
     <message>
         <source>Line Width</source>
-        <translation>Spessore della Linea:</translation>
+        <translation>Linien-Dicke</translation>
     </message>
     <message>
         <source>Color Thres</source>
-        <translation type="unfinished"></translation>
+        <translation>Farb-Schwellenwert</translation>
     </message>
     <message>
         <source>White Thres</source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeits-Schwellenwert</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="unfinished">Grassetto</translation>
+        <translation>Fett</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">Corsivo</translation>
+        <translation>Kursiv</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished">Sottolineato</translation>
+        <translation>Unterstrichen</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="unfinished">Allinea a Sinistra</translation>
+        <translation>Linksbündig</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="unfinished">Allinea al centro</translation>
+        <translation>Zentriert</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="unfinished">Allinea a Destra</translation>
+        <translation>Rechtsbündig</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="unfinished">Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
+        <translation>Der Dateiname darf folgende Zeichen nicht enthalten:  /\:*?&quot;&lt;&gt;|</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ProgressDialog</name>
     <message>
         <source>Toonz</source>
-        <translation type="unfinished">Toonz</translation>
+        <translation>OpenToonz</translation>
     </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
     <message>
         <source>Toonz</source>
-        <translation type="unfinished">Toonz</translation>
+        <translation>OpenToonz</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="unfinished">È possibile caricare solo i file TNZBAT.</translation>
+        <translation>Kanal:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ValidatedChoiceDialog</name>
     <message>
         <source>Apply</source>
-        <translation>Applica</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <source>Apply to All</source>
-        <translation>Applica a Tutto</translation>
+        <translation>Auf alle Anwenden</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
     <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="vanished">Grassetto</translation>
+        <translation type="vanished">Fett</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="vanished">Corsivo</translation>
+        <translation type="vanished">Kursiv</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="vanished">Sottolineato</translation>
+        <translation type="vanished">Unterstrichen</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="vanished">Allinea a Sinistra</translation>
+        <translation type="vanished">Linksbündig</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="vanished">Allinea al centro</translation>
+        <translation type="vanished">Zentriert</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="vanished">Allinea a Destra</translation>
+        <translation type="vanished">Rechtsbündig</translation>
     </message>
 </context>
 <context>
@@ -380,15 +387,15 @@ E&apos; possibile che il file sia corrotto.</translation>
     <name>FileSegmentPage</name>
     <message>
         <source>File Path:</source>
-        <translation>Percorso del File:</translation>
+        <translation>DateiPfad:</translation>
     </message>
     <message>
         <source>Column:</source>
-        <translation>Colonna:</translation>
+        <translation>Spalte:</translation>
     </message>
     <message>
         <source>Unit:</source>
-        <translation>Unità:</translation>
+        <translation>Einheit:</translation>
     </message>
 </context>
 <context>
@@ -399,135 +406,135 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Salva</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <source>Snapshot</source>
-        <translation>Istantanea</translation>
+        <translation>Schnappschuss</translation>
     </message>
     <message>
         <source>Define Sub-camera</source>
-        <translation>Definisci la Sotto-Camera</translation>
+        <translation>Sub-Kamera bestimmen</translation>
     </message>
     <message>
         <source>Background Colors</source>
-        <translation>Colori del Fondale</translation>
+        <translation>Hintergrundfarben</translation>
     </message>
     <message>
         <source>Framerate</source>
-        <translation>Immagini per Secondo</translation>
+        <translation>Framerate</translation>
     </message>
     <message>
         <source>Playback Controls</source>
-        <translation>Riproduzione</translation>
+        <translation>Wiedergabe-Steuerung</translation>
     </message>
     <message>
         <source>Color Channels</source>
-        <translation>Canali di Colore</translation>
+        <translation>Farbkanäle</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Imposta una Chiave</translation>
+        <translation>Keyframe setzen</translation>
     </message>
     <message>
         <source>Histogram</source>
-        <translation>Istogramma</translation>
+        <translation>Histogramm</translation>
     </message>
     <message>
         <source>&amp;Save Images</source>
-        <translation>&amp;Salva le Immagini</translation>
+        <translation>Bild Speichern (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Snapshot</source>
-        <translation>&amp;Istantanea</translation>
+        <translation>Schnappschuss (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Compare to Snapshot</source>
-        <translation>&amp;Confronta con l&apos;Istantanea</translation>
+        <translation>Mit Schnappschuss vergleichen (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Define Sub-camera</source>
-        <translation>&amp;Defininisci la Sotto-Camera</translation>
+        <translation>Sub-Kamera bestimmen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;White Background</source>
-        <translation>&amp;Fondale Bianco</translation>
+        <translation>Hintergrund Weiß (&amp;W)</translation>
     </message>
     <message>
         <source>&amp;Black Background</source>
-        <translation>&amp;Fondale Nero</translation>
+        <translation>Hintergrund Schwarz (&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Checkered Background</source>
-        <translation>&amp;Fondale a Scacchiera</translation>
+        <translation>Hintergrund Kariert (&amp;C)</translation>
     </message>
     <message>
         <source>Set the playback frame rate</source>
-        <translation>Imposta la Frequenza dei Fotogrammi per la Riproduzione</translation>
+        <translation>Framerate-Wiedergabe-Einstellungen</translation>
     </message>
     <message>
         <source>&amp;First Frame</source>
-        <translation>&amp;Primo Fotogramma</translation>
+        <translation>Erster Frame (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Previous Frame</source>
-        <translation>&amp;Fotogramma Precedente</translation>
+        <translation>Vorheriger Frame (&amp;P)</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation>Pausa</translation>
+        <translation>Pausieren</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Riproduci</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <source>Loop</source>
-        <translation>Ciclo Continuo</translation>
+        <translation>Wiederholend abspielen</translation>
     </message>
     <message>
         <source>&amp;Next frame</source>
-        <translation>&amp;Prossimo Fotogramma</translation>
+        <translation>Nächster Frame (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Last Frame</source>
-        <translation>&amp;Ultimo Fotogramma</translation>
+        <translation>Letzter Frame (&amp;L)</translation>
     </message>
     <message>
         <source>Red Channel</source>
-        <translation>Canale Rosso</translation>
+        <translation>Rot-Kanal</translation>
     </message>
     <message>
         <source>Red Channel in Grayscale</source>
-        <translation>Canale Rosso in Scala di Grigi</translation>
+        <translation>Rot-Kanal(Grauton)</translation>
     </message>
     <message>
         <source>Green Channel</source>
-        <translation>Canale Verde</translation>
+        <translation>Grün-Kanal</translation>
     </message>
     <message>
         <source>Green Channel in Grayscale</source>
-        <translation>Canale Verde in Scala di Grigi</translation>
+        <translation>Grün-Kanal(Grauton)</translation>
     </message>
     <message>
         <source>Blue Channel</source>
-        <translation>Canale Blu</translation>
+        <translation>Blau-Kanal</translation>
     </message>
     <message>
         <source>Blue Channel in Grayscale</source>
-        <translation>Canale Blu in Scala di Grigi</translation>
+        <translation>Blau-Kanal(Grauton)</translation>
     </message>
     <message>
         <source>Alpha Channel</source>
-        <translation>Canale Alfa</translation>
+        <translation>Alpha-Kanal</translation>
     </message>
     <message>
         <source>&amp;Soundtrack </source>
-        <translation>&amp;Colonna Sonora</translation>
+        <translation>Soundtrack (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Histogram</source>
-        <translation>&amp;Istogramma</translation>
+        <translation>Histogramm (&amp;H)</translation>
     </message>
     <message>
         <source> FPS	</source>
@@ -535,509 +542,517 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source> Frame  </source>
-        <translation type="vanished">Fotogramma</translation>
+        <translation type="vanished">Frame</translation>
     </message>
     <message>
         <source>Set the current frame</source>
-        <translation>Imposta il Fotogramma Corrente</translation>
+        <translation>Aktuellen Frame einstellen</translation>
     </message>
     <message>
         <source>Drag to play the animation</source>
-        <translation>Trascina per Riprodurre l&apos;Animazione</translation>
+        <translation>Ziehen, um die Animation abzuspielen</translation>
     </message>
     <message>
         <source>Define Loading Box</source>
-        <translation>Definisci il Riquadro di Caricamento</translation>
+        <translation>Lade-Box definieren</translation>
     </message>
     <message>
         <source>Use Loading Box</source>
-        <translation>Usa il Riquadro di Caricamento</translation>
+        <translation>Lade-Box benutzen</translation>
     </message>
     <message>
         <source>&amp;Define Loading Box</source>
-        <translation>&amp;Definisci il Riquadro di Caricamento</translation>
+        <translation>Lade-Box definieren (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Use Loading Box</source>
-        <translation>&amp;Usa il Riquadro di Caricamento</translation>
+        <translation>Lade-Box benutzen (&amp;U)</translation>
     </message>
     <message>
         <source>Display Areas as Filled</source>
-        <translation>Mostra Zone come Riempite</translation>
+        <translation>Flächen als gefüllt anzeigen</translation>
     </message>
     <message>
         <source>&amp;Display Areas as Filled</source>
-        <translation>&amp;Mostra Zone come Riempite</translation>
+        <translation>Flächen als gefüllt anzeigen (&amp;D)</translation>
     </message>
 </context>
 <context>
     <name>FrameNavigator</name>
     <message>
         <source>Previous Frame</source>
-        <translation>Fotogramma Precedente</translation>
+        <translation>Vorheriger Frame</translation>
     </message>
     <message>
         <source>Next Frame</source>
-        <translation>Fotogramma Successivo</translation>
+        <translation>Nächster Frame</translation>
     </message>
 </context>
 <context>
     <name>FunctionExpressionSegmentPage</name>
     <message>
         <source>Expression:</source>
-        <translation>Espressione:</translation>
+        <translation>Ausdruck:</translation>
     </message>
     <message>
         <source>Unit:</source>
-        <translation>Unità:</translation>
+        <translation>Einheit:</translation>
     </message>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation>C&apos;è un riferimento circolare nella definizione dell&apos;interpolazione.</translation>
+        <translation>Es gibt einen zirkularen Verweis in der Definition der Interpolation.</translation>
     </message>
 </context>
 <context>
     <name>FunctionPanel</name>
     <message>
         <source>Link Handles</source>
-        <translation>Collega le Maniglie</translation>
+        <translation>Griffe verlinken</translation>
     </message>
     <message>
         <source>Unlink Handles</source>
-        <translation>Scollega le Maniglie</translation>
+        <translation>Griff-Verlinkung auflösen</translation>
     </message>
     <message>
         <source>Reset Handles</source>
-        <translation>Ripristina le Maniglie</translation>
+        <translation>Griffe zurücksetzen</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Elimina</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Imposta la Chiave</translation>
+        <translation>Keyframe setzen</translation>
     </message>
     <message>
         <source>Activate Cycle</source>
-        <translation>Attiva il Ciclo</translation>
+        <translation>Zyklus aktivieren</translation>
     </message>
     <message>
         <source>Deactivate Cycle</source>
-        <translation>Disattiva il Ciclo</translation>
+        <translation>Zyklus deaktivieren</translation>
     </message>
     <message>
         <source>Linear Interpolation</source>
-        <translation>Interpolazione Lineare</translation>
+        <translation>Lineare Interpolation</translation>
     </message>
     <message>
         <source>Speed In / Speed Out Interpolation</source>
-        <translation>Interpolazione Speed In / Speed Out</translation>
+        <translation>Speed-In/Speed-Out Interpolation</translation>
     </message>
     <message>
         <source>Ease In / Ease Out Interpolation</source>
-        <translation>Interpolazione Ease In / Ease Out</translation>
+        <translation>Ease In/Ease Out Interpolation</translation>
     </message>
     <message>
         <source>Ease In / Ease Out (%) Interpolation</source>
-        <translation>Interpolazione Ease In / Ease Out (%)</translation>
+        <translation>Ease In/Ease Out(%)Interpolation</translation>
     </message>
     <message>
         <source>Exponential Interpolation</source>
-        <translation>Interpolazione Esponenziale</translation>
+        <translation>Exponentielle Interpolation</translation>
     </message>
     <message>
         <source>Expression Interpolation</source>
-        <translation>Interpolazione tramite Espressione</translation>
+        <translation>Ausdruck-Interpolation</translation>
     </message>
     <message>
         <source>File Interpolation</source>
-        <translation>Interpolazione tramite File</translation>
+        <translation>Interpolation durch Annahme einer Datei</translation>
     </message>
     <message>
         <source>Constant Interpolation</source>
-        <translation>Interpolazione Costante</translation>
+        <translation>Konstante Interpolation</translation>
     </message>
     <message>
         <source>Fit Selection</source>
-        <translation>Adatta alla Selezione</translation>
+        <translation>Auswahl anpassen</translation>
     </message>
     <message>
         <source>Fit</source>
-        <translation>Adatta</translation>
+        <translation>Anpassen</translation>
     </message>
     <message>
         <source>Similar Shape Interpolation</source>
-        <translation>Interpolazione tramite Forma Simile</translation>
+        <translation>Interpolation durch ähnliche Figuren</translation>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>Passo 1</translation>
+        <translation>Schritt 1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>Passo 2</translation>
+        <translation>Schritt 2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>Passo 3</translation>
+        <translation>Schritt 3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>Passo 4</translation>
+        <translation>Schritt 4</translation>
     </message>
     <message>
         <source>Function Curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktionskurven</translation>
     </message>
     <message>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Glätten</translation>
     </message>
     <message>
         <source>Frame Based</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame basierend</translation>
     </message>
     <message>
         <source>Curve Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurven-Form</translation>
     </message>
 </context>
 <context>
     <name>FunctionSegmentViewer</name>
     <message>
         <source>Linear</source>
-        <translation>Lineare</translation>
+        <translation>Linear</translation>
     </message>
     <message>
         <source>Speed In / Speed Out</source>
-        <translation>Speed In / Speed Out</translation>
+        <translation>Speed-In/Speed-Out</translation>
     </message>
     <message>
         <source>Ease In / Ease Out</source>
-        <translation>Ease In / Ease Out</translation>
+        <translation>Ease In/Ease Out</translation>
     </message>
     <message>
         <source>Ease In / Ease Out %</source>
-        <translation>Ease In / Ease Out %</translation>
+        <translation>Ease In/Ease Out (%)</translation>
     </message>
     <message>
         <source>Exponential</source>
-        <translation>Exponenziale</translation>
+        <translation>Exponentiell</translation>
     </message>
     <message>
         <source>Expression</source>
-        <translation>Espressione</translation>
+        <translation>Ausdruck</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>File</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <source>Constant</source>
-        <translation>Costante</translation>
+        <translation>Konstant</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="vanished">Intervallo:</translation>
+        <translation type="vanished">Bereich:</translation>
     </message>
     <message>
         <source>Interpolation:</source>
-        <translation>Interpolazione:</translation>
+        <translation>Interpolation:</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="vanished">Passo:asso 2</translation>
+        <translation type="vanished">Schritt:</translation>
     </message>
     <message>
         <source>Similar Shape</source>
-        <translation>Forma Simile</translation>
+        <translation>Ähnliche Figur</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <source>&lt; </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt; </translation>
     </message>
     <message>
         <source> &gt;</source>
-        <translation type="unfinished"></translation>
+        <translation> &gt;</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <source>Ease</source>
-        <translation type="unfinished"></translation>
+        <translation>Ease</translation>
     </message>
     <message>
         <source>Ease%</source>
-        <translation type="unfinished"></translation>
+        <translation>Ease％</translation>
     </message>
     <message>
         <source>Expo</source>
-        <translation type="unfinished"></translation>
+        <translation>Expo</translation>
     </message>
     <message>
         <source>Expr</source>
-        <translation type="unfinished"></translation>
+        <translation>Expr</translation>
     </message>
     <message>
         <source>Const</source>
-        <translation type="unfinished"></translation>
+        <translation>Konst</translation>
     </message>
     <message>
         <source>Similar</source>
-        <translation type="unfinished"></translation>
+        <translation>Ähnlich</translation>
     </message>
     <message>
         <source>????</source>
-        <translation type="unfinished"></translation>
+        <translation>????</translation>
     </message>
 </context>
 <context>
     <name>FunctionSelection</name>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation type="unfinished">C&apos;è un riferimento circolare nella definizione dell&apos;interpolazione.</translation>
+        <translation>Es gibt einen zirkularen Verweis in der Definition der Interpolation.</translation>
     </message>
 </context>
 <context>
     <name>FunctionSheetCellViewer</name>
     <message>
         <source>Delete Key</source>
-        <translation>Elimina la Chiave</translation>
+        <translation>Keyframe entfernen</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Imposta la Chiave</translation>
+        <translation>Keyframe setzen</translation>
     </message>
     <message>
         <source>Linear Interpolation</source>
-        <translation>Interpolazione Lineare</translation>
+        <translation>Lineare Interpolation</translation>
     </message>
     <message>
         <source>Speed In / Speed Out Interpolation</source>
-        <translation>Interpolazione Speed In / Speed Out</translation>
+        <translation>Speed-In/Speed-Out-Interpolation</translation>
     </message>
     <message>
         <source>Ease In / Ease Out Interpolation</source>
-        <translation>Interpolazione Ease In / Ease Out</translation>
+        <translation>Ease In/Ease Out-Interpolation</translation>
     </message>
     <message>
         <source>Ease In / Ease Out (%) Interpolation</source>
-        <translation>Interpolazione Ease In / Ease Out (%)</translation>
+        <translation>Ease In/Ease Out（%）Interpolation</translation>
     </message>
     <message>
         <source>Expression Interpolation</source>
-        <translation>Interpolazione tramite Espressione</translation>
+        <translation>Ausdruck-Interpolation</translation>
     </message>
     <message>
         <source>File Interpolation</source>
-        <translation>Interpolazione tramite File</translation>
+        <translation>Interpolation durch Annahme einer Datei</translation>
     </message>
     <message>
         <source>Constant Interpolation</source>
-        <translation>Interpolazione Costante</translation>
+        <translation>Konstante Interpolation</translation>
     </message>
     <message>
         <source>Exponential Interpolation</source>
-        <translation>Interpolazione Esponenziale</translation>
+        <translation>Exponentielle Interpolation</translation>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>Passo 1</translation>
+        <translation>Schritt 1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>Passo 2</translation>
+        <translation>Schritt 2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>Passo 3</translation>
+        <translation>Schritt 3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>Passo 4</translation>
+        <translation>Schritt 4</translation>
     </message>
 </context>
 <context>
     <name>FunctionToolbar</name>
     <message>
         <source>Value</source>
-        <translation>Valore</translation>
+        <translation>Wert</translation>
     </message>
     <message>
         <source>&amp;Function Editor Toggle</source>
-        <translation>&amp;Editor delle Funzioni</translation>
+        <translation>Funktions-Editor Toggle (&amp;F)</translation>
     </message>
 </context>
 <context>
     <name>FunctionTreeView</name>
     <message>
         <source>Save Curve</source>
-        <translation>Salva la Curva</translation>
+        <translation>Parameter speichern</translation>
     </message>
     <message>
         <source>Load Curve</source>
-        <translation>Carica la Curva</translation>
+        <translation>Parameter laden</translation>
     </message>
     <message>
         <source>Export Data</source>
-        <translation>Esporta i dati</translation>
+        <translation>Daten exportieren</translation>
     </message>
     <message>
         <source>Show Animated Only</source>
-        <translation>Mostra Solo quelle Animate</translation>
+        <translation>Nur Animierte anzeigen</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation>Mostrale Tutte</translation>
+        <translation>Alle zeigen</translation>
     </message>
 </context>
 <context>
     <name>FxColumnPainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>&amp;Disconnetti dall&apos;Xsheet</translation>
+        <translation>Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>&amp;Connetti all&apos;Xsheet</translation>
+        <translation>Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>&amp;Incolla Aggiungendo</translation>
+        <translation>Einsetzen/Hinzufügen (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>&amp;Anteprima</translation>
+        <translation>Vorschau (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Open Subxsheet</source>
-        <translation>&amp;Apri il Sub-xsheet</translation>
+        <translation>Xsheet öffnen (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Uncache Fx</source>
-        <translation>&amp;Togli l&apos;Effetto dalla Cache</translation>
+        <translation>Effekt-Cache löschen (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Cache FX</source>
-        <translation>&amp;Metti  l&apos;Effetto in Cache</translation>
+        <translation>Cache für Effekte erstellen (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>FxOutputPainter</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>&amp;Elimina</translation>
+        <translation>Entfernen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Activate</source>
-        <translation>&amp;Attiva</translation>
+        <translation>Aktivieren (&amp;A)</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="vanished">Output</translation>
+    </message>
+    <message>
+        <source>Out</source>
+        <translation type="vanished">Out</translation>
     </message>
 </context>
 <context>
     <name>FxPainter</name>
     <message>
         <source>&amp;Open Group</source>
-        <translation>&amp;Apri il Gruppo</translation>
+        <translation>Gruppe öffnen (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Paste Replace</source>
-        <translation>&amp;Incolla Rimpiazzando</translation>
+        <translation>Einfügen/Ersetzen (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>&amp;Incolla Aggiungendo</translation>
+        <translation>Einsetzen/Hinzufügen (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation>&amp;Elimina</translation>
+        <translation>Entfernen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>&amp;Disconnetti dall&apos;Xsheet</translation>
+        <translation>Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>&amp;Connetti all&apos;Xsheet</translation>
+        <translation>Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Create Linked FX</source>
-        <translation>&amp;Crea un Effetto Collegato</translation>
+        <translation>Gelinkte Effekt erstellen (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Unlink</source>
-        <translation>&amp;Scollega</translation>
+        <translation>Link auflösen (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Make Macro FX</source>
-        <translation>&amp;Crea un Effetto Macro</translation>
+        <translation>Makro-Effekt erstellen (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Explode Macro FX</source>
-        <translation>&amp;Esplodi l&apos;Effetto Macro</translation>
+        <translation>Makro-Effekt entfalten (&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Open Macro FX</source>
-        <translation>&amp;Apri l&apos;Effetto macro</translation>
+        <translation>Makro-Effekt öffnen (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Save As Preset...</source>
-        <translation>&amp;Salva come Effetto Predefinito</translation>
+        <translation>Als Vorgabe speichern (&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>&amp;Anteprima</translation>
+        <translation>Vorschau (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Uncache FX</source>
-        <translation>&amp;Togli l&apos;Effetto dalla Cache</translation>
+        <translation>Effekt aus dem Cache löschen (&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Cache FX</source>
-        <translation>&amp;Metti  l&apos;Effetto in Cache</translation>
+        <translation>Cache für Effekt erstellen (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>FxPalettePainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>&amp;Disconnetti dall&apos;Xsheet</translation>
+        <translation>Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>&amp;Connetti all&apos;Xsheet</translation>
+        <translation>Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>&amp;Anteprima</translation>
+        <translation>Vorschau (&amp;P)</translation>
     </message>
 </context>
 <context>
     <name>FxSchematicLink</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>&amp;Elimina</translation>
+        <translation>Entfernen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert</source>
-        <translation>&amp;Incolla Inserendo</translation>
+        <translation>Einfügen (Insert??) (&amp;P)</translation>
     </message>
 </context>
 <context>
     <name>FxSchematicPort</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>&amp;Disconnetti dall&apos;Xsheet</translation>
+        <translation>Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>&amp;Connetti all&apos;Xsheet</translation>
+        <translation>Mit Xsheet verbinden (&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -1045,175 +1060,183 @@ E&apos; possibile che il file sia corrotto.</translation>
     <message>
         <source>Cannot Paste Insert a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>Non è possibile Incollare Inserendo una selezione di effetti disconnessi.
-Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare la selezione che vuoi incollare.</translation>
+        <translation>Kann keine Auswahl von unverbundenen Effekt-Nodes einfügen (Insert??).
+Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor Sie die Auswahl kopieren oder ausschneiden.</translation>
     </message>
     <message>
         <source>Cannot Paste Add a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>Non è possibile Incollare Aggiungendo una selezione di effetti disconnessi.
-Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare la selezione che vuoi incollare.</translation>
+        <translation>Kann keine Auswahl von unverbundenen Effekt-Nodes einfügen/hinzufügen.
+Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor Sie die Auswahl kopieren oder ausschneiden.</translation>
     </message>
     <message>
         <source>Cannot Paste Replace a selection of unconnected FX nodes.
 Select FX nodes and related links before copying or cutting the selection you want to paste.</source>
-        <translation>Non è possibile Incollare Rimpiazzando una selezione di effetti disconnessi.
-Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare la selezione che vuoi incollare.</translation>
+        <translation>Kann keine Auswahl von unverbundenen Effekt-Nodes einfügen/ersetzen.
+Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor Sie die Auswahl kopieren oder ausschneiden.</translation>
     </message>
 </context>
 <context>
     <name>FxSettings</name>
     <message>
         <source>&amp;Camera Preview</source>
-        <translation>&amp;Anteprima di camera</translation>
+        <translation>Kamera-Vorschau (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>&amp;Anteprima</translation>
+        <translation>Vorschau (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;White Background</source>
-        <translation>&amp;Fondale Bianco</translation>
+        <translation>Hintergrund Weiß (&amp;W)</translation>
     </message>
     <message>
         <source>&amp;Black Background</source>
-        <translation>&amp;Fondale Nero</translation>
+        <translation>Hintergrund Schwarz (&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Checkered Background</source>
-        <translation>&amp;Fondale a Scacchiera</translation>
+        <translation>Hintergrund Kariert (&amp;C)</translation>
     </message>
     <message>
         <source> : </source>
-        <translation type="unfinished"></translation>
+        <translation> : </translation>
     </message>
 </context>
 <context>
     <name>FxXSheetPainter</name>
     <message>
         <source>&amp;Paste Add</source>
-        <translation>&amp;Incolla Aggiungendo</translation>
+        <translation>Einfügen/Hinzufügen (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
-        <translation>&amp;Anteprima</translation>
+        <translation>Vorschau (&amp;P)</translation>
+    </message>
+    <message>
+        <source>XSheet</source>
+        <translation type="vanished">XSheet</translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="vanished">X</translation>
     </message>
 </context>
 <context>
     <name>GroupPainter</name>
     <message>
         <source>&amp;Open Group</source>
-        <translation>&amp;Apri il Gruppo</translation>
+        <translation>Gruppe öffnen (&amp;O)</translation>
     </message>
 </context>
 <context>
     <name>Histogram</name>
     <message>
         <source>Logarithmic Scale</source>
-        <translation>Scala Logaritmica</translation>
+        <translation>Logarithmsiche Skalierung</translation>
     </message>
 </context>
 <context>
     <name>InfoViewer</name>
     <message>
         <source>File Info</source>
-        <translation>Informazioni sul File</translation>
+        <translation>Datei-Information</translation>
     </message>
 </context>
 <context>
     <name>KeyframeNavigator</name>
     <message>
         <source>Previous Key</source>
-        <translation>Chiave Precedente</translation>
+        <translation>Vorheriger Keyframe</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Imposta una Chiave</translation>
+        <translation>Keyframe setzen</translation>
     </message>
     <message>
         <source>Next Key</source>
-        <translation>Chiave Successiva</translation>
+        <translation>Nächster Keyframe</translation>
     </message>
 </context>
 <context>
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
+        <translation type="vanished">Ein Datei-Name darf nicht die folgenden Zeichen enthalten: /\:*?&quot;&lt;&gt;|. --- </translation>
     </message>
 </context>
 <context>
     <name>PageViewer</name>
     <message>
         <source>Toggle Link to Studio Palette</source>
-        <translation type="vanished">Attiva/Disattiva il Collegamento con la Palette di Studio</translation>
+        <translation type="vanished">Link zur Studio-Palette umschalten</translation>
     </message>
     <message>
         <source>Remove Reference to Studio Palette</source>
-        <translation type="vanished">Elimina il Riferimento alla Palette di Studio</translation>
+        <translation type="vanished">Referenz zur Studio-Palette entfernen</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">Nuovo Stile</translation>
+        <translation type="vanished">Neuer Stil</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Nuova Pagina</translation>
+        <translation type="vanished">Neue Seite</translation>
     </message>
 </context>
 <context>
     <name>PaletteViewer</name>
     <message>
         <source>&amp;Save Palette As</source>
-        <translation>&amp;Salva la Palette Come</translation>
+        <translation>Palette speichern als (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Save Palette</source>
-        <translation>&amp;Salva la Palette</translation>
+        <translation>Palette speichern (&amp;S)</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Opzioni</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source>&amp;Small Thumbnails View</source>
-        <translation>&amp;Visualizzazione a Piccole Icone</translation>
+        <translation>Kleine Thumbnails (&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Large Thumbnails View</source>
-        <translation>&amp;Visualizzazione a Grandi Icone</translation>
+        <translation>Große Thumbnails (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;List View</source>
-        <translation>&amp;Visualizzazione a Lista</translation>
+        <translation>Listenansicht (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;New Page</source>
-        <translation>&amp;Nuova Pagina</translation>
+        <translation>Neue Seite (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Style</source>
-        <translation>&amp;Nuovo Stile</translation>
+        <translation>Neuer Stil (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Move Palette</source>
-        <translation>&amp;Sposta la Palette</translation>
+        <translation>Palette verschieben (&amp;M)</translation>
     </message>
     <message>
         <source>Color Model: </source>
-        <translation type="vanished">Modello di Colore:</translation>
+        <translation type="vanished">Farbmodell:</translation>
     </message>
     <message>
         <source>&amp;Palette Gizmo</source>
-        <translation>&amp;Palette Gizmo</translation>
+        <translation>Farb-Palette regeln (&amp;P)</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Nuova Pagina</translation>
+        <translation>Neue Seite</translation>
     </message>
     <message>
         <source>Delete Page</source>
-        <translation>Elimina la Pagina</translation>
+        <translation>Seite entfernen</translation>
     </message>
     <message>
         <source>Palette</source>
@@ -1221,126 +1244,126 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     </message>
     <message>
         <source>Level Palette: </source>
-        <translation>Palette del Livello:</translation>
+        <translation>Ebene-Palette:</translation>
     </message>
     <message>
         <source>Cleanup Palette</source>
-        <translation>Palette di Cleanup</translation>
+        <translation>Palette säubern</translation>
     </message>
     <message>
         <source>Studio Palette</source>
-        <translation>Palette di Studio</translation>
+        <translation>Studio-Palette</translation>
     </message>
     <message>
         <source>&amp;Small Thumbnails With Name View</source>
-        <translation type="vanished">Icone piccole con Nome Visualizzato</translation>
+        <translation type="vanished">Kleine Thumbnails mit Namen anzeigen</translation>
     </message>
     <message>
         <source>Lock Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette sperren</translation>
     </message>
     <message>
         <source>&amp;Lock Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette sperren (&amp;L)</translation>
     </message>
     <message>
         <source>&amp;Medium Thumbnails View</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittlere Thumbnails (&amp;M)</translation>
     </message>
     <message>
         <source>Style Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil-Name</translation>
     </message>
     <message>
         <source>StudioPalette Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name der Studio-Palette</translation>
     </message>
     <message>
         <source>Both Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Beide Namen</translation>
     </message>
     <message>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschreiben</translation>
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht überschreiben</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisieren</translation>
     </message>
     <message>
         <source>Don&apos;t Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht aktualisieren</translation>
     </message>
     <message>
         <source>     (Color Model: </source>
-        <translation type="unfinished"></translation>
+        <translation>     (Farbmodell: </translation>
     </message>
     <message>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="unfinished"></translation>
+        <translation>- Keine Stile -</translation>
     </message>
     <message>
         <source>Remove Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Links für Studio-Palette löschen</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="unfinished">Nuovo Stile</translation>
+        <translation>Neuer Stil</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished">Nuova Pagina</translation>
+        <translation>Neue Seite</translation>
     </message>
 </context>
 <context>
     <name>PalettesScanPopup</name>
     <message>
         <source>Search for Palettes</source>
-        <translation>Ricerca le Palette</translation>
+        <translation>Palette suchen</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>&lt;files&gt;</source>
-        <translation>&lt;files&gt;</translation>
+        <translation>&lt;Datei&gt;</translation>
     </message>
 </context>
 <context>
     <name>ParamViewer</name>
     <message>
         <source>Swatch Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Muster-Ansicht</translation>
     </message>
 </context>
 <context>
     <name>ParamsPageSet</name>
     <message>
         <source>Fx Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfe</translation>
     </message>
 </context>
 <context>
     <name>PegbarPainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>&amp;Ripristina il Centro</translation>
+        <translation>Mitte zurücksetzen (&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -1351,7 +1374,7 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     </message>
     <message>
         <source>X:</source>
-        <translation type="unfinished"></translation>
+        <translation>X:</translation>
     </message>
 </context>
 <context>
@@ -1365,172 +1388,179 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     <name>QObject</name>
     <message>
         <source>Information</source>
-        <translation>Informazioni</translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>Attenzione</translation>
+        <translation>Warnung</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>Critico</translation>
+        <translation>Kritische Warnung</translation>
     </message>
     <message>
         <source>Question</source>
-        <translation>Domanda</translation>
+        <translation>Frage</translation>
     </message>
     <message>
         <source>Styles you are going to delete are used to paint lines and areas in the animation level.
 </source>
-        <translation>Gli stili che stai per cancellare sono usati per colorare linee e aree del livello di animazione.</translation>
+        <translation>Stile, die Sie entfernen werden, werden benutzt um Linien und Flächen in der Animationsebene zu bemalen.
+</translation>
     </message>
     <message>
         <source>How do you want to proceed?</source>
-        <translation>Come vuoi procedere?</translation>
+        <translation>Wie möchten Sie vorgehn?</translation>
     </message>
     <message>
         <source>Delete Styles Only</source>
-        <translation>Elimina solo gli Stili</translation>
+        <translation>Nur Stile entfernen</translation>
     </message>
     <message>
         <source>Delete Styles, Lines and Areas</source>
-        <translation>Elimina gli Stili, le Linee e le Aree</translation>
+        <translation>Stile, Linien und Flächen entfernen</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Cannot premultiply the selected file.</source>
-        <translation>Non è possibile premoltiplicare il file selezionato.</translation>
+        <translation>Premultiply kann nicht auf die gewählte Datei angewandt werden.</translation>
     </message>
     <message>
         <source>Cannot premultiply a vector-based level.</source>
-        <translation>Non è possibile premoltiplicareun livello vettoriale.</translation>
+        <translation>Premultiply kann nicht auf eine Vektor-basierte Ebene angewandt werden.</translation>
     </message>
     <message>
         <source>Level %1 premultiplied.</source>
-        <translation>Il Livello %1 è stato premoltiplicato.</translation>
+        <translation>Premultiplay auf Ebene %1 angewandt.</translation>
     </message>
     <message>
         <source>Frame %1 : conversion failed!</source>
-        <translation>Fotogramma %1: conversione fallita.</translation>
+        <translation>Frame %1 :Umwandlung fehlgeschlagen!</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Speichern</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Änderungen verwerfen</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Nein</translation>
+    </message>
+    <message>
+        <source>Stage Schematic</source>
+        <translation>Bühnen-Schaubild</translation>
+    </message>
+    <message>
+        <source>Fx Schematic</source>
+        <translation type="vanished">Effekt-Schaubild</translation>
+    </message>
+    <message>
+        <source>Save Motion Path</source>
+        <translation>Bewegungspfad speichern</translation>
+    </message>
+    <message>
+        <source>Motion Path files (*.mpath)</source>
+        <translation>Bewegungspfad-Dateien (*.mpath)</translation>
+    </message>
+    <message>
+        <source>Load Motion Path</source>
+        <translation>Bewegungspfad laden</translation>
+    </message>
+    <message>
+        <source>Can&apos;t paste styles there</source>
+        <translation>Kann hier keine Stile einfügen</translation>
+    </message>
+    <message>
+        <source>Can&apos;t modify color #0</source>
+        <translation>Farbe #0 kann nicht geändert werden</translation>
+    </message>
+    <message>
+        <source>There are more cut/copied styles than selected. Paste anyway (adding styles)?</source>
+        <translation>Es gibt mehr ausgschnittene/kopierte Stile als ausgewählt wurden. Trotzdem einfügen (Stile hinzufügen)?</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Einfügen</translation>
     </message>
     <message>
         <source>Palette</source>
         <translation>Palette</translation>
     </message>
     <message>
-        <source>Save</source>
-        <translation>Salva</translation>
-    </message>
-    <message>
-        <source>Discard</source>
-        <translation>Scarta</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation>Sì</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>No</translation>
-    </message>
-    <message>
-        <source>Stage Schematic</source>
-        <translation>Diagramma di Scena</translation>
-    </message>
-    <message>
-        <source>FX Schematic</source>
-        <translation>Diagramma degli Effetti</translation>
-    </message>
-    <message>
-        <source>Fx Schematic</source>
-        <translation type="vanished">Diagramma degli Effetti</translation>
-    </message>
-    <message>
-        <source>Save Motion Path</source>
-        <translation>Salva la Traiettoria di Movimento</translation>
-    </message>
-    <message>
-        <source>Motion Path files (*.mpath)</source>
-        <translation>File della Traiettoria di Movimento (*.mpath)</translation>
-    </message>
-    <message>
-        <source>Load Motion Path</source>
-        <translation>Carica una Traiettoria di Movimento</translation>
-    </message>
-    <message>
-        <source>Can&apos;t paste styles there</source>
-        <translation>Non è possibile incollare uno stile in base alla selezione corrente.</translation>
-    </message>
-    <message>
-        <source>Can&apos;t modify color #0</source>
-        <translation>Non è possibile modificare lo stile #0.</translation>
-    </message>
-    <message>
-        <source>There are more cut/copied styles than selected. Paste anyway (adding styles)?</source>
-        <translation>Gli stili tagliati/copiati sono di più di quelli selezionati. Incollare ugualmente aggiungendo gli stili?</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Incolla</translation>
-    </message>
-    <message>
         <source>Apply</source>
-        <translation>Applica</translation>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>This feature is not available in the demo version.
+For more information visit the %1 site:</source>
+        <translation type="vanished">Dieses Feature ist in der Demo-Version nicht verfügbar.
+Für mehr Informationen besuchen Sie die Seite %1:</translation>
+    </message>
+    <message>
+        <source>To request a trial license please contact </source>
+        <translation type="vanished">Um eine Probelizenz zu beantragen, kontaktieren Sie bitte </translation>
     </message>
     <message>
         <source>For further information visit </source>
-        <translation type="vanished">Per ulteriori informazioni visita </translation>
+        <translation type="vanished">Für weitere Informationen besuchen Sie </translation>
     </message>
     <message>
         <source>Fullpath:     </source>
-        <translation>Percorso Completo:</translation>
+        <translation>Voller Pfad:</translation>
     </message>
     <message>
         <source>File Type:    </source>
-        <translation>Tipo di File:</translation>
+        <translation>Datei-Typ:</translation>
     </message>
     <message>
         <source>Frames:       </source>
-        <translation>Fotogrammi:</translation>
+        <translation>Frames:</translation>
     </message>
     <message>
         <source>Owner:        </source>
-        <translation>Proprietario:</translation>
+        <translation>Besitzer:</translation>
     </message>
     <message>
         <source>Size:         </source>
-        <translation>Dimensione:</translation>
+        <translation>Größe:</translation>
     </message>
     <message>
         <source>Created:      </source>
-        <translation>Creazione:</translation>
+        <translation>Erstellt am:</translation>
     </message>
     <message>
         <source>Modified:     </source>
-        <translation>Modifica:</translation>
+        <translation>Modifiziert am:</translation>
     </message>
     <message>
         <source>Last Access:  </source>
-        <translation>Ultimo Accesso:</translation>
+        <translation>Letzter Zugriff:</translation>
     </message>
     <message>
         <source>Image Size:   </source>
-        <translation>Dimensione dell&apos;Immagine:</translation>
+        <translation>Bildgröße:</translation>
     </message>
     <message>
         <source>SaveBox:      </source>
-        <translation>Savebox:</translation>
+        <translation>Speicherbox:</translation>
     </message>
     <message>
         <source>Bits/Sample:  </source>
-        <translation>Bit per Canale:</translation>
+        <translation>Bits/Sample:</translation>
     </message>
     <message>
         <source>Sample/Pixel: </source>
-        <translation>Canali per Pixel:</translation>
+        <translation>Sample/Pixel:</translation>
     </message>
     <message>
         <source>Dpi:          </source>
@@ -1538,19 +1568,19 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     </message>
     <message>
         <source>Orientation:  </source>
-        <translation>Orientazione:</translation>
+        <translation>Richtung:</translation>
     </message>
     <message>
         <source>Compression:  </source>
-        <translation>Compressione:</translation>
+        <translation>Komprimierung:</translation>
     </message>
     <message>
         <source>Quality:      </source>
-        <translation>Qualità:</translation>
+        <translation>Qualität:</translation>
     </message>
     <message>
         <source>Smoothing:    </source>
-        <translation>Smoothing:</translation>
+        <translation>Glättung:</translation>
     </message>
     <message>
         <source>Codec:        </source>
@@ -1558,269 +1588,275 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     </message>
     <message>
         <source>Alpha Channel:</source>
-        <translation>Canale Alfa:</translation>
+        <translation>AlphaKanal:</translation>
     </message>
     <message>
         <source>Byte Ordering:</source>
-        <translation>Ordine dei Byte:</translation>
+        <translation>Byte-Reihenfolge:</translation>
     </message>
     <message>
         <source>H Pos:</source>
-        <translation>H Pos:</translation>
+        <translation>Horizontale Position:</translation>
     </message>
     <message>
         <source>Palette Pages:</source>
-        <translation>Pagine della Palette:</translation>
+        <translation>Paletten-Seiten:</translation>
     </message>
     <message>
         <source>Palette Styles:</source>
-        <translation>Stili della Palette:</translation>
+        <translation>Paletten-Stile:</translation>
     </message>
     <message>
         <source>Camera Size:      </source>
-        <translation>Dimensione di Camera:</translation>
+        <translation>Kamera-Größe:</translation>
     </message>
     <message>
         <source>Camera Dpi:       </source>
-        <translation>DPI di Camera:</translation>
+        <translation>Kamera-DPI:</translation>
     </message>
     <message>
         <source>Number of Frames: </source>
-        <translation>Numero di Fotogrammi:</translation>
+        <translation>Frame-Anzahl:</translation>
     </message>
     <message>
         <source>Number of Levels: </source>
-        <translation>Numero di Livelli:</translation>
+        <translation>Ebenen-Anzahl:</translation>
     </message>
     <message>
         <source>Output Path:      </source>
-        <translation>Percorso di Uscita:</translation>
+        <translation>Output-Pfad:</translation>
     </message>
     <message>
         <source>Endianess:      </source>
-        <translation>Endianess:</translation>
+        <translation>Endian:</translation>
     </message>
     <message>
         <source>It is not possible to delete the style #</source>
-        <translation>Non è possibile eliminare lo stile #</translation>
+        <translation>Es ist nicht möglich den Stil # zu entfernen.</translation>
     </message>
     <message>
         <source>It is not possible to delete styles #0 and #1.</source>
-        <translation>Non è possibile eliminare gli stili #0 e #1.</translation>
-    </message>
-    <message>
-        <source>&lt;custom&gt;</source>
-        <translation>&lt;custom&gt;</translation>
+        <translation>Es ist nicht möglichen den Stil #0 und #1 zu entfernen.</translation>
     </message>
     <message>
         <source>It is not possible to find the %1 level.</source>
-        <translation>Impossibile trovare il livello %1.</translation>
+        <translation>Ebene %1 kann nicht gefunden werden。</translation>
     </message>
     <message>
         <source>There was an error copying %1</source>
-        <translation>Errore durante la copia di %1</translation>
+        <translation>Es gab eine Fehler beim kopieren von %1</translation>
     </message>
     <message>
         <source>It is not possible to find the level %1</source>
-        <translation>Impossibile trovare il livello %1</translation>
+        <translation>Ebene %1 kann nicht gefunden werden</translation>
     </message>
     <message>
         <source>Length:       </source>
-        <translation>Lunghezza:</translation>
+        <translation>Länge:</translation>
     </message>
     <message>
         <source>Channels: </source>
-        <translation>Canali:</translation>
+        <translation>Kanal:</translation>
     </message>
     <message>
         <source>Sample Rate: </source>
-        <translation>Frequenza Campionamento:</translation>
+        <translation>Sample-Rate:</translation>
     </message>
     <message>
         <source>Sample Size:      </source>
-        <translation>Dimensione Campionamento:</translation>
+        <translation>Sample-Größe:</translation>
     </message>
     <message>
         <source>The file %1 does not exist.</source>
-        <translation>Il file %1 non esiste.</translation>
+        <translation>Die Datei %1 existiert nicht.</translation>
     </message>
     <message>
         <source>It is not possible to assing a shortcut with modifiers to the visualization commands.</source>
-        <translation>Non è possibile assegnare uno shortcut con modificatori ai comandi di visualizzazione.</translation>
+        <translation>Es kann kein Kürzel mit Modifizierungen zu den Visualisierungsbefehlen zugewiesen werden.</translation>
     </message>
     <message>
         <source>It is not possible to save the motion path.</source>
-        <translation>Non è possibile salvare la traiettoria.</translation>
+        <translation>Der Bewegungs-Pfad kann nicht gespeichert werden.</translation>
     </message>
     <message>
         <source>It is not possible to load the motion path.</source>
-        <translation>Non è possibile caricare la traiettoria.</translation>
+        <translation>Der Bewegungs-Pfad kann nicht geladen werden.</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation>&lt;Eigene&gt;</translation>
     </message>
     <message>
         <source>Toonz 7.1</source>
-        <translation type="vanished">Toonz 7.1</translation>
+        <translation type="vanished">OpenToonz</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
-        <translation>Il nome del file non può essere vuoto o contenere uno dei seguenti caratteri:
+        <translation>Der Dateiname darf nicht leer sein oder folgende Zeichen enthalten:
 \ / : * ? &quot; |</translation>
     </message>
     <message>
         <source>The source image seems not suitable for this kind of conversion</source>
-        <translation>L&apos;immagine sorgente non sembra adatta per questo tipo di conversione</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Deletion of Lines and Areas from raster-based levels is not undoable.
-Are you sure?</source>
-        <translation></translation>
+        <translation>Das Ausgangsbild ist nicht geeignet für diese Umwandlung.</translation>
     </message>
     <message>
         <source>Deleting &quot;%1&quot;.
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; wird entfernt.
+Sind Sie sicher?</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Paste Style  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil in Palette einfügen : %1</translation>
     </message>
     <message>
         <source>Delete Style  from Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil von Palette entfernen : %1</translation>
     </message>
     <message>
         <source>Cut Style  from Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil von Palette auschneiden : %1</translation>
     </message>
     <message>
         <source>  to Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>  zu Palette : %1</translation>
     </message>
     <message>
         <source>Paste Color &amp;&amp; Name%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe einfügen %1</translation>
     </message>
     <message>
         <source>Paste Name%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Name einfügen %1</translation>
     </message>
     <message>
         <source>Paste Color%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe%1 Einfügen</translation>
     </message>
     <message>
         <source>Paste%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1Einfügen</translation>
     </message>
     <message>
         <source>Blend Colors  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Farben mischen : Palette %1</translation>
     </message>
     <message>
         <source>Toggle Link  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Link umschalten : Palette %1</translation>
     </message>
     <message>
         <source>Remove Link  in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Link entfernen : Palette %1</translation>
     </message>
     <message>
         <source>Get Color from Studio Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe aus Studio-Palette nehmen</translation>
     </message>
     <message>
         <source>Paste Object  </source>
-        <translation type="unfinished"></translation>
+        <translation>Object einfügen</translation>
     </message>
     <message>
         <source>Copy Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframe kopieren</translation>
     </message>
     <message>
         <source>Paste Keyframe  at Frame : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframe einfügen : Frame %1</translation>
     </message>
     <message>
         <source>Delete Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframe entfernen</translation>
     </message>
     <message>
         <source>Move Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframe verschieben</translation>
     </message>
     <message>
         <source>Change Style   Palette : %1  Style#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil ändern   Palette : %1 Stil#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</translation>
     </message>
     <message>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersetzen</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Paramter ändern : %1</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 -&gt; %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Parameter ändern  %1 : %2 -&gt; %3</translation>
     </message>
     <message>
         <source>Modify Fx Param : </source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Parameter ändern : </translation>
     </message>
     <message>
         <source>ON : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>An : %1</translation>
     </message>
     <message>
         <source>OFF : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus : %1</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Parameter ändern : %1 : %2 Key</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Parameter ändern : %1 : %2 Punkt auf Toon-Kurve</translation>
     </message>
     <message>
         <source>%1 : Linear ON</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : Lineare Toon-Kurve An</translation>
     </message>
     <message>
         <source>%1 : Linear OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 : Lineare Toon-Kurve Aus</translation>
     </message>
     <message>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschreiben</translation>
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht überschreiben</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>Deletion of Lines and Areas from raster-based levels is not undoable.
+Are you sure?</source>
+        <translation>Das Entfernen von Linien und Flächen in Raster basierten Ebenen kann nicht rückgängig gemacht werden.
+Sind Sie sicher?</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt-Parameter ändern : Key %1 : %2  Frame %3</translation>
     </message>
     <message>
         <source>Set</source>
+        <translation>Einstellen</translation>
+    </message>
+    <message>
+        <source>FX Schematic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1831,8 +1867,12 @@ Are you sure?</source>
 <context>
     <name>QPushButton</name>
     <message>
+        <source>Ok</source>
+        <translation type="vanished">Ok</translation>
+    </message>
+    <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1846,43 +1886,43 @@ Are you sure?</source>
     <name>SchematicViewer</name>
     <message>
         <source>&amp;Fit to Window</source>
-        <translation>&amp;Adattare alla Finestra</translation>
+        <translation>An Fenster anpassen (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Focus on Current</source>
-        <translation>&amp;Centrare sul Nodo Corrente</translation>
+        <translation>Fokus auf aktuelles Objekt (&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Reorder Nodes</source>
-        <translation>&amp;Riordinare i Nodi</translation>
+        <translation>Nodes umordnen (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Reset Size</source>
-        <translation>&amp;Ripristinare la Dimensione</translation>
+        <translation>Größe zurücksetzen (&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Minimize Nodes</source>
-        <translation>&amp;Minimizzare i Nodi</translation>
+        <translation>Nodes minimieren (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Maximize Nodes</source>
-        <translation>&amp;Massimizzare i Nodi</translation>
+        <translation>Nodes maximieren (&amp;M)</translation>
     </message>
     <message>
         <source>&amp;New Pegbar</source>
-        <translation>&amp;Nuova Reggetta</translation>
+        <translation>Neuer Haltestift (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Camera</source>
-        <translation>&amp;Nuova Camera</translation>
+        <translation>Neue Kamera (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
-        <translation>&amp;Nuova Traiettoria di Movimento</translation>
+        <translation>Neue Bewegungspfad (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Schematic Toggle</source>
-        <translation type="vanished">&amp;Diagramma Effetti/Scena</translation>
+        <translation type="vanished">Schaubild umschalten</translation>
     </message>
     <message>
         <source>&amp;Swtich output port display mode</source>
@@ -1893,272 +1933,277 @@ Are you sure?</source>
     <name>SchematicWindowEditor</name>
     <message>
         <source>&amp;Close Editor</source>
-        <translation>&amp;Chiudi il Modificatore</translation>
+        <translation>Editor schließen (&amp;C)</translation>
     </message>
 </context>
 <context>
     <name>SimilarShapeSegmentPage</name>
     <message>
         <source>Reference Curve:</source>
-        <translation>Curva di Riferimento:</translation>
+        <translation>Referenzkurve:</translation>
     </message>
     <message>
         <source>Frame Offset:</source>
-        <translation>Fotogrammi di Sfalsamento:</translation>
+        <translation>Frame-Offset:</translation>
     </message>
     <message>
         <source>There is a syntax error in the definition of the interpolation.</source>
-        <translation>Errore di sintassi nella definizione dell&apos;interpolazione.</translation>
+        <translation>Es gibt einen Syntax-Fehler in der Definition der Interpolation.</translation>
     </message>
     <message>
         <source>There is a circular reference in the definition of the interpolation.</source>
-        <translation>C&apos;è un riferimento circolare nella definizione dell&apos;interpolazione.</translation>
+        <translation>Es gibt eine zirkulare Referenz in der Definition der Interpolation.</translation>
     </message>
 </context>
 <context>
     <name>SpecialStyleChooserPage</name>
     <message>
         <source>Plain color</source>
-        <translation>Colore Piatto</translation>
+        <translation>Normale Farbe</translation>
     </message>
 </context>
 <context>
     <name>SpeedInOutSegmentPage</name>
     <message>
         <source>Speed in:</source>
-        <translation type="vanished">Speed in:</translation>
+        <translation type="vanished">Speed-In:</translation>
     </message>
     <message>
         <source>Speed out:</source>
-        <translation type="vanished">Speed Out:</translation>
+        <translation type="vanished">Speed-Out:</translation>
     </message>
     <message>
         <source>First Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo des Ersten:</translation>
     </message>
     <message>
         <source>Handle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Griff:</translation>
     </message>
     <message>
         <source>/</source>
-        <translation type="unfinished"></translation>
+        <translation>/</translation>
     </message>
     <message>
         <source>Last Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo des Letzten:</translation>
     </message>
     <message>
         <source>---</source>
-        <translation type="unfinished"></translation>
+        <translation>---</translation>
     </message>
 </context>
 <context>
     <name>SplinePainter</name>
     <message>
         <source>&amp;Delete</source>
-        <translation>&amp;Elimina</translation>
+        <translation>Entfernen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Save Motion Path...</source>
-        <translation>&amp;Salva la Traiettoria di Movimento...</translation>
+        <translation>Bewegungspfad speichern (&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Load Motion Path...</source>
-        <translation>&amp;Carica la Traiettoria di Movimento...</translation>
+        <translation>Bewegungspfad laden (&amp;L)...</translation>
     </message>
 </context>
 <context>
     <name>StageSchematicScene</name>
     <message>
         <source>&amp;New Pegbar</source>
-        <translation>&amp;Nuova Reggetta</translation>
+        <translation>Neuer Haltestift (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
-        <translation>&amp;Nuova Traiettoria di Movimento</translation>
+        <translation>Neuer Bewegungspfad (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Camera</source>
-        <translation>&amp;Nuova Camera</translation>
+        <translation>Neue Kamera (&amp;N)</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>This folder is not empty. Delete anyway?</source>
-        <translation>Questo folder non è vuota. Lo vuoi cancellare lo stesso?</translation>
+        <translation>Dieser Ordner ist nicht leer. Trotzdem entfernen?</translation>
     </message>
     <message>
         <source>New Palette</source>
-        <translation>Nuova Palette</translation>
+        <translation>Neue Palette</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation>Nuova Cartella</translation>
+        <translation>Neuer Ordner</translation>
     </message>
     <message>
         <source>Delete Folder</source>
-        <translation>Elimina la Cartella</translation>
+        <translation>Ordner löschen</translation>
     </message>
     <message>
         <source>Load into Current Palette</source>
-        <translation>Carica nella Palette Corrente</translation>
+        <translation>In aktuelle Palette laden</translation>
     </message>
     <message>
         <source>Merge to Current Palette</source>
-        <translation>Unisci alla Palette Corrente</translation>
+        <translation>Durch aktuelle Palette vereinen</translation>
     </message>
     <message>
         <source>Replace with Current Palette</source>
-        <translation>Rimpiazza con la Palette Corrente</translation>
+        <translation>Durch aktuelle Palette ersetzen</translation>
     </message>
     <message>
         <source>Delete Palette</source>
-        <translation>Elimina la Palette</translation>
+        <translation>Palette entfernen</translation>
     </message>
     <message>
         <source>Search for Palettes</source>
-        <translation>Ricerca le Palette</translation>
+        <translation>Palette suchen</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Elimina</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Adjust Current Level to This Palette</source>
-        <translation>Adatta il Livello Corrente a questa Palette</translation>
+        <translation>Aktuelle Ebene an diese Palette anpassen</translation>
     </message>
     <message>
         <source>Convert to Studio Palette and Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Studio-Palette umwandeln und überschreiben</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;New Folder</source>
-        <translation type="vanished">&amp;Nuova Cartella</translation>
+        <translation type="vanished">Neuer Ordner</translation>
     </message>
     <message>
         <source>&amp;New Palette</source>
-        <translation type="vanished">&amp;Nuova Palette</translation>
+        <translation type="vanished">Neue Palette</translation>
     </message>
     <message>
         <source>&amp;Search for Palettes</source>
-        <translation type="vanished">&amp;Ricerca le Palette</translation>
+        <translation type="vanished">Palette suchen</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="vanished">&amp;Elimina</translation>
+        <translation type="vanished">Entfernen</translation>
     </message>
 </context>
 <context>
     <name>StyleEditor</name>
     <message>
         <source>Apply</source>
-        <translation>Applica</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <source>Apply changes to current style</source>
-        <translation>Applica i cambiamenti allo stile corrente</translation>
+        <translation>Änderungen an aktuellen Stil anwenden</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="vanished">Auto</translation>
+        <translation type="vanished">Automatisch</translation>
     </message>
     <message>
         <source>Automatically update style changes</source>
-        <translation>Aggiorna automaticamente i cambiamenti dello stile</translation>
+        <translation>Stil-Änderungen automatisch aktualisieren</translation>
     </message>
     <message>
         <source>Return To Previous Style</source>
-        <translation>Torna allo Stile Precedente</translation>
+        <translation>Zum vorherigen Stil zurückkehren</translation>
     </message>
     <message>
         <source>Current Style</source>
-        <translation>Stile Corrente</translation>
+        <translation>Aktueller Stil</translation>
     </message>
     <message>
         <source>Plain</source>
-        <translation>Piatto</translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <source>Texture</source>
-        <translation>Trama</translation>
+        <translation>Textur</translation>
     </message>
     <message>
         <source>Special</source>
-        <translation>Speciale</translation>
+        <translation>Besondere</translation>
     </message>
     <message>
         <source>Custom</source>
-        <translation>Personalizzato</translation>
+        <translation>Eigene</translation>
     </message>
     <message>
         <source>Vector Brush</source>
-        <translation>Pennello Vettoriale</translation>
+        <translation>Vektor-Pinsel</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>Impostazioni</translation>
+        <translation>Einstellungen</translation>
     </message>
     <message>
         <source>Auto  
 Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch
+anwenden</translation>
     </message>
 </context>
 <context>
     <name>StyleEditorGUI::PlainColorPage</name>
     <message>
         <source>Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbrad</translation>
     </message>
     <message>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <source>Matte</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
 </context>
 <context>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>Colorazione Automatica per le Linee</translation>
+        <translation>Automatisches Malen für Linien</translation>
     </message>
 </context>
 <context>
     <name>StyleNameEditor</name>
     <message>
         <source>Name Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil-Name-Editor</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <source>Ok</source>
+        <translation type="vanished">Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <source>Style Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil-Name</translation>
     </message>
     <message>
         <source>Name Editor: # %1</source>
+        <translation>Stil-Name bearbeiten: # %1</translation>
+    </message>
+    <message>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2166,40 +2211,40 @@ Apply</source>
     <name>TMessageViewer</name>
     <message>
         <source>Errors</source>
-        <translation>Errori</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <source>Warnings</source>
-        <translation>Avvertimenti</translation>
+        <translation>Warnung</translation>
     </message>
     <message>
         <source>Infos</source>
-        <translation>Informazioni</translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source> Clear </source>
-        <translation>Pulire</translation>
+        <translation>Leeren</translation>
     </message>
 </context>
 <context>
     <name>TablePainter</name>
     <message>
         <source>&amp;Reset Center</source>
-        <translation>&amp;Ripristina il centro</translation>
+        <translation>Mitte zurücksetzen (&amp;R)</translation>
     </message>
 </context>
 <context>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">È possibile caricare solo i file TNZBAT.</translation>
+        <translation type="vanished">Kanal:</translation>
     </message>
 </context>
 <context>
     <name>VectorBrushStyleChooserPage</name>
     <message>
         <source>Plain color</source>
-        <translation>Colore Piatto</translation>
+        <translation>Normale Farbe</translation>
     </message>
 </context>
 </TS>

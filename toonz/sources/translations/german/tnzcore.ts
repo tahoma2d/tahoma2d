@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="de_DE">
 <context>
     <name>QObject</name>
     <message>
         <source>colors</source>
-        <translation>颜色</translation>
+        <translation>Farben</translation>
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation>未标识的动作</translation>
+        <translation>Unbekannte Aktion</translation>
     </message>
 </context>
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
         <source>Constant</source>
-        <translation>恒定</translation>
+        <translation>Konstante</translation>
     </message>
     <message>
         <source>Thickness</source>
-        <translation>粗细</translation>
+        <translation>Dicke</translation>
     </message>
 </context>
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
         <source>Distance</source>
-        <translation>距离</translation>
+        <translation>Abstand</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation>旋转</translation>
+        <translation>Rotation</translation>
     </message>
 </context>
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
         <source>Distance</source>
-        <translation>距离</translation>
+        <translation>Abstand</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation>旋转</translation>
+        <translation>Rotation</translation>
     </message>
 </context>
 </TS>
