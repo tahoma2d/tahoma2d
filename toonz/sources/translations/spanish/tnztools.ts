@@ -782,7 +782,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
-        <translation>Modificar aparato de efectos</translation>
+        <translation>Control de modificación de efectos</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
