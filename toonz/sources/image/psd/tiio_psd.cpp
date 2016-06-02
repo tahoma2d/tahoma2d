@@ -1,3 +1,5 @@
+#ifdef __LP64__
+
 #include "tiio_psd.h"
 #include "trasterimage.h"
 #include "timageinfo.h"
@@ -215,3 +217,4 @@ TImageWriterP TLevelWriterPsd::getFrameWriter(TFrameId fid)
 	TImageWriterPsd *iwm = new TImageWriterPsd(m_path, layerId, this);
 	return TImageWriterP(iwm);
 }
+#endif
