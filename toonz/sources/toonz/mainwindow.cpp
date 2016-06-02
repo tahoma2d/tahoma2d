@@ -1946,7 +1946,7 @@ void MainWindow::defineActions()
 	createViewerAction(V_ShowHideFullScreen, tr("Show//Hide Full Screen"), "");
 	CommandManager::instance()->setToggleTexts(V_ShowHideFullScreen, tr("Full Screen Mode"), tr("Exit Full Screen Mode"));
 
-	createMiscAction(MI_RefreshTree, "Refresh Folder Tree", "");
+	createMiscAction(MI_RefreshTree, tr("Refresh Folder Tree"), "");
 
 	createToolOptionsAction("A_ToolOption_GlobalKey", tr("Global Key"), "");
 
