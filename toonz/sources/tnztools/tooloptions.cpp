@@ -1798,6 +1798,15 @@ RulerToolOptionsBox::RulerToolOptionsBox(QWidget *parent,
 
 	m_Afld->setMeasure("angle");
 
+	if (Preferences::instance()->getUnits() == "pixel")
+	{
+		m_Xfld->setMeasure("camera.lx");
+		m_Yfld->setMeasure("camera.lx");
+		m_Wfld->setMeasure("camera.lx");
+		m_Hfld->setMeasure("camera.lx");
+		m_Lfld->setMeasure("camera.lx");
+	}
+
 	m_Xfld->setObjectName("RulerToolOptionValues");
 	m_Yfld->setObjectName("RulerToolOptionValues");
 	m_Wfld->setObjectName("RulerToolOptionValues");
