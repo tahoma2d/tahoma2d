@@ -158,6 +158,12 @@ LevelSettingsPopup::LevelSettingsPopup()
 	m_widthFld->setMeasure("camera.lx");
 	m_heightFld->setMeasure("camera.ly");
 
+	if (Preferences::instance()->getCameraUnits() == "pixel")
+	{
+		m_widthFld->setDecimals(0);
+		m_heightFld->setDecimals(0);
+	}
+
 	m_doPremultiply->setChecked(false);
 
 	m_doAntialias->setChecked(false);

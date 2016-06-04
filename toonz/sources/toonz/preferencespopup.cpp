@@ -1138,12 +1138,25 @@ PreferencesPopup::PreferencesPopup()
 		}
 	}
 
-	m_defLevelWidth->setRange(0.1, (std::numeric_limits<double>::max)());
-	m_defLevelWidth->setMeasure("level.lx");
-	m_defLevelWidth->setValue(m_pref->getDefLevelWidth());
-	m_defLevelHeight->setRange(0.1, (std::numeric_limits<double>::max)());
-	m_defLevelHeight->setMeasure("level.ly");
-	m_defLevelHeight->setValue(m_pref->getDefLevelHeight());
+
+	if (Preferences::instance()->getUnits() == "pixel")
+	{
+		m_defLevelWidth->setRange(0.1, (std::numeric_limits<double>::max)());
+		m_defLevelWidth->setMeasure("camera.lx");
+		m_defLevelWidth->setValue(m_pref->getDefLevelWidth());
+		m_defLevelHeight->setRange(0.1, (std::numeric_limits<double>::max)());
+		m_defLevelHeight->setMeasure("camera.ly");
+		m_defLevelHeight->setValue(m_pref->getDefLevelHeight());
+	}
+	else
+	{
+		m_defLevelWidth->setRange(0.1, (std::numeric_limits<double>::max)());
+		m_defLevelWidth->setMeasure("level.lx");
+		m_defLevelWidth->setValue(m_pref->getDefLevelWidth());
+		m_defLevelHeight->setRange(0.1, (std::numeric_limits<double>::max)());
+		m_defLevelHeight->setMeasure("level.ly");
+		m_defLevelHeight->setValue(m_pref->getDefLevelHeight());
+	}
 	m_defLevelDpi->setRange(0.1, (std::numeric_limits<double>::max)());
 	m_defLevelDpi->setValue(m_pref->getDefLevelDpi());
 	QStringList autocreationTypes;

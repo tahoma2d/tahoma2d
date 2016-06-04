@@ -1800,11 +1800,11 @@ RulerToolOptionsBox::RulerToolOptionsBox(QWidget *parent,
 
 	if (Preferences::instance()->getUnits() == "pixel")
 	{
-		m_Xfld->setMeasure("camera.lx");
-		m_Yfld->setMeasure("camera.lx");
-		m_Wfld->setMeasure("camera.lx");
-		m_Hfld->setMeasure("camera.lx");
-		m_Lfld->setMeasure("camera.lx");
+		m_Xfld->setMeasure("length.x");
+		m_Yfld->setMeasure("length.y");
+		m_Wfld->setMeasure("length.x");
+		m_Hfld->setMeasure("length.y");
+		m_Lfld->setMeasure("length.x");
 	}
 
 	m_Xfld->setObjectName("RulerToolOptionValues");
