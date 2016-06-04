@@ -1042,7 +1042,7 @@ PreferencesPopup::PreferencesPopup()
 	styleSheetType->setCurrentIndex(currentIndex);
 
 	QStringList type;
-	type << tr("cm") << tr("mm") << tr("inch") << tr("field");
+	type << tr("cm") << tr("mm") << tr("inch") << tr("field") << tr("pixel");
 	unitOm->addItems(type);
 	int idx = std::find(::units, ::units + ::unitsCount, m_pref->getUnits()) - ::units;
 	unitOm->setCurrentIndex((idx < ::unitsCount) ? idx : ::inchIdx);

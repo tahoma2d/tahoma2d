@@ -20,6 +20,7 @@
 #include "toonz/txshlevel.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshleveltypes.h"
+#include "toonz/preferences.h"
 
 // TnzCore includes
 #include "tconvert.h"
@@ -286,7 +287,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 			gridLay->addWidget(m_yPrev, 0, 4, Qt::AlignCenter);
 
 			gridLay->addWidget(m_inchPrev, 1, 0, Qt::AlignRight | Qt::AlignVCenter);
-			gridLay->addWidget(new QLabel("Inch"), 1, 1, Qt::AlignRight | Qt::AlignVCenter);
+			QString units = Preferences::instance()->getCameraUnits();
+			gridLay->addWidget(new QLabel(units), 1, 1, Qt::AlignRight | Qt::AlignVCenter);
 			gridLay->addWidget(m_lxFld, 1, 2);
 			gridLay->addWidget(new QLabel("x"), 1, 3, Qt::AlignCenter);
 			gridLay->addWidget(m_lyFld, 1, 4);
