@@ -101,6 +101,7 @@ public:
 	void onLoadScene();
 	void onLoadSubScene();
 	void resetRoomsLayout();
+	void maximizePanel();
 	void autofillToggle();
 	void onUpgradeTabPro();
 	void onAbout();

@@ -93,7 +93,7 @@ public:
 	QWidget *widgetAt(int) const;
 	QLayoutItem *takeAt(int);
 	void setGeometry(const QRect &rect);
-
+	
 	void update();									  //Re-applies partition found
 	void redistribute();							  //Calculates partition
 	void applyTransform(const QTransform &transform); //Applies tranformation to known parition - Da rimuovere, non serve...
@@ -155,10 +155,12 @@ private:
   \sa DockLayout and DockPlaceholder classes.
 */
 class DVAPI DockWidget : public QWidget
-{
+{	
 	friend class DockLayout;	  //DockLayout is granted access to placeholders' privates
 	friend class DockPlaceholder; //As above.
 								  //friend Region;          //Regions need access to m_saveIndex field.
+public:
+	void maximizeDock();
 
 protected:
 	//Private attributes for dragging purposes

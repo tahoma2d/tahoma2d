@@ -442,6 +442,7 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent, Q
 	setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
 
 	setCommandHandler(MI_About, this, &MainWindow::onAbout);
+	setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
 }
 
 //-----------------------------------------------------------------------------
@@ -1124,6 +1125,16 @@ void MainWindow::resetRoomsLayout()
 	}*/
 
 	DVGui::info(QObject::tr("The rooms will be reset the next time you run Toonz."));
+}
+
+void MainWindow::maximizePanel()
+{
+	DockLayout *currDockLayout = getCurrentRoom()->dockLayout();
+	QPoint p = mapFromGlobal(QCursor::pos());
+	QWidget* myWidge = currDockLayout->containerOf(p);
+	DockWidget* w = static_cast<DockWidget*>(myWidge);
+	if (w)
+	w->maximizeDock();
 }
 
 //-----------------------------------------------------------------------------
@@ -1848,12 +1859,12 @@ void MainWindow::defineActions()
 	createMenuWindowsAction(MI_OpenHistoryPanel, tr("&History"), "");
 
 	createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"), "");
-
+	createMenuWindowsAction(MI_MaximizePanel, tr("Maximize Current Panel"), "`");
 	createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
 
 	createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
-	createToggle(MI_OnionSkin, tr("Onion Skin"), "", false, RightClickMenuCommandType);
+	createToggle(MI_OnionSkin, tr("Onion Skin Toggle"), "\\", false, RightClickMenuCommandType);
 
 	//createRightClickMenuAction(MI_LoadSubSceneFile,     tr("Load As Sub-xsheet"),   "");
 	//createRightClickMenuAction(MI_LoadResourceFile,     tr("Load"),								  "");

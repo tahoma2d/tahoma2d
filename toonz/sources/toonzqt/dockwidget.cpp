@@ -385,6 +385,15 @@ void DockWidget::mouseDoubleClickEvent(QMouseEvent *me)
 
 //-------------------------------------
 
+void DockWidget::maximizeDock()
+{
+	if (!m_floating) {
+		parentLayout()->setMaximized(this, !m_maximized);
+	}
+}
+
+//-------------------------------------
+
 //!Switch in selected dock placeholder's hierarchy.
 void DockWidget::wheelEvent(QWheelEvent *we)
 {
