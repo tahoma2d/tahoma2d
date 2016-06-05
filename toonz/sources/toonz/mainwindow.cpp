@@ -443,6 +443,7 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent, Q
 
 	setCommandHandler(MI_About, this, &MainWindow::onAbout);
 	setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
+	setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
 }
 
 //-----------------------------------------------------------------------------
@@ -1135,6 +1136,18 @@ void MainWindow::maximizePanel()
 	DockWidget* w = static_cast<DockWidget*>(myWidge);
 	if (w)
 	w->maximizeDock();
+}
+
+void MainWindow::fullScreenWindow()
+{
+	QMainWindow *currWindow = TApp::instance()->getMainWindow();
+	if (currWindow->isFullScreen()) {
+		currWindow->setWindowState(Qt::WindowMaximized);
+	}
+	else {
+		currWindow->setWindowState(Qt::WindowFullScreen);
+	}
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1859,7 +1872,8 @@ void MainWindow::defineActions()
 	createMenuWindowsAction(MI_OpenHistoryPanel, tr("&History"), "");
 
 	createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"), "");
-	createMenuWindowsAction(MI_MaximizePanel, tr("Maximize Current Panel"), "`");
+	createMenuWindowsAction(MI_MaximizePanel, tr("Toggle Maximize Panel"), "`");
+	createMenuWindowsAction(MI_FullScreenWindow, tr("Toggle Full Screen"), "Ctrl+`");
 	createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
 
 	createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
