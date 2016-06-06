@@ -1131,11 +1131,19 @@ void MainWindow::resetRoomsLayout()
 void MainWindow::maximizePanel()
 {
 	DockLayout *currDockLayout = getCurrentRoom()->dockLayout();
-	QPoint p = mapFromGlobal(QCursor::pos());
-	QWidget* myWidge = currDockLayout->containerOf(p);
-	DockWidget* w = static_cast<DockWidget*>(myWidge);
-	if (w)
-	w->maximizeDock();
+	QPoint p;
+	if (!panelMaximized)
+	{
+		p = mapFromGlobal(QCursor::pos());
+		panelMaximized = true;
+	}
+	else {
+		panelMaximized = false;
+	}
+	QWidget* currWidget = currDockLayout->containerOf(p);
+	DockWidget* currW = static_cast<DockWidget*>(currWidget);
+	if (currW)
+	currW->maximizeDock();
 }
 
 void MainWindow::fullScreenWindow()
