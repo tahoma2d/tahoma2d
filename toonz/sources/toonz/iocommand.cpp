@@ -1514,7 +1514,7 @@ bool IoCmd::saveLevel(const TFilePath &path)
 	std::string dotts = sl->getPath().getDots();
 	TFilePath realPath = path;
 	if (realPath.getType() == "")
-		realPath = TFilePath(realPath.getWideString() + toWideString(dotts + ext));
+		realPath = TFilePath(realPath.getWideString() + ::to_wstring(dotts + ext));
 
 	saveLevel(realPath, sl, false);
 	RecentFiles::instance()->addFilePath(toQString(realPath), RecentFiles::Level);
@@ -1632,7 +1632,7 @@ bool IoCmd::saveLevel(TXshSimpleLevel *sl)
 }
 
 //===========================================================================
-// IoCmd::saveAll() save current scene and all of its levels
+// IoCmd::saveSound(soundPath, soundColumn, overwrite)
 //---------------------------------------------------------------------------
 
 bool IoCmd::saveAll()
