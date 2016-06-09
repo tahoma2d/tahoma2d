@@ -542,6 +542,195 @@ int computeThickness(int pressure, const TIntPairProperty &property, bool isPath
 
 } // namespace
 
+//--------------------------------------------------------------------------------------------------
+
+static void CatmullRomInterpolate(const TThickPoint& P0, const TThickPoint& P1, const TThickPoint& P2, const TThickPoint& P3, int samples, std::vector<TThickPoint>& points)
+{
+    double x0 = P1.x;
+    double x1 = (-P0.x + P2.x) * 0.5f;
+    double x2 = P0.x - 2.5f * P1.x + 2.0f * P2.x - 0.5f * P3.x;
+    double x3 = -0.5f * P0.x + 1.5f * P1.x - 1.5f * P2.x + 0.5f * P3.x;
+
+    double y0 = P1.y;
+    double y1 = (-P0.y + P2.y) * 0.5f;
+    double y2 = P0.y - 2.5f * P1.y + 2.0f * P2.y - 0.5f * P3.y;
+    double y3 = -0.5f * P0.y + 1.5f * P1.y - 1.5f * P2.y + 0.5f * P3.y;
+
+    double z0 = P1.thick;
+    double z1 = (-P0.thick + P2.thick) * 0.5f;
+    double z2 = P0.thick - 2.5f * P1.thick + 2.0f * P2.thick - 0.5f * P3.thick;
+    double z3 = -0.5f * P0.thick + 1.5f * P1.thick - 1.5f * P2.thick + 0.5f * P3.thick;
+
+    for (int i = 1; i <= samples; ++i)
+    {
+        double t = i / (double)(samples + 1);
+        double t2 = t * t;
+        double t3 = t2 * t;
+        TThickPoint p;
+        p.x = x0 + x1 * t + x2 * t2 + x3 * t3;
+        p.y = y0 + y1 * t + y2 * t2 + y3 * t3;
+        p.thick = z0 + z1 * t + z2 * t2 + z3 * t3;
+        points.push_back(p);
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+static void Smooth(std::vector<TThickPoint>& points, int radius)
+{
+    int n = (int)points.size();
+    if (radius < 1 || n < 3)
+    {
+        return;
+    }
+
+    std::vector<TThickPoint> result;
+
+    float d = 1.0f / (radius * 2 + 1);
+
+    for (int i = 1; i < n - 1; ++i)
+    {
+        int lower = i - radius;
+        int upper = i + radius;
+
+        TThickPoint total;
+        total.x = 0;
+        total.y = 0;
+        total.thick = 0;
+
+        for (int j = lower; j <= upper; ++j)
+        {
+            int idx = j;
+            if (idx < 0)
+            {
+                idx = 0;
+            }
+            else if (idx >= n)
+            {
+                idx = n - 1;
+            }
+            total.x += points[idx].x;
+            total.y += points[idx].y;
+            total.thick += points[idx].thick;
+        }
+
+        total.x *= d;
+        total.y *= d;
+        total.thick *= d;
+        result.push_back(total);
+    }
+
+    for (int i = 1; i < n - 1; ++i)
+    {
+        points[i].x = result[i - 1].x;
+        points[i].y = result[i - 1].y;
+        points[i].thick = result[i - 1].thick;
+    }
+
+    if (points.size() >= 3)
+    {
+        std::vector<TThickPoint> pts;
+        CatmullRomInterpolate(points[0], points[0], points[1], points[2], 10, pts);
+        std::vector<TThickPoint>::iterator it = points.begin();
+        points.insert(it, pts.begin(), pts.end());
+
+        pts.clear();
+        CatmullRomInterpolate(points[n - 3], points[n - 2], points[n - 1], points[n - 1], 10, pts);
+        it = points.begin();
+        it += n - 1;
+        points.insert(it, pts.begin(), pts.end());
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void SmoothStroke::beginStroke(int smooth)
+{
+    m_smooth = smooth;
+    m_outputIndex = 0;
+    m_readIndex = -1;
+    m_rawPoints.clear();
+    m_outputPoints.clear();
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void SmoothStroke::addPoint(const TThickPoint& point)
+{
+    if (m_rawPoints.size() > 0 && m_rawPoints.back().x == point.x && m_rawPoints.back().y == point.y)
+    {
+        return;
+    }
+    m_rawPoints.push_back(point);
+    generatePoints();
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void SmoothStroke::endStroke()
+{
+    generatePoints();
+    // force enable the output all segments
+    m_outputIndex = m_outputPoints.size() - 1;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void SmoothStroke::getSmoothPoints(std::vector<TThickPoint>& smoothPoints)
+{
+    int n = m_outputPoints.size();
+    for (int i = m_readIndex + 1; i <= m_outputIndex && i < n; ++i)
+    {
+        smoothPoints.push_back(m_outputPoints[i]);
+    }
+    m_readIndex = m_outputIndex;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void SmoothStroke::generatePoints()
+{
+    int n = (int)m_rawPoints.size();
+    if (n == 0)
+    {
+        return;
+    }
+    std::vector<TThickPoint> smoothedPoints;
+    // Add more stroke samples before applying the smoothing
+    // This is because the raw inputs points are too few to support smooth result, especially on stroke ends
+    smoothedPoints.push_back(m_rawPoints.front());
+    for (int i = 1; i < n; ++i)
+    {
+        const TThickPoint& p1 = m_rawPoints[i - 1];
+        const TThickPoint& p2 = m_rawPoints[i];
+        const TThickPoint& p0 = i - 2 >= 0 ? m_rawPoints[i - 2] : p1;
+        const TThickPoint& p3 = i + 1 < n ? m_rawPoints[i + 1] : p2;
+
+        int samples = 8;
+        CatmullRomInterpolate(p0, p1, p2, p3, samples, smoothedPoints);
+        smoothedPoints.push_back(p2);
+    }
+    // Apply the 1D box filter
+    // Multiple passes result in better quality and fix the stroke ends break issue
+    for (int i = 0; i < 3; ++i)
+    {
+        Smooth(smoothedPoints, m_smooth);
+    }
+    // Compare the new smoothed stroke with old one
+    // Enable the output for unchanged parts
+    int outputNum = (int)m_outputPoints.size();
+    for (int i = m_outputIndex; i < outputNum; ++i)
+    {
+        if (m_outputPoints[i] != smoothedPoints[i])
+        {
+            break;
+        }
+        ++m_outputIndex;
+    }
+    m_outputPoints = smoothedPoints;
+}
+
+
 //===================================================================
 //
 // BrushTool
@@ -897,7 +1086,8 @@ void BrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e)
 		if (m_pressure.getValue() && e.m_pressure == 255)
 			thickness = m_rasThickness.getValue().first;
 
-		m_track.add(TThickPoint(pos, thickness), getPixelSize() * getPixelSize());
+        m_smoothStroke.beginStroke(m_accuracy.getValue());
+        addTrackPoint(TThickPoint(pos, thickness), getPixelSize() * getPixelSize());
 	}
 }
 
@@ -982,8 +1172,7 @@ void BrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e)
 		invalidate(invalidateRect.enlarge(2));
 	} else {
 		double thickness = (m_pressure.getValue() || m_isPath) ? computeThickness(e.m_pressure, m_thickness, m_isPath) : m_thickness.getValue().second * 0.5;
-		m_track.add(TThickPoint(pos, thickness), getPixelSize() * getPixelSize());
-
+        addTrackPoint(TThickPoint(pos, thickness), getPixelSize() * getPixelSize());
 		invalidate();
 	}
 }
@@ -997,6 +1186,8 @@ void BrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e)
 
 	if (!isValid)
 		return;
+    
+    flushTrackPoint();
 
 	if (m_isPath) {
 		double error = 20.0 * getPixelSize();
@@ -1045,7 +1236,8 @@ void BrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e)
 			return;
 		}
 		m_track.filterPoints();
-		double error = 30.0 / (1 + 0.5 * m_accuracy.getValue());
+        //double error = 30.0 / (1 + 0.5 * m_accuracy.getValue());
+        double error = 30.0 / (1 + 0.5 * 100);//temp use accuracy as smooth values instead of error range
 		error *= getPixelSize();
 
 		TStroke *stroke = m_track.makeStroke(error);
@@ -1070,6 +1262,33 @@ void BrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e)
 	} else if (TToonzImageP ti = image) {
 		finishRasterBrush(pos, e.m_pressure);
 	}
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void BrushTool::addTrackPoint(const TThickPoint& point, double pixelSize2)
+{
+    m_smoothStroke.addPoint(point);
+    std::vector<TThickPoint> pts;
+    m_smoothStroke.getSmoothPoints(pts);
+    for (size_t i = 0; i < pts.size(); ++i)
+    {
+        m_track.add(pts[i], pixelSize2);
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void BrushTool::flushTrackPoint()
+{
+    m_smoothStroke.endStroke();
+    std::vector<TThickPoint> pts;
+    m_smoothStroke.getSmoothPoints(pts);
+    double pixelSize2 = getPixelSize() * getPixelSize();
+    for (size_t i = 0; i < pts.size(); ++i)
+    {
+        m_track.add(pts[i], pixelSize2);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------

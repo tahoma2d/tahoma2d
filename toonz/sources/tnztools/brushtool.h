@@ -71,6 +71,38 @@ public:
 };
 
 //************************************************************************
+//    Smooth Stroke declaration
+//    Brush stroke smoothing buffer.
+//************************************************************************
+class SmoothStroke
+{
+public:
+    SmoothStroke() {}
+    ~SmoothStroke() {}
+
+    // begin stroke
+    // smooth is smooth strength, from 0 to 100
+    void beginStroke(int smooth);
+    // add stroke point
+    void addPoint(const TThickPoint& point);
+    // end stroke
+    void endStroke();
+    // Get generated stroke points which has been smoothed.
+    // Both addPoint() and endStroke() generate new smoothed points.
+    // This method will removed generated points 
+    void getSmoothPoints(std::vector<TThickPoint>& smoothPoints);
+
+private:
+    void generatePoints();
+
+private:
+    int m_smooth;
+    int m_outputIndex;
+    int m_readIndex;
+    std::vector<TThickPoint> m_rawPoints;
+    std::vector<TThickPoint> m_outputPoints;
+};
+//************************************************************************
 //    Brush Tool declaration
 //************************************************************************
 
@@ -119,6 +151,9 @@ public:
 	//return true if the pencil mode is active in the Brush / PaintBrush / Eraser Tools.
 	bool isPencilModeActive();
 
+    void addTrackPoint(const TThickPoint& point, double pixelSize2);
+    void flushTrackPoint();
+
 protected:
 	TPropertyGroup m_prop[2];
 
@@ -159,6 +194,8 @@ protected:
 	std::vector<TThickPoint> m_points;
 	TRect m_strokeRect,
 		m_lastRect;
+
+    SmoothStroke m_smoothStroke;
 
 	BrushPresetManager m_presetsManager; //!< Manager for presets of this tool instance
 
