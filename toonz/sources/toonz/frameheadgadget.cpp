@@ -37,12 +37,6 @@ void enableOnionSkin(bool enable = true)
 	osmh->notifyOnionSkinMaskChanged();
 }
 
-void enableZeroThick(bool enable = true)
-{
-	Preferences::instance()->setShow0ThickLines(enable);
-	TApp::instance()->getCurrentScene()->notifySceneChanged();
-}
-
 bool isOnionSkinEnabled()
 {
 	TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
@@ -703,4 +697,36 @@ public:
 		bool checked = action->isChecked();
 		enableZeroThick(checked);
 	}
+
+	static void enableZeroThick(bool enable = true)
+	{
+		Preferences::instance()->setShow0ThickLines(enable);
+		TApp::instance()->getCurrentScene()->notifySceneChanged();
+	}
 } ZeroThickToggle;
+
+
+void ZeroThickToggleGui::addZeroThickCommand(QMenu *menu)
+{
+	static ZeroThickToggleHandler switcher;
+	if (Preferences::instance()->getShow0ThickLines()) {
+		QAction *hideZeroThick = menu->addAction(QString(QObject::tr("Hide Zero Thickness Lines")));
+		menu->connect(hideZeroThick, SIGNAL(triggered()),
+			&switcher, SLOT(deactivate()));
+	}
+	else {
+		QAction *showZeroThick = menu->addAction(QString(QObject::tr("Show Zero Thickness Lines")));
+		menu->connect(showZeroThick, SIGNAL(triggered()),
+			&switcher, SLOT(activate()));
+	}
+}
+
+void ZeroThickToggleGui::ZeroThickToggleHandler::activate()
+{
+	ZeroThickToggle::enableZeroThick(true);
+}
+
+void ZeroThickToggleGui::ZeroThickToggleHandler::deactivate()
+{
+	ZeroThickToggle::enableZeroThick(false);
+}

@@ -7,6 +7,7 @@
 #include "tapp.h"
 #include "menubarcommandids.h"
 #include "onionskinmaskgui.h"
+#include "frameheadgadget.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -158,9 +159,13 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
 	addAction(action);
 	ret = ret && parent->connect(action, SIGNAL(triggered()), SLOT(setActualPixelSize()));
 
-// onion skin
+	// onion skin
 	if (Preferences::instance()->isOnionSkinEnabled() && !parent->isPreviewEnabled())
 		OnioniSkinMaskGUI::addOnionSkinCommand(this);
+
+	// Zero Thick
+	if (!parent->isPreviewEnabled())
+		ZeroThickToggleGui::addZeroThickCommand(this);
 
 	// preview
 	if (parent->isPreviewEnabled()) {

@@ -11,6 +11,7 @@ class FilmstripFrames;
 class QEvent;
 class QColor;
 class QWidget;
+class QMenu;
 
 class FrameHeadGadget : public QObject
 {
@@ -83,5 +84,21 @@ public:
 
 	bool eventFilter(QObject *obj, QEvent *event);
 };
+
+namespace ZeroThickToggleGui
+{
+	void addZeroThickCommand(QMenu* menu);
+
+	class ZeroThickToggleHandler : public QObject
+	{
+		Q_OBJECT
+
+	public slots:
+		void activate();
+		void deactivate();
+	};
+
+
+} //Namespace ZeroThickToggleGui
 
 #endif
