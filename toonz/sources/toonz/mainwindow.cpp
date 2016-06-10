@@ -1853,7 +1853,8 @@ void MainWindow::defineActions()
 
 	createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
-	createToggle(MI_OnionSkin, tr("Onion Skin"), "", false, RightClickMenuCommandType);
+	createToggle(MI_OnionSkin, tr("Onion Skin"), "/", false, RightClickMenuCommandType);
+	createToggle(MI_ZeroThick, tr("Zero Thick Lines"), "Shift+/", false, RightClickMenuCommandType);
 
 	//createRightClickMenuAction(MI_LoadSubSceneFile,     tr("Load As Sub-xsheet"),   "");
 	//createRightClickMenuAction(MI_LoadResourceFile,     tr("Load"),								  "");

@@ -37,6 +37,12 @@ void enableOnionSkin(bool enable = true)
 	osmh->notifyOnionSkinMaskChanged();
 }
 
+void enableZeroThick(bool enable = true)
+{
+	Preferences::instance()->setShow0ThickLines(enable);
+	TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
 bool isOnionSkinEnabled()
 {
 	TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
@@ -681,3 +687,20 @@ public:
 		enableOnionSkin(checked);
 	}
 } onionSkinToggle;
+
+
+class ZeroThickToggle : public MenuItemHandler
+{
+public:
+	ZeroThickToggle() : MenuItemHandler(MI_ZeroThick)
+	{
+	}
+	void execute()
+	{
+		QAction *action = CommandManager::instance()->getAction(MI_ZeroThick);
+		if (!action)
+			return;
+		bool checked = action->isChecked();
+		enableZeroThick(checked);
+	}
+} ZeroThickToggle;
