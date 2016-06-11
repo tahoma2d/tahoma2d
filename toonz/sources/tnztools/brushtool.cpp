@@ -739,7 +739,7 @@ void SmoothStroke::generatePoints()
 //-----------------------------------------------------------------------------
 
 BrushTool::BrushTool(std::string name, int targetType)
-    : TTool(name), m_thickness("Size", 0, 100, 0, 5), m_rasThickness("Size", 1, 100, 1, 5), m_accuracy("Accuracy:", 1, 100, 20), m_smooth("Smooth:", 0, 100, 0), m_hardness("Hardness:", 0, 100, 100), m_preset("Preset:"), m_selective("Selective", false), m_breakAngles("Break", true), m_pencil("Pencil", false), m_pressure("Pressure", true), m_capStyle("Cap"), m_joinStyle("Join"), m_miterJoinLimit("Miter:", 0, 100, 4), m_rasterTrack(0), m_styleId(0), m_modifiedRegion(), m_bluredBrush(0), m_active(false), m_enabled(false), m_isPrompting(false), m_firstTime(true), m_presetsLoaded(false), m_workingFrameId(TFrameId())
+    : TTool(name), m_thickness("Size", 0, 100, 0, 5), m_rasThickness("Size", 1, 100, 1, 5), m_accuracy("Accuracy:", 1, 100, 20), m_smooth("Smooth:", 0, 50, 0), m_hardness("Hardness:", 0, 100, 100), m_preset("Preset:"), m_selective("Selective", false), m_breakAngles("Break", true), m_pencil("Pencil", false), m_pressure("Pressure", true), m_capStyle("Cap"), m_joinStyle("Join"), m_miterJoinLimit("Miter:", 0, 100, 4), m_rasterTrack(0), m_styleId(0), m_modifiedRegion(), m_bluredBrush(0), m_active(false), m_enabled(false), m_isPrompting(false), m_firstTime(true), m_presetsLoaded(false), m_workingFrameId(TFrameId())
 {
 	bind(targetType);
 
