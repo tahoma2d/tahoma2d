@@ -51,6 +51,7 @@ TEnv::IntVar VectorMiterValue("InknpaintVectorMiterValue", 4);
 TEnv::DoubleVar RasterBrushMinSize("InknpaintRasterBrushMinSize", 1);
 TEnv::DoubleVar RasterBrushMaxSize("InknpaintRasterBrushMaxSize", 5);
 TEnv::DoubleVar BrushAccuracy("InknpaintBrushAccuracy", 20);
+TEnv::DoubleVar BrushSmooth("InknpaintBrushSmooth", 0);
 TEnv::IntVar BrushSelective("InknpaintBrushSelective", 0);
 TEnv::IntVar BrushBreakSharpAngles("InknpaintBrushBreakSharpAngles", 0);
 TEnv::IntVar RasterBrushPencilMode("InknpaintRasterBrushPencilMode", 0);
@@ -738,13 +739,14 @@ void SmoothStroke::generatePoints()
 //-----------------------------------------------------------------------------
 
 BrushTool::BrushTool(std::string name, int targetType)
-	: TTool(name), m_thickness("Size", 0, 100, 0, 5), m_rasThickness("Size", 1, 100, 1, 5), m_accuracy("Accuracy:", 1, 100, 20), m_hardness("Hardness:", 0, 100, 100), m_preset("Preset:"), m_selective("Selective", false), m_breakAngles("Break", true), m_pencil("Pencil", false), m_pressure("Pressure", true), m_capStyle("Cap"), m_joinStyle("Join"), m_miterJoinLimit("Miter:", 0, 100, 4), m_rasterTrack(0), m_styleId(0), m_modifiedRegion(), m_bluredBrush(0), m_active(false), m_enabled(false), m_isPrompting(false), m_firstTime(true), m_presetsLoaded(false), m_workingFrameId(TFrameId())
+    : TTool(name), m_thickness("Size", 0, 100, 0, 5), m_rasThickness("Size", 1, 100, 1, 5), m_accuracy("Accuracy:", 1, 100, 20), m_smooth("Smooth:", 0, 100, 0), m_hardness("Hardness:", 0, 100, 100), m_preset("Preset:"), m_selective("Selective", false), m_breakAngles("Break", true), m_pencil("Pencil", false), m_pressure("Pressure", true), m_capStyle("Cap"), m_joinStyle("Join"), m_miterJoinLimit("Miter:", 0, 100, 4), m_rasterTrack(0), m_styleId(0), m_modifiedRegion(), m_bluredBrush(0), m_active(false), m_enabled(false), m_isPrompting(false), m_firstTime(true), m_presetsLoaded(false), m_workingFrameId(TFrameId())
 {
 	bind(targetType);
 
 	if (targetType & TTool::Vectors) {
 		m_prop[0].bind(m_thickness);
 		m_prop[0].bind(m_accuracy);
+        m_prop[0].bind(m_smooth);
 		m_prop[0].bind(m_breakAngles);
 		m_breakAngles.setId("BreakSharpAngles");
 	}
@@ -897,6 +899,7 @@ void BrushTool::updateTranslation()
 	m_rasThickness.setQStringName(tr("Size"));
 	m_hardness.setQStringName(tr("Hardness:"));
 	m_accuracy.setQStringName(tr("Accuracy:"));
+    m_smooth.setQStringName(tr("Smooth:"));
 	m_selective.setQStringName(tr("Selective"));
 	//m_filled.setQStringName(tr("Filled"));
 	m_preset.setQStringName(tr("Preset:"));
@@ -953,6 +956,7 @@ void BrushTool::onActivate()
 		m_pressure.setValue(BrushPressureSensibility ? 1 : 0);
 		m_firstTime = false;
 		m_accuracy.setValue(BrushAccuracy);
+        m_smooth.setValue(BrushSmooth);
 		m_hardness.setValue(RasterBrushHardness);
 	}
 	if (m_targetType & TTool::ToonzImage) {
@@ -1086,7 +1090,7 @@ void BrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e)
 		if (m_pressure.getValue() && e.m_pressure == 255)
 			thickness = m_rasThickness.getValue().first;
 
-        m_smoothStroke.beginStroke(m_accuracy.getValue());
+        m_smoothStroke.beginStroke(m_smooth.getValue());
         addTrackPoint(TThickPoint(pos, thickness), getPixelSize() * getPixelSize());
 	}
 }
@@ -1236,8 +1240,7 @@ void BrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e)
 			return;
 		}
 		m_track.filterPoints();
-        //double error = 30.0 / (1 + 0.5 * m_accuracy.getValue());
-        double error = 30.0 / (1 + 0.5 * 100);//temp use accuracy as smooth values instead of error range
+        double error = 30.0 / (1 + 0.5 * m_accuracy.getValue());
 		error *= getPixelSize();
 
 		TStroke *stroke = m_track.makeStroke(error);
@@ -1621,6 +1624,8 @@ bool BrushTool::onPropertyChanged(std::string propertyName)
 		}		
 	} else if (propertyName == m_accuracy.getName()) {
 		BrushAccuracy = m_accuracy.getValue();
+    } else if (propertyName == m_smooth.getName()) {
+        BrushSmooth = m_smooth.getValue();
 	} else if (propertyName == m_preset.getName()) {
 		loadPreset();
 		notifyTool = true;
@@ -1708,6 +1713,7 @@ void BrushTool::loadPreset()
 		if (getTargetType() & TTool::Vectors) {
 			m_thickness.setValue(TDoublePairProperty::Value(preset.m_min, preset.m_max));
 			m_accuracy.setValue(preset.m_acc, true);
+            m_smooth.setValue(preset.m_smooth, true);
 			m_breakAngles.setValue(preset.m_breakAngles);
 			m_pressure.setValue(preset.m_pressure);
 			m_capStyle.setIndex(preset.m_cap);
@@ -1741,6 +1747,7 @@ void BrushTool::addPreset(QString name)
 	}
 
 	preset.m_acc = m_accuracy.getValue();
+    preset.m_smooth = m_smooth.getValue();
 	preset.m_hardness = m_hardness.getValue();
 	preset.m_selective = m_selective.getValue();
 	preset.m_pencil = m_pencil.getValue();
@@ -1795,14 +1802,14 @@ BrushTool toonzPencil("T_Brush", TTool::ToonzImage | TTool::EmptyTarget);
 //*******************************************************************************
 
 BrushData::BrushData()
-	: m_name(), m_min(0.0), m_max(0.0), m_acc(0.0), m_hardness(0.0), m_opacityMin(0.0), m_opacityMax(0.0), m_selective(false), m_pencil(false), m_breakAngles(false), m_pressure(false), m_cap(0), m_join(0), m_miter(0)
+	: m_name(), m_min(0.0), m_max(0.0), m_acc(0.0), m_smooth(0.0), m_hardness(0.0), m_opacityMin(0.0), m_opacityMax(0.0), m_selective(false), m_pencil(false), m_breakAngles(false), m_pressure(false), m_cap(0), m_join(0), m_miter(0)
 {
 }
 
 //----------------------------------------------------------------------------------------------------------
 
 BrushData::BrushData(const std::wstring &name)
-	: m_name(name), m_min(0.0), m_max(0.0), m_acc(0.0), m_hardness(0.0), m_opacityMin(0.0), m_opacityMax(0.0), m_selective(false), m_pencil(false), m_breakAngles(false), m_pressure(false), m_cap(0), m_join(0), m_miter(0)
+    : m_name(name), m_min(0.0), m_max(0.0), m_acc(0.0), m_smooth(0.0), m_hardness(0.0), m_opacityMin(0.0), m_opacityMax(0.0), m_selective(false), m_pencil(false), m_breakAngles(false), m_pressure(false), m_cap(0), m_join(0), m_miter(0)
 {
 }
 
@@ -1819,6 +1826,9 @@ void BrushData::saveData(TOStream &os)
 	os.openChild("Accuracy");
 	os << m_acc;
 	os.closeChild();
+    os.openChild("Smooth");
+    os << m_smooth;
+    os.closeChild();
 	os.openChild("Hardness");
 	os << m_hardness;
 	os.closeChild();
@@ -1862,6 +1872,8 @@ void BrushData::loadData(TIStream &is)
 			is >> m_min >> m_max, is.matchEndTag();
 		else if (tagName == "Accuracy")
 			is >> m_acc, is.matchEndTag();
+        else if (tagName == "Smooth")
+            is >> m_smooth, is.matchEndTag();
 		else if (tagName == "Hardness")
 			is >> m_hardness, is.matchEndTag();
 		else if (tagName == "Opacity")

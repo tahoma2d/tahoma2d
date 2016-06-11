@@ -35,7 +35,7 @@ struct BrushData : public TPersist {
 	PERSIST_DECLARATION(BrushData)
 
 	std::wstring m_name;
-	double m_min, m_max, m_acc, m_hardness, m_opacityMin, m_opacityMax;
+    double m_min, m_max, m_acc, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
 	bool m_selective, m_pencil, m_breakAngles, m_pressure;
 	int m_cap, m_join, m_miter;
 
@@ -160,6 +160,7 @@ protected:
 	TDoublePairProperty m_thickness;
 	TDoublePairProperty m_rasThickness;
 	TDoubleProperty m_accuracy;
+    TDoubleProperty m_smooth;
 	TDoubleProperty m_hardness;
 	TEnumProperty m_preset;
 	TBoolProperty m_selective;
