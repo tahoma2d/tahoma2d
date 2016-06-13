@@ -24,7 +24,7 @@ TOfflineGL::Imp *MacOfflineGenerator1(const TDimension &dim)
 #endif
 
 #include <map>
-#include <strstream>
+#include <sstream>
 
 using namespace TEnv;
 
@@ -217,10 +217,10 @@ TFilePath EnvGlobals::getSystemPath(int id)
   if(it != m_systemPaths.end()) return it->second;
   switch(id)
     {
-     case StuffDir:        return TFilePath(); 
+     case StuffDir:        return TFilePath();
      case ConfigDir:       return getSystemPath(StuffDir) + "config";
      case ProfilesDir:      return getSystemPath(StuffDir) + "profiles";
-     default: return TFilePath();      
+     default: return TFilePath();
     }
 }
 
@@ -636,21 +636,17 @@ std::istream &operator>>(std::istream &is, TRect &rect)
 template <class T>
 std::string toString2(T value)
 {
-	std::ostrstream ss;
+	std::ostringstream ss;
 	ss << value << '\0';
-	std::string s(ss.str());
-	ss.freeze(false);
-	return s;
+	return ss.str();
 }
 
 template <>
 std::string toString2(TRect value)
 {
-	std::ostrstream ss;
+	std::ostringstream ss;
 	ss << value.x0 << " " << value.y0 << " " << value.x1 << " " << value.y1 << '\0';
-	std::string s = ss.str();
-	ss.freeze(false);
-	return s;
+	return ss.str();
 }
 
 template <class T>
@@ -658,7 +654,7 @@ void fromString(std::string s, T &value)
 {
 	if (s.empty())
 		return;
-	std::istrstream is(s.c_str(), s.size());
+	std::istringstream is(s);
 	is >> value;
 }
 
