@@ -34,9 +34,8 @@ class BluredBrush;
 struct BrushData : public TPersist {
   PERSIST_DECLARATION(BrushData)
 
-	double m_min, m_max, m_acc, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
   std::wstring m_name;
-  double m_min, m_max, m_acc, m_hardness, m_opacityMin, m_opacityMax;
+  double m_min, m_max, m_acc, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
   bool m_selective, m_pencil, m_breakAngles, m_pressure;
   int m_cap, m_join, m_miter;
 
@@ -74,33 +73,32 @@ public:
 //    Smooth Stroke declaration
 //    Brush stroke smoothing buffer.
 //************************************************************************
-class SmoothStroke
-{
+class SmoothStroke {
 public:
-    SmoothStroke() {}
-    ~SmoothStroke() {}
+  SmoothStroke() {}
+  ~SmoothStroke() {}
 
-    // begin stroke
-    // smooth is smooth strength, from 0 to 100
-    void beginStroke(int smooth);
-    // add stroke point
-    void addPoint(const TThickPoint& point);
-    // end stroke
-    void endStroke();
-    // Get generated stroke points which has been smoothed.
-    // Both addPoint() and endStroke() generate new smoothed points.
-    // This method will removed generated points 
-    void getSmoothPoints(std::vector<TThickPoint>& smoothPoints);
-
-private:
-    void generatePoints();
+  // begin stroke
+  // smooth is smooth strength, from 0 to 100
+  void beginStroke(int smooth);
+  // add stroke point
+  void addPoint(const TThickPoint &point);
+  // end stroke
+  void endStroke();
+  // Get generated stroke points which has been smoothed.
+  // Both addPoint() and endStroke() generate new smoothed points.
+  // This method will removed generated points
+  void getSmoothPoints(std::vector<TThickPoint> &smoothPoints);
 
 private:
-    int m_smooth;
-    int m_outputIndex;
-    int m_readIndex;
-    std::vector<TThickPoint> m_rawPoints;
-    std::vector<TThickPoint> m_outputPoints;
+  void generatePoints();
+
+private:
+  int m_smooth;
+  int m_outputIndex;
+  int m_readIndex;
+  std::vector<TThickPoint> m_rawPoints;
+  std::vector<TThickPoint> m_outputPoints;
 };
 //************************************************************************
 //    Brush Tool declaration
@@ -151,12 +149,11 @@ public:
   // Tools.
   bool isPencilModeActive();
 
-    void addTrackPoint(const TThickPoint& point, double pixelSize2);
-    void flushTrackPoint();
+  void addTrackPoint(const TThickPoint &point, double pixelSize2);
+  void flushTrackPoint();
 
 protected:
   TPropertyGroup m_prop[2];
-
 
   TDoublePairProperty m_thickness;
   TDoublePairProperty m_rasThickness;
@@ -203,7 +200,7 @@ protected:
 
   bool m_active, m_enabled,
       m_isPrompting,  //!< Whether the tool is prompting for spline
-                      //!substitution.
+                      //! substitution.
       m_firstTime, m_isPath, m_presetsLoaded;
 
   /*---
