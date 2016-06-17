@@ -15,7 +15,7 @@
 
 #include <atomic>
 
-typedef std::atomic<int> atomic_t;
+typedef std::atomic<long> atomic_t;
 
 static __inline__ void atomic_set(atomic_t *v, const int value) {
   v->store(value);
