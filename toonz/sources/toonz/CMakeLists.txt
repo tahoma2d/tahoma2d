@@ -143,9 +143,7 @@ set(MOC_HEADERS
     metnum.h
     ObjectTracker.h
     predict3d.h
-    processor.h
-    viewer.h
-    writer.h)
+    processor.h)
 
 set(HEADERS ${MOC_HEADERS})
 
@@ -300,9 +298,7 @@ set(SOURCES
     dummyprocessor.cpp
     metnum.cpp
     ObjectTracker.cpp
-    predict3d.cpp
-    viewer.cpp
-    writer.cpp)
+    predict3d.cpp)
 
 add_translation(toonz ${HEADERS} ${SOURCES})
 
@@ -356,7 +352,7 @@ if(WIN32)
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport
         ${GL_LIB} ${GLUT_LIB}
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
-else()
+elseif(APPLE)
     find_library(COCOA_LIB Cocoa)
 
     _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
@@ -365,7 +361,15 @@ else()
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
     target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${COCOA_LIB} ${EXTRA_LIBS})
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
 
+    # 変なところにライブラリ生成するカスども
+    set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
+
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} ${OPENBLAS_LIB})
+
+    target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${EXTRA_LIBS})
 endif()
 
 if(APPLE)
