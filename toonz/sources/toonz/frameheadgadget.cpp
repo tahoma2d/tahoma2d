@@ -661,14 +661,10 @@ public:
 } onionSkinToggle;
 
 
-class ZeroThickToggle : public MenuItemHandler
-{
+class ZeroThickToggle : public MenuItemHandler {
 public:
-	ZeroThickToggle() : MenuItemHandler(MI_ZeroThick)
-	{
-	}
-	void execute()
-	{
+	ZeroThickToggle() : MenuItemHandler(MI_ZeroThick) {}
+	void execute() {
 		QAction *action = CommandManager::instance()->getAction(MI_ZeroThick);
 		if (!action)
 			return;
@@ -676,16 +672,14 @@ public:
 		enableZeroThick(checked);
 	}
 
-	static void enableZeroThick(bool enable = true)
-	{
+	static void enableZeroThick(bool enable = true)	{
 		Preferences::instance()->setShow0ThickLines(enable);
 		TApp::instance()->getCurrentScene()->notifySceneChanged();
 	}
 } ZeroThickToggle;
 
 
-void ZeroThickToggleGui::addZeroThickCommand(QMenu *menu)
-{
+void ZeroThickToggleGui::addZeroThickCommand(QMenu *menu) {
 	static ZeroThickToggleHandler switcher;
 	if (Preferences::instance()->getShow0ThickLines()) {
 		QAction *hideZeroThick = menu->addAction(QString(QObject::tr("Hide Zero Thickness Lines")));
@@ -699,12 +693,10 @@ void ZeroThickToggleGui::addZeroThickCommand(QMenu *menu)
 	}
 }
 
-void ZeroThickToggleGui::ZeroThickToggleHandler::activate()
-{
+void ZeroThickToggleGui::ZeroThickToggleHandler::activate() {
 	ZeroThickToggle::enableZeroThick(true);
 }
 
-void ZeroThickToggleGui::ZeroThickToggleHandler::deactivate()
-{
+void ZeroThickToggleGui::ZeroThickToggleHandler::deactivate() {
 	ZeroThickToggle::enableZeroThick(false);
 }

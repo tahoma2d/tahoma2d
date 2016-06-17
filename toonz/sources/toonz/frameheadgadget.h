@@ -87,12 +87,10 @@ public:
   bool eventFilter(QObject *obj, QEvent *event);
 };
 
-namespace ZeroThickToggleGui
-{
+namespace ZeroThickToggleGui {
 	void addZeroThickCommand(QMenu* menu);
 
-	class ZeroThickToggleHandler : public QObject
-	{
+	class ZeroThickToggleHandler : public QObject {
 		Q_OBJECT
 
 	public slots:
