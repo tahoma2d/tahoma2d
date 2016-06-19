@@ -39,7 +39,7 @@ class DVAPI TCamera {
 public:
   /*!
 Constructs TCamera with default value, size (12,9) and resolution (768,576).
-  Constructs TCamera with default value, size (12,9) and resolution (1920,1080).
+  Constructs TCamera with default value, size (35.9955, 20.2544) and resolution (1920,1080).
 - 05/31/16
 */
   TCamera();

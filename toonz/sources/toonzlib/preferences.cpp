@@ -373,7 +373,17 @@ Preferences::Preferences()
   setUndoMemorySize(m_undoMemorySize);
   m_blankColor = TPixel32(r, g, b);
 
+  getValue(*m_settings, "pixelsOnly", m_pixelsOnly);
+  
+  //for Pixels only 
   QString units;
+  units                    = m_settings->value("oldUnits").toString();
+  m_oldUnits = units;
+
+  units                    = m_settings->value("oldCameraUnits").toString();
+  m_oldCameraUnits = units;
+  //end for pixels only
+
   units                    = m_settings->value("linearUnits").toString();
   if (units != "") m_units = units;
   setUnits(m_units.toStdString());
@@ -929,6 +939,20 @@ void setCurrentUnits(std::string measureName, std::string units) {
 
 //-----------------------------------------------------------------
 
+void Preferences::setPixelsOnly(bool state) {
+	m_pixelsOnly = state;
+	m_settings->setValue("pixelsOnly", m_pixelsOnly);
+	if (state) {
+		storeOldUnits();
+	}
+	else
+	{
+		resetOldUnits();
+	}
+}
+
+//-----------------------------------------------------------------
+
 void Preferences::setUnits(std::string units) {
   m_units = QString::fromStdString(units);
   m_settings->setValue("linearUnits", m_units);
@@ -948,6 +972,24 @@ void Preferences::setCameraUnits(std::string units) {
   m_settings->setValue("cameraUnits", m_cameraUnits);
   setCurrentUnits("camera.lx", units);
   setCurrentUnits("camera.ly", units);
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::storeOldUnits() {
+	m_oldUnits = getUnits();
+	m_oldCameraUnits = getCameraUnits();
+	m_settings->setValue("oldUnits", m_oldUnits);
+	m_settings->setValue("oldCameraUnits", m_oldCameraUnits);
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::resetOldUnits() {
+	if (m_oldUnits != "" && m_oldCameraUnits != "") {
+		setUnits(m_oldUnits.toStdString());
+		setCameraUnits(m_oldCameraUnits.toStdString());
+	}
 }
 
 //-----------------------------------------------------------------

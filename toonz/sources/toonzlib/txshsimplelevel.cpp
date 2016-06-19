@@ -395,6 +395,10 @@ void TXshSimpleLevel::setPath(const TFilePath &fp, bool keepFrames) {
         imageRes.ly = imageInfo->m_ly;
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
+		if (Preferences::instance()->getUnits() == "pixel") {
+			imageDpi.x = 53.3333;
+			imageDpi.y = 53.3333;
+		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);
         m_properties->setBpp(imageInfo->m_bitsPerSample *
@@ -1175,6 +1179,10 @@ void TXshSimpleLevel::load() {
         imageRes.ly = imageInfo->m_ly;
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
+		if (Preferences::instance()->getUnits() == "pixel") {
+			imageDpi.x = 53.3333;
+			imageDpi.y = 53.3333;
+		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);
         m_properties->setBpp(imageInfo->m_bitsPerSample *
@@ -1282,6 +1290,10 @@ void TXshSimpleLevel::load(const std::vector<TFrameId> &fIds) {
         imageRes.ly = imageInfo->m_ly;
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
+		if (Preferences::instance()->getUnits() == "pixel") {
+			imageDpi.x = 53.3333;
+			imageDpi.y = 53.3333;
+		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);
       }

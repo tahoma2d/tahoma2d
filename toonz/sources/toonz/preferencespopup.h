@@ -51,7 +51,7 @@ private:
 
   QComboBox *m_keyframeType, *m_cellsDragBehaviour, *m_defScanLevelType,
       *m_defLevelType, *m_autocreationType, *m_levelFormatNames,
-      *m_columnIconOm;
+      *m_columnIconOm, *m_unitOm, *m_cameraUnitOm;
 
   DVGui::MeasuredDoubleLineEdit *m_defLevelWidth, *m_defLevelHeight;
 
@@ -65,7 +65,7 @@ private:
   QPushButton *m_addLevelFormat, *m_removeLevelFormat, *m_editLevelFormat;
 
   DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_levelsBackup,
-      *m_onionSkinVisibility;
+      *m_onionSkinVisibility, *m_pixelsOnlyCB;
 
 private:
   // QWidget* create(const QString& lbl, bool def, const char* slot);
@@ -73,6 +73,7 @@ private:
 
 private slots:
 
+  void onPixelsOnlyChanged(int index);
   void onUnitChanged(int index);
   void onCameraUnitChanged(int index);
   void onRoomChoiceChanged(int index);

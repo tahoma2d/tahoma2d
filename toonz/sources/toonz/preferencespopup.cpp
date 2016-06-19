@@ -22,6 +22,8 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/toonzscene.h"
+#include "toonz/tcamera.h"
 #include "toonz/levelproperties.h"
 #include "toonz/tonionskinmaskhandle.h"
 
@@ -211,14 +213,57 @@ Preferences::LevelFormat PreferencesPopup::FormatProperties::levelFormat()
 //    PreferencesPopup  implementation
 //**********************************************************************************
 
+void PreferencesPopup::onPixelsOnlyChanged(int index) {
+	bool enabled = index == Qt::Checked;
+	if (enabled) {
+		m_pref->setDefLevelDpi(53.3333);
+		m_pref->setPixelsOnly(true);
+		TCamera* camera;
+		camera = TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+		TDimension camRes = camera->getRes();
+		TDimensionD camSize;
+		camSize.lx = camRes.lx / 53.3333;
+		camSize.ly = camRes.ly / 53.3333;
+		camera->setSize(camSize);
+		m_pref->storeOldUnits();
+		if (m_unitOm->currentIndex() != 4)
+			m_unitOm->setCurrentIndex(4);
+		if (m_cameraUnitOm->currentIndex() != 4)
+			m_cameraUnitOm->setCurrentIndex(4);
+		m_unitOm->setDisabled(true);
+		m_cameraUnitOm->setDisabled(true);
+
+	}
+	else {
+		QString tempUnit;
+		int unitIndex;
+		tempUnit = m_pref->getOldUnits();
+		unitIndex = m_unitOm->findText(tempUnit);
+		m_unitOm->setCurrentIndex(unitIndex);
+		tempUnit = m_pref->getOldCameraUnits();
+		unitIndex = m_cameraUnitOm->findText(tempUnit);
+		m_cameraUnitOm->setCurrentIndex(unitIndex);
+		m_unitOm->setDisabled(false);
+		m_cameraUnitOm->setDisabled(false);
+		m_pref->setPixelsOnly(false);
+	}
+
+}
+
 void PreferencesPopup::onUnitChanged(int index) {
-  m_pref->setUnits(::units[index].toStdString());
+	if (index == 4 && m_pixelsOnlyCB->isChecked() == false) {
+		m_pixelsOnlyCB->setCheckState(Qt::Checked);
+	}
+	m_pref->setUnits(::units[index].toStdString());
 }
 
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onCameraUnitChanged(int index) {
-  m_pref->setCameraUnits(::units[index].toStdString());
+	if (index == 4 && m_pixelsOnlyCB->isChecked() == false) {
+		m_pixelsOnlyCB->setChecked(true);
+	}
+	m_pref->setCameraUnits(::units[index].toStdString());
 }
 
 //-----------------------------------------------------------------------------
@@ -834,8 +879,10 @@ PreferencesPopup::PreferencesPopup()
     languageType->setCurrentIndex(currentIndex);
   }
   QComboBox *styleSheetType = new QComboBox(this);
-  QComboBox *unitOm         = new QComboBox(this);
-  QComboBox *cameraUnitOm   = new QComboBox(this);
+  m_pixelsOnlyCB =
+	  new CheckBox(tr("All imported images will use the same DPI"), this);
+  m_unitOm         = new QComboBox(this);
+  m_cameraUnitOm   = new QComboBox(this);
   // Choose between standard and Studio Ghibli rooms
   QComboBox *roomChoice = new QComboBox(this);
 
@@ -1014,18 +1061,19 @@ PreferencesPopup::PreferencesPopup()
   }
   styleSheetType->addItems(styleSheetList);
   styleSheetType->setCurrentIndex(currentIndex);
-
+  //m_pixelsOnlyCB->setChecked(m_pref->getPixelsOnly());
+  m_pixelsOnlyCB->setChecked(true);
   QStringList type;
   type << tr("cm") << tr("mm") << tr("inch") << tr("field") << tr("pixel");
-  unitOm->addItems(type);
+  m_unitOm->addItems(type);
   int idx =
       std::find(::units, ::units + ::unitsCount, m_pref->getUnits()) - ::units;
-  unitOm->setCurrentIndex((idx < ::unitsCount) ? idx : ::inchIdx);
-  cameraUnitOm->addItems(type);
+  m_unitOm->setCurrentIndex((idx < ::unitsCount) ? idx : ::inchIdx);
+  m_cameraUnitOm->addItems(type);
 
   idx = std::find(::units, ::units + ::unitsCount, m_pref->getCameraUnits()) -
         ::units;
-  cameraUnitOm->setCurrentIndex((idx < ::unitsCount) ? idx : ::inchIdx);
+  m_cameraUnitOm->setCurrentIndex((idx < ::unitsCount) ? idx : ::inchIdx);
 
   QStringList roomList;
   int currentRoomIndex = 0;
@@ -1269,18 +1317,22 @@ PreferencesPopup::PreferencesPopup()
         styleLay->addWidget(new QLabel(tr("Style:")), 0, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
         styleLay->addWidget(styleSheetType, 0, 1);
+		
+		styleLay->addWidget(new QLabel(tr("Pixels Only:"), this), 1, 0,
+			                Qt::AlignRight | Qt::AlignVCenter);
+		styleLay->addWidget(m_pixelsOnlyCB, 1, 1);
 
-        styleLay->addWidget(new QLabel(tr("Unit:"), this), 1, 0,
+        styleLay->addWidget(new QLabel(tr("Unit:"), this), 2, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
-        styleLay->addWidget(unitOm, 1, 1);
+        styleLay->addWidget(m_unitOm, 2, 1);
 
-        styleLay->addWidget(new QLabel(tr("Camera Unit:"), this), 2, 0,
+        styleLay->addWidget(new QLabel(tr("Camera Unit:"), this), 3, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
-        styleLay->addWidget(cameraUnitOm, 2, 1);
+        styleLay->addWidget(m_cameraUnitOm, 3, 1);
 
-        styleLay->addWidget(new QLabel(tr("Rooms *:"), this), 3, 0,
+        styleLay->addWidget(new QLabel(tr("Rooms *:"), this), 4, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
-        styleLay->addWidget(roomChoice, 3, 1);
+        styleLay->addWidget(roomChoice, 4, 1);
       }
       styleLay->setColumnStretch(0, 0);
       styleLay->setColumnStretch(1, 0);
@@ -1671,9 +1723,11 @@ PreferencesPopup::PreferencesPopup()
   //--- Interface ----------------------
   ret = ret && connect(styleSheetType, SIGNAL(currentIndexChanged(int)),
                        SLOT(onStyleSheetTypeChanged(int)));
-  ret = ret && connect(unitOm, SIGNAL(currentIndexChanged(int)),
+  ret = ret && connect(m_pixelsOnlyCB, SIGNAL(stateChanged(int)),
+	                   SLOT(onPixelsOnlyChanged(int)));
+  ret = ret && connect(m_unitOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onUnitChanged(int)));
-  ret = ret && connect(cameraUnitOm, SIGNAL(currentIndexChanged(int)),
+  ret = ret && connect(m_cameraUnitOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onCameraUnitChanged(int)));
   ret = ret && connect(roomChoice, SIGNAL(currentIndexChanged(int)),
                        SLOT(onRoomChoiceChanged(int)));
