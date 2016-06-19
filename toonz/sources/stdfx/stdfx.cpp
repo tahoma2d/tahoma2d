@@ -38,7 +38,7 @@ public:
 
   ~FadeFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       bool ret = m_input->doGetBBox(frame, bBox, info);
       // devo scurire bgColor
@@ -49,7 +49,7 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) {
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
     if (!m_input.isConnected()) return;
 
     m_input->compute(tile, frame, ri);
@@ -58,7 +58,7 @@ public:
     TRop::rgbmScale(tile.getRaster(), tile.getRaster(), 1, 1, 1, v);
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 };
 
 //==================================================================
@@ -101,14 +101,14 @@ TPixel32 colors[] = {
   };
   ~SpiralFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 };
 
 //------------------------------------------------------------------
@@ -200,17 +200,17 @@ public:
   }
   ~MultiLinearGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
 
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::WIDTH;
@@ -252,17 +252,17 @@ public:
   }
   ~LinearGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
 
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::WIDTH;
@@ -414,16 +414,16 @@ public:
   }
   ~RadialGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 2];
 
     concepts[0].m_type  = TParamUIConcept::RADIUS;
@@ -470,16 +470,16 @@ public:
   }
   ~MultiRadialGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::RADIUS;
@@ -560,16 +560,16 @@ m_color->setDefaultValue(TPixel::Magenta);
   }
   ~LightSpotFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type = TParamUIConcept::RECT;

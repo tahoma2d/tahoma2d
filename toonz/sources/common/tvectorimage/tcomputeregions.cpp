@@ -2572,11 +2572,11 @@ private:
 public:
   TRegionClockWiseFormula() : m_quasiArea(0) {}
 
-  void inline update(const TPointD &p1, const TPointD &p2) {
+  void update(const TPointD &p1, const TPointD &p2) override {
     m_quasiArea += (p2.y + p1.y) * (p1.x - p2.x);
   }
 
-  bool inline isClockwise() { return m_quasiArea > 0.5; }
+  bool isClockwise() { return m_quasiArea > 0.5; }
 };
 
 //----------------------------------------------------------------------------------------------

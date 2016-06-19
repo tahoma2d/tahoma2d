@@ -1310,7 +1310,7 @@ class MeshifyCommand : public MenuItemHandler {
 public:
   MeshifyCommand() : MenuItemHandler("A_ToolOption_Meshify") {}
 
-  void execute() {
+  void execute() override {
     static MeshifyPopup *thePopup = 0;
     if (!thePopup) thePopup       = new MeshifyPopup;
 

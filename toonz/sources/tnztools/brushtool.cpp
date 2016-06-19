@@ -424,7 +424,7 @@ public:
       , m_selective(selective)
       , m_isPencil(isPencil) {}
 
-  void redo() const {
+  void redo() const override {
     insertLevelAndFrameIfNeeded();
     TToonzImageP image = getImage();
     TRasterCM32P ras   = image->getRaster();
@@ -439,9 +439,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const { return sizeof(*this) + TRasterUndo::getSize(); }
-  QString getToolName() { return QString("Brush Tool"); }
-  int getHistoryType() { return HistoryType::BrushTool; }
+  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  QString getToolName() override { return QString("Brush Tool"); }
+  int getHistoryType() override { return HistoryType::BrushTool; }
 };
 
 //=========================================================================================================
@@ -466,7 +466,7 @@ public:
       , m_maxThick(maxThick)
       , m_hardness(hardness) {}
 
-  void redo() const {
+  void redo() const override {
     if (m_points.size() == 0) return;
     insertLevelAndFrameIfNeeded();
     TToonzImageP image     = getImage();
@@ -506,10 +506,10 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
 
-  virtual QString getToolName() { return QString("Brush Tool"); }
-  int getHistoryType() { return HistoryType::BrushTool; }
+  QString getToolName() override { return QString("Brush Tool"); }
+  int getHistoryType() override { return HistoryType::BrushTool; }
 };
 
 //=========================================================================================================

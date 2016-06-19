@@ -136,8 +136,8 @@ public:
   }
   ~TImageWriterAvi() { m_lwa->release(); }
 
-  bool is64bitOutputSupported() { return false; }
-  void save(const TImageP &img) { m_lwa->save(img, m_frameIndex); }
+  bool is64bitOutputSupported() override { return false; }
+  void save(const TImageP &img) override { m_lwa->save(img, m_frameIndex); }
 
 private:
   TLevelWriterAvi *m_lwa;
@@ -613,7 +613,7 @@ public:
   }
   ~TImageReaderAvi() { m_lra->release(); }
 
-  TImageP load() { return m_lra->load(m_frameIndex); }
+  TImageP load() override { return m_lra->load(m_frameIndex); }
   TDimension getSize() const { return m_lra->getSize(); }
   TRect getBBox() const { return TRect(); }
 

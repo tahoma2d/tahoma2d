@@ -303,8 +303,8 @@ between RGBA color components.
       const;  //!< Returns the index of the style whose main color
               //!  is nearest to the requested one.
 
-  void loadData(TIStream &is);  //!< I/O palette save function.
-  void saveData(TOStream &os);  //!< I/O palette load function.
+  void loadData(TIStream &is) override;  //!< I/O palette save function.
+  void saveData(TOStream &os) override;  //!< I/O palette load function.
 
   int getVersion() const {
     return m_version;

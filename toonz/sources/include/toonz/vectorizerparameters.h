@@ -275,8 +275,8 @@ public:
                              getCenterlineConfiguration(weight));
   }
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 };
 
 #endif  // VECTORIZERPARAMETERS_H

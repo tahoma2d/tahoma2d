@@ -203,8 +203,8 @@ private:
 
   void updateVisibility();
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 private slots:
 
@@ -313,7 +313,7 @@ protected:
   /*! \details  Remember that \b each of the above \a set methods \b must
           be called before invoking run().                                    */
 
-  void run();  //!< Starts the vectorization thread (see QThread documentation).
+  void run() override;  //!< Starts the vectorization thread (see QThread documentation).
 
 private:
   TXshSimpleLevelP m_level;  //!< Input level to vectorize (only one level at a

@@ -35,7 +35,7 @@ class ParticlesManagerGenerator : public TRenderResourceManagerGenerator {
 public:
   ParticlesManagerGenerator() : TRenderResourceManagerGenerator(true) {}
 
-  TRenderResourceManager *operator()(void) { return new ParticlesManager; }
+  TRenderResourceManager *operator()(void) override { return new ParticlesManager; }
 };
 
 MANAGER_FILESCOPE_DECLARATION(ParticlesManager, ParticlesManagerGenerator);

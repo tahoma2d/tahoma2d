@@ -570,7 +570,7 @@ private:
   void invalidate(LazyData &ld) const;
   void updateKeyframes(LazyData &ld) const;
 
-  void onChange(const class TParamChange &c);
+  void onChange(const class TParamChange &c) override;
 };
 
 //-----------------------------------------------------------------------------

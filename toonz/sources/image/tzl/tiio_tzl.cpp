@@ -340,12 +340,12 @@ private:
 public:
   //! Indice del frame del livello
   TFrameId m_fid;
-  TImageP load();
-  TImageP loadIcon() {
+  TImageP load() override;
+  TImageP loadIcon() override {
     m_isIcon = true;
     return load();
   }
-  const TImageInfo *getImageInfo() const;
+  const TImageInfo *getImageInfo() const override;
 
   // TImageP doLoad();
 
@@ -389,7 +389,7 @@ private:
   TImageWriterTzl &operator=(const TImageWriterTzl &src);
 
 public:
-  void save(const TImageP &img) { m_lwp->save(img, m_fid); }
+  void save(const TImageP &img) override { m_lwp->save(img, m_fid); }
 };
 /*
 //===================================================================

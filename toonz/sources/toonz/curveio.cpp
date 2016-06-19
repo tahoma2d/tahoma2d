@@ -20,11 +20,11 @@ public:
   LoadCurveUndo(TDoubleParam *curve) : m_curve(curve) {
     m_oldCurve = static_cast<TDoubleParam *>(curve->clone());
   }
-  void onAdd() { m_newCurve = static_cast<TDoubleParam *>(m_curve->clone()); }
+  void onAdd() override { m_newCurve = static_cast<TDoubleParam *>(m_curve->clone()); }
 
-  void undo() const { m_curve->copy(m_oldCurve.getPointer()); }
-  void redo() const { m_curve->copy(m_newCurve.getPointer()); }
-  int getSize() const {
+  void undo() const override { m_curve->copy(m_oldCurve.getPointer()); }
+  void redo() const override { m_curve->copy(m_newCurve.getPointer()); }
+  int getSize() const override {
     return sizeof(*this) + 2 * sizeof(TDoubleParam);  // not very accurate
   }
 };
@@ -50,7 +50,7 @@ public:
     setFilterTypes(sl);
   }
 
-  void initFolder() { setFolder(m_folderPath); }
+  void initFolder() override { setFolder(m_folderPath); }
 
   bool checkOverride(const TFilePath &fp) const {
     if (TFileStatus(fp).doesExist()) {
@@ -76,7 +76,7 @@ public:
     setFilterType("curve");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ public:
     setFilterType("curve");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -155,7 +155,7 @@ public:
     setFilterType("dat");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------

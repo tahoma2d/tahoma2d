@@ -1584,7 +1584,7 @@ class CleanupCommand : public MenuItemHandler {
 public:
   CleanupCommand() : MenuItemHandler("MI_Cleanup") {}
 
-  void execute() {
+  void execute() override {
     static CleanupPopup *popup = new CleanupPopup;
     popup->execute();
   }

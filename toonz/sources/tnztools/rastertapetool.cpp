@@ -72,7 +72,7 @@ public:
 
   //-------------------------------------------------------------------
 
-  void redo() const {
+  void redo() const override {
     TToonzImageP image = getImage();
     if (!image) return;
     TAutocloser ac(image->getRaster(), m_params.m_closingDistance,
@@ -88,10 +88,10 @@ public:
 
   //-------------------------------------------------------------------
 
-  int getSize() const { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
 
-  QString getToolName() { return QString("Autoclose Tool"); }
-  int getHistoryType() { return HistoryType::AutocloseTool; }
+  QString getToolName() override { return QString("Autoclose Tool"); }
+  int getHistoryType() override { return HistoryType::AutocloseTool; }
 };
 
 }  // namespace
@@ -169,11 +169,11 @@ public:
 
   //------------------------------------------------------------
 
-  ToolType getToolType() const { return TTool::LevelWriteTool; }
+  ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
   //------------------------------------------------------------
 
-  void updateTranslation() {
+  void updateTranslation() override {
     m_closeType.setQStringName(tr("Type:"));
     m_distance.setQStringName(tr("Distance:"));
     m_inkIndex.setQStringName(tr("Style Index:"));
@@ -184,7 +184,7 @@ public:
 
   //------------------------------------------------------------
 
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override {
     if (m_closeType.getValue() == RECT_CLOSE) {
       if (!m_selecting) return;
       m_selectingRect.x1 = pos.x;
@@ -372,7 +372,7 @@ public:
 
   //----------------------------------------------------------------------
 
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override {
     TToonzImageP ti = TToonzImageP(getImage(true));
     if (!ti) return;
 
@@ -439,7 +439,7 @@ public:
 
   //------------------------------------------------------------
 
-  void draw() {
+  void draw() override {
     double pixelSize2 = getPixelSize() * getPixelSize();
     m_thick           = sqrt(pixelSize2) / 2.0;
     if (m_closeType.getValue() == RECT_CLOSE) {
@@ -477,7 +477,7 @@ public:
 
   //------------------------------------------------------------
 
-  bool onPropertyChanged(std::string propertyName) {
+  bool onPropertyChanged(std::string propertyName) override {
     if (propertyName == m_closeType.getName()) {
       AutocloseVectorType = ::to_string(m_closeType.getValue());
       resetMulti();
@@ -523,7 +523,7 @@ public:
 
   //----------------------------------------------------------------------
 
-  void onImageChanged() {
+  void onImageChanged() override {
     if (!m_multi.getValue()) return;
     TTool::Application *app = TTool::getApplication();
     TXshSimpleLevel *xshl   = 0;
@@ -551,7 +551,7 @@ public:
 
   //----------------------------------------------------------------------
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {
     TToonzImageP ti = TToonzImageP(getImage(true));
     if (!ti) return;
 
@@ -600,7 +600,7 @@ public:
 
   //----------------------------------------------------------------------
 
-  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) override {
     TToonzImageP ti = TToonzImageP(getImage(true));
     if (m_closeType.getValue() == POLYLINE_CLOSE && ti) {
       closePolyline(pos);
@@ -629,7 +629,7 @@ public:
 
   //----------------------------------------------------------------------
 
-  void mouseMove(const TPointD &pos, const TMouseEvent &e) {
+  void mouseMove(const TPointD &pos, const TMouseEvent &e) override {
     if (m_closeType.getValue() == POLYLINE_CLOSE) {
       m_mousePosition = pos;
       invalidate();
@@ -638,17 +638,17 @@ public:
 
   //----------------------------------------------------------------------
 
-  void onEnter() {
+  void onEnter() override {
     //      getApplication()->editImage();
   }
 
   //----------------------------------------------------------------------
 
-  TPropertyGroup *getProperties(int targetType) { return &m_prop; }
+  TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
   //----------------------------------------------------------------------
 
-  void onActivate() {
+  void onActivate() override {
     if (m_firstTime) {
       m_closeType.setValue(::to_wstring(AutocloseVectorType.getValue()));
       m_distance.setValue(AutocloseDistance);
@@ -663,11 +663,11 @@ public:
 
   //----------------------------------------------------------------------
 
-  void onDeactivate() {}
+  void onDeactivate() override {}
 
   //----------------------------------------------------------------------
 
-  int getCursorId() const {
+  int getCursorId() const override {
     if (ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg)
       return ToolCursor::TapeCursorWhite;
     else

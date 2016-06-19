@@ -59,9 +59,9 @@ public:
 
   void createLattice();
   void shepardWarp();
-  TPointD map(const TPointD &p) const;
-  int invMap(const TPointD &p, TPointD *invs) const;
-  int maxInvCount() const { return 1; }
+  TPointD map(const TPointD &p) const override;
+  int invMap(const TPointD &p, TPointD *invs) const override;
+  int maxInvCount() const override { return 1; }
 };
 
 /*---------------------------------------------------------------------------*/

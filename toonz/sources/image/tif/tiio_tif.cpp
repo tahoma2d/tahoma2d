@@ -52,16 +52,17 @@ public:
   TifReader(bool isTzi);
   ~TifReader();
 
-  void open(FILE *file);
+  void open(FILE *file) override;
 
-  Tiio::RowOrder getRowOrder() const { return m_rowOrder; }
+  Tiio::RowOrder getRowOrder() const override { return m_rowOrder; }
 
-  virtual bool read16BitIsEnabled() const { return false; }
-  virtual void enable16BitRead(bool enabled) { is16bitEnabled = enabled; }
+  bool read16BitIsEnabled() const override { return false; }
 
-  int skipLines(int lineCount);
-  void readLine(char *buffer, int x0, int x1, int shrink);
-  void readLine(short *buffer, int x0, int x1, int shrink);
+  void enable16BitRead(bool enabled) override { is16bitEnabled = enabled; }
+
+  int skipLines(int lineCount) override;
+  void readLine(char *buffer, int x0, int x1, int shrink) override;
+  void readLine(short *buffer, int x0, int x1, int shrink) override;
 };
 
 //------------------------------------------------------------
@@ -734,13 +735,13 @@ public:
   TifWriter();
   ~TifWriter();
 
-  void open(FILE *file, const TImageInfo &info);
-  void writeLine(char *buffer);
-  void writeLine(short *buffer);
+  void open(FILE *file, const TImageInfo &info) override;
+  void writeLine(char *buffer) override;
+  void writeLine(short *buffer) override;
 
-  void flush();
+  void flush() override;
 
-  Tiio::RowOrder getRowOrder() const { return m_rowOrder; }
+  Tiio::RowOrder getRowOrder() const override { return m_rowOrder; }
 };
 
 //------------------------------------------------------------

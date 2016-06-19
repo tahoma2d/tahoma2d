@@ -200,7 +200,7 @@ class TImageWriter3gp : public TImageWriter {
 public:
   TImageWriter3gp(const TFilePath &, int frameIndex, TLevelWriter3gp *);
   ~TImageWriter3gp() { m_lwm->release(); }
-  bool is64bitOutputSupported() { return false; }
+  bool is64bitOutputSupported() override { return false; }
 
 private:
   // not implemented
@@ -208,7 +208,7 @@ private:
   TImageWriter3gp &operator=(const TImageWriter3gp &src);
 
 public:
-  void save(const TImageP &);
+  void save(const TImageP &) override;
   int m_frameIndex;
 
 private:
@@ -229,7 +229,7 @@ private:
   TImageReader3gp &operator=(const TImageReader3gp &src);
 
 public:
-  TImageP load();
+  TImageP load() override;
   void load(const TRasterP &rasP, const TPoint &pos = TPoint(0, 0),
             int shrinkX = 1, int shrinkY = 1);
   int m_frameIndex;

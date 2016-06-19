@@ -135,8 +135,8 @@ successful (accepted) - in which case the popup closes.
   // change the "Apply" button for the browser in flipbook to "Append"
   virtual bool executeApply() { return execute(); }
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
 
@@ -164,7 +164,7 @@ was explicitly aborted by the user.
   TFilePath getPath();
 
 protected:
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -186,7 +186,7 @@ action was explicitly aborted by the user.
   TFilePath getPath();
 
 protected:
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -197,14 +197,14 @@ class LoadScenePopup : public FileBrowserPopup {
 public:
   LoadScenePopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 
   // change the initial path according to the current room
   void setInitialFolderByCurrentRoom();
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -215,11 +215,11 @@ class LoadSubScenePopup : public FileBrowserPopup {
 public:
   LoadSubScenePopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -230,8 +230,8 @@ class SaveSceneAsPopup : public FileBrowserPopup {
 public:
   SaveSceneAsPopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -242,8 +242,8 @@ class SaveSubSceneAsPopup : public FileBrowserPopup {
 public:
   SaveSubSceneAsPopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -270,17 +270,17 @@ class LoadLevelPopup : public FileBrowserPopup {
 public:
   LoadLevelPopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 
 protected:
   // reflect the current frame to GUI
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 public slots:
   void onFilePathsSelected(const std::set<TFilePath> &paths,
-                           const std::list<std::vector<TFrameId>> &fIds);
+                           const std::list<std::vector<TFrameId>> &fIds) override;
   // if the frame switched, then move m_posFrom
   void onFrameSwitched();
   // if the from/to values in the subsequent box are changed, then reflect them
@@ -310,8 +310,8 @@ class SaveLevelAsPopup : public FileBrowserPopup {
 public:
   SaveLevelAsPopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -326,10 +326,10 @@ class ReplaceLevelPopup : public FileBrowserPopup {
 public:
   ReplaceLevelPopup();
 
-  bool execute();
+  bool execute() override;
   void show();
 
-  void initFolder();
+  void initFolder() override;
 
 protected slots:
   void onSelectionChanged(TSelection *selection);
@@ -343,8 +343,8 @@ class SavePaletteAsPopup : public FileBrowserPopup {
 public:
   SavePaletteAsPopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -357,10 +357,10 @@ class LoadColorModelPopup : public FileBrowserPopup {
 public:
   LoadColorModelPopup();
 
-  bool execute();
+  bool execute() override;
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 
 protected slots:
 
@@ -375,11 +375,11 @@ class ImportMagpieFilePopup : public FileBrowserPopup {
 public:
   ImportMagpieFilePopup();
 
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -394,8 +394,8 @@ class ReplaceParentDirectoryPopup : public FileBrowserPopup {
 public:
   ReplaceParentDirectoryPopup();
   void show();
-  bool execute();
-  void initFolder();
+  bool execute() override;
+  void initFolder() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -410,7 +410,7 @@ public:
 
   const TFilePath &getPath() { return m_path; }
 
-  bool execute();
+  bool execute() override;
   void initFolder(TFilePath path);
 };
 
@@ -426,10 +426,10 @@ class BrowserPopupController : public QObject,
 public:
   BrowserPopupController();
 
-  bool isExecute() { return m_isExecute; }
+  bool isExecute() override { return m_isExecute; }
   void openPopup(QStringList filters, bool isDirectoryOnly,
-                 QString lastSelectedPath);
-  QString getPath();
+                 QString lastSelectedPath) override;
+  QString getPath() override;
 };
 
 #endif  // FILEBROWSERPOPUP_H

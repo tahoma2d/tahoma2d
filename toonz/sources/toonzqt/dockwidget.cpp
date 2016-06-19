@@ -43,7 +43,7 @@ class DockingToggleCommand : public MenuItemHandler {
 public:
   DockingToggleCommand() : MenuItemHandler("MI_DockingCheck") {}
 
-  void execute() {
+  void execute() override {
     DockingCheck *dc = DockingCheck::instance();
     dc->setIsEnabled(!dc->isEnabled());
   }

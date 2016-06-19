@@ -68,8 +68,8 @@ public:
           FramesMode FRAMES_NONE or Filter EMPTY. It is user's responsibility
           to check whether nontrivial selections are empty or not. */
 
-  bool isEmpty() const;  //!< Returns whether the selection is empty.
-  void selectNone();  //!< Resets the selection to empty. This is functionally
+  bool isEmpty() const override;  //!< Returns whether the selection is empty.
+  void selectNone() override;  //!< Resets the selection to empty. This is functionally
                       //!  equivalent to <TT>operator=(LevelSelection());</TT>
   FramesMode framesMode() const { return m_framesMode; }
   FramesMode &framesMode()  //!  Returns current frames selection mode.

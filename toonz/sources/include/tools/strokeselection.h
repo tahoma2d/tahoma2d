@@ -57,12 +57,12 @@ public:
   const IndexesContainer &getSelection() const { return m_indexes; }
   IndexesContainer &getSelection() { return m_indexes; }
 
-  bool isEmpty() const { return m_indexes.empty(); }
+  bool isEmpty() const override { return m_indexes.empty(); }
   bool updateSelectionBBox() const { return m_updateSelectionBBox; }
   bool isSelected(int index) const { return (m_indexes.count(index) > 0); }
   void select(int index, bool on);
   void toggle(int index);
-  void selectNone() { m_indexes.clear(); }
+  void selectNone() override { m_indexes.clear(); }
 
   void setSceneHandle(TSceneHandle *tsh) { m_sceneHandle = tsh; }
 
@@ -77,7 +77,7 @@ public:
 
   void removeEndpoints();
 
-  void enableCommands();
+  void enableCommands() override;
 
 private:
   TVectorImageP m_vi;          //!< Selected vector image.

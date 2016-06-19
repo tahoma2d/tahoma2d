@@ -266,7 +266,7 @@ public:
 
   // resituisce una stringa che identifica univocamente il sottoalbero
   // avente come radice l'effetto
-  virtual std::string getAlias(double frame, const TRenderSettings &info) const;
+  std::string getAlias(double frame, const TRenderSettings &info) const override;
 
   virtual void dryCompute(TRectD &rect, double frame,
                           const TRenderSettings &info);
@@ -331,18 +331,18 @@ public:
   virtual TAffine getPlacement(double frame)       = 0;
   virtual TAffine getParentPlacement(double frame) = 0;
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info);
-  virtual void compute(TFlash &flash, int frame);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
+  void compute(TFlash &flash, int frame) override;
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info);
+  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override;
 
   virtual bool checkTimeRegion() const { return false; }
 
-  std::string getAlias(double frame, const TRenderSettings &info) const;
+  std::string getAlias(double frame, const TRenderSettings &info) const override;
 
   void transform(double frame, int port, const TRectD &rectOnOutput,
                  const TRenderSettings &infoOnOutput, TRectD &rectOnInput,
-                 TRenderSettings &infoOnInput);
+                 TRenderSettings &infoOnInput) override;
 };
 
 //-------------------------------------------------------------------
@@ -388,21 +388,21 @@ public:
   ~NaAffineFx() {}
   NaAffineFx(bool isDpiAffine = false);
 
-  TFx *clone(bool recursive) const;
+  TFx *clone(bool recursive) const override;
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
 
-  void compute(TFlash &flash, int frame);
+  void compute(TFlash &flash, int frame) override;
 
-  TAffine getPlacement(double frame) { return m_aff; }
-  TAffine getParentPlacement(double frame) { return TAffine(); }
+  TAffine getPlacement(double frame) override { return m_aff; }
+  TAffine getParentPlacement(double frame) override { return TAffine(); }
 
   void setAffine(const TAffine &aff) {
     assert(aff != TAffine());
     m_aff = aff;
   }
   bool isDpiAffine() const { return m_isDpiAffine; }
-  std::string getPluginId() const { return std::string(); }
+  std::string getPluginId() const override { return std::string(); }
 
 protected:
   TRasterFxPort m_port;

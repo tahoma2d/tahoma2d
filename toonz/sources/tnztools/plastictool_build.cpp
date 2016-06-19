@@ -105,7 +105,7 @@ protected:
 public:
   VertexUndo() : m_row(::row()), m_col(::column()), m_v(-1), m_vParent(-1) {}
 
-  int getSize() const { return sizeof(*this); }  // sizeof this is roughly ok
+  int getSize() const override { return sizeof(*this); }  // sizeof this is roughly ok
 
   void storeChildren(const PlasticSkeleton &skeleton,
                      const PlasticSkeletonVertex &vx) {
@@ -198,10 +198,10 @@ public:
     assert(m_vx.edges().empty());
   }
 
-  void redo() const {
+  void redo() const override {
     const_cast<AddVertexUndo &>(*this).VertexUndo::addVertex();
   }
-  void undo() const {
+  void undo() const override {
     const_cast<AddVertexUndo &>(*this).VertexUndo::removeVertex();
   }
 };
@@ -215,10 +215,10 @@ public:
     m_v = v;
   }
 
-  void redo() const {
+  void redo() const override {
     const_cast<RemoveVertexUndo &>(*this).VertexUndo::removeVertex();
   }
-  void undo() const {
+  void undo() const override {
     const_cast<RemoveVertexUndo &>(*this).VertexUndo::insertVertex();
   }
 };
@@ -235,11 +235,11 @@ public:
     std::vector<int>(1, ed.vertex(1)).swap(m_children);
   }
 
-  void redo() const {
+  void redo() const override {
     const_cast<InsertVertexUndo &>(*this).VertexUndo::insertVertex();
   }
 
-  void undo() const {
+  void undo() const override {
     TCG_ASSERT(!m_children.empty(), return );
 
     const_cast<InsertVertexUndo &>(*this).VertexUndo::removeVertex();
@@ -267,16 +267,16 @@ public:
   // cleared deformation! So, I guess 1 MB (100 of these in the standard undos
   // pool)
   // is a reasonable estimate...
-  int getSize() const { return 1 << 20; }
+  int getSize() const override { return 1 << 20; }
 
-  void redo() const {
+  void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     l_plasticTool.addSkeleton(m_skelId, new PlasticSkeleton(*m_skeleton));
     ::invalidateXsheet();
   }
 
-  void undo() const {
+  void undo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     l_plasticTool.removeSkeleton(m_skelId);
@@ -290,8 +290,8 @@ public:
   RemoveSkeletonUndo(int skelId)
       : AddSkeletonUndo(skelId, l_plasticTool.skeleton()) {}
 
-  void redo() const { AddSkeletonUndo::undo(); }
-  void undo() const { AddSkeletonUndo::redo(); }
+  void redo() const override { AddSkeletonUndo::undo(); }
+  void undo() const override { AddSkeletonUndo::redo(); }
 };
 
 //------------------------------------------------------------------------
@@ -303,7 +303,7 @@ class RemoveSkeletonUndo_WithKeyframes : public RemoveSkeletonUndo {
 public:
   RemoveSkeletonUndo_WithKeyframes(int skelId) : RemoveSkeletonUndo(skelId) {}
 
-  void redo() const {
+  void redo() const override {
     // Erase all keyframes corresponding to m_skelId from sd's skeleton ids
     // curve
     const SkDP &sd = l_plasticTool.deformation();
@@ -327,7 +327,7 @@ public:
     RemoveSkeletonUndo::redo();  // Invalidates the xsheet
   }
 
-  void undo() const {
+  void undo() const override {
     l_plasticTool
         .touchDeformation();  // Skeleton removal could have destroyed the sd
 
@@ -362,9 +362,9 @@ public:
   SetSkeletonIdUndo(int skelId)
       : m_row(::row()), m_col(::column()), m_skelId(skelId) {}
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  void redo() const {
+  void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     const SkDP &sd = l_plasticTool.deformation();
@@ -396,7 +396,7 @@ public:
     // onChange()
   }
 
-  void undo() const {
+  void undo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     const SkDP &sd = l_plasticTool.deformation();
@@ -440,12 +440,12 @@ public:
     assert(m_vIdxs.size() == m_origVxsPos.size());
   }
 
-  int getSize() const {
+  int getSize() const override {
     return int(sizeof(*this) +
                m_vIdxs.size() * (sizeof(int) + 2 * sizeof(TPointD)));
   }
 
-  void redo() const {
+  void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     l_plasticTool.setSkeletonSelection(m_vIdxs);
@@ -456,7 +456,7 @@ public:
     l_plasticTool.invalidate();
   }
 
-  void undo() const {
+  void undo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     l_plasticTool.setSkeletonSelection(m_vIdxs);

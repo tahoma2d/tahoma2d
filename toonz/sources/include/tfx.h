@@ -89,9 +89,9 @@ public:
     }
   }
 
-  TFx *getFx() const { return m_fx; }
+  TFx *getFx() const override { return m_fx; }
 
-  void setFx(TFx *fx) {
+  void setFx(TFx *fx) override {
     if (m_fx) m_fx->removeOutputConnection(this);
 
     if (fx == 0) {
@@ -459,7 +459,7 @@ public:
   static TFx *create(std::string name);
 
   // TParamObserver-related methods
-  void onChange(const TParamChange &c);
+  void onChange(const TParamChange &c) override;
 
   void addObserver(TFxObserver *);
   void removeObserver(TFxObserver *);
@@ -469,8 +469,8 @@ public:
   void notify(const TFxParamAdded &change);
   void notify(const TFxParamRemoved &change);
 
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
 
   void loadPreset(TIStream &is);  // solleva un eccezione se il preset non
                                   // corrisponde all'effetto
@@ -529,7 +529,7 @@ template <class T>
 class TFxDeclarationT : public TFxDeclaration {
 public:
   TFxDeclarationT(const TFxInfo &info) : TFxDeclaration(info) {}
-  TPersist *create() const { return new T; }
+  TPersist *create() const override { return new T; }
 };
 
 //-------------------------------------------------------------------

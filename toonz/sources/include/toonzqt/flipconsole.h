@@ -58,7 +58,7 @@ public:
 
   void resetFps(int fps);
 
-  void run();
+  void run() override;
   void abort() { m_abort = true; }
 
   void emitNextFrame(int fps) { emit nextFrame(fps); }
@@ -161,11 +161,11 @@ public:
   void setFinishedColor(const QColor &color);
 
 protected:
-  void paintEvent(QPaintEvent *ev);
+  void paintEvent(QPaintEvent *ev) override;
 
-  void mousePressEvent(QMouseEvent *me);
-  void mouseMoveEvent(QMouseEvent *me);
-  void mouseReleaseEvent(QMouseEvent *me);
+  void mousePressEvent(QMouseEvent *me) override;
+  void mouseMoveEvent(QMouseEvent *me) override;
+  void mouseReleaseEvent(QMouseEvent *me) override;
 
 private:
   int sliderPositionFromValue(int min, int max, int pos, int span);

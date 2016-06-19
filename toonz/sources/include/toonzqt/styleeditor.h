@@ -168,14 +168,14 @@ public:
   QColor getBGColor() const { return m_bgColor; }
 
 protected:
-  void initializeGL();
-  void resizeGL(int width, int height);
-  void paintGL();
+  void initializeGL() override;
+  void resizeGL(int width, int height) override;
+  void paintGL() override;
   QSize SizeHint() const { return QSize(300, 200); };
 
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
 
 signals:
   void colorChanged(const ColorModel &color, bool isDragging);
@@ -204,12 +204,12 @@ public:
   void setColor(const ColorModel &color);
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 
   void click(const QPoint &pos);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
 
 public slots:
   /*! Connect channels to the two square axes:
@@ -247,9 +247,9 @@ public:
   ColorChannel getChannel() const { return m_channel; }
 
 protected:
-  void paintEvent(QPaintEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
 
   //	QIcon getFirstArrowIcon();
   //	QIcon getLastArrowIcon();
@@ -279,7 +279,7 @@ public:
 
 protected:
   void stopTime(int timerId);
-  void timerEvent(QTimerEvent *event);
+  void timerEvent(QTimerEvent *event) override;
   void notifyChanged();
 
 protected slots:
@@ -344,9 +344,9 @@ public:
       : IntLineEdit(parent, value, minValue, maxValue), m_isEditing(false) {}
 
 protected:
-  void mousePressEvent(QMouseEvent *);
-  void focusOutEvent(QFocusEvent *);
-  void paintEvent(QPaintEvent *);
+  void mousePressEvent(QMouseEvent *) override;
+  void focusOutEvent(QFocusEvent *) override;
+  void paintEvent(QPaintEvent *) override;
 };
 
 //=============================================================================
@@ -423,8 +423,8 @@ signals:
   void colorParamChanged();
 
 protected:
-  void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *);
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
 };
 
 //=============================================================================
@@ -460,7 +460,7 @@ public:
   void setColor(const TColorStyle &style, int colorParameterIndex);
 
 protected:
-  void resizeEvent(QResizeEvent *);
+  void resizeEvent(QResizeEvent *) override;
 
 signals:
   void colorChanged(const ColorModel &, bool isDragging);
@@ -512,12 +512,12 @@ protected:
 
   int posToIndex(const QPoint &pos) const;
 
-  void paintEvent(QPaintEvent *);
-  void resizeEvent(QResizeEvent *) { computeSize(); }
+  void paintEvent(QPaintEvent *) override;
+  void resizeEvent(QResizeEvent *) override { computeSize(); }
 
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event) {}
-  void mouseReleaseEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override {}
+  void mouseReleaseEvent(QMouseEvent *event) override;
 protected slots:
   void computeSize();
 signals:
@@ -675,8 +675,8 @@ protected:
               bool enabledFirstAndLastTab = false);
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
 

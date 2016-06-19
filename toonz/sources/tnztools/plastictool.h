@@ -183,37 +183,37 @@ public:
   PlasticTool();
   ~PlasticTool();
 
-  ToolType getToolType() const;
-  int getCursorId() const { return ToolCursor::SplineEditorCursor; }
+  ToolType getToolType() const override;
+  int getCursorId() const override { return ToolCursor::SplineEditorCursor; }
 
-  ToolOptionsBox *createOptionsBox();
+  ToolOptionsBox *createOptionsBox() override;
 
-  TPropertyGroup *getProperties(int idx) { return &m_propGroup[idx]; }
+  TPropertyGroup *getProperties(int idx) override { return &m_propGroup[idx]; }
 
-  void updateTranslation();
+  void updateTranslation() override;
 
-  void onSetViewer();
+  void onSetViewer() override;
 
-  void onActivate();
-  void onDeactivate();
+  void onActivate() override;
+  void onDeactivate() override;
 
-  void onEnter();
-  void onLeave();
+  void onEnter() override;
+  void onLeave() override;
 
-  void addContextMenuItems(QMenu *menu);
+  void addContextMenuItems(QMenu *menu) override;
 
-  void reset();
+  void reset() override;
 
-  bool onPropertyChanged(std::string propertyName);
+  bool onPropertyChanged(std::string propertyName) override;
 
 public:
   // Methods reimplemented in each interaction mode
-  void mouseMove(const TPointD &pos, const TMouseEvent &me);
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &me);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &me);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &me);
+  void mouseMove(const TPointD &pos, const TMouseEvent &me) override;
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &me) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &me) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &me) override;
 
-  void draw();
+  void draw() override;
 
 public:
   // Skeleton methods
@@ -374,16 +374,16 @@ private:
   void toggleMeshSelection(MeshSelection &target,
                            const MeshSelection &addedSel);
 
-  void onSelectionChanged();
-  void enableCommands();
+  void onSelectionChanged() override;
+  void enableCommands() override;
 
   // Parameter Observation methods
 
-  void onChange(const TParamChange &);
+  void onChange(const TParamChange &) override;
 
 private slots:
 
-  void onFrameSwitched();
+  void onFrameSwitched() override;
   void onColumnSwitched();
   void onXsheetChanged();
 
@@ -416,10 +416,10 @@ private:
   QPushButton *m_addSkelButton, *m_removeSkelButton;
 
 private:
-  void showEvent(QShowEvent *se);
-  void hideEvent(QHideEvent *he);
+  void showEvent(QShowEvent *se) override;
+  void hideEvent(QHideEvent *he) override;
 
-  void onPropertyChanged();
+  void onPropertyChanged() override;
 
 private slots:
 

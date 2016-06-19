@@ -123,7 +123,7 @@ public:
   }
   ~ChangeColorFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
     if (m_input.isConnected()) return m_input->doGetBBox(frame, bBox, info);
     {
       bBox = TRectD();
@@ -131,7 +131,7 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 };
 
 double normalize_h(double h) {

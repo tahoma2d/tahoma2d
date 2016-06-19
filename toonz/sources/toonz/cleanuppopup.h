@@ -54,7 +54,7 @@ public:
   void execute();
 
 protected:
-  void closeEvent(QCloseEvent *);
+  void closeEvent(QCloseEvent *) override;
 
 private:
   class OverwriteDialog;
@@ -147,15 +147,15 @@ class CleanupPopup::OverwriteDialog : public DVGui::ValidatedChoiceDialog {
 public:
   OverwriteDialog();
 
-  virtual void reset();
+  void reset() override;
 
 private:
   DVGui::LineEdit *m_suffix;
   QString m_suffixText;
 
 private:
-  virtual QString acceptResolution(void *obj, int resolution, bool applyToAll);
-  virtual void initializeUserInteraction(const void *obj);
+  QString acceptResolution(void *obj, int resolution, bool applyToAll) override;
+  void initializeUserInteraction(const void *obj) override;
 
 private slots:
 

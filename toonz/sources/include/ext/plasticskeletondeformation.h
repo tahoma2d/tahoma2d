@@ -74,8 +74,8 @@ public:
   bool isFullKeyframe(double frame) const;
   void deleteKeyframe(double frame);
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 
 } SkVD;
 
@@ -267,8 +267,8 @@ public:
                    const TPointD &pos);
 
 protected:
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 
 private:
   friend class PlasticSkeleton;

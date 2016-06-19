@@ -85,9 +85,9 @@ public:
 
   void start();
 
-  bool onFrameCompleted(int frame);
-  bool onFrameFailed(int frame, TException &e);
-  void onSequenceCompleted(const TFilePath &fp);
+  bool onFrameCompleted(int frame) override;
+  bool onFrameFailed(int frame, TException &e) override;
+  void onSequenceCompleted(const TFilePath &fp) override;
   void onRenderCompleted();
 };
 

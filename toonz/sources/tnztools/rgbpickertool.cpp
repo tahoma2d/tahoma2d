@@ -95,13 +95,13 @@ public:
     }
   }
 
-  void undo() const { setColor(m_oldValue); }
+  void undo() const override { setColor(m_oldValue); }
 
-  void redo() const { setColor(m_newValue); }
+  void redo() const override { setColor(m_newValue); }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("RGB Picker (R%1, G%2, B%3)")
         .arg(QString::number((int)m_newValue.r))
         .arg(QString::number((int)m_newValue.g))

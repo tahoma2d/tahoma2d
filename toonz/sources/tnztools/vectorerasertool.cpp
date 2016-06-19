@@ -95,7 +95,7 @@ public:
                                             image->getBBox());
   }
 
-  void onAdd() {
+  void onAdd() override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     assert(!!image);
     if (!image) return;
@@ -121,7 +121,7 @@ public:
     m_newStrokes.insert(std::map<int, VIStroke *>::value_type(index, s));
   }
 
-  void undo() const {
+  void undo() const override {
     TTool::Application *app = TTool::getApplication();
     if (!app) return;
 
@@ -175,7 +175,7 @@ public:
     notifyImageChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TTool::Application *app = TTool::getApplication();
     if (!app) return;
 
@@ -229,16 +229,16 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) +
            (m_oldFillInformation.capacity() + m_newFillInformation.capacity()) *
                sizeof(TFilledRegionInf) +
            500;
   }
 
-  QString getToolName() { return QString("Vector Eraser Tool"); }
+  QString getToolName() override { return QString("Vector Eraser Tool"); }
 
-  int getHistoryType() { return HistoryType::EraserTool; }
+  int getHistoryType() override { return HistoryType::EraserTool; }
 };
 
 }  // namespace
@@ -254,9 +254,9 @@ public:
   EraserTool();
   ~EraserTool();
 
-  ToolType getToolType() const { return TTool::LevelWriteTool; }
+  ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
-  void draw();
+  void draw() override;
 
   void startErase(
       TVectorImageP vi,
@@ -267,23 +267,23 @@ public:
 
   void stopErase(TVectorImageP vi);
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e);
-  void mouseMove(const TPointD &pos, const TMouseEvent &e);
-  bool onPropertyChanged(std::string propertyName);
-  void onEnter();
-  void onLeave();
-  void onActivate();
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) override;
+  void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
+  bool onPropertyChanged(std::string propertyName) override;
+  void onEnter() override;
+  void onLeave() override;
+  void onActivate() override;
 
-  TPropertyGroup *getProperties(int targetType) { return &m_prop; }
+  TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
-  int getCursorId() const { return ToolCursor::EraserCursor; }
-  void onImageChanged();
+  int getCursorId() const override { return ToolCursor::EraserCursor; }
+  void onImageChanged() override;
 
   /*-- ドラッグ中にツールが切り替わった場合、Eraseの終了処理を行う --*/
-  void onDeactivate();
+  void onDeactivate() override;
 
 private:
   TPropertyGroup m_prop;
@@ -327,7 +327,7 @@ private:
 private:
   void resetMulti();
 
-  void updateTranslation();
+  void updateTranslation() override;
 
   // Metodi per disegnare la linea della modalita' Freehand
   void startFreehand(const TPointD &pos);

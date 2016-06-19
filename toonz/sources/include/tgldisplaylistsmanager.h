@@ -64,8 +64,8 @@ public:
   TGLDisplayListsProxyT(Context *proxy) : m_proxy(proxy) {}
   ~TGLDisplayListsProxyT() { delete m_proxy; }
 
-  void makeCurrent() { m_proxy->makeCurrent(); }
-  void doneCurrent() { m_proxy->doneCurrent(); }
+  void makeCurrent() override { m_proxy->makeCurrent(); }
+  void doneCurrent() override { m_proxy->doneCurrent(); }
 };
 
 //**************************************************************************************************

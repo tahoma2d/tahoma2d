@@ -259,7 +259,7 @@ public:
                              PlasticSkeleton &deformedSkeleton, double frame,
                              int v);
 
-  void onChange(const TParamChange &change);  // Passes param notifications to
+  void onChange(const TParamChange &change) override;  // Passes param notifications to
                                               // external observers
 
 private:

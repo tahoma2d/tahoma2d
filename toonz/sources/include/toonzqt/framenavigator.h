@@ -83,8 +83,8 @@ public slots:
   void nextFrame() { setFrame(m_frame + 1, true); }  //!< Move to next frame.
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
   void updateFrame(int frame);  //!< Changes frame without emitting any signal
                                 //!and notifying the frameHandle.

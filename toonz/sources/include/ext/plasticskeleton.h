@@ -92,8 +92,8 @@ public:
 
   int parent() const { return m_parent; }
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 };
 
 //************************************************************************************
@@ -143,8 +143,8 @@ public:
 
   bool setVertexName(int v, const QString &name);
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 
   // Utility functions
 

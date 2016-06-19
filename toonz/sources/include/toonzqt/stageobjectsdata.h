@@ -82,7 +82,7 @@ public:
 
   //! Clones this object.
   //! \note Clones stored fxs, columns, etc. too.
-  StageObjectsData *clone() const;
+  StageObjectsData *clone() const override;
 
   bool isEmpty() const { return m_elements.isEmpty() && m_splines.isEmpty(); }
 

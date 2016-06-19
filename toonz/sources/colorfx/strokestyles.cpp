@@ -40,11 +40,11 @@ public:
                         TOptimizedStrokeStyleT<T> *style);
   ~TOptimizedStrokePropT() { m_colorStyle->release(); }
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash) { getColorStyle()->drawStroke(flash, getStroke()); }
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override { getColorStyle()->drawStroke(flash, getStroke()); }
 };
 
 //-----------------------------------------------------------------------------
