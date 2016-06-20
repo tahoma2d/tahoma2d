@@ -37,6 +37,8 @@ class RGBPickerTool : public TTool {
   std::vector<TPointD> m_workingPolyline;
   bool m_makePick;
 
+  TPoint m_mousePixelPosition;
+
 public:
   RGBPickerTool();
 
@@ -68,7 +70,7 @@ public:
 
   void mouseMove(const TPointD &pos, const TMouseEvent &e);
 
-  void pick(TPoint pos);
+  void pick();
 
   void pickRect();
 
@@ -82,7 +84,9 @@ public:
 
   int getCursorId() const;
 
-  void doPolylinePick();
+  void doPolylineFreehandPick();
+
+  void passivePick();
 
   //! Viene aggiunto \b pos a \b m_track e disegnato il primo pezzetto del
   //! lazzo. Viene inizializzato \b m_firstPos
