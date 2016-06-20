@@ -38,7 +38,8 @@ public:
 
   ~FadeFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       bool ret = m_input->doGetBBox(frame, bBox, info);
       // devo scurire bgColor
@@ -49,7 +50,8 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     if (!m_input.isConnected()) return;
 
     m_input->compute(tile, frame, ri);
@@ -58,7 +60,9 @@ public:
     TRop::rgbmScale(tile.getRaster(), tile.getRaster(), 1, 1, 1, v);
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //==================================================================
@@ -108,7 +112,9 @@ TPixel32 colors[] = {
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //------------------------------------------------------------------
@@ -208,7 +214,9 @@ public:
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
@@ -260,7 +268,9 @@ public:
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
@@ -421,7 +431,9 @@ public:
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 2];
@@ -477,7 +489,9 @@ public:
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
@@ -567,7 +581,9 @@ m_color->setDefaultValue(TPixel::Magenta);
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];

@@ -116,7 +116,8 @@ public:
   }
   void showEvent(QShowEvent *) override { showToolTip(currentIndex()); }
   void hideEvent(QHideEvent *) override { m_tooltip->hide(); }
-  void currentChanged(const QModelIndex &current, const QModelIndex &previous) override {
+  void currentChanged(const QModelIndex &current,
+                      const QModelIndex &previous) override {
     showToolTip(current);
     QListView::currentChanged(current, previous);
   }

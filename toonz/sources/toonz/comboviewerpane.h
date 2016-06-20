@@ -72,9 +72,12 @@ public:
   }
   bool getShowHideFlag(CV_Parts parts) { return m_visibleFlag[parts]; }
   // reimplementation of TPanel::widgetInThisPanelIsFocused
-  bool widgetInThisPanelIsFocused() override { return m_sceneViewer->hasFocus(); }
+  bool widgetInThisPanelIsFocused() override {
+    return m_sceneViewer->hasFocus();
+  }
 
-  void onDrawFrame(int frame, const ImagePainter::VisualSettings &settings) override;
+  void onDrawFrame(int frame,
+                   const ImagePainter::VisualSettings &settings) override;
 
   // reimplementation of FlipConsoleOwner::isFrameAlreadyCached
   bool isFrameAlreadyCached(int frame) override;

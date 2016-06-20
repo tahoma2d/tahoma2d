@@ -516,7 +516,7 @@ void MultimediaRenderer::enablePrecomputing(bool on) {
 //---------------------------------------------------------
 
 //!\b NOTE: Such render may vary from time to time, and even be 0 if no renderer
-//!is currently
+//! is currently
 //! active, for example due to preprocessing states.
 TRenderer *MultimediaRenderer::getTRenderer() {
   return m_imp->m_currentTRenderer;

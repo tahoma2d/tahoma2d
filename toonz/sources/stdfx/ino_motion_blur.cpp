@@ -111,7 +111,8 @@ public:
     }
   }
   //------------------------------------------------------------
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (false == this->m_input.isConnected()) {
       bBox = TRectD();
       return false;
@@ -140,7 +141,8 @@ public:
       return isAlmostIsotropic(info.m_affine) || m_scale->getValue(frame) == 0;
     }
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_motion_blur, "inoMotionBlurFx");
 //------------------------------------------------------------

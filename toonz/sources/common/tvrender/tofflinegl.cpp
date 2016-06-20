@@ -346,7 +346,7 @@ public:
     if (((it != m_glxContext.end()) && (it->second != m_context)) ||
         (it == m_glxContext.end())) {
       //	cout << "calling GLXMakeCurrent " << self << " " << m_context <<
-      //endl;
+      // endl;
       Bool ret;
       if (!isDtor) ret   = glXMakeCurrent(m_dpy, m_pixmap, m_context);
       m_glxContext[self] = m_context;
@@ -519,9 +519,13 @@ public:
                        std::shared_ptr<TOfflineGL::Imp> shared)
       : m_ogl(ogl), m_size(size), m_shared(std::move(shared)) {}
 
-  void onDeliver() override { m_ogl->m_imp = currentImpGenerator(m_size, m_shared); }
+  void onDeliver() override {
+    m_ogl->m_imp = currentImpGenerator(m_size, m_shared);
+  }
 
-  TThread::Message *clone() const override { return new MessageCreateContext(*this); }
+  TThread::Message *clone() const override {
+    return new MessageCreateContext(*this);
+  }
 };
 
 //} // namespace

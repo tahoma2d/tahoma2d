@@ -230,7 +230,7 @@ private:
 
   struct VisualizationOptions {
     bool m_singleColumnEnabled;  //!< Whether only current column should be
-                                 //!rendered
+                                 //! rendered
     bool m_checkFlags;           //   ... o.o? ....
   };
 

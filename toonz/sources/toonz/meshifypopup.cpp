@@ -78,7 +78,7 @@ namespace {
 struct MeshifyOptions  //!  Available options for the meshification process.
 {
   double m_edgesLength;  //!< The desired mesh edges length, in standard world
-                         //!coordinates
+                         //! coordinates
   double m_rasterizationDpi;  //!< Dpi value used to render PLIs and sub-xsheets
   int m_margin;               //!< Margin to the original shape (in pixels)
 };

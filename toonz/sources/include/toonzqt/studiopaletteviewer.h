@@ -29,7 +29,7 @@ class TXshLevelHandle;
 
 //=============================================================================
 //!	The StudioPaletteTreeViewer class provides an object to view and manage
-//!palettes files.
+//! palettes files.
 /*!	Inherits \b QTreeWidget, \b StudioPalette::Listener and \b
    ProjectManager::Listener.
 
@@ -80,7 +80,8 @@ public:
   /*!	Overriden from StudioPalette::Listener. */
   void onStudioPaletteTreeChange() override { refresh(); }
   /*!	Overriden from StudioPalette::Listener. */
-  void onStudioPaletteMove(const TFilePath &dstPath, const TFilePath &srcPath) override {
+  void onStudioPaletteMove(const TFilePath &dstPath,
+                           const TFilePath &srcPath) override {
     refresh();
   }
   /*!	Overriden from StudioPalette::Listener. */
@@ -189,7 +190,7 @@ protected:
 
 //=============================================================================
 //!	The StudioPaletteViewer class provides an object to view and manage
-//!studio palettes.
+//! studio palettes.
 /*!	Inherits \b QFrame.
                 This object is composed of a splitter \b QSplitter that contain
    a vertical

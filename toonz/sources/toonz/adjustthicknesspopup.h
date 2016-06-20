@@ -114,7 +114,7 @@ private:
   // Widgets
 
   QComboBox *m_thicknessMode;  //!< Thickness mode (scale thickness, add
-                               //!thickness, constant).
+                               //! thickness, constant).
   DVGui::MeasuredDoubleField *m_fromScale,  //!< Starting thickness scale.
       *m_fromDisplacement,  //!< Starting thickness displacement.
       *m_toScale,           //!< Ending thickness scale.

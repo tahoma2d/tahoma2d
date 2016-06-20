@@ -49,11 +49,11 @@ public:
   enum Options  //! Various options used to customize the popup's behavior.
   { STANDARD      = 0x0,  //!< Standard options.
     CUSTOM_LAYOUT = 0x1,  //!< Prevents standard layout organization at
-                          //!construction, surrendering it
+                          //! construction, surrendering it
     //!  to the user. Observe that sub-widgets creation is still enforced.
     MULTISELECTION = 0x2,  //!< Enable multiple selection in the browser widget.
     WITH_APPLY_BUTTON = 0x4  //!< Enable if the filebrowser has an apply button
-                             //!next to the OK button
+                             //! next to the OK button
   };
 
 public:
@@ -279,8 +279,9 @@ protected:
   void hideEvent(QHideEvent *) override;
 
 public slots:
-  void onFilePathsSelected(const std::set<TFilePath> &paths,
-                           const std::list<std::vector<TFrameId>> &fIds) override;
+  void onFilePathsSelected(
+      const std::set<TFilePath> &paths,
+      const std::list<std::vector<TFrameId>> &fIds) override;
   // if the frame switched, then move m_posFrom
   void onFrameSwitched();
   // if the from/to values in the subsequent box are changed, then reflect them

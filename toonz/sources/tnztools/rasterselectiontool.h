@@ -90,7 +90,9 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Transform Raster"); }
+  QString getHistoryString() override {
+    return QObject::tr("Transform Raster");
+  }
 };
 
 //=============================================================================
@@ -110,8 +112,8 @@ protected:
   void applyTransform(TAffine aff, bool modifyCenter);
   void addTransformUndo() override;
 
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override {};
-  void draw() override {};
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override{};
+  void draw() override{};
 
 public:
   RasterDeformTool(RasterSelectionTool *tool, bool freeDeformer);
@@ -201,7 +203,8 @@ class RasterSelectionTool : public SelectionTool {
 public:
   RasterSelectionTool(int targetType);
 
-  void setBBox(const DragSelectionTool::FourPoints &points, int index = 0) override;
+  void setBBox(const DragSelectionTool::FourPoints &points,
+               int index = 0) override;
 
   void setNewFreeDeformer() override;
   VectorFreeDeformer *getSelectionFreeDeformer() const;

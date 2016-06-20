@@ -77,7 +77,8 @@ public:
     this->m_ref_mode->addItem(4, "Luminance");
     this->m_ref_mode->addItem(-1, "Nothing");
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       return this->m_input->doGetBBox(frame, bBox, info);
     } else {
@@ -101,7 +102,8 @@ public:
     2013-11-08 */
     return false;
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_hls_noise, "inohlsNoiseFx");
 //------------------------------------------------------------

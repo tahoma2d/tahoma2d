@@ -132,7 +132,9 @@ public:
   StrokesData *toStrokesData(ToonzScene *scene) const override;
   TPointD getDpi() const override { return TPointD(m_dpiX, m_dpiY); }
 
-  FullColorImageData *clone() const override { return new FullColorImageData(*this); }
+  FullColorImageData *clone() const override {
+    return new FullColorImageData(*this);
+  }
   int getMemorySize() const override;
 };
 

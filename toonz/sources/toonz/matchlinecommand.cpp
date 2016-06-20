@@ -258,7 +258,9 @@ public:
     }
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
-  void redo() const override { doCloneLevelNoSave(m_range, m_levelname, false); }
+  void redo() const override {
+    doCloneLevelNoSave(m_range, m_levelname, false);
+  }
 
   int getSize() const override {
     return sizeof *this +

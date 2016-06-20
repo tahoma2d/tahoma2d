@@ -69,9 +69,9 @@ enum Resolution {
   NO_RESOLUTION,  //!< No required resolution.
   CANCEL,         //!< Validation was canceled.
   OVERWRITE,   //!< Does not delete old cleanupped levels, but overwrites found
-               //!frames.
+               //! frames.
   WRITE_NEW,   //!< Like above, but does not overwrite. Just adds not cleanupped
-               //!frames.
+               //! frames.
   REPLACE,     //!< Destroy the old level and build one anew.
   ADD_SUFFIX,  //!< Add a suffix to the output path.
   NOPAINT_ONLY  //!< overwrite the result only in "nopaint" folder

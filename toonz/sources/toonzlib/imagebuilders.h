@@ -32,7 +32,7 @@ class ImageLoader : public ImageBuilder {
 public:
   struct BuildExtData {
     const TXshSimpleLevel *m_sl;  //!< TXshSimpleLevel instance associated to an
-                                  //!image loading request
+                                  //! image loading request
     TFrameId m_fid;  //!< m_sl's fid at which the image will be loaded
 
     int m_subs;  //!< The subsampling factor for image loading (0 meaning either

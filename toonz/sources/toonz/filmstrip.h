@@ -176,7 +176,7 @@ private:
 
   int m_scrollSpeed,
       m_dragSelectionStartIndex,  //!< Starting level index during drag
-                                  //!selections.
+                                  //! selections.
       m_dragSelectionEndIndex,  //!< Ending level index during drag selections.
       m_timerId;                // per l'autoscroll
 

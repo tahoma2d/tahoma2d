@@ -155,7 +155,9 @@ public:
     render(makeRenderData(scene, rows));
   }
 
-  void onRenderRasterStarted(const RenderData &renderData) override { int a = 1; }
+  void onRenderRasterStarted(const RenderData &renderData) override {
+    int a = 1;
+  }
   void onRenderRasterCompleted(const RenderData &renderData) override {
     TRasterP outputRaster = renderData.m_rasA;
     TRasterImageP img(outputRaster->clone());

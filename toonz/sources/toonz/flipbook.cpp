@@ -340,7 +340,9 @@ public:
     }
   }
 
-  TThread::Message *clone() const override { return new ProgressBarMessager(*this); }
+  TThread::Message *clone() const override {
+    return new ProgressBarMessager(*this);
+  }
 };
 
 }  // namespace
@@ -735,7 +737,7 @@ void FlipBook::saveImage() {
     }
     savedFrames++;
     //		if (!m_pb->changeFraction(m_currentFrameToSave,
-    //TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount()))
+    // TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount()))
     //			break;
     m_currentFrameToSave++;
 

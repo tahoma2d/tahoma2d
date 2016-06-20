@@ -43,8 +43,10 @@ public:
 
   TFx *clone(bool recursive = true) const override;
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
   TFxTimeRegion getTimeRegion() const override;
@@ -65,7 +67,8 @@ public:
 
   bool canHandle(const TRenderSettings &info, double frame) override;
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
 
   void loadData(TIStream &is) override;
   void saveData(TOStream &os) override;

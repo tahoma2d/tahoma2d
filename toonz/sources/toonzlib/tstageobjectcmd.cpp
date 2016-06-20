@@ -283,7 +283,9 @@ public:
     pegbar->setSpline(m_spline);
     m_xshHandle->notifyXsheetChanged();
   }
-  int getSize() const override { return sizeof *this + sizeof(TStageObjectSpline); }
+  int getSize() const override {
+    return sizeof *this + sizeof(TStageObjectSpline);
+  }
 
   QString getHistoryString() override {
     return QObject::tr("New Motion Path  %1")
@@ -324,7 +326,9 @@ public:
     m_xshHandle->notifyXsheetChanged();
   }
 
-  int getSize() const override { return sizeof *this + sizeof(TStageObjectSpline); }
+  int getSize() const override {
+    return sizeof *this + sizeof(TStageObjectSpline);
+  }
 
   QString getHistoryString() override {
     return QObject::tr("Link Motion Path  %1 > %2")
@@ -378,7 +382,9 @@ public:
     m_xshHandle->notifyXsheetChanged();
   }
 
-  int getSize() const override { return sizeof *this + sizeof(TStageObjectSpline); }
+  int getSize() const override {
+    return sizeof *this + sizeof(TStageObjectSpline);
+  }
 };
 
 //===================================================================
@@ -1107,7 +1113,8 @@ public:
       : SetAttributeUndo<ParentIdAndHandle>(
             id, xshHandle, ParentIdAndHandle(oldParentId, oldParentHandle),
             ParentIdAndHandle(newParentId, newParentHandle)) {}
-  void setAttribute(TStageObject *pegbar, ParentIdAndHandle parent) const override {
+  void setAttribute(TStageObject *pegbar,
+                    ParentIdAndHandle parent) const override {
     pegbar->setParent(parent.first);
     pegbar->setParentHandle(parent.second);
   }

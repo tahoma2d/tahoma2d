@@ -81,7 +81,7 @@ public:
   static bool
       m_rasterizePli;  //!< \internal  Not the proper place for this data.
   static bool m_fillFullColorRaster;  //!< \internal  Not the proper place for
-                                      //!this data.
+                                      //! this data.
 
 public:
   TXshSimpleLevel(
@@ -131,10 +131,11 @@ public:
 
   std::vector<TFrameId> getFids()
       const;  //!< Returns a copy of the level's frame ids.
-  void getFids(std::vector<TFrameId> &fids) const override;  //!< Copies fids() into
-                                                    //!fids.  \deprecated  Use
-                                                    //!the return valued
-                                                    //!variation instead.
+  void getFids(
+      std::vector<TFrameId> &fids) const override;  //!< Copies fids() into
+                                                    //! fids.  \deprecated  Use
+  //! the return valued
+  //! variation instead.
 
   TFrameId getFirstFid()
       const;  //!< Returns the first level frame's id; roughly equivalent to
@@ -163,12 +164,12 @@ public:
           guessStep() for further details.                          */
 
   TFrameId index2fid(int index) const;  //!< Returns a frame id corresponding to
-                                        //!the specified frame index, or
-                                        //!  an invalid frame otherwise.
+                                        //! the specified frame index, or
+  //!  an invalid frame otherwise.
   int fid2index(const TFrameId &fid) const;  //!< Returns the frame \a index
-                                             //!corresponding to the specified
-                                             //!frame id,
-                                             //!  or \p -1 if not found.
+                                             //! corresponding to the specified
+  //! frame id,
+  //!  or \p -1 if not found.
 
   /*
 if the table contains 'fid' it returns fid2index(fid).
@@ -238,7 +239,7 @@ Editable range is contained in \b m_editableRange.
               cleanup process. Should be moved there.                         */
 
   void makeTlv(const TFilePath &tlvPath);  //!< Transforms the level from \a
-                                           //!fullcolor to tlv (colormap),
+                                           //! fullcolor to tlv (colormap),
   //!  and assigns the specified level path.
   TImageP createEmptyFrame();
 
@@ -378,7 +379,7 @@ private:
 
   bool m_isSubsequence, m_16BitChannelLevel, m_isReadOnly,
       m_temporaryHookMerged;  //!< Used only during hook merge (and hence during
-                              //!saving)
+                              //! saving)
 
 private:
   //! Save simple level in scene-decoded path \p decodedFp.

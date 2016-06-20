@@ -30,10 +30,12 @@ public:
   FreeDistortBaseFx(bool isCastShadow);
   ~FreeDistortBaseFx();
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &ri) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &ri) override;
   void onPortConnected(TFxPort *port);
   bool canHandle(const TRenderSettings &info, double frame) override;
   int getMemoryRequirement(const TRectD &rect, double frame,

@@ -149,7 +149,7 @@ TStageObjectId \b \e id.
      their data.
   */
   void saveData(TOStream &os, int occupiedColumnCount);
-  void saveData(TOStream &os) override {};  // not used
+  void saveData(TOStream &os) override{};  // not used
   /*!
 Returns the numbers of the objects in the tree.
 */
@@ -230,7 +230,8 @@ Removes from stage object tree the spline \b spline.
 */
   void removeSpline(TStageObjectSpline *spline);
   /*!
-          Returns	\e true if \b \e spline is present in the tree, otherwise
+          Returns	\e true if \b \e spline is present in the tree,
+     otherwise
      returns \e false.
   */
   bool containsSpline(TStageObjectSpline *) const;

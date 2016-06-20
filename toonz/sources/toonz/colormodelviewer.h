@@ -40,8 +40,8 @@ protected:
   void mousePressEvent(QMouseEvent *) override;
   void mouseMoveEvent(QMouseEvent *) override;
   void pick(const QPoint &p);
-  void hideEvent(
-      QHideEvent *e) override;  // to avoid calling the hideEvent of class Flipbook!
+  void hideEvent(QHideEvent *e)
+      override;  // to avoid calling the hideEvent of class Flipbook!
   void showEvent(QShowEvent *e) override;
 
   /*-

@@ -43,7 +43,8 @@ public:
                  TRenderSettings &infoOnInput) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       // Build the render data
       TRenderSettings info2(info);
@@ -58,7 +59,9 @@ public:
 
   //-----------------------------------------------------------------------------
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   //-----------------------------------------------------------------------------
 

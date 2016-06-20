@@ -300,8 +300,8 @@ private:
       m_oldMousePos,   //!< Previous mouse position.
       m_brushPos,      //!< Position the brush will be painted at.
       m_firstPos;      //!< Either The first point inserted either in m_track or
-                       //!m_polyline
-                       //!  (depending on selected erase mode).
+                       //! m_polyline
+  //!  (depending on selected erase mode).
   UndoEraser *m_undo;
   std::vector<int> m_indexes;
 
@@ -657,7 +657,7 @@ intersect( *oldStroke, pos, m_pointSize, intersections );
     }
 
     //---------- piu'
-    //intersezioni--------------------------------------------------------
+    // intersezioni--------------------------------------------------------
 
     if (intersections.size() & 1 &&
         oldStroke->isSelfLoop()) {  // non dovrebbe mai accadere
@@ -892,7 +892,7 @@ void EraserTool::onImageChanged() {
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
-  else {  // cambio stato.
+  else {                           // cambio stato.
     m_firstFrameSelected = true;
     if (m_eraseType.getValue() == RECT_ERASE) {
       assert(!m_selectingRect.isEmpty());
@@ -1185,7 +1185,7 @@ void EraserTool::addPointPolyline(const TPointD &pos) {
 
 #if defined(MACOSX)
 //		m_viewer->enableRedraw(m_eraseType.getValue() ==
-//POLYLINE_ERASE);
+// POLYLINE_ERASE);
 #endif
 
   glPushMatrix();

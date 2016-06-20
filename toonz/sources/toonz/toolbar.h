@@ -15,10 +15,11 @@ class Toolbar : public QToolBar {
   bool m_isExpanded;
 
   void updateToolbar();
+
 public:
   Toolbar(QWidget *parent, bool isVertical = true);
   ~Toolbar();
-  
+
 protected:
   bool addAction(QAction *act);
 

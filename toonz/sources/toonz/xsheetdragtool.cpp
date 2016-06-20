@@ -441,7 +441,9 @@ public:
     return sizeof(*this) + sizeof(TXshCell) * m_cells.size();
   }
 
-  QString getHistoryString() override { return QObject::tr("Use Level Extender"); }
+  QString getHistoryString() override {
+    return QObject::tr("Use Level Extender");
+  }
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
@@ -820,7 +822,9 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Modify Sound Level"); }
+  QString getHistoryString() override {
+    return QObject::tr("Modify Sound Level");
+  }
 
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
@@ -1318,7 +1322,9 @@ public:
     app->getCurrentFrame()->scrubXsheet(row, row, getViewer()->getXsheet());
   }
 
-  void onRelease(int row, int col) override { getViewer()->getXsheet()->stopScrub(); }
+  void onRelease(int row, int col) override {
+    getViewer()->getXsheet()->stopScrub();
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -1533,7 +1539,9 @@ public:
     if (selection) selection->selectNone();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
-  int getSize() const override { return sizeof(*this) + m_indices.size() * sizeof(int); }
+  int getSize() const override {
+    return sizeof(*this) + m_indices.size() * sizeof(int);
+  }
 
   QString getHistoryString() override { return QObject::tr("Move Columns"); }
   int getHistoryType() override { return HistoryType::Xsheet; }

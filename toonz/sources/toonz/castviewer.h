@@ -91,7 +91,8 @@ public:
 
   int getItemCount() const override;
   void refreshData() override;
-  QVariant getItemData(int index, DataType dataType, bool isSelected = false) override;
+  QVariant getItemData(int index, DataType dataType,
+                       bool isSelected = false) override;
   QMenu *getContextMenu(QWidget *parent, int index) override;
   void startDragDrop() override;
   bool acceptDrop(const QMimeData *data) const override;

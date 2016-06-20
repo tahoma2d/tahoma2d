@@ -82,7 +82,9 @@ public:
     return QObject::tr("Exporting level of %1 frames in %2");
   }
 
-  void setProcessedName(const QString &name) override { m_processedName = name; }
+  void setProcessedName(const QString &name) override {
+    m_processedName = name;
+  }
   void setRange(int min, int max) override {
     m_pb.setMaximum(max);
     buildString();
@@ -405,7 +407,7 @@ TImageP IoCmd::exportedImage(const std::string &ext, const TXshSimpleLevel &sl,
 // in modo adatto ad essere usato in Retas, e cioe':
 //- messo il bianco al posto del transparente
 //- se c'e' bianco nell'immagine, viene "sporcato"(altrimenti poi viene letto
-//come trasparente da retas)
+// come trasparente da retas)
 //- l'output e' solo tga a 24bit compressed nel formato pippo0001.tga
 
 bool IoCmd::exportLevel(const TFilePath &path, TXshSimpleLevel *sl,

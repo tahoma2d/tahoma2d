@@ -30,7 +30,9 @@ public:
            ++it)
         (*it)->onLogChanged();
     }
-    TThread::Message *clone() const override { return new ListenerNotifier(*this); }
+    TThread::Message *clone() const override {
+      return new ListenerNotifier(*this);
+    }
   };
 
   void notify() {

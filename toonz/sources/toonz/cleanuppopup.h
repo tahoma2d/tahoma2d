@@ -82,7 +82,7 @@ private:
                            //!  current level. Used in some autoadjust cases.
 
   std::vector<TFrameId> m_cleanuppedLevelFrames;  //!< Current level's list of
-                                                  //!cleanupped frames. Used
+                                                  //! cleanupped frames. Used
   //!  to selectively build the level's unpainted backup.
   std::unique_ptr<CleanupParameters>
       m_params;  //!< Cleanup params used to cleanup.
@@ -115,7 +115,7 @@ private:
   TImageP currentImage() const;
 
   QString setupLevel();  //!< Prepares level for cleanup.  \return  An eventual
-                         //!failure message.
+                         //! failure message.
   QString resetLevel();  //!< Erases existing output for the cleanup operation.
                          //!\return  An eventual failure message.
   void closeLevel();

@@ -36,7 +36,7 @@ const int cGroupShortNameY =
     0;  //!< Column header's y pos for channel groups' short name tabs
 const int cGroupLongNameY = 27;  //!< Same for its long name tabs
 const int cChannelNameY = 50;  //!< Column header's y pos of channel name tabs,
-                               //!up to the widget's height
+                               //! up to the widget's height
 const int cColHeadersEndY = 87;  //!< End of column headers y pos
 
 }  // namespace

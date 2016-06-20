@@ -452,7 +452,7 @@ bool FilmstripFrameHeadGadget::eventFilter(QObject *obj, QEvent *e) {
     //		オニオンスキンの●エリア
     //をクリックで各フレームのON／OFF切り替え→ドラッグで伸ばせる
     //		Fixedオニオンスキンの●エリアをクリックで
-    //Fixedオニオンスキンの位置の指定
+    // Fixedオニオンスキンの位置の指定
 
     //-----
     //それぞれのパーツの位置Rectの指定。各フレームの右上座標からのオフセットも含む。

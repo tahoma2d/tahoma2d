@@ -63,7 +63,7 @@ public:
   int getFrame() const { return m_frame; }
 
   void setFrameHandle(TFrameHandle *);  //!< Attaches the navigator to the
-                                        //!specified frameHandle.
+                                        //! specified frameHandle.
   //!  \remark    Detaches from any previously attached frame handle.
 
   bool anyWidgetHasFocus();
@@ -87,7 +87,7 @@ protected:
   void hideEvent(QHideEvent *) override;
 
   void updateFrame(int frame);  //!< Changes frame without emitting any signal
-                                //!and notifying the frameHandle.
+                                //! and notifying the frameHandle.
 
 protected slots:
 
@@ -96,7 +96,7 @@ protected slots:
 current frame value.
 */
   void onEditingFinished();  //!< Slot invoked whenever current frame's text
-                             //!editing is finished.
+                             //! editing is finished.
   void onFrameSwitched();
 };
 

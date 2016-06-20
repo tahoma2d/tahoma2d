@@ -47,7 +47,9 @@ public:
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
   // TAffine handledAffine(const TRenderSettings& info, double frame) {return
   // TAffine();}
 };

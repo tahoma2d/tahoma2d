@@ -115,7 +115,9 @@ public:
   }
 
   // imprecise - depends on the style
-  int getSize() const override { return sizeof(*this) + 2 * sizeof(TColorStyle *); }
+  int getSize() const override {
+    return sizeof(*this) + 2 * sizeof(TColorStyle *);
+  }
 
   QString getHistoryString() override {
     return QObject::tr(
@@ -1877,7 +1879,9 @@ else return false;
 }
   */
 
-  int getChipCount() const override { return styleManager()->getPatternCount(); }
+  int getChipCount() const override {
+    return styleManager()->getPatternCount();
+  }
 
   void drawChip(QPainter &p, QRect rect, int index) override {
     assert(0 <= index && index < getChipCount());
@@ -1959,7 +1963,9 @@ public:
   }
   bool loadIfNeeded() override { return false; }
 
-  int getChipCount() const override { return styleManager()->getPatternCount() + 1; }
+  int getChipCount() const override {
+    return styleManager()->getPatternCount() + 1;
+  }
 
   void drawChip(QPainter &p, QRect rect, int index) override;
   void onSelect(int index) override;

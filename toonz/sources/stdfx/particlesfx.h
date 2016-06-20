@@ -117,16 +117,21 @@ public:
     return (g == 0) ? &m_source : (g == 1) ? &m_control : 0;
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
   bool allowUserCacheOnPort(int port) override;
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
   TFxTimeRegion getTimeRegion() const override {
     return TFxTimeRegion::createUnlimited();
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
   void compute(TFlash &flash, int frame) override;
 

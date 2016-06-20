@@ -33,7 +33,9 @@ public:
     return true;
   };
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];

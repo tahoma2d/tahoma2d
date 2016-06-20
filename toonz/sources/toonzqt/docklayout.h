@@ -323,8 +323,8 @@ protected:
 class DockSeparator : public QWidget {
   friend class DockLayout;  // Layout updates each DockSeparator during
                             // DockLayout::applyGeometry()
-  friend class Region;  // Region may update a DockSeparator's parent during
-                        // removeItem()
+  friend class Region;      // Region may update a DockSeparator's parent during
+                            // removeItem()
 
   DockLayout *m_owner;
 
@@ -471,8 +471,8 @@ private:
 */
 
 class Region {
-  friend class DockLayout;  // Layout is the main operating class over
-                            // rectangular regions - need full access
+  friend class DockLayout;     // Layout is the main operating class over
+                               // rectangular regions - need full access
   friend class DockSeparator;  // Separators need access to extremal sizes
                                // methods when moving themselves
 

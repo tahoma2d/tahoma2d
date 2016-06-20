@@ -61,9 +61,11 @@ class Iwa_DirectionalBlurFx : public TStandardRasterFx {
 public:
   Iwa_DirectionalBlurFx();
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &settings) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &settings) override;
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
   bool canHandle(const TRenderSettings &info, double frame) override;
 

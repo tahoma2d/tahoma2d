@@ -191,9 +191,12 @@ public:
 
   ~InvertFx(){};
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       bool ret = m_input->doGetBBox(frame, bBox, info);
       return ret;
@@ -203,7 +206,8 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     if (!m_input.isConnected()) return;
 
     m_input->compute(tile, frame, ri);

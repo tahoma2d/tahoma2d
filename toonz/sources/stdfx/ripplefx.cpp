@@ -71,7 +71,8 @@ public:
 
   //-------------------------------------------------------------------
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_warped.isConnected()) {
       int ret = m_warped->doGetBBox(frame, bBox, info);
 
@@ -92,7 +93,8 @@ public:
 
   //-------------------------------------------------------------------
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     bool isWarped = m_warped.isConnected();
     if (!isWarped) return;
     if (fabs(m_intensity->getValue(frame)) < 0.01) {
@@ -123,7 +125,8 @@ public:
 
   //-------------------------------------------------------------------
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override {
     bool isWarped = m_warped.isConnected();
 
     if (!isWarped) return;

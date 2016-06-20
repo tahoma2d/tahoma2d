@@ -408,7 +408,8 @@ public:
 
   int getSize() const override {
     return sizeof(*this) +
-           /*(m_oldFillInformation.capacity()+m_newFillInformation.capacity())*sizeof(TFilledRegionInf) +*/
+           /*(m_oldFillInformation.capacity()+m_newFillInformation.capacity())*sizeof(TFilledRegionInf)
+              +*/
            500;
   }
 

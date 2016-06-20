@@ -721,7 +721,7 @@ public:
   }
 
   void undo() const override { redo(); }  // Operation is idempotent (indices
-                                 // are perfectly restored, too)
+                                          // are perfectly restored, too)
 };
 
 //==============================================================================

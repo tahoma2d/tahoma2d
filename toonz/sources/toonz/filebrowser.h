@@ -73,7 +73,8 @@ public:
   void refreshData() override;
 
   int getItemCount() const override;
-  QVariant getItemData(int index, DataType dataType, bool isSelected = false) override;
+  QVariant getItemData(int index, DataType dataType,
+                       bool isSelected = false) override;
 
   bool canRenameItem(int index) const override;
   void renameItem(int index, const QString &newName) override;

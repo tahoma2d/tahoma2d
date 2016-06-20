@@ -78,7 +78,8 @@ class SceneViewer : public QGLWidget,
   /*!  FreezedStatus:
 *  \li NO_FREEZED freezed is not active;
 *  \li NORMAL_FREEZED freezed is active: show grab image;
-*  \li UPDATE_FREEZED freezed is active: draw last unfreezed image and grab view;
+*  \li UPDATE_FREEZED freezed is active: draw last unfreezed image and grab
+* view;
 */
   enum FreezedStatus {
     NO_FREEZED     = 0,
@@ -310,7 +311,8 @@ protected:
   int posToColumnIndex(const TPoint &p, double distance,
                        bool includeInvisible = true) const override;
   void posToColumnIndexes(const TPoint &p, std::vector<int> &indexes,
-                          double distance, bool includeInvisible = true) const override;
+                          double distance,
+                          bool includeInvisible = true) const override;
 
   //! return the row of the drawings intersecting point \b p (used with onion
   //! skins)

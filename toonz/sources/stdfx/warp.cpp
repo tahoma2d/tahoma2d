@@ -288,7 +288,7 @@ void getWarpComputeRects(TRectD &outputComputeRect, TRectD &warpedComputeRect,
 
 //! Deals with raster tiles and invokes warper functions.
 //!\b NOTE: \b tileRas's size should be \b warper's one multiplied by
-//!params.m_scale.
+//! params.m_scale.
 void warp(TRasterP &tileRas, const TRasterP &rasIn, TRasterP &warper,
           TPointD rasInPos, TPointD warperPos, const WarpParams &params) {
   TRaster32P rasIn32   = rasIn;

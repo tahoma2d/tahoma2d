@@ -121,7 +121,9 @@ public:
     delete fx;
   }
 
-  TThread::Message *clone() const override { return new PluginSetupMessage(*this); }
+  TThread::Message *clone() const override {
+    return new PluginSetupMessage(*this);
+  }
 };
 
 PluginInformation::~PluginInformation() {

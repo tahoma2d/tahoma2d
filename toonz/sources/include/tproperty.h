@@ -364,7 +364,9 @@ public:
   std::wstring getValue() const {
     return (m_index < 0) ? L"" : m_range[m_index];
   }
-  std::string getValueAsString() override { return ::to_string(m_range[m_index]); }
+  std::string getValueAsString() override {
+    return ::to_string(m_range[m_index]);
+  }
   int getIndex() const { return m_index; }
 
   void accept(Visitor &v) override { v.visit(this); }

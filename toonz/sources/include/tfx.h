@@ -46,7 +46,7 @@ class DVAPI TFxPort {
 protected:
   TFx *m_owner;    //!< This is an input port of m_owner
   int m_groupIdx;  //!< Dynamic group index this belongs to in m_owner (-1 if
-                   //!none)
+                   //! none)
   bool m_isControl;
 
 public:
@@ -378,17 +378,17 @@ public:
   TFx *getLinkedFx() const;
 
   bool addInputPort(const std::string &name, TFxPort &p);  //!< Adds a port with
-                                                           //!given name,
-                                                           //!returns false on
-                                                           //!duplicate names.
+                                                           //! given name,
+  //! returns false on
+  //! duplicate names.
   //!  Ownership of the port belongs to derived implementations of TFx.
   bool addInputPort(const std::string &name, TFxPort *p,
                     int groupIndex);  //!< Adds a port with given name to the
-                                      //!specified dynamic group,
+                                      //! specified dynamic group,
   //!  returns false on duplicate names. Ownership is transferred to the group.
   bool removeInputPort(const std::string &name);  //!< Removes the port with
-                                                  //!given name, returns false
-                                                  //!if not found.
+                                                  //! given name, returns false
+  //! if not found.
 
   bool renamePort(const std::string &oldName, const std::string &newName);
 
@@ -414,10 +414,10 @@ public:
 
   static void listFxs(std::vector<TFxInfo> &fxInfos);
   static TFxInfo getFxInfo(const std::string &fxIdentifier);  //!< Returns info
-                                                              //!associated to
-                                                              //!an fx
-                                                              //!identifier, or
-                                                              //!an
+                                                              //! associated to
+  //! an fx
+  //! identifier, or
+  //! an
   //!  unnamed one if none was found.
   virtual bool isZerary() const { return getInputPortCount() == 0; }
 

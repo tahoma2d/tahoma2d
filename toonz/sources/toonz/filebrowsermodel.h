@@ -82,7 +82,7 @@ protected:
   TFilePath m_path;                //!< The folder path
   bool m_isProjectFolder;          //!< Whether this is a project folder
   bool m_existsChecked, m_exists;  //!< Whether the folder exists on the file
-                                   //!system (a node could exist
+                                   //! system (a node could exist
   //!< on a remote version control repository, without an actual copy on disk).
   bool m_hasChildren;  //!< Cached info about sub-folders existence
   bool m_peeks;        //!< Whether this folder allows peeking (typically
@@ -234,7 +234,9 @@ public:
   void setPassword(const std::wstring &password) { m_password = password; }
   std::wstring getPassword() const { return m_password; }
 
-  DvDirVersionControlRootNode *getVersionControlRootNode() override { return this; }
+  DvDirVersionControlRootNode *getVersionControlRootNode() override {
+    return this;
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -343,7 +345,8 @@ public:
 
   DvDirModelNode *getNode(const QModelIndex &index) const;
 
-  QModelIndex index(int row, int column, const QModelIndex &parent) const override;
+  QModelIndex index(int row, int column,
+                    const QModelIndex &parent) const override;
   QModelIndex parent(const QModelIndex &index) const override;
 
   QModelIndex getIndexByPath(const TFilePath &path) const;
@@ -353,7 +356,8 @@ public:
                           const std::wstring &name) const;
 
   int columnCount(const QModelIndex &parent) const override { return 1; }
-  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+  QVariant data(const QModelIndex &index,
+                int role = Qt::DisplayRole) const override;
   Qt::ItemFlags flags(const QModelIndex &index) const override;
   bool setData(const QModelIndex &index, const QVariant &value,
                int role = Qt::EditRole) override;

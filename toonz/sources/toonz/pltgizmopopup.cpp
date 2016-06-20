@@ -504,7 +504,7 @@ ValueShifter::ValueShifter(bool isHue, QWidget *parent, Qt::WFlags flags)
   QPushButton *plusBut  = new QPushButton(QString("+"), this);
   QPushButton *minusBut = new QPushButton(QString("-"), this);
   int maxValue          = (isHue) ? 360 : 100;
-  m_valueLineEdit = new DoubleLineEdit(this, 10.00);  // parent - value
+  m_valueLineEdit       = new DoubleLineEdit(this, 10.00);  // parent - value
   plusBut->setFixedSize(21, 21);
   minusBut->setFixedSize(21, 21);
   plusBut->setObjectName("GizmoButton");

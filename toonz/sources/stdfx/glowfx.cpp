@@ -145,7 +145,8 @@ public:
 
   //---------------------------------------------------------------------------
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override {
     if (getActiveTimeRegion().contains(frame))
       if (m_light.isConnected()) {
         TRectD b0, b1;
@@ -184,7 +185,8 @@ public:
 
   //---------------------------------------------------------------------------
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     Status status = getFxStatus(m_light, m_lighted);
 
     if (status & NoPortsConnected)
@@ -294,7 +296,7 @@ public:
   //---------------------------------------------------------------------------
 
   void doDryCompute(TRectD &rect, double frame,
-                            const TRenderSettings &info) override {
+                    const TRenderSettings &info) override {
     Status status = getFxStatus(m_light, m_lighted);
     if (status & NoPortsConnected) return;
 

@@ -587,10 +587,12 @@ public:
                           TaskState &status) override;
 
   // used (by a server) to notify a server start
-  void attachServer(const QString &name, const QString &addr, int port) override;
+  void attachServer(const QString &name, const QString &addr,
+                    int port) override;
 
   // used (by a server) to notify a server stop
-  void detachServer(const QString &name, const QString &addr, int port) override;
+  void detachServer(const QString &name, const QString &addr,
+                    int port) override;
 
   // used (by a server) to notify a task submission error
   void taskSubmissionError(const QString &taskId, int errCode) override;

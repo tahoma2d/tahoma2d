@@ -90,13 +90,17 @@ public:
   TAffine getDpiAff(int frame);
 
   TFxTimeRegion getTimeRegion() const override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
   void compute(TFlash &flash, int frame) override;
 
   void saveData(TOStream &os) override;
@@ -149,8 +153,10 @@ public:
   bool canHandle(const TRenderSettings &info, double frame) override;
 
   TFxTimeRegion getTimeRegion() const override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
   TAffine getDpiAff(int frame);
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &) override;
@@ -188,11 +194,15 @@ public:
   int getColumnIndex() const override;
   TXshColumn *getXshColumn() const override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   TFxTimeRegion getTimeRegion() const override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &) override;
 
@@ -220,12 +230,16 @@ public:
 
   FxDag *getFxDag() const { return m_fxDag; }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &) override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
   const TPersistDeclaration *getDeclaration() const override;
   std::string getPluginId() const override;
@@ -249,9 +263,12 @@ class TOutputFx : public TRasterFx {
 public:
   TOutputFx();
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &) override;
 

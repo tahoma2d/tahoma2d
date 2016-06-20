@@ -37,9 +37,11 @@ public:
   void queryTaskShortInfo(const QString &id, QString &parentId, QString &name,
                           TaskState &status) override;
 
-  void attachServer(const QString &name, const QString &addr, int port) override;
+  void attachServer(const QString &name, const QString &addr,
+                    int port) override;
 
-  void detachServer(const QString &name, const QString &addr, int port) override;
+  void detachServer(const QString &name, const QString &addr,
+                    int port) override;
 
   void taskSubmissionError(const QString &taskId, int errCode) override;
 
@@ -62,7 +64,8 @@ public:
 
   // deactivates the server whose id has been specified
   // once deactivated, a server is not available for task rendering
-  void deactivateServer(const QString &id, bool completeRunningTasks = true) override;
+  void deactivateServer(const QString &id,
+                        bool completeRunningTasks = true) override;
 };
 
 //------------------------------------------------------------------------------

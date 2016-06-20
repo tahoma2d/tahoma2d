@@ -324,7 +324,9 @@ class GlobalKeyframeUndo : public TUndo {
 public:
   GlobalKeyframeUndo(int frame) : m_frame(frame) {}
 
-  int getSize() const override { return sizeof(*this) + m_columns.size() * sizeof(int); }
+  int getSize() const override {
+    return sizeof(*this) + m_columns.size() * sizeof(int);
+  }
 
   int getHistoryType() override { return HistoryType::Xsheet; }
 
@@ -561,16 +563,20 @@ public:
 //	Drawing Substitution
 //============================================================
 class DrawingSubtitutionUndo : public TUndo {
-
 private:
   int m_direction, m_row, m_col;
   TCellSelection::Range m_range;
   bool m_selected;
 
 public:
-  DrawingSubtitutionUndo(int dir, TCellSelection::Range range, int row, int col, bool selected) 
-    : m_direction(dir), m_range(range), m_row(row), m_col(col), m_selected(selected){}
-  
+  DrawingSubtitutionUndo(int dir, TCellSelection::Range range, int row, int col,
+                         bool selected)
+      : m_direction(dir)
+      , m_range(range)
+      , m_row(row)
+      , m_col(col)
+      , m_selected(selected) {}
+
   void undo() const override {
     if (!m_selected) {
       changeDrawing(-m_direction, m_row, m_col);
@@ -579,9 +585,9 @@ public:
     int col, row;
     int c = m_range.m_c0;
     int r = m_range.m_r0;
-    while (c <= m_range.m_c1)	{
+    while (c <= m_range.m_c1) {
       col = c;
-      while (r <= m_range.m_r1)	{
+      while (r <= m_range.m_r1) {
         row = r;
         changeDrawing(-m_direction, row, col);
         r++;
@@ -589,7 +595,6 @@ public:
       r = m_range.m_r0;
       c++;
     }
-    
   }
 
   void redo() const override {
@@ -597,13 +602,13 @@ public:
       changeDrawing(m_direction, m_row, m_col);
       return;
     }
-    
+
     int col, row;
     int c = m_range.m_c0;
     int r = m_range.m_r0;
-    while (c <= m_range.m_c1)	{
+    while (c <= m_range.m_c1) {
       col = c;
-      while (r <= m_range.m_r1)	{
+      while (r <= m_range.m_r1) {
         row = r;
         changeDrawing(m_direction, row, col);
         r++;
@@ -613,19 +618,16 @@ public:
     }
   }
 
-  int getSize() const override {
-    return sizeof(*this);
-  }
+  int getSize() const override { return sizeof(*this); }
 
   QString getHistoryString() override {
-    return QObject::tr("Change current drawing %1").arg(QString::number(m_direction));
+    return QObject::tr("Change current drawing %1")
+        .arg(QString::number(m_direction));
   }
 
-  int getHistoryType() override {
-    return HistoryType::Xsheet;
-  }
+  int getHistoryType() override { return HistoryType::Xsheet; }
+
 protected:
-
   static bool changeDrawing(int delta, int row, int col);
   static void setDrawing(const TFrameId &fid, int row, int col, TXshCell cell);
   friend class DrawingSubtitutionGroupUndo;
@@ -634,7 +636,6 @@ protected:
 //============================================================
 
 class DrawingSubtitutionGroupUndo : public TUndo {
-
 private:
   int m_direction;
   int m_row;
@@ -642,22 +643,34 @@ private:
   int m_count;
 
 public:
-  DrawingSubtitutionGroupUndo(int dir, int row, int col) : m_direction(dir), m_col(col), m_row(row)
-  {
-    m_count = 1;
-    TXshCell cell = TTool::getApplication()->getCurrentScene()->getScene()->getXsheet()->getCell(m_row, m_col);
-    if (!cell.m_level || !cell.m_level->getSimpleLevel())	return;
+  DrawingSubtitutionGroupUndo(int dir, int row, int col)
+      : m_direction(dir), m_col(col), m_row(row) {
+    m_count       = 1;
+    TXshCell cell = TTool::getApplication()
+                        ->getCurrentScene()
+                        ->getScene()
+                        ->getXsheet()
+                        ->getCell(m_row, m_col);
+    if (!cell.m_level || !cell.m_level->getSimpleLevel()) return;
 
     TFrameId id = cell.m_frameId;
 
-    TXshCell nextCell = TTool::getApplication()->getCurrentScene()->getScene()->getXsheet()->getCell(m_row + m_count, m_col);
-    if (!nextCell.m_level || !nextCell.m_level->getSimpleLevel())	return;
+    TXshCell nextCell = TTool::getApplication()
+                            ->getCurrentScene()
+                            ->getScene()
+                            ->getXsheet()
+                            ->getCell(m_row + m_count, m_col);
+    if (!nextCell.m_level || !nextCell.m_level->getSimpleLevel()) return;
 
     TFrameId nextId = nextCell.m_frameId;
 
     while (id == nextId) {
       m_count++;
-      nextCell = TTool::getApplication()->getCurrentScene()->getScene()->getXsheet()->getCell(m_row + m_count, m_col);
+      nextCell = TTool::getApplication()
+                     ->getCurrentScene()
+                     ->getScene()
+                     ->getXsheet()
+                     ->getCell(m_row + m_count, m_col);
       nextId = nextCell.m_frameId;
     }
   }
@@ -665,92 +678,90 @@ public:
   void undo() const override {
     int n = 1;
     DrawingSubtitutionUndo::changeDrawing(-m_direction, m_row, m_col);
-    while (n < m_count)	{
+    while (n < m_count) {
       DrawingSubtitutionUndo::changeDrawing(-m_direction, m_row + n, m_col);
-      n++; 
+      n++;
     }
   }
 
   void redo() const override {
     int n = 1;
     DrawingSubtitutionUndo::changeDrawing(m_direction, m_row, m_col);
-    while (n < m_count)	{
+    while (n < m_count) {
       DrawingSubtitutionUndo::changeDrawing(m_direction, m_row + n, m_col);
       n++;
     }
   }
 
-  int getSize() const override {
-    return sizeof(*this);
-  }
+  int getSize() const override { return sizeof(*this); }
 
   QString getHistoryString() override {
-    return QObject::tr("Change current drawing %1").arg(QString::number(m_direction));
+    return QObject::tr("Change current drawing %1")
+        .arg(QString::number(m_direction));
   }
 
-  int getHistoryType() override {
-    return HistoryType::Xsheet;
-  }
-
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //============================================================
 
 bool DrawingSubtitutionUndo::changeDrawing(int delta, int row, int col) {
-    TTool::Application *app = TTool::getApplication();
-    TXsheet *xsh = app->getCurrentScene()->getScene()->getXsheet();
-    TXshCell cell = xsh->getCell(row, col);
-    
-    if (!cell.m_level || !cell.m_level->getSimpleLevel())	return false;
-    
-    std::vector<TFrameId> fids;
-    cell.m_level->getSimpleLevel()->getFids(fids);
-    int n = fids.size();
-    
-    if (n < 2) return false;
-    
-    std::vector<TFrameId>::iterator it;
-    it = std::find(fids.begin(), fids.end(), cell.m_frameId);
-    
-    if (it == fids.end())	return false;
-    
-    int index = std::distance(fids.begin(), it);
-    while (delta < 0)	delta += n;
-    index = (index + delta) % n;
-    
-    setDrawing(fids[index], row, col, cell);
+  TTool::Application *app = TTool::getApplication();
+  TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
+  TXshCell cell           = xsh->getCell(row, col);
 
+  if (!cell.m_level || !cell.m_level->getSimpleLevel()) return false;
+
+  std::vector<TFrameId> fids;
+  cell.m_level->getSimpleLevel()->getFids(fids);
+  int n = fids.size();
+
+  if (n < 2) return false;
+
+  std::vector<TFrameId>::iterator it;
+  it = std::find(fids.begin(), fids.end(), cell.m_frameId);
+
+  if (it == fids.end()) return false;
+
+  int index = std::distance(fids.begin(), it);
+  while (delta < 0) delta += n;
+  index = (index + delta) % n;
+
+  setDrawing(fids[index], row, col, cell);
 }
 
-void DrawingSubtitutionUndo::setDrawing(const TFrameId &fid, int row, int col, TXshCell cell) {
-    TTool::Application *app = TTool::getApplication();
-    TXsheet *xsh = app->getCurrentScene()->getScene()->getXsheet();
-    cell.m_frameId = fid;
-    xsh->setCell(row, col, cell);
-    TStageObject *pegbar = xsh->getStageObject(TStageObjectId::ColumnId(col));
-    pegbar->setOffset(pegbar->getOffset());
+void DrawingSubtitutionUndo::setDrawing(const TFrameId &fid, int row, int col,
+                                        TXshCell cell) {
+  TTool::Application *app = TTool::getApplication();
+  TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
+  cell.m_frameId          = fid;
+  xsh->setCell(row, col, cell);
+  TStageObject *pegbar = xsh->getStageObject(TStageObjectId::ColumnId(col));
+  pegbar->setOffset(pegbar->getOffset());
 
-    app->getCurrentXsheet()->notifyXsheetChanged();
-    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
 
 //-----------------------------------------------------------------------------
 
 void drawingSubstituion(int dir) {
-  //TTool::Application *app = TTool::getApplication();
-  //TCellSelection *selection = dynamic_cast<TCellSelection *>(app->getCurrentSelection()->getSelection());
-  TCellSelection *selection = dynamic_cast<TCellSelection *>(TTool::getApplication()->getCurrentSelection()->getSelection());
+  // TTool::Application *app = TTool::getApplication();
+  // TCellSelection *selection = dynamic_cast<TCellSelection
+  // *>(app->getCurrentSelection()->getSelection());
+  TCellSelection *selection = dynamic_cast<TCellSelection *>(
+      TTool::getApplication()->getCurrentSelection()->getSelection());
   TCellSelection::Range range;
   bool selected = false;
   if (selection) {
-    range = selection->getSelectedCells();
-    if (!(range.isEmpty()))
-      selected = true;
+    range                            = selection->getSelectedCells();
+    if (!(range.isEmpty())) selected = true;
   }
   int row = TTool::getApplication()->getCurrentFrame()->getFrame();
   int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
-  
-  DrawingSubtitutionUndo *undo = new DrawingSubtitutionUndo(dir, range, row, col, selected);
+
+  DrawingSubtitutionUndo *undo =
+      new DrawingSubtitutionUndo(dir, range, row, col, selected);
   TUndoManager::manager()->add(undo);
 
   undo->redo();
@@ -759,7 +770,8 @@ void drawingSubstituion(int dir) {
 void drawingSubstituionGroup(int dir) {
   int row = TTool::getApplication()->getCurrentFrame()->getFrame();
   int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
-  DrawingSubtitutionGroupUndo *undo = new DrawingSubtitutionGroupUndo(dir, row, col);
+  DrawingSubtitutionGroupUndo *undo =
+      new DrawingSubtitutionGroupUndo(dir, row, col);
   TUndoManager::manager()->add(undo);
   undo->redo();
 }
@@ -769,47 +781,39 @@ void drawingSubstituionGroup(int dir) {
 class DrawingSubstitutionForwardCommand : public MenuItemHandler {
 public:
   DrawingSubstitutionForwardCommand() : MenuItemHandler(MI_DrawingSubForward) {}
-  void execute() override {
-    XshCmd::drawingSubstituion(1);
-  }
+  void execute() override { XshCmd::drawingSubstituion(1); }
 } DrawingSubstitutionForwardCommand;
-
 
 //============================================================
 
 class DrawingSubstitutionBackwardCommand : public MenuItemHandler {
 public:
-  DrawingSubstitutionBackwardCommand() : MenuItemHandler(MI_DrawingSubBackward) {}
-  void execute() override {
-    XshCmd::drawingSubstituion(-1);
-  }
+  DrawingSubstitutionBackwardCommand()
+      : MenuItemHandler(MI_DrawingSubBackward) {}
+  void execute() override { XshCmd::drawingSubstituion(-1); }
 } DrawingSubstitutionBackwardCommand;
 
 //=============================================================================
 
 class DrawingSubstitutionGroupForwardCommand : public MenuItemHandler {
 public:
-  DrawingSubstitutionGroupForwardCommand() : MenuItemHandler(MI_DrawingSubGroupForward) {}
-  void execute() override {
-    XshCmd::drawingSubstituionGroup(1);
-  }
+  DrawingSubstitutionGroupForwardCommand()
+      : MenuItemHandler(MI_DrawingSubGroupForward) {}
+  void execute() override { XshCmd::drawingSubstituionGroup(1); }
 } DrawingSubstitutionGroupForwardCommand;
-
 
 //============================================================
 
 class DrawingSubstitutionGroupBackwardCommand : public MenuItemHandler {
 public:
-  DrawingSubstitutionGroupBackwardCommand() : MenuItemHandler(MI_DrawingSubGroupBackward) {}
-  void execute() override {
-    XshCmd::drawingSubstituionGroup(-1);
-  }
+  DrawingSubstitutionGroupBackwardCommand()
+      : MenuItemHandler(MI_DrawingSubGroupBackward) {}
+  void execute() override { XshCmd::drawingSubstituionGroup(-1); }
 } DrawingSubstitutionGroupBackwardCommand;
-
 
 //============================================================
 
-} // namespace XshCmd
+}  // namespace XshCmd
 
 //*****************************************************************************
 //    Selection  commands
@@ -1254,8 +1258,12 @@ public:
     TApp::instance()->getCurrentObject()->notifyObjectIdChanged(false);
   }
 
-  void redo() const override { setKeyframes(m_newKeyframeFirst, m_newKeyframeSecond); }
-  void undo() const override { setKeyframes(m_oldKeyframeFirst, m_oldKeyframeSecond); }
+  void redo() const override {
+    setKeyframes(m_newKeyframeFirst, m_newKeyframeSecond);
+  }
+  void undo() const override {
+    setKeyframes(m_oldKeyframeFirst, m_oldKeyframeSecond);
+  }
 
   int getSize() const override { return sizeof *this; }
 

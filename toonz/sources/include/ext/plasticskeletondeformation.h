@@ -277,8 +277,8 @@ private:
       PlasticSkeleton *sk,
       int v);  //!< Deals with vertex deformations when v has been added
   void insertVertex(PlasticSkeleton *sk, int v);  //!< Deals with vertex
-                                                  //!deformations when v has
-                                                  //!been inserted in an edge
+                                                  //! deformations when v has
+  //! been inserted in an edge
   void deleteVertex(
       PlasticSkeleton *sk,
       int v);  //!< Removes vertex deformation for v, \a before it is deleted

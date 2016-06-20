@@ -1584,7 +1584,9 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Create Output Fx"); }
+  QString getHistoryString() override {
+    return QObject::tr("Create Output Fx");
+  }
 
 private:
   void initialize(TFx *fx) {
@@ -1792,7 +1794,7 @@ private:
   std::list<TFxCommand::Link>
       m_normalLinks;               //!< Actual *common* links from m_links
   std::list<TFx *> m_terminalFxs;  //!< Fxs connected to the xsheet (represents
-                                   //!xsheet input links)
+                                   //! xsheet input links)
   //   Why SMART pointers? No fx is deleted with this command... hmm...
   std::map<TFx *, DynamicLinksVector>
       m_dynamicLinks;  //!< Complete dynamic links configuration, per fx.
@@ -2438,7 +2440,9 @@ public:
     initialize(zeraryFxColumnSize, pos, addOffset);
   }
 
-  bool isConsistent() const override { return !(m_fxs.empty() && m_columns.empty()); }
+  bool isConsistent() const override {
+    return !(m_fxs.empty() && m_columns.empty());
+  }
 
   void redo() const override;
   void undo() const override;

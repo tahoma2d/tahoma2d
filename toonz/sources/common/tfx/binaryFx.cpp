@@ -59,7 +59,9 @@ public:
     return (g == 0) ? &m_group : 0;
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override {
@@ -69,10 +71,13 @@ public:
     return TRasterFx::memorySize(rect, info.m_bpp);
   }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
 
   void compatibilityTranslatePort(int majorVersion, int minorVersion,
                                   std::string &portName) override;
@@ -253,7 +258,8 @@ class OverFx : public TImageCombinationFx {
 public:
   OverFx() { setName(L"OverFx"); }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::over(down, up);
   }
 };
@@ -268,7 +274,8 @@ class AddFx : public TImageCombinationFx {
 public:
   AddFx() : m_value(100.0) { bindParam(this, "value", m_value); }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     double value = m_value->getValue(frame) / 100.0;
 
     if (value != 1.0)
@@ -286,7 +293,8 @@ class ColorDodgeFx : public TImageCombinationFx {
   FX_DECLARATION(AddFx)
 
 public:
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::colordodge(up, down, down);
   }
 
@@ -299,7 +307,8 @@ class ColorBurnFx : public TImageCombinationFx {
   FX_DECLARATION(AddFx)
 
 public:
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::colorburn(up, down, down);
   }
 
@@ -314,7 +323,8 @@ class ScreenFx : public TImageCombinationFx {
 public:
   bool requiresFullRect() override { return true; }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::screen(up, down, down);
   }
 
@@ -331,7 +341,8 @@ class SubFx : public TImageCombinationFx {
 public:
   SubFx() : m_matte(false) { bindParam(this, "matte", m_matte); }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::sub(up, down, down, m_matte->getValue());
   }
 
@@ -354,7 +365,8 @@ public:
 
   bool requiresFullRect() override { return m_matte->getValue(); }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::mult(up, down, down, m_value->getValue(frame), m_matte->getValue());
   }
 
@@ -373,7 +385,8 @@ public:
 
   bool requiresFullRect() override { return true; }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::ropmin(up, down, down, m_matte->getValue());
   }
 
@@ -386,7 +399,8 @@ class MaxFx : public TImageCombinationFx {
   FX_DECLARATION(MaxFx)
 
 public:
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::ropmax(up, down, down);
   }
 
@@ -399,7 +413,8 @@ class LinearBurnFx : public TImageCombinationFx {
   FX_DECLARATION(LinearBurnFx)
 
 public:
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::linearburn(up, down, down);
   }
 
@@ -416,7 +431,8 @@ public:
   OverlayFx() {}
   ~OverlayFx() {}
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     TRop::overlay(up, down, down);
   }
 };
@@ -436,7 +452,8 @@ public:
 
   bool requiresFullRect() override { return true; }
 
-  void process(const TRasterP &up, const TRasterP &down, double frame) override {
+  void process(const TRasterP &up, const TRasterP &down,
+               double frame) override {
     double value     = 0.01 * m_value->getValue(frame);
     UCHAR matteValue = (UCHAR)(value * 255.0 + 0.5);
 
@@ -464,7 +481,8 @@ public:
 
   ~InFx() {}
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override {
     if (m_matte.isConnected() && m_source.isConnected()) {
       bool ret = m_matte->doGetBBox(frame, bbox, info);
 
@@ -477,9 +495,12 @@ public:
     return false;
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     // This fx is not visible if either the source or the matte tiles are empty.
     // It's because only source is visible, and only where matte is opaque.
     if (!(m_source.isConnected() && m_matte.isConnected())) return;
@@ -494,7 +515,8 @@ public:
     TRop::ropin(srcTile.getRaster(), tile.getRaster(), tile.getRaster());
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     if (!(m_source.isConnected() && m_matte.isConnected())) return;
 
     m_source->dryCompute(rect, frame, info);
@@ -541,15 +563,19 @@ public:
 
   ~OutFx() {}
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override {
     if (m_source.isConnected()) return m_source->doGetBBox(frame, bbox, info);
 
     return false;
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     // If there is no source, do nothing
     if (!m_source.isConnected()) return;
 
@@ -570,7 +596,8 @@ public:
     TRop::ropout(srcTile.getRaster(), tile.getRaster(), tile.getRaster());
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     if (!m_source.isConnected()) return;
 
     if (!m_matte.isConnected()) {
@@ -601,9 +628,12 @@ public:
     addInputPort("Down", m_dn);
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     bBox = TRectD();
 
     {
@@ -625,7 +655,8 @@ public:
     return (bBox.getLx() >= 0) && (bBox.getLy() >= 0);
   }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     // Here it's just like matte in, but the matte is visible under up.
 
     if (!m_dn.isConnected()) return;
@@ -644,7 +675,8 @@ public:
     TRop::atop(upTile.getRaster(), tile.getRaster(), tile.getRaster());
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     if (!m_dn.isConnected()) return;
 
     if (!m_up.isConnected()) {

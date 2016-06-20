@@ -178,7 +178,8 @@ public:
   double getParamValue(TColorStyle::double_tag, int index) const override;
   void setParamValue(int index, double value) override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const override;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
   void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void loadData(TInputStreamInterface &is) override {
@@ -226,7 +227,9 @@ public:
                   const TStroke *stroke) const override;
   void drawStroke(TFlash &flash, const TStroke *s) const override;
 
-  void loadData(TInputStreamInterface &is) override { is >> m_color >> m_intensity; }
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_intensity;
+  }
   void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_intensity;
   }
@@ -315,7 +318,9 @@ public:
   void setParamValue(int index, double value) override;
 
   void loadData(TInputStreamInterface &is) override { is >> m_color >> m_bend; }
-  void saveData(TOutputStreamInterface &os) const override { os << m_color << m_bend; }
+  void saveData(TOutputStreamInterface &os) const override {
+    os << m_color << m_bend;
+  }
   bool isSaveSupported() { return true; }
 
   int getTagId() const override { return 108; }
@@ -378,7 +383,8 @@ public:
 
   TColorStyle *clone() const override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const override;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
   void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
@@ -413,7 +419,9 @@ public:
   bool isSaveSupported() { return true; }
 
   int getTagId() const override { return 136; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(112); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(112);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -445,10 +453,13 @@ public:
   double getParamValue(TColorStyle::double_tag, int index) const override;
   void setParamValue(int index, double value) override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const override;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
   void drawStroke(TFlash &fl, const TStroke *s) const override;
 
-  void loadData(TInputStreamInterface &is) override { is >> m_color >> m_density; }
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_density;
+  }
   void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_density;
   }
@@ -488,10 +499,13 @@ public:
       m_color1 = color;
   }
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const override;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
   void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) override { is >> m_color0 >> m_color1; }
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color0 >> m_color1;
+  }
   void loadData(int oldId, TInputStreamInterface &) override;
   void saveData(TOutputStreamInterface &os) const override {
     os << m_color0 << m_color1;
@@ -499,7 +513,9 @@ public:
   bool isSaveSupported() { return true; }
 
   int getTagId() const override { return 114; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(137); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(137);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -647,7 +663,9 @@ public:
   }
 
   int getTagId() const override { return 120; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(121); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(121);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -692,7 +710,9 @@ public:
     os << m_color << m_blend << m_intensity << m_in << m_out << m_noise;
   }
   int getTagId() const override { return 123; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(105); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(105);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -740,7 +760,9 @@ public:
   bool isSaveSupported() { return true; }
 
   int getTagId() const override { return 125; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(110); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(110);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -833,7 +855,9 @@ public:
   void setParamValue(int index, double value) override;
 
   int getTagId() const override { return 127; };
-  void loadData(TInputStreamInterface &is) override { is >> m_color >> m_parameter; }
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_parameter;
+  }
   void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_parameter;
   }
@@ -1049,7 +1073,9 @@ public:
     os << m_color << m_parameter << m_thick;
   }
   int getTagId() const override { return 133; };
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(102); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(102);
+  }
 };
 
 //-------------------------------------------------------------------

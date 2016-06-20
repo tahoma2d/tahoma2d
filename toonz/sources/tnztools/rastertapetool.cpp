@@ -88,7 +88,9 @@ public:
 
   //-------------------------------------------------------------------
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 
   QString getToolName() override { return QString("Autoclose Tool"); }
   int getHistoryType() override { return HistoryType::AutocloseTool; }
@@ -540,7 +542,7 @@ public:
       m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
                                      // torno all'immagine iniziale, torno allo
                                      // stato iniziale
-    else {  // cambio stato.
+    else {                           // cambio stato.
       m_firstFrameSelected = true;
       if (m_closeType.getValue() == RECT_CLOSE) {
         assert(!m_selectingRect.isEmpty());
@@ -600,7 +602,8 @@ public:
 
   //----------------------------------------------------------------------
 
-  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) override {
+  void leftButtonDoubleClick(const TPointD &pos,
+                             const TMouseEvent &e) override {
     TToonzImageP ti = TToonzImageP(getImage(true));
     if (m_closeType.getValue() == POLYLINE_CLOSE && ti) {
       closePolyline(pos);

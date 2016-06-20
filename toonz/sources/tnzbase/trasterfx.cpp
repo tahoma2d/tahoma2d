@@ -233,11 +233,14 @@ public:
 
   //-----------------------------------------------------------
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   //-----------------------------------------------------------
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override {
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override {
     // NOTE: TrFx are not present at this recursive level. Affines dealing is
     // currently handled by inserting the
     // rendering affine AFTER a getAlias call. Ever.
@@ -247,7 +250,8 @@ public:
 
   //-----------------------------------------------------------
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     // NOTE: TrFx are not present at this recursive level. Affines dealing is
     // still handled by TGeometryFxs here....
     return m_fx->doGetBBox(frame, bBox, info);
@@ -255,7 +259,8 @@ public:
 
   //-----------------------------------------------------------
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override {
     const TRectD &rectOut =
         myConvert(tile.getRaster()->getBounds()) + tile.m_pos;
 
@@ -280,7 +285,8 @@ public:
 
   //-----------------------------------------------------------
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     TRectD rectIn;
     TRenderSettings infoIn(info);
     TAffine appliedAff;

@@ -37,7 +37,8 @@ class MySortFilterProxyModel : public QSortFilterProxyModel {
 public:
   MySortFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent) {}
 
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
+  bool filterAcceptsRow(int sourceRow,
+                        const QModelIndex &sourceParent) const override {
     TMessageViewer *v = dynamic_cast<TMessageViewer *>(parent());
     assert(v);
 

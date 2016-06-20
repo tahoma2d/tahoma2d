@@ -219,8 +219,8 @@ signals:
 class DvItemViewerPanel : public QFrame, public TSelection::View {
   Q_OBJECT
 
-  QColor m_alternateBackground;  // alaternate bg color for teble view
-                                 // (170,170,170)
+  QColor m_alternateBackground;     // alaternate bg color for teble view
+                                    // (170,170,170)
   QColor m_textColor;               // text color (black)
   QColor m_selectedTextColor;       // selected item text color (white)
   QColor m_folderTextColor;         // folder item text color (blue)

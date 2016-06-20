@@ -187,7 +187,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 
   QString getToolName() override { return QString("Eraser Tool"); }
   int getHistoryType() override { return HistoryType::EraserTool; }
@@ -256,7 +258,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 
   QString getToolName() override { return QString("Eraser Tool"); }
   int getHistoryType() override { return HistoryType::EraserTool; }
@@ -1073,7 +1077,7 @@ void EraserTool::onImageChanged() {
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
-  else {  // cambio stato.
+  else {                           // cambio stato.
     m_firstFrameSelected = true;
     if (m_eraseType.getValue() != FREEHANDERASE &&
         m_eraseType.getValue() != POLYLINEERASE) {

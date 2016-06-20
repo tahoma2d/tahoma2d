@@ -32,7 +32,7 @@ public:
 
   // chiama compute_value ma effettua un controllo del parametro
   void setParameters_(const TStroke *ref, double w,
-                              double actionLength) override;
+                      double actionLength) override;
 
 private:
   Potential *clone() override;

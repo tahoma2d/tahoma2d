@@ -50,7 +50,9 @@ public:
 
   int getColorParamCount() const override { return 1; }
   TPixel32 getColorParamValue(int index) const override { return m_color; }
-  void setColorParamValue(int index, const TPixel32 &color) override { m_color = color; }
+  void setColorParamValue(int index, const TPixel32 &color) override {
+    m_color = color;
+  }
 
   QString getDescription() const override {
     return QCoreApplication::translate("TAirbrushRasterStyle", "Airbrush");
@@ -103,7 +105,7 @@ protected:
   void saveData(TOutputStreamInterface &) const override;
 
   // per la compatibilita' con il passato
-  void loadData(int oldId, TInputStreamInterface &) override {};
+  void loadData(int oldId, TInputStreamInterface &) override{};
 };
 
 //=============================================================================
@@ -158,7 +160,9 @@ public:
     assert(false);
     return TPixel32();
   }
-  void setColorParamValue(int index, const TPixel32 &color) override { assert(false); }
+  void setColorParamValue(int index, const TPixel32 &color) override {
+    assert(false);
+  }
 
   int getTagId() const override { return 1151; }
 
@@ -170,11 +174,11 @@ public:
 protected:
   void makeIcon(const TDimension &d) override;
 
-  void loadData(TInputStreamInterface &) override {};
-  void saveData(TOutputStreamInterface &) const override {};
+  void loadData(TInputStreamInterface &) override{};
+  void saveData(TOutputStreamInterface &) const override{};
 
   // per la compatibilita' con il passato
-  void loadData(int oldId, TInputStreamInterface &) override {};
+  void loadData(int oldId, TInputStreamInterface &) override{};
 };
 
 #endif

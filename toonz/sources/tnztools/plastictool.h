@@ -95,7 +95,7 @@ private:
   int m_skelId;                      //!< Current m_sd's skeleton id
   tcg::invalidable<PlasticSkeleton>
       m_deformedSkeleton;  //!< The interactively-deformed \a animation-mode
-                           //!skeleton
+                           //! skeleton
 
   TMeshImageP m_mi;  //!< Current mesh image
 
@@ -161,14 +161,14 @@ private:
   // Editing-related vars
 
   std::auto_ptr<tcg::polymorphic> m_rigidityPainter;  //!< Delegate class to
-                                                      //!deal with (undoable)
-                                                      //!rigidity painting
+                                                      //! deal with (undoable)
+  //! rigidity painting
   bool m_showSkeletonOS;  //!< Whether onion-skinned skeletons must be shown
 
   // Deformation-related vars
 
   bool m_recompileOnMouseRelease;  //!< Whether skeleton recompilation should
-                                   //!happen on mouse release
+                                   //! happen on mouse release
 
 public:
   enum Modes {
@@ -247,9 +247,9 @@ public:
   void touchDeformation();
 
   void storeDeformation();  //!< Stores deformation of current column (copying
-                            //!its reference)
+                            //! its reference)
   void storeSkeletonId();  //!< Stores current skeleton id associated to current
-                           //!deformation
+                           //! deformation
 
   void onChange();  //!< Updates the tool after a deformation parameter change.
                     //!< It can be used to refresh the tool in ANIMATION mode.
@@ -439,7 +439,7 @@ namespace PlasticToolLocals {
 
 extern PlasticTool l_plasticTool;        //!< Tool instance.
 extern bool l_suspendParamsObservation;  //!< Used to join multiple param change
-                                         //!notifications.
+                                         //! notifications.
 
 //------------------------------------------------------------------------------
 

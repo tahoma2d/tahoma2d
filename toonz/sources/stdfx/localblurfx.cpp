@@ -255,7 +255,8 @@ public:
     return (isAlmostIsotropic(info.m_affine) || m_value->getValue(frame) == 0);
   }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_up.isConnected()) {
       bool ret = m_up->doGetBBox(frame, bBox, info);
 
@@ -272,8 +273,10 @@ public:
 
   void enlarge(const TRectD &bbox, TRectD &requestedRect, int blur);
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
 
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override;

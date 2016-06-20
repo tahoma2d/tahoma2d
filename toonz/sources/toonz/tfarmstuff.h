@@ -130,7 +130,8 @@ public:
   TDimension getPreferredSize() const override;
 
   void configureNotify(const TDimension &d) override;
-  bool onNcPaint(bool is_active, const TDimension &size, const TRect &titlebar) override;
+  bool onNcPaint(bool is_active, const TDimension &size,
+                 const TRect &titlebar) override;
 
   void popup(const TPoint &p, const TFilePath &fp);
   void onIntFieldChange(const TNumField::Event &e);
@@ -153,7 +154,8 @@ public:
   TDimension getPreferredSize() const override;
 
   void configureNotify(const TDimension &d) override;
-  bool onNcPaint(bool is_active, const TDimension &size, const TRect &titlebar) override;
+  bool onNcPaint(bool is_active, const TDimension &size,
+                 const TRect &titlebar) override;
 
   void popup(const TPoint &p, const TFilePath &fp);
   void onIntFieldChange(const TNumField::Event &e);

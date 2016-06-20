@@ -312,7 +312,9 @@ public:
     }
   }
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 
   QString getToolName() override {
     return QString("Fill Tool : %1")
@@ -433,7 +435,9 @@ public:
     }
   }
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 };
 
 //=============================================================================
@@ -1491,7 +1495,7 @@ public:
       m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
                                      // torno all'immagine iniziale, torno allo
                                      // stato iniziale
-    else {  // cambio stato.
+    else {                           // cambio stato.
       m_firstFrameSelected = true;
       if (m_type != FREEHAND && m_type != POLYLINE) {
         assert(!m_selectingRect.isEmpty());

@@ -290,7 +290,8 @@ private:
 
   // Observers notification functions
 
-  void onChange(const TParamChange &) override;  // Multiple param notifications ...
+  void onChange(
+      const TParamChange &) override;   // Multiple param notifications ...
   void onParamChange(bool isDragging);  // ... that get compressed into one
 
   // Update functions
@@ -324,7 +325,9 @@ public:
 
   QString getIdName() const override;
 
-  void *getInternalPointer() const override { return static_cast<void *>(m_fx); }
+  void *getInternalPointer() const override {
+    return static_cast<void *>(m_fx);
+  }
   TFx *getFx() const { return m_fx; }
   QVariant data(int role) const override;
 
@@ -367,11 +370,14 @@ public:
   QColor getCurrentTextColor() const { return m_currentTextColor; }
 
 protected:
-  void onClick(TreeModel::Item *item, const QPoint &itemPos, QMouseEvent *e) override;
+  void onClick(TreeModel::Item *item, const QPoint &itemPos,
+               QMouseEvent *e) override;
 
-  void onMidClick(TreeModel::Item *item, const QPoint &itemPos, QMouseEvent *e) override;
+  void onMidClick(TreeModel::Item *item, const QPoint &itemPos,
+                  QMouseEvent *e) override;
 
-  void onDrag(TreeModel::Item *item, const QPoint &itemPos, QMouseEvent *e) override;
+  void onDrag(TreeModel::Item *item, const QPoint &itemPos,
+              QMouseEvent *e) override;
   void onRelease() override;
 
   void openContextMenu(FunctionTreeModel::Channel *channel,

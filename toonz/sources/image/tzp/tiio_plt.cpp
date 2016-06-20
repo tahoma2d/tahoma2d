@@ -48,7 +48,8 @@ public:
   void readLine(char *buffer, int x0, int x1, int shrink) override;
 
   void getTzpPaletteColorNames(
-      std::map<int, std::pair<std::string, std::string>> &pltColorNames) const override;
+      std::map<int, std::pair<std::string, std::string>> &pltColorNames)
+      const override;
 };
 
 //------------------------------------------------------------

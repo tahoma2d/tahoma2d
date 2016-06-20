@@ -236,7 +236,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const override { return UndoFullColorPencil::getSize() + sizeof(this); }
+  int getSize() const override {
+    return UndoFullColorPencil::getSize() + sizeof(this);
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -276,7 +278,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const override { return UndoRasterPencil::getSize() + sizeof(this); }
+  int getSize() const override {
+    return UndoRasterPencil::getSize() + sizeof(this);
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -823,7 +827,9 @@ public:
 
   int getColorClass() const { return 1; }
 
-  TPropertyGroup *getProperties(int idx) override { return &m_param.m_prop[idx]; }
+  TPropertyGroup *getProperties(int idx) override {
+    return &m_param.m_prop[idx];
+  }
 
   bool onPropertyChanged(std::string propertyName) override {
     /*---	変更されたPropertyごとに処理を分ける。

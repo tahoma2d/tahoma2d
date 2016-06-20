@@ -24,7 +24,8 @@ public:
   }
   ~RGBMFadeFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected())
       return m_input->doGetBBox(frame, bBox, info);
     else {
@@ -34,7 +35,9 @@ public:
   }
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 template <typename PIXEL>

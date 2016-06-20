@@ -373,7 +373,7 @@ class TImageWriterTzl : public TImageWriter {
   TDimension
       m_iconSize;  // Dimensioni dell'iconcina salvata all'interno del file tlv
   //	In genere questo parametro viene settato come quello impostato
-  //dall'utente
+  // dall'utente
   // nelle preferenze.
 public:
   TImageWriterTzl(TLevelWriterTzl *lw, TFrameId fid)

@@ -103,7 +103,7 @@ public:
   QRectF boundingRect() const override;
   // reimplemeted in SchematicToggle_SplineOptions
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                     QWidget *widget = 0) override;
+             QWidget *widget = 0) override;
 
   //! this is used for a 2-state toggle;
   void setIsActive(bool value) { m_state = value ? 1 : 0; }
@@ -312,7 +312,7 @@ public:
   QRectF boundingRect() const override { return QRectF(0, 0, 1, 1); };
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                     QWidget *widget = 0) override {};
+             QWidget *widget = 0) override{};
 
   //! Add the \b link to the links container.
   void addLink(SchematicLink *link) { m_links.push_back(link); }
@@ -331,7 +331,7 @@ public:
 
   //! Returns the link indexed with \b index.\n
   //!\note A link is indexed with a progressive number when is inserted in the
-  //!container.
+  //! container.
   SchematicLink *getLink(int index) const {
     return (index < m_links.size() && index >= 0) ? m_links[index] : 0;
   }

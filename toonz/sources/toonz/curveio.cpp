@@ -20,7 +20,9 @@ public:
   LoadCurveUndo(TDoubleParam *curve) : m_curve(curve) {
     m_oldCurve = static_cast<TDoubleParam *>(curve->clone());
   }
-  void onAdd() override { m_newCurve = static_cast<TDoubleParam *>(m_curve->clone()); }
+  void onAdd() override {
+    m_newCurve = static_cast<TDoubleParam *>(m_curve->clone());
+  }
 
   void undo() const override { m_curve->copy(m_oldCurve.getPointer()); }
   void redo() const override { m_curve->copy(m_newCurve.getPointer()); }

@@ -162,14 +162,15 @@ public:
   bool isKeyframe(double) const override { return false; }
   void deleteKeyframe(double) override {}
   void clearKeyframes() override {}
-  void assignKeyframe(double, const TSmartPointerT<TParam> &, double, bool) override {}
+  void assignKeyframe(double, const TSmartPointerT<TParam> &, double,
+                      bool) override {}
 
   std::string getValueAlias(double, int) override {
     using namespace std;
     return to_string(getValue());
   }
   bool hasKeyframes() const override { return 0; };
-  void getKeyframes(std::set<double> &) const override {};
+  void getKeyframes(std::set<double> &) const override{};
   int getNextKeyframe(double) const override { return -1; };
   int getPrevKeyframe(double) const override { return -1; };
 };

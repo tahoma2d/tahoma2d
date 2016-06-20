@@ -72,13 +72,13 @@ public:
   // Tool data
 
   double m_minAngle, m_maxAngle;  //!< Minimum and maximum accepted angles when
-                                  //!updating the vertex
-                                  //!< position with the mouse. In degrees.
+                                  //! updating the vertex
+  //!< position with the mouse. In degrees.
 public:
   // Handle data
 
   bool m_interpolate;  //!< Whether the vertex needs to be interpolated (see
-                       //!plasticdeformer.h)
+                       //! plasticdeformer.h)
 
 public:
   PlasticSkeletonVertex();
@@ -124,8 +124,8 @@ public:
   int parentVertex(int v) { return vertex(v).m_parent; }
 
   void moveVertex(int v, const TPointD &pos);  //!< Moves a vertex to the
-                                               //!specified position, informing
-                                               //!associated deformers
+                                               //! specified position, informing
+  //! associated deformers
   int addVertex(const PlasticSkeletonVertex &vx,
                 int parent);  //!< Adds a vertex to the skeleton
   int insertVertex(const PlasticSkeletonVertex &vx,

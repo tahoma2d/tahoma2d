@@ -42,7 +42,9 @@ public:
   static double m_fieldGuideAspectRatio;
 
   VerticalFldUnitConverter(double factor) : m_factor(factor) {}
-  TUnitConverter *clone() const override { return new VerticalFldUnitConverter(*this); }
+  TUnitConverter *clone() const override {
+    return new VerticalFldUnitConverter(*this);
+  }
   double convertTo(double v) const override {
     return v * m_fieldGuideAspectRatio * m_factor;
   }
@@ -72,7 +74,9 @@ class TangentConverter : public TUnitConverter {
 public:
   TangentConverter() {}
   TUnitConverter *clone() const override { return new TangentConverter(*this); }
-  double convertTo(double v) const override { return atan(v) * (M_1_PI * 180.0); }
+  double convertTo(double v) const override {
+    return atan(v) * (M_1_PI * 180.0);
+  }
   double convertFrom(double v) const override { return tan(v * M_PI_180); }
 };
 
@@ -81,7 +85,9 @@ public:
 class TPixelUnitXConverter : public TUnitConverter {
 public:
   TPixelUnitXConverter() {}
-  TUnitConverter *clone() const override { return new TPixelUnitXConverter(*this); }
+  TUnitConverter *clone() const override {
+    return new TPixelUnitXConverter(*this);
+  }
   double convertTo(double v) const override {
     return v * UnitParameters::currentDpiGetter().first;
   }
@@ -93,7 +99,9 @@ public:
 class TPixelUnitYConverter : public TUnitConverter {
 public:
   TPixelUnitYConverter() {}
-  TUnitConverter *clone() const override { return new TPixelUnitYConverter(*this); }
+  TUnitConverter *clone() const override {
+    return new TPixelUnitYConverter(*this);
+  }
   double convertTo(double v) const override {
     return v * UnitParameters::currentDpiGetter().second;
   }
@@ -532,7 +540,9 @@ public:
     return new ZDepthUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const override { return (1 - v * 0.001) * getCameraSize(); }
+  double convertTo(double v) const override {
+    return (1 - v * 0.001) * getCameraSize();
+  }
   double convertFrom(double v) const override {
     return (1 - v / getCameraSize()) * 1000.0;
   }
@@ -551,7 +561,9 @@ public:
     return new CameraZDepthUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const override { return (1 + v * 0.001) * getCameraSize(); }
+  double convertTo(double v) const override {
+    return (1 + v * 0.001) * getCameraSize();
+  }
   double convertFrom(double v) const override {
     return (v / getCameraSize() - 1) * 1000.0;
   }
@@ -571,8 +583,12 @@ public:
     return new ZDepthHandleUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const override { return -v * 0.001 * getCameraSize(); }
-  double convertFrom(double v) const override { return (-v / getCameraSize()) * 1000.0; }
+  double convertTo(double v) const override {
+    return -v * 0.001 * getCameraSize();
+  }
+  double convertFrom(double v) const override {
+    return (-v / getCameraSize()) * 1000.0;
+  }
 };
 
 class CameraZDepthHandleUnitConverter : public TUnitConverter {
@@ -587,8 +603,12 @@ public:
     return new CameraZDepthHandleUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const override { return v * 0.001 * getCameraSize(); }
-  double convertFrom(double v) const override { return (v / getCameraSize()) * 1000.0; }
+  double convertTo(double v) const override {
+    return v * 0.001 * getCameraSize();
+  }
+  double convertFrom(double v) const override {
+    return (v / getCameraSize()) * 1000.0;
+  }
 };
 
 }  // namespace

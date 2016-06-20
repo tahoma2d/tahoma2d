@@ -79,7 +79,8 @@ public:
   QModelIndexList getSelectedIndexes() const { return selectedIndexes(); }
 
 protected:
-  void onClick(TreeModel::Item *item, const QPoint &pos, QMouseEvent *e) override;
+  void onClick(TreeModel::Item *item, const QPoint &pos,
+               QMouseEvent *e) override;
   void openContextMenu(TreeModel::Item *item, const QPoint &globalPos) override;
 };
 

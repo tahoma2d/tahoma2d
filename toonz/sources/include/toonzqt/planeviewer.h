@@ -122,7 +122,7 @@ protected:
   double m_chessSize;   //!< Size of the chessboard squares (default is 40).
 
   TRaster32P m_rasterBuffer;  //!< Auxiliary buffer used to draw on the widget
-                              //!directly.
+                              //! directly.
 
   double m_zoomRange[2];  //!< Viewport zoom range (default: [-1024, 1024]).
 

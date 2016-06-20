@@ -53,7 +53,8 @@ public:
     this->m_ref_mode->setDefaultValue(0);
     this->m_ref_mode->setValue(0);
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       const bool ret      = this->m_input->doGetBBox(frame, bBox, info);
       const double margin = ceil(this->m_radius->getValue(frame));
@@ -74,7 +75,8 @@ public:
     const double radius = this->m_radius->getValue(frame);
     return TRasterFx::memorySize(rect.enlarge(ceil(radius) + 0.5), info.m_bpp);
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_median, "inoMedianFx")
 //------------------------------------------------------------

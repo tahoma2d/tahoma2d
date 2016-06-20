@@ -100,7 +100,9 @@ public:
       , m_stageObjectGroup(stageGroup)
       , m_vxName(vxName) {}
 
-  QString getShortName() const override { return m_stageObjectGroup->getShortName(); }
+  QString getShortName() const override {
+    return m_stageObjectGroup->getShortName();
+  }
   QString getLongName() const override { return *m_vxName; }
 
   void *getInternalPointer() const override { return (void *)m_vxName; }

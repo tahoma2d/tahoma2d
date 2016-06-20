@@ -1191,9 +1191,9 @@ inline void setMatteAndYMirror(const TRaster32P &ras) {
   ras->lock();
   TPixel32 *upRow = ras->pixels();
   TPixel32 *dwRow = ras->pixels(ras->getLy() - 1);
-  int hLy         = (int)(ras->getLy() / 2. + 0.5);  // piccola pessimizzazione...
-  int wrap        = ras->getWrap();
-  int lx          = ras->getLx();
+  int hLy  = (int)(ras->getLy() / 2. + 0.5);  // piccola pessimizzazione...
+  int wrap = ras->getWrap();
+  int lx   = ras->getLx();
   TPixel32 *upPix = 0;
 
   TPixel32 *lastPix = ras->pixels(hLy);

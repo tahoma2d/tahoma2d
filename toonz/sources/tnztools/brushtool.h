@@ -163,7 +163,7 @@ protected:
 
   bool m_active, m_enabled,
       m_isPrompting,  //!< Whether the tool is prompting for spline
-                      //!substitution.
+                      //! substitution.
       m_firstTime, m_isPath, m_presetsLoaded;
 
   /*---

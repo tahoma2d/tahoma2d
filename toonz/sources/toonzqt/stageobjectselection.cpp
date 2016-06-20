@@ -92,7 +92,9 @@ public:
     m_xshHandle->notifyXsheetChanged();
   }
 
-  int getSize() const override { return sizeof(*this) + sizeof(StageObjectsData); }
+  int getSize() const override {
+    return sizeof(*this) + sizeof(StageObjectsData);
+  }
 
   QString getHistoryString() override {
     QString str                              = QObject::tr("Paste Object  ");

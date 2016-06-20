@@ -123,7 +123,8 @@ public:
   }
   ~ChangeColorFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) return m_input->doGetBBox(frame, bBox, info);
     {
       bBox = TRectD();

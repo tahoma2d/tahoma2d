@@ -2258,12 +2258,10 @@ void TVectorImage::Imp::findIntersections() {
   for (i = 0; i < strokeSize; i++) {
     TStroke *s1 = strokeArray[i]->m_s;
     if (strokeArray[i]->m_isPoint) continue;
-    for (
-        j = i;
-        j <
-        strokeSize /*&& (strokeArray[i]->getBBox().x1>= strokeArray[j]->getBBox().x0)*/
-        ;
-        j++) {
+    for (j = i; j < strokeSize /*&& (strokeArray[i]->getBBox().x1>=
+                                  strokeArray[j]->getBBox().x0)*/
+         ;
+         j++) {
       TStroke *s2 = strokeArray[j]->m_s;
 
       if (strokeArray[j]->m_isPoint ||

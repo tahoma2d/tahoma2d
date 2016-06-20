@@ -202,7 +202,8 @@ public:
   TPixel32 getColor() const { return m_color; }
   USHORT getStipple() const { return m_stipple; }
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const override;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
   void drawStroke(TFlash &flash, const TStroke *s) const override;
 
   bool hasMainColor() const override { return true; }
@@ -263,7 +264,9 @@ public:
 
   TColorStyle *clone() const override;
 
-  QString getDescription() const override { return "TRasterImagePatternStrokeStyle"; }
+  QString getDescription() const override {
+    return "TRasterImagePatternStrokeStyle";
+  }
 
   bool hasMainColor() const override { return false; }
   TPixel32 getMainColor() const override { return TPixel32::Black; }
@@ -338,7 +341,9 @@ public:
 
   TColorStyle *clone() const override;
 
-  QString getDescription() const override { return "TVectorImagePatternStrokeStyle"; }
+  QString getDescription() const override {
+    return "TVectorImagePatternStrokeStyle";
+  }
 
   bool hasMainColor() const override { return false; }
   TPixel32 getMainColor() const override { return TPixel32::Black; }

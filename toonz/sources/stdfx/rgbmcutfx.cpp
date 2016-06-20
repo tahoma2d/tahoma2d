@@ -39,13 +39,16 @@ public:
 
   ~RGBMCutFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     return m_input.getFx() && m_input->doGetBBox(frame, bBox, info);
   };
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 namespace {

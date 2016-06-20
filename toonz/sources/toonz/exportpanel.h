@@ -57,7 +57,8 @@ public:
 
   // da DvItemListModel
   int getItemCount() const override;
-  QVariant getItemData(int index, DataType dataType, bool isSelected = false) override;
+  QVariant getItemData(int index, DataType dataType,
+                       bool isSelected = false) override;
   bool isSceneItem(int index) const override { return true; }
   QMenu *getContextMenu(QWidget *parent, int index) override;
   void enableSelectionCommands(TSelection *) override;

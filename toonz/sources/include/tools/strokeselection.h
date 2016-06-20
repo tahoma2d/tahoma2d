@@ -85,7 +85,7 @@ private:
 
   std::unique_ptr<TGroupCommand> m_groupCommand;  //!< Groups commands wrapper.
   TSceneHandle *m_sceneHandle;  //!< Global scene handle. \deprecated  Use
-                                //!TApplication instead.
+                                //! TApplication instead.
 
   /*!Set this boolean to true before call tool->notifyImageChanged() when you
 want to reset strokes bbox.

@@ -101,7 +101,8 @@ Use this constructor with modifyControlPoints.
   virtual ~TStrokePointDeformation();
 
   TThickPoint getDisplacement(const TStroke &stroke, double s) const override;
-  TThickPoint getDisplacementForControlPoint(const TStroke &s, UINT n) const override;
+  TThickPoint getDisplacementForControlPoint(const TStroke &s,
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
                                                 double cpLen) const override;
 
@@ -235,7 +236,8 @@ Use this constructor with movePoints.
   virtual ~TStrokeBenderDeformation();
 
   TThickPoint getDisplacement(const TStroke &, double s) const override;
-  TThickPoint getDisplacementForControlPoint(const TStroke &, UINT n) const override;
+  TThickPoint getDisplacementForControlPoint(const TStroke &,
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
                                                 double cpLen) const override;
 

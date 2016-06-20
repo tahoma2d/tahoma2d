@@ -526,7 +526,9 @@ void setMainColor(const TPixel32 &color){ m_color0=color; }
     return QCoreApplication::translate("TChalkFillStyle", "Chalk");
   }
   void loadData(int oldId, TInputStreamInterface &) override;
-  void getObsoleteTagIds(std::vector<int> &ids) const override { ids.push_back(1133); }
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(1133);
+  }
   int getTagId() const override { return 1143; };
 
 protected:

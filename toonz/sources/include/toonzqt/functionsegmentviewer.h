@@ -148,7 +148,7 @@ class SpeedInOutSegmentPage : public FunctionSegmentPage {
 public:
   SpeedInOutSegmentPage(FunctionSegmentViewer *parent = 0);
   void refresh() override;
-  void apply() override {};
+  void apply() override{};
 
   void getGuiValues(TPointD &speedIn, TPointD &speedOut);
   void init(int segmentLength) override;

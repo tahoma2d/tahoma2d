@@ -170,8 +170,10 @@ public:
   const TPersistDeclaration *getDeclaration() const override;
   std::string getPluginId() const override;
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override;
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override;
   bool canHandle(const TRenderSettings &info, double frame) override;
@@ -201,8 +203,10 @@ public:
   bool isZerary() const override { return isPluginZerary(); };
   void callStartRenderHandler() override;
   void callEndRenderHandler() override;
-  void callStartRenderFrameHandler(const TRenderSettings *rs, double frame) override;
-  void callEndRenderFrameHandler(const TRenderSettings *rs, double frame) override;
+  void callStartRenderFrameHandler(const TRenderSettings *rs,
+                                   double frame) override;
+  void callEndRenderFrameHandler(const TRenderSettings *rs,
+                                 double frame) override;
   void *getUserData();
   void setUserData(void *user_data);
 

@@ -573,11 +573,11 @@ void TLevelWriterAvi::doSaveSoundTrack() {
   audioStreamInfo.dwFormatChangeCount   = 0;
   audioStreamInfo.szName[0]             = 0;
 
-  waveinfo.wFormatTag     = WAVE_FORMAT_PCM;  // WAVE_FORMAT_DRM
-  waveinfo.nChannels      = m_st->getChannelCount();
-  waveinfo.nSamplesPerSec = m_st->getSampleRate();
-  waveinfo.wBitsPerSample = m_st->getBitPerSample();
-  waveinfo.nBlockAlign    = waveinfo.nChannels * waveinfo.wBitsPerSample >> 3;
+  waveinfo.wFormatTag      = WAVE_FORMAT_PCM;  // WAVE_FORMAT_DRM
+  waveinfo.nChannels       = m_st->getChannelCount();
+  waveinfo.nSamplesPerSec  = m_st->getSampleRate();
+  waveinfo.wBitsPerSample  = m_st->getBitPerSample();
+  waveinfo.nBlockAlign     = waveinfo.nChannels * waveinfo.wBitsPerSample >> 3;
   waveinfo.nAvgBytesPerSec = waveinfo.nSamplesPerSec * waveinfo.nBlockAlign;
   waveinfo.cbSize          = sizeof(WAVEFORMATEX);
 

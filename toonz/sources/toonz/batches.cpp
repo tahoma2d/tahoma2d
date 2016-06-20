@@ -961,7 +961,9 @@ public:
     // throw m_e;
   }
 
-  TThread::Message *clone() const override { return new ControllerFailureMsg(m_e); }
+  TThread::Message *clone() const override {
+    return new ControllerFailureMsg(m_e);
+  }
 
   TException m_e;
 };
@@ -1039,18 +1041,21 @@ public:
 
   void getTasks(vector<QString> &tasks) override;
   void getTasks(const QString &parentId, std::vector<QString> &tasks) override;
-  void getTasks(const QString &parentId, std::vector<TaskShortInfo> &tasks) override;
+  void getTasks(const QString &parentId,
+                std::vector<TaskShortInfo> &tasks) override;
 
   void queryTaskInfo(const QString &id, TFarmTask &task) override;
 
   void queryTaskShortInfo(const QString &id, QString &parentId, QString &name,
                           TaskState &status) override;
 
-  void attachServer(const QString &name, const QString &addr, int port) override {
+  void attachServer(const QString &name, const QString &addr,
+                    int port) override {
     assert(false);
   }
 
-  void detachServer(const QString &name, const QString &addr, int port) override {
+  void detachServer(const QString &name, const QString &addr,
+                    int port) override {
     assert(false);
   }
 
@@ -1070,7 +1075,9 @@ public:
     return ServerUnknown;
   }
 
-  void queryServerInfo(const QString &id, ServerInfo &info) override { assert(false); }
+  void queryServerInfo(const QString &id, ServerInfo &info) override {
+    assert(false);
+  }
 
   void activateServer(const QString &id) override { assert(false); }
 

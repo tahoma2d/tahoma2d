@@ -130,7 +130,9 @@ public:
   /*!
           Returns a pointer to the current selection.
   */
-  TSelectionHandle *getCurrentSelection() const override { return m_currentSelection; }
+  TSelectionHandle *getCurrentSelection() const override {
+    return m_currentSelection;
+  }
   /*!
           Returns a pointer to the current layer's mask.
   */

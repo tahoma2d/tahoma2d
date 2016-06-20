@@ -159,7 +159,8 @@ public slots:
 protected:
   QSize sizeHint() const override;
 
-  void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
+  void currentChanged(const QModelIndex &current,
+                      const QModelIndex &previous) override;
   bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *ev) override;
   void resizeEvent(QResizeEvent *) override;
 

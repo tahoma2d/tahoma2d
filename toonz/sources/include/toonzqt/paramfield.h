@@ -208,7 +208,8 @@ public:
 
   virtual void updateField(T value) = 0;
 
-  void setParam(const TParamP &current, const TParamP &actual, int frame) override {
+  void setParam(const TParamP &current, const TParamP &actual,
+                int frame) override {
     m_currentParam = current;
     m_actualParam  = actual;
     assert(m_currentParam);
@@ -433,7 +434,8 @@ class EnumParamField : public ParamField {
 public:
   EnumParamField(QWidget *parent, QString name, const TIntEnumParamP &param);
 
-  void setParam(const TParamP &current, const TParamP &actual, int frame) override;
+  void setParam(const TParamP &current, const TParamP &actual,
+                int frame) override;
   void update(int frame) override;
 
   QSize getPreferedSize() override { return QSize(150, 20); }
@@ -455,7 +457,8 @@ class DVAPI BoolParamField : public ParamField {
 public:
   BoolParamField(QWidget *parent, QString name, const TBoolParamP &param);
 
-  void setParam(const TParamP &current, const TParamP &actual, int frame) override;
+  void setParam(const TParamP &current, const TParamP &actual,
+                int frame) override;
   void update(int frame) override;
 
   QSize getPreferedSize() override { return QSize(20, 10); }
@@ -483,7 +486,8 @@ public:
   IntParamField(QWidget *parent = 0, QString name = 0,
                 const TIntParamP &param = 0);
 
-  void setParam(const TParamP &current, const TParamP &actual, int frame) override;
+  void setParam(const TParamP &current, const TParamP &actual,
+                int frame) override;
   void update(int frame) override;
 
   QSize getPreferedSize() override { return QSize(50, 28); }
@@ -505,7 +509,8 @@ class DVAPI StringParamField : public ParamField {
 public:
   StringParamField(QWidget *parent, QString name, const TStringParamP &param);
 
-  void setParam(const TParamP &current, const TParamP &actual, int frame) override;
+  void setParam(const TParamP &current, const TParamP &actual,
+                int frame) override;
   void update(int frame) override;
 
   QSize getPreferedSize() override { return QSize(100, 20); }
@@ -556,7 +561,8 @@ class DVAPI LineEdit_double : public ParamField {
 public:
   LineEdit_double(QWidget *parent, QString name, TDoubleParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -574,7 +580,8 @@ class DVAPI Slider_double : public ParamField {
 public:
   Slider_double(QWidget *parent, QString name, TDoubleParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -592,7 +599,8 @@ class DVAPI SpinBox_double : public ParamField {
 public:
   SpinBox_double(QWidget *parent, QString name, TDoubleParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -612,7 +620,8 @@ class DVAPI LineEdit_int : public ParamField {
 public:
   LineEdit_int(QWidget *parent, QString name, TIntParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -630,7 +639,8 @@ class DVAPI Slider_int : public ParamField {
 public:
   Slider_int(QWidget *parent, QString name, TIntParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -648,7 +658,8 @@ class DVAPI SpinBox_int : public ParamField {
 public:
   SpinBox_int(QWidget *parent, QString name, TIntParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -669,7 +680,8 @@ class DVAPI CheckBox_bool : public ParamField {
 public:
   CheckBox_bool(QWidget *parent, QString name, TBoolParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -690,7 +702,8 @@ class DVAPI RadioButton_enum : public ParamField {
 public:
   RadioButton_enum(QWidget *parent, QString name, TIntEnumParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -708,7 +721,8 @@ class DVAPI ComboBox_enum : public ParamField {
 public:
   ComboBox_enum(QWidget *parent, QString name, TIntEnumParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:
@@ -728,7 +742,8 @@ class DVAPI LineEdit_string : public ParamField {
 public:
   LineEdit_string(QWidget *parent, QString name, TStringParamP const &param);
 
-  void setParam(TParamP const &current, TParamP const &actual, int frame) override;
+  void setParam(TParamP const &current, TParamP const &actual,
+                int frame) override;
   void update(int frame) override;
 
 protected slots:

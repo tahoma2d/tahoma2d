@@ -89,7 +89,7 @@ public:
     LargeChips,         //!< Large icons with style names.
     List,               //!< Top-down list of all icons.
     SmallChipsWithName  //!< Small icons with overlayed style names (if
-                        //!user-defined).
+                        //! user-defined).
   };
 
   // for displaying the linked style name from studio palette

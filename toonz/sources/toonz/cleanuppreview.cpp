@@ -428,7 +428,9 @@ public:
   }
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Move Cleanup Camera"); }
+  QString getHistoryString() override {
+    return QObject::tr("Move Cleanup Camera");
+  }
   int getHistoryType() override { return HistoryType::EditTool_Move; }
 };
 
@@ -480,7 +482,9 @@ public:
   }
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Scale Cleanup Camera"); }
+  QString getHistoryString() override {
+    return QObject::tr("Scale Cleanup Camera");
+  }
   int getHistoryType() override { return HistoryType::EditTool_Move; }
 };
 

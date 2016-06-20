@@ -45,7 +45,8 @@ public:
 #endif
   ~SceneViewerPanel();
 
-  void onDrawFrame(int frame, const ImagePainter::VisualSettings &settings) override;
+  void onDrawFrame(int frame,
+                   const ImagePainter::VisualSettings &settings) override;
 
 protected:
   void showEvent(QShowEvent *) override;

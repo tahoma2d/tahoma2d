@@ -20,8 +20,11 @@ public:
     this->m_opacity->setValueRange(0, 10.0 * ino::param_range());
   }
   ~ino_blend_add() {}
-  bool canHandle(const TRenderSettings &rs, double frame) override { return true; }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &rs) override {
+  bool canHandle(const TRenderSettings &rs, double frame) override {
+    return true;
+  }
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &rs) override {
     TRectD up_bx;
     const bool up_sw =
         (m_up.isConnected() ? m_up->doGetBBox(frame, up_bx, rs) : false);
@@ -49,7 +52,8 @@ public:
     return TRasterFx::memorySize(rect, rs.m_bpp);
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &rs) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &rs) override {
     this->dryComputeUpAndDown(rect, frame, rs, false);
   }
   void doCompute(TTile &tile, double frame, const TRenderSettings &rs) override;

@@ -45,8 +45,8 @@ public:
   void loadData(TIStream &is) override;
   void saveData(TOStream &os) override;
 
-  void load() override {};
-  void save() override {};
+  void load() override{};
+  void save() override{};
 
 private:
   // not implemented

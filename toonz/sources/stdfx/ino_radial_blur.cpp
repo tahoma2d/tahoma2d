@@ -108,7 +108,8 @@ public:
     }
   }
   //------------------------------------------------------------
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (!this->m_input.isConnected()) {
       bBox = TRectD();
       return false;

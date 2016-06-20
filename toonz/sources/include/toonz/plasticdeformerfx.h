@@ -42,11 +42,15 @@ public:
 
   bool canHandle(const TRenderSettings &info, double frame) override;
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override;
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override;
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override;
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override;
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
 
   std::string getPluginId() const override { return std::string(); }
 

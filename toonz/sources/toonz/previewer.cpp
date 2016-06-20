@@ -805,7 +805,9 @@ public:
     }
   }
 
-  TThread::Message *clone() const override { return new ProgressBarMessager(*this); }
+  TThread::Message *clone() const override {
+    return new ProgressBarMessager(*this);
+  }
 };
 
 }  // namespace

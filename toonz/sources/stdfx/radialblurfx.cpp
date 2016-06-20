@@ -53,7 +53,8 @@ public:
   void enlarge(const TRectD &bbox, TRectD &requestedGeom,
                const TRenderSettings &ri, double frame);
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       m_input->doGetBBox(frame, bBox, info);
       bBox = bBox.enlarge(getMaxBraid(bBox, frame));

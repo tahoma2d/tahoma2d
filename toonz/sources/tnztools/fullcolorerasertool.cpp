@@ -171,7 +171,9 @@ public:
            sizeof(this);
   }
 
-  QString getToolName() override { return QString("Raster Eraser Tool (Rect)"); }
+  QString getToolName() override {
+    return QString("Raster Eraser Tool (Rect)");
+  }
 
   int getHistoryType() override { return HistoryType::EraserTool; }
 };
@@ -1022,7 +1024,7 @@ void FullColorEraserTool::onImageChanged() {
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
-  else {  // cambio stato.
+  else {                           // cambio stato.
     m_firstFrameSelected = true;
     if (m_eraseType.getValue() != FREEHANDERASE &&
         m_eraseType.getValue() != POLYLINEERASE) {

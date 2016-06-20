@@ -251,7 +251,9 @@ public:
     m_oldName = vx.name();
   }
 
-  int getSize() const override { return sizeof(*this); }  // sizeof this is roughly ok
+  int getSize() const override {
+    return sizeof(*this);
+  }  // sizeof this is roughly ok
 
   void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);

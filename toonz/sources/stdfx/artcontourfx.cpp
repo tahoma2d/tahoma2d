@@ -91,7 +91,8 @@ public:
 
   //----------------------------------------------------------------------------
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &ri) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &ri) override {
     if (m_input.isConnected() && m_controller.isConnected()) {
       TRectD controlBox, inputBox;
 
@@ -119,7 +120,9 @@ public:
 
   //-----------------------------------------------------------------------------
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   //-----------------------------------------------------------------------------
 
@@ -127,7 +130,8 @@ public:
 
   //-----------------------------------------------------------------------------
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &ri) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &ri) override;
 
   //-----------------------------------------------------------------------------
 

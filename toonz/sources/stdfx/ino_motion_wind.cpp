@@ -126,7 +126,8 @@ public:
     this->m_ref_mode->addItem(4, "Luminance");
     this->m_ref_mode->addItem(-1, "Nothing");
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       const bool ret = this->m_input->doGetBBox(frame, bBox, info);
       // if ( this->m_spread->getValue() ) {
@@ -161,7 +162,8 @@ public:
         (int)(ceil((length_min < length_max) ? length_max : length_min) + 0.5);
     return TRasterFx::memorySize(rect.enlarge(enlarge_pixel), info.m_bpp);
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_motion_wind, "inoMotionWindFx");
 //------------------------------------------------------------

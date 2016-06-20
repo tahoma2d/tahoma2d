@@ -773,7 +773,7 @@ inline TINT32 hasExternalReferences(const TImageP &img) {
     if (timg)
       refCount = timg->getRaster()->getRefCount() -
                  1;  //!!! the TToonzImage::getRaster method increments raster
-                     //!refCount!(the TRasterImage::getRaster don't)
+                     //! refCount!(the TRasterImage::getRaster don't)
   }
 #endif
 

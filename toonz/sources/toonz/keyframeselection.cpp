@@ -164,7 +164,9 @@ public:
   }
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Paste Key Frames"); }
+  QString getHistoryString() override {
+    return QObject::tr("Paste Key Frames");
+  }
 };
 
 //=============================================================================
@@ -209,7 +211,9 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Delete Key Frames"); }
+  QString getHistoryString() override {
+    return QObject::tr("Delete Key Frames");
+  }
 };
 
 //-----------------------------------------------------------------------------

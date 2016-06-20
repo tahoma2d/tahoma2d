@@ -43,13 +43,17 @@ public:
 
   ~BaseRaylitFx() {}
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];

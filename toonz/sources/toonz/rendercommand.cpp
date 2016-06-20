@@ -107,7 +107,9 @@ public:
   OnRenderCompleted(const TFilePath &fp, bool error)
       : m_fp(fp), m_error(error) {}
 
-  TThread::Message *clone() const override { return new OnRenderCompleted(*this); }
+  TThread::Message *clone() const override {
+    return new OnRenderCompleted(*this);
+  }
 
   void onDeliver() override {
     if (m_error) {
@@ -183,16 +185,15 @@ public:
 
 //=========================================================
 
-class RenderCommand
-{
-	int m_r0, m_r1, m_step;
-	TFilePath m_fp;
-	int m_numFrames;
-	TPixel32 m_oldBgColor;
-	static TPixel32 m_priorBgColor;
-	TDimension m_oldCameraRes;
-	double m_r, m_stepd;
-	double m_timeStretchFactor;
+class RenderCommand {
+  int m_r0, m_r1, m_step;
+  TFilePath m_fp;
+  int m_numFrames;
+  TPixel32 m_oldBgColor;
+  static TPixel32 m_priorBgColor;
+  TDimension m_oldCameraRes;
+  double m_r, m_stepd;
+  double m_timeStretchFactor;
 
   int m_multimediaRender;
 
@@ -489,13 +490,12 @@ void RenderCommand::rasterRender(bool isPreview) {
 #endif
 
   TPixel32 currBgColor = scene->getProperties()->getBgColor();
-	m_priorBgColor = currBgColor;
-	if (ext == "jpg" || ext == "avi" || ext == "bmp")
-	{
-		currBgColor.m = 255;
-		scene->getProperties()->setBgColor(currBgColor);
-	}
-  
+  m_priorBgColor       = currBgColor;
+  if (ext == "jpg" || ext == "avi" || ext == "bmp") {
+    currBgColor.m = 255;
+    scene->getProperties()->setBgColor(currBgColor);
+  }
+
   // Extract output properties
   TOutputProperties *prop = isPreview
                                 ? scene->getProperties()->getPreviewProperties()
@@ -586,13 +586,11 @@ void RenderCommand::rasterRender(bool isPreview) {
   movieRenderer.start();
 }
 
-
 TPixel32 RenderCommand::m_priorBgColor;
 
-void RenderCommand::resetBgColor()
-{
-	ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-	scene->getProperties()->setBgColor(m_priorBgColor);
+void RenderCommand::resetBgColor() {
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  scene->getProperties()->setBgColor(m_priorBgColor);
 }
 
 //===================================================================

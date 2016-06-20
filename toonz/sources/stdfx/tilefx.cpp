@@ -23,7 +23,8 @@ public:
   TileFx();
   ~TileFx();
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
   bool canHandle(const TRenderSettings &info, double frame) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
   int getMemoryRequirement(const TRectD &rect, double frame,

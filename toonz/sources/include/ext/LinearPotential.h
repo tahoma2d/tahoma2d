@@ -30,7 +30,7 @@ public:
   double value_(double radiusToTest) const override;
 
   void setParameters_(const TStroke *ref, double w,
-                              double actionLength) override;
+                      double actionLength) override;
 
   Potential *clone() override;
 

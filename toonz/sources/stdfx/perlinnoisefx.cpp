@@ -52,7 +52,8 @@ public:
   }
   ~PerlinNoiseFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       m_input->doGetBBox(frame, bBox, info);
       bBox = bBox.enlarge(m_intensity->getValue(frame));
@@ -70,7 +71,9 @@ public:
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
   int getMemoryRequirement(const TRectD &rect, double frame,
                            const TRenderSettings &info) override;
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
 
   void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];

@@ -49,7 +49,9 @@ public:
 
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
 };
 
 template <typename PIXEL>

@@ -60,7 +60,8 @@ public:
     }
   }
   //------------------------------------------------------------
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (false == this->m_input.isConnected()) {
       bBox = TRectD();
       return false;
@@ -82,8 +83,11 @@ public:
     infoOnInput = infoOnOutput;
     this->get_render_enlarge(frame, infoOnOutput.m_affine, rectOnInput);
   }
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_fog, "inoFogFx");
 //------------------------------------------------------------

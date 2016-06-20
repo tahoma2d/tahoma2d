@@ -161,7 +161,7 @@ int KeyframeSetter::createKeyframe(double frame) {
       TDoubleKeyframe kb                = m_param->getKeyframe(m_kIndex + 1);
       TDoubleKeyframe::Type segmentType = ka.m_type;
       m_keyframe.m_type                 = ka.m_type;
-      m_keyframe.m_step                 = ka.m_step;  // An existing segment step should prevail
+      m_keyframe.m_step = ka.m_step;  // An existing segment step should prevail
                                       // over the preference
 
       /*---Segment内にKeyを打った場合は、Step値も元のSegmentの値を引き継ぐようにする---*/

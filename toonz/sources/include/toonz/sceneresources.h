@@ -152,7 +152,9 @@ Set simple level path to old path.
 */
   void rollbackPath() override;
 
-  void accept(ResourceProcessor *processor) override { processor->process(m_pl); }
+  void accept(ResourceProcessor *processor) override {
+    processor->process(m_pl);
+  }
 
   bool isDirty() override;
   QString getResourceName() override;
@@ -196,7 +198,9 @@ Set simple level path to old path.
 */
   void rollbackPath() override;
 
-  void accept(ResourceProcessor *processor) override { processor->process(m_sl); }
+  void accept(ResourceProcessor *processor) override {
+    processor->process(m_sl);
+  }
 
   bool isDirty() override;
   QString getResourceName() override;
@@ -238,7 +242,9 @@ Set sound track path to old path.
 */
   void rollbackPath() override;
 
-  void accept(ResourceProcessor *processor) override { processor->process(m_sl); }
+  void accept(ResourceProcessor *processor) override {
+    processor->process(m_sl);
+  }
 
   bool isDirty() override { return false; }
   QString getResourceName() override { return QString(); }

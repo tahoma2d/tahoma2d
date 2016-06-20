@@ -28,9 +28,12 @@ public:
     setName(L"ColorCardFx");
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
   }
@@ -71,14 +74,17 @@ public:
     setName(L"CheckBoardFx");
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return false; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
 
   bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
   }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override {
     const TPixel32 &c1 = m_color1->getValue(frame);
     const TPixel32 &c2 = m_color2->getValue(frame);
 

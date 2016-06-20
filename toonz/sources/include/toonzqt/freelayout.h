@@ -47,7 +47,9 @@ public:
   QSize sizeHint() const override;
 
   QSize minimumSize() const override { return QSize(0, 0); }
-  QSize maximumSize() const override { return QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX); }
+  QSize maximumSize() const override {
+    return QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+  }
 
   int count() const override { return m_items.count(); }
   void addItem(QLayoutItem *item) override { m_items.push_back(item); }

@@ -242,7 +242,9 @@ public:
     }
   }
 
-  QString getHistoryString() override { return QObject::tr("Merge Raster Levels"); }
+  QString getHistoryString() override {
+    return QObject::tr("Merge Raster Levels");
+  }
   int getHistoryType() override { return HistoryType::FilmStrip; }
 };
 

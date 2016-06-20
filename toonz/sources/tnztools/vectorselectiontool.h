@@ -38,7 +38,7 @@ enum SelectionTarget         //! Possible selection targets in a SelectionTool.
   SAME_STYLE_TYPE_IDX,       //!< Selected styles at current frame.
   STYLE_SELECTED_FRAMES_TYPE_IDX,  //!< Selected styles at selected frames.
   STYLE_LEVEL_TYPE_IDX,  //!< Selected styles at current frame on the whole
-                         //!level.
+                         //! level.
   BOUNDARY_TYPE_IDX,     //!< Boundary strokes on current frame.
   BOUNDARY_SELECTED_FRAMES_TYPE_IDX,  //!< Boundary strokes on selected frames.
   BOUNDARY_LEVEL_TYPE_IDX,            //!< Boundary strokes on the whole level.
@@ -227,7 +227,8 @@ class VectorScaleTool : public VectorDeformTool {
 public:
   VectorScaleTool(VectorSelectionTool *tool, int type);
 
-  TPointD transform(int index, TPointD newPos) override;  //!< Returns scale value.
+  TPointD transform(int index,
+                    TPointD newPos) override;  //!< Returns scale value.
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
@@ -280,7 +281,9 @@ public:
 
   void setCanEnterGroup(bool value) { m_canEnterGroup = value; }
 
-  bool isConstantThickness() const override { return m_constantThickness.getValue(); }
+  bool isConstantThickness() const override {
+    return m_constantThickness.getValue();
+  }
   bool isLevelType() const override;
   bool isSelectedFramesType() const override;
   bool isSameStyleType() const override;
@@ -326,7 +329,7 @@ protected:
 private:
   class AttachedLevelSelection : public LevelSelection {
     StrokeSelection &m_strokeSelection;  //!< Selection of strokes to be seen at
-                                         //!current frame.
+                                         //! current frame.
 
   public:
     AttachedLevelSelection(StrokeSelection &strokeSelection)
@@ -339,13 +342,13 @@ private:
 
 private:
   TEnumProperty m_selectionTarget;  //!< Selected target content (strokes, whole
-                                    //!image, styles...).
+                                    //! image, styles...).
   TBoolProperty m_constantThickness;
 
   StrokeSelection m_strokeSelection;        //!< Standard selection of a set of
-                                            //!strokes in current image.
+                                            //! strokes in current image.
   AttachedLevelSelection m_levelSelection;  //!< Selection across multiple
-                                            //!frames and specific styles.
+                                            //! frames and specific styles.
 
   TEnumProperty m_capStyle;       //!< Style of stroke caps.
   TEnumProperty m_joinStyle;      //!< Style of stroke joins.
@@ -354,7 +357,7 @@ private:
   TPropertyGroup m_outlineProps;
 
   int m_selectionCount;  //!< \deprecated  This is \a not related to stroke
-                         //!selections;
+                         //! selections;
   //!               but rather to bboxes count - and even that is deprecated.
   bool m_canEnterGroup;  //!< \deprecated  Used in Manga and Kids
 
@@ -379,12 +382,12 @@ private:
           as a result of a change in target.                                  */
 
   void updateSelectionTarget();  //!< Reads widget fields and updates the
-                                 //!selection target accordingly.
+                                 //! selection target accordingly.
   void
   clearSelectedStrokes();    //!< Clears strokes visible in current selection.
   void finalizeSelection();  //!< Makes selection consistent, and invokes all
-                             //!related cached data
-                             //!  updates needed for visualization.
+                             //! related cached data
+  //!  updates needed for visualization.
   void drawInLevelType(const TVectorImage &vi);
   void drawSelectedStrokes(const TVectorImage &vi);
   void drawGroup(const TVectorImage &vi);

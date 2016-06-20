@@ -47,7 +47,9 @@ public:
     ti->setSavebox(m_originalSavebox);
   }
 
-  int getSize() const override { return TRasterUndo::getSize() + sizeof(this) + 100; }
+  int getSize() const override {
+    return TRasterUndo::getSize() + sizeof(this) + 100;
+  }
 
   ~SetSaveboxUndo() {}
 

@@ -430,9 +430,10 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override = 0;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override = 0;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override   = 0;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
-  void leftButtonDoubleClick(const TPointD &, const TMouseEvent &e) override = 0;
+  void leftButtonDoubleClick(const TPointD &,
+                             const TMouseEvent &e) override = 0;
   bool keyDown(int key, TUINT32 flags, const TPoint &pos) override;
 
   int getCursorId() const override;
@@ -440,7 +441,7 @@ public:
   void draw() override = 0;
 
   TSelection *getSelection() override = 0;
-  virtual bool isSelectionEmpty()    = 0;
+  virtual bool isSelectionEmpty()     = 0;
 
   virtual void computeBBox() = 0;
 

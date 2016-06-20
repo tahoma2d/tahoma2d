@@ -1224,7 +1224,7 @@ bool IoCmd::saveSceneIfNeeded(QString msg) {
     }
 
     //--- If both the level and scene is clean, then open the quit confirmation
-    //dialog
+    // dialog
     if (!isLevelOrSceneIsDirty && msg == "Quit") {
       QString question("Are you sure ?");
       int ret =

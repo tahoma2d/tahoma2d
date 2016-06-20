@@ -220,7 +220,9 @@ class NotNode : public CalculatorNode {
 public:
   NotNode(Calculator *calc, CalculatorNode *a) : CalculatorNode(calc), m_a(a) {}
 
-  double compute(double vars[3]) const override { return m_a->compute(vars) == 0; }
+  double compute(double vars[3]) const override {
+    return m_a->compute(vars) == 0;
+  }
   void accept(CalculatorNodeVisitor &visitor) override { m_a->accept(visitor); }
 };
 //-------------------------------------------------------------------
@@ -423,7 +425,8 @@ public:
       : m_opName(opName), m_priority(priority) {}
   int getPriority() const override { return m_priority; }
   std::string getFirstKeyword() const override { return m_opName; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.empty() || previousTokens.size() == 2;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -456,7 +459,8 @@ public:
   int getPriority() const override { return 50; }
   std::string getFirstKeyword() const override { return "-"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -492,7 +496,8 @@ public:
   int getPriority() const override { return 5; }
   std::string getFirstKeyword() const override { return m_prefix; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -523,7 +528,8 @@ public:
   int getPriority() const override { return 5; }
   std::string getFirstKeyword() const override { return "?"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     int i = (int)previousTokens.size();
     return i == 0 || i == 2 || i == 4;
   }
@@ -557,7 +563,8 @@ public:
   int getPriority() const override { return 5; }
   std::string getFirstKeyword() const override { return "("; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -604,7 +611,8 @@ public:
   void addOptionalArg(double value) { m_optionalArgDefaults.push_back(value); }
 
   std::string getFirstKeyword() const override { return m_functionName; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     int n = (int)previousTokens.size();
     return 2 <= n && (n & 1) == 0;
   }

@@ -203,7 +203,8 @@ from which it's created.It hasn't reference to the object.
 
   //! Returns the soundtrack pressure max value in the given sample range and
   //! channel
-  double getMaxPressure(TINT32 s0, TINT32 s1, TSound::Channel chan) const override {
+  double getMaxPressure(TINT32 s0, TINT32 s1,
+                        TSound::Channel chan) const override {
     TINT32 sampleCount = getSampleCount();
     if (sampleCount <= 0) {
       return -1;
@@ -237,7 +238,8 @@ from which it's created.It hasn't reference to the object.
 
   //! Returns the soundtrack pressure min value in the given sample range and
   //! channel
-  double getMinPressure(TINT32 s0, TINT32 s1, TSound::Channel chan) const override {
+  double getMinPressure(TINT32 s0, TINT32 s1,
+                        TSound::Channel chan) const override {
     TINT32 sampleCount = getSampleCount();
     if (sampleCount <= 0) {
       return 0;

@@ -219,7 +219,8 @@ public:
       return TStageObject::T_ChannelCount;
   }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 4;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -253,7 +254,8 @@ public:
     return TSyntax::Operator;
   }
 
-  void getAcceptableKeywords(std::vector<std::string> &keywords) const override {
+  void getAcceptableKeywords(
+      std::vector<std::string> &keywords) const override {
     const std::string ks[] = {"table",  "tab", "col",   "cam",
                               "camera", "peg", "pegbar"};
     for (int i = 0; i < tArrayCount(ks); i++) keywords.push_back(ks[i]);
@@ -332,7 +334,8 @@ public:
     return 0;
   }
   std::string getFirstKeyword() const override { return "fx"; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return !previousTokens.empty() && previousTokens.back().getText() == "(";
   }
   bool matchToken(const std::vector<Token> &previousTokens,
@@ -452,7 +455,8 @@ public:
 
   std::string getFirstKeyword() const override { return "vertex"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const override {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return (previousTokens.size() == EXPR);
   }
 

@@ -77,7 +77,8 @@ public:
       bBox = bBox.enlarge(static_cast<double>(margin));
     }
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (false == this->m_input.isConnected()) {
       bBox = TRectD();
       return false;
@@ -103,7 +104,8 @@ public:
     // return true;
     return false;
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets) override;
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_warp_hv, "inoWarphvFx");
 //--------------------------------------------------------------------

@@ -261,7 +261,7 @@ void RGBPickerTool::draw() {
       // Il pick in modalita' polyline e rectangular deve essere fatto soltanto
       // dopo aver cancellato il
       //"disegno" della polyline altrimenti alcuni pixels neri delle spezzate
-      //che la
+      // che la
       // compongono vengono presi in considerazione nel calcolo del "colore
       // medio"
       if (m_pickType.getValue() == POLYLINE_PICK && m_drawingPolyline.empty())

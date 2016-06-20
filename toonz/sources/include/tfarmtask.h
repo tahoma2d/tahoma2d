@@ -69,7 +69,7 @@ public:
   Id m_parentId;  //!< Task id of the parent task (if any)
 
   bool m_isComposerTask;  //!< Whether this is a tcomposer task (opposed to
-                          //!tcleanupper task)
+                          //! tcleanupper task)
 
   QString m_name;               //!< User-readable name
   TFilePath m_taskFilePath;     //!< Path of the input file affected by the task

@@ -105,7 +105,9 @@ protected:
 public:
   VertexUndo() : m_row(::row()), m_col(::column()), m_v(-1), m_vParent(-1) {}
 
-  int getSize() const override { return sizeof(*this); }  // sizeof this is roughly ok
+  int getSize() const override {
+    return sizeof(*this);
+  }  // sizeof this is roughly ok
 
   void storeChildren(const PlasticSkeleton &skeleton,
                      const PlasticSkeletonVertex &vx) {
@@ -356,7 +358,7 @@ class SetSkeletonIdUndo : public TUndo {
   mutable TDoubleKeyframe
       m_oldKf;  //!< Old keyframe values for skelIds parameter
   mutable bool m_added1stKeyframe;  //!< Whether the redo() added the first
-                                    //!skelIds keyframe
+                                    //! skelIds keyframe
 
 public:
   SetSkeletonIdUndo(int skelId)

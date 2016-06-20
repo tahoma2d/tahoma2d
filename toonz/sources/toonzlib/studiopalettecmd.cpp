@@ -129,7 +129,9 @@ public:
     StudioPalette::instance()->setPalette(m_palettePath, m_palette->clone(),
                                           true);
   }
-  void redo() const override { StudioPalette::instance()->deletePalette(m_palettePath); }
+  void redo() const override {
+    StudioPalette::instance()->deletePalette(m_palettePath);
+  }
   int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
   QString getHistoryString() override {
     return QObject::tr("Delete Studio Palette  : %1")
@@ -150,7 +152,9 @@ public:
     m_palette = StudioPalette::instance()->getPalette(m_palettePath);
   }
 
-  void undo() const override { StudioPalette::instance()->deletePalette(m_palettePath); }
+  void undo() const override {
+    StudioPalette::instance()->deletePalette(m_palettePath);
+  }
   void redo() const override {
     StudioPalette::instance()->setPalette(m_palettePath, m_palette->clone(),
                                           true);
@@ -197,7 +201,9 @@ public:
                                                 path.getWideName());
     }
   }
-  void redo() const override { StudioPalette::instance()->deleteFolder(m_path); }
+  void redo() const override {
+    StudioPalette::instance()->deleteFolder(m_path);
+  }
   int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
   QString getHistoryString() override {
     return QObject::tr("Delete Studio Palette Folder  : %1")
@@ -215,7 +221,9 @@ class CreateFolderUndo : public TUndo {
 public:
   CreateFolderUndo(const TFilePath &folderPath) : m_folderPath(folderPath) {}
 
-  void undo() const override { StudioPalette::instance()->deleteFolder(m_folderPath); }
+  void undo() const override {
+    StudioPalette::instance()->deleteFolder(m_folderPath);
+  }
   void redo() const override {
     StudioPalette::instance()->createFolder(m_folderPath.getParentDir(),
                                             m_folderPath.getWideName());

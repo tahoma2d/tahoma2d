@@ -284,12 +284,14 @@ public:
   void queryHwInfo(HwInfo &hwInfo) override;
 
   void attachController(const ControllerData &data);
-  void attachController(const QString &name, const QString &addr, int port) override {
+  void attachController(const QString &name, const QString &addr,
+                        int port) override {
     attachController(ControllerData(name, addr, port));
   }
 
   void detachController(const ControllerData &data);
-  void detachController(const QString &name, const QString &addr, int port) override {
+  void detachController(const QString &name, const QString &addr,
+                        int port) override {
     detachController(ControllerData(name, addr, port));
   }
 

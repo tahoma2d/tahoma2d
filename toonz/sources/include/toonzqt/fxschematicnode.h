@@ -453,7 +453,7 @@ public:
 
   QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                     QWidget *widget = 0) override;
+             QWidget *widget = 0) override;
 
   void resize(bool maximizeNode) override;
 

@@ -286,8 +286,7 @@ LevelCreatePopup::LevelCreatePopup()
 
 //-----------------------------------------------------------------------------
 
-void LevelCreatePopup::updatePath()
-{
+void LevelCreatePopup::updatePath() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TFilePath defaultPath;
   defaultPath = scene->getDefaultLevelPath(getLevelType()).getParentDir();
@@ -299,20 +298,21 @@ void LevelCreatePopup::updatePath()
 void LevelCreatePopup::nextName() {
   const std::auto_ptr<NameBuilder> nameBuilder(NameBuilder::getBuilder(L""));
 
-  TLevelSet* levelSet = TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
-  ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
+  TLevelSet *levelSet =
+      TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+  ToonzScene *scene      = TApp::instance()->getCurrentScene()->getScene();
   std::wstring levelName = L"";
 
-  // Select a different unique level name in case it already exists (either in scene or on disk)
+  // Select a different unique level name in case it already exists (either in
+  // scene or on disk)
   TFilePath fp;
   TFilePath actualFp;
   for (;;) {
     levelName = nameBuilder->getNext();
 
-    if (levelSet->getLevel(levelName) != 0)
-      continue;
+    if (levelSet->getLevel(levelName) != 0) continue;
 
-    fp = scene->getDefaultLevelPath(getLevelType(), levelName); 
+    fp       = scene->getDefaultLevelPath(getLevelType(), levelName);
     actualFp = scene->decodeFilePath(fp);
 
     if (TSystem::doesExistFileOrLevel(actualFp)) {
@@ -324,8 +324,6 @@ void LevelCreatePopup::nextName() {
 
   m_nameFld->setText(QString::fromStdWString(levelName));
 }
-
-
 
 void LevelCreatePopup::showEvent(QShowEvent *) {
   nextName();
@@ -361,8 +359,7 @@ int LevelCreatePopup::getLevelType() const {
 
 //-----------------------------------------------------------------------------
 
-void LevelCreatePopup::onLevelTypeChanged(const QString &text)
-{
+void LevelCreatePopup::onLevelTypeChanged(const QString &text) {
   if (text == "Raster Level" || text == "Toonz Raster Level")
     setSizeWidgetEnable(true);
   else
@@ -374,9 +371,8 @@ void LevelCreatePopup::onLevelTypeChanged(const QString &text)
 
 //-----------------------------------------------------------------------------
 
-void LevelCreatePopup::onOkBtn()
-{
-  if(apply())
+void LevelCreatePopup::onOkBtn() {
+  if (apply())
     close();
   else
     m_nameFld->setFocus();
@@ -384,8 +380,7 @@ void LevelCreatePopup::onOkBtn()
 
 //-----------------------------------------------------------------------------
 
-void LevelCreatePopup::onApplyButton()
-{
+void LevelCreatePopup::onApplyButton() {
   if (apply()) {
     nextName();
   }

@@ -377,7 +377,8 @@ protected:
   //  TBoolParamP m_useSSE;
 
 public:
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
   DirectionalBlurBaseFx(bool isMotionBLur)
       : m_isMotionBlur(isMotionBLur)
@@ -443,7 +444,8 @@ class MotionBlurFx : public DirectionalBlurBaseFx
 public:
   MotionBlurFx() : DirectionalBlurBaseFx(true) {}
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override {
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override {
     unsigned long id = getIdentifier();
     double value     = m_intensity->getValue(frame);
     return getFxType() + "[" + std::to_string(id) + "," +

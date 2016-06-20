@@ -1449,7 +1449,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  //m_ghibli3DLutUtil)
+  // m_ghibli3DLutUtil)
   //	m_ghibli3DLutUtil->startDraw();
 
   if (m_hRuler && m_vRuler) {
@@ -1483,7 +1483,7 @@ void SceneViewer::paintGL() {
     // iwsw commented out temporarily
     // if (!m_isPicking &&
     //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-    //m_ghibli3DLutUtil)
+    // m_ghibli3DLutUtil)
     //	m_ghibli3DLutUtil->endDraw();
 
     return;
@@ -1495,7 +1495,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	  !Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() ||
-  //!m_ghibli3DLutUtil)
+  //! m_ghibli3DLutUtil)
   copyFrontBufferToBackBuffer();
   check_framebuffer_status();
   drawEnableScissor();
@@ -1533,7 +1533,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  //m_ghibli3DLutUtil)
+  // m_ghibli3DLutUtil)
   //	m_ghibli3DLutUtil->endDraw();
 }
 

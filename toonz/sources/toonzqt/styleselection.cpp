@@ -948,7 +948,8 @@ public:
           pastedStyle->setGlobalName(dstGlobalName);
           pastedStyle->setOriginalName(L"");
           pastedStyle->setIsEditedFlag(false);
-        } else  // dstStyle == LINKEDSTYLE		//9. From linked to linked.
+        } else  // dstStyle == LINKEDSTYLE		//9. From linked to
+                // linked.
                 // Do nothing (bring all information from the original).
         {
         }
@@ -1122,7 +1123,8 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
           pastedStyle->setGlobalName(dstGlobalName);
           pastedStyle->setOriginalName(L"");
           pastedStyle->setIsEditedFlag(false);
-        } else  // dstStyle == LINKEDSTYLE		//9. From linked to linked.
+        } else  // dstStyle == LINKEDSTYLE		//9. From linked to
+                // linked.
                 // Do nothing (bring all information from the original).
         {
         }

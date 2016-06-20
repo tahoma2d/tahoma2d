@@ -90,7 +90,9 @@ public:
   }
   TFxTimeRegion getTimeRegion() const override { return m_timeRegion; }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   std::string getPluginId() const override { return std::string(); }
 
@@ -100,7 +102,8 @@ public:
     TRasterFxP(m_port.getFx())->compute(flash, m_frame);
   }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     if (!m_port.isConnected()) {
       tile.getRaster()->clear();
       return;
@@ -110,17 +113,20 @@ public:
     TRasterFxP(m_port.getFx())->compute(tile, m_frame, ri);
   }
 
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info) override {
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override {
     if (!m_port.isConnected()) return false;
 
     return TRasterFxP(m_port.getFx())->doGetBBox(m_frame, bbox, info);
   }
 
-  std::string getAlias(double frame, const TRenderSettings &info) const override {
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override {
     return TRasterFx::getAlias(m_frame, info);
   }
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info) override {
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override {
     if (m_port.isConnected())
       TRasterFxP(m_port.getFx())->dryCompute(rect, m_frame, info);
   }
@@ -173,7 +179,9 @@ public:
     return fx;
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) override { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
   TAffine getPlacement(double frame) override {
     TAffine objAff = m_stageObject->getPlacement(frame);

@@ -182,10 +182,12 @@ public:
   void initialize();
 
   void getParamUIs(TParamUIConcept *&params, int &length) override;
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
   bool canHandle(const TRenderSettings &info, double frame) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &ri) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &ri) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
 private:
@@ -329,7 +331,9 @@ public:
 
   void onDeliver() override { man->onRenderInstanceEnd(); }
 
-  TThread::Message *clone() const override { return new MessageCreateContext(*this); }
+  TThread::Message *clone() const override {
+    return new MessageCreateContext(*this);
+  }
 };
 
 class SCMDelegate : public TRenderResourceManager {

@@ -134,7 +134,9 @@ public:
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_averageColor; }
-  void setMainColor(const TPixel32 &color) override { m_params.m_patternColor = color; }
+  void setMainColor(const TPixel32 &color) override {
+    m_params.m_patternColor = color;
+  }
 
   // void draw(const TVectorRenderData &rd,  TStrokeOutline* outline) const;
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,

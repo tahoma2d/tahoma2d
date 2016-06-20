@@ -93,7 +93,9 @@ public:
     return QObject::tr("Exporting level of %1 frames in %2");
   }
 
-  void setProcessedName(const QString &name) override { m_processedName = name; }
+  void setProcessedName(const QString &name) override {
+    m_processedName = name;
+  }
   void setRange(int min, int max) override {
     m_pb.setMaximum(max);
     buildString();

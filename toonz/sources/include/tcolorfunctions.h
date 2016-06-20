@@ -51,7 +51,9 @@ class DVAPI TGenericColorFunction : public TColorFunction {
 public:
   TGenericColorFunction(const double m[4], const double c[4]);
 
-  TColorFunction *clone() const override { return new TGenericColorFunction(m_m, m_c); }
+  TColorFunction *clone() const override {
+    return new TGenericColorFunction(m_m, m_c);
+  }
 
   TPixel32 operator()(const TPixel32 &color) const override;
   bool getParameters(Parameters &p) const override;
@@ -68,7 +70,9 @@ public:
   TColorFader(const TPixel32 &color, double fade)
       : m_color(color), m_fade(fade) {}
 
-  TColorFunction *clone() const override { return new TColorFader(m_color, m_fade); }
+  TColorFunction *clone() const override {
+    return new TColorFader(m_color, m_fade);
+  }
 
   TPixel32 operator()(const TPixel32 &color) const override;
   bool getParameters(Parameters &p) const override;
@@ -85,7 +89,9 @@ public:
   TOnionFader(const TPixel32 &color, double fade)
       : m_color(color), m_fade(fade) {}
 
-  TColorFunction *clone() const override { return new TOnionFader(m_color, m_fade); }
+  TColorFunction *clone() const override {
+    return new TOnionFader(m_color, m_fade);
+  }
 
   TPixel32 operator()(const TPixel32 &color) const override;
   bool getParameters(Parameters &p) const override;

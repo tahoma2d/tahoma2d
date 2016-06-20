@@ -314,7 +314,9 @@ public:
 
   TRasterP create() const override { return TRasterPT<T>(m_lx, m_ly); }
 
-  TRasterP create(int lx, int ly) const override { return TRasterPT<T>(lx, ly); }
+  TRasterP create(int lx, int ly) const override {
+    return TRasterPT<T>(lx, ly);
+  }
 
   //!\include raster_ex2.cpp
   TRasterP extract(int x0, int y0, int x1, int y1) override {

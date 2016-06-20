@@ -91,7 +91,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const override { return sizeof(*this) + TRasterUndo::getSize(); }
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
 
   QString getToolName() override { return QString("Paint Brush Tool"); }
   int getHistoryType() override { return HistoryType::PaintBrushTool; }

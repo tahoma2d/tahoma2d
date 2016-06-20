@@ -459,7 +459,9 @@ public:
   void undo() const override { renumber(m_undoTable); }
   void redo() const override { renumber(m_redoTable); }
 
-  int getSize() const override { return (m_redoTable.size() << 2) * sizeof(TXshCell); }
+  int getSize() const override {
+    return (m_redoTable.size() << 2) * sizeof(TXshCell);
+  }
 };
 
 class RenumberUndo::RedoNotifier : public TUndo {
@@ -1020,7 +1022,9 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Overwrite Paste Cells"); }
+  QString getHistoryString() override {
+    return QObject::tr("Overwrite Paste Cells");
+  }
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
