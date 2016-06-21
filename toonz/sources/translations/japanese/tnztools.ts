@@ -140,7 +140,7 @@
     </message>
     <message>
         <source>Smooth:</source>
-        <translation>補正：</translation>
+        <translation>平滑化：</translation>
     </message>
 </context>
 <context>
