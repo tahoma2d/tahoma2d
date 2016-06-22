@@ -55,7 +55,7 @@ bool PlaneViewerZoomer::zoom(bool zoomin, bool resetZoom) {
 //=========================================================================================
 
 PlaneViewer::PlaneViewer(QWidget *parent)
-    : QOpenGLWidget(parent)
+    : QGLWidget(parent)
     , m_firstResize(true)
     , m_xpos(0)
     , m_ypos(0)
@@ -186,7 +186,7 @@ void PlaneViewer::wheelEvent(QWheelEvent *event) {
 void PlaneViewer::keyPressEvent(QKeyEvent *event) {
   if (PlaneViewerZoomer(this).exec(event)) return;
 
-  QOpenGLWidget::keyPressEvent(event);
+  QGLWidget::keyPressEvent(event);
 }
 
 //------------------------------------------------------
