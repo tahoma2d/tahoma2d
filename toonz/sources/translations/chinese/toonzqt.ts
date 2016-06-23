@@ -2048,7 +2048,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Convert to Studio Palette and Overwrite</source>
-        <translation>转换为工作站调色板并覆盖</translation>
+        <translation>转换为工作室调色板并覆盖</translation>
     </message>
 </context>
 <context>
