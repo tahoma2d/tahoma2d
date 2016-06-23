@@ -15,57 +15,31 @@
 
 #include <atomic>
 
-typedef std::atomic<long> atomic_t;
-
-static __inline__ void atomic_set(atomic_t *v, const int value) {
-  v->store(value);
-}
-
-static __inline__ int atomic_inc_return(atomic_t *v) {
-  return v->fetch_add(1) + 1;  // post increment atomic
-}
-
-static __inline__ int atomic_dec_return(atomic_t *v) {
-  return v->fetch_sub(1) - 1;  // post decriment atomic
-}
-
-static __inline__ int atomic_read(const atomic_t *v) { return v->load(); }
-
-static __inline__ int atomic_add(int num, const atomic_t *v) {
-  return const_cast<atomic_t *>(v)->fetch_add(num) +
-         num; /* なんで const つけた? */
-}
-
 class DVAPI TAtomicVar {
+public:
+  using value_type = long;
+
 public:
   TAtomicVar() : m_var(0) {}
 
-  long operator++() {
-    return m_var++ + 1;
-  }
+public:
+  value_type operator++() { return ++m_var; }
+  value_type operator--() { return --m_var; }
 
-  long operator+=(long value) {
-    m_var += value;
-    return m_var;
-  }
+  value_type operator+=(value_type value) { return m_var += value; }
 
-  long operator--() {
-    return m_var-- - 1;
-  }
-  bool operator<=(const long &rhs) {
-    return m_var <= rhs;
-  };
-  operator long() const {
-    return m_var;
-  };
+  bool operator<=(value_type rhs) { return m_var <= rhs; };
 
-  atomic_t m_var;
+  operator value_type() const { return m_var; };
 
 #if !defined(LINUX) || defined(LINUX) && (__GNUC__ == 3) && (__GNUC_MINOR__ > 1)
 private:  // to avoid well known bug in gcc3 ... fixed in later versions..
 #endif
-  TAtomicVar &operator=(const TAtomicVar &);  // not implemented
-  TAtomicVar(const TAtomicVar &v);            // not implemented
+  TAtomicVar &operator=(const TAtomicVar &) = delete;  // not implemented
+  TAtomicVar(const TAtomicVar &v)           = delete;  // not implemented
+
+private:
+  std::atomic<value_type> m_var;
 };
 
 #endif
