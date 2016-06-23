@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es" sourcelanguage="en">
+<TS version="2.0" language="es" sourcelanguage="en">
 <context>
     <name>AddFxContextMenu</name>
     <message>
@@ -124,11 +124,11 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
     <message>
         <source>Error : Preset Name is Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: El nombre del ajuste no es válido</translation>
     </message>
     <message>
         <source>The preset name must not use &apos;,&apos;(comma).</source>
-        <translation type="unfinished"></translation>
+        <translation>El nombre del ajuste no puede utilizar &apos;,&apos;(coma).</translation>
     </message>
 </context>
 <context>
@@ -1836,7 +1836,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>OpenToonz 1.0</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenToonz 1.0</translation>
     </message>
 </context>
 <context>
@@ -1897,7 +1897,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>&amp;Swtich output port display mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cambiar modo de visualización del puerto de salida</translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es" sourcelanguage="en">
+<TS version="2.0" language="es" sourcelanguage="en">
 <context>
     <name>AddFilmstripFramesPopup</name>
     <message>
@@ -844,7 +844,7 @@ What do you want to do?</source>
     <name>CommandListTree</name>
     <message>
         <source>----Separator----</source>
-        <translation type="unfinished"></translation>
+        <translation>----Separador----</translation>
     </message>
 </context>
 <context>
@@ -4216,31 +4216,31 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>About OpenToonz</source>
-        <translation type="unfinished"></translation>
+        <translation>Acerca de OpenToonz</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <source>&amp;Save All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Guardar todo</translation>
     </message>
     <message>
         <source>Toggle Edit in Place</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar edición en el lugar</translation>
     </message>
     <message>
         <source>&amp;ComboViewer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visor compuesto</translation>
     </message>
     <message>
         <source>&amp;History</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Historia</translation>
     </message>
     <message>
         <source>&amp;About OpenToonz...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Acerca de OpenToonz...</translation>
     </message>
 </context>
 <context>
@@ -4314,47 +4314,48 @@ Huecos</translation>
     <name>MenuBarPopup</name>
     <message>
         <source>Customize Menu Bar of Room &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Personalizar barra de menúes del espacio de trabajo &quot;%1&quot;</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>%1 Menu Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de menúes %1</translation>
     </message>
     <message>
         <source>Menu Items</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementos del menú</translation>
     </message>
     <message>
         <source>N.B. If you put unique title to submenu, it may not be translated to another language.
 N.B. Duplicated commands will be ignored. Only the last one will appear in the menu bar.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nota: Si se coloca un título poco común a un submenú, éste puede no aparecer traducido a otros idiomas.
+Nota: Los comandos duplicados serán ignorados. Sólo el último aparecerá en la barra de menúes.</translation>
     </message>
 </context>
 <context>
     <name>MenuBarTree</name>
     <message>
         <source>Insert Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Insertar menú</translation>
     </message>
     <message>
         <source>Insert Submenu</source>
-        <translation type="unfinished"></translation>
+        <translation>Insertar submenú</translation>
     </message>
     <message>
         <source>Remove &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar &quot;%1&quot;</translation>
     </message>
     <message>
         <source>New Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo menú</translation>
     </message>
 </context>
 <context>
@@ -5261,7 +5262,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Minimize Raster Memory Fragmentation *</source>
-         <translation>Minimizar fragmentación de memoria de imágenes *</translation>
+        <translation>Minimizar fragmentación de memoria de imágenes *</translation>
     </message>
     <message>
         <source>* Changes will take effect the next time you run Toonz</source>
@@ -5389,59 +5390,59 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Replace Toonz Level after SaveLevelAs command</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar nivel de Toonz luego del comando Guardar nivel como</translation>
     </message>
     <message>
         <source>Show Keyframes on Cell Area</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar fotogramas clave en el área de acetatos</translation>
     </message>
     <message>
         <source>Mouse Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor del ratón</translation>
     </message>
     <message>
         <source>Viewer Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro del visor</translation>
     </message>
     <message>
         <source>On Demand</source>
-        <translation type="unfinished"></translation>
+        <translation>Bajo demanda</translation>
     </message>
     <message>
         <source>All Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los íconos</translation>
     </message>
     <message>
         <source>All Icons &amp; Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los íconos e imágenes</translation>
     </message>
     <message>
         <source>At Once</source>
-        <translation type="unfinished"></translation>
+        <translation>De una vez</translation>
     </message>
     <message>
         <source>Pick Every Colors as Different Styles</source>
-        <translation type="unfinished"></translation>
+        <translation>Escoger cada color como un estilo distinto</translation>
     </message>
     <message>
         <source>Integrate Similar Colors as One Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrar colores similares como un solo estilo</translation>
     </message>
     <message>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitado</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitado</translation>
     </message>
     <message>
         <source>Use Xsheet as Animation Sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar planilla como planilla de animación</translation>
     </message>
     <message>
         <source>Palette Type on Loading Raster Image as Color Model</source>
-        <translation type="unfinished"></translation>
+        <translation>Al cargar una imagen usar tipo de paleta como modelo de color</translation>
     </message>
 </context>
 <context>
@@ -5800,9 +5801,8 @@ What do you want to do? </source>
     </message>
     <message numerus="yes">
         <source>Deleting %n files. Are you sure?</source>
-        <translation type="unfinished">
-            <numerusform>A punto de borrar %n archivos. ¿Seguro?
-        </numerusform>
+        <translation>
+            <numerusform>A punto de borrar %n archivos. ¿Seguro?</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -6928,7 +6928,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Modify Sound Level</source>
-         <translation>Modificar nivel de sonido</translation>
+        <translation>Modificar nivel de sonido</translation>
     </message>
     <message>
         <source>Move Columns</source>
@@ -6948,7 +6948,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Combo Viewer</source>
-         <translation>Visor compuesto</translation>
+        <translation>Visor compuesto</translation>
     </message>
     <message>
         <source>Move Level to Cast Folder</source>
@@ -6964,80 +6964,81 @@ Are you sure to </source>
     </message>
     <message>
         <source>Apply Matchline  : Column%1 &lt; Column%2</source>
-             <translation>Aplicar línea de coincidencia: Columna%1 &lt; Columna%2</translation>
+        <translation>Aplicar línea de coincidencia: Columna%1 &lt; Columna%2</translation>
     </message>
     <message>
         <source>Move Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover fotograma clave</translation>
     </message>
     <message>
         <source>Inbetween  : Level %1,  </source>
-        <translation type="unfinished"></translation>
+        <translation>Intermedio  : Nivel %1,  </translation>
     </message>
     <message>
         <source>It is not possible to track the level:
 undefined error.</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible rastrear el nivel:
+error no definido.</translation>
     </message>
     <message>
         <source>Palette Gizmo  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Control de paleta  %1</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Advertencia</translation>
     </message>
     <message>
         <source>Palette is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>La paleta está bloqueada.</translation>
     </message>
     <message>
         <source>Move keyframe handle  : %1  Handle of the keyframe %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover tangente de fotograma clave: %1  Tangente del fotograma %2</translation>
     </message>
     <message>
         <source>Toggle cycle of  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar ciclo de  %1</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Historia</translation>
     </message>
     <message>
         <source>[Drag] to move position</source>
-        <translation type="unfinished"></translation>
+        <translation>[Arrastrar] para mover la posición</translation>
     </message>
     <message>
         <source>----Separator----</source>
-        <translation type="unfinished"></translation>
+        <translation>----Separador----</translation>
     </message>
     <message>
         <source>[Drag] to move position, [Double Click] to edit title</source>
-        <translation type="unfinished"></translation>
+        <translation>[Arrastrar] para mover la posición, [Doble clic] para editar el título</translation>
     </message>
     <message>
         <source>Incorrect file</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo incorrecto</translation>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy separator to menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>[Arrastrar y soltar] para copiar el separador a la barra de menúes</translation>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy command to menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>[Arrastrar y soltar] para copiar el comando a la barra de menúes</translation>
     </message>
     <message>
         <source>Cannot open menubar settings template file. Re-installing Toonz will solve this problem.</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible abrir el archivo de plantilla de opciones de la barra de menúes. Reinstalar OpenToonz resolverá este problema.</translation>
     </message>
     <message>
         <source>Visit Web Site</source>
-        <translation type="unfinished">Visita il Sito Web</translation>
+        <translation>Visitar el sitio web</translation>
     </message>
     <message>
         <source>https://opentoonz.github.io/e/</source>
-        <translation type="unfinished"></translation>
+        <translation>https://opentoonz.github.io/e/</translation>
     </message>
 </context>
 <context>
@@ -7180,11 +7181,11 @@ El archivo de sonido no será incluido en el clip procesado.</translation>
     </message>
     <message>
         <source>Delete Room &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar espacio de trabajo &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Customize Menu Bar of Room &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Personalizar barra de menúes del espacio de trabajo &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -8523,27 +8524,27 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>Level</source>
-         <translation>Nivel</translation>
+        <translation>Nivel</translation>
     </message>
     <message>
         <source>Failed to load menu %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al cargar el menú %1</translation>
     </message>
     <message>
         <source>Failed to add command %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al agregar el comando %1</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayuda</translation>
     </message>
     <message>
         <source>Cannot open menubar settings file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible abrir el archivo de opciones de la barra de menúes %1</translation>
     </message>
     <message>
         <source>Failed to create menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al crear la barra de menúes</translation>
     </message>
 </context>
 <context>
@@ -8762,11 +8763,11 @@ Clic en el botón con una flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>&lt;&lt; Add</source>
-         <translation>&lt;&lt; Agregar</translation>
+        <translation>&lt;&lt; Agregar</translation>
     </message>
     <message>
         <source>Successful Steps:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos exitosos:</translation>
     </message>
 </context>
 <context>
@@ -8931,7 +8932,7 @@ Clic en el botón con una flecha para crear una nueva sub-planilla</translation>
     <name>TopBar</name>
     <message>
         <source>Lock Rooms Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear solapa de espacios de trabajo</translation>
     </message>
 </context>
 <context>
@@ -9378,7 +9379,7 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Double Click to Toggle Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Doble clic para alternar piel de cebolla</translation>
     </message>
 </context>
 <context>
