@@ -36,7 +36,7 @@ struct PlaneViewerZoomer : public ImageUtils::ShortcutZoomer {
   PlaneViewerZoomer(PlaneViewer *planeViewer) : ShortcutZoomer(planeViewer) {}
 
 private:
-  virtual bool zoom(bool zoomin, bool resetZoom);
+  bool zoom(bool zoomin, bool resetZoom) override;
 };
 
 //========================================================================
