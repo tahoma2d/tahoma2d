@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TSTREAMEXCEPTION_INCLUDED
 #define TSTREAMEXCEPTION_INCLUDED
@@ -22,15 +22,14 @@ class TOStream;
 
 //===================================================================
 
-class DVAPI TIStreamException : public TException
-{
+class DVAPI TIStreamException : public TException {
 public:
-	TIStreamException(TIStream &is);
-	TIStreamException(TIStream &is, const TException &e);
-	TIStreamException(TIStream &is, wstring message);
-	TIStreamException(TIStream &is, string message);
+  TIStreamException(TIStream &is);
+  TIStreamException(TIStream &is, const TException &e);
+  TIStreamException(TIStream &is, std::wstring message);
+  TIStreamException(TIStream &is, std::string message);
 
-	~TIStreamException();
+  ~TIStreamException();
 };
 
 #endif

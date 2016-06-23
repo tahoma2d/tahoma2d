@@ -9,8 +9,8 @@ set(MOC_HEADERS
     ../include/tools/toolhandle.h
     ../include/tools/tooloptions.h
     ../include/tools/screenpicker.h
-	rgbpickertool.h
-	rulertool.h)
+    rgbpickertool.h
+    rulertool.h)
 
 set(HEADERS ${MOC_HEADERS}
     autofill.h
@@ -87,8 +87,8 @@ set(SOURCES
     rasterselection.cpp
     strokeselection.cpp
     screenpicker.cpp
-	fingertool.cpp
-	rulertool.cpp)
+    fingertool.cpp
+    rulertool.cpp)
 
 set(RESOURCES tnztools.qrc)
 
@@ -101,9 +101,9 @@ qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 add_library(tnztools SHARED ${HEADERS} ${SOURCES} ${RESOURCES})
 add_definitions(-DTNZTOOLS_EXPORTS)
 
-if (APPLE)
+if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnztools.dylib")
-endif (APPLE)
+endif()
 
 message("subdir: tnztools")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})

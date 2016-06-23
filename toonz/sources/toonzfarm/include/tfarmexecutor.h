@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TFARMEXECUTOR_H
 #define TFARMEXECUTOR_H
@@ -14,7 +14,7 @@ using std::string;
 #undef TFARMAPI
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef TFARM_EXPORTS
 #define TFARMAPI __declspec(dllexport)
 #else
@@ -26,20 +26,19 @@ using std::string;
 
 //==============================================================================
 
-class TFARMAPI TFarmExecutor : public TTcpIpServer
-{
+class TFARMAPI TFarmExecutor : public TTcpIpServer {
 public:
-	TFarmExecutor(int port);
-	virtual ~TFarmExecutor() {}
+  TFarmExecutor(int port);
+  virtual ~TFarmExecutor() {}
 
-	// TTcpIpServer overrides
-	void onReceive(int socket, const QString &data);
+  // TTcpIpServer overrides
+  void onReceive(int socket, const QString &data);
 
 protected:
-	virtual QString execute(const vector<QString> &argv) = 0;
+  virtual QString execute(const std::vector<QString> &argv) = 0;
 
 private:
-	TTcpIpServer *m_tcpipServer;
+  TTcpIpServer *m_tcpipServer;
 };
 
 #endif

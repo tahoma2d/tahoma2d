@@ -746,7 +746,7 @@ DvDirTreeView {
   alternate-background-color: #3d3d3d;
 }
 /*---------------------------------------------------------------------------*/
-/* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup */
+/* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup, RenameAsToonzPopup */
 /*---------------------------------------------------------------------------*/
 #CleanupSettingsFrame,
 #LoadLevelFrame,
@@ -757,7 +757,8 @@ DvDirTreeView {
 #LoadLevelHeadLabel,
 #PsdSettingsHeadLabel,
 #PsdSettingsGroupBox::title,
-#FxSettingsPreviewShowLabel {
+#FxSettingsPreviewShowLabel,
+#RenameAsToonzPopupLabel {
   color: #a8bee7;
 }
 #PsdSettingsGroupBox {
@@ -903,6 +904,9 @@ ParamsPage {
 #XsheetScrollBar::add-page {
   background: none;
 }
+#noteTextEdit {
+  color: black;
+}
 XsheetViewer {
   qproperty-TextColor: #e6e6e6;
   qproperty-BGColor: #484848;
@@ -936,6 +940,9 @@ XsheetViewer {
   qproperty-PaletteColumnColor: #3a655f;
   qproperty-PaletteColumnBorderColor: #86aca7;
   qproperty-SelectedPaletteColumnColor: #5f8581;
+  qproperty-MeshColumnColor: #684d86;
+  qproperty-MeshColumnBorderColor: #ba92ef;
+  qproperty-SelectedMeshColumnColor: #8a75a2;
   qproperty-ColumnHeadPastelizer: #000000;
   qproperty-SelectedColumnHead: #506082;
   qproperty-LightLightBGColor: #fafafa;
@@ -1167,6 +1174,13 @@ SpreadsheetViewer {
 }
 #EditToolLockButton::indicator:checked:hover {
   image: url("../gray_072/imgs/cam_lock_hover.png");
+}
+/*------ Script Console ------*/
+#ScriptConsole {
+  border: 1px inset;
+  background-color: #dcdcdc;
+  color: black;
+  font-family: "Courier";
 }
 /*------ Topbar and Menubar of the MainWindow ------*/
 #TopBar {

@@ -22,9 +22,9 @@ set(SOURCES
 
 add_library(tfarm SHARED ${HEADERS} ${SOURCES})
 add_definitions(-DTFARM_EXPORTS)
-if (APPLE)
+if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtfarm.dylib")
-endif (APPLE)
+endif()
 
 message("subdir: tfarm")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
@@ -35,11 +35,13 @@ if(WIN32)
     set(EXTRA_LIBS
         tnzcore tnzbase toonzlib
         ws2_32.lib)
-else()
+elseif(APPLE)
     set(EXTRA_LIBS
         ${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.dylib
         ${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.dylib
         ${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.dylib)
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;tnzext")
 endif()
 
 target_link_libraries(tfarm

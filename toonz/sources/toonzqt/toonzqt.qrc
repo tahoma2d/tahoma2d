@@ -301,5 +301,8 @@
       <file>Resources/keyframe_key.png</file>
       <file>Resources/keyframe_modified.png</file>
       <file>Resources/keyframe_inbetween.png</file>
+      <file>Resources/switchport_on.png</file>
+      <file>Resources/switchport_off.png</file>
+      <file>Resources/switchport_over.png</file>
     </qresource>
 </RCC>

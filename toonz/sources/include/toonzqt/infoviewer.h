@@ -1,7 +1,9 @@
-
+#pragma once
 
 #ifndef INFOVIEWER_H
 #define INFOVIEWER_H
+
+#include <memory>
 
 #include "toonzqt/dvdialog.h"
 
@@ -20,23 +22,22 @@ class TFilePath;
 class TPalette;
 class InfoViewerImp;
 
-class DVAPI InfoViewer : public DVGui::Dialog
-{
-	Q_OBJECT
-	InfoViewerImp *m_imp;
-	QWidget *m_parent;
+class DVAPI InfoViewer : public DVGui::Dialog {
+  Q_OBJECT
+  std::unique_ptr<InfoViewerImp> m_imp;
+  QWidget *m_parent;
 
 public:
-	InfoViewer(QWidget *parent = 0);
-	~InfoViewer();
+  InfoViewer(QWidget *parent = 0);
+  ~InfoViewer();
 
 protected:
-	void hideEvent(QHideEvent *);
-	void showEvent(QShowEvent *);
+  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *);
 protected slots:
-	void onSliderChanged(bool);
+  void onSliderChanged(bool);
 public slots:
-	void setItem(const TLevelP &level, TPalette *palette, const TFilePath &path);
+  void setItem(const TLevelP &level, TPalette *palette, const TFilePath &path);
 };
 
 #endif

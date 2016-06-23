@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TIIO_QUANTEL_INCLUDED
 #define TIIO_QUANTEL_INCLUDED
@@ -8,12 +8,11 @@
 
 //===========================================================================
 
-namespace Tiio
-{
+namespace Tiio {
 
 Tiio::Reader *makeQntReader();
 Tiio::Writer *makeQntWriter();
 
-} // namespace
+}  // namespace
 
 #endif

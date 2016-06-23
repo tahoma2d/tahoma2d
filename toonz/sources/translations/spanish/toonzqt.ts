@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es" sourcelanguage="en">
+<TS version="2.1" language="es" sourcelanguage="en">
 <context>
     <name>AddFxContextMenu</name>
     <message>
@@ -121,6 +121,14 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Force Squared Pixel</source>
         <translation>Forzar píxel cuadrado</translation>
+    </message>
+    <message>
+        <source>Error : Preset Name is Invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The preset name must not use &apos;,&apos;(comma).</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1826,6 +1834,10 @@ Are you sure?</source>
         <source>Set</source>
         <translation>Conjunto</translation>
     </message>
+    <message>
+        <source>OpenToonz 1.0</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -1882,6 +1894,10 @@ Are you sure?</source>
     <message>
         <source>&amp;Schematic Toggle</source>
         <translation>Alternar &amp;diagrama</translation>
+    </message>
+    <message>
+        <source>&amp;Swtich output port display mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

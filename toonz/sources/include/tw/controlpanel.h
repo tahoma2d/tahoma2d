@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TNZ_TW_CONTROL_PANEL_INCLUDED
 #define TNZ_TW_CONTROL_PANEL_INCLUDED
@@ -15,27 +15,26 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class DVAPI TControlPanel : public TWidget
-{
-	class Layout;
-	Layout *m_layout;
+class DVAPI TControlPanel : public TWidget {
+  class Layout;
+  Layout *m_layout;
 
 public:
-	TControlPanel(TWidget *parent, string name = "control panel");
-	~TControlPanel();
+  TControlPanel(TWidget *parent, string name = "control panel");
+  ~TControlPanel();
 
-	void beginRow(Alignment align = BEGIN);
-	void endRow();
+  void beginRow(Alignment align = BEGIN);
+  void endRow();
 
-	void add(TWidget *w, bool canResize = false);
-	void addSeparator(string title = "");
+  void add(TWidget *w, bool canResize = false);
+  void addSeparator(string title = "");
 
-	void setTab(int x);
+  void setTab(int x);
 
-	void draw();
-	void configureNotify(const TDimension &d);
+  void draw();
+  void configureNotify(const TDimension &d);
 
-	TDimension getMinimumSize();
+  TDimension getMinimumSize();
 };
 
 #endif

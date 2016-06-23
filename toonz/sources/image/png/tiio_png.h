@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TTIO_PNG_INCLUDED
 #define TTIO_PNG_INCLUDED
@@ -9,18 +9,16 @@
 
 //===========================================================================
 
-namespace Tiio
-{
+namespace Tiio {
 
 //===========================================================================
 
-class PngWriterProperties : public TPropertyGroup
-{
+class PngWriterProperties : public TPropertyGroup {
 public:
-	//TEnumProperty m_pixelSize;
-	TBoolProperty m_matte;
+  // TEnumProperty m_pixelSize;
+  TBoolProperty m_matte;
 
-	PngWriterProperties();
+  PngWriterProperties();
 };
 
 //===========================================================================
@@ -28,6 +26,6 @@ public:
 Tiio::Reader *makePngReader();
 Tiio::Writer *makePngWriter();
 
-} // namespace
+}  // namespace
 
 #endif

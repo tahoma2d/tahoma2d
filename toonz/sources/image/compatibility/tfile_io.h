@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TFILE_IO_H
 #define TFILE_IO_H
@@ -11,6 +11,10 @@ extern "C" {
 
 #ifdef MACOSX
 #include <stddef.h>
+#endif
+
+#ifdef LINUX
+#include <wchar.h>
 #endif
 
 char *convertWCHAR2CHAR(const wchar_t *fname);

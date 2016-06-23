@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es" sourcelanguage="en">
+<TS version="2.1" language="es" sourcelanguage="en">
 <context>
     <name>ArrowToolOptionsBox</name>
     <message>
@@ -803,6 +803,10 @@ Do you want to proceed?</source>
     <message>
         <source>Transform Raster</source>
         <translation>Transformar imagen</translation>
+    </message>
+    <message>
+        <source>Set Save Box : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

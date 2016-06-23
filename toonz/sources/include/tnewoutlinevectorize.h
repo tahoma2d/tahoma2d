@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TNEW_OUTLINE_VECTORIZE_H
 #define TNEW_OUTLINE_VECTORIZE_H
@@ -6,8 +6,7 @@
 #include "trasterimage.h"
 #include "tvectorimage.h"
 
-namespace tvectorizer
-{
+namespace tvectorizer {
 
 //****************************************************************************
 //    Vectorization Functions
@@ -15,13 +14,13 @@ namespace tvectorizer
 
 struct
 
-	//****************************************************************************
-	//    Vectorization Functions
-	//****************************************************************************
+    //****************************************************************************
+    //    Vectorization Functions
+    //****************************************************************************
 
-	void
-	outlineVectorize(const TRasterImageP &input, TVectorImageP &output);
+    void
+    outlineVectorize(const TRasterImageP &input, TVectorImageP &output);
 
-} //namespace toutlinevectorizer
+}  // namespace toutlinevectorizer
 
-#endif //TNEW_OUTLINE_VECTORIZE_H
+#endif  // TNEW_OUTLINE_VECTORIZE_H

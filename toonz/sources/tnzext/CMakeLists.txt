@@ -74,18 +74,18 @@ endif()
 
 add_library(tnzext SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES})
 
-if (APPLE)
+if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzext.dylib")
-endif (APPLE)
+endif()
 
 add_definitions(-DTNZEXT_EXPORTS)
 
 message("subdir: tnzext")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-if (APPLE)
-find_library(ACCE_LIB Accelerate)
-endif (APPLE)
+if(APPLE)
+    find_library(ACCE_LIB Accelerate)
+endif()
 
 include_directories(${SDKROOT}/superlu/SuperLU_4.1/SRC)
 
@@ -94,7 +94,7 @@ if(WIN32)
         Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
         ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${OPENBLAS_LIB} ${EXTRA_LIBS}
         tnzcore tnzbase)
-else()
+elseif(APPLE)
     set(EXTRA_LIBS
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.dylib
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.dylib)
@@ -102,4 +102,12 @@ else()
     target_link_libraries(tnzext
         Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
         ${ACCE_LIB} ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${EXTRA_LIBS})
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase")
+
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${OPENBLAS_LIB})
+
+    target_link_libraries(tnzext
+        Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
+        ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${EXTRA_LIBS})
 endif()

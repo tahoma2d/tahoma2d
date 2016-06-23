@@ -1,17 +1,13 @@
-
+#pragma once
 
 #ifndef TFONT_H
 #define TFONT_H
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-//Toonz includes
+// Toonz includes
 #include "trastercm.h"
 #include "texception.h"
 
-//STL includes
+// STL includes
 #include <string>
 
 #undef DVAPI
@@ -32,9 +28,10 @@ class TFont;
 
 //-----------------------------------------------------
 
-//TFont declaration. The class is currently not directly available under 64-bit MAC OSX.
+// TFont declaration. The class is currently not directly available under 64-bit
+// MAC OSX.
 
-#ifndef __LP64__
+#if !defined(__LP64__) || !defined(MACOSX)
 
 #ifdef MACOSX
 #include <ApplicationServices/ApplicationServices.h>
@@ -45,152 +42,153 @@ class TFont;
 
 //! Class to manage loading and rendering of fonts.
 
-class DVAPI TFont
-{
+class DVAPI TFont {
 public:
-	struct Impl;
+  struct Impl;
 
 private:
-	friend class TFontManager;
-	Impl *m_pimpl;
+  friend class TFontManager;
+  Impl *m_pimpl;
 
-#ifdef WIN32
-	TFont(const LOGFONTW &, HDC hdc);
+#ifdef _WIN32
+  TFont(const LOGFONTW &, HDC hdc);
+#elif defined(MACOSX)
+  TFont(ATSUFontID, int size);
 #else
-	TFont(ATSUFontID, int size);
+  TFont(const std::wstring family, const std::wstring face, int size);
 #endif
 
 public:
-	~TFont();
+  ~TFont();
 
-	TPoint drawChar(TVectorImageP &outImage, wchar_t charcode, wchar_t nextCode = 0) const;
-	TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode, wchar_t nextCode = 0) const;
-	TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId, wchar_t charcode, wchar_t nextCode = 0) const;
+  TPoint drawChar(TVectorImageP &outImage, wchar_t charcode,
+                  wchar_t nextCode = 0) const;
+  TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode,
+                  wchar_t nextCode = 0) const;
+  TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId,
+                  wchar_t charcode, wchar_t nextCode = 0) const;
 
-	//brief  get kerning distance between two characters
-	TPoint getDistance(wchar_t firstChar, wchar_t secondChar) const;
+  // brief  get kerning distance between two characters
+  TPoint getDistance(wchar_t firstChar, wchar_t secondChar) const;
 
-	int getMaxHeight() const;
-	int getMaxWidth() const;
-	//void disableKerning();
-	//void enableKerning();
-	bool hasKerning() const;
-	int getLineAscender() const;
-	int getLineDescender() const;
-	bool hasVertical() const;
-	wstring getFamily() const;
-	wstring getTypeface() const;
-	//bool isValidCode( wchar_t code ) const;
+  int getMaxHeight() const;
+  int getMaxWidth() const;
+  // void disableKerning();
+  // void enableKerning();
+  bool hasKerning() const;
+  int getLineAscender() const;
+  int getLineDescender() const;
+  bool hasVertical() const;
+  std::wstring getFamily() const;
+  std::wstring getTypeface() const;
+  // bool isValidCode( wchar_t code ) const;
 
 private:
-	// not implemented
-	TFont(const TFont &);
-	TFont &operator=(const TFont &);
+  // not implemented
+  TFont(const TFont &);
+  TFont &operator=(const TFont &);
 };
 
-#endif //!__LP64__
+#endif  //!__LP64__ || !MACOSX
 
 //-----------------------------------------------------------------------------
 
-class TFontCreationError : public TException
-{
+class TFontCreationError : public TException {
 public:
-	TFontCreationError()
-		: TException("E_CanNotUseSelectedFont")
-	{
-	}
+  TFontCreationError() : TException("E_CanNotUseSelectedFont") {}
 };
 
 //-----------------------------------------------------------------------------
 
-class TFontLibraryLoadingError : public TException
-{
+class TFontLibraryLoadingError : public TException {
 public:
-	TFontLibraryLoadingError()
-		: TException("E_CanNotLoadFonts")
-	{
-	}
+  TFontLibraryLoadingError() : TException("E_CanNotLoadFonts") {}
 };
 
 //-----------------------------------------------------------------------------
 
-//singleton
-class DVAPI TFontManager
-{
-	struct Impl;
-	Impl *m_pimpl;
+// singleton
+class DVAPI TFontManager {
+  struct Impl;
+  Impl *m_pimpl;
 
-	TFontManager();
-	~TFontManager();
+  TFontManager();
+  ~TFontManager();
 
 public:
-	static TFontManager *instance();
+  static TFontManager *instance();
 
-	TFont *getCurrentFont();
+  TFont *getCurrentFont();
 
-	//!throws TFontLibraryLoadingError if can not load fonts
-	void loadFontNames();
+  //! throws TFontLibraryLoadingError if can not load fonts
+  void loadFontNames();
 
-	//! if can not create font, throws TFontCreationError and leave as current the old one
-	void setFamily(const wstring family);
+  //! if can not create font, throws TFontCreationError and leave as current the
+  //! old one
+  void setFamily(const std::wstring family);
 
-	//!if can not create font, throws TFontCreationError and leave as current the old one
-	void setTypeface(const wstring typeface);
+  //! if can not create font, throws TFontCreationError and leave as current the
+  //! old one
+  void setTypeface(const std::wstring typeface);
 
-	wstring getCurrentFamily() const;
-	wstring getCurrentTypeface() const;
-	void getAllFamilies(vector<wstring> &families) const;
-	void getAllTypefaces(vector<wstring> &typefaces) const;
-	void setVertical(bool vertical);
-	void setSize(int size);
+  std::wstring getCurrentFamily() const;
+  std::wstring getCurrentTypeface() const;
+  void getAllFamilies(std::vector<std::wstring> &families) const;
+  void getAllTypefaces(std::vector<std::wstring> &typefaces) const;
+  void setVertical(bool vertical);
+  void setSize(int size);
 
 // --------- TFont methods  called on curren font -----------
 
-#ifndef __LP64__
+#if !defined(__LP64__) || defined(LINUX)
 
-	TPoint drawChar(TVectorImageP &outImage, wchar_t charcode, wchar_t nextCode = 0)
-	{
-		return getCurrentFont()->drawChar(outImage, charcode, nextCode);
-	}
+  TPoint drawChar(TVectorImageP &outImage, wchar_t charcode,
+                  wchar_t nextCode = 0) {
+    return getCurrentFont()->drawChar(outImage, charcode, nextCode);
+  }
 
-	TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode, wchar_t nextCode = 0)
-	{
-		return getCurrentFont()->drawChar(outImage, glyphOrigin, charcode, nextCode);
-	}
+  TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode,
+                  wchar_t nextCode = 0) {
+    return getCurrentFont()->drawChar(outImage, glyphOrigin, charcode,
+                                      nextCode);
+  }
 
-	TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId, wchar_t charcode, wchar_t nextCode = 0)
-	{
-		return getCurrentFont()->drawChar(outImage, glyphOrigin, inkId, charcode, nextCode);
-	}
+  TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId,
+                  wchar_t charcode, wchar_t nextCode = 0) {
+    return getCurrentFont()->drawChar(outImage, glyphOrigin, inkId, charcode,
+                                      nextCode);
+  }
 
-	TPoint getDistance(wchar_t firstChar, wchar_t secondChar)
-	{
-		return getCurrentFont()->getDistance(firstChar, secondChar);
-	}
+  TPoint getDistance(wchar_t firstChar, wchar_t secondChar) {
+    return getCurrentFont()->getDistance(firstChar, secondChar);
+  }
 
-	int getMaxHeight() { return getCurrentFont()->getMaxHeight(); }
-	int getMaxWidth() { return getCurrentFont()->getMaxWidth(); }
-	bool hasKerning() { return getCurrentFont()->hasKerning(); }
-	int getLineAscender() { return getCurrentFont()->getLineAscender(); }
-	int getLineDescender() { return getCurrentFont()->getLineDescender(); }
-	bool hasVertical() { return getCurrentFont()->hasVertical(); }
+  int getMaxHeight() { return getCurrentFont()->getMaxHeight(); }
+  int getMaxWidth() { return getCurrentFont()->getMaxWidth(); }
+  bool hasKerning() { return getCurrentFont()->hasKerning(); }
+  int getLineAscender() { return getCurrentFont()->getLineAscender(); }
+  int getLineDescender() { return getCurrentFont()->getLineDescender(); }
+  bool hasVertical() { return getCurrentFont()->hasVertical(); }
 
-#else //__LP64__
+#else  //__LP64__
 
-	TPoint drawChar(TVectorImageP &outImage, wchar_t charcode, wchar_t nextCode = 0);
-	TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode, wchar_t nextCode = 0);
-	TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId, wchar_t charcode, wchar_t nextCode = 0);
+  TPoint drawChar(TVectorImageP &outImage, wchar_t charcode,
+                  wchar_t nextCode = 0);
+  TPoint drawChar(TRasterGR8P &outImage, TPoint &glyphOrigin, wchar_t charcode,
+                  wchar_t nextCode = 0);
+  TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId,
+                  wchar_t charcode, wchar_t nextCode = 0);
 
-	TPoint getDistance(wchar_t firstChar, wchar_t secondChar);
+  TPoint getDistance(wchar_t firstChar, wchar_t secondChar);
 
-	int getMaxHeight();
-	int getMaxWidth();
-	bool hasKerning();
-	int getLineAscender();
-	int getLineDescender();
-	bool hasVertical();
+  int getMaxHeight();
+  int getMaxWidth();
+  bool hasKerning();
+  int getLineAscender();
+  int getLineDescender();
+  bool hasVertical();
 
-#endif //__LP64__
+#endif  //__LP64__
 };
 
 //-----------------------------------------------------------------------------

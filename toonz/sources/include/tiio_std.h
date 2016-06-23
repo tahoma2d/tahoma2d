@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TTIO_STD_INCLUDED
 #define TTIO_STD_INCLUDED
@@ -12,11 +12,10 @@
 #define DVAPI DV_IMPORT_API
 #endif
 
-namespace Tiio
-{
+namespace Tiio {
 
 DVAPI void defineStd();
 
-} // namespace
+}  // namespace
 
 #endif

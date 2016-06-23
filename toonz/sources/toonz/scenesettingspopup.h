@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef SCENESETTINGSPOPUP_H
 #define SCENESETTINGSPOPUP_H
@@ -13,52 +13,49 @@
 class TSceneProperties;
 class QComboBox;
 
-using namespace DVGui;
-
 //=============================================================================
 // SceneSettingsPopup
 //-----------------------------------------------------------------------------
 
-class SceneSettingsPopup : public QDialog
-{
-	Q_OBJECT
+class SceneSettingsPopup : public QDialog {
+  Q_OBJECT
 
-	DoubleLineEdit *m_frameRateFld;
-	ColorField *m_bgColorFld;
+  DVGui::DoubleLineEdit *m_frameRateFld;
+  DVGui::ColorField *m_bgColorFld;
 
-	IntLineEdit *m_fieldGuideFld;
-	DoubleLineEdit *m_aspectRatioFld;
+  DVGui::IntLineEdit *m_fieldGuideFld;
+  DVGui::DoubleLineEdit *m_aspectRatioFld;
 
-	IntLineEdit *m_fullcolorSubsamplingFld;
-	IntLineEdit *m_tlvSubsamplingFld;
+  DVGui::IntLineEdit *m_fullcolorSubsamplingFld;
+  DVGui::IntLineEdit *m_tlvSubsamplingFld;
 
-	IntLineEdit *m_markerIntervalFld;
-	IntLineEdit *m_startFrameFld;
+  DVGui::IntLineEdit *m_markerIntervalFld;
+  DVGui::IntLineEdit *m_startFrameFld;
 
-	TSceneProperties *getProperties() const;
+  TSceneProperties *getProperties() const;
 
 public:
-	SceneSettingsPopup();
-	void configureNotify();
+  SceneSettingsPopup();
+  void configureNotify();
 
 protected:
-	void showEvent(QShowEvent *);
-	void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *);
+  void hideEvent(QHideEvent *);
 
 public slots:
 
-	void update();
+  void update();
 
-	void onFrameRateEditingFinished();
-	void onFieldGuideSizeEditingFinished();
-	void onFieldGuideAspectRatioEditingFinished();
+  void onFrameRateEditingFinished();
+  void onFieldGuideSizeEditingFinished();
+  void onFieldGuideAspectRatioEditingFinished();
 
-	void onFullColorSubsampEditingFinished();
-	void onTlvSubsampEditingFinished();
-	void onMakerIntervalEditingFinished();
-	void onStartFrameEditingFinished();
+  void onFullColorSubsampEditingFinished();
+  void onTlvSubsampEditingFinished();
+  void onMakerIntervalEditingFinished();
+  void onStartFrameEditingFinished();
 
-	void setBgColor(const TPixel32 &value, bool isDragging);
+  void setBgColor(const TPixel32 &value, bool isDragging);
 };
 
-#endif // SCENESETTINGSPOPUP_H
+#endif  // SCENESETTINGSPOPUP_H

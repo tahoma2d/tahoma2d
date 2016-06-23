@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef RENUMBERPOPUP_H
 #define RENUMBERPOPUP_H
@@ -10,25 +10,22 @@
 // forward declaration
 class QPushButton;
 
-using namespace DVGui;
-
 //=============================================================================
 // RenumberPopup
 //-----------------------------------------------------------------------------
 
-class RenumberPopup : public Dialog
-{
-	Q_OBJECT
+class RenumberPopup : public DVGui::Dialog {
+  Q_OBJECT
 
-	QPushButton *m_okBtn;
-	QPushButton *m_cancelBtn;
+  QPushButton *m_okBtn;
+  QPushButton *m_cancelBtn;
 
-	IntLineEdit *m_startFld, *m_stepFld;
+  DVGui::IntLineEdit *m_startFld, *m_stepFld;
 
 public:
-	RenumberPopup();
-	void setValues(int start, int step);
-	void getValues(int &start, int &step);
+  RenumberPopup();
+  void setValues(int start, int step);
+  void getValues(int &start, int &step);
 };
 
-#endif // RENUMBERPOPUP_H
+#endif  // RENUMBERPOPUP_H

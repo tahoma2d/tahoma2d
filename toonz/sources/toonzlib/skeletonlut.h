@@ -1,10 +1,9 @@
-
+#pragma once
 
 #ifndef _SKELETONLUT_H_
 #define _SKELETONLUT_H_
 
-namespace SkeletonLut
-{
+namespace SkeletonLut {
 
 extern UCHAR FirstPreseedTable[];
 
@@ -21,6 +20,6 @@ extern UCHAR NextSeedTable[];
 extern UCHAR EndpointTable[];
 
 extern UCHAR ExtremeEndpointTable[];
-} //namespace
+}  // namespace
 
 #endif

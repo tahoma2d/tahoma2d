@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef MENUBAR_COMMANDS_IDS_DEFINED
 #define MENUBAR_COMMANDS_IDS_DEFINED
@@ -15,6 +15,7 @@
 #define MI_LoadScene "MI_LoadScene"
 #define MI_SaveScene "MI_SaveScene"
 #define MI_SaveSceneAs "MI_SaveSceneAs"
+#define MI_SaveAll "MI_SaveAll"
 #define MI_RevertScene "MI_RevertScene"
 #define MI_LoadSubSceneFile "MI_LoadSubSceneFile"
 
@@ -126,6 +127,10 @@
 
 #define MI_InsertGlobalKeyframe "MI_InsertGlobalKeyframe"
 #define MI_RemoveGlobalKeyframe "MI_RemoveGlobalKeyframe"
+#define MI_DrawingSubForward "MI_DrawingSubForward"
+#define MI_DrawingSubBackward "MI_DrawingSubBackward"
+#define MI_DrawingSubGroupForward "MI_DrawingSubGroupForward"
+#define MI_DrawingSubGroupBackward "MI_DrawingSubGroupBackward"
 
 #define MI_InsertFx "MI_InsertFx"
 #define MI_NewOutputFx "MI_NewOutputFx"

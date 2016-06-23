@@ -1,9 +1,9 @@
-
+#pragma once
 
 #ifndef TNZTYPES_H
 #define TNZTYPES_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #define TINT32 __int32
 typedef unsigned __int32 TUINT32;
 typedef __int64 TINT64;
@@ -18,11 +18,11 @@ typedef uint32_t TUINT32;
 typedef int64_t TINT64;
 typedef uint64_t TUINT64;
 
-#elif defined(__LP64__)
+#elif defined(__LP64__) && (!defined(LINUX))
 
-#define TINT32 \
-	;          \
-	__int32
+#define TINT32                                                                 \
+  ;                                                                            \
+  __int32
 typedef unsigned __int32 TSINT32;
 typedef __int64 TINT64;
 typedef unsigned __int64 TUINT64;

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TVECTORIMAGE_UTILS_INCLUDED
 #define TVECTORIMAGE_UTILS_INCLUDED
@@ -16,6 +16,7 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-void DVAPI getGroupsList(const TVectorImageP &vi, std::vector<TVectorImageP> &list);
+void DVAPI getGroupsList(const TVectorImageP &vi,
+                         std::vector<TVectorImageP> &list);
 
-#endif // TVECTORIMAGE_UTILS_INCLUDED
+#endif  // TVECTORIMAGE_UTILS_INCLUDED

@@ -113,7 +113,7 @@
         <translation>列が選択されていないので、マッチラインを合成できません。</translation>
     </message>
     <message>
-        <source>It is not possible to apply the match lines because two columns have to be seleted.</source>
+        <source>It is not possible to apply the match lines because two columns have to be selected.</source>
         <translation>二つの列が選択されていないので、マッチラインを合成できません。</translation>
     </message>
 </context>
@@ -835,6 +835,13 @@ What do you want to do?</source>
     </message>
 </context>
 <context>
+    <name>CommandListTree</name>
+    <message>
+        <source>----Separator----</source>
+        <translation>----セパレータ----</translation>
+    </message>
+</context>
+<context>
     <name>ConflictWidget</name>
     <message>
         <source>Mine</source>
@@ -1066,6 +1073,20 @@ What do you want to do?</source>
     <message>
         <source>Palette:</source>
         <translation>パレット :</translation>
+    </message>
+    <message>
+        <source>Append Default Palette</source>
+        <translation>デフォルトパレットを追加する</translation>
+    </message>
+    <message>
+        <source>When activated, styles of the default palette
+($TOONZSTUDIOPALETTE\cleanup_default.tpl) will 
+be appended to the palette after conversion in 
+order to save the effort of creating styles 
+before color designing.</source>
+        <translation>このオプションがONのとき、デフォルトパレット ($TOONZSTUDIOPALETTE\cleanup_default.tpl)
+のスタイルが変換後のパレットに追加されます。色見本を作成する際に、スタイルを新規作成する
+手間を省くことができます。</translation>
     </message>
 </context>
 <context>
@@ -1846,7 +1867,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Relative Onion Skin Toggle</source>
-        <translation>オニオンスキン表示/非表示</translation>
+        <translation type="vanished">オニオンスキン表示/非表示</translation>
     </message>
     <message>
         <source>Fixed Onion Skin Toggle</source>
@@ -2626,11 +2647,11 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Visit Web Site</source>
-        <translation>ウェブサイトを開く</translation>
+        <translation type="vanished">ウェブサイトを開く</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation type="vanished">キャンセル</translation>
     </message>
     <message>
         <source>&amp;New Scene</source>
@@ -4209,7 +4230,7 @@ Do you want to create it?</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <source>&amp;Abount OpenToonz...</source>
+        <source>&amp;About OpenToonz...</source>
         <translation>OpenToonzについて (&amp;A)...</translation>
     </message>
     <message>
@@ -4219,6 +4240,18 @@ Do you want to create it?</source>
     <message>
         <source>&amp;History</source>
         <translation>ヒストリー (&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Save All</source>
+        <translation>シーンとレベルを全て保存 （&amp;S）</translation>
+    </message>
+    <message>
+        <source>Toggle Edit in Place</source>
+        <translation>親シートの内容をビューアに表示/非表示</translation>
+    </message>
+    <message>
+        <source>Refresh Folder Tree</source>
+        <translation>フォルダ構成の再読み込み</translation>
     </message>
 </context>
 <context>
@@ -4286,6 +4319,54 @@ Halftone</source>
 Gaps</source>
         <translation>線を食い
 込ませる</translation>
+    </message>
+</context>
+<context>
+    <name>MenuBarPopup</name>
+    <message>
+        <source>Customize Menu Bar of Room &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;ワークスペースのメニューバーをカスタマイズ</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>%1 Menu Bar</source>
+        <translation>%1 のメニューバー</translation>
+    </message>
+    <message>
+        <source>Menu Items</source>
+        <translation>コマンド一覧</translation>
+    </message>
+    <message>
+        <source>N.B. If you put unique title to submenu, it may not be translated to another language.
+N.B. Duplicated commands will be ignored. Only the last one will appear in the menu bar.</source>
+        <translation>※ サブメニューに特別な名前を付けると、他の言語での表示時にも翻訳されないことがあります。
+※ 重複したコマンドは無視され、最後に追加されたものだけがメニューバーに表示されます。</translation>
+    </message>
+</context>
+<context>
+    <name>MenuBarTree</name>
+    <message>
+        <source>Insert Menu</source>
+        <translation>メニューを挿入</translation>
+    </message>
+    <message>
+        <source>Insert Submenu</source>
+        <translation>サブメニューを挿入</translation>
+    </message>
+    <message>
+        <source>Remove &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;を削除</translation>
+    </message>
+    <message>
+        <source>New Menu</source>
+        <translation>新規メニュー</translation>
     </message>
 </context>
 <context>
@@ -4578,7 +4659,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Columns</source>
-        <translation>列</translation>
+        <translation type="vanished">列</translation>
     </message>
     <message>
         <source>Camera Shift:</source>
@@ -5381,6 +5462,14 @@ Do you want to overwrite it?</source>
         <source>Replace Toonz Level after SaveLevelAs command</source>
         <translation>Toonzレベルを別名で保存した後、レベルを置き換える</translation>
     </message>
+    <message>
+        <source>Show Keyframes on Cell Area</source>
+        <translation>タイムシートのコマ領域にキーフレームを表示</translation>
+    </message>
+    <message>
+        <source>Rooms *:</source>
+        <translation>ワークスペースレイアウト *：</translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -5755,7 +5844,7 @@ Do you want to import it or load it from its original location?</source>
     </message>
     <message>
         <source>System date tampered.</source>
-        <translation>システムの日時が不正に変更されました。</translation>
+        <translation type="vanished">システムの日時が不正に変更されました。</translation>
     </message>
     <message>
         <source>No more Undo operations available.</source>
@@ -5773,7 +5862,7 @@ Visit the Web site for more information.</source>
     </message>
     <message>
         <source>Quit</source>
-        <translation>終了</translation>
+        <translation type="vanished">終了</translation>
     </message>
     <message>
         <source>Scan</source>
@@ -5868,7 +5957,7 @@ some regions are too high.</source>
         <translation>距離しきい値のエラー</translation>
     </message>
     <message>
-        <source>Sensibility Error</source>
+        <source>Sensitivity Error</source>
         <translation>感度のエラー</translation>
     </message>
     <message>
@@ -5895,7 +5984,7 @@ the level has to be saved first.</source>
     </message>
     <message>
         <source>It is not possible to track the level:
-undefinied error.</source>
+undefined error.</source>
         <translation>レベルを追跡できません：
 未定義のエラー。</translation>
     </message>
@@ -6082,12 +6171,6 @@ What do you want to do?</source>
     <message>
         <source>The rooms will be reset the next time you run Toonz.</source>
         <translation>Toonzを次回起動するとき、ワークスペースが初期化されます。</translation>
-    </message>
-    <message>
-        <source>The license validation process was not able to confirm the right to use this software on this computer.
- Please contact [ support@toonz.com ] for assistance.</source>
-        <translation>ライセンス確認プロセスは、このコンピュータ上で本ソフトウェアを使用する権利を確認できませんでした。
-support@toonz.com に連絡してください。</translation>
     </message>
     <message>
         <source>Saving previewed frames....</source>
@@ -6479,7 +6562,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>The scene %1 was created with Toonz and cannot be loaded in LineTest.</source>
-        <translation>シーン %1 はToonzで作成され、LINETESTに読み込みできません。</translation>
+        <translation type="vanished">シーン %1 はToonzで作成され、LINETESTに読み込みできません。</translation>
     </message>
     <message>
         <source>File %1 already exists.
@@ -6651,7 +6734,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Toonz cannot Save this Level</source>
-        <translation>このレベルを保存できません</translation>
+        <translation type="vanished">このレベルを保存できません</translation>
     </message>
     <message>
         <source>No Current Scene</source>
@@ -6710,7 +6793,7 @@ Are you sure to </source>
         <translation>レベルをシーンに移動 : レベル %1</translation>
     </message>
     <message>
-        <source>Inbeteween  : Level %1,  </source>
+        <source>Inbetween  : Level %1,  </source>
         <translation>中割り : レベル %1</translation>
     </message>
     <message>
@@ -6881,7 +6964,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Set Keyframe  : %1  at Frame %2</source>
-        <translation>キーフレームを設定 : %1  フレーム %2</translation>
+        <translation type="vanished">キーフレームを設定 : %1  フレーム %2</translation>
     </message>
     <message>
         <source>Move Columns</source>
@@ -6902,10 +6985,6 @@ Are you sure to </source>
     <message>
         <source>Combo Viewer</source>
         <translation>メインビューア</translation>
-    </message>
-    <message>
-        <source>Cleeanup Settings</source>
-        <translation type="vanished">トレース設定</translation>
     </message>
     <message>
         <source>Move Level to Cast Folder</source>
@@ -6938,6 +7017,58 @@ Are you sure to </source>
     <message>
         <source>History</source>
         <translation>ヒストリー</translation>
+    </message>
+    <message>
+        <source>Move Keyframe</source>
+        <translation>キーフレームを移動</translation>
+    </message>
+    <message>
+        <source>Move keyframe handle  : %1  Handle of the keyframe %2</source>
+        <translation>キーフレームハンドルを移動： フレーム %2 のハンドル %1</translation>
+    </message>
+    <message>
+        <source>Toggle cycle of  %1</source>
+        <translation>%1 のアニメーションの繰り返しをトグル</translation>
+    </message>
+    <message>
+        <source>[Drag] to move position</source>
+        <translation>[ドラッグ] 移動</translation>
+    </message>
+    <message>
+        <source>----Separator----</source>
+        <translation>----セパレータ----</translation>
+    </message>
+    <message>
+        <source>[Drag] to move position, [Double Click] to edit title</source>
+        <translation>[ドラッグ] 移動 [ダブルクリック] タイトルを編集</translation>
+    </message>
+    <message>
+        <source>Incorrect file</source>
+        <translation>不正なファイル</translation>
+    </message>
+    <message>
+        <source>[Drag&amp;Drop] to copy separator to menu bar</source>
+        <translation>[ドラッグ &amp; ドロップ] セパレータをメニューバーにコピー (&amp;D)</translation>
+    </message>
+    <message>
+        <source>[Drag&amp;Drop] to copy command to menu bar</source>
+        <translation>[ドラッグ &amp; ドロップ] コマンドをメニューバーにコピー (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Cannot open menubar settings template file. Re-installing Toonz will solve this problem.</source>
+        <translation>メニューバー設定テンプレートファイルが見つかりません： OpenToonzを再インストールすると問題が解決します。</translation>
+    </message>
+    <message>
+        <source>Visit Web Site</source>
+        <translation>ウェブサイトを開く</translation>
+    </message>
+    <message>
+        <source>https://opentoonz.github.io/e/</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Add color model&apos;s palette to the destination palette.</source>
+        <translation>カラーモデルのパレットを、対象のパレットに追加する。</translation>
     </message>
 </context>
 <context>
@@ -7066,7 +7197,7 @@ The audio file will not be included in the rendered clip.</source>
     <name>RoomTabWidget</name>
     <message>
         <source>New Room</source>
-        <translation type="vanished">新規ワークスペース</translation>
+        <translation>新規ワークスペース</translation>
     </message>
     <message>
         <source>Delete Room</source>
@@ -7074,11 +7205,19 @@ The audio file will not be included in the rendered clip.</source>
     </message>
     <message>
         <source>Room</source>
-        <translation type="vanished">ワークスペース</translation>
+        <translation>ワークスペース</translation>
     </message>
     <message>
         <source>Are you sure you want to remove room %1</source>
-        <translation type="vanished">%1 ワークスペースを削除してもよろしいですか？</translation>
+        <translation>%1 ワークスペースを削除してもよろしいですか</translation>
+    </message>
+    <message>
+        <source>Delete Room &quot;%1&quot;</source>
+        <translation>ワークスペース&quot;%1&quot;を削除</translation>
+    </message>
+    <message>
+        <source>Customize Menu Bar of Room &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;ワークスペースのメニューバーをカスタマイズ</translation>
     </message>
 </context>
 <context>
@@ -8423,6 +8562,22 @@ Assign to &apos;%3&apos;?</source>
         <source>Help</source>
         <translation>ヘルプ</translation>
     </message>
+    <message>
+        <source>Failed to load menu %1</source>
+        <translation>メニュー %1 の読み込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to add command %1</source>
+        <translation>コマンド %1 の追加に失敗しました</translation>
+    </message>
+    <message>
+        <source>Cannot open menubar settings file %1</source>
+        <translation>メニューバー設定ファイル %1 を開けませんでした</translation>
+    </message>
+    <message>
+        <source>Failed to create menubar</source>
+        <translation>メニューバーの作成に失敗しました</translation>
+    </message>
 </context>
 <context>
     <name>SubSheetBar</name>
@@ -8522,7 +8677,7 @@ Click the arrow button to create a new sub-xsheet</source>
         <translation>失敗ステップ数：</translation>
     </message>
     <message>
-        <source>Successfull Steps:</source>
+        <source>Successful Steps:</source>
         <translation>成功ステップ数：</translation>
     </message>
     <message>
@@ -8801,6 +8956,13 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
 </context>
 <context>
+    <name>TopBar</name>
+    <message>
+        <source>Lock Rooms Tab</source>
+        <translation>ワークスペースタブをロック</translation>
+    </message>
+</context>
+<context>
     <name>TrackerPopup</name>
     <message>
         <source>Tracking Settings</source>
@@ -8811,7 +8973,7 @@ Click the arrow button to create a new sub-xsheet</source>
         <translation>しきい値：</translation>
     </message>
     <message>
-        <source>Sensibility:</source>
+        <source>Sensitivity:</source>
         <translation>検出感度：</translation>
     </message>
     <message>
@@ -9028,19 +9190,19 @@ Please refer to the user guide for details.</source>
     <name>XsheetGUI::CellArea</name>
     <message>
         <source>Click to select keyframe, drag to move it</source>
-        <translation type="vanished">［クリック］キーフレームを選択、［ドラッグ］移動</translation>
+        <translation>［クリック］キーフレームを選択、［ドラッグ］移動</translation>
     </message>
     <message>
         <source>Click and drag to set the acceleration range</source>
-        <translation type="vanished">［ドラッグ］加速範囲を設定</translation>
+        <translation>［ドラッグ］加速範囲を設定</translation>
     </message>
     <message>
         <source>Click and drag to set the deceleration range</source>
-        <translation type="vanished">［ドラッグ］減速範囲を設定</translation>
+        <translation>［ドラッグ］減速範囲を設定</translation>
     </message>
     <message>
         <source>Set the cycle of previous keyframes</source>
-        <translation type="vanished">前のキーフレームのサイクルを設定</translation>
+        <translation>前のキーフレームのサイクルを設定</translation>
     </message>
     <message>
         <source>Click and drag to move the selection</source>
@@ -9208,11 +9370,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Relative Onion Skin Toggle</source>
-        <translation type="vanished">オニオンスキン表示/非表示［連結］</translation>
+        <translation>オニオンスキン表示/非表示［連結］</translation>
     </message>
     <message>
         <source>Fixed Onion Skin Toggle</source>
-        <translation type="vanished">オニオンスキン表示/非表示［固定］</translation>
+        <translation>オニオンスキン表示/非表示［固定］</translation>
     </message>
     <message>
         <source>Playback Start Marker</source>
@@ -9241,6 +9403,10 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Preview This</source>
         <translation>このフレームのみプレビュー</translation>
+    </message>
+    <message>
+        <source>Double Click to Toggle Onion Skin</source>
+        <translation>[ダブルクリック] オニオンスキン表示/非表示</translation>
     </message>
 </context>
 <context>

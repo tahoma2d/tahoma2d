@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef VERSION_CONTROL_GUI_H
 #define VERSION_CONTROL_GUI_H
@@ -13,4 +13,4 @@
 #include "svncleanupdialog.h"
 #include "svnpurgedialog.h"
 
-#endif // VERSION_CONTROL_GUI_H
+#endif  // VERSION_CONTROL_GUI_H

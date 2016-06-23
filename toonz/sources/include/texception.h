@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef T_EXCEPTION_INCLUDED
 #define T_EXCEPTION_INCLUDED
@@ -15,17 +15,16 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class DVAPI TException
-{
-	TString m_msg;
+class DVAPI TException {
+  TString m_msg;
 
 public:
-	explicit TException(const string &msg = "Toonz Exception");
-	explicit TException(const wstring &msg) : m_msg(msg) {}
-	virtual ~TException() {}
-	virtual TString getMessage() const { return m_msg; }
+  explicit TException(const std::string &msg = "Toonz Exception");
+  explicit TException(const std::wstring &msg) : m_msg(msg) {}
+  virtual ~TException() {}
+  virtual TString getMessage() const { return m_msg; }
 };
 
 // DVAPI ostream& operator<<(ostream &out, const TException &e);
 
-#endif //T_EXCEPTION_INCLUDED
+#endif  // T_EXCEPTION_INCLUDED

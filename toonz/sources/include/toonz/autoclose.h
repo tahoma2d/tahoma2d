@@ -1,7 +1,9 @@
-
+#pragma once
 
 #ifndef _TAUTOCLOSE_H_
 #define _TAUTOCLOSE_H_
+
+#include <memory>
 
 #include "tgeometry.h"
 #include "traster.h"
@@ -16,31 +18,31 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class DVAPI TAutocloser
-{
+class DVAPI TAutocloser {
 public:
-	typedef std::pair<TPoint, TPoint> Segment;
+  typedef std::pair<TPoint, TPoint> Segment;
 
-	TAutocloser(const TRasterP &r, int distance, double angle, int index, int opacity);
-	~TAutocloser();
+  TAutocloser(const TRasterP &r, int distance, double angle, int index,
+              int opacity);
+  ~TAutocloser();
 
-	//calcola i segmenti e li disegna sul raster
-	void exec();
+  // calcola i segmenti e li disegna sul raster
+  void exec();
 
-	// non modifica il raster. Si limita a calcolare i segmenti
-	void compute(vector<Segment> &segments);
+  // non modifica il raster. Si limita a calcolare i segmenti
+  void compute(std::vector<Segment> &segments);
 
-	// disegna sul raster i segmenti
-	void draw(const vector<Segment> &segments);
+  // disegna sul raster i segmenti
+  void draw(const std::vector<Segment> &segments);
 
 private:
-	class Imp;
-	Imp *m_imp;
+  class Imp;
+  std::unique_ptr<Imp> m_imp;
 
-	//not implemented
-	TAutocloser();
-	TAutocloser(const TAutocloser &a);
-	TAutocloser &operator=(const TAutocloser &a);
+  // not implemented
+  TAutocloser();
+  TAutocloser(const TAutocloser &a);
+  TAutocloser &operator=(const TAutocloser &a);
 };
 
 #endif

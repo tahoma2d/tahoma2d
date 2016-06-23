@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef VIEWERPOPUP_H
 #define VIEWERPOPUP_H
@@ -16,10 +16,10 @@
 //-----------------------------------------------------------------------------
 /*
 class ViewerPopup : public FlipBook
-{	
+{
   Q_OBJECT
 public:
-	ViewerPopup(QWidget *parent = 0, Qt::WFlags flags=0);
+        ViewerPopup(QWidget *parent = 0, Qt::WFlags flags=0);
 protected slots:
   void onVisibilityChange(bool visible);
 };
@@ -30,4 +30,4 @@ protected slots:
 // ||
 //-----------------------------------------------------------------------------
 
-#endif // VIEWERPOPUP_H
+#endif  // VIEWERPOPUP_H

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef PALETTESCANPOPUP_H
 #define PALETTESCANPOPUP_H
@@ -18,47 +18,44 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-using namespace DVGui;
-
 //=============================================================================
 // PalettesScanPopup
 //-----------------------------------------------------------------------------
 
-class DVAPI PalettesScanPopup : public Dialog
-{
-	Q_OBJECT
+class DVAPI PalettesScanPopup : public DVGui::Dialog {
+  Q_OBJECT
 
-	FileField *m_field;
-	QLabel *m_label;
+  DVGui::FileField *m_field;
+  QLabel *m_label;
 
-	TFilePath m_folderPath;
-	int m_timerId;
+  TFilePath m_folderPath;
+  int m_timerId;
 
-	struct Directory {
-		TFilePath m_path;
-		TFilePathSet m_files;
-		TFilePathSet::iterator m_it;
-	};
-	std::vector<Directory *> m_stack;
+  struct Directory {
+    TFilePath m_path;
+    TFilePathSet m_files;
+    TFilePathSet::iterator m_it;
+  };
+  std::vector<Directory *> m_stack;
 
 public:
-	PalettesScanPopup();
+  PalettesScanPopup();
 
-	void setCurrentFolder(TFilePath path);
-	TFilePath getCurrentFolder();
+  void setCurrentFolder(TFilePath path);
+  TFilePath getCurrentFolder();
 
 protected slots:
-	void onOkBtnClicked();
+  void onOkBtnClicked();
 
 protected:
-	void setLabel(const TFilePath &fp);
-	void timerEvent(QTimerEvent *event);
-	void push(const TFilePath &fp);
-	void push(const TFilePathSet &fs);
-	void pop();
-	bool step();
-	void clearStack();
-	void onPlt(const TFilePath &fp);
+  void setLabel(const TFilePath &fp);
+  void timerEvent(QTimerEvent *event);
+  void push(const TFilePath &fp);
+  void push(const TFilePathSet &fs);
+  void pop();
+  bool step();
+  void clearStack();
+  void onPlt(const TFilePath &fp);
 };
 
-#endif //PALETTESCANPOPUP_H
+#endif  // PALETTESCANPOPUP_H

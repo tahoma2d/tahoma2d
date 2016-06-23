@@ -320,9 +320,9 @@ add_translation(toonzlib ${HEADERS} ${SOURCES})
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 add_library(toonzlib SHARED ${HEADERS} ${SOURCES})
-if (APPLE)
+if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtoonzlib.dylib")
-endif (APPLE)
+endif()
 
 add_definitions(-DTOONZLIB_EXPORTS)
 
@@ -339,12 +339,16 @@ if(WIN32)
         Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script
         ${GLUT_LIB} ${GL_LIB} vfw32.lib
         tnzcore tnzbase tnzext)
-else()
+elseif(APPLE)
     set(EXTRA_LIBS
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.dylib
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.dylib
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzext/libtnzext.dylib
         ${USB_LIB})
+
+    target_link_libraries(toonzlib Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;tnzext")
 
     target_link_libraries(toonzlib Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
 endif()

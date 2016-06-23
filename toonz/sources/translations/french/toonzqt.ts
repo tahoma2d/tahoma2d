@@ -122,6 +122,14 @@ Possibly the preset file has been corrupted</source>
         <source>Force Squared Pixel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error : Preset Name is Invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The preset name must not use &apos;,&apos;(comma).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -1474,18 +1482,8 @@ Sélectionnez les nœuds FX et les liens connexes avant de copier ou couper la s
         <translation>Appliquer</translation>
     </message>
     <message>
-        <source>This feature is not available in the demo version.
-For more information visit the %1 site:</source>
-        <translation>Cette fonctionnalité n&apos;est pas disponible dans la version de démonstration.
-Pour plus d&apos;informations visitez le site %1:</translation>
-    </message>
-    <message>
-        <source>To request a trial license please contact </source>
-        <translation>Pour demander une licence temporaire s&apos;il vous plaît contactez</translation>
-    </message>
-    <message>
         <source>For further information visit </source>
-        <translation>Pour plus d&apos;informations visitez</translation>
+        <translation type="vanished">Pour plus d&apos;informations visitez</translation>
     </message>
     <message>
         <source>Fullpath:     </source>
@@ -1661,7 +1659,7 @@ Pour plus d&apos;informations visitez le site %1:</translation>
     </message>
     <message>
         <source>Toonz 7.1</source>
-        <translation>Toonz 7.1</translation>
+        <translation type="vanished">Toonz 7.1</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
@@ -1826,6 +1824,10 @@ Are you sure?</source>
         <source>Set</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>OpenToonz 1.0</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -1882,6 +1884,10 @@ Are you sure?</source>
     <message>
         <source>&amp;Schematic Toggle</source>
         <translation type="vanished">&amp;Toggle du Schématique</translation>
+    </message>
+    <message>
+        <source>&amp;Swtich output port display mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

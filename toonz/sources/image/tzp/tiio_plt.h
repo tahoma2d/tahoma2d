@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TTIO_PLT_INCLUDED
 #define TTIO_PLT_INCLUDED
@@ -8,14 +8,13 @@
 
 //===========================================================================
 
-namespace Tiio
-{
+namespace Tiio {
 
 //===========================================================================
 
 Tiio::Reader *makePltReader();
 Tiio::Writer *makePltWriter();
 
-} // namespace
+}  // namespace
 
 #endif

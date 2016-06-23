@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TW_COLORS_INCLUDED
 #define TW_COLORS_INCLUDED
@@ -15,8 +15,7 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-namespace TwConsts
-{
+namespace TwConsts {
 
 DVVAR extern const TGuiColor ToonzBgColor;
 DVVAR extern const TGuiColor ToonzHighlightColor;

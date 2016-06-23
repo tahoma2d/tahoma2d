@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TFILE_IO_H
 #define TFILE_IO_H
@@ -9,7 +9,7 @@ extern "C" {
 
 #include <stdio.h>
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
 #include <stddef.h>
 #endif
 

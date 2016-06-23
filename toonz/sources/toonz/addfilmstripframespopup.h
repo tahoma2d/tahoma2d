@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef ADDFILMSTRIPFRAMESPOPUP_H
 #define ADDFILMSTRIPFRAMESPOPUP_H
@@ -10,33 +10,30 @@
 class QPushButton;
 class QLineEdit;
 
-using namespace DVGui;
-
 //=============================================================================
 // AddFilmstripFramesPopup
 //-----------------------------------------------------------------------------
 
-class AddFilmstripFramesPopup : public Dialog
-{
-	Q_OBJECT
+class AddFilmstripFramesPopup : public DVGui::Dialog {
+  Q_OBJECT
 
-	QPushButton *m_okBtn;
-	QPushButton *m_cancelBtn;
+  QPushButton *m_okBtn;
+  QPushButton *m_cancelBtn;
 
-	IntLineEdit *m_startFld, *m_endFld, *m_stepFld;
+  DVGui::IntLineEdit *m_startFld, *m_endFld, *m_stepFld;
 
 public slots:
-	void onOk();
+  void onOk();
 
 public:
-	AddFilmstripFramesPopup();
+  AddFilmstripFramesPopup();
 
-	// void configureNotify(const TDimension &size);
+  // void configureNotify(const TDimension &size);
 
-	void draw();
-	void update();
+  void draw();
+  void update();
 
-	void getParameters(int &startFrame, int &endFrame, int &stepFrame) const;
+  void getParameters(int &startFrame, int &endFrame, int &stepFrame) const;
 };
 
-#endif // ADDFILMSTRIPFRAMESPOPUP_H
+#endif  // ADDFILMSTRIPFRAMESPOPUP_H

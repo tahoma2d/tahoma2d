@@ -3,43 +3,51 @@ project(OpenToonz)
 
 get_filename_component(SDKROOT ../../thirdparty/ ABSOLUTE)
 message("SDK Root:" ${SDKROOT})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "../cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 if(APPLE)
     set(THIRDPARTY_LIBS_HINTS "/usr/local/Cellar/" "/opt/include" ${SDKROOT})
-elseif(WIN32)
+elseif(WIN32 OR UNIX)
     set(THIRDPARTY_LIBS_HINTS ${SDKROOT})
 endif()
 
 message("Thirdpary Library Search path:" ${THIRDPARTY_LIBS_HINTS})
 
-if (WIN32)
+if(WIN32)
     message("Windows System")
-    set(QT_PATH "C:/Qt/Qt5.5.1/5.5/msvc2013_64" CACHE PATH "Qt instlattion directory")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(QT_PATH "C:/Qt/Qt5.6.0_32/5.6/msvc2013" CACHE PATH "Qt instlattion directory")
+    else()
+        set(QT_PATH "C:/Qt/Qt5.6.0/5.6/msvc2013_64" CACHE PATH "Qt instlattion directory")
+    endif()
     if(NOT EXISTS ${QT_PATH})
         message("Specify QT_PATH properly")
         return()
     endif()
     set(QT_LIB_PATH ${QT_PATH})
     set(CMAKE_PREFIX_PATH "${QT_PATH}/lib/cmake/")
-elseif (APPLE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4251")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
+    add_definitions(-DVC_EXTRALEAN -DNOMINMAX -D_USE_MATH_DEFINES)
+elseif(APPLE)
     message("Apple System")
-    if (NOT PLATFORM)
+    if(NOT PLATFORM)
         set(PLATFORM 64)
     endif()
     message("PLATFORM:" ${PLATFORM})
-    if (PLATFORM EQUAL 64)
-        set(QT_PATH "~/Qt/5.5/clang_64/lib/")
-        set(QT_LIB_PATH ${QT_PATH})
-        set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
-
+    if(PLATFORM EQUAL 64)
+        set(QT_PATH "~/Qt/5.6/clang_64/lib" CACHE PATH "Qt instlattion directory")
+        set(QT_LIB_PATH "${QT_PATH}/")
+        set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
 
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
         add_definitions(-DMACOSX -Di386)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
     elseif(PLATFORM EQUAL 32)
-        set(QT_PATH "~/Qt/5.5/clang_32/lib/")
-        set(QT_LIB_PATH ${QT_PATH})
-        set(CMAKE_PREFIX_PATH ${QT_PATH}cmake/)
+        set(QT_PATH "~/Qt/5.6/clang_32/lib" CACHE PATH "Qt instlattion directory")
+        set(QT_LIB_PATH "${QT_PATH}/")
+        set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
+
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
         add_definitions(-DMACOSX -Di386)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -std=c++11 -stdlib=libc++ -fno-implicit-templates -D HAS_QUICKDRAW")
@@ -48,18 +56,47 @@ elseif (APPLE)
     else()
         message(FATAL_ERROR "Invalid PLATFORM:" ${PLATFORM} ". 'PLATFORM' must be 32 or 64.")
     endif()
-else ()
-    message("Unknown System")
-endif ()
+elseif(UNIX)
+    # Needed for correct Qt detection
+    cmake_minimum_required(VERSION 2.8.12)
+
+    message("Unix System")
+    if(CMAKE_SIZEOF_VOID_P MATCHES "8")
+        set(PLATFORM 64)
+    else()
+        set(PLATFORM 32)
+    endif()
+    if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        add_definitions(-DLINUX)
+    else()
+        message(WARNING "Support for generic Unix (Not Apple or Linux) isn't yet working!")
+    endif()
+
+    set(CMAKE_CXX_STANDARD 11)
+
+    find_package(Qt5Widgets)
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -lstdc++ -std=c++11")
+else()
+    message(ERROR "Unknown System")
+endif()
 
 add_definitions(-DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_SHARED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_INSTALL_RPATH ${QT_LIB_PATH})
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
+if(APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+    set(CMAKE_INSTALL_RPATH ${QT_LIB_PATH})
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${QT_LIB_PATH}" isSystemDir)
+    if("${isSystemDir}" STREQUAL "-1")
+        set(CMAKE_INSTALL_RPATH "${QT_LIB_PATH}")
+    endif()
+endif()
 
 include_directories(include)
 
@@ -93,10 +130,10 @@ macro(_find_toonz_library OUT_LIB_LIST IN_LIB_LIST)
     foreach(arg ${IN_LIB_LIST})
         unset(COREPATH CACHE)
         # find しても cmake が走るときにはできていないので完全なパス名を生成して返すだけ
-        if(WIN32)
-            set(LIBPATH ${arg})
-        else()
+        if(APPLE)
             set(LIBPATH ${CMAKE_CURRENT_BINARY_DIR}/../${arg}/lib${arg}${CMAKE_SHARED_LIBRARY_SUFFIX})
+        else()
+            set(LIBPATH ${arg})
         endif()
         set(OUTLIST ${OUTLIST} ${LIBPATH})
     endforeach()
@@ -107,7 +144,7 @@ set(TNZSTDFX_Location)
 set(TFARM_Location)
 
 if(WIN32)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(PLATFORM 32)
         set(PLATFORM2)
     else()
@@ -133,10 +170,10 @@ if(WIN32)
     set(SUPERLU_LIB ${SDKROOT}/superlu/SuperLU_${PLATFORM}.lib)
     set(OPENBLAS_LIB ${SDKROOT}/openblas/libopenblas_${PLATFORM}.lib)
     set(USB_LIB)  # unused
-    if (PLATFORM EQUAL 32)
+    if(PLATFORM EQUAL 32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
     endif()
-else()
+elseif(APPLE)
     find_library(GLUT_LIB GLUT)
     find_library(GL_LIB OpenGL)
     find_library(Z_LIB z)
@@ -173,7 +210,7 @@ else()
 
     pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
     set(OPENBLAS_LIB) # unused?
-    if (PLATFORM EQUAL 32)
+    if(PLATFORM EQUAL 32)
         find_library(QT_LIB QuickTime)
     endif()
 
@@ -182,10 +219,65 @@ else()
 
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
+
+elseif(UNIX)
+    find_library(GL_LIB GL)
+    find_library(GLU_LIB GLU)
+    find_library(GLUT_LIB glut)
+    find_library(Z_LIB z)
+
+    find_package(TIFF REQUIRED)
+    set(TIFF_LIB ${TIFF_LIBRARY})
+    find_package(PNG REQUIRED)
+    set(PNG_LIB ${PNG_LIBRARY})
+    message("******* libpng:" ${PNG_LIB})
+    find_package(GLEW)
+
+    find_package(SuperLU REQUIRED)
+    set(SUPERLU_INCLUDE_DIR ${SUPERLU_INCLUDE_DIR}/superlu)
+    set(SUPERLU_LIB ${SUPERLU_LIBRARY})
+
+    find_package(JPEG REQUIRED)
+
+    # the libraries have .pc
+    find_package(PkgConfig)
+    if(GLEW-NOTFOUND)
+        pkg_check_modules(GLEW REQUIRED glew)
+    endif()
+    set(GLEW_LIB ${GLEW_LIBRARIES})
+
+    pkg_check_modules(LZ4_LIB REQUIRED liblz4)
+
+    message("**************** lz4 lib:" ${LZ4_LIB_INCLUDE_DIRS})
+    find_path(LZ4_STATIC lz4frame_static.h PATH ${LZ4_LIB_INCLUDE_DIRS})
+    if(LZ4_STATIC-FOUND)
+       add_definitions(-DLZ4_STATIC)
+    endif()
+
+    pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
+
+    # TODO: check for them properly in some sane order with pkg-config
+    find_library(OPENBLAS_LIB NAMES cblas gslcblas openblas blas)
+    message("OpenBLAS:" ${OPENBLAS_LIB})
+
+    set(JPEG_LIB ${JPEG_LIBRARY})
+    set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
+
+    find_package(LZO REQUIRED)
+    message("LZO:" ${LZO_INCLUDE_DIR})
+
+    pkg_check_modules(FREETYPE REQUIRED freetype2)
+    pkg_check_modules(SDL_LIB REQUIRED sdl)
 endif()
 
-find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
-find_package(Boost 1.55 EXACT REQUIRED)
+include_directories(BEFORE ${TIFF_INCLUDE_DIR} ${PNG_INCLUDE_DIRS})
+
+if(WIN32 OR APPLE)
+    find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS}
+        PATH_SUFFIXES boost/boost_1_61_0/ boost/boost_1_60_0/ boost/boost_1_59_0/
+        boost/boost_1_58_0/ boost/boost_1_57_0/ boost/boost_1_56_0/ boost155/1.55.0_1/ boost/boost_1_55_0/ )
+endif()
+find_package(Boost 1.55 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR} ${LZ4_LIB_INCLUDE_DIRS} ${USB_LIB_INCLUDE_DIRS} ${SUPERLU_INCLUDE_DIR} ${JPEG_INCLUDE_DIR})
 
@@ -197,16 +289,20 @@ if(WIN32)
     # place Toonz.exe and dlls in the same directory
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+elseif(APPLE)
+    # pass
+elseif(UNIX)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
 
-if (MSVC AND MSVC_VERSION EQUAL 1800)
+if(MSVC AND MSVC_VERSION EQUAL 1800)
     # Visual C++ 2013 cannot handle UTF-8 without BOM
     # Non-ascii characters in comments would not be a problem
     add_compile_options("/wd4819")
 endif()
 
 # generate Qt translations and messages
-set(LANGUAGES japanese italian french)
+set(LANGUAGES japanese italian french spanish chinese german)
 
 function(add_translation module)
     set(translation)
@@ -235,21 +331,21 @@ add_subdirectory(colorfx)
 add_subdirectory(image)
 add_subdirectory(toonzqt)
 add_subdirectory(tnztools)
-add_subdirectory(toonz)
 
 add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
 
+add_subdirectory(toonz)
 add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)
 add_subdirectory(tconverter)
 add_subdirectory(toonzfarm)
-if(PLATFORM EQUAL 32)
+if((PLATFORM EQUAL 32) AND (WIN32 OR APPLE))
     add_subdirectory(t32bitsrv)
 endif()
 
-if (APPLE)
+if(APPLE)
     add_custom_command(TARGET executable
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH}
         $<TARGET_FILE:executable>)
-endif (APPLE)
+endif()

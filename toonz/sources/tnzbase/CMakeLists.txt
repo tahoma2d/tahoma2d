@@ -19,7 +19,6 @@ set(HEADERS ${MOC_HEADERS}
     ../common/twain/twain.h
     ../include/permissionsmanager.h
     ../include/tscanner.h
-    tscanner/tscannerdevice.h
     tscanner/tscannerutil.h
     tscanner/tscannerepson.h
     tscanner/tscannertwain.h
@@ -37,7 +36,6 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tparamcontainer.h
     ../include/tparamset.h
     ../include/tspectrumparam.h
-    ../include/tstepparam.h
     ../include/ttonecurveparam.h
     ../include/tcolumnset.h
     ../include/tbasefx.h
@@ -81,7 +79,6 @@ set(SOURCES
     ../common/tparam/tpointparam.cpp
     ../common/tparam/trangeparam.cpp
     ../common/tparam/tspectrumparam.cpp
-    ../common/tparam/tstepparam.cpp
     ../common/tparam/ttonecurveparam.cpp
     ../common/txsheet/tcolumnset.cpp
     ../common/tfx/binaryFx.cpp
@@ -114,13 +111,13 @@ set(SOURCES
     tscanner/tscannerutil.cpp
     tscanner/tscannerepson.cpp)
 
-if (WIN32)
+if(WIN32)
     set(SOURCES ${SOURCES}
         tscanner/TScannerIO/TUSBScannerIO_W.cpp)
-else ()
+else()
     set(SOURCES ${SOURCES}
         tscanner/TScannerIO/TUSBScannerIO_M.cpp)
-endif ()
+endif()
 
 set(OBJCSOURCES
     ../common/twain/ttwain_capability.c
@@ -132,17 +129,22 @@ set(OBJCSOURCES
     tscanner/tscanner.cpp
     tscanner/tscannertwain.cpp)
 
-if (WIN32)
+if(WIN32)
     set(OBJCSOURCES ${OBJCSOURCES}
         ../common/twain/ttwain_stateW.c
         ../common/twain/ttwain_utilW.c
         ../common/twain/ttwain_winW.c)
-else ()
+elseif(APPLE)
     set(OBJCSOURCES ${OBJCSOURCES}
         ../common/twain/ttwain_stateM.c
         ../common/twain/ttwain_utilM.c
         ../common/twain/ttwain_winM.c)
-endif ()
+elseif(UNIX)
+    set(OBJCSOURCES ${OBJCSOURCES}
+        ../common/twain/ttwain_stateX.c
+        ../common/twain/ttwain_utilX.c
+        ../common/twain/ttwain_winX.c)
+endif()
 
 if(APPLE)
     #set_source_files_properties(${OBJCSOURCES} PROPERTIES LANGUAGE OBJCXX)
@@ -153,9 +155,9 @@ qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 add_library(tnzbase SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES})
 
-if (APPLE)
+if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzbase.dylib")
-endif (APPLE)
+endif()
 
 add_definitions(-DTNZBASE_EXPORTS -DTPARAM_EXPORTS -DTXSHEET_EXPORTS -DTFX_EXPORTS -DTAPPTOOLS_EXPORTS -DTTEST_EXPORTS)
 
@@ -170,7 +172,7 @@ include_directories(../common/flash ${SDKROOT}/libusb/libusb-1.0.9/include)
 if(WIN32)
     set(EXTRA_LIBS
         tnzcore)
-else()
+elseif(APPLE)
     find_library(TWAIN_LIB TWAIN)
     find_library(IOKIT_LIB IOKit)
     find_library(COCOA_LIB Cocoa)
@@ -181,6 +183,12 @@ else()
         ${TWAIN_LIB}
         ${IOKIT_LIB}
         ${COCOA_LIB})
+
+    target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore")
+    set(EXTRA_LIBS ${EXTRA_LIBS}
+        ${SDL_LIB_LIBRARIES})
 
     target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
 endif()

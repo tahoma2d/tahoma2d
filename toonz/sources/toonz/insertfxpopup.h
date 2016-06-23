@@ -1,10 +1,10 @@
-
+#pragma once
 
 #ifndef INSERTFXPOPUP_H
 #define INSERTFXPOPUP_H
 
 #include "toonzqt/dvdialog.h"
-#include "tfilePath.h"
+#include "tfilepath.h"
 #include "tstream.h"
 
 // forward declaration
@@ -14,55 +14,51 @@ class TFx;
 
 #include <QIcon>
 
-using namespace DVGui;
-using namespace std;
-
 //=============================================================================
 // InsertFxPopup
 //-----------------------------------------------------------------------------
 
-class InsertFxPopup : public Dialog
-{
-	Q_OBJECT
+class InsertFxPopup : public DVGui::Dialog {
+  Q_OBJECT
 
-	QTreeWidget *m_fxTree;
+  QTreeWidget *m_fxTree;
 
-	TIStream *m_is;
-	TFilePath m_presetFolder;
+  TIStream *m_is;
+  TFilePath m_presetFolder;
 
-	QIcon m_folderIcon;
-	QIcon m_presetIcon;
-	QIcon m_fxIcon;
+  QIcon m_folderIcon;
+  QIcon m_presetIcon;
+  QIcon m_fxIcon;
 
 public:
-	InsertFxPopup();
+  InsertFxPopup();
 
 private:
-	TFx *createFx();
+  TFx *createFx();
 
-	void makeItem(QTreeWidgetItem *parent, string fxid);
+  void makeItem(QTreeWidgetItem *parent, std::string fxid);
 
-	void loadFolder(QTreeWidgetItem *parent);
-	/*!Return true if preset is loaded.*/
-	bool loadPreset(QTreeWidgetItem *item);
+  void loadFolder(QTreeWidgetItem *parent);
+  /*!Return true if preset is loaded.*/
+  bool loadPreset(QTreeWidgetItem *item);
 
-	bool loadFx(TFilePath fp);
-	void loadMacro();
+  bool loadFx(TFilePath fp);
+  void loadMacro();
 
 public slots:
-	void onItemDoubleClicked(QTreeWidgetItem *w, int c);
-	void onInsert();
-	void onReplace();
-	void onAdd();
+  void onItemDoubleClicked(QTreeWidgetItem *w, int c);
+  void onInsert();
+  void onReplace();
+  void onAdd();
 
 protected:
-	void showEvent(QShowEvent *);
-	void hideEvent(QHideEvent *);
-	void contextMenuEvent(QContextMenuEvent *);
+  void showEvent(QShowEvent *);
+  void hideEvent(QHideEvent *);
+  void contextMenuEvent(QContextMenuEvent *);
 
 protected slots:
-	void updatePresets();
-	void removePreset();
+  void updatePresets();
+  void removePreset();
 };
 
-#endif // INSERTFXPOPUP_H
+#endif  // INSERTFXPOPUP_H

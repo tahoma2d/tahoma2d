@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TW_TEXT_LISTENER_INCLUDED
 #define TW_TEXT_LISTENER_INCLUDED
@@ -17,12 +17,11 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class DVAPI TTextListener
-{
+class DVAPI TTextListener {
 public:
 #ifndef MACOSX
-	//togliere ifndef con il gcc3.3.2
-	virtual bool getCaret(TPoint &pos, int &height) = 0;
+  // togliere ifndef con il gcc3.3.2
+  virtual bool getCaret(TPoint &pos, int &height) = 0;
 #endif
 };
 

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef SHADERFX_H
 #define SHADERFX_H
@@ -25,4 +25,4 @@ class TFilePath;
 
 void DVAPI loadShaderInterfaces(const TFilePath &shaderInterfacesFolder);
 
-#endif // SHADERFX_H
+#endif  // SHADERFX_H

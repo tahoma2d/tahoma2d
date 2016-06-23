@@ -122,6 +122,14 @@ Possibly the preset file has been corrupted</source>
         <source>Force Squared Pixel</source>
         <translation>正方ピクセルを保持</translation>
     </message>
+    <message>
+        <source>Error : Preset Name is Invalid</source>
+        <translation>エラー ： プリセット名は無効です</translation>
+    </message>
+    <message>
+        <source>The preset name must not use &apos;,&apos;(comma).</source>
+        <translation>プリセット名に &quot;,&quot; (カンマ)を使用できません</translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -1491,17 +1499,8 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <translation>適用</translation>
     </message>
     <message>
-        <source>This feature is not available in the demo version.
-For more information visit the %1 site:</source>
-        <translation>この機能はデモ版での利用ができません。詳しい情報に関しては、こちらへ： %1</translation>
-    </message>
-    <message>
-        <source>To request a trial license please contact </source>
-        <translation>体験版を試用はこちらへ：</translation>
-    </message>
-    <message>
         <source>For further information visit </source>
-        <translation>詳しい情報に関しては、こちらへ：</translation>
+        <translation type="vanished">詳しい情報に関しては、こちらへ：</translation>
     </message>
     <message>
         <source>Fullpath:     </source>
@@ -1677,7 +1676,7 @@ For more information visit the %1 site:</source>
     </message>
     <message>
         <source>Toonz 7.1</source>
-        <translation>OpenToonz</translation>
+        <translation type="vanished">OpenToonz</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
@@ -1844,6 +1843,10 @@ Are you sure?</source>
         <source>Set</source>
         <translation>設定</translation>
     </message>
+    <message>
+        <source>OpenToonz 1.0</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -1900,6 +1903,10 @@ Are you sure?</source>
     <message>
         <source>&amp;Schematic Toggle</source>
         <translation type="vanished">スキマティック切り替え</translation>
+    </message>
+    <message>
+        <source>&amp;Swtich output port display mode</source>
+        <translation>ポートの表示を切り替える (&amp;S)</translation>
     </message>
 </context>
 <context>

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef TXSHPALETTECOLUMN_INCLUDED
 #define TXSHPALETTECOLUMN_INCLUDED
@@ -16,47 +16,47 @@
 #endif
 
 //=============================================================================
-//forward declarations
+// forward declarations
 class TPaletteColumnFx;
 
 //=============================================================================
-//!The TXshPaletteColumn class represent a column in xsheet containing TXshPaletteLevel
+//! The TXshPaletteColumn class represent a column in xsheet containing
+//! TXshPaletteLevel
 /*!Inherits \b TXshColumn.
 \n
 */
 //=============================================================================
 
-class DVAPI TXshPaletteColumn : public TXshCellColumn
-{
-	PERSIST_DECLARATION(TXshPaletteColumn)
-	TPaletteColumnFx *m_fx;
+class DVAPI TXshPaletteColumn : public TXshCellColumn {
+  PERSIST_DECLARATION(TXshPaletteColumn)
+  TPaletteColumnFx *m_fx;
 
 public:
-	TXshPaletteColumn();
-	~TXshPaletteColumn();
+  TXshPaletteColumn();
+  ~TXshPaletteColumn();
 
-	TXshColumn::ColumnType getColumnType() const;
+  TXshColumn::ColumnType getColumnType() const;
 
-	TXshPaletteColumn *getPaletteColumn() { return this; }
+  TXshPaletteColumn *getPaletteColumn() { return this; }
 
-	TXshColumn *clone() const;
+  TXshColumn *clone() const;
 
-	TPaletteColumnFx *getPaletteColumnFx() const { return m_fx; }
-	TFx *getFx() const;
-	void setFx(TFx *fx);
+  TPaletteColumnFx *getPaletteColumnFx() const { return m_fx; }
+  TFx *getFx() const;
+  void setFx(TFx *fx);
 
-	bool canSetCell(const TXshCell &cell) const;
+  bool canSetCell(const TXshCell &cell) const;
 
-	void loadData(TIStream &is);
-	void saveData(TOStream &is);
+  void loadData(TIStream &is);
+  void saveData(TOStream &is);
 
 private:
-	// not implemented
-	TXshPaletteColumn(const TXshPaletteColumn &);
-	TXshPaletteColumn &operator=(const TXshPaletteColumn &);
+  // not implemented
+  TXshPaletteColumn(const TXshPaletteColumn &);
+  TXshPaletteColumn &operator=(const TXshPaletteColumn &);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 template class TSmartPointerT<TXshPaletteColumn>;
 #endif
 

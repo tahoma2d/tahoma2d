@@ -1,7 +1,9 @@
-
+#pragma once
 
 #ifndef PERMISSIONSMANAGER_INCLUDED
 #define PERMISSIONSMANAGER_INCLUDED
+
+#include <memory>
 
 // TnzCore includes
 #include "tcommon.h"
@@ -22,20 +24,20 @@ extern "C" typedef void (*LICENSE_OBSERVER_CB)(char *);
 //    PermissionsManager  declaration
 //************************************************************************
 
-class DVAPI PermissionsManager // singleton
+class DVAPI PermissionsManager  // singleton
 {
 public:
-	static PermissionsManager *instance();
-	std::string getSVNUserName(int index) const;
-	std::string getSVNPassword(int index) const;
+  static PermissionsManager *instance();
+  std::string getSVNUserName(int index) const;
+  std::string getSVNPassword(int index) const;
 
 private:
-	class Imp;
-	Imp *m_imp;
+  class Imp;
+  std::unique_ptr<Imp> m_imp;
 
 private:
-	PermissionsManager();
-	~PermissionsManager();
+  PermissionsManager();
+  ~PermissionsManager();
 };
 
 #endif

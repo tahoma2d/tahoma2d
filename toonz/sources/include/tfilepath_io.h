@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef T_TFILEPATH_IO_INCLUDED
 #define T_TFILEPATH_IO_INCLUDED
@@ -57,30 +57,28 @@
 
 =========================================================*/
 
-DVAPI FILE *fopen(const TFilePath &fp, string mode);
+DVAPI FILE *fopen(const TFilePath &fp, std::string mode);
 
-class DVAPI Tifstream : public std::ifstream
-{
-	FILE *m_file;
+class DVAPI Tifstream : public std::ifstream {
+  FILE *m_file;
 
 public:
-	Tifstream(const TFilePath &fp);
-	~Tifstream();
-	bool isOpen() const;
-	void close();
+  Tifstream(const TFilePath &fp);
+  ~Tifstream();
+  bool isOpen() const;
+  void close();
 };
 
-class DVAPI Tofstream : public std::ofstream
-{
-	FILE *m_file;
+class DVAPI Tofstream : public std::ofstream {
+  FILE *m_file;
 
 public:
-	Tofstream(const TFilePath &fp, bool append_existing = false);
+  Tofstream(const TFilePath &fp, bool append_existing = false);
 
-	~Tofstream();
+  ~Tofstream();
 
-	bool isOpen() const;
-	void close();
+  bool isOpen() const;
+  void close();
 };
 
 #endif

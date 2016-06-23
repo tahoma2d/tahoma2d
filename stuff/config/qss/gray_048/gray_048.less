@@ -732,7 +732,7 @@ DvDirTreeView {
 }
 
 /*---------------------------------------------------------------------------*/ 
-/* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup */
+/* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup, RenameAsToonzPopup */
 /*---------------------------------------------------------------------------*/
 #CleanupSettingsFrame, 
 #LoadLevelFrame,
@@ -744,7 +744,8 @@ DvDirTreeView {
 #LoadLevelHeadLabel, 
 #PsdSettingsHeadLabel, 
 #PsdSettingsGroupBox::title, 
-#FxSettingsPreviewShowLabel {
+#FxSettingsPreviewShowLabel,
+#RenameAsToonzPopupLabel{
 	color: @m_titleTxtColor;
 }
 
@@ -887,6 +888,10 @@ ParamsPage {
 	}
 }
 
+#noteTextEdit{
+    color: black;
+}
+
 XsheetViewer {
 	qproperty-TextColor: rgb(230,230,230);
 	qproperty-BGColor: rgb(72,72,72);
@@ -930,6 +935,10 @@ XsheetViewer {
 	qproperty-PaletteColumnBorderColor: rgb(134,172,167);
 	qproperty-SelectedPaletteColumnColor: rgb(95,133,129);
 
+	qproperty-MeshColumnColor: rgb(104,77,134);
+	qproperty-MeshColumnBorderColor: rgb(186,146,239);
+	qproperty-SelectedMeshColumnColor: rgb(138,117,162);
+	
 	qproperty-ColumnHeadPastelizer: rgb(0,0,0);
 	qproperty-SelectedColumnHead: rgb(80,96,130);
 
@@ -1162,6 +1171,15 @@ SpreadsheetViewer {
 			}
 		}
 	}
+}
+
+/*------ Script Console ------*/
+
+#ScriptConsole {
+	border: 1px inset;
+    background-color: rgb(220,220,220);
+    color: black;
+    font-family: "Courier";
 }
 
 /*------ Topbar and Menubar of the MainWindow ------*/

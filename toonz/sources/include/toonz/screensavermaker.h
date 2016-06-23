@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef SCREENSAVERMAKER_INCLUDED
 #define SCREENSAVERMAKER_INCLUDED
@@ -15,15 +15,11 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-void DVAPI makeScreenSaver(
-	TFilePath scr,
-	TFilePath swf,
-	string screenSaverName);
+void DVAPI makeScreenSaver(TFilePath scr, TFilePath swf,
+                           std::string screenSaverName);
 
-void DVAPI previewScreenSaver(
-	TFilePath scr);
+void DVAPI previewScreenSaver(TFilePath scr);
 
-void DVAPI installScreenSaver(
-	TFilePath scr);
+void DVAPI installScreenSaver(TFilePath scr);
 
 #endif

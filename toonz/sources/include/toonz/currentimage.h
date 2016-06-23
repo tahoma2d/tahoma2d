@@ -1,4 +1,4 @@
-
+#pragma once
 
 #ifndef CURRENTIMAGE_INCLUDED
 #define CURRENTIMAGE_INCLUDED
@@ -13,11 +13,10 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class CurrentImageListener
-{
+class CurrentImageListener {
 public:
-	virtual void onImageChange() = 0;
-	virtual ~CurrentImageListener() {}
+  virtual void onImageChange() = 0;
+  virtual ~CurrentImageListener() {}
 };
 
 DVAPI void addCurrentImageListener(CurrentImageListener *listener);
