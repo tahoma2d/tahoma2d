@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es" sourcelanguage="en">
+<TS version="2.0" language="es" sourcelanguage="en">
 <context>
     <name>ArrowToolOptionsBox</name>
     <message>
@@ -57,11 +57,11 @@
     </message>
     <message>
         <source>Center</source>
-        <translation type="vanished">Centrar</translation>
+        <translation>Centrar</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="vanished">Bloquear</translation>
+        <translation>Bloquear</translation>
     </message>
     <message>
         <source>(</source>
@@ -80,7 +80,7 @@
     <name>BrushTool</name>
     <message>
         <source>Thickness</source>
-        <translation type="vanished">Grosor</translation>
+        <translation>Grosor</translation>
     </message>
     <message>
         <source>Hardness:</source>
@@ -100,15 +100,15 @@
     </message>
     <message>
         <source>Break Sharp Angles</source>
-        <translation type="vanished">Quebrar ángulos agudos</translation>
+        <translation>Quebrar ángulos agudos</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation type="vanished">Modo de la pluma</translation>
+        <translation>Modo de la pluma</translation>
     </message>
     <message>
         <source>Pressure Sensitivity</source>
-        <translation type="vanished">Sensibilidad a la presión</translation>
+        <translation>Sensibilidad a la presión</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -694,7 +694,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current column is not visible in Camera Stand.</source>
-        <translation type="vanished">La columna actual no se encuentra visible en la vista de cámara.</translation>
+        <translation>La columna actual no se encuentra visible en la vista de cámara.</translation>
     </message>
     <message>
         <source>It is not possible to edit the audio column.</source>
@@ -782,7 +782,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
-        <translation>Modificar aparato de efectos</translation>
+        <translation>Control de modificación de efectos</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
@@ -806,7 +806,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Set Save Box : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir marco de seguridad : (X%1,Y%2,An%3,Al%4)-&gt;(X%5,Y%6,An%7,Al%8)</translation>
     </message>
 </context>
 <context>
