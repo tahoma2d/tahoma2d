@@ -115,7 +115,7 @@ void Separator::paintEvent(QPaintEvent *) {
   QPainter p(this);
   ParamsPage *page = dynamic_cast<ParamsPage *>(parentWidget());
   if (!page)
-    p.setPen(Qt::black);
+    p.setPen(palette().alternateBase().color());
   else
     p.setPen(page->getTextColor());
 
