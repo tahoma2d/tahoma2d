@@ -136,7 +136,8 @@ find_package(Qt5 REQUIRED
     Script
     Widgets
     PrintSupport
-    LinguistTools)
+    LinguistTools
+    Multimedia)
 
 if(WIN32)
     include_directories(
