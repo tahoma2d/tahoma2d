@@ -13,9 +13,9 @@ find_path(
 find_library(
     SUPERLU_LIBRARY
     NAMES
+        libsuperlu.so
         libsuperlu.a
         libsuperlu_4.1.a
-        libsuperlu.so
     HINTS
         ${THIRDPARTY_LIBS_HINTS}
     PATH_SUFFIXES
