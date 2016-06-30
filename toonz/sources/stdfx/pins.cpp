@@ -12,7 +12,7 @@
 #ifdef _WIN32
 #define ISNAN _isnan
 #else
-#define ISNAN isnan
+#define ISNAN std::isnan
 #endif
 
 namespace {
