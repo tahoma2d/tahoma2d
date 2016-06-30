@@ -14,6 +14,7 @@ find_library(
     NAMES
         liblzo2.a
         lzo2_64.lib
+        liblzo2.so
     HINTS
         ${THIRDPARTY_LIBS_HINTS}
     PATH_SUFFIXES
