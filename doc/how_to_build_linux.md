@@ -3,16 +3,15 @@
 ## Required software
 
 You will need to install some dependencies before you can build. Depending on your distribution you will be able to install the packages directly with the command lines below or will have to manually install:
-- git
-- gcc
-- cmake
+- Git
+- GCC
+- CMake
   - confirmed to work with 3.4.1.
-- Qt
+- Qt5
   - http://download.qt.io/official_releases/qt/5.5/5.5.1/
-- boost
+- Boost
   - http://www.boost.org/users/history/version_1_55_0.html
-- SDL 2
-TODO: list them all?
+- SDL2
 
 ### Installing required packages on Debian / Ubuntu
 
