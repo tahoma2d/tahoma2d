@@ -7,7 +7,7 @@ This software can be built using Visual Studio 2013 and Qt 5.6
 ### Visual Studio Express 2013 for Windows Desktop
 - https://www.microsoft.com/en-us/download/details.aspx?id=44914
 - Make sure that the target platform is "for Windows Desktop" not "for Windows".
-- Community and Provessional versions of Visual Studio 2013 for Windows Desktop also work.
+- Community and Professional versions of Visual Studio 2013 for Windows Desktop also work.
 
 ### CMake
 - https://cmake.org/download/
@@ -34,7 +34,7 @@ They will have to be installed seperately as follows.
 - boost 1.55.0 or later is required (tested up to 1.60.0), but the support build is using 1.55.0 exactly.
 - http://www.boost.org/users/history/version_1_55_0.html
 - Download boost_1_55_0.zip from the above link.  Extract all contents to the '$opentoonz/thirdparty/boost' directory.
-- Install the following path for Visual Studio 2013
+- Install the following patch for Visual Studio 2013 (Make the changes listed in the patch file).
   - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 
@@ -48,7 +48,7 @@ They will have to be installed seperately as follows.
   - If the build directory is in the git repository, be sure to add the directory to .gitignore
   - If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
 4. Click on Configure and select Visual Studio 12 2013 Win64.
-5. If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears, navigate to the `QT_DIR` install folder and specify the path to `msvc2013_64`.
+5. If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears, navigate to the `QT_DIR` install folder and specify the path to `msvc2013_64`. Rerun Configure. 
 6. Click Generate
   - Should the CMakeLists.txt file change, such as during automatic build cleanup, there is no need to rerun CMake.
 
@@ -57,7 +57,8 @@ Rename the following files:
   - `$opentoonz/thirdparty/LibJPEG/jpeg-9/jconfig.vc` → `$opentoonz/thirdparty/LibJPEG/jpeg-9/jconfig.h`
   - `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tif_config.vc.h` → `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tif_config.h`
   - `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tiffconf.vc.h` → `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tiffconf.h`
-  - `$opentoonz/thirdparty/libpng-1.6.21/scripts/pnglibconf.h.prebuilt` → `$opentoonz/thirdparty/libpng-1.6.21/pnglibconf.h`
+  - `$opentoonz/thirdparty/libpng-1.6.21/scripts/pnglibconf.h.prebuilt` → `$opentoonz/thirdparty/libpng-1.6.21/pnglibconf.h` 
+    - Note that the destination is a different folder for the last file.
 
 ## Building
 1. Open `$opentoonz/toonz/build/OpenToonz.sln` and change to `Release`
@@ -66,11 +67,38 @@ Rename the following files:
 ## Running the Program
 ### Setting Up the Program's Path
 1. Copy the entire contents of `$opentoonz/toonz/build/Release` to an appropriate folder.
+
 2. In the path for `OpenToonz_1.0.exe`, append the Qt program `windeployqt.exe` as an argument.
   - The necessary Qt library files should be in the same folder as `OpenToonz_1.0.exe`
+  - These include:
+    - `Qt5Core.dll`
+    - `Qt5Gui.dll`
+    - `Qt5Network.dll`
+    - `Qt5OpenGL.dll`
+    - `Qt5PrintSupport.dll`
+    - `Qt5Script.dll`
+    - `Qt5Svg.dll`
+    - `Qt5Widgets.dll`
+  - These files should be in the corresponding folders in the same folder `OpenToonz_1.0.exe`
+    - `/bearer/qgenericbearer.dll`
+    - `/bearer/qnativewifibearer.dll`
+    - `/iconengines/qsvgicon.dll`
+    - `/imageformats/qdds.dll`
+    - `/imageformats/qgif.dll`
+    - `/imageformats/qicns.dll`
+    - `/imageformats/qico.dll`
+    - `/imageformats/qjpeg.dll`
+    - `/imageformats/qsvg.dll`
+    - `/imageformats/qtga.dll`
+    - `/imageformats/qtiff.dll`
+    - `/imageformats/qwbmp.dll`
+    - `/imageformats/qwebp.dll`
+    - `/platforms/qwindows.dll`
+
 3. Copy the following files to the same folder as `OpenToonz_1.0.exe`
   - `$opentoonz/thirdparty/glut/3.7.6/lib/glut64.dll`
   - `$opentoonz/thirdparty/glew/glew-1.9.0/bin/64bit/glew32.dll`
+
 4. Copy the `srv` folder from the previous OpenToonz installation to the same folder as `OpenToonz_1.0.exe`
   - If there is no `srv` folder, OpenToonz can still be used.  However, various file formats such as `mov` cannot be used.
   - Creating the files for `srv` is discussed later.
