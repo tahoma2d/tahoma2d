@@ -244,6 +244,9 @@ set(SOURCES
     iwa_noise1234.cpp
     iwa_pnperspectivefx.cpp)
 
+set(OBJCSOURCES
+)
+
 add_library(tnzstdfx SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES})
 add_definitions(-D_USRDLL -DTNZSTDFX_EXPORTS)
 if(APPLE)

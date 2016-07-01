@@ -67,6 +67,9 @@ set(SOURCES
     tlin/tlin_cblas_wrap.cpp
     tlin/tlin_superlu_wrap.cpp)
 
+set(OBJCSOURCES
+)
+
 if(WIN32 AND PLATFORM EQUAL 32)
     # can not link libopenblas_32.lib with SAFESEH
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
