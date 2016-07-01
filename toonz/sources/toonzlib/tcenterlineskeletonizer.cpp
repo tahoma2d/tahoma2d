@@ -1549,7 +1549,7 @@ inline void Event::processVertexEvent() {
 
     newLeftNode->m_notOpposites.push_back(newRightNode->m_edge);
     newLeftNode->m_notOpposites.push_back(newRightNode->m_prev->m_edge);
-  } else if (newLeftNode->m_concave) {
+  } else if (newRightNode->m_concave) {
     newRightNode->m_notOpposites = m_generator->m_notOpposites;
     append<std::vector<ContourEdge *>,
            std::vector<ContourEdge *>::reverse_iterator>(
