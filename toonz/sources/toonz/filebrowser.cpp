@@ -611,7 +611,7 @@ void FileBrowser::refreshCurrentFolderItems() {
         if (levelItem.m_creationDate.isNull() ||
             (fileInfo.created() < levelItem.m_creationDate))
           levelItem.m_creationDate = fileInfo.created();
-        if (levelItem.m_creationDate.isNull() ||
+        if (levelItem.m_modifiedDate.isNull() ||
             (fileInfo.lastModified() > levelItem.m_modifiedDate))
           levelItem.m_modifiedDate = fileInfo.lastModified();
         levelItem.m_fileSize += fileInfo.size();
