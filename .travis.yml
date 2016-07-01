@@ -1,17 +1,20 @@
-os: osx
 language: cpp
-compiler: clang
+sudo: required
+dist: trusty
 before_install:
-    - brew update
+    - sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty
+    - sudo apt-get update
 install:
-    - brew install qt55 glew lz4 lzo libusb
+    - sudo apt-get install -y liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libsdl2-dev libglew-dev freeglut3-dev qt55script libsuperlu3-dev libpng-dev qt55svg qt55tools wget libusb-1.0-0-dev libboost-all-dev
+    # someone forgot to include liblz4.pc with the package, use the version from xenial, as it only depends on libc
+    - wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-1_0.0~r131-2ubuntu2_amd64.deb -O liblz4.deb
+    - wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-dev_0.0~r131-2ubuntu2_amd64.deb -O liblz4-dev.deb
+    - sudo dpkg -i liblz4.deb liblz4-dev.deb
 script:
     - pushd thirdparty/tiff-4.0.3
-    - ./configure && make
+    - CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --disable-jbig && make
     - popd
     - cd toonz && mkdir build && cd build
+    - source /opt/qt55/bin/qt55-env.sh
     - cmake ../sources
-          -DQT_PATH=/usr/local/Cellar/qt55/5.5.1/lib/
-          -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.0.3/libtiff/
-          -DSUPERLU_INCLUDE_DIR=../../thirdparty/superlu/SuperLU_4.1/include/
-    - make
+    - make -j 2
