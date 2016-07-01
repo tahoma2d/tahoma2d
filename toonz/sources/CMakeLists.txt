@@ -230,7 +230,6 @@ elseif(UNIX)
     find_library(Z_LIB z)
 
     find_package(TIFF REQUIRED)
-    set(TIFF_LIB ${TIFF_LIBRARY})
     find_package(PNG REQUIRED)
     set(PNG_LIB ${PNG_LIBRARY})
     message("******* libpng:" ${PNG_LIB})
@@ -244,6 +243,12 @@ elseif(UNIX)
 
     # the libraries have .pc
     find_package(PkgConfig)
+
+    # This is not required for OpenToonz itself, but libtiff will pick it up if
+    # present and libimage won't be aware causing linker to fail
+    pkg_check_modules(LZMA liblzma)
+    set(TIFF_LIB ${TIFF_LIBRARY} ${LZMA_LIBRARIES})
+
     if(GLEW-NOTFOUND)
         pkg_check_modules(GLEW REQUIRED glew)
     endif()
