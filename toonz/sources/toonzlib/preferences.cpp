@@ -377,10 +377,10 @@ Preferences::Preferences()
   
   //for Pixels only 
   QString units;
-  units                    = m_settings->value("oldUnits").toString();
+  units                    = m_settings->value("oldUnits", m_units).toString();
   m_oldUnits = units;
 
-  units                    = m_settings->value("oldCameraUnits").toString();
+  units                    = m_settings->value("oldCameraUnits", m_cameraUnits).toString();
   m_oldCameraUnits = units;
   //end for pixels only
 

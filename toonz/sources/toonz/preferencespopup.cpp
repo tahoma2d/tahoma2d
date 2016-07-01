@@ -883,6 +883,10 @@ PreferencesPopup::PreferencesPopup()
 	  new CheckBox(tr("All imported images will use the same DPI"), this);
   m_unitOm         = new QComboBox(this);
   m_cameraUnitOm   = new QComboBox(this);
+  if (m_pref->getPixelsOnly()){
+	  m_unitOm->setDisabled(true);
+	  m_cameraUnitOm->setDisabled(true);
+  }
   // Choose between standard and Studio Ghibli rooms
   QComboBox *roomChoice = new QComboBox(this);
 
