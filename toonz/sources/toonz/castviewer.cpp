@@ -60,7 +60,7 @@ namespace {
 // dipendere dallo sceneHandle)
 // questo undo puo' essere spostato in un nuovo file levelsetcommand in
 // toonzlib.
-class MoveLevelToFolderUndo : public TUndo {
+class MoveLevelToFolderUndo final : public TUndo {
   TLevelSet *m_levelSet;
   std::wstring m_levelName;
   TFilePath m_oldFolder;
@@ -74,21 +74,21 @@ public:
     m_oldFolder      = m_levelSet->getFolder(level);
   }
 
-  void undo() const {
+  void undo() const override {
     TXshLevel *level = m_levelSet->getLevel(m_levelName);
     m_levelSet->moveLevelToFolder(m_oldFolder, level);
     TApp::instance()->getCurrentScene()->notifyCastChange();
   }
 
-  void redo() const {
+  void redo() const override {
     TXshLevel *level = m_levelSet->getLevel(m_levelName);
     m_levelSet->moveLevelToFolder(m_newFolder, level);
     TApp::instance()->getCurrentScene()->notifyCastChange();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Move Level to Cast Folder");
   }
 };

@@ -24,7 +24,7 @@ using namespace TFxCommand;
 //    FxsData  declaration
 //**********************************************************************
 
-class FxsData : public DvMimeData {
+class FxsData final : public DvMimeData {
   QList<TFxP> m_fxs;
   QMap<TFx *, bool> m_visitedFxs;
   QMap<TFx *, int> m_zeraryFxColumnSize;
@@ -34,7 +34,7 @@ class FxsData : public DvMimeData {
 public:
   FxsData();
 
-  FxsData *clone() const;
+  FxsData *clone() const override;
 
   //! Set the FxsData. FxsData<-QList<TFxP>
   void setFxs(const QList<TFxP> &selectedFxs, const QList<Link> &selectedLinks,

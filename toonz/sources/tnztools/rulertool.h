@@ -11,7 +11,7 @@
 
 //----------------------------------------------------------------------------------------------
 
-class RulerTool : public TTool {
+class RulerTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(RulerTool)
 
   enum DragMode { MakeNewRuler = 0, MoveFirstPos, MoveSecondPos, MoveRuler };
@@ -30,23 +30,23 @@ public:
 
   void setToolOptionsBox(RulerToolOptionsBox *toolOptionsBox);
 
-  ToolType getToolType() const { return TTool::GenericTool; }
+  ToolType getToolType() const override { return TTool::GenericTool; }
 
-  void onImageChanged();
+  void onImageChanged() override;
 
-  void draw();
+  void draw() override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
 
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
 
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 
-  void mouseMove(const TPointD &pos, const TMouseEvent &e);
+  void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
 
-  void onActivate();
+  void onActivate() override;
 
-  int getCursorId() const;
+  int getCursorId() const override;
 
   void updateToolOption();
 

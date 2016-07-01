@@ -46,11 +46,11 @@
 
 namespace {
 
-class SchematicZoomer : public ImageUtils::ShortcutZoomer {
+class SchematicZoomer final : public ImageUtils::ShortcutZoomer {
 public:
   SchematicZoomer(QWidget *parent) : ShortcutZoomer(parent) {}
 
-  bool zoom(bool zoomin, bool resetZoom) {
+  bool zoom(bool zoomin, bool resetZoom) override {
     static_cast<SchematicSceneViewer *>(getWidget())->zoomQt(zoomin, resetZoom);
     return true;
   }

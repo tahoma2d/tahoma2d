@@ -4,7 +4,7 @@
 
 #include "ino_common.h"
 //------------------------------------------------------------
-class ino_hls_adjust : public TStandardRasterFx {
+class ino_hls_adjust final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ino_hls_adjust)
   TRasterFxPort m_input;
   TRasterFxPort m_refer;
@@ -70,7 +70,8 @@ public:
     this->m_ref_mode->addItem(4, "Luminance");
     this->m_ref_mode->addItem(-1, "Nothing");
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       return this->m_input->doGetBBox(frame, bBox, info);
     } else {
@@ -78,10 +79,11 @@ public:
       return false;
     }
   }
-  bool canHandle(const TRenderSettings &rend_sets, double frame) {
+  bool canHandle(const TRenderSettings &rend_sets, double frame) override {
     return true;
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets);
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_hls_adjust, "inohlsAdjustFx");
 //------------------------------------------------------------

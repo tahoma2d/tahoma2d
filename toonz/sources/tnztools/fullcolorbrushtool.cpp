@@ -43,7 +43,7 @@
 
 TEnv::IntVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
 TEnv::IntVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
-TEnv::IntVar FullcolorPressureSensibility("FullcolorPressureSensibility", 1);
+TEnv::IntVar FullcolorPressureSensitivity("FullcolorPressureSensitivity", 1);
 TEnv::DoubleVar FullcolorBrushHardness("FullcolorBrushHardness", 100);
 TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 100);
 TEnv::DoubleVar FullcolorMaxOpacity("FullcolorMaxOpacity", 100);
@@ -81,7 +81,7 @@ double computeThickness(int pressure, const TDoublePairProperty &property,
 
 //----------------------------------------------------------------------------------
 
-class FullColorBrushUndo : public ToolUtils::TFullColorRasterUndo {
+class FullColorBrushUndo final : public ToolUtils::TFullColorRasterUndo {
   TPoint m_offset;
   QString m_id;
 
@@ -100,7 +100,7 @@ public:
 
   ~FullColorBrushUndo() { TImageCache::instance()->remove(m_id); }
 
-  void redo() const {
+  void redo() const override {
     insertLevelAndFrameIfNeeded();
 
     TRasterImageP image = getImage();
@@ -114,12 +114,12 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + ToolUtils::TFullColorRasterUndo::getSize();
   }
 
-  virtual QString getToolName() { return QString("Raster Brush Tool"); }
-  int getHistoryType() { return HistoryType::BrushTool; }
+  QString getToolName() override { return QString("Raster Brush Tool"); }
+  int getHistoryType() override { return HistoryType::BrushTool; }
 };
 
 }  // namespace
@@ -203,7 +203,7 @@ void FullColorBrushTool::onActivate() {
     m_firstTime = false;
     m_thickness.setValue(
         TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
-    m_pressure.setValue(FullcolorPressureSensibility ? 1 : 0);
+    m_pressure.setValue(FullcolorPressureSensitivity ? 1 : 0);
     m_opacity.setValue(
         TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));
     m_hardness.setValue(FullcolorBrushHardness);
@@ -582,7 +582,7 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
 setWorkAndBackupImages();*/
   FullcolorBrushMinSize        = m_minThick;
   FullcolorBrushMaxSize        = m_maxThick;
-  FullcolorPressureSensibility = m_pressure.getValue();
+  FullcolorPressureSensitivity = m_pressure.getValue();
   FullcolorBrushHardness       = m_hardness.getValue();
   FullcolorMinOpacity          = m_opacity.getValue().first;
   FullcolorMaxOpacity          = m_opacity.getValue().second;

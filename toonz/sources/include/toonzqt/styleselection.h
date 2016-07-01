@@ -28,7 +28,7 @@ class TXshLevelHandle;
 // TStyleSelection
 //-----------------------------------------------------------------------------
 
-class DVAPI TStyleSelection : public TSelection {
+class DVAPI TStyleSelection final : public TSelection {
   TPaletteHandle *m_paletteHandle;
 
   // Used to change level palette; in other palette (cleanup, ...) xsheetHandle
@@ -53,8 +53,8 @@ public:
   bool isSelected(int pageIndex, int styleIndexInPage) const;
   bool isPageSelected(int pageIndex) const;
   bool canHandleStyles();
-  void selectNone();
-  bool isEmpty() const;
+  void selectNone() override;
+  bool isEmpty() const override;
   int getStyleCount() const;
   TPaletteHandle *getPaletteHandle() const { return m_paletteHandle; }
   void setPaletteHandle(TPaletteHandle *paletteHandle) {
@@ -90,7 +90,7 @@ public:
   void toggleLink();
   void eraseToggleLink();
 
-  void enableCommands();
+  void enableCommands() override;
 
   void toggleKeyframe(int frame);
 

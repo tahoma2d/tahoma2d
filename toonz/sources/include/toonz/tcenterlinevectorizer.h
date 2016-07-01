@@ -34,7 +34,7 @@ It can also deal notifications about its progress status, and is receptive to
 user cancels.
 
 \sa VectorizerPopup, Vectorizer, VectorizerConfiguration classes.*/
-class DVAPI VectorizerCore : public QObject {
+class DVAPI VectorizerCore final : public QObject {
   Q_OBJECT
 
   int m_currPartial;
@@ -59,10 +59,10 @@ Returns the \b TVectorImageP converted image.*/
   bool isCanceled() { return m_isCanceled; }
 
   //!\b (\b Internal \b use \b only) Sets the maximum number of partial
-  //!notifications.
+  //! notifications.
   void setOverallPartials(int total) { m_totalPartials = total; }
   //!\b (\b Internal \b use \b only) Emits partial progress signal and updates
-  //!partial progresses internal count.
+  //! partial progresses internal count.
   void emitPartialDone(void);
 
 private:

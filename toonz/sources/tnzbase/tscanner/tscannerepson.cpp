@@ -75,7 +75,7 @@ static unsigned char NotReady   = 1 << 6;
 
 #define log
 
-class TScannerExpection : public TException {
+class TScannerExpection final : public TException {
   TString m_scannerMsg;
 
 public:
@@ -87,7 +87,7 @@ public:
       m_scannerMsg += L"\n" + ::to_wstring(notFatal[i - 1]);
     log("Exception created: " + ::to_string(m_scannerMsg));
   }
-  TString getMessage() const { return m_scannerMsg; }
+  TString getMessage() const override { return m_scannerMsg; }
 };
 
 //-----------------------------------------------------------------------------

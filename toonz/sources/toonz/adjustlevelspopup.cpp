@@ -92,7 +92,7 @@ void getRange(const QVector<int> &values, int threshold, int &min, int &max) {
 //    Adjust Levels Swatch
 //**************************************************************************
 
-class AdjustLevelsPopup::Swatch : public PlaneViewer {
+class AdjustLevelsPopup::Swatch final : public PlaneViewer {
   TRasterP m_ras;
 
 public:
@@ -554,7 +554,7 @@ void AdjustLevelsPopup::autoAdjust() {
 //    TGBMScale Undo
 //**************************************************************************
 
-class AdjustLevelsUndo : public TUndo {
+class AdjustLevelsUndo final : public TUndo {
   int m_in0[5], m_in1[5], m_out0[5], m_out1[5];
   int m_r, m_c;
 
@@ -566,10 +566,10 @@ public:
                    TRasterP ras);
   ~AdjustLevelsUndo();
 
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
 
-  int getSize() const { return sizeof(*this) + m_rasSize; }
+  int getSize() const override { return sizeof(*this) + m_rasSize; }
 };
 
 //--------------------------------------------------------------

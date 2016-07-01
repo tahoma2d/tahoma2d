@@ -31,7 +31,7 @@ namespace XsheetGUI {
 // NotePopup
 //-----------------------------------------------------------------------------
 
-class NotePopup : public DVGui::Dialog {
+class NotePopup final : public DVGui::Dialog {
   Q_OBJECT
   XsheetViewer *m_viewer;
   int m_noteIndex;
@@ -59,8 +59,8 @@ protected:
   DVGui::ColorField *createColorField(int index);
   void updateColorField();
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
   void onColor1Switched(const TPixel32 &, bool isDragging);
@@ -83,7 +83,7 @@ protected slots:
 // NoteWidget
 //-----------------------------------------------------------------------------
 
-class NoteWidget : public QWidget {
+class NoteWidget final : public QWidget {
   Q_OBJECT
   XsheetViewer *m_viewer;
   int m_noteIndex;
@@ -104,14 +104,14 @@ public:
   void openNotePopup();
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 };
 
 //=============================================================================
 // NoteArea
 //-----------------------------------------------------------------------------
 
-class NoteArea : public QFrame {
+class NoteArea final : public QFrame {
   Q_OBJECT
 
   std::unique_ptr<NotePopup> m_newNotePopup;  // Popup used to create new note

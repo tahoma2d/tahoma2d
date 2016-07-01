@@ -30,7 +30,7 @@ class PropertyComboBox;
 //    FormatSettingsPopup  definition
 //**********************************************************************************
 
-class FormatSettingsPopup : public DVGui::Dialog {
+class FormatSettingsPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:
@@ -64,7 +64,7 @@ private:
   void buildValueField(int index, TPropertyGroup *props);
   void buildPropertyCheckBox(int index, TPropertyGroup *props);
   void buildPropertyLineEdit(int index, TPropertyGroup *props);
-  void showEvent(QShowEvent *se);
+  void showEvent(QShowEvent *se) override;
 
 #ifdef _WIN32
 

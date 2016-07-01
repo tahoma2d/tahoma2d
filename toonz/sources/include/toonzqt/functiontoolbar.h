@@ -54,7 +54,7 @@ public:
 //    FunctionToolbar  declaration
 //*************************************************************************
 
-class FunctionToolbar : public DVGui::ToolBar, public TParamObserver {
+class FunctionToolbar final : public DVGui::ToolBar, public TParamObserver {
   Q_OBJECT
 
   QToolBar *m_valueToolbar, *m_keyframeToolbar;
@@ -82,7 +82,7 @@ public:
   void setSelection(FunctionSelection *);
   void setFrameHandle(TFrameHandle *frameHandle);
 
-  void onChange(const TParamChange &);
+  void onChange(const TParamChange &) override;
 
   bool anyWidgetHasFocus();
 

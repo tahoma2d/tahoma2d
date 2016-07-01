@@ -97,7 +97,7 @@ protected slots:
 //
 //==================================================================
 
-class DVAPI SchematicSceneViewer : public QGraphicsView {
+class DVAPI SchematicSceneViewer final : public QGraphicsView {
   Q_OBJECT
 
 public:
@@ -109,12 +109,12 @@ public:
   QPointF getOldScenePos() { return m_oldScenePos; }
 
 protected:
-  void mousePressEvent(QMouseEvent *me);
-  void mouseMoveEvent(QMouseEvent *me);
-  void mouseReleaseEvent(QMouseEvent *me);
-  void keyPressEvent(QKeyEvent *ke);
-  void wheelEvent(QWheelEvent *me);
-  void showEvent(QShowEvent *se);
+  void mousePressEvent(QMouseEvent *me) override;
+  void mouseMoveEvent(QMouseEvent *me) override;
+  void mouseReleaseEvent(QMouseEvent *me) override;
+  void keyPressEvent(QKeyEvent *ke) override;
+  void wheelEvent(QWheelEvent *me) override;
+  void showEvent(QShowEvent *se) override;
 
 protected slots:
 
@@ -139,7 +139,7 @@ private:
 //
 //==================================================================
 
-class DVAPI SchematicViewer : public QWidget {
+class DVAPI SchematicViewer final : public QWidget {
   Q_OBJECT
 
 public:

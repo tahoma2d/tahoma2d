@@ -58,8 +58,8 @@ static QString srvCmdline() {
 //  Buffer data exchanger
 //*************************************************************************************
 
-class DVAPI BufferExchanger : public tipc::ShMemReader,
-                              public tipc::ShMemWriter {
+class DVAPI BufferExchanger final : public tipc::ShMemReader,
+                                    public tipc::ShMemWriter {
   UCHAR *m_buf;
   UCHAR *m_data;
 
@@ -69,8 +69,8 @@ public:
 
   UCHAR *buffer() const { return m_buf; }
 
-  int read(const char *srcBuf, int len);
-  int write(char *dstBuf, int len);
+  int read(const char *srcBuf, int len) override;
+  int write(char *dstBuf, int len) override;
 };
 
 //*************************************************************************************
@@ -78,8 +78,8 @@ public:
 //*************************************************************************************
 
 template <typename PIXEL>
-class DVAPI RasterExchanger : public tipc::ShMemReader,
-                              public tipc::ShMemWriter {
+class DVAPI RasterExchanger final : public tipc::ShMemReader,
+                                    public tipc::ShMemWriter {
   typedef PIXEL pix_type;
 
   TRasterPT<PIXEL> m_ras;
@@ -94,8 +94,8 @@ public:
 
   TRasterP raster() const { return m_ras; }
 
-  int read(const char *srcBuf, int len);
-  int write(char *dstBuf, int len);
+  int read(const char *srcBuf, int len) override;
+  int write(char *dstBuf, int len) override;
 };
 
 }  // namespace t32bitsrv

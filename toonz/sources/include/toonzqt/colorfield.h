@@ -40,7 +40,7 @@ namespace DVGui {
 // StyleSample
 //-----------------------------------------------------------------------------
 
-class DVAPI StyleSample : public QWidget {
+class DVAPI StyleSample final : public QWidget {
   Q_OBJECT
   QImage m_samplePixmap;
   TRaster32P m_bgRas;
@@ -74,9 +74,9 @@ public:
   bool isEnable() const { return m_drawEnable; }
 
 protected:
-  void paintEvent(QPaintEvent *event);
-  void mousePressEvent(QMouseEvent *);
-  void mouseDoubleClickEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent *event) override;
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 signals:
   void clicked(const TColorStyle &style);
@@ -86,7 +86,7 @@ signals:
 // ChannelField
 //-----------------------------------------------------------------------------
 
-class DVAPI ChannelField : public QWidget {
+class DVAPI ChannelField final : public QWidget {
   Q_OBJECT
 
   DVGui::IntLineEdit *m_channelEdit;
@@ -116,7 +116,7 @@ protected slots:
 // ColorField
 //-----------------------------------------------------------------------------
 
-class DVAPI ColorField : public QWidget {
+class DVAPI ColorField final : public QWidget {
   Q_OBJECT
 
   StyleSample *m_colorSample;
@@ -177,9 +177,9 @@ public:
 
 protected:
   void updateChannels();
-  void mousePressEvent(QMouseEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *event);
-  void hideEvent(QHideEvent *);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
   void onRedChannelChanged(int value, bool isDragging);
@@ -196,7 +196,7 @@ signals:
 // CleanupColorField
 //-----------------------------------------------------------------------------
 
-class DVAPI CleanupColorField : public QWidget {
+class DVAPI CleanupColorField final : public QWidget {
   Q_OBJECT
 
   TPaletteHandle *m_ph;
@@ -263,9 +263,9 @@ public:
   void setContrastEnabled(bool enable);
 
 protected:
-  void mousePressEvent(QMouseEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *event);
-  void hideEvent(QHideEvent *);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
 

@@ -108,7 +108,7 @@ public:
   inline bool empty() { return size() == 0; }
 };
 
-class Intersection : public VIListElem {
+class Intersection final : public VIListElem {
 public:
   // Intersection* m_prev, *m_next;
   TPointD m_intersection;
@@ -149,7 +149,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class IntersectedStroke : public VIListElem {
+class IntersectedStroke final : public VIListElem {
   /*double m_w;
 TStroke *m_s;
 UINT m_index;*/
@@ -2258,12 +2258,10 @@ void TVectorImage::Imp::findIntersections() {
   for (i = 0; i < strokeSize; i++) {
     TStroke *s1 = strokeArray[i]->m_s;
     if (strokeArray[i]->m_isPoint) continue;
-    for (
-        j = i;
-        j <
-        strokeSize /*&& (strokeArray[i]->getBBox().x1>= strokeArray[j]->getBBox().x0)*/
-        ;
-        j++) {
+    for (j = i; j < strokeSize /*&& (strokeArray[i]->getBBox().x1>=
+                                  strokeArray[j]->getBBox().x0)*/
+         ;
+         j++) {
       TStroke *s2 = strokeArray[j]->m_s;
 
       if (strokeArray[j]->m_isPoint ||
@@ -2565,18 +2563,18 @@ return false;
 //-----------------------------------------------------------------------------
 */
 
-class TRegionClockWiseFormula : public TRegionFeatureFormula {
+class TRegionClockWiseFormula final : public TRegionFeatureFormula {
 private:
   double m_quasiArea;
 
 public:
   TRegionClockWiseFormula() : m_quasiArea(0) {}
 
-  void inline update(const TPointD &p1, const TPointD &p2) {
+  void update(const TPointD &p1, const TPointD &p2) override {
     m_quasiArea += (p2.y + p1.y) * (p1.x - p2.x);
   }
 
-  bool inline isClockwise() { return m_quasiArea > 0.5; }
+  bool isClockwise() { return m_quasiArea > 0.5; }
 };
 
 //----------------------------------------------------------------------------------------------

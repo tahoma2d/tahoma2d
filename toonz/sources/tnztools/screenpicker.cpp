@@ -144,10 +144,10 @@ void ScreenPicker::startGrab() {
 //    Pick Screen Command instantiation
 //***********************************************************************************
 
-class PickScreenCommandHandler : public MenuItemHandler {
+class PickScreenCommandHandler final : public MenuItemHandler {
 public:
   PickScreenCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
-  void execute() {
+  void execute() override {
     static ScreenPicker *picker = new ScreenPicker;
     picker->startGrab();
   }

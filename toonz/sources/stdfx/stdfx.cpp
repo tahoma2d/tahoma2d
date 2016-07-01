@@ -23,7 +23,7 @@ bool isAlmostIsotropic(const TAffine &aff) { return aff.isIsotropic(0.001); }
 
 //==================================================================
 
-class FadeFx : public TStandardRasterFx {
+class FadeFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(FadeFx)
   TRasterFxPort m_input;
   TDoubleParamP m_value;
@@ -38,7 +38,8 @@ public:
 
   ~FadeFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       bool ret = m_input->doGetBBox(frame, bBox, info);
       // devo scurire bgColor
@@ -49,7 +50,8 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) {
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &ri) override {
     if (!m_input.isConnected()) return;
 
     m_input->compute(tile, frame, ri);
@@ -58,12 +60,14 @@ public:
     TRop::rgbmScale(tile.getRaster(), tile.getRaster(), 1, 1, 1, v);
   }
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //==================================================================
 
-class SpiralFx : public TStandardZeraryFx {
+class SpiralFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(SpiralFx)
   TDoubleParamP m_freq;
   TDoubleParamP m_phase;
@@ -101,14 +105,16 @@ TPixel32 colors[] = {
   };
   ~SpiralFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //------------------------------------------------------------------
@@ -158,7 +164,7 @@ void SpiralFx::doCompute(TTile &tile, double frame, const TRenderSettings &ri) {
 
 //------------------------------------------------------------------
 
-class MultiLinearGradientFx : public TStandardZeraryFx {
+class MultiLinearGradientFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(MultiLinearGradientFx)
   TDoubleParamP m_period;
   TDoubleParamP m_count;
@@ -200,17 +206,19 @@ public:
   }
   ~MultiLinearGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
 
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::WIDTH;
@@ -219,7 +227,7 @@ public:
   }
 };
 
-class LinearGradientFx : public TStandardZeraryFx {
+class LinearGradientFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(LinearGradientFx)
   TDoubleParamP m_period;
 
@@ -252,17 +260,19 @@ public:
   }
   ~LinearGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
 
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::WIDTH;
@@ -388,7 +398,7 @@ throw TException("MultiLinearGradientFx: unsupported Pixel Type");
 
 //==================================================================
 
-class RadialGradientFx : public TStandardZeraryFx {
+class RadialGradientFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(RadialGradientFx)
   TDoubleParamP m_period;
   TDoubleParamP m_innerperiod;
@@ -414,16 +424,18 @@ public:
   }
   ~RadialGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 2];
 
     concepts[0].m_type  = TParamUIConcept::RADIUS;
@@ -438,7 +450,7 @@ public:
 
 //==================================================================
 
-class MultiRadialGradientFx : public TStandardZeraryFx {
+class MultiRadialGradientFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(MultiRadialGradientFx)
   TDoubleParamP m_period;
   TDoubleParamP m_count;
@@ -470,16 +482,18 @@ public:
   }
   ~MultiRadialGradientFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type  = TParamUIConcept::RADIUS;
@@ -532,7 +546,7 @@ void RadialGradientFx::doCompute(TTile &tile, double frame,
 
 //------------------------------------------------------------------
 
-class LightSpotFx : public TStandardZeraryFx {
+class LightSpotFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(LightSpotFx)
   TDoubleParamP m_softness;
   TDoubleParamP m_a;
@@ -560,16 +574,18 @@ m_color->setDefaultValue(TPixel::Magenta);
   }
   ~LightSpotFx(){};
 
-  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double, TRectD &bBox, const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
     // si potrebbe/dovrebbe fare meglio
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length) {
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override {
     concepts = new TParamUIConcept[length = 1];
 
     concepts[0].m_type = TParamUIConcept::RECT;

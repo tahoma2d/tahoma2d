@@ -46,15 +46,15 @@
 #endif
 
 namespace ToonzExt {
-class DVAPI NotSimmetricExpPotential : public Potential {
+class DVAPI NotSimmetricExpPotential final : public Potential {
 public:
   virtual ~NotSimmetricExpPotential();
 
   // chiama compute_value ma effettua un controllo del parametro
-  virtual double value_(double radiusToTest) const;
+  double value_(double radiusToTest) const override;
 
-  virtual void setParameters_(const TStroke *ref, double par, double al);
-  Potential *clone();
+  void setParameters_(const TStroke *ref, double par, double al) override;
+  Potential *clone() override;
 
 private:
   double compute_shape(double) const;  // funzione ausiliaria per

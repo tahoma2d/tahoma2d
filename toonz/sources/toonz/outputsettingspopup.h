@@ -62,8 +62,8 @@ public:
 protected:
   ToonzScene *getCurrentScene() const;
   TOutputProperties *getProperties() const;
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
 
@@ -97,7 +97,7 @@ protected slots:
   void onFrameRateEditingFinished();
 };
 
-class PreviewSettingsPopup : public OutputSettingsPopup {
+class PreviewSettingsPopup final : public OutputSettingsPopup {
 public:
   PreviewSettingsPopup() : OutputSettingsPopup(true) {}
 };

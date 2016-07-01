@@ -19,12 +19,12 @@ using namespace DVGui;
 
 namespace {
 
-class MouseTrackerDrawing : public ScreenBoard::Drawing {
+class MouseTrackerDrawing final : public ScreenBoard::Drawing {
 public:
-  bool acceptScreenEvents(const QRect &rect) const {
+  bool acceptScreenEvents(const QRect &rect) const override {
     return rect.contains(QCursor::pos());
   }
-  void paintEvent(QWidget *widget, QPaintEvent *pe) {
+  void paintEvent(QWidget *widget, QPaintEvent *pe) override {
 // Seems that mouse masking is on by default on the drawn regions, when using
 // WA_TranslucentBackground (which is weird). I think it's the Qt 2 autoMask
 // feature
@@ -54,7 +54,7 @@ public:
 //    ScreenWidget implementation
 //***********************************************************************************
 
-class ScreenBoard::ScreenWidget : public QWidget {
+class ScreenBoard::ScreenWidget final : public QWidget {
   QList<ScreenBoard::Drawing *>
       m_drawings;        //!< Drawings intersecting the screen
   bool m_mouseOnScreen;  //!< Whether the mouse is inside this screen
@@ -81,7 +81,7 @@ public:
   bool mouseOnScreen() const { return m_mouseOnScreen; }
 
 protected:
-  bool event(QEvent *e) {
+  bool event(QEvent *e) override {
     int i, size = m_drawings.size();
     if (e->type() == QEvent::Paint) {
       // Invoke paint events in reversed sorting order
@@ -95,14 +95,14 @@ protected:
     return QWidget::event(e);
   }
 
-  void leaveEvent(QEvent *e) {
+  void leaveEvent(QEvent *e) override {
     m_mouseOnScreen = false;
 
     ScreenBoard *screenBoard = ScreenBoard::instance();
     if (screenBoard->m_grabbing) screenBoard->ensureMouseOnAScreen();
   }
 
-  void enterEvent(QEvent *e) {
+  void enterEvent(QEvent *e) override {
     m_mouseOnScreen                           = true;
     ScreenBoard::instance()->m_mouseOnAScreen = true;
   }

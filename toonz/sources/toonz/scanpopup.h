@@ -21,7 +21,7 @@ class ProgressDialog;
 // MyScannerListener
 //-----------------------------------------------------------------------------
 
-class MyScannerListener : public QObject, public TScannerListener {
+class MyScannerListener final : public QObject, public TScannerListener {
   Q_OBJECT
 
   int m_current;
@@ -32,11 +32,11 @@ class MyScannerListener : public QObject, public TScannerListener {
 
 public:
   MyScannerListener(const ScanList &scanList);
-  void onImage(const TRasterImageP &);
-  void onError();
-  void onNextPaper();
-  void onAutomaticallyNextPaper();
-  bool isCanceled();
+  void onImage(const TRasterImageP &) override;
+  void onError() override;
+  void onNextPaper() override;
+  void onAutomaticallyNextPaper() override;
+  bool isCanceled() override;
 
 protected slots:
   void cancelButtonPressed();
@@ -46,7 +46,7 @@ protected slots:
 // DefineScannerPopup
 //-----------------------------------------------------------------------------
 
-class DefineScannerPopup : public DVGui::Dialog {
+class DefineScannerPopup final : public DVGui::Dialog {
   Q_OBJECT
   QComboBox *m_scanDriverOm;
 
@@ -54,14 +54,14 @@ public:
   DefineScannerPopup();
 
 public slots:
-  void accept();
+  void accept() override;
 };
 
 //=============================================================================
 // ScanSettingsPopup
 //-----------------------------------------------------------------------------
 
-class ScanSettingsPopup : public DVGui::Dialog {
+class ScanSettingsPopup final : public DVGui::Dialog {
   Q_OBJECT
   QLabel *m_scannerNameLbl;
   DVGui::CheckBox *m_reverseOrderCB;
@@ -81,8 +81,8 @@ public:
   ScanSettingsPopup();
 
 protected:
-  void showEvent(QShowEvent *event);
-  void hideEvent(QHideEvent *event);
+  void showEvent(QShowEvent *event) override;
+  void hideEvent(QHideEvent *event) override;
   void connectAll();
   void disconnectAll();
 
@@ -99,7 +99,7 @@ public slots:
 // AutocenterPopup
 //-----------------------------------------------------------------------------
 
-class AutocenterPopup : public DVGui::Dialog {
+class AutocenterPopup final : public DVGui::Dialog {
   Q_OBJECT
   DVGui::CheckBox *m_autocenter;
   QComboBox *m_pegbarHoles;

@@ -62,7 +62,7 @@ class QTimer;
 
   \sa       The FreeLayout class.
 */
-class DVAPI DvScrollWidget : public QFrame {
+class DVAPI DvScrollWidget final : public QFrame {
   Q_OBJECT
 
   QWidget *m_content;
@@ -105,11 +105,11 @@ public slots:
   void scrollForward();
 
 protected:
-  void resizeEvent(QResizeEvent *re);
-  void mousePressEvent(QMouseEvent *me);
-  void mouseMoveEvent(QMouseEvent *me);
-  void mouseReleaseEvent(QMouseEvent *me);
-  void showEvent(QShowEvent *se);
+  void resizeEvent(QResizeEvent *re) override;
+  void mousePressEvent(QMouseEvent *me) override;
+  void mouseMoveEvent(QMouseEvent *me) override;
+  void mouseReleaseEvent(QMouseEvent *me) override;
+  void showEvent(QShowEvent *se) override;
 
 protected slots:
 

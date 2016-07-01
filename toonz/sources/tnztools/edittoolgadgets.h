@@ -82,7 +82,7 @@ public:
   virtual void leftButtonDrag(const TPointD &pos, const TMouseEvent &) {}
   virtual void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
 
-  void onChange(const TParamChange &);
+  void onChange(const TParamChange &) override;
   void createUndo();
   void commitUndo();
 
@@ -110,7 +110,7 @@ public:
 
 }  // EditToolGadgets namespace
 
-class FxGadgetController : public QObject {
+class FxGadgetController final : public QObject {
   Q_OBJECT
 
   TTool *m_tool;

@@ -34,7 +34,7 @@ extern "C" {
 //    TifReader  implementation
 //**************************************************************************
 
-class TifReader : public Tiio::Reader {
+class TifReader final : public Tiio::Reader {
   TIFF *m_tiff;
   int m_row;
   bool m_tiled, m_stripped;
@@ -52,16 +52,17 @@ public:
   TifReader(bool isTzi);
   ~TifReader();
 
-  void open(FILE *file);
+  void open(FILE *file) override;
 
-  Tiio::RowOrder getRowOrder() const { return m_rowOrder; }
+  Tiio::RowOrder getRowOrder() const override { return m_rowOrder; }
 
-  virtual bool read16BitIsEnabled() const { return false; }
-  virtual void enable16BitRead(bool enabled) { is16bitEnabled = enabled; }
+  bool read16BitIsEnabled() const override { return false; }
 
-  int skipLines(int lineCount);
-  void readLine(char *buffer, int x0, int x1, int shrink);
-  void readLine(short *buffer, int x0, int x1, int shrink);
+  void enable16BitRead(bool enabled) override { is16bitEnabled = enabled; }
+
+  int skipLines(int lineCount) override;
+  void readLine(char *buffer, int x0, int x1, int shrink) override;
+  void readLine(short *buffer, int x0, int x1, int shrink) override;
 };
 
 //------------------------------------------------------------
@@ -339,7 +340,9 @@ break;*/
     m_stripBuffer = m_tmpRas->getRawData();
   } else {
     m_rowsPerStrip = rps;
-    // if(m_rowsPerStrip<=0) m_rowsPerStrip = 1;			//potrei mettere qualsiasi
+    // if(m_rowsPerStrip<=0) m_rowsPerStrip = 1;			//potrei
+    // mettere
+    // qualsiasi
     // valore
     // purchè sia lo stesso in tif_getimage.c linea 2512
     // if(m_rowsPerStrip==-1) assert(0);
@@ -720,7 +723,7 @@ Tiio::TifWriterProperties::TifWriterProperties()
 
 //============================================================
 
-class TifWriter : public Tiio::Writer {
+class TifWriter final : public Tiio::Writer {
   TIFF *m_tiff;
   int m_row;
   // Tiio::TifWriterProperties m_properties;
@@ -734,13 +737,13 @@ public:
   TifWriter();
   ~TifWriter();
 
-  void open(FILE *file, const TImageInfo &info);
-  void writeLine(char *buffer);
-  void writeLine(short *buffer);
+  void open(FILE *file, const TImageInfo &info) override;
+  void writeLine(char *buffer) override;
+  void writeLine(short *buffer) override;
 
-  void flush();
+  void flush() override;
 
-  Tiio::RowOrder getRowOrder() const { return m_rowOrder; }
+  Tiio::RowOrder getRowOrder() const override { return m_rowOrder; }
 };
 
 //------------------------------------------------------------

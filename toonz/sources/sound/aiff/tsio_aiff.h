@@ -11,7 +11,7 @@ The class TSoundTrackReaderAiff reads audio files having
 .aiff extension
 */
 
-class TSoundTrackReaderAiff : public TSoundTrackReader {
+class TSoundTrackReaderAiff final : public TSoundTrackReader {
 public:
   TSoundTrackReaderAiff(const TFilePath &fp);
   ~TSoundTrackReaderAiff() {}
@@ -20,7 +20,7 @@ public:
 Loads the .aiff audio file whose path has been specified in the constructor.
 It returns a TSoundTrackP created from the audio file
 */
-  TSoundTrackP load();
+  TSoundTrackP load() override;
 
   /*!
 Returns a soundtrack reader able to read .aiff audio files
@@ -35,7 +35,7 @@ Returns a soundtrack reader able to read .aiff audio files
 The class TSoundTrackWriterAiff writes audio file having
 .aiff extension
 */
-class TSoundTrackWriterAiff : public TSoundTrackWriter {
+class TSoundTrackWriterAiff final : public TSoundTrackWriter {
 public:
   TSoundTrackWriterAiff(const TFilePath &fp);
   ~TSoundTrackWriterAiff() {}
@@ -44,7 +44,7 @@ public:
 Saves the informations of the soundtrack in .aiff audio file
 whose path has been specified in the constructor.
 */
-  bool save(const TSoundTrackP &);
+  bool save(const TSoundTrackP &) override;
 
   /*!
 Returns a soundtrack writer able to write .aiff audio files

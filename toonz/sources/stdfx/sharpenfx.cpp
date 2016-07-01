@@ -234,7 +234,7 @@ void ropSharpen(const TRasterPT<T> &rin, TRasterPT<T> &rout,
 
 /*---------------------------------------------------------------------------*/
 
-class SharpenFx : public TStandardRasterFx {
+class SharpenFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(SharpenFx)
 
   TRasterFxPort m_input;
@@ -252,7 +252,8 @@ public:
 
   ~SharpenFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) {
       bool ret = m_input->doGetBBox(frame, bBox, info);
       return ret;
@@ -262,9 +263,11 @@ public:
     }
   }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //-------------------------------------------------------------------

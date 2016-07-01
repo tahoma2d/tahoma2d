@@ -28,7 +28,7 @@ class TFarmController;
 //------------------------------------------------------------------------------
 class TaskTreeModel;
 
-class BatchesController : public QObject {  // singleton
+class BatchesController final : public QObject {  // singleton
   Q_OBJECT
 public:
   static BatchesController *instance();
@@ -109,16 +109,16 @@ private:
   static inline QString taskBusyStr();
 };
 //-----------------------------------------------------------------------------
-class LoadTaskListPopup : public FileBrowserPopup {
+class LoadTaskListPopup final : public FileBrowserPopup {
 public:
   LoadTaskListPopup();
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
 
-class LoadTaskPopup : public FileBrowserPopup {
+class LoadTaskPopup final : public FileBrowserPopup {
   Q_OBJECT
 
   bool m_isRenderTask;
@@ -126,19 +126,19 @@ class LoadTaskPopup : public FileBrowserPopup {
 public:
   LoadTaskPopup();
 
-  bool execute();
+  bool execute() override;
   void open(bool isRenderTask);
 };
 
 //-----------------------------------------------------------------------------
 
-class SaveTaskListPopup : public FileBrowserPopup {
+class SaveTaskListPopup final : public FileBrowserPopup {
   Q_OBJECT
 
 public:
   SaveTaskListPopup();
 
-  bool execute();
+  bool execute() override;
 };
 
 //------------------------------------------------------------------------------

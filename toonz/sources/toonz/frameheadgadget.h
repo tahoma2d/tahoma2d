@@ -59,31 +59,31 @@ public:
   void setMos(int frame, bool on);
 
   // reimpremented in FilmstripFrameHeadGadget
-  virtual bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
-class XsheetFrameHeadGadget : public FrameHeadGadget {
+class XsheetFrameHeadGadget final : public FrameHeadGadget {
 public:
 };
 
-class FilmstripFrameHeadGadget : public FrameHeadGadget {
+class FilmstripFrameHeadGadget final : public FrameHeadGadget {
   FilmstripFrames *m_filmstrip;
   int m_dy;
 
 public:
   FilmstripFrameHeadGadget(FilmstripFrames *filmstrip);
 
-  int getY() const;
-  int index2y(int index) const;
-  int y2index(int y) const;
+  int getY() const override;
+  int index2y(int index) const override;
+  int y2index(int y) const override;
 
   void drawOnionSkinSelection(QPainter &p, const QColor &lightColor,
-                              const QColor &darkColor);
+                              const QColor &darkColor) override;
 
-  void setCurrentFrame(int index) const;
-  int getCurrentFrame() const;
+  void setCurrentFrame(int index) const override;
+  int getCurrentFrame() const override;
 
-  bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif

@@ -104,7 +104,7 @@ public:
 //
 //-----------------------------------------------------------------------------
 
-class DVAPI UndoSetKeyFrame : public TUndo {
+class DVAPI UndoSetKeyFrame final : public TUndo {
   TStageObjectId m_objId;
   int m_frame;
 
@@ -124,12 +124,12 @@ public:
     m_objectHandle = objectHandle;
   }
 
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
 
-  int getSize() const;
+  int getSize() const override;
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Set Keyframe   %1 at frame %2")
         .arg(QString::fromStdString(m_objId.toString()))
         .arg(m_frame + 1);
@@ -146,7 +146,7 @@ public:
 //
 //-----------------------------------------------------------------------------
 
-class DVAPI UndoRemoveKeyFrame : public TUndo {
+class DVAPI UndoRemoveKeyFrame final : public TUndo {
   TStageObjectId m_objId;
   int m_frame;
 
@@ -168,12 +168,12 @@ public:
     m_objectHandle = objectHandle;
   }
 
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
 
-  int getSize() const;
+  int getSize() const override;
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Remove Keyframe   %1 at frame %2")
         .arg(QString::fromStdString(m_objId.toString()))
         .arg(m_frame);
@@ -184,7 +184,7 @@ public:
 // UndoStageObjectCenterMove
 //-----------------------------------------------------------------------------
 
-class DVAPI UndoStageObjectCenterMove : public TUndo {
+class DVAPI UndoStageObjectCenterMove final : public TUndo {
   TStageObjectId m_pid;
   int m_frame;
   TPointD m_before, m_after;
@@ -204,23 +204,23 @@ public:
     m_objectHandle = objectHandle;
   }
 
-  void undo() const;
-  void redo() const;
-  int getSize() const { return sizeof(*this); }
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Move Center   %1  Frame %2")
         .arg(QString::fromStdString(m_pid.toString()))
         .arg(m_frame + 1);
   }
-  int getHistoryType() { return HistoryType::EditTool_Move; }
+  int getHistoryType() override { return HistoryType::EditTool_Move; }
 };
 
 //=============================================================================
 // UndoStageObjectMove
 //-----------------------------------------------------------------------------
 
-class DVAPI UndoStageObjectMove : public TUndo {
+class DVAPI UndoStageObjectMove final : public TUndo {
   TStageObjectValues m_before, m_after;
   TObjectHandle
       *m_objectHandle;  // OK: viene usato per notificare i cambiamenti!
@@ -233,19 +233,19 @@ public:
     m_objectHandle = objectHandle;
   }
 
-  void undo() const;
-  void redo() const;
-  int getSize() const { return sizeof(*this); }
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return m_before.getStringForHistory(); }
-  int getHistoryType() { return HistoryType::EditTool_Move; }
+  QString getHistoryString() override { return m_before.getStringForHistory(); }
+  int getHistoryType() override { return HistoryType::EditTool_Move; }
 };
 
 //=============================================================================
 // UndoStageObjectPinned
 //-----------------------------------------------------------------------------
 
-class DVAPI UndoStageObjectPinned : public TUndo {
+class DVAPI UndoStageObjectPinned final : public TUndo {
   TStageObjectId m_pid;
   int m_frame;
   bool m_before, m_after;
@@ -265,9 +265,9 @@ public:
     m_objectHandle = objectHandle;
   }
 
-  void undo() const;
-  void redo() const;
-  int getSize() const { return sizeof(*this); }
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override { return sizeof(*this); }
 };
 
 //=============================================================================

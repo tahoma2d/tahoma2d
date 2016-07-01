@@ -28,7 +28,7 @@ class QXmlStreamReader;
 
 //-----------------------------------------------------------------------------
 
-class RoomTabWidget : public QTabBar {
+class RoomTabWidget final : public QTabBar {
   Q_OBJECT
 
   int m_clickedTabIndex;
@@ -46,11 +46,11 @@ public:
 protected:
   void swapIndex(int firstIndex, int secondIndex);
 
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *event);
-  void contextMenuEvent(QContextMenuEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
 
 protected slots:
   void updateTabName();
@@ -69,7 +69,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 /*
-class SubSheetBar : public QFrame
+class SubSheetBar final : public QFrame
 {
   Q_OBJECT
 
@@ -105,7 +105,7 @@ protected:
 //-----------------------------------------------------------------------------
 
 #ifdef MACOSX
-class MenuBarWhiteLine : public QFrame
+class MenuBarWhiteLine final : public QFrame
 {
   Q_OBJECT
 public:
@@ -114,7 +114,7 @@ protected:
   void paintEvent(QPaintEvent *event);
 };
 #else
-class MenuBarWhiteLine : public QMenuBar
+class MenuBarWhiteLine final : public QMenuBar
 {
 public:
   MenuBarWhiteLine(QWidget *parent = 0);
@@ -125,7 +125,7 @@ protected:
 */
 //-----------------------------------------------------------------------------
 
-class UrlOpener : public QObject {
+class UrlOpener final : public QObject {
   Q_OBJECT
   QUrl m_url;
 
@@ -138,7 +138,7 @@ public slots:
 
 //-----------------------------------------------------------------------------
 /*-- モジュールごとにMenubarの内容を切り替える --*/
-class StackedMenuBar : public QStackedWidget {
+class StackedMenuBar final : public QStackedWidget {
   Q_OBJECT
 
   QMenuBar *createCleanupMenuBar();
@@ -170,7 +170,7 @@ protected slots:
 
 //-----------------------------------------------------------------------------
 
-class TopBar : public QToolBar {
+class TopBar final : public QToolBar {
   Q_OBJECT
 
   QFrame *m_containerFrame;
@@ -188,7 +188,7 @@ public:
 
 protected:
   /*--  右クリックで消えないようにする--*/
-  void contextMenuEvent(QContextMenuEvent *event) { event->accept(); }
+  void contextMenuEvent(QContextMenuEvent *event) override { event->accept(); }
 };
 
 #endif  // MENUBAR_H

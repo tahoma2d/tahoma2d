@@ -63,34 +63,34 @@ public:
 
 //-------------------------------------------------------------------
 
-class DVAPI SetFrameDragTool : public DragTool {
+class DVAPI SetFrameDragTool final : public DragTool {
   TFrameHandle *m_frameHandle;
 
 public:
   SetFrameDragTool(TFrameHandle *frameHandle) : m_frameHandle(frameHandle) {}
 
-  void click(int row, int col, QMouseEvent *e);
-  void drag(int row, int col, QMouseEvent *e);
-  void release(int row, int col, QMouseEvent *e);
+  void click(int row, int col, QMouseEvent *e) override;
+  void drag(int row, int col, QMouseEvent *e) override;
+  void release(int row, int col, QMouseEvent *e) override;
 };
 
 //-------------------------------------------------------------------
 
-class DVAPI SelectionDragTool : public DragTool {
+class DVAPI SelectionDragTool final : public DragTool {
   SpreadsheetViewer *m_viewer;
   int m_firstRow, m_firstCol;
 
 public:
   SelectionDragTool(SpreadsheetViewer *viewer);
 
-  void click(int row, int col, QMouseEvent *e);
-  void drag(int row, int col, QMouseEvent *e);
-  void release(int row, int col, QMouseEvent *e);
+  void click(int row, int col, QMouseEvent *e) override;
+  void drag(int row, int col, QMouseEvent *e) override;
+  void release(int row, int col, QMouseEvent *e) override;
 };
 
 //-------------------------------------------------------------------
 
-class DVAPI PanTool : public DragTool {
+class DVAPI PanTool final : public DragTool {
   SpreadsheetViewer *m_viewer;
   GenericPanel *m_panel;
   QPoint m_lastPos;
@@ -98,14 +98,14 @@ class DVAPI PanTool : public DragTool {
 public:
   PanTool(GenericPanel *panel);
 
-  void click(int row, int col, QMouseEvent *e);
-  void drag(int row, int col, QMouseEvent *e);
-  void release(int row, int col, QMouseEvent *e);
+  void click(int row, int col, QMouseEvent *e) override;
+  void drag(int row, int col, QMouseEvent *e) override;
+  void release(int row, int col, QMouseEvent *e) override;
 };
 
 //-------------------------------------------------------------------
 
-class DVAPI ScrollArea : public QScrollArea {
+class DVAPI ScrollArea final : public QScrollArea {
   Q_OBJECT
 
 public:
@@ -119,8 +119,8 @@ public:
 protected:
   // keyPressEvent and wheelEvent are ignored by the ScrollArea
   // and therefore they are handled by the parent (Viewer)
-  void keyPressEvent(QKeyEvent *e);
-  void wheelEvent(QWheelEvent *e);
+  void keyPressEvent(QKeyEvent *e) override;
+  void wheelEvent(QWheelEvent *e) override;
 };
 
 //-------------------------------------------------------------------
@@ -139,10 +139,10 @@ public:
   virtual DragTool *createDragTool(QMouseEvent *) { return 0; };
 
 protected:
-  void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *);
-  void mouseReleaseEvent(QMouseEvent *);
-  void mouseMoveEvent(QMouseEvent *);
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseReleaseEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
 };
 
 //-------------------------------------------------------------------
@@ -154,10 +154,10 @@ public:
   RowPanel(SpreadsheetViewer *viewer);
   virtual ~RowPanel() {}
 
-  DragTool *createDragTool(QMouseEvent *);
+  DragTool *createDragTool(QMouseEvent *) override;
 
 protected:
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
   void drawRows(QPainter &p, int r0, int r1);
   void drawCurrentRowGadget(QPainter &p, int r0, int r1);
 };
@@ -180,10 +180,10 @@ public:
   CellPanel(SpreadsheetViewer *viewer);
   virtual ~CellPanel() {}
 
-  DragTool *createDragTool(QMouseEvent *);
+  DragTool *createDragTool(QMouseEvent *) override;
 
 protected:
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
   virtual void drawCells(QPainter &p, int r0, int c0, int r1, int c1) {}
 };
 }
@@ -287,7 +287,7 @@ public:
   int getRowCount() const { return m_rowCount; }
 
   // provvisorio
-  QScrollArea *getFrameScrollArea() const { return m_cellScrollArea; }
+  QScrollArea *getFrameScrollArea() const override { return m_cellScrollArea; }
 
   // QProperty
   void setLightLightBGColor(const QColor &color) {
@@ -354,7 +354,7 @@ public:
   }
 
   void scroll(QPoint delta);
-  void onPrepareToScroll(int dy) { refreshContentSize(0, dy); }
+  void onPrepareToScroll(int dy) override { refreshContentSize(0, dy); }
 
   void setAutoPanSpeed(const QPoint &speed);
   void setAutoPanSpeed(const QRect &widgetBounds, const QPoint &mousePos);
@@ -397,12 +397,12 @@ public:
   void ensureVisibleCol(int col);
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
-  void resizeEvent(QResizeEvent *event);
-  void keyPressEvent(QKeyEvent *event);
-  void wheelEvent(QWheelEvent *event);
-  void timerEvent(QTimerEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
+  void resizeEvent(QResizeEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
+  void timerEvent(QTimerEvent *) override;
 
 public slots:
   void setRowCount(int rowCount);

@@ -32,7 +32,7 @@ using namespace ToolUtils;
 //    PumpTool declaration
 //*****************************************************************************
 
-class PumpTool : public TTool {
+class PumpTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(PumpTool)
 
   int m_strokeStyleId, m_strokeIndex;  //!< Edited stroke indices
@@ -94,31 +94,31 @@ public:
     m_prop.bind(m_accuracy);
   }
 
-  ToolType getToolType() const { return TTool::LevelWriteTool; }
+  ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
-  TPropertyGroup *getProperties(int targetType) { return &m_prop; }
+  TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
-  void updateTranslation() {
+  void updateTranslation() override {
     m_toolSize.setQStringName(tr("Size:"));
     m_accuracy.setQStringName(tr("Accuracy:"));
   }
 
-  void onEnter();
-  void onLeave();
+  void onEnter() override;
+  void onLeave() override;
 
-  void draw();
+  void draw() override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override;
 
-  void mouseMove(const TPointD &pos, const TMouseEvent &e);
+  void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   bool moveCursor(const TPointD &pos);
 
-  int getCursorId() const { return m_cursorId; }
+  int getCursorId() const override { return m_cursorId; }
   void invalidateCursorArea();
 
-  void onDeactivate();
+  void onDeactivate() override;
 
 private:
   double actionRadius(double strokeLength);

@@ -133,7 +133,7 @@ public:
 //    OverwriteDialog  definition
 //************************************************************************
 
-class OverwriteDialog : public DVGui::ValidatedChoiceDialog {
+class OverwriteDialog final : public DVGui::ValidatedChoiceDialog {
 public:
   enum Resolution {
     NO_RESOLUTION,
@@ -150,7 +150,7 @@ public:
 public:
   OverwriteDialog(QWidget *parent);
 
-  virtual QString acceptResolution(void *obj, int resolution, bool applyToAll);
+  QString acceptResolution(void *obj, int resolution, bool applyToAll) override;
 };
 
 //************************************************************************

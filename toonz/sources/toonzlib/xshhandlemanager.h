@@ -18,14 +18,14 @@ class ToonzScene;
 //    XshHandleManager  declaration
 //*********************************************************************************
 
-class XshHandleManager : public HandleManager {
+class XshHandleManager final : public HandleManager {
   TXsheet *m_xsh;
 
 public:
   XshHandleManager(TXsheet *xsh) : m_xsh(xsh) {}
 
   TPointD getHandlePos(const TStageObjectId &id, const std::string &handle,
-                       int row) const;
+                       int row) const override;
 };
 
 #endif

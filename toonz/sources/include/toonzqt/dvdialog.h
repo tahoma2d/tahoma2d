@@ -126,7 +126,7 @@ QString DVAPI getText(const QString &title, const QString &label,
                 \b Result
                         \image html DialogSeparator.jpg
 */
-class DVAPI Separator : public QFrame {
+class DVAPI Separator final : public QFrame {
   Q_OBJECT
 
   QString m_name;
@@ -150,7 +150,7 @@ public:
   bool isHorizontal() { return m_isHorizontal; }
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -168,8 +168,8 @@ class DVAPI Dialog : public QDialog {
 protected:
   QHBoxLayout *m_buttonLayout;
   QList<QLabel *> m_labelList;
-  void resizeEvent(QResizeEvent *e);
-  void moveEvent(QMoveEvent *e);
+  void resizeEvent(QResizeEvent *e) override;
+  void moveEvent(QMoveEvent *e) override;
 
 public:
   QVBoxLayout *m_topLayout;
@@ -230,7 +230,7 @@ public:
   void addButtonBarWidget(QWidget *first, QWidget *second);
   void addButtonBarWidget(QWidget *first, QWidget *second, QWidget *third);
 
-  virtual void hideEvent(QHideEvent *event);
+  void hideEvent(QHideEvent *event) override;
 
   void clearButtonBar();
 signals:
@@ -243,7 +243,7 @@ signals:
     0 -> Cancel or Close Popup,
     1,2,3,... -> checkbox clicked.
 */
-class DVAPI RadioButtonDialog : public DVGui::Dialog {
+class DVAPI RadioButtonDialog final : public DVGui::Dialog {
   Q_OBJECT
 
   int m_result;

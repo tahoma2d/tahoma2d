@@ -41,7 +41,7 @@ namespace {
 
 //===================================================================
 
-class ParamDependencyFinder : public TSyntax::CalculatorNodeVisitor {
+class ParamDependencyFinder final : public TSyntax::CalculatorNodeVisitor {
   TDoubleParam *m_possiblyDependentParam;
   bool m_found;
 
@@ -62,9 +62,9 @@ public:
 //
 //-------------------------------------------------------------------
 
-class ParamCalculatorNode : public CalculatorNode,
-                            public TParamObserver,
-                            public boost::noncopyable {
+class ParamCalculatorNode final : public CalculatorNode,
+                                  public TParamObserver,
+                                  public boost::noncopyable {
   TDoubleParamP m_param;
   std::auto_ptr<CalculatorNode> m_frame;
 
@@ -77,7 +77,7 @@ public:
 
   ~ParamCalculatorNode() { m_param->removeObserver(this); }
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     double value      = m_param->getValue(m_frame->compute(vars) - 1);
     TMeasure *measure = m_param->getMeasure();
     if (measure) {
@@ -87,14 +87,14 @@ public:
     return value;
   }
 
-  void accept(TSyntax::CalculatorNodeVisitor &visitor) {
+  void accept(TSyntax::CalculatorNodeVisitor &visitor) override {
     ParamDependencyFinder *pdf =
         dynamic_cast<ParamDependencyFinder *>(&visitor);
     pdf->check(m_param.getPointer());
     m_param->accept(visitor);
   }
 
-  void onChange(const TParamChange &paramChange) {
+  void onChange(const TParamChange &paramChange) override {
     // The referenced parameter changed. This means the parameter owning the
     // expression this node is part of, changes too.
 
@@ -117,8 +117,8 @@ public:
 
 //-------------------------------------------------------------------
 
-class XsheetDrawingCalculatorNode : public CalculatorNode,
-                                    public boost::noncopyable {
+class XsheetDrawingCalculatorNode final : public CalculatorNode,
+                                          public boost::noncopyable {
   TXsheet *m_xsh;
   int m_columnIndex;
 
@@ -132,7 +132,7 @@ public:
       , m_columnIndex(columnIndex)
       , m_frame(frame) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     double f = m_frame->compute(vars);
     int i    = tfloor(f);
     f        = f - (double)i;
@@ -145,7 +145,7 @@ public:
     return d;
   }
 
-  void accept(TSyntax::CalculatorNodeVisitor &) {}
+  void accept(TSyntax::CalculatorNodeVisitor &) override {}
 };
 
 //===================================================================
@@ -154,7 +154,7 @@ public:
 //
 //-------------------------------------------------------------------
 
-class XsheetReferencePattern : public Pattern {
+class XsheetReferencePattern final : public Pattern {
   TXsheet *m_xsh;
 
 public:
@@ -219,11 +219,12 @@ public:
       return TStageObject::T_ChannelCount;
   }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 4;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     int i = (int)previousTokens.size();
     if (i == 0)
       return matchObjectName(token) != TStageObjectId::NoneId;
@@ -241,26 +242,27 @@ public:
       return false;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() >= 6;
   }
   bool isComplete(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() >= 6 || previousTokens.size() == 3;
   }
   TSyntax::TokenType getTokenType(const std::vector<Token> &previousTokens,
-                                  const Token &token) const {
+                                  const Token &token) const override {
     return TSyntax::Operator;
   }
 
-  void getAcceptableKeywords(std::vector<std::string> &keywords) const {
+  void getAcceptableKeywords(
+      std::vector<std::string> &keywords) const override {
     const std::string ks[] = {"table",  "tab", "col",   "cam",
                               "camera", "peg", "pegbar"};
     for (int i = 0; i < tArrayCount(ks); i++) keywords.push_back(ks[i]);
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() >= 3);
 
     std::auto_ptr<CalculatorNode> frameNode(
@@ -286,7 +288,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class FxReferencePattern : public Pattern {
+class FxReferencePattern final : public Pattern {
   TXsheet *m_xsh;
 
 public:
@@ -331,12 +333,13 @@ public:
     }
     return 0;
   }
-  std::string getFirstKeyword() const { return "fx"; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  std::string getFirstKeyword() const override { return "fx"; }
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return !previousTokens.empty() && previousTokens.back().getText() == "(";
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     int i         = (int)previousTokens.size();
     std::string s = toLower(token.getText());
     if (i == 0 && s == "fx")
@@ -368,21 +371,21 @@ public:
       return false;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return !previousTokens.empty() && previousTokens.back().getText() == ")";
   }
   bool isComplete(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     int n = (int)previousTokens.size();
     return n >= 2 && (n & 1) == 1 && previousTokens[n - 2].getText() != "(";
   }
   TSyntax::TokenType getTokenType(const std::vector<Token> &previousTokens,
-                                  const Token &token) const {
+                                  const Token &token) const override {
     return TSyntax::Operator;
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     int tokenSize = tokens.size();
 
     std::auto_ptr<CalculatorNode> frameNode(
@@ -412,7 +415,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class PlasticVertexPattern : public Pattern {
+class PlasticVertexPattern final : public Pattern {
   TXsheet *m_xsh;
 
   /*
@@ -450,14 +453,15 @@ public:
         "Skeleton vertex");
   }
 
-  virtual std::string getFirstKeyword() const { return "vertex"; }
+  std::string getFirstKeyword() const override { return "vertex"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return (previousTokens.size() == EXPR);
   }
 
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     struct {
       const PlasticVertexPattern *m_this;
       const SkD *skdp(const Token &columnToken) {
@@ -503,23 +507,23 @@ public:
   }
 
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return (previousTokens.size() >= POSITIONS_COUNT);
   }
 
   bool isComplete(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return (previousTokens.size() >= POSITIONS_COUNT ||
             previousTokens.size() == L2);
   }
 
   TSyntax::TokenType getTokenType(const std::vector<Token> &previousTokens,
-                                  const Token &token) const {
+                                  const Token &token) const override {
     return TSyntax::Operator;
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() > COMPONENT);
 
     std::auto_ptr<CalculatorNode> frameNode(

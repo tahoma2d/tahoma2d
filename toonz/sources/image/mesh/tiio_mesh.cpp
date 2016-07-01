@@ -13,7 +13,7 @@
 //    TImageWriterMesh  definition
 //********************************************************************************
 
-class TImageWriterMesh : public TImageWriter {
+class TImageWriterMesh final : public TImageWriter {
   TFrameId m_fid;  //!< The frame id
 
 public:
@@ -21,7 +21,7 @@ public:
   ~TImageWriterMesh() {}
 
 public:
-  void save(const TImageP &);
+  void save(const TImageP &) override;
 
 private:
   TImageWriterMesh(const TImageWriterMesh &);
@@ -76,7 +76,7 @@ void TImageWriterMesh::save(const TImageP &img) {
 //    TImageReaderMesh  definition
 //********************************************************************************
 
-class TImageReaderMesh : public TImageReader {
+class TImageReaderMesh final : public TImageReader {
   TFrameId m_fid;             //<! Current frame id
   mutable TImageInfo m_info;  //!< The image's infos
 
@@ -84,8 +84,8 @@ public:
   TImageReaderMesh(const TFilePath &fp, const TFrameId &frameId);
   ~TImageReaderMesh() {}
 
-  const TImageInfo *getImageInfo() const;
-  TImageP load();
+  const TImageInfo *getImageInfo() const override;
+  TImageP load() override;
 
 private:
   //! Reference to level reader

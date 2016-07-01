@@ -14,7 +14,7 @@ class TImageReaderPli;
 
 //===========================================================================
 /*
-class TWriterInfoPli : public TWriterInfo {
+class TWriterInfoPli final : public TWriterInfo {
 
 public:
  ~TWriterInfoPli() {}
@@ -33,7 +33,7 @@ private:
 /*!
   TLevelWriterPli:
  */
-class TLevelWriterPli : public TLevelWriter {
+class TLevelWriterPli final : public TLevelWriter {
   //! object to manage a pli
   std::unique_ptr<ParsedPli> m_pli;
 
@@ -46,7 +46,7 @@ class TLevelWriterPli : public TLevelWriter {
 public:
   TLevelWriterPli(const TFilePath &path, TPropertyGroup *winfo);
   ~TLevelWriterPli();
-  TImageWriterP getFrameWriter(TFrameId fid);
+  TImageWriterP getFrameWriter(TFrameId fid) override;
 
   friend class TImageWriterPli;
 
@@ -68,7 +68,7 @@ typedef std::pair<ImageTag *, bool> pliFrameInfo;
 /*!
   TLevelReaderPli:
  */
-class TLevelReaderPli : public TLevelReader {
+class TLevelReaderPli final : public TLevelReader {
 public:
   TLevelReaderPli(const TFilePath &path);
   ~TLevelReaderPli();
@@ -76,15 +76,15 @@ public:
   /*!
 Return info about current pli
 */
-  TLevelP loadInfo();
-  void doReadPalette(bool doReadIt);
+  TLevelP loadInfo() override;
+  void doReadPalette(bool doReadIt) override;
 
   /*!
 Return an image with Reader information
 */
-  TImageReaderP getFrameReader(TFrameId fid);
+  TImageReaderP getFrameReader(TFrameId fid) override;
 
-  QString getCreator();
+  QString getCreator() override;
   friend class TImageReaderPli;
 
 private:
@@ -120,7 +120,7 @@ private:
 /*
 Classe locale per la lettura di un frame del livello.
 */
-class TImageReaderPli : public TImageReader {
+class TImageReaderPli final : public TImageReader {
 public:
   TFrameId m_frameId;  //<! Current frame id
 
@@ -134,7 +134,7 @@ public:
                   TLevelReaderPli *);
   ~TImageReaderPli() {}
 
-  TImageP load();
+  TImageP load() override;
   TImageP doLoad();
 
   TDimension getSize() const;

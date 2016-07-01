@@ -25,8 +25,8 @@
 
 //! The TDoubleParamRelayProperty is a TProperty heir which can be used as
 //! intermediary between a TDoubleParam instance and its GUI viewers.
-class DVAPI TDoubleParamRelayProperty : public TProperty,
-                                        public TParamObserver {
+class DVAPI TDoubleParamRelayProperty final : public TProperty,
+                                              public TParamObserver {
   TDoubleParamP m_param;  //!< The referenced param
   double m_frame;         //!< Frame at which m_param returns values
 
@@ -44,8 +44,8 @@ public:
   TDoubleParamRelayProperty(const TDoubleParamRelayProperty &other);
   TDoubleParamRelayProperty &operator=(const TDoubleParamRelayProperty &other);
 
-  TProperty *clone() const;
-  std::string getValueAsString();
+  TProperty *clone() const override;
+  std::string getValueAsString() override;
 
   void setParam(const TDoubleParamP &param);
   const TDoubleParamP &getParam() const { return m_param; }
@@ -56,9 +56,9 @@ public:
   double frame() const { return m_frame; }
   double &frame() { return m_frame; }
 
-  void accept(TProperty::Visitor &v);
+  void accept(TProperty::Visitor &v) override;
 
-  void onChange(const TParamChange &);
+  void onChange(const TParamChange &) override;
 };
 
 #endif  // TDOUBLEPARAMRELAYPROPERTY_H

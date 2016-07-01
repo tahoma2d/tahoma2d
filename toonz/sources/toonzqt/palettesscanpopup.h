@@ -22,7 +22,7 @@
 // PalettesScanPopup
 //-----------------------------------------------------------------------------
 
-class DVAPI PalettesScanPopup : public DVGui::Dialog {
+class DVAPI PalettesScanPopup final : public DVGui::Dialog {
   Q_OBJECT
 
   DVGui::FileField *m_field;
@@ -49,7 +49,7 @@ protected slots:
 
 protected:
   void setLabel(const TFilePath &fp);
-  void timerEvent(QTimerEvent *event);
+  void timerEvent(QTimerEvent *event) override;
   void push(const TFilePath &fp);
   void push(const TFilePathSet &fs);
   void pop();

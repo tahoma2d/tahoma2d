@@ -37,7 +37,7 @@ class QFileSystemWatcher;
 //! generator does. Calculated frame counts are also stored for quick lookup
 //! once they
 //! have been calculated the first time.
-class FrameCountReader : public QObject {
+class FrameCountReader final : public QObject {
   Q_OBJECT
 
   TThread::Executor m_executor;
@@ -56,7 +56,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class FileBrowser : public QFrame, public DvItemListModel {
+class FileBrowser final : public QFrame, public DvItemListModel {
   Q_OBJECT
 
 public:
@@ -69,18 +69,19 @@ public:
 #endif
   ~FileBrowser();
 
-  void sortByDataModel(DataType dataType, bool isDiscendent);
-  void refreshData();
+  void sortByDataModel(DataType dataType, bool isDiscendent) override;
+  void refreshData() override;
 
-  int getItemCount() const;
-  QVariant getItemData(int index, DataType dataType, bool isSelected = false);
+  int getItemCount() const override;
+  QVariant getItemData(int index, DataType dataType,
+                       bool isSelected = false) override;
 
-  bool canRenameItem(int index) const;
-  void renameItem(int index, const QString &newName);
+  bool canRenameItem(int index) const override;
+  void renameItem(int index, const QString &newName) override;
 
-  bool isSceneItem(int index) const;
-  void startDragDrop();
-  QMenu *getContextMenu(QWidget *parent, int index);
+  bool isSceneItem(int index) const override;
+  void startDragDrop() override;
+  QMenu *getContextMenu(QWidget *parent, int index) override;
 
   /*!
 This functions adds to the types to be filtered a new type;
@@ -129,10 +130,10 @@ protected:
   bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data,
                     Qt::DropAction action);
 
-  bool acceptDrop(const QMimeData *data) const;
-  bool drop(const QMimeData *data);
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  bool acceptDrop(const QMimeData *data) const override;
+  bool drop(const QMimeData *data) override;
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
   // Fill the QStringList with files selected in the browser, auxiliary files
   // (palette for tlv, hooks, sceneIcons)
@@ -266,7 +267,7 @@ private:
 };
 
 //--------------------------------------------------------------------
-class RenameAsToonzPopup : public DVGui::Dialog {
+class RenameAsToonzPopup final : public DVGui::Dialog {
   Q_OBJECT
   QPushButton *m_okBtn, *m_cancelBtn;
   DVGui::LineEdit *m_name;

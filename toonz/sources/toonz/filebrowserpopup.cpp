@@ -373,6 +373,7 @@ void FileBrowserPopup::showEvent(QShowEvent *) {
     m_currentProjectPath = projectPath;
     initFolder();
     m_nameField->update();
+    m_nameField->setFocus();
   }
   resize(m_dialogSize);
 }
@@ -636,13 +637,13 @@ LoadLevelPopup::LoadLevelPopup()
   // use the default value set in the preference
   m_loadTlvBehaviorComboBox->setCurrentIndex(
       Preferences::instance()->getInitialLoadTlvCachingBehavior());
-  cacheBehaviorLabel->setObjectName("LoadLevelHeadLabel");
+  cacheBehaviorLabel->setObjectName("TitleTxtLabel");
 
   QIntValidator *validator = new QIntValidator(this);
   validator->setBottom(1);
 
   //----Load Subsequence Level
-  subsequenceLabel->setObjectName("LoadLevelHeadLabel");
+  subsequenceLabel->setObjectName("TitleTxtLabel");
   showSubsequenceButton->setObjectName("LoadLevelShowButton");
   showSubsequenceButton->setFixedSize(15, 15);
   showSubsequenceButton->setCheckable(true);
@@ -658,7 +659,7 @@ LoadLevelPopup::LoadLevelPopup()
   m_toFrame->setValidator(validator);
 
   //----Arrangement in Xsheet
-  arrangementLabel->setObjectName("LoadLevelHeadLabel");
+  arrangementLabel->setObjectName("TitleTxtLabel");
   showArrangementButton->setObjectName("LoadLevelShowButton");
   showArrangementButton->setFixedSize(15, 15);
   showArrangementButton->setCheckable(true);
@@ -902,7 +903,7 @@ void LoadLevelPopup::updatePosTo() {
     } else {
       std::vector<TFrameId> fIds = getCurrentFIds();
       //--- If loading the level with sequencial files, reuse the list of
-      //TFrameId
+      // TFrameId
       if (fIds.size() != 0) {
         if (m_stepCombo->currentIndex() == 0)  // Step = Auto
         {

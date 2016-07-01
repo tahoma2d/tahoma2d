@@ -14,14 +14,14 @@ class TColorStyle;
 // StyleData
 //-----------------------------------------------------------------------------
 
-class StyleData : public DvMimeData {
+class StyleData final : public DvMimeData {
   std::vector<std::pair<int, TColorStyle *>> m_styles;
 
 public:
   StyleData();
   ~StyleData();
 
-  StyleData *clone() const;
+  StyleData *clone() const override;
 
   void addStyle(int styleIndex, TColorStyle *style);  // gets ownership
 

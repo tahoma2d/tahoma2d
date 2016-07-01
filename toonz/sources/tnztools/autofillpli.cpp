@@ -59,7 +59,7 @@ static TPointD workB(0, 0);
 
 //==============================================================================================
 
-class AreasAndPerimeterFormula : public TRegionFeatureFormula {
+class AreasAndPerimeterFormula final : public TRegionFeatureFormula {
   double m_signedArea, m_perimeter;
 
 public:
@@ -67,7 +67,7 @@ public:
 
   ~AreasAndPerimeterFormula() {}
 
-  void update(const TPointD &p1, const TPointD &p2) {
+  void update(const TPointD &p1, const TPointD &p2) override {
     m_perimeter += norm(p2 - p1);
     m_signedArea += ((p1.x * p2.y) - (p2.x * p1.y)) * 0.5;
   }
@@ -79,7 +79,7 @@ public:
 
 //---------------------------------------------------------------------------------------------
 
-class CentroidFormula : public TRegionFeatureFormula {
+class CentroidFormula final : public TRegionFeatureFormula {
   TPointD m_centroid;
   double m_signedArea;
 
@@ -88,7 +88,7 @@ public:
 
   ~CentroidFormula() {}
 
-  void update(const TPointD &p1, const TPointD &p2) {
+  void update(const TPointD &p1, const TPointD &p2) override {
     double factor = ((p1.x * p2.y) - (p2.x * p1.y));
     m_centroid.x += (p1.x + p2.x) * factor;
     m_centroid.y += (p1.y + p2.y) * factor;

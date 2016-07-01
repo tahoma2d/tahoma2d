@@ -35,11 +35,14 @@ typedef std::map<double, Iwa_ParticlesManager::FrameData> FramesMap;
 //    Preliminaries
 //************************************************************************************************
 
-class Iwa_ParticlesManagerGenerator : public TRenderResourceManagerGenerator {
+class Iwa_ParticlesManagerGenerator final
+    : public TRenderResourceManagerGenerator {
 public:
   Iwa_ParticlesManagerGenerator() : TRenderResourceManagerGenerator(true) {}
 
-  TRenderResourceManager *operator()(void) { return new Iwa_ParticlesManager; }
+  TRenderResourceManager *operator()(void) override {
+    return new Iwa_ParticlesManager;
+  }
 };
 
 MANAGER_FILESCOPE_DECLARATION(Iwa_ParticlesManager,

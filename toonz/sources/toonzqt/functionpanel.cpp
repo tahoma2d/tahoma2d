@@ -52,14 +52,14 @@ void drawRoundedSquare(QPainter &painter, const QPointF &p, double r) {
 
 double norm2(const QPointF &p) { return p.x() * p.x() + p.y() * p.y(); }
 
-class FunctionPanelZoomer : public ImageUtils::ShortcutZoomer {
+class FunctionPanelZoomer final : public ImageUtils::ShortcutZoomer {
   FunctionPanel *m_panel;
 
 public:
   FunctionPanelZoomer(FunctionPanel *panel)
       : ShortcutZoomer(panel), m_panel(panel) {}
 
-  bool zoom(bool zoomin, bool resetZoom) {
+  bool zoom(bool zoomin, bool resetZoom) override {
     if (resetZoom)
       m_panel->fitGraphToWindow();
     else {

@@ -16,7 +16,7 @@
 // Sono i fotogrammi della filmstrip
 //-----------------------------------------------------------------------------
 
-class DrawingData : public DvMimeData {
+class DrawingData final : public DvMimeData {
 public:
   std::map<TFrameId, QString>
       m_imageSet;  // images are in the cache, the QString is the cache id
@@ -37,10 +37,10 @@ public:
       , m_level(src->m_level)
       , m_levelHooks(src->m_levelHooks) {}
 
-  void releaseData();
+  void releaseData() override;
   ~DrawingData();
 
-  DrawingData *clone() const;
+  DrawingData *clone() const override;
 
   // data <- filmstrip
   void setLevelFrames(TXshSimpleLevel *sl, std::set<TFrameId> &frames);

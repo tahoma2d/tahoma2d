@@ -17,11 +17,11 @@
 //    Decorations
 //-------------------
 
-class TDockDecoAllocator : public DockDecoAllocator {
+class TDockDecoAllocator final : public DockDecoAllocator {
   DockSeparator *newSeparator(DockLayout *owner, bool orientation,
-                              Region *parentRegion);
+                              Region *parentRegion) override;
   DockPlaceholder *newPlaceholder(DockWidget *owner, Region *r, int idx,
-                                  int attributes);
+                                  int attributes) override;
 };
 
 //========================================================================
@@ -326,27 +326,27 @@ QSize TDockWidget::getDockedMaximumSize() {
 //    Custom Decorations
 //--------------------------
 
-class TDockSeparator : public DockSeparator {
+class TDockSeparator final : public DockSeparator {
 public:
   TDockSeparator(DockLayout *owner, bool orientation, Region *parentRegion)
       : DockSeparator(owner, orientation, parentRegion) {}
 
-  void paintEvent(QPaintEvent *pe);
+  void paintEvent(QPaintEvent *pe) override;
 };
 
 //----------------------------------------
 
-class TDockPlaceholder : public DockPlaceholder {
+class TDockPlaceholder final : public DockPlaceholder {
   QWidget *m_associated[3];
 
 public:
   TDockPlaceholder(DockWidget *owner, Region *r, int idx, int attributes);
   ~TDockPlaceholder();
 
-  void buildGeometry();
+  void buildGeometry() override;
 
-  void showEvent(QShowEvent *se);
-  void hideEvent(QHideEvent *he);
+  void showEvent(QShowEvent *se) override;
+  void hideEvent(QHideEvent *he) override;
 };
 
 //----------------------------------------

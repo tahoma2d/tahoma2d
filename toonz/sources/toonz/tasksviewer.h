@@ -17,21 +17,21 @@ class TaskTreeView;
 class QListWidgetItem;
 class QComboBox;
 
-class TaskTreeModel : public TreeModel {
+class TaskTreeModel final : public TreeModel {
   Q_OBJECT
 
   // QModelIndex m_selectedIndex;
   TaskTreeView *m_view;
 
 public:
-  class Item : public TreeModel::Item {
+  class Item final : public TreeModel::Item {
     friend class TaskTreeModel;
 
   public:
     Item(const QString &name);
     Item(TFarmTask *task);
     //~Item();
-    void *getInternalPointer() const { return m_task; }
+    void *getInternalPointer() const override { return m_task; }
     TFarmTask *getTask() const { return m_task; }
     void setName(QString name) { m_name = name; }
     QString getName() const { return m_name; }
@@ -60,7 +60,7 @@ public slots:
   void setupModelData();
 
 protected:
-  QVariant data(const QModelIndex &index, int role) const;
+  QVariant data(const QModelIndex &index, int role) const override;
 
 private:
   // void setLayout(Item *oldPegs);
@@ -69,7 +69,7 @@ private:
 //------------------------------------------------------------------------------------------
 class TasksViewer;
 
-class TaskTreeView : public TreeView {
+class TaskTreeView final : public TreeView {
   Q_OBJECT
 
 public:
@@ -79,8 +79,9 @@ public:
   QModelIndexList getSelectedIndexes() const { return selectedIndexes(); }
 
 protected:
-  void onClick(TreeModel::Item *item, const QPoint &pos, QMouseEvent *e);
-  void openContextMenu(TreeModel::Item *item, const QPoint &globalPos);
+  void onClick(TreeModel::Item *item, const QPoint &pos,
+               QMouseEvent *e) override;
+  void openContextMenu(TreeModel::Item *item, const QPoint &globalPos) override;
 };
 
 //------------------------------------------------------------------------------------------
@@ -92,7 +93,7 @@ class TFarmTask;
 class QTextEdit;
 class QListWidget;
 
-class TaskSheet : public QScrollArea {
+class TaskSheet final : public QScrollArea {
   Q_OBJECT
 
   TasksViewer *m_viewer;
@@ -160,7 +161,7 @@ public:
 
 //=============================================================================
 class QToolBar;
-class TasksViewer : public QSplitter, public BatchesController::Observer {
+class TasksViewer final : public QSplitter, public BatchesController::Observer {
   Q_OBJECT
 
 public:
@@ -175,7 +176,7 @@ public:
 #endif
   ~TasksViewer();
 
-  void update();
+  void update() override;
 
   void setSelected(TFarmTask *task);
   const std::vector<QAction *> &getActions() const;
@@ -192,8 +193,8 @@ protected:
   void add(const QString &iconName, QString text, QToolBar *toolBar,
            const char *slot, QString iconText);
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 };
 
 //=============================================================================

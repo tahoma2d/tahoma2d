@@ -171,7 +171,7 @@ inline bool isBlank(char c) { return c == ' ' || c == '\t' || c == '\n'; }
 //==============================================================================
 //==============================================================================
 
-class FarmServerService : public TService {
+class FarmServerService final : public TService {
 public:
   FarmServerService(std::ostream &os)
       : TService("ToonzFarm Server", "ToonzFarm Server")
@@ -180,8 +180,8 @@ public:
 
   ~FarmServerService() { delete m_userLog; }
 
-  void onStart(int argc, char *argv[]);
-  void onStop();
+  void onStart(int argc, char *argv[]) override;
+  void onStop() override;
 
   void loadControllerData(QString &hostName, string &ipAddr, int &port);
 #ifdef _WIN32
@@ -208,7 +208,7 @@ FarmServerService service(std::cout);
 //==============================================================================
 //==============================================================================
 
-class FarmControllerProxy : public TSmartObject {
+class FarmControllerProxy final : public TSmartObject {
   TFarmController *m_controller;
 
 public:
@@ -259,7 +259,7 @@ public:
 //==============================================================================
 //==============================================================================
 
-class FarmServer : public TFarmExecutor, public TFarmServer {
+class FarmServer final : public TFarmExecutor, public TFarmServer {
 public:
   FarmServer(int port, TUserLog *log);
   ~FarmServer();
@@ -274,22 +274,24 @@ public:
   TFarmController *getController() const { return m_controller.getPointer(); }
   void setAppPaths(const vector<TFilePath> &);
 
-  QString execute(const vector<QString> &argv);
+  QString execute(const vector<QString> &argv) override;
 
   // TFarmServer overrides
-  int addTask(const QString &taskid, const QString &cmdline);
-  int terminateTask(const QString &taskid);
-  int getTasks(vector<QString> &tasks);
+  int addTask(const QString &taskid, const QString &cmdline) override;
+  int terminateTask(const QString &taskid) override;
+  int getTasks(vector<QString> &tasks) override;
 
-  void queryHwInfo(HwInfo &hwInfo);
+  void queryHwInfo(HwInfo &hwInfo) override;
 
   void attachController(const ControllerData &data);
-  void attachController(const QString &name, const QString &addr, int port) {
+  void attachController(const QString &name, const QString &addr,
+                        int port) override {
     attachController(ControllerData(name, addr, port));
   }
 
   void detachController(const ControllerData &data);
-  void detachController(const QString &name, const QString &addr, int port) {
+  void detachController(const QString &name, const QString &addr,
+                        int port) override {
     detachController(ControllerData(name, addr, port));
   }
 
@@ -324,7 +326,7 @@ private:
 //===================================================================
 //===================================================================
 
-class Task : public TThread::Runnable {
+class Task final : public TThread::Runnable {
 public:
   Task(const QString &id, const QString &cmdline, TUserLog *log,
        FarmServer *server, const FarmControllerProxyP &controller)
@@ -334,7 +336,7 @@ public:
       , m_server(server)
       , m_controller(controller) {}
 
-  void run();
+  void run() override;
 
 private:
   QString m_id;

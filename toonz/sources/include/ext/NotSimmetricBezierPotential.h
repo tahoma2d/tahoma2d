@@ -23,17 +23,17 @@
 #endif
 
 namespace ToonzExt {
-class DVAPI NotSimmetricBezierPotential : public Potential {
+class DVAPI NotSimmetricBezierPotential final : public Potential {
 public:
   virtual ~NotSimmetricBezierPotential();
 
   // chiama compute_value ma effettua un controllo del parametro
-  virtual double value_(double radiusToTest) const;
+  double value_(double radiusToTest) const override;
 
-  virtual void setParameters_(const TStroke *ref, double w,
-                              double actionLength);
+  void setParameters_(const TStroke *ref, double w,
+                      double actionLength) override;
 
-  Potential *clone();
+  Potential *clone() override;
 
 private:
   double compute_shape(double) const;  // funzione ausiliaria per

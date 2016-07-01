@@ -67,12 +67,12 @@ protected:
 
 //------------------------------------------------------------------------------
 
-class CantConnectToStub : public TFarmProxyException {
+class CantConnectToStub final : public TFarmProxyException {
 public:
   CantConnectToStub(const QString &hostname, const QString &addr, int port)
       : TFarmProxyException(hostname, addr, port, "") {}
 
-  TString getMessage() const;
+  TString getMessage() const override;
 };
 
 #endif

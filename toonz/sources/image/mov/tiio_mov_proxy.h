@@ -3,7 +3,7 @@
 #ifndef TIIO_MOV_PROXY_H
 #define TIIO_MOV_PROXY_H
 
-#if defined(x64) || defined(__LP64__)
+#if defined(x64) || defined(__LP64__) || defined(LINUX)
 
 // Qt includes
 #include <QString>
@@ -22,7 +22,7 @@ bool IsQuickTimeInstalled();
 //    TLevelWriterMov Proxy - delegates to a background 32-bit process
 //******************************************************************************
 
-class TLevelWriterMov : public TLevelWriter {
+class TLevelWriterMov final : public TLevelWriter {
   unsigned int m_id;
 
 public:
@@ -48,7 +48,7 @@ public:
 //    TLevelReaderMov Proxy
 //******************************************************************************
 
-class TLevelReaderMov : public TLevelReader {
+class TLevelReaderMov final : public TLevelReader {
   unsigned int m_id;
   int m_lx, m_ly;
 
@@ -76,7 +76,7 @@ public:
 //===========================================================================
 
 namespace Tiio {
-class MovWriterProperties : public TPropertyGroup {
+class MovWriterProperties final : public TPropertyGroup {
 public:
   MovWriterProperties();
 };

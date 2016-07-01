@@ -88,7 +88,7 @@ void putint(FILE *fp, int i) {
 
 //=========================================================
 
-class BmpReader : public Tiio::Reader {
+class BmpReader final : public Tiio::Reader {
   FILE *m_chan;
   BMP_HEADER m_header;
   char *m_line;
@@ -103,7 +103,7 @@ public:
   BmpReader();
   ~BmpReader();
 
-  void open(FILE *file);
+  void open(FILE *file) override;
 
   int readNoLine(char *buffer, int x0, int x1, int shrink);
 
@@ -123,8 +123,8 @@ public:
   int read24Line(char *buffer, int x0, int x1, int shrink);
   int read32Line(char *buffer, int x0, int x1, int shrink);
 
-  void readLine(char *buffer, int x0, int x1, int shrink);
-  int skipLines(int lineCount) {
+  void readLine(char *buffer, int x0, int x1, int shrink) override;
+  int skipLines(int lineCount) override {
     fseek(m_chan, lineCount * m_lineSize, SEEK_CUR);
     /* for(int i=0;i<lineCount;i++)
             skipBytes(m_lineSize);*/
@@ -584,7 +584,7 @@ int BmpReader::read32Line(char *buffer, int x0, int x1, int shrink) {
 
 //=========================================================
 
-class BmpWriter : public Tiio::Writer {
+class BmpWriter final : public Tiio::Writer {
   FILE *m_chan;
   int m_bitPerPixel;
   int m_compression;
@@ -593,11 +593,11 @@ public:
   BmpWriter();
   ~BmpWriter();
 
-  void open(FILE *file, const TImageInfo &info);
+  void open(FILE *file, const TImageInfo &info) override;
 
-  void flush() { fflush(m_chan); }
+  void flush() override { fflush(m_chan); }
 
-  void writeLine(char *buffer);
+  void writeLine(char *buffer) override;
 };
 
 //---------------------------------------------------------

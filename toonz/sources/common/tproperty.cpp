@@ -75,21 +75,21 @@ void assign(Property *dst, TProperty *src) {
   dst->setValue(s->getValue());
 }
 
-class Setter : public TProperty::Visitor {
+class Setter final : public TProperty::Visitor {
   TProperty *m_src;
 
 public:
   Setter(TProperty *src) : m_src(src) {}
 
-  void visit(TDoubleProperty *dst) { assign(dst, m_src); }
-  void visit(TIntProperty *dst) { assign(dst, m_src); }
-  void visit(TStringProperty *dst) { assign(dst, m_src); }
-  void visit(TBoolProperty *dst) { assign(dst, m_src); }
-  void visit(TEnumProperty *dst) { assign(dst, m_src); }
-  void visit(TDoublePairProperty *dst) { assign(dst, m_src); }
-  void visit(TIntPairProperty *dst) { assign(dst, m_src); }
-  void visit(TStyleIndexProperty *dst) { assign(dst, m_src); }
-  void visit(TPointerProperty *dst) { assign(dst, m_src); }
+  void visit(TDoubleProperty *dst) override { assign(dst, m_src); }
+  void visit(TIntProperty *dst) override { assign(dst, m_src); }
+  void visit(TStringProperty *dst) override { assign(dst, m_src); }
+  void visit(TBoolProperty *dst) override { assign(dst, m_src); }
+  void visit(TEnumProperty *dst) override { assign(dst, m_src); }
+  void visit(TDoublePairProperty *dst) override { assign(dst, m_src); }
+  void visit(TIntPairProperty *dst) override { assign(dst, m_src); }
+  void visit(TStyleIndexProperty *dst) override { assign(dst, m_src); }
+  void visit(TPointerProperty *dst) override { assign(dst, m_src); }
 };
 
 void TPropertyGroup::setProperties(TPropertyGroup *g) {
@@ -111,13 +111,13 @@ void TPropertyGroup::accept(TProperty::Visitor &v) {
     i->first->accept(v);
 }
 
-class PropertyWriter : public TProperty::Visitor {
+class PropertyWriter final : public TProperty::Visitor {
   TOStream &m_os;
 
 public:
   PropertyWriter(TOStream &os) : m_os(os) {}
 
-  void visit(TDoubleProperty *p) {
+  void visit(TDoubleProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "double";
     attr["name"]  = p->getName();
@@ -126,7 +126,7 @@ public:
     attr["value"] = std::to_string(p->getValue());
     m_os.openCloseChild("property", attr);
   }
-  void visit(TDoublePairProperty *p) {
+  void visit(TDoublePairProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]                     = "pair";
     attr["name"]                     = p->getName();
@@ -137,7 +137,7 @@ public:
         std::to_string(value.first) + " " + std::to_string(value.second);
     m_os.openCloseChild("property", attr);
   }
-  void visit(TIntPairProperty *p) {
+  void visit(TIntPairProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]                  = "pair";
     attr["name"]                  = p->getName();
@@ -148,7 +148,7 @@ public:
         std::to_string(value.first) + " " + std::to_string(value.second);
     m_os.openCloseChild("property", attr);
   }
-  void visit(TIntProperty *p) {
+  void visit(TIntProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "int";
     attr["name"]  = p->getName();
@@ -157,14 +157,14 @@ public:
     attr["value"] = std::to_string(p->getValue());
     m_os.openCloseChild("property", attr);
   }
-  void visit(TBoolProperty *p) {
+  void visit(TBoolProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "bool";
     attr["name"]  = p->getName();
     attr["value"] = p->getValue() ? "true" : "false";
     m_os.openCloseChild("property", attr);
   }
-  void visit(TStringProperty *p) {
+  void visit(TStringProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "string";
     attr["name"]  = p->getName();
@@ -172,7 +172,7 @@ public:
     m_os.openCloseChild("property", attr);
   }
 
-  void visit(TStyleIndexProperty *p) {
+  void visit(TStyleIndexProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "string";
     attr["name"]  = p->getName();
@@ -180,7 +180,7 @@ public:
     m_os.openCloseChild("property", attr);
   }
 
-  void visit(TEnumProperty *p) {
+  void visit(TEnumProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "enum";
     attr["name"]  = p->getName();
@@ -197,7 +197,7 @@ public:
     } else
       m_os.openCloseChild("property", attr);
   }
-  void visit(TPointerProperty *p) {
+  void visit(TPointerProperty *p) override {
     std::map<std::string, std::string> attr;
     attr["type"]  = "pointer";
     attr["name"]  = p->getName();

@@ -181,18 +181,18 @@ public:
 //
 
 template <class T>
-class CommandHandlerHelper : public CommandHandlerInterface {
+class CommandHandlerHelper final : public CommandHandlerInterface {
   T *m_target;
   void (T::*m_method)();
 
 public:
   CommandHandlerHelper(T *target, void (T::*method)())
       : m_target(target), m_method(method) {}
-  void execute() { (m_target->*m_method)(); }
+  void execute() override { (m_target->*m_method)(); }
 };
 
 template <class T, typename R>
-class CommandHandlerHelper2 : public CommandHandlerInterface {
+class CommandHandlerHelper2 final : public CommandHandlerInterface {
   T *m_target;
   void (T::*m_method)(R value);
   R m_value;
@@ -200,7 +200,7 @@ class CommandHandlerHelper2 : public CommandHandlerInterface {
 public:
   CommandHandlerHelper2(T *target, void (T::*method)(R), R value)
       : m_target(target), m_method(method), m_value(value) {}
-  void execute() { (m_target->*m_method)(m_value); }
+  void execute() override { (m_target->*m_method)(m_value); }
 };
 
 //-----------------------------------------------------------------------------
@@ -222,7 +222,7 @@ public:
 };
 
 template <class T>
-class OpenPopupCommandHandler : public MenuItemHandler {
+class OpenPopupCommandHandler final : public MenuItemHandler {
   T *m_popup;
   CommandId m_id;
 
@@ -230,7 +230,7 @@ public:
   OpenPopupCommandHandler(CommandId cmdId)
       : MenuItemHandler(cmdId), m_popup(0) {}
 
-  void execute() {
+  void execute() override {
     if (!m_popup) m_popup = new T();
     m_popup->show();
     m_popup->raise();
@@ -240,7 +240,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class DVAPI DVAction : public QAction {
+class DVAPI DVAction final : public QAction {
   Q_OBJECT
 public:
   DVAction(const QString &text, QObject *parent);
@@ -252,7 +252,7 @@ public slots:
 
 //-----------------------------------------------------------------------------
 
-class DVAPI DVMenuAction : public QMenu {
+class DVAPI DVMenuAction final : public QMenu {
   Q_OBJECT
 
   int m_triggeredActionIndex;

@@ -37,11 +37,11 @@ void printLibRelease(ostream &out) { out << "Tnzcore 1.0 - " __DATE__ << endl; }
 //
 //---------------------------------------------------------
 
-class SpecialUsageElement : public UsageElement {
+class SpecialUsageElement final : public UsageElement {
 public:
   SpecialUsageElement(std::string name) : UsageElement(name, " "){};
-  void dumpValue(ostream &) const {};
-  void resetValue(){};
+  void dumpValue(ostream &) const override{};
+  void resetValue() override{};
 };
 
 //---------------------------------------------------------

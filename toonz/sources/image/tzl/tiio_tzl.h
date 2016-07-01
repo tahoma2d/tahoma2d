@@ -30,7 +30,7 @@ private:
 typedef std::map<TFrameId, TzlChunk> TzlOffsetMap;
 class TRasterCodecLZO;
 
-class TLevelWriterTzl : public TLevelWriter {
+class TLevelWriterTzl final : public TLevelWriter {
   // bool m_paletteWritten;
   bool m_headerWritten;
   bool m_creatorWritten;
@@ -64,22 +64,22 @@ public:
   TLevelWriterTzl(const TFilePath &path, TPropertyGroup *winfo);
   ~TLevelWriterTzl();
 
-  void setPalette(TPalette *palette);
+  void setPalette(TPalette *palette) override;
 
-  void setOverwritePaletteFlag(bool overwrite) {
+  void setOverwritePaletteFlag(bool overwrite) override {
     m_overwritePaletteFlag = overwrite;
   }
 
-  void renumberFids(const std::map<TFrameId, TFrameId> &renumberTable);
+  void renumberFids(const std::map<TFrameId, TFrameId> &renumberTable) override;
   /*!
                   Setta le dimensioni dell'iconcina nel file.
                   ATTENZIONE: va necessariamente richiamata prima di
      renumberFids()!
           */
-  void setIconSize(TDimension iconSize);
-  TDimension getIconSize() const { return m_iconSize; }
+  void setIconSize(TDimension iconSize) override;
+  TDimension getIconSize() const override { return m_iconSize; }
 
-  TImageWriterP getFrameWriter(TFrameId fid);
+  TImageWriterP getFrameWriter(TFrameId fid) override;
 
   // friend class TImageWriterTzl;
   // Save Image and icon
@@ -134,22 +134,22 @@ private:
 /*!
   TLevelReaderTzl:
  */
-class TLevelReaderTzl : public TLevelReader {
+class TLevelReaderTzl final : public TLevelReader {
 public:
   TLevelReaderTzl(const TFilePath &path);
   ~TLevelReaderTzl();
-  void doReadPalette(bool doReadIt);
+  void doReadPalette(bool doReadIt) override;
   /*!
 Return info about current tzl
 */
-  TLevelP loadInfo();
+  TLevelP loadInfo() override;
 
   /*!
 Return an image with Reader information
 */
-  TImageReaderP getFrameReader(TFrameId fid);
+  TImageReaderP getFrameReader(TFrameId fid) override;
 
-  QString getCreator();
+  QString getCreator() override;
   friend class TImageReaderTzl;
 
   /*!

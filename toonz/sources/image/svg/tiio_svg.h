@@ -7,13 +7,13 @@
 
 #endif
 
-class TLevelReaderSvg : public TLevelReader {
+class TLevelReaderSvg final : public TLevelReader {
 public:
   TLevelReaderSvg(const TFilePath &path);
   ~TLevelReaderSvg() {}
 
-  TLevelP loadInfo();
-  TImageReaderP getFrameReader(TFrameId fid);
+  TLevelP loadInfo() override;
+  TImageReaderP getFrameReader(TFrameId fid) override;
 
   // QString getCreator();
   // friend class TImageReaderPli;
@@ -34,7 +34,7 @@ private:
 
 namespace Tiio {
 
-class SvgWriterProperties : public TPropertyGroup {
+class SvgWriterProperties final : public TPropertyGroup {
 public:
   TEnumProperty m_strokeMode;
   TEnumProperty m_outlineQuality;
@@ -42,7 +42,7 @@ public:
 };
 }
 
-class TLevelWriterSvg : public TLevelWriter {
+class TLevelWriterSvg final : public TLevelWriter {
   //! object to manage a pli
   // ParsedPli *m_pli;
 
@@ -55,7 +55,7 @@ class TLevelWriterSvg : public TLevelWriter {
 public:
   TLevelWriterSvg(const TFilePath &path, TPropertyGroup *winfo);
 
-  TImageWriterP getFrameWriter(TFrameId fid);
+  TImageWriterP getFrameWriter(TFrameId fid) override;
 
   friend class TImageWriterSvg;
 

@@ -23,12 +23,12 @@ class DvDirTreeView;
   \brief    Popup widget used to invoke the <I>Load Folder</I> command.
 */
 
-class LoadFolderPopup : public DVGui::Dialog {
+class LoadFolderPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:
   LoadFolderPopup(QWidget *parent = 0);  //!< Constructs the popup as child of
-                                         //!an optional parent widget.
+                                         //! an optional parent widget.
 
   /*! \details  The path returned by getFolder() could be empty in case
           there is no selected folder, or the selection is not a

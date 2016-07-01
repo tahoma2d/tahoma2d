@@ -49,13 +49,13 @@ void getAmplitude(int &amplitude, const TSoundTrackP st, TINT32 sample);
 //     Class to send the message that a playback is completed
 //==============================================================================
 #ifndef TNZCORE_LIGHT
-class EndPlayMsg : public TThread::Message {
+class EndPlayMsg final : public TThread::Message {
 public:
   EndPlayMsg(TSoundOutputDeviceListener *notifier) { m_listener = notifier; }
 
-  TThread::Message *clone() const { return new EndPlayMsg(*this); }
+  TThread::Message *clone() const override { return new EndPlayMsg(*this); }
 
-  void onDeliver() { m_listener->onPlayCompleted(); }
+  void onDeliver() override { m_listener->onPlayCompleted(); }
 
 private:
   TSoundOutputDeviceListener *m_listener;
@@ -859,7 +859,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
 
 //==============================================================================
 
-class WaveFormat : public WAVEFORMATEX {
+class WaveFormat final : public WAVEFORMATEX {
 public:
   WaveFormat(){};
   WaveFormat(unsigned char channelCount, unsigned TINT32 sampleRate,
@@ -1012,14 +1012,14 @@ void WinSoundInputDevice::stop() {
 //====================================================================
 
 #ifndef TNZCORE_LIGHT
-class RecordTask : public TThread::Runnable {
+class RecordTask final : public TThread::Runnable {
 public:
   RecordTask(std::shared_ptr<TSoundInputDeviceImp> dev)
       : Runnable(), m_dev(std::move(dev)) {}
 
   ~RecordTask() {}
 
-  void run();
+  void run() override;
 
   std::shared_ptr<TSoundInputDeviceImp> m_dev;
 };
@@ -1028,7 +1028,7 @@ public:
 
 //====================================================================
 
-class TSoundInputDeviceImp : public WinSoundInputDevice {
+class TSoundInputDeviceImp final : public WinSoundInputDevice {
 public:
   bool m_allocateBuff;
   bool m_isRecording;

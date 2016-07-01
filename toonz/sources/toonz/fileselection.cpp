@@ -53,7 +53,7 @@ namespace {
 //  CopyFilesUndo
 //-----------------------------------------------------------------------------
 
-class CopyFilesUndo : public TUndo {
+class CopyFilesUndo final : public TUndo {
   QMimeData *m_oldData;
   QMimeData *m_newData;
 
@@ -61,26 +61,26 @@ public:
   CopyFilesUndo(QMimeData *oldData, QMimeData *newData)
       : m_oldData(oldData), m_newData(newData) {}
 
-  void undo() const {
+  void undo() const override {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData(cloneData(m_oldData), QClipboard::Clipboard);
   }
 
-  void redo() const {
+  void redo() const override {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData(cloneData(m_newData), QClipboard::Clipboard);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Copy File"); }
+  QString getHistoryString() override { return QObject::tr("Copy File"); }
 };
 
 //=============================================================================
 //  PasteFilesUndo
 //-----------------------------------------------------------------------------
 
-class PasteFilesUndo : public TUndo {
+class PasteFilesUndo final : public TUndo {
   std::vector<TFilePath> m_newFiles;
   TFilePath m_folder;
 
@@ -90,7 +90,7 @@ public:
 
   ~PasteFilesUndo() {}
 
-  void undo() const {
+  void undo() const override {
     int i;
     for (i = 0; i < (int)m_newFiles.size(); i++) {
       TFilePath path = m_newFiles[i];
@@ -103,7 +103,7 @@ public:
     FileBrowser::refreshFolder(m_folder);
   }
 
-  void redo() const {
+  void redo() const override {
     if (!TSystem::touchParentDir(m_folder)) TSystem::mkDir(m_folder);
     const FileData *data =
         dynamic_cast<const FileData *>(QApplication::clipboard()->mimeData());
@@ -114,9 +114,9 @@ public:
     FileBrowser::refreshFolder(m_folder);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Paste  File  : ");
     for (int i = 0; i < (int)m_newFiles.size(); i++) {
       if (i != 0) str += QString(", ");
@@ -130,7 +130,7 @@ public:
 //  DuplicateUndo
 //-----------------------------------------------------------------------------
 
-class DuplicateUndo : public TUndo {
+class DuplicateUndo final : public TUndo {
   std::vector<TFilePath> m_newFiles;
   std::vector<TFilePath> m_files;
 
@@ -140,7 +140,7 @@ public:
 
   ~DuplicateUndo() {}
 
-  void undo() const {
+  void undo() const override {
     int i;
     for (i = 0; i < (int)m_newFiles.size(); i++) {
       TFilePath path = m_newFiles[i];
@@ -155,7 +155,7 @@ public:
     FileBrowser::refreshFolder(m_newFiles[0].getParentDir());
   }
 
-  void redo() const {
+  void redo() const override {
     int i;
     for (i = 0; i < (int)m_files.size(); i++) {
       TFilePath fp = m_files[i];
@@ -165,9 +165,9 @@ public:
     FileBrowser::refreshFolder(m_files[0].getParentDir());
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Duplicate  File  : ");
     int i;
     for (i = 0; i < (int)m_files.size(); i++) {

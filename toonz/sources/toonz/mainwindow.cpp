@@ -1727,6 +1727,14 @@ void MainWindow::defineActions() {
   createMenuCellsAction(MI_Duplicate, tr("&Duplicate Drawing  "), "D");
   createMenuCellsAction(MI_Autorenumber, tr("&Autorenumber"), "");
   createMenuCellsAction(MI_CloneLevel, tr("&Clone"), "");
+  createMenuCellsAction(MI_DrawingSubForward,
+                        tr("Drawing Substitution Forward"), ".");
+  createMenuCellsAction(MI_DrawingSubBackward,
+                        tr("Drawing Substitution Backward"), ",");
+  createMenuCellsAction(MI_DrawingSubGroupForward,
+                        tr("Similar Drawing Substitution Forward"), "Ctrl+.");
+  createMenuCellsAction(MI_DrawingSubGroupBackward,
+                        tr("Similar Drawing Substitution Backward"), "Ctrl+,");
 
   createMenuCellsAction(MI_Reframe1, tr("1's"), "");
   createMenuCellsAction(MI_Reframe2, tr("2's"), "");
@@ -2023,8 +2031,8 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_PencilMode", tr("Pencil Mode"), "");
   createToolOptionsAction("A_ToolOption_PreserveThickness",
                           tr("Preserve Thickness"), "");
-  createToolOptionsAction("A_ToolOption_PressureSensibility",
-                          tr("Pressure sensibility"), "");
+  createToolOptionsAction("A_ToolOption_PressureSensitivity",
+                          tr("Pressure sensitivity"), "");
   createToolOptionsAction("A_ToolOption_SegmentInk", tr("Segment Ink"), "F8");
   createToolOptionsAction("A_ToolOption_Selective", tr("Selective"), "F7");
   createToolOptionsAction("A_ToolOption_Smooth", tr("Smooth"), "");
@@ -2143,10 +2151,10 @@ void MainWindow::togglePickStyleLines() {
 
 //-----------------------------------------------------------------------------
 
-class ReloadStyle : public MenuItemHandler {
+class ReloadStyle final : public MenuItemHandler {
 public:
   ReloadStyle() : MenuItemHandler("MI_ReloadStyle") {}
-  void execute() {
+  void execute() override {
     QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
     QFile file(currentStyle);
     file.open(QFile::ReadOnly);

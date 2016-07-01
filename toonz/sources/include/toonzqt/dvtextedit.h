@@ -40,7 +40,7 @@ namespace DVGui {
 class ColorField;
 //-----------------------------------------------------------------------------
 
-class DvMiniToolBar : public QFrame {
+class DvMiniToolBar final : public QFrame {
   QPoint m_dragPos;
 
 public:
@@ -48,13 +48,13 @@ public:
   ~DvMiniToolBar();
 
 protected:
-  void mousePressEvent(QMouseEvent *);
-  void mouseMoveEvent(QMouseEvent *);
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
 };
 
 //-----------------------------------------------------------------------------
 
-class DvTextEditButton : public QWidget {
+class DvTextEditButton final : public QWidget {
   Q_OBJECT
 
 public:
@@ -62,8 +62,8 @@ public:
   ~DvTextEditButton();
 
 protected:
-  void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *);
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
 
 signals:
   void clicked();
@@ -71,7 +71,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class DVAPI DvTextEdit : public QTextEdit {
+class DVAPI DvTextEdit final : public QTextEdit {
   Q_OBJECT
 
   bool m_paintMode;
@@ -107,15 +107,15 @@ protected:
   void showMiniToolBar(const QPoint &pos);
   void hideMiniToolBar();
 
-  void mousePressEvent(QMouseEvent *);
-  void mouseMoveEvent(QMouseEvent *);
-  void mouseReleaseEvent(QMouseEvent *);
-  void wheelEvent(QWheelEvent *);
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
+  void mouseReleaseEvent(QMouseEvent *) override;
+  void wheelEvent(QWheelEvent *) override;
 
-  void focusInEvent(QFocusEvent *);
-  void focusOutEvent(QFocusEvent *);
+  void focusInEvent(QFocusEvent *) override;
+  void focusOutEvent(QFocusEvent *) override;
 
-  void dragMoveEvent(QDragMoveEvent *);
+  void dragMoveEvent(QDragMoveEvent *) override;
 
 private:
   void fontChanged(const QFont &f);

@@ -20,21 +20,21 @@
 //    Commands  definition
 //**********************************************************************************
 
-class LinkToggleCommand : public MenuItemHandler {
+class LinkToggleCommand final : public MenuItemHandler {
 public:
   LinkToggleCommand() : MenuItemHandler("MI_Link") {}
-  void execute() { FlipConsole::toggleLinked(); }
+  void execute() override { FlipConsole::toggleLinked(); }
 } linkToggleCommand;
 
 //-----------------------------------------------------------------------------
 
-class VcrCommand : public MenuItemHandler {
+class VcrCommand final : public MenuItemHandler {
   FlipConsole::EGadget m_buttonId;
 
 public:
   VcrCommand(const char *cmdId, FlipConsole::EGadget buttonId)
       : MenuItemHandler(cmdId), m_buttonId(buttonId) {}
-  void execute() {
+  void execute() override {
     FlipConsole *console = FlipConsole::getCurrent();
     if (console) console->pressButton(m_buttonId);
   }
@@ -42,11 +42,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class NextDrawingCommand : public MenuItemHandler {
+class NextDrawingCommand final : public MenuItemHandler {
 public:
   NextDrawingCommand() : MenuItemHandler(MI_NextDrawing) {}
 
-  void execute() {
+  void execute() override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
     int row = TApp::instance()->getCurrentFrame()->getFrame();
@@ -65,11 +65,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class PrevDrawingCommand : public MenuItemHandler {
+class PrevDrawingCommand final : public MenuItemHandler {
 public:
   PrevDrawingCommand() : MenuItemHandler(MI_PrevDrawing) {}
 
-  void execute() {
+  void execute() override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
     int row = TApp::instance()->getCurrentFrame()->getFrame();
@@ -96,11 +96,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class NextStepCommand : public MenuItemHandler {
+class NextStepCommand final : public MenuItemHandler {
 public:
   NextStepCommand() : MenuItemHandler(MI_NextStep) {}
 
-  void execute() {
+  void execute() override {
     int row  = TApp::instance()->getCurrentFrame()->getFrame();
     int step = Preferences::instance()->getXsheetStep();
 
@@ -110,11 +110,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class PrevStepCommand : public MenuItemHandler {
+class PrevStepCommand final : public MenuItemHandler {
 public:
   PrevStepCommand() : MenuItemHandler(MI_PrevStep) {}
 
-  void execute() {
+  void execute() override {
     int row  = TApp::instance()->getCurrentFrame()->getFrame();
     int step = Preferences::instance()->getXsheetStep();
 

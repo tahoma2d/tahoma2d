@@ -35,7 +35,7 @@ private:
 
 //-----------------------------------------------------------------------------
 
-class PropertyComboBox : public QComboBox, public PropertyWidget {
+class PropertyComboBox final : public QComboBox, public PropertyWidget {
   Q_OBJECT
 
 public:
@@ -45,12 +45,12 @@ protected slots:
   void onCurrentIndexChanged(const QString &text);
 
 private:
-  void onPropertyChanged();
+  void onPropertyChanged() override;
 };
 
 //-----------------------------------------------------------------------------
 
-class PropertyCheckBox : public CheckBox, public PropertyWidget {
+class PropertyCheckBox final : public CheckBox, public PropertyWidget {
   Q_OBJECT
 
 public:
@@ -60,12 +60,12 @@ protected slots:
   void onStateChanged(int state);
 
 private:
-  void onPropertyChanged();
+  void onPropertyChanged() override;
 };
 
 //-----------------------------------------------------------------------------
 
-class PropertyLineEdit : public LineEdit, public PropertyWidget {
+class PropertyLineEdit final : public LineEdit, public PropertyWidget {
   Q_OBJECT
 
 public:
@@ -75,12 +75,12 @@ protected slots:
   void onTextChanged(const QString &text);
 
 private:
-  void onPropertyChanged();
+  void onPropertyChanged() override;
 };
 
 //-----------------------------------------------------------------------------
 
-class PropertyIntField : public IntField, public PropertyWidget {
+class PropertyIntField final : public IntField, public PropertyWidget {
   Q_OBJECT
 
 public:
@@ -90,7 +90,7 @@ protected slots:
   void onValueChanged(bool isDragging);
 
 private:
-  void onPropertyChanged();
+  void onPropertyChanged() override;
 };
 
 //-----------------------------------------------------------------------------

@@ -471,7 +471,7 @@ void cloneSubXsheets(TXsheet *xsh) {
 //  PasteColumnsUndo
 //-----------------------------------------------------------------------------
 
-class PasteColumnsUndo : public TUndo {
+class PasteColumnsUndo final : public TUndo {
   std::set<int> m_indices;
   StageObjectsData *m_data;
   QMap<TFxPort *, TFx *> m_columnLinks;
@@ -496,14 +496,14 @@ public:
 
   ~PasteColumnsUndo() { delete m_data; }
 
-  void undo() const {
+  void undo() const override {
     std::set<int> indices;
     std::set<int>::const_iterator indicesIt = m_indices.begin();
     while (indicesIt != m_indices.end()) indices.insert(*indicesIt++);
     deleteColumnsWithoutUndo(&indices);
   }
 
-  void redo() const {
+  void redo() const override {
     std::set<int> indices;
     std::set<int>::const_iterator indicesIt = m_indices.begin();
     while (indicesIt != m_indices.end()) indices.insert(*indicesIt++);
@@ -512,9 +512,9 @@ public:
                  QMap<TStageObjectId, QList<TStageObjectId>>());
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Paste Column :  ");
 
     std::set<int>::iterator it;
@@ -525,14 +525,14 @@ public:
     return str;
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
 //  DeleteColumnsUndo
 //-----------------------------------------------------------------------------
 
-class DeleteColumnsUndo : public TUndo {
+class DeleteColumnsUndo final : public TUndo {
   std::set<int> m_indices;
 
   QMap<TFxPort *, TFx *> m_columnFxLinks;
@@ -588,7 +588,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
     assert(!m_data.get());
@@ -601,7 +601,7 @@ public:
     deleteColumnsWithoutUndo(&indices);
   }
 
-  void undo() const {
+  void undo() const override {
     std::set<int> indices = m_indices;
     resetColumns(m_data.get(), &indices, m_columnFxLinks, m_columnObjParents,
                  m_columnObjChildren);
@@ -609,9 +609,9 @@ public:
     m_data.reset();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Delete Column :  ");
 
     std::set<int>::iterator it;
@@ -622,7 +622,7 @@ public:
     return str;
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 }  // namespace
@@ -643,7 +643,7 @@ protected:
 //    Insert Empty Columns  Command
 //*************************************************************************
 
-class InsertEmptyColumnsUndo : public ColumnCommandUndo {
+class InsertEmptyColumnsUndo final : public ColumnCommandUndo {
   std::vector<std::pair<int, int>> m_columnBlocks;
 
 public:
@@ -651,14 +651,14 @@ public:
     initialize(indices);
   }
 
-  bool isConsistent() const { return true; }
+  bool isConsistent() const override { return true; }
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Insert Column :  ");
 
     std::vector<std::pair<int, int>>::iterator it;
@@ -669,7 +669,7 @@ public:
     return str;
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 
 private:
   void initialize(const std::vector<int> &indices);
@@ -839,7 +839,7 @@ void ColumnCmd::cutColumns(std::set<int> &indices) {
 // Undo Resequence
 //=============================================================================
 
-class ResequenceUndo : public TUndo {
+class ResequenceUndo final : public TUndo {
   int m_index;
   int m_r0;
   std::vector<TFrameId> m_oldFrames;
@@ -861,7 +861,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int r0, r1;
     xsh->getCellRange(m_index, r0, r1);
@@ -881,7 +881,7 @@ public:
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int r0, r1;
     xsh->getCellRange(m_index, r0, r1);
@@ -898,15 +898,15 @@ public:
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + m_oldFrames.size() * sizeof(TFrameId);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Resequence :  Col%1").arg(QString::number(m_index + 1));
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
@@ -972,7 +972,7 @@ void ColumnCmd::resequence(int index) {
 // Undo cloneChild
 //=============================================================================
 
-class CloneChildUndo : public TUndo {
+class CloneChildUndo final : public TUndo {
   TXshChildLevelP m_childLevel;
   int m_columnIndex;
 
@@ -980,13 +980,13 @@ public:
   CloneChildUndo(TXshChildLevel *childLevel, int columnIndex)
       : m_childLevel(childLevel), m_columnIndex(columnIndex) {}
 
-  void undo() const {
+  void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     xsh->removeColumn(m_columnIndex);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     xsh->insertColumn(m_columnIndex);
     int frameCount                 = m_childLevel->getXsheet()->getFrameCount();
@@ -997,17 +997,17 @@ public:
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     // bisognerebbe tener conto della dimensione del sottoxsheet
     return sizeof(*this) + 100;
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Clone Sub-xsheet :  Col%1")
         .arg(QString::number(m_columnIndex + 1));
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
@@ -1126,7 +1126,7 @@ void ColumnCmd::copyColumn(int dstIndex, int srcIndex) {
 // Undo Clear Cells
 //=============================================================================
 
-class ClearColumnCellsUndo : public TUndo {
+class ClearColumnCellsUndo final : public TUndo {
   int m_col;
   int m_r0;
   std::vector<TXshCell> m_oldFrames;
@@ -1143,7 +1143,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int i = 0; i < (int)m_oldFrames.size(); i++) {
       xsh->setCell(m_r0 + i, m_col, m_oldFrames[i]);
@@ -1151,7 +1151,7 @@ public:
     xsh->updateFrameCount();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
-  void redo() const {
+  void redo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int r0, r1;
     xsh->getCellRange(m_col, r0, r1);
@@ -1162,15 +1162,15 @@ public:
     }
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + m_oldFrames.size() * sizeof(m_oldFrames[0]);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Clear Cells :  Col%1").arg(QString::number(m_col + 1));
   }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
@@ -1213,14 +1213,14 @@ enum {
 
 }  // namespace
 
-class ColumnsStatusCommand : public MenuItemHandler {
+class ColumnsStatusCommand final : public MenuItemHandler {
   int m_cmd, m_target;
 
 public:
   ColumnsStatusCommand(CommandId id, int cmd, int target)
       : MenuItemHandler(id), m_cmd(cmd), m_target(target) {}
 
-  void execute() {
+  void execute() override {
     TColumnSelection *selection = dynamic_cast<TColumnSelection *>(
         TApp::instance()->getCurrentSelection()->getSelection());
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();

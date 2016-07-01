@@ -43,15 +43,15 @@ class CheckBox;
 
 //---------------------------------------------------------------
 
-class SimpleExpValidator : public QValidator {
+class SimpleExpValidator final : public QValidator {
 public:
   SimpleExpValidator(QObject *parent) : QValidator(parent){};
-  State validate(QString &input, int &pos) const;
+  State validate(QString &input, int &pos) const override;
 };
 
 //---------------------------------------------------------------
 // for A/R input field
-class SimpleExpField : public QLineEdit {
+class SimpleExpField final : public QLineEdit {
   SimpleExpValidator *m_validator;
   QString m_previousValue;
 
@@ -63,13 +63,13 @@ public:
   double getValue();
 
 protected:
-  void focusInEvent(QFocusEvent *event);
-  void focusOutEvent(QFocusEvent *event);
+  void focusInEvent(QFocusEvent *event) override;
+  void focusOutEvent(QFocusEvent *event) override;
 };
 
 //---------------------------------------------------------------
 
-class DVAPI CameraSettingsWidget : public QFrame {
+class DVAPI CameraSettingsWidget final : public QFrame {
   Q_OBJECT
 
   bool m_forCleanup;
@@ -121,7 +121,7 @@ public:
   // widget fields => camera
   void getFields(TCamera *camera);
 
-  QSize sizeHint() const { return minimumSize(); }
+  QSize sizeHint() const override { return minimumSize(); }
 
   // The aspect ratio can be expressed as a fraction (e.g. "4/3")
   // The following methods convert code/decode the value
@@ -146,7 +146,7 @@ public:
   }
 
 protected:
-  bool eventFilter(QObject *obj, QEvent *e);
+  bool eventFilter(QObject *obj, QEvent *e) override;
 
   void hComputeLx();
   void hComputeLy();

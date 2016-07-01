@@ -70,7 +70,7 @@ public:
 
 //  COMM Chunk: Chunk contenente le informazioni sulla traccia
 
-class TCOMMChunk : public TAIFFChunk {
+class TCOMMChunk final : public TAIFFChunk {
 public:
   USHORT m_chans;    // numero di canali
   TUINT32 m_frames;  // numero di campioni
@@ -79,7 +79,7 @@ public:
 
   TCOMMChunk(string name, TINT32 length) : TAIFFChunk(name, length) {}
 
-  virtual bool read(ifstream &is) {
+  bool read(ifstream &is) override {
     is.read((char *)&m_chans, sizeof(m_chans));
     is.read((char *)&m_frames, sizeof(m_frames));
     is.read((char *)&m_bitPerSample, sizeof(m_bitPerSample));
@@ -145,7 +145,7 @@ ostream &operator<<(ostream &os, const TCOMMChunk &commChunk) {
 
 //  SSND Chunk: Chunk contenente i campioni della traccia
 
-class TSSNDChunk : public TAIFFChunk {
+class TSSNDChunk final : public TAIFFChunk {
 public:
   TUINT32 m_offset;  // dall'inizio dei sample frames tra i wavedata
   TUINT32 m_blockSize;
@@ -153,7 +153,7 @@ public:
 
   TSSNDChunk(string name, TINT32 length) : TAIFFChunk(name, length) {}
 
-  bool read(ifstream &is) {
+  bool read(ifstream &is) override {
     is.read((char *)&m_offset, sizeof(m_offset));
     is.read((char *)&m_blockSize, sizeof(m_blockSize));
 

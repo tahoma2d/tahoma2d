@@ -15,7 +15,7 @@ container
 structure of the active renderIds against resource managers.
 */
 
-class RenderInstanceManagersBuilder : public TRenderResourceManager {
+class RenderInstanceManagersBuilder final : public TRenderResourceManager {
   T_RENDER_RESOURCE_MANAGER
 
   typedef std::vector<TRenderResourceManager *> ManagersVector;
@@ -30,18 +30,18 @@ public:
   TRenderResourceManager *getManager(unsigned long renderId,
                                      unsigned int idx) const;
 
-  void onRenderInstanceStart(unsigned long id);
-  void onRenderInstanceEnd(unsigned long id);
+  void onRenderInstanceStart(unsigned long id) override;
+  void onRenderInstanceEnd(unsigned long id) override;
 
-  bool renderHasOwnership() { return false; }
+  bool renderHasOwnership() override { return false; }
 };
 
 //===============================================================================================
 
-class RenderInstanceManagersBuilderGenerator
+class RenderInstanceManagersBuilderGenerator final
     : public TRenderResourceManagerGenerator {
 public:
-  TRenderResourceManager *operator()(void) {
+  TRenderResourceManager *operator()(void) override {
     return RenderInstanceManagersBuilder::instance();
   }
 };
@@ -61,33 +61,33 @@ passed to the
 dedicated instanceScope handler.
 */
 
-class InstanceResourceManagerStub : public TRenderResourceManager {
+class InstanceResourceManagerStub final : public TRenderResourceManager {
   TRenderResourceManagerGenerator *m_generator;
 
 public:
   InstanceResourceManagerStub(TRenderResourceManagerGenerator *generator)
       : m_generator(generator) {}
 
-  void onRenderInstanceStart(unsigned long id);
-  void onRenderInstanceEnd(unsigned long id);
+  void onRenderInstanceStart(unsigned long id) override;
+  void onRenderInstanceEnd(unsigned long id) override;
 
-  void onRenderFrameStart(double f);
-  void onRenderFrameEnd(double f);
+  void onRenderFrameStart(double f) override;
+  void onRenderFrameEnd(double f) override;
 
-  virtual void onRenderStatusStart(int renderStatus);
-  virtual void onRenderStatusEnd(int renderStatus);
+  void onRenderStatusStart(int renderStatus) override;
+  void onRenderStatusEnd(int renderStatus) override;
 };
 
 //===============================================================================================
 
-class StubGenerator : public TRenderResourceManagerGenerator {
+class StubGenerator final : public TRenderResourceManagerGenerator {
   TRenderResourceManagerGenerator *m_generator;
 
 public:
   StubGenerator(TRenderResourceManagerGenerator *generator)
       : m_generator(generator) {}
 
-  TRenderResourceManager *operator()() {
+  TRenderResourceManager *operator()() override {
     return new InstanceResourceManagerStub(m_generator);
   }
 };

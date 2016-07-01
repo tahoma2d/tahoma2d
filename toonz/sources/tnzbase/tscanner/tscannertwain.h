@@ -5,17 +5,17 @@
 
 #include "tscanner.h"
 
-class TScannerTwain : public TScanner {
+class TScannerTwain final : public TScanner {
 public:
   TScannerTwain();
   ~TScannerTwain();
 
-  bool isDeviceAvailable();
-  bool isDeviceSelected();
-  void selectDevice();
+  bool isDeviceAvailable() override;
+  bool isDeviceSelected() override;
+  void selectDevice() override;
 
-  void updateParameters(TScannerParameters &);  // vedi TScanner
-  void acquire(const TScannerParameters &param, int paperCount);
+  void updateParameters(TScannerParameters &) override;  // vedi TScanner
+  void acquire(const TScannerParameters &param, int paperCount) override;
   bool isAreaSupported();
 };
 

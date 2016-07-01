@@ -20,7 +20,7 @@ class IntField;
 // LinesFadePopup
 //-----------------------------------------------------------------------------
 
-class LinesFadePopup : public DVGui::Dialog {
+class LinesFadePopup final : public DVGui::Dialog {
   Q_OBJECT
 
   DVGui::ColorField *m_linesColorField;
@@ -36,8 +36,8 @@ public:
   LinesFadePopup();
 
 protected:
-  void showEvent(QShowEvent *e);
-  void hideEvent(QHideEvent *e);
+  void showEvent(QShowEvent *e) override;
+  void hideEvent(QHideEvent *e) override;
 
 protected slots:
 

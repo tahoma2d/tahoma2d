@@ -30,7 +30,7 @@
 namespace {
 //-----------------------------------------------------------------------------
 
-class DuplicateUndo : public TUndo {
+class DuplicateUndo final : public TUndo {
   int m_r0, m_c0;
   int m_r1, m_c1;
   int m_upTo;
@@ -38,15 +38,15 @@ class DuplicateUndo : public TUndo {
 public:
   DuplicateUndo(int r0, int c0, int r1, int c1, int upTo);
   ~DuplicateUndo() {}
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
   void repeat() const;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Duplicate"); }
+  QString getHistoryString() override { return QObject::tr("Duplicate"); }
 
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------

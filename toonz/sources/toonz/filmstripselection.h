@@ -13,7 +13,7 @@ class TXshSimpleLevel;
 // TFilmStripSelection
 //-----------------------------------------------------------------------------
 
-class TFilmstripSelection : public TSelection {
+class TFilmstripSelection final : public TSelection {
 public:
   typedef std::pair<TFrameId, TFrameId> InbetweenRange;
 
@@ -27,11 +27,11 @@ public:
   TFilmstripSelection();
   ~TFilmstripSelection();
 
-  void enableCommands();
+  void enableCommands() override;
 
-  bool isEmpty() const;
+  bool isEmpty() const override;
 
-  void selectNone();
+  void selectNone() override;
   void select(const TFrameId &fid, bool selected = true);
   bool isSelected(const TFrameId &fid) const;
 

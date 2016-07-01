@@ -18,7 +18,7 @@ class ScriptEngine;
 #define DVVAR DV_IMPORT_VAR
 #endif
 
-class DVAPI ScriptConsole : public QTextEdit {
+class DVAPI ScriptConsole final : public QTextEdit {
   Q_OBJECT
   ScriptEngine *m_engine;
 
@@ -36,11 +36,11 @@ public:
   ScriptEngine *getEngine() const { return m_engine; }
 
 protected:
-  void keyPressEvent(QKeyEvent *e);
+  void keyPressEvent(QKeyEvent *e) override;
   void onReturnKeyPress();
 
-  bool canInsertFromMimeData(const QMimeData *source) const;
-  void insertFromMimeData(const QMimeData *source);
+  bool canInsertFromMimeData(const QMimeData *source) const override;
+  void insertFromMimeData(const QMimeData *source) override;
 
 public slots:
   void onEvaluationDone();

@@ -31,7 +31,7 @@ class TCenterLineStrokeStyle;
 
 //=============================================================================
 
-class DVAPI TSimpleStrokeProp : public TStrokeProp {
+class DVAPI TSimpleStrokeProp final : public TStrokeProp {
 protected:
   TSimpleStrokeStyle *m_colorStyle;
 
@@ -39,16 +39,16 @@ public:
   TSimpleStrokeProp(const TStroke *stroke, TSimpleStrokeStyle *style);
   ~TSimpleStrokeProp();
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash);
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override;
 };
 
 //=============================================================================
 
-class DVAPI TRasterImagePatternStrokeProp : public TStrokeProp {
+class DVAPI TRasterImagePatternStrokeProp final : public TStrokeProp {
 protected:
   TRasterImagePatternStrokeStyle *m_colorStyle;
   std::vector<TAffine> m_transformations;
@@ -58,16 +58,16 @@ public:
                                 TRasterImagePatternStrokeStyle *style);
   ~TRasterImagePatternStrokeProp();
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash);
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override;
 };
 
 //=============================================================================
 
-class DVAPI TVectorImagePatternStrokeProp : public TStrokeProp {
+class DVAPI TVectorImagePatternStrokeProp final : public TStrokeProp {
 protected:
   TVectorImagePatternStrokeStyle *m_colorStyle;
   std::vector<TAffine> m_transformations;
@@ -77,16 +77,16 @@ public:
                                 TVectorImagePatternStrokeStyle *style);
   ~TVectorImagePatternStrokeProp();
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash);
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override;
 };
 
 //=============================================================================
 
-class DVAPI OutlineStrokeProp : public TStrokeProp {
+class DVAPI OutlineStrokeProp final : public TStrokeProp {
 protected:
   TOutlineStyleP m_colorStyle;
   TStrokeOutline m_outline;
@@ -95,11 +95,11 @@ protected:
 public:
   OutlineStrokeProp(const TStroke *stroke, TOutlineStyleP style);
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash);
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override;
 };
 
 //=============================================================================

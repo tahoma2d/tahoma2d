@@ -25,7 +25,7 @@
   configuration options, without discarding the other objects.
 */
 
-class DVAPI TPersistSet : public TPersist {
+class DVAPI TPersistSet final : public TPersist {
   PERSIST_DECLARATION(TPersistSet)
 
   std::vector<TPersist *> m_objects;  //!< #owned# Stored objects.
@@ -41,8 +41,8 @@ public:
                   object);  //!< Overwrites an object type instance with
                             //!  the supplied one.
 public:
-  void saveData(TOStream &os);  //!< Saves data to stream
-  void loadData(TIStream &is);  //!< Loads data from stream
+  void saveData(TOStream &os) override;  //!< Saves data to stream
+  void loadData(TIStream &is) override;  //!< Loads data from stream
 };
 
 #endif  // TPERSISTSET_H

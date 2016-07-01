@@ -41,7 +41,7 @@ namespace ImageUtils {
 /*!
   \brief    Notify that a task on a single frame is completed.
 */
-class DVAPI FrameTaskNotifier : public QObject {
+class DVAPI FrameTaskNotifier final : public QObject {
   Q_OBJECT
 
   int m_errorCount, m_warningCount;
@@ -86,7 +86,7 @@ void DVAPI convert(
     const TFilePath &source,  //!< Level path to convert from.
     const TFilePath &dest,    //!< Level path to convert to.
     const TFrameId &from,     //!< First source frame to convert. Supports
-                              //!TFrameId::EMPTY_FRAME
+                              //! TFrameId::EMPTY_FRAME
     //!  to specify conversion from the beginning of level.
     const TFrameId
         &to,  //!< Last source frame to convert. Supports TFrameId::EMPTY_FRAME
@@ -144,7 +144,7 @@ void DVAPI getStrokeStyleInformationInArea(
             widgets (specifically, context menus).
 */
 
-class DVAPI FullScreenWidget : public QWidget {
+class DVAPI FullScreenWidget final : public QWidget {
   Q_OBJECT
 
   QWidget *m_widget;  //!< (Owned) The content widget.

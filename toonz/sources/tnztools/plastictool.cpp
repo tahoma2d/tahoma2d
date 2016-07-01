@@ -194,27 +194,29 @@ void invalidateXsheet() {
 //    Mime  definitions
 //****************************************************************************************
 
-struct PlasticSkeletonPMime : public DvMimeData {
+struct PlasticSkeletonPMime final : public DvMimeData {
   PlasticSkeletonP m_skeleton;
 
 public:
   PlasticSkeletonPMime(const PlasticSkeletonP &skeleton)
       : m_skeleton(skeleton) {}
 
-  virtual DvMimeData *clone() const {
+  DvMimeData *clone() const override {
     return new PlasticSkeletonPMime(m_skeleton);
   }
-  virtual void releaseData() { m_skeleton = PlasticSkeletonP(); }
+
+  void releaseData() override { m_skeleton = PlasticSkeletonP(); }
 };
 
-struct SkDPMime : public DvMimeData {
+struct SkDPMime final : public DvMimeData {
   SkDP m_sd;
 
 public:
   SkDPMime(const SkDP &sd) : m_sd(sd) {}
 
-  virtual DvMimeData *clone() const { return new SkDPMime(m_sd); }
-  virtual void releaseData() { m_sd = SkDP(); }
+  DvMimeData *clone() const override { return new SkDPMime(m_sd); }
+
+  void releaseData() override { m_sd = SkDP(); }
 };
 
 //****************************************************************************************
@@ -231,7 +233,7 @@ public:
 
 namespace {
 
-class SetVertexNameUndo : public TUndo {
+class SetVertexNameUndo final : public TUndo {
   int m_row, m_col;  //!< Xsheet coordinates
   int m_v;           //!< Changed vertex
 
@@ -249,9 +251,11 @@ public:
     m_oldName = vx.name();
   }
 
-  int getSize() const { return sizeof(*this); }  // sizeof this is roughly ok
+  int getSize() const override {
+    return sizeof(*this);
+  }  // sizeof this is roughly ok
 
-  void redo() const {
+  void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     // Store the vertex deformation before it's released (possibly destroyed)
@@ -272,7 +276,7 @@ public:
     ::invalidateXsheet();
   }
 
-  void undo() const {
+  void undo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
     const SkDP &sd = l_plasticTool.deformation();
@@ -294,7 +298,7 @@ public:
 
 //========================================================================
 
-class PasteDeformationUndo : public TUndo {
+class PasteDeformationUndo final : public TUndo {
   int m_col;              //!< Affected column
   SkDP m_oldSd, m_newSd;  //!< The skeleton deformations
 
@@ -304,15 +308,15 @@ public:
       , m_oldSd(stageObject()->getPlasticSkeletonDeformation())
       , m_newSd(newSd) {}
 
-  int getSize() const { return 1 << 20; }
+  int getSize() const override { return 1 << 20; }
 
-  void redo() const {
+  void redo() const override {
     TTool::getApplication()->getCurrentColumn()->setColumnIndex(m_col);
     stageObject()->setPlasticSkeletonDeformation(m_newSd);
     ::invalidateXsheet();
   }
 
-  void undo() const {
+  void undo() const override {
     TTool::getApplication()->getCurrentColumn()->setColumnIndex(m_col);
     stageObject()->setPlasticSkeletonDeformation(m_oldSd);
     ::invalidateXsheet();
@@ -342,7 +346,7 @@ PlasticTool::TemporaryActivation::~TemporaryActivation() {
 //    PlasticToolOptionsBox::SkelIdComboBox  definition
 //****************************************************************************************
 
-class PlasticToolOptionsBox::SkelIdsComboBox : public QComboBox {
+class PlasticToolOptionsBox::SkelIdsComboBox final : public QComboBox {
 public:
   SkelIdsComboBox(QWidget *parent = 0) : QComboBox(parent) {
     updateSkeletonsList();
@@ -875,8 +879,8 @@ void PlasticTool::onChange() {
   static bool refresh = false;  // Accessible from locals since static
 
   struct locals {
-    struct RefreshFunctor : public TFunctorInvoker::BaseFunctor {
-      void operator()() {
+    struct RefreshFunctor final : public TFunctorInvoker::BaseFunctor {
+      void operator()() override {
         refresh = false;
         l_plasticTool.storeSkeletonId();  // Calls ::sdFrame()
 

@@ -20,7 +20,7 @@ class QListWidgetItem;
 //=============================================================================
 // BatchServersViewer
 
-class FarmServerListView : public QListWidget {
+class FarmServerListView final : public QListWidget {
   Q_OBJECT
 public:
   FarmServerListView(QWidget *parent);
@@ -36,11 +36,11 @@ protected slots:
 
 private:
   void openContextMenu(const QPoint &p);
-  void mousePressEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
   std::unique_ptr<QMenu> m_menu;
 };
 
-class BatchServersViewer : public QFrame {
+class BatchServersViewer final : public QFrame {
   Q_OBJECT
 
 public:

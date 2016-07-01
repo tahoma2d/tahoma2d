@@ -5,10 +5,10 @@
 
 // class QPushButton;
 class QAction;
-class CleanupSwatch : public QWidget {
+class CleanupSwatch final : public QWidget {
   Q_OBJECT
 
-  class CleanupSwatchArea : public QWidget {
+  class CleanupSwatchArea final : public QWidget {
     QPoint m_pos;
     bool m_isLeft, m_panning;
     CleanupSwatch *m_sw;
@@ -21,12 +21,12 @@ class CleanupSwatch : public QWidget {
     void updateCleanupped(bool dragging = false);
 
   protected:
-    void paintEvent(QPaintEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
   };
 
   int m_lx, m_ly;
@@ -49,7 +49,7 @@ public:
   // void enableRightSwatch(bool state);
 protected:
   // void hideEvent(QHideEvent* e);
-  void resizeEvent(QResizeEvent *event);
+  void resizeEvent(QResizeEvent *event) override;
 
 signals:
   void enabled();

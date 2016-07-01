@@ -27,7 +27,7 @@ GLdouble FxGadget::m_selectedColor[3] = {0.2, 0.8, 0.1};
 //    FxGadgetUndo  definition
 //*************************************************************************************
 
-class FxGadgetUndo : public TUndo {
+class FxGadgetUndo final : public TUndo {
   struct ParamData {
     TDoubleParamP m_param;
     double m_oldValue, m_newValue;
@@ -50,13 +50,13 @@ public:
     }
   }
 
-  void onAdd() {
+  void onAdd() override {
     for (int i = 0; i < (int)m_params.size(); i++) {
       m_params[i].m_newValue = m_params[i].m_param->getValue(m_frame);
     }
   }
 
-  void undo() const {
+  void undo() const override {
     for (int i = 0; i < (int)m_params.size(); i++) {
       if (!m_params[i].m_wasKeyframe)
         m_params[i].m_param->deleteKeyframe(m_frame);
@@ -65,17 +65,17 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     for (int i = 0; i < (int)m_params.size(); i++) {
       m_params[i].m_param->setValue(m_frame, m_params[i].m_newValue);
     }
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + m_params.size() * sizeof(ParamData);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Gadget  ");
     for (int i = 0; i < (int)m_params.size(); i++) {
       str += QString::fromStdString(m_params[i].m_param->getName());
@@ -86,14 +86,14 @@ public:
     return str;
   }
 
-  int getHistoryType() { return HistoryType::Fx; }
+  int getHistoryType() override { return HistoryType::Fx; }
 };
 
 //*************************************************************************************
 //    GadgetDragTool  definition
 //*************************************************************************************
 
-class GadgetDragTool : public DragTool {
+class GadgetDragTool final : public DragTool {
   FxGadgetController *m_controller;
   FxGadget *m_gadget;
 
@@ -103,16 +103,16 @@ public:
 
   TAffine getMatrix() const { return m_controller->getMatrix().inv(); }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override {
     m_gadget->createUndo();
     m_gadget->leftButtonDown(getMatrix() * pos, e);
   }
 
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override {
     m_gadget->leftButtonDrag(getMatrix() * pos, e);
   }
 
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override {
     m_gadget->leftButtonUp(getMatrix() * pos, e);
     m_gadget->commitUndo();
   }
@@ -219,7 +219,7 @@ void FxGadget::commitUndo() {
 //    Specific Gadget Concepts  definition
 //*************************************************************************************
 
-class PointFxGadget : public FxGadget {
+class PointFxGadget final : public FxGadget {
   TPointD m_pos;
   TDoubleParamP m_xParam, m_yParam;
 
@@ -237,15 +237,15 @@ public:
     addParam(m_yParam);
   }
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
   TPointD getPoint() const {
     return TPointD(getValue(m_xParam), getValue(m_yParam));
   }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ void PointFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
 
 //=============================================================================
 
-class RadiusFxGadget : public FxGadget {
+class RadiusFxGadget final : public FxGadget {
   TDoubleParamP m_radius;
   TPointParamP m_center;
 
@@ -312,11 +312,11 @@ public:
 
   TPointD getCenter() const;
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -367,7 +367,7 @@ void RadiusFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
 
 //=============================================================================
 
-class DistanceFxGadget : public FxGadget {
+class DistanceFxGadget final : public FxGadget {
   TDoubleParamP m_distance, m_angle;
   int m_grabPos;
 
@@ -389,11 +389,11 @@ public:
     return TPointD(cos(angle), sin(angle));
   }
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -451,7 +451,7 @@ void DistanceFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
 
 //=============================================================================
 
-class AngleFxGadget : public FxGadget {
+class AngleFxGadget final : public FxGadget {
   TDoubleParamP m_param;
   TPointD m_pos;
 
@@ -459,11 +459,11 @@ public:
   AngleFxGadget(FxGadgetController *controller, const TDoubleParamP &param,
                 const TPointD &pos);
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -524,7 +524,7 @@ void AngleFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
 
 //=============================================================================
 
-class DiamondFxGadget : public FxGadget {
+class DiamondFxGadget final : public FxGadget {
   TDoubleParamP m_param;
 
 public:
@@ -533,11 +533,11 @@ public:
     addParam(param);
   }
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -588,7 +588,7 @@ void DiamondFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
 
 //=============================================================================
 
-class SizeFxGadget : public FxGadget {
+class SizeFxGadget final : public FxGadget {
   TDoubleParamP m_lx, m_ly;
 
 public:
@@ -599,11 +599,11 @@ public:
     if (ly) addParam(ly);
   }
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -652,7 +652,7 @@ void SizeFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
 
 //=============================================================================
 
-class RectFxGadget : public FxGadget {
+class RectFxGadget final : public FxGadget {
   TDoubleParamP m_width, m_height;
   TPointParamP m_center;
 
@@ -678,11 +678,11 @@ public:
     return m_center ? getValue(m_center) : TPointD();
   }
 
-  void draw(bool picking);
+  void draw(bool picking) override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -756,7 +756,7 @@ void RectFxGadget::leftButtonDrag(const TPointD &ppos, const TMouseEvent &) {
 
 //=============================================================================
 
-class PolarFxGadget : public FxGadget {
+class PolarFxGadget final : public FxGadget {
   TPointD m_pos;
   TDoubleParamP m_phiParam, m_lengthParam;
 
@@ -771,7 +771,7 @@ public:
     addParam(lengthParam);
   }
 
-  void draw(bool picking) {
+  void draw(bool picking) override {
     setPixelSize();
     if (isSelected())
       glColor3dv(m_selectedColor);
@@ -815,20 +815,20 @@ public:
     }
   }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override {
     TPointD d     = pos - m_pos;
     double phi    = atan2(d.y, d.x);
     double length = norm(d);
     setValue(m_phiParam, phi * M_180_PI);
     setValue(m_lengthParam, length);
   }
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //=============================================================================
 
-class VectorFxGadget : public FxGadget {
+class VectorFxGadget final : public FxGadget {
   TPointParamP m_pa, m_pb;
   int m_selected;
 
@@ -842,7 +842,7 @@ public:
     addParam(pb->getY());
   }
 
-  void draw(bool picking) {
+  void draw(bool picking) override {
     setPixelSize();
     if (isSelected())
       glColor3dv(m_selectedColor);
@@ -878,14 +878,14 @@ public:
     glPopName();
   }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //=============================================================================
 
-class QuadFxGadget : public FxGadget {
+class QuadFxGadget final : public FxGadget {
   TPointParamP m_pa, m_pb, m_pc, m_pd;
 
 public:
@@ -903,7 +903,7 @@ public:
     addParam(pd->getY());
   }
 
-  void draw(bool picking) {
+  void draw(bool picking) override {
     setPixelSize();
     if (isSelected())
       glColor3dv(m_selectedColor);
@@ -928,9 +928,9 @@ public:
     // glPopName();
   }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) {}
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override {}
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //*************************************************************************************

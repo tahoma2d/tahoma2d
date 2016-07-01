@@ -1053,11 +1053,11 @@ OpenPopupCommandHandler<LevelSettingsPopup> openLevelSettingsPopup(
 
 //-----------------------------------------------------------------------------
 
-class ViewLevelFileInfoHandler : public MenuItemHandler {
+class ViewLevelFileInfoHandler final : public MenuItemHandler {
 public:
   ViewLevelFileInfoHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
 
-  void execute() {
+  void execute() override {
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
 
@@ -1111,11 +1111,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class ViewLevelHandler : public MenuItemHandler {
+class ViewLevelHandler final : public MenuItemHandler {
 public:
   ViewLevelHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
 
-  void execute() {
+  void execute() override {
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (FileSelection *fileSelection =

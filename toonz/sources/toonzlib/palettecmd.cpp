@@ -162,7 +162,7 @@ bool areStylesUsed(const set<TXshSimpleLevel *> levels,
 
 namespace {
 
-class ArrangeStylesUndo : public TUndo {
+class ArrangeStylesUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_dstPageIndex;
@@ -192,7 +192,7 @@ public:
     assert(0 <= *srcIndicesInPage.begin() &&
            *srcIndicesInPage.rbegin() < srcPage->getStyleCount());
   }
-  void undo() const {
+  void undo() const override {
     TPalette::Page *srcPage = m_palette->getPage(m_srcPageIndex);
     assert(srcPage);
     TPalette::Page *dstPage = m_palette->getPage(m_dstPageIndex);
@@ -220,7 +220,7 @@ public:
 
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     TPalette::Page *srcPage = m_palette->getPage(m_srcPageIndex);
     assert(srcPage);
     TPalette::Page *dstPage = m_palette->getPage(m_dstPageIndex);
@@ -242,15 +242,15 @@ public:
     m_paletteHandle->notifyPaletteChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof *this + m_srcIndicesInPage.size() * sizeof(int);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Arrange Styles  in Palette %1")
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -276,7 +276,7 @@ void PaletteCmd::arrangeStyles(TPaletteHandle *paletteHandle, int dstPageIndex,
 namespace {
 //-----------------------------------------------------------------------------
 
-class CreateStyleUndo : public TUndo {
+class CreateStyleUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_pageIndex;
@@ -294,7 +294,7 @@ public:
     assert(0 <= pageIndex && pageIndex < m_palette->getPageCount());
     assert(0 <= styleId && styleId < m_palette->getStyleCount());
   }
-  void undo() const {
+  void undo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     int indexInPage = page->search(m_styleId);
@@ -302,7 +302,7 @@ public:
     page->removeStyle(indexInPage);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     assert(m_palette->getStylePage(m_styleId) == 0);
@@ -316,13 +316,13 @@ public:
     m_palette->getStyle(m_styleId)->setName(m_style->getName());
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const { return sizeof *this; }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
     return QObject::tr("Create Style#%1  in Palette %2")
         .arg(QString::number(m_styleId))
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -394,7 +394,7 @@ namespace {
 // AddStylesUndo
 //-----------------------------------------------------------------------------
 
-class AddStylesUndo : public TUndo {
+class AddStylesUndo final : public TUndo {
   TPaletteP m_palette;
   int m_pageIndex;
   int m_indexInPage;
@@ -424,7 +424,7 @@ public:
   ~AddStylesUndo() {
     for (int i = 0; i < (int)m_styles.size(); i++) delete m_styles[i].first;
   }
-  void undo() const {
+  void undo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     int count = m_styles.size();
@@ -432,7 +432,7 @@ public:
     for (i = count - 1; i >= 0; i--) page->removeStyle(m_indexInPage + i);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     for (int i = 0; i < (int)m_styles.size(); i++) {
@@ -444,15 +444,15 @@ public:
     }
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const {
+  int getSize() const override {
     return sizeof *this + m_styles.size() * sizeof(TColorStyle);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Add Style  to Palette %1")
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -523,7 +523,7 @@ void PaletteCmd::eraseStyles(const std::set<TXshSimpleLevel *> &levels,
   typedef std::pair<const TXshSimpleLevelP, std::vector<TVectorImageP>>
       LevelImages;
 
-  struct Undo : public TUndo {
+  struct Undo final : public TUndo {
     std::set<TXshSimpleLevel *> m_levels;
     std::vector<int> m_styleIds;
 
@@ -541,18 +541,18 @@ void PaletteCmd::eraseStyles(const std::set<TXshSimpleLevel *> &levels,
 
     bool isValid() const { return !m_levels.empty(); }
 
-    void redo() const {
+    void redo() const override {
       std::for_each(m_imagesByLevel.begin(), m_imagesByLevel.end(),
                     cloneImages);
       eraseStylesInLevels(m_levels, m_styleIds);
     }
 
-    void undo() const {
+    void undo() const override {
       std::for_each(m_imagesByLevel.begin(), m_imagesByLevel.end(),
                     restoreImages);
     }
 
-    int getSize() const { return 10 << 20; }  // At max 10 per 100 MB
+    int getSize() const override { return 10 << 20; }  // At max 10 per 100 MB
 
   private:
     static bool isVector(const TXshSimpleLevel *level) {
@@ -616,7 +616,7 @@ void PaletteCmd::eraseStyles(const std::set<TXshSimpleLevel *> &levels,
 
 namespace {
 
-class AddPageUndo : public TUndo {
+class AddPageUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_pageIndex;
@@ -645,11 +645,11 @@ public:
   ~AddPageUndo() {
     for (int i = 0; i < (int)m_styles.size(); i++) delete m_styles[i].first;
   }
-  void undo() const {
+  void undo() const override {
     m_palette->erasePage(m_pageIndex);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     TPalette::Page *page = m_palette->addPage(m_pageName);
     assert(page);
     assert(page->getIndex() == m_pageIndex);
@@ -662,16 +662,16 @@ public:
     };
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const {
+  int getSize() const override {
     return sizeof *this + m_styles.size() * sizeof(TColorStyle);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Add Page %1 to Palette %2")
         .arg(QString::fromStdWString(m_pageName))
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -699,7 +699,7 @@ void PaletteCmd::addPage(TPaletteHandle *paletteHandle, std::wstring name,
 
 namespace {
 
-class DestroyPageUndo : public TUndo {
+class DestroyPageUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_pageIndex;
@@ -720,23 +720,23 @@ public:
     for (int i    = 0; i < page->getStyleCount(); i++)
       m_styles[i] = page->getStyleId(i);
   }
-  void undo() const {
+  void undo() const override {
     TPalette::Page *page = m_palette->addPage(m_pageName);
     m_palette->movePage(page, m_pageIndex);
     for (int i = 0; i < (int)m_styles.size(); i++) page->addStyle(m_styles[i]);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_palette->erasePage(m_pageIndex);
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const { return sizeof *this; }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
     return QObject::tr("Delete Page %1 from Palette %2")
         .arg(QString::fromStdWString(m_pageName))
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -765,7 +765,7 @@ namespace {
 // SetReferenceImageUndo
 //-------------------------------------------------------------------
 
-class SetReferenceImageUndo : public TUndo {
+class SetReferenceImageUndo final : public TUndo {
   TPaletteP m_palette;
   TPaletteP m_oldPalette, m_newPalette;
 
@@ -776,23 +776,23 @@ public:
       : m_palette(palette)
       , m_oldPalette(palette->clone())
       , m_paletteHandle(paletteHandle) {}
-  void onAdd() { m_newPalette = m_palette->clone(); }
-  void undo() const {
+  void onAdd() override { m_newPalette = m_palette->clone(); }
+  void undo() const override {
     m_palette->assign(m_oldPalette.getPointer());
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_palette->assign(m_newPalette.getPointer());
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const { return sizeof(*this) + sizeof(TPalette) * 2; }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof(*this) + sizeof(TPalette) * 2; }
+  QString getHistoryString() override {
     return QObject::tr("Load Color Model %1  to Palette %2")
         .arg(QString::fromStdString(
             m_newPalette->getRefImgPath().getLevelName()))
         .arg(QString::fromStdWString(m_palette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //===================================================================
@@ -1004,7 +1004,7 @@ void PaletteCmd::removeReferenceImage(TPaletteHandle *paletteHandle) {
 
 namespace {
 
-class MovePageUndo : public TUndo {
+class MovePageUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_srcIndex;
@@ -1017,17 +1017,17 @@ public:
       , m_dstIndex(dstIndex) {
     m_palette = m_paletteHandle->getPalette();
   }
-  void undo() const {
+  void undo() const override {
     m_palette->movePage(m_palette->getPage(m_dstIndex), m_srcIndex);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_palette->movePage(m_palette->getPage(m_srcIndex), m_dstIndex);
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const { return sizeof *this; }
-  QString getHistoryString() { return QObject::tr("Move Page"); }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override { return QObject::tr("Move Page"); }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -1047,7 +1047,7 @@ void PaletteCmd::movePalettePage(TPaletteHandle *paletteHandle, int srcIndex,
 
 namespace {
 
-class RenamePageUndo : public TUndo {
+class RenamePageUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_palette;
   int m_pageIndex;
@@ -1063,25 +1063,25 @@ public:
     m_palette = m_paletteHandle->getPalette();
     m_oldName = m_palette->getPage(pageIndex)->getName();
   }
-  void undo() const {
+  void undo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     page->setName(m_oldName);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     page->setName(m_newName);
     m_paletteHandle->notifyPaletteChanged();
   }
-  int getSize() const { return sizeof *this; }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
     return QObject::tr("Rename Page  %1 > %2")
         .arg(QString::fromStdWString(m_oldName))
         .arg(QString::fromStdWString(m_newName));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace
@@ -1108,7 +1108,7 @@ void PaletteCmd::renamePalettePage(TPaletteHandle *paletteHandle, int pageIndex,
 
 namespace {
 
-class RenamePaletteStyleUndo : public TUndo {
+class RenamePaletteStyleUndo final : public TUndo {
   TPaletteHandle *m_paletteHandle;  // Usato nell'undo e nel redo per lanciare
                                     // la notifica di cambiamento
   int m_styleId;
@@ -1127,27 +1127,27 @@ public:
     assert(style);
     m_oldName = style->getName();
   }
-  void undo() const {
+  void undo() const override {
     TColorStyle *style = m_palette->getStyle(m_styleId);
     assert(style);
     style->setName(m_oldName);
     m_paletteHandle->notifyColorStyleChanged(false);
   }
-  void redo() const {
+  void redo() const override {
     TColorStyle *style = m_palette->getStyle(m_styleId);
     assert(style);
     style->setName(m_newName);
     m_paletteHandle->notifyColorStyleChanged(false);
   }
-  int getSize() const { return sizeof *this; }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
     return QObject::tr("Rename Style#%1 in Palette%2  : %3 > %4")
         .arg(QString::number(m_styleId))
         .arg(QString::fromStdWString(m_palette->getPaletteName()))
         .arg(QString::fromStdWString(m_oldName))
         .arg(QString::fromStdWString(m_newName));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 }  // namespace

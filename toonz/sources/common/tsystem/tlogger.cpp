@@ -18,19 +18,21 @@ public:
   std::set<TLogger::Listener *> m_listeners;
   TThread::Mutex m_mutex;
 
-  class ListenerNotifier : public TThread::Message {
+  class ListenerNotifier final : public TThread::Message {
     Imp *m_imp;
 
   public:
     ListenerNotifier(Imp *imp) : m_imp(imp) {}
-    void onDeliver() {
+    void onDeliver() override {
       QMutexLocker sl(&m_imp->m_mutex);
       std::set<TLogger::Listener *>::iterator it;
       for (it = m_imp->m_listeners.begin(); it != m_imp->m_listeners.end();
            ++it)
         (*it)->onLogChanged();
     }
-    TThread::Message *clone() const { return new ListenerNotifier(*this); }
+    TThread::Message *clone() const override {
+      return new ListenerNotifier(*this);
+    }
   };
 
   void notify() {

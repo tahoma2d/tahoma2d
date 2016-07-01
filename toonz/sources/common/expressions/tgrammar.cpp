@@ -110,11 +110,11 @@ void Calculator::setRootNode(CalculatorNode *node) {
 //-------------------------------------------------------------------
 
 template <class Op>
-class Op0Node : public CalculatorNode {
+class Op0Node final : public CalculatorNode {
 public:
   Op0Node(Calculator *calc) : CalculatorNode(calc) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     Op op;
     return op();
   }
@@ -123,25 +123,25 @@ public:
 //-------------------------------------------------------------------
 
 template <class Op>
-class Op1Node : public CalculatorNode {
+class Op1Node final : public CalculatorNode {
 protected:
   std::auto_ptr<CalculatorNode> m_a;
 
 public:
   Op1Node(Calculator *calc, CalculatorNode *a) : CalculatorNode(calc), m_a(a) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     Op op;
     return op(m_a->compute(vars));
   }
 
-  void accept(CalculatorNodeVisitor &visitor) { m_a->accept(visitor); }
+  void accept(CalculatorNodeVisitor &visitor) override { m_a->accept(visitor); }
 };
 
 //-------------------------------------------------------------------
 
 template <class Op>
-class Op2Node : public CalculatorNode {
+class Op2Node final : public CalculatorNode {
 protected:
   std::auto_ptr<CalculatorNode> m_a, m_b;
 
@@ -149,12 +149,12 @@ public:
   Op2Node(Calculator *calc, CalculatorNode *a, CalculatorNode *b)
       : CalculatorNode(calc), m_a(a), m_b(b) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     Op op;
     return op(m_a->compute(vars), m_b->compute(vars));
   }
 
-  void accept(CalculatorNodeVisitor &visitor) {
+  void accept(CalculatorNodeVisitor &visitor) override {
     m_a->accept(visitor), m_b->accept(visitor);
   }
 };
@@ -162,7 +162,7 @@ public:
 //-------------------------------------------------------------------
 
 template <class Op>
-class Op3Node : public CalculatorNode {
+class Op3Node final : public CalculatorNode {
 protected:
   std::auto_ptr<CalculatorNode> m_a, m_b, m_c;
 
@@ -171,31 +171,31 @@ public:
           CalculatorNode *c)
       : CalculatorNode(calc), m_a(a), m_b(b), m_c(c) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     Op op;
     return op(m_a->compute(vars), m_b->compute(vars), m_c->compute(vars));
   }
 
-  void accept(CalculatorNodeVisitor &visitor) {
+  void accept(CalculatorNodeVisitor &visitor) override {
     m_a->accept(visitor), m_b->accept(visitor), m_c->accept(visitor);
   }
 };
 
 //-------------------------------------------------------------------
 
-class ChsNode : public CalculatorNode {
+class ChsNode final : public CalculatorNode {
   std::auto_ptr<CalculatorNode> m_a;
 
 public:
   ChsNode(Calculator *calc, CalculatorNode *a) : CalculatorNode(calc), m_a(a) {}
 
-  double compute(double vars[3]) const { return -m_a->compute(vars); }
-  void accept(CalculatorNodeVisitor &visitor) { m_a->accept(visitor); }
+  double compute(double vars[3]) const override { return -m_a->compute(vars); }
+  void accept(CalculatorNodeVisitor &visitor) override { m_a->accept(visitor); }
 };
 
 //-------------------------------------------------------------------
 
-class QuestionNode : public CalculatorNode {
+class QuestionNode final : public CalculatorNode {
   std::auto_ptr<CalculatorNode> m_a, m_b, m_c;
 
 public:
@@ -203,36 +203,38 @@ public:
                CalculatorNode *c)
       : CalculatorNode(calc), m_a(a), m_b(b), m_c(c) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     return (m_a->compute(vars) != 0) ? m_b->compute(vars) : m_c->compute(vars);
   }
 
-  void accept(CalculatorNodeVisitor &visitor) {
+  void accept(CalculatorNodeVisitor &visitor) override {
     m_a->accept(visitor), m_b->accept(visitor), m_c->accept(visitor);
   }
 };
 
 //-------------------------------------------------------------------
 
-class NotNode : public CalculatorNode {
+class NotNode final : public CalculatorNode {
   std::auto_ptr<CalculatorNode> m_a;
 
 public:
   NotNode(Calculator *calc, CalculatorNode *a) : CalculatorNode(calc), m_a(a) {}
 
-  double compute(double vars[3]) const { return m_a->compute(vars) == 0; }
-  void accept(CalculatorNodeVisitor &visitor) { m_a->accept(visitor); }
+  double compute(double vars[3]) const override {
+    return m_a->compute(vars) == 0;
+  }
+  void accept(CalculatorNodeVisitor &visitor) override { m_a->accept(visitor); }
 };
 //-------------------------------------------------------------------
 
-class CycleNode : public CalculatorNode {
+class CycleNode final : public CalculatorNode {
   std::auto_ptr<CalculatorNode> m_a;
 
 public:
   CycleNode(Calculator *calc, CalculatorNode *a)
       : CalculatorNode(calc), m_a(a) {}
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     struct locals {
       static inline double compute(const TDoubleParam &param, double f) {
         if (param.getKeyframeCount() >= 2 &&
@@ -260,12 +262,12 @@ public:
     return value;
   }
 
-  void accept(CalculatorNodeVisitor &visitor) { m_a->accept(visitor); }
+  void accept(CalculatorNodeVisitor &visitor) override { m_a->accept(visitor); }
 };
 
 //-------------------------------------------------------------------
 
-class RandomNode : public CalculatorNode {
+class RandomNode final : public CalculatorNode {
   std::auto_ptr<CalculatorNode> m_seed, m_min, m_max, m_arg;
 
 public:
@@ -287,7 +289,7 @@ public:
     m_min.reset(arg);
   }
 
-  double compute(double vars[3]) const {
+  double compute(double vars[3]) const override {
     double s = (m_seed.get() != 0) ? m_seed->compute(vars) : 0;
     double r =
         RandomManager::instance()->getValue(s, fabs(m_arg->compute(vars)));
@@ -300,7 +302,7 @@ public:
       return (1 - r) * m_min->compute(vars) + r * m_max->compute(vars);
   }
 
-  void accept(CalculatorNodeVisitor &visitor) {
+  void accept(CalculatorNodeVisitor &visitor) override {
     m_arg->accept(visitor);
     if (m_seed.get()) m_seed->accept(visitor);
     if (m_min.get()) m_min->accept(visitor);
@@ -320,22 +322,22 @@ CalculatorNode *Pattern::popNode(std::vector<CalculatorNode *> &stack) const {
 
 //===================================================================
 
-class NumberPattern : public Pattern {
+class NumberPattern final : public Pattern {
 public:
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getType() == Token::Number;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 1;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return Number;
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 1);
     assert(tokens[0].getType() == Token::Number);
     stack.push_back(new NumberNode(calc, tokens[0].getDoubleValue()));
@@ -344,7 +346,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class ConstantPattern : public Pattern {
+class ConstantPattern final : public Pattern {
   std::string m_constantName;
   double m_value;
 
@@ -355,22 +357,22 @@ public:
     setDescription(description);
   }
 
-  std::string getFirstKeyword() const { return m_constantName; }
+  std::string getFirstKeyword() const override { return m_constantName; }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getText() == m_constantName;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 1;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return Constant;
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 1);
     stack.push_back(new NumberNode(calc, m_value));
   }
@@ -378,7 +380,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class VariablePattern : public Pattern {
+class VariablePattern final : public Pattern {
   std::string m_variableName;
   int m_varIdx;
 
@@ -389,22 +391,22 @@ public:
     setDescription(description);
   }
 
-  std::string getFirstKeyword() const { return m_variableName; }
+  std::string getFirstKeyword() const override { return m_variableName; }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getText() == m_variableName;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 1;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return Variable;
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 1);
     assert(tokens[0].getText() == m_variableName);
     stack.push_back(new VariableNode(calc, m_varIdx));
@@ -414,32 +416,33 @@ public:
 //-------------------------------------------------------------------
 
 template <class Op>
-class Op2Pattern : public Pattern {
+class Op2Pattern final : public Pattern {
   std::string m_opName;
   int m_priority;
 
 public:
   Op2Pattern(std::string opName, int priority)
       : m_opName(opName), m_priority(priority) {}
-  int getPriority() const { return m_priority; }
-  std::string getFirstKeyword() const { return m_opName; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  int getPriority() const override { return m_priority; }
+  std::string getFirstKeyword() const override { return m_opName; }
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.empty() || previousTokens.size() == 2;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 1 && token.getText() == m_opName;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 3;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return previousTokens.size() == 1 ? Operator : InternalError;
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 3);
     assert(tokens[1].getText() == m_opName);
     CalculatorNode *b = popNode(stack);
@@ -450,30 +453,31 @@ public:
 
 //-------------------------------------------------------------------
 
-class UnaryMinusPattern : public Pattern {
+class UnaryMinusPattern final : public Pattern {
 public:
   UnaryMinusPattern() {}
-  int getPriority() const { return 50; }
-  std::string getFirstKeyword() const { return "-"; }
+  int getPriority() const override { return 50; }
+  std::string getFirstKeyword() const override { return "-"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getText() == "-";
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 2;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return Operator;
   }
 
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 2);
     assert(tokens[0].getText() == "-");
     stack.push_back(new ChsNode(calc, popNode(stack)));
@@ -482,33 +486,34 @@ public:
 
 //-------------------------------------------------------------------
 
-class NotPattern : public Pattern {
+class NotPattern final : public Pattern {
   std::string m_prefix;
 
 public:
   NotPattern(std::string prefix, std::string description) : m_prefix(prefix) {
     setDescription(description);
   }
-  int getPriority() const { return 5; }
-  std::string getFirstKeyword() const { return m_prefix; }
+  int getPriority() const override { return 5; }
+  std::string getFirstKeyword() const override { return m_prefix; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getText() == m_prefix;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 2;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return Operator;
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 2);
     assert(tokens[0].getText() == m_prefix);
     stack.push_back(new NotNode(calc, popNode(stack)));
@@ -517,32 +522,33 @@ public:
 
 //-------------------------------------------------------------------
 
-class QuestionTernaryPattern : public Pattern {
+class QuestionTernaryPattern final : public Pattern {
 public:
   QuestionTernaryPattern() {}
-  int getPriority() const { return 5; }
-  std::string getFirstKeyword() const { return "?"; }
+  int getPriority() const override { return 5; }
+  std::string getFirstKeyword() const override { return "?"; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     int i = (int)previousTokens.size();
     return i == 0 || i == 2 || i == 4;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     int i = (int)previousTokens.size();
     return i == 1 && token.getText() == "?" || i == 3 && token.getText() == ":";
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 5;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     int i = (int)previousTokens.size();
     return (i == 1 || i == 3) ? Operator : InternalError;
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     CalculatorNode *node1 = popNode(stack);
     CalculatorNode *node2 = popNode(stack);
     CalculatorNode *node3 = popNode(stack);
@@ -551,30 +557,31 @@ public:
 };
 //-------------------------------------------------------------------
 
-class BraketPattern : public Pattern {
+class BraketPattern final : public Pattern {
 public:
   BraketPattern() {}
-  int getPriority() const { return 5; }
-  std::string getFirstKeyword() const { return "("; }
+  int getPriority() const override { return 5; }
+  std::string getFirstKeyword() const override { return "("; }
 
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     return previousTokens.size() == 1;
   }
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.empty() && token.getText() == "(" ||
            previousTokens.size() == 2 && token.getText() == ")";
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     return previousTokens.size() == 3;
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     return previousTokens.size() != 1 ? Parenthesis : InternalError;
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     assert(tokens.size() == 3);
     assert(tokens[0].getText() == "(");
     assert(tokens[2].getText() == ")");
@@ -603,14 +610,15 @@ public:
   void allowImplicitArg(bool allowed) { m_implicitArgAllowed = allowed; }
   void addOptionalArg(double value) { m_optionalArgDefaults.push_back(value); }
 
-  std::string getFirstKeyword() const { return m_functionName; }
-  bool expressionExpected(const std::vector<Token> &previousTokens) const {
+  std::string getFirstKeyword() const override { return m_functionName; }
+  bool expressionExpected(
+      const std::vector<Token> &previousTokens) const override {
     int n = (int)previousTokens.size();
     return 2 <= n && (n & 1) == 0;
   }
 
   bool matchToken(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     int i         = (int)previousTokens.size();
     std::string s = toLower(token.getText());
     if (i == 0)
@@ -635,14 +643,14 @@ public:
       return false;
   }
   bool isFinished(const std::vector<Token> &previousTokens,
-                  const Token &token) const {
+                  const Token &token) const override {
     if (previousTokens.empty()) return false;
     return m_minArgCount == 0 && previousTokens.size() == 1 &&
                token.getText() != "(" ||
            previousTokens.back().getText() == ")";
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
-                         const Token &token) const {
+                         const Token &token) const override {
     int i = (int)previousTokens.size();
     if (i == 0)
       return Function;
@@ -694,11 +702,11 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class F0Pattern : public FunctionPattern {
+class F0Pattern final : public FunctionPattern {
 public:
   F0Pattern(std::string functionName) : FunctionPattern(functionName, 0) {}
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     stack.push_back(new Op0Node<Function>(calc, m_functionName));
   }
 };
@@ -706,14 +714,14 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class F1Pattern : public FunctionPattern {
+class F1Pattern final : public FunctionPattern {
 public:
   F1Pattern(std::string functionName, std::string descr = "")
       : FunctionPattern(functionName, 1) {
     setDescription(descr);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     stack.push_back(new Op1Node<Function>(calc, popNode(stack)));
   }
 };
@@ -721,14 +729,14 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class F2Pattern : public FunctionPattern {
+class F2Pattern final : public FunctionPattern {
 public:
   F2Pattern(std::string functionName, std::string descr = "")
       : FunctionPattern(functionName, 2) {
     setDescription(descr);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     CalculatorNode *b = popNode(stack);
     CalculatorNode *a = popNode(stack);
     stack.push_back(new Op2Node<Function>(calc, a, b));
@@ -738,14 +746,14 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class F3Pattern : public FunctionPattern {
+class F3Pattern final : public FunctionPattern {
 public:
   F3Pattern(std::string functionName, std::string descr = "")
       : FunctionPattern(functionName, 3) {
     setDescription(descr);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     CalculatorNode *c = popNode(stack);
     CalculatorNode *b = popNode(stack);
     CalculatorNode *a = popNode(stack);
@@ -756,7 +764,7 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class Fs2Pattern : public FunctionPattern {
+class Fs2Pattern final : public FunctionPattern {
 public:
   Fs2Pattern(std::string functionName, std::string description)
       : FunctionPattern(functionName, 1) {
@@ -764,7 +772,7 @@ public:
     setDescription(description);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     std::vector<CalculatorNode *> nodes;
     getArgs(nodes, calc, stack, tokens);
     stack.push_back(new Op2Node<Function>(calc, nodes[0], nodes[1]));
@@ -774,7 +782,7 @@ public:
 //-------------------------------------------------------------------
 
 template <class Function>
-class Fs3Pattern : public FunctionPattern {
+class Fs3Pattern final : public FunctionPattern {
 public:
   Fs3Pattern(std::string functionName, double defVal, std::string descr)
       : FunctionPattern(functionName, 1) {
@@ -783,7 +791,7 @@ public:
     setDescription(descr);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     std::vector<CalculatorNode *> nodes;
     getArgs(nodes, calc, stack, tokens);
     stack.push_back(new Op3Node<Function>(calc, nodes[0], nodes[1], nodes[2]));
@@ -792,7 +800,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class CyclePattern : public FunctionPattern {
+class CyclePattern final : public FunctionPattern {
 public:
   CyclePattern(std::string functionName) : FunctionPattern(functionName, 1) {
     setDescription(
@@ -800,7 +808,7 @@ public:
         "to the selected range");
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     CalculatorNode *a = popNode(stack);
     stack.push_back(new CycleNode(calc, a));
   }
@@ -808,7 +816,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class RandomPattern : public FunctionPattern {
+class RandomPattern final : public FunctionPattern {
   bool m_seed;
 
 public:
@@ -820,7 +828,7 @@ public:
     setDescription(description);
   }
   void createNode(Calculator *calc, std::vector<CalculatorNode *> &stack,
-                  const std::vector<Token> &tokens) const {
+                  const std::vector<Token> &tokens) const override {
     int n = ((int)tokens.size() - 1) / 2;
     if (m_seed) n--;
     RandomNode *randomNode = new RandomNode(calc);

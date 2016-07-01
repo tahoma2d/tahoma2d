@@ -5,7 +5,7 @@
 
 #include "ino_common.h"
 //------------------------------------------------------------
-class ino_level_rgba : public TStandardRasterFx {
+class ino_level_rgba final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ino_level_rgba)
   TRasterFxPort m_input;
   TRasterFxPort m_refer;
@@ -113,7 +113,8 @@ public:
     this->m_ref_mode->addItem(4, "Luminance");
     this->m_ref_mode->addItem(-1, "Nothing");
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       return this->m_input->doGetBBox(frame, bBox, info);
     } else {
@@ -121,8 +122,11 @@ public:
       return false;
     }
   }
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets);
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_level_rgba, "inoLevelrgbaFx");
 //------------------------------------------------------------

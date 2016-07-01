@@ -295,7 +295,7 @@ void tellipticbrush::CenterlinePoint::buildDirs(const TStroke &stroke) {
 
 namespace {
 
-class LengthLinearizator : public tellipticbrush::StrokeLinearizator {
+class LengthLinearizator final : public tellipticbrush::StrokeLinearizator {
   double m_lengthStep;
   int m_countIdx;
 
@@ -303,7 +303,7 @@ public:
   LengthLinearizator(const TStroke *stroke, double lengthStep)
       : StrokeLinearizator(stroke), m_lengthStep(lengthStep), m_countIdx(0) {}
 
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk);
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk) override;
 };
 
 //--------------------------------------------------------------------------------------------
@@ -352,14 +352,14 @@ void LengthLinearizator::linearize(std::vector<CenterlinePoint> &cPoints,
 
 //============================================================================================
 
-class RecursiveLinearizator : public tellipticbrush::StrokeLinearizator {
+class RecursiveLinearizator final : public tellipticbrush::StrokeLinearizator {
   double m_pixSize;
 
 public:
   RecursiveLinearizator(const TStroke *stroke, double pixSize)
       : StrokeLinearizator(stroke), m_pixSize(pixSize) {}
 
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk);
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk) override;
   void subdivide(std::vector<CenterlinePoint> &cPoints, CenterlinePoint &cp0,
                  CenterlinePoint &cp1);
 };
@@ -451,11 +451,11 @@ void RecursiveLinearizator::subdivide(std::vector<CenterlinePoint> &cPoints,
 
 //============================================================================================
 
-class CoverageLinearizator : public tellipticbrush::StrokeLinearizator {
+class CoverageLinearizator final : public tellipticbrush::StrokeLinearizator {
 public:
   CoverageLinearizator(const TStroke *stroke) : StrokeLinearizator(stroke) {}
 
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk);
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk) override;
 };
 
 //--------------------------------------------------------------------------------------------

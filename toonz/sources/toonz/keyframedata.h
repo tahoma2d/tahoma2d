@@ -15,7 +15,7 @@ class TXsheet;
 // TKeyframeData
 //-----------------------------------------------------------------------------
 
-class TKeyframeData : public DvMimeData {
+class TKeyframeData final : public DvMimeData {
 public:
   typedef TKeyframeSelection::Position Position;
   typedef std::map<Position, TStageObject::Keyframe> KeyData;
@@ -31,7 +31,7 @@ public:
   TKeyframeData(const TKeyframeData *src);
   ~TKeyframeData();
 
-  TKeyframeData *clone() const { return new TKeyframeData(this); }
+  TKeyframeData *clone() const override { return new TKeyframeData(this); }
 
   // data <- xsh
   void setKeyframes(std::set<Position> positions, TXsheet *xsh);

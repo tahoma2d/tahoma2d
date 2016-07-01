@@ -33,7 +33,7 @@ under control of another manager class - namely, the TFxCacheManager - for
 single render instances.
 */
 
-class DVAPI TPassiveCacheManager : public TFxCacheManagerDelegate {
+class DVAPI TPassiveCacheManager final : public TFxCacheManagerDelegate {
   T_RENDER_RESOURCE_MANAGER
 
 private:
@@ -105,14 +105,14 @@ public:
 
   void getResource(TCacheResourceP &resource, const std::string &alias,
                    const TFxP &fx, double frame, const TRenderSettings &rs,
-                   ResourceDeclaration *resData);
+                   ResourceDeclaration *resData) override;
 
-  void onRenderInstanceStart(unsigned long renderId);
-  void onRenderInstanceEnd(unsigned long renderId);
+  void onRenderInstanceStart(unsigned long renderId) override;
+  void onRenderInstanceEnd(unsigned long renderId) override;
 
-  void onRenderStatusEnd(int renderStatus);
+  void onRenderStatusEnd(int renderStatus) override;
 
-  bool renderHasOwnership() { return false; }
+  bool renderHasOwnership() override { return false; }
 
 public:
   void setTreeDescriptor(TreeDescriptor callback);

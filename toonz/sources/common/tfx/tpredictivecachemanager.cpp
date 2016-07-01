@@ -11,12 +11,12 @@
 //    Preliminaries
 //************************************************************************************************
 
-class TPredictiveCacheManagerGenerator
+class TPredictiveCacheManagerGenerator final
     : public TRenderResourceManagerGenerator {
 public:
   TPredictiveCacheManagerGenerator() : TRenderResourceManagerGenerator(true) {}
 
-  TRenderResourceManager *operator()(void) {
+  TRenderResourceManager *operator()(void) override {
     return new TPredictiveCacheManager;
   }
 };

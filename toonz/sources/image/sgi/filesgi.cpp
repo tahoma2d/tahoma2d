@@ -842,7 +842,7 @@ static int iflush(IMAGERGB *image) {
 
 /*----------------------------------------------------------------------------*/
 
-class SgiReader : public Tiio::Reader {
+class SgiReader final : public Tiio::Reader {
   IMAGERGB *m_header;
   int m_currentY;
 
@@ -851,14 +851,14 @@ public:
 
   ~SgiReader();
 
-  void open(FILE *file);
+  void open(FILE *file) override;
 
-  TPropertyGroup *getProperties() const { return 0; }
+  TPropertyGroup *getProperties() const override { return 0; }
 
-  void readLine(char *buffer, int x0, int x1, int shrink);
-  void readLine(short *buffer, int x0, int x1, int shrink);
+  void readLine(char *buffer, int x0, int x1, int shrink) override;
+  void readLine(short *buffer, int x0, int x1, int shrink) override;
 
-  int skipLines(int lineCount);
+  int skipLines(int lineCount) override;
 };
 
 //-------------------------------------------------------------------
@@ -1047,7 +1047,7 @@ int SgiReader::skipLines(int lineCount) {
                                                 WRITER
 */
 
-class SgiWriter : public Tiio::Writer {
+class SgiWriter final : public Tiio::Writer {
   int m_currentY;
   IMAGERGB *m_header;
 
@@ -1061,17 +1061,17 @@ public:
     delete m_properties;
   }
 
-  void open(FILE *file, const TImageInfo &info);
+  void open(FILE *file, const TImageInfo &info) override;
 
   TPropertyGroup *getProperties() { return m_properties; }
 
-  void writeLine(char *buffer);
-  void writeLine(short *buffer);
+  void writeLine(char *buffer) override;
+  void writeLine(short *buffer) override;
 
-  void flush() {}
+  void flush() override {}
 
   //  RowOrder getRowOrder() const { return BOTTOM2TOP; }
-  bool write64bitSupported() const { return true; }
+  bool write64bitSupported() const override { return true; }
 
   void setProperties(TPropertyGroup *properties);
 

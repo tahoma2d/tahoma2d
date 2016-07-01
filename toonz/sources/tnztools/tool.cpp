@@ -59,14 +59,14 @@ std::set<std::string> *toolNames = 0;
 
 // Local classes
 
-struct DummyTool : public TTool {
-  ToolType getToolType() const {
+struct DummyTool final : public TTool {
+  ToolType getToolType() const override {
     return TTool::LevelReadTool;
   }  // Test level type
   ToolTargetType getTargetType() const {
     return TTool::NoTarget;
   }  // Works on nothing
-  int getCursorId() const {
+  int getCursorId() const override {
     return ToolCursor::ForbiddenCursor;
   }  // Forbids everything
 

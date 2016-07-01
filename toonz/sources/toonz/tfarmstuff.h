@@ -33,17 +33,17 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TaskInfoPage : public TFarmPage {
+class TaskInfoPage final : public TFarmPage {
 public:
   TaskInfoPage(TWidget *parent);
   ~TaskInfoPage();
 
-  void configureNotify(const TDimension &size);
-  void rightButtonDown(const TMouseEvent &e);
+  void configureNotify(const TDimension &size) override;
+  void rightButtonDown(const TMouseEvent &e) override;
 
-  void onActivate();
-  void onDeactivate();
-  void update();
+  void onActivate() override;
+  void onDeactivate() override;
+  void update() override;
 
   void showTaskInfo(const std::string &id);
 
@@ -90,15 +90,15 @@ protected:
 
 //------------------------------------------------------------------------------
 
-class SubmitPage : public TFarmPage {
+class SubmitPage final : public TFarmPage {
 public:
   SubmitPage(TWidget *parent);
   ~SubmitPage();
 
-  void configureNotify(const TDimension &size);
+  void configureNotify(const TDimension &size) override;
 
-  void onActivate();
-  void onDeactivate();
+  void onActivate() override;
+  void onDeactivate() override;
 
   SubmitPageTask *getTask() const;
   void setTask(SubmitPageTask *task);
@@ -110,7 +110,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TaskConfigPanel : public TWidget {
+class TaskConfigPanel final : public TWidget {
 public:
   TaskConfigPanel(TWidget *parent) : TWidget(parent) {}
 
@@ -120,21 +120,22 @@ public:
 
 //------------------------------------------------------------------------------
 
-class SubmitRenderPopup : public TModalPopup {
+class SubmitRenderPopup final : public TModalPopup {
 public:
   SubmitRenderPopup(TWidget *parent, std::string name);
   ~SubmitRenderPopup();
 
   void onOk();
 
-  TDimension getPreferredSize() const;
+  TDimension getPreferredSize() const override;
 
-  void configureNotify(const TDimension &d);
-  bool onNcPaint(bool is_active, const TDimension &size, const TRect &titlebar);
+  void configureNotify(const TDimension &d) override;
+  bool onNcPaint(bool is_active, const TDimension &size,
+                 const TRect &titlebar) override;
 
   void popup(const TPoint &p, const TFilePath &fp);
   void onIntFieldChange(const TNumField::Event &e);
-  void draw();
+  void draw() override;
 
 private:
   class Data;
@@ -143,21 +144,22 @@ private:
 
 //------------------------------------------------------------------------------
 
-class SubmitCleanupPopup : public TModalPopup {
+class SubmitCleanupPopup final : public TModalPopup {
 public:
   SubmitCleanupPopup(TWidget *parent, std::string name);
   ~SubmitCleanupPopup();
 
   void onOk();
 
-  TDimension getPreferredSize() const;
+  TDimension getPreferredSize() const override;
 
-  void configureNotify(const TDimension &d);
-  bool onNcPaint(bool is_active, const TDimension &size, const TRect &titlebar);
+  void configureNotify(const TDimension &d) override;
+  bool onNcPaint(bool is_active, const TDimension &size,
+                 const TRect &titlebar) override;
 
   void popup(const TPoint &p, const TFilePath &fp);
   void onIntFieldChange(const TNumField::Event &e);
-  void draw();
+  void draw() override;
 
 private:
   class Data;
@@ -166,17 +168,17 @@ private:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-class GRootEnvVarPopup : public TModalPopup {
+class GRootEnvVarPopup final : public TModalPopup {
 public:
   GRootEnvVarPopup(TWidget *parent, std::string name);
   ~GRootEnvVarPopup();
 
   void onOk();
 
-  TDimension getPreferredSize() const;
+  TDimension getPreferredSize() const override;
 
-  void configureNotify(const TDimension &d);
-  void draw();
+  void configureNotify(const TDimension &d) override;
+  void draw() override;
 
   // bool onNcPaint(bool is_active, const TDimension &size, const TRect
   // &titlebar);
@@ -208,14 +210,14 @@ void getControllerData(QString &hostName, QString &ipAddr, int &port);
 
 //------------------------------------------------------------------------------
 
-class TMissingGRootFolder : public TException {
+class TMissingGRootFolder final : public TException {
 public:
   TMissingGRootFolder() : TException() {}
 };
 
 //------------------------------------------------------------------------------
 
-class TMissingGRootEnvironmentVariable : public TException {
+class TMissingGRootEnvironmentVariable final : public TException {
 public:
   TMissingGRootEnvironmentVariable() : TException() {}
 };

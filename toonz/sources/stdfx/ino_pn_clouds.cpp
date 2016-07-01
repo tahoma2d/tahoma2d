@@ -8,7 +8,7 @@
 toonz6.4sg ではTStandardRasterFx
 toonz7.0   ではTStandardZeraryFx
 */
-class ino_pn_clouds : public TStandardZeraryFx {
+class ino_pn_clouds final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(ino_pn_clouds)
 
   TDoubleParamP m_size;
@@ -47,12 +47,16 @@ public:
     this->m_persistance->setValueRange(0.1 * ino::param_range(),
                                        2.0 * ino::param_range());
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     bBox = TConsts::infiniteRectD;
     return true;
   }
-  bool canHandle(const TRenderSettings &info, double frame) { return false; }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets);
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return false;
+  }
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_pn_clouds, "inopnCloudsFx");
 // ------------------------------------------------------------------

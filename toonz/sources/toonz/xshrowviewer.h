@@ -18,7 +18,7 @@ class DragTool;
 //-----------------------------------------------------------------------------
 
 //! La classe si occupa della visualizzazione dell'area che gestisce le righe.
-class RowArea : public QWidget {
+class RowArea final : public QWidget {
   Q_OBJECT
   XsheetViewer *m_viewer;
   int m_xa;
@@ -60,14 +60,14 @@ public:
   ~RowArea();
 
 protected:
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
-  void contextMenuEvent(QContextMenuEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *event);
-  bool event(QEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  bool event(QEvent *event) override;
 
   void setMarker(int index);
 

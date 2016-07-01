@@ -53,12 +53,12 @@ class TOptimizedStrokeStyleT : public TColorStyle {
 public:
   TOptimizedStrokeStyleT() {}
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
-  TStrokeProp *makeStrokeProp(const TStroke *stroke);
+  TStrokeProp *makeStrokeProp(const TStroke *stroke) override;
 
-  TRegionProp *makeRegionProp(const TRegion *region) {
+  TRegionProp *makeRegionProp(const TRegion *region) override {
     assert(false);
     return 0;
   };
@@ -71,55 +71,55 @@ public:
 
 //-------------------------------------------------------------------
 
-class TFurStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TFurStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   double m_cs, m_sn, m_angle, m_length;
   TPixel32 m_color;
 
 public:
   TFurStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void invalidate() {}
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &rd, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &rd, const TStroke *stroke) const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TFurStrokeStyle", "Herringbone");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_angle << m_length;
   }
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_angle >> m_length;
     m_cs = cos(m_angle);
     m_sn = sin(m_angle);
   }
 
-  int getTagId() const { return 103; };
+  int getTagId() const override { return 103; };
 };
 
 //-------------------------------------------------------------------
 
-class TChainStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TChainStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
 
 public:
@@ -128,30 +128,30 @@ public:
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TChainStrokeStyle", "Chain");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) { is >> m_color; }
-  void saveData(TOutputStreamInterface &os) const { os << m_color; }
-  int getTagId() const { return 104; };
+  void loadData(TInputStreamInterface &is) override { is >> m_color; }
+  void saveData(TOutputStreamInterface &os) const override { os << m_color; }
+  int getTagId() const override { return 104; };
 };
 
 //-------------------------------------------------------------------
 
-class TSprayStrokeStyle : public TSimpleStrokeStyle {
+class TSprayStrokeStyle final : public TSimpleStrokeStyle {
   TPixel32 m_color;
   double m_blend, m_intensity, m_radius;
 
@@ -160,39 +160,40 @@ public:
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TSprayStrokeStyle", "Circlets");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_blend >> m_intensity >> m_radius;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_blend << m_intensity << m_radius;
   }
-  int getTagId() const { return 106; };
+  int getTagId() const override { return 106; };
 };
 
 //-------------------------------------------------------------------
 
-class TGraphicPenStrokeStyle
+class TGraphicPenStrokeStyle final
     : public TOptimizedStrokeStyleT<DrawmodePointsMatrix> {
   TPixel32 m_color;
   double m_intensity;
@@ -202,40 +203,42 @@ public:
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TGraphicPenStrokeStyle", "Dashes");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void computeData(DrawmodePointsMatrix &data, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, DrawmodePointsMatrix &data,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *s) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *s) const override;
 
-  void loadData(TInputStreamInterface &is) { is >> m_color >> m_intensity; }
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_intensity;
+  }
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_intensity;
   }
-  int getTagId() const { return 107; };
+  int getTagId() const override { return 107; };
 };
 
 //-------------------------------------------------------------------
 
-class TDottedLineStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TDottedLineStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_in, m_line, m_out, m_blank;
 
@@ -243,45 +246,45 @@ public:
   TDottedLineStrokeStyle();
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TDottedLineStrokeStyle", "Vanishing");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_in >> m_line >> m_out >> m_blank;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_in << m_line << m_out << m_blank;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 111; }
+  int getTagId() const override { return 111; }
 };
 
 //-------------------------------------------------------------------
 
-class TRopeStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TRopeStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_bend;
 
@@ -289,41 +292,43 @@ public:
   TRopeStrokeStyle();
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TRopeStrokeStyle", "Rope");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) { is >> m_color >> m_bend; }
-  void saveData(TOutputStreamInterface &os) const { os << m_color << m_bend; }
+  void loadData(TInputStreamInterface &is) override { is >> m_color >> m_bend; }
+  void saveData(TOutputStreamInterface &os) const override {
+    os << m_color << m_bend;
+  }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 108; }
+  int getTagId() const override { return 108; }
 };
 
 //-------------------------------------------------------------------
 
-class TCrystallizeStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TCrystallizeStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_period, m_opacity;
 
@@ -331,270 +336,281 @@ public:
   TCrystallizeStrokeStyle();
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TCrystallizeStrokeStyle", "Tulle");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_period >> m_opacity;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_period << m_opacity;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 109; }
+  int getTagId() const override { return 109; }
 };
 
 //-------------------------------------------------------------------
 
-class TBraidStrokeStyle : public TSimpleStrokeStyle {
+class TBraidStrokeStyle final : public TSimpleStrokeStyle {
   TPixel32 m_colors[3];
   double m_period;
 
 public:
   TBraidStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TBraidStrokeStyle", "Plait");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_colors[0]; }
-  void setMainColor(const TPixel32 &color) { m_colors[0] = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_colors[0]; }
+  void setMainColor(const TPixel32 &color) override { m_colors[0] = color; }
 
-  int getColorParamCount() const { return 3; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 3; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_colors[0] >> m_colors[1] >> m_colors[2] >> m_period;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_colors[0] << m_colors[1] << m_colors[2] << m_period;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 136; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(112); }
+  int getTagId() const override { return 136; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(112);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TSketchStrokeStyle : public TSimpleStrokeStyle {
+class TSketchStrokeStyle final : public TSimpleStrokeStyle {
   TPixel32 m_color;
   double m_density;
 
 public:
   TSketchStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TSketchStrokeStyle", "Fuzz");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &fl, const TStroke *s) const;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &fl, const TStroke *s) const override;
 
-  void loadData(TInputStreamInterface &is) { is >> m_color >> m_density; }
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_density;
+  }
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_density;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 113; }
+  int getTagId() const override { return 113; }
 };
 
 //-------------------------------------------------------------------
 
-class TBubbleStrokeStyle : public TSimpleStrokeStyle {
+class TBubbleStrokeStyle final : public TSimpleStrokeStyle {
   TPixel32 m_color0, m_color1;
 
 public:
   TBubbleStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TBubbleStrokeStyle", "Bubbles");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color0; }
-  void setMainColor(const TPixel32 &color) { m_color0 = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color0; }
+  void setMainColor(const TPixel32 &color) override { m_color0 = color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const {
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override {
     return index == 0 ? m_color0 : m_color1;
   }
-  void setColorParamValue(int index, const TPixel32 &color) {
+  void setColorParamValue(int index, const TPixel32 &color) override {
     if (index == 0)
       m_color0 = color;
     else
       m_color1 = color;
   }
 
-  void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(const TColorFunction *cf,
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) { is >> m_color0 >> m_color1; }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color0 >> m_color1;
+  }
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color0 << m_color1;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 114; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(137); }
+  int getTagId() const override { return 114; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(137);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TTissueStrokeStyle : public TOptimizedStrokeStyleT<PointMatrix> {
+class TTissueStrokeStyle final : public TOptimizedStrokeStyleT<PointMatrix> {
   TPixel32 m_color;
   double m_density, m_border;
 
 public:
   TTissueStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(PointMatrix &data, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, PointMatrix &data,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TTissueStrokeStyle", "Gauze");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_density >> m_border;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_density << m_border;
   }
 
-  int getTagId() const { return 117; }
+  int getTagId() const override { return 117; }
 };
 
 //-------------------------------------------------------------------
 
-class TBiColorStrokeStyle : public TOutlineStyle {
+class TBiColorStrokeStyle final : public TOutlineStyle {
   TPixel32 m_color0, m_color1;
   double m_parameter;
 
 public:
   TBiColorStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  TRegionOutline &boundary) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TBiColorStrokeStyle", "Shade");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color0; }
-  void setMainColor(const TPixel32 &color) { m_color0 = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color0; }
+  void setMainColor(const TPixel32 &color) override { m_color0 = color; }
 
-  void loadData(TInputStreamInterface &is);
-  void loadData(int oldId, TInputStreamInterface &);
+  void loadData(TInputStreamInterface &is) override;
+  void loadData(int oldId, TInputStreamInterface &) override;
 
-  void saveData(TOutputStreamInterface &os) const;
+  void saveData(TOutputStreamInterface &os) const override;
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const {
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override {
     return index == 0 ? m_color0 : m_color1;
   }
-  void setColorParamValue(int index, const TPixel32 &color) {
+  void setColorParamValue(int index, const TPixel32 &color) override {
     if (index == 0)
       m_color0 = color;
     else
       m_color1 = color;
   }
 
-  int getTagId() const { return 135; };
-  void getObsoleteTagIds(std::vector<int> &ids) const {
+  int getTagId() const override { return 135; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
     ids.push_back(115);
     ids.push_back(119);
   }
@@ -602,197 +618,204 @@ public:
 
 //-------------------------------------------------------------------
 
-class TNormal2StrokeStyle : public TOutlineStyle {
+class TNormal2StrokeStyle final : public TOutlineStyle {
   TPixel32 m_color;
   double m_lightx, m_lighty, m_shininess, m_metal, m_bend;
 
 public:
   TNormal2StrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
+                  TRegionOutline &boundary) const override;
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TNormal2StrokeStyle", "Bump");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_lightx >> m_lighty >> m_shininess >> m_metal >> m_bend;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_lightx << m_lighty << m_shininess << m_metal << m_bend;
   }
 
-  int getTagId() const { return 120; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(121); }
+  int getTagId() const override { return 120; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(121);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TChalkStrokeStyle2 : public TOptimizedStrokeStyleT<Doubles> {
+class TChalkStrokeStyle2 final : public TOptimizedStrokeStyleT<Doubles> {
   TPixel32 m_color;
   double m_blend, m_intensity, m_in, m_out, m_noise;
 
 public:
   TChalkStrokeStyle2();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TChalkStrokeStyle2", "Chalk");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void computeData(Doubles &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Doubles &positions,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_blend >> m_intensity >> m_in >> m_out >> m_noise;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_blend << m_intensity << m_in << m_out << m_noise;
   }
-  int getTagId() const { return 123; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(105); }
+  int getTagId() const override { return 123; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(105);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TBlendStrokeStyle2 : public TOptimizedStrokeStyleT<PointsAndDoubles> {
+class TBlendStrokeStyle2 final
+    : public TOptimizedStrokeStyleT<PointsAndDoubles> {
   TPixel32 m_color;
   double m_blend, m_in, m_out;
 
 public:
   TBlendStrokeStyle2();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(PointsAndDoubles &data, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, PointsAndDoubles &data,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TBlendStrokeStyle2", "Fade");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_blend >> m_in >> m_out;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_blend << m_in << m_out;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 125; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(110); }
+  int getTagId() const override { return 125; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(110);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TTwirlStrokeStyle : public TOptimizedStrokeStyleT<Doubles> {
+class TTwirlStrokeStyle final : public TOptimizedStrokeStyleT<Doubles> {
   TPixel32 m_color;
   double m_period, m_blend;
 
 public:
   TTwirlStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(Doubles &data, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Doubles &data,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   // void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TTwirlStrokeStyle", "Ribbon");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_period >> m_blend;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_period << m_blend;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 126; }
+  int getTagId() const override { return 126; }
 };
 
 //-------------------------------------------------------------------
 
-class TSawToothStrokeStyle : public TOutlineStyle {
+class TSawToothStrokeStyle final : public TOutlineStyle {
   TPixel32 m_color;
   double m_parameter;
 
@@ -800,103 +823,106 @@ public:
   TSawToothStrokeStyle(TPixel32 color   = TPixel32::Blue,
                        double parameter = 20.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const {}
+                  TRegionOutline &boundary) const override {}
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void invalidate() {}
 
   void computeOutline(const TStroke *stroke, TStrokeOutline &outline,
-                      TOutlineUtil::OutlineParameter param) const;
+                      TOutlineUtil::OutlineParameter param) const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TSawToothStrokeStyle", "Jagged");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 127; };
-  void loadData(TInputStreamInterface &is) { is >> m_color >> m_parameter; }
-  void saveData(TOutputStreamInterface &os) const {
+  int getTagId() const override { return 127; };
+  void loadData(TInputStreamInterface &is) override {
+    is >> m_color >> m_parameter;
+  }
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_parameter;
   }
 };
 
 //-------------------------------------------------------------------
 
-class TMultiLineStrokeStyle2 : public TOptimizedStrokeStyleT<BlendAndPoints> {
+class TMultiLineStrokeStyle2 final
+    : public TOptimizedStrokeStyleT<BlendAndPoints> {
   TPixel32 m_color0, m_color1;
   double m_intensity, m_length, m_thick, m_noise;
 
 public:
   TMultiLineStrokeStyle2();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(BlendAndPoints &data, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, BlendAndPoints &data,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   // void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TMultiLineStrokeStyle2", "Gouache");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color0; }
-  void setMainColor(const TPixel32 &color) { m_color0 = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color0; }
+  void setMainColor(const TPixel32 &color) override { m_color0 = color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const {
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override {
     return index == 0 ? m_color0 : m_color1;
   }
-  void setColorParamValue(int index, const TPixel32 &color) {
+  void setColorParamValue(int index, const TPixel32 &color) override {
     if (index == 0)
       m_color0 = color;
     else
       m_color1 = color;
   }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color0 >> m_color1 >> m_intensity >> m_length >> m_thick >> m_noise;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color0 << m_color1 << m_intensity << m_length << m_thick << m_noise;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 138; };
-  void getObsoleteTagIds(std::vector<int> &ids) const {
+  int getTagId() const override { return 138; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
     ids.push_back(118);
     ids.push_back(128);
   }
@@ -904,7 +930,7 @@ public:
 
 //-------------------------------------------------------------------
 
-class TZigzagStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TZigzagStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_minDist, m_maxDist;
   double m_minAngle, m_maxAngle;
@@ -919,142 +945,144 @@ class TZigzagStrokeStyle : public TOptimizedStrokeStyleT<Points> {
 public:
   TZigzagStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   // void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TZigzagStrokeStyle", "Zigzag");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_minDist >> m_maxDist >> m_minAngle >> m_maxAngle >>
         m_thickness;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_minDist << m_maxDist << m_minAngle << m_maxAngle
        << m_thickness;
   }
   bool isSaveSupported() { return true; }
 
-  int getTagId() const { return 129; }
+  int getTagId() const override { return 129; }
 };
 
 //-------------------------------------------------------------------
 
-class TSinStrokeStyle : public TOptimizedStrokeStyleT<Points> {
+class TSinStrokeStyle final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_frequency, m_thick;
 
 public:
   TSinStrokeStyle();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void computeData(Points &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, Points &positions,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   // void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TSinStrokeStyle", "Wave");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_frequency >> m_thick;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_frequency << m_thick;
   }
 
-  int getTagId() const { return 130; }
+  int getTagId() const override { return 130; }
 };
 
 //-------------------------------------------------------------------
 
-class TFriezeStrokeStyle2 : public TOptimizedStrokeStyleT<Points> {
+class TFriezeStrokeStyle2 final : public TOptimizedStrokeStyleT<Points> {
   TPixel32 m_color;
   double m_parameter, m_thick;
 
 public:
   TFriezeStrokeStyle2();
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void invalidate() {}
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TFriezeStrokeStyle2", "Curl");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color; }
-  void setMainColor(const TPixel32 &color) { m_color = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void computeData(std::vector<TPointD> &positions, const TStroke *stroke,
-                   const TColorFunction *cf) const;
+                   const TColorFunction *cf) const override;
   void drawStroke(const TColorFunction *cf, std::vector<TPointD> &positions,
-                  const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
   // void drawStroke(const TColorFunction *cf, const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  void loadData(TInputStreamInterface &is) {
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color >> m_parameter >> m_thick;
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void saveData(TOutputStreamInterface &os) const {
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color << m_parameter << m_thick;
   }
-  int getTagId() const { return 133; };
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(102); }
+  int getTagId() const override { return 133; };
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(102);
+  }
 };
 
 //-------------------------------------------------------------------
 
-class TDualColorStrokeStyle2 : public TOutlineStyle {
+class TDualColorStrokeStyle2 final : public TOutlineStyle {
   TPixel32 m_color0, m_color1;
   double m_parameter;
 
@@ -1063,61 +1091,61 @@ public:
                          TPixel32 color1  = TPixel32::Yellow,
                          double parameter = 20.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const {}
+                  TRegionOutline &boundary) const override {}
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void invalidate() {}
 
   void computeOutline(const TStroke *stroke, TStrokeOutline &outline,
-                      TOutlineUtil::OutlineParameter param) const;
+                      TOutlineUtil::OutlineParameter param) const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TDualColorStrokeStyle2", "Striped");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color0; }
-  void setMainColor(const TPixel32 &color) { m_color0 = color; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color0; }
+  void setMainColor(const TPixel32 &color) override { m_color0 = color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const {
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override {
     return (index == 0) ? m_color0 : m_color1;
   }
-  void setColorParamValue(int index, const TPixel32 &color) {
+  void setColorParamValue(int index, const TPixel32 &color) override {
     if (index == 0)
       m_color0 = color;
     else
       m_color1 = color;
   }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 132; };
-  void loadData(TInputStreamInterface &is) {
+  int getTagId() const override { return 132; };
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color0 >> m_color1 >> m_parameter;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color0 << m_color1 << m_parameter;
   }
 };
 
 //-------------------------------------------------------------------
 
-class TLongBlendStrokeStyle2 : public TOutlineStyle {
+class TLongBlendStrokeStyle2 final : public TOutlineStyle {
   TPixel32 m_color0, m_color1;
   double m_parameter;
 
@@ -1126,54 +1154,54 @@ public:
                          TPixel32 color1  = TPixel32::Transparent,
                          double parameter = 20.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const {}
+                  TRegionOutline &boundary) const override {}
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
-  void drawStroke(TFlash &flash, const TStroke *stroke) const;
+                  const TStroke *stroke) const override;
+  void drawStroke(TFlash &flash, const TStroke *stroke) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void invalidate() {}
 
   void computeOutline(const TStroke *stroke, TStrokeOutline &outline,
-                      TOutlineUtil::OutlineParameter param) const;
+                      TOutlineUtil::OutlineParameter param) const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TLongBlendStrokeStyle2", "Watercolor");
   }
 
-  bool hasMainColor() const { return true; }
-  TPixel32 getMainColor() const { return m_color0; }
-  void setMainColor(const TPixel32 &color0) { m_color0 = color0; }
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color0; }
+  void setMainColor(const TPixel32 &color0) override { m_color0 = color0; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const {
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override {
     return index == 0 ? m_color0 : m_color1;
   }
-  void setColorParamValue(int index, const TPixel32 &color) {
+  void setColorParamValue(int index, const TPixel32 &color) override {
     if (index == 0)
       m_color0 = color;
     else
       m_color1 = color;
   }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 134; };
-  void loadData(TInputStreamInterface &is) {
+  int getTagId() const override { return 134; };
+  void loadData(TInputStreamInterface &is) override {
     is >> m_color0 >> m_color1 >> m_parameter;
   }
-  void saveData(TOutputStreamInterface &os) const {
+  void saveData(TOutputStreamInterface &os) const override {
     os << m_color0 << m_color1 << m_parameter;
   }
 };
@@ -1182,7 +1210,7 @@ public:
 
 #ifdef _DEBUG
 
-class OutlineViewerStyle : public TSolidColorStyle {
+class OutlineViewerStyle final : public TSolidColorStyle {
   double m_parameter[4];
 
   bool m_boolPar;
@@ -1191,50 +1219,50 @@ class OutlineViewerStyle : public TSolidColorStyle {
   TFilePath m_pathPar;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 public:
   OutlineViewerStyle(TPixel32 color = TPixel32::Black, double parameter0 = 0.0,
                      double parameter1 = 0.0, double parameter2 = 2.0,
                      double parameter3 = 3.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
+  QString getParamNames(int index) const override;
 
-  bool getParamValue(TColorStyle::bool_tag, int index) const;
-  void setParamValue(int index, bool value);
+  bool getParamValue(TColorStyle::bool_tag, int index) const override;
+  void setParamValue(int index, bool value) override;
 
-  void getParamRange(int index, int &min, int &max) const;
-  int getParamValue(TColorStyle::int_tag, int index) const;
-  void setParamValue(int index, int value);
+  void getParamRange(int index, int &min, int &max) const override;
+  int getParamValue(TColorStyle::int_tag, int index) const override;
+  void setParamValue(int index, int value) override;
 
-  void getParamRange(int index, QStringList &enumItems) const;
+  void getParamRange(int index, QStringList &enumItems) const override;
 
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  TFilePath getParamValue(TColorStyle::TFilePath_tag, int index) const;
-  void setParamValue(int index, const TFilePath &path);
+  TFilePath getParamValue(TColorStyle::TFilePath_tag, int index) const override;
+  void setParamValue(int index, const TFilePath &path) override;
 
   void computeOutline(const TStroke *stroke, TStrokeOutline &outline,
-                      TOutlineUtil::OutlineParameter param) const;
+                      TOutlineUtil::OutlineParameter param) const override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
   void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
-                  const TStroke *stroke) const;
-  QString getDescription() const {
+                  const TStroke *stroke) const override;
+  QString getDescription() const override {
     return QCoreApplication::translate("OutlineViewerStyle",
                                        "OutlineViewer(OnlyDebug)");
   }
-  int getTagId() const { return 99; };
+  int getTagId() const override { return 99; };
 };
 
 #endif
@@ -1243,7 +1271,7 @@ public:
 
 class TMatrioskaStrokeStyle;
 
-class TMatrioskaStrokeProp : public TStrokeProp {
+class TMatrioskaStrokeProp final : public TStrokeProp {
 protected:
   double m_outlinePixelSize;
   TMatrioskaStrokeStyle *m_colorStyle;
@@ -1256,49 +1284,49 @@ public:
   TMatrioskaStrokeProp(const TStroke *stroke, TMatrioskaStrokeStyle *style);
   ~TMatrioskaStrokeProp();
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TStrokeProp *clone(const TStroke *stroke) const;
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash);
+  TStrokeProp *clone(const TStroke *stroke) const override;
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override;
 };
 
-class TMatrioskaStrokeStyle : public TSolidColorStyle {
+class TMatrioskaStrokeStyle final : public TSolidColorStyle {
   double m_parameter;
   TPixel32 m_color2;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 public:
   TMatrioskaStrokeStyle(TPixel32 color1  = TPixel32::Magenta,
                         TPixel32 color2  = TPixel32::Blue,
                         double parameter = 6.0, bool alternate = true);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  TStrokeProp *makeStrokeProp(const TStroke *stroke);
+  TStrokeProp *makeStrokeProp(const TStroke *stroke) override;
 
-  bool isRegionStyle() const { return false; }
-  bool isStrokeStyle() const { return true; }
+  bool isRegionStyle() const override { return false; }
+  bool isStrokeStyle() const override { return true; }
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TMatrioskaStrokeStyle", "Toothpaste");
   }
-  int getTagId() const { return 141; };
+  int getTagId() const override { return 141; };
 };
 
 #endif  // STROKESTYLES_H

@@ -38,14 +38,14 @@ public:
 
 //-------------------------------------------------------------------
 
-class DVAPI TTextData : public TData {
+class DVAPI TTextData final : public TData {
   TString m_text;
 
 public:
   TTextData(TString text) : m_text(text) {}
   TTextData(std::string text);
 
-  TDataP clone() const;
+  TDataP clone() const override;
 
   TString getText() const { return m_text; }
 };
@@ -57,13 +57,13 @@ public:
 #pragma warning(disable : 4251)
 #endif
 
-class DVAPI TFilePathListData : public TData {
+class DVAPI TFilePathListData final : public TData {
   std::vector<TFilePath> m_filePaths;
 
 public:
   TFilePathListData(const std::vector<TFilePath> &filePaths)
       : m_filePaths(filePaths) {}
-  TDataP clone() const;
+  TDataP clone() const override;
 
   int getFilePathCount() const { return m_filePaths.size(); }
   TFilePath getFilePath(int i) const;

@@ -15,7 +15,7 @@ TPixel32 unmultiply(const TPixel32 &pix) {
 
 //===================================================================
 
-class UnmultiplyFx : public TStandardRasterFx {
+class UnmultiplyFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(UnmultiplyFx)
   TRasterFxPort m_input;
 
@@ -23,7 +23,8 @@ public:
   UnmultiplyFx() { addInputPort("Source", m_input); }
   ~UnmultiplyFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected())
       return m_input->doGetBBox(frame, bBox, info);
     else {
@@ -32,8 +33,10 @@ public:
     }
   }
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
 };
 
 //------------------------------------------------------------------------------

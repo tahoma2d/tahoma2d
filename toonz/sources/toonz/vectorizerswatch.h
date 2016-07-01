@@ -19,7 +19,7 @@
 //    VectorizerSwatchArea declaration
 //*****************************************************************************
 
-class VectorizerSwatchArea : public QFrame {
+class VectorizerSwatchArea final : public QFrame {
   Q_OBJECT
 
 public:
@@ -44,8 +44,8 @@ protected:
   void connectUpdates();
   void disconnectUpdates();
 
-  void showEvent(QShowEvent *se);  // { connectUpdates(); }
-  void hideEvent(QHideEvent *he);  // { disconnectUpdates(); }
+  void showEvent(QShowEvent *se) override;  // { connectUpdates(); }
+  void hideEvent(QHideEvent *he) override;  // { disconnectUpdates(); }
 
 public slots:
 
@@ -60,7 +60,7 @@ public slots:
 //    VectorizerSwatchArea::Swatch declaration
 //*****************************************************************************
 
-class VectorizerSwatchArea::Swatch : public PlaneViewer {
+class VectorizerSwatchArea::Swatch final : public PlaneViewer {
   TImageP m_img;
   VectorizerSwatchArea *m_area;
 
@@ -87,7 +87,7 @@ protected:
 //    VectorizationSwatchTask declaration   -   Private class
 //*****************************************************************************
 
-class VectorizationSwatchTask : public TThread::Runnable {
+class VectorizationSwatchTask final : public TThread::Runnable {
   Q_OBJECT
 
   int m_row, m_col;
@@ -98,9 +98,9 @@ class VectorizationSwatchTask : public TThread::Runnable {
 public:
   VectorizationSwatchTask(int row, int col);
 
-  void run();
-  void onStarted(TThread::RunnableP task);
-  void onFinished(TThread::RunnableP task);
+  void run() override;
+  void onStarted(TThread::RunnableP task) override;
+  void onFinished(TThread::RunnableP task) override;
 
 signals:
 

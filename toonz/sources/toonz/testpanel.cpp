@@ -113,10 +113,10 @@ void TestPanel::onColorValueChanged(const TPixel32 &, bool isDragging) {
 //=============================================================================
 // OpenFloatingTestPanel
 
-class OpenFloatingTestPanel : public MenuItemHandler {
+class OpenFloatingTestPanel final : public MenuItemHandler {
 public:
   OpenFloatingTestPanel() : MenuItemHandler(MI_OpenTest) {}
-  void execute() {
+  void execute() override {
     TMainWindow *currentRoom = TApp::instance()->getCurrentRoom();
     if (currentRoom) {
       QList<TPanel *> list = currentRoom->findChildren<TPanel *>();

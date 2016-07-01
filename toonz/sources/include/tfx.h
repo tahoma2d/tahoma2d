@@ -46,7 +46,7 @@ class DVAPI TFxPort {
 protected:
   TFx *m_owner;    //!< This is an input port of m_owner
   int m_groupIdx;  //!< Dynamic group index this belongs to in m_owner (-1 if
-                   //!none)
+                   //! none)
   bool m_isControl;
 
 public:
@@ -89,9 +89,9 @@ public:
     }
   }
 
-  TFx *getFx() const { return m_fx; }
+  TFx *getFx() const override { return m_fx; }
 
-  void setFx(TFx *fx) {
+  void setFx(TFx *fx) override {
     if (m_fx) m_fx->removeOutputConnection(this);
 
     if (fx == 0) {
@@ -250,7 +250,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-class TFxParamChange : public TFxChange {
+class TFxParamChange final : public TFxChange {
 public:
   TFxParamChange(TFx *fx, double firstAffectedFrame, double lastAffectedFrame,
                  bool dragging);
@@ -259,7 +259,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TFxPortAdded : public TFxChange {
+class TFxPortAdded final : public TFxChange {
 public:
   TFxPortAdded(TFx *fx) : TFxChange(fx, m_minFrame, m_maxFrame, false) {}
   ~TFxPortAdded() {}
@@ -267,7 +267,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TFxPortRemoved : public TFxChange {
+class TFxPortRemoved final : public TFxChange {
 public:
   TFxPortRemoved(TFx *fx) : TFxChange(fx, m_minFrame, m_maxFrame, false) {}
   ~TFxPortRemoved() {}
@@ -275,7 +275,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TFxParamAdded : public TFxChange {
+class TFxParamAdded final : public TFxChange {
 public:
   TFxParamAdded(TFx *fx) : TFxChange(fx, m_minFrame, m_maxFrame, false) {}
   ~TFxParamAdded() {}
@@ -283,7 +283,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TFxParamRemoved : public TFxChange {
+class TFxParamRemoved final : public TFxChange {
 public:
   TFxParamRemoved(TFx *fx) : TFxChange(fx, m_minFrame, m_maxFrame, false) {}
   ~TFxParamRemoved() {}
@@ -291,7 +291,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class TFxParamsUnlinked : public TFxChange {
+class TFxParamsUnlinked final : public TFxChange {
 public:
   TFxParamsUnlinked(TFx *fx) : TFxChange(fx, m_minFrame, m_maxFrame, false) {}
   ~TFxParamsUnlinked() {}
@@ -378,17 +378,17 @@ public:
   TFx *getLinkedFx() const;
 
   bool addInputPort(const std::string &name, TFxPort &p);  //!< Adds a port with
-                                                           //!given name,
-                                                           //!returns false on
-                                                           //!duplicate names.
+                                                           //! given name,
+  //! returns false on
+  //! duplicate names.
   //!  Ownership of the port belongs to derived implementations of TFx.
   bool addInputPort(const std::string &name, TFxPort *p,
                     int groupIndex);  //!< Adds a port with given name to the
-                                      //!specified dynamic group,
+                                      //! specified dynamic group,
   //!  returns false on duplicate names. Ownership is transferred to the group.
   bool removeInputPort(const std::string &name);  //!< Removes the port with
-                                                  //!given name, returns false
-                                                  //!if not found.
+                                                  //! given name, returns false
+  //! if not found.
 
   bool renamePort(const std::string &oldName, const std::string &newName);
 
@@ -414,10 +414,10 @@ public:
 
   static void listFxs(std::vector<TFxInfo> &fxInfos);
   static TFxInfo getFxInfo(const std::string &fxIdentifier);  //!< Returns info
-                                                              //!associated to
-                                                              //!an fx
-                                                              //!identifier, or
-                                                              //!an
+                                                              //! associated to
+  //! an fx
+  //! identifier, or
+  //! an
   //!  unnamed one if none was found.
   virtual bool isZerary() const { return getInputPortCount() == 0; }
 
@@ -459,7 +459,7 @@ public:
   static TFx *create(std::string name);
 
   // TParamObserver-related methods
-  void onChange(const TParamChange &c);
+  void onChange(const TParamChange &c) override;
 
   void addObserver(TFxObserver *);
   void removeObserver(TFxObserver *);
@@ -469,8 +469,8 @@ public:
   void notify(const TFxParamAdded &change);
   void notify(const TFxParamRemoved &change);
 
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
 
   void loadPreset(TIStream &is);  // solleva un eccezione se il preset non
                                   // corrisponde all'effetto
@@ -526,10 +526,10 @@ public:
 };
 
 template <class T>
-class TFxDeclarationT : public TFxDeclaration {
+class TFxDeclarationT final : public TFxDeclaration {
 public:
   TFxDeclarationT(const TFxInfo &info) : TFxDeclaration(info) {}
-  TPersist *create() const { return new T; }
+  TPersist *create() const override { return new T; }
 };
 
 //-------------------------------------------------------------------
@@ -541,7 +541,7 @@ inline std::string TFx::getFxType() const { return getDeclaration()->getId(); }
 #define FX_DECLARATION(T)                                                      \
   \
 public:                                                                        \
-  const TPersistDeclaration *getDeclaration() const;
+  const TPersistDeclaration *getDeclaration() const override;
 
 #define FX_IDENTIFIER(T, I)                                                    \
   namespace {                                                                  \

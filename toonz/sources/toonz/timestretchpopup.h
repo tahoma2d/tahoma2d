@@ -18,7 +18,7 @@ class TSelection;
 // TimeStretchPopup
 //-----------------------------------------------------------------------------
 
-class TimeStretchPopup : public DVGui::Dialog {
+class TimeStretchPopup final : public DVGui::Dialog {
   Q_OBJECT
 
   QPushButton *m_okBtn;
@@ -38,8 +38,8 @@ public:
   TimeStretchPopup();
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
   void setCurrentStretchType(int index);

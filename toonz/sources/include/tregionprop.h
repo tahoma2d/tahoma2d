@@ -74,7 +74,7 @@ private:
 
 //-------------------------------------------------------------------
 
-class OutlineRegionProp : public TRegionProp {
+class OutlineRegionProp final : public TRegionProp {
   double m_pixelSize;
   TOutlineStyleP m_colorStyle;
 
@@ -87,12 +87,12 @@ class OutlineRegionProp : public TRegionProp {
 public:
   OutlineRegionProp(const TRegion *region, const TOutlineStyleP regionStyle);
 
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &rd);
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &rd) override;
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
-  TRegionProp *clone(const TRegion *region) const;
+  TRegionProp *clone(const TRegion *region) const override;
 };
 
 #endif

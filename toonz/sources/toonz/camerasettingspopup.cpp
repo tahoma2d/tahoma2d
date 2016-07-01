@@ -55,12 +55,12 @@ class CameraSettingsPopup;
 
 //=============================================================================
 
-class OpenCameraStageCommandHandler : public MenuItemHandler {
+class OpenCameraStageCommandHandler final : public MenuItemHandler {
   CommandId m_id;
 
 public:
   OpenCameraStageCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
-  void execute() {
+  void execute() override {
     TXsheet *xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
     TStageObjectId cameraId =
         TApp::instance()->getCurrentObject()->getObjectId();

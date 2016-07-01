@@ -37,7 +37,7 @@ class TOStream;
             (like \p VectorizerPopup) to lower layers (\p VectorizerCore) of
             the vectorization process inside a \p VectorizerConfiguration
   variable.
-            This typically includes vectorization modes, various sensibility and
+            This typically includes vectorization modes, various sensitivity and
             accuracy parameters, and post-processing informations. This class
             merely acts as a base parameters container (although no pure virtual
             method is present) - meaning that every vectorization method
@@ -52,11 +52,11 @@ public:
   bool m_outline;  //!< Vectorization mode between outline and centerline
 
   int m_threshold;  //!< Cut-out parameter to distinguish paper or painted
-                    //!background
+                    //! background
   //!  from recognizable strokes. A pixel whose tone (for colormaps)
   //!  or HSV value is under \p m_threshold is considered ink-colored.
   bool m_leaveUnpainted;  //!< Whether color recognition for areas should be
-                          //!applied
+                          //! applied
 
   TAffine m_affine;  //!< Affine transform applied to the vectorization results
   double m_thickScale;  //!< Impose a thickness reduction by this ratio
@@ -79,7 +79,7 @@ public:
             specialization for the centerline vectorization method.
 */
 
-class DVAPI CenterlineConfiguration : public VectorizerConfiguration {
+class DVAPI CenterlineConfiguration final : public VectorizerConfiguration {
 public:
   /*!After threshold is done, raster zones of uniform ink or paint color whose
 area is under this parameter
@@ -142,7 +142,7 @@ with activated region computing and painting.*/
             specialization for the (new) outline vectorization method.
 */
 
-class DVAPI NewOutlineConfiguration : public VectorizerConfiguration {
+class DVAPI NewOutlineConfiguration final : public VectorizerConfiguration {
 public:
   double m_adherenceTol;  //!< Adherence to contour corners
   double m_angleTol;      //!< Angle-based corners tolerance
@@ -151,9 +151,9 @@ public:
   int m_despeckling;  //!< Despeckling edge size (size x size gets despeckled)
 
   int m_maxColors;  //!< Maximum number of palette color from fullcolor
-                    //!quantization
+                    //! quantization
   TPixel32 m_transparentColor;  //!< Color to be recognized as transparent in
-                                //!the fullcolor case
+                                //! the fullcolor case
 
   int m_toneTol;  //!< Tone threshold to be used in the colormap case
 
@@ -182,7 +182,7 @@ public:
                 with a different outline vectorization algorithm.
 */
 
-class DVAPI OutlineConfiguration : public VectorizerConfiguration {
+class DVAPI OutlineConfiguration final : public VectorizerConfiguration {
 public:
   int m_smoothness;  // Outline
 
@@ -215,7 +215,7 @@ public:
   \brief    Container class for scene-bound vectorizer options.
 */
 
-class DVAPI VectorizerParameters : public TPersist {
+class DVAPI VectorizerParameters final : public TPersist {
   PERSIST_DECLARATION(VectorizerParameters)
 
 public:
@@ -275,8 +275,8 @@ public:
                              getCenterlineConfiguration(weight));
   }
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 };
 
 #endif  // VECTORIZERPARAMETERS_H

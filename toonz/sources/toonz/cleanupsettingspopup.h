@@ -45,7 +45,7 @@ class IntField;
 //    CleanupSettingsPopup declaration
 //*****************************************************************************
 
-class CleanupSettings : public QWidget {
+class CleanupSettings final : public QWidget {
   Q_OBJECT
 
   CleanupTab *m_cleanupTab;
@@ -78,8 +78,8 @@ public slots:
   void enableOpacityCheck(bool);
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 private slots:
 
@@ -94,7 +94,7 @@ private slots:
 //    Cleanup Tab declaration
 //**********************************************************************
 
-class CleanupTab : public QFrame {
+class CleanupTab final : public QFrame {
   Q_OBJECT
 
   DVGui::CheckBox *m_autoCenter, *m_flipX, *m_flipY;
@@ -122,7 +122,7 @@ private:
 //    ProcessingTab declaration
 //**********************************************************************
 
-class ProcessingTab : public QFrame {
+class ProcessingTab final : public QFrame {
   Q_OBJECT
 
   CleanupPaletteViewer *m_paletteViewer;
@@ -159,7 +159,7 @@ private slots:
 //    CameraTab declaration
 //**********************************************************************
 
-class CameraTab : public CleanupCameraSettingsWidget {
+class CameraTab final : public CleanupCameraSettingsWidget {
   Q_OBJECT
 
 public:

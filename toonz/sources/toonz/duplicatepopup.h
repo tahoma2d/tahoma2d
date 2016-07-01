@@ -15,7 +15,7 @@ class QPushButton;
 // DuplicatePopup
 //-----------------------------------------------------------------------------
 
-class DuplicatePopup : public QDialog {
+class DuplicatePopup final : public QDialog {
   Q_OBJECT
 
   QPushButton *m_okBtn;
@@ -37,7 +37,7 @@ public slots:
   void onSelectionChanged();
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 };
 
 #endif  // DUPLICATEPOPUP_H

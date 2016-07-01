@@ -27,7 +27,7 @@ class ToolOptions;
 // PaletteViewerPanel
 //---------------------------------------------------------
 
-class PaletteViewerPanel : public TPanel {
+class PaletteViewerPanel final : public TPanel {
   Q_OBJECT
 
   TPaletteHandle *m_paletteHandle;
@@ -39,14 +39,14 @@ class PaletteViewerPanel : public TPanel {
 public:
   PaletteViewerPanel(QWidget *parent);
 
-  void setViewType(int viewType);
-  int getViewType();
+  void setViewType(int viewType) override;
+  int getViewType() override;
 
-  void reset();
+  void reset() override;
 
 protected:
   void initializeTitleBar();
-  bool isActivatableOnEnter() { return true; }
+  bool isActivatableOnEnter() override { return true; }
 
 protected slots:
   void onColorStyleSwitched();
@@ -59,7 +59,7 @@ protected slots:
 // StudioPaletteViewerPanel
 //---------------------------------------------------------
 
-class StudioPaletteViewerPanel : public TPanel {
+class StudioPaletteViewerPanel final : public TPanel {
   Q_OBJECT
 
   TPaletteHandle *m_studioPaletteHandle;
@@ -69,7 +69,7 @@ public:
   StudioPaletteViewerPanel(QWidget *parent);
 
 protected:
-  bool isActivatableOnEnter() { return true; }
+  bool isActivatableOnEnter() override { return true; }
 protected slots:
   void onColorStyleSwitched();
   void onPaletteSwitched();
@@ -79,7 +79,7 @@ protected slots:
 // StyleEditorPanel
 //---------------------------------------------------------
 
-class StyleEditorPanel : public TPanel {
+class StyleEditorPanel final : public TPanel {
   Q_OBJECT
   StyleEditor *m_styleEditor;
 
@@ -91,7 +91,7 @@ public:
 // ColorFieldEditorController
 //---------------------------------------------------------
 
-class ColorFieldEditorController
+class ColorFieldEditorController final
     : public QObject,
       public DVGui::ColorField::ColorFieldEditorController {
   Q_OBJECT
@@ -105,8 +105,8 @@ public:
   ~ColorFieldEditorController() {}
 
   // Indice dello stile corrente == 1
-  void edit(DVGui::ColorField *colorField);
-  void hide();
+  void edit(DVGui::ColorField *colorField) override;
+  void hide() override;
 
 protected slots:
   void onColorStyleChanged();
@@ -117,7 +117,7 @@ protected slots:
 // CleanupColorFieldEditorController
 //---------------------------------------------------------
 
-class CleanupColorFieldEditorController
+class CleanupColorFieldEditorController final
     : public QObject,
       public DVGui::CleanupColorField::CleanupColorFieldEditorController {
   Q_OBJECT
@@ -132,8 +132,8 @@ public:
   ~CleanupColorFieldEditorController() {}
 
   // Indice dello stile corrente == 1
-  void edit(DVGui::CleanupColorField *colorField);
-  void hide();
+  void edit(DVGui::CleanupColorField *colorField) override;
+  void hide() override;
 
 protected slots:
   void onColorStyleChanged();
@@ -143,7 +143,7 @@ protected slots:
 // SchematicScenePanel
 //---------------------------------------------------------
 
-class SchematicScenePanel : public TPanel {
+class SchematicScenePanel final : public TPanel {
   Q_OBJECT
 
   SchematicViewer *m_schematicViewer;
@@ -151,12 +151,12 @@ class SchematicScenePanel : public TPanel {
 public:
   SchematicScenePanel(QWidget *parent);
 
-  void setViewType(int viewType);
-  int getViewType();
+  void setViewType(int viewType) override;
+  int getViewType() override;
 
 protected:
-  void showEvent(QShowEvent *e);
-  void hideEvent(QHideEvent *e);
+  void showEvent(QShowEvent *e) override;
+  void hideEvent(QHideEvent *e) override;
 
 protected slots:
   void onShowPreview(TFxP fx);
@@ -171,7 +171,7 @@ protected slots:
 // FunctionViewerPanel
 //---------------------------------------------------------
 
-class FunctionViewerPanel : public TPanel {
+class FunctionViewerPanel final : public TPanel {
   Q_OBJECT
 
   FunctionViewer *m_functionViewer;
@@ -179,16 +179,16 @@ class FunctionViewerPanel : public TPanel {
 public:
   FunctionViewerPanel(QWidget *parent = 0);
 
-  void reset();
+  void reset() override;
 
   void attachHandles();
   void detachHandles();
 
-  bool widgetInThisPanelIsFocused();
+  bool widgetInThisPanelIsFocused() override;
 
 protected:
-  void widgetFocusOnEnter();
-  void widgetClearFocusOnLeave();
+  void widgetFocusOnEnter() override;
+  void widgetClearFocusOnLeave() override;
 
 public slots:
 
@@ -200,7 +200,7 @@ public slots:
 // ToolOptionPanel
 //---------------------------------------------------------
 
-class ToolOptionPanel : public TPanel {
+class ToolOptionPanel final : public TPanel {
   Q_OBJECT
 
   ToolOptions *m_toolOption;
@@ -213,7 +213,7 @@ public:
 // FlipbookPanel
 //---------------------------------------------------------
 
-class FlipbookPanel : public TPanel {
+class FlipbookPanel final : public TPanel {
   Q_OBJECT
   FlipBook *m_flipbook;
 
@@ -226,9 +226,9 @@ protected:
 public:
   FlipbookPanel(QWidget *parent);
 
-  void reset();
+  void reset() override;
   // disable minimize button when docked
-  void onDock(bool docked);
+  void onDock(bool docked) override;
 
 protected slots:
   void onMinimizeButtonToggled(bool);

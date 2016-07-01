@@ -61,14 +61,14 @@ protected:
 };
 
 
-class TRamCache : public TCache {
+class TRamCache final : public TCache {
 public:
   TRamCache();
 
 };
 
 
-class TDiskCache : public TCache {
+class TDiskCache final : public TCache {
 public:
   TDiskCache();
 };
@@ -83,18 +83,18 @@ void TDiskCache::getRaster(
 
 
 
-class TRAMUncompressedCache : public TRamCache {
+class TRAMUncompressedCache final : public TRamCache {
 };
 
-class TRAMLzoCache : public TRamCache {
-};
-
-
-class TDiskUncompressedCache : public TDiskCache {
+class TRAMLzoCache final : public TRamCache {
 };
 
 
-class TDiskYUV422Cache : public TDiskCache {
+class TDiskUncompressedCache final : public TDiskCache {
+};
+
+
+class TDiskYUV422Cache final : public TDiskCache {
 public:
   TDiskYUV422Cache();
   ~TDiskYUV422Cache();
@@ -186,25 +186,25 @@ public:
   TRasterCodec *m_codec;
 };
 
-class DVAPI TRamCachePersist : public TCachePersist {
+class DVAPI TRamCachePersist final : public TCachePersist {
 public:
   TRamCachePersist(TRasterCodec *codec);
   ~TRamCachePersist();
 
-  void setFrameSize(int lx, int ly, int bpp) {}
+  void setFrameSize(int lx, int ly, int bpp) override {}
 
-  void onInvalidate();
-  void onInvalidate(int startFrame, int endFrame);
+  void onInvalidate() override;
+  void onInvalidate(int startFrame, int endFrame) override;
 
-  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly);
+  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly) override;
 
-  TUINT64 getUsedSpace();
+  TUINT64 getUsedSpace() override;
 
 private:
-  TRasterP doGetRaster(int frame);
-  bool doGetRaster(int frame, TRaster32P &ras) const;
+  TRasterP doGetRaster(int frame) override;
+  bool doGetRaster(int frame, TRaster32P &ras) const override;
 
-  bool doPutRaster(int frame, const TRasterP &ras);
+  bool doPutRaster(int frame, const TRasterP &ras) override;
 
 private:
   class Imp;
@@ -213,25 +213,25 @@ private:
 
 //------------------------------------------------------------------------------
 
-class DVAPI TDiskCachePersist : public TCachePersist {
+class DVAPI TDiskCachePersist final : public TCachePersist {
 public:
   TDiskCachePersist(TRasterCodec *codec, const TFilePath &fullpath);
   ~TDiskCachePersist();
 
-  void setFrameSize(int lx, int ly, int bpp);
+  void setFrameSize(int lx, int ly, int bpp) override;
 
-  void onInvalidate();
-  void onInvalidate(int startFrame, int endFrame);
+  void onInvalidate() override;
+  void onInvalidate(int startFrame, int endFrame) override;
 
-  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly);
+  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly) override;
 
-  TUINT64 getUsedSpace();
+  TUINT64 getUsedSpace() override;
 
 private:
-  TRasterP doGetRaster(int frame);
-  bool doGetRaster(int frame, TRaster32P &ras) const;
+  TRasterP doGetRaster(int frame) override;
+  bool doGetRaster(int frame, TRaster32P &ras) const override;
 
-  bool doPutRaster(int frame, const TRasterP &ras);
+  bool doPutRaster(int frame, const TRasterP &ras) override;
 
 private:
   class Imp;
@@ -241,25 +241,25 @@ private:
 //------------------------------------------------------------------------------
 // TDiskCachePersist2 usa il Direct File I/O (acceso al disco non bufferizzato)
 
-class DVAPI TDiskCachePersist2 : public TCachePersist {
+class DVAPI TDiskCachePersist2 final : public TCachePersist {
 public:
   TDiskCachePersist2(TRasterCodec *codec, const TFilePath &fullpath);
   ~TDiskCachePersist2();
 
-  void setFrameSize(int lx, int ly, int bpp);
+  void setFrameSize(int lx, int ly, int bpp) override;
 
-  void onInvalidate();
-  void onInvalidate(int startFrame, int endFrame);
+  void onInvalidate() override;
+  void onInvalidate(int startFrame, int endFrame) override;
 
-  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly);
+  UCHAR *getRawData(int frame, TINT32 &size, int &lx, int &ly) override;
 
-  TUINT64 getUsedSpace();
+  TUINT64 getUsedSpace() override;
 
 private:
-  TRasterP doGetRaster(int frame);
-  bool doGetRaster(int frame, TRaster32P &ras) const;
+  TRasterP doGetRaster(int frame) override;
+  bool doGetRaster(int frame, TRaster32P &ras) const override;
 
-  bool doPutRaster(int frame, const TRasterP &ras);
+  bool doPutRaster(int frame, const TRasterP &ras) override;
 
 private:
   class Imp;

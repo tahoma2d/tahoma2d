@@ -22,7 +22,7 @@ class TFilePath;
 class TPalette;
 class InfoViewerImp;
 
-class DVAPI InfoViewer : public DVGui::Dialog {
+class DVAPI InfoViewer final : public DVGui::Dialog {
   Q_OBJECT
   std::unique_ptr<InfoViewerImp> m_imp;
   QWidget *m_parent;
@@ -32,8 +32,8 @@ public:
   ~InfoViewer();
 
 protected:
-  void hideEvent(QHideEvent *);
-  void showEvent(QShowEvent *);
+  void hideEvent(QHideEvent *) override;
+  void showEvent(QShowEvent *) override;
 protected slots:
   void onSliderChanged(bool);
 public slots:

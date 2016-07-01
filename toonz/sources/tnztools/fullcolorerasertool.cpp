@@ -125,7 +125,7 @@ void eraseImage(const TRasterImageP &ri, const TRaster32P &image,
 
 //----------------------------------------------------------------------------------
 
-class RectFullColorUndo : public TFullColorRasterUndo {
+class RectFullColorUndo final : public TFullColorRasterUndo {
   TRectD m_modifyArea;
   TStroke *m_stroke;
   std::wstring m_eraseType;
@@ -145,7 +145,7 @@ public:
 
   ~RectFullColorUndo() { delete m_stroke; }
 
-  void redo() const {
+  void redo() const override {
     TRasterImageP ri = getImage();
     if (!ri) return;
 
@@ -165,20 +165,22 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return TFullColorRasterUndo::getSize() +
            m_stroke->getControlPointCount() * sizeof(TThickPoint) + 100 +
            sizeof(this);
   }
 
-  virtual QString getToolName() { return QString("Raster Eraser Tool (Rect)"); }
+  QString getToolName() override {
+    return QString("Raster Eraser Tool (Rect)");
+  }
 
-  int getHistoryType() { return HistoryType::EraserTool; }
+  int getHistoryType() override { return HistoryType::EraserTool; }
 };
 
 //----------------------------------------------------------------------------------
 
-class FullColorEraserUndo : public TFullColorRasterUndo {
+class FullColorEraserUndo final : public TFullColorRasterUndo {
   std::vector<TThickPoint> m_points;
   int m_size;
   double m_hardness;
@@ -195,7 +197,7 @@ public:
       , m_hardness(hardness)
       , m_opacity(opacity) {}
 
-  void redo() const {
+  void redo() const override {
     if (m_points.size() == 0) return;
     TRasterImageP image      = getImage();
     TRasterP ras             = image->getRaster();
@@ -234,12 +236,12 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + TFullColorRasterUndo::getSize();
   }
 
-  virtual QString getToolName() { return QString("Raster Eraser Tool"); }
-  int getHistoryType() { return HistoryType::EraserTool; }
+  QString getToolName() override { return QString("Raster Eraser Tool"); }
+  int getHistoryType() override { return HistoryType::EraserTool; }
 };
 
 //----------------------------------------------------------------------------------
@@ -277,35 +279,35 @@ void eraseStroke(const TRasterImageP &ri, TStroke *stroke,
 //    FullColorEraserTool  definition
 //**********************************************************************************
 
-class FullColorEraserTool : public TTool {
+class FullColorEraserTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(FullColorEraserTool)
 
 public:
   FullColorEraserTool(std::string name);
   ~FullColorEraserTool();
 
-  ToolType getToolType() const { return TTool::LevelWriteTool; }
+  ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
-  void updateTranslation();
+  void updateTranslation() override;
 
-  void onActivate();
-  void onDeactivate();
+  void onActivate() override;
+  void onDeactivate() override;
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e);
-  void mouseMove(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) override;
+  void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
 
-  void draw();
+  void draw() override;
 
-  int getCursorId() const { return ToolCursor::PenCursor; }
+  int getCursorId() const override { return ToolCursor::PenCursor; }
 
-  TPropertyGroup *getProperties(int targetType) { return &m_prop; }
+  TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
-  bool onPropertyChanged(std::string propertyName);
-  void onImageChanged();
-  void onEnter();
+  bool onPropertyChanged(std::string propertyName) override;
+  void onImageChanged() override;
+  void onEnter() override;
 
   void update(const TRasterImageP &ri, TRectD selArea,
               const TXshSimpleLevelP &level, bool multi = false,
@@ -1022,7 +1024,7 @@ void FullColorEraserTool::onImageChanged() {
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
-  else {  // cambio stato.
+  else {                           // cambio stato.
     m_firstFrameSelected = true;
     if (m_eraseType.getValue() != FREEHANDERASE &&
         m_eraseType.getValue() != POLYLINEERASE) {

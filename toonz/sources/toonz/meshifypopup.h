@@ -38,15 +38,15 @@ class QPushButton;
             Plastic Tool.
 */
 
-class MeshifyPopup : public DVGui::Dialog {
+class MeshifyPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:
   MeshifyPopup();
 
 protected:
-  void showEvent(QShowEvent *se);
-  void hideEvent(QHideEvent *se);
+  void showEvent(QShowEvent *se) override;
+  void hideEvent(QHideEvent *se) override;
 
   void acquirePreview();
   void updateMeshPreview();

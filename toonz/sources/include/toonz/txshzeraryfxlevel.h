@@ -27,7 +27,7 @@ class TXshZeraryFxColumn;
  */
 //=============================================================================
 
-class DVAPI TXshZeraryFxLevel : public TXshLevel {
+class DVAPI TXshZeraryFxLevel final : public TXshLevel {
   PERSIST_DECLARATION(TXshZeraryFxLevel)
 
   TXshZeraryFxColumn *m_zeraryFxColumn;
@@ -40,16 +40,16 @@ public:
   /*!
 Return the \b TXshZeraryFxLevel zerary fx level.
 */
-  TXshZeraryFxLevel *getZeraryFxLevel() { return this; }
+  TXshZeraryFxLevel *getZeraryFxLevel() override { return this; }
 
   void setColumn(TXshZeraryFxColumn *column);
   TXshZeraryFxColumn *getColumn() const { return m_zeraryFxColumn; }
 
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
 
-  void load();
-  void save();
+  void load() override;
+  void save() override;
 
 private:
   // not implemented

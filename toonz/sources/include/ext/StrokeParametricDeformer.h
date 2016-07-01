@@ -35,7 +35,7 @@ class Potential;
    *
    * New stroke deformer doesn't change last point of stroke.
    */
-class DVAPI StrokeParametricDeformer : public TStrokeDeformation {
+class DVAPI StrokeParametricDeformer final : public TStrokeDeformation {
 public:
   StrokeParametricDeformer(double actionLenght, double startParameter,
                            TStroke *s, Potential *);
@@ -56,7 +56,7 @@ public:
 *@return displacement to apply to obtain deformation
 *@sa increaseControlPoints
 */
-  TThickPoint getDisplacement(const TStroke &stroke, double w) const;
+  TThickPoint getDisplacement(const TStroke &stroke, double w) const override;
 
   /**
 *@brief Return displacement to use with function  modifyControlPoints
@@ -66,9 +66,9 @@ public:
 *@sa modifyControlPoints
 */
   TThickPoint getDisplacementForControlPoint(const TStroke &stroke,
-                                             UINT n) const;
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
-                                                double cpLen) const;
+                                                double cpLen) const override;
 
   /**
 *@brief This method compute the delta (gradient) referred to stroke in
@@ -80,20 +80,20 @@ public:
 *@param w Stroke parameter
 *@return the @b gradient in w
 */
-  double getDelta(const TStroke &stroke, double w) const;
+  double getDelta(const TStroke &stroke, double w) const override;
 
   /**
 *@brief Max diff of delta (This value indicates when it's necessary
 *  to insert control point)
 *@return max displacement permitted
 */
-  double getMaxDiff() const;
+  double getMaxDiff() const override;
 
   // just for debug
   const Potential *getPotential() const { return pot_; }
 
   /**
-*@brief Change sensibility of deformer (just for debug).
+*@brief Change sensitivity of deformer (just for debug).
 */
   void setDiff(double diff) { diff_ = diff; }
 
@@ -121,7 +121,7 @@ private:
   // deformation shape
   Potential *pot_;
 
-  // sensibility of deformer
+  // sensitivity of deformer
   // Indica il valore minimo a partire dal quale
   //  l'inseritore comincia a mettere punti di controllo
   double diff_;

@@ -15,7 +15,7 @@
 // HookUndo
 //-----------------------------------------------------------------------------
 
-class HookUndo : public TUndo {
+class HookUndo final : public TUndo {
   HookSet m_oldHooks, m_newHooks;
   TXshLevelP m_level;
 
@@ -23,20 +23,20 @@ public:
   HookUndo(const TXshLevelP &level);
   ~HookUndo();
 
-  void onAdd();
+  void onAdd() override;
   void assignHookSet(const HookSet &src) const;
 
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
 
-  int getSize() const;
+  int getSize() const override;
 };
 
 //=============================================================================
 // HooksData
 //-----------------------------------------------------------------------------
 
-class HooksData : public DvMimeData {
+class HooksData final : public DvMimeData {
   struct HookPosition {
     int m_id;
     TPointD m_aPos, m_bPos;
@@ -52,7 +52,7 @@ public:
   HooksData(const TXshLevelP &level);
   ~HooksData();
 
-  HooksData *clone() const;
+  HooksData *clone() const override;
   void storeHookPositions(const std::vector<int> &ids);
   void restoreHookPositions() const;
 };
@@ -66,7 +66,7 @@ public:
 // (1=A,2=B)
 //-----------------------------------------------------------------------------
 
-class HookSelection : public TSelection {
+class HookSelection final : public TSelection {
   TXshLevelP m_level;
   std::set<std::pair<int, int>> m_hooks;  // hookId, side : 1=A 2=B
 
@@ -80,11 +80,11 @@ public:
   void unselect(int id, int side);
   bool isSelected(int id, int side) const;
   void invertSelection(int id, int side);
-  bool isEmpty() const;
-  void selectNone() { m_hooks.clear(); }
+  bool isEmpty() const override;
+  void selectNone() override { m_hooks.clear(); }
   HookSet *getHookSet() const;
   bool select(const TSelection *s);
-  void enableCommands();
+  void enableCommands() override;
 
   // commands
   void deleteSelectedHooks();

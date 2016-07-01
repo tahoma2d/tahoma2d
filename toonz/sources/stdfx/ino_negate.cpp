@@ -4,7 +4,7 @@
 
 #include "ino_common.h"
 //------------------------------------------------------------
-class ino_negate : public TStandardRasterFx {
+class ino_negate final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ino_negate)
   TRasterFxPort m_input;
   TBoolParamP m_red;
@@ -20,7 +20,8 @@ public:
     bindParam(this, "blue", this->m_blue);
     bindParam(this, "alpha", this->m_alpha);
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       return this->m_input->doGetBBox(frame, bBox, info);
     } else {
@@ -28,8 +29,11 @@ public:
       return false;
     }
   }
-  bool canHandle(const TRenderSettings &info, double frame) { return true; }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets);
+  bool canHandle(const TRenderSettings &info, double frame) override {
+    return true;
+  }
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_negate, "inoNegateFx");
 //------------------------------------------------------------

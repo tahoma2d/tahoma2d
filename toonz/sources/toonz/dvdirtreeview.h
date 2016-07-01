@@ -36,7 +36,7 @@ class QFileSystemWatcher;
 //    DvDirTreeView  declaration
 //**********************************************************************************
 
-class DvDirTreeView : public QTreeView, public TSelection {
+class DvDirTreeView final : public QTreeView, public TSelection {
   Q_OBJECT
 
   QColor m_textColor;                // text color (black)
@@ -65,9 +65,9 @@ public:
   DvDirModelNode *getCurrentDropNode() const { return m_currentDropItem; }
 
   // From TSelection
-  bool isEmpty() const { return false; }
-  void selectNone() {}
-  void enableCommands();
+  bool isEmpty() const override { return false; }
+  void selectNone() override {}
+  void enableCommands() override;
 
   void enableGlobalSelection(bool enabled) {
     m_globalSelectionEnabled = enabled;
@@ -157,18 +157,19 @@ public slots:
   void onMonitoredDirectoryChanged(const QString &);
 
 protected:
-  QSize sizeHint() const;
+  QSize sizeHint() const override;
 
-  void currentChanged(const QModelIndex &current, const QModelIndex &previous);
-  bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *ev);
-  void resizeEvent(QResizeEvent *);
+  void currentChanged(const QModelIndex &current,
+                      const QModelIndex &previous) override;
+  bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *ev) override;
+  void resizeEvent(QResizeEvent *) override;
 
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragLeaveEvent(QDragLeaveEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dragLeaveEvent(QDragLeaveEvent *event) override;
+  void dragMoveEvent(QDragMoveEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
 
-  void contextMenuEvent(QContextMenuEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event) override;
 
   void createMenuAction(QMenu &menu, QString name, const char *slot,
                         bool enable = true);
@@ -199,7 +200,7 @@ private:
 //    DvDirTreeViewDelegate  declaration
 //**********************************************************************************
 
-class DvDirTreeViewDelegate : public QItemDelegate {
+class DvDirTreeViewDelegate final : public QItemDelegate {
   Q_OBJECT
 
 public:
@@ -207,22 +208,22 @@ public:
   ~DvDirTreeViewDelegate();
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                        const QModelIndex &index) const;
+                        const QModelIndex &index) const override;
 
   bool editorEvent(QEvent *event, QAbstractItemModel *model,
                    const QStyleOptionViewItem &option,
-                   const QModelIndex &index);
+                   const QModelIndex &index) override;
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
-             const QModelIndex &index) const;
+             const QModelIndex &index) const override;
 
-  void setEditorData(QWidget *editor, const QModelIndex &index) const;
+  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
   void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const;
+                    const QModelIndex &index) const override;
 
   QSize sizeHint(const QStyleOptionViewItem &option,
-                 const QModelIndex &index) const;
+                 const QModelIndex &index) const override;
   void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                            const QModelIndex &index) const;
+                            const QModelIndex &index) const override;
 
 private:
   DvDirTreeView *m_treeView;
@@ -236,7 +237,7 @@ private slots:
 //    NodeEditor  declaration
 //**********************************************************************************
 
-class NodeEditor : public QWidget {
+class NodeEditor final : public QWidget {
   Q_OBJECT
 
 public:
@@ -250,7 +251,7 @@ signals:
   void editingFinished();
 
 protected:
-  void focusInEvent(QFocusEvent *event);
+  void focusInEvent(QFocusEvent *event) override;
 
 protected slots:
 

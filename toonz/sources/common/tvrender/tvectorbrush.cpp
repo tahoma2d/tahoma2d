@@ -118,7 +118,8 @@ void getHRange(const TStroke &stroke, double &x0, double &x1) {
 //    Outlinization Data
 //********************************************************************************
 
-struct StrokeOutlinizationData : public tellipticbrush::OutlinizationData {
+struct StrokeOutlinizationData final
+    : public tellipticbrush::OutlinizationData {
   double m_x0, m_x1, m_xRange;
   double m_y0, m_yScale;
 
@@ -238,7 +239,7 @@ void StrokeOutlinizationData::buildPoint(const CenterlinePoint &p, bool pNextD,
 int StrokeOutlinizationData::buildPoints(const CenterlinePoint &p,
                                          CenterlinePoint &ref,
                                          CenterlinePoint *out) {
-  out[0] = out[1] = p;
+  out[0] = out[1]  = p;
   out[0].m_covered = out[1].m_covered = true;  // Coverage is rebuilt
 
   bool refSymmetric =
@@ -372,7 +373,7 @@ ReferenceLinearizator::ReferenceLinearizator(
 //    Brush Linearizator on Path inter-chunk points
 //********************************************************************************
 
-class ReferenceChunksLinearizator : public ReferenceLinearizator {
+class ReferenceChunksLinearizator final : public ReferenceLinearizator {
   double m_w0, m_w1;
 
 public:
@@ -380,8 +381,9 @@ public:
                               const StrokeOutlinizationData &data)
       : ReferenceLinearizator(stroke, path, data) {}
 
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk);
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk, double t1);
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk) override;
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk,
+                 double t1) override;
 
   void addCenterlinePoints(std::vector<CenterlinePoint> &cPoints,
                            int brushChunk, double x0, double x1);
@@ -506,7 +508,7 @@ void ReferenceChunksLinearizator::addCenterlinePoints(
 //    Recursive (regular) Reference Stroke Linearizator
 //********************************************************************************
 
-class RecursiveReferenceLinearizator : public ReferenceLinearizator {
+class RecursiveReferenceLinearizator final : public ReferenceLinearizator {
 public:
   typedef void (RecursiveReferenceLinearizator::*SubdivisorFuncPtr)(
       std::vector<CenterlinePoint> &cPoints, CenterlinePoint &cp0,
@@ -515,8 +517,9 @@ public:
   SubdivisorFuncPtr m_subdivisor;
 
 public:
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk);
-  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk, double t1);
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk) override;
+  void linearize(std::vector<CenterlinePoint> &cPoints, int chunk,
+                 double t1) override;
 
   void subdivide(std::vector<CenterlinePoint> &cPoints, CenterlinePoint &cp0,
                  CenterlinePoint &cp1);

@@ -53,20 +53,20 @@
 
 namespace {
 
-class ReverseUndo : public TUndo {
+class ReverseUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
 
 public:
   ReverseUndo(int r0, int c0, int r1, int c1)
       : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1) {}
 
-  void redo() const;
-  void undo() const { redo(); }  // Reverse is idempotent :)
+  void redo() const override;
+  void undo() const override { redo(); }  // Reverse is idempotent :)
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Reverse"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Reverse"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -101,20 +101,20 @@ void TCellSelection::reverseCells() {
 
 namespace {
 
-class SwingUndo : public TUndo {
+class SwingUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
 
 public:
   SwingUndo(int r0, int c0, int r1, int c1)
       : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1) {}
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Swing"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Swing"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void TCellSelection::swingCells() {
 
 namespace {
 
-class IncrementUndo : public TUndo {
+class IncrementUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   mutable std::vector<std::pair<TRect, TXshCell>> m_undoCells;
 
@@ -171,13 +171,13 @@ public:
   IncrementUndo(int r0, int c0, int r1, int c1)
       : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1), m_ok(true) {}
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Autoexpose"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Autoexpose"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ void TCellSelection::incrementCells() {
 
 namespace {
 
-class RandomUndo : public TUndo {
+class RandomUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
 
   std::vector<int> m_shuffle;  //!< Shuffled indices
@@ -256,15 +256,15 @@ public:
 
   void shuffleCells(int row, int col, const std::vector<int> &data) const;
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + 2 * sizeof(int) * m_shuffle.size();
   }
 
-  QString getHistoryString() { return QObject::tr("Random"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Random"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -344,7 +344,7 @@ void TCellSelection::randomCells() {
 
 namespace {
 
-class StepUndo : public TUndo {
+class StepUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
 
@@ -356,15 +356,15 @@ class StepUndo : public TUndo {
 public:
   StepUndo(int r0, int c0, int r1, int c1, int step);
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Step %1").arg(QString::number(m_step));
   }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -445,7 +445,7 @@ void TCellSelection::stepCells(int step) {
 
 namespace {
 
-class EachUndo : public TUndo {
+class EachUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
 
@@ -457,15 +457,15 @@ class EachUndo : public TUndo {
 public:
   EachUndo(int r0, int c0, int r1, int c1, int each);
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Each %1").arg(QString::number(m_each));
   }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -549,7 +549,7 @@ void TCellSelection::eachCells(int each) {
 
 namespace {
 
-class ReframeUndo : public TUndo {
+class ReframeUndo final : public TUndo {
   int m_r0, m_r1;
   int m_type;
   int m_nr;
@@ -562,16 +562,16 @@ public:
 
   ReframeUndo(int r0, int r1, std::vector<int> columnIndeces, int type);
   ~ReframeUndo();
-  void undo() const;
-  void redo() const;
+  void undo() const override;
+  void redo() const override;
   void repeat() const;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Reframe to %1's").arg(QString::number(m_type));
   }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //-----------------------------------------------------------------------------
@@ -705,7 +705,7 @@ void TColumnSelection::reframeCells(int count) {
 
 namespace {
 
-class ResetStepUndo : public TUndo {
+class ResetStepUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
 
@@ -715,10 +715,10 @@ class ResetStepUndo : public TUndo {
 public:
   ResetStepUndo(int r0, int c0, int r1, int c1);
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -804,7 +804,7 @@ void TCellSelection::resetStepCells() {
 
 namespace {
 
-class IncreaseStepUndo : public TUndo {
+class IncreaseStepUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
 
@@ -817,10 +817,10 @@ public:
 public:
   IncreaseStepUndo(int r0, int c0, int r1, int c1);
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -908,7 +908,7 @@ void TCellSelection::increaseStepCells() {
 
 namespace {
 
-class DecreaseStepUndo : public TUndo {
+class DecreaseStepUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
 
@@ -921,10 +921,10 @@ public:
 public:
   DecreaseStepUndo(int r0, int c0, int r1, int c1);
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1026,7 +1026,7 @@ public:
   RollupUndo(int r0, int c0, int r1, int c1)
       : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1) {}
 
-  void redo() const {
+  void redo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -1036,7 +1036,7 @@ public:
     app->getCurrentScene()->setDirtyFlag(true);
   }
 
-  void undo() const {
+  void undo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -1046,10 +1046,10 @@ public:
     app->getCurrentScene()->setDirtyFlag(true);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  virtual QString getHistoryString() { return QObject::tr("Roll Up"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Roll Up"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 }  // namespace
@@ -1070,14 +1070,14 @@ void TCellSelection::rollupCells() {
 
 namespace {
 
-class RolldownUndo : public RollupUndo {
+class RolldownUndo final : public RollupUndo {
 public:
   RolldownUndo(int r0, int c0, int r1, int c1) : RollupUndo(r0, c0, r1, c1) {}
 
-  void redo() const { RollupUndo::undo(); }
-  void undo() const { RollupUndo::redo(); }
+  void redo() const override { RollupUndo::undo(); }
+  void undo() const override { RollupUndo::redo(); }
 
-  QString getHistoryString() { return QObject::tr("Roll Down"); }
+  QString getHistoryString() override { return QObject::tr("Roll Down"); }
 };
 
 }  // namespace
@@ -1142,7 +1142,7 @@ void TCellSelection::setKeyframes() {
 
 namespace {
 
-class CloneLevelUndo : public TUndo {
+class CloneLevelUndo final : public TUndo {
   typedef std::map<TXshSimpleLevel *, TXshLevelP> InsertedLevelsMap;
   typedef std::set<int> InsertedColumnsSet;
 
@@ -1163,16 +1163,16 @@ public:
   CloneLevelUndo(const TCellSelection::Range &range)
       : m_range(range), m_clonedLevels(false), m_ok(false) {}
 
-  void redo() const;
-  void undo() const;
+  void redo() const override;
+  void undo() const override;
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof *this +
            (sizeof(TXshLevelP) + sizeof(TXshSimpleLevel *)) *
                m_insertedLevels.size();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     if (m_insertedLevels.empty()) return QString();
     QString str;
     if (m_insertedLevels.size() == 1) {
@@ -1193,7 +1193,7 @@ public:
     }
     return str;
   }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 
 private:
   TXshSimpleLevel *cloneLevel(const TXshSimpleLevel *srcSl,
@@ -1211,19 +1211,19 @@ private:
 
 //-----------------------------------------------------------------------------
 
-struct CloneLevelUndo::ExistsFunc : public OverwriteDialog::ExistsFunc {
+struct CloneLevelUndo::ExistsFunc final : public OverwriteDialog::ExistsFunc {
   ToonzScene *m_scene;
 
 public:
   ExistsFunc(ToonzScene *scene) : m_scene(scene) {}
 
-  QString conflictString(const TFilePath &fp) const {
+  QString conflictString(const TFilePath &fp) const override {
     return OverwriteDialog::tr(
                "Level \"%1\" already exists.\n\nWhat do you want to do?")
         .arg(QString::fromStdWString(fp.withoutParentDir().getWideString()));
   }
 
-  bool operator()(const TFilePath &fp) const {
+  bool operator()(const TFilePath &fp) const override {
     return TSystem::doesExistFileOrLevel(fp) ||
            m_scene->getLevelSet()->getLevel(*m_scene, fp);
   }
@@ -1231,7 +1231,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class CloneLevelUndo::LevelNamePopup : public DVGui::Dialog {
+class CloneLevelUndo::LevelNamePopup final : public DVGui::Dialog {
   DVGui::LineEdit *m_name;
   QPushButton *m_ok, *m_cancel;
 

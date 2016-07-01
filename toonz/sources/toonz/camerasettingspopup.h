@@ -30,7 +30,7 @@ class MeasuredDoubleLineEdit;
 // CameraSettingsPopup
 //-----------------------------------------------------------------------------
 
-class CameraSettingsPopup : public QDialog {
+class CameraSettingsPopup final : public QDialog {
   Q_OBJECT
   static std::map<TStageObjectId, CameraSettingsPopup *> m_popups;
 
@@ -51,9 +51,9 @@ public:
   static CameraSettingsPopup *createPopup(const TStageObjectId &id);
 
 protected:
-  void showEvent(QShowEvent *e);
-  void hideEvent(QHideEvent *e);
-  void moveEvent(QMoveEvent *e);
+  void showEvent(QShowEvent *e) override;
+  void hideEvent(QHideEvent *e) override;
+  void moveEvent(QMoveEvent *e) override;
 
 protected slots:
 

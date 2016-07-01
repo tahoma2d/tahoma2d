@@ -79,7 +79,7 @@ Max diff of delta (This value indicates when it's necessary
     const TPointD &vect
     ... list of parameter.
  */
-class DVAPI TStrokePointDeformation : public TStrokeDeformation {
+class DVAPI TStrokePointDeformation final : public TStrokeDeformation {
 protected:
   struct Imp;
   std::unique_ptr<Imp> m_imp;
@@ -100,13 +100,14 @@ Use this constructor with modifyControlPoints.
 
   virtual ~TStrokePointDeformation();
 
-  TThickPoint getDisplacement(const TStroke &stroke, double s) const;
-  TThickPoint getDisplacementForControlPoint(const TStroke &s, UINT n) const;
+  TThickPoint getDisplacement(const TStroke &stroke, double s) const override;
+  TThickPoint getDisplacementForControlPoint(const TStroke &s,
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
-                                                double cpLen) const;
+                                                double cpLen) const override;
 
-  double getDelta(const TStroke &stroke, double w) const;
-  double getMaxDiff() const;
+  double getDelta(const TStroke &stroke, double w) const override;
+  double getMaxDiff() const override;
 };
 
 //=============================================================================
@@ -116,7 +117,7 @@ Use this constructor with modifyControlPoints.
 
   Function is b*exp( -((x-a)^2)/c ).
  */
-class DVAPI TStrokeParamDeformation : public TStrokeDeformation {
+class DVAPI TStrokeParamDeformation final : public TStrokeDeformation {
 private:
   const TStroke *m_pRef;
   double m_startParameter;
@@ -143,15 +144,15 @@ Use this constructor with movePoints.
 
   virtual ~TStrokeParamDeformation();
 
-  TThickPoint getDisplacement(const TStroke &, double) const;
+  TThickPoint getDisplacement(const TStroke &, double) const override;
   TThickPoint getDisplacementForControlPoint(const TStroke &stroke,
-                                             UINT n) const;
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
-                                                double cpLen) const;
+                                                double cpLen) const override;
 
-  double getDelta(const TStroke &, double) const;
+  double getDelta(const TStroke &, double) const override;
 
-  double getMaxDiff() const;
+  double getMaxDiff() const override;
 };
 
 //=============================================================================
@@ -159,7 +160,7 @@ Use this constructor with movePoints.
 /*!
   Manage the deformation of thick in a stroke.
  */
-class DVAPI TStrokeThicknessDeformation : public TStrokeDeformation {
+class DVAPI TStrokeThicknessDeformation final : public TStrokeDeformation {
 private:
   double m_lengthOfDeformation;
   double m_startParameter;
@@ -188,21 +189,21 @@ Use this constructor with movePoints.
 
   virtual ~TStrokeThicknessDeformation();
 
-  TThickPoint getDisplacement(const TStroke &, double) const;
+  TThickPoint getDisplacement(const TStroke &, double) const override;
   TThickPoint getDisplacementForControlPoint(const TStroke &stroke,
-                                             UINT n) const;
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
-                                                double cpLen) const;
+                                                double cpLen) const override;
 
-  double getDelta(const TStroke &, double) const;
+  double getDelta(const TStroke &, double) const override;
 
-  double getMaxDiff() const;
+  double getMaxDiff() const override;
 };
 //=============================================================================
 /*!
   Manage the bending of a stroke.
  */
-class DVAPI TStrokeBenderDeformation : public TStrokeDeformation {
+class DVAPI TStrokeBenderDeformation final : public TStrokeDeformation {
 private:
   const TStroke *m_pRef;
   double m_startLength;
@@ -234,13 +235,14 @@ Use this constructor with movePoints.
 
   virtual ~TStrokeBenderDeformation();
 
-  TThickPoint getDisplacement(const TStroke &, double s) const;
-  TThickPoint getDisplacementForControlPoint(const TStroke &, UINT n) const;
+  TThickPoint getDisplacement(const TStroke &, double s) const override;
+  TThickPoint getDisplacementForControlPoint(const TStroke &,
+                                             UINT n) const override;
   TThickPoint getDisplacementForControlPointLen(const TStroke &stroke,
-                                                double cpLen) const;
+                                                double cpLen) const override;
 
-  double getDelta(const TStroke &, double) const;
-  double getMaxDiff() const;
+  double getDelta(const TStroke &, double) const override;
+  double getMaxDiff() const override;
 };
 
 //=============================================================================
@@ -248,7 +250,7 @@ Use this constructor with movePoints.
 /*!
   Manage wirling of a stroke.
  */
-class DVAPI TStrokeTwirlDeformation : public TStrokeDeformation {
+class DVAPI TStrokeTwirlDeformation final : public TStrokeDeformation {
 private:
   TPointD m_center;
   double m_innerRadius2;
@@ -267,9 +269,9 @@ Use this constructor with increasePoints.
 
   virtual ~TStrokeTwirlDeformation();
 
-  TThickPoint getDisplacement(const TStroke &, double s) const;
-  double getDelta(const TStroke &, double) const;
-  double getMaxDiff() const;
+  TThickPoint getDisplacement(const TStroke &, double s) const override;
+  double getDelta(const TStroke &, double) const override;
+  double getMaxDiff() const override;
 };
 
 //=============================================================================

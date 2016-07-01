@@ -13,7 +13,7 @@
 
 #include "tofflinegl.h"
 
-class QtOfflineGL : public TOfflineGL::Imp {
+class QtOfflineGL final : public TOfflineGL::Imp {
 public:
   std::shared_ptr<QOpenGLContext> m_context;
   std::shared_ptr<QOpenGLContext> m_oldContext;
@@ -24,19 +24,19 @@ public:
   ~QtOfflineGL();
 
   void createContext(TDimension rasterSize,
-                     std::shared_ptr<TOfflineGL::Imp> shared);
-  void makeCurrent();
-  void doneCurrent();
+                     std::shared_ptr<TOfflineGL::Imp> shared) override;
+  void makeCurrent() override;
+  void doneCurrent() override;
 
   void saveCurrentContext();
   void restoreCurrentContext();
 
-  void getRaster(TRaster32P raster);
+  void getRaster(TRaster32P raster) override;
 };
 
 //-----------------------------------------------------------------------------
 
-class QtOfflineGLPBuffer : public TOfflineGL::Imp {
+class QtOfflineGLPBuffer final : public TOfflineGL::Imp {
 public:
   std::shared_ptr<QGLPixelBuffer> m_context;
 
@@ -44,10 +44,10 @@ public:
   ~QtOfflineGLPBuffer();
 
   void createContext(TDimension rasterSize);
-  void makeCurrent();
-  void doneCurrent();
+  void makeCurrent() override;
+  void doneCurrent() override;
 
-  void getRaster(TRaster32P raster);
+  void getRaster(TRaster32P raster) override;
 };
 
 #endif

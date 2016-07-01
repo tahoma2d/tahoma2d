@@ -78,7 +78,7 @@ namespace {
 struct MeshifyOptions  //!  Available options for the meshification process.
 {
   double m_edgesLength;  //!< The desired mesh edges length, in standard world
-                         //!coordinates
+                         //! coordinates
   double m_rasterizationDpi;  //!< Dpi value used to render PLIs and sub-xsheets
   int m_margin;               //!< Margin to the original shape (in pixels)
 };
@@ -493,7 +493,7 @@ void getRaster(const TXsheet *xsh, int row, TRasterP &ras, TPointD &rasDpi,
 //    MeshifyPopup::Swatch  definition
 //********************************************************************************************
 
-class MeshifyPopup::Swatch : public PlaneViewer {
+class MeshifyPopup::Swatch final : public PlaneViewer {
 public:
   TImageP m_img;  //!< The eventual image to be meshified
 
@@ -1306,11 +1306,11 @@ bool meshifySelection(const MeshifyOptions &options) {
 //    Meshify Command  definition
 //********************************************************************************************
 
-class MeshifyCommand : public MenuItemHandler {
+class MeshifyCommand final : public MenuItemHandler {
 public:
   MeshifyCommand() : MenuItemHandler("A_ToolOption_Meshify") {}
 
-  void execute() {
+  void execute() override {
     static MeshifyPopup *thePopup = 0;
     if (!thePopup) thePopup       = new MeshifyPopup;
 

@@ -895,7 +895,7 @@ set<int> explode(TXsheet *xsh, TXsheet *subXsh, int index,
 // OpenChildUndo
 //-----------------------------------------------------------------------------
 
-class OpenChildUndo : public TUndo {
+class OpenChildUndo final : public TUndo {
   int m_row, m_col;
 
 public:
@@ -907,7 +907,7 @@ public:
     TXshCell cell = xsh->getCell(m_row, m_col);
   }
 
-  void undo() const {
+  void undo() const override {
     TApp *app         = TApp::instance();
     ToonzScene *scene = app->getCurrentScene()->getScene();
     int row, col;
@@ -916,7 +916,7 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  void redo() const {
+  void redo() const override {
     TApp *app         = TApp::instance();
     ToonzScene *scene = app->getCurrentScene()->getScene();
     scene->getChildStack()->openChild(m_row, m_col);
@@ -924,21 +924,21 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //=============================================================================
 // CloseChildUndo
 //-----------------------------------------------------------------------------
 
-class CloseChildUndo : public TUndo {
+class CloseChildUndo final : public TUndo {
   std::vector<std::pair<int, int>> m_cells;
 
 public:
   CloseChildUndo(const std::vector<std::pair<int, int>> &cells)
       : m_cells(cells) {}
 
-  void undo() const {
+  void undo() const override {
     TApp *app         = TApp::instance();
     ToonzScene *scene = app->getCurrentScene()->getScene();
     for (int i = m_cells.size() - 1; i >= 0; i--) {
@@ -949,7 +949,7 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  void redo() const {
+  void redo() const override {
     TApp *app         = TApp::instance();
     ToonzScene *scene = app->getCurrentScene()->getScene();
     for (int i = 0; i < (int)m_cells.size(); i++) {
@@ -960,10 +960,10 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Close SubXsheet"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Close SubXsheet"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
@@ -1507,7 +1507,7 @@ public:
     delete m_newData;
   }
 
-  virtual void undo() const {
+  void undo() const override {
     doUndo();
     TApp *app = TApp::instance();
     app->getCurrentXsheet()->notifyXsheetChanged();
@@ -1515,24 +1515,24 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  virtual void redo() const {
+  void redo() const override {
     doRedo(false);
     TApp *app = TApp::instance();
     app->getCurrentXsheet()->notifyXsheetChanged();
     app->getCurrentObject()->notifyObjectIdSwitched();
     changeSaveSubXsheetAsCommand();
   }
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Collapse"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Collapse"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
 // CollapseFxUndo
 //-----------------------------------------------------------------------------
 
-class CollapseFxUndo : public CollapseUndo {
+class CollapseFxUndo final : public CollapseUndo {
   set<TFx *> m_fxs;
   QMap<TFx *, FxConnections> m_fxConnections;
 
@@ -1554,7 +1554,7 @@ public:
     for (it = m_fxs.begin(); it != m_fxs.end(); it++) (*it)->release();
   }
 
-  void undo() const {
+  void undo() const override {
     doUndo();
     TApp *app           = TApp::instance();
     TXsheet *xsh        = app->getCurrentXsheet()->getXsheet();
@@ -1595,7 +1595,7 @@ public:
     changeSaveSubXsheetAsCommand();
   }
 
-  void redo() const {
+  void redo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
     std::map<TFx *, std::vector<TFxPort *>> roots =
@@ -1615,16 +1615,16 @@ public:
     app->getCurrentObject()->notifyObjectIdSwitched();
     changeSaveSubXsheetAsCommand();
   }
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Collapse (Fx)"); }
+  QString getHistoryString() override { return QObject::tr("Collapse (Fx)"); }
 };
 
 //=============================================================================
 // ExplodeChildUndoRemovingColumn
 //-----------------------------------------------------------------------------
 
-class ExplodeChildUndoRemovingColumn : public TUndo {
+class ExplodeChildUndoRemovingColumn final : public TUndo {
   std::set<int> m_newIndexs;
   int m_index;
   StageObjectsData *m_oldData;
@@ -1740,7 +1740,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     TApp *app               = TApp::instance();
     TXsheet *xsh            = app->getCurrentXsheet()->getXsheet();
     int editingGroup        = -1;
@@ -1822,7 +1822,7 @@ public:
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -1904,17 +1904,17 @@ public:
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Explode"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Explode"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
 // ExplodeChildUndo
 //-----------------------------------------------------------------------------
 
-class ExplodeChildUndoWithoutRemovingColumn : public TUndo {
+class ExplodeChildUndoWithoutRemovingColumn final : public TUndo {
   std::set<int> m_newIndexs;
   int m_index, m_from, m_to;
 
@@ -1987,7 +1987,7 @@ public:
       (*it2)->release();
   }
 
-  void undo() const {
+  void undo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -2040,7 +2040,7 @@ public:
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
     xsh->clearCells(m_from, m_index, m_to - m_from + 1);
@@ -2086,10 +2086,10 @@ public:
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() { return QObject::tr("Explode"); }
-  int getHistoryType() { return HistoryType::Xsheet; }
+  QString getHistoryString() override { return QObject::tr("Explode"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 }  // namespace
@@ -2098,30 +2098,30 @@ public:
 // OpenChildCommand
 //-----------------------------------------------------------------------------
 
-class OpenChildCommand : public MenuItemHandler {
+class OpenChildCommand final : public MenuItemHandler {
 public:
   OpenChildCommand() : MenuItemHandler(MI_OpenChild) {}
-  void execute() { openSubXsheet(); }
+  void execute() override { openSubXsheet(); }
 } openChildCommand;
 
 //=============================================================================
 // CloseChildCommand
 //-----------------------------------------------------------------------------
 
-class CloseChildCommand : public MenuItemHandler {
+class CloseChildCommand final : public MenuItemHandler {
 public:
   CloseChildCommand() : MenuItemHandler(MI_CloseChild) {}
-  void execute() { closeSubXsheet(1); }
+  void execute() override { closeSubXsheet(1); }
 } closeChildCommand;
 
 //=============================================================================
 // ToggleEditInPlaceCommand
 //-----------------------------------------------------------------------------
 
-class ToggleEditInPlaceCommand : public MenuItemHandler {
+class ToggleEditInPlaceCommand final : public MenuItemHandler {
 public:
   ToggleEditInPlaceCommand() : MenuItemHandler(MI_ToggleEditInPlace) {}
-  void execute() { toggleEditInPlace(); }
+  void execute() override { toggleEditInPlace(); }
 } toggleEditInPlaceCommand;
 
 //=============================================================================

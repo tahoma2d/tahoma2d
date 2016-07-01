@@ -442,7 +442,7 @@ public:
   IconRenderer(const std::string &id, const TDimension &iconSize);
   virtual ~IconRenderer();
 
-  virtual void run() = 0;
+  void run() override = 0;
 
   void setIcon(const TRaster32P &icon) { m_icon = icon; }
   TRaster32P getIcon() const { return m_icon; }
@@ -491,7 +491,7 @@ IconRenderer::~IconRenderer() {}
 //    VectorImageIconRenderer class
 //--------------------------------------
 
-class VectorImageIconRenderer : public IconRenderer {
+class VectorImageIconRenderer final : public IconRenderer {
   TVectorImageP m_vimage;
   TXshSimpleLevelP m_sl;
   TFrameId m_fid;
@@ -517,7 +517,7 @@ public:
       , m_settings(settings) {}
 
   TRaster32P generateRaster(const TDimension &iconSize) const;
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -561,7 +561,7 @@ void VectorImageIconRenderer::run() {
 //    SplineImageIconRenderer class
 //--------------------------------------
 
-class SplineIconRenderer : public IconRenderer {
+class SplineIconRenderer final : public IconRenderer {
   TStageObjectSpline *m_spline;
 
 public:
@@ -570,7 +570,7 @@ public:
       : IconRenderer(id, iconSize), m_spline(spline) {}
 
   TRaster32P generateRaster(const TDimension &iconSize) const;
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -622,7 +622,7 @@ void SplineIconRenderer::run() {
 //    RasterImageIconRenderer class
 //--------------------------------------
 
-class RasterImageIconRenderer : public IconRenderer {
+class RasterImageIconRenderer final : public IconRenderer {
   TXshSimpleLevelP m_sl;
   TFrameId m_fid;
 
@@ -631,7 +631,7 @@ public:
                           TXshSimpleLevelP sl, const TFrameId &fid)
       : IconRenderer(id, iconSize), m_sl(sl), m_fid(fid) {}
 
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -656,7 +656,7 @@ void RasterImageIconRenderer::run() {
 //    ToonzImageIconRenderer class
 //--------------------------------------
 
-class ToonzImageIconRenderer : public IconRenderer {
+class ToonzImageIconRenderer final : public IconRenderer {
   TXshSimpleLevelP m_sl;
   TFrameId m_fid;
   IconGenerator::Settings m_settings;
@@ -673,7 +673,7 @@ public:
       , m_settings(settings)
       , m_tnzImgIcon(0) {}
 
-  void run();
+  void run() override;
 
   void setIcon_TnzImg(const TRasterCM32P &timgp) { m_tnzImgIcon = timgp; }
   TRasterCM32P getIcon_TnzImg() const { return m_tnzImgIcon; }
@@ -761,7 +761,7 @@ void ToonzImageIconRenderer::run() {
 //    MeshImageIconRenderer class
 //--------------------------------------
 
-class MeshImageIconRenderer : public IconRenderer {
+class MeshImageIconRenderer final : public IconRenderer {
   TMeshImageP m_image;
   TXshSimpleLevelP m_sl;
   TFrameId m_fid;
@@ -787,7 +787,7 @@ public:
       , m_settings(settings) {}
 
   TRaster32P generateRaster(const TDimension &iconSize) const;
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -833,7 +833,7 @@ void MeshImageIconRenderer::run() {
 //    XsheetIconRenderer class
 //----------------------------------
 
-class XsheetIconRenderer : public IconRenderer {
+class XsheetIconRenderer final : public IconRenderer {
   TXsheet *m_xsheet;
   int m_row;
 
@@ -856,7 +856,7 @@ public:
   }
 
   TRaster32P generateRaster(const TDimension &iconSize) const;
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -894,7 +894,7 @@ void XsheetIconRenderer::run() {
 //    FileIconRenderer class
 //--------------------------------
 
-class FileIconRenderer : public IconRenderer {
+class FileIconRenderer final : public IconRenderer {
   TFilePath m_path;
   TFrameId m_fid;
 
@@ -905,7 +905,7 @@ public:
 
   static std::string getId(const TFilePath &path, const TFrameId &fid);
 
-  void run();
+  void run() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -1227,7 +1227,7 @@ void FileIconRenderer::run() {
 //    SceneIconRenderer class
 //--------------------------------
 
-class SceneIconRenderer : public IconRenderer {
+class SceneIconRenderer final : public IconRenderer {
   ToonzScene *m_toonzScene;
 
 public:
@@ -1236,7 +1236,7 @@ public:
 
   static std::string getId() { return "currentScene"; }
 
-  void run();
+  void run() override;
   TRaster32P generateIcon(const TDimension &iconSize) const;
 };
 

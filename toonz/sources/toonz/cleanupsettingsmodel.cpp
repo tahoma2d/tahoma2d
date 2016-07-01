@@ -75,7 +75,7 @@ public:
 //    SaveSettingsPopup
 //==================================================================
 
-class SaveSettingsPopup : public IOSettingsPopup {
+class SaveSettingsPopup final : public IOSettingsPopup {
 public:
   SaveSettingsPopup() : IOSettingsPopup(tr("Save Cleanup Settings")) {
     // addFilterType("tif");
@@ -85,7 +85,7 @@ public:
     setOkText(tr("Save"));
   }
 
-  bool execute() {
+  bool execute() override {
     if (m_selectedPaths.empty()) return false;
 
     TFilePath savePath(*m_selectedPaths.begin());
@@ -111,13 +111,13 @@ public:
 //    LoadSettingsPopup
 //==================================================================
 
-class LoadSettingsPopup : public IOSettingsPopup {
+class LoadSettingsPopup final : public IOSettingsPopup {
 public:
   LoadSettingsPopup() : IOSettingsPopup(tr("Load Cleanup Settings")) {
     setOkText(tr("Load"));
   }
 
-  bool execute() {
+  bool execute() override {
     if (m_selectedPaths.empty()) return false;
 
     const TFilePath &loadPath = *m_selectedPaths.begin();

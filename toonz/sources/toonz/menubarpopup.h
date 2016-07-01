@@ -18,7 +18,7 @@ class QXmlStreamWriter;
 // MenuBarTree
 //-----------------------------------------------------------------------------
 
-class MenuBarTree : public QTreeWidget {
+class MenuBarTree final : public QTreeWidget {
   Q_OBJECT
 
   TFilePath m_path;
@@ -33,9 +33,9 @@ public:
 
 protected:
   bool dropMimeData(QTreeWidgetItem* parent, int index, const QMimeData* data,
-                    Qt::DropAction action);
-  QStringList mimeTypes() const;
-  void contextMenuEvent(QContextMenuEvent* event);
+                    Qt::DropAction action) override;
+  QStringList mimeTypes() const override;
+  void contextMenuEvent(QContextMenuEvent* event) override;
 protected slots:
   void insertMenu();
   void removeItem();
@@ -45,7 +45,7 @@ protected slots:
 // CommandListTree
 //-----------------------------------------------------------------------------
 
-class CommandListTree : public QTreeWidget {
+class CommandListTree final : public QTreeWidget {
   Q_OBJECT
 
   void addFolder(const QString& title, int commandType,
@@ -55,14 +55,14 @@ public:
   CommandListTree(QWidget* parent = 0);
 
 protected:
-  void mousePressEvent(QMouseEvent*);
+  void mousePressEvent(QMouseEvent*) override;
 };
 
 //=============================================================================
 // MenuBarPopup
 //-----------------------------------------------------------------------------
 
-class MenuBarPopup : public DVGui::Dialog {
+class MenuBarPopup final : public DVGui::Dialog {
   Q_OBJECT
   CommandListTree* m_commandListTree;
   MenuBarTree* m_menuBarTree;

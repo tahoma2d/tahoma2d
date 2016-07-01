@@ -47,7 +47,7 @@ class FlipConsoleOwner;
 class TFrameHandle;
 //-----------------------------------------------------------------------------
 
-class PlaybackExecutor : public QThread {
+class PlaybackExecutor final : public QThread {
   Q_OBJECT
 
   int m_fps;
@@ -58,7 +58,7 @@ public:
 
   void resetFps(int fps);
 
-  void run();
+  void run() override;
   void abort() { m_abort = true; }
 
   void emitNextFrame(int fps) { emit nextFrame(fps); }
@@ -71,7 +71,7 @@ signals:
 //-----------------------------------------------------------------------------
 
 // Implements a flipbook slider with a progress bar in background.
-class FlipSlider : public QAbstractSlider {
+class FlipSlider final : public QAbstractSlider {
   Q_OBJECT
 
   Q_PROPERTY(int PBHeight READ getPBHeight WRITE setPBHeight)
@@ -161,11 +161,11 @@ public:
   void setFinishedColor(const QColor &color);
 
 protected:
-  void paintEvent(QPaintEvent *ev);
+  void paintEvent(QPaintEvent *ev) override;
 
-  void mousePressEvent(QMouseEvent *me);
-  void mouseMoveEvent(QMouseEvent *me);
-  void mouseReleaseEvent(QMouseEvent *me);
+  void mousePressEvent(QMouseEvent *me) override;
+  void mouseMoveEvent(QMouseEvent *me) override;
+  void mouseReleaseEvent(QMouseEvent *me) override;
 
 private:
   int sliderPositionFromValue(int min, int max, int pos, int span);
@@ -179,7 +179,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class DVAPI FlipConsole : public QWidget {
+class DVAPI FlipConsole final : public QWidget {
   Q_OBJECT
 
 public:
@@ -211,10 +211,10 @@ public:
     eCustomize       = 0x800000,
     eSave            = 0x1000000,
     eDefineSubCamera = 0x2000000,
-    eFilledRaster  = 0x4000000,  // Used only in LineTest
-    eDefineLoadBox = 0x8000000,
-    eUseLoadBox    = 0x10000000,
-    eEnd           = 0x20000000
+    eFilledRaster    = 0x4000000,  // Used only in LineTest
+    eDefineLoadBox   = 0x8000000,
+    eUseLoadBox      = 0x10000000,
+    eEnd             = 0x20000000
   };
 
   static const UINT cFullConsole = eEnd - 1;

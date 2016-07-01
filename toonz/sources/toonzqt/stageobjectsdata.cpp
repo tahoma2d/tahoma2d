@@ -189,7 +189,7 @@ TStageObjectId TStageObjectDataElement::restoreObject(TXsheet *xsh,
 
 //! Class used to clone a column stage object's relational data inside the stage
 //! schematic.
-class TColumnDataElement : public TStageObjectDataElement {
+class TColumnDataElement final : public TStageObjectDataElement {
   friend class StageObjectsData;
 
   TXshColumnP m_column;  //!< Column associated with the stage object
@@ -203,7 +203,7 @@ public:
 
   //! Clones the stord data.
   //! \warning Clones the stored TXshColumnP, too.
-  TColumnDataElement *clone() const;
+  TColumnDataElement *clone() const override;
 
   //! Stores the stage object and column data of the specified column index in
   //! the supplied xsheet.
@@ -341,14 +341,14 @@ TStageObjectId TColumnDataElement::restoreColumn(TXsheet *xsh, int index,
 
 //! Class used to clone a camera stage object's relational data inside the stage
 //! schematic.
-class TCameraDataElement : public TStageObjectDataElement {
+class TCameraDataElement final : public TStageObjectDataElement {
   TCamera m_camera;  //!< The object's camera
 
 public:
   TCameraDataElement();
   ~TCameraDataElement();
 
-  TCameraDataElement *clone() const;
+  TCameraDataElement *clone() const override;
 
   //! Stores the specified camera object.
   void storeCamera(const TStageObjectId &selectedObj, TXsheet *xsh);

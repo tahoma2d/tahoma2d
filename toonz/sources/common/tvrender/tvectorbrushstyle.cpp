@@ -24,7 +24,7 @@ TFilePath TVectorBrushStyle::m_rootDir = TFilePath();
 //    Vector Brush Prop  declaration
 //**********************************************************************
 
-class VectorBrushProp : public TStrokeProp {
+class VectorBrushProp final : public TStrokeProp {
   TVectorBrushStyle *m_style;
   TVectorImageP m_brush;
   TRectD m_brushBox;
@@ -36,12 +36,12 @@ class VectorBrushProp : public TStrokeProp {
 public:
   VectorBrushProp(const TStroke *stroke, TVectorBrushStyle *style);
 
-  TStrokeProp *clone(const TStroke *stroke) const;
+  TStrokeProp *clone(const TStroke *stroke) const override;
 
-  void draw(const TVectorRenderData &rd);
-  void draw(TFlash &flash) {}
+  void draw(const TVectorRenderData &rd) override;
+  void draw(TFlash &flash) override {}
 
-  const TColorStyle *getColorStyle() const;
+  const TColorStyle *getColorStyle() const override;
 
 private:
   // not implemented

@@ -43,7 +43,7 @@ void valueToIntList(const QScriptValue &arr, QList<int> &list) {
 
 //=======================================================
 
-class Renderer::Imp : public TRenderPort {
+class Renderer::Imp final : public TRenderPort {
 public:
   TScriptBinding::Image *m_outputImage;
   TScriptBinding::Level *m_outputLevel;
@@ -155,8 +155,10 @@ public:
     render(makeRenderData(scene, rows));
   }
 
-  void onRenderRasterStarted(const RenderData &renderData) { int a = 1; }
-  void onRenderRasterCompleted(const RenderData &renderData) {
+  void onRenderRasterStarted(const RenderData &renderData) override {
+    int a = 1;
+  }
+  void onRenderRasterCompleted(const RenderData &renderData) override {
     TRasterP outputRaster = renderData.m_rasA;
     TRasterImageP img(outputRaster->clone());
     img->setDpi(m_cameraDpi.x, m_cameraDpi.y);
@@ -175,7 +177,7 @@ public:
         TImageCache::instance()->compress(ids[i]);
     }
   }
-  void onRenderFailure(const RenderData &renderData, TException &e) {}
+  void onRenderFailure(const RenderData &renderData, TException &e) override {}
   void onRenderFinished() { m_completed = true; }
 };  // class RenderEngine
 

@@ -15,7 +15,7 @@ class TPalette;
 //-----------------------------------------------------------------------------
 /*! Useful to set data in drag and drop event styles or palette.
 */
-class PaletteData : public DvMimeData {
+class PaletteData final : public DvMimeData {
   TPalette *m_palette;
   std::set<int> m_styleIndicesInPage;
   int m_pageIndex;
@@ -25,7 +25,7 @@ public:
 
   ~PaletteData() {}
 
-  PaletteData *clone() const;
+  PaletteData *clone() const override;
 
   void setPaletteData(TPalette *palette, int pageIndex,
                       std::set<int> styleIndicesInPage);

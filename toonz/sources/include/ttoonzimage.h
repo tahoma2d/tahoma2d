@@ -20,7 +20,7 @@ class TToonzImageP;
 
 //! An image containing a Toonz raster.
 
-class DVAPI TToonzImage : public TImage {
+class DVAPI TToonzImage final : public TImage {
   //! dpi value for x axis
   double m_dpix,
       //! dpi value for y axis
@@ -52,7 +52,7 @@ private:
 
 public:
   //! Return the type of the image.
-  TImage::Type getType() const { return TImage::TOONZ_RASTER; }
+  TImage::Type getType() const override { return TImage::TOONZ_RASTER; }
 
   //! Return the size of the Image.
   TDimension getSize() const { return m_size; }
@@ -79,7 +79,7 @@ public:
   void setSavebox(const TRect &rect);
 
   //! Return the boundin box of the image.
-  TRectD getBBox() const { return convert(m_savebox); }
+  TRectD getBBox() const override { return convert(m_savebox); }
 
   //! Return the offset point of the image.
   TPoint getOffset() const { return m_offset; }
@@ -92,7 +92,7 @@ public:
   // void sethPos(double hPos) {m_hPos= hPos;}
 
   //! Return a clone of the current image
-  TImage *cloneImage() const;
+  TImage *cloneImage() const override;
 
   //! Return the image's raster
   TRasterCM32P getCMapped() const;
@@ -105,7 +105,7 @@ public:
   /*! Call the getCMapped() method.*/
   TRasterCM32P getRaster() const { return getCMapped(); }
 
-  TRasterP raster() const { return (TRasterP)getCMapped(); }
+  TRasterP raster() const override { return (TRasterP)getCMapped(); }
 
   //! Return a clone of the current image.
   TToonzImageP clone() const;
@@ -122,7 +122,8 @@ template class DVAPI TSmartPointerT<TToonzImage>;
 template class DVAPI TDerivedSmartPointerT<TToonzImage, TImage>;
 #endif
 
-class DVAPI TToonzImageP : public TDerivedSmartPointerT<TToonzImage, TImage> {
+class DVAPI TToonzImageP final
+    : public TDerivedSmartPointerT<TToonzImage, TImage> {
 public:
   TToonzImageP() {}
   TToonzImageP(TToonzImage *image) : DerivedSmartPointer(image) {}

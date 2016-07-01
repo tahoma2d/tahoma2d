@@ -99,7 +99,7 @@ static void OLDHSV2RGB(double hue, double sat, double value, double *red,
   }
 }
 
-class ChangeColorFx : public TStandardRasterFx {
+class ChangeColorFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ChangeColorFx)
   TRasterFxPort m_input;
   TPixelParamP m_from_color;
@@ -123,7 +123,8 @@ public:
   }
   ~ChangeColorFx(){};
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (m_input.isConnected()) return m_input->doGetBBox(frame, bBox, info);
     {
       bBox = TRectD();
@@ -131,7 +132,7 @@ public:
     }
   };
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 };
 
 double normalize_h(double h) {

@@ -42,7 +42,7 @@ class QLabel;
 // 120405
 //-----------------------------------------------------------------------------
 
-class DVAPI ComboHistoRGBLabel : public QWidget {
+class DVAPI ComboHistoRGBLabel final : public QWidget {
   QColor m_color;
 
 public:
@@ -53,7 +53,7 @@ public:
   void setColorAndUpdate(QColor color);
 
 protected:
-  void paintEvent(QPaintEvent *pe);
+  void paintEvent(QPaintEvent *pe) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,12 +76,12 @@ public:
   void showCurrentChannelValue(int val);
 
 protected:
-  virtual void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 };
 
 //-----------------------------------------------------------------------------
 
-class DVAPI RGBHistoGraph : public ChannelHistoGraph {
+class DVAPI RGBHistoGraph final : public ChannelHistoGraph {
   Q_OBJECT
 
   QVector<int> m_rgbValues[3];
@@ -92,14 +92,14 @@ public:
   RGBHistoGraph(QWidget *parent = 0, int *channelValue = 0);
   ~RGBHistoGraph();
 
-  void setValues();
+  void setValues() override;
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 };
 //-----------------------------------------------------------------------------
 
-class DVAPI ChannelColorBar : public QWidget {
+class DVAPI ChannelColorBar final : public QWidget {
   Q_OBJECT
   QColor m_color;
 
@@ -108,12 +108,12 @@ public:
   ~ChannelColorBar() {}
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 };
 
 //-----------------------------------------------------------------------------
 
-class DVAPI ChannelHisto : public QWidget {
+class DVAPI ChannelHisto final : public QWidget {
   Q_OBJECT
 
   ChannelHistoGraph *m_histogramGraph;
@@ -133,7 +133,7 @@ protected slots:
 
 //-----------------------------------------------------------------------------
 
-class DVAPI ComboHistogram : public QWidget {
+class DVAPI ComboHistogram final : public QWidget {
   Q_OBJECT
 
   TRasterP m_raster;

@@ -9,7 +9,7 @@
 //-------------------------------------------------------------------
 
 /*
-class VerticalCameraFldUnitConverter : public TUnitConverter {
+class VerticalCameraFldUnitConverter final : public TUnitConverter {
 public:
   static double m_factor;
   VerticalCameraFldUnitConverter() {}
@@ -35,18 +35,20 @@ void setCurrentDpiGetter(CurrentDpiGetter f) { currentDpiGetter = f; }
 
 //-------------------------------------------------------------------
 
-class VerticalFldUnitConverter : public TUnitConverter {
+class VerticalFldUnitConverter final : public TUnitConverter {
   double m_factor;
 
 public:
   static double m_fieldGuideAspectRatio;
 
   VerticalFldUnitConverter(double factor) : m_factor(factor) {}
-  TUnitConverter *clone() const { return new VerticalFldUnitConverter(*this); }
-  double convertTo(double v) const {
+  TUnitConverter *clone() const override {
+    return new VerticalFldUnitConverter(*this);
+  }
+  double convertTo(double v) const override {
     return v * m_fieldGuideAspectRatio * m_factor;
   }
-  double convertFrom(double v) const {
+  double convertFrom(double v) const override {
     return v / (m_fieldGuideAspectRatio * m_factor);
   }
 };
@@ -68,36 +70,42 @@ double getFieldGuideAspectRatio() {
 
 //===================================================================
 
-class TangentConverter : public TUnitConverter {
+class TangentConverter final : public TUnitConverter {
 public:
   TangentConverter() {}
-  TUnitConverter *clone() const { return new TangentConverter(*this); }
-  double convertTo(double v) const { return atan(v) * (M_1_PI * 180.0); }
-  double convertFrom(double v) const { return tan(v * M_PI_180); }
+  TUnitConverter *clone() const override { return new TangentConverter(*this); }
+  double convertTo(double v) const override {
+    return atan(v) * (M_1_PI * 180.0);
+  }
+  double convertFrom(double v) const override { return tan(v * M_PI_180); }
 };
 
 //===================================================================
 
-class TPixelUnitXConverter : public TUnitConverter {
+class TPixelUnitXConverter final : public TUnitConverter {
 public:
   TPixelUnitXConverter() {}
-  TUnitConverter *clone() const { return new TPixelUnitXConverter(*this); }
-  double convertTo(double v) const {
+  TUnitConverter *clone() const override {
+    return new TPixelUnitXConverter(*this);
+  }
+  double convertTo(double v) const override {
     return v * UnitParameters::currentDpiGetter().first;
   }
-  double convertFrom(double v) const {
+  double convertFrom(double v) const override {
     return v / UnitParameters::currentDpiGetter().first;
   }
 };
 
-class TPixelUnitYConverter : public TUnitConverter {
+class TPixelUnitYConverter final : public TUnitConverter {
 public:
   TPixelUnitYConverter() {}
-  TUnitConverter *clone() const { return new TPixelUnitYConverter(*this); }
-  double convertTo(double v) const {
+  TUnitConverter *clone() const override {
+    return new TPixelUnitYConverter(*this);
+  }
+  double convertTo(double v) const override {
     return v * UnitParameters::currentDpiGetter().second;
   }
-  double convertFrom(double v) const {
+  double convertFrom(double v) const override {
     return v / UnitParameters::currentDpiGetter().second;
   }
 };
@@ -522,44 +530,48 @@ std::wstring TMeasuredValue::toWideString(int decimals) const {
 
 namespace {
 
-class ZDepthUnitConverter : public TUnitConverter {
+class ZDepthUnitConverter final : public TUnitConverter {
   TMeasureManager::CameraSizeProvider *m_cameraSizeProvider;
 
 public:
   ZDepthUnitConverter(TMeasureManager::CameraSizeProvider *cameraSizeProvider)
       : m_cameraSizeProvider(cameraSizeProvider) {}
-  TUnitConverter *clone() const {
+  TUnitConverter *clone() const override {
     return new ZDepthUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const { return (1 - v * 0.001) * getCameraSize(); }
-  double convertFrom(double v) const {
+  double convertTo(double v) const override {
+    return (1 - v * 0.001) * getCameraSize();
+  }
+  double convertFrom(double v) const override {
     return (1 - v / getCameraSize()) * 1000.0;
   }
 };
 
 //-------------------------------------------------------------------
 
-class CameraZDepthUnitConverter : public TUnitConverter {
+class CameraZDepthUnitConverter final : public TUnitConverter {
   TMeasureManager::CameraSizeProvider *m_cameraSizeProvider;
 
 public:
   CameraZDepthUnitConverter(
       TMeasureManager::CameraSizeProvider *cameraSizeProvider)
       : m_cameraSizeProvider(cameraSizeProvider) {}
-  TUnitConverter *clone() const {
+  TUnitConverter *clone() const override {
     return new CameraZDepthUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const { return (1 + v * 0.001) * getCameraSize(); }
-  double convertFrom(double v) const {
+  double convertTo(double v) const override {
+    return (1 + v * 0.001) * getCameraSize();
+  }
+  double convertFrom(double v) const override {
     return (v / getCameraSize() - 1) * 1000.0;
   }
 };
 
 //===================================================================
 /*-- Zのカーブのハンドルの長さは0=0となるようにしなければならない --*/
-class ZDepthHandleUnitConverter : public TUnitConverter {
+class ZDepthHandleUnitConverter final : public TUnitConverter {
   TMeasureManager::CameraSizeProvider *m_cameraSizeProvider;
 
 public:
@@ -567,15 +579,19 @@ public:
       TMeasureManager::CameraSizeProvider *cameraSizeProvider)
       : m_cameraSizeProvider(cameraSizeProvider) {}
 
-  TUnitConverter *clone() const {
+  TUnitConverter *clone() const override {
     return new ZDepthHandleUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const { return -v * 0.001 * getCameraSize(); }
-  double convertFrom(double v) const { return (-v / getCameraSize()) * 1000.0; }
+  double convertTo(double v) const override {
+    return -v * 0.001 * getCameraSize();
+  }
+  double convertFrom(double v) const override {
+    return (-v / getCameraSize()) * 1000.0;
+  }
 };
 
-class CameraZDepthHandleUnitConverter : public TUnitConverter {
+class CameraZDepthHandleUnitConverter final : public TUnitConverter {
   TMeasureManager::CameraSizeProvider *m_cameraSizeProvider;
 
 public:
@@ -583,12 +599,16 @@ public:
       TMeasureManager::CameraSizeProvider *cameraSizeProvider)
       : m_cameraSizeProvider(cameraSizeProvider) {}
 
-  TUnitConverter *clone() const {
+  TUnitConverter *clone() const override {
     return new CameraZDepthHandleUnitConverter(m_cameraSizeProvider);
   }
   inline double getCameraSize() const { return (*m_cameraSizeProvider)(); }
-  double convertTo(double v) const { return v * 0.001 * getCameraSize(); }
-  double convertFrom(double v) const { return (v / getCameraSize()) * 1000.0; }
+  double convertTo(double v) const override {
+    return v * 0.001 * getCameraSize();
+  }
+  double convertFrom(double v) const override {
+    return (v / getCameraSize()) * 1000.0;
+  }
 };
 
 }  // namespace

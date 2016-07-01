@@ -101,7 +101,7 @@ class Intersection;
 
 #ifdef LEVO
 
-class TAutocloseEdge : public TGeneralEdge {
+class TAutocloseEdge final : public TGeneralEdge {
 public:
   TSegment m_segment;
   int m_nextStrokeIndex;
@@ -228,7 +228,7 @@ private:
   // gruppo o il move di strokes
 
   //--------------------NUOVO CALCOLO
-  //REGIONI------------------------------------------------
+  // REGIONI------------------------------------------------
 
 public:
 #ifdef LEVO

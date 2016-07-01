@@ -4,7 +4,7 @@
 
 #include "ino_common.h"
 //------------------------------------------------------------
-class ino_hls_noise : public TStandardRasterFx {
+class ino_hls_noise final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ino_hls_noise)
   TRasterFxPort m_input;
   TRasterFxPort m_refer;
@@ -77,7 +77,8 @@ public:
     this->m_ref_mode->addItem(4, "Luminance");
     this->m_ref_mode->addItem(-1, "Nothing");
   }
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) {
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override {
     if (this->m_input.isConnected()) {
       return this->m_input->doGetBBox(frame, bBox, info);
     } else {
@@ -85,7 +86,7 @@ public:
       return false;
     }
   }
-  bool canHandle(const TRenderSettings &info, double frame) {
+  bool canHandle(const TRenderSettings &info, double frame) override {
     // return true;
     /* trueだと素材がスライドして現れるときノイズパターン
     が変わってしまう 2013-4-5からtoonz上で変更した */
@@ -101,7 +102,8 @@ public:
     2013-11-08 */
     return false;
   }
-  void doCompute(TTile &tile, double frame, const TRenderSettings &rend_sets);
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &rend_sets) override;
 };
 FX_PLUGIN_IDENTIFIER(ino_hls_noise, "inohlsNoiseFx");
 //------------------------------------------------------------

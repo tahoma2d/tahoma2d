@@ -12,7 +12,7 @@
 
 //=============================================================================
 
-class LoadCurveUndo : public TUndo {
+class LoadCurveUndo final : public TUndo {
   TDoubleParamP m_curve;
   TDoubleParamP m_oldCurve, m_newCurve;
 
@@ -20,11 +20,13 @@ public:
   LoadCurveUndo(TDoubleParam *curve) : m_curve(curve) {
     m_oldCurve = static_cast<TDoubleParam *>(curve->clone());
   }
-  void onAdd() { m_newCurve = static_cast<TDoubleParam *>(m_curve->clone()); }
+  void onAdd() override {
+    m_newCurve = static_cast<TDoubleParam *>(m_curve->clone());
+  }
 
-  void undo() const { m_curve->copy(m_oldCurve.getPointer()); }
-  void redo() const { m_curve->copy(m_newCurve.getPointer()); }
-  int getSize() const {
+  void undo() const override { m_curve->copy(m_oldCurve.getPointer()); }
+  void redo() const override { m_curve->copy(m_newCurve.getPointer()); }
+  int getSize() const override {
     return sizeof(*this) + 2 * sizeof(TDoubleParam);  // not very accurate
   }
 };
@@ -50,7 +52,7 @@ public:
     setFilterTypes(sl);
   }
 
-  void initFolder() { setFolder(m_folderPath); }
+  void initFolder() override { setFolder(m_folderPath); }
 
   bool checkOverride(const TFilePath &fp) const {
     if (TFileStatus(fp).doesExist()) {
@@ -68,7 +70,7 @@ public:
 
 //=============================================================================
 
-class SaveCurvePopup : public CurvePopup {
+class SaveCurvePopup final : public CurvePopup {
 public:
   SaveCurvePopup(const TFilePath folderPath, TDoubleParam *curve)
       : CurvePopup(tr("Save Curve"), folderPath, curve) {
@@ -76,7 +78,7 @@ public:
     setFilterType("curve");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -103,7 +105,7 @@ bool SaveCurvePopup::execute() {
 
 //=============================================================================
 
-class LoadCurvePopup : public CurvePopup {
+class LoadCurvePopup final : public CurvePopup {
 public:
   LoadCurvePopup(const TFilePath folderPath, TDoubleParam *curve)
       : CurvePopup(tr("Load Curve"), folderPath, curve) {
@@ -111,7 +113,7 @@ public:
     setFilterType("curve");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -144,7 +146,7 @@ bool LoadCurvePopup::execute() {
 
 //=============================================================================
 
-class ExportCurvePopup : public CurvePopup {
+class ExportCurvePopup final : public CurvePopup {
   std::string m_name;
 
 public:
@@ -155,7 +157,7 @@ public:
     setFilterType("dat");
   }
 
-  bool execute();
+  bool execute() override;
 };
 
 //-----------------------------------------------------------------------------

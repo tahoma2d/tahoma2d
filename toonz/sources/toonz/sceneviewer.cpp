@@ -1,4 +1,7 @@
 
+#ifdef LINUX
+#define GL_GLEXT_PROTOTYPES
+#endif
 
 // Toonz includes
 #include "tapp.h"
@@ -96,14 +99,14 @@ std::set<TGlContext>
 //-------------------------------------------------------------------------------
 
 QGLWidget *touchProxy() {
-  struct GLWidgetProxy : public TGLDisplayListsProxy {
+  struct GLWidgetProxy final : public TGLDisplayListsProxy {
     ~GLWidgetProxy() {
       delete l_proxy;
       l_proxy = 0;
     }
 
-    void makeCurrent() { l_proxy->makeCurrent(); }
-    void doneCurrent() { l_proxy->doneCurrent(); }
+    void makeCurrent() override { l_proxy->makeCurrent(); }
+    void doneCurrent() override { l_proxy->doneCurrent(); }
   };
 
   // If it does not exist, create the viewer's display lists proxy
@@ -318,78 +321,78 @@ void executeCheck(int checkType) {
 
 //-----------------------------------------------------------------------------
 
-class TCheckToggleCommand : public MenuItemHandler {
+class TCheckToggleCommand final : public MenuItemHandler {
 public:
   TCheckToggleCommand() : MenuItemHandler("MI_TCheck") {}
-  void execute() { executeCheck(ToonzCheck::eTransparency); }
+  void execute() override { executeCheck(ToonzCheck::eTransparency); }
 } tcheckToggle;
 
 //-----------------------------------------------------------------------------
 
-class ICheckToggleCommand : public MenuItemHandler {
+class ICheckToggleCommand final : public MenuItemHandler {
 public:
   ICheckToggleCommand() : MenuItemHandler("MI_ICheck") {}
-  void execute() { executeCheck(ToonzCheck::eInk); }
+  void execute() override { executeCheck(ToonzCheck::eInk); }
 } icheckToggle;
 
 //-----------------------------------------------------------------------------
 
-class PCheckToggleCommand : public MenuItemHandler {
+class PCheckToggleCommand final : public MenuItemHandler {
 public:
   PCheckToggleCommand() : MenuItemHandler("MI_PCheck") {}
-  void execute() { executeCheck(ToonzCheck::ePaint); }
+  void execute() override { executeCheck(ToonzCheck::ePaint); }
 } pcheckToggle;
 
 //-----------------------------------------------------------------------------
 
-class BCheckToggleCommand : public MenuItemHandler {
+class BCheckToggleCommand final : public MenuItemHandler {
 public:
   BCheckToggleCommand() : MenuItemHandler("MI_BCheck") {}
-  void execute() { executeCheck(ToonzCheck::eBlackBg); }
+  void execute() override { executeCheck(ToonzCheck::eBlackBg); }
 } bcheckToggle;
 
 //-----------------------------------------------------------------------------
 
-class TAutocloseToggleCommand : public MenuItemHandler {
+class TAutocloseToggleCommand final : public MenuItemHandler {
 public:
   TAutocloseToggleCommand() : MenuItemHandler("MI_ACheck") {}
-  void execute() { executeCheck(ToonzCheck::eAutoclose); }
+  void execute() override { executeCheck(ToonzCheck::eAutoclose); }
 } tautocloseToggle;
 
 //-----------------------------------------------------------------------------
 
-class TGapToggleCommand : public MenuItemHandler {
+class TGapToggleCommand final : public MenuItemHandler {
 public:
   TGapToggleCommand() : MenuItemHandler("MI_GCheck") {}
-  void execute() { executeCheck(ToonzCheck::eGap); }
+  void execute() override { executeCheck(ToonzCheck::eGap); }
 } tgapToggle;
 
 //-----------------------------------------------------------------------------
 
-class TInksOnlyToggleCommand : public MenuItemHandler {
+class TInksOnlyToggleCommand final : public MenuItemHandler {
 public:
   TInksOnlyToggleCommand() : MenuItemHandler("MI_IOnly") {}
-  void execute() { executeCheck(ToonzCheck::eInksOnly); }
+  void execute() override { executeCheck(ToonzCheck::eInksOnly); }
 } tinksOnlyToggle;
 
 //-----------------------------------------------------------------------------
 /*! emphasize lines with style#1 regardless of the current style
 */
-class Ink1CheckToggleCommand : public MenuItemHandler {
+class Ink1CheckToggleCommand final : public MenuItemHandler {
 public:
   Ink1CheckToggleCommand() : MenuItemHandler("MI_Ink1Check") {}
-  void execute() { executeCheck(ToonzCheck::eInk1); }
+  void execute() override { executeCheck(ToonzCheck::eInk1); }
 } ink1checkToggle;
 
 //=============================================================================
 
-class TShiftTraceToggleCommand : public MenuItemHandler {
+class TShiftTraceToggleCommand final : public MenuItemHandler {
   CommandId m_cmdId;
 
 public:
   TShiftTraceToggleCommand(CommandId cmdId)
       : MenuItemHandler(cmdId), m_cmdId(cmdId) {}
-  void execute() {
+  void execute() override {
     CommandManager *cm = CommandManager::instance();
     QAction *action    = cm->getAction(m_cmdId);
     bool checked       = action->isChecked();
@@ -440,10 +443,10 @@ public:
 TShiftTraceToggleCommand shiftTraceToggleCommand(MI_ShiftTrace),
     editShiftToggleCommand(MI_EditShift), noShiftToggleCommand(MI_NoShift);
 
-class TResetShiftTraceCommand : public MenuItemHandler {
+class TResetShiftTraceCommand final : public MenuItemHandler {
 public:
   TResetShiftTraceCommand() : MenuItemHandler(MI_ResetShift) {}
-  void execute() {
+  void execute() override {
     OnionSkinMask osm =
         TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
     osm.setShiftTraceGhostCenter(0, TPointD());
@@ -1401,16 +1404,16 @@ void drawFpsGraph(int t0, int t1) {
 
 //-----------------------------------------------------------------------------
 
-class Qt_GLContextManager : public TGLContextManager {
+class Qt_GLContextManager final : public TGLContextManager {
   QGLContext *m_context;
 
 public:
   Qt_GLContextManager() : m_context(0) {}
-  void store() {
+  void store() override {
     // m_context = const_cast<QGLContext *>(QGLContext::currentContext());
   }
   void store(QGLContext *context) { m_context = context; }
-  void restore() {
+  void restore() override {
     if (m_context) m_context->makeCurrent();
   }
 };
@@ -1449,7 +1452,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  //m_ghibli3DLutUtil)
+  // m_ghibli3DLutUtil)
   //	m_ghibli3DLutUtil->startDraw();
 
   if (m_hRuler && m_vRuler) {
@@ -1483,7 +1486,7 @@ void SceneViewer::paintGL() {
     // iwsw commented out temporarily
     // if (!m_isPicking &&
     //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-    //m_ghibli3DLutUtil)
+    // m_ghibli3DLutUtil)
     //	m_ghibli3DLutUtil->endDraw();
 
     return;
@@ -1495,7 +1498,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	  !Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() ||
-  //!m_ghibli3DLutUtil)
+  //! m_ghibli3DLutUtil)
   copyFrontBufferToBackBuffer();
   check_framebuffer_status();
   drawEnableScissor();
@@ -1533,7 +1536,7 @@ void SceneViewer::paintGL() {
   // iwsw commented out temporarily
   // if (!m_isPicking &&
   //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  //m_ghibli3DLutUtil)
+  // m_ghibli3DLutUtil)
   //	m_ghibli3DLutUtil->endDraw();
 }
 

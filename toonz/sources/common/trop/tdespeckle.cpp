@@ -304,7 +304,7 @@ void DespecklingReader::closeContainer() {
 //========================================================================
 
 template <typename Pix>
-class ReplacePainter : public BordersPainter<Pix> {
+class ReplacePainter final : public BordersPainter<Pix> {
   typename ReplacePainter::pixel_type m_color;
 
 public:
@@ -317,7 +317,7 @@ public:
   const typename ReplacePainter::pixel_type &color() const { return m_color; }
   typename ReplacePainter::pixel_type &color() { return m_color; }
 
-  void paintPixel(typename ReplacePainter::pixel_type *pix) const {
+  void paintPixel(typename ReplacePainter::pixel_type *pix) const override {
     *pix = m_color;
   }
 };
@@ -325,7 +325,7 @@ public:
 //---------------------------------------------------------------------------------------------
 
 template <>
-class ReplacePainter<TPixelCM32> : public BordersPainter<TPixelCM32> {
+class ReplacePainter<TPixelCM32> final : public BordersPainter<TPixelCM32> {
   TUINT32 m_value;
   TUINT32 m_keepMask;
 
@@ -342,7 +342,7 @@ public:
   const TUINT32 &keepMask() const { return m_keepMask; }
   TUINT32 &keepMask() { return m_keepMask; }
 
-  void paintPixel(pixel_type *pix) const {
+  void paintPixel(pixel_type *pix) const override {
     *pix = TPixelCM32(m_value | (pix->getValue() & m_keepMask));
   }
 };
@@ -352,7 +352,7 @@ public:
 //========================================================================
 
 template <typename PixelSelector>
-class IsolatedReader : public DespecklingReader {
+class IsolatedReader final : public DespecklingReader {
 public:
   typedef typename PixelSelector::pixel_type pixel_type;
   typedef typename PixelSelector::value_type value_type;
@@ -366,7 +366,7 @@ public:
 
   void openContainer(const RasterEdgeIterator<PixelSelector> &it);
   void addElement(const RasterEdgeIterator<PixelSelector> &it);
-  void closeContainer();
+  void closeContainer() override;
 };
 
 //---------------------------------------------------------------------------------------------
@@ -509,7 +509,7 @@ void TRop::despeckle(const TRasterP &rout, const TRasterP &rin,
 namespace {
 
 template <typename PixelSelector>
-class FillingReader : public DespecklingReader {
+class FillingReader final : public DespecklingReader {
 public:
   typedef typename PixelSelector::pixel_type pixel_type;
   typedef typename PixelSelector::value_type value_type;
@@ -523,7 +523,7 @@ public:
 
   void openContainer(const RasterEdgeIterator<PixelSelector> &it);
   void addElement(const RasterEdgeIterator<PixelSelector> &it);
-  void closeContainer();
+  void closeContainer() override;
 
   RunsMapP &runsMap() { return m_painter.runsMap(); }
 };

@@ -26,19 +26,19 @@
 #include "StrokeDeformationImpl.h"
 
 namespace ToonzExt {
-class DVAPI StraightCornerDeformation : public StrokeDeformationImpl {
+class DVAPI StraightCornerDeformation final : public StrokeDeformationImpl {
   StraightCornerDeformation();
 
 public:
   virtual ~StraightCornerDeformation();
 
-  bool check_(const ContextStatus *status);
+  bool check_(const ContextStatus *status) override;
 
-  bool findExtremes_(const ContextStatus *, Interval &);
+  bool findExtremes_(const ContextStatus *, Interval &) override;
 
-  virtual void draw(Designer *);
+  void draw(Designer *) override;
 
-  double findActionLength();
+  double findActionLength() override;
 
   static StraightCornerDeformation *instance();
 };

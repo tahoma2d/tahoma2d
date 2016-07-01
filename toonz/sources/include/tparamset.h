@@ -23,7 +23,7 @@
 
 class TParamSetImp;
 
-class TParamSetChange : public TParamChange {
+class TParamSetChange final : public TParamChange {
 public:
   std::vector<TParamChange *> m_paramChanges;
 
@@ -66,39 +66,39 @@ public:
 
   void getAnimatableParams(std::vector<TParamP> &params, bool recursive = true);
 
-  void addObserver(TParamObserver *observer);
-  void removeObserver(TParamObserver *observer);
+  void addObserver(TParamObserver *observer) override;
+  void removeObserver(TParamObserver *observer) override;
 
   void beginParameterChange();
   void endParameterChange();
 
   void enableDragging(bool on);
-  void enableNotification(bool on);
-  bool isNotificationEnabled() const;
+  void enableNotification(bool on) override;
+  bool isNotificationEnabled() const override;
 
-  bool isAnimatable() const { return true; }
-  bool isKeyframe(double frame) const;
-  void deleteKeyframe(double frame);
-  void clearKeyframes();
+  bool isAnimatable() const override { return true; }
+  bool isKeyframe(double frame) const override;
+  void deleteKeyframe(double frame) override;
+  void clearKeyframes() override;
   void assignKeyframe(double frame, const TSmartPointerT<TParam> &src,
-                      double srcFrame, bool changedOnly = false);
+                      double srcFrame, bool changedOnly = false) override;
 
-  void getKeyframes(std::set<double> &frames) const;
+  void getKeyframes(std::set<double> &frames) const override;
   int getKeyframeCount() const;
 
-  double keyframeIndexToFrame(int index) const;
+  double keyframeIndexToFrame(int index) const override;
 
-  virtual TParam *clone() const;
-  virtual void copy(TParam *src);
-  virtual void loadData(TIStream &);
-  virtual void saveData(TOStream &);
+  TParam *clone() const override;
+  void copy(TParam *src) override;
+  void loadData(TIStream &) override;
+  void saveData(TOStream &) override;
 
-  int getNextKeyframe(double frame) const;
-  int getPrevKeyframe(double frame) const;
+  int getNextKeyframe(double frame) const override;
+  int getPrevKeyframe(double frame) const override;
 
-  bool hasKeyframes() const;
+  bool hasKeyframes() const override;
 
-  std::string getValueAlias(double frame, int precision);
+  std::string getValueAlias(double frame, int precision) override;
 
 private:
   TParamSetImp *m_imp = nullptr;
@@ -137,7 +137,7 @@ template class DVAPI TPersistDeclarationT<TPointParam>;
 class TPointParamImp;
 class TDoubleParamP;
 
-class DVAPI TPointParam : public TParamSet {
+class DVAPI TPointParam final : public TParamSet {
   PERSIST_DECLARATION(TPointParam)
   TPointParamImp *m_data;
   bool m_from_plugin;
@@ -147,16 +147,16 @@ public:
   TPointParam(const TPointParam &src);
   ~TPointParam();
 
-  TParam *clone() const { return new TPointParam(*this); }
-  void copy(TParam *src);
+  TParam *clone() const override { return new TPointParam(*this); }
+  void copy(TParam *src) override;
 
   TPointD getDefaultValue() const;
   TPointD getValue(double frame) const;
   bool setValue(double frame, const TPointD &p);
   void setDefaultValue(const TPointD &p);
 
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
 
   TDoubleParamP &getX();
   TDoubleParamP &getY();
@@ -184,7 +184,7 @@ public:
 
 class TPixelParamImp;
 
-class DVAPI TPixelParam : public TParamSet {
+class DVAPI TPixelParam final : public TParamSet {
   PERSIST_DECLARATION(TPixelParam)
   TPixelParamImp *m_data;
 
@@ -193,8 +193,8 @@ public:
   TPixelParam(const TPixelParam &);
   ~TPixelParam();
 
-  TParam *clone() const { return new TPixelParam(*this); }
-  void copy(TParam *src);
+  TParam *clone() const override { return new TPixelParam(*this); }
+  void copy(TParam *src) override;
 
   TPixel32 getDefaultValue() const;
   TPixelD getValueD(double frame) const;
@@ -210,8 +210,8 @@ public:
   void enableMatte(bool on);
 
   bool isMatteEnabled() const;
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
 
   TDoubleParamP &getRed();
   TDoubleParamP &getGreen();
@@ -242,7 +242,7 @@ template class DVAPI TPersistDeclarationT<TRangeParam>;
 class TRangeParamImp;
 class TDoubleParamP;
 
-class DVAPI TRangeParam : public TParamSet {
+class DVAPI TRangeParam final : public TParamSet {
   PERSIST_DECLARATION(TRangeParam)
   TRangeParamImp *m_data;
 
@@ -251,16 +251,16 @@ public:
   TRangeParam(const TRangeParam &src);
   ~TRangeParam();
 
-  TParam *clone() const { return new TRangeParam(*this); }
-  void copy(TParam *src);
+  TParam *clone() const override { return new TRangeParam(*this); }
+  void copy(TParam *src) override;
 
   DoublePair getDefaultValue() const;
   DoublePair getValue(double frame) const;
   bool setValue(double frame, const DoublePair &v);
   void setDefaultValue(const DoublePair &v);
 
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
   int getKeyframeCount() const;
 
   TDoubleParamP &getMin();

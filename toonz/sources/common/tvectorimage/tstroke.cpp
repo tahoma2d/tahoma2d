@@ -3116,8 +3116,8 @@ double *reparameterize3D(const TThickCubic &cubic,
   for (int i = 0; i < size; i++) {
     uPrime[i] = NewtonRaphsonRootFind3D(cubic, *(pointsArrayBegin + i), u[i]);
     if (!_finite(uPrime[i])) {
-      delete uPrime;
-      return 0;
+      delete[] uPrime;
+      return NULL;
     }
   }
 
@@ -3125,8 +3125,8 @@ double *reparameterize3D(const TThickCubic &cubic,
   // std::sort( uPrime, uPrime+size );
 
   if (uPrime[0] < 0.0 || uPrime[size - 1] > 1.0) {
-    delete uPrime;
-    return 0;
+    delete[] uPrime;
+    return NULL;
   }
 
   assert(uPrime[0] >= 0.0);
@@ -3343,9 +3343,6 @@ void computeQuadraticsFromCubic(const TThickCubic &cubic, double error,
           assert(areAlmostEqual(
               tsign(cs_sign) * sqrt(cs2),
               tmp / (2 * sqrt(norm2_side0p) * sqrt(norm2_side3p))));
-          assert(!(cs_sign < 0) ||
-                 acos(-sqrt(cs2)) >
-                     10 * M_PI_180);  //  cs_sign < 0 => acos(-sqrt(cs2)) > 10°
           if (cs_sign < 0 || cs2 < 0.969846)  //  cos(10°)^2 = 0.969846
           {  //  limita distanza di intersection: elimina quadratiche "cappio"
              //  (con p1 "lontano")

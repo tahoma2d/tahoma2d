@@ -38,7 +38,7 @@ enum { RIGID_IDX = 0, FLEX_IDX };
 
 namespace {
 
-class PaintRigidityUndo : public TUndo {
+class PaintRigidityUndo final : public TUndo {
   TXshCell m_cell;  //!< Affected image (cell == level + frame)
   std::vector<std::map<int, double>> m_vertices;  //!< Affected vertices
 
@@ -50,9 +50,9 @@ public:
                     double paintValue)
       : m_cell(cell), m_vertices(vertices), m_paintValue(paintValue) {}
 
-  int getSize() const { return 1 << 20; }
+  int getSize() const override { return 1 << 20; }
 
-  void redo() const {
+  void redo() const override {
     TXshSimpleLevel *sl =
         static_cast<TXshSimpleLevel *>(m_cell.m_level.getPointer());
     sl->setDirtyFlag(true);
@@ -73,7 +73,7 @@ public:
         mi.getPointer(), PlasticDeformerStorage::MESH);
   }
 
-  void undo() const {
+  void undo() const override {
     TXshSimpleLevel *sl =
         static_cast<TXshSimpleLevel *>(m_cell.m_level.getPointer());
     sl->setDirtyFlag(true);
@@ -103,7 +103,7 @@ public:
 
 namespace {
 
-class RigidityPainter : public tcg::polymorphic {
+class RigidityPainter final : public tcg::polymorphic {
   std::vector<std::map<int, double>>
       m_oldRigidities;         //!< The original values of painted vertices
   double m_sqRadius, m_value;  //!< Drawing parameters

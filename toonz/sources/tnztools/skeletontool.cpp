@@ -495,7 +495,7 @@ bool SkeletonTool::keyDown(int key, TUINT32 flags, const TPoint &pos) {
 
 //-------------------------------------------------------------------
 
-class TogglePinnedStatusUndo : public TUndo {
+class TogglePinnedStatusUndo final : public TUndo {
   SkeletonTool *m_tool;
   std::set<int> m_oldTemp, m_newTemp;
   int m_columnIndex, m_oldColumnIndex;
@@ -569,7 +569,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     m_tool->setTemporaryPinnedColumns(m_oldTemp);
 
     if (m_columnIndex >= 0)
@@ -593,7 +593,7 @@ public:
     notify();
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsh = getXsheet();
     for (int i = 0; i < (int)m_keyframes.size(); i++) {
       TStageObject *stageObject =
@@ -612,7 +612,7 @@ public:
     }
     notify();
   }
-  int getSize() const { return sizeof *this; }
+  int getSize() const override { return sizeof *this; }
 };
 
 //-------------------------------------------------------------------

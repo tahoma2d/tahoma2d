@@ -234,13 +234,13 @@ public:
     bool operator!=(const Iterator &it) { return !operator==(it); }
   };
 
-  class ColIterator : public Iterator {
+  class ColIterator final : public Iterator {
     ColKey m_colKey;
 
     friend class Table;
     ColIterator(Table *table, const ColKey &c) : Iterator(table), m_colKey(c) {}
 
-    void makeConsistent() {
+    void makeConsistent() override {
       Iterator::m_rowIt = Iterator::m_rowIt;
       while (Iterator::m_rowIt != Iterator::m_table->m_table.end()) {
         Iterator::m_it = Iterator::m_rowIt->second.find(m_colKey);
@@ -250,17 +250,17 @@ public:
     }
 
   public:
-    void operator++() {
+    void operator++() override {
       ++Iterator::m_rowIt;
       makeConsistent();
     }
   };
 
-  class RowIterator : public Iterator {
+  class RowIterator final : public Iterator {
     friend class Table;
     RowIterator(Table *table) : Iterator(table) {}
 
-    void makeConsistent() {}
+    void makeConsistent() override {}
 
   public:
     RowIterator(const RowsIterator rowIt) : Iterator(0) {
@@ -268,8 +268,8 @@ public:
       Iterator::m_it    = rowIt->second.begin();
     }
 
-    void operator++() { ++Iterator::m_it; }
-    operator bool() {
+    void operator++() override { ++Iterator::m_it; }
+    operator bool() override {
       return Iterator::m_it != Iterator::m_rowIt->second.end();
     }
   };
@@ -423,8 +423,9 @@ TPassiveCacheManager::FxData::~FxData() {}
 //    TPassiveCacheManagerGenerator
 //---------------------------------------
 
-class TPassiveCacheManagerGenerator : public TRenderResourceManagerGenerator {
-  TRenderResourceManager *operator()(void) {
+class TPassiveCacheManagerGenerator final
+    : public TRenderResourceManagerGenerator {
+  TRenderResourceManager *operator()(void) override {
     // return new TPassiveCacheManager;
     return TPassiveCacheManager::instance();
   }

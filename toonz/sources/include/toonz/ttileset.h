@@ -73,25 +73,21 @@ public:
 
 //********************************************************************************
 
-class DVAPI TTileSetCM32 : public TTileSet {
+class DVAPI TTileSetCM32 final : public TTileSet {
 public:
   // per adesso, facciamo che comprime sempre,
   // appena costruisce l'oggetto. Poi potremmo dare la scelta,
   // anche per decidere se farlo subito o meno.
-  class DVAPI Tile : public TTileSet::Tile {
+  class DVAPI Tile final : public TTileSet::Tile {
   public:
     Tile();
     Tile(const TRasterCM32P &ras, const TPoint &p);
     ~Tile();
-#ifdef __LP64__
-    QString id() const {
-      return "TileCM" + QString::number((unsigned long)this);
+    QString id() const override {
+      return "TileCM" + QString::number((uintptr_t)this);
     }
-#else
-    QString id() const { return "TileCM" + QString::number((UINT)this); }
-#endif
 
-    Tile *clone() const;
+    Tile *clone() const override;
 
     void getRaster(TRasterCM32P &ras) const;
 
@@ -107,37 +103,31 @@ public:
   // crea un tile estraendo rect*ras->getBounds() da ras.
   // Nota: se rect e' completamente fuori non fa nulla
   // Nota: clona il raster!
-  void add(const TRasterP &ras, TRect rect);
+  void add(const TRasterP &ras, TRect rect) override;
 
   const Tile *getTile(int index) const;
   Tile *editTile(int index) const;
 
-  TTileSetCM32 *clone() const;
+  TTileSetCM32 *clone() const override;
 };
 
 //********************************************************************************
 
-class DVAPI TTileSetFullColor : public TTileSet {
+class DVAPI TTileSetFullColor final : public TTileSet {
 public:
   // per adesso, facciamo che comprime sempre,
   // appena costruisce l'oggetto. Poi potremmo dare la scelta,
   // anche per decidere se farlo subito o meno.
-  class DVAPI Tile : public TTileSet::Tile {
+  class DVAPI Tile final : public TTileSet::Tile {
   public:
     Tile();
     Tile(const TRasterP &ras, const TPoint &p);
     ~Tile();
-#ifdef __LP64__
-    QString id() const {
-      return "TTileSet32::Tile" + QString::number((unsigned long)this);
+    QString id() const override {
+      return "TTileSet32::Tile" + QString::number((uintptr_t)this);
     }
-#else
-    QString id() const {
-      return "TTileSet32::Tile" + QString::number((UINT)this);
-    }
-#endif
 
-    Tile *clone() const;
+    Tile *clone() const override;
 
     void getRaster(TRasterP &ras) const;
 
@@ -153,11 +143,11 @@ public:
   // crea un tile estraendo rect*ras->getBounds() da ras.
   // Nota: se rect e' completamente fuori non fa nulla
   // Nota: clona il raster!
-  void add(const TRasterP &ras, TRect rect);
+  void add(const TRasterP &ras, TRect rect) override;
 
   const Tile *getTile(int index) const;
 
-  TTileSetFullColor *clone() const;
+  TTileSetFullColor *clone() const override;
 };
 
 #endif

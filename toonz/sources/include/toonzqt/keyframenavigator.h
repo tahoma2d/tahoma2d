@@ -87,15 +87,15 @@ protected:
   virtual void goNext()               = 0;
   virtual void goPrev()               = 0;
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 };
 
 //=============================================================================
 // ViewerKeyframeNavigator
 //-----------------------------------------------------------------------------
 
-class DVAPI ViewerKeyframeNavigator : public KeyframeNavigator {
+class DVAPI ViewerKeyframeNavigator final : public KeyframeNavigator {
   Q_OBJECT
 
   TObjectHandle *m_objectHandle;
@@ -124,24 +124,24 @@ public slots:
 
 protected:
   TStageObject *getStageObject() const;
-  bool hasNext() const;
-  bool hasPrev() const;
-  bool hasKeyframes() const;
-  bool isKeyframe() const;
-  bool isFullKeyframe() const;
-  void toggle();
-  void goNext();
-  void goPrev();
+  bool hasNext() const override;
+  bool hasPrev() const override;
+  bool hasKeyframes() const override;
+  bool isKeyframe() const override;
+  bool isFullKeyframe() const override;
+  void toggle() override;
+  void goNext() override;
+  void goPrev() override;
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 };
 
 //=============================================================================
 // PaletteKeyframeNavigator
 //-----------------------------------------------------------------------------
 
-class DVAPI PaletteKeyframeNavigator : public KeyframeNavigator {
+class DVAPI PaletteKeyframeNavigator final : public KeyframeNavigator {
   Q_OBJECT
 
   TPaletteHandle *m_paletteHandle;
@@ -175,24 +175,24 @@ public slots:
   }
 
 protected:
-  bool hasNext() const;
-  bool hasPrev() const;
-  bool hasKeyframes() const;
-  bool isKeyframe() const;
-  bool isFullKeyframe() const { return isKeyframe(); }
-  void toggle();
-  void goNext();
-  void goPrev();
+  bool hasNext() const override;
+  bool hasPrev() const override;
+  bool hasKeyframes() const override;
+  bool isKeyframe() const override;
+  bool isFullKeyframe() const override { return isKeyframe(); }
+  void toggle() override;
+  void goNext() override;
+  void goPrev() override;
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 };
 
 //=============================================================================
 // FxKeyframeNavigator
 //-----------------------------------------------------------------------------
 
-class DVAPI FxKeyframeNavigator : public KeyframeNavigator {
+class DVAPI FxKeyframeNavigator final : public KeyframeNavigator {
   Q_OBJECT
 
   TFxHandle *m_fxHandle;
@@ -220,17 +220,17 @@ public slots:
   }
 
 protected:
-  bool hasNext() const;
-  bool hasPrev() const;
-  bool hasKeyframes() const;
-  bool isKeyframe() const;
-  bool isFullKeyframe() const;
-  void toggle();
-  void goNext();
-  void goPrev();
+  bool hasNext() const override;
+  bool hasPrev() const override;
+  bool hasKeyframes() const override;
+  bool isKeyframe() const override;
+  bool isFullKeyframe() const override;
+  void toggle() override;
+  void goNext() override;
+  void goPrev() override;
 
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 };
 
 #endif

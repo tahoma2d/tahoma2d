@@ -44,7 +44,7 @@ class ParamChange;
 //**************************************************************************************
 
 //! The deformation of a plastic skeleton vertex.
-typedef struct DVAPI PlasticSkeletonVertexDeformation : public TPersist {
+typedef struct DVAPI PlasticSkeletonVertexDeformation final : public TPersist {
   PERSIST_DECLARATION(PlasticSkeletonVertexDeformation)
 
 public:
@@ -74,8 +74,8 @@ public:
   bool isFullKeyframe(double frame) const;
   void deleteKeyframe(double frame);
 
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 
 } SkVD;
 
@@ -154,7 +154,8 @@ of the
   skeletons it is attached to. It is therefore intended to be a \a container of
 said skeletons.
 */
-class DVAPI PlasticSkeletonDeformation : public TSmartObject, public TPersist {
+class DVAPI PlasticSkeletonDeformation final : public TSmartObject,
+                                               public TPersist {
   DECLARE_CLASS_CODE
   PERSIST_DECLARATION(PlasticSkeletonDeformation)
 
@@ -267,8 +268,8 @@ public:
                    const TPointD &pos);
 
 protected:
-  void saveData(TOStream &os);
-  void loadData(TIStream &is);
+  void saveData(TOStream &os) override;
+  void loadData(TIStream &is) override;
 
 private:
   friend class PlasticSkeleton;
@@ -277,8 +278,8 @@ private:
       PlasticSkeleton *sk,
       int v);  //!< Deals with vertex deformations when v has been added
   void insertVertex(PlasticSkeleton *sk, int v);  //!< Deals with vertex
-                                                  //!deformations when v has
-                                                  //!been inserted in an edge
+                                                  //! deformations when v has
+  //! been inserted in an edge
   void deleteVertex(
       PlasticSkeleton *sk,
       int v);  //!< Removes vertex deformation for v, \a before it is deleted

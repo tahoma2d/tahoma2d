@@ -53,7 +53,7 @@
 //    TBinarizeUndo
 //**************************************************************************
 
-class TBinarizeUndo : public TUndo {
+class TBinarizeUndo final : public TUndo {
   std::wstring m_levelName;
   TFrameId m_fid;
   bool m_alphaEnabled;
@@ -93,7 +93,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     TXshSimpleLevel *sl = getLevel();
     if (!sl) return;
     TRasterImageP ri = sl->getFrame(m_fid, true);
@@ -104,7 +104,7 @@ public:
     notify(sl);
   }
 
-  void redo() const {
+  void redo() const override {
     TXshSimpleLevel *sl = getLevel();
     if (!sl) return;
     TRasterImageP ri = sl->getFrame(m_fid, true);
@@ -117,14 +117,14 @@ public:
     notify(sl);
   }
 
-  int getSize() const { return sizeof(*this) + m_rasSize; }
+  int getSize() const override { return sizeof(*this) + m_rasSize; }
 };
 
 //**************************************************************************
 //    BinarizePopup Swatch
 //**************************************************************************
 
-class BinarizePopup::Swatch : public PlaneViewer {
+class BinarizePopup::Swatch final : public PlaneViewer {
   TRasterP m_ras;
 
 public:

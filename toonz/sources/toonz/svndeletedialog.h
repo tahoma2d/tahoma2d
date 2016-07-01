@@ -15,7 +15,7 @@ class QFile;
 
 //-----------------------------------------------------------------------------
 
-class SVNDeleteDialog : public DVGui::Dialog {
+class SVNDeleteDialog final : public DVGui::Dialog {
   Q_OBJECT
 
   QLabel *m_waitingLabel;
@@ -53,7 +53,7 @@ public:
                   int sceneIconAdded);
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 
 private:
   void switchToCloseButton();

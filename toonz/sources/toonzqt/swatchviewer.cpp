@@ -66,7 +66,7 @@ a swatch pointer to its associated cache data - the advantage being that cache
 resources are shared at the
 same scene zoom.*/
 
-class SwatchCacheManager : public TFxCacheManagerDelegate {
+class SwatchCacheManager final : public TFxCacheManagerDelegate {
   T_RENDER_RESOURCE_MANAGER
 
   unsigned long m_setFxId;
@@ -90,20 +90,21 @@ public:
 
   void getResource(TCacheResourceP &resource, const std::string &alias,
                    const TFxP &fx, double frame, const TRenderSettings &rs,
-                   ResourceDeclaration *resData);
+                   ResourceDeclaration *resData) override;
 
   // void onRenderInstanceStart(unsigned long renderId);
   // void onRenderInstanceEnd(unsigned long renderId);
 
-  bool renderHasOwnership() { return false; }
+  bool renderHasOwnership() override { return false; }
 };
 
 //*****************************************************************************************
 //    Manager generator
 //*****************************************************************************************
 
-class SwatchCacheManagerGenerator : public TRenderResourceManagerGenerator {
-  TRenderResourceManager *operator()(void) {
+class SwatchCacheManagerGenerator final
+    : public TRenderResourceManagerGenerator {
+  TRenderResourceManager *operator()(void) override {
     // return new TPassiveCacheManager;
     return SwatchCacheManager::instance();
   }

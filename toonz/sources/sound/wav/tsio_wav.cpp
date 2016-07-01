@@ -66,7 +66,7 @@ TINT32 TWAVChunk::HDR_LENGTH = 8;
 
 //  FMT Chunk: Chunk contenente le informazioni sulla traccia
 
-class TFMTChunk : public TWAVChunk {
+class TFMTChunk final : public TWAVChunk {
 public:
   static TINT32 LENGTH;
 
@@ -79,7 +79,7 @@ public:
 
   TFMTChunk(TINT32 length) : TWAVChunk("fmt ", length) {}
 
-  virtual bool read(Tifstream &is) {
+  bool read(Tifstream &is) override {
     is.read((char *)&m_encodingType, sizeof(m_encodingType));
     is.read((char *)&m_chans, sizeof(m_chans));
     is.read((char *)&m_sampleRate, sizeof(m_sampleRate));
@@ -139,13 +139,13 @@ TINT32 TFMTChunk::LENGTH = TWAVChunk::HDR_LENGTH + 16;
 
 //  DATA Chunk: Chunk contenente i campioni
 
-class TDATAChunk : public TWAVChunk {
+class TDATAChunk final : public TWAVChunk {
 public:
   std::unique_ptr<UCHAR[]> m_samples;
 
   TDATAChunk(TINT32 length) : TWAVChunk("data", length) {}
 
-  bool read(Tifstream &is) {
+  bool read(Tifstream &is) override {
     // alloca il buffer dei campioni
     m_samples.reset(new UCHAR[m_length]);
     if (!m_samples) return false;

@@ -126,7 +126,7 @@ inline bool contains(const QRegion &region, const TRect &rect) {
 //    Previewer::Imp
 //-----------------------
 
-class Previewer::Imp : public TRenderPort {
+class Previewer::Imp final : public TRenderPort {
 public:
   // All useful infos about a frame under Previewer's management
   struct FrameInfo {
@@ -199,9 +199,9 @@ public:
   void refreshFrame(int frame);
 
   // TRenderPort methods
-  void onRenderRasterStarted(const RenderData &renderData);
-  void onRenderRasterCompleted(const RenderData &renderData);
-  void onRenderFailure(const RenderData &renderData, TException &e);
+  void onRenderRasterStarted(const RenderData &renderData) override;
+  void onRenderRasterCompleted(const RenderData &renderData) override;
+  void onRenderFailure(const RenderData &renderData, TException &e) override;
 
   // Main-thread executed code related to TRenderPort. Used to update
   // thread-vulnerable infos.
@@ -768,14 +768,14 @@ static DVGui::ProgressDialog *Pd = 0;
 
 //-----------------------------------------------------------------------------
 
-class ProgressBarMessager : public TThread::Message {
+class ProgressBarMessager final : public TThread::Message {
 public:
   int m_choice;
   int m_val;
   QString m_str;
   ProgressBarMessager(int choice, int val, const QString &str = "")
       : m_choice(choice), m_val(val), m_str(str) {}
-  void onDeliver() {
+  void onDeliver() override {
     switch (m_choice) {
     case eBegin:
       if (!Pd)
@@ -805,14 +805,16 @@ public:
     }
   }
 
-  TThread::Message *clone() const { return new ProgressBarMessager(*this); }
+  TThread::Message *clone() const override {
+    return new ProgressBarMessager(*this);
+  }
 };
 
 }  // namespace
 
 //-----------------------------------------------------------------------------
 
-class SavePreviewedPopup : public FileBrowserPopup {
+class SavePreviewedPopup final : public FileBrowserPopup {
   Previewer *m_p;
 
 public:
@@ -822,7 +824,7 @@ public:
 
   void setPreview(Previewer *p) { m_p = p; }
 
-  bool execute() {
+  bool execute() override {
     if (m_selectedPaths.empty()) return false;
 
     return m_p->doSaveRenderedFrames(*m_selectedPaths.begin());

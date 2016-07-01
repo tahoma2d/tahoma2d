@@ -69,7 +69,7 @@ inline void onChange(const TRasterP &ras, int threshold, int softness) {
 //    AntialiasPopup Swatch
 //**************************************************************************
 
-class AntialiasPopup::Swatch : public PlaneViewer {
+class AntialiasPopup::Swatch final : public PlaneViewer {
   TImageP m_img;
 
 public:
@@ -274,7 +274,7 @@ void AntialiasPopup::hideEvent(QHideEvent *he) {
 
 //-----------------------------------------------------------------------------
 
-class TRasterAntialiasUndo : public TUndo {
+class TRasterAntialiasUndo final : public TUndo {
   int m_r, m_c, m_threshold, m_softness;
 
   QString m_rasId;
@@ -294,7 +294,7 @@ public:
 
   ~TRasterAntialiasUndo() { TImageCache::instance()->remove(m_rasId); }
 
-  void undo() const {
+  void undo() const override {
     TXsheet *xsheet    = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshCell cell      = xsheet->getCell(m_r, m_c);
     TImageP image      = cell.getImage(true);
@@ -323,7 +323,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshCell cell   = xsheet->getCell(m_r, m_c);
     TImageP image   = (TRasterImageP)cell.getImage(true);
@@ -342,7 +342,7 @@ public:
     }
   }
 
-  int getSize() const { return sizeof(*this) + m_rasSize; }
+  int getSize() const override { return sizeof(*this) + m_rasSize; }
 };
 
 //-----------------------------------------------------------------------------

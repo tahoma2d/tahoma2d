@@ -30,17 +30,17 @@ class IntField;
 フィールドのためのFileField。browseDirectoryを再実装して、フィールドが空欄のときは、
 カレントレベル（Scan画像。TIF等）の入っているフォルダの１つ上をデフォルトフォルダにして開くようにしたい。
 */
-class CleanupSaveInField : public DVGui::FileField {
+class CleanupSaveInField final : public DVGui::FileField {
   Q_OBJECT
 public:
   CleanupSaveInField(QWidget *parent = 0, QString path = 0)
       : DVGui::FileField(parent, path) {}
 
 protected slots:
-  void browseDirectory();
+  void browseDirectory() override;
 };
 
-class CleanupSettingsPane : public QFrame {
+class CleanupSettingsPane final : public QFrame {
   Q_OBJECT
 public:
   //----Cleanup Camera Settings
@@ -71,8 +71,8 @@ public:
   CleanupSettingsPane(QWidget *parent = 0);
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 public slots:
 

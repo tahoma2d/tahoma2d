@@ -75,7 +75,7 @@ void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 // GroupUndo
 //-----------------------------------------------------------------------------
 
-class GroupUndo : public ToolUtils::TToolUndo {
+class GroupUndo final : public ToolUtils::TToolUndo {
   std::auto_ptr<StrokeSelection> m_selection;
 
 public:
@@ -83,26 +83,26 @@ public:
             StrokeSelection *selection)
       : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {}
 
-  void undo() const {
+  void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
   }
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getToolName() { return QObject::tr("Group"); }
+  QString getToolName() override { return QObject::tr("Group"); }
 };
 
 //=============================================================================
 // UngroupUndo
 //-----------------------------------------------------------------------------
 
-class UngroupUndo : public ToolUtils::TToolUndo {
+class UngroupUndo final : public ToolUtils::TToolUndo {
   std::auto_ptr<StrokeSelection> m_selection;
 
 public:
@@ -110,26 +110,26 @@ public:
               StrokeSelection *selection)
       : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {}
 
-  void undo() const {
+  void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
   }
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getToolName() { return QObject::tr("Ungroup"); }
+  QString getToolName() override { return QObject::tr("Ungroup"); }
 };
 
 //=============================================================================
 // MoveGroupUndo
 //-----------------------------------------------------------------------------
 
-class MoveGroupUndo : public ToolUtils::TToolUndo {
+class MoveGroupUndo final : public ToolUtils::TToolUndo {
   UCHAR m_moveType;
   int m_refStroke, m_count, m_moveBefore;
   std::vector<std::pair<TStroke *, int>> m_selectedGroups;
@@ -147,7 +147,7 @@ public:
 
   ~MoveGroupUndo() {}
 
-  void undo() const {
+  void undo() const override {
     int refStroke;
     int moveBefore;
     switch (m_moveType) {
@@ -192,7 +192,7 @@ public:
     notifyImageChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (!image) return;
     QMutexLocker lock(image->getMutex());
@@ -214,9 +214,9 @@ public:
     notifyImageChanged();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 
-  QString getToolName() { return QObject::tr("Move Group"); }
+  QString getToolName() override { return QObject::tr("Move Group"); }
 };
 
 //-----------------------------------------------------------------------------

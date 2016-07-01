@@ -58,7 +58,7 @@ enum eFxType {
 //    FxColumnPainter
 //*****************************************************
 
-class FxColumnPainter : public QObject, public QGraphicsItem {
+class FxColumnPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -72,9 +72,9 @@ public:
                   const QString &name);
   virtual ~FxColumnPainter();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
   QLinearGradient getGradientByLevelType(int type);
@@ -84,14 +84,14 @@ public slots:
   void onIconGenerated();
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxPalettePainter
 //*****************************************************
 
-class FxPalettePainter : public QGraphicsItem, public QObject {
+class FxPalettePainter final : public QGraphicsItem, public QObject {
   FxSchematicPaletteNode *m_parent;
   double m_width, m_height;
   QString m_name;
@@ -101,20 +101,20 @@ public:
                    const QString &name);
   ~FxPalettePainter();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxPainter
 //*****************************************************
 
-class FxPainter : public QObject, public QGraphicsItem {
+class FxPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -134,20 +134,20 @@ public:
             const QString &name, eFxType type, std::string fxType);
   ~FxPainter();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxXSheetPainter
 //*****************************************************
 
-class FxXSheetPainter : public QObject, public QGraphicsItem {
+class FxXSheetPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -159,19 +159,19 @@ public:
   FxXSheetPainter(FxSchematicXSheetNode *parent, double width, double height);
   ~FxXSheetPainter();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxOutputPainter
 //*****************************************************
 
-class FxOutputPainter : public QObject, public QGraphicsItem {
+class FxOutputPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -183,19 +183,19 @@ public:
   FxOutputPainter(FxSchematicOutputNode *parent, double width, double height);
   ~FxOutputPainter();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxSchematicLink
 //*****************************************************
 
-class FxSchematicLink : public SchematicLink {
+class FxSchematicLink final : public SchematicLink {
   Q_OBJECT
 
 public:
@@ -203,14 +203,14 @@ public:
   ~FxSchematicLink();
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //*****************************************************
 //    FxSchematicPort
 //*****************************************************
 
-class FxSchematicPort : public SchematicPort {
+class FxSchematicPort final : public SchematicPort {
   TFx *m_ownerFx;
   FxSchematicPort *m_currentTargetPort;
   QList<SchematicLink *> m_hiddenLinks;
@@ -220,22 +220,22 @@ public:
   FxSchematicPort(FxSchematicDock *parent, int type);
   ~FxSchematicPort();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
-  bool linkTo(SchematicPort *port, bool checkOnly = false);
+             QWidget *widget = 0) override;
+  bool linkTo(SchematicPort *port, bool checkOnly = false) override;
   FxSchematicDock *getDock() const;
-  SchematicLink *makeLink(SchematicPort *port);
+  SchematicLink *makeLink(SchematicPort *port) override;
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *me);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *me);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *me) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *me) override;
   TFx *getOwnerFx() const;
 
 private:
   void linkEffects(TFx *inputFx, TFx *fx, int inputId);
-  SchematicPort *searchPort(const QPointF &scenePos);
+  SchematicPort *searchPort(const QPointF &scenePos) override;
 
   //! Handles hiding of existing link and showing of ghost links for snapping
   //! after creation link only for fx having
@@ -248,15 +248,15 @@ private:
 
   void resetSnappedLinksOnDynamicPortFx();
 
-  void hideSnappedLinks();
-  void showSnappedLinks();
+  void hideSnappedLinks() override;
+  void showSnappedLinks() override;
 };
 
 //*****************************************************
 //    FxSchematicDock
 //*****************************************************
 
-class FxSchematicDock : public QGraphicsItem, public QObject {
+class FxSchematicDock final : public QGraphicsItem, public QObject {
   QString m_name;
   double m_width;
   FxSchematicPort *m_port;
@@ -266,9 +266,9 @@ public:
                   eFxSchematicPortType type);
   ~FxSchematicDock();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   FxSchematicNode *getNode();
   FxSchematicPort *getPort() { return m_port; }
 };
@@ -327,7 +327,7 @@ public:
 
   void setWidth(const qreal &width) { m_width = width; }
   void setHeight(const qreal &height) { m_height = height; }
-  void setSchematicNodePos(const QPointF &pos) const;
+  void setSchematicNodePos(const QPointF &pos) const override;
 
   TFx *getFx() const { return m_fx.getPointer(); }
   bool isA(eFxType type) { return m_type == type; }
@@ -346,12 +346,12 @@ public:
   }
 
   bool isNameEditing() { return m_nameItem->isVisible(); }
-  void onClicked();
+  void onClicked() override;
   bool isCurrentFxLinked(SchematicNode *comingNode) {
     return m_isCurrentFxLinked;
   }
   void setIsCurrentFxLinked(bool value, FxSchematicNode *comingNode);
-  void setPosition(const QPointF &newPos);
+  void setPosition(const QPointF &newPos) override;
 
   void updatePortsPosition();
 
@@ -373,45 +373,45 @@ signals:
 //    FxSchematicOutputNode
 //*****************************************************
 
-class FxSchematicOutputNode : public FxSchematicNode {
+class FxSchematicOutputNode final : public FxSchematicNode {
   FxOutputPainter *m_outputPainter;
 
 public:
   FxSchematicOutputNode(FxSchematicScene *scene, TOutputFx *fx);
   ~FxSchematicOutputNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 };
 
 //*****************************************************
 //    FxSchematicXSheetNode
 //*****************************************************
 
-class FxSchematicXSheetNode : public FxSchematicNode {
+class FxSchematicXSheetNode final : public FxSchematicNode {
   FxXSheetPainter *m_xsheetPainter;
 
 public:
   FxSchematicXSheetNode(FxSchematicScene *scene, TXsheetFx *fx);
   ~FxSchematicXSheetNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 };
 
 //*****************************************************
 //    FxSchematicNormalFxNode
 //*****************************************************
 
-class FxSchematicNormalFxNode : public FxSchematicNode {
+class FxSchematicNormalFxNode final : public FxSchematicNode {
   Q_OBJECT
 
   FxPainter *m_painter;
@@ -421,14 +421,14 @@ public:
   FxSchematicNormalFxNode(FxSchematicScene *scene, TFx *fx);
   ~FxSchematicNormalFxNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
-  void resize(bool maximizeNode);
+  void resize(bool maximizeNode) override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
 
@@ -440,7 +440,7 @@ protected slots:
 //    FxSchematicZeraryNode
 //*****************************************************
 
-class FxSchematicZeraryNode : public FxSchematicNode {
+class FxSchematicZeraryNode final : public FxSchematicNode {
   Q_OBJECT
 
   FxPainter *m_painter;
@@ -451,17 +451,17 @@ public:
   FxSchematicZeraryNode(FxSchematicScene *scene, TZeraryColumnFx *fx);
   ~FxSchematicZeraryNode();
 
-  QRectF boundingRect() const;
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                     QWidget *widget = 0);
+  QRectF boundingRect() const override;
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+             QWidget *widget = 0) override;
 
-  void resize(bool maximizeNode);
+  void resize(bool maximizeNode) override;
 
   int getColumnIndex() { return m_columnIndex; }
-  bool isCached() const;
+  bool isCached() const override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
 
@@ -473,7 +473,7 @@ protected slots:
 //    FxSchematicColumnNode
 //*****************************************************
 
-class FxSchematicColumnNode : public FxSchematicNode {
+class FxSchematicColumnNode final : public FxSchematicNode {
   Q_OBJECT
 
   SchematicThumbnailToggle *m_resizeItem;
@@ -486,19 +486,19 @@ public:
   FxSchematicColumnNode(FxSchematicScene *scene, TLevelColumnFx *fx);
   ~FxSchematicColumnNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   QPixmap getPixmap();
-  bool isOpened() { return m_isOpened; }
+  bool isOpened() override { return m_isOpened; }
 
   void getLevelTypeAndName(int &, QString &);
 
-  void resize(bool maximizeNode);
+  void resize(bool maximizeNode) override;
   int getColumnIndex() { return m_columnIndex; }
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 private:
   void renameObject(const TStageObjectId &id, std::string name);
@@ -515,7 +515,7 @@ protected slots:
 //    FxSchematicPaletteNode
 //*****************************************************
 
-class FxSchematicPaletteNode : public FxSchematicNode {
+class FxSchematicPaletteNode final : public FxSchematicNode {
   Q_OBJECT
 
   SchematicToggle *m_renderToggle;
@@ -526,17 +526,17 @@ public:
   FxSchematicPaletteNode(FxSchematicScene *scene, TPaletteColumnFx *fx);
   ~FxSchematicPaletteNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   QPixmap getPixmap();
-  bool isOpened() { return false; }
+  bool isOpened() override { return false; }
   int getColumnIndex() { return m_columnIndex; }
 
   QString getPaletteName();
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
 
@@ -551,7 +551,7 @@ private:
 //    FxGroupNode
 //*****************************************************
 
-class FxGroupNode : public FxSchematicNode {
+class FxGroupNode final : public FxSchematicNode {
   Q_OBJECT
 
   QList<TFxP> m_groupedFxs;
@@ -567,9 +567,9 @@ public:
               const std::wstring &groupName);
   ~FxGroupNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
   FxSchematicPort *getOutputPort() const {
     return m_outDock ? m_outDock->getPort() : 0;
@@ -584,17 +584,17 @@ public:
 
   QList<TFxP> getGroupedFxs() const { return m_groupedFxs; }
   void updateFxsDagPosition(const TPointD &pos) const;
-  bool isOpened() { return m_isOpened; }
-  void resize(bool maximized);
+  bool isOpened() override { return m_isOpened; }
+  void resize(bool maximized) override;
   bool contains(TFxP fx);
   // returns the number of ports that take the group in input... it consider
   // also the node xsheet
   int getOutputConnectionsCount() const;
-  bool isEnabled() const;
-  virtual bool isCached() const;
+  bool isEnabled() const override;
+  bool isCached() const override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
   QPointF computePos() const;
 
 protected slots:

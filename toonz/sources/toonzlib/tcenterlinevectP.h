@@ -291,9 +291,9 @@ public:
       m_updateTime,  //!< \a Algoritmic time in which the node was updated.
       m_ancestor,  //!< Index of the original node from which this one evolved.
       m_ancestorContour;  //!< Contour index of the original node from which
-                          //!this one evolved.
+                          //! this one evolved.
   std::vector<ContourEdge *> m_notOpposites;  //!< List of edges \a not to be
-                                              //!used as possible opposites.
+                                              //! used as possible opposites.
   int m_outputNode;  //!< Skeleton node produced by this ContourNode.
 
   // Connective data
@@ -430,7 +430,7 @@ public:
 
 //--------------------------------------------------------------------------
 
-class JointSequenceGraph : public Graph<UINT, Sequence> {
+class JointSequenceGraph final : public Graph<UINT, Sequence> {
 public:
   JointSequenceGraph() {}
   ~JointSequenceGraph() {}

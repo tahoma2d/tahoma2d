@@ -102,7 +102,7 @@ private:
 //---------------------------------------------------------
 
 template <class T>
-class TRangeProperty : public TProperty {
+class TRangeProperty final : public TProperty {
 public:
   typedef std::pair<T, T> Range;
 
@@ -115,7 +115,7 @@ public:
     setValue(value);
   }
 
-  TProperty *clone() const { return new TRangeProperty<T>(*this); }
+  TProperty *clone() const override { return new TRangeProperty<T>(*this); }
 
   Range getRange() const { return m_range; }
 
@@ -131,9 +131,9 @@ public:
 
   T getValue() const { return m_value; }
 
-  std::string getValueAsString() { return std::to_string(m_value); }
+  std::string getValueAsString() override { return std::to_string(m_value); }
 
-  void accept(Visitor &v) { v.visit(this); }
+  void accept(Visitor &v) override { v.visit(this); }
 
   bool isMaxRangeLimited() const { return m_isMaxRangeLimited; }
 
@@ -150,7 +150,7 @@ template class DVAPI TRangeProperty<double>;
 #endif
 //---------------------------------------------------------
 
-class TDoublePairProperty : public TProperty {
+class TDoublePairProperty final : public TProperty {
 public:
   typedef std::pair<double, double> Range;
   typedef std::pair<double, double> Value;
@@ -163,7 +163,7 @@ public:
     setValue(Value(v0, v1));
   }
 
-  TProperty *clone() const { return new TDoublePairProperty(*this); }
+  TProperty *clone() const override { return new TDoublePairProperty(*this); }
 
   Range getRange() const { return m_range; }
 
@@ -178,10 +178,10 @@ public:
     m_value = value;
   }
   Value getValue() const { return m_value; }
-  std::string getValueAsString() {
+  std::string getValueAsString() override {
     return std::to_string(m_value.first) + "," + std::to_string(m_value.second);
   }
-  void accept(Visitor &v) { v.visit(this); };
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   Range m_range;
@@ -191,7 +191,7 @@ private:
 
 //---------------------------------------------------------
 
-class TIntPairProperty : public TProperty {
+class TIntPairProperty final : public TProperty {
 public:
   typedef std::pair<int, int> Range;
   typedef std::pair<int, int> Value;
@@ -204,7 +204,7 @@ public:
     setValue(Value(v0, v1));
   }
 
-  TProperty *clone() const { return new TIntPairProperty(*this); }
+  TProperty *clone() const override { return new TIntPairProperty(*this); }
 
   Range getRange() const { return m_range; }
 
@@ -219,10 +219,10 @@ public:
     m_value = value;
   }
   Value getValue() const { return m_value; }
-  std::string getValueAsString() {
+  std::string getValueAsString() override {
     return std::to_string(m_value.first) + "," + std::to_string(m_value.second);
   }
-  void accept(Visitor &v) { v.visit(this); };
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   Range m_range;
@@ -232,17 +232,17 @@ private:
 
 //---------------------------------------------------------
 
-class DVAPI TBoolProperty : public TProperty {
+class DVAPI TBoolProperty final : public TProperty {
 public:
   TBoolProperty(std::string name, bool value)
       : TProperty(name), m_value(value) {}
 
-  TProperty *clone() const { return new TBoolProperty(*this); }
+  TProperty *clone() const override { return new TBoolProperty(*this); }
 
   void setValue(bool v) { m_value = v; }
   bool getValue() const { return m_value; }
-  std::string getValueAsString() { return std::to_string(m_value); }
-  void accept(Visitor &v) { v.visit(this); };
+  std::string getValueAsString() override { return std::to_string(m_value); }
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   bool m_value;
@@ -250,17 +250,17 @@ private:
 
 //---------------------------------------------------------
 
-class DVAPI TStringProperty : public TProperty {
+class DVAPI TStringProperty final : public TProperty {
 public:
   TStringProperty(std::string name, std::wstring value)
       : TProperty(name), m_value(value) {}
 
-  TProperty *clone() const { return new TStringProperty(*this); }
+  TProperty *clone() const override { return new TStringProperty(*this); }
 
   void setValue(std::wstring v) { m_value = v; }
   std::wstring getValue() const { return m_value; }
-  std::string getValueAsString() { return ::to_string(m_value); }
-  void accept(Visitor &v) { v.visit(this); };
+  std::string getValueAsString() override { return ::to_string(m_value); }
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   std::wstring m_value;
@@ -268,19 +268,19 @@ private:
 
 //---------------------------------------------------------
 
-class DVAPI TStyleIndexProperty : public TProperty {
+class DVAPI TStyleIndexProperty final : public TProperty {
 public:
   TStyleIndexProperty(std::string name, std::wstring value)
       : TProperty(name), m_value(value) {}
 
-  TProperty *clone() const { return new TStyleIndexProperty(*this); }
+  TProperty *clone() const override { return new TStyleIndexProperty(*this); }
 
   void setValue(std::wstring v) { m_value = v; }
   std::wstring getValue() const { return m_value; }
 
-  std::string getValueAsString() { return ::to_string(m_value); }
+  std::string getValueAsString() override { return ::to_string(m_value); }
 
-  void accept(Visitor &v) { v.visit(this); };
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   std::wstring m_value;
@@ -288,19 +288,19 @@ private:
 
 //------------------------------------------------------------------
 
-class DVAPI TPointerProperty : public TProperty {
+class DVAPI TPointerProperty final : public TProperty {
 public:
   TPointerProperty(std::string name, void *value)
       : TProperty(name), m_value(value) {}
 
-  TProperty *clone() const { return new TPointerProperty(*this); }
+  TProperty *clone() const override { return new TPointerProperty(*this); }
 
   void setValue(void *v) { m_value = v; }
   void *getValue() const { return m_value; }
 
-  std::string getValueAsString() { return ::to_string(m_value); }
+  std::string getValueAsString() override { return ::to_string(m_value); }
 
-  void accept(Visitor &v) { v.visit(this); };
+  void accept(Visitor &v) override { v.visit(this); };
 
 private:
   void *m_value;
@@ -308,7 +308,7 @@ private:
 
 //---------------------------------------------------------
 
-class DVAPI TEnumProperty : public TProperty {
+class DVAPI TEnumProperty final : public TProperty {
 public:
   typedef std::vector<std::wstring> Range;
 
@@ -326,7 +326,7 @@ public:
     if (m_index < 0) throw RangeError();
   }
 
-  TProperty *clone() const { return new TEnumProperty(*this); }
+  TProperty *clone() const override { return new TEnumProperty(*this); }
 
   int indexOf(const std::wstring &value) {
     Range::const_iterator it = std::find(m_range.begin(), m_range.end(), value);
@@ -364,10 +364,12 @@ public:
   std::wstring getValue() const {
     return (m_index < 0) ? L"" : m_range[m_index];
   }
-  std::string getValueAsString() { return ::to_string(m_range[m_index]); }
+  std::string getValueAsString() override {
+    return ::to_string(m_range[m_index]);
+  }
   int getIndex() const { return m_index; }
 
-  void accept(Visitor &v) { v.visit(this); }
+  void accept(Visitor &v) override { v.visit(this); }
 
   static void enableRangeSaving(bool on);
   static bool isRangeSavingEnabled();

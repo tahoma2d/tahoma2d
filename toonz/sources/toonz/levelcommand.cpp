@@ -35,26 +35,26 @@
 
 namespace {
 
-class DeleteLevelUndo : public TUndo {
+class DeleteLevelUndo final : public TUndo {
   TXshLevelP m_xl;
 
 public:
   DeleteLevelUndo(TXshLevel *xl) : m_xl(xl) {}
 
-  void undo() const {
+  void undo() const override {
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     scene->getLevelSet()->insertLevel(m_xl.getPointer());
     TApp::instance()->getCurrentScene()->notifyCastChange();
   }
-  void redo() const {
+  void redo() const override {
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     scene->getLevelSet()->removeLevel(m_xl.getPointer());
     TApp::instance()->getCurrentScene()->notifyCastChange();
   }
 
-  int getSize() const { return sizeof *this + 100; }
+  int getSize() const override { return sizeof *this + 100; }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Delete Level  : %1")
         .arg(QString::fromStdWString(m_xl->getName()));
   }
@@ -66,11 +66,11 @@ public:
 // RemoveUnusedLevelCommand
 //-----------------------------------------------------------------------------
 
-class RemoveUnusedLevelsCommand : public MenuItemHandler {
+class RemoveUnusedLevelsCommand final : public MenuItemHandler {
 public:
   RemoveUnusedLevelsCommand() : MenuItemHandler(MI_RemoveUnused) {}
 
-  void execute() {
+  void execute() override {
     TApp *app         = TApp::instance();
     ToonzScene *scene = app->getCurrentScene()->getScene();
 
@@ -108,7 +108,7 @@ public:
 // RemoveLevelCommand
 //-----------------------------------------------------------------------------
 
-class RemoveLevelCommand : public MenuItemHandler {
+class RemoveLevelCommand final : public MenuItemHandler {
 public:
   RemoveLevelCommand() : MenuItemHandler(MI_RemoveLevel) {}
 
@@ -128,7 +128,7 @@ public:
     return true;
   }
 
-  void execute() {
+  void execute() override {
     TXsheet *xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
     CastSelection *castSelection =
         dynamic_cast<CastSelection *>(TSelection::getCurrent());
@@ -242,7 +242,7 @@ bool loadLastSaveFids(TXshSimpleLevel *sl,
 // Undo RevertToCommandUndo
 //-----------------------------------------------------------------------------
 
-class RevertToCommandUndo : public TUndo {
+class RevertToCommandUndo final : public TUndo {
   TXshSimpleLevel *m_sl;
   std::vector<QString> m_replacedImgsId;
   std::set<TFrameId> m_selectedFids;
@@ -272,7 +272,7 @@ public:
       TImageCache::instance()->remove(m_replacedImgsId[i]);
   }
 
-  void undo() const {
+  void undo() const override {
     assert((int)m_replacedImgsId.size() == (int)m_selectedFids.size());
     int i = 0;
     for (auto const &fid : m_selectedFids) {
@@ -285,7 +285,7 @@ public:
     invalidateIcons(m_sl, m_selectedFids);
   }
 
-  void redo() const {
+  void redo() const override {
     if (m_isCleanedUp)
       loadUnpaintedFids(m_sl, m_selectedFids);
     else
@@ -293,11 +293,11 @@ public:
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) + m_selectedFids.size() * sizeof(TFrameId);
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Revert To %1  : Level %2")
         .arg((m_isCleanedUp) ? QString("Cleaned Up") : QString("Last Saved"))
         .arg(QString::fromStdWString(m_sl->getName()));
@@ -409,11 +409,11 @@ void revertTo(bool isCleanedUp) {
 // RevertToCleanedUpCommand
 //-----------------------------------------------------------------------------
 
-class RevertToCleanedUpCommand : public MenuItemHandler {
+class RevertToCleanedUpCommand final : public MenuItemHandler {
 public:
   RevertToCleanedUpCommand() : MenuItemHandler(MI_RevertToCleanedUp) {}
 
-  void execute() { revertTo(true); }
+  void execute() override { revertTo(true); }
 
 } revertToCleanedUpCommand;
 
@@ -421,10 +421,10 @@ public:
 // RevertToLastSaveCommand
 //-----------------------------------------------------------------------------
 
-class RevertToLastSaveCommand : public MenuItemHandler {
+class RevertToLastSaveCommand final : public MenuItemHandler {
 public:
   RevertToLastSaveCommand() : MenuItemHandler(MI_RevertToLastSaved) {}
 
-  void execute() { revertTo(false); }
+  void execute() override { revertTo(false); }
 
 } revertToLastSaveCommand;

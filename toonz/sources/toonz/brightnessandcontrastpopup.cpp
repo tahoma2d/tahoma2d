@@ -197,7 +197,7 @@ inline void onChange(const RAS &ras, int contrast, int brightness) {
 //    BrightnessAndContrastPopup Swatch
 //**************************************************************************
 
-class BrightnessAndContrastPopup::Swatch : public PlaneViewer {
+class BrightnessAndContrastPopup::Swatch final : public PlaneViewer {
   TRasterP m_ras;
 
 public:
@@ -402,7 +402,7 @@ void BrightnessAndContrastPopup::hideEvent(QHideEvent *he) {
 
 //-----------------------------------------------------------------------------
 
-class TRasterBrightnessUndo : public TUndo {
+class TRasterBrightnessUndo final : public TUndo {
   int m_r, m_c, m_brightness, m_contrast;
 
   QString m_rasId;
@@ -423,7 +423,7 @@ public:
 
   ~TRasterBrightnessUndo() { TImageCache::instance()->remove(m_rasId); }
 
-  void undo() const {
+  void undo() const override {
     TXsheet *xsheet        = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshCell cell          = xsheet->getCell(m_r, m_c);
     TRasterImageP rasImage = (TRasterImageP)cell.getImage(true);
@@ -443,7 +443,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     TXsheet *xsheet        = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshCell cell          = xsheet->getCell(m_r, m_c);
     TRasterImageP rasImage = (TRasterImageP)cell.getImage(true);
@@ -462,7 +462,7 @@ public:
     }
   }
 
-  int getSize() const { return sizeof(*this) + m_rasSize; }
+  int getSize() const override { return sizeof(*this) + m_rasSize; }
 };
 
 //-----------------------------------------------------------------------------

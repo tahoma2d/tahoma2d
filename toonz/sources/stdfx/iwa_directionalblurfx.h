@@ -21,7 +21,7 @@ struct int2 {
   int x, y;
 };
 
-class Iwa_DirectionalBlurFx : public TStandardRasterFx {
+class Iwa_DirectionalBlurFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(Iwa_DirectionalBlurFx)
 
   TRasterFxPort m_input;
@@ -61,13 +61,15 @@ class Iwa_DirectionalBlurFx : public TStandardRasterFx {
 public:
   Iwa_DirectionalBlurFx();
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &settings);
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &settings) override;
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info);
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
-  bool canHandle(const TRenderSettings &info, double frame);
+  bool canHandle(const TRenderSettings &info, double frame) override;
 
-  void getParamUIs(TParamUIConcept *&concepts, int &length);
+  void getParamUIs(TParamUIConcept *&concepts, int &length) override;
 };
 
 #endif

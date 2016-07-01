@@ -424,7 +424,7 @@ int DragSelectionTool::UndoChangeStrokes::getSize() const {
 // UndoChangeOutlineStyle
 //-----------------------------------------------------------------------------
 
-class UndoChangeOutlineStyle : public ToolUtils::TToolUndo {
+class UndoChangeOutlineStyle final : public ToolUtils::TToolUndo {
   std::vector<TStroke::OutlineOptions> m_oldOptions, m_newOptions;
   FourPoints m_oldBBox, m_newBBox;
   VectorSelectionTool *m_tool;
@@ -438,9 +438,9 @@ public:
   void registerStrokes(bool beforeModify = false);
   void transform(const std::vector<TStroke::OutlineOptions> &options,
                  FourPoints bbox) const;
-  void undo() const;
-  void redo() const;
-  int getSize() const;
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -1123,45 +1123,45 @@ bool getGroupBBox(const TVectorImage &vi, int strokeIndex, TRectD &gBox) {
 // UndoEnterGroup
 //-----------------------------------------------------------------------------
 
-class UndoEnterGroup : public TUndo {
+class UndoEnterGroup final : public TUndo {
   int m_strokeIndex;
   TVectorImageP m_vi;
 
 public:
   UndoEnterGroup(TVectorImageP vi, int strokeIndex)
       : m_vi(vi), m_strokeIndex(strokeIndex) {}
-  void undo() const {
+  void undo() const override {
     m_vi->exitGroup();
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_vi->enterGroup(m_strokeIndex);
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //=============================================================================
 // UndoExitGroup
 //-----------------------------------------------------------------------------
 
-class UndoExitGroup : public TUndo {
+class UndoExitGroup final : public TUndo {
   int m_strokeIndex;
   TVectorImageP m_vi;
 
 public:
   UndoExitGroup(TVectorImageP vi, int strokeIndex)
       : m_vi(vi), m_strokeIndex(strokeIndex) {}
-  void undo() const {
+  void undo() const override {
     m_vi->enterGroup(m_strokeIndex);
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_vi->exitGroup();
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 }  // namespace

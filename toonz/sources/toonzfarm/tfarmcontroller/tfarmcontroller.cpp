@@ -170,7 +170,7 @@ bool isAScript(TFarmTask *task) {
 
 //==============================================================================
 
-class CtrlFarmTask : public TFarmTask {
+class CtrlFarmTask final : public TFarmTask {
 public:
   CtrlFarmTask() : m_toBeDeleted(false), m_failureCount(0) {}
 
@@ -191,9 +191,9 @@ public:
   }
 
   // TPersist implementation
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
-  const TPersistDeclaration *getDeclaration() const;
+  void loadData(TIStream &is) override;
+  void saveData(TOStream &os) override;
+  const TPersistDeclaration *getDeclaration() const override;
 
   QString m_serverId;
   vector<QString> m_subTasks;
@@ -206,11 +206,11 @@ public:
 
 namespace {
 
-class TFarmTaskDeclaration : public TPersistDeclaration {
+class TFarmTaskDeclaration final : public TPersistDeclaration {
 public:
   TFarmTaskDeclaration(const std::string &id) : TPersistDeclaration(id) {}
 
-  TPersist *create() const { return new CtrlFarmTask; }
+  TPersist *create() const override { return new CtrlFarmTask; }
 } Declaration("tfarmtask");
 }
 
@@ -442,12 +442,12 @@ bool doTestConnection(const QString &hostName, const QString &addr, int port) {
 
 //------------------------------------------------------------------------------
 #ifdef _WIN32
-class ConnectionTest : public TThread::Runnable {
+class ConnectionTest final : public TThread::Runnable {
 public:
   ConnectionTest(const FarmServerProxy *server, HANDLE hEvent)
       : m_server(server), m_hEvent(hEvent) {}
 
-  void run();
+  void run() override;
 
   const FarmServerProxy *m_server;
   HANDLE m_hEvent;
@@ -553,7 +553,7 @@ public:
 
 //==============================================================================
 
-class FarmController : public TFarmExecutor, public TFarmController {
+class FarmController final : public TFarmExecutor, public TFarmController {
 public:
   FarmController(const QString &hostName, const QString &addr, int port,
                  TUserLog *log);
@@ -562,7 +562,7 @@ public:
 
   // TFarmExecutor interface implementation
 
-  QString execute(const vector<QString> &argv);
+  QString execute(const vector<QString> &argv) override;
 
   // TFarmController interface methods implementation
 
@@ -570,53 +570,55 @@ public:
                   const QString &user, const QString &host, bool suspended,
                   int priority, TFarmPlatform platform);
 
-  QString addTask(const TFarmTask &task, bool suspended);
+  QString addTask(const TFarmTask &task, bool suspended) override;
 
-  void removeTask(const QString &id);
-  void suspendTask(const QString &id);
-  void activateTask(const QString &id);
-  void restartTask(const QString &id);
+  void removeTask(const QString &id) override;
+  void suspendTask(const QString &id) override;
+  void activateTask(const QString &id) override;
+  void restartTask(const QString &id) override;
 
-  void getTasks(vector<QString> &tasks);
-  void getTasks(const QString &parentId, vector<QString> &tasks);
-  void getTasks(const QString &parentId, vector<TaskShortInfo> &tasks);
+  void getTasks(vector<QString> &tasks) override;
+  void getTasks(const QString &parentId, vector<QString> &tasks) override;
+  void getTasks(const QString &parentId, vector<TaskShortInfo> &tasks) override;
 
-  void queryTaskInfo(const QString &id, TFarmTask &task);
+  void queryTaskInfo(const QString &id, TFarmTask &task) override;
 
   void queryTaskShortInfo(const QString &id, QString &parentId, QString &name,
-                          TaskState &status);
+                          TaskState &status) override;
 
   // used (by a server) to notify a server start
-  void attachServer(const QString &name, const QString &addr, int port);
+  void attachServer(const QString &name, const QString &addr,
+                    int port) override;
 
   // used (by a server) to notify a server stop
-  void detachServer(const QString &name, const QString &addr, int port);
+  void detachServer(const QString &name, const QString &addr,
+                    int port) override;
 
   // used (by a server) to notify a task submission error
-  void taskSubmissionError(const QString &taskId, int errCode);
+  void taskSubmissionError(const QString &taskId, int errCode) override;
 
   // used by a server to notify a task progress
   void taskProgress(const QString &taskId, int step, int stepCount,
-                    int frameNumber, FrameState state);
+                    int frameNumber, FrameState state) override;
 
   // used (by a server) to notify a task completion
-  void taskCompleted(const QString &taskId, int exitCode);
+  void taskCompleted(const QString &taskId, int exitCode) override;
 
   // fills the servers vector with the names of the servers
-  void getServers(vector<ServerIdentity> &servers);
+  void getServers(vector<ServerIdentity> &servers) override;
 
   // returns the state of the server whose id has been specified
-  ServerState queryServerState2(const QString &id);
+  ServerState queryServerState2(const QString &id) override;
 
   // fills info with the infoes about the server whose id is specified
-  void queryServerInfo(const QString &id, ServerInfo &info);
+  void queryServerInfo(const QString &id, ServerInfo &info) override;
 
   // activates the server whose id has been specified
-  void activateServer(const QString &id);
+  void activateServer(const QString &id) override;
 
   // deactivates the server whose id has been specified
   // once deactivated, a server is not available for task rendering
-  void deactivateServer(const QString &id, bool completeRunningTasks);
+  void deactivateServer(const QString &id, bool completeRunningTasks) override;
 
   // FarmController specific methods
   CtrlFarmTask *doAddTask(const QString &id, const QString &parentId,
@@ -1324,11 +1326,11 @@ ServerState FarmController::getServerState(FarmServerProxy *server,
 
 //------------------------------------------------------------------------------
 
-class ServerInitializer : public TThread::Runnable {
+class ServerInitializer final : public TThread::Runnable {
 public:
   ServerInitializer(FarmServerProxy *server) : m_server(server) {}
 
-  void run() {
+  void run() override {
     TFarmServer::HwInfo hwInfo;
     try {
       m_server->queryHwInfo(hwInfo);
@@ -1379,13 +1381,13 @@ QString FarmController::addTask(const QString &name, const QString &cmdline,
 
 //------------------------------------------------------------------------------
 
-class TaskStarter : public TThread::Runnable {
+class TaskStarter final : public TThread::Runnable {
 public:
   TaskStarter(FarmController *controller, CtrlFarmTask *task,
               FarmServerProxy *server = 0)
       : m_controller(controller), m_task(task), m_server(server) {}
 
-  void run();
+  void run() override;
 
   FarmController *m_controller;
   CtrlFarmTask *m_task;
@@ -2174,7 +2176,7 @@ void FarmController::activateReadyServers() {
 
 //==============================================================================
 
-class ControllerService : public TService {
+class ControllerService final : public TService {
 public:
   ControllerService()
       : TService("ToonzFarmController", "ToonzFarm Controller")
@@ -2182,8 +2184,8 @@ public:
 
   ~ControllerService() { delete m_controller; }
 
-  void onStart(int argc, char *argv[]);
-  void onStop();
+  void onStart(int argc, char *argv[]) override;
+  void onStop() override;
 
   static TFilePath getTasksDataFile() {
     TFilePath fp = getGlobalRoot() + "data" + "tasks.txt";

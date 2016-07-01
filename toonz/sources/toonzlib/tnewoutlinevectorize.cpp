@@ -62,7 +62,7 @@ inline TPixelGR16 transparent<TPixelGR16>() {
 //    Mesh stuff
 //===========================================================
 
-class Edge : public tcg::Edge {
+class Edge final : public tcg::Edge {
   TPoint m_dirs[2];
   TStroke *m_s;
 
@@ -282,7 +282,7 @@ public:
 //************************************************************************
 
 template <typename Pix>
-class BordersReader : public TRop::borders::BordersReader {
+class BordersReader final : public TRop::borders::BordersReader {
 public:
   typedef Pix pixel_type;
 
@@ -343,10 +343,10 @@ public:
 
   void openContainer(const TPoint &pos, const TPoint &dir,
                      const pixel_type &innerColor,
-                     const pixel_type &outerColor);
+                     const pixel_type &outerColor) override;
   void addElement(const TPoint &pos, const TPoint &dir,
-                  const pixel_type &outerColor);
-  void closeContainer();
+                  const pixel_type &outerColor) override;
+  void closeContainer() override;
 
   int surroundingEdges();
 

@@ -39,7 +39,7 @@ enum eStageSchematicPortType {
 //
 //========================================================
 
-class ColumnPainter : public QObject, public QGraphicsItem {
+class ColumnPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -52,15 +52,15 @@ public:
   ColumnPainter(StageSchematicColumnNode *parent, double width, double height,
                 const QString &name);
   ~ColumnPainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
   QLinearGradient getGradientByLevelType(int type);
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 
 public slots:
   void onIconGenerated();
@@ -72,7 +72,7 @@ public slots:
 //
 //========================================================
 
-class GroupPainter : public QObject, public QGraphicsItem {
+class GroupPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -84,13 +84,13 @@ public:
   GroupPainter(StageSchematicGroupNode *parent, double width, double height,
                const QString &name);
   ~GroupPainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //========================================================
@@ -99,7 +99,7 @@ protected:
 //
 //========================================================
 
-class PegbarPainter : public QObject, public QGraphicsItem {
+class PegbarPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -111,13 +111,13 @@ public:
   PegbarPainter(StageSchematicPegbarNode *parent, double width, double height,
                 const QString &name);
   ~PegbarPainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //========================================================
@@ -126,7 +126,7 @@ protected:
 //
 //========================================================
 
-class CameraPainter : public QObject, public QGraphicsItem {
+class CameraPainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -139,13 +139,13 @@ public:
   CameraPainter(StageSchematicCameraNode *parent, double width, double height,
                 const QString &name);
   ~CameraPainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //========================================================
@@ -154,7 +154,7 @@ protected:
 //
 //========================================================
 
-class TablePainter : public QObject, public QGraphicsItem {
+class TablePainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -164,12 +164,12 @@ class TablePainter : public QObject, public QGraphicsItem {
 public:
   TablePainter(StageSchematicTableNode *parent, double width, double height);
   ~TablePainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //========================================================
@@ -178,7 +178,7 @@ protected:
 //
 //========================================================
 
-class SplinePainter : public QObject, public QGraphicsItem {
+class SplinePainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 
@@ -190,13 +190,13 @@ public:
   SplinePainter(StageSchematicSplineNode *parent, double width, double height,
                 const QString &name);
   ~SplinePainter();
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
 protected:
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme);
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
 
 //========================================================
@@ -205,25 +205,25 @@ protected:
 //
 //========================================================
 
-class StageSchematicNodePort : public SchematicPort {
+class StageSchematicNodePort final : public SchematicPort {
   QString m_handle;
 
 public:
   StageSchematicNodePort(StageSchematicNodeDock *parent, int type);
   ~StageSchematicNodePort();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   void setHandle(const QString &value) { m_handle = value; }
   QString getHandle() { return m_handle; }
 
-  bool linkTo(SchematicPort *port, bool checkOnly = false);
+  bool linkTo(SchematicPort *port, bool checkOnly = false) override;
 
 private:
-  SchematicPort *searchPort(const QPointF &scenePos);
-  void hideSnappedLinks();
-  void showSnappedLinks();
+  SchematicPort *searchPort(const QPointF &scenePos) override;
+  void hideSnappedLinks() override;
+  void showSnappedLinks() override;
 };
 
 //========================================================
@@ -232,7 +232,7 @@ private:
 //
 //========================================================
 
-class StageSchematicSplinePort : public SchematicPort {
+class StageSchematicSplinePort final : public SchematicPort {
   StageSchematicSplineDock *m_parent;
   QPixmap m_squarePixmap, m_rhombPixmap;
 
@@ -240,15 +240,15 @@ public:
   StageSchematicSplinePort(StageSchematicSplineDock *parent, int type);
   ~StageSchematicSplinePort();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
-  bool linkTo(SchematicPort *port, bool checkOnly = false);
+             QWidget *widget = 0) override;
+  bool linkTo(SchematicPort *port, bool checkOnly = false) override;
 
 private:
-  SchematicPort *searchPort(const QPointF &scenePos);
-  void hideSnappedLinks();
-  void showSnappedLinks();
+  SchematicPort *searchPort(const QPointF &scenePos) override;
+  void hideSnappedLinks() override;
+  void showSnappedLinks() override;
 };
 
 //========================================================
@@ -257,7 +257,7 @@ private:
 //
 //========================================================
 
-class SplineAimChanger : public SchematicHandleSpinBox {
+class SplineAimChanger final : public SchematicHandleSpinBox {
   bool m_aim;
 
 public:
@@ -267,9 +267,9 @@ public:
   bool getAim() { return m_aim; }
 
 protected:
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *me);
-  void mousePressEvent(QGraphicsSceneMouseEvent *me);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *me);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *me) override;
+  void mousePressEvent(QGraphicsSceneMouseEvent *me) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *me) override;
 };
 
 //========================================================
@@ -278,7 +278,7 @@ protected:
 //
 //========================================================
 
-class StageSchematicNodeDock : public QObject, public QGraphicsItem {
+class StageSchematicNodeDock final : public QObject, public QGraphicsItem {
   Q_OBJECT
 #ifndef MACOSX
   Q_INTERFACES(QGraphicsItem)
@@ -296,18 +296,18 @@ public:
                          eStageSchematicPortType type);
   ~StageSchematicNodeDock();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
   StageSchematicNodePort *getPort() { return m_port; }
   StageSchematicNode *getNode() { return m_parent; }
   bool isParentPort() { return m_isParentPort; }
 
 protected:
-  void hoverEnterEvent(QGraphicsSceneHoverEvent *he);
-  void hoverLeaveEvent(QGraphicsSceneHoverEvent *he);
-  void hoverMoveEvent(QGraphicsSceneHoverEvent *he);
+  void hoverEnterEvent(QGraphicsSceneHoverEvent *he) override;
+  void hoverLeaveEvent(QGraphicsSceneHoverEvent *he) override;
+  void hoverMoveEvent(QGraphicsSceneHoverEvent *he) override;
 
 private:
   // void updateHandle(bool increase);
@@ -329,7 +329,7 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicSplineDock : public QObject, public QGraphicsItem {
+class StageSchematicSplineDock final : public QObject, public QGraphicsItem {
   Q_OBJECT
 #ifndef MACOSX
   Q_INTERFACES(QGraphicsItem)
@@ -343,9 +343,9 @@ public:
                            eStageSchematicPortType type);
   ~StageSchematicSplineDock();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
   StageSchematicSplinePort *getPort() { return m_port; }
   SchematicNode *getNode() { return m_parent; }
@@ -381,9 +381,9 @@ public:
 
   void setWidth(const qreal &width) { m_width = width; }
   void setHeight(const qreal &height) { m_height = height; }
-  void setSchematicNodePos(const QPointF &pos) const;
+  void setSchematicNodePos(const QPointF &pos) const override;
   bool isNameEditing() { return m_nameItem->isVisible(); }
-  void onClicked();
+  void onClicked() override;
 
   int getChildCount() { return m_childDocks.size(); }
   StageSchematicNodePort *getChildPort(int i) {
@@ -395,7 +395,7 @@ public:
   StageSchematicNodePort *makeChildPort(const QString &label);
   StageSchematicNodePort *makeParentPort(const QString &label);
   virtual void updateChildDockPositions();  // TODO: commento! doxygen
-  void setPosition(const QPointF &newPos);
+  void setPosition(const QPointF &newPos) override;
 
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
@@ -412,7 +412,7 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicPegbarNode : public StageSchematicNode {
+class StageSchematicPegbarNode final : public StageSchematicNode {
   Q_OBJECT
 
   PegbarPainter *m_pegbarPainter;
@@ -421,12 +421,12 @@ public:
   StageSchematicPegbarNode(StageSchematicScene *scene, TStageObject *pegbar);
   ~StageSchematicPegbarNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
   void onNameChanged();
@@ -438,16 +438,16 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicTableNode : public StageSchematicNode {
+class StageSchematicTableNode final : public StageSchematicNode {
   TablePainter *m_tablePainter;
 
 public:
   StageSchematicTableNode(StageSchematicScene *scene, TStageObject *pegbar);
   ~StageSchematicTableNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 };
 
 //========================================================
@@ -456,7 +456,7 @@ public:
 //
 //========================================================
 
-class StageSchematicColumnNode : public StageSchematicNode {
+class StageSchematicColumnNode final : public StageSchematicNode {
   Q_OBJECT
 
   SchematicThumbnailToggle *m_resizeItem;
@@ -468,9 +468,9 @@ public:
   StageSchematicColumnNode(StageSchematicScene *scene, TStageObject *pegbar);
   ~StageSchematicColumnNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   QPixmap getPixmap();
   bool isOpened() { return m_isOpened; }
   void resize(bool maximized);
@@ -481,7 +481,7 @@ private:
   void updatePortsPosition();
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
   void onNameChanged();
@@ -496,7 +496,7 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicCameraNode : public StageSchematicNode {
+class StageSchematicCameraNode final : public StageSchematicNode {
   Q_OBJECT
 
   CameraPainter *m_cameraPainter;
@@ -505,12 +505,12 @@ public:
   StageSchematicCameraNode(StageSchematicScene *scene, TStageObject *pegbar);
   ~StageSchematicCameraNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
   void onNameChanged();
@@ -522,7 +522,7 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicSplineNode : public SchematicNode {
+class StageSchematicSplineNode final : public SchematicNode {
   Q_OBJECT
 
   TStageObjectSpline *m_spline;
@@ -538,22 +538,22 @@ public:
                            TStageObjectSpline *spline);
   ~StageSchematicSplineNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
-  void onClicked();
+             QWidget *widget = 0) override;
+  void onClicked() override;
 
-  void setSchematicNodePos(const QPointF &pos) const;
+  void setSchematicNodePos(const QPointF &pos) const override;
   TStageObjectSpline *getSpline() { return m_spline; }
   bool isNameEditing() { return m_nameItem->isVisible(); }
   bool isOpened() { return m_isOpened; }
   QPixmap getPixmap();
   StageSchematicSplinePort *getParentPort() { return m_dock->getPort(); }
-  void setPosition(const QPointF &newPos) { setPos(newPos); }
+  void setPosition(const QPointF &newPos) override { setPos(newPos); }
   void resize(bool maximized);
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
@@ -569,7 +569,7 @@ protected slots:
 //
 //========================================================
 
-class StageSchematicGroupNode : public StageSchematicNode {
+class StageSchematicGroupNode final : public StageSchematicNode {
   Q_OBJECT
 
   GroupPainter *m_painter;
@@ -582,9 +582,9 @@ public:
                           const QList<TStageObject *> groupedObj);
   ~StageSchematicGroupNode();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = 0);
+             QWidget *widget = 0) override;
   QList<TStageObject *> getGroupedObjects() { return m_groupedObj; }
   int getGroupId();
   TStageObject *getRoot() { return m_root; }
@@ -594,7 +594,7 @@ public:
   void resize(bool maximized);
 
 protected:
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
 
 protected slots:
   void onNameChanged();

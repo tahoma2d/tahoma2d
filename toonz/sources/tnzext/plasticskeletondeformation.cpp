@@ -214,7 +214,7 @@ void SkVD::loadData(TIStream &is) {
 //    PlasticSkeletonDeformation::Imp  definition
 //**************************************************************************************
 
-class PlasticSkeletonDeformation::Imp : public TParamObserver {
+class PlasticSkeletonDeformation::Imp final : public TParamObserver {
 public:
   PlasticSkeletonDeformation *m_back;  //!< Back-pointer to the interface class
 
@@ -259,8 +259,9 @@ public:
                              PlasticSkeleton &deformedSkeleton, double frame,
                              int v);
 
-  void onChange(const TParamChange &change);  // Passes param notifications to
-                                              // external observers
+  void onChange(
+      const TParamChange &change) override;  // Passes param notifications to
+                                             // external observers
 
 private:
   // Not directly copy-constructible

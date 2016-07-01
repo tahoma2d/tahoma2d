@@ -35,8 +35,8 @@ public:
   FxSettingsUndo(QString name, TFxHandle *fxHandle)
       : m_name(name), m_fxHandle(fxHandle) {}
 
-  int getSize() const { return sizeof(*this); }
-  int getHistoryType() { return HistoryType::Fx; }
+  int getSize() const override { return sizeof(*this); }
+  int getHistoryType() override { return HistoryType::Fx; }
 };
 
 class AnimatableFxSettingsUndo : public FxSettingsUndo {
@@ -48,7 +48,7 @@ public:
   AnimatableFxSettingsUndo(QString name, int frame, TFxHandle *fxHandle)
       : FxSettingsUndo(name, fxHandle), m_frame(frame) {}
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : %1").arg(m_name);
     if (m_wasKeyframe)
       str += QString("  Frame : %1").arg(QString::number(m_frame + 1));
@@ -61,7 +61,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! MeasuredDoubleParamField Undo
 */
-class MeasuredDoubleParamFieldUndo : public AnimatableFxSettingsUndo {
+class MeasuredDoubleParamFieldUndo final : public AnimatableFxSettingsUndo {
   TDoubleParamP m_param;
   double m_oldValue, m_newValue;
 
@@ -74,9 +74,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newValue = m_param->getValue(m_frame); }
+  void onAdd() override { m_newValue = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldValue);
     else
@@ -87,7 +87,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newValue);
     else
@@ -99,7 +99,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! RangeParamField Undo
 */
-class RangeParamFieldUndo : public AnimatableFxSettingsUndo {
+class RangeParamFieldUndo final : public AnimatableFxSettingsUndo {
   TRangeParamP m_param;
   DoublePair m_oldValue, m_newValue;
 
@@ -112,9 +112,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newValue = m_param->getValue(m_frame); }
+  void onAdd() override { m_newValue = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldValue);
     else
@@ -125,7 +125,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newValue);
     else
@@ -137,7 +137,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! PixelParamField Undo
 */
-class PixelParamFieldUndo : public AnimatableFxSettingsUndo {
+class PixelParamFieldUndo final : public AnimatableFxSettingsUndo {
   TPixelParamP m_param;
   TPixel32 m_oldValue, m_newValue;
 
@@ -150,9 +150,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newValue = m_param->getValue(m_frame); }
+  void onAdd() override { m_newValue = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldValue);
     else
@@ -163,7 +163,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newValue);
     else
@@ -175,7 +175,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! PointParamField Undo
 */
-class PointParamFieldUndo : public AnimatableFxSettingsUndo {
+class PointParamFieldUndo final : public AnimatableFxSettingsUndo {
   TPointParamP m_param;
   TPointD m_oldValue, m_newValue;
 
@@ -188,9 +188,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newValue = m_param->getValue(m_frame); }
+  void onAdd() override { m_newValue = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldValue);
     else
@@ -199,7 +199,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newValue);
     else
@@ -211,7 +211,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! EnumParamField Undo
 */
-class EnumParamFieldUndo : public FxSettingsUndo {
+class EnumParamFieldUndo final : public FxSettingsUndo {
   TIntEnumParamP m_param;
   std::string m_oldString, m_newString;
 
@@ -223,17 +223,17 @@ public:
       , m_oldString(oldString)
       , m_newString(newString) {}
 
-  void undo() const {
+  void undo() const override {
     m_param->setValue(m_oldString);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     m_param->setValue(m_newString);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : %1 : %2 -> %3")
                       .arg(m_name)
                       .arg(QString::fromStdString(m_oldString))
@@ -245,7 +245,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! IntParamFieldのUndo
 */
-class IntParamFieldUndo : public FxSettingsUndo {
+class IntParamFieldUndo final : public FxSettingsUndo {
   TIntParamP m_param;
   int m_oldValue, m_newValue;
 
@@ -256,19 +256,19 @@ public:
     m_newValue = m_oldValue;
   }
 
-  void onAdd() { m_newValue = m_param->getValue(); }
+  void onAdd() override { m_newValue = m_param->getValue(); }
 
-  void undo() const {
+  void undo() const override {
     m_param->setValue(m_oldValue);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     m_param->setValue(m_newValue);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : %1 : %2 -> %3")
                       .arg(m_name)
                       .arg(QString::number(m_oldValue))
@@ -280,7 +280,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! BoolParamFieldのUndo
 */
-class BoolParamFieldUndo : public FxSettingsUndo {
+class BoolParamFieldUndo final : public FxSettingsUndo {
   TBoolParamP m_param;
   bool m_newState;
 
@@ -290,17 +290,17 @@ public:
     m_newState = param->getValue();
   }
 
-  void undo() const {
+  void undo() const override {
     m_param->setValue(!m_newState);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     m_param->setValue(m_newState);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : ");
     if (m_newState)
       str += QObject::tr("ON : %1").arg(m_name);
@@ -313,7 +313,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! SpectrumParamFieldのUndo
 */
-class SpectrumParamFieldUndo : public AnimatableFxSettingsUndo {
+class SpectrumParamFieldUndo final : public AnimatableFxSettingsUndo {
   TSpectrumParamP m_param;
   TSpectrum m_oldSpectrum, m_newSpectrum;
 
@@ -326,9 +326,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newSpectrum = m_param->getValue(m_frame); }
+  void onAdd() override { m_newSpectrum = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldSpectrum);
     else
@@ -339,7 +339,7 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newSpectrum);
     else
@@ -354,7 +354,7 @@ public:
    SpectrumParamFieldは、表示更新時にactualParamとcurrentParamのKeyの数が
         一致していなくてはならないので、２つ同時に変更する必要が有る。
 */
-class SpectrumParamFieldAddRemoveKeyUndo : public FxSettingsUndo {
+class SpectrumParamFieldAddRemoveKeyUndo final : public FxSettingsUndo {
   TSpectrumParamP m_actualParam;
   TSpectrumParamP m_currentParam;
   TSpectrum::ColorKey m_key;
@@ -385,7 +385,7 @@ public:
     m_currentParam->insertKey(m_index, m_key.first, m_key.second);
   }
 
-  void undo() const {
+  void undo() const override {
     if (m_isAddUndo)
       removeKeys();
     else
@@ -394,7 +394,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     if (m_isAddUndo)
       addKeys();
     else
@@ -402,7 +402,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str =
         QObject::tr("Modify Fx Param : %1 : %2 Key")
             .arg(m_name)
@@ -414,7 +414,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! StringParamField Undo
 */
-class StringParamFieldUndo : public FxSettingsUndo {
+class StringParamFieldUndo final : public FxSettingsUndo {
   TStringParamP m_param;
   std::wstring m_oldValue, m_newValue;
 
@@ -426,19 +426,19 @@ public:
     m_newValue = m_oldValue;
   }
 
-  void onAdd() { m_newValue = m_param->getValue(); }
+  void onAdd() override { m_newValue = m_param->getValue(); }
 
-  void undo() const {
+  void undo() const override {
     m_param->setValue(m_oldValue);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     m_param->setValue(m_newValue);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : %1 : %2 -> %3")
                       .arg(m_name)
                       .arg(QString::fromStdWString(m_oldValue))
@@ -450,7 +450,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! ToneCurveParamField Undo
 */
-class ToneCurveParamFieldUndo : public AnimatableFxSettingsUndo {
+class ToneCurveParamFieldUndo final : public AnimatableFxSettingsUndo {
   TToneCurveParamP m_param;
   QList<TPointD> m_oldPoints, m_newPoints;
 
@@ -463,9 +463,9 @@ public:
     m_wasKeyframe = m_param->isKeyframe(frame);
   }
 
-  void onAdd() { m_newPoints = m_param->getValue(m_frame); }
+  void onAdd() override { m_newPoints = m_param->getValue(m_frame); }
 
-  void undo() const {
+  void undo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_oldPoints);
     else
@@ -474,7 +474,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     if (!m_wasKeyframe)
       m_param->setDefaultValue(m_newPoints);
     else
@@ -490,7 +490,7 @@ public:
         一致していなくてはならないので、２つ同時に変更する必要が有る。
 */
 
-class ToneCurveParamFieldAddRemovePointUndo : public FxSettingsUndo {
+class ToneCurveParamFieldAddRemovePointUndo final : public FxSettingsUndo {
   TToneCurveParamP m_actualParam;
   TToneCurveParamP m_currentParam;
   QList<TPointD> m_value;
@@ -521,7 +521,7 @@ public:
     m_currentParam->addValue(0, m_value, m_index);
   }
 
-  void undo() const {
+  void undo() const override {
     if (m_isAddUndo)
       removePoints();
     else
@@ -530,7 +530,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     if (m_isAddUndo)
       addPoints();
     else
@@ -538,7 +538,7 @@ public:
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str =
         QObject::tr("Modify Fx Param : %1 : %2 Point")
             .arg(m_name)
@@ -550,7 +550,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! ToneCurveParamField Undo (Linearのトグル)
 */
-class ToneCurveParamFieldToggleLinearUndo : public FxSettingsUndo {
+class ToneCurveParamFieldToggleLinearUndo final : public FxSettingsUndo {
   TToneCurveParamP m_actualParam;
   TToneCurveParamP m_currentParam;
   bool m_newState;
@@ -565,19 +565,19 @@ public:
     m_newState = actualParam->isLinear();
   }
 
-  void undo() const {
+  void undo() const override {
     m_actualParam->setIsLinear(!m_newState);
     m_currentParam->setIsLinear(!m_newState);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     m_actualParam->setIsLinear(m_newState);
     m_currentParam->setIsLinear(m_newState);
     if (m_fxHandle) m_fxHandle->notifyFxChanged();
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     QString str = QObject::tr("Modify Fx Param : ");
     if (m_newState)
       str += QObject::tr("%1 : Linear ON").arg(m_name);

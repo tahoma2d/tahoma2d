@@ -21,7 +21,7 @@ class CheckBox;
 // BinarizePopup
 //-----------------------------------------------------------------------------
 
-class BinarizePopup : public DVGui::Dialog {
+class BinarizePopup final : public DVGui::Dialog {
   Q_OBJECT
 
 protected:
@@ -39,8 +39,8 @@ public:
   void setSample(const TRasterP &ras);
 
 protected:
-  void showEvent(QShowEvent *e);
-  void hideEvent(QHideEvent *e);
+  void showEvent(QShowEvent *e) override;
+  void hideEvent(QHideEvent *e) override;
 
 private:
   typedef std::vector<std::pair<TXshSimpleLevel *, TFrameId>> Frames;

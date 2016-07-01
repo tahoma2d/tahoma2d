@@ -171,7 +171,7 @@ void cutStrokesWithoutUndo(TVectorImageP image, std::set<int> &indexes) {
 // CopyStrokesUndo
 //-----------------------------------------------------------------------------
 
-class CopyStrokesUndo : public TUndo {
+class CopyStrokesUndo final : public TUndo {
   QMimeData *m_oldData;
   QMimeData *m_newData;
 
@@ -179,24 +179,24 @@ public:
   CopyStrokesUndo(QMimeData *oldData, QMimeData *newData)
       : m_oldData(oldData), m_newData(newData) {}
 
-  void undo() const {
+  void undo() const override {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData(cloneData(m_oldData), QClipboard::Clipboard);
   }
 
-  void redo() const {
+  void redo() const override {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData(cloneData(m_newData), QClipboard::Clipboard);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //=============================================================================
 // PasteStrokesUndo
 //-----------------------------------------------------------------------------
 
-class PasteStrokesUndo : public TUndo {
+class PasteStrokesUndo final : public TUndo {
   TXshSimpleLevelP m_level;
   TFrameId m_frameId;
   std::set<int> m_indexes;
@@ -219,7 +219,7 @@ public:
 
   ~PasteStrokesUndo() { delete m_oldData; }
 
-  void undo() const {
+  void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
 
     // Se la selezione corrente e' la stroke selection devo svuotarla,
@@ -232,7 +232,7 @@ public:
     deleteStrokesWithoutUndo(image, indexes);
   }
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image   = m_level->getFrame(m_frameId, true);
     std::set<int> indexes = m_indexes;
 
@@ -247,12 +247,12 @@ public:
     clipboard->setMimeData(data, QClipboard::Clipboard);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //--------------------------------------------------------------------
 
-class RemoveEndpointsUndo : public TUndo {
+class RemoveEndpointsUndo final : public TUndo {
   TXshSimpleLevelP m_level;
   TFrameId m_frameId;
   std::vector<std::pair<int, TStroke *>> m_strokes;
@@ -271,7 +271,7 @@ public:
     for (i = 0; i < (int)m_strokes.size(); i++) delete m_strokes[i].second;
   }
 
-  void undo() const {
+  void undo() const override {
     TVectorImageP vi = m_level->getFrame(m_frameId, true);
     int i;
     for (i = 0; i < (int)m_strokes.size(); i++) {
@@ -286,7 +286,7 @@ public:
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     int i;
     TVectorImageP vi = m_level->getFrame(m_frameId, true);
     for (i = 0; i < (int)m_strokes.size(); i++) {
@@ -297,7 +297,7 @@ public:
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 //=============================================================================
 // DeleteFramesUndo
@@ -323,7 +323,7 @@ public:
 
   ~DeleteStrokesUndo() { delete m_data; }
 
-  void undo() const {
+  void undo() const override {
     QClipboard *clipboard = QApplication::clipboard();
     QMimeData *oldData    = cloneData(clipboard->mimeData());
 
@@ -336,20 +336,20 @@ public:
     clipboard->setMimeData(oldData, QClipboard::Clipboard);
   }
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image   = m_level->getFrame(m_frameId, true);
     std::set<int> indexes = m_indexes;
     deleteStrokesWithoutUndo(image, indexes);
   }
 
-  int getSize() const { return sizeof(*this); }
+  int getSize() const override { return sizeof(*this); }
 };
 
 //=============================================================================
 // CutStrokesUndo
 //-----------------------------------------------------------------------------
 
-class CutStrokesUndo : public DeleteStrokesUndo {
+class CutStrokesUndo final : public DeleteStrokesUndo {
 public:
   CutStrokesUndo(TXshSimpleLevel *level, const TFrameId &frameId,
                  std::set<int> indexes, QMimeData *data,
@@ -358,7 +358,7 @@ public:
 
   ~CutStrokesUndo() {}
 
-  void redo() const {
+  void redo() const override {
     TVectorImageP image   = m_level->getFrame(m_frameId, true);
     std::set<int> indexes = m_indexes;
     cutStrokesWithoutUndo(image, indexes);
@@ -619,7 +619,7 @@ void StrokeSelection::enableCommands() {
 namespace {
 //===================================================================
 
-class UndoSetStrokeStyle : public TUndo {
+class UndoSetStrokeStyle final : public TUndo {
   TVectorImageP m_image;
   std::vector<int> m_strokeIndexes;
   std::vector<int> m_oldStyles;
@@ -634,7 +634,7 @@ public:
     m_oldStyles.push_back(stroke->getStyle());
   }
 
-  void undo() const {
+  void undo() const override {
     UINT size = m_strokeIndexes.size();
     assert(size == m_oldStyles.size());
 
@@ -647,7 +647,7 @@ public:
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
-  void redo() const {
+  void redo() const override {
     UINT size = m_strokeIndexes.size();
     assert(size == m_oldStyles.size());
 
@@ -660,7 +660,7 @@ public:
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) +
            m_strokeIndexes.capacity() * sizeof(m_strokeIndexes[0]) +
            m_oldStyles.capacity() * sizeof(m_oldStyles[0]);

@@ -16,7 +16,7 @@
 //    Centered Text Widget class
 //----------------------------------
 
-class CenteredTextWidget : public QWidget {
+class CenteredTextWidget final : public QWidget {
   QString m_text;
 
 public:
@@ -25,7 +25,7 @@ public:
   void setText(const QString &text) { m_text = text; }
 
 protected:
-  void paintEvent(QPaintEvent *) {
+  void paintEvent(QPaintEvent *) override {
     QPainter p(this);
 
     QFontMetrics fm    = p.fontMetrics();
@@ -158,10 +158,10 @@ void LogPanel::clear() {
 //=============================================================================
 // OpenFloatingLogPanel
 
-class OpenFloatingLogPanel : public MenuItemHandler {
+class OpenFloatingLogPanel final : public MenuItemHandler {
 public:
   OpenFloatingLogPanel() : MenuItemHandler(MI_OpenMessage) {}
-  void execute() {
+  void execute() override {
     TMainWindow *currentRoom = TApp::instance()->getCurrentRoom();
     if (currentRoom) {
       QList<TPanel *> list = currentRoom->findChildren<TPanel *>();

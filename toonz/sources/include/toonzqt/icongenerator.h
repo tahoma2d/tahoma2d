@@ -63,7 +63,7 @@ class TOfflineGL;
             once an icon has been generated.
 */
 
-class DVAPI IconGenerator : public QObject {
+class DVAPI IconGenerator final : public QObject {
   Q_OBJECT
 
 public:
@@ -156,7 +156,7 @@ private:
   TDimension m_iconSize;
 
   QEventLoop m_iconsTerminationLoop;  //!< Event loop used to wait for icons
-                                      //!termination.
+                                      //! termination.
 
   Settings m_settings;
 

@@ -48,7 +48,7 @@ class TFrameHandle;
             (e.g. when \p m_frame is 0 then 1 is visualized).
 */
 
-class DVAPI FrameNavigator : public QToolBar {
+class DVAPI FrameNavigator final : public QToolBar {
   Q_OBJECT
 
   TFrameHandle *m_frameHandle;
@@ -63,7 +63,7 @@ public:
   int getFrame() const { return m_frame; }
 
   void setFrameHandle(TFrameHandle *);  //!< Attaches the navigator to the
-                                        //!specified frameHandle.
+                                        //! specified frameHandle.
   //!  \remark    Detaches from any previously attached frame handle.
 
   bool anyWidgetHasFocus();
@@ -83,11 +83,11 @@ public slots:
   void nextFrame() { setFrame(m_frame + 1, true); }  //!< Move to next frame.
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
   void updateFrame(int frame);  //!< Changes frame without emitting any signal
-                                //!and notifying the frameHandle.
+                                //! and notifying the frameHandle.
 
 protected slots:
 
@@ -96,7 +96,7 @@ protected slots:
 current frame value.
 */
   void onEditingFinished();  //!< Slot invoked whenever current frame's text
-                             //!editing is finished.
+                             //! editing is finished.
   void onFrameSwitched();
 };
 

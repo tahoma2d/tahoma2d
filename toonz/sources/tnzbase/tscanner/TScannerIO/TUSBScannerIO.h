@@ -7,16 +7,16 @@
 
 class TUSBScannerIOPD;
 
-class TUSBScannerIO : public TScannerIO {
+class TUSBScannerIO final : public TScannerIO {
   TUSBScannerIOPD *m_data;
 
 public:
   TUSBScannerIO();
-  bool open();
-  void close();
-  int receive(unsigned char *buffer, int size);
-  int send(unsigned char *buffer, int size);
-  void trace(bool on);
+  bool open() override;
+  void close() override;
+  int receive(unsigned char *buffer, int size) override;
+  int send(unsigned char *buffer, int size) override;
+  void trace(bool on) override;
   ~TUSBScannerIO();
 };
 

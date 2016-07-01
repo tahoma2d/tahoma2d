@@ -110,7 +110,7 @@ public:
 //! The BilinearDistorterBase is just a convenience class implementing a
 //! lightweight version of
 //! \b BilinearDistorter class when the source quad is a rect.
-class DVAPI BilinearDistorterBase : public TQuadDistorter {
+class DVAPI BilinearDistorterBase final : public TQuadDistorter {
   // Used to make things a little bit faster.
   TPointD m_A, m_B, m_C, m_D;
   double m_a, m_b0;
@@ -121,9 +121,9 @@ public:
                         const TPointD &p00d, const TPointD &p10d,
                         const TPointD &p01d, const TPointD &p11d);
 
-  TPointD map(const TPointD &p) const;
-  int invMap(const TPointD &p, TPointD *results) const;
-  int maxInvCount() const { return 2; }
+  TPointD map(const TPointD &p) const override;
+  int invMap(const TPointD &p, TPointD *results) const override;
+  int maxInvCount() const override { return 2; }
 };
 
 //------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ public:
 //! of the source corners into the same combinations of destination ones. The
 //! resulting image deformation
 //! is similar to bending a paper foil.
-class DVAPI BilinearDistorter : public TQuadDistorter {
+class DVAPI BilinearDistorter final : public TQuadDistorter {
   struct Base {
     TPointD m_p00, m_p10, m_p01, m_p11;
     // Used to make things a little bit faster.
@@ -154,10 +154,10 @@ public:
                     const TPointD &p01d, const TPointD &p11d);
   ~BilinearDistorter();
 
-  TPointD map(const TPointD &p) const;
-  int invMap(const TPointD &p, TPointD *results) const;
-  int maxInvCount() const { return 2; }
-  TRectD invMap(const TRectD &rect) const;
+  TPointD map(const TPointD &p) const override;
+  int invMap(const TPointD &p, TPointD *results) const override;
+  int maxInvCount() const override { return 2; }
+  TRectD invMap(const TRectD &rect) const override;
 };
 
 //================================================================================================
@@ -169,7 +169,7 @@ public:
 //! The PerspectiveDistorter class implements a quadrilateral distorter that
 //! makes the source quad
 //! bend into the destination one while keeping a perspectical resemblance.
-class DVAPI PerspectiveDistorter : public TQuadDistorter {
+class DVAPI PerspectiveDistorter final : public TQuadDistorter {
   //================================================================================================
   // TPerspect
   //================================================================================================
@@ -214,10 +214,10 @@ public:
 
   const TPerspect &getMatrix() const { return m_matrix; }
 
-  TPointD map(const TPointD &p) const;
-  int invMap(const TPointD &p, TPointD *results) const;
-  int maxInvCount() const { return 1; }
-  TRectD invMap(const TRectD &rect) const;
+  TPointD map(const TPointD &p) const override;
+  int invMap(const TPointD &p, TPointD *results) const override;
+  int maxInvCount() const override { return 1; }
+  TRectD invMap(const TRectD &rect) const override;
 
 private:
   //! Compute the matrix used to distort image.

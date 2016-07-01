@@ -31,7 +31,7 @@ class TFont;
 // TFont declaration. The class is currently not directly available under 64-bit
 // MAC OSX.
 
-#ifndef __LP64__
+#if !defined(__LP64__) || !defined(MACOSX)
 
 #ifdef MACOSX
 #include <ApplicationServices/ApplicationServices.h>
@@ -52,8 +52,10 @@ private:
 
 #ifdef _WIN32
   TFont(const LOGFONTW &, HDC hdc);
-#else
+#elif defined(MACOSX)
   TFont(ATSUFontID, int size);
+#else
+  TFont(const std::wstring family, const std::wstring face, int size);
 #endif
 
 public:
@@ -87,18 +89,18 @@ private:
   TFont &operator=(const TFont &);
 };
 
-#endif  //!__LP64__
+#endif  //!__LP64__ || !MACOSX
 
 //-----------------------------------------------------------------------------
 
-class TFontCreationError : public TException {
+class TFontCreationError final : public TException {
 public:
   TFontCreationError() : TException("E_CanNotUseSelectedFont") {}
 };
 
 //-----------------------------------------------------------------------------
 
-class TFontLibraryLoadingError : public TException {
+class TFontLibraryLoadingError final : public TException {
 public:
   TFontLibraryLoadingError() : TException("E_CanNotLoadFonts") {}
 };
@@ -138,7 +140,7 @@ public:
 
 // --------- TFont methods  called on curren font -----------
 
-#ifndef __LP64__
+#if !defined(__LP64__) || defined(LINUX)
 
   TPoint drawChar(TVectorImageP &outImage, wchar_t charcode,
                   wchar_t nextCode = 0) {

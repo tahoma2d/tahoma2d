@@ -29,17 +29,17 @@ class TRandom;
 
 //============================================================
 
-class MovingModifier : public TOutlineStyle::RegionOutlineModifier {
+class MovingModifier final : public TOutlineStyle::RegionOutlineModifier {
   TPointD m_move;
 
 public:
   MovingModifier(const TPointD &point) : m_move(point) {}
 
-  TOutlineStyle::RegionOutlineModifier *clone() const;
+  TOutlineStyle::RegionOutlineModifier *clone() const override;
 
   TPointD getMovePoint() const { return m_move; }
 
-  void modify(TRegionOutline &outline) const;
+  void modify(TRegionOutline &outline) const override;
 
 public:
   void loadData(TInputStreamInterface &is) { is >> m_move.x >> m_move.y; }
@@ -51,40 +51,40 @@ public:
 
 //============================================================
 
-class MovingSolidColor : public TSolidColorStyle {
+class MovingSolidColor final : public TSolidColorStyle {
 public:
   MovingSolidColor(const TPixel32 &color, const TPointD &move);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 1125; };
-  QString getDescription() const {
+  int getTagId() const override { return 1125; };
+  QString getDescription() const override {
     return QCoreApplication::translate("MovingSolidColor", "Offset");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 //============================================================
 
-class DVAPI ShadowStyle : public TSolidColorStyle {
+class DVAPI ShadowStyle final : public TSolidColorStyle {
   TPointD m_shadowDirection;
   TPixel32 m_shadowColor;
   double m_density;
@@ -95,34 +95,34 @@ public:
               const TPointD &shadowDirection = TPointD(-1, -1),
               double len = 30.0, double density = 0.4);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  void makeIcon(const TDimension &d);
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  void makeIcon(const TDimension &d) override;
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
   // TPixel32 getMainColor() const {return m_shadowColor; }
   // void setMainColor(const TPixel32 &color){ m_shadowColor=color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 1127; };
-  QString getDescription() const {
+  int getTagId() const override { return 1127; };
+  QString getDescription() const override {
     return QCoreApplication::translate("ShadowStyle", "Hatched Shading");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
+                  TRegionOutline &boundary) const override;
 
   // it is too slow and if the region is too complex, some flash readers
   // (IExplorer) crash.
@@ -130,8 +130,8 @@ public:
   // void drawRegion( TFlash& flash, const TRegion* r) const;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void drawPolyline(const TColorFunction *cf, std::vector<T3DPointD> &polyline,
@@ -140,7 +140,7 @@ private:
 
 //============================================================
 
-class DVAPI ShadowStyle2 : public TSolidColorStyle {
+class DVAPI ShadowStyle2 final : public TSolidColorStyle {
   TPointD m_shadowDirection;
   TPixel32 m_shadowColor;
   double m_shadowLength;
@@ -150,38 +150,38 @@ public:
                const TPointD &shadowDirection = TPointD(-1, -1),
                double shadowLength            = 70.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
   // TPixel32 getMainColor() const {return m_shadowColor; }
   // void setMainColor(const TPixel32 &color){ m_shadowColor=color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 1135; };
-  QString getDescription() const {
+  int getTagId() const override { return 1135; };
+  QString getDescription() const override {
     return QCoreApplication::translate("ShadowStyle2", "Plain Shadow");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void drawPolyline(const TColorFunction *cf,
@@ -193,7 +193,7 @@ private:
 
 //============================================================
 
-class RubberModifier : public TOutlineStyle::RegionOutlineModifier {
+class RubberModifier final : public TOutlineStyle::RegionOutlineModifier {
   double m_deform;
 
 public:
@@ -205,47 +205,47 @@ public:
   double getDeform() { return m_deform; }
   void setDeform(const double deform) { m_deform = deform; }
 
-  void modify(TRegionOutline &outline) const;
+  void modify(TRegionOutline &outline) const override;
 
-  TOutlineStyle::RegionOutlineModifier *clone() const;
+  TOutlineStyle::RegionOutlineModifier *clone() const override;
 };
 
 //============================================================
 
-class DVAPI TRubberFillStyle : public TSolidColorStyle {
+class DVAPI TRubberFillStyle final : public TSolidColorStyle {
   typedef std::vector<TQuadratic> QuadraticVector;
   typedef std::vector<TQuadratic *> QuadraticPVector;
 
 public:
   TRubberFillStyle(const TPixel32 &color, double deform);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  void makeIcon(const TDimension &d);
+  void makeIcon(const TDimension &d) override;
 
-  int getTagId() const { return 1128; };
-  QString getDescription() const {
+  int getTagId() const override { return 1128; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TRubberFillStyle", "Blob");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void transformPolylines();
@@ -253,7 +253,7 @@ private:
 
 //============================================================
 
-class DVAPI TPointShadowFillStyle : public TSolidColorStyle {
+class DVAPI TPointShadowFillStyle final : public TSolidColorStyle {
   TPointD m_shadowDirection;
   TPixel32 m_shadowColor;
   double m_shadowSize;
@@ -266,41 +266,41 @@ public:
                         double density = 0.1, double shadowSize = 30.0,
                         double pointSize = 5.0);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
   /*
 TPixel32 getMainColor() const {return m_shadowColor; }
 void setMainColor(const TPixel32 &color){ m_shadowColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 1129; };
-  QString getDescription() const {
+  int getTagId() const override { return 1129; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TPointShadowFillStyle",
                                        "Sponge Shading");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   double triangleArea(const TPointD &a, const TPointD &b,
@@ -317,7 +317,7 @@ private:
 
 //============================================================
 
-class DVAPI TDottedFillStyle : public TSolidColorStyle {
+class DVAPI TDottedFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_dotSize;
   double m_dotDist;
@@ -330,40 +330,40 @@ public:
 
   TDottedFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1130; };
-  QString getDescription() const {
+  int getTagId() const override { return 1130; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TDottedFillStyle", "Polka Dots");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   int nbClip(const double LDotDist, const bool LIsShifted,
@@ -372,7 +372,7 @@ private:
 
 //============================================================
 
-class DVAPI TCheckedFillStyle : public TSolidColorStyle {
+class DVAPI TCheckedFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_HDist, m_HAngle;
   double m_VDist, m_VAngle, m_Thickness;
@@ -384,34 +384,34 @@ public:
 
   TCheckedFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1131; };
-  QString getDescription() const {
+  int getTagId() const override { return 1131; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TCheckedFillStyle", "Square");
   }
 
@@ -423,13 +423,13 @@ private:
   int nbClip(const TRectD &bbox) const;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 //============================================================
 
-class ArtisticModifier : public TOutlineStyle::RegionOutlineModifier {
+class ArtisticModifier final : public TOutlineStyle::RegionOutlineModifier {
   TPointD m_move;
   double m_period;
 
@@ -437,7 +437,7 @@ public:
   ArtisticModifier(const TPointD &point, double period)
       : m_move(point), m_period(period) {}
 
-  TOutlineStyle::RegionOutlineModifier *clone() const;
+  TOutlineStyle::RegionOutlineModifier *clone() const override;
 
   void loadData(TInputStreamInterface &is) {
     is >> m_move.x >> m_move.y >> m_period;
@@ -449,45 +449,45 @@ public:
   TPointD getMovePoint() const { return m_move; }
   double getPeriod() const { return m_period; }
 
-  void modify(TRegionOutline &outline) const;
+  void modify(TRegionOutline &outline) const override;
 };
 
 //============================================================
 
-class ArtisticSolidColor : public TSolidColorStyle {
+class ArtisticSolidColor final : public TSolidColorStyle {
 public:
   ArtisticSolidColor(const TPixel32 &color, const TPointD &move, double period);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
-  int getTagId() const { return 1132; };
-  QString getDescription() const {
+  int getTagId() const override { return 1132; };
+  QString getDescription() const override {
     return QCoreApplication::translate("ArtisticSolidColor", "Irregular");
   }
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 //============================================================
 
-class DVAPI TChalkFillStyle : public TSolidColorStyle {
+class DVAPI TChalkFillStyle final : public TSolidColorStyle {
   TPixel32 m_color0;
   double m_density, m_size;
 
@@ -496,47 +496,49 @@ public:
                   const double density, const double size);
   TChalkFillStyle(const TPixel32 &color0, const TPixel32 &color1);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_color0; }
 void setMainColor(const TPixel32 &color){ m_color0=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  QString getDescription() const {
+  QString getDescription() const override {
     return QCoreApplication::translate("TChalkFillStyle", "Chalk");
   }
-  void loadData(int oldId, TInputStreamInterface &);
-  void getObsoleteTagIds(std::vector<int> &ids) const { ids.push_back(1133); }
-  int getTagId() const { return 1143; };
+  void loadData(int oldId, TInputStreamInterface &) override;
+  void getObsoleteTagIds(std::vector<int> &ids) const override {
+    ids.push_back(1133);
+  }
+  int getTagId() const override { return 1143; };
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 //============================================================
 
-class DVAPI TChessFillStyle : public TSolidColorStyle {
+class DVAPI TChessFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_HDist, m_VDist, m_Angle;
 
@@ -545,40 +547,40 @@ public:
                   const double HDist, const double VDist, const double Angle);
   TChessFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1136; };
-  QString getDescription() const {
+  int getTagId() const override { return 1136; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TChessFillStyle", "Chessboard");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void makeGrid(TRectD &bbox, TRotation &rotM, std::vector<TPointD> &grid,
@@ -587,7 +589,7 @@ private:
 
 //============================================================
 
-class DVAPI TStripeFillStyle : public TSolidColorStyle {
+class DVAPI TStripeFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_Dist, m_Angle, m_Thickness;
 
@@ -597,42 +599,42 @@ public:
                    const double Thickness);
   TStripeFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1137; };
-  QString getDescription() const {
+  int getTagId() const override { return 1137; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TStripeFillStyle", "Banded");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
-  void makeIcon(const TDimension &d);
+  void makeIcon(const TDimension &d) override;
 
 private:
   void getThickline(const TPointD &lc, const double ly, TPointD &p0,
@@ -642,7 +644,7 @@ private:
 
 //============================================================
 
-class DVAPI TLinGradFillStyle : public TSolidColorStyle {
+class DVAPI TLinGradFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_Angle;
   double m_XPos, m_YPos, m_Size;
@@ -653,40 +655,40 @@ public:
                     const double Size);
   TLinGradFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1138; };
-  QString getDescription() const {
+  int getTagId() const override { return 1138; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TLinGradFillStyle", "Linear Gradient");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void getRects(const TRectD &bbox, std::vector<TPointD> &r0,
@@ -697,7 +699,7 @@ private:
 
 //============================================================
 
-class DVAPI TRadGradFillStyle : public TSolidColorStyle {
+class DVAPI TRadGradFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_Radius;
   double m_XPos, m_YPos;
@@ -709,43 +711,43 @@ public:
                     const double Smooth);
   TRadGradFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   //  TPixel32 getMainColor() const {return m_pointColor; }
   //  void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1139; };
-  QString getDescription() const {
+  int getTagId() const override { return 1139; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TRadGradFillStyle", "Radial Gradient");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 //============================================================
 
-class DVAPI TCircleStripeFillStyle : public TSolidColorStyle {
+class DVAPI TCircleStripeFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor;
   double m_XPos, m_YPos;
   double m_Dist, m_Thickness;
@@ -756,40 +758,40 @@ public:
                          const double Dist, const double Thickness);
   TCircleStripeFillStyle(const TPixel32 &color);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor; }
 void setMainColor(const TPixel32 &color){ m_pointColor=color; }
 */
 
-  int getColorParamCount() const { return 2; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 2; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1140; };
-  QString getDescription() const {
+  int getTagId() const override { return 1140; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TCircleStripeFillStyle", "Concentric");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void getCircleStripeQuads(const TPointD &center, const double r1,
@@ -800,7 +802,7 @@ private:
 
 //============================================================
 
-class DVAPI TMosaicFillStyle : public TSolidColorStyle {
+class DVAPI TMosaicFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor[4];
   double m_size;
   double m_deform;
@@ -813,40 +815,40 @@ public:
                    const double minThickness, const double maxThickness);
   TMosaicFillStyle(const TPixel32 bgColor);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
   /*
 TPixel32 getMainColor() const {return m_pointColor[0]; }
 void setMainColor(const TPixel32 &color){ m_pointColor[0]=color; }
 */
 
-  int getColorParamCount() const { return 5; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 5; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1141; };
-  QString getDescription() const {
+  int getTagId() const override { return 1141; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TMosaicFillStyle", "Stained Glass");
   }
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 
 private:
   void preaprePos(const TRectD &box, std::vector<TPointD> &v, int &lX, int &lY,
@@ -857,7 +859,7 @@ private:
 
 //============================================================
 
-class DVAPI TPatchFillStyle : public TSolidColorStyle {
+class DVAPI TPatchFillStyle final : public TSolidColorStyle {
   TPixel32 m_pointColor[6];
   double m_size;
   double m_deform;
@@ -869,29 +871,29 @@ public:
                   const double thickness);
   TPatchFillStyle(const TPixel32 &bgColor);
 
-  TColorStyle *clone() const;
+  TColorStyle *clone() const override;
 
-  int getColorParamCount() const { return 7; }
-  TPixel32 getColorParamValue(int index) const;
-  void setColorParamValue(int index, const TPixel32 &color);
+  int getColorParamCount() const override { return 7; }
+  TPixel32 getColorParamValue(int index) const override;
+  void setColorParamValue(int index, const TPixel32 &color) override;
 
-  bool isRegionStyle() const { return true; }
-  bool isStrokeStyle() const { return false; }
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return false; }
 
-  int getParamCount() const;
-  TColorStyle::ParamType getParamType(int index) const;
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
 
-  QString getParamNames(int index) const;
-  void getParamRange(int index, double &min, double &max) const;
-  double getParamValue(TColorStyle::double_tag, int index) const;
-  void setParamValue(int index, double value);
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
 
   void drawRegion(const TColorFunction *cf, const bool antiAliasing,
-                  TRegionOutline &boundary) const;
-  void drawRegion(TFlash &flash, const TRegion *r) const;
+                  TRegionOutline &boundary) const override;
+  void drawRegion(TFlash &flash, const TRegion *r) const override;
 
-  int getTagId() const { return 1142; };
-  QString getDescription() const {
+  int getTagId() const override { return 1142; };
+  QString getDescription() const override {
     return QCoreApplication::translate("TPatchFillStyle", "Beehive");
   }
 
@@ -907,8 +909,8 @@ private:
                          const TPointD &p3) const;
 
 protected:
-  void loadData(TInputStreamInterface &is);
-  void saveData(TOutputStreamInterface &os) const;
+  void loadData(TInputStreamInterface &is) override;
+  void saveData(TOutputStreamInterface &os) const override;
 };
 
 #endif  // TDERIVEDREGIONSTYLES_H

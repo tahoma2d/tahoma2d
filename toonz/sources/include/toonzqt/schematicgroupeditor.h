@@ -50,9 +50,9 @@ public:
                         SchematicScene *scene);
   ~SchematicWindowEditor();
 
-  QRectF boundingRect() const;
+  QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget                    = 0);
+             QWidget *widget                    = 0) override;
   virtual QRectF boundingSceneRect() const      = 0;
   virtual void setGroupedNodeZValue(int zValue) = 0;
   bool contains(SchematicNode *node) const {
@@ -61,11 +61,11 @@ public:
   void resizeNodes(bool maximizeNodes);
 
 protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent *e);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
-  void contextMenuEvent(QGraphicsSceneContextMenuEvent *e);
+  void mousePressEvent(QGraphicsSceneMouseEvent *e) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *e) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *e) override;
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e) override;
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *e) override;
 
 protected slots:
   virtual void closeEditor()   = 0;
@@ -83,7 +83,7 @@ private:
 //
 //=====================================================
 
-class DVAPI FxSchematicGroupEditor : public SchematicWindowEditor {
+class DVAPI FxSchematicGroupEditor final : public SchematicWindowEditor {
   Q_OBJECT
 
   int m_groupId;
@@ -93,16 +93,16 @@ public:
                          SchematicScene *scene);
   ~FxSchematicGroupEditor();
 
-  QRectF boundingSceneRect() const;
-  void setGroupedNodeZValue(int zValue);
+  QRectF boundingSceneRect() const override;
+  void setGroupedNodeZValue(int zValue) override;
 
 protected slots:
-  void closeEditor();
-  void onNameChanged();
+  void closeEditor() override;
+  void onNameChanged() override;
 
 private:
-  void initializeEditor();
-  void doResizeNodes(bool maximizeNodes);
+  void initializeEditor() override;
+  void doResizeNodes(bool maximizeNodes) override;
 };
 
 //=====================================================
@@ -111,7 +111,7 @@ private:
 //
 //=====================================================
 
-class DVAPI FxSchematicMacroEditor : public SchematicWindowEditor {
+class DVAPI FxSchematicMacroEditor final : public SchematicWindowEditor {
   Q_OBJECT
 
   TMacroFx *m_macro;
@@ -122,19 +122,19 @@ public:
                          SchematicScene *scene);
   ~FxSchematicMacroEditor();
 
-  QRectF boundingSceneRect() const;
-  void setGroupedNodeZValue(int zValue);
+  QRectF boundingSceneRect() const override;
+  void setGroupedNodeZValue(int zValue) override;
 
 protected:
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *e) override;
 
 protected slots:
-  void closeEditor();
-  void onNameChanged();
+  void closeEditor() override;
+  void onNameChanged() override;
 
 private:
-  void initializeEditor();
-  void doResizeNodes(bool maximizeNodes);
+  void initializeEditor() override;
+  void doResizeNodes(bool maximizeNodes) override;
 };
 
 //=====================================================
@@ -143,7 +143,7 @@ private:
 //
 //=====================================================
 
-class DVAPI StageSchematicGroupEditor : public SchematicWindowEditor {
+class DVAPI StageSchematicGroupEditor final : public SchematicWindowEditor {
   Q_OBJECT
 
   int m_groupId;
@@ -154,16 +154,16 @@ public:
                             SchematicScene *scene);
   ~StageSchematicGroupEditor();
 
-  QRectF boundingSceneRect() const;
-  void setGroupedNodeZValue(int zValue);
+  QRectF boundingSceneRect() const override;
+  void setGroupedNodeZValue(int zValue) override;
 
 protected slots:
-  void closeEditor();
-  void onNameChanged();
+  void closeEditor() override;
+  void onNameChanged() override;
 
 private:
-  void initializeEditor();
-  void doResizeNodes(bool maximizeNodes);
+  void initializeEditor() override;
+  void doResizeNodes(bool maximizeNodes) override;
 };
 
 #endif

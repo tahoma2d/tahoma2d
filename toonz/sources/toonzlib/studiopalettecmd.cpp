@@ -35,7 +35,7 @@ namespace {
 //=============================================================================
 // PaletteAssignUndo : Undo for the "Load into Current Palette" command.
 
-class PaletteAssignUndo : public TUndo {
+class PaletteAssignUndo final : public TUndo {
   TPaletteP m_targetPalette, m_oldPalette, m_newPalette;
   TPaletteHandle *m_paletteHandle;
 
@@ -47,34 +47,34 @@ public:
       , m_newPalette(newPalette)
       , m_paletteHandle(paletteHandle) {}
 
-  void undo() const {
+  void undo() const override {
     m_targetPalette->assign(m_oldPalette.getPointer());
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     m_targetPalette->assign(m_newPalette.getPointer());
     m_paletteHandle->notifyPaletteChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) +
            (m_targetPalette->getStyleCount() + m_oldPalette->getStyleCount() +
             m_newPalette->getStyleCount()) *
                100;
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Load into Current Palette  > %1")
         .arg(QString::fromStdWString(m_targetPalette->getPaletteName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // StudioPaletteAssignUndo : Undo for the "Replace with Current Palette"
 // command.
 
-class StudioPaletteAssignUndo : public TUndo {
+class StudioPaletteAssignUndo final : public TUndo {
   TPaletteP m_oldPalette, m_newPalette;
   TFilePath m_fp;
   TPaletteHandle *m_paletteHandle;
@@ -89,34 +89,34 @@ public:
       , m_newPalette(newPalette)
       , m_paletteHandle(paletteHandle) {}
 
-  void undo() const {
+  void undo() const override {
     StudioPalette *sp = StudioPalette::instance();
     sp->setPalette(m_fp, m_oldPalette.getPointer(), true);
     m_paletteHandle->notifyPaletteChanged();
   }
-  void redo() const {
+  void redo() const override {
     StudioPalette *sp = StudioPalette::instance();
     sp->setPalette(m_fp, m_newPalette.getPointer(), true);
     m_paletteHandle->notifyPaletteChanged();
   }
 
-  int getSize() const {
+  int getSize() const override {
     return sizeof(*this) +
            (m_oldPalette->getStyleCount() + m_newPalette->getStyleCount()) *
                100;
   }
 
-  QString getHistoryString() {
+  QString getHistoryString() override {
     return QObject::tr("Replace with Current Palette  > %1")
         .arg(QString::fromStdString(m_fp.getLevelName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // DeletePaletteUndo
 
-class DeletePaletteUndo : public TUndo {
+class DeletePaletteUndo final : public TUndo {
   TFilePath m_palettePath;
   TPaletteP m_palette;
 
@@ -125,23 +125,25 @@ public:
     m_palette = StudioPalette::instance()->getPalette(m_palettePath);
   }
 
-  void undo() const {
+  void undo() const override {
     StudioPalette::instance()->setPalette(m_palettePath, m_palette->clone(),
                                           true);
   }
-  void redo() const { StudioPalette::instance()->deletePalette(m_palettePath); }
-  int getSize() const { return sizeof(*this) + sizeof(TPalette); }
-  QString getHistoryString() {
+  void redo() const override {
+    StudioPalette::instance()->deletePalette(m_palettePath);
+  }
+  int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
+  QString getHistoryString() override {
     return QObject::tr("Delete Studio Palette  : %1")
         .arg(QString::fromStdString(m_palettePath.getLevelName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // CreatePaletteUndo
 
-class CreatePaletteUndo : public TUndo {
+class CreatePaletteUndo final : public TUndo {
   TFilePath m_palettePath;
   TPaletteP m_palette;
 
@@ -150,23 +152,25 @@ public:
     m_palette = StudioPalette::instance()->getPalette(m_palettePath);
   }
 
-  void undo() const { StudioPalette::instance()->deletePalette(m_palettePath); }
-  void redo() const {
+  void undo() const override {
+    StudioPalette::instance()->deletePalette(m_palettePath);
+  }
+  void redo() const override {
     StudioPalette::instance()->setPalette(m_palettePath, m_palette->clone(),
                                           true);
   }
-  int getSize() const { return sizeof(*this) + sizeof(TPalette); }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
+  QString getHistoryString() override {
     return QObject::tr("Create Studio Palette  : %1")
         .arg(QString::fromStdString(m_palettePath.getLevelName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // DeleteFolderUndo
 
-class DeleteFolderUndo : public TUndo {
+class DeleteFolderUndo final : public TUndo {
   TFilePath m_path;
   TFilePathSet m_pathSet;
   QList<TPaletteP> m_paletteList;
@@ -182,7 +186,7 @@ public:
     }
   }
 
-  void undo() const {
+  void undo() const override {
     StudioPalette::instance()->createFolder(m_path.getParentDir(),
                                             m_path.getWideName());
     int paletteCount = -1;
@@ -197,61 +201,65 @@ public:
                                                 path.getWideName());
     }
   }
-  void redo() const { StudioPalette::instance()->deleteFolder(m_path); }
-  int getSize() const { return sizeof(*this) + sizeof(TPalette); }
-  QString getHistoryString() {
+  void redo() const override {
+    StudioPalette::instance()->deleteFolder(m_path);
+  }
+  int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
+  QString getHistoryString() override {
     return QObject::tr("Delete Studio Palette Folder  : %1")
         .arg(QString::fromStdString(m_path.getName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // CreateFolderUndo
 
-class CreateFolderUndo : public TUndo {
+class CreateFolderUndo final : public TUndo {
   TFilePath m_folderPath;
 
 public:
   CreateFolderUndo(const TFilePath &folderPath) : m_folderPath(folderPath) {}
 
-  void undo() const { StudioPalette::instance()->deleteFolder(m_folderPath); }
-  void redo() const {
+  void undo() const override {
+    StudioPalette::instance()->deleteFolder(m_folderPath);
+  }
+  void redo() const override {
     StudioPalette::instance()->createFolder(m_folderPath.getParentDir(),
                                             m_folderPath.getWideName());
   }
-  int getSize() const { return sizeof(*this) + sizeof(TPalette); }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof(*this) + sizeof(TPalette); }
+  QString getHistoryString() override {
     return QObject::tr("Create Studio Palette Folder  : %1")
         .arg(QString::fromStdString(m_folderPath.getName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //=============================================================================
 // MovePaletteUndo
 
-class MovePaletteUndo : public TUndo {
+class MovePaletteUndo final : public TUndo {
   TFilePath m_dstPath, m_srcPath;
 
 public:
   MovePaletteUndo(const TFilePath &dstPath, const TFilePath &srcPath)
       : m_dstPath(dstPath), m_srcPath(srcPath) {}
 
-  void undo() const {
+  void undo() const override {
     StudioPalette::instance()->movePalette(m_srcPath, m_dstPath);
   }
-  void redo() const {
+  void redo() const override {
     StudioPalette::instance()->movePalette(m_dstPath, m_srcPath);
   }
-  int getSize() const { return sizeof(*this); }
-  QString getHistoryString() {
+  int getSize() const override { return sizeof(*this); }
+  QString getHistoryString() override {
     return QObject::tr("Move Studio Palette Folder  : %1 : %2 > %3")
         .arg(QString::fromStdString(m_srcPath.getName()))
         .arg(QString::fromStdString(m_srcPath.getParentDir().getName()))
         .arg(QString::fromStdString(m_dstPath.getParentDir().getName()));
   }
-  int getHistoryType() { return HistoryType::Palette; }
+  int getHistoryType() override { return HistoryType::Palette; }
 };
 
 //-------------------------------------------------------------
@@ -259,7 +267,7 @@ void adaptLevelToPalette(TXshLevelHandle *currentLevelHandle,
                          TPaletteHandle *paletteHandle, TPalette *plt,
                          int tolerance, bool noUndo);
 
-class AdjustIntoCurrentPaletteUndo : public TUndo {
+class AdjustIntoCurrentPaletteUndo final : public TUndo {
   TXshLevelHandle *m_currentLevelHandle;
   TPaletteHandle *m_paletteHandle;
   TPaletteP m_oldPalette, m_newPalette;
@@ -296,7 +304,7 @@ public:
     TImageCache::instance()->remove(m_oldImageId);
   }
 
-  void undo() const {
+  void undo() const override {
     TImageP img            = TImageCache::instance()->get(m_oldImageId, true);
     TXshSimpleLevel *level = m_currentLevelHandle->getSimpleLevel();
     level->setPalette(m_oldPalette.getPointer());
@@ -313,12 +321,12 @@ public:
     }
   }
 
-  void redo() const {
+  void redo() const override {
     adaptLevelToPalette(m_currentLevelHandle, m_paletteHandle,
                         m_newPalette.getPointer(), m_tolerance, true);
   }
 
-  int getSize() const { return m_undoSize; }
+  int getSize() const override { return m_undoSize; }
 };
 
 //-----------------------------------------------------------------------------

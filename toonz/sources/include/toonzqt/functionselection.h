@@ -37,7 +37,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class FunctionSelection : public QObject, public TSelection {
+class FunctionSelection final : public QObject, public TSelection {
   Q_OBJECT
   QRect m_selectedCells;  // yrange = rowrange of the selected keyframes;
                           // xrange = columnrange (functionsheet only)
@@ -77,8 +77,8 @@ public:
   void selectCells(const QRect &selectedCells);
   void deselectAllCells();
 
-  bool isEmpty() const { return m_selectedKeyframes.empty(); }
-  void selectNone();
+  bool isEmpty() const override { return m_selectedKeyframes.empty(); }
+  void selectNone() override;
   void select(TDoubleParam *curve, int k);
   bool isSelected(TDoubleParam *curve, int k) const;
   void selectSegment(TDoubleParam *, int k,
@@ -101,7 +101,7 @@ public:
                                  : 0;
   }
 
-  void enableCommands();
+  void enableCommands() override;
 
   void doCopy();
   void doPaste();
@@ -115,7 +115,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class FunctionKeyframesData : public DvMimeData {
+class FunctionKeyframesData final : public DvMimeData {
 public:
   FunctionKeyframesData();
   ~FunctionKeyframesData();
@@ -133,7 +133,7 @@ public:
 
   const Keyframes &getKeyframes(int columnIndex) const;
 
-  DvMimeData *clone() const;
+  DvMimeData *clone() const override;
 
   bool isCircularReferenceFree(int columnIndex, TDoubleParam *curve) const;
 

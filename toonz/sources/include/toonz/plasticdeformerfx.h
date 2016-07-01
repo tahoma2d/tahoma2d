@@ -25,7 +25,7 @@ class TXsheet;
 //! PlasticDeformerFx is a hidden fx used to inject data about a plastic
 //! deformation just above a
 //! TLevelColumnFx instance.
-class PlasticDeformerFx : public TRasterFx {
+class PlasticDeformerFx final : public TRasterFx {
   FX_DECLARATION(PlasticDeformerFx)
 
 public:
@@ -38,17 +38,21 @@ public:
 public:
   PlasticDeformerFx();
 
-  TFx *clone(bool recursive = true) const;
+  TFx *clone(bool recursive = true) const override;
 
-  bool canHandle(const TRenderSettings &info, double frame);
+  bool canHandle(const TRenderSettings &info, double frame) override;
 
-  std::string getAlias(double frame, const TRenderSettings &info) const;
-  bool doGetBBox(double frame, TRectD &bbox, const TRenderSettings &info);
+  std::string getAlias(double frame,
+                       const TRenderSettings &info) const override;
+  bool doGetBBox(double frame, TRectD &bbox,
+                 const TRenderSettings &info) override;
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &info);
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &info);
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &info) override;
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &info) override;
 
-  std::string getPluginId() const { return std::string(); }
+  std::string getPluginId() const override { return std::string(); }
 
 private:
   void buildRenderSettings(double, TRenderSettings &);

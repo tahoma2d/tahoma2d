@@ -60,14 +60,14 @@ FunctionSegmentPage::~FunctionSegmentPage() {}
 
 //=============================================================================
 
-class FunctionEmptySegmentPage : public FunctionSegmentPage {
+class FunctionEmptySegmentPage final : public FunctionSegmentPage {
 public:
   FunctionEmptySegmentPage(FunctionSegmentViewer *parent = 0)
       : FunctionSegmentPage(parent) {}
 
-  void refresh() {}
-  void apply() {}
-  void init(int segmentLength) {}
+  void refresh() override {}
+  void apply() override {}
+  void init(int segmentLength) override {}
 };
 
 //=============================================================================
@@ -657,7 +657,7 @@ bool FunctionExpressionSegmentPage::getGuiValues(std::string &expressionText,
 
 //=============================================================================
 
-class FileSegmentPage : public FunctionSegmentPage {
+class FileSegmentPage final : public FunctionSegmentPage {
   DVGui::FileField *m_fileFld;
   LineEdit *m_fieldIndexFld;
   LineEdit *m_measureFld;
@@ -704,7 +704,7 @@ public:
     }
     setLayout(mainLayout);
   }
-  void refresh() {
+  void refresh() override {
     TDoubleKeyframe kf;
     TDoubleParam *curve = getCurve();
     if (curve) kf       = curve->getKeyframeAt(getR0());
@@ -731,7 +731,7 @@ public:
     }
   }
 
-  void init(int segmentLength) {
+  void init(int segmentLength) override {
     TDoubleParam *curve = getCurve();
     if (!curve) return;
 
@@ -747,7 +747,7 @@ public:
     m_fieldIndexFld->setText("");
   }
 
-  void apply() {
+  void apply() override {
     TDoubleParam *curve = getCurve();
     if (!curve) return;
     int kIndex = getViewer()->getSegmentIndex();

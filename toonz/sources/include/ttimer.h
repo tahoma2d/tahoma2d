@@ -28,11 +28,11 @@ public:
 //-------------------------------------------------------------------
 
 template <class T>
-class TTimerAction : public TGenericTimerAction {
+class TTimerAction final : public TGenericTimerAction {
 public:
   typedef void (T::*Method)(TUINT64 tick);
   TTimerAction(T *target, Method method) : m_target(target), m_method(method) {}
-  void sendCommand(TUINT64 tick) { (m_target->*m_method)(tick); }
+  void sendCommand(TUINT64 tick) override { (m_target->*m_method)(tick); }
 
 private:
   T *m_target;

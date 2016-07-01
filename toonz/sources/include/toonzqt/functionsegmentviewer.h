@@ -33,7 +33,7 @@ class ExpressionField;
 
 //-----------------------------------------------------------------------------
 
-class FunctionSegmentViewer : public QFrame, public TParamObserver {
+class FunctionSegmentViewer final : public QFrame, public TParamObserver {
   Q_OBJECT
 
   TDoubleParam *m_curve;
@@ -75,7 +75,7 @@ public:
   void refresh();
 
   // overriden from TDoubleParamObserver
-  void onChange(const TParamChange &) { refresh(); }
+  void onChange(const TParamChange &) override { refresh(); }
 
   void setXsheetHandle(TXsheetHandle *xshHandle) { m_xshHandle = xshHandle; }
 
@@ -134,7 +134,7 @@ public slots:
 
 //-----------------------------------------------------------------------------
 
-class SpeedInOutSegmentPage : public FunctionSegmentPage {
+class SpeedInOutSegmentPage final : public FunctionSegmentPage {
   Q_OBJECT
 
   DVGui::LineEdit *m_speed0xFld;
@@ -147,11 +147,11 @@ class SpeedInOutSegmentPage : public FunctionSegmentPage {
 
 public:
   SpeedInOutSegmentPage(FunctionSegmentViewer *parent = 0);
-  void refresh();
-  void apply(){};
+  void refresh() override;
+  void apply() override{};
 
   void getGuiValues(TPointD &speedIn, TPointD &speedOut);
-  void init(int segmentLength);
+  void init(int segmentLength) override;
 
 public slots:
   void onFirstHandleXChanged();
@@ -164,7 +164,7 @@ public slots:
 
 //-----------------------------------------------------------------------------
 
-class EaseInOutSegmentPage : public FunctionSegmentPage {
+class EaseInOutSegmentPage final : public FunctionSegmentPage {
   Q_OBJECT
   DVGui::MeasuredDoubleLineEdit *m_ease0Fld, *m_ease1Fld;
   double m_fieldScale;
@@ -173,11 +173,11 @@ class EaseInOutSegmentPage : public FunctionSegmentPage {
 
 public:
   EaseInOutSegmentPage(bool percentage, FunctionSegmentViewer *parent = 0);
-  void refresh();
-  void apply() {}
+  void refresh() override;
+  void apply() override {}
 
   void getGuiValues(TPointD &easeIn, TPointD &easeOut);
-  void init(int segmentLength);
+  void init(int segmentLength) override;
 
 public slots:
   void onEase0Changed();
@@ -186,7 +186,7 @@ public slots:
 
 //-----------------------------------------------------------------------------
 
-class FunctionExpressionSegmentPage : public FunctionSegmentPage {
+class FunctionExpressionSegmentPage final : public FunctionSegmentPage {
   Q_OBJECT
 
   DVGui::ExpressionField *m_expressionFld;
@@ -194,18 +194,18 @@ class FunctionExpressionSegmentPage : public FunctionSegmentPage {
 
 public:
   FunctionExpressionSegmentPage(FunctionSegmentViewer *parent = 0);
-  void refresh();
-  void apply();
+  void refresh() override;
+  void apply() override;
 
   // return false if a circular reference is occured
   bool getGuiValues(std::string &expressionText, std::string &unitName);
 
-  void init(int segmentLength);
+  void init(int segmentLength) override;
 };
 
 //-----------------------------------------------------------------------------
 
-class SimilarShapeSegmentPage : public FunctionSegmentPage {
+class SimilarShapeSegmentPage final : public FunctionSegmentPage {
   Q_OBJECT
 
   DVGui::ExpressionField *m_expressionFld;
@@ -214,10 +214,10 @@ class SimilarShapeSegmentPage : public FunctionSegmentPage {
 public:
   SimilarShapeSegmentPage(FunctionSegmentViewer *parent = 0);
 
-  void refresh();
-  void apply();
+  void refresh() override;
+  void apply() override;
 
-  void init(int segmentLength);
+  void init(int segmentLength) override;
 
   void getGuiValues(std::string &expressionText, double &similarShapeOffset);
 };

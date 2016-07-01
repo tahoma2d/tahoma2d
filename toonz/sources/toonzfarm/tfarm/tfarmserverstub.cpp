@@ -11,14 +11,14 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 
-class TFarmServerStub::Imp : public TFarmExecutor {
+class TFarmServerStub::Imp final : public TFarmExecutor {
 public:
   Imp(TFarmServer *server, int port) : TFarmExecutor(port), m_server(server) {
     assert(m_server);
   }
 
   // TFarmExecutor overrides
-  QString execute(const std::vector<QString> &argv);
+  QString execute(const std::vector<QString> &argv) override;
 
   TFarmServer *m_server;
 };

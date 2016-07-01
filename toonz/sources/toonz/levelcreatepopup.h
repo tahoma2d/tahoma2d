@@ -17,7 +17,7 @@ class QComboBox;
 // LevelCreatePopup
 //-----------------------------------------------------------------------------
 
-class LevelCreatePopup : public DVGui::Dialog {
+class LevelCreatePopup final : public DVGui::Dialog {
   Q_OBJECT
 
   DVGui::LineEdit *m_nameFld;
@@ -46,8 +46,8 @@ public:
 protected:
   // set m_pathFld to the default path
   void updatePath();
-
-  void showEvent(QShowEvent *);
+  void nextName();
+  void showEvent(QShowEvent *) override;
 
 public slots:
   void onLevelTypeChanged(const QString &text);

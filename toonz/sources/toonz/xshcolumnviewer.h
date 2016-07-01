@@ -23,7 +23,7 @@ class DragTool;
 // MotionPathMenu
 //-----------------------------------------------------------------------------
 
-class MotionPathMenu : public QWidget {
+class MotionPathMenu final : public QWidget {
   Q_OBJECT
 
   QRect m_mDeleteRect;
@@ -41,11 +41,11 @@ public:
   ~MotionPathMenu();
 
 protected:
-  void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
-  void leaveEvent(QEvent *event);
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void leaveEvent(QEvent *event) override;
 };
 
 //=============================================================================
@@ -71,9 +71,9 @@ public:
   virtual void refresh(){};
 
 protected:
-  void mouseMoveEvent(QMouseEvent *event);
-  void focusOutEvent(QFocusEvent *e);
-  void focusInEvent(QFocusEvent *e) {}
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void focusOutEvent(QFocusEvent *e) override;
+  void focusInEvent(QFocusEvent *e) override {}
   void selectCurrent(const QString &text);
 
 protected slots:
@@ -84,41 +84,41 @@ protected slots:
 // ChangeObjectParent
 //-----------------------------------------------------------------------------
 
-class ChangeObjectParent : public ChangeObjectWidget {
+class ChangeObjectParent final : public ChangeObjectWidget {
   Q_OBJECT
 
 public:
   ChangeObjectParent(QWidget *parent = 0);
   ~ChangeObjectParent();
 
-  void refresh();
+  void refresh() override;
 
 protected slots:
-  void onTextChanged(const QString &);
+  void onTextChanged(const QString &) override;
 };
 
 //=============================================================================
 // ChangeObjectHandle
 //-----------------------------------------------------------------------------
 
-class ChangeObjectHandle : public ChangeObjectWidget {
+class ChangeObjectHandle final : public ChangeObjectWidget {
   Q_OBJECT
 
 public:
   ChangeObjectHandle(QWidget *parent = 0);
   ~ChangeObjectHandle();
 
-  void refresh();
+  void refresh() override;
 
 protected slots:
-  void onTextChanged(const QString &);
+  void onTextChanged(const QString &) override;
 };
 
 //=============================================================================
 // RenameColumnField
 //-----------------------------------------------------------------------------
 
-class RenameColumnField : public QLineEdit {
+class RenameColumnField final : public QLineEdit {
   Q_OBJECT
 
   int m_col;
@@ -136,7 +136,7 @@ public:
   void show(QPoint pos, int col);
 
 protected:
-  void focusOutEvent(QFocusEvent *);
+  void focusOutEvent(QFocusEvent *) override;
 
 protected slots:
   void renameColumn();
@@ -146,7 +146,7 @@ protected slots:
 // ColumnArea
 //-----------------------------------------------------------------------------
 
-class ColumnTransparencyPopup : public QWidget {
+class ColumnTransparencyPopup final : public QWidget {
   Q_OBJECT
 
   QSlider *m_slider;
@@ -159,7 +159,7 @@ public:
 
 protected:
   // void mouseMoveEvent ( QMouseEvent * e );
-  void mouseReleaseEvent(QMouseEvent *e);
+  void mouseReleaseEvent(QMouseEvent *e) override;
 
 protected slots:
   void onSliderReleased();
@@ -169,7 +169,7 @@ protected slots:
 };
 
 //! La classe si occupa della visualizzazione dell'area che gestisce le colonne.
-class ColumnArea : public QWidget {
+class ColumnArea final : public QWidget {
   Q_OBJECT
 
   enum { ToggleTransparency = 1, TogglePreviewVisible, ToggleLock };
@@ -227,14 +227,14 @@ public:
 protected:
   void select(int columnIndex, QMouseEvent *event);
 
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *event);
-  void contextMenuEvent(QContextMenuEvent *event);
-  bool event(QEvent *event);
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  bool event(QEvent *event) override;
 
 protected slots:
   void onSubSampling(QAction *);

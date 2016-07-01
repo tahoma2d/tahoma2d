@@ -23,7 +23,7 @@ class SchematicPort;
 //
 //---------------------------------------------------------
 
-class StageObjectSelection : public QObject, public TSelection {
+class StageObjectSelection final : public QObject, public TSelection {
   Q_OBJECT
 
   QList<QPair<TStageObjectId, TStageObjectId>> m_selectedLinks;
@@ -40,15 +40,15 @@ public:
   StageObjectSelection(const StageObjectSelection &src);
   ~StageObjectSelection();
 
-  void enableCommands();
+  void enableCommands() override;
 
-  bool isEmpty() const {
+  bool isEmpty() const override {
     return m_selectedObjects.empty() && m_selectedLinks.empty() &&
            m_selectedSplines.empty();
   }
   void setPastePosition(const TPointD &pos) { m_pastePosition = pos; };
 
-  void selectNone() {
+  void selectNone() override {
     m_selectedObjects.clear();
     m_selectedLinks.clear();
     m_selectedSplines.clear();

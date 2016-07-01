@@ -111,21 +111,21 @@ inline TRectD getImageBoundsD(const TImageP &img) {
 
 //-----------------------------------------------------------------------------
 
-class FlipZoomer : public ImageUtils::ShortcutZoomer {
+class FlipZoomer final : public ImageUtils::ShortcutZoomer {
 public:
   FlipZoomer(ImageViewer *parent) : ShortcutZoomer(parent) {}
 
-  bool zoom(bool zoomin, bool resetZoom) {
+  bool zoom(bool zoomin, bool resetZoom) override {
     static_cast<ImageViewer *>(getWidget())->zoomQt(zoomin, resetZoom);
     return true;
   }
 
-  bool fit() {
+  bool fit() override {
     static_cast<ImageViewer *>(getWidget())->fitView();
     return true;
   }
 
-  bool toggleFullScreen(bool quit) {
+  bool toggleFullScreen(bool quit) override {
     if (ImageUtils::FullScreenWidget *fsWidget =
             dynamic_cast<ImageUtils::FullScreenWidget *>(
                 getWidget()->parentWidget()))
@@ -1160,11 +1160,11 @@ void ImageViewer::keyPressEvent(QKeyEvent *event) {
 //-----------------------------------------------------------------------------
 /*! load image from history
 */
-class LoadRecentFlipbookImagesCommandHandler : public MenuItemHandler {
+class LoadRecentFlipbookImagesCommandHandler final : public MenuItemHandler {
 public:
   LoadRecentFlipbookImagesCommandHandler()
       : MenuItemHandler(MI_LoadRecentImage) {}
-  void execute() {
+  void execute() override {
     QAction *act = CommandManager::instance()->getAction(MI_LoadRecentImage);
 
     /*--- 右クリックで呼ばれないとここにWidgetが入らない ---*/
@@ -1188,11 +1188,11 @@ public:
 //-----------------------------------------------------------------------------
 /*! clear the history
 */
-class ClearRecentFlipbookImagesCommandHandler : public MenuItemHandler {
+class ClearRecentFlipbookImagesCommandHandler final : public MenuItemHandler {
 public:
   ClearRecentFlipbookImagesCommandHandler()
       : MenuItemHandler(MI_ClearRecentImage) {}
-  void execute() {
+  void execute() override {
     RecentFiles::instance()->clearRecentFilesList(RecentFiles::Flip);
   }
 } clearRecentFlipbookImagesCommandHandler;

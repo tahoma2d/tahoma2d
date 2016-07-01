@@ -227,7 +227,7 @@ void tcomposerRunOutOfContMemHandler(unsigned long size) {
 
 //==============================================================================================
 
-class MyMovieRenderListener : public MovieRenderer::Listener {
+class MyMovieRenderListener final : public MovieRenderer::Listener {
 public:
   MyMovieRenderListener(const TFilePath &fp, int frameCount,
                         QWaitCondition &renderCompleted, bool stereo)
@@ -238,9 +238,9 @@ public:
       , m_renderCompleted(renderCompleted)
       , m_stereo(stereo) {}
 
-  bool onFrameCompleted(int frame);
-  bool onFrameFailed(int frame, TException &e);
-  void onSequenceCompleted(const TFilePath &fp);
+  bool onFrameCompleted(int frame) override;
+  bool onFrameFailed(int frame, TException &e) override;
+  void onSequenceCompleted(const TFilePath &fp) override;
 
   TFilePath m_fp;
   int m_frameCount;
@@ -319,7 +319,7 @@ void MyMovieRenderListener::onSequenceCompleted(const TFilePath &fp) {
 
 //==============================================================================================
 
-class MyMultimediaRenderListener : public MultimediaRenderer::Listener {
+class MyMultimediaRenderListener final : public MultimediaRenderer::Listener {
 public:
   TFilePath m_fp;
   int m_frameCount;
@@ -332,10 +332,10 @@ public:
       , m_frameCompletedCount(0)
       , m_frameFailedCount(0) {}
 
-  bool onFrameCompleted(int frame, int column);
-  bool onFrameFailed(int frame, int column, TException &e);
-  void onSequenceCompleted(int column) {}
-  void onRenderCompleted() {}
+  bool onFrameCompleted(int frame, int column) override;
+  bool onFrameFailed(int frame, int column, TException &e) override;
+  void onSequenceCompleted(int column) override {}
+  void onRenderCompleted() override {}
 };
 
 //==================================================================================

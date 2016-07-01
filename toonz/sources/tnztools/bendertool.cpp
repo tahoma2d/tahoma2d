@@ -108,7 +108,7 @@ void clearPointerMap(std::map<TStroke *, std::vector<int> *> &corners) {
 // Bender Tool
 //-----------------------------------------------------------------------------
 
-class BenderTool : public TTool {
+class BenderTool final : public TTool {
 private:
   TUndo *m_undo;
   bool m_atLeastOneIsChanged;
@@ -170,15 +170,15 @@ public:
 
   virtual ~BenderTool();
 
-  ToolType getToolType() const { return TTool::LevelWriteTool; }
+  ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
-  void draw();
-  void leftButtonDown(const TPointD &, const TMouseEvent &);
-  void leftButtonDrag(const TPointD &, const TMouseEvent &);
-  void leftButtonUp(const TPointD &, const TMouseEvent &);
-  void onEnter();
+  void draw() override;
+  void leftButtonDown(const TPointD &, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &, const TMouseEvent &) override;
+  void onEnter() override;
 
-  void onActivate() {
+  void onActivate() override {
     m_buttonDownCounter = 1;
     m_prevPoint         = TConsts::napd;
     m_benderSegment.setP0(TConsts::napd);
@@ -188,7 +188,7 @@ public:
     m_hitStrokeCorners.clear();
   }
 
-  int getCursorId() const { return m_cursor; }
+  int getCursorId() const override { return m_cursor; }
 } BenderTool;
 
 //-----------------------------------------------------------------------------

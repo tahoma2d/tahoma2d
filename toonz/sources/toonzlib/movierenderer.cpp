@@ -96,7 +96,7 @@ QString getPreviewName(unsigned long renderSessionId) {
 //    MovieRenderer::Imp  definition
 //**************************************************************************
 
-class MovieRenderer::Imp : public TRenderPort, public TSmartObject {
+class MovieRenderer::Imp final : public TRenderPort, public TSmartObject {
 public:
   ToonzScene *m_scene;
   TRenderer m_renderer;
@@ -138,11 +138,11 @@ public:
 
   // TRenderPort methods
 
-  void onRenderRasterCompleted(const RenderData &renderData);
-  void onRenderFailure(const RenderData &renderData, TException &e);
+  void onRenderRasterCompleted(const RenderData &renderData) override;
+  void onRenderFailure(const RenderData &renderData, TException &e) override;
 
   /*-- キャンセル時にはm_overallRenderedRegionを更新しない --*/
-  virtual void onRenderFinished(bool isCanceled = false);
+  void onRenderFinished(bool isCanceled = false) override;
 
   void doRenderRasterCompleted(const RenderData &renderData);
   void doPreviewRasterCompleted(const RenderData &renderData);

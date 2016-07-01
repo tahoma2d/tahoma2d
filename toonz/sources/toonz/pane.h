@@ -35,12 +35,12 @@ public slots:
   void setPressed(bool pressed);  // n.b. doesn't emit signals. calls update()
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 
-  void mouseMoveEvent(QMouseEvent *event);
-  void enterEvent(QEvent *);
-  void leaveEvent(QEvent *);
-  virtual void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void enterEvent(QEvent *) override;
+  void leaveEvent(QEvent *) override;
+  void mousePressEvent(QMouseEvent *event) override;
 
 signals:
   //! emitted when the user press the button
@@ -53,7 +53,7 @@ signals:
  * context menu
 */
 
-class TPanelTitleBarButtonForSafeArea : public TPanelTitleBarButton {
+class TPanelTitleBarButtonForSafeArea final : public TPanelTitleBarButton {
   Q_OBJECT
 public:
   TPanelTitleBarButtonForSafeArea(QWidget *parent,
@@ -65,8 +65,8 @@ public:
   void getSafeAreaNameList(QList<QString> &nameList);
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event);
-  void mousePressEvent(QMouseEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 protected slots:
   void onSetSafeArea();
 };
@@ -74,7 +74,7 @@ protected slots:
 //-----------------------------------------------------------------------------
 
 //! a buttonset can group different TPanelTitleBarButton
-class TPanelTitleBarButtonSet : public QObject {
+class TPanelTitleBarButtonSet final : public QObject {
   Q_OBJECT
   std::vector<TPanelTitleBarButton *> m_buttons;
 
@@ -92,7 +92,7 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class TPanelTitleBar : public QFrame {
+class TPanelTitleBar final : public QFrame {
   Q_OBJECT
 
   bool m_isActive;
@@ -103,8 +103,8 @@ public:
   TPanelTitleBar(QWidget *parent                      = 0,
                  TDockWidget::Orientation orientation = TDockWidget::vertical);
 
-  QSize sizeHint() const { return minimumSizeHint(); }
-  QSize minimumSizeHint() const;
+  QSize sizeHint() const override { return minimumSizeHint(); }
+  QSize minimumSizeHint() const override;
 
   void setIsActive(bool value);
   bool isActive() { return m_isActive; }
@@ -113,15 +113,15 @@ public:
   void add(const QPoint &pos, QWidget *widget);
 
 protected:
-  void resizeEvent(QResizeEvent *e);
+  void resizeEvent(QResizeEvent *e) override;
 
   // To Disable the default context Menu
-  void contextMenuEvent(QContextMenuEvent *) {}
+  void contextMenuEvent(QContextMenuEvent *) override {}
 
-  void paintEvent(QPaintEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseDoubleClickEvent(QMouseEvent *);
+  void paintEvent(QPaintEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *) override;
 
 signals:
 
@@ -198,11 +198,11 @@ public:
   };
 
 protected:
-  void paintEvent(QPaintEvent *);
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
-  void enterEvent(QEvent *);
-  void leaveEvent(QEvent *);
+  void paintEvent(QPaintEvent *) override;
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
+  void enterEvent(QEvent *) override;
+  void leaveEvent(QEvent *) override;
 
   virtual bool isActivatableOnEnter() { return false; }
 

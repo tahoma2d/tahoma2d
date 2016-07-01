@@ -55,21 +55,21 @@ class QHideEvent;
 /*!
   \brief    The popup dealing with level exports in Toonz.
 */
-class ExportLevelPopup : public FileBrowserPopup {
+class ExportLevelPopup final : public FileBrowserPopup {
   Q_OBJECT
 
 public:
   ExportLevelPopup();
   ~ExportLevelPopup();
 
-  bool execute();
+  bool execute() override;
 
   TPropertyGroup *getFormatProperties(const std::string &ext);
   IoCmd::ExportLevelOptions getOptions(const std::string &ext);
 
 protected:
-  void showEvent(QShowEvent *se);
-  void hideEvent(QHideEvent *he);
+  void showEvent(QShowEvent *se) override;
+  void hideEvent(QHideEvent *he) override;
 
 private:
   class ExportOptions;
@@ -96,7 +96,7 @@ private slots:
 
   void onOptionsClicked();
   void onRetas(int);
-  void initFolder();
+  void initFolder() override;
   void updateOnSelection();
   void onformatChanged(const QString &);
   void checkAlpha();
@@ -105,7 +105,7 @@ private slots:
 
 //-----------------------------------------------------------------------------
 
-class ExportLevelPopup::ExportOptions : public QFrame {
+class ExportLevelPopup::ExportOptions final : public QFrame {
   Q_OBJECT
 
 public:
@@ -120,7 +120,7 @@ signals:
   void optionsChanged();
 
 protected:
-  void showEvent(QShowEvent *se);
+  void showEvent(QShowEvent *se) override;
 
   void updateCameraDefault();
   void updateDpi();

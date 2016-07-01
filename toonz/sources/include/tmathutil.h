@@ -28,13 +28,14 @@ enum TMathError { INFINITE_SOLUTIONS = -1 };
 
 //-----------------------------------------------------------------------------
 
-class DVAPI TMathException : public TException {
+class DVAPI TMathException final : public TException {
   TString m_msg;
 
 public:
   TMathException(std::string msg);
   virtual ~TMathException() {}
-  virtual TString getMessage() const { return m_msg; }
+
+  TString getMessage() const override { return m_msg; }
 };
 
 //-----------------------------------------------------------------------------

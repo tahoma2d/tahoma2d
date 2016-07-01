@@ -35,7 +35,7 @@ public:
 // MagpieFileImportPopup
 //-----------------------------------------------------------------------------
 
-class MagpieFileImportPopup : public DVGui::Dialog {
+class MagpieFileImportPopup final : public DVGui::Dialog {
   Q_OBJECT
 
   MagpieInfo *m_info;
@@ -55,8 +55,8 @@ public:
   void setFilePath(TFilePath path);
 
 protected:
-  void showEvent(QShowEvent *);
-  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
   void onLevelPathChanged();

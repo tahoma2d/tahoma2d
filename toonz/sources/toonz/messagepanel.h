@@ -16,7 +16,7 @@ class MainWindow;
 // MessagePanel
 //-----------------------------------------------------------------------------
 
-class MessagePanel : public TPanel {
+class MessagePanel final : public TPanel {
   friend class MainWindow;
 
   CenteredTextWidget *m_messageBox;
@@ -34,8 +34,8 @@ private:
   // These methods are used to remember special panel infos
   // when a MessagePanel substitutes a panel due to license
   // limitations.
-  void setViewType(int viewType);
-  int getViewType();
+  void setViewType(int viewType) override;
+  int getViewType() override;
 
   void setPoolIndex(int poolIndex);
   int getPoolIndex() const;
@@ -45,7 +45,7 @@ private:
 // MessagePanel
 //-----------------------------------------------------------------------------
 
-class LogPanel : public TPanel, public TLogger::Listener {
+class LogPanel final : public TPanel, public TLogger::Listener {
   Q_OBJECT
 
   QTextEdit *m_messageBox;
@@ -61,7 +61,7 @@ public:
 #endif
   ~LogPanel();
 
-  void onLogChanged();
+  void onLogChanged() override;
 
 public slots:
   void clear();

@@ -15,7 +15,7 @@ class TXshColumn;
 // TCellKeyframeData
 //-----------------------------------------------------------------------------
 
-class TCellKeyframeData : public DvMimeData {
+class TCellKeyframeData final : public DvMimeData {
   TCellData *m_cellData;
   TKeyframeData *m_keyframeData;
 
@@ -29,7 +29,9 @@ public:
   void setKeyframeData(TKeyframeData *data) { m_keyframeData = data; }
   TKeyframeData *getKeyframeData() const { return m_keyframeData; }
 
-  TCellKeyframeData *clone() const { return new TCellKeyframeData(this); }
+  TCellKeyframeData *clone() const override {
+    return new TCellKeyframeData(this);
+  }
 };
 
 #endif

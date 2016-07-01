@@ -25,7 +25,7 @@
  \include rasterImage_ex.cpp
 */
 
-class DVAPI TRasterImage : public TImage {
+class DVAPI TRasterImage final : public TImage {
   TRasterP m_mainRaster, m_patchRaster, m_iconRaster;
 
   //! dpi value for x axis
@@ -61,7 +61,7 @@ private:
 
 public:
   //! Return the image type
-  TImage::Type getType() const { return TImage::RASTER; }
+  TImage::Type getType() const override { return TImage::RASTER; }
 
   // image info
   //! Return the name of the image
@@ -89,7 +89,7 @@ public:
   void setSavebox(const TRect &rect) { m_savebox = rect; }
 
   //! Return the bbox of the image
-  TRectD getBBox() const { return convert(m_savebox); }
+  TRectD getBBox() const override { return convert(m_savebox); }
 
   //! Return raster image offset \b m_offset
   TPoint getOffset() const { return m_offset; }
@@ -102,14 +102,14 @@ public:
   // void sethPos(double hPos) {m_hPos= hPos;}
 
   //! Return a clone of image
-  TImage *cloneImage() const;
+  TImage *cloneImage() const override;
 
   //! Return \b TRasterP
   const TRasterP &getRaster() const { return m_mainRaster; }
   //! Return \b TRasterP
   TRasterP &getRaster() { return m_mainRaster; }
 
-  TRasterP raster() const { return m_mainRaster; }
+  TRasterP raster() const override { return m_mainRaster; }
 
   //! Set the \b TRasterP \b raster
   void setRaster(const TRasterP &raster);
@@ -144,7 +144,8 @@ template class DVAPI TSmartPointerT<TRasterImage>;
 template class DVAPI TDerivedSmartPointerT<TRasterImage, TImage>;
 #endif
 
-class DVAPI TRasterImageP : public TDerivedSmartPointerT<TRasterImage, TImage> {
+class DVAPI TRasterImageP final
+    : public TDerivedSmartPointerT<TRasterImage, TImage> {
 public:
   TRasterImageP() {}
   TRasterImageP(TRasterImage *image) : DerivedSmartPointer(image) {}

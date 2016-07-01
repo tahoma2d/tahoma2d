@@ -28,7 +28,7 @@ class TFilePath;
 // Previewer
 //-----------------------------------------------------------------------------
 
-class Previewer : public QObject, public TFxObserver {
+class Previewer final : public QObject, public TFxObserver {
   Q_OBJECT
 
   class Imp;
@@ -77,7 +77,7 @@ public:
   bool isActive() const;
   bool isBusy() const;
 
-  void onChange(const TFxChange &change);
+  void onChange(const TFxChange &change) override;
 
   void onImageChange(TXshLevel *xl, const TFrameId &fid);
   void onLevelChange(TXshLevel *xl);

@@ -1759,7 +1759,7 @@ error:
 //=------------------------------------------------------------------------------------------------------------------------------
 //=------------------------------------------------------------------------------------------------------------------------------
 
-class TImageWriterSvg : public TImageWriter {
+class TImageWriterSvg final : public TImageWriter {
 public:
   TImageWriterSvg(const TFilePath &, TPropertyGroup *);
   ~TImageWriterSvg() {}
@@ -1771,17 +1771,18 @@ private:
   TImageWriterSvg &operator=(const TImageWriterSvg &src);
 
 public:
-  void save(const TImageP &);
+  void save(const TImageP &) override;
 };
 
 //-----------------------------------------------------------------------------
-class TImageReaderSvg : public TImageReader {
+class TImageReaderSvg final : public TImageReader {
   TLevelP m_level;
 
 public:
   TImageReaderSvg(const TFilePath &path, TLevelP &level)
       : TImageReader(path), m_level(level) {}
-  virtual TImageP load();
+
+  TImageP load() override;
 };
 
 TImageWriterP TLevelWriterSvg::getFrameWriter(TFrameId fid) {

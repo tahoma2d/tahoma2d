@@ -566,9 +566,9 @@ void put_sl_ch_(std::vector<double> &result, const int hh, const int ww,
 }
 namespace {  //--------------------------------------------------------
 template <class T>
-class one_thread_
+class one_thread_ final
     : public igs::resource::thread_execute_interface { /* thread単位の実行設定
-                                                          */
+                                                    */
 public:
   one_thread_() {}
   void setup(T in_image, T out_image, double *ref_thresh
@@ -615,7 +615,7 @@ public:
                      this->pixe_starts_, this->thre_starts_, this->result_,
                      this->alpha_ref_);
   }
-  void run(void) {
+  void run(void) override {
     bool rgb_rendering_sw   = true;
     bool alpha_rendering_sw = this->alpha_rendering_sw_;
     if (this->pixe_tracks_.size() <= 1) {

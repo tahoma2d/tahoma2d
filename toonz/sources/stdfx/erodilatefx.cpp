@@ -14,7 +14,7 @@
 //    ErodeDilate Fx
 //****************************************************************************
 
-class ErodeDilateFx : public TStandardRasterFx {
+class ErodeDilateFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(ErodeDilateFx)
 
   TRasterFxPort m_input;
@@ -33,14 +33,16 @@ public:
     bindParam(this, "radius", m_radius);
   }
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info);
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &ri);
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &ri) override;
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
   int getMemoryRequirement(const TRectD &rect, double frame,
-                           const TRenderSettings &info);
+                           const TRenderSettings &info) override;
 
-  bool canHandle(const TRenderSettings &info, double frame) {
+  bool canHandle(const TRenderSettings &info, double frame) override {
     return isAlmostIsotropic(info.m_affine);
   }
 };

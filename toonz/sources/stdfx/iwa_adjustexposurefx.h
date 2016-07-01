@@ -15,7 +15,7 @@ struct float4 {
   float x, y, z, w;
 };
 
-class Iwa_AdjustExposureFx : public TStandardRasterFx {
+class Iwa_AdjustExposureFx final : public TStandardRasterFx {
   FX_PLUGIN_DECLARATION(Iwa_AdjustExposureFx)
 
 protected:
@@ -34,14 +34,16 @@ protected:
 public:
   Iwa_AdjustExposureFx();
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &settings);
+  void doCompute(TTile &tile, double frame,
+                 const TRenderSettings &settings) override;
 
   void doCompute_CPU(TTile &tile, double frame, const TRenderSettings &settings,
                      TDimensionI &dim, float4 *tile_host);
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info);
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
 
-  bool canHandle(const TRenderSettings &info, double frame);
+  bool canHandle(const TRenderSettings &info, double frame) override;
 };
 
 #endif

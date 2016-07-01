@@ -30,14 +30,14 @@ struct _RASTER;
 //    TRopException  definition
 //********************************************************************************
 
-class DVAPI TRopException : public TException {
+class DVAPI TRopException final : public TException {
   std::string message;
 
 public:
   TRopException(const std::string &s) : message(s) {}
   ~TRopException() {}
 
-  TString getMessage() const;
+  TString getMessage() const override;
 };
 
 //********************************************************************************

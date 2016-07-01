@@ -157,7 +157,7 @@ inline void ceilRect(TRectD &rect) {
 //    Shader Fx  declaration
 //****************************************************************************
 
-class ShaderFx : public TStandardZeraryFx {
+class ShaderFx final : public TStandardZeraryFx {
   FX_PLUGIN_DECLARATION(ShaderFx)
 
   const ShaderInterface *m_shaderInterface;  //!< Shader fx 'description'.
@@ -181,12 +181,14 @@ public:
   // void setShaderInterface(const ShaderInterface& shaderInterface);
   void initialize();
 
-  void getParamUIs(TParamUIConcept *&params, int &length);
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info);
-  bool canHandle(const TRenderSettings &info, double frame);
+  void getParamUIs(TParamUIConcept *&params, int &length) override;
+  bool doGetBBox(double frame, TRectD &bBox,
+                 const TRenderSettings &info) override;
+  bool canHandle(const TRenderSettings &info, double frame) override;
 
-  void doDryCompute(TRectD &rect, double frame, const TRenderSettings &ri);
-  void doCompute(TTile &tile, double frame, const TRenderSettings &ri);
+  void doDryCompute(TRectD &rect, double frame,
+                    const TRenderSettings &ri) override;
+  void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
 private:
   QGLShaderProgram *touchShaderProgram(const ShaderInterface::ShaderData &sd,
@@ -209,7 +211,7 @@ private:
 //    ShaderFxDeclaration  definition
 //****************************************************************************
 
-class ShaderFxDeclaration : public TFxDeclaration {
+class ShaderFxDeclaration final : public TFxDeclaration {
   ShaderInterface m_shaderInterface;
 
 public:
@@ -218,14 +220,14 @@ public:
             TFxInfo(shaderInterface.mainShader().m_name.toStdString(), false))
       , m_shaderInterface(shaderInterface) {}
 
-  TPersist *create() const { return new ShaderFx(&m_shaderInterface); }
+  TPersist *create() const override { return new ShaderFx(&m_shaderInterface); }
 };
 
 //****************************************************************************
 //    ShadingContextManager  definition
 //****************************************************************************
 
-class ShadingContextManager : public QObject {
+class ShadingContextManager final : public QObject {
   mutable QMutex m_mutex;
 
   ShadingContext m_shadingContext;
@@ -321,25 +323,27 @@ template class DV_EXPORT_API TFxDeclarationT<ShaderFx>;
 //    ShadingContextManagerDelegate  definition
 //****************************************************************************
 
-class MessageCreateContext : public TThread::Message {
+class MessageCreateContext final : public TThread::Message {
   ShadingContextManager *man;
 
 public:
   MessageCreateContext(ShadingContextManager *ctx) : man(ctx) {}
 
-  void onDeliver() { man->onRenderInstanceEnd(); }
+  void onDeliver() override { man->onRenderInstanceEnd(); }
 
-  TThread::Message *clone() const { return new MessageCreateContext(*this); }
+  TThread::Message *clone() const override {
+    return new MessageCreateContext(*this);
+  }
 };
 
-class SCMDelegate : public TRenderResourceManager {
+class SCMDelegate final : public TRenderResourceManager {
   T_RENDER_RESOURCE_MANAGER
 
-  void onRenderInstanceStart(unsigned long id) {
+  void onRenderInstanceStart(unsigned long id) override {
     ShadingContextManager::instance()->onRenderInstanceStart();
   }
 
-  void onRenderInstanceEnd(unsigned long id) {
+  void onRenderInstanceEnd(unsigned long id) override {
     if (!TThread::isMainThread()) {
       /* tofflinegl のときとは逆で main thread に dispatch する */
       MessageCreateContext(ShadingContextManager::instance()).sendBlocking();
@@ -351,7 +355,7 @@ class SCMDelegate : public TRenderResourceManager {
 
 //-------------------------------------------------------------------
 
-class SCMDelegateGenerator : public TRenderResourceManagerGenerator {
+class SCMDelegateGenerator final : public TRenderResourceManagerGenerator {
 public:
   SCMDelegateGenerator() : TRenderResourceManagerGenerator(false) {
     /*
@@ -361,14 +365,14 @@ QCoreApplication itself has been created. The easiest way to do so
 is scheduling a slot to be executed as soon as event processing starts.
 */
 
-    struct InstanceSCM : public TFunctorInvoker::BaseFunctor {
-      void operator()() { ShadingContextManager::instance(); }
+    struct InstanceSCM final : public TFunctorInvoker::BaseFunctor {
+      void operator()() override { ShadingContextManager::instance(); }
     };
 
     TFunctorInvoker::instance()->invokeQueued(new InstanceSCM);
   }
 
-  TRenderResourceManager *operator()() { return new SCMDelegate; }
+  TRenderResourceManager *operator()() override { return new SCMDelegate; }
 };
 
 MANAGER_FILESCOPE_DECLARATION(SCMDelegate, SCMDelegateGenerator)
