@@ -1,20 +1,14 @@
 language: cpp
 sudo: required
 dist: trusty
-before_install:
-    - sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty
-    - sudo apt-get update
 install:
-    - sudo apt-get install -y liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libsdl2-dev libglew-dev freeglut3-dev qt55script libsuperlu3-dev libpng-dev qt55svg qt55tools wget libusb-1.0-0-dev libboost-all-dev liblzma-dev
-    # someone forgot to include liblz4.pc with the package, use the version from xenial, as it only depends on libc
-    - wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-1_0.0~r131-2ubuntu2_amd64.deb -O liblz4.deb
-    - wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-dev_0.0~r131-2ubuntu2_amd64.deb -O liblz4-dev.deb
-    - sudo dpkg -i liblz4.deb liblz4-dev.deb
+    - if [[ $TRAVIS_OS_NAME == "osx" ]];   then bash ci-scripts/osx/travis-install.sh; fi
+    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then bash ci-scripts/linux/travis-install.sh; fi
 script:
-    - pushd thirdparty/tiff-4.0.3
-    - CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --disable-jbig && make
-    - popd
-    - cd toonz && mkdir build && cd build
-    - source /opt/qt55/bin/qt55-env.sh
-    - cmake ../sources
-    - make -j 2
+    - if [[ $TRAVIS_OS_NAME == "osx" ]];   then bash ci-scripts/osx/travis-build.sh; fi
+    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then bash ci-scripts/linux/travis-build.sh; fi
+
+matrix:
+    include:
+        - os: linux
+        - os: osx
