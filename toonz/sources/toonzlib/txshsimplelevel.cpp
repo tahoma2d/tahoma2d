@@ -382,7 +382,7 @@ void TXshSimpleLevel::setPath(const TFilePath &fp, bool keepFrames) {
     } catch (...) {
     }
   }
-
+  
   if (getType() != PLI_XSHLEVEL) {
     if (!m_frames.empty()) {
       std::string imageId = getImageId(getFirstFid());
@@ -396,8 +396,8 @@ void TXshSimpleLevel::setPath(const TFilePath &fp, bool keepFrames) {
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
 		if (Preferences::instance()->getUnits() == "pixel") {
-			imageDpi.x = 53.3333;
-			imageDpi.y = 53.3333;
+			imageDpi.x = Stage::inch;
+			imageDpi.y = Stage::inch;
 		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);
@@ -1179,9 +1179,10 @@ void TXshSimpleLevel::load() {
         imageRes.ly = imageInfo->m_ly;
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
+		std::string un = Preferences::instance()->getUnits().toStdString();
 		if (Preferences::instance()->getUnits() == "pixel") {
-			imageDpi.x = 53.3333;
-			imageDpi.y = 53.3333;
+			imageDpi.x = Stage::inch;
+			imageDpi.y = Stage::inch;
 		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);
@@ -1291,8 +1292,8 @@ void TXshSimpleLevel::load(const std::vector<TFrameId> &fIds) {
         imageDpi.x  = imageInfo->m_dpix;
         imageDpi.y  = imageInfo->m_dpiy;
 		if (Preferences::instance()->getUnits() == "pixel") {
-			imageDpi.x = 53.3333;
-			imageDpi.y = 53.3333;
+			imageDpi.x = Stage::inch;
+			imageDpi.y = Stage::inch;
 		}
         m_properties->setImageDpi(imageDpi);
         m_properties->setImageRes(imageRes);

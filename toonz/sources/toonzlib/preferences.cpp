@@ -208,7 +208,8 @@ bool Preferences::LevelFormat::matches(const TFilePath &fp) const {
 //**********************************************************************************
 
 Preferences::Preferences()
-    : m_units("mm")
+	: m_pixelsOnly(false)
+	, m_units("mm")
     , m_cameraUnits("inch")
     , m_currentRoomChoice("Default")
     , m_scanLevelType("tif")
@@ -373,9 +374,14 @@ Preferences::Preferences()
   setUndoMemorySize(m_undoMemorySize);
   m_blankColor = TPixel32(r, g, b);
 
-  getValue(*m_settings, "pixelsOnly", m_pixelsOnly);
+  
   
   //for Pixels only 
+  
+  getValue(*m_settings, "pixelsOnly", m_pixelsOnly); //doesn't work for some reason.
+  QString pos = m_settings->value("pixelsOnly").toString();
+  if (pos == "true") m_pixelsOnly = true;
+  
   QString units;
   units                    = m_settings->value("oldUnits", m_units).toString();
   m_oldUnits = units;

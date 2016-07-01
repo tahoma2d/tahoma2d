@@ -216,14 +216,15 @@ Preferences::LevelFormat PreferencesPopup::FormatProperties::levelFormat()
 void PreferencesPopup::onPixelsOnlyChanged(int index) {
 	bool enabled = index == Qt::Checked;
 	if (enabled) {
-		m_pref->setDefLevelDpi(53.3333);
+		
+		m_pref->setDefLevelDpi(120);
 		m_pref->setPixelsOnly(true);
 		TCamera* camera;
 		camera = TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
 		TDimension camRes = camera->getRes();
 		TDimensionD camSize;
-		camSize.lx = camRes.lx / 53.3333;
-		camSize.ly = camRes.ly / 53.3333;
+		camSize.lx = camRes.lx / 120;
+		camSize.ly = camRes.ly / 120;
 		camera->setSize(camSize);
 		m_pref->storeOldUnits();
 		if (m_unitOm->currentIndex() != 4)
@@ -883,10 +884,7 @@ PreferencesPopup::PreferencesPopup()
 	  new CheckBox(tr("All imported images will use the same DPI"), this);
   m_unitOm         = new QComboBox(this);
   m_cameraUnitOm   = new QComboBox(this);
-  if (m_pref->getPixelsOnly()){
-	  m_unitOm->setDisabled(true);
-	  m_cameraUnitOm->setDisabled(true);
-  }
+
   // Choose between standard and Studio Ghibli rooms
   QComboBox *roomChoice = new QComboBox(this);
 
@@ -1065,8 +1063,13 @@ PreferencesPopup::PreferencesPopup()
   }
   styleSheetType->addItems(styleSheetList);
   styleSheetType->setCurrentIndex(currentIndex);
-  //m_pixelsOnlyCB->setChecked(m_pref->getPixelsOnly());
-  m_pixelsOnlyCB->setChecked(true);
+  bool po = m_pref->getPixelsOnly();
+  m_pixelsOnlyCB->setChecked(po);
+  //m_pixelsOnlyCB->setChecked(true);
+  if (po){
+	  m_unitOm->setDisabled(true);
+	  m_cameraUnitOm->setDisabled(true);
+  }
   QStringList type;
   type << tr("cm") << tr("mm") << tr("inch") << tr("field") << tr("pixel");
   m_unitOm->addItems(type);
