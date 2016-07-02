@@ -326,11 +326,21 @@ else()
     set(MACOSX_BUNDLE_ICON_FILE "OpenToonz.icns")
     set_source_files_properties(OpenToonz.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     add_executable(OpenToonz_${VERSION} MACOSX_BUNDLE OpenToonz.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
-    #add_definitions(-DTNZBASE_EXPORTS -DTPARAM_EXPORTS -DTXSHEET_EXPORTS -DTFX_EXPORTS -DTAPPTOOLS_EXPORTS -DTTEST_EXPORTS)
+    #add_definitions(
+    #    -DTNZBASE_EXPORTS
+    #    -DTPARAM_EXPORTS
+    #    -DTXSHEET_EXPORTS
+    #    -DTFX_EXPORTS
+    #    -DTAPPTOOLS_EXPORTS
+    #    -DTTEST_EXPORTS
+    #)
 endif()
 
 if(WIN32)
-    add_definitions(-DUNICODE -D_UNICODE)
+    add_definitions(
+        -DUNICODE
+        -D_UNICODE
+    )
 endif()
 
 message("subdir: toonz")

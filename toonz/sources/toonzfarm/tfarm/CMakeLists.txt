@@ -21,7 +21,10 @@ set(SOURCES
     ttcpipserver.cpp)
 
 add_library(tfarm SHARED ${HEADERS} ${SOURCES})
-add_definitions(-DTFARM_EXPORTS)
+add_definitions(
+    -DTFARM_EXPORTS
+)
+
 if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtfarm.dylib")
 endif()

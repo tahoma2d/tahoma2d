@@ -99,7 +99,9 @@ add_translation(tnztools ${HEADERS} ${SOURCES})
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 add_library(tnztools SHARED ${HEADERS} ${SOURCES} ${RESOURCES})
-add_definitions(-DTNZTOOLS_EXPORTS)
+add_definitions(
+    -DTNZTOOLS_EXPORTS
+)
 
 if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnztools.dylib")

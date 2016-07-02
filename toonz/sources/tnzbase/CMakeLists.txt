@@ -159,7 +159,14 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzbase.dylib")
 endif()
 
-add_definitions(-DTNZBASE_EXPORTS -DTPARAM_EXPORTS -DTXSHEET_EXPORTS -DTFX_EXPORTS -DTAPPTOOLS_EXPORTS -DTTEST_EXPORTS)
+add_definitions(
+    -DTNZBASE_EXPORTS
+    -DTPARAM_EXPORTS
+    -DTXSHEET_EXPORTS
+    -DTFX_EXPORTS
+    -DTAPPTOOLS_EXPORTS
+    -DTTEST_EXPORTS
+)
 
 message("subdir: tnzbase")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
