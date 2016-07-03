@@ -322,11 +322,15 @@ elseif(APPLE)
 elseif(UNIX)
     set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-    # For now put lib and runtime in the same path
-    # since its convenient to for launching.
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    # Mirror relative bin/lib location for installation
+    # so the generated shell script works in both cases.
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/opentoonz)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/opentoonz)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "/opt/opentoonz" CACHE PATH "OpenToonz install prefix" FORCE)
+    endif()
 endif()
 
 if(MSVC AND MSVC_VERSION EQUAL 1800)

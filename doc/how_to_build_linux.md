@@ -65,7 +65,7 @@ zypper in boost-devel git cmake gcc-c++ freeglut-devel freetype2-devel glew-deve
 $ git clone https://github.com/opentoonz/opentoonz
 ```
 
-### Installation of the stuff directory
+### Copying the stuff directory
 
 TODO: some parts should really be installed in $prefix/ instead... and some other in various cache or user-local places.
 cf. https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -141,6 +141,21 @@ You can now run the application:
 
 ```
 $ cd bin
-$ LD_LIBRARY_PATH=image:toonzlib:toonzfarm/tfarm:tnzbase:tnztools:stdfx:sound:tnzcore:tnzext:colorfx:toonzqt toonz/OpenToonz_1.0
+$ LD_LIBRARY_PATH=./lib/opentoonz:$LD_LIBRARY_PATH ./bin/OpenToonz_1.0
 ```
+
+### Performing a system installation
+
+The steps above show how to run OpenToonz from the build directory,
+however you may wish to install OpenToonz onto your system.
+
+OpenToonz will install to `/opt/opentoonz` by default, to do this run:
+
+```
+$ sudo make install
+```
+
+Then you can launch OpenToonz by running `/opt/opentoonz/bin/opentoonz`.
+
+You can change the installation path by modifying the `CMAKE_INSTALL_PREFIX` CMake variable.
 

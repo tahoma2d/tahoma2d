@@ -405,4 +405,84 @@ if(APPLE)
     add_custom_command(TARGET OpenToonz_${VERSION} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/OpenToonz_${VERSION}.app/Contents/Resources)
     add_custom_command(TARGET OpenToonz_${VERSION} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/qss)
     add_custom_command(TARGET OpenToonz_${VERSION} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_CURRENT_BINARY_DIR}/OpenToonz_${VERSION}.app/Contents/Resources)
+elseif(UNIX)
+    # Setup files on Linux/Unix platform.
+    # not essential since the binary can run in-place,
+    # but useful for package managers.
+    #
+    # Note that its assumed the destination can be either
+    # - /opt/opentoonz
+    # - /usr
+    install(
+        TARGETS
+            OpenToonz_${VERSION}
+        DESTINATION bin
+    )
+
+    # Shell script that copies files to the home directory as needed
+    # and sets the library preload path.
+    file(WRITE ${CMAKE_BINARY_DIR}/bin/opentoonz
+"#!/bin/sh
+OPENTOONZ_BASE=\$(dirname \"\$0\")/..
+
+if [ ! -d \$HOME/.config/OpenToonz ]; then
+    mkdir -p \$HOME/.config/OpenToonz
+fi
+
+if [ ! -d \$HOME/.config/OpenToonz/stuff ]; then
+    cp -r \$OPENTOONZ_BASE/share/opentoonz/stuff \$HOME/.config/OpenToonz
+fi
+
+if [ ! -e \$HOME/.config/OpenToonz/SystemVar.ini ]; then
+    cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
+[General]
+OPENTOONZROOT="\$HOME/.config/OpenToonz/stuff"
+OpenToonzPROFILES="\$HOME/.config/OpenToonz/stuff/profiles"
+TOONZCACHEROOT="\$HOME/.config/OpenToonz/stuff/cache"
+TOONZCONFIG="\$HOME/.config/OpenToonz/stuff/config"
+TOONZFXPRESETS="\$HOME/.config/OpenToonz/stuff/projects/fxs"
+TOONZLIBRARY="\$HOME/.config/OpenToonz/stuff/projects/library"
+TOONZPROFILES="\$HOME/.config/OpenToonz/stuff/profiles"
+TOONZPROJECTS="$HOME/.config/OpenToonz/stuff/projects"
+TOONZROOT="\$HOME/.config/OpenToonz/stuff"
+TOONZSTUDIOPALETTE="\$HOME/.config/OpenToonz/stuff/projects/studiopalette"
+EOF
+fi
+
+export LD_LIBRARY_PATH=\${OPENTOONZ_BASE}/lib/opentoonz:\${LD_LIBRARY_PATH}
+
+exec \$OPENTOONZ_BASE/bin/OpenToonz_${VERSION} \"\$@\"
+")
+    # only needed for executing without installing
+    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/bin/opentoonz)
+
+    install(
+        PROGRAMS
+            ${CMAKE_BINARY_DIR}/bin/opentoonz
+        DESTINATION bin
+    )
+
+    install(
+        FILES
+            "$<TARGET_FILE:tnzcore>"
+            "$<TARGET_FILE:tnzbase>"
+            "$<TARGET_FILE:toonzlib>"
+            "$<TARGET_FILE:colorfx>"
+            "$<TARGET_FILE:tnzext>"
+            "$<TARGET_FILE:image>"
+            "$<TARGET_FILE:sound>"
+            "$<TARGET_FILE:toonzqt>"
+            "$<TARGET_FILE:tnztools>"
+            "$<TARGET_FILE:tnzstdfx>"
+            "$<TARGET_FILE:tfarm>"
+        DESTINATION lib/opentoonz
+    )
+
+    install(
+        DIRECTORY
+            ${CMAKE_SOURCE_DIR}/../../stuff
+        DESTINATION share/opentoonz
+    )
+
 endif()
+
