@@ -1549,8 +1549,11 @@ PreferencesPopup::PreferencesPopup()
     }
     drawingBox->setLayout(drawingFrameLay);
     stackedWidget->addWidget(drawingBox);
-	if (m_pixelsOnlyCB->isChecked())
+	if (m_pixelsOnlyCB->isChecked()) {
 		m_defLevelDpi->setDisabled(true);
+		m_defLevelWidth->setDecimals(0);
+		m_defLevelHeight->setDecimals(0);
+	}
 
     //--- Xsheet --------------------------
     QWidget *xsheetBox          = new QWidget(this);

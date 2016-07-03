@@ -208,9 +208,9 @@ bool Preferences::LevelFormat::matches(const TFilePath &fp) const {
 //**********************************************************************************
 
 Preferences::Preferences()
-	: m_pixelsOnly(false)
-	, m_units("mm")
-    , m_cameraUnits("inch")
+	: m_pixelsOnly(true)
+	, m_units("pixel")
+    , m_cameraUnits("pixel")
     , m_currentRoomChoice("Default")
     , m_scanLevelType("tif")
     , m_defLevelWidth(0.0)
