@@ -217,14 +217,14 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
 	bool enabled = index == Qt::Checked;
 	if (enabled) {
 		
-		m_pref->setDefLevelDpi(120);
+		m_pref->setDefLevelDpi(53.33333);
 		m_pref->setPixelsOnly(true);
 		TCamera* camera;
 		camera = TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
 		TDimension camRes = camera->getRes();
 		TDimensionD camSize;
-		camSize.lx = camRes.lx / 120;
-		camSize.ly = camRes.ly / 120;
+		camSize.lx = camRes.lx / 53.33333;
+		camSize.ly = camRes.ly / 53.33333;
 		camera->setSize(camSize);
 		m_pref->storeOldUnits();
 		if (m_unitOm->currentIndex() != 4)
@@ -234,7 +234,13 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
 		m_unitOm->setDisabled(true);
 		m_cameraUnitOm->setDisabled(true);
 		m_defLevelDpi->setDisabled(true);
-		m_defLevelDpi->setValue(120);
+		m_defLevelDpi->setValue(53.33333);
+		m_defLevelWidth->setMeasure("camera.lx");
+		m_defLevelHeight->setMeasure("camera.ly");
+		m_defLevelWidth->setValue(m_pref->getDefLevelWidth());
+		m_defLevelHeight->setValue(m_pref->getDefLevelHeight());
+		m_defLevelHeight->setDecimals(0);
+		m_defLevelWidth->setDecimals(0);
 
 	}
 	else {
@@ -254,6 +260,12 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
 		if (isRaster) {
 			m_defLevelDpi->setDisabled(false);
 		}
+		m_defLevelHeight->setMeasure("level.ly");
+		m_defLevelWidth->setMeasure("level.lx");
+		m_defLevelWidth->setValue(m_pref->getDefLevelWidth());
+		m_defLevelHeight->setValue(m_pref->getDefLevelHeight());
+		m_defLevelHeight->setDecimals(4);
+		m_defLevelWidth->setDecimals(4);
 	}
 
 }

@@ -347,7 +347,7 @@ TMeasureManager::TMeasureManager() {
   m->add(cameraYFld.clone());
   add(m);
 
-  const double stage_inch = 120; //Stage::inch used to be 53.33333
+  const double stage_inch = 53.33333; //Consider changing to 120 or 160
 
   TUnit fxLength(L"fxLength"),
 	  fxInch(L"in", new TSimpleUnitConverter(1 / stage_inch)),
