@@ -327,30 +327,6 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   }
   setLayout(mainLay);
 
-  if (Preferences::instance()->getCameraUnits() == "pixel")
-  {
-	  m_resLabel->hide();
-	  m_dpiLabel->hide();
-	  m_xLabel->hide();
-	  m_xResFld->hide();
-	  m_yResFld->hide();
-	  m_xDpiFld->hide();
-	  m_yDpiFld->hide();
-	  m_fspChk->hide();
-	  m_dotPrev->hide();
-  }
-  else {
-	  m_resLabel->show();
-	  m_dpiLabel->show();
-	  m_xLabel->show();
-	  m_xResFld->show();
-	  m_yResFld->show();
-	  m_xDpiFld->show();
-	  m_yDpiFld->show();
-	  m_fspChk->show();
-	  m_dotPrev->show();
-  }
-
   // initialize fields
   TCamera camera;
   setFields(&camera);
