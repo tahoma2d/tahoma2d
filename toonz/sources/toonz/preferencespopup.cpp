@@ -233,6 +233,8 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
 			m_cameraUnitOm->setCurrentIndex(4);
 		m_unitOm->setDisabled(true);
 		m_cameraUnitOm->setDisabled(true);
+		m_defLevelDpi->setDisabled(true);
+		m_defLevelDpi->setValue(120);
 
 	}
 	else {
@@ -247,6 +249,11 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
 		m_unitOm->setDisabled(false);
 		m_cameraUnitOm->setDisabled(false);
 		m_pref->setPixelsOnly(false);
+		int levelType = m_pref->getDefLevelType();
+		bool isRaster = levelType != PLI_XSHLEVEL;
+		if (isRaster) {
+			m_defLevelDpi->setDisabled(false);
+		}
 	}
 
 }
@@ -719,7 +726,8 @@ void PreferencesPopup::onDefLevelTypeChanged(int index) {
     bool isRaster = levelType != PLI_XSHLEVEL;
     m_defLevelWidth->setEnabled(isRaster);
     m_defLevelHeight->setEnabled(isRaster);
-    m_defLevelDpi->setEnabled(isRaster);
+	if (!m_pixelsOnlyCB->isChecked())
+		m_defLevelDpi->setEnabled(isRaster);
   }
 }
 
@@ -959,7 +967,7 @@ PreferencesPopup::PreferencesPopup()
   m_defLevelHeight   = new MeasuredDoubleLineEdit(0);
   m_defLevelDpi      = new DoubleLineEdit(0, 66.76);
   m_autocreationType = new QComboBox(this);
-
+  m_dpiLabel = new QLabel(tr("DPI:"), this);
   CheckBox *keepOriginalCleanedUpCB =
       new CheckBox(tr("Keep Original Cleaned Up Drawings As Backup"), this);
   CheckBox *multiLayerStylePickerCB = new CheckBox(
@@ -1337,7 +1345,7 @@ PreferencesPopup::PreferencesPopup()
                             Qt::AlignRight | Qt::AlignVCenter);
         styleLay->addWidget(m_cameraUnitOm, 3, 1);
 
-        styleLay->addWidget(new QLabel(tr("Rooms *:"), this), 4, 0,
+        styleLay->addWidget(new QLabel(tr("Rooms*:"), this), 4, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
         styleLay->addWidget(roomChoice, 4, 1);
       }
@@ -1509,11 +1517,9 @@ PreferencesPopup::PreferencesPopup()
         drawingTopLay->addWidget(new QLabel(tr("  Height:")), 2, 2,
                                  Qt::AlignRight);
         drawingTopLay->addWidget(m_defLevelHeight, 2, 3);
-
-        drawingTopLay->addWidget(new QLabel(tr("DPI:")), 3, 0, Qt::AlignRight);
-        drawingTopLay->addWidget(m_defLevelDpi, 3, 1);
-
-        drawingTopLay->addWidget(new QLabel(tr("Autocreation:")), 4, 0,
+		drawingTopLay->addWidget(m_dpiLabel, 3, 0, Qt::AlignRight);
+		drawingTopLay->addWidget(m_defLevelDpi, 3, 1);
+		drawingTopLay->addWidget(new QLabel(tr("Autocreation:")), 4, 0,
                                  Qt::AlignRight);
         drawingTopLay->addWidget(m_autocreationType, 4, 1, 1, 3);
       }
@@ -1531,6 +1537,8 @@ PreferencesPopup::PreferencesPopup()
     }
     drawingBox->setLayout(drawingFrameLay);
     stackedWidget->addWidget(drawingBox);
+	if (m_pixelsOnlyCB->isChecked())
+		m_defLevelDpi->setDisabled(true);
 
     //--- Xsheet --------------------------
     QWidget *xsheetBox          = new QWidget(this);

@@ -132,6 +132,9 @@ LevelSettingsPopup::LevelSettingsPopup()
   m_cameraDpiLabel = new QLabel(tr(""));
   m_imageDpiLabel  = new QLabel(tr(""));
   m_imageResLabel  = new QLabel(tr(""));
+  m_cameraDpiTitle = new QLabel(tr("Camera DPI:"));
+  m_imageDpiTitle = new QLabel(tr("Image DPI:"));
+  m_imageResTitle = new QLabel(tr("Resolution:"));
 
   // subsampling
   m_subsamplingLabel = new QLabel(tr("Subsampling:"));
@@ -200,9 +203,13 @@ LevelSettingsPopup::LevelSettingsPopup()
     m_topLayout->addWidget(nameBox);
 
     //----DPI & Resolution
-    QGroupBox *dpiBox      = new QGroupBox(tr("DPI && Resolution"), this);
+	QGroupBox *dpiBox;
+	if (Preferences::instance()->getUnits() == "pixel")
+		 dpiBox     = new QGroupBox(tr("Resolution"), this);
+	else
+		dpiBox = new QGroupBox(tr("DPI && Resolution"), this);
     QGridLayout *dpiLayout = new QGridLayout();
-    dpiLayout->setMargin(5);
+	dpiLayout->setMargin(5);
     dpiLayout->setSpacing(5);
     {
       dpiLayout->addWidget(m_dpiTypeOm, 0, 1, 1, 3);
@@ -217,15 +224,16 @@ LevelSettingsPopup::LevelSettingsPopup()
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_heightFld, 2, 3);
       dpiLayout->addWidget(m_useCameraDpiBtn, 3, 1, 1, 3);
-      dpiLayout->addWidget(new QLabel(tr("Camera DPI:"), this), 4, 0,
+      dpiLayout->addWidget(m_cameraDpiTitle, 4, 0,
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_cameraDpiLabel, 4, 1, 1, 3);
-      dpiLayout->addWidget(new QLabel(tr("Image DPI:"), this), 5, 0,
+      dpiLayout->addWidget(m_imageDpiTitle, 5, 0,
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_imageDpiLabel, 5, 1, 1, 3);
-      dpiLayout->addWidget(new QLabel(tr("Resolution:"), this), 6, 0,
+      dpiLayout->addWidget(m_imageResTitle, 6, 0,
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_imageResLabel, 6, 1, 1, 3);
+	
     }
     dpiLayout->setColumnStretch(0, 0);
     dpiLayout->setColumnStretch(1, 1);
@@ -312,6 +320,33 @@ void LevelSettingsPopup::showEvent(QShowEvent *e) {
 
   assert(ret);
   updateLevelSettings();
+  if (Preferences::instance()->getUnits() == "pixel")
+  {
+	  m_dpiTypeOm->hide();
+	  m_dpiLabel->hide();
+	  m_dpiFld->hide();
+	  m_squarePixCB->hide();
+	  m_useCameraDpiBtn->hide();
+	  m_cameraDpiLabel->hide();
+	  m_imageDpiLabel->hide();
+	  m_imageDpiTitle->hide();
+	  m_cameraDpiTitle->hide();
+	  m_imageResTitle->hide();
+	  m_imageResLabel->hide();
+  }
+  else {
+	  m_dpiTypeOm->show();
+	  m_dpiLabel->show();
+	  m_dpiFld->show();
+	  m_squarePixCB->show();
+	  m_useCameraDpiBtn->show();
+	  m_cameraDpiLabel->show();
+	  m_imageDpiLabel->show();
+	  m_imageDpiTitle->show();
+	  m_cameraDpiTitle->show();
+	  m_imageResTitle->show();
+	  m_imageResLabel->show();
+  }
 }
 
 //-----------------------------------------------------------------------------

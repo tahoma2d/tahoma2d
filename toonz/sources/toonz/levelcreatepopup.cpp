@@ -277,6 +277,8 @@ LevelCreatePopup::LevelCreatePopup()
     m_buttonLayout->addStretch(1);
   }
 
+  
+
   //---- signal-slot connections
   bool ret = true;
   ret      = ret &&
@@ -335,6 +337,15 @@ void LevelCreatePopup::showEvent(QShowEvent *) {
   nextName();
   update();
   m_nameFld->setFocus();
+  if (Preferences::instance()->getUnits() == "pixel")
+  {
+	  m_dpiFld->hide();
+	  m_dpiLabel->hide();
+  }
+  else {
+	  m_dpiFld->show();
+	  m_dpiLabel->show();
+  }
 }
 
 //-----------------------------------------------------------------------------
