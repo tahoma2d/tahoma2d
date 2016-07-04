@@ -459,6 +459,11 @@ exec \$OPENTOONZ_BASE/bin/OpenToonz_${VERSION} \"\$@\"
     install(
         PROGRAMS
             ${CMAKE_BINARY_DIR}/bin/opentoonz
+            "$<TARGET_FILE:tcleanup>"
+            "$<TARGET_FILE:tcomposer>"
+            "$<TARGET_FILE:tconverter>"
+            "$<TARGET_FILE:tfarmcontroller>"
+            "$<TARGET_FILE:tfarmserver>"
         DESTINATION bin
     )
 
