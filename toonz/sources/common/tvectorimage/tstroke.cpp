@@ -3559,7 +3559,7 @@ void TCubicStroke::fitCubic3D(const T3DPointD pointsArrayBegin[], int size,
 
   // if (maxError<error)
   {
-    double *uPrime = 0;
+    double *uPrime = NULL;
     for (int i = 0; i < maxIterations; i++) {
       // delete uPrime;
       uPrime = reparameterize3D(*cubic, pointsArrayBegin, size, u);
@@ -3571,7 +3571,7 @@ void TCubicStroke::fitCubic3D(const T3DPointD pointsArrayBegin[], int size,
       maxError =
           computeMaxError3D(*cubic, pointsArrayBegin, size, uPrime, splitPoint);
       if (maxError < error) {
-        delete uPrime;
+        delete[] uPrime;
         delete[] u;
         m_cubicChunkArray->push_back(cubic);
         return;
