@@ -385,11 +385,10 @@ void DockWidget::mouseDoubleClickEvent(QMouseEvent *me) {
 
 //-------------------------------------
 
-void DockWidget::maximizeDock()
-{
-	if (!m_floating) {
-		parentLayout()->setMaximized(this, !m_maximized);
-	}
+void DockWidget::maximizeDock() {
+  if (!m_floating) {
+    parentLayout()->setMaximized(this, !m_maximized);
+  }
 }
 
 //-------------------------------------

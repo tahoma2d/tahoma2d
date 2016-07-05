@@ -69,7 +69,6 @@ class MainWindow final : public QMainWindow {
   bool m_saveSettingsOnQuit;
   int m_oldRoomIndex;
   QString m_currentRoomsChoice;
-  bool panelMaximized;
   UpdateChecker *m_updateChecker;
 
   TopBar *m_topBar;
@@ -101,7 +100,7 @@ public:
   void onLoadSubScene();
   void resetRoomsLayout();
   void maximizePanel();
-	void fullScreenWindow();
+  void fullScreenWindow();
   void autofillToggle();
   void onUpgradeTabPro();
   void onAbout();
