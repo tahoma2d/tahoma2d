@@ -1,9 +1,9 @@
-#if _MSC_VER >= 1400
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
 #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 #define IS_TIFF_MAIN
 
-#if _WIN32
+#if defined(_WIN32)
 #include <io.h>
 #else
 #include <unistd.h>

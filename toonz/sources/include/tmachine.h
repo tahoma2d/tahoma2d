@@ -3,7 +3,7 @@
 #ifndef T_MACHINE_INCLUDED
 #define T_MACHINE_INCLUDED
 
-#if defined(WIN32) || defined(i386)
+#if defined(_WIN32) || defined(i386)
 #define TNZ_LITTLE_ENDIAN 1
 #define TNZ_MACHINE_CHANNEL_ORDER_BGRM 1
 #elif defined(__sgi)
