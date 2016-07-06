@@ -446,16 +446,16 @@ fi
 if [ ! -e \$HOME/.config/OpenToonz/SystemVar.ini ]; then
     cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
 [General]
-OPENTOONZROOT="\$HOME/.config/OpenToonz/stuff"
-OpenToonzPROFILES="\$HOME/.config/OpenToonz/stuff/profiles"
-TOONZCACHEROOT="\$HOME/.config/OpenToonz/stuff/cache"
-TOONZCONFIG="\$HOME/.config/OpenToonz/stuff/config"
-TOONZFXPRESETS="\$HOME/.config/OpenToonz/stuff/projects/fxs"
-TOONZLIBRARY="\$HOME/.config/OpenToonz/stuff/projects/library"
-TOONZPROFILES="\$HOME/.config/OpenToonz/stuff/profiles"
-TOONZPROJECTS="$HOME/.config/OpenToonz/stuff/projects"
-TOONZROOT="\$HOME/.config/OpenToonz/stuff"
-TOONZSTUDIOPALETTE="\$HOME/.config/OpenToonz/stuff/projects/studiopalette"
+OPENTOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
+OpenToonzPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
+TOONZCACHEROOT=\"\$HOME/.config/OpenToonz/stuff/cache\"
+TOONZCONFIG=\"\$HOME/.config/OpenToonz/stuff/config\"
+TOONZFXPRESETS=\"\$HOME/.config/OpenToonz/stuff/projects/fxs\"
+TOONZLIBRARY=\"\$HOME/.config/OpenToonz/stuff/projects/library\"
+TOONZPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
+TOONZPROJECTS=\"$HOME/.config/OpenToonz/stuff/projects\"
+TOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
+TOONZSTUDIOPALETTE=\"\$HOME/.config/OpenToonz/stuff/projects/studiopalette\"
 EOF
 fi
 
