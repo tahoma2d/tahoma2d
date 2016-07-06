@@ -35,7 +35,11 @@ if(WIN32)
     set(CMAKE_PREFIX_PATH "${QT_PATH}/lib/cmake/")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4251")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
-    add_definitions(-DVC_EXTRALEAN -DNOMINMAX -D_USE_MATH_DEFINES)
+    add_definitions(
+        -DVC_EXTRALEAN
+        -DNOMINMAX
+        -D_USE_MATH_DEFINES
+    )
 elseif(APPLE)
     message("Apple System")
     if(NOT PLATFORM)
@@ -48,7 +52,10 @@ elseif(APPLE)
         set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
 
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
-        add_definitions(-DMACOSX -Di386)
+        add_definitions(
+            -DMACOSX
+            -Di386
+        )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
     elseif(PLATFORM EQUAL 32)
@@ -57,7 +64,10 @@ elseif(APPLE)
         set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
 
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
-        add_definitions(-DMACOSX -Di386)
+        add_definitions(
+            -DMACOSX
+            -Di386
+        )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -std=c++11 -stdlib=libc++ -fno-implicit-templates -D HAS_QUICKDRAW")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
         set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -m32")
@@ -89,7 +99,12 @@ else()
     message(ERROR "Unknown System")
 endif()
 
-add_definitions(-DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_SHARED)
+add_definitions(
+    -DQT_GUI_LIB
+    -DQT_NETWORK_LIB
+    -DQT_CORE_LIB
+    -DQT_SHARED
+)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -129,7 +144,9 @@ if(WIN32)
         ${SDKROOT}/zlib-1.2.8
         ${SDKROOT}/LibJPEG/jpeg-9
     )
-    add_definitions(-DGLUT_NO_LIB_PRAGMA)
+    add_definitions(
+        -DGLUT_NO_LIB_PRAGMA
+    )
 endif()
 
 get_target_property(QtCore_location Qt5::Core LOCATION)

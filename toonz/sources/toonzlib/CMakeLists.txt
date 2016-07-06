@@ -324,7 +324,9 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtoonzlib.dylib")
 endif()
 
-add_definitions(-DTOONZLIB_EXPORTS)
+add_definitions(
+    -DTOONZLIB_EXPORTS
+)
 
 message("subdir: toonzlib")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
