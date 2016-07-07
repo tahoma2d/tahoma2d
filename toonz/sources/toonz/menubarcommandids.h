@@ -222,6 +222,7 @@
 #define MI_ResetRoomLayout "MI_ResetRoomLayout"
 
 #define MI_OnionSkin "MI_OnionSkin"
+#define MI_ZeroThick "MI_ZeroThick"
 
 //#define MI_LoadResourceFile       "MI_LoadResourceFile"
 #define MI_DuplicateFile "MI_DuplicateFile"
