@@ -4,7 +4,7 @@ project(OpenToonz)
 include(${CMAKE_SOURCE_DIR}/../cmake/util_compiler.cmake)
 
 get_filename_component(SDKROOT ../../thirdparty/ ABSOLUTE)
-message("SDK Root:" ${SDKROOT})
+message(STATUS "SDK Root:" ${SDKROOT})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 if(APPLE)
     set(THIRDPARTY_LIBS_HINTS "/usr/local/Cellar/" "/opt/include" ${SDKROOT})
@@ -12,10 +12,11 @@ elseif(WIN32 OR UNIX)
     set(THIRDPARTY_LIBS_HINTS ${SDKROOT})
 endif()
 
-message("Thirdpary Library Search path:" ${THIRDPARTY_LIBS_HINTS})
+message(STATUS "Thirdpary Library Search path:" ${THIRDPARTY_LIBS_HINTS})
 
 if(WIN32)
-    message("Windows System")
+    message(STATUS "Windows System")
+
     if(MSVC_VERSION GREATER 1800)
         if(CMAKE_SIZEOF_VOID_P EQUAL 4)
             set(QT_PATH "C:/Qt/5.6/msvc2015" CACHE PATH "Qt instlattion directory")
@@ -43,7 +44,8 @@ if(WIN32)
         -D_USE_MATH_DEFINES
     )
 elseif(APPLE)
-    message("Apple System")
+    message(STATUS "Apple System")
+
     if(NOT PLATFORM)
         set(PLATFORM 64)
     endif()
@@ -77,10 +79,11 @@ elseif(APPLE)
         message(FATAL_ERROR "Invalid PLATFORM:" ${PLATFORM} ". 'PLATFORM' must be 32 or 64.")
     endif()
 elseif(UNIX)
+    message(STATUS "Unix System")
+
     # Needed for correct Qt detection
     cmake_minimum_required(VERSION 2.8.12)
 
-    message("Unix System")
     if(CMAKE_SIZEOF_VOID_P MATCHES "8")
         set(PLATFORM 64)
     else()
@@ -155,7 +158,7 @@ endif()
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
 get_target_property(QtWidget_location Qt5::Widgets LOCATION)
-message("Qt Core Location:" ${QtCore_location})
+message(STATUS "Qt Core Location:" ${QtCore_location})
 
 macro(_find_toonz_library OUT_LIB_LIST IN_LIB_LIST)
     set(OUTLIST "")

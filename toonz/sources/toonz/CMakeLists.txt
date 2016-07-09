@@ -138,7 +138,7 @@ set(MOC_HEADERS
     comboviewerpane.h
     historypane.h
     cleanupsettingspane.h
-	penciltestpopup.h
+    penciltestpopup.h
 # Tracker file
     dummyprocessor.h
     metnum.h
@@ -295,7 +295,7 @@ set(SOURCES
     comboviewerpane.cpp
     historypane.cpp
     cleanupsettingspane.cpp
-	penciltestpopup.cpp
+    penciltestpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp
