@@ -48,6 +48,7 @@ protected:
    * UseCurrentFrameのLevelに移動してきたときに、改めてCurrentFrameを格納しなおす
    * -*/
   void reloadCurrentFrame();
+
 protected slots:
   void showCurrentImage();
 

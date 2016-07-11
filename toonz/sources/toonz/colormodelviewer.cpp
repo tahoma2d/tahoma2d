@@ -14,6 +14,7 @@
 #include "tools/toolcommandids.h"
 #include "tools/tool.h"
 #include "tools/toolhandle.h"
+#include "../tnztools/stylepickertool.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -306,6 +307,12 @@ void ColorModelViewer::pick(const QPoint &p) {
     if (styleSelection) styleSelection->selectNone();
   }
 
+  /* 
+    if the Style Picker too is current and "organize palette" is activated,
+    then move the picked style to the first page of the palette. 
+  */
+  //TODO: write organize palette operation here (maybe implement in PaletteCmd)
+
   ph->setStyleIndex(styleIndex);
 }
 
@@ -356,8 +363,16 @@ void ColorModelViewer::showEvent(QShowEvent *e) {
 //-----------------------------------------------------------------------------
 /*- ツールのTypeに合わせてPickのタイプも変え、カーソルも切り替える -*/
 void ColorModelViewer::changePickType() {
-  TPropertyGroup *propGroup =
-      TApp::instance()->getCurrentTool()->getTool()->getProperties(0);
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+  if (tool->getName() == T_StylePicker) {
+    StylePickerTool* stylePickerTool = dynamic_cast<StylePickerTool*>(tool);
+    if (stylePickerTool->isOrganizePaletteActive()) {
+      setToolCursor(m_imageViewer, ToolCursor::PickerCursorOrganize);
+      return;
+    }
+  }
+
+  TPropertyGroup *propGroup = tool->getProperties(0);
   /*- Propertyの無いツールの場合 -*/
   if (!propGroup) {
     m_mode = 2;
