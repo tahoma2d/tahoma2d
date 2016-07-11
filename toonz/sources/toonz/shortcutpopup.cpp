@@ -49,10 +49,7 @@ public:
     text.remove("&");
     setText(0, text);
     QString shortcut = m_action->shortcut().toString();
-	if (shortcut != "")
-		setText(1, shortcut);
-	else
-		setText(1, "");
+	setText(1, shortcut);
   }
   QAction *getAction() const { return m_action; }
 };
