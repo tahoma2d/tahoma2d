@@ -361,7 +361,7 @@ TMeasureManager::TMeasureManager() {
   fxInch.setDefaultExtension(L"\"");
   fxXfld.addExtension(L"field");
   fxXfld.addExtension(L"F");
-  fxXfld.addExtension(L"pixel");
+  fxPx.addExtension(L"pixel");
   m = new TMeasure("fxLength", fxLength.clone());
   m->add(fxInch.clone());
   m->add(fxCm.clone());
