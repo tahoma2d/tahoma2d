@@ -1287,6 +1287,13 @@ void IoCmd::newScene() {
       TDimensionD((double)res.lx / cameraDpi, (double)res.ly / cameraDpi));
   scene->getProperties()->setBgColor(TPixel32::White);
   TProjectManager::instance()->initializeScene(scene);
+  if (Preferences::instance()->getPixelsOnly())
+  {
+	  TCamera *updateCamera = scene->getCurrentCamera();
+	  TDimension updateRes = updateCamera->getRes();
+	  updateCamera->setSize(
+		  TDimensionD((double)updateRes.lx / cameraDpi, (double)updateRes.ly / cameraDpi));
+  }
   // Must set current scene after initializeScene!!
   app->getCurrentScene()->setScene(scene);
   // initializeScene() load project cleanup palette: set it to cleanup palette
