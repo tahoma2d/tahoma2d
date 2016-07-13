@@ -7,6 +7,7 @@
 #include "versioncontrol.h"
 #include "levelsettingspopup.h"
 #include "tapp.h"
+#include "cleanupsettingsmodel.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -226,7 +227,12 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
     camSize.lx = camRes.lx / 53.33333;
     camSize.ly = camRes.ly / 53.33333;
     camera->setSize(camSize);
-    m_pref->storeOldUnits();
+    TDimension cleanupRes = CleanupSettingsModel::instance()->getCurrentParameters()->m_camera.getRes();
+    TDimensionD cleanupSize;
+    cleanupSize.lx = cleanupRes.lx / 53.33333;
+    cleanupSize.ly = cleanupRes.ly / 53.33333;
+    CleanupSettingsModel::instance()->getCurrentParameters()->m_camera.setSize(cleanupSize);
+	m_pref->storeOldUnits();
     if (m_unitOm->currentIndex() != 4) m_unitOm->setCurrentIndex(4);
     if (m_cameraUnitOm->currentIndex() != 4) m_cameraUnitOm->setCurrentIndex(4);
     m_unitOm->setDisabled(true);
