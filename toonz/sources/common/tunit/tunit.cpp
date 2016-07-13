@@ -347,14 +347,14 @@ TMeasureManager::TMeasureManager() {
   m->add(cameraYFld.clone());
   add(m);
 
-  const double stage_inch = 53.33333; //Consider changing to 120 or 160
+  const double stage_inch = 53.33333;  // Consider changing to 120 or 160
 
   TUnit fxLength(L"fxLength"),
-	  fxInch(L"in", new TSimpleUnitConverter(1 / stage_inch)),
-	  fxCm(L"cm", new TSimpleUnitConverter(2.54 / stage_inch)),
-	  fxMm(L"mm", new TSimpleUnitConverter(25.4 / stage_inch)),
-	  fxXfld(L"fld", new TSimpleUnitConverter(2 / stage_inch)),
-	  fxPx(L"px", new TSimpleUnitConverter(1));
+      fxInch(L"in", new TSimpleUnitConverter(1 / stage_inch)),
+      fxCm(L"cm", new TSimpleUnitConverter(2.54 / stage_inch)),
+      fxMm(L"mm", new TSimpleUnitConverter(25.4 / stage_inch)),
+      fxXfld(L"fld", new TSimpleUnitConverter(2 / stage_inch)),
+      fxPx(L"px", new TSimpleUnitConverter(1));
   fxInch.addExtension(L"inch");
   fxInch.addExtension(L"\"");
   fxInch.addExtension(L"''");

@@ -57,7 +57,7 @@ private:
 
   DVGui::DoubleLineEdit *m_defLevelDpi;
 
-  QLabel* m_dpiLabel;
+  QLabel *m_dpiLabel;
 
   DVGui::IntLineEdit *m_minuteFld, *m_chunkSizeFld, *m_iconSizeLx,
       *m_iconSizeLy, *m_viewShrink, *m_viewStep, *m_blanksCount,

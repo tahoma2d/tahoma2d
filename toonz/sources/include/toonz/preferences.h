@@ -418,8 +418,8 @@ private:
 
   std::vector<LevelFormat> m_levelFormats;
 
-  QString m_units, m_cameraUnits, m_scanLevelType, m_currentRoomChoice, 
-	  m_oldUnits, m_oldCameraUnits;
+  QString m_units, m_cameraUnits, m_scanLevelType, m_currentRoomChoice,
+      m_oldUnits, m_oldCameraUnits;
 
   double m_defLevelWidth, m_defLevelHeight, m_defLevelDpi;
 
