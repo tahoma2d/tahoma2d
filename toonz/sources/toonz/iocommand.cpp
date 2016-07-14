@@ -1257,7 +1257,8 @@ bool IoCmd::saveSceneIfNeeded(QString msg) {
 void IoCmd::newScene() {
   RenderingSuspender suspender;
   TApp *app        = TApp::instance();
-  double cameraDpi = 64.0;
+  double cameraDpi = 53.33333;  // used to be 64, consider changing to 120 or
+                                // 160
   if (!saveSceneIfNeeded(QApplication::tr("New Scene"))) return;
 
   IconGenerator::instance()->clearRequests();
@@ -1286,6 +1287,13 @@ void IoCmd::newScene() {
       TDimensionD((double)res.lx / cameraDpi, (double)res.ly / cameraDpi));
   scene->getProperties()->setBgColor(TPixel32::White);
   TProjectManager::instance()->initializeScene(scene);
+  if (Preferences::instance()->getPixelsOnly())
+  {
+	  TCamera *updateCamera = scene->getCurrentCamera();
+	  TDimension updateRes = updateCamera->getRes();
+	  updateCamera->setSize(
+		  TDimensionD((double)updateRes.lx / cameraDpi, (double)updateRes.ly / cameraDpi));
+  }
   // Must set current scene after initializeScene!!
   app->getCurrentScene()->setScene(scene);
   // initializeScene() load project cleanup palette: set it to cleanup palette
