@@ -1668,7 +1668,7 @@ void MainWindow::defineActions() {
 
   createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
   
-  createMenuScanCleanupAction(MI_PencilTest, tr("&Pencil Test..."), "");
+  createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
   
   createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   createMenuLevelAction(MI_Renumber, tr("&Renumber..."), "");
