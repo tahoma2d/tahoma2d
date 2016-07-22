@@ -64,7 +64,7 @@ typedef enum Direction {
   outward        = 1,
   deletedInward  = 2,
   deletedOutward = 3
-};
+} Direction;
 
 /*
         class CompareOutlines {
