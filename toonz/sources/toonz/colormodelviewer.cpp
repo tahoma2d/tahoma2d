@@ -308,10 +308,16 @@ void ColorModelViewer::pick(const QPoint &p) {
   }
 
   /* 
-    if the Style Picker too is current and "organize palette" is activated,
+    if the Style Picker tool is current and "organize palette" is activated,
     then move the picked style to the first page of the palette. 
   */
-  //TODO: write organize palette operation here (maybe implement in PaletteCmd)
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+  if (tool->getName() == "T_StylePicker"){
+    StylePickerTool* spTool = dynamic_cast<StylePickerTool*>(tool);
+    if (spTool && spTool->isOrganizePaletteActive()){
+      PaletteCmd::organizePaletteStyle(ph, styleIndex);
+    }
+  }
 
   ph->setStyleIndex(styleIndex);
 }

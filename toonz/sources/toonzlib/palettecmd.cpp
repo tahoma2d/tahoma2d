@@ -1168,3 +1168,26 @@ void PaletteCmd::renamePaletteStyle(TPaletteHandle *paletteHandle,
   paletteHandle->notifyColorStyleChanged(false);
   TUndoManager::manager()->add(undo);
 }
+
+//=============================================================================
+// organizePaletteStyle
+// called in ColorModelViewer::pick() - move selected style to the first page
+//-----------------------------------------------------------------------------
+void PaletteCmd::organizePaletteStyle(TPaletteHandle *paletteHandle, int styleId){
+  if (!paletteHandle) return;
+  TPalette *palette = paletteHandle->getPalette();
+  if (!palette) return;
+  // if the style is already in the first page, then do nothing
+  TPalette::Page* page = palette->getStylePage(styleId);
+  if (!page || page->getIndex() == 0) return;
+
+  int indexInPage = page->search(styleId);
+
+  /* 
+    just call arrangeStyles as tentative implementation.
+    TODO: store the picked position into the style name somehow
+  */
+  arrangeStyles(paletteHandle, 0, palette->getPage(0)->getStyleCount(),
+    page->getIndex(), { indexInPage });
+ 
+}

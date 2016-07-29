@@ -88,6 +88,9 @@ DVAPI void renamePalettePage(TPaletteHandle *paletteHandle, int pageIndex,
 DVAPI void renamePaletteStyle(TPaletteHandle *paletteHandle,
                               const std::wstring &newName);
 
+/* called in ColorModelViewer::pick() - move selected style to the first page */
+DVAPI void organizePaletteStyle(TPaletteHandle *paletteHandle, int styleId);
+
 }  // namespace
 
 #endif
