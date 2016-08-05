@@ -190,15 +190,15 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
   m_arFld = new SimpleExpField(this);
 
-  m_xResFld = new DVGui::IntLineEdit();
-  m_yResFld = new DVGui::IntLineEdit();
-  m_xDpiFld = new DoubleLineEdit();
-  m_yDpiFld = new DoubleLineEdit();
+  m_xResFld   = new DVGui::IntLineEdit();
+  m_yResFld   = new DVGui::IntLineEdit();
+  m_xDpiFld   = new DoubleLineEdit();
+  m_yDpiFld   = new DoubleLineEdit();
   m_unitLabel = new QLabel();
   if (Preferences::instance()->getPixelsOnly())
-	  m_unitLabel->setText("Pixels");
+    m_unitLabel->setText("Pixels");
   else
-	  m_unitLabel->setText(Preferences::instance()->getCameraUnits());
+    m_unitLabel->setText(Preferences::instance()->getCameraUnits());
   m_dpiLabel = new QLabel(tr("DPI"));
   m_resLabel = new QLabel(tr("Pixels"));
   m_xLabel   = new QLabel(tr("x"));
@@ -287,8 +287,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
       gridLay->addWidget(m_yPrev, 0, 4, Qt::AlignCenter);
 
       gridLay->addWidget(m_inchPrev, 1, 0, Qt::AlignRight | Qt::AlignVCenter);
-      gridLay->addWidget(m_unitLabel, 1, 1,
-                         Qt::AlignRight | Qt::AlignVCenter);
+      gridLay->addWidget(m_unitLabel, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
       gridLay->addWidget(m_lxFld, 1, 2);
       gridLay->addWidget(new QLabel("x"), 1, 3, Qt::AlignCenter);
       gridLay->addWidget(m_lyFld, 1, 4);
@@ -400,9 +399,9 @@ void CameraSettingsWidget::showEvent(QShowEvent *e) {
     m_lyFld->setDecimals(4);
   }
   if (Preferences::instance()->getPixelsOnly())
-	  m_unitLabel->setText("Pixels");
+    m_unitLabel->setText("Pixels");
   else
-	  m_unitLabel->setText(Preferences::instance()->getCameraUnits());
+    m_unitLabel->setText(Preferences::instance()->getCameraUnits());
 }
 
 void CameraSettingsWidget::loadPresetList() {
@@ -674,13 +673,13 @@ void CameraSettingsWidget::computeYRes() {
 // lx,xres => xdpi
 void CameraSettingsWidget::computeXDpi() {
   if (m_lxFld->getValue() == 0.0) return;  // non dovrebbe mai succedere
-	m_xDpiFld->setValue(m_xResFld->getValue() / m_lxFld->getValue());
+  m_xDpiFld->setValue(m_xResFld->getValue() / m_lxFld->getValue());
 }
 
 // ly,yres => ydpi
 void CameraSettingsWidget::computeYDpi() {
   if (m_lyFld->getValue() == 0.0) return;  // non dovrebbe mai succedere
-	m_yDpiFld->setValue(m_yResFld->getValue() / m_lyFld->getValue());
+  m_yDpiFld->setValue(m_yResFld->getValue() / m_lyFld->getValue());
 }
 
 // set A/R field, assign m_arValue and compute a nice string representation for
@@ -759,11 +758,11 @@ void CameraSettingsWidget::onYResChanged() {
 }
 
 void CameraSettingsWidget::onXDpiChanged() {
-	if (Preferences::instance()->getPixelsOnly()) {
-		m_xDpiFld->setValue(Stage::inch);
-		m_yDpiFld->setValue(Stage::inch);
-	}
-  else if (m_fspChk->isChecked()) m_yDpiFld->setValue(m_xDpiFld->getValue());
+  if (Preferences::instance()->getPixelsOnly()) {
+    m_xDpiFld->setValue(Stage::inch);
+    m_yDpiFld->setValue(Stage::inch);
+  } else if (m_fspChk->isChecked())
+    m_yDpiFld->setValue(m_xDpiFld->getValue());
 
   if (m_dotPrev->isChecked()) {
     vComputeLx();
@@ -781,11 +780,11 @@ void CameraSettingsWidget::onXDpiChanged() {
 }
 
 void CameraSettingsWidget::onYDpiChanged() {
-	if (Preferences::instance()->getPixelsOnly()) {
-		m_xDpiFld->setValue(Stage::inch);
-		m_yDpiFld->setValue(Stage::inch);
-	}
-	else if (m_fspChk->isChecked()) m_xDpiFld->setValue(m_yDpiFld->getValue());
+  if (Preferences::instance()->getPixelsOnly()) {
+    m_xDpiFld->setValue(Stage::inch);
+    m_yDpiFld->setValue(Stage::inch);
+  } else if (m_fspChk->isChecked())
+    m_xDpiFld->setValue(m_yDpiFld->getValue());
 
   if (m_dotPrev->isChecked()) {
     vComputeLy();
@@ -850,10 +849,10 @@ void CameraSettingsWidget::onPresetSelected(const QString &str) {
         hComputeLx();
     }
 
-	if (Preferences::instance()->getPixelsOnly()) {
-		m_lxFld->setValue(xres / Stage::inch);
-		m_lyFld->setValue(yres / Stage::inch);
-	}
+    if (Preferences::instance()->getPixelsOnly()) {
+      m_lxFld->setValue(xres / Stage::inch);
+      m_lyFld->setValue(yres / Stage::inch);
+    }
 
     if (m_forCleanup && m_offsX && m_offsY && !xoffset.isEmpty() &&
         !yoffset.isEmpty()) {
