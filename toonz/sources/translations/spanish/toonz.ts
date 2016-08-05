@@ -3240,7 +3240,7 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>&amp;Camera Box</source>
-        <translation type="unfinished">&amp;Marco de la cámara</translation>
+        <translation>&amp;Marco de la cámara</translation>
     </message>
     <message>
         <source>&amp;Table</source>
