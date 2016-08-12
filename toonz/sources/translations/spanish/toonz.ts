@@ -8668,7 +8668,7 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>Windows</source>
-        <translation>Windows</translation>
+        <translation>Ventanas</translation>
     </message>
     <message>
         <source>Other Windows</source>
