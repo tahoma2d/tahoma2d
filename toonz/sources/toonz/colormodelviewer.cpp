@@ -307,15 +307,16 @@ void ColorModelViewer::pick(const QPoint &p) {
     if (styleSelection) styleSelection->selectNone();
   }
 
-  /* 
+  /*
     if the Style Picker tool is current and "organize palette" is activated,
-    then move the picked style to the first page of the palette. 
+    then move the picked style to the first page of the palette.
   */
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
-  if (tool->getName() == "T_StylePicker"){
-    StylePickerTool* spTool = dynamic_cast<StylePickerTool*>(tool);
-    if (spTool && spTool->isOrganizePaletteActive()){
-      PaletteCmd::organizePaletteStyle(ph, styleIndex);
+  if (tool->getName() == "T_StylePicker") {
+    StylePickerTool *spTool = dynamic_cast<StylePickerTool *>(tool);
+    if (spTool && spTool->isOrganizePaletteActive()) {
+      TPoint point = picker.getRasterPoint(pos);
+      PaletteCmd::organizePaletteStyle(ph, styleIndex, point);
     }
   }
 
@@ -371,7 +372,7 @@ void ColorModelViewer::showEvent(QShowEvent *e) {
 void ColorModelViewer::changePickType() {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool->getName() == T_StylePicker) {
-    StylePickerTool* stylePickerTool = dynamic_cast<StylePickerTool*>(tool);
+    StylePickerTool *stylePickerTool = dynamic_cast<StylePickerTool *>(tool);
     if (stylePickerTool->isOrganizePaletteActive()) {
       setToolCursor(m_imageViewer, ToolCursor::PickerCursorOrganize);
       return;

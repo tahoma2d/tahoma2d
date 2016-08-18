@@ -13,11 +13,12 @@ class StylePickerTool final : public TTool, public QObject {
   TEnumProperty m_colorType;
   TPropertyGroup m_prop;
   TBoolProperty m_passivePick;
-  
+
   TBoolProperty m_organizePalette;
-  TPalette* m_paletteToBeOrganized;
+  TPalette *m_paletteToBeOrganized;
 
   bool startOrganizePalette();
+
 public:
   TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
@@ -34,20 +35,20 @@ public:
   void pick(const TPointD &pos, const TMouseEvent &e);
 
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
-  
+
   int getCursorId() const override;
 
   bool onPropertyChanged(std::string propertyName);
 
   bool isOrganizePaletteActive() { return m_organizePalette.getValue(); }
 
-  /* 
-     This function is called when either frame/column/level/scene is switched or 
+  /*
+     This function is called when either frame/column/level/scene is switched or
      either scene/level/object is changed (see tapp.cpp).
-     If the working palette is changed, then deactivate the "organize palette" toggle.
+     If the working palette is changed, then deactivate the "organize palette"
+     toggle.
   */
   void onImageChanged() override;
 };
-
 
 #endif

@@ -1173,21 +1173,70 @@ void PaletteCmd::renamePaletteStyle(TPaletteHandle *paletteHandle,
 // organizePaletteStyle
 // called in ColorModelViewer::pick() - move selected style to the first page
 //-----------------------------------------------------------------------------
-void PaletteCmd::organizePaletteStyle(TPaletteHandle *paletteHandle, int styleId){
+namespace {
+
+class setStylePickedPositionUndo final : public TUndo {
+  TPaletteHandle *m_paletteHandle;  // Used in undo and redo to notify change
+  int m_styleId;
+  TPaletteP m_palette;
+  TPoint m_newPos;
+  TPoint m_oldPos;
+
+public:
+  setStylePickedPositionUndo(TPaletteHandle *paletteHandle, int styleId,
+                             const TPoint &newPos)
+      : m_paletteHandle(paletteHandle), m_styleId(styleId), m_newPos(newPos) {
+    m_palette = paletteHandle->getPalette();
+    assert(m_palette);
+    TColorStyle *style = m_palette->getStyle(m_styleId);
+    assert(style);
+    m_oldPos = style->getPickedPosition();
+  }
+  void undo() const override {
+    TColorStyle *style = m_palette->getStyle(m_styleId);
+    assert(style);
+    style->setPickedPosition(m_oldPos);
+    m_paletteHandle->notifyColorStyleChanged(false);
+  }
+  void redo() const override {
+    TColorStyle *style = m_palette->getStyle(m_styleId);
+    assert(style);
+    style->setPickedPosition(m_newPos);
+    m_paletteHandle->notifyColorStyleChanged(false);
+  }
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
+    return QObject::tr("Set Picked Position of Style#%1 in Palette%2 : %3,%4")
+        .arg(QString::number(m_styleId))
+        .arg(QString::fromStdWString(m_palette->getPaletteName()))
+        .arg(QString::number(m_newPos.x))
+        .arg(QString::number(m_newPos.y));
+  }
+  int getHistoryType() override { return HistoryType::Palette; }
+};
+}
+
+void PaletteCmd::organizePaletteStyle(TPaletteHandle *paletteHandle,
+                                      int styleId, const TPoint &point) {
   if (!paletteHandle) return;
   TPalette *palette = paletteHandle->getPalette();
   if (!palette) return;
   // if the style is already in the first page, then do nothing
-  TPalette::Page* page = palette->getStylePage(styleId);
+  TPalette::Page *page = palette->getStylePage(styleId);
   if (!page || page->getIndex() == 0) return;
 
   int indexInPage = page->search(styleId);
 
-  /* 
-    just call arrangeStyles as tentative implementation.
-    TODO: store the picked position into the style name somehow
-  */
+  TUndoManager::manager()->beginBlock();
+
+  // call arrangeStyles() to move style to the first page
   arrangeStyles(paletteHandle, 0, palette->getPage(0)->getStyleCount(),
-    page->getIndex(), { indexInPage });
- 
+                page->getIndex(), {indexInPage});
+  // then set the picked position
+  setStylePickedPositionUndo *undo =
+      new setStylePickedPositionUndo(paletteHandle, styleId, point);
+  undo->redo();
+  TUndoManager::manager()->add(undo);
+
+  TUndoManager::manager()->endBlock();
 }
