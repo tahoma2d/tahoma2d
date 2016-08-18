@@ -276,6 +276,15 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
   }
 }
 
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onPixelUnitExternallySelected(bool on) {
+  // call slot function onPixelsOnlyChanged() accordingly
+  m_pixelsOnlyCB->setCheckState((on) ? Qt::Checked : Qt::Unchecked);
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onUnitChanged(int index) {
   if (index == 4 && m_pixelsOnlyCB->isChecked() == false) {
     m_pixelsOnlyCB->setCheckState(Qt::Checked);
@@ -1834,6 +1843,11 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onStyleSheetTypeChanged(int)));
   ret = ret && connect(m_pixelsOnlyCB, SIGNAL(stateChanged(int)),
                        SLOT(onPixelsOnlyChanged(int)));
+  // pixels unit may deactivated externally on loading scene (see
+  // IoCmd::loadScene())
+  ret = ret && connect(TApp::instance()->getCurrentScene(),
+                       SIGNAL(pixelUnitSelected(bool)), this,
+                       SLOT(onPixelUnitExternallySelected(bool)));
   ret = ret && connect(m_unitOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onUnitChanged(int)));
   ret = ret && connect(m_cameraUnitOm, SIGNAL(currentIndexChanged(int)),

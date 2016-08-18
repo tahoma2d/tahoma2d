@@ -1861,6 +1861,32 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   QAction *act = CommandManager::instance()->getAction(MI_RevertScene);
   if (act) act->setEnabled(exist);
 
+  // check if the output dpi is incompatible with pixels only mode
+  if (Preferences::instance()->getPixelsOnly()) {
+    TPointD dpi = scene->getCurrentCamera()->getDpi();
+    if (!areAlmostEqual(dpi.x, Stage::standardDpi) ||
+        !areAlmostEqual(dpi.y, Stage::standardDpi)) {
+      QString question = QObject::tr(
+          "The camera dpi is incompatible with pixels only mode. What would "
+          "you like to do?");
+      QString turnOffPixelAnswer = QObject::tr("Turn off pixels only mode");
+      QString changeDpiAnswer    = QObject::tr("Change the camera dpi");
+      int ret = DVGui::MsgBox(question, turnOffPixelAnswer, changeDpiAnswer, 0);
+      if (ret == 0) {
+      }                     // do nothing
+      else if (ret == 1) {  // Turn off pixels only mode
+        app->getCurrentScene()->notifyPixelUnitSelected(false);
+      } else {  // ret = 2 : Change the camera dpi
+        TDimension camRes = scene->getCurrentCamera()->getRes();
+        TDimensionD camSize(camRes.lx / Stage::standardDpi,
+                            camRes.ly / Stage::standardDpi);
+        scene->getCurrentCamera()->setSize(camSize);
+        app->getCurrentScene()->setDirtyFlag(true);
+        app->getCurrentXsheet()->notifyXsheetChanged();
+      }
+    }
+  }
+
   printf("%s:%s loadScene() completed :\n", __FILE__, __FUNCTION__);
   return true;
 }

@@ -347,7 +347,7 @@ TMeasureManager::TMeasureManager() {
   m->add(cameraYFld.clone());
   add(m);
 
-  const double stage_inch        = 53.33333;  // Consider changing to 120 or 160
+  const double stage_inch        = 53.33333;
   const double stage_standardDpi = 120;
 
   TUnit fxLength(L"fxLength"),
