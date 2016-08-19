@@ -1867,20 +1867,23 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     if (!areAlmostEqual(dpi.x, Stage::standardDpi) ||
         !areAlmostEqual(dpi.y, Stage::standardDpi)) {
       QString question = QObject::tr(
-          "The camera dpi is incompatible with pixels only mode. What would "
-          "you like to do?");
+          "This scene is incompatible with pixels only mode of the current "
+          "OpenToonz version.\nWhat would you like to do?");
       QString turnOffPixelAnswer = QObject::tr("Turn off pixels only mode");
-      QString changeDpiAnswer    = QObject::tr("Change the camera dpi");
-      int ret = DVGui::MsgBox(question, turnOffPixelAnswer, changeDpiAnswer, 0);
+      QString resizeSceneAnswer =
+          QObject::tr("Keep pixels only mode on and resize the scene");
+      int ret =
+          DVGui::MsgBox(question, turnOffPixelAnswer, resizeSceneAnswer, 0);
       if (ret == 0) {
       }                     // do nothing
       else if (ret == 1) {  // Turn off pixels only mode
+        Preferences::instance()->setPixelsOnly(false);
         app->getCurrentScene()->notifyPixelUnitSelected(false);
-      } else {  // ret = 2 : Change the camera dpi
-        TDimension camRes = scene->getCurrentCamera()->getRes();
-        TDimensionD camSize(camRes.lx / Stage::standardDpi,
-                            camRes.ly / Stage::standardDpi);
-        scene->getCurrentCamera()->setSize(camSize);
+      } else {  // ret = 2 : Resize the scene
+        TDimensionD camSize = scene->getCurrentCamera()->getSize();
+        TDimension camRes(camSize.lx * Stage::standardDpi,
+                          camSize.ly * Stage::standardDpi);
+        scene->getCurrentCamera()->setRes(camRes);
         app->getCurrentScene()->setDirtyFlag(true);
         app->getCurrentXsheet()->notifyXsheetChanged();
       }
