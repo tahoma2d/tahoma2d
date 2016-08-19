@@ -625,6 +625,12 @@ void PreferencesPopup::onOnionSkinVisibilityChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onOnionSkinDuringPlaybackChanged(int index) {
+  m_pref->setOnionSkinDuringPlayback(index == Qt::Checked);
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onActualPixelOnSceneModeChanged(int index) {
   m_pref->enableActualPixelViewOnSceneEditingMode(index == Qt::Checked);
 }
@@ -1058,9 +1064,11 @@ PreferencesPopup::PreferencesPopup()
   bool onlyInks;
   m_pref->getOnionData(frontColor, backColor, onlyInks);
   m_onionSkinVisibility = new CheckBox(tr("Onion Skin ON"));
-  m_frontOnionColor     = new ColorField(this, false, frontColor);
-  m_backOnionColor      = new ColorField(this, false, backColor);
-  m_inksOnly            = new DVGui::CheckBox(tr("Display Lines Only "));
+  m_onionSkinDuringPlayback =
+      new CheckBox(tr("Show Onion Skin During Playback"));
+  m_frontOnionColor = new ColorField(this, false, frontColor);
+  m_backOnionColor  = new ColorField(this, false, backColor);
+  m_inksOnly        = new DVGui::CheckBox(tr("Display Lines Only "));
   m_inksOnly->setChecked(onlyInks);
 
   int thickness         = m_pref->getOnionPaperThickness();
@@ -1288,6 +1296,7 @@ PreferencesPopup::PreferencesPopup()
 
   //--- Onion Skin ------------------------------
   m_onionSkinVisibility->setChecked(m_pref->isOnionSkinEnabled());
+  m_onionSkinDuringPlayback->setChecked(m_pref->getOnionSkinDuringPlayback());
   m_frontOnionColor->setEnabled(m_pref->isOnionSkinEnabled());
   m_backOnionColor->setEnabled(m_pref->isOnionSkinEnabled());
   m_inksOnly->setEnabled(m_pref->isOnionSkinEnabled());
@@ -1756,6 +1765,8 @@ PreferencesPopup::PreferencesPopup()
       onionLay->addLayout(onionColorLay, 0);
 
       onionLay->addWidget(m_inksOnly, 0, Qt::AlignLeft | Qt::AlignVCenter);
+      onionLay->addWidget(m_onionSkinDuringPlayback, 0,
+                          Qt::AlignLeft | Qt::AlignVCenter);
 
       onionLay->addStretch(1);
     }
@@ -2004,6 +2015,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onOnionDataChanged(int)));
   ret = ret && connect(m_onionSkinVisibility, SIGNAL(stateChanged(int)),
                        SLOT(onOnionSkinVisibilityChanged(int)));
+  ret = ret && connect(m_onionSkinDuringPlayback, SIGNAL(stateChanged(int)),
+                       SLOT(onOnionSkinDuringPlaybackChanged(int)));
   ret = ret && connect(m_onionPaperThickness, SIGNAL(editingFinished()),
                        SLOT(onOnionPaperThicknessChanged()));
 
