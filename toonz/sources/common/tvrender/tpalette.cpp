@@ -1115,3 +1115,15 @@ void TPalette::setShortcutValue(int key, int styleId) {
     m_shortcuts[key] = styleId;
   }
 }
+
+//-------------------------------------------------------------------
+// Returns true if there is at least one style with picked pos value
+//-------------------------------------------------------------------
+
+bool TPalette::hasPickedPosStyle() {
+  for (int i = 0; i < getStyleCount(); ++i) {
+    TColorStyleP style = m_styles[i].second;
+    if (style->getPickedPosition() != TPoint()) return true;
+  }
+  return false;
+}

@@ -33,6 +33,7 @@
 #include "tstroke.h"
 #include "tregion.h"
 #include "tlevel_io.h"
+#include "tpixelutils.h"
 
 #include "historytypes.h"
 
@@ -44,6 +45,8 @@
 #include <boost/range/counting_range.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/range/adaptor/filtered.hpp>
+
+#include <QHash>
 
 //===================================================================
 
@@ -1239,4 +1242,106 @@ void PaletteCmd::organizePaletteStyle(TPaletteHandle *paletteHandle,
   TUndoManager::manager()->add(undo);
 
   TUndoManager::manager()->endBlock();
+}
+
+//=============================================================================
+// called in ColorModelViewer::repickFromColorModel().
+// Pick color from the img for all styles with "picked position" value.
+//-----------------------------------------------------------------------------
+namespace {
+
+class pickColorByUsingPickedPositionUndo final : public TUndo {
+  TPaletteHandle *m_paletteHandle;  // Used in undo and redo to notify change
+  TPaletteP m_palette;
+  QHash<int, QPair<TPixel32, TPixel32>> m_styleList;
+
+public:
+  pickColorByUsingPickedPositionUndo(
+      TPaletteHandle *paletteHandle,
+      QHash<int, QPair<TPixel32, TPixel32>> styleList)
+      : m_paletteHandle(paletteHandle), m_styleList(styleList) {
+    m_palette = paletteHandle->getPalette();
+    assert(m_palette);
+  }
+  void undo() const override {
+    QHash<int, QPair<TPixel32, TPixel32>>::const_iterator i =
+        m_styleList.constBegin();
+    while (i != m_styleList.constEnd()) {
+      TColorStyle *style = m_palette->getStyle(i.key());
+      assert(style);
+      style->setMainColor(i.value().first);
+      ++i;
+    }
+    m_paletteHandle->notifyColorStyleChanged(false);
+  }
+  void redo() const override {
+    QHash<int, QPair<TPixel32, TPixel32>>::const_iterator i =
+        m_styleList.constBegin();
+    while (i != m_styleList.constEnd()) {
+      TColorStyle *style = m_palette->getStyle(i.key());
+      assert(style);
+      style->setMainColor(i.value().second);
+      ++i;
+    }
+    m_paletteHandle->notifyColorStyleChanged(false);
+  }
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
+    return QObject::tr("Update Colors by Using Picked Positions in Palette %1")
+        .arg(QString::fromStdWString(m_palette->getPaletteName()));
+  }
+  int getHistoryType() override { return HistoryType::Palette; }
+};
+
+TPixel32 pickColor(TRasterImageP ri, const TPoint &rasterPoint) {
+  TRasterP raster;
+  raster = ri->getRaster();
+
+  if (!TRect(raster->getSize()).contains(rasterPoint))
+    return TPixel32::Transparent;
+
+  TRaster32P raster32 = raster;
+  if (raster32) return raster32->pixels(rasterPoint.y)[rasterPoint.x];
+
+  TRasterGR8P rasterGR8 = raster;
+  if (rasterGR8)
+    return toPixel32(rasterGR8->pixels(rasterPoint.y)[rasterPoint.x]);
+
+  return TPixel32::Transparent;
+}
+}
+
+void PaletteCmd::pickColorByUsingPickedPosition(TPaletteHandle *paletteHandle,
+                                                TImageP img) {
+  TRasterImageP ri = img;
+  if (!ri) return;
+
+  TPalette *currentPalette = paletteHandle->getPalette();
+  if (!currentPalette) return;
+
+  TDimension imgSize = ri->getRaster()->getSize();
+  QHash<int, QPair<TPixel32, TPixel32>> styleList;
+
+  // For all styles (starting from #1 as #0 is reserved for the transparent)
+  for (int sId = 1; sId < currentPalette->getStyleCount(); sId++) {
+    TColorStyle *style = currentPalette->getStyle(sId);
+    TPoint pp          = style->getPickedPosition();
+    // If style has a valid picked position
+    if (pp != TPoint() && pp.x >= 0 && pp.x < imgSize.lx && pp.y >= 0 &&
+        pp.y < imgSize.ly && style->hasMainColor()) {
+      TPixel32 beforeColor = style->getMainColor();
+      TPixel32 afterColor  = pickColor(ri, pp);
+      style->setMainColor(afterColor);
+      //... store the style in the list for undo
+      styleList.insert(sId, QPair<TPixel32, TPixel32>(beforeColor, afterColor));
+    }
+  }
+
+  // if some style has been changed, then register undo and notify changes
+  if (!styleList.isEmpty()) {
+    pickColorByUsingPickedPositionUndo *undo =
+        new pickColorByUsingPickedPositionUndo(paletteHandle, styleList);
+    TUndoManager::manager()->add(undo);
+    paletteHandle->notifyColorStyleChanged(false, true);  // set dirty flag here
+  }
 }

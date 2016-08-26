@@ -223,10 +223,27 @@ void ColorModelViewer::contextMenuEvent(QContextMenuEvent *event) {
   connect(loadCurrentFrame, SIGNAL(triggered()), SLOT(loadCurrentFrame()));
   menu.addAction(loadCurrentFrame);
 
+  if (!m_imageViewer->getImage()) {
+    menu.exec(event->globalPos());
+    return;
+  }
+
   QAction *removeColorModel =
       new QAction(QString(tr("Remove Color Model")), this);
   connect(removeColorModel, SIGNAL(triggered()), SLOT(removeColorModel()));
   menu.addAction(removeColorModel);
+
+  /* If there is at least one style with "picked pos" parameter, then enable
+   * repick command */
+  TRasterImageP ri = m_imageViewer->getImage();
+  if (ri && currentPalette->hasPickedPosStyle()) {
+    menu.addSeparator();
+    QAction *repickFromColorModelAct = new QAction(
+        QString(tr("Update Colors by Using Picked Positions")), this);
+    connect(repickFromColorModelAct, SIGNAL(triggered()),
+            SLOT(repickFromColorModel()));
+    menu.addAction(repickFromColorModelAct);
+  }
 
   menu.addSeparator();
 
@@ -593,6 +610,17 @@ void ColorModelViewer::onRefImageNotFound() {
   DVGui::info(
       tr("It is not possible to retrieve the color model set for the current "
          "level."));
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorModelViewer::repickFromColorModel() {
+  TImageP img = m_imageViewer->getImage();
+  if (!img) return;
+  TPaletteHandle *ph =
+      TApp::instance()->getPaletteController()->getCurrentLevelPalette();
+
+  PaletteCmd::pickColorByUsingPickedPosition(ph, img);
 }
 
 //=============================================================================

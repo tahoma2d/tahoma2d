@@ -63,6 +63,8 @@ protected slots:
    * -*/
   void changePickType();
 
+  void repickFromColorModel();
+
 signals:
   void refImageNotFound();
 };
