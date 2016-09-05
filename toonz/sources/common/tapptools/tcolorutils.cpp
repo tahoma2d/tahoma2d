@@ -183,7 +183,7 @@ void chooseLeafToClusterize(ClusterContainer::iterator &itRet,
     assert(!ISNAN(clusterCovariance[0]));
 
     // calcola gli autovalori della matrice di covarianza della statistica
-    // del cluster (siccome la matrice e' simmetrica gli autovalori
+    // del cluster (siccome la matrice e' symmetrica gli autovalori
     // sono tutti reali)
     KEYER_FLOAT eigenValues[3];
     tmpMulteplicity = calcCovarianceEigenValues(clusterCovariance, eigenValues);
