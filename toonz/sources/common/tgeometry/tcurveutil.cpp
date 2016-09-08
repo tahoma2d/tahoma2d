@@ -439,8 +439,8 @@ bool isCloseToSegment(const TPointD &point, const TSegment &segment,
                       double distance) {
   TPointD a      = segment.getP0();
   TPointD b      = segment.getP1();
-  double lenght2 = tdistance2(a, b);
-  if (lenght2 < tdistance2(a, point) || lenght2 < tdistance2(point, b))
+  double length2 = tdistance2(a, b);
+  if (length2 < tdistance2(a, point) || length2 < tdistance2(point, b))
     return false;
   if (a.x == b.x) return fabs(point.x - a.x) <= distance;
   if (a.y == b.y) return fabs(point.y - a.y) <= distance;
