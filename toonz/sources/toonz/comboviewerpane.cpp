@@ -189,6 +189,9 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
                        SLOT(update()));
   ret = ret && connect(app->getCurrentScene(), SIGNAL(sceneSwitched()), this,
                        SLOT(onSceneSwitched()));
+  ret = ret && connect(m_toolOptions, SIGNAL(newPanelCreated()), this,
+                       SLOT(updateTabFocus()));
+
   assert(ret);
 
   // note: initializeTitleBar() refers to m_sceneViewer
@@ -388,9 +391,9 @@ void ComboViewerPanel::showEvent(QShowEvent *) {
 
   ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()),
                        m_sceneViewer, SLOT(onToolSwitched()));
-  ret = ret && connect(sceneHandle, SIGNAL(preferenceChanged()), m_flipConsole,
-                       SLOT(onPreferenceChanged()));
-  m_flipConsole->onPreferenceChanged();
+  ret = ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
+                       this, SLOT(onPreferenceChanged(const QString &)));
+  onPreferenceChanged("");
 
   assert(ret);
 
@@ -781,3 +784,38 @@ bool ComboViewerPanel::isFrameAlreadyCached(int frame) {
 }
 
 //-----------------------------------------------------------------------------
+
+void ComboViewerPanel::onPreferenceChanged(const QString &prefName) {
+  // if no name specified (on showEvent), then process all updates
+  if (prefName == "BlankCount" || prefName == "BlankColor" ||
+      prefName.isEmpty())
+    m_flipConsole->onPreferenceChanged();
+
+  if (prefName == "NumpadForSwitchingStyles" || prefName.isEmpty())
+    updateTabFocus();
+}
+
+//-----------------------------------------------------------------------------
+
+void ComboViewerPanel::updateTabFocus() {
+  QList<QWidget *> widgets = findChildren<QWidget *>();
+  if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) {
+    // disable tab focus
+    foreach (QWidget *widget, widgets) {
+      Qt::FocusPolicy policy = widget->focusPolicy();
+      if (policy == Qt::TabFocus || policy == Qt::StrongFocus ||
+          policy == Qt::WheelFocus) {
+        m_childrenFocusPolicies[widget] = policy;
+        widget->setFocusPolicy((policy == Qt::TabFocus) ? Qt::NoFocus
+                                                        : Qt::ClickFocus);
+      }
+    }
+  } else {
+    // revert tab focus
+    QHashIterator<QWidget *, Qt::FocusPolicy> i(m_childrenFocusPolicies);
+    while (i.hasNext()) {
+      i.next();
+      i.key()->setFocusPolicy(i.value());
+    }
+  }
+}

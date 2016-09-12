@@ -199,6 +199,8 @@ protected:
   void zoomInChip();
   void zoomOutChip();
 
+  bool hasShortcut(int indexInPage);
+
 protected slots:
 
   void toggleLink();

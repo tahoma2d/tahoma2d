@@ -211,6 +211,9 @@ private:
   //! The confirmation dialog will not be opened unless the palette is edited
   //! again,
   //! even if the palette's dirtyflag is true.
+
+  int m_shortcutScopeIndex;
+
 public:
   TPalette();
   ~TPalette();
@@ -416,6 +419,8 @@ between RGBA color components.
   {
     m_isLocked = lock;
   }
+
+  void nextShortcutScope();
 
 public:
   // Deprecated functions

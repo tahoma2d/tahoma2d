@@ -38,6 +38,8 @@ class SceneViewerPanel final : public TPanel, public FlipConsoleOwner {
   TPanelTitleBarButton *m_subcameraPreviewButton;
   bool m_onionSkinActive = false;
 
+  QHash<QWidget *, Qt::FocusPolicy> m_childrenFocusPolicies;
+
 public:
 #if QT_VERSION >= 0x050500
   SceneViewerPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -75,6 +77,7 @@ protected slots:
   void onPlayingStatusChanged(bool playing);
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
+  void onPreferenceChanged(const QString &prefName);
 };
 
 #endif

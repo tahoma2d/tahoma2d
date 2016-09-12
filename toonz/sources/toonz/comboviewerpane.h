@@ -55,6 +55,8 @@ class ComboViewerPanel final : public TPanel, public FlipConsoleOwner {
   TPanelTitleBarButton *m_previewButton;
   TPanelTitleBarButton *m_subcameraPreviewButton;
 
+  QHash<QWidget *, Qt::FocusPolicy> m_childrenFocusPolicies;
+
 public:
 #if QT_VERSION >= 0x050500
   ComboViewerPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -118,6 +120,9 @@ protected slots:
   void onSceneSwitched();
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
+
+  void onPreferenceChanged(const QString &prefName);
+  void updateTabFocus();
 };
 
 #endif

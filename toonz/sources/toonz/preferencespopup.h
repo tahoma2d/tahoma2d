@@ -68,7 +68,8 @@ private:
   QPushButton *m_addLevelFormat, *m_removeLevelFormat, *m_editLevelFormat;
 
   DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_levelsBackup,
-      *m_onionSkinVisibility, *m_pixelsOnlyCB, *m_onionSkinDuringPlayback;
+      *m_onionSkinVisibility, *m_pixelsOnlyCB, *m_onionSkinDuringPlayback,
+      *m_useNumpadForSwitchingStyles;
 
   DVGui::FileField *m_ffmpegPathFileFld;
 
@@ -155,6 +156,7 @@ private slots:
   void onShowKeyframesOnCellAreaChanged(int);
   void onFfmpegPathChanged();
   void onFfmpegTimeoutChanged();
+  void onUseNumpadForSwitchingStylesClicked(bool);
 };
 
 //**********************************************************************************
