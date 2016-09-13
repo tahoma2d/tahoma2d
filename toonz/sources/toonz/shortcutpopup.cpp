@@ -10,6 +10,9 @@
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/dvdialog.h"
 
+// TnzLib includes
+#include "toonz/preferences.h"
+
 // Qt includes
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
@@ -126,6 +129,14 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
       return;
     } else
       modifiers = 0;
+  }
+
+  // If "Use Numpad and Tab keys for Switching Styles" option is activated,
+  // then prevent to assign such keys
+  if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
+      modifiers == 0 && (key >= Qt::Key_0 && key <= Qt::Key_9)) {
+    event->ignore();
+    return;
   }
 
   if (m_action) {

@@ -420,7 +420,7 @@ between RGBA color components.
     m_isLocked = lock;
   }
 
-  void nextShortcutScope();
+  void nextShortcutScope(bool invert);
 
 public:
   // Deprecated functions

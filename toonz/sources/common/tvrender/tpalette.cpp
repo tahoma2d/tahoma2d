@@ -1097,9 +1097,16 @@ void TPalette::setShortcutValue(int key, int styleId) {
 
 //-------------------------------------------------------------------
 
-void TPalette::nextShortcutScope() {
-  if ((m_shortcutScopeIndex + 1) * 10 < getPage(0)->getStyleCount())
-    m_shortcutScopeIndex += 1;
-  else
-    m_shortcutScopeIndex = 0;
+void TPalette::nextShortcutScope(bool invert) {
+  if (invert) {
+    if (m_shortcutScopeIndex > 0)
+      m_shortcutScopeIndex -= 1;
+    else
+      m_shortcutScopeIndex = getPage(0)->getStyleCount() / 10;
+  } else {
+    if ((m_shortcutScopeIndex + 1) * 10 < getPage(0)->getStyleCount())
+      m_shortcutScopeIndex += 1;
+    else
+      m_shortcutScopeIndex = 0;
+  }
 }

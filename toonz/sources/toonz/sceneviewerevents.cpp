@@ -775,13 +775,13 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
       }
       event->accept();
       return;
-    } else if (key == Qt::Key_Tab) {
+    } else if (key == Qt::Key_Tab || key == Qt::Key_Backtab) {
       TPaletteHandle *ph =
           TApp::instance()->getPaletteController()->getCurrentLevelPalette();
 
       TPalette *palette = ph->getPalette();
       if (palette) {
-        palette->nextShortcutScope();
+        palette->nextShortcutScope(key == Qt::Key_Backtab);
         ph->notifyPaletteChanged();
       }
       event->accept();

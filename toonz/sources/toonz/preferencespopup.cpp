@@ -885,6 +885,8 @@ void PreferencesPopup::onUseNumpadForSwitchingStylesClicked(bool checked) {
     }
     QAction *tabAction = cm->getActionFromShortcut("Tab");
     if (tabAction) actionsList.append(tabAction);
+    tabAction = cm->getActionFromShortcut("Shift+Tab");
+    if (tabAction) actionsList.append(tabAction);
     // if there are actions using numpad shortcuts, notify to release them.
     if (!actionsList.isEmpty()) {
       QString msgStr =
