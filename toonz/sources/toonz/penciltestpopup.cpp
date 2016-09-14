@@ -1100,7 +1100,7 @@ void PencilTestPopup::showEvent(QShowEvent* event) {
 
   // reload camera
   if (m_currentCamera) {
-    if (m_currentCamera->state() == QCamera::UnloadedStatus)
+    if (m_currentCamera->state() == QCamera::UnloadedState)
       m_currentCamera->load();
     if (m_currentCamera->state() == QCamera::LoadedState)
       m_currentCamera->start();
