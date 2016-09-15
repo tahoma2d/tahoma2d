@@ -95,7 +95,7 @@ public:
   void toggleKeyframe(int frame);
 
   // remove link from the studio palette (if linked)
-  bool removeLink();
+  void removeLink();
   // get back the style from the studio palette (if linked)
   void getBackOriginalStyle();
 };

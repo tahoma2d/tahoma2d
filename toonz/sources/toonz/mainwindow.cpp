@@ -1640,7 +1640,7 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_GetColorFromStudioPalette,
                              tr("Get Color from Studio Palette"), "");
   createRightClickMenuAction(MI_ToggleLinkToStudioPalette,
-                             tr("Toggle Link to Studio Palette"), "\\");
+                             tr("Toggle Link to Studio Palette"), "");
   createRightClickMenuAction(MI_RemoveReferenceToStudioPalette,
                              tr("Remove Reference to Studio Palette"), "");
   createMenuEditAction(MI_Clear, tr("&Delete"), "Delete");
