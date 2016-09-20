@@ -825,7 +825,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Camera Stand View</source>
-        <translation></translation>
+        <translation>Vista de cámara</translation>
     </message>
     <message>
         <source>3D View</source>
@@ -833,7 +833,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Camera View</source>
-        <translation></translation>
+        <translation>Vista de cámara</translation>
     </message>
     <message>
         <source>Freeze</source>
