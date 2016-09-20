@@ -1023,7 +1023,8 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
 
   // remove links from studio palette
   if (m_viewType == LEVEL_PALETTE && m_styleSelection &&
-      !m_styleSelection->isEmpty() && !isLocked) {
+      !m_styleSelection->isEmpty() && !isLocked &&
+      m_styleSelection->hasLinkedStyle()) {
     menu.addSeparator();
     QAction *toggleStyleLink = cmd->getAction("MI_ToggleLinkToStudioPalette");
     menu.addAction(toggleStyleLink);

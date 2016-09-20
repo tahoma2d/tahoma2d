@@ -1794,3 +1794,26 @@ void TStyleSelection::getBackOriginalStyle() {
   } else
     delete undo;
 }
+
+//-----------------------------------------------------------------------------
+/*! return true if there is at least one linked style in the selection
+*/
+
+bool TStyleSelection::hasLinkedStyle() {
+  TPalette *palette = getPalette();
+  if (!palette || m_pageIndex < 0 || isEmpty()) return false;
+  if (m_styleIndicesInPage.size() <= 0) return false;
+
+  TPalette::Page *page = palette->getPage(m_pageIndex);
+  assert(page);
+
+  // for each selected style
+  for (std::set<int>::iterator it = m_styleIndicesInPage.begin();
+       it != m_styleIndicesInPage.end(); ++it) {
+    TColorStyle *cs    = page->getStyle(*it);
+    std::wstring gname = cs->getGlobalName();
+    // if the style has link, return true
+    if (gname != L"" && (gname[0] == L'-' || gname[0] == L'+')) return true;
+  }
+  return false;
+}
