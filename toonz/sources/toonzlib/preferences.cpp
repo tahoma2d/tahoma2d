@@ -255,6 +255,8 @@ Preferences::Preferences()
     , m_fitToFlipbookEnabled(false)
     , m_previewAlwaysOpenNewFlipEnabled(false)
     , m_autosaveEnabled(false)
+    , m_autosaveSceneEnabled(true)
+    , m_autosaveOtherFilesEnabled(true)
     , m_defaultViewerEnabled(false)
     , m_saveUnpaintedInCleanup(true)
     , m_askForOverrideRender(true)
@@ -324,6 +326,9 @@ Preferences::Preferences()
   getValue(*m_settings, "sceneNumberingEnabled", m_sceneNumberingEnabled);
   getValue(*m_settings, "animationSheetEnabled", m_animationSheetEnabled);
   getValue(*m_settings, "autosaveEnabled", m_autosaveEnabled);
+  getValue(*m_settings, "autosaveSceneEnabled", m_autosaveSceneEnabled);
+  getValue(*m_settings, "autosaveOtherFilesEnabled",
+           m_autosaveOtherFilesEnabled);
   getValue(*m_settings, "defaultViewerEnabled", m_defaultViewerEnabled);
   getValue(*m_settings, "rasterOptimizedMemory", m_rasterOptimizedMemory);
   getValue(*m_settings, "saveUnpaintedInCleanup", m_saveUnpaintedInCleanup);
@@ -640,6 +645,20 @@ void Preferences::enableAutosave(bool on) {
     emit stopAutoSave();
   else
     emit startAutoSave();
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::enableAutosaveScene(bool on) {
+  m_autosaveSceneEnabled = on;
+  m_settings->setValue("autosaveSceneEnabled", on ? "1" : "0");
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::enableAutosaveOtherFiles(bool on) {
+  m_autosaveOtherFilesEnabled = on;
+  m_settings->setValue("autosaveOtherFilesEnabled", on ? "1" : "0");
 }
 
 //-----------------------------------------------------------------
