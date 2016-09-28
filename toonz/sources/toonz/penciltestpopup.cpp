@@ -1521,7 +1521,9 @@ void PencilTestPopup::onCaptureFilterSettingsBtnPressed() {
   QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
   for (int c = 0; c < cameras.size(); c++) {
     if (cameras.at(c).deviceName() == m_deviceName) {
+#ifdef _WIN32
       openCaptureFilterSettings(this, cameras.at(c).description());
+#endif
       return;
     }
   }
