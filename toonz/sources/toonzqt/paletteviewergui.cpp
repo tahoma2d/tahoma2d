@@ -1023,27 +1023,21 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
 
   // remove links from studio palette
   if (m_viewType == LEVEL_PALETTE && m_styleSelection &&
-      !m_styleSelection->isEmpty() && !isLocked) {
+      !m_styleSelection->isEmpty() && !isLocked &&
+      m_styleSelection->hasLinkedStyle()) {
     menu.addSeparator();
-    QAction *removeLinkAct = menu.addAction(tr("Remove Links"));
-    connect(removeLinkAct, SIGNAL(triggered()), this, SLOT(removeLink()));
+    QAction *toggleStyleLink = cmd->getAction("MI_ToggleLinkToStudioPalette");
+    menu.addAction(toggleStyleLink);
+    QAction *removeStyleLink =
+        cmd->getAction("MI_RemoveReferenceToStudioPalette");
+    menu.addAction(removeStyleLink);
+    QAction *getBackOriginalAct =
+        cmd->getAction("MI_GetColorFromStudioPalette");
+    menu.addAction(getBackOriginalAct);
   }
 
   if (((indexPage == 0 && index > 0) || (indexPage > 0 && index >= 0)) &&
       index < getChipCount() && !isLocked) {
-    // iwsw commented out temporarly
-    /*
-    wstring globalName = m_page->getStyle(index)->getGlobalName();
-    if (m_viewType != STUDIO_PALETTE &&
-            globalName != L"" &&
-            (globalName[0] == L'-' || globalName[0] == L'+'))
-    {
-            createMenuAction(menu, "MI_ToggleLinkToStudioPalette", tr("Toggle
-    Link to Studio Palette"), "toggleLink()");
-            createMenuAction(menu, "MI_RemoveReferenceToStudioPalette",
-    tr("Remove Reference to Studio Palette"), "eraseToggleLink()");
-    }
-    */
     if (pasteValueAct) pasteValueAct->setEnabled(true);
     if (pasteColorsAct) pasteColorsAct->setEnabled(true);
 
@@ -1061,29 +1055,20 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
     clearAct->setEnabled(false);
   }
 
-  // get color from the original studio palette
-  if (m_viewType == LEVEL_PALETTE && m_styleSelection &&
-      !m_styleSelection->isEmpty() && !isLocked) {
-    menu.addSeparator();
-    QAction *getBackOriginalAct =
-        cmd->getAction("MI_GetColorFromStudioPalette");
-    menu.addAction(getBackOriginalAct);
-  }
-
-  // iwsw commented out temporarly
-  /*
-  if (m_viewType != STUDIO_PALETTE)
-  {
-          menu.addSeparator();
-          menu.addAction(cmd->getAction(MI_EraseUnusedStyles));
-  }
-  */
   if (m_page) {
+    menu.addSeparator();
     QAction *newStyle = menu.addAction(tr("New Style"));
     connect(newStyle, SIGNAL(triggered()), SLOT(addNewColor()));
     QAction *newPage = menu.addAction(tr("New Page"));
     connect(newPage, SIGNAL(triggered()), SLOT(addNewPage()));
   }
+
+  /*
+  if (m_viewType != STUDIO_PALETTE) {
+          menu.addAction(cmd->getAction(MI_EraseUnusedStyles));
+  }
+  */
+
   menu.exec(event->globalPos());
 }
 
@@ -1370,25 +1355,6 @@ void PageViewer::onStyleRenamed() {
   PaletteCmd::renamePaletteStyle(getPaletteHandle(), newName);
 }
 
-//-----------------------------------------------------------------------------
-/*! Recall \b TStyleSelection::toggleLink() to current page style selection.
-*/
-void PageViewer::toggleLink() {
-  if (!m_page || !m_styleSelection || m_styleSelection->isEmpty()) return;
-  m_styleSelection->toggleLink();
-  update();
-  emit changeWindowTitleSignal();
-}
-
-//-----------------------------------------------------------------------------
-/*! Recall \b TStyleSelection::eraseToggleLink() to current page style
- * selection.
-*/
-void PageViewer::eraseToggleLink() {
-  if (!m_page || !m_styleSelection || m_styleSelection->isEmpty()) return;
-  m_styleSelection->eraseToggleLink();
-}
-
 //=============================================================================
 /*! \class PaletteViewerGUI::PaletteTabBar
                 \brief The PaletteTabBar class provides a bar with tab to show
@@ -1652,13 +1618,6 @@ void PageViewer::updateCommandLocks() {
   cmd->getAction("MI_BlendColors")->setEnabled(!isLocked);
   cmd->getAction("MI_PasteNames")->setEnabled(!isLocked);
   cmd->getAction("MI_GetColorFromStudioPalette")->setEnabled(!isLocked);
-}
-
-//-----------------------------------------------------------------------------
-/*! remove link and revert to the normal style
-*/
-void PageViewer::removeLink() {
-  if (!m_page || !m_styleSelection || m_styleSelection->isEmpty()) return;
-
-  if (m_styleSelection->removeLink()) emit changeWindowTitleSignal();
+  cmd->getAction("MI_ToggleLinkToStudioPalette")->setEnabled(!isLocked);
+  cmd->getAction("MI_RemoveReferenceToStudioPalette")->setEnabled(!isLocked);
 }
