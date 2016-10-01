@@ -158,3 +158,15 @@ Then you can launch OpenToonz by running `/opt/opentoonz/bin/opentoonz`.
 
 You can change the installation path by modifying the `CMAKE_INSTALL_PREFIX` CMake variable.
 
+----
+
+# Linux Package Definitions
+
+It may be helpful to use existing packages as a reference when creating a package for your own distribution.
+
+- ArchLinux (AUR):
+  https://aur.archlinux.org/packages/opentoonz-git/
+
+- App-Image (Portable):
+  https://github.com/morevnaproject/morevna-builds
+
