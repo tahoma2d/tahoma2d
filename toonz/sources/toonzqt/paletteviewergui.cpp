@@ -454,6 +454,10 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
       name += "  " + toQString(g.first) + ":" + QString::number(g.second);
     if (style->getFlags() != 0) name += "(autopaint)";
 
+    TPoint pickedPos = style->getPickedPosition();
+    if (pickedPos != TPoint())
+      name += QString(" (%1,%2)").arg(pickedPos.x).arg(pickedPos.y);
+
     p.drawText(nameRect.adjusted(6, 4, -6, -4), name);
 
     QColor borderCol(getTextColor());
@@ -772,10 +776,23 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       p.drawText(indexRect, Qt::AlignCenter, QString().setNum(styleIndex));
 
       // draw "Autopaint for lines" indicator
+      int offset = 0;
       if (style->getFlags() != 0) {
         QRect aflRect(chipRect.bottomLeft() + QPoint(0, -14), QSize(12, 15));
         p.drawRect(aflRect);
         p.drawText(aflRect, Qt::AlignCenter, "A");
+        offset += 12;
+      }
+
+      // draw "Picked Position" indicator (not show on small chip mode)
+      if (style->getPickedPosition() != TPoint() && m_viewMode != SmallChips) {
+        QRect ppRect(chipRect.bottomLeft() + QPoint(offset, -14),
+                     QSize(12, 15));
+        p.drawRect(ppRect);
+        QPoint markPos = ppRect.center() + QPoint(1, 0);
+        p.drawEllipse(markPos, 3, 3);
+        p.drawLine(markPos - QPoint(5, 0), markPos + QPoint(5, 0));
+        p.drawLine(markPos - QPoint(0, 5), markPos + QPoint(0, 5));
       }
 
       // revert font set
