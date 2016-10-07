@@ -292,7 +292,8 @@ Preferences::Preferences()
     , m_projectRoot(0x08)
     , m_customProjectRoot("")
     , m_precompute(true)
-    , m_ffmpegTimeout(30) {
+    , m_ffmpegTimeout(30)
+    , m_shortcutPreset("defopentoonz") {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -557,6 +558,9 @@ Preferences::Preferences()
   if (ffmpegPath != "") m_ffmpegPath = ffmpegPath;
   setFfmpegPath(m_ffmpegPath.toStdString());
   getValue(*m_settings, "ffmpegTimeout", m_ffmpegTimeout);
+  QString shortcutPreset = m_settings->value("shortcutPreset").toString();
+  if (shortcutPreset != "") m_shortcutPreset = shortcutPreset;
+  setShortcutPreset(m_shortcutPreset.toStdString());
 }
 
 //-----------------------------------------------------------------
@@ -1238,6 +1242,13 @@ void Preferences::setFfmpegPath(std::string path) {
   m_ffmpegPath        = QString::fromStdString(path);
   std::string strPath = m_ffmpegPath.toStdString();
   m_settings->setValue("ffmpegPath", m_ffmpegPath);
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::setShortcutPreset(std::string preset) {
+  m_shortcutPreset = QString::fromStdString(preset);
+  m_settings->setValue("shortcutPreset", m_shortcutPreset);
 }
 
 //-----------------------------------------------------------------
