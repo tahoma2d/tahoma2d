@@ -14,6 +14,7 @@
 #include "onionskinmaskgui.h"
 #include "ruler.h"
 #include "comboviewerpane.h"
+#include "locatorpopup.h"
 
 // TnzTools includes
 #include "tools/cursors.h"
@@ -179,6 +180,14 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button) {
   case FlipConsole::eDefineSubCamera:
     m_editPreviewSubCamera = !m_editPreviewSubCamera;
     update();
+    break;
+
+  // open locator. Create one for the first time
+  case FlipConsole::eLocator:
+    if (!m_locator) m_locator = new LocatorPopup(this);
+    m_locator->show();
+    m_locator->raise();
+    m_locator->activateWindow();
     break;
   }
 }
@@ -349,6 +358,10 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
                    false);
     TPointD pos = tool->getMatrix().inv() * winToWorld(curPos);
 
+    if (m_locator) {
+      m_locator->onChangeViewAff(m_viewAff[m_viewMode], pos);
+    }
+
     TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
     if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
       pos.x /= m_dpiScale.x;
@@ -375,6 +388,7 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
       // panning
       panQt(curPos - m_pos);
     m_pos = curPos;
+
     return;
   }
 }
@@ -973,6 +987,7 @@ void SceneViewer::contextMenuEvent(QContextMenuEvent *e) {
 #endif
 
   if (m_freezedStatus != NO_FREEZED) return;
+  if (m_isLocator) return;
 
   TPoint winPos(e->pos().x(), height() - e->pos().y());
   std::vector<int> columnIndices;

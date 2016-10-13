@@ -1688,6 +1688,8 @@ void BrushTool::draw() {
   } else {
     tglDrawCircle(m_brushPos, 0.5 * m_minThick);
     tglDrawCircle(m_brushPos, 0.5 * m_maxThick);
+    std::cout << "BRUSH m_brushPos = " << m_brushPos.x << ",  " << m_brushPos.y
+              << std::endl;
   }
 }
 

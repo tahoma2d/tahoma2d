@@ -140,6 +140,7 @@ set(MOC_HEADERS
     historypane.h
     cleanupsettingspane.h
     penciltestpopup.h
+	locatorpopup.h
 # Tracker file
     dummyprocessor.h
     metnum.h
@@ -298,6 +299,7 @@ set(SOURCES
     historypane.cpp
     cleanupsettingspane.cpp
     penciltestpopup.cpp
+	locatorpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp
