@@ -1104,7 +1104,7 @@ void SceneViewer::drawCameraStand() {
   // Show white background when level editing mode.
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (m_drawEditingLevel && tool && tool->isEnabled()) {
-    tool->setViewer(this);
+    if (!m_isLocator) tool->setViewer(this);
     glPushMatrix();
     if (m_referenceMode == CAMERA3D_REFERENCE) {
       mult3DMatrix();
@@ -1366,8 +1366,8 @@ void SceneViewer::drawOverlay() {
     // draw cross at the center of the locator window
     if (m_isLocator) {
       glColor3d(1.0, 0.0, 0.0);
-      tglDrawSegment(TPointD(-5, 0), TPointD(5, 0));
-      tglDrawSegment(TPointD(0, -5), TPointD(0, 5));
+      tglDrawSegment(TPointD(-4, 0), TPointD(5, 0));
+      tglDrawSegment(TPointD(0, -4), TPointD(0, 5));
     }
   }
 }

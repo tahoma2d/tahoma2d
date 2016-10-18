@@ -21,7 +21,7 @@ public:
   LocatorPopup(QWidget* parent = 0);
   SceneViewer* viewer() { return m_viewer; }
 
-  void onChangeViewAff(const TAffine& affine, const TPointD& curPos);
+  void onChangeViewAff(const TPointD& curPos);
 
 protected:
   void showEvent(QShowEvent*);

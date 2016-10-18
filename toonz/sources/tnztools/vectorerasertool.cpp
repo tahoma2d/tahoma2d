@@ -427,8 +427,6 @@ void EraserTool::draw() {
     if (m_eraseType.getValue() == NORMAL_ERASE) {
       tglColor(TPixel32(255, 0, 255));
       tglDrawCircle(m_brushPos, m_pointSize);
-      std::cout << "ERASER m_brushPos = " << m_brushPos.x << ",  "
-                << m_brushPos.y << std::endl;
     }
     if ((m_eraseType.getValue() == FREEHAND_ERASE ||
          m_eraseType.getValue() == POLYLINE_ERASE) &&

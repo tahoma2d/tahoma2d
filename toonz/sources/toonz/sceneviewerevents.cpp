@@ -356,10 +356,11 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
     TMouseEvent toonzEvent;
     initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent,
                    false);
-    TPointD pos = tool->getMatrix().inv() * winToWorld(curPos);
+    TPointD worldPos = winToWorld(curPos);
+    TPointD pos      = tool->getMatrix().inv() * worldPos;
 
     if (m_locator) {
-      m_locator->onChangeViewAff(m_viewAff[m_viewMode], pos);
+      m_locator->onChangeViewAff(worldPos);
     }
 
     TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
