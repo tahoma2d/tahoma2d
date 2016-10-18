@@ -1344,6 +1344,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
 
   //---Help Menu
   QMenu *helpMenu = addMenu(tr("Help"), fullMenuBar);
+  addMenuItem(helpMenu, MI_StartupPopup);
   addMenuItem(helpMenu, MI_About);
 
   return fullMenuBar;

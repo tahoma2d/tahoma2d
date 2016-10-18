@@ -526,7 +526,7 @@ DvDirTreeView {
 /*---------------------------------------------------------------------------*/
 /* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup, RenameAsToonzPopup */
 /*---------------------------------------------------------------------------*/
-#CleanupSettingsFrame,
+#CleanupSettingsFrame, 
 #LoadLevelFrame,
 #SolidLineFrame {
   border: 1px solid #141414;
