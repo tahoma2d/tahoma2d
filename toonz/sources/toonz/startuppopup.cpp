@@ -221,8 +221,8 @@ StartupPopup::StartupPopup()
     m_sceneBox->setLayout(newSceneLay);
     guiLay->addWidget(m_sceneBox, 2, 0, 4, 1, Qt::AlignLeft);
 
-    m_recentSceneLay->setMargin(8);
-    m_recentSceneLay->setSpacing(8);
+    m_recentSceneLay->setMargin(5);
+    m_recentSceneLay->setSpacing(2);
     {
       // Recent Scene List
       m_recentBox->setLayout(m_recentSceneLay);
@@ -367,6 +367,8 @@ void StartupPopup::showEvent(QShowEvent *) {
       if (i > 9) break;  // box can hold 10 scenes
       QString justName = QString::fromStdString(TFilePath(name).getName());
       m_recentNamesLabels[i] = new StartupLabel(justName, this, i);
+      m_recentNamesLabels[i]->setToolTip(
+          name.remove(0, name.indexOf(" ") + 1));  // remove "#. " prefix
       m_recentSceneLay->addWidget(m_recentNamesLabels[i], i, Qt::AlignTop);
       i++;
     }
@@ -901,6 +903,7 @@ void StartupPopup::updateSize() {
 StartupLabel::StartupLabel(const QString &text, QWidget *parent, int index)
     : QLabel(parent), m_index(index) {
   setText(text);
+  setObjectName("StartupLabel");
 }
 
 StartupLabel::~StartupLabel() {}

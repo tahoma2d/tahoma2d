@@ -526,7 +526,7 @@ DvDirTreeView {
 /*---------------------------------------------------------------------------*/
 /* Cleanup Settings, LoadLevel, PsdSettingsPopup, FxSettingsPopup, RenameAsToonzPopup */
 /*---------------------------------------------------------------------------*/
-#CleanupSettingsFrame, 
+#CleanupSettingsFrame,
 #LoadLevelFrame,
 #SolidLineFrame {
   border: 1px solid #141414;
@@ -1110,6 +1110,12 @@ QDialog #dialogButtonFrame {
 }
 #GearButton {
   qproperty-icon: url("imgs/gear.png");
+}
+#StartupLabel {
+  padding: 3px;
+}
+#StartupLabel:hover {
+  background-color: #9a9a9a;
 }
 
 //# sourceMappingURL=gray_128.qss.map
