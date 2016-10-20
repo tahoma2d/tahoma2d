@@ -443,5 +443,8 @@
       <file>Resources/finger_rollover.svg</file>
       <file>Resources/ruler.svg</file>
       <file>Resources/ruler_rollover.svg</file>
+      <file>Resources/locator.png</file>
+      <file>Resources/locator_click.png</file>
+      <file>Resources/locator_over.png</file>
     </qresource>
 </RCC>
