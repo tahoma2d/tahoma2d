@@ -595,7 +595,7 @@ DvDirTreeView {
 /*---------------------------------------------------------------------------*/
 #CleanupSettingsFrame, 
 #LoadLevelFrame,
-#SolidLineFrame{
+#SolidLineFrame {
 	border: 1px solid rgb(20,20,20);
 }
 
@@ -1190,4 +1190,15 @@ QDialog #dialogButtonFrame {
 
 #LargeSizedText {
     font-size: 17px;
+}
+
+#GearButton {
+    qproperty-icon: url("@{image_url}/gear.png");
+}
+
+#StartupLabel {
+    padding: 3px;
+	&:hover {
+		.baseBG(light, 10%);
+	}    
 }

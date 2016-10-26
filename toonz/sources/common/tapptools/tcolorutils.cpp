@@ -182,7 +182,8 @@ void chooseLeafToClusterize(ClusterContainer::iterator &itRet,
     const KEYER_FLOAT *clusterCovariance = cluster->statistic.covariance;
     assert(!ISNAN(clusterCovariance[0]));
 
-    // Calculate the eigenvalues ​​of the covariance matrix of the cluster statistics
+    // Calculate the eigenvalues ​​of the covariance matrix of the cluster
+    // statistics
     // (because the array is symmetrical the eigenvalues are all real)
     KEYER_FLOAT eigenValues[3];
     tmpMulteplicity = calcCovarianceEigenValues(clusterCovariance, eigenValues);

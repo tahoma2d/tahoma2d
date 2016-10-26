@@ -284,7 +284,8 @@ int intersect(const TQuadratic &c0, const TQuadratic &c1,
 // This function checks whether the control point
 // p1 is very close to p0 or p2.
 // In this case, we are approximated to the quadratic p0-p2 segment.
-// If p1 is near p0, the relationship between the original and the quadratic segment:
+// If p1 is near p0, the relationship between the original and the quadratic
+// segment:
 //     tq = sqrt(ts),
 // If p1 is near p2, instead it's:
 //     tq = 1-sqrt(1-ts).

@@ -201,12 +201,6 @@ protected:
 
   bool hasShortcut(int indexInPage);
 
-protected slots:
-
-  void toggleLink();
-  void eraseToggleLink();
-  void removeLink();
-
 private:
   DVGui::LineEdit *m_renameTextField;
   QPoint m_dragStartPosition;

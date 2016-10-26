@@ -1369,5 +1369,14 @@ QDialog #dialogButtonFrame {
 #LargeSizedText {
   font-size: 17px;
 }
+#GearButton {
+  qproperty-icon: url("../gray_072/imgs/gear.png");
+}
+#StartupLabel {
+  padding: 3px;
+}
+#StartupLabel:hover {
+  background-color: #4a4a4a;
+}
 
 //# sourceMappingURL=gray_048.qss.map

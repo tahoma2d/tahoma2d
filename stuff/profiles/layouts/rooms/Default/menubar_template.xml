@@ -2,9 +2,9 @@
   <menu title="File">
     <command>MI_NewScene</command>
     <command>MI_LoadScene</command>
+    <command>MI_SaveAll</command>
     <command>MI_SaveScene</command>
     <command>MI_SaveSceneAs</command>
-    <command>MI_SaveAll</command>
     <command>MI_OpenRecentScene</command>
     <command>MI_RevertScene</command>
     <separator/>
@@ -13,6 +13,7 @@
     <separator/>
     <command>MI_NewLevel</command>
     <command>MI_LoadLevel</command>
+    <command>MI_SaveAllLevels</command>
     <command>MI_SaveLevel</command>
     <command>MI_SaveLevelAs</command>
     <command>MI_ExportLevel</command>
@@ -233,6 +234,7 @@
     <command>MI_ResetRoomLayout</command>
   </menu>
   <menu title="Help">
+    <command>MI_StartupPopup</command>
     <command>MI_About</command>
   </menu>
 </menubar>
