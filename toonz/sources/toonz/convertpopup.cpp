@@ -529,7 +529,7 @@ QFrame *ConvertPopup::createTlvSettings() {
   m_tlvMode              = new QComboBox();
   m_unpaintedFolderLabel = new QLabel(tr("Unpainted File Folder:"));
   m_unpaintedFolder =
-      new DVGui::FileField(0, QString(tr("Same as Painted")), true);
+      new DVGui::FileField(0, QString(tr("Same as Painted")), true, true);
   m_suffixLabel     = new QLabel(tr(" Unpainted File Suffix:"));
   m_unpaintedSuffix = new DVGui::LineEdit("_np");
   m_applyAutoclose  = new QCheckBox(tr("Apply Autoclose"));
@@ -538,8 +538,9 @@ QFrame *ConvertPopup::createTlvSettings() {
   m_appendDefaultPalette = new QCheckBox(tr("Append Default Palette"));
   m_antialias            = new QComboBox();
   m_antialiasIntensity   = new DVGui::IntLineEdit(0, 50, 0, 100);
-  m_palettePath = new DVGui::FileField(0, QString(CreateNewPalette), true);
-  m_tolerance   = new DVGui::IntLineEdit(0, 0, 0, 255);
+  m_palettePath =
+      new DVGui::FileField(0, QString(CreateNewPalette), true, true);
+  m_tolerance = new DVGui::IntLineEdit(0, 0, 0, 255);
 
   m_removeUnusedStyles =
       new QCheckBox(tr("Remove Unused Styles from Input Palette"));
