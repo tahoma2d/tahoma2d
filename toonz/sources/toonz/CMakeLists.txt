@@ -142,6 +142,7 @@ set(MOC_HEADERS
     cleanupsettingspane.h
     penciltestpopup.h
 	locatorpopup.h
+	styleshortcutselectivepanel.h
 # Tracker file
     dummyprocessor.h
     metnum.h
@@ -302,6 +303,7 @@ set(SOURCES
     cleanupsettingspane.cpp
     penciltestpopup.cpp
 	locatorpopup.cpp
+	styleshortcutselectivepanel.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

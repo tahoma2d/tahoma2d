@@ -3,7 +3,7 @@
 #ifndef COMBOVIEWER_PANE_INCLUDED
 #define COMBOVIEWER_PANE_INCLUDED
 
-#include "pane.h"
+#include "styleshortcutselectivepanel.h"
 #include "sceneviewer.h"
 #include "toonzqt/intfield.h"
 #include "toonzqt/keyframenavigator.h"
@@ -37,7 +37,8 @@ enum CV_Parts {
 };
 //-----------------------------------------------------------------------------
 
-class ComboViewerPanel final : public TPanel, public FlipConsoleOwner {
+class ComboViewerPanel final : public StyleShortcutSelectivePanel,
+                               public FlipConsoleOwner {
   Q_OBJECT
 
   SceneViewer *m_sceneViewer;
@@ -54,8 +55,6 @@ class ComboViewerPanel final : public TPanel, public FlipConsoleOwner {
 
   TPanelTitleBarButton *m_previewButton;
   TPanelTitleBarButton *m_subcameraPreviewButton;
-
-  QHash<QWidget *, Qt::FocusPolicy> m_childrenFocusPolicies;
 
 public:
 #if QT_VERSION >= 0x050500
@@ -121,8 +120,7 @@ protected slots:
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
 
-  void onPreferenceChanged(const QString &prefName);
-  void updateTabFocus();
+  void onPreferenceChanged(const QString &prefName) override;
 };
 
 #endif

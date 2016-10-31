@@ -3,7 +3,7 @@
 #ifndef VIEWER_PANE_INCLUDED
 #define VIEWER_PANE_INCLUDED
 
-#include "pane.h"
+#include "styleshortcutselectivepanel.h"
 #include "sceneviewer.h"
 #include "toonzqt/intfield.h"
 #include "toonzqt/keyframenavigator.h"
@@ -25,7 +25,8 @@ class Ruler;
 
 class FlipConsole;
 class TXshLevel;
-class SceneViewerPanel final : public TPanel, public FlipConsoleOwner {
+class SceneViewerPanel final : public StyleShortcutSelectivePanel,
+                               public FlipConsoleOwner {
   Q_OBJECT
 
   friend class SceneViewer;
@@ -37,8 +38,6 @@ class SceneViewerPanel final : public TPanel, public FlipConsoleOwner {
   TPanelTitleBarButton *m_previewButton;
   TPanelTitleBarButton *m_subcameraPreviewButton;
   bool m_onionSkinActive = false;
-
-  QHash<QWidget *, Qt::FocusPolicy> m_childrenFocusPolicies;
 
 public:
 #if QT_VERSION >= 0x050500
@@ -77,7 +76,7 @@ protected slots:
   void onPlayingStatusChanged(bool playing);
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
-  void onPreferenceChanged(const QString &prefName);
+  void onPreferenceChanged(const QString &prefName) override;
 };
 
 #endif

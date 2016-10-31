@@ -772,36 +772,15 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
 
   tool->setViewer(this);
 
-  if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
-      (!isTextToolActive)) {
-    if (Qt::Key_0 <= key && key <= Qt::Key_9) {
-      TPaletteHandle *ph =
-          TApp::instance()->getPaletteController()->getCurrentLevelPalette();
-
-      TPalette *palette = ph->getPalette();
-      if (palette) {
-        int styleId = palette->getShortcutValue(key);
-        if (styleId >= 0) {
-          ph->setStyleIndex(styleId);
-          TStyleSelection *selection = dynamic_cast<TStyleSelection *>(
-              TApp::instance()->getCurrentSelection()->getSelection());
-          if (selection) selection->selectNone();
-        }
-      }
-      event->accept();
-      return;
-    } else if (key == Qt::Key_Tab || key == Qt::Key_Backtab) {
-      TPaletteHandle *ph =
-          TApp::instance()->getPaletteController()->getCurrentLevelPalette();
-
-      TPalette *palette = ph->getPalette();
-      if (palette) {
-        palette->nextShortcutScope(key == Qt::Key_Backtab);
-        ph->notifyPaletteChanged();
-      }
-      event->accept();
-      return;
-    }
+  // If this object is child of Viewer or ComboViewer
+  // (m_isStyleShortcutSelective = true),
+  // then consider about shortcut for the current style selection.
+  if (m_isStyleShortcutSelective &&
+      Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
+      (!isTextToolActive) && ((Qt::Key_0 <= key && key <= Qt::Key_9) ||
+                              key == Qt::Key_Tab || key == Qt::Key_Backtab)) {
+    event->ignore();
+    return;
   }
 
   if (key == Qt::Key_Shift)

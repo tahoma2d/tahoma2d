@@ -86,7 +86,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 #else
 ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
 #endif
-    : TPanel(parent) {
+    : StyleShortcutSelectivePanel(parent) {
   TApp *app = TApp::instance();
 
   QFrame *hbox = new QFrame(this);
@@ -103,6 +103,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
   ImageUtils::FullScreenWidget *fsWidget =
       new ImageUtils::FullScreenWidget(this);
   fsWidget->setWidget(m_sceneViewer = new SceneViewer(fsWidget));
+  m_sceneViewer->setIsStyleShortcutSelective();
 
 #if defined(Q_OS_WIN) && (QT_VERSION >= 0x050500) && (QT_VERSION < 0x050600)
   //  Workaround for QTBUG-48288
@@ -339,7 +340,8 @@ ComboViewerPanel::~ComboViewerPanel() {
 
 //-----------------------------------------------------------------------------
 
-void ComboViewerPanel::showEvent(QShowEvent *) {
+void ComboViewerPanel::showEvent(QShowEvent *event) {
+  StyleShortcutSelectivePanel::showEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -391,9 +393,6 @@ void ComboViewerPanel::showEvent(QShowEvent *) {
 
   ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()),
                        m_sceneViewer, SLOT(onToolSwitched()));
-  ret = ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
-                       this, SLOT(onPreferenceChanged(const QString &)));
-  onPreferenceChanged("");
 
   assert(ret);
 
@@ -406,7 +405,8 @@ void ComboViewerPanel::showEvent(QShowEvent *) {
 
 //-----------------------------------------------------------------------------
 
-void ComboViewerPanel::hideEvent(QHideEvent *) {
+void ComboViewerPanel::hideEvent(QHideEvent *event) {
+  StyleShortcutSelectivePanel::hideEvent(event);
   TApp *app = TApp::instance();
   disconnect(app->getCurrentScene());
   disconnect(app->getCurrentLevel());
@@ -791,31 +791,5 @@ void ComboViewerPanel::onPreferenceChanged(const QString &prefName) {
       prefName.isEmpty())
     m_flipConsole->onPreferenceChanged();
 
-  if (prefName == "NumpadForSwitchingStyles" || prefName.isEmpty())
-    updateTabFocus();
-}
-
-//-----------------------------------------------------------------------------
-
-void ComboViewerPanel::updateTabFocus() {
-  QList<QWidget *> widgets = findChildren<QWidget *>();
-  if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) {
-    // disable tab focus
-    foreach (QWidget *widget, widgets) {
-      Qt::FocusPolicy policy = widget->focusPolicy();
-      if (policy == Qt::TabFocus || policy == Qt::StrongFocus ||
-          policy == Qt::WheelFocus) {
-        m_childrenFocusPolicies[widget] = policy;
-        widget->setFocusPolicy((policy == Qt::TabFocus) ? Qt::NoFocus
-                                                        : Qt::ClickFocus);
-      }
-    }
-  } else {
-    // revert tab focus
-    QHashIterator<QWidget *, Qt::FocusPolicy> i(m_childrenFocusPolicies);
-    while (i.hasNext()) {
-      i.next();
-      i.key()->setFocusPolicy(i.value());
-    }
-  }
+  StyleShortcutSelectivePanel::onPreferenceChanged(prefName);
 }

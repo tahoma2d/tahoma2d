@@ -77,7 +77,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 #else
 SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
 #endif
-    : TPanel(parent) {
+    : StyleShortcutSelectivePanel(parent) {
   QFrame *hbox = new QFrame(this);
   hbox->setFrameStyle(QFrame::StyledPanel);
   hbox->setObjectName("ViewerPanel");
@@ -94,6 +94,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
       new ImageUtils::FullScreenWidget(viewer);
 
   fsWidget->setWidget(m_sceneViewer = new SceneViewer(fsWidget));
+  m_sceneViewer->setIsStyleShortcutSelective();
 
   bool ret = true;
   ret      = ret && connect(m_sceneViewer, SIGNAL(onZoomChanged()),
@@ -220,7 +221,8 @@ SceneViewerPanel::~SceneViewerPanel() {}
 
 //-----------------------------------------------------------------------------
 
-void SceneViewerPanel::showEvent(QShowEvent *) {
+void SceneViewerPanel::showEvent(QShowEvent *event) {
+  StyleShortcutSelectivePanel::showEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -259,10 +261,6 @@ void SceneViewerPanel::showEvent(QShowEvent *) {
   ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()),
                        m_sceneViewer, SLOT(onToolSwitched()));
 
-  ret = ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
-                       this, SLOT(onPreferenceChanged(const QString &)));
-  onPreferenceChanged("");
-
   assert(ret);
 
   // Aggiorno FPS al valore definito nel viewer corrente.
@@ -272,7 +270,8 @@ void SceneViewerPanel::showEvent(QShowEvent *) {
 
 //-----------------------------------------------------------------------------
 
-void SceneViewerPanel::hideEvent(QHideEvent *) {
+void SceneViewerPanel::hideEvent(QHideEvent *event) {
+  StyleShortcutSelectivePanel::hideEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -304,9 +303,6 @@ void SceneViewerPanel::hideEvent(QHideEvent *) {
 
   disconnect(app->getCurrentTool(), SIGNAL(toolSwitched()), m_sceneViewer,
              SLOT(onToolSwitched()));
-
-  disconnect(sceneHandle, SIGNAL(preferenceChanged()), m_flipConsole,
-             SLOT(onPreferenceChanged()));
 
   m_flipConsole->setActive(false);
 }
@@ -605,33 +601,13 @@ void SceneViewerPanel::onFrameTypeChanged() {
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::onPreferenceChanged(const QString &prefName) {
-  // if no name specified (on showEvent), then process all updates
+  // if no name specified (on StyleShortcutSelectivePanel::showEvent),
+  // then process all updates
   if (prefName == "BlankCount" || prefName == "BlankColor" ||
       prefName.isEmpty())
     m_flipConsole->onPreferenceChanged();
 
-  if (prefName == "NumpadForSwitchingStyles" || prefName.isEmpty()) {
-    QList<QWidget *> widgets = findChildren<QWidget *>();
-    if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) {
-      // disable tab key
-      foreach (QWidget *widget, widgets) {
-        Qt::FocusPolicy policy = widget->focusPolicy();
-        if (policy == Qt::TabFocus || policy == Qt::StrongFocus ||
-            policy == Qt::WheelFocus) {
-          m_childrenFocusPolicies[widget] = policy;
-          widget->setFocusPolicy((policy == Qt::TabFocus) ? Qt::NoFocus
-                                                          : Qt::ClickFocus);
-        }
-      }
-    } else {
-      // revert tab focus
-      QHashIterator<QWidget *, Qt::FocusPolicy> i(m_childrenFocusPolicies);
-      while (i.hasNext()) {
-        i.next();
-        i.key()->setFocusPolicy(i.value());
-      }
-    }
-  }
+  StyleShortcutSelectivePanel::onPreferenceChanged(prefName);
 }
 
 //-----------------------------------------------------------------------------

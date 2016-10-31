@@ -593,6 +593,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
 
       // if numpad shortcut is activated, draw shortcut scope
       if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
+          m_viewType == LEVEL_PALETTE &&
           palette->getStyleShortcut(styleIndex) >= 0) {
         p.setPen(QPen(QColor(0, 0, 0, 128), 2));
         p.drawLine(nameRect.topLeft() + QPoint(2, 1),
@@ -639,6 +640,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
 
       // if numpad shortcut is activated, draw shortcut scope
       if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
+          m_viewType == LEVEL_PALETTE &&
           palette->getStyleShortcut(styleIndex) >= 0) {
         QRect itemRect = getItemRect(i);
         // paint dark
@@ -830,6 +832,22 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         p.drawEllipse(markPos, 3, 3);
         p.drawLine(markPos - QPoint(5, 0), markPos + QPoint(5, 0));
         p.drawLine(markPos - QPoint(0, 5), markPos + QPoint(0, 5));
+      }
+
+      // if numpad shortcut is activated, draw shortcut number on top
+      if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
+          m_viewType == LEVEL_PALETTE &&
+          palette->getStyleShortcut(styleIndex) >= 0 &&
+          m_viewMode != SmallChips) {
+        int key      = palette->getStyleShortcut(styleIndex);
+        int shortcut = key - Qt::Key_0;
+        QRect ssRect(chipRect.center().x() - 8, chipRect.top() - 11, 16, 20);
+        p.setBrush(Qt::gray);
+        p.drawChord(ssRect, 0, -180 * 16);
+        tmpFont.setPointSize(6);
+        p.setFont(tmpFont);
+        p.drawText(ssRect.adjusted(0, 10, 0, 0), Qt::AlignCenter,
+                   QString().setNum(shortcut));
       }
 
       // revert font set
