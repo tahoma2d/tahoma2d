@@ -86,7 +86,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 #else
 ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
 #endif
-    : StyleShortcutSelectivePanel(parent) {
+    : StyleShortcutSwitchablePanel(parent) {
   TApp *app = TApp::instance();
 
   QFrame *hbox = new QFrame(this);
@@ -103,7 +103,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
   ImageUtils::FullScreenWidget *fsWidget =
       new ImageUtils::FullScreenWidget(this);
   fsWidget->setWidget(m_sceneViewer = new SceneViewer(fsWidget));
-  m_sceneViewer->setIsStyleShortcutSelective();
+  m_sceneViewer->setIsStyleShortcutSwitchable();
 
 #if defined(Q_OS_WIN) && (QT_VERSION >= 0x050500) && (QT_VERSION < 0x050600)
   //  Workaround for QTBUG-48288
@@ -341,7 +341,7 @@ ComboViewerPanel::~ComboViewerPanel() {
 //-----------------------------------------------------------------------------
 
 void ComboViewerPanel::showEvent(QShowEvent *event) {
-  StyleShortcutSelectivePanel::showEvent(event);
+  StyleShortcutSwitchablePanel::showEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -406,7 +406,7 @@ void ComboViewerPanel::showEvent(QShowEvent *event) {
 //-----------------------------------------------------------------------------
 
 void ComboViewerPanel::hideEvent(QHideEvent *event) {
-  StyleShortcutSelectivePanel::hideEvent(event);
+  StyleShortcutSwitchablePanel::hideEvent(event);
   TApp *app = TApp::instance();
   disconnect(app->getCurrentScene());
   disconnect(app->getCurrentLevel());
@@ -791,5 +791,5 @@ void ComboViewerPanel::onPreferenceChanged(const QString &prefName) {
       prefName.isEmpty())
     m_flipConsole->onPreferenceChanged();
 
-  StyleShortcutSelectivePanel::onPreferenceChanged(prefName);
+  StyleShortcutSwitchablePanel::onPreferenceChanged(prefName);
 }

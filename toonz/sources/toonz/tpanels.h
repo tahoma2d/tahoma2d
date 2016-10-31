@@ -4,7 +4,7 @@
 #define TPANELS_INCLUDED
 
 #include "pane.h"
-#include "styleshortcutselectivepanel.h"
+#include "styleshortcutswitchablepanel.h"
 
 #include "tpalette.h"
 #include "trenderer.h"
@@ -28,7 +28,7 @@ class ToolOptions;
 // PaletteViewerPanel
 //---------------------------------------------------------
 
-class PaletteViewerPanel final : public StyleShortcutSelectivePanel {
+class PaletteViewerPanel final : public StyleShortcutSwitchablePanel {
   Q_OBJECT
 
   TPaletteHandle *m_paletteHandle;

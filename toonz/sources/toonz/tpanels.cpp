@@ -403,7 +403,7 @@ public:
 //-----------------------------------------------------------------------------
 
 PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
-    : StyleShortcutSelectivePanel(parent) {
+    : StyleShortcutSwitchablePanel(parent) {
   m_paletteHandle = new TPaletteHandle();
   connect(m_paletteHandle, SIGNAL(colorStyleSwitched()),
           SLOT(onColorStyleSwitched()));

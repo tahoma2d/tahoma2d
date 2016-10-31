@@ -775,10 +775,11 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
   // If this object is child of Viewer or ComboViewer
   // (m_isStyleShortcutSelective = true),
   // then consider about shortcut for the current style selection.
-  if (m_isStyleShortcutSelective &&
+  if (m_isStyleShortcutSwitchable &&
       Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
-      (!isTextToolActive) && ((Qt::Key_0 <= key && key <= Qt::Key_9) ||
-                              key == Qt::Key_Tab || key == Qt::Key_Backtab)) {
+      (!isTextToolActive) && event->modifiers() == Qt::NoModifier &&
+      ((Qt::Key_0 <= key && key <= Qt::Key_9) || key == Qt::Key_Tab ||
+       key == Qt::Key_Backtab)) {
     event->ignore();
     return;
   }

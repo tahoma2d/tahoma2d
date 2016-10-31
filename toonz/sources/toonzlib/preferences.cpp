@@ -296,7 +296,7 @@ Preferences::Preferences()
     , m_precompute(true)
     , m_ffmpegTimeout(30)
     , m_shortcutPreset("defopentoonz")
-    , m_useNumpadForSwitchingStyles(false) {
+    , m_useNumpadForSwitchingStyles(true) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;

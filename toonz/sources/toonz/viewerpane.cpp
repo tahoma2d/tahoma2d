@@ -77,7 +77,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 #else
 SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
 #endif
-    : StyleShortcutSelectivePanel(parent) {
+    : StyleShortcutSwitchablePanel(parent) {
   QFrame *hbox = new QFrame(this);
   hbox->setFrameStyle(QFrame::StyledPanel);
   hbox->setObjectName("ViewerPanel");
@@ -94,7 +94,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
       new ImageUtils::FullScreenWidget(viewer);
 
   fsWidget->setWidget(m_sceneViewer = new SceneViewer(fsWidget));
-  m_sceneViewer->setIsStyleShortcutSelective();
+  m_sceneViewer->setIsStyleShortcutSwitchable();
 
   bool ret = true;
   ret      = ret && connect(m_sceneViewer, SIGNAL(onZoomChanged()),
@@ -222,7 +222,7 @@ SceneViewerPanel::~SceneViewerPanel() {}
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::showEvent(QShowEvent *event) {
-  StyleShortcutSelectivePanel::showEvent(event);
+  StyleShortcutSwitchablePanel::showEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -271,7 +271,7 @@ void SceneViewerPanel::showEvent(QShowEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::hideEvent(QHideEvent *event) {
-  StyleShortcutSelectivePanel::hideEvent(event);
+  StyleShortcutSwitchablePanel::hideEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -644,7 +644,7 @@ void SceneViewerPanel::onPreferenceChanged(const QString &prefName) {
       prefName.isEmpty())
     m_flipConsole->onPreferenceChanged();
 
-  StyleShortcutSelectivePanel::onPreferenceChanged(prefName);
+  StyleShortcutSwitchablePanel::onPreferenceChanged(prefName);
 }
 
 //-----------------------------------------------------------------------------

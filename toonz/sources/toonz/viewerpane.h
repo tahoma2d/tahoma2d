@@ -3,7 +3,7 @@
 #ifndef VIEWER_PANE_INCLUDED
 #define VIEWER_PANE_INCLUDED
 
-#include "styleshortcutselectivepanel.h"
+#include "styleshortcutswitchablepanel.h"
 #include "sceneviewer.h"
 #include "toonzqt/intfield.h"
 #include "toonzqt/keyframenavigator.h"
@@ -25,7 +25,7 @@ class Ruler;
 
 class FlipConsole;
 class TXshLevel;
-class SceneViewerPanel final : public StyleShortcutSelectivePanel,
+class SceneViewerPanel final : public StyleShortcutSwitchablePanel,
                                public FlipConsoleOwner {
   Q_OBJECT
 

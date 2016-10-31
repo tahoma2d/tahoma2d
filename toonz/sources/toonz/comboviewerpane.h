@@ -3,7 +3,7 @@
 #ifndef COMBOVIEWER_PANE_INCLUDED
 #define COMBOVIEWER_PANE_INCLUDED
 
-#include "styleshortcutselectivepanel.h"
+#include "styleshortcutswitchablepanel.h"
 #include "sceneviewer.h"
 #include "toonzqt/intfield.h"
 #include "toonzqt/keyframenavigator.h"
@@ -37,7 +37,7 @@ enum CV_Parts {
 };
 //-----------------------------------------------------------------------------
 
-class ComboViewerPanel final : public StyleShortcutSelectivePanel,
+class ComboViewerPanel final : public StyleShortcutSwitchablePanel,
                                public FlipConsoleOwner {
   Q_OBJECT
 

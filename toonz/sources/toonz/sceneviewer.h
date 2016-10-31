@@ -138,7 +138,7 @@ class SceneViewer final : public QGLWidget,
 
   LocatorPopup *m_locator;
   bool m_isLocator;
-  bool m_isStyleShortcutSelective;
+  bool m_isStyleShortcutSwitchable;
 
   // iwsw commented out temporarily
   // Ghibli3DLutUtil * m_ghibli3DLutUtil;
@@ -236,7 +236,7 @@ public:
   void setFocus(Qt::FocusReason reason) { QWidget::setFocus(reason); };
 
   void setIsLocator() { m_isLocator = true; }
-  void setIsStyleShortcutSelective() { m_isStyleShortcutSelective = true; }
+  void setIsStyleShortcutSwitchable() { m_isStyleShortcutSwitchable = true; }
 
 public:
   // SceneViewer's gadget public functions

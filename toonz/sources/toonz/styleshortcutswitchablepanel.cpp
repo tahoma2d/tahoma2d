@@ -1,4 +1,4 @@
-#include "styleshortcutselectivepanel.h"
+#include "styleshortcutswitchablepanel.h"
 
 // TnzLib includes
 #include "toonz/tscenehandle.h"
@@ -21,12 +21,12 @@
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSelectivePanel::keyPressEvent(QKeyEvent *event) {
+void StyleShortcutSwitchablePanel::keyPressEvent(QKeyEvent *event) {
   if (!Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) return;
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool) return;
   if (tool->getName() == T_Type && tool->isActive()) return;
-
+  if (event->modifiers() != Qt::NoModifier) return;
   int key = event->key();
   if (Qt::Key_0 <= key && key <= Qt::Key_9) {
     TPaletteHandle *ph =
@@ -58,7 +58,7 @@ void StyleShortcutSelectivePanel::keyPressEvent(QKeyEvent *event) {
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSelectivePanel::showEvent(QShowEvent *event) {
+void StyleShortcutSwitchablePanel::showEvent(QShowEvent *event) {
   TPanel::showEvent(event);
   bool ret = connect(TApp::instance()->getCurrentScene(),
                      SIGNAL(preferenceChanged(const QString &)), this,
@@ -69,7 +69,7 @@ void StyleShortcutSelectivePanel::showEvent(QShowEvent *event) {
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSelectivePanel::hideEvent(QHideEvent *event) {
+void StyleShortcutSwitchablePanel::hideEvent(QHideEvent *event) {
   TPanel::hideEvent(event);
   disconnect(TApp::instance()->getCurrentScene(),
              SIGNAL(preferenceChanged(const QString &)), this,
@@ -78,14 +78,15 @@ void StyleShortcutSelectivePanel::hideEvent(QHideEvent *event) {
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSelectivePanel::onPreferenceChanged(const QString &prefName) {
+void StyleShortcutSwitchablePanel::onPreferenceChanged(
+    const QString &prefName) {
   if (prefName == "NumpadForSwitchingStyles" || prefName.isEmpty())
     updateTabFocus();
 }
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSelectivePanel::updateTabFocus() {
+void StyleShortcutSwitchablePanel::updateTabFocus() {
   QList<QWidget *> widgets = findChildren<QWidget *>();
   if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) {
     // disable tab focus
