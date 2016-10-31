@@ -380,7 +380,7 @@ if(WIN32)
     endif()
 endif()
 
-if(WIN32)	
+if(WIN32)
     target_link_libraries(OpenToonz_${VERSION}
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia
@@ -436,10 +436,10 @@ if(APPLE)
     get_target_property(loc OpenToonz_${VERSION} MACOSX_BUNDLE_NAME)
     message(" ==> App Bundle: " ${loc})
     message(" ==> Mach-o: " ${bin})
-    foreach (lib ${EXTRA_LIBS})
+    foreach(lib ${EXTRA_LIBS})
         message(" copy:" ${lib} "==>" ${CMAKE_CURRENT_BINARY_DIR}/OpenToonz_${VERSION}.app/Contents/MacOS/)
         add_custom_command(TARGET OpenToonz_${VERSION} POST_BUILD COMMAND cp ${lib} ${CMAKE_CURRENT_BINARY_DIR}/OpenToonz_${VERSION}.app/Contents/MacOS/)
-    endforeach ()
+    endforeach()
 
     add_custom_command(TARGET OpenToonz_${VERSION}
         POST_BUILD COMMAND
