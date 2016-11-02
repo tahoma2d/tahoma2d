@@ -4,7 +4,7 @@
 
 You will need to install some dependencies before you can build. Depending on your distribution you will be able to install the packages directly with the command lines below or will have to manually install:
 - Git
-- GCC
+- GCC or Clang
 - CMake
   - confirmed to work with 3.4.1.
 - Qt5
@@ -22,7 +22,7 @@ $ sudo apt-get install build-essential git cmake pkg-config libboost-all-dev qt5
 Notes:
 * It's possible we also need libgsl2 (or maybe libopenbias-dev)
 
-### Installing required packages on RedHat / Mageia
+### Installing required packages on RedHat / CentOS
 
 TODO
 ```
@@ -53,7 +53,7 @@ Notes:
 ### Installing required packages on openSUSE
 
 ```
-zypper in boost-devel cmake freeglut-devel freetype2-devel gcc-c++ glew-devel libQt5OpenGL-devel libSDL2-devel libjpeg-devel liblz4-devel libpng16-compat-devel libqt5-linguist-devel libqt5-qtbase-devel libqt5-qtmultimedia-devel libqt5-qtscript-devel libqt5-qtsvg-devel libtiff-devel libusb-devel lzo-devel openblas-devel pkgconfig sed superlu-devel zlib-devel
+$ zypper in boost-devel cmake freeglut-devel freetype2-devel gcc-c++ glew-devel libQt5OpenGL-devel libSDL2-devel libjpeg-devel liblz4-devel libpng16-compat-devel libqt5-linguist-devel libqt5-qtbase-devel libqt5-qtmultimedia-devel libqt5-qtscript-devel libqt5-qtsvg-devel libtiff-devel libusb-devel lzo-devel openblas-devel pkgconfig sed superlu-devel zlib-devel
 ```
 
 ## Build instructions
@@ -127,7 +127,7 @@ The build takes a lot of time, be patient.
 
 If something doesn't compile or link, please run `make` this way to help spot the problem:
 ```
-LANG=C make VERBOSE=1
+$ LANG=C make VERBOSE=1
 ```
 
 #### Debug build
