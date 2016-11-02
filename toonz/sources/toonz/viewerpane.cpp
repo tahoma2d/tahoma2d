@@ -121,7 +121,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
 
   int buttons = FlipConsole::cFullConsole;
 
-  buttons &= (~FlipConsole::eSound);
+  // buttons &= (~FlipConsole::eSound);
   buttons &= (~FlipConsole::eFilledRaster);
   buttons &= (~FlipConsole::eDefineLoadBox);
   buttons &= (~FlipConsole::eUseLoadBox);
@@ -151,6 +151,10 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
         connect(m_flipConsole, SIGNAL(buttonPressed(FlipConsole::EGadget)),
                 m_sceneViewer, SLOT(onButtonPressed(FlipConsole::EGadget)));
 
+  ret =
+      ret && connect(m_flipConsole, SIGNAL(buttonPressed(FlipConsole::EGadget)),
+                     this, SLOT(onButtonPressed(FlipConsole::EGadget)));
+
   ret = ret && connect(m_sceneViewer, SIGNAL(previewStatusChanged()), this,
                        SLOT(update()));
 
@@ -158,7 +162,8 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
                        SLOT(onSceneSwitched()));
 
   assert(ret);
-
+  m_flipConsole->setChecked(FlipConsole::eSound, true);
+  m_playSound = m_flipConsole->isChecked(FlipConsole::eSound);
   m_flipConsole->setFrameRate(app->getCurrentScene()
                                   ->getScene()
                                   ->getProperties()
@@ -470,6 +475,12 @@ void SceneViewerPanel::onXshLevelSwitched(TXshLevel *) { changeWindowTitle(); }
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::onPlayingStatusChanged(bool playing) {
+  if (playing) {
+    m_playing = true;
+  } else {
+    m_playing = false;
+    m_first   = true;
+  }
   if (Preferences::instance()->getOnionSkinDuringPlayback()) return;
   OnionSkinMask osm =
       TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
@@ -574,7 +585,6 @@ void SceneViewerPanel::onSceneChanged() {
   updateFrameRange();
   updateFrameMarkers();
   changeWindowTitle();
-
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   assert(scene);
@@ -584,6 +594,7 @@ void SceneViewerPanel::onSceneChanged() {
   int frameIndex = TApp::instance()->getCurrentFrame()->getFrameIndex();
   if (m_keyFrameButton->getCurrentFrame() != frameIndex)
     m_keyFrameButton->setCurrentFrame(frameIndex);
+  hasSoundtrack();
 }
 
 //-----------------------------------------------------------------------------
@@ -611,6 +622,14 @@ void SceneViewerPanel::onFrameSwitched() {
   m_flipConsole->setCurrentFrame(frameIndex + 1);
   if (m_keyFrameButton->getCurrentFrame() != frameIndex)
     m_keyFrameButton->setCurrentFrame(frameIndex);
+
+  if (m_playing && m_playSound) {
+    if (m_first == true && hasSoundtrack()) {
+      playAudioFrame(frameIndex);
+    } else if (m_hasSoundtrack) {
+      playAudioFrame(frameIndex);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -648,3 +667,50 @@ void SceneViewerPanel::onPreferenceChanged(const QString &prefName) {
 }
 
 //-----------------------------------------------------------------------------
+
+void SceneViewerPanel::playAudioFrame(int frame) {
+  if (m_first) {
+    m_first = false;
+    m_fps   = TApp::instance()
+                ->getCurrentScene()
+                ->getScene()
+                ->getProperties()
+                ->getOutputProperties()
+                ->getFrameRate();
+    m_samplesPerFrame = m_sound->getSampleRate() / abs(m_fps);
+  }
+  if (!m_sound) return;
+  m_viewerFps = m_flipConsole->getCurrentFps();
+  double s0 = frame * m_samplesPerFrame, s1 = s0 + m_samplesPerFrame;
+
+  // make the sound stop if the viewerfps is higher so the next sound can play
+  // on time.
+  if (m_fps < m_viewerFps)
+    TApp::instance()->getCurrentXsheet()->getXsheet()->stopScrub();
+  TApp::instance()->getCurrentXsheet()->getXsheet()->play(m_sound, s0, s1,
+                                                          false);
+}
+
+bool SceneViewerPanel::hasSoundtrack() {
+  if (m_sound != NULL) {
+    m_sound         = NULL;
+    m_hasSoundtrack = false;
+    m_first         = true;
+  }
+  TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
+  TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
+  m_sound                        = xsheetHandle->getXsheet()->makeSound(prop);
+  if (m_sound == NULL) {
+    m_hasSoundtrack = false;
+    return false;
+  } else {
+    m_hasSoundtrack = true;
+    return true;
+  }
+}
+
+void SceneViewerPanel::onButtonPressed(FlipConsole::EGadget button) {
+  if (button == FlipConsole::eSound) {
+    m_playSound = !m_playSound;
+  }
+}
