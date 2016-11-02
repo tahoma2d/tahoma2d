@@ -1,4 +1,4 @@
-# Setting up the development environment for GNU/Linux and Unix
+# Setting up the development environment for GNU/Linux
 
 ## Required software
 
@@ -6,7 +6,7 @@ You will need to install some dependencies before you can build. Depending on yo
 - Git
 - GCC or Clang
 - CMake
-  - confirmed to work with 3.4.1.
+  - confirmed to work with 3.4.1 and newer.
 - Qt5
   - http://download.qt.io/official_releases/qt/5.5/5.5.1/
 - Boost
@@ -33,7 +33,7 @@ $ rpm ...
 (it may include some useless packages)
 
 ```
-dnf install gcc gcc-c++ automake git cmake boost boost-devel SuperLU SuperLU-devel lz4-devel lzma libusb-devel lzo-devel libjpeg-turbo-devel libGLEW glew-devel freeglut-devel freeglut SDL2 SDL2-devel freetype-devel libpng-devel qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel qt5-qtscript qt5-qtscript-devel qt5-qttools qt5-qttools-devel qt5-qtmultimedia-devel blas blas-devel
+$ dnf install gcc gcc-c++ automake git cmake boost boost-devel SuperLU SuperLU-devel lz4-devel lzma libusb-devel lzo-devel libjpeg-turbo-devel libGLEW glew-devel freeglut-devel freeglut SDL2 SDL2-devel freetype-devel libpng-devel qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel qt5-qtscript qt5-qtscript-devel qt5-qttools qt5-qttools-devel qt5-qtmultimedia-devel blas blas-devel
 ```
 
 ### Installing required packages on ArchLinux
