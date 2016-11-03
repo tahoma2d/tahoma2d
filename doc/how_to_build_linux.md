@@ -20,7 +20,7 @@ $ sudo apt-get install build-essential git cmake pkg-config libboost-all-dev qt5
 ```
 
 Notes:
-* It's possible we also need libgsl2 (or maybe libopenbias-dev)
+* It's possible we also need libgsl2 (or maybe libopenblas-dev)
 
 ### Installing required packages on RedHat / CentOS
 
@@ -48,7 +48,7 @@ $ yaourt -S superlu
 ```
 
 Notes:
-* ArchLinux had BLAS splitted in blas and cblas
+* ArchLinux had BLAS split into blas and cblas
 
 ### Installing required packages on openSUSE
 
