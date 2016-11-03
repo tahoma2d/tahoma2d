@@ -107,7 +107,7 @@ Features from the modified libtiff and needed currently, so this isn't a simple 
 
 ```
 $ cd opentoonz/thirdparty/tiff-4.0.3
-$ CFLAGS="-fPIC" ./configure && make
+$ ./configure --with-pic && make
 $ cd -
 ```
 
