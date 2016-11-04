@@ -777,7 +777,8 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
   // then consider about shortcut for the current style selection.
   if (m_isStyleShortcutSwitchable &&
       Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
-      (!isTextToolActive) && event->modifiers() == Qt::NoModifier &&
+      (!isTextToolActive) && (event->modifiers() == Qt::NoModifier ||
+                              event->modifiers() == Qt::KeypadModifier) &&
       ((Qt::Key_0 <= key && key <= Qt::Key_9) || key == Qt::Key_Tab ||
        key == Qt::Key_Backtab)) {
     event->ignore();

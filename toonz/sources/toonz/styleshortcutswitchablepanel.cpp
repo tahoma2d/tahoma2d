@@ -26,7 +26,9 @@ void StyleShortcutSwitchablePanel::keyPressEvent(QKeyEvent *event) {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool) return;
   if (tool->getName() == T_Type && tool->isActive()) return;
-  if (event->modifiers() != Qt::NoModifier) return;
+  if (event->modifiers() != Qt::NoModifier &&
+      event->modifiers() != Qt::KeypadModifier)
+    return;
   int key = event->key();
   if (Qt::Key_0 <= key && key <= Qt::Key_9) {
     TPaletteHandle *ph =
