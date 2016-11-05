@@ -110,16 +110,10 @@ Features from the modified libtiff and needed currently, so this isn't a simple 
 
 ```
 $ cd opentoonz/thirdparty/tiff-4.0.3
-$ ./configure --with-pic
+$ ./configure --with-pic --disable-jbig
 $ make
 $ cd -
 ```
-
-If you receive linking errors mentioning `jbg_` functions while building OpenToonz itself,
-try appending `--disable-jbig` to the `./configure` command above and make clean build.
-(see https://github.com/opentoonz/opentoonz/issues/851).
-This workaround means you won't be able to load images using this compression method
-(see https://github.com/opentoonz/opentoonz/issues/901) for updates on this issue.
 
 ### Building OpenToonz
 
