@@ -821,30 +821,29 @@ ParamsPage {
 	}
 }
 /* Customize QScrollBar  vertical*/
-QScrollBar, #XsheetScrollBar {
-	.baseBG(light, 10%);
+QScrollBar {
 	border: 1px solid black;
 
 	&:vertical {
-		width: 18px;
-		.set_margin( 0px, 20px );
+		width: 16px;
+		.set_margin( 0px, 17px );
 	}
 	&:horizontal {
-		height: 18px;
-		.set_margin( 20px, 0px );
+		height: 16px;
+		.set_margin( 17px, 0px );
 	}
 
 	&::handle {
-		border-width: 4;
+		border-width: 3;
 		image-position: center center;
 		&:vertical {
-			border-image: url("@{image_url}/sb_g_vhandle.png")4;
+			border-image: url("@{image_url}/sb_g_vhandle.png")3;
 			image: url("@{image_url}/sb_g_vline.png");
 			min-height: 40px;
 		}
 		
 		&:horizontal {
-			border-image: url("@{image_url}/sb_g_hhandle.png")4;
+			border-image: url("@{image_url}/sb_g_hhandle.png")3;
 			image: url("@{image_url}/sb_g_hline.png");
 			min-width: 40px;
 		}
@@ -854,7 +853,7 @@ QScrollBar, #XsheetScrollBar {
 		subcontrol-origin: margin;
 		&:vertical {
 			image: url("@{image_url}/sb_g_downarrow.png");
-			height: 20px;
+			height: 16px;
 			subcontrol-position: bottom;
 			&:pressed {
 				image: url("@{image_url}/sb_g_downarrow_pressed.png");
@@ -862,7 +861,7 @@ QScrollBar, #XsheetScrollBar {
 		}
 		&:horizontal {
 			image: url("@{image_url}/sb_g_rarrow.png");
-			width: 20px;
+			width: 16px;
 			subcontrol-position: right;
 			&:pressed{
 				image: url("@{image_url}/sb_g_rarrow_pressed.png");
@@ -874,7 +873,7 @@ QScrollBar, #XsheetScrollBar {
 		subcontrol-origin: margin;
 		&:vertical {
 			image: url("@{image_url}/sb_g_uparrow.png");
-			height: 20px;
+			height: 16px;
 			subcontrol-position: top;
 			&:pressed {
 				image: url("@{image_url}/sb_g_uparrow_pressed.png");
@@ -882,7 +881,7 @@ QScrollBar, #XsheetScrollBar {
 		}
 		&:horizontal {
 			image: url("@{image_url}/sb_g_larrow.png");
-			width: 20px;
+			width: 16px;
 			subcontrol-position: left;
 			&:pressed{
 				image: url("@{image_url}/sb_g_larrow_pressed.png");
@@ -891,7 +890,7 @@ QScrollBar, #XsheetScrollBar {
 	}
 
 	&::add-page, &::sub-page {
-		background: none;
+	    .baseBG(light, 10%);
 	}
 }
 
