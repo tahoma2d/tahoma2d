@@ -294,6 +294,7 @@ Preferences::Preferences()
     , m_projectRoot(0x08)
     , m_customProjectRoot("")
     , m_precompute(true)
+    , m_fastRenderPath("desktop")
     , m_ffmpegTimeout(30)
     , m_shortcutPreset("defopentoonz")
     , m_useNumpadForSwitchingStyles(true) {
@@ -561,6 +562,9 @@ Preferences::Preferences()
   QString ffmpegPath = m_settings->value("ffmpegPath").toString();
   if (ffmpegPath != "") m_ffmpegPath = ffmpegPath;
   setFfmpegPath(m_ffmpegPath.toStdString());
+  QString fastRenderPath = m_settings->value("fastRenderPath").toString();
+  if (fastRenderPath != "") m_fastRenderPath = fastRenderPath;
+  setFastRenderPath(m_fastRenderPath.toStdString());
   getValue(*m_settings, "ffmpegTimeout", m_ffmpegTimeout);
   QString shortcutPreset = m_settings->value("shortcutPreset").toString();
   if (shortcutPreset != "") m_shortcutPreset = shortcutPreset;
@@ -1255,6 +1259,14 @@ void Preferences::setFfmpegPath(std::string path) {
   m_ffmpegPath        = QString::fromStdString(path);
   std::string strPath = m_ffmpegPath.toStdString();
   m_settings->setValue("ffmpegPath", m_ffmpegPath);
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::setFastRenderPath(std::string path) {
+  m_fastRenderPath    = QString::fromStdString(path);
+  std::string strPath = m_ffmpegPath.toStdString();
+  m_settings->setValue("fastRenderPath", m_fastRenderPath);
 }
 
 //-----------------------------------------------------------------

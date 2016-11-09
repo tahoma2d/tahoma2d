@@ -76,7 +76,7 @@ private:
 
   DVGui::FileField *m_customProjectRootFileField;
 
-  DVGui::FileField *m_ffmpegPathFileFld;
+  DVGui::FileField *m_ffmpegPathFileFld, *m_fastRenderPathFileField;
 
   QGroupBox *m_autoSaveGroup;
 
@@ -168,6 +168,7 @@ private slots:
   void onShowKeyframesOnCellAreaChanged(int);
   void onFfmpegPathChanged();
   void onFfmpegTimeoutChanged();
+  void onFastRenderPathChanged();
   void onUseNumpadForSwitchingStylesClicked(bool);
 };
 

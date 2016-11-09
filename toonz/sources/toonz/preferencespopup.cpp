@@ -923,6 +923,13 @@ void PreferencesPopup::onFfmpegPathChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onFastRenderPathChanged() {
+  QString text = m_fastRenderPathFileField->getPath();
+  m_pref->setFastRenderPath(text.toStdString());
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onFfmpegTimeoutChanged() {
   m_pref->setFfmpegTimeout(m_ffmpegTimeout->getValue());
 }
@@ -1118,7 +1125,9 @@ PreferencesPopup::PreferencesPopup()
   //--- Import/Export ------------------------------
   categoryList->addItem(tr("Import/Export"));
   m_ffmpegPathFileFld = new DVGui::FileField(this, QString(""));
-  m_ffmpegTimeout     = new DVGui::IntLineEdit(this, 30, 1);
+  m_fastRenderPathFileField =
+      new DVGui::FileField(this, QString("desktop"), false, true);
+  m_ffmpegTimeout = new DVGui::IntLineEdit(this, 30, 1);
 
   //--- Drawing ------------------------------
   categoryList->addItem(tr("Drawing"));
@@ -1342,6 +1351,8 @@ PreferencesPopup::PreferencesPopup()
   //--- Import/Export ------------------------------
   QString path = m_pref->getFfmpegPath();
   m_ffmpegPathFileFld->setPath(path);
+  path = m_pref->getFastRenderPath();
+  m_fastRenderPathFileField->setPath(path);
   m_ffmpegTimeout->setValue(m_pref->getFfmpegTimeout());
 
   //--- Drawing ------------------------------
@@ -1755,6 +1766,14 @@ PreferencesPopup::PreferencesPopup()
         ioGridLay->addWidget(new QLabel(tr("FFmpeg Timeout:")), 4, 0,
                              Qt::AlignRight);
         ioGridLay->addWidget(m_ffmpegTimeout, 4, 1, 1, 3);
+        ioGridLay->addWidget(new QLabel(" "), 5, 0);
+        ioGridLay->addWidget(
+            new QLabel(tr("Please indicate where you would like "
+                          "exports from Fast Render(MP4) to go.")),
+            6, 0, 1, 4);
+        ioGridLay->addWidget(new QLabel(tr("Fast Render Path: ")), 7, 0,
+                             Qt::AlignRight);
+        ioGridLay->addWidget(m_fastRenderPathFileField, 7, 1, 1, 3);
       }
       ioLay->addLayout(ioGridLay);
       ioLay->addStretch(1);
@@ -2128,6 +2147,8 @@ PreferencesPopup::PreferencesPopup()
   //--- Import/Export ----------------------
   ret = ret && connect(m_ffmpegPathFileFld, SIGNAL(pathChanged()), this,
                        SLOT(onFfmpegPathChanged()));
+  ret = ret && connect(m_fastRenderPathFileField, SIGNAL(pathChanged()), this,
+                       SLOT(onFastRenderPathChanged()));
   ret = ret && connect(m_ffmpegTimeout, SIGNAL(editingFinished()), this,
                        SLOT(onFfmpegTimeoutChanged()));
 
