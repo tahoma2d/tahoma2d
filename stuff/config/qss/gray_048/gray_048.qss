@@ -1378,5 +1378,40 @@ QDialog #dialogButtonFrame {
 #StartupLabel:hover {
   background-color: #4a4a4a;
 }
+#WordButton {
+  font-size: 12px;
+  color: black;
+  background-color: #c0c0c0;
+  border-style: outset;
+  border-left-color: white;
+  border-top-color: white;
+  border-right-color: black;
+  border-bottom-color: black;
+  border-width: 1px;
+  border-radius: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+#WordButton:pressed {
+  background-color: #faffa2;
+  border-style: inset;
+  border-left-color: black;
+  border-top-color: black;
+  border-right-color: white;
+  border-bottom-color: white;
+}
+#WordButton:hover {
+  background-color: #faffa2;
+}
+#WordButton:hover:pressed {
+  background-color: #faffa2;
+  border-style: inset;
+  border-left-color: black;
+  border-top-color: black;
+  border-right-color: white;
+  border-bottom-color: white;
+}
 
 //# sourceMappingURL=gray_048.qss.map
