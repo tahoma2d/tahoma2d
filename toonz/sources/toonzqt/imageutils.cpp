@@ -652,6 +652,8 @@ void convertNaa2Tlv(const TFilePath &source, const TFilePath &dest,
   Naa2TlvConverter converter;
   converter.setPalette(palette);
 
+  QList<int> usedStyleIds({0});
+
   int f, fCount = int(frames.size());
   for (f = 0; f != fCount; ++f) {
     if (frameNotifier->abortTask()) break;
@@ -672,8 +674,8 @@ void convertNaa2Tlv(const TFilePath &source, const TFilePath &dest,
 
       converter.process(raster);
 
-      if (TToonzImageP dstImg = converter.makeTlv(
-              false, removeUnusedStyles))  // Opaque synthetic inks
+      if (TToonzImageP dstImg =
+              converter.makeTlv(false, usedStyleIds))  // Opaque synthetic inks
       {
         if (converter.getPalette() == 0)
           converter.setPalette(dstImg->getPalette());
@@ -693,6 +695,8 @@ void convertNaa2Tlv(const TFilePath &source, const TFilePath &dest,
 
     frameNotifier->notifyFrameCompleted(100 * (f + 1) / frames.size());
   }
+
+  if (removeUnusedStyles) converter.removeUnusedStyles(usedStyleIds);
 }
 
 //=============================================================================

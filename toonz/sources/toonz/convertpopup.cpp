@@ -784,6 +784,7 @@ void ConvertPopup::setFiles(const std::vector<TFilePath> &fps) {
   // if (m_unpaintedFolder->getPath()==SameAsPainted)
   //   m_unpaintedFolder->setPath(toQString(fps[0].getParentDir()));
   m_palettePath->setPath(CreateNewPalette);
+  m_removeUnusedStyles->setEnabled(false);
 
   // m_fileFormat->setCurrentIndex(areFullcolor?0:m_fileFormat->findText("tif"));
 }
