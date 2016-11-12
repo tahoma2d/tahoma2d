@@ -148,6 +148,13 @@ find_package(Qt5 REQUIRED
     Multimedia
 )
 
+set(QT_MINIMUM_VERSION 5.5.0)
+if(Qt5Core_VERSION VERSION_LESS QT_MINIMUM_VERSION)
+    MESSAGE(FATAL_ERROR "Minimum supported Qt version: ${QT_MINIMUM_VERSION}.
+    Installed version: ${Qt5Core_VERSION}")
+endif()
+unset(QT_MINIMUM_VERSION)
+
 if(WIN32)
     include_directories(
         SYSTEM
