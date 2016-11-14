@@ -3,7 +3,8 @@
 #ifndef STYLENAMEEDITOR_H
 #define STYLENAMEEDITOR_H
 
-#include <QDialog>
+#include "dvdialog.h"
+
 #include <QWidget>
 #include <QStringList>
 #include <QPushButton>
@@ -78,7 +79,9 @@ class EasyInputArea final : public QWidget {
 
 public:
   EasyInputArea(QWidget *parent = 0);
-  ~EasyInputArea();
+
+protected:
+  void enterEvent(QEvent *) override;
 
 protected slots:
   void addWordButtonClicked(const int);
@@ -86,18 +89,20 @@ protected slots:
 
 signals:
   void wordClicked(const QString &);
+  void mouseEnter();
 };
 
 //------------------------------------------------------------
 
-class StyleNameEditor final : public QDialog  // singleton
-{
+class StyleNameEditor final : public DVGui::Dialog {
   Q_OBJECT
 
   TPaletteHandle *m_paletteHandle;
 
   QLineEdit *m_styleName;
   QPushButton *m_okButton, *m_applyButton, *m_cancelButton;
+
+  int m_selectionStart, m_selectionLength;
 
 public:
   StyleNameEditor(QWidget *parent = 0);
@@ -114,6 +119,7 @@ protected slots:
   void onApplyPressed();
   void onCancelPressed();
   void onWordClicked(const QString &);
+  void storeSelectionInfo();
 };
 
 #endif

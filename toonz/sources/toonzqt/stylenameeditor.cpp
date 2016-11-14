@@ -29,7 +29,10 @@
 
 //------------------------------------------------------------
 namespace {
-const int areaColCount[WORD_COLUMN_AMOUNT] = {2, 2, 1};
+const int areaColCount[WORD_COLUMN_AMOUNT]    = {2, 2, 1};
+const QString columnLabel[WORD_COLUMN_AMOUNT] = {AddWordButton::tr("Name"),
+                                                 AddWordButton::tr("Part"),
+                                                 AddWordButton::tr("Suffix")};
 
 int indexToRow(int index, int columnId) {
   return index / areaColCount[columnId];
@@ -109,11 +112,11 @@ void WordButton::contextMenuEvent(QContextMenuEvent* event) {
 //------------------------------------------------------------
 
 AddWordButton::AddWordButton(const int col, QWidget* parent)
-    : WordButton("", parent), m_column(col) {
-  setFixedSize(23, 23);
+    : WordButton(columnLabel[col], parent), m_column(col) {
+  // setFixedSize(23, 23);
   setIcon(QIcon(":Resources/plus.png"));
   setIconSize(QSize(16, 16));
-  setToolTip(tr("Add New Word"));
+  setToolTip(tr("Add New Word for %1").arg(columnLabel[col]));
 }
 
 //-------
@@ -151,7 +154,7 @@ void EasyInputArea::saveList() {
   wordsSettings.clear();
   for (int a = 0; a < WORD_COLUMN_AMOUNT; a++) {
     wordsSettings.beginWriteArray(QString::number(a));
-    for (int i = 0; i < m_wordList[a].size(); ++i) {
+    for (int i = 0; i < m_wordList[a].count(); ++i) {
       wordsSettings.setArrayIndex(i);
       wordsSettings.setValue("word", m_wordList[a].at(i));
     }
@@ -191,6 +194,7 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
       // store word buttons
       for (int s = 0; s < m_wordList[a].size(); s++) {
         WordButton* button = new WordButton(m_wordList[a].at(s), this);
+        button->setFocusPolicy(Qt::NoFocus);
         buttonsLay->addWidget(button, row, col, Qt::AlignCenter);
         connect(button, SIGNAL(clicked(const QString&)), this,
                 SIGNAL(wordClicked(const QString&)));
@@ -204,6 +208,7 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
       }
       // add button
       AddWordButton* addWordButton = new AddWordButton(a, this);
+      addWordButton->setFocusPolicy(Qt::NoFocus);
       buttonsLay->addWidget(addWordButton, row, col, Qt::AlignCenter);
       connect(addWordButton, SIGNAL(clicked(const int)), this,
               SLOT(addWordButtonClicked(const int)));
@@ -222,10 +227,6 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
   mainLay->addStretch(1);
   setLayout(mainLay);
 }
-
-//-------
-
-EasyInputArea::~EasyInputArea() { saveList(); }
 
 //-------
 
@@ -255,6 +256,7 @@ void EasyInputArea::addWordButtonClicked(const int columnId) {
           SIGNAL(wordClicked(const QString&)));
   connect(button, SIGNAL(removeWord(const QString&)), this,
           SLOT(onRemoveWord(const QString&)));
+  button->setFocusPolicy(Qt::NoFocus);
 
   int wordCount   = m_wordList[columnId].count();
   int row         = indexToRow(wordCount - 1, columnId);
@@ -270,6 +272,8 @@ void EasyInputArea::addWordButtonClicked(const int columnId) {
   m_wordLayout[columnId]->addWidget(addBtn, row, col, Qt::AlignCenter);
 
   updatePanelSize(columnId);
+
+  saveList();
 }
 
 //------------------------------------------------------------
@@ -321,8 +325,15 @@ void EasyInputArea::onRemoveWord(const QString& word) {
 
 //------------------------------------------------------------
 
+void EasyInputArea::enterEvent(QEvent*) { emit mouseEnter(); }
+
+//------------------------------------------------------------
+
 StyleNameEditor::StyleNameEditor(QWidget* parent)
-    : QDialog(parent), m_paletteHandle(0) {
+    : Dialog(parent, false, false, "StyleNameEditor")
+    , m_paletteHandle(0)
+    , m_selectionStart(-1)
+    , m_selectionLength(0) {
   setWindowTitle(tr("Name Editor"));
 
   m_styleName                  = new QLineEdit(this);
@@ -331,17 +342,22 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
   m_applyButton                = new QPushButton(tr("Apply and Next"), this);
   EasyInputArea* easyInputArea = new EasyInputArea(this);
 
+  setFocusProxy(m_styleName);
+
   m_styleName->setEnabled(false);
   m_okButton->setEnabled(false);
   m_okButton->setFocusPolicy(Qt::NoFocus);
   m_applyButton->setEnabled(false);
+  m_applyButton->setFocusPolicy(Qt::NoFocus);
   m_cancelButton->setFocusPolicy(Qt::NoFocus);
 
   m_styleName->setObjectName("LargeSizedText");
 
-  QVBoxLayout* mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(10);
-  mainLayout->setSpacing(5);
+  easyInputArea->setFocusPolicy(Qt::NoFocus);
+
+  // QVBoxLayout* mainLayout = new QVBoxLayout();
+  m_topLayout->setMargin(10);
+  m_topLayout->setSpacing(5);
   {
     QHBoxLayout* inputLayout = new QHBoxLayout();
     inputLayout->setMargin(0);
@@ -350,7 +366,7 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
       inputLayout->addWidget(new QLabel(tr("Style Name"), this), 0);
       inputLayout->addWidget(m_styleName, 1);
     }
-    mainLayout->addLayout(inputLayout, 0);
+    m_topLayout->addLayout(inputLayout, 0);
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->setMargin(0);
@@ -360,17 +376,14 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
       buttonLayout->addWidget(m_applyButton);
       buttonLayout->addWidget(m_cancelButton);
     }
-    mainLayout->addLayout(buttonLayout, 0);
+    m_topLayout->addLayout(buttonLayout, 0);
 
-    mainLayout->addSpacing(5);
-    mainLayout->addWidget(new QLabel(tr("Easy Inputs"), this), 0,
-                          Qt::AlignLeft);
+    m_topLayout->addSpacing(5);
+    m_topLayout->addWidget(new QLabel(tr("Easy Inputs"), this), 0,
+                           Qt::AlignLeft);
 
-    mainLayout->addWidget(easyInputArea, 1);
+    m_topLayout->addWidget(easyInputArea, 1);
   }
-  setLayout(mainLayout);
-
-  resize(420, 300);
 
   bool ret = true;
   ret =
@@ -381,6 +394,8 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
         connect(m_applyButton, SIGNAL(pressed()), this, SLOT(onApplyPressed()));
   ret = ret && connect(easyInputArea, SIGNAL(wordClicked(const QString&)), this,
                        SLOT(onWordClicked(const QString&)));
+  ret = ret && connect(easyInputArea, SIGNAL(mouseEnter()), this,
+                       SLOT(storeSelectionInfo()));
   assert(ret);
 }
 
@@ -427,6 +442,7 @@ void StyleNameEditor::onStyleSwitched() {
   std::wstring styleName = m_paletteHandle->getStyle()->getName();
   m_styleName->setText(QString::fromStdWString(styleName));
   m_styleName->selectAll();
+  m_styleName->setFocus();
 
   int styleId = m_paletteHandle->getStyleIndex();
   setWindowTitle(tr("Name Editor: # %1").arg(styleId));
@@ -483,5 +499,25 @@ void StyleNameEditor::enterEvent(QEvent* e) {
 
 //-------
 void StyleNameEditor::onWordClicked(const QString& word) {
+  if (m_selectionLength != 0)
+    m_styleName->setSelection(m_selectionStart, m_selectionLength);
+  else
+    m_styleName->setCursorPosition(m_selectionStart);
+
   m_styleName->insert(word);
+  m_styleName->setFocus();
+
+  storeSelectionInfo();
+}
+
+//-------
+// remember the selection of m_stylename when mouse entered in EasyInputArea
+void StyleNameEditor::storeSelectionInfo() {
+  if (m_styleName->hasSelectedText()) {
+    m_selectionStart  = m_styleName->selectionStart();
+    m_selectionLength = m_styleName->selectedText().length();
+  } else {
+    m_selectionStart  = m_styleName->cursorPosition();
+    m_selectionLength = 0;
+  }
 }
