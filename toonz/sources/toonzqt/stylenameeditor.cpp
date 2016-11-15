@@ -114,7 +114,7 @@ void WordButton::contextMenuEvent(QContextMenuEvent* event) {
 //------------------------------------------------------------
 
 AddWordButton::AddWordButton(const int col, QWidget* parent)
-    : WordButton(columnLabel[col], parent), m_column(col) {
+    : WordButton(tr("New"), parent), m_column(col) {
   // setFixedSize(23, 23);
   setIcon(QIcon(":Resources/plus.png"));
   setIconSize(QSize(16, 16));
@@ -350,6 +350,12 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
   m_applyButton                = new QPushButton(tr("Apply and Next"), this);
   EasyInputArea* easyInputArea = new EasyInputArea(this);
 
+  QLabel* panelLabel[WORD_COLUMN_AMOUNT];
+  for (int i = 0; i < WORD_COLUMN_AMOUNT; i++) {
+    panelLabel[i] = new QLabel(columnLabel[i], this);
+    panelLabel[i]->setStyleSheet("font-size: 10px; font: italic;");
+  }
+
   setFocusProxy(m_styleName);
 
   m_styleName->setEnabled(false);
@@ -387,8 +393,20 @@ StyleNameEditor::StyleNameEditor(QWidget* parent)
     m_topLayout->addLayout(buttonLayout, 0);
 
     m_topLayout->addSpacing(5);
-    m_topLayout->addWidget(new QLabel(tr("Easy Inputs"), this), 0,
-                           Qt::AlignLeft);
+
+    QHBoxLayout* labelLay = new QHBoxLayout();
+    labelLay->setMargin(0);
+    labelLay->setSpacing(3);
+    {
+      labelLay->addWidget(new QLabel(tr("Easy Inputs"), this), 1,
+                          Qt::AlignLeft);
+      for (int i = 0; i < WORD_COLUMN_AMOUNT; i++) {
+        labelLay->addWidget(panelLabel[i],
+                            (i == 0) ? areaColCount[i] - 1 : areaColCount[i],
+                            Qt::AlignRight | Qt::AlignBottom);
+      }
+    }
+    m_topLayout->addLayout(labelLay, 0);
 
     m_topLayout->addWidget(easyInputArea, 1);
   }
