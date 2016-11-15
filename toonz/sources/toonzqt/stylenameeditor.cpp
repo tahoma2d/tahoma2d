@@ -30,7 +30,7 @@
 //------------------------------------------------------------
 namespace {
 const int areaColCount[WORD_COLUMN_AMOUNT]    = {2, 2, 1};
-const QString columnLabel[WORD_COLUMN_AMOUNT] = {AddWordButton::tr("Name"),
+const QString columnLabel[WORD_COLUMN_AMOUNT] = {AddWordButton::tr("Character"),
                                                  AddWordButton::tr("Part"),
                                                  AddWordButton::tr("Suffix")};
 
@@ -84,8 +84,10 @@ QString NewWordDialog::getName() { return m_lineEdit->text(); }
 
 WordButton::WordButton(const QString& text, QWidget* parent)
     : QPushButton(text, parent) {
-  setFixedSize(75, 23);
+  setFixedHeight(23);
+  setMinimumWidth(75);
   setObjectName("WordButton");
+  setToolTip(text);
 
   bool ret = connect(this, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
   assert(ret);
@@ -168,8 +170,8 @@ void EasyInputArea::updatePanelSize(int columnId) {
   int itemCount = m_wordList[columnId].size() + 1;
   int rowCount  = tceil((double)itemCount / (double)areaColCount[columnId]);
 
-  m_wordPanel[columnId]->setFixedSize(areaColCount[columnId] * 78 + 3,
-                                      rowCount * 26 + 3);
+  QWidget* widget = m_scrollArea[columnId]->widget();
+  widget->setFixedSize(m_scrollArea[columnId]->width(), rowCount * 26 + 3);
 }
 
 //------
@@ -181,10 +183,10 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
   mainLay->setMargin(0);
   mainLay->setSpacing(3);
   for (int a = 0; a < WORD_COLUMN_AMOUNT; a++) {
-    QScrollArea* scrollArea = new QScrollArea(this);
-    scrollArea->setObjectName("SolidLineFrame");
+    m_scrollArea[a] = new QScrollArea(this);
+    m_scrollArea[a]->setObjectName("SolidLineFrame");
 
-    m_wordPanel[a]          = new QFrame(this);
+    QFrame* wordPanel       = new QFrame(this);
     QGridLayout* buttonsLay = new QGridLayout();
     buttonsLay->setMargin(3);
     buttonsLay->setSpacing(3);
@@ -195,7 +197,7 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
       for (int s = 0; s < m_wordList[a].size(); s++) {
         WordButton* button = new WordButton(m_wordList[a].at(s), this);
         button->setFocusPolicy(Qt::NoFocus);
-        buttonsLay->addWidget(button, row, col, Qt::AlignCenter);
+        buttonsLay->addWidget(button, row, col);
         connect(button, SIGNAL(clicked(const QString&)), this,
                 SIGNAL(wordClicked(const QString&)));
         connect(button, SIGNAL(removeWord(const QString&)), this,
@@ -209,22 +211,20 @@ EasyInputArea::EasyInputArea(QWidget* parent) : QWidget(parent) {
       // add button
       AddWordButton* addWordButton = new AddWordButton(a, this);
       addWordButton->setFocusPolicy(Qt::NoFocus);
-      buttonsLay->addWidget(addWordButton, row, col, Qt::AlignCenter);
+      buttonsLay->addWidget(addWordButton, row, col);
       connect(addWordButton, SIGNAL(clicked(const int)), this,
               SLOT(addWordButtonClicked(const int)));
     }
     for (int c = 0; c < areaColCount[a]; c++)
       buttonsLay->setColumnStretch(c, 1);
-    m_wordPanel[a]->setLayout(buttonsLay);
+    wordPanel->setLayout(buttonsLay);
     m_wordLayout[a] = buttonsLay;
 
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea->setWidget(m_wordPanel[a]);
-    mainLay->addWidget(scrollArea, 0);
-    updatePanelSize(a);
-    scrollArea->setFixedWidth(m_wordPanel[a]->width());
+    m_scrollArea[a]->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_scrollArea[a]->setMinimumWidth(areaColCount[a] * 78 + 3);
+    m_scrollArea[a]->setWidget(wordPanel);
+    mainLay->addWidget(m_scrollArea[a], areaColCount[a]);
   }
-  mainLay->addStretch(1);
   setLayout(mainLay);
 }
 
@@ -262,14 +262,14 @@ void EasyInputArea::addWordButtonClicked(const int columnId) {
   int row         = indexToRow(wordCount - 1, columnId);
   int col         = indexToCol(wordCount - 1, columnId);
   QWidget* addBtn = m_wordLayout[columnId]->itemAtPosition(row, col)->widget();
-  m_wordLayout[columnId]->addWidget(button, row, col, Qt::AlignCenter);
+  m_wordLayout[columnId]->addWidget(button, row, col);
   // Move add button to the next index
   col++;
   if (col == areaColCount[columnId]) {
     col = 0;
     row++;
   }
-  m_wordLayout[columnId]->addWidget(addBtn, row, col, Qt::AlignCenter);
+  m_wordLayout[columnId]->addWidget(addBtn, row, col);
 
   updatePanelSize(columnId);
 
@@ -314,7 +314,7 @@ void EasyInputArea::onRemoveWord(const QString& word) {
       row--;
       col = areaColCount[a] - 1;
     }
-    m_wordLayout[a]->addWidget(button, row, col, Qt::AlignCenter);
+    m_wordLayout[a]->addWidget(button, row, col);
   }
 
   // remove word from the list
@@ -326,6 +326,14 @@ void EasyInputArea::onRemoveWord(const QString& word) {
 //------------------------------------------------------------
 
 void EasyInputArea::enterEvent(QEvent*) { emit mouseEnter(); }
+
+//------------------------------------------------------------
+
+void EasyInputArea::resizeEvent(QResizeEvent*) {
+  for (int i = 0; i < WORD_COLUMN_AMOUNT; i++) {
+    updatePanelSize(i);
+  }
+}
 
 //------------------------------------------------------------
 

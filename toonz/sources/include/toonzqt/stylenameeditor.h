@@ -13,7 +13,7 @@ class QLineEdit;
 class QPushButton;
 class TPaletteHandle;
 class QGridLayout;
-class QFrame;
+class QScrollArea;
 
 const int WORD_COLUMN_AMOUNT = 3;
 
@@ -71,7 +71,7 @@ class EasyInputArea final : public QWidget {
 
   QStringList m_wordList[WORD_COLUMN_AMOUNT];
   QGridLayout *m_wordLayout[WORD_COLUMN_AMOUNT];
-  QFrame *m_wordPanel[WORD_COLUMN_AMOUNT];
+  QScrollArea *m_scrollArea[WORD_COLUMN_AMOUNT];
 
   void loadList();
   void saveList();
@@ -82,6 +82,7 @@ public:
 
 protected:
   void enterEvent(QEvent *) override;
+  void resizeEvent(QResizeEvent *) override;
 
 protected slots:
   void addWordButtonClicked(const int);
