@@ -569,17 +569,16 @@ void LevelNameLineEdit::onEditingFinished() {
 //=============================================================================
 
 PencilTestPopup::PencilTestPopup()
-    : Dialog(TApp::instance()->getMainWindow(), false, false, "PencilTest")
-    , m_currentCamera(NULL)
-    , m_cameraImageCapture(NULL)
-    , m_captureWhiteBGCue(false)
-    , m_captureCue(false) {
+    // set the parent 0 in order to enable the popup behind the main window
+    : Dialog(0, false, false, "PencilTest"),
+      m_currentCamera(NULL),
+      m_cameraImageCapture(NULL),
+      m_captureWhiteBGCue(false),
+      m_captureCue(false) {
   setWindowTitle(tr("Camera Capture"));
 
   // add maximize button to the dialog
-  Qt::WindowFlags flags = windowFlags();
-  flags |= Qt::WindowMaximizeButtonHint;
-  setWindowFlags(flags);
+  setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint);
 
   layout()->setSizeConstraint(QLayout::SetNoConstraint);
 
@@ -1241,6 +1240,7 @@ void PencilTestPopup::hideEvent(QHideEvent* event) {
     if (m_currentCamera->state() == QCamera::LoadedState)
       m_currentCamera->unload();
   }
+  Dialog::hideEvent(event);
 }
 
 //-----------------------------------------------------------------------------
