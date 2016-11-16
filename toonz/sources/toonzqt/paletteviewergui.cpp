@@ -113,7 +113,8 @@ PageViewer::PageViewer(QWidget *parent, PaletteViewType viewType,
     , m_viewType(viewType)
     , m_nameDisplayMode(Style)
     , m_hasPasteColors(hasPasteColors)
-    , m_changeStyleCommand(0) {
+    , m_changeStyleCommand(0)
+    , m_styleNameEditor(NULL) {
   setFrameStyle(QFrame::StyledPanel);
   setObjectName("PageViewer");
   setFocusPolicy(Qt::StrongFocus);
@@ -124,9 +125,6 @@ PageViewer::PageViewer(QWidget *parent, PaletteViewType viewType,
     QAction *pasteColorsAct = cmd->getAction(MI_PasteColors);
     addAction(pasteColorsAct);
   }
-
-  m_styleNameEditor = new StyleNameEditor(this);
-  m_styleNameEditor->hide();
 
   m_renameTextField->hide();
   m_renameTextField->setObjectName("RenameColorTextField");
@@ -171,7 +169,7 @@ void PageViewer::setPaletteHandle(TPaletteHandle *paletteHandle) {
   m_styleSelection->setPaletteHandle(paletteHandle);
   connect(paletteHandle, SIGNAL(colorStyleChanged()), SLOT(update()));
 
-  m_styleNameEditor->setPaletteHandle(paletteHandle);
+  if (m_styleNameEditor) m_styleNameEditor->setPaletteHandle(paletteHandle);
 }
 
 //-----------------------------------------------------------------------------
@@ -1081,6 +1079,10 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
   menu.addAction(openStyleControlAct);
   QAction *openStyleNameEditorAct = menu.addAction(tr("Name Editor"));
   connect(openStyleNameEditorAct, &QAction::triggered, [&]() {
+    if (!m_styleNameEditor) {
+      m_styleNameEditor = new StyleNameEditor(this);
+      m_styleNameEditor->setPaletteHandle(getPaletteHandle());
+    }
     m_styleNameEditor->show();
     m_styleNameEditor->raise();
     m_styleNameEditor->activateWindow();
