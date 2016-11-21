@@ -89,11 +89,11 @@ public:
     if (m_data->imp) {
       if (m_data->m_doNotify == false) return;
       m_data->m_doNotify = false;
-      if (m_data->imp->m_isPlaying) m_data->imp->doStopDevice();
       std::set<TSoundOutputDeviceListener *>::iterator it =
           m_data->imp->m_listeners.begin();
       for (; it != m_data->imp->m_listeners.end(); ++it)
         (*it)->onPlayCompleted();
+      if (m_data->imp->m_isPlaying) m_data->imp->doStopDevice();
     }
   }
 };
@@ -134,6 +134,11 @@ static void sdl_fill_audio(void *udata, Uint8 *stream, int len) {
 
   /* Mix as much data as possible */
   len = (len > audio_len ? audio_len : len);
+
+  // Mix with silence if we're not at full volume
+  if (_this->m_volume != SDL_MIX_MAXVOLUME) {
+    SDL_memset(stream, 0, len);
+  }
   SDL_MixAudio(stream, (Uint8 *)myData->entireFileBuffer + myData->byteOffset,
                len, _this->m_volume);
   myData->byteOffset += len;
