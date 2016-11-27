@@ -133,12 +133,8 @@ static void sdl_fill_audio(void *udata, Uint8 *stream, int len) {
   }
 
   /* Mix as much data as possible */
-  len = (len > audio_len ? audio_len : len);
-
-  // Mix with silence if we're not at full volume
-  if (_this->m_volume != SDL_MIX_MAXVOLUME) {
-    SDL_memset(stream, 0, len);
-  }
+  len = min(audio_len, len);
+  SDL_memset(stream, 0, len);
   SDL_MixAudio(stream, (Uint8 *)myData->entireFileBuffer + myData->byteOffset,
                len, _this->m_volume);
   myData->byteOffset += len;
