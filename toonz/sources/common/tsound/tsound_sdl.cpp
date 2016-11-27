@@ -268,21 +268,8 @@ void TSoundOutputDeviceImp::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1,
   myData->fileByteCount    = (s1 - s0) * st->getSampleSize();
   myData->entireFileBuffer = new char[myData->fileByteCount];
 
-#if defined(i386)
-  // XXX: let's see if that's needed for SDL
-  if (st->getBitPerSample() == 16) {
-    int i;
-    USHORT *dst = (USHORT *)(myData->entireFileBuffer);
-    USHORT *src = (USHORT *)(st->getRawData() + s0 * st->getSampleSize());
-
-    for (i = 0; i < myData->fileByteCount / 2; i++) *dst++ = swapUshort(*src++);
-  } else
-    memcpy(myData->entireFileBuffer,
-           st->getRawData() + s0 * st->getSampleSize(), myData->fileByteCount);
-#else
   memcpy(myData->entireFileBuffer, st->getRawData() + s0 * st->getSampleSize(),
          myData->fileByteCount);
-#endif
 
   //	myData->maxPacketSize = fileASBD.mFramesPerPacket *
   // fileASBD.mBytesPerFrame;
