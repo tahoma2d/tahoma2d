@@ -1,7 +1,7 @@
 /*------------------------------------
 Iwa_MotionBlurCompFx
-Amount of light/Motion blur considering the trajectory of the object
-Enable synthesis of exposure value with background.
+Motion blur fx considering the exposure of light and trajectory of the object.
+Available to composite exposure value with background.
 //------------------------------------*/
 
 #include "iwa_motionblurfx.h"
@@ -11,8 +11,9 @@ Enable synthesis of exposure value with background.
 
 #include "trop.h"
 
-/* Normalize the source image to 0 to 1 and read it into the host memory
- * If the source image is premultiped or not specified in the combo box. */
+/* Normalize the source image to 0 - 1 and read it into the host memory.
+ * Check if the source image is premultiped or not here, if it is not specified
+ * in the combo box. */
 template <typename RASTER, typename PIXEL>
 bool Iwa_MotionBlurCompFx::setSourceRaster(const RASTER srcRas, float4 *dstMem,
                                            TDimensionI dim,
@@ -33,8 +34,7 @@ bool Iwa_MotionBlurCompFx::setSourceRaster(const RASTER srcRas, float4 *dstMem,
       (*chann_p).w = (float)pix->m / (float)PIXEL::maxChannelValue;
 
       /* If there are pixels whose RGB values ​​are larger than the alpha
-       * channel,
-       * Don't Premutiply */
+       * channel, determine the source is not premutiplied */
       if (type == AUTO && isPremultiplied &&
           (((*chann_p).x > (*chann_p).w && (*chann_p).x > threshold) ||
            ((*chann_p).y > (*chann_p).w && (*chann_p).y > threshold) ||
@@ -101,17 +101,17 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
     float *filter_p, TDimensionI &filterDim, int marginLeft, int marginBottom,
     float4 *pointsTable, int pointAmount, float startValue, float startCurve,
     float endValue, float endCurve) {
-  /* Variable to add filter value */
+  /* Variable for adding filter value*/
   float fil_val_sum = 0.0f;
-  /* For current filter coordinates to rotate in the 'for' statement */
+  /* The current filter position to be looped in the 'for' statement */
   float *current_fil_p = filter_p;
-  /* Coordinates of each filter information */
+  /* For each coordinate in the filter */
   for (int fily = 0; fily < filterDim.ly; fily++) {
     for (int filx = 0; filx < filterDim.lx; filx++, current_fil_p++) {
       /* Get filter coordinates */
       float2 pos = {static_cast<float>(filx - marginLeft),
                     static_cast<float>(fily - marginBottom)};
-      /* Value to update */
+      /* Value to be updated */
       float nearestDist2         = 100.0f;
       int nearestIndex           = -1;
       float nearestFramePosRatio = 0.0f;
@@ -130,17 +130,17 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
 
         /* Since it is within the range, obtain the distance between the line
          * segment and the point. */
-        /* Find the inner product of 'p0' -> sampling point and 'p0' -> 'p1' */
+        /* Calculate the inner product of 'p0'->sampling point and 'p0'->'p1' */
         float2 vec_p0_sample = {static_cast<float>(pos.x - p0.x),
                                 static_cast<float>(pos.y - p0.y)};
         float2 vec_p0_p1 = {static_cast<float>(p1.x - p0.x),
                             static_cast<float>(p1.y - p0.y)};
         float dot =
             vec_p0_sample.x * vec_p0_p1.x + vec_p0_sample.y * vec_p0_p1.y;
-        /* Find the square of distance */
+        /* Calculate the square of distance */
         float dist2;
         float framePosRatio;
-        /* When it is before 'p0' */
+        /* If it is before 'p0' */
         if (dot <= 0.0f) {
           dist2 = vec_p0_sample.x * vec_p0_sample.x +
                   vec_p0_sample.y * vec_p0_sample.y;
@@ -149,9 +149,9 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
           /* Calculate the square of the length of the trajectory vector */
           float length2 = p0.z * p0.z;
 
-          /* When it is between 'p0' and 'p1'
-           * When the trajectory at p is a point,
-           * length 2 becomes 0, so it will never fall into this condition.
+          /* If it is between 'p0' and 'p1'
+           * If the trajectory at p is a point,
+           * 'length2' becomes 0, so it will never fall into this condition.
            * So, there should not be worry of becoming ZeroDivide. */
           if (dot < length2) {
             float p0_sample_dist2 = vec_p0_sample.x * vec_p0_sample.x +
@@ -159,7 +159,7 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
             dist2         = p0_sample_dist2 - dot * dot / length2;
             framePosRatio = dot / length2;
           }
-          /* if it is before 'p1' */
+          /* If it is before 'p1' */
           else {
             float2 vec_p1_sample = {pos.x - p1.x, pos.y - p1.y};
             dist2                = vec_p1_sample.x * vec_p1_sample.x +
@@ -168,7 +168,7 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
           }
         }
         /* If the distance is farther than (√ 2 + 1) / 2, continue
-         * Because it is a comparison with dist2 I'm squaring */
+         * Because it is a comparison with dist2, the value is squared */
         if (dist2 > 1.4571f) continue;
 
         /* Update if distance is closer */
@@ -179,42 +179,40 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
         }
       }
 
-      /* If neighbors of the current pixel can not be found,
-       * the filter value is 0 and return */
+      /* If neighborhood vector of the current pixel can not be found,
+       * set the filter value to 0 and return */
       if (nearestIndex == -1) {
         *current_fil_p = 0.0f;
         continue;
       }
 
-      /* How much is the subpixel (16 * 16) of the current pixel
-       * in the range 0.5 from the neighborhood vector.
-       *
-       * It counts whether it is included.
+      /* Count how many subpixels (16 * 16) of the current pixel
+       * are in the range 0.5 from the neighborhood vector.
        */
       int count  = 0;
       float4 np0 = pointsTable[nearestIndex];
       float4 np1 = pointsTable[nearestIndex + 1];
       for (int yy = 0; yy < 16; yy++) {
-        /* the Y coordinate of the sub pixel */
+        /* Y coordinate of the subpixel */
         float subPosY = pos.y + ((float)yy - 7.5f) / 16.0f;
         for (int xx = 0; xx < 16; xx++) {
-          /* X coordinate of subpixel */
+          /* X coordinate of the subpixel */
           float subPosX = pos.x + ((float)xx - 7.5f) / 16.0f;
 
           float2 vec_np0_sub = {subPosX - np0.x, subPosY - np0.y};
           float2 vec_np0_np1 = {np1.x - np0.x, np1.y - np0.y};
           float dot =
               vec_np0_sub.x * vec_np0_np1.x + vec_np0_sub.y * vec_np0_np1.y;
-          /* Find the square of the distance */
+          /* Calculate the square of the distance */
           float dist2;
-          /* When it is before 'p0' */
+          /* If it is before 'p0' */
           if (dot <= 0.0f)
             dist2 =
                 vec_np0_sub.x * vec_np0_sub.x + vec_np0_sub.y * vec_np0_sub.y;
           else {
             /* Compute the square of the length of the trajectory vector */
             float length2 = np0.z * np0.z;
-            /* When it is between 'p0' and 'p1' */
+            /* If it is between 'p0' and 'p1' */
             if (dot < length2) {
               float np0_sub_dist2 =
                   vec_np0_sub.x * vec_np0_sub.x + vec_np0_sub.y * vec_np0_sub.y;
@@ -227,29 +225,29 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
                   vec_np1_sub.x * vec_np1_sub.x + vec_np1_sub.y * vec_np1_sub.y;
             }
           }
-          /* Increment count if distance squared is less than 0.25 */
+          /* Increment count if squared distance is less than 0.25 */
           if (dist2 <= 0.25f) count++;
         }
       }
-      /* If the insurance count is 0, the field value is 0 and return. */
+      /* 'safeguard' - If the count is 0, set the field value to 0 and return.
+       */
       if (count == 0) {
         *current_fil_p = 0.0f;
         continue;
       }
 
-      /* Count is Max 256 */
+      /* Count is 256 at a maximum */
       float countRatio = (float)count / 256.0f;
 
       /* The brightness of the filter value is inversely proportional
        * to the area of ​​the line of width 1 made by the vector.
        *
        * Since there are semicircular caps with radius 0.5
-       * before and after the vector, even vectors of length 0.
-       *
-       * It will never be 0-divide.
+       * before and after the vector, it will never be 0-divide
+       * even if the length of vector is 0.
        */
 
-      /* Neighborhood vector, area when width 1 */
+      /* Area of the neighborhood vector when width = 1 */
       float vecMenseki = 0.25f * 3.14159265f + np0.z;
 
       //-----------------
@@ -259,8 +257,7 @@ void Iwa_MotionBlurCompFx::makeMotionBlurFilter_CPU(
       float frameOffset =
           np0.w * (1.0f - nearestFramePosRatio) + np1.w * nearestFramePosRatio;
       /* If the frame is exactly at the frame origin,
-       * or 'curveValue = 1' if there is no attenuation value.
-       */
+       * or there is no attenuation value, set curveValue to 1 */
       if (frameOffset == 0.0f || (frameOffset < 0.0f && startValue == 1.0f) ||
           (frameOffset > 0.0f && endValue == 1.0f))
         curveValue = 1.0f;
@@ -305,17 +302,17 @@ void Iwa_MotionBlurCompFx::makeZanzoFilter_CPU(
     float endValue, float endCurve) {
   /* Variable for adding filter value */
   float fil_val_sum = 0.0f;
-  /* For current filter coordinates to rotate in the for statement */
+  /* The current filter position to be looped in the 'for' statement */
   float *current_fil_p = filter_p;
-  /* About the coordinates of each filter */
+  /* For each coordinate in the filter */
   for (int fily = 0; fily < filterDim.ly; fily++) {
     for (int filx = 0; filx < filterDim.lx; filx++, current_fil_p++) {
       /* Get filter coordinates */
       float2 pos = {(float)(filx - marginLeft), (float)(fily - marginBottom)};
-      /* Variable to be accumulated from now */
+      /* Variable to be accumulated */
       float filter_sum = 0.0f;
-      /* Measure the distance for each sample point and accumulate the
-       * concentration */
+      /* Measure the distance for each sample point and accumulate the density
+       */
       for (int v = 0; v < pointAmount; v++) {
         float4 p0 = pointsTable[v];
         /* If it is not within the distance 1 around the coordinates of 'p0',
@@ -333,7 +330,7 @@ void Iwa_MotionBlurCompFx::makeZanzoFilter_CPU(
         float curveValue;
         float frameOffset = p0.w;
         /* If the frame is exactly at the frame origin,
-         *   or curveValue = 1 if there is no attenuation value */
+        * or there is no attenuation value, set curveValue to 1 */
         if (frameOffset == 0.0f || (frameOffset < 0.0f && startValue == 1.0f) ||
             (frameOffset > 0.0f && endValue == 1.0f))
           curveValue = 1.0f;
@@ -373,7 +370,7 @@ void Iwa_MotionBlurCompFx::makeZanzoFilter_CPU(
 }
 
 /*------------------------------------------------------------
- Return exposure value from depremultipy to RGB value (0 to 1) -> premultiply
+ Unpremultiply -> convert to exposure value -> premultiply
 ------------------------------------------------------------*/
 
 void Iwa_MotionBlurCompFx::convertRGBtoExposure_CPU(
@@ -381,7 +378,7 @@ void Iwa_MotionBlurCompFx::convertRGBtoExposure_CPU(
     bool sourceIsPremultiplied) {
   float4 *cur_tile_p = in_tile_p;
   for (int i = 0; i < dim.lx * dim.ly; i++, cur_tile_p++) {
-    /* if alpha is 0 return */
+    /* if alpha is 0, return */
     if (cur_tile_p->w == 0.0f) {
       cur_tile_p->x = 0.0f;
       cur_tile_p->y = 0.0f;
@@ -389,21 +386,23 @@ void Iwa_MotionBlurCompFx::convertRGBtoExposure_CPU(
       continue;
     }
 
-    /* Do depremultiply on materials that are premultiply, such as regular Level
-     * It is not done for DigiBook etc. */
+    /* Unpremultiply on sources that are premultiplied, such as regular Level.
+     * It is not done for 'digital overlay' (image with alpha mask added by
+     * using Photoshop, as known as 'DigiBook' in Japanese animation industry)
+     * etc. */
     if (sourceIsPremultiplied) {
-      /* depremultiply */
+      /* unpremultiply */
       cur_tile_p->x /= cur_tile_p->w;
       cur_tile_p->y /= cur_tile_p->w;
       cur_tile_p->z /= cur_tile_p->w;
     }
 
-    /* Set RGB to Exposure */
+    /* convert RGB to Exposure */
     cur_tile_p->x = powf(10, (cur_tile_p->x - 0.5f) * hardness);
     cur_tile_p->y = powf(10, (cur_tile_p->y - 0.5f) * hardness);
     cur_tile_p->z = powf(10, (cur_tile_p->z - 0.5f) * hardness);
 
-    /* Then multiply on the alpha channel */
+    /* Then multiply with the alpha channel */
     cur_tile_p->x *= cur_tile_p->w;
     cur_tile_p->y *= cur_tile_p->w;
     cur_tile_p->z *= cur_tile_p->w;
@@ -412,7 +411,7 @@ void Iwa_MotionBlurCompFx::convertRGBtoExposure_CPU(
 
 /*------------------------------------------------------------
  Filter and blur exposure values
- Rotate by the loop only the range of 'outDim'.
+ Loop for the range of 'outDim'.
 ------------------------------------------------------------*/
 
 void Iwa_MotionBlurCompFx::applyBlurFilter_CPU(
@@ -421,7 +420,7 @@ void Iwa_MotionBlurCompFx::applyBlurFilter_CPU(
     int marginRight, int marginTop, TDimensionI &outDim) {
   for (int i = 0; i < outDim.lx * outDim.ly; i++) {
     /* in_tile_dev and out_tile_dev contain data with dimensions lx * ly.
-     * Convert i to coordinates for output. */
+     * So, convert i to coordinates for output. */
     int2 outPos  = {i % outDim.lx + marginRight, i / outDim.lx + marginTop};
     int outIndex = outPos.y * enlargedDim.lx + outPos.x;
     /* put the result in out_tile_dev [outIndex] */
@@ -430,17 +429,17 @@ void Iwa_MotionBlurCompFx::applyBlurFilter_CPU(
     float4 value = {0.0f, 0.0f, 0.0f, 0.0f};
 
     /* Loop by filter size.
-     * However, the filter is designed to collect images of sample points
-     * To use it, invert the sample vertically and horizontally and sample it */
+     * Note that the filter is used to 'collect' pixels at sample points
+     * so flip the filter vertically and horizontally and sample it */
     int filterIndex = 0;
     for (int fily = -marginBottom; fily < filterDim.ly - marginBottom; fily++) {
-      /* Sample coordinates and index back of this scan line */
+      /* Sample coordinates and index of the end of this scan line */
       int2 samplePos  = {outPos.x + marginLeft, outPos.y - fily};
       int sampleIndex = samplePos.y * enlargedDim.lx + samplePos.x;
 
       for (int filx = -marginLeft; filx < filterDim.lx - marginLeft;
            filx++, filterIndex++, sampleIndex--) {
-        /* If the filter value is 0 or the sample pixel is transparent continue
+        /* If the filter value is 0 or the sample pixel is transparent, continue
          */
         if (filter_p[filterIndex] == 0.0f || in_tile_p[sampleIndex].w == 0.0f)
           continue;
@@ -460,8 +459,9 @@ void Iwa_MotionBlurCompFx::applyBlurFilter_CPU(
 }
 
 /*------------------------------------------------------------
- Return exposure value from depremultipy to RGB value
- (0 to 1) -> premultiply
+ Unpremultiply the exposure value
+ -> convert back to RGB value (0 to 1)
+ -> premultiply
 ------------------------------------------------------------*/
 
 void Iwa_MotionBlurCompFx::convertExposureToRGB_CPU(float4 *out_tile_p,
@@ -477,12 +477,12 @@ void Iwa_MotionBlurCompFx::convertExposureToRGB_CPU(float4 *out_tile_p,
       continue;
     }
 
-    // depremultiply
+    // unpremultiply
     cur_tile_p->x /= cur_tile_p->w;
     cur_tile_p->y /= cur_tile_p->w;
     cur_tile_p->z /= cur_tile_p->w;
 
-    /* Set Exposure to RGB value */
+    /* Convert Exposure to RGB value */
     cur_tile_p->x = log10f(cur_tile_p->x) / hardness + 0.5f;
     cur_tile_p->y = log10f(cur_tile_p->y) / hardness + 0.5f;
     cur_tile_p->z = log10f(cur_tile_p->z) / hardness + 0.5f;
@@ -506,7 +506,7 @@ void Iwa_MotionBlurCompFx::convertExposureToRGB_CPU(float4 *out_tile_p,
 }
 
 /*------------------------------------------------------------
- If there is a background and the foreground does not move, simply over
+ If there is a background, and the foreground does not move, simply over
 ------------------------------------------------------------*/
 void Iwa_MotionBlurCompFx::composeWithNoMotion(
     TTile &tile, double frame, const TRenderSettings &settings) {
@@ -524,7 +524,7 @@ void Iwa_MotionBlurCompFx::composeWithNoMotion(
 }
 
 /*------------------------------------------------------------
- Normally synthesized with background as exposure value
+  Convert background to exposure value and over it
 ------------------------------------------------------------*/
 void Iwa_MotionBlurCompFx::composeBackgroundExposure_CPU(
     float4 *out_tile_p, TDimensionI &enlargedDimIn, int marginRight,
@@ -536,7 +536,7 @@ void Iwa_MotionBlurCompFx::composeBackgroundExposure_CPU(
 
   bool bgIsPremultiplied;
 
-  /* normalize the background image to 0 to 1 and read it into the host memory
+  /* normalize the background image to 0 - 1 and read it into the host memory
    */
   TRaster32P backRas32 = (TRaster32P)back_tile.getRaster();
   TRaster64P backRas64 = (TRaster64P)back_tile.getRaster();
@@ -561,11 +561,13 @@ void Iwa_MotionBlurCompFx::composeBackgroundExposure_CPU(
 
       float3 bgExposure = {(*bg_p).x, (*bg_p).y, (*bg_p).z};
 
-      /* Do depremultiply on materials that are premultiply, such as regular
-       * Level.
-       * It is not done for DigiBook etc. */
+      /* Unpremultiply on sources that are premultiplied, such as regular Level.
+       * It is not done for 'digital overlay' (image with alpha mask added by
+       * using Photoshop, as known as 'DigiBook' in Japanese animation industry)
+       * etc.
+      */
       if (bgIsPremultiplied) {
-        // demultiply
+        // Unpremultiply
         bgExposure.x /= (*bg_p).w;
         bgExposure.y /= (*bg_p).w;
         bgExposure.z /= (*bg_p).w;
@@ -581,11 +583,11 @@ void Iwa_MotionBlurCompFx::composeBackgroundExposure_CPU(
       bgExposure.y *= (*bg_p).w;
       bgExposure.z *= (*bg_p).w;
 
-      /* Front and Over Synthesis */
+      /* Over composte with front layers */
       (*out_p).x = (*out_p).x + bgExposure.x * (1.0f - (*out_p).w);
       (*out_p).y = (*out_p).y + bgExposure.y * (1.0f - (*out_p).w);
       (*out_p).z = (*out_p).z + bgExposure.z * (1.0f - (*out_p).w);
-      /* Alpha value also over synthesized */
+      /* Alpha value also over-composited */
       (*out_p).w = (*out_p).w + (*bg_p).w * (1.0f - (*out_p).w);
     }
   }
@@ -652,7 +654,7 @@ void Iwa_MotionBlurCompFx::doCompute(TTile &tile, double frame,
     return;
   }
 
-  /* Get operating parameters */
+  /* Get parameters */
   QList<TPointD> points = getAttributes()->getMotionPoints();
   double hardness       = m_hardness->getValue(frame);
   double shutterStart   = m_shutterStart->getValue(frame);
@@ -671,7 +673,7 @@ void Iwa_MotionBlurCompFx::doCompute(TTile &tile, double frame,
       composeWithNoMotion(tile, frame, settings);
     return;
   }
-  /* Get display range */
+  /* Get display area */
   TRectD bBox =
       TRectD(tile.m_pos /* Render position on Pixel unit */
              ,
@@ -694,17 +696,19 @@ void Iwa_MotionBlurCompFx::doCompute(TTile &tile, double frame,
   int marginTop    = (int)ceil(abs(maxY));
   int marginBottom = (int)ceil(abs(minY));
 
-  /* Returns the exact type tiles (= filter margin all 0's) doesn't work. */
+  /* Return the input tile as-is if there is not movement
+  * (= filter margins are all 0). */
   if (marginLeft == 0 && marginRight == 0 && marginTop == 0 &&
       marginBottom == 0) {
     if (!m_background.isConnected()) m_input->compute(tile, frame, settings);
-    /* If there is a background and the foreground does not move, simply over */
+    /* If there is a background, and the foreground does not move, simply over
+     */
     else
       composeWithNoMotion(tile, frame, settings);
     return;
   }
 
-  /* The margin is the size of the upper/lower/left/right of the filter reversed
+  /* resize the bbox with the upper/lower/left/right inverted margins.
    */
   TRectD enlargedBBox(bBox.x0 - (double)marginRight,
                       bBox.y0 - (double)marginTop, bBox.x1 + (double)marginLeft,
@@ -721,7 +725,7 @@ void Iwa_MotionBlurCompFx::doCompute(TTile &tile, double frame,
   m_input->allocateAndCompute(enlarge_tile, enlargedBBox.getP00(),
                               enlargedDimIn, tile.getRaster(), frame, settings);
 
-  /* When background is required */
+  /* If background is required */
   TTile back_Tile;
   if (m_background.isConnected()) {
     m_background->allocateAndCompute(back_Tile, tile.m_pos,
@@ -742,13 +746,13 @@ void Iwa_MotionBlurCompFx::doCompute(TTile &tile, double frame,
   for (int p = 0; p < pointAmount; p++) {
     pointsTable[p].x = (float)points.at(p).x;
     pointsTable[p].y = (float)points.at(p).y;
-    /* z contains the distance of p -> p + 1 vector */
+    /* z stores the distance of p -> p + 1 vector */
     if (p < pointAmount - 1) {
       float2 vec = {(float)(points.at(p + 1).x - points.at(p).x),
                     (float)(points.at(p + 1).y - points.at(p).y)};
       pointsTable[p].z = sqrtf(vec.x * vec.x + vec.y * vec.y);
     }
-    /* 'w' stores shutter time offset */
+    /* w stores shutter time offset */
     pointsTable[p].w = -(float)shutterStart + (float)p * dt;
   }
 
@@ -787,7 +791,7 @@ void Iwa_MotionBlurCompFx::doCompute_CPU(
   filter_p = (float *)filter_ras->getRawData();
 
   bool sourceIsPremultiplied;
-  /* normalize the source image to 0 to 1 and read it into memory */
+  /* normalize the source image to 0 - 1 and read it into memory */
   TRaster32P ras32 = (TRaster32P)enlarge_tile.getRaster();
   TRaster64P ras64 = (TRaster64P)enlarge_tile.getRaster();
   if (ras32)
@@ -799,16 +803,16 @@ void Iwa_MotionBlurCompFx::doCompute_CPU(
         ras64, in_tile_p, enlargedDimIn,
         (PremultiTypes)m_premultiType->getValue());
 
-  /* When after image mode is off */
+  /* When afterimage mode is off */
   if (!m_zanzoMode->getValue()) {
     /* Create and normalize filters */
     makeMotionBlurFilter_CPU(filter_p, filterDim, marginLeft, marginBottom,
                              pointsTable, pointAmount, startValue, startCurve,
                              endValue, endCurve);
   }
-  /* When ghosting mode */
+  /* When afterimage mode is ON */
   else {
-    /* Create / normalize residual image filter */
+    /* Create / normalize the afterimage filter */
     makeZanzoFilter_CPU(filter_p, filterDim, marginLeft, marginBottom,
                         pointsTable, pointAmount, startValue, startCurve,
                         endValue, endCurve);
@@ -816,7 +820,7 @@ void Iwa_MotionBlurCompFx::doCompute_CPU(
 
   delete[] pointsTable;
 
-  /* depremultiply RGB value (0 to 1)
+  /* Unpremultiply RGB value (0 to 1)
    * -> convert it to exposure value
    * -> premultiply again
    */
@@ -836,8 +840,9 @@ void Iwa_MotionBlurCompFx::doCompute_CPU(
                                   marginTop, back_tile, dimOut,
                                   (float)hardness);
   }
-  /* Return exposure value from depremultipy to RGB value
-   * (0 to 1) -> premultiply */
+  /* Unpremultiply the exposure value
+   * -> convert back to RGB value (0 to 1)
+   * -> premultiply */
   convertExposureToRGB_CPU(out_tile_p, enlargedDimIn, hardness);
 
   /* Clear raster */
@@ -865,7 +870,8 @@ bool Iwa_MotionBlurCompFx::doGetBBox(double frame, TRectD &bBox,
     return false;
   }
 
-  /* Just a quick note, the background had led to infinite size */
+  /* Rough implemetation - return infinite size if the background is connected
+   */
   if (m_background.isConnected()) {
     bool _ret = m_background->doGetBBox(frame, bBox, info);
     bBox      = TConsts::infiniteRectD;
@@ -877,9 +883,10 @@ bool Iwa_MotionBlurCompFx::doGetBBox(double frame, TRectD &bBox,
   if (bBox == TConsts::infiniteRectD) return true;
 
   QList<TPointD> points = getAttributes()->getMotionPoints();
-  /* Find the margin from the bounding box of the moved trajectory */
-  /* Obtain the maximum absolute value of the coordinates of each locus point */
-  /* Get upper, lower, left and right margin */
+  /* Compute the margin from the bounding box of the moved trajectory */
+  /* Obtain the maximum absolute value of the coordinates of each trajectory
+   * point */
+  /* Get upper, lower, left and right margins */
   double minX = 0.0;
   double maxX = 0.0;
   double minY = 0.0;
@@ -913,7 +920,7 @@ bool Iwa_MotionBlurCompFx::canHandle(const TRenderSettings &info,
 
 /*------------------------------------------------------------
  Since there is a possibility that the reference object is moving,
- Alias ​​is changed every frame
+ Change the alias every frame
 ------------------------------------------------------------*/
 
 std::string Iwa_MotionBlurCompFx::getAlias(double frame,
