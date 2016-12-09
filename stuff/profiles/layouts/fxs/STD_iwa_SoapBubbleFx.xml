@@ -13,7 +13,7 @@
     <vbox>
       <separator label="Shape"/>
       <control>binarizeThresold</control>
-      <control>shpeAspectRatio</control>
+      <control>shapeAspectRatio</control>
       <control>blurRadius</control>
       <control>blurPower</control>
     </vbox>
