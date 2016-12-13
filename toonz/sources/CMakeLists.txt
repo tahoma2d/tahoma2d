@@ -288,7 +288,6 @@ elseif(UNIX)
     find_package(GLEW)
 
     find_package(SuperLU REQUIRED)
-    set(SUPERLU_INCLUDE_DIR ${SUPERLU_INCLUDE_DIR}/superlu)
     set(SUPERLU_LIB ${SUPERLU_LIBRARY})
 
     find_package(JPEG REQUIRED)
