@@ -527,6 +527,7 @@ void ShortcutPopup::setPresetShortcuts(TFilePath fp) {
     QByteArray ba      = id.toLatin1();
     const char *charId = ba.data();
     action = CommandManager::instance()->getAction((CommandId)charId);
+    if (!action) continue;
     CommandManager::instance()->setShortcut(
         action, preset.value(id).toString().toStdString(), false);
   }
