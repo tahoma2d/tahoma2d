@@ -496,7 +496,6 @@ namespace XsheetGUI {
 
 RenameCellField::RenameCellField(QWidget *parent, XsheetViewer *viewer)
     : QLineEdit(parent), m_viewer(viewer), m_row(-1), m_col(-1) {
-  setFixedSize(XsheetGUI::ColumnWidth + 3, XsheetGUI::RowHeight + 4);
   connect(this, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
   setContextMenuPolicy(Qt::PreventContextMenu);
   setObjectName("RenameCellField");
@@ -512,7 +511,6 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
   m_row = row;
   m_col = col;
 
-  move(QPoint(m_viewer->columnToX(col) - 1, m_viewer->rowToY(row) - 2));
 #ifdef _WIN32
   static QFont font("Arial", XSHEET_FONT_SIZE, QFont::Normal);
 #else
@@ -546,6 +544,9 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
 
   TXshCell cell = xsh->getCell(row, col);
   if (!cell.isEmpty()) {
+    setFixedSize(XsheetGUI::ColumnWidth - 5, XsheetGUI::RowHeight + 4);
+    move(QPoint(m_viewer->columnToX(col) + 7, m_viewer->rowToY(row) - 2));
+
     TFrameId fid           = cell.getFrameId();
     std::wstring levelName = cell.m_level->getName();
 
@@ -574,6 +575,9 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
   }
   // clear the field if the empty cell is clicked
   else {
+    setFixedSize(XsheetGUI::ColumnWidth + 3, XsheetGUI::RowHeight + 4);
+    move(QPoint(m_viewer->columnToX(col) - 1, m_viewer->rowToY(row) - 2));
+
     setText("");
   }
   show();
@@ -733,8 +737,10 @@ bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
   QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
   if (!action) return false;
 
-  return TCellSelection::isEnabledCommand(
-      CommandManager::instance()->getIdFromAction(action));
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId == "MI_Undo" || actionId == "MI_Redo") return true;
+  return TCellSelection::isEnabledCommand(actionId);
 }
 
 //-----------------------------------------------------------------------------
@@ -789,6 +795,34 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
   }
   m_viewer->updateCells();
   TApp::instance()->getCurrentSelection()->notifySelectionChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::showEvent(QShowEvent *) {
+  bool ret = connect(TApp::instance()->getCurrentXsheet(),
+                     SIGNAL(xsheetChanged()), this, SLOT(onXsheetChanged()));
+  assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::hideEvent(QHideEvent *) {
+  disconnect(TApp::instance()->getCurrentXsheet(), SIGNAL(xsheetChanged()),
+             this, SLOT(onXsheetChanged()));
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::onXsheetChanged() {
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (!cellSelection) {
+    hide();
+    return;
+  }
+  TCellSelection::Range range = cellSelection->getSelectedCells();
+  showInRowCol(m_row, m_col, range.getColCount() > 1);
 }
 
 //=============================================================================
