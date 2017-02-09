@@ -37,10 +37,13 @@ option_defaults_init(
 # customize...
 if(WIN32)
     set(_init_SYSTEM_LZO                     OFF)
+    set(_init_SYSTEM_SUPERLU                 OFF)
 elseif(APPLE)
     set(_init_SYSTEM_LZO                     OFF)
+    set(_init_SYSTEM_SUPERLU                 OFF)
 elseif(UNIX)
     set(_init_SYSTEM_LZO                     ON)
+    set(_init_SYSTEM_SUPERLU                 ON)
 endif()
 
 
@@ -48,6 +51,7 @@ endif()
 # Build Options
 
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
+option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
 
 # avoid using again
 option_defaults_clear()
