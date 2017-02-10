@@ -518,6 +518,15 @@ exec \$OPENTOONZ_BASE/bin/OpenToonz_${VERSION} \"\$@\"
         DESTINATION bin
     )
 
+    if(LZODRIVER_FOUND)
+        install(
+            PROGRAMS
+                "$<TARGET_FILE:lzocompress>"
+                "$<TARGET_FILE:lzodecompress>"
+            DESTINATION bin
+        )
+    endif()
+
     install(
         FILES
             "$<TARGET_FILE:tnzcore>"
