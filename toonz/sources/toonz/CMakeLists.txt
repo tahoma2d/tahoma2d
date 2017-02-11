@@ -142,8 +142,8 @@ set(MOC_HEADERS
     historypane.h
     cleanupsettingspane.h
     penciltestpopup.h
-	locatorpopup.h
-	styleshortcutswitchablepanel.h
+    locatorpopup.h
+    styleshortcutswitchablepanel.h
 # Tracker file
     dummyprocessor.h
     metnum.h
