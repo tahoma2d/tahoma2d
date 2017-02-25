@@ -484,6 +484,14 @@ if [ ! -d \$HOME/.config/OpenToonz/stuff ]; then
     cp -r \$OPENTOONZ_BASE/share/opentoonz/stuff \$HOME/.config/OpenToonz
 fi
 
+if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/library ]; then
+    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/library
+fi
+
+if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/fxs ]; then
+    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/fxs
+fi
+
 if [ ! -e \$HOME/.config/OpenToonz/SystemVar.ini ]; then
     cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
 [General]
