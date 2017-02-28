@@ -786,10 +786,6 @@ bool ComboViewerPanel::isFrameAlreadyCached(int frame) {
 //-----------------------------------------------------------------------------
 
 void ComboViewerPanel::onPreferenceChanged(const QString &prefName) {
-  // if no name specified (on showEvent), then process all updates
-  if (prefName == "BlankCount" || prefName == "BlankColor" ||
-      prefName.isEmpty())
-    m_flipConsole->onPreferenceChanged();
-
+  m_flipConsole->onPreferenceChanged(prefName);
   StyleShortcutSwitchablePanel::onPreferenceChanged(prefName);
 }
