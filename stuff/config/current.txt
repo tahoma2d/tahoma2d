@@ -1183,6 +1183,8 @@
   <item>"STD_iwa_SoapBubbleFx.GGamma"	"G Gamma"	</item>
   <item>"STD_iwa_SoapBubbleFx.BGamma"	"B Gamma"	</item>
   <item>"STD_iwa_SoapBubbleFx.binarizeThresold"	"Threshold"	</item>
+  <item>"STD_iwa_SoapBubbleFx.multiSource"	"Multiple Bubbles in Shape Image"	</item>
+  <item>"STD_iwa_SoapBubbleFx.maskCenter"	"Mask Center of the Bubble"	</item>
   <item>"STD_iwa_SoapBubbleFx.shapeAspectRatio"	"Shape Aspect Ratio"	</item>
   <item>"STD_iwa_SoapBubbleFx.blurRadius"	"Blur Radius"	</item>
   <item>"STD_iwa_SoapBubbleFx.blurPower"	"Power"	</item>
