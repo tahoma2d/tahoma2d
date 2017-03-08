@@ -299,7 +299,8 @@ Preferences::Preferences()
     , m_shortcutPreset("defopentoonz")
     , m_useNumpadForSwitchingStyles(true)
     , m_useArrowKeyToShiftCellSelection(false)
-    , m_inputCellsWithoutDoubleClickingEnabled(false) {
+    , m_inputCellsWithoutDoubleClickingEnabled(false)
+    , m_watchFileSystem(true) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -577,6 +578,7 @@ Preferences::Preferences()
            m_useArrowKeyToShiftCellSelection);
   getValue(*m_settings, "inputCellsWithoutDoubleClickingEnabled",
            m_inputCellsWithoutDoubleClickingEnabled);
+  getValue(*m_settings, "watchFileSystemEnabled", m_watchFileSystem);
 }
 
 //-----------------------------------------------------------------
@@ -1363,4 +1365,11 @@ void Preferences::enableInputCellsWithoutDoubleClicking(bool on) {
   m_inputCellsWithoutDoubleClickingEnabled = on;
   m_settings->setValue("inputCellsWithoutDoubleClickingEnabled",
                        on ? "1" : "0");
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::enableWatchFileSystem(bool on) {
+  m_watchFileSystem = on;
+  m_settings->setValue("watchFileSystemEnabled", on ? "1" : "0");
 }
