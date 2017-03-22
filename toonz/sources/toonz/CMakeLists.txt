@@ -545,7 +545,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} ${OPENBLAS_LIB})
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} ${OPENBLAS_LIB} ${EXECINFO_LIBRARY})
 
     if(WITH_GPHOTO2)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
@@ -706,7 +706,7 @@ TAHOMA2DSTUDIOPALETTE=\"\$HOME/.config/Tahoma2D/stuff/studiopalette\"
 EOF
 fi
 
-export LD_LIBRARY_PATH=\${TAHOMA2D_BASE}/lib/tahoma2d:\${LD_LIBRARY_PATH}
+export ${PRELOAD_VARIABLE}=\${TAHOMA2D_BASE}/lib/tahoma2d:\${${PRELOAD_VARIABLE}}
 
 exec \$TAHOMA2D_BASE/bin/Tahoma2D \"\$@\"
 ")

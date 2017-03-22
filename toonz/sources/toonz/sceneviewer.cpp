@@ -1,5 +1,5 @@
 
-#if defined(LINUX) || defined(FREEBSD)
+#if defined(LINUX) || defined(FREEBSD) || defined(HAIKU)
 #define GL_GLEXT_PROTOTYPES
 #endif
 
