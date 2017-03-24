@@ -185,9 +185,9 @@ void MyThread::compositLayerToTile(const RASTER layerRas,
       }
       // Composite the upper layer exposure with the bottom layers. Then,
       // convert the exposure to RGB values.
-      PIXEL::Channel dnVal = (m_channel == Red)
-                                 ? outPix->r
-                                 : (m_channel == Green) ? outPix->g : outPix->b;
+      typename PIXEL::Channel dnVal =
+          (m_channel == Red) ? outPix->r
+                             : (m_channel == Green) ? outPix->g : outPix->b;
 
       float exposure;
       double val;
@@ -214,24 +214,25 @@ void MyThread::compositLayerToTile(const RASTER layerRas,
 
       switch (m_channel) {
       case Red:
-        outPix->r = (PIXEL::Channel)val;
+        outPix->r = (typename PIXEL::Channel)val;
         //"over" composite the alpha channel here
         if (outPix->m != A_PIXEL::maxChannelValue) {
           if (alphaPix->value == A_PIXEL::maxChannelValue)
             outPix->m = A_PIXEL::maxChannelValue;
           else
-            outPix->m = alphaPix->value +
-                        (A_PIXEL::Channel)((float)outPix->m *
-                                           (float)(A_PIXEL::maxChannelValue -
-                                                   alphaPix->value) /
-                                           (float)A_PIXEL::maxChannelValue);
+            outPix->m =
+                alphaPix->value +
+                (typename A_PIXEL::Channel)(
+                    (float)outPix->m *
+                    (float)(A_PIXEL::maxChannelValue - alphaPix->value) /
+                    (float)A_PIXEL::maxChannelValue);
         }
         break;
       case Green:
-        outPix->g = (PIXEL::Channel)val;
+        outPix->g = (typename PIXEL::Channel)val;
         break;
       case Blue:
-        outPix->b = (PIXEL::Channel)val;
+        outPix->b = (typename PIXEL::Channel)val;
         break;
       }
 
@@ -653,7 +654,7 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
           threadR.start();
         break;
       }
-      Sleep(500);
+      QThread::msleep(500);
       waitCount++;
     }
     // Green channel
@@ -678,7 +679,7 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
           threadG.start();
         break;
       }
-      Sleep(500);
+      QThread::msleep(500);
       waitCount++;
     }
     // Blue channel
@@ -704,7 +705,7 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
           threadB.start();
         break;
       }
-      Sleep(500);
+      QThread::msleep(500);
       waitCount++;
     }
 
@@ -737,7 +738,7 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
       }
       if (threadR.isFinished() && threadG.isFinished() && threadB.isFinished())
         break;
-      Sleep(50);
+      QThread::msleep(50);
       waitCount++;
     }
     tmpAlphaRas->unlock();
