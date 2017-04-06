@@ -765,6 +765,7 @@ TPointD SceneViewer::winToWorld(const QPoint &pos) const {
     } else
       return TAffine() * TPointD(0, 0);
   }
+
   return getViewMatrix().inv() * pp;
 }
 
@@ -2556,10 +2557,12 @@ void SceneViewer::invalidateToolStatus() {
 */
 
 TRectD SceneViewer::getGeometry() const {
+  int devPixRatio = TApp::instance()->getDevPixRatio();
   TTool *tool     = TApp::instance()->getCurrentTool()->getTool();
-  TPointD topLeft = tool->getMatrix().inv() * winToWorld(geometry().topLeft());
-  TPointD bottomRight =
-      tool->getMatrix().inv() * winToWorld(geometry().bottomRight());
+  TPointD topLeft =
+      tool->getMatrix().inv() * winToWorld(geometry().topLeft() * devPixRatio);
+  TPointD bottomRight = tool->getMatrix().inv() *
+                        winToWorld(geometry().bottomRight() * devPixRatio);
 
   TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
   if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
@@ -2577,4 +2580,15 @@ TRectD SceneViewer::getGeometry() const {
 */
 void SceneViewer::doDeleteSubCamera() {
   PreviewSubCameraManager::instance()->deleteSubCamera(this);
+}
+
+//-----------------------------------------------------------------------------
+/*! modify sizes for high DPI monitors
+*/
+int SceneViewer::width() const {
+  return QGLWidget::width() * TApp::instance()->getDevPixRatio();
+}
+
+int SceneViewer::height() const {
+  return QGLWidget::height() * TApp::instance()->getDevPixRatio();
 }

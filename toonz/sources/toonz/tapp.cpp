@@ -57,6 +57,8 @@
 #include <QDebug>
 #include <QEvent>
 #include <QCoreApplication>
+#include <QApplication>
+#include <QDesktopWidget>
 
 //===================================================================
 
@@ -736,4 +738,11 @@ QString TApp::getCurrentRoomName() const {
   if (!currentRoom) return QString();
 
   return currentRoom->getName();
+}
+
+//-----------------------------------------------------------------------------
+
+int TApp::getDevPixRatio() const {
+  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
+  return devPixRatio;
 }

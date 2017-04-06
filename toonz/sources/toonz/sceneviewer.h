@@ -245,6 +245,10 @@ public:
 
   TPoint worldToPos(const TPointD &worldPos) const override;
 
+  //  modify sizes for high DPI monitors
+  int width() const;
+  int height() const;
+
 protected:
   // Paint vars
   TAffine m_drawCameraAff;

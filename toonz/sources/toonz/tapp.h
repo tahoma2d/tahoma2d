@@ -201,6 +201,11 @@ public:
 
   void writeSettings();
 
+  // returns device-pixel ratio. It is 1 for normal monitors and 2 (or higher
+  // ratio) for high DPI monitors. Setting "Display > Set custom text size(DPI)"
+  // for Windows corresponds to this ratio.
+  int getDevPixRatio() const;
+
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
