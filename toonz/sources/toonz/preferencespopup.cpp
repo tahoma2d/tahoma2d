@@ -975,6 +975,27 @@ void PreferencesPopup::onUseNumpadForSwitchingStylesClicked(bool checked) {
       "NumpadForSwitchingStyles");
 }
 
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onUseArrowKeyToShiftCellSelectionClicked(int on) {
+  m_pref->enableUseArrowKeyToShiftCellSelection(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onInputCellsWithoutDoubleClickingClicked(int on) {
+  m_pref->enableInputCellsWithoutDoubleClicking(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onWatchFileSystemClicked(int on) {
+  m_pref->enableWatchFileSystem(on);
+  // emit signal to update behavior of the File browser
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "WatchFileSystem");
+}
+
 //**********************************************************************************
 //    PrefencesPopup's  constructor
 //**********************************************************************************
@@ -1020,6 +1041,8 @@ PreferencesPopup::PreferencesPopup()
   m_chunkSizeFld =
       new DVGui::IntLineEdit(this, m_pref->getDefaultTaskChunkSize(), 1, 2000);
   CheckBox *sceneNumberingCB = new CheckBox(tr("Show Info in Rendered Frames"));
+  CheckBox *watchFileSystemCB = new CheckBox(
+      tr("Watch File System and Update File Browser Automatically"), this);
 
   m_projectRootDocuments = new CheckBox(tr("My Documents/OpenToonz*"), this);
   m_projectRootDesktop   = new CheckBox(tr("Desktop/OpenToonz*"), this);
@@ -1162,6 +1185,10 @@ PreferencesPopup::PreferencesPopup()
       new CheckBox(tr("Ignore Alpha Channel on Levels in Column 1"), this);
   CheckBox *showKeyframesOnCellAreaCB =
       new CheckBox(tr("Show Keyframes on Cell Area"), this);
+  CheckBox *useArrowKeyToShiftCellSelectionCB =
+      new CheckBox(tr("Use Arrow Key to Shift Cell Selection"), this);
+  CheckBox *inputCellsWithoutDoubleClickingCB =
+      new CheckBox(tr("Enable to Input Cells without Double Clicking"), this);
 
   //--- Animation ------------------------------
   categoryList->addItem(tr("Animation"));
@@ -1237,6 +1264,7 @@ PreferencesPopup::PreferencesPopup()
   m_cellsDragBehaviour->setCurrentIndex(m_pref->getDragCellsBehaviour());
   m_levelsBackup->setChecked(m_pref->isLevelsBackupEnabled());
   sceneNumberingCB->setChecked(m_pref->isSceneNumberingEnabled());
+  watchFileSystemCB->setChecked(m_pref->isWatchFileSystemEnabled());
 
   m_customProjectRootFileField->setPath(m_pref->getCustomProjectRoot());
 
@@ -1416,6 +1444,10 @@ PreferencesPopup::PreferencesPopup()
   ignoreAlphaonColumn1CB->setChecked(m_pref->isIgnoreAlphaonColumn1Enabled());
   showKeyframesOnCellAreaCB->setChecked(
       m_pref->isShowKeyframesOnXsheetCellAreaEnabled());
+  useArrowKeyToShiftCellSelectionCB->setChecked(
+      m_pref->isUseArrowKeyToShiftCellSelectionEnabled());
+  inputCellsWithoutDoubleClickingCB->setChecked(
+      m_pref->isInputCellsWithoutDoubleClickingEnabled());
 
   //--- Animation ------------------------------
   QStringList list;
@@ -1525,6 +1557,9 @@ PreferencesPopup::PreferencesPopup()
                                  Qt::AlignLeft | Qt::AlignVCenter);
       generalFrameLay->addWidget(sceneNumberingCB, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
+      generalFrameLay->addWidget(watchFileSystemCB, 0,
+                                 Qt::AlignLeft | Qt::AlignVCenter);
+
       QGroupBox *projectGroupBox =
           new QGroupBox(tr("Additional Project Locations"), this);
       QGridLayout *projectRootLay = new QGridLayout();
@@ -1856,11 +1891,13 @@ PreferencesPopup::PreferencesPopup()
 
       xsheetFrameLay->addWidget(ignoreAlphaonColumn1CB, 3, 0, 1, 2);
       xsheetFrameLay->addWidget(showKeyframesOnCellAreaCB, 4, 0, 1, 2);
+      xsheetFrameLay->addWidget(useArrowKeyToShiftCellSelectionCB, 5, 0, 1, 2);
+      xsheetFrameLay->addWidget(inputCellsWithoutDoubleClickingCB, 6, 0, 1, 2);
     }
     xsheetFrameLay->setColumnStretch(0, 0);
     xsheetFrameLay->setColumnStretch(1, 0);
     xsheetFrameLay->setColumnStretch(2, 1);
-    xsheetFrameLay->setRowStretch(5, 1);
+    xsheetFrameLay->setRowStretch(7, 1);
     xsheetBox->setLayout(xsheetFrameLay);
     stackedWidget->addWidget(xsheetBox);
 
@@ -2037,6 +2074,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onLevelsBackupChanged(int)));
   ret = ret && connect(sceneNumberingCB, SIGNAL(stateChanged(int)),
                        SLOT(onSceneNumberingChanged(int)));
+  ret = ret && connect(watchFileSystemCB, SIGNAL(stateChanged(int)),
+                       SLOT(onWatchFileSystemClicked(int)));
   ret = ret && connect(m_chunkSizeFld, SIGNAL(editingFinished()), this,
                        SLOT(onChunkSizeChanged()));
   ret = ret && connect(m_customProjectRootFileField, SIGNAL(pathChanged()),
@@ -2188,6 +2227,12 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onDragCellsBehaviourChanged(int)));
   ret = ret && connect(showKeyframesOnCellAreaCB, SIGNAL(stateChanged(int)),
                        this, SLOT(onShowKeyframesOnCellAreaChanged(int)));
+  ret = ret &&
+        connect(useArrowKeyToShiftCellSelectionCB, SIGNAL(stateChanged(int)),
+                SLOT(onUseArrowKeyToShiftCellSelectionClicked(int)));
+  ret = ret &&
+        connect(inputCellsWithoutDoubleClickingCB, SIGNAL(stateChanged(int)),
+                SLOT(onInputCellsWithoutDoubleClickingClicked(int)));
 
   //--- Animation ----------------------
   ret = ret && connect(m_keyframeType, SIGNAL(currentIndexChanged(int)),

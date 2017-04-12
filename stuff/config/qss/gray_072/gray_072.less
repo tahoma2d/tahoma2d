@@ -1,3 +1,4 @@
+// out: gray_072.qss
 /* LESS Definitions */
 
 /*Image URL*/
@@ -89,6 +90,9 @@
 QWidget {
 	color: @m_baseTxtColor;
 	.baseBG;
+	&:disabled{
+		color: @m_disabledTxtColor;
+	}
 }
 
 QFrame {
@@ -344,14 +348,21 @@ QSlider {
 
 QGroupBox {
 	border: 1px solid @m_baseTxtColor;
-	.set_margin( 5px, 5px );
-	.set_padding( 3px, 5px );
+	margin: 6px 0 0 0;
+	padding: 5px 3px;
+	
 	&::title {
 		subcontrol-origin: margin;
-		padding: 0px;
-		margin-top: -4px;
-		/*bottom: 3px;*/
 		left: 15px;
+		margin: -2px 0 0 0;
+		padding: 0 3px;
+	}
+	&::indicator {
+		&:extend(QCheckBox::indicator all);
+	}
+	&:disabled{
+		color: @m_base_darkH;
+		border-color: @m_disabledTxtColor;
 	}
 }
 
@@ -397,6 +408,8 @@ PaletteViewer #ToolBarContainer
     }
 }
 #TabBarContainer{
+	qproperty-BottomAboveLineColor: rgb(120, 120, 120);
+	qproperty-BottomBelowLineColor: rgb(255, 255, 255);
 	.baseBG(15%);
 	& #ScrollLeftButton,
 	& #ScrollRightButton{
@@ -908,6 +921,8 @@ XsheetViewer {
 	qproperty-BGColor: rgb(72,72,72);
 	qproperty-LightLineColor: rgb(32,32,32);
 	qproperty-MarkerLineColor: rgb(30, 150, 196);
+	qproperty-VerticalLineColor: rgb(120,120,120);
+	qproperty-VerticalLineHeadColor: rgb(160,160,160);
 	qproperty-PreviewFrameTextColor: rgb(150, 230, 230);
 	qproperty-CurrentRowBgColor: rgb(80,96,130);
 
@@ -1339,7 +1354,9 @@ QDialog #dialogButtonFrame {
 #IntPairField, 
 #DoublePairField {
 	qproperty-LightLineColor: rgb(155,155,155);
+	qproperty-LightLineEdgeColor: @m_baseBG;
 	qproperty-DarkLineColor: rgb(47,47,47);
+	qproperty-MiddleLineColor: rgb(0,0,0);
 	qproperty-HandleLeftPixmap: url("@{image_url}/h_slider_left.png");
 	qproperty-HandleRightPixmap: url("@{image_url}/h_slider_right.png");
 	qproperty-HandleLeftGrayPixmap: url("@{image_url}/h_slider_left_disabled.png");
@@ -1373,6 +1390,10 @@ QDialog #dialogButtonFrame {
 
 #GearButton {
     qproperty-icon: url("@{image_url}/gear.png");
+}
+
+#SubfolderButton {
+    qproperty-icon: url("@{image_url}/subfolder.png");
 }
 
 #StartupLabel {

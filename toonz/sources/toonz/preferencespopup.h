@@ -170,6 +170,9 @@ private slots:
   void onFfmpegTimeoutChanged();
   void onFastRenderPathChanged();
   void onUseNumpadForSwitchingStylesClicked(bool);
+  void onUseArrowKeyToShiftCellSelectionClicked(int);
+  void onInputCellsWithoutDoubleClickingClicked(int);
+  void onWatchFileSystemClicked(int);
 };
 
 //**********************************************************************************

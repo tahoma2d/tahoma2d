@@ -127,6 +127,9 @@ public:
   void setCustomProjectRoot(std::wstring path);
   QString getCustomProjectRoot() { return m_customProjectRoot; }
 
+  void enableWatchFileSystem(bool on);
+  bool isWatchFileSystemEnabled() { return m_watchFileSystem; }
+
   // Interface  tab
 
   void setCurrentLanguage(int currentLanguage);
@@ -340,6 +343,16 @@ public:
     return m_showKeyframesOnXsheetCellArea;
   }
 
+  void enableUseArrowKeyToShiftCellSelection(bool on);
+  bool isUseArrowKeyToShiftCellSelectionEnabled() const {
+    return m_useArrowKeyToShiftCellSelection;
+  }
+
+  void enableInputCellsWithoutDoubleClicking(bool on);
+  bool isInputCellsWithoutDoubleClickingEnabled() const {
+    return m_inputCellsWithoutDoubleClickingEnabled;
+  }
+
   // Animation  tab
 
   void setKeyframeType(int s);
@@ -525,6 +538,16 @@ private:
                                              // change encoding.
   // whether to use numpad and tab key shortcut for selecting styles
   bool m_useNumpadForSwitchingStyles;
+
+  // use arrow key to shift cel selection, ctrl + arrow key to resize the
+  // selection range.
+  bool m_useArrowKeyToShiftCellSelection;
+
+  // enable to input drawing numbers into cells without double-clicking
+  bool m_inputCellsWithoutDoubleClickingEnabled;
+
+  // enable to watch file system in order to update file browser automatically
+  bool m_watchFileSystem;
 
 private:
   Preferences();

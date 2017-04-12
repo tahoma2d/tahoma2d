@@ -203,14 +203,14 @@ QCheckBox {
 
 QGroupBox {
 	border: 1px solid;
-	.set_margin( 5px, 5px );
-	.set_padding( 3px, 5px );
+	margin: 6px 0 0 0;
+	padding: 5px 3px;
+	
 	&::title {
 		subcontrol-origin: margin;
-		padding: 0px;
-		margin-top: -4px;
-		/*bottom: 3px;*/
 		left: 15px;
+		margin: -2px 0 0 0;
+		padding: 0 3px;
 	}
 }
 
@@ -248,6 +248,8 @@ PaletteViewer #ToolBarContainer
     }
 }
 #TabBarContainer{
+	qproperty-BottomAboveLineColor: rgb(120, 120, 120);
+	qproperty-BottomBelowLineColor: rgb(255, 255, 255);
 	.baseBG(15%);
 	& #ScrollLeftButton,
 	& #ScrollRightButton{
@@ -745,6 +747,8 @@ XsheetViewer {
 	qproperty-BGColor: rgb(164,164,164);
 	qproperty-LightLineColor: rgb(146,144,146);
 	qproperty-MarkerLineColor: rgb(0, 255, 246);
+	qproperty-VerticalLineColor: rgb(0, 0, 0);
+	qproperty-VerticalLineHeadColor: rgb(0, 0, 0);
 	qproperty-PreviewFrameTextColor: rgb(0, 0, 255);
 	qproperty-CurrentRowBgColor: rgb(210,210,210);
 
@@ -1169,7 +1173,9 @@ QDialog #dialogButtonFrame {
 #IntPairField, 
 #DoublePairField {
 	qproperty-LightLineColor: white;
-	qproperty-DarkLineColor: rgb(128,128,128);
+	qproperty-LightLineEdgeColor: white;
+	qproperty-DarkLineColor: rgb(198,198,198);
+	qproperty-MiddleLineColor: @m_baseBG;
 	qproperty-HandleLeftPixmap: url("@{image_url}/h_slider_left.png");
 	qproperty-HandleRightPixmap: url("@{image_url}/h_slider_right.png");
 	qproperty-HandleLeftGrayPixmap: url("@{image_url}/h_slider_left_disabled.png");
@@ -1199,6 +1205,10 @@ QDialog #dialogButtonFrame {
 
 #GearButton {
     qproperty-icon: url("@{image_url}/gear.png");
+}
+
+#SubfolderButton {
+    qproperty-icon: url("@{image_url}/subfolder.png");
 }
 
 #StartupLabel {

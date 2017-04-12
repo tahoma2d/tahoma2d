@@ -483,7 +483,8 @@ void TApp::onFrameSwitched() {
   TCellSelection *sel =
       dynamic_cast<TCellSelection *>(TSelection::getCurrent());
 
-  if (sel && !sel->isRowSelected(row)) {
+  if (sel && !sel->isRowSelected(row) &&
+      !Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled()) {
     sel->selectNone();
   }
 }
@@ -672,13 +673,6 @@ void TApp::autosave() {
     return;
   } else
     m_autosaveSuspended = false;
-
-  if (scene->isUntitled() &&
-      Preferences::instance()->isAutosaveSceneEnabled()) {
-    DVGui::warning(
-        tr("It is not possible to automatically save an untitled scene."));
-    return;
-  }
 
   DVGui::ProgressDialog pb(
       "Autosaving scene..." + toQString(scene->getScenePath()), 0, 0, 1);

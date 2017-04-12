@@ -142,8 +142,8 @@ set(MOC_HEADERS
     historypane.h
     cleanupsettingspane.h
     penciltestpopup.h
-	locatorpopup.h
-	styleshortcutswitchablepanel.h
+    locatorpopup.h
+    styleshortcutswitchablepanel.h
 # Tracker file
     dummyprocessor.h
     metnum.h
@@ -484,6 +484,14 @@ if [ ! -d \$HOME/.config/OpenToonz/stuff ]; then
     cp -r \$OPENTOONZ_BASE/share/opentoonz/stuff \$HOME/.config/OpenToonz
 fi
 
+if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/library ]; then
+    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/library
+fi
+
+if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/fxs ]; then
+    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/fxs
+fi
+
 if [ ! -e \$HOME/.config/OpenToonz/SystemVar.ini ]; then
     cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
 [General]
@@ -491,8 +499,8 @@ OPENTOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
 OpenToonzPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
 TOONZCACHEROOT=\"\$HOME/.config/OpenToonz/stuff/cache\"
 TOONZCONFIG=\"\$HOME/.config/OpenToonz/stuff/config\"
-TOONZFXPRESETS=\"\$HOME/.config/OpenToonz/stuff/projects/fxs\"
-TOONZLIBRARY=\"\$HOME/.config/OpenToonz/stuff/projects/library\"
+TOONZFXPRESETS=\"\$HOME/.config/OpenToonz/stuff/fxs\"
+TOONZLIBRARY=\"\$HOME/.config/OpenToonz/stuff/library\"
 TOONZPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
 TOONZPROJECTS=\"$HOME/.config/OpenToonz/stuff/projects\"
 TOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
@@ -517,6 +525,15 @@ exec \$OPENTOONZ_BASE/bin/OpenToonz_${VERSION} \"\$@\"
             "$<TARGET_FILE:tfarmserver>"
         DESTINATION bin
     )
+
+    if(LZODRIVER_FOUND)
+        install(
+            PROGRAMS
+                "$<TARGET_FILE:lzocompress>"
+                "$<TARGET_FILE:lzodecompress>"
+            DESTINATION bin
+        )
+    endif()
 
     install(
         FILES
