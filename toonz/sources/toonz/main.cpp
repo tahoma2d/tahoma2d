@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
 #if QT_VERSION >= 0x050600
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-
+  
   QApplication a(argc, argv);
 
 #ifdef MACOSX
@@ -345,6 +345,9 @@ int main(int argc, char *argv[]) {
   // weird flickering effects when dragging panel separators.
   a.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 #endif
+  
+  // Enable to render smooth icons on high dpi monitors
+  a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
   // Set the app's locale for numeric stuff to standard C. This is important for
   // atof() and similar
