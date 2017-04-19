@@ -16,6 +16,9 @@ public:
                      Qt::WindowFlags f            = Qt::WindowFlags())
       : QGLWidget(parent, shareWidget, f) {}
 
+  // returns device-pixel ratio. It is 1 for normal monitors and 2 (or higher
+  // ratio) for high DPI monitors. Setting "Display > Set custom text size(DPI)"
+  // for Windows corresponds to this ratio.
   int getDevPixRatio() const {
     static int devPixRatio = QApplication::desktop()->devicePixelRatio();
     return devPixRatio;

@@ -739,10 +739,3 @@ QString TApp::getCurrentRoomName() const {
 
   return currentRoom->getName();
 }
-
-//-----------------------------------------------------------------------------
-
-int TApp::getDevPixRatio() const {
-  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
-  return devPixRatio;
-}
