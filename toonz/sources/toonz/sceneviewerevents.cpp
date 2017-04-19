@@ -75,8 +75,7 @@ int modifiers = 0;
 
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                     int widgetHeight, double pressure, bool isTablet,
-                    bool isClick) {
-  int devPixRatio  = TApp::instance()->getDevPixRatio();
+                    bool isClick, int devPixRatio) {
   toonzEvent.m_pos = TPoint(event->pos().x() * devPixRatio,
                             widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_pressure = isTablet ? int(255 * pressure) : 255;
@@ -275,7 +274,7 @@ void SceneViewer::enterEvent(QEvent *) {
 void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_freezedStatus != NO_FREEZED) return;
 
-  QPoint curPos  = event->pos() * TApp::instance()->getDevPixRatio();
+  QPoint curPos  = event->pos() * getDevPixRatio();
   bool cursorSet = false;
   m_lastMousePos = curPos;
 
@@ -360,7 +359,7 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
     tool->setViewer(this);
     TMouseEvent toonzEvent;
     initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent,
-                   false);
+                   false, getDevPixRatio());
     TPointD worldPos = winToWorld(curPos);
     TPointD pos      = tool->getMatrix().inv() * worldPos;
 
@@ -418,7 +417,7 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
   if (m_mouseButton != Qt::NoButton) return;
 
-  m_pos         = event->pos() * TApp::instance()->getDevPixRatio();
+  m_pos         = event->pos() * getDevPixRatio();
   m_mouseButton = event->button();
 
   // when using tablet, avoid unexpected drawing behavior occurs when
@@ -477,7 +476,8 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   if (m_pressure > 0 && !m_tabletEvent) m_tabletEvent = true;
 
   if (TApp::instance()->isPenCloseToTablet()) m_tabletEvent = true;
-  initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent, true);
+  initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent, true,
+                 getDevPixRatio());
   // if(!m_tabletEvent) qDebug() << "-----------------MOUSE PRESS 'PURO'.
   // POSSIBILE EMBOLO";
   TPointD pos = tool->getMatrix().inv() * winToWorld(m_pos);
@@ -543,9 +543,9 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
   {
     TMouseEvent toonzEvent;
     initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent,
-                   false);
-    TPointD pos = tool->getMatrix().inv() *
-                  winToWorld(event->pos() * TApp::instance()->getDevPixRatio());
+                   false, getDevPixRatio());
+    TPointD pos =
+        tool->getMatrix().inv() * winToWorld(event->pos() * getDevPixRatio());
 
     TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
     if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
@@ -623,8 +623,7 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
         CommandManager::instance()->execute("MI_PrevDrawing");
       }
     } else {
-      zoomQt(event->pos() * TApp::instance()->getDevPixRatio(),
-             exp(0.001 * delta));
+      zoomQt(event->pos() * getDevPixRatio(), exp(0.001 * delta));
     }
   }
   event->accept();
@@ -1004,9 +1003,10 @@ void SceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) return;
   TMouseEvent toonzEvent;
-  initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent, true);
-  TPointD pos = tool->getMatrix().inv() *
-                winToWorld(event->pos() * TApp::instance()->getDevPixRatio());
+  initToonzEvent(toonzEvent, event, height(), m_pressure, m_tabletEvent, true,
+                 getDevPixRatio());
+  TPointD pos =
+      tool->getMatrix().inv() * winToWorld(event->pos() * getDevPixRatio());
   TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
   if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
     pos.x /= m_dpiScale.x;
@@ -1041,7 +1041,7 @@ void SceneViewer::contextMenuEvent(QContextMenuEvent *e) {
   if (m_freezedStatus != NO_FREEZED) return;
   if (m_isLocator) return;
 
-  int devPixRatio = TApp::instance()->getDevPixRatio();
+  int devPixRatio = getDevPixRatio();
   TPoint winPos(e->pos().x() * devPixRatio,
                 height() - e->pos().y() * devPixRatio);
   std::vector<int> columnIndices;

@@ -466,7 +466,7 @@ public:
 //-----------------------------------------------------------------------------
 
 SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
-    : QGLWidget(parent, touchProxy())
+    : GLWidgetForHighDpi(parent, touchProxy())
     , m_pressure(0)
     , m_lastMousePos(0, 0)
     , m_mouseButton(Qt::NoButton)
@@ -2557,7 +2557,7 @@ void SceneViewer::invalidateToolStatus() {
 */
 
 TRectD SceneViewer::getGeometry() const {
-  int devPixRatio = TApp::instance()->getDevPixRatio();
+  int devPixRatio = getDevPixRatio();
   TTool *tool     = TApp::instance()->getCurrentTool()->getTool();
   TPointD topLeft =
       tool->getMatrix().inv() * winToWorld(geometry().topLeft() * devPixRatio);
@@ -2580,15 +2580,4 @@ TRectD SceneViewer::getGeometry() const {
 */
 void SceneViewer::doDeleteSubCamera() {
   PreviewSubCameraManager::instance()->deleteSubCamera(this);
-}
-
-//-----------------------------------------------------------------------------
-/*! modify sizes for high DPI monitors
-*/
-int SceneViewer::width() const {
-  return QGLWidget::width() * TApp::instance()->getDevPixRatio();
-}
-
-int SceneViewer::height() const {
-  return QGLWidget::height() * TApp::instance()->getDevPixRatio();
 }
