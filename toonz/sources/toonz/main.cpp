@@ -369,10 +369,12 @@ int main(int argc, char *argv[]) {
   // splash screen
   QPixmap splashPixmap(":Resources/splash.png");
 #ifdef _WIN32
-  a.setFont(QFont("Arial", 10));
+  QFont font("Arial", -1);
 #else
-  a.setFont(QFont("Helvetica", 10));
+  QFont font("Helvetica", -1);
 #endif
+  font.setPixelSize(13);
+  a.setFont(font);
 
   QString offsetStr("\n\n\n\n\n\n\n\n");
 
