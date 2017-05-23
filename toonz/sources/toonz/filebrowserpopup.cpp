@@ -376,6 +376,11 @@ void FileBrowserPopup::showEvent(QShowEvent *) {
     m_nameField->setFocus();
   }
   resize(m_dialogSize);
+
+  // Set all the file browsers non-modal (even if opened with exec())
+  // in order to handle the info viewer and the flipbook which are opened
+  // with "Info..." and "View..." commands respectively.
+  setWindowModality(Qt::NonModal);
 }
 
 //***********************************************************************************
@@ -399,6 +404,14 @@ bool GenericLoadFilePopup::execute() {
 //-----------------------------------------------------------------------------
 
 TFilePath GenericLoadFilePopup::getPath() {
+  // In case that this function is called twice before closing the popup.
+  // Note that the file browser popup will be always non-modal even if opened
+  // with exec().
+  // see FileBrowserPopup::showEvent()
+  if (isVisible()) {
+    activateWindow();
+    return TFilePath();
+  }
   return (exec() == QDialog::Rejected) ? TFilePath() : *m_selectedPaths.begin();
 }
 
@@ -450,6 +463,14 @@ bool GenericSaveFilePopup::execute() {
 //-----------------------------------------------------------------------------
 
 TFilePath GenericSaveFilePopup::getPath() {
+  // In case that this function is called twice before closing the popup.
+  // Note that the file browser popup will be always non-modal even if opened
+  // with exec().
+  // see FileBrowserPopup::showEvent()
+  if (isVisible()) {
+    activateWindow();
+    return TFilePath();
+  }
   return (exec() == QDialog::Rejected) ? TFilePath() : *m_selectedPaths.begin();
 }
 
