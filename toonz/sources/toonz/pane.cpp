@@ -35,7 +35,6 @@ extern TEnv::StringVar EnvSafeAreaName;
 //=============================================================================
 // TPanel
 //-----------------------------------------------------------------------------
-extern QWidget *CurrentOpenedBrowser;
 
 TPanel::TPanel(QWidget *parent, Qt::WindowFlags flags,
                TDockWidget::Orientation orientation)
@@ -57,20 +56,6 @@ TPanel::TPanel(QWidget *parent, Qt::WindowFlags flags,
   connect(m_panelTitleBar, SIGNAL(closeButtonPressed()), this,
           SLOT(onCloseButtonPressed()));
   setOrientation(orientation);
-}
-
-void TPanel::hideEvent(QHideEvent *) {
-  if (CurrentOpenedBrowser) {
-    CurrentOpenedBrowser->setWindowModality(Qt::ApplicationModal);
-    // setWindowModality(Qt::NonModal);
-  }
-}
-
-void TPanel::showEvent(QShowEvent *) {
-  if (CurrentOpenedBrowser) {
-    CurrentOpenedBrowser->setWindowModality(Qt::NonModal);
-    // setWindowModality(Qt::WindowModal);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -467,7 +452,7 @@ TPanelFactory::~TPanelFactory() { tableInstance().remove(m_panelType); }
 
 //-----------------------------------------------------------------------------
 
-QMap<QString, TPanelFactory *>& TPanelFactory::tableInstance() {
+QMap<QString, TPanelFactory *> &TPanelFactory::tableInstance() {
   static QMap<QString, TPanelFactory *> table;
   return table;
 }
