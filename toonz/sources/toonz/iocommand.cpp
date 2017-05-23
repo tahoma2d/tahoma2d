@@ -2131,9 +2131,6 @@ static int loadPSDResource(IoCmd::LoadResourceArguments &args,
         error(QString::fromStdWString(e.getMessage()));
       }
       if (xl) {
-        if (xl->getSimpleLevel())  // just in case
-          xl->getSimpleLevel()->getProperties()->setDoPremultiply(true);
-
         // lo importo nell'xsheet
         if (popup->subxsheet() && childXsh) {
           childXsh->exposeLevel(0, subCol0, xl);
