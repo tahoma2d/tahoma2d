@@ -2177,9 +2177,10 @@ void FlipBook::loadAndCacheAllTlvImages(Level level, int fromFrame,
 //! some additional random access information may be retrieved (i.e. images may
 //! map
 //! to specific frames).
-void viewFile(const TFilePath &path, int from, int to, int step, int shrink,
-              TSoundTrack *snd, FlipBook *flipbook, bool append,
-              bool isToonzOutput) {
+// returns pointer to the opened flipbook to control modality.
+FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
+                   int shrink, TSoundTrack *snd, FlipBook *flipbook,
+                   bool append, bool isToonzOutput) {
   // In case the step and shrink informations are invalid, load them from
   // preferences
   if (step == -1 || shrink == -1) {
@@ -2195,11 +2196,11 @@ void viewFile(const TFilePath &path, int from, int to, int step, int shrink,
       path.isLevelName()) {
     DVGui::warning(QObject::tr("%1  has an invalid extension format.")
                        .arg(QString::fromStdString(path.getLevelName())));
-    return;
+    return NULL;
   }
 
   // Windows Screen Saver - avoid
-  if (path.getType() == "scr") return;
+  if (path.getType() == "scr") return NULL;
 
   // Avi and movs may be viewed by an external viewer, depending on preferences
   if (path.getType() == "mov" || path.getType() == "avi" && !flipbook) {
@@ -2207,7 +2208,7 @@ void viewFile(const TFilePath &path, int from, int to, int step, int shrink,
     QSettings().value("generatedMovieViewEnabled", str);
     if (str.toInt() != 0) {
       TSystem::showDocument(path);
-      return;
+      return NULL;
     }
   }
 
@@ -2220,6 +2221,7 @@ void viewFile(const TFilePath &path, int from, int to, int step, int shrink,
   // Assign the passed level with associated infos
   flipbook->setLevel(path, 0, from, to, step, shrink, snd, append,
                      isToonzOutput);
+  return flipbook;
 }
 
 //-----------------------------------------------------------------------------
