@@ -2078,7 +2078,9 @@ void FlipBook::onDoubleClick(QMouseEvent *me) {
   if (!img) return;
 
   TAffine toWidgetRef(m_imageViewer->getImgToWidgetAffine());
-  TRectD pixGeomD(toWidgetRef * getImageBoundsD(img));
+  TRectD pixGeomD(TScale(1.0 / (double)m_imageViewer->getDevPixRatio()) *
+                  toWidgetRef * getImageBoundsD(img));
+  // TRectD pixGeomD(toWidgetRef  * getImageBoundsD(img));
   TRect pixGeom(tceil(pixGeomD.x0), tceil(pixGeomD.y0), tfloor(pixGeomD.x1) - 1,
                 tfloor(pixGeomD.y1) - 1);
 
