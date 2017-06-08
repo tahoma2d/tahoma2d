@@ -241,9 +241,11 @@ void SceneViewerPanel::showEvent(QShowEvent *event) {
 
   ret = ret && connect(xshHandle, SIGNAL(xsheetChanged()), this,
                        SLOT(onSceneChanged()));
-
+  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                       SLOT(onSceneChanged()));
   ret = ret && connect(sceneHandle, SIGNAL(sceneChanged()), this,
                        SLOT(onSceneChanged()));
+
   ret = ret && connect(sceneHandle, SIGNAL(nameSceneChanged()), this,
                        SLOT(changeWindowTitle()));
 
@@ -289,7 +291,8 @@ void SceneViewerPanel::hideEvent(QHideEvent *event) {
   disconnect(sceneHandle, SIGNAL(sceneChanged()), this, SLOT(onSceneChanged()));
   disconnect(sceneHandle, SIGNAL(nameSceneChanged()), this,
              SLOT(changeWindowTitle()));
-
+  disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
+             SLOT(onSceneChanged()));
   disconnect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
              SLOT(onXshLevelSwitched(TXshLevel *)));
   disconnect(levelHandle, SIGNAL(xshLevelChanged()), this,
@@ -661,6 +664,16 @@ void SceneViewerPanel::onFrameTypeChanged() {
 
   updateFrameRange();
   updateFrameMarkers();
+}
+
+//-----------------------------------------------------------------------------
+
+bool SceneViewerPanel::isFrameAlreadyCached(int frame) {
+  if (m_sceneViewer->isPreviewEnabled()) {
+    class Previewer *pr = Previewer::instance();
+    return pr->isFrameReady(frame - 1);
+  } else
+    return true;
 }
 
 //-----------------------------------------------------------------------------

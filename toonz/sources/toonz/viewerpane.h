@@ -60,6 +60,8 @@ public:
   bool widgetInThisPanelIsFocused() override {
     return m_sceneViewer->hasFocus();
   }
+  // reimplementation of FlipConsoleOwner::isFrameAlreadyCached
+  bool isFrameAlreadyCached(int frame) override;
 
 protected:
   void showEvent(QShowEvent *) override;

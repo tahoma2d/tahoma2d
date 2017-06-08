@@ -381,7 +381,8 @@ void ComboViewerPanel::showEvent(QShowEvent *event) {
   // onXshLevelSwitched(TXshLevel*)： changeWindowTitle() + updateFrameRange()
   ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
                        SLOT(onXshLevelSwitched(TXshLevel *)));
-
+  ret = ret && connect(levelHandle, SIGNAL(xshLevelTitleChanged()), this,
+                       SLOT(changeWindowTitle()));
   // updateFrameRange(): update the frame slider's range
   ret = ret && connect(levelHandle, SIGNAL(xshLevelChanged()), this,
                        SLOT(updateFrameRange()));
@@ -410,13 +411,38 @@ void ComboViewerPanel::showEvent(QShowEvent *event) {
 
 void ComboViewerPanel::hideEvent(QHideEvent *event) {
   StyleShortcutSwitchablePanel::hideEvent(event);
-  TApp *app = TApp::instance();
-  disconnect(app->getCurrentScene());
-  disconnect(app->getCurrentLevel());
-  disconnect(app->getCurrentFrame());
-  disconnect(app->getCurrentObject());
-  disconnect(app->getCurrentXsheet());
-  disconnect(app->getCurrentTool());
+  TApp *app                    = TApp::instance();
+  TFrameHandle *frameHandle    = app->getCurrentFrame();
+  TSceneHandle *sceneHandle    = app->getCurrentScene();
+  TXshLevelHandle *levelHandle = app->getCurrentLevel();
+  TObjectHandle *objectHandle  = app->getCurrentObject();
+  TXsheetHandle *xshHandle     = app->getCurrentXsheet();
+
+  disconnect(xshHandle, SIGNAL(xsheetChanged()), this, SLOT(onSceneChanged()));
+
+  disconnect(sceneHandle, SIGNAL(sceneChanged()), this, SLOT(onSceneChanged()));
+  disconnect(sceneHandle, SIGNAL(nameSceneChanged()), this,
+             SLOT(changeWindowTitle()));
+  disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
+             SLOT(onSceneChanged()));
+  disconnect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
+             SLOT(onXshLevelSwitched(TXshLevel *)));
+  disconnect(levelHandle, SIGNAL(xshLevelChanged()), this,
+             SLOT(changeWindowTitle()));
+  disconnect(levelHandle, SIGNAL(xshLevelTitleChanged()), this,
+             SLOT(changeWindowTitle()));
+  disconnect(levelHandle, SIGNAL(xshLevelChanged()), this,
+             SLOT(updateFrameRange()));
+
+  disconnect(frameHandle, SIGNAL(frameSwitched()), this,
+             SLOT(changeWindowTitle()));
+  disconnect(frameHandle, SIGNAL(frameSwitched()), this,
+             SLOT(onFrameChanged()));
+  disconnect(frameHandle, SIGNAL(frameTypeChanged()), this,
+             SLOT(onFrameTypeChanged()));
+
+  disconnect(app->getCurrentTool(), SIGNAL(toolSwitched()), m_sceneViewer,
+             SLOT(onToolSwitched()));
 
   m_flipConsole->setActive(false);
 }
