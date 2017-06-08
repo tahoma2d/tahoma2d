@@ -321,16 +321,13 @@ void ComboViewerPanel::onDrawFrame(
 
   assert(frame >= 0);
   if (frame != frameHandle->getFrameIndex() + 1) {
-    if (frameHandle->isEditingScene()) {
-      TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(
-          app->getCurrentColumn()->getColumnIndex());
-      if (column) {
-        TXshSoundColumn *soundColumn = column->getSoundColumn();
-        if (soundColumn && !soundColumn->isPlaying())
-          app->getCurrentFrame()->scrubColumn(frame, frame, soundColumn);
-      }
-    }
+    int oldFrame = frameHandle->getFrame();
     frameHandle->setCurrentFrame(frame);
+    if (!frameHandle->isPlaying() && !frameHandle->isEditingLevel() &&
+        oldFrame != frameHandle->getFrame())
+      frameHandle->scrubXsheet(
+          frame - 1, frame - 1,
+          TApp::instance()->getCurrentXsheet()->getXsheet());
   }
 
   else if (settings.m_blankColor != TPixel::Transparent)
@@ -811,6 +808,8 @@ void ComboViewerPanel::onPreferenceChanged(const QString &prefName) {
   StyleShortcutSwitchablePanel::onPreferenceChanged(prefName);
 }
 
+//-----------------------------------------------------------------------------
+
 void ComboViewerPanel::playAudioFrame(int frame) {
   if (m_first) {
     m_first = false;
@@ -832,6 +831,8 @@ void ComboViewerPanel::playAudioFrame(int frame) {
   TApp::instance()->getCurrentXsheet()->getXsheet()->play(m_sound, s0, s1,
                                                           false);
 }
+
+//-----------------------------------------------------------------------------
 
 bool ComboViewerPanel::hasSoundtrack() {
   if (m_sound != NULL) {
