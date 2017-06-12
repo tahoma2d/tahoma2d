@@ -51,8 +51,11 @@ void Iwa_TimeCodeFx::doCompute(TTile &tile, double frame,
       fac * m_position->getValue(frame) -
       (tile.m_pos + tile.getRaster()->getCenterD()) +
       TPointD(ri.m_cameraBox.getLx() / 2.0, ri.m_cameraBox.getLy() / 2.0));
-
+#ifdef _WIN32
   QFont font("Arial", size);
+#else
+  QFont font("Helvetica", size);
+#endif
   font.setWeight(QFont::Normal);
   QFontMetrics fm(font);
   QString timeCodeStr = getTimeCodeStr(frame, ri);
@@ -158,13 +161,13 @@ void Iwa_TimeCodeFx::putTimeCodeImage(const RASTER srcRas, TPoint &pos,
       if (rasX < 0) continue;
       if (srcRas->getLx() <= rasX) break;
 
-      pix[rasX].r = (PIXEL::Channel)(
+      pix[rasX].r = (typename PIXEL::Channel)(
           qRed(*img_p) * (int)PIXEL::maxChannelValue / (int)UCHAR_MAX);
-      pix[rasX].g = (PIXEL::Channel)(
+      pix[rasX].g = (typename PIXEL::Channel)(
           qGreen(*img_p) * (int)PIXEL::maxChannelValue / (int)UCHAR_MAX);
-      pix[rasX].b = (PIXEL::Channel)(
+      pix[rasX].b = (typename PIXEL::Channel)(
           qBlue(*img_p) * (int)PIXEL::maxChannelValue / (int)UCHAR_MAX);
-      pix[rasX].m = (PIXEL::Channel)(
+      pix[rasX].m = (typename PIXEL::Channel)(
           qAlpha(*img_p) * (int)PIXEL::maxChannelValue / (int)UCHAR_MAX);
     }
   }
