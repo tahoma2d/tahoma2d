@@ -1050,8 +1050,10 @@ void MainWindow::onUpgradeTabPro() {}
 //-----------------------------------------------------------------------------
 
 void MainWindow::onAbout() {
-  QLabel *label = new QLabel();
-  label->setPixmap(QPixmap(":Resources/splash.png"));
+  QLabel *label  = new QLabel();
+  QPixmap pixmap = QIcon(":Resources/splash.svg").pixmap(QSize(610, 344));
+  pixmap.setDevicePixelRatio(QApplication::desktop()->devicePixelRatio());
+  label->setPixmap(pixmap);
 
   DVGui::Dialog *dialog = new DVGui::Dialog(this, true);
   dialog->setWindowTitle(tr("About OpenToonz"));
@@ -1757,7 +1759,10 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_DeleteInk, tr("&Delete Lines..."), "");
   createMenuXsheetAction(MI_MergeColumns, tr("&Merge Levels"), "");
   createMenuXsheetAction(MI_InsertFx, tr("&New FX..."), "Ctrl+F");
-  createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Ctrl+F");
+  QAction *newOutputAction =
+      createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Ctrl+F");
+  newOutputAction->setIcon(createQIconOnOff("output", false));
+
   createRightClickMenuAction(MI_FxParamEditor, tr("&Edit FX..."), "Ctrl+K");
 
   createMenuXsheetAction(MI_InsertSceneFrame, tr("Insert Frame"), "");
@@ -2086,7 +2091,7 @@ void MainWindow::defineActions() {
   QAction *refreshAct =
       createMiscAction(MI_RefreshTree, tr("Refresh Folder Tree"), "");
   refreshAct->setIconText(tr("Refresh"));
-  refreshAct->setIcon(createQIconOnOffPNG("refresh"));
+  refreshAct->setIcon(createQIcon("refresh"));
 
   createToolOptionsAction("A_ToolOption_GlobalKey", tr("Global Key"), "");
 
