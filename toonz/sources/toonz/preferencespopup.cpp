@@ -671,7 +671,7 @@ void PreferencesPopup::setChessboardColor2(const TPixel32 &color,
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onColumnIconChange(const QString &value) {
-  m_pref->setColumnIconLoadingPolicy(value == QString("At Once")
+  m_pref->setColumnIconLoadingPolicy(value == tr("At Once")
                                          ? Preferences::LoadAtOnce
                                          : Preferences::LoadOnDemand);
 }
