@@ -89,7 +89,8 @@ TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 namespace {
 //=============================================================================
 
-const std::string layoutsFileName     = "layouts.txt";
+// layout file name may be overwritten by the argument
+std::string layoutsFileName           = "layouts.txt";
 const std::string currentRoomFileName = "currentRoom.txt";
 bool scrambledRooms                   = false;
 
@@ -108,8 +109,10 @@ bool readRoomList(std::vector<TFilePath> &roomPaths,
                      " not found!");
       fp = ToonzFolder::getRoomsFile(layoutsFileName);
       if (!TFileStatus(fp).doesExist()) return false;
-    } else
+    } else {
       argumentLayoutFileLoaded = true;
+      layoutsFileName          = argumentLayoutFileName.toStdString();
+    }
   } else {
     fp = ToonzFolder::getRoomsFile(layoutsFileName);
     if (!TFileStatus(fp).doesExist()) return false;
