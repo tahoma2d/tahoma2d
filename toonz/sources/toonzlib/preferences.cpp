@@ -310,8 +310,8 @@ Preferences::Preferences()
     , m_useNumpadForSwitchingStyles(true)
     , m_showXSheetToolbar(false)
     , m_expandFunctionHeader(false)
-	, m_showColumnNumbers(false)
-	, m_useArrowKeyToShiftCellSelection(false)
+    , m_showColumnNumbers(false)
+    , m_useArrowKeyToShiftCellSelection(false)
     , m_inputCellsWithoutDoubleClickingEnabled(false)
     , m_importPolicy(0)
     , m_watchFileSystem(true) {
@@ -1392,8 +1392,8 @@ void Preferences::enableExpandFunctionHeader(bool on) {
 }
 
 void Preferences::enableShowColumnNumbers(bool on) {
-	m_showColumnNumbers = on;
-	m_settings->setValue("showColumnNumbers", on ? "1" : "0");
+  m_showColumnNumbers = on;
+  m_settings->setValue("showColumnNumbers", on ? "1" : "0");
 }
 
 //-----------------------------------------------------------------
