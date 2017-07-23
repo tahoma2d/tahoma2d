@@ -89,7 +89,8 @@ TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 namespace {
 //=============================================================================
 
-const std::string layoutsFileName     = "layouts.txt";
+// layout file name may be overwritten by the argument
+std::string layoutsFileName           = "layouts.txt";
 const std::string currentRoomFileName = "currentRoom.txt";
 bool scrambledRooms                   = false;
 
@@ -108,8 +109,10 @@ bool readRoomList(std::vector<TFilePath> &roomPaths,
                      " not found!");
       fp = ToonzFolder::getRoomsFile(layoutsFileName);
       if (!TFileStatus(fp).doesExist()) return false;
-    } else
+    } else {
       argumentLayoutFileLoaded = true;
+      layoutsFileName          = argumentLayoutFileName.toStdString();
+    }
   } else {
     fp = ToonzFolder::getRoomsFile(layoutsFileName);
     if (!TFileStatus(fp).doesExist()) return false;
@@ -255,6 +258,9 @@ void Room::save() {
     TPanel *pane = static_cast<TPanel *>(layout->itemAt(i)->widget());
     settings.setValue("name", pane->objectName());
     settings.setValue("geometry", geometries[i]);  // Use passed geometry
+    if (SaveLoadQSettings *persistent =
+            dynamic_cast<SaveLoadQSettings *>(pane->widget()))
+      persistent->save(settings);
     if (pane->getViewType() != -1)
       // If panel has different viewtypes, store current one
       settings.setValue("viewtype", pane->getViewType());
@@ -303,6 +309,9 @@ void Room::load(const TFilePath &fp) {
       // Allocate panel
       paneObjectName = name.toString();
       pane           = TPanelFactory::createPanel(this, paneObjectName);
+      if (SaveLoadQSettings *persistent =
+              dynamic_cast<SaveLoadQSettings *>(pane->widget()))
+        persistent->load(settings);
     }
 
     if (!pane) {
