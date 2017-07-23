@@ -550,7 +550,7 @@ void NoteArea::removeLayout() {
 
 void NoteArea::createLayout() {
   const Orientation *o = m_viewer->orientation();
-  QRect rect = o->rect(PredefinedRect::NOTE_AREA);
+  QRect rect           = o->rect(PredefinedRect::NOTE_AREA);
 
   setFixedSize(rect.size());
 

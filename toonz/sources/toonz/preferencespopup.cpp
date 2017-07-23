@@ -1003,7 +1003,7 @@ void PreferencesPopup::onExpandFunctionHeaderClicked(bool checked) {
 }
 
 void PreferencesPopup::onShowColumnNumbersChanged(int index) {
-	m_pref->enableShowColumnNumbers(index == Qt::Checked);
+  m_pref->enableShowColumnNumbers(index == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1228,7 +1228,8 @@ PreferencesPopup::PreferencesPopup()
       tr("Expand Function Editor Header to Match XSheet Toolbar Height "
          "(Requires Restart)"),
       this);
-  CheckBox *showColumnNumbersCB = new CheckBox(tr("Show Column Numbers in Column Headers"), this);
+  CheckBox *showColumnNumbersCB =
+      new CheckBox(tr("Show Column Numbers in Column Headers"), this);
 
   //--- Animation ------------------------------
   categoryList->addItem(tr("Animation"));
@@ -1961,8 +1962,8 @@ PreferencesPopup::PreferencesPopup()
       m_showXSheetToolbar->setLayout(xSheetToolbarLay);
 
       xsheetFrameLay->addWidget(m_showXSheetToolbar, 7, 0, 3, 3);
-	  xsheetFrameLay->addWidget(showColumnNumbersCB, 10, 0, 1, 2);
-	}
+      xsheetFrameLay->addWidget(showColumnNumbersCB, 10, 0, 1, 2);
+    }
     xsheetFrameLay->setColumnStretch(0, 0);
     xsheetFrameLay->setColumnStretch(1, 0);
     xsheetFrameLay->setColumnStretch(2, 1);
@@ -2312,8 +2313,8 @@ PreferencesPopup::PreferencesPopup()
   ret = ret && connect(m_expandFunctionHeader, SIGNAL(clicked(bool)),
                        SLOT(onExpandFunctionHeaderClicked(bool)));
 
-  ret = ret && connect(showColumnNumbersCB, SIGNAL(stateChanged(int)),
-	  this, SLOT(onShowColumnNumbersChanged(int)));
+  ret = ret && connect(showColumnNumbersCB, SIGNAL(stateChanged(int)), this,
+                       SLOT(onShowColumnNumbersChanged(int)));
 
   //--- Animation ----------------------
   ret = ret && connect(m_keyframeType, SIGNAL(currentIndexChanged(int)),
