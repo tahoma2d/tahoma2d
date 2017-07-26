@@ -600,12 +600,6 @@ void SceneViewerPanel::onSceneChanged() {
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   assert(scene);
-  m_flipConsole->setFrameRate(TApp::instance()
-                                  ->getCurrentScene()
-                                  ->getScene()
-                                  ->getProperties()
-                                  ->getOutputProperties()
-                                  ->getFrameRate());
   // vinz: perche veniva fatto?
   // m_flipConsole->updateCurrentFPS(scene->getProperties()->getOutputProperties()->getFrameRate());
 
@@ -623,6 +617,12 @@ void SceneViewerPanel::onSceneSwitched() {
   enableFlipConsoleForCamerastand(false);
   m_sceneViewer->enablePreview(SceneViewer::NO_PREVIEW);
   m_flipConsole->setChecked(FlipConsole::eDefineSubCamera, false);
+  m_flipConsole->setFrameRate(TApp::instance()
+                                  ->getCurrentScene()
+                                  ->getScene()
+                                  ->getProperties()
+                                  ->getOutputProperties()
+                                  ->getFrameRate());
   m_sceneViewer->setEditPreviewSubcamera(false);
   onSceneChanged();
 }
@@ -664,16 +664,6 @@ void SceneViewerPanel::onFrameTypeChanged() {
 
   updateFrameRange();
   updateFrameMarkers();
-}
-
-//-----------------------------------------------------------------------------
-
-bool SceneViewerPanel::isFrameAlreadyCached(int frame) {
-  if (m_sceneViewer->isPreviewEnabled()) {
-    class Previewer *pr = Previewer::instance();
-    return pr->isFrameReady(frame - 1);
-  } else
-    return true;
 }
 
 //-----------------------------------------------------------------------------

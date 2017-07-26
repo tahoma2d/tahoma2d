@@ -411,35 +411,12 @@ void ComboViewerPanel::showEvent(QShowEvent *event) {
 
 void ComboViewerPanel::hideEvent(QHideEvent *event) {
   StyleShortcutSwitchablePanel::hideEvent(event);
-  TApp *app                    = TApp::instance();
-  TFrameHandle *frameHandle    = app->getCurrentFrame();
-  TSceneHandle *sceneHandle    = app->getCurrentScene();
-  TXshLevelHandle *levelHandle = app->getCurrentLevel();
-  TObjectHandle *objectHandle  = app->getCurrentObject();
-  TXsheetHandle *xshHandle     = app->getCurrentXsheet();
-
-  disconnect(xshHandle, SIGNAL(xsheetChanged()), this, SLOT(onSceneChanged()));
-
-  disconnect(sceneHandle, SIGNAL(sceneChanged()), this, SLOT(onSceneChanged()));
-  disconnect(sceneHandle, SIGNAL(nameSceneChanged()), this,
-             SLOT(changeWindowTitle()));
-  disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
-             SLOT(onSceneChanged()));
-  disconnect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
-             SLOT(onXshLevelSwitched(TXshLevel *)));
-  disconnect(levelHandle, SIGNAL(xshLevelChanged()), this,
-             SLOT(changeWindowTitle()));
-  disconnect(levelHandle, SIGNAL(xshLevelTitleChanged()), this,
-             SLOT(changeWindowTitle()));
-  disconnect(levelHandle, SIGNAL(xshLevelChanged()), this,
-             SLOT(updateFrameRange()));
-
-  disconnect(frameHandle, SIGNAL(frameSwitched()), this,
-             SLOT(changeWindowTitle()));
-  disconnect(frameHandle, SIGNAL(frameSwitched()), this,
-             SLOT(onFrameChanged()));
-  disconnect(frameHandle, SIGNAL(frameTypeChanged()), this,
-             SLOT(onFrameTypeChanged()));
+  TApp *app = TApp::instance();
+  disconnect(app->getCurrentFrame(), 0, this, 0);
+  disconnect(app->getCurrentScene(), 0, this, 0);
+  disconnect(app->getCurrentLevel(), 0, this, 0);
+  disconnect(app->getCurrentObject(), 0, this, 0);
+  disconnect(app->getCurrentXsheet(), 0, this, 0);
 
   disconnect(app->getCurrentTool(), SIGNAL(toolSwitched()), m_sceneViewer,
              SLOT(onToolSwitched()));
@@ -737,14 +714,6 @@ void ComboViewerPanel::onSceneChanged() {
   int frameIndex    = fh->getFrameIndex();
   int maxFrameIndex = fh->getMaxFrameIndex();
   if (frameIndex > maxFrameIndex) maxFrameIndex = frameIndex;
-
-  // set the FPS for new scene
-  m_flipConsole->setFrameRate(TApp::instance()
-                                  ->getCurrentScene()
-                                  ->getScene()
-                                  ->getProperties()
-                                  ->getOutputProperties()
-                                  ->getFrameRate());
   // update the frame slider's range with new frameHandle
   m_flipConsole->setFrameRange(1, maxFrameIndex + 1, 1, frameIndex + 1);
 
@@ -767,6 +736,13 @@ void ComboViewerPanel::onSceneSwitched() {
   enableFlipConsoleForCamerastand(false);
   m_sceneViewer->enablePreview(SceneViewer::NO_PREVIEW);
   m_flipConsole->setChecked(FlipConsole::eDefineSubCamera, false);
+  // set the FPS for new scene
+  m_flipConsole->setFrameRate(TApp::instance()
+                                  ->getCurrentScene()
+                                  ->getScene()
+                                  ->getProperties()
+                                  ->getOutputProperties()
+                                  ->getFrameRate());
   m_sceneViewer->setEditPreviewSubcamera(false);
   onSceneChanged();
 }
@@ -815,16 +791,6 @@ void ComboViewerPanel::onFrameTypeChanged() {
   // if in the level editing mode, ignore the preview marker
   else
     m_flipConsole->setMarkers(0, -1);
-}
-
-//-----------------------------------------------------------------------------
-
-bool ComboViewerPanel::isFrameAlreadyCached(int frame) {
-  if (m_sceneViewer->isPreviewEnabled()) {
-    class Previewer *pr = Previewer::instance();
-    return pr->isFrameReady(frame - 1);
-  } else
-    return true;
 }
 
 //-----------------------------------------------------------------------------
