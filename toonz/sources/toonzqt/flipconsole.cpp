@@ -443,6 +443,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, UINT gadgetsMask,
     , m_framesCount(1)
     , m_settings()
     , m_fps(24)
+    , m_sceneFps(24)
     , m_isPlay(false)
     , m_reverse(false)
     , m_doubleRed(0)
@@ -841,10 +842,13 @@ void FlipConsole::updateCurrentFPS(int val) {
 
 //-----------------------------------------------------------------------------
 
-void FlipConsole::setFrameRate(int val) {
-  if (!m_fpsSlider) return;
-  m_fpsSlider->setValue(val);
-  setCurrentFPS(val);
+void FlipConsole::setFrameRate(int val, bool forceUpdate) {
+  if (m_sceneFps != val || forceUpdate) {
+    if (!m_fpsSlider) return;
+    m_fpsSlider->setValue(val);
+    setCurrentFPS(val);
+  }
+  m_sceneFps = val;
 }
 
 //-----------------------------------------------------------------------------
