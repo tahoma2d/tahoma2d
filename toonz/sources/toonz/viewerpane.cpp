@@ -600,6 +600,14 @@ void SceneViewerPanel::onSceneChanged() {
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   assert(scene);
+  // update fps only when the scene settings is changed
+  m_flipConsole->setFrameRate(TApp::instance()
+                                  ->getCurrentScene()
+                                  ->getScene()
+                                  ->getProperties()
+                                  ->getOutputProperties()
+                                  ->getFrameRate(),
+                              false);
   // vinz: perche veniva fatto?
   // m_flipConsole->updateCurrentFPS(scene->getProperties()->getOutputProperties()->getFrameRate());
 

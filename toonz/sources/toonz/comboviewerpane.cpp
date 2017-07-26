@@ -714,6 +714,14 @@ void ComboViewerPanel::onSceneChanged() {
   int frameIndex    = fh->getFrameIndex();
   int maxFrameIndex = fh->getMaxFrameIndex();
   if (frameIndex > maxFrameIndex) maxFrameIndex = frameIndex;
+  // update fps only when the scene settings is changed
+  m_flipConsole->setFrameRate(TApp::instance()
+                                  ->getCurrentScene()
+                                  ->getScene()
+                                  ->getProperties()
+                                  ->getOutputProperties()
+                                  ->getFrameRate(),
+                              false);
   // update the frame slider's range with new frameHandle
   m_flipConsole->setFrameRange(1, maxFrameIndex + 1, 1, frameIndex + 1);
 
@@ -736,7 +744,6 @@ void ComboViewerPanel::onSceneSwitched() {
   enableFlipConsoleForCamerastand(false);
   m_sceneViewer->enablePreview(SceneViewer::NO_PREVIEW);
   m_flipConsole->setChecked(FlipConsole::eDefineSubCamera, false);
-  // set the FPS for new scene
   m_flipConsole->setFrameRate(TApp::instance()
                                   ->getCurrentScene()
                                   ->getScene()
