@@ -508,7 +508,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_toolDisableReason("")
     , m_editPreviewSubCamera(false)
     , m_locator(NULL)
-    , m_isLocator(false) {
+    , m_isLocator(false)
+    , m_isBusyOnTabletMove(false) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   // Enables multiple key input.
@@ -518,6 +519,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   setFocusPolicy(Qt::StrongFocus);
   setAcceptDrops(true);
   this->setMouseTracking(true);
+  // to be introduced from Qt 5.9
+  // this->setTabletTracking(true);
 
   for (int i = 0; i < tArrayCount(m_viewAff); i++)
     setViewMatrix(getNormalZoomScale(), i);
@@ -837,6 +840,8 @@ void SceneViewer::showEvent(QShowEvent *) {
   connect(app->getCurrentTool(), SIGNAL(toolCursorTypeChanged()), this,
           SLOT(onToolChanged()));
 
+  connect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
+
   if (m_hRuler && m_vRuler) {
     if (!viewRulerToggle.getStatus()) {
       m_hRuler->hide();
@@ -887,6 +892,7 @@ void SceneViewer::hideEvent(QHideEvent *) {
   ToolHandle *toolHandle = app->getCurrentTool();
   if (toolHandle) toolHandle->disconnect(this);
 
+  disconnect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
   // hide locator
   if (m_locator && m_locator->isVisible()) m_locator->hide();
 }

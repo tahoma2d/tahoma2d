@@ -139,6 +139,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
   bool m_isLocator;
   bool m_isStyleShortcutSwitchable;
 
+  bool m_isBusyOnTabletMove;
+
   // iwsw commented out temporarily
   // Ghibli3DLutUtil * m_ghibli3DLutUtil;
 public:
@@ -284,6 +286,11 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
   void mouseDoubleClickEvent(QMouseEvent *event) override;
+
+  void onPress(const TMouseEvent &event);
+  void onMove(const TMouseEvent &event);
+  void onRelease(const TMouseEvent &event);
+
   void wheelEvent(QWheelEvent *) override;
   void keyPressEvent(QKeyEvent *event) override;
   void keyReleaseEvent(QKeyEvent *event) override;
@@ -366,6 +373,10 @@ public slots:
 
   // delete preview-subcamera executed from context menu
   void doDeleteSubCamera();
+
+  void resetTabletStatus();
+
+  void releaseBusyOnTabletMove() { m_isBusyOnTabletMove = false; }
 
 signals:
 
