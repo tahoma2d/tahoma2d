@@ -1999,7 +1999,7 @@ void MainWindow::defineActions() {
                              tr("Add As Cleanup Task"), "");
 
   createRightClickMenuAction(MI_SelectRowKeyframes,
-                             tr("Select All Keys in this Row"), "");
+                             tr("Select All Keys in this Frame"), "");
   createRightClickMenuAction(MI_SelectColumnKeyframes,
                              tr("Select All Keys in this Column"), "");
   createRightClickMenuAction(MI_SelectAllKeyframes, tr("Select All Keys"), "");
@@ -2012,9 +2012,9 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SelectFollowingKeysInColumn,
                              tr("Select Following Keys in this Column"), "");
   createRightClickMenuAction(MI_SelectPreviousKeysInRow,
-                             tr("Select Previous Keys in this Row"), "");
+                             tr("Select Previous Keys in this Frame"), "");
   createRightClickMenuAction(MI_SelectFollowingKeysInRow,
-                             tr("Select Following Keys in this Row"), "");
+                             tr("Select Following Keys in this Frame"), "");
   createRightClickMenuAction(MI_InvertKeyframeSelection,
                              tr("Invert Key Selection"), "");
 
