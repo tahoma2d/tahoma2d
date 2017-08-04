@@ -750,7 +750,7 @@ bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
   // These are usally standard ctrl/command strokes for text editing.
   // Default to standard behavior and don't execute OT's action while renaming cell.
   if (actionId == "MI_Undo" || actionId == "MI_Redo"
-	  || actionId == "MI_Clear" || actionId == "MI_Copy" || actionId == "MI_Paste"
+	  || actionId == "MI_Clear" || actionId == "MI_Copy" || actionId == "MI_Paste" ||  actionId == "MI_Cut"
 	  ) return QObject::eventFilter(obj, e); //return true;
   return TCellSelection::isEnabledCommand(actionId);
 }
