@@ -84,8 +84,9 @@ void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                           event->modifiers() & Qt::AltModifier,
                           event->modifiers() & Qt::ControlModifier);
 
-  toonzEvent.m_buttons = event->buttons();
-  toonzEvent.m_button  = event->button();
+  toonzEvent.m_buttons  = event->buttons();
+  toonzEvent.m_button   = event->button();
+  toonzEvent.m_isTablet = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -101,8 +102,9 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
                           event->modifiers() & Qt::AltModifier,
                           event->modifiers() & Qt::ControlModifier);
 
-  toonzEvent.m_buttons = event->buttons();
-  toonzEvent.m_button  = event->button();
+  toonzEvent.m_buttons  = event->buttons();
+  toonzEvent.m_button   = event->button();
+  toonzEvent.m_isTablet = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -115,8 +117,9 @@ void initToonzEvent(TMouseEvent &toonzEvent, QKeyEvent *event) {
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
                           event->modifiers() & Qt::ControlModifier);
-  toonzEvent.m_buttons = Qt::NoButton;
-  toonzEvent.m_button  = Qt::NoButton;
+  toonzEvent.m_buttons  = Qt::NoButton;
+  toonzEvent.m_button   = Qt::NoButton;
+  toonzEvent.m_isTablet = false;
 }
 
 //-----------------------------------------------------------------------------
