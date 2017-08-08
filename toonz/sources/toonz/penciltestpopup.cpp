@@ -45,7 +45,9 @@
 #include <QCamera>
 #include <QCameraImageCapture>
 #include <QCameraViewfinderSettings>
+#ifdef MACOSX
 #include <QCameraViewfinder>
+#endif
 
 #include <QComboBox>
 #include <QPushButton>
