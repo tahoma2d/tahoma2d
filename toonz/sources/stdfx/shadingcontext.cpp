@@ -91,7 +91,7 @@ QSurfaceFormat ShadingContext::Imp::format() {
 
 #ifdef MACOSX
   fmt.setVersion(3, 2);
-  fmt.setProfile(QGLFormat::CompatibilityProfile);
+  fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
 #endif
 
   return fmt;
