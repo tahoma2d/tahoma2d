@@ -62,11 +62,11 @@ CameraCaptureLevelHistogram::CameraCaptureLevelHistogram(QWidget* parent)
     , m_gamma(1.0)
     , m_threshold(128)
     , m_offset(0)
-    , m_mode(Color_GrayScale) {
+    , m_mode(Color_GrayScale)
+    , m_histogramData(256) {
   setFixedSize(256 + SIDE_MARGIN * 2, HISTOGRAM_HEIGHT + 15);
   setMouseTracking(true);
 
-  m_histogramData.reserve(256);
   m_histogramData.fill(0);
 }
 
