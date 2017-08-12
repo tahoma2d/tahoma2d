@@ -1401,6 +1401,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
 
   // if the same level & same fId with the previous cell,
   // draw continue line
+  QString fnum;
   if (sameLevel && prevCell.m_frameId == cell.m_frameId) {
     // not on line marker
     PredefinedLine which =
@@ -1417,19 +1418,19 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
 
     // convert the last one digit of the frame number to alphabet
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
-    if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
-      p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom,
-                 m_viewer->getFrameNumberWithLetters(fid.getNumber()));
+	if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
+		fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
     else {
       std::string frameNumber("");
       // set number
       if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
       // add letter
       if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
-      p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom,
-                 QString::fromStdString(frameNumber));
+      fnum = QString::fromStdString(frameNumber);
     }
-  }
+
+	p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, fnum);
+}
 
   // draw level name
   if (!sameLevel ||
@@ -1437,11 +1438,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
        Preferences::instance()->isLevelNameOnEachMarkerEnabled())) {
     std::wstring levelName = cell.m_level->getName();
     QString text           = QString::fromStdWString(levelName);
+	QFontMetrics fm(font);
 #if QT_VERSION >= 0x050500
-    QFontMetrics fm(font);
-    QString elidaName = elideText(text, fm, nameRect.width(), QString("~"));
+//    QFontMetrics fm(font);
+    QString elidaName = elideText(text, fm, nameRect.width() - fm.width(fnum), QString("~"));
 #else
-    QString elidaName = elideText(text, font, nameRect.width());
+    QString elidaName = elideText(text, font, nameRect.width() - fm.width(fnum));
 #endif
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
   }
