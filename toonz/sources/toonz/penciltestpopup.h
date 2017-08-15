@@ -186,6 +186,8 @@ class PencilTestPopup : public DVGui::Dialog {
 
   CameraCaptureLevelControl* m_camCapLevelControl;
 
+  QLabel* m_frameInfoLabel;
+
 #ifdef MACOSX
   QCameraViewfinder* m_dummyViewFinder;
 #endif
@@ -228,6 +230,8 @@ protected slots:
 
   void onCaptureButtonClicked(bool);
   void onCaptureFilterSettingsBtnPressed();
+
+  void refreshFrameInfo();
 
 public slots:
   void openSaveInFolderPopup();
