@@ -625,8 +625,8 @@ void PreferencesPopup::onAnimationStepChanged() {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onLanguageTypeChanged(int index) {
-  m_pref->setCurrentLanguage(index);
+void PreferencesPopup::onLanguageTypeChanged(const QString &langName) {
+  m_pref->setCurrentLanguage(langName);
   QString currentLanguage = m_pref->getCurrentLanguage();
 }
 
@@ -769,10 +769,10 @@ void PreferencesPopup::onShowKeyframesOnCellAreaChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onStyleSheetTypeChanged(int index) {
-  m_pref->setCurrentStyleSheet(index);
+void PreferencesPopup::onStyleSheetTypeChanged(const QString &styleSheetName) {
+  m_pref->setCurrentStyleSheet(styleSheetName);
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString currentStyle = m_pref->getCurrentStyleSheet();
+  QString currentStyle = m_pref->getCurrentStyleSheetPath();
   qApp->setStyleSheet(currentStyle);
   QApplication::restoreOverrideCursor();
 }
@@ -1339,9 +1339,10 @@ PreferencesPopup::PreferencesPopup()
   }
   //--- Interface ------------------------------
   QStringList styleSheetList;
+  currentIndex = 0;
   for (int i = 0; i < m_pref->getStyleSheetCount(); i++) {
     QString string = m_pref->getStyleSheet(i);
-    if (string == m_pref->getCurrentStyleSheet()) currentIndex = i;
+    if (string == m_pref->getCurrentStyleSheetName()) currentIndex = i;
     TFilePath path(string.toStdWString());
     styleSheetList.push_back(QString::fromStdWString(path.getWideName()));
   }
@@ -2186,8 +2187,9 @@ PreferencesPopup::PreferencesPopup()
   ret = ret && connect(m_projectRootCustom, SIGNAL(stateChanged(int)),
                        SLOT(onProjectRootChanged()));
   //--- Interface ----------------------
-  ret = ret && connect(styleSheetType, SIGNAL(currentIndexChanged(int)),
-                       SLOT(onStyleSheetTypeChanged(int)));
+  ret = ret &&
+        connect(styleSheetType, SIGNAL(currentIndexChanged(const QString &)),
+                SLOT(onStyleSheetTypeChanged(const QString &)));
   ret = ret && connect(m_pixelsOnlyCB, SIGNAL(stateChanged(int)),
                        SLOT(onPixelsOnlyChanged(int)));
   // pixels unit may deactivated externally on loading scene (see
@@ -2212,8 +2214,9 @@ PreferencesPopup::PreferencesPopup()
   ret = ret && connect(m_viewStep, SIGNAL(editingFinished()),
                        SLOT(onViewValuesChanged()));
   if (languageList.size() > 1)
-    ret = ret && connect(languageType, SIGNAL(currentIndexChanged(int)),
-                         SLOT(onLanguageTypeChanged(int)));
+    ret = ret &&
+          connect(languageType, SIGNAL(currentIndexChanged(const QString &)),
+                  SLOT(onLanguageTypeChanged(const QString &)));
   ret = ret && connect(moveCurrentFrameCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onMoveCurrentFrameChanged(int)));
   ret =

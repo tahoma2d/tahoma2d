@@ -2255,7 +2255,7 @@ class ReloadStyle final : public MenuItemHandler {
 public:
   ReloadStyle() : MenuItemHandler("MI_ReloadStyle") {}
   void execute() override {
-    QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
+    QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
     QFile file(currentStyle);
     file.open(QFile::ReadOnly);
     QString styleSheet = QString(file.readAll());

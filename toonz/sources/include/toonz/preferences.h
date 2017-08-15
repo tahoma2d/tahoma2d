@@ -134,13 +134,14 @@ public:
 
   // Interface  tab
 
-  void setCurrentLanguage(int currentLanguage);
+  void setCurrentLanguage(const QString &currentLanguage);
   QString getCurrentLanguage() const;
   QString getLanguage(int index) const;
   int getLanguageCount() const;
 
-  void setCurrentStyleSheet(int currentStyleSheet);
-  QString getCurrentStyleSheet() const;
+  void setCurrentStyleSheet(const QString &currentStyleSheet);
+  QString getCurrentStyleSheetName() const;
+  QString getCurrentStyleSheetPath() const;
   QString getStyleSheet(int index) const;
   int getStyleSheetCount() const;
 
@@ -482,7 +483,8 @@ Q_SIGNALS:
 private:
   std::unique_ptr<QSettings> m_settings;
 
-  QMap<int, QString> m_languageMaps, m_styleSheetMaps, m_roomMaps;
+  QStringList m_languageList, m_styleSheetList;
+  QMap<int, QString> m_roomMaps;
 
   std::vector<LevelFormat> m_levelFormats;
 
@@ -503,8 +505,8 @@ private:
       m_textureSize, m_autocreationType, m_keyframeType, m_animationStep,
       m_ffmpegTimeout;  // seconds
   int m_projectRoot, m_importPolicy;
-  int m_currentLanguage, m_currentStyleSheet,
-      m_undoMemorySize,  // in megabytes
+  QString m_currentLanguage, m_currentStyleSheet;
+  int m_undoMemorySize,  // in megabytes
       m_dragCellsBehaviour, m_lineTestFpsCapture, m_defLevelType, m_xsheetStep,
       m_shmmax, m_shmseg, m_shmall, m_shmmni, m_vectorSnappingTarget;
 

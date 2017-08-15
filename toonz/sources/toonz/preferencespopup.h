@@ -125,8 +125,8 @@ private slots:
   void onTranspCheckDataChanged(const TPixel32 &, bool isDragging);
   void onOnionDataChanged(const TPixel32 &, bool isDragging);
   void onOnionDataChanged(int);
-  void onLanguageTypeChanged(int);
-  void onStyleSheetTypeChanged(int);
+  void onLanguageTypeChanged(const QString &);
+  void onStyleSheetTypeChanged(const QString &);
   void onUndoMemorySizeChanged();
   void onSVNEnabledChanged(int);
   void onAutomaticSVNRefreshChanged(int);
