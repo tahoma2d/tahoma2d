@@ -20,7 +20,6 @@
 #include "toonz/toonzscene.h"
 #include "toutputproperties.h"
 #include "toonz/sceneproperties.h"
-#include "toonz/namebuilder.h"
 #include "toonz/levelset.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/toonzfolders.h"
@@ -380,7 +379,7 @@ void openCaptureFilterSettings(const QWidget* parent,
 }
 #endif
 
-QString convertToFrameWithLetter(int value, bool length = -1) {
+QString convertToFrameWithLetter(int value, int length = -1) {
   QString str;
   str.setNum((int)(value / 10));
   while (str.length() < length) str.push_front("0");
@@ -546,10 +545,7 @@ void FrameNumberLineEdit::setValue(int value) {
 
   QString str;
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
-    str.setNum((int)(value / 10));
-    while (str.length() < 3) str.push_front("0");
-    QChar letter = numToLetter(value % 10);
-    if (!letter.isNull()) str.append(letter);
+    str = convertToFrameWithLetter(value, 3);
   } else {
     str.setNum(value);
     while (str.length() < 4) str.push_front("0");
@@ -602,6 +598,46 @@ void LevelNameLineEdit::onEditingFinished() {
   if (text() == m_textOnFocusIn) return;
 
   emit levelNameEdited();
+}
+
+//=============================================================================
+
+std::wstring FlexibleNameCreator::getPrevious() {
+  if (m_s.empty() || (m_s[0] == 0 && m_s.size() == 1)) {
+    m_s.push_back('Z' - 'A');
+    m_s.push_back('Z' - 'A');
+    return L"ZZ";
+  }
+  int i = 0;
+  int n = m_s.size();
+  while (i < n) {
+    m_s[i]--;
+    if (m_s[i] >= 0) break;
+    m_s[i] = 'Z' - 'A';
+    i++;
+  }
+  if (i >= n) {
+    n--;
+    m_s.pop_back();
+  }
+  std::wstring s;
+  for (i = n - 1; i >= 0; i--) s.append(1, (wchar_t)(L'A' + m_s[i]));
+  return s;
+}
+
+//-------------------------------------------------------------------
+
+bool FlexibleNameCreator::setCurrent(std::wstring name) {
+  if (name.empty() || name.size() > 2) return false;
+  std::vector<int> newNameBuf;
+  for (std::wstring::iterator it = name.begin(); it != name.end(); ++it) {
+    int s = (int)((*it) - L'A');
+    if (s < 0 || s > 'Z' - 'A') return false;
+    newNameBuf.push_back(s);
+  }
+  m_s.clear();
+  for (int i = newNameBuf.size() - 1; i >= 0; i--) m_s.push_back(newNameBuf[i]);
+  return true;
 }
 
 //=============================================================================
@@ -967,6 +1003,8 @@ PencilTestPopup::PencilTestPopup()
   m_saveInFileFld = new FileField(this, m_saveInFolderPopup->getParentPath());
 
   QToolButton* nextLevelButton = new QToolButton(this);
+  m_previousLevelButton        = new QToolButton(this);
+
   m_saveOnCaptureCB =
       new QCheckBox(tr("Save images as they are captured"), this);
 
@@ -1017,6 +1055,9 @@ PencilTestPopup::PencilTestPopup()
   nextLevelButton->setFixedSize(24, 24);
   nextLevelButton->setArrowType(Qt::RightArrow);
   nextLevelButton->setToolTip(tr("Next Level"));
+  m_previousLevelButton->setFixedSize(24, 24);
+  m_previousLevelButton->setArrowType(Qt::LeftArrow);
+  m_previousLevelButton->setToolTip(tr("Previous Level"));
   m_saveOnCaptureCB->setChecked(true);
 
   imageFrame->setObjectName("CleanupSettingsFrame");
@@ -1119,6 +1160,7 @@ PencilTestPopup::PencilTestPopup()
             nameLay->setMargin(0);
             nameLay->setSpacing(2);
             {
+              nameLay->addWidget(m_previousLevelButton, 0);
               nameLay->addWidget(m_levelNameEdit, 1);
               nameLay->addWidget(nextLevelButton, 0);
             }
@@ -1241,6 +1283,8 @@ PencilTestPopup::PencilTestPopup()
                        SLOT(onLevelNameEdited()));
   ret = ret &&
         connect(nextLevelButton, SIGNAL(pressed()), this, SLOT(onNextName()));
+  ret = ret && connect(m_previousLevelButton, SIGNAL(pressed()), this,
+                       SLOT(onPreviousName()));
   ret = ret && connect(m_colorTypeCombo, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onColorTypeComboChanged(int)));
   ret = ret && connect(m_captureWhiteBGButton, SIGNAL(pressed()), this,
@@ -1294,7 +1338,7 @@ PencilTestPopup::PencilTestPopup()
     }
   }
 
-  onNextName();
+  setToNextNewLevel();
 }
 
 //-----------------------------------------------------------------------------
@@ -1487,19 +1531,52 @@ void PencilTestPopup::onFileFormatOptionButtonPressed() {
 //-----------------------------------------------------------------------------
 
 void PencilTestPopup::onLevelNameEdited() {
-  // set the start frame 10 if the option in preferences
-  // "Show ABC Appendix to the Frame Number in Xsheet Cell" is active.
-  // (frame 10 is displayed as "1" with this option)
-  int startFrame =
-      Preferences::instance()->isShowFrameNumberWithLettersEnabled() ? 10 : 1;
-  m_frameNumberEdit->setValue(startFrame);
+  updateLevelNameAndFrame(m_levelNameEdit->text().toStdWString());
+}
 
-  refreshFrameInfo();
+//-----------------------------------------------------------------------------
+void PencilTestPopup::onNextName() {
+  std::unique_ptr<FlexibleNameCreator> nameCreator(new FlexibleNameCreator());
+  if (!nameCreator->setCurrent(m_levelNameEdit->text().toStdWString())) {
+    setToNextNewLevel();
+    return;
+  }
+
+  std::wstring levelName = nameCreator->getNext();
+
+  updateLevelNameAndFrame(levelName);
 }
 
 //-----------------------------------------------------------------------------
 
-void PencilTestPopup::onNextName() {
+void PencilTestPopup::onPreviousName() {
+  std::unique_ptr<FlexibleNameCreator> nameCreator(new FlexibleNameCreator());
+
+  std::wstring levelName;
+
+  // if the current level name is non-sequencial, then try to switch the last
+  // sequencial level in the scene.
+  if (!nameCreator->setCurrent(m_levelNameEdit->text().toStdWString())) {
+    TLevelSet* levelSet =
+        TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+    nameCreator->setCurrent(L"ZZ");
+    for (;;) {
+      levelName = nameCreator->getPrevious();
+      if (levelSet->getLevel(levelName) != 0) break;
+      if (levelName == L"A") {
+        setToNextNewLevel();
+        return;
+      }
+    }
+  } else
+    levelName = nameCreator->getPrevious();
+
+  updateLevelNameAndFrame(levelName);
+}
+
+//-----------------------------------------------------------------------------
+
+void PencilTestPopup::setToNextNewLevel() {
   const std::auto_ptr<NameBuilder> nameBuilder(NameBuilder::getBuilder(L""));
 
   TLevelSet* levelSet =
@@ -1528,12 +1605,38 @@ void PencilTestPopup::onNextName() {
     break;
   }
 
-  m_levelNameEdit->setText(QString::fromStdWString(levelName));
+  updateLevelNameAndFrame(levelName);
+}
+
+//-----------------------------------------------------------------------------
+
+void PencilTestPopup::updateLevelNameAndFrame(std::wstring levelName) {
+  if (levelName != m_levelNameEdit->text().toStdWString())
+    m_levelNameEdit->setText(QString::fromStdWString(levelName));
+  m_previousLevelButton->setDisabled(levelName == L"A");
+
   // set the start frame 10 if the option in preferences
   // "Show ABC Appendix to the Frame Number in Xsheet Cell" is active.
   // (frame 10 is displayed as "1" with this option)
-  int startFrame =
-      Preferences::instance()->isShowFrameNumberWithLettersEnabled() ? 10 : 1;
+  bool withLetter =
+      Preferences::instance()->isShowFrameNumberWithLettersEnabled();
+
+  TLevelSet* levelSet =
+      TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+  TXshLevel* level_p = levelSet->getLevel(levelName);
+  int startFrame;
+  if (!level_p) {
+    startFrame = withLetter ? 10 : 1;
+  } else {
+    std::vector<TFrameId> fids;
+    level_p->getFids(fids);
+    if (fids.empty()) {
+      startFrame = withLetter ? 10 : 1;
+    } else {
+      int lastNum = fids.back().getNumber();
+      startFrame  = withLetter ? ((int)(lastNum / 10) + 1) * 10 : lastNum + 1;
+    }
+  }
   m_frameNumberEdit->setValue(startFrame);
 
   refreshFrameInfo();
@@ -1628,6 +1731,7 @@ void PencilTestPopup::showEvent(QShowEvent* event) {
   TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
   connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(refreshFrameInfo()));
   connect(sceneHandle, SIGNAL(castChanged()), this, SLOT(refreshFrameInfo()));
+  refreshFrameInfo();
 }
 
 //-----------------------------------------------------------------------------
@@ -2026,7 +2130,7 @@ void PencilTestPopup::openSaveInFolderPopup() {
     QString oldPath = m_saveInFileFld->getPath();
     m_saveInFileFld->setPath(m_saveInFolderPopup->getPath());
     if (oldPath == m_saveInFileFld->getPath())
-      onNextName();
+      setToNextNewLevel();
     else
       refreshFrameInfo();
   }
@@ -2037,6 +2141,11 @@ void PencilTestPopup::openSaveInFolderPopup() {
 // Refresh information that how many & which frames are saved for the current
 // level
 void PencilTestPopup::refreshFrameInfo() {
+  if (!m_currentCamera || m_deviceName.isNull()) {
+    m_frameInfoLabel->setText("");
+    return;
+  }
+
   QString tooltipStr, labelStr;
   enum InfoType { NEW = 0, ADD, OVERWRITE, WARNING } infoType(WARNING);
 
@@ -2273,9 +2382,6 @@ void PencilTestPopup::refreshFrameInfo() {
                                       .arg(infoColor.name()));
   m_frameInfoLabel->setText(labelStr);
   m_frameInfoLabel->setToolTip(tooltipStr);
-  //ここで、tooltipStr（ツールチップ） labelStr（テキスト） infoType（色）
-  //をラベルに反映させること
-  std::cout << "refreshFrameInfo" << std::endl;
 }
 
 //-----------------------------------------------------------------------------

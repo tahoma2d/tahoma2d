@@ -5,6 +5,7 @@
 
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/lineedit.h"
+#include "toonz/namebuilder.h"
 
 #include <QFrame>
 
@@ -127,6 +128,18 @@ signals:
 };
 
 //=============================================================================
+// FlexibleNameCreator
+// Inherits NameCreator, added function for obtaining the previous name and
+// setting the current name.
+
+class FlexibleNameCreator final : public NameCreator {
+public:
+  FlexibleNameCreator() {}
+  std::wstring getPrevious();
+  bool setCurrent(std::wstring name);
+};
+
+//=============================================================================
 // PencilTestSaveInFolderPopup
 //-----------------------------------------------------------------------------
 
@@ -188,6 +201,8 @@ class PencilTestPopup : public DVGui::Dialog {
 
   QLabel* m_frameInfoLabel;
 
+  QToolButton* m_previousLevelButton;
+
 #ifdef MACOSX
   QCameraViewfinder* m_dummyViewFinder;
 #endif
@@ -199,6 +214,9 @@ class PencilTestPopup : public DVGui::Dialog {
 
   void processImage(QImage& procImage);
   bool importImage(QImage& image);
+
+  void setToNextNewLevel();
+  void updateLevelNameAndFrame(std::wstring levelName);
 
 public:
   PencilTestPopup();
@@ -218,6 +236,7 @@ protected slots:
   void onFileFormatOptionButtonPressed();
   void onLevelNameEdited();
   void onNextName();
+  void onPreviousName();
   void onColorTypeComboChanged(int index);
   void onImageCaptured(int, const QImage&);
   void onCaptureWhiteBGButtonPressed();
