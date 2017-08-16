@@ -429,6 +429,27 @@ QString fidsToString(const std::vector<TFrameId>& fids,
   return retStr;
 }
 
+bool findCell(TXsheet* xsh, int col, const TXshCell& targetCell,
+              int& bottomRowWithTheSameLevel) {
+  bottomRowWithTheSameLevel = -1;
+  TXshColumnP column        = const_cast<TXsheet*>(xsh)->getColumn(col);
+  if (!column) return false;
+
+  TXshCellColumn* cellColumn = column->getCellColumn();
+  if (!cellColumn) return false;
+
+  int r0, r1;
+  if (!cellColumn->getRange(r0, r1)) return false;
+
+  for (int r = r0; r <= r1; r++) {
+    TXshCell cell = cellColumn->getCell(r);
+    if (cell == targetCell) return true;
+    if (cell.m_level == targetCell.m_level) bottomRowWithTheSameLevel = r;
+  }
+
+  return false;
+}
+
 }  // namespace
 
 //=============================================================================
@@ -1982,6 +2003,8 @@ bool PencilTestPopup::importImage(QImage& image) {
   TXshSimpleLevel* sl = 0;
 
   TXshLevel* level = scene->getLevelSet()->getLevel(levelName);
+  enum State { NEWLEVEL = 0, ADDFRAME, OVERWRITE } state;
+
   /* if the level already exists in the scene cast */
   if (level) {
     /* if the existing level is not a raster level, then return */
@@ -2014,7 +2037,9 @@ bool PencilTestPopup::importImage(QImage& image) {
       int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
                               QObject::tr("Cancel"));
       if (ret == 0 || ret == 2) return false;
-    }
+      state = OVERWRITE;
+    } else
+      state = ADDFRAME;
   }
   /* if the level does not exist in the scene cast */
   else {
@@ -2037,13 +2062,15 @@ bool PencilTestPopup::importImage(QImage& image) {
       }
 
       /* confirm overwrite */
-      QString question =
-          tr("File %1 does exist.\nDo you want to overwrite it?")
-              .arg(toQString(actualLevelFp.withFrame(frameNumber)));
-      int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
-                              QObject::tr("Cancel"));
-      if (ret == 0 || ret == 2) return false;
-
+      TFilePath frameFp(actualLevelFp.withFrame(frameNumber));
+      if (TFileStatus(frameFp).doesExist()) {
+        QString question =
+            tr("File %1 does exist.\nDo you want to overwrite it?")
+                .arg(toQString(frameFp));
+        int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                                QObject::tr("Cancel"));
+        if (ret == 0 || ret == 2) return false;
+      }
     }
     /* if the file does not exist, then create a new level */
     else {
@@ -2058,6 +2085,8 @@ bool PencilTestPopup::importImage(QImage& image) {
       sl->getProperties()->setImageRes(
           TDimension(image.width(), image.height()));
     }
+
+    state = NEWLEVEL;
   }
 
   TFrameId fid(frameNumber);
@@ -2078,30 +2107,64 @@ bool PencilTestPopup::importImage(QImage& image) {
   if (m_saveOnCaptureCB->isChecked()) sl->save();
 
   /* placement in xsheet */
+
   int row = app->getCurrentFrame()->getFrame();
   int col = app->getCurrentColumn()->getColumnIndex();
 
-  /* try to find the vacant cell */
-  int tmpRow = row;
-  while (1) {
-    /* if the same cell is already in the column, then just replace the content
-     * and do not set a new cell */
-    if (xsh->getCell(tmpRow, col) == TXshCell(sl, fid)) break;
-    /* in case setting the same level as the the current column */
-    else if (xsh->getCell(tmpRow, col).isEmpty()) {
-      xsh->setCell(tmpRow, col, TXshCell(sl, fid));
-      break;
-    }
-    /* in case the level is different from the current column, then insert a new
-       column */
-    else if (xsh->getCell(tmpRow, col).m_level->getSimpleLevel() != sl) {
+  // if the level is newly created or imported, then insert a new column
+  if (state == NEWLEVEL) {
+    if (!xsh->isColumnEmpty(col)) {
       col += 1;
       xsh->insertColumn(col);
-      xsh->setCell(row, col, TXshCell(sl, fid));
-      app->getCurrentColumn()->setColumnIndex(col);
-      break;
     }
-    tmpRow++;
+    xsh->setCell(row, col, TXshCell(sl, fid));
+    app->getCurrentColumn()->setColumnIndex(col);
+    return true;
+  }
+
+  // state == OVERWRITE, ADDFRAME
+
+  // if the same cell is already in the column, then just replace the content
+  // and do not set a new cell
+  int foundCol, foundRow = -1;
+  // most possibly, it's in the current column
+  int rowCheck;
+  if (findCell(xsh, col, TXshCell(sl, fid), rowCheck)) return true;
+  if (rowCheck >= 0) {
+    foundRow = rowCheck;
+    foundCol = col;
+  }
+  // search entire xsheet
+  for (int c = 0; c < xsh->getColumnCount(); c++) {
+    if (c == col) continue;
+    if (findCell(xsh, c, TXshCell(sl, fid), rowCheck)) return true;
+    if (rowCheck >= 0) {
+      foundRow = rowCheck;
+      foundCol = c;
+    }
+  }
+  // if there is a column containing the same level
+  if (foundRow >= 0) {
+    // put the cell at the bottom
+    int tmpRow = foundRow + 1;
+    while (1) {
+      if (xsh->getCell(tmpRow, foundCol).isEmpty()) {
+        xsh->setCell(tmpRow, foundCol, TXshCell(sl, fid));
+        app->getCurrentColumn()->setColumnIndex(foundCol);
+        break;
+      }
+      tmpRow++;
+    }
+  }
+  // if the level is registered in the scene, but is not placed in the xsheet,
+  // then insert a new column
+  else {
+    if (!xsh->isColumnEmpty(col)) {
+      col += 1;
+      xsh->insertColumn(col);
+    }
+    xsh->setCell(row, col, TXshCell(sl, fid));
+    app->getCurrentColumn()->setColumnIndex(col);
   }
 
   return true;
