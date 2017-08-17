@@ -2301,7 +2301,7 @@ void PencilTestPopup::refreshFrameInfo() {
       // if the saved images has not the same resolution as the current camera
       // resolution
       if (camRes != dim) {
-        tooltipStr += tr("\nWARNING : Image size mismatch. The saved image "
+        tooltipStr += tr("WARNING : Image size mismatch. The saved image "
                          "size is %1 x %2.")
                           .arg(dim.lx)
                           .arg(dim.ly);
@@ -2318,16 +2318,16 @@ void PencilTestPopup::refreshFrameInfo() {
                             .arg(fidsToString(fids, letterOptionEnabled));
         // if the frame exists, then it will be overwritten
         if (frameExist) {
-          labelStr += tr("OVERWRITE");
+          labelStr += tr("OVERWRITE one of");
           infoType = OVERWRITE;
         } else {
-          labelStr += tr("ADD");
+          labelStr += tr("ADD to");
           infoType = ADD;
         }
         if (frameCount == 1)
-          labelStr += tr(" : %1 frame exists").arg(frameCount);
+          labelStr += tr(" %1 frame").arg(frameCount);
         else
-          labelStr += tr(" : %1 frames exist").arg(frameCount);
+          labelStr += tr(" %1 frames").arg(frameCount);
       }
     }
     // If no level exists in the file system, then it will be a new level
@@ -2378,18 +2378,18 @@ void PencilTestPopup::refreshFrameInfo() {
       }
       // If there is already the frame then it will be overwritten
       if (hasFrame) {
-        labelStr += tr("OVERWRITE");
+        labelStr += tr("OVERWRITE one of");
         infoType = OVERWRITE;
       }
       // Or, the frame will be added to the level
       else {
-        labelStr += tr("ADD");
+        labelStr += tr("ADD to");
         infoType = ADD;
       }
       if (frameCount == 1)
-        labelStr += tr(" : %1 frame exists").arg(frameCount);
+        labelStr += tr(" %1 frame").arg(frameCount);
       else
-        labelStr += tr(" : %1 frames exist").arg(frameCount);
+        labelStr += tr(" %1 frames").arg(frameCount);
     }
   }
   // ### CASE 3 ###
@@ -2398,7 +2398,7 @@ void PencilTestPopup::refreshFrameInfo() {
     if (level_sameName) {
       TFilePath anotherPath = level_sameName->getPath();
       tooltipStr +=
-          tr("\nWARNING : Level name conflicts. There already is the level %1 in the scene with the path\
+          tr("WARNING : Level name conflicts. There already is a level %1 in the scene with the path\
                         \n          %2.")
               .arg(QString::fromStdWString(levelName))
               .arg(toQString(anotherPath));
@@ -2417,8 +2417,9 @@ void PencilTestPopup::refreshFrameInfo() {
     }
     if (level_samePath) {
       std::wstring anotherName = level_samePath->getName();
+      if (!tooltipStr.isEmpty()) tooltipStr += QString("\n");
       tooltipStr +=
-          tr("\nWARNING : Level path conflicts. There already is the level with the path %1\
+          tr("WARNING : Level path conflicts. There already is a level with the path %1\
                         \n          in the scene with the name %2.")
               .arg(toQString(levelFp))
               .arg(QString::fromStdWString(anotherName));
