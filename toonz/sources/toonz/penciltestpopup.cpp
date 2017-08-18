@@ -450,6 +450,19 @@ bool findCell(TXsheet* xsh, int col, const TXshCell& targetCell,
   return false;
 }
 
+bool getRasterLevelSize(TXshLevel* level, TDimension& dim) {
+  std::vector<TFrameId> fids;
+  level->getFids(fids);
+  if (fids.empty()) return false;
+  TXshSimpleLevel* simpleLevel = level->getSimpleLevel();
+  if (!simpleLevel) return false;
+  TRasterImageP rimg = (TRasterImageP)simpleLevel->getFrame(fids[0], false);
+  if (!rimg || rimg->isEmpty()) return false;
+
+  dim = rimg->getRaster()->getSize();
+  return true;
+}
+
 }  // namespace
 
 //=============================================================================
@@ -2318,7 +2331,7 @@ void PencilTestPopup::refreshFrameInfo() {
                             .arg(fidsToString(fids, letterOptionEnabled));
         // if the frame exists, then it will be overwritten
         if (frameExist) {
-          labelStr += tr("OVERWRITE one of");
+          labelStr += tr("OVERWRITE 1 of");
           infoType = OVERWRITE;
         } else {
           labelStr += tr("ADD to");
@@ -2348,10 +2361,18 @@ void PencilTestPopup::refreshFrameInfo() {
     level_sameName->getFids(fids);
 
     // check resolution
-    TDimension dim = level_sameName->getSimpleLevel()->getResolution();
+    TDimension dim;
+    bool ret = getRasterLevelSize(level_sameName, dim);
+    if (!ret) {
+      tooltipStr +=
+          tr("\nWARNING : Failed to get image size of the existing level %1.")
+              .arg(QString::fromStdWString(levelName));
+      labelStr += tr("WARNING");
+      infoType = WARNING;
+    }
     // if the saved images has not the same resolution as the current camera
     // resolution
-    if (camRes != dim) {
+    else if (camRes != dim) {
       tooltipStr += tr("\nWARNING : Image size mismatch. The existing level "
                        "size is %1 x %2.")
                         .arg(dim.lx)
@@ -2378,7 +2399,7 @@ void PencilTestPopup::refreshFrameInfo() {
       }
       // If there is already the frame then it will be overwritten
       if (hasFrame) {
-        labelStr += tr("OVERWRITE one of");
+        labelStr += tr("OVERWRITE 1 of");
         infoType = OVERWRITE;
       }
       // Or, the frame will be added to the level
@@ -2403,13 +2424,9 @@ void PencilTestPopup::refreshFrameInfo() {
               .arg(QString::fromStdWString(levelName))
               .arg(toQString(anotherPath));
       // check resolution
-      std::vector<TFrameId> fids;
-      level_sameName->getFids(fids);
-      TRasterImageP rimg =
-          (TRasterImageP)level_sameName->getSimpleLevel()->getFrame(fids[0],
-                                                                    false);
-      TDimension dim = rimg->getRaster()->getSize();
-      if (camRes != dim)
+      TDimension dim;
+      bool ret = getRasterLevelSize(level_sameName, dim);
+      if (ret && camRes != dim)
         tooltipStr += tr("\nWARNING : Image size mismatch. The size of level "
                          "with the same name is is %1 x %2.")
                           .arg(dim.lx)
@@ -2424,13 +2441,9 @@ void PencilTestPopup::refreshFrameInfo() {
               .arg(toQString(levelFp))
               .arg(QString::fromStdWString(anotherName));
       // check resolution
-      std::vector<TFrameId> fids;
-      level_samePath->getFids(fids);
-      TRasterImageP rimg =
-          (TRasterImageP)level_samePath->getSimpleLevel()->getFrame(fids[0],
-                                                                    false);
-      TDimension dim = rimg->getRaster()->getSize();
-      if (camRes != dim)
+      TDimension dim;
+      bool ret = getRasterLevelSize(level_samePath, dim);
+      if (ret && camRes != dim)
         tooltipStr += tr("\nWARNING : Image size mismatch. The size of level "
                          "with the same path is %1 x %2.")
                           .arg(dim.lx)
