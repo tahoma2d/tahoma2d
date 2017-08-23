@@ -1223,9 +1223,9 @@ public:
   void execute() override {
     TColumnSelection *selection = dynamic_cast<TColumnSelection *>(
         TApp::instance()->getCurrentSelection()->getSelection());
-    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    int cc       = TApp::instance()->getCurrentColumn()->getColumnIndex();
-	bool sound_changed = false;
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    int cc             = TApp::instance()->getCurrentColumn()->getColumnIndex();
+    bool sound_changed = false;
     for (int i = 0; i < xsh->getColumnCount(); i++) {
       /*- 空のカラムの場合は飛ばす -*/
       if (xsh->isColumnEmpty(i)) continue;
@@ -1272,7 +1272,7 @@ public:
           column->setCamstandVisible(negate);
         else
           column->setCamstandVisible(!column->isCamstandVisible());
-		if (column->getSoundColumn()) sound_changed = true;
+        if (column->getSoundColumn()) sound_changed = true;
       }
       /*TAB
 if(cmd & (CMD_ENABLE_PREVIEW|CMD_DISABLE_PREVIEW|CMD_TOGGLE_PREVIEW))
@@ -1295,7 +1295,8 @@ column->setCamstandVisible(!column->isCamstandVisible());
 }
       */
     }
-	if (sound_changed) TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+    if (sound_changed)
+      TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
   }

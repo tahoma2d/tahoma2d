@@ -730,28 +730,33 @@ void RenameCellField::focusOutEvent(QFocusEvent *e) {
 // Override shortcut keys for cell selection commands
 
 bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
-  // We really shouldn't allow OT defined shortcuts to be checked and used while renaming a cell
-  // but if we must, we should only return true or false if we're executing our OT action;
+  // We really shouldn't allow OT defined shortcuts to be checked and used while
+  // renaming a cell
+  // but if we must, we should only return true or false if we're executing our
+  // OT action;
   // otherwise pass event forward in case another object is interested in it.
-  if (e->type() != QEvent::ShortcutOverride) return QObject::eventFilter(obj, e); //return false;
+  if (e->type() != QEvent::ShortcutOverride)
+    return QObject::eventFilter(obj, e);  // return false;
 
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
-  if (!cellSelection) return QObject::eventFilter(obj, e); //return false;
+  if (!cellSelection) return QObject::eventFilter(obj, e);  // return false;
 
   QKeyEvent *ke = (QKeyEvent *)e;
   std::string keyStr =
       QKeySequence(ke->key() + ke->modifiers()).toString().toStdString();
   QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
-  if (!action) return QObject::eventFilter(obj, e); //return false;
+  if (!action) return QObject::eventFilter(obj, e);  // return false;
 
   std::string actionId = CommandManager::instance()->getIdFromAction(action);
 
   // These are usally standard ctrl/command strokes for text editing.
-  // Default to standard behavior and don't execute OT's action while renaming cell.
-  if (actionId == "MI_Undo" || actionId == "MI_Redo"
-	  || actionId == "MI_Clear" || actionId == "MI_Copy" || actionId == "MI_Paste" ||  actionId == "MI_Cut"
-	  ) return QObject::eventFilter(obj, e); //return true;
+  // Default to standard behavior and don't execute OT's action while renaming
+  // cell.
+  if (actionId == "MI_Undo" || actionId == "MI_Redo" ||
+      actionId == "MI_Clear" || actionId == "MI_Copy" ||
+      actionId == "MI_Paste" || actionId == "MI_Cut")
+    return QObject::eventFilter(obj, e);  // return true;
   return TCellSelection::isEnabledCommand(actionId);
 }
 
@@ -1418,8 +1423,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
 
     // convert the last one digit of the frame number to alphabet
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
-	if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
-		fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
+    if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
+      fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
     else {
       std::string frameNumber("");
       // set number
@@ -1429,8 +1434,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
       fnum = QString::fromStdString(frameNumber);
     }
 
-	p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, fnum);
-}
+    p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, fnum);
+  }
 
   // draw level name
   if (!sameLevel ||
@@ -1438,12 +1443,14 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
        Preferences::instance()->isLevelNameOnEachMarkerEnabled())) {
     std::wstring levelName = cell.m_level->getName();
     QString text           = QString::fromStdWString(levelName);
-	QFontMetrics fm(font);
+    QFontMetrics fm(font);
 #if QT_VERSION >= 0x050500
-//    QFontMetrics fm(font);
-    QString elidaName = elideText(text, fm, nameRect.width() - fm.width(fnum), QString("~"));
+    //    QFontMetrics fm(font);
+    QString elidaName =
+        elideText(text, fm, nameRect.width() - fm.width(fnum), QString("~"));
 #else
-    QString elidaName = elideText(text, font, nameRect.width() - fm.width(fnum));
+    QString elidaName =
+        elideText(text, font, nameRect.width() - fm.width(fnum));
 #endif
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
   }

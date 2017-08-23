@@ -829,8 +829,8 @@ public:
     TApp *app                     = TApp::instance();
     TKeyframeSelection *selection = dynamic_cast<TKeyframeSelection *>(
         app->getCurrentSelection()->getSelection());
-	if (!selection) return;
-	int row = app->getCurrentFrame()->getFrame();
+    if (!selection) return;
+    int row = app->getCurrentFrame()->getFrame();
 
     selection->selectNone();
     ToonzScene *scene = app->getCurrentScene()->getScene();
@@ -863,7 +863,7 @@ public:
     TApp *app                     = TApp::instance();
     TKeyframeSelection *selection = dynamic_cast<TKeyframeSelection *>(
         app->getCurrentSelection()->getSelection());
-	if (!selection) return;
+    if (!selection) return;
     int col                 = app->getCurrentColumn()->getColumnIndex();
     TStageObjectId objectId = app->getCurrentObject()->getObjectId();
     if (app->getCurrentObject()->getObjectId() == TStageObjectId::CameraId(0)) {
