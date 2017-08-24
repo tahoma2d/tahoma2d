@@ -925,6 +925,7 @@ public:
     TApp *app                     = TApp::instance();
     TKeyframeSelection *selection = dynamic_cast<TKeyframeSelection *>(
         app->getCurrentSelection()->getSelection());
+    if (!selection) return;
     int row = app->getCurrentFrame()->getFrame();
 
     selection->selectNone();
@@ -958,7 +959,7 @@ public:
     TApp *app                     = TApp::instance();
     TKeyframeSelection *selection = dynamic_cast<TKeyframeSelection *>(
         app->getCurrentSelection()->getSelection());
-
+    if (!selection) return;
     int col                 = app->getCurrentColumn()->getColumnIndex();
     TStageObjectId objectId = app->getCurrentObject()->getObjectId();
     if (app->getCurrentObject()->getObjectId() == TStageObjectId::CameraId(0)) {
