@@ -2314,7 +2314,7 @@ void PencilTestPopup::refreshFrameInfo() {
       // if the saved images has not the same resolution as the current camera
       // resolution
       if (camRes != dim) {
-        tooltipStr += tr("WARNING : Image size mismatch. The saved image "
+        tooltipStr += tr("\nWARNING : Image size mismatch. The saved image "
                          "size is %1 x %2.")
                           .arg(dim.lx)
                           .arg(dim.ly);
