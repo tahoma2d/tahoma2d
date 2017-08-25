@@ -1124,9 +1124,15 @@ void MainWindow::resetRoomsLayout() {
 
 void MainWindow::maximizePanel() {
   DockLayout *currDockLayout = getCurrentRoom()->dockLayout();
-  QPoint p                   = mapFromGlobal(QCursor::pos());
-  QWidget *currWidget        = currDockLayout->containerOf(p);
-  DockWidget *currW          = dynamic_cast<DockWidget *>(currWidget);
+  if (currDockLayout->getMaximized() &&
+      currDockLayout->getMaximized()->isMaximized()) {
+    currDockLayout->getMaximized()->maximizeDock();  // release maximization
+    return;
+  }
+
+  QPoint p            = mapFromGlobal(QCursor::pos());
+  QWidget *currWidget = currDockLayout->containerOf(p);
+  DockWidget *currW   = dynamic_cast<DockWidget *>(currWidget);
   if (currW) currW->maximizeDock();
 }
 
