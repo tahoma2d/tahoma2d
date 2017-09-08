@@ -317,7 +317,8 @@ Preferences::Preferences()
     , m_inputCellsWithoutDoubleClickingEnabled(false)
     , m_importPolicy(0)
     , m_ignoreImageDpi(false)
-    , m_watchFileSystem(true) {
+    , m_watchFileSystem(true)
+    , m_shortcutCommandsWhileRenamingCellEnabled(false) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -612,6 +613,8 @@ Preferences::Preferences()
            m_inputCellsWithoutDoubleClickingEnabled);
   getValue(*m_settings, "importPolicy", m_importPolicy);
   getValue(*m_settings, "watchFileSystemEnabled", m_watchFileSystem);
+  getValue(*m_settings, "shortcutCommandsWhileRenamingCellEnabled",
+           m_shortcutCommandsWhileRenamingCellEnabled);
 }
 
 //-----------------------------------------------------------------
@@ -1467,4 +1470,12 @@ void Preferences::enableInputCellsWithoutDoubleClicking(bool on) {
 void Preferences::enableWatchFileSystem(bool on) {
   m_watchFileSystem = on;
   m_settings->setValue("watchFileSystemEnabled", on ? "1" : "0");
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::enableShortcutCommandsWhileRenamingCell(bool on) {
+  m_shortcutCommandsWhileRenamingCellEnabled = on;
+  m_settings->setValue("shortcutCommandsWhileRenamingCellEnabled",
+                       on ? "1" : "0");
 }
