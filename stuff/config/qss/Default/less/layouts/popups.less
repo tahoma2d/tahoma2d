@@ -8,7 +8,16 @@ QDialog {
     background-color: @dialogButtonFrame-bg-color;
     border-top: 1px solid @dialogButtonFrame-border-color;
     & QPushButton {
-      padding: 3px 15px;
+      &:focus {
+        background-color: @button-bg-color-focus;
+        color: @button-text-color-focus;
+        &:hover {
+          background-color: @button-bg-color-focus-hover;
+        }
+        &:pressed {
+          background-color: @button-bg-color-pressed;
+        }
+      }
     }
   }
 }

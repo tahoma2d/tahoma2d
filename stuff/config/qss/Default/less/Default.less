@@ -29,7 +29,7 @@
 @dock-placeholder-color: @selected-bg-color;
 
 @window-border-color: @dock-bg-color;
-@dialogButtonFrame-bg-color: darken(@bg, 6);
+@dialogButtonFrame-bg-color: darken(@bg, 4);
 @dialogButtonFrame-border-color: @accent;
 
 @label-title: rgb(159, 218, 255);
@@ -133,12 +133,17 @@
 @button-border-color-pressed: @button-border-color;
 @button-text-color-pressed: @button-text-color;
 
-@button-bg-color-checked: @button-bg-color-pressed;
+@button-bg-color-checked: darken(@button-bg-color-pressed, 0);
 @button-border-color-checked: @button-border-color;
 @button-text-color-checked: @button-text-color;
 
 @button-bg-color-checked-hover: lighten(@button-bg-color-checked, 2);
-@button-bg-color-checked-hover-pressed: @button-bg-color-pressed;
+@button-bg-color-checked-hover-pressed: @button-bg-color-checked;
+
+@button-bg-color-focus: @selected-bg-color;
+@button-text-color-focus: @button-text-color-pressed;
+
+@button-bg-color-focus-hover: lighten(@button-bg-color-focus, 8);
 
 @button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: @button-border-color;
@@ -161,14 +166,14 @@
 @toolbutton-border-color-checked: @toolbutton-bg-color-checked;
 @toolbutton-text-color-checked: @text-color;
 
-@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 5);
+@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 15);
 @toolbutton-border-color-checked-hover: @toolbutton-bg-color-checked-hover;
 
 // Lock
 @toolbutton-lock-bg-color-checked: #C34040;
 @toolbutton-lock-border-color-checked: @toolbutton-lock-bg-color-checked;
 
-@toolbutton-lock-bg-color-checked-hover: lighten(@toolbutton-lock-bg-color-checked, 5);
+@toolbutton-lock-bg-color-checked-hover: lighten(@toolbutton-lock-bg-color-checked, 15);
 @toolbutton-lock-border-color-checked-hover: @toolbutton-lock-bg-color-checked-hover;
 
 // -----------------------------------------------------------------------------
@@ -202,7 +207,7 @@
 // Textfield
 // -----------------------------------------------------------------------------
 
-@input-bg-color: darken(@bg, 9);
+@input-bg-color: darken(@bg, 10);
 @input-border-color: darken(@input-bg-color, 0);
 @input-text-color: @text-color;
 
@@ -222,17 +227,17 @@
 // CheckBox
 // -----------------------------------------------------------------------------
 
-@checkbox-bg-color: @button-bg-color;
-@checkbox-border-color: @checkbox-bg-color;
+@checkbox-bg-color: @input-bg-color;
+@checkbox-border-color: @input-border-color;
 
-@checkbox-bg-color-hover: @button-bg-color-hover;
-@checkbox-border-color-hover: @checkbox-bg-color-hover;
+@checkbox-bg-color-hover: @checkbox-bg-color;
+@checkbox-border-color-hover: @selected-bg-color;
 @checkbox-text-color-hover: @text-color;
 
 @checkbox-bg-color-checked: @checkbox-bg-color;
 @checkbox-border-color-checked: @checkbox-border-color;
 
-@checkbox-bg-color-disabled: @button-bg-color-disabled;
+@checkbox-bg-color-disabled: @input-bg-color-disabled;
 @checkbox-border-color-disabled: @checkbox-bg-color-disabled;
 
 // -----------------------------------------------------------------------------
@@ -252,7 +257,7 @@
 @slider-handle-border-color: @slider-handle-bg-color;
 
 // DoublePairField, IntPairField
-@slider-groove-color: darken(@bg, 14);
+@slider-groove-color: darken(@bg, 11);
 @slider-left-handle: @slider-handle-img;
 @slider-right-handle: @slider-handle-img;
 @slider-left-handle-disabled: @slider-handle-img-disabled;

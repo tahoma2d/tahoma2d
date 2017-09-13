@@ -12,7 +12,7 @@
 @text-color: #101010;
 
 @selected-bg-color: rgb(37, 80, 149);
-@selected-text-color: rgba(255, 255, 255, 0.80);
+@selected-text-color: #FFFFFF;
 
 @selected-bg-color-secondary: lighten(@bg, 15);
 
@@ -114,6 +114,9 @@
 @button-border-color-checked: darken(@button-bg-color-checked, 5);
 @button-text-color-checked: rgba(255, 255, 255, 0.80);
 
+@button-bg-color-focus: lighten(@button-bg-color, 15);
+@button-text-color-focus: @button-text-color-pressed;
+
 @button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: darken(@bg, 5);
 
@@ -131,7 +134,7 @@
 @input-border-color: darken(@bg, 18);
 @input-text-color: @text-color;
 
-@input-border-color-focus: #1C1C1C;
+@input-bg-color-focus: #fff;
 
 // -----------------------------------------------------------------------------
 // CheckBox
