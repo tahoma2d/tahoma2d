@@ -114,17 +114,26 @@
 @button-border-color-checked: darken(@button-bg-color-checked, 5);
 @button-text-color-checked: rgba(255, 255, 255, 0.80);
 
-@button-bg-color-focus: lighten(@button-bg-color, 15);
+@button-bg-color-focus: #B5C0D0;
 @button-text-color-focus: @button-text-color-pressed;
 
 @button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: darken(@bg, 5);
+
+// For QDialogs
+@button-dialog-border-color: @button-border-color;
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
 // -----------------------------------------------------------------------------
 
 @toolbutton-bg-color-checked: #E8EBE8;
+
+// -----------------------------------------------------------------------------
+// ComboBox
+// -----------------------------------------------------------------------------
+
+@combobox-bg-color-pressed: @button-bg-color-focus;
 
 // -----------------------------------------------------------------------------
 // Textfield

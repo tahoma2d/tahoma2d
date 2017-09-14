@@ -118,11 +118,11 @@
 // Button
 // -----------------------------------------------------------------------------
 
-@button-border-size: 0;
-@button-margin: 1px;
+@button-border-size: 1px;
+@button-margin: 0;
 
 @button-bg-color: lighten(@bg, 13);
-@button-border-color: @bg;
+@button-border-color: darken(@bg, 3);
 @button-text-color: lighten(@text-color, 5);
 
 @button-bg-color-hover: lighten(@button-bg-color, 5);
@@ -130,24 +130,26 @@
 @button-text-color-hover: @button-text-color;
 
 @button-bg-color-pressed: darken(@button-bg-color, 22);
-@button-border-color-pressed: @button-border-color;
+@button-border-color-pressed: darken(@button-bg-color-pressed, 2);
 @button-text-color-pressed: @button-text-color;
 
 @button-bg-color-checked: darken(@button-bg-color-pressed, 0);
-@button-border-color-checked: @button-border-color;
+@button-border-color-checked: darken(@button-bg-color-checked, 2);
 @button-text-color-checked: @button-text-color;
 
 @button-bg-color-checked-hover: lighten(@button-bg-color-checked, 2);
 @button-bg-color-checked-hover-pressed: @button-bg-color-checked;
 
-@button-bg-color-focus: @selected-bg-color;
-@button-text-color-focus: @button-text-color-pressed;
-
-@button-bg-color-focus-hover: lighten(@button-bg-color-focus, 8);
+@button-bg-color-focus: #636F77;
+@button-border-color-focus: @selected-bg-color;
+@button-text-color-focus: @button-text-color;
 
 @button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: @button-border-color;
 @button-text-color-disabled: @text-color-disabled;
+
+// For QDialogs
+@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 2);
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
@@ -191,8 +193,8 @@
 @combobox-border-color-hover: @combobox-border-color;
 @combobox-text-color-hover: @combobox-text-color;
 
-@combobox-bg-color-pressed: @combobox-bg-color;
-@combobox-border-color-pressed: @combobox-border-color;
+@combobox-bg-color-pressed: @button-bg-color-checked;
+@combobox-border-color-pressed: @selected-bg-color;
 @combobox-text-color-pressed: @combobox-text-color;
 
 @combobox-bg-color-disabled: @button-bg-color-disabled;
@@ -208,7 +210,7 @@
 // -----------------------------------------------------------------------------
 
 @input-bg-color: darken(@bg, 10);
-@input-border-color: darken(@input-bg-color, 0);
+@input-border-color: darken(@input-bg-color, 1.5);
 @input-text-color: @text-color;
 
 @input-bg-color-focus: @input-bg-color;

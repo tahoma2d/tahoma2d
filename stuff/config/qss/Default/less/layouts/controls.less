@@ -29,7 +29,7 @@
     background-color: @button-bg-color-hover;
     border-color: @button-border-color-hover;
     color: @button-text-color-hover;
-  }
+  } 
   &:pressed {
     background-color: @button-bg-color-pressed;
     border-color: @button-border-color-pressed;
@@ -50,6 +50,16 @@
     background-color: @button-bg-color-disabled;
     border-color: @button-border-color-disabled;
     color: @button-text-color-disabled;
+  }
+  &:focus {
+    background-color: @button-bg-color-focus;
+    border-color: @button-border-color-focus;
+    color: @button-text-color-focus;
+    &:pressed {
+      background-color: @button-bg-color-pressed;
+      border-color: @button-border-color-focus;
+      color: @button-text-color-pressed;
+    }
   }
 }
 
