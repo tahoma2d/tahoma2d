@@ -17,7 +17,6 @@
 @selected-bg-color-secondary: lighten(@bg, 15);
 
 @dock-bg-color: darken(@bg, 40);
-@dock-placeholder-color: rgb(177, 254, 97);
 
 @label-title: rgb(0, 0, 0);
 
@@ -95,29 +94,20 @@
 // Button
 // -----------------------------------------------------------------------------
 
-@button-border-size: 1px;
-@button-margin: 0;
-
 @button-bg-color: lighten(@bg, 14);
 @button-border-color: darken(@bg, 18);
 @button-text-color: @text-color;
 
 @button-bg-color-hover: lighten(@button-bg-color, 8);
-@button-border-color-hover: @button-border-color;
-@button-text-color-hover: @button-text-color;
 
-@button-bg-color-pressed: darken(@button-bg-color, 22);
-@button-border-color-pressed: darken(@bg, 15);
-@button-text-color-pressed: @button-text-color;
+@button-bg-color-pressed: lighten(@button-bg-color-hover, 15);
+@button-border-color-pressed: @button-border-color;
 
-@button-bg-color-checked: #575757;
-@button-border-color-checked: darken(@button-bg-color-checked, 5);
-@button-text-color-checked: rgba(255, 255, 255, 0.80);
+@button-bg-color-checked: #B5C0D0;
+@button-border-color-checked: @selected-bg-color;
 
 @button-bg-color-focus: #B5C0D0;
-@button-text-color-focus: @button-text-color-pressed;
 
-@button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: darken(@bg, 5);
 
 // For QDialogs
@@ -127,7 +117,18 @@
 // Tool Buttons
 // -----------------------------------------------------------------------------
 
-@toolbutton-bg-color-checked: #E8EBE8;
+// Main
+@toolbutton-border-color-hover: @button-border-color;
+
+@toolbutton-bg-color-checked: #B5C0D0;
+@toolbutton-border-color-checked: @selected-bg-color;
+@toolbutton-text-color-checked: @button-text-color;
+
+@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 8);
+@toolbutton-border-color-checked-hover: @toolbutton-border-color-checked;
+
+// Lock
+@toolbutton-lock-border-color-checked: darken(@toolbutton-lock-bg-color-checked, 20);
 
 // -----------------------------------------------------------------------------
 // ComboBox
@@ -139,11 +140,8 @@
 // Textfield
 // -----------------------------------------------------------------------------
 
-@input-bg-color: lighten(@bg, 25);
+@input-bg-color: lighten(@bg, 30);
 @input-border-color: darken(@bg, 18);
-@input-text-color: @text-color;
-
-@input-bg-color-focus: #fff;
 
 // -----------------------------------------------------------------------------
 // CheckBox
@@ -152,9 +150,7 @@
 @checkbox-bg-color: lighten(@button-bg-color, 15);
 @checkbox-border-color: @button-border-color;
 
-@checkbox-bg-color-hover: lighten(@button-bg-color-hover, 20);
-@checkbox-border-color-hover: @button-border-color;
-@checkbox-text-color-hover: @text-color;
+@checkbox-bg-color-hover: lighten(@checkbox-bg-color, 10);
 
 @checkbox-border-color-checked: @button-border-color;
 
@@ -208,10 +204,10 @@
 @xsheet-text-color:                         @text-color;
 @xsheet-bg-color:                           lighten(@bg, 7.12);
 @xsheet-LightLine-color:                    darken(@bg, 10);
-@xsheet-MarkerLine-color:                   #6D2D2E; //rgb(0, 255, 246); (old)
+@xsheet-MarkerLine-color:                   rgb(0, 255, 246);
 @xsheet-VerticalLine-color:                 darken(@bg, 11);
 @xsheet-VerticalLineHead-color:             darken(@bg, 28);
-@xsheet-PreviewFrameText-color:             @text-color; //#000eb6; (old)
+@xsheet-PreviewFrameText-color:             #000eb6;
 @xsheet-CurrentRowBG-color:                 rgb(210,210,210);
 
 @xsheet-EmptyColumnHead-color:              darken(@bg, 5);

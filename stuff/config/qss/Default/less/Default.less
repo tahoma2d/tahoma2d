@@ -26,7 +26,7 @@
 @selected-text-color-secondary: @text-color;
 
 @dock-bg-color: darken(@bg, 18);
-@dock-placeholder-color: @selected-bg-color;
+@dock-placeholder-color: #F77272;
 
 @window-border-color: @dock-bg-color;
 @dialogButtonFrame-bg-color: darken(@bg, 4);
@@ -156,17 +156,23 @@
 // -----------------------------------------------------------------------------
 
 // Main
-@toolbutton-border-size: 0;
+@toolbutton-border-size: 1;
 
 @toolbutton-bg-color: rgba(255, 255, 255, 0.00);
 @toolbutton-border-color: @toolbutton-bg-color;
+@toolbutton-text-color: @button-text-color;
 
 @toolbutton-bg-color-hover: @button-bg-color-hover;
 @toolbutton-border-color-hover: @toolbutton-bg-color-hover;
+@toolbutton-text-color-hover: @button-text-color-hover;
+
+@toolbutton-bg-color-pressed: @button-bg-color-pressed;
+@toolbutton-border-color-pressed: @button-border-color-pressed;
+@toolbutton-text-color-pressed: @button-text-color-pressed;
 
 @toolbutton-bg-color-checked: @selected-bg-color;
 @toolbutton-border-color-checked: @toolbutton-bg-color-checked;
-@toolbutton-text-color-checked: @text-color;
+@toolbutton-text-color-checked: @selected-text-color;
 
 @toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 15);
 @toolbutton-border-color-checked-hover: @toolbutton-bg-color-checked-hover;
