@@ -755,9 +755,6 @@ QMenu *CastBrowser::getContextMenu(QWidget *parent, int index) {
   if(!audioSelected && !paletteSelected)
 	  menu->addAction(cm->getAction(MI_ViewFile));
   menu->addAction(cm->getAction(MI_FileInfo));
-//  if (audioSelected && !paletteSelected && !vectorLevelSelected &&
-//      !otherFileSelected)
-//    return menu;
 
   // MI_EditLevel solo se e' stato selezionato un singolo diverso da livelli
   // palette a livelli audio
