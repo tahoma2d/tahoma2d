@@ -1,11 +1,6 @@
 // out: ../Default.qss
 
 // MASTER THEME FILE
-// All other themes are linked to this theme with the use of color functions, any
-// changes here may also affect other themes.
-//
-// The way the theme works is that most properties are value linked to the @bg
-// variable. So if the @bg variable changes, so does everything else.
 
 // Include All
 @import 'main';
@@ -86,6 +81,8 @@
 @title-text-color: lighten(@bg, 30.9804);
 @title-text-color-active: lighten(@bg, 65.8824);
 
+@title-active-border-pixmap: 'none';
+
 // -----------------------------------------------------------------------------
 // Scrollbars
 // -----------------------------------------------------------------------------
@@ -140,23 +137,25 @@
 @button-bg-color-checked-hover: lighten(@button-bg-color-checked, 2);
 @button-bg-color-checked-hover-pressed: @button-bg-color-checked;
 
-@button-bg-color-focus: #636F77;
-@button-border-color-focus: @selected-bg-color;
+@button-bg-color-focus: @selected-bg-color;
+@button-border-color-focus: @button-dialog-border-color;
 @button-text-color-focus: @button-text-color;
+
+@button-bg-color-focus-hover: lighten(@button-bg-color-focus, 8);
 
 @button-bg-color-disabled: lighten(@bg, 5);
 @button-border-color-disabled: @button-border-color;
 @button-text-color-disabled: @text-color-disabled;
 
 // For QDialogs
-@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 2);
+@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 3);
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
 // -----------------------------------------------------------------------------
 
 // Main
-@toolbutton-border-size: 1;
+@toolbutton-border-size: 1px;
 
 @toolbutton-bg-color: rgba(255, 255, 255, 0.00);
 @toolbutton-border-color: @toolbutton-bg-color;
@@ -174,7 +173,7 @@
 @toolbutton-border-color-checked: @toolbutton-bg-color-checked;
 @toolbutton-text-color-checked: @selected-text-color;
 
-@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 15);
+@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 8);
 @toolbutton-border-color-checked-hover: @toolbutton-bg-color-checked-hover;
 
 // Lock
@@ -200,7 +199,7 @@
 @combobox-text-color-hover: @combobox-text-color;
 
 @combobox-bg-color-pressed: @button-bg-color-checked;
-@combobox-border-color-pressed: @selected-bg-color;
+@combobox-border-color-pressed: @button-border-color-pressed;
 @combobox-text-color-pressed: @combobox-text-color;
 
 @combobox-bg-color-disabled: @button-bg-color-disabled;
@@ -216,7 +215,7 @@
 // -----------------------------------------------------------------------------
 
 @input-bg-color: darken(@bg, 10);
-@input-border-color: darken(@input-bg-color, 1.5);
+@input-border-color: darken(@input-bg-color, 2);
 @input-text-color: @text-color;
 
 @input-bg-color-focus: @input-bg-color;
@@ -256,11 +255,12 @@
 @slider-groove-img: 'slider-groove.svg';
 @slider-groove-img-disabled: 'slider-groove_disabled.svg';
 
-@slider-handle-width: 8px;
+@slider-handle-width: 10px;
 @slider-handle-img: 'slider-handle.svg';
 @slider-handle-img-disabled: 'slider-handle_disabled.svg';
 
 // This one is used only for #ViewerFpsSlider
+@slider-handle-margin: -2px -1px;
 @slider-handle-bg-color: lighten(@bg, 35);
 @slider-handle-border-color: @slider-handle-bg-color;
 
@@ -347,39 +347,39 @@
 
 @xsheet-LevelColumn-color:                  #4C6E4C;
 @xsheet-LevelColumnBorder-color:            #8FB38F;
-@xsheet-SelectedLevelColumn-color:          #6B8C6B;
+@xsheet-SelectedLevelColumn-color:          lighten(desaturate(@xsheet-LevelColumn-color, 5), 10);
 
 @xsheet-VectorColumn-color:                 #7B7B4C;
 @xsheet-VectorColumnBorder-color:           #BBBB9A;
-@xsheet-SelectedVectorColumn-color:         #8C8C60;
+@xsheet-SelectedVectorColumn-color:         lighten(desaturate(@xsheet-VectorColumn-color, 5), 10);
 
 @xsheet-ChildColumn-color:                  #6A526B;
 @xsheet-ChildColumnBorder-color:            #B1A3B3;
-@xsheet-SelectedChildColumn-color:          #7A617A;
+@xsheet-SelectedChildColumn-color:          lighten(desaturate(@xsheet-ChildColumn-color, 5), 10);
 
 @xsheet-FullColorColumn-color:              #657A96;
 @xsheet-FullColorColumnBorder-color:        #9EB8BB;
-@xsheet-SelectedFullColorColumn-color:      #8896A7;
+@xsheet-SelectedFullColorColumn-color:      lighten(desaturate(@xsheet-FullColorColumn-color, 5), 10);
 
 @xsheet-FxColumn-color:                     #56553C;
 @xsheet-FxColumnBorder-color:               #95958A;
-@xsheet-SelectedFxColumn-color:             #6A6D5A;
+@xsheet-SelectedFxColumn-color:             lighten(desaturate(@xsheet-FxColumn-color, 5), 10);
 
 @xsheet-ReferenceColumn-color:              #616161;
 @xsheet-ReferenceColumnBorder-color:        #A2A2A2;
-@xsheet-SelectedReferenceColumn-color:      #828282;
+@xsheet-SelectedReferenceColumn-color:      lighten(desaturate(@xsheet-ReferenceColumn-color, 5), 10);
 
 @xsheet-PaletteColumn-color:                #3A655F;
 @xsheet-PaletteColumnBorder-color:          #86ACA7;
-@xsheet-SelectedPaletteColumn-color:        #5F8581;
+@xsheet-SelectedPaletteColumn-color:        lighten(desaturate(@xsheet-PaletteColumn-color, 5), 10);
 
 @xsheet-MeshColumn-color:                   #684D86;
 @xsheet-MeshColumnBorder-color:             #BA92EF;
-@xsheet-SelectedMeshColumn-color:           #8A75A2;
+@xsheet-SelectedMeshColumn-color:           lighten(desaturate(@xsheet-MeshColumn-color, 5), 10);
 
 @xsheet-SoundColumn-color:                  #657456;
 @xsheet-SoundColumnBorder-color:            #A0AF7D;
-@xsheet-SelectedSoundColumn-color:          #7F956A;
+@xsheet-SelectedSoundColumn-color:          lighten(desaturate(@xsheet-SoundColumn-color, 5), 10);
 @xsheet-SoundColumnHL-color:                #34FE5E;
 @xsheet-SoundColumnTrack-color:             #B6C29D;
 
@@ -412,11 +412,11 @@
 // Function Spreadsheet Viewer
 @function-KeyFrame-color: rgb(153,93,29);
 @function-KeyFrameBorder-color: rgb(201,176,75);
-@function-SelectedKeyFrame-color: rgb(151,128,86);
+@function-SelectedKeyFrame-color: lighten(desaturate(@function-KeyFrame-color, 5), 10);
 
 @function-Inbetween-color: rgb(102,98,80);
 @function-InbetweenBorder-color: rgb(205,206,200);
-@function-SelectedInbetween-color: rgb(126,128,121);
+@function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
 
 @function-SelectedSceneRangeEmpty-color: lighten(@bg, 17.6471);
 

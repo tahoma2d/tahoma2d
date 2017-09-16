@@ -1,6 +1,6 @@
 // out: ../../../Light/Light.qss
 
-// Import Default Theme
+// Include Default Theme
 @import '../Default';
 
 // IMG Location
@@ -60,9 +60,11 @@
 // Titlebars
 // -----------------------------------------------------------------------------
 
-@title-bg-color: darken(@bg, 8);
-@title-text-color: @text-color;
-@title-text-color-active: @text-color;
+@title-bg-color: darken(@bg, 12);
+@title-text-color: #B4B4B4;
+@title-text-color-active: #F5F5F5;
+
+@title-active-border-pixmap: 'none';
 
 // -----------------------------------------------------------------------------
 // Scrollbars
@@ -107,6 +109,7 @@
 @button-border-color-checked: @selected-bg-color;
 
 @button-bg-color-focus: #B5C0D0;
+@button-border-color-focus: @selected-bg-color;
 
 @button-border-color-disabled: darken(@bg, 5);
 
@@ -136,6 +139,7 @@
 // -----------------------------------------------------------------------------
 
 @combobox-bg-color-pressed: @button-bg-color-focus;
+@combobox-border-color-pressed: @selected-bg-color;
 
 // -----------------------------------------------------------------------------
 // Textfield
@@ -180,6 +184,7 @@
 @slider-handle-width: 10px;
 
 // This one is used only for #ViewerFpsSlider
+@slider-handle-margin: -2px 0px;
 @slider-handle-bg-color: lighten(@bg, 15);
 @slider-handle-border-color: @accent;
 
@@ -204,55 +209,46 @@
 // XSheet Spreadsheet Viewer
 @xsheet-text-color:                         @text-color;
 @xsheet-bg-color:                           lighten(@bg, 7.12);
-@xsheet-LightLine-color:                    darken(@bg, 10);
-@xsheet-MarkerLine-color:                   rgb(0, 255, 246);
+@xsheet-LightLine-color:                    darken(@bg, 12);
+@xsheet-MarkerLine-color:                   #000; //rgb(0, 255, 246);
 @xsheet-VerticalLine-color:                 darken(@bg, 11);
 @xsheet-VerticalLineHead-color:             darken(@bg, 28);
-@xsheet-PreviewFrameText-color:             #000eb6;
-@xsheet-CurrentRowBG-color:                 rgb(210,210,210);
+@xsheet-PreviewFrameText-color:             #000; //#000eb6;
+@xsheet-CurrentRowBG-color:                 #B5C0D0;
 
 @xsheet-EmptyColumnHead-color:              darken(@bg, 5);
 @xsheet-SelectedColumnText-color:           darken(rgb(255, 0, 0), 15);
 
 @xsheet-EmptyCell-color:                    darken(@bg, 1.57);
 @xsheet-NotEmptyColumn-color:               lighten(@bg, 4);
-@xsheet-SelectedEmptyCell-color:            lighten(@bg, 32.16);
+@xsheet-SelectedEmptyCell-color:            lighten(@bg, 20);
 
 @xsheet-LevelColumn-color:                  rgb(118, 183, 118);
 @xsheet-LevelColumnBorder-color:            darken(desaturate(@xsheet-LevelColumn-color, 15), 25);
-@xsheet-SelectedLevelColumn-color:          lighten(@xsheet-LevelColumn-color, 15);
 
 @xsheet-VectorColumn-color:                 rgb(192, 192, 122);
-@xsheet-VectorColumnBorder-color:           darken(desaturate(@xsheet-VectorColumn-color, 15), 35);
-@xsheet-SelectedVectorColumn-color:         rgb(234,234,194);
+@xsheet-VectorColumnBorder-color:           darken(desaturate(@xsheet-VectorColumn-color, 15), 25);
 
 @xsheet-ChildColumn-color:                  rgb(214,154,219);
-@xsheet-ChildColumnBorder-color:            darken(desaturate(@xsheet-ChildColumn-color, 15), 35);
-@xsheet-SelectedChildColumn-color:          rgb(235,205,237);
+@xsheet-ChildColumnBorder-color:            darken(desaturate(@xsheet-ChildColumn-color, 15), 25);
 
 @xsheet-FullColorColumn-color:              rgb(139, 189, 193);
-@xsheet-FullColorColumnBorder-color:        darken(desaturate(@xsheet-FullColorColumn-color, 15), 35);
-@xsheet-SelectedFullColorColumn-color:      rgb(205,235,237);
+@xsheet-FullColorColumnBorder-color:        darken(desaturate(@xsheet-FullColorColumn-color, 15), 25);
 
 @xsheet-FxColumn-color:                     rgb(130,129,93);
 @xsheet-FxColumnBorder-color:               darken(desaturate(@xsheet-FxColumn-color, 10), 20);
-@xsheet-SelectedFxColumn-color:             rgb(193,192,174);
 
 @xsheet-ReferenceColumn-color:              rgb(171,171,171);
-@xsheet-ReferenceColumnBorder-color:        darken(desaturate(@xsheet-ReferenceColumn-color, 15), 35);
-@xsheet-SelectedReferenceColumn-color:      rgb(213,213,213);
+@xsheet-ReferenceColumnBorder-color:        darken(desaturate(@xsheet-ReferenceColumn-color, 15), 25);
 
 @xsheet-PaletteColumn-color:                rgb(42,171,154);
-@xsheet-PaletteColumnBorder-color:          darken(desaturate(@xsheet-PaletteColumn-color, 15), 35);
-@xsheet-SelectedPaletteColumn-color:        rgb(146,221,202);
+@xsheet-PaletteColumnBorder-color:          darken(desaturate(@xsheet-PaletteColumn-color, 15), 25);
 
 @xsheet-MeshColumn-color:                   rgb(172, 120, 212);
-@xsheet-MeshColumnBorder-color:             darken(desaturate(@xsheet-MeshColumn-color, 15), 35);
-@xsheet-SelectedMeshColumn-color:           rgb(216,180,245);
+@xsheet-MeshColumnBorder-color:             darken(desaturate(@xsheet-MeshColumn-color, 15), 25);
 
 @xsheet-SoundColumn-color:                  rgb(172, 186, 130);
-@xsheet-SoundColumnBorder-color:            darken(desaturate(@xsheet-SoundColumn-color, 15), 35);
-@xsheet-SelectedSoundColumn-color:          rgb(215,215,180);
+@xsheet-SoundColumnBorder-color:            darken(desaturate(@xsheet-SoundColumn-color, 15), 25);
 @xsheet-SoundColumnHL-color:                rgb(245,255,230);
 @xsheet-SoundColumnTrack-color:             rgb(90,100,45);
 
@@ -285,10 +281,8 @@
 // Function Spreadsheet Viewer
 @function-KeyFrame-color: rgb(219,139,54);
 @function-KeyFrameBorder-color: darken(desaturate(@function-KeyFrame-color, 15), 35);
-@function-SelectedKeyFrame-color: rgb(237,197,155);
 
 @function-Inbetween-color: rgb(194,194,176);
 @function-InbetweenBorder-color: rgb(72,72,65);
-@function-SelectedInbetween-color: rgb(225,225,216);
 
 @function-SelectedSceneRangeEmpty-color: rgb(210,210,210);
