@@ -2615,6 +2615,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected) {
       menu.addAction(cmdManager->getAction(MI_Rollup));
       menu.addAction(cmdManager->getAction(MI_Rolldown));
       menu.addAction(cmdManager->getAction(MI_TimeStretch));
+      menu.addAction(cmdManager->getAction(MI_AutoInputCellNumber));
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_Autorenumber));
     }
