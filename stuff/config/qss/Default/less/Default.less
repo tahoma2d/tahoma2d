@@ -108,7 +108,7 @@
 // Trees
 // -----------------------------------------------------------------------------
 
-@tree-bg-color: darken(@bg, 9);
+@tree-bg-color: darken(@bg, 8);
 @tree-bg-color-alt: lighten(@tree-bg-color, 2);
 
 // -----------------------------------------------------------------------------
@@ -119,7 +119,7 @@
 @button-margin: 0;
 
 @button-bg-color: lighten(@bg, 13);
-@button-border-color: darken(@bg, 3);
+@button-border-color: darken(@bg, 0);
 @button-text-color: lighten(@text-color, 5);
 
 @button-bg-color-hover: lighten(@button-bg-color, 5);
@@ -139,7 +139,7 @@
 
 @button-bg-color-focus: @selected-bg-color;
 @button-border-color-focus: @button-dialog-border-color;
-@button-text-color-focus: @button-text-color;
+@button-text-color-focus: lighten(@button-text-color, 10);
 
 @button-bg-color-focus-hover: lighten(@button-bg-color-focus, 8);
 
@@ -148,7 +148,7 @@
 @button-text-color-disabled: @text-color-disabled;
 
 // For QDialogs
-@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 3);
+@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 0);
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
@@ -215,7 +215,7 @@
 // -----------------------------------------------------------------------------
 
 @input-bg-color: darken(@bg, 10);
-@input-border-color: darken(@input-bg-color, 2);
+@input-border-color: darken(@input-bg-color, 1);
 @input-text-color: @text-color;
 
 @input-bg-color-focus: @input-bg-color;
@@ -280,12 +280,12 @@
 @browser-folder-text-color-selected: @selected-text-color;
 
 // Left Pane
-@browser-listview-bg-color: @bg;
+@browser-listview-bg-color: @tree-bg-color;
 @browser-listview-bg-color-alt: @browser-listview-bg-color;
 
 // Right Pane
-@browser-itemview-bg-color: @tree-bg-color;
-@browser-itemview-bg-color-alt: @tree-bg-color-alt;
+@browser-itemview-bg-color: @bg;
+@browser-itemview-bg-color-alt: darken(@browser-itemview-bg-color, 3);
 
 // -----------------------------------------------------------------------------
 // Viewer Window

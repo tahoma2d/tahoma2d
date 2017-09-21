@@ -41,13 +41,13 @@
 @topbar-bg-color: @bg;
 
 // Workspace Tabs
-@rooms-tab-bg-color: @tab-bg-color;
+@rooms-tab-bg-color: @topbar-bg-color;
 @rooms-tab-text-color: @tab-text-color;
 
-@rooms-tab-bg-color-hover: @tab-bg-color-hover;
+@rooms-tab-bg-color-hover: lighten(@rooms-tab-bg-color, 15);
 @rooms-text-color-hover: @rooms-tab-text-color;
 
-@rooms-tab-bg-color-selected: lighten(@bg, 8);
+@rooms-tab-bg-color-selected: @button-bg-color-focus;
 @rooms-tab-text-color-selected: @tab-text-color-selected;
 
 // -----------------------------------------------------------------------------
@@ -87,7 +87,7 @@
 // Trees
 // -----------------------------------------------------------------------------
 
-@tree-bg-color: lighten(@bg, 8);
+@tree-bg-color: lighten(@bg, 10);
 @tree-bg-color-alt: lighten(@tree-bg-color, 3);
 
 // -----------------------------------------------------------------------------
@@ -146,6 +146,8 @@
 @input-bg-color: lighten(@bg, 30);
 @input-border-color: darken(@bg, 18);
 
+@input-border-color-focus: @input-border-color;
+
 // -----------------------------------------------------------------------------
 // CheckBox
 // -----------------------------------------------------------------------------
@@ -168,7 +170,7 @@
 @browser-folder-text-color: #000eb6;
 
 // Left Pane
-@browser-listview-bg-color: #A4A4A4;
+@browser-listview-bg-color: #969696;
 
 // Right Pane
 @browser-itemview-bg-color: @tree-bg-color;
