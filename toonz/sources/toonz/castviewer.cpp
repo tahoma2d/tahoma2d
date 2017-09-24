@@ -725,6 +725,7 @@ QMenu *CastBrowser::getContextMenu(QWidget *parent, int index) {
   bool audioSelected       = false;
   bool paletteSelected     = false;
   bool vectorLevelSelected = false;
+  bool meshLevelSelected   = false;
   bool otherFileSelected   = false;
   int levelSelectedCount   = 0;
   for (it = indices.begin(); it != indices.end(); ++it) {
@@ -742,6 +743,8 @@ QMenu *CastBrowser::getContextMenu(QWidget *parent, int index) {
     levelSelectedCount++;
     if (sl->getType() == PLI_XSHLEVEL)
       vectorLevelSelected = true;
+	else if(sl->getType() == MESH_XSHLEVEL)
+	  meshLevelSelected = true;
     else
       otherFileSelected = true;
   }
@@ -752,7 +755,7 @@ QMenu *CastBrowser::getContextMenu(QWidget *parent, int index) {
 
   menu->addAction(cm->getAction(MI_ExposeResource));
   menu->addAction(cm->getAction(MI_ShowFolderContents));
-  if(!audioSelected && !paletteSelected)
+  if(!audioSelected && !paletteSelected && !meshLevelSelected)
 	  menu->addAction(cm->getAction(MI_ViewFile));
   menu->addAction(cm->getAction(MI_FileInfo));
 
