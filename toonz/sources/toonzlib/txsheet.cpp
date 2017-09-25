@@ -849,7 +849,7 @@ void TXsheet::eachCells(int r0, int c0, int r1, int c1, int type) {
 //-----------------------------------------------------------------------------
 /*! force cells order in n-steps. returns the row amount after process
  */
-int TXsheet::reframeCells(int r0, int r1, int col, int type) {
+int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
   // Row amount in the selection
   int nr = r1 - r0 + 1;
 
@@ -864,10 +864,25 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type) {
       cells.push_back(getCell(CellPosition(r, col)));
   }
 
+  // if withBlank is greater than -1, remove empty cells from cell order
+  if (withBlank >= 0) {
+    auto itr = cells.begin();
+    while (itr != cells.end()) {
+      if ((*itr).isEmpty())
+        itr = cells.erase(itr);
+      else
+        itr++;
+    }
+  }
+
   if (cells.empty()) return 0;
 
   // row amount after n-step
   int nrows = cells.size() * type;
+
+  if (withBlank > 0) {
+    nrows += cells.size() * withBlank * type;
+  }
 
   // if needed, insert cells
   if (nr < nrows) {
@@ -886,6 +901,13 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type) {
         setCell(i + i1, col, cells[k]);
     }
     i += type;  // dipende dal tipo di step (2 o 3 per ora)
+
+    if (withBlank > 0) {
+      for (int i1 = 0; i1 < withBlank * type; i1++) {
+        clearCells(i + i1, col);
+      }
+      i += withBlank * type;
+    }
   }
 
   return nrows;  // return row amount after process

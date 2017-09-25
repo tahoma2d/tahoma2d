@@ -1430,7 +1430,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
 #ifdef _WIN32
     fontName = "Arial";
 #else
-    fontName          = "Helvetica";
+    fontName = "Helvetica";
 #endif
   }
   static QFont font(fontName, -1, QFont::Normal);
@@ -2590,6 +2590,8 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected) {
         reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe2));
         reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe3));
         reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe4));
+        reframeSubMenu->addAction(
+            cmdManager->getAction(MI_ReframeWithEmptyInbetweens));
       }
       menu.addMenu(reframeSubMenu);
 

@@ -305,6 +305,7 @@
 #define MI_Reframe2 "MI_Reframe2"
 #define MI_Reframe3 "MI_Reframe3"
 #define MI_Reframe4 "MI_Reframe4"
+#define MI_ReframeWithEmptyInbetweens "MI_ReframeWithEmptyInbetweens"
 
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
