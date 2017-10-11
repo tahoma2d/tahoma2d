@@ -6,15 +6,13 @@
 #include <QOpenGLWidget>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QOpenGLFunctions>
 #include "toonzqt/gutil.h"
 
-// use obsolete QGLWidget instead of QOpenGLWidget for now...
-// TODO: replace with the "modern" OpenGL source and transfer to QOpenGLWidget
-class GLWidgetForHighDpi : public QOpenGLWidget {
+class GLWidgetForHighDpi : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
-  GLWidgetForHighDpi(QWidget *parent                  = Q_NULLPTR,
-                     const QOpenGLWidget *shareWidget = Q_NULLPTR,
-                     Qt::WindowFlags f                = Qt::WindowFlags())
+  GLWidgetForHighDpi(QWidget *parent   = Q_NULLPTR,
+                     Qt::WindowFlags f = Qt::WindowFlags())
       : QOpenGLWidget(parent, f) {}
 
   //  modify sizes for high DPI monitors

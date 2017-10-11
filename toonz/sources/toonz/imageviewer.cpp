@@ -412,6 +412,7 @@ void ImageViewer::hideHistogram() {
 //-------------------------------------------------------------------
 
 void ImageViewer::initializeGL() {
+  initializeOpenGLFunctions();
   // glClearColor(1.0,1.0,1.0,1);
   glClear(GL_COLOR_BUFFER_BIT);
 

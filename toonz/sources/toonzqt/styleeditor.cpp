@@ -585,6 +585,7 @@ HexagonalColorWheel::~HexagonalColorWheel() {
 //-----------------------------------------------------------------------------
 
 void HexagonalColorWheel::initializeGL() {
+  initializeOpenGLFunctions();
   QColor const color = getBGColor();
   glClearColor(color.redF(), color.greenF(), color.blueF(), color.alphaF());
 
