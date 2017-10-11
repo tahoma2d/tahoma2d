@@ -12,9 +12,9 @@
 // TODO: replace with the "modern" OpenGL source and transfer to QOpenGLWidget
 class GLWidgetForHighDpi : public QOpenGLWidget {
 public:
-  GLWidgetForHighDpi(QWidget *parent              = Q_NULLPTR,
+  GLWidgetForHighDpi(QWidget *parent                  = Q_NULLPTR,
                      const QOpenGLWidget *shareWidget = Q_NULLPTR,
-                     Qt::WindowFlags f            = Qt::WindowFlags())
+                     Qt::WindowFlags f                = Qt::WindowFlags())
       : QOpenGLWidget(parent, f) {}
 
   //  modify sizes for high DPI monitors

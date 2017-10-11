@@ -173,8 +173,8 @@ public:  // Sub-classes
     PERSIST_DECLARATION(ShaderData)
 
   public:
-    QString m_name;                //!< A name associated to the shader action
-    TFilePath m_path;              //!< The shader program's file path
+    QString m_name;    //!< A name associated to the shader action
+    TFilePath m_path;  //!< The shader program's file path
     QOpenGLShader::ShaderType m_type;  //!< The shader type
 
   public:

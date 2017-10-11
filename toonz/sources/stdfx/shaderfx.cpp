@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QOpenGLShaderProgram>
 #include <QCoreApplication>
+#include <QOffscreenSurface>
 
 // Glew include
 #include <GL/glew.h>
@@ -191,10 +192,9 @@ public:
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
 private:
-  QOpenGLShaderProgram *touchShaderProgram(const ShaderInterface::ShaderData &sd,
-                                       ShadingContext &context,
-                                       int varyingsCount       = 0,
-                                       const GLchar **varyings = 0);
+  QOpenGLShaderProgram *touchShaderProgram(
+      const ShaderInterface::ShaderData &sd, ShadingContext &context,
+      int varyingsCount = 0, const GLchar **varyings = 0);
 
   void bindParameters(QOpenGLShaderProgram *shaderProgram, double frame);
 
@@ -230,8 +230,9 @@ public:
 class ShadingContextManager final : public QObject {
   mutable QMutex m_mutex;
 
-  ShadingContext m_shadingContext;
+  std::unique_ptr<ShadingContext> m_shadingContext;
   TAtomicVar m_activeRenderInstances;
+  std::unique_ptr<QOffscreenSurface> m_surface;
 
 public:
   ShadingContextManager() {
@@ -251,7 +252,10 @@ Suggestions are welcome as this is a tad beyond ridiculous...
     assert(thread() ==
            mainScopeBoundObject
                ->thread());  // Parent object must be in the same thread,
-    //setParent(mainScopeBoundObject);  // otherwise reparenting fails
+    // setParent(mainScopeBoundObject);  // otherwise reparenting fails
+    m_surface.reset(new QOffscreenSurface());
+    m_surface->create();
+    m_shadingContext.reset(new ShadingContext(m_surface.get()));
   }
 
   static ShadingContextManager *instance() {
@@ -261,8 +265,8 @@ Suggestions are welcome as this is a tad beyond ridiculous...
 
   QMutex *mutex() const { return &m_mutex; }
 
-  const ShadingContext &shadingContext() const { return m_shadingContext; }
-  ShadingContext &shadingContext() { return m_shadingContext; }
+  const ShadingContext &shadingContext() const { return *m_shadingContext; }
+  ShadingContext &shadingContext() { return *m_shadingContext; }
 
   void onRenderInstanceStart() { ++m_activeRenderInstances; }
 
@@ -271,8 +275,8 @@ Suggestions are welcome as this is a tad beyond ridiculous...
       QMutexLocker mLocker(&m_mutex);
 
       // Release the shading context's output buffer
-      ::ContextLocker cLocker(m_shadingContext);
-      m_shadingContext.resize(0, 0);
+      ::ContextLocker cLocker(*m_shadingContext);
+      m_shadingContext->resize(0, 0);
 
 #ifdef DIAGNOSTICS
       DIAGNOSTICS_DUMP("ShaderLogs");
@@ -286,7 +290,7 @@ Suggestions are welcome as this is a tad beyond ridiculous...
       ShadingContextManager *m_this;
       ShadingContext::Support support() {
         QMutexLocker mLocker(&m_this->m_mutex);
-        ::ContextLocker cLocker(m_this->m_shadingContext);
+        ::ContextLocker cLocker(*m_this->m_shadingContext);
 
         return ShadingContext::support();
       }
@@ -315,6 +319,8 @@ Suggestions are welcome as this is a tad beyond ridiculous...
 
     return sup;
   }
+
+  QOffscreenSurface *getSurface() { return m_surface.get(); }
 };
 
 template class DV_EXPORT_API TFxDeclarationT<ShaderFx>;
@@ -603,7 +609,8 @@ bool ShaderFx::doGetBBox(double frame, TRectD &bbox,
   QMutexLocker mLocker(manager->mutex());
 
   // ShadingContext& context = manager->shadingContext();
-  std::shared_ptr<ShadingContext> shadingContextPtr(new ShadingContext);
+  std::shared_ptr<ShadingContext> shadingContextPtr(
+      new ShadingContext(manager->getSurface()));
   ShadingContext &context = *shadingContextPtr.get();
 
   ::ContextLocker cLocker(context);
@@ -687,7 +694,8 @@ QOpenGLShaderProgram *ShaderFx::touchShaderProgram(
 
       int c, cCount = children.size();
       for (c = 0; c != cCount; ++c) {
-        if (QOpenGLShader *shader = dynamic_cast<QOpenGLShader *>(children[c])) {
+        if (QOpenGLShader *shader =
+                dynamic_cast<QOpenGLShader *>(children[c])) {
           const QString &log = shader->log();
           if (!log.isEmpty()) DVGui::info(log);
         }
@@ -967,7 +975,7 @@ void ShaderFx::doCompute(TTile &tile, double frame,
                                        const TDimension &size, int bpp) {
       const QOpenGLFramebufferObjectFormat &fmt = makeFormat(bpp);
 
-      const TDimension &currentSize                = context.size();
+      const TDimension &currentSize                    = context.size();
       const QOpenGLFramebufferObjectFormat &currentFmt = context.format();
 
       if (currentSize.lx < size.lx || currentSize.ly < size.ly ||
@@ -983,8 +991,8 @@ void ShaderFx::doCompute(TTile &tile, double frame,
   QMutexLocker mLocker(
       manager->mutex());  // As GPU access can be considered sequential anyway,
                           // lock the full-scale mutex
-
-  std::shared_ptr<ShadingContext> shadingContextPtr(new ShadingContext);
+  std::shared_ptr<ShadingContext> shadingContextPtr(
+      new ShadingContext(manager->getSurface()));
   ShadingContext &context = *shadingContextPtr.get();
   // ShadingContext& context = manager->shadingContext();
 
@@ -1142,7 +1150,8 @@ void ShaderFx::doDryCompute(TRectD &rect, double frame,
   QMutexLocker mLocker(manager->mutex());
 
   // ShadingContext& context = manager->shadingContext();
-  std::shared_ptr<ShadingContext> shadingContextPtr(new ShadingContext);
+  std::shared_ptr<ShadingContext> shadingContextPtr(
+      new ShadingContext(manager->getSurface()));
   ShadingContext &context = *shadingContextPtr.get();
 
   int pCount = getInputPortCount();

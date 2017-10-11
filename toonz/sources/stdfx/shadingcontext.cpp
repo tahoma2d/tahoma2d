@@ -11,7 +11,6 @@
 #include <QThread>
 #include <QDateTime>
 
-
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLContext>
@@ -48,9 +47,9 @@ public:
 TQOpenGLWidget::TQOpenGLWidget() {}
 
 void TQOpenGLWidget::initializeGL() {
-	QOffscreenSurface *surface = new QOffscreenSurface();
-		//context()->create();
-			//context()->makeCurrent(surface);
+  QOffscreenSurface *surface = new QOffscreenSurface();
+  // context()->create();
+  // context()->makeCurrent(surface);
 }
 
 //*****************************************************************
@@ -58,8 +57,8 @@ void TQOpenGLWidget::initializeGL() {
 //*****************************************************************
 
 struct ShadingContext::Imp {
-	QOpenGLContextP  m_context;  //!< OpenGL context.
-  QOpenGLFramebufferObjectP m_fbo;    //!< Output buffer.
+  QOpenGLContextP m_context;        //!< OpenGL context.
+  QOpenGLFramebufferObjectP m_fbo;  //!< Output buffer.
   QOffscreenSurface *m_surface;
 
   std::map<QString,
@@ -81,8 +80,7 @@ private:
 
 //--------------------------------------------------------
 
-ShadingContext::Imp::Imp()
-    : m_context(new QOpenGLContext()), m_surface() {}
+ShadingContext::Imp::Imp() : m_context(new QOpenGLContext()), m_surface() {}
 
 //--------------------------------------------------------
 
@@ -112,16 +110,16 @@ void ShadingContext::Imp::initMatrix(int lx, int ly) {
 //    ShadingContext  implementation
 //*****************************************************************
 
-ShadingContext::ShadingContext() : m_imp(new Imp) {
-	m_imp->m_surface = new QOffscreenSurface();
-	m_imp->m_surface->create();
-	QSurfaceFormat format;
-	m_imp->m_context->setFormat(format);
-	m_imp->m_context->create();
-	m_imp->m_context->makeCurrent(m_imp->m_surface);
-	
-  //m_imp->m_pixelBuffer->context()->create();
-  //m_imp->m_fbo(new QOpenGLFramebufferObject(1, 1));
+ShadingContext::ShadingContext(QOffscreenSurface *surface) : m_imp(new Imp) {
+  m_imp->m_surface = surface;
+  m_imp->m_surface->create();
+  QSurfaceFormat format;
+  m_imp->m_context->setFormat(format);
+  m_imp->m_context->create();
+  m_imp->m_context->makeCurrent(m_imp->m_surface);
+
+  // m_imp->m_pixelBuffer->context()->create();
+  // m_imp->m_fbo(new QOpenGLFramebufferObject(1, 1));
   makeCurrent();
   glewExperimental = GL_TRUE;
   glewInit();
@@ -141,10 +139,11 @@ ShadingContext::~ShadingContext() {
 //--------------------------------------------------------
 
 ShadingContext::Support ShadingContext::support() {
-  //return !QGLPixelBuffer::hasOpenGLPbuffers()
+  // return !QGLPixelBuffer::hasOpenGLPbuffers()
   //           ? NO_PIXEL_BUFFER
-  //           : !QOpenGLShaderProgram::hasOpenGLShaderPrograms() ? NO_SHADERS : OK;
-	return OK;
+  //           : !QOpenGLShaderProgram::hasOpenGLShaderPrograms() ? NO_SHADERS :
+  //           OK;
+  return !QOpenGLShaderProgram::hasOpenGLShaderPrograms() ? NO_SHADERS : OK;
 }
 
 //--------------------------------------------------------
@@ -183,12 +182,12 @@ USE HARDWARE ACCELERATION
 //--------------------------------------------------------
 
 void ShadingContext::makeCurrent() {
-	m_imp->m_context->moveToThread(QThread::currentThread());
+  m_imp->m_context->moveToThread(QThread::currentThread());
   m_imp->m_context.reset(new QOpenGLContext());
-	QSurfaceFormat format;
-	m_imp->m_context->setFormat(format);
-	m_imp->m_context->create();
-	m_imp->m_context->makeCurrent(m_imp->m_surface);
+  QSurfaceFormat format;
+  m_imp->m_context->setFormat(format);
+  m_imp->m_context->create();
+  m_imp->m_context->makeCurrent(m_imp->m_surface);
 }
 
 //--------------------------------------------------------
@@ -209,12 +208,12 @@ void ShadingContext::resize(int lx, int ly,
   if (lx == 0 || ly == 0) {
     m_imp->m_fbo.reset(0);
   } else {
-	bool get = m_imp->m_fbo.get();
-	QOpenGLContext *currContext = m_imp->m_context->currentContext();
-	bool yes = false;
-	if (currContext) bool yes = true;
-	while (!currContext) currContext = m_imp->m_context->currentContext();
-	m_imp->m_fbo.reset(new QOpenGLFramebufferObject(lx, ly, fmt));
+    bool get                         = m_imp->m_fbo.get();
+    QOpenGLContext *currContext      = m_imp->m_context->currentContext();
+    bool yes                         = false;
+    if (currContext) bool yes        = true;
+    while (!currContext) currContext = m_imp->m_context->currentContext();
+    m_imp->m_fbo.reset(new QOpenGLFramebufferObject(lx, ly, fmt));
     assert(m_imp->m_fbo->isValid());
 
     m_imp->m_fbo->bind();

@@ -571,7 +571,7 @@ SceneViewer::~SceneViewer() {
     std::set<TGlContext>::iterator ct, cEnd(l_contexts.end());
     for (ct = l_contexts.begin(); ct != cEnd; ++ct)
       TGLDisplayListsManager::instance()->releaseContext(*ct);
-    //assert(!l_proxy);
+    // assert(!l_proxy);
   }
 
   makeCurrent();
@@ -635,8 +635,8 @@ void SceneViewer::onPreviewUpdate() {
 
 void SceneViewer::startForegroundDrawing() {
   makeCurrent();
-  //setAutoBufferSwap(false);
-  update(); // needed?
+  // setAutoBufferSwap(false);
+  update();  // needed?
   glPushMatrix();
   tglMultMatrix(getViewMatrix());
 
@@ -668,8 +668,8 @@ void SceneViewer::endForegroundDrawing() {
     assert(glGetError() == GL_NO_ERROR);
   }
 
-  //setAutoBufferSwap(true);
-  update(); // needed?
+  // setAutoBufferSwap(true);
+  update();  // needed?
   m_foregroundDrawing = false;
 }
 

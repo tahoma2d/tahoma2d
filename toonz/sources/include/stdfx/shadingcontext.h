@@ -33,7 +33,7 @@
 class QObject;
 class QOpenGLShaderProgram;
 class QDateTime;
-class QOffScreenSurface;
+class QOffscreenSurface;
 
 //=========================================================
 
@@ -42,7 +42,7 @@ public:
   enum Support { OK, NO_PIXEL_BUFFER, NO_SHADERS };
 
 public:
-  ShadingContext();
+  ShadingContext(QOffscreenSurface *);
   ~ShadingContext();
 
   //! Returns the status of OpenGL shading support.
@@ -66,8 +66,10 @@ the context's output buffer is destroyed.
 
   //! Surrenders ownership of the supplied shader program to the shading
   //! context.
-  void addShaderProgram(const QString &shaderName, QOpenGLShaderProgram *program);
-  void addShaderProgram(const QString &shaderName, QOpenGLShaderProgram *program,
+  void addShaderProgram(const QString &shaderName,
+                        QOpenGLShaderProgram *program);
+  void addShaderProgram(const QString &shaderName,
+                        QOpenGLShaderProgram *program,
                         const QDateTime &lastModified);
   bool removeShaderProgram(const QString &shaderName);
 
@@ -103,8 +105,8 @@ private:
 
 class TQOpenGLWidget : public QOpenGLWidget {
 public:
-	TQOpenGLWidget();
-	void initializeGL() override;
+  TQOpenGLWidget();
+  void initializeGL() override;
 };
 
 #endif  // SHADINGCONTEXT_H
