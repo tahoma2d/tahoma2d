@@ -86,7 +86,9 @@ struct ProgramBinder {
 
 public:
   ProgramBinder(QOpenGLShaderProgram *prog) : m_prog(prog) { m_prog->bind(); }
-  ~ProgramBinder() { m_prog->release(); }
+  ~ProgramBinder() {
+    glUseProgram(0);  // m_prog->release();
+  }
 };
 
 struct RectF {
