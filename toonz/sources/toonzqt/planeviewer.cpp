@@ -133,6 +133,8 @@ void PlaneViewer::drawBackground() {
 void PlaneViewer::initializeGL() { initializeOpenGLFunctions(); }
 
 void PlaneViewer::resizeGL(int width, int height) {
+  width *= getDevPixRatio();
+  height *= getDevPixRatio();
   glViewport(0, 0, width, height);
 
   glMatrixMode(GL_PROJECTION);

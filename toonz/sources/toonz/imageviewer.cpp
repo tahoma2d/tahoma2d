@@ -425,6 +425,8 @@ void ImageViewer::initializeGL() {
 //-----------------------------------------------------------------------------
 
 void ImageViewer::resizeGL(int w, int h) {
+  w *= getDevPixRatio();
+  h *= getDevPixRatio();
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
