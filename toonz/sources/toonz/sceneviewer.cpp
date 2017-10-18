@@ -879,8 +879,10 @@ void SceneViewer::resizeGL(int w, int h) {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-
   glOrtho(0, w, 0, h, -4000, 4000);
+  m_projectionMatrix.setToIdentity();
+  m_projectionMatrix.ortho(0, w, 0, h, -4000, 4000);
+
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glTranslatef(0.375, 0.375, 0.0);
@@ -1650,7 +1652,8 @@ double SceneViewer::projectToZ(const TPoint &delta) {
   GLint viewport[4];
   double modelview[16], projection[16];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  glGetDoublev(GL_PROJECTION_MATRIX, projection);
+  for (int i      = 0; i < 16; i++)
+    projection[i] = (double)m_projectionMatrix.constData()[i];
   glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
   double ax, ay, az, bx, by, bz;
