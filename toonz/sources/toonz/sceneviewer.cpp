@@ -1400,10 +1400,7 @@ void SceneViewer::paintGL() {
      * GL_FRAMEBUFFER_UNDEFINED の状態で paintGL() が呼ばれてしまうようだ */
     return;
   }
-#ifdef WIN32
-  // following line is necessary to solve a problem Windows 7
-  SetWindowRgn((HWND)winId(), 0, FALSE);
-#else
+#ifdef MACOSX
   // followin lines are necessary to solve a problem on iMac20
   // It seems that for some errors in the openGl implementation, buffers are not
   // set corretly.
