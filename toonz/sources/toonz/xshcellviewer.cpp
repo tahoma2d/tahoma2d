@@ -2685,7 +2685,14 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected) {
     menu.addAction(cmdManager->getAction(MI_Cut));
     menu.addAction(cmdManager->getAction(MI_Copy));
     menu.addAction(cmdManager->getAction(MI_Paste));
-    menu.addAction(cmdManager->getAction(MI_PasteInto));
+
+    QMenu *pasteSpecialMenu = new QMenu(tr("Paste Special"), this);
+    {
+      pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteInto));
+      pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteNumbers));
+    }
+    menu.addMenu(pasteSpecialMenu);
+
     menu.addAction(cmdManager->getAction(MI_Clear));
     menu.addAction(cmdManager->getAction(MI_Insert));
     menu.addSeparator();

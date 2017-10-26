@@ -522,8 +522,8 @@ int main(int argc, char *argv[]) {
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + "Initializing OpenToonz ...",
-                     Qt::AlignCenter, Qt::white);
+  splash.showMessage(offsetStr + "Initializing OpenToonz ...", Qt::AlignCenter,
+                     Qt::white);
   a.processEvents();
 
   TTool::setApplication(TApp::instance());
