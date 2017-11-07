@@ -2,6 +2,59 @@
 
 #include "toonz/tpalettehandle.h"
 
+#include "tundo.h"
+#include "historytypes.h"
+
+//=============================================================================
+// AutopaintToggleUndo
+//-----------------------------------------------------------------------------
+
+namespace {
+  class AutopaintToggleUndo final : public TUndo {
+    TPaletteHandle *m_paletteHandle;
+    TPaletteP m_palette;
+    int m_styleId;
+    bool m_flag;
+
+  public:
+    AutopaintToggleUndo(TPaletteHandle *paletteHandle, int styleId)
+      : m_paletteHandle(paletteHandle)
+      , m_palette(paletteHandle->getPalette())
+      , m_styleId(styleId)
+    {}
+
+    void toggleAutopaint() const {
+      TColorStyle *s = m_palette->getStyle(m_styleId);
+      s->setFlags(s->getFlags() == 0 ? 1 : 0);
+      m_paletteHandle->notifyColorStyleChanged();
+    }
+
+    void undo() const override {
+      toggleAutopaint();
+    }
+
+    void redo() const override {
+      toggleAutopaint();
+    }
+
+    void onAdd() { redo(); }
+
+    int getSize() const override {
+      return sizeof(*this);
+    }
+
+    QString getHistoryString() override {
+      return QObject::tr(
+        "Toggle Autopaint Option  Palette : %1  Style#%2")
+        .arg(QString::fromStdWString(m_palette->getPaletteName()))
+        .arg(QString::number(m_styleId));
+    }
+
+    int getHistoryType() override { return HistoryType::Palette; }
+  };
+
+}  // namespace
+
 //=============================================================================
 // TPaletteHandle
 //-----------------------------------------------------------------------------
@@ -142,4 +195,13 @@ void TPaletteHandle::notifyColorStyleChanged(bool onDragging,
   emit broadcastColorStyleChanged();
 
   if (!onDragging) emit broadcastColorStyleChangedOnMouseRelease();
+}
+
+//-----------------------------------------------------------------------------
+
+void TPaletteHandle::toggleAutopaint() {
+  int index = getStyleIndex();
+  if (index > 0) {
+    TUndoManager::manager()->add(new AutopaintToggleUndo(this, index));
+  }
 }

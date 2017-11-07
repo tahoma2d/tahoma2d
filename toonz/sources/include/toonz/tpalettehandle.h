@@ -62,6 +62,7 @@ public:
   void notifyPaletteDirtyFlagChanged() { emit paletteDirtyFlagChanged(); }
   void notifyPaletteLockChanged() { emit paletteLockChanged(); }
 
+  void toggleAutopaint();
 public:
 signals:
 
