@@ -755,7 +755,7 @@ void SceneViewer::showEvent(QShowEvent *) {
 
   TPaletteHandle *paletteHandle =
       app->getPaletteController()->getCurrentLevelPalette();
-  connect(paletteHandle, SIGNAL(colorStyleChanged()), this, SLOT(update()));
+  connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this, SLOT(update()));
 
   connect(app->getCurrentObject(), SIGNAL(objectSwitched()), this,
           SLOT(onObjectSwitched()));

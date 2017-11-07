@@ -748,7 +748,7 @@ StyleIndexFieldAndChip::StyleIndexFieldAndChip(TTool *tool,
 
   setPaletteHandle(pltHandle);
   connect(pltHandle, SIGNAL(colorStyleSwitched()), SLOT(updateColor()));
-  connect(pltHandle, SIGNAL(colorStyleChanged()), SLOT(updateColor()));
+  connect(pltHandle, SIGNAL(colorStyleChanged(bool)), SLOT(updateColor()));
 }
 
 //-----------------------------------------------------------------------------

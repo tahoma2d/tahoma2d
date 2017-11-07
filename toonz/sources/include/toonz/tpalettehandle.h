@@ -63,6 +63,7 @@ public:
   void notifyPaletteLockChanged() { emit paletteLockChanged(); }
 
   void toggleAutopaint();
+
 public:
 signals:
 
@@ -70,7 +71,7 @@ signals:
   void paletteChanged();
   void paletteTitleChanged();
   void colorStyleSwitched();
-  void colorStyleChanged();
+  void colorStyleChanged(bool);
   void colorStyleChangedOnMouseRelease();
   void paletteDirtyFlagChanged();
   void paletteLockChanged();
@@ -90,7 +91,7 @@ signals:
   void broadcastPaletteChanged();
   void broadcastPaletteTitleChanged();
   void broadcastColorStyleSwitched();
-  void broadcastColorStyleChanged();
+  void broadcastColorStyleChanged(bool);
   void broadcastColorStyleChangedOnMouseRelease();
 };
 
