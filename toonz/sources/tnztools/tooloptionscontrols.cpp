@@ -114,6 +114,14 @@ void ToolOptionCheckbox::updateStatus() {
 
 //-----------------------------------------------------------------------------
 
+void ToolOptionCheckbox::nextCheckState() {
+  QAbstractButton::nextCheckState();
+  m_property->setValue(checkState() == Qt::Checked);
+  notifyTool();
+}
+
+//-----------------------------------------------------------------------------
+
 void ToolOptionCheckbox::doClick(bool checked) {
   if (m_toolHandle && m_toolHandle->getTool() != m_tool) return;
   // active only if the belonging combo-viewer is visible
