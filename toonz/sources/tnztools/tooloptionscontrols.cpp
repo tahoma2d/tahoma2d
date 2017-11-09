@@ -102,6 +102,11 @@ ToolOptionCheckbox::ToolOptionCheckbox(TTool *tool, TBoolProperty *property,
 
 void ToolOptionCheckbox::updateStatus() {
   bool check = m_property->getValue();
+
+  if (!actions().isEmpty() && actions()[0]->isCheckable() &&
+      actions()[0]->isChecked() != check)
+    actions()[0]->setChecked(check);
+
   if (isChecked() == check) return;
 
   setCheckState(check ? Qt::Checked : Qt::Unchecked);
@@ -117,11 +122,16 @@ void ToolOptionCheckbox::nextCheckState() {
 
 //-----------------------------------------------------------------------------
 
-void ToolOptionCheckbox::doClick() {
+void ToolOptionCheckbox::doClick(bool checked) {
   if (m_toolHandle && m_toolHandle->getTool() != m_tool) return;
   // active only if the belonging combo-viewer is visible
   if (!isInVisibleViewer(this)) return;
-  click();
+
+  if (isChecked() == checked) return;
+
+  setChecked(checked);
+  m_property->setValue(checked);
+  notifyTool();
 }
 
 //=============================================================================
