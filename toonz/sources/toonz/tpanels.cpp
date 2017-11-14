@@ -671,14 +671,14 @@ void ColorFieldEditorController::edit(DVGui::ColorField *colorField) {
 
   connect(m_currentColorField, SIGNAL(colorChanged(const TPixel32 &, bool)),
           SLOT(onColorChanged(const TPixel32 &, bool)));
-  connect(m_colorFieldHandle, SIGNAL(colorStyleChanged()),
+  connect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)),
           SLOT(onColorStyleChanged()));
 }
 
 //-----------------------------------------------------------------------------
 
 void ColorFieldEditorController::hide() {
-  disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged()), this,
+  disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)), this,
              SLOT(onColorStyleChanged()));
 }
 
@@ -750,14 +750,14 @@ void CleanupColorFieldEditorController::edit(
   TApp::instance()->getPaletteController()->setCurrentPalette(
       m_colorFieldHandle);
 
-  connect(m_colorFieldHandle, SIGNAL(colorStyleChanged()),
+  connect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)),
           SLOT(onColorStyleChanged()));
 }
 
 //-----------------------------------------------------------------------------
 
 void CleanupColorFieldEditorController::hide() {
-  disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged()), this,
+  disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)), this,
              SLOT(onColorStyleChanged()));
 }
 
@@ -959,9 +959,9 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   int iconWidth = 20;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(titleBar, ":Resources/pane_safe_off.svg",
-                                          ":Resources/pane_safe_over.svg",
-                                          ":Resources/pane_safe_on.svg");
+      new TPanelTitleBarButtonForSafeArea(
+          titleBar, ":Resources/pane_safe_off.svg",
+          ":Resources/pane_safe_over.svg", ":Resources/pane_safe_on.svg");
   safeAreaButton->setToolTip("Safe Area (Right Click to Select)");
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),

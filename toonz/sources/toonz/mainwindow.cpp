@@ -1096,12 +1096,7 @@ void MainWindow::onAbout() {
 
 void MainWindow::autofillToggle() {
   TPaletteHandle *h = TApp::instance()->getCurrentPalette();
-  int index         = h->getStyleIndex();
-  if (index > 0) {
-    TColorStyle *s = h->getPalette()->getStyle(index);
-    s->setFlags(s->getFlags() == 0 ? 1 : 0);
-    h->notifyColorStyleChanged();
-  }
+  h->toggleAutopaint();
 }
 
 void MainWindow::resetRoomsLayout() {

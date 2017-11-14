@@ -712,8 +712,8 @@ protected:
 protected slots:
 
   void onStyleSwitched();
-  void onStyleChanged();
-  void onCleanupStyleChanged();
+  void onStyleChanged(bool isDragging);
+  void onCleanupStyleChanged(bool isDragging);
   void onOldStyleClicked(const TColorStyle &);
 
   // called (e.g.) by PaletteController when an other StyleEditor change the

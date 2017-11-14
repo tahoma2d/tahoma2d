@@ -3266,13 +3266,14 @@ void StyleEditor::showEvent(QShowEvent *) {
   bool ret = true;
   ret      = ret && connect(m_paletteHandle, SIGNAL(colorStyleSwitched()),
                        SLOT(onStyleSwitched()));
-  ret = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged()),
-                       SLOT(onStyleChanged()));
+  ret = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged(bool)),
+                       SLOT(onStyleChanged(bool)));
   ret = ret && connect(m_paletteHandle, SIGNAL(paletteSwitched()), this,
                        SLOT(onStyleSwitched()));
   if (m_cleanupPaletteHandle)
-    ret = ret && connect(m_cleanupPaletteHandle, SIGNAL(colorStyleChanged()),
-                         SLOT(onCleanupStyleChanged()));
+    ret =
+        ret && connect(m_cleanupPaletteHandle, SIGNAL(colorStyleChanged(bool)),
+                       SLOT(onCleanupStyleChanged(bool)));
 
   ret = ret && connect(m_paletteController, SIGNAL(colorAutoApplyEnabled(bool)),
                        this, SLOT(enableColorAutoApply(bool)));
@@ -3348,7 +3349,7 @@ void StyleEditor::onStyleSwitched() {
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onStyleChanged() {
+void StyleEditor::onStyleChanged(bool isDragging) {
   TPalette *palette = getPalette();
   if (!palette) return;
 
@@ -3356,10 +3357,11 @@ void StyleEditor::onStyleChanged() {
   assert(0 <= styleIndex && styleIndex < palette->getStyleCount());
 
   setEditedStyleToStyle(palette->getStyle(styleIndex));
-  setOldStyleToStyle(
-      m_editedStyle
-          .getPointer());  // This line is needed for proper undo behavior
-
+  if (!isDragging) {
+    setOldStyleToStyle(
+        m_editedStyle
+            .getPointer());  // This line is needed for proper undo behavior
+  }
   m_plainColorPage->setColor(*m_editedStyle, getColorParam());
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
@@ -3370,10 +3372,10 @@ void StyleEditor::onStyleChanged() {
 
 //-----------------------------------------------------------------------
 
-void StyleEditor::onCleanupStyleChanged() {
+void StyleEditor::onCleanupStyleChanged(bool isDragging) {
   if (!m_cleanupPaletteHandle) return;
 
-  onStyleChanged();
+  onStyleChanged(isDragging);
 }
 
 //-----------------------------------------------------------------------------
