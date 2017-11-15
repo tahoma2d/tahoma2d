@@ -1244,6 +1244,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(xsheetMenu, MI_PrevDrawing);
   addMenuItem(xsheetMenu, MI_NextStep);
   addMenuItem(xsheetMenu, MI_PrevStep);
+  addMenuItem(xsheetMenu, MI_LipSyncPopup);
 
   // Menu' CELLS
   QMenu *cellsMenu = addMenu(tr("Cells"), fullMenuBar);

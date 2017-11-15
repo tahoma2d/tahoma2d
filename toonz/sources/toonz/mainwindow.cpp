@@ -1811,6 +1811,8 @@ void MainWindow::defineActions() {
                          "");
   createMenuXsheetAction(MI_RemoveGlobalKeyframe, tr("Remove Multiple Keys"),
                          "");
+  createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
+                         "Alt+L");
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
                              tr("Toggle XSheet Toolbar"), "");
   createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
@@ -2009,6 +2011,7 @@ void MainWindow::defineActions() {
                           "Ctrl+`");
   createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
+
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
   createToggle(MI_OnionSkin, tr("Onion Skin Toggle"), "/", false,
