@@ -246,6 +246,8 @@
 #define MI_RevertToCleanedUp "MI_RevertToCleanedUp"
 #define MI_RevertToLastSaved "MI_RevertToLastSaved"
 #define MI_ConvertToVectors "MI_ConvertToVectors"
+#define MI_ConvertToToonzRaster "MI_ConvertToToonzRaster"
+#define MI_ConvertVectorToVector "MI_ConvertVectorToVector"
 #define MI_Tracking "MI_Tracking"
 #define MI_RemoveLevel "MI_RemoveLevel"
 #define MI_CollectAssets "MI_CollectAssets"
