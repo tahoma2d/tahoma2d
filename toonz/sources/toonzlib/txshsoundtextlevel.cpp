@@ -56,9 +56,9 @@ void TXshSoundTextLevel::loadData(TIStream &is) {
       if (v == "textSound") type = SND_TXT_XSHLEVEL;
       is.matchEndTag();
     } else if (tagName == "frame") {
-      QString text;
+      std::wstring text;
       is >> text;
-      m_framesText.push_back(text);
+      m_framesText.push_back(QString::fromStdWString(text));
       is.matchEndTag();
     } else
       throw TException("unexpected tag " + tagName);

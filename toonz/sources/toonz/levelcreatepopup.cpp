@@ -436,7 +436,8 @@ bool LevelCreatePopup::apply() {
 
   bool validColumn = true;
   if (xsh->getColumn(col))
-    validColumn = xsh->getColumn(col)->getColumnType() == 0;
+    validColumn =
+        xsh->getColumn(col)->getColumnType() == TXshColumn::eLevelType;
 
   int from   = (int)m_fromFld->getValue();
   int to     = (int)m_toFld->getValue();
