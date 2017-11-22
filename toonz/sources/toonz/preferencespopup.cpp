@@ -1351,7 +1351,10 @@ PreferencesPopup::PreferencesPopup()
   CheckBox *showColumnNumbersCB =
       new CheckBox(tr("Show Column Numbers in Column Headers"), this);
   QStringList xsheetLayouts;
-  xsheetLayouts << tr("Classic") << tr("Classic-revised") << tr("Compact");
+  // options should not be translatable as they are used as key strings
+  xsheetLayouts << "Classic"
+                << "Classic-revised"
+                << "Compact";
   QComboBox *xsheetLayoutOptions = new QComboBox(this);
   xsheetLayoutOptions->addItems(xsheetLayouts);
   xsheetLayoutOptions->setCurrentIndex(
