@@ -1100,6 +1100,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(fileMenu, MI_OutputSettings);
   addMenuItem(fileMenu, MI_Render);
   addMenuItem(fileMenu, MI_FastRender);
+  addMenuItem(fileMenu, MI_SoundTrack);
   //  addMenuItem(fileMenu, MI_SavePreviewedFrames);
   fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_PrintXsheet);

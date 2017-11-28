@@ -48,6 +48,7 @@
 #define MI_Render "MI_Render"
 #define MI_FastRender "MI_FastRender"
 #define MI_Preview "MI_Preview"
+#define MI_SoundTrack "MI_SoundTrack"
 #define MI_RegeneratePreview "MI_RegeneratePreview"
 #define MI_RegenerateFramePr "MI_RegenerateFramePr"
 #define MI_ClonePreview "MI_ClonePreview"
