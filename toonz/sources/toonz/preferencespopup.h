@@ -145,6 +145,7 @@ private slots:
   void onFitToFlipbook(int);
   void onDropdownShortcutsCycleOptionsChanged(int);
   void onDownArrowInLevelStripCreatesNewFrame(int);
+  void onTouchGestureControlChanged(int);
   void onAddLevelFormat();
   void onRemoveLevelFormat();
   void onEditLevelFormat();

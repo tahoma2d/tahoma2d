@@ -361,6 +361,9 @@ public:
     return m_downArrowInLevelStripCreatesNewFrame;
   }
 
+  void setTouchGestureControl(bool on);
+  bool getTouchGestureControl() { return m_touchGestureControlEnabled; }
+
   // Tools Tab
   void setDropdownShortcutsCycleOptions(bool on);
   bool getDropdownShortcutsCycleOptions() {
@@ -651,6 +654,8 @@ private:
   PathAliasPriority m_pathAliasPriority;
 
   bool m_currentTimelineEnabled;
+
+  bool m_touchGestureControlEnabled;
 
 private:
   Preferences();
