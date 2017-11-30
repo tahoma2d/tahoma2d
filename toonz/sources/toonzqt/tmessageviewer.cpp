@@ -145,10 +145,10 @@ TMessageViewer::TMessageViewer(QWidget *parent) : QFrame(parent) {
   hLayout->setMargin(0);
   fr->setLayout(hLayout);
   fr->setFixedHeight(24);
-  fr->setStyleSheet("background-color: rgb(210,210,210);");
+  fr->setStyleSheet("background-color: rgb(210,210,210); color: black;");
   hLayout->addSpacing(4);
 
-  hLayout->addWidget(new QLabel("Display:  "));
+  hLayout->addWidget(new QLabel(tr("Display:  ")));
 
   m_redCheck = new QCheckBox(tr("Errors"));
   m_redCheck->setChecked(true);
