@@ -927,7 +927,9 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
 //-----------------------------------------------------------------------------
 
 bool SceneViewer::event(QEvent *e) {
-  if (Preferences::instance()->getTouchGestureControl()) {
+  if (CommandManager::instance()
+          ->getAction(MI_TouchGestureControl)
+          ->isChecked()) {
     if (e->type() == QEvent::Gesture) {
       gestureEvent(static_cast<QGestureEvent *>(e));
       return true;

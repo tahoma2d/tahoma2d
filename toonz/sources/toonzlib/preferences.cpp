@@ -292,13 +292,6 @@ Preferences::Preferences()
     , m_keepFillOnVectorSimplify(true)
     , m_useHigherDpiOnVectorSimplify(false)
     , m_downArrowInLevelStripCreatesNewFrame(false)
-// 11/30/2017 disable touch control by default in osx
-// as there seems to be a malfunction with trackpad
-#ifdef MACOSX
-    , m_touchGestureControlEnabled(false)
-#else
-    , m_touchGestureControlEnabled(true)
-#endif
     , m_viewerBGColor(128, 128, 128, 255)
     , m_previewBGColor(64, 64, 64, 255)
     , m_chessboardColor1(180, 180, 180)
@@ -585,8 +578,6 @@ Preferences::Preferences()
   getValue(*m_settings, "keepFillOnVectorSimplify", m_keepFillOnVectorSimplify);
   getValue(*m_settings, "downArrowInLevelStripCreatesNewFrame",
            m_downArrowInLevelStripCreatesNewFrame);
-  getValue(*m_settings, "touchGestureControlEnabled",
-           m_touchGestureControlEnabled);
   getValue(*m_settings, "DragCellsBehaviour", m_dragCellsBehaviour);
 
   getValue(*m_settings, "LineTestFpsCapture", m_lineTestFpsCapture);
@@ -1357,13 +1348,6 @@ void Preferences::setUseHigherDpiOnVectorSimplify(bool on) {
 void Preferences::setDownArrowLevelStripNewFrame(bool on) {
   m_downArrowInLevelStripCreatesNewFrame = on;
   m_settings->setValue("downArrowInLevelStripCreatesNewFrame", on ? "1" : "0");
-}
-
-//-----------------------------------------------------------------
-
-void Preferences::setTouchGestureControl(bool on) {
-  m_touchGestureControlEnabled = on;
-  m_settings->setValue("touchGestureControlEnabled", on ? "1" : "0");
 }
 
 //-----------------------------------------------------------------

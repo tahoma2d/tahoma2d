@@ -527,12 +527,6 @@ void PreferencesPopup::onDownArrowInLevelStripCreatesNewFrame(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onTouchGestureControlChanged(int index) {
-  m_pref->setTouchGestureControl(index == Qt::Checked);
-}
-
-//-----------------------------------------------------------------------------
-
 void PreferencesPopup::onSubsceneFolderChanged(int index) {
   m_pref->enableSubsceneFolder(index == Qt::Checked);
 }
@@ -1349,8 +1343,6 @@ PreferencesPopup::PreferencesPopup()
       tr("Use higher DPI for calculations - Slower but more accurate"), this);
   m_downArrowInLevelStripCreatesNewFrame = new CheckBox(
       tr("Down arrow at end of level strip creates a new frame"), this);
-  CheckBox *touchGestureControlCB =
-      new CheckBox(tr("Enable Touch Gesture Control on Viewer"), this);
 
   //--- Tools -------------------------------
   categoryList->addItem(tr("Tools"));
@@ -1655,7 +1647,6 @@ PreferencesPopup::PreferencesPopup()
       m_pref->getUseHigherDpiOnVectorSimplify());
   m_downArrowInLevelStripCreatesNewFrame->setChecked(
       m_pref->getDownArrowLevelStripNewFrame());
-  touchGestureControlCB->setChecked(m_pref->getTouchGestureControl());
   m_newLevelToCameraSizeCB->setChecked(
       m_pref->isNewLevelSizeToCameraSizeEnabled());
   QStringList scanLevelTypes;
@@ -2190,8 +2181,6 @@ PreferencesPopup::PreferencesPopup()
                                  Qt::AlignLeft | Qt::AlignVCenter);
       drawingFrameLay->addWidget(m_downArrowInLevelStripCreatesNewFrame, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
-      drawingFrameLay->addWidget(touchGestureControlCB, 0,
-                                 Qt::AlignLeft | Qt::AlignVCenter);
       QGroupBox *replaceVectorGroupBox = new QGroupBox(
           tr("Replace Vectors with Simplified Vectors Command"), this);
       QVBoxLayout *replaceVectorsLay = new QVBoxLayout();
@@ -2649,8 +2638,6 @@ PreferencesPopup::PreferencesPopup()
   ret = ret && connect(m_downArrowInLevelStripCreatesNewFrame,
                        SIGNAL(stateChanged(int)),
                        SLOT(onDownArrowInLevelStripCreatesNewFrame(int)));
-  ret = ret && connect(touchGestureControlCB, SIGNAL(stateChanged(int)),
-                       SLOT(onTouchGestureControlChanged(int)));
   ret = ret && connect(m_newLevelToCameraSizeCB, SIGNAL(clicked(bool)),
                        SLOT(onNewLevelToCameraSizeChanged(bool)));
 
