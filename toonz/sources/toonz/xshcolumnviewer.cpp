@@ -1503,6 +1503,7 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
     QPixmap icon =
         IconGenerator::instance()->getIcon(xl, cell.m_frameId, false, onDemand);
     QRect thumbnailImageRect = o->rect(PredefinedRect::THUMBNAIL);
+    if (thumbnailImageRect.isEmpty()) return QPixmap();
     return scalePixmapKeepingAspectRatio(icon, thumbnailImageRect.size());
   }
 }
