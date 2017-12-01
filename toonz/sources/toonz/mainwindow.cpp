@@ -86,13 +86,7 @@ TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 0);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
-// 11/30/2017 disable touch control by default in osx
-// as there seems to be a malfunction with trackpad
-#ifdef MACOSX
 TEnv::IntVar TouchGestureControl("TouchGestureControl", 0);
-#else
-TEnv::IntVar TouchGestureControl("TouchGestureControl", 1);
-#endif
 
 //=============================================================================
 namespace {
