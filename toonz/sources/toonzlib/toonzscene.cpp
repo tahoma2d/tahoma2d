@@ -49,6 +49,13 @@
 TOfflineGL *currentOfflineGL = 0;
 
 #include <QProgressDialog>
+
+#ifdef MACOSX
+#include <QSurfaceFormat>
+#include <QOffscreenSurface>
+#include <QOpenGLContext>
+#include <QOpenGLFramebufferObject>
+#endif
 //=============================================================================
 // Utility functions
 //=============================================================================
@@ -764,10 +771,6 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 //! with known world/placed reference change - and returns the result in a
 //! 32-bit raster.
 
-#include <QSurfaceFormat>
-#include <QOffscreenSurface>
-#include <QOpenGLContext>
-#include <QOpenGLFramebufferObject>
 void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
                              const TRectD &placedRect,
                              const TAffine &worldToPlacedAff) const {
@@ -786,6 +789,8 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 
   TRect clipRect(ras->getBounds());
 
+// fix for plastic tool applied to subxsheet
+#ifdef MACOSX
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
 
@@ -798,7 +803,13 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glMatrixMode(GL_MODELVIEW), glPushMatrix();
   glMatrixMode(GL_PROJECTION), glPushMatrix();
+#else
+  TOfflineGL ogl(ras->getSize());
+  currentOfflineGL = &ogl;
+  ogl.makeCurrent();
+#endif
   {
+#ifdef MACOSX
     std::unique_ptr<QOpenGLFramebufferObject> fb(
         new QOpenGLFramebufferObject(ras->getLx(), ras->getLy()));
 
@@ -813,6 +824,7 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+#endif
     glTranslated(0.5 * ras->getLx(), 0.5 * ras->getLy(), 0.0);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -828,7 +840,7 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 
     painter.flushRasterImages();
     glFlush();
-
+#ifdef MACOSX
     QImage img =
         fb->toImage().scaled(QSize(ras->getLx(), ras->getLy()),
                              Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -843,11 +855,19 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
     }
     fb->release();
     assert(glGetError() == GL_NO_ERROR);
+#else
+    TRop::over(ras, ogl.getRaster());
+#endif
   }
+#ifdef MACOSX
   glMatrixMode(GL_MODELVIEW), glPopMatrix();
   glMatrixMode(GL_PROJECTION), glPopMatrix();
 
   glPopAttrib();
+#else
+  ogl.doneCurrent();
+  currentOfflineGL = 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
