@@ -192,14 +192,7 @@ DrawableTextureDataP texture_utils::getTextureData(const TXsheet *xsh,
   bbox = (cameraAff.inv() * bbox).enlarge(1.0);
 
   // Render the xsheet on the specified bbox
-
-  // The call below will change context (I know, it's a shame :( )
-  TGlContext currentContext = tglGetCurrentContext();
-  {
-    tglDoneCurrent(currentContext);
-    xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
-    tglMakeCurrent(currentContext);
-  }
+  xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
 
   TRop::depremultiply(tex);  // Stored textures are rendered nonpremultiplied
 
