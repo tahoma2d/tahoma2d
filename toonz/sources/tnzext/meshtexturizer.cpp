@@ -15,6 +15,8 @@
 #include "tcg/tcg_list.h"
 #include "tcg/tcg_misc.h"
 
+#include "trop.h"
+
 #define COPIED_BORDER 1  // Amount of tile border from the original image
 #define TRANSP_BORDER 1  // Amount of transparent tile border
 #define NONPREM_BORDER                                                         \
@@ -106,6 +108,7 @@ GLuint MeshTexturizer::Imp::textureAlloc(const TRaster32P &ras,
       clearMatte(ras, ras->getLx() - border1, border1, ras->getLx() - border0,
                  ras->getLy() - border1);
     }
+
   };  // locals
 
   // Prepare the texture tile
@@ -125,9 +128,11 @@ GLuint MeshTexturizer::Imp::textureAlloc(const TRaster32P &ras,
   tex->clear();
   aux->extract(auxRect)->copy(ras->extract(rasRect));
 
-  if (!premultiplied && NONPREM_BORDER > 0)
-    locals::clearMatte_border(aux, TRANSP_BORDER - NONPREM_BORDER,
+  if (!premultiplied && NONPREM_BORDER > 0) {
+    locals::clearMatte_border(tex, TRANSP_BORDER - NONPREM_BORDER,
                               TRANSP_BORDER);
+    TRop::expandColor(tex, true);  // precise is always true for now
+  }
 
   // Pass the raster into VRAM
   GLuint texId;
