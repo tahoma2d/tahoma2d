@@ -498,7 +498,7 @@ void TTool::invalidate(const TRectD &rect) {
 
 //-----------------------------------------------------------------------------
 
-int TTool::pick(const TPoint &p) {
+int TTool::pick(const TPointD &p) {
   if (!m_viewer) return 0;
 
   m_picking = true;

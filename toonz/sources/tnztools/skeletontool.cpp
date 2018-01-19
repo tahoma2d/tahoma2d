@@ -1037,7 +1037,7 @@ void SkeletonTool::drawHooks() {
     currentColumnHooks.push_back(HookData(xsh, col, hookId, m_parentProbe));
 
     // otherColumn = "picked" column not connected
-    TPoint parentProbePos = getViewer()->worldToPos(m_parentProbe);
+    TPointD parentProbePos = getViewer()->worldToPos(m_parentProbe);
     std::vector<int> indexes;
     getViewer()->posToColumnIndexes(parentProbePos, indexes,
                                     getPixelSize() * 10, false);
