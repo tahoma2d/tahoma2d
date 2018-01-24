@@ -25,104 +25,37 @@ TThread::Mutex MutexOut;
 class TSoundOutputDeviceImp
     : public std::enable_shared_from_this<TSoundOutputDeviceImp> {
 public:
-  bool m_isPlaying;
-  bool m_looped;
-  TSoundTrackFormat m_currentFormat;
-  std::set<int> m_supportedRate;
-  bool m_opened;
-  double m_volume = 0.5;
+  struct Output {
+    QByteArray   *m_byteArray;
+    QBuffer      *m_buffer;
+    QAudioOutput *m_audioOutput;
+    explicit Output(): m_byteArray(), m_buffer(), m_audioOutput() { }
+  };
 
-  QAudioOutput *m_audioOutput;
-  QBuffer *m_buffer;
-
-  TSoundOutputDeviceImp()
-      : m_isPlaying(false)
-      , m_looped(false)
-      , m_supportedRate()
-      , m_opened(false){};
-
-  std::set<TSoundOutputDeviceListener *> m_listeners;
-
-  ~TSoundOutputDeviceImp(){};
-
-  bool doOpenDevice();
-  bool doSetStreamFormat(const TSoundTrackFormat &format);
-  bool doStopDevice();
-  void play(const TSoundTrackP &st, TINT32 s0, TINT32 s1, bool loop,
-            bool scrubbing);
-  void prepareVolume(double volume);
-};
-
-//-----------------------------------------------------------------------------
-namespace {
-
-struct MyData {
-  char *entireFileBuffer;
-
-  quint64 totalPacketCount;
-  quint64 fileByteCount;
-  quint32 maxPacketSize;
-  quint64 packetOffset;
-  quint64 byteOffset;
-  bool m_doNotify;
-  void *sourceBuffer;
-  // AudioConverterRef converter;
-  std::shared_ptr<TSoundOutputDeviceImp> imp;
-  bool isLooping;
-  MyData()
-      : entireFileBuffer(0)
-      , totalPacketCount(0)
-      , fileByteCount(0)
-      , maxPacketSize(0)
-      , packetOffset(0)
-      , byteOffset(0)
-      , sourceBuffer(0)
-      , isLooping(false)
-      , m_doNotify(true) {}
-};
-
-class PlayCompletedMsg : public TThread::Message {
-  std::set<TSoundOutputDeviceListener *> m_listeners;
-  MyData *m_data;
+private:
+  double m_volume;
+  bool m_looping;
+  QList<Output> m_outputs;
 
 public:
-  PlayCompletedMsg(MyData *data) : m_data(data) {}
+  std::set<TSoundOutputDeviceListener *> m_listeners;
 
-  TThread::Message *clone() const { return new PlayCompletedMsg(*this); }
+  TSoundOutputDeviceImp(): m_volume(0.5), m_looping(false) {};
+  ~TSoundOutputDeviceImp() { stop(); }
 
-  void onDeliver() {
-    if (m_data->imp) {
-      if (m_data->m_doNotify == false) return;
-      m_data->m_doNotify = false;
-      if (m_data->imp->m_isPlaying) m_data->imp->doStopDevice();
-      std::set<TSoundOutputDeviceListener *>::iterator it =
-          m_data->imp->m_listeners.begin();
-      for (; it != m_data->imp->m_listeners.end(); ++it)
-        (*it)->onPlayCompleted();
-    }
-  }
+  double getVolume() { return m_volume; }
+  double isLooping() { return m_looping; }
+  void prepareVolume(double x) { m_volume = x; }
+  void setLooping(bool x) { m_looping = x; } // looping not implemented here yet
+
+  void clearAudioOutputs(bool keepActive = false);
+  QAudioOutput* createAudioOutput(QAudioFormat &format);
+  bool isPlaying();
+  void setVolume(double x);
+  void stop();
+
+  void play(const TSoundTrackP &st, TINT32 s0, TINT32 s1, bool loop, bool scrubbing);
 };
-}
-
-#define checkStatus(err)                                                       \
-  if (err) {                                                                   \
-    printf("Error: 0x%x ->  %s: %d\n", (int)err, __FILE__, __LINE__);          \
-    fflush(stdout);                                                            \
-  }
-
-bool TSoundOutputDeviceImp::doOpenDevice() {
-  m_opened      = false;
-  m_audioOutput = NULL;
-  m_opened      = true;
-  return m_opened;
-}
-
-bool TSoundOutputDeviceImp::doSetStreamFormat(const TSoundTrackFormat &format) {
-  if (!m_opened) doOpenDevice();
-  if (!m_opened) return false;
-  m_opened = true;
-  return true;
-}
 
 //==============================================================================
 
@@ -148,13 +81,6 @@ bool TSoundOutputDevice::installed() { return true; }
 //------------------------------------------------------------------------------
 
 bool TSoundOutputDevice::open(const TSoundTrackP &st) {
-  if (!m_imp->doOpenDevice())
-    throw TSoundDeviceException(TSoundDeviceException::UnableOpenDevice,
-                                "Problem to open the output device");
-  if (!m_imp->doSetStreamFormat(st->getFormat()))
-    throw TSoundDeviceException(
-        TSoundDeviceException::UnableOpenDevice,
-        "Problem to open the output device setting some params");
   return true;
 }
 
@@ -162,14 +88,7 @@ bool TSoundOutputDevice::open(const TSoundTrackP &st) {
 
 bool TSoundOutputDevice::close() {
   stop();
-  m_imp->m_opened = false;
   return true;
-}
-
-//------------------------------------------------------------------------------
-
-void TSoundOutputDeviceImp::prepareVolume(double volume) {
-    m_volume = volume;
 }
 
 //------------------------------------------------------------------------------
@@ -196,37 +115,16 @@ void TSoundOutputDevice::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1,
     swap(s0, s1);
   }
 
-  if (isPlaying()) {
-#ifdef DEBUG
-    cout << "is playing, stop it!" << endl;
-#endif
-    stop();
-  }
   m_imp->play(st, s0, s1, loop, scrubbing);
 }
 
 //------------------------------------------------------------------------------
 
-void TSoundOutputDeviceImp::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1,
-                                 bool loop, bool scrubbing) {
-  if (!doSetStreamFormat(st->getFormat())) return;
-
-  MyData *myData = new MyData();
-
-  myData->imp              = shared_from_this();
-  myData->totalPacketCount = s1 - s0;
-  myData->fileByteCount    = (s1 - s0) * st->getSampleSize();
-  myData->entireFileBuffer = new char[myData->fileByteCount];
-
-  memcpy(myData->entireFileBuffer, st->getRawData() + s0 * st->getSampleSize(),
-         myData->fileByteCount);
-
-  m_isPlaying       = true;
-  myData->isLooping = loop;
+void TSoundOutputDeviceImp::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1, bool loop, bool scrubbing) {
+  clearAudioOutputs(true);
+  m_looping = loop;
 
   QAudioFormat format;
-  QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-
   format.setSampleSize(st->getBitPerSample());
   format.setCodec("audio/pcm");
   format.setChannelCount(st->getChannelCount());
@@ -235,49 +133,69 @@ void TSoundOutputDeviceImp::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1,
                            ? QAudioFormat::SignedInt
                            : QAudioFormat::UnSignedInt);
   format.setSampleRate(st->getSampleRate());
-  QList<QAudioFormat::Endian> sbos        = info.supportedByteOrders();
-  QList<int> sccs                         = info.supportedChannelCounts();
-  QList<int> ssrs                         = info.supportedSampleRates();
-  QList<QAudioFormat::SampleType> sstypes = info.supportedSampleTypes();
-  QList<int> ssss                         = info.supportedSampleSizes();
-  QStringList supCodes                    = info.supportedCodecs();
-  if (!info.isFormatSupported((format))) {
-    format                                 = info.nearestFormat(format);
-    int newChannels                        = format.channelCount();
-    int newBitsPerSample                   = format.sampleSize();
-    int newSampleRate                      = format.sampleRate();
-    QAudioFormat::SampleType newSampleType = format.sampleType();
-    QAudioFormat::Endian newBo             = format.byteOrder();
-  }
-  int test = st->getSampleCount() / st->getSampleRate();
-  QByteArray *data =
-      new QByteArray(myData->entireFileBuffer, myData->fileByteCount);
-  QBuffer *newBuffer = new QBuffer;
-  newBuffer->setBuffer(data);
-  newBuffer->open(QIODevice::ReadOnly);
-  newBuffer->seek(0);
-  if (m_audioOutput == NULL) {
-    m_audioOutput = new QAudioOutput(format, NULL);
-  }
-  m_audioOutput->start(newBuffer);
-  m_audioOutput->setVolume(m_volume);
+
+  QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+  if (!info.isFormatSupported((format)))
+    format = info.nearestFormat(format);
+
+  Output output;
+  qint64 totalPacketCount = s1 - s0;
+  qint64 fileByteCount    = (s1 - s0) * st->getSampleSize();
+  char*  entireFileBuffer = new char[fileByteCount];
+  memcpy(entireFileBuffer, st->getRawData() + s0 * st->getSampleSize(), fileByteCount);
+  output.m_byteArray = new QByteArray(entireFileBuffer, fileByteCount);
+
+  output.m_buffer = new QBuffer();
+  output.m_buffer->setBuffer(output.m_byteArray);
+  output.m_buffer->open(QIODevice::ReadOnly);
+  output.m_buffer->seek(0);
+
+  output.m_audioOutput = new QAudioOutput(format);
+  output.m_audioOutput->start(output.m_buffer);
+  output.m_audioOutput->setVolume(m_volume);
+
+  m_outputs.push_back(output);
 }
 
 //------------------------------------------------------------------------------
 
-bool TSoundOutputDeviceImp::doStopDevice() {
-  m_isPlaying = false;
-  m_audioOutput->stop();
+void TSoundOutputDeviceImp::clearAudioOutputs(bool keepActive) {
+  for(QList<Output>::iterator i = m_outputs.begin(); i != m_outputs.end(); ) {
+    if (!keepActive || i->m_audioOutput->state() != QAudio::ActiveState) {
+      delete i->m_audioOutput;
+      delete i->m_buffer;
+      delete i->m_byteArray;
+      i = m_outputs.erase(i);
+    } else ++i;
+  }
+}
 
-  return true;
+//------------------------------------------------------------------------------
+
+bool TSoundOutputDeviceImp::isPlaying() {
+  clearAudioOutputs(true);
+  return !m_outputs.empty();
+}
+
+//------------------------------------------------------------------------------
+
+void TSoundOutputDeviceImp::setVolume(double x) {
+  prepareVolume(x);
+  clearAudioOutputs(true);
+  for(QList<Output>::iterator i = m_outputs.begin(); i != m_outputs.end(); ++i)
+    i->m_audioOutput->setVolume(x);
+}
+
+//------------------------------------------------------------------------------
+
+void TSoundOutputDeviceImp::stop() {
+  clearAudioOutputs();
 }
 
 //------------------------------------------------------------------------------
 
 void TSoundOutputDevice::stop() {
-  if (m_imp->m_opened == false) return;
-
-  m_imp->doStopDevice();
+  m_imp->stop();
 }
 
 //------------------------------------------------------------------------------
@@ -295,16 +213,13 @@ void TSoundOutputDevice::detach(TSoundOutputDeviceListener *listener) {
 //------------------------------------------------------------------------------
 
 double TSoundOutputDevice::getVolume() {
-  if (m_imp->m_audioOutput != NULL)
-  return m_imp->m_audioOutput->volume();
-  else return m_imp->m_volume;
+  return m_imp->getVolume();
 }
 
 //------------------------------------------------------------------------------
 
 bool TSoundOutputDevice::setVolume(double volume) {
-  m_imp->m_volume = volume;
-  m_imp->m_audioOutput->setVolume(volume);
+  m_imp->setVolume(volume);
   return true;
 }
 
@@ -314,15 +229,15 @@ bool TSoundOutputDevice::supportsVolume() { return true; }
 
 //------------------------------------------------------------------------------
 
-bool TSoundOutputDevice::isPlaying() const { return m_imp->m_isPlaying; }
+bool TSoundOutputDevice::isPlaying() const { return m_imp->isPlaying(); }
 
 //------------------------------------------------------------------------------
 
-bool TSoundOutputDevice::isLooping() { return m_imp->m_looped; }
+bool TSoundOutputDevice::isLooping() { return m_imp->isLooping(); }
 
 //------------------------------------------------------------------------------
 
-void TSoundOutputDevice::setLooping(bool loop) { m_imp->m_looped = loop; }
+void TSoundOutputDevice::setLooping(bool loop) { m_imp->setLooping(loop); }
 
 //------------------------------------------------------------------------------
 
