@@ -378,7 +378,7 @@ void PinchTool::onImageChanged() {
   m_deformation->reset();
 
   double w        = 0;
-  TStroke *stroke = getClosestStroke(convert(m_lastMouseEvent.m_pos), w);
+  TStroke *stroke = getClosestStroke(m_lastMouseEvent.m_pos, w);
   if (stroke) {
     // set parameters from sliders
     updateInterfaceStatus(m_lastMouseEvent);

@@ -330,10 +330,10 @@ void RGBPickerTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     invalidate();
     return;
   } else if (m_pickType.getValue() == FREEHAND_PICK) {
-    startFreehand(pos, convert(e.m_pos));
+    startFreehand(pos, e.m_pos);
     return;
   } else if (m_pickType.getValue() == POLYLINE_PICK) {
-    addPointPolyline(pos, convert(e.m_pos));
+    addPointPolyline(pos, e.m_pos);
     return;
   } else {  // NORMAL_PICK
     m_mousePixelPosition = e.m_pos;
@@ -354,7 +354,7 @@ void RGBPickerTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     invalidate();
     return;
   } else if (m_pickType.getValue() == FREEHAND_PICK) {
-    freehandDrag(pos, convert(e.m_pos));
+    freehandDrag(pos, e.m_pos);
     invalidate();
   }
 }
@@ -380,7 +380,7 @@ void RGBPickerTool::leftButtonDoubleClick(const TPointD &pos,
                                           const TMouseEvent &e) {
   if (m_currentStyleId == 0) return;
   if (m_pickType.getValue() == POLYLINE_PICK) {
-    closePolyline(pos, convert(e.m_pos));
+    closePolyline(pos, e.m_pos);
     std::vector<TThickPoint> strokePoints;
     for (UINT i = 0; i < m_workingPolyline.size() - 1; i++) {
       strokePoints.push_back(TThickPoint(m_workingPolyline[i], 1));

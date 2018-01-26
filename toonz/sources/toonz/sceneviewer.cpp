@@ -645,10 +645,11 @@ void SceneViewer::enablePreview(int previewMode) {
 
 //-----------------------------------------------------------------------------
 
-TPointD SceneViewer::winToWorld(const QPoint &pos) const {
+TPointD SceneViewer::winToWorld(const QPointF &pos) const {
   // coordinate window (origine in alto a sinistra) -> coordinate colonna
   // (origine al centro dell'immagine)
-  TPointD pp(pos.x() - width() / 2, -pos.y() + height() / 2);
+  TPointD pp(pos.x() - (double)width() / 2.0,
+             -pos.y() + (double)height() / 2.0);
   if (is3DView()) {
     TXsheet *xsh            = TApp::instance()->getCurrentXsheet()->getXsheet();
     TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
@@ -684,15 +685,15 @@ TPointD SceneViewer::winToWorld(const QPoint &pos) const {
 
 //-----------------------------------------------------------------------------
 
-TPointD SceneViewer::winToWorld(const TPoint &winPos) const {
-  return winToWorld(QPoint(winPos.x, height() - winPos.y));
+TPointD SceneViewer::winToWorld(const TPointD &winPos) const {
+  return winToWorld(QPointF(winPos.x, height() - winPos.y));
 }
 
 //-----------------------------------------------------------------------------
 
-TPoint SceneViewer::worldToPos(const TPointD &worldPos) const {
+TPointD SceneViewer::worldToPos(const TPointD &worldPos) const {
   TPointD p = getViewMatrix() * worldPos;
-  return TPoint(width() / 2 + p.x, height() / 2 + p.y);
+  return TPointD(width() / 2 + p.x, height() / 2 + p.y);
 }
 
 //-----------------------------------------------------------------------------
@@ -1605,7 +1606,7 @@ void SceneViewer::mult3DMatrix() {
 
 //-----------------------------------------------------------------------------
 
-double SceneViewer::projectToZ(const TPoint &delta) {
+double SceneViewer::projectToZ(const TPointD &delta) {
   glPushMatrix();
   mult3DMatrix();
   GLint viewport[4];
@@ -1623,7 +1624,7 @@ double SceneViewer::projectToZ(const TPoint &delta) {
   TPointD zdir(bx - ax, by - ay);
   double zdirLength2 = norm2(zdir);
   if (zdirLength2 > 0.0) {
-    double dz = (TPointD(delta.x, delta.y) * zdir) / zdirLength2;
+    double dz = (delta * zdir) / zdirLength2;
     return dz;
   } else
     return 0.0;
@@ -1632,25 +1633,25 @@ double SceneViewer::projectToZ(const TPoint &delta) {
 //-----------------------------------------------------------------------------
 
 TRect SceneViewer::getActualClipRect(const TAffine &aff) {
-  TDimension viewerSize(width(), height());
-  TRect clipRect(viewerSize);
+  TDimensionD viewerSize(width(), height());
+  TRectD clipRect(viewerSize);
 
   if (is3DView()) {
     TPointD p00 = winToWorld(clipRect.getP00());
     TPointD p01 = winToWorld(clipRect.getP01());
     TPointD p10 = winToWorld(clipRect.getP10());
     TPointD p11 = winToWorld(clipRect.getP11());
-    clipRect    = TRect(TPoint(std::min(p00.x, p01.x), std::min(p00.y, p10.y)),
-                     TPoint(std::max(p11.x, p10.x), std::max(p11.y, p01.y)));
+    clipRect = TRectD(TPointD(std::min(p00.x, p01.x), std::min(p00.y, p10.y)),
+                      TPointD(std::max(p11.x, p10.x), std::max(p11.y, p01.y)));
   } else if (m_clipRect.isEmpty())
-    clipRect -= TPoint(viewerSize.lx / 2, viewerSize.ly / 2);
+    clipRect -= TPointD(viewerSize.lx / 2, viewerSize.ly / 2);
   else {
     TRectD app = aff * (m_clipRect.enlarge(3));
     clipRect =
-        TRect(tceil(app.x0), tceil(app.y0), tfloor(app.x1), tfloor(app.y1));
+        TRectD(tceil(app.x0), tceil(app.y0), tfloor(app.x1), tfloor(app.y1));
   }
 
-  return clipRect;
+  return convert(clipRect);
 }
 
 //-----------------------------------------------------------------------------
@@ -1734,8 +1735,8 @@ void SceneViewer::GLInvalidateRect(const TRectD &rect) {
 //-----------------------------------------------------------------------------
 
 // delta.x: right panning, pixel; delta.y: down panning, pixel
-void SceneViewer::panQt(const QPoint &delta) {
-  if (delta == QPoint()) return;
+void SceneViewer::panQt(const QPointF &delta) {
+  if (delta == QPointF()) return;
   if (is3DView())
     m_pan3D += TPointD(delta.x(), -delta.y());
   else {
@@ -2208,7 +2209,7 @@ void SceneViewer::onToolChanged() {
 
 //-----------------------------------------------------------------------------
 
-int SceneViewer::pick(const TPoint &point) {
+int SceneViewer::pick(const TPointD &point) {
   // pick is typically called in a mouse event handler.
   // QGLWidget::makeCurrent() is not automatically called in these events.
   // (to exploit the bug: open the FxEditor preview and then select the edit
@@ -2296,7 +2297,7 @@ int SceneViewer::pick(const TPoint &point) {
 
 //-----------------------------------------------------------------------------
 
-int SceneViewer::posToColumnIndex(const TPoint &p, double distance,
+int SceneViewer::posToColumnIndex(const TPointD &p, double distance,
                                   bool includeInvisible) const {
   std::vector<int> ret;
   posToColumnIndexes(p, ret, distance, includeInvisible);
@@ -2305,8 +2306,8 @@ int SceneViewer::posToColumnIndex(const TPoint &p, double distance,
 
 //-----------------------------------------------------------------------------
 
-void SceneViewer::posToColumnIndexes(const TPoint &p, std::vector<int> &indexes,
-                                     double distance,
+void SceneViewer::posToColumnIndexes(const TPointD &p,
+                                     std::vector<int> &indexes, double distance,
                                      bool includeInvisible) const {
   int oldRasterizePli    = TXshSimpleLevel::m_rasterizePli;
   TApp *app              = TApp::instance();
@@ -2349,7 +2350,7 @@ includeInvisible);
 
 //-----------------------------------------------------------------------------
 
-int SceneViewer::posToRow(const TPoint &p, double distance,
+int SceneViewer::posToRow(const TPointD &p, double distance,
                           bool includeInvisible) const {
   int oldRasterizePli    = TXshSimpleLevel::m_rasterizePli;
   TApp *app              = TApp::instance();

@@ -65,8 +65,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
   Q_OBJECT
 
   qreal m_pressure;
-  QPoint m_lastMousePos;
-  QPoint m_pos;
+  QPointF m_lastMousePos;
+  QPointF m_pos;
   Qt::MouseButton m_mouseButton;
   bool m_foregroundDrawing;
   bool m_tabletEvent, m_tabletMove;
@@ -226,7 +226,7 @@ public:
   TPointD getPan3D() const { return m_pan3D; }
   double getZoomScale3D() const { return m_zoomScale3D; }
 
-  double projectToZ(const TPoint &delta) override;
+  double projectToZ(const TPointD &delta) override;
 
   TPointD getDpiScale() const override { return m_dpiScale; }
   void zoomQt(bool forward, bool reset);
@@ -264,10 +264,10 @@ public:
 
 public:
   // SceneViewer's gadget public functions
-  TPointD winToWorld(const QPoint &pos) const;
-  TPointD winToWorld(const TPoint &winPos) const override;
+  TPointD winToWorld(const QPointF &pos) const;
+  TPointD winToWorld(const TPointD &winPos) const override;
 
-  TPoint worldToPos(const TPointD &worldPos) const override;
+  TPointD worldToPos(const TPointD &worldPos) const override;
 
 protected:
   // Paint vars
@@ -328,13 +328,13 @@ protected:
   bool event(QEvent *event) override;
 
   // delta.x: right panning, pixel; delta.y: down panning, pixel
-  void panQt(const QPoint &delta);
+  void panQt(const QPointF &delta);
 
   // center: window coordinate, pixels, topleft origin
   void zoomQt(const QPoint &center, double scaleFactor);
 
   // overriden from TTool::Viewer
-  void pan(const TPoint &delta) override { panQt(QPoint(delta.x, delta.y)); }
+  void pan(const TPointD &delta) override { panQt(QPointF(delta.x, delta.y)); }
 
   // overriden from TTool::Viewer
   void zoom(const TPointD &center, double factor) override;
@@ -345,20 +345,20 @@ protected:
 
   //! return the column index of the drawing intersecting point \b p
   //! (window coordinate, pixels, bottom-left origin)
-  int pick(const TPoint &point) override;
+  int pick(const TPointD &point) override;
 
   //! return the column indexes of the drawings intersecting point \b p
   //! (window coordinate, pixels, bottom-left origin)
-  int posToColumnIndex(const TPoint &p, double distance,
+  int posToColumnIndex(const TPointD &p, double distance,
                        bool includeInvisible = true) const override;
-  void posToColumnIndexes(const TPoint &p, std::vector<int> &indexes,
+  void posToColumnIndexes(const TPointD &p, std::vector<int> &indexes,
                           double distance,
                           bool includeInvisible = true) const override;
 
   //! return the row of the drawings intersecting point \b p (used with onion
   //! skins)
   //! (window coordinate, pixels, bottom-left origin)
-  int posToRow(const TPoint &p, double distance,
+  int posToRow(const TPointD &p, double distance,
                bool includeInvisible = true) const override;
 
   void dragEnterEvent(QDragEnterEvent *event) override;
