@@ -535,7 +535,7 @@ Preferences::Preferences()
   bool roomsExist = false;
   rooms           = m_settings->value("CurrentRoomChoice").toString();
 
-  TFilePath room_path(TEnv::getStuffDir() + "profiles/layouts/rooms");
+  TFilePath room_path(ToonzFolder::getRoomsDir());
   TFilePathSet room_fpset;
   try {
     TSystem::readDirectory(room_fpset, room_path, true, false);
