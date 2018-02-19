@@ -73,7 +73,7 @@ void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
   toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
                              widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
-  toonzEvent.m_pressure = 255;
+  toonzEvent.m_pressure = 1.0;
 
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
@@ -92,7 +92,7 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
       event->posF().x() * (float)devPixRatio,
       (float)widgetHeight - 1.0f - event->posF().y() * (float)devPixRatio);
   toonzEvent.m_mousePos = event->posF();
-  toonzEvent.m_pressure = int(255 * pressure);
+  toonzEvent.m_pressure = pressure;
 
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
@@ -269,7 +269,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // work.
     if (e->button() == Qt::LeftButton) {
       TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), e->pressure(), getDevPixRatio());
+      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
       m_tabletState = Touched;
       onPress(mouseEvent);
     } else
@@ -279,7 +279,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   } break;
   case QEvent::TabletRelease: {
 #ifdef MACOSX
-    if (m_tabletState == OnStroke) m_tabletState = Released;
+    if (m_tabletState == StartStroke || m_tabletState == OnStroke)
+      m_tabletState = Released;
 
     TMouseEvent mouseEvent;
     initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
@@ -288,10 +289,10 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     if (TApp::instance()->getCurrentTool()->isToolBusy())
       TApp::instance()->getCurrentTool()->setToolBusy(false);
 #else
-    if (m_tabletState == OnStroke) {
+    if (m_tabletState == StartStroke || m_tabletState == OnStroke) {
       m_tabletState = Released;
       TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), e->pressure(), getDevPixRatio());
+      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
       onRelease(mouseEvent);
     } else
       m_tabletEvent = false;
@@ -307,16 +308,11 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     if (isHoveringInsideViewer) onEnter();
 #else
     // for Windowsm, use tabletEvent only for the left Button
-    if (m_tabletState != OnStroke) {
+    if (m_tabletState != StartStroke && m_tabletState != OnStroke) {
       m_tabletEvent = false;
       break;
     }
 #endif
-    // cancel stroke to prevent drawing while floating
-    if (m_tabletState == OnStroke && m_pressure == 0.0) {
-      resetTabletStatus();
-      break;
-    }
     QPoint curPos = e->pos() * getDevPixRatio();
     // It seems that the tabletEvent is called more often than mouseMoveEvent.
     // So I fire the interval timer in order to limit the following process
@@ -325,9 +321,21 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_isBusyOnTabletMove = true;
       TMouseEvent mouseEvent;
       initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
-      m_tabletMove = true;
       QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
-      onMove(mouseEvent);
+      // cancel stroke to prevent drawing while floating
+      // 23/1/2018 There is a case that the pressure becomes zero at the start
+      // and the end of stroke. For such case, stroke should not be cancelled.
+      // So, added a process to finish stroke here instead of cancelling.
+      // This will be called only if the state is OnStroke so at the start
+      // of the stroke this condition will be passed.
+      if (m_tabletState == OnStroke && m_pressure == 0.0) {
+        m_tabletState       = Released;
+        mouseEvent.m_button = Qt::LeftButton;
+        onRelease(mouseEvent);
+      } else {
+        m_tabletMove = true;
+        onMove(mouseEvent);  // m_tabletState is set to OnStrole here
+      }
     }
 #ifdef MACOSX
     // call the fake leave event if the pen is hovering the viewer edge
@@ -439,48 +447,49 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleVCursor);
     }
-  }
 
-  // control of the border handle when the "compare with snapshot" mode is
-  // activated
-  if (m_compareSettings.m_dragCompareX || m_compareSettings.m_dragCompareY) {
-    if (m_compareSettings.m_dragCompareX)
-      m_compareSettings.m_compareX +=
-          ((double)(curPos.x() - m_pos.x())) / width();
-    else if (m_compareSettings.m_dragCompareY)
-      m_compareSettings.m_compareY -=
-          ((double)(curPos.y() - m_pos.y())) / height();
-    m_compareSettings.m_compareX =
-        tcrop(m_compareSettings.m_compareX, 0.0, 1.0);
-    m_compareSettings.m_compareY =
-        tcrop(m_compareSettings.m_compareY, 0.0, 1.0);
+    // control of the border handle when the "compare with snapshot" mode is
+    // activated
+    if (m_compareSettings.m_dragCompareX || m_compareSettings.m_dragCompareY) {
+      if (m_compareSettings.m_dragCompareX)
+        m_compareSettings.m_compareX +=
+            ((double)(curPos.x() - m_pos.x())) / width();
+      else if (m_compareSettings.m_dragCompareY)
+        m_compareSettings.m_compareY -=
+            ((double)(curPos.y() - m_pos.y())) / height();
+      m_compareSettings.m_compareX =
+          tcrop(m_compareSettings.m_compareX, 0.0, 1.0);
+      m_compareSettings.m_compareY =
+          tcrop(m_compareSettings.m_compareY, 0.0, 1.0);
 
-    update();
+      update();
 
-    m_pos = curPos;
+      m_pos = curPos;
+    }
   } else if (m_mouseButton == Qt::NoButton || m_mouseButton == Qt::LeftButton) {
-    if (is3DView() && m_current3DDevice != NONE &&
-        m_mouseButton == Qt::LeftButton)
-      return;
-    else if (is3DView() && m_mouseButton == Qt::NoButton) {
-      TRectD rect = TRectD(TPointD(m_topRasterPos.x, m_topRasterPos.y),
-                           TDimensionD(20 * devPixRatio, 20 * devPixRatio));
-      if (rect.contains(TPointD(curPos.x(), curPos.y())))
-        m_current3DDevice = TOP_3D;
-      else {
-        rect = TRectD(TPointD(m_sideRasterPos.x, m_sideRasterPos.y),
-                      TDimensionD(20 * devPixRatio, 20 * devPixRatio));
-        if (rect.contains(TPointD(curPos.x(), curPos.y()))) {
-          if (m_phi3D > 0)
-            m_current3DDevice = SIDE_RIGHT_3D;
-          else
-            m_current3DDevice = SIDE_LEFT_3D;
-        } else
-          m_current3DDevice = NONE;
-      }
-      if (m_current3DDevice != NONE) {
-        cursorSet = true;
-        setToolCursor(this, ToolCursor::CURSOR_ARROW);
+    if (is3DView()) {
+      if (m_current3DDevice != NONE && m_mouseButton == Qt::LeftButton)
+        return;
+      else if (m_mouseButton == Qt::NoButton) {
+        TRectD rect = TRectD(TPointD(m_topRasterPos.x, m_topRasterPos.y),
+                             TDimensionD(20 * devPixRatio, 20 * devPixRatio));
+        if (rect.contains(TPointD(curPos.x(), curPos.y())))
+          m_current3DDevice = TOP_3D;
+        else {
+          rect = TRectD(TPointD(m_sideRasterPos.x, m_sideRasterPos.y),
+                        TDimensionD(20 * devPixRatio, 20 * devPixRatio));
+          if (rect.contains(TPointD(curPos.x(), curPos.y()))) {
+            if (m_phi3D > 0)
+              m_current3DDevice = SIDE_RIGHT_3D;
+            else
+              m_current3DDevice = SIDE_LEFT_3D;
+          } else
+            m_current3DDevice = NONE;
+        }
+        if (m_current3DDevice != NONE) {
+          cursorSet = true;
+          setToolCursor(this, ToolCursor::CURSOR_ARROW);
+        }
       }
     }
 
@@ -518,15 +527,18 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     //         << " buttonClicked=" << m_buttonClicked;
 
     // separate tablet events from mouse events
-    if (m_tabletEvent && m_tabletState == OnStroke && m_tabletMove) {
+    if (m_tabletEvent &&
+        (m_tabletState == OnStroke || m_tabletState == StartStroke) &&
+        m_tabletMove) {
       tool->leftButtonDrag(pos, event);
+      m_tabletState = OnStroke;
     }
 
     else if (m_mouseButton == Qt::LeftButton) {
       // sometimes the mousePressedEvent is postponed to a wrong  mouse move
       // event!
       if (m_buttonClicked && !m_toolSwitched) tool->leftButtonDrag(pos, event);
-    } else if (m_pressure == 0) {
+    } else if (m_pressure == 0.0) {
       tool->mouseMove(pos, event);
     }
     if (!cursorSet) setToolCursor(this, tool->getCursorId());
@@ -657,7 +669,8 @@ void SceneViewer::onPress(const TMouseEvent &event) {
   }
   // separate tablet and mouse events
   if (m_tabletEvent && m_tabletState == Touched) {
-    m_tabletState = OnStroke;
+    TApp::instance()->getCurrentTool()->setToolBusy(true);
+    m_tabletState = StartStroke;
     tool->leftButtonDown(pos, event);
   } else if (m_mouseButton == Qt::LeftButton) {
     TApp::instance()->getCurrentTool()->setToolBusy(true);
