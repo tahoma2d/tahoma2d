@@ -27,7 +27,6 @@
 #include "toonz/toonzimageutils.h"
 #include "toonz/palettecontroller.h"
 #include "toonz/stage2.h"
-#include "tw/keycodes.h"
 #include "toonz/preferences.h"
 
 // TnzCore includes
@@ -1575,8 +1574,8 @@ void BrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
 //--------------------------------------------------------------------------------------------------
 
-bool BrushTool::keyDown(int key, TUINT32 b, const TPoint &point) {
-  if (key == TwConsts::TK_Esc) {
+bool BrushTool::keyDown(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Escape) {
     resetFrameRange();
   }
   return false;

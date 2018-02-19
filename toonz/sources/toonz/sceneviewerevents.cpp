@@ -48,8 +48,6 @@
 #include "toonzqt/gutil.h"
 #include "subcameramanager.h"
 
-#include "tw/keycodes.h"
-
 // TnzCore includes
 #include "timagecache.h"
 #include "trasterimage.h"
@@ -68,11 +66,6 @@ extern QString updateToolEnableStatus(TTool *tool);
 
 //-----------------------------------------------------------------------------
 namespace {
-//-----------------------------------------------------------------------------
-
-// ahime': baco di Qt. il tablet event non conosce i modificatori correnti
-int modifiers = 0;
-
 //-----------------------------------------------------------------------------
 
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
@@ -104,7 +97,6 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
                           event->modifiers() & Qt::ControlModifier);
-
   toonzEvent.m_buttons  = event->buttons();
   toonzEvent.m_button   = event->button();
   toonzEvent.m_isTablet = true;
@@ -378,7 +370,6 @@ void SceneViewer::onEnter() {
 
   TApp *app = TApp::instance();
   app->setActiveViewer(this);
-  modifiers        = 0;
   TTool *tool      = app->getCurrentTool()->getTool();
   TXshLevel *level = app->getCurrentLevel()->getLevel();
   if (level && level->getSimpleLevel())
@@ -1158,10 +1149,6 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
   if (changeFrameSkippingHolds(event)) {
     return;
   }
-  if ((event->modifiers() & Qt::ShiftModifier) &&
-      (key == Qt::Key_Down || key == Qt::Key_Up)) {
-  }
-
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool) return;
 
@@ -1189,13 +1176,6 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
     return;
   }
 
-  if (key == Qt::Key_Shift)
-    modifiers |= Qt::SHIFT;
-  else if (key == Qt::Key_Control)
-    modifiers |= Qt::CTRL;
-  else if (key == Qt::Key_Alt || key == Qt::Key_AltGr)
-    modifiers |= Qt::ALT;
-
   if (key == Qt::Key_Shift || key == Qt::Key_Control || key == Qt::Key_Alt ||
       key == Qt::Key_AltGr) {
     // quando l'utente preme shift/ctrl ecc. alcuni tool (es. pinch) devono
@@ -1219,96 +1199,17 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
 
   bool shiftButton = QApplication::keyboardModifiers() == Qt::ShiftModifier;
 
-  TUINT32 flags = 0;
-  TPoint pos;
-  if (key == Qt::Key_Shift)
-    flags = TwConsts::TK_ShiftPressed;
-  else if (key == Qt::Key_Control)
-    flags = TwConsts::TK_CtrlPressed;
-  else if (key == Qt::Key_Alt)
-    flags = TwConsts::TK_AltPressed;
-  else if (key == Qt::Key_CapsLock)
-    flags = TwConsts::TK_CapsLock;
-  else if (key == Qt::Key_Backspace)
-    key = TwConsts::TK_Backspace;
-  else if (key == Qt::Key_Return || key == Qt::Key_Enter)
-    key = TwConsts::TK_Return;
-  else if (key == Qt::Key_Left && !shiftButton)
-    key = TwConsts::TK_LeftArrow;
-  else if (key == Qt::Key_Right && !shiftButton)
-    key = TwConsts::TK_RightArrow;
-  else if (key == Qt::Key_Up && !shiftButton)
-    key = TwConsts::TK_UpArrow;
-  else if (key == Qt::Key_Down && !shiftButton)
-    key = TwConsts::TK_DownArrow;
-  else if (key == Qt::Key_Left && shiftButton)
-    key = TwConsts::TK_ShiftLeftArrow;
-  else if (key == Qt::Key_Right && shiftButton)
-    key = TwConsts::TK_ShiftRightArrow;
-  else if (key == Qt::Key_Up && shiftButton)
-    key = TwConsts::TK_ShiftUpArrow;
-  else if (key == Qt::Key_Down && shiftButton)
-    key = TwConsts::TK_ShiftDownArrow;
-  else if (key == Qt::Key_Home)
-    key = TwConsts::TK_Home;
-  else if (key == Qt::Key_End)
-    key = TwConsts::TK_End;
-  else if (key == Qt::Key_PageUp)
-    key = TwConsts::TK_PageUp;
-  else if (key == Qt::Key_PageDown)
-    key = TwConsts::TK_PageDown;
-  else if (key == Qt::Key_Insert)
-    key = TwConsts::TK_Insert;
-  else if (key == Qt::Key_Delete)
-    key = TwConsts::TK_Delete;
-  else if (key == Qt::Key_Escape)
-    key = TwConsts::TK_Esc;
-  else if (key == Qt::Key_F1)
-    key = TwConsts::TK_F1;
-  else if (key == Qt::Key_F2)
-    key = TwConsts::TK_F2;
-  else if (key == Qt::Key_F3)
-    key = TwConsts::TK_F3;
-  else if (key == Qt::Key_F4)
-    key = TwConsts::TK_F4;
-  else if (key == Qt::Key_F5)
-    key = TwConsts::TK_F5;
-  else if (key == Qt::Key_F6)
-    key = TwConsts::TK_F6;
-  else if (key == Qt::Key_F7)
-    key = TwConsts::TK_F7;
-  else if (key == Qt::Key_F8)
-    key = TwConsts::TK_F8;
-  else if (key == Qt::Key_F9)
-    key = TwConsts::TK_F9;
-  else if (key == Qt::Key_F10)
-    key = TwConsts::TK_F10;
-  else if (key == Qt::Key_F11)
-    key = TwConsts::TK_F11;
-  else if (key == Qt::Key_F12)
-    key = TwConsts::TK_F12;
-  else if (key == Qt::Key_Menu || key == Qt::Key_Meta)
-    return;
+  if (key == Qt::Key_Menu || key == Qt::Key_Meta) return;
 
   bool ret = false;
   if (tool)  // && m_toolEnabled)
-  {
-    QString text = event->text();
-    if ((event->modifiers() & Qt::ShiftModifier)) text.toUpper();
-    std::wstring unicodeChar = text.toStdWString();
-    ret = tool->keyDown(key, unicodeChar, flags, pos);  // per il textTool
-    if (ret) {
-      update();
-      return;
-    }
-    ret = tool->keyDown(key, flags, pos);  // per gli altri tool
-  }
+    ret = tool->keyDown(event);
   if (!ret) {
     TFrameHandle *fh = TApp::instance()->getCurrentFrame();
 
-    if (key == TwConsts::TK_UpArrow || key == TwConsts::TK_LeftArrow)
+    if (key == Qt::Key_Up || key == Qt::Key_Left)
       fh->prevFrame();
-    else if (key == TwConsts::TK_DownArrow || key == TwConsts::TK_RightArrow) {
+    else if (key == Qt::Key_Down || key == Qt::Key_Right) {
       // If on a level frame pass the frame id after the last frame to allow
       // creating a new frame with the down arrow key
       TFrameId newId = 0;
@@ -1326,9 +1227,9 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
         }
       }
       fh->nextFrame(newId);
-    } else if (key == TwConsts::TK_Home)
+    } else if (key == Qt::Key_Home)
       fh->firstFrame();
-    else if (key == TwConsts::TK_End)
+    else if (key == Qt::Key_End)
       fh->lastFrame();
   }
   update();
@@ -1348,13 +1249,6 @@ void SceneViewer::keyReleaseEvent(QKeyEvent *event) {
 
   if (key == Qt::Key_Shift || key == Qt::Key_Control || key == Qt::Key_Alt ||
       key == Qt::Key_AltGr) {
-    if (key == Qt::Key_Shift)
-      modifiers &= ~Qt::ShiftModifier;
-    else if (key == Qt::Key_Control)
-      modifiers &= ~Qt::ControlModifier;
-    else if (key == Qt::Key_Alt || key == Qt::Key_AltGr)
-      modifiers &= ~Qt::AltModifier;
-
     // quando l'utente preme shift/ctrl ecc. alcuni tool (es. pinch) devono
     // cambiare subito la forma del cursore, senza aspettare il prossimo move
     TMouseEvent toonzEvent;

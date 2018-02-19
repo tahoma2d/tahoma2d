@@ -482,7 +482,7 @@ void PinchTool::mouseMove(const TPointD &pos, const TMouseEvent &event) {
 
 //-----------------------------------------------------------------------------
 
-bool PinchTool::keyDown(int key, TUINT32 flags, const TPoint &pos) {
+bool PinchTool::keyDown(QKeyEvent *event) {
   if (!m_active) m_deformation->reset();
 
 #if 0
