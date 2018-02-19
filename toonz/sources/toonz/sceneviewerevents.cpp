@@ -587,13 +587,19 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onPress(const TMouseEvent &event) {
+  if (m_mouseButton != Qt::NoButton) {
+    // if some button is pressed while another button being active,
+    // finish the action for the previous button first.
+    TMouseEvent preEvent = event;
+    preEvent.m_button    = m_mouseButton;
+    onRelease(preEvent);
+  }
+
   // evita i press ripetuti
   if (m_buttonClicked) return;
   m_buttonClicked = true;
   m_toolSwitched  = false;
   if (m_freezedStatus != NO_FREEZED) return;
-
-  if (m_mouseButton != Qt::NoButton) return;
 
   m_pos         = event.mousePos() * getDevPixRatio();
   m_mouseButton = event.button();
