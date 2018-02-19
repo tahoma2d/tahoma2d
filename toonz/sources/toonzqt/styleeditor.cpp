@@ -2999,53 +2999,8 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   QScrollArea *textureArea = makeChooserPage(m_textureStylePage);
   QScrollArea *mypaintBrushesArea = makeChooserPage(m_mypaintBrushesStylePage);
   QScrollArea *settingsArea = makeChooserPageWithoutScrollBar(m_settingsPage);
-
-  QVBoxLayout *vectorLayout = new QVBoxLayout(this);
-  vectorLayout->setMargin(0);
-  vectorLayout->setSpacing(0);
-  vectorLayout->setSizeConstraint(QLayout::SetNoConstraint);
-
-  QVBoxLayout *vectorOutsideLayout = new QVBoxLayout(this);
-  vectorOutsideLayout->setMargin(0);
-  vectorOutsideLayout->setSpacing(0);
-  vectorOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
-
-  QPushButton *specialButton     = new QPushButton(tr("Generated"), this);
-  QPushButton *customButton      = new QPushButton(tr("Trail"), this);
-  QPushButton *vectorBrushButton = new QPushButton(tr("Vector Brush"), this);
-  specialButton->setCheckable(true);
-  customButton->setCheckable(true);
-  vectorBrushButton->setCheckable(true);
-  specialButton->setChecked(true);
-  customButton->setChecked(true);
-  vectorBrushButton->setChecked(true);
-
-  QHBoxLayout *vectorButtonLayout = new QHBoxLayout(this);
-  vectorButtonLayout->setSizeConstraint(QLayout::SetNoConstraint);
-
-  QFrame *vectorFrame = new QFrame(this);
-  vectorFrame->setMinimumWidth(50);
-
-  QFrame *vectorOutsideFrame = new QFrame(this);
-  vectorOutsideFrame->setMinimumWidth(50);
-
-  vectorButtonLayout->addWidget(specialButton);
-  vectorButtonLayout->addWidget(customButton);
-  vectorButtonLayout->addWidget(vectorBrushButton);
-
-  vectorOutsideLayout->addLayout(vectorButtonLayout);
-  vectorLayout->addWidget(m_specialStylePage);
-  vectorLayout->addWidget(m_customStylePage);
-  vectorLayout->addWidget(m_vectorBrushesStylePage);
-
-  vectorFrame->setLayout(vectorLayout);
-  m_vectorArea = makeChooserPage(vectorFrame);
-  m_vectorArea->setMinimumWidth(50);
-  vectorOutsideLayout->addWidget(m_vectorArea);
-
-  vectorOutsideFrame->setLayout(vectorOutsideLayout);
   QScrollArea *vectorOutsideArea =
-      makeChooserPageWithoutScrollBar(vectorOutsideFrame);
+      makeChooserPageWithoutScrollBar(createVectorPage());
   vectorOutsideArea->setMinimumWidth(50);
 
   m_styleChooser = new QStackedWidget(this);
@@ -3116,12 +3071,6 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   ret = ret && connect(m_plainColorPage,
                        SIGNAL(colorChanged(const ColorModel &, bool)), this,
                        SLOT(onColorChanged(const ColorModel &, bool)));
-  ret = ret && connect(specialButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onSpecialButtonToggled(bool)));
-  ret = ret && connect(customButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onCustomButtonToggled(bool)));
-  ret = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onVectorBrushButtonToggled(bool)));
   assert(ret);
 
   /* ------- initial conditions ------- */
@@ -3205,6 +3154,68 @@ QFrame *StyleEditor::createBottomWidget() {
   assert(ret);
 
   return bottomWidget;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *StyleEditor::createVectorPage() {
+  QFrame *vectorOutsideFrame = new QFrame(this);
+  vectorOutsideFrame->setMinimumWidth(50);
+
+  QPushButton *specialButton     = new QPushButton(tr("Generated"), this);
+  QPushButton *customButton      = new QPushButton(tr("Trail"), this);
+  QPushButton *vectorBrushButton = new QPushButton(tr("Vector Brush"), this);
+
+  specialButton->setCheckable(true);
+  customButton->setCheckable(true);
+  vectorBrushButton->setCheckable(true);
+  specialButton->setChecked(true);
+  customButton->setChecked(true);
+  vectorBrushButton->setChecked(true);
+
+  /* ------ layout ------ */
+  QVBoxLayout *vectorOutsideLayout = new QVBoxLayout();
+  vectorOutsideLayout->setMargin(0);
+  vectorOutsideLayout->setSpacing(0);
+  vectorOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
+  {
+    QHBoxLayout *vectorButtonLayout = new QHBoxLayout();
+    vectorButtonLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    {
+      vectorButtonLayout->addWidget(specialButton);
+      vectorButtonLayout->addWidget(customButton);
+      vectorButtonLayout->addWidget(vectorBrushButton);
+    }
+    vectorOutsideLayout->addLayout(vectorButtonLayout);
+
+    QVBoxLayout *vectorLayout = new QVBoxLayout();
+    vectorLayout->setMargin(0);
+    vectorLayout->setSpacing(0);
+    vectorLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    {
+      vectorLayout->addWidget(m_specialStylePage);
+      vectorLayout->addWidget(m_customStylePage);
+      vectorLayout->addWidget(m_vectorBrushesStylePage);
+    }
+    QFrame *vectorFrame = new QFrame(this);
+    vectorFrame->setMinimumWidth(50);
+    vectorFrame->setLayout(vectorLayout);
+    m_vectorArea = makeChooserPage(vectorFrame);
+    m_vectorArea->setMinimumWidth(50);
+    vectorOutsideLayout->addWidget(m_vectorArea);
+  }
+  vectorOutsideFrame->setLayout(vectorOutsideLayout);
+
+  /* ------ signal-slot connections ------ */
+  bool ret = true;
+  ret      = ret && connect(specialButton, SIGNAL(toggled(bool)), this,
+                       SLOT(onSpecialButtonToggled(bool)));
+  ret = ret && connect(customButton, SIGNAL(toggled(bool)), this,
+                       SLOT(onCustomButtonToggled(bool)));
+  ret = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
+                       SLOT(onVectorBrushButtonToggled(bool)));
+  assert(ret);
+  return vectorOutsideFrame;
 }
 
 //-----------------------------------------------------------------------------

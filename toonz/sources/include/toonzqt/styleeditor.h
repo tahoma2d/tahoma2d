@@ -738,6 +738,7 @@ protected slots:
 
 private:
   QFrame *createBottomWidget();
+  QFrame *createVectorPage();
   void updateTabBar();
 
   void copyEditedStyleToPalette(bool isDragging);
