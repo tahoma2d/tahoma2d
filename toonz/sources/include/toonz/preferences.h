@@ -662,7 +662,7 @@ private:
   bool m_currentTimelineEnabled;
 
   // color calibration using 3DLUT
-  bool m_colorCalibrationEnabled = true;  //とりあえず
+  bool m_colorCalibrationEnabled = false;
   // map of [monitor name]-[path to the lut file].
   // for now non-Windows accepts only one lut path for all kinds of monitors
   QMap<QString, QString> m_colorCalibrationLutPaths;
