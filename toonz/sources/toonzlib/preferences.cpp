@@ -666,6 +666,18 @@ Preferences::Preferences()
   m_loadedXsheetLayout = m_xsheetLayoutPreference;
 
   getValue(*m_settings, "currentTimelineEnabled", m_currentTimelineEnabled);
+
+  getValue(*m_settings, "colorCalibrationEnabled", m_colorCalibrationEnabled);
+  QVariant val = m_settings->value("colorCalibrationLutPaths");
+  if (val.canConvert<QVariantMap>()) {
+    QAssociativeIterable iterable           = val.value<QAssociativeIterable>();
+    QAssociativeIterable::const_iterator it = iterable.begin();
+    const QAssociativeIterable::const_iterator end = iterable.end();
+    for (; it != end; ++it) {
+      m_colorCalibrationLutPaths.insert(it.key().toString(),
+                                        it.value().toString());
+    }
+  }
 }
 
 //-----------------------------------------------------------------
@@ -1617,3 +1629,30 @@ void Preferences::enableCurrentTimelineIndicator(bool on) {
   m_currentTimelineEnabled = on;
   m_settings->setValue("currentTimelineEnabled", on ? "1" : "0");
 }
+
+//-----------------------------------------------------------------
+// color calibration using 3DLUT
+
+void Preferences::enableColorCalibration(bool on) {
+  m_colorCalibrationEnabled = on;
+  m_settings->setValue("colorCalibrationEnabled", on ? "1" : "0");
+}
+
+void Preferences::setColorCalibrationLutPath(QString monitorName,
+                                             QString path) {
+  m_colorCalibrationLutPaths.insert(monitorName, path);
+  QMap<QString, QVariant> map;
+  QMap<QString, QString>::const_iterator i =
+      m_colorCalibrationLutPaths.constBegin();
+  while (i != m_colorCalibrationLutPaths.constEnd()) {
+    map.insert(i.key(), i.value());
+    i++;
+  }
+  m_settings->setValue("colorCalibrationLutPaths", map);
+}
+
+QString Preferences::getColorCalibrationLutPath(QString &monitorName) const {
+  return m_colorCalibrationLutPaths.value(monitorName);
+}
+
+//-----------------------------------------------------------------

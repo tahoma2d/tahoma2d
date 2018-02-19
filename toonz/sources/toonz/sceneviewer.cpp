@@ -23,6 +23,7 @@
 #include "toonzqt/icongenerator.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
+#include "toonzqt/lutcalibrator.h"
 
 // TnzLib includes
 #include "toonz/tscenehandle.h"
@@ -81,6 +82,7 @@
 #include <QInputContext>
 #endif
 #include <QGLContext>
+#include <QOpenGLFramebufferObject>
 
 #include "sceneviewer.h"
 
@@ -500,10 +502,6 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   m_3DSideL = rasterFromQPixmap(svgToPixmap(":Resources/3Dside_l.svg"));
   m_3DTop   = rasterFromQPixmap(svgToPixmap(":Resources/3Dtop.svg"));
 
-  // iwsw commented out temporarily
-  // if (Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  // Ghibli3DLutUtil::m_isValid)
-  //  m_ghibli3DLutUtil = new Ghibli3DLutUtil();
   setAttribute(Qt::WA_AcceptTouchEvents);
   grabGesture(Qt::SwipeGesture);
   grabGesture(Qt::PanGesture);
@@ -525,14 +523,7 @@ void SceneViewer::setVisual(const ImagePainter::VisualSettings &settings) {
 //-----------------------------------------------------------------------------
 
 SceneViewer::~SceneViewer() {
-  // iwsw commented out temporarily
-  /*
-if (m_ghibli3DLutUtil)
-{
-    m_ghibli3DLutUtil->onEnd();
-    delete m_ghibli3DLutUtil;
-}
-*/
+  if (m_fbo) delete m_fbo;
 }
 
 //-------------------------------------------------------------------------------
@@ -825,13 +816,12 @@ double SceneViewer::getHGuide(int index) { return m_hRuler->getGuide(index); }
 
 void SceneViewer::initializeGL() {
   initializeOpenGLFunctions();
+
+  // to be computed once through the software
+  LutCalibrator::instance()->initialize();
+
   // glClearColor(1.0,1.0,1.0,1);
   glClear(GL_COLOR_BUFFER_BIT);
-
-  // iwsw commented out temporarily
-  // if (Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  // m_ghibli3DLutUtil)
-  //	  m_ghibli3DLutUtil->onInit();
 }
 
 //-----------------------------------------------------------------------------
@@ -856,12 +846,14 @@ void SceneViewer::resizeGL(int w, int h) {
 
   if (m_previewMode != NO_PREVIEW) requestTimedRefresh();
 
+  // remake fbo with new size
+  if (LutCalibrator::instance()->isValid()) {
+    if (m_fbo) delete m_fbo;
+    m_fbo = new QOpenGLFramebufferObject(w, h);
+  }
+
   // for updating the navigator in levelstrip
   emit refreshNavi();
-  // iwsw commented out temporarily
-  // if (Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  // m_ghibli3DLutUtil)
-  //	m_ghibli3DLutUtil->onResize(w, h);
 }
 
 //-----------------------------------------------------------------------------
@@ -1381,11 +1373,7 @@ void SceneViewer::paintGL() {
   time.start();
 #endif
 
-  // iwsw commented out temporarily
-  // if (!m_isPicking &&
-  //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  // m_ghibli3DLutUtil)
-  //	m_ghibli3DLutUtil->startDraw();
+  if (!m_isPicking && LutCalibrator::instance()->isValid()) m_fbo->bind();
 
   if (m_hRuler && m_vRuler) {
     if (!viewRulerToggle.getStatus() &&
@@ -1415,11 +1403,8 @@ void SceneViewer::paintGL() {
     glPopMatrix();
     m_viewGrabImage->unlock();
 
-    // iwsw commented out temporarily
-    // if (!m_isPicking &&
-    //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-    // m_ghibli3DLutUtil)
-    //	m_ghibli3DLutUtil->endDraw();
+    if (!m_isPicking && LutCalibrator::instance()->isValid())
+      LutCalibrator::instance()->onEndDraw(m_fbo);
 
     return;
   }
@@ -1427,11 +1412,8 @@ void SceneViewer::paintGL() {
   drawBuildVars();
 
   check_framebuffer_status();
-  // iwsw commented out temporarily
-  // if (!m_isPicking &&
-  //	  !Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() ||
-  //! m_ghibli3DLutUtil)
   copyFrontBufferToBackBuffer();
+
   check_framebuffer_status();
   drawEnableScissor();
   check_framebuffer_status();
@@ -1465,11 +1447,8 @@ void SceneViewer::paintGL() {
 #endif
   // TOfflineGL::setContextManager(0);
 
-  // iwsw commented out temporarily
-  // if (!m_isPicking &&
-  //	Preferences::instance()->isDoColorCorrectionByUsing3DLutEnabled() &&
-  // m_ghibli3DLutUtil)
-  //	m_ghibli3DLutUtil->endDraw();
+  if (!m_isPicking && LutCalibrator::instance()->isValid())
+    LutCalibrator::instance()->onEndDraw(m_fbo);
 }
 
 //-----------------------------------------------------------------------------
@@ -2555,4 +2534,16 @@ TRectD SceneViewer::getGeometry() const {
 */
 void SceneViewer::doDeleteSubCamera() {
   PreviewSubCameraManager::instance()->deleteSubCamera(this);
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::bindFBO() {
+  if (m_fbo) m_fbo->bind();
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::releaseFBO() {
+  if (m_fbo) m_fbo->release();
 }

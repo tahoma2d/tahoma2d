@@ -14,8 +14,6 @@
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/flipconsole.h"
 #include "toonzqt/glwidget_for_highdpi.h"
-// iwsw commented out temporarily
-//#include "toonzqt/ghibli_3dlut_util.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -36,6 +34,7 @@ class SceneViewer;
 class LocatorPopup;
 class QGestureEvent;
 class QTouchEvent;
+class QOpenGLFramebufferObject;
 
 namespace ImageUtils {
 class FullScreenWidget;
@@ -145,6 +144,9 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   bool m_editPreviewSubCamera;
 
+  // used for color calibration with 3DLUT
+  QOpenGLFramebufferObject *m_fbo = NULL;
+
   enum Device3D {
     NONE,
     SIDE_LEFT_3D,
@@ -160,8 +162,6 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   QMatrix4x4 m_projectionMatrix;
 
-  // iwsw commented out temporarily
-  // Ghibli3DLutUtil * m_ghibli3DLutUtil;
 public:
   // iwsw commented out temporarily
   // Ghibli3DLutUtil* get3DLutUtil(){ return m_ghibli3DLutUtil; }
@@ -261,6 +261,9 @@ public:
   int getHGuideCount();
   double getVGuide(int index);
   double getHGuide(int index);
+
+  void bindFBO() override;
+  void releaseFBO() override;
 
 public:
   // SceneViewer's gadget public functions

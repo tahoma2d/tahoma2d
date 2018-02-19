@@ -59,9 +59,6 @@ class ToolOptionsBox;
 
 class QMenu;
 
-// iwsw commented out
-// class Ghibli3DLutUtil;
-
 //===================================================================
 
 //*****************************************************************************************
@@ -655,8 +652,8 @@ public:
   /*-- Toolで画面の内外を判断するため --*/
   virtual TRectD getGeometry() const = 0;
 
-  // iwsw commented out
-  // virtual Ghibli3DLutUtil* get3DLutUtil(){ return 0; }
+  virtual void bindFBO() {}
+  virtual void releaseFBO() {}
 };
 
 #endif
