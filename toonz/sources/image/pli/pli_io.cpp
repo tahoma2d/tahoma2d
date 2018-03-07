@@ -2544,7 +2544,7 @@ bool ParsedPliImp::writePli(const TFilePath &filename) {
   double absAutoClose = fabs(m_autocloseTolerance);
   s                   = tsign(m_autocloseTolerance) + 1;
   i                   = (UCHAR)((int)absAutoClose);
-  d                   = (UCHAR)((int)((absAutoClose - i) * 100));
+  d                   = (UCHAR)((int)round((absAutoClose - i) * 100));
   *m_oChan << s;
   *m_oChan << i;
   *m_oChan << d;
