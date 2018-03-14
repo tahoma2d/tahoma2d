@@ -429,6 +429,12 @@ void PreferencesPopup::onAutomaticSVNRefreshChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onCheckLatestVersionChanged(bool on) {
+  m_pref->enableLatestVersionCheck(on);
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onSVNEnabledChanged(int index) {
   bool enabled = index == Qt::Checked;
   if (enabled) {
@@ -1463,6 +1469,9 @@ PreferencesPopup::PreferencesPopup()
   CheckBox *autoRefreshFolderContentsCB =
       new CheckBox(tr("Automatically Refresh Folder Contents"), this);
 
+  CheckBox *checkForTheLatestVersionCB = new CheckBox(
+      tr("Check for the Latest Version of OpenToonz on Launch"), this);
+
   QLabel *note_version =
       new QLabel(tr("* Changes will take effect the next time you run Toonz"));
   note_version->setStyleSheet("font-size: 10px; font: italic;");
@@ -1793,6 +1802,7 @@ PreferencesPopup::PreferencesPopup()
   m_enableVersionControl->setChecked(m_pref->isSVNEnabled());
   autoRefreshFolderContentsCB->setChecked(
       m_pref->isAutomaticSVNFolderRefreshEnabled());
+  checkForTheLatestVersionCB->setChecked(m_pref->isLatestVersionCheckEnabled());
 
   /*--- layout ---*/
 
@@ -2485,6 +2495,8 @@ PreferencesPopup::PreferencesPopup()
                        Qt::AlignLeft | Qt::AlignVCenter);
       vcLay->addWidget(autoRefreshFolderContentsCB, 0,
                        Qt::AlignLeft | Qt::AlignVCenter);
+      vcLay->addWidget(checkForTheLatestVersionCB, 0,
+                       Qt::AlignLeft | Qt::AlignVCenter);
 
       vcLay->addStretch(1);
 
@@ -2804,7 +2816,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onSVNEnabledChanged(int)));
   ret = ret && connect(autoRefreshFolderContentsCB, SIGNAL(stateChanged(int)),
                        SLOT(onAutomaticSVNRefreshChanged(int)));
-
+  ret = ret && connect(checkForTheLatestVersionCB, SIGNAL(clicked(bool)),
+                       SLOT(onCheckLatestVersionChanged(bool)));
   assert(ret);
 }
 

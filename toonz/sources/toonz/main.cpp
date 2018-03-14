@@ -588,7 +588,8 @@ int main(int argc, char *argv[]) {
 
   a.setQuitOnLastWindowClosed(false);
   // a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-  w.checkForUpdates();
+  if (Preferences::instance()->isLatestVersionCheckEnabled())
+    w.checkForUpdates();
 
   w.show();
 

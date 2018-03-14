@@ -1336,14 +1336,19 @@ void MainWindow::onUpdateCheckerDone(bool error) {
   int const latest_version =
       get_version_code_from(m_updateChecker->getLatestVersion().toStdString());
   if (software_version < latest_version) {
-    std::vector<QString> buttons;
+    QStringList buttons;
     buttons.push_back(QObject::tr("Visit Web Site"));
     buttons.push_back(QObject::tr("Cancel"));
-    int ret = DVGui::MsgBox(
+    DVGui::MessageAndCheckboxDialog *dialog = DVGui::createMsgandCheckbox(
         DVGui::INFORMATION,
         QObject::tr("An update is available for this software.\nVisit the Web "
                     "site for more information."),
-        buttons);
+        QObject::tr("Check for the latest version on launch."), buttons, 0,
+        Qt::Checked);
+    int ret = dialog->exec();
+    if (dialog->getChecked() == Qt::Unchecked)
+      Preferences::instance()->enableLatestVersionCheck(false);
+    dialog->deleteLater();
     if (ret == 1) {
       // Write the new last date to file
       QDesktopServices::openUrl(QObject::tr("https://opentoonz.github.io/e/"));
@@ -2392,9 +2397,9 @@ RecentFiles::~RecentFiles() {}
 
 void RecentFiles::addFilePath(QString path, FileType fileType) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
     if (files.at(i) == path) files.removeAt(i);
@@ -2519,9 +2524,9 @@ void RecentFiles::saveRecentFiles() {
 
 QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   QList<QString> names;
   int i;
   for (i = 0; i < files.size(); i++) {
@@ -2548,9 +2553,9 @@ void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
     menu->setEnabled(false);
   else {
     CommandId clearActionId =
-        (fileType == Scene) ? MI_ClearRecentScene : (fileType == Level)
-                                                        ? MI_ClearRecentLevel
-                                                        : MI_ClearRecentImage;
+        (fileType == Scene)
+            ? MI_ClearRecentScene
+            : (fileType == Level) ? MI_ClearRecentLevel : MI_ClearRecentImage;
     menu->setActions(names);
     menu->addSeparator();
     QAction *clearAction = CommandManager::instance()->getAction(clearActionId);
