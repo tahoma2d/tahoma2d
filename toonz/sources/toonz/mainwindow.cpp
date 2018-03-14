@@ -1625,7 +1625,8 @@ void MainWindow::defineActions() {
   QAction *newToonzRasterLevelAction = createMenuFileAction(
       MI_NewToonzRasterLevel, tr("&New Toonz Raster Level"), "");
   newToonzRasterLevelAction->setIconText(tr("New Toonz Raster Level"));
-  newToonzRasterLevelAction->setIcon(QIcon(":Resources/new_toonz_raster_level.svg"));
+  newToonzRasterLevelAction->setIcon(
+      QIcon(":Resources/new_toonz_raster_level.svg"));
   QAction *newRasterLevelAction =
       createMenuFileAction(MI_NewRasterLevel, tr("&New Raster Level"), "");
   newRasterLevelAction->setIconText(tr("New Raster Level"));
@@ -2213,6 +2214,8 @@ void MainWindow::defineActions() {
                           tr("Pressure Sensitivity"), "Shift+P");
   createToolOptionsAction("A_ToolOption_SegmentInk", tr("Segment Ink"), "F8");
   createToolOptionsAction("A_ToolOption_Selective", tr("Selective"), "F7");
+  createToolOptionsAction("A_ToolOption_DrawOrder",
+                          tr("Brush Tool - Draw Order"), "");
   createToolOptionsAction("A_ToolOption_Smooth", tr("Smooth"), "");
   createToolOptionsAction("A_ToolOption_Snap", tr("Snap"), "");
   createToolOptionsAction("A_ToolOption_AutoSelectDrawing",
