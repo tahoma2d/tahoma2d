@@ -752,6 +752,19 @@ void SmoothStroke::generatePoints() {
   if (n == 0) {
     return;
   }
+
+  // if m_smooth = 0, then skip whole smoothing process
+  if (m_smooth == 0) {
+    for (int i = m_outputIndex; i < (int)m_outputPoints.size(); ++i) {
+      if (m_outputPoints[i] != m_rawPoints[i]) {
+        break;
+      }
+      ++m_outputIndex;
+    }
+    m_outputPoints = m_rawPoints;
+    return;
+  }
+
   std::vector<TThickPoint> smoothedPoints;
   // Add more stroke samples before applying the smoothing
   // This is because the raw inputs points are too few to support smooth result,
@@ -869,21 +882,20 @@ BrushTool::BrushTool(std::string name, int targetType)
   m_preset.addValue(CUSTOM_WSTR);
   m_pressure.setId("PressureSensitivity");
 
-  m_capStyle.addValue(BUTT_WSTR);
-  m_capStyle.addValue(ROUNDC_WSTR);
-  m_capStyle.addValue(PROJECTING_WSTR);
-  m_capStyle.setId("Cap");
-
-  m_joinStyle.addValue(MITER_WSTR);
-  m_joinStyle.addValue(ROUNDJ_WSTR);
-  m_joinStyle.addValue(BEVEL_WSTR);
-  m_joinStyle.setId("Join");
-
-  m_miterJoinLimit.setId("Miter");
-
   if (targetType & TTool::Vectors) {
+    m_capStyle.addValue(BUTT_WSTR);
+    m_capStyle.addValue(ROUNDC_WSTR);
+    m_capStyle.addValue(PROJECTING_WSTR);
+    m_capStyle.setId("Cap");
     m_prop[1].bind(m_capStyle);
+
+    m_joinStyle.addValue(MITER_WSTR);
+    m_joinStyle.addValue(ROUNDJ_WSTR);
+    m_joinStyle.addValue(BEVEL_WSTR);
+    m_joinStyle.setId("Join");
     m_prop[1].bind(m_joinStyle);
+
+    m_miterJoinLimit.setId("Miter");
     m_prop[1].bind(m_miterJoinLimit);
   }
 }
@@ -1096,17 +1108,21 @@ void BrushTool::onActivate() {
         TDoublePairProperty::Value(VectorBrushMinSize, VectorBrushMaxSize));
     m_rasThickness.setValue(
         TDoublePairProperty::Value(RasterBrushMinSize, RasterBrushMaxSize));
-    m_capStyle.setIndex(VectorCapStyle);
-    m_joinStyle.setIndex(VectorJoinStyle);
-    m_miterJoinLimit.setValue(VectorMiterValue);
-    if (m_targetType & TTool::ToonzImage) m_drawOrder.setIndex(BrushDrawOrder);
-    m_breakAngles.setValue(BrushBreakSharpAngles ? 1 : 0);
-    m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
+    if (m_targetType & TTool::Vectors) {
+      m_capStyle.setIndex(VectorCapStyle);
+      m_joinStyle.setIndex(VectorJoinStyle);
+      m_miterJoinLimit.setValue(VectorMiterValue);
+      m_breakAngles.setValue(BrushBreakSharpAngles ? 1 : 0);
+      m_accuracy.setValue(BrushAccuracy);
+    }
+    if (m_targetType & TTool::ToonzImage) {
+      m_drawOrder.setIndex(BrushDrawOrder);
+      m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
+      m_hardness.setValue(RasterBrushHardness);
+    }
     m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
     m_firstTime = false;
-    m_accuracy.setValue(BrushAccuracy);
     m_smooth.setValue(BrushSmooth);
-    m_hardness.setValue(RasterBrushHardness);
     if (m_targetType & TTool::Vectors) {
       m_frameRange.setIndex(VectorBrushFrameRange);
       m_snap.setValue(VectorBrushSnap);
@@ -2000,16 +2016,19 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
         (m_targetType & TTool::ToonzImage) ? m_rasThickness : m_thickness, min,
         max);
   } else {
+    m_mousePos = pos;
     m_brushPos = pos;
 
-    m_mousePos       = pos;
-    m_firstSnapPoint = pos;
-    m_foundFirstSnap = false;
+    if (m_targetType & TTool::Vectors) {
+      m_firstSnapPoint = pos;
+      m_foundFirstSnap = false;
 
-    checkStrokeSnapping(true);
-    checkGuideSnapping(true);
-    m_brushPos = m_firstSnapPoint;
+      checkStrokeSnapping(true);
+      checkGuideSnapping(true);
+      m_brushPos = m_firstSnapPoint;
+    }
   }
+  // TODO: this can be partial update for toonz raster brush
   invalidate();
 
   if (m_minThick == 0 && m_maxThick == 0) {
@@ -2157,34 +2176,36 @@ void BrushTool::draw() {
 
   // snapping
   TVectorImageP vi = img;
-  if ((m_targetType & TTool::Vectors) && m_snap.getValue()) {
-    m_pixelSize  = getPixelSize();
-    double thick = 6.0 * m_pixelSize;
-    if (m_foundFirstSnap) {
-      tglColor(TPixelD(0.1, 0.9, 0.1));
-      tglDrawCircle(m_firstSnapPoint, thick);
+  if (m_targetType & TTool::Vectors) {
+    if (m_snap.getValue()) {
+      m_pixelSize  = getPixelSize();
+      double thick = 6.0 * m_pixelSize;
+      if (m_foundFirstSnap) {
+        tglColor(TPixelD(0.1, 0.9, 0.1));
+        tglDrawCircle(m_firstSnapPoint, thick);
+      }
+
+      TThickPoint point2;
+
+      if (m_foundLastSnap) {
+        tglColor(TPixelD(0.1, 0.9, 0.1));
+        tglDrawCircle(m_lastSnapPoint, thick);
+      }
     }
 
-    TThickPoint point2;
-
-    if (m_foundLastSnap) {
-      tglColor(TPixelD(0.1, 0.9, 0.1));
-      tglDrawCircle(m_lastSnapPoint, thick);
+    // frame range
+    if (m_firstStroke) {
+      glColor3d(1.0, 0.0, 0.0);
+      m_rangeTrack.drawAllFragments();
+      glColor3d(0.0, 0.6, 0.0);
+      TPointD firstPoint        = m_rangeTrack.getFirstPoint();
+      TPointD topLeftCorner     = TPointD(firstPoint.x - 5, firstPoint.y - 5);
+      TPointD topRightCorner    = TPointD(firstPoint.x + 5, firstPoint.y - 5);
+      TPointD bottomLeftCorner  = TPointD(firstPoint.x - 5, firstPoint.y + 5);
+      TPointD bottomRightCorner = TPointD(firstPoint.x + 5, firstPoint.y + 5);
+      tglDrawSegment(topLeftCorner, bottomRightCorner);
+      tglDrawSegment(topRightCorner, bottomLeftCorner);
     }
-  }
-
-  // frame range
-  if (m_firstStroke) {
-    glColor3d(1.0, 0.0, 0.0);
-    m_rangeTrack.drawAllFragments();
-    glColor3d(0.0, 0.6, 0.0);
-    TPointD firstPoint        = m_rangeTrack.getFirstPoint();
-    TPointD topLeftCorner     = TPointD(firstPoint.x - 5, firstPoint.y - 5);
-    TPointD topRightCorner    = TPointD(firstPoint.x + 5, firstPoint.y - 5);
-    TPointD bottomLeftCorner  = TPointD(firstPoint.x - 5, firstPoint.y + 5);
-    TPointD bottomRightCorner = TPointD(firstPoint.x + 5, firstPoint.y + 5);
-    tglDrawSegment(topLeftCorner, bottomRightCorner);
-    tglDrawSegment(topRightCorner, bottomLeftCorner);
   }
 
   if (getApplication()->getCurrentObject()->isSpline()) return;

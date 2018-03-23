@@ -352,7 +352,7 @@ public:
 
 //-----------------------------------------------------------------------------
 /*! emphasize lines with style#1 regardless of the current style
-*/
+ */
 class Ink1CheckToggleCommand final : public MenuItemHandler {
 public:
   Ink1CheckToggleCommand() : MenuItemHandler("MI_Ink1Check") {}
@@ -506,6 +506,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   grabGesture(Qt::SwipeGesture);
   grabGesture(Qt::PanGesture);
   grabGesture(Qt::PinchGesture);
+
+  setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 
   if (Preferences::instance()->isColorCalibrationEnabled())
     m_lutCalibrator = new LutCalibrator();
@@ -1357,11 +1359,13 @@ static void drawFpsGraph(int t0, int t1) {
 //#define FPS_HISTOGRAM
 
 void SceneViewer::paintGL() {
+#ifdef _DEBUG
   if (!check_framebuffer_status()) {
     /* QGLWidget の widget 生成/削除のタイミングで(platform によって?)
      * GL_FRAMEBUFFER_UNDEFINED の状態で paintGL() が呼ばれてしまうようだ */
     return;
   }
+#endif
 #ifdef MACOSX
   // followin lines are necessary to solve a problem on iMac20
   // It seems that for some errors in the openGl implementation, buffers are not
@@ -1419,19 +1423,14 @@ void SceneViewer::paintGL() {
 
   drawBuildVars();
 
-  check_framebuffer_status();
-  copyFrontBufferToBackBuffer();
+  // This seems not to be necessary for now.
+  // copyFrontBufferToBackBuffer();
 
-  check_framebuffer_status();
   drawEnableScissor();
-  check_framebuffer_status();
   drawBackground();
-  check_framebuffer_status();
 
   if (m_previewMode != FULL_PREVIEW) {
-    check_framebuffer_status();
     drawCameraStand();
-    check_framebuffer_status();
   }
 
   if (isPreviewEnabled()) drawPreview();
@@ -1694,7 +1693,7 @@ void SceneViewer::invalidateAll() {
 
 //-----------------------------------------------------------------------------
 /*! Pan the viewer by using "navigator" (red rectangle) in level strip
-*/
+ */
 void SceneViewer::navigatorPan(const QPoint &delta) {
   panQt(delta);
   m_pos += delta;
@@ -1714,7 +1713,6 @@ void SceneViewer::GLInvalidateAll() {
 void SceneViewer::GLInvalidateRect(const TRectD &rect) {
   m_clipRect = rect;
   update();
-  m_clipRect.empty();
   if (m_vRuler) m_vRuler->update();
   if (m_hRuler) m_hRuler->update();
 }
@@ -1803,7 +1801,7 @@ void SceneViewer::zoomQt(bool forward, bool reset) {
 
 //-----------------------------------------------------------------------------
 /*! a factor for getting pixel-based zoom ratio
-*/
+ */
 double SceneViewer::getDpiFactor() {
   // When the current unit is "pixels", always use a standard dpi
   if (Preferences::instance()->getPixelsOnly()) {
@@ -2133,7 +2131,7 @@ void SceneViewer::onLevelChanged() {
 //-----------------------------------------------------------------------------
 /*! when level is switched, update m_dpiScale in order to show white background
  * for Ink&Paint work properly
-*/
+ */
 void SceneViewer::onLevelSwitched() {
   TApp *app        = TApp::instance();
   TTool *tool      = app->getCurrentTool()->getTool();
@@ -2188,7 +2186,7 @@ void SceneViewer::onFrameSwitched() {
 
 //-----------------------------------------------------------------------------
 /*! when tool options are changed, update tooltip immediately
-*/
+ */
 void SceneViewer::onToolChanged() {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool) setToolCursor(this, tool->getCursorId());
@@ -2540,7 +2538,7 @@ TRectD SceneViewer::getGeometry() const {
 
 //-----------------------------------------------------------------------------
 /*! delete preview - subcamera executed from context menu
-*/
+ */
 void SceneViewer::doDeleteSubCamera() {
   PreviewSubCameraManager::instance()->deleteSubCamera(this);
 }
