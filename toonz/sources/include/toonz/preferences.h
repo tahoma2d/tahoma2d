@@ -245,7 +245,7 @@ public:
   FunctionEditorToggle getFunctionEditorToggle() {
     return m_functionEditorToggle;
   }
-  
+
   // color calibration using 3DLUT
   void enableColorCalibration(bool on);
   bool isColorCalibrationEnabled() const { return m_colorCalibrationEnabled; }
@@ -331,6 +331,9 @@ public:
 
   bool isAutoCreateEnabled() const { return m_autocreationType > 0; }
   bool isAnimationSheetEnabled() const { return m_autocreationType == 2; }
+
+  void enableAutoStretch(bool on);
+  bool isAutoStretchEnabled() const { return m_enableAutoStretch; }
 
   void enableSaveUnpaintedInCleanup(bool on);
   bool isSaveUnpaintedInCleanupEnable() const {
@@ -680,6 +683,7 @@ private:
   FunctionEditorToggle m_functionEditorToggle;
 
   bool m_currentTimelineEnabled;
+  bool m_enableAutoStretch;
 
   // color calibration using 3DLUT
   bool m_colorCalibrationEnabled = false;

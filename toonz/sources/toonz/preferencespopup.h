@@ -78,7 +78,8 @@ private:
       *m_useNumpadForSwitchingStyles, *m_expandFunctionHeader,
       *m_useHigherDpiOnVectorSimplifyCB, *m_keepFillOnVectorSimplifyCB,
       *m_newLevelToCameraSizeCB, *m_ignoreImageDpiCB,
-      *m_syncLevelRenumberWithXsheet, *m_downArrowInLevelStripCreatesNewFrame;
+      *m_syncLevelRenumberWithXsheet, *m_downArrowInLevelStripCreatesNewFrame,
+      *m_enableAutoStretch;
 
   DVGui::FileField *m_customProjectRootFileField;
 
@@ -206,6 +207,7 @@ private slots:
   void onColorCalibrationChanged(bool);
   void onLutPathChanged();
   void onCheckLatestVersionChanged(bool);
+  void onEnableAutoStretch(int index);
 };
 
 //**********************************************************************************
