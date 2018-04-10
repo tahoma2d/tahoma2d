@@ -472,6 +472,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_eraserPointerOn(false)
     , m_backupTool("")
     , m_clipRect()
+    , m_dirty()
     , m_isPicking(false)
     , m_current3DDevice(NONE)
     , m_sideRasterPos()
@@ -1363,6 +1364,7 @@ static void drawFpsGraph(int t0, int t1) {
 //#define FPS_HISTOGRAM
 
 void SceneViewer::paintGL() {
+  m_dirty = false;
 #ifdef _DEBUG
   if (!check_framebuffer_status()) {
     /* QGLWidget の widget 生成/削除のタイミングで(platform によって?)
@@ -1689,6 +1691,7 @@ bool SceneViewer::is3DView() const {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::invalidateAll() {
+  m_dirty = true;
   m_clipRect.empty();
   update();
   if (m_vRuler) m_vRuler->update();
@@ -1706,6 +1709,7 @@ void SceneViewer::navigatorPan(const QPoint &delta) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::GLInvalidateAll() {
+  m_dirty = true;
   m_clipRect.empty();
   update();
   if (m_vRuler) m_vRuler->update();
@@ -1715,17 +1719,15 @@ void SceneViewer::GLInvalidateAll() {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::GLInvalidateRect(const TRectD &rect) {
-  // there is a case that this function is called more than once before
-  // paintGL() is called
-  if (!m_clipRect.isEmpty())
-    m_clipRect += rect;
-  else
+  if (!m_dirty || rect.isEmpty())
     m_clipRect = rect;
+  else if (!m_clipRect.isEmpty())
+    m_clipRect += rect;
+  m_dirty = true;
   update();
   if (m_vRuler) m_vRuler->update();
   if (m_hRuler) m_hRuler->update();
 }
-
 //-----------------------------------------------------------------------------
 
 // delta.x: right panning, pixel; delta.y: down panning, pixel
@@ -2253,11 +2255,13 @@ int SceneViewer::pick(const TPointD &point) {
   // we could be painting OUTSIDE a paintEvent()...
 
   TRectD oldClipRect(m_clipRect);
+  bool oldDirty(m_dirty);
   m_clipRect = TRectD(point.x, point.y, point.x + 1, point.y + 1);
 
   paintGL();  // draw identifiable objects
 
   m_clipRect = oldClipRect;
+  m_dirty = oldDirty;
 
   m_previewMode = previewMode;
 
