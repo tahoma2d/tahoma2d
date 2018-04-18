@@ -205,7 +205,7 @@ public:
     int h     = m_dstIndexInPage;
     std::set<int>::const_iterator i;
     for (i = m_srcIndicesInPage.begin(); i != m_srcIndicesInPage.end(); ++i) {
-      if (srcPage == dstPage && (*i) <= h)
+      if (srcPage == dstPage && (*i) <= m_dstIndexInPage)
         h--;
       else
         break;
