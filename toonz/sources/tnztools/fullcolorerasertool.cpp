@@ -408,7 +408,13 @@ void FullColorEraserTool::updateTranslation() {
   m_size.setQStringName(tr("Size:"));
   m_opacity.setQStringName(tr("Opacity:"));
   m_hardness.setQStringName(tr("Hardness:"));
+
   m_eraseType.setQStringName(tr("Type:"));
+  m_eraseType.setItemUIName(NORMALERASE, tr("Normal"));
+  m_eraseType.setItemUIName(RECTERASE, tr("Rectangular"));
+  m_eraseType.setItemUIName(FREEHANDERASE, tr("Freehand"));
+  m_eraseType.setItemUIName(POLYLINEERASE, tr("Polyline"));
+
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
 }

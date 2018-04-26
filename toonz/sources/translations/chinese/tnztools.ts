@@ -158,6 +158,66 @@
         <source>Snap</source>
         <translation>吸附</translation>
     </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In&amp;Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Butt cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projecting cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miter join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bevel join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrushToolOptionsBox</name>
@@ -282,6 +342,38 @@
         <source>Active Axis</source>
         <translation>当前轴</translation>
     </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pegbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation type="unfinished">位置</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation type="unfinished">缩放</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished">中心点</translation>
+    </message>
 </context>
 <context>
     <name>EraserTool</name>
@@ -317,6 +409,34 @@
         <source>Pencil Mode</source>
         <translation>铅笔模式</translation>
     </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">正常</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">手绘</translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">线</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">区域</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
@@ -350,11 +470,11 @@
     </message>
     <message>
         <source>Lines</source>
-        <translation type="vanished">线</translation>
+        <translation>线</translation>
     </message>
     <message>
         <source>Areas</source>
-        <translation type="vanished">区域</translation>
+        <translation>区域</translation>
     </message>
     <message>
         <source>Lines &amp;&amp; Areas</source>
@@ -362,23 +482,27 @@
     </message>
     <message>
         <source>Normal</source>
-        <translation type="vanished">正常</translation>
+        <translation>正常</translation>
     </message>
     <message>
         <source>Rectangular</source>
-        <translation type="vanished">矩形</translation>
+        <translation>矩形</translation>
     </message>
     <message>
         <source>Freehand</source>
-        <translation type="vanished">手绘</translation>
+        <translation>手绘</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation type="vanished">多边形</translation>
+        <translation>多边形</translation>
     </message>
     <message>
         <source>Autopaint Lines</source>
         <translation>自动填充线</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -461,6 +585,22 @@
         <source>Frame Range</source>
         <translation>帧范围</translation>
     </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">正常</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">手绘</translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
+    </message>
 </context>
 <context>
     <name>HookTool</name>
@@ -489,6 +629,18 @@
     <message>
         <source>Selective</source>
         <translation>选择性</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">线</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">区域</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -730,6 +882,70 @@ Do you want to proceed?</source>
         <source>Snap</source>
         <translation>吸附</translation>
     </message>
+    <message>
+        <source>Rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Butt cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projecting cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miter join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bevel join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -778,7 +994,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>It is not possible to edit the Magpie column.</source>
-        <translation>无法编辑 MAGPIE 列。</translation>
+        <translation type="vanished">无法编辑 MAGPIE 列。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Level column.</source>
@@ -884,6 +1100,14 @@ Do you want to proceed?</source>
         <source>Set Save Box : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</source>
         <translation>设置保存框 : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</translation>
     </message>
+    <message>
+        <source>The current column is hidden.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note columns can only be edited in the xsheet or timeline.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -894,6 +1118,22 @@ Do you want to proceed?</source>
     <message>
         <source>Passive Pick</source>
         <translation>拾取光标位置颜色</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">正常</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">手绘</translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
     </message>
 </context>
 <context>
@@ -940,12 +1180,40 @@ Do you want to proceed?</source>
         <source>Angle:</source>
         <translation>角度:</translation>
     </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">正常</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">手绘</translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
+    </message>
 </context>
 <context>
     <name>SelectionTool</name>
     <message>
         <source>Type:</source>
         <translation>类型:</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">手绘</translation>
+    </message>
+    <message>
+        <source>Polyline</source>
+        <translation type="unfinished">多边形</translation>
     </message>
 </context>
 <context>
@@ -997,6 +1265,18 @@ Do you want to proceed?</source>
         <source>Reset Pinned Center</source>
         <translation>重置固定中心</translation>
     </message>
+    <message>
+        <source>Build Skeleton</source>
+        <translation type="unfinished">制作骨架</translation>
+    </message>
+    <message>
+        <source>Animate</source>
+        <translation type="unfinished">动画</translation>
+    </message>
+    <message>
+        <source>Inverse Kinematics</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StylePickerTool</name>
@@ -1023,6 +1303,18 @@ Do you want to proceed?</source>
     <message>
         <source>Organize Palette</source>
         <translation>整理调色板</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">线</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">区域</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1093,6 +1385,66 @@ moved to the end of the first page of the palette.</source>
         <source>Miter:</source>
         <translation>斜接比例:</translation>
     </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whole Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Same Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Same Style on Selected Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Same Style on Whole Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boundary Strokes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boundaries on Selected Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boundaries on Whole Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Butt cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projecting cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miter join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bevel join</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VectorTapeTool</name>
@@ -1115,6 +1467,26 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Type:</source>
         <translation>类型:</translation>
+    </message>
+    <message>
+        <source>Endpoint to Endpoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Endpoint to Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line to Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">正常</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">矩形</translation>
     </message>
 </context>
 </TS>

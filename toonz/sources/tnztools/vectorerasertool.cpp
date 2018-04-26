@@ -402,6 +402,10 @@ void EraserTool::updateTranslation() {
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
   m_eraseType.setQStringName(tr("Type:"));
+  m_eraseType.setItemUIName(NORMAL_ERASE, tr("Normal"));
+  m_eraseType.setItemUIName(RECT_ERASE, tr("Rectangular"));
+  m_eraseType.setItemUIName(FREEHAND_ERASE, tr("Freehand"));
+  m_eraseType.setItemUIName(POLYLINE_ERASE, tr("Polyline"));
 }
 
 //-----------------------------------------------------------------------------

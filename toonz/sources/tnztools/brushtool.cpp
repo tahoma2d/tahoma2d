@@ -852,9 +852,9 @@ BrushTool::BrushTool(std::string name, int targetType)
     m_prop[0].bind(m_pencil);
     m_pencil.setId("PencilMode");
 
-    m_drawOrder.addValue(tr("Over All").toStdWString());
-    m_drawOrder.addValue(tr("Under All").toStdWString());
-    m_drawOrder.addValue(tr("Palette Order").toStdWString());
+    m_drawOrder.addValue(L"Over All");
+    m_drawOrder.addValue(L"Under All");
+    m_drawOrder.addValue(L"Palette Order");
     m_drawOrder.setId("DrawOrder");
   }
 
@@ -883,15 +883,16 @@ BrushTool::BrushTool(std::string name, int targetType)
   m_pressure.setId("PressureSensitivity");
 
   if (targetType & TTool::Vectors) {
-    m_capStyle.addValue(BUTT_WSTR);
-    m_capStyle.addValue(ROUNDC_WSTR);
-    m_capStyle.addValue(PROJECTING_WSTR);
+    m_capStyle.addValue(BUTT_WSTR, QString::fromStdWString(BUTT_WSTR));
+    m_capStyle.addValue(ROUNDC_WSTR, QString::fromStdWString(ROUNDC_WSTR));
+    m_capStyle.addValue(PROJECTING_WSTR,
+                        QString::fromStdWString(PROJECTING_WSTR));
     m_capStyle.setId("Cap");
     m_prop[1].bind(m_capStyle);
 
-    m_joinStyle.addValue(MITER_WSTR);
-    m_joinStyle.addValue(ROUNDJ_WSTR);
-    m_joinStyle.addValue(BEVEL_WSTR);
+    m_joinStyle.addValue(MITER_WSTR, QString::fromStdWString(MITER_WSTR));
+    m_joinStyle.addValue(ROUNDJ_WSTR, QString::fromStdWString(ROUNDJ_WSTR));
+    m_joinStyle.addValue(BEVEL_WSTR, QString::fromStdWString(BEVEL_WSTR));
     m_joinStyle.setId("Join");
     m_prop[1].bind(m_joinStyle);
 
@@ -1061,8 +1062,14 @@ void BrushTool::updateTranslation() {
   m_accuracy.setQStringName(tr("Accuracy:"));
   m_smooth.setQStringName(tr("Smooth:"));
   m_drawOrder.setQStringName(tr("Draw Order:"));
+  if (m_targetType & TTool::ToonzImage) {
+    m_drawOrder.setItemUIName(L"Over All", tr("Over All"));
+    m_drawOrder.setItemUIName(L"Under All", tr("Under All"));
+    m_drawOrder.setItemUIName(L"Palette Order", tr("Palette Order"));
+  }
   // m_filled.setQStringName(tr("Filled"));
   m_preset.setQStringName(tr("Preset:"));
+  m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
   m_breakAngles.setQStringName(tr("Break"));
   m_pencil.setQStringName(tr("Pencil"));
   m_pressure.setQStringName(tr("Pressure"));
@@ -1072,6 +1079,22 @@ void BrushTool::updateTranslation() {
   m_frameRange.setQStringName(tr("Range:"));
   m_snap.setQStringName(tr("Snap"));
   m_snapSensitivity.setQStringName("");
+  if (m_targetType & TTool::Vectors) {
+    m_frameRange.setItemUIName(L"Off", tr("Off"));
+    m_frameRange.setItemUIName(LINEAR_WSTR, tr("Linear"));
+    m_frameRange.setItemUIName(EASEIN_WSTR, tr("In"));
+    m_frameRange.setItemUIName(EASEOUT_WSTR, tr("Out"));
+    m_frameRange.setItemUIName(EASEINOUT_WSTR, tr("In&Out"));
+    m_snapSensitivity.setItemUIName(LOW_WSTR, tr("Low"));
+    m_snapSensitivity.setItemUIName(MEDIUM_WSTR, tr("Med"));
+    m_snapSensitivity.setItemUIName(HIGH_WSTR, tr("High"));
+    m_capStyle.setItemUIName(BUTT_WSTR, tr("Butt cap"));
+    m_capStyle.setItemUIName(ROUNDC_WSTR, tr("Round cap"));
+    m_capStyle.setItemUIName(PROJECTING_WSTR, tr("Projecting cap"));
+    m_joinStyle.setItemUIName(MITER_WSTR, tr("Miter join"));
+    m_joinStyle.setItemUIName(ROUNDJ_WSTR, tr("Round join"));
+    m_joinStyle.setItemUIName(BEVEL_WSTR, tr("Bevel join"));
+  }
 }
 
 //---------------------------------------------------------------------------------------------------

@@ -791,12 +791,12 @@ EditTool::EditTool()
   m_autoSelect.setId("AutoSelect");
 
   m_prop.bind(m_activeAxis);
-  m_activeAxis.addValue(L"Position");
-  m_activeAxis.addValue(L"Rotation");
-  m_activeAxis.addValue(L"Scale");
-  m_activeAxis.addValue(L"Shear");
-  m_activeAxis.addValue(L"Center");
-  m_activeAxis.addValue(L"All");
+  m_activeAxis.addValue(L"Position", "edit_position");
+  m_activeAxis.addValue(L"Rotation", "edit_rotation");
+  m_activeAxis.addValue(L"Scale", "edit_scale");
+  m_activeAxis.addValue(L"Shear", "edit_shear");
+  m_activeAxis.addValue(L"Center", "edit_center");
+  m_activeAxis.addValue(L"All", "edit_all");
   m_activeAxis.setValue(L"Position");
 
   m_activeAxis.setId("EditToolActiveAxis");
@@ -813,7 +813,15 @@ EditTool::~EditTool() {
 
 void EditTool::updateTranslation() {
   m_scaleConstraint.setQStringName(tr("Scale Constraint:"));
+  m_scaleConstraint.setItemUIName(L"None", tr("None"));
+  m_scaleConstraint.setItemUIName(L"A/R", tr("A/R"));
+  m_scaleConstraint.setItemUIName(L"Mass", tr("Mass"));
+
   m_autoSelect.setQStringName(tr("Auto Select Column"));
+  m_autoSelect.setItemUIName(L"None", tr("None"));
+  m_autoSelect.setItemUIName(L"Column", tr("Column"));
+  m_autoSelect.setItemUIName(L"Pegbar", tr("Pegbar"));
+
   m_globalKeyframes.setQStringName(tr("Global Key"));
   m_lockCenterX.setQStringName(tr("Lock Center E/W"));
   m_lockCenterY.setQStringName(tr("Lock Center N/S"));
@@ -833,7 +841,13 @@ void EditTool::updateTranslation() {
   m_showHVscale.setQStringName(tr("Horizontal and Vertical Scale"));
   m_showShear.setQStringName(tr("Shear"));
   m_showCenterPosition.setQStringName(tr("Center Position"));
+
   m_activeAxis.setQStringName(tr("Active Axis"));
+  m_activeAxis.setItemUIName(L"Position", tr("Position"));
+  m_activeAxis.setItemUIName(L"Rotation", tr("Rotation"));
+  m_activeAxis.setItemUIName(L"Scale", tr("Scale"));
+  m_activeAxis.setItemUIName(L"Shear", tr("Shear"));
+  m_activeAxis.setItemUIName(L"Center", tr("Center"));
 }
 
 //-----------------------------------------------------------------------------

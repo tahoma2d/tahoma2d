@@ -44,11 +44,6 @@ using namespace ToolUtils;
 #define AREAS L"Areas"
 #define ALL L"Lines & Areas"
 
-#define NORMALERASE L"Normal"
-#define RECTERASE L"Rectangular"
-#define FREEHANDERASE L"Freehand"
-#define POLYLINEERASE L"Polyline"
-
 TEnv::StringVar PaintBrushColorType("InknpaintPaintBrushColorType", "Areas");
 TEnv::IntVar PaintBrushSelective("InknpaintPaintBrushSelective", 0);
 TEnv::DoubleVar PaintBrushSize("InknpaintPaintBrushSize", 10);
@@ -346,7 +341,12 @@ PaintBrushTool::PaintBrushTool()
 
 void PaintBrushTool::updateTranslation() {
   m_toolSize.setQStringName(tr("Size:"));
+
   m_colorType.setQStringName(tr("Mode:"));
+  m_colorType.setItemUIName(LINES, tr("Lines"));
+  m_colorType.setItemUIName(AREAS, tr("Areas"));
+  m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
+
   m_onlyEmptyAreas.setQStringName(tr("Selective", NULL));
 }
 

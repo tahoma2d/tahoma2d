@@ -1794,9 +1794,20 @@ int FillTool::getCursorId() const {
 
 void FillTool::updateTranslation() {
   m_frameRange.setQStringName(tr("Frame Range"));
+
   m_fillType.setQStringName(tr("Type:"));
+  m_fillType.setItemUIName(NORMALFILL, tr("Normal"));
+  m_fillType.setItemUIName(RECTFILL, tr("Rectangular"));
+  m_fillType.setItemUIName(FREEHANDFILL, tr("Freehand"));
+  m_fillType.setItemUIName(POLYLINEFILL, tr("Polyline"));
+
   m_selective.setQStringName(tr("Selective"));
+
   m_colorType.setQStringName(tr("Mode:"));
+  m_colorType.setItemUIName(LINES, tr("Lines"));
+  m_colorType.setItemUIName(AREAS, tr("Areas"));
+  m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
+
   m_onion.setQStringName(tr("Onion Skin"));
   m_fillDepth.setQStringName(tr("Fill Depth"));
   m_segment.setQStringName(tr("Segment"));

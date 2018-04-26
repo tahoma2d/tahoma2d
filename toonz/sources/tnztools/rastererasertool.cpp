@@ -623,8 +623,18 @@ EraserTool::EraserTool(std::string name)
 void EraserTool::updateTranslation() {
   m_toolSize.setQStringName(tr("Size:"));
   m_hardness.setQStringName(tr("Hardness:"));
+
   m_eraseType.setQStringName(tr("Type:"));
+  m_eraseType.setItemUIName(NORMALERASE, tr("Normal"));
+  m_eraseType.setItemUIName(RECTERASE, tr("Rectangular"));
+  m_eraseType.setItemUIName(FREEHANDERASE, tr("Freehand"));
+  m_eraseType.setItemUIName(POLYLINEERASE, tr("Polyline"));
+
   m_colorType.setQStringName(tr("Mode:"));
+  m_colorType.setItemUIName(LINES, tr("Lines"));
+  m_colorType.setItemUIName(AREAS, tr("Areas"));
+  m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
+
   m_currentStyle.setQStringName(tr("Selective"));
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
@@ -1644,10 +1654,11 @@ void EraserTool::storeUndoAndRefresh() {
     TUndoManager::manager()->add(new RasterBluredEraserUndo(
         m_tileSet, m_points,
         TTool::getApplication()->getCurrentLevelStyleIndex(),
-        m_currentStyle.getValue(), TTool::getApplication()
-                                       ->getCurrentLevel()
-                                       ->getLevel()
-                                       ->getSimpleLevel(),
+        m_currentStyle.getValue(),
+        TTool::getApplication()
+            ->getCurrentLevel()
+            ->getLevel()
+            ->getSimpleLevel(),
         m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId,
         m_toolSize.getValue(), m_hardness.getValue() * 0.01,
         m_colorType.getValue()));
