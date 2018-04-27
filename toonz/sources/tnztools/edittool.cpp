@@ -7,6 +7,7 @@
 #include "tstroke.h"
 #include "tgl.h"
 #include "tenv.h"
+#include "toonzqt/gutil.h"
 
 #include "toonz/tstageobjecttree.h"
 #include "toonz/tstageobjectspline.h"
@@ -1206,7 +1207,7 @@ void EditTool::drawMainHandle() {
   TAffine parentAff    = xsh->getParentPlacement(objId, frame);
   TAffine aff          = xsh->getPlacement(objId, frame);
   TPointD center       = Stage::inch * xsh->getCenter(objId, frame);
-
+  int devPixRatio = getDevPixRatio();
   // the gadget appears on the center of the level. orientation and dimension
   // are independent of the movement of the level
   glPushMatrix();
@@ -1217,7 +1218,7 @@ void EditTool::drawMainHandle() {
   center = TPointD();
 
   double unit = sqrt(tglGetPixelSize2());
-
+  unit *= devPixRatio;
   bool dragging = m_dragTool != 0;
 
   // draw center
