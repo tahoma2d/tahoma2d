@@ -313,7 +313,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       break;
     }
 #endif
-    QPoint curPos = e->pos() * getDevPixRatio();
+    QPointF curPos = e->posF() * getDevPixRatio();
     // It seems that the tabletEvent is called more often than mouseMoveEvent.
     // So I fire the interval timer in order to limit the following process
     // to be called in 50fps in maximum.
