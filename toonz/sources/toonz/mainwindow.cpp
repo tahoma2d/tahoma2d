@@ -1421,21 +1421,15 @@ QAction *MainWindow::createAction(const char *id, const QString &name,
 // To prevent the wrong menu items (due to MacOS menu naming conventions), from
 // taking Preferences, Quit, or About roles (sometimes happens unexpectedly in
 // translations) - all menu items should have "NoRole"
-  if (MenuFileCommandType || MenuEditCommandType || MenuScanCleanupCommandType
-      || MenuLevelCommandType || MenuXsheetCommandType || MenuCellsCommandType || 
-      MenuViewCommandType || MenuWindowsCommandType) {
-    action->setMenuRole(QAction::NoRole);
-  }
   //  except for Preferences, Quit, and About
-  if (strcmp(id, MI_Preferences) == 0) {
+  if (strcmp(id, MI_Preferences) == 0)
     action->setMenuRole(QAction::PreferencesRole);
-  }
-  if (strcmp(id, MI_Quit) == 0) {
+  else if (strcmp(id, MI_Quit) == 0)
     action->setMenuRole(QAction::QuitRole);
-  }
-  if (strcmp(id, MI_About) == 0) {
+  else if (strcmp(id, MI_About) == 0)
     action->setMenuRole(QAction::AboutRole);
-  }
+  else
+    action->setMenuRole(QAction::NoRole);
 #endif
   CommandManager::instance()->define(id, type, defaultShortcut.toStdString(),
                                      action);
