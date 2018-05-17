@@ -25,6 +25,7 @@
 #include "toonz/tstageobject.h"
 #include "toonz/palettecontroller.h"
 #include "toonz/mypaintbrushstyle.h"
+#include "toonz/preferences.h"
 
 // TnzCore includes
 #include "tgl.h"
@@ -487,6 +488,9 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
 void FullColorBrushTool::draw() {
   if (TRasterImageP ri = TRasterImageP(getImage(false))) {
+    // If toggled off, don't draw brush outline
+    if (!Preferences::instance()->isCursorOutlineEnabled()) return;
+
     TRasterP ras = ri->getRaster();
 
     double alpha       = 1.0;

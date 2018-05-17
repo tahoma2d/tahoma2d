@@ -390,6 +390,15 @@ public:
     return m_dropdownShortcutsCycleOptions;
   }
 
+  void setCursorBrushType(std::string brushType);
+  QString getCursorBrushType() const { return m_cursorBrushType; }
+
+  void setCursorBrushStyle(std::string brushStyle);
+  QString getCursorBrushStyle() const { return m_cursorBrushStyle; }
+
+  void enableCursorOutline(bool on);
+  bool isCursorOutlineEnabled() const { return m_cursorOutlineEnabled; }
+
   // Xsheet  tab
   void setXsheetStep(int step);  //!< Sets the step used for the <I>next/prev
                                  //! step</I> commands.
@@ -693,6 +702,11 @@ private:
 
   // release version check
   bool m_latestVersionCheckEnabled = true;
+
+  // Cursor settings
+  QString m_cursorBrushType;
+  QString m_cursorBrushStyle;
+  bool m_cursorOutlineEnabled = false;
 
 private:
   Preferences();

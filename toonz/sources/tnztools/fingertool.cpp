@@ -21,6 +21,7 @@
 #include "toonz/stage2.h"
 #include "toonz/ttileset.h"
 #include "toonz/rasterstrokegenerator.h"
+#include "toonz/preferences.h"
 #include "tgl.h"
 #include "tenv.h"
 
@@ -338,6 +339,9 @@ void FingerTool::draw() {
   if (m_pointSize == -1) {
     return;
   }
+
+  // If toggled off, don't draw brush outline
+  if (!Preferences::instance()->isCursorOutlineEnabled()) return;
 
   TToonzImageP ti = (TToonzImageP)getImage(false);
   if (!ti) return;

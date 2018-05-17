@@ -717,9 +717,8 @@ public:
     std::vector<TFilledRegionInf> *fillInformation =
         new std::vector<TFilledRegionInf>;
     ImageUtils::getFillingInformationOverlappingArea(
-        vi, *fillInformation,
-        vi->getStroke(m_strokeIndex1)->getBBox() +
-            vi->getStroke(m_strokeIndex2)->getBBox());
+        vi, *fillInformation, vi->getStroke(m_strokeIndex1)->getBBox() +
+                                  vi->getStroke(m_strokeIndex2)->getBBox());
 
     doTape(vi, fillInformation, m_joinStrokes.getValue());
 

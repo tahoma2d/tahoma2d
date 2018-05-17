@@ -1182,6 +1182,20 @@ void PreferencesPopup::onEnableAutoStretch(int index) {
   m_pref->enableAutoStretch(index == Qt::Checked);
 }
 
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onCursorBrushTypeChanged(const QString &text) {
+  m_pref->setCursorBrushType(text.toStdString());
+}
+
+void PreferencesPopup::onCursorBrushStyleChanged(const QString &text) {
+  m_pref->setCursorBrushStyle(text.toStdString());
+}
+
+void PreferencesPopup::onCursorOutlineChanged(int index) {
+  m_pref->enableCursorOutline(index == Qt::Checked);
+}
+
 //**********************************************************************************
 //    PrefencesPopup's  constructor
 //**********************************************************************************
@@ -1380,6 +1394,24 @@ PreferencesPopup::PreferencesPopup()
       tr("Multi Layer Style Picker : Switch Levels by Picking"), this);
   CheckBox *useSaveboxToLimitFillingOpCB =
       new CheckBox(tr("Use the TLV Savebox to Limit Filling Operations"), this);
+
+  QStringList brushTypes;
+  // options should not be translatable as they are used as key strings
+  brushTypes << "Small"
+             << "Large"
+             << "Crosshair";
+  QComboBox *cursorBrushTypeOptions = new QComboBox(this);
+  cursorBrushTypeOptions->addItems(brushTypes);
+
+  QStringList brushStyles;
+  brushStyles << "Default"
+              << "Left-Handed"
+              << "Simple";
+  QComboBox *cursorBrushStyleOptions = new QComboBox(this);
+  cursorBrushStyleOptions->addItems(brushStyles);
+
+  CheckBox *cursorOutlineCB =
+      new CheckBox(tr("Show Cursor Size Outlines"), this);
 
   //--- Xsheet ------------------------------
   categoryList->addItem(tr("Xsheet"));
@@ -1771,6 +1803,12 @@ PreferencesPopup::PreferencesPopup()
       m_pref->getDropdownShortcutsCycleOptions() ? 1 : 0);
   multiLayerStylePickerCB->setChecked(m_pref->isMultiLayerStylePickerEnabled());
   useSaveboxToLimitFillingOpCB->setChecked(m_pref->getFillOnlySavebox());
+
+  cursorBrushTypeOptions->setCurrentIndex(
+      cursorBrushTypeOptions->findText(m_pref->getCursorBrushType()));
+  cursorBrushStyleOptions->setCurrentIndex(
+      cursorBrushStyleOptions->findText(m_pref->getCursorBrushStyle()));
+  cursorOutlineCB->setChecked(m_pref->isCursorOutlineEnabled());
 
   //--- Xsheet ------------------------------
   xsheetAutopanDuringPlaybackCB->setChecked(m_pref->isXsheetAutopanEnabled());
@@ -2274,26 +2312,59 @@ PreferencesPopup::PreferencesPopup()
 
     //--- Tools ---------------------------
     QWidget *toolsBox          = new QWidget(this);
-    QGridLayout *toolsFrameLay = new QGridLayout();
+    QVBoxLayout *toolsFrameLay = new QVBoxLayout();
     toolsFrameLay->setMargin(15);
-    toolsFrameLay->setHorizontalSpacing(15);
-    toolsFrameLay->setVerticalSpacing(10);
+    toolsFrameLay->setSpacing(10);
     {
-      toolsFrameLay->addWidget(new QLabel(tr("Dropdown Shortcuts:")), 0, 0,
+      QGridLayout *ToolsTopLay = new QGridLayout();
+      ToolsTopLay->setVerticalSpacing(10);
+      ToolsTopLay->setHorizontalSpacing(15);
+      ToolsTopLay->setMargin(0);
+      {
+        ToolsTopLay->addWidget(new QLabel(tr("Dropdown Shortcuts:")), 0, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-      toolsFrameLay->addWidget(m_dropdownShortcutsCycleOptionsCB, 0, 1);
-      toolsFrameLay->addWidget(useSaveboxToLimitFillingOpCB, 1, 0, 1, 3,
+        ToolsTopLay->addWidget(m_dropdownShortcutsCycleOptionsCB, 0, 1);
+        ToolsTopLay->addWidget(useSaveboxToLimitFillingOpCB, 1, 0, 1, 3,
                                Qt::AlignLeft | Qt::AlignVCenter);
-      toolsFrameLay->addWidget(multiLayerStylePickerCB, 2, 0, 1, 3,
+        ToolsTopLay->addWidget(multiLayerStylePickerCB, 2, 0, 1, 3,
                                Qt::AlignLeft | Qt::AlignVCenter);
+
+        toolsFrameLay->addLayout(ToolsTopLay, 0);
+
+        QGroupBox *cursorStyleGroupBox =
+            new QGroupBox(tr("Cursor Options"), this);
+        QVBoxLayout *cursorStylesLay = new QVBoxLayout();
+        cursorStylesLay->setMargin(10);
+        cursorStylesLay->setSpacing(10);
+        {
+          QGridLayout *cursorStylesGridLay = new QGridLayout();
+          cursorStylesGridLay->setMargin(0);
+          cursorStylesGridLay->setHorizontalSpacing(15);
+          cursorStylesGridLay->setVerticalSpacing(10);
+          {
+            cursorStylesGridLay->addWidget(new QLabel(tr("Basic Cursor Type:")),
+                                           0, 0,
+                                           Qt::AlignRight | Qt::AlignVCenter);
+            cursorStylesGridLay->addWidget(cursorBrushTypeOptions, 0, 1);
+
+            cursorStylesGridLay->addWidget(new QLabel(tr("Cursor Style:")), 1,
+                                           0,
+                                           Qt::AlignRight | Qt::AlignVCenter);
+            cursorStylesGridLay->addWidget(cursorBrushStyleOptions, 1, 1);
+
+            cursorStylesGridLay->addWidget(cursorOutlineCB, 2, 0, 1, 3,
+                                           Qt::AlignLeft | Qt::AlignVCenter);
+          }
+          cursorStylesLay->addLayout(cursorStylesGridLay, 0);
+
+          cursorStyleGroupBox->setLayout(cursorStylesLay);
+        }
+        ToolsTopLay->addWidget(cursorStyleGroupBox, 3, 0, 1, 3);
+      }
+      toolsFrameLay->addLayout(ToolsTopLay, 0);
+
+      toolsFrameLay->addStretch(1);
     }
-    toolsFrameLay->setColumnStretch(0, 0);
-    toolsFrameLay->setColumnStretch(1, 0);
-    toolsFrameLay->setColumnStretch(2, 1);
-    toolsFrameLay->setRowStretch(0, 0);
-    toolsFrameLay->setRowStretch(1, 0);
-    toolsFrameLay->setRowStretch(2, 0);
-    toolsFrameLay->setRowStretch(3, 1);
     toolsBox->setLayout(toolsFrameLay);
     stackedWidget->addWidget(toolsBox);
 
@@ -2746,6 +2817,14 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onMultiLayerStylePickerChanged(int)));
   ret = ret && connect(useSaveboxToLimitFillingOpCB, SIGNAL(stateChanged(int)),
                        this, SLOT(onGetFillOnlySavebox(int)));
+  ret = ret && connect(cursorBrushTypeOptions,
+                       SIGNAL(currentIndexChanged(const QString &)), this,
+                       SLOT(onCursorBrushTypeChanged(const QString &)));
+  ret = ret && connect(cursorBrushStyleOptions,
+                       SIGNAL(currentIndexChanged(const QString &)), this,
+                       SLOT(onCursorBrushStyleChanged(const QString &)));
+  ret = ret && connect(cursorOutlineCB, SIGNAL(stateChanged(int)), this,
+                       SLOT(onCursorOutlineChanged(int)));
 
   //--- Xsheet ----------------------
   ret = ret && connect(xsheetAutopanDuringPlaybackCB, SIGNAL(stateChanged(int)),

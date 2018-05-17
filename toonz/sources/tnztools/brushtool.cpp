@@ -2255,6 +2255,9 @@ void BrushTool::draw() {
 
   if (getApplication()->getCurrentObject()->isSpline()) return;
 
+  // If toggled off, don't draw brush outline
+  if (!Preferences::instance()->isCursorOutlineEnabled()) return;
+
   // Draw the brush outline - change color when the Ink / Paint check is
   // activated
   if ((ToonzCheck::instance()->getChecks() & ToonzCheck::eInk) ||

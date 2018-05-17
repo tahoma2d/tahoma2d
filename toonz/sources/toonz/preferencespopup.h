@@ -208,6 +208,9 @@ private slots:
   void onLutPathChanged();
   void onCheckLatestVersionChanged(bool);
   void onEnableAutoStretch(int index);
+  void onCursorBrushTypeChanged(const QString &text);
+  void onCursorBrushStyleChanged(const QString &text);
+  void onCursorOutlineChanged(int);
 };
 
 //**********************************************************************************
