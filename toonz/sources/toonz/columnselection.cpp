@@ -38,7 +38,9 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_Cut, &TColumnSelection::cutColumns);
   enableCommand(this, MI_Copy, &TColumnSelection::copyColumns);
   enableCommand(this, MI_Paste, &TColumnSelection::pasteColumns);
+  enableCommand(this, MI_PasteAbove, &TColumnSelection::pasteColumnsAbove);
   enableCommand(this, MI_Clear, &TColumnSelection::deleteColumns);
+  enableCommand(this, MI_InsertAbove, &TColumnSelection::insertColumnsAbove);
   enableCommand(this, MI_Insert, &TColumnSelection::insertColumns);
   enableCommand(this, MI_Collapse, &TColumnSelection::collapse);
   enableCommand(this, MI_ExplodeChild, &TColumnSelection::explodeChild);
@@ -68,6 +70,19 @@ void TColumnSelection::pasteColumns() { ColumnCmd::pasteColumns(m_indices); }
 
 //-----------------------------------------------------------------------------
 
+void TColumnSelection::pasteColumnsAbove() {
+  std::set<int> indices;
+  std::set<int>::iterator it;
+
+  for (it = m_indices.begin(); it != m_indices.end(); it++) {
+    int newIdx = *it + 1;
+    indices.insert(newIdx);
+  }
+
+  ColumnCmd::pasteColumns(indices, 0);
+}
+
+//-----------------------------------------------------------------------------
 void TColumnSelection::deleteColumns() {
   ColumnCmd::deleteColumns(m_indices, false, false);
 }
@@ -87,6 +102,11 @@ void TColumnSelection::insertColumns() {
 
 //-----------------------------------------------------------------------------
 
+void TColumnSelection::insertColumnsAbove() {
+  ColumnCmd::insertEmptyColumns(m_indices, true);
+}
+
+//-----------------------------------------------------------------------------
 void TColumnSelection::collapse() {
   if (m_indices.empty()) return;
   SubsceneCmd::collapse(m_indices);
