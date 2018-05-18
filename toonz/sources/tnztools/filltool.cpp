@@ -2302,7 +2302,7 @@ void FillTool::onDeactivate() {
   disconnect(TTool::m_application->getCurrentScene(), SIGNAL(sceneSwitched()),
              this, SLOT(onFrameSwitched()));
   disconnect(TTool::m_application->getCurrentColumn(),
-             SIGNAL(columnIndexSwitched()), this, SLOT(onColumnSwitched()));
+             SIGNAL(columnIndexSwitched()), this, SLOT(onFrameSwitched()));
 }
 
 //-----------------------------------------------------------------------------
