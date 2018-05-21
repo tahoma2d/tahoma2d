@@ -1564,6 +1564,14 @@ PreferencesPopup::PreferencesPopup()
   pathAliasPriority->setToolTip(
       tr("This option defines which alias to be used\nif both are possible on "
          "coding file path."));
+  pathAliasPriority->setItemData(0, QString(" "), Qt::ToolTipRole);
+  QString scenefolderTooltip =
+      tr("Choosing this option will set initial location of all file browsers "
+         "to $scenefolder.\n"
+         "Also the initial output destination for new scenes will be set to "
+         "$scenefolder as well.");
+  pathAliasPriority->setItemData(1, scenefolderTooltip, Qt::ToolTipRole);
+  pathAliasPriority->setItemData(2, QString(" "), Qt::ToolTipRole);
 
   //--- Interface ------------------------------
   QStringList styleSheetList;

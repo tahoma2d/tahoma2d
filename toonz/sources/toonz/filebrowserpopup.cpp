@@ -369,6 +369,16 @@ void FileBrowserPopup::showEvent(QShowEvent *) {
   if (m_currentProjectPath != projectPath) {
     m_currentProjectPath = projectPath;
     initFolder();
+
+    // set initial folder of all browsers to $scenefolder when the scene folder
+    // mode is set in user preferences
+    if (Preferences::instance()->getPathAliasPriority() ==
+        Preferences::SceneFolderAlias) {
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      if (scene && !scene->isUntitled())
+        setFolder(scene->getScenePath().getParentDir());
+    }
+
     m_nameField->update();
     m_nameField->setFocus();
   }
