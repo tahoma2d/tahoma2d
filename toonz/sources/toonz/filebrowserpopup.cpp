@@ -964,38 +964,42 @@ void LoadLevelPopup::updatePosTo() {
       // loading another type of level such as tlv
       else {
         if (fp.isEmpty()) return;
+        try {
+          TLevelReaderP lr(fp);
+          TLevelP level;
+          if (lr) level = lr->loadInfo();
+          if (!level.getPointer()) return;
 
-        TLevelReaderP lr(fp);
-        TLevelP level;
-        if (lr) level = lr->loadInfo();
-        if (!level.getPointer()) return;
-
-        if (m_stepCombo->currentIndex() == 0)  // Step = Auto
-        {
-          TLevel::Iterator it;
-          int firstFrame = 0;
-          int lastFrame  = 0;
-          for (it = level->begin(); it != level->end(); it++) {
-            if (xFrom <= it->first.getNumber()) {
-              firstFrame = it->first.getNumber();
-              break;
+          if (m_stepCombo->currentIndex() == 0)  // Step = Auto
+          {
+            TLevel::Iterator it;
+            int firstFrame = 0;
+            int lastFrame  = 0;
+            for (it = level->begin(); it != level->end(); it++) {
+              if (xFrom <= it->first.getNumber()) {
+                firstFrame = it->first.getNumber();
+                break;
+              }
             }
-          }
-          for (it = level->begin(); it != level->end(); it++) {
-            if (it->first.getNumber() <= xTo) {
-              lastFrame = it->first.getNumber();
+            for (it = level->begin(); it != level->end(); it++) {
+              if (it->first.getNumber() <= xTo) {
+                lastFrame = it->first.getNumber();
+              }
             }
+            frameLength = lastFrame - firstFrame + 1;
+          } else  // Step != Auto
+          {
+            TLevel::Iterator it;
+            int loopAmount = 0;
+            for (it = level->begin(); it != level->end(); it++) {
+              if (xFrom <= it->first.getNumber() &&
+                  it->first.getNumber() <= xTo)
+                loopAmount++;
+            }
+            frameLength = loopAmount * m_stepCombo->currentIndex();
           }
-          frameLength = lastFrame - firstFrame + 1;
-        } else  // Step != Auto
-        {
-          TLevel::Iterator it;
-          int loopAmount = 0;
-          for (it = level->begin(); it != level->end(); it++) {
-            if (xFrom <= it->first.getNumber() && it->first.getNumber() <= xTo)
-              loopAmount++;
-          }
-          frameLength = loopAmount * m_stepCombo->currentIndex();
+        } catch (...) {
+          return;
         }
       }
     }
@@ -1090,14 +1094,18 @@ bool LoadLevelPopup::execute() {
       }
       // another case such as loading tlv
       else {
-        TLevelReaderP lr(fp);
-        TLevelP level;
-        if (lr) level = lr->loadInfo();
-        if (!level.getPointer()) return false;
+        try {
+          TLevelReaderP lr(fp);
+          TLevelP level;
+          if (lr) level = lr->loadInfo();
+          if (!level.getPointer()) return false;
 
-        firstFrame = level->begin()->first;
-        lastFrame  = (--level->end())->first;
-        lr         = TLevelReaderP();
+          firstFrame = level->begin()->first;
+          lastFrame  = (--level->end())->first;
+          lr         = TLevelReaderP();
+        } catch (...) {
+          return false;
+        }
       }
       int firstFrameNumber = m_fromFrame->text().toInt();
       int lastFrameNumber  = m_toFrame->text().toInt();
@@ -1270,13 +1278,26 @@ void LoadLevelPopup::updateBottomGUI() {
       firstFrame = fIds[0];
       lastFrame  = fIds[fIds.size() - 1];
     } else {
-      TLevelReaderP lr(fp);
-      TLevelP level;
-      if (lr) level = lr->loadInfo();
-      if (!level.getPointer() || level->getTable()->size() == 0) return;
+      try {
+        TLevelReaderP lr(fp);
+        TLevelP level;
+        if (lr) level = lr->loadInfo();
+        if (!level.getPointer() || level->getTable()->size() == 0) return;
 
-      firstFrame = level->begin()->first;
-      lastFrame  = (--level->end())->first;
+        firstFrame = level->begin()->first;
+        lastFrame  = (--level->end())->first;
+      } catch (...) {
+        m_fromFrame->setText("");
+        m_toFrame->setText("");
+        m_subsequenceFrame->setEnabled(false);
+
+        m_xFrom->setText("");
+        m_xTo->setText("");
+        m_levelName->setText("");
+        m_posTo->setText("");
+        m_arrangementFrame->setEnabled(false);
+        return;
+      }
     }
 
     m_fromFrame->setText(QString().number(firstFrame.getNumber()));
@@ -1779,14 +1800,17 @@ void LoadColorModelPopup::onFilePathsSelected(
   if (paths.size() == 1) {
     // Initialize the line with the level's starting frame
     const TFilePath &fp = *paths.begin();
+    try {
+      TLevelReaderP lr(fp);
+      TLevelP level;
+      if (lr) level = lr->loadInfo();
 
-    TLevelReaderP lr(fp);
-    TLevelP level;
-    if (lr) level = lr->loadInfo();
-
-    if (level.getPointer() && level->begin() != level->end()) {
-      int firstFrame = level->begin()->first.getNumber();
-      if (firstFrame > 0) m_paletteFrame->setText(QString::number(firstFrame));
+      if (level.getPointer() && level->begin() != level->end()) {
+        int firstFrame = level->begin()->first.getNumber();
+        if (firstFrame > 0)
+          m_paletteFrame->setText(QString::number(firstFrame));
+      }
+    } catch (...) {
     }
   }
 }
