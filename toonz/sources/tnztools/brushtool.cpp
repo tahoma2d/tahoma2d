@@ -1262,6 +1262,12 @@ void BrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
       TPointD halfThick(maxThick * 0.5, maxThick * 0.5);
       TRectD invalidateRect(pos - halfThick, pos + halfThick);
+      TPointD dpi;
+      ri->getDpi(dpi.x, dpi.y);
+      TRectD previousTipRect(m_brushPos - halfThick, m_brushPos + halfThick);
+      if (dpi.x > Stage::inch || dpi.y > Stage::inch)
+        previousTipRect *= dpi.x / Stage::inch;
+      invalidateRect += previousTipRect;
 
       // if the drawOrder mode = "Palette Order",
       // get styleId list which is above the current style in the palette
@@ -1324,7 +1330,7 @@ void BrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       /*-- 作業中のFidを登録 --*/
       m_workingFrameId = getFrameId();
 
-      invalidate(invalidateRect);
+      invalidate(invalidateRect.enlarge(2));
     }
   } else {  // vector happens here
     m_track.clear();
@@ -1346,6 +1352,9 @@ void BrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       addTrackPoint(TThickPoint(pos, thickness),
                     getPixelSize() * getPixelSize());
   }
+
+  // updating m_brushPos is needed to refresh viewer properly
+  m_brushPos = m_mousePos = pos;
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -1464,6 +1473,13 @@ void BrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         m_strokeRect += bbox;
       }
     }
+
+    // draw brush tip when drawing smooth stroke
+    if (m_smooth.getValue() != 0) {
+      TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
+      invalidateRect += TRectD(m_brushPos - halfThick, m_brushPos + halfThick);
+    }
+
     invalidate(invalidateRect.enlarge(2));
   } else {
     double thickness =
@@ -2052,6 +2068,10 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   // locals.addMinMax(
   //  TToonzImageP(getImage(false, 1)) ? m_rasThickness : m_thickness, add);
   //} else
+
+  TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
+  TRectD invalidateRect(m_brushPos - halfThick, m_brushPos + halfThick);
+
   if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) {
     const TPointD &diff = pos - m_mousePos;
     double max          = diff.x / 2;
@@ -2060,6 +2080,13 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     locals.addMinMaxSeparate(
         (m_targetType & TTool::ToonzImage) ? m_rasThickness : m_thickness, min,
         max);
+
+    double radius = (m_targetType & TTool::ToonzImage)
+                        ? m_rasThickness.getValue().second * 0.5
+                        : m_thickness.getValue().second * 0.5;
+    invalidateRect += TRectD(m_brushPos - TPointD(radius, radius),
+                             m_brushPos + TPointD(radius, radius));
+
   } else {
     m_mousePos = pos;
     m_brushPos = pos;
@@ -2072,9 +2099,10 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
       checkGuideSnapping(true);
       m_brushPos = m_firstSnapPoint;
     }
+    invalidateRect += TRectD(pos - halfThick, pos + halfThick);
   }
-  // TODO: this can be partial update for toonz raster brush
-  invalidate();
+
+  invalidate(invalidateRect.enlarge(2));
 
   if (m_minThick == 0 && m_maxThick == 0) {
     if (m_targetType & TTool::ToonzImage) {
@@ -2199,8 +2227,8 @@ void BrushTool::checkGuideSnapping(bool beforeMousePress) {
         snapPoint.x = hGuide;
       }
       beforeMousePress ? m_foundFirstSnap = true : m_foundLastSnap = true;
-      beforeMousePress ? m_firstSnapPoint = snapPoint : m_lastSnapPoint =
-                                                            snapPoint;
+      beforeMousePress ? m_firstSnapPoint                          = snapPoint
+                       : m_lastSnapPoint                           = snapPoint;
     }
   }
 }
@@ -2272,10 +2300,14 @@ void BrushTool::draw() {
     TRasterP ras = ti->getRaster();
     int lx       = ras->getLx();
     int ly       = ras->getLy();
-
     drawEmptyCircle(m_brushPos, tround(m_minThick), lx % 2 == 0, ly % 2 == 0,
                     m_pencil.getValue());
     drawEmptyCircle(m_brushPos, tround(m_maxThick), lx % 2 == 0, ly % 2 == 0,
+                    m_pencil.getValue());
+  } else if (m_targetType & TTool::ToonzImage) {
+    drawEmptyCircle(m_brushPos, tround(m_minThick), true, true,
+                    m_pencil.getValue());
+    drawEmptyCircle(m_brushPos, tround(m_maxThick), true, true,
                     m_pencil.getValue());
   } else {
     tglDrawCircle(m_brushPos, 0.5 * m_minThick);
@@ -2288,7 +2320,7 @@ void BrushTool::draw() {
 void BrushTool::onEnter() {
   TImageP img = getImage(false);
 
-  if (TToonzImageP(img)) {
+  if (m_targetType & TTool::ToonzImage) {
     m_minThick = m_rasThickness.getValue().first;
     m_maxThick = m_rasThickness.getValue().second;
   } else {
@@ -2382,11 +2414,9 @@ bool BrushTool::onPropertyChanged(std::string propertyName) {
 
   /*--- 変更されたPropertyに合わせて処理を分ける ---*/
 
-  /*--- m_thicknessとm_rasThicknessは同じName(="Size:")なので、
-          扱っている画像がラスタかどうかで区別する---*/
+  /*--- determine which type of brush to be modified ---*/
   if (propertyName == m_thickness.getName()) {
-    TImageP img = getImage(false);
-    if (TToonzImageP(img))  // raster
+    if (m_targetType & TTool::ToonzImage)  // raster
     {
       RasterBrushMinSize = m_rasThickness.getValue().first;
       RasterBrushMaxSize = m_rasThickness.getValue().second;

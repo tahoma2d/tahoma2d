@@ -522,7 +522,7 @@ void SceneViewer::setVisual(const ImagePainter::VisualSettings &settings) {
   m_visualSettings = settings;
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
-  if (repaint) update();
+  if (repaint) GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -602,7 +602,7 @@ void SceneViewer::freeze(bool on) {
     setCursor(Qt::ForbiddenCursor);
     m_freezedStatus = UPDATE_FREEZED;
   }
-  update();
+  GLInvalidateAll();
 }
 
 //-------------------------------------------------------------------------------
@@ -633,7 +633,7 @@ void SceneViewer::enablePreview(int previewMode) {
 
   m_previewMode = previewMode;
 
-  update();
+  GLInvalidateAll();
 
   // for updating the title bar
   emit previewToggled();
@@ -1715,7 +1715,12 @@ void SceneViewer::GLInvalidateAll() {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::GLInvalidateRect(const TRectD &rect) {
-  m_clipRect = rect;
+  // there is a case that this function is called more than once before
+  // paintGL() is called
+  if (!m_clipRect.isEmpty())
+    m_clipRect += rect;
+  else
+    m_clipRect = rect;
   update();
   if (m_vRuler) m_vRuler->update();
   if (m_hRuler) m_hRuler->update();
@@ -2154,7 +2159,7 @@ void SceneViewer::onXsheetChanged() {
   TTool *tool    = TApp::instance()->getCurrentTool()->getTool();
   if (tool && tool->isEnabled()) tool->updateMatrix();
   onLevelChanged();
-  update();
+  GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -2163,14 +2168,14 @@ void SceneViewer::onObjectSwitched() {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool && tool->isEnabled()) tool->updateMatrix();
   onLevelChanged();
-  update();
+  GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onSceneChanged() {
   onLevelChanged();
-  update();
+  GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -2185,7 +2190,7 @@ void SceneViewer::onFrameSwitched() {
     tool->onEnter();
   }
 
-  update();
+  GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -2194,7 +2199,7 @@ void SceneViewer::onFrameSwitched() {
 void SceneViewer::onToolChanged() {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool) setToolCursor(this, tool->getCursorId());
-  update();
+  GLInvalidateAll();
 }
 
 //-----------------------------------------------------------------------------
