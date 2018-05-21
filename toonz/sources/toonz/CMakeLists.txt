@@ -157,6 +157,7 @@ set(MOC_HEADERS
 	cameracapturelevelcontrol.h
 	reframepopup.h
 	autoinputcellnumberpopup.h
+	colormodelbehaviorpopup.h
 # Tracker file
     dummyprocessor.h
     metnum.h
@@ -329,6 +330,7 @@ set(SOURCES
 	cameracapturelevelcontrol.cpp
 	reframepopup.cpp
 	autoinputcellnumberpopup.cpp
+	colormodelbehaviorpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

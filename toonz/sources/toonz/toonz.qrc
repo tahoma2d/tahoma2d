@@ -459,5 +459,8 @@
       <file>Resources/zoom_out.svg</file>
       <file>Resources/zoom_in_rollover.svg</file>
       <file>Resources/zoom_out_rollover.svg</file>
+      <file>Resources/colorchiporder_leftup.svg</file>
+      <file>Resources/colorchiporder_lowleft.svg</file>
+      <file>Resources/colorchiporder_upleft.svg</file>
     </qresource>
 </RCC>

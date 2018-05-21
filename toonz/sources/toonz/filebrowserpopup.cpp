@@ -14,6 +14,7 @@
 #include "columnselection.h"
 #include "convertpopup.h"
 #include "matchline.h"
+#include "colormodelbehaviorpopup.h"
 
 // TnzQt includes
 #include "toonzqt/gutil.h"
@@ -1822,7 +1823,6 @@ bool LoadColorModelPopup::execute() {
 
   const TFilePath &fp = *m_selectedPaths.begin();
 
-  int index = 0;
   TPaletteHandle *paletteHandle =
       TApp::instance()->getPaletteController()->getCurrentLevelPalette();
 
@@ -1832,43 +1832,18 @@ bool LoadColorModelPopup::execute() {
     return false;
   }
 
-  PaletteCmd::ColorModelPltBehavior pltBehavior;
+  PaletteCmd::ColorModelLoadingConfiguration config;
 
   // if the palette is locked, replace the color model's palette with the
   // destination
-  if (palette->isLocked())
-    pltBehavior = PaletteCmd::ReplaceColorModelPlt;
-  else {
-    std::string type(fp.getType());
-    QString question(
-        QObject::tr("The color model palette is different from the destination "
-                    "palette.\nWhat do you want to do? "));
-    QList<QString> list;
-    list.append(QObject::tr("Overwrite the destination palette."));
-    list.append(QObject::tr(
-        "Keep the destination palette and apply it to the color model."));
-    /*- if the file is raster image (i.e. without palette), then add another
-     * option "add styles"  -*/
-    if (type != "tlv" && type != "pli")
-      list.append(
-          QObject::tr("Add color model's palette to the destination palette."));
-    int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
-    switch (ret) {
-    case 0:
-      return false;
-    case 1:
-      pltBehavior = PaletteCmd::KeepColorModelPlt;
-      break;
-    case 2:
-      pltBehavior = PaletteCmd::ReplaceColorModelPlt;
-      break;
-    case 3:
-      pltBehavior = PaletteCmd::AddColorModelPlt;
-      break;
-    default:
-      pltBehavior = PaletteCmd::KeepColorModelPlt;
-      break;
-    }
+  if (palette->isLocked()) {
+    // do nothing as config will use behavior = ReplaceColorModelPlt by default
+    // config.behavior = PaletteCmd::ReplaceColorModelPlt;
+  } else {
+    ColorModelBehaviorPopup popup(m_selectedPaths, 0);
+    int ret = popup.exec();
+    if (ret == QDialog::Rejected) return false;
+    popup.getLoadingConfiguration(config);
   }
 
   std::vector<int> framesInput = string2Indexes(m_paletteFrame->text());
@@ -1880,9 +1855,8 @@ bool LoadColorModelPopup::execute() {
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 
-  int isLoaded = PaletteCmd::loadReferenceImage(paletteHandle, pltBehavior, fp,
-                                                index, scene, framesInput);
-
+  int isLoaded = PaletteCmd::loadReferenceImage(paletteHandle, config, fp,
+                                                scene, framesInput);
   // return value - isLoaded
   // 2: failed to get palette
   // 1: failed to get image
@@ -1899,7 +1873,7 @@ bool LoadColorModelPopup::execute() {
   }
 
   // no changes in the icon with replace (Keep the destination palette) option
-  if (pltBehavior != PaletteCmd::ReplaceColorModelPlt) {
+  if (config.behavior != PaletteCmd::ReplaceColorModelPlt) {
     TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
     if (!level) return true;
     std::vector<TFrameId> fids;

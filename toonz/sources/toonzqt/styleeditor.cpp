@@ -3335,7 +3335,7 @@ void StyleEditor::onStyleSwitched() {
     statusText += QString::fromStdWString(L" | #");
     statusText += QString::number(styleIndex);
     statusText += QString::fromStdWString(L" : " + m_editedStyle->getName());
-    TPoint pickedPos = m_editedStyle->getPickedPosition();
+    TPoint pickedPos = m_editedStyle->getPickedPosition().pos;
     if (pickedPos != TPoint())
       statusText +=
           QString(" (Picked from %1,%2)").arg(pickedPos.x).arg(pickedPos.y);

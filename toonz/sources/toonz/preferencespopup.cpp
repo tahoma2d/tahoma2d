@@ -837,12 +837,6 @@ void PreferencesPopup::onShowFrameNumberWithLettersChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onPaletteTypeForRasterColorModelChanged(int index) {
-  m_pref->setPaletteTypeOnLoadRasterImageAsColorModel(index);
-}
-
-//-----------------------------------------------------------------------------
-
 void PreferencesPopup::onShowKeyframesOnCellAreaChanged(int index) {
   m_pref->enableShowKeyframesOnXsheetCellArea(index == Qt::Checked);
 }
@@ -1343,8 +1337,6 @@ PreferencesPopup::PreferencesPopup()
   m_removeLevelFormat = new QPushButton("-");
   m_editLevelFormat   = new QPushButton(tr("Edit"));
 
-  QComboBox *paletteTypeForRasterColorModelComboBox = new QComboBox(this);
-
   m_importPolicy = new QComboBox;
 
   //--- Import/Export ------------------------------
@@ -1706,13 +1698,6 @@ PreferencesPopup::PreferencesPopup()
   m_removeLevelFormat->setFixedSize(20, 20);
 
   rebuildFormatsList();
-
-  QStringList paletteTypes;
-  paletteTypes << tr("Pick Every Colors as Different Styles")
-               << tr("Integrate Similar Colors as One Style");
-  paletteTypeForRasterColorModelComboBox->addItems(paletteTypes);
-  paletteTypeForRasterColorModelComboBox->setCurrentIndex(
-      m_pref->getPaletteTypeOnLoadRasterImageAsColorModel());
 
   QStringList policies;
   policies << tr("Always ask before loading or importing")
@@ -2172,12 +2157,6 @@ PreferencesPopup::PreferencesPopup()
         cacheLay->addWidget(m_addLevelFormat, 2, 2);
         cacheLay->addWidget(m_removeLevelFormat, 2, 3);
         cacheLay->addWidget(m_editLevelFormat, 2, 4);
-
-        cacheLay->addWidget(
-            new QLabel(
-                tr("Palette Type on Loading Raster Image as Color Model:")),
-            3, 0, 1, 6);
-        cacheLay->addWidget(paletteTypeForRasterColorModelComboBox, 4, 1, 1, 5);
       }
       cacheLay->setColumnStretch(0, 0);
       cacheLay->setColumnStretch(1, 0);
@@ -2755,9 +2734,6 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onRemoveLevelFormat()));
   ret = ret && connect(m_editLevelFormat, SIGNAL(clicked()),
                        SLOT(onEditLevelFormat()));
-  ret = ret && connect(paletteTypeForRasterColorModelComboBox,
-                       SIGNAL(currentIndexChanged(int)), this,
-                       SLOT(onPaletteTypeForRasterColorModelChanged(int)));
   ret = ret && connect(m_importPolicy, SIGNAL(currentIndexChanged(int)),
                        SLOT(onImportPolicyChanged(int)));
   ret = ret && connect(TApp::instance()->getCurrentScene(),
