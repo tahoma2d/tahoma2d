@@ -1899,6 +1899,7 @@ void MainWindow::defineActions() {
                         tr("Reframe with Empty Inbetweens..."), "");
   createMenuCellsAction(MI_AutoInputCellNumber, tr("Auto Input Cell Number..."),
                         "");
+  createMenuCellsAction(MI_FillEmptyCell, tr("&Fill In Empty Cells"), "");
 
   createRightClickMenuAction(MI_SetKeyframes, tr("&Set Key"), "Z");
   createRightClickMenuAction(MI_PasteNumbers, tr("&Paste Numbers"), "");
