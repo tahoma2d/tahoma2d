@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Position</source>
-        <translation type="vanished">Position</translation>
+        <translation>Position</translation>
     </message>
     <message>
         <source>E/W:</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="vanished">Rotation</translation>
+        <translation>Rotation</translation>
     </message>
     <message>
         <source>Scale</source>
@@ -100,7 +100,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>Sélective</translation>
+        <translation type="vanished">Sélective</translation>
     </message>
     <message>
         <source>Preset:</source>
@@ -216,6 +216,22 @@
     </message>
     <message>
         <source>Med</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw Order:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Over All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Under All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette Order</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1103,6 +1119,22 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>Note columns can only be edited in the xsheet or timeline.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Front</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Backward</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

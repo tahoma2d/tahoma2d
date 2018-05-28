@@ -955,6 +955,75 @@ Cosa vuoi fare?</translation>
     </message>
 </context>
 <context>
+    <name>ColorModelBehaviorPopup</name>
+    <message>
+        <source>Select the Palette Operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite the destination palette.</source>
+        <translation type="unfinished">Sovrascrivi la palette di destinazione.</translation>
+    </message>
+    <message>
+        <source>Keep the destination palette and apply it to the color model.</source>
+        <translation type="unfinished">Mantieni la palette di destinazione e applicala al modello di colore.</translation>
+    </message>
+    <message>
+        <source>The color model palette is different from the destination palette.
+What do you want to do? </source>
+        <translation type="unfinished">La palette del modello di colore è diversa dalla palette di destinazione.
+Cosa vuoi fare?</translation>
+    </message>
+    <message>
+        <source>Add color model&apos;s palette to the destination palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Picking Colors from Raster Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick Every Colors as Different Styles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Integrate Similar Colors as One Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick Colors in Color Chip Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Horizontal - Top to bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Horizontal - Bottom to top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertical - Left to right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grid Line Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grid Line Width:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chip Order:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ColorModelViewer</name>
     <message>
         <source>Color Model</source>
@@ -2379,6 +2448,21 @@ Vuoi sovrascriverlo?</translation>
     <message>
         <source>It is not possible to delete %1.</source>
         <translation>Non è possibile eliminare %1.</translation>
+    </message>
+</context>
+<context>
+    <name>LayerFooterPanel</name>
+    <message>
+        <source>Zoom in/out of timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom in (Ctrl-click to zoom in all the way)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom out (Ctrl-click to zoom out all the way)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4574,10 +4658,6 @@ Decrementa lo spessore minimo del pennello</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Insert Paste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Paste Color &amp;&amp; Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4953,6 +5033,34 @@ Decrementa lo spessore minimo del pennello</translation>
         <source>Animate Tool</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Paste Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Insert Above/After</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert Above/After</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fill In Empty Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Cursor Size Outline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tool - Draw Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active Axis - All</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -5016,6 +5124,16 @@ Halftone</source>
     <message>
         <source>Fill
 Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Inks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Inks : If the target level has the same style as the match line ink
+(i.e. with the same index and the same color), the existing style will be used.
+Otherwise, a new style will be added to &quot;match lines&quot; page.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6556,14 +6674,6 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pick Every Colors as Different Styles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Integrate Similar Colors as One Style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Disabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6822,10 +6932,6 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Palette Type on Loading Raster Image as Color Model:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please indicate where you would like exports from Fast Render(MP4) to go.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6889,6 +6995,59 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Column Header Layout*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color Calibration using 3D Look-up Table *</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable auto-stretch frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Cursor Size Outlines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for the Latest Version of OpenToonz on Launch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choosing this option will set initial location of all file browsers to $scenefolder.
+Also the initial output destination for new scenes will be set to $scenefolder as well.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graph Editor Opens in Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spreadsheet Opens in Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Between Graph Editor and Spreadsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Function Editor*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3DLUT File for [%1] *:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cursor Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Basic Cursor Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cursor Style:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7156,16 +7315,16 @@ Visita il sito Web per avere maggiori informazioni.</translation>
     <message>
         <source>The color model palette is different from the destination palette.
 What do you want to do? </source>
-        <translation>La palette del modello di colore è diversa dalla palette di destinazione.
+        <translation type="vanished">La palette del modello di colore è diversa dalla palette di destinazione.
 Cosa vuoi fare?</translation>
     </message>
     <message>
         <source>Overwrite the destination palette.</source>
-        <translation>Sovrascrivi la palette di destinazione.</translation>
+        <translation type="vanished">Sovrascrivi la palette di destinazione.</translation>
     </message>
     <message>
         <source>Keep the destination palette and apply it to the color model.</source>
-        <translation>Mantieni la palette di destinazione e applicala al modello di colore.</translation>
+        <translation type="vanished">Mantieni la palette di destinazione e applicala al modello di colore.</translation>
     </message>
     <message>
         <source>Color Model</source>
@@ -8535,10 +8694,6 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add color model&apos;s palette to the destination palette.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;custom&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8670,6 +8825,61 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Cannot Read XML File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">Applica</translation>
+    </message>
+    <message>
+        <source>The scene is not yet saved and the output destination is set to $scenefolder.
+Save the scene first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A prior save of Scene &apos;%1&apos; was critically interupted. 
+
+A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
+
+Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <translation type="unfinished">Continua</translation>
+    </message>
+    <message>
+        <source>File &apos;%1&apos; will reload level &apos;%2&apos; as a duplicate column in the xsheet.
+
+Allow duplicate?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow All Dups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No to All Dups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide cursor size outline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show cursor size outline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill In Empty Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for the latest version on launch.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8813,7 +9023,7 @@ Il risultato del render può essere diverso dal previsto. Cosa vuoi fare?</trans
     </message>
     <message>
         <source>Nothing to replace: no cells selected.</source>
-        <translation>Non c&apos;è nulla da rimpiazzare: non ci sono celle selezionate.</translation>
+        <translation type="vanished">Non c&apos;è nulla da rimpiazzare: non ci sono celle selezionate.</translation>
     </message>
     <message>
         <source>File not found
@@ -8830,10 +9040,6 @@ Il risultato del render può essere diverso dal previsto. Cosa vuoi fare?</trans
     <message>
         <source>Replace</source>
         <translation type="unfinished">Rimpiazza</translation>
-    </message>
-    <message>
-        <source>Nothing to replace: no cells or columns selected.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10544,6 +10750,13 @@ Clicca la freccia per creare un nuovo sub-xsheet</translation>
     </message>
 </context>
 <context>
+    <name>T</name>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TApp</name>
     <message>
         <source>Error allocating memory: not enough memory.</source>
@@ -11287,6 +11500,38 @@ Per favore fai riferimento alla Guida utente per i dettagli.</translation>
         <source>Additional column settings</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Insert Before</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert After</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Insert Before</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Insert After</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Insert Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Insert Above</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::ColumnTransparencyPopup</name>
@@ -11431,10 +11676,6 @@ Per favore fai riferimento alla Guida utente per i dettagli.</translation>
     </message>
     <message>
         <source> columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom in/out of timeline</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

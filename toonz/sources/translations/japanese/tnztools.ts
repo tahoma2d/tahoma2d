@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Position</source>
-        <translation type="vanished">位置</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <source>E/W:</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="vanished">回転</translation>
+        <translation>回転</translation>
     </message>
     <message>
         <source>Scale</source>
@@ -100,7 +100,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>塗りの保護</translation>
+        <translation type="vanished">塗りの保護</translation>
     </message>
     <message>
         <source>Preset:</source>
@@ -217,6 +217,22 @@
     <message>
         <source>Bevel join</source>
         <translation>ベベル結合</translation>
+    </message>
+    <message>
+        <source>Draw Order:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Over All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Under All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette Order</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1103,6 +1119,22 @@ Do you want to proceed?</source>
     <message>
         <source>Note columns can only be edited in the xsheet or timeline.</source>
         <translation>ノートレベルはタイムシート又はタイムライン上でのみ編集できます。</translation>
+    </message>
+    <message>
+        <source> to Front</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to Backward</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -884,6 +884,13 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
 </context>
 <context>
+    <name>FunctionSheet</name>
+    <message>
+        <source>Function Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionSheetCellViewer</name>
     <message>
         <source>Delete Key</source>
@@ -1950,7 +1957,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>OpenToonz 1.1</source>
-        <translation>OpenToonz 1.1</translation>
+        <translation type="vanished">OpenToonz 1.1</translation>
     </message>
     <message>
         <source>Remove Reference  in Palette : %1</source>
@@ -1959,6 +1966,63 @@ Are you sure?</source>
     <message>
         <source>It is not possible to assign a shortcut with modifiers to the visualization commands.</source>
         <translation>No es posible asignar un atajo con modificadores a los comandos de visualización.</translation>
+    </message>
+    <message>
+        <source>Failed to compile m_textureShader.vert.</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to compile m_shader.frag.</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to add m_shader.vert.</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to add m_shader.frag.</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to link simple shader: %1</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get attribute location of %1</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get uniform location of %1</source>
+        <comment>gl</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Open 3DLUT File.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Load 3DLUT File.
+It should start with &quot;3DMESH&quot; keyword.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Load 3DLUT File.
+The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Load 3DLUT File.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenToonz 1.2</source>
+        <translation type="unfinished">OpenToonz 1.2</translation>
     </message>
 </context>
 <context>
@@ -2166,6 +2230,26 @@ Are you sure?</source>
         <source>Convert to Studio Palette and Overwrite</source>
         <translation>Convertir a paleta de estudio y sobrescribir</translation>
     </message>
+    <message>
+        <source>the palette &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the selected palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move %1 to &quot;%2&quot;. Are you sure ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -2198,7 +2282,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="vanished">Auto</translation>
+        <translation>Auto</translation>
     </message>
     <message>
         <source>Automatically update style changes</source>
@@ -2239,7 +2323,7 @@ Are you sure?</source>
     <message>
         <source>Auto  
 Apply</source>
-        <translation>Aplicar
+        <translation type="vanished">Aplicar
 Autom</translation>
     </message>
     <message>
@@ -2248,7 +2332,7 @@ Autom</translation>
     </message>
     <message>
         <source>- Style not Selected -</source>
-        <translation>- Estilo no seleccionado -</translation>
+        <translation type="vanished">- Estilo no seleccionado -</translation>
     </message>
     <message>
         <source>[CLEANUP]  </source>
@@ -2264,7 +2348,7 @@ Autom</translation>
     </message>
     <message>
         <source>- Style is Not Valid -</source>
-        <translation>- Estilo no válido -</translation>
+        <translation type="vanished">- Estilo no válido -</translation>
     </message>
     <message>
         <source>Generated</source>
@@ -2285,6 +2369,22 @@ Autom</translation>
     <message>
         <source>Raster</source>
         <translation>Imagen</translation>
+    </message>
+    <message>
+        <source>Show or hide parts of the Color Page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle orientation of the Color Page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Style Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Editor - No Valid Style Selected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2322,11 +2422,11 @@ Autom</translation>
     <name>StyleEditorGUI::PlainColorPage</name>
     <message>
         <source>Wheel</source>
-        <translation>Muestra</translation>
+        <translation type="vanished">Muestra</translation>
     </message>
     <message>
         <source>HSV</source>
-        <translation>TSV</translation>
+        <translation type="vanished">TSV</translation>
     </message>
     <message>
         <source>Matte</source>
@@ -2334,11 +2434,11 @@ Autom</translation>
     </message>
     <message>
         <source>RGB</source>
-        <translation>RVA</translation>
+        <translation type="vanished">RVA</translation>
     </message>
     <message>
         <source>Alpha</source>
-        <translation>Alfa</translation>
+        <translation type="vanished">Alfa</translation>
     </message>
 </context>
 <context>

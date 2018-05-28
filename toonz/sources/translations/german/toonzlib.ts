@@ -412,6 +412,26 @@ Wahrscheinlich funktioniert der Codec nicht korrekt.</translation>
         <source>WhiteThres</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Can&apos;t undo rename palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t undo move palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t redo rename palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t redo move palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename Studio Palette : %1 &gt; %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>

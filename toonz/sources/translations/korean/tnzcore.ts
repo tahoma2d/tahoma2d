@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="189"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="197"/>
         <source>colors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14,7 +14,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tsystem/tfilepath.cpp" line="642"/>
+        <location filename="../../common/tsystem/tfilepath.cpp" line="694"/>
         <source>Malformed frame name</source>
         <translation type="unfinished"></translation>
     </message>
