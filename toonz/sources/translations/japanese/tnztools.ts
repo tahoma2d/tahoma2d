@@ -220,19 +220,19 @@
     </message>
     <message>
         <source>Draw Order:</source>
-        <translation type="unfinished"></translation>
+        <translation>線の重ね順:</translation>
     </message>
     <message>
         <source>Over All</source>
-        <translation type="unfinished"></translation>
+        <translation>上に描く</translation>
     </message>
     <message>
         <source>Under All</source>
-        <translation type="unfinished"></translation>
+        <translation>下に描く</translation>
     </message>
     <message>
         <source>Palette Order</source>
-        <translation type="unfinished"></translation>
+        <translation>パレット順</translation>
     </message>
 </context>
 <context>
@@ -486,7 +486,7 @@
     </message>
     <message>
         <source>Autopaint Lines</source>
-        <translation>含め塗り</translation>
+        <translation>含み塗り</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -1086,7 +1086,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
-        <translation>エフェクト・ガジェットでパラメータを変更</translation>
+        <translation>エフェクト・ガジェットでパラメータを変更  </translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
@@ -1122,19 +1122,19 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source> to Front</source>
-        <translation type="unfinished"></translation>
+        <translation> 最前面へ</translation>
     </message>
     <message>
         <source> to Forward</source>
-        <translation type="unfinished"></translation>
+        <translation> 前面へ</translation>
     </message>
     <message>
         <source> to Back</source>
-        <translation type="unfinished"></translation>
+        <translation> 最背面へ</translation>
     </message>
     <message>
         <source> to Backward</source>
-        <translation type="unfinished"></translation>
+        <translation> 背面へ</translation>
     </message>
 </context>
 <context>
@@ -1168,7 +1168,7 @@ Do you want to proceed?</source>
     <name>RGBPickerToolOptionsBox</name>
     <message>
         <source>Pick Screen</source>
-        <translation>画面を選択</translation>
+        <translation>スクリーン上から拾う</translation>
     </message>
 </context>
 <context>
@@ -1303,7 +1303,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Inverse Kinematics</source>
-        <translation>インバースキネマティクス</translation>
+        <translation>逆運動学（IK)</translation>
     </message>
 </context>
 <context>

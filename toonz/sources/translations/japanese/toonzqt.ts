@@ -754,7 +754,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Function Curves</source>
-        <translation>グラフエディター</translation>
+        <translation>グラフエディタ</translation>
     </message>
     <message>
         <source>Smooth</source>
@@ -887,7 +887,7 @@ Possibly the preset file has been corrupted</source>
     <name>FunctionSheet</name>
     <message>
         <source>Function Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>パラメータエディタ</translation>
     </message>
 </context>
 <context>
@@ -961,7 +961,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Open Function Curve Editor</source>
-        <translation>グラフエディターを開く (&amp;O)</translation>
+        <translation>グラフエディタを開く (&amp;O)</translation>
     </message>
 </context>
 <context>
@@ -1969,59 +1969,61 @@ Are you sure?</source>
     <message>
         <source>Failed to compile m_textureShader.vert.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>m_textureShader.vert のコンパイルに失敗しました。</translation>
     </message>
     <message>
         <source>Failed to compile m_shader.frag.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>m_shader.frag のコンパイルに失敗しました。</translation>
     </message>
     <message>
         <source>Failed to add m_shader.vert.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>m_shader.vert の追加に失敗しました。</translation>
     </message>
     <message>
         <source>Failed to add m_shader.frag.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>m_shader.frag の追加に失敗しました。</translation>
     </message>
     <message>
         <source>Failed to link simple shader: %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>simple shader のリンクに失敗しました : %1</translation>
     </message>
     <message>
         <source>Failed to get attribute location of %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1　のアトリビュート位置の取得に失敗しました</translation>
     </message>
     <message>
         <source>Failed to get uniform location of %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1 のuniform位置の取得に失敗しました</translation>
     </message>
     <message>
         <source>Failed to Open 3DLUT File.</source>
-        <translation type="unfinished"></translation>
+        <translation>3DLUTファイルを開けませんでした。</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.
 It should start with &quot;3DMESH&quot; keyword.</source>
-        <translation type="unfinished"></translation>
+        <translation>3DLUTファイルの読み込みに失敗しました。
+ファイルの内容はキーワード &quot;3DMESH&quot; から始まる必要があります。</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.
 The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>3DLUTファイルの読み込みに失敗しました。
+2行目は &quot;Mesh [入力ビット深度] [出力ビット深度]&quot;の形式で書かれている必要があります</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.</source>
-        <translation type="unfinished"></translation>
+        <translation>3DLUTファイルの読み込みに失敗しました。</translation>
     </message>
     <message>
         <source>OpenToonz 1.2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2089,7 +2091,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <name>SchematicWindowEditor</name>
     <message>
         <source>&amp;Close Editor</source>
-        <translation>エディターを閉じる (&amp;C)</translation>
+        <translation>エディタを閉じる (&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -2231,23 +2233,23 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>the palette &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>パレット &quot;%1&quot;</translation>
     </message>
     <message>
         <source>the selected palettes</source>
-        <translation type="unfinished"></translation>
+        <translation>選択されたパレット</translation>
     </message>
     <message>
         <source>Move %1 to &quot;%2&quot;. Are you sure ?</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を &quot;%2&quot; に移動します。よろしいですか？</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>移動する</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
@@ -2371,19 +2373,19 @@ Apply</source>
     </message>
     <message>
         <source>Show or hide parts of the Color Page.</source>
-        <translation type="unfinished"></translation>
+        <translation>「色」タブ内の各パーツの表示/非表示を切り替え</translation>
     </message>
     <message>
         <source>Toggle orientation of the Color Page.</source>
-        <translation type="unfinished"></translation>
+        <translation>「色」タブのレイアウト方向を変更</translation>
     </message>
     <message>
         <source>No Style Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルが選択されていません</translation>
     </message>
     <message>
         <source>Style Editor - No Valid Style Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルエディタ - 有効なスタイルが選択されていません</translation>
     </message>
 </context>
 <context>
@@ -2444,7 +2446,7 @@ Apply</source>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>色トレース線として、含め塗りを行う</translation>
+        <translation>色トレース線として、含み塗りを行う</translation>
     </message>
     <message>
         <source>Reset to default</source>

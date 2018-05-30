@@ -410,23 +410,23 @@
     </message>
     <message>
         <source>Can&apos;t undo rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットのリネーム操作を元に戻せません</translation>
     </message>
     <message>
         <source>Can&apos;t undo move palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットの移動操作を元に戻せません</translation>
     </message>
     <message>
         <source>Can&apos;t redo rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットのリネーム操作をやり直せません</translation>
     </message>
     <message>
         <source>Can&apos;t redo move palette</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットの移動操作をやり直せません</translation>
     </message>
     <message>
         <source>Rename Studio Palette : %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>スタジオパレットをリネーム : %1 &gt; %2</translation>
     </message>
 </context>
 <context>

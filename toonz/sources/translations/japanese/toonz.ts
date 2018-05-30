@@ -710,7 +710,7 @@ when running the cleanup process.</source>
     </message>
     <message>
         <source>Rename the new level adding the suffix </source>
-        <translation>接尾辞を付け、新規レベルの名前を変更</translation>
+        <translation>接尾辞を付け、新規レベルの名前を変更 </translation>
     </message>
     <message>
         <source>File &quot;%1&quot; already exists.
@@ -957,69 +957,69 @@ What do you want to do?</source>
     <name>ColorModelBehaviorPopup</name>
     <message>
         <source>Select the Palette Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>パレットに行う操作の選択</translation>
     </message>
     <message>
         <source>Overwrite the destination palette.</source>
-        <translation type="unfinished">対象のパレットを上書きする。</translation>
+        <translation>対象のパレットを上書きする。</translation>
     </message>
     <message>
         <source>Keep the destination palette and apply it to the color model.</source>
-        <translation type="unfinished">対象のパレットを保持して、カラーモデルにも適用する。</translation>
+        <translation>対象のパレットを保持して、カラーモデルにも適用する。</translation>
     </message>
     <message>
         <source>The color model palette is different from the destination palette.
 What do you want to do? </source>
-        <translation type="unfinished">カラーモデルのパレットは対象のパレットと異なります。
-どうしますか？</translation>
+        <translation>カラーモデルのパレットは対象のパレットと異なります。
+どうしますか？ </translation>
     </message>
     <message>
         <source>Add color model&apos;s palette to the destination palette.</source>
-        <translation type="unfinished">カラーモデルのパレットを、対象のパレットに追加する。</translation>
+        <translation>カラーモデルのパレットを、対象のパレットに追加する。</translation>
     </message>
     <message>
         <source>Picking Colors from Raster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像から色を拾ってパレットを作成</translation>
     </message>
     <message>
         <source>Pick Every Colors as Different Styles</source>
-        <translation type="unfinished">画像の全ての異なる色を別々のスタイルにする</translation>
+        <translation>画像の全ての異なる色を別々のスタイルにする</translation>
     </message>
     <message>
         <source>Integrate Similar Colors as One Style</source>
-        <translation type="unfinished">近似色を１つのスタイルとして統合する</translation>
+        <translation>近似色を１つのスタイルとして統合する</translation>
     </message>
     <message>
         <source>Pick Colors in Color Chip Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>色見本のカラーチップから自動で拾う</translation>
     </message>
     <message>
         <source>Horizontal - Top to bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>横方向、上から下</translation>
     </message>
     <message>
         <source>Horizontal - Bottom to top</source>
-        <translation type="unfinished"></translation>
+        <translation>横方向、下から上</translation>
     </message>
     <message>
         <source>Vertical - Left to right</source>
-        <translation type="unfinished"></translation>
+        <translation>縦方向、左から右</translation>
     </message>
     <message>
         <source>Pick Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>タイプ:</translation>
     </message>
     <message>
         <source>Grid Line Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>枠線の色:</translation>
     </message>
     <message>
         <source>Grid Line Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>枠線の太さ:</translation>
     </message>
     <message>
         <source>Chip Order:</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーチップの順序:</translation>
     </message>
 </context>
 <context>
@@ -2452,15 +2452,15 @@ Do you want to overwrite it?</source>
     <name>LayerFooterPanel</name>
     <message>
         <source>Zoom in/out of timeline</source>
-        <translation type="unfinished">タイムラインの拡大/縮小</translation>
+        <translation>タイムラインの拡大/縮小</translation>
     </message>
     <message>
         <source>Zoom in (Ctrl-click to zoom in all the way)</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムラインの拡大 [Ctrl+クリック] 最大まで拡大</translation>
     </message>
     <message>
         <source>Zoom out (Ctrl-click to zoom out all the way)</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムラインの縮小 [Ctrl+クリック] 最小まで縮小</translation>
     </message>
 </context>
 <context>
@@ -4234,7 +4234,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Global Key</source>
-        <translation>グローバルキー</translation>
+        <translation>編集ツール - グローバルキー</translation>
     </message>
     <message>
         <source>Increase brush hardness</source>
@@ -4246,15 +4246,15 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Auto Group</source>
-        <translation>自動グループ</translation>
+        <translation>図形ツール - 自動グループ化</translation>
     </message>
     <message>
         <source>Break sharp angles</source>
-        <translation>鋭角で線を分割</translation>
+        <translation>ブラシツール - 鋭角で線を分割</translation>
     </message>
     <message>
         <source>Frame range</source>
-        <translation>フレーム範囲</translation>
+        <translation>共通 - フレーム範囲</translation>
     </message>
     <message>
         <source>Inverse kinematics</source>
@@ -4262,27 +4262,27 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Invert</source>
-        <translation>反転</translation>
+        <translation>消しゴムツール - 反転</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>手動</translation>
+        <translation>線つまみツール - 手動</translation>
     </message>
     <message>
         <source>Onion skin</source>
-        <translation>オニオンスキン</translation>
+        <translation>塗りつぶしツール - オニオンスキン</translation>
     </message>
     <message>
         <source>Orientation</source>
-        <translation>方向</translation>
+        <translation>文字ツール - 縦書きにする</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
-        <translation>鉛筆モード</translation>
+        <translation>共通 - 鉛筆モード</translation>
     </message>
     <message>
         <source>Preserve Thickness</source>
-        <translation>太さを保持</translation>
+        <translation>選択ツール - 線の太さを保持</translation>
     </message>
     <message>
         <source>Pressure sensibility</source>
@@ -4290,51 +4290,51 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Segment Ink</source>
-        <translation>線分の自動検出</translation>
+        <translation>塗りつぶしツール - 線分の自動検出</translation>
     </message>
     <message>
         <source>Selective</source>
-        <translation>塗りの保護</translation>
+        <translation>共通 - 塗りの保護</translation>
     </message>
     <message>
         <source>Smooth</source>
-        <translation>カーブで連結</translation>
+        <translation>線つなぎツール - 滑らかに連結</translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation>スナップ</translation>
+        <translation>共通 - スナップ</translation>
     </message>
     <message>
         <source>Auto Select Drawing</source>
-        <translation>クリックでレベルを切り替える</translation>
+        <translation>パス編集ツール - レベルをまたいで選択</translation>
     </message>
     <message>
         <source>Auto Fill</source>
-        <translation>自動塗りつぶし</translation>
+        <translation>図形ツール - 自動塗りつぶし</translation>
     </message>
     <message>
         <source>Join Vectors</source>
-        <translation>ベクターを結合</translation>
+        <translation>線つなぎツール - ベクターの結合</translation>
     </message>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation>有効なボーンのみ表示</translation>
+        <translation>ボーンツール - アクティブなボーンのみ表示</translation>
     </message>
     <message>
         <source>Brush Preset</source>
-        <translation>ブラシプリセット</translation>
+        <translation>ブラシツール - ブラシプリセット</translation>
     </message>
     <message>
         <source>Geometric Shape</source>
-        <translation>図形シェイプ</translation>
+        <translation>図形ツール - 形状</translation>
     </message>
     <message>
         <source>Geometric Edge</source>
-        <translation>頂点数</translation>
+        <translation>図形ツール - 多角形の辺の数</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation>モード</translation>
+        <translation>共通 - モード</translation>
     </message>
     <message>
         <source>Areas Mode</source>
@@ -4350,7 +4350,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation>タイプ</translation>
+        <translation>共通 - タイプ</translation>
     </message>
     <message>
         <source>Normal Type</source>
@@ -4370,63 +4370,63 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>TypeTool Font</source>
-        <translation>文字ツールのフォント</translation>
+        <translation>文字ツール - フォント</translation>
     </message>
     <message>
         <source>TypeTool Size</source>
-        <translation>文字ツールのサイズ</translation>
+        <translation>文字ツール - サイズ</translation>
     </message>
     <message>
         <source>TypeTool Style</source>
-        <translation>文字ツールのスタイル</translation>
+        <translation>文字ツール - スタイル</translation>
     </message>
     <message>
         <source>Active Axis</source>
-        <translation></translation>
+        <translation>編集ツール - 軸</translation>
     </message>
     <message>
         <source>Active Axis - Position</source>
-        <translation></translation>
+        <translation>編集ツール - 軸 - 位置</translation>
     </message>
     <message>
         <source>Active Axis - Rotation</source>
-        <translation></translation>
+        <translation>編集ツール - 軸 - 回転</translation>
     </message>
     <message>
         <source>Active Axis - Scale</source>
-        <translation></translation>
+        <translation>編集ツール - 軸 - 拡大縮小</translation>
     </message>
     <message>
         <source>Active Axis - Shear</source>
-        <translation></translation>
+        <translation>編集ツール - 軸 - シアー</translation>
     </message>
     <message>
         <source>Active Axis - Center</source>
-        <translation></translation>
+        <translation>編集ツール - 軸 - 基準点</translation>
     </message>
     <message>
         <source>Build Skeleton Mode</source>
-        <translation>ボーン作成モード</translation>
+        <translation>プラスチックツール - モード - ボーン作成</translation>
     </message>
     <message>
         <source>Animate Mode</source>
-        <translation>アニメートモード</translation>
+        <translation>プラスチックツール - モード - アニメート</translation>
     </message>
     <message>
         <source>Inverse Kinematics Mode</source>
-        <translation>逆運動学（IK)モード</translation>
+        <translation>ボーンツール - モード - 逆運動学（IK)</translation>
     </message>
     <message>
         <source>None Pick Mode</source>
-        <translation>無し</translation>
+        <translation>編集ツール - 選択オブジェクト - 無し</translation>
     </message>
     <message>
         <source>Column Pick Mode</source>
-        <translation>列</translation>
+        <translation>編集ツール - 選択オブジェクト - 列</translation>
     </message>
     <message>
         <source>Pegbar Pick Mode</source>
-        <translation>タップ</translation>
+        <translation>編集ツール - 選択オブジェクト - タップ</translation>
     </message>
     <message>
         <source>&amp;Reset Step</source>
@@ -4490,7 +4490,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Toggle Autofill on Current Palette Color</source>
-        <translation>現在のパレット色で自動塗りつぶしオプションを切り替え</translation>
+        <translation>現在のスタイルで含み塗りオプションを切り替え</translation>
     </message>
     <message>
         <source>&amp;Export</source>
@@ -4538,7 +4538,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Pick Screen</source>
-        <translation>スクリーン上から拾う</translation>
+        <translation>RGBスポイトツール - スクリーン上から拾う</translation>
     </message>
     <message>
         <source>&amp;Blend colors</source>
@@ -4594,7 +4594,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Create Mesh</source>
-        <translation>メッシュを作成</translation>
+        <translation>プラスチックツール - メッシュを作成</translation>
     </message>
     <message>
         <source>&amp;Merge Tlv Levels...</source>
@@ -4794,55 +4794,55 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Brush size - Increase max</source>
-        <translation>ブラシサイズ - 最大値を増加</translation>
+        <translation>共通 - ブラシサイズ - 最大値を増加</translation>
     </message>
     <message>
         <source>Brush size - Decrease max</source>
-        <translation>ブラシサイズ - 最大値を減少</translation>
+        <translation>共通 - ブラシサイズ - 最大値を減少</translation>
     </message>
     <message>
         <source>Brush size - Increase min</source>
-        <translation>ブラシサイズ - 最小値を増加</translation>
+        <translation>共通 - ブラシサイズ - 最小値を増加</translation>
     </message>
     <message>
         <source>Brush size - Decrease min</source>
-        <translation>ブラシサイズ - 最小値を減少</translation>
+        <translation>共通 - ブラシサイズ - 最小値を減少</translation>
     </message>
     <message>
         <source>Brush hardness - Increase</source>
-        <translation>ブラシ硬さ - 増加</translation>
+        <translation>ブラシツール - 硬さ - 増加</translation>
     </message>
     <message>
         <source>Brush hardness - Decrease</source>
-        <translation>ブラシ硬さ - 減少</translation>
+        <translation>ブラシツール - 硬さ - 減少</translation>
     </message>
     <message>
         <source>Mode - Areas</source>
-        <translation>モード - 塗り</translation>
+        <translation>共通 - モード - 塗り</translation>
     </message>
     <message>
         <source>Mode - Lines</source>
-        <translation>モード - 線</translation>
+        <translation>共通 - モード - 線</translation>
     </message>
     <message>
         <source>Mode - Lines &amp; Areas</source>
-        <translation>モード - 線と塗り</translation>
+        <translation>共通 - モード - 線と塗り</translation>
     </message>
     <message>
         <source>Type - Normal</source>
-        <translation>タイプ - 標準</translation>
+        <translation>共通 - タイプ - 標準</translation>
     </message>
     <message>
         <source>Type - Rectangular</source>
-        <translation>タイプ - 長方形</translation>
+        <translation>共通 - タイプ - 長方形</translation>
     </message>
     <message>
         <source>Type - Freehand</source>
-        <translation>タイプ - なげなわ</translation>
+        <translation>共通 - タイプ - なげなわ</translation>
     </message>
     <message>
         <source>Type - Polyline</source>
-        <translation>タイプ - 多角形</translation>
+        <translation>共通 - タイプ - 多角形</translation>
     </message>
     <message>
         <source>About OpenToonz</source>
@@ -4906,7 +4906,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Pressure Sensitivity</source>
-        <translation>圧力感知</translation>
+        <translation>ブラシツール - 圧力感知</translation>
     </message>
     <message>
         <source>Toggle Link to Studio Palette</source>
@@ -4938,7 +4938,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>SnapSensitivity</source>
-        <translation>スナップ感度</translation>
+        <translation>共通 - スナップ感度</translation>
     </message>
     <message>
         <source>&amp;New Vector Level</source>
@@ -5042,31 +5042,31 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Paste Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>挿入して貼り付け (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert Above/After</source>
-        <translation type="unfinished"></translation>
+        <translation>前に挿入して貼りつけ (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Insert Above/After</source>
-        <translation type="unfinished"></translation>
+        <translation>上/右に挿入 (&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Fill In Empty Cells</source>
-        <translation type="unfinished"></translation>
+        <translation>空コマを埋める (&amp;F)</translation>
     </message>
     <message>
         <source>Toggle Cursor Size Outline</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ形状の表示/非表示</translation>
     </message>
     <message>
         <source>Brush Tool - Draw Order</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシツール - 線の重ね順</translation>
     </message>
     <message>
         <source>Active Axis - All</source>
-        <translation type="unfinished"></translation>
+        <translation>編集ツール - 軸 - 全て</translation>
     </message>
 </context>
 <context>
@@ -5105,7 +5105,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Use Ink: </source>
-        <translation>既存のスタイル番号を指定して使用 :</translation>
+        <translation>既存のスタイル番号を指定して使用 : </translation>
     </message>
     <message>
         <source>Ink Usage</source>
@@ -5137,13 +5137,15 @@ Gaps</source>
     </message>
     <message>
         <source>Merge Inks</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを結合する</translation>
     </message>
     <message>
         <source>Merge Inks : If the target level has the same style as the match line ink
 (i.e. with the same index and the same color), the existing style will be used.
 Otherwise, a new style will be added to &quot;match lines&quot; page.</source>
-        <translation type="unfinished"></translation>
+        <translation>スタイルを結合する：もし合成親となるレベルのパレットに合成子と同じスタイル
+（＝同じスタイル番号かつ同じ色のスタイル）があった場合は、そのスタイルが
+使用されます。それ以外の場合は「マッチライン」ページにスタイルが追加されます。</translation>
     </message>
 </context>
 <context>
@@ -7120,56 +7122,57 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Color Calibration using 3D Look-up Table *</source>
-        <translation type="unfinished"></translation>
+        <translation>３Dルックアップテーブルを用いて色補正を行う *</translation>
     </message>
     <message>
         <source>Enable auto-stretch frame</source>
-        <translation type="unfinished"></translation>
+        <translation>空コマを埋める</translation>
     </message>
     <message>
         <source>Show Cursor Size Outlines</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ形状を表示する</translation>
     </message>
     <message>
         <source>Check for the Latest Version of OpenToonz on Launch</source>
-        <translation type="unfinished"></translation>
+        <translation>起動時にOpenToonzのアップデートを確認する</translation>
     </message>
     <message>
         <source>Choosing this option will set initial location of all file browsers to $scenefolder.
 Also the initial output destination for new scenes will be set to $scenefolder as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>このオプションを選択すると、全てのファイルブラウザの初期パスが $scenefolder に設定されます。
+さらに、新規シーン時のレンダリング出力先フォルダも $scenefolder に設定されます。</translation>
     </message>
     <message>
         <source>Graph Editor Opens in Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>グラフエディタをポップアップ表示する</translation>
     </message>
     <message>
         <source>Spreadsheet Opens in Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>スプレッドシートをポップアップ表示する</translation>
     </message>
     <message>
         <source>Toggle Between Graph Editor and Spreadsheet</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">グラフエディタとスプレッドシートを切り替える</translation>
     </message>
     <message>
         <source>Function Editor*:</source>
-        <translation type="unfinished"></translation>
+        <translation>パラメータエディタのパネル切替 *:</translation>
     </message>
     <message>
         <source>3DLUT File for [%1] *:</source>
-        <translation type="unfinished"></translation>
+        <translation>モニタ [%1] 用の3DLUTファイル* : </translation>
     </message>
     <message>
         <source>Cursor Options</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソル設定</translation>
     </message>
     <message>
         <source>Basic Cursor Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>基本カーソルのタイプ:</translation>
     </message>
     <message>
         <source>Cursor Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルのスタイル:</translation>
     </message>
 </context>
 <context>
@@ -8990,12 +8993,13 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <source>The scene is not yet saved and the output destination is set to $scenefolder.
 Save the scene first.</source>
-        <translation type="unfinished"></translation>
+        <translation>シーンはまだ保存されていませんが、出力先に $scenefolder が設定されています。
+先にシーンを保存して下さい。</translation>
     </message>
     <message>
         <source>A prior save of Scene &apos;%1&apos; was critically interupted. 
@@ -9003,45 +9007,51 @@ Save the scene first.</source>
 A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
 
 Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
-        <translation type="unfinished"></translation>
+        <translation>シーン &apos; %1 &apos; は直前の保存作業が不正に中断しました。
+
+生成された一時保存ファイル &apos;%2&apos; から直前の編集内容を手動で復旧できる可能性があります。
+
+最後に保存に成功したファイルの読み込みを続けますか、それとも一時保存ファイルから復旧を試みるために読み込みを中断しますか？</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished">続ける</translation>
+        <translation>続ける</translation>
     </message>
     <message>
         <source>File &apos;%1&apos; will reload level &apos;%2&apos; as a duplicate column in the xsheet.
 
 Allow duplicate?</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル &apos;%1&apos; はレベル &apos;%2&apos; を重複した列として再度タイムシートに読み込みます。
+
+重複を許可しますか？</translation>
     </message>
     <message>
         <source>Allow</source>
-        <translation type="unfinished"></translation>
+        <translation>許可する</translation>
     </message>
     <message>
         <source>Allow All Dups</source>
-        <translation type="unfinished"></translation>
+        <translation>全ての重複を許可する</translation>
     </message>
     <message>
         <source>No to All Dups</source>
-        <translation type="unfinished"></translation>
+        <translation>全ての重複を許可しない</translation>
     </message>
     <message>
         <source>Hide cursor size outline</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ形状を隠す</translation>
     </message>
     <message>
         <source>Show cursor size outline</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ形状を表示する</translation>
     </message>
     <message>
         <source>Fill In Empty Cells</source>
-        <translation type="unfinished"></translation>
+        <translation>空コマを埋める</translation>
     </message>
     <message>
         <source>Check for the latest version on launch.</source>
-        <translation type="unfinished"></translation>
+        <translation>起動時にアップデートを確認する。</translation>
     </message>
 </context>
 <context>
@@ -10927,7 +10937,7 @@ Click the arrow button to create a new sub-xsheet</source>
     <name>T</name>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
-        <translation type="unfinished">置き換えることができません：選択されているコマまたは列がありません。</translation>
+        <translation>置き換えることができません：選択されているコマまたは列がありません。</translation>
     </message>
 </context>
 <context>
@@ -11680,35 +11690,35 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>&amp;Insert Before</source>
-        <translation type="unfinished"></translation>
+        <translation>左に挿入（&amp;I）</translation>
     </message>
     <message>
         <source>&amp;Insert After</source>
-        <translation type="unfinished"></translation>
+        <translation>右に挿入 (&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert Before</source>
-        <translation type="unfinished"></translation>
+        <translation>左に挿入貼り付け (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert After</source>
-        <translation type="unfinished"></translation>
+        <translation>右に挿入して貼り付け (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Insert Below</source>
-        <translation type="unfinished"></translation>
+        <translation>下に挿入 (&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Insert Above</source>
-        <translation type="unfinished"></translation>
+        <translation>上に挿入 (&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert Below</source>
-        <translation type="unfinished"></translation>
+        <translation>下に挿入して貼り付け (&amp;P)</translation>
     </message>
     <message>
         <source>&amp;Paste Insert Above</source>
-        <translation type="unfinished"></translation>
+        <translation>上に挿入して貼り付け (&amp;P)</translation>
     </message>
 </context>
 <context>
