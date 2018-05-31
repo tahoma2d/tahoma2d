@@ -887,7 +887,7 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <name>FunctionSheet</name>
     <message>
         <source>Function Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor de funciones</translation>
     </message>
 </context>
 <context>
@@ -1970,59 +1970,61 @@ Are you sure?</source>
     <message>
         <source>Failed to compile m_textureShader.vert.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al compilar m_textureShader.vert.</translation>
     </message>
     <message>
         <source>Failed to compile m_shader.frag.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al compilar m_shader.frag.</translation>
     </message>
     <message>
         <source>Failed to add m_shader.vert.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al agregar m_shader.vert.</translation>
     </message>
     <message>
         <source>Failed to add m_shader.frag.</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al agregar m_shader.frag.</translation>
     </message>
     <message>
         <source>Failed to link simple shader: %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al vincular sombreador simple: %1</translation>
     </message>
     <message>
         <source>Failed to get attribute location of %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al obtener la ubicación del atributo de %1</translation>
     </message>
     <message>
         <source>Failed to get uniform location of %1</source>
         <comment>gl</comment>
-        <translation type="unfinished"></translation>
+        <translation>Falla al obtener la ubicación uniforme de %1</translation>
     </message>
     <message>
         <source>Failed to Open 3DLUT File.</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al abrir el archivo 3DLUT.</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.
 It should start with &quot;3DMESH&quot; keyword.</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al cargar el archivo 3DLUT.
+Debe comenzar con la palabra clave &quot;3DMESH&quot;.</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.
 The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al cargar el archivo 3DLUT.
+La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de entrada] [profundidad de bits de salida]&quot;</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.</source>
-        <translation type="unfinished"></translation>
+        <translation>Falla al cargar el archivo 3DLUT.</translation>
     </message>
     <message>
         <source>OpenToonz 1.2</source>
-        <translation type="unfinished">OpenToonz 1.2</translation>
+        <translation>OpenToonz 1.2</translation>
     </message>
 </context>
 <context>
@@ -2232,23 +2234,23 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>the palette &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>la paleta &quot;%1&quot;</translation>
     </message>
     <message>
         <source>the selected palettes</source>
-        <translation type="unfinished"></translation>
+        <translation>las paletas seleccionadas</translation>
     </message>
     <message>
         <source>Move %1 to &quot;%2&quot;. Are you sure ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover %1 a &quot;%2&quot;. ¿Seguro ?</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -2372,19 +2374,19 @@ Autom</translation>
     </message>
     <message>
         <source>Show or hide parts of the Color Page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterna la visibilidad de las secciones en la solapa Color.</translation>
     </message>
     <message>
         <source>Toggle orientation of the Color Page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterna la orientación de los controles en la solapa Color.</translation>
     </message>
     <message>
         <source>No Style Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ningún estilo seleccionado</translation>
     </message>
     <message>
         <source>Style Editor - No Valid Style Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor de estilos - Ningún estilo válido seleccionado</translation>
     </message>
 </context>
 <context>
@@ -2445,7 +2447,7 @@ Autom</translation>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>Pintado automático de líneas</translation>
+        <translation>Pintar automáticamente al rellenar</translation>
     </message>
     <message>
         <source>Reset to default</source>

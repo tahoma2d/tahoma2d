@@ -406,27 +406,27 @@
     </message>
     <message>
         <source>Toggle Autopaint Option  Palette : %1  Style#%2</source>
-        <translation>Pintado automático  Paleta : %1  Estilo#%2</translation>
+        <translation>Pintar automáticamente al rellenar  Paleta: %1  Estilo №%2</translation>
     </message>
     <message>
         <source>Can&apos;t undo rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible deshacer el cambio de nombre de la paleta</translation>
     </message>
     <message>
         <source>Can&apos;t undo move palette</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible deshacer el cambio de ubicación de la paleta</translation>
     </message>
     <message>
         <source>Can&apos;t redo rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible rehacer el cambio de nombre de la paleta</translation>
     </message>
     <message>
         <source>Can&apos;t redo move palette</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible rehacer el cambio de ubicación de la paleta</translation>
     </message>
     <message>
         <source>Rename Studio Palette : %1 &gt; %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Renombrar paleta de estudio : %1 &gt; %2</translation>
     </message>
 </context>
 <context>

@@ -17,7 +17,7 @@
     </message>
     <message>
         <source>Malformed frame name</source>
-        <translation>Nombre de archivo malformado</translation>
+        <translation>Nombre de fotograma malformado</translation>
     </message>
 </context>
 <context>
