@@ -165,6 +165,14 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
         <source>x</source>
         <translation>x</translation>
     </message>
+    <message>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished">&lt;personalizado&gt;</translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -252,6 +260,32 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
 </context>
 <context>
+    <name>ComboHistoRGBLabel</name>
+    <message>
+        <source>R:%1 G:%2 B:%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ComboHistogram</name>
+    <message>
+        <source>Picked Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average Color (Ctrl + Drag)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">X:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">Y:</translation>
+    </message>
+</context>
+<context>
     <name>DVGui</name>
     <message>
         <source>OK</source>
@@ -295,6 +329,25 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>White Thres</source>
         <translation>Umbral blanco</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -358,6 +411,13 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>OpenToonz</source>
         <translation>OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -965,6 +1025,21 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
 </context>
 <context>
+    <name>FunctionTreeModel</name>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plastic Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionTreeView</name>
     <message>
         <source>Save Curve</source>
@@ -985,6 +1060,10 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Show All</source>
         <translation>Mostrar todo</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished">Mesa</translation>
     </message>
 </context>
 <context>
@@ -1216,6 +1295,30 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     <message>
         <source>Logarithmic Scale</source>
         <translation>Escala logarítmica</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">Valor</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RVA</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Rojo</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Verde</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Azul</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
     </message>
 </context>
 <context>
@@ -1741,7 +1844,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;personalizado&gt;</translation>
+        <translation type="vanished">&lt;personalizado&gt;</translation>
     </message>
     <message>
         <source>It is not possible to find the %1 level.</source>
@@ -2387,6 +2490,26 @@ Autom</translation>
     <message>
         <source>Style Editor - No Valid Style Selected</source>
         <translation>Editor de estilos - Ningún estilo válido seleccionado</translation>
+    </message>
+    <message>
+        <source>Wheel</source>
+        <translation type="unfinished">Muestra</translation>
+    </message>
+    <message>
+        <source>HSV</source>
+        <translation type="unfinished">TSV</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RVA</translation>
+    </message>
+    <message>
+        <source>Palette</source>
+        <translation type="unfinished">Paleta</translation>
     </message>
 </context>
 <context>

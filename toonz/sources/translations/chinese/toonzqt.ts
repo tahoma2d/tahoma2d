@@ -171,6 +171,14 @@ Possibly the preset file has been corrupted</source>
         <translation>%1&apos; 不是格式完好的摄影机预设。
 可能预设文件已经被损坏了</translation>
     </message>
+    <message>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished">&lt;自定&gt;</translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -258,6 +266,32 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>ComboHistoRGBLabel</name>
+    <message>
+        <source>R:%1 G:%2 B:%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ComboHistogram</name>
+    <message>
+        <source>Picked Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average Color (Ctrl + Drag)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">X:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">Y:</translation>
+    </message>
+</context>
+<context>
     <name>DVGui</name>
     <message>
         <source>OK</source>
@@ -301,6 +335,25 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>White Thres</source>
         <translation>白场阈值</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -364,6 +417,13 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>OpenToonz</source>
         <translation>OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -971,6 +1031,21 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>FunctionTreeModel</name>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plastic Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionTreeView</name>
     <message>
         <source>Save Curve</source>
@@ -991,6 +1066,10 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Show All</source>
         <translation>显示全部</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished">动画台</translation>
     </message>
 </context>
 <context>
@@ -1222,6 +1301,30 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <source>Logarithmic Scale</source>
         <translation>对数刻度</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">值</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">红</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">绿</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">蓝</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1822,7 +1925,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;自定&gt;</translation>
+        <translation type="vanished">&lt;自定&gt;</translation>
     </message>
     <message>
         <source>Toonz 7.1</source>
@@ -2439,6 +2542,26 @@ Apply</source>
     <message>
         <source>Style Editor - No Valid Style Selected</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wheel</source>
+        <translation type="unfinished">色轮</translation>
+    </message>
+    <message>
+        <source>HSV</source>
+        <translation type="unfinished">HSV</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Palette</source>
+        <translation type="unfinished">调色板</translation>
     </message>
 </context>
 <context>

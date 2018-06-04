@@ -148,6 +148,7 @@
     </message>
     <message>
         <location filename="../../tnztools/brushtool.cpp" line="1072"/>
+        <location filename="../../tnztools/brushtool.cpp" line="2551"/>
         <source>&lt;custom&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -265,17 +266,17 @@
 <context>
     <name>BrushToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1749"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1752"/>
         <source>Preset Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1753"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1756"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1755"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1758"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -298,6 +299,14 @@
     <message>
         <location filename="../../tnztools/controlpointselection.cpp" line="1007"/>
         <source>Set Nonlinear Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="810"/>
+        <source>current</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -454,6 +463,11 @@
     <message>
         <location filename="../../tnztools/edittool.cpp" line="851"/>
         <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/edittool.cpp" line="852"/>
+        <source>All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -617,6 +631,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../tnztools/filltool.cpp" line="1814"/>
+        <source>Maximum Gap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../tnztools/filltool.cpp" line="1815"/>
         <source>Autopaint Lines</source>
         <translation type="unfinished"></translation>
@@ -672,6 +691,11 @@
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="183"/>
         <source>Lock Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/fullcolorbrushtool.cpp" line="615"/>
+        <source>&lt;custom&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1403,7 +1427,7 @@ Do you want to proceed?</source>
 <context>
     <name>RGBPickerToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2353"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2362"/>
         <source>Pick Screen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1423,6 +1447,11 @@ Do you want to proceed?</source>
 </context>
 <context>
     <name>RasterTapeTool</name>
+    <message>
+        <location filename="../../tnztools/rastertapetool.cpp" line="187"/>
+        <source>current</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="179"/>
         <source>Type:</source>
@@ -1459,18 +1488,65 @@ Do you want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/rastertapetool.cpp" line="187"/>
+        <location filename="../../tnztools/rastertapetool.cpp" line="188"/>
         <source>Opacity:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/rastertapetool.cpp" line="188"/>
+        <location filename="../../tnztools/rastertapetool.cpp" line="189"/>
         <source>Frame Range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/rastertapetool.cpp" line="189"/>
+        <location filename="../../tnztools/rastertapetool.cpp" line="190"/>
         <source>Angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RotateTool</name>
+    <message>
+        <location filename="../../tnztools/viewtools.cpp" line="225"/>
+        <source>Rotate On Camera Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RulerToolOptionsBox</name>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2123"/>
+        <source>X:</source>
+        <comment>ruler tool option</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2129"/>
+        <source>Y:</source>
+        <comment>ruler tool option</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2137"/>
+        <source>W:</source>
+        <comment>ruler tool option</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2143"/>
+        <source>H:</source>
+        <comment>ruler tool option</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2151"/>
+        <source>A:</source>
+        <comment>ruler tool option</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptions.cpp" line="2156"/>
+        <source>L:</source>
+        <comment>ruler tool option</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1624,7 +1700,7 @@ Do you want to proceed?</source>
 <context>
     <name>StylePickerToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2435"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2444"/>
         <source>With this option being activated, the picked style will be
 moved to the end of the first page of the palette.</source>
         <translation type="unfinished"></translation>

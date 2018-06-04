@@ -512,6 +512,26 @@ Do you want to crop the canvas?</source>
         <source>Crop</source>
         <translation>裁切</translation>
     </message>
+    <message>
+        <source>pixel</source>
+        <translation type="unfinished">像素</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished">mm</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished">cm</translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation type="unfinished">field</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation type="unfinished">inch</translation>
+    </message>
 </context>
 <context>
     <name>CaptureSettingsPopup</name>
@@ -1886,6 +1906,14 @@ contain the dpi information, then the current camera dpi will be used.
         <source>Scale:</source>
         <translation>缩放:</translation>
     </message>
+    <message>
+        <source>Width: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExportPanel</name>
@@ -2299,10 +2327,25 @@ Do you want to overwrite it?</source>
     </message>
 </context>
 <context>
+    <name>FlipbookPanel</name>
+    <message>
+        <source>Safe Area (Right Click to Select)</source>
+        <translation type="unfinished">安全区域(右键单击可选择)</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
         <translation>文件设置</translation>
+    </message>
+    <message>
+        <source>Configure Codec</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2617,6 +2660,22 @@ Do you want to create it?</source>
         <source>Save In:</source>
         <translation>保存位置:</translation>
     </message>
+    <message>
+        <source>Toonz Vector Level</source>
+        <translation type="unfinished">Toonz 矢量层级</translation>
+    </message>
+    <message>
+        <source>Toonz Raster Level</source>
+        <translation type="unfinished">Toonz 光栅层级</translation>
+    </message>
+    <message>
+        <source>Raster Level</source>
+        <translation type="unfinished">光栅层级</translation>
+    </message>
+    <message>
+        <source>Scan Level</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
@@ -2711,6 +2770,42 @@ Do you want to create it?</source>
     <message>
         <source>Resolution</source>
         <translation>分辨率</translation>
+    </message>
+    <message>
+        <source>Image DPI</source>
+        <translation type="unfinished">图像 DPI</translation>
+    </message>
+    <message>
+        <source>Custom DPI</source>
+        <translation type="unfinished">自定 DPI</translation>
+    </message>
+    <message>
+        <source>Scan level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raster level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mesh level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Vector level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Raster level</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7212,6 +7307,42 @@ Also the initial output destination for new scenes will be set to $scenefolder a
         <source>Cursor Style:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished">小</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished">大</translation>
+    </message>
+    <message>
+        <source>Crosshair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left-Handed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic-revised</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -9098,6 +9229,10 @@ Allow duplicate?</source>
         <source>Check for the latest version on launch.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation type="unfinished">没有可替换的: 没有帧格或者列被选中。</translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -10365,15 +10500,15 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Select </source>
-        <translation>选择 </translation>
+        <translation type="vanished">选择 </translation>
     </message>
     <message>
         <source>Show </source>
-        <translation>显示 </translation>
+        <translation type="vanished">显示 </translation>
     </message>
     <message>
         <source>Hide </source>
-        <translation>隐藏 </translation>
+        <translation type="vanished">隐藏 </translation>
     </message>
     <message>
         <source>Show / Hide</source>
@@ -10414,6 +10549,22 @@ Please commit or revert changes first.</source>
     <message>
         <source>All Drawings</source>
         <translation>全部笔画</translation>
+    </message>
+    <message>
+        <source>Show %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10560,6 +10711,38 @@ Please commit or revert changes first.</source>
     <message>
         <source>Shortcut Presets</source>
         <translation>快捷键预设</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">删除</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation type="unfinished">另存为</translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setting Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset Name:</source>
+        <translation type="unfinished">预设名称:</translation>
     </message>
 </context>
 <context>
@@ -11055,7 +11238,7 @@ Click the arrow button to create a new sub-xsheet</source>
     <name>T</name>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
-        <translation type="unfinished">没有可替换的: 没有帧格或者列被选中。</translation>
+        <translation type="obsolete">没有可替换的: 没有帧格或者列被选中。</translation>
     </message>
 </context>
 <context>
@@ -11242,6 +11425,30 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>&lt;&lt; Add</source>
         <translation>&lt;&lt; 添加</translation>
+    </message>
+    <message>
+        <source>Suspended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TaskUnknown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

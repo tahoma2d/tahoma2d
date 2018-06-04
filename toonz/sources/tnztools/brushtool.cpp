@@ -2258,8 +2258,8 @@ void BrushTool::checkGuideSnapping(bool beforeMousePress, bool invertCheck) {
         snapPoint.x = hGuide;
       }
       beforeMousePress ? m_foundFirstSnap = true : m_foundLastSnap = true;
-      beforeMousePress ? m_firstSnapPoint = snapPoint : m_lastSnapPoint =
-                                                            snapPoint;
+      beforeMousePress ? m_firstSnapPoint                          = snapPoint
+                       : m_lastSnapPoint                           = snapPoint;
     }
   }
 }
@@ -2548,6 +2548,7 @@ void BrushTool::initPresets() {
 
   m_preset.deleteAllValues();
   m_preset.addValue(CUSTOM_WSTR);
+  m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
 
   std::set<BrushData>::const_iterator it, end = presets.end();
   for (it = presets.begin(); it != end; ++it) m_preset.addValue(it->m_name);

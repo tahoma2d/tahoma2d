@@ -505,6 +505,26 @@ Do you want to crop the canvas?</source>
         <source>Crop</source>
         <translation>Recortar</translation>
     </message>
+    <message>
+        <source>pixel</source>
+        <translation type="unfinished">píxeles</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished">mm</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished">cm</translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation type="unfinished">campos</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation type="unfinished">pulgadas</translation>
+    </message>
 </context>
 <context>
     <name>CaptureSettingsPopup</name>
@@ -1859,6 +1879,14 @@ contuviera información de PPP, entonces se usarán los de la cámara actual.
         <source>End:</source>
         <translation>Final:</translation>
     </message>
+    <message>
+        <source>Width: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExportPanel</name>
@@ -2263,10 +2291,25 @@ Do you want to overwrite it?</source>
     </message>
 </context>
 <context>
+    <name>FlipbookPanel</name>
+    <message>
+        <source>Safe Area (Right Click to Select)</source>
+        <translation type="unfinished">Áreas de seguridad (clic derecho para seleccionar)</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
         <translation>Opciones de archivo</translation>
+    </message>
+    <message>
+        <source>Configure Codec</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2581,6 +2624,22 @@ Do you want to create it?</source>
         <source>Save In:</source>
         <translation>Guardar en:</translation>
     </message>
+    <message>
+        <source>Toonz Vector Level</source>
+        <translation type="unfinished">Nivel vectorial de Toonz</translation>
+    </message>
+    <message>
+        <source>Toonz Raster Level</source>
+        <translation type="unfinished">Nivel de imagen de Toonz</translation>
+    </message>
+    <message>
+        <source>Raster Level</source>
+        <translation type="unfinished">Nivel de imagen</translation>
+    </message>
+    <message>
+        <source>Scan Level</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
@@ -2675,6 +2734,42 @@ Do you want to create it?</source>
     <message>
         <source>Resolution</source>
         <translation>Resolución</translation>
+    </message>
+    <message>
+        <source>Image DPI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom DPI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Vector level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Raster level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raster level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mesh level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound Column</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7187,6 +7282,42 @@ También, se establecerá el destino inicial de salida para las nuevas escenas e
         <source>Cursor Style:</source>
         <translation>Estilo de puntero:</translation>
     </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished">Pequeñas</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished">Grandes</translation>
+    </message>
+    <message>
+        <source>Crosshair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left-Handed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic-revised</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -9063,6 +9194,10 @@ Allow duplicate?</source>
         <source>Check for the latest version on launch.</source>
         <translation>Comprobar actualizaciones al iniciar.</translation>
     </message>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation type="unfinished">Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -10328,15 +10463,15 @@ Por favor enviar o revertir los cambios antes.</translation>
     </message>
     <message>
         <source>Select </source>
-        <translation>Seleccionar </translation>
+        <translation type="vanished">Seleccionar </translation>
     </message>
     <message>
         <source>Show </source>
-        <translation>Mostrar </translation>
+        <translation type="vanished">Mostrar </translation>
     </message>
     <message>
         <source>Hide </source>
-        <translation>Ocultar </translation>
+        <translation type="vanished">Ocultar </translation>
     </message>
     <message>
         <source>Show / Hide</source>
@@ -10377,6 +10512,22 @@ Por favor enviar o revertir los cambios antes.</translation>
     <message>
         <source>All Drawings</source>
         <translation>Todos los dibujos</translation>
+    </message>
+    <message>
+        <source>Show %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10523,6 +10674,38 @@ Por favor enviar o revertir los cambios antes.</translation>
     <message>
         <source>Shortcut Presets</source>
         <translation>Ajustes de atajos</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Borrar</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation type="unfinished">Guardar como</translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setting Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset Name:</source>
+        <translation type="unfinished">Nombre del ajuste:</translation>
     </message>
 </context>
 <context>
@@ -10946,7 +11129,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <name>T</name>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
-        <translation>Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
+        <translation type="vanished">Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
     </message>
 </context>
 <context>
@@ -11133,6 +11316,30 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <message>
         <source>Successful Steps:</source>
         <translation>Pasos exitosos:</translation>
+    </message>
+    <message>
+        <source>Suspended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TaskUnknown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

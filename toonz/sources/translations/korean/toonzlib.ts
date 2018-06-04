@@ -536,6 +536,16 @@
         <source>Move Center   %1  Frame %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../toonzlib/orientation.cpp" line="67"/>
+        <source>Xsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/orientation.cpp" line="127"/>
+        <source>Timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>

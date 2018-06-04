@@ -2,6 +2,37 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>BmpWriterProperties</name>
+    <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="752"/>
+        <source>Bits Per Pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="753"/>
+        <source>24 bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="754"/>
+        <source>8 bits (Greyscale)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JpgWriterProperties</name>
+    <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="216"/>
+        <source>Quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="217"/>
+        <source>Smoothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../../common/tvrender/tpalette.cpp" line="197"/>

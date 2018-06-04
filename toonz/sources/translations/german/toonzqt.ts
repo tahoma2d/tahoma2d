@@ -168,6 +168,14 @@ Possibly the preset file has been corrupted</source>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished">&lt;Eigene&gt;</translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -255,6 +263,32 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>ComboHistoRGBLabel</name>
+    <message>
+        <source>R:%1 G:%2 B:%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ComboHistogram</name>
+    <message>
+        <source>Picked Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average Color (Ctrl + Drag)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">X:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">Y:</translation>
+    </message>
+</context>
+<context>
     <name>DVGui</name>
     <message>
         <source>Ok</source>
@@ -302,6 +336,25 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>White Thres</source>
         <translation>Helligkeits-Schwellenwert</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -364,6 +417,13 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>OpenToonz</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -972,6 +1032,21 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>FunctionTreeModel</name>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plastic Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionTreeView</name>
     <message>
         <source>Save Curve</source>
@@ -992,6 +1067,10 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Show All</source>
         <translation>Alle zeigen</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1223,6 +1302,30 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <message>
         <source>Logarithmic Scale</source>
         <translation>Logarithmsiche Skalierung</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">Wert</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Rot</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Grün</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Blau</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
     </message>
 </context>
 <context>
@@ -1799,7 +1902,7 @@ Für mehr Informationen besuchen Sie die Seite %1:</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;Eigene&gt;</translation>
+        <translation type="vanished">&lt;Eigene&gt;</translation>
     </message>
     <message>
         <source>Toonz 7.1</source>
@@ -2392,6 +2495,26 @@ anwenden</translation>
     <message>
         <source>Style Editor - No Valid Style Selected</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wheel</source>
+        <translation type="unfinished">Farbrad</translation>
+    </message>
+    <message>
+        <source>HSV</source>
+        <translation type="unfinished">HSV</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Palette</source>
+        <translation type="unfinished">Palette</translation>
     </message>
 </context>
 <context>

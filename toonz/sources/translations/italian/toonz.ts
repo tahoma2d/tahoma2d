@@ -502,6 +502,26 @@ Vuoi tagliare il canvas?</translation>
         <source>Crop</source>
         <translation>Tagliare</translation>
     </message>
+    <message>
+        <source>pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished">mm</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished">cm</translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation type="unfinished">field</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation type="unfinished">pollici</translation>
+    </message>
 </context>
 <context>
     <name>CaptureSettingsPopup</name>
@@ -1852,6 +1872,14 @@ contain the dpi information, then the current camera dpi will be used.
         <source>End:</source>
         <translation>Fine:</translation>
     </message>
+    <message>
+        <source>Width: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExportPanel</name>
@@ -2258,10 +2286,25 @@ Vuoi sovrascriverlo?</translation>
     </message>
 </context>
 <context>
+    <name>FlipbookPanel</name>
+    <message>
+        <source>Safe Area (Right Click to Select)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
         <translation>Impostazioni del File</translation>
+    </message>
+    <message>
+        <source>Configure Codec</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2576,6 +2619,22 @@ Vuoi crearla?</translation>
         <source>Save In:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Toonz Vector Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Raster Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raster Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan Level</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
@@ -2669,6 +2728,42 @@ Vuoi crearla?</translation>
     </message>
     <message>
         <source>Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image DPI</source>
+        <translation type="unfinished">DPI dell&apos; Immagine</translation>
+    </message>
+    <message>
+        <source>Custom DPI</source>
+        <translation type="unfinished">DPI Personalizzato</translation>
+    </message>
+    <message>
+        <source>Scan level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raster level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mesh level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Vector level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toonz Raster level</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7050,6 +7145,42 @@ Also the initial output destination for new scenes will be set to $scenefolder a
         <source>Cursor Style:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished">Piccoli</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished">Grandi</translation>
+    </message>
+    <message>
+        <source>Crosshair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left-Handed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Classic-revised</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -8882,6 +9013,10 @@ Allow duplicate?</source>
         <source>Check for the latest version on launch.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -10143,18 +10278,6 @@ Per favore sottometti o ripristina i cambiamenti prima di proseguire.</translati
         <translation>Rigenera l&apos;Anteprima del Fotogramma</translation>
     </message>
     <message>
-        <source>Select </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Show </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Hide </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show / Hide</source>
         <translation></translation>
     </message>
@@ -10192,6 +10315,22 @@ Per favore sottometti o ripristina i cambiamenti prima di proseguire.</translati
     </message>
     <message>
         <source>All Drawings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10339,6 +10478,38 @@ Per favore sottometti o ripristina i cambiamenti prima di proseguire.</translati
     <message>
         <source>Shortcut Presets</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Elimina</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setting Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset Name:</source>
+        <translation type="unfinished">Nome dell&apos;Effetto predefinito:</translation>
     </message>
 </context>
 <context>
@@ -10750,13 +10921,6 @@ Clicca la freccia per creare un nuovo sub-xsheet</translation>
     </message>
 </context>
 <context>
-    <name>T</name>
-    <message>
-        <source>Nothing to replace: no cells or columns selected.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>TApp</name>
     <message>
         <source>Error allocating memory: not enough memory.</source>
@@ -10935,6 +11099,30 @@ Clicca la freccia per creare un nuovo sub-xsheet</translation>
     </message>
     <message>
         <source>&lt;&lt; Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Suspended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TaskUnknown</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

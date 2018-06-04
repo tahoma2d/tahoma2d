@@ -269,6 +269,13 @@
     </message>
 </context>
 <context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation>選択色</translation>
+    </message>
+</context>
+<context>
     <name>EditTool</name>
     <message>
         <source>Scale Constraint:</source>
@@ -389,6 +396,10 @@
     <message>
         <source>Center</source>
         <translation>基準点</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>全て</translation>
     </message>
 </context>
 <context>
@@ -516,6 +527,10 @@
         <source>Lines &amp; Areas</source>
         <translation>線と塗り</translation>
     </message>
+    <message>
+        <source>Maximum Gap</source>
+        <translation>隙間の判定</translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -569,6 +584,10 @@
     <message>
         <source>Lock Alpha</source>
         <translation>透明部分の保護</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation>&lt;カスタム&gt;</translation>
     </message>
 </context>
 <context>
@@ -1224,6 +1243,50 @@ Do you want to proceed?</source>
         <source>Polyline</source>
         <translation>多角形</translation>
     </message>
+    <message>
+        <source>current</source>
+        <translation>選択色</translation>
+    </message>
+</context>
+<context>
+    <name>RotateTool</name>
+    <message>
+        <source>Rotate On Camera Center</source>
+        <translation>カメラ中心点を基準にする</translation>
+    </message>
+</context>
+<context>
+    <name>RulerToolOptionsBox</name>
+    <message>
+        <source>X:</source>
+        <comment>ruler tool option</comment>
+        <translation>X：</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <comment>ruler tool option</comment>
+        <translation>Y：</translation>
+    </message>
+    <message>
+        <source>W:</source>
+        <comment>ruler tool option</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>H:</source>
+        <comment>ruler tool option</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <comment>ruler tool option</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>L:</source>
+        <comment>ruler tool option</comment>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>SelectionTool</name>
@@ -1487,7 +1550,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Distance</source>
-        <translation></translation>
+        <translation>距離：</translation>
     </message>
     <message>
         <source>Mode:</source>

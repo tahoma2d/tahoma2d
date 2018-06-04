@@ -382,7 +382,7 @@ Stop it or wait for its completion before removing it.</source>
     </message>
     <message>
         <source>Apply</source>
-        <translation></translation>
+        <translation>適用</translation>
     </message>
 </context>
 <context>
@@ -504,6 +504,26 @@ Do you want to crop the canvas?</source>
     <message>
         <source>Crop</source>
         <translation>はい</translation>
+    </message>
+    <message>
+        <source>pixel</source>
+        <translation>ピクセル</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation>mm</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation>cm</translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation>フィールド</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation>inch</translation>
     </message>
 </context>
 <context>
@@ -849,15 +869,15 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Save In</source>
-        <translation></translation>
+        <translation>保存先</translation>
     </message>
     <message>
         <source>Please fill the Save In field.</source>
-        <translation></translation>
+        <translation>保存先を指定して下さい。</translation>
     </message>
     <message>
         <source>Cleanup Settings (Global)</source>
-        <translation></translation>
+        <translation>トレース設定（共通）</translation>
     </message>
     <message>
         <source>Cleanup Settings: </source>
@@ -1057,27 +1077,27 @@ What do you want to do? </source>
     <name>ComboViewerPanel</name>
     <message>
         <source>Safe Area (Right Click to Select)</source>
-        <translation></translation>
+        <translation>セーフエリア （右クリックで選択）</translation>
     </message>
     <message>
         <source>Field Guide</source>
-        <translation></translation>
+        <translation>フィールドガイド</translation>
     </message>
     <message>
         <source>Camera Stand View</source>
-        <translation></translation>
+        <translation>カメラスタンド表示</translation>
     </message>
     <message>
         <source>3D View</source>
-        <translation></translation>
+        <translation>３D表示</translation>
     </message>
     <message>
         <source>Camera View</source>
-        <translation></translation>
+        <translation>カメラ表示</translation>
     </message>
     <message>
         <source>Freeze</source>
-        <translation></translation>
+        <translation>フリーズ</translation>
     </message>
     <message>
         <source>GUI Show / Hide</source>
@@ -1675,19 +1695,19 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Up</source>
-        <translation></translation>
+        <translation>上へ</translation>
     </message>
     <message>
         <source>New</source>
-        <translation></translation>
+        <translation>新規フォルダ</translation>
     </message>
     <message>
         <source>Icon</source>
-        <translation></translation>
+        <translation>アイコン表示</translation>
     </message>
     <message>
         <source>List</source>
-        <translation></translation>
+        <translation>リスト表示</translation>
     </message>
 </context>
 <context>
@@ -1852,6 +1872,14 @@ contain the dpi information, then the current camera dpi will be used.
         <source>Scale:</source>
         <translation>リサイズ:</translation>
     </message>
+    <message>
+        <source>Width: </source>
+        <translation>幅： </translation>
+    </message>
+    <message>
+        <source>Height: </source>
+        <translation>高さ： </translation>
+    </message>
 </context>
 <context>
     <name>ExportPanel</name>
@@ -1938,7 +1966,7 @@ contain the dpi information, then the current camera dpi will be used.
     <name>FileBrowser</name>
     <message>
         <source>Folder: </source>
-        <translation></translation>
+        <translation>フォルダ： </translation>
     </message>
     <message>
         <source>Can&apos;t change file extension</source>
@@ -2129,7 +2157,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Folder name:</source>
-        <translation></translation>
+        <translation>フォルダ名 ：</translation>
     </message>
 </context>
 <context>
@@ -2256,10 +2284,25 @@ Do you want to overwrite it?</source>
     </message>
 </context>
 <context>
+    <name>FlipbookPanel</name>
+    <message>
+        <source>Safe Area (Right Click to Select)</source>
+        <translation>セーフエリア （右クリックで選択）</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>最小化</translation>
+    </message>
+</context>
+<context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
         <translation>ファイルの設定</translation>
+    </message>
+    <message>
+        <source>Configure Codec</source>
+        <translation>コーデック設定</translation>
     </message>
 </context>
 <context>
@@ -2574,6 +2617,22 @@ Do you want to create it?</source>
         <source>Save In:</source>
         <translation>保存先フォルダ：</translation>
     </message>
+    <message>
+        <source>Toonz Vector Level</source>
+        <translation>Toonzベクターレベル</translation>
+    </message>
+    <message>
+        <source>Toonz Raster Level</source>
+        <translation>Toonzラスターレベル</translation>
+    </message>
+    <message>
+        <source>Raster Level</source>
+        <translation>ラスターレベル</translation>
+    </message>
+    <message>
+        <source>Scan Level</source>
+        <translation>スキャンレベル</translation>
+    </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
@@ -2668,6 +2727,46 @@ Do you want to create it?</source>
     <message>
         <source>Resolution</source>
         <translation>ピクセルサイズ</translation>
+    </message>
+    <message>
+        <source>Image DPI</source>
+        <translation>画像のDPI</translation>
+    </message>
+    <message>
+        <source>Custom DPI</source>
+        <translation>カスタムDPI</translation>
+    </message>
+    <message>
+        <source>Scan level</source>
+        <translation>スキャンレベル</translation>
+    </message>
+    <message>
+        <source>Vector level</source>
+        <translation type="vanished">ベクターレベル</translation>
+    </message>
+    <message>
+        <source>Raster level</source>
+        <translation>ラスターレベル</translation>
+    </message>
+    <message>
+        <source>Mesh level</source>
+        <translation>メッシュレベル</translation>
+    </message>
+    <message>
+        <source>Palette level</source>
+        <translation>パレットレベル</translation>
+    </message>
+    <message>
+        <source>Sound Column</source>
+        <translation>オーディオ</translation>
+    </message>
+    <message>
+        <source>Toonz Vector level</source>
+        <translation>Toonzベクターレベル</translation>
+    </message>
+    <message>
+        <source>Toonz Raster level</source>
+        <translation>Toonzラスターレベル</translation>
     </message>
 </context>
 <context>
@@ -2796,7 +2895,7 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Apply</source>
-        <translation></translation>
+        <translation>適用</translation>
     </message>
 </context>
 <context>
@@ -2974,15 +3073,15 @@ Please use the frame numbers for reference.</source>
     <name>LoadLevelPopup</name>
     <message>
         <source>On Demand</source>
-        <translation></translation>
+        <translation>必要に応じて読み込む</translation>
     </message>
     <message>
         <source>All Icons</source>
-        <translation></translation>
+        <translation>全フレームのアイコンを最初に読み込む</translation>
     </message>
     <message>
         <source>All Icons &amp; Images</source>
-        <translation></translation>
+        <translation>全フレームのアイコンと画像を最初に読み込む</translation>
     </message>
     <message>
         <source>Load Level</source>
@@ -3866,7 +3965,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Toggle FX/Stage schematic</source>
-        <translation></translation>
+        <translation>エフェクト/ステージスキマティックの切り替え</translation>
     </message>
     <message>
         <source>&amp;Scene Cast</source>
@@ -4114,11 +4213,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Fill Tool - Areas</source>
-        <translation></translation>
+        <translation>塗りつぶしツール (塗りモード)</translation>
     </message>
     <message>
         <source>Fill Tool - Lines</source>
-        <translation></translation>
+        <translation>塗りつぶしツール (線モード)</translation>
     </message>
     <message>
         <source>Paint Brush Tool</source>
@@ -4782,7 +4881,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Hide Upper Columns</source>
-        <translation></translation>
+        <translation>上の列を隠す</translation>
     </message>
     <message>
         <source>Ruler Tool</source>
@@ -5529,51 +5628,51 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Triangle filter</source>
-        <translation></translation>
+        <translation>三角窓</translation>
     </message>
     <message>
         <source>Mitchell-Netravali filter</source>
-        <translation></translation>
+        <translation>バイキュービック・フィルター</translation>
     </message>
     <message>
         <source>Cubic convolution, a = .5</source>
-        <translation></translation>
+        <translation>三次畳み込み, a = .5</translation>
     </message>
     <message>
         <source>Cubic convolution, a = .75</source>
-        <translation></translation>
+        <translation>三次畳み込み, a = .75</translation>
     </message>
     <message>
         <source>Cubic convolution, a = 1</source>
-        <translation></translation>
+        <translation>三次畳み込み, a = 1</translation>
     </message>
     <message>
         <source>Hann window, rad = 2</source>
-        <translation></translation>
+        <translation>ハン窓, rad = 2</translation>
     </message>
     <message>
         <source>Hann window, rad = 3</source>
-        <translation></translation>
+        <translation>ハン窓, rad = 3</translation>
     </message>
     <message>
         <source>Hamming window, rad = 2</source>
-        <translation></translation>
+        <translation>ハミング窓, rad = 2</translation>
     </message>
     <message>
         <source>Hamming window, rad = 3</source>
-        <translation></translation>
+        <translation>ハミング窓, rad = 3</translation>
     </message>
     <message>
         <source>Lanczos window, rad = 2</source>
-        <translation></translation>
+        <translation>ランツォシュ窓, rad = 2</translation>
     </message>
     <message>
         <source>Lanczos window, rad = 3</source>
-        <translation></translation>
+        <translation>ランツォシュ窓, rad = 3</translation>
     </message>
     <message>
         <source>Gaussian convolution</source>
-        <translation></translation>
+        <translation>ガウシアン畳み込み</translation>
     </message>
     <message>
         <source>Closest Pixel (Nearest Neighbor)</source>
@@ -6454,7 +6553,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Xsheet Autopan during Playback</source>
-        <translation>再生中にタイムシートをオートスクロール</translation>
+        <translation>再生中にタイムシートを自動スクロール</translation>
     </message>
     <message>
         <source>Level Strip Frames Width*:</source>
@@ -6506,15 +6605,15 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Toonz Vector Level</source>
-        <translation></translation>
+        <translation>Toonzベクターレベル</translation>
     </message>
     <message>
         <source>Toonz Raster Level</source>
-        <translation></translation>
+        <translation>Toonzラスターレベル</translation>
     </message>
     <message>
         <source>Raster Level</source>
-        <translation></translation>
+        <translation>ラスターレベル</translation>
     </message>
     <message>
         <source>Autocreation:</source>
@@ -6790,11 +6889,11 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>My Documents/OpenToonz*</source>
-        <translation></translation>
+        <translation>ドキュメント/OpenToonz *</translation>
     </message>
     <message>
         <source>Desktop/OpenToonz*</source>
-        <translation></translation>
+        <translation>デスクトップ/OpenToonz *</translation>
     </message>
     <message>
         <source>Stuff Folder*</source>
@@ -7152,7 +7251,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     </message>
     <message>
         <source>Toggle Between Graph Editor and Spreadsheet</source>
-        <translation type="unfinished">グラフエディタとスプレッドシートを切り替える</translation>
+        <translation>グラフエディタとスプレッドシートを切り替える</translation>
     </message>
     <message>
         <source>Function Editor*:</source>
@@ -7173,6 +7272,42 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     <message>
         <source>Cursor Style:</source>
         <translation>カーソルのスタイル:</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>小</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>大</translation>
+    </message>
+    <message>
+        <source>Crosshair</source>
+        <translation>クロスヘアー</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>デフォルト</translation>
+    </message>
+    <message>
+        <source>Left-Handed</source>
+        <translation>左利き用</translation>
+    </message>
+    <message>
+        <source>Simple</source>
+        <translation>シンプル</translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation>クラシック</translation>
+    </message>
+    <message>
+        <source>Classic-revised</source>
+        <translation>改良版クラシック</translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation>コンパクト</translation>
     </message>
 </context>
 <context>
@@ -9053,6 +9188,10 @@ Allow duplicate?</source>
         <source>Check for the latest version on launch.</source>
         <translation>起動時にアップデートを確認する。</translation>
     </message>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation>置き換えることができません：選択されているコマまたは列がありません。</translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -10320,15 +10459,15 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Select </source>
-        <translation></translation>
+        <translation type="vanished">選択 </translation>
     </message>
     <message>
         <source>Show </source>
-        <translation></translation>
+        <translation type="vanished">表示 </translation>
     </message>
     <message>
         <source>Hide </source>
-        <translation></translation>
+        <translation type="vanished">隠す </translation>
     </message>
     <message>
         <source>Show / Hide</source>
@@ -10369,6 +10508,22 @@ Please commit or revert changes first.</source>
     <message>
         <source>All Drawings</source>
         <translation>全ての作画</translation>
+    </message>
+    <message>
+        <source>Show %1</source>
+        <translation>%1 を表示</translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation>%1 を隠す</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation>テーブル</translation>
+    </message>
+    <message>
+        <source>Select %1</source>
+        <translation>%1 を選択</translation>
     </message>
 </context>
 <context>
@@ -10515,6 +10670,38 @@ Please commit or revert changes first.</source>
     <message>
         <source>Shortcut Presets</source>
         <translation>ショートカットプリセット</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation>別名で保存</translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation>検索：</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>プリセット：</translation>
+    </message>
+    <message>
+        <source>Saving Shortcuts</source>
+        <translation>ショートカットを保存</translation>
+    </message>
+    <message>
+        <source>Setting Shortcuts</source>
+        <translation>ショートカットを設定</translation>
+    </message>
+    <message>
+        <source>Enter Preset Name</source>
+        <translation>プリセット名を入力して下さい</translation>
+    </message>
+    <message>
+        <source>Preset Name:</source>
+        <translation>プリセット名：</translation>
     </message>
 </context>
 <context>
@@ -10937,7 +11124,7 @@ Click the arrow button to create a new sub-xsheet</source>
     <name>T</name>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
-        <translation>置き換えることができません：選択されているコマまたは列がありません。</translation>
+        <translation type="vanished">置き換えることができません：選択されているコマまたは列がありません。</translation>
     </message>
 </context>
 <context>
@@ -11124,6 +11311,30 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>&lt;&lt; Add</source>
         <translation>&lt;&lt; 追加</translation>
+    </message>
+    <message>
+        <source>Suspended</source>
+        <translation>中断</translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation>待機中</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>実行中</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
+    </message>
+    <message>
+        <source>TaskUnknown</source>
+        <translation>不明のタスク</translation>
     </message>
 </context>
 <context>
