@@ -505,6 +505,26 @@ Do you want to crop the canvas?</source>
         <source>Crop</source>
         <translation>Recortar</translation>
     </message>
+    <message>
+        <source>pixel</source>
+        <translation>píxeles</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation>mm</translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation>cm</translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation>campos</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation>pulgadas</translation>
+    </message>
 </context>
 <context>
     <name>CaptureSettingsPopup</name>
@@ -812,7 +832,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>None</source>
-        <translation>Ninguno</translation>
+        <translation>no</translation>
     </message>
     <message>
         <source>Morphological</source>
@@ -1213,11 +1233,11 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Start:</source>
-        <translation>Inicio:</translation>
+        <translation>                         Inicio:</translation>
     </message>
     <message>
         <source>Save in:</source>
-        <translation>Guardar en:</translation>
+        <translation>               Guardar en:</translation>
     </message>
     <message>
         <source>Options</source>
@@ -1241,7 +1261,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Bg Color:</source>
-        <translation>Color de fondo:</translation>
+        <translation>        Color de fondo:</translation>
     </message>
     <message>
         <source>Skip Existing Files</source>
@@ -1293,7 +1313,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>File to convert:</source>
-        <translation>Archivo a convertir:</translation>
+        <translation> Archivo a convertir:</translation>
     </message>
     <message>
         <source>Output Name:</source>
@@ -1409,7 +1429,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>  End:</source>
-        <translation>Fin:</translation>
+        <translation>  Fin:</translation>
     </message>
     <message>
         <source>File Name:</source>
@@ -1859,6 +1879,14 @@ contuviera información de PPP, entonces se usarán los de la cámara actual.
         <source>End:</source>
         <translation>Final:</translation>
     </message>
+    <message>
+        <source>Width: </source>
+        <translation>Ancho: </translation>
+    </message>
+    <message>
+        <source>Height: </source>
+        <translation>Altura: </translation>
+    </message>
 </context>
 <context>
     <name>ExportPanel</name>
@@ -2263,10 +2291,25 @@ Do you want to overwrite it?</source>
     </message>
 </context>
 <context>
+    <name>FlipbookPanel</name>
+    <message>
+        <source>Safe Area (Right Click to Select)</source>
+        <translation>Áreas de seguridad (clic derecho para seleccionar)</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Minimizar</translation>
+    </message>
+</context>
+<context>
     <name>FormatSettingsPopup</name>
     <message>
         <source>File Settings</source>
         <translation>Opciones de archivo</translation>
+    </message>
+    <message>
+        <source>Configure Codec</source>
+        <translation>Configurar</translation>
     </message>
 </context>
 <context>
@@ -2581,6 +2624,22 @@ Do you want to create it?</source>
         <source>Save In:</source>
         <translation>Guardar en:</translation>
     </message>
+    <message>
+        <source>Toonz Vector Level</source>
+        <translation>Nivel vectorial de Toonz</translation>
+    </message>
+    <message>
+        <source>Toonz Raster Level</source>
+        <translation>Nivel de imagen de Toonz</translation>
+    </message>
+    <message>
+        <source>Raster Level</source>
+        <translation>Nivel de imagen</translation>
+    </message>
+    <message>
+        <source>Scan Level</source>
+        <translation>Nivel de escaneo</translation>
+    </message>
 </context>
 <context>
     <name>LevelSettingsPopup</name>
@@ -2675,6 +2734,42 @@ Do you want to create it?</source>
     <message>
         <source>Resolution</source>
         <translation>Resolución</translation>
+    </message>
+    <message>
+        <source>Image DPI</source>
+        <translation>PPP de la imagen</translation>
+    </message>
+    <message>
+        <source>Custom DPI</source>
+        <translation>PPP personalizados</translation>
+    </message>
+    <message>
+        <source>Scan level</source>
+        <translation>Nivel de escaneo</translation>
+    </message>
+    <message>
+        <source>Toonz Vector level</source>
+        <translation>Nivel vectorial</translation>
+    </message>
+    <message>
+        <source>Toonz Raster level</source>
+        <translation>Nivel de imagen de Toonz</translation>
+    </message>
+    <message>
+        <source>Raster level</source>
+        <translation>Nivel de imagen</translation>
+    </message>
+    <message>
+        <source>Mesh level</source>
+        <translation>Nivel de malla</translation>
+    </message>
+    <message>
+        <source>Palette level</source>
+        <translation>Nivel de paleta</translation>
+    </message>
+    <message>
+        <source>Sound Column</source>
+        <translation>Columna de sonido</translation>
     </message>
 </context>
 <context>
@@ -3517,7 +3612,7 @@ Usar los números de fotograma como referencia.</translation>
     </message>
     <message>
         <source>&amp;Level Settings...</source>
-        <translation>&amp;Opciones del nivel...</translation>
+        <translation>&amp;Opciones de nivel...</translation>
     </message>
     <message>
         <source>&amp;Brightness and Contrast...</source>
@@ -4169,19 +4264,19 @@ Usar los números de fotograma como referencia.</translation>
     </message>
     <message>
         <source>Magnet Tool</source>
-        <translation>Imán</translation>
+        <translation>Imantar</translation>
     </message>
     <message>
         <source>Bender Tool</source>
-        <translation>Pinza</translation>
+        <translation>Doblar</translation>
     </message>
     <message>
         <source>Iron Tool</source>
-        <translation>Plancha</translation>
+        <translation>Planchar</translation>
     </message>
     <message>
         <source>Cutter Tool</source>
-        <translation>Trincheta</translation>
+        <translation>Cortar</translation>
     </message>
     <message>
         <source>Skeleton Tool</source>
@@ -7187,6 +7282,42 @@ También, se establecerá el destino inicial de salida para las nuevas escenas e
         <source>Cursor Style:</source>
         <translation>Estilo de puntero:</translation>
     </message>
+    <message>
+        <source>Small</source>
+        <translation>Pequeño</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <source>Crosshair</source>
+        <translation>Mira</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Predefinido</translation>
+    </message>
+    <message>
+        <source>Left-Handed</source>
+        <translation>Para zurdos</translation>
+    </message>
+    <message>
+        <source>Simple</source>
+        <translation>Simple</translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation>Clásico</translation>
+    </message>
+    <message>
+        <source>Classic-revised</source>
+        <translation>Clásico-revisado</translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation>Compacto</translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -9063,6 +9194,10 @@ Allow duplicate?</source>
         <source>Check for the latest version on launch.</source>
         <translation>Comprobar actualizaciones al iniciar.</translation>
     </message>
+    <message>
+        <source>Nothing to replace: no cells or columns selected.</source>
+        <translation>Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -10328,15 +10463,15 @@ Por favor enviar o revertir los cambios antes.</translation>
     </message>
     <message>
         <source>Select </source>
-        <translation>Seleccionar </translation>
+        <translation type="vanished">Seleccionar </translation>
     </message>
     <message>
         <source>Show </source>
-        <translation>Mostrar </translation>
+        <translation type="vanished">Mostrar </translation>
     </message>
     <message>
         <source>Hide </source>
-        <translation>Ocultar </translation>
+        <translation type="vanished">Ocultar </translation>
     </message>
     <message>
         <source>Show / Hide</source>
@@ -10377,6 +10512,22 @@ Por favor enviar o revertir los cambios antes.</translation>
     <message>
         <source>All Drawings</source>
         <translation>Todos los dibujos</translation>
+    </message>
+    <message>
+        <source>Show %1</source>
+        <translation>Mostrar %1</translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation>Ocultar %1</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation>Mesa</translation>
+    </message>
+    <message>
+        <source>Select %1</source>
+        <translation>Seleccionar %1</translation>
     </message>
 </context>
 <context>
@@ -10523,6 +10674,38 @@ Por favor enviar o revertir los cambios antes.</translation>
     <message>
         <source>Shortcut Presets</source>
         <translation>Ajustes de atajos</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Borrar</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation>Guardar como</translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation>Buscar:</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>Ajustes:</translation>
+    </message>
+    <message>
+        <source>Saving Shortcuts</source>
+        <translation>Guardando atajos</translation>
+    </message>
+    <message>
+        <source>Setting Shortcuts</source>
+        <translation>Estableciendo atajos</translation>
+    </message>
+    <message>
+        <source>Enter Preset Name</source>
+        <translation>Ingresar nombre del ajuste</translation>
+    </message>
+    <message>
+        <source>Preset Name:</source>
+        <translation>Nombre del ajuste:</translation>
     </message>
 </context>
 <context>
@@ -10946,7 +11129,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <name>T</name>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
-        <translation>Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
+        <translation type="vanished">Nada que reemplazar: no se han seleccionado acetatos o columnas.</translation>
     </message>
 </context>
 <context>
@@ -11134,6 +11317,30 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
         <source>Successful Steps:</source>
         <translation>Pasos exitosos:</translation>
     </message>
+    <message>
+        <source>Suspended</source>
+        <translation>En suspenso</translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation>Esperando</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>Ejecutándose</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>Completada</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Fallida</translation>
+    </message>
+    <message>
+        <source>TaskUnknown</source>
+        <translation>Tarea desconocida</translation>
+    </message>
 </context>
 <context>
     <name>TaskTreeModel</name>
@@ -11181,7 +11388,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>&amp;Add Cleanup Task</source>
-        <translation>&amp;Agregr tarea de limpieza</translation>
+        <translation>&amp;Agregar tarea de limpieza</translation>
     </message>
     <message>
         <source>&amp;Save Task List</source>
@@ -11312,7 +11519,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>Variable Region Size</source>
-        <translation>Tamaño variable de región</translation>
+        <translation>Regiones de tamaño variable</translation>
     </message>
     <message>
         <source>Include Background</source>
@@ -11415,11 +11622,11 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>Start:</source>
-        <translation>Inicio:</translation>
+        <translation>Inicial:</translation>
     </message>
     <message>
         <source>End:</source>
-        <translation>Fin:</translation>
+        <translation>Final:</translation>
     </message>
     <message>
         <source>Thickness Calibration</source>
