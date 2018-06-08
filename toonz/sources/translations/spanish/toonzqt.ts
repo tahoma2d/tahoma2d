@@ -1263,6 +1263,10 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
         <source> : </source>
         <translation> : </translation>
     </message>
+    <message>
+        <source>Fx Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FxXSheetPainter</name>
