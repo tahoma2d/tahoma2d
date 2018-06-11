@@ -136,7 +136,6 @@ class SceneViewer final : public GLWidgetForHighDpi,
   bool m_eraserPointerOn;
   QString m_backupTool;
   TRectD m_clipRect;
-  bool m_dirty;
 
   bool m_isPicking;
 
