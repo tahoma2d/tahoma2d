@@ -10,11 +10,9 @@ class QToolButton;
 class Toolbar final : public QToolBar {
   Q_OBJECT
 
+  std::map<std::string, QAction *> m_toolbarList;
   QToolButton *m_expandButton;
-  QAction *m_sep1, *m_sep2;
   bool m_isExpanded;
-
-  void updateToolbar();
 
 public:
   Toolbar(QWidget *parent, bool isVertical = true);
@@ -29,6 +27,7 @@ protected:
 protected slots:
   void onToolChanged();
   void setIsExpanded(bool expand);
+  void updateToolbar();
 };
 
 #endif  // TOOLBAR_H

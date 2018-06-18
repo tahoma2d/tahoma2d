@@ -10,6 +10,9 @@
 #include "toonzqt/menubarcommand.h"
 #include "menubarcommandids.h"
 
+#include "toonz/txshleveltypes.h"
+#include "toonz/txshlevelhandle.h"
+
 // TnzBase includes
 #include "tenv.h"
 
@@ -17,6 +20,7 @@
 #include <QAction>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QObject>
 
 TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 0);
 
@@ -38,139 +42,187 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
   setIconSize(QSize(23, 23));
   setToolButtonStyle(Qt::ToolButtonIconOnly);
 
-  bool actionAdded = addAction(CommandManager::instance()->getAction(T_Edit));
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Selection)) ||
-                actionAdded;
-  if (actionAdded) addSeparator();
-  actionAdded = false;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Brush)) || actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Geometric)) ||
-                actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Type)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Fill)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_PaintBrush)) ||
-      actionAdded;
-  if (actionAdded) addSeparator();
-  actionAdded = false;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Eraser)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Tape)) || actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Finger));
-  if (actionAdded) addSeparator();
-  actionAdded = false;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_StylePicker)) ||
-      actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_RGBPicker)) ||
-                actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Ruler));
-  if (actionAdded) addSeparator();
-  actionAdded = false;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_ControlPointEditor)) ||
-      actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Pinch)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Pump)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Magnet)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Bender)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Iron)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Cutter)) || actionAdded;
-  if (actionAdded) m_sep1 = addSeparator();
-  actionAdded             = false;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Skeleton)) ||
-                actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Hook)) || actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Tracker)) ||
-                actionAdded;
-  actionAdded = addAction(CommandManager::instance()->getAction(T_Plastic)) ||
-                actionAdded;
-  if (actionAdded) m_sep2 = addSeparator();
-  actionAdded             = false;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Zoom)) || actionAdded;
-  if (actionAdded)
-    CommandManager::instance()->getAction(T_Zoom)->setChecked(true);
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Rotate)) || actionAdded;
-  actionAdded =
-      addAction(CommandManager::instance()->getAction(T_Hand)) || actionAdded;
-
   m_expandButton = new QToolButton(this);
   m_expandButton->setObjectName("expandButton");
   m_expandButton->setCheckable(true);
   m_expandButton->setChecked(m_isExpanded);
   m_expandButton->setArrowType((isVertical) ? Qt::DownArrow : Qt::RightArrow);
 
-  addWidget(m_expandButton);
-
-  // toolbar is expanded or shrinked according to env at the beginning
-  updateToolbar();
-
   connect(m_expandButton, SIGNAL(toggled(bool)), this,
           SLOT(setIsExpanded(bool)));
+
+  QAction *expandAction = addWidget(m_expandButton);
+
+  m_toolbarList[T_Edit] = CommandManager::instance()->getAction(T_Edit);
+  m_toolbarList[T_Selection] =
+      CommandManager::instance()->getAction(T_Selection);
+  m_toolbarList["Separator_1"] = addSeparator();
+  m_toolbarList[T_Brush]       = CommandManager::instance()->getAction(T_Brush);
+  m_toolbarList[T_Geometric] =
+      CommandManager::instance()->getAction(T_Geometric);
+  m_toolbarList[T_Type] = CommandManager::instance()->getAction(T_Type);
+  m_toolbarList[T_Fill] = CommandManager::instance()->getAction(T_Fill);
+  m_toolbarList[T_PaintBrush] =
+      CommandManager::instance()->getAction(T_PaintBrush);
+  m_toolbarList["Separator_2"] = addSeparator();
+  m_toolbarList[T_Eraser] = CommandManager::instance()->getAction(T_Eraser);
+  m_toolbarList[T_Tape]   = CommandManager::instance()->getAction(T_Tape);
+  m_toolbarList[T_Finger] = CommandManager::instance()->getAction(T_Finger);
+  m_toolbarList["Separator_3"] = addSeparator();
+  m_toolbarList[T_StylePicker] =
+      CommandManager::instance()->getAction(T_StylePicker);
+  m_toolbarList[T_RGBPicker] =
+      CommandManager::instance()->getAction(T_RGBPicker);
+  m_toolbarList[T_Ruler]       = CommandManager::instance()->getAction(T_Ruler);
+  m_toolbarList["Separator_4"] = addSeparator();
+  m_toolbarList[T_ControlPointEditor] =
+      CommandManager::instance()->getAction(T_ControlPointEditor);
+  m_toolbarList[T_Pinch]  = CommandManager::instance()->getAction(T_Pinch);
+  m_toolbarList[T_Pump]   = CommandManager::instance()->getAction(T_Pump);
+  m_toolbarList[T_Magnet] = CommandManager::instance()->getAction(T_Magnet);
+  m_toolbarList[T_Bender] = CommandManager::instance()->getAction(T_Bender);
+  m_toolbarList[T_Iron]   = CommandManager::instance()->getAction(T_Iron);
+  m_toolbarList[T_Cutter] = CommandManager::instance()->getAction(T_Cutter);
+  m_toolbarList["Separator_5"] = addSeparator();
+  m_toolbarList[T_Skeleton] = CommandManager::instance()->getAction(T_Skeleton);
+  m_toolbarList[T_Hook]     = CommandManager::instance()->getAction(T_Hook);
+  m_toolbarList[T_Tracker]  = CommandManager::instance()->getAction(T_Tracker);
+  m_toolbarList[T_Plastic]  = CommandManager::instance()->getAction(T_Plastic);
+  m_toolbarList["Separator_6"] = addSeparator();
+  m_toolbarList[T_Zoom]        = CommandManager::instance()->getAction(T_Zoom);
+  m_toolbarList[T_Rotate]   = CommandManager::instance()->getAction(T_Rotate);
+  m_toolbarList[T_Hand]     = CommandManager::instance()->getAction(T_Hand);
+  m_toolbarList["Expander"] = expandAction;
+
+  updateToolbar();
 }
 
 //-----------------------------------------------------------------------------
 /*! Layout the tool buttons according to the state of the expandButton
 */
 void Toolbar::updateToolbar() {
-  if (m_isExpanded) {
-    insertAction(CommandManager::instance()->getAction(T_Fill),
-                 CommandManager::instance()->getAction(T_Type));
-    insertAction(CommandManager::instance()->getAction(T_Hand),
-                 CommandManager::instance()->getAction(T_Rotate));
-    insertAction(m_sep2, CommandManager::instance()->getAction(T_Plastic));
-    insertAction(CommandManager::instance()->getAction(T_Plastic),
-                 CommandManager::instance()->getAction(T_Hook));
-    insertAction(CommandManager::instance()->getAction(T_Hook),
-                 CommandManager::instance()->getAction(T_Tracker));
-    insertAction(CommandManager::instance()->getAction(T_Tracker),
-                 CommandManager::instance()->getAction(T_Skeleton));
-    insertAction(CommandManager::instance()->getAction(T_Skeleton), m_sep1);
-    insertAction(m_sep1, CommandManager::instance()->getAction(T_Cutter));
-    insertAction(CommandManager::instance()->getAction(T_Cutter),
-                 CommandManager::instance()->getAction(T_Iron));
-    insertAction(CommandManager::instance()->getAction(T_Iron),
-                 CommandManager::instance()->getAction(T_Bender));
-    insertAction(CommandManager::instance()->getAction(T_Bender),
-                 CommandManager::instance()->getAction(T_Magnet));
-    insertAction(CommandManager::instance()->getAction(T_Magnet),
-                 CommandManager::instance()->getAction(T_Pump));
-    insertAction(CommandManager::instance()->getAction(T_Pump),
-                 CommandManager::instance()->getAction(T_Pinch));
+  TApp *app                  = TApp::instance();
+  TXshLevelHandle *currlevel = app->getCurrentLevel();
+  TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
+  int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
+  std::map<std::string, QAction *>::iterator it;
+  for (it = m_toolbarList.begin(); it != m_toolbarList.end(); it++) {
+    QAction *action = it->second;
+    if (!action) continue;
+    removeAction(action);
+  }
+
+  bool actionEnabled = false;
+
+  if (levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Edit]) || actionEnabled;
+
+  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Selection]) || actionEnabled;
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_1"]);
+  actionEnabled = false;
+
+  if (levelType == NO_XSHLEVEL || levelType == OVL_XSHLEVEL ||
+      levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+      levelType == TZP_XSHLEVEL) {
+    actionEnabled = addAction(m_toolbarList[T_Brush]) || actionEnabled;
+    actionEnabled = addAction(m_toolbarList[T_Geometric]) || actionEnabled;
+    if (m_isExpanded)
+      actionEnabled = addAction(m_toolbarList[T_Type]) || actionEnabled;
+  }
+
+  if (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Fill]) || actionEnabled;
+
+  if (levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_PaintBrush]) || actionEnabled;
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_2"]);
+  actionEnabled = false;
+
+  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Eraser]) || actionEnabled;
+
+  if (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Tape]) || actionEnabled;
+
+  if (levelType == TZP_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Finger]) || actionEnabled;
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_3"]);
+  actionEnabled = false;
+
+  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL) {
+    actionEnabled = addAction(m_toolbarList[T_StylePicker]) || actionEnabled;
+    actionEnabled = addAction(m_toolbarList[T_RGBPicker]) || actionEnabled;
+  }
+
+  actionEnabled = addAction(m_toolbarList[T_Ruler]) || actionEnabled;
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_4"]);
+  actionEnabled = false;
+
+  if (levelType == PLI_XSHLEVEL) {
+    actionEnabled =
+        addAction(m_toolbarList[T_ControlPointEditor]) || actionEnabled;
+    if (m_isExpanded) {
+      actionEnabled = addAction(m_toolbarList[T_Pinch]) || actionEnabled;
+      actionEnabled = addAction(m_toolbarList[T_Pump]) || actionEnabled;
+      actionEnabled = addAction(m_toolbarList[T_Magnet]) || actionEnabled;
+      actionEnabled = addAction(m_toolbarList[T_Bender]) || actionEnabled;
+      actionEnabled = addAction(m_toolbarList[T_Iron]) || actionEnabled;
+      actionEnabled = addAction(m_toolbarList[T_Cutter]) || actionEnabled;
+    }
+  }
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_5"]);
+
+  actionEnabled = false;
+
+  if (m_isExpanded && levelType != NO_XSHLEVEL && levelType != MESH_XSHLEVEL &&
+      levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL)
+    actionEnabled = addAction(m_toolbarList[T_Skeleton]) || actionEnabled;
+
+  if (m_isExpanded &&
+      (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+       levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)) {
+    actionEnabled = addAction(m_toolbarList[T_Hook]) || actionEnabled;
+    actionEnabled = addAction(m_toolbarList[T_Tracker]) || actionEnabled;
+  }
+
+  if (m_isExpanded &&
+      (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+       levelType == CHILD_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+       levelType == TZP_XSHLEVEL || levelType == MESH_XSHLEVEL))
+    actionEnabled = addAction(m_toolbarList[T_Plastic]) || actionEnabled;
+
+  if (actionEnabled) addAction(m_toolbarList["Separator_6"]);
+
+  actionEnabled = false;
+
+  actionEnabled = addAction(m_toolbarList[T_Zoom]) || actionEnabled;
+  if (m_isExpanded)
+    actionEnabled = addAction(m_toolbarList[T_Rotate]) || actionEnabled;
+
+  actionEnabled = addAction(m_toolbarList[T_Hand]) || actionEnabled;
+
+  actionEnabled = addAction(m_toolbarList["Expander"]) || actionEnabled;
+
+  if (m_isExpanded) {
     m_expandButton->setArrowType(
         (orientation() == Qt::Vertical) ? Qt::UpArrow : Qt::LeftArrow);
-
+    m_expandButton->setToolTip(tr("Hide certain tools"));
   } else {
-    removeAction(CommandManager::instance()->getAction(T_Type));
-    removeAction(CommandManager::instance()->getAction(T_Pinch));
-    removeAction(CommandManager::instance()->getAction(T_Pump));
-    removeAction(CommandManager::instance()->getAction(T_Magnet));
-    removeAction(CommandManager::instance()->getAction(T_Bender));
-    removeAction(CommandManager::instance()->getAction(T_Iron));
-    removeAction(CommandManager::instance()->getAction(T_Cutter));
-    removeAction(CommandManager::instance()->getAction(T_Skeleton));
-    removeAction(CommandManager::instance()->getAction(T_Tracker));
-    removeAction(CommandManager::instance()->getAction(T_Hook));
-    removeAction(CommandManager::instance()->getAction(T_Plastic));
-    removeAction(CommandManager::instance()->getAction(T_Rotate));
-    removeAction(m_sep1);
     m_expandButton->setArrowType(
         (orientation() == Qt::Vertical) ? Qt::DownArrow : Qt::RightArrow);
+    m_expandButton->setToolTip(tr("Show all available tools"));
   }
+
   update();
 }
 
@@ -197,13 +249,25 @@ bool Toolbar::addAction(QAction *act) {
 //-----------------------------------------------------------------------------
 
 void Toolbar::showEvent(QShowEvent *e) {
+  TApp *app = TApp::instance();
+
+  TXshLevelHandle *levelHandle = TApp::instance()->getCurrentLevel();
+  connect(levelHandle, SIGNAL(xshLevelChanged()), this, SLOT(updateToolbar()));
+  connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
+          SLOT(updateToolbar()));
+  connect(levelHandle, SIGNAL(xshLevelViewChanged()), this,
+          SLOT(updateToolbar()));
+
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()),
           SLOT(onToolChanged()));
+
+  updateToolbar();
 }
 
 //-----------------------------------------------------------------------------
 
 void Toolbar::hideEvent(QHideEvent *e) {
+  disconnect(TApp::instance()->getCurrentLevel(), 0, this, 0);
   disconnect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()), this,
              SLOT(onToolChanged()));
 }
