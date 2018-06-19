@@ -12,6 +12,7 @@
 
 #include "toonz/txshleveltypes.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonz/preferences.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -106,112 +107,159 @@ void Toolbar::updateToolbar() {
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
+  bool showDisabled = Preferences::instance()->isShowDisabledToolsEnabled();
+
   std::map<std::string, QAction *>::iterator it;
   for (it = m_toolbarList.begin(); it != m_toolbarList.end(); it++) {
     QAction *action = it->second;
     if (!action) continue;
+    action->setDisabled(true);
     removeAction(action);
   }
 
   bool actionEnabled = false;
+  bool activate      = false;
 
-  if (levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Edit]) || actionEnabled;
+  activate = (levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Edit], showDisabled, activate) ||
+      actionEnabled;
 
-  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Selection]) || actionEnabled;
+  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Selection], showDisabled, activate) ||
+      actionEnabled;
 
-  if (actionEnabled) addAction(m_toolbarList["Separator_1"]);
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_1"], true, true);
   actionEnabled = false;
 
-  if (levelType == NO_XSHLEVEL || levelType == OVL_XSHLEVEL ||
-      levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
-      levelType == TZP_XSHLEVEL) {
-    actionEnabled = addAction(m_toolbarList[T_Brush]) || actionEnabled;
-    actionEnabled = addAction(m_toolbarList[T_Geometric]) || actionEnabled;
-    if (m_isExpanded)
-      actionEnabled = addAction(m_toolbarList[T_Type]) || actionEnabled;
-  }
-
-  if (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Fill]) || actionEnabled;
-
-  if (levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_PaintBrush]) || actionEnabled;
-
-  if (actionEnabled) addAction(m_toolbarList["Separator_2"]);
-  actionEnabled = false;
-
-  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Eraser]) || actionEnabled;
-
-  if (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Tape]) || actionEnabled;
-
-  if (levelType == TZP_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Finger]) || actionEnabled;
-
-  if (actionEnabled) addAction(m_toolbarList["Separator_3"]);
-  actionEnabled = false;
-
-  if (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL) {
-    actionEnabled = addAction(m_toolbarList[T_StylePicker]) || actionEnabled;
-    actionEnabled = addAction(m_toolbarList[T_RGBPicker]) || actionEnabled;
-  }
-
-  actionEnabled = addAction(m_toolbarList[T_Ruler]) || actionEnabled;
-
-  if (actionEnabled) addAction(m_toolbarList["Separator_4"]);
-  actionEnabled = false;
-
-  if (levelType == PLI_XSHLEVEL) {
-    actionEnabled =
-        addAction(m_toolbarList[T_ControlPointEditor]) || actionEnabled;
-    if (m_isExpanded) {
-      actionEnabled = addAction(m_toolbarList[T_Pinch]) || actionEnabled;
-      actionEnabled = addAction(m_toolbarList[T_Pump]) || actionEnabled;
-      actionEnabled = addAction(m_toolbarList[T_Magnet]) || actionEnabled;
-      actionEnabled = addAction(m_toolbarList[T_Bender]) || actionEnabled;
-      actionEnabled = addAction(m_toolbarList[T_Iron]) || actionEnabled;
-      actionEnabled = addAction(m_toolbarList[T_Cutter]) || actionEnabled;
-    }
-  }
-
-  if (actionEnabled) addAction(m_toolbarList["Separator_5"]);
-
-  actionEnabled = false;
-
-  if (m_isExpanded && levelType != NO_XSHLEVEL && levelType != MESH_XSHLEVEL &&
-      levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL)
-    actionEnabled = addAction(m_toolbarList[T_Skeleton]) || actionEnabled;
-
-  if (m_isExpanded &&
-      (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-       levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL)) {
-    actionEnabled = addAction(m_toolbarList[T_Hook]) || actionEnabled;
-    actionEnabled = addAction(m_toolbarList[T_Tracker]) || actionEnabled;
-  }
-
-  if (m_isExpanded &&
-      (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-       levelType == CHILD_XSHLEVEL || levelType == PLI_XSHLEVEL ||
-       levelType == TZP_XSHLEVEL || levelType == MESH_XSHLEVEL))
-    actionEnabled = addAction(m_toolbarList[T_Plastic]) || actionEnabled;
-
-  if (actionEnabled) addAction(m_toolbarList["Separator_6"]);
-
-  actionEnabled = false;
-
-  actionEnabled = addAction(m_toolbarList[T_Zoom]) || actionEnabled;
+  activate = (levelType == NO_XSHLEVEL || levelType == OVL_XSHLEVEL ||
+              levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+              levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Brush], showDisabled, activate) ||
+      actionEnabled;
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Geometric], showDisabled, activate) ||
+      actionEnabled;
   if (m_isExpanded)
-    actionEnabled = addAction(m_toolbarList[T_Rotate]) || actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Type], showDisabled, activate) ||
+        actionEnabled;
 
-  actionEnabled = addAction(m_toolbarList[T_Hand]) || actionEnabled;
+  activate = (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Fill], showDisabled, activate) ||
+      actionEnabled;
 
-  actionEnabled = addAction(m_toolbarList["Expander"]) || actionEnabled;
+  activate = (levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_PaintBrush], showDisabled, activate) ||
+      actionEnabled;
+
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_2"], true, true);
+  actionEnabled = false;
+
+  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Eraser], showDisabled, activate) ||
+      actionEnabled;
+
+  activate = (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Tape], showDisabled, activate) ||
+      actionEnabled;
+
+  activate = (levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Finger], showDisabled, activate) ||
+      actionEnabled;
+
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_3"], true, true);
+  actionEnabled = false;
+
+  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_StylePicker], showDisabled, activate) ||
+      actionEnabled;
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_RGBPicker], showDisabled, activate) ||
+      actionEnabled;
+
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Ruler], true, true) || actionEnabled;
+
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_4"], true, true);
+  actionEnabled = false;
+
+  activate      = (levelType == PLI_XSHLEVEL);
+  actionEnabled = addOrShowAction(m_toolbarList[T_ControlPointEditor],
+                                  showDisabled, activate) ||
+                  actionEnabled;
+  if (m_isExpanded) {
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Pinch], showDisabled, activate) ||
+        actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Pump], showDisabled, activate) ||
+        actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Magnet], showDisabled, activate) ||
+        actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Bender], showDisabled, activate) ||
+        actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Iron], showDisabled, activate) ||
+        actionEnabled;
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Cutter], showDisabled, activate) ||
+        actionEnabled;
+  }
+
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_5"], true, true);
+  actionEnabled = false;
+
+  activate =
+      (m_isExpanded && levelType != NO_XSHLEVEL && levelType != MESH_XSHLEVEL &&
+       levelType != SND_XSHLEVEL && levelType != SND_TXT_XSHLEVEL);
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Skeleton], showDisabled, activate) ||
+      actionEnabled;
+
+  activate = (m_isExpanded &&
+              (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+               levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Hook], showDisabled, activate) ||
+      actionEnabled;
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Tracker], showDisabled, activate) ||
+      actionEnabled;
+
+  activate = (m_isExpanded &&
+              (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+               levelType == CHILD_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+               levelType == TZP_XSHLEVEL || levelType == MESH_XSHLEVEL));
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Plastic], showDisabled, activate) ||
+      actionEnabled;
+
+  if (actionEnabled) addOrShowAction(m_toolbarList["Separator_6"], true, true);
+  actionEnabled = false;
+
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Zoom], true, true) || actionEnabled;
+  if (m_isExpanded)
+    actionEnabled =
+        addOrShowAction(m_toolbarList[T_Rotate], true, true) || actionEnabled;
+  actionEnabled =
+      addOrShowAction(m_toolbarList[T_Hand], true, true) || actionEnabled;
+  actionEnabled =
+      addOrShowAction(m_toolbarList["Expander"], true, true) || actionEnabled;
 
   if (m_isExpanded) {
     m_expandButton->setArrowType(
@@ -240,10 +288,15 @@ Toolbar::~Toolbar() {}
 
 //-----------------------------------------------------------------------------
 
-bool Toolbar::addAction(QAction *act) {
+bool Toolbar::addOrShowAction(QAction *act, bool showDisabled, bool activate) {
   if (!act) return false;
-  QToolBar::addAction(act);
-  return true;
+  if (showDisabled || activate) QToolBar::addAction(act);
+
+  if (activate) act->setDisabled(false);
+
+  if (showDisabled || activate) return true;
+
+  return false;
 }
 
 //-----------------------------------------------------------------------------

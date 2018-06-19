@@ -1252,6 +1252,13 @@ void PreferencesPopup::onRasterBackgroundColorChanged(const TPixel32 &color,
   m_pref->setRasterBackgroundColor(color);
 }
 
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onShowDisabledToolsChanged(int index) {
+  m_pref->enableShowDisabledTools(index == Qt::Checked);
+  TApp::instance()->getCurrentLevel()->notifyLevelChange();
+}
+
 //**********************************************************************************
 //    PrefencesPopup's  constructor
 //**********************************************************************************
@@ -1480,6 +1487,9 @@ PreferencesPopup::PreferencesPopup()
 
   CheckBox *cursorOutlineCB =
       new CheckBox(tr("Show Cursor Size Outlines"), this);
+
+  CheckBox *showDisabledToolsCB =
+      new CheckBox(tr("Show Disabled Tools In Toolbar"), this);
 
   //--- Xsheet ------------------------------
   categoryList->addItem(tr("Xsheet"));
@@ -1877,6 +1887,8 @@ PreferencesPopup::PreferencesPopup()
   m_cursorBrushStyle->setCurrentIndex(
       m_cursorBrushStyle->findData(m_pref->getCursorBrushStyle()));
   cursorOutlineCB->setChecked(m_pref->isCursorOutlineEnabled());
+
+  showDisabledToolsCB->setChecked(m_pref->isShowDisabledToolsEnabled());
 
   //--- Xsheet ------------------------------
   xsheetAutopanDuringPlaybackCB->setChecked(m_pref->isXsheetAutopanEnabled());
@@ -2460,6 +2472,8 @@ PreferencesPopup::PreferencesPopup()
           cursorStyleGroupBox->setLayout(cursorStylesLay);
         }
         ToolsTopLay->addWidget(cursorStyleGroupBox, 3, 0, 1, 3);
+
+        ToolsTopLay->addWidget(showDisabledToolsCB, 4, 0, 1, 3);
       }
       toolsFrameLay->addLayout(ToolsTopLay, 0);
 
@@ -2949,6 +2963,8 @@ PreferencesPopup::PreferencesPopup()
                        this, SLOT(onCursorBrushStyleChanged(int)));
   ret = ret && connect(cursorOutlineCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onCursorOutlineChanged(int)));
+  ret = ret && connect(showDisabledToolsCB, SIGNAL(stateChanged(int)),
+                       SLOT(onShowDisabledToolsChanged(int)));
 
   //--- Xsheet ----------------------
   ret = ret && connect(xsheetAutopanDuringPlaybackCB, SIGNAL(stateChanged(int)),

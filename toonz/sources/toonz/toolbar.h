@@ -19,7 +19,7 @@ public:
   ~Toolbar();
 
 protected:
-  bool addAction(QAction *act);
+  bool addOrShowAction(QAction *act, bool showDisabled, bool activate);
 
   void showEvent(QShowEvent *e) override;
   void hideEvent(QHideEvent *e) override;
