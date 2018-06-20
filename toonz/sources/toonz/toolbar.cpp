@@ -12,6 +12,8 @@
 
 #include "toonz/txshleveltypes.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonz/txshsimplelevel.h"
+#include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
 
 // TnzBase includes
@@ -106,6 +108,10 @@ void Toolbar::updateToolbar() {
   TXshLevelHandle *currlevel = app->getCurrentLevel();
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
+  TXshSimpleLevel *sl        = level ? level->getSimpleLevel() : 0;
+  bool editable =
+      (sl && sl->getPath().getType() != "psd" && !sl->is16BitChannelLevel() &&
+       sl->getProperties()->getBpp() != 1);
 
   bool showDisabled = Preferences::instance()->isShowDisabledToolsEnabled();
 
@@ -125,8 +131,9 @@ void Toolbar::updateToolbar() {
       addOrShowAction(m_toolbarList[T_Edit], showDisabled, activate) ||
       actionEnabled;
 
-  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+                    levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Selection], showDisabled, activate) ||
       actionEnabled;
@@ -134,26 +141,32 @@ void Toolbar::updateToolbar() {
   if (actionEnabled) addOrShowAction(m_toolbarList["Separator_1"], true, true);
   actionEnabled = false;
 
-  activate = (levelType == NO_XSHLEVEL || levelType == OVL_XSHLEVEL ||
-              levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
-              levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == NO_XSHLEVEL || levelType == OVL_XSHLEVEL ||
+                    levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+                    levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Brush], showDisabled, activate) ||
       actionEnabled;
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Geometric], showDisabled, activate) ||
       actionEnabled;
-  if (m_isExpanded)
+  if (m_isExpanded) {
+    activate =
+        (editable && (levelType == NO_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+                      levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
     actionEnabled =
         addOrShowAction(m_toolbarList[T_Type], showDisabled, activate) ||
         actionEnabled;
+  }
 
-  activate = (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Fill], showDisabled, activate) ||
       actionEnabled;
 
-  activate = (levelType == TZP_XSHLEVEL);
+  activate = (editable && levelType == TZP_XSHLEVEL);
   actionEnabled =
       addOrShowAction(m_toolbarList[T_PaintBrush], showDisabled, activate) ||
       actionEnabled;
@@ -161,18 +174,20 @@ void Toolbar::updateToolbar() {
   if (actionEnabled) addOrShowAction(m_toolbarList["Separator_2"], true, true);
   actionEnabled = false;
 
-  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+                    levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Eraser], showDisabled, activate) ||
       actionEnabled;
 
-  activate = (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Tape], showDisabled, activate) ||
       actionEnabled;
 
-  activate = (levelType == TZP_XSHLEVEL);
+  activate = (editable && levelType == TZP_XSHLEVEL);
   actionEnabled =
       addOrShowAction(m_toolbarList[T_Finger], showDisabled, activate) ||
       actionEnabled;
@@ -180,11 +195,15 @@ void Toolbar::updateToolbar() {
   if (actionEnabled) addOrShowAction(m_toolbarList["Separator_3"], true, true);
   actionEnabled = false;
 
-  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
-              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
+  activate =
+      (editable && (levelType == TZI_XSHLEVEL || levelType == PLI_XSHLEVEL ||
+                    levelType == TZP_XSHLEVEL));
   actionEnabled =
       addOrShowAction(m_toolbarList[T_StylePicker], showDisabled, activate) ||
       actionEnabled;
+
+  activate = (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
+              levelType == PLI_XSHLEVEL || levelType == TZP_XSHLEVEL);
   actionEnabled =
       addOrShowAction(m_toolbarList[T_RGBPicker], showDisabled, activate) ||
       actionEnabled;
@@ -195,7 +214,7 @@ void Toolbar::updateToolbar() {
   if (actionEnabled) addOrShowAction(m_toolbarList["Separator_4"], true, true);
   actionEnabled = false;
 
-  activate      = (levelType == PLI_XSHLEVEL);
+  activate      = (editable && levelType == PLI_XSHLEVEL);
   actionEnabled = addOrShowAction(m_toolbarList[T_ControlPointEditor],
                                   showDisabled, activate) ||
                   actionEnabled;
@@ -240,7 +259,7 @@ void Toolbar::updateToolbar() {
       addOrShowAction(m_toolbarList[T_Tracker], showDisabled, activate) ||
       actionEnabled;
 
-  activate = (m_isExpanded &&
+  activate = (m_isExpanded && editable &&
               (levelType == OVL_XSHLEVEL || levelType == TZI_XSHLEVEL ||
                levelType == CHILD_XSHLEVEL || levelType == PLI_XSHLEVEL ||
                levelType == TZP_XSHLEVEL || levelType == MESH_XSHLEVEL));
