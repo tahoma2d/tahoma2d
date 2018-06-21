@@ -1227,7 +1227,7 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
     xl->setPath(codeFilePath(levelPath), true);
 
     try {
-      if (fIds.size() != 0)
+      if (fIds.size() != 0 && !ltype.m_oldLevelFlag)
         xl->load(fIds);
       else
         xl->load();
