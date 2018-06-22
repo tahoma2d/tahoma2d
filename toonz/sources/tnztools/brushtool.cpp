@@ -1197,7 +1197,13 @@ void BrushTool::onDeactivate() {
 
 bool BrushTool::preLeftButtonDown() {
   touchImage();
-  if (m_isFrameCreated) setWorkAndBackupImages();
+  if (m_isFrameCreated) {
+    setWorkAndBackupImages();
+    // When the xsheet frame is selected, whole viewer will be updated from
+    // SceneViewer::onXsheetChanged() on adding a new frame.
+    // We need to take care of a case when the level frame is selected.
+    if (m_application->getCurrentFrame()->isEditingLevel()) invalidate();
+  }
   return true;
 }
 
