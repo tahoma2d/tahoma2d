@@ -121,7 +121,8 @@ struct {
     {"Separator_6", false, ActivateLevel::Separator, 0},
     {T_Zoom, false, ActivateLevel::All, 0},
     {T_Rotate, true, ActivateLevel::All, 0},
-    {T_Hand, false, ActivateLevel::All, 0}};
+    {T_Hand, false, ActivateLevel::All, 0},
+    {0, false, 0}};
 }
 //=============================================================================
 // Toolbar
@@ -165,7 +166,7 @@ void Toolbar::updateToolbar() {
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
   // Hide action for now
-  for (int idx = 0; idx < std::size(buttonLayout); idx++) {
+  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
     if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
   }
 
@@ -192,7 +193,7 @@ void Toolbar::updateToolbar() {
   bool showDisabled = Preferences::instance()->isShowDisabledToolsEnabled();
 
   bool actionEnabled = false;
-  for (int idx = 0; idx < std::size(buttonLayout); idx++) {
+  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
     if (!buttonLayout[idx].action) {
       if (buttonLayout[idx].displayLevels & ActivateLevel::Separator)
         buttonLayout[idx].action = addSeparator();
