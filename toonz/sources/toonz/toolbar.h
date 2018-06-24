@@ -12,6 +12,7 @@ class Toolbar final : public QToolBar {
 
   std::map<std::string, QAction *> m_toolbarList;
   QToolButton *m_expandButton;
+  QAction *m_expandAction;
   bool m_isExpanded;
 
 public:
@@ -19,7 +20,7 @@ public:
   ~Toolbar();
 
 protected:
-  bool addOrShowAction(QAction *act, bool showDisabled, bool activate);
+  bool addAction(QAction *act);
 
   void showEvent(QShowEvent *e) override;
   void hideEvent(QHideEvent *e) override;
