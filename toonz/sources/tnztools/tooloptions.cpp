@@ -449,13 +449,13 @@ GenericToolOptionsBox::GenericToolOptionsBox(QWidget *parent, TTool *tool,
 //-----------------------------------------------------------------------------
 
 // show 17x17 icon without style dependency
-class SimpleIconViewField : public QWidget {
+class SimpleIconViewField : public DraggableIconView {
   QIcon m_icon;
 
 public:
   SimpleIconViewField(const QString &iconName, const QString &toolTipStr = "",
                       QWidget *parent = 0)
-      : QWidget(parent), m_icon(createQIcon(iconName.toUtf8())) {
+      : DraggableIconView(parent), m_icon(createQIcon(iconName.toUtf8())) {
     setMinimumSize(17, 25);
     setToolTip(toolTipStr);
   }
@@ -1126,7 +1126,7 @@ void ArrowToolOptionsBox::onCurrentAxisChanged(int axisId) {
 //=============================================================================
 
 IconViewField::IconViewField(QWidget *parent, IconType iconType)
-    : QWidget(parent), m_iconType(iconType) {
+    : DraggableIconView(parent), m_iconType(iconType) {
   setMinimumSize(21, 25);
 }
 
@@ -1136,15 +1136,15 @@ void IconViewField::paintEvent(QPaintEvent *e) {
   p.drawPixmap(QRect(0, 3, 21, 17), m_pm[m_iconType]);
 }
 
-void IconViewField::mousePressEvent(QMouseEvent *event) {
+void DraggableIconView::mousePressEvent(QMouseEvent *event) {
   emit onMousePress(event);
 }
 
-void IconViewField::mouseMoveEvent(QMouseEvent *event) {
+void DraggableIconView::mouseMoveEvent(QMouseEvent *event) {
   emit onMouseMove(event);
 }
 
-void IconViewField::mouseReleaseEvent(QMouseEvent *event) {
+void DraggableIconView::mouseReleaseEvent(QMouseEvent *event) {
   emit onMouseRelease(event);
 }
 
@@ -1168,20 +1168,16 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
   if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
 
-  IconViewField *iconView =
-      new IconViewField(this, IconViewField::Icon_ScalePeg);
   m_scaleXLabel = new ClickableLabel(tr("H:"), this);
   m_scaleXField = new SelectionScaleField(selectionTool, 0, "Scale X");
   m_scaleYLabel = new ClickableLabel(tr("V:"), this);
   m_scaleYField = new SelectionScaleField(selectionTool, 1, "Scale Y");
   m_scaleLink   = new DVGui::CheckBox(tr("Link"), this);
 
-  IconViewField *rotIconView =
-      new IconViewField(this, IconViewField::Icon_Rotation);
+  SimpleIconViewField *rotIconView =
+      new SimpleIconViewField("edit_rotation", tr("Rotation"));
   m_rotationField = new SelectionRotationField(selectionTool, tr("Rotation"));
 
-  IconViewField *moveIconView =
-      new IconViewField(this, IconViewField::Icon_Position);
   m_moveXLabel = new ClickableLabel(tr("E/W:"), this);
   m_moveXField = new SelectionMoveField(selectionTool, 0, "Move X");
   m_moveYLabel = new ClickableLabel(tr("N/S:"), this);
@@ -1204,7 +1200,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
 
   addSeparator();
 
-  hLayout()->addWidget(iconView, 0);
+  hLayout()->addWidget(new SimpleIconViewField("edit_scale", tr("Scale"), this),
+                       0);
   hLayout()->addWidget(m_scaleXLabel, 0);
   hLayout()->addWidget(m_scaleXField, 10);
   hLayout()->addWidget(m_scaleYLabel, 0);
@@ -1219,7 +1216,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
 
   addSeparator();
 
-  hLayout()->addWidget(moveIconView, 0);
+  hLayout()->addWidget(
+      new SimpleIconViewField("edit_position", tr("Position"), this), 0);
   hLayout()->addWidget(m_moveXLabel, 0);
   hLayout()->addWidget(m_moveXField, 10);
   hLayout()->addWidget(m_moveYLabel, 0);
@@ -1249,7 +1247,6 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
     addSeparator();
     hLayout()->addWidget(thicknessIconView, 0);
     hLayout()->addWidget(m_thickChangeField, 10);
-    // Outline options
     // Outline options
     ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
     builder.setEnumWidgetType(ToolOptionControlBuilder::POPUPBUTTON);

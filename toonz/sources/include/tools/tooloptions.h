@@ -288,7 +288,25 @@ protected slots:
 //
 //=============================================================================
 
-class IconViewField final : public QWidget {
+class DraggableIconView : public QWidget {
+  Q_OBJECT
+public:
+  DraggableIconView(QWidget *parent = 0) : QWidget(parent){};
+
+protected:
+  // these are used for dragging on the icon to
+  // change the value of the field
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
+  void mouseReleaseEvent(QMouseEvent *) override;
+
+signals:
+  void onMousePress(QMouseEvent *event);
+  void onMouseMove(QMouseEvent *event);
+  void onMouseRelease(QMouseEvent *event);
+};
+
+class IconViewField final : public DraggableIconView {
   Q_OBJECT
 
 public:
@@ -336,16 +354,6 @@ public:
 
 protected:
   void paintEvent(QPaintEvent *e);
-  // these are used for dragging on the icon to
-  // change the value of the field
-  void mousePressEvent(QMouseEvent *) override;
-  void mouseMoveEvent(QMouseEvent *) override;
-  void mouseReleaseEvent(QMouseEvent *) override;
-
-signals:
-  void onMousePress(QMouseEvent *event);
-  void onMouseMove(QMouseEvent *event);
-  void onMouseRelease(QMouseEvent *event);
 };
 
 //-----------------------------------------------------------------------------
