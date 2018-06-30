@@ -14,6 +14,7 @@ class Toolbar final : public QToolBar {
   QToolButton *m_expandButton;
   QAction *m_expandAction;
   bool m_isExpanded;
+  int m_toolbarLevel;
 
 public:
   Toolbar(QWidget *parent, bool isVertical = true);

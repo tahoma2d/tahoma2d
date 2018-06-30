@@ -190,6 +190,10 @@ void Toolbar::updateToolbar() {
     }
   }
 
+  if (levelType == m_toolbarLevel) return;
+
+  m_toolbarLevel = levelType;
+
   // Hide action for now
   for (int idx = 0; buttonLayout[idx].toolName; idx++) {
     if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
@@ -282,6 +286,7 @@ void Toolbar::updateToolbar() {
 
 void Toolbar::setIsExpanded(bool expand) {
   m_isExpanded       = expand;
+  m_toolbarLevel     = -1;  // Force toolbar to refresh
   ShowAllToolsToggle = (expand) ? 1 : 0;
   updateToolbar();
 }
