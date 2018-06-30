@@ -12,6 +12,7 @@
 
 #include "toonz/txshleveltypes.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonz/tframehandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/txshcell.h"
 #include "toonz/txshsimplelevel.h"
@@ -165,14 +166,7 @@ void Toolbar::updateToolbar() {
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
-  // Hide action for now
-  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
-    if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
-  }
-
-  removeAction(m_expandAction);
-
-  // If in an empty cell, use primary level of column
+  // If in an empty cell, find most recent level
   if (levelType == NO_XSHLEVEL) {
     TXsheetHandle *xshHandle = app->getCurrentXsheet();
     TXsheet *xsh             = xshHandle->getXsheet();
@@ -183,12 +177,25 @@ void Toolbar::updateToolbar() {
       int r0, r1;
       xsh->getCellRange(index, r0, r1);
       if (0 <= r0 && r0 <= r1) {
-        // level type depends on the top-most occupied cell
-        TXshCell cell                  = xsh->getCell(r0, index);
-        if (!cell.isEmpty()) levelType = cell.m_level->getType();
+        TFrameHandle *frameHandle = app->getCurrentFrame();
+        int currentFrame          = frameHandle->getFrameIndex();
+        // level type depends on previous occupied cell
+        for (int r = min(r1, currentFrame); r >= r0; r--) {
+          TXshCell cell = xsh->getCell(r, index);
+          if (cell.isEmpty()) continue;
+          levelType = cell.m_level->getType();
+          break;
+        }
       }
     }
   }
+
+  // Hide action for now
+  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
+    if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
+  }
+
+  removeAction(m_expandAction);
 
   bool showDisabled = Preferences::instance()->isShowDisabledToolsEnabled();
 
@@ -298,8 +305,17 @@ void Toolbar::showEvent(QShowEvent *e) {
   connect(columnHandle, SIGNAL(columnIndexSwitched()), this,
           SLOT(updateToolbar()));
 
+  TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+  connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
+
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()),
           SLOT(onToolChanged()));
+}
+
+void Toolbar::onFrameSwitched() {
+  TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+  if (frameHandle->isPlaying()) return;
+  updateToolbar();
 }
 
 //-----------------------------------------------------------------------------

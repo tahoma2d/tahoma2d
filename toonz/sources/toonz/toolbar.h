@@ -29,6 +29,7 @@ protected slots:
   void onToolChanged();
   void setIsExpanded(bool expand);
   void updateToolbar();
+  void onFrameSwitched();
 };
 
 #endif  // TOOLBAR_H
