@@ -197,7 +197,7 @@ void Toolbar::updateToolbar() {
 
   removeAction(m_expandAction);
 
-  bool showDisabled = Preferences::instance()->isShowDisabledToolsEnabled();
+  bool showLevelBased = Preferences::instance()->isShowLevelBasedToolsEnabled();
 
   bool actionEnabled = false;
   for (int idx = 0; buttonLayout[idx].toolName; idx++) {
@@ -212,7 +212,7 @@ void Toolbar::updateToolbar() {
     // Unhide if it meets the criteria for showing
     bool enable = false;
 
-    if (showDisabled || buttonLayout[idx].displayLevels & ActivateLevel::All)
+    if (!showLevelBased || buttonLayout[idx].displayLevels & ActivateLevel::All)
       enable = true;
     else if (buttonLayout[idx].displayLevels & ActivateLevel::Separator)
       enable = actionEnabled;

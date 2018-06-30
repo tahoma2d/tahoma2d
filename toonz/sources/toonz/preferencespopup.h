@@ -84,7 +84,7 @@ private:
       *m_syncLevelRenumberWithXsheet, *m_downArrowInLevelStripCreatesNewFrame,
       *m_enableAutoStretch, *m_enableWinInk,
       *m_useOnionColorsForShiftAndTraceCB,
-      *m_showDisabledTools;
+      *m_showLevelBasedTools;
 
   DVGui::FileField *m_customProjectRootFileField;
 
@@ -222,7 +222,7 @@ private slots:
   void onCurrentColumnDataChanged(const TPixel32 &, bool isDragging);
   void onEnableWinInkChanged(int index);
   void onRasterBackgroundColorChanged(const TPixel32 &, bool isDragging);
-  void onShowDisabledToolsChanged(int);
+  void onShowLevelBasedToolsChanged(int);
 };
 
 //**********************************************************************************
