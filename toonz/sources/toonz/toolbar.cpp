@@ -109,11 +109,11 @@ struct {
       ActivateLevel::ToonzVector | ActivateLevel::Child |
       ActivateLevel::ZeraryFX | ActivateLevel::Palette),
      0},
-    {T_Hook, true, (ActivateLevel::Raster | ActivateLevel::Scan |
-                    ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
     {T_Tracker, true, (ActivateLevel::Raster | ActivateLevel::Scan |
                        ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
+     0},
+    {T_Hook, true, (ActivateLevel::Raster | ActivateLevel::Scan |
+                    ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
      0},
     {T_Plastic, true,
      (ActivateLevel::Raster | ActivateLevel::Scan | ActivateLevel::ToonzRaster |
