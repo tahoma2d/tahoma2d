@@ -31,6 +31,7 @@ protected slots:
   void setIsExpanded(bool expand);
   void updateToolbar();
   void onFrameSwitched();
+  void onXsheetChanged();
 };
 
 #endif  // TOOLBAR_H

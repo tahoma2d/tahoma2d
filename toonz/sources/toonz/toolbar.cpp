@@ -313,6 +313,9 @@ void Toolbar::showEvent(QShowEvent *e) {
   TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
   connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
 
+  TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
+  connect(xsheetHandle, SIGNAL(xsheetChanged()), this, SLOT(onXsheetChanged()));
+
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()),
           SLOT(onToolChanged()));
 }
@@ -322,6 +325,8 @@ void Toolbar::onFrameSwitched() {
   if (frameHandle->isPlaying()) return;
   updateToolbar();
 }
+
+void Toolbar::onXsheetChanged() { updateToolbar(); }
 
 //-----------------------------------------------------------------------------
 
