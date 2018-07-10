@@ -575,6 +575,10 @@ int main(int argc, char *argv[]) {
   // Apply translation to file writers properties
   Tiio::updateFileWritersPropertiesTranslation();
 
+  // Force to have left-to-right layout direction in any language environment.
+  // This fucntion has to be called after installTransrator().
+  a.setLayoutDirection(Qt::LeftToRight);
+
   splash.showMessage(offsetStr + "Loading styles ...", Qt::AlignCenter,
                      Qt::white);
   a.processEvents();
