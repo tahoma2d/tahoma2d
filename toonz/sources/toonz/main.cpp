@@ -629,7 +629,6 @@ int main(int argc, char *argv[]) {
   QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
   a.setStyleSheet(currentStyle);
 
-  TApp::instance()->setMainWindow(&w);
   w.setWindowTitle(applicationFullName);
   if (TEnv::getIsPortable()) {
     splash.showMessage(offsetStr + "Starting OpenToonz Portable ...",
