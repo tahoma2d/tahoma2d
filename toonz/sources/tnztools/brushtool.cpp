@@ -1752,8 +1752,8 @@ bool BrushTool::doFrameRangeStrokes(TFrameId firstFrameId, TStroke *firstStroke,
     swapped = true;
   }
 
-  firstImage->addStroke(first);
-  lastImage->addStroke(last);
+  firstImage->addStroke(first, false);
+  lastImage->addStroke(last, false);
   assert(firstFrameId <= lastFrameId);
 
   std::vector<TFrameId> allFids;
