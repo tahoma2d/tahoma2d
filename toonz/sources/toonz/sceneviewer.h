@@ -403,6 +403,7 @@ public slots:
   // for Ink&Paint work properly
   void onLevelSwitched();
   void onFrameSwitched();
+  void onOnionSkinMaskChanged() { GLInvalidateAll(); }
 
   void setReferenceMode(int referenceMode);
   void enablePreview(int previewMode);
