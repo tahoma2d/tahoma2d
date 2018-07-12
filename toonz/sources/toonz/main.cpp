@@ -310,6 +310,8 @@ int main(int argc, char *argv[]) {
         argumentPathValues.insert(q_itr->first,
                                   q_itr->second->getValue().getQString());
     }
+
+    argc = 1;
   }
 
 // Enables high-DPI scaling. This attribute must be set before QApplication is
