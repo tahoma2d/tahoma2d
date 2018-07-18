@@ -1,6 +1,4 @@
-Some of code in this repository is derived from thirdparty libralies.
-For files in the "thirdparty" directory: Please consult with the licenses in the appropriate READMEs or source codes.
-For files in the "stuff/library/mypaint brushes" directory: Please see the licenses in stuff/library/mypaint brushes/Licenses.txt.
+For licenses of third party libraries exploited in this software, please see the correspondent files in the same directory with this document.
 
 - - - - - - - - - - - - - - - -
 
