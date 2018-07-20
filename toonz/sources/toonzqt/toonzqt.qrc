@@ -313,5 +313,11 @@
       <file>Resources/switchport_off.svg</file>
       <file>Resources/switchport_over.svg</file>
       <file>Resources/plus.svg</file>
+      <file>Resources/schematic_selection_mode_on.svg</file>
+      <file>Resources/schematic_selection_mode_off.svg</file>
+      <file>Resources/schematic_zoom_mode_on.svg</file>
+      <file>Resources/schematic_zoom_mode_off.svg</file>
+      <file>Resources/schematic_hand_mode_on.svg</file>
+      <file>Resources/schematic_hand_mode_off.svg</file>
     </qresource>
 </RCC>
