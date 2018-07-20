@@ -227,7 +227,7 @@ private:
 
   bool m_fullSchematic, m_maximizedNode;
 
-  SchematicViewer::CursorMode m_cursorMode;
+  CursorMode m_cursorMode;
 
 private:
   void createToolbars();
