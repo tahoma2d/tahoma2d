@@ -43,6 +43,8 @@
 #include <QVBoxLayout>
 #include <QGestureEvent>
 
+#include <QDebug>
+
 // STD includes
 #include "assert.h"
 #include "math.h"
@@ -290,8 +292,8 @@ void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
     return;
   }
 
-  m_zooming = false;
-  m_panning = false;
+  m_zooming    = false;
+  m_panning    = false;
 
   m_buttonState = Qt::NoButton;
   QGraphicsView::mouseReleaseEvent(me);
@@ -302,11 +304,12 @@ void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
-  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
+  if (m_gestureActive) {
     fitScene();
     m_gestureActive = false;
     return;
   }
+
   QGraphicsView::mouseDoubleClickEvent(event);
 }
 //------------------------------------------------------------------
@@ -322,9 +325,12 @@ void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
 /*! Reimplemets the QGraphicsView::wheelEvent()
 */
 void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
-  me->accept();
-  double factor = exp(me->delta() * 0.001);
-  changeScale(me->pos(), factor);
+  if ((m_gestureActive == true && m_touchDevice == QTouchDevice::TouchScreen) ||
+      m_gestureActive == false) {
+    me->accept();
+    double factor = exp(me->delta() * 0.001);
+    changeScale(me->pos(), factor);
+  }
 }
 
 //------------------------------------------------------------------
@@ -493,11 +499,12 @@ void SchematicSceneViewer::showEvent(QShowEvent *se) {
 }
 
 //------------------------------------------------------------------
+
 void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
   if (type == QEvent::TouchBegin) {
     m_touchActive = true;
-    m_oldWinPos   = e->touchPoints().at(0).pos().toPoint();
-    m_oldScenePos = mapToScene(m_oldWinPos);
+    m_oldWinPos = m_prevWinPos = e->touchPoints().at(0).pos().toPoint();
+    m_oldScenePos              = mapToScene(m_oldWinPos);
     // obtain device type
     m_touchDevice = e->device()->type();
   } else if (m_touchActive) {
@@ -511,7 +518,7 @@ void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
       QTouchEvent::TouchPoint currPos = e->touchPoints().at(0);
       QPoint currWinPos               = currPos.pos().toPoint();
       if (!m_panning) {
-        QPointF deltaPoint = currWinPos - m_oldWinPos;
+        QPointF deltaPoint = currWinPos - m_prevWinPos;
         // minimize accidental and jerky zooming/rotating during 2 finger
         // panning
         if ((deltaPoint.manhattanLength() > 100) && !m_zooming) {
@@ -602,6 +609,42 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
 //------------------------------------------------------------------
 
 bool SchematicSceneViewer::event(QEvent *e) {
+  /*
+    switch (e->type()) {
+    case QEvent::TabletPress:
+      QTabletEvent *te = static_cast<QTabletEvent *>(e);
+      qDebug() << "[event] TabletPress: pointerType(" << te->pointerType()
+               << ") device(" << te->device() << ")";
+      break;
+    case QEvent::TabletRelease:
+      qDebug() << "[event] TabletRelease";
+      break;
+    case QEvent::TouchBegin:
+      qDebug() << "[event] TouchBegin";
+      break;
+    case QEvent::TouchEnd:
+      qDebug() << "[event] TouchEnd";
+      break;
+    case QEvent::TouchCancel:
+      qDebug() << "[event] TouchCancel";
+      break;
+    case QEvent::MouseButtonPress:
+      qDebug() << "[event] MouseButtonPress";
+      break;
+    case QEvent::MouseButtonDblClick:
+      qDebug() << "[event] MouseButtonDblClick";
+      break;
+    case QEvent::MouseButtonRelease:
+      qDebug() << "[event] MouseButtonRelease";
+      break;
+    case QEvent::Gesture:
+      qDebug() << "[event] Gesture";
+      break;
+    default:
+      break;
+    }
+  */
+
   if (CommandManager::instance()
           ->getAction(MI_TouchGestureControl)
           ->isChecked()) {
