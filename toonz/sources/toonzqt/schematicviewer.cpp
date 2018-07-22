@@ -217,7 +217,8 @@ SchematicSceneViewer::~SchematicSceneViewer() {}
 /*! Reimplemets the QGraphicsView::mousePressEvent()
 */
 void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
-  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
+  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
+      !m_stylusUsed) {
     return;
   }
 
@@ -257,7 +258,8 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
 /*! Reimplemets the QGraphicsView::mouseMoveEvent()
 */
 void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
-  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
+  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
+      !m_stylusUsed) {
     return;
   }
 
@@ -284,16 +286,19 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
 */
 void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
   // for touchscreens but not touchpads...
-  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
+  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
+      !m_stylusUsed) {
     m_gestureActive = false;
     m_zooming       = false;
     m_panning       = false;
+    m_stylusUsed    = false;
     m_scaleFactor   = 0.0;
     return;
   }
 
   m_zooming    = false;
   m_panning    = false;
+  m_stylusUsed = false;
 
   m_buttonState = Qt::NoButton;
   QGraphicsView::mouseReleaseEvent(me);
@@ -304,7 +309,7 @@ void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
-  if (m_gestureActive) {
+  if (m_gestureActive && !m_stylusUsed) {
     fitScene();
     m_gestureActive = false;
     return;
@@ -496,6 +501,18 @@ void SchematicSceneViewer::showEvent(QShowEvent *se) {
     resetMatrix();
     centerOn(rect.center());
   }
+}
+
+//------------------------------------------------------------------
+
+void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
+  if (e->type() == QTabletEvent::TabletPress) {
+    m_stylusUsed = e->pointerType() ? true : false;
+  } else if (e->type() == QTabletEvent::TabletRelease) {
+    m_stylusUsed = false;
+  }
+
+  e->accept();
 }
 
 //------------------------------------------------------------------

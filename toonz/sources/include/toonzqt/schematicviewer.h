@@ -124,6 +124,8 @@ class DVAPI SchematicSceneViewer final : public QGraphicsView {
   bool m_panning                         = false;
   double m_scaleFactor;  // used for zoom gesture
 
+  bool m_stylusUsed = false;
+
   CursorMode m_cursorMode;
 
 public:
@@ -146,6 +148,7 @@ protected:
   void showEvent(QShowEvent *se) override;
   void mouseDoubleClickEvent(QMouseEvent *event);
 
+  void tabletEvent(QTabletEvent *e);
   void touchEvent(QTouchEvent *e, int type);
   void gestureEvent(QGestureEvent *e);
 
