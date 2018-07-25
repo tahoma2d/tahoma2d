@@ -509,6 +509,26 @@ void SchematicSceneViewer::showEvent(QShowEvent *se) {
 
 //------------------------------------------------------------------
 
+void SchematicSceneViewer::enterEvent(QEvent *e) {
+  switch (m_cursorMode) {
+  case CursorMode::Hand:
+    setToolCursor(this, ToolCursor::PanCursor);
+    break;
+  case CursorMode::Zoom:
+    setToolCursor(this, ToolCursor::ZoomCursor);
+    break;
+  default:
+    setToolCursor(this, ToolCursor::StrokeSelectCursor);
+    break;
+  }
+}
+
+//------------------------------------------------------------------
+
+void SchematicSceneViewer::leaveEvent(QEvent *e) { setCursor(Qt::ArrowCursor); }
+
+//------------------------------------------------------------------
+
 void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
   if (e->type() == QTabletEvent::TabletPress) {
     m_stylusUsed = e->pointerType() ? true : false;
@@ -1176,21 +1196,12 @@ void SchematicViewer::setCursorMode(CursorMode cursorMode) {
 
 //------------------------------------------------------------------
 
-void SchematicViewer::selectModeEnabled() {
-  setCursorMode(CursorMode::Select);
-  setToolCursor(this, ToolCursor::StrokeSelectCursor);
-}
+void SchematicViewer::selectModeEnabled() { setCursorMode(CursorMode::Select); }
 
 //------------------------------------------------------------------
 
-void SchematicViewer::zoomModeEnabled() {
-  setCursorMode(CursorMode::Zoom);
-  setToolCursor(this, ToolCursor::ZoomCursor);
-}
+void SchematicViewer::zoomModeEnabled() { setCursorMode(CursorMode::Zoom); }
 
 //------------------------------------------------------------------
 
-void SchematicViewer::handModeEnabled() {
-  setCursorMode(CursorMode::Hand);
-  setToolCursor(this, ToolCursor::PanCursor);
-}
+void SchematicViewer::handModeEnabled() { setCursorMode(CursorMode::Hand); }
