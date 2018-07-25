@@ -4,7 +4,11 @@
 #include "tools/tool.h"
 #include "tools/cursors.h"
 
+#ifdef TOONZQT_EXPORTS
+#include "toonz/preferences.h"
+#else
 #include "../toonz/preferences.h"
+#endif
 
 #include <QWidget>
 #include <QPixmap>

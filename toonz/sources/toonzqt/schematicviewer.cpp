@@ -1,5 +1,4 @@
 
-
 #include "toonzqt/schematicviewer.h"
 
 // TnzQt includes
@@ -31,6 +30,9 @@
 #include "toonz/txshleveltypes.h"
 
 #include "../toonz/menubarcommandids.h"
+
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
 
 // Qt includes
 #include <QGraphicsSceneMouseEvent>
@@ -1174,12 +1176,21 @@ void SchematicViewer::setCursorMode(CursorMode cursorMode) {
 
 //------------------------------------------------------------------
 
-void SchematicViewer::selectModeEnabled() { setCursorMode(CursorMode::Select); }
+void SchematicViewer::selectModeEnabled() {
+  setCursorMode(CursorMode::Select);
+  setToolCursor(this, ToolCursor::StrokeSelectCursor);
+}
 
 //------------------------------------------------------------------
 
-void SchematicViewer::zoomModeEnabled() { setCursorMode(CursorMode::Zoom); }
+void SchematicViewer::zoomModeEnabled() {
+  setCursorMode(CursorMode::Zoom);
+  setToolCursor(this, ToolCursor::ZoomCursor);
+}
 
 //------------------------------------------------------------------
 
-void SchematicViewer::handModeEnabled() { setCursorMode(CursorMode::Hand); }
+void SchematicViewer::handModeEnabled() {
+  setCursorMode(CursorMode::Hand);
+  setToolCursor(this, ToolCursor::PanCursor);
+}
