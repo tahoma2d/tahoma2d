@@ -168,9 +168,12 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   QMatrix4x4 m_projectionMatrix;
 
+  // Used for texture management.
+  // Changing dock / float state of the panel will alter the context.
+  // So discarding the resources in old context in initializeGL.
+  TGlContext m_currentContext;
+
 public:
-  // iwsw commented out temporarily
-  // Ghibli3DLutUtil* get3DLutUtil(){ return m_ghibli3DLutUtil; }
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
     CAMERA3D_REFERENCE = 2,
@@ -381,6 +384,8 @@ protected:
 
   void setFocus() override { QWidget::setFocus(); };
 
+  void registerContext();
+
 public slots:
 
   void resetSceneViewer();
@@ -398,6 +403,7 @@ public slots:
   // for Ink&Paint work properly
   void onLevelSwitched();
   void onFrameSwitched();
+  void onOnionSkinMaskChanged() { GLInvalidateAll(); }
 
   void setReferenceMode(int referenceMode);
   void enablePreview(int previewMode);

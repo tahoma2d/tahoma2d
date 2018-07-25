@@ -3,6 +3,7 @@
 #include "toonzqt/fxschematicscene.h"
 
 // TnzQt includes
+#include "toonzqt/fxtypes.h"
 #include "toonzqt/fxschematicnode.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/dvdialog.h"
@@ -27,6 +28,7 @@
 #include "toonz/tcolumnhandle.h"
 #include "toonz/tframehandle.h"
 #include "toonz/tobjecthandle.h"
+#include "toonz/childstack.h"
 
 // TnzBase includes
 #include "tmacrofx.h"
@@ -36,11 +38,14 @@
 
 // TnzCore includes
 #include "tconst.h"
+#include "tenv.h"
 
 // Qt includes
 #include <QMenu>
 #include <QApplication>
 #include <QGraphicsSceneContextMenuEvent>
+
+TEnv::IntVar IconifyFxSchematicNodes("IconifyFxSchematicNodes", 0);
 
 namespace {
 
@@ -302,7 +307,10 @@ FxSchematicScene::FxSchematicScene(QWidget *parent)
     , m_lastPos(0, 0)
     , m_currentFxNode(0)
     , m_gridDimension(eSmall)
-    , m_isLargeScaled(true) {
+    , m_isNormalIconView(!IconifyFxSchematicNodes)
+    , m_viewer() {
+  m_viewer = (SchematicViewer *)parent;
+
   m_selection = new FxSelection();
   m_selection->setFxSchematicScene(this);
 
@@ -345,13 +353,7 @@ void FxSchematicScene::setApplication(TApplication *app) {
 //------------------------------------------------------------------
 
 void FxSchematicScene::updateScene() {
-  if (!views().empty())
-#if QT_VERSION >= 0x050000
-    m_isLargeScaled = views().at(0)->matrix().determinant() >= 1.0;
-#else
-    m_isLargeScaled = views().at(0)->matrix().det() >= 1.0;
-#endif
-  m_disconnectionLinks.clearAll();
+  if (!views().empty()) m_disconnectionLinks.clearAll();
   m_connectionLinks.clearAll();
   m_selectionOldPos.clear();
 
@@ -908,6 +910,15 @@ void FxSchematicScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
 
   menu.addMenu(m_addFxContextMenu.getAddMenu());
   if (addOutputFx) menu.addAction(addOutputFx);
+
+  // Close sub xsheet and move to parent sheet
+  ToonzScene *scene      = getXsheet()->getScene();
+  ChildStack *childStack = scene->getChildStack();
+  if (childStack && childStack->getAncestorCount() > 0) {
+    menu.addSeparator();
+    menu.addAction(CommandManager::instance()->getAction("MI_CloseChild"));
+  }
+
   menu.addSeparator();
   menu.addAction(copy);
   menu.addAction(cut);
@@ -946,7 +957,7 @@ QPointF FxSchematicScene::nearestPoint(const QPointF &point) {
   if (item) return rect.bottomRight();
   item = itemAt(rect.topLeft());
   if (item) return rect.topLeft();
-  item                    = itemAt(rect.topRight());
+  item = itemAt(rect.topRight());
 #endif
   if (item) return rect.topRight();
   return QPointF();
@@ -1374,13 +1385,6 @@ void FxSchematicScene::onCollapse(const QList<TFxP> &fxs) {
 
 //------------------------------------------------------------------
 
-void FxSchematicScene::onOpenSubxsheet() {
-  CommandManager *cm = CommandManager::instance();
-  cm->execute("MI_OpenChild");
-}
-
-//------------------------------------------------------------------
-
 TXsheet *FxSchematicScene::getXsheet() { return m_xshHandle->getXsheet(); }
 
 //------------------------------------------------------------------
@@ -1442,6 +1446,14 @@ void FxSchematicScene::onCurrentFxSwitched() {
 void FxSchematicScene::onCurrentColumnChanged(int index) {
   m_app->getCurrentColumn()->setColumnIndex(index);
   m_app->getCurrentObject()->setObjectId(TStageObjectId::ColumnId(index));
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::onIconifyNodesToggled(bool iconified) {
+  m_isNormalIconView      = !iconified;
+  IconifyFxSchematicNodes = (iconified) ? 1 : 0;
+  updateScene();
 }
 
 //------------------------------------------------------------------

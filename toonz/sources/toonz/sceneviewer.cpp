@@ -83,6 +83,7 @@
 #endif
 #include <QGLContext>
 #include <QOpenGLFramebufferObject>
+#include <QMainWindow>
 
 #include "sceneviewer.h"
 
@@ -91,6 +92,19 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
 
 //-------------------------------------------------------------------------------
 namespace {
+
+int l_mainDisplayListsSpaceId =
+    -1;  //!< Display lists space id associated with SceneViewers
+std::set<TGlContext>
+    l_contexts;  //!< Stores every SceneViewer context (see ~SceneViewer)
+
+//-------------------------------------------------------------------------------
+
+struct DummyProxy : public TGLDisplayListsProxy {
+  ~DummyProxy() {}
+  void makeCurrent() {}
+  void doneCurrent() {}
+};
 
 //-------------------------------------------------------------------------------
 
@@ -532,6 +546,12 @@ void SceneViewer::setVisual(const ImagePainter::VisualSettings &settings) {
 
 SceneViewer::~SceneViewer() {
   if (m_fbo) delete m_fbo;
+
+  // release all the registered context (once when exit the software)
+  std::set<TGlContext>::iterator ct, cEnd(l_contexts.end());
+  for (ct = l_contexts.begin(); ct != cEnd; ++ct)
+    TGLDisplayListsManager::instance()->releaseContext(*ct);
+  l_contexts.clear();
 }
 
 //-------------------------------------------------------------------------------
@@ -724,7 +744,7 @@ void SceneViewer::showEvent(QShowEvent *) {
           SLOT(update()));
 
   connect(app->getCurrentOnionSkin(), SIGNAL(onionSkinMaskChanged()), this,
-          SLOT(update()));
+          SLOT(onOnionSkinMaskChanged()));
 
   connect(app->getCurrentLevel(), SIGNAL(xshLevelChanged()), this,
           SLOT(update()));
@@ -824,6 +844,8 @@ double SceneViewer::getHGuide(int index) { return m_hRuler->getGuide(index); }
 
 void SceneViewer::initializeGL() {
   initializeOpenGLFunctions();
+
+  registerContext();
 
   // to be computed once through the software
   if (m_lutCalibrator) {
@@ -2579,4 +2601,46 @@ void SceneViewer::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+}
+
+//-----------------------------------------------------------------------------
+// called from SceneViewer::initializeGL()
+
+void SceneViewer::registerContext() {
+  // release the old context, if any
+  // this will be happen when dock / float the viewer panel.
+  bool hasOldContext;
+#ifdef _WIN32
+  hasOldContext =
+      (m_currentContext.first != nullptr && m_currentContext.second != nullptr);
+#else
+  hasOldContext = m_currentContext != nullptr;
+#endif
+  if (hasOldContext) {
+    int ret = l_contexts.erase(m_currentContext);
+    if (ret)
+      TGLDisplayListsManager::instance()->releaseContext(m_currentContext);
+  }
+
+  // then, register context and the space Id correspondent to it.
+  int displayListId;
+  if (TApp::instance()->getMainWindow() &&
+      TApp::instance()->getMainWindow()->isAncestorOf(this) &&
+      QThread::currentThread() == qGuiApp->thread()) {
+    // obtain displaySpaceId for main thread
+    if (l_mainDisplayListsSpaceId == -1)
+      l_mainDisplayListsSpaceId =
+          TGLDisplayListsManager::instance()->storeProxy(new DummyProxy);
+
+    displayListId = l_mainDisplayListsSpaceId;
+  }
+  // for the other cases (such as for floating viewer), it can't share the
+  // context so
+  // obtain different id
+  else
+    displayListId =
+        TGLDisplayListsManager::instance()->storeProxy(new DummyProxy);
+  TGlContext tglContext(tglGetCurrentContext());
+  TGLDisplayListsManager::instance()->attachContext(displayListId, tglContext);
+  l_contexts.insert(tglContext);
 }

@@ -4,6 +4,8 @@
 #define FXSCHEMATICNODE_H
 
 // TnzQt includes
+#include "fxtypes.h"
+
 #include "schematicnode.h"
 
 // Qt includes
@@ -31,29 +33,6 @@ class FxSchematicNormalFxNode;
 class FxSchematicXSheetNode;
 class FxSchematicOutputNode;
 
-//==============================================================
-
-enum eFxSchematicPortType {
-  eFxOutputPort     = 200,
-  eFxInputPort      = 201,
-  eFxLinkPort       = 202,
-  eFxGroupedInPort  = 203,
-  eFxGroupedOutPort = 204
-};
-
-enum eFxType {
-  eNormalFx              = 100,
-  eZeraryFx              = 101,
-  eMacroFx               = 102,
-  eColumnFx              = 103,
-  eOutpuFx               = 104,
-  eXSheetFx              = 106,
-  eGroupedFx             = 107,
-  eNormalImageAdjustFx   = 108,
-  eNormalLayerBlendingFx = 109,
-  eNormalMatteFx         = 110
-};
-
 //*****************************************************
 //    FxColumnPainter
 //*****************************************************
@@ -76,8 +55,6 @@ public:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
-
-  QLinearGradient getGradientByLevelType(int type);
 
 public slots:
 
@@ -126,7 +103,6 @@ class FxPainter final : public QObject, public QGraphicsItem {
   // to obtain the fx icons for zoom out view of the schematic
   std::string m_fxType;
 
-  QLinearGradient getGradientByLevelType(eFxType);
   void paint_small(QPainter *painter);
 
 public:
@@ -297,7 +273,7 @@ protected:
   eFxType m_type;
   bool m_isCurrentFxLinked;
 
-  bool m_isLargeScaled;
+  bool m_isNormalIconView;
 
 protected:
   //! If the fx has dynamic port groups, ensures that each group always has at
@@ -360,7 +336,8 @@ public:
   virtual bool isCached() const;
   virtual void resize(bool maximizeNode) {}
 
-  bool isLargeScaled() { return m_isLargeScaled; }
+  void toggleNormalIconView() { m_isNormalIconView = !m_isNormalIconView; }
+  bool isNormalIconView() { return m_isNormalIconView; }
 signals:
 
   void switchCurrentFx(TFx *fx);
@@ -466,6 +443,7 @@ protected:
 protected slots:
 
   void onRenderToggleClicked(bool);
+  void onCameraStandToggleClicked(int);
   void onNameChanged();
 };
 

@@ -1484,9 +1484,15 @@ void BrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
     TRectD invalidateRect;
     TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
+    TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
 
     // In order to clear the previous brush tip
     invalidateRect += TRectD(m_brushPos - halfThick, m_brushPos + halfThick);
+
+    // In order to clear the previous snap indicator
+    if (m_foundLastSnap)
+      invalidateRect +=
+          TRectD(m_lastSnapPoint - snapThick, m_lastSnapPoint + snapThick);
 
     m_currThickness = thickness;
 
@@ -1503,7 +1509,7 @@ void BrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
     if (m_foundLastSnap)
       invalidateRect +=
-          TRectD(m_lastSnapPoint - halfThick, m_lastSnapPoint + halfThick);
+          TRectD(m_lastSnapPoint - snapThick, m_lastSnapPoint + snapThick);
 
     if (e.isShiftPressed()) {
       m_smoothStroke.clearPoints();
@@ -1746,8 +1752,8 @@ bool BrushTool::doFrameRangeStrokes(TFrameId firstFrameId, TStroke *firstStroke,
     swapped = true;
   }
 
-  firstImage->addStroke(first);
-  lastImage->addStroke(last);
+  firstImage->addStroke(first, false);
+  lastImage->addStroke(last, false);
   assert(firstFrameId <= lastFrameId);
 
   std::vector<TFrameId> allFids;
@@ -2097,12 +2103,22 @@ void BrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     m_brushPos = pos;
 
     if (m_targetType & TTool::Vectors) {
+      TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
+      // In order to clear the previous snap indicator
+      if (m_foundFirstSnap)
+        invalidateRect +=
+            TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
+
       m_firstSnapPoint = pos;
       m_foundFirstSnap = false;
       m_altPressed     = e.isAltPressed() && !e.isCtrlPressed();
       checkStrokeSnapping(true, m_altPressed);
       checkGuideSnapping(true, m_altPressed);
       m_brushPos = m_firstSnapPoint;
+      // In order to draw the snap indicator
+      if (m_foundFirstSnap)
+        invalidateRect +=
+            TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
     }
     invalidateRect += TRectD(pos - halfThick, pos + halfThick);
   }
