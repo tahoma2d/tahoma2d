@@ -227,19 +227,22 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
   }
 
   m_buttonState = me->button();
-  m_oldWinPos = m_prevWinPos = me->pos();
-  m_oldScenePos              = mapToScene(m_oldWinPos);
+  m_oldWinPos   = me->pos();
+  m_oldScenePos = mapToScene(m_oldWinPos);
 
   if (m_buttonState == Qt::LeftButton) {
     if (m_cursorMode == CursorMode::Zoom) {
-      m_zooming = true;
+      m_zoomPoint = me->pos();
+      m_zooming   = true;
       return;
     } else if (m_cursorMode == CursorMode::Hand) {
-      m_panning = true;
+      m_firstPanPoint = mapToScene(me->pos());
+      m_panning       = true;
       return;
     }
+  } else if (m_buttonState == Qt::MidButton) {
+    m_firstPanPoint = mapToScene(me->pos());
   }
-
   bool drawRect                       = true;
   QList<QGraphicsItem *> pointedItems = items(me->pos());
   int i;
@@ -271,13 +274,16 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
   QPointF currScenePos = mapToScene(currWinPos);
   if ((m_cursorMode == CursorMode::Hand && m_panning) ||
       m_buttonState == Qt::MidButton) {
-    panQt(currWinPos);
-  } else if (m_cursorMode == CursorMode::Zoom && m_zooming) {
-    int deltaY     = (m_prevWinPos.y() - me->pos().y()) * 10;
-    double factorY = exp(deltaY * 0.001);
-    changeScale(m_oldWinPos, factorY);
-    m_prevWinPos = me->pos();
+    QPointF deltaPoint = ((mapToScene(me->pos()) * getDevPixRatio()) -
+                          (m_firstPanPoint * getDevPixRatio()));
+    panQt(deltaPoint);
   } else {
+    if (m_cursorMode == CursorMode::Zoom && m_zooming) {
+      //	  int deltaY = (m_prevWinPos.y() - me->pos().y()) * 10;
+      int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
+      double factorY = exp(deltaY * 0.001);
+      changeScale(m_zoomPoint, factorY);
+    }
     m_oldWinPos   = currWinPos;
     m_oldScenePos = currScenePos;
   }
@@ -480,21 +486,14 @@ void SchematicSceneViewer::normalizeScene() {
 }
 
 //------------------------------------------------------------------
-void SchematicSceneViewer::panQt(QPoint currWinPos) {
-  QPointF currScenePos = mapToScene(currWinPos);
-
+void SchematicSceneViewer::panQt(const QPointF &delta) {
   setInteractive(false);
   // I need to disable QGraphicsView event handling to avoid the generation of
   // 'virtual' mouseMoveEvent
-  QPointF deltaPoint = currScenePos - m_oldScenePos;
-  translate(deltaPoint.x(), deltaPoint.y());
-  currScenePos = mapToScene(currWinPos);
+  translate(delta.x(), delta.y());
   // translate has changed the matrix affecting the mapToScene() method. I
   // have to recompute currScenePos
   setInteractive(true);
-
-  m_oldWinPos   = currWinPos;
-  m_oldScenePos = currScenePos;
 }
 
 void SchematicSceneViewer::showEvent(QShowEvent *se) {
@@ -541,47 +540,6 @@ void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
 
 //------------------------------------------------------------------
 
-void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
-  if (type == QEvent::TouchBegin) {
-    m_touchActive = true;
-    m_oldWinPos = m_prevWinPos = e->touchPoints().at(0).pos().toPoint();
-    m_oldScenePos              = mapToScene(m_oldWinPos);
-    // obtain device type
-    m_touchDevice = e->device()->type();
-  } else if (m_touchActive) {
-    // touchpads must have 2 finger panning for tools and navigation to be
-    // functional
-    // on other devices, 1 finger panning is preferred
-    if ((e->touchPoints().count() == 2 &&
-         m_touchDevice == QTouchDevice::TouchPad) ||
-        (e->touchPoints().count() == 1 &&
-         m_touchDevice == QTouchDevice::TouchScreen)) {
-      QTouchEvent::TouchPoint currPos = e->touchPoints().at(0);
-      QPoint currWinPos               = currPos.pos().toPoint();
-      if (!m_panning) {
-        QPointF deltaPoint = currWinPos - m_prevWinPos;
-        // minimize accidental and jerky zooming/rotating during 2 finger
-        // panning
-        if ((deltaPoint.manhattanLength() > 100) && !m_zooming) {
-          m_panning = true;
-        }
-      }
-      if (m_panning) {
-        m_oldWinPos   = currPos.lastPos().toPoint();
-        m_oldScenePos = mapToScene(m_oldWinPos);
-        panQt(currWinPos);
-      }
-    }
-  }
-  if (type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
-    m_touchActive = false;
-    m_panning     = false;
-  }
-  e->accept();
-}
-
-//------------------------------------------------------------------
-
 void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
   m_gestureActive = false;
   if (QGesture *swipe = e->gesture(Qt::SwipeGesture)) {
@@ -592,19 +550,14 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
   if (QGesture *pinch = e->gesture(Qt::PinchGesture)) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);
     QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-    QPoint currCenter                      = gesture->centerPoint().toPoint();
-    QPoint currWinCenter                   = mapFromGlobal(currCenter);
+    QPoint firstCenter                     = gesture->centerPoint().toPoint();
 
     if (gesture->state() == Qt::GestureStarted) {
-      m_oldWinPos = m_prevWinPos = currWinCenter;
-      m_oldScenePos              = mapToScene(m_oldWinPos);
-      m_gestureActive            = true;
+      m_gestureActive = true;
     } else if (gesture->state() == Qt::GestureFinished) {
-      m_oldWinPos = m_prevWinPos = currWinCenter;
-      m_oldScenePos              = mapToScene(m_oldWinPos);
-      m_gestureActive            = false;
-      m_zooming                  = false;
-      m_scaleFactor              = 0.0;
+      m_gestureActive = false;
+      m_zooming       = false;
+      m_scaleFactor   = 0.0;
     } else {
       if (changeFlags & QPinchGesture::ScaleFactorChanged) {
         double scaleFactor = gesture->scaleFactor();
@@ -619,7 +572,6 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
           decimalValue /= 1.5;
           scaleFactor = 1 - decimalValue;
         }
-
         if (!m_zooming) {
           double delta = scaleFactor - 1;
           m_scaleFactor += delta;
@@ -628,17 +580,16 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
           }
         }
         if (m_zooming) {
-          changeScale(m_oldWinPos, scaleFactor);
-          m_prevWinPos = currWinCenter;
+          changeScale(firstCenter * getDevPixRatio(), scaleFactor);
         }
         m_gestureActive = true;
       }
 
       if (changeFlags & QPinchGesture::CenterPointChanged) {
-        QPointF deltaPoint =
-            gesture->centerPoint() - gesture->lastCenterPoint();
-        if (deltaPoint.manhattanLength() > 1) {
-          // panQt(currWinCenter);
+        QPointF centerDelta = (gesture->centerPoint() * getDevPixRatio()) -
+                              (gesture->lastCenterPoint() * getDevPixRatio());
+        if (centerDelta.manhattanLength() > 1) {
+          // panQt(centerDelta.toPoint());
         }
         m_gestureActive = true;
       }
@@ -647,7 +598,41 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
   e->accept();
 }
 
-//------------------------------------------------------------------
+void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
+  if (type == QEvent::TouchBegin) {
+    m_touchActive   = true;
+    m_firstPanPoint = e->touchPoints().at(0).pos();
+    // obtain device type
+    m_touchDevice = e->device()->type();
+  } else if (m_touchActive) {
+    // touchpads must have 2 finger panning for tools and navigation to be
+    // functional on other devices, 1 finger panning is preferred
+    if ((e->touchPoints().count() == 2 &&
+         m_touchDevice == QTouchDevice::TouchPad) ||
+        (e->touchPoints().count() == 1 &&
+         m_touchDevice == QTouchDevice::TouchScreen)) {
+      QTouchEvent::TouchPoint panPoint = e->touchPoints().at(0);
+      if (!m_panning) {
+        QPointF deltaPoint = panPoint.pos() - m_firstPanPoint;
+        // minimize accidental and jerky zooming/rotating during 2 finger
+        // panning
+        if ((deltaPoint.manhattanLength() > 100) && !m_zooming) {
+          m_panning = true;
+        }
+      }
+      if (m_panning) {
+        QPointF centerDelta = (panPoint.pos() * getDevPixRatio()) -
+                              (panPoint.lastPos() * getDevPixRatio());
+        panQt(centerDelta.toPoint());
+      }
+    }
+  }
+  if (type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
+    m_touchActive = false;
+    m_panning     = false;
+  }
+  e->accept();
+}
 
 bool SchematicSceneViewer::event(QEvent *e) {
   /*

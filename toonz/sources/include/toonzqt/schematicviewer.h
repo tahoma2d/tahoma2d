@@ -135,7 +135,7 @@ public:
   ~SchematicSceneViewer();
 
   void zoomQt(bool zoomin, bool resetZoom);
-  void panQt(QPoint currWinPos);
+  void panQt(const QPointF &delta);
 
   QPointF getOldScenePos() { return m_oldScenePos; }
 
@@ -169,7 +169,8 @@ private:
   Qt::MouseButton m_buttonState;
   QPoint m_oldWinPos;
   QPointF m_oldScenePos;
-  QPoint m_prevWinPos;
+  QPointF m_firstPanPoint;
+  QPoint m_zoomPoint;
   bool m_firstShowing;
 
 private:
