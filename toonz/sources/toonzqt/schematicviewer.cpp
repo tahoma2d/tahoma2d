@@ -621,9 +621,10 @@ void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
         }
       }
       if (m_panning) {
-        QPointF centerDelta = (panPoint.pos() * getDevPixRatio()) -
-                              (panPoint.lastPos() * getDevPixRatio());
-        panQt(centerDelta.toPoint());
+        QPointF centerDelta =
+            (mapToScene(panPoint.pos().toPoint()) * getDevPixRatio()) -
+            (mapToScene(panPoint.lastPos().toPoint()) * getDevPixRatio());
+        panQt(centerDelta);
       }
     }
   }
