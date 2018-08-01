@@ -295,20 +295,11 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
 /*! Reimplemets the QGraphicsView::mouseReleaseEvent()
 */
 void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
-  // for touchscreens but not touchpads...
-  if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
-      !m_stylusUsed) {
-    m_gestureActive = false;
-    m_zooming       = false;
-    m_panning       = false;
-    m_stylusUsed    = false;
-    m_scaleFactor   = 0.0;
-    return;
-  }
-
-  m_zooming    = false;
-  m_panning    = false;
-  m_stylusUsed = false;
+  m_gestureActive = false;
+  m_zooming       = false;
+  m_panning       = false;
+  m_stylusUsed    = false;
+  m_scaleFactor   = 0.0;
 
   m_buttonState = Qt::NoButton;
   QGraphicsView::mouseReleaseEvent(me);
@@ -320,13 +311,20 @@ void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
 
 void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
   if (m_gestureActive && !m_stylusUsed) {
-    fitScene();
     m_gestureActive = false;
-    return;
+    QGraphicsItem *item =
+        scene()->itemAt(mapToScene(event->pos()), QTransform());
+    if (!item) {
+      fitScene();
+      return;
+    }
+
+    mousePressEvent(event);
   }
 
   QGraphicsView::mouseDoubleClickEvent(event);
 }
+
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
