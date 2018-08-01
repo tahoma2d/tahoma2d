@@ -222,8 +222,8 @@ public:
 
 private:
   SchematicPort *searchPort(const QPointF &scenePos) override;
-  void hideSnappedLinks() override;
-  void showSnappedLinks() override;
+  void hideSnappedLinks(SchematicPort *linkingPort) override;
+  void showSnappedLinks(SchematicPort *linkingPort) override;
 };
 
 //========================================================
@@ -247,8 +247,8 @@ public:
 
 private:
   SchematicPort *searchPort(const QPointF &scenePos) override;
-  void hideSnappedLinks() override;
-  void showSnappedLinks() override;
+  void hideSnappedLinks(SchematicPort *) override;
+  void showSnappedLinks(SchematicPort *) override;
 };
 
 //========================================================

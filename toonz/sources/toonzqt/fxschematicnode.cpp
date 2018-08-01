@@ -1373,7 +1373,7 @@ void FxSchematicPort::linkEffects(TFx *inputFx, TFx *fx, int inputId) {
 
 //-----------------------------------------------------
 
-void FxSchematicPort::hideSnappedLinks() {
+void FxSchematicPort::hideSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   if (m_linkingTo->getType() == eFxInputPort &&
       m_linkingTo->getLinkCount() == 1) {
@@ -1405,7 +1405,7 @@ void FxSchematicPort::hideSnappedLinks() {
 
 //-----------------------------------------------------
 
-void FxSchematicPort::showSnappedLinks() {
+void FxSchematicPort::showSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   if (m_linkingTo->getType() == eFxInputPort &&
       m_linkingTo->getLinkCount() == 1) {
@@ -1591,7 +1591,8 @@ void FxSchematicPort::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
 
 void FxSchematicPort::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   SchematicPort::mouseMoveEvent(me);
-  if (m_ghostLink && !m_ghostLink->isVisible()) m_ghostLink->show();
+  if (!m_ghostLinks.isEmpty() && !m_ghostLinks[0]->isVisible())
+    m_ghostLinks[0]->show();
   bool cntr = me->modifiers() == Qt::ControlModifier;
   if (m_currentTargetPort) {
     m_currentTargetPort->resetSnappedLinksOnDynamicPortFx();
@@ -1623,7 +1624,12 @@ void FxSchematicPort::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   if (targetFx != m_ownerFx && cntr && getType() == eFxOutputPort)
     targetPort->handleSnappedLinksOnDynamicPortFx(groupedPorts, portId);
   else if (targetFx == m_ownerFx && getType() == eFxInputPort) {
-    if (m_ghostLink) m_ghostLink->hide();
+    if (!m_ghostLinks.isEmpty()) {
+      for (SchematicLink *ghostLink : m_ghostLinks)
+        scene()->removeItem(ghostLink);
+      qDeleteAll(m_ghostLinks.begin(), m_ghostLinks.end());
+      m_ghostLinks.clear();
+    }
     FxSchematicNode *thisNode = dynamic_cast<FxSchematicNode *>(getNode());
     int thisId                = thisNode->getInputDockId(getDock());
     TFxPort *thisFxPort       = targetFx->getInputPort(thisId);

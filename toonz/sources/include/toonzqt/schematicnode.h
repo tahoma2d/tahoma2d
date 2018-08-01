@@ -245,6 +245,8 @@ public:
   void updatePath(SchematicPort *startPort, SchematicPort *endPort);
   void updatePath() { updatePath(m_startPort, m_endPort); }
 
+  void updateEndPos(const QPointF &endPos);
+
   //! Sets the start SchematicPort of the link to \b startPort.
   void setStartPort(SchematicPort *startPort) { m_startPort = startPort; }
   //! Sets the start SchematicPort of the link to \b startPort.
@@ -309,7 +311,7 @@ protected:
   SchematicNode *m_node;
   QPointF m_hook;
   bool m_highlighted;
-  SchematicLink *m_ghostLink;
+  QList<SchematicLink *> m_ghostLinks;
   SchematicPort *m_linkingTo;
   QList<SchematicLink *> m_links;
   int m_type;
@@ -390,8 +392,11 @@ protected:
 
 private:
   virtual SchematicPort *searchPort(const QPointF &scenePos) = 0;
-  virtual void hideSnappedLinks()                            = 0;
-  virtual void showSnappedLinks()                            = 0;
+
+  // linkingPort is used only for stage schematic port -
+  // in order to enable to connect from multiple node at the same time.
+  virtual void hideSnappedLinks(SchematicPort *linkingPort) = 0;
+  virtual void showSnappedLinks(SchematicPort *linkingPort) = 0;
 
 signals:
   void isClicked();

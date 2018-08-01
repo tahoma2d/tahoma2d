@@ -224,8 +224,8 @@ private:
 
   void resetSnappedLinksOnDynamicPortFx();
 
-  void hideSnappedLinks() override;
-  void showSnappedLinks() override;
+  void hideSnappedLinks(SchematicPort *) override;
+  void showSnappedLinks(SchematicPort *) override;
 };
 
 //*****************************************************

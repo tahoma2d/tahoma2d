@@ -836,33 +836,33 @@ SchematicPort *StageSchematicNodePort::searchPort(const QPointF &scenePos) {
 
 //--------------------------------------------------------
 
-void StageSchematicNodePort::hideSnappedLinks() {
-  if (!m_linkingTo) return;
+void StageSchematicNodePort::hideSnappedLinks(SchematicPort *linkingPort) {
+  if (!linkingPort) return;
   if (getType() == eStageChildPort &&
-      m_linkingTo->getType() == eStageParentPort &&
-      m_linkingTo->getLinkCount() == 1)
-    m_linkingTo->getLink(0)->hide();
+      linkingPort->getType() == eStageParentPort &&
+      linkingPort->getLinkCount() == 1)
+    linkingPort->getLink(0)->hide();
   if (getType() == eStageParentPort &&
-      m_linkingTo->getType() == eStageChildPort && getLinkCount() == 1)
+      linkingPort->getType() == eStageChildPort && getLinkCount() == 1)
     getLink(0)->hide();
 }
 
 //--------------------------------------------------------
 
-void StageSchematicNodePort::showSnappedLinks() {
-  if (!m_linkingTo) return;
+void StageSchematicNodePort::showSnappedLinks(SchematicPort *linkingPort) {
+  if (!linkingPort) return;
   if (getType() == eStageChildPort &&
-      m_linkingTo->getType() == eStageParentPort &&
-      m_linkingTo->getLinkCount() == 1) {
-    m_linkingTo->getLink(0)->show();
-    m_linkingTo->highLight(true);
-    m_linkingTo->update();
+      linkingPort->getType() == eStageParentPort &&
+      linkingPort->getLinkCount() == 1) {
+    linkingPort->getLink(0)->show();
+    linkingPort->highLight(true);
+    linkingPort->update();
   }
   if (getType() == eStageParentPort &&
-      m_linkingTo->getType() == eStageChildPort && getLinkCount() == 1) {
+      linkingPort->getType() == eStageChildPort && getLinkCount() == 1) {
     getLink(0)->show();
-    m_linkingTo->highLight(true);
-    m_linkingTo->update();
+    linkingPort->highLight(true);
+    linkingPort->update();
   }
 }
 
@@ -970,7 +970,7 @@ SchematicPort *StageSchematicSplinePort::searchPort(const QPointF &scenePos) {
 
 //--------------------------------------------------------
 
-void StageSchematicSplinePort::hideSnappedLinks() {
+void StageSchematicSplinePort::hideSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(getNode());
   StageSchematicSplineNode *splineNode =
@@ -982,7 +982,7 @@ void StageSchematicSplinePort::hideSnappedLinks() {
 
 //--------------------------------------------------------
 
-void StageSchematicSplinePort::showSnappedLinks() {
+void StageSchematicSplinePort::showSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(getNode());
   StageSchematicSplineNode *splineNode =
