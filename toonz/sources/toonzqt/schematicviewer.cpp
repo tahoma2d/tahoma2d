@@ -548,7 +548,7 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
   if (QGesture *pinch = e->gesture(Qt::PinchGesture)) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);
     QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-    QPoint firstCenter                     = gesture->centerPoint().toPoint();
+    QPoint firstCenter = mapFromGlobal(gesture->centerPoint().toPoint());
 
     if (gesture->state() == Qt::GestureStarted) {
       m_gestureActive = true;
