@@ -1499,6 +1499,7 @@ void FxSchematicScene::mousePressEvent(QGraphicsSceneMouseEvent *me) {
   FxsData fxsData;
   fxsData.setFxs(m_selection->getFxs(), m_selection->getLinks(),
                  m_selection->getColumnIndexes(), m_xshHandle->getXsheet());
+  // m_isConnected indicates that the all selected nodes are connected
   if (fxsData.isConnected() && me->button() == Qt::LeftButton && !port && !link)
     m_isConnected = true;
 }
@@ -1613,9 +1614,19 @@ void FxSchematicScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
 bool FxSchematicScene::event(QEvent *e) {
   bool ret        = SchematicScene::event(e);
   bool altPressed = QApplication::keyboardModifiers() == Qt::AltModifier;
-  if (m_linkUnlinkSimulation && m_altPressed != altPressed)
-    onAltModifierChanged(altPressed);
-  m_altPressed = altPressed;
+  if (m_altPressed != altPressed) {
+    // When Alt key is pressed, put the link lines on top of other items
+    // in order to enable to pick them up with itemAt() function.
+    double z                          = (altPressed) ? 5.0 : 0.0;
+    QList<QGraphicsItem *> sceneItems = items();
+    for (int i = 0; i < sceneItems.size(); i++) {
+      SchematicLink *link = dynamic_cast<SchematicLink *>(sceneItems.at(i));
+      if (link) link->setZValue(z);
+    }
+
+    if (m_linkUnlinkSimulation) onAltModifierChanged(altPressed);
+    m_altPressed = altPressed;
+  }
   return ret;
 }
 
@@ -1656,7 +1667,6 @@ void FxSchematicScene::onAltModifierChanged(bool altPressed) {
     if (m_disconnectionLinks.size() == 0 && m_linkUnlinkSimulation)
       simulateDisconnectSelection(altPressed);
     if (m_connectionLinks.size() == 0 && m_linkUnlinkSimulation) {
-      m_connectionLinks.showBridgeLinks();
 #if QT_VERSION >= 0x050000
       SchematicLink *link =
           dynamic_cast<SchematicLink *>(itemAt(m_lastPos, QTransform()));
@@ -1664,7 +1674,6 @@ void FxSchematicScene::onAltModifierChanged(bool altPressed) {
       SchematicLink *link = dynamic_cast<SchematicLink *>(itemAt(m_lastPos));
 #endif
       if (link && (!link->getEndPort() || !link->getStartPort())) return;
-      m_connectionLinks.hideBridgeLinks();
       simulateInsertSelection(link, altPressed && !!link);
     }
   } else {
@@ -1672,15 +1681,7 @@ void FxSchematicScene::onAltModifierChanged(bool altPressed) {
       simulateDisconnectSelection(altPressed);
     if (m_connectionLinks.size() > 0 && m_linkUnlinkSimulation) {
       m_connectionLinks.showBridgeLinks();
-#if QT_VERSION >= 0x050000
-      SchematicLink *link =
-          dynamic_cast<SchematicLink *>(itemAt(m_lastPos, QTransform()));
-#else
-      SchematicLink *link = dynamic_cast<SchematicLink *>(itemAt(m_lastPos));
-#endif
-      if (link && (!link->getEndPort() || !link->getStartPort())) return;
-      m_connectionLinks.hideBridgeLinks();
-      simulateInsertSelection(link, altPressed && !!link);
+      simulateInsertSelection(0, false);
     }
   }
 }
@@ -1751,62 +1752,60 @@ void FxSchematicScene::highlightLinks(FxSchematicNode *node, bool value) {
 //------------------------------------------------------------------
 
 void FxSchematicScene::simulateDisconnectSelection(bool disconnect) {
-  if (m_selection->isEmpty()) return;
-  QList<TFxP> selectedFxs = m_selection->getFxs();
-  if (selectedFxs.isEmpty()) return;
-  QMap<TFx *, bool> visitedFxs;
-  int i;
-  for (i                                    = 0; i < selectedFxs.size(); i++)
-    visitedFxs[selectedFxs[i].getPointer()] = false;
-
-  TFx *inputFx = 0, *outputFx = 0;
-  findBoundariesFxs(inputFx, outputFx, visitedFxs);
-  FxSchematicNode *inputNode  = m_table[inputFx];
-  FxSchematicNode *outputNode = m_table[outputFx];
-  assert(inputNode && outputNode);
-
-  FxSchematicPort *inputPort = 0, *outputPort = 0;
-  SchematicPort *otherInputPort = 0;
-  QList<SchematicPort *> otherOutputPorts;
-  if (inputNode->getInputPortCount() > 0) {
-    inputPort = inputNode->getInputPort(0);
-    if (inputPort) {
-      SchematicLink *inputLink = inputPort->getLink(0);
-      if (inputLink && !m_connectionLinks.isAnInputLink(inputLink)) {
-        if (!m_disconnectionLinks.isAnInputLink(inputLink))
-          m_disconnectionLinks.addInputLink(inputLink);
-        otherInputPort = inputLink->getOtherPort(inputPort);
-      }
-    }
-  }
-  outputPort = outputNode->getOutputPort();
-  if (outputPort) {
-    for (i = 0; i < outputPort->getLinkCount(); i++) {
-      SchematicLink *outputLink = outputPort->getLink(i);
-      if (outputLink && !m_connectionLinks.isAnOutputLink(outputLink)) {
-        if (!m_disconnectionLinks.isAnOutputLink(outputLink))
-          m_disconnectionLinks.addOutputLink(outputLink);
-        otherOutputPorts.push_back(outputLink->getOtherPort(outputPort));
-      }
-    }
-  }
   if (disconnect) {
+    if (m_selection->isEmpty()) return;
+    QList<TFxP> selectedFxs = m_selection->getFxs();
+    if (selectedFxs.isEmpty()) return;
+    QMap<TFx *, bool> visitedFxs;
+    int i;
+    for (i                                    = 0; i < selectedFxs.size(); i++)
+      visitedFxs[selectedFxs[i].getPointer()] = false;
+
+    TFx *inputFx = 0, *outputFx = 0;
+    findBoundariesFxs(inputFx, outputFx, visitedFxs);
+    FxSchematicNode *inputNode  = m_table[inputFx];
+    FxSchematicNode *outputNode = m_table[outputFx];
+    assert(inputNode && outputNode);
+
+    FxSchematicPort *inputPort = 0, *outputPort = 0;
+    SchematicPort *otherInputPort = 0;
+    QList<SchematicPort *> otherOutputPorts;
+    if (inputNode->getInputPortCount() > 0) {
+      inputPort = inputNode->getInputPort(0);
+      if (inputPort) {
+        SchematicLink *inputLink = inputPort->getLink(0);
+        if (inputLink && !m_connectionLinks.isAnInputLink(inputLink)) {
+          if (!m_disconnectionLinks.isAnInputLink(inputLink))
+            m_disconnectionLinks.addInputLink(inputLink);
+          otherInputPort = inputLink->getOtherPort(inputPort);
+        }
+      }
+    }
+    outputPort = outputNode->getOutputPort();
+    if (outputPort) {
+      for (i = 0; i < outputPort->getLinkCount(); i++) {
+        SchematicLink *outputLink = outputPort->getLink(i);
+        if (outputLink && !m_connectionLinks.isAnOutputLink(outputLink)) {
+          if (!m_disconnectionLinks.isAnOutputLink(outputLink))
+            m_disconnectionLinks.addOutputLink(outputLink);
+          otherOutputPorts.push_back(outputLink->getOtherPort(outputPort));
+        }
+      }
+    }
     m_disconnectionLinks.hideInputLinks();
     m_disconnectionLinks.hideOutputLinks();
+
+    if (otherInputPort) {
+      for (i = 0; i < otherOutputPorts.size(); i++)
+        m_disconnectionLinks.addBridgeLink(
+            otherOutputPorts[i]->makeLink(otherInputPort));
+    }
   } else {
     m_disconnectionLinks.showInputLinks();
     m_disconnectionLinks.showOutputLinks();
     m_disconnectionLinks.removeInputLinks();
     m_disconnectionLinks.removeOutputLinks();
-  }
-
-  if (otherInputPort) {
-    if (disconnect) {
-      for (i = 0; i < otherOutputPorts.size(); i++)
-        m_disconnectionLinks.addBridgeLink(
-            otherOutputPorts[i]->makeLink(otherInputPort));
-    } else
-      m_disconnectionLinks.removeBridgeLinks(true);
+    m_disconnectionLinks.removeBridgeLinks(true);
   }
 }
 
@@ -1814,7 +1813,7 @@ void FxSchematicScene::simulateDisconnectSelection(bool disconnect) {
 
 void FxSchematicScene::simulateInsertSelection(SchematicLink *link,
                                                bool connect) {
-  if (!link) {
+  if (!link || !connect) {
     m_connectionLinks.showBridgeLinks();
     m_connectionLinks.hideInputLinks();
     m_connectionLinks.hideOutputLinks();
@@ -1825,13 +1824,8 @@ void FxSchematicScene::simulateInsertSelection(SchematicLink *link,
     if (m_disconnectionLinks.isABridgeLink(link) || m_selection->isEmpty())
       return;
 
-    if (connect) {
-      m_connectionLinks.addBridgeLink(link);
-      m_connectionLinks.hideBridgeLinks();
-    } else {
-      m_connectionLinks.showBridgeLinks();
-      m_connectionLinks.removeBridgeLinks();
-    }
+    m_connectionLinks.addBridgeLink(link);
+    m_connectionLinks.hideBridgeLinks();
 
     SchematicPort *inputPort = 0, *outputPort = 0;
     if (link) {
@@ -1867,15 +1861,8 @@ void FxSchematicScene::simulateInsertSelection(SchematicLink *link,
     if (outputNodePort && inputPort)
       m_connectionLinks.addOutputLink(inputPort->makeLink(outputNodePort));
 
-    if (connect) {
-      m_connectionLinks.showInputLinks();
-      m_connectionLinks.showOutputLinks();
-    } else {
-      m_connectionLinks.hideInputLinks();
-      m_connectionLinks.hideOutputLinks();
-      m_connectionLinks.removeInputLinks(true);
-      m_connectionLinks.removeOutputLinks(true);
-    }
+    m_connectionLinks.showInputLinks();
+    m_connectionLinks.showOutputLinks();
   }
 }
 //------------------------------------------------------------
