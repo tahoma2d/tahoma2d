@@ -1526,7 +1526,14 @@ void BrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     // In order to draw the current brush tip
     invalidateRect += TRectD(m_brushPos - halfThick, m_brushPos + halfThick);
 
-    if (!invalidateRect.isEmpty()) invalidate(invalidateRect.enlarge(2));
+    if (!invalidateRect.isEmpty()) {
+      // for motion path, call the invalidate function directry to ignore dpi of
+      // the current level
+      if (m_isPath)
+        m_viewer->GLInvalidateRect(invalidateRect.enlarge(2));
+      else
+        invalidate(invalidateRect.enlarge(2));
+    }
   }
 }
 
