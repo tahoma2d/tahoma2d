@@ -38,6 +38,7 @@
 // Qt includes
 #include <QHBoxLayout>
 #include <QComboBox>
+#include <QFontComboBox>
 #include <QLabel>
 #include <QStackedWidget>
 #include <QLineEdit>
@@ -353,10 +354,31 @@ void PreferencesPopup::onDropdownShortcutsCycleOptionsChanged(int index) {
 }
 
 //-----------------------------------------------------------------------------
+void PreferencesPopup::rebuilldFontStyleList() {
+  TFontManager *instance = TFontManager::instance();
+  std::vector<std::wstring> typefaces;
+  QString font = m_interfaceFont->currentText();
+  instance->loadFontNames();
+  instance->setFamily(font.toStdWString());
+  instance->getAllTypefaces(typefaces);
+  m_interfaceFontStyle->clear();
+  for (std::vector<std::wstring>::iterator it = typefaces.begin();
+       it != typefaces.end(); ++it)
+    m_interfaceFontStyle->addItem(QString::fromStdWString(*it));
+}
 
 void PreferencesPopup::onInterfaceFontChanged(int index) {
   QString font = m_interfaceFont->currentText();
   m_pref->setInterfaceFont(font.toStdString());
+
+  QString oldTypeface = m_interfaceFontStyle->currentText();
+  rebuilldFontStyleList();
+  if (!oldTypeface.isEmpty()) {
+    int newIndex               = m_interfaceFontStyle->findText(oldTypeface);
+    if (newIndex < 0) newIndex = 0;
+    m_interfaceFontStyle->setCurrentIndex(newIndex);
+  }
+
   if (font.contains("Comic Sans"))
     DVGui::warning(tr("Life is too short for Comic Sans"));
   if (font.contains("Wingdings"))
@@ -365,8 +387,9 @@ void PreferencesPopup::onInterfaceFontChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onInterfaceFontWeightChanged(int index) {
-  m_pref->setInterfaceFontWeight(index);
+void PreferencesPopup::onInterfaceFontStyleChanged(int index) {
+  QString style = m_interfaceFontStyle->itemText(index);
+  m_pref->setInterfaceFontStyle(style.toStdString());
 }
 
 //-----------------------------------------------------------------------------
@@ -1313,8 +1336,8 @@ PreferencesPopup::PreferencesPopup()
       new QLabel(tr("* Changes will take effect the next time you run Toonz"));
   note_interface->setStyleSheet("font-size: 10px; font: italic;");
 
-  m_interfaceFont       = new QComboBox(this);
-  m_interfaceFontWeight = new QComboBox(this);
+  m_interfaceFont      = new QFontComboBox(this);
+  m_interfaceFontStyle = new QComboBox(this);
 
   m_colorCalibration =
       new QGroupBox(tr("Color Calibration using 3D Look-up Table *"));
@@ -1661,32 +1684,10 @@ PreferencesPopup::PreferencesPopup()
   viewerZoomCenterComboBox->addItems(zoomCenters);
   viewerZoomCenterComboBox->setCurrentIndex(m_pref->getViewerZoomCenter());
 
-  TFontManager *instance = TFontManager::instance();
-  bool validFonts;
-  try {
-    instance->loadFontNames();
-    validFonts = true;
-  } catch (TFontLibraryLoadingError &) {
-    validFonts = false;
-    //    TMessage::error(toString(e.getMessage()));
-  }
+  m_interfaceFont->setCurrentText(m_pref->getInterfaceFont());
 
-  if (validFonts) {
-    std::vector<std::wstring> names;
-    instance->getAllFamilies(names);
-
-    for (std::vector<std::wstring>::iterator it = names.begin();
-         it != names.end(); ++it)
-      m_interfaceFont->addItem(QString::fromStdWString(*it));
-
-    m_interfaceFont->setCurrentText(m_pref->getInterfaceFont());
-  }
-
-  QStringList fontStyles;
-  fontStyles << "Regular"
-             << "Bold";
-  m_interfaceFontWeight->addItems(fontStyles);
-  m_interfaceFontWeight->setCurrentIndex(m_pref->getInterfaceFontWeight());
+  rebuilldFontStyleList();
+  m_interfaceFontStyle->setCurrentText(m_pref->getInterfaceFontStyle());
 
   m_colorCalibration->setCheckable(true);
   m_colorCalibration->setChecked(m_pref->isColorCalibrationEnabled());
@@ -2092,8 +2093,8 @@ PreferencesPopup::PreferencesPopup()
           {
             fontLay->addWidget(m_interfaceFont);
             fontLay->addSpacing(10);
-            fontLay->addWidget(new QLabel(tr("Weight *:")));
-            fontLay->addWidget(m_interfaceFontWeight);
+            fontLay->addWidget(new QLabel(tr("Style *:")));
+            fontLay->addWidget(m_interfaceFontStyle);
             fontLay->addStretch(1);
           }
           interfaceBottomLay->addLayout(fontLay, 4, 1, 1, 5);
@@ -2714,8 +2715,8 @@ PreferencesPopup::PreferencesPopup()
                      this, SLOT(onViewerZoomCenterChanged(int)));
   ret = ret && connect(m_interfaceFont, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onInterfaceFontChanged(int)));
-  ret = ret && connect(m_interfaceFontWeight, SIGNAL(currentIndexChanged(int)),
-                       this, SLOT(onInterfaceFontWeightChanged(int)));
+  ret = ret && connect(m_interfaceFontStyle, SIGNAL(currentIndexChanged(int)),
+                       this, SLOT(onInterfaceFontStyleChanged(int)));
   ret = ret && connect(replaceAfterSaveLevelAsCB, SIGNAL(stateChanged(int)),
                        this, SLOT(onReplaceAfterSaveLevelAsChanged(int)));
   ret =

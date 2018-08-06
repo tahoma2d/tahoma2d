@@ -16,6 +16,7 @@
 
 // Qt includes
 #include <QComboBox>
+#include <QFontComboBox>
 
 //==============================================================
 
@@ -55,9 +56,10 @@ private:
       *m_defLevelType, *m_autocreationType, *m_levelFormatNames,
       *m_columnIconOm, *m_unitOm, *m_cameraUnitOm, *m_importPolicy,
       *m_vectorSnappingTargetCB, *m_dropdownShortcutsCycleOptionsCB,
-      *m_interfaceFont, *m_interfaceFontWeight, *m_guidedDrawingStyle,
-      *m_functionEditorToggle, *m_cursorBrushType, *m_cursorBrushStyle,
-      *m_xsheetLayout;
+      *m_guidedDrawingStyle, *m_functionEditorToggle, *m_cursorBrushType,
+      *m_cursorBrushStyle, *m_xsheetLayout, *m_interfaceFontStyle;
+
+  QFontComboBox *m_interfaceFont;
 
   DVGui::MeasuredDoubleLineEdit *m_defLevelWidth, *m_defLevelHeight;
 
@@ -94,6 +96,7 @@ private:
 private:
   // QWidget* create(const QString& lbl, bool def, const char* slot);
   void rebuildFormatsList();
+  void rebuilldFontStyleList();
 
 private slots:
 
@@ -202,7 +205,7 @@ private slots:
   void onShortcutCommandsWhileRenamingCellClicked(int);
   void onWatchFileSystemClicked(int);
   void onInterfaceFontChanged(int index);
-  void onInterfaceFontWeightChanged(int index);
+  void onInterfaceFontStyleChanged(int index);
   void onXsheetLayoutChanged(int index);
   void onPathAliasPriorityChanged(int index);
   void onShowCurrentTimelineChanged(int);
