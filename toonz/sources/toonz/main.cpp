@@ -64,6 +64,8 @@
 #include "tvectorbrushstyle.h"
 #include "tfont.h"
 
+#include "kis_tablet_support_win8.h"
+
 #ifdef MACOSX
 #include "tipc.h"
 #endif
@@ -729,6 +731,17 @@ int main(int argc, char *argv[]) {
   // documentation.
   _controlfp_s(0, fpWord, -1);
 #endif
+#endif
+
+#ifdef _WIN32
+  if (Preferences::instance()->isWinInkEnabled()) {
+    KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
+    if (penFilter->init()) {
+      a.installNativeEventFilter(penFilter);
+    } else {
+      delete penFilter;
+    }
+  }
 #endif
 
   a.installEventFilter(TApp::instance());
