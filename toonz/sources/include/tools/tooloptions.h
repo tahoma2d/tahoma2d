@@ -669,6 +669,26 @@ protected slots:
   void updateRealTimePickLabel(const int, const int, const int);
 };
 
+//=============================================================================
+//
+// ShiftTraceToolOptionBox
+// shown only when "Edit Shift" mode is active
+//
+//=============================================================================
+
+class ShiftTraceToolOptionBox final : public ToolOptionsBox {
+  Q_OBJECT
+  QPushButton *m_resetPrevGhostBtn;
+  QPushButton *m_resetAfterGhostBtn;
+  void resetGhost(int index);
+
+public:
+  ShiftTraceToolOptionBox(QWidget *parent = 0);
+protected slots:
+  void onResetPrevGhostBtnPressed();
+  void onResetAfterGhostBtnPressed();
+};
+
 //-----------------------------------------------------------------------------
 
 class DVAPI ToolOptions final : public QFrame {

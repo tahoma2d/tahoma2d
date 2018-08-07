@@ -391,10 +391,9 @@ public:
     if (std::string(m_cmdId) == MI_ShiftTrace) {
       cm->enable(MI_EditShift, checked);
       cm->enable(MI_NoShift, checked);
-      if (!checked) {
-        cm->setChecked(MI_EditShift, false);
-      }
+      if (checked) OnioniSkinMaskGUI::resetShiftTraceFrameOffset();
       //     cm->getAction(MI_NoShift)->setChecked(false);
+      TApp::instance()->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
     } else if (std::string(m_cmdId) == MI_EditShift) {
       if (checked) {
         QAction *noShiftAction =
@@ -427,6 +426,7 @@ public:
     OnionSkinMask osm =
         TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
     osm.setShiftTraceStatus(status);
+    osm.clearGhostFlipKey();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     TApp::instance()->getCurrentOnionSkin()->setOnionSkinMask(osm);
   }
@@ -2377,30 +2377,36 @@ includeInvisible);
 
 int SceneViewer::posToRow(const TPointD &p, double distance,
                           bool includeInvisible) const {
-  int oldRasterizePli    = TXshSimpleLevel::m_rasterizePli;
-  TApp *app              = TApp::instance();
-  ToonzScene *scene      = app->getCurrentScene()->getScene();
-  TXsheet *xsh           = app->getCurrentXsheet()->getXsheet();
-  int frame              = app->getCurrentFrame()->getFrame();
-  int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();
-  OnionSkinMask osm      = app->getCurrentOnionSkin()->getOnionSkinMask();
+  int oldRasterizePli = TXshSimpleLevel::m_rasterizePli;
+  TApp *app           = TApp::instance();
+  OnionSkinMask osm   = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
   Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
   picker.setDistance(distance);
 
-  TXshSimpleLevel::m_rasterizePli = 0;
+  if (app->getCurrentFrame()->isEditingLevel()) {
+    Stage::visit(picker, app->getCurrentLevel()->getLevel(),
+                 app->getCurrentFrame()->getFid(), osm,
+                 app->getCurrentFrame()->isPlaying(), false);
+  } else {
+    ToonzScene *scene      = app->getCurrentScene()->getScene();
+    TXsheet *xsh           = app->getCurrentXsheet()->getXsheet();
+    int frame              = app->getCurrentFrame()->getFrame();
+    int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();
 
-  Stage::VisitArgs args;
-  args.m_scene       = scene;
-  args.m_xsh         = xsh;
-  args.m_row         = frame;
-  args.m_col         = currentColumnIndex;
-  args.m_osm         = &osm;
-  args.m_onlyVisible = includeInvisible;
+    TXshSimpleLevel::m_rasterizePli = 0;
 
-  Stage::visit(picker, args);
+    Stage::VisitArgs args;
+    args.m_scene       = scene;
+    args.m_xsh         = xsh;
+    args.m_row         = frame;
+    args.m_col         = currentColumnIndex;
+    args.m_osm         = &osm;
+    args.m_onlyVisible = includeInvisible;
 
+    Stage::visit(picker, args);
+  }
   TXshSimpleLevel::m_rasterizePli = oldRasterizePli;
   return picker.getRow();
 }

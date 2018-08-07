@@ -1960,6 +1960,8 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
   createToggle(MI_EditShift, tr("Edit Shift"), "", false, MenuViewCommandType);
   createToggle(MI_NoShift, tr("No Shift"), "", false, MenuViewCommandType);
+  CommandManager::instance()->enable(MI_EditShift, false);
+  CommandManager::instance()->enable(MI_NoShift, false);
   createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
 
   if (QGLPixelBuffer::hasOpenGLPbuffers())
