@@ -221,6 +221,7 @@ SchematicSceneViewer::~SchematicSceneViewer() {}
 /*! Reimplemets the QGraphicsView::mousePressEvent()
 */
 void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
+  // qDebug() << "[mousePressEvent]";
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
       !m_stylusUsed) {
     return;
@@ -279,7 +280,6 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
     panQt(deltaPoint);
   } else {
     if (m_cursorMode == CursorMode::Zoom && m_zooming) {
-      //	  int deltaY = (m_prevWinPos.y() - me->pos().y()) * 10;
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
       double factorY = exp(deltaY * 0.001);
       changeScale(m_zoomPoint, factorY);
@@ -295,6 +295,7 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
 /*! Reimplemets the QGraphicsView::mouseReleaseEvent()
 */
 void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
+  // qDebug() << "[mouseReleaseEvent]";
   m_gestureActive = false;
   m_zooming       = false;
   m_panning       = false;
@@ -310,6 +311,7 @@ void SchematicSceneViewer::mouseReleaseEvent(QMouseEvent *me) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
+  // qDebug() << "[mouseDoubleClickEvent]";
   if (m_gestureActive && !m_stylusUsed) {
     m_gestureActive = false;
     QGraphicsItem *item =
@@ -338,12 +340,50 @@ void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
 /*! Reimplemets the QGraphicsView::wheelEvent()
 */
 void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
-  if ((m_gestureActive == true && m_touchDevice == QTouchDevice::TouchScreen) ||
-      m_gestureActive == false) {
-    me->accept();
-    double factor = exp(me->delta() * 0.001);
-    changeScale(me->pos(), factor);
+  // qDebug() << "[wheelEvent]";
+
+  int delta = 0;
+  switch (me->source()) {
+  case Qt::MouseEventNotSynthesized: {
+    if (me->modifiers() & Qt::AltModifier)
+      delta = me->angleDelta().x();
+    else
+      delta = me->angleDelta().y();
+    break;
   }
+
+  case Qt::MouseEventSynthesizedBySystem: {
+    QPoint numPixels  = me->pixelDelta();
+    QPoint numDegrees = me->angleDelta() / 8;
+    if (!numPixels.isNull()) {
+      delta = me->pixelDelta().y();
+    } else if (!numDegrees.isNull()) {
+      QPoint numSteps = numDegrees / 15;
+      delta           = numSteps.y();
+    }
+    break;
+  }
+
+  default:  // Qt::MouseEventSynthesizedByQt,
+            // Qt::MouseEventSynthesizedByApplication
+    {
+      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
+
+  }  // end switch
+
+  if (abs(delta) > 0) {
+    if ((m_gestureActive == true &&
+         m_touchDevice == QTouchDevice::TouchScreen) ||
+        m_gestureActive == false) {
+      double factor = exp(delta * 0.001);
+      changeScale(me->pos(), factor);
+    }
+  }
+  me->accept();
 }
 
 //------------------------------------------------------------------
@@ -527,6 +567,7 @@ void SchematicSceneViewer::leaveEvent(QEvent *e) { setCursor(Qt::ArrowCursor); }
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
+  // qDebug() << "[tabletEvent]";
   if (e->type() == QTabletEvent::TabletPress) {
     m_stylusUsed = e->pointerType() ? true : false;
   } else if (e->type() == QTabletEvent::TabletRelease) {
@@ -539,6 +580,7 @@ void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
+  // qDebug() << "[gestureEvent]";
   m_gestureActive = false;
   if (QGesture *swipe = e->gesture(Qt::SwipeGesture)) {
     m_gestureActive = true;
@@ -597,6 +639,7 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
 }
 
 void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
+  // qDebug() << "[touchEvent]";
   if (type == QEvent::TouchBegin) {
     m_touchActive   = true;
     m_firstPanPoint = e->touchPoints().at(0).pos();
@@ -635,39 +678,39 @@ void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
 
 bool SchematicSceneViewer::event(QEvent *e) {
   /*
-    switch (e->type()) {
-    case QEvent::TabletPress:
-      QTabletEvent *te = static_cast<QTabletEvent *>(e);
-      qDebug() << "[event] TabletPress: pointerType(" << te->pointerType()
-               << ") device(" << te->device() << ")";
-      break;
-    case QEvent::TabletRelease:
-      qDebug() << "[event] TabletRelease";
-      break;
-    case QEvent::TouchBegin:
-      qDebug() << "[event] TouchBegin";
-      break;
-    case QEvent::TouchEnd:
-      qDebug() << "[event] TouchEnd";
-      break;
-    case QEvent::TouchCancel:
-      qDebug() << "[event] TouchCancel";
-      break;
-    case QEvent::MouseButtonPress:
-      qDebug() << "[event] MouseButtonPress";
-      break;
-    case QEvent::MouseButtonDblClick:
-      qDebug() << "[event] MouseButtonDblClick";
-      break;
-    case QEvent::MouseButtonRelease:
-      qDebug() << "[event] MouseButtonRelease";
-      break;
-    case QEvent::Gesture:
-      qDebug() << "[event] Gesture";
-      break;
-    default:
-      break;
-    }
+  switch (e->type()) {
+  case QEvent::TabletPress: {
+    QTabletEvent *te = static_cast<QTabletEvent *>(e);
+    qDebug() << "[event] TabletPress: pointerType(" << te->pointerType()
+             << ") device(" << te->device() << ")";
+  } break;
+  case QEvent::TabletRelease:
+    qDebug() << "[event] TabletRelease";
+    break;
+  case QEvent::TouchBegin:
+    qDebug() << "[event] TouchBegin";
+    break;
+  case QEvent::TouchEnd:
+    qDebug() << "[event] TouchEnd";
+    break;
+  case QEvent::TouchCancel:
+    qDebug() << "[event] TouchCancel";
+    break;
+  case QEvent::MouseButtonPress:
+    qDebug() << "[event] MouseButtonPress";
+    break;
+  case QEvent::MouseButtonDblClick:
+    qDebug() << "[event] MouseButtonDblClick";
+    break;
+  case QEvent::MouseButtonRelease:
+    qDebug() << "[event] MouseButtonRelease";
+    break;
+  case QEvent::Gesture:
+    qDebug() << "[event] Gesture";
+    break;
+  default:
+    break;
+  }
   */
 
   if (CommandManager::instance()
