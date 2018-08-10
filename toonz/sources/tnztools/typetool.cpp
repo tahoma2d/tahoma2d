@@ -1616,6 +1616,7 @@ bool TypeTool::keyDown(QKeyEvent *event) {
     break;
 
   default:
+    if (unicodeChar.empty()) return false;
     replaceText(unicodeChar, m_cursorIndex, m_cursorIndex);
     m_cursorIndex++;
     m_preeditRange = std::make_pair(m_cursorIndex, m_cursorIndex);
