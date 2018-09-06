@@ -773,6 +773,13 @@ bool TTool::isColumnLocked(int columnIndex) const {
 //-----------------------------------------------------------------------------
 
 QString TTool::updateEnabled() {
+  int rowIndex    = m_application->getCurrentFrame()->getFrame();
+  int columnIndex = m_application->getCurrentColumn()->getColumnIndex();
+
+  return updateEnabled(rowIndex, columnIndex);
+}
+
+QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // Disable every tool during playback
   if (m_application->getCurrentFrame()->isPlaying())
     return (enable(false), QString());
@@ -786,13 +793,12 @@ QString TTool::updateEnabled() {
   // Retrieve vars and view modes
   TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
 
-  int rowIndex       = m_application->getCurrentFrame()->getFrame();
-  int columnIndex    = m_application->getCurrentColumn()->getColumnIndex();
   TXshColumn *column = (columnIndex >= 0) ? xsh->getColumn(columnIndex) : 0;
 
-  TXshLevel *xl       = m_application->getCurrentLevel()->getLevel();
-  TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
-  int levelType       = sl ? sl->getType() : NO_XSHLEVEL;
+  TXshCell cell       = xsh->getCell(rowIndex, columnIndex);
+  TXshLevel *xl       = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
+  TXshSimpleLevel *sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+  int levelType       = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
 
   if (Preferences::instance()->isAutoCreateEnabled() &&
       Preferences::instance()->isAnimationSheetEnabled()) {

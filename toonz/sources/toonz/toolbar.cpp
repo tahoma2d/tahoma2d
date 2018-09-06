@@ -31,99 +31,27 @@
 TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 0);
 
 namespace {
-enum ActivateLevel {
-  Empty       = 0x1,
-  Raster      = 0x2,    //! OVL_XSHLEVEL
-  Scan        = 0x4,    //! TZI_XSHLEVEL
-  ToonzRaster = 0x8,    //! TZP_XSHLEVEL
-  ToonzVector = 0x10,   //! PLI_XSHLEVEL
-  Child       = 0x20,   //! CHILD_XSHLEVEL
-  Mesh        = 0x40,   //! MESH_XSHLEVEL
-  ZeraryFX    = 0x80,   //! ZERARYFX_XSHLEVEL
-  Sound       = 0x100,  //! SND_XSHLEVEL
-  SoundText   = 0x200,  //! SND_TXT_XSHLEVEL
-  Palette     = 0x400,  //! PLT_XSHLEVEL
-
-  Separator = 0x800,
-
-  All = 0x1000,
-};
-
 struct {
   const char *toolName;
   bool collapsable;
-  int displayLevels;
   QAction *action;
-} buttonLayout[] = {
-    {T_Edit, false,
-     (ActivateLevel::Empty | ActivateLevel::Raster | ActivateLevel::Scan |
-      ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector |
-      ActivateLevel::Child | ActivateLevel::Mesh | ActivateLevel::ZeraryFX |
-      ActivateLevel::Palette),
-     0},
-    {T_Selection, false,
-     (ActivateLevel::Raster | ActivateLevel::Scan | ActivateLevel::ToonzRaster |
-      ActivateLevel::ToonzVector),
-     0},
-    {"Separator_1", false, ActivateLevel::Separator, 0},
-    {T_Brush, false,
-     (ActivateLevel::Empty | ActivateLevel::Raster | ActivateLevel::Scan |
-      ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Geometric, false,
-     (ActivateLevel::Empty | ActivateLevel::Raster | ActivateLevel::Scan |
-      ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Type, true, (ActivateLevel::Empty | ActivateLevel::ToonzRaster |
-                    ActivateLevel::ToonzVector),
-     0},
-    {T_Fill, false, (ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_PaintBrush, false, ActivateLevel::ToonzRaster, 0},
-    {"Separator_2", false, ActivateLevel::Separator, 0},
-    {T_Eraser, false, (ActivateLevel::Raster | ActivateLevel::Scan |
-                       ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Tape, false, (ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Finger, false, ActivateLevel::ToonzRaster, 0},
-    {"Separator_3", false, ActivateLevel::Separator, 0},
-    {T_StylePicker, false,
-     (ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector), 0},
-    {T_RGBPicker, false,
-     (ActivateLevel::Raster | ActivateLevel::Scan | ActivateLevel::ToonzRaster |
-      ActivateLevel::ToonzVector),
-     0},
-    {T_Ruler, false, ActivateLevel::All, 0},
-    {"Separator_4", false, ActivateLevel::Separator, 0},
-    {T_ControlPointEditor, false, ActivateLevel::ToonzVector, 0},
-    {T_Pinch, true, ActivateLevel::ToonzVector, 0},
-    {T_Pump, true, ActivateLevel::ToonzVector, 0},
-    {T_Magnet, true, ActivateLevel::ToonzVector, 0},
-    {T_Bender, true, ActivateLevel::ToonzVector, 0},
-    {T_Iron, true, ActivateLevel::ToonzVector, 0},
-    {T_Cutter, true, ActivateLevel::ToonzVector, 0},
-    {"Separator_5", false, ActivateLevel::Separator, 0},
-    {T_Skeleton, true,
-     (ActivateLevel::Raster | ActivateLevel::Scan | ActivateLevel::ToonzRaster |
-      ActivateLevel::ToonzVector | ActivateLevel::Child |
-      ActivateLevel::ZeraryFX | ActivateLevel::Palette),
-     0},
-    {T_Tracker, true, (ActivateLevel::Raster | ActivateLevel::Scan |
-                       ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Hook, true, (ActivateLevel::Raster | ActivateLevel::Scan |
-                    ActivateLevel::ToonzRaster | ActivateLevel::ToonzVector),
-     0},
-    {T_Plastic, true,
-     (ActivateLevel::Raster | ActivateLevel::Scan | ActivateLevel::ToonzRaster |
-      ActivateLevel::ToonzVector | ActivateLevel::Child | ActivateLevel::Mesh),
-     0},
-    {"Separator_6", false, ActivateLevel::Separator, 0},
-    {T_Zoom, false, ActivateLevel::All, 0},
-    {T_Rotate, true, ActivateLevel::All, 0},
-    {T_Hand, false, ActivateLevel::All, 0},
-    {0, false, 0}};
+} buttonLayout[] = {{T_Edit, false, 0},        {T_Selection, false, 0},
+                    {"Separator_1", false, 0}, {T_Brush, false, 0},
+                    {T_Geometric, false, 0},   {T_Type, true, 0},
+                    {T_Fill, false, 0},        {T_PaintBrush, false, 0},
+                    {"Separator_2", false, 0}, {T_Eraser, false, 0},
+                    {T_Tape, false, 0},        {T_Finger, false, 0},
+                    {"Separator_3", false, 0}, {T_StylePicker, false, 0},
+                    {T_RGBPicker, false, 0},   {T_Ruler, false, 0},
+                    {"Separator_4", false, 0}, {T_ControlPointEditor, false, 0},
+                    {T_Pinch, true, 0},        {T_Pump, true, 0},
+                    {T_Magnet, true, 0},       {T_Bender, true, 0},
+                    {T_Iron, true, 0},         {T_Cutter, true, 0},
+                    {"Separator_5", false, 0}, {T_Skeleton, true, 0},
+                    {T_Tracker, true, 0},      {T_Hook, true, 0},
+                    {T_Plastic, true, 0},      {"Separator_6", false, 0},
+                    {T_Zoom, false, 0},        {T_Rotate, true, 0},
+                    {T_Hand, false, 0},        {0, false, 0}};
 }
 //=============================================================================
 // Toolbar
@@ -166,24 +94,26 @@ void Toolbar::updateToolbar() {
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
+  TColumnHandle *colHandle  = app->getCurrentColumn();
+  int colIndex              = colHandle->getColumnIndex();
+  TFrameHandle *frameHandle = app->getCurrentFrame();
+  int rowIndex              = frameHandle->getFrameIndex();
+
   // If in an empty cell, find most recent level
   if (levelType == NO_XSHLEVEL) {
     TXsheetHandle *xshHandle = app->getCurrentXsheet();
     TXsheet *xsh             = xshHandle->getXsheet();
-    TColumnHandle *colHandle = app->getCurrentColumn();
-    int index                = colHandle->getColumnIndex();
 
-    if (index >= 0 && !xsh->isColumnEmpty(index)) {
+    if (colIndex >= 0 && !xsh->isColumnEmpty(colIndex)) {
       int r0, r1;
-      xsh->getCellRange(index, r0, r1);
+      xsh->getCellRange(colIndex, r0, r1);
       if (0 <= r0 && r0 <= r1) {
-        TFrameHandle *frameHandle = app->getCurrentFrame();
-        int currentFrame          = frameHandle->getFrameIndex();
         // level type depends on previous occupied cell
-        for (int r = min(r1, currentFrame); r >= r0; r--) {
-          TXshCell cell = xsh->getCell(r, index);
+        for (int r = min(r1, rowIndex); r >= r0; r--) {
+          TXshCell cell = xsh->getCell(r, colIndex);
           if (cell.isEmpty()) continue;
           levelType = cell.m_level->getType();
+          rowIndex  = r;
           break;
         }
       }
@@ -194,6 +124,24 @@ void Toolbar::updateToolbar() {
 
   m_toolbarLevel = levelType;
 
+  TTool::ToolTargetType targetType = TTool::NoTarget;
+
+  switch (m_toolbarLevel) {
+  case OVL_XSHLEVEL:
+    targetType = TTool::RasterImage;
+    break;
+  case TZP_XSHLEVEL:
+    targetType = TTool::ToonzImage;
+    break;
+  case PLI_XSHLEVEL:
+  default:
+    targetType = TTool::VectorImage;
+    break;
+  case MESH_XSHLEVEL:
+    targetType = TTool::MeshImage;
+    break;
+  }
+
   // Hide action for now
   for (int idx = 0; buttonLayout[idx].toolName; idx++) {
     if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
@@ -203,10 +151,17 @@ void Toolbar::updateToolbar() {
 
   bool showLevelBased = Preferences::instance()->isShowLevelBasedToolsEnabled();
 
-  bool actionEnabled = false;
+  bool actionEnabled     = false;
+  ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+
   for (int idx = 0; buttonLayout[idx].toolName; idx++) {
+    TTool *tool = TTool::getTool(buttonLayout[idx].toolName, targetType);
+    if (tool) tool->updateEnabled(rowIndex, colIndex);
+    bool isSeparator = !strncmp(buttonLayout[idx].toolName, "Separator", 9);
+    bool enable      = !tool ? actionEnabled : tool->isEnabled();
+
     if (!buttonLayout[idx].action) {
-      if (buttonLayout[idx].displayLevels & ActivateLevel::Separator)
+      if (isSeparator)
         buttonLayout[idx].action = addSeparator();
       else
         buttonLayout[idx].action =
@@ -214,57 +169,11 @@ void Toolbar::updateToolbar() {
     }
 
     // Unhide if it meets the criteria for showing
-    bool enable = false;
-
-    if (!showLevelBased || buttonLayout[idx].displayLevels & ActivateLevel::All)
-      enable = true;
-    else if (buttonLayout[idx].displayLevels & ActivateLevel::Separator)
-      enable = actionEnabled;
-    else {
-      switch (levelType) {
-      case OVL_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Raster);
-        break;
-      case TZI_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Scan);
-        break;
-      case CHILD_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Child);
-        break;
-      case PLI_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::ToonzVector);
-        break;
-      case TZP_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::ToonzRaster);
-        break;
-      case MESH_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Mesh);
-        break;
-      case ZERARYFX_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::ZeraryFX);
-        break;
-      case SND_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Sound);
-        break;
-      case SND_TXT_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::SoundText);
-        break;
-      case PLT_XSHLEVEL:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Palette);
-        break;
-      case NO_XSHLEVEL:
-      default:
-        enable = (buttonLayout[idx].displayLevels & ActivateLevel::Empty);
-        break;
-      }
-    }
-
     if (!enable || (!m_isExpanded && buttonLayout[idx].collapsable)) continue;
 
     actionEnabled = addAction(buttonLayout[idx].action) || actionEnabled;
 
-    if (buttonLayout[idx].displayLevels & ActivateLevel::Separator)
-      actionEnabled = false;
+    if (isSeparator) actionEnabled = false;
   }
 
   addAction(m_expandAction);
@@ -326,7 +235,10 @@ void Toolbar::onFrameSwitched() {
   updateToolbar();
 }
 
-void Toolbar::onXsheetChanged() { updateToolbar(); }
+void Toolbar::onXsheetChanged() {
+  m_toolbarLevel = -1;
+  updateToolbar();
+}
 
 //-----------------------------------------------------------------------------
 
