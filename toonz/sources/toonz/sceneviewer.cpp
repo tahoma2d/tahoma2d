@@ -782,6 +782,8 @@ void SceneViewer::showEvent(QShowEvent *) {
     m_shownOnce = true;
   }
   TApp::instance()->setActiveViewer(this);
+
+  update();
 }
 
 //-----------------------------------------------------------------------------
