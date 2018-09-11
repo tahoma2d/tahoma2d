@@ -260,7 +260,12 @@ void SchematicToggle::paint(QPainter *painter,
                           sourceRect.height() * getDevPixRatio());
     painter->drawPixmap(rect, redPm, newRect);
   } else if (!m_imageOff.isNull()) {
-    painter->fillRect(boundingRect().toRect(), m_colorOff);
+    QPen pen(m_colorOn);
+    pen.setWidthF(0.5);
+    painter->setPen(pen);
+    painter->setBrush(m_colorOff);
+    double d = pen.widthF() / 2.0;
+    painter->drawRect(boundingRect().adjusted(d, d, -d, -d));
     QRect sourceRect =
         scene()->views()[0]->matrix().mapRect(QRect(0, 0, 18, 17));
     QPixmap redPm = m_imageOff.pixmap(sourceRect.size());

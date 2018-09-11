@@ -45,6 +45,7 @@ class FxColumnPainter final : public QObject, public QGraphicsItem {
   double m_width, m_height;
   QString m_name;
   int m_type;
+  bool m_isReference = false;
 
 public:
   FxColumnPainter(FxSchematicColumnNode *parent, double width, double height,
@@ -55,6 +56,7 @@ public:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
+  void setIsReference(bool ref = true) { m_isReference = ref; }
 
 public slots:
 

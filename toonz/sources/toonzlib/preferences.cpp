@@ -714,7 +714,7 @@ Preferences::Preferences()
 
   getValue(*m_settings, "cursorOutlineEnabled", m_cursorOutlineEnabled);
 
-  r = 255, g = 0, b = 0;
+  r = 255, g = 255, b = 0;
   getValue(*m_settings, "currentColumnColor.r", r);
   getValue(*m_settings, "currentColumnColor.g", g);
   getValue(*m_settings, "currentColumnColor.b", b);

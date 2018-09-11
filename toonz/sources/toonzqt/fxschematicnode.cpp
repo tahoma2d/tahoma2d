@@ -176,8 +176,13 @@ void FxColumnPainter::paint(QPainter *painter,
   SchematicViewer *viewer = sceneFx->getSchematicViewer();
   viewer->getNodeColor(levelType, nodeColor);
 
-  painter->setBrush(nodeColor);
-  painter->setPen(Qt::NoPen);
+  if (m_isReference) {
+    painter->setBrush(viewer->getReferenceColumnColor());
+    painter->setPen(nodeColor);
+  } else {
+    painter->setBrush(nodeColor);
+    painter->setPen(Qt::NoPen);
+  }
   painter->drawRect(0, 0, m_width, m_height);
 
   if (m_parent->isOpened() && m_parent->isNormalIconView()) {
@@ -2947,6 +2952,9 @@ FxSchematicColumnNode::FxSchematicColumnNode(FxSchematicScene *scene,
     m_renderToggle->setIsActive(column->isPreviewVisible());
     m_cameraStandToggle->setState(
         column->isCamstandVisible() ? (column->getOpacity() < 255 ? 2 : 1) : 0);
+    if (!column->isControl() && !column->isRendered() &&
+        !column->getMeshColumn())
+      m_columnPainter->setIsReference();
   }
 
   // set geometry
