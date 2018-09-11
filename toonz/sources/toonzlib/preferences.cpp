@@ -1598,7 +1598,7 @@ void Preferences::setGuidedDrawing(int status) {
 
 void Preferences::setAnimatedGuidedDrawing(bool status) {
   m_animatedGuidedDrawing = status;
-  m_settings->setValue("animatedGuidedDrawing", status);
+  m_settings->setValue("animatedGuidedDrawing", status ? "1" : "0");
 }
 
 //-----------------------------------------------------------------

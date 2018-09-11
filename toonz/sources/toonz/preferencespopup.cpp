@@ -814,7 +814,7 @@ void PreferencesPopup::onOnionColorsForShiftAndTraceChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onGuidedDrawingStyleChanged(int index) {
-  m_pref->setAnimatedGuidedDrawing(index);
+  m_pref->setAnimatedGuidedDrawing(index == 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1913,7 +1913,8 @@ PreferencesPopup::PreferencesPopup()
   QStringList guidedDrawingStyles;
   guidedDrawingStyles << tr("Arrow Markers") << tr("Animated Guide");
   m_guidedDrawingStyle->addItems(guidedDrawingStyles);
-  m_guidedDrawingStyle->setCurrentIndex(m_pref->getAnimatedGuidedDrawing());
+  m_guidedDrawingStyle->setCurrentIndex(m_pref->getAnimatedGuidedDrawing() ? 1
+                                                                           : 0);
 
   //--- Version Control ------------------------------
   m_enableVersionControl->setChecked(m_pref->isSVNEnabled());

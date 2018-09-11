@@ -173,6 +173,10 @@ class SceneViewer final : public GLWidgetForHighDpi,
   // So discarding the resources in old context in initializeGL.
   TGlContext m_currentContext;
 
+  // used for updating viewer where the animated guide appears
+  // updated in drawScene() and used in GLInvalidateRect()
+  TRectD m_guidedDrawingBBox;
+
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,

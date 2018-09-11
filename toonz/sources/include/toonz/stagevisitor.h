@@ -252,6 +252,8 @@ private:
   // darken blended view mode for viewing the non-cleanuped and stacked drawings
   bool m_doRasterDarkenBlendedView;
 
+  std::vector<TStroke *> m_guidedStrokes;
+
 public:
   RasterPainter(const TDimension &dim, const TAffine &viewAff,
                 const TRect &rect, const ImagePainter::VisualSettings &vs,
@@ -279,6 +281,8 @@ public:
   bool isSingleColumnEnabled() const { return m_singleColumnEnabled; }
 
   void setRasterDarkenBlendedView(bool on) { m_doRasterDarkenBlendedView = on; }
+
+  std::vector<TStroke *> &getGuidedStrokes() { return m_guidedStrokes; }
 };
 
 //=============================================================================

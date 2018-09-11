@@ -1607,6 +1607,13 @@ void SceneViewer::drawScene() {
       drawSpline(getViewMatrix(), clipRect,
                  m_referenceMode == CAMERA3D_REFERENCE, m_pixelSize);
     assert(glGetError() == 0);
+
+    // gather animated guide strokes' bounding boxes
+    // it is used for updating viewer next time
+    std::vector<TStroke *> guidedStrokes = painter.getGuidedStrokes();
+    for (auto itr = guidedStrokes.begin(); itr != guidedStrokes.end(); ++itr) {
+      m_guidedDrawingBBox += (*itr)->getBBox();
+    }
   }
 }
 
@@ -1748,11 +1755,19 @@ void SceneViewer::GLInvalidateRect(const TRectD &rect) {
     return;
   else if (rect.isEmpty())
     m_clipRect = InvalidateAllRect;
-  else
+  else {
     m_clipRect += rect;
+    if (!m_guidedDrawingBBox.isEmpty()) {
+      TTool *tool         = TApp::instance()->getCurrentTool()->getTool();
+      TPointD topLeft     = tool->getMatrix() * m_guidedDrawingBBox.getP00();
+      TPointD bottomRight = tool->getMatrix() * m_guidedDrawingBBox.getP11();
+      m_clipRect += TRectD(topLeft, bottomRight);
+    }
+  }
   update();
   if (m_vRuler) m_vRuler->update();
   if (m_hRuler) m_hRuler->update();
+  m_guidedDrawingBBox.empty();
 }
 //-----------------------------------------------------------------------------
 
