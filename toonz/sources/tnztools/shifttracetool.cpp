@@ -4,7 +4,6 @@
 #include "toonz/onionskinmask.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "tools/cursors.h"
-#include "tools/tool.h"
 #include "timage.h"
 #include "trasterimage.h"
 #include "ttoonzimage.h"
@@ -15,10 +14,10 @@
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/txshlevelhandle.h"
+#include "tools/toolhandle.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/dpiscale.h"
 #include "toonz/stage.h"
-#include "tapp.h"
 #include "tpixel.h"
 #include "toonzqt/menubarcommand.h"
 
@@ -51,97 +50,6 @@ static bool circumCenter(TPointD &out, const TPointD &a, const TPointD &b,
 
 //=============================================================================
 
-class ShiftTraceTool final : public TTool {
-public:
-  enum CurveStatus {
-    NoCurve,
-    TwoPointsCurve,  // just during the first click&drag
-    ThreePointsCurve
-  };
-
-  enum GadgetId {
-    NoGadget,
-    NoGadget_InBox,
-    CurveP0Gadget,
-    CurveP1Gadget,
-    CurvePmGadget,
-    MoveCenterGadget,
-    RotateGadget,
-    TranslateGadget,
-    ScaleGadget
-  };
-  inline bool isCurveGadget(GadgetId id) const {
-    return CurveP0Gadget <= id && id <= CurvePmGadget;
-  }
-
-private:
-  TPointD m_oldPos, m_startPos;
-  int m_ghostIndex;
-  TPointD m_p0, m_p1, m_p2;
-
-  CurveStatus m_curveStatus;
-  GadgetId m_gadget;
-  GadgetId m_highlightedGadget;
-
-  TRectD m_box;
-  TAffine m_dpiAff;
-  int m_row[2];
-  TAffine m_aff[2];
-  TPointD m_center[2];
-
-  TAffine m_oldAff;
-
-public:
-  ShiftTraceTool();
-
-  ToolType getToolType() const override { return GenericTool; }
-
-  void clearData();
-  void updateData();
-  void updateBox();
-  void updateCurveAffs();
-  void updateGhost();
-
-  void reset() override {
-    int ghostIndex = m_ghostIndex;
-    onActivate();
-    invalidate();
-    m_ghostIndex = ghostIndex;
-  }
-
-  void mouseMove(const TPointD &, const TMouseEvent &e) override;
-  void leftButtonDown(const TPointD &, const TMouseEvent &) override;
-  void leftButtonDrag(const TPointD &, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &, const TMouseEvent &) override;
-  void draw() override;
-
-  TAffine getGhostAff();
-  GadgetId getGadget(const TPointD &);
-  void drawDot(const TPointD &center, double r,
-               const TPixel32 &color = TPixel32::White);
-  void drawControlRect();
-  void drawCurve();
-
-  void onActivate() override {
-    m_ghostIndex  = 0;
-    m_curveStatus = NoCurve;
-    clearData();
-    OnionSkinMask osm =
-        TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
-    m_aff[0]    = osm.getShiftTraceGhostAff(0);
-    m_aff[1]    = osm.getShiftTraceGhostAff(1);
-    m_center[0] = osm.getShiftTraceGhostCenter(0);
-    m_center[1] = osm.getShiftTraceGhostCenter(1);
-  }
-  void onDeactivate() override {
-    QAction *action = CommandManager::instance()->getAction("MI_EditShift");
-    action->setChecked(false);
-  }
-  bool isEventAcceptable(QEvent *e) override;
-
-  int getCursorId() const override;
-};
-
 ShiftTraceTool::ShiftTraceTool()
     : TTool("T_ShiftTrace")
     , m_ghostIndex(0)
@@ -170,7 +78,7 @@ void ShiftTraceTool::updateBox() {
 
   TImageP img;
 
-  TApp *app = TApp::instance();
+  TApplication *app = TTool::getApplication();
   if (app->getCurrentFrame()->isEditingScene()) {
     int col      = app->getCurrentColumn()->getColumnIndex();
     int row      = m_row[m_ghostIndex];
@@ -214,10 +122,9 @@ void ShiftTraceTool::updateData() {
   m_box = TRectD();
   for (int i = 0; i < 2; i++) m_row[i] = -1;
   m_dpiAff                             = TAffine();
-  TApp *app                            = TApp::instance();
+  TApplication *app                    = TTool::getApplication();
 
-  OnionSkinMask osm =
-      TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+  OnionSkinMask osm  = app->getCurrentOnionSkin()->getOnionSkinMask();
   int previousOffset = osm.getShiftTraceGhostFrameOffset(0);
   int forwardOffset  = osm.getShiftTraceGhostFrameOffset(1);
   // we must find the prev (m_row[0]) and next (m_row[1]) reference images
@@ -284,12 +191,23 @@ void ShiftTraceTool::updateCurveAffs() {
 
 void ShiftTraceTool::updateGhost() {
   OnionSkinMask osm =
-      TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+      TTool::getApplication()->getCurrentOnionSkin()->getOnionSkinMask();
   osm.setShiftTraceGhostAff(0, m_aff[0]);
   osm.setShiftTraceGhostAff(1, m_aff[1]);
   osm.setShiftTraceGhostCenter(0, m_center[0]);
   osm.setShiftTraceGhostCenter(1, m_center[1]);
-  TApp::instance()->getCurrentOnionSkin()->setOnionSkinMask(osm);
+  TTool::getApplication()->getCurrentOnionSkin()->setOnionSkinMask(osm);
+}
+
+void ShiftTraceTool::reset() {
+  int ghostIndex = m_ghostIndex;
+  onActivate();
+  invalidate();
+  m_ghostIndex = ghostIndex;
+
+  TTool::getApplication()
+      ->getCurrentTool()
+      ->notifyToolChanged();  // Refreshes toolbar values
 }
 
 TAffine ShiftTraceTool::getGhostAff() {
@@ -417,6 +335,23 @@ void ShiftTraceTool::drawCurve() {
   }
 }
 
+void ShiftTraceTool::onActivate() {
+  m_ghostIndex  = 0;
+  m_curveStatus = NoCurve;
+  clearData();
+  OnionSkinMask osm =
+      TTool::getApplication()->getCurrentOnionSkin()->getOnionSkinMask();
+  m_aff[0]    = osm.getShiftTraceGhostAff(0);
+  m_aff[1]    = osm.getShiftTraceGhostAff(1);
+  m_center[0] = osm.getShiftTraceGhostCenter(0);
+  m_center[1] = osm.getShiftTraceGhostCenter(1);
+}
+
+void ShiftTraceTool::onDeactivate() {
+  QAction *action = CommandManager::instance()->getAction("MI_EditShift");
+  action->setChecked(false);
+}
+
 ShiftTraceTool::GadgetId ShiftTraceTool::getGadget(const TPointD &p) {
   std::vector<std::pair<TPointD, GadgetId>> gadgets;
   gadgets.push_back(std::make_pair(m_p0, CurveP0Gadget));
@@ -505,6 +440,8 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   m_gadget = m_highlightedGadget;
   m_oldPos = m_startPos = pos;
 
+  bool notify = false;
+
   if (m_gadget == NoGadget || m_gadget == NoGadget_InBox) {
     if (!e.isCtrlPressed()) {
       if (m_gadget == NoGadget_InBox)
@@ -513,13 +450,13 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         m_gadget = RotateGadget;
       // m_curveStatus = NoCurve;
     }
-    int row = getViewer()->posToRow(e.m_pos, 5 * getPixelSize(), false);
+    int row = getViewer()->posToRow(e.m_pos, 5 * getPixelSize(), false, true);
     if (row >= 0) {
-      int index = -1;
-      TApp *app = TApp::instance();
+      int index         = -1;
+      TApplication *app = TTool::getApplication();
       if (app->getCurrentFrame()->isEditingScene()) {
         int currentRow = getFrame();
-        if (m_row[0] >= 0 && row <= currentRow)
+        if (m_row[0] >= 0 && row < currentRow)
           index = 0;
         else if (m_row[1] >= 0 && row > currentRow)
           index = 1;
@@ -535,12 +472,19 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         updateBox();
         m_gadget            = TranslateGadget;
         m_highlightedGadget = TranslateGadget;
+        notify              = true;
       }
     }
   }
 
   m_oldAff = m_aff[m_ghostIndex];
   invalidate();
+
+  if (notify) {
+    TTool::getApplication()
+        ->getCurrentTool()
+        ->notifyToolChanged();  // Refreshes toolbar values
+  }
 }
 
 void ShiftTraceTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
@@ -613,6 +557,10 @@ void ShiftTraceTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   }
   m_gadget = NoGadget;
   invalidate();
+
+  TTool::getApplication()
+      ->getCurrentTool()
+      ->notifyToolChanged();  // Refreshes toolbar values
 }
 
 void ShiftTraceTool::draw() {
@@ -637,6 +585,19 @@ bool ShiftTraceTool::isEventAcceptable(QEvent *e) {
   QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
   int key             = keyEvent->key();
   return (Qt::Key_F1 <= key && key <= Qt::Key_F3);
+}
+
+void ShiftTraceTool::onLeave() {
+  OnionSkinMask osm =
+      TTool::getApplication()->getCurrentOnionSkin()->getOnionSkinMask();
+  osm.clearGhostFlipKey();
+  TTool::getApplication()->getCurrentOnionSkin()->setOnionSkinMask(osm);
+}
+
+void ShiftTraceTool::setCurrentGhostIndex(int index) {
+  m_ghostIndex = index;
+  updateBox();
+  invalidate();
 }
 
 ShiftTraceTool shiftTraceTool;

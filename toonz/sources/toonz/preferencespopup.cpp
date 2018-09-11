@@ -506,6 +506,7 @@ void PreferencesPopup::onOnionDataChanged(const TPixel32 &, bool isDragging) {
 
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentLevel()->notifyLevelViewChange();
+  TApp::instance()->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -802,6 +803,12 @@ void PreferencesPopup::onOnionSkinVisibilityChanged(int index) {
 
 void PreferencesPopup::onOnionSkinDuringPlaybackChanged(int index) {
   m_pref->setOnionSkinDuringPlayback(index == Qt::Checked);
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onOnionColorsForShiftAndTraceChanged(int index) {
+  m_pref->useOnionColorsForShiftAndTraceGhosts(index == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1533,9 +1540,11 @@ PreferencesPopup::PreferencesPopup()
   m_onionSkinVisibility = new CheckBox(tr("Onion Skin ON"));
   m_onionSkinDuringPlayback =
       new CheckBox(tr("Show Onion Skin During Playback"));
-  m_frontOnionColor = new ColorField(this, false, frontColor);
-  m_backOnionColor  = new ColorField(this, false, backColor);
-  m_inksOnly        = new DVGui::CheckBox(tr("Display Lines Only "));
+  m_frontOnionColor                  = new ColorField(this, false, frontColor);
+  m_backOnionColor                   = new ColorField(this, false, backColor);
+  m_useOnionColorsForShiftAndTraceCB = new CheckBox(
+      tr("Use Onion Skin Colors for Reference Drawings of Shift and Trace"));
+  m_inksOnly = new DVGui::CheckBox(tr("Display Lines Only "));
   m_inksOnly->setChecked(onlyInks);
 
   int thickness         = m_pref->getOnionPaperThickness();
@@ -1898,6 +1907,8 @@ PreferencesPopup::PreferencesPopup()
   m_onionSkinDuringPlayback->setChecked(m_pref->getOnionSkinDuringPlayback());
   m_frontOnionColor->setEnabled(m_pref->isOnionSkinEnabled());
   m_backOnionColor->setEnabled(m_pref->isOnionSkinEnabled());
+  m_useOnionColorsForShiftAndTraceCB->setChecked(
+      m_pref->areOnionColorsUsedForShiftAndTraceGhosts());
   m_inksOnly->setEnabled(m_pref->isOnionSkinEnabled());
   QStringList guidedDrawingStyles;
   guidedDrawingStyles << tr("Arrow Markers") << tr("Animated Guide");
@@ -2558,6 +2569,8 @@ PreferencesPopup::PreferencesPopup()
       onionLay->addWidget(m_inksOnly, 0, Qt::AlignLeft | Qt::AlignVCenter);
       onionLay->addWidget(m_onionSkinDuringPlayback, 0,
                           Qt::AlignLeft | Qt::AlignVCenter);
+      onionLay->addWidget(m_useOnionColorsForShiftAndTraceCB, 0,
+                          Qt::AlignLeft | Qt::AlignVCenter);
       QGridLayout *guidedDrawingLay = new QGridLayout();
       {
         guidedDrawingLay->addWidget(new QLabel(tr("Vector Guided Style:")), 0,
@@ -2952,6 +2965,9 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onOnionSkinVisibilityChanged(int)));
   ret = ret && connect(m_onionSkinDuringPlayback, SIGNAL(stateChanged(int)),
                        SLOT(onOnionSkinDuringPlaybackChanged(int)));
+  ret = ret &&
+        connect(m_useOnionColorsForShiftAndTraceCB, SIGNAL(stateChanged(int)),
+                SLOT(onOnionColorsForShiftAndTraceChanged(int)));
   ret = ret && connect(m_onionPaperThickness, SIGNAL(editingFinished()),
                        SLOT(onOnionPaperThicknessChanged()));
   ret = ret && connect(m_guidedDrawingStyle, SIGNAL(currentIndexChanged(int)),

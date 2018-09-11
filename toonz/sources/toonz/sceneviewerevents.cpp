@@ -365,6 +365,11 @@ void SceneViewer::onLeave() {
   if (m_freezedStatus != NO_FREEZED) return;
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool && tool->isEnabled()) tool->onLeave();
+
+  // force reset the flipping of shift & trace
+  if (CommandManager::instance()->getAction(MI_ShiftTrace)->isChecked())
+    TTool::getTool("T_ShiftTrace", TTool::ToonzImage)->onLeave();
+
   update();
 }
 

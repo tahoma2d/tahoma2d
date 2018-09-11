@@ -507,6 +507,11 @@ public:
   }
   bool getOnionSkinDuringPlayback() { return m_onionSkinDuringPlayback; }
   void setOnionSkinDuringPlayback(bool on);
+
+  void useOnionColorsForShiftAndTraceGhosts(bool on);
+  bool areOnionColorsUsedForShiftAndTraceGhosts() const {
+    return m_useOnionColorsForShiftAndTraceGhosts;
+  }
   // Transparency Check  tab
 
   void setTranspCheckData(const TPixel &bg, const TPixel &ink,
@@ -711,7 +716,8 @@ private:
 
   TPixel32 m_currentColumnColor;
 
-  bool m_enableWinInk = false;
+  bool m_enableWinInk                         = false;
+  bool m_useOnionColorsForShiftAndTraceGhosts = false;
 
 private:
   Preferences();

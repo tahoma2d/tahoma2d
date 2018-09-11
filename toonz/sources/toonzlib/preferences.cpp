@@ -344,7 +344,8 @@ Preferences::Preferences()
     , m_cursorBrushStyle("Default")
     , m_cursorOutlineEnabled(true)
     , m_currentColumnColor(TPixel::Black)
-    , m_enableWinInk(false) {
+    , m_enableWinInk(false)
+    , m_useOnionColorsForShiftAndTraceGhosts(false) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -620,6 +621,8 @@ Preferences::Preferences()
            m_moveCurrentFrameByClickCellArea);
   getValue(*m_settings, "onionSkinEnabled", m_onionSkinEnabled);
   getValue(*m_settings, "onionSkinDuringPlayback", m_onionSkinDuringPlayback);
+  getValue(*m_settings, "useOnionColorsForShiftAndTraceGhosts",
+           m_useOnionColorsForShiftAndTraceGhosts);
   getValue(*m_settings, "multiLayerStylePickerEnabled",
            m_multiLayerStylePickerEnabled);
   getValue(*m_settings, "showKeyframesOnXsheetCellArea",
@@ -1103,6 +1106,13 @@ void Preferences::enableOnionSkin(bool on) {
 void Preferences::setOnionSkinDuringPlayback(bool on) {
   m_onionSkinDuringPlayback = on;
   m_settings->setValue("onionSkinDuringPlayback", on ? "1" : "0");
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::useOnionColorsForShiftAndTraceGhosts(bool on) {
+  m_useOnionColorsForShiftAndTraceGhosts = on;
+  m_settings->setValue("useOnionColorsForShiftAndTraceGhosts", on ? "1" : "0");
 }
 
 //-----------------------------------------------------------------

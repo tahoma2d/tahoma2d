@@ -36,6 +36,7 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tools/toolutils.h
     ../include/tools/RGBpicker.h
     mypainttoonzbrush.h
+    shifttracetool.h
 )
 
 set(SOURCES
@@ -96,6 +97,7 @@ set(SOURCES
     fingertool.cpp
     rulertool.cpp
     mypainttoonzbrush.cpp
+    shifttracetool.cpp
 )
 
 set(RESOURCES tnztools.qrc)

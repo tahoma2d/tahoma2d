@@ -289,6 +289,8 @@ class DVAPI Picker final : public Visitor {
   TAffine m_viewAff;
   double m_minDist2;
 
+  int m_currentColumnIndex = -1;
+
 public:
   Picker(const TAffine &viewAff, const TPointD &p,
          const ImagePainter::VisualSettings &vs);
@@ -304,6 +306,8 @@ public:
   int getColumnIndex() const;
   void getColumnIndexes(std::vector<int> &indexes) const;
   int getRow() const;
+
+  void setCurrentColumnIndex(int index) { m_currentColumnIndex = index; }
 };
 
 //=============================================================================

@@ -370,8 +370,8 @@ protected:
   //! return the row of the drawings intersecting point \b p (used with onion
   //! skins)
   //! (window coordinate, pixels, bottom-left origin)
-  int posToRow(const TPointD &p, double distance,
-               bool includeInvisible = true) const override;
+  int posToRow(const TPointD &p, double distance, bool includeInvisible = true,
+               bool currentColumnOnly = false) const override;
 
   void dragEnterEvent(QDragEnterEvent *event) override;
   void dropEvent(QDropEvent *event) override;

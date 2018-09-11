@@ -82,7 +82,8 @@ private:
       *m_useHigherDpiOnVectorSimplifyCB, *m_keepFillOnVectorSimplifyCB,
       *m_newLevelToCameraSizeCB, *m_ignoreImageDpiCB,
       *m_syncLevelRenumberWithXsheet, *m_downArrowInLevelStripCreatesNewFrame,
-      *m_enableAutoStretch, *m_enableWinInk;
+      *m_enableAutoStretch, *m_enableWinInk,
+      *m_useOnionColorsForShiftAndTraceCB;
 
   DVGui::FileField *m_customProjectRootFileField;
 
@@ -182,6 +183,7 @@ private slots:
   void onReplaceAfterSaveLevelAsChanged(int index);
   void onOnionSkinVisibilityChanged(int);
   void onOnionSkinDuringPlaybackChanged(int);
+  void onOnionColorsForShiftAndTraceChanged(int);
   void onGuidedDrawingStyleChanged(int);
   void onActualPixelOnSceneModeChanged(int);
   void onMultiLayerStylePickerChanged(int);

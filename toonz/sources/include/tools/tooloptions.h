@@ -20,6 +20,7 @@
 #include <QToolBar>
 #include <QMap>
 #include <QLabel>
+#include <QRadioButton>
 
 // STD includes
 #include <map>
@@ -678,15 +679,25 @@ protected slots:
 
 class ShiftTraceToolOptionBox final : public ToolOptionsBox {
   Q_OBJECT
-  QPushButton *m_resetPrevGhostBtn;
-  QPushButton *m_resetAfterGhostBtn;
+  QFrame *m_prevFrame, *m_afterFrame;
+  QRadioButton *m_prevRadioBtn, *m_afterRadioBtn;
+  QPushButton *m_resetPrevGhostBtn, *m_resetAfterGhostBtn;
+  TTool *m_tool;
   void resetGhost(int index);
 
+protected:
+  void showEvent(QShowEvent *);
+  void hideEvent(QShowEvent *);
+
 public:
-  ShiftTraceToolOptionBox(QWidget *parent = 0);
+  ShiftTraceToolOptionBox(QWidget *parent = 0, TTool *tool = 0);
+  void updateStatus() override;
 protected slots:
   void onResetPrevGhostBtnPressed();
   void onResetAfterGhostBtnPressed();
+  void onPrevRadioBtnClicked();
+  void onAfterRadioBtnClicked();
+  void updateColors();
 };
 
 //-----------------------------------------------------------------------------

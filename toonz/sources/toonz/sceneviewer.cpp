@@ -2376,7 +2376,7 @@ includeInvisible);
 //-----------------------------------------------------------------------------
 
 int SceneViewer::posToRow(const TPointD &p, double distance,
-                          bool includeInvisible) const {
+                          bool includeInvisible, bool currentColumnOnly) const {
   int oldRasterizePli = TXshSimpleLevel::m_rasterizePli;
   TApp *app           = TApp::instance();
   OnionSkinMask osm   = app->getCurrentOnionSkin()->getOnionSkinMask();
@@ -2404,6 +2404,8 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
     args.m_col         = currentColumnIndex;
     args.m_osm         = &osm;
     args.m_onlyVisible = includeInvisible;
+
+    if (currentColumnOnly) picker.setCurrentColumnIndex(currentColumnIndex);
 
     Stage::visit(picker, args);
   }

@@ -1956,13 +1956,16 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
   createToggle(MI_ACheck, tr("&Gap Check"), "", ACheckToggleAction ? 1 : 0,
                MenuViewCommandType);
-  createToggle(MI_ShiftTrace, tr("Shift and Trace"), "", false,
+  QAction* shiftTraceAction = createToggle(MI_ShiftTrace, tr("Shift and Trace"), "", false,
                MenuViewCommandType);
-  createToggle(MI_EditShift, tr("Edit Shift"), "", false, MenuViewCommandType);
+  shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace.svg"));
+  shiftTraceAction = createToggle(MI_EditShift, tr("Edit Shift"), "", false, MenuViewCommandType);
+  shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace_edit.svg"));
   createToggle(MI_NoShift, tr("No Shift"), "", false, MenuViewCommandType);
   CommandManager::instance()->enable(MI_EditShift, false);
   CommandManager::instance()->enable(MI_NoShift, false);
-  createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
+  shiftTraceAction = createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
+  shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace_reset.svg"));
 
   if (QGLPixelBuffer::hasOpenGLPbuffers())
     createToggle(MI_RasterizePli, tr("&Visualize Vector As Raster"), "",

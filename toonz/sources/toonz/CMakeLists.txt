@@ -107,7 +107,6 @@ set(MOC_HEADERS
     sceneviewerevents.h
     scriptconsolepanel.h
     selectionutils.h
-    shifttracetool.h
     shortcutpopup.h
     soundtrackexport.h
     startuppopup.h
@@ -255,7 +254,6 @@ set(SOURCES
     sceneviewercontextmenu.cpp
     scenesettingspopup.cpp
     scriptconsolepanel.cpp
-    shifttracetool.cpp
     shortcutpopup.cpp
     soundtrackexport.cpp
     startuppopup.cpp
