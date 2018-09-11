@@ -355,6 +355,9 @@ void Room::load(const TFilePath &fp) {
     settings.endGroup();
   }
 
+  // resolve resize events here to avoid unwanted minimize of floating viewer
+  qApp->processEvents();
+
   DockLayout::State state(geometries, settings.value("hierarchy").toString());
 
   layout->restoreState(state);
