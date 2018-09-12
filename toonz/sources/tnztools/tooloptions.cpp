@@ -10,8 +10,9 @@
 #include "selectiontool.h"
 #include "vectorselectiontool.h"
 #include "rasterselectiontool.h"
-#include "brushtool.h"
+#include "toonzrasterbrushtool.h"
 #include "fullcolorbrushtool.h"
+#include "toonzvectorbrushtool.h"
 #include "tooloptionscontrols.h"
 
 //#include "rgbpickertool.h"
@@ -1867,9 +1868,18 @@ void BrushToolOptionsBox::filterControls() {
   // show or hide widgets which modify imported brush (mypaint)
 
   bool showModifiers = false;
-  if (FullColorBrushTool *fullColorBrushTool =
-          dynamic_cast<FullColorBrushTool *>(m_tool))
+  if (m_tool->getTargetType() & TTool::RasterImage) {
+    FullColorBrushTool *fullColorBrushTool =
+        dynamic_cast<FullColorBrushTool *>(m_tool);
     showModifiers = fullColorBrushTool->getBrushStyle();
+  } else if (m_tool->getTargetType() & TTool::ToonzImage) {
+    ToonzRasterBrushTool *toonzRasterBrushTool =
+        dynamic_cast<ToonzRasterBrushTool *>(m_tool);
+    showModifiers = toonzRasterBrushTool->isMyPaintStyleSelected();
+  } else {  // (m_tool->getTargetType() & TTool::Vectors)
+    m_snapSensitivityCombo->setHidden(!m_snapCheckbox->isChecked());
+    return;
+  }
 
   for (QMap<std::string, QLabel *>::iterator it = m_labels.begin();
        it != m_labels.end(); it++) {
@@ -1886,9 +1896,6 @@ void BrushToolOptionsBox::filterControls() {
     bool visible    = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
-  }
-  if (m_tool->getTargetType() & TTool::Vectors) {
-    m_snapSensitivityCombo->setHidden(!m_snapCheckbox->isChecked());
   }
 }
 
@@ -1931,9 +1938,12 @@ void BrushToolOptionsBox::onAddPreset() {
   m_presetNamePopup->removeName();
 
   switch (m_tool->getTargetType() & TTool::CommonImages) {
-  case TTool::VectorImage:
+  case TTool::VectorImage: {
+    static_cast<ToonzVectorBrushTool *>(m_tool)->addPreset(name);
+    break;
+  }
   case TTool::ToonzImage: {
-    static_cast<BrushTool *>(m_tool)->addPreset(name);
+    static_cast<ToonzRasterBrushTool *>(m_tool)->addPreset(name);
     break;
   }
 
@@ -1950,9 +1960,12 @@ void BrushToolOptionsBox::onAddPreset() {
 
 void BrushToolOptionsBox::onRemovePreset() {
   switch (m_tool->getTargetType() & TTool::CommonImages) {
-  case TTool::VectorImage:
+  case TTool::VectorImage: {
+    static_cast<ToonzVectorBrushTool *>(m_tool)->removePreset();
+    break;
+  }
   case TTool::ToonzImage: {
-    static_cast<BrushTool *>(m_tool)->removePreset();
+    static_cast<ToonzRasterBrushTool *>(m_tool)->removePreset();
     break;
   }
 
