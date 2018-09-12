@@ -158,7 +158,8 @@ void Toolbar::updateToolbar() {
     TTool *tool = TTool::getTool(buttonLayout[idx].toolName, targetType);
     if (tool) tool->updateEnabled(rowIndex, colIndex);
     bool isSeparator = !strncmp(buttonLayout[idx].toolName, "Separator", 9);
-    bool enable      = !tool ? actionEnabled : tool->isEnabled();
+    bool enable =
+        !showLevelBased ? true : (!tool ? actionEnabled : tool->isEnabled());
 
     if (!buttonLayout[idx].action) {
       if (isSeparator)
