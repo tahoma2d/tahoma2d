@@ -359,13 +359,19 @@ void PreferencesPopup::onDropdownShortcutsCycleOptionsChanged(int index) {
 void PreferencesPopup::rebuilldFontStyleList() {
   TFontManager *instance = TFontManager::instance();
   std::vector<std::wstring> typefaces;
-  QString font = m_interfaceFont->currentText();
-  instance->loadFontNames();
-  instance->setFamily(font.toStdWString());
-  instance->getAllTypefaces(typefaces);
+  std::vector<std::wstring>::iterator it;
+  QString font  = m_interfaceFont->currentText();
+  QString style = m_pref->getInterfaceFontStyle();
+  try {
+    instance->loadFontNames();
+    instance->setFamily(font.toStdWString());
+    instance->getAllTypefaces(typefaces);
+  } catch (TFontCreationError &) {
+    it = typefaces.begin();
+    typefaces.insert(it, style.toStdWString());
+  }
   m_interfaceFontStyle->clear();
-  for (std::vector<std::wstring>::iterator it = typefaces.begin();
-       it != typefaces.end(); ++it)
+  for (it = typefaces.begin(); it != typefaces.end(); ++it)
     m_interfaceFontStyle->addItem(QString::fromStdWString(*it));
 }
 
