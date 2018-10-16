@@ -8,6 +8,7 @@
 #include "tapp.h"
 #include "camerasettingspopup.h"
 #include "pane.h"
+#include "boardsettingspopup.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -25,6 +26,7 @@
 #include "toonz/preferences.h"
 #include "toutputproperties.h"
 #include "toonz/tcamera.h"
+#include "toonz/boardsettings.h"
 
 // TnzBase includes
 #include "trasterfx.h"
@@ -166,6 +168,11 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
     m_renderButton          = new QPushButton(tr("Render"), this);
+
+    // Board
+    m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
+    m_boardSettingsBtn = new QPushButton(tr("Edit Clapperboard..."), this);
+
     // Gamma
     m_gammaFld = new DVGui::DoubleLineEdit();
     // Dominant Field
@@ -457,39 +464,43 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
         otherSettingsLay->setHorizontalSpacing(5);
         otherSettingsLay->setVerticalSpacing(10);
         {
+          // clapperboard
+          otherSettingsLay->addWidget(m_addBoard, 0, 0);
+          otherSettingsLay->addWidget(m_boardSettingsBtn, 0, 2, 1, 2);
+
           // Gamma
-          otherSettingsLay->addWidget(new QLabel(tr("Gamma:"), this), 0, 0,
+          otherSettingsLay->addWidget(new QLabel(tr("Gamma:"), this), 1, 0,
                                       Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_gammaFld, 0, 1, 1, 3);
+          otherSettingsLay->addWidget(m_gammaFld, 1, 1, 1, 3);
           // Dominant Field
           otherSettingsLay->addWidget(new QLabel(tr("Dominant Field:"), this),
-                                      1, 0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_dominantFieldOm, 1, 1, 1, 4);
+                                      2, 0, Qt::AlignRight | Qt::AlignVCenter);
+          otherSettingsLay->addWidget(m_dominantFieldOm, 2, 1, 1, 4);
           // Scene Settings' FPS
           otherSettingsLay->addWidget(
-              new QLabel(tr("Frame Rate (linked to Scene Settings):"), this), 2,
+              new QLabel(tr("Frame Rate (linked to Scene Settings):"), this), 3,
               0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_frameRateFld, 2, 1, 1, 3);
+          otherSettingsLay->addWidget(m_frameRateFld, 3, 1, 1, 3);
           // Strech
           otherSettingsLay->addWidget(new QLabel(tr("Stretch from FPS:"), this),
-                                      3, 0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stretchFromFld, 3, 1);
-          otherSettingsLay->addWidget(new QLabel(tr("  To:"), this), 3, 2,
+                                      4, 0, Qt::AlignRight | Qt::AlignVCenter);
+          otherSettingsLay->addWidget(m_stretchFromFld, 4, 1);
+          otherSettingsLay->addWidget(new QLabel(tr("  To:"), this), 4, 2,
                                       Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stretchToFld, 3, 3);
+          otherSettingsLay->addWidget(m_stretchToFld, 4, 3);
           // new in V6.1
           // Multimedia rendering enum
           otherSettingsLay->addWidget(
-              new QLabel(tr("Multiple Rendering:"), this), 4, 0,
+              new QLabel(tr("Multiple Rendering:"), this), 5, 0,
               Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_multimediaOm, 4, 1, 1, 4);
+          otherSettingsLay->addWidget(m_multimediaOm, 5, 1, 1, 4);
 
-          otherSettingsLay->addWidget(m_doStereoscopy, 5, 0);
-          otherSettingsLay->addWidget(new QLabel(tr("Camera Shift:")), 5, 1,
+          otherSettingsLay->addWidget(m_doStereoscopy, 6, 0);
+          otherSettingsLay->addWidget(new QLabel(tr("Camera Shift:")), 6, 1,
                                       Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stereoShift, 5, 2);
+          otherSettingsLay->addWidget(m_stereoShift, 6, 2);
 
-          otherSettingsLay->addLayout(bottomGridLay, 6, 0, 4, 5);
+          otherSettingsLay->addLayout(bottomGridLay, 7, 0, 4, 5);
         }
         otherSettingsLay->setColumnStretch(0, 0);
         otherSettingsLay->setColumnStretch(1, 0);
@@ -548,6 +559,12 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
                        SLOT(onChannelWidthChanged(int)));
 
   if (!isPreview) {
+    // clapperboard
+    ret = ret && connect(m_addBoard, SIGNAL(stateChanged(int)), this,
+                         SLOT(onAddBoardChecked(int)));
+    ret = ret && connect(m_boardSettingsBtn, SIGNAL(clicked()), this,
+                         SLOT(onBoardSettingsBtnClicked()));
+
     ret = ret && connect(m_gammaFld, SIGNAL(editingFinished()),
                          SLOT(onGammaFldEditFinished()));
     ret = ret && connect(m_dominantFieldOm, SIGNAL(currentIndexChanged(int)),
@@ -862,6 +879,18 @@ void OutputSettingsPopup::updateField() {
   m_stretchToFld->setValue(renderSettings.m_timeStretchTo);
 
   m_frameRateFld->setValue(prop->getFrameRate());
+
+  // clapperboard
+  BoardSettings *boardSettings = prop->getBoardSettings();
+  m_addBoard->setChecked(boardSettings->isActive());
+  // clapperboard is only available with movie formats
+  if (isMovieType(m_fileFormat->currentText().toStdString())) {
+    m_addBoard->setEnabled(true);
+    m_boardSettingsBtn->setEnabled(m_addBoard->isChecked());
+  } else {
+    m_addBoard->setEnabled(false);
+    m_boardSettingsBtn->setEnabled(false);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -959,6 +988,15 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
   } else {
     m_threadsComboOm->setDisabled(false);
     m_threadsComboOm->setCurrentIndex(2);
+  }
+
+  // clapperboard is only available with movie formats
+  if (isMovieType(str.toStdString())) {
+    m_addBoard->setEnabled(true);
+    m_boardSettingsBtn->setEnabled(m_addBoard->isChecked());
+  } else {
+    m_addBoard->setEnabled(false);
+    m_boardSettingsBtn->setEnabled(false);
   }
 }
 
@@ -1570,6 +1608,21 @@ void OutputSettingsPopup::onFrameRateEditingFinished() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentXsheet()->getXsheet()->updateFrameCount();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void OutputSettingsPopup::onAddBoardChecked(int state) {
+  BoardSettings *boardSettings = getProperties()->getBoardSettings();
+  boardSettings->setActive(state == Qt::Checked);
+
+  m_boardSettingsBtn->setEnabled(state == Qt::Checked);
+}
+
+void OutputSettingsPopup::onBoardSettingsBtnClicked() {
+  std::cout << "board settings button clicked" << std::endl;
+  BoardSettingsPopup popup(this);
+  popup.exec();
 }
 
 //-----------------------------------------------------------------------------

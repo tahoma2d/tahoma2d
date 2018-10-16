@@ -53,6 +53,10 @@ class OutputSettingsPopup : public DVGui::Dialog {
   CameraSettingsPopup *m_cameraSettings;
   QComboBox *m_presetCombo;
 
+  // clapperboard
+  DVGui::CheckBox *m_addBoard;
+  QPushButton *m_boardSettingsBtn;
+
   bool m_isPreviewSettings;
 
   void updatePresetComboItems();
@@ -97,6 +101,9 @@ protected slots:
   void onCameraSettingsChanged();
   /*-- Scene Settings のFPSを編集できるようにする --*/
   void onFrameRateEditingFinished();
+  // clapperboard
+  void onAddBoardChecked(int state);
+  void onBoardSettingsBtnClicked();
 };
 
 class PreviewSettingsPopup final : public OutputSettingsPopup {
