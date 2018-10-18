@@ -60,6 +60,7 @@ class OutputSettingsPopup : public DVGui::Dialog {
   bool m_isPreviewSettings;
 
   void updatePresetComboItems();
+  void translateResampleOptions();
 
 public:
   OutputSettingsPopup(bool isPreview = false);
