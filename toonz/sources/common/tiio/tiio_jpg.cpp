@@ -9,6 +9,7 @@
 //#include "../compatibility/tnz4.h"
 
 #include "tiio_jpg.h"
+#include "tiio_jpg_exif.h"
 #include "tproperty.h"
 #include "tpixel.h"
 
@@ -76,10 +77,36 @@ void JpgReader::open(FILE *file) {
   m_cinfo.err->error_exit = tnz_error_exit;
 
   jpeg_create_decompress(&m_cinfo);
+
   m_chan = file;
   jpeg_stdio_src(&m_cinfo, m_chan);
+  jpeg_save_markers(&m_cinfo, JPEG_APP0 + 1, 0xffff);  // EXIF
   bool ret = jpeg_read_header(&m_cinfo, TRUE);
-  ret      = ret && jpeg_start_decompress(&m_cinfo);
+
+  bool resolutionFoundInExif = false;
+  jpeg_saved_marker_ptr mark;
+  for (mark = m_cinfo.marker_list; NULL != mark; mark = mark->next) {
+    switch (mark->marker) {
+    case JPEG_APP0 + 1:  // EXIF
+      JpgExifReader exifReader;
+      exifReader.process_EXIF(mark->data - 2, mark->data_length);
+      if (exifReader.containsResolution()) {
+        int resUnit           = exifReader.getResolutionUnit();
+        resolutionFoundInExif = true;
+        if (resUnit == 1 || resUnit == 2) {  // no unit(1) or inch(2)
+          m_info.m_dpix = (double)exifReader.getXResolution();
+          m_info.m_dpiy = (double)exifReader.getYResolution();
+        } else if (resUnit == 3) {  // centimeter(3);
+          m_info.m_dpix = (double)exifReader.getXResolution() * 2.54;
+          m_info.m_dpiy = (double)exifReader.getYResolution() * 2.54;
+        } else  // ignore millimeter(4) and micrometer(5) cases for now
+          resolutionFoundInExif = false;
+      }
+      break;
+    }
+  }
+
+  ret = ret && jpeg_start_decompress(&m_cinfo);
   if (!ret) return;
 
   int row_stride = m_cinfo.output_width * m_cinfo.output_components;
@@ -91,6 +118,17 @@ void JpgReader::open(FILE *file) {
   m_info.m_samplePerPixel = 3;
   m_info.m_valid          = true;
   m_isOpen                = true;
+
+  if (!resolutionFoundInExif && (m_cinfo.saw_JFIF_marker != 0) &&
+      (m_cinfo.X_density != 1) && (m_cinfo.Y_density != 1)) {
+    if (m_cinfo.density_unit == 1) {
+      m_info.m_dpix = (double)m_cinfo.X_density;
+      m_info.m_dpiy = (double)m_cinfo.Y_density;
+    } else if (m_cinfo.density_unit == 2) {
+      m_info.m_dpix = (double)m_cinfo.X_density * 2.54;
+      m_info.m_dpiy = (double)m_cinfo.Y_density * 2.54;
+    }
+  }
 }
 
 void JpgReader::readLine(char *buffer, int x0, int x1, int shrink) {
@@ -164,6 +202,16 @@ public:
     m_cinfo.in_color_space   = JCS_RGB;
 
     jpeg_set_defaults(&m_cinfo);
+
+    // save dpi always in JFIF header, instead of EXIF
+    m_cinfo.write_JFIF_header  = 1;
+    m_cinfo.JFIF_major_version = 1;
+    m_cinfo.JFIF_minor_version = 2;
+    m_cinfo.X_density          = (UINT16)info.m_dpix;
+    m_cinfo.Y_density          = (UINT16)info.m_dpiy;
+    m_cinfo.density_unit       = 1;  // dot per inch
+    m_cinfo.write_Adobe_marker = 0;
+
     if (!m_properties) m_properties = new Tiio::JpgWriterProperties();
 
     jpeg_set_quality(
