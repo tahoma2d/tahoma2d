@@ -1477,7 +1477,8 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   if (!isValid) {
     return;
   }
-  finishRasterBrush(pos, e.m_pressure);
+  double pressure = m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
+  finishRasterBrush(pos, pressure);
 }
 
 //---------------------------------------------------------------------------------------------------------------
