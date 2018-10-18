@@ -1391,7 +1391,10 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
       (!oldFp.isEmpty()) ? oldFp : getScene()->decodeFilePath(m_path);
 
   TFilePath dDstPath = getScene()->decodeFilePath(fp);
-  TSystem::touchParentDir(dDstPath);
+  if (!TSystem::touchParentDir(dDstPath))
+    throw TSystemException(
+        dDstPath,
+        "The level cannot be saved: failed to access the target folder.");
 
   // backup
   if (Preferences::instance()->isLevelsBackupEnabled() &&
