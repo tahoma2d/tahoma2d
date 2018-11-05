@@ -868,15 +868,16 @@ void StyleIndexFieldAndChip::onValueChanged(const QString &changedText) {
   // Aware of both "current" and translated string
   if (!QString("current").contains(changedText) &&
       !StyleIndexLineEdit::tr("current").contains(changedText)) {
-    int index      = changedText.toInt();
-    TPalette *plt  = m_pltHandle->getPalette();
-    int indexCount = plt->getStyleCount();
-    if (index > indexCount)
-      style = QString::number(indexCount - 1);
+    int index     = changedText.toInt();
+    TPalette *plt = m_pltHandle->getPalette();
+    if (plt && index > plt->getStyleCount())
+      style = QString::number(plt->getStyleCount() - 1);
     else
       style = text();
-  }
-  m_property->setValue(style.toStdWString());
+    m_property->setValue(style.toStdWString());
+  } else
+    m_property->setValue(changedText.toStdWString());
+
   repaint();
   // synchronize the state with the same widgets in other tool option bars
   if (m_toolHandle) m_toolHandle->notifyToolChanged();
