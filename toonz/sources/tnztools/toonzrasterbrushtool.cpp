@@ -2094,9 +2094,10 @@ ToonzRasterBrushToolNotifier::ToonzRasterBrushToolNotifier(
       bool ret;
       ret = connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this,
                     SLOT(onColorStyleChanged()));
-      assert(ret);
-      ret = connect(paletteHandle, SIGNAL(colorStyleSwitched()), this,
-                    SLOT(onColorStyleChanged()));
+      ret = ret && connect(paletteHandle, SIGNAL(colorStyleSwitched()), this,
+                           SLOT(onColorStyleChanged()));
+      ret = ret && connect(paletteHandle, SIGNAL(paletteSwitched()), this,
+                           SLOT(onColorStyleChanged()));
       assert(ret);
     }
   }
