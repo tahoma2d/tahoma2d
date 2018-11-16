@@ -348,10 +348,6 @@ void Room::load(const TFilePath &fp) {
       dynamic_cast<FlipBook *>(pane->widget())->setPoolIndex(index);
     }
 
-    /*-- もしRoomにComboViewerがロードされたら、centralWidgetとして登録する --*/
-    if (paneObjectName == "ComboViewer")
-      setCentralViewerPanel(qobject_cast<ComboViewerPanel *>(pane));
-
     settings.endGroup();
   }
 
@@ -549,20 +545,6 @@ void MainWindow::refreshWriteSettings() { writeSettings(); }
 //-----------------------------------------------------------------------------
 
 void MainWindow::readSettings(const QString &argumentLayoutFileName) {
-  TFilePath fp(ToonzFolder::getMyModuleDir() + TFilePath(mySettingsFileName));
-  QSettings mySettings(toQString(fp), QSettings::IniFormat);
-  /*-- Palette-PageViewerのチップサイズのロード --*/
-  mySettings.beginGroup("PaletteChipSizes");
-  {
-    PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Palette =
-        mySettings.value("PaletteViewer", 2).toInt();
-    PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Cleanup =
-        mySettings.value("CleanupSettings", 0).toInt();
-    PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Studio =
-        mySettings.value("StudioPalette", 1).toInt();
-  }
-  mySettings.endGroup();
-
   QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
 
   /*-- Pageを追加すると同時にMenubarを追加する --*/
@@ -656,7 +638,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   writeRoomList(rooms);
 
   // Imposto la stanza corrente
-  fp = ToonzFolder::getRoomsFile(currentRoomFileName);
+  TFilePath fp = ToonzFolder::getRoomsFile(currentRoomFileName);
   Tifstream is(fp);
   std::string currentRoomName;
   is >> currentRoomName;
@@ -673,38 +655,6 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   }
 
   RecentFiles::instance()->loadRecentFiles();
-
-  QStringList roomNames;
-  roomNames << "InknPaint"
-            << "Cleanup"
-            << "PltEdit"
-            << "Schematic"
-            << "QAR";
-  /*--- ComboViewerのパーツのShow/Hideの再現 ---*/
-  mySettings.beginGroup("ComboViewerPartsVisible");
-  {
-    for (int r = 0; r < roomNames.size(); r++) {
-      QString tmpRoomName = roomNames.at(r);
-      Room *tmpRoom       = getRoomByName(tmpRoomName);
-      if (tmpRoom) {
-        ComboViewerPanel *cvp = tmpRoom->getCentralViewerPanel();
-        if (cvp) {
-          if (r == 0)  // InknPaintRoom
-            TApp::instance()->setInknPaintViewerPanel(cvp);
-          mySettings.beginGroup(tmpRoomName);
-          cvp->setShowHideFlag(CVPARTS_TOOLBAR,
-                               mySettings.value("Toolbar", true).toBool());
-          cvp->setShowHideFlag(CVPARTS_TOOLOPTIONS,
-                               mySettings.value("ToolOptions", true).toBool());
-          cvp->setShowHideFlag(CVPARTS_FLIPCONSOLE,
-                               mySettings.value("Console", true).toBool());
-          cvp->updateShowHide();
-          mySettings.endGroup();
-        }
-      }
-    }
-  }
-  mySettings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -748,56 +698,6 @@ void MainWindow::writeSettings() {
   QSettings settings(toQString(fp), QSettings::IniFormat);
 
   settings.setValue("MainWindowGeometry", saveGeometry());
-
-  // Recent Files
-  // RecentFiles::instance()->saveRecentFiles();
-
-  fp = ToonzFolder::getMyModuleDir() + TFilePath(mySettingsFileName);
-  QSettings mySettings(toQString(fp), QSettings::IniFormat);
-
-  /*--- Palette-PageViewerのチップサイズの保存 ---*/
-  mySettings.beginGroup("PaletteChipSizes");
-  {
-    mySettings.setValue(
-        "PaletteViewer",
-        PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Palette);
-    mySettings.setValue(
-        "CleanupSettings",
-        PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Cleanup);
-    mySettings.setValue(
-        "StudioPalette",
-        PaletteViewerGUI::ChipSizeManager::instance()->chipSize_Studio);
-  }
-  mySettings.endGroup();
-
-  QStringList roomNames;
-  roomNames << "InknPaint"
-            << "Cleanup"
-            << "PltEdit"
-            << "Schematic"
-            << "QAR";
-  /*--- ComboViewerのパーツのShow/Hideの保存 ---*/
-  mySettings.beginGroup("ComboViewerPartsVisible");
-  {
-    for (int r = 0; r < roomNames.size(); r++) {
-      QString tmpRoomName = roomNames.at(r);
-      Room *tmpRoom       = getRoomByName(tmpRoomName);
-      if (tmpRoom) {
-        ComboViewerPanel *cvp = tmpRoom->getCentralViewerPanel();
-        if (cvp) {
-          mySettings.beginGroup(tmpRoomName);
-          mySettings.setValue("Toolbar", cvp->getShowHideFlag(CVPARTS_TOOLBAR));
-          mySettings.setValue("ToolOptions",
-                              cvp->getShowHideFlag(CVPARTS_TOOLOPTIONS));
-          mySettings.setValue("Console",
-                              cvp->getShowHideFlag(CVPARTS_FLIPCONSOLE));
-          cvp->updateShowHide();
-          mySettings.endGroup();
-        }
-      }
-    }
-  }
-  mySettings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -817,15 +717,9 @@ Room *MainWindow::createCleanupRoom() {
     cleanupRoom->addDockWidget(viewer);
     layout->dockItem(viewer);
     ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(viewer);
-    if (cvp) {
-      /*- UI隠す -*/
-      cvp->setShowHideFlag(CVPARTS_TOOLBAR, false);
-      cvp->setShowHideFlag(CVPARTS_TOOLOPTIONS, false);
-      cvp->setShowHideFlag(CVPARTS_FLIPCONSOLE, false);
-      cvp->updateShowHide();
-
-      cleanupRoom->setCentralViewerPanel(cvp);
-    }
+    if (cvp)
+      // hide all parts
+      cvp->setVisiblePartsFlag(CVPARTS_None);
   }
 
   // CleanupSettings
@@ -864,11 +758,7 @@ Room *MainWindow::createPltEditRoom() {
     layout->dockItem(viewer);
 
     ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(viewer);
-    if (cvp) {
-      cvp->setShowHideFlag(CVPARTS_FLIPCONSOLE, false);
-      cvp->updateShowHide();
-      pltEditRoom->setCentralViewerPanel(cvp);
-    }
+    if (cvp) cvp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
   }
 
   // Palette
@@ -920,12 +810,6 @@ Room *MainWindow::createInknPaintRoom() {
   if (viewer) {
     inknPaintRoom->addDockWidget(viewer);
     layout->dockItem(viewer);
-
-    ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(viewer);
-    if (cvp) {
-      inknPaintRoom->setCentralViewerPanel(cvp);
-      TApp::instance()->setInknPaintViewerPanel(cvp);
-    }
   }
 
   // Palette
@@ -1959,15 +1843,17 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
   createToggle(MI_ACheck, tr("&Gap Check"), "", ACheckToggleAction ? 1 : 0,
                MenuViewCommandType);
-  QAction* shiftTraceAction = createToggle(MI_ShiftTrace, tr("Shift and Trace"), "", false,
-               MenuViewCommandType);
+  QAction *shiftTraceAction = createToggle(MI_ShiftTrace, tr("Shift and Trace"),
+                                           "", false, MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace.svg"));
-  shiftTraceAction = createToggle(MI_EditShift, tr("Edit Shift"), "", false, MenuViewCommandType);
+  shiftTraceAction = createToggle(MI_EditShift, tr("Edit Shift"), "", false,
+                                  MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace_edit.svg"));
   createToggle(MI_NoShift, tr("No Shift"), "", false, MenuViewCommandType);
   CommandManager::instance()->enable(MI_EditShift, false);
   CommandManager::instance()->enable(MI_NoShift, false);
-  shiftTraceAction = createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
+  shiftTraceAction =
+      createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace_reset.svg"));
 
   if (QGLPixelBuffer::hasOpenGLPbuffers())

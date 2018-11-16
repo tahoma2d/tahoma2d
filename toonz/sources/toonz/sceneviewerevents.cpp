@@ -1096,19 +1096,21 @@ bool SceneViewer::event(QEvent *e) {
       break;
     }
   */
-  if (CommandManager::instance()
+  if (e->type() == QEvent::Gesture &&
+      CommandManager::instance()
           ->getAction(MI_TouchGestureControl)
           ->isChecked()) {
-    if (e->type() == QEvent::Gesture) {
-      gestureEvent(static_cast<QGestureEvent *>(e));
-      return true;
-    }
-    if (e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
-        e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) {
-      touchEvent(static_cast<QTouchEvent *>(e), e->type());
-      m_gestureActive = true;
-      return true;
-    }
+    gestureEvent(static_cast<QGestureEvent *>(e));
+    return true;
+  }
+  if ((e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
+       e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) &&
+      CommandManager::instance()
+          ->getAction(MI_TouchGestureControl)
+          ->isChecked()) {
+    touchEvent(static_cast<QTouchEvent *>(e), e->type());
+    m_gestureActive = true;
+    return true;
   }
   if (e->type() == QEvent::ShortcutOverride || e->type() == QEvent::KeyPress) {
     if (!((QKeyEvent *)e)->isAutoRepeat()) {
@@ -1474,8 +1476,8 @@ void SceneViewer::onContextMenu(const QPoint &pos, const QPoint &globalPos) {
 
   menu->addLevelCommands(columnIndices);
 
-  ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(
-      parentWidget()->parentWidget()->parentWidget());
+  ComboViewerPanel *cvp =
+      qobject_cast<ComboViewerPanel *>(parentWidget()->parentWidget());
   if (cvp) {
     menu->addSeparator();
     cvp->addShowHideContextMenu(menu);

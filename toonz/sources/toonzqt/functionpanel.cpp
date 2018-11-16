@@ -263,13 +263,11 @@ FunctionPanel::FunctionPanel(QWidget *parent, bool isFloating)
 
   if (m_isFloating) {
     // load the dialog size
-    TFilePath fp(ToonzFolder::getMyModuleDir() + TFilePath(mySettingsFileName));
-    QSettings mySettings(toQString(fp), QSettings::IniFormat);
+    TFilePath fp(ToonzFolder::getMyModuleDir() + TFilePath("popups.ini"));
+    QSettings settings(toQString(fp), QSettings::IniFormat);
 
-    mySettings.beginGroup("Dialogs");
     setGeometry(
-        mySettings.value("FunctionCurves", QRect(500, 500, 400, 300)).toRect());
-    mySettings.endGroup();
+        settings.value("FunctionCurves", QRect(500, 500, 400, 300)).toRect());
   }
 }
 
@@ -278,12 +276,10 @@ FunctionPanel::FunctionPanel(QWidget *parent, bool isFloating)
 FunctionPanel::~FunctionPanel() {
   if (m_isFloating) {
     // save the dialog size
-    TFilePath fp(ToonzFolder::getMyModuleDir() + TFilePath(mySettingsFileName));
-    QSettings mySettings(toQString(fp), QSettings::IniFormat);
+    TFilePath fp(ToonzFolder::getMyModuleDir() + TFilePath("popups.ini"));
+    QSettings settings(toQString(fp), QSettings::IniFormat);
 
-    mySettings.beginGroup("Dialogs");
-    mySettings.setValue("FunctionCurves", geometry());
-    mySettings.endGroup();
+    settings.setValue("FunctionCurves", geometry());
   }
 
   delete m_dragTool;
