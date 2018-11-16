@@ -271,10 +271,15 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So, in such case set m_tabletEvent = FALSE and let the mousePressEvent to
     // work.
     if (e->button() == Qt::LeftButton) {
-      TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
-      m_tabletState = Touched;
-      onPress(mouseEvent);
+      // Proces the 1st tabletPress encountered and ignore back-to-back
+      // tabletPress events. Treat it as if it happened so a following
+      // mousePressEvent gets ignored
+      if (m_tabletState == Released || m_tabletState == None) {
+        TMouseEvent mouseEvent;
+        initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+        m_tabletState = Touched;
+        onPress(mouseEvent);
+      }
     } else
       m_tabletEvent = false;
 #endif
@@ -547,6 +552,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       // sometimes the mousePressedEvent is postponed to a wrong  mouse move
       // event!
       if (m_buttonClicked && !m_toolSwitched) tool->leftButtonDrag(pos, event);
+      m_mouseState = OnStroke;
     } else if (m_pressure == 0.0) {
       tool->mouseMove(pos, event);
     }
@@ -593,6 +599,7 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   // and will cancel the onPress operation called here.
 
   TMouseEvent mouseEvent;
+  m_mouseState = Touched;
   initToonzEvent(mouseEvent, event, height(), 1.0, getDevPixRatio());
   onPress(mouseEvent);
 }
@@ -601,11 +608,20 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
 void SceneViewer::onPress(const TMouseEvent &event) {
   if (m_mouseButton != Qt::NoButton) {
-    // if some button is pressed while another button being active,
-    // finish the action for the previous button first.
-    TMouseEvent preEvent = event;
-    preEvent.m_button    = m_mouseButton;
-    onRelease(preEvent);
+    if (event.m_isTablet && m_mouseState != None) {
+      //      qDebug() << "[onPress] Switched from MousePress to TabletPress";
+      // TabletPress came immediately after MousePress. Let's switch to
+      // tabletPress but not end the prior action or it leaves an extra
+      // stroke
+      m_mouseState    = None;
+      m_buttonClicked = false;
+    } else {
+      // if some button is pressed while another button being active,
+      // finish the action for the previous button first.
+      TMouseEvent preEvent = event;
+      preEvent.m_button    = m_mouseButton;
+      onRelease(preEvent);
+    }
   }
 
   // evita i press ripetuti
@@ -683,6 +699,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     m_tabletState = StartStroke;
     tool->leftButtonDown(pos, event);
   } else if (m_mouseButton == Qt::LeftButton) {
+    m_mouseState = StartStroke;
     TApp::instance()->getCurrentTool()->setToolBusy(true);
     tool->leftButtonDown(pos, event);
   }
@@ -713,6 +730,7 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
   }
 
   TMouseEvent mouseEvent;
+  if (m_mouseState != None) m_mouseState = Released;
   initToonzEvent(mouseEvent, event, height(), 1.0, getDevPixRatio());
   onRelease(mouseEvent);
 }
@@ -784,6 +802,7 @@ quit:
   // Don't clear it out table state so the tablePress event will process
   // correctly.
   if (m_tabletState != Touched) m_tabletState = None;
+  m_mouseState                                = None;
   m_tabletMove                                = false;
   m_pressure                                  = 0;
   // Leave m_tabletEvent as-is in order to check whether the onRelease is called
@@ -1015,6 +1034,68 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
 //-----------------------------------------------------------------------------
 
 bool SceneViewer::event(QEvent *e) {
+  /*
+    switch (e->type()) {
+    //	case QEvent::Enter:
+    //	qDebug() << "[enter] ************************** Enter";
+    //	break;
+    //	case QEvent::Leave:
+    //	qDebug() << "[enter] ************************** Leave";
+    //	break;
+
+    case QEvent::TabletPress: {
+      QTabletEvent *te = static_cast<QTabletEvent *>(e);
+      qDebug() << "[enter] ************************** TabletPress mouseState("
+               << m_mouseState << ") tabletState(" << m_tabletState
+               << ") pressure(" << m_pressure << ") pointerType("
+               << te->pointerType() << ") device(" << te->device() << ")";
+    } break;
+    //	case QEvent::TabletMove:
+    //	qDebug() << "[enter] ************************** TabletMove
+    //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
+    //<< m_pressure << ")";
+    //	break;
+    case QEvent::TabletRelease:
+      qDebug() << "[enter] ************************** TabletRelease mouseState("
+               << m_mouseState << ") tabletState(" << m_tabletState << ")";
+      break;
+
+    case QEvent::TouchBegin:
+      qDebug() << "[enter] ************************** TouchBegin";
+      break;
+    case QEvent::TouchEnd:
+      qDebug() << "[enter] ************************** TouchEnd";
+      break;
+    case QEvent::TouchCancel:
+      qDebug() << "[enter] ************************** TouchCancel";
+      break;
+
+    case QEvent::Gesture:
+      qDebug() << "[enter] ************************** Gesture";
+      break;
+
+    case QEvent::MouseButtonPress:
+      qDebug()
+          << "[enter] ************************** MouseButtonPress mouseState("
+          << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
+          << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
+      break;
+    //	case QEvent::MouseMove:
+    //	qDebug() << "[enter] ************************** MouseMove mouseState("
+    //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
+    //m_pressure << ")";
+    //	break;
+    case QEvent::MouseButtonRelease:
+      qDebug()
+          << "[enter] ************************** MouseButtonRelease mouseState("
+          << m_mouseState << ") tabletState(" << m_tabletState << ")";
+      break;
+
+    case QEvent::MouseButtonDblClick:
+      qDebug() << "[enter] ============================== MouseButtonDblClick";
+      break;
+    }
+  */
   if (CommandManager::instance()
           ->getAction(MI_TouchGestureControl)
           ->isChecked()) {
@@ -1076,44 +1157,6 @@ bool SceneViewer::event(QEvent *e) {
     }
     clock.start();
   }
-
-  /*
-  switch(e->type())
-  {
-  case QEvent::Enter:
-  qDebug() << "************************** Enter";
-  break;
-  case QEvent::Leave:
-  qDebug() << "************************** Leave";
-  break;
-
-  case QEvent::TabletPress:
-  qDebug() << "************************** TabletPress"  << m_pressure;
-  break;
-  case QEvent::TabletMove:
-  qDebug() << "************************** TabletMove";
-  break;
-  case QEvent::TabletRelease:
-  qDebug() << "************************** TabletRelease";
-  break;
-
-
-  case QEvent::MouseButtonPress:
-  qDebug() << "**************************MouseButtonPress"  << m_pressure << " "
-  << m_tabletEvent;
-  break;
-  case QEvent::MouseMove:
-  qDebug() << "**************************MouseMove" <<  m_pressure;
-  break;
-  case QEvent::MouseButtonRelease:
-  qDebug() << "**************************MouseButtonRelease";
-  break;
-
-  case QEvent::MouseButtonDblClick:
-  qDebug() << "============================== MouseButtonDblClick";
-  break;
-  }
-  */
 
   return QOpenGLWidget::event(e);
 }
