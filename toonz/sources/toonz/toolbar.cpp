@@ -161,6 +161,11 @@ void Toolbar::updateToolbar() {
     bool enable =
         !showLevelBased ? true : (!tool ? actionEnabled : tool->isEnabled());
 
+    // Plastic tool should always be available so you can create a mesh
+    if (!enable && !strncmp(buttonLayout[idx].toolName, T_Plastic, 9) &&
+        (m_toolbarLevel & LEVELCOLUMN_XSHLEVEL))
+      enable = true;
+
     if (!buttonLayout[idx].action) {
       if (isSeparator)
         buttonLayout[idx].action = addSeparator();
