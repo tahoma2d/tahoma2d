@@ -795,10 +795,18 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 
   TXshColumn *column = (columnIndex >= 0) ? xsh->getColumn(columnIndex) : 0;
 
-  TXshCell cell       = xsh->getCell(rowIndex, columnIndex);
-  TXshLevel *xl       = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
-  TXshSimpleLevel *sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
-  int levelType       = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+  TXshLevel *xl       = m_application->getCurrentLevel()->getLevel();
+  TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
+  int levelType       = sl ? sl->getType() : NO_XSHLEVEL;
+
+  // If not in Level editor, let's use our current cell from the xsheet to
+  // find the nearest level before it
+  if (!m_application->getCurrentFrame()->isEditingLevel()) {
+    TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+    xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
+    sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+    levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+  }
 
   if (Preferences::instance()->isAutoCreateEnabled() &&
       Preferences::instance()->isAnimationSheetEnabled()) {
