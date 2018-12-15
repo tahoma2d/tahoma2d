@@ -118,6 +118,12 @@ void Toolbar::updateToolbar(bool forceReset) {
           rowIndex  = r;
           break;
         }
+
+        if (levelType == NO_XSHLEVEL) {
+          TXshCell cell = xsh->getCell(r0, colIndex);
+          levelType     = cell.m_level->getType();
+          rowIndex      = r0;
+        }
       }
     }
   }

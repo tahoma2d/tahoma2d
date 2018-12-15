@@ -801,7 +801,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 
   // If not in Level editor, let's use our current cell from the xsheet to
   // find the nearest level before it
-  if (!m_application->getCurrentFrame()->isEditingLevel()) {
+  if (levelType == NO_XSHLEVEL &&
+      !m_application->getCurrentFrame()->isEditingLevel()) {
     TXshCell cell = xsh->getCell(rowIndex, columnIndex);
     xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
     sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
