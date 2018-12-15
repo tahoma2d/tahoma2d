@@ -88,7 +88,9 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
 //-----------------------------------------------------------------------------
 /*! Layout the tool buttons according to the state of the expandButton
 */
-void Toolbar::updateToolbar() {
+void Toolbar::updateToolbar(bool forceReset) {
+  if (forceReset) m_toolbarLevel = -1;
+
   TApp *app                  = TApp::instance();
   TXshLevelHandle *currlevel = app->getCurrentLevel();
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
@@ -201,9 +203,8 @@ void Toolbar::updateToolbar() {
 
 void Toolbar::setIsExpanded(bool expand) {
   m_isExpanded       = expand;
-  m_toolbarLevel     = -1;  // Force toolbar to refresh
   ShowAllToolsToggle = (expand) ? 1 : 0;
-  updateToolbar();
+  updateToolbar(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -227,12 +228,18 @@ void Toolbar::showEvent(QShowEvent *e) {
 
   TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
   connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
+  connect(frameHandle, SIGNAL(frameTypeChanged()), this,
+          SLOT(refreshToolbar()));
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
-  connect(xsheetHandle, SIGNAL(xsheetChanged()), this, SLOT(onXsheetChanged()));
+  connect(xsheetHandle, SIGNAL(xsheetChanged()), this, SLOT(refreshToolbar()));
 
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()),
           SLOT(onToolChanged()));
+
+  TXshLevelHandle *levelHandle = TApp::instance()->getCurrentLevel();
+  connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
+          SLOT(updateToolbar()));
 }
 
 void Toolbar::onFrameSwitched() {
@@ -241,10 +248,7 @@ void Toolbar::onFrameSwitched() {
   updateToolbar();
 }
 
-void Toolbar::onXsheetChanged() {
-  m_toolbarLevel = -1;
-  updateToolbar();
-}
+void Toolbar::refreshToolbar() { updateToolbar(true); }
 
 //-----------------------------------------------------------------------------
 

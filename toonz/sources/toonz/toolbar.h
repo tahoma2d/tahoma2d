@@ -29,9 +29,9 @@ protected:
 protected slots:
   void onToolChanged();
   void setIsExpanded(bool expand);
-  void updateToolbar();
+  void updateToolbar(bool forceReset = false);
   void onFrameSwitched();
-  void onXsheetChanged();
+  void refreshToolbar();
 };
 
 #endif  // TOOLBAR_H
