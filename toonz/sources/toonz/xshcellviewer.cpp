@@ -828,8 +828,8 @@ void RenameCellField::renameCell() {
       }
 
       TXshLevel *xl = cell.m_level.getPointer();
-      if (!xl || (xl->getType() == OVL_XSHLEVEL &&
-                  xl->getPath().getFrame() == TFrameId::NO_FRAME)) {
+      if (!xl || (xl->getSimpleLevel() &&
+                  xl->getSimpleLevel()->getFirstFid() == TFrameId::NO_FRAME)) {
         cells.append(TXshCell());
         continue;
       }
