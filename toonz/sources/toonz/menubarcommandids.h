@@ -333,5 +333,6 @@
 #define MI_LipSyncPopup "MI_LipSyncPopup"
 #define MI_AutoInputCellNumber "MI_AutoInputCellNumber"
 #define MI_TouchGestureControl "MI_TouchGestureControl"
+#define MI_SeparateColors "MI_SeparateColors"
 
 #endif

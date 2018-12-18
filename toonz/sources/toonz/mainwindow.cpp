@@ -2046,6 +2046,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_DeactivateUpperColumns,
                              tr("Hide Upper Columns"), "");
 
+  createRightClickMenuAction(MI_SeparateColors, tr("Separate Colors..."), "");
+
   createToolAction(T_Edit, "edit", tr("Animate Tool"), "A");
   createToolAction(T_Selection, "selection", tr("Selection Tool"), "S");
   createToolAction(T_Brush, "brush", tr("Brush Tool"), "B");
