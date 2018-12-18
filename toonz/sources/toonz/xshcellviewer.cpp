@@ -137,8 +137,7 @@ bool selectionContainLevelImage(TCellSelection *selection, TXsheet *xsheet) {
 
       std::string ext = level->getPath().getType();
       int type        = level->getType();
-      if (type == TZP_XSHLEVEL || type == PLI_XSHLEVEL ||
-          (type == OVL_XSHLEVEL && ext != "psd"))
+      if (type == TZP_XSHLEVEL || type == PLI_XSHLEVEL || type == OVL_XSHLEVEL)
         return true;
     }
 
