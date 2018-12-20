@@ -82,13 +82,11 @@
 
 // boost includes
 #include <boost/optional.hpp>
-#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/utility/in_place_factory.hpp>
 
 //#define USE_SQLITE_HDPOOL
 
 using namespace DVGui;
-namespace ba = boost::algorithm;
 
 //-----------------------------------------------------------------------------
 namespace {
@@ -2261,8 +2259,8 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   if (args.resourceDatas.empty()) return 0;
 
   // Redirect to resource folders loading in case they're all dirs
-  if (ba::all_of(args.resourceDatas.begin(), args.resourceDatas.end(),
-                 locals::isDir))
+  if (std::all_of(args.resourceDatas.begin(), args.resourceDatas.end(),
+                  locals::isDir))
     return loadResourceFolders(args, sb);
 
   boost::optional<LoadScopedBlock> sb_;
