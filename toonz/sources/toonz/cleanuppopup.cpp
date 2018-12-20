@@ -49,15 +49,11 @@
 #include <QMainWindow>
 #include <QGroupBox>
 
-// boost includes
-#include <boost/bind.hpp>
-#include <boost/functional.hpp>
-#include <boost/mem_fn.hpp>
-
 // STL includes
 #include <set>
 #include <map>
 #include <numeric>
+#include <functional>
 
 //*****************************************************************************
 //    Local namespace stuff
@@ -743,7 +739,7 @@ bool CleanupPopup::analyzeCleanupList() {
   /*--- Cleanup対象フレームが無くなったLevelを対象から外す ---*/
   m_cleanupLevels.erase(
       std::remove_if(m_cleanupLevels.begin(), m_cleanupLevels.end(),
-                     boost::mem_fn(&CleanupLevel::empty)),
+                     std::mem_fn(&CleanupLevel::empty)),
       m_cleanupLevels.end());
 
   return true;
