@@ -162,6 +162,8 @@ QList<TFxP> getRoots(const QList<TFxP> &fxs, TFxSet *terminals) {
   return roots;
 }
 
+bool resizingNodes = false;
+bool updatingScene = false;
 }  // namespace
 
 //==================================================================
@@ -353,6 +355,8 @@ void FxSchematicScene::setApplication(TApplication *app) {
 //------------------------------------------------------------------
 
 void FxSchematicScene::updateScene() {
+  if (updatingScene) return;
+  updatingScene = true;
   if (!views().empty()) m_disconnectionLinks.clearAll();
   m_connectionLinks.clearAll();
   m_selectionOldPos.clear();
@@ -460,6 +464,7 @@ void FxSchematicScene::updateScene() {
   updateEditedMacros(editedMacro);
   updateLink();
   m_nodesToPlace.clear();
+  updatingScene = false;
 }
 
 //------------------------------------------------------------------
@@ -528,6 +533,9 @@ FxSchematicNode *FxSchematicScene::addFxSchematicNode(TFx *fx) {
 
   connect(node, SIGNAL(fxNodeDoubleClicked()), this,
           SLOT(onFxNodeDoubleClicked()));
+
+  connect(node, SIGNAL(nodeChangedSize()), this, SLOT(onNodeChangedSize()));
+
   if (fx->getAttributes()->getDagNodePos() == TConst::nowhere) {
     node->resize(m_gridDimension == 0);
     placeNode(node);
@@ -1964,6 +1972,8 @@ void FxSchematicScene::closeInnerMacroEditor(int groupId) {
 //------------------------------------------------------------------
 
 void FxSchematicScene::resizeNodes(bool maximizedNode) {
+  resizingNodes = true;
+
   // resize nodes
   m_gridDimension = maximizedNode ? eLarge : eSmall;
   m_xshHandle->getXsheet()->getFxDag()->setDagGridDimension(m_gridDimension);
@@ -1990,6 +2000,8 @@ void FxSchematicScene::resizeNodes(bool maximizedNode) {
     it3.value()->resizeNodes(maximizedNode);
   }
   updateScene();
+
+  resizingNodes = false;
 }
 
 //------------------------------------------------------------------
@@ -1999,4 +2011,11 @@ void FxSchematicScene::updatePositionOnResize(TFx *fx, bool maximizedNode) {
   double oldPosY = oldPos.y - 25000;
   double newPosY = maximizedNode ? oldPosY * 2 : oldPosY * 0.5;
   fx->getAttributes()->setDagNodePos(TPointD(oldPos.x, newPosY + 25000));
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::onNodeChangedSize() {
+  if (resizingNodes) return;
+  updateScene();
 }
