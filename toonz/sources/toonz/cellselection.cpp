@@ -1911,7 +1911,13 @@ void TCellSelection::pasteKeyframesInto() {
 //-----------------------------------------------------------------------------
 
 void TCellSelection::duplicateFrame() {
-  if (!Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) return;
+  if (!Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) {
+    DVGui::warning(
+        QObject::tr("Please enable \"Sync Level Strip Drawing Number Changes "
+                    "with the XSheet\" preference option\nto use the duplicate "
+                    "command in the xsheet / timeline."));
+    return;
+  }
 
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   // TApp::instance()->getCurrentScene()->getScene()->g
@@ -1919,11 +1925,12 @@ void TCellSelection::duplicateFrame() {
   getSelectedCells(r0, c0, r1, c1);
   // check for cases that won't work
   if (c1 > c0) {
-    DVGui::error("Please select only one layer to duplicate a frame.");
+    DVGui::error(
+        QObject::tr("Please select only one layer to duplicate a frame."));
     return;
   }
   if (r1 > r0) {
-    DVGui::error("Please select only one frame to duplicate.");
+    DVGui::error(QObject::tr("Please select only one frame to duplicate."));
     return;
   }
 
