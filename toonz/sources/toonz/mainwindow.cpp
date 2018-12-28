@@ -57,8 +57,6 @@
 #include <QPushButton>
 #include <QLabel>
 
-extern const char *applicationFullName;
-
 TEnv::IntVar ViewCameraToggleAction("ViewCameraToggleAction", 1);
 TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 1);
 TEnv::IntVar FieldGuideToggleAction("FieldGuideToggleAction", 0);
@@ -493,7 +491,7 @@ void MainWindow::changeWindowTitle() {
 
   if (name.isEmpty()) name = tr("Untitled");
 
-  name += " : " + QString::fromLatin1(applicationFullName);
+  name += " : " + QString::fromStdString(TEnv::getApplicationFullName());
 
   setWindowTitle(name);
 }
