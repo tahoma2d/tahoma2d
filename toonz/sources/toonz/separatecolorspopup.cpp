@@ -1599,7 +1599,7 @@ void SeparateColorsPopup::doCompute(TRaster32P raster, TDimensionI& dim,
         pix_c3->b = getChannelValue(subColor3.b, ratio_s3);
         pix_c3->m = getChannelValue(TPixel32::maxChannelValue, ratio_s3);
       } else {
-        *pix_c2 = matteColor_s3;
+        *pix_c3 = matteColor_s3;
       }
 
       if (doMatte) matte_p++;
