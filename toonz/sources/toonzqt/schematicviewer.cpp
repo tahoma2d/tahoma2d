@@ -282,7 +282,7 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
     if (m_cursorMode == CursorMode::Zoom && m_zooming) {
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
       double factorY = exp(deltaY * 0.001);
-      changeScale(m_zoomPoint, factorY);
+      changeScale(m_zoomPoint * getDevPixRatio(), factorY);
     }
     m_oldWinPos   = currWinPos;
     m_oldScenePos = currScenePos;
@@ -380,7 +380,7 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
       double factor = exp(delta * 0.001);
-      changeScale(me->pos(), factor);
+      changeScale(me->pos() * getDevPixRatio(), factor);
     }
   }
   me->accept();
