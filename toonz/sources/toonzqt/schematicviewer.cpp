@@ -664,19 +664,18 @@ bool SchematicSceneViewer::event(QEvent *e) {
   }
   */
 
-  if (CommandManager::instance()
+  if (e->type() == QEvent::Gesture &&
+      CommandManager::instance()
           ->getAction(MI_TouchGestureControl)
           ->isChecked()) {
-    if (e->type() == QEvent::Gesture) {
-      gestureEvent(static_cast<QGestureEvent *>(e));
-      return true;
-    }
-    if (e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
-        e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) {
-      touchEvent(static_cast<QTouchEvent *>(e), e->type());
-      m_gestureActive = true;
-      return true;
-    }
+    gestureEvent(static_cast<QGestureEvent *>(e));
+    return true;
+  }
+  if (e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
+      e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) {
+    touchEvent(static_cast<QTouchEvent *>(e), e->type());
+    m_gestureActive = true;
+    return true;
   }
   return QGraphicsView::event(e);
 }
