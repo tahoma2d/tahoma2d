@@ -310,6 +310,7 @@
 @xsheet-VerticalLineHead-color:             lighten(@bg, 21.9608);
 @xsheet-PreviewFrameText-color:             @label-title;
 @xsheet-CurrentRowBG-color:                 #506082;
+@xsheet-OnionSkinAreaBG-color:              darken(@bg, 7);
 
 @xsheet-EmptyColumnHead-color:              lighten(@bg, 10.1961);
 @xsheet-SelectedColumnText-color:           #E66464;
@@ -455,16 +456,17 @@
 @schematic-FxColumn-color: @xsheet-FxColumn-color;
 @schematic-PaletteColumn-color: @xsheet-PaletteColumn-color;
 @schematic-MeshColumn-color: @xsheet-MeshColumn-color;
+@schematic-ReferenceColumn-color: @xsheet-ReferenceColumn-color;
 
 @schematic-PreviewButtonBgOn-color: @xsheet-PreviewButtonBgOn-color;
 @schematic-PreviewButtonOnImage: @xsheet-PreviewButtonOnImage;
-@schematic-PreviewButtonBgOff-color: fade(@xsheet-PreviewButtonBgOn-color, 50%);
+@schematic-PreviewButtonBgOff-color: @xsheet-ReferenceColumn-color;
 @schematic-PreviewButtonOffImage: @xsheet-PreviewButtonOffImage;
 
 @schematic-CamstandButtonBgOn-color: @xsheet-CamstandButtonBgOn-color;
 @schematic-CamstandButtonOnImage: @xsheet-CamstandButtonOnImage;
 @schematic-CamstandButtonTranspImage: @xsheet-CamstandButtonTranspImage;
-@schematic-CamstandButtonBgOff-color: fade(@xsheet-CamstandButtonBgOn-color, 50%);
+@schematic-CamstandButtonBgOff-color: @xsheet-ReferenceColumn-color;
 @schematic-CamstandButtonOffImage: @xsheet-CamstandButtonOffImage;
 
 // -----------------------------------------------------------------------------

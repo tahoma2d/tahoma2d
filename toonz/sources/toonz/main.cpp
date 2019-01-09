@@ -62,6 +62,9 @@
 #include "tsimplecolorstyles.h"
 #include "toonz/imagestyles.h"
 #include "tvectorbrushstyle.h"
+#include "tfont.h"
+
+#include "kis_tablet_support_win8.h"
 
 #ifdef MACOSX
 #include "tipc.h"
@@ -89,17 +92,10 @@ TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
 const char *applicationFullName = "LineTest 6.4 Beta";
 const char *rootVarName         = "LINETESTROOT";
 const char *systemVarPrefix     = "LINETEST";
-#else
-const char *applicationName     = "OpenToonz";
-const char *applicationVersion  = "1.2";
-const char *applicationRevision = "1";
-const char *dllRelativePath     = "./toonz6.app/Contents/Frameworks";
 #endif
 
 TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
 
-const char *applicationFullName =
-    "OpenToonz 1.2.1";  // next will be 1.3 (not 1.3.0)
 const char *rootVarName     = "TOONZROOT";
 const char *systemVarPrefix = "TOONZ";
 
@@ -115,9 +111,10 @@ void qt_mac_set_menubar_merge(bool enable);
 
 static void fatalError(QString msg) {
   DVGui::MsgBoxInPopup(
-      CRITICAL, msg + "\n" +
-                    QObject::tr("Installing %1 again could fix the problem.")
-                        .arg(applicationFullName));
+      CRITICAL,
+      msg + "\n" +
+          QObject::tr("Installing %1 again could fix the problem.")
+              .arg(QString::fromStdString(TEnv::getApplicationFullName())));
   exit(0);
 }
 //-----------------------------------------------------------------------------
@@ -154,12 +151,8 @@ DV_IMPORT_API void initColorFx();
 */
 static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   StudioPalette::enable(true);
-
-  TEnv::setApplication(applicationName, applicationVersion,
-                       applicationRevision);
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
-  TEnv::setDllRelativeDir(TFilePath(dllRelativePath));
 
   QHash<QString, QString>::const_iterator i = argPathValues.constBegin();
   while (i != argPathValues.constEnd()) {
@@ -172,9 +165,8 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
 
   QCoreApplication::setOrganizationName("OpenToonz");
   QCoreApplication::setOrganizationDomain("");
-  QString fullApplicationNameQStr =
-      QString(applicationName) + " " + applicationVersion;
-  QCoreApplication::setApplicationName(fullApplicationNameQStr);
+  QCoreApplication::setApplicationName(
+      QString::fromStdString(TEnv::getApplicationFullName()));
 
   /*-- TOONZROOTのPathの確認 --*/
   // controllo se la xxxroot e' definita e corrisponde ad un folder esistente
@@ -631,7 +623,7 @@ int main(int argc, char *argv[]) {
   QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
   a.setStyleSheet(currentStyle);
 
-  w.setWindowTitle(applicationFullName);
+  w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
     splash.showMessage(offsetStr + "Starting OpenToonz Portable ...",
                        Qt::AlignCenter, Qt::white);
@@ -682,16 +674,29 @@ int main(int argc, char *argv[]) {
   }
 
   QFont *myFont;
-  std::string fontName =
-      Preferences::instance()->getInterfaceFont().toStdString();
-  std::string isBold =
-      Preferences::instance()->getInterfaceFontWeight() ? "Yes" : "No";
-  myFont = new QFont(QString::fromStdString(fontName));
+  QString fontName  = Preferences::instance()->getInterfaceFont();
+  QString fontStyle = Preferences::instance()->getInterfaceFontStyle();
+
+  TFontManager *fontMgr = TFontManager::instance();
+  std::vector<std::wstring> typefaces;
+  bool isBold = false, isItalic = false, hasKerning = false;
+  try {
+    fontMgr->loadFontNames();
+    fontMgr->setFamily(fontName.toStdWString());
+    fontMgr->getAllTypefaces(typefaces);
+    isBold     = fontMgr->isBold(fontName, fontStyle);
+    isItalic   = fontMgr->isItalic(fontName, fontStyle);
+    hasKerning = fontMgr->hasKerning();
+  } catch (TFontCreationError &) {
+    // Do nothing. A default font should load
+  }
+
+  myFont = new QFont(fontName);
   myFont->setPixelSize(EnvSoftwareCurrentFontSize);
-  if (strcmp(isBold.c_str(), "Yes") == 0)
-    myFont->setBold(true);
-  else
-    myFont->setBold(false);
+  myFont->setBold(isBold);
+  myFont->setItalic(isItalic);
+  myFont->setKerning(hasKerning);
+
   a.setFont(*myFont);
 
   QAction *action = CommandManager::instance()->getAction("MI_OpenTMessage");
@@ -718,6 +723,17 @@ int main(int argc, char *argv[]) {
   // documentation.
   _controlfp_s(0, fpWord, -1);
 #endif
+#endif
+
+#ifdef _WIN32
+  if (Preferences::instance()->isWinInkEnabled()) {
+    KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
+    if (penFilter->init()) {
+      a.installNativeEventFilter(penFilter);
+    } else {
+      delete penFilter;
+    }
+  }
 #endif
 
   a.installEventFilter(TApp::instance());

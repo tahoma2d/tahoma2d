@@ -56,7 +56,6 @@
 #include "toonz/cleanupparameters.h"
 #include "toonz/toonzimageutils.h"
 #include "toonz/txshleveltypes.h"
-#include "toonz/preferences.h"
 #include "subcameramanager.h"
 
 // TnzCore includes
@@ -391,10 +390,9 @@ public:
     if (std::string(m_cmdId) == MI_ShiftTrace) {
       cm->enable(MI_EditShift, checked);
       cm->enable(MI_NoShift, checked);
-      if (!checked) {
-        cm->setChecked(MI_EditShift, false);
-      }
+      if (checked) OnioniSkinMaskGUI::resetShiftTraceFrameOffset();
       //     cm->getAction(MI_NoShift)->setChecked(false);
+      TApp::instance()->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
     } else if (std::string(m_cmdId) == MI_EditShift) {
       if (checked) {
         QAction *noShiftAction =
@@ -427,6 +425,7 @@ public:
     OnionSkinMask osm =
         TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
     osm.setShiftTraceStatus(status);
+    osm.clearGhostFlipKey();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     TApp::instance()->getCurrentOnionSkin()->setOnionSkinMask(osm);
   }
@@ -782,6 +781,8 @@ void SceneViewer::showEvent(QShowEvent *) {
     m_shownOnce = true;
   }
   TApp::instance()->setActiveViewer(this);
+
+  update();
 }
 
 //-----------------------------------------------------------------------------
@@ -1607,6 +1608,13 @@ void SceneViewer::drawScene() {
       drawSpline(getViewMatrix(), clipRect,
                  m_referenceMode == CAMERA3D_REFERENCE, m_pixelSize);
     assert(glGetError() == 0);
+
+    // gather animated guide strokes' bounding boxes
+    // it is used for updating viewer next time
+    std::vector<TStroke *> guidedStrokes = painter.getGuidedStrokes();
+    for (auto itr = guidedStrokes.begin(); itr != guidedStrokes.end(); ++itr) {
+      m_guidedDrawingBBox += (*itr)->getBBox();
+    }
   }
 }
 
@@ -1748,11 +1756,19 @@ void SceneViewer::GLInvalidateRect(const TRectD &rect) {
     return;
   else if (rect.isEmpty())
     m_clipRect = InvalidateAllRect;
-  else
+  else {
     m_clipRect += rect;
+    if (!m_guidedDrawingBBox.isEmpty()) {
+      TTool *tool         = TApp::instance()->getCurrentTool()->getTool();
+      TPointD topLeft     = tool->getMatrix() * m_guidedDrawingBBox.getP00();
+      TPointD bottomRight = tool->getMatrix() * m_guidedDrawingBBox.getP11();
+      m_clipRect += TRectD(topLeft, bottomRight);
+    }
+  }
   update();
   if (m_vRuler) m_vRuler->update();
   if (m_hRuler) m_hRuler->update();
+  m_guidedDrawingBBox.empty();
 }
 //-----------------------------------------------------------------------------
 
@@ -2172,6 +2188,7 @@ void SceneViewer::onLevelChanged() {
  * for Ink&Paint work properly
  */
 void SceneViewer::onLevelSwitched() {
+  invalidateToolStatus();
   TApp *app        = TApp::instance();
   TTool *tool      = app->getCurrentTool()->getTool();
   TXshLevel *level = app->getCurrentLevel()->getLevel();
@@ -2376,31 +2393,39 @@ includeInvisible);
 //-----------------------------------------------------------------------------
 
 int SceneViewer::posToRow(const TPointD &p, double distance,
-                          bool includeInvisible) const {
-  int oldRasterizePli    = TXshSimpleLevel::m_rasterizePli;
-  TApp *app              = TApp::instance();
-  ToonzScene *scene      = app->getCurrentScene()->getScene();
-  TXsheet *xsh           = app->getCurrentXsheet()->getXsheet();
-  int frame              = app->getCurrentFrame()->getFrame();
-  int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();
-  OnionSkinMask osm      = app->getCurrentOnionSkin()->getOnionSkinMask();
+                          bool includeInvisible, bool currentColumnOnly) const {
+  int oldRasterizePli = TXshSimpleLevel::m_rasterizePli;
+  TApp *app           = TApp::instance();
+  OnionSkinMask osm   = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
   Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
   picker.setDistance(distance);
 
-  TXshSimpleLevel::m_rasterizePli = 0;
+  if (app->getCurrentFrame()->isEditingLevel()) {
+    Stage::visit(picker, app->getCurrentLevel()->getLevel(),
+                 app->getCurrentFrame()->getFid(), osm,
+                 app->getCurrentFrame()->isPlaying(), false);
+  } else {
+    ToonzScene *scene      = app->getCurrentScene()->getScene();
+    TXsheet *xsh           = app->getCurrentXsheet()->getXsheet();
+    int frame              = app->getCurrentFrame()->getFrame();
+    int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();
 
-  Stage::VisitArgs args;
-  args.m_scene       = scene;
-  args.m_xsh         = xsh;
-  args.m_row         = frame;
-  args.m_col         = currentColumnIndex;
-  args.m_osm         = &osm;
-  args.m_onlyVisible = includeInvisible;
+    TXshSimpleLevel::m_rasterizePli = 0;
 
-  Stage::visit(picker, args);
+    Stage::VisitArgs args;
+    args.m_scene       = scene;
+    args.m_xsh         = xsh;
+    args.m_row         = frame;
+    args.m_col         = currentColumnIndex;
+    args.m_osm         = &osm;
+    args.m_onlyVisible = includeInvisible;
 
+    if (currentColumnOnly) picker.setCurrentColumnIndex(currentColumnIndex);
+
+    Stage::visit(picker, args);
+  }
   TXshSimpleLevel::m_rasterizePli = oldRasterizePli;
   return picker.getRow();
 }

@@ -260,7 +260,12 @@ void SchematicToggle::paint(QPainter *painter,
                           sourceRect.height() * getDevPixRatio());
     painter->drawPixmap(rect, redPm, newRect);
   } else if (!m_imageOff.isNull()) {
-    painter->fillRect(boundingRect().toRect(), m_colorOff);
+    QPen pen(m_colorOn);
+    pen.setWidthF(0.5);
+    painter->setPen(pen);
+    painter->setBrush(m_colorOff);
+    double d = pen.widthF() / 2.0;
+    painter->drawRect(boundingRect().adjusted(d, d, -d, -d));
     QRect sourceRect =
         scene()->views()[0]->matrix().mapRect(QRect(0, 0, 18, 17));
     QPixmap redPm = m_imageOff.pixmap(sourceRect.size());
@@ -527,6 +532,12 @@ void SchematicLink::updatePath(SchematicPort *startPort,
 
 //--------------------------------------------------------
 
+void SchematicLink::updateEndPos(const QPointF &endPos) {
+  if (m_startPort) updatePath(m_startPort->getLinkEndPoint(), endPos);
+}
+
+//--------------------------------------------------------
+
 SchematicPort *SchematicLink::getOtherPort(const SchematicPort *port) const {
   if (port == m_startPort)
     return m_endPort;
@@ -624,7 +635,6 @@ SchematicPort::SchematicPort(QGraphicsItem *parent, SchematicNode *node,
     , m_node(node)
     , m_buttonState(Qt::NoButton)
     , m_highlighted(false)
-    , m_ghostLink(0)
     , m_linkingTo(0)
     , m_hook(0, 0)
     , m_type(type) {
@@ -645,27 +655,28 @@ SchematicPort::~SchematicPort() { m_links.clear(); }
 
 void SchematicPort::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   if (m_buttonState != Qt::LeftButton) return;
-  if (!m_ghostLink) return;
+  if (m_ghostLinks.isEmpty()) return;
 
-  if (m_linkingTo) {
-    showSnappedLinks();
-    m_linkingTo = 0;
-  }
   // Snapping
   SchematicPort *linkingTo = searchPort(me->scenePos());
   if (!linkingTo) {
+    for (SchematicLink *ghostLink : m_ghostLinks) {
+      ghostLink->updateEndPos(me->scenePos());
+      ghostLink->getStartPort()->showSnappedLinks(m_linkingTo);
+    }
     if (m_linkingTo) {
       m_linkingTo->highLight(false);
       m_linkingTo->update();
+      m_linkingTo = nullptr;
     }
-    m_ghostLink->updatePath(this->getLinkEndPoint(), me->scenePos());
-    m_linkingTo = linkingTo;
   }
   // if to be connected something
   else if (linkingTo != this) {
-    m_ghostLink->updatePath(this, linkingTo);
     m_linkingTo = linkingTo;
-    hideSnappedLinks();
+    for (SchematicLink *ghostLink : m_ghostLinks) {
+      ghostLink->updatePath(ghostLink->getStartPort(), linkingTo);
+      ghostLink->getStartPort()->hideSnappedLinks(m_linkingTo);
+    }
   }
   // autopan
   QGraphicsView *viewer = scene()->views()[0];
@@ -697,9 +708,32 @@ void SchematicPort::mousePressEvent(QGraphicsSceneMouseEvent *me) {
     m_buttonState = Qt::LeftButton;
     QPointF endPos(me->pos());
 
-    m_ghostLink = new SchematicLink(0, scene());
-    m_ghostLink->setZValue(3.0);
-    m_ghostLink->updatePath(this->getLinkEndPoint(), me->scenePos());
+    // Enable to connect multiple links from all selected nodes
+    // only when ( Ctrl + ) dragging from the eStageParentPort.
+    if (getType() == 101) {  // eStageParentPort
+      QList<QGraphicsItem *> items = scene()->selectedItems();
+      if (items.empty()) return;
+      for (auto const &item : items) {
+        SchematicNode *node = dynamic_cast<SchematicNode *>(item);
+        if (node) {
+          SchematicPort *parentPort =
+              node->getPort(0);  // id 0 is for parent port.
+          if (parentPort) {
+            SchematicLink *ghostLink = new SchematicLink(0, scene());
+            ghostLink->setStartPort(parentPort);
+            ghostLink->setZValue(3.0);
+            ghostLink->updateEndPos(me->scenePos());
+            m_ghostLinks.push_back(ghostLink);
+          }
+        }
+      }
+    } else {
+      SchematicLink *ghostLink = new SchematicLink(0, scene());
+      ghostLink->setStartPort(this);
+      ghostLink->setZValue(3.0);
+      ghostLink->updateEndPos(me->scenePos());
+      m_ghostLinks.push_back(ghostLink);
+    }
     emit(isClicked());
   }
 }
@@ -710,22 +744,39 @@ void SchematicPort::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
   if (me->modifiers() != Qt::ControlModifier && me->button() != Qt::RightButton)
     QGraphicsItem::mouseReleaseEvent(me);
 
-  if (m_ghostLink) m_ghostLink->hide();
-
   if (m_buttonState == Qt::LeftButton) emit(isReleased(me->scenePos()));
 
   // The link is added to the scene only if the user released the left mouse
   // button over
   // a SchematicPort different from SchematicPort of the parent node.
-  if (m_buttonState == Qt::LeftButton && m_linkingTo &&
-      !isLinkedTo(m_linkingTo) && linkTo(m_linkingTo, true)) {
-    linkTo(m_linkingTo);
+  bool somethingChanged = false;
+  if (m_buttonState == Qt::LeftButton && m_linkingTo) {
+    TUndoManager::manager()->beginBlock();
+    for (SchematicLink *ghostLink : m_ghostLinks) {
+      SchematicPort *port = ghostLink->getStartPort();
+      if (!port) continue;
+      if (!port->isLinkedTo(m_linkingTo) && port->linkTo(m_linkingTo, true)) {
+        port->linkTo(m_linkingTo);
+        somethingChanged = true;
+      } else
+        port->showSnappedLinks(m_linkingTo);
+    }
     m_buttonState = Qt::NoButton;
     m_linkingTo   = 0;
+    TUndoManager::manager()->endBlock();
+  }
+
+  if (!m_ghostLinks.isEmpty()) {
+    for (SchematicLink *ghostLink : m_ghostLinks)
+      scene()->removeItem(ghostLink);
+    qDeleteAll(m_ghostLinks.begin(), m_ghostLinks.end());
+    m_ghostLinks.clear();
+  }
+
+  if (somethingChanged) {
     emit sceneChanged();
     emit xsheetChanged();
-  } else
-    showSnappedLinks();
+  }
 }
 
 //--------------------------------------------------------

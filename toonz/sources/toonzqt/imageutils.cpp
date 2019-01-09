@@ -36,7 +36,6 @@
 #include "tfiletype.h"
 #include "tfilepath.h"
 #include "ttoonzimage.h"
-#include "trasterimage.h"
 #include "tvectorimage.h"
 #include "tstroke.h"
 
@@ -90,7 +89,7 @@ void getFrameIds(TFrameId from, TFrameId to, const TLevelP &level,
 
   if (to.isEmptyFrame()) to = TFrameId((std::numeric_limits<int>::max)());
 
-  if (from > to) tswap(from, to);
+  if (from > to) std::swap(from, to);
 
   const TLevel::Table &table = *level->getTable();
 

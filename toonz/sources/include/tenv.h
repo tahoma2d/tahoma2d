@@ -89,8 +89,6 @@ public:
 //
 // es.:  TEnv::setApplication("Toonz","5.0");
 //
-DVAPI void setApplication(std::string applicationName, std::string version,
-                          std::string revision = std::string());
 
 DVAPI std::string getApplicationName();
 DVAPI std::string getApplicationVersion();
@@ -136,9 +134,6 @@ DVAPI TFilePath getConfigDir();
 // per l'utilizzo di ToonzLib senza che sia definita una TOONZROOT
 // bisogna chiamare TEnv::setStuffDir(stuffdir) prima di ogni altra operazione
 DVAPI void setStuffDir(const TFilePath &stuffDir);
-
-DVAPI TFilePath getDllRelativeDir();
-DVAPI void setDllRelativeDir(const TFilePath &dllRelativeDir);
 
 DVAPI void saveAllEnvVariables();
 

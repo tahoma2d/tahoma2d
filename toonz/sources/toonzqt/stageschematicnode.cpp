@@ -26,7 +26,6 @@
 #include "toonz/txshchildlevel.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshleveltypes.h"
-#include "toonz/txshleveltypes.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/hook.h"
 #include "toonz/preferences.h"
@@ -139,8 +138,14 @@ void ColumnPainter::paint(QPainter *painter,
   SchematicViewer *viewer = stageScene->getSchematicViewer();
   viewer->getNodeColor(levelType, nodeColor);
 
-  painter->setBrush(nodeColor);
-  painter->setPen(Qt::NoPen);
+  if (m_isReference && levelType != PLT_XSHLEVEL) {
+    painter->setBrush(viewer->getReferenceColumnColor());
+    painter->setPen(nodeColor);
+  } else {
+    painter->setBrush(nodeColor);
+    painter->setPen(Qt::NoPen);
+  }
+
   if (levelType == PLT_XSHLEVEL)
     painter->drawRoundRect(0, 0, m_width, m_height, 32, 99);
   else
@@ -836,33 +841,33 @@ SchematicPort *StageSchematicNodePort::searchPort(const QPointF &scenePos) {
 
 //--------------------------------------------------------
 
-void StageSchematicNodePort::hideSnappedLinks() {
-  if (!m_linkingTo) return;
+void StageSchematicNodePort::hideSnappedLinks(SchematicPort *linkingPort) {
+  if (!linkingPort) return;
   if (getType() == eStageChildPort &&
-      m_linkingTo->getType() == eStageParentPort &&
-      m_linkingTo->getLinkCount() == 1)
-    m_linkingTo->getLink(0)->hide();
+      linkingPort->getType() == eStageParentPort &&
+      linkingPort->getLinkCount() == 1)
+    linkingPort->getLink(0)->hide();
   if (getType() == eStageParentPort &&
-      m_linkingTo->getType() == eStageChildPort && getLinkCount() == 1)
+      linkingPort->getType() == eStageChildPort && getLinkCount() == 1)
     getLink(0)->hide();
 }
 
 //--------------------------------------------------------
 
-void StageSchematicNodePort::showSnappedLinks() {
-  if (!m_linkingTo) return;
+void StageSchematicNodePort::showSnappedLinks(SchematicPort *linkingPort) {
+  if (!linkingPort) return;
   if (getType() == eStageChildPort &&
-      m_linkingTo->getType() == eStageParentPort &&
-      m_linkingTo->getLinkCount() == 1) {
-    m_linkingTo->getLink(0)->show();
-    m_linkingTo->highLight(true);
-    m_linkingTo->update();
+      linkingPort->getType() == eStageParentPort &&
+      linkingPort->getLinkCount() == 1) {
+    linkingPort->getLink(0)->show();
+    linkingPort->highLight(true);
+    linkingPort->update();
   }
   if (getType() == eStageParentPort &&
-      m_linkingTo->getType() == eStageChildPort && getLinkCount() == 1) {
+      linkingPort->getType() == eStageChildPort && getLinkCount() == 1) {
     getLink(0)->show();
-    m_linkingTo->highLight(true);
-    m_linkingTo->update();
+    linkingPort->highLight(true);
+    linkingPort->update();
   }
 }
 
@@ -970,7 +975,7 @@ SchematicPort *StageSchematicSplinePort::searchPort(const QPointF &scenePos) {
 
 //--------------------------------------------------------
 
-void StageSchematicSplinePort::hideSnappedLinks() {
+void StageSchematicSplinePort::hideSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(getNode());
   StageSchematicSplineNode *splineNode =
@@ -982,7 +987,7 @@ void StageSchematicSplinePort::hideSnappedLinks() {
 
 //--------------------------------------------------------
 
-void StageSchematicSplinePort::showSnappedLinks() {
+void StageSchematicSplinePort::showSnappedLinks(SchematicPort *) {
   if (!m_linkingTo) return;
   StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(getNode());
   StageSchematicSplineNode *splineNode =
@@ -1744,6 +1749,10 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
   m_columnPainter = new ColumnPainter(this, m_width, m_height, m_name);
   m_columnPainter->setZValue(1);
 
+  if (column && !column->isControl() && !column->isRendered() &&
+      !column->getMeshColumn())
+    m_columnPainter->setIsReference();
+
   int levelType;
   QString levelName;
   getLevelTypeAndName(levelType, levelName);
@@ -1883,6 +1892,7 @@ void StageSchematicColumnNode::onChangedSize(bool expand) {
   updatePortsPosition();
   updateLinksGeometry();
   update();
+  emit nodeChangedSize();
 }
 
 //--------------------------------------------------------

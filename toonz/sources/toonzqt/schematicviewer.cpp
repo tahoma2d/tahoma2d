@@ -403,10 +403,6 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetZoom) {
 #else
   double scale2 = matrix().det();
 #endif
-
-  // if the zoom scale is changed over 100% in FxSchematic, call updateScene
-  bool beforeIsLarge = (scale2 >= 1.0);
-
   if (resetZoom ||
       ((scale2 < 100000 || !zoomin) && (scale2 > 0.001 * 0.05 || zoomin))) {
     double oldZoomScale = sqrt(scale2);
@@ -421,16 +417,6 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetZoom) {
         mapToScene(QRect(rect.center(), QSize(2, 2))).boundingRect());
     setMatrix(scale, true);
     centerOn(sceneCenterRect.center());
-
-#if QT_VERSION >= 0x050000
-    bool afterIsLarge = (matrix().determinant() >= 1.0);
-#else
-    bool afterIsLarge  = (matrix().det() >= 1.0);
-#endif
-    if (beforeIsLarge != afterIsLarge) {
-      FxSchematicScene *fxScene = qobject_cast<FxSchematicScene *>(scene());
-      if (fxScene) fxScene->updateScene();
-    }
   }
 }
 
@@ -440,51 +426,20 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetZoom) {
 */
 void SchematicSceneViewer::changeScale(const QPoint &winPos,
                                        qreal scaleFactor) {
-#if QT_VERSION >= 0x050000
-  bool beforeIsLarge = (matrix().determinant() >= 1.0);
-#else
-  bool beforeIsLarge   = (matrix().det() >= 1.0);
-#endif
   QPointF startScenePos = mapToScene(winPos);
   QMatrix scale         = QMatrix().scale(scaleFactor, scaleFactor);
   setMatrix(scale, true);
   QPointF endScenePos = mapToScene(winPos);
   QPointF delta       = endScenePos - startScenePos;
   translate(delta.x(), delta.y());
-
-#if QT_VERSION >= 0x050000
-  bool afterIsLarge = (matrix().determinant() >= 1.0);
-#else
-  bool afterIsLarge    = (matrix().det() >= 1.0);
-#endif
-  if (beforeIsLarge != afterIsLarge) {
-    FxSchematicScene *fxScene = qobject_cast<FxSchematicScene *>(scene());
-    if (fxScene) fxScene->updateScene();
-  }
 }
 
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::fitScene() {
   if (scene()) {
-#if QT_VERSION >= 0x050000
-    bool beforeIsLarge = (matrix().determinant() >= 1.0);
-#else
-    bool beforeIsLarge = (matrix().det() >= 1.0);
-#endif
-
     QRectF rect = scene()->itemsBoundingRect();
     fitInView(rect, Qt::KeepAspectRatio);
-
-#if QT_VERSION >= 0x050000
-    bool afterIsLarge = (matrix().determinant() >= 1.0);
-#else
-    bool afterIsLarge  = (matrix().det() >= 1.0);
-#endif
-    if (beforeIsLarge != afterIsLarge) {
-      FxSchematicScene *fxScene = qobject_cast<FxSchematicScene *>(scene());
-      if (fxScene) fxScene->updateScene();
-    }
   }
 }
 
@@ -506,11 +461,6 @@ void SchematicSceneViewer::reorderScene() {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::normalizeScene() {
-#if QT_VERSION >= 0x050000
-  bool beforeIsLarge = (matrix().determinant() >= 1.0);
-#else
-  bool beforeIsLarge   = (matrix().det() >= 1.0);
-#endif
   // See QGraphicsView::mapToScene()'s doc for details
   QRect rect(0, 0, width(), height());
   QRectF sceneCenterRect(
@@ -520,16 +470,6 @@ void SchematicSceneViewer::normalizeScene() {
   scale(1.32, 1.32);
 #endif
   centerOn(sceneCenterRect.center());
-
-#if QT_VERSION >= 0x050000
-  bool afterIsLarge = (matrix().determinant() >= 1.0);
-#else
-  bool afterIsLarge    = (matrix().det() >= 1.0);
-#endif
-  if (beforeIsLarge != afterIsLarge) {
-    FxSchematicScene *fxScene = qobject_cast<FxSchematicScene *>(scene());
-    if (fxScene) fxScene->updateScene();
-  }
 }
 
 //------------------------------------------------------------------
