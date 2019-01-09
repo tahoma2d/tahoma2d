@@ -182,7 +182,7 @@ public:
       qint64 audioBufferSize = format.bytesForDuration(100000);
       m_audioOutput->setBufferSize(audioBufferSize);
       m_audioOutput->setNotifyInterval(50);
-      QObject::connect(m_audioOutput, &QAudioOutput::notify, [=](){ sendBuffer(); });
+      QObject::connect(m_audioOutput.data(), &QAudioOutput::notify, [=](){ sendBuffer(); });
 
       reset();
     }/* audio buffer too small, so optimization not uses
