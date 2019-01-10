@@ -233,20 +233,22 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
 
   if (m_buttonState == Qt::LeftButton) {
     if (m_cursorMode == CursorMode::Zoom) {
-      m_zoomPoint = me->pos();
-      m_zooming   = true;
+      m_zoomPoint = m_touchDevice == QTouchDevice::TouchScreen
+                        ? me->pos()
+                        : me->pos() * getDevPixRatio();
+      m_zooming = true;
       return;
     } else if (m_cursorMode == CursorMode::Hand) {
       m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
                             ? mapToScene(me->pos())
-                            : me->pos();
+                            : me->pos() * getDevPixRatio();
       m_panning = true;
       return;
     }
   } else if (m_buttonState == Qt::MidButton) {
     m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
-                          : me->pos();
+                          : me->pos() * getDevPixRatio();
   }
   bool drawRect                       = true;
   QList<QGraphicsItem *> pointedItems = items(me->pos());
@@ -279,19 +281,19 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
   QPointF currScenePos = mapToScene(currWinPos);
   if ((m_cursorMode == CursorMode::Hand && m_panning) ||
       m_buttonState == Qt::MidButton) {
-    QPointF usePos =
-        m_touchDevice == QTouchDevice::TouchScreen ? currScenePos : currWinPos;
-    QPointF deltaPoint =
-        ((usePos * getDevPixRatio()) - (m_firstPanPoint * getDevPixRatio()));
+    QPointF usePos = m_touchDevice == QTouchDevice::TouchScreen
+                         ? currScenePos
+                         : currWinPos * getDevPixRatio();
+    QPointF deltaPoint = usePos - m_firstPanPoint;
     panQt(deltaPoint);
     m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
-                          ? mapToScene(me->pos())
-                          : me->pos();
+                          ? mapToScene(currWinPos)
+                          : currWinPos * getDevPixRatio();
   } else {
     if (m_cursorMode == CursorMode::Zoom && m_zooming) {
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
       double factorY = exp(deltaY * 0.001);
-      changeScale(m_zoomPoint * getDevPixRatio(), factorY);
+      changeScale(m_zoomPoint, factorY);
     }
     m_oldWinPos   = currWinPos;
     m_oldScenePos = currScenePos;
@@ -389,7 +391,10 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
       double factor = exp(delta * 0.001);
-      changeScale(me->pos() * getDevPixRatio(), factor);
+      QPoint curPos = m_touchDevice == QTouchDevice::TouchScreen
+                          ? me->pos()
+                          : me->pos() * getDevPixRatio();
+      changeScale(curPos, factor);
     }
   }
   me->accept();
@@ -571,7 +576,10 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
           }
         }
         if (m_zooming) {
-          changeScale(firstCenter * getDevPixRatio(), scaleFactor);
+          QPoint centerPos = m_touchDevice == QTouchDevice::TouchScreen
+                                 ? firstCenter
+                                 : firstCenter * getDevPixRatio();
+          changeScale(centerPos, scaleFactor);
         }
         m_gestureActive = true;
       }
@@ -613,9 +621,15 @@ void SchematicSceneViewer::touchEvent(QTouchEvent *e, int type) {
         }
       }
       if (m_panning) {
-        QPointF centerDelta =
-            (mapToScene(panPoint.pos().toPoint()) * getDevPixRatio()) -
-            (mapToScene(panPoint.lastPos().toPoint()) * getDevPixRatio());
+        QPointF curPos =
+            m_touchDevice == QTouchDevice::TouchScreen
+                ? mapToScene(panPoint.pos().toPoint())
+                : mapToScene(panPoint.pos().toPoint()) * getDevPixRatio();
+        QPointF lastPos =
+            m_touchDevice == QTouchDevice::TouchScreen
+                ? mapToScene(panPoint.lastPos().toPoint())
+                : mapToScene(panPoint.lastPos().toPoint()) * getDevPixRatio();
+        QPointF centerDelta = curPos - lastPos;
         panQt(centerDelta);
       }
     }
