@@ -287,8 +287,8 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
     QPointF deltaPoint = usePos - m_firstPanPoint;
     panQt(deltaPoint);
     m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
-                          ? mapToScene(currWinPos)
-                          : currWinPos * getDevPixRatio();
+                          ? mapToScene(me->pos())
+                          : me->pos() * getDevPixRatio();
   } else {
     if (m_cursorMode == CursorMode::Zoom && m_zooming) {
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
