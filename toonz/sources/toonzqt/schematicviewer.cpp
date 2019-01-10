@@ -233,10 +233,8 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
 
   if (m_buttonState == Qt::LeftButton) {
     if (m_cursorMode == CursorMode::Zoom) {
-      m_zoomPoint = m_touchDevice == QTouchDevice::TouchScreen
-                        ? me->pos()
-                        : me->pos() * getDevPixRatio();
-      m_zooming = true;
+      m_zoomPoint = me->pos();
+      m_zooming   = true;
       return;
     } else if (m_cursorMode == CursorMode::Hand) {
       m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
@@ -391,10 +389,7 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
       double factor = exp(delta * 0.001);
-      QPoint curPos = m_touchDevice == QTouchDevice::TouchScreen
-                          ? me->pos()
-                          : me->pos() * getDevPixRatio();
-      changeScale(curPos, factor);
+      changeScale(me->pos(), factor);
     }
   }
   me->accept();
@@ -431,11 +426,15 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetZoom) {
 */
 void SchematicSceneViewer::changeScale(const QPoint &winPos,
                                        qreal scaleFactor) {
-  QPointF startScenePos = mapToScene(winPos);
-  QMatrix scale         = QMatrix().scale(scaleFactor, scaleFactor);
+  QPointF startScenePos = m_touchDevice == QTouchDevice::TouchScreen
+                              ? mapToScene(winPos)
+                              : winPos * getDevPixRatio();
+  QMatrix scale = QMatrix().scale(scaleFactor, scaleFactor);
   setMatrix(scale, true);
-  QPointF endScenePos = mapToScene(winPos);
-  QPointF delta       = endScenePos - startScenePos;
+  QPointF endScenePos = m_touchDevice == QTouchDevice::TouchScreen
+                            ? mapToScene(winPos)
+                            : winPos * getDevPixRatio();
+  QPointF delta = endScenePos - startScenePos;
   translate(delta.x(), delta.y());
 }
 
@@ -576,10 +575,7 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
           }
         }
         if (m_zooming) {
-          QPoint centerPos = m_touchDevice == QTouchDevice::TouchScreen
-                                 ? firstCenter
-                                 : firstCenter * getDevPixRatio();
-          changeScale(centerPos, scaleFactor);
+          changeScale(firstCenter, scaleFactor);
         }
         m_gestureActive = true;
       }
