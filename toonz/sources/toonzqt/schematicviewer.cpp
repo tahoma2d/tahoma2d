@@ -428,12 +428,12 @@ void SchematicSceneViewer::changeScale(const QPoint &winPos,
                                        qreal scaleFactor) {
   QPointF startScenePos = m_touchDevice == QTouchDevice::TouchScreen
                               ? mapToScene(winPos)
-                              : mapToScene(winPos) * getDevPixRatio();
+                              : mapToScene(winPos * getDevPixRatio());
   QMatrix scale = QMatrix().scale(scaleFactor, scaleFactor);
   setMatrix(scale, true);
   QPointF endScenePos = m_touchDevice == QTouchDevice::TouchScreen
                             ? mapToScene(winPos)
-                            : mapToScene(winPos) * getDevPixRatio();
+                            : mapToScene(winPos * getDevPixRatio());
   QPointF delta = endScenePos - startScenePos;
   translate(delta.x(), delta.y());
 }
