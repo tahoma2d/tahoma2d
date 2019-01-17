@@ -169,7 +169,7 @@ private:
   Qt::MouseButton m_buttonState;
   QPoint m_oldWinPos;
   QPointF m_oldScenePos;
-  QPointF m_firstPanPoint;
+  QPointF m_firstPanPoint, m_mousePanPoint;
   QPoint m_zoomPoint;
   bool m_firstShowing;
 

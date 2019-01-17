@@ -237,14 +237,14 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
       m_zooming   = true;
       return;
     } else if (m_cursorMode == CursorMode::Hand) {
-      m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
+      m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                             ? mapToScene(me->pos())
                             : me->pos();
       m_panning = true;
       return;
     }
   } else if (m_buttonState == Qt::MidButton) {
-    m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
+    m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
                           : me->pos();
   }
@@ -282,9 +282,9 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
     QPointF usePos = m_touchDevice == QTouchDevice::TouchScreen
                          ? mapToScene(me->pos())
                          : me->pos();
-    QPointF deltaPoint = usePos - m_firstPanPoint;
+    QPointF deltaPoint = usePos - m_mousePanPoint;
     panQt(deltaPoint);
-    m_firstPanPoint = m_touchDevice == QTouchDevice::TouchScreen
+    m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
                           : me->pos();
   } else {
@@ -292,6 +292,7 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
       double factorY = exp(deltaY * 0.001);
       changeScale(m_zoomPoint, factorY);
+      m_panning = false;
     }
     m_oldWinPos   = currWinPos;
     m_oldScenePos = currScenePos;
@@ -390,6 +391,7 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
         m_gestureActive == false) {
       double factor = exp(delta * 0.001);
       changeScale(me->pos(), factor);
+      m_panning = false;
     }
   }
   me->accept();
@@ -426,15 +428,11 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetZoom) {
 */
 void SchematicSceneViewer::changeScale(const QPoint &winPos,
                                        qreal scaleFactor) {
-  QPointF startScenePos = m_touchDevice == QTouchDevice::TouchScreen
-                              ? mapToScene(winPos)
-                              : mapToScene(winPos * getDevPixRatio());
-  QMatrix scale = QMatrix().scale(scaleFactor, scaleFactor);
+  QPointF startScenePos = mapToScene(winPos);
+  QMatrix scale         = QMatrix().scale(scaleFactor, scaleFactor);
   setMatrix(scale, true);
-  QPointF endScenePos = m_touchDevice == QTouchDevice::TouchScreen
-                            ? mapToScene(winPos)
-                            : mapToScene(winPos * getDevPixRatio());
-  QPointF delta = endScenePos - startScenePos;
+  QPointF endScenePos = mapToScene(winPos);
+  QPointF delta       = endScenePos - startScenePos;
   translate(delta.x(), delta.y());
 }
 
@@ -478,6 +476,7 @@ void SchematicSceneViewer::normalizeScene() {
 
 //------------------------------------------------------------------
 void SchematicSceneViewer::panQt(const QPointF &delta) {
+  if (delta == QPointF()) return;
   setInteractive(false);
   // I need to disable QGraphicsView event handling to avoid the generation of
   // 'virtual' mouseMoveEvent
@@ -576,6 +575,7 @@ void SchematicSceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_zooming) {
           changeScale(firstCenter, scaleFactor);
+          m_panning = false;
         }
         m_gestureActive = true;
       }
@@ -681,8 +681,11 @@ bool SchematicSceneViewer::event(QEvent *e) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
-  if (e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
-      e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) {
+  if ((e->type() == QEvent::TouchBegin || e->type() == QEvent::TouchEnd ||
+       e->type() == QEvent::TouchCancel || e->type() == QEvent::TouchUpdate) &&
+      CommandManager::instance()
+          ->getAction(MI_TouchGestureControl)
+          ->isChecked()) {
     touchEvent(static_cast<QTouchEvent *>(e), e->type());
     m_gestureActive = true;
     return true;
