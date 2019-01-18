@@ -1539,7 +1539,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   if (isFirstRow) {
     QRect modifierRect = m_viewer->orientation()
                              ->rect(PredefinedRect::BEGIN_SOUND_EDIT)
-                             .adjusted(-frameAdj, 0, -frameAdj, 0)
                              .translated(xy);
     if (r0 != r0WithoutOff) p.fillRect(modifierRect, SoundColumnExtenderColor);
     m_soundLevelModifyRects.append(modifierRect);  // list of clipping rects
