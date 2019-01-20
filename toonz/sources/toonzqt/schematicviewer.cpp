@@ -239,14 +239,14 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
     } else if (m_cursorMode == CursorMode::Hand) {
       m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                             ? mapToScene(me->pos())
-                            : me->pos();
+                            : me->pos() * getDevPixRatio();
       m_panning = true;
       return;
     }
   } else if (m_buttonState == Qt::MidButton) {
     m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
-                          : me->pos();
+                          : me->pos() * getDevPixRatio();
   }
   bool drawRect                       = true;
   QList<QGraphicsItem *> pointedItems = items(me->pos());
@@ -281,12 +281,12 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
       m_buttonState == Qt::MidButton) {
     QPointF usePos = m_touchDevice == QTouchDevice::TouchScreen
                          ? mapToScene(me->pos())
-                         : me->pos();
+                         : me->pos() * getDevPixRatio();
     QPointF deltaPoint = usePos - m_mousePanPoint;
     panQt(deltaPoint);
     m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
-                          : me->pos();
+                          : me->pos() * getDevPixRatio();
   } else {
     if (m_cursorMode == CursorMode::Zoom && m_zooming) {
       int deltaY     = (m_oldWinPos.y() - me->pos().y()) * 10;
