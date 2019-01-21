@@ -1133,6 +1133,7 @@ void ToonzRasterBrushTool::onDeactivate() {
   if (m_tileSaver) {
     bool isValid = m_enabled && m_active;
     m_enabled    = false;
+    m_active     = false;
     if (isValid) {
       finishRasterBrush(m_mousePos,
                         1); /*-- 最後のストロークの筆圧は1とする --*/
@@ -1474,6 +1475,7 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
                                         const TMouseEvent &e) {
   bool isValid = m_enabled && m_active;
   m_enabled    = false;
+  m_active     = false;
   if (!isValid) {
     return;
   }
@@ -1488,6 +1490,8 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
 void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
                                              double pressureVal) {
   TToonzImageP ti = TImageP(getImage(true));
+
+  if (!ti) return;
 
   TPointD rasCenter         = ti->getRaster()->getCenterD();
   TTool::Application *app   = TTool::getApplication();
