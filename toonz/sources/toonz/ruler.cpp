@@ -248,7 +248,7 @@ double Ruler::posToValue(const QPoint &p) const {
 //-----------------------------------------------------------------------------
 
 void Ruler::mousePressEvent(QMouseEvent *e) {
-  if (e->button() == Qt::LeftButton) {
+  if (e->button() == Qt::LeftButton || e->button() == Qt::RightButton) {
     Guides &guides  = getGuides();
     double v        = posToValue(e->pos());
     m_hiding        = false;
@@ -265,7 +265,7 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
         selected = i;
       }
     }
-    if (selected < 0 || minDist2 > 25) {
+    if (e->button() == Qt::LeftButton && (selected < 0 || minDist2 > 25)) {
       // crea una nuova guida
       guides.push_back(v * getDevPixRatio());
       m_viewer->update();
@@ -274,6 +274,12 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
       // muove la guida vecchia
       if (selected < count - 1) std::swap(guides[selected], guides.back());
       // aggiorna sprop!!!!
+      if (e->button() == Qt::RightButton) {
+        assert(!getGuides().empty());
+        getGuides().pop_back();
+        update();
+        m_viewer->update();
+      }
     }
     m_moving = true;
     update();
