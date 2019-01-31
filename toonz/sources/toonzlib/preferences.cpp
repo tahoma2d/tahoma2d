@@ -348,7 +348,7 @@ Preferences::Preferences()
     , m_enableWinInk(false)
     , m_useOnionColorsForShiftAndTraceGhosts(false)
     , m_rasterBackgroundColor(TPixel::White)
-    , m_showLevelBasedTools(false) {
+    , m_levelBasedToolsDisplay(0) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -728,7 +728,7 @@ Preferences::Preferences()
   getValue(*m_settings, "rasterBackgroundColor", m_rasterBackgroundColor);
   TImageWriter::setBackgroundColor(m_rasterBackgroundColor);
 
-  getValue(*m_settings, "showLevelBasedTools", m_showLevelBasedTools);
+  getValue(*m_settings, "levelBasedToolsDisplay", m_levelBasedToolsDisplay);
 }
 
 //-----------------------------------------------------------------
@@ -1777,7 +1777,7 @@ void Preferences::setRasterBackgroundColor(const TPixel32 &color) {
                        QString::number((int)color.m));
 }
 
-void Preferences::enableShowLevelBasedTools(bool on) {
-  m_showLevelBasedTools = on;
-  m_settings->setValue("showLevelBasedTools", on ? "1" : "0");
+void Preferences::setLevelBasedToolsDisplay(int displayType) {
+  m_levelBasedToolsDisplay = displayType;
+  m_settings->setValue("levelBasedToolsDisplay", displayType);
 }

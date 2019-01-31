@@ -1254,8 +1254,8 @@ void PreferencesPopup::onRasterBackgroundColorChanged(const TPixel32 &color,
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onShowLevelBasedToolsChanged(int index) {
-  m_pref->enableShowLevelBasedTools(index == Qt::Checked);
+void PreferencesPopup::onLevelBasedToolsDisplayChanged(int index) {
+  m_pref->setLevelBasedToolsDisplay(index);
   TApp::instance()->getCurrentLevel()->notifyLevelChange();
 }
 
@@ -1488,8 +1488,12 @@ PreferencesPopup::PreferencesPopup()
   CheckBox *cursorOutlineCB =
       new CheckBox(tr("Show Cursor Size Outlines"), this);
 
-  CheckBox *showLevelBasedToolsCB =
-      new CheckBox(tr("Show Only Level-Based Tools In Toolbar"), this);
+  QStringList leveBasedToolsDisplayTypes;
+  leveBasedToolsDisplayTypes << tr("Default")
+                             << tr("Enable Tools For Level Only")
+                             << tr("Show Tools For Level Only");
+  m_levelBasedToolsDisplayCB = new QComboBox(this);
+  m_levelBasedToolsDisplayCB->addItems(leveBasedToolsDisplayTypes);
 
   //--- Xsheet ------------------------------
   categoryList->addItem(tr("Xsheet"));
@@ -1888,7 +1892,8 @@ PreferencesPopup::PreferencesPopup()
       m_cursorBrushStyle->findData(m_pref->getCursorBrushStyle()));
   cursorOutlineCB->setChecked(m_pref->isCursorOutlineEnabled());
 
-  showLevelBasedToolsCB->setChecked(m_pref->isShowLevelBasedToolsEnabled());
+  m_levelBasedToolsDisplayCB->setCurrentIndex(
+      m_pref->getLevelBasedToolsDisplay());
 
   //--- Xsheet ------------------------------
   xsheetAutopanDuringPlaybackCB->setChecked(m_pref->isXsheetAutopanEnabled());
@@ -2473,7 +2478,9 @@ PreferencesPopup::PreferencesPopup()
         }
         ToolsTopLay->addWidget(cursorStyleGroupBox, 3, 0, 1, 3);
 
-        ToolsTopLay->addWidget(showLevelBasedToolsCB, 4, 0, 1, 3);
+        ToolsTopLay->addWidget(new QLabel(tr("Toolbar Display Behaviour:")), 4,
+                               0, Qt::AlignRight | Qt::AlignVCenter);
+        ToolsTopLay->addWidget(m_levelBasedToolsDisplayCB, 4, 1);
       }
       toolsFrameLay->addLayout(ToolsTopLay, 0);
 
@@ -2963,8 +2970,9 @@ PreferencesPopup::PreferencesPopup()
                        this, SLOT(onCursorBrushStyleChanged(int)));
   ret = ret && connect(cursorOutlineCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onCursorOutlineChanged(int)));
-  ret = ret && connect(showLevelBasedToolsCB, SIGNAL(stateChanged(int)),
-                       SLOT(onShowLevelBasedToolsChanged(int)));
+  ret = ret &&
+        connect(m_levelBasedToolsDisplayCB, SIGNAL(currentIndexChanged(int)),
+                SLOT(onLevelBasedToolsDisplayChanged(int)));
 
   //--- Xsheet ----------------------
   ret = ret && connect(xsheetAutopanDuringPlaybackCB, SIGNAL(stateChanged(int)),

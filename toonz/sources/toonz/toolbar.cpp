@@ -157,7 +157,7 @@ void Toolbar::updateToolbar(bool forceReset) {
 
   removeAction(m_expandAction);
 
-  bool showLevelBased = Preferences::instance()->isShowLevelBasedToolsEnabled();
+  int levelBasedDisplay = Preferences::instance()->getLevelBasedToolsDisplay();
 
   bool actionEnabled     = false;
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
@@ -167,7 +167,7 @@ void Toolbar::updateToolbar(bool forceReset) {
     if (tool) tool->updateEnabled(rowIndex, colIndex);
     bool isSeparator = !strncmp(buttonLayout[idx].toolName, "Separator", 9);
     bool enable =
-        !showLevelBased ? true : (!tool ? actionEnabled : tool->isEnabled());
+        !levelBasedDisplay ? true : (!tool ? actionEnabled : tool->isEnabled());
 
     // Plastic tool should always be available so you can create a mesh
     if (!enable && !strncmp(buttonLayout[idx].toolName, T_Plastic, 9) &&
@@ -182,8 +182,12 @@ void Toolbar::updateToolbar(bool forceReset) {
             CommandManager::instance()->getAction(buttonLayout[idx].toolName);
     }
 
-    // Unhide if it meets the criteria for showing
-    if (!enable || (!m_isExpanded && buttonLayout[idx].collapsable)) continue;
+    if (!m_isExpanded && buttonLayout[idx].collapsable) continue;
+
+    if (levelBasedDisplay != 2)
+      buttonLayout[idx].action->setEnabled(enable);
+    else if (!enable)
+      continue;
 
     actionEnabled = addAction(buttonLayout[idx].action) || actionEnabled;
 
