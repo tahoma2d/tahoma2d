@@ -28,10 +28,9 @@ protected:
 
 protected slots:
   void onToolChanged();
+  void onPreferenceChanged(const QString &prefName);
   void setIsExpanded(bool expand);
-  void updateToolbar(bool forceReset = false);
-  void onFrameSwitched();
-  void refreshToolbar();
+  void updateToolbar();
 };
 
 #endif  // TOOLBAR_H

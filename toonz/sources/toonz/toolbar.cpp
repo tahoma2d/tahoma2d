@@ -18,6 +18,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
+#include "toonz/tscenehandle.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -88,47 +89,50 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
 //-----------------------------------------------------------------------------
 /*! Layout the tool buttons according to the state of the expandButton
 */
-void Toolbar::updateToolbar(bool forceReset) {
-  if (forceReset) m_toolbarLevel = -1;
+void Toolbar::updateToolbar() {
+  TApp *app                 = TApp::instance();
+  TFrameHandle *frameHandle = app->getCurrentFrame();
 
-  TApp *app                  = TApp::instance();
+  if (frameHandle->isPlaying()) return;
+
   TXshLevelHandle *currlevel = app->getCurrentLevel();
   TXshLevel *level           = currlevel ? currlevel->getLevel() : 0;
   int levelType              = level ? level->getType() : NO_XSHLEVEL;
 
-  TColumnHandle *colHandle  = app->getCurrentColumn();
-  int colIndex              = colHandle->getColumnIndex();
-  TFrameHandle *frameHandle = app->getCurrentFrame();
-  int rowIndex              = frameHandle->getFrameIndex();
+  TColumnHandle *colHandle = app->getCurrentColumn();
+  int colIndex             = colHandle->getColumnIndex();
 
-  // If in an empty cell, find most recent level
-  if (levelType == NO_XSHLEVEL) {
-    TXsheetHandle *xshHandle = app->getCurrentXsheet();
-    TXsheet *xsh             = xshHandle->getXsheet();
+  int rowIndex = frameHandle->getFrameIndex();
 
-    if (colIndex >= 0 && !xsh->isColumnEmpty(colIndex)) {
-      int r0, r1;
-      xsh->getCellRange(colIndex, r0, r1);
-      if (0 <= r0 && r0 <= r1) {
-        // level type depends on previous occupied cell
-        for (int r = min(r1, rowIndex); r >= r0; r--) {
-          TXshCell cell = xsh->getCell(r, colIndex);
-          if (cell.isEmpty()) continue;
-          levelType = cell.m_level->getType();
-          rowIndex  = r;
-          break;
-        }
+  if (Preferences::instance()->isAutoCreateEnabled() &&
+      Preferences::instance()->isAnimationSheetEnabled()) {
+    // If in an empty cell, find most recent level
+    if (levelType == NO_XSHLEVEL) {
+      TXsheetHandle *xshHandle = app->getCurrentXsheet();
+      TXsheet *xsh             = xshHandle->getXsheet();
 
-        if (levelType == NO_XSHLEVEL) {
-          TXshCell cell = xsh->getCell(r0, colIndex);
-          levelType     = cell.m_level->getType();
-          rowIndex      = r0;
+      if (colIndex >= 0 && !xsh->isColumnEmpty(colIndex)) {
+        int r0, r1;
+        xsh->getCellRange(colIndex, r0, r1);
+        if (0 <= r0 && r0 <= r1) {
+          // level type depends on previous occupied cell
+          for (int r = min(r1, rowIndex); r >= r0; r--) {
+            TXshCell cell = xsh->getCell(r, colIndex);
+            if (cell.isEmpty()) continue;
+            levelType = cell.m_level->getType();
+            rowIndex  = r;
+            break;
+          }
+
+          if (levelType == NO_XSHLEVEL) {
+            TXshCell cell = xsh->getCell(r0, colIndex);
+            levelType     = cell.m_level->getType();
+            rowIndex      = r0;
+          }
         }
       }
     }
   }
-
-  if (levelType == m_toolbarLevel) return;
 
   m_toolbarLevel = levelType;
 
@@ -214,7 +218,7 @@ void Toolbar::updateToolbar(bool forceReset) {
 void Toolbar::setIsExpanded(bool expand) {
   m_isExpanded       = expand;
   ShowAllToolsToggle = (expand) ? 1 : 0;
-  updateToolbar(true);
+  updateToolbar();
 }
 
 //-----------------------------------------------------------------------------
@@ -237,12 +241,11 @@ void Toolbar::showEvent(QShowEvent *e) {
           SLOT(updateToolbar()));
 
   TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
-  connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
-  connect(frameHandle, SIGNAL(frameTypeChanged()), this,
-          SLOT(refreshToolbar()));
+  connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(updateToolbar()));
+  connect(frameHandle, SIGNAL(frameTypeChanged()), this, SLOT(updateToolbar()));
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
-  connect(xsheetHandle, SIGNAL(xsheetChanged()), this, SLOT(refreshToolbar()));
+  connect(xsheetHandle, SIGNAL(xsheetChanged()), this, SLOT(updateToolbar()));
 
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()),
           SLOT(onToolChanged()));
@@ -250,15 +253,13 @@ void Toolbar::showEvent(QShowEvent *e) {
   TXshLevelHandle *levelHandle = TApp::instance()->getCurrentLevel();
   connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
           SLOT(updateToolbar()));
-}
 
-void Toolbar::onFrameSwitched() {
-  TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
-  if (frameHandle->isPlaying()) return;
-  updateToolbar();
-}
+  connect(TApp::instance()->getCurrentScene(),
+          SIGNAL(preferenceChanged(const QString &)), this,
+          SLOT(onPreferenceChanged(const QString &)));
 
-void Toolbar::refreshToolbar() { updateToolbar(true); }
+  onPreferenceChanged("");
+}
 
 //-----------------------------------------------------------------------------
 
@@ -266,6 +267,21 @@ void Toolbar::hideEvent(QHideEvent *e) {
   disconnect(TApp::instance()->getCurrentLevel(), 0, this, 0);
   disconnect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()), this,
              SLOT(onToolChanged()));
+
+  disconnect(TApp::instance()->getCurrentColumn(),
+             SIGNAL(columnIndexSwitched()), this, SLOT(updateToolbar()));
+
+  disconnect(TApp::instance()->getCurrentFrame(), SIGNAL(frameSwitched()), this,
+             SLOT(updateToolbar()));
+  disconnect(TApp::instance()->getCurrentFrame(), SIGNAL(frameTypeChanged()),
+             this, SLOT(updateToolbar()));
+
+  disconnect(TApp::instance()->getCurrentXsheet(), SIGNAL(xsheetChanged()),
+             this, SLOT(updateToolbar()));
+
+  disconnect(TApp::instance()->getCurrentScene(),
+             SIGNAL(preferenceChanged(const QString &)), this,
+             SLOT(onPreferenceChanged(const QString &)));
 }
 
 //-----------------------------------------------------------------------------
@@ -277,6 +293,12 @@ void Toolbar::onToolChanged() {
   QAction *act = CommandManager::instance()->getAction(toolName.c_str());
   if (!act || act->isChecked()) return;
   act->setChecked(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void Toolbar::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "ToolbarDisplay" || prefName.isEmpty()) updateToolbar();
 }
 
 //=============================================================================

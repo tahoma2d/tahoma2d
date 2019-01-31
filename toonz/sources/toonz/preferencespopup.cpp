@@ -1256,7 +1256,8 @@ void PreferencesPopup::onRasterBackgroundColorChanged(const TPixel32 &color,
 
 void PreferencesPopup::onLevelBasedToolsDisplayChanged(int index) {
   m_pref->setLevelBasedToolsDisplay(index);
-  TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "ToolbarDisplay");
 }
 
 //**********************************************************************************
