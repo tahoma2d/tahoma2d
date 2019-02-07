@@ -1397,8 +1397,8 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
         "The level cannot be saved: failed to access the target folder.");
 
   // backup
-  if (Preferences::instance()->isLevelsBackupEnabled() &&
-      dOldPath == dDstPath && TSystem::doesExistFileOrLevel(dDstPath))
+  if (Preferences::instance()->isBackupEnabled() && dOldPath == dDstPath &&
+      TSystem::doesExistFileOrLevel(dDstPath))
     saveBackup(dDstPath);
 
   if (isAreadOnlyLevel(dDstPath)) {
@@ -1638,7 +1638,7 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
         lw = TLevelWriterP();  // TLevelWriterP's destructor saves the palette
       } else if (isPaletteModified && overwritePalette) {
         TFilePath palettePath = decodedFp.withNoFrame().withType("tpl");
-        if (Preferences::instance()->isLevelsBackupEnabled() &&
+        if (Preferences::instance()->isBackupEnabled() &&
             TSystem::doesExistFileOrLevel(palettePath))
           saveBackup(palettePath);
         TOStream os(palettePath);
@@ -2199,9 +2199,8 @@ TFilePath TXshSimpleLevel::getExistingHookFile(
   }
 
   assert(h >= 0);
-  return (h < 0) ? TFilePath()
-                 : decodedLevelPath.getParentDir() +
-                       TFilePath(hookFiles[h].toStdWString());
+  return (h < 0) ? TFilePath() : decodedLevelPath.getParentDir() +
+                                     TFilePath(hookFiles[h].toStdWString());
 }
 
 //-----------------------------------------------------------------------------

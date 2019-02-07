@@ -286,7 +286,7 @@ Preferences::Preferences()
     , m_automaticSVNFolderRefreshEnabled(true)
     , m_SVNEnabled(false)
     , m_minimizeSaveboxAfterEditing(true)
-    , m_levelsBackupEnabled(false)
+    , m_backupEnabled(true)
     , m_sceneNumberingEnabled(false)
     , m_animationSheetEnabled(false)
     , m_inksOnly(false)
@@ -390,7 +390,7 @@ Preferences::Preferences()
   getValue(*m_settings, "SVNEnabled", m_SVNEnabled);
   getValue(*m_settings, "minimizeSaveboxAfterEditing",
            m_minimizeSaveboxAfterEditing);
-  getValue(*m_settings, "levelsBackupEnabled", m_levelsBackupEnabled);
+  getValue(*m_settings, "backupEnabled", m_backupEnabled);
   getValue(*m_settings, "sceneNumberingEnabled", m_sceneNumberingEnabled);
   getValue(*m_settings, "animationSheetEnabled", m_animationSheetEnabled);
   getValue(*m_settings, "autosaveEnabled", m_autosaveEnabled);
@@ -1433,9 +1433,9 @@ void Preferences::setDownArrowLevelStripNewFrame(bool on) {
 
 //-----------------------------------------------------------------
 
-void Preferences::enableLevelsBackup(bool enabled) {
-  m_levelsBackupEnabled = enabled;
-  m_settings->setValue("levelsBackupEnabled", enabled ? "1" : "0");
+void Preferences::enableBackup(bool enabled) {
+  m_backupEnabled = enabled;
+  m_settings->setValue("backupEnabled", enabled ? "1" : "0");
 }
 
 //-----------------------------------------------------------------

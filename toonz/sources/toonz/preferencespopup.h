@@ -74,7 +74,7 @@ private:
 
   QPushButton *m_addLevelFormat, *m_removeLevelFormat, *m_editLevelFormat;
 
-  DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_levelsBackup,
+  DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_backup,
       *m_onionSkinVisibility, *m_pixelsOnlyCB, *m_projectRootDocuments,
       *m_projectRootDesktop, *m_projectRootCustom, *m_projectRootStuff,
       *m_onionSkinDuringPlayback, *m_autoSaveSceneCB, *m_autoSaveOtherFilesCB,
@@ -147,7 +147,7 @@ private slots:
   void onSVNEnabledChanged(int);
   void onAutomaticSVNRefreshChanged(int);
   void onDragCellsBehaviourChanged(int);
-  void onLevelsBackupChanged(int);
+  void onBackupChanged(int);
   void onSceneNumberingChanged(int);
   void onChunkSizeChanged();
   void onDefLevelTypeChanged(int);

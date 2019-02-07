@@ -169,71 +169,16 @@ void deleteUntitledScene(const TFilePath &fp) {
 }
 
 //-----------------------------------------------------------------------------
-/*-- TODO: オプション化して復活させるか、検討のこと --*/
-/*
-void saveBackup(const TFilePath &fp)
-{
-  if(!TFileStatus(fp).doesExist()) return;
-        wstring sceneName = fp.getWideName();
-  TFilePath bckDir = fp.getParentDir() + "backups" + sceneName;
-  if(!TFileStatus(bckDir).doesExist())
-  {
-    try {TSystem::mkDir(bckDir);}
-    catch(...) {return;}
-  }
 
-  std::map<int, TFilePath> oldBackups;
-  TFilePathSet lst = TSystem::readDirectory(bckDir);
-  for(TFilePathSet::iterator it = lst.begin(); it != lst.end(); ++it)
-  {
-    TFilePath fp2 = *it;
-    if(fp2.getType() != "tnz" && fp2.getType() != "tab") continue;
-    wstring name = fp2.getWideName();
-    if(name.find_first_of(L"0123456789") == wstring::npos) continue;
-                int i = name.find(sceneName);
-                if(i != wstring::npos)
-                        name = name.substr(sceneName.size()+1);
-    if(name == L"" || name.find_first_not_of(L"0123456789") != wstring::npos)
-      continue;
-    int index = toInt(name);
-    assert(0<index);
-    assert(oldBackups.count(index)==0);
-    oldBackups[index] = fp2;
+static void saveBackup(TFilePath path) {
+  try {
+    TFilePath backup = path.withName(path.getName() + "_backup");
+    if (TSystem::doesExistFileOrLevel(backup))
+      TSystem::removeFileOrLevel_throw(backup);
+    TSystem::copyFileOrLevel_throw(backup, path);
+  } catch (...) {
   }
-
-  int m = 3;
-  if((int)oldBackups.size()>m)
-  {
-    std::map<int, TFilePath>::iterator it = oldBackups.begin();
-    for(int i=0;i+m<(int)oldBackups.size();i++)
-    {
-      assert(it != oldBackups.end());
-      TFilePath toKill = it->second;
-      try {TSystem::deleteFile(toKill); } catch(...) {}
-      ++it;
-    }
-  }
-
-  TFilePath bckFp;
-  if(oldBackups.empty())
-  {
-    if(fp.getType() == "tnz")
-      bckFp = bckDir + TFilePath(sceneName + L"_1.tnz");
-    else if(fp.getType() == "tab")
-      bckFp = bckDir + TFilePath(sceneName + L"_1.tab");
-  }
-  else
-  {
-    int id = oldBackups.rbegin()->first + 1;
-    if(fp.getType() == "tnz")
-      bckFp = bckDir + TFilePath(sceneName + L"_" + ::to_wstring(id) + L".tnz");
-    else if(fp.getType() == "tab")
-      bckFp = bckDir + TFilePath(sceneName + L"_" + ::to_wstring(id) + L".tab");
-  }
-
-  TSystem::renameFile(bckFp, fp);
 }
-*/
 
 //-----------------------------------------------------------------------------
 
@@ -635,7 +580,9 @@ void ToonzScene::save(const TFilePath &fp, TXsheet *subxsh) {
   TFilePath scenePathTemp(scenePath.getWideString() +
                           QString(".tmp").toStdWString());
 
-  // if(TFileStatus(scenePath).doesExist()) saveBackup(scenePath);
+  if (Preferences::instance()->isBackupEnabled() &&
+      oldScenePath == newScenePath && TFileStatus(scenePath).doesExist())
+    saveBackup(scenePath);
 
   if (TFileStatus(scenePathTemp).doesExist())
     TSystem::removeFileOrLevel(scenePathTemp);

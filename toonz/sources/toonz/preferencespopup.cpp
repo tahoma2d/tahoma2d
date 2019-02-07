@@ -927,8 +927,8 @@ void PreferencesPopup::onLineTestFpsCapture(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onLevelsBackupChanged(int index) {
-  m_pref->enableLevelsBackup(index == Qt::Checked);
+void PreferencesPopup::onBackupChanged(int index) {
+  m_pref->enableBackup(index == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1298,7 +1298,7 @@ PreferencesPopup::PreferencesPopup()
 
   m_undoMemorySize =
       new DVGui::IntLineEdit(this, m_pref->getUndoMemorySize(), 0, 2000);
-  m_levelsBackup = new CheckBox(tr("Backup Animation Levels when Saving"));
+  m_backup = new CheckBox(tr("Backup Scene and Animation Levels when Saving"));
   m_chunkSizeFld =
       new DVGui::IntLineEdit(this, m_pref->getDefaultTaskChunkSize(), 1, 2000);
   CheckBox *sceneNumberingCB = new CheckBox(tr("Show Info in Rendered Frames"));
@@ -1631,7 +1631,7 @@ PreferencesPopup::PreferencesPopup()
   replaceAfterSaveLevelAsCB->setChecked(
       m_pref->isReplaceAfterSaveLevelAsEnabled());
 
-  m_levelsBackup->setChecked(m_pref->isLevelsBackupEnabled());
+  m_backup->setChecked(m_pref->isBackupEnabled());
   sceneNumberingCB->setChecked(m_pref->isSceneNumberingEnabled());
   watchFileSystemCB->setChecked(m_pref->isWatchFileSystemEnabled());
 
@@ -2017,8 +2017,7 @@ PreferencesPopup::PreferencesPopup()
 
       generalFrameLay->addWidget(replaceAfterSaveLevelAsCB, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
-      generalFrameLay->addWidget(m_levelsBackup, 0,
-                                 Qt::AlignLeft | Qt::AlignVCenter);
+      generalFrameLay->addWidget(m_backup, 0, Qt::AlignLeft | Qt::AlignVCenter);
       generalFrameLay->addWidget(sceneNumberingCB, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
       generalFrameLay->addWidget(watchFileSystemCB, 0,
@@ -2768,8 +2767,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onDragCellsBehaviourChanged(int)));
   ret = ret && connect(m_undoMemorySize, SIGNAL(editingFinished()),
                        SLOT(onUndoMemorySizeChanged()));
-  ret = ret && connect(m_levelsBackup, SIGNAL(stateChanged(int)),
-                       SLOT(onLevelsBackupChanged(int)));
+  ret = ret && connect(m_backup, SIGNAL(stateChanged(int)),
+                       SLOT(onBackupChanged(int)));
   ret = ret && connect(sceneNumberingCB, SIGNAL(stateChanged(int)),
                        SLOT(onSceneNumberingChanged(int)));
   ret = ret && connect(watchFileSystemCB, SIGNAL(stateChanged(int)),
