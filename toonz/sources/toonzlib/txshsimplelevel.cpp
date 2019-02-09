@@ -1375,7 +1375,7 @@ void TXshSimpleLevel::save() {
 
 static void saveBackup(TFilePath path) {
   try {
-    TFilePath backup = path.withName(path.getName() + "_backup");
+    TFilePath backup = path.withType(path.getType() + ".bak");
     if (TSystem::doesExistFileOrLevel(backup))
       TSystem::removeFileOrLevel_throw(backup);
     TSystem::copyFileOrLevel_throw(backup, path);
