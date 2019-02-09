@@ -257,8 +257,6 @@ void Toolbar::showEvent(QShowEvent *e) {
   connect(TApp::instance()->getCurrentScene(),
           SIGNAL(preferenceChanged(const QString &)), this,
           SLOT(onPreferenceChanged(const QString &)));
-
-  onPreferenceChanged("");
 }
 
 //-----------------------------------------------------------------------------
