@@ -347,7 +347,8 @@ Preferences::Preferences()
     , m_currentColumnColor(TPixel::Black)
     , m_enableWinInk(false)
     , m_useOnionColorsForShiftAndTraceGhosts(false)
-    , m_rasterBackgroundColor(TPixel::White) {
+    , m_rasterBackgroundColor(TPixel::White)
+    , m_backupKeepCount(1) {
   TCamera camera;
   m_defLevelType   = PLI_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -391,6 +392,7 @@ Preferences::Preferences()
   getValue(*m_settings, "minimizeSaveboxAfterEditing",
            m_minimizeSaveboxAfterEditing);
   getValue(*m_settings, "backupEnabled", m_backupEnabled);
+  getValue(*m_settings, "backupKeepCount", m_backupKeepCount);
   getValue(*m_settings, "sceneNumberingEnabled", m_sceneNumberingEnabled);
   getValue(*m_settings, "animationSheetEnabled", m_animationSheetEnabled);
   getValue(*m_settings, "autosaveEnabled", m_autosaveEnabled);
@@ -1436,6 +1438,13 @@ void Preferences::setDownArrowLevelStripNewFrame(bool on) {
 void Preferences::enableBackup(bool enabled) {
   m_backupEnabled = enabled;
   m_settings->setValue("backupEnabled", enabled ? "1" : "0");
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::setBackupKeepCount(int count) {
+  m_backupKeepCount = count;
+  m_settings->setValue("backupKeepCount", count);
 }
 
 //-----------------------------------------------------------------

@@ -171,8 +171,26 @@ void deleteUntitledScene(const TFilePath &fp) {
 //-----------------------------------------------------------------------------
 
 static void saveBackup(TFilePath path) {
+  int totalBackups = Preferences::instance()->getBackupKeepCount();
+  totalBackups -= 1;
+  TFilePath backup = path.withType(path.getType() + ".bak");
+  TFilePath prevBackup =
+      path.withType(path.getType() + ".bak" + std::to_string(totalBackups));
+  while (--totalBackups >= 0) {
+    std::string bakExt =
+        ".bak" + (totalBackups > 0 ? std::to_string(totalBackups) : "");
+    backup = path.withType(path.getType() + bakExt);
+    if (!TSystem::doesExistFileOrLevel(backup)) continue;
+    try {
+      if (TSystem::doesExistFileOrLevel(prevBackup))
+        TSystem::removeFileOrLevel_throw(prevBackup);
+      TSystem::copyFileOrLevel_throw(prevBackup, backup);
+    } catch (...) {
+    }
+    prevBackup = backup;
+  }
+
   try {
-    TFilePath backup = path.withType(path.getType() + ".bak");
     if (TSystem::doesExistFileOrLevel(backup))
       TSystem::removeFileOrLevel_throw(backup);
     TSystem::copyFileOrLevel_throw(backup, path);

@@ -927,8 +927,14 @@ void PreferencesPopup::onLineTestFpsCapture(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onBackupChanged(int index) {
-  m_pref->enableBackup(index == Qt::Checked);
+void PreferencesPopup::onBackupChanged(bool enabled) {
+  m_pref->enableBackup(enabled);
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onBackupKeepCountChanged() {
+  m_pref->setBackupKeepCount(m_backupKeepCount->getValue());
 }
 
 //-----------------------------------------------------------------------------
@@ -1298,7 +1304,10 @@ PreferencesPopup::PreferencesPopup()
 
   m_undoMemorySize =
       new DVGui::IntLineEdit(this, m_pref->getUndoMemorySize(), 0, 2000);
-  m_backup = new CheckBox(tr("Backup Scene and Animation Levels when Saving"));
+  m_backup = new QGroupBox(tr("Backup Scene and Animation Levels when Saving"));
+  m_backup->setCheckable(true);
+  m_backupKeepCount =
+      new DVGui::IntLineEdit(this, m_pref->getBackupKeepCount(), 1);
   m_chunkSizeFld =
       new DVGui::IntLineEdit(this, m_pref->getDefaultTaskChunkSize(), 1, 2000);
   CheckBox *sceneNumberingCB = new CheckBox(tr("Show Info in Rendered Frames"));
@@ -2017,7 +2026,24 @@ PreferencesPopup::PreferencesPopup()
 
       generalFrameLay->addWidget(replaceAfterSaveLevelAsCB, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
-      generalFrameLay->addWidget(m_backup, 0, Qt::AlignLeft | Qt::AlignVCenter);
+
+      QVBoxLayout *backupLay = new QVBoxLayout();
+      backupLay->setMargin(10);
+      {
+        QHBoxLayout *backupCountLay = new QHBoxLayout();
+        backupCountLay->setMargin(0);
+        backupCountLay->setSpacing(5);
+        {
+          backupCountLay->addWidget(
+              new QLabel(tr("# of backups to keep: "), this));
+          backupCountLay->addWidget(m_backupKeepCount, 0);
+          backupCountLay->addStretch(1);
+        }
+        backupLay->addLayout(backupCountLay, 0);
+      }
+      m_backup->setLayout(backupLay);
+      generalFrameLay->addWidget(m_backup);
+
       generalFrameLay->addWidget(sceneNumberingCB, 0,
                                  Qt::AlignLeft | Qt::AlignVCenter);
       generalFrameLay->addWidget(watchFileSystemCB, 0,
@@ -2767,8 +2793,10 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onDragCellsBehaviourChanged(int)));
   ret = ret && connect(m_undoMemorySize, SIGNAL(editingFinished()),
                        SLOT(onUndoMemorySizeChanged()));
-  ret = ret && connect(m_backup, SIGNAL(stateChanged(int)),
-                       SLOT(onBackupChanged(int)));
+  ret = ret &&
+        connect(m_backup, SIGNAL(toggled(bool)), SLOT(onBackupChanged(bool)));
+  ret = ret && connect(m_backupKeepCount, SIGNAL(editingFinished()), this,
+                       SLOT(onBackupKeepCountChanged()));
   ret = ret && connect(sceneNumberingCB, SIGNAL(stateChanged(int)),
                        SLOT(onSceneNumberingChanged(int)));
   ret = ret && connect(watchFileSystemCB, SIGNAL(stateChanged(int)),

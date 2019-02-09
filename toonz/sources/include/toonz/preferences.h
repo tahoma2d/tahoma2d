@@ -124,6 +124,9 @@ public:
   void enableBackup(bool enabled);
   bool isBackupEnabled() const { return m_backupEnabled; }
 
+  void setBackupKeepCount(int count);
+  int getBackupKeepCount() { return m_backupKeepCount; }
+
   void enableSceneNumbering(bool enabled);
   bool isSceneNumberingEnabled() const { return m_sceneNumberingEnabled; }
 
@@ -722,6 +725,8 @@ private:
 
   bool m_enableWinInk                         = false;
   bool m_useOnionColorsForShiftAndTraceGhosts = false;
+
+  int m_backupKeepCount;
 
 private:
   Preferences();
