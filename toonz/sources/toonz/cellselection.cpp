@@ -2632,7 +2632,7 @@ bool TCellSelection::areOnlyVectorCellsSelected() {
   }
 
   TXshSimpleLevel *sourceSl = firstCell.getSimpleLevel();
-  if (sourceSl->getType() != PLI_XSHLEVEL) {
+  if (!sourceSl || sourceSl->getType() != PLI_XSHLEVEL) {
     DVGui::error(QObject::tr("This command only works on vector cells."));
     return false;
   }

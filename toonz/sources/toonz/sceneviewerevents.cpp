@@ -544,6 +544,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     if (m_tabletEvent &&
         (m_tabletState == OnStroke || m_tabletState == StartStroke) &&
         m_tabletMove) {
+      if (m_toolSwitched) tool->leftButtonDown(pos, event);
       tool->leftButtonDrag(pos, event);
       m_tabletState = OnStroke;
     }
@@ -551,14 +552,18 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     else if (m_mouseButton == Qt::LeftButton) {
       // sometimes the mousePressedEvent is postponed to a wrong  mouse move
       // event!
-      if (m_buttonClicked && !m_toolSwitched) tool->leftButtonDrag(pos, event);
+      //      if (m_buttonClicked && !m_toolSwitched) tool->leftButtonDrag(pos,
+      //      event);
+      if (m_toolSwitched) tool->leftButtonDown(pos, event);
+      tool->leftButtonDrag(pos, event);
       m_mouseState = OnStroke;
     } else if (m_pressure == 0.0) {
       tool->mouseMove(pos, event);
     }
     if (!cursorSet) setToolCursor(this, tool->getCursorId());
-    m_pos        = curPos;
-    m_tabletMove = false;
+    m_pos          = curPos;
+    m_tabletMove   = false;
+    m_toolSwitched = false;
   } else if (m_mouseButton == Qt::MidButton) {
     if ((event.buttons() & Qt::MidButton) == 0) m_mouseButton = Qt::NoButton;
     // scrub with shift and middle click
@@ -1530,7 +1535,7 @@ void SceneViewer::dropEvent(QDropEvent *e) {
   if (mimeData->hasUrls()) {
     IoCmd::LoadResourceArguments args;
 
-    foreach (const QUrl &url, mimeData->urls()) {
+    for (const QUrl &url : mimeData->urls()) {
       TFilePath fp(url.toLocalFile().toStdWString());
       args.resourceDatas.push_back(fp);
     }
