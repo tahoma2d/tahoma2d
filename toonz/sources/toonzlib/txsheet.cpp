@@ -338,7 +338,8 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
     else if (levelType == MESH_XSHLEVEL)
       type = TXshColumn::eMeshType;
   }
-  bool wasColumnEmpty    = isColumnEmpty(col);
+  bool wasColumnEmpty = isColumnEmpty(col);
+  if (col < 0) return false;
   TXshCellColumn *column = touchColumn(col, type)->getCellColumn();
   if (!column) return false;
 
@@ -1299,6 +1300,7 @@ void TXsheet::insertColumn(int col, TXshColumn::ColumnType type) {
 //-----------------------------------------------------------------------------
 
 void TXsheet::insertColumn(int col, TXshColumn *column) {
+  if (col < 0) col = 0;
   column->setXsheet(this);
   m_imp->m_columnSet.insertColumn(col, column);
   m_imp->m_pegTree->insertColumn(col);
@@ -1387,7 +1389,7 @@ int TXsheet::getFirstFreeColumnIndex() const {
 
 TXshColumn *TXsheet::touchColumn(int index, TXshColumn::ColumnType type) {
   TXshColumn *column = m_imp->m_columnSet.touchColumn(index, type).getPointer();
-  if (!column) return 0;
+  if (index < 0 || !column) return 0;
 
   // NOTE (Daniele): The following && should be a bug... but I fear I'd break
   // something changing it.

@@ -979,6 +979,8 @@ static void newNoteLevel() {
   TTool::Application *app = TTool::getApplication();
   TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
   int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
+  if (col < 0)
+    col = 0;  // Normally insert before. In case of camera, insert after
   TXshSoundTextColumn *textSoundCol = new TXshSoundTextColumn();
 
   textSoundCol->setXsheet(xsh);

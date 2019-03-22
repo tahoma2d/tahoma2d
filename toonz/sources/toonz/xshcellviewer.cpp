@@ -982,8 +982,10 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
                                c1 + offset.layer());
   } else {
     CellPosition offset(offset * stride);
-    int movedR0   = std::max(0, r0 + offset.frame());
-    int movedC0   = std::max(0, c0 + offset.layer());
+    int movedR0 = std::max(0, r0 + offset.frame());
+    int firstCol =
+        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+    int movedC0   = std::max(firstCol, c0 + offset.layer());
     int diffFrame = movedR0 - r0;
     int diffLayer = movedC0 - c0;
     // It needs to be discussed - I made not to rename cell with arrow key.
@@ -991,7 +993,9 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
     // renameCell();
     cellSelection->selectCells(r0 + diffFrame, c0 + diffLayer, r1 + diffFrame,
                                c1 + diffLayer);
-    showInRowCol(m_row + offset.frame(), m_col + offset.layer(), c1 - c0 > 0);
+    int newRow = std::max(0, m_row + offset.frame());
+    int newCol = std::max(firstCol, m_col + offset.layer());
+    showInRowCol(newRow, newCol, c1 - c0 > 0);
   }
   m_viewer->updateCells();
   TApp::instance()->getCurrentSelection()->notifySelectionChanged();
@@ -1250,7 +1254,7 @@ void CellArea::drawNonEmptyBackground(QPainter &p) const {
         m_viewer->positionToXY(CellPosition(totalFrames, lastNonEmptyCol + 1));
   } else {
     xyTop          = m_viewer->positionToXY(CellPosition(0, lastNonEmptyCol));
-    xyBottom       = m_viewer->positionToXY(CellPosition(totalFrames, 0));
+    xyBottom       = m_viewer->positionToXY(CellPosition(totalFrames, -1));
     ColumnFan *fan = xsh->getColumnFan(o);
     xyBottom.setY(xyBottom.y() +
                   ((fan ? fan->isActive(0) : true) ? o->cellHeight() : 9));
@@ -3002,7 +3006,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
   TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
   int k0, k1;
   int r0, r1, c0, c1;
-  if (col >= 0) m_viewer->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+  m_viewer->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
 
   QPoint cellTopLeft = m_viewer->positionToXY(CellPosition(row, col));
   QPoint mouseInCell = event->pos() - cellTopLeft;
@@ -3029,8 +3033,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
                !xsh->getColumn(col)
                     ->isLocked())  // on the line between two keyframes
       createKeyLineMenu(menu, row, col);
-  } else if (col >= 0 &&  // Non e' la colonna di camera
-             m_viewer->getCellSelection()->isCellSelected(
+  } else if (m_viewer->getCellSelection()->isCellSelected(
                  row, col) &&  // La cella e' selezionata
              (abs(r1 - r0) > 0 ||
               abs(c1 - c0) >
@@ -3049,11 +3052,9 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
     }
     createCellMenu(menu, areCellsEmpty, cell);
   } else {
-    if (col >= 0) {
-      m_viewer->getCellSelection()->makeCurrent();
-      m_viewer->getCellSelection()->selectCell(row, col);
-      m_viewer->setCurrentColumn(col);
-    }
+    m_viewer->getCellSelection()->makeCurrent();
+    m_viewer->getCellSelection()->selectCell(row, col);
+    m_viewer->setCurrentColumn(col);
 
     createCellMenu(menu, !cell.isEmpty(), cell);
   }
@@ -3132,7 +3133,8 @@ const bool CellArea::isControlPressed() { return isCtrlPressed; }
 void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
   CommandManager *cmdManager = CommandManager::instance();
 
-  bool soundCellsSelected = m_viewer->areSoundCellsSelected();
+  bool soundCellsSelected  = m_viewer->areSoundCellsSelected();
+  bool cameraCellsSelected = m_viewer->areCameraCellsSelected();
 
   if (m_viewer->areSoundTextCellsSelected()) return;  // Magpies stop here
 
@@ -3304,6 +3306,10 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
       menu.addAction(cmdManager->getAction(MI_LipSyncPopup));
   } else {
     menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
+    if (cameraCellsSelected) {
+      menu.addSeparator();
+      menu.addAction(cmdManager->getAction(MI_SetKeyframes));
+    }
   }
   menu.addSeparator();
   if (!soundCellsSelected)

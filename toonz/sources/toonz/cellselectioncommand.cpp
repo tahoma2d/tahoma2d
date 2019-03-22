@@ -1237,7 +1237,8 @@ void TCellSelection::setKeyframes() {
   const TXshCell &cell = xsh->getCell(row, col);
   if (cell.getSoundLevel() || cell.getSoundTextLevel()) return;
 
-  const TStageObjectId &id = TStageObjectId::ColumnId(col);
+  const TStageObjectId &id =
+      col >= 0 ? TStageObjectId::ColumnId(col) : TStageObjectId::CameraId(0);
 
   TStageObject *obj = xsh->getStageObject(id);
   if (!obj) return;

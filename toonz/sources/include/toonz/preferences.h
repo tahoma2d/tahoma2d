@@ -468,6 +468,9 @@ public:
     currentColumnColor = m_currentColumnColor;
   }
 
+  void enableXsheetCameraColumn(bool on);
+  bool isXsheetCameraColumnEnabled() const { return m_showXsheetCameraColumn; }
+
   // Animation  tab
 
   void setKeyframeType(int s);
@@ -723,6 +726,8 @@ private:
 
   bool m_enableWinInk                         = false;
   bool m_useOnionColorsForShiftAndTraceGhosts = false;
+
+  bool m_showXsheetCameraColumn = true;
 
 private:
   Preferences();

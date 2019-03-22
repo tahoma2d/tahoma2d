@@ -597,6 +597,7 @@ public:
   /*! Return true if selection contain only sound cell.*/
   bool areSoundCellsSelected();
   bool areSoundTextCellsSelected();
+  bool areCameraCellsSelected();
 
   XsheetGUI::DragTool *getDragTool() const { return m_dragTool; };
   void setDragTool(XsheetGUI::DragTool *dragTool);

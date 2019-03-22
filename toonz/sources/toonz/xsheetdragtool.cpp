@@ -179,8 +179,10 @@ public:
   void onDrag(const CellPosition &pos) override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int row = pos.frame(), col = pos.layer();
-    if (col < 0 || (!getViewer()->orientation()->isVerticalTimeline() &&
-                    col >= xsh->getColumnCount()))
+    int firstCol =
+        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+    if (col < firstCol || (!getViewer()->orientation()->isVerticalTimeline() &&
+                           col >= xsh->getColumnCount()))
       return;
     if (row < 0) row = 0;
     if (m_modifier & Qt::ControlModifier)
@@ -1487,8 +1489,10 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int col      = pos.layer();
     if (!m_enabled) return;
-    if (col < 0 || (!getViewer()->orientation()->isVerticalTimeline() &&
-                    col >= xsh->getColumnCount()))
+    int firstCol =
+        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+    if (col < firstCol || (!getViewer()->orientation()->isVerticalTimeline() &&
+                           col >= xsh->getColumnCount()))
       return;
     TColumnSelection *selection = getViewer()->getColumnSelection();
     selection->selectNone();
@@ -1620,6 +1624,7 @@ public:
     TXsheet *xsh                = app->getCurrentXsheet()->getXsheet();
 
     std::set<int> indices = selection->getIndices();
+    indices.erase(-1);  // Ignore camera column
     if (indices.empty()) return;
 
     assert(m_lastCol == *indices.begin());

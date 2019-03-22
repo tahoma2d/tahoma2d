@@ -743,7 +743,14 @@ void ColumnCmd::insertEmptyColumns(const std::set<int> &indices,
                                    bool insertAfter) {
   // Filter out all less than 0 indices (in particular, the 'camera' column
   // in the Toonz derivative product "Tab")
-  std::vector<int> positiveIndices(indices.lower_bound(0), indices.end());
+  std::vector<int> positiveIndices(indices.begin(), indices.end());
+  if (positiveIndices[0] < 0) {
+    if (!insertAfter) return;
+    // If inserting after on camera column, change it to insert before on column
+    // 1
+    positiveIndices[0] = 0;
+    insertAfter        = false;
+  }
   if (positiveIndices.empty()) return;
 
   std::unique_ptr<ColumnCommandUndo> undo(
@@ -809,6 +816,7 @@ void ColumnCmd::pasteColumns(std::set<int> &indices,
 
 void ColumnCmd::deleteColumns(std::set<int> &indices, bool onlyColumns,
                               bool withoutUndo) {
+  indices.erase(-1);  // Ignore camera column
   if (indices.empty()) return;
 
   if (!withoutUndo && !onlyColumns)
