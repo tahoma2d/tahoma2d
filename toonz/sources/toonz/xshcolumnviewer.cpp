@@ -604,6 +604,17 @@ const QPixmap &ColumnArea::Pixmaps::soundPlaying() {
 
 void ColumnArea::DrawHeader::levelColors(QColor &columnColor,
                                          QColor &dragColor) const {
+  if (col < 0) {
+    TStageObjectId cameraId =
+        m_viewer->getXsheet()->getStageObjectTree()->getCurrentCameraId();
+    bool isActive =
+        cameraId.getIndex() == m_viewer->getXsheet()->getCameraColumnIndex();
+    columnColor = isActive ? m_viewer->getActiveCameraColor()
+                           : m_viewer->getOtherCameraColor();
+    dragColor = isActive ? m_viewer->getActiveCameraColor()
+                         : m_viewer->getOtherCameraColor();
+    return;
+  }
   enum { Normal, Reference, Control } usage = Reference;
   if (column) {
     if (column->isControl()) usage                             = Control;
