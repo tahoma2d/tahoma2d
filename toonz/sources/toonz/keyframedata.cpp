@@ -41,7 +41,8 @@ void TKeyframeData::setKeyframes(std::set<Position> positions, TXsheet *xsh,
                                  Position startPos) {
   if (positions.empty()) return;
 
-  TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+  TStageObjectId cameraId =
+      TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 
   std::set<Position>::iterator it = positions.begin();
   int r0                          = it->first;
@@ -92,7 +93,8 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
   XsheetViewer *viewer = TApp::instance()->getCurrentXsheetViewer();
 
   positions.clear();
-  TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+  TStageObjectId cameraId =
+      TStageObjectId::CameraId(xsh->getCameraColumnIndex());
   Iterator it;
   bool keyFrameChanged = false;
   for (it = m_keyData.begin(); it != m_keyData.end(); ++it) {

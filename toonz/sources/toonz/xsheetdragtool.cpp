@@ -1107,9 +1107,10 @@ public:
 
   void onClick(const CellPosition &pos) override {
     int row = pos.frame(), col = pos.layer();
-    m_r0 = m_r1             = row;
-    TXsheet *xsh            = getViewer()->getXsheet();
-    TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+    m_r0 = m_r1  = row;
+    TXsheet *xsh = getViewer()->getXsheet();
+    TStageObjectId cameraId =
+        TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 
     TStageObjectId objId = col >= 0 ? TStageObjectId::ColumnId(col) : cameraId;
     if (col >= 0 && xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) {
@@ -1738,12 +1739,12 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     TStageObjectId columnId(getViewer()->getObjectId(m_firstCol));
     if (m_firstCol == -1)
-      columnId =
-          getViewer()->getXsheet()->getStageObjectTree()->getCurrentCameraId();
+      columnId = TStageObjectId::CameraId(
+          getViewer()->getXsheet()->getCameraColumnIndex());
     TStageObjectId parentId(getViewer()->getObjectId(m_lastCol));
     if (m_lastCol == -1)
-      parentId =
-          getViewer()->getXsheet()->getStageObjectTree()->getCurrentCameraId();
+      parentId = TStageObjectId::CameraId(
+          getViewer()->getXsheet()->getCameraColumnIndex());
     if (getViewer()->getXsheet()->getColumn(m_lastCol) &&
         getViewer()->getXsheet()->getColumn(m_lastCol)->getSoundColumn())
       return;

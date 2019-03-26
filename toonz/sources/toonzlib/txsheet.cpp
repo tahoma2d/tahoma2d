@@ -185,7 +185,8 @@ TXsheet::TXsheet()
     : TSmartObject(m_classCode)
     , m_player(0)
     , m_imp(new TXsheet::TXsheetImp)
-    , m_notes(new TXshNoteSet()) {
+    , m_notes(new TXshNoteSet())
+    , m_cameraColumnIndex(0) {
   // extern TSyntax::Grammar *createXsheetGrammar(TXsheet*);
   m_soundProperties      = new TXsheet::SoundProperties();
   m_imp->m_handleManager = new XshHandleManager(this);

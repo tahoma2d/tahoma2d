@@ -508,8 +508,11 @@ void TApp::onColumnIndexSwitched() {
   int columnIndex = m_currentColumn->getColumnIndex();
   if (columnIndex >= 0)
     m_currentObject->setObjectId(TStageObjectId::ColumnId(columnIndex));
-  else
-    m_currentObject->setObjectId(TStageObjectId::CameraId(0));
+  else {
+    TXsheet *xsh = getCurrentXsheet()->getXsheet();
+    m_currentObject->setObjectId(
+        TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -482,7 +482,8 @@ int XsheetViewer::getCurrentRow() const {
 //-----------------------------------------------------------------------------
 
 TStageObjectId XsheetViewer::getObjectId(int col) const {
-  if (col < 0) return TStageObjectId::CameraId(0);
+  TXsheet *xsh = getXsheet();
+  if (col < 0) return TStageObjectId::CameraId(xsh->getCameraColumnIndex());
   return TStageObjectId::ColumnId(col);
 }
 //-----------------------------------------------------------------------------

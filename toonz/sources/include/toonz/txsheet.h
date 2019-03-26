@@ -156,6 +156,8 @@ private:
   TXshNoteSet *m_notes;
   SoundProperties *m_soundProperties;
 
+  int m_cameraColumnIndex;
+
   DECLARE_CLASS_CODE
 
 public:
@@ -556,6 +558,9 @@ in TXsheetImp.
                             int from, int to, int r0, int r1, bool isOverwrite,
                             std::vector<int> columnIndices,
                             std::vector<TXshLevelP> levels, int rowsCount);
+
+  void setCameraColumnIndex(int index) { m_cameraColumnIndex = index; }
+  int getCameraColumnIndex() { return m_cameraColumnIndex; }
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

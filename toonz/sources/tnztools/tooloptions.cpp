@@ -124,7 +124,8 @@ ToolOptionsBox::ToolOptionsBox(QWidget *parent, bool isScrollable)
 ToolOptionsBox::~ToolOptionsBox() {
   std::for_each(m_controls.begin(), m_controls.end(),
                 std::default_delete<ToolOptionControl>());
-  std::for_each(m_labels.begin(), m_labels.end(), std::default_delete<QLabel>());
+  std::for_each(m_labels.begin(), m_labels.end(),
+                std::default_delete<QLabel>());
 }
 
 //-----------------------------------------------------------------------------
@@ -1117,6 +1118,11 @@ void ArrowToolOptionsBox::onCurrentStageObjectComboActivated(int index) {
   }
   // switch the current object
   m_objHandle->setObjectId(id);
+  if (id.isCamera()) {
+    TXsheet *xsh = m_xshHandle->getXsheet();
+    if (xsh->getCameraColumnIndex() != id.getIndex())
+      m_xshHandle->changeXsheetCamera(id.getIndex());
+  }
 }
 
 //------------------------------------------------------------------------------

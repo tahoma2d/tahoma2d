@@ -3017,7 +3017,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
   if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell)) {
     TStageObjectId objectId;
     if (col < 0)
-      objectId = TStageObjectId::CameraId(0);
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     else {  // Set the current column and the current object
       objectId = TStageObjectId::ColumnId(col);
       m_viewer->setCurrentColumn(col);

@@ -101,7 +101,8 @@ bool isKeyframe(int r, int c) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   TStageObjectId objectId =
-      (c == -1) ? TStageObjectId::CameraId(0) : TStageObjectId::ColumnId(c);
+      (c == -1) ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
+                : TStageObjectId::ColumnId(c);
 
   TStageObject *object = xsh->getStageObject(objectId);
   assert(object);
@@ -162,7 +163,7 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
 
     if (c == -1) {
 #ifdef LINETEST
-      objectId = TStageObjectId::CameraId(0);
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 #else
       continue;
 #endif
@@ -189,7 +190,7 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame) {
 
     if (c == -1) {
 #ifdef LINETEST
-      objectId = TStageObjectId::CameraId(0);
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 #else
       continue;
 #endif
@@ -258,7 +259,8 @@ public:
     m_keyframes.resize(colsCount + 1);
 
     // Inserting the eventual camera keyframe at the end
-    TStageObject *cameraObj = xsh->getStageObject(TStageObjectId::CameraId(0));
+    TStageObject *cameraObj = xsh->getStageObject(
+        TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
     if (cameraObj->isKeyframe(m_frame))
       m_keyframes[colsCount] = cameraObj->getKeyframe(m_frame);
 
@@ -285,8 +287,8 @@ public:
 
     // Deal with the eventual camera keyframe
     if (m_keyframes[cellsCount].m_isKeyframe) {
-      TStageObject *cameraObj =
-          xsh->getStageObject(TStageObjectId::CameraId(0));
+      TStageObject *cameraObj = xsh->getStageObject(
+          TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
       cameraObj->setKeyframeWithoutUndo(m_frame, m_keyframes[cellsCount]);
     }
 
@@ -376,7 +378,7 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
 
     if (c == -1) {
 #ifdef LINETEST
-      objectId = TStageObjectId::CameraId(0);
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 #else
       continue;
 #endif
@@ -411,7 +413,7 @@ void GlobalKeyframeUndo::doRemoveGlobalKeyframes(
 
     if (c == -1) {
 #ifdef LINETEST
-      objectId = TStageObjectId::CameraId(0);
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 #else
       continue;
 #endif
@@ -498,8 +500,9 @@ public:
       static TStageObject::Keyframe getKeyframe(int r, int c) {
         TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-        TStageObjectId objectId = (c == -1) ? TStageObjectId::CameraId(0)
-                                            : TStageObjectId::ColumnId(c);
+        TStageObjectId objectId =
+            (c == -1) ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
+                      : TStageObjectId::ColumnId(c);
 
         TStageObject *object = xsh->getStageObject(objectId);
         assert(object);
@@ -530,8 +533,9 @@ public:
     for (c = 0; c != cCount; ++c) {
       int col = m_columns[c];
 
-      TStageObjectId objectId = (col == -1) ? TStageObjectId::CameraId(0)
-                                            : TStageObjectId::ColumnId(col);
+      TStageObjectId objectId =
+          (col == -1) ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
+                      : TStageObjectId::ColumnId(col);
 
       TStageObject *object = xsh->getStageObject(objectId);
       object->setKeyframeWithoutUndo(m_frame, m_keyframes[c]);
@@ -1072,11 +1076,8 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1095,18 +1096,19 @@ public:
 
   void execute() override {
     TApp *app                     = TApp::instance();
+    ToonzScene *scene             = app->getCurrentScene()->getScene();
+    TXsheet *xsh                  = scene->getXsheet();
     TKeyframeSelection *selection = dynamic_cast<TKeyframeSelection *>(
         app->getCurrentSelection()->getSelection());
     if (!selection) return;
     int col                 = app->getCurrentColumn()->getColumnIndex();
     TStageObjectId objectId = app->getCurrentObject()->getObjectId();
-    if (app->getCurrentObject()->getObjectId() == TStageObjectId::CameraId(0)) {
-      objectId = TStageObjectId::CameraId(0);
+    if (app->getCurrentObject()->getObjectId() ==
+        TStageObjectId::CameraId(xsh->getCameraColumnIndex())) {
+      objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       col      = -1;
     }
     selection->selectNone();
-    ToonzScene *scene    = app->getCurrentScene()->getScene();
-    TXsheet *xsh         = scene->getXsheet();
     TStageObject *pegbar = xsh->getStageObject(objectId);
     TStageObject::KeyframeMap keyframes;
     pegbar->getKeyframes(keyframes);
@@ -1136,11 +1138,8 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1176,11 +1175,8 @@ public:
     TXsheet *xsh      = scene->getXsheet();
     for (int col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1218,11 +1214,8 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1261,9 +1254,9 @@ public:
 
     TStageObjectId objectId =
         TApp::instance()->getCurrentObject()->getObjectId();
-#ifdef LINETEST
-    if (objectId == TStageObjectId::CameraId(0)) currentColumn = -1;
-#endif
+    if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
+        Preferences::instance()->isXsheetCameraColumnEnabled())
+      currentColumn      = -1;
     TStageObject *pegbar = xsh->getStageObject(objectId);
     TStageObject::KeyframeMap keyframes;
     pegbar->getKeyframes(keyframes);
@@ -1298,9 +1291,9 @@ public:
     TXsheet *xsh      = scene->getXsheet();
     TStageObjectId objectId =
         TApp::instance()->getCurrentObject()->getObjectId();
-#ifdef LINETEST
-    if (objectId == TStageObjectId::CameraId(0)) currentColumn = -1;
-#endif
+    if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
+        Preferences::instance()->isXsheetCameraColumnEnabled())
+      currentColumn      = -1;
     TStageObject *pegbar = xsh->getStageObject(objectId);
     TStageObject::KeyframeMap keyframes;
     pegbar->getKeyframes(keyframes);
@@ -1336,11 +1329,8 @@ public:
     int col;
     for (col = -1; col <= currentColumn; col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1374,20 +1364,21 @@ public:
     int currentRow    = app->getCurrentFrame()->getFrame();
     int currentColumn = app->getCurrentColumn()->getColumnIndex();
 
-    TStageObjectId objectId =
-        TApp::instance()->getCurrentObject()->getObjectId();
-#ifdef LINETEST
-    if (objectId == TStageObjectId::CameraId(0)) currentColumn = -1;
-#endif
-
-    selection->selectNone();
     ToonzScene *scene = app->getCurrentScene()->getScene();
     TXsheet *xsh      = scene->getXsheet();
+
+    TStageObjectId objectId =
+        TApp::instance()->getCurrentObject()->getObjectId();
+    if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
+        Preferences::instance()->isXsheetCameraColumnEnabled())
+      currentColumn = -1;
+
+    selection->selectNone();
     int col;
     for (col = currentColumn; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
       if (col == -1)
-        objectId = TStageObjectId::CameraId(0);
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);
@@ -1423,11 +1414,8 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-#ifdef LINETEST
-      if (col == -1) objectId = TStageObjectId::CameraId(0);
-#else
-      if (col == -1) continue;
-#endif
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+        objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
       TStageObject *pegbar = xsh->getStageObject(objectId);

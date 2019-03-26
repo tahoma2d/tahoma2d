@@ -1677,7 +1677,7 @@ void TCellSelection::pasteCells() {
     TKeyframeSelection selection;
     if (isEmpty() &&
         TApp::instance()->getCurrentObject()->getObjectId() ==
-            TStageObjectId::CameraId(0))
+            TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
     // Se la selezione e' vuota e l'objectId e' quello della camera sono nella
     // colonna di camera quindi devo selezionare la row corrente e -1.
     {
@@ -1880,6 +1880,7 @@ void TCellSelection::insertCells() {
 //-----------------------------------------------------------------------------
 
 void TCellSelection::pasteKeyframesInto() {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   const TKeyframeData *keyframeData = dynamic_cast<const TKeyframeData *>(
       QApplication::clipboard()->mimeData());
   if (keyframeData) {
@@ -1889,7 +1890,7 @@ void TCellSelection::pasteKeyframesInto() {
     TKeyframeSelection selection;
     if (isEmpty() &&
         TApp::instance()->getCurrentObject()->getObjectId() ==
-            TStageObjectId::CameraId(0))
+            TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
     // Se la selezione e' vuota e l'objectId e' quello della camera sono nella
     // colonna di camera quindi devo selezionare la row corrente e -1.
     {
