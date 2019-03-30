@@ -1190,7 +1190,7 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
 
     // for each frame
     for (row = r0; row <= r1; row++) {
-      if (!isColumn) {
+      if (col >= 0 && !isColumn) {
         drawFrameSeparator(p, row, col, true);
         if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
             !m_viewer->orientation()->isVerticalTimeline() &&
@@ -1677,8 +1677,38 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
       xy.setX(xy.x() + 1);
   }
 
+  TXshCell nextCell;
+  nextCell = xsh->getCell(row + 1, col);  // cell in next frame
+
+  int frameAdj   = m_viewer->getFrameZoomAdjustment();
+  QRect cellRect = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
+  cellRect.adjust(0, 0, -frameAdj, 0);
+  QRect rect = cellRect.adjusted(
+      1, 1,
+      (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
+           ? 2
+           : 0),
+      0);
+
+  // get cell colors
+  QColor cellColor, sideColor;
+
   // nothing to draw
   if (cell.isEmpty() && prevCell.isEmpty()) {
+    if (col < 0) {
+      TStageObjectId cameraId =
+          m_viewer->getXsheet()->getStageObjectTree()->getCurrentCameraId();
+      bool isActive =
+          cameraId.getIndex() == m_viewer->getXsheet()->getCameraColumnIndex();
+      cellColor = (isSelected)
+                      ? (isActive ? m_viewer->getSelectedActiveCameraColor()
+                                  : m_viewer->getSelectedOtherCameraColor())
+                      : (isActive ? m_viewer->getActiveCameraColor()
+                                  : m_viewer->getOtherCameraColor());
+      cellColor.setAlpha(50);
+      // paint cell
+      p.fillRect(rect, QBrush(cellColor));
+    }
     drawFrameSeparator(p, row, col, true);
 
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
@@ -1693,18 +1723,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
                     prevCell.m_frameId == cell.m_frameId);
   drawFrameSeparator(p, row, col, false, heldFrame);
 
-  TXshCell nextCell;
-  nextCell = xsh->getCell(row + 1, col);  // cell in next frame
-
-  int frameAdj   = m_viewer->getFrameZoomAdjustment();
-  QRect cellRect = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
-  cellRect.adjust(0, 0, -frameAdj, 0);
-  QRect rect = cellRect.adjusted(
-      1, 1,
-      (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
-           ? 2
-           : 0),
-      0);
   if (cell.isEmpty()) {  // it means previous is not empty
     // diagonal cross meaning end of level
     QColor levelEndColor = m_viewer->getTextColor();
@@ -1722,8 +1740,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
     return;
   }
 
-  // get cell colors
-  QColor cellColor, sideColor;
   if (isReference) {
     cellColor = (isSelected) ? m_viewer->getSelectedReferenceColumnColor()
                              : m_viewer->getReferenceColumnColor();

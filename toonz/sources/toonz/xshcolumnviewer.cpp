@@ -698,8 +698,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
   colorSelection.setAlpha(170);
-  p.fillRect(rect,
-             (isSelected || isCameraSelected) ? colorSelection : pastelizer);
+  p.fillRect(rect, isSelected ? colorSelection : pastelizer);
 }
 
 void ColumnArea::DrawHeader::drawEye() const {
