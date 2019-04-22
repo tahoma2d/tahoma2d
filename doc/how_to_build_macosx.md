@@ -108,7 +108,9 @@ Command /bin/sh emitted errors but did not return a nonzero exit code to indicat
 If you have installed OpenToonz on the machine already, you can skip this.  Otherwise, you need to create the stuff folder with the following:
 ```
 $ cd ~/Documents/opentoonz
+$ sudo mkdir /Applications/OpenToonz
 $ sudo cp -r stuff /Applications/OpenToonz/OpenToonz_stuff
+$ sudo chmod -R 777 /Applications/OpenToonz
 ```
 
 ### Running the build
