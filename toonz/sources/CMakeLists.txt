@@ -157,7 +157,7 @@ elseif(BUILD_ENV_APPLE)
     endif()
     message("PLATFORM:" ${PLATFORM})
     if(PLATFORM EQUAL 64)
-        set(QT_PATH "/usr/local/Cellar/qt/5.12.2/lib" CACHE PATH "Qt instlattion directory")
+        set(QT_PATH "~/Qt5.9.2/5.9.2/clang_64/lib" CACHE PATH "Qt instlattion directory")
         set(QT_LIB_PATH "${QT_PATH}/")
         set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
 

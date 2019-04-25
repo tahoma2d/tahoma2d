@@ -43,7 +43,7 @@ $ git lfs install
 
 NOTE: This will install the latest version of QT which may not be compatible with older OS versions.
 
-If you cannot use the most recent version, download the online installer from https://www.qt.io/download and install the appropriate version (min 5.9.2).  If installing via this method, be sure to install the depricated QT Script libraries.
+If you cannot use the most recent version, download the online installer from https://www.qt.io/download and install the appropriate `macOS` version (min 5.9.2).  If installing via this method, be sure to install the `Qt Script (Deprecated)` libraries.
 
 ### Set up OpenToonz repository
 
@@ -64,9 +64,10 @@ $ ./configure && make
 
 ### Configure build for QT version
 
-If your QT version is not 5.12.2, edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file  at line 160 (64bit OS) or 172 (32bit OS) and modify the root path for the QT lib directory
+Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at line 160 (64bit OS) or 172 (32bit OS) and modify the root path for the QT lib directory
 
-If you installed QT using `brew` , you can get the version and path to use with: `$ brew info qt`.  The entry will look something like this: `/usr/local/Cellar/qt/5.12.2/lib`
+If you installed QT using `brew` , you can get the version and path to use with: `$ brew info qt`.  The lib path will look something like this: `/usr/local/Cellar/qt/5.12.2/lib`
+If you downloaded the QT installer and installed to `/Users/yourlogin/Qt`, your lib path may look something like this: `~/Qt/5.12.2/clang_64/lib` or `~/Qt/5.12.2/clang_32/lib`
 
 ### Configure environment and Build OpenToonz
 
@@ -103,6 +104,8 @@ $ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.  #
 Command /bin/sh emitted errors but did not return a nonzero exit code to indicate failure
 ```
 
+Sidenote: If you want to be able to build by command line and Xcode, create a separate build directory for each.
+
 ### Create the stuff Directory
 
 If you have installed OpenToonz on the machine already, you can skip this.  Otherwise, you need to create the stuff folder with the following:
@@ -115,7 +118,7 @@ $ sudo chmod -R 777 /Applications/OpenToonz
 
 ### Running the build
 
-- If built using via command line, run the following:
+- If built using command line, run the following:
 ```
 $ open ~/Documents/opentoonz/build/toonz/OpenToonz.app
 ```
