@@ -17,11 +17,13 @@ Download the .bz2 mac (unix if mac not specified) version 1_55_0 or later (last 
 
 Save for later step.
 
-### Download and install XCode from Apple
+### Download and install Xcode from Apple
 
-When downloading XCode, you should use the appropriate version for your OS version.  You can refer to the Version Comparison Table on https://en.wikipedia.org/wiki/Xcode to find out which version you should use.
+When downloading Xcode, you should use the appropriate version for your OS version.  You can refer to the Version Comparison Table on https://en.wikipedia.org/wiki/Xcode to find out which version you should use.
 
 Apple store usually provides for the most recent macOS version.  For older versions, you will need to go to the Apple Developer site.
+
+After installing the application, you will need to start it in order to complete the installation.
 
 ### Install Homebrew from https://brew.sh
 
@@ -86,7 +88,7 @@ $ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake ../sources  #replace QT pa
 $ make
 ```
 
-To build using XCode, do the following:
+To build using Xcode, do the following:
 ```
 $ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 $ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.  #replace QT path with your installed QT version#
@@ -104,7 +106,7 @@ $ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.  #
 Command /bin/sh emitted errors but did not return a nonzero exit code to indicate failure
 ```
 
-Sidenote: If you want to be able to build by command line and Xcode, create a separate build directory for each.
+Side note: If you want the option to build by command line and Xcode, create a separate build directory for each.
 
 ### Create the stuff Directory
 
