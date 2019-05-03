@@ -792,6 +792,7 @@ void RenameCellField::renameCell() {
   if (!cellSelection) return;
 
   QList<TXshCell> cells;
+  bool hasFrameZero = false;
 
   if (levelName == L"") {
     int r0, c0, r1, c1;
@@ -837,7 +838,9 @@ void RenameCellField::renameCell() {
       if (fid == TFrameId::NO_FRAME)
         fid = (m_row - tmpRow <= 1) ? cell.m_frameId : TFrameId(0);
       cells.append(TXshCell(xl, fid));
-      changed = true;
+      changed      = true;
+      hasFrameZero = (fid.getNumber() == 0 && xl->getSimpleLevel() &&
+                      xl->getSimpleLevel()->isFid(fid));
     }
     if (!changed) return;
   } else {
@@ -857,9 +860,11 @@ void RenameCellField::renameCell() {
     }
     if (!xl) return;
     cells.append(TXshCell(xl, fid));
+    hasFrameZero = (fid.getNumber() == 0 && xl->getSimpleLevel() &&
+                    xl->getSimpleLevel()->isFid(fid));
   }
 
-  if (fid.getNumber() == 0) {
+  if (fid.getNumber() == 0 && !hasFrameZero) {
     TCellSelection::Range range = cellSelection->getSelectedCells();
     cellSelection->deleteCells();
     // revert cell selection
@@ -1856,7 +1861,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
     else {
       std::string frameNumber("");
       // set number
-      if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
+      frameNumber = std::to_string(fid.getNumber());
       // add letter
       if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
       fnum = QString::fromStdString(frameNumber);
@@ -2871,7 +2876,7 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
                     m_viewer->getFrameNumberWithLetters(fid.getNumber());
     } else {
       std::string frameNumber("");
-      if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
+      frameNumber = std::to_string(fid.getNumber());
       if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
       m_tooltip =
           QString((frameNumber.empty())
