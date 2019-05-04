@@ -1861,7 +1861,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
     else {
       std::string frameNumber("");
       // set number
-      frameNumber = std::to_string(fid.getNumber());
+      if (fid.getNumber() >= 0) frameNumber = std::to_string(fid.getNumber());
       // add letter
       if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
       fnum = QString::fromStdString(frameNumber);
@@ -2876,7 +2876,7 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
                     m_viewer->getFrameNumberWithLetters(fid.getNumber());
     } else {
       std::string frameNumber("");
-      frameNumber = std::to_string(fid.getNumber());
+      if (fid.getNumber() >= 0) frameNumber = std::to_string(fid.getNumber());
       if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
       m_tooltip =
           QString((frameNumber.empty())
