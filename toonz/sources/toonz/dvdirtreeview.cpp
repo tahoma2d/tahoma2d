@@ -1373,11 +1373,11 @@ void DvDirTreeView::onRefreshStatusError(const QString &text) {
 void DvDirTreeView::checkPartialLock(const QString &workingDir,
                                      const QStringList &files) {
   QStringList args;
-  args << "propget";
-  args << "partial-lock";
+  args << "proplist";
   int filesCount = files.count();
   for (int i = 0; i < filesCount; i++) args << files.at(i);
   args << "--xml";
+  args << "-v";
 
   m_thread.disconnect(SIGNAL(done(const QString &)));
   m_thread.disconnect(SIGNAL(error(const QString &)));

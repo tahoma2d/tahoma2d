@@ -304,10 +304,10 @@ void SVNLockFrameRangeDialog::onLockDone() {
 
     // Step 2: propget
     QStringList args;
-    args << "propget";
-    args << "partial-lock";
+    args << "proplist";
     args << m_file;
     args << "--xml";
+    args << "-v";
 
     m_thread.disconnect(SIGNAL(done(const QString &)));
     connect(&m_thread, SIGNAL(done(const QString &)), this,
@@ -736,10 +736,10 @@ void SVNUnlockFrameRangeDialog::onLockDone() {
 
   // Step 3: propget
   QStringList args;
-  args << "propget";
-  args << "partial-lock";
+  args << "proplist";
   args << m_file;
   args << "--xml";
+  args << "-v";
 
   m_thread.disconnect(SIGNAL(done(const QString &)));
   connect(&m_thread, SIGNAL(done(const QString &)), this,
@@ -1074,10 +1074,10 @@ SVNFrameRangeLockInfoDialog::SVNFrameRangeLockInfoDialog(
 
   // 1. propget
   QStringList args;
-  args << "propget";
-  args << "partial-lock";
+  args << "proplist";
   args << m_file;
   args << "--xml";
+  args << "-v";
 
   connect(&m_thread, SIGNAL(done(const QString &)), this,
           SLOT(onPropGetDone(const QString &)));

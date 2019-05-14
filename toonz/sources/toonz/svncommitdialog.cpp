@@ -1041,10 +1041,10 @@ void SVNCommitFrameRangeDialog::onLockDone() {
 
   // Step 3: propget
   QStringList args;
-  args << "propget";
-  args << "partial-lock";
+  args << "proplist";
   args << m_file;
   args << "--xml";
+  args << "-v";
 
   m_thread.disconnect(SIGNAL(done(const QString &)));
   connect(&m_thread, SIGNAL(done(const QString &)), this,
