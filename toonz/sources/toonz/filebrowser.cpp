@@ -1328,6 +1328,10 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     }
 
     if (status == DvItemListModel::VC_Locked && files.size() == 1) {
+      action = vcMenu->addAction(tr("Unlock"));
+      ret    = ret && connect(action, SIGNAL(triggered()), this,
+                           SLOT(unlockVersionControl()));
+
       action = vcMenu->addAction(tr("Edit Info"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
                            SLOT(showLockInformation()));
