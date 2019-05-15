@@ -22,6 +22,7 @@
 
 // TnzCore includes
 #include "tconvert.h"
+#include "tsystem.h"
 
 // Qt includes
 #include <QVBoxLayout>
@@ -894,8 +895,15 @@ void PaletteViewer::saveStudioPalette() {
         int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
                                 QObject::tr("Don't Overwrite"), 0);
         if (ret == 2 || ret == 0) return;
-        StudioPalette::instance()->save(palettePath, palette);
-        palette->setDirtyFlag(false);
+        try {
+          StudioPalette::instance()->save(palettePath, palette);
+          palette->setDirtyFlag(false);
+        } catch (TSystemException se) {
+          QApplication::restoreOverrideCursor();
+          DVGui::warning(QString::fromStdWString(se.getMessage()));
+          return;
+        } catch (...) {
+        }
       }
     }
     return;
