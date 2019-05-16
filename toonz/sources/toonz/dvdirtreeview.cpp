@@ -1470,19 +1470,12 @@ DvItemListModel::Status DvDirTreeView::getItemVersionControlStatus(
     if (s.m_item == "missing" ||
         s.m_item == "none" && s.m_repoStatus == "added")
       return DvItemListModel::VC_Missing;
-    if (s.m_isLocked) {
-      DvDirVersionControlRootNode *rootNode = node->getVersionControlRootNode();
-      if (rootNode) {
-        if (QString::fromStdWString(rootNode->getUserName()) != s.m_lockOwner ||
-            TSystem::getHostName() != s.m_lockHostName)
-          return DvItemListModel::VC_Locked;
-        else if (s.m_item == "normal" && s.m_repoStatus == "none")
-          return DvItemListModel::VC_Edited;
-      }
-    }
-
     if (s.m_item == "unversioned") return DvItemListModel::VC_Unversioned;
-    if (s.m_isPartialEdited) {
+	// If, for some errors, there is some item added locally but not committed
+	// yet, use the modified status
+	if (s.m_item == "modified" || s.m_item == "added")
+		return DvItemListModel::VC_Modified;
+	if (s.m_isPartialEdited) {
       QString from                          = QString::number(s.m_editFrom);
       QString to                            = QString::number(s.m_editTo);
       DvDirVersionControlRootNode *rootNode = node->getVersionControlRootNode();
@@ -1499,16 +1492,22 @@ DvItemListModel::Status DvDirTreeView::getItemVersionControlStatus(
       else
         return DvItemListModel::VC_PartialEdited;
     }
-    if (s.m_isPartialLocked) return DvItemListModel::VC_PartialLocked;
-    // Pay attention: "ToUpdate" is more important than "ReadOnly"
+	if (s.m_isPartialLocked) return DvItemListModel::VC_PartialLocked;
+	if (s.m_isLocked) {
+		DvDirVersionControlRootNode *rootNode = node->getVersionControlRootNode();
+		if (rootNode) {
+			if (QString::fromStdWString(rootNode->getUserName()) != s.m_lockOwner ||
+				TSystem::getHostName() != s.m_lockHostName)
+				return DvItemListModel::VC_Locked;
+			else if (s.m_item == "normal" && s.m_repoStatus == "none")
+				return DvItemListModel::VC_Edited;
+		}
+	}
+	// Pay attention: "ToUpdate" is more important than "ReadOnly"
     if (s.m_item == "normal" && s.m_repoStatus == "modified")
       return DvItemListModel::VC_ToUpdate;
-    if (!fs.isWritable() || s.m_item == "normal")
-      return DvItemListModel::VC_ReadOnly;
-    // If, for some errors, there is some item added locally but not committed
-    // yet, use the modified status
-    if (s.m_item == "modified" || s.m_item == "added")
-      return DvItemListModel::VC_Modified;
+	if (!fs.isWritable() || s.m_item == "normal")
+		return DvItemListModel::VC_ReadOnly;
   } else if (fp.getDots() == "..") {
     // Get the files list to control its status...
     QStringList levelNames = getLevelFileNames(fp);
