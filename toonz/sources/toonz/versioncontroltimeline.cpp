@@ -389,14 +389,13 @@ void SVNTimeline::exportToTemporaryFile(int index, bool isAuxFile) {
 
   // SceneIcons (pay attention to add a space at the fileName end)
   if (isAuxFile && fi.completeSuffix() == "png") {
-    args << "sceneIcons/" + fileName + " ." + extension + "@" +
-                m_log.at(index).m_revision;
+    args << "sceneIcons/" + m_fileName + "@" + m_log.at(index).m_revision;
     args << fi.absoluteFilePath();
   } else {
-    args << fileName + "." + fi.completeSuffix() + "@" +
-                m_log.at(index).m_revision;
+    args << m_fileName + "@" + m_log.at(index).m_revision;
     args << fi.absoluteFilePath();
   }
+  args << "--force";
 
   // Export to temporary file...
   m_thread.executeCommand(m_workingDir, "svn", args, true);
