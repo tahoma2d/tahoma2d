@@ -2251,3 +2251,24 @@ TRectD TXshSimpleLevel::getBBox(const TFrameId &fid) const {
   // Get the frame's dpi and traduce the bbox to inch coordinates
   return TScale(1.0 / dpiX, 1.0 / dpiY) * bbox;
 }
+
+bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
+  // For Raster and mesh files, check to see if files are marked as read-only at
+  // the OS level
+  if (getType() == OVL_XSHLEVEL || getType() == TZI_XSHLEVEL ||
+      getType() == MESH_XSHLEVEL) {
+    TFilePath fullPath = getScene()->decodeFilePath(m_path);
+    TFilePath path =
+        fullPath.getDots() == ".." ? fullPath.withFrame(fid) : fullPath;
+    if (!TSystem::doesExistFileOrLevel(path)) return false;
+    TFileStatus fs(path);
+    return !fs.isWritable();
+  }
+
+  // If Level is marked read only, check for editable frames
+  if (m_isReadOnly && !m_editableRange.empty() &&
+      m_editableRange.count(fid) != 0)
+    return false;
+
+  return m_isReadOnly;
+}
