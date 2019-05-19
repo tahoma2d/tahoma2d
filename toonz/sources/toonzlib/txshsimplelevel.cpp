@@ -1431,6 +1431,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
       sl->setPalette(getPalette());
       sl->setPath(getScene()->codeFilePath(app));
       sl->setType(getType());
+      sl->setDirtyFlag(getDirtyFlag());
 
       std::set<TFrameId>::iterator eft, efEnd = m_editableRange.end();
       for (eft = m_editableRange.begin(); eft != efEnd; ++eft) {
@@ -1449,6 +1450,8 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
         if (m_editableRange.find(fid) == m_editableRange.end())
           hookSet->eraseFrame(fid);
       }
+
+      sl->setRenumberTable();
 
       // Copy mesh level
       sl->save(app);
