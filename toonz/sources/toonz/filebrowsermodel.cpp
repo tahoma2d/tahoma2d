@@ -18,10 +18,12 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QDirIterator>
 
 #ifdef _WIN32
 #include <shlobj.h>
 #include <winnetwk.h>
+#include <wctype.h>
 #endif
 #ifdef MACOSX
 #include <Cocoa/Cocoa.h>
@@ -250,13 +252,11 @@ bool DvDirModelFileFolderNode::hasChildren() {
   if (m_childrenValid) return m_hasChildren;
 
   if (m_peeks) {
-    // Using QDir directly rather than
-    // DvDirModelFileFolderNode::refreshChildren() due to
-    // performance issues
-    QDir dir(QString::fromStdWString(m_path.getWideString()));
+    // Using QDirIterator and only checking existence of the first item
+    QDir dir(m_path.getQString());
     dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
-
-    return (dir.count() > 0);
+    QDirIterator it(dir);
+    return (it.hasNext());
   } else
     return true;  // Not peeking nodes allow users to actively scan for
                   // sub-folders
@@ -314,16 +314,48 @@ void DvDirModelFileFolderNode::getChildrenNames(
   TFileStatus folderPathStatus(m_path);
   if (folderPathStatus.isLink()) return;
 
-  QStringList entries;
-  if (folderPathStatus.isDirectory()) {
-    QDir dir(toQString(m_path));
+  if (!folderPathStatus.isDirectory()) return;
 
-    entries = dir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot,
-                            QDir::Name | QDir::LocaleAware);
+  QDir dir(toQString(m_path));
+
+#ifdef _WIN32
+  // equivalent to sorting with QDir::LocaleAware
+  struct strCompare {
+    bool operator()(const QString &s1, const QString &s2) {
+      return QString::localeAwareCompare(s1, s2) < 0;
+    }
+  };
+
+  std::set<QString, strCompare> entries;
+
+  WIN32_FIND_DATA find_dir_data;
+  QString dir_search_path = dir.absolutePath() + "\\*";
+  auto addEntry           = [&]() {
+    // QDir::NoDotAndDotDot condition
+    if (wcscmp(find_dir_data.cFileName, L".") != 0 &&
+        wcscmp(find_dir_data.cFileName, L"..") != 0) {
+      // QDir::AllDirs condition
+      if (find_dir_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY &&
+          (find_dir_data.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0) {
+        entries.insert(QString::fromWCharArray(find_dir_data.cFileName));
+      }
+    }
+  };
+  HANDLE hFind =
+      FindFirstFile((const wchar_t *)dir_search_path.utf16(), &find_dir_data);
+  if (hFind != INVALID_HANDLE_VALUE) {
+    addEntry();
+    while (FindNextFile(hFind, &find_dir_data)) addEntry();
   }
+  for (const QString &name : entries) names.push_back(name.toStdWString());
+
+#else
+  QStringList entries = dir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot,
+                                      QDir::Name | QDir::LocaleAware);
 
   int e, eCount = entries.size();
   for (e = 0; e != eCount; ++e) names.push_back(entries[e].toStdWString());
+#endif
 }
 
 //-----------------------------------------------------------------------------
