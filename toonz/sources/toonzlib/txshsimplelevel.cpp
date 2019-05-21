@@ -1432,6 +1432,8 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
       sl->setPath(getScene()->codeFilePath(app));
       sl->setType(getType());
       sl->setDirtyFlag(getDirtyFlag());
+      sl->addRef();  // Needed so levelUpdater doesn't destroy it right away
+                     // when its done writing
 
       std::set<TFrameId>::iterator eft, efEnd = m_editableRange.end();
       for (eft = m_editableRange.begin(); eft != efEnd; ++eft) {
