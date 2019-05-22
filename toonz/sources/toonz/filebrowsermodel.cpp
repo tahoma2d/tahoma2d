@@ -316,46 +316,11 @@ void DvDirModelFileFolderNode::getChildrenNames(
 
   if (!folderPathStatus.isDirectory()) return;
 
+  QStringList dirItems;
+  TSystem::readDirectory_DirItems(dirItems, m_path);
+  for (const QString &name : dirItems) names.push_back(name.toStdWString());
+
   QDir dir(toQString(m_path));
-
-#ifdef _WIN32
-  // equivalent to sorting with QDir::LocaleAware
-  struct strCompare {
-    bool operator()(const QString &s1, const QString &s2) {
-      return QString::localeAwareCompare(s1, s2) < 0;
-    }
-  };
-
-  std::set<QString, strCompare> entries;
-
-  WIN32_FIND_DATA find_dir_data;
-  QString dir_search_path = dir.absolutePath() + "\\*";
-  auto addEntry           = [&]() {
-    // QDir::NoDotAndDotDot condition
-    if (wcscmp(find_dir_data.cFileName, L".") != 0 &&
-        wcscmp(find_dir_data.cFileName, L"..") != 0) {
-      // QDir::AllDirs condition
-      if (find_dir_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY &&
-          (find_dir_data.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0) {
-        entries.insert(QString::fromWCharArray(find_dir_data.cFileName));
-      }
-    }
-  };
-  HANDLE hFind =
-      FindFirstFile((const wchar_t *)dir_search_path.utf16(), &find_dir_data);
-  if (hFind != INVALID_HANDLE_VALUE) {
-    addEntry();
-    while (FindNextFile(hFind, &find_dir_data)) addEntry();
-  }
-  for (const QString &name : entries) names.push_back(name.toStdWString());
-
-#else
-  QStringList entries = dir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot,
-                                      QDir::Name | QDir::LocaleAware);
-
-  int e, eCount = entries.size();
-  for (e = 0; e != eCount; ++e) names.push_back(entries[e].toStdWString());
-#endif
 }
 
 //-----------------------------------------------------------------------------
