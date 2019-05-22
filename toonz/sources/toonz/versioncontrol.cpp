@@ -15,9 +15,11 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/tpalettehandle.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/tproject.h"
 #include "tsystem.h"
 #include "tenv.h"
 #include "tapp.h"
+#include "permissionsmanager.h"
 
 #include <QFile>
 #include <QDir>
@@ -316,6 +318,18 @@ VersionControlManager *VersionControlManager::instance() {
 }
 
 //-----------------------------------------------------------------------------
+void setVersionControlCredentials(QString currentPath) {
+  VersionControl *vc                = VersionControl::instance();
+  QList<SVNRepository> repositories = vc->getRepositories();
+  int repoCount                     = repositories.size();
+  for (int i = 0; i < repoCount; i++) {
+    SVNRepository r = repositories.at(i);
+    if (!currentPath.startsWith(r.m_localPath)) continue;
+    vc->setUserName(r.m_username);
+    vc->setPassword(r.m_password);
+    return;
+  }
+}
 
 void VersionControlManager::setFrameRange(TLevelSet *levelSet,
                                           bool deleteLater) {
@@ -340,8 +354,10 @@ void VersionControlManager::setFrameRange(TLevelSet *levelSet,
         TFilePath parentDir =
             sl->getScene()->decodeFilePath(sl->getPath().getParentDir());
         if (VersionControl::instance()->isFolderUnderVersionControl(
-                toQString(parentDir)))
+                toQString(parentDir))) {
           checkVersionControl = true;
+          setVersionControlCredentials(toQString(parentDir));
+        }
       }
 
       if (sl && sl->isReadOnly()) {
@@ -434,6 +450,8 @@ void VersionControlManager::onFrameRangeDone(const QString &text) {
         break;
       }
     }
+
+    setVersionControlCredentials(toQString(currentPath));
 
     QString username = VersionControl::instance()->getUserName();
     QString hostName = TSystem::getHostName();
