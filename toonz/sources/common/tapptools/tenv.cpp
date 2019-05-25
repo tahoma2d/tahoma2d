@@ -223,6 +223,22 @@ public:
         TFilePath(m_workingDirectory + "\\portablestuff\\");
     TFileStatus portableStatus(portableCheck);
     m_isPortable = portableStatus.doesExist();
+
+#ifdef MACOSX
+    // macOS 10.12 (Sierra) translocates applications before running them
+    // depending on how it was installed. This separates the app from the
+    // portablestuff folder and we don't know where it is so we stop treating it
+    // as a portable. Placing portablestuff inside OpenToonz.app will keep
+    // everything together when it translocates.
+    if (!m_isPortable) {
+      portableCheck = TFilePath(m_workingDirectory + "\\" +
+                                getApplicationName() + ".app\\portablestuff\\");
+      portableStatus = TFileStatus(portableCheck);
+      m_isPortable   = portableStatus.doesExist();
+      if (m_isPortable)
+        m_workingDirectory.append("\\" + getApplicationName() + ".app");
+    }
+#endif
   }
   std::string getWorkingDirectory() { return m_workingDirectory; }
 
