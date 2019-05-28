@@ -565,7 +565,22 @@ void TSystem::readDirectory(TFilePathSet &dst, const QDir &dir,
   WIN32_FIND_DATA find_dir_data;
   QString dir_search_path = dir.absolutePath() + "\\*";
   QDir::Filters filter    = dir.filter();
-  auto addEntry           = [&]() {
+
+  // store name filters
+  bool hasNameFilter = false;
+  QList<QRegExp> nameFilters;
+  for (const QString &nameFilter : dir.nameFilters()) {
+    if (nameFilter == "*") {
+      hasNameFilter = false;
+      break;
+    }
+    QRegExp regExp(nameFilter);
+    regExp.setPatternSyntax(QRegExp::Wildcard);
+    nameFilters.append(regExp);
+    hasNameFilter = true;
+  }
+
+  auto addEntry = [&]() {
     // QDir::NoDotAndDotDot condition
     if (wcscmp(find_dir_data.cFileName, L".") != 0 &&
         wcscmp(find_dir_data.cFileName, L"..") != 0) {
@@ -581,7 +596,22 @@ void TSystem::readDirectory(TFilePathSet &dst, const QDir &dir,
       if ((filter & QDir::Hidden) == 0 &&
           (find_dir_data.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN))
         return;
-      entries.append(QString::fromWCharArray(find_dir_data.cFileName));
+
+      QString fileName = QString::fromWCharArray(find_dir_data.cFileName);
+
+      // name filter
+      if (hasNameFilter) {
+        bool matched = false;
+        for (const QRegExp &regExp : nameFilters) {
+          if (regExp.exactMatch(fileName)) {
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) return;
+      }
+
+      entries.append(fileName);
     }
   };
   HANDLE hFind =
