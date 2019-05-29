@@ -178,6 +178,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
   // updated in drawScene() and used in GLInvalidateRect()
   TRectD m_guidedDrawingBBox;
 
+  double m_rotationAngle[2];
+
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
@@ -394,6 +396,9 @@ protected:
 public slots:
 
   void resetSceneViewer();
+  void resetZoom();
+  void resetRotation();
+  void resetPosition();
   void setActualPixelSize();
   void flipX();
   void flipY();

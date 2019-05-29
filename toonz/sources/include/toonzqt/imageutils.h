@@ -234,6 +234,15 @@ protected:
   virtual bool setFlipY() {
     return false;
   }  //!< Handler for 'flip viewer horizontally' commands.
+  virtual bool resetZoom() {
+    return false;
+  }  //!< Handler for 'reset zoom' commands.
+  virtual bool resetRotation() {
+    return false;
+  }  //!< Handler for 'reset rotation' commands.
+  virtual bool resetPosition() {
+    return false;
+  }  //!< Handler for 'reset position' commands.
   virtual bool toggleFullScreen(
       bool quit = false)  //!  Handler for 'toggle fullscreen' commands.
   {

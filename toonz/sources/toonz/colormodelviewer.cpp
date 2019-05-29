@@ -244,7 +244,7 @@ void ColorModelViewer::contextMenuEvent(QContextMenuEvent *event) {
   menu.addSeparator();
 
   QString shortcut = QString::fromStdString(
-      CommandManager::instance()->getShortcutFromId(V_ZoomReset));
+      CommandManager::instance()->getShortcutFromId(V_ViewReset));
   QAction *reset = menu.addAction(tr("Reset View") + "\t " + shortcut);
   connect(reset, SIGNAL(triggered()), m_imageViewer, SLOT(resetView()));
 

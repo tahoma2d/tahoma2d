@@ -305,7 +305,7 @@ void ImageViewer::contextMenuEvent(QContextMenuEvent *event) {
 
   QAction *reset = menu->addAction(tr("Reset View"));
   reset->setShortcut(
-      QKeySequence(CommandManager::instance()->getKeyFromId(V_ZoomReset)));
+      QKeySequence(CommandManager::instance()->getKeyFromId(V_ViewReset)));
   connect(reset, SIGNAL(triggered()), SLOT(resetView()));
 
   QAction *fit = menu->addAction(tr("Fit To Window"));

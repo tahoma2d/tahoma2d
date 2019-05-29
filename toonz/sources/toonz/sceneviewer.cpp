@@ -24,6 +24,7 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
 #include "toonzqt/lutcalibrator.h"
+#include "toonzqt/viewcommandids.h"
 
 // TnzLib includes
 #include "toonz/tscenehandle.h"
@@ -451,6 +452,64 @@ public:
   }
 } resetShiftTraceCommand;
 
+class TViewResetCommand final : public MenuItemHandler {
+public:
+  TViewResetCommand() : MenuItemHandler(V_ViewReset) {}
+  void execute() override {
+    TApp::instance()->getActiveViewer()->resetSceneViewer();
+  }
+} viewResetCommand;
+
+class TZoomResetCommand final : public MenuItemHandler {
+public:
+  TZoomResetCommand() : MenuItemHandler(V_ZoomReset) {}
+  void execute() override { TApp::instance()->getActiveViewer()->resetZoom(); }
+} zoomResetCommand;
+
+class TZoomFitCommand final : public MenuItemHandler {
+public:
+  TZoomFitCommand() : MenuItemHandler(V_ZoomFit) {}
+  void execute() override {
+    TApp::instance()->getActiveViewer()->fitToCamera();
+  }
+} zoomFitCommand;
+
+class TActualPixelSizeCommand final : public MenuItemHandler {
+public:
+  TActualPixelSizeCommand() : MenuItemHandler(V_ActualPixelSize) {}
+  void execute() override {
+    TApp::instance()->getActiveViewer()->setActualPixelSize();
+  }
+} aActualPixelSizeCommand;
+
+class TFlipViewerXCommand final : public MenuItemHandler {
+public:
+  TFlipViewerXCommand() : MenuItemHandler(V_FlipX) {}
+  void execute() override { TApp::instance()->getActiveViewer()->flipX(); }
+} flipViewerXCommand;
+
+class TFlipViewerYCommand final : public MenuItemHandler {
+public:
+  TFlipViewerYCommand() : MenuItemHandler(V_FlipY) {}
+  void execute() override { TApp::instance()->getActiveViewer()->flipY(); }
+} flipViewerYCommand;
+
+class TRotateResetCommand final : public MenuItemHandler {
+public:
+  TRotateResetCommand() : MenuItemHandler(V_RotateReset) {}
+  void execute() override {
+    TApp::instance()->getActiveViewer()->resetRotation();
+  }
+} rotateResetCommand;
+
+class TPositionResetCommand final : public MenuItemHandler {
+public:
+  TPositionResetCommand() : MenuItemHandler(V_PositionReset) {}
+  void execute() override {
+    TApp::instance()->getActiveViewer()->resetPosition();
+  }
+} positionResetCommand;
+
 //=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
@@ -511,8 +570,10 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   this->setTabletTracking(true);
 #endif
 
-  for (int i = 0; i < tArrayCount(m_viewAff); i++)
+  for (int i = 0; i < tArrayCount(m_viewAff); i++) {
     setViewMatrix(getNormalZoomScale(), i);
+    m_rotationAngle[i] = 0.0;
+  }
 
   m_3DSideR = rasterFromQPixmap(svgToPixmap(":Resources/3Dside_r.svg"));
   m_3DSideL = rasterFromQPixmap(svgToPixmap(":Resources/3Dside_l.svg"));
@@ -2017,7 +2078,8 @@ void SceneViewer::flipY() {
 void SceneViewer::rotate(const TPointD &center, double angle) {
   if (angle == 0) return;
   if (m_isFlippedX != m_isFlippedY) angle = -angle;
-  TPointD realCenter                      = m_viewAff[m_viewMode] * center;
+  m_rotationAngle[m_viewMode] += angle;
+  TPointD realCenter = m_viewAff[m_viewMode] * center;
   setViewMatrix(TRotation(realCenter, angle) * m_viewAff[m_viewMode],
                 m_viewMode);
   invalidateAll();
@@ -2109,8 +2171,10 @@ void SceneViewer::resetSceneViewer() {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
 
-  for (int i = 0; i < tArrayCount(m_viewAff); i++)
+  for (int i = 0; i < tArrayCount(m_viewAff); i++) {
     setViewMatrix(getNormalZoomScale(), i);
+    m_rotationAngle[i] = 0.0;
+  }
 
   m_pos         = QPoint(0, 0);
   m_pan3D       = TPointD(0, 0);
@@ -2120,6 +2184,45 @@ void SceneViewer::resetSceneViewer() {
   m_isFlippedX  = false;
   m_isFlippedY  = false;
   emit onZoomChanged();
+  invalidateAll();
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::resetZoom() {
+  TPointD realCenter(m_viewAff[m_viewMode].a13, m_viewAff[m_viewMode].a23);
+  TAffine aff =
+      getNormalZoomScale() * TRotation(realCenter, m_rotationAngle[m_viewMode]);
+  aff.a13               = realCenter.x;
+  aff.a23               = realCenter.y;
+  if (m_isFlippedX) aff = aff * TScale(-1, 1);
+  if (m_isFlippedY) aff = aff * TScale(1, -1);
+  setViewMatrix(aff, m_viewMode);
+  invalidateAll();
+  emit onZoomChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::resetRotation() {
+  double reverseRotatation = m_rotationAngle[m_viewMode] * -1;
+  if (m_isFlippedX) reverseRotatation *= -1;
+  if (m_isFlippedY) reverseRotatation *= -1;
+  TTool *tool    = TApp::instance()->getCurrentTool()->getTool();
+  TPointD center = m_viewAff[m_viewMode].inv() * TPointD(0, 0);
+  if (tool->getName() == "T_Rotate" &&
+      tool->getProperties(0)
+              ->getProperty("Rotate On Camera Center")
+              ->getValueAsString() == "1")
+    center = TPointD(0, 0);
+  rotate(center, reverseRotatation);
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::resetPosition() {
+  m_viewAff[m_viewMode].a13 = 0.0;
+  m_viewAff[m_viewMode].a23 = 0.0;
   invalidateAll();
 }
 
