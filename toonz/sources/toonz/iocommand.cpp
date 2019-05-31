@@ -1440,8 +1440,13 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   app->getCurrentScene()->setDirtyFlag(false);
 
   History::instance()->addItem(scenePath);
-  RecentFiles::instance()->addFilePath(toQString(scenePath),
-                                       RecentFiles::Scene);
+  RecentFiles::instance()->addFilePath(
+      toQString(scenePath), RecentFiles::Scene,
+      QString::fromStdString(app->getCurrentScene()
+                                 ->getScene()
+                                 ->getProject()
+                                 ->getName()
+                                 .getName()));
 
   QApplication::restoreOverrideCursor();
 
@@ -1884,8 +1889,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   TApp::instance()->getCurrentScene()->setDirtyFlag(false);
   History::instance()->addItem(scenePath);
   if (updateRecentFile)
-    RecentFiles::instance()->addFilePath(toQString(scenePath),
-                                         RecentFiles::Scene);
+    RecentFiles::instance()->addFilePath(
+        toQString(scenePath), RecentFiles::Scene,
+        QString::fromStdString(scene->getProject()->getName().getName()));
   QApplication::restoreOverrideCursor();
 
   int forbiddenLevelCount = 0;

@@ -32,6 +32,7 @@
 #include "toonz/txshnoteset.h"
 #include "toonz/childstack.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonz/tproject.h"
 #include "tconvert.h"
 
 #include "tenv.h"
@@ -1603,13 +1604,16 @@ void XsheetViewer::changeWindowTitle() {
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene || !app->getCurrentFrame()->isEditingScene()) return;
-  QString sceneName = QString::fromStdWString(scene->getSceneName());
+  TProject *project   = scene->getProject();
+  QString projectName = QString::fromStdString(project->getName().getName());
+  QString sceneName   = QString::fromStdWString(scene->getSceneName());
   if (sceneName.isEmpty()) sceneName = tr("Untitled");
   if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-  QString name   = tr("Scene: ") + sceneName;
+  QString name =
+      tr("Scene: ") + sceneName + tr("   ::   Project: ") + projectName;
   int frameCount = scene->getFrameCount();
   name           = name + "   ::   " + tr(std::to_string(frameCount).c_str()) +
-         tr(" Frames");
+         (frameCount == 1 ? tr(" Frame") : tr(" Frames"));
 
   // subXsheet or not
   ChildStack *childStack = scene->getChildStack();

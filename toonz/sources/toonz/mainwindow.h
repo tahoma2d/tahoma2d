@@ -208,6 +208,7 @@ signals:
 class RecentFiles {
   friend class StartupPopup;
   QList<QString> m_recentScenes;
+  QList<QString> m_recentSceneProjects;
   QList<QString> m_recentLevels;
   QList<QString> m_recentFlipbookImages;
 
@@ -219,10 +220,12 @@ public:
   static RecentFiles *instance();
   ~RecentFiles();
 
-  void addFilePath(QString path, FileType fileType);
+  void addFilePath(QString path, FileType fileType, QString projectName = 0);
   void moveFilePath(int fromIndex, int toIndex, FileType fileType);
   void removeFilePath(int fromIndex, FileType fileType);
   QString getFilePath(int index, FileType fileType) const;
+  QString getFileProject(QString fileName) const;
+  QString getFileProject(int index) const;
   void clearRecentFilesList(FileType fileType);
   void loadRecentFiles();
   void saveRecentFiles();
