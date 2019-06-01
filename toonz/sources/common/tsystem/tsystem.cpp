@@ -298,9 +298,10 @@ void TSystem::copyDir(const TFilePath &dst, const TFilePath &src) {
       TFilePath srcDir = TFilePath(fi.filePath().toStdString());
       TFilePath dstDir = dst + srcDir.getName();
       copyDir(dstDir, srcDir);
-    } else
-      QFile::copy(fi.filePath(),
-                  toQString(dst) + QString("\\") + fi.fileName());
+    } else {
+      TFilePath srcFi = dst + TFilePath(fi.fileName());
+      QFile::copy(fi.filePath(), toQString(srcFi));
+    }
   }
 }
 
