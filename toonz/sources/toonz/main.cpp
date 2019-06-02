@@ -237,6 +237,8 @@ project->setUseScenePath(TProject::Extras, false);
 //-----------------------------------------------------------------------------
 
 int main(int argc, char *argv[]) {
+  TEnv::setApplicationFileName(argv[0]);
+
 #ifdef Q_OS_WIN
   //  Enable standard input/output on Windows Platform for debug
   BOOL consoleAttached = ::AttachConsole(ATTACH_PARENT_PROCESS);

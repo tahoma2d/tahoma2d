@@ -41,6 +41,7 @@ const std::map<std::string, std::string> systemPathMap{
 class EnvGlobals {  // singleton
 
   ToonzVersion m_version;
+  std::string m_applicationFileName;  // May differ from application name
   std::string m_applicationVersion;
   std::string m_applicationFullName;
   std::string m_moduleName;
@@ -76,7 +77,7 @@ public:
     QString settingsPath;
 
 #ifdef MACOSX
-    settingsPath = QString::fromStdString(getApplicationName()) +
+    settingsPath = QString::fromStdString(getApplicationFileName()) +
                    QString(".app") +
                    QString("/Contents/Resources/SystemVar.ini");
 #else /* Generic Unix */
@@ -181,6 +182,10 @@ public:
     updateEnvFile();
   }
 
+  void setApplicationFileName(std::string appFileName) {
+    m_applicationFileName = appFileName;
+  }
+  std::string getApplicationFileName() { return m_applicationFileName; }
   std::string getApplicationName() { return m_version.getAppName(); }
   std::string getApplicationVersion() { return m_applicationVersion; }
   std::string getApplicationVersionWithoutRevision() {
@@ -231,12 +236,13 @@ public:
     // as a portable. Placing portablestuff inside OpenToonz.app will keep
     // everything together when it translocates.
     if (!m_isPortable) {
-      portableCheck = TFilePath(m_workingDirectory + "\\" +
-                                getApplicationName() + ".app\\portablestuff\\");
+      portableCheck =
+          TFilePath(m_workingDirectory + "\\" + getApplicationFileName() +
+                    ".app\\portablestuff\\");
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)
-        m_workingDirectory.append("\\" + getApplicationName() + ".app");
+        m_workingDirectory.append("\\" + getApplicationFileName() + ".app");
     }
 #endif
   }
@@ -491,6 +497,15 @@ void Variable::assignValue(std::string value) {
 }
 
 //===================================================================
+
+void TEnv::setApplicationFileName(std::string appFileName) {
+  TFilePath fp(appFileName);
+  EnvGlobals::instance()->setApplicationFileName(fp.getName());
+}
+
+std::string TEnv::getApplicationFileName() {
+  return EnvGlobals::instance()->getApplicationFileName();
+}
 
 std::string TEnv::getApplicationName() {
   return EnvGlobals::instance()->getApplicationName();
