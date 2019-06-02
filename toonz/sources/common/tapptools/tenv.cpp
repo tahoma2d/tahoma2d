@@ -500,6 +500,13 @@ void Variable::assignValue(std::string value) {
 
 void TEnv::setApplicationFileName(std::string appFileName) {
   TFilePath fp(appFileName);
+#ifdef MACOSX
+  if (fp.getWideName().find(L".app"))
+    for (int i = 0; i < 3; i++) fp = fp.getParentDir();
+#elif LINUX
+  if (fp.getWideName().find(L".appimage"))
+    for (int i = 0; i < 2; i++) fp = fp.getParentDir();
+#endif
   EnvGlobals::instance()->setApplicationFileName(fp.getName());
 }
 
