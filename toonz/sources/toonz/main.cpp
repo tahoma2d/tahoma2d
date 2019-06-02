@@ -237,8 +237,6 @@ project->setUseScenePath(TProject::Extras, false);
 //-----------------------------------------------------------------------------
 
 int main(int argc, char *argv[]) {
-  TEnv::setApplicationFileName(argv[0]);
-
 #ifdef Q_OS_WIN
   //  Enable standard input/output on Windows Platform for debug
   BOOL consoleAttached = ::AttachConsole(ATTACH_PARENT_PROCESS);
@@ -410,6 +408,8 @@ int main(int argc, char *argv[]) {
     assert(ret);
   }
 #endif
+
+  TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
   QPixmap splashPixmap = QIcon(":Resources/splash.svg").pixmap(QSize(610, 344));

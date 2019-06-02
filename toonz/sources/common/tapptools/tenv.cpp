@@ -184,6 +184,7 @@ public:
 
   void setApplicationFileName(std::string appFileName) {
     m_applicationFileName = appFileName;
+    setWorkingDirectory();
   }
   std::string getApplicationFileName() { return m_applicationFileName; }
   std::string getApplicationName() { return m_version.getAppName(); }
@@ -242,7 +243,8 @@ public:
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)
-        m_workingDirectory.append("\\" + getApplicationFileName() + ".app");
+        m_workingDirectory =
+            portableCheck.getParentDir().getQString().toStdString();
     }
 #endif
   }
