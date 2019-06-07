@@ -580,7 +580,7 @@ void StudioPalette::setStylesGlobalNames(TPalette *palette) {
 
 void StudioPalette::save(const TFilePath &path, TPalette *palette) {
   TFileStatus fs(path);
-  if (!fs.isWritable()) {
+  if (fs.doesExist() && !fs.isWritable()) {
     throw TSystemException(path,
                            "The studio palette cannot be saved: it is a read "
                            "only studio palette.");
