@@ -368,7 +368,14 @@ void ProjectPopup::updateChooseProjectCombo() {
       }
     }
   }
-
+  // Add in project of current project if outside known Project root folders
+  TProjectP currentProject   = TProjectManager::instance()->getCurrentProject();
+  TFilePath currentProjectFP = currentProject->getProjectPath();
+  if (m_projectPaths.indexOf(currentProjectFP) == -1) {
+    m_projectPaths.push_back(currentProjectFP);
+    m_chooseProjectCombo->addItem(
+        QString::fromStdString(currentProject->getName().getName()));
+  }
   for (int i = 0; i < m_projectPaths.size(); i++) {
     if (TProjectManager::instance()->getCurrentProjectPath() ==
         m_projectPaths[i]) {
