@@ -630,7 +630,7 @@ void SVNCommitDialog::addUnversionedItem(const QString &relativePath) {
         item = new QTreeWidgetItem(m_treeWidget, QStringList(list.at(i)));
 
       if (fi.isDir()) item->setIcon(0, folderIcon);
-      if (relativePath == tempString) {
+      if ((i + 1) == levelCount) {
         item->setCheckState(0, m_folderOnly ? Qt::Unchecked : Qt::Checked);
         item->setData(0, Qt::UserRole, tempString);
         item->setData(0, Qt::UserRole + 1, true);
