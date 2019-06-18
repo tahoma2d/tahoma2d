@@ -2590,8 +2590,9 @@ PreferencesPopup::PreferencesPopup()
                                Qt::AlignLeft | Qt::AlignVCenter);
       previewLayout->addWidget(openFlipbookAfterCB, 5, 0, 1, 3,
                                Qt::AlignLeft | Qt::AlignVCenter);
-      previewLayout->addWidget(new QLabel(tr("Short Play Frame Number:")), 6, 0,
-                               Qt::AlignRight | Qt::AlignVCenter);
+      previewLayout->addWidget(
+          new QLabel(tr("Number of Frames for Short Play:")), 6, 0,
+          Qt::AlignRight | Qt::AlignVCenter);
       previewLayout->addWidget(m_shortPlayFrameCount, 6, 1);
     }
     previewLayout->setColumnStretch(0, 0);
