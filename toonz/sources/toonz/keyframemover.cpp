@@ -13,6 +13,7 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/txsheet.h"
+#include "toonz/preferences.h"
 
 // TnzCore includes
 #include "tundo.h"
@@ -273,13 +274,13 @@ KeyframeMoverTool::KeyframeMoverTool(XsheetViewer *viewer, bool justMovement)
     , m_startSelection()
     , m_offset(0)
     , m_firstRow(0)
-    , m_firstCol(0)
     , m_selecting(false)
     , m_startPos()
     , m_curPos()
     , m_firstKeyframeMovement(false)
     , m_justMovement(justMovement) {
-  m_mover = new KeyframeMover();
+  m_mover    = new KeyframeMover();
+  m_firstCol = Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -304,7 +305,13 @@ void KeyframeMoverTool::ctrlSelect(int row, int col) {
 void KeyframeMoverTool::shiftSelect(int row, int col) {
   TXsheet *xsh = getViewer()->getXsheet();
   int r0 = 0, c0 = 0, r1 = -1, c1 = -1;
-  for (int c = 0; c < xsh->getColumnCount(); c++) {
+  int c = 0;
+  if (Preferences::instance()->isXsheetCameraColumnEnabled()) {
+    c0--;
+    c1--;
+    c--;
+  }
+  for (; c < xsh->getColumnCount(); c++) {
     TStageObject *obj = xsh->getStageObject(getViewer()->getObjectId(c));
     int ra, rb;
     obj->getKeyframeRange(ra, rb);
