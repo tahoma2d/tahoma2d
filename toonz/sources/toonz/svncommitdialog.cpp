@@ -469,7 +469,8 @@ void SVNCommitDialog::onResourcesStatusRetrieved(const QString &xmlResponse) {
 
 void SVNCommitDialog::onStatusRetrieved(const QString &xmlResponse) {
   SVNStatusReader sr(xmlResponse);
-  m_status = sr.getStatus();
+  m_status   = sr.getStatus();
+  int height = 160;
 
   m_thread.disconnect(SIGNAL(statusRetrieved(const QString &)));
 
@@ -508,6 +509,10 @@ void SVNCommitDialog::onStatusRetrieved(const QString &xmlResponse) {
         }
       }
 
+      if (m_treeWidget->isVisible()) height += (filesToPutCount * 25);
+
+      setMinimumSize(350, min(height, 350));
+
       m_waitingLabel->hide();
       m_commentLabel->show();
       m_commentTextEdit->show();
@@ -530,6 +535,10 @@ void SVNCommitDialog::onStatusRetrieved(const QString &xmlResponse) {
       m_selectionCheckBox->show();
       m_selectionLabel->show();
     }
+
+    if (m_treeWidget->isVisible()) height += (m_items.size() * 25);
+
+    setMinimumSize(350, min(height, 350));
 
     m_waitingLabel->hide();
     m_textLabel->hide();
@@ -916,7 +925,7 @@ SVNCommitFrameRangeDialog::SVNCommitFrameRangeDialog(QWidget *parent,
 
   setWindowTitle(tr("Version Control: Put"));
 
-  setMinimumSize(300, 150);
+  setMinimumSize(350, 150);
   QWidget *container = new QWidget;
 
   QVBoxLayout *mainLayout = new QVBoxLayout;

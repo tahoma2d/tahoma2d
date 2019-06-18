@@ -185,6 +185,10 @@ void SVNLockFrameRangeDialog::onPropGetDone(const QString &xmlResponse) {
     }
   }
 
+  int height =
+      180 + (m_lockInfos.isEmpty() ? 0 : ((m_lockInfos.size() - 1) * 25));
+  setMinimumSize(300, height);
+
   m_lockButton->show();
 
   m_cancelButton->show();
@@ -530,6 +534,10 @@ void SVNLockMultiFrameRangeDialog::onStatusRetrieved(
     }
     m_textLabel->setText(temp);
   }
+
+  int height =
+      180 + (m_lockInfos.isEmpty() ? 0 : ((m_lockInfos.size() - 1) * 25));
+  setMinimumSize(300, height);
 
   m_lockButton->show();
 
@@ -1115,6 +1123,9 @@ void SVNFrameRangeLockInfoDialog::onPropGetDone(const QString &xmlResponse) {
                         .arg(lock.m_from)
                         .arg(lock.m_to));
       }
+      int height = 100 + ((lockInfos.size() - 1) * 25);
+      setMinimumSize(300, height);
+
       m_textLabel->setText(temp);
     }
   }
@@ -1224,6 +1235,9 @@ void SVNMultiFrameRangeLockInfoDialog::onStatusRetrieved(
                       .arg(lock.m_from)
                       .arg(lock.m_to));
     }
+    int height = 100 + ((lockInfos.size() - 1) * 25);
+    setMinimumSize(300, height);
+
     m_textLabel->setText(temp);
   }
 }

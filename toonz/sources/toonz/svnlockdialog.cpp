@@ -185,6 +185,12 @@ void SVNLockDialog::onStatusRetrieved(const QString &xmlResponse) {
 
     switchToCloseButton();
   } else {
+    int height = m_lock ? 160 : 50;
+    if (m_treeWidget->isVisible())
+      height += (m_filesToEdit.size() * (m_lock ? 25 : 50));
+
+    setMinimumSize(300, min(height, 350));
+
     m_waitingLabel->hide();
 
     if (m_lock)
