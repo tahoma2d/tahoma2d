@@ -607,6 +607,12 @@ void PreferencesPopup::onRewindAfterPlayback(int index) {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onShortPlayFrameCountChanged() {
+  m_pref->setShortPlayFrameCount(m_shortPlayFrameCount->getValue());
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onFitToFlipbook(int index) {
   m_pref->enableFitToFlipbook(index == Qt::Checked);
 }
@@ -1544,6 +1550,8 @@ PreferencesPopup::PreferencesPopup()
   m_blankColor  = new ColorField(this, false, TPixel::Black);
   CheckBox *rewindAfterPlaybackCB =
       new CheckBox(tr("Rewind after Playback"), this);
+  int shortPlayFrames   = m_pref->getShortPlayFrameCount();
+  m_shortPlayFrameCount = new DVGui::IntLineEdit(this, shortPlayFrames, 1, 100);
   CheckBox *displayInNewFlipBookCB =
       new CheckBox(tr("Display in a New Flipbook Window"), this);
   CheckBox *fitToFlipbookCB = new CheckBox(tr("Fit to Flipbook"), this);
@@ -2582,12 +2590,15 @@ PreferencesPopup::PreferencesPopup()
                                Qt::AlignLeft | Qt::AlignVCenter);
       previewLayout->addWidget(openFlipbookAfterCB, 5, 0, 1, 3,
                                Qt::AlignLeft | Qt::AlignVCenter);
+      previewLayout->addWidget(new QLabel(tr("Short Play Frame Number:")), 6, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+      previewLayout->addWidget(m_shortPlayFrameCount, 6, 1);
     }
     previewLayout->setColumnStretch(0, 0);
     previewLayout->setColumnStretch(1, 0);
     previewLayout->setColumnStretch(2, 1);
     for (int i = 0; i <= 5; i++) previewLayout->setRowStretch(i, 0);
-    previewLayout->setRowStretch(6, 1);
+    previewLayout->setRowStretch(7, 1);
     previewBox->setLayout(previewLayout);
     stackedWidget->addWidget(previewBox);
 
@@ -3003,6 +3014,8 @@ PreferencesPopup::PreferencesPopup()
                      SLOT(onBlankColorChanged(const TPixel32 &, bool)));
   ret = ret && connect(rewindAfterPlaybackCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onRewindAfterPlayback(int)));
+  ret = ret && connect(m_shortPlayFrameCount, SIGNAL(editingFinished()),
+                       SLOT(onShortPlayFrameCountChanged()));
   ret = ret && connect(displayInNewFlipBookCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onPreviewAlwaysOpenNewFlip(int)));
   ret = ret && connect(fitToFlipbookCB, SIGNAL(stateChanged(int)), this,

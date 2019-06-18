@@ -70,7 +70,7 @@ private:
   DVGui::IntLineEdit *m_minuteFld, *m_chunkSizeFld, *m_iconSizeLx,
       *m_iconSizeLy, *m_viewShrink, *m_viewStep, *m_blanksCount,
       *m_onionPaperThickness, *m_animationStepField, *m_undoMemorySize,
-      *m_xsheetStep, *m_ffmpegTimeout;
+      *m_xsheetStep, *m_ffmpegTimeout, *m_shortPlayFrameCount;
 
   QPushButton *m_addLevelFormat, *m_removeLevelFormat, *m_editLevelFormat;
 
@@ -122,6 +122,7 @@ private slots:
   void onXsheetAutopanChanged(int index);
   void onIgnoreAlphaonColumn1Changed(int index);
   void onRewindAfterPlayback(int index);
+  void onShortPlayFrameCountChanged();
   void onPreviewAlwaysOpenNewFlip(int index);
   void onRasterOptimizedMemoryChanged(int index);
   void onSaveUnpaintedInCleanupChanged(int index);

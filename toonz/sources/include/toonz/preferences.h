@@ -493,6 +493,9 @@ public:
     return m_rewindAfterPlaybackEnabled;
   }
 
+  void setShortPlayFrameCount(int frames);
+  int getShortPlayFrameCount() const { return m_shortPlayFrameCount; }
+
   void enableFitToFlipbook(bool on);
   bool fitToFlipbookEnabled() const { return m_fitToFlipbookEnabled; }
 
@@ -624,7 +627,8 @@ private:
   QString m_currentLanguage, m_currentStyleSheet;
   int m_undoMemorySize,  // in megabytes
       m_dragCellsBehaviour, m_lineTestFpsCapture, m_defLevelType, m_xsheetStep,
-      m_shmmax, m_shmseg, m_shmall, m_shmmni, m_vectorSnappingTarget;
+      m_shmmax, m_shmseg, m_shmall, m_shmmni, m_vectorSnappingTarget,
+      m_shortPlayFrameCount;
 
   bool m_autoExposeEnabled, m_autoCreateEnabled, m_subsceneFolderEnabled,
       m_generatedMovieViewEnabled, m_xsheetAutopanEnabled,

@@ -1873,6 +1873,7 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
 
   createPlaybackAction(MI_Play, tr("Play"), "P");
+  createPlaybackAction(MI_ShortPlay, tr("Short Play"), "Alt+P");
   createPlaybackAction(MI_Loop, tr("Loop"), "L");
   createPlaybackAction(MI_Pause, tr("Pause"), "");
   createPlaybackAction(MI_FirstFrame, tr("First Frame"), "Alt+,");
