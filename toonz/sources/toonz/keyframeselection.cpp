@@ -319,7 +319,7 @@ void TKeyframeSelection::copyKeyframes() {
 //-----------------------------------------------------------------------------
 
 void TKeyframeSelection::pasteKeyframes() {
-  pasteKeyframesWithShift(0, 0, -1, -1);
+  pasteKeyframesWithShift(0, 0, 0, -1);
 }
 
 //-----------------------------------------------------------------------------
