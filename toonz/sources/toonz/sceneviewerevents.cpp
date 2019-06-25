@@ -15,6 +15,7 @@
 #include "ruler.h"
 #include "comboviewerpane.h"
 #include "locatorpopup.h"
+#include "cellselection.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -1331,6 +1332,7 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
     if (changeFrameSkippingHolds(event)) return;
 
     TFrameHandle *fh = TApp::instance()->getCurrentFrame();
+    int origFrame    = fh->getFrame();
 
     if (key == Qt::Key_Up || key == Qt::Key_Left)
       fh->prevFrame();
@@ -1356,6 +1358,21 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
       fh->firstFrame();
     else if (key == Qt::Key_End)
       fh->lastFrame();
+
+    // Use arrow keys to shift the cell selection.
+    if (Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled() &&
+        fh->getFrameType() != TFrameHandle::LevelFrame) {
+      TCellSelection *cellSel =
+          dynamic_cast<TCellSelection *>(TSelection::getCurrent());
+      if (cellSel && !cellSel->isEmpty()) {
+        int r0, c0, r1, c1;
+        cellSel->getSelectedCells(r0, c0, r1, c1);
+        int shiftFrame = fh->getFrame() - origFrame;
+
+        cellSel->selectCells(r0 + shiftFrame, c0, r1 + shiftFrame, c1);
+        TApp::instance()->getCurrentSelection()->notifySelectionChanged();
+      }
+    }
   }
   update();
   // TODO: devo accettare l'evento?
