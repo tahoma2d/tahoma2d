@@ -117,6 +117,29 @@ std::wstring getProjectSuffix(const TFilePath &path) {
 
 //-------------------------------------------------------------------
 
+/*! Looks in the directory for a project file.  If nothing found, returns a
+ * blank TFilePath
+*/
+TFilePath getProjectFile(const TFilePath &fp) {
+  const std::wstring &fpName     = fp.getWideName();
+  const std::wstring &folderName = fp.getParentDir().getWideName();
+  QDir dir(fp.getQString());
+  for (int i = 0; i < prjSuffixCount; ++i) {
+    TFilePath path = fp + (fpName + prjSuffix[i] + xmlExt);
+    if (TFileStatus(path).doesExist()) return path;
+
+    QStringList filters;
+    filters << "*" + QString::fromStdWString(prjSuffix[i] + xmlExt);
+    QStringList prjfiles =
+        dir.entryList(filters, QDir::Files, (QDir::Time | QDir::Reversed));
+    if (prjfiles.size()) return fp + TFilePath(prjfiles[0]);
+  }
+
+  return TFilePath();
+}
+
+//-------------------------------------------------------------------
+
 //! In case the supplied path has an old version suffix,
 //! this function updates it to the most recent; otherwise,
 //! it is left untouched.
@@ -146,11 +169,8 @@ TFilePath searchProjectPath(TFilePath folder) {
   wstring projectName = folder.getWideName();
 
   // Search for the first available project file, starting from the most recent.
-  TFilePath projectPath;
-  for (int i = 0; i < prjSuffixCount; ++i) {
-    projectPath = folder + TFilePath(projectName + prjSuffix[i] + xmlExt);
-    if (TFileStatus(projectPath).doesExist()) return projectPath;
-  }
+  TFilePath projectPath = getProjectFile(folder);
+  if (projectPath != TFilePath()) return projectPath;
 
   // If none exist in the folder, build the name with the most recent suffix
   return folder + TFilePath(projectName + prjSuffix[0] + xmlExt);
@@ -662,10 +682,9 @@ void TProject::load(const TFilePath &projectPath) {
 */
 bool TProject::isAProjectPath(const TFilePath &fp) {
   if (fp.isAbsolute() && fp.getType() == "xml") {
-    const std::wstring &fpName     = fp.getWideName();
-    const std::wstring &folderName = fp.getParentDir().getWideName();
+    const std::wstring &fpName = fp.getWideName();
     for (int i = 0; i < prjSuffixCount; ++i)
-      if (fpName == (folderName + prjSuffix[i])) return true;
+      if (fpName.find(prjSuffix[i]) != std::wstring::npos) return true;
   }
 
   return false;
@@ -981,12 +1000,7 @@ TProjectP TProjectManager::loadSceneProject(const TFilePath &scenePath) {
       is.matchEndTag();
       projectPath = makeAbsolute(folder, projectFolderPath);
 
-      TFilePath path;
-      for (int i = 0; i < prjSuffixCount; ++i) {
-        path =
-            projectPath + (projectPath.getWideName() + prjSuffix[i] + xmlExt);
-        if (TFileStatus(path).doesExist()) break;
-      }
+      TFilePath path = getProjectFile(projectPath);
 
       projectPath = path;
 
