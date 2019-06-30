@@ -868,15 +868,16 @@ void StartupPopup::onRecentSceneClicked(int index) {
     refreshRecentScenes();
   } else {
     IoCmd::loadScene(TFilePath(path.toStdWString()), false);
-    if (RecentFiles::instance()->getFileProject(index) == "-") {
+    QString origProjectName = RecentFiles::instance()->getFileProject(index);
+    QString projectName     = QString::fromStdString(TApp::instance()
+                                                     ->getCurrentScene()
+                                                     ->getScene()
+                                                     ->getProject()
+                                                     ->getName()
+                                                     .getName());
+    if (origProjectName == "-" || origProjectName != projectName) {
       QString fileName =
           RecentFiles::instance()->getFilePath(index, RecentFiles::Scene);
-      QString projectName = QString::fromStdString(TApp::instance()
-                                                       ->getCurrentScene()
-                                                       ->getScene()
-                                                       ->getProject()
-                                                       ->getName()
-                                                       .getName());
       RecentFiles::instance()->removeFilePath(index, RecentFiles::Scene);
       RecentFiles::instance()->addFilePath(fileName, RecentFiles::Scene,
                                            projectName);
