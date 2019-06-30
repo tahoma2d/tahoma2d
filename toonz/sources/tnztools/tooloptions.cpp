@@ -125,7 +125,8 @@ ToolOptionsBox::ToolOptionsBox(QWidget *parent, bool isScrollable)
 ToolOptionsBox::~ToolOptionsBox() {
   std::for_each(m_controls.begin(), m_controls.end(),
                 std::default_delete<ToolOptionControl>());
-  std::for_each(m_labels.begin(), m_labels.end(), std::default_delete<QLabel>());
+  std::for_each(m_labels.begin(), m_labels.end(),
+                std::default_delete<QLabel>());
 }
 
 //-----------------------------------------------------------------------------
@@ -217,6 +218,17 @@ void ToolOptionControlBuilder::visit(TDoubleProperty *p) {
     a = cm->getAction("A_DecreaseMaxBrushThickness");
     control->addAction(a);
     QObject::connect(a, SIGNAL(triggered()), control, SLOT(decrease()));
+  }
+  if (p->getName() == "ModifierSize") {
+    QAction *a;
+    a = cm->getAction("A_IncreaseMaxBrushThickness");
+    control->addAction(a);
+    QObject::connect(a, SIGNAL(triggered()), control,
+                     SLOT(increaseFractional()));
+    a = cm->getAction("A_DecreaseMaxBrushThickness");
+    control->addAction(a);
+    QObject::connect(a, SIGNAL(triggered()), control,
+                     SLOT(decreaseFractional()));
   }
   if (p->getName() == "Hardness:") {
     QAction *a;
@@ -1635,6 +1647,25 @@ void PaintbrushToolOptionsBox::onColorModeChanged(int index) {
 
 //=============================================================================
 //
+// FullColorFillToolOptionsBox
+//
+//=============================================================================
+
+FullColorFillToolOptionsBox::FullColorFillToolOptionsBox(
+    QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
+    ToolHandle *toolHandle)
+    : ToolOptionsBox(parent) {
+  TPropertyGroup *props = tool->getProperties(0);
+  assert(props->getPropertyCount() > 0);
+
+  ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
+  if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
+
+  m_layout->addStretch(0);
+}
+
+//=============================================================================
+//
 // FillToolOptionsBox
 //
 //=============================================================================
@@ -2796,9 +2827,13 @@ void ToolOptions::onToolSwitched() {
         panel = new TypeToolOptionsBox(0, tool, currPalette, currTool);
       else if (tool->getName() == T_PaintBrush)
         panel = new PaintbrushToolOptionsBox(0, tool, currPalette, currTool);
-      else if (tool->getName() == T_Fill)
-        panel = new FillToolOptionsBox(0, tool, currPalette, currTool);
-      else if (tool->getName() == T_Eraser)
+      else if (tool->getName() == T_Fill) {
+        if (tool->getTargetType() & TTool::RasterImage)
+          panel =
+              new FullColorFillToolOptionsBox(0, tool, currPalette, currTool);
+        else
+          panel = new FillToolOptionsBox(0, tool, currPalette, currTool);
+      } else if (tool->getName() == T_Eraser)
         panel = new EraserToolOptionsBox(0, tool, currPalette, currTool);
       else if (tool->getName() == T_Tape)
         panel = new TapeToolOptionsBox(0, tool, currPalette, currTool);
