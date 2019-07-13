@@ -1184,6 +1184,10 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
   // todo: gestire autoenable
   if (!m_enabled) return;
 
+  TPointD modifiedPos = pos;
+  modifiedPos.x -= 0.5;
+  modifiedPos.y -= 0.5;
+
   m_currentColor = TPixel32::Black;
   m_active       = !!getImage(true);
   if (!m_active) {
@@ -1226,7 +1230,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       thickness = m_rasThickness.getValue().first;
 
     TPointD halfThick(maxThick * 0.5, maxThick * 0.5);
-    TRectD invalidateRect(pos - halfThick, pos + halfThick);
+    TRectD invalidateRect(modifiedPos - halfThick, modifiedPos + halfThick);
     TPointD dpi;
     ri->getDpi(dpi.x, dpi.y);
     TRectD previousTipRect(m_brushPos - halfThick, m_brushPos + halfThick);
@@ -1244,7 +1248,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
 
     // mypaint brush case
     if (m_isMyPaintStyleSelected) {
-      TPointD point(pos + rasCenter);
+      TPointD point(modifiedPos + rasCenter);
       double pressure =
           m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
       updateCurrentStyle();
@@ -1276,7 +1280,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
 
       TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
       invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-      invalidateRect += TRectD(pos - thickOffset, pos + thickOffset);
+      invalidateRect += TRectD(modifiedPos - thickOffset, modifiedPos + thickOffset);
       invalidateRect +=
           TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
     } else if (m_hardness.getValue() == 100 || m_pencil.getValue()) {
@@ -1284,7 +1288,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
         * --*/
       if (!m_pencil.getValue()) thickness -= 1.0;
 
-      TThickPoint thickPoint(pos + convert(ras->getCenter()), thickness);
+      TThickPoint thickPoint(modifiedPos + convert(ras->getCenter()), thickness);
       m_rasterTrack = new RasterStrokeGenerator(
           ras, BRUSH, NONE, m_styleId, thickPoint, drawOrder != OverAll, 0,
           !m_pencil.getValue(), drawOrder == PaletteOrder);
@@ -1305,7 +1309,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       }
     } else {
       m_points.clear();
-      TThickPoint point(pos + rasCenter, thickness);
+      TThickPoint point(modifiedPos + rasCenter, thickness);
       m_points.push_back(point);
       m_bluredBrush = new BluredBrush(m_workRas, maxThick, m_brushPad, false);
 
@@ -1336,6 +1340,8 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
   }
   // updating m_brushPos is needed to refresh viewer properly
   m_brushPos = m_mousePos = pos;
+  m_brushPos.x -= 0.5;
+  m_brushPos.y -= 0.5;
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -1344,8 +1350,14 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
                                           const TMouseEvent &e) {
   if (!m_enabled || !m_active) {
     m_brushPos = m_mousePos = pos;
+    m_brushPos.x -= 0.5;
+    m_brushPos.y -= 0.5;
     return;
   }
+
+  TPointD modifiedPos = pos;
+  modifiedPos.x -= 0.5;
+  modifiedPos.y -= 0.5;
 
   TToonzImageP ti   = TImageP(getImage(true));
   TPointD rasCenter = ti->getRaster()->getCenterD();
@@ -1356,7 +1368,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   TRectD invalidateRect;
   if (m_isMyPaintStyleSelected) {
     TRasterP ras = ti->getRaster();
-    TPointD point(pos + rasCenter);
+    TPointD point(modifiedPos + rasCenter);
     double pressure =
         m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
 
@@ -1372,7 +1384,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
 
     TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
     invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-    invalidateRect += TRectD(pos - thickOffset, pos + thickOffset);
+    invalidateRect += TRectD(modifiedPos - thickOffset, modifiedPos + thickOffset);
     invalidateRect +=
         TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
   } else if (m_rasterTrack &&
@@ -1381,7 +1393,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       * --*/
     if (!m_pencil.getValue()) thickness -= 1.0;
 
-    TThickPoint thickPoint(pos + rasCenter, thickness);
+    TThickPoint thickPoint(modifiedPos + rasCenter, thickness);
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0) {
       pts.push_back(thickPoint);
@@ -1410,7 +1422,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   } else {
     // antialiased brush
     assert(m_workRas.getPointer() && m_backupRas.getPointer());
-    TThickPoint thickPoint(pos + rasCenter, thickness);
+    TThickPoint thickPoint(modifiedPos + rasCenter, thickness);
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0) {
       pts.push_back(thickPoint);
@@ -1461,10 +1473,12 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   if (m_smooth.getValue() != 0) {
     TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
     invalidateRect += TRectD(m_brushPos - halfThick, m_brushPos + halfThick);
-    invalidateRect += TRectD(pos - halfThick, pos + halfThick);
+    invalidateRect += TRectD(modifiedPos - halfThick, modifiedPos + halfThick);
   }
 
   m_brushPos = m_mousePos = pos;
+  m_brushPos.x -= 0.5;
+  m_brushPos.y -= 0.5;
 
   invalidate(invalidateRect.enlarge(2));
 }
@@ -1479,8 +1493,11 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   if (!isValid) {
     return;
   }
+  TPointD modifiedPos = pos;
+  modifiedPos.x -= 0.5;
+  modifiedPos.y -= 0.5;
   double pressure = m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
-  finishRasterBrush(pos, pressure);
+  finishRasterBrush(modifiedPos, pressure);
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -1767,6 +1784,8 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   } else {
     m_mousePos = pos;
     m_brushPos = pos;
+    m_brushPos.x -= 0.5;
+    m_brushPos.y -= 0.5;
 
     invalidateRect += TRectD(pos - halfThick, pos + halfThick);
   }
