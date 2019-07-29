@@ -1512,7 +1512,7 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
 
   if (columnIndex == -1) {  // Indice colonna = -1 -> CAMERA
     TApp *app             = TApp::instance();
-    static QPixmap camera = QPixmap(":Resources/camera.png");
+    static QPixmap camera = svgToPixmap(":Resources/camera.svg");
     return camera;
   }
   TXsheet *xsh = m_viewer->getXsheet();
