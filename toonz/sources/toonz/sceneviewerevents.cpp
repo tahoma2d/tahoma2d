@@ -279,6 +279,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
         m_tabletState = Touched;
         onPress(mouseEvent);
+      } else if (m_tabletState == Touched) {
+        m_tabletState = StartStroke;
       }
     } else
       m_tabletEvent = false;
@@ -1047,66 +1049,66 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
 
 bool SceneViewer::event(QEvent *e) {
   /*
-    switch (e->type()) {
-    //	case QEvent::Enter:
-    //	qDebug() << "[enter] ************************** Enter";
-    //	break;
-    //	case QEvent::Leave:
-    //	qDebug() << "[enter] ************************** Leave";
-    //	break;
+  switch (e->type()) {
+  //	case QEvent::Enter:
+  //	qDebug() << "[enter] ************************** Enter";
+  //	break;
+  //	case QEvent::Leave:
+  //	qDebug() << "[enter] ************************** Leave";
+  //	break;
 
-    case QEvent::TabletPress: {
-      QTabletEvent *te = static_cast<QTabletEvent *>(e);
-      qDebug() << "[enter] ************************** TabletPress mouseState("
-               << m_mouseState << ") tabletState(" << m_tabletState
-               << ") pressure(" << m_pressure << ") pointerType("
-               << te->pointerType() << ") device(" << te->device() << ")";
-    } break;
-    //	case QEvent::TabletMove:
-    //	qDebug() << "[enter] ************************** TabletMove
-    //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
-    //<< m_pressure << ")";
-    //	break;
-    case QEvent::TabletRelease:
-      qDebug() << "[enter] ************************** TabletRelease mouseState("
-               << m_mouseState << ") tabletState(" << m_tabletState << ")";
-      break;
+  case QEvent::TabletPress: {
+    QTabletEvent *te = static_cast<QTabletEvent *>(e);
+    qDebug() << "[enter] ************************** TabletPress mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState
+             << ") pressure(" << m_pressure << ") pointerType("
+             << te->pointerType() << ") device(" << te->device() << ")";
+  } break;
+  //	case QEvent::TabletMove:
+  //	qDebug() << "[enter] ************************** TabletMove
+  //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
+  //<< m_pressure << ")";
+  //	break;
+  case QEvent::TabletRelease:
+    qDebug() << "[enter] ************************** TabletRelease mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-    case QEvent::TouchBegin:
-      qDebug() << "[enter] ************************** TouchBegin";
-      break;
-    case QEvent::TouchEnd:
-      qDebug() << "[enter] ************************** TouchEnd";
-      break;
-    case QEvent::TouchCancel:
-      qDebug() << "[enter] ************************** TouchCancel";
-      break;
+  case QEvent::TouchBegin:
+    qDebug() << "[enter] ************************** TouchBegin";
+    break;
+  case QEvent::TouchEnd:
+    qDebug() << "[enter] ************************** TouchEnd";
+    break;
+  case QEvent::TouchCancel:
+    qDebug() << "[enter] ************************** TouchCancel";
+    break;
 
-    case QEvent::Gesture:
-      qDebug() << "[enter] ************************** Gesture";
-      break;
+  case QEvent::Gesture:
+    qDebug() << "[enter] ************************** Gesture";
+    break;
 
-    case QEvent::MouseButtonPress:
-      qDebug()
-          << "[enter] ************************** MouseButtonPress mouseState("
-          << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
-          << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
-      break;
-    //	case QEvent::MouseMove:
-    //	qDebug() << "[enter] ************************** MouseMove mouseState("
-    //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
-    //m_pressure << ")";
-    //	break;
-    case QEvent::MouseButtonRelease:
-      qDebug()
-          << "[enter] ************************** MouseButtonRelease mouseState("
-          << m_mouseState << ") tabletState(" << m_tabletState << ")";
-      break;
+  case QEvent::MouseButtonPress:
+    qDebug()
+        << "[enter] ************************** MouseButtonPress mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
+        << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
+    break;
+  //	case QEvent::MouseMove:
+  //	qDebug() << "[enter] ************************** MouseMove mouseState("
+  //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
+  //m_pressure << ")";
+  //	break;
+  case QEvent::MouseButtonRelease:
+    qDebug()
+        << "[enter] ************************** MouseButtonRelease mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-    case QEvent::MouseButtonDblClick:
-      qDebug() << "[enter] ============================== MouseButtonDblClick";
-      break;
-    }
+  case QEvent::MouseButtonDblClick:
+    qDebug() << "[enter] ============================== MouseButtonDblClick";
+    break;
+  }
   */
   if (e->type() == QEvent::Gesture &&
       CommandManager::instance()
