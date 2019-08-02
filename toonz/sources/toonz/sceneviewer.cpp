@@ -570,7 +570,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   this->setTabletTracking(true);
 #endif
 
-  for (int i = 0; i < tArrayCount(m_viewAff); i++) {
+  for (int i = 0; i < m_viewAff.size(); ++i) {
     setViewMatrix(getNormalZoomScale(), i);
     m_rotationAngle[i] = 0.0;
   }
@@ -2191,7 +2191,7 @@ void SceneViewer::resetSceneViewer() {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
 
-  for (int i = 0; i < tArrayCount(m_viewAff); i++) {
+  for (int i = 0; i < m_viewAff.size(); ++i) {
     setViewMatrix(getNormalZoomScale(), i);
     m_rotationAngle[i] = 0.0;
   }
@@ -2278,7 +2278,7 @@ void SceneViewer::setActualPixelSize() {
   TPointD tempScale             = dpi;
   if (m_isFlippedX) tempScale.x = -tempScale.x;
   if (m_isFlippedY) tempScale.y = -tempScale.y;
-  for (int i = 0; i < tArrayCount(m_viewAff); i++)
+  for (int i = 0; i < m_viewAff.size(); ++i)
     setViewMatrix(dpi == TPointD(0, 0) ? tempAff : TScale(tempScale.x / inch,
                                                           tempScale.y / inch),
                   i);
@@ -2384,8 +2384,8 @@ int SceneViewer::pick(const TPointD &point) {
   assert(glGetError() == GL_NO_ERROR);
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  GLuint selectBuffer[512];
-  glSelectBuffer(tArrayCount(selectBuffer), selectBuffer);
+  std::array<GLuint, 512> selectBuffer;
+  glSelectBuffer(selectBuffer.size(), selectBuffer.data());
   glRenderMode(GL_SELECT);
 
   // definisco la matrice di proiezione
@@ -2444,7 +2444,7 @@ int SceneViewer::pick(const TPointD &point) {
   // conto gli hits
   int ret      = -1;
   int hitCount = glRenderMode(GL_RENDER);
-  GLuint *p    = selectBuffer;
+  GLuint *p    = selectBuffer.data();
   for (int i = 0; i < hitCount; ++i) {
     GLuint nameCount = *p++;
     GLuint zmin      = *p++;
