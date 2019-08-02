@@ -82,7 +82,7 @@ public:
     TMeasure *measure = m_param->getMeasure();
     if (measure) {
       const TUnit *unit = measure->getCurrentUnit();
-      if (unit) value   = unit->convertTo(value);
+      if (unit) value = unit->convertTo(value);
     }
     return value;
   }
@@ -542,9 +542,8 @@ public:
         const QString &vertexName =
             QString::fromStdString(tokens[VERTEX_NAME].getText());
         if (SkVD *skvd = skdp->vertexDeformation(vertexName)) {
-          const Component *componentsEnd =
-                              m_components +
-                              sizeof(m_components) / sizeof(Component),
+          const Component *componentsEnd = m_components + sizeof(m_components) /
+                                                              sizeof(Component),
                           *component = std::find(m_components, componentsEnd,
                                                  tokens[COMPONENT].getText());
 

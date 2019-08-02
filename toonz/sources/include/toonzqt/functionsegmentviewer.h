@@ -32,7 +32,7 @@ namespace DVGui {
 class MeasuredDoubleLineEdit;
 class ExpressionField;
 class FileField;
-}
+}  // namespace DVGui
 
 //-----------------------------------------------------------------------------
 

@@ -166,4 +166,4 @@ Token Tokenizer::getTokenFromPos(int pos) const {
 
 //===================================================================
 
-}  // TSyntax
+}  // namespace TSyntax

@@ -918,7 +918,7 @@ TFilePath TProjectManager::getCurrentProjectPath() {
   }
   fp = searchProjectPath(fp.getParentDir());
   if (!TFileStatus(fp).doesExist())
-    fp     = projectNameToProjectPath(TProject::SandboxProjectName);
+    fp = projectNameToProjectPath(TProject::SandboxProjectName);
   fp       = getLatestVersionProjectPath(fp);
   string s = ::to_string(fp);
   if (s != (string)currentProjectPath) currentProjectPath = s;

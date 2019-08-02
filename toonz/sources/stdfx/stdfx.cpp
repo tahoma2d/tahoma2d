@@ -128,7 +128,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
     TPointD posAux = posTrasf;
     T *pix         = raster->pixels(y);
     for (int x = 0; x < raster->getLx(); x++) {
-      double ang                              = 0.0;
+      double ang = 0.0;
       if (posAux.x != 0 || posAux.y != 0) ang = atan2(posAux.y, posAux.x);
       double r = sqrt(posAux.x * posAux.x + posAux.y * posAux.y);
       double v = 0.5 * (1 + sin(r * freq + ang + phase));
@@ -141,7 +141,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
   }
   raster->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 
@@ -304,13 +304,13 @@ void doComputeT(TRasterPT<T> ras, TPointD posTrasf,
     T *endPix = pix + ras->getLx();
     while (pix < endPix) {
       if (w_amplitude) shift = w_amplitude * sin(w_freq * posAux.y + w_phase);
-      double radius          = posAux.x + shift;
-      double t               = 1;
+      double radius = posAux.x + shift;
+      double t      = 1;
       if (fabs(radius) < maxRadius) {
         t = (radius + maxRadius + cycle) * freq;
         t -= floor(t);
       } else if (radius < 0)
-        t                  = 0;
+        t = 0;
       double polinomfactor = (-2 * t + 3) * (t * t);
       // pos.x += 1.0;
       *pix++ = spectrum.getPremultipliedValue(polinomfactor);
@@ -322,7 +322,7 @@ void doComputeT(TRasterPT<T> ras, TPointD posTrasf,
   }
   ras->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 
@@ -533,7 +533,7 @@ void RadialGradientFx::doCompute(TTile &tile, double frame,
   if (innerperiod < period)
     inner = innerperiod / period;
   else
-    inner                      = 1 - TConsts::epsilon;
+    inner = 1 - TConsts::epsilon;
   std::vector<TSpectrum::ColorKey> colors = {
       TSpectrum::ColorKey(0, m_color1->getValue(frame)),
       TSpectrum::ColorKey(inner, m_color1->getValue(frame)),
@@ -632,7 +632,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
       }
       if (result > 1) result = 1;
       if (result < 0) result = 0;
-      *pix++                 = blend(T::Black, pixelColor, result);
+      *pix++ = blend(T::Black, pixelColor, result);
       posAux.x += aff.a11;
       posAux.y += aff.a21;
     }
@@ -641,7 +641,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
   }
   raster->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 

@@ -57,15 +57,15 @@ public:
 //==================================================================
 
 void CloudsFx::doCompute(TTile &tile, double frame, const TRenderSettings &ri) {
-  double scale          = sqrt(fabs(ri.m_affine.det()));
-  int type              = m_type->getValue();
-  double min            = m_min->getValue(frame);
-  double max            = m_max->getValue(frame);
-  double evolution      = m_evol->getValue(frame);
-  double size           = m_size->getValue(frame) / ri.m_shrinkX;
-  size                  = fabs(size);
+  double scale     = sqrt(fabs(ri.m_affine.det()));
+  int type         = m_type->getValue();
+  double min       = m_min->getValue(frame);
+  double max       = m_max->getValue(frame);
+  double evolution = m_evol->getValue(frame);
+  double size      = m_size->getValue(frame) / ri.m_shrinkX;
+  size             = fabs(size);
   if (size < 0.01) size = 0.01;
-  TPointD pos           = tile.m_pos;
+  TPointD pos = tile.m_pos;
 
   doClouds(tile.getRaster(), m_colors, pos, evolution, size, min, max, type,
            scale, frame);
