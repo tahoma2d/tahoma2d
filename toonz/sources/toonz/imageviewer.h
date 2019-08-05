@@ -109,6 +109,7 @@ public:
    */
   void hideHistogram();
   void zoomQt(bool forward, bool reset);
+  void resetZoom();
 
   void setIsRemakingPreviewFx(bool on) {
     m_isRemakingPreviewFx = on;
