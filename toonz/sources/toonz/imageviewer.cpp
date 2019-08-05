@@ -383,13 +383,17 @@ ImageViewer::~ImageViewer() {
 //-----------------------------------------------------------------------------
 /*! Set current image to \b image and update. If Histogram is visible set its
  * image.
-*/
+ */
 void ImageViewer::setImage(TImageP image) {
   m_image = image;
 
   if (m_image && m_firstImage) {
     m_firstImage = false;
     fitView();
+    // when the viewer size is large enough, limit the zoom ratio to 100% so
+    // that the image is shown in actual pixel size without jaggies due to
+    // resampling.
+    if (fabs(m_viewAff.det()) > 1.0) resetView();
   }
 
   if (m_isHistogramEnable && m_histogramPopup->isVisible())
@@ -573,7 +577,7 @@ void ImageViewer::paintGL() {
   } else if (m_draggingZoomSelection || m_rectRGBPick) {
     fromPos = TPoint(m_pressedMousePos.x - width() * 0.5,
                      height() * 0.5 - m_pressedMousePos.y);
-    toPos = TPoint(m_pos.x() - width() * 0.5, height() * 0.5 - m_pos.y());
+    toPos   = TPoint(m_pos.x() - width() * 0.5, height() * 0.5 - m_pos.y());
   }
   if (fromPos != TPoint() || toPos != TPoint()) {
     if (m_rectRGBPick) {
@@ -612,7 +616,7 @@ void ImageViewer::paintGL() {
 
 //------------------------------------------------------------------------------
 /*! Add to current trasformation matrix a \b delta traslation.
-*/
+ */
 void ImageViewer::panQt(const QPoint &delta) {
   if (delta == QPoint()) return;
 
@@ -746,7 +750,7 @@ void ImageViewer::updateCursor(const TPoint &curPos) {
 
 //---------------------------------------------------------------------------------------------
 /*! If middle button is pressed pan the image. Update current mouse position.
-*/
+ */
 void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
   if (!m_image) return;
 
@@ -841,7 +845,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
 
 //---------------------------------------------------------------------------------------------
 /*! notify the color picked by rgb picker to palette controller
-*/
+ */
 void ImageViewer::setPickedColorToStyleEditor(const TPixel32 &color) {
   // do not modify the style #0
   TPaletteHandle *ph =
@@ -853,7 +857,7 @@ void ImageViewer::setPickedColorToStyleEditor(const TPixel32 &color) {
 
 //---------------------------------------------------------------------------------------------
 /*! rgb picking
-*/
+ */
 void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
   if (!m_isHistogramEnable) return;
   if (!m_histogramPopup->isVisible()) return;
@@ -897,7 +901,7 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
 //---------------------------------------------------------------------------------------------
 /*! rectangular rgb picking. The picked color will be an average of pixels in
  * specified rectangle
-*/
+ */
 void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
   if (!m_isHistogramEnable) return;
   if (!m_histogramPopup->isVisible()) return;
@@ -1031,7 +1035,7 @@ void ImageViewer::mousePressEvent(QMouseEvent *event) {
 
 //-----------------------------------------------------------------------------
 /*! Reset current mouse position and current mouse button event.
-*/
+ */
 void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
   if (!m_image) return;
   if (m_draggingZoomSelection && !m_visualSettings.m_defineLoadbox) {
@@ -1072,7 +1076,7 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
 
 //-----------------------------------------------------------------------------
 /*! Apply zoom.
-*/
+ */
 void ImageViewer::wheelEvent(QWheelEvent *event) {
   if (!m_image) return;
   if (event->orientation() == Qt::Horizontal) return;
@@ -1100,12 +1104,12 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -1404,10 +1408,9 @@ bool ImageViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -1425,7 +1428,7 @@ bool ImageViewer::event(QEvent *e) {
 
 //-----------------------------------------------------------------------------
 /*! load image from history
-*/
+ */
 class LoadRecentFlipbookImagesCommandHandler final : public MenuItemHandler {
 public:
   LoadRecentFlipbookImagesCommandHandler()
@@ -1453,7 +1456,7 @@ public:
 
 //-----------------------------------------------------------------------------
 /*! clear the history
-*/
+ */
 class ClearRecentFlipbookImagesCommandHandler final : public MenuItemHandler {
 public:
   ClearRecentFlipbookImagesCommandHandler()
