@@ -2512,6 +2512,8 @@ public:
   void undo() const override {
     m_pegbar->enableCycle(!m_pegbar->isCycleEnabled());
     m_area->update();
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    TApp::instance()->getCurrentObject()->notifyObjectIdChanged(false);
   }
   void redo() const override { undo(); }
   int getSize() const override { return sizeof *this; }
@@ -2675,8 +2677,9 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
       } else if (isKeyframeFrame && row == k1 + 1 &&
                  o->rect(PredefinedRect::LOOP_ICON)
                      .contains(mouseInCell)) {  // cycle toggle
-        pegbar->enableCycle(!pegbar->isCycleEnabled());
-        TUndoManager::manager()->add(new CycleUndo(pegbar, this));
+        CycleUndo *undo = new CycleUndo(pegbar, this);
+        undo->redo();
+        TUndoManager::manager()->add(undo);
         accept = true;
       }
       if (accept) {
