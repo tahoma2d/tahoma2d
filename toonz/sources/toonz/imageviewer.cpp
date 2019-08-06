@@ -119,13 +119,18 @@ class FlipZoomer final : public ImageUtils::ShortcutZoomer {
 public:
   FlipZoomer(ImageViewer *parent) : ShortcutZoomer(parent) {}
 
-  bool zoom(bool zoomin, bool resetZoom) override {
-    static_cast<ImageViewer *>(getWidget())->zoomQt(zoomin, resetZoom);
+  bool zoom(bool zoomin, bool resetView) override {
+    static_cast<ImageViewer *>(getWidget())->zoomQt(zoomin, resetView);
     return true;
   }
 
   bool fit() override {
     static_cast<ImageViewer *>(getWidget())->fitView();
+    return true;
+  }
+
+  bool resetZoom() override {
+    static_cast<ImageViewer *>(getWidget())->resetZoom();
     return true;
   }
 
@@ -675,6 +680,14 @@ void ImageViewer::zoomQt(bool forward, bool reset) {
         reset ? 1 : ImageUtils::getQuantizedZoomFactor(oldZoomScale, forward);
     setViewAff(TScale(zoomScale / oldZoomScale) * m_viewAff);
   }
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ImageViewer::resetZoom() {
+  double oldZoomScale = sqrt(m_viewAff.det());
+  setViewAff(TScale(1.0 / oldZoomScale) * m_viewAff);
   update();
 }
 
