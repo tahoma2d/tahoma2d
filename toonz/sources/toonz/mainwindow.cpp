@@ -527,7 +527,7 @@ Room *MainWindow::getRoom(int index) const {
 
 //-----------------------------------------------------------------------------
 /*! Roomを名前から探す
-*/
+ */
 Room *MainWindow::getRoomByName(QString &roomName) {
   for (int i = 0; i < getRoomCount(); i++) {
     Room *room = dynamic_cast<Room *>(m_stackedWidget->widget(i));
@@ -1154,7 +1154,7 @@ void MainWindow::onMenuCheckboxChanged() {
 #endif
   else if (cm->getAction(MI_RasterizePli) == action) {
     if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
-    RasterizePliToggleAction                            = isChecked;
+    RasterizePliToggleAction = isChecked;
   } else if (cm->getAction(MI_SafeArea) == action)
     SafeAreaToggleAction = isChecked;
   else if (cm->getAction(MI_ViewColorcard) == action)
@@ -1430,6 +1430,13 @@ QAction *MainWindow::createMenuAction(const char *id, const QString &name,
 QAction *MainWindow::createViewerAction(const char *id, const QString &name,
                                         const QString &defaultShortcut) {
   return createAction(id, name, defaultShortcut, ZoomCommandType);
+}
+
+//-----------------------------------------------------------------------------
+
+QAction *MainWindow::createVisualizationButtonAction(const char *id,
+                                                     const QString &name) {
+  return createAction(id, name, "", VisualizationButtonCommandType);
 }
 
 //-----------------------------------------------------------------------------
@@ -2114,6 +2121,21 @@ void MainWindow::defineActions() {
                                              tr("Full Screen Mode"),
                                              tr("Exit Full Screen Mode"));
 
+  // Following actions are for adding "Visualization" menu items to the command
+  // bar. They are separated from the original actions in order to avoid
+  // assigning shortcut keys. They must be triggered only from pressing buttons
+  // in the command bar. Assinging shortcut keys and registering as MenuItem
+  // will break a logic of ShortcutZoomer. So here we register separate items
+  // and bypass the command.
+  createVisualizationButtonAction(VB_ViewReset, tr("Reset View"));
+  createVisualizationButtonAction(VB_ZoomFit, tr("Fit to Window"));
+  createVisualizationButtonAction(VB_ZoomReset, tr("Reset Zoom"));
+  createVisualizationButtonAction(VB_RotateReset, tr("Reset Rotation"));
+  createVisualizationButtonAction(VB_PositionReset, tr("Reset Position"));
+  createVisualizationButtonAction(VB_ActualPixelSize, tr("Actual Pixel Size"));
+  createVisualizationButtonAction(VB_FlipX, tr("Flip Viewer Horizontally"));
+  createVisualizationButtonAction(VB_FlipY, tr("Flip Viewer Vertically"));
+
   QAction *refreshAct =
       createMiscAction(MI_RefreshTree, tr("Refresh Folder Tree"), "");
   refreshAct->setIconText(tr("Refresh"));
@@ -2345,9 +2367,9 @@ RecentFiles::~RecentFiles() {}
 void RecentFiles::addFilePath(QString path, FileType fileType,
                               QString projectName) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
     if (files.at(i) == path) {
@@ -2514,9 +2536,9 @@ void RecentFiles::saveRecentFiles() {
 
 QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   QList<QString> names;
   int i;
   for (i = 0; i < files.size(); i++) {
@@ -2543,9 +2565,9 @@ void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
     menu->setEnabled(false);
   else {
     CommandId clearActionId =
-        (fileType == Scene) ? MI_ClearRecentScene : (fileType == Level)
-                                                        ? MI_ClearRecentLevel
-                                                        : MI_ClearRecentImage;
+        (fileType == Scene)
+            ? MI_ClearRecentScene
+            : (fileType == Level) ? MI_ClearRecentLevel : MI_ClearRecentImage;
     menu->setActions(names);
     menu->addSeparator();
     QAction *clearAction = CommandManager::instance()->getAction(clearActionId);

@@ -452,61 +452,80 @@ public:
   }
 } resetShiftTraceCommand;
 
+//-----------------------------------------------------------------------------
+// Following commands (VB_***) are registered for command bar buttons.
+// They are separatd from the original visalization commands
+// so that they will not break a logic of ShortcutZoomer.
+
 class TViewResetCommand final : public MenuItemHandler {
 public:
-  TViewResetCommand() : MenuItemHandler(V_ViewReset) {}
+  TViewResetCommand() : MenuItemHandler(VB_ViewReset) {}
   void execute() override {
-    TApp::instance()->getActiveViewer()->resetSceneViewer();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->resetSceneViewer();
   }
 } viewResetCommand;
 
 class TZoomResetCommand final : public MenuItemHandler {
 public:
-  TZoomResetCommand() : MenuItemHandler(V_ZoomReset) {}
-  void execute() override { TApp::instance()->getActiveViewer()->resetZoom(); }
+  TZoomResetCommand() : MenuItemHandler(VB_ZoomReset) {}
+  void execute() override {
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->resetZoom();
+  }
 } zoomResetCommand;
 
 class TZoomFitCommand final : public MenuItemHandler {
 public:
-  TZoomFitCommand() : MenuItemHandler(V_ZoomFit) {}
+  TZoomFitCommand() : MenuItemHandler(VB_ZoomFit) {}
   void execute() override {
-    TApp::instance()->getActiveViewer()->fitToCamera();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->fitToCamera();
   }
 } zoomFitCommand;
 
 class TActualPixelSizeCommand final : public MenuItemHandler {
 public:
-  TActualPixelSizeCommand() : MenuItemHandler(V_ActualPixelSize) {}
+  TActualPixelSizeCommand() : MenuItemHandler(VB_ActualPixelSize) {}
   void execute() override {
-    TApp::instance()->getActiveViewer()->setActualPixelSize();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->setActualPixelSize();
   }
-} aActualPixelSizeCommand;
+} actualPixelSizeCommand;
 
 class TFlipViewerXCommand final : public MenuItemHandler {
 public:
-  TFlipViewerXCommand() : MenuItemHandler(V_FlipX) {}
-  void execute() override { TApp::instance()->getActiveViewer()->flipX(); }
+  TFlipViewerXCommand() : MenuItemHandler(VB_FlipX) {}
+  void execute() override {
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->flipX();
+  }
 } flipViewerXCommand;
 
 class TFlipViewerYCommand final : public MenuItemHandler {
 public:
-  TFlipViewerYCommand() : MenuItemHandler(V_FlipY) {}
-  void execute() override { TApp::instance()->getActiveViewer()->flipY(); }
+  TFlipViewerYCommand() : MenuItemHandler(VB_FlipY) {}
+  void execute() override {
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->flipY();
+  }
 } flipViewerYCommand;
 
 class TRotateResetCommand final : public MenuItemHandler {
 public:
-  TRotateResetCommand() : MenuItemHandler(V_RotateReset) {}
+  TRotateResetCommand() : MenuItemHandler(VB_RotateReset) {}
   void execute() override {
-    TApp::instance()->getActiveViewer()->resetRotation();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->resetRotation();
   }
 } rotateResetCommand;
 
 class TPositionResetCommand final : public MenuItemHandler {
 public:
-  TPositionResetCommand() : MenuItemHandler(V_PositionReset) {}
+  TPositionResetCommand() : MenuItemHandler(VB_PositionReset) {}
   void execute() override {
-    TApp::instance()->getActiveViewer()->resetPosition();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->resetPosition();
   }
 } positionResetCommand;
 

@@ -175,6 +175,9 @@ private:
                             const QString &defaultShortcut);
   QAction *createViewerAction(const char *id, const QString &name,
                               const QString &defaultShortcut);
+  // For command bar, no shortcut keys
+  QAction *createVisualizationButtonAction(const char *id, const QString &name);
+
   QAction *createMiscAction(const char *id, const QString &name,
                             const char *defaultShortcut);
   QAction *createToolOptionsAction(const char *id, const QString &name,
