@@ -1333,8 +1333,8 @@ void ToonzVectorBrushTool::checkStrokeSnapping(bool beforeMousePress,
   TVectorImageP vi(getImage(false));
   bool checkSnap = m_snap.getValue();
   if (invertCheck) checkSnap = !checkSnap;
+  m_dragDraw = true;
   if (vi && checkSnap) {
-    m_dragDraw          = true;
     double minDistance2 = m_minDistance2;
     if (beforeMousePress)
       m_strokeIndex1 = -1;
