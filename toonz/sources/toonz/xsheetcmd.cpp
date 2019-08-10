@@ -161,19 +161,16 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
   for (c = -1; c < colsCount; ++c) {
     TStageObjectId objectId;
 
-    if (c == -1) {
-#ifdef LINETEST
+    if (c == -1)
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
-#else
-      continue;
-#endif
-    } else
+    else {
       objectId = TStageObjectId::ColumnId(c);
 
-    xsh->insertCells(frame, c);
-    xsh->setCell(frame, c, xsh->getCell(frame + 1, c));
+      xsh->insertCells(frame, c);
+      xsh->setCell(frame, c, xsh->getCell(frame + 1, c));
 
-    if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
+      if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
+    }
 
     if (TStageObject *obj = xsh->getStageObject(objectId))
       insertFrame(obj, frame);
@@ -188,18 +185,15 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame) {
   for (int c = -1; c != xsh->getColumnCount(); ++c) {
     TStageObjectId objectId;
 
-    if (c == -1) {
-#ifdef LINETEST
+    if (c == -1)
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
-#else
-      continue;
-#endif
-    } else
+    else {
       objectId = TStageObjectId::ColumnId(c);
 
-    xsh->removeCells(frame, c);
+      xsh->removeCells(frame, c);
 
-    if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
+      if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
+    }
 
     if (TStageObject *pegbar = xsh->getStageObject(objectId))
       removeFrame(pegbar, frame);
