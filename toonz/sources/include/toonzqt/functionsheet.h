@@ -124,6 +124,11 @@ public:
   int getColumnIndexByCurve(TDoubleParam *param) const;
   bool anyWidgetHasFocus();
 
+  // Obtains a pointer to the stage object containing the
+  // parameter of specified column. Returns nullptr for
+  // fx parameter columns.
+  TStageObject *getStageObject(int column);
+
 protected:
   void showEvent(QShowEvent *e) override;
   void hideEvent(QHideEvent *e) override;

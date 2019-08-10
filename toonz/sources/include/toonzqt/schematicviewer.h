@@ -134,7 +134,7 @@ public:
   SchematicSceneViewer(QWidget *parent);
   ~SchematicSceneViewer();
 
-  void zoomQt(bool zoomin, bool resetZoom);
+  void zoomQt(bool zoomin, bool resetView);
   void panQt(const QPointF &delta);
 
   QPointF getOldScenePos() { return m_oldScenePos; }
@@ -160,10 +160,13 @@ protected:
 
 protected slots:
 
-  void fitScene();
   void centerOnCurrent();
   void reorderScene();
+
+public slots:
+
   void normalizeScene();
+  void fitScene();
 
 private:
   Qt::MouseButton m_buttonState;
