@@ -154,8 +154,11 @@ static void sampleColor(const TRasterCM32P &ras, int threshold, Sequence &seq,
         return;
     }
 
-    params.push_back(params.back() + tdistance(*currGraph->getNode(next),
-                                               *currGraph->getNode(curr)));
+    double distance =
+        tdistance(*currGraph->getNode(next), *currGraph->getNode(curr));
+    if (distance == 0.0) continue;
+
+    params.push_back(params.back() + distance);
     nodes.push_back(next);
 
     meanThickness += currGraph->getNode(next)->z;
@@ -174,8 +177,8 @@ static void sampleColor(const TRasterCM32P &ras, int threshold, Sequence &seq,
   // Prepare sampling procedure
   int paramCount = params.size(), paramMax = paramCount - 1;
 
-  int sampleMax = std::max(params.back() / std::max(meanThickness, 1.0),
-                           3.0),    // Number of color samples depends on
+  int sampleMax   = std::max(params.back() / std::max(meanThickness, 1.0),
+                           3.0),  // Number of color samples depends on
       sampleCount = sampleMax + 1;  // the ratio params.back() / meanThickness
 
   std::vector<double> sampleParams(sampleCount);  // Sampling lengths
@@ -254,8 +257,9 @@ static void sampleColor(const TRasterCM32P &ras, int threshold, Sequence &seq,
     }
   }
 
-  if (i >= k) goto _getOut;  // No admissible segment found for splitting
-                             // check.
+  if (i >= k)
+    goto _getOut;  // No admissible segment found for splitting
+                   // check.
   // Find color changes between sampled colors
   for (l = i; l < k; ++l) {
     const TPixelCM32

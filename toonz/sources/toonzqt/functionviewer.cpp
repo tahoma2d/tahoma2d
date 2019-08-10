@@ -582,7 +582,10 @@ void FunctionViewer::onStageObjectChanged(bool isDragging) {
   static_cast<FunctionTreeModel *>(m_treeView->model())
       ->setCurrentStageObject(obj);
 
-  if (!isDragging) m_treeView->updateAll();
+  if (!isDragging) {
+    m_treeView->updateAll();
+    m_numericalColumns->updateAll();
+  }
 
   m_functionGraph->update();
 }

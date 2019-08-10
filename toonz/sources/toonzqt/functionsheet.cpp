@@ -11,6 +11,7 @@
 #include "toonz/doubleparamcmd.h"
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/tstageobject.h"
 
 // TnzBase includes
 #include "tunit.h"
@@ -579,6 +580,13 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
     TMeasure *measure = curve->getMeasure();
     const TUnit *unit = measure ? measure->getCurrentUnit() : 0;
 
+    bool isStageObjectCycled = false;
+    TStageObject *obj        = m_sheet->getStageObject(c);
+    if (obj && obj->isCycleEnabled()) isStageObjectCycled = true;
+
+    bool isParamCycled = curve->isCycleEnabled();
+    int rowCount       = getViewer()->getRowCount();
+
     // draw each cell
     for (int row = r0; row <= r1; row++) {
       int ya = m_sheet->rowToY(row);
@@ -586,8 +594,11 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
 
       bool isSelected = getViewer()->isSelectedCell(row, c);
 
-      double value    = curve->getValue(row);
+      double value = (isStageObjectCycled)
+                         ? curve->getValue(obj->paramsTime((double)row))
+                         : curve->getValue(row);
       if (unit) value = unit->convertTo(value);
+      enum { None, KeyRange, CycleRange } drawValue = None;
 
       QRect cellRect(x0, ya, x1 - x0 + 1, yb - ya + 1);
       QRect borderRect(x0, ya, 7, yb - ya + 1);
@@ -622,8 +633,42 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
           }
         }
 
+        drawValue = KeyRange;
+
+      }
+      // empty cells
+      else {
+        // show values for cycled parameter.
+        // cycle option can be set in two ways; one is as TStageObject,
+        // the other is as TDoubleParam.
+        // - TStageObject cycle literally cycles values with no offset.
+        //   Applied to all transformation parameters of the cycled object.
+        // - TDoubleParam cycle includes value offset so that the curve
+        //   connects smoothly.
+        // - TStageObject cycle option has a priority to TDoubleParam one.
+        // (see TStageObject::paramsTime() in tstageobject.cpp)
+        if (kCount > 0 && row > kr1 && (isStageObjectCycled || isParamCycled) &&
+            (row < rowCount)) {
+          drawValue = CycleRange;
+        }
+        // empty and selected cell
+        if (isSelected) {
+          cellColor = (row >= rowCount) ? SelectedEmptyColor
+                                        : SelectedSceneRangeEmptyColor;
+          painter.setPen(Qt::NoPen);
+          painter.fillRect(cellRect, cellColor);
+        }
+      }
+
+      if (drawValue != None) {
         // draw cell value
-        painter.setPen(getViewer()->getTextColor());
+        if (drawValue == KeyRange)
+          painter.setPen(getViewer()->getTextColor());
+        else {
+          QColor semiTranspTextColor = getViewer()->getTextColor();
+          semiTranspTextColor.setAlpha(128);
+          painter.setPen(semiTranspTextColor);
+        }
 
         /*--- 整数から小数点以下3桁以内の場合はそれ以降の0000を描かない ---*/
         QString text;
@@ -653,19 +698,31 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
           fontName = "Helvetica";
 #endif
         }
-        static QFont font(fontName, -1, QFont::Bold);
+        static QFont font(fontName, -1);
+        font.setBold(drawValue == KeyRange);
         font.setPixelSize(12);
         painter.setFont(font);
         painter.drawText(cellRect.adjusted(10, 0, 0, 0),
-                         Qt::AlignVCenter | Qt::AlignLeft, text);
+                         Qt::AlignVCenter | Qt::AlignRight, text);
       }
-      // empty and selected cell
-      else if (isSelected) {
-        int rowCount = getViewer()->getRowCount();
-        cellColor    = (row >= rowCount) ? SelectedEmptyColor
-                                      : SelectedSceneRangeEmptyColor;
-        painter.setPen(Qt::NoPen);
-        painter.fillRect(cellRect, cellColor);
+    }
+
+    if (kCount > 0 && (isStageObjectCycled || isParamCycled)) {
+      // draw the row zigzag
+      int ymax           = m_sheet->rowToY(r1 + 1);
+      int qx             = x0 + 4;
+      int qy             = m_sheet->rowToY(kr1 + 1);
+      int zig            = 2;
+      QColor zigzagColor = (isStageObjectCycled) ? getViewer()->getTextColor()
+                                                 : KeyFrameBorderColor;
+      painter.setPen(zigzagColor);
+      painter.drawLine(QPoint(qx, qy), QPoint(qx - zig, qy + zig));
+      qy += zig;
+      while (qy < ymax) {
+        painter.drawLine(QPoint(qx - zig, qy), QPoint(qx + zig, qy + 2 * zig));
+        painter.drawLine(QPoint(qx + zig, qy + 2 * zig),
+                         QPoint(qx - zig, qy + 4 * zig));
+        qy += 4 * zig;
       }
     }
   }
@@ -835,6 +892,8 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   QAction setStep2Action(tr("Step 2"), 0);
   QAction setStep3Action(tr("Step 3"), 0);
   QAction setStep4Action(tr("Step 4"), 0);
+  QAction activateCycleAction(tr("Activate Cycle"), 0);
+  QAction deactivateCycleAction(tr("Deactivate Cycle"), 0);
 
   CellPosition cellPosition = getViewer()->xyToPosition(e->pos());
   int row                   = cellPosition.frame();
@@ -858,6 +917,15 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
 
   // build menu
   QMenu menu(0);
+
+  // on clicking after last keyframe
+  if (kCount > 0 && isEmpty && kIndex == kCount - 1) {
+    if (curve->isCycleEnabled())
+      menu.addAction(&deactivateCycleAction);
+    else
+      menu.addAction(&activateCycleAction);
+  }
+
   if (!isKeyframe)  // menu.addAction(&deleteKeyframeAction); else
     menu.addAction(&insertKeyframeAction);
 
@@ -896,7 +964,7 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   menu.addAction(cmdManager->getAction("MI_Insert"));
 
   FunctionSelection *selection = m_sheet->getSelection();
-
+  TSceneHandle *sceneHandle    = m_sheet->getViewer()->getSceneHandle();
   // execute menu
   QAction *action = menu.exec(e->globalPos());  // QCursor::pos());
   if (action == &deleteKeyframeAction) {
@@ -935,6 +1003,10 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
     KeyframeSetter(curve, kIndex).setStep(3);
   else if (action == &setStep4Action)
     KeyframeSetter(curve, kIndex).setStep(4);
+  else if (action == &activateCycleAction)
+    KeyframeSetter::enableCycle(curve, true, sceneHandle);
+  else if (action == &deactivateCycleAction)
+    KeyframeSetter::enableCycle(curve, false, sceneHandle);
 
   update();
 }
@@ -1151,4 +1223,23 @@ void FunctionSheet::onCurrentChannelChanged(
       return;
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+/*! Obtains a pointer to the stage object containing the parameter of specified
+ * column
+*/
+TStageObject *FunctionSheet::getStageObject(int column) {
+  FunctionTreeModel::Channel *channel = getChannel(column);
+  if (!channel) return nullptr;
+
+  FunctionTreeModel::ChannelGroup *channelGroup = channel->getChannelGroup();
+  if (!channelGroup) return nullptr;
+
+  // returns nullptr if the channel is a fx parameter
+  StageObjectChannelGroup *stageItem =
+      dynamic_cast<StageObjectChannelGroup *>(channelGroup);
+  if (!stageItem) return nullptr;
+
+  return stageItem->getStageObject();
 }
