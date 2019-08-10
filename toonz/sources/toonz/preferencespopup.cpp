@@ -260,10 +260,10 @@ void PreferencesPopup::onPixelsOnlyChanged(int index) {
     QString tempUnit;
     int unitIndex;
     tempUnit  = m_pref->getOldUnits();
-    unitIndex = m_unitOm->findText(tempUnit);
+    unitIndex = std::find(::units, ::units + ::unitsCount, tempUnit) - ::units;
     m_unitOm->setCurrentIndex(unitIndex);
     tempUnit  = m_pref->getOldCameraUnits();
-    unitIndex = m_cameraUnitOm->findText(tempUnit);
+    unitIndex = std::find(::units, ::units + ::unitsCount, tempUnit) - ::units;
     m_cameraUnitOm->setCurrentIndex(unitIndex);
     m_unitOm->setDisabled(false);
     m_cameraUnitOm->setDisabled(false);
@@ -381,7 +381,7 @@ void PreferencesPopup::onInterfaceFontChanged(int index) {
   QString oldTypeface = m_interfaceFontStyle->currentText();
   rebuilldFontStyleList();
   if (!oldTypeface.isEmpty()) {
-    int newIndex               = m_interfaceFontStyle->findText(oldTypeface);
+    int newIndex = m_interfaceFontStyle->findText(oldTypeface);
     if (newIndex < 0) newIndex = 0;
     m_interfaceFontStyle->setCurrentIndex(newIndex);
   }
@@ -504,7 +504,7 @@ void PreferencesPopup::onTranspCheckDataChanged(const TPixel32 &,
 
 void PreferencesPopup::onOnionDataChanged(const TPixel32 &, bool isDragging) {
   if (isDragging) return;
-  bool inksOnly            = false;
+  bool inksOnly = false;
   if (m_inksOnly) inksOnly = m_inksOnly->isChecked();
   m_pref->setOnionData(m_frontOnionColor->getColor(),
                        m_backOnionColor->getColor(), inksOnly);
@@ -517,7 +517,7 @@ void PreferencesPopup::onOnionDataChanged(const TPixel32 &, bool isDragging) {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onOnionDataChanged(int) {
-  bool inksOnly            = false;
+  bool inksOnly = false;
   if (m_inksOnly) inksOnly = m_inksOnly->isChecked();
   m_pref->setOnionData(m_frontOnionColor->getColor(),
                        m_backOnionColor->getColor(), inksOnly);

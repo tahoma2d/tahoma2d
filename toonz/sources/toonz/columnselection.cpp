@@ -141,7 +141,7 @@ static bool canMergeColumns(int column, int mColumn, bool forMatchlines) {
 
   if (column < 0 || mColumn < 0) return false;
 
-  if (xsh->getColumn(column)->isLocked()) return false;
+  if (!xsh || !xsh->getColumn(column) || xsh->getColumn(column)->isLocked()) return false;
 
   int start, end;
   xsh->getCellRange(column, start, end);

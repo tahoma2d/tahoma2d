@@ -774,7 +774,7 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allIncreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allIncreaseIsEqual; c++)
-    allIncreaseIsEqual       = allIncreaseIsEqual && ends[c] == ends[c + 1];
+    allIncreaseIsEqual = allIncreaseIsEqual && ends[c] == ends[c + 1];
   if (allIncreaseIsEqual) r1 = ends[0];
 }
 
@@ -808,7 +808,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allDecreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allDecreaseIsEqual; c++)
-    allDecreaseIsEqual       = allDecreaseIsEqual && ends[c] == ends[c + 1];
+    allDecreaseIsEqual = allDecreaseIsEqual && ends[c] == ends[c + 1];
   if (allDecreaseIsEqual) r1 = ends[0];
 }
 
@@ -942,7 +942,7 @@ void TXsheet::resetStepCells(int r0, int c0, int r1, int c1) {
 //-----------------------------------------------------------------------------
 /*! Roll first cells of rect r0,c0,r1,c1. Move cells contained in first row to
  * last row.
-*/
+ */
 void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
   int nc   = c1 - c0 + 1;
   int size = 1 * nc;
@@ -965,7 +965,7 @@ void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
 //-----------------------------------------------------------------------------
 /*! Roll last cells of rect r0,c0,r1,c1. Move cells contained in last row to
  * first row.
-*/
+ */
 void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
   int nc   = c1 - c0 + 1;
   int size = 1 * nc;
@@ -1420,8 +1420,9 @@ void searchAudioColumn(TXsheet *xsh, std::vector<TXshSoundColumn *> &sounds,
     TXshColumn *column = xsh->getColumn(i);
     if (column) {
       TXshSoundColumn *soundCol = column->getSoundColumn();
-      if (soundCol && ((isPreview && soundCol->isCamstandVisible()) ||
-                       (!isPreview && soundCol->isPreviewVisible()))) {
+      if (soundCol && !soundCol->isEmpty() &&
+          ((isPreview && soundCol->isCamstandVisible()) ||
+           (!isPreview && soundCol->isPreviewVisible()))) {
         sounds.push_back(soundCol);
         continue;
       }

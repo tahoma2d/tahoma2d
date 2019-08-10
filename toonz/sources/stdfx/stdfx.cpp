@@ -89,13 +89,13 @@ TPixel32 colors[] = {
             TPixel32::Yellow,
             transparent};
 */
-    TSpectrum::ColorKey colors[] = {TSpectrum::ColorKey(0, TPixel32::Magenta),
-                                    TSpectrum::ColorKey(0.25, TPixel32::Black),
-                                    TSpectrum::ColorKey(0.5, TPixel32::Red),
-                                    TSpectrum::ColorKey(0.75, TPixel32::Yellow),
-                                    TSpectrum::ColorKey(1, transparent)};
-
-    m_spectrum = TSpectrumParamP(tArrayCount(colors), colors);
+    std::vector<TSpectrum::ColorKey> colors = {
+        TSpectrum::ColorKey(0, TPixel32::Magenta),
+        TSpectrum::ColorKey(0.25, TPixel32::Black),
+        TSpectrum::ColorKey(0.5, TPixel32::Red),
+        TSpectrum::ColorKey(0.75, TPixel32::Yellow),
+        TSpectrum::ColorKey(1, transparent)};
+    m_spectrum = TSpectrumParamP(colors);
 
     bindParam(this, "colors", m_spectrum);
     bindParam(this, "freq", m_freq);
@@ -128,7 +128,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
     TPointD posAux = posTrasf;
     T *pix         = raster->pixels(y);
     for (int x = 0; x < raster->getLx(); x++) {
-      double ang                              = 0.0;
+      double ang = 0.0;
       if (posAux.x != 0 || posAux.y != 0) ang = atan2(posAux.y, posAux.x);
       double r = sqrt(posAux.x * posAux.x + posAux.y * posAux.y);
       double v = 0.5 * (1 + sin(r * freq + ang + phase));
@@ -141,7 +141,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
   }
   raster->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 
@@ -184,11 +184,12 @@ public:
       , m_wave_phase(0.0)      // args, "Cycle")
   //    , m_colors (0) //args, "Colors")
   {
-    TSpectrum::ColorKey colors[] = {TSpectrum::ColorKey(0, TPixel32::White),
-                                    TSpectrum::ColorKey(0.33, TPixel32::Yellow),
-                                    TSpectrum::ColorKey(0.66, TPixel32::Red),
-                                    TSpectrum::ColorKey(1, TPixel32::White)};
-    m_colors = TSpectrumParamP(tArrayCount(colors), colors);
+    std::vector<TSpectrum::ColorKey> colors = {
+        TSpectrum::ColorKey(0, TPixel32::White),
+        TSpectrum::ColorKey(0.33, TPixel32::Yellow),
+        TSpectrum::ColorKey(0.66, TPixel32::Red),
+        TSpectrum::ColorKey(1, TPixel32::White)};
+    m_colors = TSpectrumParamP(colors);
 
     bindParam(this, "period", m_period);
     bindParam(this, "count", m_count);
@@ -303,13 +304,13 @@ void doComputeT(TRasterPT<T> ras, TPointD posTrasf,
     T *endPix = pix + ras->getLx();
     while (pix < endPix) {
       if (w_amplitude) shift = w_amplitude * sin(w_freq * posAux.y + w_phase);
-      double radius          = posAux.x + shift;
-      double t               = 1;
+      double radius = posAux.x + shift;
+      double t      = 1;
       if (fabs(radius) < maxRadius) {
         t = (radius + maxRadius + cycle) * freq;
         t -= floor(t);
       } else if (radius < 0)
-        t                  = 0;
+        t = 0;
       double polinomfactor = (-2 * t + 3) * (t * t);
       // pos.x += 1.0;
       *pix++ = spectrum.getPremultipliedValue(polinomfactor);
@@ -321,7 +322,7 @@ void doComputeT(TRasterPT<T> ras, TPointD posTrasf,
   }
   ras->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 
@@ -337,10 +338,10 @@ void LinearGradientFx::doCompute(TTile &tile, double frame,
   double w_phase     = m_wave_phase->getValue(frame);
   w_freq *= 0.01 * M_PI_180;
 
-  TSpectrum::ColorKey colors[] = {
+  std::vector<TSpectrum::ColorKey> colors = {
       TSpectrum::ColorKey(0, m_color1->getValue(frame)),
       TSpectrum::ColorKey(1, m_color2->getValue(frame))};
-  TSpectrumParamP m_colors = TSpectrumParamP(tArrayCount(colors), colors);
+  TSpectrumParamP m_colors = TSpectrumParamP(colors);
 
   TAffine aff      = ri.m_affine.inv();
   TPointD posTrasf = aff * tile.m_pos;
@@ -465,12 +466,12 @@ public:
   //    , m_colors (0) //args, "Colors")
   {
     m_period->setMeasureName("fxLength");
-    TSpectrum::ColorKey colors[] = {TSpectrum::ColorKey(0, TPixel32::White),
-                                    TSpectrum::ColorKey(0.33, TPixel32::Yellow),
-                                    TSpectrum::ColorKey(0.66, TPixel32::Red),
-                                    TSpectrum::ColorKey(1, TPixel32::White)};
-
-    m_colors = TSpectrumParamP(tArrayCount(colors), colors);
+    std::vector<TSpectrum::ColorKey> colors = {
+        TSpectrum::ColorKey(0, TPixel32::White),
+        TSpectrum::ColorKey(0.33, TPixel32::Yellow),
+        TSpectrum::ColorKey(0.66, TPixel32::Red),
+        TSpectrum::ColorKey(1, TPixel32::White)};
+    m_colors = TSpectrumParamP(colors);
 
     bindParam(this, "period", m_period);
     bindParam(this, "count", m_count);
@@ -532,12 +533,12 @@ void RadialGradientFx::doCompute(TTile &tile, double frame,
   if (innerperiod < period)
     inner = innerperiod / period;
   else
-    inner                      = 1 - TConsts::epsilon;
-  TSpectrum::ColorKey colors[] = {
+    inner = 1 - TConsts::epsilon;
+  std::vector<TSpectrum::ColorKey> colors = {
       TSpectrum::ColorKey(0, m_color1->getValue(frame)),
       TSpectrum::ColorKey(inner, m_color1->getValue(frame)),
       TSpectrum::ColorKey(1, m_color2->getValue(frame))};
-  TSpectrumParamP m_colors = TSpectrumParamP(tArrayCount(colors), colors);
+  TSpectrumParamP m_colors = TSpectrumParamP(colors);
   TAffine aff              = ri.m_affine.inv();
   TPointD posTrasf         = aff * tile.m_pos;
   multiRadial(tile.getRaster(), posTrasf, m_colors, period, count, cycle, aff,
@@ -631,7 +632,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
       }
       if (result > 1) result = 1;
       if (result < 0) result = 0;
-      *pix++                 = blend(T::Black, pixelColor, result);
+      *pix++ = blend(T::Black, pixelColor, result);
       posAux.x += aff.a11;
       posAux.y += aff.a21;
     }
@@ -640,7 +641,7 @@ void doComputeT(TRasterPT<T> raster, TPointD posTrasf, const TAffine &aff,
   }
   raster->unlock();
 }
-}
+}  // namespace
 
 //==================================================================
 

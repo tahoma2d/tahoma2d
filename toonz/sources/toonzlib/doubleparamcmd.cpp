@@ -2,6 +2,7 @@
 
 #include "toonz/doubleparamcmd.h"
 #include "toonz/preferences.h"
+#include "toonz/tscenehandle.h"
 #include "tdoubleparam.h"
 #include "tdoublekeyframe.h"
 #include "tundo.h"
@@ -830,13 +831,23 @@ void KeyframeSetter::removeKeyframeAt(TDoubleParam *curve, double frame) {
 
 class EnableCycleUndo final : public TUndo {
   TDoubleParam *m_param;
+  TSceneHandle *m_sceneHandle;
 
 public:
-  EnableCycleUndo(TDoubleParam *param) : m_param(param) { m_param->addRef(); }
+  EnableCycleUndo(TDoubleParam *param, TSceneHandle *sceneHandle)
+      : m_param(param), m_sceneHandle(sceneHandle) {
+    m_param->addRef();
+  }
   ~EnableCycleUndo() { m_param->release(); }
   void invertCycleEnabled() const {
     bool isEnabled = m_param->isCycleEnabled();
     m_param->enableCycle(!isEnabled);
+    // for now the scene handle is only available when RMB click in function
+    // sheet
+    if (m_sceneHandle) {
+      m_sceneHandle->setDirtyFlag(true);
+      m_sceneHandle->notifySceneChanged();
+    }
   }
   void undo() const override { invertCycleEnabled(); }
   void redo() const override { invertCycleEnabled(); }
@@ -847,7 +858,9 @@ public:
 
 //=============================================================================
 
-void KeyframeSetter::enableCycle(TDoubleParam *curve, bool enabled) {
+void KeyframeSetter::enableCycle(TDoubleParam *curve, bool enabled,
+                                 TSceneHandle *sceneHandle) {
   curve->enableCycle(enabled);
-  TUndoManager::manager()->add(new EnableCycleUndo(curve));
+  sceneHandle->notifySceneChanged();
+  TUndoManager::manager()->add(new EnableCycleUndo(curve, sceneHandle));
 }

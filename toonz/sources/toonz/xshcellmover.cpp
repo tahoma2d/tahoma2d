@@ -183,10 +183,7 @@ bool CellsMover::canMoveCells(const TPoint &pos) {
     while (i < m_rowCount * m_colCount) {
       TXshColumn::ColumnType srcType = getColumnTypeFromCell(i);
       int dstIndex                   = c + i;
-      if (!m_orientation->isVerticalTimeline() &&
-          dstIndex >= xsh->getColumnCount())
-        return false;
-      TXshColumn *dstColumn = xsh->getColumn(dstIndex);
+      TXshColumn *dstColumn          = xsh->getColumn(dstIndex);
       if (srcType == TXshColumn::eZeraryFxType ||
           srcType == TXshColumn::eSoundTextType)
         return false;
