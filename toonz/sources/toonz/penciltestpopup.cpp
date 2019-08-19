@@ -2224,7 +2224,10 @@ void PencilTestPopup::showEvent(QShowEvent* event) {
   TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
   connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
   connect(sceneHandle, SIGNAL(castChanged()), this, SLOT(refreshFrameInfo()));
+
+  bool tmp_alwaysOverwrite = m_alwaysOverwrite;
   onSceneSwitched();
+  m_alwaysOverwrite = tmp_alwaysOverwrite;
 }
 
 //-----------------------------------------------------------------------------
@@ -2524,11 +2527,16 @@ bool PencilTestPopup::importImage(QImage image) {
     /* if the level already have the same frame, then ask if overwrite it */
     TFilePath frameFp(actualLevelFp.withFrame(frameNumber));
     if (TFileStatus(frameFp).doesExist()) {
-      QString question = tr("File %1 does exist.\nDo you want to overwrite it?")
-                             .arg(toQString(frameFp));
-      int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
-                              QObject::tr("Cancel"));
-      if (ret == 0 || ret == 2) return false;
+      if (!m_alwaysOverwrite) {
+        QString question =
+            tr("File %1 does exist.\nDo you want to overwrite it?")
+                .arg(toQString(frameFp));
+        int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                                QObject::tr("Always Overwrite in This Scene"),
+                                QObject::tr("Cancel"));
+        if (ret == 0 || ret == 3) return false;
+        if (ret == 2) m_alwaysOverwrite = true;
+      }
       state = OVERWRITE;
     } else
       state = ADDFRAME;
@@ -2555,12 +2563,16 @@ bool PencilTestPopup::importImage(QImage image) {
       /* confirm overwrite */
       TFilePath frameFp(actualLevelFp.withFrame(frameNumber));
       if (TFileStatus(frameFp).doesExist()) {
-        QString question =
-            tr("File %1 does exist.\nDo you want to overwrite it?")
-                .arg(toQString(frameFp));
-        int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
-                                QObject::tr("Cancel"));
-        if (ret == 0 || ret == 2) return false;
+        if (!m_alwaysOverwrite) {
+          QString question =
+              tr("File %1 does exist.\nDo you want to overwrite it?")
+                  .arg(toQString(frameFp));
+          int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                                  QObject::tr("Always Overwrite in This Scene"),
+                                  QObject::tr("Cancel"));
+          if (ret == 0 || ret == 3) return false;
+          if (ret == 2) m_alwaysOverwrite = true;
+        }
       }
     }
     /* if the file does not exist, then create a new level */
@@ -2982,6 +2994,7 @@ void PencilTestPopup::onSceneSwitched() {
   m_saveInFolderPopup->updateParentFolder();
   m_saveInFileFld->setPath(m_saveInFolderPopup->getParentPath());
   refreshFrameInfo();
+  m_alwaysOverwrite = false;
 }
 
 //-----------------------------------------------------------------------------
