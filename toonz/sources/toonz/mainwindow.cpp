@@ -1056,7 +1056,6 @@ void MainWindow::onCurrentRoomChanged(int newRoomIndex) {
     TPanel *pane = paneList.at(i);
     if (pane->isFloating() && !pane->isHidden()) {
       QRect oldGeometry = pane->geometry();
-
       // Just setting the new parent is not enough for the new layout manager.
       // Must be removed from the old and added to the new.
       oldRoom->removeDockWidget(pane);
