@@ -2088,6 +2088,16 @@ void FileBrowser::refreshFolder(const TFilePath &folderPath) {
 
 //-----------------------------------------------------------------------------
 
+void FileBrowser::updateItemViewerPanel() {
+  std::set<FileBrowser *>::iterator it;
+  for (it = activeBrowsers.begin(); it != activeBrowsers.end(); ++it) {
+    FileBrowser *browser = *it;
+    browser->m_itemViewer->getPanel()->update();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void FileBrowser::getExpandedFolders(DvDirModelNode *node,
                                      QList<DvDirModelNode *> &expandedNodes) {
   if (!node) return;

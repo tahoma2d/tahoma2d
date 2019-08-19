@@ -599,6 +599,6 @@ void FileSelection::selectAll() {
     QString name =
         getModel()->getItemData(*it, DvItemListModel::FullPath).toString();
     TFilePath fp(name.toStdWString());
-    FileBrowser::refreshFolder(fp.getParentDir());
+    FileBrowser::updateItemViewerPanel();
   }
 }
