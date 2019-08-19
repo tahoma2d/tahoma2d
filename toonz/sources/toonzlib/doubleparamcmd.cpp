@@ -333,7 +333,7 @@ void KeyframeSetter::moveKeyframes(int dFrame, double dValue) {
     int n = m_param->getKeyframeCount();
     std::vector<std::pair<TDoubleKeyframe, int>> keyframes(
         n);  // (keyframe, index)
-    for (int i     = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
       keyframes[i] = std::make_pair(m_param->getKeyframe(i), i);
 
     // change frame and value of selected keyframes
@@ -486,11 +486,11 @@ void KeyframeSetter::setType(int kIndex, TDoubleKeyframe::Type type) {
   case TDoubleKeyframe::Expression:
     keyframe.m_type = type;
     {
-      double value                    = m_param->getValue(keyframe.m_frame);
-      const TUnit *unit               = 0;
+      double value      = m_param->getValue(keyframe.m_frame);
+      const TUnit *unit = 0;
       if (m_param->getMeasure()) unit = m_param->getMeasure()->getCurrentUnit();
-      if (unit) value                 = unit->convertTo(value);
-      keyframe.m_expressionText       = QString::number(value).toStdString();
+      if (unit) value = unit->convertTo(value);
+      keyframe.m_expressionText = QString::number(value).toStdString();
     }
     m_param->setKeyframe(kIndex, keyframe);
     break;
@@ -586,8 +586,8 @@ void KeyframeSetter::setSpeedIn(const TPointD &speedIn) {
   const double eps = 0.00001;
   assert(m_kIndex >= 0 && m_indices.size() == 1);
   assert(isSpeedInOut(m_kIndex - 1));
-  m_changed                                              = true;
-  m_keyframe.m_speedIn                                   = speedIn;
+  m_changed            = true;
+  m_keyframe.m_speedIn = speedIn;
   if (m_keyframe.m_speedIn.x > 0) m_keyframe.m_speedIn.x = 0;
   if (m_keyframe.m_linkedHandles &&
       m_kIndex + 1 <= m_param->getKeyframeCount()) {
@@ -617,8 +617,8 @@ void KeyframeSetter::setSpeedOut(const TPointD &speedOut) {
   const double eps = 0.00001;
   assert(m_kIndex >= 0 && m_indices.size() == 1);
   assert(isSpeedInOut(m_kIndex));
-  m_changed                                                = true;
-  m_keyframe.m_speedOut                                    = speedOut;
+  m_changed             = true;
+  m_keyframe.m_speedOut = speedOut;
   if (m_keyframe.m_speedOut.x < 0) m_keyframe.m_speedOut.x = 0;
   if (m_keyframe.m_linkedHandles && m_kIndex > 0) {
     double inNorm = getNorm(m_keyframe.m_speedIn);
@@ -720,7 +720,7 @@ void KeyframeSetter::setAllParams(
 
   // set step
   if (step < 1) step = 1;
-  keyframe.m_step    = step;
+  keyframe.m_step = step;
 
   // set type
   keyframe.m_type = comboType;
@@ -732,7 +732,7 @@ void KeyframeSetter::setAllParams(
     keyframe.m_speedOut    = speedOut;
     nextKeyframe.m_speedIn = speedIn;
 
-    if (keyframe.m_speedOut.x < 0) keyframe.m_speedOut.x       = 0;
+    if (keyframe.m_speedOut.x < 0) keyframe.m_speedOut.x = 0;
     if (nextKeyframe.m_speedIn.x > 0) nextKeyframe.m_speedIn.x = 0;
     break;
 
@@ -861,6 +861,6 @@ public:
 void KeyframeSetter::enableCycle(TDoubleParam *curve, bool enabled,
                                  TSceneHandle *sceneHandle) {
   curve->enableCycle(enabled);
-  sceneHandle->notifySceneChanged();
+  if (sceneHandle) sceneHandle->notifySceneChanged();
   TUndoManager::manager()->add(new EnableCycleUndo(curve, sceneHandle));
 }
