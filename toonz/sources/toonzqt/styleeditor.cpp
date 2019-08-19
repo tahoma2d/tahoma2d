@@ -2001,7 +2001,9 @@ bool VectorBrushStyleChooserPage::event(QEvent *e) {
     QToolTip::showText(he->globalPos(),
                        QString::fromStdString(pattern.m_patternName));
   } else
-    QToolTip::showText(he->globalPos(), tr("Plain color"));
+    QToolTip::showText(
+        he->globalPos(),
+        QObject::tr("Plain color", "VectorBrushStyleChooserPage"));
 
   return true;
 }
@@ -2175,8 +2177,11 @@ bool TextureStyleChooserPage::event(QEvent *e) {
     int index  = posToIndex(pos);
     if (index >= 0 && index < (int)m_textures.size()) {
       toolTip = m_textures[index].m_name;
-      QToolTip::showText(helpEvent->globalPos(),
-                         toolTip != QString() ? toolTip : "Custom Texture");
+      QToolTip::showText(
+          helpEvent->globalPos(),
+          toolTip != QString()
+              ? toolTip
+              : QObject::tr("Custom Texture", "TextureStyleChooserPage"));
     }
     e->accept();
   }
@@ -2242,7 +2247,7 @@ public:
       QPoint pos = helpEvent->pos();
       int index  = posToIndex(pos);
       if (index == 0) {
-        toolTip = tr("Plain color");
+        toolTip = QObject::tr("Plain color", "MyPaintBrushStyleChooserPage");
       } else if (index > 0 && index <= (int)m_brushes.size()) {
         toolTip = m_brushes[index - 1].getPath().getQString();
       }
@@ -2391,7 +2396,7 @@ bool SpecialStyleChooserPage::event(QEvent *e) {
     QPoint pos = helpEvent->pos();
     int index  = posToIndex(pos);
     if (index == 0)
-      toolTip = tr("Plain color");
+      toolTip = QObject::tr("Plain color", "SpecialStyleChooserPage");
     else {
       int j = index - 1;
       if (0 <= j && j < (int)m_customStyles.size()) {

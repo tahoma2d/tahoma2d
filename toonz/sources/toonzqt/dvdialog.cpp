@@ -33,7 +33,7 @@
 
 using namespace DVGui;
 
-QString DialogTitle = QObject::tr("OpenToonz 1.3");
+QString DialogTitle = "OpenToonz 1.3";
 
 //=============================================================================
 namespace {
@@ -1340,9 +1340,9 @@ QString DVGui::getText(const QString &title, const QString &labelText,
   LineEdit *nameFld = new LineEdit(text, &dialog);
   layout->addWidget(nameFld);
 
-  QPushButton *okBtn = new QPushButton(dialog.tr("OK"), &dialog);
+  QPushButton *okBtn = new QPushButton(QObject::tr("OK"), &dialog);
   okBtn->setDefault(true);
-  QPushButton *cancelBtn = new QPushButton(dialog.tr("Cancel"), &dialog);
+  QPushButton *cancelBtn = new QPushButton(QObject::tr("Cancel"), &dialog);
   QObject::connect(okBtn, SIGNAL(clicked()), &dialog, SLOT(accept()));
   QObject::connect(cancelBtn, SIGNAL(clicked()), &dialog, SLOT(reject()));
 
