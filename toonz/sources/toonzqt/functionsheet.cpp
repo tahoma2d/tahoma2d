@@ -703,7 +703,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
         font.setPixelSize(12);
         painter.setFont(font);
         painter.drawText(cellRect.adjusted(10, 0, 0, 0),
-                         Qt::AlignVCenter | Qt::AlignRight, text);
+                         Qt::AlignVCenter | Qt::AlignLeft, text);
       }
     }
 
