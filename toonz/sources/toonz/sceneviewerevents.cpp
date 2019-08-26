@@ -454,7 +454,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
 
   // if the "compare with snapshot" mode is activated, change the mouse cursor
   // on the border handle
-  if (m_visualSettings.m_doCompare) {
+  if (m_visualSettings.m_doCompare && isPreviewEnabled()) {
     if (abs(curPos.x() - width() * m_compareSettings.m_compareX) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleHCursor);
