@@ -450,6 +450,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
+  setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
   setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
   setCommandHandler("MI_NewVectorLevel", this,
@@ -985,6 +986,12 @@ void MainWindow::onAbout() {
   connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
 
   dialog->exec();
+}
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::onOpenOnlineManual() {
+  QDesktopServices::openUrl(QUrl(tr("http://opentoonz.readthedocs.io")));
 }
 
 //-----------------------------------------------------------------------------
@@ -1629,7 +1636,7 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_RemoveEndpoints, tr("&Remove Vector Overflow"), "");
   QAction *touchToggle =
       createToggle(MI_TouchGestureControl, tr("&Touch Gesture Control"), "",
-                   TouchGestureControl ? 1 : 0, MenuEditCommandType);
+                   TouchGestureControl ? 1 : 0, MiscCommandType);
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
@@ -1958,6 +1965,7 @@ void MainWindow::defineActions() {
                           "Ctrl+`");
   createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
+  createMenuWindowsAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 

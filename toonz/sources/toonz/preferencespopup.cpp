@@ -1240,6 +1240,20 @@ void PreferencesPopup::onCurrentColumnDataChanged(const TPixel32 &,
 
 //---------------------------------------------------------------------------------------
 
+void PreferencesPopup::onEnableTouchGesturesChanged(int index) {
+  QAction *action =
+      CommandManager::instance()->getAction(MI_TouchGestureControl);
+  action->setChecked(index == Qt::Checked);
+}
+
+//---------------------------------------------------------------------------------------
+
+void PreferencesPopup::onEnableTouchGesturesTriggered(bool checked) {
+  m_enableTouchGestures->setChecked(checked);
+}
+
+//---------------------------------------------------------------------------------------
+
 void PreferencesPopup::onEnableWinInkChanged(int index) {
   m_pref->enableWinInk(index == Qt::Checked);
 }
@@ -1262,10 +1276,10 @@ PreferencesPopup::PreferencesPopup()
     , m_inksOnly(0)
     , m_blanksCount(0)
     , m_blankColor(0) {
-  bool showTabletSettings = false;
+  bool winInkAvailable = false;
 
 #ifdef _WIN32
-  showTabletSettings = KisTabletSupportWin8::isAvailable();
+  winInkAvailable = KisTabletSupportWin8::isAvailable();
 #endif
 
   setWindowTitle(tr("Preferences"));
@@ -1605,9 +1619,13 @@ PreferencesPopup::PreferencesPopup()
 
   QLabel *note_tablet;
   //--- Tablet Settings ------------------------------
-  if (showTabletSettings) {
-    categoryList->addItem(tr("Tablet Settings"));
 
+  categoryList->addItem(tr("Touch/Tablet Settings"));
+
+  m_enableTouchGestures =
+      new DVGui::CheckBox(tr("Enable Touch Gesture Controls"));
+
+  if (winInkAvailable) {
     m_enableWinInk =
         new DVGui::CheckBox(tr("Enable Windows Ink Support* (EXPERIMENTAL)"));
 
@@ -1943,7 +1961,11 @@ PreferencesPopup::PreferencesPopup()
   checkForTheLatestVersionCB->setChecked(m_pref->isLatestVersionCheckEnabled());
 
   //--- Tablet Settings ------------------------------
-  if (showTabletSettings) m_enableWinInk->setChecked(m_pref->isWinInkEnabled());
+  m_enableTouchGestures->setChecked(CommandManager::instance()
+                                        ->getAction(MI_TouchGestureControl)
+                                        ->isChecked());
+
+  if (winInkAvailable) m_enableWinInk->setChecked(m_pref->isWinInkEnabled());
 
   /*--- layout ---*/
 
@@ -2717,21 +2739,23 @@ PreferencesPopup::PreferencesPopup()
     stackedWidget->addWidget(versionControlBox);
 
     //--- Tablet Settings --------------------------
-    if (showTabletSettings) {
-      QWidget *tabletSettingsBox = new QWidget(this);
-      QVBoxLayout *tsLay         = new QVBoxLayout();
-      tsLay->setMargin(15);
-      tsLay->setSpacing(10);
-      {
+    QWidget *tabletSettingsBox = new QWidget(this);
+    QVBoxLayout *tsLay         = new QVBoxLayout();
+    tsLay->setMargin(15);
+    tsLay->setSpacing(10);
+    {
+      tsLay->addWidget(m_enableTouchGestures, 0,
+                       Qt::AlignLeft | Qt::AlignVCenter);
+
+      if (winInkAvailable)
         tsLay->addWidget(m_enableWinInk, 0, Qt::AlignLeft | Qt::AlignVCenter);
 
-        tsLay->addStretch(1);
+      tsLay->addStretch(1);
 
-        tsLay->addWidget(note_tablet, 0);
-      }
-      tabletSettingsBox->setLayout(tsLay);
-      stackedWidget->addWidget(tabletSettingsBox);
+      if (winInkAvailable) tsLay->addWidget(note_tablet, 0);
     }
+    tabletSettingsBox->setLayout(tsLay);
+    stackedWidget->addWidget(tabletSettingsBox);
 
     mainLayout->addWidget(stackedWidget, 1);
   }
@@ -3067,8 +3091,16 @@ PreferencesPopup::PreferencesPopup()
   ret = ret && connect(checkForTheLatestVersionCB, SIGNAL(clicked(bool)),
                        SLOT(onCheckLatestVersionChanged(bool)));
 
-  //--- Tablet Settings ----------------------
-  if (showTabletSettings)
+  //--- Touch/Tablet Settings ----------------------
+  ret = ret && connect(m_enableTouchGestures, SIGNAL(stateChanged(int)),
+                       SLOT(onEnableTouchGesturesChanged(int)));
+
+  QAction *action =
+      CommandManager::instance()->getAction(MI_TouchGestureControl);
+  ret = ret && connect(action, SIGNAL(triggered(bool)),
+                       SLOT(onEnableTouchGesturesTriggered(bool)));
+
+  if (winInkAvailable)
     ret = ret && connect(m_enableWinInk, SIGNAL(stateChanged(int)),
                          SLOT(onEnableWinInkChanged(int)));
 

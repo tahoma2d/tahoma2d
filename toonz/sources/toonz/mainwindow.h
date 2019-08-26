@@ -95,6 +95,7 @@ public:
   void autofillToggle();
   void onUpgradeTabPro();
   void onAbout();
+  void onOpenOnlineManual();
   void checkForUpdates();
   int getRoomCount() const;
   Room *getRoom(int index) const;
