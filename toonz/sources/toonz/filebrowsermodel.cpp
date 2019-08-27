@@ -49,7 +49,13 @@ TFilePath getMyDocumentsPath() {
   return TFilePath((const char *)[documentsDirectory
       cStringUsingEncoding:NSASCIIStringEncoding]);
 #else
-  return TFilePath();
+  std::string path(getenv("HOME"));
+  if(path.empty()) return TFilePath();
+  path += "/Documents";
+  QString pathAsQString = QString::fromStdString(path);
+  QDir dir(pathAsQString);
+  if(!dir.exists()) return TFilePath();
+  return TFilePath(path);
 #endif
 }
 
@@ -71,7 +77,13 @@ TFilePath getDesktopPath() {
   return TFilePath((const char *)[desktopDirectory
       cStringUsingEncoding:NSASCIIStringEncoding]);
 #else
-  return TFilePath();
+  std::string path(getenv("HOME"));
+  if(path.empty()) return TFilePath();
+  path += "/Desktop";
+  QString pathAsQString = QString::fromStdString(path);
+  QDir dir(pathAsQString);
+  if(!dir.exists()) return TFilePath();
+  return TFilePath(path);
 #endif
 }
 }
