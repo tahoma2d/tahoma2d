@@ -450,6 +450,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
+  setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
   setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
   setCommandHandler("MI_NewVectorLevel", this,
@@ -989,6 +990,12 @@ void MainWindow::onAbout() {
 
 //-----------------------------------------------------------------------------
 
+void MainWindow::onOpenOnlineManual() {
+  QDesktopServices::openUrl(QUrl(tr("http://opentoonz.readthedocs.io")));
+}
+
+//-----------------------------------------------------------------------------
+
 void MainWindow::autofillToggle() {
   TPaletteHandle *h = TApp::instance()->getCurrentPalette();
   h->toggleAutopaint();
@@ -1056,7 +1063,6 @@ void MainWindow::onCurrentRoomChanged(int newRoomIndex) {
     TPanel *pane = paneList.at(i);
     if (pane->isFloating() && !pane->isHidden()) {
       QRect oldGeometry = pane->geometry();
-
       // Just setting the new parent is not enough for the new layout manager.
       // Must be removed from the old and added to the new.
       oldRoom->removeDockWidget(pane);
@@ -1630,7 +1636,7 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_RemoveEndpoints, tr("&Remove Vector Overflow"), "");
   QAction *touchToggle =
       createToggle(MI_TouchGestureControl, tr("&Touch Gesture Control"), "",
-                   TouchGestureControl ? 1 : 0, MenuEditCommandType);
+                   TouchGestureControl ? 1 : 0, MiscCommandType);
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
@@ -1961,6 +1967,7 @@ void MainWindow::defineActions() {
                           "Ctrl+`");
   createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
+  createMenuWindowsAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 

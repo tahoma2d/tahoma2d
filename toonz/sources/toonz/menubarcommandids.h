@@ -345,4 +345,6 @@
 #define MI_TouchGestureControl "MI_TouchGestureControl"
 #define MI_SeparateColors "MI_SeparateColors"
 
+#define MI_OpenOnlineManual "MI_OpenOnlineManual"
+
 #endif

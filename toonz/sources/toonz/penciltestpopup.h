@@ -320,6 +320,7 @@ class PencilTestPopup : public DVGui::Dialog {
 
   bool m_captureWhiteBGCue;
   bool m_captureCue;
+  bool m_alwaysOverwrite = false;
 
   void processImage(QImage& procImage);
   bool importImage(QImage image);

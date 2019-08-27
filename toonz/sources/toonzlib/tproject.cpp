@@ -160,7 +160,15 @@ TFilePath searchProjectPath(TFilePath folder) {
 
 bool isFolderUnderVersionControl(const TFilePath &folderPath) {
   QDir dir(QString::fromStdWString(folderPath.getWideString()));
-  return dir.entryList(QDir::AllDirs | QDir::Hidden).contains(".svn");
+  if (dir.entryList(QDir::AllDirs | QDir::Hidden).contains(".svn")) return true;
+  // For SVN 1.7 and greater, check parent directories to see if it's under
+  // version control
+  while (dir.cdUp()) {
+    if (dir.entryList(QDir::AllDirs | QDir::Hidden).contains(".svn"))
+      return true;
+  }
+
+  return false;
 }
 
 //===================================================================

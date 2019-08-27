@@ -442,7 +442,7 @@ void ImageViewer::initializeGL() {
   initializeOpenGLFunctions();
 
   // to be computed once through the software
-  if (m_lutCalibrator) {
+  if (m_lutCalibrator && !m_lutCalibrator->isInitialized()) {
     m_lutCalibrator->initialize();
     connect(context(), SIGNAL(aboutToBeDestroyed()), this,
             SLOT(onContextAboutToBeDestroyed()));
@@ -450,6 +450,13 @@ void ImageViewer::initializeGL() {
 
   // glClearColor(1.0,1.0,1.0,1);
   glClear(GL_COLOR_BUFFER_BIT);
+
+  if (m_firstInitialized)
+    m_firstInitialized = false;
+  else {
+    resizeGL(width(), height());
+    update();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1207,6 +1214,8 @@ TAffine ImageViewer::getImgToWidgetAffine(const TRectD &geom) const {
 //! ratio
 void ImageViewer::adaptView(const TRect &imgRect, const TRect &viewRect) {
   QRect viewerRect(rect());
+
+  if (viewerRect.isEmpty()) return;
 
   double imageScale = std::min(viewerRect.width() / (double)viewRect.getLx(),
                                viewerRect.height() / (double)viewRect.getLy());

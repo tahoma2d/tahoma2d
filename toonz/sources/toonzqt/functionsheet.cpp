@@ -109,8 +109,8 @@ public:
   }
 
   void drag(int row, int col, QMouseEvent *e) override {
-    int d                             = row - m_oldRow;
-    m_oldRow                          = row;
+    int d    = row - m_oldRow;
+    m_oldRow = row;
     if (d + m_firstKeyframeRow < 0) d = -m_firstKeyframeRow;
     m_firstKeyframeRow += d;
     for (int i = 0; i < (int)m_setters.size(); i++)
@@ -166,10 +166,10 @@ public:
   void drag(int row, int col, QMouseEvent *e) override {
     if (row < 0) row = 0;
     if (col < 0) col = 0;
-    int r0           = qMin(row, m_firstRow);
-    int r1           = qMax(row, m_firstRow);
-    int c0           = qMin(col, m_firstCol);
-    int c1           = qMax(col, m_firstCol);
+    int r0 = qMin(row, m_firstRow);
+    int r1 = qMax(row, m_firstRow);
+    int c0 = qMin(col, m_firstCol);
+    int c1 = qMax(col, m_firstCol);
     QRect selectedCells(c0, r0, c1 - c0 + 1, r1 - r0 + 1);
     m_sheet->selectCells(selectedCells);
   }
@@ -367,7 +367,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
 
 //-----------------------------------------------------------------------------
 /*! update tooltips
-*/
+ */
 void FunctionSheetColumnHeadViewer::mouseMoveEvent(QMouseEvent *e) {
   if ((e->buttons() & Qt::MidButton) && m_draggingChannel &&
       (e->pos() - m_dragStartPosition).manhattanLength() >=
@@ -503,7 +503,7 @@ FunctionSheetCellViewer::FunctionSheetCellViewer(FunctionSheet *parent)
   m_lineEdit->hide();
   bool ret = connect(m_lineEdit, SIGNAL(editingFinished()), this,
                      SLOT(onCellEditorEditingFinished()));
-  ret = ret && connect(m_lineEdit, SIGNAL(mouseMoved(QMouseEvent *)), this,
+  ret      = ret && connect(m_lineEdit, SIGNAL(mouseMoved(QMouseEvent *)), this,
                        SLOT(onMouseMovedInLineEdit(QMouseEvent *)));
   assert(ret);
   setMouseTracking(true);
@@ -513,7 +513,7 @@ FunctionSheetCellViewer::FunctionSheetCellViewer(FunctionSheet *parent)
 
 //-----------------------------------------------------------------------------
 /*! Called when the cell panel is left/right-clicked
-*/
+ */
 Spreadsheet::DragTool *FunctionSheetCellViewer::createDragTool(QMouseEvent *e) {
   CellPosition cellPosition = getViewer()->xyToPosition(e->pos());
   int row                   = cellPosition.frame();
@@ -598,7 +598,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
                          ? curve->getValue(obj->paramsTime((double)row))
                          : curve->getValue(row);
       if (unit) value = unit->convertTo(value);
-      enum { None, KeyRange, CycleRange } drawValue = None;
+      enum { None, Key, Inbetween, CycleRange } drawValue = None;
 
       QRect cellRect(x0, ya, x1 - x0 + 1, yb - ya + 1);
       QRect borderRect(x0, ya, 7, yb - ya + 1);
@@ -612,6 +612,16 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
         } else {
           cellColor   = (isSelected) ? SelectedInBetweenColor : InBetweenColor;
           borderColor = InBetweenBorderColor;
+
+          // when the inbetween values are hidden, change the cell colors to
+          // semi-transparent if the frame is in middle of the value step
+          if (!m_sheet->isIbtwnValueVisible()) {
+            TDoubleKeyframe kf =
+                curve->getKeyframe(curve->getPrevKeyframe(row));
+            int step = kf.m_step;
+            if (step > 1 && (row - (int)std::floor(kf.m_frame)) % step != 0)
+              cellColor.setAlpha(128);
+          }
         }
         painter.setPen(Qt::NoPen);
         painter.fillRect(cellRect, cellColor);
@@ -633,7 +643,9 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
           }
         }
 
-        drawValue = KeyRange;
+        drawValue = (curve->isKeyframe(row))
+                        ? Key
+                        : (m_sheet->isIbtwnValueVisible()) ? Inbetween : None;
 
       }
       // empty cells
@@ -662,7 +674,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
 
       if (drawValue != None) {
         // draw cell value
-        if (drawValue == KeyRange)
+        if (drawValue == Key || drawValue == Inbetween)
           painter.setPen(getViewer()->getTextColor());
         else {
           QColor semiTranspTextColor = getViewer()->getTextColor();
@@ -699,11 +711,11 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
 #endif
         }
         static QFont font(fontName, -1);
-        font.setBold(drawValue == KeyRange);
+        font.setBold(drawValue == Key);
         font.setPixelSize(12);
         painter.setFont(font);
         painter.drawText(cellRect.adjusted(10, 0, 0, 0),
-                         Qt::AlignVCenter | Qt::AlignRight, text);
+                         Qt::AlignVCenter | Qt::AlignLeft, text);
       }
     }
 
@@ -748,8 +760,8 @@ void FunctionSheetCellViewer::mouseDoubleClickEvent(QMouseEvent *e) {
     double v          = curve->getValue(row);
     TMeasure *measure = curve->getMeasure();
     const TUnit *unit = measure ? measure->getCurrentUnit() : 0;
-    if (unit) v       = unit->convertTo(v);
-    m_currentValue    = v;
+    if (unit) v = unit->convertTo(v);
+    m_currentValue = v;
     m_lineEdit->setText(QString::number(v, 'f', 4));
     // in order to put the cursor to the left end
     m_lineEdit->setSelection(m_lineEdit->text().length(),
@@ -786,7 +798,7 @@ void FunctionSheetCellViewer::onCellEditorEditingFinished() {
     if (curve) {
       TMeasure *measure = curve->getMeasure();
       const TUnit *unit = measure ? measure->getCurrentUnit() : 0;
-      if (unit) value   = unit->convertFrom(value);
+      if (unit) value = unit->convertFrom(value);
       KeyframeSetter::setValue(curve, m_editRow, value);
     }
   }
@@ -894,6 +906,8 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   QAction setStep4Action(tr("Step 4"), 0);
   QAction activateCycleAction(tr("Activate Cycle"), 0);
   QAction deactivateCycleAction(tr("Deactivate Cycle"), 0);
+  QAction showIbtwnAction(tr("Show Inbetween Values"), 0);
+  QAction hideIbtwnAction(tr("Hide Inbetween Values"), 0);
 
   CellPosition cellPosition = getViewer()->xyToPosition(e->pos());
   int row                   = cellPosition.frame();
@@ -931,26 +945,30 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
 
   if (!isEmpty && !isKeyframe && kIndex >= 0) {
     menu.addSeparator();
+    QMenu *interpMenu  = menu.addMenu(tr("Change Interpolation"));
     TDoubleKeyframe kf = curve->getKeyframe(kIndex);
-    if (kf.m_type != TDoubleKeyframe::Linear) menu.addAction(&setLinearAction);
+    if (kf.m_type != TDoubleKeyframe::Linear)
+      interpMenu->addAction(&setLinearAction);
     if (kf.m_type != TDoubleKeyframe::SpeedInOut)
-      menu.addAction(&setSpeedInOutAction);
+      interpMenu->addAction(&setSpeedInOutAction);
     if (kf.m_type != TDoubleKeyframe::EaseInOut)
-      menu.addAction(&setEaseInOutAction);
+      interpMenu->addAction(&setEaseInOutAction);
     if (kf.m_type != TDoubleKeyframe::EaseInOutPercentage)
-      menu.addAction(&setEaseInOut2Action);
+      interpMenu->addAction(&setEaseInOut2Action);
     if (kf.m_type != TDoubleKeyframe::Exponential)
-      menu.addAction(&setExponentialAction);
+      interpMenu->addAction(&setExponentialAction);
     if (kf.m_type != TDoubleKeyframe::Expression)
-      menu.addAction(&setExpressionAction);
-    if (kf.m_type != TDoubleKeyframe::File) menu.addAction(&setFileAction);
+      interpMenu->addAction(&setExpressionAction);
+    if (kf.m_type != TDoubleKeyframe::File)
+      interpMenu->addAction(&setFileAction);
     if (kf.m_type != TDoubleKeyframe::Constant)
-      menu.addAction(&setConstantAction);
-    menu.addSeparator();
-    if (kf.m_step != 1) menu.addAction(&setStep1Action);
-    if (kf.m_step != 2) menu.addAction(&setStep2Action);
-    if (kf.m_step != 3) menu.addAction(&setStep3Action);
-    if (kf.m_step != 4) menu.addAction(&setStep4Action);
+      interpMenu->addAction(&setConstantAction);
+
+    QMenu *stepMenu = menu.addMenu(tr("Change Step"));
+    if (kf.m_step != 1) stepMenu->addAction(&setStep1Action);
+    if (kf.m_step != 2) stepMenu->addAction(&setStep2Action);
+    if (kf.m_step != 3) stepMenu->addAction(&setStep3Action);
+    if (kf.m_step != 4) stepMenu->addAction(&setStep4Action);
   }
 
   menu.addSeparator();
@@ -962,6 +980,14 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   menu.addAction(cmdManager->getAction("MI_Clear"));
 
   menu.addAction(cmdManager->getAction("MI_Insert"));
+
+  if (!isEmpty && kIndex >= 0) {
+    menu.addSeparator();
+    if (m_sheet->isIbtwnValueVisible())
+      menu.addAction(&hideIbtwnAction);
+    else
+      menu.addAction(&showIbtwnAction);
+  }
 
   FunctionSelection *selection = m_sheet->getSelection();
   TSceneHandle *sceneHandle    = m_sheet->getViewer()->getSceneHandle();
@@ -1007,6 +1033,10 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
     KeyframeSetter::enableCycle(curve, true, sceneHandle);
   else if (action == &deactivateCycleAction)
     KeyframeSetter::enableCycle(curve, false, sceneHandle);
+  else if (action == &hideIbtwnAction)
+    m_sheet->setIbtwnValueVisible(false);
+  else if (action == &showIbtwnAction)
+    m_sheet->setIbtwnValueVisible(true);
 
   update();
 }
@@ -1170,7 +1200,7 @@ void FunctionSheet::selectCells(const QRect &selectedCells) {
   if (getSelection()) {
     QList<TDoubleParam *> curves;
     for (int c = selectedCells.left(); c <= selectedCells.right(); c++) {
-      TDoubleParam *param              = 0;
+      TDoubleParam *param = 0;
       if (c < getChannelCount()) param = getChannel(c)->getParam();
       curves.push_back(param);
     }
@@ -1195,7 +1225,7 @@ void FunctionSheet::updateAll() {
 
 //-----------------------------------------------------------------------------
 /*! Display expression name of the current segment
-*/
+ */
 QString FunctionSheet::getSelectedParamName() {
   if (m_functionTreeModel->getCurrentChannel())
     return m_functionTreeModel->getCurrentChannel()->getExprRefName();
@@ -1211,7 +1241,7 @@ int FunctionSheet::getColumnIndexByCurve(TDoubleParam *param) const {
 
 //-----------------------------------------------------------------------------
 /*! scroll column to show the current one
-*/
+ */
 void FunctionSheet::onCurrentChannelChanged(
     FunctionTreeModel::Channel *channel) {
   if (!channel) return;
@@ -1228,7 +1258,7 @@ void FunctionSheet::onCurrentChannelChanged(
 //-----------------------------------------------------------------------------
 /*! Obtains a pointer to the stage object containing the parameter of specified
  * column
-*/
+ */
 TStageObject *FunctionSheet::getStageObject(int column) {
   FunctionTreeModel::Channel *channel = getChannel(column);
   if (!channel) return nullptr;

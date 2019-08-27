@@ -181,6 +181,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   double m_rotationAngle[2];
 
+  bool m_firstInitialized = true;
+
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
