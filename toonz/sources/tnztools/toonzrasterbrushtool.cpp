@@ -1019,6 +1019,7 @@ void ToonzRasterBrushTool::drawEmptyCircle(TPointD pos, int thick,
 
 TPointD ToonzRasterBrushTool::getCenteredCursorPos(
     const TPointD &originalCursorPos) {
+  if (m_isMyPaintStyleSelected) return originalCursorPos;
   TXshLevelHandle *levelHandle = m_application->getCurrentLevel();
   TXshSimpleLevel *level = levelHandle ? levelHandle->getSimpleLevel() : 0;
   TDimension resolution =
