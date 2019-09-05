@@ -1105,8 +1105,8 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
   c0 = visible.from().layer();
   c1 = visible.to().layer();
   if (!m_viewer->orientation()->isVerticalTimeline()) {
-    int colCount = qMax(1, xsh->getColumnCount());
-    c1           = qMin(c1, colCount - 1);
+    int colCount = std::max(1, xsh->getColumnCount());
+    c1           = std::min(c1, colCount - 1);
   }
 
   drawNonEmptyBackground(p);
@@ -1276,8 +1276,8 @@ void CellArea::drawSelectionBackground(QPainter &p) const {
         CellRange(CellPosition(selRow0, selCol0),
                   CellPosition(selRow1 + 1, selCol1 + 1)));
   else {
-    int newSelCol0 = qMax(selCol0, selCol1);
-    int newSelCol1 = qMin(selCol0, selCol1);
+    int newSelCol0 = std::max(selCol0, selCol1);
+    int newSelCol1 = std::min(selCol0, selCol1);
     selectionRect  = m_viewer->rangeToXYRect(
         CellRange(CellPosition(selRow0, newSelCol0),
                   CellPosition(selRow1 + 1, newSelCol1 - 1)));

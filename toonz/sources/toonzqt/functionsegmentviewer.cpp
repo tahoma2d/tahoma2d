@@ -756,7 +756,7 @@ void FileSegmentPage::apply() {
   TDoubleKeyframe::FileParams fileParams;
 
   fileParams.m_path       = TFilePath(stringPath.toStdWString());
-  fileParams.m_fieldIndex = qMax(0, m_fieldIndexFld->text().toInt() - 1);
+  fileParams.m_fieldIndex = std::max(0, m_fieldIndexFld->text().toInt() - 1);
   std::string unitName    = m_measureFld->text().toStdString();
 
   KeyframeSetter setter(curve, kIndex);
@@ -769,7 +769,7 @@ void FileSegmentPage::getGuiValues(TDoubleKeyframe::FileParams &fileParam,
   QString stringPath = m_fileFld->getPath();
   stringPath.replace("\\", "\\\\");
   fileParam.m_path       = TFilePath(stringPath.toStdWString());
-  fileParam.m_fieldIndex = qMax(0, m_fieldIndexFld->text().toInt() - 1);
+  fileParam.m_fieldIndex = std::max(0, m_fieldIndexFld->text().toInt() - 1);
 
   unitName = m_measureFld->text().toStdString();
 }

@@ -650,7 +650,7 @@ void XsheetViewer::timerEvent(QTimerEvent *) {
 bool XsheetViewer::refreshContentSize(int dx, int dy) {
   QSize viewportSize = m_cellScrollArea->viewport()->size();
   QPoint offset      = m_cellArea->pos();
-  offset = QPoint(qMin(0, offset.x() - dx), qMin(0, offset.y() - dy));  // what?
+  offset = QPoint(std::min(0, offset.x() - dx), std::min(0, offset.y() - dy));  // what?
 
   TXsheet *xsh    = getXsheet();
   int frameCount  = xsh ? xsh->getFrameCount() : 0;
@@ -745,7 +745,7 @@ int XsheetViewer::colToTimelineLayerAxis(int layer) const {
   int yBottom = o->colToLayerAxis(layer, fan) +
                 (fan->isActive(layer) ? o->cellHeight() : o->foldedCellSize()) -
                 1;
-  int columnCount = qMax(1, xsh->getColumnCount());
+  int columnCount = std::max(1, xsh->getColumnCount());
   int layerHeightActual =
       m_columnArea->height() - 2;  // o->colToLayerAxis(columnCount, fan) - 1;
 
@@ -771,7 +771,7 @@ CellPosition XsheetViewer::xyToPosition(const QPoint &point) const {
   // For timeline mode, we need to base the Y axis on the bottom of the column
   // area
   // since the layers are flipped
-  int columnCount   = qMax(1, xsh->getColumnCount());
+  int columnCount   = std::max(1, xsh->getColumnCount());
   int colAreaHeight = o->colToLayerAxis(columnCount, fan);
 
   usePoint.setY(colAreaHeight - usePoint.y());
@@ -811,7 +811,7 @@ QPoint XsheetViewer::positionToXY(const CellPosition &pos) const {
   usePoint.setY(usePoint.y() + (fan->isActive(pos.layer())
                                     ? o->cellHeight()
                                     : o->foldedCellSize()));
-  int columnCount = qMax(1, xsh->getColumnCount());
+  int columnCount = std::max(1, xsh->getColumnCount());
   int colsHeight  = o->colToLayerAxis(columnCount, fan);
 
   if (colsHeight)
@@ -1747,7 +1747,7 @@ int XsheetViewer::getFrameZoomAdjustment() {
   int adj         = frameRect.width() -
             ((frameRect.width() * getFrameZoomFactor()) / 100) - 1;
 
-  return qMax(0, adj);
+  return std::max(0, adj);
 }
 
 void XsheetViewer::zoomOnFrame(int frame, int factor) {

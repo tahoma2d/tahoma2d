@@ -2143,8 +2143,8 @@ public:
           CellRange(CellPosition(rect.y0, rect.x0),
                     CellPosition(rect.y1 + 1, rect.x1 + 1)));
     else {
-      int newY0  = qMax(rect.y0, rect.y1);
-      int newY1  = qMin(rect.y0, rect.y1);
+      int newY0  = std::max(rect.y0, rect.y1);
+      int newY1  = std::min(rect.y0, rect.y1);
       screenCell = getViewer()->rangeToXYRect(CellRange(
           CellPosition(rect.x0, newY0), CellPosition(rect.x1 + 1, newY1 - 1)));
     }

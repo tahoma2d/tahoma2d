@@ -166,10 +166,10 @@ public:
   void drag(int row, int col, QMouseEvent *e) override {
     if (row < 0) row = 0;
     if (col < 0) col = 0;
-    int r0 = qMin(row, m_firstRow);
-    int r1 = qMax(row, m_firstRow);
-    int c0 = qMin(col, m_firstCol);
-    int c1 = qMax(col, m_firstCol);
+    int r0           = std::min(row, m_firstRow);
+    int r1           = std::max(row, m_firstRow);
+    int c0           = std::min(col, m_firstCol);
+    int c1           = std::max(col, m_firstCol);
     QRect selectedCells(c0, r0, c1 - c0 + 1, r1 - r0 + 1);
     m_sheet->selectCells(selectedCells);
   }
