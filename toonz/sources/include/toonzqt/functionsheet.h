@@ -48,6 +48,8 @@ class FunctionSheetColumnHeadViewer final : public Spreadsheet::ColumnPanel {
   QPoint m_dragStartPosition;
   FunctionTreeModel::Channel *m_draggingChannel;
 
+  int m_clickedColumn = -1;
+
 public:
   FunctionSheetColumnHeadViewer(FunctionSheet *parent);
 
