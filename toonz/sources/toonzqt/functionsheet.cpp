@@ -166,10 +166,10 @@ public:
   void drag(int row, int col, QMouseEvent *e) override {
     if (row < 0) row = 0;
     if (col < 0) col = 0;
-    int r0           = std::min(row, m_firstRow);
-    int r1           = std::max(row, m_firstRow);
-    int c0           = std::min(col, m_firstCol);
-    int c1           = std::max(col, m_firstCol);
+    int r0 = std::min(row, m_firstRow);
+    int r1 = std::max(row, m_firstRow);
+    int c0 = std::min(col, m_firstCol);
+    int c1 = std::max(col, m_firstCol);
     QRect selectedCells(c0, r0, c1 - c0 + 1, r1 - r0 + 1);
     m_sheet->selectCells(selectedCells);
   }
@@ -381,7 +381,6 @@ void FunctionSheetColumnHeadViewer::mouseMoveEvent(QMouseEvent *e) {
     Qt::DropAction dropAction = drag->exec();
     return;
   }
-
   // get the column under the cursor
   int col = getViewer()->xyToPosition(e->pos()).layer();
   FunctionTreeModel::Channel *channel = m_sheet->getChannel(col);
@@ -389,41 +388,80 @@ void FunctionSheetColumnHeadViewer::mouseMoveEvent(QMouseEvent *e) {
     setToolTip(QString(""));
   } else
     setToolTip(channel->getExprRefName());
+
+  // modify selected channel by left dragging
+  if (m_clickedColumn >= 0 && channel && e->buttons() & Qt::LeftButton) {
+    int fromC      = std::min(m_clickedColumn, col);
+    int toC        = std::max(m_clickedColumn, col);
+    int lastKeyPos = 0;
+    for (int c = fromC; c <= toC; c++) {
+      FunctionTreeModel::Channel *tmpChan = m_sheet->getChannel(c);
+      if (!tmpChan) continue;
+      std::set<double> frames;
+      tmpChan->getParam()->getKeyframes(frames);
+      if (!frames.empty())
+        lastKeyPos = std::max(lastKeyPos, (int)*frames.rbegin());
+    }
+    QRect rect(std::min(m_clickedColumn, col), 0,
+               std::abs(col - m_clickedColumn) + 1, lastKeyPos + 1);
+    getViewer()->selectCells(rect);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void FunctionSheetColumnHeadViewer::mousePressEvent(QMouseEvent *e) {
-  QPoint pos   = e->pos();
-  int currentC = getViewer()->xyToPosition(pos).layer();
-  FunctionTreeModel::Channel *channel;
-  for (int c = 0; c <= m_sheet->getChannelCount(); c++) {
-    channel = m_sheet->getChannel(c);
-    if (!channel || c != currentC) continue;
-    break;
+  QPoint pos                          = e->pos();
+  int currentC                        = getViewer()->xyToPosition(pos).layer();
+  FunctionTreeModel::Channel *channel = m_sheet->getChannel(currentC);
+  if (!channel) {
+    m_clickedColumn = -1;
+    return;
   }
-  if (channel && e->button() == Qt::MidButton) {
+
+  if (e->button() == Qt::MidButton) {
     m_draggingChannel   = channel;
     m_dragStartPosition = e->pos();
     return;
-  } else if (channel)
+  } else
     channel->setIsCurrent(true);
   m_draggingChannel = 0;
-  if (!channel) return;
 
-  // Open folder
-  FunctionTreeModel::ChannelGroup *channelGroup = channel->getChannelGroup();
-  if (!channelGroup->isOpen())
-    channelGroup->getModel()->setExpandedItem(channelGroup->createIndex(),
-                                              true);
-  // Select all segment
-  std::set<double> frames;
-  channel->getParam()->getKeyframes(frames);
+  if (e->button() == Qt::LeftButton) {
+    int lastKeyPos = 0;
+    // if the current selection does not contain the first cell in m_firstColumn
+    // then we assume that the selection has been modified and treat shift+click
+    // as normal click.
+    if (getViewer()->getSelectedCells().contains(m_clickedColumn, 0) &&
+        (e->modifiers() & Qt::ShiftModifier)) {
+      int fromC = std::min(m_clickedColumn, currentC);
+      int toC   = std::max(m_clickedColumn, currentC);
+      for (int c = fromC; c <= toC; c++) {
+        FunctionTreeModel::Channel *tmpChan = m_sheet->getChannel(c);
+        if (!tmpChan) continue;
+        std::set<double> frames;
+        tmpChan->getParam()->getKeyframes(frames);
+        if (!frames.empty())
+          lastKeyPos = std::max(lastKeyPos, (int)*frames.rbegin());
+      }
+    } else {
+      // Open folder
+      FunctionTreeModel::ChannelGroup *channelGroup =
+          channel->getChannelGroup();
+      if (!channelGroup->isOpen())
+        channelGroup->getModel()->setExpandedItem(channelGroup->createIndex(),
+                                                  true);
+      // Select all segment
+      std::set<double> frames;
+      channel->getParam()->getKeyframes(frames);
+      if (!frames.empty()) lastKeyPos = (int)*frames.rbegin();
+      m_clickedColumn = currentC;
+    }
+    QRect rect(std::min(m_clickedColumn, currentC), 0,
+               std::abs(currentC - m_clickedColumn) + 1, lastKeyPos + 1);
 
-  QRect rect(0, 0, 0, 0);
-  if (!frames.empty()) rect = QRect(currentC, 0, 1, (*frames.rbegin()) + 1);
-
-  getViewer()->selectCells(rect);
+    getViewer()->selectCells(rect);
+  }
 }
 
 //-----------------------------------------------------------------------------
