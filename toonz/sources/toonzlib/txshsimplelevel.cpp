@@ -1374,6 +1374,19 @@ void TXshSimpleLevel::save() {
 //-----------------------------------------------------------------------------
 
 static void saveBackup(TFilePath path) {
+  // The additional .bak extension keeps it from being detected as a sequence.
+  // If the original path is a sequence, find the individual files and back it
+  // up individually
+  if (path.isLevelName()) {
+    TFilePathSet files =
+        TSystem::readDirectory(path.getParentDir(), false, true);
+    for (TFilePathSet::iterator file = files.begin(); file != files.end();
+         file++) {
+      if (file->getLevelName() == path.getLevelName()) saveBackup(*file);
+    }
+    return;
+  }
+
   int totalBackups = Preferences::instance()->getBackupKeepCount();
   totalBackups -= 1;
   TFilePath backup = path.withType(path.getType() + ".bak");
@@ -1383,12 +1396,11 @@ static void saveBackup(TFilePath path) {
     std::string bakExt =
         ".bak" + (totalBackups > 0 ? std::to_string(totalBackups) : "");
     backup = path.withType(path.getType() + bakExt);
-    if (!TSystem::doesExistFileOrLevel(backup)) continue;
-    try {
-      if (TSystem::doesExistFileOrLevel(prevBackup))
-        TSystem::removeFileOrLevel_throw(prevBackup);
-      TSystem::copyFileOrLevel_throw(prevBackup, backup);
-    } catch (...) {
+    if (TSystem::doesExistFileOrLevel(backup)) {
+      try {
+        TSystem::copyFileOrLevel_throw(prevBackup, backup);
+      } catch (...) {
+      }
     }
     prevBackup = backup;
   }
