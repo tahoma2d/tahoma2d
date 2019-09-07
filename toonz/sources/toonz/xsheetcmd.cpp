@@ -363,7 +363,7 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
 
   int i, colsCount = columns.size();
   int startCol =
-      Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+      Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
   for (i = startCol; i != colsCount; ++i) {
     TStageObjectId objectId;
 
@@ -395,7 +395,7 @@ void GlobalKeyframeUndo::doRemoveGlobalKeyframes(
 
   int i, colsCount = columns.size();
   int startCol =
-      Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+      Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
   for (i = 0; i != colsCount; ++i) {
     TStageObjectId objectId;
 
@@ -1065,7 +1065,7 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
@@ -1127,7 +1127,7 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
@@ -1164,7 +1164,7 @@ public:
     TXsheet *xsh      = scene->getXsheet();
     for (int col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
@@ -1203,7 +1203,7 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
@@ -1244,7 +1244,7 @@ public:
     TStageObjectId objectId =
         TApp::instance()->getCurrentObject()->getObjectId();
     if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
-        Preferences::instance()->isXsheetCameraColumnEnabled())
+        Preferences::instance()->isXsheetCameraColumnVisible())
       currentColumn      = -1;
     TStageObject *pegbar = xsh->getStageObject(objectId);
     TStageObject::KeyframeMap keyframes;
@@ -1281,7 +1281,7 @@ public:
     TStageObjectId objectId =
         TApp::instance()->getCurrentObject()->getObjectId();
     if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
-        Preferences::instance()->isXsheetCameraColumnEnabled())
+        Preferences::instance()->isXsheetCameraColumnVisible())
       currentColumn      = -1;
     TStageObject *pegbar = xsh->getStageObject(objectId);
     TStageObject::KeyframeMap keyframes;
@@ -1318,7 +1318,7 @@ public:
     int col;
     for (col = -1; col <= currentColumn; col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);
@@ -1359,7 +1359,7 @@ public:
     TStageObjectId objectId =
         TApp::instance()->getCurrentObject()->getObjectId();
     if (objectId == TStageObjectId::CameraId(xsh->getCameraColumnIndex()) &&
-        Preferences::instance()->isXsheetCameraColumnEnabled())
+        Preferences::instance()->isXsheetCameraColumnVisible())
       currentColumn = -1;
 
     selection->selectNone();
@@ -1403,7 +1403,7 @@ public:
     int col;
     for (col = -1; col < xsh->getColumnCount(); col++) {
       TStageObjectId objectId;
-      if (col == -1 && Preferences::instance()->isXsheetCameraColumnEnabled())
+      if (col == -1 && Preferences::instance()->isXsheetCameraColumnVisible())
         objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       else
         objectId           = TStageObjectId::ColumnId(col);

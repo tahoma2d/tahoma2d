@@ -180,7 +180,7 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int row = pos.frame(), col = pos.layer();
     int firstCol =
-        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+        Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
     if (col < firstCol || (!getViewer()->orientation()->isVerticalTimeline() &&
                            col >= xsh->getColumnCount()))
       return;
@@ -1549,7 +1549,7 @@ public:
     int col      = pos.layer();
     if (!m_enabled) return;
     int firstCol =
-        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+        Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
     if (col < firstCol || (!getViewer()->orientation()->isVerticalTimeline() &&
                            col >= xsh->getColumnCount()))
       return;

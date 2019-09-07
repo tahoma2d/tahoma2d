@@ -53,7 +53,7 @@ void ColumnFan::update() {
 //-----------------------------------------------------------------------------
 
 int ColumnFan::layerAxisToCol(int coord) const {
-  if (Preferences::instance()->isXsheetCameraColumnEnabled()) {
+  if (Preferences::instance()->isXsheetCameraColumnVisible()) {
     int firstCol =
         m_cameraActive
             ? m_unfolded
@@ -75,7 +75,7 @@ int ColumnFan::layerAxisToCol(int coord) const {
 int ColumnFan::colToLayerAxis(int col) const {
   int m        = m_columns.size();
   int firstCol = 0;
-  if (Preferences::instance()->isXsheetCameraColumnEnabled()) {
+  if (Preferences::instance()->isXsheetCameraColumnVisible()) {
     if (col < -1) return -m_unfolded;
     if (col < 0) return 0;
     firstCol =
@@ -148,7 +148,7 @@ void ColumnFan::copyFoldedStateFrom(const ColumnFan &from) {
 void ColumnFan::saveData(
     TOStream &os) {  // only saves indices of folded columns
   int index, n = (int)m_columns.size();
-  if (Preferences::instance()->isXsheetCameraColumnEnabled() && !m_cameraActive)
+  if (Preferences::instance()->isXsheetCameraColumnVisible() && !m_cameraActive)
     os << -1 << 1;
   for (index = 0; index < n;) {
     while (index < n && m_columns[index].m_active) index++;

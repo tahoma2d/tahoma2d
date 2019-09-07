@@ -2291,7 +2291,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
       }
     } else if (m_doOnRelease == ToggleAllLock) {
       int startCol =
-          Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+          Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
       for (col = startCol; col < totcols; col++) {
         TXshColumn *column = xsh->getColumn(col);
         if (!xsh->isColumnEmpty(col)) {
@@ -2440,14 +2440,18 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     }
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_FoldColumns));
-	QAction *cameraToggle = cmdManager->getAction(MI_ToggleXsheetCameraColumn);
-	bool cameraVisible = Preferences::instance()->isXsheetCameraColumnEnabled();
-	if (cameraVisible)
-		cameraToggle->setText(tr("Hide Camera Column"));
-	else
-		cameraToggle->setText(tr("Show Camera Column"));
-	menu.addAction(cameraToggle);
-	menu.addSeparator();
+    if (Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()) {
+      QAction *cameraToggle =
+          cmdManager->getAction(MI_ToggleXsheetCameraColumn);
+      bool cameraVisible =
+          Preferences::instance()->isXsheetCameraColumnVisible();
+      if (cameraVisible)
+        cameraToggle->setText(tr("Hide Camera Column"));
+      else
+        cameraToggle->setText(tr("Show Camera Column"));
+      menu.addAction(cameraToggle);
+    }
+    menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
 
     // force the selected cells placed in n-steps

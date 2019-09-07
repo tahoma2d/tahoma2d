@@ -469,7 +469,13 @@ public:
   }
 
   void enableXsheetCameraColumn(bool on);
-  bool isXsheetCameraColumnEnabled() const { return m_showXsheetCameraColumn; }
+  bool isXsheetCameraColumnEnabled() const {
+    return m_showXsheetCameraColumn;
+  }
+
+  bool isXsheetCameraColumnVisible() const {
+	  return m_showXsheetCameraColumn && m_showKeyframesOnXsheetCellArea;
+  }
 
   // Animation  tab
 

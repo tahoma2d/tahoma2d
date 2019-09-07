@@ -381,7 +381,7 @@ void PreferencesPopup::onInterfaceFontChanged(int index) {
   QString oldTypeface = m_interfaceFontStyle->currentText();
   rebuilldFontStyleList();
   if (!oldTypeface.isEmpty()) {
-    int newIndex = m_interfaceFontStyle->findText(oldTypeface);
+    int newIndex               = m_interfaceFontStyle->findText(oldTypeface);
     if (newIndex < 0) newIndex = 0;
     m_interfaceFontStyle->setCurrentIndex(newIndex);
   }
@@ -504,7 +504,7 @@ void PreferencesPopup::onTranspCheckDataChanged(const TPixel32 &,
 
 void PreferencesPopup::onOnionDataChanged(const TPixel32 &, bool isDragging) {
   if (isDragging) return;
-  bool inksOnly = false;
+  bool inksOnly            = false;
   if (m_inksOnly) inksOnly = m_inksOnly->isChecked();
   m_pref->setOnionData(m_frontOnionColor->getColor(),
                        m_backOnionColor->getColor(), inksOnly);
@@ -517,7 +517,7 @@ void PreferencesPopup::onOnionDataChanged(const TPixel32 &, bool isDragging) {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onOnionDataChanged(int) {
-  bool inksOnly = false;
+  bool inksOnly            = false;
   if (m_inksOnly) inksOnly = m_inksOnly->isChecked();
   m_pref->setOnionData(m_frontOnionColor->getColor(),
                        m_backOnionColor->getColor(), inksOnly);
@@ -874,8 +874,9 @@ void PreferencesPopup::onShowFrameNumberWithLettersChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onShowKeyframesOnCellAreaChanged(int index) {
-  m_pref->enableShowKeyframesOnXsheetCellArea(index == Qt::Checked);
+void PreferencesPopup::onShowKeyframesOnCellAreaChanged(bool checked) {
+  m_pref->enableShowKeyframesOnXsheetCellArea(checked);
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("XsheetCamera");
 }
 
 //-----------------------------------------------------------------------------
@@ -1512,8 +1513,9 @@ PreferencesPopup::PreferencesPopup()
   m_cellsDragBehaviour = new QComboBox();
   CheckBox *ignoreAlphaonColumn1CB =
       new CheckBox(tr("Ignore Alpha Channel on Levels in Column 1"), this);
-  CheckBox *showKeyframesOnCellAreaCB =
-      new CheckBox(tr("Show Keyframes on Cell Area"), this);
+  m_showKeyframesOnCellAreaCB =
+      new QGroupBox(tr("Show Keyframes on Cell Area"), this);
+  m_showKeyframesOnCellAreaCB->setCheckable(true);
   CheckBox *useArrowKeyToShiftCellSelectionCB =
       new CheckBox(tr("Use Arrow Key to Shift Cell Selection"), this);
   CheckBox *inputCellsWithoutDoubleClickingCB =
@@ -1911,7 +1913,7 @@ PreferencesPopup::PreferencesPopup()
   m_cellsDragBehaviour->addItem(tr("Cells and Column Data"));
   m_cellsDragBehaviour->setCurrentIndex(m_pref->getDragCellsBehaviour());
   ignoreAlphaonColumn1CB->setChecked(m_pref->isIgnoreAlphaonColumn1Enabled());
-  showKeyframesOnCellAreaCB->setChecked(
+  m_showKeyframesOnCellAreaCB->setChecked(
       m_pref->isShowKeyframesOnXsheetCellAreaEnabled());
   useArrowKeyToShiftCellSelectionCB->setChecked(
       m_pref->isUseArrowKeyToShiftCellSelectionEnabled());
@@ -2529,7 +2531,16 @@ PreferencesPopup::PreferencesPopup()
                                   Qt::AlignLeft | Qt::AlignVCenter);
 
         xsheetFrameLay->addWidget(ignoreAlphaonColumn1CB, 4, 0, 1, 2);
-        xsheetFrameLay->addWidget(showKeyframesOnCellAreaCB, 5, 0, 1, 2);
+
+        QVBoxLayout *showKeyframesOnCellAreaCBLay = new QVBoxLayout();
+        showKeyframesOnCellAreaCBLay->setMargin(11);
+        {
+          showKeyframesOnCellAreaCBLay->addWidget(
+              showXsheetCameraCB, 0, Qt::AlignLeft | Qt::AlignVCenter);
+        }
+        m_showKeyframesOnCellAreaCB->setLayout(showKeyframesOnCellAreaCBLay);
+
+        xsheetFrameLay->addWidget(m_showKeyframesOnCellAreaCB, 5, 0, 1, 2);
         xsheetFrameLay->addWidget(useArrowKeyToShiftCellSelectionCB, 6, 0, 1,
                                   2);
         xsheetFrameLay->addWidget(inputCellsWithoutDoubleClickingCB, 7, 0, 1,
@@ -2553,7 +2564,6 @@ PreferencesPopup::PreferencesPopup()
         xsheetFrameLay->addWidget(new QLabel(tr("Current Column Color:")), 15,
                                   0, Qt::AlignRight | Qt::AlignVCenter);
         xsheetFrameLay->addWidget(m_currentColumnColor, 15, 1);
-        xsheetFrameLay->addWidget(showXsheetCameraCB, 16, 0, 1, 2);
       }
       xsheetFrameLay->setColumnStretch(0, 0);
       xsheetFrameLay->setColumnStretch(1, 0);
@@ -2994,8 +3004,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onXsheetStepChanged()));
   ret = ret && connect(m_cellsDragBehaviour, SIGNAL(currentIndexChanged(int)),
                        SLOT(onDragCellsBehaviourChanged(int)));
-  ret = ret && connect(showKeyframesOnCellAreaCB, SIGNAL(stateChanged(int)),
-                       this, SLOT(onShowKeyframesOnCellAreaChanged(int)));
+  ret = ret && connect(m_showKeyframesOnCellAreaCB, SIGNAL(clicked(bool)), this,
+                       SLOT(onShowKeyframesOnCellAreaChanged(bool)));
   ret = ret &&
         connect(useArrowKeyToShiftCellSelectionCB, SIGNAL(stateChanged(int)),
                 SLOT(onUseArrowKeyToShiftCellSelectionClicked(int)));

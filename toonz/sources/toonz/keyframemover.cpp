@@ -280,7 +280,7 @@ KeyframeMoverTool::KeyframeMoverTool(XsheetViewer *viewer, bool justMovement)
     , m_firstKeyframeMovement(false)
     , m_justMovement(justMovement) {
   m_mover    = new KeyframeMover();
-  m_firstCol = Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+  m_firstCol = Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ void KeyframeMoverTool::shiftSelect(int row, int col) {
   TXsheet *xsh = getViewer()->getXsheet();
   int r0 = 0, c0 = 0, r1 = -1, c1 = -1;
   int c = 0;
-  if (Preferences::instance()->isXsheetCameraColumnEnabled()) {
+  if (Preferences::instance()->isXsheetCameraColumnVisible()) {
     c0--;
     c1--;
     c--;

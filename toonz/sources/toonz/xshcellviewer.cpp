@@ -964,7 +964,7 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
     CellPosition offset(offset * stride);
     int movedR0 = std::max(0, r0 + offset.frame());
     int firstCol =
-        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+        Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
     int movedC0   = std::max(firstCol, c0 + offset.layer());
     int diffFrame = movedR0 - r0;
     int diffLayer = movedC0 - c0;

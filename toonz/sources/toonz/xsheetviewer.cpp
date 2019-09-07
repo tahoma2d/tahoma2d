@@ -664,7 +664,7 @@ bool XsheetViewer::refreshContentSize(int dx, int dy) {
     contentSize = positionToXY(CellPosition(frameCount + 1, columnCount + 1));
   else {
     int firstCol =
-        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+        Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
     contentSize = positionToXY(CellPosition(frameCount + 1, firstCol));
 
     ColumnFan *fan = xsh->getColumnFan(m_orientation);
@@ -718,7 +718,7 @@ void XsheetViewer::updateAreeSize() {
           CellPosition(xsh->getFrameCount() + 1, xsh->getColumnCount() + 1));
     else {
       int firstCol =
-          Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+          Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
       areaFilled =
           positionToXY(CellPosition(xsh->getFrameCount() + 1, firstCol));
 
@@ -1196,7 +1196,7 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
   TCellSelection *cellSel =
       dynamic_cast<TCellSelection *>(TSelection::getCurrent());
   int firstCol =
-      Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+      Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
   // Use arrow keys to shift the cell selection. Ctrl + arrow keys to resize the
   // selection range.
   if (Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled() &&

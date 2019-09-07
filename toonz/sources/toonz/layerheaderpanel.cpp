@@ -222,7 +222,7 @@ void LayerHeaderPanel::mouseReleaseEvent(QMouseEvent *event) {
 
   if (m_doOnRelease != 0 && totcols > 0) {
     int startCol =
-        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+        Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
     for (col = startCol; col < totcols; col++) {
       if (startCol < 0 || !xsh->isColumnEmpty(col)) {
         TXshColumn *column = xsh->getColumn(col);

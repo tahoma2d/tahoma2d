@@ -90,7 +90,8 @@ private:
   DVGui::FileField *m_ffmpegPathFileFld, *m_fastRenderPathFileField,
       *m_lutPathFileField;
 
-  QGroupBox *m_autoSaveGroup, *m_showXSheetToolbar, *m_colorCalibration;
+  QGroupBox *m_autoSaveGroup, *m_showXSheetToolbar, *m_colorCalibration,
+      *m_showKeyframesOnCellAreaCB;
 
   DVGui::ColorField *m_currentColumnColor;
 
@@ -193,7 +194,7 @@ private slots:
   void onRemoveSceneNumberFromLoadedLevelNameChanged(int index);
   void onShowRasterImageDarkenBlendedInViewerChanged(int index);
   void onShowFrameNumberWithLettersChanged(int index);
-  void onShowKeyframesOnCellAreaChanged(int);
+  void onShowKeyframesOnCellAreaChanged(bool);
   void onFfmpegPathChanged();
   void onFfmpegTimeoutChanged();
   void onFastRenderPathChanged();
