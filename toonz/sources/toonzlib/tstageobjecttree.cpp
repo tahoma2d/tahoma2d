@@ -13,6 +13,8 @@
 #include "toonz/txshcell.h"
 
 #include "toonz/txsheetexpr.h"
+#include "toonz/columnfan.h"
+#include "../include/orientation.h"
 
 using namespace TSyntax;
 
@@ -396,9 +398,13 @@ void TStageObjectTree::loadData(TIStream &is, TXsheet *xsh) {
         m_imp->m_currentPreviewCameraId = id;
       else if (id.isCamera() && is.getTagAttribute("activeboth") == "yes")
         m_imp->m_currentPreviewCameraId = m_imp->m_currentCameraId = id;
-      
-	  if (id.isCamera() && is.getTagAttribute("columnLocked") == "yes")
-        xsh->setCameraColumnLocked(true);
+
+      if (id.isCamera()) {
+        if (is.getTagAttribute("columnLocked") == "yes")
+          xsh->setCameraColumnLocked(true);
+        if (is.getTagAttribute("columnFolded") == "yes")
+          xsh->getColumnFan(Orientations::topToBottom())->deactivate(-1);
+      }
 
       TStageObject *pegbar =
           dynamic_cast<TStageObject *>(getStageObject(id, true));
@@ -453,10 +459,14 @@ void TStageObjectTree::saveData(TOStream &os, int occupiedColumnCount,
     else if (objectId == m_imp->m_currentPreviewCameraId)
       attr["activepreview"] = "yes";
 
+    // Since we don't have a real column and we want the files to open in
+    // older versions, we'll store column settings on the camera pegbar
     if ((objectId == m_imp->m_currentCameraId ||
-         objectId == m_imp->m_currentPreviewCameraId) &&
-        xsh->isCameraColumnLocked())
-      attr["columnLocked"] = "yes";
+         objectId == m_imp->m_currentPreviewCameraId)) {
+      if (xsh->isCameraColumnLocked()) attr["columnLocked"] = "yes";
+      if (!xsh->getColumnFan(Orientations::topToBottom())->isActive(-1))
+        attr["columnFolded"] = "yes";
+    }
 
     os.openChild("pegbar", attr);
 

@@ -148,8 +148,6 @@ void ColumnFan::copyFoldedStateFrom(const ColumnFan &from) {
 void ColumnFan::saveData(
     TOStream &os) {  // only saves indices of folded columns
   int index, n = (int)m_columns.size();
-  if (Preferences::instance()->isXsheetCameraColumnVisible() && !m_cameraActive)
-    os << -1 << 1;
   for (index = 0; index < n;) {
     while (index < n && m_columns[index].m_active) index++;
     if (index < n) {
