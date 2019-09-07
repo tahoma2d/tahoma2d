@@ -553,13 +553,9 @@ ColumnArea::DrawHeader::DrawHeader(ColumnArea *nArea, QPainter &nP, int nCol)
   o        = m_viewer->orientation();
   app      = TApp::instance();
   xsh      = m_viewer->getXsheet();
-  column   = col >= 0 ? xsh->getColumn(col) : 0;
-  isEmpty  = col >= 0 && xsh->isColumnEmpty(col);
+  column   = xsh->getColumn(col);
+  isEmpty  = col >= 0 ? xsh->isColumnEmpty(col) : false;
 
-  if (col < 0) {
-    column  = TXshColumn::createEmpty(0);
-    isEmpty = false;
-  }
   TStageObjectId currentColumnId = app->getCurrentObject()->getObjectId();
 
   // check if the column is current
@@ -784,11 +780,6 @@ void ColumnArea::DrawHeader::drawLock() const {
 
   // lock button
   p.setPen(m_viewer->getVerticalLineColor());
-
-  if (col < 0) {
-    if (o->flag(PredefinedFlag::LOCK_AREA_BORDER)) p.drawRect(lockModeRect);
-    return;
-  }
 
   p.fillRect(lockModeRect, bgColor);
   if (o->flag(PredefinedFlag::LOCK_AREA_BORDER)) p.drawRect(lockModeRect);
@@ -2001,8 +1992,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
       // lock button
       else if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell) &&
                event->button() == Qt::LeftButton) {
-        if (m_col >= 0)
-          m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
+        m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
       }
       // preview button
       else if (o->rect(PredefinedRect::EYE_AREA).contains(mouseInCell) &&
@@ -2300,7 +2290,9 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         app->getCurrentXsheet()->notifyXsheetSoundChanged();
       }
     } else if (m_doOnRelease == ToggleAllLock) {
-      for (col = 0; col < totcols; col++) {
+      int startCol =
+          Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+      for (col = startCol; col < totcols; col++) {
         TXshColumn *column = xsh->getColumn(col);
         if (!xsh->isColumnEmpty(col)) {
           column->lock(!column->isLocked());
@@ -2448,14 +2440,14 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     }
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_FoldColumns));
-    QAction *cameraToggle = cmdManager->getAction(MI_ToggleXsheetCameraColumn);
-    bool cameraVisible = Preferences::instance()->isXsheetCameraColumnEnabled();
-    if (cameraVisible)
-      cameraToggle->setText(tr("Hide Camera Column"));
-    else
-      cameraToggle->setText(tr("Show Camera Column"));
-    menu.addAction(cameraToggle);
-    menu.addSeparator();
+	QAction *cameraToggle = cmdManager->getAction(MI_ToggleXsheetCameraColumn);
+	bool cameraVisible = Preferences::instance()->isXsheetCameraColumnEnabled();
+	if (cameraVisible)
+		cameraToggle->setText(tr("Hide Camera Column"));
+	else
+		cameraToggle->setText(tr("Show Camera Column"));
+	menu.addAction(cameraToggle);
+	menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
 
     // force the selected cells placed in n-steps

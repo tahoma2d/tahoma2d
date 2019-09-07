@@ -372,7 +372,7 @@ void TStageObjectTree::swapColumns(int i, int j) {
 
 //-----------------------------------------------------------------------------
 
-void TStageObjectTree::loadData(TIStream &is) {
+void TStageObjectTree::loadData(TIStream &is, TXsheet *xsh) {
   std::string tagName;
   while (is.matchTag(tagName)) {
     if (tagName == "splines") {
@@ -396,6 +396,9 @@ void TStageObjectTree::loadData(TIStream &is) {
         m_imp->m_currentPreviewCameraId = id;
       else if (id.isCamera() && is.getTagAttribute("activeboth") == "yes")
         m_imp->m_currentPreviewCameraId = m_imp->m_currentCameraId = id;
+      
+	  if (id.isCamera() && is.getTagAttribute("columnLocked") == "yes")
+        xsh->setCameraColumnLocked(true);
 
       TStageObject *pegbar =
           dynamic_cast<TStageObject *>(getStageObject(id, true));
@@ -421,7 +424,8 @@ void TStageObjectTree::loadData(TIStream &is) {
 
 //-----------------------------------------------------------------------------
 
-void TStageObjectTree::saveData(TOStream &os, int occupiedColumnCount) {
+void TStageObjectTree::saveData(TOStream &os, int occupiedColumnCount,
+                                TXsheet *xsh) {
   std::map<TStageObjectId, TStageObject *>::iterator it;
   std::map<TStageObjectId, TStageObject *> &pegbars = m_imp->m_pegbarTable;
   if (!m_imp->m_splines.empty()) {
@@ -448,6 +452,11 @@ void TStageObjectTree::saveData(TOStream &os, int occupiedColumnCount) {
       attr["active"] = "yes";
     else if (objectId == m_imp->m_currentPreviewCameraId)
       attr["activepreview"] = "yes";
+
+    if ((objectId == m_imp->m_currentCameraId ||
+         objectId == m_imp->m_currentPreviewCameraId) &&
+        xsh->isCameraColumnLocked())
+      attr["columnLocked"] = "yes";
 
     os.openChild("pegbar", attr);
 

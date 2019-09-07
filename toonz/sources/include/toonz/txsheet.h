@@ -157,6 +157,7 @@ private:
   SoundProperties *m_soundProperties;
 
   int m_cameraColumnIndex;
+  TXshColumn *m_cameraColumn;
 
   DECLARE_CLASS_CODE
 
@@ -561,6 +562,9 @@ in TXsheetImp.
 
   void setCameraColumnIndex(int index) { m_cameraColumnIndex = index; }
   int getCameraColumnIndex() { return m_cameraColumnIndex; }
+
+  void setCameraColumnLocked(bool locked) { m_cameraColumn->lock(locked); }
+  bool isCameraColumnLocked() { return m_cameraColumn->isLocked(); }
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

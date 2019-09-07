@@ -192,6 +192,11 @@ TXsheet::TXsheet()
   m_imp->m_handleManager = new XshHandleManager(this);
   m_imp->m_pegTree->setHandleManager(m_imp->m_handleManager);
   m_imp->m_pegTree->createGrammar(this);
+
+  // Dummy camera column
+  m_cameraColumn          = TXshColumn::createEmpty(0);
+  m_cameraColumn->m_index = -1;
+  m_cameraColumn->setXsheet(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -774,7 +779,7 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allIncreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allIncreaseIsEqual; c++)
-    allIncreaseIsEqual = allIncreaseIsEqual && ends[c] == ends[c + 1];
+    allIncreaseIsEqual       = allIncreaseIsEqual && ends[c] == ends[c + 1];
   if (allIncreaseIsEqual) r1 = ends[0];
 }
 
@@ -808,7 +813,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allDecreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allDecreaseIsEqual; c++)
-    allDecreaseIsEqual = allDecreaseIsEqual && ends[c] == ends[c + 1];
+    allDecreaseIsEqual       = allDecreaseIsEqual && ends[c] == ends[c + 1];
   if (allDecreaseIsEqual) r1 = ends[0];
 }
 
@@ -1208,7 +1213,7 @@ void TXsheet::loadData(TIStream &is) {
       }
     } else if (tagName == "pegbars") {
       TPersist *p = m_imp->m_pegTree;
-      is >> *p;
+      m_imp->m_pegTree->loadData(is, this);
     } else if (tagName == "fxnodes") {
       m_imp->m_fxDag->loadData(is);
       std::vector<TFx *> fxs;
@@ -1263,7 +1268,7 @@ void TXsheet::saveData(TOStream &os) {
   }
   os.closeChild();
   os.openChild("pegbars");
-  m_imp->m_pegTree->saveData(os, getFirstFreeColumnIndex());
+  m_imp->m_pegTree->saveData(os, getFirstFreeColumnIndex(), this);
   // os << *(m_imp->m_pegTree);
   os.closeChild();
 
@@ -1369,6 +1374,7 @@ void TXsheet::moveColumn(int srcIndex, int dstIndex) {
 //-----------------------------------------------------------------------------
 
 TXshColumn *TXsheet::getColumn(int col) const {
+  if (col < 0) return m_cameraColumn;
   return m_imp->m_columnSet.getColumn(col).getPointer();
 }
 

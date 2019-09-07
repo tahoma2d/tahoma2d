@@ -36,6 +36,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/tstageobjectspline.h"
 #include "toonz/fxcommand.h"
+#include "toonz/preferences.h"
 
 // TnzBase includes
 #include "tfx.h"
@@ -1249,9 +1250,12 @@ public:
     TTool::Viewer *viewer = tool ? tool->getViewer() : nullptr;
     bool viewer_changed   = false;
 
-    for (int i = 0; i < xsh->getColumnCount(); i++) {
+    int startCol =
+        Preferences::instance()->isXsheetCameraColumnEnabled() ? -1 : 0;
+
+    for (int i = startCol; i < xsh->getColumnCount(); i++) {
       /*- 空のカラムの場合は飛ばす -*/
-      if (xsh->isColumnEmpty(i)) continue;
+      if (i >= 0 && xsh->isColumnEmpty(i)) continue;
       /*- カラムが取得できなかったら飛ばす -*/
       TXshColumn *column = xsh->getColumn(i);
       if (!column) continue;

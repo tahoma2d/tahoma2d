@@ -118,9 +118,7 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     if (column && column->getSoundColumn()) continue;
     TStageObject *pegbar = xsh->getStageObject(
         col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
-    if (pegbar->getId().isColumn() && xsh->getColumn(col) &&
-        xsh->getColumn(col)->isLocked())
-      continue;
+    if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;
     keyFrameChanged = true;
     assert(pegbar);
 

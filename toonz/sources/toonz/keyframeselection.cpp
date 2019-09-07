@@ -104,9 +104,7 @@ bool deleteKeyframesWithoutUndo(
     int col              = it->second;
     TStageObject *pegbar = xsh->getStageObject(
         col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
-    if (pegbar->getId().isColumn() && xsh->getColumn(col) &&
-        xsh->getColumn(col)->isLocked())
-      continue;
+    if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;
     areAllColumnLocked = false;
     assert(pegbar);
     pegbar->removeKeyframeWithoutUndo(row);
@@ -255,10 +253,10 @@ void TKeyframeSelection::unselectLockedColumn() {
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
   std::set<Position> positions;
   std::set<Position>::iterator it;
+
   for (it = m_positions.begin(); it != m_positions.end(); ++it) {
     int col = it->second;
-    if (col >= 0 && xsh->getColumn(col) && xsh->getColumn(col)->isLocked())
-      continue;
+    if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;
     positions.insert(*it);
   }
   m_positions.swap(positions);
