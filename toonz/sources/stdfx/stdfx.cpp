@@ -174,6 +174,8 @@ class MultiLinearGradientFx final : public TStandardZeraryFx {
   TDoubleParamP m_wave_phase;
   TSpectrumParamP m_colors;
 
+  TIntEnumParamP m_curveType;
+
 public:
   MultiLinearGradientFx()
       : m_period(100)          // args, "Period")
@@ -182,8 +184,12 @@ public:
       , m_wave_amplitude(0.0)  // args, "Cycle")
       , m_wave_freq(0.0)       // args, "Cycle")
       , m_wave_phase(0.0)      // args, "Cycle")
-  //    , m_colors (0) //args, "Colors")
-  {
+                               //    , m_colors (0) //args, "Colors")
+      , m_curveType(new TIntEnumParam(EaseInOut, "Ease In-Out")) {
+    m_curveType->addItem(Linear, "Linear");
+    m_curveType->addItem(EaseIn, "Ease In");
+    m_curveType->addItem(EaseOut, "Ease Out");
+
     std::vector<TSpectrum::ColorKey> colors = {
         TSpectrum::ColorKey(0, TPixel32::White),
         TSpectrum::ColorKey(0.33, TPixel32::Yellow),
@@ -198,6 +204,8 @@ public:
     bindParam(this, "wave_frequency", m_wave_freq);
     bindParam(this, "wave_phase", m_wave_phase);
     bindParam(this, "colors", m_colors);
+    bindParam(this, "curveType", m_curveType);
+
     m_period->setValueRange(0, (std::numeric_limits<double>::max)());
     m_cycle->setValueRange(0, (std::numeric_limits<double>::max)());
     m_wave_amplitude->setValueRange(0, (std::numeric_limits<double>::max)());
@@ -238,6 +246,8 @@ class LinearGradientFx final : public TStandardZeraryFx {
   TPixelParamP m_color1;
   TPixelParamP m_color2;
 
+  TIntEnumParamP m_curveType;
+
 public:
   LinearGradientFx()
       : m_period(100)          // args, "Period")
@@ -246,14 +256,20 @@ public:
       , m_wave_phase(0.0)      // args, "Cycle")
       , m_color1(TPixel32::Black)
       , m_color2(TPixel32::White)
-  //    , m_colors (0) //args, "Colors")
-  {
+      //    , m_colors (0) //args, "Colors")
+      , m_curveType(new TIntEnumParam(EaseInOut, "Ease In-Out")) {
+    m_curveType->addItem(Linear, "Linear");
+    m_curveType->addItem(EaseIn, "Ease In");
+    m_curveType->addItem(EaseOut, "Ease Out");
+
     bindParam(this, "period", m_period);
     bindParam(this, "wave_amplitude", m_wave_amplitude);
     bindParam(this, "wave_frequency", m_wave_freq);
     bindParam(this, "wave_phase", m_wave_phase);
     bindParam(this, "color1", m_color1);
     bindParam(this, "color2", m_color2);
+    bindParam(this, "curveType", m_curveType);
+
     m_period->setValueRange(0, std::numeric_limits<double>::max());
     m_wave_amplitude->setValueRange(0, std::numeric_limits<double>::max());
     m_period->setMeasureName("fxLength");
@@ -346,7 +362,8 @@ void LinearGradientFx::doCompute(TTile &tile, double frame,
   TAffine aff      = ri.m_affine.inv();
   TPointD posTrasf = aff * tile.m_pos;
   multiLinear(tile.getRaster(), posTrasf, m_colors, period, count, w_amplitude,
-              w_freq, w_phase, cycle, aff, frame);
+              w_freq, w_phase, cycle, aff, frame,
+              (GradientCurveType)m_curveType->getValue());
   /*
   if (TRaster32P ras32 = tile.getRaster())
 doComputeT<TPixel32>(
@@ -380,7 +397,8 @@ void MultiLinearGradientFx::doCompute(TTile &tile, double frame,
   TAffine aff      = ri.m_affine.inv();
   TPointD posTrasf = aff * tile.m_pos;
   multiLinear(tile.getRaster(), posTrasf, m_colors, period, count, w_amplitude,
-              w_freq, w_phase, cycle, aff, frame);
+              w_freq, w_phase, cycle, aff, frame,
+              (GradientCurveType)m_curveType->getValue());
   /*
   if (TRaster32P ras32 = tile.getRaster())
 doComputeT<TPixel32>(
@@ -406,20 +424,30 @@ class RadialGradientFx final : public TStandardZeraryFx {
   TPixelParamP m_color1;
   TPixelParamP m_color2;
 
+  TIntEnumParamP m_curveType;
+
 public:
   RadialGradientFx()
       : m_period(100.0)
       , m_innerperiod(0.0)  // args, "Period")
       , m_color1(TPixel32::White)
       , m_color2(TPixel32::Transparent)
-  //    , m_colors (0) //args, "Colors")
-  {
+      //    , m_colors (0) //args, "Colors")
+      , m_curveType(new TIntEnumParam()) {
+    m_curveType->addItem(EaseInOut, "Ease In-Out");
+    m_curveType->addItem(Linear, "Linear");
+    m_curveType->addItem(EaseIn, "Ease In");
+    m_curveType->addItem(EaseOut, "Ease Out");
+    m_curveType->setDefaultValue(Linear);
+    m_curveType->setValue(Linear);
+
     m_period->setMeasureName("fxLength");
     m_innerperiod->setMeasureName("fxLength");
     bindParam(this, "period", m_period);
     bindParam(this, "innerperiod", m_innerperiod);
     bindParam(this, "color1", m_color1);
     bindParam(this, "color2", m_color2);
+    bindParam(this, "curveType", m_curveType);
     m_period->setValueRange(0.0, std::numeric_limits<double>::max());
     m_innerperiod->setValueRange(0.0, std::numeric_limits<double>::max());
   }
@@ -458,13 +486,22 @@ class MultiRadialGradientFx final : public TStandardZeraryFx {
   TDoubleParamP m_cycle;
   TSpectrumParamP m_colors;
 
+  TIntEnumParamP m_curveType;
+
 public:
   MultiRadialGradientFx()
       : m_period(100)  // args, "Period")
       , m_count(2)     // args, "Count")
       , m_cycle(0.0)   // args, "Count")
-  //    , m_colors (0) //args, "Colors")
-  {
+                       //    , m_colors (0) //args, "Colors")
+      , m_curveType(new TIntEnumParam()) {
+    m_curveType->addItem(EaseInOut, "Ease In-Out");
+    m_curveType->addItem(Linear, "Linear");
+    m_curveType->addItem(EaseIn, "Ease In");
+    m_curveType->addItem(EaseOut, "Ease Out");
+    m_curveType->setDefaultValue(Linear);
+    m_curveType->setValue(Linear);
+
     m_period->setMeasureName("fxLength");
     std::vector<TSpectrum::ColorKey> colors = {
         TSpectrum::ColorKey(0, TPixel32::White),
@@ -477,6 +514,7 @@ public:
     bindParam(this, "count", m_count);
     bindParam(this, "cycle", m_cycle);
     bindParam(this, "colors", m_colors);
+    bindParam(this, "curveType", m_curveType);
     m_period->setValueRange(0, (std::numeric_limits<double>::max)());
     m_cycle->setValueRange(0, (std::numeric_limits<double>::max)());
     m_count->setValueRange(0, (std::numeric_limits<double>::max)());
@@ -517,7 +555,7 @@ void MultiRadialGradientFx::doCompute(TTile &tile, double frame,
   TAffine aff      = ri.m_affine.inv();
   TPointD posTrasf = aff * tile.m_pos;
   multiRadial(tile.getRaster(), posTrasf, m_colors, period, count, cycle, aff,
-              frame);
+              frame, 0.0, (GradientCurveType)m_curveType->getValue());
 }
 
 //==================================================================
@@ -536,13 +574,12 @@ void RadialGradientFx::doCompute(TTile &tile, double frame,
     inner = 1 - TConsts::epsilon;
   std::vector<TSpectrum::ColorKey> colors = {
       TSpectrum::ColorKey(0, m_color1->getValue(frame)),
-      TSpectrum::ColorKey(inner, m_color1->getValue(frame)),
       TSpectrum::ColorKey(1, m_color2->getValue(frame))};
   TSpectrumParamP m_colors = TSpectrumParamP(colors);
   TAffine aff              = ri.m_affine.inv();
   TPointD posTrasf         = aff * tile.m_pos;
   multiRadial(tile.getRaster(), posTrasf, m_colors, period, count, cycle, aff,
-              frame);
+              frame, inner, (GradientCurveType)m_curveType->getValue());
 }
 
 //------------------------------------------------------------------

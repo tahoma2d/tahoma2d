@@ -882,10 +882,10 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
   if (!m_isHistogramEnable) return;
   if (!m_histogramPopup->isVisible()) return;
 
-  QPoint curPos = event->pos() * getDevPixRatio();
+  QPointF curPos = event->localPos() * getDevPixRatio();
 
   // avoid to pick outside of the flip
-  if ((!m_image) || !rect().contains(curPos)) {
+  if ((!m_image) || !rect().contains(curPos.toPoint())) {
     // throw transparent color
     m_histogramPopup->updateInfo(TPixel32::Transparent, TPointD(-1, -1));
     return;
@@ -893,21 +893,26 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
 
   StylePicker picker(m_image);
 
-  TPoint mousePos = TPoint(curPos.x(), height() - 1 - curPos.y());
-  TRectD area     = TRectD(mousePos.x, mousePos.y, mousePos.x, mousePos.y);
+  TPointD mousePos = TPointD(curPos.x(), height() - 1 - curPos.y());
+  TRectD area      = TRectD(mousePos.x, mousePos.y, mousePos.x, mousePos.y);
 
-  if (m_lutCalibrator && m_lutCalibrator->isValid()) m_fbo->bind();
+  TPointD pos =
+      getViewAff().inv() * TPointD(curPos.x() - (qreal)(width()) / 2,
+                                   -curPos.y() + (qreal)(height()) / 2);
 
-  const TPixel32 pix = picker.pickColor(area);
+  TRectD imgRect = (m_image->raster())
+                       ? convert(TRect(m_image->raster()->getSize()))
+                       : m_image->getBBox();
+  TPointD imagePos =
+      TPointD(0.5 * imgRect.getLx() + pos.x, 0.5 * imgRect.getLy() + pos.y);
 
-  if (m_lutCalibrator && m_lutCalibrator->isValid()) m_fbo->release();
+  TPixel32 pix;
+  if (m_lutCalibrator && m_lutCalibrator->isValid())
+    pix = picker.pickColor(pos + TPointD(-0.5, -0.5));
+  else
+    pix = picker.pickColor(area);
 
-  QPoint viewP = mapFrom(this, curPos);
-  TPointD pos  = getViewAff().inv() *
-                TPointD(viewP.x() - width() / 2, -viewP.y() + height() / 2);
-  TPointD imagePos = TPointD(0.5 * m_image->getBBox().getLx() + pos.x,
-                             0.5 * m_image->getBBox().getLy() + pos.y);
-  if (m_image->getBBox().contains(imagePos)) {
+  if (!m_image->raster() || imgRect.contains(imagePos)) {
     // throw the picked color to the histogram
     m_histogramPopup->updateInfo(pix, imagePos);
     // throw it to the style editor as well
@@ -923,6 +928,14 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
  * specified rectangle
  */
 void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
+  auto isRas32 = [this]() -> bool {
+    TRasterImageP ri = m_image;
+    if (!ri) return false;
+    TRaster32P ras32 = ri->getRaster();
+    if (!ras32) return false;
+    return true;
+  };
+
   if (!m_isHistogramEnable) return;
   if (!m_histogramPopup->isVisible()) return;
 
@@ -938,11 +951,15 @@ void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
     return;
   }
 
-  if (m_lutCalibrator && m_lutCalibrator->isValid() && m_fbo) m_fbo->bind();
-
-  const TPixel32 pix = picker.pickColor(area.enlarge(-1, -1));
-
-  if (m_lutCalibrator && m_lutCalibrator->isValid() && m_fbo) m_fbo->release();
+  TPixel32 pix;
+  if (m_lutCalibrator && m_lutCalibrator->isValid() && isRas32()) {
+    TPointD start = getViewAff().inv() * TPointD(startPos.x - width() / 2,
+                                                 startPos.y - height() / 2);
+    TPointD end   = getViewAff().inv() *
+                  TPointD(endPos.x - width() / 2, endPos.y - height() / 2);
+    pix = picker.pickAverageColor(TRectD(start, end));
+  } else
+    pix = picker.pickColor(area.enlarge(-1, -1));
 
   // throw the picked color to the histogram
   m_histogramPopup->updateAverageColor(pix);
