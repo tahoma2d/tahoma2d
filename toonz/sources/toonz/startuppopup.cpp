@@ -508,13 +508,14 @@ void StartupPopup::updateProjectCB() {
   m_projectPaths.clear();
   m_projectsCB->clear();
 
-  TFilePath sandboxFp = TProjectManager::instance()->getSandboxProjectFolder() +
-                        "sandbox_otprj.xml";
+  TProjectManager *pm = TProjectManager::instance();
+
+  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "sandbox_otprj.xml";
   m_projectPaths.push_back(sandboxFp);
   m_projectsCB->addItem("sandbox");
 
   std::vector<TFilePath> prjRoots;
-  TProjectManager::instance()->getProjectRoots(prjRoots);
+  pm->getProjectRoots(prjRoots);
   for (int i = 0; i < prjRoots.size(); i++) {
     TFilePathSet fps;
     TSystem::readDirectory_Dir_ReadExe(fps, prjRoots[i]);
@@ -522,15 +523,15 @@ void StartupPopup::updateProjectCB() {
     TFilePathSet::iterator it;
     for (it = fps.begin(); it != fps.end(); ++it) {
       TFilePath fp(*it);
-      if (TProjectManager::instance()->isProject(fp)) {
-        m_projectPaths.push_back(
-            TProjectManager::instance()->projectFolderToProjectPath(fp));
-        m_projectsCB->addItem(QString::fromStdString(fp.getName()));
+      if (pm->isProject(fp)) {
+        m_projectPaths.push_back(pm->projectFolderToProjectPath(fp));
+        TFilePath prjFile = pm->getProjectPathByProjectFolder(fp);
+        m_projectsCB->addItem(QString::fromStdString(prjFile.getName()));
       }
     }
   }
   // Add in project of current project if outside known Project root folders
-  TProjectP currentProject   = TProjectManager::instance()->getCurrentProject();
+  TProjectP currentProject   = pm->getCurrentProject();
   TFilePath currentProjectFP = currentProject->getProjectPath();
   if (m_projectPaths.indexOf(currentProjectFP) == -1) {
     m_projectPaths.push_back(currentProjectFP);
@@ -539,8 +540,7 @@ void StartupPopup::updateProjectCB() {
   }
   int i;
   for (i = 0; i < m_projectPaths.size(); i++) {
-    if (TProjectManager::instance()->getCurrentProjectPath() ==
-        m_projectPaths[i]) {
+    if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
       m_projectsCB->setCurrentIndex(i);
       break;
     }

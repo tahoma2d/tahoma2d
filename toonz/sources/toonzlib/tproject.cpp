@@ -810,6 +810,14 @@ TFilePath TProjectManager::projectPathToProjectName(
   assert(projectPath.isAbsolute());
   TFilePath projectFolder = projectPath.getParentDir();
   if (m_projectsRoots.empty()) addDefaultProjectsRoot();
+
+  std::wstring fpName = projectPath.getWideName();
+  for (int i = 0; i < prjSuffixCount; ++i) {
+    //	  std::wstring::size_type const i = fpName.find(prjSuffix[i]);
+    if (fpName.find(prjSuffix[i]) != std::wstring::npos)
+      return TFilePath(fpName.substr(0, fpName.find(prjSuffix[i])));
+  }
+
   int i;
   for (i = 0; i < (int)m_projectsRoots.size(); i++) {
     if (m_projectsRoots[i].isAncestorOf(projectFolder))
@@ -874,6 +882,15 @@ TFilePath TProjectManager::getProjectPathByName(const TFilePath &projectName) {
     if (TFileStatus(projectPath).doesExist()) return projectPath;
   }
   return TFilePath();
+}
+
+//-------------------------------------------------------------------
+
+TFilePath TProjectManager::getProjectPathByProjectFolder(
+    const TFilePath &projectFolder) {
+  assert(!projectFolder.isAbsolute());
+  TFilePath projectPath = searchProjectPath(projectFolder);
+  return projectPathToProjectName(projectPath);
 }
 
 //-------------------------------------------------------------------
