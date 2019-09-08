@@ -482,9 +482,18 @@ ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
 void ProjectSettingsPopup::onChooseProjectChanged(int index) {
   TFilePath projectFp = m_projectPaths[index];
 
-  TProjectManager::instance()->setCurrentProjectPath(projectFp);
+  TProjectManager *pm = TProjectManager::instance();
+  pm->setCurrentProjectPath(projectFp);
+
   TProject *projectP =
       TProjectManager::instance()->getCurrentProject().getPointer();
+
+  // In case the project file was upgraded to current version, save it now
+  if (projectP->getProjectPath() != projectFp) {
+    m_projectPaths[index] = projectP->getProjectPath();
+    projectP->save();
+  }
+
   updateFieldsFromProject(projectP);
   IoCmd::saveSceneIfNeeded("Change project");
   IoCmd::newScene();

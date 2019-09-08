@@ -560,7 +560,16 @@ void StartupPopup::onProjectChanged(int index) {
   if (m_updating) return;
   TFilePath projectFp = m_projectPaths[index];
 
-  TProjectManager::instance()->setCurrentProjectPath(projectFp);
+  TProjectManager *pm = TProjectManager::instance();
+  pm->setCurrentProjectPath(projectFp);
+
+  TProjectP currentProject = pm->getCurrentProject();
+
+  // In case the project file was upgraded to current version, save it now
+  if (currentProject->getProjectPath() != projectFp) {
+    m_projectPaths[index] = currentProject->getProjectPath();
+    currentProject->save();
+  }
 
   IoCmd::newScene();
   m_pathFld->setPath(TApp::instance()
