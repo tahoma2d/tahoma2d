@@ -1898,8 +1898,8 @@ void MainWindow::defineActions() {
   createAction(MI_NextStep, tr("Next Step"), "", PlaybackCommandType);
   createAction(MI_PrevStep, tr("Prev Step"), "", PlaybackCommandType);
 
-  createAction(MI_NextKeyframe, tr("Next Key"), "", MenuXsheetCommandType);
-  createAction(MI_PrevKeyframe, tr("Prev Key"), "", MenuXsheetCommandType);
+  createAction(MI_NextKeyframe, tr("Next Key"), "Ctrl+.", MenuXsheetCommandType);
+  createAction(MI_PrevKeyframe, tr("Prev Key"), "Ctrl+,", MenuXsheetCommandType);
 
   createRGBAAction(MI_RedChannel, tr("Red Channel"), "");
   createRGBAAction(MI_GreenChannel, tr("Green Channel"), "");
