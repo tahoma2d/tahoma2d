@@ -124,11 +124,46 @@ public:
       return;
     }
 
-    mergeColumns(indices);
+    mergeColumns(indices, true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
 } MergeColumnsCommand;
+
+//*****************************************************************************
+//    MergeColumns /wo Groups  command
+//*****************************************************************************
+
+class MergeColumnsCommandWOGroups final : public MenuItemHandler {
+public:
+  MergeColumnsCommandWOGroups() : MenuItemHandler(MI_MergeColumnsWOGroups) {}
+
+  void execute() override {
+    TColumnSelection *selection =
+        dynamic_cast<TColumnSelection *>(TSelection::getCurrent());
+
+    std::set<int> indices =
+        selection ? selection->getIndices() : std::set<int>();
+
+    if (indices.empty()) {
+      DVGui::warning(QObject::tr(
+          "It is not possible to execute the merge column command because "
+          "no column was selected."));
+      return;
+    }
+
+    if (indices.size() == 1) {
+      DVGui::warning(QObject::tr(
+          "It is not possible to execute the merge column command because "
+          "only one columns is selected."));
+      return;
+    }
+
+    mergeColumns(indices, false);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+} MergeColumnsWOGroupsCommand;
 
 //*****************************************************************************
 //    ApplyMatchlines  command

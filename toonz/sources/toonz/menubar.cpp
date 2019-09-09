@@ -668,6 +668,7 @@ QMenuBar *StackedMenuBar::createInknPaintMenuBar() {
   addMenuItem(filesMenu, MI_DeleteInk);
   addMenuItem(filesMenu, MI_MergeCmapped);
   addMenuItem(filesMenu, MI_MergeColumns);
+  addMenuItem(filesMenu, MI_MergeColumnsWOGroups);
   filesMenu->addSeparator();
   addMenuItem(filesMenu, MI_LoadScene);
   addMenuItem(filesMenu, MI_SaveScene);
@@ -1255,6 +1256,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(xsheetMenu, MI_MergeCmapped);
   xsheetMenu->addSeparator();
   addMenuItem(xsheetMenu, MI_MergeColumns);
+  addMenuItem(xsheetMenu, MI_MergeColumnsWOGroups);
   addMenuItem(xsheetMenu, MI_DeleteMatchLines);
   addMenuItem(xsheetMenu, MI_DeleteInk);
   xsheetMenu->addSeparator();

@@ -201,6 +201,7 @@ void TColumnSelection::selectColumn(int col, bool on) {
     m_indices.erase(col);
 
   CommandManager::instance()->enable(MI_MergeColumns, false);
+  CommandManager::instance()->enable(MI_MergeColumnsWOGroups, false);
   CommandManager::instance()->enable(MI_ApplyMatchLines, false);
   CommandManager::instance()->enable(MI_MergeCmapped, false);
 
@@ -216,6 +217,7 @@ void TColumnSelection::selectColumn(int col, bool on) {
 
   if (it == m_indices.end()) {
     CommandManager::instance()->enable(MI_MergeColumns, true);
+    CommandManager::instance()->enable(MI_MergeColumnsWOGroups, true);
     return;
   }
 
