@@ -1787,7 +1787,6 @@ void MainWindow::defineActions() {
   mergeLevelsAction->setIcon(QIcon(":Resources/merge.svg"));
   QAction *mergeLevelsWOGroupsAction =
       createMenuXsheetAction(MI_MergeColumnsWOGroups, tr("&Merge Levels Without Groups"), "");
-  mergeLevelsWOGroupsAction->setIcon(QIcon(":Resources/merge.svg"));
   createMenuXsheetAction(MI_InsertFx, tr("&New FX..."), "Ctrl+F");
   QAction *newOutputAction =
       createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Alt+O");
