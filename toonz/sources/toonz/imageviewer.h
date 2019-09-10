@@ -82,6 +82,8 @@ class ImageViewer final : public GLWidgetForHighDpi {
   void pickColor(QMouseEvent *event, bool putValueToStyleEditor = false);
   void rectPickColor(bool putValueToStyleEditor = false);
   void setPickedColorToStyleEditor(const TPixel32 &color);
+  // get the image (m_image or the snapshot) to be picked.
+  TImageP getPickedImage(QPointF mousePos);
 
 public:
   ImageViewer(QWidget *parent, FlipBook *flipbook, bool showHistogram);
