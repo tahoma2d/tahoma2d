@@ -52,8 +52,7 @@ TFilePath getMyDocumentsPath() {
       cStringUsingEncoding:NSASCIIStringEncoding]);
 #else
   QDir dir = QDir::home();
-  dir.cd("Documents");
-  if(!dir.exists()) return TFilePath();
+  if (!dir.cd("Documents")) return TFilePath();
   return TFilePath(dir.absolutePath().toStdString());
 #endif
 }
@@ -77,8 +76,7 @@ TFilePath getDesktopPath() {
       cStringUsingEncoding:NSASCIIStringEncoding]);
 #else
   QDir dir = QDir::home();
-  dir.cd("Desktop");
-  if(!dir.exists()) return TFilePath();
+  if (!dir.cd("Desktop")) return TFilePath();
   return TFilePath(dir.absolutePath().toStdString());
 #endif
 }
