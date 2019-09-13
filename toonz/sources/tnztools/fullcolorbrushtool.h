@@ -76,6 +76,8 @@ public:
   void addPreset(QString name);
   void removePreset();
 
+  void loadLastBrush();
+
   void onCanvasSizeChanged();
   void onColorStyleChanged();
 

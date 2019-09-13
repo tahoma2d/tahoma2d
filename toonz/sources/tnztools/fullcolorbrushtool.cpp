@@ -54,6 +54,7 @@ TEnv::DoubleVar FullcolorModifierSize("FullcolorModifierSize", 0);
 TEnv::DoubleVar FullcolorModifierOpacity("FullcolorModifierOpacity", 100);
 TEnv::IntVar FullcolorModifierEraser("FullcolorModifierEraser", 0);
 TEnv::IntVar FullcolorModifierLockAlpha("FullcolorModifierLockAlpha", 0);
+TEnv::StringVar FullcolorBrushPreset("FullcolorBrushPreset", "<custom>");
 
 //----------------------------------------------------------------------------------
 
@@ -195,16 +196,15 @@ void FullColorBrushTool::onActivate() {
 
   if (m_firstTime) {
     m_firstTime = false;
-    m_thickness.setValue(
-        TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
-    m_pressure.setValue(FullcolorPressureSensitivity ? 1 : 0);
-    m_opacity.setValue(
-        TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));
-    m_hardness.setValue(FullcolorBrushHardness);
-    m_modifierSize.setValue(FullcolorModifierSize);
-    m_modifierOpacity.setValue(FullcolorModifierOpacity);
-    m_modifierEraser.setValue(FullcolorModifierEraser ? true : false);
-    m_modifierLockAlpha.setValue(FullcolorModifierLockAlpha ? true : false);
+
+    std::wstring wpreset =
+        QString::fromStdString(FullcolorBrushPreset.getValue()).toStdWString();
+    if (wpreset != CUSTOM_WSTR) {
+      initPresets();
+      m_preset.setValue(wpreset);
+      loadPreset();
+    } else
+      loadLastBrush();
   }
 
   setWorkAndBackupImages();
@@ -578,6 +578,19 @@ void FullColorBrushTool::setWorkAndBackupImages() {
 //------------------------------------------------------------------
 
 bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
+  updateCurrentStyle();
+
+  if (propertyName == "Preset:") {
+    if (m_preset.getValue() != CUSTOM_WSTR)
+      loadPreset();
+    else  // Chose <custom>, go back to last saved brush settings
+      loadLastBrush();
+
+    FullcolorBrushPreset = m_preset.getValueAsString();
+    getApplication()->getCurrentTool()->notifyToolChanged();
+    return true;
+  }
+
   FullcolorBrushMinSize        = m_thickness.getValue().first;
   FullcolorBrushMaxSize        = m_thickness.getValue().second;
   FullcolorPressureSensitivity = m_pressure.getValue();
@@ -589,16 +602,9 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
   FullcolorModifierEraser      = m_modifierEraser.getValue() ? 1 : 0;
   FullcolorModifierLockAlpha   = m_modifierLockAlpha.getValue() ? 1 : 0;
 
-  updateCurrentStyle();
-
-  if (propertyName == "Preset:") {
-    loadPreset();
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    return true;
-  }
-
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
+    FullcolorBrushPreset = m_preset.getValueAsString();
     getApplication()->getCurrentTool()->notifyToolChanged();
   }
 
@@ -690,6 +696,21 @@ void FullColorBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+}
+
+//------------------------------------------------------------------
+
+void FullColorBrushTool::loadLastBrush() {
+  m_thickness.setValue(
+      TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
+  m_pressure.setValue(FullcolorPressureSensitivity ? 1 : 0);
+  m_opacity.setValue(
+      TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));
+  m_hardness.setValue(FullcolorBrushHardness);
+  m_modifierSize.setValue(FullcolorModifierSize);
+  m_modifierOpacity.setValue(FullcolorModifierOpacity);
+  m_modifierEraser.setValue(FullcolorModifierEraser ? true : false);
+  m_modifierLockAlpha.setValue(FullcolorModifierLockAlpha ? true : false);
 }
 
 //------------------------------------------------------------------

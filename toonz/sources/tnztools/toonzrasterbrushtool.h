@@ -156,6 +156,8 @@ public:
   void addPreset(QString name);
   void removePreset();
 
+  void loadLastBrush();
+
   void finishRasterBrush(const TPointD &pos, double pressureVal);
   // return true if the pencil mode is active in the Brush / PaintBrush / Eraser
   // Tools.
