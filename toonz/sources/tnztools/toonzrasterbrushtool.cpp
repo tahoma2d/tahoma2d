@@ -55,6 +55,7 @@ TEnv::IntVar RasterBrushPencilMode("InknpaintRasterBrushPencilMode", 0);
 TEnv::IntVar BrushPressureSensitivity("InknpaintBrushPressureSensitivity", 1);
 TEnv::DoubleVar RasterBrushHardness("RasterBrushHardness", 100);
 TEnv::DoubleVar RasterBrushModifierSize("RasterBrushModifierSize", 0);
+TEnv::StringVar RasterBrushPreset("RasterBrushPreset", "<custom>");
 
 //-------------------------------------------------------------------
 #define CUSTOM_WSTR L"<custom>"
@@ -1125,17 +1126,16 @@ void ToonzRasterBrushTool::onActivate() {
   if (!m_notifier) m_notifier = new ToonzRasterBrushToolNotifier(this);
 
   if (m_firstTime) {
-    m_rasThickness.setValue(
-        TDoublePairProperty::Value(RasterBrushMinSize, RasterBrushMaxSize));
-
-    m_drawOrder.setIndex(BrushDrawOrder);
-    m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
-    m_hardness.setValue(RasterBrushHardness);
-
-    m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
     m_firstTime = false;
-    m_smooth.setValue(BrushSmooth);
-    m_modifierSize.setValue(RasterBrushModifierSize);
+
+    std::wstring wpreset =
+        QString::fromStdString(RasterBrushPreset.getValue()).toStdWString();
+    if (wpreset != CUSTOM_WSTR) {
+      initPresets();
+      m_preset.setValue(wpreset);
+      loadPreset();
+    } else
+      loadLastBrush();
   }
   m_brushPad = ToolUtils::getBrushPad(m_rasThickness.getValue().second,
                                       m_hardness.getValue() * 0.01);
@@ -1936,11 +1936,22 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
 //------------------------------------------------------------------
 
 bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
-  // Set the following to true whenever a different piece of interface must
-  // be refreshed - done once at the end.
-  bool notifyTool = false;
+  if (m_propertyUpdating) return true;
 
-  /*--- 変更されたPropertyに合わせて処理を分ける ---*/
+  if (propertyName == m_preset.getName()) {
+    if (m_preset.getValue() != CUSTOM_WSTR)
+      loadPreset();
+    else  // Chose <custom>, go back to last saved brush settings
+      loadLastBrush();
+
+    RasterBrushPreset  = m_preset.getValueAsString();
+    m_propertyUpdating = true;
+    getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
+    return true;
+  }
+
+  /*--- Divide the process according to the changed Property ---*/
 
   /*--- determine which type of brush to be modified ---*/
   if (propertyName == m_rasThickness.getName()) {
@@ -1951,9 +1962,6 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
     m_maxThick = m_rasThickness.getValue().second;
   } else if (propertyName == m_smooth.getName()) {
     BrushSmooth = m_smooth.getValue();
-  } else if (propertyName == m_preset.getName()) {
-    loadPreset();
-    notifyTool = true;
   } else if (propertyName == m_drawOrder.getName()) {
     BrushDrawOrder = m_drawOrder.getIndex();
   } else if (propertyName == m_pencil.getName()) {
@@ -1974,13 +1982,13 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
     invalidate(rect);
   }
 
-  if (propertyName != m_preset.getName() &&
-      m_preset.getValue() != CUSTOM_WSTR) {
+  if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
-    notifyTool = true;
+    RasterBrushPreset  = m_preset.getValueAsString();
+    m_propertyUpdating = true;
+    getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
   }
-
-  if (notifyTool) getApplication()->getCurrentTool()->notifyToolChanged();
 
   return true;
 }
@@ -2069,6 +2077,21 @@ void ToonzRasterBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+}
+
+//------------------------------------------------------------------
+
+void ToonzRasterBrushTool::loadLastBrush() {
+  m_rasThickness.setValue(
+      TDoublePairProperty::Value(RasterBrushMinSize, RasterBrushMaxSize));
+
+  m_drawOrder.setIndex(BrushDrawOrder);
+  m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
+  m_hardness.setValue(RasterBrushHardness);
+
+  m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
+  m_smooth.setValue(BrushSmooth);
+  m_modifierSize.setValue(RasterBrushModifierSize);
 }
 
 //------------------------------------------------------------------
