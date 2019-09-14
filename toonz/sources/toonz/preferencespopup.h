@@ -70,14 +70,14 @@ private:
   DVGui::IntLineEdit *m_minuteFld, *m_chunkSizeFld, *m_iconSizeLx,
       *m_iconSizeLy, *m_viewShrink, *m_viewStep, *m_blanksCount,
       *m_onionPaperThickness, *m_animationStepField, *m_undoMemorySize,
-      *m_xsheetStep, *m_ffmpegTimeout;
+      *m_xsheetStep, *m_ffmpegTimeout, *m_backupKeepCount;
 
   QPushButton *m_addLevelFormat, *m_removeLevelFormat, *m_editLevelFormat;
 
-  DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_levelsBackup,
-      *m_onionSkinVisibility, *m_pixelsOnlyCB, *m_projectRootDocuments,
-      *m_projectRootDesktop, *m_projectRootCustom, *m_projectRootStuff,
-      *m_onionSkinDuringPlayback, *m_autoSaveSceneCB, *m_autoSaveOtherFilesCB,
+  DVGui::CheckBox *m_inksOnly, *m_enableVersionControl, *m_onionSkinVisibility,
+      *m_pixelsOnlyCB, *m_projectRootDocuments, *m_projectRootDesktop,
+      *m_projectRootCustom, *m_projectRootStuff, *m_onionSkinDuringPlayback,
+      *m_autoSaveSceneCB, *m_autoSaveOtherFilesCB,
       *m_useNumpadForSwitchingStyles, *m_expandFunctionHeader,
       *m_useHigherDpiOnVectorSimplifyCB, *m_keepFillOnVectorSimplifyCB,
       *m_newLevelToCameraSizeCB, *m_ignoreImageDpiCB,
@@ -91,7 +91,7 @@ private:
       *m_lutPathFileField;
 
   QGroupBox *m_autoSaveGroup, *m_showXSheetToolbar, *m_colorCalibration,
-      *m_showKeyframesOnCellAreaCB;
+      *m_backup, *m_showKeyframesOnCellAreaCB;
 
   DVGui::ColorField *m_currentColumnColor;
 
@@ -148,7 +148,7 @@ private slots:
   void onSVNEnabledChanged(int);
   void onAutomaticSVNRefreshChanged(int);
   void onDragCellsBehaviourChanged(int);
-  void onLevelsBackupChanged(int);
+  void onBackupChanged(bool enabled);
   void onSceneNumberingChanged(int);
   void onChunkSizeChanged();
   void onDefLevelTypeChanged(int);
@@ -224,6 +224,7 @@ private slots:
   void onEnableTouchGesturesTriggered(bool checked);
   void onEnableWinInkChanged(int index);
   void onRasterBackgroundColorChanged(const TPixel32 &, bool isDragging);
+  void onBackupKeepCountChanged();
   void onShowXsheetCameraColumnChanged(int index);
 };
 
