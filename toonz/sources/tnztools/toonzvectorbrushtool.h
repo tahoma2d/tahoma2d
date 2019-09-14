@@ -197,6 +197,8 @@ protected:
 
   TPointD m_lastDragPos;        //!< Position where mouse was last dragged.
   TMouseEvent m_lastDragEvent;  //!< Previous mouse-drag event.
+
+  bool m_propertyUpdating = false;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H

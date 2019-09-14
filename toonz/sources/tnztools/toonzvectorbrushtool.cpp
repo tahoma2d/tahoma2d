@@ -1438,6 +1438,8 @@ void ToonzVectorBrushTool::resetFrameRange() {
 //------------------------------------------------------------------
 
 bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
+  if (m_propertyUpdating) return true;
+
   // Set the following to true whenever a different piece of interface must
   // be refreshed - done once at the end.
   bool notifyTool = false;
@@ -1449,7 +1451,9 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
       loadLastBrush();
 
     V_VectorBrushPreset = m_preset.getValueAsString();
+    m_propertyUpdating  = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
     return true;
   }
 
@@ -1505,7 +1509,11 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     notifyTool          = true;
   }
 
-  if (notifyTool) getApplication()->getCurrentTool()->notifyToolChanged();
+  if (notifyTool) {
+    m_propertyUpdating = true;
+    getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
+  }
 
   return true;
 }

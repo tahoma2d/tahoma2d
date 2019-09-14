@@ -578,6 +578,8 @@ void FullColorBrushTool::setWorkAndBackupImages() {
 //------------------------------------------------------------------
 
 bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
+  if (m_propertyUpdating) return true;
+
   updateCurrentStyle();
 
   if (propertyName == "Preset:") {
@@ -587,7 +589,9 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
       loadLastBrush();
 
     FullcolorBrushPreset = m_preset.getValueAsString();
+    m_propertyUpdating   = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
     return true;
   }
 
@@ -605,7 +609,9 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
     FullcolorBrushPreset = m_preset.getValueAsString();
+    m_propertyUpdating   = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
   }
 
   return true;

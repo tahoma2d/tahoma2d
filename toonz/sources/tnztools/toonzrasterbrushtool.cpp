@@ -1936,14 +1936,18 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
 //------------------------------------------------------------------
 
 bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
+  if (m_propertyUpdating) return true;
+
   if (propertyName == m_preset.getName()) {
     if (m_preset.getValue() != CUSTOM_WSTR)
       loadPreset();
     else  // Chose <custom>, go back to last saved brush settings
       loadLastBrush();
 
-    RasterBrushPreset = m_preset.getValueAsString();
+    RasterBrushPreset  = m_preset.getValueAsString();
+    m_propertyUpdating = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
     return true;
   }
 
@@ -1980,8 +1984,10 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
 
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
-    RasterBrushPreset = m_preset.getValueAsString();
+    RasterBrushPreset  = m_preset.getValueAsString();
+    m_propertyUpdating = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
   }
 
   return true;

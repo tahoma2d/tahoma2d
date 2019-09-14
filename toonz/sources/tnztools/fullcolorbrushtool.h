@@ -122,6 +122,8 @@ protected:
   bool m_firstTime;
   bool m_mousePressed = false;
   TMouseEvent m_mouseEvent;
+
+  bool m_propertyUpdating = false;
 };
 
 //------------------------------------------------------------

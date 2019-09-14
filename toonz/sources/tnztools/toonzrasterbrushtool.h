@@ -223,6 +223,8 @@ protected:
   QElapsedTimer m_brushTimer;
   int m_minCursorThick, m_maxCursorThick;
 
+  bool m_propertyUpdating = false;
+
 protected:
   static void drawLine(const TPointD &point, const TPointD &centre,
                        bool horizontal, bool isDecimal);
