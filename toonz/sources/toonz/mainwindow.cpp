@@ -1783,10 +1783,11 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_DeleteMatchLines, tr("&Delete Match Lines"), "");
   createMenuXsheetAction(MI_DeleteInk, tr("&Delete Lines..."), "");
   QAction *mergeLevelsAction =
-      createMenuXsheetAction(MI_MergeColumns, tr("&Merge Levels"), "");
+      createMenuXsheetAction(MI_MergeColumns, tr("&Merge Levels (Grouped)"), "");
   mergeLevelsAction->setIcon(QIcon(":Resources/merge.svg"));
   QAction *mergeLevelsWOGroupsAction =
-      createMenuXsheetAction(MI_MergeColumnsWOGroups, tr("&Merge Levels Without Groups"), "");
+      createMenuXsheetAction(MI_MergeColumnsWOGroups, tr("&Merge Levels (No Groups)"), "");
+  mergeLevelsWOGroupsAction->setIcon(QIcon(":Resources/merge_wogroups.svg"));
   createMenuXsheetAction(MI_InsertFx, tr("&New FX..."), "Ctrl+F");
   QAction *newOutputAction =
       createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Alt+O");
