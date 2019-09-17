@@ -117,7 +117,7 @@ void RoomTabWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 //-----------------------------------------------------------------------------
 /*! Set a text field with focus in event position to edit tab name.
-*/
+ */
 void RoomTabWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   if (m_isLocked) return;
   int index = tabAt(event->pos());
@@ -1433,6 +1433,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(helpMenu, MI_OpenOnlineManual);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);
+  addMenuItem(helpMenu, MI_ClearCacheFolder);
 
 // addMenuItem(fileMenu, MI_TestAnimation);
 // fileMenu->addSeparator();

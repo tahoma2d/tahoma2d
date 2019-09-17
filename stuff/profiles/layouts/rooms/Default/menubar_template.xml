@@ -313,6 +313,7 @@
     <menu title="Help">
         <command>MI_OpenOnlineManual</command>
         <separator/>
-        <command>MI_About</command>
+        <command>MI_ClearCacheFolder</command>   
+        <command>MI_About</command>     
     </menu>
 </menubar>
