@@ -53,9 +53,9 @@ after_build:
     
     copy /Y ..\..\thirdparty\libmypaint\dist\64\libmypaint-1-4-0.dll %CONFIGURATION%\OpenToonz
 
-    mkdir "%CONFIGURATION%\OpenToonz\OpenToonz stuff"
+    mkdir "%CONFIGURATION%\OpenToonz stuff"
 
-    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\OpenToonz\OpenToonz stuff"
+    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\OpenToonz stuff"
     
 artifacts:
 - path: toonz\$(PLATFORM)\$(CONFIGURATION)
