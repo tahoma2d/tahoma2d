@@ -1598,6 +1598,7 @@ void MainWindow::defineActions() {
   createMenuAction(MI_LoadRecentImage, tr("&Load Recent Image Files"), files);
   createMenuFileAction(MI_ClearRecentImage,
                        tr("&Clear Recent Flipbook Image List"), "");
+  createMenuFileAction(MI_ClearCacheFolder, tr("&Clear Cache Folder"), "");
 
   createRightClickMenuAction(MI_PreviewFx, tr("Preview Fx"), "");
 
@@ -1968,7 +1969,6 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
   createMenuWindowsAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
-  createMenuWindowsAction(MI_ClearCacheFolder, tr("&Clear Cache Folder"), "");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 

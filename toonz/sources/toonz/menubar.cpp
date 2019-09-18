@@ -1117,6 +1117,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(fileMenu, MI_Preferences);
   addMenuItem(fileMenu, MI_ShortcutPopup);
   fileMenu->addSeparator();
+  addMenuItem(fileMenu, MI_ClearCacheFolder);
+  fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_Quit);
 
   // Menu' EDIT
@@ -1433,7 +1435,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(helpMenu, MI_OpenOnlineManual);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);
-  addMenuItem(helpMenu, MI_ClearCacheFolder);
 
 // addMenuItem(fileMenu, MI_TestAnimation);
 // fileMenu->addSeparator();
