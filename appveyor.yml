@@ -35,9 +35,7 @@ after_build:
 - cmd: >-
     mkdir %CONFIGURATION%\OpenToonz
 
-    move %CONFIGURATION%\*.dll %CONFIGURATION%\OpenToonz
-
-    move %CONFIGURATION%\*.exe %CONFIGURATION%\OpenToonz
+    move %CONFIGURATION%\*.* %CONFIGURATION%\OpenToonz
 
     C:\Qt\5.9\msvc2015_64\bin\windeployqt.exe %CONFIGURATION%\OpenToonz\OpenToonz.exe
 
