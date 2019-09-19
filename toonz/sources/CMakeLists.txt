@@ -280,7 +280,7 @@ macro(_find_toonz_library OUT_LIB_LIST IN_LIB_LIST)
         unset(COREPATH CACHE)
         # find しても cmake が走るときにはできていないので完全なパス名を生成して返すだけ
         if(BUILD_ENV_APPLE)
-            set(LIBPATH ${CMAKE_CURRENT_BINARY_DIR}/../${arg}/lib${arg}${CMAKE_SHARED_LIBRARY_SUFFIX})
+            set(LIBPATH "\$<TARGET_FILE:${arg}>")
         else()
             set(LIBPATH ${arg})
         endif()
