@@ -842,6 +842,11 @@ QString TTool::updateEnabled() {
       Preferences::instance()->isMultiLayerStylePickerEnabled())
     return (enable(true), QString());
 
+  // Check against camera column
+  if (columnIndex < 0 && (targetType & TTool::EmptyTarget) &&
+      (m_name == T_Type || m_name == T_Geometric || m_name == T_Brush))
+    return (enable(false), QString());
+
   // Check against unplaced columns (not in filmstrip mode)
   if (column && !filmstrip) {
     if (column->isLocked())

@@ -1128,7 +1128,8 @@ void FxGadgetController::onFxSwitched() {
     if (referenceColumnIndex == -1) {
       TObjectHandle *oh = m_tool->getApplication()->getCurrentObject();
       if (!oh->getObjectId().isCamera()) {
-        oh->setObjectId(TStageObjectId::CameraId(0));
+        TXsheet *xsh = m_tool->getXsheet();
+        oh->setObjectId(TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
       }
       enabled = true;
     } else if (referenceColumnIndex == m_tool->getColumnIndex())
