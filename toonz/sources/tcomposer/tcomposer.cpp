@@ -661,7 +661,7 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setOrganizationName("OpenToonz");
   QCoreApplication::setOrganizationDomain("");
   QCoreApplication::setApplicationName(
-      QString::fromStdString(TEnv::getApplicationFullName()));
+      QString::fromStdString(TEnv::getApplicationName()));
 
   QHash<QString, QString>::const_iterator argItr =
       argumentPathValues.constBegin();
