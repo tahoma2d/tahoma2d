@@ -1758,7 +1758,7 @@ void MainWindow::defineActions() {
                          "Alt+L");
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
                              tr("Toggle XSheet Toolbar"), "");
-  createMenuXsheetAction(MI_ToggleXsheetCameraColumn,
+  createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
                          tr("Show/Hide Xsheet Camera Column"), "");
   createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   createMenuCellsAction(MI_Swing, tr("&Swing"), "");
