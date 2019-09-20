@@ -33,10 +33,9 @@ using namespace TVER;
 
 namespace {
 const std::map<std::string, std::string> systemPathMap{
-    {"LIBRARY", "library"},   {"STUDIOPALETTE", "studiopalette"},
-    {"FXPRESETS", "fxs"},     {"CACHEROOT", "cache"},
-    {"PROFILES", "profiles"}, {"CONFIG", "config"},
-    {"PROJECTS", "projects"}};
+    {"LIBRARY", "library"}, {"STUDIOPALETTE", "studiopalette"},
+    {"FXPRESETS", "fxs"},   {"PROFILES", "profiles"},
+    {"CONFIG", "config"},   {"PROJECTS", "projects"}};
 
 class EnvGlobals {  // singleton
 
@@ -470,7 +469,7 @@ Variable::Variable(std::string name)
 Variable::Variable(std::string name, std::string defaultValue)
     : m_imp(VariableSet::instance()->getImp(name)) {
   // assert(!m_imp->m_defaultDefined);
-  m_imp->m_defaultDefined              = true;
+  m_imp->m_defaultDefined = true;
   if (!m_imp->m_loaded) m_imp->m_value = defaultValue;
 }
 
@@ -567,11 +566,11 @@ TFilePathSet TEnv::getSystemVarPathSetValue(std::string varName) {
   TFilePathSet lst;
   EnvGlobals *eg = EnvGlobals::instance();
   // if the path is registered by command line argument, then use it
-  std::string value      = eg->getArgPathValue(varName);
+  std::string value = eg->getArgPathValue(varName);
   if (value == "") value = eg->getSystemVarValue(varName);
-  int len                = (int)value.size();
-  int i                  = 0;
-  int j                  = value.find(';');
+  int len = (int)value.size();
+  int i   = 0;
+  int j   = value.find(';');
   while (j != std::string::npos) {
     std::string s = value.substr(i, j - i);
     lst.push_back(TFilePath(s));
