@@ -474,6 +474,15 @@ public:
     currentColumnColor = m_currentColumnColor;
   }
 
+  void enableXsheetCameraColumn(bool on);
+  bool isXsheetCameraColumnEnabled() const {
+    return m_showXsheetCameraColumn;
+  }
+
+  bool isXsheetCameraColumnVisible() const {
+	  return m_showXsheetCameraColumn && m_showKeyframesOnXsheetCellArea;
+  }
+
   // Animation  tab
 
   void setKeyframeType(int s);
@@ -730,6 +739,8 @@ private:
   bool m_useOnionColorsForShiftAndTraceGhosts = false;
 
   int m_backupKeepCount;
+
+  bool m_showXsheetCameraColumn = true;
 
   int m_levelBasedToolsDisplay;
 

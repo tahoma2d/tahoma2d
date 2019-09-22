@@ -84,7 +84,7 @@ private:
       *m_newLevelToCameraSizeCB, *m_ignoreImageDpiCB,
       *m_syncLevelRenumberWithXsheet, *m_downArrowInLevelStripCreatesNewFrame,
       *m_enableAutoStretch, *m_enableWinInk, *m_enableTouchGestures,
-      *m_useOnionColorsForShiftAndTraceCB;
+      *m_useOnionColorsForShiftAndTraceCB, *m_showXsheetCameraColCB;
 
   DVGui::FileField *m_customProjectRootFileField;
 
@@ -92,7 +92,7 @@ private:
       *m_lutPathFileField;
 
   QGroupBox *m_autoSaveGroup, *m_showXSheetToolbar, *m_colorCalibration,
-      *m_backup;
+      *m_backup, *m_showKeyframesOnCellAreaCB;
 
   DVGui::ColorField *m_currentColumnColor;
 
@@ -195,7 +195,7 @@ private slots:
   void onRemoveSceneNumberFromLoadedLevelNameChanged(int index);
   void onShowRasterImageDarkenBlendedInViewerChanged(int index);
   void onShowFrameNumberWithLettersChanged(int index);
-  void onShowKeyframesOnCellAreaChanged(int);
+  void onShowKeyframesOnCellAreaChanged(bool);
   void onFfmpegPathChanged();
   void onFfmpegTimeoutChanged();
   void onFastRenderPathChanged();
@@ -226,6 +226,7 @@ private slots:
   void onEnableWinInkChanged(int index);
   void onRasterBackgroundColorChanged(const TPixel32 &, bool isDragging);
   void onBackupKeepCountChanged();
+  void onShowXsheetCameraColumnChanged(int index);
   void onLevelBasedToolsDisplayChanged(int);
 };
 

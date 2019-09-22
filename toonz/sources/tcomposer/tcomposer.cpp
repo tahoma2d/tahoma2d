@@ -658,6 +658,11 @@ int main(int argc, char *argv[]) {
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
 
+  QCoreApplication::setOrganizationName("OpenToonz");
+  QCoreApplication::setOrganizationDomain("");
+  QCoreApplication::setApplicationName(
+      QString::fromStdString(TEnv::getApplicationName()));
+
   QHash<QString, QString>::const_iterator argItr =
       argumentPathValues.constBegin();
   while (argItr != argumentPathValues.constEnd()) {

@@ -42,10 +42,10 @@ class DVAPI ColumnFan {
   std::map<int, int> m_table;
   int m_firstFreePos;
   int m_unfolded, m_folded;
-
+  bool m_cameraActive;
   /*!
-Called by activate() and deactivate() to update columns coordinates.
-*/
+  Called by activate() and deactivate() to update columns coordinates.
+  */
   void update();
 
 public:
