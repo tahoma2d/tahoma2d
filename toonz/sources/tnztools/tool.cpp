@@ -603,7 +603,7 @@ void TTool::notifyImageChanged() {
 //-----------------------------------------------------------------------------
 
 /*! Notify change of image in \b fid: update icon and notify level change.
-*/
+ */
 void TTool::notifyImageChanged(const TFrameId &fid) {
   onImageChanged();
 
@@ -846,6 +846,17 @@ QString TTool::updateEnabled() {
   if (!filmstrip && columnIndex < 0 && (targetType & TTool::EmptyTarget) &&
       (m_name == T_Type || m_name == T_Geometric || m_name == T_Brush))
     return (enable(false), QString());
+
+  // In case of Animate Tool
+  if (m_name == T_Edit && !filmstrip) {
+    // if an object other than column is selected, then enable the tool
+    // regardless of the current column state
+    if (!m_application->getCurrentObject()->getObjectId().isColumn())
+      return (enable(true), QString());
+    // if a column object is selected, switch the inspected column to it
+    column = xsh->getColumn(
+        m_application->getCurrentObject()->getObjectId().getIndex());
+  }
 
   // Check against unplaced columns (not in filmstrip mode)
   if (column && !filmstrip) {
