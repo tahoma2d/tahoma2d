@@ -50,6 +50,8 @@ const struct {
     {ToolCursor::PickerCursorAreaBase, "picker_style", 7, 22, true},
     {ToolCursor::PickerCursor, "picker_style", 7, 22, true},
 
+    {ToolCursor::PointingHandCursor, "pointing_hand", 13, 4, true},
+
     {ToolCursor::PumpCursor, "pump", 16, 23, false},
     {ToolCursor::RotCursor, "rot", 15, 15, false},
     {ToolCursor::RotTopLeft, "rot_top_left", 15, 15, false},

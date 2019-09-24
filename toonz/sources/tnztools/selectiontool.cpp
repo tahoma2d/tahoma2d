@@ -1023,7 +1023,8 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
     }
     if (!isLevelType() && !isSelectedFramesType() &&
         tdistance2(getCenter(), pos) < maxDist2) {
-      m_what = MOVE_CENTER;
+      m_what     = MOVE_CENTER;
+      m_cursorId = ToolCursor::PointingHandCursor;
       return;
     }
     TPointD hpos = bbox.getP10() - TPointD(14 * pixelSize, 15 * pixelSize);
