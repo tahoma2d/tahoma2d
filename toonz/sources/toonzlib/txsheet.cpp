@@ -169,7 +169,9 @@ TXsheet::TXsheetImp::~TXsheetImp() {
 void TXsheet::TXsheetImp::initColumnFans() {
   for (auto o : Orientations::all()) {
     int index = o->dimension(PredefinedDimension::INDEX);
-    m_columnFans[index].setDimension(o->dimension(PredefinedDimension::LAYER));
+    m_columnFans[index].setDimensions(
+        o->dimension(PredefinedDimension::LAYER),
+        o->dimension(PredefinedDimension::CAMERA_LAYER));
   }
 }
 
@@ -779,7 +781,7 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allIncreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allIncreaseIsEqual; c++)
-    allIncreaseIsEqual       = allIncreaseIsEqual && ends[c] == ends[c + 1];
+    allIncreaseIsEqual = allIncreaseIsEqual && ends[c] == ends[c + 1];
   if (allIncreaseIsEqual) r1 = ends[0];
 }
 
@@ -813,7 +815,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allDecreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allDecreaseIsEqual; c++)
-    allDecreaseIsEqual       = allDecreaseIsEqual && ends[c] == ends[c + 1];
+    allDecreaseIsEqual = allDecreaseIsEqual && ends[c] == ends[c + 1];
   if (allDecreaseIsEqual) r1 = ends[0];
 }
 

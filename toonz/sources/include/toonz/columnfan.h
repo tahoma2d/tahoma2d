@@ -43,6 +43,7 @@ class DVAPI ColumnFan {
   int m_firstFreePos;
   int m_unfolded, m_folded;
   bool m_cameraActive;
+  int m_cameraColumnDim;
   /*!
   Called by activate() and deactivate() to update columns coordinates.
   */
@@ -55,7 +56,7 @@ Constructs a ColumnFan with default value.
   ColumnFan();
 
   //! Adjust column sizes when switching orientation
-  void setDimension(int unfolded);
+  void setDimensions(int unfolded, int cameraColumn);
 
   /*!
 Set column \b col not folded.
