@@ -94,13 +94,21 @@ FourPoints getFourPointsFromVectorImage(const TVectorImageP &img,
 //-----------------------------------------------------------------------------
 
 bool getStrokeIndexFromPos(UINT &index, const TVectorImageP &vi,
-                           const TPointD &pos, double pixelSize) {
+                           const TPointD &pos, double pixelSize, TAffine aff) {
   if (!vi) return false;
   double t, dist2 = 0;
-  double maxDist  = 5 * pixelSize;
-  double maxDist2 = maxDist * maxDist;
-  vi->getNearestStroke(pos, t, index, dist2);
-  return (dist2 < maxDist2 * 4);
+  double maxDist   = 5 * pixelSize;
+  double maxDist2  = maxDist * maxDist;
+  double checkDist = maxDist2 * 4;
+
+  if (vi->getNearestStroke(pos, t, index, dist2)) {
+    TStroke *strokeRef = vi->getStroke(index);
+    TThickPoint cursor = strokeRef->getThickPoint(t);
+    double len         = cursor.thick * pixelSize * sqrt(aff.det());
+    checkDist          = std::max(checkDist, (len * len));
+  }
+
+  return (dist2 < checkDist);
 }
 
 //-----------------------------------------------------------------------------
@@ -1447,9 +1455,10 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
   UINT index         = 0;
   bool modifiableSel = isModifiableSelectionType(),
-       strokeAtPos   = getStrokeIndexFromPos(index, vi, pos, getPixelSize()),
-       addStroke     = strokeAtPos && !m_strokeSelection.isSelected(index),
-       toggleStroke  = strokeAtPos && e.isShiftPressed();
+       strokeAtPos   = getStrokeIndexFromPos(index, vi, pos, getPixelSize(),
+                                           getViewer()->getViewMatrix()),
+       addStroke    = strokeAtPos && !m_strokeSelection.isSelected(index),
+       toggleStroke = strokeAtPos && e.isShiftPressed();
 
   m_selecting =
       (modifiableSel && !strokeAtPos  // There must be no stroke under cursor
@@ -2154,7 +2163,8 @@ void VectorSelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
 
   if ((isLevelType() &&
        bbox.contains(pos))  // What about isSelectedFramesType()??
-      || (getStrokeIndexFromPos(index, vi, pos, getPixelSize()) &&
+      || (getStrokeIndexFromPos(index, vi, pos, getPixelSize(),
+                                getViewer()->getViewMatrix()) &&
           m_strokeSelection.isSelected(index))) {
     m_what = Inside;
     m_cursorId =
