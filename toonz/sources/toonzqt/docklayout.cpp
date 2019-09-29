@@ -436,7 +436,8 @@ void DockLayout::redistribute() {
         QWidget *widget = m_items.at(i)->widget();
         if (widget) {
           std::string name = widget->objectName().toStdString();
-          if (widget->objectName() == "FilmStrip") {
+          if (widget->objectName() == "FilmStrip" ||
+              widget->objectName() == "StyleEditor") {
             widgets.push_back(widget);
             widget->setFixedWidth(widget->width());
           }
