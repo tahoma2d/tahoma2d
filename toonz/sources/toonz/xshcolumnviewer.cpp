@@ -803,7 +803,9 @@ void ColumnArea::DrawHeader::drawLock() const {
 }
 
 void ColumnArea::DrawHeader::drawConfig() const {
-  if (isEmpty || !o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE)) return;
+  if (isEmpty || (col >= 0 && !o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE)) ||
+      (col < 0 && !o->flag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE)))
+    return;
   QColor bgColor;
   QImage icon;
   int buttonType = CONFIG_XSHBUTTON;

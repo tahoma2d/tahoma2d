@@ -3439,6 +3439,8 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
   TDoubleKeyframe::Type rType =
       pegbar->getParam(TStageObject::T_X)->getKeyframeAt(r0).m_type;
 
+  if (rType != TDoubleKeyframe::Constant)
+    menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
   if (rType != TDoubleKeyframe::Linear)
     menu.addAction(cmdManager->getAction(MI_UseLinearInterpolation));
   if (rType != TDoubleKeyframe::SpeedInOut)
@@ -3449,12 +3451,6 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
     menu.addAction(cmdManager->getAction(MI_UseEaseInOutPctInterpolation));
   if (rType != TDoubleKeyframe::Exponential)
     menu.addAction(cmdManager->getAction(MI_UseExponentialInterpolation));
-  if (rType != TDoubleKeyframe::Expression)
-    menu.addAction(cmdManager->getAction(MI_UseExpressionInterpolation));
-  if (rType != TDoubleKeyframe::File)
-    menu.addAction(cmdManager->getAction(MI_UseFileInterpolation));
-  if (rType != TDoubleKeyframe::Constant)
-    menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
 
   if (col < 0) {
     menu.addSeparator();

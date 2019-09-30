@@ -506,6 +506,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::CONFIG_AREA_BORDER, true);
     addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, false);
     addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, true);
     addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, true);
     addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
@@ -616,6 +617,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::CONFIG_AREA_BORDER, true);
     addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, false);
     addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, true);
     addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, true);
     addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
@@ -643,7 +645,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
                       HDRROW_HEIGHT - 1);
     addRect(PredefinedRect::LAYER_NAME, layername);
     addRect(PredefinedRect::CAMERA_LAYER_NAME,
-            QRect(1, HDRROW3, CAMERA_CELL_WIDTH - 1,
+            QRect(1, HDRROW3 + HDRROW_HEIGHT - 8, CAMERA_CELL_WIDTH - 1,
                   THUMBNAIL_HEIGHT + CELL_HEIGHT));
     addRect(PredefinedRect::LAYER_NUMBER, QRect(0, 0, -1, -1));
 
@@ -669,7 +671,11 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
     addRect(PredefinedRect::CONFIG_AREA, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::CONFIG, QRect(0, 0, -1, -1));
-    addRect(PredefinedRect::CAMERA_CONFIG, QRect(0, 0, -1, -1));
+    cameraConfigArea =
+        QRect(0, HDRROW3 - 2, CAMERA_CELL_WIDTH, HDRROW_HEIGHT - 4);
+    addRect(PredefinedRect::CAMERA_CONFIG_AREA, cameraConfigArea);
+    addRect(PredefinedRect::CAMERA_CONFIG,
+            iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
 
     thumbnailArea =
         QRect(INDENT - 1, HDRROW3, CELL_WIDTH - INDENT - 1, THUMBNAIL_HEIGHT);
@@ -681,9 +687,6 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::CAMERA_ICON_AREA, cameraIconArea);
     addRect(PredefinedRect::CAMERA_ICON,
             iconRect(cameraIconArea, ICON_WIDTH, ICON_HEIGHT));
-    // clicking on the camera icon will switch the camera in "Classic" mode
-    addRect(PredefinedRect::CAMERA_CONFIG_AREA,
-            rect(PredefinedRect::CAMERA_ICON_AREA));
 
     addRect(PredefinedRect::FILTER_COLOR,
             QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
@@ -720,6 +723,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::CONFIG_AREA_BORDER, false);
     addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, false);
     addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, false);
+    addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, false);
     addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, true);
     addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
@@ -1142,6 +1146,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
   addFlag(PredefinedFlag::CONFIG_AREA_BORDER, true);
   addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, true);
   addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, true);
+  addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
   addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, false);
   addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, false);
   addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
