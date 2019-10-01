@@ -2434,7 +2434,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   CommandManager *cmdManager = CommandManager::instance();
 
   //---- Preview
-  if ((isCamera || !xsh->isColumnEmpty(col)) &&
+  if (((isCamera && !o->isVerticalTimeline()) || !xsh->isColumnEmpty(col)) &&
       o->rect(PredefinedRect::EYE_AREA).contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Preview");
 
@@ -2447,7 +2447,9 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   }
   //---- Lock
   else if ((isCamera || !xsh->isColumnEmpty(col)) &&
-           o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell)) {
+           o->rect((isCamera) ? PredefinedRect::CAMERA_LOCK_AREA
+                              : PredefinedRect::LOCK_AREA)
+               .contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Lock");
 
     menu.addAction(cmdManager->getAction("MI_LockThisColumnOnly"));
@@ -2458,7 +2460,8 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     menu.addAction(cmdManager->getAction("MI_ToggleColumnLocks"));
   }
   //---- Camstand
-  else if ((isCamera || !xsh->isColumnEmpty(col)) &&
+  else if (((isCamera && !o->isVerticalTimeline()) ||
+            !xsh->isColumnEmpty(col)) &&
            o->rect(PredefinedRect::PREVIEW_LAYER_AREA).contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Camstand");
 
@@ -2473,39 +2476,41 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   }
   // right clicking another area / right clicking empty column head
   else {
-    int r0, r1;
-    xsh->getCellRange(col, r0, r1);
-    TXshCell cell = xsh->getCell(r0, col);
-    menu.addAction(cmdManager->getAction(MI_Cut));
-    menu.addAction(cmdManager->getAction(MI_Copy));
-    menu.addAction(cmdManager->getAction(MI_Paste));
-    menu.addAction(cmdManager->getAction(MI_PasteAbove));
-    menu.addAction(cmdManager->getAction(MI_Clear));
-    menu.addAction(cmdManager->getAction(MI_Insert));
-    menu.addAction(cmdManager->getAction(MI_InsertAbove));
-    menu.addSeparator();
-    menu.addAction(cmdManager->getAction(MI_InsertFx));
-    menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
-    menu.addAction(cmdManager->getAction(MI_RemoveEmptyColumns));
-    menu.addSeparator();
-    if (m_viewer->getXsheet()->isColumnEmpty(col) ||
-        (cell.m_level && cell.m_level->getChildLevel()))
-      menu.addAction(cmdManager->getAction(MI_OpenChild));
+    if (!isCamera) {
+      int r0, r1;
+      xsh->getCellRange(col, r0, r1);
+      TXshCell cell = xsh->getCell(r0, col);
+      menu.addAction(cmdManager->getAction(MI_Cut));
+      menu.addAction(cmdManager->getAction(MI_Copy));
+      menu.addAction(cmdManager->getAction(MI_Paste));
+      menu.addAction(cmdManager->getAction(MI_PasteAbove));
+      menu.addAction(cmdManager->getAction(MI_Clear));
+      menu.addAction(cmdManager->getAction(MI_Insert));
+      menu.addAction(cmdManager->getAction(MI_InsertAbove));
+      menu.addSeparator();
+      menu.addAction(cmdManager->getAction(MI_InsertFx));
+      menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
+      menu.addAction(cmdManager->getAction(MI_RemoveEmptyColumns));
+      menu.addSeparator();
+      if (m_viewer->getXsheet()->isColumnEmpty(col) ||
+          (cell.m_level && cell.m_level->getChildLevel()))
+        menu.addAction(cmdManager->getAction(MI_OpenChild));
 
-    // Close sub xsheet and move to parent sheet
-    ToonzScene *scene      = TApp::instance()->getCurrentScene()->getScene();
-    ChildStack *childStack = scene->getChildStack();
-    if (childStack && childStack->getAncestorCount() > 0) {
-      menu.addAction(cmdManager->getAction(MI_CloseChild));
-    }
+      // Close sub xsheet and move to parent sheet
+      ToonzScene *scene      = TApp::instance()->getCurrentScene()->getScene();
+      ChildStack *childStack = scene->getChildStack();
+      if (childStack && childStack->getAncestorCount() > 0) {
+        menu.addAction(cmdManager->getAction(MI_CloseChild));
+      }
 
-    menu.addAction(cmdManager->getAction(MI_Collapse));
-    if (cell.m_level && cell.m_level->getChildLevel()) {
-      menu.addAction(cmdManager->getAction(MI_Resequence));
-      menu.addAction(cmdManager->getAction(MI_CloneChild));
-      menu.addAction(cmdManager->getAction(MI_ExplodeChild));
+      menu.addAction(cmdManager->getAction(MI_Collapse));
+      if (cell.m_level && cell.m_level->getChildLevel()) {
+        menu.addAction(cmdManager->getAction(MI_Resequence));
+        menu.addAction(cmdManager->getAction(MI_CloneChild));
+        menu.addAction(cmdManager->getAction(MI_ExplodeChild));
+      }
+      menu.addSeparator();
     }
-    menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_FoldColumns));
     if (Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()) {
       QAction *cameraToggle =
@@ -2520,6 +2525,11 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     }
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
+
+    if (isCamera) {
+      menu.exec(event->globalPos());
+      return;
+    }
 
     // force the selected cells placed in n-steps
     if (!xsh->isColumnEmpty(col)) {
