@@ -1302,6 +1302,10 @@ void CellArea::drawExtenderHandles(QPainter &p) {
 
   int selRow0, selCol0, selRow1, selCol1;
   cellSelection->getSelectedCells(selRow0, selCol0, selRow1, selCol1);
+
+  // do nothing if only the camera column is selected
+  if (selCol1 < 0) return;
+
   QRect selected;
   selected = m_viewer->rangeToXYRect(CellRange(
       CellPosition(selRow0, selCol0), CellPosition(selRow1 + 1, selCol1 + 1)));
@@ -1665,8 +1669,10 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
   TXshCell nextCell;
   nextCell = xsh->getCell(row + 1, col);  // cell in next frame
 
-  int frameAdj   = m_viewer->getFrameZoomAdjustment();
-  QRect cellRect = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
+  int frameAdj = m_viewer->getFrameZoomAdjustment();
+  QRect cellRect =
+      o->rect((col < 0) ? PredefinedRect::CAMERA_CELL : PredefinedRect::CELL)
+          .translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj, 0);
   QRect rect = cellRect.adjusted(
       1, 1,
@@ -2286,9 +2292,14 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
     row0 = std::max(row0, r0);
     row1 = std::min(row1, r1);
 
+    QRect tmpKeyRect = (col >= 0)
+                           ? keyRect
+                           : o->rect(PredefinedRect::CAMERA_KEY_ICON)
+                                 .adjusted(-frameAdj / 2, 0, -frameAdj / 2, 0);
+
     /*- first, draw key segments -*/
     p.setPen(m_viewer->getTextColor());
-    int line_layerAxis = layerAxis + o->layerSide(keyRect).middle();
+    int line_layerAxis = layerAxis + o->layerSide(tmpKeyRect).middle();
     for (row = row0; row <= row1; row++) {
       int segmentRow0, segmentRow1;
       double ease0, ease1;
@@ -2303,14 +2314,16 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
                              handleRow1)) {
             QPoint topLeft =
                 m_viewer->positionToXY(CellPosition(handleRow0, col));
-            m_viewer->drawPredefinedPath(p, PredefinedPath::BEGIN_EASE_TRIANGLE,
-                                         topLeft + QPoint(-frameAdj / 2, 0),
-                                         keyFrameColor, outline);
+            m_viewer->drawPredefinedPath(
+                p, PredefinedPath::BEGIN_EASE_TRIANGLE,
+                tmpKeyRect.translated(topLeft).center(), keyFrameColor,
+                outline);
 
             topLeft = m_viewer->positionToXY(CellPosition(handleRow1, col));
-            m_viewer->drawPredefinedPath(p, PredefinedPath::END_EASE_TRIANGLE,
-                                         topLeft + QPoint(-frameAdj / 2, 0),
-                                         keyFrameColor, outline);
+            m_viewer->drawPredefinedPath(
+                p, PredefinedPath::END_EASE_TRIANGLE,
+                tmpKeyRect.translated(topLeft).center(), keyFrameColor,
+                outline);
           }
         }
         // skip to next segment
@@ -2327,7 +2340,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       p.setPen(m_viewer->getTextColor());
       if (pegbar->isKeyframe(row)) {
         QPoint xy     = m_viewer->positionToXY(CellPosition(row, col));
-        QPoint target = keyRect.translated(xy).topLeft();
+        QPoint target = tmpKeyRect.translated(xy).topLeft();
         if (!o->isVerticalTimeline() && m_viewer->getFrameZoomFactor() <= 50) {
           QColor color = Qt::white;
           int x        = xy.x();
@@ -2401,7 +2414,8 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
                                 const NumberRange &rows) const {
   int frameAdj         = m_viewer->getFrameZoomAdjustment();
   const QRect &keyRect = m_viewer->orientation()
-                             ->rect(PredefinedRect::KEY_ICON)
+                             ->rect((col < 0) ? PredefinedRect::CAMERA_KEY_ICON
+                                              : PredefinedRect::KEY_ICON)
                              .adjusted(-frameAdj / 2, 0, -frameAdj / 2, 0);
   QPoint begin =
       keyRect.center() + m_viewer->positionToXY(CellPosition(rows.from(), col));
@@ -2511,10 +2525,11 @@ void CellArea::paintEvent(QPaintEvent *event) {
   int row      = m_viewer->getCurrentRow();
   int col      = m_viewer->getCurrentColumn();
   QPoint xy    = m_viewer->positionToXY(CellPosition(row, col));
-  QRect rect   = m_viewer->orientation()
-                   ->rect(PredefinedRect::CELL)
-                   .translated(xy)
-                   .adjusted(0, 0, -1 - frameAdj, 0);
+  QRect rect =
+      m_viewer->orientation()
+          ->rect((col < 0) ? PredefinedRect::CAMERA_CELL : PredefinedRect::CELL)
+          .translated(xy)
+          .adjusted(0, 0, -1 - frameAdj, 0);
   p.setPen(Qt::black);
   p.setBrush(Qt::NoBrush);
   for (int i = 0; i < 2; i++)  // thick border within cell
@@ -2569,8 +2584,8 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
   int frameAdj         = m_viewer->getFrameZoomAdjustment();
 
   if (o->isVerticalTimeline())
-    return o->rect(PredefinedRect::KEYFRAME_AREA)
-               .adjusted(-frameAdj / 2, 0, -frameAdj / 2, 0)
+    return o->rect((col < 0) ? PredefinedRect::CAMERA_CELL
+                             : PredefinedRect::KEYFRAME_AREA)
                .contains(mouseInCell) &&
            row < k1 + 1;
 
@@ -2700,7 +2715,8 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
           }
         }
       } else if (isKeyframeFrame && row == k1 + 1 &&
-                 o->rect(PredefinedRect::LOOP_ICON)
+                 o->rect((col < 0) ? PredefinedRect::CAMERA_LOOP_ICON
+                                   : PredefinedRect::LOOP_ICON)
                      .contains(mouseInCell)) {  // cycle toggle
         CycleUndo *undo = new CycleUndo(pegbar, this);
         undo->redo();
@@ -2852,7 +2868,8 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
       }
     }
   } else if (isKeyframeFrame && row == k1 + 1 &&
-             o->rect(PredefinedRect::LOOP_ICON)
+             o->rect((col < 0) ? PredefinedRect::CAMERA_LOOP_ICON
+                               : PredefinedRect::LOOP_ICON)
                  .contains(mouseInCell))  // cycle toggle of key frames
     m_tooltip = tr("Set the cycle of previous keyframes");
   else if ((!xsh->getCell(row, col).isEmpty()) &&
@@ -3422,6 +3439,8 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
   TDoubleKeyframe::Type rType =
       pegbar->getParam(TStageObject::T_X)->getKeyframeAt(r0).m_type;
 
+  if (rType != TDoubleKeyframe::Constant)
+    menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
   if (rType != TDoubleKeyframe::Linear)
     menu.addAction(cmdManager->getAction(MI_UseLinearInterpolation));
   if (rType != TDoubleKeyframe::SpeedInOut)
@@ -3432,12 +3451,11 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
     menu.addAction(cmdManager->getAction(MI_UseEaseInOutPctInterpolation));
   if (rType != TDoubleKeyframe::Exponential)
     menu.addAction(cmdManager->getAction(MI_UseExponentialInterpolation));
-  if (rType != TDoubleKeyframe::Expression)
-    menu.addAction(cmdManager->getAction(MI_UseExpressionInterpolation));
-  if (rType != TDoubleKeyframe::File)
-    menu.addAction(cmdManager->getAction(MI_UseFileInterpolation));
-  if (rType != TDoubleKeyframe::Constant)
-    menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
+
+  if (col < 0) {
+    menu.addSeparator();
+    menu.addAction(cmdManager->getAction(MI_SetKeyframes));
+  }
 
 #ifdef LINETEST
   menu.addSeparator();
