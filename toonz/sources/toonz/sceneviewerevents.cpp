@@ -911,6 +911,7 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
               m_touchDevice == QTouchDevice::TouchScreen) ||
              m_gestureActive == false) {
       zoomQt(event->pos() * getDevPixRatio(), exp(0.001 * delta));
+      m_panning = false;
     }
   }
   event->accept();
@@ -929,6 +930,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);
     QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
     QPoint firstCenter                     = gesture->centerPoint().toPoint();
+    if (m_touchDevice == QTouchDevice::TouchScreen)
+      firstCenter = mapFromGlobal(firstCenter);
 
     if (gesture->state() == Qt::GestureStarted) {
       m_gestureActive = true;
@@ -961,6 +964,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_zooming) {
           zoomQt(firstCenter * getDevPixRatio(), scaleFactor);
+          m_panning = false;
         }
         m_gestureActive = true;
       }
