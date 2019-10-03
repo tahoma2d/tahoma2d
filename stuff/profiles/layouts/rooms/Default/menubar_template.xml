@@ -158,7 +158,6 @@
         <command>MI_MergeCmapped</command>
         <separator/>
         <command>MI_MergeColumns</command>
-        <command>MI_MergeColumnsWOGroups</command>
         <command>MI_DeleteMatchLines</command>
         <command>MI_DeleteInk</command>
         <separator/>

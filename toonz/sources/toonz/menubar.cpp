@@ -668,7 +668,6 @@ QMenuBar *StackedMenuBar::createInknPaintMenuBar() {
   addMenuItem(filesMenu, MI_DeleteInk);
   addMenuItem(filesMenu, MI_MergeCmapped);
   addMenuItem(filesMenu, MI_MergeColumns);
-  addMenuItem(filesMenu, MI_MergeColumnsWOGroups);
   filesMenu->addSeparator();
   addMenuItem(filesMenu, MI_LoadScene);
   addMenuItem(filesMenu, MI_SaveScene);

@@ -131,6 +131,7 @@
 #define MI_ApplyMatchLines "MI_ApplyMatchLines"
 #define MI_MergeCmapped "MI_MergeCmapped"
 #define MI_MergeColumns "MI_MergeColumns"
+#define MI_MergeColumnsWGroups "MI_MergeColumnsWGroups"
 #define MI_MergeColumnsWOGroups "MI_MergeColumnsWOGroups"
 #define MI_DeleteMatchLines "MI_DeleteMatchLines"
 #define MI_DeleteInk "MI_DeleteInk"
