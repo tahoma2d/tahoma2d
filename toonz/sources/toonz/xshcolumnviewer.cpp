@@ -2402,8 +2402,10 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
   TXsheet *xsh = m_viewer->getXsheet();
   if (col >= 0 && xsh->isColumnEmpty(col)) return;
 
+  QPoint fieldPos =
+      (col < 0 && o->isVerticalTimeline()) ? nameRect.topLeft() : topLeft;
   QRect renameRect =
-      o->rect(PredefinedRect::RENAME_COLUMN).translated(nameRect.topLeft());
+      o->rect(PredefinedRect::RENAME_COLUMN).translated(fieldPos);
   m_renameColumnField->show(renameRect, col);
 }
 
