@@ -620,6 +620,11 @@ int main(int argc, char *argv[]) {
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
 
+#ifdef _WIN32
+  // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
+  QWindowsWindowFunctions::setHasBorderInFullScreen(w.windowHandle(), true);
+#endif
+
   splash.showMessage(offsetStr + "Loading style sheet ...", Qt::AlignCenter,
                      Qt::white);
   a.processEvents();
@@ -662,11 +667,6 @@ int main(int argc, char *argv[]) {
   // a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
   if (Preferences::instance()->isLatestVersionCheckEnabled())
     w.checkForUpdates();
-
-#ifdef _WIN32
-  // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
-  QWindowsWindowFunctions::setHasBorderInFullScreen(w.windowHandle(), true);
-#endif
 
   w.show();
 
