@@ -24,7 +24,8 @@ namespace {
 string escape(string v) {
   int i = 0;
   for (;;) {
-// Removing escaping of apostrophe from Windows and OSX as it's not needed and causes problems
+// Removing escaping of apostrophe from Windows and OSX as it's not needed and
+// causes problems
 #ifdef LINUX
     i = v.find_first_of("\\\'\"", i);
 #else
@@ -353,10 +354,11 @@ TOStream &TOStream::operator<<(string v) {
   }
   int i;
   for (i = 0; i < len; i++)
-    if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%')
-		|| v[i] < 32   // Less than ASCII for SPACE
-		|| v[i] > 126  // Greater than ASCII for ~
-		) break;
+    if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%') ||
+        v[i] < 32      // Less than ASCII for SPACE
+        || v[i] > 126  // Greater than ASCII for ~
+        )
+      break;
   if (i == len)
     os << v << " ";
   else {
@@ -381,10 +383,11 @@ TOStream &TOStream::operator<<(QString _v) {
   }
   int i;
   for (i = 0; i < len; i++)
-	  if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%')
-		  || v[i] < 32   // Less than ASCII for SPACE
-		  || v[i] > 126  // Greater than ASCII for ~
-		  ) break;
+    if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%') ||
+        v[i] < 32      // Less than ASCII for SPACE
+        || v[i] > 126  // Greater than ASCII for ~
+        )
+      break;
   if (i == len)
     os << v << " ";
   else {
@@ -1071,9 +1074,15 @@ TIStream &TIStream::operator>>(TFilePath &v) {
   is.get(c);
   if (c == '"') {
     is.get(c);
-    while (is && c != '"') {
+    bool escapedChar = false;
+    // If processing double-quote ("), if it's escaped, keep reading.
+    while (is && (c != '"' || escapedChar)) {
       // if(c=='\\')
       //   is.get(c);
+      if (c == '\\')
+        escapedChar = true;
+      else
+        escapedChar = false;
       s.append(1, c);
       is.get(c);
     }
