@@ -162,7 +162,7 @@ inline TRectD getImageBoundsD(const TImageP &img) {
     \sa FlipBookPool class.
 */
 FlipBook::FlipBook(QWidget *parent, QString viewerTitle,
-                   UINT flipConsoleButtonMask, UCHAR flags,
+                   std::vector<int> flipConsoleButtonMask, UCHAR flags,
                    bool isColorModel)  //, bool showOnlyPlayBackgroundButton)
     : QWidget(parent),
       m_viewerTitle(viewerTitle),
@@ -201,7 +201,9 @@ FlipBook::FlipBook(QWidget *parent, QString viewerTitle,
       new ImageUtils::FullScreenWidget(this);
 
   m_imageViewer = new ImageViewer(
-      fsWidget, this, flipConsoleButtonMask == FlipConsole::cFullConsole);
+      fsWidget, this,
+      std::find(flipConsoleButtonMask.begin(), flipConsoleButtonMask.end(),
+                FlipConsole::eHisto) == flipConsoleButtonMask.end());
   fsWidget->setWidget(m_imageViewer);
 
   setFocusProxy(m_imageViewer);

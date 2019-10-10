@@ -397,6 +397,8 @@ public slots:
   void setActualPixelSize();
   void flipX();
   void flipY();
+  void zoomIn();
+  void zoomOut();
   void onXsheetChanged();
   void onObjectSwitched();
   // when tool options are changed, update tooltip immediately
@@ -431,6 +433,8 @@ public slots:
 signals:
 
   void onZoomChanged();
+  void onFlipHChanged(bool);
+  void onFlipVChanged(bool);
   void freezeStateChanged(bool);
   void previewStatusChanged();
   // when pan/zoom on the viewer, notify to level strip in order to update the
