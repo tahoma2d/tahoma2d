@@ -1074,15 +1074,15 @@ TIStream &TIStream::operator>>(TFilePath &v) {
   is.get(c);
   if (c == '"') {
     is.get(c);
-    bool escapedChar = false;
+    bool escapeChar = false;
     // If processing double-quote ("), if it's escaped, keep reading.
-    while (is && (c != '"' || escapedChar)) {
+    while (is && (c != '"' || escapeChar)) {
       // if(c=='\\')
       //   is.get(c);
-      if (c == '\\')
-        escapedChar = true;
+      if (c == '\\' && !escapeChar)
+        escapeChar = true;
       else
-        escapedChar = false;
+        escapeChar = false;
       s.append(1, c);
       is.get(c);
     }
