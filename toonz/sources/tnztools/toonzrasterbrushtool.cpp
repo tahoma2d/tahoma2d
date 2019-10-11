@@ -251,8 +251,9 @@ static void findMaxCurvPoints(TStroke *stroke, const float &angoloLim,
     double estremo_int = 0;
     double t           = -1;
     if (q != TPointD(0, 0)) {
-      t = 0.25 * (2 * q.x * q.x + 2 * q.y * q.y - q.x * p0.x + q.x * p2.x -
-                  q.y * p0.y + q.y * p2.y) /
+      t = 0.25 *
+          (2 * q.x * q.x + 2 * q.y * q.y - q.x * p0.x + q.x * p2.x -
+           q.y * p0.y + q.y * p2.y) /
           (q.x * q.x + q.y * q.y);
 
       dp  = -p0 + p2 + 2 * q - 4 * t * q;  // First derivate of the curve
@@ -286,7 +287,7 @@ static void findMaxCurvPoints(TStroke *stroke, const float &angoloLim,
     if (estremo_sx >= estremo_dx)
       t_ext = 0;
     else
-      t_ext           = 1;
+      t_ext = 1;
     double maxEstremi = std::max(estremo_dx, estremo_sx);
     if (maxEstremi > estremo_int) {
       t        = t_ext;
@@ -600,9 +601,9 @@ public:
 //=========================================================================================================
 
 double computeThickness(double pressure, const TDoublePairProperty &property) {
-  double t                    = pressure * pressure * pressure;
-  double thick0               = property.getValue().first;
-  double thick1               = property.getValue().second;
+  double t      = pressure * pressure * pressure;
+  double thick0 = property.getValue().first;
+  double thick1 = property.getValue().second;
   if (thick1 < 0.0001) thick0 = thick1 = 0.0;
   return (thick0 + (thick1 - thick0) * t) * 0.5;
 }
@@ -821,7 +822,7 @@ void SmoothStroke::generatePoints() {
 
 ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     : TTool(name)
-    , m_rasThickness("Size", 1, 100, 1, 5)
+    , m_rasThickness("Size", 1, 1000, 1, 5)
     , m_smooth("Smooth:", 0, 50, 0)
     , m_hardness("Hardness:", 0, 100, 100)
     , m_preset("Preset:")
@@ -841,6 +842,8 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_workingFrameId(TFrameId())
     , m_notifier(0) {
   bind(targetType);
+
+  m_rasThickness.setNonLinearSlider();
 
   m_prop[0].bind(m_rasThickness);
   m_prop[0].bind(m_hardness);
@@ -1244,7 +1247,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
                            : maxThick;
 
     /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する
-      * ---*/
+     * ---*/
     if (m_pressure.getValue() && e.m_pressure == 1.0)
       thickness = m_rasThickness.getValue().first;
 
@@ -1305,7 +1308,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
           TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
     } else if (m_hardness.getValue() == 100 || m_pencil.getValue()) {
       /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
-        * --*/
+       * --*/
       if (!m_pencil.getValue()) thickness -= 1.0;
 
       TThickPoint thickPoint(centeredPos + convert(ras->getCenter()),
@@ -1408,7 +1411,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   } else if (m_rasterTrack &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
-      * --*/
+     * --*/
     if (!m_pencil.getValue()) thickness -= 1.0;
 
     TThickPoint thickPoint(centeredPos + rasCenter, thickness);
@@ -1518,7 +1521,7 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
 //---------------------------------------------------------------------------------------------------------------
 /*!
  * ドラッグ中にツールが切り替わった場合に備え、onDeactivate時とMouseRelease時にと同じ終了処理を行う
-*/
+ */
 void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
                                              double pressureVal) {
   TToonzImageP ti = TImageP(getImage(true));
@@ -2096,7 +2099,7 @@ void ToonzRasterBrushTool::loadLastBrush() {
 
 //------------------------------------------------------------------
 /*!	Brush、PaintBrush、EraserToolがPencilModeのときにTrueを返す
-*/
+ */
 bool ToonzRasterBrushTool::isPencilModeActive() {
   return getTargetType() == TTool::ToonzImage && m_pencil.getValue();
 }
