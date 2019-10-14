@@ -391,13 +391,13 @@ public:
           cells will be inserted by shifting the other down.
   */
   void stepCells(int r0, int c0, int r1, int c1, int type);
-  /*! For each sequenze of frame with same number, contained in rect delimited
+  /*! For each sequence of frame with same number, contained in rect delimited
      by first row \b \e r0, last row \b \e r1 and
           first column \b \e c0, a frame with same number is inserted.
 */
   void increaseStepCells(int r0, int c0, int &r1, int c1);
   /*!
-For each sequenze of frame with same number, contained in rect delimited by
+For each sequence of frame with same number, contained in rect delimited by
 first row \b \e r0, last row \b \e r1 and
           first column \b \e c0, a frame with same number is removed.
 */
@@ -405,7 +405,7 @@ first row \b \e r0, last row \b \e r1 and
   /*!
 The cells, contained in rect delimited by first row \b \e r0, last row \b \e r1
 and
-          first column \b \e c0, are resetted in order to have no sequential
+          first column \b \e c0, are reset in order to have no sequential
 frame duplication.
 */
   void resetStepCells(int r0, int c0, int r1, int c1);

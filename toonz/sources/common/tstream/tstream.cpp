@@ -470,7 +470,7 @@ TOStream &TOStream::operator<<(const TPixel64 &v) {
 
 void TOStream::cr() {
   *(m_imp->m_os) << endl;
-  for (int i           = 0; i < m_imp->m_tab; i++) *(m_imp->m_os) << "  ";
+  for (int i = 0; i < m_imp->m_tab; i++) *(m_imp->m_os) << "  ";
   m_imp->m_justStarted = false;
 }
 
@@ -585,6 +585,10 @@ bool TOStream::checkStatus() const {
 
   m_imp->m_os->flush();
   return m_imp->m_os->rdstate() == ios_base::goodbit;
+}
+
+std::string TOStream::getCurrentTagName() {
+  return (m_imp->m_tagStack.empty()) ? "" : m_imp->m_tagStack.back();
 }
 
 //===============================================================
@@ -1118,8 +1122,8 @@ TIStream &TIStream::operator>>(TPersist *&v) {
   m_imp->m_currentTag = StreamTag();
   string tagName      = tag.m_name;
   std::map<std::string, string>::iterator it;
-  int id                               = -1;
-  it                                   = tag.m_attributes.find("id");
+  int id = -1;
+  it     = tag.m_attributes.find("id");
   if (it != tag.m_attributes.end()) id = atoi(it->second.c_str());
   // cout << "tagname = " << tagName << " id = " << id << endl;
 
@@ -1277,3 +1281,7 @@ void TIStream::setVersion(const VersionNumber &version) {
 //---------------------------------------------------------------
 
 void TIStream::skipCurrentTag() { m_imp->skipCurrentTag(); }
+
+//---------------------------------------------------------------
+
+std::string TIStream::getCurrentTagName() { return m_imp->m_tagStack.back(); }
