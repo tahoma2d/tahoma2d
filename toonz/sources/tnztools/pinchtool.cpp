@@ -81,6 +81,8 @@ PinchTool::PinchTool()
     , m_selector(500, 10, 1000) {
   bind(TTool::Vectors);
 
+  m_toolRange.setNonLinearSlider();
+
   m_prop.bind(m_toolCornerSize);
   m_prop.bind(m_autoOrManual);
   m_prop.bind(m_toolRange);
@@ -138,7 +140,7 @@ void PinchTool::updateInterfaceStatus(const TMouseEvent &event) {
   m_status.key_event_ = ContextStatus::NONE;
 
   // mutual exclusive
-  if (event.isCtrlPressed()) m_status.key_event_  = ContextStatus::CTRL;
+  if (event.isCtrlPressed()) m_status.key_event_ = ContextStatus::CTRL;
   if (event.isShiftPressed()) m_status.key_event_ = ContextStatus::SHIFT;
 
   // TODO:  **DEVE** essere fatto dentro la costruzione di TMouseEvent
@@ -357,7 +359,7 @@ void PinchTool::onEnter() {
 //-----------------------------------------------------------------------------
 
 void PinchTool::onLeave() {
-  if (!m_active) m_draw   = false;
+  if (!m_active) m_draw = false;
   m_status.stroke2change_ = 0;
 
   // Abbiamo dovuto commentarlo perche' stranamente
