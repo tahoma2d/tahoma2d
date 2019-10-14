@@ -132,7 +132,7 @@
     </message>
     <message>
         <source> </source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The microphone is not available: 
@@ -162,7 +162,7 @@ Please select a different device or check the microphone.</source>
     <message>
         <source>Setting this value 0 will automatically 
 pick up all frames in the selected level.</source>
-        <translation>이 값을 0으로 설정하면 자동으로 설정되며, 선택한 수준의 모든 프레임을 자동배치함.</translation>
+        <translation>이 값을 0으로 설정하면 자동으로 설정되며, 선택한 레벨의 모든 프레임을 자동배치함.</translation>
     </message>
     <message>
         <source>From frame</source>
@@ -171,7 +171,7 @@ pick up all frames in the selected level.</source>
     <message>
         <source> </source>
         <comment>from frame</comment>
-        <translation>시작 프레임</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>with</source>
@@ -188,7 +188,7 @@ pick up all frames in the selected level.</source>
     <message>
         <source> </source>
         <comment>to frame</comment>
-        <translation>종료 프레임</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>inserting</source>
@@ -377,7 +377,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Load Preset</source>
-        <translation>로드 미리설정</translation>
+        <translation>가져오기 미리설정</translation>
     </message>
     <message>
         <source>Save as Preset</source>
@@ -570,11 +570,11 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>mm</source>
-        <translation>mm</translation>
+        <translation>미리</translation>
     </message>
     <message>
         <source>cm</source>
-        <translation>cm</translation>
+        <translation>센치</translation>
     </message>
     <message>
         <source>field</source>
@@ -701,14 +701,14 @@ Do you want to crop the canvas?</source>
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
 </context>
 <context>
     <name>ChooseCameraDialog</name>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -753,7 +753,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>There were errors opening the existing level &quot;%1&quot;.
@@ -863,7 +863,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Load Settings</source>
-        <translation>로드 설정</translation>
+        <translation>가져오기 설정</translation>
     </message>
     <message>
         <source>Reset Settings</source>
@@ -902,7 +902,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -1040,7 +1040,7 @@ What do you want to do?</source>
     <name>ClipListViewer</name>
     <message>
         <source>Load Scene</source>
-        <translation>로드 장면</translation>
+        <translation>장면 가져오기</translation>
     </message>
 </context>
 <context>
@@ -1267,7 +1267,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1541,7 +1541,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>No output filename specified: please choose a valid level name.</source>
-        <translation>출력 파일 이름이 지정되지 않음: 올바른 수준 이름을 선택하십시오.</translation>
+        <translation>출력 파일 이름이 지정되지 않음: 올바른 레벨 이름을 선택하십시오.</translation>
     </message>
     <message>
         <source>No unpainted suffix specified: cannot convert.</source>
@@ -1549,7 +1549,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>Convert completed with %1 error(s) and %2 level(s) skipped</source>
-        <translation>%1 오류 및 %2 수준을 건너뛰고 변환 완료</translation>
+        <translation>%1 오류 및 %2 레벨을 건너뛰고 변환 완료</translation>
     </message>
     <message>
         <source>Convert completed with %1 error(s) </source>
@@ -1602,7 +1602,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1699,7 +1699,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>It is not possible to delete the folder.</source>
@@ -2023,11 +2023,11 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>Load As Sub-xsheet</source>
-        <translation>서브-X시트로 로드</translation>
+        <translation>서브-X시트로 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -2115,11 +2115,11 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>Done: All Levels  converted to TLV Format</source>
-        <translation>완료: TLV 형식으로 변환된 모든 수준</translation>
+        <translation>완료: TLV 형식으로 변환된 모든 레벨</translation>
     </message>
     <message>
         <source>Convert To Painted Tlv</source>
@@ -2146,7 +2146,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2206,7 +2206,7 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="vanished">뷰어</translation>
+        <translation>뷰어</translation>
     </message>
 </context>
 <context>
@@ -2241,24 +2241,24 @@ DPI 정보를 포함하면 현재 카메라 DPI가 적용됩니다. </translatio
     <message>
         <source>Click to Reset Shift &amp; Trace Markers to Neighbor Frames
 Hold F2 Key on the Viewer to Show This Frame Only</source>
-        <translation>Shift &amp; 인접한 프레임에 대한 추적마커. 
+        <translation>이동 &amp; 인접한 프레임에 대한 추적마커. 
 이 프레임 만 표시하려면 뷰어에서 F2를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F1 Key on the Viewer to Show This Frame Only</source>
-        <translation>이 프레임을 Shift &amp; 에서 숨기려면 클릭.
+        <translation>이 프레임을 이동&amp; 에서 숨기려면 클릭.
 이 프레임만 표시하려면 뷰어에서 F1키를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F3 Key on the Viewer to Show This Frame Only</source>
-        <translation>이 프레임을 Shift &amp; 에서 이 프레임을 숨기려면 클릭.
+        <translation>이 프레임을 이동 &amp; 에서 이 프레임을 숨기려면 클릭.
 이 프레임만 표시하려면 뷰어에서 F3를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Move Shift &amp; Trace Marker</source>
-        <translation>Shift &amp; 테이블 마커를 이동 하려면 클릭</translation>
+        <translation>이동 &amp; 테이블 마커를 이동 하려면 클릭</translation>
     </message>
 </context>
 <context>
@@ -2389,7 +2389,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load / Append Images</source>
-        <translation>로드/이미지 추가</translation>
+        <translation>가져오기/이미지 추가</translation>
     </message>
     <message>
         <source>Save Images</source>
@@ -2432,7 +2432,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
@@ -2510,7 +2510,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>It is not possible to delete %1.</source>
@@ -2637,7 +2637,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2673,7 +2673,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>Step:</source>
@@ -2901,7 +2901,7 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Capture Settings</source>
-        <translation>캠처 설정</translation>
+        <translation>캡처 설정</translation>
     </message>
     <message>
         <source>   File Settings    </source>
@@ -3076,14 +3076,14 @@ Please use the frame numbers for reference.</source>
     <name>LoadBoardPresetFilePopup</name>
     <message>
         <source>Load Clapperboard Settings Preset</source>
-        <translation>클래퍼보드 설정로드 사전설정</translation>
+        <translation>클래퍼보드 사전설정 가져오기</translation>
     </message>
 </context>
 <context>
     <name>LoadColorModelPopup</name>
     <message>
         <source>Load Color Model</source>
-        <translation>로드 색상 모델</translation>
+        <translation>색상 모델 가져오기</translation>
     </message>
     <message>
         <source>Frames :</source>
@@ -3091,32 +3091,32 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
 </context>
 <context>
     <name>LoadCurvePopup</name>
     <message>
         <source>Load Curve</source>
-        <translation type="vanished">로드 곡선</translation>
+        <translation type="vanished">곡선 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="vanished">로드</translation>
+        <translation type="vanished">가져오기</translation>
     </message>
 </context>
 <context>
     <name>LoadFolderPopup</name>
     <message>
         <source>Load Folder</source>
-        <translation>폴더 로드</translation>
+        <translation>폴더 가져오기</translation>
     </message>
 </context>
 <context>
     <name>LoadImagesPopup</name>
     <message>
         <source>Load Images</source>
-        <translation>이미지 로드</translation>
+        <translation>이미지 가져오기</translation>
     </message>
     <message>
         <source>Append</source>
@@ -3128,7 +3128,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>Step:</source>
@@ -3140,22 +3140,22 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>Load / Append Images</source>
-        <translation>로드/이미지 추가</translation>
+        <translation>가져오기/이미지 추가</translation>
     </message>
 </context>
 <context>
     <name>LoadLevelPopup</name>
     <message>
         <source>Load Level</source>
-        <translation>레벨 로드</translation>
+        <translation>레벨 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>TLV Caching Behavior</source>
@@ -3163,7 +3163,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Load Subsequence Level</source>
-        <translation>로드 섭시퀀스 레벨</translation>
+        <translation>서브시퀀스 레벨 가져오기</translation>
     </message>
     <message>
         <source>Arrangement in Xsheet</source>
@@ -3183,7 +3183,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>All Icons &amp; Images</source>
-        <translation>전체 아이콘 및 이미지(&amp;I)</translation>
+        <translation>전체 아이콘 &amp; 이미지</translation>
     </message>
     <message>
         <source>From:</source>
@@ -3191,7 +3191,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source> To:</source>
-        <translation>마지막 프레임:</translation>
+        <translation> 로:</translation>
     </message>
     <message>
         <source> Step:</source>
@@ -3199,7 +3199,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source> Inc:</source>
-        <translation>Inc:</translation>
+        <translation>증가:</translation>
     </message>
     <message>
         <source>Level Name:</source>
@@ -3218,11 +3218,11 @@ Please use the frame numbers for reference.</source>
     <name>LoadScenePopup</name>
     <message>
         <source>Load Scene</source>
-        <translation>로드 장면</translation>
+        <translation>장면 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source> is not a scene file.</source>
@@ -3237,18 +3237,18 @@ Please use the frame numbers for reference.</source>
     <name>LoadScriptPopup</name>
     <message>
         <source>Load script</source>
-        <translation type="vanished">로드 스크립트</translation>
+        <translation>스크립트 가져오기</translation>
     </message>
 </context>
 <context>
     <name>LoadSettingsPopup</name>
     <message>
         <source>Load Cleanup Settings</source>
-        <translation type="vanished">로드 정리 </translation>
+        <translation type="vanished">가져오기 정리</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="vanished">로드</translation>
+        <translation type="vanished">가져오기</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
@@ -3259,11 +3259,11 @@ Please use the frame numbers for reference.</source>
     <name>LoadSubScenePopup</name>
     <message>
         <source>Load Sub-Xsheet</source>
-        <translation>서브 X-시트 로드</translation>
+        <translation>서브 X-시트 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source> is not a scene file.</source>
@@ -3278,11 +3278,11 @@ Please use the frame numbers for reference.</source>
     <name>LoadTaskListPopup</name>
     <message>
         <source>Load Task List</source>
-        <translation>작업 목록 로드</translation>
+        <translation>작업목록 가져오기</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source> does not exist.</source>
@@ -3290,7 +3290,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>It is possible to load only TNZBAT files.</source>
-        <translation>TNZBAT 파일만 로드 할 수 있음.</translation>
+        <translation>TNZBAT 파일만 가져오지 못함.</translation>
     </message>
 </context>
 <context>
@@ -3313,11 +3313,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source> you can load only TNZ files for render task.</source>
-        <translation>렌데 작업을 위해 TNZ 파일만 로드할 수 있음.</translation>
+        <translation>렌데 작업을 위해 TNZ 파일만 가져오기 할 수 있음.</translation>
     </message>
     <message>
         <source> you can load only TNZ or CLN files for cleanup task.</source>
-        <translation>정리작업을 위해 TNZ 또는 CLN 파일만 로드할 수 있음.</translation>
+        <translation>정리작업을 위해 TNZ 또는 CLN 파일만 가져오기 할 수 있음.</translation>
     </message>
 </context>
 <context>
@@ -3339,7 +3339,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>From:</source>
@@ -3410,7 +3410,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Load Scene...</source>
-        <translation>로드 장면...</translation>
+        <translation>장면 가져오기(&amp;L)...</translation>
     </message>
     <message>
         <source>&amp;Save Scene</source>
@@ -3418,7 +3418,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Save Scene As...</source>
-        <translation>장면 다른이름으로 저장...</translation>
+        <translation>장면 다른이름으로 저장(&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Save All</source>
@@ -3430,11 +3430,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Load Folder...</source>
-        <translation>폴더 로드(&amp;L)...</translation>
+        <translation>폴더 가져오기(&amp;L)...</translation>
     </message>
     <message>
         <source>&amp;Load As Sub-xsheet...</source>
-        <translation>서브-X시트로 로드(&amp;L)...</translation>
+        <translation>서브-X시트로 가져오기(&amp;L)...</translation>
     </message>
     <message>
         <source>&amp;Open Recent Scene File</source>
@@ -3482,7 +3482,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Load Level...</source>
-        <translation>레벨 로드(&amp;L)...</translation>
+        <translation>레벨 가져오기(&amp;L)...</translation>
     </message>
     <message>
         <source>&amp;Save Level</source>
@@ -3514,7 +3514,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Load Color Model...</source>
-        <translation>로드 색상 모델(&amp;L)...</translation>
+        <translation>색상 모델 가져오기(&amp;L)...</translation>
     </message>
     <message>
         <source>&amp;Import Magpie File...</source>
@@ -3622,7 +3622,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Load Recent Image Files</source>
-        <translation>최근 이미지 파일로드(&amp;L)</translation>
+        <translation>최근 이미지 파일 가져오기(&amp;L)</translation>
     </message>
     <message>
         <source>&amp;Clear Recent Flipbook Image List</source>
@@ -3634,23 +3634,23 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Select All</source>
-        <translation>모두선택 (&amp;S)</translation>
+        <translation>모두선택(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Invert Selection</source>
-        <translation>반전 선택 (&amp;I)</translation>
+        <translation>반전 선택(&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>풀다 (&amp;U)</translation>
+        <translation>풀다(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation> 다시 실행 (&amp;R)</translation>
+        <translation>다시 실행(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Cut</source>
-        <translation>잘라내기 (&amp;C)</translation>
+        <translation>잘라내기(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
@@ -3674,7 +3674,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Paste Color &amp;&amp; Name</source>
-        <translation>색 붙여넣기(&amp;P) &amp;&amp; 이름(&amp;N)</translation>
+        <translation>색 붙여넣기 이름(&amp;P)</translation>
     </message>
     <message>
         <source>Paste Color</source>
@@ -3886,7 +3886,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Open Sub-xsheet</source>
-        <translation>서브 X-시트 열기</translation>
+        <translation>서브 X-시트 열기(&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Close Sub-xsheet</source>
@@ -3926,7 +3926,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Merge Tlv Levels...</source>
-        <translation>Tlv 레벨 병합...</translation>
+        <translation>Tlv 레벨 병합(&amp;M)...</translation>
     </message>
     <message>
         <source>&amp;Delete Match Lines</source>
@@ -3942,7 +3942,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;New FX...</source>
-        <translation>새로운 Fx...</translation>
+        <translation>새로운 Fx(&amp;N)...</translation>
     </message>
     <message>
         <source>&amp;New Output</source>
@@ -3950,7 +3950,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Edit FX...</source>
-        <translation>Fx 편집...</translation>
+        <translation>Fx 편집(&amp;E)...</translation>
     </message>
     <message>
         <source>Insert Frame</source>
@@ -3990,7 +3990,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Swing</source>
-        <translation>스윙(&amp;S)</translation>
+        <translation>흔들다(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Random</source>
@@ -4010,39 +4010,39 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Increase Step</source>
-        <translation>단계 증가(&amp;I)</translation>
+        <translation>프레임 증가(&amp;I)</translation>
     </message>
     <message>
         <source>&amp;Decrease Step</source>
-        <translation>단계 감소(&amp;D)</translation>
+        <translation>프레임 감소(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Step 2</source>
-        <translation>2 단계(&amp;S)</translation>
+        <translation>2단계(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Step 3</source>
-        <translation>3 단계(&amp;S)</translation>
+        <translation>3단계(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Step 4</source>
-        <translation>4 단계(&amp;S)</translation>
+        <translation>4단계(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Each 2</source>
-        <translation>각 2(&amp;E)</translation>
+        <translation>각각 2(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Each 3</source>
-        <translation>각 3(&amp;E)&gt;</translation>
+        <translation>각각 3(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Each 4</source>
-        <translation>각 4(&amp;E)</translation>
+        <translation>각각 4(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Roll Up</source>
-        <translation>롤 업(&amp;R)&gt;</translation>
+        <translation>롤 업(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Roll Down</source>
@@ -4054,7 +4054,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Duplicate Drawing</source>
-        <translation type="vanished">도면 복제(&amp;D)</translation>
+        <translation type="vanished">사본 만들기(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Autorenumber</source>
@@ -4082,19 +4082,19 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>1&apos;s</source>
-        <translation>1 프레임</translation>
+        <translation>1&apos;s</translation>
     </message>
     <message>
         <source>2&apos;s</source>
-        <translation>2 프레임</translation>
+        <translation>2&apos;s</translation>
     </message>
     <message>
         <source>3&apos;s</source>
-        <translation>3 프레임</translation>
+        <translation>3&apos;s</translation>
     </message>
     <message>
         <source>4&apos;s</source>
-        <translation>4 프레임</translation>
+        <translation>4&apos;s</translation>
     </message>
     <message>
         <source>Reframe with Empty Inbetweens...</source>
@@ -4122,7 +4122,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Table</source>
-        <translation>표(&amp;T)</translation>
+        <translation>테이블(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;Field Guide</source>
@@ -4202,7 +4202,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Visualize Vector As Raster</source>
-        <translation>백터를 래스터로 시각화하여 활용</translation>
+        <translation>백터를 래스터로 시각화하여 활용(&amp;V)</translation>
     </message>
     <message>
         <source>&amp;Histogram</source>
@@ -4326,7 +4326,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Delete Unused Styles</source>
-        <translation>사용하지 않는 스타일 삭제(&amp;P)</translation>
+        <translation>사용하지 않는 스타일 삭제(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Tasks</source>
@@ -4350,7 +4350,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Schematic</source>
-        <translation>스키메틱(&amp;S)</translation>
+        <translation>도식(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Cleanup Settings</source>
@@ -4422,7 +4422,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;About OpenToonz...</source>
-        <translation>오픈 툰즈에 대해...</translation>
+        <translation>오픈 툰즈에 대해(&amp;A)...</translation>
     </message>
     <message>
         <source>&amp;Startup Popup...</source>
@@ -4450,7 +4450,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Duplicate</source>
-        <translation>복제</translation>
+        <translation>사본만들기</translation>
     </message>
     <message>
         <source>Show Folder Contents</source>
@@ -4622,11 +4622,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>ON Selected</source>
-        <translation>ON 선택</translation>
+        <translation>켬선택</translation>
     </message>
     <message>
         <source>ON All</source>
-        <translation>모두 ON</translation>
+        <translation>모두 켬</translation>
     </message>
     <message>
         <source>OFF All</source>
@@ -4634,11 +4634,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>OFF Selected</source>
-        <translation>OFF 선택</translation>
+        <translation>끔 선택</translation>
     </message>
     <message>
         <source>Swap ON/OFF</source>
-        <translation>스왑 ON/OFF</translation>
+        <translation>바꾸기 켬/끔</translation>
     </message>
     <message>
         <source>Lock This Only</source>
@@ -4938,7 +4938,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation>활성 스켈레톤만 표시</translation>
+        <translation>활성 골격만 표시</translation>
     </message>
     <message>
         <source>Brush Preset</source>
@@ -4966,7 +4966,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Mode - Lines &amp; Areas</source>
-        <translation>모드-라인 (&amp; 구역)</translation>
+        <translation>모드-라인&amp; 영역</translation>
     </message>
     <message>
         <source>Type</source>
@@ -4986,7 +4986,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Type - Polyline</source>
-        <translation>유형 - 폴리라인</translation>
+        <translation>유형 - 다각형</translation>
     </message>
     <message>
         <source>TypeTool Font</source>
@@ -5014,11 +5014,11 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Active Axis - Scale</source>
-        <translation>활성 축 - 규모</translation>
+        <translation>활성 축 - 비율</translation>
     </message>
     <message>
         <source>Active Axis - Shear</source>
-        <translation>활성 축 - 전단</translation>
+        <translation>활성 축 - 왜곡</translation>
     </message>
     <message>
         <source>Active Axis - Center</source>
@@ -5030,7 +5030,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Build Skeleton Mode</source>
-        <translation>스켈레톤 모드빌드</translation>
+        <translation>골격 모드빌드</translation>
     </message>
     <message>
         <source>Animate Mode</source>
@@ -5074,7 +5074,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Style Picker Tool - Areas</source>
-        <translation>ㅅ스타일 선택도구 - 영역</translation>
+        <translation>스타일 선택도구 - 영역</translation>
     </message>
     <message>
         <source>Style Picker Tool - Lines</source>
@@ -5082,7 +5082,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>Toggle FX/Stage schematic</source>
-        <translation>Fx/스테이지 회로도 전환</translation>
+        <translation>Fx/스테이지 도식 전환</translation>
     </message>
     <message>
         <source>http://opentoonz.readthedocs.io</source>
@@ -5090,7 +5090,7 @@ Please use the frame numbers for reference.</source>
     </message>
     <message>
         <source>&amp;Duplicate Drawing  </source>
-        <translation>도면 및 중복 도면(&amp;D)</translation>
+        <translation>사본 만들기(&amp;D)  </translation>
     </message>
     <message>
         <source>&amp;Online Manual...</source>
@@ -5233,11 +5233,11 @@ Gaps</source>
     <name>MenuBarPopup</name>
     <message>
         <source>Customize Menu Bar of Room &quot;%1&quot;</source>
-        <translation>회의실의 메뉴 표시 줄 &quot;%1&quot;</translation>
+        <translation>&quot;%1&quot;회의실의 메뉴모음 사용자 정의 </translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -5296,7 +5296,7 @@ N.B 중복된 명령은 무시된다. 메뉴 표시 줄에는 마지막것만 �
     <name>MergeCmappedDialog</name>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -5541,7 +5541,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>8 bit</source>
-        <translation>8 비트</translation>
+        <translation>8비트</translation>
     </message>
     <message>
         <source>Add Clapperboard</source>
@@ -5569,11 +5569,11 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Fx Schematic Flows</source>
-        <translation>Fx 회로도</translation>
+        <translation>Fx 도식 흐름</translation>
     </message>
     <message>
         <source>Fx Schematic Terminal Nodes</source>
-        <translation>Fx 회로도 터미널 노드</translation>
+        <translation>Fx 도식 터미널 노드</translation>
     </message>
     <message>
         <source>Save current output settings.
@@ -5683,7 +5683,7 @@ The parameters to be saved are:
     </message>
     <message>
         <source>  To:</source>
-        <translation>To:</translation>
+        <translation>  로:</translation>
     </message>
     <message>
         <source>Multiple Rendering:</source>
@@ -5796,7 +5796,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>No</source>
         <comment>frame id</comment>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>Camera Capture</source>
@@ -5840,7 +5840,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load Selected Image</source>
-        <translation>선택한 이미지 로드</translation>
+        <translation>선택한 이미지 가져오기</translation>
     </message>
     <message>
         <source>Interval timer</source>
@@ -5885,7 +5885,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Black &amp; White</source>
-        <translation>블랙(&amp;W) 화이트</translation>
+        <translation>블랙 &amp; 화이트</translation>
     </message>
     <message>
         <source>Video Capture Filter Settings...</source>
@@ -5959,7 +5959,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Stop Capturing
 [Return key]</source>
-        <translation>캠처 중지[리턴 키]</translation>
+        <translation>캡처 중지[엔터키]</translation>
     </message>
     <message>
         <source>No level name specified: please choose a valid level name</source>
@@ -5995,7 +5995,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Failed to load %1.</source>
-        <translation>%1를 로드하지 못함.</translation>
+        <translation>%1를 가져오지 못함.</translation>
     </message>
     <message>
         <source>UNDEFINED WARNING</source>
@@ -6080,7 +6080,7 @@ WARNING : Image size mismatch. The size of level with the same name is is %1 x %
     <message>
         <source>WARNING : Level path conflicts. There already is a level with the path %1                        
           in the scene with the name %2.</source>
-        <translation>경고: 레벨 경로 충돌. 경로가 %1인 수준이 이미 있음. 이름이 %2인 장면에서</translation>
+        <translation>경고: 레벨 경로 충돌. 경로가 %1인 레벨이 이미 있음. 이름이 %2인 장면에서</translation>
     </message>
     <message>
         <source>
@@ -6128,7 +6128,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -6225,7 +6225,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Shift (value)</source>
-        <translation>Shift(값)</translation>
+        <translation>이동(값)</translation>
     </message>
     <message>
         <source>Value</source>
@@ -6286,7 +6286,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -6330,7 +6330,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Backup Animation Levels when Saving</source>
-        <translation type="vanished">저장 할 때 백업 애니메이션 레벨</translation>
+        <translation type="vanished">저장 시 애니메이션 레벨 백업</translation>
     </message>
     <message>
         <source>Show Info in Rendered Frames</source>
@@ -6422,7 +6422,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Expose Loaded Levels in Xsheet</source>
-        <translation>로드된 레벨을 X-시트에 표시</translation>
+        <translation>가져오기 레벨을 X-시트에 표시</translation>
     </message>
     <message>
         <source>Create Sub-folder when Importing Sub-xsheet</source>
@@ -6434,7 +6434,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Automatically Remove Scene Number from Loaded Level Name</source>
-        <translation>로드된 레벨 이름에서 장면 번호 자동 제거</translation>
+        <translation>가져오기 레벨 이름에서 장면 번호 자동 제거</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -6558,7 +6558,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Onion Skin ON</source>
-        <translation>어니언 스킨 ON</translation>
+        <translation>어니언 스킨 켬</translation>
     </message>
     <message>
         <source>Show Onion Skin During Playback</source>
@@ -6674,7 +6674,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     </message>
     <message>
         <source>Use Onion Skin Colors for Reference Drawings of Shift and Trace</source>
-        <translation>Shift 및 Trace 참조 도면에 어니언스킨 색상 사용</translation>
+        <translation>이동 및 트레스 참조 도면에 어니언스킨 색상 사용</translation>
     </message>
     <message>
         <source>Colors</source>
@@ -6716,11 +6716,11 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>cm</source>
-        <translation>cm</translation>
+        <translation>센치</translation>
     </message>
     <message>
         <source>mm</source>
-        <translation>mm</translation>
+        <translation>미리</translation>
     </message>
     <message>
         <source>inch</source>
@@ -6752,11 +6752,11 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>All Icons &amp; Images</source>
-        <translation>전체 아이콘 및 이미지(&amp;I)</translation>
+        <translation>전체 아이콘 &amp; 이미지</translation>
     </message>
     <message>
         <source>Always ask before loading or importing</source>
-        <translation>로드 또는 가져오기 전에 항상 문의하세요</translation>
+        <translation>가져오기 또는 가져오기 전에 항상 문의하세요</translation>
     </message>
     <message>
         <source>Always import the file to the current project</source>
@@ -6764,7 +6764,7 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Always load the file from the current location</source>
-        <translation>항상 현재 위치에서 파일로드 하세요</translation>
+        <translation>항상 현재 위치에서 파일가져오기 하세요</translation>
     </message>
     <message>
         <source>Toonz Vector Level</source>
@@ -7058,7 +7058,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Next/Previous Step Frames:</source>
-        <translation>다음/이전단계 프레임:</translation>
+        <translation>다음/이전 단계 프레임:</translation>
     </message>
     <message>
         <source>Cell-dragging Behaviour:</source>
@@ -7118,7 +7118,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Backup Scene and Animation Levels when Saving</source>
-        <translation>저장 할 때 백업 장면 및 애니메이션 수준</translation>
+        <translation>저장 할 때 백업 장면 및 애니메이션 레벨</translation>
     </message>
     <message>
         <source>Show Camera Column</source>
@@ -7216,7 +7216,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -7252,15 +7252,15 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Append $scenepath to +drawings</source>
-        <translation> + 도면에 $ 장면 경로 추가</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Append $scenepath to +inputs</source>
-        <translation> + 입력에 $ 장면 경로 추가</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Append $scenepath to +extras</source>
-        <translation>&gt;Append $scenepath to +extras</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7274,7 +7274,7 @@ Do you want to overwrite it?</source>
     <name>PsdSettingsPopup</name>
     <message>
         <source>Load PSD File</source>
-        <translation>로드 PSD 파일</translation>
+        <translation>PSD 파일 가져오기</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -7298,7 +7298,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load As:</source>
-        <translation>로드 As:</translation>
+        <translation>다른이름으로 가져오기</translation>
     </message>
     <message>
         <source>Level Name:</source>
@@ -7326,11 +7326,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load document layers as frames into a single xsheet column.</source>
-        <translation>문서 도면층을 프레임으로 단일 X시트 열에 로드 합니다.</translation>
+        <translation>문서 도면층을 프레임으로 단일 X시트 열에 가져오기 합니다.</translation>
     </message>
     <message>
         <source>Load document layers as xhseet columns.</source>
-        <translation>문서 도면층을 X시트 열로 로드하십시오.</translation>
+        <translation>문서 도면층을 X시트 열로 가져오기 하십시오.</translation>
     </message>
     <message>
         <source>Single Image</source>
@@ -7350,7 +7350,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -7365,7 +7365,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Load Scene</source>
-        <translation>로드 장면</translation>
+        <translation>장면 가져오기</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -7391,8 +7391,8 @@ Do you want to overwrite it?</source>
         <translation>네</translation>
     </message>
     <message>
-        <source>아니요</source>
-        <translation type="vanished">No</translation>
+        <source>No</source>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -7424,7 +7424,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>It is not possible to load the curve.</source>
-        <translation>곡선을 로드할 수 없음.</translation>
+        <translation>곡선을 가져오지 못함.</translation>
     </message>
     <message>
         <source>It is not possible to export data.</source>
@@ -7432,7 +7432,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>There was an error saving frames for the %1 level.</source>
-        <translation>%1 수준의 프레임을 저장하는 동안 오류가 발생함.</translation>
+        <translation>%1 레벨의 프레임을 저장하는 동안 오류가 발생함.</translation>
     </message>
     <message>
         <source>It is not possible to display the file %1: no player associated with its format</source>
@@ -7499,7 +7499,7 @@ Save the scene first.</source>
     <message>
         <source>The cleanup settings file for the %1 level already exists.
  Do you want to overwrite it?</source>
-        <translation>%1 수준에 대한 정리 설정 파일이 이미 있음.
+        <translation>%1 레벨에 대한 정리 설정 파일이 이미 있음.
 덮어쓰겠습니까?</translation>
     </message>
     <message>
@@ -7618,7 +7618,7 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Missing</source>
-        <translation>Missing</translation>
+        <translation>누락</translation>
     </message>
     <message>
         <source>Partially Edited</source>
@@ -7774,12 +7774,12 @@ Are you sure ?</source>
     </message>
     <message>
         <source>The Reload command is not supported for the current selection.</source>
-        <translation>현재 선택 항목에 대해 다시 로드 명령이 지원되지 않음.</translation>
+        <translation>현재 선택 항목에 대해 다시 가져오기 명령이 지원되지 않음.</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t belong to the current project.
 Do you want to import it or load it from its original location?</source>
-        <translation>%1 파일은 현재 프로젝트에 속하지 않음. 가져오시겠습니까? 아니면 원래 위치에서 로드하겠습니까?</translation>
+        <translation>%1 파일은 현재 프로젝트에 속하지 않음. 가져오시겠습니까? 아니면 원래 위치에서 가져오기 하겠습니까?</translation>
     </message>
     <message>
         <source>Always do this action.</source>
@@ -7791,19 +7791,19 @@ Do you want to import it or load it from its original location?</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>Load Level  %1</source>
-        <translation>레벨 로드 %1</translation>
+        <translation>레벨 가져오기 %1</translation>
     </message>
     <message>
         <source>Load and Replace Level  %1</source>
-        <translation>%1 레벨 로드 및 교체</translation>
+        <translation>%1 레벨 가져오기 및 교체</translation>
     </message>
     <message>
         <source>The camera settings of the scene you are loading as sub-xsheet are different from those of your current scene. What you want to do?</source>
-        <translation>서브 X시트로 로드하는 장면의 카메라 설정은 현재 장면의 설정과 다름. 무엇을 하길 원합니까?</translation>
+        <translation>서브 X시트로 가져오기 장면의 카메라 설정은 현재 장면의 설정과 다름. 무엇을 하길 원합니까?</translation>
     </message>
     <message>
         <source>Keep the sub-xsheet original camera settings.</source>
@@ -7811,7 +7811,7 @@ Do you want to import it or load it from its original location?</source>
     </message>
     <message>
         <source>Apply the current scene camera settings to the sub-xsheet.</source>
-        <translation>현재 장면 카메라 설정을 서브 X시트에 적용.</translation>
+        <translation>현재 장면 카메라 설정을 서브-X시트에 적용.</translation>
     </message>
     <message>
         <source>Expose Level  %1</source>
@@ -7856,7 +7856,7 @@ What would you like to do? </source>
     </message>
     <message>
         <source> Anyway</source>
-        <translation>Anyway</translation>
+        <translation> 어쨌든</translation>
     </message>
     <message>
         <source>%1 has an invalid file extension.</source>
@@ -7874,7 +7874,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Couldn&apos;t load %1</source>
-        <translation>%1을 로드할 수 있음.</translation>
+        <translation>%1을 가져오지 못음.</translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
@@ -7891,7 +7891,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Don&apos;t Overwrite Palette</source>
-        <translation>Don&apos;t 팔레트 덮어쓰기</translation>
+        <translation>팔레트 덮어쓰기 안함</translation>
     </message>
     <message>
         <source>The soundtrack %1 already exists.
@@ -7909,8 +7909,10 @@ A partial save file was generated and changes may be manually salvaged from &apo
 
 Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
         <translation>장면 &apos;%1&apos; 이전 절약은 심각하게 상호작용됨.
+
 부분 저장 파일이 생성되었으며, &apos;%2&apos; 에서 수동으로 변경 사항을 복구할 수 있음.
-마지막 굿 세이브를 계속 로드하시겠습니까? 아니면 중지하고 이전 저장을 복구하려고 합니까?</translation>
+
+마지막 굿 세이브를 계속 가져오기 하시겠습니까? 아니면 중지하고 이전 저장을 복구하려고 합니까?</translation>
     </message>
     <message>
         <source>Continue</source>
@@ -7918,7 +7920,7 @@ Do you wish to continue loading the last good save or stop and try to salvage th
     </message>
     <message>
         <source>It is not possible to load the scene %1 because it does not belong to any project.</source>
-        <translation>%1 장면은 프로젝트에 속하지 않기 때문에 로드 할 수 없음.</translation>
+        <translation>%1 장면은 프로젝트에 속하지 않기 때문에 가져올 수 없음.</translation>
     </message>
     <message>
         <source>The Scene &apos;%1&apos; belongs to project &apos;%2&apos;.
@@ -7936,14 +7938,14 @@ What do you want to do?</source>
     <message>
         <source>There were problems loading the scene %1.
  Some files may be missing.</source>
-        <translation>장면 %1를 로드하는 중에 문제가 발생함. 
+        <translation>장면 %1를 가져오는 중에 문제가 발생함. 
 일부 파일이 누락되었을 수 있음.</translation>
     </message>
     <message>
         <source>There were problems loading the scene %1.
 Some levels have not been loaded because their version is not supported</source>
-        <translation>장면 %1을 로드하는 중에 문제가 발생함.
-버전이 지원되지 않기 때문에 일부 레벨이 로드 되지 않음.</translation>
+        <translation>장면 %1을가져오는 중에 문제가 발생함.
+버전이 지원되지 않기 때문에 일부 레벨이 가져올수 없음.</translation>
     </message>
     <message>
         <source>This scene is incompatible with pixels only mode of the current OpenToonz version.
@@ -7963,7 +7965,7 @@ What would you like to do?</source>
         <source>File &apos;%1&apos; will reload level &apos;%2&apos; as a duplicate column in the xsheet.
 
 Allow duplicate?</source>
-        <translation>파일 %1 레벨 %2 다시 로드함. X시트에서 중복열로 복제하겠습니까?</translation>
+        <translation>파일 %1 레벨 %2 다시 가져오기함. X시트에서 중복열로 복제하겠습니까?</translation>
     </message>
     <message>
         <source>Allow</source>
@@ -7979,7 +7981,7 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>It is not possible to load the level %1</source>
-        <translation>%1 레벨을 로드 할 수 없음.</translation>
+        <translation>%1 레벨을 가져올 수 없음.</translation>
     </message>
     <message>
         <source>The following level(s) use path with $scenefolder alias.
@@ -7991,7 +7993,7 @@ Allow duplicate?</source>
         <source>
 They will not be opened properly when you load the scene next time.
 What do you want to do?</source>
-        <translation>다음에 장면을 로드하면 제대로 열리지 않음.
+        <translation>다음에 장면을 가져오기 하면 제대로 열리지 않음.
 무엇을 하고싶습니까?</translation>
     </message>
     <message>
@@ -8018,7 +8020,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Don&apos;t Overwrite for All</source>
-        <translation>Don&apos;t 모두 덮어쓰기</translation>
+        <translation>모두 덮어쓰지 않음</translation>
     </message>
     <message>
         <source>Failed to overwrite %1</source>
@@ -8046,7 +8048,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>It is not possible to load the %1 level.</source>
-        <translation>%1 레벨을 로드 할 수 없음.</translation>
+        <translation>%1 레벨을 가져올 수 없음.</translation>
     </message>
     <message>
         <source>The scene %1 doesn&apos;t exist.</source>
@@ -8064,7 +8066,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>The copied selection cannot be pasted in the current drawing.</source>
@@ -8100,7 +8102,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Swing  : Level %1</source>
-        <translation>스윙 : 레벨 %1</translation>
+        <translation>흔들림 : 레벨 %1</translation>
     </message>
     <message>
         <source>Step %1  : Level %2</source>
@@ -8108,11 +8110,11 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Each %1  : Level %2</source>
-        <translation>각 %1 : 레벨 %2</translation>
+        <translation>각각 %1 : 레벨 %2</translation>
     </message>
     <message>
         <source>Duplicate  : Level %1</source>
-        <translation>복제 : 레벨 %1</translation>
+        <translation>사본만들기 : 레벨 %1</translation>
     </message>
     <message>
         <source>Move Level to Scene  : Level %1</source>
@@ -8156,7 +8158,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Swing</source>
-        <translation>스윙</translation>
+        <translation>흔들다</translation>
     </message>
     <message>
         <source>Autoexpose</source>
@@ -8176,7 +8178,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Each %1</source>
-        <translation>각 %1</translation>
+        <translation>각각 %1</translation>
     </message>
     <message>
         <source>Reframe to %1&apos;s</source>
@@ -8204,7 +8206,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>FlipBook</source>
@@ -8344,7 +8346,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Don&apos;t Scan</source>
-        <translation>Don&apos;t 스캔</translation>
+        <translation>스캔안함</translation>
     </message>
     <message>
         <source>There are no frames to scan.</source>
@@ -8380,7 +8382,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>No Palette loaded.</source>
-        <translation>팔레트가 로드 되지않음.</translation>
+        <translation>팔레트 가져오기가 되지않음.</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -8396,7 +8398,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Create Level %1  at Column %2</source>
-        <translation>열 %2에서 수준 %1 생성</translation>
+        <translation>열 %2에서 레벨 %1 생성</translation>
     </message>
     <message>
         <source>Layer name</source>
@@ -8417,7 +8419,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Don&apos;t expose</source>
-        <translation>Don&apos;t 노출</translation>
+        <translation>노출하지 않음</translation>
     </message>
     <message>
         <source>Nothing to replace: no cells or columns selected.</source>
@@ -8430,7 +8432,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Cannot load Color Model in current palette.</source>
-        <translation>현재 팔레트에서 색상 모델을 로드할 수 없음.</translation>
+        <translation>현재 팔레트에서 색상 모델을 가져오기할 수 없음.</translation>
     </message>
     <message>
         <source>Choose Folder</source>
@@ -8442,7 +8444,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Duplicate</source>
-        <translation>복제</translation>
+        <translation>사본만들기</translation>
     </message>
     <message>
         <source>Paste Key Frames</source>
@@ -8514,11 +8516,11 @@ The operation cannot be undone: are you sure?</source>
     </message>
     <message>
         <source>Error loading scene %1 :%2</source>
-        <translation>%1 장면 로드 오류: %2</translation>
+        <translation>%1 장면 가져오기 오류: %2</translation>
     </message>
     <message>
         <source>Error loading scene %1</source>
-        <translation>%1 장면 로드중 오류 발생</translation>
+        <translation>%1 장면 가져오는 중 오류발생</translation>
     </message>
     <message>
         <source>There was an error saving the %1 scene.</source>
@@ -8706,15 +8708,15 @@ X시트/ 타임에서 중복 명령을 사용하세요.</translation>
     </message>
     <message>
         <source>Schematic</source>
-        <translation>스키메틱</translation>
+        <translation>도식</translation>
     </message>
     <message>
         <source>Stage Schematic</source>
-        <translation>단계 회로도</translation>
+        <translation>도식단계</translation>
     </message>
     <message>
         <source>Fx Schematic</source>
-        <translation>Fx 회로도</translation>
+        <translation>Fx 도식</translation>
     </message>
     <message>
         <source>Palette</source>
@@ -8826,7 +8828,7 @@ X시트/ 타임에서 중복 명령을 사용하세요.</translation>
     </message>
     <message>
         <source>Don&apos;t Duplicate</source>
-        <translation>Don&apos;t 복제</translation>
+        <translation>복제안함</translation>
     </message>
     <message>
         <source>The specified name is already assigned to the %1 file.</source>
@@ -8910,7 +8912,7 @@ X시트/ 타임에서 중복 명령을 사용하세요.</translation>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy separator to menu bar</source>
-        <translation>[드래그&amp;드롭]  구분 기회를 메뉴 모음에 복사</translation>
+        <translation>[드래그&amp;드롭] 구분 기회를 메뉴 모음에 복사</translation>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy command to menu bar</source>
@@ -8994,7 +8996,7 @@ Visit the Web site for more information.</source>
         <source>Selected folders don&apos;t belong to the current project.
 Do you want to import them or load from their original location?</source>
         <translation>선택한 폴더가 현재 프로젝트에 속하지 않음.
-가져오거나 원래 위치에서 로드 하겠습니까?</translation>
+원래 위치에서 가져오거나 가져가기 할까요?</translation>
     </message>
     <message>
         <source>Cannot Read XML File</source>
@@ -9002,15 +9004,15 @@ Do you want to import them or load from their original location?</source>
     </message>
     <message>
         <source>Change project</source>
-        <translation type="vanished">프로젝트 변경</translation>
+        <translation>프로젝트 변경</translation>
     </message>
     <message>
         <source>File not found</source>
-        <translation type="vanished">파일을 찾을 수 없음</translation>
+        <translation>파일을 찾을 수 없음</translation>
     </message>
     <message>
         <source>Don&apos;t Save</source>
-        <translation type="vanished">저장하지 마세요</translation>
+        <translation>저장하지 마세요</translation>
     </message>
     <message>
         <source>Clone Level</source>
@@ -9028,7 +9030,7 @@ Do you want to import them or load from their original location?</source>
     </message>
     <message>
         <source>Load Cleanup Settings</source>
-        <translation>로드 정리 </translation>
+        <translation>가져오기 정리</translation>
     </message>
     <message>
         <source>%1 does not exist.</source>
@@ -9040,15 +9042,11 @@ Do you want to import them or load from their original location?</source>
     </message>
     <message>
         <source>Load Curve</source>
-        <translation>로드 곡선</translation>
+        <translation>곡선 가져오기</translation>
     </message>
     <message>
         <source>Export Curve</source>
         <translation>원 곡선</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>아니요</translation>
     </message>
     <message>
         <source>It is not possible to find the %1 level.</source>
@@ -9264,7 +9262,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9427,7 +9425,7 @@ The audio file will not be included in the rendered clip.</source>
     </message>
     <message>
         <source>Customize Menu Bar of Room &quot;%1&quot;</source>
-        <translation>회의실의 메뉴 표시 줄 &quot;%1&quot;</translation>
+        <translation>&quot;%1&quot;회의실의 메뉴모음 사용자 정의 </translation>
     </message>
     <message>
         <source>Room</source>
@@ -9763,7 +9761,7 @@ The audio file will not be included in the rendered clip.</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>Comment:</source>
@@ -9833,7 +9831,7 @@ The audio file will not be included in the rendered clip.</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>Comment:</source>
@@ -10324,7 +10322,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
 </context>
 <context>
@@ -10516,7 +10514,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Table</source>
-        <translation>표</translation>
+        <translation>테이블</translation>
     </message>
     <message>
         <source>Select %1</source>
@@ -10812,7 +10810,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>Use selected preset as shortcuts</source>
@@ -10880,7 +10878,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Load from file...</source>
-        <translation>파일에서 로드...</translation>
+        <translation>파일에서 가져오기...</translation>
     </message>
     <message>
         <source>Enter Preset Name</source>
@@ -10980,7 +10978,7 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
 </context>
 <context>
@@ -11071,7 +11069,7 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>Reframe</source>
-        <translation>리프레임</translation>
+        <translation>프레임 재구성</translation>
     </message>
     <message>
         <source>Step</source>
@@ -11079,7 +11077,7 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>Each</source>
-        <translation>각</translation>
+        <translation>각각</translation>
     </message>
     <message>
         <source>File</source>
@@ -11087,7 +11085,7 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>Scan &amp;&amp; Cleanup</source>
-        <translation>스캔 &amp; &amp; 정리</translation>
+        <translation>스캔 &amp;&amp; 정리</translation>
     </message>
     <message>
         <source>Level</source>
@@ -11234,11 +11232,11 @@ Assign to &apos;%3&apos;?</source>
     </message>
     <message>
         <source>cm</source>
-        <translation>cm</translation>
+        <translation>센치</translation>
     </message>
     <message>
         <source>mm</source>
-        <translation>mm</translation>
+        <translation>미리</translation>
     </message>
     <message>
         <source>inch</source>
@@ -11331,66 +11329,66 @@ Possibly the preset file has been corrupted</source>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>This folder is not empty. Delete anyway?</source>
-        <translation type="vanished">이 폴더는 비어 있지 않음. 삭제하겠습니까?</translation>
+        <translation>이 폴더는 비어 있지 않음. 삭제하겠습니까?</translation>
     </message>
     <message>
         <source>New Palette</source>
-        <translation type="vanished">새로운 팔레트</translation>
+        <translation>새로운 팔레트</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="vanished">새폴더</translation>
+        <translation>새폴더</translation>
     </message>
     <message>
         <source>New Cleanup Palette</source>
-        <translation type="vanished"> </translation>
+        <translation>새 정리 팔레트</translation>
     </message>
     <message>
         <source>Delete Folder</source>
-        <translation type="vanished">폴더 삭제</translation>
+        <translation>폴더 삭제</translation>
     </message>
     <message>
         <source>Load into Current Cleaunp Palette</source>
-        <translation type="vanished">현재 클리아운프 팔레트에 로드</translation>
+        <translation>현재 클리아운프 팔레트에 가져오기</translation>
     </message>
     <message>
         <source>Replace with Current Cleaunp Palette</source>
-        <translation type="vanished">현재 클리어프 팔레트로 교체</translation>
+        <translation>현재 클리어프 팔레트로 교체</translation>
     </message>
     <message>
         <source>Load into Current Palette</source>
-        <translation type="vanished">현재 팔레트로 로드</translation>
+        <translation>현재 팔레트로 가져오기</translation>
     </message>
     <message>
         <source>Merge to Current Palette</source>
-        <translation type="vanished">현재 팔레트로 병합</translation>
+        <translation>현재 팔레트로 병합</translation>
     </message>
     <message>
         <source>Replace with Current Palette</source>
-        <translation type="vanished">현재 팔레트로 교체</translation>
+        <translation>현재 팔레트로 교체</translation>
     </message>
     <message>
         <source>Delete Palette</source>
-        <translation type="vanished">팔레트 삭제</translation>
+        <translation>팔레트 삭제</translation>
     </message>
     <message>
         <source>Search for Palettes</source>
-        <translation type="vanished">팔레트 검색</translation>
+        <translation>팔레트 검색</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;New Folder</source>
-        <translation type="vanished">새 폴더(&amp;N)</translation>
+        <translation>새 폴더(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Palette</source>
-        <translation type="vanished">새로운 팔레트(&amp;N)</translation>
+        <translation>새로운 팔레트(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="vanished">삭제(&amp;D)</translation>
+        <translation>삭제(&amp;D)</translation>
     </message>
 </context>
 <context>
@@ -11500,7 +11498,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>To:</source>
-        <translation>종료:</translation>
+        <translation>로:</translation>
     </message>
     <message>
         <source>Step:</source>
@@ -11516,11 +11514,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Fx Schematic Flows</source>
-        <translation>Fx 회로도</translation>
+        <translation>Fx 도식 흐름</translation>
     </message>
     <message>
         <source>Fx Schematic Terminal Nodes</source>
-        <translation>Fx 회로도 터미널 노드</translation>
+        <translation>Fx 도식 터미널 노드</translation>
     </message>
     <message>
         <source>Dedicated CPUs:</source>
@@ -11657,7 +11655,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Save Task List As</source>
-        <translation>다른 이름으로 목록저장</translation>
+        <translation>다른 이름으로 목록저장(&amp;S)</translation>
     </message>
     <message>
         <source>Save As</source>
@@ -11665,11 +11663,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Load Task List</source>
-        <translation>작업 목록 로드(&amp;L)</translation>
+        <translation>작업목록 가져오기(&amp;L)</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>로드</translation>
+        <translation>가져오기</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
@@ -11847,7 +11845,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Corners</source>
-        <translation>각</translation>
+        <translation>모서리</translation>
     </message>
     <message>
         <source>Adherence</source>
@@ -11895,7 +11893,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Load Settings</source>
-        <translation>로드 설정</translation>
+        <translation>가져오기 설정</translation>
     </message>
     <message>
         <source>Reset Settings</source>
@@ -12002,7 +12000,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Reframe</source>
-        <translation>리프레임</translation>
+        <translation>프레임 재구성</translation>
     </message>
     <message>
         <source>Step</source>
@@ -12010,7 +12008,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Each</source>
-        <translation>각</translation>
+        <translation>각각</translation>
     </message>
     <message>
         <source>Edit Cell Numbers</source>
@@ -12109,7 +12107,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Reframe</source>
-        <translation>리프레임</translation>
+        <translation>프레임 재구성</translation>
     </message>
     <message>
         <source>Subsampling</source>
@@ -12222,24 +12220,24 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Click to Reset Shift &amp; Trace Markers to Neighbor Frames
 Hold F2 Key on the Viewer to Show This Frame Only</source>
-        <translation>Shift &amp; 인접한 프레임에 대한 추적마커. 
+        <translation>이동 &amp; 인접한 프레임에 대한 추적마커. 
 이 프레임 만 표시하려면 뷰어에서 F2를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F1 Key on the Viewer to Show This Frame Only</source>
-        <translation>이 프레임을 Shift &amp; 에서 숨기려면 클릭.
+        <translation>이 프레임을 이동&amp; 에서 숨기려면 클릭.
 이 프레임만 표시하려면 뷰어에서 F1키를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F3 Key on the Viewer to Show This Frame Only</source>
-        <translation>이 프레임을 Shift &amp; 에서 이 프레임을 숨기려면 클릭.
+        <translation>이 프레임을 이동 &amp; 에서 이 프레임을 숨기려면 클릭.
 이 프레임만 표시하려면 뷰어에서 F3를 누르세요.</translation>
     </message>
     <message>
         <source>Click to Move Shift &amp; Trace Marker</source>
-        <translation>Shift &amp; 테이블 마커를 이동 하려면 클릭</translation>
+        <translation>이동 &amp; 테이블 마커를 이동 하려면 클릭</translation>
     </message>
     <message>
         <source>Playback Start Marker</source>

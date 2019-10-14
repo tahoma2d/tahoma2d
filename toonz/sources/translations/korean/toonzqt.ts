@@ -184,50 +184,50 @@ Possibly the preset file has been corrupted</source>
     <name>ColorChannelControl</name>
     <message>
         <source>R</source>
-        <translation type="vanished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation type="vanished">G</translation>
+        <translation>G</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="vanished">B</translation>
+        <translation>B</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="vanished">A</translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>H</source>
-        <translation type="vanished">H</translation>
+        <translation>수평</translation>
     </message>
     <message>
         <source>S</source>
-        <translation type="vanished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <source>V</source>
-        <translation type="vanished">V</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
     <name>ColorField</name>
     <message>
         <source>R:</source>
-        <translation type="vanished">R:</translation>
+        <translation>R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation type="vanished">G:</translation>
+        <translation>G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="vanished">B:</translation>
+        <translation>B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="vanished">A:</translation>
+        <translation>A:</translation>
     </message>
 </context>
 <context>
@@ -267,7 +267,7 @@ Possibly the preset file has been corrupted</source>
     <name>DVGui</name>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -294,7 +294,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>H Range</source>
-        <translation>H 범위</translation>
+        <translation>수평범위</translation>
     </message>
     <message>
         <source>Line Width</source>
@@ -305,88 +305,88 @@ Possibly the preset file has been corrupted</source>
     <name>DVGui::ColorField</name>
     <message>
         <source>R:</source>
-        <translation type="unfinished">R:</translation>
+        <translation type="obsolete">R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation type="unfinished">G:</translation>
+        <translation type="obsolete">G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="unfinished">B:</translation>
+        <translation type="obsolete">B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="unfinished">A:</translation>
+        <translation type="obsolete">A:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="unfinished">볼드</translation>
+        <translation type="obsolete">볼드</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">이탤릭체</translation>
+        <translation type="obsolete">이탤릭체</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished">밑줄</translation>
+        <translation type="obsolete">밑줄</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="unfinished">왼쪽 정렬</translation>
+        <translation type="obsolete">왼쪽 정렬</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="unfinished">중심 정렬</translation>
+        <translation type="obsolete">중심 정렬</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="unfinished">오른쪽 정렬</translation>
+        <translation type="obsolete">오른쪽 정렬</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation type="obsolete">...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="unfinished">파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
+        <translation type="obsolete">파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ProgressDialog</name>
     <message>
         <source>OpenToonz</source>
-        <translation type="unfinished">오픈툰즈</translation>
+        <translation type="obsolete">오픈툰즈</translation>
     </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
     <message>
         <source>OpenToonz</source>
-        <translation type="unfinished">오픈툰즈</translation>
+        <translation type="obsolete">오픈툰즈</translation>
     </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">현재</translation>
+        <translation type="obsolete">현재</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="unfinished">채널:</translation>
+        <translation type="obsolete">채널:</translation>
     </message>
 </context>
 <context>
@@ -408,27 +408,27 @@ Possibly the preset file has been corrupted</source>
     <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="vanished">볼드</translation>
+        <translation>볼드</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="vanished">이탤릭체</translation>
+        <translation>이탤릭체</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="vanished">밑줄</translation>
+        <translation>밑줄</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="vanished">왼쪽 정렬</translation>
+        <translation>왼쪽 정렬</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="vanished">중심 정렬</translation>
+        <translation>중심 정렬</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="vanished">오른쪽 정렬</translation>
+        <translation>오른쪽 정렬</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@ Possibly the preset file has been corrupted</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -771,19 +771,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>1 단계</translation>
+        <translation>1단계</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>2 단계</translation>
+        <translation>2단계</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>3 단계</translation>
+        <translation>3단계</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>4 단계</translation>
+        <translation>4단계</translation>
     </message>
     <message>
         <source>Smooth</source>
@@ -846,11 +846,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>From</source>
-        <translation>From</translation>
+        <translation>부터</translation>
     </message>
     <message>
         <source>To</source>
-        <translation>To</translation>
+        <translation>로</translation>
     </message>
     <message>
         <source>Step</source>
@@ -878,11 +878,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Expo</source>
-        <translation>Expo</translation>
+        <translation>지수간격</translation>
     </message>
     <message>
         <source>Expr</source>
-        <translation>Expr</translation>
+        <translation> type="unfinished"></translation>
     </message>
     <message>
         <source>Const</source>
@@ -955,19 +955,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Step 1</source>
-        <translation type="vanished">1 단계</translation>
+        <translation type="vanished">1단계</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation type="vanished">2 단계</translation>
+        <translation type="vanished">2단계</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation type="vanished">3 단계</translation>
+        <translation type="vanished">3단계</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation type="vanished">4 단계</translation>
+        <translation type="vanished">4단계</translation>
     </message>
     <message>
         <source>Activate Cycle</source>
@@ -1013,7 +1013,7 @@ Possibly the preset file has been corrupted</source>
     <name>FunctionTreeModel</name>
     <message>
         <source>Stage</source>
-        <translation>단계</translation>
+        <translation>스테이지</translation>
     </message>
     <message>
         <source>FX</source>
@@ -1021,14 +1021,14 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Plastic Skeleton</source>
-        <translation>플라스틱 스켈레톤</translation>
+        <translation>플라스틱 골격</translation>
     </message>
 </context>
 <context>
     <name>FunctionTreeView</name>
     <message>
         <source>Table</source>
-        <translation>표</translation>
+        <translation>테이블</translation>
     </message>
     <message>
         <source>Save Curve</source>
@@ -1036,7 +1036,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Load Curve</source>
-        <translation>로드 곡선</translation>
+        <translation>곡선 가져오기</translation>
     </message>
     <message>
         <source>Export Data</source>
@@ -1338,7 +1338,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
+        <translation>파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -1352,7 +1352,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>NewWordDialog</name>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1367,19 +1367,19 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="vanished">&gt;- 스타일 없음 -</translation>
+        <translation>- 스타일 없음 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">이름 편집기</translation>
+        <translation>이름 편집기</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">새로운 스타일</translation>
+        <translation>새로운 스타일</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">새로운 페이지</translation>
+        <translation>새로운 페이지</translation>
     </message>
 </context>
 <context>
@@ -1493,19 +1493,19 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="unfinished">&gt;- 스타일 없음 -</translation>
+        <translation type="vanished">- 스타일 없음 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="unfinished">이름 편집기</translation>
+        <translation type="obsolete">이름 편집기</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="unfinished">새로운 스타일</translation>
+        <translation type="obsolete">새로운 스타일</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished">새로운 페이지</translation>
+        <translation type="obsolete">새로운 페이지</translation>
     </message>
 </context>
 <context>
@@ -1516,7 +1516,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1524,7 +1524,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>&lt;files&gt;</source>
-        <translation>&gt;&lt;파일&gt;</translation>
+        <translation>&lt;파일&gt;</translation>
     </message>
 </context>
 <context>
@@ -1574,7 +1574,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>ProgressDialog</name>
     <message>
         <source>OpenToonz</source>
-        <translation type="vanished">오픈툰즈</translation>
+        <translation>오픈툰즈</translation>
     </message>
 </context>
 <context>
@@ -1622,7 +1622,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Paste Color &amp;&amp; Name%1</source>
-        <translation>색상 이름붙여넣기 %1</translation>
+        <translation>색상 &amp;&amp;이름붙여넣기 %1</translation>
     </message>
     <message>
         <source>Paste Name%1</source>
@@ -1686,7 +1686,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Save Motion Path</source>
-        <translation>이동 경로 저장</translation>
+        <translation>이동경로 저장</translation>
     </message>
     <message>
         <source>Motion Path files (*.mpath)</source>
@@ -1698,19 +1698,19 @@ Are you sure?</source>
     </message>
     <message>
         <source>Load Motion Path</source>
-        <translation>이동 경로 로드</translation>
+        <translation>이동경로 가져오기</translation>
     </message>
     <message>
         <source>It is not possible to load the motion path.</source>
-        <translation>모션 경로를 로드할 수 없음.</translation>
+        <translation>모션 경로를 가져오기 할 수 없음.</translation>
     </message>
     <message>
         <source>Stage Schematic</source>
-        <translation>단계 회로도</translation>
+        <translation>도식단계</translation>
     </message>
     <message>
         <source>FX Schematic</source>
-        <translation>Fx 회로도</translation>
+        <translation>Fx 도식</translation>
     </message>
     <message>
         <source>Change Style   Palette : %1  Style#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</source>
@@ -1726,7 +1726,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="vanished">Yes</translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>No</source>
@@ -1750,15 +1750,15 @@ Are you sure?</source>
     </message>
     <message>
         <source>ON : %1</source>
-        <translation>ON : %1</translation>
+        <translation>켬 : %1</translation>
     </message>
     <message>
         <source>OFF : %1</source>
-        <translation>OFF : %1</translation>
+        <translation>끔 : %1</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 : %2 Key</source>
-        <translation>Fx Param: %1 :%2 키</translation>
+        <translation>Fx 매개변수: %1 :%2 키</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1774,11 +1774,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>%1 : Linear ON</source>
-        <translation>%1 : 선형 ON&gt;</translation>
+        <translation>%1 : 선형 켬</translation>
     </message>
     <message>
         <source>%1 : Linear OFF</source>
-        <translation>%1: 선형 OFF</translation>
+        <translation>%1: 선형 끔</translation>
     </message>
     <message>
         <source>Palette</source>
@@ -2011,7 +2011,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Deletion of Lines and Areas from raster-based levels is not undoable.
@@ -2061,7 +2061,7 @@ Are you sure?</source>
     <message>
         <source>Failed to Load 3DLUT File.
 It should start with &quot;3DMESH&quot; keyword.</source>
-        <translation>3D LUT 파일을 로드하지 못함.
+        <translation>3D LUT 파일을 가져오지 못함.
 3D 메쉬; 키워드로 시작해야함. </translation>
     </message>
     <message>
@@ -2076,7 +2076,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Current Frame: </source>
@@ -2108,25 +2108,25 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Fx 매개변수 수정: %1 키 : %2 프레임 %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">설정</translation>
     </message>
 </context>
 <context>
     <name>QPushButton</name>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
 </context>
 <context>
     <name>RadioButtonDialog</name>
     <message>
         <source>OpenToonz</source>
-        <translation type="vanished">오픈툰즈</translation>
+        <translation>오픈툰즈</translation>
     </message>
 </context>
 <context>
@@ -2160,7 +2160,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>&amp;Minimize Nodes</source>
-        <translation>노드 최소화(%=&amp;M)</translation>
+        <translation>노드 최소화(&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Maximize Nodes</source>
@@ -2192,7 +2192,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>&amp;Zoom Mode</source>
-        <translation>&amp;Zoom 모드</translation>
+        <translation>확대 모드(&amp;Z)</translation>
     </message>
     <message>
         <source>&amp;Hand Mode</source>
@@ -2210,7 +2210,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <name>SettingsPage</name>
     <message>
         <source>Reset to default</source>
-        <translation type="vanished">기본값으로 재설정</translation>
+        <translation>기본값으로 재설정</translation>
     </message>
 </context>
 <context>
@@ -2270,11 +2270,11 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>&amp;Save Motion Path...</source>
-        <translation>이동 경로 저장(&amp;S)...</translation>
+        <translation>이동경로 저장(&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Load Motion Path...</source>
-        <translation>이동 경로 로드(&amp;L)...</translation>
+        <translation>이동경로 가져오기(&amp;L)...</translation>
     </message>
 </context>
 <context>
@@ -2323,7 +2323,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>Load into Current Palette</source>
-        <translation>현재 팔레트로 로드</translation>
+        <translation>현재 팔레트로 가져오기</translation>
     </message>
     <message>
         <source>Adjust Current Level to This Palette</source>
@@ -2521,31 +2521,31 @@ Are you sure ?</source>
     <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
         <source>R</source>
-        <translation type="unfinished">R</translation>
+        <translation type="obsolete">R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation type="unfinished">G</translation>
+        <translation type="obsolete">G</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="unfinished">B</translation>
+        <translation type="obsolete">B</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished">A</translation>
+        <translation type="obsolete">A</translation>
     </message>
     <message>
         <source>H</source>
-        <translation type="unfinished">H</translation>
+        <translation type="vanished">수평</translation>
     </message>
     <message>
         <source>S</source>
-        <translation type="unfinished">S</translation>
+        <translation type="obsolete">S</translation>
     </message>
     <message>
         <source>V</source>
-        <translation type="unfinished">V</translation>
+        <translation type="obsolete">V</translation>
     </message>
 </context>
 <context>
@@ -2556,14 +2556,14 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation type="unfinished">기본값으로 재설정</translation>
+        <translation type="obsolete">기본값으로 재설정</translation>
     </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">현재</translation>
+        <translation>현재</translation>
     </message>
 </context>
 <context>
@@ -2574,7 +2574,7 @@ Are you sure ?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2635,7 +2635,7 @@ Are you sure ?</source>
     <name>TablePainter</name>
     <message>
         <source>Table</source>
-        <translation>표</translation>
+        <translation>테이블</translation>
     </message>
     <message>
         <source>&amp;Reset Center</source>
@@ -2646,7 +2646,7 @@ Are you sure ?</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">채널:</translation>
+        <translation>채널:</translation>
     </message>
 </context>
 <context>

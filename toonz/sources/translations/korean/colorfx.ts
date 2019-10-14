@@ -257,7 +257,7 @@
     <name>TCircleStripeFillStyle</name>
     <message>
         <source>X Position</source>
-        <translation>수평위치</translation>
+        <translation>X 이동</translation>
     </message>
     <message>
         <source>Y Position</source>
@@ -389,7 +389,7 @@
     </message>
     <message>
         <source>X Position</source>
-        <translation>수평위치</translation>
+        <translation>X 이동</translation>
     </message>
     <message>
         <source>Y Position</source>
@@ -548,7 +548,7 @@
     <name>TRadGradFillStyle</name>
     <message>
         <source>X Position</source>
-        <translation>수평위치</translation>
+        <translation>X 이동</translation>
     </message>
     <message>
         <source>Y Position</source>

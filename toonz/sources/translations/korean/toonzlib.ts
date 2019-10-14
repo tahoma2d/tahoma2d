@@ -5,170 +5,170 @@
     <name>CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="vanished">%1 레벨을 벡터화 할 수 없음</translation>
+        <translation>%1 레벨을 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="vanished">프레임 없이 레벨을 벡터링 할 수 없음</translation>
+        <translation>프레임 없이 레벨을 벡터링 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="vanished">%1 이미지를 벡터화 할 수 없음</translation>
+        <translation>%1 이미지를 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="vanished">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
+        <translation>잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
     </message>
 </context>
 <context>
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="vanished">&quot;%1&quot;</translation>
+        <translation>&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="vanished">절대 경로를 연결하세요: %1</translation>
+        <translation>절대 경로를 연결하세요: %1</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="vanished">%1 디렉토리가 아님.</translation>
+        <translation>%1 디렉토리가 아님.</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="vanished">%1 디렉토리 읽기</translation>
+        <translation>%1 디렉토리 읽기</translation>
     </message>
 </context>
 <context>
     <name>Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">%1 파일이 존재하지 않음</translation>
+        <translation>%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="vanished">%1 첫 번? 프레임이 로드됨</translation>
+        <translation>%1 첫번째 프레임 가져오기</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="vanished">이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
+        <translation>이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="vanished">인식 할 수 없는 파일 형식:</translation>
+        <translation>인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="vanished">%1 이미지를 이 파일 형식에 저장할 수 있음: %2</translation>
+        <translation>%1 이미지를 이 파일 형식에 저장할 수 있음: %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="vanished">이미지를 쓰는 중 이야기치 않는 오류</translation>
+        <translation>이미지를 쓰는 중 이야기치 않는 오류</translation>
     </message>
 </context>
 <context>
     <name>ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="vanished">잘못된 인수(%1): 래스터 또는 툰즈 레스터 여야함.</translation>
+        <translation>잘못된 인수(%1): 래스터 또는 툰즈 레스터 여야함.</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="vanished">이미지 빌더 (%1 이미지)</translation>
+        <translation>이미지 빌더 (%1 이미지)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="vanished">%1 : %2</translation>
+        <translation>%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="vanished">잘못된 인수(%1): 변환이어야함</translation>
+        <translation>잘못된 인수(%1): 변환이어야함</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="vanished">%1 프레임</translation>
+        <translation>%1 프레임</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="vanished">잘못된 인수(%1). 파일 경로 또는 문자열이어야함.</translation>
+        <translation>잘못된 인수(%1). 파일 경로 또는 문자열이어야함.</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="vanished">예외 적재 레벨(%1)</translation>
+        <translation>예외 적재 레벨(%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">%1 파일이 존재하지 않음</translation>
+        <translation>%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="vanished">%1 파일이 지원되지 않음.</translation>
+        <translation>%1 파일이 지원되지 않음.</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="vanished">%1 읽기 예외</translation>
+        <translation>%1 읽기 예외</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="vanished">빈 레벨을 저장할 수 없음</translation>
+        <translation>빈 레벨을 저장할 수 없음</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="vanished">인식 할 수 없는 파일 형식:</translation>
+        <translation>인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="vanished">%1 레벨을 이 파일 형식에 저장하세요: %2</translation>
+        <translation>%1 레벨을 이 파일 형식에 저장하세요: %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="vanished">%1 쓰기 예외</translation>
+        <translation>%1 쓰기 예외</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="vanished">프레임 인덱스(%1)는 숫자여야함</translation>
+        <translation>프레임 인덱스(%1)는 숫자여야함</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="vanished">프레임 인덱스 (%1) 이 범위를 벗어남 (0-%2)</translation>
+        <translation>프레임 인덱스 (%1) 이 범위를 벗어남 (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="vanished">두 번? 인수(%1)는 이미지가 아님</translation>
+        <translation>두 번? 인수(%1)는 이미지가 아님</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="vanished">%1 이미지를 레벨에 삽입할 수 없음</translation>
+        <translation>%1 이미지를 레벨에 삽입할 수 없음</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="vanished">%1 이미지를 %2 레벨에 삽입할 수 없음</translation>
+        <translation>%1 이미지를 %2 레벨에 삽입할 수 없음</translation>
     </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="vanished">%1 레벨을 벡터화 할 수 없음</translation>
+        <translation>%1 레벨을 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="vanished">프레임 없이 레벨을 벡터링 할 수 없음</translation>
+        <translation>프레임 없이 레벨을 벡터링 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="vanished">%1 이미지를 벡터화 할 수 없음</translation>
+        <translation>%1 이미지를 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="vanished">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
+        <translation>잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="vanished">잘못된 색상 :</translation>
+        <translation>잘못된 색상 :</translation>
     </message>
 </context>
 <context>
@@ -248,7 +248,7 @@
     </message>
     <message>
         <source>Load into Current Palette  &gt; %1</source>
-        <translation>현재 팔레트에 로드  &gt; %1</translation>
+        <translation>현재 팔레트에 가져오기  &gt; %1</translation>
     </message>
     <message>
         <source>Replace with Current Palette  &gt; %1</source>
@@ -316,7 +316,7 @@
     </message>
     <message>
         <source>Load Color Model %1  to Palette %2</source>
-        <translation>색상 모델 %1을 팔레트 %2에 로드</translation>
+        <translation>색상 모델 %1을 팔레트 %2에 가져오기</translation>
     </message>
     <message>
         <source>color model</source>
@@ -504,19 +504,19 @@
     </message>
     <message>
         <source>Edit PosPath</source>
-        <translation>POS 경로 편집</translation>
+        <translation>POS 경로편집</translation>
     </message>
     <message>
         <source>Edit Shear X</source>
-        <translation>전단 X 편집</translation>
+        <translation>왜곡 X 편집</translation>
     </message>
     <message>
         <source>Edit Shear Y</source>
-        <translation>전단 Y 편집</translation>
+        <translation>왜곡 Y 편집</translation>
     </message>
     <message>
         <source>%1  %2  Frame : %3</source>
-        <translation>&gt;%1  %2  프레임 : %3</translation>
+        <translation>%1  %2  프레임 : %3</translation>
     </message>
     <message>
         <source>First argument must be a scene : %1</source>
@@ -556,7 +556,7 @@
     </message>
     <message>
         <source>%1 is not a valid color (valid color names are &apos;red&apos;, &apos;transparent&apos;, &apos;#FF8800&apos;, ecc.)</source>
-        <translation>%1은 유효한 색상이 아님(유효한 색상은 투명함 #FF8800, ecc)</translation>
+        <translation>%1은 유효한 색상이 아님(유효한 색상 이름은 &apos;red&apos;, &apos;transparent&apos;, &apos;#FF8800&apos;, ecc.)</translation>
     </message>
     <message>
         <source>Can&apos;t save</source>
@@ -572,7 +572,7 @@
     </message>
     <message>
         <source>HRange</source>
-        <translation>H 범위</translation>
+        <translation>수평범위</translation>
     </message>
     <message>
         <source>Line Width</source>
@@ -596,401 +596,401 @@
     </message>
     <message>
         <source>Set Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">%2 프레임에서 키프레임 %1 설정</translation>
     </message>
     <message>
         <source>Remove Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">프레임 %2에서 키프레임 %1을 제거하세요.</translation>
     </message>
     <message>
         <source>Move Center   %1  Frame %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">센터 %1 프레임 %2 이동</translation>
     </message>
 </context>
 <context>
     <name>Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="vanished">벡터 레벨 이미지: %1</translation>
+        <translation>벡터 레벨 이미지: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="vanished">벡터 레벨 예상: %1</translation>
+        <translation>벡터 레벨 예상: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="vanished">인수는 벡터 레벨 또는 이미지여야함 :</translation>
+        <translation>인수는 벡터 레벨 또는 이미지여야함 :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="vanished">팔레트가 없음 %1</translation>
+        <translation>팔레트가 없음 %1</translation>
     </message>
 </context>
 <context>
     <name>Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">%1 파일이 존재하지 않음</translation>
+        <translation>%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="vanished">%1 읽기 예외</translation>
+        <translation>%1 읽기 예외</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="vanished">%1 쓰기 예외</translation>
+        <translation>%1 쓰기 예외</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="vanished">잘못된 레벨 유형(%1): 벡터, 래스터 또는 툰즈 래스터여야함.</translation>
+        <translation>잘못된 레벨 유형(%1): 벡터, 래스터 또는 툰즈 래스터여야함.</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="vanished">레벨을 추가할 수 없음: 이름(%1)이 이미 사용됨</translation>
+        <translation>레벨을 추가할 수 없음: 이름(%1)이 이미 사용됨</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="vanished">이 종류의 파일을 레벨로 로드할 수 없음: %1</translation>
+        <translation>이 종류의 파일을 레벨로 가져올 수 없음: %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="vanished">%1 레벨을 로드 할수 없음.</translation>
+        <translation>%1 레벨을 가져올 수 없음.</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="vanished">레벨은 장면에 포함되어 있지 않음: %1</translation>
+        <translation>레벨은 장면에 포함되어 있지 않음: %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="vanished">%1: 예상되는 레벨 인스턴스 또는 레벨 이름 </translation>
+        <translation>%1: 예상되는 레벨 인스턴스 또는 레벨 이름 </translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="vanished">레벨 %1 현장에 포함되지 않음.</translation>
+        <translation>레벨 %1 현장에 포함되지 않음.</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished">%1 레벨을 벡터화 할 수 없음</translation>
+        <translation type="obsolete">%1 레벨을 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished">프레임 없이 레벨을 벡터링 할 수 없음</translation>
+        <translation type="obsolete">프레임 없이 레벨을 벡터링 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished">%1 이미지를 벡터화 할 수 없음</translation>
+        <translation type="obsolete">%1 이미지를 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
+        <translation type="obsolete">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="unfinished">&quot;%1&quot;</translation>
+        <translation type="obsolete">&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="unfinished">절대 경로를 연결하세요: %1</translation>
+        <translation type="obsolete">절대 경로를 연결하세요: %1</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="unfinished">%1 디렉토리가 아님.</translation>
+        <translation type="obsolete">%1 디렉토리가 아님.</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="unfinished">%1 디렉토리 읽기</translation>
+        <translation type="obsolete">%1 디렉토리 읽기</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">%1 파일이 존재하지 않음</translation>
+        <translation type="obsolete">%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="unfinished">%1 첫 번? 프레임이 로드됨</translation>
+        <translation type="vanished">%1 첫번째 프레임 가져오기</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="unfinished">이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
+        <translation type="obsolete">이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">인식 할 수 없는 파일 형식:</translation>
+        <translation type="obsolete">인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="unfinished">%1 이미지를 이 파일 형식에 저장할 수 있음: %2</translation>
+        <translation type="obsolete">%1 이미지를 이 파일 형식에 저장할 수 있음: %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="unfinished">이미지를 쓰는 중 이야기치 않는 오류</translation>
+        <translation type="obsolete">이미지를 쓰는 중 이야기치 않는 오류</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="unfinished">잘못된 인수(%1): 래스터 또는 툰즈 레스터 여야함.</translation>
+        <translation type="obsolete">잘못된 인수(%1): 래스터 또는 툰즈 레스터 여야함.</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="unfinished">이미지 빌더 (%1 이미지)</translation>
+        <translation type="obsolete">이미지 빌더 (%1 이미지)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="unfinished">%1 : %2</translation>
+        <translation type="obsolete">%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="unfinished">잘못된 인수(%1): 변환이어야함</translation>
+        <translation type="obsolete">잘못된 인수(%1): 변환이어야함</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="unfinished">%1 프레임</translation>
+        <translation type="obsolete">%1 프레임</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="unfinished">잘못된 인수(%1). 파일 경로 또는 문자열이어야함.</translation>
+        <translation type="obsolete">잘못된 인수(%1). 파일 경로 또는 문자열이어야함.</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="unfinished">예외 적재 레벨(%1)</translation>
+        <translation type="obsolete">예외 적재 레벨(%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">%1 파일이 존재하지 않음</translation>
+        <translation type="obsolete">%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="unfinished">%1 파일이 지원되지 않음.</translation>
+        <translation type="obsolete">%1 파일이 지원되지 않음.</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">%1 읽기 예외</translation>
+        <translation type="obsolete">%1 읽기 예외</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="unfinished">빈 레벨을 저장할 수 없음</translation>
+        <translation type="obsolete">빈 레벨을 저장할 수 없음</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">인식 할 수 없는 파일 형식:</translation>
+        <translation type="obsolete">인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="unfinished">%1 레벨을 이 파일 형식에 저장하세요: %2</translation>
+        <translation type="obsolete">%1 레벨을 이 파일 형식에 저장하세요: %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">%1 쓰기 예외</translation>
+        <translation type="obsolete">%1 쓰기 예외</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="unfinished">프레임 인덱스(%1)는 숫자여야함</translation>
+        <translation type="obsolete">프레임 인덱스(%1)는 숫자여야함</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="unfinished">프레임 인덱스 (%1) 이 범위를 벗어남 (0-%2)</translation>
+        <translation type="obsolete">프레임 인덱스 (%1) 이 범위를 벗어남 (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="unfinished">두 번? 인수(%1)는 이미지가 아님</translation>
+        <translation type="obsolete">두 번? 인수(%1)는 이미지가 아님</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="unfinished">%1 이미지를 레벨에 삽입할 수 없음</translation>
+        <translation type="obsolete">%1 이미지를 레벨에 삽입할 수 없음</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="unfinished">%1 이미지를 %2 레벨에 삽입할 수 없음</translation>
+        <translation type="obsolete">%1 이미지를 %2 레벨에 삽입할 수 없음</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished">%1 레벨을 벡터화 할 수 없음</translation>
+        <translation type="obsolete">%1 레벨을 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished">프레임 없이 레벨을 벡터링 할 수 없음</translation>
+        <translation type="obsolete">프레임 없이 레벨을 벡터링 할 수 없음</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished">%1 이미지를 벡터화 할 수 없음</translation>
+        <translation type="obsolete">%1 이미지를 벡터화 할 수 없음</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
+        <translation type="obsolete">잘못된 인수(%1): 이미지 또는 레벨이어야함.</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="unfinished">잘못된 색상 :</translation>
+        <translation type="obsolete">잘못된 색상 :</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="unfinished">벡터 레벨 이미지: %1</translation>
+        <translation type="obsolete">벡터 레벨 이미지: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="unfinished">벡터 레벨 예상: %1</translation>
+        <translation type="obsolete">벡터 레벨 예상: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="unfinished">인수는 벡터 레벨 또는 이미지여야함 :</translation>
+        <translation type="obsolete">인수는 벡터 레벨 또는 이미지여야함 :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="unfinished">팔레트가 없음 %1</translation>
+        <translation type="obsolete">팔레트가 없음 %1</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">%1 파일이 존재하지 않음</translation>
+        <translation type="obsolete">%1 파일이 존재하지 않음</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">%1 읽기 예외</translation>
+        <translation type="obsolete">%1 읽기 예외</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">%1 쓰기 예외</translation>
+        <translation type="obsolete">%1 쓰기 예외</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="unfinished">잘못된 레벨 유형(%1): 벡터, 래스터 또는 툰즈 래스터여야함.</translation>
+        <translation type="obsolete">잘못된 레벨 유형(%1): 벡터, 래스터 또는 툰즈 래스터여야함.</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="unfinished">레벨을 추가할 수 없음: 이름(%1)이 이미 사용됨</translation>
+        <translation type="obsolete">레벨을 추가할 수 없음: 이름(%1)이 이미 사용됨</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="unfinished">이 종류의 파일을 레벨로 로드할 수 없음: %1</translation>
+        <translation type="vanished">이 종류의 파일을 레벨로 가져올 수 없음: %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="unfinished">%1 레벨을 로드 할수 없음.</translation>
+        <translation type="vanished">%1 레벨을 가져올 수 없음.</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="unfinished">레벨은 장면에 포함되어 있지 않음: %1</translation>
+        <translation type="obsolete">레벨은 장면에 포함되어 있지 않음: %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="unfinished">%1: 예상되는 레벨 인스턴스 또는 레벨 이름 </translation>
+        <translation type="obsolete">%1: 예상되는 레벨 인스턴스 또는 레벨 이름 </translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="unfinished">레벨 %1 현장에 포함되지 않음.</translation>
+        <translation type="obsolete">레벨 %1 현장에 포함되지 않음.</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="unfinished">%1 레벨을 변환할 수 있음.</translation>
+        <translation type="obsolete">%1 레벨을 변환할 수 있음.</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="unfinished">프레임 없이 레벨을 변환 할수 있음.</translation>
+        <translation type="obsolete">프레임 없이 레벨을 변환 할수 있음.</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="unfinished">%1 이미지를 변환할 수 있음.</translation>
+        <translation type="obsolete">%1 이미지를 변환할 수 있음.</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="unfinished">잘못된 인수(%1): 래스터 레벨 또는 래스터 이미지여야함.</translation>
+        <translation type="obsolete">잘못된 인수(%1): 래스터 레벨 또는 래스터 이미지여야함.</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="unfinished">정체</translation>
+        <translation type="obsolete">정체</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="unfinished">회전(%1,%2)</translation>
+        <translation type="vanished">번역(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="unfinished">회전(%1)</translation>
+        <translation type="obsolete">회전(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="unfinished">규모(%1%)</translation>
+        <translation type="obsolete">비율(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="unfinished">규모(%1%, %2%)</translation>
+        <translation type="obsolete">비율(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="unfinished">변환(%1, %2, %3, %4, %5, %6)</translation>
+        <translation type="obsolete">변환(%1, %2, %3, %4, %5, %6)</translation>
     </message>
 </context>
 <context>
     <name>ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="vanished">%1 레벨을 변환할 수 있음.</translation>
+        <translation>%1 레벨을 변환할 수 있음.</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="vanished">프레임 없이 레벨을 변환 할수 있음.</translation>
+        <translation>프레임 없이 레벨을 변환 할수 있음.</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="vanished">%1 이미지를 변환할 수 있음.</translation>
+        <translation>%1 이미지를 변환할 수 있음.</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="vanished">잘못된 인수(%1): 래스터 레벨 또는 래스터 이미지여야함.</translation>
+        <translation>잘못된 인수(%1): 래스터 레벨 또는 래스터 이미지여야함.</translation>
     </message>
 </context>
 <context>
     <name>Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="vanished">정체</translation>
+        <translation>정체</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="vanished">회전(%1,%2)</translation>
+        <translation>번역(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="vanished">회전(%1)</translation>
+        <translation>회전(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="vanished">규모(%1%)</translation>
+        <translation>비율(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="vanished">규모(%1%, %2%)</translation>
+        <translation>비율(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="vanished">변환(%1, %2, %3, %4, %5, %6)</translation>
+        <translation>변환(%1, %2, %3, %4, %5, %6)</translation>
     </message>
 </context>
 </TS>

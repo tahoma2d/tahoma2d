@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Position:</source>
-        <translation>수평위치:</translation>
+        <translation>이동:</translation>
     </message>
     <message>
         <source>E/W:</source>
@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>H:</source>
-        <translation>H:</translation>
+        <translation>수평:</translation>
     </message>
     <message>
         <source>V:</source>
@@ -41,7 +41,7 @@
     </message>
     <message>
         <source>Position</source>
-        <translation>수평위치</translation>
+        <translation>이동</translation>
     </message>
     <message>
         <source>(</source>
@@ -57,7 +57,7 @@
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
     <message>
         <source>Maintain:</source>
@@ -65,7 +65,7 @@
     </message>
     <message>
         <source>Shear</source>
-        <translation>전단</translation>
+        <translation>왜곡</translation>
     </message>
     <message>
         <source>Center Position</source>
@@ -73,7 +73,7 @@
     </message>
     <message>
         <source>Table</source>
-        <translation>표</translation>
+        <translation>테이블</translation>
     </message>
     <message>
         <source>Pick:</source>
@@ -148,7 +148,7 @@
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>안과 밖 영역</translation>
+        <translation>안&amp;밖</translation>
     </message>
     <message>
         <source>Low</source>
@@ -191,15 +191,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation type="obsolete">취소</translation>
     </message>
 </context>
 <context>
@@ -224,7 +224,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">현재</translation>
+        <translation type="obsolete">현재</translation>
     </message>
 </context>
 <context>
@@ -327,7 +327,7 @@
     </message>
     <message>
         <source>Shear</source>
-        <translation>전단</translation>
+        <translation>왜곡</translation>
     </message>
     <message>
         <source>Center Position</source>
@@ -339,11 +339,11 @@
     </message>
     <message>
         <source>Position</source>
-        <translation>수평위치</translation>
+        <translation>이동</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
     <message>
         <source>Center</source>
@@ -386,11 +386,11 @@
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Hardness:</source>
@@ -410,7 +410,7 @@
     </message>
     <message>
         <source>Lines &amp; Areas</source>
-        <translation>선과 영역</translation>
+        <translation>선 &amp; 영역</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
@@ -437,11 +437,11 @@
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -461,7 +461,7 @@
     </message>
     <message>
         <source>Lines &amp; Areas</source>
-        <translation>선과 영역</translation>
+        <translation>선 &amp; 영역</translation>
     </message>
     <message>
         <source>Onion Skin</source>
@@ -558,11 +558,11 @@
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Invert</source>
@@ -621,7 +621,7 @@
     </message>
     <message>
         <source>Lines &amp; Areas</source>
-        <translation>선과 영역</translation>
+        <translation>선 &amp; 영역</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -747,7 +747,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -775,7 +775,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Show Skeleton Onion Skin</source>
-        <translation>스켈레톤 어니언 스킨 표시</translation>
+        <translation>골격 어니언 스킨 표시</translation>
     </message>
     <message>
         <source>The previous vertex name will be discarded, and all associated keys will be lost.
@@ -833,7 +833,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Arc</source>
@@ -975,7 +975,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1011,11 +1011,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Yes</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>아니요</translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
@@ -1055,7 +1055,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current level is not editable.</source>
-        <translation>현재의 수준은 편집할 수 없음.</translation>
+        <translation>현재의 레벨은 편집할 수 없음.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Vector Level.</source>
@@ -1075,7 +1075,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a mesh-deformed level</source>
-        <translation>현재 도구는 메쉬 변형 수준에 사용할 수 없음.</translation>
+        <translation>현재 도구는 메쉬 변형 레벨에 사용할 수 없음.</translation>
     </message>
     <message>
         <source>The current frame is locked: any editing is forbidden.</source>
@@ -1091,15 +1091,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">%1 레벨 : %2 프레임 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">선 수정도구</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">스플라인 수정</translation>
     </message>
 </context>
 <context>
@@ -1118,11 +1118,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Passive Pick</source>
@@ -1167,11 +1167,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
     <message>
         <source>Distance:</source>
@@ -1228,7 +1228,7 @@ Do you want to proceed?</source>
     <message>
         <source>H:</source>
         <comment>ruler tool option</comment>
-        <translation>H:</translation>
+        <translation>수평:</translation>
     </message>
     <message>
         <source>A:</source>
@@ -1253,18 +1253,18 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Freehand</source>
-        <translation>프리핸드</translation>
+        <translation>올가미</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation>폴리선</translation>
+        <translation>다각형</translation>
     </message>
 </context>
 <context>
     <name>SelectionToolOptionsBox</name>
     <message>
         <source>H:</source>
-        <translation>H:</translation>
+        <translation>수평:</translation>
     </message>
     <message>
         <source>V:</source>
@@ -1288,11 +1288,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation>수평위치</translation>
+        <translation>이동</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -1322,7 +1322,7 @@ Do you want to proceed?</source>
     <name>SkeletonTool</name>
     <message>
         <source>Show Only Active Skeleton</source>
-        <translation>활성 스켈레톤만 표시</translation>
+        <translation>활성 골격만 표시</translation>
     </message>
     <message>
         <source>Global Key</source>
@@ -1353,7 +1353,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">현재</translation>
+        <translation>현재</translation>
     </message>
 </context>
 <context>
@@ -1384,7 +1384,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Lines &amp; Areas</source>
-        <translation>선과 영역</translation>
+        <translation>선 &amp; 영역</translation>
     </message>
     <message>
         <source>Passive Pick</source>
@@ -1504,7 +1504,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Whole Level</source>
-        <translation>전체수준</translation>
+        <translation>전체레벨</translation>
     </message>
     <message>
         <source>Same Style</source>
@@ -1516,7 +1516,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Same Style on Whole Level</source>
-        <translation>동일한 스타일의 전체수준</translation>
+        <translation>동일한 스타일의 전체레벨</translation>
     </message>
     <message>
         <source>Boundary Strokes</source>

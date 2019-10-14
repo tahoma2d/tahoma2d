@@ -16,7 +16,7 @@
     <name>GifWriterProperties</name>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
     <message>
         <source>Looping</source>
@@ -35,7 +35,7 @@
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
 </context>
 <context>
@@ -120,7 +120,7 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
     <message>
         <source>Format</source>
@@ -284,7 +284,7 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     </message>
     <message>
         <source>Scale</source>
-        <translation>규모</translation>
+        <translation>비율</translation>
     </message>
 </context>
 </TS>

@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">픽셀당 비트 수</translation>
+        <translation type="obsolete">픽셀당 비트 수</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="unfinished">24비트</translation>
+        <translation type="obsolete">24비트</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8비트</translation>
+        <translation type="obsolete">8비트</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="unfinished">품질</translation>
+        <translation type="obsolete">품질</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="unfinished">평활화</translation>
+        <translation type="obsolete">평활화</translation>
     </message>
 </context>
 <context>
@@ -43,7 +43,7 @@
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">식별되지 않은 작업</translation>
     </message>
 </context>
 <context>
@@ -83,26 +83,26 @@
     <name>Tiio::BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="vanished">픽셀당 비트 수</translation>
+        <translation>픽셀당 비트 수</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="vanished">24비트</translation>
+        <translation>24비트</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="vanished">8비트</translation>
+        <translation>8비트</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="vanished">품질</translation>
+        <translation>품질</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="vanished">평활화</translation>
+        <translation>평활화</translation>
     </message>
 </context>
 </TS>
