@@ -59,7 +59,10 @@
 #include <dlfcn.h>
 #include <utime.h>
 #include <sys/time.h>
-
+#include <QDir>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QUrl>
 #endif
 
 #if defined(MACOSX)
@@ -452,7 +455,40 @@ void TSystem::moveFileToRecycleBin(const TFilePath &fp) {
     } catch (...) {
     }
   }
+#elif defined(LINUX)
+  //
+  // From https://stackoverflow.com/questions/17964439/move-files-to-trash-recycle-bin-in-qt
+  //
+  QString fileToRecycle = fp.getQString();
+  QFileInfo FileName(fileToRecycle);
 
+  QDateTime currentTime(QDateTime::currentDateTime());    // get system time
+
+  QString trashFilePath = QDir::homePath() + "/.local/share/Trash/files/";    // this folder contains deleted files
+  QString trashInfoPath = QDir::homePath() + "/.local/share/Trash/info/";     // this folder contains information about the deleted files
+
+  // check paths exist
+  if( !QDir(trashFilePath).exists() || !QDir(trashFilePath).exists(trashInfoPath) ) {
+    outputDebug("Could not find the right paths to send the file to the recycle bin.");
+    return;
+  }
+
+  // create file for the "Trash/info" folder
+  QFile infoFile(trashInfoPath + FileName.completeBaseName() + "." + FileName.completeSuffix() + ".trashinfo");     // filename+extension+.trashinfo
+
+  infoFile.open(QIODevice::ReadWrite);
+
+  QTextStream stream(&infoFile);
+
+  stream << "[Trash Info]" << endl;
+  stream << "Path=" + QString(QUrl::toPercentEncoding(FileName.absoluteFilePath(), "~_-./")) << endl;     // convert path to percentage encoded string
+  stream << "DeletionDate=" + currentTime.toString("yyyy-MM-dd") + "T" + currentTime.toString("hh:mm:ss") << endl;      // get date and time in format YYYY-MM-DDThh:mm:ss
+
+  infoFile.close();
+
+  // move the original file to the "Trash/files" folder
+  QDir file;
+  file.rename(FileName.absoluteFilePath(), trashFilePath+FileName.completeBaseName() + "." + FileName.completeSuffix());  // rename(original path, trash path)
 #else
   assert(!"Not implemented yet");
 #endif
