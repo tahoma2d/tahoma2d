@@ -1423,6 +1423,7 @@ void VectorSelectionTool::clearSelectedStrokes() {
   m_strokeSelection.selectNone();
   m_levelSelection.styles().clear();
   m_deformValues.reset();
+  m_centers.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -1710,8 +1711,8 @@ void VectorSelectionTool::draw() {
 
   glPushMatrix();
 
-  if (m_strokeSelection.isEmpty())       // o_o  WTF!?
-    m_bboxs.clear(), m_centers.clear();  //
+  if (m_strokeSelection.isEmpty())  // o_o  WTF!?
+    m_bboxs.clear();                //
 
   // common draw
   if (getBBoxsCount() > 0) drawCommandHandle(vi.getPointer());
@@ -1762,7 +1763,6 @@ bool VectorSelectionTool::isSelectionEmpty() {
 
 void VectorSelectionTool::computeBBox() {
   m_bboxs.clear();
-  m_centers.clear();
 
   TVectorImageP vi = getImage(false);
   if (!vi) return;
@@ -1822,7 +1822,8 @@ void VectorSelectionTool::computeBBox() {
     FourPoints bbox;
     bbox = newBbox;
     m_bboxs.push_back(bbox);
-    m_centers.push_back(0.5 * (bbox.getP11() + bbox.getP00()));
+    if (getCenter() == TPointD())
+      m_centers.push_back(0.5 * (bbox.getP11() + bbox.getP00()));
   }
 
   ++m_selectionCount;
