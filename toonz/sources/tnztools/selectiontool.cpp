@@ -972,6 +972,12 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
     }
     maxDist  = 5 * pixelSize;
     maxDist2 = maxDist * maxDist;
+    if (!isLevelType() && !isSelectedFramesType() &&
+        tdistance2(getCenter(), pos) < maxDist2) {
+      m_what     = MOVE_CENTER;
+      m_cursorId = ToolCursor::PointingHandCursor;
+      return;
+    }
     if (tdistance2(bbox.getP00(), pos) < maxDist2 ||
         tdistance2(bbox.getP11(), pos) < maxDist2 ||
         tdistance2(bbox.getP01(), pos) < maxDist2 ||
@@ -1019,12 +1025,6 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
         m_cursorId = ToolCursor::DistortCursor;
         m_what     = DEFORM;
       }
-      return;
-    }
-    if (!isLevelType() && !isSelectedFramesType() &&
-        tdistance2(getCenter(), pos) < maxDist2) {
-      m_what     = MOVE_CENTER;
-      m_cursorId = ToolCursor::PointingHandCursor;
       return;
     }
     TPointD hpos = bbox.getP10() - TPointD(14 * pixelSize, 15 * pixelSize);
