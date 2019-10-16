@@ -39,7 +39,8 @@ DoubleValuePairField::DoubleValuePairField(QWidget *parent,
     , m_rightMargin(72)
     , m_isMaxRangeLimited(isMaxRangeLimited)
     , m_leftLineEdit(leftLineEdit)
-    , m_rightLineEdit(rightLineEdit) {
+    , m_rightLineEdit(rightLineEdit)
+    , m_isLinear(true) {
   assert(m_leftLineEdit);
   assert(m_rightLineEdit);
   setObjectName("DoublePairField");

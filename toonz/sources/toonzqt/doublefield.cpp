@@ -82,7 +82,11 @@ void DoubleValueLineEdit::mouseReleaseEvent(QMouseEvent *e) {
 
 DoubleValueField::DoubleValueField(QWidget *parent,
                                    DoubleValueLineEdit *lineEdit)
-    : QWidget(parent), m_lineEdit(lineEdit), m_slider(0), m_roller(0) {
+    : QWidget(parent)
+    , m_lineEdit(lineEdit)
+    , m_slider(0)
+    , m_roller(0)
+    , m_isLinearSlider(true) {
   assert(m_lineEdit);
 
   QWidget *field = new QWidget(this);
