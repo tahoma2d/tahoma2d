@@ -586,6 +586,13 @@ void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
 
   VectorFreeDeformer *freeDeformer =
       static_cast<VectorFreeDeformer *>(tool->getFreeDeformer());
+
+  const bool stayedTheSame =
+      bbox.getP00() == freeDeformer->getPoint(0) &&
+      bbox.getP10() == freeDeformer->getPoint(1) &&
+      bbox.getP11() == freeDeformer->getPoint(2) &&
+      bbox.getP01() == freeDeformer->getPoint(3);
+
   freeDeformer->setPoints(bbox.getP00(), bbox.getP10(), bbox.getP11(),
                           bbox.getP01());
   freeDeformer->setComputeRegion(!m_isDragging);
@@ -601,7 +608,7 @@ void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
 
   if (!m_isDragging) tool->notifyImageChanged();
 
-  tool->m_deformValues.m_isSelectionModified = true;
+  if (!stayedTheSame) tool->m_deformValues.m_isSelectionModified = true;
 
   if (!m_isDragging && (tool->isLevelType() || tool->isSelectedFramesType()))
     transformWholeLevel();
