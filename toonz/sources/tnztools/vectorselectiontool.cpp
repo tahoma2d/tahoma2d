@@ -587,11 +587,10 @@ void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
   VectorFreeDeformer *freeDeformer =
       static_cast<VectorFreeDeformer *>(tool->getFreeDeformer());
 
-  const bool stayedTheSame =
-      bbox.getP00() == freeDeformer->getPoint(0) &&
-      bbox.getP10() == freeDeformer->getPoint(1) &&
-      bbox.getP11() == freeDeformer->getPoint(2) &&
-      bbox.getP01() == freeDeformer->getPoint(3);
+  const bool stayedTheSame = bbox.getP00() == freeDeformer->getPoint(0) &&
+                             bbox.getP10() == freeDeformer->getPoint(1) &&
+                             bbox.getP11() == freeDeformer->getPoint(2) &&
+                             bbox.getP01() == freeDeformer->getPoint(3);
 
   freeDeformer->setPoints(bbox.getP00(), bbox.getP10(), bbox.getP11(),
                           bbox.getP01());
@@ -1497,6 +1496,7 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
   if (selectionChanged) {
     m_deformValues.reset();  // Resets selection values shown in the toolbar
+    m_centers.clear();
 
     finalizeSelection();
     notifySelectionChanged();
@@ -1594,7 +1594,10 @@ void VectorSelectionTool::leftButtonDrag(const TPointD &pos,
         selectionChanged = (selectStroke(s, false) || selectionChanged);
     }
 
-    if (selectionChanged) finalizeSelection();
+    if (selectionChanged) {
+      m_centers.clear();
+      finalizeSelection();
+    }
 
     invalidate();
   }
@@ -1936,6 +1939,7 @@ void VectorSelectionTool::onImageChanged() {
         vi->getPalette() !=
             selectedImg->getPalette())  // if palettes still match
       selectedStyles().clear();
+    m_centers.clear();
   } else {
     // Remove any eventual stroke index outside the valid range
     if (!m_strokeSelection.isEmpty()) {
@@ -1962,6 +1966,7 @@ void VectorSelectionTool::doOnDeactivate() {
   m_deformValues.reset();
 
   m_polyline.clear();
+  m_centers.clear();
 
   TTool::getApplication()->getCurrentSelection()->setSelection(0);
 
@@ -2150,6 +2155,7 @@ void VectorSelectionTool::selectRegionVectorImage() {
   }
 
   if (selectionChanged) {
+    m_centers.clear();
     finalizeSelection();
     notifySelectionChanged();
     invalidate();
