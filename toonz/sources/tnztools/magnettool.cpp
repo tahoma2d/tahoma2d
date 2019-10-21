@@ -142,7 +142,7 @@ public:
       : TTool("T_Magnet")
       , m_active(false)
       , m_oldStrokesArray()
-      , m_toolSize("Size:", 10, 500, 20)  // W_ToolOptions_MagnetTool
+      , m_toolSize("Size:", 10, 1000, 20)  // W_ToolOptions_MagnetTool
   {
     bind(TTool::Vectors);
 
