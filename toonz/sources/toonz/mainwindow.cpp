@@ -1763,7 +1763,7 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
                              tr("Toggle XSheet Toolbar"), "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
-                             tr("Show/Hide Xsheet Camera Column"), "");
+                         tr("Show/Hide Xsheet Camera Column"), "");
   createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   createMenuCellsAction(MI_Swing, tr("&Swing"), "");
   createMenuCellsAction(MI_Random, tr("&Random"), "");
