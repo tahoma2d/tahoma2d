@@ -114,8 +114,9 @@ const struct {
                     {ToolCursor::Ex_StyleArea, "ex_style_area"},
                     {ToolCursor::Ex_RGB, "ex_rgb"},
                     {ToolCursor::Ex_HV, "ex_hv"},
+                    {ToolCursor::Ex_Precise, "ex_precise"},
                     {0, 0}};
-};
+};  // namespace
 
 //=============================================================================
 // CursorManager
@@ -141,9 +142,9 @@ public:
       p.setCompositionMode(QPainter::CompositionMode_SourceOver);
       for (int i = 0; decorateInfo[i].pixmapFilename; i++)
         if (decorationFlag & decorateInfo[i].decorateType) {
-          QString leftStr      = "";
+          QString leftStr = "";
           if (useLeft) leftStr = "_left";
-          QString path         = QString(":Resources/") +
+          QString path = QString(":Resources/") +
                          decorateInfo[i].pixmapFilename + leftStr + ".png";
           p.drawPixmap(0, 0, QPixmap(path));
         }
