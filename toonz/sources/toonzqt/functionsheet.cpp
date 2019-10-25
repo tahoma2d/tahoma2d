@@ -462,6 +462,18 @@ void FunctionSheetColumnHeadViewer::mousePressEvent(QMouseEvent *e) {
 
     getViewer()->selectCells(rect);
   }
+  // Switch selection before opening the context menu
+  // if the clicked column is out of the selection
+  else if (e->button() == Qt::RightButton) {
+    QRect selectedCell = getViewer()->getSelectedCells();
+    if (selectedCell.left() > currentC || selectedCell.right() < currentC) {
+      int lastKeyPos = 0;
+      std::set<double> frames;
+      channel->getParam()->getKeyframes(frames);
+      if (!frames.empty()) lastKeyPos = (int)*frames.rbegin();
+      getViewer()->selectCells(QRect(currentC, 0, 1, lastKeyPos + 1));
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -497,13 +509,13 @@ void FunctionSheetColumnHeadViewer::contextMenuEvent(QContextMenuEvent *ce) {
 
     QAction showAnimatedOnly(FunctionTreeView::tr("Show Animated Only"), 0);
     QAction showAll(FunctionTreeView::tr("Show All"), 0);
+    QAction hideSelected(FunctionTreeView::tr("Hide Selected"), 0);
     menu.addAction(&showAnimatedOnly);
     menu.addAction(&showAll);
+    menu.addAction(&hideSelected);
 
     // execute menu
     QAction *action = menu.exec(globalPos);
-
-    if (action != &showAll && action != &showAnimatedOnly) return;
 
     // Process action
     if (action == &showAll) {
@@ -521,7 +533,18 @@ void FunctionSheetColumnHeadViewer::contextMenuEvent(QContextMenuEvent *ce) {
         if (channel && !channel->isHidden())
           channel->setIsActive(channel->isAnimated());
       }
-    }
+    } else if (action == &hideSelected) {
+      QRect selectedCells = getViewer()->getSelectedCells();
+      // hide the selected columns from the right to the left
+      for (int col = selectedCells.right(); col >= selectedCells.left();
+           col--) {
+        FunctionTreeModel::Channel *chan = m_sheet->getChannel(col);
+        if (chan) chan->setIsActive(false);
+      }
+      // clear cell selection
+      getViewer()->selectCells(QRect());
+    } else
+      return;
 
     fv->update();
   }
