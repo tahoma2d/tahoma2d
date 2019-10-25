@@ -423,8 +423,9 @@ void DockLayout::applyTransform(const QTransform &transform) {
 //------------------------------------------------------
 
 void DockLayout::redistribute() {
-  std::vector<QWidget *> widgets;
   if (!m_regions.empty()) {
+    std::vector<QWidget *> widgets;
+
     // Recompute extremal region sizes
     // NOTA: Sarebbe da fare solo se un certo flag lo richiede; altrimenti tipo
     // per resize events e' inutile...
@@ -460,14 +461,15 @@ void DockLayout::redistribute() {
     // Recompute Layout geometry
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
+
+    for (QWidget *widget : widgets) {
+      widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+      widget->setMinimumSize(0, 0);
+    }
   }
 
   // Finally, apply Region geometries found
   applyGeometry();
-  for (QWidget *widget : widgets) {
-    widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-    widget->setMinimumSize(0, 0);
-  }
 }
 
 //======================================================================
