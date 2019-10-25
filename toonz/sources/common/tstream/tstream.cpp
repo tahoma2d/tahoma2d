@@ -357,7 +357,7 @@ TOStream &TOStream::operator<<(string v) {
     if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%') ||
         v[i] < 32      // Less than ASCII for SPACE
         || v[i] > 126  // Greater than ASCII for ~
-    )
+        )
       break;
   if (i == len)
     os << v << " ";
@@ -386,7 +386,7 @@ TOStream &TOStream::operator<<(QString _v) {
     if ((!iswalnum(v[i]) && v[i] != '_' && v[i] != '%') ||
         v[i] < 32      // Less than ASCII for SPACE
         || v[i] > 126  // Greater than ASCII for ~
-    )
+        )
       break;
   if (i == len)
     os << v << " ";
@@ -1078,9 +1078,15 @@ TIStream &TIStream::operator>>(TFilePath &v) {
   is.get(c);
   if (c == '"') {
     is.get(c);
-    while (is && c != '"') {
+    bool escapeChar = false;
+    // If processing double-quote ("), if it's escaped, keep reading.
+    while (is && (c != '"' || escapeChar)) {
       // if(c=='\\')
       //   is.get(c);
+      if (c == '\\' && !escapeChar)
+        escapeChar = true;
+      else
+        escapeChar = false;
       s.append(1, c);
       is.get(c);
     }
