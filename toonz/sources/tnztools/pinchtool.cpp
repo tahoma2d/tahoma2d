@@ -73,7 +73,7 @@ PinchTool::PinchTool()
     , m_draw(false)
     , m_undo(0)
     , m_showSelector(true)
-    , m_toolRange("Size:", 1.0, 1000.0, 500.0)  // W_ToolOptions_PinchTool
+    , m_toolRange("Size:", 1.0, 10000.0, 500.0)  // W_ToolOptions_PinchTool
     , m_toolCornerSize("Corner:", 1.0, 180.0,
                        160.0)          // W_ToolOptions_PinchCorner
     , m_autoOrManual("Manual", false)  // W_ToolOptions_PinchManual
