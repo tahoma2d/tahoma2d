@@ -94,13 +94,21 @@ FourPoints getFourPointsFromVectorImage(const TVectorImageP &img,
 //-----------------------------------------------------------------------------
 
 bool getStrokeIndexFromPos(UINT &index, const TVectorImageP &vi,
-                           const TPointD &pos, double pixelSize) {
+                           const TPointD &pos, double pixelSize, TAffine aff) {
   if (!vi) return false;
   double t, dist2 = 0;
-  double maxDist  = 5 * pixelSize;
-  double maxDist2 = maxDist * maxDist;
-  vi->getNearestStroke(pos, t, index, dist2);
-  return (dist2 < maxDist2 * 4);
+  double maxDist   = 5 * pixelSize;
+  double maxDist2  = maxDist * maxDist;
+  double checkDist = maxDist2 * 4;
+
+  if (vi->getNearestStroke(pos, t, index, dist2)) {
+    TStroke *strokeRef = vi->getStroke(index);
+    TThickPoint cursor = strokeRef->getThickPoint(t);
+    double len         = cursor.thick * pixelSize * sqrt(aff.det());
+    checkDist          = std::max(checkDist, (len * len));
+  }
+
+  return (dist2 < checkDist);
 }
 
 //-----------------------------------------------------------------------------
@@ -578,6 +586,12 @@ void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
 
   VectorFreeDeformer *freeDeformer =
       static_cast<VectorFreeDeformer *>(tool->getFreeDeformer());
+
+  const bool stayedTheSame = bbox.getP00() == freeDeformer->getPoint(0) &&
+                             bbox.getP10() == freeDeformer->getPoint(1) &&
+                             bbox.getP11() == freeDeformer->getPoint(2) &&
+                             bbox.getP01() == freeDeformer->getPoint(3);
+
   freeDeformer->setPoints(bbox.getP00(), bbox.getP10(), bbox.getP11(),
                           bbox.getP01());
   freeDeformer->setComputeRegion(!m_isDragging);
@@ -593,7 +607,7 @@ void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
 
   if (!m_isDragging) tool->notifyImageChanged();
 
-  tool->m_deformValues.m_isSelectionModified = true;
+  if (!stayedTheSame) tool->m_deformValues.m_isSelectionModified = true;
 
   if (!m_isDragging && (tool->isLevelType() || tool->isSelectedFramesType()))
     transformWholeLevel();
@@ -1423,6 +1437,7 @@ void VectorSelectionTool::clearSelectedStrokes() {
   m_strokeSelection.selectNone();
   m_levelSelection.styles().clear();
   m_deformValues.reset();
+  m_centers.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -1447,9 +1462,10 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
   UINT index         = 0;
   bool modifiableSel = isModifiableSelectionType(),
-       strokeAtPos   = getStrokeIndexFromPos(index, vi, pos, getPixelSize()),
-       addStroke     = strokeAtPos && !m_strokeSelection.isSelected(index),
-       toggleStroke  = strokeAtPos && e.isShiftPressed();
+       strokeAtPos   = getStrokeIndexFromPos(index, vi, pos, getPixelSize(),
+                                           getViewer()->getViewMatrix()),
+       addStroke    = strokeAtPos && !m_strokeSelection.isSelected(index),
+       toggleStroke = strokeAtPos && e.isShiftPressed();
 
   m_selecting =
       (modifiableSel && !strokeAtPos  // There must be no stroke under cursor
@@ -1480,6 +1496,7 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
   if (selectionChanged) {
     m_deformValues.reset();  // Resets selection values shown in the toolbar
+    m_centers.clear();
 
     finalizeSelection();
     notifySelectionChanged();
@@ -1577,7 +1594,10 @@ void VectorSelectionTool::leftButtonDrag(const TPointD &pos,
         selectionChanged = (selectStroke(s, false) || selectionChanged);
     }
 
-    if (selectionChanged) finalizeSelection();
+    if (selectionChanged) {
+      m_centers.clear();
+      finalizeSelection();
+    }
 
     invalidate();
   }
@@ -1710,8 +1730,8 @@ void VectorSelectionTool::draw() {
 
   glPushMatrix();
 
-  if (m_strokeSelection.isEmpty())       // o_o  WTF!?
-    m_bboxs.clear(), m_centers.clear();  //
+  if (m_strokeSelection.isEmpty())  // o_o  WTF!?
+    m_bboxs.clear();                //
 
   // common draw
   if (getBBoxsCount() > 0) drawCommandHandle(vi.getPointer());
@@ -1762,7 +1782,6 @@ bool VectorSelectionTool::isSelectionEmpty() {
 
 void VectorSelectionTool::computeBBox() {
   m_bboxs.clear();
-  m_centers.clear();
 
   TVectorImageP vi = getImage(false);
   if (!vi) return;
@@ -1822,7 +1841,8 @@ void VectorSelectionTool::computeBBox() {
     FourPoints bbox;
     bbox = newBbox;
     m_bboxs.push_back(bbox);
-    m_centers.push_back(0.5 * (bbox.getP11() + bbox.getP00()));
+    if (getCenter() == TPointD())
+      m_centers.push_back(0.5 * (bbox.getP11() + bbox.getP00()));
   }
 
   ++m_selectionCount;
@@ -1919,6 +1939,7 @@ void VectorSelectionTool::onImageChanged() {
         vi->getPalette() !=
             selectedImg->getPalette())  // if palettes still match
       selectedStyles().clear();
+    m_centers.clear();
   } else {
     // Remove any eventual stroke index outside the valid range
     if (!m_strokeSelection.isEmpty()) {
@@ -1945,6 +1966,7 @@ void VectorSelectionTool::doOnDeactivate() {
   m_deformValues.reset();
 
   m_polyline.clear();
+  m_centers.clear();
 
   TTool::getApplication()->getCurrentSelection()->setSelection(0);
 
@@ -2133,6 +2155,7 @@ void VectorSelectionTool::selectRegionVectorImage() {
   }
 
   if (selectionChanged) {
+    m_centers.clear();
     finalizeSelection();
     notifySelectionChanged();
     invalidate();
@@ -2154,7 +2177,8 @@ void VectorSelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
 
   if ((isLevelType() &&
        bbox.contains(pos))  // What about isSelectedFramesType()??
-      || (getStrokeIndexFromPos(index, vi, pos, getPixelSize()) &&
+      || (getStrokeIndexFromPos(index, vi, pos, getPixelSize(),
+                                getViewer()->getViewMatrix()) &&
           m_strokeSelection.isSelected(index))) {
     m_what = Inside;
     m_cursorId =

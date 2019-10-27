@@ -70,7 +70,7 @@ namespace {
 
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                     int widgetHeight, double pressure, int devPixRatio) {
-  toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
+  toonzEvent.m_pos      = TPointD(event->pos().x() * devPixRatio,
                              widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
   toonzEvent.m_pressure = 1.0;
@@ -295,6 +295,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
         m_tabletState = Touched;
         onPress(mouseEvent);
+      } else if (m_tabletState == Touched) {
+        m_tabletState = StartStroke;
       }
     } else
       m_tabletEvent = false;
@@ -468,7 +470,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
 
   // if the "compare with snapshot" mode is activated, change the mouse cursor
   // on the border handle
-  if (m_visualSettings.m_doCompare) {
+  if (m_visualSettings.m_doCompare && isPreviewEnabled()) {
     if (abs(curPos.x() - width() * m_compareSettings.m_compareX) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleHCursor);
@@ -823,6 +825,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
 
 quit:
   m_mouseButton = Qt::NoButton;
+  // Leave m_tabletEvent as-is in order to check whether the onRelease is called
+  // from tabletEvent or not in mouseReleaseEvent.
+  if (m_tabletState == Released)  // only clear if tabletRelease event
+    m_tabletEvent = false;
   // If m_tabletState is "Touched", we've been called by tabletPress event.
   // Don't clear it out table state so the tablePress event will process
   // correctly.
@@ -830,10 +836,6 @@ quit:
   m_mouseState                                = None;
   m_tabletMove                                = false;
   m_pressure                                  = 0;
-  // Leave m_tabletEvent as-is in order to check whether the onRelease is called
-  // from tabletEvent or not in mouseReleaseEvent.
-  if (m_tabletState == Released)  // only clear if tabletRelease event
-    m_tabletEvent = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -885,12 +887,12 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -925,6 +927,7 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
               m_touchDevice == QTouchDevice::TouchScreen) ||
              m_gestureActive == false) {
       zoomQt(event->pos() * getDevPixRatio(), exp(0.001 * delta));
+      m_panning = false;
     }
   }
   event->accept();
@@ -943,6 +946,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);
     QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
     QPoint firstCenter                     = gesture->centerPoint().toPoint();
+    if (m_touchDevice == QTouchDevice::TouchScreen)
+      firstCenter = mapFromGlobal(firstCenter);
 
     if (gesture->state() == Qt::GestureStarted) {
       m_gestureActive = true;
@@ -975,12 +980,14 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_zooming) {
           zoomQt(firstCenter * getDevPixRatio(), scaleFactor);
+          m_panning = false;
         }
         m_gestureActive = true;
       }
       if (changeFlags & QPinchGesture::RotationAngleChanged) {
         qreal rotationDelta =
             gesture->rotationAngle() - gesture->lastRotationAngle();
+        if (m_isFlippedX != m_isFlippedY) rotationDelta = -rotationDelta;
         TAffine aff    = getViewMatrix().inv();
         TPointD center = aff * TPointD(0, 0);
         if (!m_rotating && !m_zooming) {
@@ -1062,71 +1069,70 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
 
 bool SceneViewer::event(QEvent *e) {
   /*
-    switch (e->type()) {
-    //	case QEvent::Enter:
-    //	qDebug() << "[enter] ************************** Enter";
-    //	break;
-    //	case QEvent::Leave:
-    //	qDebug() << "[enter] ************************** Leave";
-    //	break;
+  switch (e->type()) {
+  //	case QEvent::Enter:
+  //	qDebug() << "[enter] ************************** Enter";
+  //	break;
+  //	case QEvent::Leave:
+  //	qDebug() << "[enter] ************************** Leave";
+  //	break;
 
-    case QEvent::TabletPress: {
-      QTabletEvent *te = static_cast<QTabletEvent *>(e);
-      qDebug() << "[enter] ************************** TabletPress mouseState("
-               << m_mouseState << ") tabletState(" << m_tabletState
-               << ") pressure(" << m_pressure << ") pointerType("
-               << te->pointerType() << ") device(" << te->device() << ")";
-    } break;
-    //	case QEvent::TabletMove:
-    //	qDebug() << "[enter] ************************** TabletMove
-    //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
-    //<< m_pressure << ")";
-    //	break;
-    case QEvent::TabletRelease:
-      qDebug() << "[enter] ************************** TabletRelease mouseState("
-               << m_mouseState << ") tabletState(" << m_tabletState << ")";
-      break;
+  case QEvent::TabletPress: {
+    QTabletEvent *te = static_cast<QTabletEvent *>(e);
+    qDebug() << "[enter] ************************** TabletPress mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState
+             << ") pressure(" << m_pressure << ") pointerType("
+             << te->pointerType() << ") device(" << te->device() << ")";
+  } break;
+  //	case QEvent::TabletMove:
+  //	qDebug() << "[enter] ************************** TabletMove
+  //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
+  //<< m_pressure << ")";
+  //	break;
+  case QEvent::TabletRelease:
+    qDebug() << "[enter] ************************** TabletRelease mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-    case QEvent::TouchBegin:
-      qDebug() << "[enter] ************************** TouchBegin";
-      break;
-    case QEvent::TouchEnd:
-      qDebug() << "[enter] ************************** TouchEnd";
-      break;
-    case QEvent::TouchCancel:
-      qDebug() << "[enter] ************************** TouchCancel";
-      break;
+  case QEvent::TouchBegin:
+    qDebug() << "[enter] ************************** TouchBegin";
+    break;
+  case QEvent::TouchEnd:
+    qDebug() << "[enter] ************************** TouchEnd";
+    break;
+  case QEvent::TouchCancel:
+    qDebug() << "[enter] ************************** TouchCancel";
+    break;
 
-    case QEvent::Gesture:
-      qDebug() << "[enter] ************************** Gesture";
-      break;
+  case QEvent::Gesture:
+    qDebug() << "[enter] ************************** Gesture";
+    break;
 
-    case QEvent::MouseButtonPress:
-      qDebug()
-          << "[enter] ************************** MouseButtonPress mouseState("
-          << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
-          << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
-      break;
-    //	case QEvent::MouseMove:
-    //	qDebug() << "[enter] ************************** MouseMove mouseState("
-    //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
-    //m_pressure << ")";
-    //	break;
-    case QEvent::MouseButtonRelease:
-      qDebug()
-          << "[enter] ************************** MouseButtonRelease mouseState("
-          << m_mouseState << ") tabletState(" << m_tabletState << ")";
-      break;
+  case QEvent::MouseButtonPress:
+    qDebug()
+        << "[enter] ************************** MouseButtonPress mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
+        << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
+    break;
+  //	case QEvent::MouseMove:
+  //	qDebug() << "[enter] ************************** MouseMove mouseState("
+  //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
+  //m_pressure << ")";
+  //	break;
+  case QEvent::MouseButtonRelease:
+    qDebug()
+        << "[enter] ************************** MouseButtonRelease mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-    case QEvent::MouseButtonDblClick:
-      qDebug() << "[enter] ============================== MouseButtonDblClick";
-      break;
-    }
+  case QEvent::MouseButtonDblClick:
+    qDebug() << "[enter] ============================== MouseButtonDblClick";
+    break;
+  }
   */
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -1196,11 +1202,11 @@ class ViewerZoomer final : public ImageUtils::ShortcutZoomer {
 public:
   ViewerZoomer(SceneViewer *parent) : ShortcutZoomer(parent) {}
 
-  bool zoom(bool zoomin, bool resetZoom) override {
+  bool zoom(bool zoomin, bool resetView) override {
     SceneViewer *sceneViewer = static_cast<SceneViewer *>(getWidget());
 
-    resetZoom ? sceneViewer->resetSceneViewer()
-              : sceneViewer->zoomQt(zoomin, resetZoom);
+    resetView ? sceneViewer->resetSceneViewer()
+              : sceneViewer->zoomQt(zoomin, resetView);
 
     return true;
   }
@@ -1222,6 +1228,21 @@ public:
 
   bool setFlipY() override {
     static_cast<SceneViewer *>(getWidget())->flipY();
+    return true;
+  }
+
+  bool resetZoom() override {
+    static_cast<SceneViewer *>(getWidget())->resetZoom();
+    return true;
+  }
+
+  bool resetRotation() override {
+    static_cast<SceneViewer *>(getWidget())->resetRotation();
+    return true;
+  }
+
+  bool resetPosition() override {
+    static_cast<SceneViewer *>(getWidget())->resetPosition();
     return true;
   }
 
@@ -1532,10 +1553,13 @@ void SceneViewer::dragEnterEvent(QDragEnterEvent *event) {
 
   const QMimeData *mimeData = event->mimeData();
 
-  if (acceptResourceOrFolderDrop(mimeData->urls()))
-    event->acceptProposedAction();
-  else
+  if (acceptResourceOrFolderDrop(mimeData->urls())) {
+    // Force CopyAction
+    event->setDropAction(Qt::CopyAction);
+    event->accept();
+  } else {
     event->ignore();
+  }
 }
 
 //-----------------------------------------------------------------------------

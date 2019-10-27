@@ -121,8 +121,11 @@ public:
     return m_autosaveOtherFilesEnabled;
   }
 
-  void enableLevelsBackup(bool enabled);
-  bool isLevelsBackupEnabled() const { return m_levelsBackupEnabled; }
+  void enableBackup(bool enabled);
+  bool isBackupEnabled() const { return m_backupEnabled; }
+
+  void setBackupKeepCount(int count);
+  int getBackupKeepCount() { return m_backupKeepCount; }
 
   void enableSceneNumbering(bool enabled);
   bool isSceneNumberingEnabled() const { return m_sceneNumberingEnabled; }
@@ -468,6 +471,15 @@ public:
     currentColumnColor = m_currentColumnColor;
   }
 
+  void enableXsheetCameraColumn(bool on);
+  bool isXsheetCameraColumnEnabled() const {
+    return m_showXsheetCameraColumn;
+  }
+
+  bool isXsheetCameraColumnVisible() const {
+	  return m_showXsheetCameraColumn && m_showKeyframesOnXsheetCellArea;
+  }
+
   // Animation  tab
 
   void setKeyframeType(int s);
@@ -635,9 +647,8 @@ private:
       m_expandFunctionHeader, m_showColumnNumbers, m_animatedGuidedDrawing;
   bool m_rasterOptimizedMemory, m_saveUnpaintedInCleanup,
       m_askForOverrideRender, m_automaticSVNFolderRefreshEnabled, m_SVNEnabled,
-      m_levelsBackupEnabled, m_minimizeSaveboxAfterEditing,
-      m_sceneNumberingEnabled, m_animationSheetEnabled, m_inksOnly,
-      m_startupPopupEnabled;
+      m_backupEnabled, m_minimizeSaveboxAfterEditing, m_sceneNumberingEnabled,
+      m_animationSheetEnabled, m_inksOnly, m_startupPopupEnabled;
   bool m_fillOnlySavebox, m_show0ThickLines, m_regionAntialias;
   bool m_onionSkinDuringPlayback, m_ignoreImageDpi,
       m_syncLevelRenumberWithXsheet;
@@ -723,6 +734,10 @@ private:
 
   bool m_enableWinInk                         = false;
   bool m_useOnionColorsForShiftAndTraceGhosts = false;
+
+  int m_backupKeepCount;
+
+  bool m_showXsheetCameraColumn = true;
 
 private:
   Preferences();

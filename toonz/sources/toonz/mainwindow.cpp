@@ -32,6 +32,7 @@
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
 #include "toonz/txshleveltypes.h"
+#include "toonz/tproject.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -56,6 +57,7 @@
 #include <QButtonGroup>
 #include <QPushButton>
 #include <QLabel>
+#include <QMessageBox>
 
 TEnv::IntVar ViewCameraToggleAction("ViewCameraToggleAction", 1);
 TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 1);
@@ -449,6 +451,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
+  setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
   setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
   setCommandHandler("MI_NewVectorLevel", this,
@@ -457,6 +460,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
                     &MainWindow::onNewToonzRasterLevelButtonPressed);
   setCommandHandler("MI_NewRasterLevel", this,
                     &MainWindow::onNewRasterLevelButtonPressed);
+  setCommandHandler(MI_ClearCacheFolder, this, &MainWindow::clearCacheFolder);
   // remove ffmpegCache if still exists from crashed exit
   QString ffmpegCachePath =
       ToonzFolder::getCacheRootFolder().getQString() + "//ffmpeg";
@@ -484,14 +488,19 @@ void MainWindow::changeWindowTitle() {
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) return;
 
-  QString name = QString::fromStdWString(scene->getSceneName());
+  TProject *project   = scene->getProject();
+  QString projectName = QString::fromStdString(project->getName().getName());
+
+  QString sceneName = QString::fromStdWString(scene->getSceneName());
+
+  if (sceneName.isEmpty()) sceneName = tr("Untitled");
+  if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
 
   /*--- レイアウトファイル名を頭に表示させる ---*/
-  if (!m_layoutName.isEmpty()) name.prepend(m_layoutName + " : ");
+  if (!m_layoutName.isEmpty()) sceneName.prepend(m_layoutName + " : ");
 
-  if (name.isEmpty()) name = tr("Untitled");
-
-  name += " : " + QString::fromStdString(TEnv::getApplicationFullName());
+  QString name = sceneName + " [" + projectName + "] : " +
+                 QString::fromStdString(TEnv::getApplicationFullName());
 
   setWindowTitle(name);
 }
@@ -521,7 +530,7 @@ Room *MainWindow::getRoom(int index) const {
 
 //-----------------------------------------------------------------------------
 /*! Roomを名前から探す
-*/
+ */
 Room *MainWindow::getRoomByName(QString &roomName) {
   for (int i = 0; i < getRoomCount(); i++) {
     Room *room = dynamic_cast<Room *>(m_stackedWidget->widget(i));
@@ -983,6 +992,12 @@ void MainWindow::onAbout() {
 
 //-----------------------------------------------------------------------------
 
+void MainWindow::onOpenOnlineManual() {
+  QDesktopServices::openUrl(QUrl(tr("http://opentoonz.readthedocs.io")));
+}
+
+//-----------------------------------------------------------------------------
+
 void MainWindow::autofillToggle() {
   TPaletteHandle *h = TApp::instance()->getCurrentPalette();
   h->toggleAutopaint();
@@ -1050,7 +1065,6 @@ void MainWindow::onCurrentRoomChanged(int newRoomIndex) {
     TPanel *pane = paneList.at(i);
     if (pane->isFloating() && !pane->isHidden()) {
       QRect oldGeometry = pane->geometry();
-
       // Just setting the new parent is not enough for the new layout manager.
       // Must be removed from the old and added to the new.
       oldRoom->removeDockWidget(pane);
@@ -1428,6 +1442,13 @@ QAction *MainWindow::createViewerAction(const char *id, const QString &name,
 
 //-----------------------------------------------------------------------------
 
+QAction *MainWindow::createVisualizationButtonAction(const char *id,
+                                                     const QString &name) {
+  return createAction(id, name, "", VisualizationButtonCommandType);
+}
+
+//-----------------------------------------------------------------------------
+
 QAction *MainWindow::createMiscAction(const char *id, const QString &name,
                                       const char *defaultShortcut) {
   QAction *action = new DVAction(name, this);
@@ -1537,7 +1558,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SavePaletteAs, tr("&Save Palette As..."), "");
   createRightClickMenuAction(MI_OverwritePalette, tr("&Save Palette"), "");
   createMenuFileAction(MI_LoadColorModel, tr("&Load Color Model..."), "");
-  createMenuFileAction(MI_ImportMagpieFile, tr("&Import Magpie File..."), "");
+  createMenuFileAction(MI_ImportMagpieFile,
+                       tr("&Import Toonz Lip Sync File..."), "");
   createMenuFileAction(MI_NewProject, tr("&New Project..."), "");
   createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
   createMenuFileAction(MI_SaveDefaultSettings, tr("&Save Default Settings"),
@@ -1577,6 +1599,7 @@ void MainWindow::defineActions() {
   createMenuAction(MI_LoadRecentImage, tr("&Load Recent Image Files"), files);
   createMenuFileAction(MI_ClearRecentImage,
                        tr("&Clear Recent Flipbook Image List"), "");
+  createMenuFileAction(MI_ClearCacheFolder, tr("&Clear Cache Folder"), "");
 
   createRightClickMenuAction(MI_PreviewFx, tr("Preview Fx"), "");
 
@@ -1610,14 +1633,14 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_Ungroup, tr("&Ungroup"), "Ctrl+Shift+G");
   createMenuEditAction(MI_BringToFront, tr("&Bring to Front"), "Ctrl+]");
   createMenuEditAction(MI_BringForward, tr("&Bring Forward"), "]");
-  createMenuEditAction(MI_SendBack, tr("&Send Back"), "Ctrl+[");
+  createMenuEditAction(MI_SendBack, tr("&Send to Back"), "Ctrl+[");
   createMenuEditAction(MI_SendBackward, tr("&Send Backward"), "[");
   createMenuEditAction(MI_EnterGroup, tr("&Enter Group"), "");
   createMenuEditAction(MI_ExitGroup, tr("&Exit Group"), "");
   createMenuEditAction(MI_RemoveEndpoints, tr("&Remove Vector Overflow"), "");
   QAction *touchToggle =
       createToggle(MI_TouchGestureControl, tr("&Touch Gesture Control"), "",
-                   TouchGestureControl ? 1 : 0, MenuEditCommandType);
+                   TouchGestureControl ? 1 : 0, MiscCommandType);
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
@@ -1670,7 +1693,7 @@ void MainWindow::defineActions() {
                         tr("&Brightness and Contrast..."), "");
   createMenuLevelAction(MI_LinesFade, tr("&Color Fade..."), "");
 #ifdef LINETEST
-  createMenuLevelAction(MI_Capture, tr("&Capture"), "Space");
+  createMenuLevelAction(MI_Capture, tr("&Capture"), "");
 #endif
   QAction *action =
       createMenuLevelAction(MI_CanvasSize, tr("&Canvas Size..."), "");
@@ -1722,7 +1745,7 @@ void MainWindow::defineActions() {
   mergeLevelsAction->setIcon(QIcon(":Resources/merge.svg"));
   createMenuXsheetAction(MI_InsertFx, tr("&New FX..."), "Ctrl+F");
   QAction *newOutputAction =
-      createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Ctrl+F");
+      createMenuXsheetAction(MI_NewOutputFx, tr("&New Output"), "Alt+O");
   newOutputAction->setIcon(createQIconOnOff("output", false));
 
   createRightClickMenuAction(MI_FxParamEditor, tr("&Edit FX..."), "Ctrl+K");
@@ -1739,6 +1762,8 @@ void MainWindow::defineActions() {
                          "Alt+L");
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
                              tr("Toggle XSheet Toolbar"), "");
+  createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
+                         tr("Show/Hide Xsheet Camera Column"), "");
   createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   createMenuCellsAction(MI_Swing, tr("&Swing"), "");
   createMenuCellsAction(MI_Random, tr("&Random"), "");
@@ -1879,6 +1904,9 @@ void MainWindow::defineActions() {
   createAction(MI_NextStep, tr("Next Step"), "", PlaybackCommandType);
   createAction(MI_PrevStep, tr("Prev Step"), "", PlaybackCommandType);
 
+  createAction(MI_NextKeyframe, tr("Next Key"), "Ctrl+.", MenuXsheetCommandType);
+  createAction(MI_PrevKeyframe, tr("Prev Key"), "Ctrl+,", MenuXsheetCommandType);
+
   createRGBAAction(MI_RedChannel, tr("Red Channel"), "");
   createRGBAAction(MI_GreenChannel, tr("Green Channel"), "");
   createRGBAAction(MI_BlueChannel, tr("Blue Channel"), "");
@@ -1946,6 +1974,7 @@ void MainWindow::defineActions() {
                           "Ctrl+`");
   createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
+  createMenuWindowsAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
@@ -2094,8 +2123,11 @@ void MainWindow::defineActions() {
 
   createViewerAction(V_ZoomIn, tr("Zoom In"), "+");
   createViewerAction(V_ZoomOut, tr("Zoom Out"), "-");
-  createViewerAction(V_ZoomReset, tr("Reset View"), "Alt+0");
+  createViewerAction(V_ViewReset, tr("Reset View"), "Alt+0");
   createViewerAction(V_ZoomFit, tr("Fit to Window"), "Alt+9");
+  createViewerAction(V_ZoomReset, tr("Reset Zoom"), "");
+  createViewerAction(V_RotateReset, tr("Reset Rotation"), "");
+  createViewerAction(V_PositionReset, tr("Reset Position"), "");
   createViewerAction(V_ActualPixelSize, tr("Actual Pixel Size"), "N");
   createViewerAction(V_FlipX, tr("Flip Viewer Horizontally"), "");
   createViewerAction(V_FlipY, tr("Flip Viewer Vertically"), "");
@@ -2104,6 +2136,21 @@ void MainWindow::defineActions() {
   CommandManager::instance()->setToggleTexts(V_ShowHideFullScreen,
                                              tr("Full Screen Mode"),
                                              tr("Exit Full Screen Mode"));
+
+  // Following actions are for adding "Visualization" menu items to the command
+  // bar. They are separated from the original actions in order to avoid
+  // assigning shortcut keys. They must be triggered only from pressing buttons
+  // in the command bar. Assinging shortcut keys and registering as MenuItem
+  // will break a logic of ShortcutZoomer. So here we register separate items
+  // and bypass the command.
+  createVisualizationButtonAction(VB_ViewReset, tr("Reset View"));
+  createVisualizationButtonAction(VB_ZoomFit, tr("Fit to Window"));
+  createVisualizationButtonAction(VB_ZoomReset, tr("Reset Zoom"));
+  createVisualizationButtonAction(VB_RotateReset, tr("Reset Rotation"));
+  createVisualizationButtonAction(VB_PositionReset, tr("Reset Position"));
+  createVisualizationButtonAction(VB_ActualPixelSize, tr("Actual Pixel Size"));
+  createVisualizationButtonAction(VB_FlipX, tr("Flip Viewer Horizontally"));
+  createVisualizationButtonAction(VB_FlipY, tr("Flip Viewer Vertically"));
 
   QAction *refreshAct =
       createMiscAction(MI_RefreshTree, tr("Refresh Folder Tree"), "");
@@ -2152,6 +2199,10 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_JoinVectors", tr("Join Vectors"), "");
   createToolOptionsAction("A_ToolOption_ShowOnlyActiveSkeleton",
                           tr("Show Only Active Skeleton"), "");
+  createToolOptionsAction("A_ToolOption_RasterEraser",
+                          tr("Brush Tool - Eraser (Raster option)"), "");
+  createToolOptionsAction("A_ToolOption_LockAlpha",
+                          tr("Brush Tool - Lock Alpha"), "");
 
   // Option Menu
   createToolOptionsAction("A_ToolOption_BrushPreset", tr("Brush Preset"), "");
@@ -2293,6 +2344,96 @@ void MainWindow::onNewRasterLevelButtonPressed() {
 }
 
 //-----------------------------------------------------------------------------
+// delete unused files / folders in the cache
+void MainWindow::clearCacheFolder() {
+  // currently cache folder is used for following purposes
+  // 1. $CACHE/[ProcessID] : for disk swap of image cache.
+  //    To be deleted on exit. Remains on crash.
+  // 2. $CACHE/ffmpeg : ffmpeg cache.
+  //    To be cleared on the end of rendering, on exist and on launch.
+  // 3. $CACHE/temp : untitled scene data.
+  //    To be deleted on switching or exiting scenes. Remains on crash.
+
+  // So, this function will delete all files / folders in $CACHE
+  // except the following items:
+  // 1. $CACHE/[Current ProcessID]
+  // 2. $CACHE/temp/[Current scene folder] if the current scene is untitled
+
+  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
+  if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
+
+  TFilePathSet filesToBeRemoved;
+
+  TSystem::readDirectory(filesToBeRemoved, cacheRoot, false);
+
+  // keep the imagecache folder
+  filesToBeRemoved.remove(cacheRoot + std::to_string(TSystem::getProcessId()));
+  // keep the untitled scene data folder
+  if (TApp::instance()->getCurrentScene()->getScene()->isUntitled()) {
+    filesToBeRemoved.remove(cacheRoot + "temp");
+    TFilePathSet untitledData =
+        TSystem::readDirectory(cacheRoot + "temp", false);
+    untitledData.remove(TApp::instance()
+                            ->getCurrentScene()
+                            ->getScene()
+                            ->getScenePath()
+                            .getParentDir());
+    filesToBeRemoved.insert(filesToBeRemoved.end(), untitledData.begin(),
+                            untitledData.end());
+  }
+
+  // return if there is no files/folders to be deleted
+  if (filesToBeRemoved.size() == 0) {
+    QMessageBox::information(
+        this, tr("Clear Cache Folder"),
+        tr("There are no unused items in the cache folder."));
+    return;
+  }
+
+  QString message(tr("Deleting the following items:\n"));
+  int count = 0;
+  for (const auto &fileToBeRemoved : filesToBeRemoved) {
+    QString dirPrefix =
+        (TFileStatus(fileToBeRemoved).isDirectory()) ? tr("<DIR> ") : "";
+    message +=
+        "   " + dirPrefix + (fileToBeRemoved - cacheRoot).getQString() + "\n";
+    count++;
+    if (count == 5) break;
+  }
+  if (filesToBeRemoved.size() > 5)
+    message +=
+        tr("   ... and %1 more items\n").arg(filesToBeRemoved.size() - 5);
+
+  message +=
+      tr("\nAre you sure?\n\nN.B. Make sure you are not running another "
+         "process of OpenToonz,\nor you may delete necessary files for it.");
+
+  QMessageBox::StandardButton ret = QMessageBox::question(
+      this, tr("Clear Cache Folder"), message,
+      QMessageBox::StandardButtons(QMessageBox::Ok | QMessageBox::Cancel));
+
+  if (ret != QMessageBox::Ok) return;
+
+  for (const auto &fileToBeRemoved : filesToBeRemoved) {
+    try {
+      if (TFileStatus(fileToBeRemoved).isDirectory())
+        TSystem::rmDirTree(fileToBeRemoved);
+      else
+        TSystem::deleteFile(fileToBeRemoved);
+    } catch (TException &e) {
+      QMessageBox::warning(
+          this, tr("Clear Cache Folder"),
+          tr("Can't delete %1 : ").arg(fileToBeRemoved.getQString()) +
+              QString::fromStdWString(e.getMessage()));
+    } catch (...) {
+      QMessageBox::warning(
+          this, tr("Clear Cache Folder"),
+          tr("Can't delete %1 : ").arg(fileToBeRemoved.getQString()));
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 class ReloadStyle final : public MenuItemHandler {
 public:
@@ -2313,7 +2454,8 @@ void MainWindow::onQuit() { close(); }
 // RecentFiles
 //=============================================================================
 
-RecentFiles::RecentFiles() : m_recentScenes(), m_recentLevels() {}
+RecentFiles::RecentFiles()
+    : m_recentScenes(), m_recentSceneProjects(), m_recentLevels() {}
 
 //-----------------------------------------------------------------------------
 
@@ -2328,17 +2470,25 @@ RecentFiles::~RecentFiles() {}
 
 //-----------------------------------------------------------------------------
 
-void RecentFiles::addFilePath(QString path, FileType fileType) {
+void RecentFiles::addFilePath(QString path, FileType fileType,
+                              QString projectName) {
   QList<QString> files =
       (fileType == Scene) ? m_recentScenes : (fileType == Level)
                                                  ? m_recentLevels
                                                  : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
-    if (files.at(i) == path) files.removeAt(i);
+    if (files.at(i) == path) {
+      files.removeAt(i);
+      if (fileType == Scene) m_recentSceneProjects.removeAt(i);
+    }
   files.insert(0, path);
+  if (fileType == Scene) m_recentSceneProjects.insert(0, projectName);
   int maxSize = 10;
-  if (files.size() > maxSize) files.removeAt(maxSize);
+  if (files.size() > maxSize) {
+    files.removeAt(maxSize);
+    if (fileType == Scene) m_recentSceneProjects.removeAt(maxSize);
+  }
 
   if (fileType == Scene)
     m_recentScenes = files;
@@ -2354,9 +2504,10 @@ void RecentFiles::addFilePath(QString path, FileType fileType) {
 //-----------------------------------------------------------------------------
 
 void RecentFiles::moveFilePath(int fromIndex, int toIndex, FileType fileType) {
-  if (fileType == Scene)
+  if (fileType == Scene) {
     m_recentScenes.move(fromIndex, toIndex);
-  else if (fileType == Level)
+    m_recentSceneProjects.move(fromIndex, toIndex);
+  } else if (fileType == Level)
     m_recentLevels.move(fromIndex, toIndex);
   else
     m_recentFlipbookImages.move(fromIndex, toIndex);
@@ -2366,9 +2517,10 @@ void RecentFiles::moveFilePath(int fromIndex, int toIndex, FileType fileType) {
 //-----------------------------------------------------------------------------
 
 void RecentFiles::removeFilePath(int index, FileType fileType) {
-  if (fileType == Scene)
+  if (fileType == Scene) {
     m_recentScenes.removeAt(index);
-  else if (fileType == Level)
+    m_recentSceneProjects.removeAt(index);
+  } else if (fileType == Level)
     m_recentLevels.removeAt(index);
   saveRecentFiles();
 }
@@ -2384,10 +2536,26 @@ QString RecentFiles::getFilePath(int index, FileType fileType) const {
 
 //-----------------------------------------------------------------------------
 
+QString RecentFiles::getFileProject(int index) const {
+  if (index >= m_recentScenes.size() || index >= m_recentSceneProjects.size())
+    return "-";
+  return m_recentSceneProjects[index];
+}
+
+QString RecentFiles::getFileProject(QString fileName) const {
+  for (int index = 0; index < m_recentScenes.size(); index++)
+    if (m_recentScenes[index] == fileName) return m_recentSceneProjects[index];
+
+  return "-";
+}
+
+//-----------------------------------------------------------------------------
+
 void RecentFiles::clearRecentFilesList(FileType fileType) {
-  if (fileType == Scene)
+  if (fileType == Scene) {
     m_recentScenes.clear();
-  else if (fileType == Level)
+    m_recentSceneProjects.clear();
+  } else if (fileType == Level)
     m_recentLevels.clear();
   else
     m_recentFlipbookImages.clear();
@@ -2411,6 +2579,22 @@ void RecentFiles::loadRecentFiles() {
     QString scene = settings.value(QString("Scenes")).toString();
     if (!scene.isEmpty()) m_recentScenes.append(scene);
   }
+
+  // Load scene's projects info. This is for display purposes only. For
+  // backwards compatibility it is stored and maintained separately.
+  QList<QVariant> sceneProjects =
+      settings.value(QString("SceneProjects")).toList();
+  if (!sceneProjects.isEmpty()) {
+    for (i = 0; i < sceneProjects.size(); i++)
+      m_recentSceneProjects.append(sceneProjects.at(i).toString());
+  } else {
+    QString sceneProject = settings.value(QString("SceneProjects")).toString();
+    if (!sceneProject.isEmpty()) m_recentSceneProjects.append(sceneProject);
+  }
+  // Should be 1-to-1. If we're short, append projects list with "-".
+  while (m_recentSceneProjects.size() < m_recentScenes.size())
+    m_recentSceneProjects.append("-");
+
   QList<QVariant> levels = settings.value(QString("Levels")).toList();
   if (!levels.isEmpty()) {
     for (i = 0; i < levels.size(); i++) {
@@ -2448,6 +2632,7 @@ void RecentFiles::saveRecentFiles() {
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("RecentFiles.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
   settings.setValue(QString("Scenes"), QVariant(m_recentScenes));
+  settings.setValue(QString("SceneProjects"), QVariant(m_recentSceneProjects));
   settings.setValue(QString("Levels"), QVariant(m_recentLevels));
   settings.setValue(QString("FlipbookImages"),
                     QVariant(m_recentFlipbookImages));
