@@ -737,6 +737,10 @@ void DragSelectionTool::VectorDeformTool::leftButtonUp(const TPointD &pos,
   m_isDragging = false;
 
   tool->notifyImageChanged();
+
+  VectorSelectionTool *selectionTool =
+      dynamic_cast<VectorSelectionTool *>(m_tool);
+  selectionTool->setResetCenter(true);
 }
 
 //=============================================================================
@@ -766,6 +770,8 @@ void DragSelectionTool::VectorRotationTool::transform(TAffine aff,
 
 void DragSelectionTool::VectorRotationTool::leftButtonDrag(
     const TPointD &pos, const TMouseEvent &e) {
+  VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
+  tool->setResetCenter(false);
   m_rotation->leftButtonDrag(pos, e);
 }
 
@@ -785,6 +791,8 @@ DragSelectionTool::VectorFreeDeformTool::VectorFreeDeformTool(
 
 void DragSelectionTool::VectorFreeDeformTool::leftButtonDrag(
     const TPointD &pos, const TMouseEvent &e) {
+  VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
+  tool->setResetCenter(false);
   m_freeDeform->leftButtonDrag(pos, e);
 }
 
@@ -819,6 +827,8 @@ void DragSelectionTool::VectorMoveSelectionTool::leftButtonDown(
 
 void DragSelectionTool::VectorMoveSelectionTool::leftButtonDrag(
     const TPointD &pos, const TMouseEvent &e) {
+  VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
+  tool->setResetCenter(false);
   if (e.isCtrlPressed() ||
       norm2(pos - getStartPos()) > l_dragThreshold * getTool()->getPixelSize())
     m_moveSelection->leftButtonDrag(pos, e);
@@ -885,6 +895,8 @@ void DragSelectionTool::VectorScaleTool::leftButtonDown(const TPointD &pos,
 
 void DragSelectionTool::VectorScaleTool::leftButtonDrag(const TPointD &pos,
                                                         const TMouseEvent &e) {
+  VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
+  tool->setResetCenter(false);
   m_scale->leftButtonDrag(pos, e);
 }
 
@@ -1099,6 +1111,8 @@ void DragSelectionTool::VectorChangeThicknessTool::leftButtonDrag(
   TPointD delta    = pos - m_curPos;
   TVectorImageP vi = getTool()->getImage(true);
   if (!vi) return;
+  VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
+  tool->setResetCenter(false);
   m_thicknessChange = (pos.y - m_firstPos.y) * 0.2;
   changeImageThickness(*vi, m_thicknessChange);
   getTool()->m_deformValues.m_maxSelectionThickness = m_thicknessChange;
@@ -1196,7 +1210,8 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
     , m_joinStyle("Join")
     , m_miterJoinLimit("Miter:", 0, 100, 4)
     , m_selectionCount(0)
-    , m_canEnterGroup(true) {
+    , m_canEnterGroup(true)
+    , m_resetCenter(true) {
   assert(targetType == TTool::Vectors);
   m_prop.bind(m_selectionTarget);
   m_prop.bind(m_constantThickness);
@@ -1437,7 +1452,6 @@ void VectorSelectionTool::clearSelectedStrokes() {
   m_strokeSelection.selectNone();
   m_levelSelection.styles().clear();
   m_deformValues.reset();
-  m_centers.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -1496,7 +1510,6 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
   if (selectionChanged) {
     m_deformValues.reset();  // Resets selection values shown in the toolbar
-    m_centers.clear();
 
     finalizeSelection();
     notifySelectionChanged();
@@ -1594,10 +1607,7 @@ void VectorSelectionTool::leftButtonDrag(const TPointD &pos,
         selectionChanged = (selectStroke(s, false) || selectionChanged);
     }
 
-    if (selectionChanged) {
-      m_centers.clear();
-      finalizeSelection();
-    }
+    if (selectionChanged) finalizeSelection();
 
     invalidate();
   }
@@ -1782,6 +1792,7 @@ bool VectorSelectionTool::isSelectionEmpty() {
 
 void VectorSelectionTool::computeBBox() {
   m_bboxs.clear();
+  if (canResetCenter()) m_centers.clear();
 
   TVectorImageP vi = getImage(false);
   if (!vi) return;
@@ -1816,7 +1827,7 @@ void VectorSelectionTool::computeBBox() {
             getFourPointsFromVectorImage(vi, selectedStyles(), maxThickness);
 
         m_bboxs.push_back(p);
-        m_centers.push_back(0.5 * (p.getP00() + p.getP11()));
+		m_centers.push_back(0.5 * (p.getP00() + p.getP11()));
         m_deformValues.m_maxSelectionThickness = maxThickness;
       }
     }
@@ -1841,7 +1852,7 @@ void VectorSelectionTool::computeBBox() {
     FourPoints bbox;
     bbox = newBbox;
     m_bboxs.push_back(bbox);
-    if (getCenter() == TPointD())
+    if (canResetCenter())
       m_centers.push_back(0.5 * (bbox.getP11() + bbox.getP00()));
   }
 
@@ -1939,7 +1950,6 @@ void VectorSelectionTool::onImageChanged() {
         vi->getPalette() !=
             selectedImg->getPalette())  // if palettes still match
       selectedStyles().clear();
-    m_centers.clear();
   } else {
     // Remove any eventual stroke index outside the valid range
     if (!m_strokeSelection.isEmpty()) {
@@ -1966,7 +1976,6 @@ void VectorSelectionTool::doOnDeactivate() {
   m_deformValues.reset();
 
   m_polyline.clear();
-  m_centers.clear();
 
   TTool::getApplication()->getCurrentSelection()->setSelection(0);
 
@@ -2155,7 +2164,6 @@ void VectorSelectionTool::selectRegionVectorImage() {
   }
 
   if (selectionChanged) {
-    m_centers.clear();
     finalizeSelection();
     notifySelectionChanged();
     invalidate();
