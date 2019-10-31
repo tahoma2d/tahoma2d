@@ -110,6 +110,7 @@ public:
 class GadgetDragTool final : public DragTool {
   FxGadgetController *m_controller;
   FxGadget *m_gadget;
+  TPointD m_firstPos;
 
 public:
   GadgetDragTool(FxGadgetController *controller, FxGadget *gadget)
@@ -120,14 +121,25 @@ public:
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override {
     m_gadget->createUndo();
     m_gadget->leftButtonDown(getMatrix() * pos, e);
+    m_firstPos = pos;
   }
 
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override {
-    m_gadget->leftButtonDrag(getMatrix() * pos, e);
+    // precise control with pressing Alt key
+    if (e.isAltPressed()) {
+      TPointD precisePos = m_firstPos + (pos - m_firstPos) * 0.1;
+      m_gadget->leftButtonDrag(getMatrix() * precisePos, e);
+    } else
+      m_gadget->leftButtonDrag(getMatrix() * pos, e);
   }
 
   void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override {
-    m_gadget->leftButtonUp(getMatrix() * pos, e);
+    // precise control with pressing Alt key
+    if (e.isAltPressed()) {
+      TPointD precisePos = m_firstPos + (pos - m_firstPos) * 0.1;
+      m_gadget->leftButtonUp(getMatrix() * precisePos, e);
+    } else
+      m_gadget->leftButtonUp(getMatrix() * pos, e);
     m_gadget->commitUndo();
   }
 };
