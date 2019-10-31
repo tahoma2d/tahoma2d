@@ -2294,9 +2294,8 @@ TRectD TXshSimpleLevel::getBBox(const TFrameId &fid) const {
     if (!info) return TRectD();
 
     bbox = TRectD(TPointD(info->m_x0, info->m_y0),
-                  TDimensionD(info->m_lx,
-                              info->m_ly)) -  // Using lx, ly is less ambiguous
-           0.5 * TPointD(info->m_lx, info->m_ly);
+		  TPointD(info->m_x1, info->m_y1))
+          - 0.5 * TPointD(info->m_lx, info->m_ly);
 
     if (info->m_dpix > 0.0 && info->m_dpiy > 0.0)
       dpiX = info->m_dpix, dpiY = info->m_dpiy;
