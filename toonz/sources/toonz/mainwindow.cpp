@@ -1405,9 +1405,23 @@ QAction *MainWindow::createMenuWindowsAction(const char *id,
 
 //-----------------------------------------------------------------------------
 
-QAction *MainWindow::createPlaybackAction(const char *id, const QString &name,
+QAction *MainWindow::createMenuPlayAction(const char *id, const QString &name,
                                           const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, PlaybackCommandType);
+  return createAction(id, name, defaultShortcut, MenuPlayCommandType);
+}
+
+//-----------------------------------------------------------------------------
+
+QAction *MainWindow::createMenuRenderAction(const char *id, const QString &name,
+                                            const QString &defaultShortcut) {
+  return createAction(id, name, defaultShortcut, MenuRenderCommandType);
+}
+
+//-----------------------------------------------------------------------------
+
+QAction *MainWindow::createMenuHelpAction(const char *id, const QString &name,
+                                          const QString &defaultShortcut) {
+  return createAction(id, name, defaultShortcut, MenuHelpCommandType);
 }
 
 //-----------------------------------------------------------------------------
@@ -1532,28 +1546,28 @@ void MainWindow::defineActions() {
                        "");
   createMenuFileAction(MI_ClearRecentLevel, tr("&Clear Recent level File List"),
                        "");
-  createMenuFileAction(MI_NewLevel, tr("&New Level..."), "Alt+N");
+  createMenuLevelAction(MI_NewLevel, tr("&New Level..."), "Alt+N");
 
   QAction *newVectorLevelAction =
-      createMenuFileAction(MI_NewVectorLevel, tr("&New Vector Level"), "");
+      createMenuLevelAction(MI_NewVectorLevel, tr("&New Vector Level"), "");
   newVectorLevelAction->setIconText(tr("New Vector Level"));
   newVectorLevelAction->setIcon(QIcon(":Resources/new_vector_level.svg"));
-  QAction *newToonzRasterLevelAction = createMenuFileAction(
+  QAction *newToonzRasterLevelAction = createMenuLevelAction(
       MI_NewToonzRasterLevel, tr("&New Toonz Raster Level"), "");
   newToonzRasterLevelAction->setIconText(tr("New Toonz Raster Level"));
   newToonzRasterLevelAction->setIcon(
       QIcon(":Resources/new_toonz_raster_level.svg"));
   QAction *newRasterLevelAction =
-      createMenuFileAction(MI_NewRasterLevel, tr("&New Raster Level"), "");
+      createMenuLevelAction(MI_NewRasterLevel, tr("&New Raster Level"), "");
   newRasterLevelAction->setIconText(tr("New Raster Level"));
   newRasterLevelAction->setIcon(QIcon(":Resources/new_raster_level.svg"));
   QAction *loadLevelAction =
-      createMenuFileAction(MI_LoadLevel, tr("&Load Level..."), "");
+      createMenuLevelAction(MI_LoadLevel, tr("&Load Level..."), "");
   loadLevelAction->setIcon(QIcon(":Resources/load_level.svg"));
-  createMenuFileAction(MI_SaveLevel, tr("&Save Level"), "");
-  createMenuFileAction(MI_SaveAllLevels, tr("&Save All Levels"), "");
-  createMenuFileAction(MI_SaveLevelAs, tr("&Save Level As..."), "");
-  createMenuFileAction(MI_ExportLevel, tr("&Export Level..."), "");
+  createMenuLevelAction(MI_SaveLevel, tr("&Save Level"), "");
+  createMenuLevelAction(MI_SaveAllLevels, tr("&Save All Levels"), "");
+  createMenuLevelAction(MI_SaveLevelAs, tr("&Save Level As..."), "");
+  createMenuLevelAction(MI_ExportLevel, tr("&Export Level..."), "");
   createMenuFileAction(MI_ConvertFileWithInput, tr("&Convert File..."), "");
   createRightClickMenuAction(MI_SavePaletteAs, tr("&Save Palette As..."), "");
   createRightClickMenuAction(MI_OverwritePalette, tr("&Save Palette"), "");
@@ -1564,14 +1578,15 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
   createMenuFileAction(MI_SaveDefaultSettings, tr("&Save Default Settings"),
                        "");
-  createMenuFileAction(MI_OutputSettings, tr("&Output Settings..."), "Ctrl+O");
-  createMenuFileAction(MI_PreviewSettings, tr("&Preview Settings..."), "");
-  createMenuFileAction(MI_Render, tr("&Render"), "Ctrl+Shift+R");
-  createMenuFileAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
-  createMenuFileAction(MI_Preview, tr("&Preview"), "Ctrl+R");
+  createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),
+                         "Ctrl+O");
+  createMenuRenderAction(MI_PreviewSettings, tr("&Preview Settings..."), "");
+  createMenuRenderAction(MI_Render, tr("&Render"), "Ctrl+Shift+R");
+  createMenuRenderAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
+  createMenuRenderAction(MI_Preview, tr("&Preview"), "Ctrl+R");
   createMenuFileAction(MI_SoundTrack, tr("&Export Soundtrack"), "");
-  createRightClickMenuAction(MI_SavePreviewedFrames,
-                             tr("&Save Previewed Frames"), "");
+  createMenuRenderAction(MI_SavePreviewedFrames, tr("&Save Previewed Frames"),
+                         "");
   createRightClickMenuAction(MI_RegeneratePreview, tr("&Regenerate Preview"),
                              "");
   createRightClickMenuAction(MI_RegenerateFramePr,
@@ -1637,7 +1652,7 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_SendBackward, tr("&Send Backward"), "[");
   createMenuEditAction(MI_EnterGroup, tr("&Enter Group"), "");
   createMenuEditAction(MI_ExitGroup, tr("&Exit Group"), "");
-  createMenuEditAction(MI_RemoveEndpoints, tr("&Remove Vector Overflow"), "");
+  createMenuLevelAction(MI_RemoveEndpoints, tr("&Remove Vector Overflow"), "");
   QAction *touchToggle =
       createToggle(MI_TouchGestureControl, tr("&Touch Gesture Control"), "",
                    TouchGestureControl ? 1 : 0, MiscCommandType);
@@ -1727,7 +1742,7 @@ void MainWindow::defineActions() {
   collapseAction->setIcon(createQIconOnOffPNG("collapse"));
 
   toggle = createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
-                        EditInPlaceToggleAction ? 1 : 0, MenuViewCommandType);
+                        EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(QIcon(":Resources/edit_in_place.svg"));
 
@@ -1756,14 +1771,14 @@ void MainWindow::defineActions() {
                          "");
   createMenuXsheetAction(MI_RemoveGlobalKeyframe, tr("Remove Multiple Keys"),
                          "");
-  createMenuXsheetAction(MI_NewNoteLevel, tr("New Note Level"), "");
+  createMenuLevelAction(MI_NewNoteLevel, tr("New Note Level"), "");
   createMenuXsheetAction(MI_RemoveEmptyColumns, tr("Remove Empty Columns"), "");
   createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
                          "Alt+L");
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
                              tr("Toggle XSheet Toolbar"), "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
-                         tr("Show/Hide Xsheet Camera Column"), "");
+                             tr("Show/Hide Xsheet Camera Column"), "");
   createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   createMenuCellsAction(MI_Swing, tr("&Swing"), "");
   createMenuCellsAction(MI_Random, tr("&Random"), "");
@@ -1889,23 +1904,23 @@ void MainWindow::defineActions() {
 
   // createToolOptionsAction("A_ToolOption_Link", tr("Link"), "");
   createToggle(MI_Link, tr("Link Flipbooks"), "", LinkToggleAction ? 1 : 0,
-               MenuViewCommandType);
+               MenuPlayCommandType);
 
-  createPlaybackAction(MI_Play, tr("Play"), "P");
-  createPlaybackAction(MI_Loop, tr("Loop"), "L");
-  createPlaybackAction(MI_Pause, tr("Pause"), "");
-  createPlaybackAction(MI_FirstFrame, tr("First Frame"), "Alt+,");
-  createPlaybackAction(MI_LastFrame, tr("Last Frame"), "Alt+.");
-  createPlaybackAction(MI_PrevFrame, tr("Previous Frame"), "Shift+,");
-  createPlaybackAction(MI_NextFrame, tr("Next Frame"), "Shift+.");
+  createMenuPlayAction(MI_Play, tr("Play"), "P");
+  createMenuPlayAction(MI_Loop, tr("Loop"), "L");
+  createMenuPlayAction(MI_Pause, tr("Pause"), "");
+  createMenuPlayAction(MI_FirstFrame, tr("First Frame"), "Alt+,");
+  createMenuPlayAction(MI_LastFrame, tr("Last Frame"), "Alt+.");
+  createMenuPlayAction(MI_PrevFrame, tr("Previous Frame"), "Shift+,");
+  createMenuPlayAction(MI_NextFrame, tr("Next Frame"), "Shift+.");
 
-  createAction(MI_NextDrawing, tr("Next Drawing"), ".", PlaybackCommandType);
-  createAction(MI_PrevDrawing, tr("Prev Drawing"), ",", PlaybackCommandType);
-  createAction(MI_NextStep, tr("Next Step"), "", PlaybackCommandType);
-  createAction(MI_PrevStep, tr("Prev Step"), "", PlaybackCommandType);
+  createMenuPlayAction(MI_NextDrawing, tr("Next Drawing"), ".");
+  createMenuPlayAction(MI_PrevDrawing, tr("Prev Drawing"), ",");
+  createMenuPlayAction(MI_NextStep, tr("Next Step"), "");
+  createMenuPlayAction(MI_PrevStep, tr("Prev Step"), "");
 
-  createAction(MI_NextKeyframe, tr("Next Key"), "Ctrl+.", MenuXsheetCommandType);
-  createAction(MI_PrevKeyframe, tr("Prev Key"), "Ctrl+,", MenuXsheetCommandType);
+  createMenuPlayAction(MI_NextKeyframe, tr("Next Key"), "Ctrl+.");
+  createMenuPlayAction(MI_PrevKeyframe, tr("Prev Key"), "Ctrl+,");
 
   createRGBAAction(MI_RedChannel, tr("Red Channel"), "");
   createRGBAAction(MI_GreenChannel, tr("Green Channel"), "");
@@ -1972,9 +1987,9 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_FullScreenWindow,
                           tr("Toggle Main Window's Full Screen Mode"),
                           "Ctrl+`");
-  createMenuWindowsAction(MI_About, tr("&About OpenToonz..."), "");
+  createMenuHelpAction(MI_About, tr("&About OpenToonz..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
-  createMenuWindowsAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
+  createMenuHelpAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
