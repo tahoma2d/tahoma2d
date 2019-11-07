@@ -776,6 +776,13 @@ bool TTool::isColumnLocked(int columnIndex) const {
 //-----------------------------------------------------------------------------
 
 QString TTool::updateEnabled() {
+  int rowIndex    = m_application->getCurrentFrame()->getFrame();
+  int columnIndex = m_application->getCurrentColumn()->getColumnIndex();
+
+  return updateEnabled(rowIndex, columnIndex);
+}
+
+QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // Disable every tool during playback
   if (m_application->getCurrentFrame()->isPlaying())
     return (enable(false), QString());
@@ -789,13 +796,21 @@ QString TTool::updateEnabled() {
   // Retrieve vars and view modes
   TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
 
-  int rowIndex       = m_application->getCurrentFrame()->getFrame();
-  int columnIndex    = m_application->getCurrentColumn()->getColumnIndex();
   TXshColumn *column = (columnIndex >= 0) ? xsh->getColumn(columnIndex) : 0;
 
   TXshLevel *xl       = m_application->getCurrentLevel()->getLevel();
   TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
   int levelType       = sl ? sl->getType() : NO_XSHLEVEL;
+
+  // If not in Level editor, let's use our current cell from the xsheet to
+  // find the nearest level before it
+  if (levelType == NO_XSHLEVEL &&
+      !m_application->getCurrentFrame()->isEditingLevel()) {
+    TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+    xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
+    sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+    levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+  }
 
   if (Preferences::instance()->isAutoCreateEnabled() &&
       Preferences::instance()->isAnimationSheetEnabled()) {

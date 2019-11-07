@@ -349,7 +349,8 @@ Preferences::Preferences()
     , m_useOnionColorsForShiftAndTraceGhosts(true)
     , m_rasterBackgroundColor(TPixel::White)
     , m_backupKeepCount(1)
-    , m_showXsheetCameraColumn(true) {
+    , m_showXsheetCameraColumn(true)
+    , m_levelBasedToolsDisplay(0) {
   TCamera camera;
   m_defLevelType   = TZP_XSHLEVEL;
   m_defLevelWidth  = camera.getSize().lx;
@@ -731,6 +732,8 @@ Preferences::Preferences()
   TImageWriter::setBackgroundColor(m_rasterBackgroundColor);
 
   getValue(*m_settings, "showXsheetCameraColumn", m_showXsheetCameraColumn);
+
+  getValue(*m_settings, "levelBasedToolsDisplay", m_levelBasedToolsDisplay);
 }
 
 //-----------------------------------------------------------------
@@ -1791,4 +1794,9 @@ void Preferences::setRasterBackgroundColor(const TPixel32 &color) {
 void Preferences::enableXsheetCameraColumn(bool on) {
   m_showXsheetCameraColumn = on;
   m_settings->setValue("showXsheetCameraColumn", on ? "1" : "0");
+}
+
+void Preferences::setLevelBasedToolsDisplay(int displayType) {
+  m_levelBasedToolsDisplay = displayType;
+  m_settings->setValue("levelBasedToolsDisplay", displayType);
 }

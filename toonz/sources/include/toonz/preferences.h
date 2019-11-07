@@ -404,6 +404,9 @@ public:
   void enableCursorOutline(bool on);
   bool isCursorOutlineEnabled() const { return m_cursorOutlineEnabled; }
 
+  void setLevelBasedToolsDisplay(int displayType);
+  int getLevelBasedToolsDisplay() const { return m_levelBasedToolsDisplay; }
+
   // Xsheet  tab
   void setXsheetStep(int step);  //!< Sets the step used for the <I>next/prev
                                  //! step</I> commands.
@@ -738,6 +741,8 @@ private:
   int m_backupKeepCount;
 
   bool m_showXsheetCameraColumn = true;
+
+  int m_levelBasedToolsDisplay;
 
 private:
   Preferences();
