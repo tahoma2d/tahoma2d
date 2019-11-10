@@ -1254,7 +1254,7 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
 
 TFilePath ToonzScene::decodeFilePath(const TFilePath &path) const {
   TProject *project   = getProject();
-  bool projectIsEmpty = false;
+  bool projectIsEmpty = project->getFolderCount() ? false : true;
   TFilePath fp        = path;
 
   std::wstring head;
