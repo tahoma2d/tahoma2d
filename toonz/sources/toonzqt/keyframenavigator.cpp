@@ -148,6 +148,12 @@ void KeyframeNavigator::showEvent(QShowEvent *e) {
 void KeyframeNavigator::hideEvent(QHideEvent *e) {
   if (!m_frameHandle) return;
   disconnect(m_frameHandle);
+
+  disconnect(m_frameHandle, SIGNAL(triggerNextKeyframe(QWidget *)), this,
+             SLOT(onNextKeyframe(QWidget *)));
+  disconnect(m_frameHandle, SIGNAL(triggerPrevKeyframe(QWidget *)), this,
+             SLOT(onPrevKeyframe(QWidget *)));
+  m_panel = nullptr;
 }
 
 void KeyframeNavigator::onNextKeyframe(QWidget *panel) {
