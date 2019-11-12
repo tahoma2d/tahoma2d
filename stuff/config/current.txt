@@ -1286,6 +1286,14 @@
   <item>"STD_iwa_CorridorGradientFx.inner_color"	"Inner Color"		</item>
   <item>"STD_iwa_CorridorGradientFx.outer_color"	"Outer Color"		</item>
 
+  <item>"STD_iwa_SpinGradientFx" 			"Spin Gradient Iwa" 	</item>
+  <item>"STD_iwa_SpinGradientFx.center"	"Center"		</item>
+  <item>"STD_iwa_SpinGradientFx.curveType"	"Type"		</item>
+  <item>"STD_iwa_SpinGradientFx.startAngle"	"Start Angle"		</item>
+  <item>"STD_iwa_SpinGradientFx.startColor"	"Start Color"		</item>
+  <item>"STD_iwa_SpinGradientFx.endAngle"	"End Angle"		</item>
+  <item>"STD_iwa_SpinGradientFx.endColor"	"End Color"		</item>
+
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->
 
   <item>STD_iwa_TiledParticlesFx "Tiled Particles Iwa" </item>

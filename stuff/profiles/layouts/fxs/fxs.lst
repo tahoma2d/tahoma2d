@@ -45,6 +45,7 @@
     STD_spiralFx 
     STD_squareGradientFx 
     STD_iwa_CorridorGradientFx 
+    STD_iwa_SpinGradientFx 
   </Gradient>
   <Image_Adjust>
     STD_iwa_AdjustExposureFx
