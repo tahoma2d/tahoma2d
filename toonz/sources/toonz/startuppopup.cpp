@@ -274,15 +274,15 @@ StartupPopup::StartupPopup()
   bool ret = true;
   ret      = ret && connect(sceneHandle, SIGNAL(sceneChanged()), this,
                        SLOT(onSceneChanged()));
-  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+  ret      = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
                        SLOT(onSceneChanged()));
-  ret = ret && connect(newProjectButton, SIGNAL(clicked()), this,
+  ret      = ret && connect(newProjectButton, SIGNAL(clicked()), this,
                        SLOT(onNewProjectButtonPressed()));
-  ret = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
+  ret      = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
                        SLOT(onLoadSceneButtonPressed()));
-  ret = ret && connect(m_projectsCB, SIGNAL(currentIndexChanged(int)),
+  ret      = ret && connect(m_projectsCB, SIGNAL(currentIndexChanged(int)),
                        SLOT(onProjectChanged(int)));
-  ret = ret &&
+  ret      = ret &&
         connect(createButton, SIGNAL(clicked()), this, SLOT(onCreateButton()));
   ret = ret && connect(m_showAtStartCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onShowAtStartChanged(int)));
@@ -440,12 +440,6 @@ void StartupPopup::onCreateButton() {
     m_nameFld->setFocus();
     return;
   }
-  if (!TSystem::doesExistFileOrLevel(TFilePath(m_pathFld->getPath()))) {
-    DVGui::warning(tr("The chosen file path is not valid."));
-    m_pathFld->setFocus();
-    return;
-  }
-
   if (m_widthFld->getValue() <= 0) {
     DVGui::warning(tr("The width must be greater than zero."));
     m_widthFld->setFocus();
@@ -461,9 +455,28 @@ void StartupPopup::onCreateButton() {
     m_fpsFld->setFocus();
     return;
   }
-  if (TSystem::doesExistFileOrLevel(
-          TFilePath(m_pathFld->getPath()) +
-          TFilePath(m_nameFld->text().trimmed().toStdWString() + L".tnz"))) {
+
+  TFilePath scenePath =
+      TFilePath(m_pathFld->getPath()) +
+      TFilePath(m_nameFld->text().trimmed().toStdWString() + L".tnz");
+
+  if (!TSystem::doesExistFileOrLevel(TFilePath(m_pathFld->getPath()))) {
+    QString question;
+    question = QObject::tr(
+        "The chosen folder path does not exist."
+        "\nDo you want to create it?");
+    int ret = DVGui::MsgBox(question, QObject::tr("Create"),
+                            QObject::tr("Cancel"), 0);
+    if (ret == 0 || ret == 2) {
+      m_pathFld->setFocus();
+      return;
+    }
+    if (!TSystem::touchParentDir(scenePath)) {
+      DVGui::warning(tr("Failed to create the folder."));
+      m_pathFld->setFocus();
+      return;
+    }
+  } else if (TSystem::doesExistFileOrLevel(scenePath)) {
     QString question;
     question = QObject::tr(
         "The file name already exists."
@@ -476,9 +489,7 @@ void StartupPopup::onCreateButton() {
     }
   }
   CommandManager::instance()->execute(MI_NewScene);
-  TApp::instance()->getCurrentScene()->getScene()->setScenePath(
-      TFilePath(m_pathFld->getPath()) +
-      TFilePath(m_nameFld->text().trimmed().toStdWString()));
+  TApp::instance()->getCurrentScene()->getScene()->setScenePath(scenePath);
   TDimensionD size =
       TDimensionD(m_widthFld->getValue(), m_heightFld->getValue());
   TDimension res = TDimension(m_xRes, m_yRes);
@@ -794,8 +805,8 @@ double StartupPopup::aspectRatioStringToValue(const QString &s) {
   }
   int i = s.indexOf("/");
   if (i <= 0 || i + 1 >= s.length()) return s.toDouble();
-  int num           = s.left(i).toInt();
-  int den           = s.mid(i + 1).toInt();
+  int num = s.left(i).toInt();
+  int den = s.mid(i + 1).toInt();
   if (den <= 0) den = 1;
   return (double)num / (double)den;
 }

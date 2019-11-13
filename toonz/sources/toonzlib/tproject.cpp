@@ -119,7 +119,7 @@ std::wstring getProjectSuffix(const TFilePath &path) {
 
 /*! Looks in the directory for a project file.  If nothing found, returns a
  * blank TFilePath
-*/
+ */
 TFilePath getProjectFile(const TFilePath &fp) {
   const std::wstring &fpName     = fp.getWideName();
   const std::wstring &folderName = fp.getParentDir().getWideName();
@@ -724,18 +724,15 @@ public:
         and folders.
 
         It is possible to handle more than one project root.
-        The class maintains a container this purpose. All the projects roots must
-   be set by hand in the windows
-        registery. By default, only one project root is created when toonz is
-   installed.\n
-        The project root container can be updated using addProjectsRoot(const
-   TFilePath &root), addDefaultProjectsRoot()
-        methods.
+        The class maintains a container this purpose. All the projects roots
+   must be set by hand in the windows registery. By default, only one project
+   root is created when toonz is installed.\n The project root container can be
+   updated using addProjectsRoot(const TFilePath &root),
+   addDefaultProjectsRoot() methods.
 
-        The class maintains also information about the current project. The class
-   provides all needed method to retrieve
-        the current project path, name and folder.
-        \see TProject
+        The class maintains also information about the current project. The
+   class provides all needed method to retrieve the current project path, name
+   and folder. \see TProject
 
 */
 
@@ -896,7 +893,7 @@ TFilePath TProjectManager::getProjectPathByName(const TFilePath &projectName) {
 
 TFilePath TProjectManager::getProjectPathByProjectFolder(
     const TFilePath &projectFolder) {
-  assert(!projectFolder.isAbsolute());
+  assert(projectFolder.isAbsolute());
   TFilePath projectPath = searchProjectPath(projectFolder);
   return projectPathToProjectName(projectPath);
 }
