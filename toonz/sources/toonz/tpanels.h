@@ -25,6 +25,8 @@ class FunctionViewer;
 class FlipBook;
 class ToolOptions;
 class ComboViewerPanel;
+class FxSettings;
+
 //=========================================================
 // PaletteViewerPanel
 //---------------------------------------------------------
@@ -265,6 +267,22 @@ protected:
   // reimplementation of TPanel::widgetFocusOnEnter
   void widgetFocusOnEnter() override;
   void widgetClearFocusOnLeave() override;
+};
+
+//=========================================================
+// FxSettingsPanel
+//---------------------------------------------------------
+
+class FxSettingsPanel final : public TPanel {
+  Q_OBJECT
+
+  FxSettings *m_fxSettings;
+
+public:
+  FxSettingsPanel(QWidget *parent);
+  // FxSettings will adjust its size according to the current fx
+  // so we only restore position of the panel.
+  void restoreFloatingPanelState() override;
 };
 
 #endif

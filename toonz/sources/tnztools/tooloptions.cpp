@@ -125,7 +125,8 @@ ToolOptionsBox::ToolOptionsBox(QWidget *parent, bool isScrollable)
 ToolOptionsBox::~ToolOptionsBox() {
   std::for_each(m_controls.begin(), m_controls.end(),
                 std::default_delete<ToolOptionControl>());
-  std::for_each(m_labels.begin(), m_labels.end(), std::default_delete<QLabel>());
+  std::for_each(m_labels.begin(), m_labels.end(),
+                std::default_delete<QLabel>());
 }
 
 //-----------------------------------------------------------------------------
@@ -217,6 +218,17 @@ void ToolOptionControlBuilder::visit(TDoubleProperty *p) {
     a = cm->getAction("A_DecreaseMaxBrushThickness");
     control->addAction(a);
     QObject::connect(a, SIGNAL(triggered()), control, SLOT(decrease()));
+  }
+  if (p->getName() == "ModifierSize") {
+    QAction *a;
+    a = cm->getAction("A_IncreaseMaxBrushThickness");
+    control->addAction(a);
+    QObject::connect(a, SIGNAL(triggered()), control,
+                     SLOT(increaseFractional()));
+    a = cm->getAction("A_DecreaseMaxBrushThickness");
+    control->addAction(a);
+    QObject::connect(a, SIGNAL(triggered()), control,
+                     SLOT(decreaseFractional()));
   }
   if (p->getName() == "Hardness:") {
     QAction *a;
@@ -523,7 +535,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_nsPosField =
       new PegbarChannelField(m_tool, TStageObject::T_Y, "field", frameHandle,
                              objHandle, xshHandle, this);
-  m_zField = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
+  m_zField        = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
                                     frameHandle, objHandle, xshHandle, this);
   m_noScaleZField = new NoScaleField(m_tool, "field");
 
@@ -654,7 +666,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_zField->setPrecision(4);
   m_noScaleZField->setPrecision(4);
 
-  bool splined                        = isCurrentObjectSplined();
+  bool splined = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
 
@@ -1052,7 +1064,7 @@ void ArrowToolOptionsBox::onStageObjectChange() { updateStatus(); }
 
 //-----------------------------------------------------------------------------
 /*! update the object list in combobox
-*/
+ */
 void ArrowToolOptionsBox::updateStageObjectComboItems() {
   // clear items
   m_currentStageObjectCombo->clear();
@@ -1081,7 +1093,7 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
 
 //------------------------------------------------------------------------------
 /*! syncronize the current item in the combobox to the selected stage object
-*/
+ */
 void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   TStageObjectId curObjId = m_objHandle->getObjectId();
 
@@ -1104,7 +1116,7 @@ void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
 
 //------------------------------------------------------------------------------
 /*!change the current stage object when user changes it via combobox by hand
-*/
+ */
 void ArrowToolOptionsBox::onCurrentStageObjectComboActivated(int index) {
   int code = m_currentStageObjectCombo->itemData(index).toInt();
   TStageObjectId id;
@@ -1118,6 +1130,11 @@ void ArrowToolOptionsBox::onCurrentStageObjectComboActivated(int index) {
   }
   // switch the current object
   m_objHandle->setObjectId(id);
+  if (id.isCamera()) {
+    TXsheet *xsh = m_xshHandle->getXsheet();
+    if (xsh->getCameraColumnIndex() != id.getIndex())
+      m_xshHandle->changeXsheetCamera(id.getIndex());
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1282,7 +1299,7 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   // assert(ret);
   bool ret = connect(m_scaleXField, SIGNAL(valueChange(bool)),
                      SLOT(onScaleXValueChanged(bool)));
-  ret = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
+  ret      = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
                        SLOT(onScaleYValueChanged(bool)));
   if (m_setSaveboxCheckbox)
     ret = ret && connect(m_setSaveboxCheckbox, SIGNAL(toggled(bool)),
@@ -1610,7 +1627,7 @@ PaintbrushToolOptionsBox::PaintbrushToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
 
   if (m_colorMode->getProperty()->getValue() == L"Lines")
-    m_selectiveMode->setEnabled(false);
+    m_selectiveMode->setVisible(false);
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
@@ -1630,7 +1647,26 @@ void PaintbrushToolOptionsBox::updateStatus() {
 void PaintbrushToolOptionsBox::onColorModeChanged(int index) {
   const TEnumProperty::Range &range = m_colorMode->getProperty()->getRange();
   bool enabled                      = range[index] != L"Lines";
-  m_selectiveMode->setEnabled(enabled);
+  m_selectiveMode->setVisible(enabled);
+}
+
+//=============================================================================
+//
+// FullColorFillToolOptionsBox
+//
+//=============================================================================
+
+FullColorFillToolOptionsBox::FullColorFillToolOptionsBox(
+    QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
+    ToolHandle *toolHandle)
+    : ToolOptionsBox(parent) {
+  TPropertyGroup *props = tool->getProperties(0);
+  assert(props->getPropertyCount() > 0);
+
+  ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
+  if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
+
+  m_layout->addStretch(0);
 }
 
 //=============================================================================
@@ -1674,11 +1710,11 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
-  ret = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
+  ret      = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolTypeChanged(int)));
-  ret = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
                        SLOT(onOnionModeToggled(bool)));
-  ret = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
                        SLOT(onMultiFrameModeToggled(bool)));
   assert(ret);
   if (m_colorMode->getProperty()->getValue() == L"Lines") {
@@ -2277,9 +2313,9 @@ TapeToolOptionsBox::TapeToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_typeMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onToolTypeChanged(int)));
-  ret = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
+  ret      = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolModeChanged(int)));
-  ret = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
                        SLOT(onJoinStrokesModeChanged()));
   assert(ret);
 }
@@ -2327,7 +2363,7 @@ void TapeToolOptionsBox::onJoinStrokesModeChanged() {
 
 //-----------------------------------------------------------------------------
 /*! Label with background color
-*/
+ */
 class RGBLabel final : public QWidget {
   QColor m_color;
 
@@ -2366,10 +2402,11 @@ protected:
       p.setPen(Qt::black);
     p.setBrush(Qt::NoBrush);
 
-    p.drawText(rect(), Qt::AlignCenter, QString("R:%1 G:%2 B:%3")
-                                            .arg(m_color.red())
-                                            .arg(m_color.green())
-                                            .arg(m_color.blue()));
+    p.drawText(rect(), Qt::AlignCenter,
+               QString("R:%1 G:%2 B:%3")
+                   .arg(m_color.red())
+                   .arg(m_color.green())
+                   .arg(m_color.blue()));
   }
 };
 
@@ -2648,7 +2685,7 @@ ZoomToolOptionsBox::ZoomToolOptionsBox(QWidget *parent, TTool *tool,
   setFrameStyle(QFrame::StyledPanel);
   setFixedHeight(26);
 
-  QAction *resetZoomAction = CommandManager::instance()->getAction(V_ZoomReset);
+  QAction *resetZoomAction = CommandManager::instance()->getAction(VB_ZoomReset);
 
   QPushButton *button = new QPushButton(tr("Reset Zoom"));
   button->setFixedHeight(20);
@@ -2671,7 +2708,7 @@ RotateToolOptionsBox::RotateToolOptionsBox(QWidget *parent, TTool *tool,
   setFixedHeight(26);
 
   QAction *resetRotationAction =
-      CommandManager::instance()->getAction(V_RotateReset);
+      CommandManager::instance()->getAction(VB_RotateReset);
 
   QPushButton *button = new QPushButton(tr("Reset Rotation"));
   button->setFixedHeight(20);
@@ -2694,7 +2731,7 @@ HandToolOptionsBox::HandToolOptionsBox(QWidget *parent, TTool *tool,
   setFixedHeight(26);
 
   QAction *resetPositionAction =
-      CommandManager::instance()->getAction(V_PositionReset);
+      CommandManager::instance()->getAction(VB_PositionReset);
 
   QPushButton *button = new QPushButton(tr("Reset Position"));
   button->setFixedHeight(20);
@@ -2780,7 +2817,7 @@ void ToolOptions::onToolSwitched() {
   TTool *tool = app->getCurrentTool()->getTool();
   if (tool) {
     // c'e' un tool corrente
-    ToolOptionsBox *panel = 0;
+    ToolOptionsBox *panel                            = 0;
     std::map<TTool *, ToolOptionsBox *>::iterator it = m_panels.find(tool);
     if (it == m_panels.end()) {
       // ... senza panel associato
@@ -2796,9 +2833,13 @@ void ToolOptions::onToolSwitched() {
         panel = new TypeToolOptionsBox(0, tool, currPalette, currTool);
       else if (tool->getName() == T_PaintBrush)
         panel = new PaintbrushToolOptionsBox(0, tool, currPalette, currTool);
-      else if (tool->getName() == T_Fill)
-        panel = new FillToolOptionsBox(0, tool, currPalette, currTool);
-      else if (tool->getName() == T_Eraser)
+      else if (tool->getName() == T_Fill) {
+        if (tool->getTargetType() & TTool::RasterImage)
+          panel =
+              new FullColorFillToolOptionsBox(0, tool, currPalette, currTool);
+        else
+          panel = new FillToolOptionsBox(0, tool, currPalette, currTool);
+      } else if (tool->getName() == T_Eraser)
         panel = new EraserToolOptionsBox(0, tool, currPalette, currTool);
       else if (tool->getName() == T_Tape)
         panel = new TapeToolOptionsBox(0, tool, currPalette, currTool);

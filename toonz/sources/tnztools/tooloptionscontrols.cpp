@@ -148,6 +148,7 @@ ToolOptionSlider::ToolOptionSlider(TTool *tool, TDoubleProperty *property,
     : DoubleField()
     , ToolOptionControl(tool, property->getName(), toolHandle)
     , m_property(property) {
+  setLinearSlider(property->isLinearSlider());
   m_property->addListener(this);
   TDoubleProperty::Range range = property->getRange();
   setRange(range.first, range.second);
@@ -192,7 +193,7 @@ void ToolOptionSlider::onValueChanged(bool isDragging) {
 
 //-----------------------------------------------------------------------------
 
-void ToolOptionSlider::increase() {
+void ToolOptionSlider::increase(double step) {
   if (m_toolHandle && m_toolHandle->getTool() != m_tool) return;
   // active only if the belonging combo-viewer is visible
   if (!isInVisibleViewer(this)) return;
@@ -201,7 +202,7 @@ void ToolOptionSlider::increase() {
   double minValue, maxValue;
   getRange(minValue, maxValue);
 
-  value += 1;
+  value += step;
   if (value > maxValue) value = maxValue;
 
   setValue(value);
@@ -213,7 +214,11 @@ void ToolOptionSlider::increase() {
 
 //-----------------------------------------------------------------------------
 
-void ToolOptionSlider::decrease() {
+void ToolOptionSlider::increaseFractional() { increase(0.06); }
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionSlider::decrease(double step) {
   if (m_toolHandle && m_toolHandle->getTool() != m_tool) return;
   // active only if the belonging combo-viewer is visible
   if (!isInVisibleViewer(this)) return;
@@ -222,7 +227,7 @@ void ToolOptionSlider::decrease() {
   double minValue, maxValue;
   getRange(minValue, maxValue);
 
-  value -= 1;
+  value -= step;
   if (value < minValue) value = minValue;
 
   setValue(value);
@@ -231,6 +236,10 @@ void ToolOptionSlider::decrease() {
   // update the interface
   repaint();
 }
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionSlider::decreaseFractional() { decrease(0.06); }
 
 //=============================================================================
 
@@ -242,6 +251,7 @@ ToolOptionPairSlider::ToolOptionPairSlider(TTool *tool,
     : DoublePairField(0, property->isMaxRangeLimited())
     , ToolOptionControl(tool, property->getName(), toolHandle)
     , m_property(property) {
+  setLinearSlider(property->isLinearSlider());
   m_property->addListener(this);
   TDoublePairProperty::Value value = property->getValue();
   TDoublePairProperty::Range range = property->getRange();
@@ -369,6 +379,7 @@ ToolOptionIntPairSlider::ToolOptionIntPairSlider(TTool *tool,
     : IntPairField(0, property->isMaxRangeLimited())
     , ToolOptionControl(tool, property->getName(), toolHandle)
     , m_property(property) {
+  setLinearSlider(property->isLinearSlider());
   setLeftText(leftName);
   setRightText(rightName);
   m_property->addListener(this);
@@ -483,6 +494,7 @@ ToolOptionIntSlider::ToolOptionIntSlider(TTool *tool, TIntProperty *property,
     : IntField(0, property->isMaxRangeLimited())
     , ToolOptionControl(tool, property->getName(), toolHandle)
     , m_property(property) {
+  setLinearSlider(property->isLinearSlider());
   m_property->addListener(this);
   TIntProperty::Range range = property->getRange();
   setRange(range.first, range.second);
@@ -613,7 +625,7 @@ void ToolOptionCombo::loadEntries() {
                       }");
       }
     }
-    int tmpWidth                      = fontMetrics().width(items[i].UIName);
+    int tmpWidth = fontMetrics().width(items[i].UIName);
     if (tmpWidth > maxWidth) maxWidth = tmpWidth;
   }
 
@@ -647,8 +659,8 @@ void ToolOptionCombo::onActivated(int index) {
 
 void ToolOptionCombo::doShowPopup() {
   if (Preferences::instance()->getDropdownShortcutsCycleOptions()) {
-    const TEnumProperty::Range &range           = m_property->getRange();
-    int theIndex                                = currentIndex() + 1;
+    const TEnumProperty::Range &range = m_property->getRange();
+    int theIndex                      = currentIndex() + 1;
     if (theIndex >= (int)range.size()) theIndex = 0;
     doOnActivated(theIndex);
   } else {
@@ -730,8 +742,8 @@ void ToolOptionFontCombo::onActivated(int index) {
 void ToolOptionFontCombo::doShowPopup() {
   if (!isInVisibleViewer(this)) return;
   if (Preferences::instance()->getDropdownShortcutsCycleOptions()) {
-    const TEnumProperty::Range &range           = m_property->getRange();
-    int theIndex                                = currentIndex() + 1;
+    const TEnumProperty::Range &range = m_property->getRange();
+    int theIndex                      = currentIndex() + 1;
     if (theIndex >= (int)range.size()) theIndex = 0;
     onActivated(theIndex);
     setCurrentIndex(theIndex);
@@ -1407,8 +1419,8 @@ void PegbarCenterField::onChange(TMeasuredValue *fld, bool addToUndo) {
 
   TStageObject *obj = xsh->getStageObject(objId);
 
-  double v                           = fld->getValue(TMeasuredValue::MainUnit);
-  TPointD center                     = obj->getCenter(frame);
+  double v       = fld->getValue(TMeasuredValue::MainUnit);
+  TPointD center = obj->getCenter(frame);
   if (!m_firstMouseDrag) m_oldCenter = center;
   if (m_index == 0)
     center.x = v;
@@ -1499,7 +1511,7 @@ PropertyMenuButton::PropertyMenuButton(QWidget *parent, TTool *tool,
   setIcon(icon);
   setToolTip(tooltip);
 
-  QMenu *menu                     = new QMenu(tooltip, this);
+  QMenu *menu = new QMenu(tooltip, this);
   if (!tooltip.isEmpty()) tooltip = tooltip + " ";
 
   QActionGroup *actiongroup = new QActionGroup(this);
@@ -1585,13 +1597,13 @@ bool SelectionScaleField::applyChange(bool addToUndo) {
     return false;
   DragSelectionTool::DragTool *scaleTool = createNewScaleTool(m_tool, 0);
   double p                               = getValue();
-  if (p == 0) p                          = 0.00001;
-  DragSelectionTool::FourPoints points   = m_tool->getBBox();
-  TPointD center                         = m_tool->getCenter();
-  TPointD p0M                            = points.getPoint(7);
-  TPointD p1M                            = points.getPoint(5);
-  TPointD pM1                            = points.getPoint(6);
-  TPointD pM0                            = points.getPoint(4);
+  if (p == 0) p = 0.00001;
+  DragSelectionTool::FourPoints points = m_tool->getBBox();
+  TPointD center                       = m_tool->getCenter();
+  TPointD p0M                          = points.getPoint(7);
+  TPointD p1M                          = points.getPoint(5);
+  TPointD pM1                          = points.getPoint(6);
+  TPointD pM0                          = points.getPoint(4);
   int pointIndex;
   TPointD sign(1, 1);
   TPointD scaleFactor = m_tool->m_deformValues.m_scaleValue;

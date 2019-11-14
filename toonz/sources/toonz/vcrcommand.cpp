@@ -3,6 +3,7 @@
 // Tnz6 includes
 #include "menubarcommandids.h"
 #include "tapp.h"
+#include "sceneviewer.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -15,6 +16,8 @@
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
+
+#include <QApplication>
 
 //**********************************************************************************
 //    Commands  definition
@@ -135,13 +138,77 @@ public:
 
   void execute() override {
     int row = TApp::instance()->getCurrentFrame()->getFrame();
+	int shortPlayFrameCount = Preferences::instance()->getShortPlayFrameCount();
     int count =
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
-    if (count > 8) {
-      TApp::instance()->getCurrentFrame()->setFrame(std::max(
-          0, count - Preferences::instance()->getShortPlayFrameCount()));
+    if (count >= shortPlayFrameCount) {
+        int newFrame = std::max(
+          0, count - shortPlayFrameCount);
+        // there is a bug in playback.
+        // currently playback basically ignores the first frame.
+        // it goes on to the 2nd frame in the play range right away.
+      if (newFrame > 0) newFrame -= 1;
+      TApp::instance()->getCurrentFrame()->setFrame(newFrame);
+      CommandManager::instance()->execute(MI_Play);
     }
-    CommandManager::instance()->execute(MI_Play);
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+class NextKeyframeCommand final : public MenuItemHandler {
+public:
+  NextKeyframeCommand() : MenuItemHandler(MI_NextKeyframe) {}
+
+  void execute() override {
+    QString navControlList[6] = {"LevelPalette",   "StudioPalette",
+                                 "FunctionEditor", "FxSettings",
+                                 "ComboViewer",    "SceneViewer"};
+
+    QWidget *panel    = QApplication::focusWidget();
+    if (!panel) panel = TApp::instance()->getActiveViewer();
+    while (panel) {
+      QString pane = panel->objectName();
+      if (panel->windowType() == Qt::WindowType::SubWindow ||
+          panel->windowType() == Qt::WindowType::Tool) {
+        if (std::find(navControlList, navControlList + 6, pane) !=
+            (navControlList + 6)) {
+          TApp::instance()->getCurrentFrame()->emitTriggerNextKeyframe(panel);
+          break;
+        } else
+          panel = TApp::instance()->getActiveViewer()->parentWidget();
+      } else
+        panel = panel->parentWidget();
+    }
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+class PrevKeyframeCommand final : public MenuItemHandler {
+public:
+  PrevKeyframeCommand() : MenuItemHandler(MI_PrevKeyframe) {}
+
+  void execute() override {
+    QString navControlList[6] = {"LevelPalette",   "StudioPalette",
+                                 "FunctionEditor", "FxSettings",
+                                 "ComboViewer",    "SceneViewer"};
+
+    QWidget *panel    = QApplication::focusWidget();
+    if (!panel) panel = TApp::instance()->getActiveViewer();
+    while (panel) {
+      QString pane = panel->objectName();
+      if (panel->windowType() == Qt::WindowType::SubWindow ||
+          panel->windowType() == Qt::WindowType::Tool) {
+        if (std::find(navControlList, navControlList + 6, pane) !=
+            (navControlList + 6)) {
+          TApp::instance()->getCurrentFrame()->emitTriggerPrevKeyframe(panel);
+          break;
+        } else
+          panel = TApp::instance()->getActiveViewer()->parentWidget();
+      } else
+        panel = panel->parentWidget();
+    }
   }
 };
 
@@ -173,3 +240,6 @@ PrevDrawingCommand prevDrawingCommand;
 NextStepCommand nextStepCommand;
 PrevStepCommand prevStepCommand;
 ShortPlayCommand shortPlayCommand;
+
+NextKeyframeCommand nextKeyframeCommand;
+PrevKeyframeCommand prevKeyframeCommand;
