@@ -112,6 +112,7 @@ public:
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();
+  void clearCacheFolder();
 
   QString getLayoutName() { return m_layoutName; }
 
@@ -160,7 +161,11 @@ private:
   QAction *createMenuWindowsAction(const char *id, const QString &name,
                                    const QString &defaultShortcut);
 
-  QAction *createPlaybackAction(const char *id, const QString &name,
+  QAction *createMenuPlayAction(const char *id, const QString &name,
+                                const QString &defaultShortcut);
+  QAction *createMenuRenderAction(const char *id, const QString &name,
+                                  const QString &defaultShortcut);
+  QAction *createMenuHelpAction(const char *id, const QString &name,
                                 const QString &defaultShortcut);
   QAction *createRGBAAction(const char *id, const QString &name,
                             const QString &defaultShortcut);

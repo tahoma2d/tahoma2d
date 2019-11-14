@@ -15,6 +15,7 @@
 #include "ruler.h"
 #include "comboviewerpane.h"
 #include "locatorpopup.h"
+#include "cellselection.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -809,17 +810,17 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
 
 quit:
   m_mouseButton = Qt::NoButton;
-  // If m_tabletState is "Touched", we've been called by tabletPress event.
-  // Don't clear it out table state so the tablePress event will process
-  // correctly.
-  if (m_tabletState != Touched) m_tabletState = None;
-  m_mouseState = None;
-  m_tabletMove = false;
-  m_pressure   = 0;
   // Leave m_tabletEvent as-is in order to check whether the onRelease is called
   // from tabletEvent or not in mouseReleaseEvent.
   if (m_tabletState == Released)  // only clear if tabletRelease event
     m_tabletEvent = false;
+  // If m_tabletState is "Touched", we've been called by tabletPress event.
+  // Don't clear it out table state so the tablePress event will process
+  // correctly.
+  if (m_tabletState != Touched) m_tabletState = None;
+  m_mouseState                                = None;
+  m_tabletMove                                = false;
+  m_pressure                                  = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -911,6 +912,7 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
               m_touchDevice == QTouchDevice::TouchScreen) ||
              m_gestureActive == false) {
       zoomQt(event->pos() * getDevPixRatio(), exp(0.001 * delta));
+      m_panning = false;
     }
   }
   event->accept();
@@ -929,6 +931,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);
     QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
     QPoint firstCenter                     = gesture->centerPoint().toPoint();
+    if (m_touchDevice == QTouchDevice::TouchScreen)
+      firstCenter = mapFromGlobal(firstCenter);
 
     if (gesture->state() == Qt::GestureStarted) {
       m_gestureActive = true;
@@ -961,6 +965,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_zooming) {
           zoomQt(firstCenter * getDevPixRatio(), scaleFactor);
+          m_panning = false;
         }
         m_gestureActive = true;
       }
@@ -1347,6 +1352,7 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
     if (changeFrameSkippingHolds(event)) return;
 
     TFrameHandle *fh = TApp::instance()->getCurrentFrame();
+    int origFrame    = fh->getFrame();
 
     if (key == Qt::Key_Up || key == Qt::Key_Left)
       fh->prevFrame();
@@ -1372,6 +1378,21 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
       fh->firstFrame();
     else if (key == Qt::Key_End)
       fh->lastFrame();
+
+    // Use arrow keys to shift the cell selection.
+    if (Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled() &&
+        fh->getFrameType() != TFrameHandle::LevelFrame) {
+      TCellSelection *cellSel =
+          dynamic_cast<TCellSelection *>(TSelection::getCurrent());
+      if (cellSel && !cellSel->isEmpty()) {
+        int r0, c0, r1, c1;
+        cellSel->getSelectedCells(r0, c0, r1, c1);
+        int shiftFrame = fh->getFrame() - origFrame;
+
+        cellSel->selectCells(r0 + shiftFrame, c0, r1 + shiftFrame, c1);
+        TApp::instance()->getCurrentSelection()->notifySelectionChanged();
+      }
+    }
   }
   update();
   // TODO: devo accettare l'evento?

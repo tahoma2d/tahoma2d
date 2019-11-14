@@ -156,6 +156,8 @@ public:
   void addPreset(QString name);
   void removePreset();
 
+  void loadLastBrush();
+
   void finishRasterBrush(const TPointD &pos, double pressureVal);
   // return true if the pencil mode is active in the Brush / PaintBrush / Eraser
   // Tools.
@@ -220,6 +222,8 @@ protected:
   MyPaintToonzBrush *m_toonz_brush = 0;
   QElapsedTimer m_brushTimer;
   int m_minCursorThick, m_maxCursorThick;
+
+  bool m_propertyUpdating = false;
 
 protected:
   static void drawLine(const TPointD &point, const TPointD &centre,

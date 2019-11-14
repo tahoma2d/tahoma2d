@@ -519,7 +519,7 @@ void ColorModelViewer::loadCurrentFrame() {
 
   std::vector<TFrameId> fids;
   fids.push_back(fid);
-  currentPalette->setRefLevelFids(fids);
+  currentPalette->setRefLevelFids(fids, false);
 
   m_currentRefImgPath = xl->getPath();
 

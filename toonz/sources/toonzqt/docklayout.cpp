@@ -423,8 +423,9 @@ void DockLayout::applyTransform(const QTransform &transform) {
 //------------------------------------------------------
 
 void DockLayout::redistribute() {
-  std::vector<QWidget *> widgets;
   if (!m_regions.empty()) {
+    std::vector<QWidget *> widgets;
+
     // Recompute extremal region sizes
     // NOTA: Sarebbe da fare solo se un certo flag lo richiede; altrimenti tipo
     // per resize events e' inutile...
@@ -436,7 +437,8 @@ void DockLayout::redistribute() {
         QWidget *widget = m_items.at(i)->widget();
         if (widget) {
           std::string name = widget->objectName().toStdString();
-          if (widget->objectName() == "FilmStrip") {
+          if (widget->objectName() == "FilmStrip" ||
+              widget->objectName() == "StyleEditor") {
             widgets.push_back(widget);
             widget->setFixedWidth(widget->width());
           }
@@ -459,14 +461,15 @@ void DockLayout::redistribute() {
     // Recompute Layout geometry
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
+
+    for (QWidget *widget : widgets) {
+      widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+      widget->setMinimumSize(0, 0);
+    }
   }
 
   // Finally, apply Region geometries found
   applyGeometry();
-  for (QWidget *widget : widgets) {
-    widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-    widget->setMinimumSize(0, 0);
-  }
 }
 
 //======================================================================
@@ -824,7 +827,7 @@ void Region::removeItem(DockWidget *item) {
 
 //! Undocks \b item and updates geometry.
 
-//!\b NOTE: Window flags are resetted to floating appearance (thus hiding the
+//!\b NOTE: Window flags are reset to floating appearance (thus hiding the
 //! widget). Since the geometry
 //! reference changes a geometry() update may be needed - so item's show() is
 //! not forced here. You should

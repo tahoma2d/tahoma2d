@@ -35,6 +35,9 @@
 
 // For Qt translation support
 #include <QCoreApplication>
+#include <QClipboard>
+#include <QApplication>
+#include <QMimeData>
 
 //#include "tw/message.h"
 
@@ -697,7 +700,7 @@ void TypeTool::updateStrokeChar() {
 
 void TypeTool::updateCharPositions(int updateFrom) {
   if (updateFrom < 0) updateFrom = 0;
-  UINT size                      = m_string.size();
+  UINT size = m_string.size();
   TPointD currentOffset;
   TFontManager *instance = TFontManager::instance();
   m_fontYOffset          = (double)(instance->getLineSpacing()) * m_scale.a11;
@@ -1147,7 +1150,7 @@ void TypeTool::setCursorIndexFromPoint(TPointD point) {
             m_cursorIndex = j;
           else
             m_cursorIndex = j + 1;
-          m_preeditRange  = std::make_pair(m_cursorIndex, m_cursorIndex);
+          m_preeditRange = std::make_pair(m_cursorIndex, m_cursorIndex);
           return;
         }
       } else {
@@ -1159,7 +1162,7 @@ void TypeTool::setCursorIndexFromPoint(TPointD point) {
               m_cursorIndex = j;
             else
               m_cursorIndex = j + 1;
-            m_preeditRange  = std::make_pair(m_cursorIndex, m_cursorIndex);
+            m_preeditRange = std::make_pair(m_cursorIndex, m_cursorIndex);
             return;
           }
         } else {
@@ -1171,7 +1174,7 @@ void TypeTool::setCursorIndexFromPoint(TPointD point) {
               m_cursorIndex = j;
             else
               m_cursorIndex = j + 1;
-            m_preeditRange  = std::make_pair(m_cursorIndex, m_cursorIndex);
+            m_preeditRange = std::make_pair(m_cursorIndex, m_cursorIndex);
             return;
           }
         }
@@ -1203,7 +1206,7 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
   if (!m_active)
     img = touchImage();
   else
-    img            = getImage(true);
+    img = getImage(true);
   TVectorImageP vi = img;
   TToonzImageP ti  = img;
 
@@ -1301,7 +1304,7 @@ void TypeTool::replaceText(std::wstring text, int from, int to) {
         adv = instance->drawChar(characterImage, character,
                                  m_string[index].m_key);
       else
-        adv        = instance->drawChar(characterImage, character);
+        adv = instance->drawChar(characterImage, character);
       TPointD advD = m_scale * TPointD(adv.x, adv.y);
 
       characterImage->transform(m_scale);
@@ -1511,16 +1514,30 @@ void TypeTool::deleteKey() {
 bool TypeTool::keyDown(QKeyEvent *event) {
   QString text = event->text();
   if ((event->modifiers() & Qt::ShiftModifier)) text.toUpper();
+
+  std::string keyStr =
+      QKeySequence(event->key() + event->modifiers()).toString().toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  if (action) {
+    std::string actionId = CommandManager::instance()->getIdFromAction(action);
+    if (actionId == "MI_Paste") {
+      QClipboard *clipboard     = QApplication::clipboard();
+      const QMimeData *mimeData = clipboard->mimeData();
+      if (!mimeData->hasText()) return true;
+      text = mimeData->text().replace('\n', '\r');
+    }
+  }
+
   std::wstring unicodeChar = text.toStdWString();
+
+  // return if only ALT, SHIFT or CTRL key is pressed
+  if (event->modifiers() != Qt::NoModifier && (unicodeChar.empty()))
+    return true;
 
   // per sicurezza
   m_preeditRange = std::make_pair(0, 0);
 
   if (!m_validFonts || !m_active) return true;
-
-  // Se ho premuto solo i tasti ALT, SHIFT e CTRL (da soli) esco
-  if (event->modifiers() != Qt::NoModifier && (unicodeChar.empty()))
-    return true;
 
   switch (event->key()) {
   case Qt::Key_Insert:
@@ -1588,7 +1605,7 @@ bool TypeTool::keyDown(QKeyEvent *event) {
     invalidate();
     break;
 
-  /////////////////// end cursors
+    /////////////////// end cursors
 
   case Qt::Key_Escape:
     resetInputMethod();
@@ -1618,9 +1635,10 @@ bool TypeTool::keyDown(QKeyEvent *event) {
   default:
     if (unicodeChar.empty()) return false;
     replaceText(unicodeChar, m_cursorIndex, m_cursorIndex);
-    m_cursorIndex++;
-    m_preeditRange = std::make_pair(m_cursorIndex, m_cursorIndex);
-    updateCharPositions(m_cursorIndex - 1);
+    int startIndex = m_cursorIndex + 1;
+    m_cursorIndex += unicodeChar.size();
+    m_preeditRange = std::make_pair(startIndex, m_cursorIndex);
+    updateCharPositions(startIndex - 1);
   }
 
   invalidate();

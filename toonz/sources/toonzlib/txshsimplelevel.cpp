@@ -119,7 +119,9 @@ bool isAreadOnlyLevel(const TFilePath &path) {
   if (path.getDots() == "." ||
       (path.getDots() == ".." &&
        (path.getType() == "tlv" || path.getType() == "tpl"))) {
-    if (path.getType() == "psd") return true;
+    if (path.getType() == "psd" || path.getType() == "gif" ||
+        path.getType() == "mp4" || path.getType() == "webm")
+      return true;
     if (!TSystem::doesExistFileOrLevel(path)) return false;
     TFileStatus fs(path);
     return !fs.isWritable();
@@ -1209,10 +1211,35 @@ void TXshSimpleLevel::load() {
           if (img && getPalette()) {
             img->setPalette(0);
             getPalette()->setRefImg(img);
-            std::vector<TFrameId> fids;
-            for (TLevel::Iterator it = level->begin(); it != level->end(); ++it)
-              fids.push_back(it->first);
-            getPalette()->setRefLevelFids(fids);
+            std::vector<TFrameId> fids = getPalette()->getRefLevelFids();
+            // in case the fids are specified by user
+            if (fids.size() > 0) {
+              // check existence of each fid
+              auto itr = fids.begin();
+              while (itr != fids.end()) {
+                bool found = false;
+                for (TLevel::Iterator it = level->begin(); it != level->end();
+                     ++it) {
+                  if (itr->getNumber() == it->first.getNumber()) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found)  // remove the fid if it does not exist in the level
+                  itr = fids.erase(itr);
+                else
+                  itr++;
+              }
+            }
+            // in case the fids are not specified, or all specified fids are
+            // absent
+            if (fids.size() == 0) {
+              for (TLevel::Iterator it = level->begin(); it != level->end();
+                   ++it)
+                fids.push_back(it->first);
+              getPalette()->setRefLevelFids(fids, false);
+            } else if (fids.size() != getPalette()->getRefLevelFids().size())
+              getPalette()->setRefLevelFids(fids, true);
           }
         }
       }
@@ -1375,8 +1402,38 @@ void TXshSimpleLevel::save() {
 //-----------------------------------------------------------------------------
 
 static void saveBackup(TFilePath path) {
+  // The additional .bak extension keeps it from being detected as a sequence.
+  // If the original path is a sequence, find the individual files and back it
+  // up individually
+  if (path.isLevelName()) {
+    TFilePathSet files =
+        TSystem::readDirectory(path.getParentDir(), false, true);
+    for (TFilePathSet::iterator file = files.begin(); file != files.end();
+         file++) {
+      if (file->getLevelName() == path.getLevelName()) saveBackup(*file);
+    }
+    return;
+  }
+
+  int totalBackups = Preferences::instance()->getBackupKeepCount();
+  totalBackups -= 1;
+  TFilePath backup = path.withType(path.getType() + ".bak");
+  TFilePath prevBackup =
+      path.withType(path.getType() + ".bak" + std::to_string(totalBackups));
+  while (--totalBackups >= 0) {
+    std::string bakExt =
+        ".bak" + (totalBackups > 0 ? std::to_string(totalBackups) : "");
+    backup = path.withType(path.getType() + bakExt);
+    if (TSystem::doesExistFileOrLevel(backup)) {
+      try {
+        TSystem::copyFileOrLevel_throw(prevBackup, backup);
+      } catch (...) {
+      }
+    }
+    prevBackup = backup;
+  }
+
   try {
-    TFilePath backup = path.withName(path.getName() + "_backup");
     if (TSystem::doesExistFileOrLevel(backup))
       TSystem::removeFileOrLevel_throw(backup);
     TSystem::copyFileOrLevel_throw(backup, path);
@@ -1398,8 +1455,8 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
         "The level cannot be saved: failed to access the target folder.");
 
   // backup
-  if (Preferences::instance()->isLevelsBackupEnabled() &&
-      dOldPath == dDstPath && TSystem::doesExistFileOrLevel(dDstPath))
+  if (Preferences::instance()->isBackupEnabled() && dOldPath == dDstPath &&
+      TSystem::doesExistFileOrLevel(dDstPath))
     saveBackup(dDstPath);
 
   if (isAreadOnlyLevel(dDstPath)) {
@@ -1644,7 +1701,7 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
         lw = TLevelWriterP();  // TLevelWriterP's destructor saves the palette
       } else if (isPaletteModified && overwritePalette) {
         TFilePath palettePath = decodedFp.withNoFrame().withType("tpl");
-        if (Preferences::instance()->isLevelsBackupEnabled() &&
+        if (Preferences::instance()->isBackupEnabled() &&
             TSystem::doesExistFileOrLevel(palettePath))
           saveBackup(palettePath);
         TOStream os(palettePath);
@@ -1658,6 +1715,9 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
       // strategia
       LevelUpdater updater(this);
       updater.getLevelWriter()->setCreator(getCreatorString());
+      if (updater.getImageInfo())
+        updater.getLevelWriter()->setFrameRate(
+            updater.getImageInfo()->m_frameRate);
 
       if (isLevelModified) {
         // Apply the level's renumber table, before saving other files.
@@ -2239,8 +2299,7 @@ TRectD TXshSimpleLevel::getBBox(const TFrameId &fid) const {
     if (!info) return TRectD();
 
     bbox = TRectD(TPointD(info->m_x0, info->m_y0),
-                  TDimensionD(info->m_lx,
-                              info->m_ly)) -  // Using lx, ly is less ambiguous
+                  TPointD(info->m_x1, info->m_y1)) -
            0.5 * TPointD(info->m_lx, info->m_ly);
 
     if (info->m_dpix > 0.0 && info->m_dpiy > 0.0)

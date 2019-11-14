@@ -2631,7 +2631,7 @@ bool PencilTestPopup::importImage(QImage image) {
 
   // if the level is newly created or imported, then insert a new column
   if (state == NEWLEVEL) {
-    if (!xsh->isColumnEmpty(col)) {
+    if (col < 0 || !xsh->isColumnEmpty(col)) {
       col += 1;
       xsh->insertColumn(col);
     }

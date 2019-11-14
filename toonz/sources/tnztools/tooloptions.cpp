@@ -1130,6 +1130,11 @@ void ArrowToolOptionsBox::onCurrentStageObjectComboActivated(int index) {
   }
   // switch the current object
   m_objHandle->setObjectId(id);
+  if (id.isCamera()) {
+    TXsheet *xsh = m_xshHandle->getXsheet();
+    if (xsh->getCameraColumnIndex() != id.getIndex())
+      m_xshHandle->changeXsheetCamera(id.getIndex());
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2680,7 +2685,7 @@ ZoomToolOptionsBox::ZoomToolOptionsBox(QWidget *parent, TTool *tool,
   setFrameStyle(QFrame::StyledPanel);
   setFixedHeight(26);
 
-  QAction *resetZoomAction = CommandManager::instance()->getAction(V_ZoomReset);
+  QAction *resetZoomAction = CommandManager::instance()->getAction(VB_ZoomReset);
 
   QPushButton *button = new QPushButton(tr("Reset Zoom"));
   button->setFixedHeight(20);
@@ -2703,7 +2708,7 @@ RotateToolOptionsBox::RotateToolOptionsBox(QWidget *parent, TTool *tool,
   setFixedHeight(26);
 
   QAction *resetRotationAction =
-      CommandManager::instance()->getAction(V_RotateReset);
+      CommandManager::instance()->getAction(VB_RotateReset);
 
   QPushButton *button = new QPushButton(tr("Reset Rotation"));
   button->setFixedHeight(20);
@@ -2726,7 +2731,7 @@ HandToolOptionsBox::HandToolOptionsBox(QWidget *parent, TTool *tool,
   setFixedHeight(26);
 
   QAction *resetPositionAction =
-      CommandManager::instance()->getAction(V_PositionReset);
+      CommandManager::instance()->getAction(VB_PositionReset);
 
   QPushButton *button = new QPushButton(tr("Reset Position"));
   button->setFixedHeight(20);

@@ -462,6 +462,18 @@ void FunctionSheetColumnHeadViewer::mousePressEvent(QMouseEvent *e) {
 
     getViewer()->selectCells(rect);
   }
+  // Switch selection before opening the context menu
+  // if the clicked column is out of the selection
+  else if (e->button() == Qt::RightButton) {
+    QRect selectedCell = getViewer()->getSelectedCells();
+    if (selectedCell.left() > currentC || selectedCell.right() < currentC) {
+      int lastKeyPos = 0;
+      std::set<double> frames;
+      channel->getParam()->getKeyframes(frames);
+      if (!frames.empty()) lastKeyPos = (int)*frames.rbegin();
+      getViewer()->selectCells(QRect(currentC, 0, 1, lastKeyPos + 1));
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -497,13 +509,13 @@ void FunctionSheetColumnHeadViewer::contextMenuEvent(QContextMenuEvent *ce) {
 
     QAction showAnimatedOnly(FunctionTreeView::tr("Show Animated Only"), 0);
     QAction showAll(FunctionTreeView::tr("Show All"), 0);
+    QAction hideSelected(FunctionTreeView::tr("Hide Selected"), 0);
     menu.addAction(&showAnimatedOnly);
     menu.addAction(&showAll);
+    menu.addAction(&hideSelected);
 
     // execute menu
     QAction *action = menu.exec(globalPos);
-
-    if (action != &showAll && action != &showAnimatedOnly) return;
 
     // Process action
     if (action == &showAll) {
@@ -521,7 +533,18 @@ void FunctionSheetColumnHeadViewer::contextMenuEvent(QContextMenuEvent *ce) {
         if (channel && !channel->isHidden())
           channel->setIsActive(channel->isAnimated());
       }
-    }
+    } else if (action == &hideSelected) {
+      QRect selectedCells = getViewer()->getSelectedCells();
+      // hide the selected columns from the right to the left
+      for (int col = selectedCells.right(); col >= selectedCells.left();
+           col--) {
+        FunctionTreeModel::Channel *chan = m_sheet->getChannel(col);
+        if (chan) chan->setIsActive(false);
+      }
+      // clear cell selection
+      getViewer()->selectCells(QRect());
+    } else
+      return;
 
     fv->update();
   }
@@ -918,30 +941,17 @@ void FunctionSheetCellViewer::onMouseMovedInLineEdit(QMouseEvent *event) {
 
 // TODO: refactor: cfr functionpanel.cpp
 void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
-  struct locals {
-    static void sheet__setSegmentType(FunctionSelection *selection,
-                                      TDoubleParam *curve, int segmentIndex,
-                                      TDoubleKeyframe::Type type) {
-      selection->selectSegment(curve, segmentIndex);
-      KeyframeSetter setter(curve, segmentIndex);
-      setter.setType(type);
-    }
-  };  // locals
-
   QAction deleteKeyframeAction(tr("Delete Key"), 0);
   QAction insertKeyframeAction(tr("Set Key"), 0);
-  QAction setLinearAction(tr("Linear Interpolation"), 0);
-  QAction setSpeedInOutAction(tr("Speed In / Speed Out Interpolation"), 0);
-  QAction setEaseInOutAction(tr("Ease In / Ease Out Interpolation"), 0);
-  QAction setEaseInOut2Action(tr("Ease In / Ease Out (%) Interpolation"), 0);
-  QAction setExponentialAction(tr("Exponential Interpolation"), 0);
-  QAction setExpressionAction(tr("Expression Interpolation"), 0);
-  QAction setFileAction(tr("File Interpolation"), 0);
-  QAction setConstantAction(tr("Constant Interpolation"), 0);
-  QAction setStep1Action(tr("Step 1"), 0);
-  QAction setStep2Action(tr("Step 2"), 0);
-  QAction setStep3Action(tr("Step 3"), 0);
-  QAction setStep4Action(tr("Step 4"), 0);
+
+  QStringList interpNames;
+  interpNames << tr("Constant Interpolation") << tr("Linear Interpolation")
+              << tr("Speed In / Speed Out Interpolation")
+              << tr("Ease In / Ease Out Interpolation")
+              << tr("Ease In / Ease Out (%) Interpolation")
+              << tr("Exponential Interpolation")
+              << tr("Expression Interpolation") << tr("File Interpolation")
+              << tr("Similar Shape Interpolation");
   QAction activateCycleAction(tr("Activate Cycle"), 0);
   QAction deactivateCycleAction(tr("Deactivate Cycle"), 0);
   QAction showIbtwnAction(tr("Show Inbetween Values"), 0);
@@ -967,6 +977,15 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   }
   int kIndex = curve->getPrevKeyframe(row);
 
+  // if the FunctionSelection is not current or when clicking outside of the
+  // selection, then select the clicked cell.
+  FunctionSelection *selection = m_sheet->getSelection();
+  if (!selection->getSelectedCells().contains(col, row)) {
+    selection->makeCurrent();
+    selection->selectCells(QRect(col, row, 1, 1));
+  }
+  CommandManager *cmdManager = CommandManager::instance();
+
   // build menu
   QMenu menu(0);
 
@@ -981,37 +1000,35 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   if (!isKeyframe)  // menu.addAction(&deleteKeyframeAction); else
     menu.addAction(&insertKeyframeAction);
 
-  if (!isEmpty && !isKeyframe && kIndex >= 0) {
+  // change interpolation commands
+  QList<QAction *> interpActions;
+  int interp = selection->getCommonSegmentType();
+  if (interp != -1) {
     menu.addSeparator();
-    QMenu *interpMenu  = menu.addMenu(tr("Change Interpolation"));
-    TDoubleKeyframe kf = curve->getKeyframe(kIndex);
-    if (kf.m_type != TDoubleKeyframe::Linear)
-      interpMenu->addAction(&setLinearAction);
-    if (kf.m_type != TDoubleKeyframe::SpeedInOut)
-      interpMenu->addAction(&setSpeedInOutAction);
-    if (kf.m_type != TDoubleKeyframe::EaseInOut)
-      interpMenu->addAction(&setEaseInOutAction);
-    if (kf.m_type != TDoubleKeyframe::EaseInOutPercentage)
-      interpMenu->addAction(&setEaseInOut2Action);
-    if (kf.m_type != TDoubleKeyframe::Exponential)
-      interpMenu->addAction(&setExponentialAction);
-    if (kf.m_type != TDoubleKeyframe::Expression)
-      interpMenu->addAction(&setExpressionAction);
-    if (kf.m_type != TDoubleKeyframe::File)
-      interpMenu->addAction(&setFileAction);
-    if (kf.m_type != TDoubleKeyframe::Constant)
-      interpMenu->addAction(&setConstantAction);
+    QMenu *interpMenu = menu.addMenu(tr("Change Interpolation"));
+    for (int i = (int)TDoubleKeyframe::Constant;
+         i <= (int)TDoubleKeyframe::SimilarShape; i++) {
+      if (interp != i) {
+        QAction *interpAction = new QAction(interpNames[i - 1], 0);
+        interpAction->setData(i);
+        interpActions.append(interpAction);
+        interpMenu->addAction(interpAction);
+      }
+    }
+  }
 
+  // change step commands
+  int step = selection->getCommonStep();
+  if (step != -1) {
     QMenu *stepMenu = menu.addMenu(tr("Change Step"));
-    if (kf.m_step != 1) stepMenu->addAction(&setStep1Action);
-    if (kf.m_step != 2) stepMenu->addAction(&setStep2Action);
-    if (kf.m_step != 3) stepMenu->addAction(&setStep3Action);
-    if (kf.m_step != 4) stepMenu->addAction(&setStep4Action);
+    if (step != 1) stepMenu->addAction(cmdManager->getAction("MI_ResetStep"));
+    if (step != 2) stepMenu->addAction(cmdManager->getAction("MI_Step2"));
+    if (step != 3) stepMenu->addAction(cmdManager->getAction("MI_Step3"));
+    if (step != 4) stepMenu->addAction(cmdManager->getAction("MI_Step4"));
   }
 
   menu.addSeparator();
 
-  CommandManager *cmdManager = CommandManager::instance();
   menu.addAction(cmdManager->getAction("MI_Cut"));
   menu.addAction(cmdManager->getAction("MI_Copy"));
   menu.addAction(cmdManager->getAction("MI_Paste"));
@@ -1027,47 +1044,16 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
       menu.addAction(&showIbtwnAction);
   }
 
-  FunctionSelection *selection = m_sheet->getSelection();
-  TSceneHandle *sceneHandle    = m_sheet->getViewer()->getSceneHandle();
+  TSceneHandle *sceneHandle = m_sheet->getViewer()->getSceneHandle();
   // execute menu
   QAction *action = menu.exec(e->globalPos());  // QCursor::pos());
   if (action == &deleteKeyframeAction) {
     KeyframeSetter::removeKeyframeAt(curve, row);
   } else if (action == &insertKeyframeAction) {
     KeyframeSetter(curve).createKeyframe(row);
-  } else if (action == &setLinearAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::Linear);
-  else if (action == &setSpeedInOutAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::SpeedInOut);
-  else if (action == &setEaseInOutAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::EaseInOut);
-  else if (action == &setEaseInOut2Action)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::EaseInOutPercentage);
-  else if (action == &setExponentialAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::Exponential);
-  else if (action == &setExpressionAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::Expression);
-  else if (action == &setFileAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::File);
-  else if (action == &setConstantAction)
-    locals::sheet__setSegmentType(selection, curve, kIndex,
-                                  TDoubleKeyframe::Constant);
-  else if (action == &setStep1Action)
-    KeyframeSetter(curve, kIndex).setStep(1);
-  else if (action == &setStep2Action)
-    KeyframeSetter(curve, kIndex).setStep(2);
-  else if (action == &setStep3Action)
-    KeyframeSetter(curve, kIndex).setStep(3);
-  else if (action == &setStep4Action)
-    KeyframeSetter(curve, kIndex).setStep(4);
-  else if (action == &activateCycleAction)
+  } else if (interpActions.contains(action)) {
+    selection->setSegmentType((TDoubleKeyframe::Type)action->data().toInt());
+  } else if (action == &activateCycleAction)
     KeyframeSetter::enableCycle(curve, true, sceneHandle);
   else if (action == &deactivateCycleAction)
     KeyframeSetter::enableCycle(curve, false, sceneHandle);

@@ -40,6 +40,8 @@
         <command>MI_Preferences</command>
         <command>MI_ShortcutPopup</command>
         <separator/>
+        <command>MI_ClearCacheFolder</command>  
+        <separator/> 
         <command>MI_Quit</command>
     </menu>
     <menu title="Edit">
@@ -230,6 +232,8 @@
         <separator/>
         <command>MI_PrevDrawing</command>
         <command>MI_NextDrawing</command>
+        <command>MI_PrevKeyframe</command>
+        <command>MI_NextKeyframe</command>
         <separator/>
         <command>MI_Link</command>
     </menu>
@@ -313,6 +317,6 @@
     <menu title="Help">
         <command>MI_OpenOnlineManual</command>
         <separator/>
-        <command>MI_About</command>
+        <command>MI_About</command>     
     </menu>
 </menubar>

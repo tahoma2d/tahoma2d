@@ -118,6 +118,8 @@ public:
   void addPreset(QString name);
   void removePreset();
 
+  void loadLastBrush();
+
   // return true if the pencil mode is active in the Brush / PaintBrush / Eraser
   // Tools.
   bool isPencilModeActive() override;
@@ -193,8 +195,10 @@ protected:
   ˆÚ“®‚µ‚Ä‚¢‚½‚Æ‚«‚Ì•s‹ï‡‚ğC³‚·‚éB---*/
   TFrameId m_workingFrameId;
 
-  TPointD m_lastDragPos; //!< Position where mouse was last dragged.
-  TMouseEvent m_lastDragEvent; //!< Previous mouse-drag event.
+  TPointD m_lastDragPos;        //!< Position where mouse was last dragged.
+  TMouseEvent m_lastDragEvent;  //!< Previous mouse-drag event.
+
+  bool m_propertyUpdating = false;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H
