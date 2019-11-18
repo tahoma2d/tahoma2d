@@ -138,19 +138,13 @@ public:
 
   void execute() override {
     int row = TApp::instance()->getCurrentFrame()->getFrame();
-	int shortPlayFrameCount = Preferences::instance()->getShortPlayFrameCount();
+    int shortPlayFrameCount = Preferences::instance()->getShortPlayFrameCount();
     int count =
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
-    if (count >= shortPlayFrameCount) {
-        int newFrame = std::max(
-          0, count - shortPlayFrameCount);
-        // there is a bug in playback.
-        // currently playback basically ignores the first frame.
-        // it goes on to the 2nd frame in the play range right away.
-      if (newFrame > 0) newFrame -= 1;
-      TApp::instance()->getCurrentFrame()->setFrame(newFrame);
-      CommandManager::instance()->execute(MI_Play);
-    }
+    int newFrame = std::max(
+      0, count - shortPlayFrameCount);
+    TApp::instance()->getCurrentFrame()->setFrame(newFrame);
+    CommandManager::instance()->execute(MI_Play);
   }
 };
 
