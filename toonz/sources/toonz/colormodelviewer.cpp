@@ -123,7 +123,10 @@ void ColorModelViewer::dragEnterEvent(QDragEnterEvent *event) {
     std::string type = fp.getType();
     if (type == "scr" || type == "tpl") return;
   }
-  event->acceptProposedAction();
+  // Force CopyAction
+  event->setDropAction(Qt::CopyAction);
+  // For files, don't accept original proposed action in case it's a move
+  event->accept();
 }
 
 //-----------------------------------------------------------------------------
@@ -138,7 +141,10 @@ void ColorModelViewer::dropEvent(QDropEvent *event) {
       loadImage(fp);
       setLevel(fp);
     }
-    event->acceptProposedAction();
+	// Force CopyAction
+	event->setDropAction(Qt::CopyAction);
+	// For files, don't accept original proposed action in case it's a move
+	event->accept();
   }
 }
 
