@@ -234,8 +234,13 @@ void SceneLevel::save() {
         // imageBuilder path refresh.
         m_sl->setPath(fp, false);
       } else {
-        m_sl->save(actualFp, oldActualPath);
-
+        try {
+          m_sl->save(actualFp, oldActualPath);
+        } catch (...) {
+          DVGui::warning(
+              QObject::tr("Can't save") +
+              QString::fromStdWString(L": " + actualFp.getLevelNameW()));
+        }
         if ((actualFp.getType() == "tlv" || actualFp.getType() == "pli") &&
             actualFp != oldActualPath && m_oldRefImgPath != TFilePath()) {
           // Devo preoccuparmi dell'eventuale livello colormodel
