@@ -183,7 +183,6 @@ void ColumnFan::loadData(TIStream &is) {
 
 void ColumnFan::rollLeftFoldedState(int index, int count) {
   assert(index >= 0);
-  assert(count > 1);
   int columnCount = m_columns.size();
   if (columnCount <= index) return;
   if (index + count - 1 > columnCount) count = columnCount - index + 1;
@@ -210,7 +209,6 @@ void ColumnFan::rollLeftFoldedState(int index, int count) {
 
 void ColumnFan::rollRightFoldedState(int index, int count) {
   assert(index >= 0);
-  assert(count > 1);
 
   int columnCount = m_columns.size();
   if (columnCount <= index) return;

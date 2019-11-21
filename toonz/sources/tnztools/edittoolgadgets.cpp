@@ -1510,8 +1510,9 @@ void LinearRangeFxGadget::leftButtonDrag(const TPointD &pos,
   if (m_targetPos != m_anotherPos && e.isShiftPressed()) {
     TPointD vecA = m_targetPos - m_anotherPos;
     TPointD vecB = m_targetPos + d - m_anotherPos;
-    double ratio = std::min(vecB.x / vecA.x, vecB.y / vecA.y);
-    d            = vecA * (ratio - 1.0);
+    d            = vecA * ((vecA.x * vecB.x + vecA.y * vecB.y) /
+                    (vecA.x * vecA.x + vecA.y * vecA.y) -
+                1.0);
   }
 
   setValue(target, m_targetPos + d);
