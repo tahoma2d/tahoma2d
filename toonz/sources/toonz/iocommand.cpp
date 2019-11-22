@@ -1884,6 +1884,10 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   app->getCurrentScene()->notifyNameSceneChange();
   app->getCurrentFrame()->setFrame(0);
   app->getCurrentColumn()->setColumnIndex(0);
+  TPalette *palette = 0;
+  if (app->getCurrentLevel() && app->getCurrentLevel()->getSimpleLevel())
+    palette = app->getCurrentLevel()->getSimpleLevel()->getPalette();
+  app->getCurrentPalette()->setPalette(palette);
   app->getCurrentXsheet()->notifyXsheetSoundChanged();
   app->getCurrentObject()->setIsSpline(false);
 
@@ -2673,9 +2677,9 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   str = QObject::tr(
             "The following level(s) use path with $scenefolder alias.\n\n") +
         str +
-        QObject::tr(
-            "\nThey will not be opened properly when you load the "
-            "scene next time.\nWhat do you want to do?");
+	    QObject::tr(
+                  "\nThey will not be opened properly when you load the "
+                  "scene next time.\nWhat do you want to do?");
 
   int ret = DVGui::MsgBox(
       str, QObject::tr("Copy the levels to correspondent paths"),
