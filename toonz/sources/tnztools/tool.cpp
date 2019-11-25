@@ -770,6 +770,7 @@ bool TTool::isColumnLocked(int columnIndex) const {
   if (columnIndex < 0) return false;
   TXsheet *xsh       = getXsheet();
   TXshColumn *column = xsh->getColumn(columnIndex);
+  if (!column) return false;
   return column->isLocked();
 }
 
@@ -884,7 +885,7 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 
   // Check against unplaced columns (not in filmstrip mode)
   if (column && !filmstrip) {
-    if (column->isLocked())
+    if (column->isLocked() && m_name != T_Selection)
       return (enable(false), QObject::tr("The current column is locked."));
 
     else if (!column->isCamstandVisible())
@@ -971,7 +972,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
       if (parentId.isColumn() && obj->getParentHandle()[0] != 'H') {
         TXshSimpleLevel *parentSl =
             xsh->getCell(rowIndex, parentId.getIndex()).getSimpleLevel();
-        if (parentSl && parentSl->getType() == MESH_XSHLEVEL)
+        if (parentSl && parentSl->getType() == MESH_XSHLEVEL &&
+            m_name != T_Selection)
           return (
               enable(false),
               QObject::tr(
@@ -980,7 +982,7 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     }
 
     // Check TTool::ImageType tools
-    if (toolType == TTool::LevelWriteTool) {
+    if (toolType == TTool::LevelWriteTool && m_name != T_Selection) {
       // Check level against read-only status
       if (sl->isFrameReadOnly(getCurrentFid()))
         return (enable(false),
@@ -993,7 +995,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
           sl->getPath().getType() == "gif" ||
           sl->getPath().getType() == "mp4" ||
           sl->getPath().getType() == "webm" ||
-          sl->is16BitChannelLevel() ||  // Inherited by previous implementation.
+          sl->is16BitChannelLevel() ||  // Inherited by previous
+                                        // implementation.
                                         // Could be fixed?
           sl->getProperties()->getBpp() ==
               1)  // Black & White images. Again, could be fixed?
