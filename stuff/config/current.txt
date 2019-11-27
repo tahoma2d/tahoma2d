@@ -1430,7 +1430,26 @@
   <item>"STD_iwa_LinearGradientFx.wave_amplitude"	"Amplitude"	</item>
   <item>"STD_iwa_LinearGradientFx.wave_frequency"	"Frequency"	</item>
   <item>"STD_iwa_LinearGradientFx.wave_phase"		"Phase"		</item>
-
+  
+  <item>"STD_iwa_FloorBumpFx" 			"Floor Bump Iwa" 	</item>
+  <item>"STD_iwa_FloorBumpFx.renderMode"	"Render Mode"		</item>
+  <item>"STD_iwa_FloorBumpFx.fov"	"Fov"		</item>
+  <item>"STD_iwa_FloorBumpFx.cameraAltitude"	"Camera Altitude"		</item>
+  <item>"STD_iwa_FloorBumpFx.eyeLevel"	"Eye Level"		</item>
+  <item>"STD_iwa_FloorBumpFx.drawLevel"	"Draw Level"		</item>
+  <item>"STD_iwa_FloorBumpFx.waveHeight"	"Wave Height"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetAmount"	"Amount"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetSpread"	"Spread"		</item>
+  <item>"STD_iwa_FloorBumpFx.sourcePrecision"	"Precision"		</item>
+  <item>"STD_iwa_FloorBumpFx.souceMargin"	"Margin"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightAzimuth"	"Azimuth"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightElevation"	"Elevation"		</item>
+  <item>"STD_iwa_FloorBumpFx.depth"	"Depth"		</item>
+  <item>"STD_iwa_FloorBumpFx.refractiveIndex"	"Refractive Index"		</item>
+  <item>"STD_iwa_FloorBumpFx.distanceLevel"	"Distance Level"		</item>
+  <item>"STD_iwa_FloorBumpFx.differenceMode"	"Render difference from unbumped state"		</item>
+  <item>"STD_iwa_FloorBumpFx.displacement"	"Displacement"		</item>
+  
   <item>"STD_iwa_GlareFx" 			"Glare Iwa" 	</item>
   <item>"STD_iwa_GlareFx.renderMode"	"Render Mode"		</item>
   <item>"STD_iwa_GlareFx.irisMode"	"Iris Shape"		</item>

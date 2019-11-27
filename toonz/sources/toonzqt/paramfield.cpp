@@ -1387,7 +1387,6 @@ void EnumParamField::onChange(const QString &str) {
 
   emit currentParamChanged();
   emit actualParamChanged();
-
   emit modeChanged(m_actualParam->getValue());
 
   if (undo) TUndoManager::manager()->add(undo);
@@ -1420,6 +1419,10 @@ void EnumParamField::update(int frame) {
     return;
   }
 }
+
+//-----------------------------------------------------------------------------
+
+int EnumParamField::getValue() const { return m_actualParam->getValue(); }
 
 //=============================================================================
 // BoolParamField

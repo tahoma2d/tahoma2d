@@ -35,6 +35,7 @@
     STD_warpFx
     STD_inoWarphvFx
     STD_iwa_BarrelDistortFx
+    STD_iwa_FloorBumpFx
   </Distort>
   <Gradient>
     STD_diamondGradientFx

@@ -1,0 +1,39 @@
+<fxlayout>
+  <page name="Floor Bump Iwa">
+	<control>renderMode</control>
+	<control>fov</control>
+	<control>cameraAltitude</control>
+	<control>eyeLevel</control>
+	<control>drawLevel</control>
+	<control>waveHeight</control>
+	<control>souceMargin</control>
+	<control>displacement</control>	
+	<vbox modeSensitive="renderMode" mode="0,4,5">
+		<separator label="Source Image"/>
+		<control>sourcePrecision</control>
+	</vbox>
+	<vbox modeSensitive="renderMode" mode="0,1,2,3">
+		<separator label="Texture Offset"/>
+		<control>textureOffsetAmount</control>
+		<control>textureOffsetSpread</control>
+	</vbox>
+	<vbox modeSensitive="renderMode" mode="1,2">
+  	<separator label="Light Direction"/>
+		<control>lightAzimuth</control>
+		<control>lightElevation</control>
+	</vbox>
+	<vbox modeSensitive="renderMode" mode="4">
+  	<separator label="Refraction mode"/>
+		<control>depth</control>
+		<control>refractiveIndex</control>
+	</vbox>
+	<vbox modeSensitive="renderMode" mode="5">
+		<separator label="Reflection mode"/>
+		<control>distanceLevel</control>
+	</vbox>
+	<vbox modeSensitive="renderMode" mode="0,1,2,3">
+		<separator label="Difference mode"/>
+		<control>differenceMode</control>
+	</vbox>
+  </page>
+</fxlayout>

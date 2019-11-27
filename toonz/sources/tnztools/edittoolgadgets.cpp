@@ -2366,6 +2366,78 @@ void EllipseFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 void EllipseFxGadget::leftButtonUp() { m_handle = None; }
 
+//=============================================================================
+
+class VerticalPosFxGadget final : public FxGadget {
+  TPointD m_pos;
+  TDoubleParamP m_yParam;
+  TIntEnumParamP m_mode;
+
+public:
+  VerticalPosFxGadget(FxGadgetController *controller,
+                      const TDoubleParamP &param, const TIntEnumParamP &mode)
+      : FxGadget(controller), m_yParam(param), m_mode(mode) {
+    addParam(m_yParam);
+  }
+
+  void draw(bool picking) override;
+
+  bool isVisible();
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+};
+
+//---------------------------------------------------------------------------
+// Dirty resolution to hide gadget when selecting unrelated modes
+
+bool VerticalPosFxGadget::isVisible() {
+  if (!m_mode) return true;
+  // condition for Distance Level parameter of Iwa_FloorBumpFx
+  if (m_yParam->getName() == "distanceLevel" && m_mode->getValue() != 5)
+    return false;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+
+void VerticalPosFxGadget::draw(bool picking) {
+  if (!isVisible()) return;
+  setPixelSize();
+  if (isSelected())
+    glColor3dv(m_selectedColor);
+  else
+    glColor3d(0, 0, 1);
+  glPushName(getId());
+  double vPos = getValue(m_yParam);
+  double unit = getPixelSize();
+  glPushMatrix();
+  glTranslated(0, vPos, 0);
+  double r = unit * 3;
+  double d = unit * 300;
+  glBegin(GL_LINES);
+  glVertex2d(0, r);
+  glVertex2d(0, -r);
+  glVertex2d(-d, 0);
+  glVertex2d(d, 0);
+  glEnd();
+  drawTooltip(TPointD(7, 7) * unit, getLabel());
+
+  glPopMatrix();
+  glPopName();
+}
+
+//---------------------------------------------------------------------------
+
+void VerticalPosFxGadget::leftButtonDown(const TPointD &pos,
+                                         const TMouseEvent &) {}
+
+//---------------------------------------------------------------------------
+
+void VerticalPosFxGadget::leftButtonDrag(const TPointD &pos,
+                                         const TMouseEvent &) {
+  if (m_yParam) setValue(m_yParam, pos.y);
+}
+
 //*************************************************************************************
 //    FxGadgetController  implementation
 //*************************************************************************************
@@ -2596,6 +2668,15 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
       gadget = new EllipseFxGadget(this, uiConcept.m_params[0],
                                    uiConcept.m_params[1], uiConcept.m_params[2],
                                    uiConcept.m_params[3]);
+    break;
+  }
+
+  case TParamUIConcept::VERTICAL_POS: {
+    assert(uiConcept.m_params.size() >= 1 && uiConcept.m_params.size() <= 2);
+    TIntEnumParamP mode((uiConcept.m_params.size() >= 2)
+                            ? (TIntEnumParamP)uiConcept.m_params[1]
+                            : TIntEnumParamP());
+    gadget = new VerticalPosFxGadget(this, uiConcept.m_params[0], mode);
     break;
   }
 

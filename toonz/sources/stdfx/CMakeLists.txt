@@ -86,6 +86,7 @@ set(HEADERS
     iwa_bokeh_advancedfx.h
     iwa_bokeh_util.h
     globalcontrollablefx.h
+    iwa_floorbumpfx.h
 )
 
 if(OpenCV_FOUND)
@@ -280,6 +281,7 @@ set(SOURCES
     iwa_rainbowfx.cpp
     iwa_bokeh_advancedfx.cpp
     iwa_bokeh_util.cpp
+    iwa_floorbumpfx.cpp
 )
 
 if(OpenCV_FOUND)
