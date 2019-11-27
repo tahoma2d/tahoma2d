@@ -1760,7 +1760,8 @@ void ImageViewer::showHistogram() {
 
 void FlipBook::dragEnterEvent(QDragEnterEvent *e) {
   const QMimeData *mimeData = e->mimeData();
-  if (!acceptResourceDrop(mimeData->urls()) &&
+  bool isResourceDrop       = acceptResourceDrop(mimeData->urls());
+  if (!isResourceDrop &&
       !mimeData->hasFormat("application/vnd.toonz.drawings") &&
       !mimeData->hasFormat(CastItems::getMimeFormat()))
     return;
@@ -1784,18 +1785,31 @@ void FlipBook::dragEnterEvent(QDragEnterEvent *e) {
     }
   }
 
-  e->acceptProposedAction();
+  if (isResourceDrop) {
+    // Force CopyAction
+    e->setDropAction(Qt::CopyAction);
+    // For files, don't accept original proposed action in case it's a move
+    e->accept();
+  } else
+    e->acceptProposedAction();
 }
 
 //-----------------------------------------------------------------------------
 
 void FlipBook::dropEvent(QDropEvent *e) {
   const QMimeData *mimeData = e->mimeData();
+  bool isResourceDrop       = acceptResourceDrop(mimeData->urls());
   if (mimeData->hasUrls()) {
     for (const QUrl &url : mimeData->urls()) {
       TFilePath fp(url.toLocalFile().toStdWString());
       if (TFileType::getInfo(fp) != TFileType::UNKNOW_FILE) setLevel(fp);
-      e->acceptProposedAction();
+      if (isResourceDrop) {
+        // Force CopyAction
+        e->setDropAction(Qt::CopyAction);
+        // For files, don't accept original proposed action in case it's a move
+        e->accept();
+      } else
+        e->acceptProposedAction();
       return;
     }
   } else if (mimeData->hasFormat(

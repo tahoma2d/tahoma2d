@@ -3090,12 +3090,17 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
 //-----------------------------------------------------------------------------
 
 void CellArea::dragEnterEvent(QDragEnterEvent *e) {
-  if (acceptResourceOrFolderDrop(e->mimeData()->urls()) ||
+  bool isResourceOrFolderDrop = 
+	  acceptResourceOrFolderDrop(e->mimeData()->urls());
+  if (isResourceOrFolderDrop ||
       e->mimeData()->hasFormat(CastItems::getMimeFormat()) ||
       e->mimeData()->hasFormat("application/vnd.toonz.drawings")) {
     setDragTool(XsheetGUI::DragTool::makeDragAndDropDataTool(m_viewer));
+	// For file dragging force CopyAction
+	if (isResourceOrFolderDrop) e->setDropAction(Qt::CopyAction);
     m_viewer->dragToolClick(e);
-    e->acceptProposedAction();
+	// For files, don't accept original proposed action in case it's a move
+	isResourceOrFolderDrop ? e->accept() : e->acceptProposedAction();
   }
 }
 
@@ -3110,8 +3115,13 @@ void CellArea::dragLeaveEvent(QDragLeaveEvent *e) {
 
 void CellArea::dragMoveEvent(QDragMoveEvent *e) {
   if (!getDragTool()) return;
+  bool isResourceOrFolderDrop =
+	  acceptResourceOrFolderDrop(e->mimeData()->urls());
+  // For file dragging force CopyAction
+  if (isResourceOrFolderDrop) e->setDropAction(Qt::CopyAction);
   m_viewer->dragToolDrag(e);
-  e->acceptProposedAction();
+  // For files, don't accept original proposed action in case it's a move
+  isResourceOrFolderDrop ? e->accept() : e->acceptProposedAction();
 }
 
 //-----------------------------------------------------------------------------
@@ -3122,8 +3132,13 @@ void CellArea::dropEvent(QDropEvent *e) {
   if (e->source() == this) {
     e->setDropAction(Qt::MoveAction);
     e->accept();
+  } else if (acceptResourceOrFolderDrop(e->mimeData()->urls())) {
+	// For file dragging force CopyAction
+	e->setDropAction(Qt::CopyAction);
+	// For files, don't accept original proposed action in case it's a move
+	  e->accept();
   } else
-    e->acceptProposedAction();
+	e->acceptProposedAction();
 }
 
 //-----------------------------------------------------------------------------
