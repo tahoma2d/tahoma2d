@@ -2988,8 +2988,12 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
   // in modalita' xsheet as animation sheet non deve essere possibile creare
   // livelli con doppio click: se la cella e' vuota non bisogna fare nulla
   if ((Preferences::instance()->isAnimationSheetEnabled() &&
-       m_viewer->getXsheet()->getCell(row, col).isEmpty()))
-    return;
+       m_viewer->getXsheet()->getCell(row, col).isEmpty())) {
+    TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+    if (!column ||
+        column->getColumnType() != TXshColumn::ColumnType::eSoundTextType)
+      return;
+  }
 
   int colCount = m_viewer->getCellSelection()->getSelectedCells().getColCount();
 
