@@ -2112,6 +2112,7 @@ void SceneViewer::flipX() {
   m_isFlippedX = !m_isFlippedX;
   invalidateAll();
   emit onZoomChanged();
+  emit onFlipHChanged(m_isFlippedX);
 }
 
 //-----------------------------------------------------------------------------
@@ -2132,6 +2133,21 @@ void SceneViewer::flipY() {
   m_isFlippedY = !m_isFlippedY;
   invalidateAll();
   emit onZoomChanged();
+  emit onFlipVChanged(m_isFlippedY);
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::zoomIn() {
+  m_lastMousePos = rect().center();
+  zoomQt(true, false);
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::zoomOut() {
+  m_lastMousePos = rect().center();
+  zoomQt(false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2186,6 +2202,9 @@ void SceneViewer::fitToCamera() {
   bool tempIsFlippedY = m_isFlippedY;
   resetSceneViewer();
 
+  m_isFlippedX = tempIsFlippedX;
+  m_isFlippedY = tempIsFlippedY;
+
   TXsheet *xsh            = TApp::instance()->getCurrentXsheet()->getXsheet();
   int frame               = TApp::instance()->getCurrentFrame()->getFrame();
   TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
@@ -2224,6 +2243,8 @@ void SceneViewer::fitToCamera() {
   // Scale and center on the center of \a rect.
   QPoint c = viewRect.center();
   zoom(TPointD(c.x(), c.y()), ratio);
+  emit onFlipHChanged(m_isFlippedX);
+  emit onFlipVChanged(m_isFlippedY);
 }
 
 //-----------------------------------------------------------------------------
@@ -2245,6 +2266,8 @@ void SceneViewer::resetSceneViewer() {
   m_isFlippedX  = false;
   m_isFlippedY  = false;
   emit onZoomChanged();
+  emit onFlipHChanged(m_isFlippedX);
+  emit onFlipVChanged(m_isFlippedY);
   invalidateAll();
 }
 

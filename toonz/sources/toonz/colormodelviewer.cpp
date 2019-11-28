@@ -79,14 +79,19 @@ TPaletteHandle *getPaletteHandle() {
 */
 ColorModelViewer::ColorModelViewer(QWidget *parent)
     : FlipBook(parent, QString(tr("Color Model")),
-               FlipConsole::cFullConsole &
-                   (~(FlipConsole::eFilterRgbm | FlipConsole::cFilterGRgb |
-                      FlipConsole::eRate | FlipConsole::eSound |
-                      FlipConsole::eSaveImg | FlipConsole::eHisto |
-                      FlipConsole::eCompare | FlipConsole::eCustomize |
-                      FlipConsole::eSave | FlipConsole::eFilledRaster |
-                      FlipConsole::eDefineLoadBox | FlipConsole::eUseLoadBox |
-                      FlipConsole::eDefineSubCamera | FlipConsole::eLocator)),
+               std::vector<int>(
+                   {FlipConsole::eRed,          FlipConsole::eGreen,
+                    FlipConsole::eBlue,         FlipConsole::eMatte,
+                    FlipConsole::eGRed,         FlipConsole::eGGreen,
+                    FlipConsole::eGBlue,        FlipConsole::eRate,
+                    FlipConsole::eSound,        FlipConsole::eSaveImg,
+                    FlipConsole::eHisto,        FlipConsole::eCompare,
+                    FlipConsole::eCustomize,    FlipConsole::eSave,
+                    FlipConsole::eFilledRaster, FlipConsole::eDefineLoadBox,
+                    FlipConsole::eUseLoadBox,   FlipConsole::eDefineSubCamera,
+                    FlipConsole::eLocator,      FlipConsole::eZoomIn,
+                    FlipConsole::eZoomOut,      FlipConsole::eFlipHorizontal,
+                    FlipConsole::eFlipVertical, FlipConsole::eResetView}),
                eDontKeepFilesOpened, true)
     , m_mode(0)
     , m_currentRefImgPath(TFilePath()) {

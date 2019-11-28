@@ -215,6 +215,22 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button) {
     m_locator->raise();
     m_locator->activateWindow();
     break;
+
+  case FlipConsole::eZoomIn:
+    zoomIn();
+    break;
+  case FlipConsole::eZoomOut:
+    zoomOut();
+    break;
+  case FlipConsole::eFlipHorizontal:
+    flipX();
+    break;
+  case FlipConsole::eFlipVertical:
+    flipY();
+    break;
+  case FlipConsole::eResetView:
+    resetSceneViewer();
+    break;
   }
 }
 
