@@ -1802,6 +1802,8 @@ void MainWindow::defineActions() {
   QAction *timeStretchAction =
       createMenuCellsAction(MI_TimeStretch, tr("&Time Stretch..."), "");
   timeStretchAction->setIcon(QIcon(":Resources/timestretch.svg"));
+  createMenuCellsAction(MI_CreateBlankDrawing, tr("&Create Blank Drawing"),
+                        "Alt+D");
   createMenuCellsAction(MI_Duplicate, tr("&Duplicate Drawing  "), "D");
   createMenuCellsAction(MI_Autorenumber, tr("&Autorenumber"), "");
   createMenuCellsAction(MI_CloneLevel, tr("&Clone"), "");

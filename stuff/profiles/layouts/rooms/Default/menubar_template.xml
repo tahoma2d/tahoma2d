@@ -212,6 +212,7 @@
         </menu>
         <separator/>
         <command>MI_Autorenumber</command>
+        <command>MI_CreateBlankDrawing</command>
         <command>MI_Duplicate</command>
         <command>MI_MergeFrames</command>
         <command>MI_CloneLevel</command>
