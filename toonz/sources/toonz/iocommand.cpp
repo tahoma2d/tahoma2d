@@ -166,10 +166,10 @@ public:
         return A_CANCEL;
       }
       if (ret == 1 && checked > 0) {
-        Preferences::instance()->setDefaultImportPolicy(1);
+        Preferences::instance()->setValue(importPolicy, 1);
         TApp::instance()->getCurrentScene()->notifyImportPolicyChanged(1);
       } else if (ret == 2 && checked > 0) {
-        Preferences::instance()->setDefaultImportPolicy(2);
+        Preferences::instance()->setValue(importPolicy, 2);
         TApp::instance()->getCurrentScene()->notifyImportPolicyChanged(2);
       }
       m_importEnabled = (ret == 1);
@@ -1953,7 +1953,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       if (ret == 0) {
       }                     // do nothing
       else if (ret == 1) {  // Turn off pixels only mode
-        Preferences::instance()->setPixelsOnly(false);
+        Preferences::instance()->setValue(pixelsOnly, false);
         app->getCurrentScene()->notifyPixelUnitSelected(false);
       } else {  // ret = 2 : Resize the scene
         TDimensionD camSize = scene->getCurrentCamera()->getSize();
@@ -2727,8 +2727,8 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   } else if (ret == 2) {  // decode $scenefolder aliases case
     Preferences::PathAliasPriority oldPriority =
         Preferences::instance()->getPathAliasPriority();
-    Preferences::instance()->setPathAliasPriority(
-        Preferences::ProjectFolderOnly);
+    Preferences::instance()->setValue(pathAliasPriority,
+                                      Preferences::ProjectFolderOnly);
     for (int i = 0; i < sceneFolderLevels.size(); i++) {
       TXshLevel *level = sceneFolderLevels.at(i);
 
@@ -2737,7 +2737,7 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
           scene->codeFilePath(scene->decodeFilePath(level->getPath()));
       setPathToLevel(level, fp);
     }
-    Preferences::instance()->setPathAliasPriority(oldPriority);
+    Preferences::instance()->setValue(pathAliasPriority, oldPriority);
   }
 
   // Save the scene only case (ret == 3), do nothing
