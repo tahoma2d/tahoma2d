@@ -1255,7 +1255,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(xsheetMenu, MI_MergeCmapped);
   xsheetMenu->addSeparator();
   addMenuItem(xsheetMenu, MI_MergeColumns);
-  addMenuItem(xsheetMenu, MI_MergeColumnsWOGroups);
   addMenuItem(xsheetMenu, MI_DeleteMatchLines);
   addMenuItem(xsheetMenu, MI_DeleteInk);
   xsheetMenu->addSeparator();
