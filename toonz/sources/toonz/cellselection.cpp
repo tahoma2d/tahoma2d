@@ -246,7 +246,7 @@ public:
     int r0, c0, r1, c1;
     selection->getSelectedCells(r0, c0, r1, c1);
     if (c0 < 0) c0 = 0;  // Ignore camera column
-    m_selection    = new TCellSelection();
+    m_selection = new TCellSelection();
     m_selection->selectCells(r0, c0, r1, c1);
 
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -334,7 +334,7 @@ public:
     int r0, c0, r1, c1;
     selection->getSelectedCells(r0, c0, r1, c1);
     if (c0 < 0) c0 = 0;  // Ignore camera column
-    m_selection    = new TCellSelection();
+    m_selection = new TCellSelection();
     m_selection->selectCells(r0, c0, r1, c1);
 
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -474,7 +474,7 @@ bool pasteStrokesInCellWithoutUndo(
   TFrameId fid(1);
   if (cell.isEmpty()) {
     if (row > 0) cell = xsh->getCell(row - 1, col);
-    sl                = cell.getSimpleLevel();
+    sl = cell.getSimpleLevel();
     if (!sl || sl->getType() != PLI_XSHLEVEL) {
       ToonzScene *scene = app->getCurrentScene()->getScene();
       TXshLevel *xl     = scene->createNewLevel(PLI_XSHLEVEL);
@@ -557,7 +557,7 @@ public:
       else
         oldPalette = xsh->getCell(row - 1, col).getSimpleLevel()->getPalette();
     } else
-      oldPalette                 = cell.getSimpleLevel()->getPalette();
+      oldPalette = cell.getSimpleLevel()->getPalette();
     if (oldPalette) m_oldPalette = oldPalette->clone();
   }
 
@@ -640,14 +640,14 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
   TCamera *camera   = scene->getCurrentCamera();
   if (cell.isEmpty()) {
     if (row > 0) cell = xsh->getCell(row - 1, col);
-    sl                = cell.getSimpleLevel();
+    sl = cell.getSimpleLevel();
     if (!sl || (sl->getType() == OVL_XSHLEVEL &&
                 sl->getPath().getFrame() == TFrameId::NO_FRAME)) {
       int levelType;
       if (dynamic_cast<const ToonzImageData *>(rasterImageData))
         levelType = TZP_XSHLEVEL;
       else if (dynamic_cast<const FullColorImageData *>(rasterImageData))
-        levelType   = OVL_XSHLEVEL;
+        levelType = OVL_XSHLEVEL;
       TXshLevel *xl = 0;
       if (levelType == TZP_XSHLEVEL)
         xl = scene->createNewLevel(TZP_XSHLEVEL, L"", rasterImageData->getDim(),
@@ -721,11 +721,11 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
     affine *= sc;
     int i;
     TRectD boxD;
-    if (rects.size() > 0) boxD   = rects[0];
+    if (rects.size() > 0) boxD = rects[0];
     if (strokes.size() > 0) boxD = strokes[0].getBBox();
     for (i = 0; i < rects.size(); i++) boxD += rects[i];
     for (i = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
-    boxD   = affine * boxD;
+    boxD = affine * boxD;
     TPoint pos;
     if (sl->getType() == TZP_XSHLEVEL) {
       TRect box = ToonzImageUtils::convertWorldToRaster(boxD, img);
@@ -1600,7 +1600,7 @@ static void pasteRasterImageInCell(int row, int col,
   if (!cell.getSimpleLevel()) {
     createdFrame        = true;
     TXshSimpleLevel *sl = xsh->getCell(row - 1, col).getSimpleLevel();
-    if (sl) oldPalette  = sl->getPalette();
+    if (sl) oldPalette = sl->getPalette();
   } else {
     TXshSimpleLevel *sl = cell.getSimpleLevel();
     if (sl->getType() == OVL_XSHLEVEL &&
@@ -1610,8 +1610,8 @@ static void pasteRasterImageInCell(int row, int col,
     oldPalette = sl->getPalette();
   }
   if (oldPalette) oldPalette = oldPalette->clone();
-  TTileSet *tiles            = 0;
-  bool isPaste = pasteRasterImageInCellWithoutUndo(row, col, rasterImageData,
+  TTileSet *tiles = 0;
+  bool isPaste    = pasteRasterImageInCellWithoutUndo(row, col, rasterImageData,
                                                    &tiles, isLevelCreated);
   if (isLevelCreated && oldPalette.getPointer()) oldPalette = 0;
   if (!isPaste) return;
@@ -1719,9 +1719,8 @@ void TCellSelection::pasteCells() {
       return;
     }
     TKeyframeSelection selection;
-    if (isEmpty() &&
-        TApp::instance()->getCurrentObject()->getObjectId() ==
-            TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
+    if (isEmpty() && TApp::instance()->getCurrentObject()->getObjectId() ==
+                         TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
     // Se la selezione e' vuota e l'objectId e' quello della camera sono nella
     // colonna di camera quindi devo selezionare la row corrente e -1.
     {
@@ -1838,7 +1837,7 @@ void TCellSelection::pasteCells() {
     }
     if (vi) {
       TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
-      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
       assert(sl);
       StrokesData *strokesData = rasterImageData->toStrokesData(sl->getScene());
       pasteStrokesInCell(r0, c0, strokesData);
@@ -1861,7 +1860,7 @@ void TCellSelection::deleteCells() {
   int r0, c0, r1, c1;
   getSelectedCells(r0, c0, r1, c1);
   if (c0 < 0) c0 = 0;  // Ignore camera column
-  TXsheet *xsh   = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   // if all the selected cells are already empty, then do nothing
   if (xsh->isRectEmpty(CellPosition(r0, c0), CellPosition(r1, c1))) return;
   TCellData *data = new TCellData();
@@ -1932,9 +1931,8 @@ void TCellSelection::pasteKeyframesInto() {
     getSelectedCells(r0, c0, r1, c1);
 
     TKeyframeSelection selection;
-    if (isEmpty() &&
-        TApp::instance()->getCurrentObject()->getObjectId() ==
-            TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
+    if (isEmpty() && TApp::instance()->getCurrentObject()->getObjectId() ==
+                         TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
     // Se la selezione e' vuota e l'objectId e' quello della camera sono nella
     // colonna di camera quindi devo selezionare la row corrente e -1.
     {
@@ -2012,7 +2010,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
-  if (!isAutoCreateEnabled) Preferences::instance()->setAutocreationType(1);
+  if (!isAutoCreateEnabled)
+    Preferences::instance()->setValue(AutocreationType, 1, false);
 
   TImage *img = toolHandle->getTool()->touchImage();
 
@@ -2020,7 +2019,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (!img || !sl) {
-    if (!isAutoCreateEnabled) Preferences::instance()->setAutocreationType(0);
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(AutocreationType, 0, false);
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to create a blank drawing on the current column"));
@@ -2035,7 +2035,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   TUndoManager::manager()->add(undo);
 
   // Reset back to what these were
-  if (!isAutoCreateEnabled) Preferences::instance()->setAutocreationType(0);
+  if (!isAutoCreateEnabled)
+    Preferences::instance()->setValue(AutocreationType, 0, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2266,8 +2267,8 @@ public:
     m_oldCell = getXsheet()->getCell(m_row, m_col);
   }
   void onAdd() override {
-    m_newCell      = getXsheet()->getCell(m_row, m_col);
-    TImageP img    = m_newCell.getImage(false);
+    m_newCell   = getXsheet()->getCell(m_row, m_col);
+    TImageP img = m_newCell.getImage(false);
     if (img) m_img = img->cloneImage();
   }
   TXsheet *getXsheet() const {
@@ -2608,7 +2609,7 @@ void TCellSelection::overwritePasteNumbers() {
     // store celldata for undo
     r1 = r0 + cellData->getRowCount() - 1;
     if (cellData->getColCount() != 1 || c0 == c1)
-      c1                  = c0 + cellData->getColCount() - 1;
+      c1 = c0 + cellData->getColCount() - 1;
     TCellData *beforeData = new TCellData();
     beforeData->setCells(xsh, r0, c0, r1, c1);
 
