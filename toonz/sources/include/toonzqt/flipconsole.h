@@ -203,9 +203,6 @@ public:
     eRate,
     eSound,
     eHisto,
-    eBlackBg,
-    eWhiteBg,
-    eCheckBg,
     eSaveImg,
     eCompare,
     eCustomize,
@@ -220,6 +217,10 @@ public:
     eFlipHorizontal,
     eFlipVertical,
     eResetView,
+    // following values are hard-coded in ImagePainter
+    eBlackBg = 0x40000,
+    eWhiteBg = 0x80000,
+    eCheckBg = 0x100000,
     eEnd
   };
 
