@@ -3115,17 +3115,17 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
 //-----------------------------------------------------------------------------
 
 void CellArea::dragEnterEvent(QDragEnterEvent *e) {
-  bool isResourceOrFolderDrop = 
-	  acceptResourceOrFolderDrop(e->mimeData()->urls());
+  bool isResourceOrFolderDrop =
+      acceptResourceOrFolderDrop(e->mimeData()->urls());
   if (isResourceOrFolderDrop ||
       e->mimeData()->hasFormat(CastItems::getMimeFormat()) ||
       e->mimeData()->hasFormat("application/vnd.toonz.drawings")) {
     setDragTool(XsheetGUI::DragTool::makeDragAndDropDataTool(m_viewer));
-	// For file dragging force CopyAction
-	if (isResourceOrFolderDrop) e->setDropAction(Qt::CopyAction);
+    // For file dragging force CopyAction
+    if (isResourceOrFolderDrop) e->setDropAction(Qt::CopyAction);
     m_viewer->dragToolClick(e);
-	// For files, don't accept original proposed action in case it's a move
-	isResourceOrFolderDrop ? e->accept() : e->acceptProposedAction();
+    // For files, don't accept original proposed action in case it's a move
+    isResourceOrFolderDrop ? e->accept() : e->acceptProposedAction();
   }
 }
 
@@ -3141,7 +3141,7 @@ void CellArea::dragLeaveEvent(QDragLeaveEvent *e) {
 void CellArea::dragMoveEvent(QDragMoveEvent *e) {
   if (!getDragTool()) return;
   bool isResourceOrFolderDrop =
-	  acceptResourceOrFolderDrop(e->mimeData()->urls());
+      acceptResourceOrFolderDrop(e->mimeData()->urls());
   // For file dragging force CopyAction
   if (isResourceOrFolderDrop) e->setDropAction(Qt::CopyAction);
   m_viewer->dragToolDrag(e);
@@ -3158,12 +3158,12 @@ void CellArea::dropEvent(QDropEvent *e) {
     e->setDropAction(Qt::MoveAction);
     e->accept();
   } else if (acceptResourceOrFolderDrop(e->mimeData()->urls())) {
-	// For file dragging force CopyAction
-	e->setDropAction(Qt::CopyAction);
-	// For files, don't accept original proposed action in case it's a move
-	  e->accept();
+    // For file dragging force CopyAction
+    e->setDropAction(Qt::CopyAction);
+    // For files, don't accept original proposed action in case it's a move
+    e->accept();
   } else
-	e->acceptProposedAction();
+    e->acceptProposedAction();
 }
 
 //-----------------------------------------------------------------------------
@@ -3198,10 +3198,9 @@ const bool CellArea::isControlPressed() { return isCtrlPressed; }
 void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
   CommandManager *cmdManager = CommandManager::instance();
 
-  bool soundCellsSelected  = m_viewer->areSoundCellsSelected();
-  bool cameraCellsSelected = m_viewer->areCameraCellsSelected();
-
-  if (m_viewer->areSoundTextCellsSelected()) return;  // Magpies stop here
+  bool soundCellsSelected     = m_viewer->areSoundCellsSelected();
+  bool soundTextCellsSelected = m_viewer->areSoundTextCellsSelected();
+  bool cameraCellsSelected    = m_viewer->areCameraCellsSelected();
 
   menu.addSeparator();
 
@@ -3212,13 +3211,17 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
   }
 
   if (isCellSelected) {
+    bool addSeparator = false;
     // open fx settings instead of level settings when clicked on zerary fx
     // level
-    if (cell.m_level && cell.m_level->getZeraryFxLevel())
+    if (cell.m_level && cell.m_level->getZeraryFxLevel()) {
       menu.addAction(cmdManager->getAction(MI_FxParamEditor));
-    else
+      addSeparator = true;
+    } else if (!soundTextCellsSelected) {
       menu.addAction(cmdManager->getAction(MI_LevelSettings));
-    menu.addSeparator();
+      addSeparator = true;
+    }
+    if (addSeparator) menu.addSeparator();
 
     if (!soundCellsSelected) {
       QMenu *reframeSubMenu = new QMenu(tr("Reframe"), this);
@@ -3250,74 +3253,81 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
       }
       menu.addMenu(eachSubMenu);
 
-      QMenu *editCellNumbersMenu = new QMenu(tr("Edit Cell Numbers"), this);
-      {
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Reverse));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Swing));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Random));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Dup));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rollup));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rolldown));
-        editCellNumbersMenu->addAction(cmdManager->getAction(MI_TimeStretch));
-        editCellNumbersMenu->addAction(
-            cmdManager->getAction(MI_AutoInputCellNumber));
+      if (!soundTextCellsSelected) {
+        QMenu *editCellNumbersMenu = new QMenu(tr("Edit Cell Numbers"), this);
+        {
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Reverse));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Swing));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Random));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Dup));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rollup));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rolldown));
+          editCellNumbersMenu->addAction(cmdManager->getAction(MI_TimeStretch));
+          editCellNumbersMenu->addAction(
+              cmdManager->getAction(MI_AutoInputCellNumber));
+        }
+        menu.addMenu(editCellNumbersMenu);
       }
-      menu.addMenu(editCellNumbersMenu);
       menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
 
       menu.addSeparator();
-      menu.addAction(cmdManager->getAction(MI_Autorenumber));
+
+      if (!soundTextCellsSelected)
+        menu.addAction(cmdManager->getAction(MI_Autorenumber));
     }
 
-    QMenu *replaceLevelMenu = new QMenu(tr("Replace Level"), this);
-    menu.addMenu(replaceLevelMenu);
+    if (!soundTextCellsSelected) {
+      QMenu *replaceLevelMenu = new QMenu(tr("Replace Level"), this);
+      menu.addMenu(replaceLevelMenu);
 
-    replaceLevelMenu->addAction(cmdManager->getAction(MI_ReplaceLevel));
+      replaceLevelMenu->addAction(cmdManager->getAction(MI_ReplaceLevel));
 
-    replaceLevelMenu->addAction(
-        cmdManager->getAction(MI_ReplaceParentDirectory));
+      replaceLevelMenu->addAction(
+          cmdManager->getAction(MI_ReplaceParentDirectory));
 
-    {
-      // replace with another level in scene cast
-      std::vector<TXshLevel *> levels;
-      TApp::instance()
-          ->getCurrentScene()
-          ->getScene()
-          ->getLevelSet()
-          ->listLevels(levels);
-      if (!levels.empty()) {
-        QMenu *replaceMenu = replaceLevelMenu->addMenu(tr("Replace with"));
-        connect(replaceMenu, SIGNAL(triggered(QAction *)), this,
-                SLOT(onReplaceByCastedLevel(QAction *)));
-        for (int i = 0; i < (int)levels.size(); i++) {
-          if (!levels[i]->getSimpleLevel() && !levels[i]->getChildLevel())
-            continue;
+      {
+        // replace with another level in scene cast
+        std::vector<TXshLevel *> levels;
+        TApp::instance()
+            ->getCurrentScene()
+            ->getScene()
+            ->getLevelSet()
+            ->listLevels(levels);
+        if (!levels.empty()) {
+          QMenu *replaceMenu = replaceLevelMenu->addMenu(tr("Replace with"));
+          connect(replaceMenu, SIGNAL(triggered(QAction *)), this,
+                  SLOT(onReplaceByCastedLevel(QAction *)));
+          for (int i = 0; i < (int)levels.size(); i++) {
+            if (!levels[i]->getSimpleLevel() && !levels[i]->getChildLevel())
+              continue;
 
-          if (levels[i]->getChildLevel() &&
-              !TApp::instance()->getCurrentXsheet()->getXsheet()->isLevelUsed(
-                  levels[i]))
-            continue;
+            if (levels[i]->getChildLevel() &&
+                !TApp::instance()->getCurrentXsheet()->getXsheet()->isLevelUsed(
+                    levels[i]))
+              continue;
 
-          QString tmpLevelName = QString::fromStdWString(levels[i]->getName());
-          QAction *tmpAction   = new QAction(tmpLevelName, replaceMenu);
-          tmpAction->setData(tmpLevelName);
-          replaceMenu->addAction(tmpAction);
+            QString tmpLevelName =
+                QString::fromStdWString(levels[i]->getName());
+            QAction *tmpAction = new QAction(tmpLevelName, replaceMenu);
+            tmpAction->setData(tmpLevelName);
+            replaceMenu->addAction(tmpAction);
+          }
         }
       }
-    }
 
-    if (!soundCellsSelected) {
-      if (selectionContainTlvImage(m_viewer->getCellSelection(),
-                                   m_viewer->getXsheet()))
-        replaceLevelMenu->addAction(
-            cmdManager->getAction(MI_RevertToCleanedUp));
-      if (selectionContainLevelImage(m_viewer->getCellSelection(),
+      if (!soundCellsSelected && !soundTextCellsSelected) {
+        if (selectionContainTlvImage(m_viewer->getCellSelection(),
                                      m_viewer->getXsheet()))
-        replaceLevelMenu->addAction(
-            cmdManager->getAction(MI_RevertToLastSaved));
-      menu.addAction(cmdManager->getAction(MI_SetKeyframes));
+          replaceLevelMenu->addAction(
+              cmdManager->getAction(MI_RevertToCleanedUp));
+        if (selectionContainLevelImage(m_viewer->getCellSelection(),
+                                       m_viewer->getXsheet()))
+          replaceLevelMenu->addAction(
+              cmdManager->getAction(MI_RevertToLastSaved));
+        menu.addAction(cmdManager->getAction(MI_SetKeyframes));
+      }
+      menu.addSeparator();
     }
-    menu.addSeparator();
 
     menu.addAction(cmdManager->getAction(MI_Cut));
     menu.addAction(cmdManager->getAction(MI_Copy));
@@ -3332,8 +3342,10 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
 
     menu.addAction(cmdManager->getAction(MI_Clear));
     menu.addAction(cmdManager->getAction(MI_Insert));
-    menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
-    menu.addAction(cmdManager->getAction(MI_Duplicate));
+    if (!soundTextCellsSelected) {
+      menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
+      menu.addAction(cmdManager->getAction(MI_Duplicate));
+    }
     menu.addSeparator();
 
     TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
@@ -3383,6 +3395,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
   if (!soundCellsSelected)
     menu.addAction(cmdManager->getAction(MI_ImportMagpieFile));
 }
+
 //-----------------------------------------------------------------------------
 /*! replace level with another level in the cast
  */
