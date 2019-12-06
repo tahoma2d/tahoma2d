@@ -875,6 +875,12 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
         m_application->getCurrentObject()->getObjectId().getIndex());
   }
 
+  bool isZeraryCol =
+      column ? (column->getZeraryFxColumn() ? true : false) : false;
+  bool isPaletteCol =
+      column ? (column->getPaletteColumn() ? true : false) : false;
+  bool isMeshCol = column ? (column->getMeshColumn() ? true : false) : false;
+
   // Check against splines
   if (spline && (toolType & TTool::LevelTool)) {
     return (targetType & Splines)
@@ -930,8 +936,10 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   if (toolType & TTool::LevelTool) {
     // Check against empty levels
     if (!xl)
-      return (targetType & EmptyTarget) ? (enable(true), QString())
-                                        : (enable(false), QString());
+      return ((targetType & EmptyTarget) && !isZeraryCol && !isPaletteCol &&
+              !isMeshCol)
+                 ? (enable(true), QString())
+                 : (enable(false), QString());
 
     // Check against simple-level-edness
     if (!sl)
