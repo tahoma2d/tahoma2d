@@ -2027,6 +2027,15 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
     return;
   }
 
+  if (!toolHandle->getTool()->m_isFrameCreated) {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "Unable to replace the current drawing with a blank drawing"));
+    return;
+  }
+
+  sl->setDirtyFlag(true);
+
   TPalette *palette = sl->getPalette();
   TFrameId frame    = cell.getFrameId();
 
