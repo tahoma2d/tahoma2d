@@ -1408,6 +1408,10 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_CloneLevel, &TCellSelection::cloneLevel);
   enableCommand(this, MI_SetKeyframes, &TCellSelection::setKeyframes);
 
+  enableCommand(this, MI_ShiftKeyframesDown,
+                &TCellSelection::shiftKeyframesDown);
+  enableCommand(this, MI_ShiftKeyframesUp, &TCellSelection::shiftKeyframesUp);
+
   enableCommand(this, MI_Copy, &TCellSelection::copyCells);
   enableCommand(this, MI_Paste, &TCellSelection::pasteCells);
 
@@ -1462,6 +1466,8 @@ bool TCellSelection::isEnabledCommand(
                                         MI_TimeStretch,
                                         MI_CloneLevel,
                                         MI_SetKeyframes,
+                                        MI_ShiftKeyframesDown,
+                                        MI_ShiftKeyframesUp,
                                         MI_Copy,
                                         MI_Paste,
                                         MI_PasteInto,
