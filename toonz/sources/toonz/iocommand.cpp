@@ -2247,10 +2247,7 @@ DVGui::ProgressDialog &LoadScopedBlock::progressDialog() const {
 //=============================================================================
 
 int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
-                         LoadScopedBlock *sb, int xFrom, int xTo,
-                         std::wstring levelName, int step, int inc,
-                         int frameCount, bool doesFileActuallyExist,
-                         CacheTlvBehavior cachingBehavior) {
+                         LoadScopedBlock *sb) {
   struct locals {
     static bool isDir(const LoadResourceArguments::ResourceData &rd) {
       return QFileInfo(rd.m_path.getQString()).isDir();
@@ -2282,7 +2279,7 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   bool isSoundLevel = false;
 
   // show wait cursor in case of caching all images because it is time consuming
-  if (cachingBehavior == ALL_ICONS_AND_IMAGES)
+  if (args.cachingBehavior == LoadResourceArguments::ALL_ICONS_AND_IMAGES)
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
   // Initialize progress dialog
@@ -2441,15 +2438,15 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
       }
 
       try {
-        xl = ::loadResource(scene, rd, args.castFolder, row0, col0, row1, col1,
-                            args.expose,
+        xl = ::loadResource(
+            scene, rd, args.castFolder, row0, col0, row1, col1, args.expose,
 #if (__cplusplus > 199711L)
-                            std::move(fIds),
+            std::move(fIds),
 #else
-                            fIds,
+            fIds,
 #endif
-                            xFrom, xTo, levelName, step, inc, frameCount,
-                            doesFileActuallyExist);
+            args.xFrom, args.xTo, args.levelName, args.step, args.inc,
+            args.frameCount, args.doesFileActuallyExist);
         if (updateRecentFile) {
           RecentFiles::instance()->addFilePath(
               toQString(scene->decodeFilePath(path)), RecentFiles::Level);
@@ -2466,10 +2463,12 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
         ++loadedCount;
 
         // load the image data of all frames to cache at the beginning
-        if (cachingBehavior != ON_DEMAND) {
+        if (args.cachingBehavior != LoadResourceArguments::ON_DEMAND) {
           TXshSimpleLevel *simpleLevel = xl->getSimpleLevel();
           if (simpleLevel && simpleLevel->getType() == TZP_XSHLEVEL) {
-            bool cacheImagesAsWell = (cachingBehavior == ALL_ICONS_AND_IMAGES);
+            bool cacheImagesAsWell =
+                (args.cachingBehavior ==
+                 LoadResourceArguments::ALL_ICONS_AND_IMAGES);
             simpleLevel->loadAllIconsAndPutInCache(cacheImagesAsWell);
           }
         }
@@ -2483,7 +2482,7 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   sb->data().m_hasSoundLevel = sb->data().m_hasSoundLevel || isSoundLevel;
 
   // revert the cursor
-  if (cachingBehavior == ALL_ICONS_AND_IMAGES)
+  if (args.cachingBehavior == LoadResourceArguments::ALL_ICONS_AND_IMAGES)
     QApplication::restoreOverrideCursor();
 
   return loadedCount;
@@ -2677,9 +2676,9 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   str = QObject::tr(
             "The following level(s) use path with $scenefolder alias.\n\n") +
         str +
-	    QObject::tr(
-                  "\nThey will not be opened properly when you load the "
-                  "scene next time.\nWhat do you want to do?");
+        QObject::tr(
+            "\nThey will not be opened properly when you load the "
+            "scene next time.\nWhat do you want to do?");
 
   int ret = DVGui::MsgBox(
       str, QObject::tr("Copy the levels to correspondent paths"),

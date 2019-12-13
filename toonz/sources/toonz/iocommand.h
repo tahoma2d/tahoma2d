@@ -126,19 +126,22 @@ public:
 
   std::vector<TXshLevel *> loadedLevels;  //!< [\p Out]     Levels loaded by
                                           //! resource loading procedures.
+
+  int xFrom, xTo;
+  std::wstring levelName;
+  int step, inc, frameCount;
+  bool doesFileActuallyExist;
+
+  enum CacheTlvBehavior {
+    ON_DEMAND = 0,  // image data will be loaded when needed
+    ALL_ICONS,      // icon data of all frames will be cached at the begininng
+    ALL_ICONS_AND_IMAGES  // both icon and image data of all frames will be
+                          // cached at the begininng
+  } cachingBehavior;
   //! Multiple
   //!               levels \a may be loaded for a single resource data.
 public:
-  LoadResourceArguments()
-      : row0(-1)
-      , col0(-1)
-      , row1(-1)
-      , col1(-1)
-      , importPolicy(static_cast<ImportPolicy>(
-            Preferences::instance()->getDefaultImportPolicy()))
-      , expose(Preferences::instance()->isAutoExposeEnabled()) {}
-
-  LoadResourceArguments(const TFilePath &fp,
+  LoadResourceArguments(const TFilePath &fp   = TFilePath(),
                         const TFilePath &cast = TFilePath())
       : castFolder(cast)
       , row0(-1)
@@ -147,8 +150,16 @@ public:
       , col1(-1)
       , importPolicy(static_cast<ImportPolicy>(
             Preferences::instance()->getDefaultImportPolicy()))
-      , expose(Preferences::instance()->isAutoExposeEnabled()) {
-    resourceDatas.push_back(fp);
+      , expose(Preferences::instance()->isAutoExposeEnabled())
+      , xFrom(-1)
+      , xTo(-1)
+      , levelName(L"")
+      , step(-1)
+      , inc(-1)
+      , frameCount(-1)
+      , doesFileActuallyExist(true)
+      , cachingBehavior(ON_DEMAND) {
+    if (!fp.isEmpty()) resourceDatas.push_back(fp);
   }
 };
 
@@ -203,25 +214,16 @@ bool saveSound(TXshSoundLevel *sc);
 /*! \note     Will fallback to loadResourceFolders() in case all
               argument paths are folders.                                 */
 
-enum CacheTlvBehavior {
-  ON_DEMAND = 0,  // image data will be loaded when needed
-  ALL_ICONS,      // icon data of all frames will be cached at the begininng
-  ALL_ICONS_AND_IMAGES  // both icon and image data of all frames will be cached
-                        // at the begininng
-};
-
 int loadResources(
     LoadResourceArguments &args,  //!< Resources to be loaded.
     bool updateRecentFiles =
         true,  //!< Whether Toonz's <I>Recent Files</I> list must be updated.
     LoadResourceArguments::ScopedBlock *sb =
-        0,  //!< Load block. May be nonzero in order to extend block data
-            //!  access and finalization.
-            //!< Loads a group of resources by path.
-            //!  \return  The actually loaded levels count.
-    int xFrom = -1, int xTo = -1, std::wstring levelName = L"", int step = -1,
-    int inc = -1, int frameCount = -1, bool doesFileActuallyExist = true,
-    CacheTlvBehavior cachingBehavior = ON_DEMAND);
+        0  //!< Load block. May be nonzero in order to extend block data
+           //!  access and finalization.
+           //!< Loads a group of resources by path.
+           //!  \return  The actually loaded levels count.
+);
 
 int loadResourceFolders(
     LoadResourceArguments &args,  //!< Resource folders to be loaded.
