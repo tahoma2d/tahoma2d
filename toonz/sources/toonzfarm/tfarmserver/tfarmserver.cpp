@@ -76,8 +76,7 @@ TFilePath getGlobalRoot() {
 // Leggo la localRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() +
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
@@ -121,8 +120,7 @@ TFilePath getLocalRoot() {
 #else
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() + 
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
