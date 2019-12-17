@@ -303,6 +303,9 @@ public slots:
   // the selection
   void onSelectionChanged(TSelection *selection);
 
+protected slots:
+  void onFilePathDoubleClicked(const TFilePath &path);
+
 private:
   // update the fields acording to the current Path
   void updateBottomGUI(void);

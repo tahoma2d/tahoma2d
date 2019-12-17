@@ -860,6 +860,8 @@ LoadLevelPopup::LoadLevelPopup()
           SLOT(onNameSetEditted()));
   connect(m_browser, SIGNAL(treeFolderChanged(const TFilePath &)), this,
           SLOT(onNameSetEditted()));
+  connect(m_browser, SIGNAL(filePathDoubleClicked(const TFilePath&)), this,
+          SLOT(onFilePathDoubleClicked(const TFilePath&)));
 }
 
 //-----------------------------------------------------------------------
@@ -1213,6 +1215,14 @@ void LoadLevelPopup::initFolder() {
   setFolder(fp);
   onFilePathsSelected(getCurrentPathSet(), getCurrentFIdsSet());
 }
+
+//----------------------------------------------------------------------------
+
+void LoadLevelPopup::onFilePathDoubleClicked(const TFilePath& path) {
+  Q_UNUSED(path);
+  onOkPressed();
+}
+
 //----------------------------------------------------------------------------
 
 void LoadLevelPopup::onFilePathsSelected(
