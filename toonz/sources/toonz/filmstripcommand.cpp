@@ -2226,6 +2226,27 @@ public:
 // duplicate
 //-----------------------------------------------------------------------------
 
+void FilmstripCmd::duplicateFrameWithoutUndo(TXshSimpleLevel *sl,
+                                             TFrameId srcFrame,
+                                             TFrameId targetFrame) {
+  if (srcFrame.isNoFrame() || targetFrame.isNoFrame()) return;
+  if (srcFrame.isEmptyFrame()) return;
+
+  std::set<TFrameId> frames;
+
+  frames.insert(srcFrame);
+  DrawingData *data = new DrawingData();
+  data->setLevelFrames(sl, frames);
+
+  frames.clear();
+  frames.insert(targetFrame);
+
+  bool keepOriginalPalette = true;
+
+  pasteFramesWithoutUndo(data, sl, frames, DrawingData::OVER_SELECTION, true,
+                         keepOriginalPalette);
+}
+
 void FilmstripCmd::duplicate(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
                              bool withUndo) {
   if (frames.empty() || !sl || sl->isSubsequence() || sl->isReadOnly()) return;

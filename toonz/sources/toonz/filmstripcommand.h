@@ -40,6 +40,8 @@ void swing(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void step(TXshSimpleLevel *sl, std::set<TFrameId> &frames, int step);
 void each(TXshSimpleLevel *sl, std::set<TFrameId> &frames, int each);
 
+void duplicateFrameWithoutUndo(TXshSimpleLevel *sl, TFrameId srcFrame,
+                               TFrameId targetFrame);
 void duplicate(TXshSimpleLevel *sl, std::set<TFrameId> &frames, bool withUndo);
 
 // TODO vanno spostati in un altro posto
