@@ -1972,6 +1972,11 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
+#ifdef WITH_STOPMOTION
+  createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
+                          "");
+
+#endif
   createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
 #ifdef LINETEST
   createMenuWindowsAction(MI_OpenLineTestCapture, tr("&LineTest Capture"), "");
@@ -2291,6 +2296,20 @@ void MainWindow::defineActions() {
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
+#ifdef WITH_STOPMOTION
+  createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "Enter");
+  createAction(MI_StopMotionRaiseOpacity, tr("Raise Stop Motion Opacity"), "");
+  createAction(MI_StopMotionLowerOpacity, tr("Lower Stop Motion Opacity"), "");
+  createAction(MI_StopMotionToggleLiveView, tr("Toggle Stop Motion Live View"),
+               "");
+  createAction(MI_StopMotionToggleZoom, tr("Toggle Stop Motion Zoom"), "");
+  createAction(MI_StopMotionLowerSubsampling,
+               tr("Lower Stop Motion Level Subsampling"), "");
+  createAction(MI_StopMotionRaiseSubsampling,
+               tr("Raise Stop Motion Level Subsampling"), "");
+  createAction(MI_StopMotionJumpToCamera, tr("Go to Stop Motion Insert Frame"),
+               "");
+#endif
 }
 
 //-----------------------------------------------------------------------------

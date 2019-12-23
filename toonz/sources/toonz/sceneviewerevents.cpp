@@ -17,6 +17,10 @@
 #include "locatorpopup.h"
 #include "cellselection.h"
 
+#ifdef WITH_STOPMOTION
+#include "stopmotion.h"
+#endif
+
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/styleselection.h"
@@ -580,6 +584,11 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       tool->mouseMove(pos, event);
     }
     if (!cursorSet) setToolCursor(this, tool->getCursorId());
+
+#ifdef WITH_STOPMOTION
+    if (StopMotion::instance()->m_pickLiveViewZoom)
+      setToolCursor(this, ToolCursor::ZoomCursor);
+#endif
     m_pos          = curPos;
     m_tabletMove   = false;
     m_toolSwitched = false;
@@ -721,6 +730,17 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     pos.x /= m_dpiScale.x;
     pos.y /= m_dpiScale.y;
   }
+
+#ifdef WITH_STOPMOTION
+  // grab screen picking for stop motion live view zoom
+  if (StopMotion::instance()->m_pickLiveViewZoom) {
+    StopMotion::instance()->m_pickLiveViewZoom = false;
+    StopMotion::instance()->makeZoomPoint(pos);
+    if (tool) setToolCursor(this, tool->getCursorId());
+    if (m_mouseButton != Qt::RightButton) return;
+  }
+#endif
+
   // separate tablet and mouse events
   if (m_tabletEvent && m_tabletState == Touched) {
     TApp::instance()->getCurrentTool()->setToolBusy(true);

@@ -151,6 +151,7 @@ QGroupBox {
   qproperty-BottomBelowLineColor: #212223;
 }
 .tab-flat,
+#StopMotionTabBar::tab,
 #StyleEditorTabBar::tab,
 #PaletteTabBar::tab,
 #FxSettingsTabBar::tab {
@@ -161,6 +162,7 @@ QGroupBox {
   padding: 3 4 3 4;
 }
 .tab-flat:hover,
+#StopMotionTabBar::tab:hover,
 #StyleEditorTabBar::tab:hover,
 #PaletteTabBar::tab:hover,
 #FxSettingsTabBar::tab:hover {
@@ -168,6 +170,7 @@ QGroupBox {
   color: #94969a;
 }
 .tab-flat:selected,
+#StopMotionTabBar::tab:selected,
 #StyleEditorTabBar::tab:selected,
 #PaletteTabBar::tab:selected,
 #FxSettingsTabBar::tab:selected {
@@ -176,6 +179,7 @@ QGroupBox {
   border-bottom-color: #414345;
 }
 .tab-flat:only-one,
+#StopMotionTabBar::tab:only-one,
 #StyleEditorTabBar::tab:only-one,
 #PaletteTabBar::tab:only-one,
 #FxSettingsTabBar::tab:only-one {
@@ -1157,6 +1161,29 @@ PencilTestPopup {
 }
 #LargeSizedText {
   font-size: 17px;
+}
+/* -----------------------------------------------------------------------------
+   Stop Motion Controller
+----------------------------------------------------------------------------- */
+#StopMotionController QScrollArea {
+  margin: 8;
+}
+#StopMotionController QPushButton {
+  margin: 2 1;
+  padding: 0;
+}
+#StopMotionController #TabBarContainer {
+  margin-left: -4;
+}
+#StopMotionController #bottomWidget {
+  border-top: 1 solid #212223;
+  padding: 3 2 8 3;
+}
+#StopMotionController #bottomWidget QPushButton {
+  padding: 3 5;
+}
+#StopMotionTabBar::tab::first {
+  border-left: 1 solid #212223;
 }
 /* -----------------------------------------------------------------------------
    Unknowns + Legacy

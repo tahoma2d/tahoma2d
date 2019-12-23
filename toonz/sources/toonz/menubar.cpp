@@ -1423,6 +1423,9 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenTMessage);
   addMenuItem(windowsMenu, MI_OpenHistoryPanel);
   addMenuItem(windowsMenu, MI_AudioRecording);
+#ifdef WITH_STOPMOTION
+  addMenuItem(windowsMenu, MI_OpenStopMotionPanel);
+#endif
   addMenuItem(windowsMenu, MI_StartupPopup);
 #ifdef LINETEST
   windowsMenu->addSeparator();

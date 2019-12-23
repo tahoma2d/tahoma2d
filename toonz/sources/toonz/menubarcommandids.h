@@ -95,6 +95,7 @@
 #define MI_OpenCommandToolbar "MI_OpenCommandToolbar"
 #define MI_OpenToolOptionBar "MI_OpenToolOptionBar"
 #define MI_OpenLevelView "MI_OpenLevelView"
+#define MI_OpenStopMotionPanel "MI_OpenStopMotionPanel"
 #ifdef LINETEST
 #define MI_OpenExport "MI_OpenExport"
 #define MI_OpenLineTestView "MI_OpenLineTestView"
@@ -350,6 +351,15 @@
 #define MI_AutoInputCellNumber "MI_AutoInputCellNumber"
 #define MI_TouchGestureControl "MI_TouchGestureControl"
 #define MI_SeparateColors "MI_SeparateColors"
+
+#define MI_StopMotionCapture "MI_StopMotionCapture"
+#define MI_StopMotionRaiseOpacity "MI_StopMotionRaiseOpacity"
+#define MI_StopMotionLowerOpacity "MI_StopMotionLowerOpacity"
+#define MI_StopMotionToggleLiveView "MI_StopMotionToggleLiveView"
+#define MI_StopMotionToggleZoom "MI_StopMotionToggleZoom"
+#define MI_StopMotionLowerSubsampling "MI_StopMotionLowerSubsampling"
+#define MI_StopMotionRaiseSubsampling "MI_StopMotionRaiseSubsampling"
+#define MI_StopMotionJumpToCamera "MI_StopMotionJumpToCamera"
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"
