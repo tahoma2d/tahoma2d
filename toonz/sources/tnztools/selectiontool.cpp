@@ -13,6 +13,8 @@
 
 #include <QKeyEvent>
 
+#include <memory>
+
 using namespace ToolUtils;
 using namespace DragSelectionTool;
 
@@ -20,50 +22,30 @@ TEnv::StringVar SelectionType("SelectionType", "Rectangular");
 
 //-----------------------------------------------------------------------------
 
-DragSelectionTool::DragTool *createNewMoveSelectionTool(SelectionTool *st) {
+template <typename Tv, typename Tr, typename... Args> DragSelectionTool::DragTool* createNewDragTool(SelectionTool* st, Args... args) {
   VectorSelectionTool *vst = dynamic_cast<VectorSelectionTool *>(st);
   RasterSelectionTool *rst = dynamic_cast<RasterSelectionTool *>(st);
   if (vst)
-    return new DragSelectionTool::VectorMoveSelectionTool(vst);
+    return new Tv(vst, args...);
   else if (rst)
-    return new DragSelectionTool::RasterMoveSelectionTool(rst);
-  return 0;
+    return new Tr(rst, args...);
+  return nullptr;
 }
 
-//-----------------------------------------------------------------------------
+DragSelectionTool::DragTool *createNewMoveSelectionTool(SelectionTool *st) {
+  return createNewDragTool<VectorMoveSelectionTool, RasterMoveSelectionTool>(st);
+}
 
 DragSelectionTool::DragTool *createNewRotationTool(SelectionTool *st) {
-  VectorSelectionTool *vst = dynamic_cast<VectorSelectionTool *>(st);
-  RasterSelectionTool *rst = dynamic_cast<RasterSelectionTool *>(st);
-  if (vst)
-    return new DragSelectionTool::VectorRotationTool(vst);
-  else if (rst)
-    return new DragSelectionTool::RasterRotationTool(rst);
-  return 0;
+  return createNewDragTool<VectorRotationTool, RasterRotationTool>(st);
 }
-
-//-----------------------------------------------------------------------------
 
 DragSelectionTool::DragTool *createNewFreeDeformTool(SelectionTool *st) {
-  VectorSelectionTool *vst = dynamic_cast<VectorSelectionTool *>(st);
-  RasterSelectionTool *rst = dynamic_cast<RasterSelectionTool *>(st);
-  if (vst)
-    return new DragSelectionTool::VectorFreeDeformTool(vst);
-  else if (rst)
-    return new DragSelectionTool::RasterFreeDeformTool(rst);
-  return 0;
+  return createNewDragTool<VectorFreeDeformTool, RasterFreeDeformTool>(st);
 }
 
-//-----------------------------------------------------------------------------
-
-DragSelectionTool::DragTool *createNewScaleTool(SelectionTool *st, int type) {
-  VectorSelectionTool *vst = dynamic_cast<VectorSelectionTool *>(st);
-  RasterSelectionTool *rst = dynamic_cast<RasterSelectionTool *>(st);
-  if (vst)
-    return new DragSelectionTool::VectorScaleTool(vst, type);
-  else if (rst)
-    return new DragSelectionTool::RasterScaleTool(rst, type);
-  return 0;
+DragSelectionTool::DragTool *createNewScaleTool(SelectionTool *st, ScaleType type) {
+  return createNewDragTool<VectorScaleTool, RasterScaleTool>(st, type);
 }
 
 //=============================================================================
@@ -559,7 +541,7 @@ void DragSelectionTool::MoveSelection::leftButtonDrag(const TPointD &pos,
 // Scale
 //-----------------------------------------------------------------------------
 
-DragSelectionTool::Scale::Scale(DeformTool *deformTool, int type)
+DragSelectionTool::Scale::Scale(DeformTool *deformTool, ScaleType type)
     : m_deformTool(deformTool)
     , m_startCenter(deformTool->getTool()->getCenter())
     , m_type(type)
@@ -800,7 +782,7 @@ void DragSelectionTool::Scale::leftButtonDrag(const TPointD &pos,
   }
   TPointD newPos    = pos;
   int selectedIndex = tool->getSelectedPoint();
-  if (m_isShiftPressed && m_type == GLOBAL) {
+  if (m_isShiftPressed && m_type == ScaleType::GLOBAL) {
     TPointD point = tool->getBBox().getPoint(selectedIndex);
     TPointD delta;
     if (!isBboxReset)
@@ -1069,11 +1051,11 @@ void SelectionTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     else if (m_what == MOVE_CENTER)
       m_dragTool = new MoveCenterTool(this);
     else if (m_what == SCALE)
-      m_dragTool = createNewScaleTool(this, 0);
+      m_dragTool = createNewScaleTool(this, ScaleType::GLOBAL);
     else if (m_what == SCALE_X)
-      m_dragTool = createNewScaleTool(this, 1);
+      m_dragTool = createNewScaleTool(this, ScaleType::HORIZONTAL);
     else if (m_what == SCALE_Y)
-      m_dragTool = createNewScaleTool(this, 2);
+      m_dragTool = createNewScaleTool(this, ScaleType::VERTICAL);
     else if (m_what == DEFORM)
       m_dragTool = createNewFreeDeformTool(this);
     else if (m_what == GLOBAL_THICKNESS)
@@ -1150,15 +1132,13 @@ bool SelectionTool::keyDown(QKeyEvent *event) {
 
   if (!ti && !vi && !ri) return false;
 
-  DragTool *dragTool = createNewMoveSelectionTool(this);
+  std::unique_ptr<DragTool> dragTool(createNewMoveSelectionTool(this));
   TAffine aff        = TTranslation(delta);
   dragTool->transform(aff);
   double factor = 1.0 / Stage::inch;
   m_deformValues.m_moveValue += factor * delta;
   dragTool->addTransformUndo();
   TTool::getApplication()->getCurrentTool()->notifyToolChanged();
-  delete dragTool;
-  dragTool = 0;
 
   invalidate();
   return true;

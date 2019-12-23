@@ -152,10 +152,10 @@ public:
 
   SelectionTool *getTool() const { return m_tool; }
 
-  virtual void transform(TAffine aff, double angle){};
-  virtual void transform(TAffine aff){};
-  virtual TPointD transform(int index, TPointD newPos) { return TPointD(); };
-  virtual void addTransformUndo(){};
+  virtual void transform(TAffine aff, double angle){}
+  virtual void transform(TAffine aff){}
+  virtual TPointD transform(int index, TPointD newPos) { return TPointD(); }
+  virtual void addTransformUndo(){}
 
   virtual void leftButtonDown(const TPointD &pos, const TMouseEvent &) = 0;
   virtual void leftButtonDrag(const TPointD &pos, const TMouseEvent &) = 0;
@@ -254,6 +254,12 @@ public:
 // Scale
 //-----------------------------------------------------------------------------
 
+enum class ScaleType {
+  GLOBAL = 0,
+  HORIZONTAL,
+  VERTICAL
+};
+
 class Scale {
   TPointD m_startCenter;
   bool m_isShiftPressed;
@@ -264,9 +270,9 @@ class Scale {
   DeformTool *m_deformTool;
 
 public:
-  enum Type { GLOBAL = 0, HORIZONTAL = 1, VERTICAL = 2 };
-  int m_type;
-  Scale(DeformTool *deformTool, int type);
+
+  ScaleType m_type;
+  Scale(DeformTool *deformTool, ScaleType type);
 
   /*! Return intersection between straight line in \b point0, \b point1 and
 straight line for
@@ -309,7 +315,7 @@ compute scaleValue. */
 DragSelectionTool::DragTool *createNewMoveSelectionTool(SelectionTool *st);
 DragSelectionTool::DragTool *createNewRotationTool(SelectionTool *st);
 DragSelectionTool::DragTool *createNewFreeDeformTool(SelectionTool *st);
-DragSelectionTool::DragTool *createNewScaleTool(SelectionTool *st, int type);
+DragSelectionTool::DragTool *createNewScaleTool(SelectionTool *st, DragSelectionTool::ScaleType type);
 
 //=============================================================================
 // SelectionTool
@@ -347,6 +353,7 @@ protected:
     GLOBAL_THICKNESS,
     ADD_SELECTION
   } m_what;  // RV
+
   enum {
     P00 = 0,
     P10 = 1,
@@ -400,7 +407,7 @@ public:
   DragSelectionTool::DeformValues m_deformValues;
 
   SelectionTool(int targetType);
-  ~SelectionTool();
+  ~SelectionTool() override;
 
   ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
