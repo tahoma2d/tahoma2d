@@ -72,7 +72,7 @@ Rename the following files:
 
 ## Building with extended stop motion support for webcams and Canon DSLR cameras.
 You will need three additional libraries.
-  - [OpenCV](https://opencv.org/)
+  - [OpenCV](https://opencv.org/) (v4.1.0 and later)
   - [libjpeg-turbo](https://www.libjpeg-turbo.org/)
   - The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
@@ -80,10 +80,9 @@ Copy the following folders into the `$opentoonz/thirdparty` folder.
   - Copy the Header and library folders from the Canon SDK to `$opentoonz/thirdparty/canon`
     - Make sure that the library is the one from the EDSDK_64 folder.
   - Copy the lib and include folders from libjpeg-turbo64 into `$opentoonz/thirdparty/libjpeg-turbo64`.
-  - Copy the include folder from opencv2/build into `$opentoonz/thirdparty/opencv2`
-  - Copy the lib folder from opencv2/build/x64/vc15 into `$opentoonz/thirdparty/opencv2`
 
 Check the checkbox in CMake to build with stop motion support.
+On configuring with CMake or in the environmental variables, specify `OpenCV_DIR` to the `build` folder in the install folder of OpenCV (like `C:/opencv/build`).
 
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 

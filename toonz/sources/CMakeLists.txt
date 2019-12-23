@@ -272,6 +272,7 @@ if(BUILD_ENV_MSVC AND NOT WITH_STOPMOTION)
 endif()
 
 if(BUILD_ENV_MSVC AND WITH_STOPMOTION)
+    find_package(OpenCV 4.1 REQUIRED)
     include_directories(
         SYSTEM
         ${SDKROOT}/glut/3.7.6/include
@@ -279,7 +280,7 @@ if(BUILD_ENV_MSVC AND WITH_STOPMOTION)
         ${SDKROOT}/LibJPEG/jpeg-9
         ${SDKROOT}/canon/Header
         ${SDKROOT}/libjpeg-turbo64/include
-        ${SDKROOT}/opencv2/include
+        ${OpenCV_INCLUDE_DIRS}
     )
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
@@ -347,12 +348,8 @@ if(BUILD_ENV_MSVC)
     set(OPENBLAS_LIB ${SDKROOT}/openblas/libopenblas_${PLATFORM}.lib)
     set(USB_LIB)  # unused
     if (WITH_STOPMOTION)
-    set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
-    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
-    set(OPENCV_LIB 
-        optimized ${SDKROOT}/opencv2/lib/opencv_world412.lib
-        debug ${SDKROOT}/opencv2/lib/opencv_world412d.lib
-    )
+        set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
     endif()
     if(PLATFORM EQUAL 32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)

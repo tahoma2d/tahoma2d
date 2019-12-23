@@ -441,7 +441,7 @@ if(BUILD_ENV_MSVC AND WITH_STOPMOTION)
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia
         ${GL_LIB} ${GLUT_LIB} 
-        ${CANON_LIB} ${TURBOJPEG_LIB} ${OPENCV_LIB} strmiids
+        ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} strmiids
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
 elseif(BUILD_ENV_MSVC)
