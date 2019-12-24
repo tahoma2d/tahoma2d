@@ -876,8 +876,7 @@ void FarmServerService::onStart(int argc, char *argv[]) {
     m_userLog             = new TUserLog(logFilePath);
   }
 
-std:
-  string appverinfo = tver.getAppVersionInfo("Farm Server") + "\n\n";
+  std::string appverinfo = tver.getAppVersionInfo("Farm Server") + "\n\n";
   m_userLog->info(appverinfo.c_str());
 
   // legge dal file di configurazione dei server il numero di porta da
