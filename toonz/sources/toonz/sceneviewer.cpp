@@ -530,6 +530,141 @@ public:
   }
 } positionResetCommand;
 
+class TSelectGuideStrokeNextCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokeNextCommand() : MenuItemHandler(MI_SelectNextGuideStroke) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(1);
+  }
+} selectGuideStrokeNextCommand;
+
+class TSelectGuideStrokePrevCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokePrevCommand() : MenuItemHandler(MI_SelectPrevGuideStroke) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-1);
+  }
+} selectGuideStrokePrevCommand;
+
+class TSelectBothGuideStrokesCommand final : public MenuItemHandler {
+public:
+  TSelectBothGuideStrokesCommand()
+      : MenuItemHandler(MI_SelectBothGuideStrokes) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-2);
+  }
+} selectBothGuideStrokesCommand;
+
+class TSelectGuideStrokeResetCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokeResetCommand()
+      : MenuItemHandler(MI_SelectGuideStrokeReset) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(0);
+    tool->getViewer()->setGuidedBackStroke(-1);
+    tool->getViewer()->setGuidedFrontStroke(-1);
+    tool->getViewer()->invalidateAll();
+  }
+} selectGuideStrokeResetCommand;
+
+class TTweenGuideStrokesCommand final : public MenuItemHandler {
+public:
+  TTweenGuideStrokesCommand() : MenuItemHandler(MI_TweenGuideStrokes) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->tweenSelectedGuideStrokes();
+  }
+} tweenGuideStrokesCommand;
+
+class TTweenGuideStrokeToSelectedCommand final : public MenuItemHandler {
+public:
+  TTweenGuideStrokeToSelectedCommand()
+      : MenuItemHandler(MI_TweenGuideStrokeToSelected) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->tweenGuideStrokeToSelected();
+  }
+} tweenGuideStrokeToSelectedCommand;
+
+class TSelectGuidesAndTweenCommand final : public MenuItemHandler {
+public:
+  TSelectGuidesAndTweenCommand()
+      : MenuItemHandler(MI_SelectGuidesAndTweenMode) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-3);
+  }
+} selectGuidesAndTweenCommand;
+
 //=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
@@ -1662,7 +1797,10 @@ void SceneViewer::drawScene() {
   TXshSimpleLevel::m_fillFullColorRaster = false;
 
   // Guided Drawing Check
-  int useGuidedDrawing = Preferences::instance()->getGuidedDrawing();
+  int useGuidedDrawing  = Preferences::instance()->getGuidedDrawing();
+  TTool *tool           = app->getCurrentTool()->getTool();
+  int guidedFrontStroke = tool ? tool->getViewer()->getGuidedFrontStroke() : -1;
+  int guidedBackStroke  = tool ? tool->getViewer()->getGuidedBackStroke() : -1;
 
   m_minZ = 0;
   if (is3DView()) {
@@ -1693,6 +1831,8 @@ void SceneViewer::drawScene() {
             ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
             .getFrameId();
     args.m_isGuidedDrawingEnabled = useGuidedDrawing;
+    args.m_guidedFrontStroke      = guidedFrontStroke;
+    args.m_guidedBackStroke       = guidedBackStroke;
 
     // args.m_currentFrameId = app->getCurrentFrame()->getFid();
     Stage::visit(painter, args);
@@ -1726,7 +1866,8 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
                    app->getCurrentOnionSkin()->getOnionSkinMask(),
-                   frameHandle->isPlaying(), useGuidedDrawing);
+                   frameHandle->isPlaying(), useGuidedDrawing, guidedBackStroke,
+                   guidedFrontStroke);
     } else {
       std::pair<TXsheet *, int> xr;
       int xsheetLevel = 0;
@@ -1751,6 +1892,9 @@ void SceneViewer::drawScene() {
               ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
               .getFrameId();
       args.m_isGuidedDrawingEnabled = useGuidedDrawing;
+      args.m_guidedFrontStroke      = guidedFrontStroke;
+      args.m_guidedBackStroke       = guidedBackStroke;
+
       Stage::visit(painter, args);
     }
 

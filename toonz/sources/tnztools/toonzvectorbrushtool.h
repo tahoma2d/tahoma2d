@@ -107,7 +107,11 @@ public:
   void onEnter() override;
   void onLeave() override;
 
-  int getCursorId() const override { return ToolCursor::PenCursor; }
+  int getCursorId() const override {
+    if (m_viewer && m_viewer->getGuidedStrokePickerMode())
+      return m_viewer->getGuidedStrokePickerCursor();
+    return ToolCursor::PenCursor;
+  }
 
   TPropertyGroup *getProperties(int targetType) override;
   bool onPropertyChanged(std::string propertyName) override;
@@ -128,9 +132,16 @@ public:
   void flushTrackPoint();
   bool doFrameRangeStrokes(TFrameId firstFrameId, TStroke *firstStroke,
                            TFrameId lastFrameId, TStroke *lastStroke,
-                           bool drawFirstStroke = true);
+                           int interpolationType, bool breakAngles,
+                           bool autoGroup = false, bool autoFill = false,
+                           bool drawFirstStroke = true,
+                           bool drawLastStroke = true, bool withUndo = true);
   void checkGuideSnapping(bool beforeMousePress, bool invertCheck);
   void checkStrokeSnapping(bool beforeMousePress, bool invertCheck);
+  bool doGuidedAutoInbetween(TFrameId cFid, const TVectorImageP &cvi,
+                             TStroke *cStroke, bool breakAngles,
+                             bool autoGroup = false, bool autoFill = false,
+                             bool drawStroke = true);
 
 protected:
   TPropertyGroup m_prop[2];

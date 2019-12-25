@@ -32,6 +32,7 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/dpiscale.h"
 #include "toonz/palettecontroller.h"
+#include "toonz/tonionskinmaskhandle.h"
 
 // TnzCore includes
 #include "tvectorimage.h"
@@ -40,6 +41,10 @@
 #include "tcolorstyles.h"
 #include "ttoonzimage.h"
 #include "trasterimage.h"
+#include "strokeselection.h"
+#include "tundo.h"
+
+#include "toonzvectorbrushtool.h"
 
 //*****************************************************************************************
 //    Local namespace
@@ -1022,4 +1027,347 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 void TTool::setSelectedFrames(const std::set<TFrameId> &selectedFrames) {
   m_selectedFrames = selectedFrames;
   onSelectedFramesChanged();
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
+  OnionSkinMask osMask =
+      m_application->getCurrentOnionSkin()->getOnionSkinMask();
+
+  if (!osMask.isEnabled() || osMask.isEmpty()) return;
+
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+
+  int cidx     = currentFrame->getFrameIndex();
+  int mosBack  = 0;
+  int mosFront = 0;
+  int mosCount = osMask.getMosCount();
+  int fosBack  = -1;
+  int fosFront = -1;
+  int fosCount = osMask.getFosCount();
+
+  // Find onion-skinned drawing that is being used for guided auto inbetween
+  if (Preferences::instance()->getGuidedDrawing() == 1) {
+    // Get closest moving unionskin
+    for (int i = 0; i < mosCount; i++) {
+      int cmos = osMask.getMos(i);
+      if (cmos == 0) continue;  // skip current
+      if (cmos < 0 && (!mosBack || cmos > mosBack)) mosBack    = cmos;
+      if (cmos > 0 && (!mosFront || cmos < mosFront)) mosFront = cmos;
+    }
+    if (mosBack) *backIdx   = mosBack + cidx;
+    if (mosFront) *frontIdx = mosFront + cidx;
+
+    // Get closest fixed onionskin
+    for (int i = 0; i < fosCount; i++) {
+      int cfos = osMask.getFos(i);
+      if (cfos == cidx) continue;  // skip current
+      if (cfos < cidx && (fosBack == -1 || cfos > fosBack)) fosBack    = cfos;
+      if (cfos > cidx && (fosFront == -1 || cfos < fosFront)) fosFront = cfos;
+    }
+
+    if (*backIdx == -1)
+      *backIdx = fosBack;
+    else if (fosBack != -1)
+      *backIdx = std::max(*backIdx, fosBack);
+    if (*frontIdx == -1)
+      *frontIdx = fosFront;
+    else if (fosFront != -1)
+      *frontIdx = std::min(*frontIdx, fosFront);
+  } else if (Preferences::instance()->getGuidedDrawing() ==
+             2) {  // Furthest drawing
+                   // Get moving unionskin
+    for (int i = 0; i < mosCount; i++) {
+      int cmos = osMask.getMos(i);
+      if (cmos == 0) continue;  // skip current
+      if (cmos < 0 && (!mosBack || cmos < mosBack)) mosBack    = cmos;
+      if (cmos > 0 && (!mosFront || cmos > mosFront)) mosFront = cmos;
+    }
+    if (mosBack) *backIdx   = mosBack + cidx;
+    if (mosFront) *frontIdx = mosFront + cidx;
+
+    // Get fixed onionskin
+    for (int i = 0; i < fosCount; i++) {
+      int cfos = osMask.getFos(i);
+      if (cfos == cidx) continue;  // skip current
+      if (cfos < cidx && (fosBack == -1 || cfos < fosBack)) fosBack    = cfos;
+      if (cfos > cidx && (fosFront == -1 || cfos > fosFront)) fosFront = cfos;
+    }
+
+    if (*backIdx == -1)
+      *backIdx = fosBack;
+    else if (fosBack != -1)
+      *backIdx = std::min(*backIdx, fosBack);
+    if (*frontIdx == -1)
+      *frontIdx = fosFront;
+    else if (fosFront != -1)
+      *frontIdx = std::max(*frontIdx, fosFront);
+  }
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void TTool::Viewer::doPickGuideStroke(const TPointD &pos) {
+  int pickerMode = getGuidedStrokePickerMode();
+
+  if (!pickerMode) return;
+
+  if (pickerMode >= -2 && pickerMode <= 2) setGuidedStrokePickerMode(0);
+
+  int osBack  = -1;
+  int osFront = -1;
+  int os      = -1;
+
+  getGuidedFrameIdx(&osBack, &osFront);
+
+  if (pickerMode < 0)  // Previous Frame
+    os = osBack;
+  else if (pickerMode > 0)  // Next Frame
+    os = osFront;
+
+  TFrameId fid;
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXshSimpleLevel *sl =
+      getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return;
+
+  if (currentFrame->isEditingScene()) {
+    TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
+    int col      = getApplication()->getCurrentColumn()->getColumnIndex();
+    if (xsh && col >= 0) {
+      TXshCell cell            = xsh->getCell(os, col);
+      if (!cell.isEmpty()) fid = cell.getFrameId();
+    }
+  } else
+    fid = sl->getFrameId(os);
+
+  if (fid.isEmptyFrame()) return;
+
+  TVectorImageP fvi = sl->getFrame(fid, false);
+  if (!fvi) return;
+
+  UINT index;
+  double t, dist2 = 0;
+  double pixelSize = getPixelSize();
+  TAffine aff      = getViewMatrix();
+  double maxDist   = 5 * pixelSize;
+  double maxDist2  = maxDist * maxDist;
+  double checkDist = maxDist2 * 4;
+  TStroke *strokeRef;
+  if (fvi->getNearestStroke(pos, t, index, dist2)) {
+    strokeRef          = fvi->getStroke(index);
+    TThickPoint cursor = strokeRef->getThickPoint(t);
+    double len         = cursor.thick * pixelSize * sqrt(aff.det());
+    checkDist          = std::max(checkDist, (len * len));
+  }
+
+  if (dist2 >= checkDist)
+    index = -1;
+  else {
+    if (pickerMode < 0)  // Previous Frame
+      setGuidedBackStroke(index);
+    else if (pickerMode > 0)  // Next Frame
+      setGuidedFrontStroke(index);
+  }
+
+  if (pickerMode <= -2) {
+    if (index != -1) setGuidedStrokePickerMode(pickerMode * -1);
+  } else if (pickerMode >= 2) {
+    if (pickerMode >= 3 && index != -1) {
+      TTool *tool = TTool::getTool(T_Brush, TTool::ToolTargetType::VectorImage);
+      ToonzVectorBrushTool *vbTool = (ToonzVectorBrushTool *)tool;
+      if (vbTool) {
+        vbTool->setViewer(this);
+        vbTool->doGuidedAutoInbetween(fid, fvi, strokeRef, false, false, false,
+                                      false);
+      }
+
+      setGuidedStrokePickerMode(pickerMode * -1);
+    }
+  }
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void TTool::tweenSelectedGuideStrokes() {
+  if (!getViewer() || !m_application) return;
+
+  TXshSimpleLevel *sl =
+      m_application->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return;
+
+  int backIdx = -1, frontIdx = -1;
+
+  getViewer()->getGuidedFrameIdx(&backIdx, &frontIdx);
+
+  if (backIdx == -1 || frontIdx == -1) return;
+
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  int row                    = currentFrame->getFrameIndex();
+  TFrameId bFid, cFid, fFid;
+
+  cFid = getCurrentFid();
+  if (cFid.isEmptyFrame()) return;
+
+  TVectorImageP cvi = sl->getFrame(cFid, false);
+  if (!cvi) return;
+
+  int cStrokeCount = cvi->getStrokeCount();
+
+  if (currentFrame->isEditingScene()) {
+    TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+    int col      = m_application->getCurrentColumn()->getColumnIndex();
+    if (xsh && col >= 0) {
+      TXshCell cell             = xsh->getCell(backIdx, col);
+      if (!cell.isEmpty()) bFid = cell.getFrameId();
+      cell                      = xsh->getCell(frontIdx, col);
+      if (!cell.isEmpty()) fFid = cell.getFrameId();
+    }
+  } else {
+    bFid = sl->getFrameId(backIdx);
+    fFid = sl->getFrameId(frontIdx);
+  }
+  if (bFid.isEmptyFrame() || fFid.isEmptyFrame()) return;
+
+  TVectorImageP bvi = sl->getFrame(bFid, false);
+  TVectorImageP fvi = sl->getFrame(fFid, false);
+
+  if (!bvi || !fvi) return;
+
+  int bStrokeCount = bvi->getStrokeCount();
+  int fStrokeCount = fvi->getStrokeCount();
+
+  if (!bStrokeCount || !fStrokeCount) return;
+
+  int bStrokeIdx = getViewer()->getGuidedBackStroke() != -1
+                       ? getViewer()->getGuidedBackStroke()
+                       : cStrokeCount;
+  int fStrokeIdx = getViewer()->getGuidedFrontStroke() != -1
+                       ? getViewer()->getGuidedFrontStroke()
+                       : cStrokeCount;
+
+  if (bStrokeIdx >= bStrokeCount || fStrokeIdx >= fStrokeCount) return;
+
+  TStroke *bStroke = bvi->getStroke(bStrokeIdx);
+  TStroke *fStroke = fvi->getStroke(fStrokeIdx);
+
+  if (!bStroke || !fStroke) return;
+
+  TTool *tool = TTool::getTool(T_Brush, TTool::ToolTargetType::VectorImage);
+  ToonzVectorBrushTool *vbTool = (ToonzVectorBrushTool *)tool;
+  if (vbTool) {
+    vbTool->setViewer(m_viewer);
+    vbTool->doFrameRangeStrokes(
+        bFid, bStroke, fFid, fStroke,
+        Preferences::instance()->getGuidedInterpolation(), false, false, false,
+        false, false, true);
+  }
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void TTool::tweenGuideStrokeToSelected() {
+  if (!getViewer() || !m_application) return;
+
+  TXshSimpleLevel *sl =
+      m_application->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return;
+
+  int backIdx = -1, frontIdx = -1;
+
+  getViewer()->getGuidedFrameIdx(&backIdx, &frontIdx);
+
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  int row                    = currentFrame->getFrameIndex();
+  TFrameId bFid, cFid, fFid;
+  TVectorImageP bvi, cvi, fvi;
+
+  cFid = getCurrentFid();
+  if (cFid.isEmptyFrame()) return;
+
+  cvi = sl->getFrame(cFid, false);
+  if (!cvi) return;
+
+  int cStrokeCount = cvi->getStrokeCount();
+  if (!cStrokeCount) return;
+
+  StrokeSelection *strokeSelection =
+      dynamic_cast<StrokeSelection *>(getSelection());
+  if (!strokeSelection || strokeSelection->isEmpty()) return;
+  const std::set<int> &selectedStrokeIdxs = strokeSelection->getSelection();
+  const std::set<int>::iterator it        = selectedStrokeIdxs.begin();
+  int cStrokeIdx                          = *it;
+
+  TStroke *cStroke = cvi->getStroke(cStrokeIdx);
+  if (!cStroke) return;
+
+  if (backIdx != -1) {
+    if (currentFrame->isEditingScene()) {
+      TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+      int col      = m_application->getCurrentColumn()->getColumnIndex();
+      if (xsh && col >= 0) {
+        TXshCell cell             = xsh->getCell(backIdx, col);
+        if (!cell.isEmpty()) bFid = cell.getFrameId();
+      }
+    } else
+      bFid = sl->getFrameId(backIdx);
+
+    if (!bFid.isEmptyFrame()) bvi = sl->getFrame(bFid, false);
+  }
+
+  if (frontIdx != -1) {
+    if (currentFrame->isEditingScene()) {
+      TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+      int col      = m_application->getCurrentColumn()->getColumnIndex();
+      if (xsh && col >= 0) {
+        TXshCell cell             = xsh->getCell(frontIdx, col);
+        if (!cell.isEmpty()) fFid = cell.getFrameId();
+      }
+    } else
+      fFid = sl->getFrameId(frontIdx);
+
+    if (!fFid.isEmptyFrame()) fvi = sl->getFrame(fFid, false);
+  }
+
+  if (!bvi && !fvi) return;
+
+  int bStrokeCount = bvi ? bvi->getStrokeCount() : 0;
+  int fStrokeCount = fvi ? fvi->getStrokeCount() : 0;
+
+  if (!bStrokeCount && !fStrokeCount) return;
+
+  int bStrokeIdx = getViewer()->getGuidedBackStroke() != -1
+                       ? getViewer()->getGuidedBackStroke()
+                       : cStrokeCount;
+  int fStrokeIdx = getViewer()->getGuidedFrontStroke() != -1
+                       ? getViewer()->getGuidedFrontStroke()
+                       : cStrokeCount;
+
+  if ((bStrokeCount && bStrokeIdx >= bStrokeCount) ||
+      (fStrokeCount && fStrokeIdx >= fStrokeCount))
+    return;
+
+  TStroke *bStroke = bvi ? bvi->getStroke(bStrokeIdx) : 0;
+  TStroke *fStroke = fvi ? fvi->getStroke(fStrokeIdx) : 0;
+
+  if (!bStroke && !fStroke) return;
+
+  TTool *tool = TTool::getTool(T_Brush, TTool::ToolTargetType::VectorImage);
+  ToonzVectorBrushTool *vbTool = (ToonzVectorBrushTool *)tool;
+  if (vbTool) {
+    vbTool->setViewer(m_viewer);
+    TUndoManager::manager()->beginBlock();
+    if (bStroke)
+      vbTool->doFrameRangeStrokes(
+          bFid, bStroke, cFid, cStroke,
+          Preferences::instance()->getGuidedInterpolation(), false, false,
+          false, false, false, false);
+    if (fStroke)
+      vbTool->doFrameRangeStrokes(
+          cFid, cStroke, fFid, fStroke,
+          Preferences::instance()->getGuidedInterpolation(), false, false,
+          false, false, false, false);
+    TUndoManager::manager()->endBlock();
+  }
 }
