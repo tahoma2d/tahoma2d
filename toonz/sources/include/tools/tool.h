@@ -522,14 +522,23 @@ transformation.
   void tweenGuideStrokeToSelected();
 
 public:
-  static std::vector<int> m_cellsData;  //!< \deprecated  brutto brutto. fix
-                                        //! quick & dirty del baco #6213 (undo
+  struct CellOps {
+    int r0;
+    int r1;
+    enum Type { ExistingToNew = 0, BlankToExisting, BlankToNew } type;
+  };
+  static std::vector<CellOps>
+      m_cellsData;  //!< \deprecated  brutto brutto. fix
+                    //! quick & dirty del baco #6213 (undo
   //! con animation sheet) spiegazioni in
   //! tool.cpp
   static bool m_isLevelCreated;  //!< \deprecated  Shouldn't expose global
                                  //! static variables.
   static bool m_isFrameCreated;  //!< \deprecated  Shouldn't expose global
                                  //! static variables.
+  static std::vector<TFrameId> m_oldFids;
+  static std::vector<TFrameId> m_newFids;
+  static bool m_isLevelRenumbererd;
 
 protected:
   std::string m_name;  //!< The tool's name.
@@ -586,9 +595,8 @@ public:
   }
   ImagePainter::VisualSettings &visualSettings() { return m_visualSettings; }
 
-  virtual double getPixelSize()
-      const = 0;  //!< Returns the length of a pixel in current OpenGL
-                  //!< coordinates
+  virtual double getPixelSize() const = 0;  //!< Returns the length of a pixel
+                                            //!< in current OpenGL coordinates
 
   virtual void invalidateAll() = 0;    //!< Redraws the entire viewer, passing
                                        //! through Qt's event system
@@ -608,7 +616,7 @@ public:
   //! return the column index of the drawing intersecting point \b p
   //! (window coordinate, pixels, bottom-left origin)
   virtual int posToColumnIndex(const TPointD &p, double distance,
-                               bool includeInvisible = true) const = 0;
+                               bool includeInvisible = true) const    = 0;
   virtual void posToColumnIndexes(const TPointD &p, std::vector<int> &indexes,
                                   double distance,
                                   bool includeInvisible = true) const = 0;
@@ -640,9 +648,9 @@ public:
 
   virtual void rotate(const TPointD &center, double angle) = 0;
   virtual void rotate3D(double dPhi, double dTheta)        = 0;
-  virtual bool is3DView() const      = 0;
-  virtual bool getIsFlippedX() const = 0;
-  virtual bool getIsFlippedY() const = 0;
+  virtual bool is3DView() const                            = 0;
+  virtual bool getIsFlippedX() const                       = 0;
+  virtual bool getIsFlippedY() const                       = 0;
 
   virtual double projectToZ(const TPointD &delta) = 0;
 

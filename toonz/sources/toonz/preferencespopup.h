@@ -122,7 +122,6 @@ private:
   void beforeRoomChoiceChanged();
   // Drawing
   void onDefLevelTypeChanged();
-  void onAutocreationTypeChanged();
   void onUseNumpadForSwitchingStylesClicked();
   // Tools
   void onLevelBasedToolsDisplayChanged();

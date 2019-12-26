@@ -7,6 +7,7 @@
 #include "tools/toolhandle.h"
 #include "tools/cursors.h"
 #include "tools/tooloptions.h"
+#include "tools/toolutils.h"
 
 // TnzQt includes
 #include "toonzqt/icongenerator.h"
@@ -107,6 +108,27 @@ TFrameId getNewFrameId(TXshSimpleLevel *sl, int row) {
   return fid;
 }
 
+TFrameId getDesiredFId(TXshCellColumn *column, int r0, TXshSimpleLevel *sl,
+                       int row, TFrameId &maxFId) {
+  // search upper cells in the current column and return the next fids to be
+  // inserted if the maximum fid has no suffix it returns next number, otherwise
+  // returns next suffix.
+  maxFId = TFrameId(0);
+  // in case inserting a new frame on the top
+  if (row <= r0) return TFrameId(1);
+  TFrameId neighborFId;
+  for (int r = row - 1; r >= r0; r--) {
+    if (sl != column->getCell(r).getSimpleLevel()) continue;
+    TFrameId tmpFId = column->getCell(r).getFrameId();
+    if (neighborFId.isEmptyFrame()) neighborFId = tmpFId;
+    if (maxFId < tmpFId) maxFId = tmpFId;
+  }
+  if (maxFId.getLetter() && maxFId.getLetter() < 'z' && maxFId == neighborFId)
+    return TFrameId(maxFId.getNumber(), maxFId.getLetter() + 1);
+  else
+    return TFrameId(maxFId.getNumber() + 1);
+}
+
 }  // namespace
 
 //*****************************************************************************************
@@ -117,6 +139,7 @@ TTool::Application *TTool::m_application   = 0;
 std::set<TFrameId> TTool::m_selectedFrames = std::set<TFrameId>();
 bool TTool::m_isLevelCreated               = false;
 bool TTool::m_isFrameCreated               = false;
+bool TTool::m_isLevelRenumbererd           = false;
 
 // m_cellsData
 // brutto brutto. fix quick & dirty del baco #6213 (undo con animation sheet)
@@ -131,7 +154,9 @@ bool TTool::m_isFrameCreated               = false;
 // cfr. il codice di TTool::touchImage()
 // ToolUtils::TToolUndo::removeLevelAndFrameIfNeeded()
 
-std::vector<int> TTool::m_cellsData;
+std::vector<TTool::CellOps> TTool::m_cellsData;
+std::vector<TFrameId> TTool::m_oldFids;
+std::vector<TFrameId> TTool::m_newFids;
 
 //*****************************************************************************************
 //    TTool  implementation
@@ -264,14 +289,19 @@ TImage *TTool::touchImage() {
   if (!m_application) return 0;
 
   m_cellsData.clear();
+  m_oldFids.clear();
+  m_newFids.clear();
 
-  m_isLevelCreated  = false;
-  m_isFrameCreated  = false;
-  Preferences *pref = Preferences::instance();
+  m_isLevelCreated     = false;
+  m_isFrameCreated     = false;
+  m_isLevelRenumbererd = false;
+  Preferences *pref    = Preferences::instance();
 
-  bool isAutoCreateEnabled   = pref->isAutoCreateEnabled();
-  bool animationSheetEnabled = pref->isAnimationSheetEnabled();
-  bool isAutoStretchEnabled  = pref->isAutoStretchEnabled();
+  bool isAutoCreateEnabled        = pref->isAutoCreateEnabled();
+  bool animationSheetEnabled      = pref->isAnimationSheetEnabled();
+  bool isAutoStretchEnabled       = pref->isAutoStretchEnabled();
+  bool isAutoRenumberEnabled      = pref->isAutorenumberEnabled();
+  bool isCreateInHoldCellsEnabled = pref->isCreationInHoldCellsEnabled();
 
   TFrameHandle *currentFrame    = m_application->getCurrentFrame();
   TXshLevelHandle *currentLevel = m_application->getCurrentLevel();
@@ -299,132 +329,167 @@ TImage *TTool::touchImage() {
       m_isFrameCreated = true;
     }
     return img.getPointer();
-  } else {
-    // editing xsheet
-    if (m_application->getCurrentObject()->isSpline()) return 0;
+  }
 
-    TSceneHandle *currentScene = m_application->getCurrentScene();
-    ToonzScene *scene          = currentScene->getScene();
-    int row                    = currentFrame->getFrame();
-    int col = m_application->getCurrentColumn()->getColumnIndex();
-    if (col < 0) return 0;
+  //- - - - editing xsheet case starts here - - - -
 
-    TXsheetHandle *currentXsheet = m_application->getCurrentXsheet();
-    TXsheet *xsh                 = currentXsheet->getXsheet();
-    if (!xsh) return 0;
+  if (m_application->getCurrentObject()->isSpline()) return 0;
 
-    TXshCell cell       = xsh->getCell(row, col);
-    TXshSimpleLevel *sl = cell.getSimpleLevel();
+  TSceneHandle *currentScene = m_application->getCurrentScene();
+  ToonzScene *scene          = currentScene->getScene();
+  int row                    = currentFrame->getFrame();
+  int col = m_application->getCurrentColumn()->getColumnIndex();
+  if (col < 0) return 0;
 
-    if (sl != 0) {
-      // current cell is not empty
-      if (isAutoCreateEnabled && animationSheetEnabled && row > 0 &&
-          xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
-        // animationSheet is enabled and the current cell is a "hold". We must
-        // create a new drawing.
-        // measure the hold length (starting from the current row) : r0-r1
-        int r0 = row, r1 = row;
-        if (isAutoStretchEnabled)
-          while (xsh->getCell(r1 + 1, col) == cell) r1++;
-        // find the proper frameid (possibly addisng suffix, in order to avoid a
-        // fid already used)
-        TFrameId fid = getNewFrameId(sl, row);
-        // create the new drawing
-        TImageP img      = sl->createEmptyFrame();
-        m_isFrameCreated = true;
-        // insert the drawing in the level
-        sl->setFrame(fid, img);
-        // update the cell
-        cell = TXshCell(sl, fid);
-        // update the xsheet (change the current cell and possibly all the
-        // following "hold")
-        for (int r = r0; r <= r1; r++) xsh->setCell(r, col, cell);
-        // notify
-        currentXsheet->notifyXsheetChanged();
-        currentScene->notifyCastChange();
-        currentLevel->notifyLevelChange();
-        m_cellsData.push_back(r0);
-        m_cellsData.push_back(r1);
-        m_cellsData.push_back(0);
-      }
-      // we've found the image. return it.
-      return cell.getImage(true).getPointer();
+  TXsheetHandle *currentXsheet = m_application->getCurrentXsheet();
+  TXsheet *xsh                 = currentXsheet->getXsheet();
+  if (!xsh) return 0;
+
+  TXshCell cell       = xsh->getCell(row, col);
+  TXshSimpleLevel *sl = cell.getSimpleLevel();
+
+  if (sl) {
+    // current cell is not empty
+    if (isCreateInHoldCellsEnabled && row > 0 &&
+        xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
+      // CreateInHoldCells is enabled and the current cell is a "hold".
+      // We must create a new drawing.
+      // measure the hold length (starting from the current row) : r0-r1
+      int r0 = row, r1 = row;
+      if (isAutoStretchEnabled)
+        while (xsh->getCell(r1 + 1, col) == cell) r1++;
+      // find the proper frameid (possibly addisng suffix, in order to avoid a
+      // fid already used)
+      // find the proper frameid
+      TFrameId fid;
+      TXshCellColumn *column = xsh->getColumn(col)->getCellColumn();
+      if (isAutoRenumberEnabled && column) {
+        TFrameId maxFid;
+        if (animationSheetEnabled) {
+          fid    = TFrameId(row + 1);
+          maxFid = TFrameId(row);
+        } else {
+          int r_begin, r_end;
+          column->getRange(r_begin, r_end);
+          fid = getDesiredFId(column, r_begin, sl, row, maxFid);
+        }
+        // renumber fids
+        sl->getFids(m_oldFids);
+        m_isLevelRenumbererd = ToolUtils::renumberForInsertFId(
+            sl, fid, maxFid, scene->getTopXsheet());
+        if (m_isLevelRenumbererd) sl->getFids(m_newFids);
+      } else
+        fid = (animationSheetEnabled) ? getNewFrameId(sl, row)
+                                      : sl->index2fid(sl->getFrameCount());
+      // create the new drawing
+      TImageP img      = sl->createEmptyFrame();
+      m_isFrameCreated = true;
+      // insert the drawing in the level
+      sl->setFrame(fid, img);
+      // update the cell
+      cell = TXshCell(sl, fid);
+      // update the xsheet (change the current cell and possibly all the
+      // following "hold")
+      for (int r = r0; r <= r1; r++) xsh->setCell(r, col, cell);
+      // notify
+      currentXsheet->notifyXsheetChanged();
+      currentScene->notifyCastChange();
+      currentLevel->notifyLevelChange();
+      m_cellsData.push_back({r0, r1, CellOps::ExistingToNew});
+    }
+    // if the level does not contain a frame in the current cell
+    // (i.e. drawing on the cell with red numbers)
+    else if (!sl->isFid(cell.getFrameId())) {
+      // no drawing found
+      if (sl->isSubsequence() || sl->isReadOnly() || !isAutoCreateEnabled)
+        return 0;
+      // create a new drawing
+      TImageP img = sl->createEmptyFrame();
+      sl->setFrame(cell.getFrameId(), img);
+      currentXsheet->notifyXsheetChanged();
+      currentLevel->notifyLevelChange();
+      m_isFrameCreated = true;
+      return img.getPointer();
     }
 
-    // current cell is empty.
-    if (!isAutoCreateEnabled) return 0;
+    // we've found the image. return it.
+    return cell.getImage(true).getPointer();
+  }
 
-    // get the column range
-    int r0, r1;
-    xsh->getCellRange(col, r0, r1);
+  // current cell is empty.
+  if (!isAutoCreateEnabled) return 0;
 
-    if (animationSheetEnabled && r0 <= r1) {
-      // animation sheet enabled and not empty column. We must create a new
-      // drawing in the column level and possibly add "holds"
+  // get the column range
+  int r0, r1;
+  xsh->getCellRange(col, r0, r1);
+  // in case the column is not empty
+  if (r0 <= r1) {
+    // We must create a new drawing in the column level and possibly add "holds"
 
-      // find the last not-empty cell before the current one (a) and the first
-      // after (b)
-      int a = row - 1, b = row + 1;
-      while (a >= r0 && xsh->getCell(a, col).isEmpty()) a--;
-      while (b <= r1 && xsh->getCell(b, col).isEmpty()) b++;
+    // find the last not-empty cell before the current one (a) and the first
+    // after (b)
+    int a = row - 1, b = row + 1;
+    while (a >= r0 && xsh->getCell(a, col).isEmpty()) a--;
+    while (b <= r1 && xsh->getCell(b, col).isEmpty()) b++;
 
-      // find the level we must attach to
-      if (a >= r0) {
-        // there is a not-emtpy cell before the current one
-        sl = xsh->getCell(a, col).getSimpleLevel();
-      } else if (b <= r1) {
-        sl = xsh->getCell(b, col).getSimpleLevel();
-      }
-      if (sl) {
-        // note: sl should be always !=0 (the column is not empty)
-        // if - for some reason - it is ==0 then we skip to the standard (i.e.
-        // !animationSheetEnabled) beahviour
+    // find the level we must attach to
+    if (a >= r0) {
+      // there is a not-empty cell before the current one
+      sl = xsh->getCell(a, col).getSimpleLevel();
+    } else if (b <= r1) {
+      sl = xsh->getCell(b, col).getSimpleLevel();
+    }
+    if (sl && !sl->isSubsequence() && !sl->isReadOnly()) {
+      // note: sl should be always !=0 (the column is not empty)
+      // if - for some reason - it is == 0 or it is not editable,
+      // then we skip to empty-column behaviour
 
-        // create the drawing
-        // find the proper frameid (possibly addisng suffix, in order to avoid a
-        // fid already used)
-        TFrameId fid = getNewFrameId(sl, row);
-        // create the new drawing
-        TImageP img      = sl->createEmptyFrame();
-        m_isFrameCreated = true;
-        // insert the drawing in the level
-        sl->setFrame(fid, img);
-        // update the cell
-        cell = TXshCell(sl, fid);
-        xsh->setCell(row, col, cell);
+      // create the drawing
+      // find the proper frameid
+      TFrameId fid;
+      TXshCellColumn *column = xsh->getColumn(col)->getCellColumn();
+      if (isAutoRenumberEnabled && column) {
+        TFrameId maxFid(row);
+        fid = (animationSheetEnabled)
+                  ? TFrameId(row + 1)
+                  : getDesiredFId(column, r0, sl, row, maxFid);
+        sl->getFids(m_oldFids);
+        m_isLevelRenumbererd = ToolUtils::renumberForInsertFId(
+            sl, fid, maxFid, scene->getTopXsheet());
+        if (m_isLevelRenumbererd) sl->getFids(m_newFids);
+      } else
+        fid = (animationSheetEnabled) ? getNewFrameId(sl, row)
+                                      : sl->index2fid(sl->getFrameCount());
+      // create the new drawing
+      TImageP img      = sl->createEmptyFrame();
+      m_isFrameCreated = true;
+      // insert the drawing in the level
+      sl->setFrame(fid, img);
+      // update the cell
+      cell = TXshCell(sl, fid);
+      xsh->setCell(row, col, cell);
 
-        // create holds
-        if (!isAutoStretchEnabled) {
-          m_cellsData.push_back(row);
-          m_cellsData.push_back(row);
-          m_cellsData.push_back(2);  // vuoto => nuovo
-        } else {
-          if (a >= r0) {
-            // create a hold before : [a+1, row-1]
-            TXshCell aCell = xsh->getCell(a, col);
-            for (int i = a + 1; i < row; i++) xsh->setCell(i, col, aCell);
-            m_cellsData.push_back(a + 1);
-            m_cellsData.push_back(row - 1);
-            m_cellsData.push_back(1);  // vuoto => vecchio
+      // create holds
+      if (!isAutoStretchEnabled) {
+        m_cellsData.push_back({row, row, CellOps::BlankToNew});
+      } else {
+        if (a >= r0) {
+          // create a hold before : [a+1, row-1]
+          TXshCell aCell = xsh->getCell(a, col);
+          for (int i = a + 1; i < row; i++) xsh->setCell(i, col, aCell);
+          m_cellsData.push_back({a + 1, row - 1, CellOps::BlankToExisting});
 
-            if (b <= r1 && xsh->getCell(b, col).getSimpleLevel() == sl) {
-              // create also a hold after
-              for (int i = row + 1; i < b; i++) xsh->setCell(i, col, cell);
-              m_cellsData.push_back(row);
-              m_cellsData.push_back(b - 1);
-              m_cellsData.push_back(2);  // vuoto => nuovo
-            } else {
-              m_cellsData.push_back(row);
-              m_cellsData.push_back(row);
-              m_cellsData.push_back(2);  // vuoto => nuovo
-            }
-          } else if (b <= r1) {
-            // create a hold after
+          if (b <= r1 && xsh->getCell(b, col).getSimpleLevel() == sl) {
+            // create also a hold after
             for (int i = row + 1; i < b; i++) xsh->setCell(i, col, cell);
-            m_cellsData.push_back(row);
-            m_cellsData.push_back(b - 1);
-            m_cellsData.push_back(2);  // vuoto => nuovo
+            m_cellsData.push_back({row, b - 1, CellOps::BlankToNew});
+          } else {
+            m_cellsData.push_back({row, row, CellOps::BlankToNew});
           }
+        } else if (b <= r1) {
+          // create a hold after
+          for (int i = row + 1; i < b; i++) xsh->setCell(i, col, cell);
+          m_cellsData.push_back({row, b - 1, CellOps::BlankToNew});
         }
       }
       // notify & return
@@ -433,55 +498,27 @@ TImage *TTool::touchImage() {
       currentLevel->notifyLevelChange();
       return cell.getImage(true).getPointer();
     }
-
-    if (row > 0 && xsh->getCell(row - 1, col).getSimpleLevel() != 0 &&
-        !animationSheetEnabled) {
-      sl = xsh->getCell(row - 1, col).getSimpleLevel();
-      if (sl->getType() != OVL_XSHLEVEL ||
-          sl->getPath().getFrame() != TFrameId::NO_FRAME) {
-        // la cella precedente contiene un drawing di un livello. animationSheet
-        // e' disabilitato
-        // creo un nuovo frame
-        currentLevel->setLevel(sl);
-        if (sl->isSubsequence() || sl->isReadOnly()) return 0;
-        TFrameId fid     = sl->index2fid(sl->getFrameCount());
-        TImageP img      = sl->createEmptyFrame();
-        m_isFrameCreated = true;
-        sl->setFrame(fid, img);
-        cell = TXshCell(sl, fid);
-        xsh->setCell(row, col, cell);
-        currentXsheet->notifyXsheetChanged();
-        currentScene->notifyCastChange();
-        currentLevel->notifyLevelChange();
-        return img.getPointer();
-      }
-    }
-
-    // animation sheet disabled or empty column. autoCreate is enabled: we must
-    // create a new level
-    int levelType    = pref->getDefLevelType();
-    TXshLevel *xl    = scene->createNewLevel(levelType);
-    sl               = xl->getSimpleLevel();
-    m_isLevelCreated = true;
-
-    // create the drawing
-    TFrameId fid = animationSheetEnabled ? getNewFrameId(sl, row) : TFrameId(1);
-    TImageP img  = sl->createEmptyFrame();
-    m_isFrameCreated = true;
-    sl->setFrame(fid, img);
-    cell = TXshCell(sl, fid);
-    xsh->setCell(row, col, cell);
-    if (animationSheetEnabled) {
-      m_cellsData.push_back(row);
-      m_cellsData.push_back(row);
-      m_cellsData.push_back(2);  // vuoto => nuovo
-    }
-
-    currentXsheet->notifyXsheetChanged();
-    currentScene->notifyCastChange();
-    currentLevel->notifyLevelChange();
-    return img.getPointer();
   }
+
+  // - - - - empty column case starts here - - - -
+  // autoCreate is enabled: we must create a new level
+  int levelType    = pref->getDefLevelType();
+  TXshLevel *xl    = scene->createNewLevel(levelType);
+  sl               = xl->getSimpleLevel();
+  m_isLevelCreated = true;
+
+  // create the drawing
+  TFrameId fid = animationSheetEnabled ? getNewFrameId(sl, row) : TFrameId(1);
+  TImageP img  = sl->createEmptyFrame();
+  m_isFrameCreated = true;
+  sl->setFrame(fid, img);
+  cell = TXshCell(sl, fid);
+  xsh->setCell(row, col, cell);
+  m_cellsData.push_back({row, row, CellOps::BlankToNew});  // vuoto => nuovo
+  currentXsheet->notifyXsheetChanged();
+  currentScene->notifyCastChange();
+  currentLevel->notifyLevelChange();
+  return img.getPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -818,8 +855,7 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
   }
 
-  if (Preferences::instance()->isAutoCreateEnabled() &&
-      Preferences::instance()->isAnimationSheetEnabled()) {
+  if (Preferences::instance()->isAutoCreateEnabled()) {
     // If not in Level editor, let's use our current cell from the xsheet to
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&

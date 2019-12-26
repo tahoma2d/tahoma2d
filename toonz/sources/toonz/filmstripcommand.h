@@ -59,7 +59,7 @@ void inbetween(TXshSimpleLevel *sl, const TFrameId &fid0, const TFrameId &fid1,
 
 void renumberDrawing(TXshSimpleLevel *sl, const TFrameId &oldFid,
                      const TFrameId &desiredNewFid);
-}
+}  // namespace FilmstripCmd
 
 TFrameId operator+(const TFrameId &fid, int d);
 

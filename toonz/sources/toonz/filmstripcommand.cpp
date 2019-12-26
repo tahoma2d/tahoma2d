@@ -52,7 +52,7 @@ TFrameId operator+(const TFrameId &fid, int d) {
 }
 
 //-----------------------------------------------------------------------------
-
+/*
 void doUpdateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
                     std::vector<TFrameId> newFids, TXsheet *xsh,
                     std::vector<TXshChildLevel *> &childLevels) {
@@ -97,7 +97,7 @@ void doUpdateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
     }
   }
 }
-
+*/
 //-----------------------------------------------------------------------------
 
 static void updateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
@@ -105,7 +105,9 @@ static void updateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
   std::vector<TXshChildLevel *> childLevels;
   TXsheet *xsh =
       TApp::instance()->getCurrentScene()->getScene()->getTopXsheet();
-  doUpdateXSheet(sl, oldFids, newFids, xsh, childLevels);
+  bool changed =
+      ToolUtils::doUpdateXSheet(sl, oldFids, newFids, xsh, childLevels);
+  if (changed) TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 //=============================================================================

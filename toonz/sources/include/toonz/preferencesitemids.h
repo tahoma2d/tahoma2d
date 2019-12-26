@@ -80,8 +80,12 @@ enum PreferencesItemId {
   DefLevelWidth,
   DefLevelHeight,
   DefLevelDpi,
-  AutocreationType,
+  // AutocreationType,// deprecated
+  EnableAutocreation,
+  NumberingSystem,
   EnableAutoStretch,
+  EnableCreationInHoldCells,
+  EnableAutoRenumber,
   vectorSnappingTarget,
   saveUnpaintedInCleanup,
   minimizeSaveboxAfterEditing,

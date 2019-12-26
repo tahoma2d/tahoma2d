@@ -32,6 +32,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/preferences.h"
 #include "toonz/palettecontroller.h"
+#include "toonz/txshchildlevel.h"
 
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/icongenerator.h"
@@ -459,16 +460,18 @@ ToolUtils::TToolUndo::TToolUndo(TXshSimpleLevel *level, const TFrameId &frameId,
     , m_isEditingLevel(false)
     , m_createdFrame(createdFrame)
     , m_createdLevel(createdLevel)
+    , m_renumberedLevel(TTool::m_isLevelRenumbererd)
     , m_imageId("") {
-  m_animationSheetEnabled = Preferences::instance()->isAnimationSheetEnabled();
   TTool::Application *app = TTool::getApplication();
   m_isEditingLevel        = app->getCurrentFrame()->isEditingLevel();
   if (!m_isEditingLevel) {
-    m_col = app->getCurrentColumn()->getColumnIndex();
-    m_row = app->getCurrentFrame()->getFrameIndex();
-    if (m_animationSheetEnabled) {
-      m_cellsData = TTool::m_cellsData;
-    }
+    m_col       = app->getCurrentColumn()->getColumnIndex();
+    m_row       = app->getCurrentFrame()->getFrameIndex();
+    m_cellsData = TTool::m_cellsData;
+  }
+  if (m_renumberedLevel) {
+    m_oldFids = TTool::m_oldFids;
+    m_newFids = TTool::m_newFids;
   }
   if (createdFrame) {
     m_imageId = "TToolUndo" + std::to_string(m_idCount++);
@@ -487,6 +490,14 @@ ToolUtils::TToolUndo::~TToolUndo() {
 
 void ToolUtils::TToolUndo::insertLevelAndFrameIfNeeded() const {
   TTool::Application *app = TTool::getApplication();
+  if (m_renumberedLevel) {
+    TXsheet *xsh = app->getCurrentScene()->getScene()->getTopXsheet();
+    std::vector<TXshChildLevel *> childLevels;
+    ToolUtils::doUpdateXSheet(m_level.getPointer(), m_oldFids, m_newFids, xsh,
+                              childLevels);
+    m_level->renumber(m_newFids);
+    app->getCurrentXsheet()->notifyXsheetChanged();
+  }
   if (m_createdLevel) {
     TLevelSet *levelSet = app->getCurrentScene()->getScene()->getLevelSet();
     if (levelSet) {
@@ -499,22 +510,14 @@ void ToolUtils::TToolUndo::insertLevelAndFrameIfNeeded() const {
     TImageP img  = TImageCache::instance()->get(m_imageId, false);
     m_level->setFrame(m_frameId, img);
     if (!m_isEditingLevel) {
-      if (m_animationSheetEnabled) {
-        int m = m_cellsData.size() / 3;
-        for (int i = 0; i < m; i++) {
-          int r0   = m_cellsData[i * 3];
-          int r1   = m_cellsData[i * 3 + 1];
-          int type = m_cellsData[i * 3 + 2];
-          TXshCell cell;
-          if (type == 1)
-            cell = xsh->getCell(r0 - 1, m_col);
-          else
-            cell = TXshCell(m_level.getPointer(), m_frameId);
-          for (int r = r0; r <= r1; r++) xsh->setCell(r, m_col, cell);
-        }
-      } else {
-        TXshCell cell(m_level.getPointer(), m_frameId);
-        xsh->setCell(m_row, m_col, cell);
+      for (const TTool::CellOps &cellOps : m_cellsData) {
+        TXshCell cell;
+        if (cellOps.type == TTool::CellOps::BlankToExisting)
+          cell = xsh->getCell(cellOps.r0 - 1, m_col);
+        else
+          cell = TXshCell(m_level.getPointer(), m_frameId);
+        for (int r = cellOps.r0; r <= cellOps.r1; r++)
+          xsh->setCell(r, m_col, cell);
       }
     }
     app->getCurrentLevel()->notifyLevelChange();
@@ -529,18 +532,12 @@ void ToolUtils::TToolUndo::removeLevelAndFrameIfNeeded() const {
     m_level->eraseFrame(m_frameId);
     if (!m_isEditingLevel) {
       TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
-      if (m_animationSheetEnabled) {
-        int m = m_cellsData.size() / 3;
-        for (int i = 0; i < m; i++) {
-          int r0   = m_cellsData[i * 3];
-          int r1   = m_cellsData[i * 3 + 1];
-          int type = m_cellsData[i * 3 + 2];
-          TXshCell cell;
-          if (type == 0) cell = xsh->getCell(r0 - 1, m_col);
-          for (int r = r0; r <= r1; r++) xsh->setCell(r, m_col, cell);
-        }
-      } else {
-        xsh->clearCells(m_row, m_col);
+      for (const TTool::CellOps &cellOps : m_cellsData) {
+        TXshCell cell;
+        if (cellOps.type == TTool::CellOps::ExistingToNew)
+          cell = xsh->getCell(cellOps.r0 - 1, m_col);
+        for (int r = cellOps.r0; r <= cellOps.r1; r++)
+          xsh->setCell(r, m_col, cell);
       }
     }
     if (m_createdLevel) {
@@ -558,6 +555,14 @@ void ToolUtils::TToolUndo::removeLevelAndFrameIfNeeded() const {
     app->getPaletteController()
         ->getCurrentLevelPalette()
         ->notifyPaletteChanged();
+  }
+  if (m_renumberedLevel) {
+    TXsheet *xsh = app->getCurrentScene()->getScene()->getTopXsheet();
+    std::vector<TXshChildLevel *> childLevels;
+    ToolUtils::doUpdateXSheet(m_level.getPointer(), m_newFids, m_oldFids, xsh,
+                              childLevels);
+    m_level->renumber(m_oldFids);
+    app->getCurrentXsheet()->notifyXsheetChanged();
   }
 }
 
@@ -1757,3 +1762,104 @@ TRasterPT<PIXEL> ToolUtils::rotate90(const TRasterPT<PIXEL> &ras, bool toRight)
         }
         return workRas;
 }*/
+
+//-----------------------------------------------------------------------------
+
+bool ToolUtils::doUpdateXSheet(TXshSimpleLevel *sl,
+                               std::vector<TFrameId> oldFids,
+                               std::vector<TFrameId> newFids, TXsheet *xsh,
+                               std::vector<TXshChildLevel *> &childLevels) {
+  bool ret = false;
+  for (int c = 0; c < xsh->getColumnCount(); ++c) {
+    int r0, r1;
+    int n = xsh->getCellRange(c, r0, r1);
+    if (n > 0) {
+      bool changed = false;
+      std::vector<TXshCell> cells(n);
+      xsh->getCells(r0, c, n, &cells[0]);
+      for (int i = 0; i < n; i++) {
+        TXshCell currCell = cells[i];
+        // check the sub xsheets too
+        if (!cells[i].isEmpty() &&
+            cells[i].m_level->getType() == CHILD_XSHLEVEL) {
+          TXshChildLevel *level = cells[i].m_level->getChildLevel();
+          // make sure we haven't already checked the level
+          if (level && std::find(childLevels.begin(), childLevels.end(),
+                                 level) == childLevels.end()) {
+            childLevels.push_back(level);
+            TXsheet *subXsh = level->getXsheet();
+            ret |= doUpdateXSheet(sl, oldFids, newFids, subXsh, childLevels);
+          }
+        }
+        for (int j = 0; j < oldFids.size(); j++) {
+          if (oldFids.at(j) == newFids.at(j)) continue;
+          TXshCell tempCell(sl, oldFids.at(j));
+          bool sameSl  = tempCell.getSimpleLevel() == currCell.getSimpleLevel();
+          bool sameFid = tempCell.getFrameId() == currCell.getFrameId();
+          if (sameSl && sameFid) {
+            TXshCell newCell(sl, newFids.at(j));
+            cells[i] = newCell;
+            changed  = true;
+            break;
+          }
+        }
+      }
+      if (changed) {
+        xsh->setCells(r0, c, n, &cells[0]);
+        ret = true;
+        // TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      }
+    }
+  }
+  return ret;
+}
+
+//-----------------------------------------------------------------------------
+
+bool ToolUtils::renumberForInsertFId(TXshSimpleLevel *sl, const TFrameId &fid,
+                                     const TFrameId &maxFid, TXsheet *xsh) {
+  std::vector<TFrameId> fids;
+  std::vector<TFrameId> oldFrames;
+  sl->getFids(oldFrames);
+  sl->getFids(fids);
+  std::vector<TFrameId>::iterator it = std::find(fids.begin(), fids.end(), fid);
+  if (it == fids.end()) return false;
+
+  std::set<TFrameId> fidsSet(fids.begin(), fids.end());
+  QList<TFrameId> fIdsToBeShifted;
+  TFrameId tmpFid = fid;
+  for (auto itr = fidsSet.upper_bound(maxFid); itr != fidsSet.end(); ++itr) {
+    if (*itr > tmpFid) break;
+    fIdsToBeShifted.push_back(*itr);
+    if (fid.getLetter()) {
+      if ((*itr).getLetter() < 'z')
+        tmpFid = TFrameId((*itr).getNumber(),
+                          ((*itr).getLetter()) ? (*itr).getLetter() + 1 : 'a');
+      else
+        tmpFid = TFrameId((*itr).getNumber() + 1);
+    } else
+      tmpFid = TFrameId((*itr).getNumber() + 1, (*itr).getLetter());
+  }
+
+  if (fIdsToBeShifted.isEmpty()) return false;
+
+  for (TFrameId &tmpFid : fids) {
+    if (fIdsToBeShifted.contains(tmpFid)) {
+      if (fid.getLetter()) {
+        if (tmpFid.getLetter() < 'z')
+          tmpFid =
+              TFrameId(tmpFid.getNumber(),
+                       (tmpFid.getLetter()) ? tmpFid.getLetter() + 1 : 'a');
+        else
+          tmpFid = TFrameId(tmpFid.getNumber() + 1);
+      } else
+        tmpFid = TFrameId(tmpFid.getNumber() + 1, tmpFid.getLetter());
+    }
+  }
+
+  std::vector<TXshChildLevel *> childLevels;
+  doUpdateXSheet(sl, oldFrames, fids, xsh, childLevels);
+  sl->renumber(fids);
+
+  return true;
+}

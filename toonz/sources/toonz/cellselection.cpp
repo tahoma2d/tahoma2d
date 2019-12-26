@@ -2056,7 +2056,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
-    Preferences::instance()->setValue(AutocreationType, 1, false);
+    Preferences::instance()->setValue(EnableAutocreation, true, false);
+  // Enable inserting in the hold cells temporarily too.
+  bool isCreationInHoldCellsEnabled =
+      Preferences::instance()->isCreationInHoldCellsEnabled();
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
 
   TImage *img = toolHandle->getTool()->touchImage();
 
@@ -2065,7 +2070,10 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   if (!img || !sl) {
     if (!isAutoCreateEnabled)
-      Preferences::instance()->setValue(AutocreationType, 0, false);
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to create a blank drawing on the current column"));
@@ -2090,7 +2098,9 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   // Reset back to what these were
   if (!isAutoCreateEnabled)
-    Preferences::instance()->setValue(AutocreationType, 0, false);
+    Preferences::instance()->setValue(EnableAutocreation, false, false);
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
 }
 
 //-----------------------------------------------------------------------------
