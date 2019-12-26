@@ -2303,6 +2303,22 @@ void FileBrowser::enableGlobalSelection(bool enabled) {
 
 void FileBrowser::selectNone() { m_itemViewer->selectNone(); }
 
+//-----------------------------------------------------------------------------
+
+void FileBrowser::enableDoubleClickToOpenScenes() {
+  // perhaps this should disconnect existing signal handlers first
+  connect(this, SIGNAL(filePathDoubleClicked(const TFilePath &)),
+  this, SLOT(tryToOpenScene(const TFilePath &)));
+}
+
+//-----------------------------------------------------------------------------
+
+void FileBrowser::tryToOpenScene(const TFilePath &filePath) {
+  if (filePath.getType() == "tnz") {
+    IoCmd::loadScene(filePath);
+  }
+}
+
 //=============================================================================
 // FCData methods
 //-----------------------------------------------------------------------------
