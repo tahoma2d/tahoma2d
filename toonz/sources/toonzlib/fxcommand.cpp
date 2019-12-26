@@ -141,7 +141,7 @@ void showFx(TXsheet *xsh, TFx *fx) {
   fx->getAttributes()->setIsOpened(xsh->getFxDag()->getDagGridDimension() == 0);
 
   if (TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx))
-    fx                                       = zcfx->getZeraryFx();
+    fx = zcfx->getZeraryFx();
   fx->getAttributes()->passiveCacheDataIdx() = -1;
 }
 
@@ -589,9 +589,8 @@ template <typename Pred>
 TFx *FxCommandUndo::leftmostConnectedFx(TFx *fx, Pred pred) {
   assert(fx);
 
-  fx = rightmostConnectedFx(
-      fx, pred);  // The rightmost fx should be discovered first,
-                  // then, we'll descend from that
+  fx = rightmostConnectedFx(fx, pred);  // The rightmost fx should be discovered
+                                        // first, then, we'll descend from that
   do {
     fx = ::getActualIn(fx);
 
@@ -630,7 +629,7 @@ namespace {
 struct True_pred {
   bool operator()(TFx *fx) { return true; }
 };
-}
+}  // namespace
 
 TFx *FxCommandUndo::leftmostConnectedFx(TFx *fx) {
   return leftmostConnectedFx(fx, ::True_pred());
@@ -1155,7 +1154,7 @@ void ReplaceFxUndo::initialize() {
   }
 
   TZeraryColumnFx *zcrepfx = dynamic_cast<TZeraryColumnFx *>(repFx);
-  if (zcrepfx) repFx       = zcrepfx->getZeraryFx();
+  if (zcrepfx) repFx = zcrepfx->getZeraryFx();
 
   bool fxHasCol    = has_fx_column(fx);
   bool repfxHasCol = has_fx_column(repFx);
@@ -2577,6 +2576,10 @@ void UndoPasteFxs::initialize(const std::map<TFx *, int> &zeraryFxColumnSize,
         int ip, ipCount = macroFx->getInputPortCount();
         for (ip = 0; ip != ipCount; ++ip)
           locals::renamePort(macroFx, ip, oldFxId, newFxId);
+        // node position of the macrofx is defined by dag-pos of inner fxs.
+        // so we need to reset them here or pasted node will be at the same
+        // position as the copied one.
+        locals::buildDagPos(inFx, inFx, copyDagPos, addOffset);
       }
     }
 
