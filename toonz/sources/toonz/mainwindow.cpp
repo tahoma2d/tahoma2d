@@ -1603,6 +1603,8 @@ void MainWindow::defineActions() {
   preferencesAction->setIcon(QIcon(":Resources/preferences.svg"));
   createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "");
   createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "");
+  createMenuFileAction(MI_ExportXDTS,
+                       tr("Export Exchange Digital Time Sheet (XDTS)"), "");
   createMenuFileAction("MI_RunScript", tr("Run Script..."), "");
   createMenuFileAction("MI_OpenScriptConsole", tr("Open Script Console..."),
                        "");

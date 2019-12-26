@@ -496,6 +496,7 @@ TFilePath GenericSaveFilePopup::getPath() {
 LoadScenePopup::LoadScenePopup() : FileBrowserPopup(tr("Load Scene")) {
   setOkText(tr("Load"));
   addFilterType("tnz");
+  addFilterType("xdts");
 
   // set the initial current path according to the current module
   setInitialFolderByCurrentRoom();
@@ -509,7 +510,7 @@ bool LoadScenePopup::execute() {
 
   const TFilePath &fp = *m_selectedPaths.begin();
 
-  if (fp.getType() != "tnz") {
+  if (fp.getType() != "tnz" && fp.getType() != "xdts") {
     DVGui::error(toQString(fp) + tr(" is not a scene file."));
     return false;
   }
@@ -1235,6 +1236,7 @@ bool LoadLevelPopup::execute() {
     }
 
     return 0 < IoCmd::loadResources(args, true, 0);
+
   } else {
     std::set<TFilePath>::const_iterator it;
     IoCmd::LoadResourceArguments args;

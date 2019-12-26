@@ -120,6 +120,7 @@ set(MOC_HEADERS
     xshnoteviewer.h
     xshrowviewer.h
     xshtoolbar.h
+	xdtsimportpopup.h
 )
 
 if(WITH_STOPMOTION)
@@ -173,6 +174,7 @@ set(HEADERS
     ../include/cellposition.h
     ../include/orientation.h
     ../include/saveloadqsettings.h
+    xdtsio.h
 # Tracker file
     ObjectTracker.h
     dummyprocessor.h
@@ -347,6 +349,8 @@ set(SOURCES
 	boardsettingspopup.cpp
 	separatecolorsswatch.cpp
 	separatecolorspopup.cpp
+    xdtsio.cpp
+	xdtsimportpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

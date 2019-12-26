@@ -19,6 +19,7 @@
 #include "filebrowser.h"
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
+#include "xdtsio.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -1758,8 +1759,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   assert(!path.isEmpty());
   TFilePath scenePath = path;
   bool importScene    = false;
+  bool isXdts         = scenePath.getType() == "xdts";
   if (scenePath.getType() == "") scenePath = scenePath.withType("tnz");
-  if (scenePath.getType() != "tnz") {
+  if (scenePath.getType() != "tnz" && !isXdts) {
     QString msg;
     msg = QObject::tr("File %1 doesn't look like a TOONZ Scene")
               .arg(QString::fromStdWString(scenePath.getWideString()));
@@ -1846,8 +1848,11 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   TImageStyle::setCurrentScene(scene);
   printf("%s:%s Progressing:\n", __FILE__, __FUNCTION__);
   try {
-    /*-- プログレス表示を行いながらLoad --*/
-    scene->load(scenePath);
+    if (isXdts)
+      XdtsIo::loadXdtsScene(scene, scenePath);
+    else
+      /*-- プログレス表示を行いながらLoad --*/
+      scene->load(scenePath);
     // import if needed
     TProjectManager *pm      = TProjectManager::instance();
     TProjectP currentProject = pm->getCurrentProject();
@@ -1912,7 +1917,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->getProperties()->getFieldGuideAspectRatio());
   IconGenerator::instance()->invalidateSceneIcon();
   DvDirModel::instance()->refreshFolder(scenePath.getParentDir());
-  TApp::instance()->getCurrentScene()->setDirtyFlag(false);
+  TApp::instance()->getCurrentScene()->setDirtyFlag(isXdts);
   History::instance()->addItem(scenePath);
   if (updateRecentFile)
     RecentFiles::instance()->addFilePath(
@@ -1994,11 +1999,9 @@ bool IoCmd::loadScene() {
   static LoadScenePopup *popup = 0;
   if (!popup) {
     popup = new LoadScenePopup();
-    popup->addFilterType("tnz");
   }
   int ret = popup->exec();
   if (ret == QDialog::Accepted) {
-    TApp::instance()->getCurrentScene()->setDirtyFlag(false);
     return true;
   } else {
     TApp::instance()->getCurrentSelection()->setSelection(oldSelection);

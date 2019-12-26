@@ -372,4 +372,5 @@
 #define MI_SelectBothGuideStrokes "MI_SelectBothGuideStrokes"
 #define MI_SelectGuidesAndTweenMode "MI_SelectGuidesAndTweenMode"
 
+#define MI_ExportXDTS "MI_ExportXDTS"
 #endif

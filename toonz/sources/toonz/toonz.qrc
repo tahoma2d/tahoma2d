@@ -484,5 +484,6 @@
       <file>Resources/flipvert_over.svg</file>
       <file>Resources/reset.svg</file>
       <file>Resources/reset_over.svg</file>
+      <file>Resources/xdts.svg</file>
     </qresource>
 </RCC>
