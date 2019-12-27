@@ -2313,7 +2313,7 @@ void MainWindow::defineActions() {
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 #ifdef WITH_STOPMOTION
-  createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "Enter");
+  createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "");
   createAction(MI_StopMotionRaiseOpacity, tr("Raise Stop Motion Opacity"), "");
   createAction(MI_StopMotionLowerOpacity, tr("Lower Stop Motion Opacity"), "");
   createAction(MI_StopMotionToggleLiveView, tr("Toggle Stop Motion Live View"),
