@@ -4,17 +4,17 @@
 <context>
     <name>Preferences</name>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="111"/>
+        <location filename="../../toonzlib/preferences.cpp" line="100"/>
         <source>Retas Level Format</source>
         <translation>Формат уровней Retas</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="117"/>
+        <location filename="../../toonzlib/preferences.cpp" line="106"/>
         <source>Adobe Photoshop</source>
         <translation>Adobe Photoshop</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="122"/>
+        <location filename="../../toonzlib/preferences.cpp" line="111"/>
         <source>PNG</source>
         <translation>PNG</translation>
     </message>
@@ -224,88 +224,88 @@
         <translation>Вставить Fx  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1059"/>
         <location filename="../../toonzlib/fxcommand.cpp" line="1062"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1065"/>
         <source>Create Linked Fx  : %1</source>
         <translation>Создать связанный Fx : %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1284"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1287"/>
         <source>Replace Fx  : </source>
         <translation>Заменить Fx  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1350"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1353"/>
         <source>Unlink Fx  : %1 - - %2</source>
         <translation>Разъединить Fx  : %1 - - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1391"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1394"/>
         <source>Make Macro Fx  : %1</source>
         <translation>Сделать Makro Fx  : %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1534"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1537"/>
         <source>Explode Macro Fx  : %1</source>
         <translation>Разбить Macro Fx  : %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1597"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1600"/>
         <source>Create Output Fx</source>
         <translation>Создать выход Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1688"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1691"/>
         <source>Connect to Xsheet  : </source>
         <translation>Подключить к Xsheet  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1748"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1751"/>
         <source>Disconnect from Xsheet  : </source>
         <translation>Отключить от Xsheet  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2019"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2022"/>
         <source>Delete Link</source>
         <translation>Удалить связь</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2304"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2307"/>
         <source>Delete Fx Node : %1</source>
         <translation>Удалить Fx-узел : %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2721"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2724"/>
         <source>Paste Fx  :  </source>
         <translation>Вставить Fx :</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3087"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3090"/>
         <source>Disconnect Fx</source>
         <translation>Отключить Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3334"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3337"/>
         <source>Connect Fx : %1 - %2</source>
         <translation>Подключить Fx : %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3516"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3519"/>
         <source>Rename Fx : %1 &gt; %2</source>
         <translation>Переименовать Fx : %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3568"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3571"/>
         <source>Group Fx</source>
         <translation>Сгруппировать Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3672"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3675"/>
         <source>Ungroup Fx</source>
         <translation>Разгруппировать Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3774"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3777"/>
         <source>Rename Group  : %1 &gt; %2</source>
         <translation>Переименовать группу  : %1 &gt; %2</translation>
     </message>
@@ -447,9 +447,15 @@
         <translation>%1 не является допустимым цветом (допустимые названия цветов: &quot;красный&quot;,&quot;прозрачный,&quot;#FF8800&quot; и др.)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/sceneresources.cpp" line="434"/>
+        <location filename="../../toonzlib/sceneresources.cpp" line="437"/>
         <source>Can&apos;t save</source>
         <translation>Не удается сохранить</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneresources.cpp" line="510"/>
+        <source>Failed to save the following resources:
+</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../include/toonz/stageobjectutil.h" line="133"/>
@@ -538,12 +544,12 @@
         <translation>Порог яркости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="68"/>
+        <location filename="../../toonzlib/orientation.cpp" line="78"/>
         <source>Xsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="132"/>
+        <location filename="../../toonzlib/orientation.cpp" line="143"/>
         <source>Timeline</source>
         <translation>Таймлайн</translation>
     </message>

@@ -191,15 +191,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="vanished">사전설정 이름</translation>
+        <translation>사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">네</translation>
+        <translation>네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">취소</translation>
+        <translation type="unfinished">취소</translation>
     </message>
 </context>
 <context>
@@ -224,7 +224,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="obsolete">현재</translation>
+        <translation type="unfinished">현재</translation>
     </message>
 </context>
 <context>
@@ -1091,15 +1091,43 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="vanished">%1 레벨 : %2 프레임 : %3</translation>
+        <translation>%1 레벨 : %2 프레임 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="vanished">선 수정도구</translation>
+        <translation>선 수정도구</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="vanished">스플라인 수정</translation>
+        <translation>스플라인 수정</translation>
+    </message>
+    <message>
+        <source>The selection cannot be updated. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be deleted. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be pasted. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be grouped. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be entered. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be ungrouped. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection cannot be moved. It is not editable.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1353,7 +1381,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>현재</translation>
+        <translation type="vanished">현재</translation>
     </message>
 </context>
 <context>

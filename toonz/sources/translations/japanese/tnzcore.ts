@@ -43,7 +43,7 @@
     </message>
     <message>
         <source>Malformed frame name</source>
-        <translation>フレーム番号が不正な形式です</translation>
+        <translation type="vanished">フレーム番号が不正な形式です</translation>
     </message>
 </context>
 <context>

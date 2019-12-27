@@ -35,7 +35,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="198"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="250"/>
         <source>colors</source>
         <translation>barvy</translation>
     </message>
@@ -45,9 +45,8 @@
         <translation>Přeskakuje se snímek.</translation>
     </message>
     <message>
-        <location filename="../../common/tsystem/tfilepath.cpp" line="694"/>
         <source>Malformed frame name</source>
-        <translation>Poškozený název snímku</translation>
+        <translation type="vanished">Poškozený název snímku</translation>
     </message>
     <message>
         <location filename="../../include/tundo.h" line="46"/>

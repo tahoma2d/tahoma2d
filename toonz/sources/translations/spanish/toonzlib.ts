@@ -436,6 +436,11 @@
         <source>Timeline</source>
         <translation>Línea de T.</translation>
     </message>
+    <message>
+        <source>Failed to save the following resources:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>

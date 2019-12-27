@@ -606,6 +606,11 @@
         <source>Timeline</source>
         <translation>时间轴</translation>
     </message>
+    <message>
+        <source>Failed to save the following resources:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

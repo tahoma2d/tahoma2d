@@ -695,6 +695,30 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
         <source>&amp;Locator</source>
         <translation>&amp;Localizador</translation>
     </message>
+    <message>
+        <source>Viewer Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reset View</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FontParamField</name>
@@ -1005,19 +1029,19 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>Exposición x1</translation>
+        <translation type="vanished">Exposición x1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>Exposición x2</translation>
+        <translation type="vanished">Exposición x2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>Exposición x3</translation>
+        <translation type="vanished">Exposición x3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>Exposición x4</translation>
+        <translation type="vanished">Exposición x4</translation>
     </message>
     <message>
         <source>Activate Cycle</source>
@@ -1042,6 +1066,10 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Change Step</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar Shape Interpolation</source>
+        <translation type="unfinished">Interpolación mediante forma similar</translation>
     </message>
 </context>
 <context>
@@ -1099,6 +1127,10 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Table</source>
         <translation>Mesa</translation>
+    </message>
+    <message>
+        <source>Hide Selected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2229,6 +2261,10 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
         <source>OK</source>
         <translation type="unfinished">Aceptar</translation>
     </message>
+    <message>
+        <source>That is a reserved file name and cannot be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2242,6 +2278,17 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     <message>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>RgbLinkButtons</name>
+    <message>
+        <source>Copy RGB : %1 &gt; %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap %1 and %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2293,6 +2340,18 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     <message>
         <source>&amp;Toggle node icons</source>
         <translation>Íconos de &amp;nodos</translation>
+    </message>
+    <message>
+        <source>&amp;Selection Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Hand Mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2372,6 +2431,17 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     <message>
         <source>&amp;Load Motion Path...</source>
         <translation>&amp;Cargar trayectoria de movimiento...</translation>
+    </message>
+</context>
+<context>
+    <name>StageSchematicNode</name>
+    <message>
+        <source>Toggle Autorotate Along Motion Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Link Motion Path to Control Points</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
