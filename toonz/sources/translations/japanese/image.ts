@@ -4,12 +4,12 @@
 <context>
     <name>AviWriterProperties</name>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1179"/>
+        <location filename="../../image/avi/tiio_avi.cpp" line="1182"/>
         <source>Codec</source>
         <translation>コーデック</translation>
     </message>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1180"/>
+        <location filename="../../image/avi/tiio_avi.cpp" line="1183"/>
         <source>Uncompressed</source>
         <translation>非圧縮</translation>
     </message>
@@ -17,17 +17,17 @@
 <context>
     <name>GifWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="255"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="257"/>
         <source>Scale</source>
         <translation>スケール(%)</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="256"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="258"/>
         <source>Looping</source>
         <translation>繰り返し再生</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="257"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="259"/>
         <source>Generate Palette</source>
         <translation>パレットを生成</translation>
     </message>
@@ -35,12 +35,12 @@
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="232"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="234"/>
         <source>Quality</source>
         <translation>品質</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="233"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="235"/>
         <source>Scale</source>
         <translation>スケール(%)</translation>
     </message>
@@ -339,12 +339,12 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>WebmWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="233"/>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="235"/>
         <source>Quality</source>
         <translation>品質</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="234"/>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="236"/>
         <source>Scale</source>
         <translation>スケール(%)</translation>
     </message>

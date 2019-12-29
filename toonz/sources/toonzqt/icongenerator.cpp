@@ -118,7 +118,7 @@ bool getIcon(const std::string &iconName, QPixmap &pix,
         ras->getSize().lx > standardSize.lx &&
         ras->getSize().ly > standardSize.ly)
       isHighDpi = true;
-    pix         = rasterToQPixmap(ras, false, isHighDpi);
+    pix = rasterToQPixmap(ras, false, isHighDpi);
     return true;
   }
 
@@ -135,7 +135,7 @@ void setIcon(const std::string &iconName, const TRaster32P &icon) {
 //-----------------------------------------------------------------------------
 /*! Cache icon data in TToonzImage format if ToonzImageIconRenderer generates
  * them
-*/
+ */
 void setIcon_TnzImg(const std::string &iconName, const TRasterCM32P &icon) {
   if (iconsMap.find(iconName) != iconsMap.end())
     TImageCache::instance()->add(
@@ -187,7 +187,7 @@ void makeChessBackground(const TRaster32P &ras) {
 
     int yCol = (y & 4);
 
-    for (int x                = 0; pix != lineEnd; ++x, ++pix)
+    for (int x = 0; pix != lineEnd; ++x, ++pix)
       if (pix->m != 255) *pix = overPix((x & 4) == yCol ? gray1 : gray2, *pix);
   }
 
@@ -605,8 +605,8 @@ TRaster32P SplineIconRenderer::generateRaster(
   double scaleX = 1, scaleY = 1;
   if (sbbox.getLx() > 0.0) scaleX = (double)iconSize.lx / sbbox.getLx();
   if (sbbox.getLy() > 0.0) scaleY = (double)iconSize.ly / sbbox.getLy();
-  double scale                    = 0.8 * std::min(scaleX, scaleY);
-  TPointD centerStroke            = 0.5 * (sbbox.getP00() + sbbox.getP11());
+  double scale         = 0.8 * std::min(scaleX, scaleY);
+  TPointD centerStroke = 0.5 * (sbbox.getP00() + sbbox.getP11());
   TPointD centerPixmap(iconSize.lx * 0.5, iconSize.ly * 0.5);
   glPushMatrix();
   tglMultMatrix(TScale(scale).place(centerStroke, centerPixmap));
@@ -971,10 +971,10 @@ TRaster32P IconGenerator::generateVectorFileIcon(const TFilePath &path,
   TLevelReaderP lr(path);
   TLevelP level = lr->loadInfo();
   if (level->begin() == level->end()) return TRaster32P();
-  TFrameId frameId                       = fid;
+  TFrameId frameId = fid;
   if (fid == TFrameId::NO_FRAME) frameId = level->begin()->first;
-  TImageP img                            = lr->getFrameReader(frameId)->load();
-  TVectorImageP vi                       = img;
+  TImageP img      = lr->getFrameReader(frameId)->load();
+  TVectorImageP vi = img;
   if (!vi) return TRaster32P();
   vi->setPalette(level->getPalette());
   VectorImageIconRenderer vir("", iconSize, vi.getPointer(),
@@ -1112,7 +1112,7 @@ TRaster32P IconGenerator::generateMeshFileIcon(const TFilePath &path,
   TLevelP level = lr->loadInfo();
   if (level->begin() == level->end()) return TRaster32P();
 
-  TFrameId frameId                       = fid;
+  TFrameId frameId = fid;
   if (fid == TFrameId::NO_FRAME) frameId = level->begin()->first;
 
   TMeshImageP mi = lr->getFrameReader(frameId)->load();
@@ -1224,6 +1224,12 @@ void FileIconRenderer::run() {
                                  QSize(iconSize.lx, iconSize.ly),
                                  Qt::KeepAspectRatio));
       setIcon(rasterFromQPixmap(magpie));
+      return;
+    } else if (type == "xdts") {
+      QPixmap xdts(svgToPixmap(":Resources/xdts.svg",
+                               QSize(iconSize.lx, iconSize.ly),
+                               Qt::KeepAspectRatio));
+      setIcon(rasterFromQPixmap(xdts));
       return;
     } else if (type == "js") {
       QImage script(":Resources/scripticon.png");

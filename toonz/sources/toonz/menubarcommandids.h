@@ -95,6 +95,7 @@
 #define MI_OpenCommandToolbar "MI_OpenCommandToolbar"
 #define MI_OpenToolOptionBar "MI_OpenToolOptionBar"
 #define MI_OpenLevelView "MI_OpenLevelView"
+#define MI_OpenStopMotionPanel "MI_OpenStopMotionPanel"
 #ifdef LINETEST
 #define MI_OpenExport "MI_OpenExport"
 #define MI_OpenLineTestView "MI_OpenLineTestView"
@@ -276,6 +277,9 @@
 #define MI_SelectFollowingKeysInRow "MI_SelectFollowingKeysInRow"
 #define MI_InvertKeyframeSelection "MI_InvertKeyframeSelection"
 
+#define MI_ShiftKeyframesDown "MI_ShiftKeyframesDown"
+#define MI_ShiftKeyframesUp "MI_ShiftKeyframesUp"
+
 #define MI_SetAcceleration "MI_SetAcceleration"
 #define MI_SetDeceleration "MI_SetDeceleration"
 #define MI_SetConstantSpeed "MI_SetConstantSpeed"
@@ -349,6 +353,25 @@
 #define MI_TouchGestureControl "MI_TouchGestureControl"
 #define MI_SeparateColors "MI_SeparateColors"
 
+#define MI_StopMotionCapture "MI_StopMotionCapture"
+#define MI_StopMotionRaiseOpacity "MI_StopMotionRaiseOpacity"
+#define MI_StopMotionLowerOpacity "MI_StopMotionLowerOpacity"
+#define MI_StopMotionToggleLiveView "MI_StopMotionToggleLiveView"
+#define MI_StopMotionToggleZoom "MI_StopMotionToggleZoom"
+#define MI_StopMotionLowerSubsampling "MI_StopMotionLowerSubsampling"
+#define MI_StopMotionRaiseSubsampling "MI_StopMotionRaiseSubsampling"
+#define MI_StopMotionJumpToCamera "MI_StopMotionJumpToCamera"
+
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"
+
+#define MI_SelectNextGuideStroke "MI_SelectNextGuideStroke"
+#define MI_SelectPrevGuideStroke "MI_SelectPrevGuideStroke"
+#define MI_SelectGuideStrokeReset "MI_SelectGuideStrokeReset"
+#define MI_TweenGuideStrokes "MI_TweenGuideStrokes"
+#define MI_TweenGuideStrokeToSelected "MI_TweenGuideStrokeToSelected"
+#define MI_SelectBothGuideStrokes "MI_SelectBothGuideStrokes"
+#define MI_SelectGuidesAndTweenMode "MI_SelectGuidesAndTweenMode"
+
+#define MI_ExportXDTS "MI_ExportXDTS"
 #endif

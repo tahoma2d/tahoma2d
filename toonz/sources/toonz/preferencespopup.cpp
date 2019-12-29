@@ -417,6 +417,7 @@ void PreferencesPopup::onPixelsOnlyChanged() {
     defLevelHeight->setDecimals(4);
     defLevelWidth->setDecimals(4);
   }
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("pixelsOnly");
 }
 
 //-----------------------------------------------------------------------------
@@ -445,13 +446,6 @@ void PreferencesPopup::onDefLevelTypeChanged() {
   m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
   if (!m_pref->getBoolValue(pixelsOnly))
     m_controlIdMap.key(DefLevelDpi)->setEnabled(isRaster);
-}
-
-//-----------------------------------------------------------------------------
-
-void PreferencesPopup::onAutocreationTypeChanged() {
-  int autoCreationType = m_pref->getIntValue(AutocreationType);
-  m_controlIdMap.key(EnableAutoStretch)->setEnabled(autoCreationType == 2);
 }
 
 //-----------------------------------------------------------------------------
@@ -1010,8 +1004,11 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {DefLevelWidth, tr("Width:")},
       {DefLevelHeight, tr("  Height:")},
       {DefLevelDpi, tr("DPI:")},
-      {AutocreationType, tr("Autocreation:")},
-      {EnableAutoStretch, tr("Enable auto-stretch frame")},
+      {EnableAutocreation, tr("Enable Autocreation")},
+      {NumberingSystem, tr("Numbering System:")},
+      {EnableAutoStretch, tr("Enable Auto-stretch Frame")},
+      {EnableCreationInHoldCells, tr("Enable Creation in Hold Cells")},
+      {EnableAutoRenumber, tr("Enable Autorenumber")},
       {vectorSnappingTarget, tr("Vector Snapping:")},
       {saveUnpaintedInCleanup,
        tr("Keep Original Cleaned Up Drawings As Backup")},
@@ -1154,10 +1151,8 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
        {{tr("Toonz Vector Level"), PLI_XSHLEVEL},
         {tr("Toonz Raster Level"), TZP_XSHLEVEL},
         {tr("Raster Level"), OVL_XSHLEVEL}}},
-      {AutocreationType,
-       {{tr("Disabled"), 0},
-        {tr("Enabled"), 1},
-        {tr("Use Xsheet as Animation Sheet"), 2}}},
+      {NumberingSystem,
+       {{tr("Incremental"), 0}, {tr("Use Xsheet as Animation Sheet"), 1}}},
       {vectorSnappingTarget,
        {{tr("Strokes"), 0}, {tr("Guides"), 1}, {tr("All"), 2}}},
       {dropdownShortcutsCycleOptions,
@@ -1593,8 +1588,14 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   insertUI(DefLevelDpi, lay);
-  insertDualUIs(AutocreationType, EnableAutoStretch, lay,
-                getComboItemList(AutocreationType));
+  QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
+  {
+    insertUI(NumberingSystem, autoCreationLay,
+             getComboItemList(NumberingSystem));
+    insertUI(EnableAutoStretch, autoCreationLay);
+    insertUI(EnableCreationInHoldCells, autoCreationLay);
+    insertUI(EnableAutoRenumber, autoCreationLay);
+  }
   insertUI(vectorSnappingTarget, lay, getComboItemList(vectorSnappingTarget));
   insertUI(saveUnpaintedInCleanup, lay);
   insertUI(minimizeSaveboxAfterEditing, lay);
@@ -1613,8 +1614,6 @@ QWidget* PreferencesPopup::createDrawingPage() {
                            &PreferencesPopup::onDefLevelTypeChanged);
   m_onEditedFuncMap.insert(newLevelSizeToCameraSizeEnabled,
                            &PreferencesPopup::onDefLevelTypeChanged);
-  m_onEditedFuncMap.insert(AutocreationType,
-                           &PreferencesPopup::onAutocreationTypeChanged);
 
   onDefLevelTypeChanged();
 
@@ -1623,9 +1622,6 @@ QWidget* PreferencesPopup::createDrawingPage() {
     getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
     getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
   }
-
-  if (m_pref->getIntValue(AutocreationType) != 2)
-    m_controlIdMap.key(EnableAutoStretch)->setDisabled(true);
 
   return widget;
 }

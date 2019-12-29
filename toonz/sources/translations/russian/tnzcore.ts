@@ -35,7 +35,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="198"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="250"/>
         <source>colors</source>
         <translation>цвета</translation>
     </message>
@@ -45,9 +45,8 @@
         <translation>Пропуск кадра.</translation>
     </message>
     <message>
-        <location filename="../../common/tsystem/tfilepath.cpp" line="694"/>
         <source>Malformed frame name</source>
-        <translation>Неправильное имя файла</translation>
+        <translation type="vanished">Неправильное имя файла</translation>
     </message>
     <message>
         <location filename="../../include/tundo.h" line="46"/>

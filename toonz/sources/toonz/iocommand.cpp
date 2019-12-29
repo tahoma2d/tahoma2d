@@ -19,6 +19,7 @@
 #include "filebrowser.h"
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
+#include "xdtsio.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -1758,8 +1759,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   assert(!path.isEmpty());
   TFilePath scenePath = path;
   bool importScene    = false;
+  bool isXdts         = scenePath.getType() == "xdts";
   if (scenePath.getType() == "") scenePath = scenePath.withType("tnz");
-  if (scenePath.getType() != "tnz") {
+  if (scenePath.getType() != "tnz" && !isXdts) {
     QString msg;
     msg = QObject::tr("File %1 doesn't look like a TOONZ Scene")
               .arg(QString::fromStdWString(scenePath.getWideString()));
@@ -1846,8 +1848,11 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   TImageStyle::setCurrentScene(scene);
   printf("%s:%s Progressing:\n", __FILE__, __FUNCTION__);
   try {
-    /*-- プログレス表示を行いながらLoad --*/
-    scene->load(scenePath);
+    if (isXdts)
+      XdtsIo::loadXdtsScene(scene, scenePath);
+    else
+      /*-- プログレス表示を行いながらLoad --*/
+      scene->load(scenePath);
     // import if needed
     TProjectManager *pm      = TProjectManager::instance();
     TProjectP currentProject = pm->getCurrentProject();
@@ -1912,7 +1917,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->getProperties()->getFieldGuideAspectRatio());
   IconGenerator::instance()->invalidateSceneIcon();
   DvDirModel::instance()->refreshFolder(scenePath.getParentDir());
-  TApp::instance()->getCurrentScene()->setDirtyFlag(false);
+  TApp::instance()->getCurrentScene()->setDirtyFlag(isXdts);
   History::instance()->addItem(scenePath);
   if (updateRecentFile)
     RecentFiles::instance()->addFilePath(
@@ -1994,11 +1999,9 @@ bool IoCmd::loadScene() {
   static LoadScenePopup *popup = 0;
   if (!popup) {
     popup = new LoadScenePopup();
-    popup->addFilterType("tnz");
   }
   int ret = popup->exec();
   if (ret == QDialog::Accepted) {
-    TApp::instance()->getCurrentScene()->setDirtyFlag(false);
     return true;
   } else {
     TApp::instance()->getCurrentSelection()->setSelection(oldSelection);
@@ -2247,10 +2250,7 @@ DVGui::ProgressDialog &LoadScopedBlock::progressDialog() const {
 //=============================================================================
 
 int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
-                         LoadScopedBlock *sb, int xFrom, int xTo,
-                         std::wstring levelName, int step, int inc,
-                         int frameCount, bool doesFileActuallyExist,
-                         CacheTlvBehavior cachingBehavior) {
+                         LoadScopedBlock *sb) {
   struct locals {
     static bool isDir(const LoadResourceArguments::ResourceData &rd) {
       return QFileInfo(rd.m_path.getQString()).isDir();
@@ -2282,7 +2282,7 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   bool isSoundLevel = false;
 
   // show wait cursor in case of caching all images because it is time consuming
-  if (cachingBehavior == ALL_ICONS_AND_IMAGES)
+  if (args.cachingBehavior == LoadResourceArguments::ALL_ICONS_AND_IMAGES)
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
   // Initialize progress dialog
@@ -2441,15 +2441,15 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
       }
 
       try {
-        xl = ::loadResource(scene, rd, args.castFolder, row0, col0, row1, col1,
-                            args.expose,
+        xl = ::loadResource(
+            scene, rd, args.castFolder, row0, col0, row1, col1, args.expose,
 #if (__cplusplus > 199711L)
-                            std::move(fIds),
+            std::move(fIds),
 #else
-                            fIds,
+            fIds,
 #endif
-                            xFrom, xTo, levelName, step, inc, frameCount,
-                            doesFileActuallyExist);
+            args.xFrom, args.xTo, args.levelName, args.step, args.inc,
+            args.frameCount, args.doesFileActuallyExist);
         if (updateRecentFile) {
           RecentFiles::instance()->addFilePath(
               toQString(scene->decodeFilePath(path)), RecentFiles::Level);
@@ -2466,10 +2466,12 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
         ++loadedCount;
 
         // load the image data of all frames to cache at the beginning
-        if (cachingBehavior != ON_DEMAND) {
+        if (args.cachingBehavior != LoadResourceArguments::ON_DEMAND) {
           TXshSimpleLevel *simpleLevel = xl->getSimpleLevel();
           if (simpleLevel && simpleLevel->getType() == TZP_XSHLEVEL) {
-            bool cacheImagesAsWell = (cachingBehavior == ALL_ICONS_AND_IMAGES);
+            bool cacheImagesAsWell =
+                (args.cachingBehavior ==
+                 LoadResourceArguments::ALL_ICONS_AND_IMAGES);
             simpleLevel->loadAllIconsAndPutInCache(cacheImagesAsWell);
           }
         }
@@ -2483,7 +2485,7 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   sb->data().m_hasSoundLevel = sb->data().m_hasSoundLevel || isSoundLevel;
 
   // revert the cursor
-  if (cachingBehavior == ALL_ICONS_AND_IMAGES)
+  if (args.cachingBehavior == LoadResourceArguments::ALL_ICONS_AND_IMAGES)
     QApplication::restoreOverrideCursor();
 
   return loadedCount;
@@ -2677,9 +2679,9 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   str = QObject::tr(
             "The following level(s) use path with $scenefolder alias.\n\n") +
         str +
-	    QObject::tr(
-                  "\nThey will not be opened properly when you load the "
-                  "scene next time.\nWhat do you want to do?");
+        QObject::tr(
+            "\nThey will not be opened properly when you load the "
+            "scene next time.\nWhat do you want to do?");
 
   int ret = DVGui::MsgBox(
       str, QObject::tr("Copy the levels to correspondent paths"),

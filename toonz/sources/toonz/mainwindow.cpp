@@ -1603,6 +1603,8 @@ void MainWindow::defineActions() {
   preferencesAction->setIcon(QIcon(":Resources/preferences.svg"));
   createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "");
   createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "");
+  createMenuFileAction(MI_ExportXDTS,
+                       tr("Export Exchange Digital Time Sheet (XDTS)"), "");
   createMenuFileAction("MI_RunScript", tr("Run Script..."), "");
   createMenuFileAction("MI_OpenScriptConsole", tr("Open Script Console..."),
                        "");
@@ -1834,6 +1836,9 @@ void MainWindow::defineActions() {
   createMenuCellsAction(MI_FillEmptyCell, tr("&Fill In Empty Cells"), "");
 
   createRightClickMenuAction(MI_SetKeyframes, tr("&Set Key"), "Z");
+  createRightClickMenuAction(MI_ShiftKeyframesDown, tr("&Shift Keys Down"), "");
+  createRightClickMenuAction(MI_ShiftKeyframesUp, tr("&Shift Keys Up"), "");
+
   createRightClickMenuAction(MI_PasteNumbers, tr("&Paste Numbers"), "");
 
   createToggle(MI_ViewCamera, tr("&Camera Box"), "",
@@ -1970,6 +1975,11 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
+#ifdef WITH_STOPMOTION
+  createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
+                          "");
+
+#endif
   createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
 #ifdef LINETEST
   createMenuWindowsAction(MI_OpenLineTestCapture, tr("&LineTest Capture"), "");
@@ -2153,6 +2163,20 @@ void MainWindow::defineActions() {
   CommandManager::instance()->setToggleTexts(V_ShowHideFullScreen,
                                              tr("Full Screen Mode"),
                                              tr("Exit Full Screen Mode"));
+  createRightClickMenuAction(MI_SelectNextGuideStroke,
+                             tr("Select Next Frame Guide Stroke"), "");
+  createRightClickMenuAction(MI_SelectPrevGuideStroke,
+                             tr("Select Previous Frame Guide Stroke"), "");
+  createRightClickMenuAction(MI_SelectBothGuideStrokes,
+                             tr("Select Prev && Next Frame Guide Strokes"), "");
+  createRightClickMenuAction(MI_SelectGuideStrokeReset,
+                             tr("Reset Guide Stroke Selections"), "");
+  createRightClickMenuAction(MI_TweenGuideStrokes,
+                             tr("Tween Selected Guide Strokes"), "");
+  createRightClickMenuAction(MI_TweenGuideStrokeToSelected,
+                             tr("Tween Guide Strokes to Selected"), "");
+  createRightClickMenuAction(MI_SelectGuidesAndTweenMode,
+                             tr("Select Guide Strokes && Tween Mode"), "");
 
   // Following actions are for adding "Visualization" menu items to the command
   // bar. They are separated from the original actions in order to avoid
@@ -2289,6 +2313,20 @@ void MainWindow::defineActions() {
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
+#ifdef WITH_STOPMOTION
+  createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "");
+  createAction(MI_StopMotionRaiseOpacity, tr("Raise Stop Motion Opacity"), "");
+  createAction(MI_StopMotionLowerOpacity, tr("Lower Stop Motion Opacity"), "");
+  createAction(MI_StopMotionToggleLiveView, tr("Toggle Stop Motion Live View"),
+               "");
+  createAction(MI_StopMotionToggleZoom, tr("Toggle Stop Motion Zoom"), "");
+  createAction(MI_StopMotionLowerSubsampling,
+               tr("Lower Stop Motion Level Subsampling"), "");
+  createAction(MI_StopMotionRaiseSubsampling,
+               tr("Raise Stop Motion Level Subsampling"), "");
+  createAction(MI_StopMotionJumpToCamera, tr("Go to Stop Motion Insert Frame"),
+               "");
+#endif
 }
 
 //-----------------------------------------------------------------------------

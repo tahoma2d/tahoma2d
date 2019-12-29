@@ -605,6 +605,11 @@
         <source>Timeline</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Failed to save the following resources:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

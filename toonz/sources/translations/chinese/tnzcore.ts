@@ -43,7 +43,7 @@
     </message>
     <message>
         <source>Malformed frame name</source>
-        <translation>不合格的帧名</translation>
+        <translation type="vanished">不合格的帧名</translation>
     </message>
 </context>
 <context>

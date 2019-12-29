@@ -11,6 +11,7 @@
 #include "menubarcommandids.h"
 #include "ruler.h"
 #include "locatorpopup.h"
+#include "../stopmotion/stopmotion.h"
 
 // TnzTools includes
 #include "tools/cursors.h"
@@ -529,6 +530,141 @@ public:
   }
 } positionResetCommand;
 
+class TSelectGuideStrokeNextCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokeNextCommand() : MenuItemHandler(MI_SelectNextGuideStroke) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(1);
+  }
+} selectGuideStrokeNextCommand;
+
+class TSelectGuideStrokePrevCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokePrevCommand() : MenuItemHandler(MI_SelectPrevGuideStroke) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-1);
+  }
+} selectGuideStrokePrevCommand;
+
+class TSelectBothGuideStrokesCommand final : public MenuItemHandler {
+public:
+  TSelectBothGuideStrokesCommand()
+      : MenuItemHandler(MI_SelectBothGuideStrokes) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-2);
+  }
+} selectBothGuideStrokesCommand;
+
+class TSelectGuideStrokeResetCommand final : public MenuItemHandler {
+public:
+  TSelectGuideStrokeResetCommand()
+      : MenuItemHandler(MI_SelectGuideStrokeReset) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(0);
+    tool->getViewer()->setGuidedBackStroke(-1);
+    tool->getViewer()->setGuidedFrontStroke(-1);
+    tool->getViewer()->invalidateAll();
+  }
+} selectGuideStrokeResetCommand;
+
+class TTweenGuideStrokesCommand final : public MenuItemHandler {
+public:
+  TTweenGuideStrokesCommand() : MenuItemHandler(MI_TweenGuideStrokes) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->tweenSelectedGuideStrokes();
+  }
+} tweenGuideStrokesCommand;
+
+class TTweenGuideStrokeToSelectedCommand final : public MenuItemHandler {
+public:
+  TTweenGuideStrokeToSelectedCommand()
+      : MenuItemHandler(MI_TweenGuideStrokeToSelected) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->tweenGuideStrokeToSelected();
+  }
+} tweenGuideStrokeToSelectedCommand;
+
+class TSelectGuidesAndTweenCommand final : public MenuItemHandler {
+public:
+  TSelectGuidesAndTweenCommand()
+      : MenuItemHandler(MI_SelectGuidesAndTweenMode) {}
+  void execute() override {
+    TVectorImageP vi = (TVectorImageP)TTool::getImage(false);
+    if (!vi) return;
+
+    Preferences *pref = Preferences::instance();
+    if (!pref->isOnionSkinEnabled() ||
+        (pref->getGuidedDrawing() != 1 && pref->getGuidedDrawing() != 2))
+      return;
+
+    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+    if (!tool) return;
+
+    tool->getViewer()->setGuidedStrokePickerMode(-3);
+  }
+} selectGuidesAndTweenCommand;
+
 //=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
@@ -577,6 +713,9 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_isBusyOnTabletMove(false) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
+#ifdef WITH_STOPMOTION
+  m_stopMotion = StopMotion::instance();
+#endif
   // Enables multiple key input.
   setAttribute(Qt::WA_KeyCompression);
   // Enables input methods for Asian languages.
@@ -847,6 +986,13 @@ void SceneViewer::showEvent(QShowEvent *) {
 
   connect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
 
+  if (m_stopMotion) {
+    connect(m_stopMotion, SIGNAL(newLiveViewImageReady()), this,
+            SLOT(onNewStopMotionImageReady()));
+    connect(m_stopMotion, SIGNAL(liveViewStopped()), this,
+            SLOT(onStopMotionLiveViewStopped()));
+  }
+
   if (m_hRuler && m_vRuler) {
     if (!viewRulerToggle.getStatus()) {
       m_hRuler->hide();
@@ -901,6 +1047,14 @@ void SceneViewer::hideEvent(QHideEvent *) {
   if (toolHandle) toolHandle->disconnect(this);
 
   disconnect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
+
+  if (!m_stopMotion == NULL) {
+    disconnect(m_stopMotion, SIGNAL(newImageReady()), this,
+               SLOT(onNewStopMotionImageReady()));
+    disconnect(m_stopMotion, SIGNAL(liveViewStopped()), this,
+               SLOT(onStopMotionLiveViewStopped()));
+  }
+
   // hide locator
   if (m_locator && m_locator->isVisible()) m_locator->hide();
 }
@@ -923,6 +1077,41 @@ double SceneViewer::getHGuide(int index) { return m_hRuler->getGuide(index); }
 
 //-----------------------------------------------------------------------------
 
+void SceneViewer::onNewStopMotionImageReady() {
+#ifdef WITH_STOPMOTION
+  if (m_stopMotion->m_hasLineUpImage) {
+    // if (m_hasStopMotionLineUpImage) delete m_stopMotionLineUpImage;
+    // is there a way to do this without cloning the image twice?
+    // TRasterImageP image     = m_stopMotion->m_lineUpImage->clone();
+    m_stopMotionLineUpImage =
+        (TRasterImageP)m_stopMotion->m_lineUpImage->clone();
+    // m_stopMotionLineUpImage = (TRasterImage *)image->cloneImage();
+    m_stopMotionLineUpImage->setDpi(m_stopMotion->m_liveViewDpi.x,
+                                    m_stopMotion->m_liveViewDpi.y);
+    m_hasStopMotionLineUpImage = true;
+  }
+  if (m_stopMotion->m_hasLiveViewImage) {
+    // if (m_hasStopMotionImage) delete m_stopMotionImage;
+    // is there a way to do this without cloning the image twice?
+    // TRasterImageP image = m_stopMotion->m_liveViewImage->clone();
+    m_stopMotionImage = m_stopMotion->m_liveViewImage->clone();
+    // m_stopMotionImage   = (TRasterImage *)image->cloneImage();
+    m_stopMotionImage->setDpi(m_stopMotion->m_liveViewDpi.x,
+                              m_stopMotion->m_liveViewDpi.y);
+    m_hasStopMotionImage = true;
+    if (m_stopMotion->m_pickLiveViewZoom) {
+      setToolCursor(this, ToolCursor::ZoomCursor);
+    }
+    onSceneChanged();
+  }
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::onStopMotionLiveViewStopped() { onSceneChanged(); }
+
+//-----------------------------------------------------------------------------
 void SceneViewer::initializeGL() {
   initializeOpenGLFunctions();
 
@@ -1608,7 +1797,10 @@ void SceneViewer::drawScene() {
   TXshSimpleLevel::m_fillFullColorRaster = false;
 
   // Guided Drawing Check
-  int useGuidedDrawing = Preferences::instance()->getGuidedDrawing();
+  int useGuidedDrawing  = Preferences::instance()->getGuidedDrawing();
+  TTool *tool           = app->getCurrentTool()->getTool();
+  int guidedFrontStroke = tool ? tool->getViewer()->getGuidedFrontStroke() : -1;
+  int guidedBackStroke  = tool ? tool->getViewer()->getGuidedBackStroke() : -1;
 
   m_minZ = 0;
   if (is3DView()) {
@@ -1639,6 +1831,8 @@ void SceneViewer::drawScene() {
             ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
             .getFrameId();
     args.m_isGuidedDrawingEnabled = useGuidedDrawing;
+    args.m_guidedFrontStroke      = guidedFrontStroke;
+    args.m_guidedBackStroke       = guidedBackStroke;
 
     // args.m_currentFrameId = app->getCurrentFrame()->getFid();
     Stage::visit(painter, args);
@@ -1672,7 +1866,8 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
                    app->getCurrentOnionSkin()->getOnionSkinMask(),
-                   frameHandle->isPlaying(), useGuidedDrawing);
+                   frameHandle->isPlaying(), useGuidedDrawing, guidedBackStroke,
+                   guidedFrontStroke);
     } else {
       std::pair<TXsheet *, int> xr;
       int xsheetLevel = 0;
@@ -1697,8 +1892,34 @@ void SceneViewer::drawScene() {
               ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
               .getFrameId();
       args.m_isGuidedDrawingEnabled = useGuidedDrawing;
+      args.m_guidedFrontStroke      = guidedFrontStroke;
+      args.m_guidedBackStroke       = guidedBackStroke;
+
       Stage::visit(painter, args);
     }
+
+#ifdef WITH_STOPMOTION
+    if (!frameHandle->isPlaying() && m_stopMotion->m_liveViewStatus == 2) {
+      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+      }
+      if (m_hasStopMotionImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        bool hide_opacity =
+            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+      }
+    }
+#endif
 
     assert(glGetError() == 0);
     painter.flushRasterImages();

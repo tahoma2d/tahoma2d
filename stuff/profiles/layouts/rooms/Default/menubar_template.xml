@@ -27,6 +27,7 @@
         </menu>
         <menu title="Export">
             <command>MI_SoundTrack</command>
+            <command>MI_ExportXDTS</command>
         </menu>
         <separator/>
         <command>MI_PrintXsheet</command>

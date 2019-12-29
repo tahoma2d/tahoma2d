@@ -226,6 +226,8 @@ Preferences::Preferences() {
   initializeOptions();
 
   definePreferenceItems();
+  // resolve compatibility for deprecated items
+  resolveCompatibility();
 
   // initialize environment based on loaded preferences
   setUnits();
@@ -450,9 +452,15 @@ void Preferences::definePreferenceItems() {
          TCamera().getSize().ly, 0.1, std::numeric_limits<double>::max());
   define(DefLevelDpi, "DefLevelDpi", QMetaType::Double, TCamera().getDpi().x,
          0.1, std::numeric_limits<double>::max());
-  define(AutocreationType, "AutocreationType", QMetaType::Int,
-         2);  // Use Xsheet as Animation Sheet
+
+  define(EnableAutocreation, "EnableAutocreation", QMetaType::Bool, true);
+  define(NumberingSystem, "NumberingSystem", QMetaType::Int,
+         0);  // Incremental
   define(EnableAutoStretch, "EnableAutoStretch", QMetaType::Bool, true);
+  define(EnableCreationInHoldCells, "EnableCreationInHoldCells",
+         QMetaType::Bool, true);
+  define(EnableAutoRenumber, "EnableAutoRenumber", QMetaType::Bool, true);
+
   define(vectorSnappingTarget, "vectorSnappingTarget", QMetaType::Int,
          (int)SnapAll);
   define(saveUnpaintedInCleanup, "saveUnpaintedInCleanup", QMetaType::Bool,
@@ -576,6 +584,10 @@ void Preferences::definePreferenceItems() {
   define(shortcutPreset, "shortcutPreset", QMetaType::QString, "defopentoonz");
   // Viewer context menu
   define(guidedDrawingType, "guidedDrawingType", QMetaType::Int, 0);  // Off
+  define(guidedAutoInbetween, "guidedAutoInbetween", QMetaType::Bool,
+         false);  // Off
+  define(guidedInterpolationType, "guidedInterpolationType", QMetaType::Int,
+         1);  // Linear
 #if defined(MACOSX) && defined(__LP64__)
   // OSX shared memory settings
   define(shmmax, "shmmax", QMetaType::Int, -1);
@@ -662,6 +674,30 @@ void Preferences::define(PreferencesItemId id, QString idString,
 
 void Preferences::setCallBack(const PreferencesItemId id, OnEditedFunc func) {
   getItem(id).onEditedFunc = func;
+}
+
+//-----------------------------------------------------------------
+
+void Preferences::resolveCompatibility() {
+  // autocreation type is divided into "EnableAutocreation" and
+  // "NumberingSystem"
+  if (m_settings->contains("AutocreationType") &&
+      !m_settings->contains("EnableAutocreation")) {
+    int type = m_settings->value("AutocreationType").toInt();
+    switch (type) {
+    case 0:  // former "Disabled"
+      setValue(EnableAutocreation, false);
+      break;
+    case 1:  // former "Enabled"
+      setValue(EnableAutocreation, true);
+      setValue(NumberingSystem, 0);  // set numbering system to "Incremental"
+      break;
+    case 2:  // former "Use Xsheet as Animation Sheet"
+      setValue(EnableAutocreation, true);
+      setValue(NumberingSystem, 1);
+      break;
+    }
+  }
 }
 
 //-----------------------------------------------------------------

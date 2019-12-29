@@ -92,6 +92,10 @@ public:
   void setKeyframes();
   void pasteKeyframesInto();
 
+  void shiftKeyframes(int direction);
+  void shiftKeyframesUp() { shiftKeyframes(-1); }
+  void shiftKeyframesDown() { shiftKeyframes(1); }
+
   void cloneLevel();
   void insertCells();
 
@@ -109,7 +113,8 @@ public:
   void convertVectortoVector();
 
   void reframeWithEmptyInbetweens();
-  void duplicateFrame();
+  void duplicateFrame(int row, int col, bool multiple);
+  void duplicateFrames();
 
   void renameCells(TXshCell &cell);
   // rename cells for each columns with correspondent item in the list

@@ -52,7 +52,7 @@ TFrameId operator+(const TFrameId &fid, int d) {
 }
 
 //-----------------------------------------------------------------------------
-
+/*
 void doUpdateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
                     std::vector<TFrameId> newFids, TXsheet *xsh,
                     std::vector<TXshChildLevel *> &childLevels) {
@@ -97,7 +97,7 @@ void doUpdateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
     }
   }
 }
-
+*/
 //-----------------------------------------------------------------------------
 
 static void updateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
@@ -105,7 +105,9 @@ static void updateXSheet(TXshSimpleLevel *sl, std::vector<TFrameId> oldFids,
   std::vector<TXshChildLevel *> childLevels;
   TXsheet *xsh =
       TApp::instance()->getCurrentScene()->getScene()->getTopXsheet();
-  doUpdateXSheet(sl, oldFids, newFids, xsh, childLevels);
+  bool changed =
+      ToolUtils::doUpdateXSheet(sl, oldFids, newFids, xsh, childLevels);
+  if (changed) TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 //=============================================================================
@@ -2226,6 +2228,27 @@ public:
 // duplicate
 //-----------------------------------------------------------------------------
 
+void FilmstripCmd::duplicateFrameWithoutUndo(TXshSimpleLevel *sl,
+                                             TFrameId srcFrame,
+                                             TFrameId targetFrame) {
+  if (srcFrame.isNoFrame() || targetFrame.isNoFrame()) return;
+  if (srcFrame.isEmptyFrame()) return;
+
+  std::set<TFrameId> frames;
+
+  frames.insert(srcFrame);
+  DrawingData *data = new DrawingData();
+  data->setLevelFrames(sl, frames);
+
+  frames.clear();
+  frames.insert(targetFrame);
+
+  bool keepOriginalPalette = true;
+
+  pasteFramesWithoutUndo(data, sl, frames, DrawingData::OVER_SELECTION, true,
+                         keepOriginalPalette);
+}
+
 void FilmstripCmd::duplicate(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
                              bool withUndo) {
   if (frames.empty() || !sl || sl->isSubsequence() || sl->isReadOnly()) return;
@@ -2434,16 +2457,16 @@ public:
                       .arg(QString::fromStdWString(m_level->getName()));
     switch (m_interpolation) {
     case FilmstripCmd::II_Linear:
-      str += QString("Linear Interporation");
+      str += QString("Linear Interpolation");
       break;
     case FilmstripCmd::II_EaseIn:
-      str += QString("Ease In Interporation");
+      str += QString("Ease In Interpolation");
       break;
     case FilmstripCmd::II_EaseOut:
-      str += QString("Ease Out Interporation");
+      str += QString("Ease Out Interpolation");
       break;
     case FilmstripCmd::II_EaseInOut:
-      str += QString("Ease In-Out Interporation");
+      str += QString("Ease In-Out Interpolation");
       break;
     }
     return str;
@@ -2486,11 +2509,11 @@ void FilmstripCmd::inbetweenWithoutUndo(
     case II_Linear:
       break;
     case II_EaseIn:
-      s = t * t;
-      break;  // s'(0) = 0
-    case II_EaseOut:
       s = t * (2 - t);
       break;  // s'(1) = 0
+    case II_EaseOut:
+      s = t * t;
+      break;  // s'(0) = 0
     case II_EaseInOut:
       s = t * t * (3 - 2 * t);
       break;  // s'(0) = s'(1) = 0

@@ -61,6 +61,17 @@ Visual Studio 2015 と Qt 5.9 でビルドできることを確認していま�
 1. `$opentoonz/toonz/build/OpenToonz.sln` を開いて Release 構成を選択してビルドします
 2. `$opentoonz/toonz/build/Release` にファイルが生成されます
 
+## ストップモーション機能とキヤノン製デジタルカメラのサポートを有効にするには
+
+以下の３つのライブラリが追加で必要です。
+  - [OpenCV](https://opencv.org/) (v4.1.0以上)
+  - [libjpeg-turbo](https://www.libjpeg-turbo.org/)
+  - Canon EOS Digital SDK (EDSDK)：入手方法の詳細は[キヤノンマーケティングジャパン株式会社Webサイト](https://cweb.canon.jp/eos/info/api-package/)をご参照下さい。
+
+CMake上で、`WITH_STOPMOTION` オプションをONにします。CMake上、または環境変数で`OpenCV_DIR` の値をOpenCVのインストールフォルダ内の`build`フォルダの場所に設定します。（例： `C:/opencv/build`）
+
+実行時にはOpenCV、libjpeg-turboならびにCanon EDSDKの.dllファイルを`OpenToonz.exe` と同じフォルダにコピーします。
+
 ## 実行
 ### 実行可能ファイルなどの配置
 1. `$oepntoonz/toonz/build/Release` の中身を適当なフォルダにコピーします

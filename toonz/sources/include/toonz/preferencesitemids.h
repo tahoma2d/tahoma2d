@@ -80,8 +80,12 @@ enum PreferencesItemId {
   DefLevelWidth,
   DefLevelHeight,
   DefLevelDpi,
-  AutocreationType,
+  // AutocreationType,// deprecated
+  EnableAutocreation,
+  NumberingSystem,
   EnableAutoStretch,
+  EnableCreationInHoldCells,
+  EnableAutoRenumber,
   vectorSnappingTarget,
   saveUnpaintedInCleanup,
   minimizeSaveboxAfterEditing,
@@ -174,6 +178,8 @@ enum PreferencesItemId {
   shortcutPreset,
   // Viewer context menu
   guidedDrawingType,
+  guidedAutoInbetween,
+  guidedInterpolationType,
   // OSX shared memory settings
   shmmax,
   shmseg,

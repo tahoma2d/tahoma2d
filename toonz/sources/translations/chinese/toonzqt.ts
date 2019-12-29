@@ -701,6 +701,30 @@ Possibly the preset file has been corrupted</source>
         <source>&amp;Locator</source>
         <translation>定位器(&amp;L)</translation>
     </message>
+    <message>
+        <source>Viewer Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reset View</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FontParamField</name>
@@ -1011,19 +1035,19 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>第 1 步</translation>
+        <translation type="vanished">第 1 步</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>第 2 步</translation>
+        <translation type="vanished">第 2 步</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>第 3 步</translation>
+        <translation type="vanished">第 3 步</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>第 4 步</translation>
+        <translation type="vanished">第 4 步</translation>
     </message>
     <message>
         <source>Activate Cycle</source>
@@ -1048,6 +1072,10 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Change Step</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar Shape Interpolation</source>
+        <translation type="unfinished">相似形状插值</translation>
     </message>
 </context>
 <context>
@@ -1105,6 +1133,10 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Table</source>
         <translation>动画台</translation>
+    </message>
+    <message>
+        <source>Hide Selected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2267,6 +2299,10 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>OK</source>
         <translation type="unfinished">确定</translation>
     </message>
+    <message>
+        <source>That is a reserved file name and cannot be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2284,6 +2320,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>RgbLinkButtons</name>
+    <message>
+        <source>Copy RGB : %1 &gt; %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap %1 and %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2335,6 +2382,18 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>&amp;Toggle node icons</source>
         <translation>开关节点图标(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Selection Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Hand Mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2421,6 +2480,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>&amp;Load Motion Path...</source>
         <translation>加载运动路径(&amp;L)...</translation>
+    </message>
+</context>
+<context>
+    <name>StageSchematicNode</name>
+    <message>
+        <source>Toggle Autorotate Along Motion Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Link Motion Path to Control Points</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

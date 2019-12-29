@@ -70,8 +70,7 @@ TFilePath getGlobalRoot() {
 // Leggo la globalRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() +
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
@@ -106,8 +105,7 @@ TFilePath getLocalRoot() {
   TFilePath lroot;
 
 #ifdef _WIN32
-std:
-  string regpath = "SOFTWARE\\" + tver.getAppName() + "\\" + tver.getAppName() +
+  std::string regpath = "SOFTWARE\\" + tver.getAppName() + "\\" + tver.getAppName() +
                    "\\" + tver.getAppVersionString() + "\\FARMROOT";
   TFilePath name(regpath);
   lroot = TFilePath(TSystem::getSystemValue(name).toStdString()) +
@@ -116,8 +114,7 @@ std:
 // Leggo la localRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() +
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
@@ -2253,8 +2250,7 @@ void ControllerService::onStart(int argc, char *argv[]) {
     TFilePath logFilePath = lRootDir + "controller.log";
     m_userLog             = new TUserLog(logFilePath);
   }
-std:
-  string appverinfo = tver.getAppVersionInfo("Farm Controller") + "\n\n";
+  std::string appverinfo = tver.getAppVersionInfo("Farm Controller") + "\n\n";
   m_userLog->info(appverinfo.c_str());
 
   TFilePath globalRoot = getGlobalRoot();

@@ -76,8 +76,7 @@ TFilePath getGlobalRoot() {
 // Leggo la localRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() +
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
@@ -121,8 +120,7 @@ TFilePath getLocalRoot() {
 #else
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + "_" +
-                         tver.getAppVersionString() +
+  std::string unixpath = "./" + tver.getAppName() + 
                          ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
@@ -385,8 +383,7 @@ static QString getExeName(bool isComposer) {
   return name + ".exe ";
 #elif defined(MACOSX)
   TVER::ToonzVersion tver;
-  return "\"./" + QString::fromStdString(tver.getAppName()) + "_" +
-         QString::fromStdString(tver.getAppVersionString()) +
+  return "\"./" + QString::fromStdString(tver.getAppName()) +
          ".app/Contents/MacOS/" + name + "\" ";
 #else
   return name;
@@ -879,8 +876,7 @@ void FarmServerService::onStart(int argc, char *argv[]) {
     m_userLog             = new TUserLog(logFilePath);
   }
 
-std:
-  string appverinfo = tver.getAppVersionInfo("Farm Server") + "\n\n";
+  std::string appverinfo = tver.getAppVersionInfo("Farm Server") + "\n\n";
   m_userLog->info(appverinfo.c_str());
 
   // legge dal file di configurazione dei server il numero di porta da

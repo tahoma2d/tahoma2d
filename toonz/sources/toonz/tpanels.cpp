@@ -24,6 +24,10 @@
 #include "historypane.h"
 #include "cleanupsettingspane.h"
 
+#ifdef WITH_STOPMOTION
+#include "stopmotioncontroller.h"
+#endif
+
 #ifdef LINETEST
 #include "linetestpane.h"
 #include "linetestcapturepane.h"
@@ -1085,6 +1089,7 @@ public:
     TFilePath currentProjectFolder =
         TProjectManager::instance()->getCurrentProjectPath().getParentDir();
     browser->setFolder(currentProjectFolder, true);
+    browser->enableDoubleClickToOpenScenes();
   }
 } browserFactory;
 
@@ -1360,6 +1365,34 @@ public:
 OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel",
                                           QObject::tr("History"));
 //=============================================================================
+
+#ifdef WITH_STOPMOTION
+//=============================================================================
+// StopMotion Controller
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+class StopMotionPanelFactory final : public TPanelFactory {
+public:
+  StopMotionPanelFactory() : TPanelFactory("StopMotionController") {}
+
+  void initialize(TPanel *panel) override {
+    StopMotionController *stopMotionController =
+        new StopMotionController(panel);
+    panel->setWidget(stopMotionController);
+    panel->setWindowTitle(QObject::tr("Stop Motion Controller"));
+    panel->setIsMaximizable(false);
+  }
+} stopMotionPanelFactory;
+
+//=============================================================================
+OpenFloatingPanel openStopMotionPanelCommand(
+    MI_OpenStopMotionPanel, "StopMotionController",
+    QObject::tr("Stop Motion Controller"));
+//-----------------------------------------------------------------------------
+
+#endif
 
 //=============================================================================
 // FxSettings

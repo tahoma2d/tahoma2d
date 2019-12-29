@@ -28,6 +28,7 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/stage2.h"
 #include "toonz/preferences.h"
+#include "toonz/tonionskinmaskhandle.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -335,8 +336,9 @@ static void findMaxCurvPoints(TStroke *stroke, const float &angoloLim,
 }
 
 static void addStroke(TTool::Application *application, const TVectorImageP &vi,
-                      TStroke *stroke, bool breakAngles, bool frameCreated,
-                      bool levelCreated, TXshSimpleLevel *sLevel = NULL,
+                      TStroke *stroke, bool breakAngles, bool autoGroup,
+                      bool autoFill, bool frameCreated, bool levelCreated,
+                      TXshSimpleLevel *sLevel = NULL,
                       TFrameId fid = TFrameId::NO_FRAME) {
   QMutexLocker lock(vi->getMutex());
 
@@ -380,7 +382,8 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
       TStroke *str = new TStroke(*strokes[i]);
       vi->addStroke(str);
       TUndoManager::manager()->add(new UndoPencil(str, fillInformation, sl, id,
-                                                  frameCreated, levelCreated));
+                                                  frameCreated, levelCreated,
+                                                  autoGroup, autoFill));
     }
     TUndoManager::manager()->endBlock();
   } else {
@@ -391,7 +394,24 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
     TStroke *str = new TStroke(*stroke);
     vi->addStroke(str);
     TUndoManager::manager()->add(new UndoPencil(str, fillInformation, sl, id,
-                                                frameCreated, levelCreated));
+                                                frameCreated, levelCreated,
+                                                autoGroup, autoFill));
+  }
+
+  if (autoGroup && stroke->isSelfLoop()) {
+    int index = vi->getStrokeCount() - 1;
+    vi->group(index, 1);
+    if (autoFill) {
+      // to avoid filling other strokes, I enter into the new stroke group
+      int currentGroup = vi->exitGroup();
+      vi->enterGroup(index);
+      vi->selectFill(stroke->getBBox().enlarge(1, 1), 0, stroke->getStyle(),
+                     false, true, false);
+      if (currentGroup != -1)
+        vi->enterGroup(currentGroup);
+      else
+        vi->exitGroup();
+    }
   }
 
   // Update regions. It will call roundStroke() in
@@ -423,12 +443,13 @@ namespace {
 //-------------------------------------------------------------------
 
 void addStrokeToImage(TTool::Application *application, const TVectorImageP &vi,
-                      TStroke *stroke, bool breakAngles, bool frameCreated,
-                      bool levelCreated, TXshSimpleLevel *sLevel = NULL,
+                      TStroke *stroke, bool breakAngles, bool autoGroup,
+                      bool autoFill, bool frameCreated, bool levelCreated,
+                      TXshSimpleLevel *sLevel = NULL,
                       TFrameId id = TFrameId::NO_FRAME) {
   QMutexLocker lock(vi->getMutex());
-  addStroke(application, vi.getPointer(), stroke, breakAngles, frameCreated,
-            levelCreated, sLevel, id);
+  addStroke(application, vi.getPointer(), stroke, breakAngles, autoGroup,
+            autoFill, frameCreated, levelCreated, sLevel, id);
   // la notifica viene gia fatta da addStroke!
   // getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
 }
@@ -630,6 +651,8 @@ void ToonzVectorBrushTool::onDeactivate() {
 //--------------------------------------------------------------------------------------------------
 
 bool ToonzVectorBrushTool::preLeftButtonDown() {
+  if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
+
   touchImage();
   if (m_isFrameCreated) {
     // When the xsheet frame is selected, whole viewer will be updated from
@@ -646,6 +669,11 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
                                           const TMouseEvent &e) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
+
+  if (getViewer() && getViewer()->getGuidedStrokePickerMode()) {
+    getViewer()->doPickGuideStroke(pos);
+    return;
+  }
 
   int col   = app->getCurrentColumn()->getColumnIndex();
   m_isPath  = app->getCurrentObject()->isSpline();
@@ -912,9 +940,10 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         curCol   = application->getCurrentColumn()->getColumnIndex();
         curFrame = application->getCurrentFrame()->getFrame();
       }
-      bool success =
-          doFrameRangeStrokes(m_firstFrameId, m_firstStroke, getFrameId(),
-                              stroke, m_firstFrameRange);
+      bool success = doFrameRangeStrokes(
+          m_firstFrameId, m_firstStroke, getFrameId(), stroke,
+          m_frameRange.getIndex(), m_breakAngles.getValue(), false, false,
+          m_firstFrameRange);
       if (e.isCtrlPressed()) {
         if (application) {
           if (m_firstFrameId > currentId) {
@@ -950,9 +979,29 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       stroke->setSelfLoop(true);
       m_snapSelf = false;
     }
-    addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
-                     m_isFrameCreated, m_isLevelCreated);
+
+    bool strokeAdded = false;
+
+    if ((Preferences::instance()->getGuidedDrawing() == 1 ||
+         Preferences::instance()->getGuidedDrawing() == 2) &&
+        Preferences::instance()->getGuidedAutoInbetween()) {
+      int fidx     = getApplication()->getCurrentFrame()->getFrameIndex();
+      TFrameId fId = getFrameId();
+
+      strokeAdded = doGuidedAutoInbetween(
+          fId, vi, stroke, m_breakAngles.getValue(), false, false, true);
+
+      if (getApplication()->getCurrentFrame()->isEditingScene())
+        getApplication()->getCurrentFrame()->setFrame(fidx);
+      else
+        getApplication()->getCurrentFrame()->setFid(fId);
+    }
+
+    if (!strokeAdded)
+      addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
+                       false, false, m_isFrameCreated, m_isLevelCreated);
     TRectD bbox = stroke->getBBox().enlarge(2) + m_track.getModifiedRegion();
+
     invalidate();  // should use bbox?
   }
   assert(stroke);
@@ -971,11 +1020,11 @@ bool ToonzVectorBrushTool::keyDown(QKeyEvent *event) {
 
 //--------------------------------------------------------------------------------------------------
 
-bool ToonzVectorBrushTool::doFrameRangeStrokes(TFrameId firstFrameId,
-                                               TStroke *firstStroke,
-                                               TFrameId lastFrameId,
-                                               TStroke *lastStroke,
-                                               bool drawFirstStroke) {
+bool ToonzVectorBrushTool::doFrameRangeStrokes(
+    TFrameId firstFrameId, TStroke *firstStroke, TFrameId lastFrameId,
+    TStroke *lastStroke, int interpolationType, bool breakAngles,
+    bool autoGroup, bool autoFill, bool drawFirstStroke, bool drawLastStroke,
+    bool withUndo) {
   TXshSimpleLevel *sl =
       TTool::getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
   TStroke *first           = new TStroke();
@@ -1009,7 +1058,11 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(TFrameId firstFrameId,
   int m = fids.size();
   assert(m > 0);
 
-  TUndoManager::manager()->beginBlock();
+  if (withUndo) TUndoManager::manager()->beginBlock();
+  int row = getApplication()->getCurrentFrame()->isEditingScene()
+                ? getApplication()->getCurrentFrame()->getFrameIndex()
+                : -1;
+  TFrameId cFid = getApplication()->getCurrentFrame()->getFid();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFrameId <= fid && fid <= lastFrameId);
@@ -1017,54 +1070,142 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(TFrameId firstFrameId,
     // This is an attempt to divide the tween evenly
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     double s = t;
-    switch (m_frameRange.getIndex()) {
+    switch (interpolationType) {
     case 1:  // LINEAR_WSTR
       break;
     case 2:  // EASEIN_WSTR
-      s = t * t;
-      break;  // s'(0) = 0
-    case 3:   // EASEOUT_WSTR
       s = t * (2 - t);
       break;  // s'(1) = 0
+    case 3:   // EASEOUT_WSTR
+      s = t * t;
+      break;  // s'(0) = 0
     case 4:   // EASEINOUT_WSTR:
       s = t * t * (3 - 2 * t);
       break;  // s'(0) = s'(1) = 0
     }
 
     TTool::Application *app = TTool::getApplication();
-    if (app) {
-      if (app->getCurrentFrame()->isEditingScene())
-        app->getCurrentFrame()->setFrame(fid.getNumber() - 1);
-      else
-        app->getCurrentFrame()->setFid(fid);
-    }
+    if (app) app->getCurrentFrame()->setFid(fid);
 
     TVectorImageP img = sl->getFrame(fid, true);
     if (t == 0) {
       if (!swapped && !drawFirstStroke) {
       } else
         addStrokeToImage(getApplication(), img, firstImage->getStroke(0),
-                         m_breakAngles.getValue(), m_isFrameCreated,
+                         breakAngles, autoGroup, autoFill, m_isFrameCreated,
                          m_isLevelCreated, sl, fid);
     } else if (t == 1) {
       if (swapped && !drawFirstStroke) {
-      } else
+      } else if (drawLastStroke)
         addStrokeToImage(getApplication(), img, lastImage->getStroke(0),
-                         m_breakAngles.getValue(), m_isFrameCreated,
+                         breakAngles, autoGroup, autoFill, m_isFrameCreated,
                          m_isLevelCreated, sl, fid);
     } else {
       assert(firstImage->getStrokeCount() == 1);
       assert(lastImage->getStrokeCount() == 1);
       TVectorImageP vi = TInbetween(firstImage, lastImage).tween(s);
       assert(vi->getStrokeCount() == 1);
-      addStrokeToImage(getApplication(), img, vi->getStroke(0),
-                       m_breakAngles.getValue(), m_isFrameCreated,
-                       m_isLevelCreated, sl, fid);
+      addStrokeToImage(getApplication(), img, vi->getStroke(0), breakAngles,
+                       autoGroup, autoFill, m_isFrameCreated, m_isLevelCreated,
+                       sl, fid);
+    }
+  }
+  if (row != -1)
+    getApplication()->getCurrentFrame()->setFrame(row);
+  else
+    getApplication()->getCurrentFrame()->setFid(cFid);
+
+  if (withUndo) TUndoManager::manager()->endBlock();
+  notifyImageChanged();
+  return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+bool ToonzVectorBrushTool::doGuidedAutoInbetween(
+    TFrameId cFid, const TVectorImageP &cvi, TStroke *cStroke, bool breakAngles,
+    bool autoGroup, bool autoFill, bool drawStroke) {
+  TApplication *app = TTool::getApplication();
+
+  if (cFid.isEmptyFrame() || cFid.isNoFrame() || !cvi || !cStroke) return false;
+
+  TXshSimpleLevel *sl = app->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return false;
+
+  int osBack  = -1;
+  int osFront = -1;
+
+  getViewer()->getGuidedFrameIdx(&osBack, &osFront);
+
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  bool resultBack            = false;
+  bool resultFront           = false;
+  TFrameId oFid;
+  int cStrokeIdx   = cvi->getStrokeCount();
+  int cStrokeCount = cStrokeIdx + 1;
+
+  TUndoManager::manager()->beginBlock();
+  if (osBack != -1) {
+    if (currentFrame->isEditingScene()) {
+      TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+      int col      = app->getCurrentColumn()->getColumnIndex();
+      if (xsh && col >= 0) {
+        TXshCell cell             = xsh->getCell(osBack, col);
+        if (!cell.isEmpty()) oFid = cell.getFrameId();
+      }
+    } else
+      oFid = sl->getFrameId(osBack);
+
+    TVectorImageP fvi = sl->getFrame(oFid, false);
+    int fStrokeCount  = fvi ? fvi->getStrokeCount() : 0;
+
+    int strokeIdx = getViewer()->getGuidedBackStroke() != -1
+                        ? getViewer()->getGuidedBackStroke()
+                        : cStrokeIdx;
+
+    if (!oFid.isEmptyFrame() && oFid != cFid && fvi && fStrokeCount &&
+        strokeIdx < fStrokeCount) {
+      TStroke *fStroke = fvi->getStroke(strokeIdx);
+
+      resultBack = doFrameRangeStrokes(
+          oFid, fStroke, cFid, cStroke,
+          Preferences::instance()->getGuidedInterpolation(), breakAngles,
+          autoGroup, autoFill, false, drawStroke, false);
+    }
+  }
+
+  if (osFront != -1) {
+    bool drawFirstStroke = (osBack != -1 && resultBack) ? false : true;
+
+    if (currentFrame->isEditingScene()) {
+      TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+      int col      = app->getCurrentColumn()->getColumnIndex();
+      if (xsh && col >= 0) {
+        TXshCell cell             = xsh->getCell(osFront, col);
+        if (!cell.isEmpty()) oFid = cell.getFrameId();
+      }
+    } else
+      oFid = sl->getFrameId(osFront);
+
+    TVectorImageP fvi = sl->getFrame(oFid, false);
+    int fStrokeCount  = fvi ? fvi->getStrokeCount() : 0;
+
+    int strokeIdx = getViewer()->getGuidedFrontStroke() != -1
+                        ? getViewer()->getGuidedFrontStroke()
+                        : cStrokeIdx;
+
+    if (!oFid.isEmptyFrame() && oFid != cFid && fvi && fStrokeCount &&
+        strokeIdx < fStrokeCount) {
+      TStroke *fStroke = fvi->getStroke(strokeIdx);
+
+      resultFront = doFrameRangeStrokes(
+          cFid, cStroke, oFid, fStroke,
+          Preferences::instance()->getGuidedInterpolation(), breakAngles,
+          autoGroup, autoFill, drawFirstStroke, false, false);
     }
   }
   TUndoManager::manager()->endBlock();
-  notifyImageChanged();
-  return true;
+
+  return resultBack || resultFront;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1374,6 +1515,9 @@ void ToonzVectorBrushTool::draw() {
 
   // If toggled off, don't draw brush outline
   if (!Preferences::instance()->isCursorOutlineEnabled()) return;
+
+  // Don't draw brush outline if picking guiding stroke
+  if (getViewer()->getGuidedStrokePickerMode()) return;
 
   // Draw the brush outline - change color when the Ink / Paint check is
   // activated

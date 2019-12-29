@@ -695,6 +695,30 @@ E&apos; possibile che il file sia corrotto.</translation>
         <source>&amp;Locator</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Viewer Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reset View</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FontParamField</name>
@@ -1005,19 +1029,19 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Step 1</source>
-        <translation>Passo 1</translation>
+        <translation type="vanished">Passo 1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>Passo 2</translation>
+        <translation type="vanished">Passo 2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>Passo 3</translation>
+        <translation type="vanished">Passo 3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>Passo 4</translation>
+        <translation type="vanished">Passo 4</translation>
     </message>
     <message>
         <source>Activate Cycle</source>
@@ -1042,6 +1066,10 @@ E&apos; possibile che il file sia corrotto.</translation>
     <message>
         <source>Change Step</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar Shape Interpolation</source>
+        <translation type="unfinished">Interpolazione tramite Forma Simile</translation>
     </message>
 </context>
 <context>
@@ -1098,6 +1126,10 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
     <message>
         <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Selected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2186,6 +2218,10 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>OK</source>
         <translation type="unfinished">OK</translation>
     </message>
+    <message>
+        <source>That is a reserved file name and cannot be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2199,6 +2235,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>Toonz</source>
         <translation type="vanished">Toonz</translation>
+    </message>
+</context>
+<context>
+    <name>RgbLinkButtons</name>
+    <message>
+        <source>Copy RGB : %1 &gt; %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap %1 and %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2249,6 +2296,18 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>&amp;Toggle node icons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Selection Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Zoom Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Hand Mode</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2329,6 +2388,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>&amp;Load Motion Path...</source>
         <translation>&amp;Carica la Traiettoria di Movimento...</translation>
+    </message>
+</context>
+<context>
+    <name>StageSchematicNode</name>
+    <message>
+        <source>Toggle Autorotate Along Motion Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Link Motion Path to Control Points</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -1254,6 +1254,45 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class DuplicateDrawingUndo final : public ToolUtils::TToolUndo {
+  TFrameId origFrameId;
+  TFrameId dupFrameId;
+
+public:
+  DuplicateDrawingUndo(TXshSimpleLevel *level, const TFrameId &srcFrameId,
+                       const TFrameId &tgtFrameId)
+      : TToolUndo(level, tgtFrameId, true) {
+    origFrameId = srcFrameId;
+    dupFrameId  = tgtFrameId;
+  }
+
+  ~DuplicateDrawingUndo() {}
+
+  void undo() const override {
+    removeLevelAndFrameIfNeeded();
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    notifyImageChanged();
+  }
+
+  void redo() const override {
+    insertLevelAndFrameIfNeeded();
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Duplicate Drawing");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+  //-----------------------------------------------------------------------------
+};
+
+//-----------------------------------------------------------------------------
+
 class FillEmptyCellUndo final : public TUndo {
   TCellSelection *m_selection;
   TXshCell m_cell;
@@ -1408,6 +1447,10 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_CloneLevel, &TCellSelection::cloneLevel);
   enableCommand(this, MI_SetKeyframes, &TCellSelection::setKeyframes);
 
+  enableCommand(this, MI_ShiftKeyframesDown,
+                &TCellSelection::shiftKeyframesDown);
+  enableCommand(this, MI_ShiftKeyframesUp, &TCellSelection::shiftKeyframesUp);
+
   enableCommand(this, MI_Copy, &TCellSelection::copyCells);
   enableCommand(this, MI_Paste, &TCellSelection::pasteCells);
 
@@ -1436,7 +1479,7 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_PasteNumbers, &TCellSelection::overwritePasteNumbers);
   enableCommand(this, MI_CreateBlankDrawing,
                 &TCellSelection::createBlankDrawings);
-  enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrame);
+  enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
 }
 //-----------------------------------------------------------------------------
 // Used in RenameCellField::eventFilter()
@@ -1462,6 +1505,8 @@ bool TCellSelection::isEnabledCommand(
                                         MI_TimeStretch,
                                         MI_CloneLevel,
                                         MI_SetKeyframes,
+                                        MI_ShiftKeyframesDown,
+                                        MI_ShiftKeyframesUp,
                                         MI_Copy,
                                         MI_Paste,
                                         MI_PasteInto,
@@ -2011,7 +2056,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
-    Preferences::instance()->setValue(AutocreationType, 1, false);
+    Preferences::instance()->setValue(EnableAutocreation, true, false);
+  // Enable inserting in the hold cells temporarily too.
+  bool isCreationInHoldCellsEnabled =
+      Preferences::instance()->isCreationInHoldCellsEnabled();
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
 
   TImage *img = toolHandle->getTool()->touchImage();
 
@@ -2020,12 +2070,24 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   if (!img || !sl) {
     if (!isAutoCreateEnabled)
-      Preferences::instance()->setValue(AutocreationType, 0, false);
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to create a blank drawing on the current column"));
     return;
   }
+
+  if (!toolHandle->getTool()->m_isFrameCreated) {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "Unable to replace the current drawing with a blank drawing"));
+    return;
+  }
+
+  sl->setDirtyFlag(true);
 
   TPalette *palette = sl->getPalette();
   TFrameId frame    = cell.getFrameId();
@@ -2036,7 +2098,9 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   // Reset back to what these were
   if (!isAutoCreateEnabled)
-    Preferences::instance()->setValue(AutocreationType, 0, false);
+    Preferences::instance()->setValue(EnableAutocreation, false, false);
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2064,99 +2128,150 @@ void TCellSelection::createBlankDrawings() {
 
 //-----------------------------------------------------------------------------
 
-void TCellSelection::duplicateFrame() {
-  if (!Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) {
-    DVGui::warning(
-        QObject::tr("Please enable \"Sync Level Strip Drawing Number Changes "
-                    "with the XSheet\" preference option\nto use the duplicate "
-                    "command in the xsheet / timeline."));
-    return;
-  }
-
+void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-  // TApp::instance()->getCurrentScene()->getScene()->g
-  int r0, c0, r1, c1;
-  getSelectedCells(r0, c0, r1, c1);
-  // check for cases that won't work
-  if (c1 > c0) {
-    DVGui::error(
-        QObject::tr("Please select only one layer to duplicate a frame."));
-    return;
-  }
-  if (r1 > r0) {
-    DVGui::error(QObject::tr("Please select only one frame to duplicate."));
+
+  if (col < 0) {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "There are no drawings in the camera column to duplicate"));
     return;
   }
 
-  r0 = TTool::getApplication()->getCurrentFrame()->getFrame();
-  c0 = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
+  TXshColumn *column = xsh->getColumn(col);
+  if (column && column->isLocked()) {
+    if (!multiple) DVGui::warning(QObject::tr("The current column is locked"));
+    return;
+  }
 
-  TXshCell cell            = xsh->getCell(r0, c0);
-  TXshCell prevCell        = xsh->getCell(r0 - 1, c0);
-  TXshCell nextCell        = xsh->getCell(r0 + 1, c0);
-  TFrameId selectedFrameId = cell.getFrameId();
-  TXshSimpleLevel *sl      = cell.getSimpleLevel();
-  bool usePreviousCell     = false;
-  bool goForward           = false;
+  TApp::instance()->getCurrentColumn()->setColumnIndex(col);
+  TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 1);
 
-  // check if we use the current cell to duplicate or the previous cell
-  if (cell.isEmpty()) {
-    if (prevCell.isEmpty() || !(prevCell.m_level->getSimpleLevel())) {
+  TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
+  if (!level && Preferences::instance()->isAutoCreateEnabled() &&
+      Preferences::instance()->isAnimationSheetEnabled()) {
+    int r0, r1;
+    xsh->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r > r0; r--) {
+      TXshCell cell = xsh->getCell(r, col);
+      if (cell.isEmpty()) continue;
+      level = cell.m_level.getPointer();
+      if (!level) continue;
+      break;
+    }
+  }
+  if (level) {
+    int levelType = level->getType();
+    if (levelType == ZERARYFX_XSHLEVEL || levelType == PLT_XSHLEVEL ||
+        levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
+        levelType == MESH_XSHLEVEL) {
+      if (!multiple)
+        DVGui::warning(
+            QObject::tr("Cannot duplicate a drawing in the current column"));
+      return;
+    } else if (level->getSimpleLevel() &&
+               level->getSimpleLevel()->isReadOnly()) {
+      if (!multiple)
+        DVGui::warning(QObject::tr("The current level is not editable"));
       return;
     }
-    usePreviousCell = true;
-    selectedFrameId = prevCell.getFrameId();
-    sl              = prevCell.getSimpleLevel();
   }
+
+  TXshCell targetCell = xsh->getCell(row, col);
+  TXshCell prevCell   = xsh->getCell(row - 1, col);
+  ;
+
+  // check if we use the current cell to duplicate or the previous cell
+  if (!targetCell.isEmpty() && targetCell != prevCell) {
+    // Current cell has a drawing to duplicate and it's not a hold shift focus
+    // to next cell as if they selected that one to duplicate into
+    prevCell = targetCell;
+    TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 2);
+    row++;
+  }
+
+  if (prevCell.isEmpty() || !(prevCell.m_level->getSimpleLevel())) return;
+
+  TXshSimpleLevel *sl = prevCell.getSimpleLevel();
   if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
 
-  // check whether to change the next cell or replace the current cell if it is
-  // a hold from a previous frame
-  if (!usePreviousCell) {
-    // use the current cell
-    if (prevCell.m_level == cell.m_level &&
-        prevCell.m_frameId == cell.m_frameId) {
-      // the current frame is a hold from a previous frame
-      // change this frame and any sequential frames part of the same hold
-      bool hold = true;
-      r1        = r0 + 1;
-      while (hold) {
-        TXshCell testCell = xsh->getCell(r1, c0);
-        if (testCell.m_frameId == cell.m_frameId &&
-            testCell.m_level == cell.m_level) {
-          r1 += 1;
-        } else {
-          r1 -= 1;
-          hold = false;
-        }
-      }
+  ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
-    } else {
-      //  This is not part of a hold, use the next cell.
-      // make sure we are not going to overwrite a non-empty cell
-      if (nextCell.isEmpty()) {
-        r0 += 1;
-        cell      = nextCell;
-        goForward = true;
-      } else
-        return;
-    }
-  } else {
-    // cell = prevCell;
+  // If autocreate disabled, let's turn it on temporarily
+  bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
+  if (!isAutoCreateEnabled)
+    Preferences::instance()->setValue(EnableAutocreation, true, false);
+  // Enable inserting in the hold cells temporarily too.
+  bool isCreationInHoldCellsEnabled =
+      Preferences::instance()->isCreationInHoldCellsEnabled();
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
+
+  TImage *img = toolHandle->getTool()->touchImage();
+  if (!img) {
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
+    if (!multiple)
+      DVGui::warning(
+          QObject::tr("Unable to duplicate a drawing on the current column"));
+    return;
   }
 
+  bool frameCreated = toolHandle->getTool()->m_isFrameCreated;
+  if (!frameCreated) {
+    if (!multiple)
+      DVGui::warning(
+          QObject::tr("Unable to replace the current or next drawing with a "
+                      "duplicate drawing"));
+    return;
+  }
+
+  targetCell           = xsh->getCell(row, col);
+  TPalette *palette    = sl->getPalette();
+  TFrameId srcFrame    = prevCell.getFrameId();
+  TFrameId targetFrame = targetCell.getFrameId();
   std::set<TFrameId> frames;
-  frames.insert(selectedFrameId);
-  TUndoManager::manager()->beginBlock();
-  FilmstripCmd::duplicate(sl, frames, true);
-  TXshCell newCell;
-  newCell.m_level   = sl;
-  newCell.m_frameId = selectedFrameId + 1;
-  DuplicateInXSheetUndo *undo =
-      new DuplicateInXSheetUndo(r0, r1, c0, cell, newCell, goForward);
+
+  FilmstripCmd::duplicateFrameWithoutUndo(sl, srcFrame, targetFrame);
+
+  TApp::instance()->getCurrentLevel()->notifyLevelChange();
+
+  DuplicateDrawingUndo *undo =
+      new DuplicateDrawingUndo(sl, srcFrame, targetFrame);
   TUndoManager::manager()->add(undo);
+
+  if (!isAutoCreateEnabled)
+    Preferences::instance()->setValue(EnableAutocreation, false, false);
+  if (!isCreationInHoldCellsEnabled)
+    Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
+}
+
+//-----------------------------------------------------------------------------
+
+void TCellSelection::duplicateFrames() {
+  int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
+  int row = TApp::instance()->getCurrentFrame()->getFrameIndex();
+
+  int r0, c0, r1, c1;
+  getSelectedCells(r0, c0, r1, c1);
+
+  bool multiple = (r1 - r0 > 1) || (c1 - c0 > 1);
+
+  TUndoManager::manager()->beginBlock();
+  for (int c = c0; c <= c1; c++) {
+    for (int r = r0; r <= r1; r++) {
+      duplicateFrame(r, c, multiple);
+    }
+  }
   TUndoManager::manager()->endBlock();
-  undo->redo();
+
+  if (multiple) {
+    TApp::instance()->getCurrentColumn()->setColumnIndex(col);
+    TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 1);
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -134,6 +134,7 @@ public:
               QVariant defaultValue, QVariant min = 0, QVariant max = -1);
 
   void setCallBack(const PreferencesItemId id, OnEditedFunc func);
+  void resolveCompatibility();
 
   PreferencesItem &getItem(const PreferencesItemId id);
   bool getBoolValue(const PreferencesItemId id) const;
@@ -285,8 +286,15 @@ public:
   double getDefLevelWidth() const { return getDoubleValue(DefLevelWidth); }
   double getDefLevelHeight() const { return getDoubleValue(DefLevelHeight); }
   double getDefLevelDpi() const { return getDoubleValue(DefLevelDpi); }
-  int getAutocreationType() const { return getIntValue(AutocreationType); }
+  bool isAutoCreateEnabled() const { return getBoolValue(EnableAutocreation); }
+  int getNumberingSystem() const { return getIntValue(NumberingSystem); }
   bool isAutoStretchEnabled() const { return getBoolValue(EnableAutoStretch); }
+  bool isCreationInHoldCellsEnabled() const {
+    return getBoolValue(EnableCreationInHoldCells);
+  }
+  bool isAutorenumberEnabled() const {
+    return getBoolValue(EnableAutoRenumber);
+  }
   int getVectorSnappingTarget() { return getIntValue(vectorSnappingTarget); }
   bool isSaveUnpaintedInCleanupEnable() const {
     return getBoolValue(saveUnpaintedInCleanup);
@@ -418,7 +426,7 @@ public:
     return getBoolValue(useOnionColorsForShiftAndTraceGhosts);
   }
   bool getAnimatedGuidedDrawing() const {
-    return getBoolValue(animatedGuidedDrawing);
+    return getIntValue(animatedGuidedDrawing) == 1;
   }
 
   // Colors  tab
@@ -454,6 +462,8 @@ public:
   QString getShortcutPreset() { return getStringValue(shortcutPreset); }
   // Viewer context menu
   int getGuidedDrawing() { return getIntValue(guidedDrawingType); }
+  bool getGuidedAutoInbetween() { return getBoolValue(guidedAutoInbetween); }
+  int getGuidedInterpolation() { return getIntValue(guidedInterpolationType); }
 #if defined(MACOSX) && defined(__LP64__)
   int getShmMax() const {
     return getIntValue(shmmax);
@@ -471,9 +481,8 @@ public:
 
   void setPrecompute(bool enabled);
   bool getPrecompute() { return m_precompute; }
-  bool isAutoCreateEnabled() const { return getIntValue(AutocreationType) > 0; }
   bool isAnimationSheetEnabled() const {
-    return getIntValue(AutocreationType) == 2;
+    return getIntValue(NumberingSystem) == 1;
   }
   bool isXsheetCameraColumnVisible() const {
     return getBoolValue(showXsheetCameraColumn) &&

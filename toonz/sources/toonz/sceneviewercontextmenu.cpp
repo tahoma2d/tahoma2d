@@ -155,7 +155,65 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   action->setCheckable(true);
   action->setChecked(guidedDrawingStatus == 3);
   ret = ret && parent->connect(action, SIGNAL(triggered()), this,
-                               SLOT(setGuidedDrawingAll()));
+                            SLOT(setGuidedDrawingAll()));
+  guidedDrawingMenu->addSeparator();
+  bool enableOption = guidedDrawingStatus == 1 || guidedDrawingStatus == 2;
+  action = guidedDrawingMenu->addAction(tr("Auto Inbetween"));
+  action->setCheckable(true);
+  action->setChecked(Preferences::instance()->getGuidedAutoInbetween());
+  action->setEnabled(enableOption);
+  ret = ret && parent->connect(action, SIGNAL(triggered()), this,
+                            SLOT(setGuidedAutoInbetween()));
+  guidedDrawingMenu->addSeparator();
+  int guidedInterpolation = Preferences::instance()->getGuidedInterpolation();
+  action = guidedDrawingMenu->addAction(tr("Linear Interpolation"));
+  action->setCheckable(true);
+  action->setChecked(guidedInterpolation == 1);
+  action->setEnabled(enableOption);
+  ret = ret && parent->connect(action, SIGNAL(triggered()), this,
+                            SLOT(setGuidedInterpolationLinear()));
+  action = guidedDrawingMenu->addAction(tr("Ease In Interpolation"));
+  action->setCheckable(true);
+  action->setChecked(guidedInterpolation == 2);
+  action->setEnabled(enableOption);
+  ret = ret && parent->connect(action, SIGNAL(triggered()), this,
+                            SLOT(setGuidedInterpolationEaseIn()));
+  action = guidedDrawingMenu->addAction(tr("Ease Out Interpolation"));
+  action->setCheckable(true);
+  action->setChecked(guidedInterpolation == 3);
+  action->setEnabled(enableOption);
+  ret = ret && parent->connect(action, SIGNAL(triggered()), this,
+                            SLOT(setGuidedInterpolationEaseOut()));
+  action = guidedDrawingMenu->addAction(tr("Ease In/Out Interpolation"));
+  action->setCheckable(true);
+  action->setChecked(guidedInterpolation == 4);
+  action->setEnabled(enableOption);
+  ret = ret && parent->connect(action, SIGNAL(triggered()), this,
+                            SLOT(setGuidedInterpolationEaseInOut()));
+  guidedDrawingMenu->addSeparator();
+  action = CommandManager::instance()->getAction(MI_SelectPrevGuideStroke);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+  action = CommandManager::instance()->getAction(MI_SelectNextGuideStroke);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+  action = CommandManager::instance()->getAction(MI_SelectBothGuideStrokes);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+  action = CommandManager::instance()->getAction(MI_SelectGuideStrokeReset);
+  action->setEnabled(true);
+  guidedDrawingMenu->addAction(action);
+  guidedDrawingMenu->addSeparator();
+  action = CommandManager::instance()->getAction(MI_TweenGuideStrokes);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+  action = CommandManager::instance()->getAction(MI_TweenGuideStrokeToSelected);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+  action = CommandManager::instance()->getAction(MI_SelectGuidesAndTweenMode);
+  action->setEnabled(enableOption);
+  guidedDrawingMenu->addAction(action);
+
   // Zero Thick
   if (!parent->isPreviewEnabled())
     ZeroThickToggleGui::addZeroThickCommand(this);
@@ -386,6 +444,32 @@ void SceneViewerContextMenu::setGuidedDrawingAll() {
 }
 
 //-----------------------------------------------------------------------------
+void SceneViewerContextMenu::setGuidedAutoInbetween() {
+  Preferences::instance()->setValue(
+      guidedAutoInbetween, !Preferences::instance()->getGuidedAutoInbetween());
+}
+
+//-----------------------------------------------------------------------------
+void SceneViewerContextMenu::setGuidedInterpolationLinear() {
+  Preferences::instance()->setValue(guidedInterpolationType, 1);
+}
+
+//-----------------------------------------------------------------------------
+void SceneViewerContextMenu::setGuidedInterpolationEaseIn() {
+  Preferences::instance()->setValue(guidedInterpolationType, 2);
+}
+
+//-----------------------------------------------------------------------------
+void SceneViewerContextMenu::setGuidedInterpolationEaseOut() {
+  Preferences::instance()->setValue(guidedInterpolationType, 3);
+}
+
+//-----------------------------------------------------------------------------
+void SceneViewerContextMenu::setGuidedInterpolationEaseInOut() {
+  Preferences::instance()->setValue(guidedInterpolationType, 4);
+}
+
+//-----------------------------------------------------------------------------
 
 void SceneViewerContextMenu::savePreviewedFrames() {
   Previewer::instance(m_viewer->getPreviewMode() ==
@@ -393,6 +477,7 @@ void SceneViewerContextMenu::savePreviewedFrames() {
       ->saveRenderedFrames();
 }
 
+//-----------------------------------------------------------------------------
 class ZeroThickToggle : public MenuItemHandler {
 public:
   ZeroThickToggle() : MenuItemHandler(MI_ZeroThick) {}
