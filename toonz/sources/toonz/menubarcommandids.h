@@ -362,6 +362,10 @@
 #define MI_StopMotionJumpToCamera "MI_StopMotionJumpToCamera"
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
+#define MI_OpenWhatsNew "MI_OpenWhatsNew"
+#define MI_OpenCommunityForum "MI_OpenCommunityForum"
+#define MI_OpenReportAnIssue "MI_OpenReportAnIssue"
+
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"
 
 #define MI_SelectNextGuideStroke "MI_SelectNextGuideStroke"
