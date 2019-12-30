@@ -1937,6 +1937,7 @@ void MainWindow::defineActions() {
                MenuPlayCommandType);
 
   createMenuPlayAction(MI_Play, tr("Play"), "P");
+  createMenuPlayAction(MI_ShortPlay, tr("Short Play"), "Alt+P");
   createMenuPlayAction(MI_Loop, tr("Loop"), "L");
   createMenuPlayAction(MI_Pause, tr("Pause"), "");
   createMenuPlayAction(MI_FirstFrame, tr("First Frame"), "Alt+,");

@@ -202,6 +202,7 @@
 
 #define MI_Link "MI_Link"
 #define MI_Play "MI_Play"
+#define MI_ShortPlay "MI_ShortPlay"
 #define MI_Loop "MI_Loop"
 #define MI_Pause "MI_Pause"
 #define MI_FirstFrame "MI_FirstFrame"
