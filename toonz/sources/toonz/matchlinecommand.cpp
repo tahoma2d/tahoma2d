@@ -6,6 +6,7 @@
 #include "tpalette.h"
 
 // TnzLib includes
+#include "toonz/txsheet.h"
 #include "toonz/toonzscene.h"
 #include "toonz/txshcell.h"
 #include "toonz/txshsimplelevel.h"
@@ -15,6 +16,7 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/txshleveltypes.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -99,6 +101,31 @@ MergeCmappedDialog::MergeCmappedDialog(TFilePath &levelPath)
 //    MergeColumns  command
 //*****************************************************************************
 
+bool isVectorColumn(const std::set<int> &columns) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  std::set<int>::const_iterator column = columns.begin();
+  int start, end;
+  xsh->getCellRange(*column, start, end);
+  
+  if (start > end) return false;
+  
+  std::vector<TXshCell> cell(end - start + 1);
+  xsh->getCells(start, *column, cell.size(), &(cell[0]));
+  
+  TXshSimpleLevel *level = 0;
+  for (int i = 0; i < (int)cell.size(); i++) {
+    if (cell[i].isEmpty()) continue;
+
+    level = cell[i].getSimpleLevel();
+    if (level->getType() == PLI_XSHLEVEL) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+}
+
 class MergeColumnsCommand final : public MenuItemHandler {
 public:
   MergeColumnsCommand() : MenuItemHandler(MI_MergeColumns) {}
@@ -123,8 +150,17 @@ public:
           "only one columns is selected."));
       return;
     }
-
-    mergeColumns(indices);
+    
+    bool groupLevels = true;
+    if (isVectorColumn(indices)) {
+      int opt = DVGui::MsgBox("Group strokes by vector levels?", QObject::tr("Yes"), QObject::tr("No"), QObject::tr("Cancel"));
+      if (opt == 3) return;
+      else {
+        groupLevels = (opt == 1);
+      };
+    }
+    
+    mergeColumns(indices, groupLevels);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
