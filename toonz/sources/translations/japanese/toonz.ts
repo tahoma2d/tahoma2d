@@ -8198,7 +8198,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Save</source>
-        <translation>保存する</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <source>Discard</source>
