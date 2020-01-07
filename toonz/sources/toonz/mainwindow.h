@@ -98,7 +98,7 @@ public:
   void onOpenOnlineManual();
   void onOpenWhatsNew();
   void onOpenCommunityForum();
-  void onOpenReportAnIssue();
+  void onOpenReportABug();
   void checkForUpdates();
   int getRoomCount() const;
   Room *getRoom(int index) const;

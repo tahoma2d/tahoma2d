@@ -1443,7 +1443,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(helpMenu, MI_OpenWhatsNew);
   addMenuItem(helpMenu, MI_OpenCommunityForum);
   helpMenu->addSeparator();
-  addMenuItem(helpMenu, MI_OpenReportAnIssue);
+  addMenuItem(helpMenu, MI_OpenReportABug);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);
 

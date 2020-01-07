@@ -455,7 +455,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
   setCommandHandler(MI_OpenCommunityForum, this,
                     &MainWindow::onOpenCommunityForum);
-  setCommandHandler(MI_OpenReportAnIssue, this, &MainWindow::onOpenReportAnIssue);
+  setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
   setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
@@ -1005,21 +1005,30 @@ void MainWindow::onOpenOnlineManual() {
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl("https://github.com/opentoonz/opentoonz/releases/latest"));
+      QUrl(tr("https://github.com/opentoonz/opentoonz/releases/latest")));
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenCommunityForum() {
   QDesktopServices::openUrl(
-      QUrl("https://groups.google.com/forum/#!forum/opentoonz_en"));
+      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
 }
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onOpenReportAnIssue() {
-  QDesktopServices::openUrl(
-      QUrl("https://github.com/opentoonz/opentoonz/issues"));
+void MainWindow::onOpenReportABug() {
+  QString str = QString(
+      tr("To report a bug, click on the button below to open a web browser "
+         "window for OpenToonz's Issues page on https://github.com.  Click on "
+         "the 'New issue' button and fill out the form."));
+
+  std::vector<QString> buttons = {QObject::tr("Report a Bug"),
+                                  QObject::tr("Close")};
+  int ret = DVGui::MsgBox(DVGui::INFORMATION, str, buttons, 1);
+  if (ret == 1)
+    QDesktopServices::openUrl(
+        QUrl("https://github.com/opentoonz/opentoonz/issues"));
 }
 //-----------------------------------------------------------------------------
 
@@ -2030,7 +2039,7 @@ void MainWindow::defineActions() {
   createMenuHelpAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
   createMenuHelpAction(MI_OpenWhatsNew, tr("&What's New..."), "");
   createMenuHelpAction(MI_OpenCommunityForum, tr("&Community Forum..."), "");
-  createMenuHelpAction(MI_OpenReportAnIssue, tr("&Report an Issue..."), "");
+  createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
 
   createRightClickMenuAction(MI_BlendColors, tr("&Blend colors"), "");
 
