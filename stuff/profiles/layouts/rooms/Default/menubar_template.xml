@@ -323,7 +323,7 @@
         <command>MI_OpenWhatsNew</command>
         <command>MI_OpenCommunityForum</command>
         <separator/>
-        <command>MI_OpenReportAnIssue</command>
+        <command>MI_OpenReportABug</command>
         <separator/>
         <command>MI_About</command>     
     </menu>
