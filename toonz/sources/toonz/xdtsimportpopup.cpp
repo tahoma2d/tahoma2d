@@ -65,7 +65,7 @@ XDTSImportPopup::XDTSImportPopup(QStringList levelNames, ToonzScene* scene,
   connect(loadButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
-  addButtonBarWidget(cancelButton, loadButton);
+  addButtonBarWidget(loadButton, cancelButton);
 
   updateSuggestions(scenePath.getQString());
 }
@@ -75,8 +75,17 @@ XDTSImportPopup::XDTSImportPopup(QStringList levelNames, ToonzScene* scene,
 void XDTSImportPopup::onPathChanged() {
   FileField* fileField = dynamic_cast<FileField*>(sender());
   if (!fileField) return;
+  QString levelName = m_fields.key(fileField);
   // make the field non-suggestive
-  m_pathSuggestedLevels.removeAll(m_fields.key(fileField));
+  m_pathSuggestedLevels.removeAll(levelName);
+
+  // if the path is specified under the sub-folder with the same name as the
+  // level, then try to make suggestions from the parent folder of it
+  TFilePath fp =
+      m_scene->decodeFilePath(TFilePath(fileField->getPath())).getParentDir();
+  if (QDir(fp.getQString()).dirName() == levelName)
+    updateSuggestions(fp.getQString());
+
   updateSuggestions(fileField->getPath());
 }
 
@@ -119,14 +128,38 @@ void XDTSImportPopup::updateSuggestions(const QString samplePath) {
     if (fileField->getPath().isEmpty() ||
         m_pathSuggestedLevels.contains(levelName)) {
       // input suggestion if there is a file with the same level name
+      bool found = false;
       for (TFilePath path : pathSet) {
         if (path.getName() == levelName.toStdString()) {
           TFilePath codedPath = m_scene->codeFilePath(path);
           fileField->setPath(codedPath.getQString());
           if (!m_pathSuggestedLevels.contains(levelName))
             m_pathSuggestedLevels.append(levelName);
+          found = true;
           break;
         }
+      }
+      // Not found in the current folder.
+      // Then check if there is a sub-folder with the same name as the level
+      // (like foo/A/A.tlv), as CSP exports levels like that.
+      if (!found && suggestFolder.cd(levelName)) {
+        TFilePathSet subPathSet;
+        try {
+          TSystem::readDirectory(subPathSet, suggestFolder, true);
+        } catch (...) {
+          return;
+        }
+        for (TFilePath path : subPathSet) {
+          if (path.getName() == levelName.toStdString()) {
+            TFilePath codedPath = m_scene->codeFilePath(path);
+            fileField->setPath(codedPath.getQString());
+            if (!m_pathSuggestedLevels.contains(levelName))
+              m_pathSuggestedLevels.append(levelName);
+            break;
+          }
+        }
+        // back to parent folder
+        suggestFolder.cdUp();
       }
     }
     ++fieldsItr;

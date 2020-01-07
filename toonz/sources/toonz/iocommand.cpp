@@ -1917,6 +1917,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->getProperties()->getFieldGuideAspectRatio());
   IconGenerator::instance()->invalidateSceneIcon();
   DvDirModel::instance()->refreshFolder(scenePath.getParentDir());
+  // set dirty for xdts files since converted tnz is not yet saved
   TApp::instance()->getCurrentScene()->setDirtyFlag(isXdts);
   History::instance()->addItem(scenePath);
   if (updateRecentFile)
