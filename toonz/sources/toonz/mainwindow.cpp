@@ -1005,7 +1005,7 @@ void MainWindow::onOpenOnlineManual() {
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl("https://github.com/opentoonz/opentoonz/releases/latest"));
+      QUrl(tr("https://github.com/opentoonz/opentoonz/releases/latest")));
 }
 
 //-----------------------------------------------------------------------------
