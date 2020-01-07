@@ -1012,7 +1012,7 @@ void MainWindow::onOpenWhatsNew() {
 
 void MainWindow::onOpenCommunityForum() {
   QDesktopServices::openUrl(
-      QUrl("https://groups.google.com/forum/#!forum/opentoonz_en"));
+      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
 }
 
 //-----------------------------------------------------------------------------
