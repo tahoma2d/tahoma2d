@@ -10,6 +10,9 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/preferences.h"
+#include "toonz/sceneproperties.h"
+#include "toonz/tstageobject.h"
+#include "toutputproperties.h"
 
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
@@ -135,11 +138,18 @@ QVector<int> XdtsFieldTrackItem::getCellNumberTrack() const {
   std::sort(frameCellNumbers.begin(), frameCellNumbers.end(), frameLessThan);
 
   QVector<int> cells;
-  int currentFrame = 0;
+  int currentFrame  = 0;
+  int initialNumber = 0;
   for (QPair<int, int> &frameCellNumber : frameCellNumbers) {
     while (currentFrame < frameCellNumber.first) {
-      cells.append((cells.isEmpty()) ? 0 : cells.last());
+      cells.append((cells.isEmpty()) ? initialNumber : cells.last());
       currentFrame++;
+    }
+    // CSP may export negative frame data (although it is not allowed in XDTS
+    // format specification) so handle such case.
+    if (frameCellNumber.first < 0) {
+      initialNumber = frameCellNumber.second;
+      continue;
     }
     // ignore sheet symbols for now
     int cellNumber = frameCellNumber.second;
@@ -417,6 +427,8 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
   scene->setProject(sceneProject.getPointer());
   std::string sceneFileName = scenePath.getName() + ".tnz";
   scene->setScenePath(scenePath.getParentDir() + sceneFileName);
+  // set the current scene here in order to use $scenefolder node properly
+  // in the file browser which opens from XDTSImportPopup
   TApp::instance()->getCurrentScene()->setScene(scene);
 
   XDTSImportPopup popup(levelNames, scene, scenePath);
@@ -468,8 +480,23 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
       for (; row < duration; row++)
         xsh->setCell(row, column, TXshCell(level, TFrameId(lastFid)));
     }
+
+    TStageObject *pegbar =
+        xsh->getStageObject(TStageObjectId::ColumnId(column));
+    if (pegbar) pegbar->setName(levelName.toStdString());
   }
   xsh->updateFrameCount();
+
+  // if the duration is shorter than frame count, then set it both in
+  // preview range and output range.
+  if (duration < xsh->getFrameCount()) {
+    scene->getProperties()->getPreviewProperties()->setRange(0, duration - 1,
+                                                             1);
+    scene->getProperties()->getOutputProperties()->setRange(0, duration - 1, 1);
+  }
+
+  // emit signal here for updating the frame slider range of flip console
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
 
   return true;
 }

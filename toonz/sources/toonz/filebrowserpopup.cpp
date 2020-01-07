@@ -2265,13 +2265,15 @@ void BrowserPopupController::openPopup(QStringList filters,
   m_browserPopup->initFolder(TFilePath(lastSelectedPath.toStdWString()));
   m_browserPopup->setFileMode(isDirectoryOnly);
 
+  Qt::WindowFlags flags = m_browserPopup->windowFlags();
+  bool parentSet        = false;
   if (parentWidget) {
     for (QWidget *pwidget : QApplication::topLevelWidgets()) {
       if (pwidget->isWindow() && pwidget->isVisible() &&
           pwidget->isAncestorOf(parentWidget)) {
-        Qt::WindowFlags flags = m_browserPopup->windowFlags();
         m_browserPopup->setParent(pwidget);
         m_browserPopup->setWindowFlags(flags);
+        parentSet = true;
         break;
       }
     }
@@ -2284,6 +2286,13 @@ void BrowserPopupController::openPopup(QStringList filters,
     m_isExecute = true;
   else
     m_isExecute = false;
+
+  // set back the parent to the main window in order to prevent to be
+  // deleted along with the parent widget
+  if (parentSet) {
+    m_browserPopup->setParent(TApp::instance()->getMainWindow());
+    m_browserPopup->setWindowFlags(flags);
+  }
 }
 
 // codePath is set to true by default
