@@ -602,14 +602,6 @@ MyVideoWidget::MyVideoWidget(QWidget* parent)
     , m_upsideDown(false)
     , m_countDownTime(0)
     , m_subCameraRect(QRect()) {
-  setAutoFillBackground(false);
-  setAttribute(Qt::WA_NoSystemBackground, true);
-  setAttribute(Qt::WA_PaintOnScreen, true);
-
-  QPalette palette = this->palette();
-  palette.setColor(QPalette::Background, Qt::black);
-  setPalette(palette);
-
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
   m_surface = new MyVideoSurface(this);
