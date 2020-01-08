@@ -6,7 +6,6 @@
 #include "timagecache.h"
 #include "tstopwatch.h"
 #include "tfiletype.h"
-#include "ttimer.h"
 
 // Images includes
 #include "trasterimage.h"

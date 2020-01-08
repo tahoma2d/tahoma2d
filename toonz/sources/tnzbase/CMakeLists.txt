@@ -55,7 +55,6 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tcli.h
     ../include/tcolorutils.h
     ../include/tparamundo.h
-    ../include/ttimer.h
     ../include/ttest.h
     ../include/texpression.h
     ../include/tgrammar.h
@@ -103,7 +102,6 @@ set(SOURCES
     ../common/tapptools/tcli.cpp
     ../common/tapptools/tcolorutils.cpp
     ../common/tapptools/tparamundo.cpp
-    ../common/tapptools/ttimer.cpp
     ../common/ttest/ttest.cpp
     ../common/expressions/texpression.cpp
     ../common/expressions/tgrammar.cpp
@@ -208,15 +206,6 @@ elseif(BUILD_ENV_APPLE)
     )
 elseif(BUILD_ENV_UNIXLIKE)
     _find_toonz_library(EXTRA_LIBS "tnzcore")
-    if(NOT BUILD_TARGET_WIN)
-        set(EXTRA_LIBS ${EXTRA_LIBS}
-            ${SDL_LIB_LIBRARIES}
-        )
-        include_directories(
-            SYSTEM
-            ${SDL_LIB_INCLUDE_DIRS}
-        )
-    endif()
 endif()
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})

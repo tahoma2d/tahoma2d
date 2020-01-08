@@ -3,7 +3,6 @@
 // System includes
 #include "tsystem.h"
 #include "timagecache.h"
-#include "ttimer.h"
 
 // Geometry
 #include "tgeometry.h"
