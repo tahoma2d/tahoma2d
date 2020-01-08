@@ -480,7 +480,7 @@ void StageSchematicScene::updateEditedGroups(
     const QMap<int, QList<SchematicNode *>> &editedGroup) {
   QMap<int, QList<SchematicNode *>>::const_iterator it;
   for (it = editedGroup.begin(); it != editedGroup.end(); it++) {
-    int zValue = 2;
+    int zValue                                            = 2;
     QMap<int, QList<SchematicNode *>>::const_iterator it2 = editedGroup.begin();
     while (it2 != editedGroup.end()) {
       StageSchematicNode *placedObj =
@@ -628,7 +628,7 @@ StageSchematicSplineNode *StageSchematicScene::addSchematicSplineNode(
 
 //------------------------------------------------------------------
 /*! create node according to the type of StageObject
-*/
+ */
 StageSchematicNode *StageSchematicScene::createStageSchematicNode(
     StageSchematicScene *scene, TStageObject *pegbar) {
   TStageObjectId id = pegbar->getId();
@@ -733,7 +733,9 @@ void StageSchematicScene::findRoots(std::vector<TreeStageNode *> &roots) {
   for (i = 0; i < pegTree->getStageObjectCount(); i++) {
     TStageObject *pegbar = pegTree->getStageObject(i);
     // only cameras and pegbars can be roots
-    if (pegbar->getId().isCamera() || pegbar->getId().isTable()) {
+    // check if the id is contained in the table in case the object is grouped
+    if ((pegbar->getId().isCamera() || pegbar->getId().isTable()) &&
+        m_nodeTable.contains(pegbar->getId())) {
       StageSchematicNode *node = m_nodeTable[pegbar->getId()];
       TreeStageNode *treeNode  = new TreeStageNode(node);
       roots.push_back(treeNode);
@@ -794,7 +796,7 @@ void StageSchematicScene::placeChildren(TreeStageNode *treeNode, double &xPos,
 
 //------------------------------------------------------------------
 /*! define the position of nodes which is not specified manually
-*/
+ */
 void StageSchematicScene::placeNode(StageSchematicNode *node) {
   double xFirstPos = m_firstPos.x - 500;
   double yFirstPos = m_firstPos.y + 500;
