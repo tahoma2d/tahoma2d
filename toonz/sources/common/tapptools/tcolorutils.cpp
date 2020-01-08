@@ -11,13 +11,6 @@
 typedef float KEYER_FLOAT;
 
 //------------------------------------------------------------------------------
-#ifdef _MSC_VER
-#define ISNAN _isnan
-#else
-#define ISNAN std::isnan
-#endif
-
-//------------------------------------------------------------------------------
 
 //#define CLUSTER_ELEM_CONTAINER_IS_A_SET
 //#define WITH_ALPHA_IN_STATISTICS
@@ -180,7 +173,7 @@ void chooseLeafToClusterize(ClusterContainer::iterator &itRet,
     Cluster *cluster = *it;
     // Calculates the covariance matrix.
     const KEYER_FLOAT *clusterCovariance = cluster->statistic.covariance;
-    assert(!ISNAN(clusterCovariance[0]));
+    assert(!std::isnan(clusterCovariance[0]));
 
     // Calculate the eigenvalues ​​of the covariance matrix of the cluster
     // statistics
@@ -344,9 +337,9 @@ eigenVector[2] /= eigenVectorMagnitude;
     clusterFound->eigenVector[1] = eigenVector[1];
     clusterFound->eigenVector[2] = eigenVector[2];
 
-    assert(!ISNAN(eigenVector[0]));
-    assert(!ISNAN(eigenVector[1]));
-    assert(!ISNAN(eigenVector[2]));
+    assert(!std::isnan(eigenVector[0]));
+    assert(!std::isnan(eigenVector[1]));
+    assert(!std::isnan(eigenVector[2]));
   }
 }
 
@@ -377,9 +370,9 @@ unsigned short int calcCovarianceEigenValues(
   assert(solutionsCount > 0);
   multeplicity = 4 - solutionsCount;
 
-  assert(!ISNAN(eigenValues[0]));
-  assert(!ISNAN(eigenValues[1]));
-  assert(!ISNAN(eigenValues[2]));
+  assert(!std::isnan(eigenValues[0]));
+  assert(!std::isnan(eigenValues[1]));
+  assert(!std::isnan(eigenValues[2]));
 
   assert(multeplicity > 0);
   return multeplicity;
@@ -422,9 +415,9 @@ void SolveCubic(KEYER_FLOAT a,  /* coefficient of x^3 */
     x[2] = (KEYER_FLOAT)(-2.0 * sqrt(Q) * cos((theta + 4.0 * PI) / 3.0) -
                          a1 / 3.0);
 
-    assert(!ISNAN(x[0]));
-    assert(!ISNAN(x[1]));
-    assert(!ISNAN(x[2]));
+    assert(!std::isnan(x[0]));
+    assert(!std::isnan(x[1]));
+    assert(!std::isnan(x[2]));
 
     /*
 long KEYER_FLOAT v;
@@ -442,7 +435,7 @@ assert(areAlmostEqual(a*v*v*v+b*v*v+c*v+d, 0.0));
     x[0] *= (KEYER_FLOAT)((R < 0.0) ? 1 : -1);
     x[0] -= (KEYER_FLOAT)(a1 / 3.0);
 
-    assert(!ISNAN(x[0]));
+    assert(!std::isnan(x[0]));
 
     /*
 long KEYER_FLOAT v;
@@ -602,7 +595,7 @@ void Cluster::computeCovariance() {
   int i = 0;
   for (; i < 9; ++i) {
     statistic.covariance[i] = statistic.matrixR[i] - sumComponentsMatrix[i] / n;
-    assert(!ISNAN(statistic.matrixR[i]));
+    assert(!std::isnan(statistic.matrixR[i]));
     // assert(statistic.covariance[i] >= 0.0);
     // numerical instability???
     if (statistic.covariance[i] < 0.0) statistic.covariance[i] = 0.0;
