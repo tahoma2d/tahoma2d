@@ -886,10 +886,15 @@ TRaster32P XsheetIconRenderer::generateRaster(
   ras->fill(bgColor);
 
   TImageCache::instance()->setEnabled(false);
+  // temporarily disable "Visualize Vector As Raster" option to prevent crash.
+  // (see the issue #2862)
+  bool rasterizePli               = TXshSimpleLevel::m_rasterizePli;
+  TXshSimpleLevel::m_rasterizePli = false;
 
   // All checks are disabled
   scene->renderFrame(ras, m_row, m_xsheet, false);
 
+  TXshSimpleLevel::m_rasterizePli = rasterizePli;
   TImageCache::instance()->setEnabled(true);
 
   return ras;
