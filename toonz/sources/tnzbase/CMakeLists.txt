@@ -55,7 +55,6 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tcli.h
     ../include/tcolorutils.h
     ../include/tparamundo.h
-    ../include/ttimer.h
     ../include/ttest.h
     ../include/texpression.h
     ../include/tgrammar.h
@@ -103,7 +102,6 @@ set(SOURCES
     ../common/tapptools/tcli.cpp
     ../common/tapptools/tcolorutils.cpp
     ../common/tapptools/tparamundo.cpp
-    ../common/tapptools/ttimer.cpp
     ../common/ttest/ttest.cpp
     ../common/expressions/texpression.cpp
     ../common/expressions/tgrammar.cpp
