@@ -464,7 +464,6 @@ elseif(BUILD_ENV_UNIXLIKE)
     if(NOT BUILD_TARGET_WIN)
         pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
         pkg_check_modules(FREETYPE REQUIRED freetype2)
-        pkg_check_modules(SDL_LIB REQUIRED sdl2)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
     pkg_search_module(MYPAINT_LIB REQUIRED libmypaint libmypaint-1.3>=1.3)

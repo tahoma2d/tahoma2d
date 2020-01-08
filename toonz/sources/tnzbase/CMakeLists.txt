@@ -206,15 +206,6 @@ elseif(BUILD_ENV_APPLE)
     )
 elseif(BUILD_ENV_UNIXLIKE)
     _find_toonz_library(EXTRA_LIBS "tnzcore")
-    if(NOT BUILD_TARGET_WIN)
-        set(EXTRA_LIBS ${EXTRA_LIBS}
-            ${SDL_LIB_LIBRARIES}
-        )
-        include_directories(
-            SYSTEM
-            ${SDL_LIB_INCLUDE_DIRS}
-        )
-    endif()
 endif()
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})
