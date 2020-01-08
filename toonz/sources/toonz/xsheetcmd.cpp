@@ -361,13 +361,8 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
     int frame, const std::vector<int> &columns) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-  int i, colsCount = columns.size();
-  int startCol =
-      Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
-  for (i = startCol; i != colsCount; ++i) {
+  for (const int c : columns) {
     TStageObjectId objectId;
-
-    int c = columns[i];
 
     TXshColumn *column = xsh->getColumn(c);
     if (column && column->getSoundColumn()) continue;
@@ -393,13 +388,8 @@ void GlobalKeyframeUndo::doRemoveGlobalKeyframes(
     int frame, const std::vector<int> &columns) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-  int i, colsCount = columns.size();
-  int startCol =
-      Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
-  for (i = 0; i != colsCount; ++i) {
+  for (const int c : columns) {
     TStageObjectId objectId;
-
-    int c = columns[i];
 
     TXshColumn *column = xsh->getColumn(c);
     if (column && column->getSoundColumn()) continue;
