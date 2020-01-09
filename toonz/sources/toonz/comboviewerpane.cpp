@@ -208,7 +208,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
 
 //-----------------------------------------------------------------------------
 /*! toggle show/hide of the widgets according to m_visibleFlag
-*/
+ */
 
 void ComboViewerPanel::updateShowHide() {
   // toolbar
@@ -222,7 +222,7 @@ void ComboViewerPanel::updateShowHide() {
 
 //-----------------------------------------------------------------------------
 /*! showing the show/hide commands
-*/
+ */
 
 void ComboViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu = new QMenu(this);
@@ -273,7 +273,7 @@ void ComboViewerPanel::addShowHideContextMenu(QMenu *menu) {
 
 //-----------------------------------------------------------------------------
 /*! slot function for show/hide the parts
-*/
+ */
 
 void ComboViewerPanel::onShowHideActionTriggered(QAction *act) {
   CV_Parts part = (CV_Parts)act->data().toUInt();
@@ -603,6 +603,7 @@ void ComboViewerPanel::onPlayingStatusChanged(bool playing) {
       TApp::instance()->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
     }
   }
+  m_sceneViewer->invalidateToolStatus();
 }
 
 //-----------------------------------------------------------------------------
@@ -654,10 +655,10 @@ void ComboViewerPanel::changeWindowTitle() {
     name = name + tr("   ::   Level: ") + imageName;
 
     if (!m_sceneViewer->is3DView()) {
-      TAffine aff                             = m_sceneViewer->getViewMatrix();
+      TAffine aff = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name                                    = name + "  ::  Zoom : " +
+      name = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -669,16 +670,15 @@ void ComboViewerPanel::changeWindowTitle() {
                  ->isActualPixelViewOnSceneEditingModeEnabled() &&
              TApp::instance()->getCurrentLevel()->getSimpleLevel() &&
              !CleanupPreviewCheck::instance()
-                  ->isEnabled()  // cleanup preview must be OFF
-             &&
-             !CameraTestCheck::instance()  // camera test mode must be OFF
-                                           // neither
-                  ->isEnabled() &&
+                  ->isEnabled()               // cleanup preview must be OFF
+             && !CameraTestCheck::instance()  // camera test mode must be OFF
+                                              // neither
+                     ->isEnabled() &&
              !m_sceneViewer->is3DView()) {
-      TAffine aff                             = m_sceneViewer->getViewMatrix();
+      TAffine aff = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name                                    = name + "  ::  Zoom : " +
+      name = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -698,7 +698,7 @@ void ComboViewerPanel::changeWindowTitle() {
         TAffine aff = m_sceneViewer->getViewMatrix();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name                                    = name + "  ::  Zoom : " +
+        name = name + "  ::  Zoom : " +
                QString::number((int)(100.0 * sqrt(aff.det()) *
                                      m_sceneViewer->getDpiFactor())) +
                "%";
@@ -714,7 +714,7 @@ void ComboViewerPanel::changeWindowTitle() {
 
 //-----------------------------------------------------------------------------
 /*! update the frame range according to the current frame type
-*/
+ */
 void ComboViewerPanel::updateFrameRange() {
   TFrameHandle *fh  = TApp::instance()->getCurrentFrame();
   int frameIndex    = fh->getFrameIndex();
@@ -789,7 +789,7 @@ void ComboViewerPanel::onFrameChanged() {
 
 //-----------------------------------------------------------------------------
 /*! reset the marker positions in the flip console
-*/
+ */
 void ComboViewerPanel::onFrameTypeChanged() {
   if (TApp::instance()->getCurrentFrame()->getFrameType() ==
           TFrameHandle::LevelFrame &&
