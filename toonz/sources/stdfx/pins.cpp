@@ -9,11 +9,6 @@
 #include <cmath>
 
 //------------------------------------------------------------------------------
-#ifdef _MSC_VER
-#define ISNAN _isnan
-#else
-#define ISNAN std::isnan
-#endif
 
 namespace {
 
@@ -31,13 +26,13 @@ bool lineIntersection(const TPointD &P, const TPointD &R, const TPointD &Q,
   double r;
   if (u.y * v.x - u.x * v.y != 0) {
     r = (P.x * u.y - Q.x * u.y + u.x * (Q.y - P.y)) / (u.y * v.x - u.x * v.y);
-    assert(!ISNAN(r));
+    assert(!std::isnan(r));
     ret = Q + v * r;
-    assert(!ISNAN(ret.x) && !ISNAN(ret.y));
+    assert(!std::isnan(ret.x) && !std::isnan(ret.y));
     return true;
   } else {
     ret = P;
-    assert(!ISNAN(ret.x) && !ISNAN(ret.y));
+    assert(!std::isnan(ret.x) && !std::isnan(ret.y));
     return false;
   }
 }
