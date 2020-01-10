@@ -2528,46 +2528,33 @@ SettingsPage::SettingsPage(QWidget *parent)
   setWidget(paramsContainer);
 
   QVBoxLayout *paramsContainerLayout = new QVBoxLayout(this);
+  paramsContainerLayout->setMargin(10);
+  paramsContainerLayout->setSpacing(10);
   paramsContainer->setLayout(paramsContainerLayout);
 
   // Add a vertical layout to store the "autofill" checkbox widgets
-  {
-    m_autopaintToggleBox = new QWidget(this);
-    // box->setFixedHeight(22);
-    paramsContainerLayout->addWidget(m_autopaintToggleBox);
+  m_autoFillCheckBox = new QCheckBox(tr("Autopaint for Lines"), this);
+  paramsContainerLayout->addWidget(m_autoFillCheckBox, 0,
+                                   Qt::AlignLeft | Qt::AlignVCenter);
 
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    m_autopaintToggleBox->setLayout(hLayout);
-
-    hLayout->setSpacing(5);
-    hLayout->setMargin(0);
-    hLayout->addSpacing(98);
-
-    m_autoFillCheckBox = new QCheckBox;
-    hLayout->addWidget(m_autoFillCheckBox);
-
-    QLabel *label =
-        new QLabel(StyleEditorGUI::SettingsPage::tr("Autopaint for Lines"));
-    hLayout->addWidget(label);
-
-    hLayout->addStretch();
-
-    ret = connect(m_autoFillCheckBox, SIGNAL(stateChanged(int)), this,
-                  SLOT(onAutofillChanged()));
-    assert(ret);
-  }
+  ret = connect(m_autoFillCheckBox, SIGNAL(stateChanged(int)), this,
+                SLOT(onAutofillChanged()));
+  assert(ret);
 
   // Prepare the style parameters layout
   m_paramsLayout = new QGridLayout;
+  m_paramsLayout->setMargin(0);
+  m_paramsLayout->setVerticalSpacing(8);
+  m_paramsLayout->setHorizontalSpacing(5);
   paramsContainerLayout->addLayout(m_paramsLayout);
 
-  paramsContainerLayout->addStretch();
+  paramsContainerLayout->addStretch(1);
 }
 
 //-----------------------------------------------------------------------------
 
 void SettingsPage::enableAutopaintToggle(bool enabled) {
-  m_autopaintToggleBox->setVisible(enabled);
+  m_autoFillCheckBox->setVisible(enabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -2989,21 +2976,24 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   menu->addAction(m_rgbAction);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(QIcon(":Resources/menu.svg"));
-  toolButton->setMaximumWidth(18);
-  toolButton->setMaximumHeight(18);
+  toolButton->setIcon(createQIcon("options"));
+  toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
   toolButton->setToolTip(tr("Show or hide parts of the Color Page."));
-  QToolBar *displayToolbar  = new QToolBar(this);
-  m_toggleOrientationButton = new QPushButton(QChar(0x2194), this);
-  m_toggleOrientationButton->setFixedWidth(20);
-  m_toggleOrientationButton->setToolTip(
+  QToolBar *displayToolbar = new QToolBar(this);
+  m_toggleOrientationAction =
+      displayToolbar->addAction(QIcon(":Resources/orientation_h.svg"), "");
+  m_toggleOrientationAction->setToolTip(
       tr("Toggle orientation of the Color Page."));
-  m_toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
-  displayToolbar->addWidget(m_toggleOrientationButton);
+  QWidget *toggleOrientationButton =
+      displayToolbar->widgetForAction(m_toggleOrientationAction);
+  toggleOrientationButton->setFixedSize(22, 22);
+  toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   displayToolbar->addWidget(toolButton);
-  displayToolbar->setFixedWidth(45);
+  displayToolbar->setMaximumHeight(22);
+  displayToolbar->setIconSize(QSize(18, 18));
+
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
   mainLayout->setMargin(0);
@@ -3018,12 +3008,14 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     }
     m_tabBarContainer->setLayout(hLayout);
 
-    mainLayout->addWidget(m_tabBarContainer, 0, 0, 1, 2, 0);
+    mainLayout->addWidget(m_tabBarContainer, 0, 0, 1, 2);
     mainLayout->addWidget(m_styleChooser, 1, 0, 1, 2);
-    mainLayout->addWidget(bottomWidget, 2, 0, 1, 2, 0);
-    mainLayout->addWidget(m_toolBar, 3, 0, 1, 1, 0);
-    mainLayout->addWidget(displayToolbar, 3, 1, 1, 1, 0);
+    mainLayout->addWidget(bottomWidget, 2, 0, 1, 2);
+    mainLayout->addWidget(m_toolBar, 3, 0);
+    mainLayout->addWidget(displayToolbar, 3, 1);
   }
+  mainLayout->setColumnStretch(0, 1);
+  mainLayout->setRowStretch(1, 1);
   setLayout(mainLayout);
 
   /* ------- signal-slot connections ------- */
@@ -3062,9 +3054,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                        m_plainColorPage->m_alphaFrame, SLOT(setVisible(bool)));
   ret = ret && connect(m_rgbAction, SIGNAL(toggled(bool)),
                        m_plainColorPage->m_rgbFrame, SLOT(setVisible(bool)));
-  ret = ret && connect(m_toggleOrientationButton, SIGNAL(clicked()),
+  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()),
                        m_plainColorPage, SLOT(toggleOrientation()));
-  ret = ret && connect(m_toggleOrientationButton, SIGNAL(clicked()), this,
+  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
                        SLOT(updateOrientationButton()));
   assert(ret);
   /* ------- initial conditions ------- */
@@ -3278,9 +3270,9 @@ void StyleEditor::hideEvent(QHideEvent *) {
 
 void StyleEditor::updateOrientationButton() {
   if (m_plainColorPage->getIsVertical()) {
-    m_toggleOrientationButton->setText(QChar(0x2194));
+    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_h.svg"));
   } else {
-    m_toggleOrientationButton->setText(QChar(0x2195));
+    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_v.svg"));
   }
 }
 

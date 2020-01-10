@@ -323,5 +323,7 @@
       <file>Resources/schematic_zoom_mode_off.svg</file>
       <file>Resources/schematic_hand_mode_on.svg</file>
       <file>Resources/schematic_hand_mode_off.svg</file>
+      <file>Resources/orientation_h.svg</file>
+      <file>Resources/orientation_v.svg</file>
     </qresource>
 </RCC>
