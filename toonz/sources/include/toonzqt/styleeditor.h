@@ -559,7 +559,6 @@ class SettingsPage final : public QScrollArea {
   QGridLayout *m_paramsLayout;
 
   QCheckBox *m_autoFillCheckBox;
-  QWidget *m_autopaintToggleBox;
 
   TColorStyleP m_editedStyle;  //!< A copy of the current style being edited by
                                //! the Style Editor.
@@ -617,7 +616,7 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
       *m_newColor;  //!< New style viewer (lower-right panel side).
   DVGui::StyleSample
       *m_oldColor;  //!< Old style viewer (lower-right panel side).
-  QPushButton *m_toggleOrientationButton;
+  QAction *m_toggleOrientationAction;
   QPushButton
       *m_autoButton;  //!< "Auto Apply" checkbox on the right panel side.
   QPushButton *m_applyButton;  //!< "Apply" button on the right panel side.
