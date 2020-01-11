@@ -33,7 +33,7 @@
 
 using namespace DVGui;
 
-QString DialogTitle = "OpenToonz 1.3";
+QString DialogTitle = "OpenToonz 1.4";
 
 //=============================================================================
 namespace {
