@@ -243,10 +243,10 @@ project->setUseScenePath(TProject::Extras, false);
 //-----------------------------------------------------------------------------
 
 static void script_output(int type, const QString &value) {
-  if ( type == ScriptEngine::ExecutionError ||
-       type == ScriptEngine::SyntaxError ||
-       type == ScriptEngine::UndefinedEvaluationResult ||
-       type == ScriptEngine::Warning )
+  if (type == ScriptEngine::ExecutionError ||
+      type == ScriptEngine::SyntaxError ||
+      type == ScriptEngine::UndefinedEvaluationResult ||
+      type == ScriptEngine::Warning)
     std::cerr << value.toStdString() << std::endl;
   else
     std::cout << value.toStdString() << std::endl;
@@ -272,7 +272,8 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     TCli::Usage usage(argv[0]);
     TCli::UsageLine usageLine;
-    TCli::FilePathArgument loadFileArg("filePath", "Source scene file to open or script file to run");
+    TCli::FilePathArgument loadFileArg(
+        "filePath", "Source scene file to open or script file to run");
     TCli::StringQualifier layoutFileQual(
         "-layout filename",
         "Custom layout file to be used, it should be saved in "
@@ -447,8 +448,10 @@ int main(int argc, char *argv[]) {
 
   TMessageRepository::instance();
 
+  bool isRunScript = (loadFilePath.getType() == "toonzscript");
+
   QSplashScreen splash(splashPixmap);
-  splash.show();
+  if (!isRunScript) splash.show();
   a.processEvents();
 
   splash.showMessage(offsetStr + "Initializing QGLFormat...", Qt::AlignCenter,
@@ -634,6 +637,46 @@ int main(int argc, char *argv[]) {
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
 
+  if (isRunScript) {
+    // load script
+    if (TFileStatus(loadFilePath).doesExist()) {
+      // find project for this script file
+      TProjectManager *pm    = TProjectManager::instance();
+      TProjectP sceneProject = pm->loadSceneProject(loadFilePath);
+      TFilePath oldProjectPath;
+      if (!sceneProject) {
+        std::cerr << QObject::tr(
+                         "It is not possible to load the scene %1 because it "
+                         "does not "
+                         "belong to any project.")
+                         .arg(loadFilePath.getQString())
+                         .toStdString()
+                  << std::endl;
+        return 1;
+      }
+      if (sceneProject && !sceneProject->isCurrent()) {
+        oldProjectPath = pm->getCurrentProjectPath();
+        pm->setCurrentProjectPath(sceneProject->getProjectPath());
+      }
+      ScriptEngine engine;
+      QObject::connect(&engine, &ScriptEngine::output, script_output);
+      QString s = QString::fromStdWString(loadFilePath.getWideString())
+                      .replace("\\", "\\\\")
+                      .replace("\"", "\\\"");
+      QString cmd = QString("run(\"%1\")").arg(s);
+      engine.evaluate(cmd);
+      engine.wait();
+      if (!oldProjectPath.isEmpty()) pm->setCurrentProjectPath(oldProjectPath);
+      return 1;
+    } else {
+      std::cerr << QObject::tr("Script file %1 does not exists.")
+                       .arg(loadFilePath.getQString())
+                       .toStdString()
+                << std::endl;
+      return 1;
+    }
+  }
+
 #ifdef _WIN32
   // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
   if (w.windowHandle())
@@ -693,42 +736,8 @@ int main(int argc, char *argv[]) {
     splash.showMessage(
         QString("Loading file '") + loadFilePath.getQString() + "'...",
         Qt::AlignCenter, Qt::white);
-
-    if (loadFilePath.getType() == "toonzscript") {
-      // load script
-      if (TFileStatus(loadFilePath).doesExist()) {
-        // find project for this script file
-        TProjectManager *pm = TProjectManager::instance();
-        TProjectP sceneProject = pm->loadSceneProject(loadFilePath);
-        if (!sceneProject) {
-          std::cerr << QObject::tr(
-                    "It is not possible to load the scene %1 because it does not "
-                    "belong to any project.")
-                    .arg(loadFilePath.getQString()).toStdString() << std::endl;
-          return 1;
-        }
-        if (sceneProject && !sceneProject->isCurrent())
-          pm->setCurrentProjectPath(sceneProject->getProjectPath());
-
-        ScriptEngine engine;
-        QObject::connect(&engine, &ScriptEngine::output, script_output);
-        QString s =
-          QString::fromStdWString(loadFilePath.getWideString())
-            .replace("\\", "\\\\")
-            .replace("\"", "\\\"");
-        QString cmd = QString("run(\"%1\")").arg(s);
-        engine.evaluate(cmd);
-        engine.wait();
-        return 0;
-      } else {
-        std::cerr << QObject::tr("Script file %1 does not exists.")
-                  .arg(loadFilePath.getQString()).toStdString() << std::endl;
-        return 1;
-      }
-    } else {
-      loadFilePath = loadFilePath.withType("tnz");
-      if (TFileStatus(loadFilePath).doesExist()) IoCmd::loadScene(loadFilePath);
-    }
+    loadFilePath = loadFilePath.withType("tnz");
+    if (TFileStatus(loadFilePath).doesExist()) IoCmd::loadScene(loadFilePath);
   }
 
   QFont *myFont;
