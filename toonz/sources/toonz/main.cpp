@@ -467,11 +467,8 @@ int main(int argc, char *argv[]) {
   fmt.setStencil(true);
   QGLFormat::setDefaultFormat(fmt);
 
-// seems this function should be called at all systems
-// perhaps in some GLUT-implementations initalization is mere formality
-#if defined(LINUX) || defined(_WIN32)
+>>>>>>> Fix glutInit error on Windows with FreeGLUT
   glutInit(&argc, argv);
-#endif
 
   splash.showMessage(offsetStr + "Initializing environment...",
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
