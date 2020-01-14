@@ -226,10 +226,6 @@ pick up all frames in the selected level.</source>
         <translation>자동 입력기</translation>
     </message>
     <message>
-        <source>::</source>
-        <translation type="vanished"></translation>
-    </message>
-    <message>
         <source>Field Guide:</source>
         <translation>필드 가이드:</translation>
     </message>
@@ -5319,6 +5315,50 @@ N.B. Open Toonz 다른 프로세스를 실행하고 있지 않은지 확인하�
         <source>Go to Stop Motion Insert Frame</source>
         <translation>모션 삽입 프레임 정지로 이동</translation>
     </message>
+    <message>
+        <source>https://github.com/opentoonz/opentoonz/releases/latest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://groups.google.com/forum/#!forum/opentoonz_en</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To report a bug, click on the button below to open a web browser window for OpenToonz&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">백터 가이드 그림</translation>
+    </message>
+    <message>
+        <source>Short Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;What&apos;s New...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Community Forum...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Report a Bug...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Next Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Previous Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7063,10 +7103,6 @@ if both are possible on coding file path.</source>
         <translation>아이콘 크기 *</translation>
     </message>
     <message>
-        <source>X</source>
-        <translation type="vanished"></translation>
-    </message>
-    <message>
         <source>Viewer  Shrink</source>
         <translation>뷰어 축소</translation>
     </message>
@@ -7323,6 +7359,10 @@ in non alpha-enabled image format.</source>
     <message>
         <source>Show Tools For Level Only</source>
         <translation>레벨 전용 도구 표시</translation>
+    </message>
+    <message>
+        <source>Number of Frames to Play for Short Play</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9539,6 +9579,30 @@ Do you want to create it?</source>
     <message>
         <source>Stop Motion Controller</source>
         <translation>스톱 모션 컨트롤러</translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">백터 가이드 그림</translation>
+    </message>
+    <message>
+        <source>Group strokes by vector levels?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Vector Levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report a Bug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">닫기</translation>
     </message>
 </context>
 <context>
@@ -11797,6 +11861,14 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
         <source>No camera selected.</source>
         <translation>카메라가 감지되지 않음.</translation>
     </message>
+    <message>
+        <source>Please start live view before capturing an image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture webcam image unless live view is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StopMotionController</name>
@@ -12518,6 +12590,89 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     <message>
         <source>Cancel</source>
         <translation>취소</translation>
+    </message>
+</context>
+<context>
+    <name>VectorGuidedDrawingPane</name>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Farthest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">전체</translation>
+    </message>
+    <message>
+        <source>Auto Inbetween</source>
+        <translation type="unfinished">자동 중간</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">서서히 움직임</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">서서히 멈춤</translation>
+    </message>
+    <message>
+        <source>EaseIn/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">리셋</translation>
+    </message>
+    <message>
+        <source>Tween Selected Guide Strokes</source>
+        <translation type="unfinished">트윈 선택된 가이드 스트로크</translation>
+    </message>
+    <message>
+        <source>Tween Guide Strokes to Selected</source>
+        <translation type="unfinished">트윈 가이드 스트로크 선택</translation>
+    </message>
+    <message>
+        <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
+        <translation type="unfinished">가이드 스트로크 &amp;&amp;  전환 모드 선택</translation>
+    </message>
+    <message>
+        <source>Guide Frames:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation type="unfinished">보간:</translation>
     </message>
 </context>
 <context>

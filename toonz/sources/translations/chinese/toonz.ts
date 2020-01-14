@@ -5686,6 +5686,50 @@ or you may delete necessary files for it.</source>
         <source>Can&apos;t delete %1 : </source>
         <translation>无法删除 %1 : </translation>
     </message>
+    <message>
+        <source>https://github.com/opentoonz/opentoonz/releases/latest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://groups.google.com/forum/#!forum/opentoonz_en</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To report a bug, click on the button below to open a web browser window for OpenToonz&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">矢量引导绘图</translation>
+    </message>
+    <message>
+        <source>Short Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;What&apos;s New...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Community Forum...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Report a Bug...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Next Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Previous Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7969,6 +8013,10 @@ in non alpha-enabled image format.</source>
     <message>
         <source>Enable Touch Gesture Controls</source>
         <translation>启用触控手势控制部件</translation>
+    </message>
+    <message>
+        <source>Number of Frames to Play for Short Play</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10292,6 +10340,30 @@ Do you want to create it?</source>
     <message>
         <source>Camera Column Switch :  </source>
         <translation type="unfinished">摄影机列开关:  </translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">矢量引导绘图</translation>
+    </message>
+    <message>
+        <source>Group strokes by vector levels?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Vector Levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report a Bug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">关闭</translation>
     </message>
 </context>
 <context>
@@ -12630,6 +12702,14 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
         <source>No camera selected.</source>
         <translation>无摄影机被选上。</translation>
     </message>
+    <message>
+        <source>Please start live view before capturing an image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture webcam image unless live view is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StopMotionController</name>
@@ -13415,6 +13495,89 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Track</source>
         <translation>追踪</translation>
+    </message>
+</context>
+<context>
+    <name>VectorGuidedDrawingPane</name>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Farthest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">全部</translation>
+    </message>
+    <message>
+        <source>Auto Inbetween</source>
+        <translation type="unfinished">自动中间帧</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">缓入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">缓出</translation>
+    </message>
+    <message>
+        <source>EaseIn/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">重置</translation>
+    </message>
+    <message>
+        <source>Tween Selected Guide Strokes</source>
+        <translation type="unfinished">补间选中的导引描绘</translation>
+    </message>
+    <message>
+        <source>Tween Guide Strokes to Selected</source>
+        <translation type="unfinished">补间到选中的导引描绘</translation>
+    </message>
+    <message>
+        <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
+        <translation type="unfinished">选择导引描绘模式 &amp;&amp; 补间模式</translation>
+    </message>
+    <message>
+        <source>Guide Frames:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation type="unfinished">插值:</translation>
     </message>
 </context>
 <context>

@@ -5643,6 +5643,50 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
         <source>Can&apos;t delete %1 : </source>
         <translation>No es posible borrar %1 : </translation>
     </message>
+    <message>
+        <source>https://github.com/opentoonz/opentoonz/releases/latest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://groups.google.com/forum/#!forum/opentoonz_en</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To report a bug, click on the button below to open a web browser window for OpenToonz&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">Asistencia para dibujo vectorial</translation>
+    </message>
+    <message>
+        <source>Short Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;What&apos;s New...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Community Forum...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Report a Bug...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Next Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Previous Guide Stroke Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7941,6 +7985,10 @@ contengan píxeles transparentes en formatos de imagen sin soporte para canal al
     <message>
         <source>Enable Touch Gesture Controls</source>
         <translation>Habilitar control mediante gestos táctiles</translation>
+    </message>
+    <message>
+        <source>Number of Frames to Play for Short Play</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10246,6 +10294,30 @@ Do you want to create it?</source>
     <message>
         <source>Camera Column Switch :  </source>
         <translation>Columna de cámara :  </translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation type="unfinished">Asistencia para dibujo vectorial</translation>
+    </message>
+    <message>
+        <source>Group strokes by vector levels?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Vector Levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report a Bug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Cerrar</translation>
     </message>
 </context>
 <context>
@@ -12577,6 +12649,14 @@ ADVERTENCIA : Tamaño de imagen no coincidente. El tamaño del nivel con esa rut
         <source>No camera selected.</source>
         <translation>No se seleccionó una cámara.</translation>
     </message>
+    <message>
+        <source>Please start live view before capturing an image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture webcam image unless live view is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StopMotionController</name>
@@ -13299,6 +13379,89 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
 </context>
 <context>
+    <name>VectorGuidedDrawingPane</name>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Farthest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Inbetween</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Lineal</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">Desaceleración suave</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">Aceleración suave</translation>
+    </message>
+    <message>
+        <source>EaseIn/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">Restablecer</translation>
+    </message>
+    <message>
+        <source>Tween Selected Guide Strokes</source>
+        <translation type="unfinished">Intermediar entre los trazos de guía seleccionados</translation>
+    </message>
+    <message>
+        <source>Tween Guide Strokes to Selected</source>
+        <translation type="unfinished">Intermediar desde trazos de guía hasta el seleccionado</translation>
+    </message>
+    <message>
+        <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
+        <translation type="unfinished">Seleccionar trazos de guía &amp;y modo de intermediación</translation>
+    </message>
+    <message>
+        <source>Guide Frames:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Guide Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation type="unfinished">Interpolación:</translation>
+    </message>
+</context>
+<context>
     <name>VectorizerPopup</name>
     <message>
         <source>Convert-to-Vector Settings</source>
@@ -13979,7 +14142,7 @@ Mantener presionada la tecla F3 para ver sólo este fotograma en el visor</trans
     </message>
     <message>
         <source>   ::   Project: </source>
-        <translation>   ::   Proyecto: </translation>
+        <translation type="vanished">   ::   Proyecto: </translation>
     </message>
     <message>
         <source> Frame</source>

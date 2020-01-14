@@ -5644,6 +5644,52 @@ or you may delete necessary files for it.</source>
         <source>Can&apos;t delete %1 : </source>
         <translation>%1 を削除できません：</translation>
     </message>
+    <message>
+        <source>https://github.com/opentoonz/opentoonz/releases/latest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://groups.google.com/forum/#!forum/opentoonz_en</source>
+        <translation>https://groups.google.com/forum/#!forum/opentoonz</translation>
+    </message>
+    <message>
+        <source>To report a bug, click on the button below to open a web browser window for OpenToonz&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
+        <translation>下のボタンをクリックすると、OpenToonzの開発者向けページ（https://github.com）が開きます。
+「New issue」ボタンを押してフォームを入力してください。（※英語のページです。GitHubアカウントが必要です）
+ユーザーフォーラムの「不具合報告」から日本語でトピックを投稿していただくことも可能です。（Googleアカウントが必要です）</translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation>ベクター自動中割り</translation>
+    </message>
+    <message>
+        <source>Short Play</source>
+        <translation>少し前から再生</translation>
+    </message>
+    <message>
+        <source>&amp;What&apos;s New...</source>
+        <translation>リリースノート （&amp;W）...</translation>
+    </message>
+    <message>
+        <source>&amp;Community Forum...</source>
+        <translation>ユーザーフォーラム (&amp;C) ...</translation>
+    </message>
+    <message>
+        <source>&amp;Report a Bug...</source>
+        <translation>不具合を報告する (&amp;R)...</translation>
+    </message>
+    <message>
+        <source>Guided Drawing Controls</source>
+        <translation>ベクター自動中割りコントロール</translation>
+    </message>
+    <message>
+        <source>Flip Next Guide Stroke Direction</source>
+        <translation>後の原画描線の向きを反転</translation>
+    </message>
+    <message>
+        <source>Flip Previous Guide Stroke Direction</source>
+        <translation>前の原画描線の向きを反転</translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7629,7 +7675,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Vector Guided Style:</source>
-        <translation>ベクターレベルの描き順のガイド：</translation>
+        <translation>ベクター自動中割りの描き順ガイド：</translation>
     </message>
     <message>
         <source>Layout Preference*:</source>
@@ -7936,6 +7982,10 @@ in non alpha-enabled image format.</source>
     <message>
         <source>Enable Touch Gesture Controls</source>
         <translation>タッチジェスチャー操作を有効にする</translation>
+    </message>
+    <message>
+        <source>Number of Frames to Play for Short Play</source>
+        <translation>「少し前から再生」のフレーム数</translation>
     </message>
 </context>
 <context>
@@ -10246,6 +10296,30 @@ Do you want to create it?</source>
         <source>Camera Column Switch :  </source>
         <translation>カメラ列を切り替え ：  </translation>
     </message>
+    <message>
+        <source>Vector Guided Drawing Controls</source>
+        <translation>ベクター自動中割りコントロール</translation>
+    </message>
+    <message>
+        <source>Vector Guided Drawing</source>
+        <translation>ベクター自動中割り</translation>
+    </message>
+    <message>
+        <source>Group strokes by vector levels?</source>
+        <translation>レベル毎に描線をグループ化しますか？</translation>
+    </message>
+    <message>
+        <source>Merge Vector Levels</source>
+        <translation>ベクターレベルを結合</translation>
+    </message>
+    <message>
+        <source>Report a Bug</source>
+        <translation>不具合を報告する</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -11556,7 +11630,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Vector Guided Drawing</source>
-        <translation>ベクターレベルの描き順のガイド</translation>
+        <translation>ベクター自動中割り</translation>
     </message>
     <message>
         <source>Off</source>
@@ -12586,6 +12660,14 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
         <source>No camera selected.</source>
         <translation>カメラが選択されていません。</translation>
     </message>
+    <message>
+        <source>Please start live view before capturing an image.</source>
+        <translation>画像取り込みの前にライブビューを開始してください。</translation>
+    </message>
+    <message>
+        <source>Cannot capture webcam image unless live view is active.</source>
+        <translation>ライブビューが有効でないと、Webカメラの画像を取り込むことはできません。</translation>
+    </message>
 </context>
 <context>
     <name>StopMotionController</name>
@@ -13304,6 +13386,89 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Track</source>
         <translation>追跡</translation>
+    </message>
+</context>
+<context>
+    <name>VectorGuidedDrawingPane</name>
+    <message>
+        <source>Off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation>直近の作画</translation>
+    </message>
+    <message>
+        <source>Farthest</source>
+        <translation>最も遠い作画</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>すべて</translation>
+    </message>
+    <message>
+        <source>Auto Inbetween</source>
+        <translation>自動中割り</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation>後詰め</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation>先詰め</translation>
+    </message>
+    <message>
+        <source>EaseIn/Out</source>
+        <translation>両詰め</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>前</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>後</translation>
+    </message>
+    <message>
+        <source>Both</source>
+        <translation>両方</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>選択を解除</translation>
+    </message>
+    <message>
+        <source>Tween Selected Guide Strokes</source>
+        <translation>前後の原画描線の間を中割りする</translation>
+    </message>
+    <message>
+        <source>Tween Guide Strokes to Selected</source>
+        <translation>原画描線から選択描線の間を中割りする</translation>
+    </message>
+    <message>
+        <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
+        <translation>原画描線の選択 &amp;&amp; 中割りモード</translation>
+    </message>
+    <message>
+        <source>Guide Frames:</source>
+        <translation>ガイドを表示するフレーム：</translation>
+    </message>
+    <message>
+        <source>Select Guide Stroke:</source>
+        <translation>原画描線を選択：</translation>
+    </message>
+    <message>
+        <source>Flip Guide Stroke:</source>
+        <translation>原画描線の向きを反転：</translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation>割り方：</translation>
     </message>
 </context>
 <context>
