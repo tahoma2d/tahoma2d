@@ -2158,7 +2158,7 @@ void PencilTestPopup::onFrameCaptured(QImage& image) {
     image = image.mirrored(upsideDown, upsideDown != scanBtoT);
 
     if (importImage(image)) {
-      m_videoWidget->setPreviousImage(image);
+      m_videoWidget->setPreviousImage(image.copy());
       if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
         int f = m_frameNumberEdit->getValue();
         if (f % 10 == 0)  // next number
