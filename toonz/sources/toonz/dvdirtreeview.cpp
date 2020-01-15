@@ -323,7 +323,7 @@ void DvDirTreeViewDelegate::updateEditorGeometry(
 //-----------------------------------------------------------------------------
 
 DvDirTreeView::DvDirTreeView(QWidget *parent)
-    : QTreeView(parent)
+    : StyledTreeView(parent)
     , m_globalSelectionEnabled(true)
     , m_currentDropItem(0)
     , m_refreshVersionControlEnabled(false)

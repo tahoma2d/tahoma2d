@@ -122,6 +122,34 @@ QPixmap ExportSceneDvDirModelProjectNode::getPixmap(bool isOpen) const {
   return isOpen ? openProjectPixmap : closeProjectPixmap;
 }
 
+//-----------------------------------------------------------------------------
+
+bool ExportSceneDvDirModelProjectNode::isCurrent() const {
+  TProjectManager *pm = TProjectManager::instance();
+  return pm->getCurrentProjectPath().getParentDir() == getPath();
+}
+
+//-----------------------------------------------------------------------------
+
+DvDirModelFileFolderNode *
+ExportSceneDvDirModelProjectNode::createExposeSceneNode(DvDirModelNode *parent,
+                                                        const TFilePath &path) {
+  DvDirModelFileFolderNode *node;
+  if (path.getType() == "tnz")
+    return 0;
+  else {
+    node = new ExportSceneDvDirModelFileFolderNode(parent, path);
+    if (path.getName().find("_files") == std::string::npos)
+      node->enableRename(true);
+    TProject *project = new TProject();
+    project->load(
+        TProjectManager::instance()->projectFolderToProjectPath(getPath()));
+    int k = project->getFolderIndexFromPath(node->getPath());
+    node->setIsProjectFolder(k >= 0);
+  }
+  return node;
+}
+
 //=============================================================================
 // ExportSceneDvDirModelRootNode [Root]
 
@@ -236,7 +264,7 @@ DvDirModelNode *ExportSceneDvDirModel::getNode(const QModelIndex &index) const {
 QModelIndex ExportSceneDvDirModel::index(int row, int column,
                                          const QModelIndex &parent) const {
   if (column != 0) return QModelIndex();
-  DvDirModelNode *parentNode       = m_root;
+  DvDirModelNode *parentNode = m_root;
   if (parent.isValid()) parentNode = getNode(parent);
   if (row < 0 || row >= parentNode->getChildCount()) return QModelIndex();
   DvDirModelNode *node = parentNode->getChild(row);
@@ -362,12 +390,15 @@ void ExportSceneTreeViewDelegate::paint(QPainter *painter,
   DvDirModelNode *node = DvDirModel::instance()->getNode(index);
   if (!node) return;
 
-  DvDirModelProjectNode *pnode = dynamic_cast<DvDirModelProjectNode *>(node);
-  DvDirModelFileFolderNode *fnode =
-      dynamic_cast<DvDirModelFileFolderNode *>(node);
+  ExportSceneDvDirModelProjectNode *pnode =
+      dynamic_cast<ExportSceneDvDirModelProjectNode *>(node);
+  ExportSceneDvDirModelFileFolderNode *fnode =
+      dynamic_cast<ExportSceneDvDirModelFileFolderNode *>(node);
 
-  if (node == m_treeView->getCurrentNode())
-    painter->fillRect(rect, option.palette.highlight());
+  bool isCurrent = node == m_treeView->getCurrentNode();
+  if (isCurrent)
+    painter->fillRect(rect.adjusted(-2, 0, 0, 0),
+                      QBrush(m_treeView->getSelectedItemBackground()));
 
   QPixmap px = node->getPixmap(m_treeView->isExpanded(index));
   if (!px.isNull()) {
@@ -375,31 +406,29 @@ void ExportSceneTreeViewDelegate::paint(QPainter *painter,
     int y = rect.top() + (rect.height() - px.height()) / 2;
     painter->drawPixmap(QPoint(x, y), px);
   }
-  rect.adjust(pnode ? 26 : 20, 0, 0, 0);
+  rect.adjust(pnode ? 31 : 22, 0, 0, 0);
   QVariant d   = index.data();
   QString name = QString::fromStdWString(node->getName());
-  if (node == m_treeView->getCurrentNode() &&
-      option.state & QStyle::State_Active)
-    painter->setPen(Qt::white);
-  else if (fnode && fnode->isProjectFolder())
-    painter->setPen(Qt::blue);
-  else
-    painter->setPen(Qt::black);
+  if (fnode && fnode->isProjectFolder()) {
+    painter->setPen((isCurrent) ? m_treeView->getSelectedFolderTextColor()
+                                : m_treeView->getFolderTextColor());
+  } else {
+    painter->setPen((isCurrent) ? m_treeView->getSelectedTextColor()
+                                : m_treeView->getTextColor());
+  }
   QRect nameBox;
   painter->drawText(rect, Qt::AlignVCenter | Qt::AlignLeft, name, &nameBox);
 
   if (pnode) {
-    painter->setPen(Qt::black);
+    painter->setPen(m_treeView->getTextColor());
     if (pnode->isCurrent())
       painter->setBrush(Qt::red);
     else
       painter->setBrush(Qt::NoBrush);
-    int d = 4;
+    int d = 8;
     int y = (rect.height() - d) / 2;
     painter->drawEllipse(rect.x() - d - 4, rect.y() + y, d, d);
   }
-  painter->setPen(Qt::magenta);
-  painter->setBrush(Qt::NoBrush);
 }
 
 //-----------------------------------------------------------------------------
@@ -412,7 +441,8 @@ QSize ExportSceneTreeViewDelegate::sizeHint(const QStyleOptionViewItem &option,
 //=============================================================================
 // ExportSceneTreeView
 
-ExportSceneTreeView::ExportSceneTreeView(QWidget *parent) : QTreeView(parent) {
+ExportSceneTreeView::ExportSceneTreeView(QWidget *parent)
+    : StyledTreeView(parent) {
   setStyleSheet("border:1px solid rgb(120,120,120);");
   m_model = new ExportSceneDvDirModel();
   setModel(m_model);
@@ -424,9 +454,9 @@ ExportSceneTreeView::ExportSceneTreeView(QWidget *parent) : QTreeView(parent) {
   // bottom horizontal scrollbar to resize contents...
   bool ret = connect(this, SIGNAL(expanded(const QModelIndex &)), this,
                      SLOT(resizeToConts()));
-  ret = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
+  ret      = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
                        SLOT(resizeToConts()));
-  ret = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
+  ret      = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
                        SLOT(resizeToConts()));
 
   assert(ret);
@@ -648,7 +678,7 @@ TFilePath ExportScenePopup::createNewProject() {
   if (node)
     currentProjectRoot = node->getPath();
   else
-    currentProjectRoot    = pm->getCurrentProjectRoot();
+    currentProjectRoot = pm->getCurrentProjectRoot();
   TFilePath projectFolder = currentProjectRoot + projectName;
   TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
   TProject *project       = new TProject();
