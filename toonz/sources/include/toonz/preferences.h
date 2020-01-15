@@ -317,7 +317,7 @@ public:
 
   // Tools Tab
   bool getDropdownShortcutsCycleOptions() {
-    return getBoolValue(dropdownShortcutsCycleOptions);
+    return getIntValue(dropdownShortcutsCycleOptions) == 1;
   }
   bool getFillOnlySavebox() const { return getBoolValue(FillOnlysavebox); }
   bool isMultiLayerStylePickerEnabled() const {
