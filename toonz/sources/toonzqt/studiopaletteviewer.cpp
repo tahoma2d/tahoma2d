@@ -300,7 +300,6 @@ QTreeWidgetItem *StudioPaletteTreeViewer::getFolderItem(QTreeWidgetItem *parent,
 
 void StudioPaletteTreeViewer::resetDropItem() {
   if (!m_dropItem) return;
-  m_dropItem->setTextColor(0, Qt::black);
   m_dropItem = 0;
 }
 
@@ -1037,8 +1036,6 @@ void StudioPaletteTreeViewer::dragEnterEvent(QDragEnterEvent *event) {
 void StudioPaletteTreeViewer::dragMoveEvent(QDragMoveEvent *event) {
   QTreeWidgetItem *item = itemAt(event->pos());
   TFilePath newPath     = getItemPath(item);
-
-  if (m_dropItem) m_dropItem->setTextColor(0, Qt::black);
 
   if (item) {
     // drop will not be executed on the same item

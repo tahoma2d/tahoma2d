@@ -488,13 +488,26 @@ void ParamChannelGroup::refresh() {
 QVariant SkVDChannelGroup::data(int role) const {
   if (role == Qt::ForegroundRole) {
     // Check whether current selection is a PlasticVertex one - in case, paint
-    // it red
+    // it selection color
     // if this group refers to current vertex
+    FunctionTreeModel *model = dynamic_cast<FunctionTreeModel *>(getModel());
+    if (!model)
+#if QT_VERSION >= 0x050000
+      return QColor(Qt::black);
+#else
+      return Qt::black;
+#endif
+    FunctionTreeView *view = dynamic_cast<FunctionTreeView *>(model->getView());
+    if (!view || !model->getCurrentStageObject())
+#if QT_VERSION >= 0x050000
+      return QColor(Qt::black);
+#else
+      return Qt::black;
+#endif
 
     if (PlasticVertexSelection *vxSel =
             dynamic_cast<PlasticVertexSelection *>(TSelection::getCurrent()))
-      if (TStageObject *obj = static_cast<FunctionTreeModel *>(getModel())
-                                  ->getCurrentStageObject())
+      if (TStageObject *obj = model->getCurrentStageObject())
         if (obj == m_stageObjectGroup->m_stageObject)
           if (const SkDP &sd = obj->getPlasticSkeletonDeformation()) {
             int vIdx = *vxSel;
@@ -502,18 +515,9 @@ QVariant SkVDChannelGroup::data(int role) const {
             if (vIdx >= 0 &&
                 sd->skeleton(vxSel->skeletonId())->vertex(vIdx).name() ==
                     getLongName())
-#if QT_VERSION >= 0x050000
-              return QColor(Qt::red);
-#else
-              return Qt::red;
-#endif
+              return view->getCurrentTextColor();
           }
-
-#if QT_VERSION >= 0x050000
-    return QColor(Qt::black);
-#else
-    return Qt::black;
-#endif
+    return view->getTextColor();
   } else
     return ChannelGroup::data(role);
 }
@@ -601,7 +605,7 @@ QString FunctionTreeModel::Channel::getShortName() const {
 //-----------------------------------------------------------------------------
 
 QString FunctionTreeModel::Channel::getLongName() const {
-  QString name                = getShortName();
+  QString name = getShortName();
   if (getChannelGroup()) name = getChannelGroup()->getLongName() + " " + name;
   return name;
 }
@@ -622,7 +626,7 @@ void FunctionTreeModel::Channel::setParam(const TParamP &param) {
 
 //-----------------------------------------------------------------------------
 /*! in order to show the expression name in the tooltip
-*/
+ */
 QString FunctionTreeModel::Channel::getExprRefName() const {
   QString tmpName = QString(QString::fromStdWString(
       TStringTable::translate(m_paramNamePref + m_param->getName())));
@@ -1079,7 +1083,7 @@ void FunctionTreeModel::addChannels(TFx *fx, ChannelGroup *groupItem,
 
   std::wstring fxId = L"";
   TMacroFx *macro   = dynamic_cast<TMacroFx *>(fxItem->getFx());
-  if (macro) fxId   = fx->getFxId();
+  if (macro) fxId = fx->getFxId();
 
   const std::string &paramNamePref = fx->getFxType() + ".";
 
@@ -1225,7 +1229,7 @@ void FunctionTreeModel::resetAll() {
 
 void FunctionTreeModel::setCurrentFx(TFx *fx) {
   TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zcfx) fx          = zcfx->getZeraryFx();
+  if (zcfx) fx = zcfx->getZeraryFx();
   if (fx != m_currentFx) {
     if (fx) fx->addRef();
     if (m_currentFx) m_currentFx->release();
@@ -1611,7 +1615,7 @@ void FunctionTreeView::updateAll() {
 
 //-----------------------------------------------------------------------------
 /*! show all the animated channels when the scene switched
-*/
+ */
 void FunctionTreeView::displayAnimatedChannels() {
   FunctionTreeModel *functionTreeModel =
       dynamic_cast<FunctionTreeModel *>(model());
@@ -1626,7 +1630,7 @@ void FunctionTreeView::displayAnimatedChannels() {
 
 //-----------------------------------------------------------------------------
 /*! show all the animated channels when the scene switched
-*/
+ */
 void FunctionTreeModel::ChannelGroup::displayAnimatedChannels() {
   int itemCount = getChildCount();
   int i;
