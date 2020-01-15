@@ -39,6 +39,7 @@
 #include <QInputDialog>
 #include <QPushButton>
 #include <QDrag>
+#include <QApplication>
 
 #include <time.h>
 
@@ -99,7 +100,8 @@ StudioPaletteTreeViewer::StudioPaletteTreeViewer(
     , m_xsheetHandle(xsheetHandle)
     , m_folderIcon(QIcon())
     , m_levelPaletteIcon(QIcon())
-    , m_studioPaletteIcon(QIcon()) {
+    , m_studioPaletteIcon(QIcon())
+    , m_startPos() {
   setIndentation(14);
   setAlternatingRowColors(true);
 
@@ -965,10 +967,27 @@ void StudioPaletteTreeViewer::createMenuAction(QMenu &menu, const char *id,
 
 //-----------------------------------------------------------------------------
 
+void StudioPaletteTreeViewer::mousePressEvent(QMouseEvent *event) {
+  QTreeWidget::mousePressEvent(event);
+  // If left button is not pressed return
+  if (event->button() == Qt::LeftButton) m_startPos = event->pos();
+}
+
+//-----------------------------------------------------------------------------
+
 void StudioPaletteTreeViewer::mouseMoveEvent(QMouseEvent *event) {
   // If left button is not pressed return; is not drag event.
   if (!(event->buttons() & Qt::LeftButton)) return;
-  startDragDrop();
+  if (!m_startPos.isNull() && (m_startPos - event->pos()).manhattanLength() >=
+                                  QApplication::startDragDistance())
+    startDragDrop();
+}
+
+//-----------------------------------------------------------------------------
+
+void StudioPaletteTreeViewer::mouseReleaseEvent(QMouseEvent *event) {
+  QTreeWidget::mouseReleaseEvent(event);
+  if (event->button() == Qt::LeftButton) m_startPos = QPoint();
 }
 
 //-----------------------------------------------------------------------------
