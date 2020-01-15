@@ -57,21 +57,51 @@ QPushButton {
   &:extend(.Button);
   padding: 1 0 1 4;
   margin: 1 0;
+  &:editable {  /* for editable ComboBox */
+    color: @input-text-color;
+    background-color: @input-bg-color;
+    border-color: @input-border-color;
+    padding: 1 0 1 3;
+  }
   &:hover {
-    &:extend(.Button:hover);
+    background-color: @button-bg-color-hover;
+    &:editable {
+      background-color: @input-bg-color;
+    }
+  }
+  &:focus {
+    border-color: @input-border-color-focus;
   }
   &:checked {
     &:extend(.ComboBox);
+    border-color: @input-border-color-focus;
   }
   &:disabled {
     &:extend(.Button:disabled);
   }
   &::drop-down {
+    border: 0;
     image: url('@{img-url}/combo_downarrow.svg');
     image-position: center center;
     width: 16;
+    &:editable {
+      background-color: @button-bg-color;
+      border-left: @combobox-dropdown-border-size solid @button-border-color;
+      border-top-right-radius: @combobox-dropdown-border-radius;
+      border-bottom-right-radius: @combobox-dropdown-border-radius;
+    }
+    &:hover {
+      border-color: @combobox-dropdown-border-color-hover;
+      &:editable {
+        background-color: @button-bg-color-hover;
+        border-color: @button-border-color;
+      }
+    }
     &:disabled {
       image: url('@{img-url}/combo_downarrow_disabled.svg');
+      &:editable {
+        background-color: @combobox-dropdown-bg-color-disabled-editable;
+      }
     }
   }
   & QAbstractItemView {
@@ -144,10 +174,12 @@ QPlainTextEdit
       image: url('@{img-url}/checkmark.svg');
       &:hover {
         &:extend(.CheckBox::indicator:hover);
+        background-color: @checkbox-bg-color-checked-hover;
+        border-color: @checkbox-border-color-checked-hover;
       }
       &:disabled {
-        background-color: @checkbox-bg-color-disabled;
-        border-color: @checkbox-border-color-disabled;
+        background-color: @checkbox-bg-color-checked-disabled;
+        border-color: @checkbox-border-color-checked-disabled;
         image: url('@{img-url}/checkmark_disabled.svg');
       }
     }
@@ -159,8 +191,8 @@ QPlainTextEdit
         &:extend(.CheckBox::indicator:hover);
       }
       &:disabled {
-        background-color: @checkbox-bg-color-disabled;
-        border-color: @checkbox-border-color-disabled;
+        background-color: @checkbox-bg-color-checked-disabled;
+        border-color: @checkbox-border-color-checked-disabled;
         image: url('@{img-url}/checkpartially_disabled.svg');
       }
     }
@@ -180,17 +212,40 @@ QCheckBox {
 ----------------------------------------------------------------------------- */
 
 .RadioButton {
+  color: @text-color;
   &:hover {
-    &:extend(.CheckBox:hover);
+    color: @checkbox-text-color-hover;
   }
+  &:checked {
+    color: @text-color;
+  }
+  &:disabled {
+    color: @text-color-disabled;
+  }
+  padding: 0;
+  margin: 0;
   &::indicator {
+    @size: 11;
+    width: @size;
+    height: @size;
+    background-color: transparent;
+    border: 0;
+    image-position: center center;
     &:unchecked {
-      image: url('@{img-url}/radiobutton_unchecked.svg');
-      image-position: center center;
+      image: url('@{img-url}/@{radiobutton-img-unchecked}');
+      &:hover {
+        image: url('@{img-url}/@{radiobutton-img-unchecked-hover}');
+      }
     }
     &:checked {
-      image: url('@{img-url}/radiobutton_checked.svg');
-      image-position: center center;
+      image: url('@{img-url}/@{radiobutton-img-checked}');
+      &:disabled {
+        background-color: transparent;
+        image: url('@{img-url}/@{radiobutton-img-checked-disabled}');
+      }
+    }
+    &:disabled {
+      image: url('@{img-url}/@{radiobutton-img-unchecked-disabled}');
     }
   }
 }
@@ -280,4 +335,22 @@ QSlider {
 
 	qproperty-HandleLeftGrayPixmap: url("@{img-url}/@{slider-left-handle-disabled}");
   qproperty-HandleRightGrayPixmap: url("@{img-url}/@{slider-right-handle-disabled}");
+}
+
+/* -----------------------------------------------------------------------------
+   Progress Bar
+----------------------------------------------------------------------------- */
+
+QProgressBar {
+  text-align: center;
+  background-color: @progressbar-bg-color;
+  border: 1 solid @progressbar-border-color;
+  border-radius: 3; /* 2 fits inside 3 */
+  padding: 0;
+  &::chunk {
+    margin: -1; /* hide border of chunk except for right side */
+    background-color: @progressbar-chunk-bg-color;
+    border: 1 solid @progressbar-chunk-border-color;
+    border-radius: 2;
+  }
 }
