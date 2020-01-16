@@ -844,8 +844,3 @@ int main(int argc, char *argv[]) {
 }
 //------------------------------------------------------------------------
 
-namespace {
-const char *toonzVersion = "Toonz 7.1";
-}  // namespace
-
-static string getToonzVersion() { return toonzVersion; }
