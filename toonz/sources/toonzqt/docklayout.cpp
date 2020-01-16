@@ -201,9 +201,9 @@ QSize DockLayout::maximumSize() const {
 
 QSize DockLayout::sizeHint() const {
   QSize s(0, 0);
-  int n        = m_items.size();
+  int n = m_items.size();
   if (n > 0) s = QSize(100, 70);  // start with a nice default size
-  int i        = 0;
+  int i = 0;
   while (i < n) {
     QLayoutItem *o = m_items[i];
     s              = s.expandedTo(o->sizeHint());
@@ -421,6 +421,36 @@ void DockLayout::applyTransform(const QTransform &transform) {
 }
 
 //------------------------------------------------------
+// check if the region will be with fixed width
+bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
+  if (m_item) {
+    if (m_item->objectName() == "FilmStrip" ||
+        m_item->objectName() == "StyleEditor") {
+      widgets.push_back(m_item);
+      return true;
+    } else
+      return false;
+  }
+  if (m_childList.empty()) return false;
+  // for horizontal orientation, return true if all items are to be fixed
+  if (m_orientation == horizontal) {
+    bool ret = true;
+    for (Region *childRegion : m_childList) {
+      if (!childRegion->checkWidgetsToBeFixedWidth(widgets)) ret = false;
+    }
+    return ret;
+  }
+  // for vertical orientation, return true if at least one item is to be fixed
+  else {
+    bool ret = false;
+    for (Region *childRegion : m_childList) {
+      if (childRegion->checkWidgetsToBeFixedWidth(widgets)) ret = true;
+    }
+    return ret;
+  }
+}
+
+//------------------------------------------------------
 
 void DockLayout::redistribute() {
   if (!m_regions.empty()) {
@@ -430,21 +460,16 @@ void DockLayout::redistribute() {
     // NOTA: Sarebbe da fare solo se un certo flag lo richiede; altrimenti tipo
     // per resize events e' inutile...
 
-    // let's force the width of the film strip not to change
-
-    for (int i = 0; i < m_items.size(); i++) {
-      if (m_items.at(i)->widget() != 0) {
-        QWidget *widget = m_items.at(i)->widget();
-        if (widget) {
-          std::string name = widget->objectName().toStdString();
-          if (widget->objectName() == "FilmStrip" ||
-              widget->objectName() == "StyleEditor") {
-            widgets.push_back(widget);
-            widget->setFixedWidth(widget->width());
-          }
-        }
-      }
+    // let's force the width of the film strip / style editor not to change
+    // check recursively from the root region, if the widgets can be fixed.
+    // it avoids all widgets in horizontal alignment to be fixed, or UI becomes
+    // glitchy.
+    bool widgetsCanBeFixedWidth =
+        !m_regions.front()->checkWidgetsToBeFixedWidth(widgets);
+    if (widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
     }
+
     m_regions.front()->calculateExtremalSizes();
 
     int parentWidth  = contentsRect().width();
@@ -462,9 +487,11 @@ void DockLayout::redistribute() {
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
 
-    for (QWidget *widget : widgets) {
-      widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-      widget->setMinimumSize(0, 0);
+    if (widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) {
+        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        widget->setMinimumSize(0, 0);
+      }
     }
   }
 
@@ -1471,7 +1498,7 @@ bool DockLayout::restoreState(const State &state) {
   }
 
   // Else, deallocate old regions and substitute with new ones
-  for (j    = 0; j < m_regions.size(); ++j) delete m_regions[j];
+  for (j = 0; j < m_regions.size(); ++j) delete m_regions[j];
   m_regions = newHierarchy;
 
   // Now re-initialize dock widgets' infos.
