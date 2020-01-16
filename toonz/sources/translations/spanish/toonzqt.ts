@@ -473,11 +473,11 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <name>EaseInOutSegmentPage</name>
     <message>
         <source>Ease In:</source>
-        <translation>Desaceleración suave:</translation>
+        <translation>Aceleración suave:</translation>
     </message>
     <message>
         <source>Ease Out:</source>
-        <translation>Aceleración suave:</translation>
+        <translation>Desaceleración suave:</translation>
     </message>
 </context>
 <context>
