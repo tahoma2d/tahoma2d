@@ -31,6 +31,7 @@
 #include <qdrawutil.h>
 #include <assert.h>
 #include <QDesktopWidget>
+#include <QDialog>
 
 extern TEnv::StringVar EnvSafeAreaName;
 
@@ -124,12 +125,15 @@ void TPanel::onCloseButtonPressed() {
  */
 void TPanel::enterEvent(QEvent *event) {
   // Only when Toonz application is active
-  if (qApp->activeWindow()) {
+  QWidget *w = qApp->activeWindow();
+  if (w) {
     widgetFocusOnEnter();
     // Some panels (e.g. Viewer, StudioPalette, Palette, ColorModel) are
     // activated when mouse enters. Viewer is activatable only when being
     // docked.
-    if (isActivatableOnEnter()) activateWindow();
+    // Active windows will NOT switch when the current active window is dialog.
+    if (qobject_cast<QDialog *>(w) == 0 && isActivatableOnEnter())
+      activateWindow();
     event->accept();
   } else
     event->accept();
