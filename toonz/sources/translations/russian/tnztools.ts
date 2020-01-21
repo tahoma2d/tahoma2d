@@ -1327,7 +1327,7 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/edittoolgadgets.cpp" line="93"/>
         <source>Modify Fx Gadget  </source>
-        <translation type="unfinished">Изменить Fx-гаджет  </translation>
+        <translation>Изменить Fx-гаджет  </translation>
     </message>
     <message>
         <location filename="../../tnztools/tool.cpp" line="936"/>

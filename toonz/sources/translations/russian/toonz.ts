@@ -1815,27 +1815,27 @@ What do you want to do? </source>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="131"/>
         <source>Level %1 converting to same file format; skipped.</source>
-        <translation type="unfinished">Конвертирование уровня %1 в файл того же формата было прервано.</translation>
+        <translation>Конвертирование уровня %1 в файл того же формата было прервано.</translation>
     </message>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="137"/>
         <source>Level %1 already exists; skipped.</source>
-        <translation type="unfinished">Уровень %1 уже существует; пропуск.</translation>
+        <translation>Уровень %1 уже существует; пропуск.</translation>
     </message>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="163"/>
         <source>Converting %1</source>
-        <translation type="unfinished">Конвертация %1</translation>
+        <translation>Конвертация %1</translation>
     </message>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="165"/>
         <source>Converting level %1 of %2: %3</source>
-        <translation type="unfinished">Конвертация уровня %1 из %2: %3</translation>
+        <translation>Конвертация уровня %1 из %2: %3</translation>
     </message>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="196"/>
         <source>Level %1 has no frame; skipped.</source>
-        <translation type="unfinished">Уровень %1 не имеет кадров; пропуск.</translation>
+        <translation>Уровень %1 не имеет кадров; пропуск.</translation>
     </message>
     <message>
         <location filename="../../toonz/convertpopup.cpp" line="329"/>
@@ -4534,17 +4534,17 @@ Please use the frame numbers for reference.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1009"/>
         <source>https://github.com/opentoonz/opentoonz/releases/latest</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1016"/>
         <source>https://groups.google.com/forum/#!forum/opentoonz_en</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1023"/>
         <source>To report a bug, click on the button below to open a web browser window for OpenToonz&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для отправки отчёта об ошибке нажмите кнопку ниже, чтобы открыть страницу &quot;OpenToonz issues&quot; на сайте https://github.com. Кликните &quot;New issue&quot; и заполните форму.</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1149"/>
@@ -5566,7 +5566,7 @@ Please use the frame numbers for reference.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1938"/>
         <source>Vector Guided Drawing</source>
-        <translation type="unfinished">Векторный гид</translation>
+        <translation>Векторный гид</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1942"/>
@@ -6009,12 +6009,12 @@ or you may delete necessary files for it.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2047"/>
         <source>&amp;Report a Bug...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сообщить об ошибке...</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2050"/>
         <source>Guided Drawing Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Контроллер векторного гида</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2052"/>
@@ -6603,12 +6603,12 @@ or you may delete necessary files for it.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2227"/>
         <source>Flip Next Guide Stroke Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевернуть направление следующего штриха</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2229"/>
         <source>Flip Previous Guide Stroke Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевернуть направление предыдущего штриха</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2247"/>
@@ -8546,7 +8546,7 @@ Is it OK to release these shortcuts?</source>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="959"/>
         <source>Show Raster Images Darken Blended</source>
-        <translation type="unfinished">Отображать растровые изображения в режиме наложения Darken</translation>
+        <translation>Отображать растровые изображения в режиме наложения Darken</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="970"/>
@@ -12098,12 +12098,12 @@ to use the duplicate command in the xsheet / timeline.</source>
     <message>
         <location filename="../../toonz/tpanels.cpp" line="1495"/>
         <source>Vector Guided Drawing Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Контроллер векторного гида</translation>
     </message>
     <message>
         <location filename="../../toonz/tpanels.cpp" line="1506"/>
         <source>Vector Guided Drawing</source>
-        <translation type="unfinished">Векторный гид</translation>
+        <translation>Векторный гид</translation>
     </message>
     <message>
         <location filename="../../toonz/curveio.cpp" line="159"/>
@@ -12448,12 +12448,12 @@ to use the duplicate command in the xsheet / timeline.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1027"/>
         <source>Report a Bug</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщить об ошибке</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1028"/>
         <source>Close</source>
-        <translation type="unfinished">Закрыть</translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1067"/>
@@ -15413,47 +15413,47 @@ Possibly the preset file has been corrupted</source>
         <location filename="../../stopmotion/stopmotion.cpp" line="162"/>
         <source>No</source>
         <comment>frame id</comment>
-        <translation type="unfinished">Нет</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1074"/>
         <source>No level name specified: please choose a valid level name</source>
-        <translation type="unfinished">Имя уровня не указано: пожалуйста, укажите правильное имя уровня</translation>
+        <translation>Имя уровня не указано: пожалуйста, укажите правильное имя уровня</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1113"/>
         <source>The level name specified is already used: please choose a different level name.</source>
-        <translation type="unfinished">Имя уровня уже используется: выберите другое имя.</translation>
+        <translation>Имя уровня уже используется: выберите другое имя.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1122"/>
         <source>The save in path specified does not match with the existing level.</source>
-        <translation type="unfinished">Указанный путь сохранения не соответствует существующему уровню.</translation>
+        <translation>Указанный путь сохранения не соответствует существующему уровню.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1128"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1160"/>
         <source>The captured image size does not match with the existing level.</source>
-        <translation type="unfinished">Размер захваченного изображения не соответствует существующему уровню.</translation>
+        <translation>Размер захваченного изображения не соответствует существующему уровню.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1136"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1169"/>
         <source>File %1 already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished">Файл «%1» уже существует.
+        <translation>Файл «%1» уже существует.
 Хотите перезаписать его?</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1151"/>
         <source>Failed to load %1.</source>
-        <translation type="unfinished">Не удалось загрузить %1.</translation>
+        <translation>Не удалось загрузить %1.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1209"/>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation type="unfinished">Папки %1 не существует.
+        <translation>Папки %1 не существует.
 Вы хотите создать ее?</translation>
     </message>
     <message>
@@ -15461,17 +15461,17 @@ Do you want to create it?</source>
         <location filename="../../stopmotion/stopmotion.cpp" line="1227"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1236"/>
         <source>Unable to create</source>
-        <translation type="unfinished">Не удалось создать</translation>
+        <translation>Не удалось создать</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1363"/>
         <source>Please start live view before capturing an image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста, начните просмотр в реальном времени, прежде чем сделать снимок.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1369"/>
         <source>Cannot capture webcam image unless live view is active.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно захватить изображение с веб-камеры, если не активен просмотр в реальном времени.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1625"/>
@@ -15480,18 +15480,18 @@ Do you want to create it?</source>
         <location filename="../../stopmotion/stopmotion.cpp" line="1642"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1661"/>
         <source>UNDEFINED WARNING</source>
-        <translation type="unfinished">НЕОПРЕДЕЛЕННОЕ ПРЕДУПРЕЖДЕНИЕ</translation>
+        <translation>НЕОПРЕДЕЛЕННОЕ ПРЕДУПРЕЖДЕНИЕ</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1652"/>
         <source>The level is not registered in the scene, but exists in the file system.</source>
-        <translation type="unfinished">Уровень не загружен в текущую сцену, но файл существует.</translation>
+        <translation>Уровень не загружен в текущую сцену, но файл существует.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1668"/>
         <source>
 WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
-        <translation type="unfinished">
+        <translation>
 Предупреждение: несоответствие размера изображения. Размер сохраненного изображения%1 x %2.</translation>
     </message>
     <message>
@@ -15499,14 +15499,14 @@ WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
         <location filename="../../stopmotion/stopmotion.cpp" line="1722"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1732"/>
         <source>WARNING </source>
-        <translation type="unfinished">ВНИМАНИЕ </translation>
+        <translation>ВНИМАНИЕ </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1678"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1739"/>
         <source>
 Frame %1 exists.</source>
-        <translation type="unfinished">
+        <translation>
 Кадр %1 существует.</translation>
     </message>
     <message>
@@ -15514,105 +15514,105 @@ Frame %1 exists.</source>
         <location filename="../../stopmotion/stopmotion.cpp" line="1742"/>
         <source>
 Frames %1 exist.</source>
-        <translation type="unfinished">
+        <translation>
 Кадры %1 существуют.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1685"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1754"/>
         <source>OVERWRITE 1 of</source>
-        <translation type="unfinished">ПЕРЕЗАПИСАТЬ 1 из</translation>
+        <translation>ПЕРЕЗАПИСАТЬ 1 из</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1688"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1759"/>
         <source>ADD to</source>
-        <translation type="unfinished">ДОБАВИТЬ</translation>
+        <translation>ДОБАВИТЬ</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1692"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1763"/>
         <source> %1 frame</source>
-        <translation type="unfinished"> %1 кадр</translation>
+        <translation> %1 кадр</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1694"/>
         <location filename="../../stopmotion/stopmotion.cpp" line="1765"/>
         <source> %1 frames</source>
-        <translation type="unfinished"> %1 кадров</translation>
+        <translation> %1 кадров</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1700"/>
         <source>The level will be newly created.</source>
-        <translation type="unfinished">Уровень будет вновь создан.</translation>
+        <translation>Уровень будет вновь создан.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1701"/>
         <source>NEW</source>
-        <translation type="unfinished">НОВЫЙ</translation>
+        <translation>НОВЫЙ</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1709"/>
         <source>The level is already registered in the scene.</source>
-        <translation type="unfinished">Этот уровень уже загружен в сцену.</translation>
+        <translation>Этот уровень уже загружен в сцену.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1710"/>
         <source>
 NOTE : The level is not saved.</source>
-        <translation type="unfinished">
+        <translation>
 ПРИМЕЧАНИЕ : уровень не сохранен.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1720"/>
         <source>
 WARNING : Failed to get image size of the existing level %1.</source>
-        <translation type="unfinished">
+        <translation>
 ВНИМАНИЕ : получить размер изображения уровня %1 не удалось.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1728"/>
         <source>
 WARNING : Image size mismatch. The existing level size is %1 x %2.</source>
-        <translation type="unfinished">
+        <translation>
 ВНИМАНИЕ: несоответствие размера изображения. Существующий размер уровня %1 x %2.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1775"/>
         <source>WARNING : Level name conflicts. There already is a level %1 in the scene with the path                        
           %2.</source>
-        <translation type="unfinished">ВНИМАНИЕ: конфликт имен уровней. Уровень %1 уже присутствует в сцене с путем                        
+        <translation>ВНИМАНИЕ: конфликт имен уровней. Уровень %1 уже присутствует в сцене с путем                        
 %2.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1783"/>
         <source>
 WARNING : Image size mismatch. The size of level with the same name is is %1 x %2.</source>
-        <translation type="unfinished">
+        <translation>
 ВНИМАНИЕ: несоответствие размера изображения. Размер уровня с тем же именем — %1 x %2.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1793"/>
         <source>WARNING : Level path conflicts. There already is a level with the path %1                        
           in the scene with the name %2.</source>
-        <translation type="unfinished">ВНИМАНИЕ : повторяющийся путь к файлу. В сцене уже есть уровень из %1                        под именем %2.</translation>
+        <translation>ВНИМАНИЕ : повторяющийся путь к файлу. В сцене уже есть уровень из %1                        под именем %2.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1801"/>
         <source>
 WARNING : Image size mismatch. The size of level with the same path is %1 x %2.</source>
-        <translation type="unfinished">
+        <translation>
 ВНИМАНИЕ: несоответствие размера изображения. Размер уровня с тем же путем %1 x %2.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="1807"/>
         <source>WARNING</source>
-        <translation type="unfinished">Предупреждение</translation>
+        <translation>Предупреждение</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotion.cpp" line="2263"/>
         <source>No camera selected.</source>
-        <translation type="unfinished">Камера не выбрана.</translation>
+        <translation>Камера не выбрана.</translation>
     </message>
 </context>
 <context>
@@ -15620,315 +15620,316 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="181"/>
         <source>Controls</source>
-        <translation type="unfinished">Элементы управления</translation>
+        <translatorcomment>так и хочется написать &quot;Рульки&quot;</translatorcomment>
+        <translation>Контроль</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="182"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1330"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1342"/>
         <source>Settings</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation>Настройки</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="183"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="224"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1341"/>
         <source>Options</source>
-        <translation type="unfinished">Опции</translation>
+        <translation>Опции</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="197"/>
         <source>Resolution: </source>
-        <translation type="unfinished">Разрешение: </translation>
+        <translation>Разрешение: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="198"/>
         <source>Refresh</source>
-        <translation type="unfinished">Обновить</translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="201"/>
         <source>File</source>
-        <translation type="unfinished">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="213"/>
         <source>Webcam Settings...</source>
-        <translation type="unfinished">Настройки веб-камеры...</translation>
+        <translation>Настройки веб-камеры...</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="239"/>
         <source>Capture</source>
-        <translation type="unfinished">Захват</translation>
+        <translation>Захват</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="249"/>
         <source>Next Level</source>
-        <translation type="unfinished">Следующий уровень</translation>
+        <translation>Следующий уровень</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="250"/>
         <source>Next New</source>
-        <translation type="unfinished">Новый следующий</translation>
+        <translation>Новый следующий</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="257"/>
         <source>Previous Level</source>
-        <translation type="unfinished">Предыдущий уровень</translation>
+        <translation>Предыдущий уровень</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="260"/>
         <source>Next Frame</source>
-        <translation type="unfinished">Следующий кадр</translation>
+        <translation>Следующий кадр</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="261"/>
         <source>Last Frame</source>
-        <translation type="unfinished">Последний кадр</translation>
+        <translation>Последний кадр</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="267"/>
         <source>Previous Frame</source>
-        <translation type="unfinished">Предыдущий кадр</translation>
+        <translation>Предыдущий кадр</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="272"/>
         <source>Next XSheet Frame</source>
-        <translation type="unfinished">Следующий кадр в XSheet</translation>
+        <translation>Следующий кадр в XSheet</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="275"/>
         <source>Previous XSheet Frame</source>
-        <translation type="unfinished">Предшествующий кадр в XSheet</translation>
+        <translation>Предшествующий кадр в XSheet</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="278"/>
         <source>Current Frame</source>
-        <translation type="unfinished">Текущий кадр</translation>
+        <translation>Текущий кадр</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="284"/>
         <source>Set to the Current Playhead Location</source>
-        <translation type="unfinished">Установить текущую позицию указателя воспроизведения</translation>
+        <translation>Установить текущую позицию указателя воспроизведения</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="289"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1073"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1653"/>
         <source>Start Live View</source>
-        <translation type="unfinished">Показывать в реальном времени</translation>
+        <translation>Реалтайм</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="304"/>
         <source>Zoom</source>
-        <translation type="unfinished">Увеличение</translation>
+        <translation>Увеличение</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="308"/>
         <source>Pick Zoom</source>
-        <translation type="unfinished">Выбрать увеличение</translation>
+        <translation>Выбрать увеличение</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="312"/>
         <source>&lt;</source>
-        <translation type="unfinished">&lt;</translation>
+        <translation>&lt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="314"/>
         <source>&gt;</source>
-        <translation type="unfinished">&gt;</translation>
+        <translation>&gt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="316"/>
         <source>&lt;&lt;</source>
-        <translation type="unfinished">&lt;&lt;</translation>
+        <translation>&lt;&lt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="318"/>
         <source>&gt;&gt;</source>
-        <translation type="unfinished">&gt;&gt;</translation>
+        <translation>&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="320"/>
         <source>&lt;&lt;&lt;</source>
-        <translation type="unfinished">&lt;&lt;&lt;</translation>
+        <translation>&lt;&lt;&lt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="322"/>
         <source>&gt;&gt;&gt;</source>
-        <translation type="unfinished">&gt;&gt;&gt;</translation>
+        <translation>&gt;&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="336"/>
         <source>Camera:</source>
-        <translation type="unfinished">Камера:</translation>
+        <translation>Камера:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="362"/>
         <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="375"/>
         <source>Frame:</source>
-        <translation type="unfinished">Кадр:</translation>
+        <translation>Кадр:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="398"/>
         <source>File Type:</source>
-        <translation type="unfinished">Тип файла:</translation>
+        <translation>Тип файла:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="409"/>
         <source>Save In:</source>
-        <translation type="unfinished">Сохранить в:</translation>
+        <translation>Сохранить в:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="423"/>
         <source>XSheet Frame:</source>
-        <translation type="unfinished">Кадр xsheet:</translation>
+        <translation>Кадр xsheet:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="458"/>
         <source>Camera Model</source>
-        <translation type="unfinished">Модель камеры</translation>
+        <translation>Модель камеры</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="459"/>
         <source>Camera Mode</source>
-        <translation type="unfinished">Режим камеры</translation>
+        <translation>Режим камеры</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="460"/>
         <source>Temperature: </source>
-        <translation type="unfinished">Температура: </translation>
+        <translation>Температура: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="477"/>
         <source>Shutter Speed: </source>
-        <translation type="unfinished">Выдержка: </translation>
+        <translation>Выдержка: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="480"/>
         <source>Iso: </source>
-        <translation type="unfinished">ISO: </translation>
+        <translation>ISO: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="483"/>
         <source>Aperture: </source>
-        <translation type="unfinished">Диафрагма: </translation>
+        <translation>Диафрагма: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="486"/>
         <source>Exposure: </source>
-        <translation type="unfinished">Экспозиция: </translation>
+        <translation>Экспозиция: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="489"/>
         <source>Image Quality: </source>
-        <translation type="unfinished">Качество изображения: </translation>
+        <translation>Качество изображения: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="492"/>
         <source>Picture Style: </source>
-        <translation type="unfinished">Стиль изображения: </translation>
+        <translation>Стиль изображения: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="495"/>
         <source>White Balance: </source>
-        <translation type="unfinished">Баланс белого: </translation>
+        <translation>Баланс белого: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="521"/>
         <source>Webcam Options</source>
-        <translation type="unfinished">Параметры веб-камеры</translation>
+        <translation>Параметры веб-камеры</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="522"/>
         <source>DSLR Options</source>
-        <translation type="unfinished">Параметры DSLR</translation>
+        <translation>Параметры DSLR</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="532"/>
         <source>Place the frame in the XSheet</source>
-        <translation type="unfinished">Поместить кадр в Xsheet</translation>
+        <translation>Поместить кадр в Xsheet</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="535"/>
         <source>Use Direct Show Webcam Drivers</source>
-        <translation type="unfinished">Использовать драйверы DirectShow для веб-камеры</translation>
+        <translation>Использовать драйверы DirectShow для веб-камеры</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="550"/>
         <source>Black Screen for Capture</source>
-        <translation type="unfinished">Černá obrazovka pro zachycení</translation>
+        <translation>Чёрный фон для захвата</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="553"/>
         <source>Use Reduced Resolution Images</source>
-        <translation type="unfinished">Использовать изображения с уменьшенным разрешением</translation>
+        <translation>Использовать изображения с уменьшенным разрешением</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="563"/>
         <source>Use MJPG with Webcam</source>
-        <translation type="unfinished">Использовать MJPG с веб-камерой</translation>
+        <translation>Использовать MJPG с веб-камерой</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="571"/>
         <source>Place on XSheet</source>
-        <translation type="unfinished">Поместить в Xsheet</translation>
+        <translation>Поместить в Xsheet</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="575"/>
         <source>Use Numpad Shortcuts When Active</source>
-        <translation type="unfinished">Использовать клавиши цифрового блока, когда они включены</translation>
+        <translation>Использовать клавиши цифрового блока, когда они включены</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="578"/>
         <source>Show Live View on All Frames</source>
-        <translation type="unfinished">Показывать в реальном времени все изображения</translation>
+        <translation>Показывать в реальном времени все изображения</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="584"/>
         <source>Capture Review Time: </source>
-        <translation type="unfinished">Время захвата: </translation>
+        <translation>Время захвата: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="587"/>
         <source>Level Subsampling: </source>
-        <translation type="unfinished">Уровень понижающей дискретизации: </translation>
+        <translation>Уровень понижающей дискретизации: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="610"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Непрозрачность:</translation>
+        <translation>Непрозрачность:</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1067"/>
         <source>No camera detected.</source>
-        <translation type="unfinished">Камера не обнаружена.</translation>
+        <translation>Камера не обнаружена.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1068"/>
         <source>No camera detected</source>
-        <translation type="unfinished">Камера не обнаружена</translation>
+        <translation>Камера не обнаружена</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1076"/>
         <source>- Select camera -</source>
-        <translation type="unfinished">- Выбрать камеру -</translation>
+        <translation>- Выбрать камеру -</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1153"/>
         <source>Mode: </source>
-        <translation type="unfinished">Режим: </translation>
+        <translation>Режим: </translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1165"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1183"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1201"/>
         <source>Auto</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1220"/>
@@ -15936,12 +15937,12 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1281"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1299"/>
         <source>Disabled</source>
-        <translation type="unfinished">Отключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1650"/>
         <source>Stop Live View</source>
-        <translation type="unfinished">Остановить просмотр в реальном времени</translation>
+        <translation>Остановить просмотр в реальном времени</translation>
     </message>
 </context>
 <context>
@@ -16518,104 +16519,104 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="35"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Отключен</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="35"/>
         <source>Closest</source>
-        <translation type="unfinished"></translation>
+        <translation>В ближайшем кадре кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="35"/>
         <source>Farthest</source>
-        <translation type="unfinished"></translation>
+        <translation>В дальнем кадре кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="35"/>
         <source>All</source>
-        <translation type="unfinished">Все</translation>
+        <translation>Во всех кадрах кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="41"/>
         <source>Auto Inbetween</source>
-        <translation type="unfinished">Автофазовка</translation>
+        <translation>Автофазовка</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="49"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Линейная</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="49"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедл. в начале</translation>
+        <translation>Замедл. в начале</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="49"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Замедл. в конце</translation>
+        <translation>Замедл. в конце</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="49"/>
         <source>EaseIn/Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Замедл. в нач./ конце</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="61"/>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="105"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущий</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="66"/>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="100"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующий</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="71"/>
         <source>Both</source>
-        <translation type="unfinished"></translation>
+        <translation>Оба</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="76"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="82"/>
         <source>Tween Selected Guide Strokes</source>
-        <translation type="unfinished">Промежуточные кадры между выбранными направляющими</translation>
+        <translation>Автофазовка: между выбранными гидами</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="88"/>
         <source>Tween Guide Strokes to Selected</source>
-        <translation type="unfinished">Промежуточные кадры от направляющих до выделенных</translation>
+        <translation>Автофазовка: от гида до выбранного штриха</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="95"/>
         <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
-        <translation type="unfinished">Выберите режим промежуточных кадров и направляющих</translation>
+        <translation>Выбрать первый, затем второй гид &amp; автофазовка</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="115"/>
         <source>Guide Frames:</source>
-        <translation type="unfinished"></translation>
+        <translation>Гид :</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="120"/>
         <source>Select Guide Stroke:</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать штрих гида:</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="134"/>
         <source>Flip Guide Stroke:</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевернуть направление штриха:</translation>
     </message>
     <message>
         <location filename="../../toonz/vectorguideddrawingpane.cpp" line="150"/>
         <source>Interpolation:</source>
-        <translation type="unfinished">Интерполяция:</translation>
+        <translation>Интерполяция:</translation>
     </message>
 </context>
 <context>
@@ -16874,32 +16875,32 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="22"/>
         <source>Importing XDTS file %1</source>
-        <translation type="unfinished">Импорт XDTS файла %1</translation>
+        <translation>Импорт XDTS файла %1</translation>
     </message>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="24"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="25"/>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="28"/>
         <source>Please specify the level locations. Suggested paths are input in the fields with blue border.</source>
-        <translation type="unfinished">Пожалуйста, укажите расположение уровня. Предлагаемые пути вводятся в поля с синей рамкой.</translation>
+        <translation>Пожалуйста, укажите расположение уровня. Предлагаемые пути вводятся в поля с синей рамкой.</translation>
     </message>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="43"/>
         <source>Level Name</source>
-        <translation type="unfinished">Имя уровня</translation>
+        <translation>Имя уровня</translation>
     </message>
     <message>
         <location filename="../../toonz/xdtsimportpopup.cpp" line="45"/>
         <source>Level Path</source>
-        <translation type="unfinished">Путь уровня</translation>
+        <translation>Путь уровня</translation>
     </message>
 </context>
 <context>
@@ -16914,77 +16915,77 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2867"/>
         <source>Click to select keyframe, drag to move it</source>
-        <translation type="unfinished">Кликнуть для выделения кадра, потянуть для перемещения</translation>
+        <translation>Кликнуть для выделения кадра, потянуть для перемещения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2877"/>
         <source>Click and drag to set the acceleration range</source>
-        <translation type="unfinished">Нажмите и перетащите, чтобы установить диапазон ускорения</translation>
+        <translation>Нажмите и перетащите, чтобы установить диапазон ускорения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2879"/>
         <source>Click and drag to set the deceleration range</source>
-        <translation type="unfinished">Нажмите и перетащите, чтобы установить диапазон замедления</translation>
+        <translation>Нажмите и перетащите, чтобы установить диапазон замедления</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2886"/>
         <source>Set the cycle of previous keyframes</source>
-        <translation type="unfinished">Установите цикл предыдущих ключевых кадров</translation>
+        <translation>Установите цикл предыдущих ключевых кадров</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2891"/>
         <source>Click and drag to move the selection</source>
-        <translation type="unfinished">Кликнуть и потянуть для перемещения выделенного</translation>
+        <translation>Кликнуть и потянуть для перемещения выделенного</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2927"/>
         <source>Click and drag to play</source>
-        <translation type="unfinished">Кликнуть и потянуть для воспроизведения</translation>
+        <translation>Кликнуть и потянуть для воспроизведения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="2929"/>
         <source>Click and drag to repeat selected cells</source>
-        <translation type="unfinished">Нажмите и перетащите, чтобы повторить выбранные ячейки</translation>
+        <translation>Нажмите и перетащите, чтобы повторить выбранные ячейки</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3218"/>
         <source>Reframe</source>
-        <translation type="unfinished">Перестроить</translation>
+        <translation>Перестроить</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3229"/>
         <source>Step</source>
-        <translation type="unfinished">Шаг</translation>
+        <translation>Шаг</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3239"/>
         <source>Each</source>
-        <translation type="unfinished">Каждый</translation>
+        <translation>Каждый</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3248"/>
         <source>Edit Cell Numbers</source>
-        <translation type="unfinished">Ввести номер кадра</translation>
+        <translation>Ввести номер кадра</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3271"/>
         <source>Replace Level</source>
-        <translation type="unfinished">Заменить уровень</translation>
+        <translation>Заменить уровень</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3288"/>
         <source>Replace with</source>
-        <translation type="unfinished">Заменить</translation>
+        <translation>Заменить</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3329"/>
         <source>Paste Special</source>
-        <translation type="unfinished">Специальная вставка</translation>
+        <translation>Специальная вставка</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3360"/>
         <source>Edit Image</source>
-        <translation type="unfinished">Редактирование изображений</translation>
+        <translation>Редактирование изображений</translation>
     </message>
     <message>
         <source>Replace</source>
@@ -16993,12 +16994,12 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3540"/>
         <source>Open Memo</source>
-        <translation type="unfinished">Открыть заметку</translation>
+        <translation>Открыть мемо</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3541"/>
         <source>Delete Memo</source>
-        <translation type="unfinished">Удалить заметку</translation>
+        <translation>Удалить мемо</translation>
     </message>
 </context>
 <context>
@@ -17006,145 +17007,145 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1190"/>
         <source>&amp;Subsampling 1</source>
-        <translation type="unfinished">&amp;Субсемплинг 1</translation>
+        <translation>&amp;Субсемплинг 1</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1191"/>
         <source>&amp;Subsampling 2</source>
-        <translation type="unfinished">&amp;Субсемплинг 2</translation>
+        <translation>&amp;Субсемплинг 2</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1192"/>
         <source>&amp;Subsampling 3</source>
-        <translation type="unfinished">&amp;Субсемплинг 3</translation>
+        <translation>&amp;Субсемплинг 3</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1193"/>
         <source>&amp;Subsampling 4</source>
-        <translation type="unfinished">&amp;Субсемплинг 4</translation>
+        <translation>&amp;Субсемплинг 4</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2223"/>
         <source>Click to select camera</source>
-        <translation type="unfinished">Нажмите, чтобы выбрать камеру</translation>
+        <translation>Нажмите, чтобы выбрать камеру</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2225"/>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2228"/>
         <source>Click to select column, drag to move it</source>
-        <translation type="unfinished">Нажмите, чтобы выбрать столбец, перетащите, чтобы переместить его</translation>
+        <translation>Нажмите, чтобы выбрать столбец, перетащите, чтобы переместить его</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2230"/>
         <source>Click to select column</source>
-        <translation type="unfinished">Щелкните для выбора столбца</translation>
+        <translation>Щелкните для выбора столбца</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2234"/>
         <source>Click to select column, drag to move it, double-click to edit</source>
-        <translation type="unfinished">Нажмите, чтобы выбрать столбец, перетащите, чтобы переместить его, двойной клик чтобы редактировать</translation>
+        <translation>Нажмите, чтобы выбрать столбец, перетащите, чтобы переместить его, двойной клик чтобы редактировать</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2243"/>
         <source>Click to select column, double-click to edit</source>
-        <translation type="unfinished">Щелкните для выбора столбца, двойной клик для редактирования</translation>
+        <translation>Щелкните для выбора столбца, двойной клик для редактирования</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2245"/>
         <source>Lock Toggle</source>
-        <translation type="unfinished">Блокировка переключения</translation>
+        <translation>Блокировка переключения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2247"/>
         <source>Additional column settings</source>
-        <translation type="unfinished">Дополнительные настройки столбцов</translation>
+        <translation>Дополнительные настройки столбцов</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2249"/>
         <source>Preview Visibility Toggle</source>
-        <translation type="unfinished">Переключение видимости</translation>
+        <translation>Переключение видимости</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2252"/>
         <source>Camera Stand Visibility Toggle</source>
-        <translation type="unfinished">Переключатель видимости камеры</translation>
+        <translation>Переключатель видимости камеры</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2523"/>
         <source>Hide Camera Column</source>
-        <translation type="unfinished">Скрыть столбец камеры</translation>
+        <translation>Скрыть столбец камеры</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2525"/>
         <source>Show Camera Column</source>
-        <translation type="unfinished">Показать столбец камеры</translation>
+        <translation>Показать столбец камеры</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2578"/>
         <source>&amp;Insert Before</source>
-        <translation type="unfinished">&amp;Вставить пробел сзади</translation>
+        <translation>&amp;Вставить пробел сзади</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2579"/>
         <source>&amp;Insert After</source>
-        <translation type="unfinished">&amp;Вставить пробел cпереди</translation>
+        <translation>&amp;Вставить пробел cпереди</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2580"/>
         <source>&amp;Paste Insert Before</source>
-        <translation type="unfinished">&amp;Вставить копию сзади</translation>
+        <translation>&amp;Вставить копию сзади</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2581"/>
         <source>&amp;Paste Insert After</source>
-        <translation type="unfinished">&amp;Вставить копию спереди</translation>
+        <translation>&amp;Вставить копию спереди</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2583"/>
         <source>&amp;Insert Below</source>
-        <translation type="unfinished">&amp;Вставить пробел сзади</translation>
+        <translation>&amp;Вставить пробел сзади</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2584"/>
         <source>&amp;Insert Above</source>
-        <translation type="unfinished">&amp;Вставить пробел cпереди</translation>
+        <translation>&amp;Вставить пробел cпереди</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2585"/>
         <source>&amp;Paste Insert Below</source>
-        <translation type="unfinished">&amp;Вставить копию сзади</translation>
+        <translation>&amp;Вставить копию сзади</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2586"/>
         <source>&amp;Paste Insert Above</source>
-        <translation type="unfinished">&amp;Вставить копию спереди</translation>
+        <translation>&amp;Вставить копию спереди</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2238"/>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2257"/>
         <source>Click to play the soundtrack back</source>
-        <translation type="unfinished">Нажмите, чтобы воспроизвести зв. дорожку</translation>
+        <translation>Нажмите, чтобы воспроизвести зв. дорожку</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2241"/>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2260"/>
         <source>Set the volume of the soundtrack</source>
-        <translation type="unfinished">Установите громкость зв. дорожки</translation>
+        <translation>Установите громкость зв. дорожки</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2263"/>
         <source>Alt + Click to Toggle Thumbnail</source>
-        <translation type="unfinished">Alt + Click для переключения иконок</translation>
+        <translation>Alt + Click для переключения иконок</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2539"/>
         <source>Reframe</source>
-        <translation type="unfinished">Перестроить</translation>
+        <translation>Перестроить</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2553"/>
         <source>Subsampling</source>
-        <translation type="unfinished">Субсемплинг</translation>
+        <translation>Субсемплинг</translation>
     </message>
 </context>
 <context>
@@ -17185,12 +17186,12 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1671"/>
         <source>Filter:</source>
-        <translation type="unfinished">Фильтр:</translation>
+        <translation>Фильтр:</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1672"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Непрозрачность:</translation>
+        <translation>Непрозрачность:</translation>
     </message>
 </context>
 <context>
@@ -17198,42 +17199,42 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="485"/>
         <source>Toggle Xsheet/Timeline</source>
-        <translation type="unfinished">Переключить Xsheet/таймлайн</translation>
+        <translation>Переключить Xsheet/таймлайн</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="494"/>
         <source>Add New Memo</source>
-        <translation type="unfinished">Добавить новый мемо</translation>
+        <translation>Добавить новый мемо</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="503"/>
         <source>Previous Memo</source>
-        <translation type="unfinished">Предыдущий мемо</translation>
+        <translation>Предыдущий мемо</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="512"/>
         <source>Next Memo</source>
-        <translation type="unfinished">Следующий мемо</translation>
+        <translation>Следующий мемо</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="515"/>
         <source>Frame</source>
-        <translation type="unfinished">Кадр</translation>
+        <translation>Кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="515"/>
         <source>Sec Frame</source>
-        <translation type="unfinished">Сек Кадр</translation>
+        <translation>Сек Кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="515"/>
         <source>6sec Sheet</source>
-        <translation type="unfinished">6сек Лист</translation>
+        <translation>6сек Лист</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="516"/>
         <source>3sec Sheet</source>
-        <translation type="unfinished">3сек Лист</translation>
+        <translation>3сек Лист</translation>
     </message>
 </context>
 <context>
@@ -17241,17 +17242,17 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="56"/>
         <source>Memo</source>
-        <translation type="unfinished">Заметка</translation>
+        <translation>Мемо</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="141"/>
         <source>Post</source>
-        <translation type="unfinished">Прикрепить</translation>
+        <translation>Прикрепить</translation>
     </message>
     <message>
         <location filename="../../toonz/xshnoteviewer.cpp" line="148"/>
         <source>Discard</source>
-        <translation type="unfinished">Сбросить</translation>
+        <translation>Сбросить</translation>
     </message>
 </context>
 <context>
@@ -17259,22 +17260,22 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1153"/>
         <source>Playback Start Marker</source>
-        <translation type="unfinished">Маркер начала воспроизведения</translation>
+        <translation>Маркер начала воспроизведения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1155"/>
         <source>Playback End Marker</source>
-        <translation type="unfinished">Маркер окончания воспроизведения</translation>
+        <translation>Маркер окончания воспроизведения</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1157"/>
         <source>Pinned Center : Col%1%2</source>
-        <translation type="unfinished">Фиксированный центр : Кол%1%2</translation>
+        <translation>Фиксированный центр : Кол%1%2</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1165"/>
         <source>Double Click to Toggle Onion Skin</source>
-        <translation type="unfinished">Двойной клик для переключения Onion Skin</translation>
+        <translation>Двойной клик для переключения Onion Skin</translation>
     </message>
     <message>
         <source>Curren Frame</source>
@@ -17284,67 +17285,67 @@ Please refer to the user guide for details.</source>
         <location filename="../../toonz/xshrowviewer.cpp" line="1080"/>
         <source>Click to Reset Shift &amp; Trace Markers to Neighbor Frames
 Hold F2 Key on the Viewer to Show This Frame Only</source>
-        <translation type="unfinished">Нажмите, чтобы сбросить маркеры Shift &amp; Trace для соседних кадров
+        <translation>Нажмите, чтобы сбросить маркеры Shift &amp; Trace для соседних кадров
 Удерживайте клавишу F2 чтобы видеть только этот кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1084"/>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F1 Key on the Viewer to Show This Frame Only</source>
-        <translation type="unfinished">Нажмите, чтобы скрыть этот кадр из Shift &amp; Trace
+        <translation>Нажмите, чтобы скрыть этот кадр из Shift &amp; Trace
 Удерживайте клавишу F1 чтобы видеть только этот кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1088"/>
         <source>Click to Hide This Frame from Shift &amp; Trace
 Hold F3 Key on the Viewer to Show This Frame Only</source>
-        <translation type="unfinished">Нажмите, чтобы скрыть этот кадр из Shift &amp; Trace
+        <translation>Нажмите, чтобы скрыть этот кадр из Shift &amp; Trace
 Удерживайте клавишу F3 чтобы видеть только этот кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1091"/>
         <source>Click to Move Shift &amp; Trace Marker</source>
-        <translation type="unfinished">Нажмите, чтобы переместить маркер Shift &amp; Trace</translation>
+        <translation>Нажмите, чтобы переместить маркер Shift &amp; Trace</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1167"/>
         <source>Current Frame</source>
-        <translation type="unfinished">Текущий кадр</translation>
+        <translation>Текущий кадр</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1169"/>
         <source>Fixed Onion Skin Toggle</source>
-        <translation type="unfinished">Переключение фиксированной кальки</translation>
+        <translation>Переключение фиксированной кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1171"/>
         <source>Relative Onion Skin Toggle</source>
-        <translation type="unfinished">Переключение относительной кальки</translation>
+        <translation>Переключение относительной кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1197"/>
         <source>Set Start Marker</source>
-        <translation type="unfinished">Установить стартовый маркер</translation>
+        <translation>Установить стартовый маркер</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1199"/>
         <source>Set Stop Marker</source>
-        <translation type="unfinished">Установить конечный маркер</translation>
+        <translation>Установить конечный маркер</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1202"/>
         <source>Set Auto Markers</source>
-        <translation type="unfinished">Установить авто-маркеры</translation>
+        <translation>Установить авто-маркеры</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1206"/>
         <source>Remove Markers</source>
-        <translation type="unfinished">Удалить маркеры</translation>
+        <translation>Удалить маркеры</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1210"/>
         <source>Preview This</source>
-        <translation type="unfinished">Просмотреть это</translation>
+        <translation>Просмотреть это</translation>
     </message>
 </context>
 <context>
@@ -17352,7 +17353,7 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="1798"/>
         <source>Volume:</source>
-        <translation type="unfinished">Громкость:</translation>
+        <translation>Громкость:</translation>
     </message>
 </context>
 <context>
@@ -17360,7 +17361,7 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <message>
         <location filename="../../toonz/xshtoolbar.cpp" line="68"/>
         <source>Customize XSheet Toolbar</source>
-        <translation type="unfinished">Настроить панель инструментов Xsheet</translation>
+        <translation>Настроить панель инструментов Xsheet</translation>
     </message>
 </context>
 <context>
