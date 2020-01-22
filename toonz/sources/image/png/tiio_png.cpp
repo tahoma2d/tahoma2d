@@ -202,6 +202,12 @@ public:
     if (m_color_type == PNG_COLOR_TYPE_PALETTE) {
       m_info.m_valid = true;
       png_set_palette_to_rgb(m_png_ptr);
+
+      // treat the image as RGBA from now on
+      m_info.m_samplePerPixel = 4; // there are 4 channels per pixel (R, G, B, and A)
+
+      // if there is no alpha channel, then fill it with "255" (full opacity)
+      png_set_filler(m_png_ptr, 0xFF, PNG_FILLER_AFTER);
     }
 
     if (m_color_type == PNG_COLOR_TYPE_GRAY && m_bit_depth < 8) {
@@ -342,7 +348,8 @@ public:
 
   void writeRow(char *buffer) {
     if (m_color_type == PNG_COLOR_TYPE_RGB_ALPHA ||
-        m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+        m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA ||
+        m_color_type == PNG_COLOR_TYPE_PALETTE) { // PNG_COLOR_TYPE_PALETTE is expanded to RGBA
       if (m_bit_depth == 16) {
         TPixel32 *pix = (TPixel32 *)buffer;
         int i         = -2;
@@ -446,7 +453,8 @@ public:
 
   void writeRow(short *buffer) {
     if (m_color_type == PNG_COLOR_TYPE_RGB_ALPHA ||
-        m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+        m_color_type == PNG_COLOR_TYPE_GRAY_ALPHA ||
+        m_color_type == PNG_COLOR_TYPE_PALETTE) {  // PNG_COLOR_TYPE_PALETTE is expanded to RGBA
       TPixel64 *pix = (TPixel64 *)buffer;
       int i         = -2;  // 0;
       for (int j = 0; j < m_info.m_lx; j++) {
