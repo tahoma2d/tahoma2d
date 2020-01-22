@@ -169,7 +169,7 @@ void deleteStylesWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
                              int pageIndex, std::set<int> *styleIndicesInPage,
                              int fir = 0) {
   if (!palette) palette = pltHandle->getPalette();
-  int n                 = styleIndicesInPage->size();
+  int n = styleIndicesInPage->size();
   if (n == 0) return;
   TPalette::Page *page = palette->getPage(pageIndex);
   assert(page);
@@ -510,7 +510,7 @@ void TStyleSelection::enableCommands() {
     }
   }
   enableCommand(this, MI_Clear, &TStyleSelection::deleteStyles);
-  enableCommand(this, MI_EraseUnusedStyles, &TStyleSelection::eraseUnsedStyle);
+  enableCommand(this, MI_EraseUnusedStyles, &TStyleSelection::eraseUnusedStyle);
   enableCommand(this, MI_BlendColors, &TStyleSelection::blendStyles);
 }
 
@@ -694,7 +694,7 @@ void TStyleSelection::deleteStyles() {
 
 //-------------------------------------------------------------------
 
-void TStyleSelection::eraseUnsedStyle() {
+void TStyleSelection::eraseUnusedStyle() {
   std::set<TXshSimpleLevel *> levels;
   int row, column, i, j;
   TPalette *palette = m_paletteHandle->getPalette();
@@ -728,26 +728,59 @@ void TStyleSelection::eraseUnsedStyle() {
     }
   }
 
-  TUndoManager::manager()->beginBlock();
-
+  // check if there are styles to be erased
+  QMap<int, std::set<int>> styleIndicesInPageMap;
+  QString indicesStr;
+  int count = 0;
   // Butto gli stili non usati
   for (i = 0; i < pageCount; i++) {
     // Variabili usate per l'undo
     std::set<int> styleIndicesInPage;
-    StyleData *data      = new StyleData();
     TPalette::Page *page = palette->getPage(i);
     assert(page);
     for (j = 0; j < page->getStyleCount(); j++) {
       int styleId = page->getStyleId(j);
       if (usedStyleIds[styleId]) continue;
       styleIndicesInPage.insert(j);
-      data->addStyle(styleId, page->getStyle(j)->clone());
+      if (count < 10) indicesStr.append(QString::number(styleId) + ", ");
+      count++;
     }
-    // Se styleIndicesInPage e' vuoto ci sono stili da cancellare.
-    if (styleIndicesInPage.empty()) {
-      delete data;
-      continue;
+    if (!styleIndicesInPage.empty())
+      styleIndicesInPageMap.insert(i, styleIndicesInPage);
+  }
+
+  if (styleIndicesInPageMap.isEmpty()) {
+    DVGui::error(QObject::tr("There are no unused styles."));
+    return;
+  }
+  if (count <= 10)
+    indicesStr.chop(2);
+  else
+    indicesStr.append(
+        QObject::tr("and %1 more styles.").arg(QString::number(count - 10)));
+  // open confirmation popup
+  QString question =
+      QObject::tr(
+          "Erasing unused styles with following indices. Are you sure?\n\n%1")
+          .arg(indicesStr);
+  int ret =
+      DVGui::MsgBox(question, QObject::tr("Erase"), QObject::tr("Cancel"), 0);
+  if (ret == 2 || ret == 0) return;
+
+  TUndoManager::manager()->beginBlock();
+
+  QMap<int, std::set<int>>::const_iterator styleMapItr =
+      styleIndicesInPageMap.constBegin();
+  while (styleMapItr != styleIndicesInPageMap.constEnd()) {
+    int pageIndex                    = styleMapItr.key();
+    std::set<int> styleIndicesInPage = styleMapItr.value();
+    StyleData *data                  = new StyleData();
+    TPalette::Page *page             = palette->getPage(pageIndex);
+    for (auto indexInPage : styleIndicesInPage) {
+      int styleId = page->getStyleId(indexInPage);
+      data->addStyle(styleId, page->getStyle(indexInPage)->clone());
     }
+
     // Cancello gli stili
     std::set<int>::reverse_iterator it;
     for (it = styleIndicesInPage.rbegin(); it != styleIndicesInPage.rend();
@@ -755,9 +788,11 @@ void TStyleSelection::eraseUnsedStyle() {
       page->removeStyle(*it);
     // Undo
     DeleteStylesUndo *undo = new DeleteStylesUndo(this, data);
-    undo->setPageIndex(i);
+    undo->setPageIndex(pageIndex);
     undo->setStyleIndicesInPage(styleIndicesInPage);
     TUndoManager::manager()->add(undo);
+
+    ++styleMapItr;
   }
   TUndoManager::manager()->endBlock();
   m_paletteHandle->setStyleIndex(1);
@@ -1436,7 +1471,7 @@ void TStyleSelection::toggleLink() {
       name[0] = name[0] == L'-' ? L'+' : L'-';
       cs->setGlobalName(name);
       if (name[0] == L'+') somethingHasBeenLinked = true;
-      somethingChanged                            = true;
+      somethingChanged = true;
     }
     undo->setColorStyle(index, oldCs, name);
 
@@ -1594,7 +1629,7 @@ public:
 //-----------------------------------------------------------------------------
 /*! remove link from studio palette. Delete the global and the orginal names.
  * return true if something changed
-*/
+ */
 void TStyleSelection::removeLink() {
   TPalette *palette = getPalette();
   if (!palette || m_pageIndex < 0) return;
@@ -1709,7 +1744,7 @@ public:
 
 //-----------------------------------------------------------------------------
 /*! get the color from the linked style of the studio palette
-*/
+ */
 void TStyleSelection::getBackOriginalStyle() {
   TPalette *palette = getPalette();
   if (!palette || m_pageIndex < 0) return;
@@ -1792,7 +1827,7 @@ void TStyleSelection::getBackOriginalStyle() {
 
 //-----------------------------------------------------------------------------
 /*! return true if there is at least one linked style in the selection
-*/
+ */
 
 bool TStyleSelection::hasLinkedStyle() {
   TPalette *palette = getPalette();

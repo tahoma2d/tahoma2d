@@ -91,7 +91,7 @@ bool isStyleUsed(const TVectorImageP vi, int styleId) {
   int regionCount = vi->getRegionCount();
   for (i = 0; i < regionCount; i++) {
     TRegion *region = vi->getRegion(i);
-    if (region || region->getStyle() != styleId) return true;
+    if (region && region->getStyle() == styleId) return true;
   }
   return false;
 }

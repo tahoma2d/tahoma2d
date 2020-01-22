@@ -9,6 +9,7 @@
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/dvscrollwidget.h"
 #include "toonzqt/studiopaletteviewer.h"
+#include "toonzqt/styleselection.h"
 #include "palettedata.h"
 
 // TnzLib includes
@@ -19,6 +20,7 @@
 #include "toonz/sceneproperties.h"
 #include "toonz/studiopalette.h"
 #include "toonz/tframehandle.h"
+#include "toonz/fullcolorpalette.h"
 
 // TnzCore includes
 #include "tconvert.h"
@@ -187,7 +189,7 @@ PaletteViewer::~PaletteViewer() { delete m_changeStyleCommand; }
 void PaletteViewer::setPaletteHandle(TPaletteHandle *paletteHandle) {
   if (m_paletteHandle == paletteHandle) return;
 
-  bool ret                 = true;
+  bool ret = true;
   if (m_paletteHandle) ret = ret && disconnect(m_paletteHandle, 0, this, 0);
 
   m_paletteHandle = paletteHandle;
@@ -238,8 +240,8 @@ void PaletteViewer::setXsheetHandle(TXsheetHandle *xsheetHandle) {
 
 //-----------------------------------------------------------------------------
 /*!for clearing level cache after "paste style" command called from style
-* selection
-*/
+ * selection
+ */
 void PaletteViewer::setLevelHandle(TXshLevelHandle *levelHandle) {
   m_pageViewer->setLevelHandle(levelHandle);
 }
@@ -281,7 +283,7 @@ void PaletteViewer::enableSaveAction(bool enable) {
 
 //-----------------------------------------------------------------------------
 /*! Create tab bar to select palette page.
-*/
+ */
 void PaletteViewer::createTabBar() {
   m_pagesBar = new PaletteTabBar(this, m_hasPageCommand);
 
@@ -295,7 +297,7 @@ void PaletteViewer::createTabBar() {
 
 //-----------------------------------------------------------------------------
 /*! Create right part of button bar.
-*/
+ */
 void PaletteViewer::createPaletteToolBar() {
   m_paletteToolBar->clear();
   m_paletteToolBar->setMovable(false);
@@ -356,52 +358,48 @@ void PaletteViewer::createPaletteToolBar() {
   viewModeButton->setIcon(viewModeIcon);
   QMenu *viewMode = new QMenu(QString("Options"), viewModeButton);
   viewMode->setToolTip(tr("Options"));
+  viewMode->setLayoutDirection(Qt::LeftToRight);
 
   QActionGroup *viewModeGroup = new QActionGroup(viewMode);
+  viewModeGroup->setExclusive(true);
   connect(viewModeGroup, SIGNAL(triggered(QAction *)), this,
           SLOT(onViewMode(QAction *)));
 
-  QAction *smallThumbAct =
-      new QAction(tr("&Small Thumbnails View"), viewModeButton);
-  smallThumbAct->setData(PageViewer::SmallChips);
-  QAction *mediumThumbAct =
-      new QAction(tr("&Medium Thumbnails View"), viewModeButton);
-  mediumThumbAct->setData(PageViewer::MediumChips);
-  QAction *largeThumbAct =
-      new QAction(tr("&Large Thumbnails View"), viewModeButton);
-  largeThumbAct->setData(PageViewer::LargeChips);
+  auto addViewAction = [&](const QString &label, PageViewer::ViewMode mode) {
+    QAction *viewAction = new QAction(label, viewMode);
+    viewAction->setData(mode);
+    viewAction->setCheckable(true);
+    if (m_pageViewer->getViewMode() == mode) viewAction->setChecked(true);
+    viewModeGroup->addAction(viewAction);
+    viewMode->addAction(viewAction);
+  };
 
-  QAction *listAct = new QAction(tr("&List View"), viewModeButton);
-  listAct->setData(PageViewer::List);
+  addViewAction(tr("&Small Thumbnails View"), PageViewer::SmallChips);
+  addViewAction(tr("&Medium Thumbnails View"), PageViewer::MediumChips);
+  addViewAction(tr("&Large Thumbnails View"), PageViewer::LargeChips);
+  addViewAction(tr("&List View"), PageViewer::List);
 
-  viewModeGroup->addAction(smallThumbAct);
-  viewModeGroup->addAction(mediumThumbAct);
-  viewModeGroup->addAction(largeThumbAct);
-  viewModeGroup->addAction(listAct);
-
-  QAction *styleDisplayAct = new QAction(tr("Style Name"), viewModeButton);
-  styleDisplayAct->setData(PageViewer::Style);
-  QAction *originalDisplayAct =
-      new QAction(tr("StudioPalette Name"), viewModeButton);
-  originalDisplayAct->setData(PageViewer::Original);
-  QAction *bothDisplayAct = new QAction(tr("Both Names"), viewModeButton);
-  bothDisplayAct->setData(PageViewer::StyleAndOriginal);
+  viewMode->addSeparator();
 
   QActionGroup *nameDisplayModeGroup = new QActionGroup(viewMode);
+  nameDisplayModeGroup->setExclusive(true);
   connect(nameDisplayModeGroup, SIGNAL(triggered(QAction *)), this,
           SLOT(onNameDisplayMode(QAction *)));
-  nameDisplayModeGroup->addAction(styleDisplayAct);
-  nameDisplayModeGroup->addAction(originalDisplayAct);
-  nameDisplayModeGroup->addAction(bothDisplayAct);
 
-  viewMode->addAction(smallThumbAct);
-  viewMode->addAction(mediumThumbAct);
-  viewMode->addAction(largeThumbAct);
-  viewMode->addAction(listAct);
-  viewMode->addSeparator();
-  viewMode->addAction(styleDisplayAct);
-  viewMode->addAction(originalDisplayAct);
-  viewMode->addAction(bothDisplayAct);
+  auto addNameDisplayAction = [&](const QString &label,
+                                  PageViewer::NameDisplayMode mode) {
+    QAction *nameDisplayAction = new QAction(label, viewMode);
+    nameDisplayAction->setData(mode);
+    nameDisplayAction->setCheckable(true);
+    if (m_pageViewer->getNameDisplayMode() == mode)
+      nameDisplayAction->setChecked(true);
+    nameDisplayModeGroup->addAction(nameDisplayAction);
+    viewMode->addAction(nameDisplayAction);
+  };
+
+  addNameDisplayAction(tr("Style Name"), PageViewer::Style);
+  addNameDisplayAction(tr("StudioPalette Name"), PageViewer::Original);
+  addNameDisplayAction(tr("Both Names"), PageViewer::StyleAndOriginal);
 
   viewModeButton->setMenu(viewMode);
 
@@ -492,7 +490,7 @@ void PaletteViewer::createSavePaletteToolBar() {
 
 //-----------------------------------------------------------------------------
 /*! Update page tab bar adding or removing tab in accord with viewer palette.
-*/
+ */
 void PaletteViewer::updateTabBar() {
   int tabCount = m_pagesBar->count();
   int i;
@@ -518,8 +516,8 @@ void PaletteViewer::updateTabBar() {
 
 //-----------------------------------------------------------------------------
 /*! Update right button bar, enable its action if current viewer palette is
-* empty.
-*/
+ * empty.
+ */
 void PaletteViewer::updatePaletteToolBar() {
   if (!m_paletteToolBar) return;
   QList<QAction *> actions;
@@ -544,8 +542,8 @@ void PaletteViewer::updatePaletteToolBar() {
 
 //-----------------------------------------------------------------------------
 /*! Update left button bar, enable its action if current viewer palette is
-* empty.
-*/
+ * empty.
+ */
 void PaletteViewer::updateSavePaletteToolBar() {
   if (!m_savePaletteToolBar) return;
   QList<QAction *> actions;
@@ -567,7 +565,7 @@ void PaletteViewer::updateSavePaletteToolBar() {
 
 //-----------------------------------------------------------------------------
 /*! Resize the widget and its child.
-*/
+ */
 void PaletteViewer::resizeEvent(QResizeEvent *event) {
   QWidget::resizeEvent(event);
   if (m_pageViewer) m_pageViewer->computeSize();
@@ -585,7 +583,7 @@ void PaletteViewer::setChangeStyleCommand(
 
 //-----------------------------------------------------------------------------
 /*! Create and open the Right-click menu.
-*/
+ */
 void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
   m_indexPageToDelete = -1;
   QPoint pos          = event->pos();
@@ -619,7 +617,25 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(CommandManager::instance()->getAction("MI_SavePaletteAs"));
   }
 
+  if (m_viewType == LEVEL_PALETTE && !getPalette()->isLocked() &&
+      m_isSaveActionEnabled &&
+      !FullColorPalette::instance()->isFullColorPalette(getPalette())) {
+    menu->addSeparator();
+    menu->addAction(
+        CommandManager::instance()->getAction("MI_EraseUnusedStyles"));
+  }
+
   menu->exec(event->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+void PaletteViewer::mousePressEvent(QMouseEvent *event) {
+  QFrame::mousePressEvent(event);
+  if (event->button() == Qt::RightButton) {
+    m_pageViewer->getSelection()->makeCurrent();
+    m_pageViewer->updateCommandLocks();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -711,7 +727,7 @@ void PaletteViewer::dragEnterEvent(QDragEnterEvent *event) {
 
 //-----------------------------------------------------------------------------
 /*! Execute drop event.
-*/
+ */
 void PaletteViewer::dropEvent(QDropEvent *event) {
   if (m_viewType == CLEANUP_PALETTE) return;
   const QMimeData *mimeData = event->mimeData();
@@ -792,7 +808,7 @@ void PaletteViewer::dropEvent(QDropEvent *event) {
 
 //-----------------------------------------------------------------------------
 /*! Start drag and drop; if current page exist set drag and drop event data.
-*/
+ */
 void PaletteViewer::startDragDrop() {
   TRepetitionGuard guard;
   if (!guard.hasLock()) return;
@@ -818,7 +834,7 @@ void PaletteViewer::clearStyleSelection() { m_pageViewer->clearSelection(); }
 
 //-----------------------------------------------------------------------------
 /*! Set current view page to \b currentIndexPage
-*/
+ */
 void PaletteViewer::setPageView(int currentIndexPage) {
   TPalette *palette    = getPalette();
   TPalette::Page *page = palette ? palette->getPage(currentIndexPage) : 0;
@@ -857,7 +873,7 @@ void PaletteViewer::addNewColor() {
 
 //-----------------------------------------------------------------------------
 /*! Emit a signal to delete a page of current palette viewer.
-*/
+ */
 void PaletteViewer::deletePage() {
   TPalette *palette = getPalette();
   if (!palette || palette->isLocked()) return;
@@ -944,7 +960,7 @@ void PaletteViewer::saveStudioPalette() {
 
 //-----------------------------------------------------------------------------
 /*! If current color switched update current page view.
-*/
+ */
 void PaletteViewer::onColorStyleSwitched() {
   TPalette *palette = getPalette();
 
@@ -978,7 +994,7 @@ void PaletteViewer::onColorStyleSwitched() {
 
 //-----------------------------------------------------------------------------
 /*! Update view. Remember current page bar index.
-*/
+ */
 void PaletteViewer::onPaletteChanged() {
   int index = m_pagesBar->currentIndex();
   updateTabBar();
@@ -1002,7 +1018,7 @@ void PaletteViewer::onPaletteSwitched() {
     if (palette) {
       int currentStyleId   = palette->getCurrentStyleId();
       TPalette::Page *page = palette->getStylePage(currentStyleId);
-      if (page) pageIndex  = page->getIndex();
+      if (page) pageIndex = page->getIndex();
     }
   }
   onSwitchToPage(pageIndex);
@@ -1038,7 +1054,7 @@ void PaletteViewer::onFrameSwitched() {
 
 //-----------------------------------------------------------------------------
 /*! Set a new name to palette page of index \b tabIndex.
-*/
+ */
 void PaletteViewer::onTabTextChanged(int tabIndex) {
   if (!m_paletteHandle) return;
   QString newName = m_pagesBar->tabText(tabIndex);
@@ -1048,7 +1064,7 @@ void PaletteViewer::onTabTextChanged(int tabIndex) {
 
 //-----------------------------------------------------------------------------
 /*! Change page style view mode.
-*/
+ */
 void PaletteViewer::onViewMode(QAction *action) {
   int viewMode = action->data().toInt();
   m_pageViewer->setViewMode((PageViewer::ViewMode)viewMode);
@@ -1056,7 +1072,7 @@ void PaletteViewer::onViewMode(QAction *action) {
 
 //-----------------------------------------------------------------------------
 /*!  Change name display mode on the style chips
-*/
+ */
 void PaletteViewer::onNameDisplayMode(QAction *action) {
   int nameDisplayMode = action->data().toInt();
   m_pageViewer->setNameDisplayMode(
@@ -1108,8 +1124,8 @@ void PaletteViewer::changeWindowTitle() {
 
 //-----------------------------------------------------------------------------
 /*! Move palette view page from \b srcIndex page index to \b dstIndex page
-* index.
-*/
+ * index.
+ */
 void PaletteViewer::movePage(int srcIndex, int dstIndex) {
   PaletteCmd::movePalettePage(m_paletteHandle, srcIndex, dstIndex);
   onSwitchToPage(dstIndex);
@@ -1117,7 +1133,7 @@ void PaletteViewer::movePage(int srcIndex, int dstIndex) {
 
 //-----------------------------------------------------------------------------
 /*! Process when the lock button toggled
-*/
+ */
 void PaletteViewer::setIsLocked(bool lock) {
   if (m_viewType == CLEANUP_PALETTE) return;
 

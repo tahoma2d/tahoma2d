@@ -82,6 +82,7 @@ protected:
   TPaletteHandle *m_paletteHandle;
   TFrameHandle *m_frameHandle;
   TXsheetHandle *m_xsheetHandle;
+  TXshLevelHandle *m_levelHandle;
 
   QScrollArea *m_pageViewerScrollArea;
   PaletteViewerGUI::PageViewer *m_pageViewer;
@@ -128,6 +129,7 @@ protected:
 
   void resizeEvent(QResizeEvent *event) override;
   void contextMenuEvent(QContextMenuEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
