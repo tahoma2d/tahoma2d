@@ -377,10 +377,10 @@ EaseInOutSegmentPage::EaseInOutSegmentPage(bool isPercentage,
   mainLayout->setSpacing(5);
   mainLayout->setMargin(2);
   {
-    mainLayout->addWidget(new QLabel(tr("Ease In:")), 0, 0,
+    mainLayout->addWidget(new QLabel(tr("Ease Out:")), 0, 0,
                           Qt::AlignRight | Qt::AlignVCenter);
     mainLayout->addWidget(m_ease0Fld, 0, 1);
-    mainLayout->addWidget(new QLabel(tr("Ease Out:")), 1, 0,
+    mainLayout->addWidget(new QLabel(tr("Ease In:")), 1, 0,
                           Qt::AlignRight | Qt::AlignVCenter);
     mainLayout->addWidget(m_ease1Fld, 1, 1);
   }
