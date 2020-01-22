@@ -31,7 +31,7 @@ class ProgressDialog;
 class CheckBox;
 class DoubleField;
 class IntField;
-}
+}  // namespace DVGui
 
 namespace ImageUtils {
 class FrameTaskNotifier;
@@ -144,6 +144,9 @@ class SeparateColorsPopup : public DVGui::Dialog {
 
   ProgressDialog* m_progressDialog;
   std::vector<TFilePath> m_srcFilePaths;
+
+  QString m_lastAcceptedSaveInPath;
+
   bool m_isConverting;
 
   void doSeparate(const TFilePath& source, int from, int to, int framerate,
@@ -180,6 +183,14 @@ public slots:
   void onChange(bool isDragging);
   void onToggle() { onChange(false); }
   void onColorChange(const TPixel32&, bool isDragging) { onChange(isDragging); }
+
+  void onSaveSettings();
+  void onLoadSettings();
+
+  void doSaveSettings(const TFilePath&);
+  void doLoadSettings(const TFilePath&, bool loadAll);
+
+  void onSaveInPathChanged();
 };
 
 #endif

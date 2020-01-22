@@ -8,6 +8,7 @@
 #include "tiio.h"
 #include "toutputproperties.h"
 #include "filebrowser.h"
+#include "filebrowserpopup.h"
 
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
@@ -35,6 +36,7 @@
 #include <QThreadPool>
 #include <QVector2D>
 #include <QPainter>
+#include <QSettings>
 
 TEnv::StringVar SeparateColorsPopup_PaperColor("SeparateColorsPopup_PaperColor",
                                                "#FFFFFF");
@@ -189,9 +191,8 @@ QVector3D separate3_Kernel(QVector3D pix_xyz, QVector3D paper_xyz,
   if (ratio_ms1 <= 1.0f / (1.0f + mainAdjust) - borderRatio)
     value_ms1 = 1.0f;
   else if (ratio_ms1 < 1.0f / (1.0f + mainAdjust) + borderRatio)
-    value_ms1 = 1.0f -
-                (ratio_ms1 - 1.0f / (1.0f + mainAdjust) + borderRatio) /
-                    (2.0f * borderRatio);
+    value_ms1 = 1.0f - (ratio_ms1 - 1.0f / (1.0f + mainAdjust) + borderRatio) /
+                           (2.0f * borderRatio);
   else
     value_ms1 = 0.0f;
 
@@ -206,9 +207,8 @@ QVector3D separate3_Kernel(QVector3D pix_xyz, QVector3D paper_xyz,
   if (ratio_ms2 <= 1.0f / (1.0f + mainAdjust) - borderRatio)
     value_ms2 = 1.0f;
   else if (ratio_ms2 < 1.0f / (1.0f + mainAdjust) + borderRatio)
-    value_ms2 = 1.0f -
-                (ratio_ms2 - 1.0f / (1.0f + mainAdjust) + borderRatio) /
-                    (2.0f * borderRatio);
+    value_ms2 = 1.0f - (ratio_ms2 - 1.0f / (1.0f + mainAdjust) + borderRatio) /
+                           (2.0f * borderRatio);
   else
     value_ms2 = 0.0f;
 
@@ -512,7 +512,7 @@ void expandMask(int x, int y, uchar4* mask_host, int lx, int ly, int gen) {
 
 TPixel32 BlueMaskColor(128, 128, 255);
 TPixel32 RedMaskColor(255, 128, 128);
-};
+};  // namespace
 
 //-------------------------------------------------------------------
 
@@ -550,7 +550,7 @@ SeparateColorsPopup::SeparateColorsPopup()
   m_cancelBtn       = new QPushButton(tr("Close"), this);
   m_fromFld         = new IntLineEdit(this);
   m_toFld           = new IntLineEdit(this);
-  m_saveInFileFld   = new FileField(0, QString(""));
+  m_saveInFileFld   = new FileField(0, QString(""), false, false, false);
   m_fileFormatCombo = new QComboBox(this);
 
   m_paperColorField =
@@ -607,6 +607,9 @@ SeparateColorsPopup::SeparateColorsPopup()
   }
 
   m_separateSwatch = new SeparateSwatch(this, 200, 150);
+
+  QPushButton* saveSettingsBtn = new QPushButton(tr("Save Settings"), this);
+  QPushButton* loadSettingsBtn = new QPushButton(tr("Load Settings"), this);
 
   //----
 
@@ -792,6 +795,17 @@ SeparateColorsPopup::SeparateColorsPopup()
 
       rightLay->addSpacing(10);
 
+      QHBoxLayout* saveLoadLay = new QHBoxLayout();
+      saveLoadLay->setMargin(0);
+      saveLoadLay->setSpacing(0);
+      {
+        saveLoadLay->addWidget(saveSettingsBtn, 1);
+        saveLoadLay->addSpacing(10);
+        saveLoadLay->addWidget(loadSettingsBtn, 1);
+      }
+      rightLay->addLayout(saveLoadLay, 0);
+      rightLay->addSpacing(10);
+
       QHBoxLayout* buttonLay = new QHBoxLayout();
       buttonLay->setMargin(0);
       buttonLay->setSpacing(0);
@@ -901,6 +915,12 @@ SeparateColorsPopup::SeparateColorsPopup()
   ret = ret &&
         connect(m_showAlphaBtn, SIGNAL(toggled(bool)), this, SLOT(onToggle()));
 
+  ret = ret && connect(saveSettingsBtn, SIGNAL(clicked()), this,
+                       SLOT(onSaveSettings()));
+  ret = ret && connect(loadSettingsBtn, SIGNAL(clicked()), this,
+                       SLOT(onLoadSettings()));
+  ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
+                       SLOT(onSaveInPathChanged()));
   assert(ret);
 
   //----- reproduce UI
@@ -1014,10 +1034,17 @@ void SeparateColorsPopup::setFiles(const std::vector<TFilePath>& fps) {
     }
   }
   m_saveInFileFld->setPath(toQString(fps[0].getParentDir()));
+  m_lastAcceptedSaveInPath = m_saveInFileFld->getPath();
 
   // update preview frames
   m_previewFrameField->setRange(1, m_srcFrames.size());
   m_previewFrameField->setValue(1);
+
+  // load parameter
+  TFilePath settingsFp = fps[0].withNoFrame().withType("sep");
+  if (TSystem::doesExistFileOrLevel(settingsFp))
+    doLoadSettings(settingsFp, true);
+
   onPreviewFrameFieldValueChanged(true);
 }
 
@@ -1679,9 +1706,9 @@ void SeparateColorsPopup::separate() {
       TLevelP levelTmp;
       TLevelReaderP lrTmp = TLevelReaderP(m_srcFilePaths[i]);
       if (lrTmp) levelTmp = lrTmp->loadInfo();
-      from                = 1;
-      to                  = levelTmp->getFrameCount();
-      label               = QString(
+      from  = 1;
+      to    = levelTmp->getFrameCount();
+      label = QString(
           tr("Converting level %1 of %2: %3")
               .arg(i + 1)
               .arg(m_srcFilePaths.size())
@@ -1701,6 +1728,10 @@ void SeparateColorsPopup::separate() {
 
     doSeparate(m_srcFilePaths[i], from, to, framerate, m_notifier,
                m_outSub3CB->isChecked());
+
+    // save settings for reproducing parameters afterwards
+    TFilePath settingsFp = m_srcFilePaths[i].withNoFrame().withType("sep");
+    doSaveSettings(settingsFp);
   }
 
   onSeparateFinished();
@@ -1738,6 +1769,191 @@ void SeparateColorsPopup::onChange(bool isDragging) {
   // if autopreview is activated
   if (m_autoBtn->isChecked() && !isDragging && !m_srcFrames.isEmpty())
     onPreviewBtnPressed();
+}
+
+//-------------------------------------------------------------------
+
+void SeparateColorsPopup::onSaveSettings() {
+  // specify saving path
+  static GenericSaveFilePopup* savePopup = 0;
+  if (!savePopup) {
+    savePopup = new GenericSaveFilePopup(tr("Save Settings"));
+    savePopup->addFilterType("sep");
+  }
+
+  savePopup->setFolder(m_srcFilePaths[0].getParentDir());
+  savePopup->setFilename(
+      m_srcFilePaths[0].withoutParentDir().withNoFrame().withType("sep"));
+
+  TFilePath fp = savePopup->getPath();
+  if (fp.isEmpty()) return;
+
+  doSaveSettings(fp);
+}
+
+//-------------------------------------------------------------------
+
+void SeparateColorsPopup::doSaveSettings(const TFilePath& fp) {
+  QSettings settings(fp.getQString(), QSettings::IniFormat);
+  settings.beginGroup("SeparateColorsParameters");
+
+  TPixel32 col = m_paperColorField->getColor();
+  settings.setValue("PaperColor", QColor(col.r, col.g, col.b).name());
+  col = m_mainColorField->getColor();
+  settings.setValue("MainColor", QColor(col.r, col.g, col.b).name());
+  col = m_subColor1Field->getColor();
+  settings.setValue("SubColor1", QColor(col.r, col.g, col.b).name());
+  col = m_subColor2Field->getColor();
+  settings.setValue("SubColor2", QColor(col.r, col.g, col.b).name());
+  col = m_subColor3Field->getColor();
+  settings.setValue("SubColor3", QColor(col.r, col.g, col.b).name());
+
+  settings.setValue("SubAdjust", m_subColorAdjustFld->getValue());
+  settings.setValue("BorderSmooth", m_borderSmoothnessFld->getValue());
+  settings.setValue("OutMain", (int)m_outMainCB->isChecked());
+  settings.setValue("OutSub1", (int)m_outSub1CB->isChecked());
+  settings.setValue("OutSub2", (int)m_outSub2CB->isChecked());
+  settings.setValue("OutSub3", (int)m_outSub3CB->isChecked());
+
+  settings.setValue("MainSuffix", m_mainSuffixEdit->text());
+  settings.setValue("Sub1Suffix", m_sub1SuffixEdit->text());
+  settings.setValue("Sub2Suffix", m_sub2SuffixEdit->text());
+  settings.setValue("Sub3Suffix", m_sub3SuffixEdit->text());
+
+  settings.setValue("doMatte", (int)m_matteGroupBox->isChecked());
+  settings.setValue("MatteThreshold", m_matteThreshold->getValue());
+  settings.setValue("MatteRadius", m_matteRadius->getValue());
+
+  settings.setValue("FileFormat", m_fileFormatCombo->currentText());
+  // following values will be loaded only if "loadAll" option is ON
+  settings.setValue("SaveIn", m_saveInFileFld->getPath());
+  settings.setValue("FrameFrom", m_fromFld->text());
+  settings.setValue("FrameTo", m_toFld->text());
+  settings.endGroup();
+}
+
+//-------------------------------------------------------------------
+
+void SeparateColorsPopup::onLoadSettings() {
+  // specify saving path
+  static GenericLoadFilePopup* loadPopup = 0;
+  if (!loadPopup) {
+    loadPopup = new GenericLoadFilePopup(tr("Load Settings"));
+    loadPopup->addFilterType("sep");
+  }
+  loadPopup->setFolder(m_srcFilePaths[0].getParentDir());
+
+  TFilePath fp = loadPopup->getPath();
+  if (fp.isEmpty()) return;
+
+  doLoadSettings(fp, false);
+
+  onChange(false);
+}
+
+//-------------------------------------------------------------------
+
+void SeparateColorsPopup::doLoadSettings(const TFilePath& fp, bool loadAll) {
+  QSettings settings(fp.getQString(), QSettings::IniFormat);
+  if (!settings.childGroups().contains("SeparateColorsParameters")) {
+    DVGui::error(
+        tr("Failed to load %1.").arg(fp.withoutParentDir().getQString()));
+    return;
+  }
+
+  settings.beginGroup("SeparateColorsParameters");
+  QStringList keys = settings.childKeys();
+
+  auto loadColor = [&](const QString key, DVGui::ColorField* field) {
+    if (!keys.contains(key)) return;
+    QColor color;
+    color.setNamedColor(settings.value(key).toString());
+    field->setColor(TPixel32(color.red(), color.green(), color.blue()));
+  };
+  auto loadDouble = [&](const QString key, DVGui::DoubleField* field) {
+    if (!keys.contains(key)) return;
+    field->setValue(settings.value(key).toDouble());
+  };
+  auto loadBool = [&](const QString key, QCheckBox* cb) {
+    if (!keys.contains(key)) return;
+    cb->setChecked(settings.value(key).toInt() != 0);
+  };
+  auto loadString = [&](const QString key, DVGui::LineEdit* field) {
+    if (!keys.contains(key)) return;
+    field->setText(settings.value(key).toString());
+  };
+  auto clamp = [&](int val, int min, int max) {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+  };
+
+  loadColor("PaperColor", m_paperColorField);
+  loadColor("MainColor", m_mainColorField);
+  loadColor("SubColor1", m_subColor1Field);
+  loadColor("SubColor2", m_subColor2Field);
+  loadColor("SubColor3", m_subColor3Field);
+
+  loadDouble("SubAdjust", m_subColorAdjustFld);
+  loadDouble("BorderSmooth", m_borderSmoothnessFld);
+
+  loadBool("OutMain", m_outMainCB);
+  loadBool("OutSub1", m_outSub1CB);
+  loadBool("OutSub2", m_outSub2CB);
+  loadBool("OutSub3", m_outSub3CB);
+
+  loadString("MainSuffix", m_mainSuffixEdit);
+  loadString("Sub1Suffix", m_sub1SuffixEdit);
+  loadString("Sub2Suffix", m_sub2SuffixEdit);
+  loadString("Sub3Suffix", m_sub3SuffixEdit);
+
+  if (keys.contains("doMatte"))
+    m_matteGroupBox->setChecked(settings.value("doMatte").toInt() != 0);
+  loadDouble("MatteThreshold", m_matteThreshold);
+  if (keys.contains("MatteRadius"))
+    m_matteRadius->setValue(settings.value("MatteRadius").toInt());
+  if (keys.contains("FileFormat"))
+    m_fileFormatCombo->setCurrentText(settings.value("FileFormat").toString());
+
+  if (loadAll) {
+    if (keys.contains("SaveIn"))
+      m_saveInFileFld->setPath(settings.value("SaveIn").toString());
+    if (keys.contains("FrameFrom") && m_fromFld->isEnabled())
+      m_fromFld->setValue(
+          clamp(settings.value("FrameFrom").toInt(), 1, m_srcFrames.size()));
+    if (keys.contains("FrameTo") && m_toFld->isEnabled())
+      m_toFld->setValue(
+          clamp(settings.value("FrameTo").toInt(), 1, m_srcFrames.size()));
+  }
+  settings.endGroup();
+}
+
+//-------------------------------------------------------------------
+
+void SeparateColorsPopup::onSaveInPathChanged() {
+  QString newPath = m_saveInFileFld->getPath();
+  if (!TSystem::doesExistFileOrLevel(TFilePath(newPath))) {
+    QString question;
+    question = QObject::tr(
+        "The chosen folder path does not exist."
+        "\nDo you want to create it?");
+    int ret = DVGui::MsgBox(question, QObject::tr("Create"),
+                            QObject::tr("Cancel"), 0);
+    if (ret == 0 || ret == 2) {
+      m_saveInFileFld->setPath(m_lastAcceptedSaveInPath);
+      m_saveInFileFld->setFocus();
+      return;
+    }
+
+    if (!TSystem::touchParentDir(TFilePath(newPath) + "dummy")) {
+      DVGui::warning(tr("Failed to create the folder."));
+      m_saveInFileFld->setPath(m_lastAcceptedSaveInPath);
+      m_saveInFileFld->setFocus();
+      return;
+    }
+  }
+  m_lastAcceptedSaveInPath = newPath;
+  m_saveInFileFld->setPath(newPath);
 }
 
 //=============================================================================
