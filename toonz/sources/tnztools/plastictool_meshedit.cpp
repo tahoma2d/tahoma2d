@@ -14,7 +14,7 @@
 
 // boost includes
 #include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 using namespace tcg::bgl;
 
@@ -246,7 +246,7 @@ bool buildEdgeCuts(const TMeshImage &mi,
                    int &meshIdx, std::vector<EdgeCut> &edgeCuts) {
   typedef PlasticTool::MeshSelection::objects_container edges_container;
   typedef PlasticTool::MeshIndex MeshIndex;
-  typedef boost::unordered_map<int, VertexOccurrence> VertexOccurrencesMap;
+  typedef std::unordered_map<int, VertexOccurrence> VertexOccurrencesMap;
 
   struct locals {
     static bool differentMesh(const MeshIndex &a, const MeshIndex &b) {
