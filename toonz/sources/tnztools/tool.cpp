@@ -1473,5 +1473,7 @@ void TTool::flipGuideStrokeDirection(int mode) {
   if (!stroke) return;
 
   stroke->changeDirection();
+  sl->setDirtyFlag(true);
   getViewer()->invalidateAll();
+  m_application->getCurrentLevel()->notifyLevelChange();
 }
