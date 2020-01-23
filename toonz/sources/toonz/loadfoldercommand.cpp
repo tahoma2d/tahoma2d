@@ -182,9 +182,11 @@ TFilePath multiframeResourcePath(const TFilePath &fp) {
 
 TFilePath retasComponentPath(const TFilePath &fp) {
   std::wstring name = fp.getWideName();
-  assert(name.size() > 4);
 
-  name.insert(name.size() - 4, 1, L'.');
+  // Assumes the name is Axxxx.tga and needs to be changed to A.xxxx.tga
+  if (name.size() > 4 && fp.getDots() != "..")
+    name.insert(name.size() - 4, 1, L'.');
+
   return fp.withName(name);
 }
 
@@ -364,7 +366,7 @@ struct import_Locals {
         m_scene.getImportedLevelPath(path.absoluteResourcePath())
             .getParentDir()            // E.g. +drawings/
         + path.m_rootFp.getWideName()  // Root dir name
-    );
+        );
   }
 
   static void copy(const TFilePath &srcDir, const TFilePath &dstDir,
