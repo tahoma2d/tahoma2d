@@ -35,6 +35,7 @@ public:
   void clear();
   TPalette *getPalette(ToonzScene *scene);
   void savePalette(ToonzScene *scene);
+  bool isFullColorPalette(TPalette *palette) { return m_palette == palette; }
 };
 
 #endif  // FULLCOLOR_PALETTE

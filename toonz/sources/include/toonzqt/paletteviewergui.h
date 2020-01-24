@@ -113,6 +113,7 @@ public:
 
   ViewMode getViewMode() const { return m_viewMode; }
   void setViewMode(ViewMode mode);
+  NameDisplayMode getNameDisplayMode() const { return m_nameDisplayMode; }
   void setNameDisplayMode(NameDisplayMode mode);
 
   PaletteViewerGUI::PaletteViewType getViewType() const { return m_viewType; }
