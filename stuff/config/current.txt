@@ -405,6 +405,7 @@
   <item>"STD_solarizeFx.peak_edge"	"Peak Edge"	</item>
 
   <item>"STD_spiralFx"		"Spiral"		</item>
+  <item>"STD_spiralFx.type"		"Type"	</item>
   <item>"STD_spiralFx.freq"		"Frequency"	</item>
   <item>"STD_spiralFx.phase"	"Phase"		</item>
   <item>"STD_spiralFx.colors"	"Colors"		</item>
