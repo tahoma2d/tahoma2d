@@ -108,13 +108,14 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
   QPushButton *loadBtn  = new QPushButton(tr("Load"));
   QPushButton *resetBtn = new QPushButton(tr("Reset"));
 
+  QLabel *antialiasLabel   = new QLabel(tr("Antialias:"));
+  QLabel *sharpnessLabel   = new QLabel(tr("Sharpness:"));
+  QLabel *despecklingLabel = new QLabel(tr("Despeckling:"));
+
   // Autocenter
   m_autocenterBox->setCheckable(true);
   QStringList pegbarHoles;
-  pegbarHoles << tr("Bottom")
-              << tr("Top")
-              << tr("Left")
-              << tr("Right");
+  pegbarHoles << tr("Bottom") << tr("Top") << tr("Left") << tr("Right");
   m_pegHolesOm->addItems(pegbarHoles);
   std::vector<std::string> fdgNames;
   CleanupParameters::getFdgNames(fdgNames);
@@ -139,7 +140,7 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
   m_antialias->addItems(items);
 
   items.clear();
-  items << tr("Greyscale") << tr("Color");
+  items << tr("None") << tr("Greyscale") << tr("Color");
   m_lineProcessing->addItems(items);
 
   m_sharpness->setValues(90, 0, 100);
@@ -149,6 +150,9 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
   //  Model-related stuff
   CleanupSettingsModel *model = CleanupSettingsModel::instance();
   m_backupParams.assign(model->getCurrentParameters(), false);
+
+  m_lpWidgets << antialiasLabel << m_antialias << sharpnessLabel << m_sharpness
+              << despecklingLabel << m_despeckling << m_paletteViewer;
 
   //----layout
   QVBoxLayout *mainLay = new QVBoxLayout();
@@ -207,13 +211,13 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
       lineProcLay->addWidget(new QLabel(tr("Line Processing:")), 0, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       lineProcLay->addWidget(m_lineProcessing, 0, 1);
-      lineProcLay->addWidget(new QLabel(tr("Antialias:")), 1, 0,
+      lineProcLay->addWidget(antialiasLabel, 1, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       lineProcLay->addWidget(m_antialias, 1, 1);
-      lineProcLay->addWidget(new QLabel(tr("Sharpness:")), 2, 0,
+      lineProcLay->addWidget(sharpnessLabel, 2, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       lineProcLay->addWidget(m_sharpness, 2, 1);
-      lineProcLay->addWidget(new QLabel(tr("Despeckling:")), 3, 0,
+      lineProcLay->addWidget(despecklingLabel, 3, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       lineProcLay->addWidget(m_despeckling, 3, 1);
       lineProcLay->addWidget(m_aaValueLabel, 4, 0,
@@ -261,18 +265,18 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
 
   //-----signal-slot connections
   bool ret = true;
-  ret      = ret && connect(m_autocenterBox, SIGNAL(toggled(bool)),
+  ret      = ret && connect(m_autocenterBox, SIGNAL(clicked(bool)),
                        SLOT(onGenericSettingsChange()));
-  ret = ret && connect(m_pegHolesOm, SIGNAL(activated(int)),
+  ret      = ret && connect(m_pegHolesOm, SIGNAL(activated(int)),
                        SLOT(onGenericSettingsChange()));
-  ret = ret && connect(m_fieldGuideOm, SIGNAL(activated(int)),
+  ret      = ret && connect(m_fieldGuideOm, SIGNAL(activated(int)),
                        SLOT(onGenericSettingsChange()));
 
   ret = ret && connect(m_rotateOm, SIGNAL(activated(int)),
                        SLOT(onGenericSettingsChange()));
-  ret = ret && connect(m_flipX, SIGNAL(stateChanged(int)),
+  ret = ret && connect(m_flipX, SIGNAL(clicked(bool)),
                        SLOT(onGenericSettingsChange()));
-  ret = ret && connect(m_flipY, SIGNAL(stateChanged(int)),
+  ret = ret && connect(m_flipY, SIGNAL(clicked(bool)),
                        SLOT(onGenericSettingsChange()));
   ret =
       ret && connect(m_pathField, SIGNAL(pathChanged()), SLOT(onPathChange()));
@@ -317,7 +321,7 @@ void CleanupSettingsPane::showEvent(QShowEvent *se) {
     bool ret = true;
     ret      = ret && connect(model, SIGNAL(imageSwitched()), this,
                          SLOT(onImageSwitched()));
-    ret = ret && connect(model, SIGNAL(modelChanged(bool)), this,
+    ret      = ret && connect(model, SIGNAL(modelChanged(bool)), this,
                          SLOT(updateGui(bool)));
     ret = ret && connect(model, SIGNAL(clnLoaded()), this, SLOT(onClnLoaded()));
     assert(ret);
@@ -351,9 +355,9 @@ void CleanupSettingsPane::hideEvent(QHideEvent *he) {
     bool ret = true;
     ret      = ret && disconnect(model, SIGNAL(imageSwitched()), this,
                             SLOT(onImageSwitched()));
-    ret = ret && disconnect(model, SIGNAL(modelChanged(bool)), this,
+    ret      = ret && disconnect(model, SIGNAL(modelChanged(bool)), this,
                             SLOT(updateGui(bool)));
-    ret = ret &&
+    ret      = ret &&
           disconnect(model, SIGNAL(clnLoaded()), this, SLOT(onClnLoaded()));
     assert(ret);
   }
@@ -394,8 +398,7 @@ void CleanupSettingsPane::updateGui(CleanupParameters *params,
   m_path = params->m_path;
   m_pathField->setPath(toQString(m_path));
 
-  m_lineProcessing->setCurrentIndex(
-      (params->m_lineProcessingMode == lpGrey) ? 0 : 1);
+  m_lineProcessing->setCurrentIndex(params->m_lineProcessingMode);
   m_antialias->setCurrentIndex(
       params->m_postAntialias ? 2 : params->m_noAntialias ? 1 : 0);
   m_sharpness->setValue(params->m_sharpness);
@@ -452,19 +455,16 @@ void CleanupSettingsPane::updateImageInfo() {
 //-----------------------------------------------------------------------------
 
 void CleanupSettingsPane::updateVisibility() {
-  bool lpGrey = (m_lineProcessing->currentIndex() == 0);
+  bool lp     = (m_lineProcessing->currentIndex() != 0);
+  bool lpGrey = (m_lineProcessing->currentIndex() == 1);
   bool MLAA   = (m_antialias->currentIndex() == 2);
 
-  m_antialias->setVisible(true);
-  m_sharpness->setVisible(true);
-  m_despeckling->setVisible(true);
+  for (QWidget *w : m_lpWidgets) w->setVisible(lp);
   m_aaValueLabel->setVisible(MLAA);
   m_aaValue->setVisible(MLAA);
 
   m_paletteViewer->setMode(lpGrey);
   m_paletteViewer->setContrastEnabled(m_antialias->currentIndex() == 0);
-
-  m_paletteViewer->setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -526,13 +526,14 @@ void CleanupSettingsPane::onGenericSettingsChange() {
 
   //------
 
-  params->m_lineProcessingMode =
-      (int)((m_lineProcessing->currentIndex() == 0) ? lpGrey : lpColor);
-  params->m_noAntialias   = (m_antialias->currentIndex() > 0);
-  params->m_postAntialias = (m_antialias->currentIndex() == 2);
-  params->m_despeckling   = m_despeckling->getValue();
-  params->m_aaValue       = m_aaValue->getValue();
+  params->m_lineProcessingMode = m_lineProcessing->currentIndex();
+  params->m_noAntialias        = (m_antialias->currentIndex() > 0);
+  params->m_postAntialias      = (m_antialias->currentIndex() == 2);
+  params->m_despeckling        = m_despeckling->getValue();
+  params->m_aaValue            = m_aaValue->getValue();
 
+  if (params->m_lineProcessingMode == lpNone)
+    params->m_transparencyCheckEnabled = false;
   //------
 
   m_cameraWidget->getFields(model->getCurrentParameters());

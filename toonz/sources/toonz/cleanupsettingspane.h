@@ -24,7 +24,7 @@ namespace DVGui {
 
 class DoubleField;
 class IntField;
-}
+}  // namespace DVGui
 
 /*
 "Save In"
@@ -70,6 +70,8 @@ private:
 
   CleanupParameters m_backupParams;
   bool m_attached;
+
+  QList<QWidget *> m_lpWidgets;
 
 public:
   CleanupSettingsPane(QWidget *parent = 0);
