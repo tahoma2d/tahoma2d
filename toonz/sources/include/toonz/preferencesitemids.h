@@ -65,6 +65,7 @@ enum PreferencesItemId {
   //----------
   // Saving
   rasterBackgroundColor,
+  resetUndoOnSavingLevel,
 
   //----------
   // Import / Export
