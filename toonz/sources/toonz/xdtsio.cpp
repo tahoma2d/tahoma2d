@@ -20,6 +20,7 @@
 #include "tapp.h"
 #include "menubarcommandids.h"
 #include "xdtsimportpopup.h"
+#include "filebrowserpopup.h"
 
 #include <iostream>
 #include <QJsonObject>
@@ -340,7 +341,12 @@ void XdtsTimeTableItem::build(TXsheet *xsheet, QString name) {
   XdtsTimeTableFieldItem field;
   field.build(xsheet, m_duration, columnLabels);
   m_fields.append(field);
-  while (columnLabels.last().isEmpty()) columnLabels.removeLast();
+  while (!columnLabels.isEmpty() && columnLabels.last().isEmpty())
+    columnLabels.removeLast();
+  if (columnLabels.isEmpty()) {
+    m_fields.clear();
+    return;
+  }
   XdtsTimeTableHeaderItem header;
   header.build(columnLabels);
   m_timeTableHeaders.append(header);
@@ -388,6 +394,7 @@ QStringList XdtsData::getLevelNames() const {
 void XdtsData::build(TXsheet *xsheet, QString name) {
   XdtsTimeTableItem timeTable;
   timeTable.build(xsheet, name);
+  if (timeTable.isEmpty()) return;
   m_timeTables.append(timeTable);
 }
 
@@ -511,17 +518,28 @@ void ExportXDTSCommand::execute() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
   TFilePath fp      = scene->getScenePath().withType("xdts");
-  if (TSystem::doesExistFileOrLevel(fp)) {
-    QString question =
-        QObject::tr("The file %1 already exists.\nDo you want to overwrite it?")
-            .arg(toQString(fp));
-    int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
-                            QObject::tr("Cancel"), 0);
-    if (ret == 2 || ret == 0) return;
-  }
 
   XdtsData xdtsData;
   xdtsData.build(xsheet, QString::fromStdString(fp.getName()));
+  if (xdtsData.isEmpty()) {
+    DVGui::error(QObject::tr("No columns can be exported."));
+    return;
+  }
+
+  static GenericSaveFilePopup *savePopup = 0;
+  if (!savePopup) {
+    savePopup = new GenericSaveFilePopup(
+        QObject::tr("Export Exchange Digital Time Sheet (XDTS)"));
+    savePopup->addFilterType("xdts");
+  }
+  if (!scene->isUntitled())
+    savePopup->setFolder(fp.getParentDir());
+  else
+    savePopup->setFolder(
+        TProjectManager::instance()->getCurrentProject()->getScenesPath());
+  savePopup->setFilename(fp.withoutParentDir());
+  fp = savePopup->getPath();
+  if (fp.isEmpty()) return;
 
   QFile saveFile(fp.getQString());
 
