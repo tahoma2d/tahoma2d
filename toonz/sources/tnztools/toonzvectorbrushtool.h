@@ -81,7 +81,7 @@ public:
 //************************************************************************
 
 class ToonzVectorBrushTool final : public TTool {
-  Q_DECLARE_TR_FUNCTIONS(BrushTool)
+  Q_DECLARE_TR_FUNCTIONS(ToonzVectorBrushTool)
 
 public:
   ToonzVectorBrushTool(std::string name, int targetType);
