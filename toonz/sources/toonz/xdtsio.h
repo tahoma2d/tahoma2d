@@ -212,6 +212,10 @@ public:
   int getDuration() { return m_duration; }
 
   void build(TXsheet *, QString);
+  bool isEmpty() {
+    return m_duration == 0 || m_fields.isEmpty() ||
+           m_timeTableHeaders.isEmpty();
+  }
 };
 
 // "$schema": "http://json-schema.org/draft-07/schema",
@@ -233,6 +237,7 @@ public:
   QStringList getLevelNames() const;
   XdtsTimeTableItem &timeTable() { return m_timeTables[0]; }
   void build(TXsheet *, QString);
+  bool isEmpty() { return m_timeTables.isEmpty(); }
 };
 
 bool loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath);
