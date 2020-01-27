@@ -504,10 +504,11 @@ void StartupPopup::onCreateButton() {
       size);
   TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera()->setRes(
       res);
-  // this one is debatable - should the scene be saved right away?
-  // IoCmd::saveScene();
+  // save the scene right away
+  IoCmd::saveScene();
   // this makes sure the scene viewers update to the right fps
   TApp::instance()->getCurrentScene()->notifySceneSwitched();
+  TApp::instance()->getCurrentScene()->notifyNameSceneChange();
 
   hide();
 }
