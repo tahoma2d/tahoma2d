@@ -314,7 +314,7 @@ void ChannelBar::draw(QPainter *p, QPoint translation) {
 
   p->setBrush(QBrush(linearGrad));
 
-  p->setPen(Qt::black);
+  p->setPen(getTextColor());
   p->drawRect(x0, y0, w - 1, h - 1);
 
   if (m_drawNumbers) {

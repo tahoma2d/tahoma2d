@@ -1630,6 +1630,9 @@ FxSettings QToolBar QToolBar {
 #FxSettingsHelpButton:hover {
   background-color: #a8bee7;
 }
+ChannelBar {
+  qproperty-TextColor: #e9e9e9;
+}
 /* -----------------------------------------------------------------------------
    Script Console
 ----------------------------------------------------------------------------- */
