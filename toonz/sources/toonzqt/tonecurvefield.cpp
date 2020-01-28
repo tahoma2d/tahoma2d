@@ -363,6 +363,13 @@ void ChennelCurveEditor::moveCentralControlPoint(int index,
     setPoint(index + 2,
              getNewSecondHandlePoint(p, nextP, m_points.at(index + 2)));
     if (nextDistance < 0) d = QPointF(nextP.x() - p.x(), d.y());
+    if (nextDistance < 16) {
+      double nextYDistance = nextP.y() - (p.y() + d.y());
+      if (nextYDistance > -16 && nextYDistance < 16) {
+        double offset = nextYDistance > 0 ? -16 : +16;
+        d = QPointF(d.x(), nextP.y() - p.y() + offset);
+      }
+    }
   }
   // Caso particolare: Punto di controllo corrente == ultimo visibile,
   //                   Punto di controllo precedente
@@ -375,12 +382,21 @@ void ChennelCurveEditor::moveCentralControlPoint(int index,
     setPoint(index - 1,
              getNewSecondHandlePoint(precP, p, m_points.at(index - 1)));
     if (precDistance < 0) d = QPointF(precP.x() - p.x(), d.y());
+    if (precDistance < 16) {
+      double precYDistance = (p.y() + d.y()) - precP.y();
+      if (precYDistance > -16 && precYDistance < 16) {
+        double offset = precYDistance > 0 ? 16 : -16;
+        d = QPointF(d.x(), precP.y() - p.y() + offset);
+      }
+    }
   }
   // Altrimenti calcolo il nuovo delta
   else if (nextDistance < 16)
     d = QPointF(nextP.x() - p.x() - 16, d.y());
   else if (precDistance < 16)
     d = QPointF(precP.x() - p.x() + 16, d.y());
+
+  if (d.isNull()) return;
 
   // Punto di controllo speciale: il primo visualizzato.
   if (index == 3) {
@@ -674,17 +690,8 @@ void ChennelCurveEditor::paintEvent(QPaintEvent *e) {
       else if (isCentralControlPoint(i) && i < n - 4)
         painter.drawLine(p, nextP);
     }
-    QPainterPath circle;
     QRectF pointRect(p.x() - rad, p.y() - rad, 2 * rad, 2 * rad);
-    if (r.contains(pointRect))
-#if QT_VERSION >= 0x050000
-      painter.setClipRect(pointRect.adjusted(-1, -1, 1, 1));
-#else
-      painter.setClipRect(pointRect.adjusted(-1, -1, 1, 1), Qt::UniteClip);
-#endif
-    circle.addEllipse(pointRect);
-    painter.fillPath(circle, brush);
-    painter.drawPath(circle);
+    painter.drawEllipse(pointRect);
     p = nextP;
   }
 }

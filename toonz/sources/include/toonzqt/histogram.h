@@ -80,6 +80,10 @@ class DVAPI ChannelBar final : public QWidget {
 
   bool m_isHorizontal;
   bool m_drawNumbers;
+  
+  QColor m_textColor;
+  
+  Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
 
 public:
   ChannelBar(QWidget *parent = 0, QColor m_color = QColor(),
@@ -93,6 +97,8 @@ public:
 
   void draw(QPainter *painter, QPoint translation = QPoint(0, 0));
 
+  void setTextColor(const QColor &color) { m_textColor = color; }
+  QColor getTextColor() const { return m_textColor; }
 protected:
   void paintEvent(QPaintEvent *event) override;
 };
