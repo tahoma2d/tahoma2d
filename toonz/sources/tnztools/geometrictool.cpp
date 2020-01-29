@@ -1118,7 +1118,12 @@ public:
         ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                          stroke->getBBox());
 
-        bool strokeAdded = false;
+        vi->addStroke(stroke);
+        TUndoManager::manager()->add(new UndoPencil(
+            vi->getStroke(vi->getStrokeCount() - 1), fillInformation, sl, id,
+            m_isFrameCreated, m_isLevelCreated, m_param.m_autogroup.getValue(),
+            m_param.m_autofill.getValue()));
+
         if ((Preferences::instance()->getGuidedDrawingType() == 1 ||
              Preferences::instance()->getGuidedDrawingType() == 2) &&
             Preferences::instance()->getGuidedAutoInbetween()) {
@@ -1127,18 +1132,10 @@ public:
           ToonzVectorBrushTool *vbTool = (ToonzVectorBrushTool *)tool;
           if (vbTool) {
             vbTool->setViewer(m_viewer);
-            strokeAdded = vbTool->doGuidedAutoInbetween(
-                id, vi, stroke, false, m_param.m_autogroup.getValue(),
-                m_param.m_autofill.getValue(), true);
+            vbTool->doGuidedAutoInbetween(id, vi, stroke, false,
+                                          m_param.m_autogroup.getValue(),
+                                          m_param.m_autofill.getValue(), false);
           }
-        }
-
-        if (!strokeAdded) {
-          vi->addStroke(stroke);
-          TUndoManager::manager()->add(new UndoPencil(
-              vi->getStroke(vi->getStrokeCount() - 1), fillInformation, sl, id,
-              m_isFrameCreated, m_isLevelCreated, m_param.m_autogroup.getValue(), 
-              m_param.m_autofill.getValue()));
         }
       }
       if (m_param.m_autogroup.getValue() && stroke->isSelfLoop()) {
@@ -2095,7 +2092,7 @@ TStroke *EllipsePrimitive::makeStroke() const {
     return 0;
 
   return makeEllipticStroke(
-      getThickness(), 
+      getThickness(),
       TPointD(0.5 * (m_selectingRect.x0 + m_selectingRect.x1),
               0.5 * (m_selectingRect.y0 + m_selectingRect.y1)),
       fabs(0.5 * (m_selectingRect.x1 - m_selectingRect.x0)),
