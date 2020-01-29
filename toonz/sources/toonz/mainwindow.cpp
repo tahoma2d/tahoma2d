@@ -2209,24 +2209,24 @@ void MainWindow::defineActions() {
   CommandManager::instance()->setToggleTexts(V_ShowHideFullScreen,
                                              tr("Full Screen Mode"),
                                              tr("Exit Full Screen Mode"));
-  createMiscAction(MI_SelectNextGuideStroke,
-                   tr("Select Next Frame Guide Stroke"), "");
-  createMiscAction(MI_SelectPrevGuideStroke,
-                   tr("Select Previous Frame Guide Stroke"), "");
-  createMiscAction(MI_SelectBothGuideStrokes,
-                   tr("Select Prev && Next Frame Guide Strokes"), "");
-  createMiscAction(MI_SelectGuideStrokeReset,
-                   tr("Reset Guide Stroke Selections"), "");
-  createMiscAction(MI_TweenGuideStrokes,
-                   tr("Tween Selected Guide Strokes"), "");
-  createMiscAction(MI_TweenGuideStrokeToSelected,
-                   tr("Tween Guide Strokes to Selected"), "");
-  createMiscAction(MI_SelectGuidesAndTweenMode,
-                   tr("Select Guide Strokes && Tween Mode"), "");
-  createMiscAction(MI_FlipNextGuideStroke,
-                   tr("Flip Next Guide Stroke Direction"), "");
-  createMiscAction(MI_FlipPrevGuideStroke,
-                   tr("Flip Previous Guide Stroke Direction"), "");
+  createToolOptionsAction(MI_SelectNextGuideStroke,
+                          tr("Select Next Frame Guide Stroke"), "");
+  createToolOptionsAction(MI_SelectPrevGuideStroke,
+                          tr("Select Previous Frame Guide Stroke"), "");
+  createToolOptionsAction(MI_SelectBothGuideStrokes,
+                          tr("Select Prev && Next Frame Guide Strokes"), "");
+  createToolOptionsAction(MI_SelectGuideStrokeReset,
+                          tr("Reset Guide Stroke Selections"), "");
+  createToolOptionsAction(MI_TweenGuideStrokes,
+                          tr("Tween Selected Guide Strokes"), "");
+  createToolOptionsAction(MI_TweenGuideStrokeToSelected,
+                          tr("Tween Guide Strokes to Selected"), "");
+  createToolOptionsAction(MI_SelectGuidesAndTweenMode,
+                          tr("Select Guide Strokes && Tween Mode"), "");
+  createToolOptionsAction(MI_FlipNextGuideStroke,
+                          tr("Flip Next Guide Stroke Direction"), "");
+  createToolOptionsAction(MI_FlipPrevGuideStroke,
+                          tr("Flip Previous Guide Stroke Direction"), "");
 
   // Following actions are for adding "Visualization" menu items to the command
   // bar. They are separated from the original actions in order to avoid
