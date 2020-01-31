@@ -28,6 +28,8 @@
 using namespace ToolUtils;
 
 TEnv::IntVar AutoSelectDrawing("ControlPointEditorToolAutoSelectDrawing", 1);
+TEnv::IntVar Snap("ControlPointEditorToolSnap", 0);
+TEnv::IntVar SnapSensitivity("ControlPointEditorToolSnapSensitivity", 0);
 
 //-----------------------------------------------------------------------------
 
@@ -873,6 +875,8 @@ void ControlPointEditorTool::onLeave() {
 
 bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
   AutoSelectDrawing = (int)(m_autoSelectDrawing.getValue());
+  Snap = (int)(m_snap.getValue());
+  SnapSensitivity = (int)(m_snapSensitivity.getIndex());
   return true;
 }
 
@@ -881,6 +885,8 @@ bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
 void ControlPointEditorTool::onActivate() {
   // TODO: getApplication()->editImageOrSpline();
   m_autoSelectDrawing.setValue(AutoSelectDrawing ? 1 : 0);
+  m_snap.setValue(Snap ? 1 : 0);
+  m_snapSensitivity.setIndex(SnapSensitivity);
   m_controlPointEditorStroke.setStroke((TVectorImage *)0, -1);
   m_draw = true;
 }
