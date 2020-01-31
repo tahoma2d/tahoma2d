@@ -30,6 +30,12 @@ using namespace ToolUtils;
 TEnv::IntVar AutoSelectDrawing("ControlPointEditorToolAutoSelectDrawing", 1);
 
 //-----------------------------------------------------------------------------
+
+#define LOW_WSTR L"Low"
+#define MEDIUM_WSTR L"Medium"
+#define HIGH_WSTR L"High"
+
+//-----------------------------------------------------------------------------
 namespace {
 
 /*! Restituisce i parametri riferiti allo stroke della curva che si vuole
@@ -129,6 +135,7 @@ class ControlPointEditorTool final : public TTool {
   TBoolProperty
       m_autoSelectDrawing;  // Consente di scegliere se swichare tra i livelli.
   TBoolProperty m_snap;
+  TEnumProperty m_snapSensitivity;
 
   enum Action {
     NONE,
@@ -213,7 +220,8 @@ ControlPointEditorTool::ControlPointEditorTool()
     , m_isImageChanged(false)
     , m_selectingRect(TRectD())
     , m_autoSelectDrawing("Auto Select Drawing", true)
-    , m_snap("snap", true)
+    , m_snap("snap", false)
+    , m_snapSensitivity("Sensitivity:")
     , m_action(NONE)
     , m_cursorType(NORMAL)
     , m_undo(0)
@@ -223,10 +231,15 @@ ControlPointEditorTool::ControlPointEditorTool()
   bind(TTool::Vectors);
   m_prop.bind(m_autoSelectDrawing);
   m_prop.bind(m_snap);
+  m_prop.bind(m_snapSensitivity);
   m_selection.setControlPointEditorStroke(&m_controlPointEditorStroke);
 
   m_autoSelectDrawing.setId("AutoSelectDrawing");
   m_snap.setId("Snap");
+  m_snapSensitivity.addValue(LOW_WSTR);
+  m_snapSensitivity.addValue(MEDIUM_WSTR);
+  m_snapSensitivity.addValue(HIGH_WSTR);
+  m_snapSensitivity.setId("SnapSensitivity");
 }
 
 //-----------------------------------------------------------------------------
@@ -234,6 +247,10 @@ ControlPointEditorTool::ControlPointEditorTool()
 void ControlPointEditorTool::updateTranslation() {
   m_autoSelectDrawing.setQStringName(tr("Auto Select Drawing"));
   m_snap.setQStringName(tr("Snap"));
+  m_snapSensitivity.setQStringName(tr(""));
+  m_snapSensitivity.setItemUIName(L"Low", tr("Low"));
+  m_snapSensitivity.setItemUIName(L"Medium", tr("Med"));
+  m_snapSensitivity.setItemUIName(L"High", tr("High"));
 }
 
 //---------------------------------------------------------------------------
