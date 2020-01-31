@@ -231,7 +231,7 @@ TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
   TVectorImageP vi(TTool::getImage(false));
   TPointD snapPoint = pos;
   if (vi && m_snap.getValue()) {
-    double minDistance     = m_snapMinDistance;
+    double minDistance = m_snapMinDistance;
 
     int i, strokeNumber = vi->getStrokeCount();
 
@@ -241,7 +241,7 @@ TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
 
     for (i = 0; i < strokeNumber; i++) {
       stroke = vi->getStroke(i);
-      if(stroke != selfStroke){
+      if (stroke != selfStroke) {
         if (stroke->getNearestW(pos, outW, distance) &&
             distance < minDistance) {
           minDistance = distance;
@@ -252,9 +252,9 @@ TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
           else
             w = outW;
           TThickPoint point = stroke->getPoint(w);
-          snapPoint          = TPointD(point.x, point.y);
-          m_foundSnap        = true;
-          m_snapPoint        = snapPoint;
+          snapPoint         = TPointD(point.x, point.y);
+          m_foundSnap       = true;
+          m_snapPoint       = snapPoint;
         }
       }
     }
@@ -263,23 +263,21 @@ TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
 }
 
 void ControlPointEditorTool::drawSnap() {
-    double thick = 6.0;
-    if (m_foundSnap) {
-      tglColor(TPixelD(0.1, 0.9, 0.1));
-      tglDrawCircle(m_snapPoint, thick);
-    }
+  double thick = 6.0;
+  if (m_foundSnap) {
+    tglColor(TPixelD(0.1, 0.9, 0.1));
+    tglDrawCircle(m_snapPoint, thick);
+  }
 }
 
-TPointD ControlPointEditorTool::getSnap(TPointD pos){
+TPointD ControlPointEditorTool::getSnap(TPointD pos) {
   if (m_foundSnap)
     return m_snapPoint;
   else
     return pos;
 }
 
-void ControlPointEditorTool::resetSnap(){
-  m_foundSnap = false;
-}
+void ControlPointEditorTool::resetSnap() { m_foundSnap = false; }
 
 //=============================================================================
 // Spline Editor Tool
@@ -772,12 +770,13 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
                                                 // deselezionata l'ultima
                                                 // selezione nel movimento
 
-    TThickPoint cp = m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
+    TThickPoint cp =
+        m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
     TPointD controlPoint = TPointD(cp.x, cp.y);
 
     TPointD newPos;
     newPos = calculateSnap(pos);
-    delta = newPos - m_pos + (m_pos - controlPoint);
+    delta  = newPos - m_pos + (m_pos - controlPoint);
 
     m_pos = pos;
 
@@ -960,8 +959,8 @@ void ControlPointEditorTool::onLeave() {
 
 bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
   AutoSelectDrawing = (int)(m_autoSelectDrawing.getValue());
-  Snap = (int)(m_snap.getValue());
-  SnapSensitivity = (int)(m_snapSensitivity.getIndex());
+  Snap              = (int)(m_snap.getValue());
+  SnapSensitivity   = (int)(m_snapSensitivity.getIndex());
   switch (SnapSensitivity) {
   case 0:
     m_snapMinDistance = SNAPPING_LOW;
