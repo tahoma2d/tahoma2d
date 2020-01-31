@@ -37,6 +37,10 @@ TEnv::IntVar SnapSensitivity("ControlPointEditorToolSnapSensitivity", 0);
 #define MEDIUM_WSTR L"Medium"
 #define HIGH_WSTR L"High"
 
+const double SNAPPING_LOW    = 5.0;
+const double SNAPPING_MEDIUM = 25.0;
+const double SNAPPING_HIGH   = 100.0;
+
 //-----------------------------------------------------------------------------
 namespace {
 
@@ -138,6 +142,7 @@ class ControlPointEditorTool final : public TTool {
       m_autoSelectDrawing;  // Consente di scegliere se swichare tra i livelli.
   TBoolProperty m_snap;
   TEnumProperty m_snapSensitivity;
+  double m_snapMinDistance;
 
   enum Action {
     NONE,
@@ -877,6 +882,17 @@ bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
   AutoSelectDrawing = (int)(m_autoSelectDrawing.getValue());
   Snap = (int)(m_snap.getValue());
   SnapSensitivity = (int)(m_snapSensitivity.getIndex());
+  switch (SnapSensitivity) {
+  case 0:
+    m_snapMinDistance = SNAPPING_LOW;
+    break;
+  case 1:
+    m_snapMinDistance = SNAPPING_MEDIUM;
+    break;
+  case 2:
+    m_snapMinDistance = SNAPPING_HIGH;
+    break;
+  }
   return true;
 }
 
@@ -887,6 +903,17 @@ void ControlPointEditorTool::onActivate() {
   m_autoSelectDrawing.setValue(AutoSelectDrawing ? 1 : 0);
   m_snap.setValue(Snap ? 1 : 0);
   m_snapSensitivity.setIndex(SnapSensitivity);
+  switch (SnapSensitivity) {
+  case 0:
+    m_snapMinDistance = SNAPPING_LOW;
+    break;
+  case 1:
+    m_snapMinDistance = SNAPPING_MEDIUM;
+    break;
+  case 2:
+    m_snapMinDistance = SNAPPING_HIGH;
+    break;
+  }
   m_controlPointEditorStroke.setStroke((TVectorImage *)0, -1);
   m_draw = true;
 }
