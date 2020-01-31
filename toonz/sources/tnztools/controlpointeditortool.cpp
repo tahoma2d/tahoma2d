@@ -128,6 +128,7 @@ class ControlPointEditorTool final : public TTool {
   TPropertyGroup m_prop;
   TBoolProperty
       m_autoSelectDrawing;  // Consente di scegliere se swichare tra i livelli.
+  TBoolProperty m_snap;
 
   enum Action {
     NONE,
@@ -212,6 +213,7 @@ ControlPointEditorTool::ControlPointEditorTool()
     , m_isImageChanged(false)
     , m_selectingRect(TRectD())
     , m_autoSelectDrawing("Auto Select Drawing", true)
+    , m_snap("snap", true)
     , m_action(NONE)
     , m_cursorType(NORMAL)
     , m_undo(0)
@@ -220,15 +222,18 @@ ControlPointEditorTool::ControlPointEditorTool()
     , m_moveSegmentLimitation() {
   bind(TTool::Vectors);
   m_prop.bind(m_autoSelectDrawing);
+  m_prop.bind(m_snap);
   m_selection.setControlPointEditorStroke(&m_controlPointEditorStroke);
 
   m_autoSelectDrawing.setId("AutoSelectDrawing");
+  m_snap.setId("Snap");
 }
 
 //-----------------------------------------------------------------------------
 
 void ControlPointEditorTool::updateTranslation() {
   m_autoSelectDrawing.setQStringName(tr("Auto Select Drawing"));
+  m_snap.setQStringName(tr("Snap"));
 }
 
 //---------------------------------------------------------------------------
