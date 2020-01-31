@@ -13,7 +13,6 @@ set(MOC_HEADERS
     boardsettingspopup.h
     brightnessandcontrastpopup.h
     cachefxcommand.h
-    cameracapturelevelcontrol.h
     camerasettingspopup.h
     canvassizepopup.h
     castviewer.h
@@ -69,7 +68,6 @@ set(MOC_HEADERS
     outputsettingspopup.h
     overwritepopup.h
     pane.h
-    penciltestpopup.h
     pltgizmopopup.h
     preferencespopup.h
     previewer.h
@@ -129,6 +127,14 @@ set(MOC_HEADERS
     ${MOC_HEADERS}
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
+    cameracapturelevelcontrol.h
+    penciltestpopup.h
+)
+else()
+set(MOC_HEADERS
+    ${MOC_HEADERS}
+    cameracapturelevelcontrol_qt.h
+    penciltestpopup_qt.h
 )
 endif()
 
@@ -340,11 +346,9 @@ set(SOURCES
     comboviewerpane.cpp
     historypane.cpp
     cleanupsettingspane.cpp
-    penciltestpopup.cpp
     audiorecordingpopup.cpp
     locatorpopup.cpp
     styleshortcutswitchablepanel.cpp
-	cameracapturelevelcontrol.cpp
 	reframepopup.cpp
 	autoinputcellnumberpopup.cpp
 	colormodelbehaviorpopup.cpp
@@ -365,6 +369,14 @@ set(SOURCES
     ${SOURCES}
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
+	cameracapturelevelcontrol.cpp
+    penciltestpopup.cpp
+)
+else()
+set(SOURCES
+    ${SOURCES}
+	cameracapturelevelcontrol_qt.cpp
+    penciltestpopup_qt.cpp
 )
 endif()
 
