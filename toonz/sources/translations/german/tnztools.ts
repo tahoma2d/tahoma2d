@@ -100,7 +100,7 @@
     </message>
     <message>
         <source>Accuracy:</source>
-        <translation>Genauigkeit:</translation>
+        <translation type="vanished">Genauigkeit:</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -108,7 +108,7 @@
     </message>
     <message>
         <source>Preset:</source>
-        <translation>Vorlage:</translation>
+        <translation type="vanished">Vorlage:</translation>
     </message>
     <message>
         <source>Break Sharp Angles</source>
@@ -124,23 +124,23 @@
     </message>
     <message>
         <source>Cap</source>
-        <translation>Cap</translation>
+        <translation type="vanished">Cap</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation>Vereinen</translation>
+        <translation type="vanished">Vereinen</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation>Gehrung:</translation>
+        <translation type="vanished">Gehrung:</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="vanished">Größe</translation>
     </message>
     <message>
         <source>Break</source>
-        <translation>Scharfe Winkel brechen</translation>
+        <translation type="vanished">Scharfe Winkel brechen</translation>
     </message>
     <message>
         <source>Pencil</source>
@@ -148,79 +148,11 @@
     </message>
     <message>
         <source>Pressure</source>
-        <translation>Druck</translation>
-    </message>
-    <message>
-        <source>Smooth:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Range:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Druck</translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation type="unfinished">Einrasten</translation>
-    </message>
-    <message>
-        <source>&lt;custom&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Linear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In&amp;Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Low</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>High</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Butt cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Round cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Projecting cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Miter join</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Round join</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bevel join</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Med</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Einrasten</translation>
     </message>
 </context>
 <context>
@@ -1525,6 +1457,113 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Pressure</source>
         <translation type="unfinished">Druck</translation>
+    </message>
+</context>
+<context>
+    <name>ToonzVectorBrushTool</name>
+    <message>
+        <source>Size</source>
+        <translation>Größe</translation>
+    </message>
+    <message>
+        <source>Accuracy:</source>
+        <translation>Genauigkeit:</translation>
+    </message>
+    <message>
+        <source>Smooth:</source>
+        <translation>Glätten:</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>Vorlage:</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Break</source>
+        <translation>Scharfe Winkel brechen</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation>Druck</translation>
+    </message>
+    <message>
+        <source>Cap</source>
+        <translation>Cap</translation>
+    </message>
+    <message>
+        <source>Join</source>
+        <translation>Vereinen</translation>
+    </message>
+    <message>
+        <source>Miter:</source>
+        <translation>Gehrung:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap</source>
+        <translation>Einrasten</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In&amp;Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Butt cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projecting cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miter join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bevel join</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

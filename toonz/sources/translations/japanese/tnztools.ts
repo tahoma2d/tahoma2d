@@ -100,7 +100,7 @@
     </message>
     <message>
         <source>Accuracy:</source>
-        <translation>精度：</translation>
+        <translation type="vanished">精度：</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -108,7 +108,7 @@
     </message>
     <message>
         <source>Preset:</source>
-        <translation>プリセット：</translation>
+        <translation type="vanished">プリセット：</translation>
     </message>
     <message>
         <source>Break Sharp Angles</source>
@@ -124,23 +124,23 @@
     </message>
     <message>
         <source>Cap</source>
-        <translation>線端</translation>
+        <translation type="vanished">線端</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation>角の形状</translation>
+        <translation type="vanished">角の形状</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation>角の比率：</translation>
+        <translation type="vanished">角の比率：</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>サイズ</translation>
+        <translation type="vanished">サイズ</translation>
     </message>
     <message>
         <source>Break</source>
-        <translation>鋭角で線を分割</translation>
+        <translation type="vanished">鋭角で線を分割</translation>
     </message>
     <message>
         <source>Pencil</source>
@@ -148,79 +148,79 @@
     </message>
     <message>
         <source>Pressure</source>
-        <translation>圧力感知</translation>
+        <translation type="vanished">圧力感知</translation>
     </message>
     <message>
         <source>Smooth:</source>
-        <translation>平滑化：</translation>
+        <translation type="vanished">平滑化：</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation>中割り：</translation>
+        <translation type="vanished">中割り：</translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation>スナップ</translation>
+        <translation type="vanished">スナップ</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;カスタム&gt;</translation>
+        <translation type="vanished">&lt;カスタム&gt;</translation>
     </message>
     <message>
         <source>Off</source>
-        <translation>無効</translation>
+        <translation type="vanished">無効</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation>均等割り</translation>
+        <translation type="vanished">均等割り</translation>
     </message>
     <message>
         <source>In</source>
-        <translation>イーズイン</translation>
+        <translation type="vanished">イーズイン</translation>
     </message>
     <message>
         <source>Out</source>
-        <translation>イーズアウト</translation>
+        <translation type="vanished">イーズアウト</translation>
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>イーズインアウト</translation>
+        <translation type="vanished">イーズインアウト</translation>
     </message>
     <message>
         <source>Low</source>
-        <translation>低</translation>
+        <translation type="vanished">低</translation>
     </message>
     <message>
         <source>Med</source>
-        <translation>中</translation>
+        <translation type="vanished">中</translation>
     </message>
     <message>
         <source>High</source>
-        <translation>高</translation>
+        <translation type="vanished">高</translation>
     </message>
     <message>
         <source>Butt cap</source>
-        <translation>バット線端</translation>
+        <translation type="vanished">バット線端</translation>
     </message>
     <message>
         <source>Round cap</source>
-        <translation>丸型線端</translation>
+        <translation type="vanished">丸型線端</translation>
     </message>
     <message>
         <source>Projecting cap</source>
-        <translation>突出線端</translation>
+        <translation type="vanished">突出線端</translation>
     </message>
     <message>
         <source>Miter join</source>
-        <translation>マイター結合</translation>
+        <translation type="vanished">マイター結合</translation>
     </message>
     <message>
         <source>Round join</source>
-        <translation>ラウンド結合</translation>
+        <translation type="vanished">ラウンド結合</translation>
     </message>
     <message>
         <source>Bevel join</source>
-        <translation>ベベル結合</translation>
+        <translation type="vanished">ベベル結合</translation>
     </message>
     <message>
         <source>Draw Order:</source>
@@ -1542,6 +1542,113 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Pressure</source>
         <translation>圧力感知</translation>
+    </message>
+</context>
+<context>
+    <name>ToonzVectorBrushTool</name>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Accuracy:</source>
+        <translation>精度：</translation>
+    </message>
+    <message>
+        <source>Smooth:</source>
+        <translation>平滑化：</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>プリセット：</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation>&lt;カスタム&gt;</translation>
+    </message>
+    <message>
+        <source>Break</source>
+        <translation>鋭角で線を分割</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation>圧力感知</translation>
+    </message>
+    <message>
+        <source>Cap</source>
+        <translation>線端</translation>
+    </message>
+    <message>
+        <source>Join</source>
+        <translation>角の形状</translation>
+    </message>
+    <message>
+        <source>Miter:</source>
+        <translation>角の比率：</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>中割り：</translation>
+    </message>
+    <message>
+        <source>Snap</source>
+        <translation>スナップ</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>均等割り</translation>
+    </message>
+    <message>
+        <source>In</source>
+        <translation>イーズイン</translation>
+    </message>
+    <message>
+        <source>Out</source>
+        <translation>イーズアウト</translation>
+    </message>
+    <message>
+        <source>In&amp;Out</source>
+        <translation>イーズインアウト</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation>低</translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation>高</translation>
+    </message>
+    <message>
+        <source>Butt cap</source>
+        <translation>バット線端</translation>
+    </message>
+    <message>
+        <source>Round cap</source>
+        <translation>丸型線端</translation>
+    </message>
+    <message>
+        <source>Projecting cap</source>
+        <translation>突出線端</translation>
+    </message>
+    <message>
+        <source>Miter join</source>
+        <translation>マイター結合</translation>
+    </message>
+    <message>
+        <source>Round join</source>
+        <translation>ラウンド結合</translation>
+    </message>
+    <message>
+        <source>Bevel join</source>
+        <translation>ベベル結合</translation>
     </message>
 </context>
 <context>

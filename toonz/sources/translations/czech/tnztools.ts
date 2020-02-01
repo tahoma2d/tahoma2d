@@ -106,136 +106,104 @@
 <context>
     <name>BrushTool</name>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="583"/>
         <source>Size</source>
-        <translation>Velikost</translation>
+        <translation type="vanished">Velikost</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="584"/>
         <source>Accuracy:</source>
-        <translation>Přesnost:</translation>
+        <translation type="vanished">Přesnost:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="585"/>
         <source>Smooth:</source>
-        <translation>Vyhlazení:</translation>
+        <translation type="vanished">Vyhlazení:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="586"/>
         <source>Preset:</source>
-        <translation>Přednastavení:</translation>
+        <translation type="vanished">Přednastavení:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="587"/>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="1683"/>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;vlastní&gt;</translation>
+        <translation type="vanished">&lt;vlastní&gt;</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="588"/>
         <source>Break</source>
-        <translation>Zlomit ostré úhly</translation>
+        <translation type="vanished">Zlomit ostré úhly</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="589"/>
         <source>Pressure</source>
-        <translation>Tlak</translation>
+        <translation type="vanished">Tlak</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="590"/>
         <source>Cap</source>
-        <translation>Čepice</translation>
+        <translation type="vanished">Čepice</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="591"/>
         <source>Join</source>
-        <translation>Spojit</translation>
+        <translation type="vanished">Spojit</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="592"/>
         <source>Miter:</source>
-        <translation>Zkosení:</translation>
+        <translation type="vanished">Zkosení:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="593"/>
         <source>Range:</source>
-        <translation>Rozsah:</translation>
+        <translation type="vanished">Rozsah:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="594"/>
         <source>Snap</source>
-        <translation>Přichytávání</translation>
+        <translation type="vanished">Přichytávání</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="596"/>
         <source>Off</source>
-        <translation>Vypnuto</translation>
+        <translation type="vanished">Vypnuto</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="597"/>
         <source>Linear</source>
-        <translation>Lineární</translation>
+        <translation type="vanished">Lineární</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="598"/>
         <source>In</source>
-        <translation>Zpomalení na začátku</translation>
+        <translation type="vanished">Zpomalení na začátku</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="599"/>
         <source>Out</source>
-        <translation>Zpomalení na konci</translation>
+        <translation type="vanished">Zpomalení na konci</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="600"/>
-        <source>In&amp;Out</source>
-        <translatorcomment>Na začátku &amp;na konci</translatorcomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="601"/>
         <source>Low</source>
-        <translation>Nízký</translation>
+        <translation type="vanished">Nízký</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="602"/>
         <source>Med</source>
-        <translation>Střední</translation>
+        <translation type="vanished">Střední</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="603"/>
         <source>High</source>
-        <translation>Vysoký</translation>
+        <translation type="vanished">Vysoký</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="604"/>
         <source>Butt cap</source>
-        <translation>Odřezek</translation>
+        <translation type="vanished">Odřezek</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="605"/>
         <source>Round cap</source>
-        <translation>Zakulacený</translation>
+        <translation type="vanished">Zakulacený</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="606"/>
         <source>Projecting cap</source>
-        <translation>Rovný klobouček</translation>
+        <translation type="vanished">Rovný klobouček</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="607"/>
         <source>Miter join</source>
-        <translation>Ostrý ohyb</translation>
+        <translation type="vanished">Ostrý ohyb</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="608"/>
         <source>Round join</source>
-        <translation>Kulatý ohyb</translation>
+        <translation type="vanished">Kulatý ohyb</translation>
     </message>
     <message>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="609"/>
         <source>Bevel join</source>
-        <translation>Zkosený ohyb</translation>
+        <translation type="vanished">Zkosený ohyb</translation>
     </message>
 </context>
 <context>
@@ -813,27 +781,27 @@
 <context>
     <name>PlasticTool</name>
     <message>
-        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1115"/>
+        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1119"/>
         <source>Swap Edge</source>
         <translation>Vyměnit okraj</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1121"/>
+        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1125"/>
         <source>Collapse Edge</source>
         <translation>Sbalit okraj</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1126"/>
+        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1130"/>
         <source>Split Edge</source>
         <translation>Rozdělit okraj</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1132"/>
+        <location filename="../../tnztools/plastictool_meshedit.cpp" line="1136"/>
         <source>Cut Mesh</source>
         <translation>Vyjmout síť</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool_build.cpp" line="631"/>
+        <location filename="../../tnztools/plastictool_build.cpp" line="630"/>
         <source>Delete Vertex</source>
         <translation>Smazat vrchol</translation>
     </message>
@@ -858,77 +826,77 @@
         <translation>Nastavit celkovou klávesu pro klidovou polohu</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="715"/>
+        <location filename="../../tnztools/plastictool.cpp" line="714"/>
         <source>Mode:</source>
         <translation>Režim:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="717"/>
+        <location filename="../../tnztools/plastictool.cpp" line="716"/>
         <source>Edit Mesh</source>
         <translation>Upravit síť</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="718"/>
+        <location filename="../../tnztools/plastictool.cpp" line="717"/>
         <source>Paint Rigid</source>
         <translation>Malovat neohebný</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="719"/>
+        <location filename="../../tnztools/plastictool.cpp" line="718"/>
         <source>Build Skeleton</source>
         <translation>Postavit kostru</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="720"/>
+        <location filename="../../tnztools/plastictool.cpp" line="719"/>
         <source>Animate</source>
         <translation>Animovat</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="723"/>
+        <location filename="../../tnztools/plastictool.cpp" line="722"/>
         <source>Vertex Name:</source>
         <translation>Název vrcholu:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="724"/>
+        <location filename="../../tnztools/plastictool.cpp" line="723"/>
         <source>Allow Stretching</source>
         <translation>Povolit roztažení</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="725"/>
+        <location filename="../../tnztools/plastictool.cpp" line="724"/>
         <source>Snap To Mesh</source>
         <translation>Přichytávat k síti</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="726"/>
+        <location filename="../../tnztools/plastictool.cpp" line="725"/>
         <source>Thickness</source>
         <translation>Tloušťka</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="730"/>
+        <location filename="../../tnztools/plastictool.cpp" line="729"/>
         <source>Rigid</source>
         <translation>Tuhý</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="731"/>
+        <location filename="../../tnztools/plastictool.cpp" line="730"/>
         <source>Flex</source>
         <translation>Ohebný</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="733"/>
+        <location filename="../../tnztools/plastictool.cpp" line="732"/>
         <source>Global Key</source>
         <translation>Celková klávesa</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="734"/>
+        <location filename="../../tnztools/plastictool.cpp" line="733"/>
         <source>Keep Distance</source>
         <translation>Zachovat odstup</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="735"/>
+        <location filename="../../tnztools/plastictool.cpp" line="734"/>
         <source>Angle Bounds</source>
         <translation>Ohraničení úhlu</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1238"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1235"/>
         <source>A group of skeletons already exists for current column. Replacing it will also substitute any existing vertex animation.
 
 Do you want to continue?</source>
@@ -937,47 +905,47 @@ Do you want to continue?</source>
 Chcete pokračovat?</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1242"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1239"/>
         <source>Ok</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1242"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1239"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1456"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1453"/>
         <source>Copy Skeleton</source>
         <translation>Kopírovat kostru</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1463"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1460"/>
         <source>Paste Skeleton</source>
         <translation>Vložit kostru</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1487"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1484"/>
         <source>Show Mesh</source>
         <translation>Ukázat síť</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1494"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1491"/>
         <source>Show Rigidity</source>
         <translation>Ukázat ztuhlost</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1501"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1498"/>
         <source>Show SO</source>
         <translation>Ukázat SO</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1508"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1505"/>
         <source>Show Skeleton Onion Skin</source>
         <translation>Ukáza cibulový vzhled kostry</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1586"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1583"/>
         <source>The previous vertex name will be discarded, and all associated keys will be lost.
 
 Do you want to proceed?</source>
@@ -989,27 +957,27 @@ Chcete pokračovat?</translation>
 <context>
     <name>PlasticToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="407"/>
+        <location filename="../../tnztools/plastictool.cpp" line="406"/>
         <source>Create Mesh</source>
         <translation>Vytvořit síť</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="409"/>
+        <location filename="../../tnztools/plastictool.cpp" line="408"/>
         <source>Skeleton:</source>
         <translation>Kostra:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="473"/>
+        <location filename="../../tnztools/plastictool.cpp" line="472"/>
         <source>Distance</source>
         <translation>Odstup</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="482"/>
+        <location filename="../../tnztools/plastictool.cpp" line="481"/>
         <source>Angle</source>
         <translation>Úhel</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="491"/>
+        <location filename="../../tnztools/plastictool.cpp" line="490"/>
         <source>SO</source>
         <translation>SO</translation>
     </message>
@@ -1252,12 +1220,12 @@ Chcete pokračovat?</translation>
         <translation>Volič RGB (R%1, G%2, B%3)</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1588"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1585"/>
         <source>Ok</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1588"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1585"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -1840,6 +1808,140 @@ přesunut na konec první strany palety.</translation>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1059"/>
         <source>Pressure</source>
         <translation>Tlak</translation>
+    </message>
+</context>
+<context>
+    <name>ToonzVectorBrushTool</name>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="583"/>
+        <source>Size</source>
+        <translation>Velikost</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="584"/>
+        <source>Accuracy:</source>
+        <translation>Přesnost:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="585"/>
+        <source>Smooth:</source>
+        <translation>Vyhlazení:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="586"/>
+        <source>Preset:</source>
+        <translation>Přednastavení:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="587"/>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="1686"/>
+        <source>&lt;custom&gt;</source>
+        <translation>&lt;vlastní&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="588"/>
+        <source>Break</source>
+        <translation>Zlomit ostré úhly</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="589"/>
+        <source>Pressure</source>
+        <translation>Tlak</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="590"/>
+        <source>Cap</source>
+        <translation>Čepice</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="591"/>
+        <source>Join</source>
+        <translation>Spojit</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="592"/>
+        <source>Miter:</source>
+        <translation>Zkosení:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="593"/>
+        <source>Range:</source>
+        <translation>Rozsah:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="594"/>
+        <source>Snap</source>
+        <translation>Přichytávání</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="596"/>
+        <source>Off</source>
+        <translation>Vypnuto</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="597"/>
+        <source>Linear</source>
+        <translation>Lineární</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="598"/>
+        <source>In</source>
+        <translation>Zpomalení na začátku</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="599"/>
+        <source>Out</source>
+        <translation>Zpomalení na konci</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="600"/>
+        <source>In&amp;Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="601"/>
+        <source>Low</source>
+        <translation>Nízký</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="602"/>
+        <source>Med</source>
+        <translation>Střední</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="603"/>
+        <source>High</source>
+        <translation>Vysoký</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="604"/>
+        <source>Butt cap</source>
+        <translation>Odřezek</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="605"/>
+        <source>Round cap</source>
+        <translation>Zakulacený</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="606"/>
+        <source>Projecting cap</source>
+        <translation>Rovný klobouček</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="607"/>
+        <source>Miter join</source>
+        <translation>Ostrý ohyb</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="608"/>
+        <source>Round join</source>
+        <translation>Kulatý ohyb</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="609"/>
+        <source>Bevel join</source>
+        <translation>Zkosený ohyb</translation>
     </message>
 </context>
 <context>

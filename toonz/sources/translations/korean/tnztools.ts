@@ -84,107 +84,107 @@
     <name>BrushTool</name>
     <message>
         <source>Size</source>
-        <translation>크기</translation>
+        <translation type="vanished">크기</translation>
     </message>
     <message>
         <source>Accuracy:</source>
-        <translation>정확도:</translation>
+        <translation type="vanished">정확도:</translation>
     </message>
     <message>
         <source>Smooth:</source>
-        <translation>부드러운:</translation>
+        <translation type="vanished">부드러운:</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation>사전설정:</translation>
+        <translation type="vanished">사전설정:</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;사용자 정의&gt;</translation>
+        <translation type="vanished">&lt;사용자 정의&gt;</translation>
     </message>
     <message>
         <source>Break</source>
-        <translation>분리</translation>
+        <translation type="vanished">분리</translation>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>압력</translation>
+        <translation type="vanished">압력</translation>
     </message>
     <message>
         <source>Cap</source>
-        <translation>캡</translation>
+        <translation type="vanished">캡</translation>
     </message>
     <message>
         <source>Join</source>
-        <translation>결합</translation>
+        <translation type="vanished">결합</translation>
     </message>
     <message>
         <source>Miter:</source>
-        <translation>마이터:</translation>
+        <translation type="vanished">마이터:</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation>범위:</translation>
+        <translation type="vanished">범위:</translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation>스냅</translation>
+        <translation type="vanished">스냅</translation>
     </message>
     <message>
         <source>Off</source>
-        <translation>끄기</translation>
+        <translation type="vanished">끄기</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation>선형</translation>
+        <translation type="vanished">선형</translation>
     </message>
     <message>
         <source>In</source>
-        <translation>가속</translation>
+        <translation type="vanished">가속</translation>
     </message>
     <message>
         <source>Out</source>
-        <translation>감속</translation>
+        <translation type="vanished">감속</translation>
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>가속&amp;감속</translation>
+        <translation type="vanished">가속&amp;감속</translation>
     </message>
     <message>
         <source>Low</source>
-        <translation>낮은</translation>
+        <translation type="vanished">낮은</translation>
     </message>
     <message>
         <source>Med</source>
-        <translation>중간</translation>
+        <translation type="vanished">중간</translation>
     </message>
     <message>
         <source>High</source>
-        <translation>높은</translation>
+        <translation type="vanished">높은</translation>
     </message>
     <message>
         <source>Butt cap</source>
-        <translation>버트 캡</translation>
+        <translation type="vanished">버트 캡</translation>
     </message>
     <message>
         <source>Round cap</source>
-        <translation>라운드 캡</translation>
+        <translation type="vanished">라운드 캡</translation>
     </message>
     <message>
         <source>Projecting cap</source>
-        <translation>돌출선 끝</translation>
+        <translation type="vanished">돌출선 끝</translation>
     </message>
     <message>
         <source>Miter join</source>
-        <translation>마이터 결합</translation>
+        <translation type="vanished">마이터 결합</translation>
     </message>
     <message>
         <source>Round join</source>
-        <translation>라운드 결합</translation>
+        <translation type="vanished">라운드 결합</translation>
     </message>
     <message>
         <source>Bevel join</source>
-        <translation>베벨 결합</translation>
+        <translation type="vanished">베벨 결합</translation>
     </message>
 </context>
 <context>
