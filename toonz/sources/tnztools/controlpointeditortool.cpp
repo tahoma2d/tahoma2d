@@ -770,13 +770,16 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
                                                 // deselezionata l'ultima
                                                 // selezione nel movimento
 
-    TThickPoint cp =
-        m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
-    TPointD controlPoint = TPointD(cp.x, cp.y);
+    if (m_lastPointSelected >= 0) {
+      TThickPoint cp;
+      TPointD controlPoint;
+      TPointD newPos;
 
-    TPointD newPos;
-    newPos = calculateSnap(pos);
-    delta  = newPos - m_pos + (m_pos - controlPoint);
+      cp = m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
+      controlPoint = TPointD(cp.x, cp.y);
+      newPos       = calculateSnap(pos);
+      delta        = newPos - m_pos + (m_pos - controlPoint);
+    }
 
     m_pos = pos;
 
