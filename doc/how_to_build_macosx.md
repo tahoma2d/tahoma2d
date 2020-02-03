@@ -11,7 +11,7 @@
 - boost (1.55.0 or later)
 
 ## Building on MacOSX
-### Download boost from https://boost.org
+### Download boost from https://boost.org
 
 Download the .bz2 mac (unix if mac not specified) version 1_55_0 or later (last tested with 1_69_0)
 
