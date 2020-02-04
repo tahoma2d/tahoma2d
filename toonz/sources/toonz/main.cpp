@@ -85,6 +85,9 @@
 #include <QHash>
 
 #ifdef _WIN32
+#ifndef x64
+#include <float.h>
+#endif
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
 
