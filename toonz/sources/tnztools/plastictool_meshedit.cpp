@@ -12,9 +12,8 @@
 #include "tcg/tcg_macros.h"
 #include "tcg/tcg_point_ops.h"
 
-// boost includes
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 using namespace tcg::bgl;
 
@@ -246,7 +245,7 @@ bool buildEdgeCuts(const TMeshImage &mi,
                    int &meshIdx, std::vector<EdgeCut> &edgeCuts) {
   typedef PlasticTool::MeshSelection::objects_container edges_container;
   typedef PlasticTool::MeshIndex MeshIndex;
-  typedef boost::unordered_map<int, VertexOccurrence> VertexOccurrencesMap;
+  typedef std::unordered_map<int, VertexOccurrence> VertexOccurrencesMap;
 
   struct locals {
     static bool differentMesh(const MeshIndex &a, const MeshIndex &b) {
@@ -494,13 +493,13 @@ namespace locals_ {      // Need to use a named namespace due to
                          // a known gcc 4.2 bug with compiler-generated
 struct VertexesRecorder  // copy constructors.
 {
-  boost::unordered_set<int> &m_examinedVertexes;
+  std::unordered_set<int> &m_examinedVertexes;
 
 public:
   typedef boost::on_examine_vertex event_filter;
 
 public:
-  VertexesRecorder(boost::unordered_set<int> &examinedVertexes)
+  VertexesRecorder(std::unordered_set<int> &examinedVertexes)
       : m_examinedVertexes(examinedVertexes) {}
 
   void operator()(int v, const TTextureMesh &) { m_examinedVertexes.insert(v); }
@@ -511,7 +510,7 @@ namespace {  //
 void splitUnconnectedMesh(TMeshImage &mi, int meshIdx) {
   struct locals {
     static void buildConnectedComponent(const TTextureMesh &mesh,
-                                        boost::unordered_set<int> &vertexes) {
+                                        std::unordered_set<int> &vertexes) {
       // Prepare BFS algorithm
       std::unique_ptr<UCHAR[]> colorMapP(new UCHAR[mesh.vertices().nodesCount()]());
 
@@ -528,7 +527,7 @@ void splitUnconnectedMesh(TMeshImage &mi, int meshIdx) {
   // Retrieve the list of vertexes in the first connected component
   TTextureMesh &origMesh = *mi.meshes()[meshIdx];
 
-  boost::unordered_set<int> firstComponent;
+  std::unordered_set<int> firstComponent;
   locals::buildConnectedComponent(origMesh, firstComponent);
 
   if (firstComponent.size() == origMesh.verticesCount()) return;

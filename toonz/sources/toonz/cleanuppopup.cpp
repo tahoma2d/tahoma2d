@@ -49,15 +49,11 @@
 #include <QMainWindow>
 #include <QGroupBox>
 
-// boost includes
-#include <boost/bind.hpp>
-#include <boost/functional.hpp>
-#include <boost/mem_fn.hpp>
-
 // STL includes
 #include <set>
 #include <map>
 #include <numeric>
+#include <functional>
 
 //*****************************************************************************
 //    Local namespace stuff
@@ -521,9 +517,8 @@ bool CleanupPopup::analyzeCleanupList() {
   QList<TXshSimpleLevel *> levelsToBeDeleted;
 
   // Traverse the cleanup list
-  bc::vector<CleanupLevel>::iterator clt, clEnd = m_cleanupLevels.end();
-  for (clt = m_cleanupLevels.begin(); clt != clEnd; ++clt) {
-    TXshSimpleLevel *sl = clt->m_sl;
+  for (auto &clt : m_cleanupLevels) {
+    TXshSimpleLevel *sl = clt.m_sl;
 
     /*--- Cleanup対象LevelのCleanupSettingを取得 ---*/
     loadCleanupParams(m_params.get(),
@@ -531,7 +526,7 @@ bool CleanupPopup::analyzeCleanupList() {
 
     // Check level existence
     /*--- Cleanup後に得られるであろうTLVのパス ---*/
-    TFilePath outputPath = scene->decodeFilePath(clt->m_outputPath);
+    TFilePath outputPath = scene->decodeFilePath(clt.m_outputPath);
     {
       /*-- 出力先にTLVファイルが無ければ問題なし(このLevelはCleanupする) --*/
       if (!TSystem::doesExistFileOrLevel(outputPath)) {
@@ -568,8 +563,8 @@ bool CleanupPopup::analyzeCleanupList() {
       }
 
       // Prompt user for file conflict resolution
-      switch (clt->m_resolution =
-                  Resolution(m_overwriteDialog->execute(&clt->m_outputPath))) {
+      switch (clt.m_resolution =
+                  Resolution(m_overwriteDialog->execute(&clt.m_outputPath))) {
       case CANCEL:
         return false;
 
@@ -600,8 +595,8 @@ bool CleanupPopup::analyzeCleanupList() {
 
       TLevelP level(0);  // Current level info. Yeah the init is a shame... :(
       /*--- 元のLevelと新しいCleanup結果が混合する場合。REPLACE以外 ---*/
-      if (clt->m_resolution == OVERWRITE || clt->m_resolution == WRITE_NEW ||
-          clt->m_resolution == NOPAINT_ONLY) {
+      if (clt.m_resolution == OVERWRITE || clt.m_resolution == WRITE_NEW ||
+          clt.m_resolution == NOPAINT_ONLY) {
         // Check output resolution consistency
         // Retrieve file resolution
         /*---現在在るTLVのサイズと、CleanupSettingsのサイズが一致しているかチェック---*/
@@ -646,7 +641,7 @@ bool CleanupPopup::analyzeCleanupList() {
         }
       }
       /*--- REPLACEの場合、消されるファイルパスのリストを作る ---*/
-      else if (clt->m_resolution == REPLACE) {
+      else if (clt.m_resolution == REPLACE) {
         filePathsToBeDeleted.push_back(outputPath);
 
         levelsToBeDeleted.push_back(sl);
@@ -671,15 +666,15 @@ bool CleanupPopup::analyzeCleanupList() {
 
       // Finally, apply resolution to individual frames.
       /*--- WRITE_NEW は、「未Cleanupのフレームだけ処理する」オプション ---*/
-      if (clt->m_resolution == WRITE_NEW) {
+      if (clt.m_resolution == WRITE_NEW) {
         const TLevel::Table *table = level->getTable();
 
-        clt->m_frames.erase(
-            std::remove_if(clt->m_frames.begin(), clt->m_frames.end(),
+        clt.m_frames.erase(
+            std::remove_if(clt.m_frames.begin(), clt.m_frames.end(),
                            [table](TLevel::Table::key_type const &key) {
                              return table->count(key);
                            }),
-            clt->m_frames.end());
+            clt.m_frames.end());
       }
     }
   }
@@ -743,7 +738,7 @@ bool CleanupPopup::analyzeCleanupList() {
   /*--- Cleanup対象フレームが無くなったLevelを対象から外す ---*/
   m_cleanupLevels.erase(
       std::remove_if(m_cleanupLevels.begin(), m_cleanupLevels.end(),
-                     boost::mem_fn(&CleanupLevel::empty)),
+                     std::mem_fn(&CleanupLevel::empty)),
       m_cleanupLevels.end());
 
   return true;

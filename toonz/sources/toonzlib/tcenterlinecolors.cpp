@@ -7,7 +7,6 @@
 
 // Boost includes
 #include <boost/container/flat_map.hpp>
-#include <boost/algorithm/minmax_element.hpp>
 
 namespace boost_c = boost::container;
 
@@ -514,13 +513,6 @@ static int getInkPredominance(const TRasterCM32P &ras, TPalette *palette, int x,
 */
 static int getBranchPredominance(const TRasterCM32P &ras, TPalette *palette,
                                  JointSequenceGraph::Node &node) {
-  struct locals {
-    static inline bool valueLess(const std::pair<int, int> &a,
-                                 const std::pair<int, int> &b) {
-      return (a.second < b.second);
-    }
-  };
-
   boost_c::flat_map<int, int> branchInksHistogram;
 
   UINT l, lCount = node.getLinksCount();
@@ -536,9 +528,11 @@ static int getBranchPredominance(const TRasterCM32P &ras, TPalette *palette,
 
   typedef boost_c::flat_map<int, int>::iterator histo_it;
 
-  const std::pair<histo_it, histo_it> &histoRange =
-      boost::minmax_element(branchInksHistogram.begin(),
-                            branchInksHistogram.end(), locals::valueLess);
+  const std::pair<histo_it, histo_it> &histoRange = std::minmax_element(
+      branchInksHistogram.begin(), branchInksHistogram.end(),
+      [](const std::pair<int, int> &a, const std::pair<int, int> &b) {
+        return a.second < b.second;
+      });
 
   return (histoRange.first->second == histoRange.second->second)
              ? -1

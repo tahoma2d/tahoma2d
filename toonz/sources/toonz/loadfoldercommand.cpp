@@ -37,7 +37,6 @@
 
 #include <boost/bind.hpp>
 
-#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <boost/range/algorithm/for_each.hpp>
@@ -50,8 +49,7 @@
 
 // STD includes
 #include <set>
-
-namespace ba = boost::algorithm;
+#include <algorithm>
 
 //************************************************************************
 //    Local namespace  structures
@@ -493,8 +491,8 @@ QString OverwriteDialog::acceptResolution(void *obj_, int resolution,
     }
 
     static bool existsResource(const TFilePath &dstDir, const Resource &rsrc) {
-      return ba::any_of(rsrc.m_components.begin(), rsrc.m_components.end(),
-                        boost::bind(existsComponent, boost::cref(dstDir), _1));
+      return std::any_of(rsrc.m_components.begin(), rsrc.m_components.end(),
+                         boost::bind(existsComponent, boost::cref(dstDir), _1));
     }
   };  // locals
 
@@ -547,7 +545,7 @@ int IoCmd::loadResourceFolders(LoadResourceArguments &args,
   // Deal with import decision
   bool import = false;
   {
-    if (ba::any_of(
+    if (std::any_of(
             args.resourceDatas.begin(), args.resourceDatas.end(),
             boost::bind(locals::isExternPath, boost::cref(*scene), _1))) {
       // Ask for data import in this case
