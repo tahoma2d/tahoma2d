@@ -163,7 +163,7 @@ QVector<int> XdtsFieldTrackItem::getCellNumberTrack() const {
   return cells;
 }
 
-QString XdtsFieldTrackItem::build(TXshCellColumn *column, int duration) {
+QString XdtsFieldTrackItem::build(TXshCellColumn *column) {
   // register the firstly-found level
   TXshSimpleLevel *level = nullptr;
   TXshCell prevCell;
@@ -187,7 +187,7 @@ QString XdtsFieldTrackItem::build(TXshCellColumn *column, int duration) {
 
     prevCell = cell;
   }
-  if (r1 + 1 < duration) addFrame(r1 + 1, 0);
+  addFrame(r1 + 1, 0);
   if (level)
     return QString::fromStdWString(level->getName());
   else {
@@ -235,8 +235,7 @@ QVector<int> XdtsTimeTableFieldItem::getColumnTrack(int col) const {
   return QVector<int>();
 }
 
-void XdtsTimeTableFieldItem::build(TXsheet *xsheet, int duration,
-                                   QStringList &columnLabels) {
+void XdtsTimeTableFieldItem::build(TXsheet *xsheet, QStringList &columnLabels) {
   m_fieldId = CELL;
   for (int col = 0; col < xsheet->getFirstFreeColumnIndex(); col++) {
     if (xsheet->isColumnEmpty(col)) {
@@ -249,7 +248,7 @@ void XdtsTimeTableFieldItem::build(TXsheet *xsheet, int duration,
       continue;
     }
     XdtsFieldTrackItem track(col);
-    columnLabels.append(track.build(column, duration));
+    columnLabels.append(track.build(column));
     if (!track.isEmpty()) m_tracks.append(track);
   }
 }
@@ -334,12 +333,12 @@ QStringList XdtsTimeTableItem::getLevelNames() const {
   return ret;
 }
 
-void XdtsTimeTableItem::build(TXsheet *xsheet, QString name) {
-  m_duration = xsheet->getFrameCount();
+void XdtsTimeTableItem::build(TXsheet *xsheet, QString name, int duration) {
+  m_duration = duration;
   m_name     = name;
   QStringList columnLabels;
   XdtsTimeTableFieldItem field;
-  field.build(xsheet, m_duration, columnLabels);
+  field.build(xsheet, columnLabels);
   m_fields.append(field);
   while (!columnLabels.isEmpty() && columnLabels.last().isEmpty())
     columnLabels.removeLast();
@@ -391,9 +390,9 @@ QStringList XdtsData::getLevelNames() const {
   return m_timeTables.at(0).getLevelNames();
 }
 
-void XdtsData::build(TXsheet *xsheet, QString name) {
+void XdtsData::build(TXsheet *xsheet, QString name, int duration) {
   XdtsTimeTableItem timeTable;
-  timeTable.build(xsheet, name);
+  timeTable.build(xsheet, name, duration);
   if (timeTable.isEmpty()) return;
   m_timeTables.append(timeTable);
 }
@@ -519,8 +518,18 @@ void ExportXDTSCommand::execute() {
   TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
   TFilePath fp      = scene->getScenePath().withType("xdts");
 
+  // if the current xsheet is top xsheet in the scene and the output
+  // frame range is specified, set the "to" frame value as duration
+  int duration;
+  TOutputProperties *oprop = scene->getProperties()->getOutputProperties();
+  int from, to, step;
+  if (scene->getTopXsheet() == xsheet && oprop->getRange(from, to, step))
+    duration = to + 1;
+  else
+    duration = xsheet->getFrameCount();
+
   XdtsData xdtsData;
-  xdtsData.build(xsheet, QString::fromStdString(fp.getName()));
+  xdtsData.build(xsheet, QString::fromStdString(fp.getName()), duration);
   if (xdtsData.isEmpty()) {
     DVGui::error(QObject::tr("No columns can be exported."));
     return;
