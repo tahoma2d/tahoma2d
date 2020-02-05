@@ -139,7 +139,7 @@ public:
   int getTrackNo() const { return m_trackNo; }
   QVector<int> getCellNumberTrack() const;
 
-  QString build(TXshCellColumn *, int);
+  QString build(TXshCellColumn *);
   void addFrame(int frame, int cellNumber) {
     m_frames.append(XdtsTrackFrameItem(frame, cellNumber));
   }
@@ -161,7 +161,7 @@ public:
   QList<int> getOccupiedColumns() const;
   QVector<int> getColumnTrack(int col) const;
 
-  void build(TXsheet *, int, QStringList &);
+  void build(TXsheet *, QStringList &);
 };
 
 class XdtsTimeTableHeaderItem {
@@ -210,8 +210,7 @@ public:
     return m_timeTableHeaders[m_cellHeaderIndex];
   }
   int getDuration() { return m_duration; }
-
-  void build(TXsheet *, QString);
+  void build(TXsheet *, QString, int duration);
   bool isEmpty() {
     return m_duration == 0 || m_fields.isEmpty() ||
            m_timeTableHeaders.isEmpty();
@@ -236,7 +235,7 @@ public:
   void write(QJsonObject &json) const;
   QStringList getLevelNames() const;
   XdtsTimeTableItem &timeTable() { return m_timeTables[0]; }
-  void build(TXsheet *, QString);
+  void build(TXsheet *, QString, int duration);
   bool isEmpty() { return m_timeTables.isEmpty(); }
 };
 
