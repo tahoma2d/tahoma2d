@@ -200,11 +200,11 @@ int FilmstripFrames::getOneFrameHeight() {
 //-----------------------------------------------------------------------------
 void FilmstripFrames::updateContentHeight(int minimumHeight) {
   if (minimumHeight < 0)
-    minimumHeight   = visibleRegion().boundingRect().bottom();
+    minimumHeight = visibleRegion().boundingRect().bottom();
   int contentHeight = getFramesHeight();
   if (contentHeight < minimumHeight) contentHeight = minimumHeight;
-  int parentHeight                                 = parentWidget()->height();
-  if (contentHeight < parentHeight) contentHeight  = parentHeight;
+  int parentHeight = parentWidget()->height();
+  if (contentHeight < parentHeight) contentHeight = parentHeight;
   if (contentHeight != height()) setFixedHeight(contentHeight);
 }
 
@@ -512,9 +512,8 @@ void FilmstripFrames::paintEvent(QPaintEvent *evt) {
     QRectF naviRatio(
         (-(float)m_viewer->width() * 0.5f - (float)imgBottomLeft.x) /
             imgSizeInViewer.width(),
-        1.0f -
-            ((float)m_viewer->height() * 0.5f - (float)imgBottomLeft.y) /
-                imgSizeInViewer.height(),
+        1.0f - ((float)m_viewer->height() * 0.5f - (float)imgBottomLeft.y) /
+                   imgSizeInViewer.height(),
         (float)m_viewer->width() / imgSizeInViewer.width(),
         (float)m_viewer->height() / imgSizeInViewer.height());
 
@@ -539,7 +538,7 @@ void FilmstripFrames::paintEvent(QPaintEvent *evt) {
 
   int frameCount = (int)fids.size();
 
-  bool isReadOnly    = false;
+  bool isReadOnly = false;
   if (sl) isReadOnly = sl->isReadOnly();
 
   int i;
@@ -1063,14 +1062,12 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(cm->getAction(MI_Renumber));
     if (sl && sl->getType() == TZP_XSHLEVEL)
       menu->addAction(cm->getAction(MI_RevertToCleanedUp));
-    if (sl &&
-        (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
-         (sl->getType() == OVL_XSHLEVEL && sl->getPath().getType() != "psd" &&
-          sl->getPath().getType() != "gif" &&
-          sl->getPath().getType() != "mp4" &&
-          sl->getPath().getType() != "webm")))
-      menu->addAction(cm->getAction(MI_RevertToLastSaved));
   }
+  if (sl &&
+      (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
+       (sl->getType() == OVL_XSHLEVEL && sl->getPath().getType() != "gif" &&
+        sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm")))
+    menu->addAction(cm->getAction(MI_RevertToLastSaved));
 
   menu->exec(event->globalPos());
 }
@@ -1228,7 +1225,7 @@ Filmstrip::Filmstrip(QWidget *parent, Qt::WFlags flags)
 //-----------------------------------------------------------------------------
 /*! switch the current level when the current index of m_chooseLevelCombo is
  * changed
-*/
+ */
 void Filmstrip::onChooseLevelComboChanged(int index) {
   TApp *tapp = TApp::instance();
   // empty level
@@ -1270,7 +1267,7 @@ void Filmstrip::onChooseLevelComboChanged(int index) {
 
 //-----------------------------------------------------------------------------
 /*! update combo items when the contents of scene cast are changed
-*/
+ */
 void Filmstrip::updateChooseLevelComboItems() {
   // clear items
   m_chooseLevelCombo->clear();
@@ -1331,7 +1328,7 @@ void Filmstrip::updateChooseLevelComboItems() {
 
 //-----------------------------------------------------------------------------
 /*! synchronize the current index of combo to the current level
-*/
+ */
 void Filmstrip::updateCurrentLevelComboItem() {
   if (m_chooseLevelCombo->count() == 1) {
     m_chooseLevelCombo->setCurrentIndex(0);
@@ -1368,7 +1365,7 @@ void Filmstrip::showEvent(QShowEvent *) {
   TXshLevelHandle *levelHandle = app->getCurrentLevel();
   bool ret = connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)),
                      SLOT(onLevelSwitched(TXshLevel *)));
-  ret = ret &&
+  ret      = ret &&
         connect(levelHandle, SIGNAL(xshLevelChanged()), SLOT(onLevelChanged()));
 
   // updateWindowTitle is called in the onLevelChanged
@@ -1561,7 +1558,7 @@ QString InbetweenDialog::getValue() { return m_comboBox->currentText(); }
 //-----------------------------------------------------------------------------
 
 void InbetweenDialog::setValue(const QString &value) {
-  int currentIndex                   = m_comboBox->findText(value);
+  int currentIndex = m_comboBox->findText(value);
   if (currentIndex < 0) currentIndex = 0;
   m_comboBox->setCurrentIndex(currentIndex);
 }
