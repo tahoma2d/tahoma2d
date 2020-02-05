@@ -2786,8 +2786,8 @@ public:
     }
 
     // reset the undo before save level
-    // TODO: この仕様、Preferencesでオプション化する
-    TUndoManager::manager()->reset();
+    if (Preferences::instance()->getBoolValue(resetUndoOnSavingLevel))
+      TUndoManager::manager()->reset();
 
     if (!IoCmd::saveLevel()) error(QObject::tr("Save level Failed"));
   }
@@ -2983,8 +2983,8 @@ public:
     else if (pl)
       pl->getPalette()->setDirtyFlag(false);
 
-    /*- Undoをリセット。 TODO:この挙動、Preferencesでオプション化 -*/
-    TUndoManager::manager()->reset();
+    if (Preferences::instance()->getBoolValue(resetUndoOnSavingLevel))
+      TUndoManager::manager()->reset();
 
     TApp::instance()
         ->getPaletteController()
