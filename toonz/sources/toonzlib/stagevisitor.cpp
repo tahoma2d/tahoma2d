@@ -250,9 +250,22 @@ void Picker::onImage(const Stage::Player &player) {
     if (r) styleId   = r->getStyle();
     if (styleId != 0)
       picked = true;
-    else if (vi->getNearestStroke(point, w, strokeIndex, dist2) &&
-             dist2 < m_minDist2)
-      picked = true;
+    else if (vi->getNearestStroke(point, w, strokeIndex, dist2)) {
+      // based on TTool::Viewer::doPickGuideStroke
+
+      double pixelSize = 1.0; // TODO: Get actual pixel size from viewer.
+      double maxDist   = 5 * pixelSize;
+      double maxDist2  = maxDist * maxDist;
+      double checkDist = maxDist2 * 4;
+
+      TStroke *stroke = vi->getStroke(strokeIndex);
+      TThickPoint thickPoint = stroke->getThickPoint(w);
+      double thickness = thickPoint.thick;
+      double len = thickness * pixelSize * sqrt(m_viewAff.det());
+      checkDist = std::max(checkDist, (len * len));
+      if (dist2 < checkDist)
+        picked = true;
+    }
   } else if (TRasterImageP ri = img) {
     TRaster32P ras = ri->getRaster();
     if (!ras) return;
