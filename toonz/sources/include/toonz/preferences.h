@@ -333,6 +333,9 @@ public:
   int getLevelBasedToolsDisplay() const {
     return getIntValue(levelBasedToolsDisplay);
   }
+  bool useCtrlAltToResizeBrushEnabled() const {
+    return getBoolValue(useCtrlAltToResizeBrush);
+  }
 
   // Xsheet  tab
   QString getXsheetLayoutPreference() const {

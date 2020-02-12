@@ -490,6 +490,8 @@ void Preferences::definePreferenceItems() {
   define(cursorOutlineEnabled, "cursorOutlineEnabled", QMetaType::Bool, true);
   define(levelBasedToolsDisplay, "levelBasedToolsDisplay", QMetaType::Int,
          0);  // Default
+  define(useCtrlAltToResizeBrush, "useCtrlAltToResizeBrush",
+         QMetaType::Bool, true);
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,

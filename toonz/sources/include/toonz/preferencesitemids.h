@@ -104,6 +104,7 @@ enum PreferencesItemId {
   cursorBrushStyle,
   cursorOutlineEnabled,
   levelBasedToolsDisplay,
+  useCtrlAltToResizeBrush,
 
   //----------
   // Xsheet

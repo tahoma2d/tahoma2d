@@ -1032,6 +1032,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {cursorBrushStyle, tr("Cursor Style:")},
       {cursorOutlineEnabled, tr("Show Cursor Size Outlines")},
       {levelBasedToolsDisplay, tr("Toolbar Display Behaviour:")},
+      {useCtrlAltToResizeBrush, tr("Use Ctrl+Alt to Resize Brush")},
 
       // Xsheet
       {xsheetLayoutPreference, tr("Column Header Layout*:")},
@@ -1649,6 +1650,7 @@ QWidget* PreferencesPopup::createToolsPage() {
   }
   insertUI(levelBasedToolsDisplay, lay,
            getComboItemList(levelBasedToolsDisplay));
+  insertUI(useCtrlAltToResizeBrush, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
