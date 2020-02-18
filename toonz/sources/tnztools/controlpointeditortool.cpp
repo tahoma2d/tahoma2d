@@ -28,6 +28,18 @@
 using namespace ToolUtils;
 
 TEnv::IntVar AutoSelectDrawing("ControlPointEditorToolAutoSelectDrawing", 1);
+TEnv::IntVar Snap("ControlPointEditorToolSnap", 0);
+TEnv::IntVar SnapSensitivity("ControlPointEditorToolSnapSensitivity", 0);
+
+//-----------------------------------------------------------------------------
+
+#define LOW_WSTR L"Low"
+#define MEDIUM_WSTR L"Medium"
+#define HIGH_WSTR L"High"
+
+const double SNAPPING_LOW    = 5.0;
+const double SNAPPING_MEDIUM = 25.0;
+const double SNAPPING_HIGH   = 100.0;
 
 //-----------------------------------------------------------------------------
 namespace {
@@ -129,6 +141,12 @@ class ControlPointEditorTool final : public TTool {
   TBoolProperty
       m_autoSelectDrawing;  // Consente di scegliere se swichare tra i livelli.
 
+  TBoolProperty m_snap;
+  TEnumProperty m_snapSensitivity;
+  double m_snapMinDistance;
+  bool m_foundSnap;
+  TPointD m_snapPoint;
+
   enum Action {
     NONE,
     RECT_SELECTION,
@@ -199,7 +217,67 @@ public:
   // returns true if the pressed key is recognized and processed.
   bool isEventAcceptable(QEvent *e) override;
 
+  TPointD calculateSnap(TPointD pos);
+  void drawSnap();
+  TPointD getSnap(TPointD pos);
+  void resetSnap();
+
 } controlPointEditorTool;
+
+//-----------------------------------------------------------------------------
+
+TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
+  m_foundSnap = false;
+  TVectorImageP vi(TTool::getImage(false));
+  TPointD snapPoint = pos;
+  if (vi && m_snap.getValue()) {
+    double minDistance = m_snapMinDistance;
+
+    int i, strokeNumber = vi->getStrokeCount();
+
+    TStroke *selfStroke = m_controlPointEditorStroke.getStroke();
+    TStroke *stroke;
+    double distance, outW, w;
+
+    for (i = 0; i < strokeNumber; i++) {
+      stroke = vi->getStroke(i);
+      if (stroke != selfStroke) {
+        if (stroke->getNearestW(pos, outW, distance) &&
+            distance < minDistance) {
+          minDistance = distance;
+          if (areAlmostEqual(outW, 0.0, 1e-3))
+            w = 0.0;
+          else if (areAlmostEqual(outW, 1.0, 1e-3))
+            w = 1.0;
+          else
+            w = outW;
+          TThickPoint point = stroke->getPoint(w);
+          snapPoint         = TPointD(point.x, point.y);
+          m_foundSnap       = true;
+          m_snapPoint       = snapPoint;
+        }
+      }
+    }
+  }
+  return snapPoint;
+}
+
+void ControlPointEditorTool::drawSnap() {
+  double thick = 6.0;
+  if (m_foundSnap) {
+    tglColor(TPixelD(0.1, 0.9, 0.1));
+    tglDrawCircle(m_snapPoint, thick);
+  }
+}
+
+TPointD ControlPointEditorTool::getSnap(TPointD pos) {
+  if (m_foundSnap)
+    return m_snapPoint;
+  else
+    return pos;
+}
+
+void ControlPointEditorTool::resetSnap() { m_foundSnap = false; }
 
 //=============================================================================
 // Spline Editor Tool
@@ -212,6 +290,8 @@ ControlPointEditorTool::ControlPointEditorTool()
     , m_isImageChanged(false)
     , m_selectingRect(TRectD())
     , m_autoSelectDrawing("Auto Select Drawing", true)
+    , m_snap("snap", false)
+    , m_snapSensitivity("Sensitivity:")
     , m_action(NONE)
     , m_cursorType(NORMAL)
     , m_undo(0)
@@ -220,15 +300,27 @@ ControlPointEditorTool::ControlPointEditorTool()
     , m_moveSegmentLimitation() {
   bind(TTool::Vectors);
   m_prop.bind(m_autoSelectDrawing);
+  m_prop.bind(m_snap);
+  m_prop.bind(m_snapSensitivity);
   m_selection.setControlPointEditorStroke(&m_controlPointEditorStroke);
 
   m_autoSelectDrawing.setId("AutoSelectDrawing");
+  m_snap.setId("Snap");
+  m_snapSensitivity.addValue(LOW_WSTR);
+  m_snapSensitivity.addValue(MEDIUM_WSTR);
+  m_snapSensitivity.addValue(HIGH_WSTR);
+  m_snapSensitivity.setId("SnapSensitivity");
 }
 
 //-----------------------------------------------------------------------------
 
 void ControlPointEditorTool::updateTranslation() {
   m_autoSelectDrawing.setQStringName(tr("Auto Select Drawing"));
+  m_snap.setQStringName(tr("Snap"));
+  m_snapSensitivity.setQStringName(tr(""));
+  m_snapSensitivity.setItemUIName(L"Low", tr("Low"));
+  m_snapSensitivity.setItemUIName(L"Medium", tr("Med"));
+  m_snapSensitivity.setItemUIName(L"High", tr("High"));
 }
 
 //---------------------------------------------------------------------------
@@ -387,6 +479,8 @@ void ControlPointEditorTool::draw() {
   drawControlPoint();
 
   drawMovingSegment();
+
+  drawSnap();
 }
 
 //---------------------------------------------------------------------------
@@ -671,11 +765,24 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
   TPointD delta = pos - m_pos;
 
   if (m_action == CP_MOVEMENT) {
-    m_pos = pos;
     if (!m_selection.isSelected(m_lastPointSelected) && e.isCtrlPressed())
       m_selection.select(m_lastPointSelected);  // Controllo che non venga
                                                 // deselezionata l'ultima
                                                 // selezione nel movimento
+
+    if (m_lastPointSelected >= 0) {
+      TThickPoint cp;
+      TPointD controlPoint;
+      TPointD newPos;
+
+      cp = m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
+      controlPoint = TPointD(cp.x, cp.y);
+      newPos       = calculateSnap(pos);
+      delta        = newPos - m_pos + (m_pos - controlPoint);
+    }
+
+    m_pos = pos;
+
     moveControlPoints(delta);
     m_isImageChanged = true;
   }
@@ -713,12 +820,16 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
 
 //---------------------------------------------------------------------------
 
-void ControlPointEditorTool::leftButtonUp(const TPointD &pos,
+void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
                                           const TMouseEvent &e) {
   TVectorImageP vi(getImage(true));
   int currentStroke = m_controlPointEditorStroke.getStrokeIndex();
   if (!vi || currentStroke == -1) return;
   QMutexLocker lock(vi->getMutex());
+
+  TPointD pos;
+  pos = getSnap(realPos);
+  resetSnap();
 
   if (m_action == EDIT_SEGMENT) {
     m_moveControlPointEditorStroke.setStroke((TVectorImage *)0, -1);
@@ -851,6 +962,19 @@ void ControlPointEditorTool::onLeave() {
 
 bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
   AutoSelectDrawing = (int)(m_autoSelectDrawing.getValue());
+  Snap              = (int)(m_snap.getValue());
+  SnapSensitivity   = (int)(m_snapSensitivity.getIndex());
+  switch (SnapSensitivity) {
+  case 0:
+    m_snapMinDistance = SNAPPING_LOW;
+    break;
+  case 1:
+    m_snapMinDistance = SNAPPING_MEDIUM;
+    break;
+  case 2:
+    m_snapMinDistance = SNAPPING_HIGH;
+    break;
+  }
   return true;
 }
 
@@ -859,8 +983,22 @@ bool ControlPointEditorTool::onPropertyChanged(std::string propertyName) {
 void ControlPointEditorTool::onActivate() {
   // TODO: getApplication()->editImageOrSpline();
   m_autoSelectDrawing.setValue(AutoSelectDrawing ? 1 : 0);
+  m_snap.setValue(Snap ? 1 : 0);
+  m_snapSensitivity.setIndex(SnapSensitivity);
+  switch (SnapSensitivity) {
+  case 0:
+    m_snapMinDistance = SNAPPING_LOW;
+    break;
+  case 1:
+    m_snapMinDistance = SNAPPING_MEDIUM;
+    break;
+  case 2:
+    m_snapMinDistance = SNAPPING_HIGH;
+    break;
+  }
   m_controlPointEditorStroke.setStroke((TVectorImage *)0, -1);
   m_draw = true;
+  resetSnap();
 }
 
 //---------------------------------------------------------------------------
