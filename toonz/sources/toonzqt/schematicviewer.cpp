@@ -384,12 +384,12 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -685,10 +685,9 @@ bool SchematicSceneViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -1139,7 +1138,7 @@ void SchematicViewer::setStageSchematicViewed(bool isStageSchematic) {
 }
 
 //------------------------------------------------------------------
-
+// called when the signals xshLevelChanged or objectSwitched is emited
 void SchematicViewer::updateScenes() {
   TStageObjectId id = m_stageScene->getCurrentObject();
   if (id.isColumn()) {
@@ -1147,12 +1146,9 @@ void SchematicViewer::updateScenes() {
     TXsheet *xsh = m_stageScene->getXsheetHandle()->getXsheet();
     if (!xsh) return;
     TXshColumn *column = xsh->getColumn(id.getIndex());
-    if (!column) {
-      m_fxScene->getFxHandle()->setFx(0, false);
-      return;
-    }
-    TFx *fx = column->getFx();
-    m_fxScene->getFxHandle()->setFx(fx, false);
+    if (!column || !column->getZeraryFxColumn()) return;
+    TFx *fx = column->getZeraryFxColumn()->getZeraryColumnFx();
+    m_fxScene->getFxHandle()->setFx(fx);
     m_fxScene->update();
   }
 }

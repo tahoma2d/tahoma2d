@@ -2039,8 +2039,6 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           return;
         setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
       }
-      // synchronize the current column and the current fx
-      if (column) TApp::instance()->getCurrentFx()->setFx(column->getFx());
     }
     // clicking on the normal columns
     else if (!isEmpty) {
@@ -2146,14 +2144,16 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           }
         }
       }
-      // synchronize the current column and the current fx
-      if (column) TApp::instance()->getCurrentFx()->setFx(column->getFx());
+      // update the current fx when zerary fx column is clicked
+      if (column && column->getZeraryFxColumn()) {
+        TFx *fx = column->getZeraryFxColumn()->getZeraryColumnFx();
+        TApp::instance()->getCurrentFx()->setFx(fx);
+      }
     } else {
       if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
           event->button() == Qt::RightButton)
         return;
       setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
-      TApp::instance()->getCurrentFx()->setFx(0);
     }
 
     m_viewer->dragToolClick(event);
