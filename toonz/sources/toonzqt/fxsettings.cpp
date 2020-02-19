@@ -1345,7 +1345,7 @@ void FxSettings::setCurrentFx() {
   actualFx->getAttributes()->enable(true);
   if (hasEmptyInput)
     currentFx = actualFx;
-  else {
+  else if (m_viewer->isEnabled()) {
     if (!m_isCameraModeView)
       currentFx = buildSceneFx(scene, frame, actualFx, false);
     else {
@@ -1353,7 +1353,8 @@ void FxSettings::setCurrentFx() {
           scene->getProperties()->getPreviewProperties()->getRenderSettings();
       currentFx = buildPartialSceneFx(scene, (double)frame, actualFx, 1, false);
     }
-  }
+  } else
+    currentFx = TFxP();
 
   if (currentFx) currentFx = currentFx->clone(true);
 
