@@ -2366,7 +2366,19 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
       assert(false);
 
     app->getCurrentScene()->notifySceneChanged();
-    app->getCurrentXsheet()->notifyXsheetChanged();
+    // signal XsheetChanged will invoke PreviewFxManager to all rendered frames,
+    // if necessary. it causes slowness when opening preview flipbook of large
+    // scene.
+    bool isTransparencyRendered = app->getCurrentScene()
+                                      ->getScene()
+                                      ->getProperties()
+                                      ->isColumnColorFilterOnRenderEnabled();
+    if ((isTransparencyRendered && (m_doOnRelease == ToggleTransparency ||
+                                    m_doOnRelease == ToggleAllTransparency ||
+                                    m_doOnRelease == OpenSettings)) ||
+        m_doOnRelease == TogglePreviewVisible ||
+        m_doOnRelease == ToggleAllPreviewVisible)
+      app->getCurrentXsheet()->notifyXsheetChanged();
     update();
     m_doOnRelease = 0;
   }
