@@ -131,7 +131,7 @@ inline void adaptView(FlipBook *flipbook, TDimension cameraSize) {
   TRect imgRect(cameraSize);
   flipbook->getImageViewer()->adaptView(imgRect, imgRect);
 }
-};
+};  // namespace
 
 //=======================================================================================================
 
@@ -483,7 +483,7 @@ void PreviewFxInstance::addFlipbook(FlipBook *&flipbook) {
   else if (sfx)
     fxId = sfx->getZeraryFx()->getFxId();
   else {
-    fxId                   = m_fx->getFxId();
+    fxId = m_fx->getFxId();
     if (fxId.empty()) fxId = m_fx->getName();
   }
 
@@ -1270,7 +1270,7 @@ FlipBook *PreviewFxManager::showNewPreview(TFxP fx, bool forceFlipbook) {
 //-----------------------------------------------------------------------------
 /*! return true if the preview fx instance for specified fx is with sub-camera
  * activated
-*/
+ */
 
 bool PreviewFxManager::isSubCameraActive(TFxP fx) {
   if (!fx) return false;
@@ -1335,6 +1335,15 @@ void PreviewFxManager::unfreeze(FlipBook *flipbook) {
     flipbook->setProgressBarStatus(NULL);
 
     previewInstance->addFlipbook(flipbook);
+
+    // recompute frames, if necessary (call the same process as
+    // PreviewFxManager::onXsheetChanged())
+    previewInstance->updateRenderSettings();
+    previewInstance->updateCamera();
+    previewInstance->updateFrameRange();
+    previewInstance->updateFlipbookTitles();
+    previewInstance->updateAliases();
+
     previewInstance->refreshViewRects();
   }
 }
@@ -1471,6 +1480,8 @@ void PreviewFxManager::onFxChanged() {
     // if(areAncestorAndDescendant(it.value()->m_fx, fx))  //Currently not
     // trespassing sub-xsheet boundaries
     {
+      // in case the flipbook is frozen
+      if (it.value()->m_flipbooks.empty()) continue;
       it.value()->updateAliases();
       emit refreshViewRects(it.key());
       // it.value()->refreshViewRects();
@@ -1486,6 +1497,8 @@ void PreviewFxManager::onXsheetChanged() {
     QMap<unsigned long, PreviewFxInstance *>::iterator it;
     for (it = m_previewInstances.begin(); it != m_previewInstances.end();
          ++it) {
+      // in case the flipbook is frozen
+      if (it.value()->m_flipbooks.empty()) continue;
       it.value()->updateRenderSettings();
       it.value()->updateCamera();
       it.value()->updateFrameRange();
@@ -1506,6 +1519,8 @@ void PreviewFxManager::onObjectChanged(bool isDragging) {
     QMap<unsigned long, PreviewFxInstance *>::iterator it;
     for (it = m_previewInstances.begin(); it != m_previewInstances.end();
          ++it) {
+      // in case the flipbook is frozen
+      if (it.value()->m_flipbooks.empty()) continue;
       it.value()->updateFrameRange();
       it.value()->updateFlipbookTitles();
       it.value()->updateAliases();
