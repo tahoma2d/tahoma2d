@@ -1299,16 +1299,25 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
   int m = fids.size();
   assert(m > 0);
 
+  // Find the starting frame for the current level in the XSheet.
+  TTool::Application *app = TTool::getApplication();
+  int startRowInXSheet = 0, endRowInXSheet = 0;
+  if (app && app->getCurrentFrame()->isEditingScene()) {
+    int currentRow = getFrame();
+    TXsheet *xSheet = getXsheet();
+    TXshColumn *column = xSheet->getColumn(getColumnIndex());
+    column->getLevelRange(currentRow, startRowInXSheet, endRowInXSheet);
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFrameId <= fid && fid <= lastFrameId);
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
-    TTool::Application *app = TTool::getApplication();
     if (app) {
       if (app->getCurrentFrame()->isEditingScene())
-        app->getCurrentFrame()->setFrame(fid.getNumber() - 1);
+        app->getCurrentFrame()->setFrame(startRowInXSheet + fid.getNumber() - 1);
       else
         app->getCurrentFrame()->setFid(fid);
     }
