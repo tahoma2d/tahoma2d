@@ -932,6 +932,33 @@ QString CleanupPopup::setupLevel() {
        notLineProcessed = (sl->getType() != TZP_XSHLEVEL);
 
   if (lineProcessing) {
+    /*--- Keep original palette which will be reverted after cleanup ---*/
+    if (m_keepOriginalPalette) {
+      if ((sl->getType() == TZP_XSHLEVEL || sl->getType() == TZI_XSHLEVEL) &&
+          sl->getPalette() != NULL)
+        m_originalPalette = sl->getPalette()->clone();
+      else /*--- In case the level has been already cleanupped,
+           and is cleanupped again from raster level ---*/
+      {
+        /*--- Load and keep the palette from destination TLV ---*/
+        TFilePath targetPalettePath = outputPath.getParentDir() +
+                                      TFilePath(outputPath.getName() + ".tpl");
+        TFileStatus pfs(targetPalettePath);
+        if (pfs.doesExist() && pfs.isReadable()) {
+          TIStream is(targetPalettePath);
+          std::string tagName;
+          if (!is.matchTag(tagName) || tagName != "palette") {
+            DVGui::warning(QString(
+                "CleanupDefaultPalette file: This is not palette file"));
+            return NULL;
+          }
+          m_originalPalette = new TPalette();
+          m_originalPalette->loadData(is);
+        } else
+          m_originalPalette = 0;
+      }
+    }
+
     if (notLineProcessed) {
       /*-- Type, Pathを切り替えてTLVにする --*/
       // The level type changes to TLV
@@ -967,32 +994,6 @@ QString CleanupPopup::setupLevel() {
     // Update the level palette
     TPaletteP palette =
         TCleanupper::instance()->createToonzPaletteFromCleanupPalette();
-
-    /*--- Cleanup後にPaletteを元に戻すため、Paletteを保持しておく ---*/
-    if (m_keepOriginalPalette) {
-      if ((sl->getType() == TZP_XSHLEVEL || sl->getType() == TZI_XSHLEVEL) &&
-          sl->getPalette() != NULL)
-        m_originalPalette = sl->getPalette()->clone();
-      else /*--- 既にCleanup済みだが、再びTIFファイルからCleanupを行う場合 ---*/
-      {
-        /*--- Cleanup先のPaletteをロードして取っておく ---*/
-        TFilePath targetPalettePath = outputPath.getParentDir() +
-                                      TFilePath(outputPath.getName() + ".tpl");
-        TFileStatus pfs(targetPalettePath);
-        if (pfs.doesExist() && pfs.isReadable()) {
-          TIStream is(targetPalettePath);
-          std::string tagName;
-          if (!is.matchTag(tagName) || tagName != "palette") {
-            DVGui::warning(QString(
-                "CleanupDefaultPalette file: This is not palette file"));
-            return NULL;
-          }
-          m_originalPalette = new TPalette();
-          m_originalPalette->loadData(is);
-        } else
-          m_originalPalette = 0;
-      }
-    }
 
     sl->setPalette(palette.getPointer());
 
@@ -1569,7 +1570,7 @@ void CleanupPopup::onImgViewBoxToggled(bool on) {
 
 //-----------------------------------------------------------------------------
 /*!	Show the progress in the mainwindow's title bar
-*/
+ */
 void CleanupPopup::updateTitleString() {
   if (!TApp::instance()->getMainWindow()) return;
   MainWindow *mainWin =
