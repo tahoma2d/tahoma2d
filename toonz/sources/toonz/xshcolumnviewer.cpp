@@ -2337,7 +2337,9 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         int popupLeft = event->globalPos().x() + x;
         int popupRight = popupLeft + m_columnTransparencyPopup->width();
 
-        if (popupRight > screenRect.right()) {
+        // first condition checks if popup is on same monitor as main app;
+        // if popup is on different monitor, leave as is
+        if (popupLeft < screenRect.right() && popupRight > screenRect.right()) {
           int distance = popupRight - screenRect.right();
           m_columnTransparencyPopup->move(m_columnTransparencyPopup->x() - distance,
                                           m_columnTransparencyPopup->y());
