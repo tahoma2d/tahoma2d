@@ -203,6 +203,103 @@ public:
     // glPopMatrix();
   }
 
+  double getNearestSnapAtIntersection(TStroke *selfStroke, double w) {
+    TVectorImageP vi = TImageP(getImage(false));
+    if (!vi) {
+      return w;
+    }
+
+    std::vector<DoublePair> intersections;
+    int i, strokeNumber = vi->getStrokeCount();
+    double diff;
+    double nearestW = 1000;
+    double minDiff  = 1000;
+
+    // check self intersection first
+    intersect(selfStroke, selfStroke, intersections, false);
+    for (auto &intersection : intersections) {
+      if (areAlmostEqual(intersection.first, 0, 1e-6)) {
+        continue;
+      }
+      if (areAlmostEqual(intersection.second, 1, 1e-6)) {
+        continue;
+      }
+
+      diff = abs(intersection.first - w);
+      if (diff < minDiff) {
+        minDiff  = diff;
+        nearestW = intersection.first;
+      }
+
+      diff = abs(intersection.second - w);
+      if (diff < minDiff) {
+        minDiff  = diff;
+        nearestW = intersection.second;
+      }
+
+      if (selfStroke->isSelfLoop()) {
+        diff = abs(1 - intersection.first) + w;
+        if (diff < minDiff) {
+          minDiff  = diff;
+          nearestW = intersection.first;
+        }
+
+        diff = intersection.first + abs(1 - w);
+        if (diff < minDiff) {
+          minDiff  = diff;
+          nearestW = intersection.first;
+        }
+
+        diff = abs(1 - intersection.second) + w;
+        if (diff < minDiff) {
+          minDiff  = diff;
+          nearestW = intersection.second;
+        }
+
+        diff = intersection.second + abs(1 - w);
+        if (diff < minDiff) {
+          minDiff  = diff;
+          nearestW = intersection.second;
+        }
+      }
+    }
+
+    for (i = 0; i < strokeNumber; ++i) {
+      TStroke *stroke = vi->getStroke(i);
+      if (stroke == selfStroke) {
+        continue;
+      }
+
+      intersect(selfStroke, stroke, intersections, false);
+      for (auto &intersection : intersections) {
+        diff = abs(intersection.first - w);
+        if (diff < minDiff) {
+          minDiff  = diff;
+          nearestW = intersection.first;
+        }
+
+        if (selfStroke->isSelfLoop()) {
+          diff = abs(1 - intersection.first) + w;
+          if (diff < minDiff) {
+            minDiff  = diff;
+            nearestW = intersection.first;
+          }
+
+          diff = intersection.first + abs(1 - w);
+          if (diff < minDiff) {
+            minDiff  = diff;
+            nearestW = intersection.first;
+          }
+        }
+      }
+    }
+
+    if (nearestW >= 0 && nearestW <= 1) {
+      return nearestW;
+    }
+    return w;
+  }
+
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {
     if (getViewer() && getViewer()->getGuidedStrokePickerMode()) {
       getViewer()->doPickGuideStroke(pos);
@@ -245,6 +342,10 @@ public:
         if (len > totalLen) len -= totalLen;
 
         w = strokeRef->getParameterAtLength(len);
+      }
+
+      if (m_snapAtIntersection.getValue()) {
+        w = getNearestSnapAtIntersection(strokeRef, w);
       }
 
       std::vector<DoublePair> *sortedWRanges = new std::vector<DoublePair>;
@@ -309,9 +410,14 @@ public:
 
     if (vi->getNearestStroke(pos, pW, stroke, dist)) {
       TStroke *strokeRef = vi->getStroke(stroke);
-      m_speed            = strokeRef->getSpeed(pW);
-      m_cursor           = strokeRef->getThickPoint(pW);
-      m_pW               = pW;
+
+      if (m_snapAtIntersection.getValue()) {
+        pW = getNearestSnapAtIntersection(strokeRef, pW);
+      }
+
+      m_speed  = strokeRef->getSpeed(pW);
+      m_cursor = strokeRef->getThickPoint(pW);
+      m_pW     = pW;
     } else {
       m_speed = TPointD(0, 0);
     }
