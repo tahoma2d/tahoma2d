@@ -1,4 +1,5 @@
-
+#include "tenv.h"
+#include "tproperty.h"
 
 #include "tools/tool.h"
 #include "tools/toolutils.h"
@@ -22,6 +23,8 @@
 #include "tgl.h"
 
 using namespace ToolUtils;
+
+TEnv::IntVar SnapAtIntersection("CutterToolSnapAtIntersection", 0);
 
 //=============================================================================
 namespace {
@@ -161,11 +164,17 @@ public:
   int m_cursorId;
   double m_pW;
 
+  TPropertyGroup m_prop;
+  TBoolProperty m_snapAtIntersection;
+
   CutterTool()
       : TTool("T_Cutter")
       , m_mouseDown(false)
-      , m_cursorId(ToolCursor::CutterCursor) {
+      , m_cursorId(ToolCursor::CutterCursor)
+      , m_snapAtIntersection("Snap At Intersection", false) {
     bind(TTool::VectorImage);
+    m_prop.bind(m_snapAtIntersection);
+    m_snapAtIntersection.setId("Snap");
   }
 
   ToolType getToolType() const override { return TTool::LevelWriteTool; }
@@ -311,7 +320,9 @@ public:
 
   void onLeave() override { m_speed = TPointD(0, 0); }
 
-  void onActivate() override {}
+  void onActivate() override {
+    m_snapAtIntersection.setValue(SnapAtIntersection ? 1 : 0);
+  }
   void onEnter() override {
     if ((TVectorImageP)getImage(false))
       m_cursorId = ToolCursor::CutterCursor;
@@ -323,6 +334,17 @@ public:
     if (m_viewer && m_viewer->getGuidedStrokePickerMode())
       return m_viewer->getGuidedStrokePickerCursor();
     return m_cursorId;
+  }
+
+  void updateTranslation() override {
+    m_snapAtIntersection.setQStringName(QObject::tr("Snap At Intersection"));
+  }
+
+  TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
+
+  bool onPropertyChanged(std::string propertyName) override {
+    SnapAtIntersection = (int)(m_snapAtIntersection.getValue());
+    return true;
   }
 
 } cutterTool;
