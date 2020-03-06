@@ -1305,6 +1305,17 @@
   <item>"STD_iwa_LinearGradientFx.wave_frequency"	"Frequency"	</item>
   <item>"STD_iwa_LinearGradientFx.wave_phase"		"Phase"		</item>
 
+  <item>"STD_iwa_GlareFx" 			"Glare Iwa" 	</item>
+  <item>"STD_iwa_GlareFx.renderMode"	"Render Mode"		</item>
+  <item>"STD_iwa_GlareFx.intensity"	"Intensity"		</item>
+  <item>"STD_iwa_GlareFx.size"	"Filter Size"		</item>
+  <item>"STD_iwa_GlareFx.rotation"	"Filter Rotation"		</item>
+  <item>"STD_iwa_GlareFx.noise_factor"	"Noise Factor"		</item>
+  <item>"STD_iwa_GlareFx.noise_size"	"Noise Size"		</item>
+  <item>"STD_iwa_GlareFx.noise_octave"	"Noise Octave"		</item>
+  <item>"STD_iwa_GlareFx.noise_evolution"	"Noise Evolution"		</item>
+  <item>"STD_iwa_GlareFx.noise_offset"	"Noise Offset"		</item>
+
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->
 
   <item>STD_iwa_TiledParticlesFx "Tiled Particles Iwa" </item>
