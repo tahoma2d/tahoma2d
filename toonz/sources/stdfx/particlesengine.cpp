@@ -502,6 +502,24 @@ void Particles_Engine::render_particles(
     /*- 出力画像のバウンディングボックス -*/
     TRectD outTileBBox(tile->m_pos, TDimensionD(tile->getRaster()->getLx(),
                                                 tile->getRaster()->getLy()));
+
+    // enlarge bounding box for control images with infinite bbox in case the
+    // source region is larger than output tile
+    TRectD bboxForInifiniteSource = ri.m_affine.inv() * outTileBBox;
+    TRectD sourceBbox;
+    if (values.source_ctrl_val &&
+        ctrl_ports.at(values.source_ctrl_val)->isConnected()) {
+      (*(ctrl_ports.at(values.source_ctrl_val)))
+          ->getBBox(r_frame, sourceBbox, riAux);
+    }
+    if (sourceBbox.isEmpty() || sourceBbox == TConsts::infiniteRectD) {
+      sourceBbox = TRectD(values.x_pos_val - values.length_val * 0.5,
+                          values.y_pos_val - values.height_val * 0.5,
+                          values.x_pos_val + values.length_val * 0.5,
+                          values.y_pos_val + values.height_val * 0.5);
+    }
+    bboxForInifiniteSource += sourceBbox;
+
     /*- Controlに刺さっている各ポートについて -*/
     for (std::map<int, TRasterFxPort *>::iterator it = ctrl_ports.begin();
          it != ctrl_ports.end(); ++it) {
@@ -514,7 +532,7 @@ void Particles_Engine::render_particles(
         if (!bbox.isEmpty()) {
           if (bbox == TConsts::infiniteRectD)  // There could be an infinite
                                                // bbox - deal with it
-            bbox = ri.m_affine.inv() * outTileBBox;
+            bbox = bboxForInifiniteSource;
 
           if (frame <= pcFrame) {
             // This frame will not actually be rolled. However, it was
