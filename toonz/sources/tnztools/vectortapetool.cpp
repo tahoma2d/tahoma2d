@@ -23,6 +23,7 @@
 #include "tenv.h"
 // For Qt translation support
 #include <QCoreApplication>
+#include <QApplication>
 
 using namespace ToolUtils;
 
@@ -744,6 +745,11 @@ public:
   }
 
   void onActivate() override {
+    // enable drawing if we are in a scene viewer
+    QWidget *focusWidget = QApplication::focusWidget();
+    if (focusWidget && QString(focusWidget->metaObject()->className()) == "SceneViewer")
+      m_draw = true;
+
     if (!m_firstTime) return;
 
     std::wstring s = ::to_wstring(TapeMode.getValue());
