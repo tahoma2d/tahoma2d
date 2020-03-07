@@ -1494,10 +1494,6 @@ PencilTestPopup::PencilTestPopup()
   m_subHeightFld        = new IntLineEdit(this);
   QWidget* subCamWidget = new QWidget(this);
 
-#ifdef MACOSX
-  m_dummyViewFinder = new QCameraViewfinder(this);
-  m_dummyViewFinder->hide();
-#endif
   //----
 
   m_resolutionCombo->setMaximumWidth(fontMetrics().width("0000 x 0000") + 25);
@@ -1903,10 +1899,6 @@ void PencilTestPopup::onCameraListComboActivated(int comboIndex) {
 
   m_currentCamera = new QCamera(cameras.at(index), this);
   m_deviceName    = cameras.at(index).deviceName();
-#ifdef MACOSX
-  // this line is needed only in macosx
-  m_currentCamera->setViewfinder(m_dummyViewFinder);
-#endif
 
   // loading new camera
   m_currentCamera->load();
@@ -1952,22 +1944,22 @@ void PencilTestPopup::onResolutionComboActivated(const QString& itemText) {
   // the splited text must be "<width>" "x" and "<height>"
   if (texts.size() != 3) return;
 
+#ifndef MACOSX
   m_currentCamera->stop();
   m_currentCamera->unload();
+#endif
+
   QCameraViewfinderSettings settings = m_currentCamera->viewfinderSettings();
   QSize newResolution(texts[0].toInt(), texts[2].toInt());
   settings.setResolution(newResolution);
   m_currentCamera->setViewfinderSettings(settings);
 
-#ifdef MACOSX
-  m_dummyViewFinder->resize(newResolution);
-#endif
-
   // reset white bg
   m_whiteBGImg = QImage();
   m_bgReductionFld->setDisabled(true);
-
+#ifndef MACOSX
   m_currentCamera->start();
+#endif
   m_videoWidget->setImage(QImage());
 
   // update env
@@ -2146,8 +2138,9 @@ void PencilTestPopup::onFrameCaptured(QImage& image) {
   m_videoWidget->setImage(image.copy());
 
   if (m_captureCue) {
+#ifndef MACOSX
     m_currentCamera->stop();
-
+#endif
     m_captureCue = false;
 
     bool scanBtoT =
@@ -2186,8 +2179,9 @@ void PencilTestPopup::onFrameCaptured(QImage& image) {
       m_captureButton->setChecked(false);
       onCaptureButtonClicked(false);
     }
-
+#ifndef MACOSX
     m_currentCamera->start();
+#endif
   }
 }
 
