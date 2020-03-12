@@ -314,10 +314,6 @@ class PencilTestPopup : public DVGui::Dialog {
   DVGui::IntLineEdit *m_subWidthFld, *m_subHeightFld;
   QSize m_allowedCameraSize;
 
-#ifdef MACOSX
-  QCameraViewfinder* m_dummyViewFinder;
-#endif
-
   bool m_captureWhiteBGCue;
   bool m_captureCue;
   bool m_alwaysOverwrite = false;
