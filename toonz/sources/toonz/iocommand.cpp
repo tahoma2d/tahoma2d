@@ -1202,21 +1202,29 @@ bool IoCmd::saveSceneIfNeeded(QString msg) {
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (scene) {
-    std::vector<QString> dirtyResources;
+    QStringList dirtyResources;
     {
       SceneResources resources(scene, 0);
       resources.getDirtyResources(dirtyResources);
     }
 
     if (!dirtyResources.empty()) {
+      // show up to 5 items
+      int extraCount = dirtyResources.count() - 5;
+      if (extraCount > 0) {
+        dirtyResources = dirtyResources.mid(0, 5);
+        dirtyResources.append(
+            QObject::tr("and %1 more item(s).").arg(extraCount));
+      }
+
       QString question;
 
       question = msg + ":" +
                  QObject::tr(" The following file(s) have been modified.\n\n");
-      for (int i = 0; i < dirtyResources.size(); i++) {
-        question += "   " + dirtyResources[i] + "\n";
-      }
-      question += QObject::tr("\nWhat would you like to do? ");
+
+      question += "  " + dirtyResources.join("\n  ");
+
+      question += "\n" + QObject::tr("\nWhat would you like to do? ");
 
       int ret =
           DVGui::MsgBox(question, QObject::tr("Save Changes"),
