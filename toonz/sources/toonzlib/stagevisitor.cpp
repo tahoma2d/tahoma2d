@@ -744,7 +744,13 @@ static void drawAutocloses(TVectorImage *vi, TVectorRenderData &rd) {
 
   rd.m_palette = plt;
   buildAutocloseImage(vaux, vi, startPoints, endPoints);
+  // temporarily disable fill check, to preserve the gap indicator color
+  bool tCheckEnabledOriginal = rd.m_tcheckEnabled;
+  rd.m_tcheckEnabled = false;
+  // draw
   tglDraw(rd, vaux);
+  // restore original value
+  rd.m_tcheckEnabled = tCheckEnabledOriginal;
   delete vaux;
 }
 
