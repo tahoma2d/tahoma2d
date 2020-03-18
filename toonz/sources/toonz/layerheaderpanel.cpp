@@ -179,7 +179,7 @@ void LayerHeaderPanel::mouseMoveEvent(QMouseEvent *event) {
 
   // preview button
   if (o->rect(PredefinedRect::EYE_AREA).contains(pos)) {
-    m_tooltip           = tr("Preview Visbility Toggle All");
+    m_tooltip           = tr("Preview Visibility Toggle All");
     m_buttonHighlighted = PreviewButton;
   }
   // camstand button
