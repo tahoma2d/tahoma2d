@@ -1715,6 +1715,10 @@ ToneCurveParamField::ToneCurveParamField(QWidget *parent, QString name,
   connect(m_keyToggle, SIGNAL(keyToggled()), SLOT(onKeyToggled()));
   connect(m_toneCurveField, SIGNAL(currentChannelIndexChanged(int)),
           SLOT(onChannelChanged(int)));
+  // on enlarged, make the ParamPageSet to recompute the preferred size
+  if (paramsPage)
+    connect(m_toneCurveField, SIGNAL(sizeChanged()), paramsPage,
+            SIGNAL(preferredPageSizeChanged()));
 
   int i;
   for (i = 0; i < m_toneCurveField->getChannelCount(); i++) {
@@ -1760,6 +1764,15 @@ void ToneCurveParamField::setParams() {
   updateKeyToggle();
 
   emit currentParamChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+QSize ToneCurveParamField::getPreferedSize() {
+  if (m_toneCurveField->isEnlarged())
+    return QSize(676, 640);
+  else
+    return QSize(420, 384);
 }
 
 //-----------------------------------------------------------------------------

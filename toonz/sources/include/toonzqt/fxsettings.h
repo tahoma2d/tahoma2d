@@ -91,7 +91,7 @@ public:
   }
 
   /*- 現在のページの最適なサイズを返す -*/
-  QSize getPreferedSize();
+  QSize getPreferredSize();
 
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
@@ -118,6 +118,11 @@ public:
   TOONZ_DECLARE_NEW_COMPONENT(newComboBox);
 
 #undef TOONZ_DECLARE_NEW_COMPONENT
+
+  // make ParamsPageSet to re-compute preferred size.
+  // currently emitted only from ToneCurveParamField
+signals:
+  void preferredPageSizeChanged();
 };
 
 //=============================================================================
@@ -138,7 +143,7 @@ class DVAPI ParamsPageSet final : public QWidget {
   //! Allows to map page and index, useful to display a macro.
   QMap<ParamsPage *, int> m_pageFxIndexTable;
 
-  QSize m_preferedSize;
+  QSize m_preferredSize;
   /*-- ヘルプのファイルパス（もしあれば）---*/
   std::string m_helpFilePath;
   /*-- pdfファイルのページ指定など、引数が必要な場合の追加引数 --*/
@@ -170,7 +175,7 @@ public:
   ParamsPage *createParamsPage();
   void addParamsPage(ParamsPage *page, const char *name);
 
-  QSize getPreferedSize() { return m_preferedSize; }
+  QSize getPreferredSize() { return m_preferredSize; }
 
 protected:
   void createPage(TIStream &is, const TFxP &fx, int index);
@@ -179,6 +184,7 @@ protected slots:
   void setPage(int);
   void openHelpFile();
   void openHelpUrl();
+  void recomputePreferredSize();
 };
 
 //=============================================================================
@@ -212,6 +218,10 @@ public:
 
   void setPointValue(int index, const TPointD &p);
 
+  void notifyPreferredSizeChanged(QSize size) {
+    emit preferredSizeChanged(size);
+  }
+
 protected:
   ParamsPageSet *getCurrentPageSet() const;
 
@@ -220,7 +230,7 @@ signals:
   void actualFxParamChanged();
   void paramKeyChanged();
 
-  void preferedSizeChanged(QSize);
+  void preferredSizeChanged(QSize);
   void showSwatchButtonToggled(bool);
 };
 
@@ -302,7 +312,7 @@ protected slots:
   void setBlackBg();
   void setCheckboardBg();
 
-  void onPreferedSizeChanged(QSize);
+  void onPreferredSizeChanged(QSize);
   void onShowSwatchButtonToggled(bool);
 };
 

@@ -627,7 +627,7 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
 }
 };  // namespace
 
-QSize ParamsPage::getPreferedSize() {
+QSize ParamsPage::getPreferredSize() {
   int maxLabelWidth  = 0;
   int maxWidgetWidth = 0;
   int fieldsHeight   = 0;
@@ -651,7 +651,7 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WindowFlags flags)
 ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
 #endif
     : QWidget(parent, flags)
-    , m_preferedSize(0, 0)
+    , m_preferredSize(0, 0)
     , m_helpFilePath("")
     , m_helpCommand("") {
   // TabBar
@@ -784,10 +784,10 @@ ParamsPage *ParamsPageSet::createParamsPage() {
 
 void ParamsPageSet::addParamsPage(ParamsPage *page, const char *name) {
   /*-- このFxで最大サイズのページに合わせてダイアログをリサイズ --*/
-  QSize pagePreferedSize = page->getPreferedSize();
-  m_preferedSize         = m_preferedSize.expandedTo(
-      pagePreferedSize + QSize(m_tabBarContainer->height() + 2,
-                               2)); /*-- 2は上下左右のマージン --*/
+  QSize pagePreferredSize = page->getPreferredSize();
+  m_preferredSize         = m_preferredSize.expandedTo(
+      pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
+                                2)); /*-- 2は上下左右のマージン --*/
 
   QScrollArea *pane = new QScrollArea(this);
   pane->setWidgetResizable(true);
@@ -877,11 +877,14 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   ParamsPage *paramsPage = new ParamsPage(this, m_parent);
   paramsPage->setPage(is, fx);
 
+  connect(paramsPage, SIGNAL(preferredPageSizeChanged()), this,
+          SLOT(recomputePreferredSize()));
+
   /*-- このFxで最大サイズのページに合わせてダイアログをリサイズ --*/
-  QSize pagePreferedSize = paramsPage->getPreferedSize();
-  m_preferedSize         = m_preferedSize.expandedTo(
-      pagePreferedSize + QSize(m_tabBarContainer->height() + 2,
-                               2)); /*-- 2は上下左右のマージン --*/
+  QSize pagePreferredSize = paramsPage->getPreferredSize();
+  m_preferredSize         = m_preferredSize.expandedTo(
+      pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
+                                2)); /*-- 2は上下左右のマージン --*/
 
   QScrollArea *scrollAreaPage = new QScrollArea(this);
   scrollAreaPage->setWidgetResizable(true);
@@ -893,6 +896,26 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   m_tabBar->addSimpleTab(str.fromStdString(pageName));
   m_pagesList->addWidget(scrollAreaPage);
   if (index >= 0) m_pageFxIndexTable[paramsPage] = index;
+}
+
+//-----------------------------------------------------------------------------
+
+void ParamsPageSet::recomputePreferredSize() {
+  QSize newSize(0, 0);
+  for (int i = 0; i < m_pagesList->count(); i++) {
+    QScrollArea *area = dynamic_cast<QScrollArea *>(m_pagesList->widget(i));
+    if (!area) continue;
+    ParamsPage *page = dynamic_cast<ParamsPage *>(area->widget());
+    if (!page) continue;
+    QSize pagePreferredSize = page->getPreferredSize();
+    newSize                 = newSize.expandedTo(pagePreferredSize +
+                                 QSize(m_tabBarContainer->height() + 2, 2));
+  }
+  if (!newSize.isEmpty()) {
+    m_preferredSize = newSize;
+    // resize the parent FxSettings
+    m_parent->notifyPreferredSizeChanged(m_preferredSize + QSize(2, 50));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1016,9 +1039,9 @@ void ParamViewer::setFx(const TFxP &currentFx, const TFxP &actualFx, int frame,
     getCurrentPageSet()->setFx(currentFx, actualFx, frame);
     if (m_actualFx != actualFx) {
       m_actualFx = actualFx;
-      QSize pageViewerPreferedSize =
-          getCurrentPageSet()->getPreferedSize() + QSize(2, 50);
-      emit preferedSizeChanged(pageViewerPreferedSize);
+      QSize pageViewerPreferredSize =
+          getCurrentPageSet()->getPreferredSize() + QSize(2, 50);
+      emit preferredSizeChanged(pageViewerPreferredSize);
     }
   }
 }
@@ -1128,8 +1151,8 @@ FxSettings::FxSettings(QWidget *parent, const TPixel32 &checkCol1,
   ret      = ret &&
         connect(m_viewer, SIGNAL(pointPositionChanged(int, const TPointD &)),
                 SLOT(onPointChanged(int, const TPointD &)));
-  ret = ret && connect(m_paramViewer, SIGNAL(preferedSizeChanged(QSize)), this,
-                       SLOT(onPreferedSizeChanged(QSize)));
+  ret = ret && connect(m_paramViewer, SIGNAL(preferredSizeChanged(QSize)), this,
+                       SLOT(onPreferredSizeChanged(QSize)));
   ret = ret && connect(m_paramViewer, SIGNAL(showSwatchButtonToggled(bool)),
                        this, SLOT(onShowSwatchButtonToggled(bool)));
   assert(ret);
@@ -1513,7 +1536,7 @@ void FxSettings::onViewModeChanged(QAction *triggeredAct) {
 
 //-----------------------------------------------------------------------------
 
-void FxSettings::onPreferedSizeChanged(QSize pvBestSize) {
+void FxSettings::onPreferredSizeChanged(QSize pvBestSize) {
   QSize popupBestSize = pvBestSize;
 
   // Set minimum size, just in case

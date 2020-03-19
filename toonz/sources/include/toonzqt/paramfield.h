@@ -590,7 +590,7 @@ public:
 
   void setParams();
 
-  QSize getPreferedSize() override { return QSize(400, 380); }
+  QSize getPreferedSize() override;
 
 protected slots:
   void onChannelChanged(int);
