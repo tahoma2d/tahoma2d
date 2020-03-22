@@ -253,7 +253,10 @@ void Picker::onImage(const Stage::Player &player) {
     else if (vi->getNearestStroke(point, w, strokeIndex, dist2)) {
       // based on TTool::Viewer::doPickGuideStroke
 
-      double pixelSize = 1.0; // TODO: Get actual pixel size from viewer.
+      // m_minDist2 seems to be the pixel size to the power 4, so take the
+      // square root of the square root.
+      // Use abs() just in case m_minDist2 is negative, to avoid math errors.
+      double pixelSize = sqrt(sqrt(abs(m_minDist2)));
       double maxDist   = 5 * pixelSize;
       double maxDist2  = maxDist * maxDist;
       double checkDist = maxDist2 * 4;
