@@ -240,14 +240,14 @@ public:
   //-----------------------------------------------------------------------------
 
   bool onPropertyChanged(std::string propertyName) override {
-    TapeMode                 = ::to_string(m_mode.getValue());
-    TapeSmooth               = (int)(m_smooth.getValue());
-    std::wstring s           = m_type.getValue();
+    TapeMode       = ::to_string(m_mode.getValue());
+    TapeSmooth     = (int)(m_smooth.getValue());
+    std::wstring s = m_type.getValue();
     if (!s.empty()) TapeType = ::to_string(s);
-    TapeJoinStrokes          = (int)(m_joinStrokes.getValue());
-    AutocloseFactor          = (double)(m_autocloseFactor.getValue());
-    m_selectionRect          = TRectD();
-    m_startRect              = TPointD();
+    TapeJoinStrokes = (int)(m_joinStrokes.getValue());
+    AutocloseFactor = (double)(m_autocloseFactor.getValue());
+    m_selectionRect = TRectD();
+    m_startRect     = TPointD();
 
     if (propertyName == "Distance" &&
         (ToonzCheck::instance()->getChecks() & ToonzCheck::eAutoclose))
@@ -419,7 +419,9 @@ public:
     m_strokeIndex2 = -1;
 
     for (i = 0; i < strokeNumber; i++) {
-      if (!vi->sameGroup(m_strokeIndex1, i)) continue;
+      if (!vi->sameGroup(m_strokeIndex1, i) &&
+          (vi->isStrokeGrouped(m_strokeIndex1) || vi->isStrokeGrouped(i)))
+        continue;
       stroke = vi->getStroke(i);
       if (m_mode.getValue() != POINT2POINT) {
         if (stroke->getNearestW(pos, outW, distance2) &&
@@ -601,7 +603,7 @@ public:
       closingPoint.first--;
   }
 
-//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
 #define p2p 1
 #define p2l 2
@@ -718,8 +720,9 @@ public:
     std::vector<TFilledRegionInf> *fillInformation =
         new std::vector<TFilledRegionInf>;
     ImageUtils::getFillingInformationOverlappingArea(
-        vi, *fillInformation, vi->getStroke(m_strokeIndex1)->getBBox() +
-                                  vi->getStroke(m_strokeIndex2)->getBBox());
+        vi, *fillInformation,
+        vi->getStroke(m_strokeIndex1)->getBBox() +
+            vi->getStroke(m_strokeIndex2)->getBBox());
 
     doTape(vi, fillInformation, m_joinStrokes.getValue());
 
@@ -747,7 +750,8 @@ public:
   void onActivate() override {
     // enable drawing if we are in a scene viewer
     QWidget *focusWidget = QApplication::focusWidget();
-    if (focusWidget && QString(focusWidget->metaObject()->className()) == "SceneViewer")
+    if (focusWidget &&
+        QString(focusWidget->metaObject()->className()) == "SceneViewer")
       m_draw = true;
 
     if (!m_firstTime) return;
@@ -765,7 +769,7 @@ public:
   }
 
   int getCursorId() const override {
-    int ret                            = ToolCursor::TapeCursor;
+    int ret = ToolCursor::TapeCursor;
     if (m_type.getValue() == RECT) ret = ret | ToolCursor::Ex_Rectangle;
     if (ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg)
       ret = ret | ToolCursor::Ex_Negate;
