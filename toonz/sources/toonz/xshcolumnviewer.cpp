@@ -62,6 +62,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include <QDesktopWidget>
 
 #include <QBitmap>
 //=============================================================================
@@ -2328,6 +2329,21 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
 
         m_columnTransparencyPopup->move(event->globalPos().x() + x,
                                         event->globalPos().y() - y);
+
+        // make sure the popup doesn't go off the screen to the right
+        QDesktopWidget *desktop = qApp->desktop();
+        QRect screenRect        = desktop->screenGeometry(app->getMainWindow());
+
+        int popupLeft = event->globalPos().x() + x;
+        int popupRight = popupLeft + m_columnTransparencyPopup->width();
+
+        // first condition checks if popup is on same monitor as main app;
+        // if popup is on different monitor, leave as is
+        if (popupLeft < screenRect.right() && popupRight > screenRect.right()) {
+          int distance = popupRight - screenRect.right();
+          m_columnTransparencyPopup->move(m_columnTransparencyPopup->x() - distance,
+                                          m_columnTransparencyPopup->y());
+        }
 
         openTransparencyPopup();
       }
