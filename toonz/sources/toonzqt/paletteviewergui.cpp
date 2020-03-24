@@ -555,6 +555,27 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 }
 
 //-----------------------------------------------------------------------------
+/*! Draw the chip name \b name inside rectangle \b chipRect using painter \b p.
+* If the name is too wide to fit on the chip, use left align - to show the
+* start of the name. Otherwise, use center align.
+*/
+static void drawChipName(QPainter &p, const QRect &chipRect,
+  const std::wstring &name) {
+  const QString nameQString = QString::fromStdWString(name);
+  QRect textRect = p.boundingRect(chipRect, Qt::AlignCenter, nameQString);
+
+  if (chipRect.width() < textRect.width()) {
+    // align left if the name is too wide to fit on the chip
+    p.drawText(chipRect.adjusted(4, 0, -4, 0),
+      Qt::AlignLeft | Qt::AlignVCenter, nameQString);
+  }
+  else {
+    // otherwise align by center
+    p.drawText(chipRect, Qt::AlignCenter, nameQString);
+  }
+}
+
+//-----------------------------------------------------------------------------
 /*! Pain current page styles using current view mode.
  */
 void PageViewer::paintEvent(QPaintEvent *e) {
@@ -762,20 +783,19 @@ void PageViewer::paintEvent(QPaintEvent *e) {
 
         // display the name (style name and original name) according to the name
         // display mode
-        if (m_nameDisplayMode == Style)
-          p.drawText(chipRect, Qt::AlignCenter, QString::fromStdWString(name));
+        if (m_nameDisplayMode == Style) {
+          drawChipName(p, chipRect, name);
+        }
         else if (m_nameDisplayMode == Original) {
           if (origName != L"") {
             tmpFont.setItalic(true);
             p.setFont(tmpFont);
-            p.drawText(chipRect, Qt::AlignCenter,
-                       QString::fromStdWString(origName));
+            drawChipName(p, chipRect, origName);
           } else  // if there is no original name, then display the style name
                   // in brackets
-            p.drawText(chipRect, Qt::AlignCenter,
-                       QString::fromStdWString(L"( " + name + L" )"));
+            drawChipName(p, chipRect, L"( " + name + L" )");
         } else if (m_nameDisplayMode == StyleAndOriginal) {
-          p.drawText(chipRect, Qt::AlignCenter, QString::fromStdWString(name));
+          drawChipName(p, chipRect, name);
 
           // display original name only whne LargeChip view
           if (m_viewMode == LargeChips && origName != L"") {
