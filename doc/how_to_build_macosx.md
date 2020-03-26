@@ -32,7 +32,7 @@ Check site for any changes in installation instructions, but they will probably 
 1. Open a Terminal window
 2. Execute the following statement:
 ```
-$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
 
 ### Install required software using brew
