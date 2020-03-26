@@ -301,10 +301,6 @@ void ImageViewer::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(action);
     action->setParent(m_flipbook);
 
-    if (m_flipbook->isSavable()) {
-      action = menu->addAction(tr("Save Images"));
-      connect(action, SIGNAL(triggered()), m_flipbook, SLOT(saveImages()));
-    }
     menu->addSeparator();
   }
 
@@ -345,9 +341,18 @@ void ImageViewer::contextMenuEvent(QContextMenuEvent *event) {
     }
 
     if (m_visualSettings.m_doCompare) {
-      if (!addedSep) menu->addSeparator();
+      if (!addedSep) {
+        menu->addSeparator();
+        addedSep = true;
+      }
       action = menu->addAction(tr("Swap Compared Images"));
       connect(action, SIGNAL(triggered()), SLOT(swapCompared()));
+    }
+
+    if (m_flipbook->isSavable()) {
+      if (!addedSep) menu->addSeparator();
+      action = menu->addAction(tr("Save Images"));
+      connect(action, SIGNAL(triggered()), m_flipbook, SLOT(saveImages()));
     }
   }
 
