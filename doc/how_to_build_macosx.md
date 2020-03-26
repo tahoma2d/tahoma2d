@@ -1,5 +1,5 @@
 
-# Setting Up the Development Environment on MacOSX
+# Setting Up the Development Environment on macOS
 
 ## Necessary Software
 
@@ -10,10 +10,10 @@
 - Qt (5.9.2 or later)
 - boost (1.55.0 or later)
 
-## Building on MacOSX
+## Building on macOS
 ### Download boost from https://boost.org
 
-Download the .bz2 mac (unix if mac not specified) version 1_55_0 or later (last tested with 1_69_0)
+Download the .bz2 mac (unix if mac not specified) version 1_55_0 or later (last tested with 1_72_0)
 
 Save for later step.
 
@@ -46,6 +46,13 @@ $ git lfs install
 NOTE: This will install the latest version of QT which may not be compatible with older OS versions.
 
 If you cannot use the most recent version, download the online installer from https://www.qt.io/download and install the appropriate `macOS` version (min 5.9.2).  If installing via this method, be sure to install the `Qt Script (Deprecated)` libraries.
+
+### Remove incompatible symbolic directory
+Check to see if this symbolic glew directory exists. If so, remove it:
+```
+$ ls -l /usr/local/lib/cmake/glew
+$ rm /usr/local/lib/cmake/glew
+```
 
 ### Set up OpenToonz repository
 
