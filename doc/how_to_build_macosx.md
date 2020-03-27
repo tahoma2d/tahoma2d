@@ -63,8 +63,8 @@ $ git clone https://github.com/opentoonz/opentoonz
 $ cd opentoonz
 $ git lfs pull
 $ cd thirdparty/boost
-$ mv ~/Downloads/boost_1_69_0.tar.bz2 .  #or whatever the boost filename you downloaded is#
-$ tar xvjf boost_1_69_0.tar.bz2
+$ mv ~/Downloads/boost_1_72_0.tar.bz2 .   #or whatever the boost filename you downloaded is#
+$ tar xvjf boost_1_72_0.tar.bz2
 $ cd ../lzo
 $ cp -r 2.03/include/lzo driver
 $ cd ../tiff-4.0.3
@@ -73,9 +73,9 @@ $ ./configure && make
 
 ### Configure build for QT version
 
-Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at line 160 (64bit OS) or 172 (32bit OS) and modify the root path for the QT lib directory
+Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at line 160 (64-bit OS) or 172 (32-bit OS) and modify the root path for the QT lib directory
 
-If you installed QT using `brew` , you can get the version and path to use with: `$ brew info qt`.  The lib path will look something like this: `/usr/local/Cellar/qt/5.12.2/lib`
+If you installed QT using `brew`, you can get the version and path to use with: `$ brew info qt`.  The lib path will look something like this: `/usr/local/Cellar/qt/5.12.2/lib`
 If you downloaded the QT installer and installed to `/Users/yourlogin/Qt`, your lib path may look something like this: `~/Qt/5.12.2/clang_64/lib` or `~/Qt/5.12.2/clang_32/lib`
 
 ### Configure environment and Build OpenToonz
@@ -91,14 +91,14 @@ $ cd build
 
 To build from command line, do the following:
 ```
-$ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake ../sources  #replace QT path with your installed QT version#
+$ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake ../sources   #replace QT path with your installed QT version#
 $ make
 ```
 
 To build using Xcode, do the following:
 ```
 $ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-$ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.  #replace QT path with your installed QT version#
+$ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.   #replace QT path with your installed QT version#
 ```
 
 - Open Xcode app and open project /Users/yourlogin/Documents/opentoonz/toonz/build/OpenToonz.xcodeproj
@@ -136,6 +136,6 @@ $ open ~/Documents/opentoonz/build/toonz/OpenToonz.app
 
     - Open Scheme editor for OpenToonz: Product -> Scheme -> Edit Scheme
     - Uncheck: Run -> Options -> Document Versions
-    - Run in  Debug mode: Product -> Run
+    - Run in Debug mode: Product -> Run
 
     - To open with command line or from Finder window, the application is found in `/Users/yourlogin/Documents/opentoonz/toonz/build/Debug/OpenToonz.app`
