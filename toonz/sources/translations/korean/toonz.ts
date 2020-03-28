@@ -2617,7 +2617,7 @@ Do you want to overwrite it?</source>
 <context>
     <name>LayerHeaderPanel</name>
     <message>
-        <source>Preview Visbility Toggle All</source>
+        <source>Preview Visibility Toggle All</source>
         <translation>전체 미리보기 가시성 전환</translation>
     </message>
     <message>
