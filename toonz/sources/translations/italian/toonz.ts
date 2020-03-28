@@ -2706,7 +2706,7 @@ Vuoi sovrascriverlo?</translation>
 <context>
     <name>LayerHeaderPanel</name>
     <message>
-        <source>Preview Visbility Toggle All</source>
+        <source>Preview Visibility Toggle All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

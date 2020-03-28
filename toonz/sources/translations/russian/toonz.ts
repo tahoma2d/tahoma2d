@@ -3487,7 +3487,7 @@ Do you want to overwrite it?</source>
     <name>LayerHeaderPanel</name>
     <message>
         <location filename="../../toonz/layerheaderpanel.cpp" line="182"/>
-        <source>Preview Visbility Toggle All</source>
+        <source>Preview Visibility Toggle All</source>
         <translation>Переключить видимость</translation>
     </message>
     <message>

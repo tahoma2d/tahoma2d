@@ -2836,7 +2836,7 @@ Chcete jej přepsat?</translation>
 <context>
     <name>LayerHeaderPanel</name>
     <message>
-        <source>Preview Visbility Toggle All</source>
+        <source>Preview Visibility Toggle All</source>
         <translation>Viditelnost náhledu Přepnout vše</translation>
     </message>
     <message>
