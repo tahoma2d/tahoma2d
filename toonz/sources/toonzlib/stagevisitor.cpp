@@ -869,6 +869,7 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
 
   rd.m_drawRegions           = !inksOnly;
   rd.m_inkCheckEnabled       = tc & ToonzCheck::eInk;
+  rd.m_ink1CheckEnabled      = tc & ToonzCheck::eInk1;
   rd.m_paintCheckEnabled     = tc & ToonzCheck::ePaint;
   rd.m_blackBgEnabled        = tc & ToonzCheck::eBlackBg;
   rd.m_colorCheckIndex       = ToonzCheck::instance()->getColorIndex();
