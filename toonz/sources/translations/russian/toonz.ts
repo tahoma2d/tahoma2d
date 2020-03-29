@@ -8451,7 +8451,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="924"/>
-        <source>Minimize Raster Memory Fragmentation *</source>
+        <source>Minimize Raster Memory Fragmentation*</source>
         <translation>Минимизировать фрагментацию памяти в растре*</translation>
     </message>
     <message>
@@ -8515,8 +8515,8 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="940"/>
-        <source>Custom Project Path(s): </source>
-        <translation>Пользовательский путь(и) проекта: </translation>
+        <source>Custom Project Path(s):</source>
+        <translation>Пользовательский путь(и) проекта:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1280"/>
@@ -8525,7 +8525,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="912"/>
-        <source>* Changes will take effect the next time you run Toonz</source>
+        <source>* Changes will take effect the next time you run OpenToonz</source>
         <translation>* Изменения вступят в силу после перезапуска OpenToonz</translation>
     </message>
     <message>
@@ -8550,8 +8550,8 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="970"/>
-        <source>Color Calibration using 3D Look-up Table *</source>
-        <translation>Коррекция цвета с помощью 3D-таблицы поиска *</translation>
+        <source>Color Calibration using 3D Look-up Table*</source>
+        <translation>Коррекция цвета с помощью 3D-таблицы поиска*</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="977"/>
@@ -8575,7 +8575,7 @@ Is it OK to release these shortcuts?</source>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1052"/>
         <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
-        <translation>Развернуть заголовок редактора функций, чтобы соответствовать высоте панели инструментов XSheet *</translation>
+        <translation>Развернуть заголовок редактора функций, чтобы соответствовать высоте панели инструментов Xsheet*</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1071"/>
@@ -8673,7 +8673,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1029"/>
-        <source>Multi Layer Style Picker : Switch Levels by Picking</source>
+        <source>Multi Layer Style Picker: Switch Levels by Picking</source>
         <translation>Многослойная пипетка: Переключение уровней путем выбора</translation>
     </message>
     <message>
@@ -8779,8 +8779,8 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1050"/>
-        <source>Show Toolbar in the XSheet </source>
-        <translation>Показывать панель инструментов в Xsheet </translation>
+        <source>Show Toolbar in the Xsheet</source>
+        <translation>Показывать панель инструментов в Xsheet</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1053"/>
@@ -8874,8 +8874,8 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1078"/>
-        <source>Display Lines Only </source>
-        <translation>Отображать только линии </translation>
+        <source>Display Lines Only</source>
+        <translation>Отображать только линии</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1099"/>
@@ -8943,7 +8943,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="972"/>
-        <source>3DLUT File for [%1] *:</source>
+        <source>3DLUT File for [%1]*:</source>
         <translation>3DLUT файл для [%1]*:</translation>
     </message>
     <message>
@@ -9079,13 +9079,13 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="967"/>
-        <source>Font *:</source>
-        <translation>Шрифт:</translation>
+        <source>Font*:</source>
+        <translation>Шрифт*:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="968"/>
-        <source>Style *:</source>
-        <translation>Начертание *:</translation>
+        <source>Style*:</source>
+        <translation>Начертание*:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="980"/>
@@ -9258,13 +9258,13 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="926"/>
-        <source>Interval(Minutes): </source>
-        <translation>Интервал (в минутах): </translation>
+        <source>Interval (Minutes):</source>
+        <translation>Интервал (в минутах):</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="930"/>
-        <source>Undo Memory Size (MB)</source>
-        <translation>Емкость памяти отмен (МБ)</translation>
+        <source>Undo Memory Size (MB):</source>
+        <translation>Емкость памяти отмен (МБ):</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="931"/>
@@ -9307,23 +9307,23 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="962"/>
-        <source>Icon Size *</source>
-        <translation>Размер иконки *</translation>
+        <source>Icon Size*:</source>
+        <translation>Размер иконки*:</translation>
     </message>
     <message>
-        <source>X</source>
-        <translation type="obsolete">X</translation>
+        <source>x</source>
+        <translation>x</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="963"/>
-        <source>Viewer  Shrink</source>
+        <source>Viewer Shrink:</source>
         <translatorcomment>?</translatorcomment>
-        <translation>Viewer  Shrink</translation>
+        <translation>Viewer Shrink:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="964"/>
-        <source>Step</source>
-        <translation>Шаг</translation>
+        <source>Step:</source>
+        <translation>Шаг:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1529"/>
@@ -9334,39 +9334,39 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="992"/>
-        <source>Matte color: </source>
-        <translation>Матовый цвет: </translation>
+        <source>Matte color:</source>
+        <translation>Матовый цвет:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1085"/>
-        <source>Viewer BG Color</source>
-        <translation>Цвет фона просмотра</translation>
+        <source>Viewer BG Color:</source>
+        <translation>Цвет фона просмотра:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1086"/>
-        <source>Preview BG Color</source>
-        <translation>Цвет фона предпросмотра</translation>
+        <source>Preview BG Color:</source>
+        <translation>Цвет фона предпросмотра:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1088"/>
-        <source>ChessBoard Color 1</source>
-        <translation>Цвет клетки 1</translation>
+        <source>Chessboard Color 1:</source>
+        <translation>Цвет клетки 1:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1089"/>
-        <source>Chessboard Color 2</source>
-        <translation>Цвет клетки 2</translation>
+        <source>Chessboard Color 2:</source>
+        <translation>Цвет клетки 2:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="965"/>
-        <source>Viewer Zoom Center</source>
+        <source>Viewer Zoom Center:</source>
         <translatorcomment>дальше будет понятно из контекста</translatorcomment>
-        <translation>Зуммировать относительно</translation>
+        <translation>Зуммировать относительно:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="966"/>
-        <source>Language *:</source>
-        <translation>Язык *:</translation>
+        <source>Language*:</source>
+        <translation>Язык*:</translation>
     </message>
     <message>
         <source>Default TLV Caching Behavior</source>
@@ -9408,8 +9408,8 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="995"/>
-        <source>FFmpeg Path: </source>
-        <translation>Путь к FFmpeg: </translation>
+        <source>FFmpeg Path:</source>
+        <translation>Путь к FFmpeg:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1560"/>
@@ -9428,13 +9428,13 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1568"/>
-        <source>Please indicate where you would like exports from Fast Render(MP4) to go.</source>
+        <source>Please indicate where you would like exports from Fast Render (MP4) to go.</source>
         <translation>Укажите, где вы хотите экспортировать Fast Render (MP4) для перехода.</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="997"/>
-        <source>Fast Render Path: </source>
-        <translation>Путь быстрого рендера: </translation>
+        <source>Fast Render Path:</source>
+        <translation>Путь быстрого рендера:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1000"/>
@@ -9453,8 +9453,8 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1005"/>
-        <source>  Height:</source>
-        <translation>  Высота:</translation>
+        <source>Height:</source>
+        <translation>Высота:</translation>
     </message>
     <message>
         <source>Autocreation:</source>
@@ -9482,8 +9482,8 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="935"/>
-        <source># of backups to keep: </source>
-        <translation>Количество резервных копий для сохранения: </translation>
+        <source># of backups to keep:</source>
+        <translation>Количество резервных копий для сохранения:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1007"/>
@@ -9557,8 +9557,8 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1068"/>
-        <source>Number of Frames to Play for Short Play</source>
-        <translation>Количество кадров для краткого воспроизведения</translation>
+        <source>Number of Frames to Play for Short Play:</source>
+        <translation>Количество кадров для краткого воспроизведения:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1075"/>
@@ -9567,7 +9567,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1076"/>
-        <source>Previous  Frames Correction:</source>
+        <source>Previous Frames Correction:</source>
         <translation>Коррекция предыдущих кадров:</translation>
     </message>
     <message>
@@ -9582,17 +9582,17 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1087"/>
-        <source>Level Editor Box Color</source>
-        <translation>Цвет рамки редактора уровней</translation>
+        <source>Level Editor Box Color:</source>
+        <translation>Цвет рамки редактора уровней:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1090"/>
-        <source>Ink Color on White Bg:</source>
+        <source>Ink Color on White BG:</source>
         <translation>Цвет штриха на белом фоне:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1091"/>
-        <source>Ink Color on Black Bg:</source>
+        <source>Ink Color on Black BG:</source>
         <translation>Цвет штриха на черном фоне:</translation>
     </message>
     <message>

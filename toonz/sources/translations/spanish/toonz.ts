@@ -6927,10 +6927,6 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Usar reproductor predefinido para formatos de película</translation>
     </message>
     <message>
-        <source>Minimize Raster Memory Fragmentation*</source>
-        <translation type="vanished">Minimizar fragmentación de imágenes en memoria*</translation>
-    </message>
-    <message>
         <source>Save Automatically Every Minutes</source>
         <translation type="vanished">Guardar automáticamente cada ciertos minutos</translation>
     </message>
@@ -6976,7 +6972,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="vanished">Intervalo:</translation>
+        <translation>Intervalo:</translation>
     </message>
     <message>
         <source>Height*:</source>
@@ -7059,11 +7055,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation type="vanished">   Color de fotogramas siguientes: </translation>
     </message>
     <message>
-        <source>   Previous  Frames Correction: </source>
-        <translation type="vanished">   Color de fotogramas anteriores: </translation>
-    </message>
-    <message>
-        <source>Display Lines Only </source>
+        <source>Display Lines Only</source>
         <translation>Sólo mostrar líneas</translation>
     </message>
     <message>
@@ -7076,7 +7068,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
     </message>
     <message>
         <source>Undo Memory Size (MB):</source>
-        <translation type="vanished">Deshacer - Tamaño de memoria (MB):</translation>
+        <translation>Deshacer - Tamaño de memoria (MB):</translation>
     </message>
     <message>
         <source>Render Task Chunk Size:</source>
@@ -7085,14 +7077,6 @@ También establecer la ruta de salida a esa carpeta.</translation>
     <message>
         <source>Show Info in Rendered Frames</source>
         <translation>Sobreimprimir información en los fotogramas procesados</translation>
-    </message>
-    <message>
-        <source>*Changes will take effect the next time you run Toonz</source>
-        <translation type="vanished">*Los cambios entrarán en vigor la próxima vez que se ejecute OpenToonz</translation>
-    </message>
-    <message>
-        <source>Language*:</source>
-        <translation type="vanished">Idioma*:</translation>
     </message>
     <message>
         <source>cm</source>
@@ -7152,7 +7136,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="vanished">Altura:</translation>
+        <translation>Altura:</translation>
     </message>
     <message>
         <source>DPI:</source>
@@ -7175,20 +7159,16 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Grosor del papel:</translation>
     </message>
     <message>
-        <source>Enable Version Control *</source>
-        <translation type="vanished">Habilitar control de versiones *</translation>
-    </message>
-    <message>
         <source>Transparency Check</source>
         <translation>Comprobación de transparencia</translation>
     </message>
     <message>
-        <source>   Ink Color on White Bg: </source>
-        <translation type="vanished">   Tinta (fondo blanco): </translation>
+        <source>Ink Color on White BG:</source>
+        <translation>Tinta (fondo blanco):</translation>
     </message>
     <message>
-        <source>   Ink Color on Black Bg: </source>
-        <translation type="vanished">   Tinta (fondo negro): </translation>
+        <source>Ink Color on Black BG:</source>
+        <translation>Tinta (fondo negro):</translation>
     </message>
     <message>
         <source> Paint Color: </source>
@@ -7243,11 +7223,11 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Ignorar el canal alfa de los niveles en la columna 1</translation>
     </message>
     <message>
-        <source>Minimize Raster Memory Fragmentation *</source>
-        <translation>Minimizar fragmentación de imágenes en memoria *</translation>
+        <source>Minimize Raster Memory Fragmentation*</source>
+        <translation>Minimizar fragmentación de imágenes en memoria*</translation>
     </message>
     <message>
-        <source>* Changes will take effect the next time you run Toonz</source>
+        <source>* Changes will take effect the next time you run OpenToonz</source>
         <translation>* Los cambios entrarán en vigor la próxima vez que se ejecute OpenToonz</translation>
     </message>
     <message>
@@ -7275,7 +7255,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Eliminar automáticamente el número de escena del nombre de un nivel cargado</translation>
     </message>
     <message>
-        <source>Multi Layer Style Picker : Switch Levels by Picking</source>
+        <source>Multi Layer Style Picker: Switch Levels by Picking</source>
         <translation>Selector de estilos: Cambiar de nivel al seleccionar</translation>
     </message>
     <message>
@@ -7291,48 +7271,40 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Categorías</translation>
     </message>
     <message>
-        <source>Undo Memory Size (MB)</source>
-        <translation>Deshacer - Tamaño de memoria (MB)</translation>
+        <source>Icon Size*:</source>
+        <translation>Tamaño de íconos*:</translation>
     </message>
     <message>
-        <source>Icon Size *</source>
-        <translation>Tamaño de íconos *</translation>
+        <source>x</source>
+        <translation>x</translation>
     </message>
     <message>
-        <source>X</source>
-        <translation type="vanished">x</translation>
+        <source>Viewer Shrink:</source>
+        <translation>Visor Reducción:</translation>
     </message>
     <message>
-        <source>Viewer  Shrink</source>
-        <translation>Visor       Reducción</translation>
+        <source>Viewer BG Color:</source>
+        <translation>Fondo del visor:</translation>
     </message>
     <message>
-        <source>Step</source>
-        <translation>Intervalo</translation>
+        <source>Preview BG Color:</source>
+        <translation>Fondo previsualización:</translation>
     </message>
     <message>
-        <source>Viewer BG Color</source>
-        <translation>Fondo del visor</translation>
+        <source>Chessboard Color 1:</source>
+        <translation>Damero - Color 1:</translation>
     </message>
     <message>
-        <source>Preview BG Color</source>
-        <translation>Fondo previsualización</translation>
+        <source>Chessboard Color 2:</source>
+        <translation>Damero - Color 2:</translation>
     </message>
     <message>
-        <source>ChessBoard Color 1</source>
-        <translation>Damero - Color 1</translation>
+        <source>Viewer Zoom Center:</source>
+        <translation>Centro de zoom en visor:</translation>
     </message>
     <message>
-        <source>Chessboard Color 2</source>
-        <translation>Damero - Color 2</translation>
-    </message>
-    <message>
-        <source>Viewer Zoom Center</source>
-        <translation>Centro de zoom en visor</translation>
-    </message>
-    <message>
-        <source>Language *:</source>
-        <translation>Idioma *:</translation>
+        <source>Language*:</source>
+        <translation>Idioma*:</translation>
     </message>
     <message>
         <source>Default TLV Caching Behavior</source>
@@ -7343,10 +7315,6 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation type="vanished">Miniatura de columnas</translation>
     </message>
     <message>
-        <source>  Height:</source>
-        <translation>  Altura:</translation>
-    </message>
-    <message>
         <source>Default Interpolation:</source>
         <translation>Interpolación predefinida:</translation>
     </message>
@@ -7355,16 +7323,8 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Fotogramas siguientes:</translation>
     </message>
     <message>
-        <source>Previous  Frames Correction:</source>
+        <source>Previous Frames Correction:</source>
         <translation>Fotogramas anteriores:</translation>
-    </message>
-    <message>
-        <source>Ink Color on White Bg:</source>
-        <translation>Tinta (fondo blanco):</translation>
-    </message>
-    <message>
-        <source>Ink Color on Black Bg:</source>
-        <translation>Tinta (fondo negro):</translation>
     </message>
     <message>
         <source>Paint Color:</source>
@@ -7455,8 +7415,8 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Personalizada*</translation>
     </message>
     <message>
-        <source>Custom Project Path(s): </source>
-        <translation>Rutas personalizadas de proyectos: </translation>
+        <source>Custom Project Path(s):</source>
+        <translation>Rutas personalizadas de proyectos:</translation>
     </message>
     <message>
         <source>Advanced: Multiple paths can be separated by ** (No Spaces)</source>
@@ -7479,8 +7439,8 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>píxeles</translation>
     </message>
     <message>
-        <source>Interval(Minutes): </source>
-        <translation>Intervalo (minutos): </translation>
+        <source>Interval (Minutes):</source>
+        <translation>Intervalo (minutos):</translation>
     </message>
     <message>
         <source>Additional Project Locations</source>
@@ -7515,8 +7475,8 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Por favor indicar la ruta a la ubicación de FFmpeg en el sistema.</translation>
     </message>
     <message>
-        <source>FFmpeg Path: </source>
-        <translation>Ruta a FFmpeg: </translation>
+        <source>FFmpeg Path:</source>
+        <translation>Ruta a FFmpeg:</translation>
     </message>
     <message>
         <source>Number of seconds to wait for FFmpeg to complete processing the output:</source>
@@ -7557,12 +7517,12 @@ Is it OK to release these shortcuts?</source>
         <translation>Espacios de trabajo*:</translation>
     </message>
     <message>
-        <source>Please indicate where you would like exports from Fast Render(MP4) to go.</source>
+        <source>Please indicate where you would like exports from Fast Render (MP4) to go.</source>
         <translation>Por favor indicar dónde se desea ubicar los archivos generados al usar Procesar rápido a MP4.</translation>
     </message>
     <message>
-        <source>Fast Render Path: </source>
-        <translation>Ruta para procesamiento rápido: </translation>
+        <source>Fast Render Path:</source>
+        <translation>Ruta para procesamiento rápido:</translation>
     </message>
     <message>
         <source>Replace Level after SaveLevelAs command</source>
@@ -7585,7 +7545,7 @@ Is it OK to release these shortcuts?</source>
         <translation>Usar los PPP de la cámara para todas las imágenes importadas</translation>
     </message>
     <message>
-        <source>Show Toolbar in the XSheet </source>
+        <source>Show Toolbar in the Xsheet</source>
         <translation>Mostrar la barra de herramientas en la planilla</translation>
     </message>
     <message>
@@ -7657,8 +7617,8 @@ Is it OK to release these shortcuts?</source>
         <translation>Buena suerte.  A partir de ahora estás por las tuyas.</translation>
     </message>
     <message>
-        <source>Font *:</source>
-        <translation>Tipografía *:</translation>
+        <source>Font*:</source>
+        <translation>Tipografía*:</translation>
     </message>
     <message>
         <source>Font Weight *:</source>
@@ -7787,8 +7747,8 @@ la relatividad al resolver la ruta de un archvo.</translation>
         <translation>Disposición de encabezado de columnas*:</translation>
     </message>
     <message>
-        <source>Color Calibration using 3D Look-up Table *</source>
-        <translation>Calibración de color usando una tabla de consulta 3D *</translation>
+        <source>Color Calibration using 3D Look-up Table*</source>
+        <translation>Calibración de color usando una tabla de consulta 3D*</translation>
     </message>
     <message>
         <source>Enable auto-stretch frame</source>
@@ -7825,8 +7785,8 @@ También, se establecerá el destino inicial de salida para las nuevas escenas e
         <translation>Editor de funciones*:</translation>
     </message>
     <message>
-        <source>3DLUT File for [%1] *:</source>
-        <translation>Archivo 3DLUT para [%1] *:</translation>
+        <source>3DLUT File for [%1]*:</source>
+        <translation>Archivo 3DLUT para [%1]*:</translation>
     </message>
     <message>
         <source>Cursor Options</source>
@@ -7909,8 +7869,8 @@ También, se establecerá el destino inicial de salida para las nuevas escenas e
         <translation>Archivo</translation>
     </message>
     <message>
-        <source>Style *:</source>
-        <translation>Estilo *:</translation>
+        <source>Style*:</source>
+        <translation>Estilo*:</translation>
     </message>
     <message>
         <source>Matte color is used for background when overwriting raster levels with transparent pixels
@@ -7919,8 +7879,8 @@ in non alpha-enabled image format.</source>
 contengan píxeles transparentes en formatos de imagen sin soporte para canal alfa.</translation>
     </message>
     <message>
-        <source>Matte color: </source>
-        <translation>Color de transparencia: </translation>
+        <source>Matte color:</source>
+        <translation>Color de transparencia:</translation>
     </message>
     <message>
         <source>Current Column Color:</source>
@@ -7931,8 +7891,8 @@ contengan píxeles transparentes en formatos de imagen sin soporte para canal al
         <translation>Respaldar escena y niveles de animación al guardar</translation>
     </message>
     <message>
-        <source># of backups to keep: </source>
-        <translation>Cantidad de respaldos a conservar: </translation>
+        <source># of backups to keep:</source>
+        <translation>Cantidad de respaldos a conservar:</translation>
     </message>
     <message>
         <source>Enable Autocreation</source>
@@ -7963,8 +7923,8 @@ contengan píxeles transparentes en formatos de imagen sin soporte para canal al
         <translation>Mostrar columna de cámara</translation>
     </message>
     <message>
-        <source>Level Editor Box Color</source>
-        <translation>Fondo del visor (niveles)</translation>
+        <source>Level Editor Box Color:</source>
+        <translation>Fondo del visor (niveles):</translation>
     </message>
     <message>
         <source>Incremental</source>
@@ -7987,8 +7947,8 @@ contengan píxeles transparentes en formatos de imagen sin soporte para canal al
         <translation>Habilitar control mediante gestos táctiles</translation>
     </message>
     <message>
-        <source>Number of Frames to Play for Short Play</source>
-        <translation>Cantidad de fotogramas en Reproducción breve</translation>
+        <source>Number of Frames to Play for Short Play:</source>
+        <translation>Cantidad de fotogramas en Reproducción breve:</translation>
     </message>
 </context>
 <context>
@@ -11511,8 +11471,8 @@ Por favor enviar o revertir los cambios antes.</translation>
         <translation type="vanished">Color de fondo del visor:</translation>
     </message>
     <message>
-        <source>   Preview BG Color:</source>
-        <translation type="vanished">  Color de fondo previsualización:</translation>
+        <source>Preview BG Color:</source>
+        <translation type="vanished">Color de fondo previsualización:</translation>
     </message>
     <message>
         <source>Checkerboard Color 1:</source>
