@@ -297,6 +297,16 @@ void invalidateIcons() {
   s.m_paintIndex = mask & ToonzCheck::ePaint ? tc->getColorIndex() : -1;
   IconGenerator::instance()->setSettings(s);
 
+   // Force icons to refresh
+  TXshLevel *sl = TApp::instance()->getCurrentLevel()->getLevel();
+  if (sl) {
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+
+    for (int i = 0; i < (int)fids.size(); i++)
+      IconGenerator::instance()->invalidate(sl, fids[i]);
+  }
+
   // Do not remove icons here as they will be re-used for updating icons in the
   // level strip
 
