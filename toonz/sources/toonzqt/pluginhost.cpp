@@ -56,7 +56,7 @@ bool PluginLoader::load_entries(const std::string &basepath) {
   if (!aw) {
     aw = new PluginLoadController(basepath, NULL);
   }
-  bool ret    = aw->wait(16 /* ms */);
+  bool ret = aw->wait(16 /* ms */);
   if (ret) aw = NULL; /* deleteLater で消えるはず */
   return ret;
 }
@@ -152,7 +152,7 @@ PluginDescription::PluginDescription(const plugin_probe_t *const probe) {
 }
 
 RasterFxPluginHost::RasterFxPluginHost(PluginInformation *pinfo)
-    : TZeraryFx(), pi_(pinfo), user_data_(nullptr) {
+    : TRasterFx(), pi_(pinfo), user_data_(nullptr) {
   pi_->add_ref();
 }
 
