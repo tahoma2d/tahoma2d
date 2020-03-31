@@ -288,6 +288,9 @@ public:
   void onDeactivate() override;
 
 private:
+  typedef void (EraserTool::*EraseFunction)(const TVectorImageP vi,
+                                            TStroke *stroke);
+
   TPropertyGroup m_prop;
 
   TEnumProperty m_eraseType;
@@ -342,15 +345,18 @@ private:
 
   void eraseRegion(const TVectorImageP vi, TStroke *stroke);
 
-  bool eraseSegments(const TVectorImageP vi, TStroke *eraseStroke);
+  void eraseSegments(const TVectorImageP vi, TStroke *eraseStroke);
 
   void multiEraseRect(TFrameId firstFrameId, TFrameId lastFrameId,
                       TRectD firstRect, TRectD lastRect, bool invert);
   void doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
-                    const TStroke *firstStroke, const TStroke *lastStroke);
+                    const TStroke *firstStroke, const TStroke *lastStroke,
+                    EraseFunction eraseFunction);
   void doErase(double t, const TXshSimpleLevelP &sl, const TFrameId &fid,
-               const TVectorImageP &firstImage, const TVectorImageP &lastImage);
-  void multiEreserRegion(TStroke *stroke, const TMouseEvent &e);
+               const TVectorImageP &firstImage, const TVectorImageP &lastImage,
+               EraseFunction eraseFunction);
+  void multiErase(TStroke *stroke, const TMouseEvent &e,
+                  EraseFunction eraseFunction);
 
 } eraserTool;
 
@@ -991,7 +997,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   } else if (m_eraseType.getValue() == FREEHAND_ERASE) {
     closeFreehand(pos);
     if (m_multi.getValue()) {
-      multiEreserRegion(m_stroke, e);
+      multiErase(m_stroke, e, &EraserTool::eraseRegion);
       invalidate();
     } else {
       eraseRegion(vi, m_stroke);
@@ -1003,14 +1009,15 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
     double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
     m_stroke     = m_track.makeStroke(error);
     m_stroke->setStyle(1);
-    bool erasedSomething = eraseSegments(vi, m_stroke);
-    if (erasedSomething) {
+    if (m_multi.getValue()) {
+      multiErase(m_stroke, e, &EraserTool::eraseSegments);
+      invalidate();
+    } else {
+      eraseSegments(vi, m_stroke);
       invalidate();
       notifyImageChanged();
     }
     m_track.clear();
-    delete m_stroke;
-    m_stroke = NULL;
   }
 }
 
@@ -1038,7 +1045,7 @@ void EraserTool::leftButtonDoubleClick(const TPointD &pos,
     TStroke *stroke = new TStroke(strokePoints);
     assert(stroke->getPoint(0) == stroke->getPoint(1));
     if (m_multi.getValue())
-      multiEreserRegion(stroke, e);
+      multiErase(stroke, e, &EraserTool::eraseRegion);
     else {
       eraseRegion(vi, stroke);
       m_active = false;
@@ -1218,8 +1225,8 @@ static bool doublePairCompare(DoublePair p1, DoublePair p2) {
   return p1.first < p2.first;
 }
 
-bool EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
-  if (!vi || !eraseStroke) return false;
+void EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
+  if (!vi || !eraseStroke) return;
 
   int strokeNumber = vi->getStrokeCount();
   std::vector<int> touchedStrokeIndex;
@@ -1248,7 +1255,7 @@ bool EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
 
   // if the eraser did not touch any strokes, return
   if (touchedStrokeIndex.size() == 0) {
-    return false;
+    return;
   }
 
   // find closest intersections of each end of the touched place of each stroke
@@ -1406,7 +1413,7 @@ bool EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
   }
 
   TUndoManager::manager()->add(undo);
-  return true;
+  return;
 }
 
 //-----------------------------------------------------------------------------
@@ -1488,7 +1495,8 @@ void EraserTool::eraseRegion(
  * si deve effettuare una cancellazione.*/
 void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
                               const TStroke *firstStroke,
-                              const TStroke *lastStroke) {
+                              const TStroke *lastStroke,
+                              EraserTool::EraseFunction eraseFunction) {
   TXshSimpleLevel *sl =
       TTool::getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
   TStroke *first           = new TStroke();
@@ -1542,7 +1550,8 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
       else
         app->getCurrentFrame()->setFid(fid);
     }
-    doErase(backward ? 1 - t : t, sl, fid, firstImage, lastImage);
+    doErase(backward ? 1 - t : t, sl, fid, firstImage, lastImage,
+            eraseFunction);
     notifyImageChanged();
   }
   TUndoManager::manager()->endBlock();
@@ -1559,19 +1568,20 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
         bisogna effettuare la cancellazione.*/
 void EraserTool::doErase(double t, const TXshSimpleLevelP &sl,
                          const TFrameId &fid, const TVectorImageP &firstImage,
-                         const TVectorImageP &lastImage) {
+                         const TVectorImageP &lastImage,
+                         EraserTool::EraseFunction eraseFunction) {
   //	TImageLocation imageLocation(m_level->getName(),fid);
   TVectorImageP img = sl->getFrame(fid, true);
   if (t == 0)
-    eraseRegion(img, firstImage->getStroke(0));  //,imageLocation);
+    (this->*eraseFunction)(img, firstImage->getStroke(0));  //,imageLocation);
   else if (t == 1)
-    eraseRegion(img, lastImage->getStroke(0));  //,imageLocation);
+    (this->*eraseFunction)(img, lastImage->getStroke(0));  //,imageLocation);
   else {
     assert(firstImage->getStrokeCount() == 1);
     assert(lastImage->getStrokeCount() == 1);
     TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
     assert(vi->getStrokeCount() == 1);
-    eraseRegion(img, vi->getStroke(0));  //,imageLocation);
+    (this->*eraseFunction)(img, vi->getStroke(0));  //,imageLocation);
   }
 }
 
@@ -1581,14 +1591,16 @@ void EraserTool::doErase(double t, const TXshSimpleLevelP &sl,
 /*! Se il primo frame e' gia stato selezionato richiama la \b doMultiErase;
  altrimenti viene inizializzato
  \b m_firstStroke.*/
-void EraserTool::multiEreserRegion(TStroke *stroke, const TMouseEvent &e) {
+void EraserTool::multiErase(TStroke *stroke, const TMouseEvent &e,
+                            EraserTool::EraseFunction eraseFunction) {
   TTool::Application *application = TTool::getApplication();
   if (!application) return;
 
   if (m_firstFrameSelected) {
     if (m_firstStroke && stroke) {
       TFrameId tmpFrameId = getCurrentFid();
-      doMultiErase(m_firstFrameId, tmpFrameId, m_firstStroke, stroke);
+      doMultiErase(m_firstFrameId, tmpFrameId, m_firstStroke, stroke,
+                   eraseFunction);
     }
     if (e.isShiftPressed()) {
       m_firstStroke  = new TStroke(*stroke);
