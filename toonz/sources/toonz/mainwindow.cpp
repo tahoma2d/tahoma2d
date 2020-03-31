@@ -1821,7 +1821,7 @@ void MainWindow::defineActions() {
 
   QAction *repeatAction = createMenuCellsAction(MI_Dup, tr("&Repeat..."), "");
   repeatAction->setIconText("Repeat");
-  repeatAction->setIcon(QIcon(":Resources/repeat.svg"));
+  repeatAction->setIcon(QIcon(":Resources/repeat_icon.svg"));
 
   createMenuCellsAction(MI_ResetStep, tr("&Reset Step"), "");
   createMenuCellsAction(MI_IncreaseStep, tr("&Increase Step"), "'");
