@@ -606,8 +606,7 @@ std::string TFilePath::getLevelName() const {
 }
 
 //-----------------------------------------------------------------------------
-// es. TFilePath("/pippo/pluto.0001.tif").getLevelName() == "pluto..tif"
-// es. TFilePath("/pippo/0001.tif").getLevelName() == "0001.tif"
+// es. TFilePath("/pippo/pluto.0001.gif").getLevelName() == "pluto..gif"
 
 std::wstring TFilePath::getLevelNameW() const {
   int i            = getLastSlash(m_path);  // cerco l'ultimo slash
@@ -623,7 +622,8 @@ std::wstring TFilePath::getLevelNameW() const {
   if (j == i || j - i == 1)  // prova.tif o prova..tif
     return str;
 
-  if (!checkForSeqNum(type) || !isNumbers(str, i, j) || i == -1) return str;
+  if (!checkForSeqNum(type) || !isNumbers(str, i, j) ||
+      i == (int)std::wstring::npos) return str;
   // prova.0001.tif
   return str.erase(i + 1, j - i - 1);
 }
