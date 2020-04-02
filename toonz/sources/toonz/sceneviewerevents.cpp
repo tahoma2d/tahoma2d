@@ -307,6 +307,15 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletEvent = false;
 #endif
 
+#ifdef LINUX
+    // for Linux, create context menu on right click here.
+    // could possibly merge with OSX code above
+    if(e->button() == Qt::RightButton) {
+      m_mouseButton = Qt::NoButton;
+      onContextMenu(e->pos(), e->globalPos());
+    }
+#endif
+
   } break;
   case QEvent::TabletRelease: {
 #ifdef MACOSX
