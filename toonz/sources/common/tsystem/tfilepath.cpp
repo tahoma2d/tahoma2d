@@ -622,7 +622,8 @@ std::wstring TFilePath::getLevelNameW() const {
   if (j == i || j - i == 1)  // prova.tif o prova..tif
     return str;
 
-  if (!checkForSeqNum(type) || !isNumbers(str, i, j)) return str;
+  if (!checkForSeqNum(type) || !isNumbers(str, i, j) ||
+      i == (int)std::wstring::npos) return str;
   // prova.0001.tif
   return str.erase(i + 1, j - i - 1);
 }
