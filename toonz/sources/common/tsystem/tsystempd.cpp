@@ -61,6 +61,7 @@
 #include <sys/time.h>
 #include <QDir>
 #include <QFileInfo>
+#include <QStorageInfo>
 #include <QTextStream>
 #include <QUrl>
 #endif
@@ -464,11 +465,26 @@ void TSystem::moveFileToRecycleBin(const TFilePath &fp) {
 
   QDateTime currentTime(QDateTime::currentDateTime());    // get system time
 
+  // check if the file is on the local drive
+  const QStorageInfo fileStorageInfo(fileToRecycle);
+  const QStorageInfo homeStorageInfo(QDir::homePath());
+  const bool isOnHomeDrive = fileStorageInfo == homeStorageInfo;
+
   QString trashFilePath = QDir::homePath() + "/.local/share/Trash/files/";    // this folder contains deleted files
   QString trashInfoPath = QDir::homePath() + "/.local/share/Trash/info/";     // this folder contains information about the deleted files
 
+  // different paths are used for external drives
+  if (!isOnHomeDrive) {
+    //trashFilePath = fileStorageInfo.rootPath() + "/.Trash-1000/files/";
+    //trashInfoPath = fileStorageInfo.rootPath() + "/.Trash-1000/info/";
+
+    // TODO: Implement this... The standard is /.Trash-<UID>/...
+    outputDebug("Deleting files on external drives in Linux is not implemented yet.");
+    return;
+  }
+
   // check paths exist
-  if( !QDir(trashFilePath).exists() || !QDir(trashFilePath).exists(trashInfoPath) ) {
+  if( !QDir(trashFilePath).exists() || !QDir(trashInfoPath).exists() ) {
     outputDebug("Could not find the right paths to send the file to the recycle bin.");
     return;
   }
