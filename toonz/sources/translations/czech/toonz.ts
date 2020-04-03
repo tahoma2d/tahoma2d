@@ -7087,7 +7087,7 @@ Nastavit cestu k výstupní složce také na podsložku.</translation>
         <translation>Ukázat nahrané úrovně v záběru</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>Při zavádění podzáběrů vytvořit podsložky</translation>
     </message>
     <message>

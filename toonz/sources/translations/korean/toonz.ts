@@ -6621,7 +6621,7 @@ Is it OK to release these shortcuts?</source>
         <translation>가져오기 레벨을 X-시트에 표시</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>서브-X시트를 가져올때 하위 폴더 만들기</translation>
     </message>
     <message>

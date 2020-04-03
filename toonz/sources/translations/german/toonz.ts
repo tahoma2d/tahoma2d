@@ -7050,7 +7050,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Geladenen Ebenen in Xsheet anzeigen</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>Beim importieren von Sub-Xsheets Unterordner erstellen</translation>
     </message>
     <message>

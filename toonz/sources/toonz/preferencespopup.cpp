@@ -980,7 +980,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {importPolicy, tr("Default File Import Behavior:")},
       {autoExposeEnabled, tr("Expose Loaded Levels in Xsheet")},
       {subsceneFolderEnabled,
-       tr("Create Sub-folder when Importing Sub-xsheet")},
+       tr("Create Sub-folder when Importing Sub-Xsheet")},
       {removeSceneNumberFromLoadedLevelName,
        tr("Automatically Remove Scene Number from Loaded Level Name")},
       {IgnoreImageDpi, tr("Use Camera DPI for All Imported Images")},

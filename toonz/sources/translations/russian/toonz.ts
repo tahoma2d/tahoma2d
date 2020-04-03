@@ -8628,8 +8628,8 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="983"/>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
-        <translation>Создавать подпапки при импорте Sub-xsheet</translation>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
+        <translation>Создавать подпапки при импорте Sub-Xsheet</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="986"/>

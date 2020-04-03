@@ -6892,8 +6892,8 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Esponi i Livelli Caricati nell&apos;Xsheet</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
-        <translation>Crea una Sotto-cartella quando Importi un Sub-xsheet</translation>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
+        <translation>Crea una Sotto-cartella quando Importi un Sub-Xsheet</translation>
     </message>
     <message>
         <source>Drawing</source>

@@ -6980,7 +6980,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>シーンアセットにレベルを読み込む時、タイムシートにも配置</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>サブシートをインポートして読み込む時、サブフォルダを作成する</translation>
     </message>
     <message>

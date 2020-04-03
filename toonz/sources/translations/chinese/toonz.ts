@@ -7018,7 +7018,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>在摄影表中公开已加载的层级</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>当导入子摄影表时创建子文件夹</translation>
     </message>
     <message>

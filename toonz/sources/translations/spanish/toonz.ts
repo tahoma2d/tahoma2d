@@ -6987,7 +6987,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Exponer niveles cargados en planilla</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>Crear sub-carpetas al importar sub-planillas</translation>
     </message>
     <message>

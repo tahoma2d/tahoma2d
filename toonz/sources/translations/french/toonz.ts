@@ -6883,8 +6883,8 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Exposer les Niveaux Chargés dans le Xsheet</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
-        <translation>Créer un Sous-dossier lors de l&apos;Importation d&apos;un Sub-xsheet</translation>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
+        <translation>Créer un Sous-dossier lors de l&apos;Importation d&apos;un Sub-Xsheet</translation>
     </message>
     <message>
         <source>Drawing</source>
