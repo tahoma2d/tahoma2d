@@ -959,7 +959,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Show Raster Images Darken Blended")},
       {showFrameNumberWithLetters,
        tr("Show \"ABC\" Appendix to the Frame Number in Xsheet Cell")},
-      {iconSize, tr("Icon Size*:")},
+      {iconSize, tr("Level Strip Icon Size*:")},
       {viewShrink, tr("Viewer Shrink:")},
       {viewStep, tr("Step:")},
       {viewerZoomCenter, tr("Viewer Zoom Center:")},

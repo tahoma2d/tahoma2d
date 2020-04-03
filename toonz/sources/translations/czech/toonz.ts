@@ -7375,7 +7375,7 @@ Nastavit cestu k výstupní složce také na podsložku.</translation>
         <translation>Skupina</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>Velikost Ikony*:</translation>
     </message>
     <message>

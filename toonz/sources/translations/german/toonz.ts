@@ -7350,7 +7350,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>Icon-Größe*:</translation>
     </message>
     <message>

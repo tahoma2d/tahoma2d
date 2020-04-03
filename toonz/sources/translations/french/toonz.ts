@@ -7171,7 +7171,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Couleur de Fond du Preview:</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

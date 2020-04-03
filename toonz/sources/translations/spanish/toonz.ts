@@ -7271,7 +7271,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
         <translation>Categorías</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>Tamaño de íconos*:</translation>
     </message>
     <message>

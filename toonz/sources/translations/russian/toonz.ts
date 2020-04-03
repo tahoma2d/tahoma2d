@@ -9307,7 +9307,7 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="962"/>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>Размер иконки*:</translation>
     </message>
     <message>

@@ -7180,7 +7180,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Colore del Fondale dell&apos;Anteprima:</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

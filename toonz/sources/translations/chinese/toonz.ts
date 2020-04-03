@@ -7103,7 +7103,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Undo Memory Size (MB):</source>
-        <translation type="vanished">分配给撤消的内存大小(MB):</translation>
+        <translation>分配给撤消的内存大小(MB):</translation>
     </message>
     <message>
         <source>Render Task Chunk Size:</source>
@@ -7315,10 +7315,10 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Undo Memory Size (MB)</source>
-        <translation>分配给撤消的内存大小(MB)</translation>
+        <translation type="vanished">分配给撤消的内存大小(MB)</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>图标尺寸*:</translation>
     </message>
     <message>

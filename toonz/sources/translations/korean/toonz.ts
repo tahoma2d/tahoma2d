@@ -7099,7 +7099,7 @@ if both are possible on coding file path.</source>
         <translation>기능 편집기*:</translation>
     </message>
     <message>
-        <source>Icon Size*:</source>
+        <source>Level Strip Icon Size*:</source>
         <translation>아이콘 크기*:</translation>
     </message>
     <message>
