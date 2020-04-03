@@ -462,7 +462,7 @@ void TSystem::readDirectory_DirItems(QStringList &dst, const TFilePath &path) {
 #ifdef _WIN32
   // equivalent to sorting with QDir::LocaleAware
   struct strCompare {
-    bool operator()(const QString &s1, const QString &s2) {
+    bool operator()(const QString &s1, const QString &s2) const {
       return QString::localeAwareCompare(s1, s2) < 0;
     }
   };
