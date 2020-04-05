@@ -357,6 +357,12 @@
 #define MI_GeometricArc "MI_GeometricArc"
 #define MI_GeometricPolygon "MI_GeometricPolygon"
 
+#define MI_TypeNextMode "MI_TypeNextMode"
+#define MI_TypeOblique "MI_TypeOblique"
+#define MI_TypeRegular "MI_TypeRegular"
+#define MI_TypeBoldOblique "MI_TypeBoldOblique"
+#define MI_TypeBold "MI_TypeBold"
+
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
 #define MI_PickStyleAreas "MI_PickStyleAreas"

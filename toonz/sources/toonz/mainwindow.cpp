@@ -478,6 +478,14 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_GeometricPolygon, this,
                     &MainWindow::toggleGeometricPolygon);
 
+  /*-- Type tool + mode switching shortcuts --*/
+  setCommandHandler(MI_TypeNextMode, this, &MainWindow::toggleTypeNextMode);
+  setCommandHandler(MI_TypeOblique, this, &MainWindow::toggleTypeOblique);
+  setCommandHandler(MI_TypeRegular, this, &MainWindow::toggleTypeRegular);
+  setCommandHandler(MI_TypeBoldOblique, this,
+                    &MainWindow::toggleTypeBoldOblique);
+  setCommandHandler(MI_TypeBold, this, &MainWindow::toggleTypeBold);
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
@@ -2366,6 +2374,14 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_TypeFont", tr("TypeTool Font"), "");
   createToolOptionsAction("A_ToolOption_TypeSize", tr("TypeTool Size"), "");
   createToolOptionsAction("A_ToolOption_TypeStyle", tr("TypeTool Style"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Oblique",
+                          tr("TypeTool Style - Oblique"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Regular",
+                          tr("TypeTool Style - Regular"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Bold Oblique",
+                          tr("TypeTool Style - Bold Oblique"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Bold",
+                          tr("TypeTool Style - Bold"), "");
 
   createToolOptionsAction("A_ToolOption_EditToolActiveAxis", tr("Active Axis"),
                           "");
@@ -2439,6 +2455,15 @@ void MainWindow::defineActions() {
                ToolCommandType);
   createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "",
                ToolCommandType);
+
+  /*-- Type tool + mode switching shortcuts --*/
+  createAction(MI_TypeNextMode, tr("Type Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_TypeOblique, tr("Type Tool - Oblique"), "", ToolCommandType);
+  createAction(MI_TypeRegular, tr("Type Tool - Regular"), "", ToolCommandType);
+  createAction(MI_TypeBoldOblique, tr("Type Tool - Bold Oblique"), "",
+               ToolCommandType);
+  createAction(MI_TypeBold, tr("Type Tool - Bold"), "", ToolCommandType);
 
   /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
   createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
@@ -2625,6 +2650,42 @@ void MainWindow::toggleGeometricPolygon() {
   CommandManager::instance()->getAction(T_Geometric)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_GeometricShape:Polygon")
+      ->trigger();
+}
+//---------------------------------------------------------------------------------------
+/*-- Type tool + mode switching shortcuts --*/
+void MainWindow::toggleTypeNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Type)
+    CommandManager::instance()->getAction("A_ToolOption_TypeStyle")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Type)->trigger();
+}
+
+void MainWindow::toggleTypeOblique() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Oblique")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeRegular() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Regular")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeBoldOblique() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Bold Oblique")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeBold() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Bold")
       ->trigger();
 }
 

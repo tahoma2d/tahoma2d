@@ -132,6 +132,13 @@ public:
   void toggleGeometricArc();
   void toggleGeometricPolygon();
 
+  /*-- Type tool + mode switching shortcuts --*/
+  void toggleTypeNextMode();
+  void toggleTypeOblique();
+  void toggleTypeRegular();
+  void toggleTypeBoldOblique();
+  void toggleTypeBold();
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   void toggleFillAreas();
   void toggleFillLines();
