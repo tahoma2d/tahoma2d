@@ -117,13 +117,13 @@ public:
   void toggleEditNextAll();
 
   /*-- Selection tool + mode switching shortcuts --*/
-  void toggleSelectionNextMode();
+  void toggleSelectionNextType();
   void toggleSelectionRectangular();
   void toggleSelectionFreehand();
   void toggleSelectionPolyline();
 
-  /*-- Geometric tool + mode switching shortcuts --*/
-  void toggleGeometricNextMode();
+  /*-- Geometric tool + shape switching shortcuts --*/
+  void toggleGeometricNextShape();
   void toggleGeometricRectangle();
   void toggleGeometricCircle();
   void toggleGeometricEllipse();
@@ -132,8 +132,8 @@ public:
   void toggleGeometricArc();
   void toggleGeometricPolygon();
 
-  /*-- Type tool + mode switching shortcuts --*/
-  void toggleTypeNextMode();
+  /*-- Type tool + style switching shortcuts --*/
+  void toggleTypeNextStyle();
   void toggleTypeOblique();
   void toggleTypeRegular();
   void toggleTypeBoldOblique();

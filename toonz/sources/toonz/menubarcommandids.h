@@ -343,12 +343,12 @@
 #define MI_EditCenter "MI_EditCenter"
 #define MI_EditAll "MI_EditAll"
 
-#define MI_SelectionNextMode "MI_SelectionNextMode"
+#define MI_SelectionNextType "MI_SelectionNextType"
 #define MI_SelectionRectangular "MI_SelectionRectangular"
 #define MI_SelectionFreehand "MI_SelectionFreehand"
 #define MI_SelectionPolyline "MI_SelectionPolyline"
 
-#define MI_GeometricNextMode "MI_GeometricNextMode"
+#define MI_GeometricNextShape "MI_GeometricNextShape"
 #define MI_GeometricRectangle "MI_GeometricRectangle"
 #define MI_GeometricCircle "MI_GeometricCircle"
 #define MI_GeometricEllipse "MI_GeometricEllipse"
@@ -357,7 +357,7 @@
 #define MI_GeometricArc "MI_GeometricArc"
 #define MI_GeometricPolygon "MI_GeometricPolygon"
 
-#define MI_TypeNextMode "MI_TypeNextMode"
+#define MI_TypeNextStyle "MI_TypeNextStyle"
 #define MI_TypeOblique "MI_TypeOblique"
 #define MI_TypeRegular "MI_TypeRegular"
 #define MI_TypeBoldOblique "MI_TypeBoldOblique"

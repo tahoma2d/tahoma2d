@@ -452,9 +452,9 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_EditCenter, this, &MainWindow::toggleEditNextCenter);
   setCommandHandler(MI_EditAll, this, &MainWindow::toggleEditNextAll);
 
-  /*-- Selection tool + mode switching shortcuts --*/
-  setCommandHandler(MI_SelectionNextMode, this,
-                    &MainWindow::toggleSelectionNextMode);
+  /*-- Selection tool + type switching shortcuts --*/
+  setCommandHandler(MI_SelectionNextType, this,
+                    &MainWindow::toggleSelectionNextType);
   setCommandHandler(MI_SelectionRectangular, this,
                     &MainWindow::toggleSelectionRectangular);
   setCommandHandler(MI_SelectionFreehand, this,
@@ -462,9 +462,9 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_SelectionPolyline, this,
                     &MainWindow::toggleSelectionPolyline);
 
-  /*-- Geometric tool + mode switching shortcuts --*/
-  setCommandHandler(MI_GeometricNextMode, this,
-                    &MainWindow::toggleGeometricNextMode);
+  /*-- Geometric tool + shape switching shortcuts --*/
+  setCommandHandler(MI_GeometricNextShape, this,
+                    &MainWindow::toggleGeometricNextShape);
   setCommandHandler(MI_GeometricRectangle, this,
                     &MainWindow::toggleGeometricRectangle);
   setCommandHandler(MI_GeometricCircle, this,
@@ -478,8 +478,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_GeometricPolygon, this,
                     &MainWindow::toggleGeometricPolygon);
 
-  /*-- Type tool + mode switching shortcuts --*/
-  setCommandHandler(MI_TypeNextMode, this, &MainWindow::toggleTypeNextMode);
+  /*-- Type tool + style switching shortcuts --*/
+  setCommandHandler(MI_TypeNextStyle, this, &MainWindow::toggleTypeNextStyle);
   setCommandHandler(MI_TypeOblique, this, &MainWindow::toggleTypeOblique);
   setCommandHandler(MI_TypeRegular, this, &MainWindow::toggleTypeRegular);
   setCommandHandler(MI_TypeBoldOblique, this,
@@ -2509,8 +2509,8 @@ void MainWindow::defineActions() {
   createAction(MI_EditCenter, tr("Animate Tool - Center"), "", ToolCommandType);
   createAction(MI_EditAll, tr("Animate Tool - All"), "", ToolCommandType);
 
-  /*-- Selection tool + mode switching shortcuts --*/
-  createAction(MI_SelectionNextMode, tr("Selection Tool - Next Mode"), "",
+  /*-- Selection tool + type switching shortcuts --*/
+  createAction(MI_SelectionNextType, tr("Selection Tool - Next Type"), "",
                ToolCommandType);
   createAction(MI_SelectionRectangular, tr("Selection Tool - Rectangular"), "",
                ToolCommandType);
@@ -2519,8 +2519,8 @@ void MainWindow::defineActions() {
   createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "",
                ToolCommandType);
 
-  /*-- Geometric tool + mode switching shortcuts --*/
-  createAction(MI_GeometricNextMode, tr("Geometric Tool - Next Mode"), "",
+  /*-- Geometric tool + shape switching shortcuts --*/
+  createAction(MI_GeometricNextShape, tr("Geometric Tool - Next Shape"), "",
                ToolCommandType);
   createAction(MI_GeometricRectangle, tr("Geometric Tool - Rectangle"), "",
                ToolCommandType);
@@ -2537,8 +2537,8 @@ void MainWindow::defineActions() {
   createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "",
                ToolCommandType);
 
-  /*-- Type tool + mode switching shortcuts --*/
-  createAction(MI_TypeNextMode, tr("Type Tool - Next Mode"), "",
+  /*-- Type tool + style switching shortcuts --*/
+  createAction(MI_TypeNextStyle, tr("Type Tool - Next Style"), "",
                ToolCommandType);
   createAction(MI_TypeOblique, tr("Type Tool - Oblique"), "", ToolCommandType);
   createAction(MI_TypeRegular, tr("Type Tool - Regular"), "", ToolCommandType);
@@ -2724,8 +2724,8 @@ void MainWindow::toggleEditNextAll() {
 }
 
 //---------------------------------------------------------------------------------------
-/*-- Selection tool + mode switching shortcuts --*/
-void MainWindow::toggleSelectionNextMode() {
+/*-- Selection tool + type switching shortcuts --*/
+void MainWindow::toggleSelectionNextType() {
   if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Selection)
     CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
   else
@@ -2754,8 +2754,8 @@ void MainWindow::toggleSelectionPolyline() {
 }
 
 //---------------------------------------------------------------------------------------
-/*-- Geometric tool + mode switching shortcuts --*/
-void MainWindow::toggleGeometricNextMode() {
+/*-- Geometric tool + shape switching shortcuts --*/
+void MainWindow::toggleGeometricNextShape() {
   if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Geometric)
     CommandManager::instance()
         ->getAction("A_ToolOption_GeometricShape")
@@ -2814,7 +2814,7 @@ void MainWindow::toggleGeometricPolygon() {
 }
 //---------------------------------------------------------------------------------------
 /*-- Type tool + mode switching shortcuts --*/
-void MainWindow::toggleTypeNextMode() {
+void MainWindow::toggleTypeNextStyle() {
   if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Type)
     CommandManager::instance()->getAction("A_ToolOption_TypeStyle")->trigger();
   else
