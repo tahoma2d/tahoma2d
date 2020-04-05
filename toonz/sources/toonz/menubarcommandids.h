@@ -404,6 +404,12 @@
 #define MI_SkeletonAnimate "MI_SkeletonAnimate"
 #define MI_SkeletonInverseKinematics "MI_SkeletonInverseKinematics"
 
+#define MI_PlasticNextMode "MI_PlasticNextMode"
+#define MI_PlasticEditMesh "MI_PlasticEditMesh"
+#define MI_PlasticPaintRigid "MI_PlasticPaintRigid"
+#define MI_PlasticBuildSkeleton "MI_PlasticBuildSkeleton"
+#define MI_PlasticAnimate "MI_PlasticAnimate"
+
 #define MI_DeactivateUpperColumns "MI_DeactivateUpperColumns"
 #define MI_CompareToSnapshot "MI_CompareToSnapshot"
 #define MI_PreviewFx "MI_PreviewFx"

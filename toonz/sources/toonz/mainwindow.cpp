@@ -550,6 +550,17 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_SkeletonInverseKinematics, this,
                     &MainWindow::ToggleSkeletonInverseKinematics);
 
+  /*-- Plastic tool + mode switching shortcuts --*/
+  setCommandHandler(MI_PlasticNextMode, this,
+                    &MainWindow::TogglePlasticNextMode);
+  setCommandHandler(MI_PlasticEditMesh, this,
+                    &MainWindow::TogglePlasticEditMesh);
+  setCommandHandler(MI_PlasticPaintRigid, this,
+                    &MainWindow::TogglePlasticPaintRigid);
+  setCommandHandler(MI_PlasticBuildSkeleton, this,
+                    &MainWindow::TogglePlasticBuildSkeleton);
+  setCommandHandler(MI_PlasticAnimate, this, &MainWindow::TogglePlasticAnimate);
+
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
@@ -2464,6 +2475,10 @@ void MainWindow::defineActions() {
                           tr("Active Axis - All"), "");
 
   createToolOptionsAction("A_ToolOption_SkeletonMode", tr("Skeleton Mode"), "");
+  createToolOptionsAction("A_ToolOption_SkeletonMode:Edit Mesh",
+                          tr("Edit Mesh Mode"), "");
+  createToolOptionsAction("A_ToolOption_SkeletonMode:Paint Rigid",
+                          tr("Paint Rigid Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Build Skeleton",
                           tr("Build Skeleton Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Animate",
@@ -2608,6 +2623,18 @@ void MainWindow::defineActions() {
                ToolCommandType);
   createAction(MI_SkeletonInverseKinematics,
                tr("Skeleton Tool - Inverse Kinematics"), "", ToolCommandType);
+
+  /*-- Plastic tool + mode switching shortcuts --*/
+  createAction(MI_PlasticNextMode, tr("Plastic Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_PlasticEditMesh, tr("Plastic Tool - Edit Mesh"), "",
+               ToolCommandType);
+  createAction(MI_PlasticPaintRigid, tr("Plastic Tool - Paint Rigid"), "",
+               ToolCommandType);
+  createAction(MI_PlasticBuildSkeleton, tr("Plastic Tool - Build Skeleton"), "",
+               ToolCommandType);
+  createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "",
+               ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 #ifdef WITH_STOPMOTION
@@ -3068,6 +3095,45 @@ void MainWindow::ToggleSkeletonInverseKinematics() {
   CommandManager::instance()->getAction(T_Skeleton)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_SkeletonMode:Inverse Kinematics")
+      ->trigger();
+}
+
+//-----------------------------------------------------------------------------
+/*-- Plastic tool + mode switching shortcuts --*/
+void MainWindow::TogglePlasticNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Plastic)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_SkeletonMode")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Plastic)->trigger();
+}
+
+void MainWindow::TogglePlasticEditMesh() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Edit Mesh")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticPaintRigid() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Paint Rigid")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticBuildSkeleton() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Build Skeleton")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticAnimate() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Animate")
       ->trigger();
 }
 

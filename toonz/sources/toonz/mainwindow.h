@@ -186,6 +186,13 @@ public:
   void ToggleSkeletonAnimate();
   void ToggleSkeletonInverseKinematics();
 
+  /*-- Plastic tool + mode switching shortcuts --*/
+  void TogglePlasticNextMode();
+  void TogglePlasticEditMesh();
+  void TogglePlasticPaintRigid();
+  void TogglePlasticBuildSkeleton();
+  void TogglePlasticAnimate();
+
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();
