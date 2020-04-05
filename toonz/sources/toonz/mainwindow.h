@@ -180,6 +180,12 @@ public:
   void toggleRGBPickerFreehand();
   void toggleRGBPickerPolyline();
 
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  void ToggleSkeletonNextMode();
+  void ToggleSkeletonBuildSkeleton();
+  void ToggleSkeletonAnimate();
+  void ToggleSkeletonInverseKinematics();
+
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();

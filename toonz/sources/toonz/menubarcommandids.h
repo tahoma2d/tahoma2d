@@ -399,6 +399,11 @@
 #define MI_RGBPickerFreehand "MI_RGBPickerFreehand"
 #define MI_RGBPickerPolyline "MI_RGBPickerPolyline"
 
+#define MI_SkeletonNextMode "MI_SkeletonNextMode"
+#define MI_SkeletonBuildSkeleton "MI_SkeletonBuildSkeleton"
+#define MI_SkeletonAnimate "MI_SkeletonAnimate"
+#define MI_SkeletonInverseKinematics "MI_SkeletonInverseKinematics"
+
 #define MI_DeactivateUpperColumns "MI_DeactivateUpperColumns"
 #define MI_CompareToSnapshot "MI_CompareToSnapshot"
 #define MI_PreviewFx "MI_PreviewFx"

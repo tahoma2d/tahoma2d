@@ -540,6 +540,16 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_RGBPickerPolyline, this,
                     &MainWindow::toggleRGBPickerPolyline);
 
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  setCommandHandler(MI_SkeletonNextMode, this,
+                    &MainWindow::ToggleSkeletonNextMode);
+  setCommandHandler(MI_SkeletonBuildSkeleton, this,
+                    &MainWindow::ToggleSkeletonBuildSkeleton);
+  setCommandHandler(MI_SkeletonAnimate, this,
+                    &MainWindow::ToggleSkeletonAnimate);
+  setCommandHandler(MI_SkeletonInverseKinematics, this,
+                    &MainWindow::ToggleSkeletonInverseKinematics);
+
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
@@ -2453,6 +2463,7 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_EditToolActiveAxis:All",
                           tr("Active Axis - All"), "");
 
+  createToolOptionsAction("A_ToolOption_SkeletonMode", tr("Skeleton Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Build Skeleton",
                           tr("Build Skeleton Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Animate",
@@ -2587,6 +2598,16 @@ void MainWindow::defineActions() {
                ToolCommandType);
   createAction(MI_RGBPickerPolyline, tr("RGB Picker Tool - Polyline"), "",
                ToolCommandType);
+
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  createAction(MI_SkeletonNextMode, tr("Skeleton Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_SkeletonBuildSkeleton, tr("Skeleton Tool - Build Skeleton"),
+               "", ToolCommandType);
+  createAction(MI_SkeletonAnimate, tr("Skeleton Tool - Animate"), "",
+               ToolCommandType);
+  createAction(MI_SkeletonInverseKinematics,
+               tr("Skeleton Tool - Inverse Kinematics"), "", ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 #ifdef WITH_STOPMOTION
@@ -3016,6 +3037,37 @@ void MainWindow::toggleRGBPickerPolyline() {
   CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+//-----------------------------------------------------------------------------
+/*-- Skeleton tool + type switching shortcuts --*/
+void MainWindow::ToggleSkeletonNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Skeleton)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_SkeletonMode")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Skeleton)->trigger();
+}
+
+void MainWindow::ToggleSkeletonBuildSkeleton() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Build Skeleton")
+      ->trigger();
+}
+
+void MainWindow::ToggleSkeletonAnimate() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Animate")
+      ->trigger();
+}
+
+void MainWindow::ToggleSkeletonInverseKinematics() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Inverse Kinematics")
       ->trigger();
 }
 
