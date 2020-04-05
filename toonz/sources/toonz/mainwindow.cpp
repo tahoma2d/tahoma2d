@@ -528,6 +528,18 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_PickStyleLinesAndAreas, this,
                     &MainWindow::togglePickStyleLinesAndAreas);
 
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  setCommandHandler(MI_RGBPickerNextType, this,
+                    &MainWindow::toggleRGBPickerNextType);
+  setCommandHandler(MI_RGBPickerNormal, this,
+                    &MainWindow::toggleRGBPickerNormal);
+  setCommandHandler(MI_RGBPickerRectangular, this,
+                    &MainWindow::toggleRGBPickerRectangular);
+  setCommandHandler(MI_RGBPickerFreehand, this,
+                    &MainWindow::toggleRGBPickerFreehand);
+  setCommandHandler(MI_RGBPickerPolyline, this,
+                    &MainWindow::toggleRGBPickerPolyline);
+
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
@@ -2564,6 +2576,18 @@ void MainWindow::defineActions() {
   createAction(MI_PickStyleLinesAndAreas,
                tr("Style Picker Tool - Lines & Areas"), "", ToolCommandType);
 
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  createAction(MI_RGBPickerNextType, tr("RGB Picker Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerNormal, tr("RGB Picker Tool - Normal"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerRectangular, tr("RGB Picker Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerFreehand, tr("RGB Picker Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerPolyline, tr("RGB Picker Tool - Polyline"), "",
+               ToolCommandType);
+
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 #ifdef WITH_STOPMOTION
   createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "");
@@ -2955,6 +2979,43 @@ void MainWindow::togglePickStyleLinesAndAreas() {
   CommandManager::instance()->getAction(T_StylePicker)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
+}
+//-----------------------------------------------------------------------------
+/*-- RGB Picker tool + type switching shortcuts --*/
+void MainWindow::toggleRGBPickerNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_RGBPicker)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+}
+
+void MainWindow::toggleRGBPickerNormal() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleRGBPickerRectangular() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleRGBPickerFreehand() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleRGBPickerPolyline() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
       ->trigger();
 }
 

@@ -173,6 +173,13 @@ public:
   void togglePickStyleLines();
   void togglePickStyleLinesAndAreas();
 
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  void toggleRGBPickerNextType();
+  void toggleRGBPickerNormal();
+  void toggleRGBPickerRectangular();
+  void toggleRGBPickerFreehand();
+  void toggleRGBPickerPolyline();
+
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();

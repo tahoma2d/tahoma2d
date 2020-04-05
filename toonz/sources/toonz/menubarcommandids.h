@@ -393,6 +393,12 @@
 #define MI_PickStyleLines "MI_PickStyleLines"
 #define MI_PickStyleLinesAndAreas "MI_PickStyleLinesAndAreas"
 
+#define MI_RGBPickerNextType "MI_RGBPickerNextType"
+#define MI_RGBPickerNormal "MI_RGBPickerNormal"
+#define MI_RGBPickerRectangular "MI_RGBPickerRectangular"
+#define MI_RGBPickerFreehand "MI_RGBPickerFreehand"
+#define MI_RGBPickerPolyline "MI_RGBPickerPolyline"
+
 #define MI_DeactivateUpperColumns "MI_DeactivateUpperColumns"
 #define MI_CompareToSnapshot "MI_CompareToSnapshot"
 #define MI_PreviewFx "MI_PreviewFx"
