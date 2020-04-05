@@ -150,6 +150,14 @@ public:
   void toggleFillLines();
   void toggleFillLinesAndAreas();
 
+  /*-- Eraser tool + type switching shortcuts --*/
+  void toggleEraserNextType();
+  void toggleEraserNormal();
+  void toggleEraserRectangular();
+  void toggleEraserFreehand();
+  void toggleEraserPolyline();
+  void toggleEraserSegment();
+
   /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
   void togglePickStyleAreas();
   void togglePickStyleLines();

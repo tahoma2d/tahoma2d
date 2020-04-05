@@ -373,6 +373,13 @@
 #define MI_FillLines "MI_FillLines"
 #define MI_FillLinesAndAreas "MI_FillLinesAndAreas"
 
+#define MI_EraserNextType "MI_EraserNextType"
+#define MI_EraserNormal "MI_EraserNormal"
+#define MI_EraserRectangular "MI_EraserRectangular"
+#define MI_EraserFreehand "MI_EraserFreehand"
+#define MI_EraserPolyline "MI_EraserPolyline"
+#define MI_EraserSegment "MI_EraserSegment"
+
 #define MI_PickStyleAreas "MI_PickStyleAreas"
 #define MI_PickStyleLines "MI_PickStyleLines"
 
