@@ -335,6 +335,14 @@
 #define MI_Reframe4 "MI_Reframe4"
 #define MI_ReframeWithEmptyInbetweens "MI_ReframeWithEmptyInbetweens"
 
+#define MI_EditNextMode "MI_EditNextMode"
+#define MI_EditPosition "MI_EditPosition"
+#define MI_EditRotation "MI_EditRotation"
+#define MI_EditScale "MI_EditScale"
+#define MI_EditShear "MI_EditShear"
+#define MI_EditCenter "MI_EditCenter"
+#define MI_EditAll "MI_EditAll"
+
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
 #define MI_PickStyleAreas "MI_PickStyleAreas"

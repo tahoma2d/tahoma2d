@@ -443,6 +443,15 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler("MI_ResetRoomLayout", this, &MainWindow::resetRoomsLayout);
   setCommandHandler(MI_AutoFillToggle, this, &MainWindow::autofillToggle);
 
+  /*-- Animate tool + mode switching shortcuts --*/
+  setCommandHandler(MI_EditNextMode, this, &MainWindow::toggleEditNextMode);
+  setCommandHandler(MI_EditPosition, this, &MainWindow::toggleEditPosition);
+  setCommandHandler(MI_EditRotation, this, &MainWindow::toggleEditRotation);
+  setCommandHandler(MI_EditScale, this, &MainWindow::toggleEditNextScale);
+  setCommandHandler(MI_EditShear, this, &MainWindow::toggleEditNextShear);
+  setCommandHandler(MI_EditCenter, this, &MainWindow::toggleEditNextCenter);
+  setCommandHandler(MI_EditAll, this, &MainWindow::toggleEditNextAll);
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
@@ -2351,6 +2360,18 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_AutopaintLines",
                           tr("Fill Tool - Autopaint Lines"), "");
 
+  /*-- Animate tool + mode switching shortcuts --*/
+  createAction(MI_EditNextMode, tr("Animate Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_EditPosition, tr("Animate Tool - Position"), "",
+               ToolCommandType);
+  createAction(MI_EditRotation, tr("Animate Tool - Rotation"), "",
+               ToolCommandType);
+  createAction(MI_EditScale, tr("Animate Tool - Scale"), "", ToolCommandType);
+  createAction(MI_EditShear, tr("Animate Tool - Shear"), "", ToolCommandType);
+  createAction(MI_EditCenter, tr("Animate Tool - Center"), "", ToolCommandType);
+  createAction(MI_EditAll, tr("Animate Tool - All"), "", ToolCommandType);
+
   /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
   createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
   createAction(MI_FillLines, tr("Fill Tool - Lines"), "", ToolCommandType);
@@ -2394,6 +2415,59 @@ void MainWindow::onInk1CheckTriggered(bool on) {
   if (!on) return;
   QAction *inkCheckAction = CommandManager::instance()->getAction(MI_ICheck);
   if (inkCheckAction) inkCheckAction->setChecked(false);
+}
+
+//-----------------------------------------------------------------------------
+/*-- Animate tool + mode switching shortcuts --*/
+void MainWindow::toggleEditNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Edit)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_EditToolActiveAxis")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Edit)->trigger();
+}
+
+void MainWindow::toggleEditPosition() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Position")
+      ->trigger();
+}
+
+void MainWindow::toggleEditRotation() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Rotation")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextScale() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Scale")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextShear() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Shear")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextCenter() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Center")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextAll() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:All")
+      ->trigger();
 }
 
 //---------------------------------------------------------------------------------------

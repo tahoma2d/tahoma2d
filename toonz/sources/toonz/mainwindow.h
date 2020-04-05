@@ -106,6 +106,16 @@ public:
 
   Room *getCurrentRoom() const;
   void refreshWriteSettings();
+
+  /*-- Animate tool + mode switching shortcuts --*/
+  void toggleEditNextMode();
+  void toggleEditPosition();
+  void toggleEditRotation();
+  void toggleEditNextScale();
+  void toggleEditNextShear();
+  void toggleEditNextCenter();
+  void toggleEditNextAll();
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   void toggleFillAreas();
   void toggleFillLines();
