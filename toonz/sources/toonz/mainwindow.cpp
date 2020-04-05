@@ -462,6 +462,22 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_SelectionPolyline, this,
                     &MainWindow::toggleSelectionPolyline);
 
+  /*-- Geometric tool + mode switching shortcuts --*/
+  setCommandHandler(MI_GeometricNextMode, this,
+                    &MainWindow::toggleGeometricNextMode);
+  setCommandHandler(MI_GeometricRectangle, this,
+                    &MainWindow::toggleGeometricRectangle);
+  setCommandHandler(MI_GeometricCircle, this,
+                    &MainWindow::toggleGeometricCircle);
+  setCommandHandler(MI_GeometricEllipse, this,
+                    &MainWindow::toggleGeometricEllipse);
+  setCommandHandler(MI_GeometricLine, this, &MainWindow::toggleGeometricLine);
+  setCommandHandler(MI_GeometricPolyline, this,
+                    &MainWindow::toggleGeometricPolyline);
+  setCommandHandler(MI_GeometricArc, this, &MainWindow::toggleGeometricArc);
+  setCommandHandler(MI_GeometricPolygon, this,
+                    &MainWindow::toggleGeometricPolygon);
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
@@ -2318,6 +2334,20 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_BrushPreset", tr("Brush Preset"), "");
   createToolOptionsAction("A_ToolOption_GeometricShape", tr("Geometric Shape"),
                           "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Rectangle",
+                          tr("Geometric Shape Rectangle"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Circle",
+                          tr("Geometric Shape Circle"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Ellipse",
+                          tr("Geometric Shape Ellipse"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Line",
+                          tr("Geometric Shape Line"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Polyline",
+                          tr("Geometric Shape Polyline"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Arc",
+                          tr("Geometric Shape Arc"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Polygon",
+                          tr("Geometric Shape Polygon"), "");
   createToolOptionsAction("A_ToolOption_GeometricEdge", tr("Geometric Edge"),
                           "");
   createToolOptionsAction("A_ToolOption_Mode", tr("Mode"), "");
@@ -2390,6 +2420,24 @@ void MainWindow::defineActions() {
   createAction(MI_SelectionFreehand, tr("Selection Tool - Freehand"), "",
                ToolCommandType);
   createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "",
+               ToolCommandType);
+
+  /*-- Geometric tool + mode switching shortcuts --*/
+  createAction(MI_GeometricNextMode, tr("Geometric Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_GeometricRectangle, tr("Geometric Tool - Rectangle"), "",
+               ToolCommandType);
+  createAction(MI_GeometricCircle, tr("Geometric Tool - Circle"), "",
+               ToolCommandType);
+  createAction(MI_GeometricEllipse, tr("Geometric Tool - Ellipse"), "",
+               ToolCommandType);
+  createAction(MI_GeometricLine, tr("Geometric Tool - Line"), "",
+               ToolCommandType);
+  createAction(MI_GeometricPolyline, tr("Geometric Tool - Polyline"), "",
+               ToolCommandType);
+  createAction(MI_GeometricArc, tr("Geometric Tool - Arc"), "",
+               ToolCommandType);
+  createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "",
                ToolCommandType);
 
   /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
@@ -2517,6 +2565,66 @@ void MainWindow::toggleSelectionPolyline() {
   CommandManager::instance()->getAction(T_Selection)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+//---------------------------------------------------------------------------------------
+/*-- Geometric tool + mode switching shortcuts --*/
+void MainWindow::toggleGeometricNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Geometric)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_GeometricShape")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Geometric)->trigger();
+}
+
+void MainWindow::toggleGeometricRectangle() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Rectangle")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricCircle() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Circle")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricEllipse() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Ellipse")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricLine() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Line")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricPolyline() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Polyline")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricArc() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Arc")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricPolygon() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Polygon")
       ->trigger();
 }
 

@@ -348,6 +348,15 @@
 #define MI_SelectionFreehand "MI_SelectionFreehand"
 #define MI_SelectionPolyline "MI_SelectionPolyline"
 
+#define MI_GeometricNextMode "MI_GeometricNextMode"
+#define MI_GeometricRectangle "MI_GeometricRectangle"
+#define MI_GeometricCircle "MI_GeometricCircle"
+#define MI_GeometricEllipse "MI_GeometricEllipse"
+#define MI_GeometricLine "MI_GeometricLine"
+#define MI_GeometricPolyline "MI_GeometricPolyline"
+#define MI_GeometricArc "MI_GeometricArc"
+#define MI_GeometricPolygon "MI_GeometricPolygon"
+
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
 #define MI_PickStyleAreas "MI_PickStyleAreas"

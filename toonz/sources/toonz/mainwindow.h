@@ -122,6 +122,16 @@ public:
   void toggleSelectionFreehand();
   void toggleSelectionPolyline();
 
+  /*-- Geometric tool + mode switching shortcuts --*/
+  void toggleGeometricNextMode();
+  void toggleGeometricRectangle();
+  void toggleGeometricCircle();
+  void toggleGeometricEllipse();
+  void toggleGeometricLine();
+  void toggleGeometricPolyline();
+  void toggleGeometricArc();
+  void toggleGeometricPolygon();
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   void toggleFillAreas();
   void toggleFillLines();
