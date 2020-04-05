@@ -158,6 +158,15 @@ public:
   void toggleEraserPolyline();
   void toggleEraserSegment();
 
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  void toggleTapeNextType();
+  void toggleTapeNormal();
+  void toggleTapeRectangular();
+  void toggleTapeNextMode();
+  void toggleTapeEndpointToEndpoint();
+  void toggleTapeEndpointToLine();
+  void toggleTapeLineToLine();
+
   /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
   void togglePickStyleAreas();
   void togglePickStyleLines();

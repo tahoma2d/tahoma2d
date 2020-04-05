@@ -508,6 +508,18 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_EraserPolyline, this, &MainWindow::toggleEraserPolyline);
   setCommandHandler(MI_EraserSegment, this, &MainWindow::toggleEraserSegment);
 
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  setCommandHandler(MI_TapeNextType, this, &MainWindow::toggleTapeNextType);
+  setCommandHandler(MI_TapeNormal, this, &MainWindow::toggleTapeNormal);
+  setCommandHandler(MI_TapeRectangular, this,
+                    &MainWindow::toggleTapeRectangular);
+  setCommandHandler(MI_TapeNextMode, this, &MainWindow::toggleTapeNextMode);
+  setCommandHandler(MI_TapeEndpointToEndpoint, this,
+                    &MainWindow::toggleTapeEndpointToEndpoint);
+  setCommandHandler(MI_TapeEndpointToLine, this,
+                    &MainWindow::toggleTapeEndpointToLine);
+  setCommandHandler(MI_TapeLineToLine, this, &MainWindow::toggleTapeLineToLine);
+
   /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_PickStyleAreas, this, &MainWindow::togglePickStyleAreas);
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
@@ -2382,6 +2394,12 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_Mode:Lines", tr("Mode - Lines"), "");
   createToolOptionsAction("A_ToolOption_Mode:Lines & Areas",
                           tr("Mode - Lines & Areas"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Endpoint to Endpoint",
+                          tr("Mode - Endpoint to Endpoint"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Endpoint to Line",
+                          tr("Mode - Endpoint to Line"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Line to Line",
+                          tr("Mode - Line to Line"), "");
   createToolOptionsAction("A_ToolOption_Type", tr("Type"), "");
   createToolOptionsAction("A_ToolOption_Type:Normal", tr("Type - Normal"), "");
   createToolOptionsAction("A_ToolOption_Type:Rectangular",
@@ -2515,6 +2533,21 @@ void MainWindow::defineActions() {
   createAction(MI_EraserPolyline, tr("Eraser Tool - Polyline"), "",
                ToolCommandType);
   createAction(MI_EraserSegment, tr("Eraser Tool - Segment"), "",
+               ToolCommandType);
+
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  createAction(MI_TapeNextType, tr("Tape Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_TapeNormal, tr("Tape Tool - Normal"), "", ToolCommandType);
+  createAction(MI_TapeRectangular, tr("Tape Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_TapeNextMode, tr("Tape Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_TapeEndpointToEndpoint, tr("Tape Tool - Endpoint to Enpoint"),
+               "", ToolCommandType);
+  createAction(MI_TapeEndpointToLine, tr("Tape Tool - Endpoint to Line"), "",
+               ToolCommandType);
+  createAction(MI_TapeLineToLine, tr("Tape Tool - Line to Line"), "",
                ToolCommandType);
 
   /*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
@@ -2841,6 +2874,55 @@ void MainWindow::toggleEraserSegment() {
   CommandManager::instance()->getAction(T_Eraser)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Type:Segment")->trigger();
+}
+//---------------------------------------------------------------------------------------
+/*-- Tape tool + type/mode switching shortcuts --*/
+void MainWindow::toggleTapeNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Tape)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Tape)->trigger();
+}
+
+void MainWindow::toggleTapeNormal() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleTapeRectangular() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Tape)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Tape)->trigger();
+}
+
+void MainWindow::toggleTapeEndpointToEndpoint() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Endpoint to Endpoint")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeEndpointToLine() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Endpoint to Line")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeLineToLine() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Line to Line")
+      ->trigger();
 }
 
 //---------------------------------------------------------------------------------------

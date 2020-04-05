@@ -380,6 +380,14 @@
 #define MI_EraserPolyline "MI_EraserPolyline"
 #define MI_EraserSegment "MI_EraserSegment"
 
+#define MI_TapeNextType "MI_TapeNextType"
+#define MI_TapeNormal "MI_TapeNormal"
+#define MI_TapeRectangular "MI_TapeRectangular"
+#define MI_TapeNextMode "MI_TapeNextMode"
+#define MI_TapeEndpointToEndpoint "MI_TapeEndpointToEndpoint"
+#define MI_TapeEndpointToLine "MI_TapeEndpointToLine"
+#define MI_TapeLineToLine "MI_TapeLineToLine"
+
 #define MI_PickStyleAreas "MI_PickStyleAreas"
 #define MI_PickStyleLines "MI_PickStyleLines"
 
