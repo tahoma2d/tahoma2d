@@ -167,9 +167,12 @@ public:
   void toggleTapeEndpointToLine();
   void toggleTapeLineToLine();
 
-  /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  void togglePickStyleNextMode();
   void togglePickStyleAreas();
   void togglePickStyleLines();
+  void togglePickStyleLinesAndAreas();
+
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();

@@ -520,9 +520,13 @@ centralWidget->setLayout(centralWidgetLayout);*/
                     &MainWindow::toggleTapeEndpointToLine);
   setCommandHandler(MI_TapeLineToLine, this, &MainWindow::toggleTapeLineToLine);
 
-  /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  setCommandHandler(MI_PickStyleNextMode, this,
+                    &MainWindow::togglePickStyleNextMode);
   setCommandHandler(MI_PickStyleAreas, this, &MainWindow::togglePickStyleAreas);
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
+  setCommandHandler(MI_PickStyleLinesAndAreas, this,
+                    &MainWindow::togglePickStyleLinesAndAreas);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
@@ -2550,12 +2554,15 @@ void MainWindow::defineActions() {
   createAction(MI_TapeLineToLine, tr("Tape Tool - Line to Line"), "",
                ToolCommandType);
 
-  /*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
-   * --*/
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  createAction(MI_PickStyleNextMode, tr("Style Picker Tool - Next Mode"), "",
+               ToolCommandType);
   createAction(MI_PickStyleAreas, tr("Style Picker Tool - Areas"), "",
                ToolCommandType);
   createAction(MI_PickStyleLines, tr("Style Picker Tool - Lines"), "",
                ToolCommandType);
+  createAction(MI_PickStyleLinesAndAreas,
+               tr("Style Picker Tool - Lines & Areas"), "", ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 #ifdef WITH_STOPMOTION
@@ -2926,8 +2933,14 @@ void MainWindow::toggleTapeLineToLine() {
 }
 
 //---------------------------------------------------------------------------------------
-/*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
- * --*/
+/*-- Style Picker tool + mode switching shortcuts --*/
+void MainWindow::togglePickStyleNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_StylePicker)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_StylePicker)->trigger();
+}
+
 void MainWindow::togglePickStyleAreas() {
   CommandManager::instance()->getAction(T_StylePicker)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Areas")->trigger();
@@ -2936,6 +2949,13 @@ void MainWindow::togglePickStyleAreas() {
 void MainWindow::togglePickStyleLines() {
   CommandManager::instance()->getAction(T_StylePicker)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Lines")->trigger();
+}
+
+void MainWindow::togglePickStyleLinesAndAreas() {
+  CommandManager::instance()->getAction(T_StylePicker)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
 }
 
 //-----------------------------------------------------------------------------

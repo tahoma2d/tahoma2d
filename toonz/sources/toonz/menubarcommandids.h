@@ -388,8 +388,10 @@
 #define MI_TapeEndpointToLine "MI_TapeEndpointToLine"
 #define MI_TapeLineToLine "MI_TapeLineToLine"
 
+#define MI_PickStyleNextMode "MI_PickStyleNextMode"
 #define MI_PickStyleAreas "MI_PickStyleAreas"
 #define MI_PickStyleLines "MI_PickStyleLines"
+#define MI_PickStyleLinesAndAreas "MI_PickStyleLinesAndAreas"
 
 #define MI_DeactivateUpperColumns "MI_DeactivateUpperColumns"
 #define MI_CompareToSnapshot "MI_CompareToSnapshot"
