@@ -486,9 +486,19 @@ centralWidget->setLayout(centralWidgetLayout);*/
                     &MainWindow::toggleTypeBoldOblique);
   setCommandHandler(MI_TypeBold, this, &MainWindow::toggleTypeBold);
 
-  /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
+  /*-- Fill tool + type/mode switching shortcuts --*/
+  setCommandHandler(MI_FillNextType, this, &MainWindow::toggleFillNextType);
+  setCommandHandler(MI_FillNormal, this, &MainWindow::toggleFillNormal);
+  setCommandHandler(MI_FillRectangular, this,
+                    &MainWindow::toggleFillRectangular);
+  setCommandHandler(MI_FillFreehand, this, &MainWindow::toggleFillFreehand);
+  setCommandHandler(MI_FillPolyline, this, &MainWindow::toggleFillPolyline);
+  setCommandHandler(MI_FillNextMode, this, &MainWindow::toggleFillNextMode);
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
+  setCommandHandler(MI_FillLinesAndAreas, this,
+                    &MainWindow::toggleFillLinesAndAreas);
+
   /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_PickStyleAreas, this, &MainWindow::togglePickStyleAreas);
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
@@ -2465,9 +2475,22 @@ void MainWindow::defineActions() {
                ToolCommandType);
   createAction(MI_TypeBold, tr("Type Tool - Bold"), "", ToolCommandType);
 
-  /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
+  /*-- Fill tool + type/mode switching shortcuts --*/
+  createAction(MI_FillNextType, tr("Fill Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_FillNormal, tr("Fill Tool - Normal"), "", ToolCommandType);
+  createAction(MI_FillRectangular, tr("Fill Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_FillFreehand, tr("Fill Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_FillPolyline, tr("Fill Tool - Polyline"), "",
+               ToolCommandType);
+  createAction(MI_FillNextMode, tr("Fill Tool - Next Mode"), "",
+               ToolCommandType);
   createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
   createAction(MI_FillLines, tr("Fill Tool - Lines"), "", ToolCommandType);
+  createAction(MI_FillLinesAndAreas, tr("Fill Tool - Lines & Areas"), "",
+               ToolCommandType);
 
   /*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
    * --*/
@@ -2690,7 +2713,50 @@ void MainWindow::toggleTypeBold() {
 }
 
 //---------------------------------------------------------------------------------------
-/*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
+/*-- Fill tool + type/mode switching shortcuts --*/
+void MainWindow::toggleFillNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Fill)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Fill)->trigger();
+}
+
+void MainWindow::toggleFillNormal() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleFillRectangular() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleFillFreehand() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleFillPolyline() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+void MainWindow::toggleFillNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Fill)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Fill)->trigger();
+}
+
 void MainWindow::toggleFillAreas() {
   CommandManager::instance()->getAction(T_Fill)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Areas")->trigger();
@@ -2699,6 +2765,13 @@ void MainWindow::toggleFillAreas() {
 void MainWindow::toggleFillLines() {
   CommandManager::instance()->getAction(T_Fill)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Lines")->trigger();
+}
+
+void MainWindow::toggleFillLinesAndAreas() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
 }
 
 //---------------------------------------------------------------------------------------

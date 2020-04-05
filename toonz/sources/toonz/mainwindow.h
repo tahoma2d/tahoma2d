@@ -139,9 +139,17 @@ public:
   void toggleTypeBoldOblique();
   void toggleTypeBold();
 
-  /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
+  /*-- Fill tool + mode switching shortcuts --*/
+  void toggleFillNextType();
+  void toggleFillNormal();
+  void toggleFillRectangular();
+  void toggleFillFreehand();
+  void toggleFillPolyline();
+  void toggleFillNextMode();
   void toggleFillAreas();
   void toggleFillLines();
+  void toggleFillLinesAndAreas();
+
   /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
   void togglePickStyleAreas();
   void togglePickStyleLines();

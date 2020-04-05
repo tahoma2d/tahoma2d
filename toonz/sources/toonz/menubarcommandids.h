@@ -363,8 +363,16 @@
 #define MI_TypeBoldOblique "MI_TypeBoldOblique"
 #define MI_TypeBold "MI_TypeBold"
 
+#define MI_FillNextType "MI_FillNextType"
+#define MI_FillNormal "MI_FillNormal"
+#define MI_FillRectangular "MI_FillRectangular"
+#define MI_FillFreehand "MI_FillFreehand"
+#define MI_FillPolyline "MI_FillPolyline"
+#define MI_FillNextMode "MI_FillNextMode"
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
+#define MI_FillLinesAndAreas "MI_FillLinesAndAreas"
+
 #define MI_PickStyleAreas "MI_PickStyleAreas"
 #define MI_PickStyleLines "MI_PickStyleLines"
 
