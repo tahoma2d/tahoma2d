@@ -116,6 +116,12 @@ public:
   void toggleEditNextCenter();
   void toggleEditNextAll();
 
+  /*-- Selection tool + mode switching shortcuts --*/
+  void toggleSelectionNextMode();
+  void toggleSelectionRectangular();
+  void toggleSelectionFreehand();
+  void toggleSelectionPolyline();
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   void toggleFillAreas();
   void toggleFillLines();

@@ -343,6 +343,11 @@
 #define MI_EditCenter "MI_EditCenter"
 #define MI_EditAll "MI_EditAll"
 
+#define MI_SelectionNextMode "MI_SelectionNextMode"
+#define MI_SelectionRectangular "MI_SelectionRectangular"
+#define MI_SelectionFreehand "MI_SelectionFreehand"
+#define MI_SelectionPolyline "MI_SelectionPolyline"
+
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"
 #define MI_PickStyleAreas "MI_PickStyleAreas"

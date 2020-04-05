@@ -452,6 +452,16 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_EditCenter, this, &MainWindow::toggleEditNextCenter);
   setCommandHandler(MI_EditAll, this, &MainWindow::toggleEditNextAll);
 
+  /*-- Selection tool + mode switching shortcuts --*/
+  setCommandHandler(MI_SelectionNextMode, this,
+                    &MainWindow::toggleSelectionNextMode);
+  setCommandHandler(MI_SelectionRectangular, this,
+                    &MainWindow::toggleSelectionRectangular);
+  setCommandHandler(MI_SelectionFreehand, this,
+                    &MainWindow::toggleSelectionFreehand);
+  setCommandHandler(MI_SelectionPolyline, this,
+                    &MainWindow::toggleSelectionPolyline);
+
   /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
@@ -2372,6 +2382,16 @@ void MainWindow::defineActions() {
   createAction(MI_EditCenter, tr("Animate Tool - Center"), "", ToolCommandType);
   createAction(MI_EditAll, tr("Animate Tool - All"), "", ToolCommandType);
 
+  /*-- Selection tool + mode switching shortcuts --*/
+  createAction(MI_SelectionNextMode, tr("Selection Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_SelectionRectangular, tr("Selection Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_SelectionFreehand, tr("Selection Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "",
+               ToolCommandType);
+
   /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
   createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
   createAction(MI_FillLines, tr("Fill Tool - Lines"), "", ToolCommandType);
@@ -2467,6 +2487,36 @@ void MainWindow::toggleEditNextAll() {
   CommandManager::instance()->getAction(T_Edit)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_EditToolActiveAxis:All")
+      ->trigger();
+}
+
+//---------------------------------------------------------------------------------------
+/*-- Selection tool + mode switching shortcuts --*/
+void MainWindow::toggleSelectionNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Selection)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Selection)->trigger();
+}
+
+void MainWindow::toggleSelectionRectangular() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleSelectionFreehand() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleSelectionPolyline() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
       ->trigger();
 }
 
