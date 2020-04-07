@@ -195,6 +195,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_resolutionCombo   = new QComboBox(this);
   m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 25);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
+  m_cameraStatusLabel = new QLabel(tr("Camera Status"), this);
   QPushButton *refreshCamListButton = new QPushButton(tr("Refresh"), this);
   refreshCamListButton->setFixedHeight(28);
   refreshCamListButton->setStyleSheet("padding: 0 2;");
@@ -301,11 +302,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_levelNameEdit->setMaximumWidth(380);
 
   m_saveInFolderPopup->hide();
-  m_zoomButton = new QPushButton(tr("Zoom"), this);
+  m_zoomButton = new QPushButton(tr("Focus Check"), this);
   m_zoomButton->setFixedHeight(28);
   m_zoomButton->setStyleSheet("padding: 0 2;");
   m_zoomButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-  m_pickZoomButton = new QPushButton(tr("Pick Zoom"), this);
+  m_pickZoomButton = new QPushButton(tr("Pick Focus"), this);
   m_pickZoomButton->setStyleSheet("padding: 0 2;");
   m_pickZoomButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   m_pickZoomButton->setFixedHeight(28);
@@ -347,6 +348,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
           camLay->addWidget(m_resolutionCombo, 1, 1, 1, 2, Qt::AlignLeft);
           camLay->setColumnStretch(2, 30);
         }
+        camLay->addWidget(m_cameraStatusLabel, 2, 1, 1, 2, Qt::AlignLeft);
       }
       controlLayout->addLayout(camLay, 0);
 
@@ -1059,7 +1061,8 @@ void StopMotionController::refreshCameraListCalled() {
 
 void StopMotionController::refreshCameraList() {
   m_cameraListCombo->clear();
-
+  m_stopMotion->changeCameras(0);
+  m_cameraStatusLabel->hide();
   QList<QCameraInfo> webcams = m_stopMotion->getWebcams();
 
   int count = m_stopMotion->getCameraCount() + webcams.count();
@@ -1121,7 +1124,6 @@ void StopMotionController::refreshOptionsLists() {
   m_exposureCombo->clear();
 
   if (m_stopMotion->getCameraCount() == 0) {
-    m_resolutionCombo->setDisabled(true);
     m_shutterSpeedCombo->setDisabled(true);
     m_isoCombo->setDisabled(true);
     m_apertureCombo->setDisabled(true);
@@ -1147,10 +1149,13 @@ void StopMotionController::refreshOptionsLists() {
 void StopMotionController::refreshMode() {
   if (m_stopMotion->getCameraCount() == 0) {
     m_cameraModeLabel->setText("");
+    m_cameraStatusLabel->hide();
     return;
   }
   QString mode = m_stopMotion->getMode();
+  QString battery = m_stopMotion->getCurrentBatteryLevel();
   m_cameraModeLabel->setText(tr("Mode: ") + mode);
+  m_cameraStatusLabel->setText("Mode: " + mode + " - Battery: " + battery);
 }
 
 //-----------------------------------------------------------------------------
@@ -1325,6 +1330,7 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_cameraListCombo->setCurrentIndex(index);
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
+    m_cameraStatusLabel->hide();
   }
   if (useWebcam) {
     if (m_tabBar->tabText(1) == tr("Settings")) {
@@ -1334,10 +1340,12 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_resolutionCombo->setEnabled(true);
     m_resolutionLabel->show();
     m_captureFilterSettingsBtn->show();
+    m_cameraStatusLabel->hide();
   } else {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
     m_captureFilterSettingsBtn->hide();
+    m_cameraStatusLabel->show();
     if (m_tabBar->tabText(1) == tr("Options")) {
       m_tabBar->insertTab(1, tr("Settings"));
     }
@@ -1562,7 +1570,7 @@ void StopMotionController::onZoomPressed() { m_stopMotion->zoomLiveView(); }
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onPickZoomPressed() {
-  m_stopMotion->m_pickLiveViewZoom = true;
+  m_stopMotion->toggleZoomPicking();
 }
 
 //-----------------------------------------------------------------------------
@@ -1620,18 +1628,62 @@ void StopMotionController::hideEvent(QHideEvent *event) {
   // disconnect(m_stopMotion, SIGNAL(modeChanged()), this, SLOT(refreshMode()));
 }
 
-////-----------------------------------------------------------------------------
-//
-// void StopMotionController::keyPressEvent(QKeyEvent *event) {
-//  // override return (or enter) key as shortcut key for capturing
-//  if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-//    // show button-clicking animation followed by calling
-//    // onCaptureButtonClicked()
-//    m_captureButton->animateClick();
-//    event->accept();
-//  } else
-//    event->ignore();
-//}
+//-----------------------------------------------------------------------------
+
+ void StopMotionController::keyPressEvent(QKeyEvent *event) {
+  
+   int key = event->key();
+   TFrameHandle* fh = TApp::instance()->getCurrentFrame();
+   int origFrame = fh->getFrame();
+   if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) && (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up || key == Qt::Key_Down
+       || key == Qt::Key_2 || key == Qt::Key_4 || key == Qt::Key_6 || key == Qt::Key_8)) {
+       if (m_stopMotion->m_liveViewZoomReadyToPick == true) {
+           if (key == Qt::Key_Left || key == Qt::Key_4) {
+               m_stopMotion->m_liveViewZoomPickPoint.x -= 10;
+           }
+           if (key == Qt::Key_Right || key == Qt::Key_6) {
+               m_stopMotion->m_liveViewZoomPickPoint.x += 10;
+           }
+           if (key == Qt::Key_Up || key == Qt::Key_8) {
+               m_stopMotion->m_liveViewZoomPickPoint.y += 10;
+           }
+           if (key == Qt::Key_Down || key == Qt::Key_2) {
+               m_stopMotion->m_liveViewZoomPickPoint.y -= 10;
+           }
+           if (m_stopMotion->m_zooming) {
+               m_stopMotion->setZoomPoint();
+           }
+       }
+       m_stopMotion->calculateZoomPoint();
+       event->accept();
+   }
+   else if (key == Qt::Key_Up || key == Qt::Key_Left) {
+       fh->prevFrame();
+       event->accept();
+   }
+   else if (key == Qt::Key_Down || key == Qt::Key_Right) {
+         fh->nextFrame();
+         event->accept();
+   }
+   else if (key == Qt::Key_Home) {
+       fh->firstFrame();
+       event->accept();
+   }
+   else if (key == Qt::Key_End) {
+       fh->lastFrame();
+       event->accept();
+   }
+   else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+    m_captureButton->animateClick();
+    event->accept();
+   }
+   else if (event->key() == Qt::Key_Escape && m_stopMotion->m_pickLiveViewZoom) {
+       m_stopMotion->toggleZoomPicking();
+   }
+   
+  else
+    event->ignore();
+}
 //
 ////-----------------------------------------------------------------------------
 //

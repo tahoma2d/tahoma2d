@@ -734,7 +734,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
 #ifdef WITH_STOPMOTION
   // grab screen picking for stop motion live view zoom
   if (StopMotion::instance()->m_pickLiveViewZoom) {
-    StopMotion::instance()->m_pickLiveViewZoom = false;
+    StopMotion::instance()->toggleZoomPicking();
     StopMotion::instance()->makeZoomPoint(pos);
     if (tool) setToolCursor(this, tool->getCursorId());
     if (m_mouseButton != Qt::RightButton) return;
@@ -1151,6 +1151,44 @@ bool SceneViewer::event(QEvent *e) {
     break;
   }
   */
+
+#ifdef WITH_STOPMOTION
+    int key = 0;
+    if (e->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(e);
+        key = keyEvent->key();
+
+        if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) && (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up || key == Qt::Key_Down
+            || key == Qt::Key_2 || key == Qt::Key_4 || key == Qt::Key_6 || key == Qt::Key_8)) {
+            if (m_stopMotion->m_liveViewZoomReadyToPick == true) {
+                if (key == Qt::Key_Left || key == Qt::Key_4) {
+                    m_stopMotion->m_liveViewZoomPickPoint.x -= 10;
+                }
+                if (key == Qt::Key_Right || key == Qt::Key_6) {
+                    m_stopMotion->m_liveViewZoomPickPoint.x += 10;
+                }
+                if (key == Qt::Key_Up || key == Qt::Key_8) {
+                    m_stopMotion->m_liveViewZoomPickPoint.y += 10;
+                }
+                if (key == Qt::Key_Down || key == Qt::Key_2) {
+                    m_stopMotion->m_liveViewZoomPickPoint.y -= 10;
+                }
+                if (m_stopMotion->m_zooming) {
+                    m_stopMotion->setZoomPoint();
+                }
+            }
+            m_stopMotion->calculateZoomPoint();
+            e->accept();
+            return true;
+        }
+        else if (key == Qt::Key_Escape && m_stopMotion->m_pickLiveViewZoom) {
+            m_stopMotion->toggleZoomPicking();
+            e->accept();
+            return true;
+        }
+    }
+#endif
+
   if (e->type() == QEvent::Gesture && CommandManager::instance()
                                           ->getAction(MI_TouchGestureControl)
                                           ->isChecked()) {

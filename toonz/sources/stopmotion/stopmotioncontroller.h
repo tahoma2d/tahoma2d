@@ -74,7 +74,7 @@ class StopMotionController final : public QWidget {
       *m_focusFar3Button, *m_captureFilterSettingsBtn;
   QHBoxLayout *m_focusAndZoomLayout;
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
-      *m_kelvinLabel, *m_resolutionLabel, *m_directShowLabel;
+      *m_kelvinLabel, *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
 
@@ -103,6 +103,7 @@ protected:
   void hideEvent(QHideEvent *event);
   // void mousePressEvent(QMouseEvent *event) override;
   // void keyPressEvent(QKeyEvent *event);
+  void keyPressEvent(QKeyEvent* event) override;
 
 protected slots:
   void refreshCameraList();

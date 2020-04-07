@@ -95,6 +95,7 @@ private:
 
   QTimer* m_reviewTimer;
   std::map<std::string, QAction*> m_oldActionMap;
+  std::map<std::string, QAction*> m_oldFocusCheckMap;
 
   // Webcam Properties
   QList<QCameraInfo> m_webcams;
@@ -167,10 +168,12 @@ public:
   TPoint m_liveViewZoomOffset          = TPoint(0, 0);
   EdsUInt32 m_liveViewZoom             = 1;
   bool m_pickLiveViewZoom              = false;
+  bool m_liveViewZoomReadyToPick = true;
   TPointD m_liveViewZoomPickPoint      = TPointD(0.0, 0.0);
-  TPoint m_zoomRect                    = TPoint(0, 0);
+  TPoint m_zoomRectDimensions                    = TPoint(0, 0);
   TPoint m_calculatedZoomPoint         = TPoint(0, 0);
   TPoint m_finalZoomPoint              = TPoint(0, 0);
+  TRect m_zoomRect = TRect(0, 0, 0, 0);
 
   // Webcam Public Properties
   QString m_webcamDeviceName;
@@ -195,6 +198,7 @@ public:
   void setUseNumpadShortcuts(bool on);
   bool getUseNumpadShortcuts() { return m_useNumpadShortcuts; }
   void toggleNumpadShortcuts(bool on);
+  void toggleNumpadForFocusCheck(bool on);
   void setReviewTime(int time);
   int getReviewTime() { return m_reviewTime; }
   void setXSheetFrameNumber(int frameNumber);
@@ -241,6 +245,8 @@ public:
   void saveJpg(TRaster32P, TFilePath path);
   bool loadJpg(TFilePath path, TRaster32P& image);
   bool loadLineUpImage();
+  void saveXmlFile();
+  bool loadXmlFile();
 
   // Webcam Commands
   QList<QCameraInfo> getWebcams();
@@ -297,6 +303,7 @@ public:
   QString getCurrentColorTemperature();
   QString getCurrentImageQuality();
   QString getCurrentPictureStyle();
+  QString getCurrentBatteryLevel();
   EdsError setShutterSpeed(QString shutterSpeed);
   EdsError setIso(QString iso);
   EdsError setAperture(QString aperture);
@@ -310,6 +317,8 @@ public:
   EdsError zoomLiveView();
   EdsError setZoomPoint();
   void makeZoomPoint(TPointD pos);
+  void toggleZoomPicking();
+  void calculateZoomPoint();
   EdsError focusNear();
   EdsError focusFar();
   EdsError focusNear2();

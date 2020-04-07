@@ -1149,21 +1149,15 @@ void SceneViewer::onNewStopMotionImageReady() {
 #ifdef WITH_STOPMOTION
   if (m_stopMotion->m_hasLineUpImage) {
     // if (m_hasStopMotionLineUpImage) delete m_stopMotionLineUpImage;
-    // is there a way to do this without cloning the image twice?
-    // TRasterImageP image     = m_stopMotion->m_lineUpImage->clone();
     m_stopMotionLineUpImage =
         (TRasterImageP)m_stopMotion->m_lineUpImage->clone();
-    // m_stopMotionLineUpImage = (TRasterImage *)image->cloneImage();
     m_stopMotionLineUpImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                                     m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionLineUpImage = true;
   }
   if (m_stopMotion->m_hasLiveViewImage) {
     // if (m_hasStopMotionImage) delete m_stopMotionImage;
-    // is there a way to do this without cloning the image twice?
-    // TRasterImageP image = m_stopMotion->m_liveViewImage->clone();
     m_stopMotionImage = m_stopMotion->m_liveViewImage->clone();
-    // m_stopMotionImage   = (TRasterImage *)image->cloneImage();
     m_stopMotionImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                               m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionImage = true;
@@ -1589,6 +1583,30 @@ void SceneViewer::drawOverlay() {
       }
     }
 
+#ifdef WITH_STOPMOTION
+    // draw Stop Motion Zoom Box
+    if (m_stopMotion->m_liveViewStatus == 2 && m_stopMotion->m_pickLiveViewZoom) {
+        glPushMatrix();
+        tglMultMatrix(m_drawCameraAff);
+        m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+        TRect rect = m_stopMotion->m_zoomRect;
+
+        glColor3d(1.0, 0.0, 0.0);
+        
+        // border
+        glBegin(GL_LINE_STRIP);
+        glVertex2d(rect.x0, rect.y0);
+        glVertex2d(rect.x0, rect.y1 - m_pixelSize);
+        glVertex2d(rect.x1 - m_pixelSize, rect.y1 - m_pixelSize);
+        glVertex2d(rect.x1 - m_pixelSize, rect.y0);
+        glVertex2d(rect.x0, rect.y0);
+        glEnd();
+
+        glPopMatrix();
+    }
+
+#endif
+
     // safe area
     if (safeAreaToggle.getStatus() && m_drawEditingLevel == false &&
         !is3DView()) {
@@ -1967,7 +1985,9 @@ void SceneViewer::drawScene() {
     }
 
 #ifdef WITH_STOPMOTION
-    if (!frameHandle->isPlaying() && m_stopMotion->m_liveViewStatus == 2) {
+    if (m_stopMotion->m_liveViewStatus == 2 && 
+        (!frameHandle->isPlaying() || 
+            frame == m_stopMotion->getXSheetFrameNumber())) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;

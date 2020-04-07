@@ -49,6 +49,8 @@
 #include <QFile>
 #include <QString>
 #include <QTimer>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 // Connected camera
 TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 0);
@@ -398,6 +400,7 @@ void StopMotion::onSceneSwitched() {
         m_levelName   = QString::fromStdWString(sl->getName());
         m_frameNumber = sl->getFrameCount() + 1;
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
+        loadXmlFile();
         break;
       }
     }
@@ -521,6 +524,8 @@ void StopMotion::setUseNumpadShortcuts(bool on) {
   emit(useNumpadSignal(on));
 }
 
+//-----------------------------------------------------------------
+
 void StopMotion::toggleNumpadShortcuts(bool on) {
   // can't just return if this feature is off
   // it could have been toggled while the camera was active
@@ -528,6 +533,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
   CommandManager *comm = CommandManager::instance();
 
   if (on) {
+    m_oldActionMap.clear();
     // if turning it on, get all old shortcuts
     if (m_numpadForStyleSwitching) {
       Preferences::instance()->setValue(useNumpadForSwitchingStyles, false);
@@ -558,7 +564,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
           std::pair<std::string, QAction *>(shortcut, action));
       action = NULL;
     }
-    shortcut = "Return";
+    shortcut = "Enter";
     action   = comm->getActionFromShortcut(shortcut);
     if (action) {
       m_oldActionMap.insert(
@@ -624,91 +630,141 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       action->setShortcut(QKeySequence("*"));
       action = NULL;
     }
-
+    action = comm->getAction(MI_ShortPlay);
+    if (action) {
+        action->setShortcut(QKeySequence("6"));
+        action = NULL;
+    }
+    
   } else {
     // unset the new shortcuts first
-    QAction *action;
-    action = comm->getAction(MI_PrevDrawing);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_NextDrawing);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionJumpToCamera);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_Loop);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_Play);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionCapture);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionLowerOpacity);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionRaiseOpacity);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionToggleLiveView);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
-    action = comm->getAction(MI_StopMotionToggleZoom);
-    if (action) {
-      action->setShortcut(
-          QKeySequence(comm->getShortcutFromAction(action).c_str()));
-      action = NULL;
-    }
+      if (m_oldActionMap.size() > 0) {
+          QAction* action;
+          action = comm->getAction(MI_PrevDrawing);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_NextDrawing);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionJumpToCamera);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_Loop);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_Play);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionCapture);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionLowerOpacity);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionRaiseOpacity);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionToggleLiveView);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_StopMotionToggleZoom);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
+          action = comm->getAction(MI_ShortPlay);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
 
-    // now put back the old shortcuts
-    auto it = m_oldActionMap.begin();
-    while (it != m_oldActionMap.end()) {
-      it->second->setShortcut(QKeySequence(it->first.c_str()));
-      it++;
-    }
-    if (m_numpadForStyleSwitching) {
-      std::string shortcut;
-      QAction *action;
-      for (int i = 0; i <= 9; i++) {
-        shortcut = QString::number(i).toStdString();
-        action   = comm->getActionFromShortcut(shortcut);
-        if (action) {
-          action->setShortcut(QKeySequence(""));
-          action = NULL;
-        }
+          // now put back the old shortcuts
+          auto it = m_oldActionMap.begin();
+          while (it != m_oldActionMap.end()) {
+              it->second->setShortcut(QKeySequence(it->first.c_str()));
+              it++;
+          }
+          if (m_numpadForStyleSwitching) {
+              std::string shortcut;
+              QAction* action;
+              for (int i = 0; i <= 9; i++) {
+                  shortcut = QString::number(i).toStdString();
+                  action = comm->getActionFromShortcut(shortcut);
+                  if (action) {
+                      action->setShortcut(QKeySequence(""));
+                      action = NULL;
+                  }
+              }
+              Preferences::instance()->setValue(useNumpadForSwitchingStyles, true);
+          }
       }
-      Preferences::instance()->setValue(useNumpadForSwitchingStyles, true);
-    }
   }
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::toggleNumpadForFocusCheck(bool on) {
+
+    CommandManager* comm = CommandManager::instance();
+
+    if (on) {
+        m_oldFocusCheckMap.clear();
+        // if turning it on, get all old shortcuts
+        std::string shortcut;
+        QAction* action;
+        for (int i = 0; i <= 9; i++) {
+            shortcut = QString::number(i).toStdString();
+            action = comm->getActionFromShortcut(shortcut);
+            if (action) {
+                m_oldFocusCheckMap.insert(
+                    std::pair<std::string, QAction*>(shortcut, action));
+                comm->setShortcut(action, "", false);
+                action->setShortcut(QKeySequence(""));
+                action = NULL;
+            }
+        }
+
+    }
+    else {
+        if (m_oldFocusCheckMap.size() > 0) {
+            // now put back the old shortcuts
+            auto it = m_oldFocusCheckMap.begin();
+            while (it != m_oldFocusCheckMap.end()) {
+                comm->setShortcut(it->second, it->first.c_str(), false);
+                it->second->setShortcut(QKeySequence(it->first.c_str()));
+                it++;
+            }
+        }
+    }
 }
 
 //-----------------------------------------------------------------
@@ -1536,6 +1592,7 @@ bool StopMotion::loadJpg(TFilePath path, TRaster32P &image) {
 //-----------------------------------------------------------------------------
 
 void StopMotion::postImportProcess() {
+  saveXmlFile();
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
     int f = m_frameNumber;
     if (f % 10 == 0)  // next number
@@ -1550,6 +1607,190 @@ void StopMotion::postImportProcess() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::saveXmlFile() {
+    TApp* app = TApp::instance();
+    ToonzScene* scene = app->getCurrentScene()->getScene();
+    TXsheet* xsh = scene->getXsheet();
+
+    std::wstring levelName = m_levelName.toStdWString();
+    TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
+    TFilePath tempFile = parentDir + TFilePath(levelName + L".xml");
+    QString xmlFileName = tempFile.getQString();
+    QFile xmlFile(xmlFileName);
+    xmlFile.open(QIODevice::WriteOnly);
+    QXmlStreamWriter xmlWriter(&xmlFile);
+    xmlWriter.setAutoFormatting(true);
+    xmlWriter.writeStartDocument();
+    xmlWriter.writeStartElement("body");
+    xmlWriter.writeStartElement("SceneInfo");
+    xmlWriter.writeTextElement("LevelName", QString::fromStdWString(levelName));
+    xmlWriter.writeTextElement("CurrentFrame", QString::number(m_xSheetFrameNumber));
+    xmlWriter.writeEndElement();
+
+    xmlWriter.writeStartElement("CameraInfo");
+    if (m_usingWebcam) {
+        xmlWriter.writeTextElement("Webcam", "yes");
+        xmlWriter.writeTextElement("CameraName", m_webcamDescription);
+        xmlWriter.writeTextElement("CameraResolutionX", QString::number(m_webcamWidth));
+        xmlWriter.writeTextElement("CameraResolutionY", QString::number(m_webcamHeight));
+    }
+    else {
+        xmlWriter.writeTextElement("Webcam", "no");
+        xmlWriter.writeTextElement("CameraName", QString::fromStdString(m_cameraName));
+        xmlWriter.writeTextElement("Aperture", getCurrentAperture());
+        xmlWriter.writeTextElement("ShutterSpeed", getCurrentShutterSpeed());
+        xmlWriter.writeTextElement("ISO", getCurrentIso());
+        xmlWriter.writeTextElement("PictureStyle", getCurrentPictureStyle());
+        xmlWriter.writeTextElement("ImageQuality", getCurrentImageQuality());
+        xmlWriter.writeTextElement("WhiteBalance", getCurrentWhiteBalance());
+        xmlWriter.writeTextElement("ColorTemperature", getCurrentColorTemperature());
+        xmlWriter.writeTextElement("ExposureCompensation", getCurrentExposureCompensation());
+        xmlWriter.writeTextElement("FocusCheckLocationX", QString::number(m_finalZoomPoint.x));
+        xmlWriter.writeTextElement("FocusCheckLocationY", QString::number(m_finalZoomPoint.y));
+    }
+    xmlWriter.writeEndElement();
+
+    xmlWriter.writeStartElement("Images");
+    xmlWriter.writeTextElement("Frame", "Yes");
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndDocument();
+    xmlFile.close();
+}
+
+//-----------------------------------------------------------------------------
+
+bool StopMotion::loadXmlFile() {
+    TApp* app = TApp::instance();
+    ToonzScene* scene = app->getCurrentScene()->getScene();
+    TXsheet* xsh = scene->getXsheet();
+    
+    bool webcam = false;
+    bool foundCamera = false;
+    QString text;
+    int x;
+    int y;
+
+    std::wstring levelName = m_levelName.toStdWString();
+    TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
+    TFilePath tempFile = parentDir + TFilePath(levelName + L".xml");
+    QString xmlFileName = tempFile.getQString();
+    QFile xmlFile(xmlFileName);
+    if (!xmlFile.exists()) return false;
+    xmlFile.open(QIODevice::ReadOnly);
+
+    QXmlStreamReader xmlReader;
+    xmlReader.setDevice(&xmlFile);
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        
+        if (xmlReader.isStartElement()) {
+            if (xmlReader.name() == "Webcam") {
+                text = xmlReader.readElementText();
+                if (text == "yes") webcam = true;
+            }
+            if (xmlReader.name() == "CameraName") {
+                text = xmlReader.readElementText();
+                if (webcam) {
+                    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+                    if (cameras.size() > 0) {
+                        for (int i = 0; i < cameras.size(); i++) {
+                            if (cameras.at(i).description() == text) {
+                                changeCameras(i + 1);
+                                foundCamera = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    openCameraSession();
+                    QString camName = QString::fromStdString(getCameraName());
+                    closeCameraSession();
+                    if (text == camName) {
+                        changeCameras(-1);
+                        foundCamera = true;
+                    }
+                    
+                }
+            }
+            if (xmlReader.name() == "CameraResolutionX") {
+                text = xmlReader.readElementText();
+                x = text.toInt();
+            }
+            if (xmlReader.name() == "CameraResolutionY") {
+                text = xmlReader.readElementText();
+                y = text.toInt();
+                if (foundCamera == true && webcam == true) {
+                    setWebcamResolution(
+                        QString(QString::number(x) + " x " + QString::number(y)));
+                }
+            }
+            if (xmlReader.name() == "Aperture") {
+                text = xmlReader.readElementText();               
+                if (foundCamera == true && webcam == false) {
+                    setAperture(text);
+                }
+            }
+            if (xmlReader.name() == "ShutterSpeed") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setShutterSpeed(text);
+                }
+            }
+            if (xmlReader.name() == "ISO") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setIso(text);
+                }
+            }
+            if (xmlReader.name() == "PictureStyle") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setPictureStyle(text);
+                }
+            }
+            if (xmlReader.name() == "ImageQuality") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setImageQuality(text);
+                }
+            }
+            if (xmlReader.name() == "WhiteBalance") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setWhiteBalance(text);
+                }
+            }
+            if (xmlReader.name() == "ColorTemperature") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setColorTemperature(text);
+                }
+            }
+            if (xmlReader.name() == "ExposureCompensation") {
+                text = xmlReader.readElementText();
+                if (foundCamera == true && webcam == false) {
+                    setExposureCompensation(text);
+                }
+            }
+            if (xmlReader.name() == "FocusCheckLocationX") {
+                text = xmlReader.readElementText();
+                m_finalZoomPoint.x = text.toInt();
+            }
+            if (xmlReader.name() == "FocusCheckLocationY") {
+                text = xmlReader.readElementText();
+                m_finalZoomPoint.y = text.toInt();
+            }
+        }
+        xmlReader.readNext();
+        
+    }
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1925,7 +2166,7 @@ void StopMotion::changeCameras(int index) {
 
   // Check if its a webcam or DSLR
   // Webcams are listed first, so see if one of them is selected
-  if (index > cameras.size() - 1) {
+  if (index < 0 || index > cameras.size() - 1) {
     m_usingWebcam = false;
   } else {
     m_usingWebcam = true;
@@ -1960,13 +2201,20 @@ void StopMotion::changeCameras(int index) {
     m_webcamResolutions.clear();
 
     m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
-    int sizeCount       = m_webcamResolutions.count();
+    int sizeCount       = m_webcamResolutions.count() - 1;
 
     int width;
     int height;
     for (int s = 0; s < m_webcamResolutions.size(); s++) {
       width  = m_webcamResolutions.at(s).width();
       height = m_webcamResolutions.at(s).height();
+    }
+    // see if we can set the webcam resolution to the current camera resolution
+    TDimension res = TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera()->getRes();
+    if (m_webcamResolutions.contains(QSize(res.lx, res.ly))) {
+        width = res.lx;
+        height = res.ly;
+        sizeCount = m_webcamResolutions.indexOf(QSize(res.lx, res.ly));
     }
 
     getWebcam()->unload();
@@ -1976,9 +2224,12 @@ void StopMotion::changeCameras(int index) {
     setTEnvCameraName(m_webcamDescription.toStdString());
     emit(newCameraSelected(index + 1, true));
     emit(webcamResolutionsChanged());
-    emit(newWebcamResolutionSelected(sizeCount - 1));
+    emit(newWebcamResolutionSelected(sizeCount));
 
   } else {
+      if (index == -2) {
+          index = cameras.size();
+      }
     m_webcamDeviceName  = QString();
     m_webcamDescription = QString();
     m_webcamIndex       = -1;
@@ -2124,7 +2375,7 @@ void StopMotion::setWebcamResolution(QString resolution) {
   // resolution is written in the itemText with the format "<width> x
   // <height>" (e.g. "800 x 600")
   QStringList texts = resolution.split(' ');
-  // the splited text must be "<width>" "x" and "<height>"
+  // the split text must be "<width>" "x" and "<height>"
   if (texts.size() != 3) return;
   int tempStatus   = m_liveViewStatus;
   m_liveViewStatus = 0;
@@ -2731,6 +2982,31 @@ QString StopMotion::getCurrentColorTemperature() {
 
 //-----------------------------------------------------------------
 
+QString StopMotion::getCurrentBatteryLevel() {
+    EdsError err = EDS_ERR_OK;
+    EdsDataType batteryLevelType;
+    EdsUInt32 size;
+    EdsUInt32 data;
+    QString result;
+
+    err = EdsGetPropertySize(m_camera, kEdsPropID_BatteryLevel, 0,
+        &batteryLevelType, &size);
+    err = EdsGetPropertyData(m_camera, kEdsPropID_BatteryLevel, 0,
+        sizeof(size), &data);
+    if (data == 0xffffffff) {
+        result = tr("AC Power");
+    }
+    else if (data >= 80) {
+        result = tr("Full");
+    }
+    else {
+        result = QString::number(data) + "%";
+    }
+    return result;
+}
+
+//-----------------------------------------------------------------
+
 EdsError StopMotion::setShutterSpeed(QString shutterSpeed) {
   EdsError err = EDS_ERR_OK;
   EdsUInt32 value;
@@ -3067,13 +3343,15 @@ EdsError StopMotion::endLiveView() {
 EdsError StopMotion::zoomLiveView() {
   if (!m_sessionOpen) return EDS_ERR_DEVICE_INVALID;
   EdsError err = EDS_ERR_OK;
-
+  if (m_pickLiveViewZoom) toggleZoomPicking();
   if (m_liveViewZoom == 1) {
     m_liveViewZoom = 5;
     m_zooming      = true;
+    toggleNumpadForFocusCheck(true);
   } else if (m_liveViewZoom == 5) {
     m_liveViewZoom = 1;
     m_zooming      = false;
+    toggleNumpadForFocusCheck(false);
   }
 
   err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_Zoom, 0,
@@ -3087,39 +3365,30 @@ EdsError StopMotion::zoomLiveView() {
 
 void StopMotion::makeZoomPoint(TPointD pos) {
   m_liveViewZoomPickPoint = pos;
-  double maxFullWidth =
-      (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
-  double maxFullHeight =
-      (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
-  double newX             = m_liveViewZoomPickPoint.x + maxFullWidth / 2.0;
-  double newY             = -m_liveViewZoomPickPoint.y + maxFullHeight / 2.0;
-  m_calculatedZoomPoint.x = newX / Stage::inch * m_fullImageDpi.x;
-  m_calculatedZoomPoint.y = newY / Stage::inch * m_fullImageDpi.x;
+  calculateZoomPoint();
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::toggleZoomPicking() {
+    if (m_pickLiveViewZoom) {
+        m_pickLiveViewZoom = false;
+        toggleNumpadForFocusCheck(false);
+    }
+    else {
+        m_pickLiveViewZoom = true;
+        toggleNumpadForFocusCheck(true);
+    }
 }
 
 //-----------------------------------------------------------------
 
 EdsError StopMotion::setZoomPoint() {
   EdsError err = EDS_ERR_OK;
-
+  m_liveViewZoomReadyToPick = false;
   EdsPoint zoomPoint;
-  if (m_liveViewZoomPickPoint == TPointD(0.0, 0.0)) {
-    m_calculatedZoomPoint =
-        TPoint(m_fullImageDimensions.lx / 2, m_fullImageDimensions.ly / 2);
-    m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRect.x / 2);
-    m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRect.y / 2);
-  } else {
-    m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRect.x / 2);
-    m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRect.y / 2);
-    if (m_finalZoomPoint.x < 0) m_finalZoomPoint.x = 0;
-    if (m_finalZoomPoint.y < 0) m_finalZoomPoint.y = 0;
-    if (m_finalZoomPoint.x > m_fullImageDimensions.lx - (m_zoomRect.x)) {
-      m_finalZoomPoint.x = m_fullImageDimensions.lx - (m_zoomRect.x);
-    }
-    if (m_finalZoomPoint.y > m_fullImageDimensions.ly - (m_zoomRect.y)) {
-      m_finalZoomPoint.y = m_fullImageDimensions.ly - (m_zoomRect.y);
-    }
-  }
+
+  calculateZoomPoint();
 
   zoomPoint.x = m_finalZoomPoint.x;
   zoomPoint.y = m_finalZoomPoint.y;
@@ -3127,8 +3396,91 @@ EdsError StopMotion::setZoomPoint() {
   // make sure this is set AFTER starting zoom
   err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_ZoomPosition, 0,
                            sizeof(zoomPoint), &zoomPoint);
-
+  m_liveViewZoomReadyToPick = true;
   return err;
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::calculateZoomPoint() {
+    bool outOfBounds = false;
+    if (m_liveViewZoomPickPoint == TPointD(0.0, 0.0)) {
+        m_calculatedZoomPoint =
+            TPoint(m_fullImageDimensions.lx / 2, m_fullImageDimensions.ly / 2);
+        m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
+        m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
+    }
+    else {
+        // get the image size in OpenToonz dimensions
+        double maxFullWidth =
+            (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
+        double maxFullHeight =
+            (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
+        // OpenToonz coordinates are based on center at 0, 0
+        // convert that to top left based coordinates
+        double newX = m_liveViewZoomPickPoint.x + maxFullWidth / 2.0;
+        double newY = -m_liveViewZoomPickPoint.y + maxFullHeight / 2.0;
+        // convert back to the normal image dimensions to talk to the camera
+        m_calculatedZoomPoint.x = newX / Stage::inch * m_fullImageDpi.x;
+        m_calculatedZoomPoint.y = newY / Stage::inch * m_fullImageDpi.x;
+        // the Canon SDK wants the top left corner of the zoom rect, not the center
+        m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
+        m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
+        // finally make sure everything actually fits on the image
+        if (m_finalZoomPoint.x < 0) {
+            m_finalZoomPoint.x = 0;
+            outOfBounds = true;
+        }
+        if (m_finalZoomPoint.y < 0) {
+            m_finalZoomPoint.y = 0;
+            outOfBounds = true;
+        }
+        if (m_finalZoomPoint.x > m_fullImageDimensions.lx - (m_zoomRectDimensions.x)) {
+            m_finalZoomPoint.x = m_fullImageDimensions.lx - (m_zoomRectDimensions.x);
+            outOfBounds = true;
+        }
+        if (m_finalZoomPoint.y > m_fullImageDimensions.ly - (m_zoomRectDimensions.y)) {
+            m_finalZoomPoint.y = m_fullImageDimensions.ly - (m_zoomRectDimensions.y);
+            outOfBounds = true;
+        }
+
+        // if out of bounds, recalculate backwards to get the correct location
+        if (outOfBounds) {
+            TPoint tempCalculated;
+            // recenter the point in the rect
+            tempCalculated.x = m_finalZoomPoint.x + (m_zoomRectDimensions.x / 2);
+            tempCalculated.y = m_finalZoomPoint.y + (m_zoomRectDimensions.y / 2);
+            // convert to OpenToonz Dimensions
+            newX = tempCalculated.x / m_fullImageDpi.x * Stage::inch;
+            newY = tempCalculated.y / m_fullImageDpi.y * Stage::inch;
+            // get center based coordinates
+            m_liveViewZoomPickPoint.x = newX - (maxFullWidth / 2.0);
+            m_liveViewZoomPickPoint.y = (newY - (maxFullHeight / 2.0)) * -1;
+        }
+
+    }
+
+    // calculate the zoom rectangle position on screen
+
+    // get the image size in OpenToonz dimensions
+    double maxFullWidth =
+        (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
+    double maxFullHeight =
+        (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
+    m_zoomRect = TRect(m_finalZoomPoint.x, m_finalZoomPoint.y + m_zoomRectDimensions.y, m_finalZoomPoint.x + m_zoomRectDimensions.x, m_finalZoomPoint.y);
+    TRect tempCalculated;
+
+    // convert to OpenToonz Dimensions
+    tempCalculated.x0 = m_zoomRect.x0 / m_fullImageDpi.x * Stage::inch;
+    tempCalculated.y0 = m_zoomRect.y0 / m_fullImageDpi.y * Stage::inch;
+    tempCalculated.x1 = m_zoomRect.x1 / m_fullImageDpi.x * Stage::inch;
+    tempCalculated.y1 = m_zoomRect.y1 / m_fullImageDpi.y * Stage::inch;
+    // get center based coordinates
+    m_zoomRect.x0 = tempCalculated.x0 - (maxFullWidth / 2.0);
+    m_zoomRect.y0 = (tempCalculated.y0 - (maxFullHeight / 2.0)) * -1;
+    m_zoomRect.x1 = tempCalculated.x1 - (maxFullWidth / 2.0);
+    m_zoomRect.y1 = (tempCalculated.y1 - (maxFullHeight / 2.0)) * -1;
+
 }
 
 //-----------------------------------------------------------------
@@ -3167,12 +3519,12 @@ EdsError StopMotion::downloadEVFData() {
   err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_Zoom, 0, sizeof(size),
                            &zoomAmount);
 
-  // this is the top corner? of the zoomed image
+  // this is the top left corner of the zoomed image
   err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_ZoomPosition, 0,
                            &evfZoomPos, &sizePos);
   err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0, sizePos,
                            &zoomPos);
-  // this is the top corner of the zoomed image and the size of the zoomed image
+  // this is the size of the zoomed image
   err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_ZoomRect, 0, &evfZoomRect,
                            &sizeRect);
   err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomRect, 0, sizeRect,
@@ -3187,11 +3539,6 @@ EdsError StopMotion::downloadEVFData() {
                            &evfZoomRect, &sizeCoordSys);
   err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_CoordinateSystem, 0,
                            sizeCoordSys, &coordSys);
-
-  m_zoomRect = TPoint(zoomRect.size.width, zoomRect.size.height);
-  if (zoomAmount == 5 && m_zoomRect == TPoint(0, 0)) {
-    setZoomPoint();
-  }
 
   // Get the incidental data of the image.
   if (err == EDS_ERR_OK) {
@@ -3240,6 +3587,20 @@ EdsError StopMotion::downloadEVFData() {
 
       emit(newDimensions());
     }
+    // sometimes zoomRect returns the wrong dimensions if called too fast
+    if (zoomRect.size.width < 5000 && zoomRect.size.height < 5000) {
+        m_zoomRectDimensions = TPoint(zoomRect.size.width, zoomRect.size.height);
+        if (m_zoomRect == TRect(0, 0, 0, 0)) {
+            m_zoomRect = TRect(zoomPos.x, zoomPos.y + zoomRect.size.height, zoomPos.x + zoomRect.size.width, zoomPos.y);
+            calculateZoomPoint();
+        }
+        
+    }
+    if (zoomAmount == 5 && m_zoomRectDimensions == TPoint(0, 0)) {
+        setZoomPoint();
+        
+    }
+
   }
 
   if (stream != NULL) {
@@ -3346,7 +3707,10 @@ EdsError StopMotion::handlePropertyEvent(EdsPropertyEvent event,
       event == kEdsPropertyEvent_PropertyChanged) {
     emit(instance()->modeChanged());
   }
-
+  if (property == kEdsPropID_BatteryLevel &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+      emit(instance()->modeChanged());
+  }
   if (property == kEdsPropID_Av &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->apertureOptionsChanged());
