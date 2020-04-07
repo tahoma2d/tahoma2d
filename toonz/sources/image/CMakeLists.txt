@@ -48,7 +48,6 @@ set(SOURCES
     tzp/tiio_plt.cpp
     tzp/tiio_tzp.cpp
     tzp/avl.c
-    tzp/toonzrle.cpp
     tzl/tiio_tzl.cpp
     mov/tiio_mov_proxy.cpp
     3gp/tiio_3gp_proxy.cpp
