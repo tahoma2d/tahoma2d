@@ -407,6 +407,8 @@ void Preferences::definePreferenceItems() {
          false);
   define(colorCalibrationLutPaths, "colorCalibrationLutPaths",
          QMetaType::QVariantMap, QVariantMap());
+  define(keepTextboxFocus, "keepTextboxFocus",
+         QMetaType::Bool, false);
 
   setCallBack(pixelsOnly, &Preferences::setPixelsOnly);
   setCallBack(linearUnits, &Preferences::setUnits);

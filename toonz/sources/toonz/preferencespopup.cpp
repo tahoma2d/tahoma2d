@@ -971,6 +971,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {colorCalibrationLutPaths,
        tr("3DLUT File for [%1] *:")
            .arg(LutManager::instance()->getMonitorName())},
+      {keepTextboxFocus, tr("Keep Textbox Focus When Moving Mouse to Another Panel")},
 
       // Visualization
       {show0ThickLines, tr("Show Lines with Thickness 0")},
@@ -1417,6 +1418,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
+  insertUI(keepTextboxFocus, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);

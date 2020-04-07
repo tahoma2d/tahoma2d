@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <QDesktopWidget>
 #include <QDialog>
+#include <QLineEdit>
 
 extern TEnv::StringVar EnvSafeAreaName;
 
@@ -127,7 +128,24 @@ void TPanel::enterEvent(QEvent *event) {
   // Only when Toonz application is active
   QWidget *w = qApp->activeWindow();
   if (w) {
-    widgetFocusOnEnter();
+    // grab the focus, unless a line-edit is focused currently and the
+    // preference is set
+    bool shouldSetFocus = true;
+
+    if (Preferences::instance()->isKeepTextboxFocus()) {
+      QWidget *focusWidget = qApp->focusWidget();
+      if (focusWidget) {
+        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+        if (lineEdit) {
+          shouldSetFocus = false;
+        }
+      }
+    }
+
+    if (shouldSetFocus) {
+      widgetFocusOnEnter();
+    }
+
     // Some panels (e.g. Viewer, StudioPalette, Palette, ColorModel) are
     // activated when mouse enters. Viewer is activatable only when being
     // docked.
