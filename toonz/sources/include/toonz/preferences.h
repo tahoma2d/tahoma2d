@@ -231,9 +231,6 @@ public:
   }
   void setColorCalibrationLutPath(QString monitorName, QString path);
   QString getColorCalibrationLutPath(QString &monitorName) const;
-  bool isKeepTextboxFocus() const {
-    return getBoolValue(keepTextboxFocus);
-  }
 
   // Visualization  tab
   bool getShow0ThickLines() const { return getBoolValue(show0ThickLines); }

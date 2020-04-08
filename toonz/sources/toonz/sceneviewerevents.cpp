@@ -431,17 +431,14 @@ void SceneViewer::onEnter() {
     tool->onEnter();
   }
 
-  // grab the focus, unless a line-edit is focused currently and the
-  // preference is set
+  // grab the focus, unless a line-edit is focused currently
   bool shouldSetFocus = true;
 
-  if (Preferences::instance()->isKeepTextboxFocus()) {
-    QWidget *focusWidget = qApp->focusWidget();
-    if (focusWidget) {
-      QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
-      if (lineEdit) {
-        shouldSetFocus = false;
-      }
+  QWidget *focusWidget = qApp->focusWidget();
+  if (focusWidget) {
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+    if (lineEdit) {
+      shouldSetFocus = false;
     }
   }
 

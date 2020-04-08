@@ -128,17 +128,14 @@ void TPanel::enterEvent(QEvent *event) {
   // Only when Toonz application is active
   QWidget *w = qApp->activeWindow();
   if (w) {
-    // grab the focus, unless a line-edit is focused currently and the
-    // preference is set
+    // grab the focus, unless a line-edit is focused currently
     bool shouldSetFocus = true;
 
-    if (Preferences::instance()->isKeepTextboxFocus()) {
-      QWidget *focusWidget = qApp->focusWidget();
-      if (focusWidget) {
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
-        if (lineEdit) {
-          shouldSetFocus = false;
-        }
+    QWidget *focusWidget = qApp->focusWidget();
+    if (focusWidget) {
+      QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+      if (lineEdit) {
+        shouldSetFocus = false;
       }
     }
 

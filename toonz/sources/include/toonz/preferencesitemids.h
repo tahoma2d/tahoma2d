@@ -45,7 +45,6 @@ enum PreferencesItemId {
   interfaceFontStyle,
   colorCalibrationEnabled,
   colorCalibrationLutPaths,
-  keepTextboxFocus,
 
   //----------
   // Visualization
