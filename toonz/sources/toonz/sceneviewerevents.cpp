@@ -440,7 +440,21 @@ void SceneViewer::onEnter() {
     tool->onEnter();
   }
 
-  setFocus();
+  // grab the focus, unless a line-edit is focused currently
+  bool shouldSetFocus = true;
+
+  QWidget *focusWidget = qApp->focusWidget();
+  if (focusWidget) {
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+    if (lineEdit) {
+      shouldSetFocus = false;
+    }
+  }
+
+  if (shouldSetFocus) {
+    setFocus();
+  }
+
   update();
 }
 
