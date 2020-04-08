@@ -41,7 +41,7 @@ inline float valueToExposure(float value, float filmGamma) {
 inline float exposureToValue(float exposure, float filmGamma) {
   return log10(exposure) * filmGamma + 0.5;
 }
-};
+};  // namespace
 
 //--------------------------------------------
 // Threads used for FFT computation for each RGB channel
@@ -51,17 +51,17 @@ MyThread::MyThread(Channel channel, TRasterP layerTileRas, TRasterP outTileRas,
                    TRasterP tmpAlphaRas, kiss_fft_cpx* kissfft_comp_iris,
                    float filmGamma,
                    bool doLightenComp)  // not used for now
-    : m_channel(channel),
-      m_layerTileRas(layerTileRas),
-      m_outTileRas(outTileRas),
-      m_tmpAlphaRas(tmpAlphaRas),
-      m_kissfft_comp_iris(kissfft_comp_iris),
-      m_filmGamma(filmGamma),
-      m_finished(false),
-      m_kissfft_comp_in(0),
-      m_kissfft_comp_out(0),
-      m_isTerminated(false),
-      m_doLightenComp(doLightenComp)  // not used for now
+    : m_channel(channel)
+    , m_layerTileRas(layerTileRas)
+    , m_outTileRas(outTileRas)
+    , m_tmpAlphaRas(tmpAlphaRas)
+    , m_kissfft_comp_iris(kissfft_comp_iris)
+    , m_filmGamma(filmGamma)
+    , m_finished(false)
+    , m_kissfft_comp_in(0)
+    , m_kissfft_comp_out(0)
+    , m_isTerminated(false)
+    , m_doLightenComp(doLightenComp)  // not used for now
 {}
 
 bool MyThread::init() {
@@ -446,6 +446,11 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
   if (dimOut.lx < 10000 && dimOut.ly < 10000) {
     int new_x = kiss_fft_next_fast_size(dimOut.lx);
     int new_y = kiss_fft_next_fast_size(dimOut.ly);
+    // margin should be integer
+    while ((new_x - dimOut.lx) % 2 != 0)
+      new_x = kiss_fft_next_fast_size(new_x + 1);
+    while ((new_y - dimOut.ly) % 2 != 0)
+      new_y = kiss_fft_next_fast_size(new_y + 1);
 
     _rectOut = _rectOut.enlarge(static_cast<double>(new_x - dimOut.lx) / 2.0,
                                 static_cast<double>(new_y - dimOut.ly) / 2.0);
@@ -710,14 +715,14 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
     }
 
     /*
-    * What is done in the thread for each RGB channel:
-    * - Convert channel value -> Exposure
-    * - Multiply by alpha channel
-    * - Forward FFT
-    * - Multiply by the iris FFT data
-    * - Backward FFT
-    * - Convert Exposure -> channel value
-    */
+     * What is done in the thread for each RGB channel:
+     * - Convert channel value -> Exposure
+     * - Multiply by alpha channel
+     * - Forward FFT
+     * - Multiply by the iris FFT data
+     * - Backward FFT
+     * - Convert Exposure -> channel value
+     */
 
     waitCount = 0;
     while (1) {
@@ -852,22 +857,17 @@ void Iwa_BokehFx::convertIris(const float irisSize,
   // Create the raster for resized iris
   double2 resizedIrisSize = {std::abs(irisSizeResampleRatio) * irisOrgSize.x,
                              std::abs(irisSizeResampleRatio) * irisOrgSize.y};
-  int2 filterSize = {tceil(resizedIrisSize.x), tceil(resizedIrisSize.y)};
+  // add 1 pixel margins to all sides
+  int2 filterSize = {int(std::ceil(resizedIrisSize.x)) + 2,
+                     int(std::ceil(resizedIrisSize.y)) + 2};
+
   TPointD resizeOffset((double)filterSize.x - resizedIrisSize.x,
                        (double)filterSize.y - resizedIrisSize.y);
-
   // Add some adjustment in order to absorb the difference of the cases when the
   // iris size is odd and even numbers.
-  bool isIrisOffset[2] = {false, false};
   // Try to set the center of the iris to the center of the screen
-  if ((dimOut.lx - filterSize.x) % 2 == 1) {
-    filterSize.x++;
-    isIrisOffset[0] = true;
-  }
-  if ((dimOut.ly - filterSize.y) % 2 == 1) {
-    filterSize.y++;
-    isIrisOffset[1] = true;
-  }
+  if ((dimOut.lx - filterSize.x) % 2 == 1) filterSize.x++;
+  if ((dimOut.ly - filterSize.y) % 2 == 1) filterSize.y++;
 
   // Terminate if the filter size becomes bigger than the output size.
   if (filterSize.x > dimOut.lx || filterSize.y > dimOut.ly) {
@@ -882,10 +882,9 @@ void Iwa_BokehFx::convertIris(const float irisSize,
   // Add some adjustment in order to absorb the 0.5 translation to be done in
   // resample()
   TAffine aff;
-  TPointD affOffset((isIrisOffset[0]) ? 0.5 : 1.0,
-                    (isIrisOffset[1]) ? 0.5 : 1.0);
-  if (!isIrisOffset[0]) affOffset.x -= resizeOffset.x / 2;
-  if (!isIrisOffset[1]) affOffset.y -= resizeOffset.y / 2;
+  TPointD affOffset(0.5, 0.5);
+  affOffset += TPointD((dimOut.lx % 2 == 1) ? 0.5 : 0.0,
+                       (dimOut.ly % 2 == 1) ? 0.5 : 0.0);
 
   aff = TTranslation(resizedIris->getCenterD() + affOffset);
   aff *= TScale(irisSizeResampleRatio);
