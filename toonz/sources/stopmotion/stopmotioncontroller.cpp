@@ -1673,11 +1673,11 @@ void StopMotionController::hideEvent(QHideEvent *event) {
        fh->lastFrame();
        event->accept();
    }
-   else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+   else if (!m_stopMotion->m_pickLiveViewZoom && (key == Qt::Key_Return || key == Qt::Key_Enter)) {
     m_captureButton->animateClick();
     event->accept();
    }
-   else if (event->key() == Qt::Key_Escape && m_stopMotion->m_pickLiveViewZoom) {
+   else if (m_stopMotion->m_pickLiveViewZoom && (key == Qt::Key_Escape || key == Qt::Key_Enter || key == Qt::Key_Return )) {
        m_stopMotion->toggleZoomPicking();
    }
    

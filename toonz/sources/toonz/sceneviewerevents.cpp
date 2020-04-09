@@ -1181,11 +1181,17 @@ bool SceneViewer::event(QEvent *e) {
             e->accept();
             return true;
         }
-        else if (key == Qt::Key_Escape && m_stopMotion->m_pickLiveViewZoom) {
+        else if (m_stopMotion->m_pickLiveViewZoom && (key == Qt::Key_Escape || key == Qt::Key_Enter || key == Qt::Key_Return)) {
             m_stopMotion->toggleZoomPicking();
             e->accept();
             return true;
         }
+        else if (m_stopMotion->m_liveViewStatus == 2 && (key == Qt::Key_Enter || key == Qt::Key_Return)) {
+            m_stopMotion->captureImage();
+            e->accept();
+            return true;
+        }
+        
     }
 #endif
 

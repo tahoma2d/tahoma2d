@@ -21,6 +21,7 @@
 #include "penciltestpopup.h"
 #include "tlevel_io.h"
 #include "toutputproperties.h"
+#include "filebrowserpopup.h"
 
 #include "toonz/namebuilder.h"
 #include "toonz/preferences.h"
@@ -571,12 +572,26 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
           std::pair<std::string, QAction *>(shortcut, action));
       action = NULL;
     }
+    shortcut = "Return";
+    action = comm->getActionFromShortcut(shortcut);
+    if (action) {
+        m_oldActionMap.insert(
+            std::pair<std::string, QAction*>(shortcut, action));
+        action = NULL;
+    }
     shortcut = "*";
     action   = comm->getActionFromShortcut(shortcut);
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
       action = NULL;
+    }
+    shortcut = ".";
+    action = comm->getActionFromShortcut(shortcut);
+    if (action) {
+        m_oldActionMap.insert(
+            std::pair<std::string, QAction*>(shortcut, action));
+        action = NULL;
     }
 
     // now set all new shortcuts
@@ -617,7 +632,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     }
     action = comm->getAction(MI_StopMotionCapture);
     if (action) {
-      action->setShortcut(QKeySequence("Enter"));
+      action->setShortcut(QKeySequence("Return"));
       action = NULL;
     }
     action = comm->getAction(MI_StopMotionToggleLiveView);
@@ -629,6 +644,11 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       action->setShortcut(QKeySequence("*"));
       action = NULL;
+    }
+    action = comm->getAction(MI_StopMotionPickFocusCheck);
+    if (action) {
+        action->setShortcut(QKeySequence("."));
+        action = NULL;
     }
     action = comm->getAction(MI_ShortPlay);
     if (action) {
@@ -706,6 +726,12 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
                   QKeySequence(comm->getShortcutFromAction(action).c_str()));
               action = NULL;
           }
+          action = comm->getAction(MI_StopMotionPickFocusCheck);
+          if (action) {
+              action->setShortcut(
+                  QKeySequence(comm->getShortcutFromAction(action).c_str()));
+              action = NULL;
+          }
 
           // now put back the old shortcuts
           auto it = m_oldActionMap.begin();
@@ -735,33 +761,107 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
 void StopMotion::toggleNumpadForFocusCheck(bool on) {
 
     CommandManager* comm = CommandManager::instance();
-
-    if (on) {
-        m_oldFocusCheckMap.clear();
-        // if turning it on, get all old shortcuts
-        std::string shortcut;
-        QAction* action;
-        for (int i = 0; i <= 9; i++) {
-            shortcut = QString::number(i).toStdString();
-            action = comm->getActionFromShortcut(shortcut);
+    if (m_useNumpadShortcuts) {
+        if (on) {
+            QAction* action;
+            action = comm->getAction(MI_PrevDrawing);
             if (action) {
-                m_oldFocusCheckMap.insert(
-                    std::pair<std::string, QAction*>(shortcut, action));
-                comm->setShortcut(action, "", false);
-                action->setShortcut(QKeySequence(""));
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_NextDrawing);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionJumpToCamera);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_Loop);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_Play);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionToggleLiveView);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_ShortPlay);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionCapture);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence(""));
                 action = NULL;
             }
         }
-
-    }
-    else {
-        if (m_oldFocusCheckMap.size() > 0) {
-            // now put back the old shortcuts
-            auto it = m_oldFocusCheckMap.begin();
-            while (it != m_oldFocusCheckMap.end()) {
-                comm->setShortcut(it->second, it->first.c_str(), false);
-                it->second->setShortcut(QKeySequence(it->first.c_str()));
-                it++;
+        else {
+            QAction* action;
+            action = comm->getAction(MI_PrevDrawing);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("1"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_NextDrawing);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("2"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionJumpToCamera);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("3"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_Loop);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("8"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_Play);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("0"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionToggleLiveView);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("5"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_ShortPlay);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("6"));
+                action = NULL;
+            }
+            action = comm->getAction(MI_StopMotionCapture);
+            if (action) {
+                action->setShortcut(
+                    QKeySequence("Return"));
+                action = NULL;
             }
         }
     }
@@ -1791,6 +1891,153 @@ bool StopMotion::loadXmlFile() {
         
     }
     return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool StopMotion::exportImageSequence() {
+    TApp* app = TApp::instance();
+    ToonzScene* scene = app->getCurrentScene()->getScene();
+    TXsheet* xsh = scene->getXsheet();
+
+    std::wstring levelName = m_levelName.toStdWString();
+
+    if (levelName.empty()) {
+        DVGui::error(
+            tr("No level name specified: please choose a valid level name"));
+        return false;
+    }
+    int frameNumber = m_frameNumber;
+
+    TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
+    TFilePath fullResFolder = scene->decodeFilePath(
+        TFilePath(m_filePath) + TFilePath(levelName + L"_FullRes"));
+    TFilePath liveViewFolder = scene->decodeFilePath(
+        TFilePath(m_filePath) + TFilePath(levelName + L"_LiveView"));
+
+    TFilePath levelFp = TFilePath(m_filePath) +
+        TFilePath(levelName + L".." + m_fileType.toStdWString());
+    TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
+
+    TFilePath fullResFp =
+        scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
+    TFilePath fullResFile(fullResFp.withFrame(frameNumber));
+
+    TFilePath liveViewFp =
+        scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
+    TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
+
+    TFilePath tempFile = parentDir + "temp.jpg";
+
+    TXshSimpleLevel* sl = 0;
+    TXshLevel* level = scene->getLevelSet()->getLevel(levelName);
+    
+
+    if (level == NULL) {
+        DVGui::error(
+            tr("No level exists with the current name."));
+        return false;
+    }
+    
+    /* if the existing level is not a raster level, then return */
+    if (level->getType() != OVL_XSHLEVEL) {
+        DVGui::error(
+            tr("This is not an image level."));
+        return false;
+    }
+    if (!level->getSimpleLevel()->getProperties()->isStopMotionLevel()) {
+        DVGui::error(
+            tr("This is not a stop motion level."));
+        return false;
+    }
+    sl = level->getSimpleLevel();
+
+    if (scene->decodeFilePath(sl->getPath()) != actualLevelFp) {
+        DVGui::error(
+            tr("The save in path specified does not match with the existing "
+                "level."));
+        return false;
+    }
+
+    //find which column the level is on.  
+    // check with the first column
+    int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
+    int r0, r1, row;
+    xsh->getColumn(col)->getRange(r0, r1);
+    TXshSimpleLevel* colLevel = xsh->getCell(r0, col).getSimpleLevel();
+    if (colLevel != sl) {
+        int cols = xsh->getColumnCount();
+        for (int i = 0; i < cols; i++) {
+            xsh->getColumn(col)->getRange(r0, r1);
+            colLevel = xsh->getCell(r0, col).getSimpleLevel();
+            if (colLevel == sl) {
+                col = i;
+                break;
+            }
+        }
+        DVGui::error(
+            tr("Could not find an xsheet level with  the current level"));
+        return false;
+
+    }
+    
+    row = r0;
+    xsh->getColumn(col)->getLevelRange(row, r0, r1);
+
+
+    GenericSaveFilePopup* m_saveSequencePopup =
+        new GenericSaveFilePopup("Export Image Sequence");
+    m_saveSequencePopup->setFileMode(true);
+    TFilePath fp = m_saveSequencePopup->getPath();
+    if (fp == TFilePath()) {
+        DVGui::error(
+            tr("No export path given."));
+        return false;
+    }
+    
+    
+    TFilePath sourceFile;
+    TFilePath exportFilePath =
+        scene->decodeFilePath(fp + TFilePath(levelName + L"..jpg"));
+    TFilePath exportFile;
+    int exportFrameNumber = 1;
+    for (int i = r0; i <= r1; i++) {
+        int cellNumber = xsh->getCell(i, col).getFrameId().getNumber();
+        fullResFile = fullResFp.withFrame(cellNumber);
+        if (TFileStatus(fullResFile).doesExist()) {
+            sourceFile = fullResFile;
+        }
+        else {
+            sourceFile = actualLevelFp.withFrame(cellNumber);
+        }
+        
+        if (!TFileStatus(sourceFile).doesExist()) {
+            DVGui::error(
+                tr("Could not find the source file."));
+            return false;
+        }
+        exportFile = exportFilePath.withFrame(exportFrameNumber);
+        if (TFileStatus(exportFile).doesExist()) {
+            QString question =
+                tr("Overwrite existing files?");                
+            int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                QObject::tr("Cancel"));
+            if (ret == 0 || ret == 2) return false;
+        }
+        TSystem::copyFile(exportFile, sourceFile);
+        exportFrameNumber++;
+        if (!TFileStatus(exportFile).doesExist()) {
+            DVGui::error(
+                tr("An error occurred.  Aborting."));
+            return false;
+        }
+    }
+    QString message1 = tr("Successfully exported ");
+    QString message2 = tr(" images.");
+    QString finalMessage = message1 + QString::number(exportFrameNumber - 1) + message2;
+    DVGui::MsgBoxInPopup(DVGui::MsgType(DVGui::INFORMATION), finalMessage);
+    return true;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -3000,6 +3247,9 @@ QString StopMotion::getCurrentBatteryLevel() {
         result = tr("Full");
     }
     else {
+        // at least  the 60D reports battery values as 59, 49. . .
+        // round up
+        if (data % 10 == 9) data += 1;
         result = QString::number(data) + "%";
     }
     return result;
@@ -4373,3 +4623,27 @@ public:
     sm->jumpToCameraFrame();
   }
 } StopMotionJumpToCameraCommand;
+
+//=============================================================================
+
+class StopMotionPickFocusCheck : public MenuItemHandler {
+public:
+    StopMotionPickFocusCheck()
+        : MenuItemHandler(MI_StopMotionPickFocusCheck) {}
+    void execute() {
+        StopMotion* sm = StopMotion::instance();
+        sm->toggleZoomPicking();
+    }
+} StopMotionPickFocusCheck;
+
+//=============================================================================
+
+class StopMotionExportImageSequence : public MenuItemHandler {
+public:
+    StopMotionExportImageSequence()
+        : MenuItemHandler(MI_StopMotionExportImageSequence) {}
+    void execute() {
+        StopMotion* sm = StopMotion::instance();
+        sm->exportImageSequence();
+    }
+} StopMotionExportImageSequence;

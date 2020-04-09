@@ -95,7 +95,6 @@ private:
 
   QTimer* m_reviewTimer;
   std::map<std::string, QAction*> m_oldActionMap;
-  std::map<std::string, QAction*> m_oldFocusCheckMap;
 
   // Webcam Properties
   QList<QCameraInfo> m_webcams;
@@ -247,6 +246,7 @@ public:
   bool loadLineUpImage();
   void saveXmlFile();
   bool loadXmlFile();
+  bool exportImageSequence();
 
   // Webcam Commands
   QList<QCameraInfo> getWebcams();

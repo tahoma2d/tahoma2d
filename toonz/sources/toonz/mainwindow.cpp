@@ -1620,6 +1620,9 @@ void MainWindow::defineActions() {
   createMenuRenderAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
   createMenuRenderAction(MI_Preview, tr("&Preview"), "Ctrl+R");
   createMenuFileAction(MI_SoundTrack, tr("&Export Soundtrack"), "");
+#ifdef WITH_STOPMOTION
+  createMenuFileAction(MI_StopMotionExportImageSequence, tr("&Export Stop Motion Image Sequence"), "");
+#endif
   createMenuRenderAction(MI_SavePreviewedFrames, tr("&Save Previewed Frames"),
                          "");
   createRightClickMenuAction(MI_RegeneratePreview, tr("&Regenerate Preview"),
@@ -2017,7 +2020,6 @@ void MainWindow::defineActions() {
 #ifdef WITH_STOPMOTION
   createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
                           "");
-
 #endif
   createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
 #ifdef LINETEST
@@ -2370,6 +2372,7 @@ void MainWindow::defineActions() {
   createAction(MI_StopMotionToggleLiveView, tr("Toggle Stop Motion Live View"),
                "");
   createAction(MI_StopMotionToggleZoom, tr("Toggle Stop Motion Zoom"), "");
+  createAction(MI_StopMotionPickFocusCheck, tr("Pick Focus Check Location"), "");
   createAction(MI_StopMotionLowerSubsampling,
                tr("Lower Stop Motion Level Subsampling"), "");
   createAction(MI_StopMotionRaiseSubsampling,

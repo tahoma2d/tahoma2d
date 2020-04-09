@@ -467,13 +467,13 @@ bool GenericSaveFilePopup::execute() {
   // (yep, even if a DIFFERENT type was specified - next time do it right :P)
   const QStringList &extList = m_browser->getFilterTypes();
 
-  if (!extList.contains(QString::fromStdString(path.getType()))) {
+  if (!m_isDirectoryOnly && !extList.contains(QString::fromStdString(path.getType()))) {
     path =
         TFilePath(path.getWideString() + L"." + extList.first().toStdWString());
   }
 
   // Ask for user permission to overwrite if necessary
-  if (TFileStatus(path).doesExist()) {
+  if (!m_isDirectoryOnly && TFileStatus(path).doesExist()) {
     const QString &question =
         QObject::tr("File %1 already exists.\nDo you want to overwrite it?")
             .arg(toQString(path));
