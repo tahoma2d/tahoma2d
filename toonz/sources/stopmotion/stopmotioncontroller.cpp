@@ -1599,7 +1599,9 @@ void StopMotionController::onFocusFar3() { m_stopMotion->focusFar3(); }
 
 //-----------------------------------------------------------------------------
 
-void StopMotionController::showEvent(QShowEvent *event) {}
+void StopMotionController::showEvent(QShowEvent *event) {
+  m_stopMotion->initializeCanonSDK();
+}
 
 //-----------------------------------------------------------------------------
 

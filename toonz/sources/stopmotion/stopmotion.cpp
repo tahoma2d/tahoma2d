@@ -354,12 +354,6 @@ StopMotion::StopMotion() {
   m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
                    .getParentDir()
                    .getQString();
-
-  // set handler for a camera detected
-  initializeCanonSDK();
-  if (!m_error)
-    m_error = EdsSetCameraAddedHandler(StopMotion::handleCameraAddedEvent,
-                                       (EdsVoid *)this);
 }
 
 //-----------------------------------------------------------------
@@ -2762,6 +2756,9 @@ EdsError StopMotion::initializeCanonSDK() {
   if (m_error == EDS_ERR_OK) {
     m_isSDKLoaded = true;
   }
+  if (!m_error)
+    m_error = EdsSetCameraAddedHandler(StopMotion::handleCameraAddedEvent,
+                                       (EdsVoid *)this);
   return m_error;
 }
 
