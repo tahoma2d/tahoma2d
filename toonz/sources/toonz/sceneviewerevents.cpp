@@ -307,6 +307,15 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletEvent = false;
 #endif
 
+#ifdef LINUX
+    // for Linux, create context menu on right click here.
+    // could possibly merge with OSX code above
+    if(e->button() == Qt::RightButton) {
+      m_mouseButton = Qt::NoButton;
+      onContextMenu(e->pos(), e->globalPos());
+    }
+#endif
+
   } break;
   case QEvent::TabletRelease: {
 #ifdef MACOSX
@@ -431,7 +440,21 @@ void SceneViewer::onEnter() {
     tool->onEnter();
   }
 
-  setFocus();
+  // grab the focus, unless a line-edit is focused currently
+  bool shouldSetFocus = true;
+
+  QWidget *focusWidget = qApp->focusWidget();
+  if (focusWidget) {
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+    if (lineEdit) {
+      shouldSetFocus = false;
+    }
+  }
+
+  if (shouldSetFocus) {
+    setFocus();
+  }
+
   update();
 }
 

@@ -256,6 +256,8 @@ void ConvertPopup::Converter::convertLevelWithConvert2Tlv(
     tlvConverter->abort();
   } else {
     int count = tlvConverter->getFramesToConvertCount();
+    popup->m_progressDialog->setMinimum(0);
+    popup->m_progressDialog->setMaximum(count);
     bool stop = false;
     for (int j = 0; j < count && !stop; j++) {
       if (!tlvConverter->convertNext(errorMessage)) {
@@ -263,6 +265,8 @@ void ConvertPopup::Converter::convertLevelWithConvert2Tlv(
         DVGui::warning(QString::fromStdString(errorMessage));
       }
       if (popup->m_progressDialog->wasCanceled()) stop = true;
+
+      popup->m_notifier->notifyFrameCompleted(j);
     }
     if (stop) tlvConverter->abort();
 
@@ -661,9 +665,9 @@ QFrame *ConvertPopup::createTlvSettings() {
   bool ret = true;
   ret      = ret && connect(m_antialias, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onAntialiasSelected(int)));
-  ret = ret && connect(m_palettePath, SIGNAL(pathChanged()), this,
+  ret      = ret && connect(m_palettePath, SIGNAL(pathChanged()), this,
                        SLOT(onPalettePathChanged()));
-  ret = ret && connect(m_dpiMode, SIGNAL(currentIndexChanged(int)), this,
+  ret      = ret && connect(m_dpiMode, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onDpiModeSelected(int)));
 
   assert(ret);
@@ -891,7 +895,7 @@ Convert2Tlv *ConvertPopup::makeTlvConverter(const TFilePath &sourceFilePath) {
         sourceFilePath.withParentDir(unpaintedFolder).withName(basename));
   }
   int from = -1, to = -1;
-  if (m_srcFilePaths.size() > 1) {
+  if (m_srcFilePaths.size() == 1) {
     from = m_fromFld->getValue();
     to   = m_toFld->getValue();
   }
@@ -1109,10 +1113,10 @@ void ConvertPopup::getFrameRange(const TFilePath &sourceFilePath,
     TFrameId fid;
     bool ok;
 
-    fid                        = TFrameId(m_fromFld->text().toInt(&ok));
+    fid = TFrameId(m_fromFld->text().toInt(&ok));
     if (ok && fid > from) from = tcrop(fid, firstFrame, lastFrame);
 
-    fid                    = TFrameId(m_toFld->text().toInt(&ok));
+    fid = TFrameId(m_toFld->text().toInt(&ok));
     if (ok && fid < to) to = tcrop(fid, firstFrame, lastFrame);
   }
 }
@@ -1266,9 +1270,9 @@ void ConvertPopup::onOptionsClicked() {
   std::string ext       = m_fileFormat->currentText().toStdString();
   TPropertyGroup *props = getFormatProperties(ext);
 
-  openFormatSettingsPopup(this, ext, props, m_srcFilePaths.size() == 1
-                                                ? m_srcFilePaths[0]
-                                                : TFilePath());
+  openFormatSettingsPopup(
+      this, ext, props,
+      m_srcFilePaths.size() == 1 ? m_srcFilePaths[0] : TFilePath());
 }
 
 //-------------------------------------------------------------------
@@ -1297,9 +1301,8 @@ void ConvertPopup::onPalettePathChanged() {
 bool ConvertPopup::isSaveTlvBackupToNopaintActive() {
   return m_fileFormat->currentText() ==
              TlvExtension /*-- tlvが選択されている --*/
-         &&
-         m_tlvMode->currentText() ==
-             TlvMode_Unpainted /*-- Unpainted Tlvが選択されている --*/
+         && m_tlvMode->currentText() ==
+                TlvMode_Unpainted /*-- Unpainted Tlvが選択されている --*/
          && m_saveBackupToNopaint->isChecked(); /*-- Save Backup to "nopaint"
                                                    Folder オプションが有効 --*/
 }
