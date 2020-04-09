@@ -463,21 +463,15 @@ void Iwa_BokehRefFx::convertIris(const float irisSize, const TRectD& irisBBox,
   // create the raster for resizing
   TDimensionD resizedIrisSize(std::abs(irisSizeResampleRatio) * irisOrgSize.lx,
                               std::abs(irisSizeResampleRatio) * irisOrgSize.ly);
-  TDimensionI filterSize((int)std::ceil(resizedIrisSize.lx),
-                         (int)std::ceil(resizedIrisSize.ly));
+  // add 1 pixel margins to all sides
+  TDimensionI filterSize((int)std::ceil(resizedIrisSize.lx) + 2,
+                         (int)std::ceil(resizedIrisSize.ly) + 2);
   TPointD resizeOffset((double)filterSize.lx - resizedIrisSize.lx,
                        (double)filterSize.ly - resizedIrisSize.ly);
 
-  bool isIrisOffset[2] = {false, false};
   // iris shape must be exactly at the center of the image
-  if ((dimOut.lx - filterSize.lx) % 2 == 1) {
-    filterSize.lx++;
-    isIrisOffset[0] = true;
-  }
-  if ((dimOut.ly - filterSize.ly) % 2 == 1) {
-    filterSize.ly++;
-    isIrisOffset[1] = true;
-  }
+  if ((dimOut.lx - filterSize.lx) % 2 == 1) filterSize.lx++;
+  if ((dimOut.ly - filterSize.ly) % 2 == 1) filterSize.ly++;
 
   // if the filter size becomes larger than the output size, return
   if (filterSize.lx > dimOut.lx || filterSize.ly > dimOut.ly) {
@@ -491,10 +485,9 @@ void Iwa_BokehRefFx::convertIris(const float irisSize, const TRectD& irisBBox,
 
   // offset
   TAffine aff;
-  TPointD affOffset((isIrisOffset[0]) ? 0.5 : 1.0,
-                    (isIrisOffset[1]) ? 0.5 : 1.0);
-  if (!isIrisOffset[0]) affOffset.x -= resizeOffset.x / 2;
-  if (!isIrisOffset[1]) affOffset.y -= resizeOffset.y / 2;
+  TPointD affOffset(0.5, 0.5);
+  affOffset += TPointD((dimOut.lx % 2 == 1) ? 0.5 : 0.0,
+                       (dimOut.ly % 2 == 1) ? 0.5 : 0.0);
 
   aff = TTranslation(resizedIris->getCenterD() + affOffset);
   aff *= TScale(irisSizeResampleRatio);
@@ -924,6 +917,11 @@ void Iwa_BokehRefFx::doCompute(TTile& tile, double frame,
   if (dimOut.lx < 10000 && dimOut.ly < 10000) {
     int new_x = kiss_fft_next_fast_size(dimOut.lx);
     int new_y = kiss_fft_next_fast_size(dimOut.ly);
+    // margin should be integer
+    while ((new_x - dimOut.lx) % 2 != 0)
+      new_x = kiss_fft_next_fast_size(new_x + 1);
+    while ((new_y - dimOut.ly) % 2 != 0)
+      new_y = kiss_fft_next_fast_size(new_y + 1);
 
     rectOut = rectOut.enlarge(static_cast<double>(new_x - dimOut.lx) / 2.0,
                               static_cast<double>(new_y - dimOut.ly) / 2.0);
