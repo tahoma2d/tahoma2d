@@ -1,16 +1,4 @@
-#include "penciltestpopup.h"
-
-#ifdef WIN32
-#include <Windows.h>
-#include <mfobjects.h>
-#include <mfapi.h>
-#include <mfidl.h>
-#pragma comment(lib, "Mfplat.lib")
-#pragma comment(lib, "Mf.lib")
-#pragma comment(lib, "Mfreadwrite.lib")
-#pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "shlwapi.lib")
-#endif
+#include "penciltestpopup_qt.h"
 
 // Tnz6 includes
 #include "tapp.h"
@@ -19,7 +7,7 @@
 #include "filebrowsermodel.h"
 #include "cellselection.h"
 #include "toonzqt/tselectionhandle.h"
-#include "cameracapturelevelcontrol.h"
+#include "cameracapturelevelcontrol_qt.h"
 #include "iocommand.h"
 
 // TnzQt includes
@@ -99,10 +87,6 @@ TEnv::StringVar CamCapCameraName("CamCapCameraName", "");
 TEnv::StringVar CamCapCameraResolution("CamCapCameraResolution", "");
 // Whether to open save-in popup on launch
 TEnv::IntVar CamCapOpenSaveInPopupOnLaunch("CamCapOpenSaveInPopupOnLaunch", 0);
-TEnv::IntVar CamCapUseMjpg("CamCapUseMjpg", 1);
-#ifdef _WIN32
-TEnv::IntVar CamCapUseDirectShow("CamCapUseDirectShow", 1);
-#endif
 // SaveInFolderPopup settings
 TEnv::StringVar CamCapSaveInParentFolder("CamCapSaveInParentFolder", "");
 TEnv::IntVar CamCapSaveInPopupSubFolder("CamCapSaveInPopupSubFolder", 0);
@@ -134,9 +118,7 @@ void convertImageToRaster(TRaster32P dstRas, const QImage& srcImg) {
   dstRas->unlock();
 }
 
-void bgReduction(cv::Mat& srcImg, cv::Mat& bgImg, int reduction) {
-  // void bgReduction(QImage& srcImg, QImage& bgImg, int reduction) {
-  if (srcImg.cols != bgImg.cols || srcImg.rows != bgImg.rows) return;
+void bgReduction(QImage& srcImg, QImage& bgImg, int reduction) {
   float reductionRatio = (float)reduction / 100.0f;
   // first, make the reduction table
   std::vector<int> reductionAmount(256);
@@ -144,15 +126,104 @@ void bgReduction(cv::Mat& srcImg, cv::Mat& bgImg, int reduction) {
     reductionAmount[i] = (int)(std::floor((float)(255 - i) * reductionRatio));
   }
   // then, compute for all pixels
-  int lx = srcImg.cols;
-  int ly = srcImg.rows;
-  for (int j = 0; j < srcImg.rows; j++) {
-    cv::Vec3b* pix   = srcImg.ptr<cv::Vec3b>(j);
-    cv::Vec3b* bgPix = bgImg.ptr<cv::Vec3b>(j);
-    for (int i = 0; i < srcImg.cols; i++, pix++, bgPix++) {
-      *pix = cv::Vec3b(std::min(255, (*pix)[0] + reductionAmount[(*bgPix)[0]]),
-                       std::min(255, (*pix)[1] + reductionAmount[(*bgPix)[1]]),
-                       std::min(255, (*pix)[2] + reductionAmount[(*bgPix)[2]]));
+  int lx = srcImg.width();
+  int ly = srcImg.height();
+  for (int j = 0; j < ly; j++) {
+    // TPixel32 * pix = ras->pixels(j);
+    QRgb* pix   = (QRgb*)srcImg.scanLine(j);
+    QRgb* bgPix = (QRgb*)bgImg.scanLine(j);
+    for (int i = 0; i < lx; i++, pix++, bgPix++) {
+      *pix = qRgb(std::min(255, qRed(*pix) + reductionAmount[qRed(*bgPix)]),
+                  std::min(255, qGreen(*pix) + reductionAmount[qGreen(*bgPix)]),
+                  std::min(255, qBlue(*pix) + reductionAmount[qBlue(*bgPix)]));
+    }
+  }
+}
+
+void my_compute_lut(int black, int white, float gamma, std::vector<int>& lut) {
+  const int maxChannelValue         = lut.size() - 1;
+  const float half_maxChannelValueF = 0.5f * maxChannelValue;
+  const float maxChannelValueF      = maxChannelValue;
+
+  float value;
+
+  int lutSize = lut.size();
+  for (int i = 0; i < lutSize; i++) {
+    if (i <= black)
+      value = 0.0f;
+    else if (i >= white)
+      value = 1.0f;
+    else {
+      value = (float)(i - black) / (float)(white - black);
+      value = std::pow(value, 1.0f / gamma);
+    }
+
+    lut[i] = (int)std::floor(value * maxChannelValueF);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+inline void doPixGray(QRgb* pix, const std::vector<int>& lut) {
+  int gray = lut[qGray(*pix)];
+  *pix     = qRgb(gray, gray, gray);
+}
+
+//-----------------------------------------------------------------------------
+
+inline void doPixBinary(QRgb* pix, int threshold) {
+  int gray = qGray(*pix);
+  if (gray >= threshold)
+    gray = 255;
+  else
+    gray = 0;
+  *pix = qRgb(gray, gray, gray);
+}
+
+//-----------------------------------------------------------------------------
+
+inline void doPix(QRgb* pix, const std::vector<int>& lut) {
+  // The captured image MUST be full opaque!
+  *pix = qRgb(lut[qRed(*pix)], lut[qGreen(*pix)], lut[qBlue(*pix)]);
+}
+
+//-----------------------------------------------------------------------------
+
+void onChange(QImage& img, int black, int white, float gamma, bool doGray) {
+  std::vector<int> lut(TPixel32::maxChannelValue + 1);
+  my_compute_lut(black, white, gamma, lut);
+
+  int ly = img.height();
+  // compute in multi thread
+  int threadCount =
+      std::max(1, QThreadPool::globalInstance()->maxThreadCount() / 2);
+  int tmpStart = 0;
+  for (int t = 0; t < threadCount; t++) {
+    int tmpEnd = (int)std::round((float)(ly * (t + 1)) / (float)threadCount);
+
+    QRunnable* task;
+    if (doGray)
+      task = new ApplyGrayLutTask(tmpStart, tmpEnd, img, lut);
+    else
+      task = new ApplyLutTask(tmpStart, tmpEnd, img, lut);
+
+    QThreadPool::globalInstance()->start(task);
+
+    tmpStart = tmpEnd;
+  }
+
+  QThreadPool::globalInstance()->waitForDone();
+}
+
+//-----------------------------------------------------------------------------
+
+void onChangeBW(QImage& img, int threshold) {
+  int lx = img.width(), y, ly = img.height();
+  for (y = 0; y < ly; ++y) {
+    QRgb *pix = (QRgb*)img.scanLine(y), *endPix = (QRgb*)(pix + lx);
+    while (pix < endPix) {
+      doPixBinary(pix, threshold);
+      ++pix;
     }
   }
 }
@@ -402,9 +473,130 @@ bool getRasterLevelSize(TXshLevel* level, TDimension& dim) {
 
 //=============================================================================
 
+void ApplyLutTask::run() {
+  int lx = m_img.width();
+  for (int y = m_fromY; y < m_toY; ++y) {
+    QRgb *pix = (QRgb*)m_img.scanLine(y), *endPix = (QRgb*)(pix + lx);
+    while (pix < endPix) {
+      doPix(pix, m_lut);
+      ++pix;
+    }
+  }
+}
+
+void ApplyGrayLutTask::run() {
+  int lx = m_img.width();
+  for (int y = m_fromY; y < m_toY; ++y) {
+    QRgb *pix = (QRgb*)m_img.scanLine(y), *endPix = (QRgb*)(pix + lx);
+    while (pix < endPix) {
+      doPixGray(pix, m_lut);
+      ++pix;
+    }
+  }
+}
+
+//=============================================================================
+
+MyVideoSurface::MyVideoSurface(QWidget* widget, QObject* parent)
+    : QAbstractVideoSurface(parent)
+    , m_widget(widget)
+    , m_imageFormat(QImage::Format_Invalid) {}
+
+QList<QVideoFrame::PixelFormat> MyVideoSurface::supportedPixelFormats(
+    QAbstractVideoBuffer::HandleType handleType) const {
+  if (handleType == QAbstractVideoBuffer::NoHandle) {
+    return QList<QVideoFrame::PixelFormat>()
+           << QVideoFrame::Format_RGB32 << QVideoFrame::Format_ARGB32
+           << QVideoFrame::Format_ARGB32_Premultiplied
+           << QVideoFrame::Format_RGB565 << QVideoFrame::Format_RGB555;
+  } else {
+    return QList<QVideoFrame::PixelFormat>();
+  }
+}
+
+bool MyVideoSurface::isFormatSupported(const QVideoSurfaceFormat& format,
+                                       QVideoSurfaceFormat* similar) const {
+  Q_UNUSED(similar);
+
+  const QImage::Format imageFormat =
+      QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
+  const QSize size = format.frameSize();
+
+  return imageFormat != QImage::Format_Invalid && !size.isEmpty() &&
+         format.handleType() == QAbstractVideoBuffer::NoHandle;
+}
+
+bool MyVideoSurface::start(const QVideoSurfaceFormat& format) {
+  const QImage::Format imageFormat =
+      QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
+  const QSize size = format.frameSize();
+
+  if (imageFormat != QImage::Format_Invalid && !size.isEmpty()) {
+    m_imageFormat = imageFormat;
+    m_imageSize   = size;
+    m_sourceRect  = format.viewport();
+
+    QAbstractVideoSurface::start(format);
+
+    m_widget->updateGeometry();
+    updateVideoRect();
+
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void MyVideoSurface::updateVideoRect() {
+  QSize size = surfaceFormat().sizeHint();
+  size.scale(m_widget->size(), Qt::KeepAspectRatio);
+
+  m_targetRect = QRect(QPoint(0, 0), size);
+  m_targetRect.moveCenter(m_widget->rect().center());
+
+  double scale =
+      (double)m_targetRect.width() / (double)surfaceFormat().sizeHint().width();
+  m_S2V_Transform =
+      QTransform::fromTranslate(m_targetRect.left(), m_targetRect.top())
+          .scale(scale, scale);
+}
+
+bool MyVideoSurface::present(const QVideoFrame& frame) {
+  if (surfaceFormat().pixelFormat() != frame.pixelFormat() ||
+      surfaceFormat().frameSize() != frame.size()) {
+    setError(IncorrectFormatError);
+    stop();
+    return false;
+  } else {
+    m_currentFrame = frame;
+
+    if (m_currentFrame.map(QAbstractVideoBuffer::ReadOnly)) {
+      QImage image = QImage(m_currentFrame.bits(), m_currentFrame.width(),
+                            m_currentFrame.height(),
+                            m_currentFrame.bytesPerLine(), m_imageFormat);
+      m_currentFrame.unmap();
+      if (!image.isNull()) emit frameCaptured(image);
+    }
+
+    return true;
+  }
+}
+
+void MyVideoSurface::stop() {
+  m_currentFrame = QVideoFrame();
+  m_targetRect   = QRect();
+
+  QAbstractVideoSurface::stop();
+
+  m_widget->update();
+}
+
+//=============================================================================
+
 MyVideoWidget::MyVideoWidget(QWidget* parent)
     : QWidget(parent)
     , m_previousImage(QImage())
+    , m_surface(0)
     , m_showOnionSkin(false)
     , m_onionOpacity(128)
     , m_upsideDown(false)
@@ -412,7 +604,14 @@ MyVideoWidget::MyVideoWidget(QWidget* parent)
     , m_subCameraRect(QRect()) {
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
+  m_surface = new MyVideoSurface(this);
   setMouseTracking(true);
+}
+
+MyVideoWidget::~MyVideoWidget() { delete m_surface; }
+
+QSize MyVideoWidget::sizeHint() const {
+  return m_surface->surfaceFormat().sizeHint();
 }
 
 void MyVideoWidget::paintEvent(QPaintEvent* event) {
@@ -420,13 +619,29 @@ void MyVideoWidget::paintEvent(QPaintEvent* event) {
 
   p.fillRect(rect(), Qt::black);
 
-  if (!m_image.isNull()) {
-    p.drawImage(m_targetRect, m_image);
+  if (m_surface->isActive()) {
+    const QRect videoRect         = m_surface->videoRect();
+    const QTransform oldTransform = p.transform();
+
+    if (m_upsideDown) {
+      p.translate(videoRect.center());
+      p.rotate(180);
+      p.translate(-videoRect.center());
+    }
+    if (m_surface->surfaceFormat().scanLineDirection() ==
+        QVideoSurfaceFormat::BottomToTop) {
+      p.scale(1, -1);
+      p.translate(0, -height());
+    }
+
+    p.drawImage(videoRect, m_image, m_surface->sourceRect());
+
+    p.setTransform(oldTransform);
 
     if (m_showOnionSkin && m_onionOpacity > 0.0f && !m_previousImage.isNull() &&
         m_previousImage.size() == m_image.size()) {
       p.setOpacity((qreal)m_onionOpacity / 255.0);
-      p.drawImage(m_targetRect, m_previousImage);
+      p.drawImage(videoRect, m_previousImage, m_surface->sourceRect());
       p.setOpacity(1.0);
     }
 
@@ -454,23 +669,12 @@ void MyVideoWidget::paintEvent(QPaintEvent* event) {
 
 void MyVideoWidget::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
-  computeTransform(m_image.size());
-}
 
-void MyVideoWidget::computeTransform(QSize imgSize) {
-  QSize adjustedSize = imgSize;
-  adjustedSize.scale(size(), Qt::KeepAspectRatio);
-  m_targetRect = QRect(QPoint(), adjustedSize);
-  m_targetRect.moveCenter(rect().center());
-
-  double scale = (double)m_targetRect.width() / (double)imgSize.width();
-  m_S2V_Transform =
-      QTransform::fromTranslate(m_targetRect.left(), m_targetRect.top())
-          .scale(scale, scale);
+  m_surface->updateVideoRect();
 }
 
 void MyVideoWidget::setSubCameraSize(QSize size) {
-  QSize frameSize = m_image.size();
+  QSize frameSize = m_surface->surfaceFormat().frameSize();
   assert(frameSize == size.expandedTo(frameSize));
 
   m_subCameraRect.setSize(size);
@@ -494,7 +698,7 @@ void MyVideoWidget::drawSubCamera(QPainter& p) {
     p.drawRect(handleRect);
   };
 
-  QRect vidSubRect = m_S2V_Transform.mapRect(m_subCameraRect);
+  QRect vidSubRect = m_surface->transform().mapRect(m_subCameraRect);
   p.setBrush(Qt::NoBrush);
   drawSubFrameLine(HandleLeft, vidSubRect.topLeft(), vidSubRect.bottomLeft());
   drawSubFrameLine(HandleTop, vidSubRect.topLeft(), vidSubRect.topRight());
@@ -522,11 +726,11 @@ void MyVideoWidget::mouseMoveEvent(QMouseEvent* event) {
   };
 
   // if the sub camera is not active, do nothing and return
-  if (m_image.isNull() || m_subCameraRect.isNull()) return;
+  if (!m_surface->isActive() || m_subCameraRect.isNull()) return;
 
   // with no mouse button, update the active handles
   if (event->buttons() == Qt::NoButton) {
-    QRect vidSubRect    = m_S2V_Transform.mapRect(m_subCameraRect);
+    QRect vidSubRect    = m_surface->transform().mapRect(m_subCameraRect);
     SUBHANDLE preHandle = m_activeSubHandle;
     if (!vidSubRect.adjusted(-d, -d, d, d).contains(event->pos()))
       m_activeSubHandle = HandleNone;
@@ -591,7 +795,7 @@ void MyVideoWidget::mouseMoveEvent(QMouseEvent* event) {
     int minimumSize = 100;
 
     QPoint offset =
-        m_S2V_Transform.inverted().map(event->pos()) - m_dragStartPos;
+        m_surface->transform().inverted().map(event->pos()) - m_dragStartPos;
     if (m_activeSubHandle >= HandleTopLeft &&
         m_activeSubHandle <= HandleBottomRight) {
       QSize offsetSize = m_preSubCameraRect.size();
@@ -604,7 +808,7 @@ void MyVideoWidget::mouseMoveEvent(QMouseEvent* event) {
           m_activeSubHandle == HandleTopRight)
         offset.rx() *= -1;
     }
-    QSize camSize = m_image.size();
+    QSize camSize = m_surface->surfaceFormat().sizeHint();
 
     if (m_activeSubHandle == HandleFrame) {
       clampPoint(offset, -m_preSubCameraRect.left(),
@@ -651,13 +855,13 @@ void MyVideoWidget::mouseMoveEvent(QMouseEvent* event) {
 void MyVideoWidget::mousePressEvent(QMouseEvent* event) {
   // if the sub camera is not active, do nothing and return
   // use left button only and some handle must be active
-  if (m_image.isNull() || m_subCameraRect.isNull() ||
+  if (!m_surface->isActive() || m_subCameraRect.isNull() ||
       event->button() != Qt::LeftButton || m_activeSubHandle == HandleNone)
     return;
 
   // record the original sub camera size
   m_preSubCameraRect = m_subCameraRect;
-  m_dragStartPos     = m_S2V_Transform.inverted().map(event->pos());
+  m_dragStartPos     = m_surface->transform().inverted().map(event->pos());
 
   // temporary stop the camera
   emit stopCamera();
@@ -666,7 +870,7 @@ void MyVideoWidget::mousePressEvent(QMouseEvent* event) {
 void MyVideoWidget::mouseReleaseEvent(QMouseEvent* event) {
   // if the sub camera is not active, do nothing and return
   // use left button only and some handle must be active
-  if (m_image.isNull() || m_subCameraRect.isNull() ||
+  if (!m_surface->isActive() || m_subCameraRect.isNull() ||
       event->button() != Qt::LeftButton || m_activeSubHandle == HandleNone)
     return;
 
@@ -1217,12 +1421,7 @@ PencilTestPopup::PencilTestPopup()
     : Dialog(0, false, false, "PencilTest")
     , m_currentCamera(NULL)
     , m_captureWhiteBGCue(false)
-    , m_captureCue(false)
-    , m_useMjpg(CamCapUseMjpg != 0)
-#ifdef _WIN32
-    , m_useDirectShow(CamCapUseDirectShow != 0)
-#endif
-{
+    , m_captureCue(false) {
   setWindowTitle(tr("Camera Capture"));
 
   // add maximize button to the dialog
@@ -1277,12 +1476,15 @@ PencilTestPopup::PencilTestPopup()
   m_timerIntervalFld    = new IntField(this);
   m_captureTimer        = new QTimer(this);
   m_countdownTimer      = new QTimer(this);
-  m_timer               = new QTimer(this);
 
   m_captureButton          = new QPushButton(tr("Capture\n[Return key]"), this);
   QPushButton* closeButton = new QPushButton(tr("Close"), this);
 
+#ifdef _WIN32
   m_captureFilterSettingsBtn = new QPushButton(this);
+#else
+  m_captureFilterSettingsBtn = 0;
+#endif
 
   QPushButton* subfolderButton = new QPushButton(tr("Subfolder"), this);
 
@@ -1341,11 +1543,13 @@ PencilTestPopup::PencilTestPopup()
   m_captureButton->setIcon(style.standardIcon(QStyle::SP_DialogOkButton));
   m_captureButton->setIconSize(QSize(30, 30));
 
-  m_captureFilterSettingsBtn->setObjectName("GearButton");
-  m_captureFilterSettingsBtn->setFixedSize(23, 23);
-  m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
-  m_captureFilterSettingsBtn->setToolTip(tr("Options"));
-  m_captureFilterSettingsBtn->setMenu(createOptionsMenu());
+  if (m_captureFilterSettingsBtn) {
+    m_captureFilterSettingsBtn->setObjectName("GearButton");
+    m_captureFilterSettingsBtn->setFixedSize(23, 23);
+    m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
+    m_captureFilterSettingsBtn->setToolTip(
+        tr("Video Capture Filter Settings..."));
+  }
 
   subfolderButton->setObjectName("SubfolderButton");
   subfolderButton->setIconSize(QSize(15, 15));
@@ -1542,13 +1746,13 @@ PencilTestPopup::PencilTestPopup()
                        SLOT(refreshCameraList()));
   ret      = ret && connect(m_cameraListCombo, SIGNAL(activated(int)), this,
                        SLOT(onCameraListComboActivated(int)));
-  ret      = ret && connect(m_resolutionCombo, SIGNAL(activated(int)), this,
-                       SLOT(onResolutionComboActivated()));
-  ret      = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_resolutionCombo, SIGNAL(activated(const QString&)),
+                       this, SLOT(onResolutionComboActivated(const QString&)));
+  ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
                        SLOT(onFileFormatOptionButtonPressed()));
-  ret      = ret && connect(m_levelNameEdit, SIGNAL(levelNameEdited()), this,
+  ret = ret && connect(m_levelNameEdit, SIGNAL(levelNameEdited()), this,
                        SLOT(onLevelNameEdited()));
-  ret      = ret &&
+  ret = ret &&
         connect(nextLevelButton, SIGNAL(pressed()), this, SLOT(onNextName()));
   ret = ret && connect(m_previousLevelButton, SIGNAL(pressed()), this,
                        SLOT(onPreviousName()));
@@ -1574,6 +1778,9 @@ PencilTestPopup::PencilTestPopup()
   ret = ret && connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
   ret = ret && connect(m_captureButton, SIGNAL(clicked(bool)), this,
                        SLOT(onCaptureButtonClicked(bool)));
+  if (m_captureFilterSettingsBtn)
+    ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(pressed()), this,
+                         SLOT(onCaptureFilterSettingsBtnPressed()));
   ret = ret && connect(subfolderButton, SIGNAL(clicked(bool)), this,
                        SLOT(openSaveInFolderPopup()));
   ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
@@ -1592,10 +1799,15 @@ PencilTestPopup::PencilTestPopup()
                        SLOT(onSubCameraSizeEdited()));
   ret = ret && connect(m_subHeightFld, SIGNAL(editingFinished()), this,
                        SLOT(onSubCameraSizeEdited()));
+  ret = ret && connect(m_videoWidget, &MyVideoWidget::startCamera, [&]() {
+          if (m_currentCamera) m_currentCamera->start();
+        });
+  ret = ret && connect(m_videoWidget, &MyVideoWidget::stopCamera, [&]() {
+          if (m_currentCamera) m_currentCamera->stop();
+        });
   ret = ret && connect(m_videoWidget, SIGNAL(subCameraResized(bool)), this,
                        SLOT(onSubCameraResized(bool)));
 
-  ret = ret && connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
   assert(ret);
 
   refreshCameraList();
@@ -1612,7 +1824,7 @@ PencilTestPopup::PencilTestPopup()
     int startupResolutionIndex = m_resolutionCombo->findText(resStr);
     if (startupResolutionIndex >= 0) {
       m_resolutionCombo->setCurrentIndex(startupResolutionIndex);
-      onResolutionComboActivated();
+      onResolutionComboActivated(resStr);
     }
   }
 
@@ -1621,45 +1833,14 @@ PencilTestPopup::PencilTestPopup()
 
 //-----------------------------------------------------------------------------
 
-PencilTestPopup::~PencilTestPopup() { m_cvWebcam.release(); }
-
-//-----------------------------------------------------------------------------
-
-QMenu* PencilTestPopup::createOptionsMenu() {
-  QMenu* menu = new QMenu();
-  bool ret    = true;
-#ifdef _WIN32
-  QAction* settingsAct =
-      menu->addAction(tr("Video Capture Filter Settings..."));
-  ret = ret && connect(settingsAct, SIGNAL(triggered()), this,
-                       SLOT(onCaptureFilterSettingsBtnPressed()));
-  settingsAct->setIcon(QIcon(":Resources/preferences.svg"));
-
-  menu->addSeparator();
-
-  QAction* useDShowAct = menu->addAction(tr("Use Direct Show Webcam Drivers"));
-  useDShowAct->setCheckable(true);
-  useDShowAct->setChecked(m_useDirectShow);
-  ret = ret && connect(useDShowAct, &QAction::toggled, [&](bool checked) {
-          m_cvWebcam.release();
-          if (m_timer->isActive()) m_timer->stop();
-          m_useDirectShow     = checked;
-          CamCapUseDirectShow = checked;
-          m_timer->start(40);
-        });
-#endif
-  QAction* useMjpgAct = menu->addAction(tr("Use MJPG with Webcam"));
-  useMjpgAct->setCheckable(true);
-  useMjpgAct->setChecked(m_useMjpg);
-  ret = ret && connect(useMjpgAct, &QAction::toggled, [&](bool checked) {
-          m_cvWebcam.release();
-          if (m_timer->isActive()) m_timer->stop();
-          m_useMjpg     = checked;
-          CamCapUseMjpg = checked;
-          m_timer->start(40);
-        });
-
-  return menu;
+PencilTestPopup::~PencilTestPopup() {
+  if (m_currentCamera) {
+    if (m_currentCamera->state() == QCamera::ActiveState)
+      m_currentCamera->stop();
+    if (m_currentCamera->state() == QCamera::LoadedState)
+      m_currentCamera->unload();
+    delete m_currentCamera;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1693,11 +1874,15 @@ void PencilTestPopup::onCameraListComboActivated(int comboIndex) {
   QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
   if (cameras.size() != m_cameraListCombo->count() - 1) return;
 
-  m_cvWebcam.release();
-  if (m_timer->isActive()) m_timer->stop();
-
   // if selected the non-connected state, then disconnect the current camera
   if (comboIndex == 0) {
+    m_videoWidget->videoSurface()->stop();
+    if (m_currentCamera) {
+      if (m_currentCamera->state() == QCamera::ActiveState)
+        m_currentCamera->stop();
+      if (m_currentCamera->state() == QCamera::LoadedState)
+        m_currentCamera->unload();
+    }
     m_deviceName = QString();
     m_videoWidget->setImage(QImage());
     // update env
@@ -1709,6 +1894,9 @@ void PencilTestPopup::onCameraListComboActivated(int comboIndex) {
   // in case the camera is not changed (just click the combobox)
   if (cameras.at(index).deviceName() == m_deviceName) return;
 
+  QCamera* oldCamera = m_currentCamera;
+  if (oldCamera) m_videoWidget->videoSurface()->stop();
+
   m_currentCamera = new QCamera(cameras.at(index), this);
   m_deviceName    = cameras.at(index).deviceName();
 
@@ -1719,46 +1907,63 @@ void PencilTestPopup::onCameraListComboActivated(int comboIndex) {
   m_resolutionCombo->clear();
   QList<QSize> sizes = m_currentCamera->supportedViewfinderResolutions();
 
-  m_currentCamera->unload();
-  for (const QSize size : sizes) {
+  for (int s = 0; s < sizes.size(); s++) {
     m_resolutionCombo->addItem(
-        QString("%1 x %2").arg(size.width()).arg(size.height()), size);
+        QString("%1 x %2").arg(sizes.at(s).width()).arg(sizes.at(s).height()));
   }
   if (!sizes.isEmpty()) {
     // select the largest available resolution
     m_resolutionCombo->setCurrentIndex(m_resolutionCombo->count() - 1);
+    QCameraViewfinderSettings settings = m_currentCamera->viewfinderSettings();
+    settings.setResolution(sizes.last());
+    m_currentCamera->setViewfinderSettings(settings);
   }
+  m_currentCamera->setViewfinder(m_videoWidget->videoSurface());
+  m_videoWidget->videoSurface()->start(
+      m_videoWidget->videoSurface()->surfaceFormat());
 
+  // deleting old camera
+  if (oldCamera) {
+    if (oldCamera->state() == QCamera::ActiveState) oldCamera->stop();
+    delete oldCamera;
+  }
+  // start new camera
+  m_currentCamera->start();
   m_videoWidget->setImage(QImage());
-  m_timer->start(40);
+
   // update env
   CamCapCameraName = m_cameraListCombo->itemText(comboIndex).toStdString();
 }
 
 //-----------------------------------------------------------------------------
 
-void PencilTestPopup::onResolutionComboActivated() {
-  m_cvWebcam.release();
-  if (m_timer->isActive()) m_timer->stop();
+void PencilTestPopup::onResolutionComboActivated(const QString& itemText) {
+  // resolution is written in the itemText with the format "<width> x <height>"
+  // (e.g. "800 x 600")
+  QStringList texts = itemText.split(' ');
+  // the splited text must be "<width>" "x" and "<height>"
+  if (texts.size() != 3) return;
 
-  QSize newResolution = m_resolutionCombo->currentData().toSize();
+#ifndef MACOSX
+  m_currentCamera->stop();
+  m_currentCamera->unload();
+#endif
 
-  if (!newResolution.isValid()) return;
-  if (newResolution == m_resolution) {
-    m_timer->start(40);
-    return;
-  }
-
-  m_resolution = newResolution;
+  QCameraViewfinderSettings settings = m_currentCamera->viewfinderSettings();
+  QSize newResolution(texts[0].toInt(), texts[2].toInt());
+  settings.setResolution(newResolution);
+  m_currentCamera->setViewfinderSettings(settings);
 
   // reset white bg
-  m_whiteBGImg = cv::Mat();
+  m_whiteBGImg = QImage();
   m_bgReductionFld->setDisabled(true);
+#ifndef MACOSX
+  m_currentCamera->start();
+#endif
   m_videoWidget->setImage(QImage());
-  m_videoWidget->computeTransform(m_resolution);
 
   // update env
-  CamCapCameraResolution = m_resolutionCombo->currentText().toStdString();
+  CamCapCameraResolution = itemText.toStdString();
 
   refreshFrameInfo();
 
@@ -1777,14 +1982,13 @@ void PencilTestPopup::onResolutionComboActivated() {
     TDimension camres = camera->getRes();
     newResolution =
         QSize(camres.lx, camres.ly).scaled(newResolution, Qt::KeepAspectRatio);
+    // newResolution.scale(QSize(res.lx, res.ly), Qt::KeepAspectRatio);
     m_subWidthFld->setValue(newResolution.width());
     m_subHeightFld->setValue(newResolution.height());
   } else {
     m_subWidthFld->setValue(m_allowedCameraSize.width());
     m_subHeightFld->setValue(m_allowedCameraSize.height());
   }
-
-  m_timer->start(40);
 }
 
 //-----------------------------------------------------------------------------
@@ -1814,6 +2018,7 @@ void PencilTestPopup::onNextName() {
   }
 
   std::wstring levelName = nameCreator->getNext();
+
   updateLevelNameAndFrame(levelName);
 }
 
@@ -1920,158 +2125,33 @@ void PencilTestPopup::onColorTypeComboChanged(int index) {
 
 //-----------------------------------------------------------------------------
 
-void PencilTestPopup::onTimeout() { getWebcamImage(); }
-
-//-----------------------------------------------------------------------------
-
-int PencilTestPopup::translateIndex(int camIndex) {
-  // We are using Qt to get the camera info and supported resolutions, but
-  // we are using OpenCV to actually get the images.
-  // The camera index from OpenCV and from Qt don't always agree,
-  // So this checks the name against the correct index.
-
-  // Thanks to:
-  // https://elcharolin.wordpress.com/2017/08/28/webcam-capture-with-the-media-foundation-sdk/
-  // for the webcam enumeration here
-
-  std::wstring desc = m_cameraListCombo->currentText().toStdWString();
-
-#define CLEAN_ATTRIBUTES()                                                     \
-  if (attributes) {                                                            \
-    attributes->Release();                                                     \
-    attributes = NULL;                                                         \
-  }                                                                            \
-  for (DWORD i = 0; i < count; i++) {                                          \
-    if (&devices[i]) {                                                         \
-      devices[i]->Release();                                                   \
-      devices[i] = NULL;                                                       \
-    }                                                                          \
-  }                                                                            \
-  CoTaskMemFree(devices);                                                      \
-  return camIndex;
-
-  HRESULT hr = S_OK;
-
-  // this is important!!
-  hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-
-  UINT32 count              = 0;
-  IMFAttributes* attributes = NULL;
-  IMFActivate** devices     = NULL;
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // Create an attribute store to specify enumeration parameters.
-  hr = MFCreateAttributes(&attributes, 1);
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-
-  // The attribute to be requested is devices that can capture video
-  hr = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,
-                           MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // Enummerate the video capture devices
-  hr = MFEnumDeviceSources(attributes, &devices, &count);
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // if there are any available devices
-  if (count > 0) {
-    WCHAR* nameString = NULL;
-    // Get the human-friendly name of the device
-    UINT32 cchName;
-
-    for (int i = 0; i < count; i++) {
-      hr = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME,
-                                          &nameString, &cchName);
-      if (nameString == desc) {
-        return i;
-      }
-      // devices[0]->ShutdownObject();
-    }
-
-    CoTaskMemFree(nameString);
-  }
-  // clean
-  CLEAN_ATTRIBUTES()
-}
-
-//-----------------------------------------------------------------------------
-
-void PencilTestPopup::getWebcamImage() {
-  bool error = false;
-  cv::Mat imgOriginal;
-  cv::Mat imgCorrected;
-
-  if (m_cvWebcam.isOpened() == false) {
-    if (m_cameraListCombo->currentIndex() <= 0) return;
-    int camIndex = m_cameraListCombo->currentIndex() - 1;
-    if (!m_useDirectShow) {
-      // the webcam order obtained from Qt isn't always the same order as
-      // the one obtained from OpenCV without DirectShow
-      m_cvWebcam.open(translateIndex(camIndex));
-    } else {
-      m_cvWebcam.open(camIndex, cv::CAP_DSHOW);
-    }
-    // mjpg is used by many webcams
-    // opencv runs very slow on some webcams without it.
-    if (m_useMjpg) {
-      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                     cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
-      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                     cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-    }
-    m_cvWebcam.set(cv::CAP_PROP_FRAME_WIDTH, m_resolution.width());
-    m_cvWebcam.set(cv::CAP_PROP_FRAME_HEIGHT, m_resolution.height());
-    if (!m_cvWebcam.isOpened()) error = true;
-  }
-
-  bool blnFrameReadSuccessfully =
-      m_cvWebcam.read(imgOriginal);  // get next frame
-
-  if (!blnFrameReadSuccessfully ||
-      imgOriginal.empty()) {  // if frame not read successfully
-    std::cout << "error: frame not read from webcam\n";
-    error = true;  // print error message to std out
-  }
-
-  if (!error) {
-    cv::cvtColor(imgOriginal, imgCorrected, cv::COLOR_BGR2RGB);
-    onFrameCaptured(imgCorrected);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-void PencilTestPopup::onFrameCaptured(cv::Mat& image) {
-  if (!m_videoWidget) return;
+void PencilTestPopup::onFrameCaptured(QImage& image) {
+  if (!m_videoWidget || image.isNull()) return;
   // capture the white BG
   if (m_captureWhiteBGCue) {
-    ;
-    m_whiteBGImg        = image.clone();
+    m_whiteBGImg        = image.copy();
     m_captureWhiteBGCue = false;
     m_bgReductionFld->setEnabled(true);
   }
 
   processImage(image);
-
-  QImage::Format format = (m_colorTypeCombo->currentIndex() == 0)
-                              ? QImage::Format_RGB888
-                              : QImage::Format_Grayscale8;
-  QImage qimg(image.data, image.cols, image.rows, format);
-  m_videoWidget->setImage(qimg.copy());
+  m_videoWidget->setImage(image.copy());
 
   if (m_captureCue) {
+#ifndef MACOSX
+    m_currentCamera->stop();
+#endif
     m_captureCue = false;
 
-    if (importImage(qimg)) {
-      m_videoWidget->setPreviousImage(qimg.copy());
+    bool scanBtoT =
+        m_videoWidget->videoSurface()->surfaceFormat().scanLineDirection() ==
+        QVideoSurfaceFormat::BottomToTop;
+    bool upsideDown = m_upsideDownCB->isChecked();
+
+    image = image.mirrored(upsideDown, upsideDown != scanBtoT);
+
+    if (importImage(image)) {
+      m_videoWidget->setPreviousImage(image.copy());
       if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
         int f = m_frameNumberEdit->getValue();
         if (f % 10 == 0)  // next number
@@ -2099,17 +2179,33 @@ void PencilTestPopup::onFrameCaptured(cv::Mat& image) {
       m_captureButton->setChecked(false);
       onCaptureButtonClicked(false);
     }
+#ifndef MACOSX
+    m_currentCamera->start();
+#endif
   }
 }
 
 //-----------------------------------------------------------------------------
 
 void PencilTestPopup::showEvent(QShowEvent* event) {
+  // m_timerId = startTimer(10);
+
   // if there is another action of which "return" key is assigned as short cut
   // key,
   // then release the shortcut key temporary while the popup opens
   QAction* action = CommandManager::instance()->getActionFromShortcut("Return");
   if (action) action->setShortcut(QKeySequence(""));
+
+  connect(m_videoWidget->videoSurface(), SIGNAL(frameCaptured(QImage&)), this,
+          SLOT(onFrameCaptured(QImage&)));
+
+  // reload camera
+  if (m_currentCamera) {
+    if (m_currentCamera->state() == QCamera::UnloadedState)
+      m_currentCamera->load();
+    if (m_currentCamera->state() == QCamera::LoadedState)
+      m_currentCamera->start();
+  }
 
   TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
   connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
@@ -2118,9 +2214,6 @@ void PencilTestPopup::showEvent(QShowEvent* event) {
   bool tmp_alwaysOverwrite = m_alwaysOverwrite;
   onSceneSwitched();
   m_alwaysOverwrite = tmp_alwaysOverwrite;
-
-  onResolutionComboActivated();
-  m_videoWidget->computeTransform(m_resolution);
 }
 
 //-----------------------------------------------------------------------------
@@ -2130,15 +2223,22 @@ void PencilTestPopup::hideEvent(QHideEvent* event) {
   QAction* action = CommandManager::instance()->getActionFromShortcut("Return");
   if (action) action->setShortcut(QKeySequence("Return"));
 
+  disconnect(m_videoWidget->videoSurface(), SIGNAL(frameCaptured(QImage&)),
+             this, SLOT(onFrameCaptured(QImage&)));
+
   // stop interval timer if it is active
   if (m_timerCB->isChecked() && m_captureButton->isChecked()) {
     m_captureButton->setChecked(false);
     onCaptureButtonClicked(false);
   }
 
-  m_cvWebcam.release();
-  if (m_timer->isActive()) m_timer->stop();
-
+  // release camera
+  if (m_currentCamera) {
+    if (m_currentCamera->state() == QCamera::ActiveState)
+      m_currentCamera->stop();
+    if (m_currentCamera->state() == QCamera::LoadedState)
+      m_currentCamera->unload();
+  }
   Dialog::hideEvent(event);
 
   TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
@@ -2181,26 +2281,27 @@ bool PencilTestPopup::event(QEvent* event) {
 }
 //-----------------------------------------------------------------------------
 
-void PencilTestPopup::processImage(cv::Mat& image) {
-  //  void PencilTestPopup::processImage(QImage& image) {
-  if (m_upsideDownCB->isChecked())
-    cv::flip(image, image, -1);  // flip in both directions
+void PencilTestPopup::processImage(QImage& image) {
+  /* "upside down" is not executed here. It will be done when capturing the
+   * image */
   // white bg reduction
-  if (!m_whiteBGImg.empty() && m_bgReductionFld->getValue() != 0)
+  if (!m_whiteBGImg.isNull() && m_bgReductionFld->getValue() != 0) {
     bgReduction(image, m_whiteBGImg, m_bgReductionFld->getValue());
-
+  }
   // obtain histogram AFTER bg reduction
   m_camCapLevelControl->updateHistogram(image);
 
-  // change channel
-  if (m_colorTypeCombo->currentIndex() != 0)
-    cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
-
   // color and grayscale mode
-  if (m_colorTypeCombo->currentIndex() != 2)
-    m_camCapLevelControl->adjustLevel(image);
-  else
-    m_camCapLevelControl->binarize(image);
+  if (m_colorTypeCombo->currentIndex() != 2) {
+    int black, white;
+    float gamma;
+    m_camCapLevelControl->getValues(black, white, gamma);
+    if (black != 0 || white != 255 || gamma != 1.0)
+      onChange(image, black, white, gamma,
+               m_colorTypeCombo->currentIndex() != 0);
+  } else {
+    onChangeBW(image, m_camCapLevelControl->getThreshold());
+  }
 }
 
 //-----------------------------------------------------------------------------
