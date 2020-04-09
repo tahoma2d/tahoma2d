@@ -5,7 +5,12 @@
 #include "menubarcommandids.h"
 #include "cellselection.h"
 #include "columnselection.h"
-#include "penciltestpopup.h"  // for FrameNumberLineEdit
+
+#ifdef WITH_STOPMOTION
+#include "penciltestpopup.h"
+#else
+#include "penciltestpopup_qt.h"
+#endif
 
 // TnzQt includes
 #include "toonzqt/intfield.h"
@@ -31,7 +36,6 @@
 #include <iostream>
 
 namespace {
-
 class AutoInputCellNumberUndo final : public TUndo {
   int m_increment, m_interval, m_step, m_repeat;
   int m_from, m_to;
@@ -64,7 +68,7 @@ public:
 
   int rowsCount() { return m_rowsCount; }
 };
-};
+};  // namespace
 
 //-----------------------------------------------------------------------------
 // executing this on column selection, set r1 = -1.
@@ -273,7 +277,7 @@ AutoInputCellNumberPopup::AutoInputCellNumberPopup()
   bool ret = true;
   ret      = ret && connect(m_overwriteBtn, SIGNAL(clicked()), this,
                        SLOT(onOverwritePressed()));
-  ret = ret &&
+  ret      = ret &&
         connect(m_insertBtn, SIGNAL(clicked()), this, SLOT(onInsertPressed()));
   ret = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
   assert(ret);

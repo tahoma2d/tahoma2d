@@ -1531,6 +1531,9 @@ ProjectPopup QLabel {
 #GearButton {
   qproperty-icon: url('../Default/imgs/black/gear.svg');
 }
+#GearButton::menu-indicator {
+  image: "";
+}
 #SubfolderButton {
   qproperty-icon: url('../Default/imgs/black/subfolder.svg');
   padding-left: 6px;
