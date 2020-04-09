@@ -195,7 +195,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_resolutionCombo   = new QComboBox(this);
   m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 25);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
-  m_cameraStatusLabel = new QLabel(tr("Camera Status"), this);
+  m_cameraStatusLabel               = new QLabel(tr("Camera Status"), this);
   QPushButton *refreshCamListButton = new QPushButton(tr("Refresh"), this);
   refreshCamListButton->setFixedHeight(28);
   refreshCamListButton->setStyleSheet("padding: 0 2;");
@@ -1152,7 +1152,7 @@ void StopMotionController::refreshMode() {
     m_cameraStatusLabel->hide();
     return;
   }
-  QString mode = m_stopMotion->getMode();
+  QString mode    = m_stopMotion->getMode();
   QString battery = m_stopMotion->getCurrentBatteryLevel();
   m_cameraModeLabel->setText(tr("Mode: ") + mode);
   m_cameraStatusLabel->setText("Mode: " + mode + " - Battery: " + battery);
@@ -1630,57 +1630,55 @@ void StopMotionController::hideEvent(QHideEvent *event) {
 
 //-----------------------------------------------------------------------------
 
- void StopMotionController::keyPressEvent(QKeyEvent *event) {
-  
-   int key = event->key();
-   TFrameHandle* fh = TApp::instance()->getCurrentFrame();
-   int origFrame = fh->getFrame();
-   if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) && (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up || key == Qt::Key_Down
-       || key == Qt::Key_2 || key == Qt::Key_4 || key == Qt::Key_6 || key == Qt::Key_8)) {
-       if (m_stopMotion->m_liveViewZoomReadyToPick == true) {
-           if (key == Qt::Key_Left || key == Qt::Key_4) {
-               m_stopMotion->m_liveViewZoomPickPoint.x -= 10;
-           }
-           if (key == Qt::Key_Right || key == Qt::Key_6) {
-               m_stopMotion->m_liveViewZoomPickPoint.x += 10;
-           }
-           if (key == Qt::Key_Up || key == Qt::Key_8) {
-               m_stopMotion->m_liveViewZoomPickPoint.y += 10;
-           }
-           if (key == Qt::Key_Down || key == Qt::Key_2) {
-               m_stopMotion->m_liveViewZoomPickPoint.y -= 10;
-           }
-           if (m_stopMotion->m_zooming) {
-               m_stopMotion->setZoomPoint();
-           }
-       }
-       m_stopMotion->calculateZoomPoint();
-       event->accept();
-   }
-   else if (key == Qt::Key_Up || key == Qt::Key_Left) {
-       fh->prevFrame();
-       event->accept();
-   }
-   else if (key == Qt::Key_Down || key == Qt::Key_Right) {
-         fh->nextFrame();
-         event->accept();
-   }
-   else if (key == Qt::Key_Home) {
-       fh->firstFrame();
-       event->accept();
-   }
-   else if (key == Qt::Key_End) {
-       fh->lastFrame();
-       event->accept();
-   }
-   else if (!m_stopMotion->m_pickLiveViewZoom && (key == Qt::Key_Return || key == Qt::Key_Enter)) {
+void StopMotionController::keyPressEvent(QKeyEvent *event) {
+  int key          = event->key();
+  TFrameHandle *fh = TApp::instance()->getCurrentFrame();
+  int origFrame    = fh->getFrame();
+  if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) &&
+      (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
+       key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
+       key == Qt::Key_6 || key == Qt::Key_8)) {
+    if (m_stopMotion->m_liveViewZoomReadyToPick == true) {
+      if (key == Qt::Key_Left || key == Qt::Key_4) {
+        m_stopMotion->m_liveViewZoomPickPoint.x -= 10;
+      }
+      if (key == Qt::Key_Right || key == Qt::Key_6) {
+        m_stopMotion->m_liveViewZoomPickPoint.x += 10;
+      }
+      if (key == Qt::Key_Up || key == Qt::Key_8) {
+        m_stopMotion->m_liveViewZoomPickPoint.y += 10;
+      }
+      if (key == Qt::Key_Down || key == Qt::Key_2) {
+        m_stopMotion->m_liveViewZoomPickPoint.y -= 10;
+      }
+      if (m_stopMotion->m_zooming) {
+        m_stopMotion->setZoomPoint();
+      }
+    }
+    m_stopMotion->calculateZoomPoint();
+    event->accept();
+  } else if (key == Qt::Key_Up || key == Qt::Key_Left) {
+    fh->prevFrame();
+    event->accept();
+  } else if (key == Qt::Key_Down || key == Qt::Key_Right) {
+    fh->nextFrame();
+    event->accept();
+  } else if (key == Qt::Key_Home) {
+    fh->firstFrame();
+    event->accept();
+  } else if (key == Qt::Key_End) {
+    fh->lastFrame();
+    event->accept();
+  } else if (!m_stopMotion->m_pickLiveViewZoom &&
+             (key == Qt::Key_Return || key == Qt::Key_Enter)) {
     m_captureButton->animateClick();
     event->accept();
-   }
-   else if (m_stopMotion->m_pickLiveViewZoom && (key == Qt::Key_Escape || key == Qt::Key_Enter || key == Qt::Key_Return )) {
-       m_stopMotion->toggleZoomPicking();
-   }
-   
+  } else if (m_stopMotion->m_pickLiveViewZoom &&
+             (key == Qt::Key_Escape || key == Qt::Key_Enter ||
+              key == Qt::Key_Return)) {
+    m_stopMotion->toggleZoomPicking();
+  }
+
   else
     event->ignore();
 }

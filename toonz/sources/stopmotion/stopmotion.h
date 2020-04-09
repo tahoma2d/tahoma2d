@@ -167,12 +167,12 @@ public:
   TPoint m_liveViewZoomOffset          = TPoint(0, 0);
   EdsUInt32 m_liveViewZoom             = 1;
   bool m_pickLiveViewZoom              = false;
-  bool m_liveViewZoomReadyToPick = true;
+  bool m_liveViewZoomReadyToPick       = true;
   TPointD m_liveViewZoomPickPoint      = TPointD(0.0, 0.0);
-  TPoint m_zoomRectDimensions                    = TPoint(0, 0);
+  TPoint m_zoomRectDimensions          = TPoint(0, 0);
   TPoint m_calculatedZoomPoint         = TPoint(0, 0);
   TPoint m_finalZoomPoint              = TPoint(0, 0);
-  TRect m_zoomRect = TRect(0, 0, 0, 0);
+  TRect m_zoomRect                     = TRect(0, 0, 0, 0);
 
   // Webcam Public Properties
   QString m_webcamDeviceName;

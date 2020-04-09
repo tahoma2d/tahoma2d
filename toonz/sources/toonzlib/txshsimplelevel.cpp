@@ -920,7 +920,6 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         if (is.getTagParam("isStopMotionLevel", v))
           isStopMotionLevel = std::stoi(v);
 
-
         m_properties->setDpiPolicy(dpiPolicy);
         m_properties->setDpi(TPointD(xdpi, ydpi));
         m_properties->setSubsampling(subsampling);
