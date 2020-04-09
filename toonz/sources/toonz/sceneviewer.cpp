@@ -781,9 +781,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_isBusyOnTabletMove(false) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
-#ifdef WITH_STOPMOTION
   m_stopMotion = StopMotion::instance();
-#endif
+
   // Enables multiple key input.
   setAttribute(Qt::WA_KeyCompression);
   // Enables input methods for Asian languages.
@@ -1146,7 +1145,6 @@ double SceneViewer::getHGuide(int index) { return m_hRuler->getGuide(index); }
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onNewStopMotionImageReady() {
-#ifdef WITH_STOPMOTION
   if (m_stopMotion->m_hasLineUpImage) {
     // if (m_hasStopMotionLineUpImage) delete m_stopMotionLineUpImage;
     m_stopMotionLineUpImage =
@@ -1166,7 +1164,6 @@ void SceneViewer::onNewStopMotionImageReady() {
     }
     onSceneChanged();
   }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1583,7 +1580,7 @@ void SceneViewer::drawOverlay() {
       }
     }
 
-#ifdef WITH_STOPMOTION
+#ifdef WITH_CANON
     // draw Stop Motion Zoom Box
     if (m_stopMotion->m_liveViewStatus == 2 &&
         m_stopMotion->m_pickLiveViewZoom) {
@@ -1985,7 +1982,6 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, args);
     }
 
-#ifdef WITH_STOPMOTION
     if (m_stopMotion->m_liveViewStatus == 2 &&
         (!frameHandle->isPlaying() ||
          frame == m_stopMotion->getXSheetFrameNumber())) {
@@ -2002,13 +1998,15 @@ void SceneViewer::drawScene() {
         double dpiX, dpiY;
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        bool hide_opacity =
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
       }
     }
-#endif
 
     assert(glGetError() == 0);
     painter.flushRasterImages();

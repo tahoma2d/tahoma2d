@@ -3,11 +3,13 @@
 #ifndef STOPMOTION_H
 #define STOPMOTION_H
 
-#ifdef WITH_STOPMOTION
+#ifdef WITH_CANON
 // Canon Includes
 #include "EDSDK.h"
 #include "EDSDKErrors.h"
 #include "EDSDKTypes.h"
+#endif
+
 #include "turbojpeg.h"
 #include "opencv2/opencv.hpp"
 
@@ -24,16 +26,14 @@ class QDialog;
 class QTimer;
 
 enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
-#endif
 
 #include <QThread>
 //=============================================================================
 // JpgConverter
 //-----------------------------------------------------------------------------
-
+#if WITH_CANON
 class JpgConverter : public QThread {
   Q_OBJECT
-#ifdef WITH_STOPMOTION
   EdsStreamRef m_stream;
   TRaster32P m_finalImage;
   bool m_scale     = false;
@@ -51,10 +51,11 @@ public:
 protected:
   void run() override;
 
-#endif
 signals:
   void imageReady(bool);
 };
+
+#endif
 
 class StopMotion : public QObject {  // Singleton
   Q_OBJECT
@@ -64,7 +65,6 @@ public:
     static StopMotion _instance;
     return &_instance;
   };
-#ifdef WITH_STOPMOTION
 
 private:
   StopMotion();
@@ -84,8 +84,7 @@ private:
   QStringList m_isoOptions, m_shutterSpeedOptions, m_apertureOptions,
       m_exposureOptions, m_whiteBalanceOptions, m_colorTempOptions,
       m_imageQualityOptions, m_pictureStyleOptions;
-  std::map<EdsUInt32, std::string> m_avMap, m_tvMap, m_isoMap, m_modeMap,
-      m_exposureMap, m_whiteBalanceMap, m_imageQualityMap, m_pictureStyleMap;
+
   QDialog *m_fullScreen1, *m_fullScreen2, *m_fullScreen3;
   int m_screenCount;
   bool m_useMjpg                 = true;
@@ -101,6 +100,10 @@ private:
   QCamera* m_webcam;
   cv::VideoCapture m_cvWebcam;
 
+#if WITH_CANON
+  std::map<EdsUInt32, std::string> m_avMap, m_tvMap, m_isoMap, m_modeMap,
+      m_exposureMap, m_whiteBalanceMap, m_imageQualityMap, m_pictureStyleMap;
+  JpgConverter* m_converter;
   static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event,
                                                 EdsBaseRef object,
                                                 EdsVoid* context);
@@ -124,6 +127,8 @@ private:
   void buildImageQualityMap();
   void buildPictureStyleMap();
 
+#endif
+
 public:
   enum LiveViewStatus {
     LiveViewClosed = 0,
@@ -132,7 +137,6 @@ public:
     LiveViewPaused
   };
 
-  JpgConverter* m_converter;
   bool m_useScaledImages = true;
   bool m_usingWebcam     = false;
   bool m_blackCapture    = true;
@@ -149,31 +153,33 @@ public:
   QList<QSize> m_webcamResolutions;
 
   // Canon Public Properties
+  bool m_pickLiveViewZoom = false;
+#if WITH_CANON
   EdsError m_error              = EDS_ERR_OK;
-  bool m_isSDKLoaded            = false;
   EdsUInt32 m_count             = 0;
   EdsCameraListRef m_cameraList = NULL;
   EdsCameraRef m_camera         = NULL;
+  EdsUInt32 m_liveViewZoom      = 1;
+  bool m_isSDKLoaded            = false;
   bool m_sessionOpen            = false;
   bool m_zooming                = false;
   std::string m_cameraName;
+  TDimension m_proxyImageDimensions = TDimension(0, 0);
+  TPointD m_proxyDpi                = TPointD(0.0, 0.0);
+  TPoint m_liveViewZoomOffset       = TPoint(0, 0);
+  bool m_liveViewZoomReadyToPick    = true;
+  TPointD m_liveViewZoomPickPoint   = TPointD(0.0, 0.0);
+  TPoint m_zoomRectDimensions       = TPoint(0, 0);
+  TPoint m_calculatedZoomPoint      = TPoint(0, 0);
+  TPoint m_finalZoomPoint           = TPoint(0, 0);
+  TRect m_zoomRect                  = TRect(0, 0, 0, 0);
+#endif
+
   TRaster32P m_liveViewImage, m_newImage, m_lineUpImage;
   TDimension m_liveViewImageDimensions = TDimension(0, 0);
   TDimension m_fullImageDimensions     = TDimension(0, 0);
-  TDimension m_proxyImageDimensions    = TDimension(0, 0);
-  TPointD m_proxyDpi                   = TPointD(0.0, 0.0);
   TPointD m_liveViewDpi                = TPointD(0.0, 0.0);
   TPointD m_fullImageDpi               = TPointD(0.0, 0.0);
-  TPoint m_liveViewZoomOffset          = TPoint(0, 0);
-  EdsUInt32 m_liveViewZoom             = 1;
-  bool m_pickLiveViewZoom              = false;
-  bool m_liveViewZoomReadyToPick       = true;
-  TPointD m_liveViewZoomPickPoint      = TPointD(0.0, 0.0);
-  TPoint m_zoomRectDimensions          = TPoint(0, 0);
-  TPoint m_calculatedZoomPoint         = TPoint(0, 0);
-  TPoint m_finalZoomPoint              = TPoint(0, 0);
-  TRect m_zoomRect                     = TRect(0, 0, 0, 0);
-
   // Webcam Public Properties
   QString m_webcamDeviceName;
   QString m_webcamDescription;
@@ -260,20 +266,21 @@ public:
   bool getUseDirectShow() { return m_useDirectShow; }
   void setUseDirectShow(int state);
   QList<QSize> getWebcamResolutions() { return m_webcamResolutions; }
-  // void changeResolutions(int index);
+// void changeResolutions(int index);
 
-  // Canon Commands
-  EdsError initializeCanonSDK();
+// Canon Commands
+#if WITH_CANON
+  void cameraAdded();
   void closeCanonSDK();
+  int getCameraCount();
+  std::string getCameraName();
+  EdsError initializeCanonSDK();
   EdsCameraListRef getCameraList();
   EdsError releaseCameraList();
-  int getCameraCount();
   EdsError getCamera(int index);
   EdsError releaseCamera();
-  void cameraAdded();
   EdsError openCameraSession();
   EdsError closeCameraSession();
-  std::string getCameraName();
   EdsError downloadImage(EdsBaseRef object);
   EdsError takePicture();
   EdsError startLiveView();
@@ -325,11 +332,13 @@ public:
   EdsError focusFar2();
   EdsError focusNear3();
   EdsError focusFar3();
+#endif
 
-#endif  // WITH_STOPMOTION
 public slots:
+#if WITH_CANON
   void onImageReady(const bool&);
   void onFinished();
+#endif
   void onTimeout();
   void onReviewTimeout();
   void update();
@@ -348,6 +357,7 @@ signals:
   void webcamResolutionsChanged();
   void newWebcamResolutionSelected(int);
 
+#if WITH_CANON
   void apertureOptionsChanged();
   void isoOptionsChanged();
   void shutterSpeedOptionsChanged();
@@ -365,6 +375,7 @@ signals:
   void imageQualityChangedSignal(QString);
   void pictureStyleChangedSignal(QString);
   void modeChanged();
+#endif
 
   void newDimensions();
   void subsamplingChanged(int);

@@ -122,15 +122,9 @@ set(MOC_HEADERS
     xshrowviewer.h
     xshtoolbar.h
 	xdtsimportpopup.h
-)
-
-if(WITH_STOPMOTION)
-set(MOC_HEADERS
-    ${MOC_HEADERS}
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
 )
-endif()
 
 set(HEADERS
     ${MOC_HEADERS}
@@ -358,15 +352,9 @@ set(SOURCES
     metnum.cpp
     ObjectTracker.cpp
     predict3d.cpp
-)
-
-if(WITH_STOPMOTION)
-set(SOURCES
-    ${SOURCES}
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
 )
-endif()
 
 add_translation(toonz ${HEADERS} ${SOURCES})
 
@@ -420,11 +408,11 @@ message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
     ../../sources/toonzfarm/include
     ../../sources/toonzqt
+    ../../sources/stopmotion
 )
 
-if (WITH_STOPMOTION)
-include_directories(../../sources/stopmotion)
-    add_definitions(-DWITH_STOPMOTION)
+if (WITH_CANON)
+    add_definitions(-DWITH_CANON)
 endif()
 
 if(BUILD_ENV_APPLE)
@@ -442,7 +430,7 @@ if(BUILD_TARGET_WIN)
     endif()
 endif()
 
-if(BUILD_ENV_MSVC AND WITH_STOPMOTION)
+if(BUILD_ENV_MSVC AND WITH_CANON)
     target_link_libraries(OpenToonz
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia
@@ -454,9 +442,26 @@ elseif(BUILD_ENV_MSVC)
     target_link_libraries(OpenToonz
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia
-        ${GL_LIB} ${GLUT_LIB} strmiids
+        ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} strmiids
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
+elseif(BUILD_ENV_APPLE AND WITH_CANON)
+    find_library(COCOA_LIB Cocoa)
+
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
+
+    # 変なところにライブラリ生成するカスども
+    set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
+
+    add_dependencies(OpenToonz tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+
+    target_link_libraries(OpenToonz
+        Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets
+        ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
+        ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
+    )
+
 elseif(BUILD_ENV_APPLE)
     find_library(COCOA_LIB Cocoa)
 
@@ -470,7 +475,7 @@ elseif(BUILD_ENV_APPLE)
     target_link_libraries(OpenToonz
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets
-        ${GL_LIB} ${GLUT_LIB}
+        ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
     )
 
@@ -489,7 +494,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     target_link_libraries(
         OpenToonz Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia
-        ${GL_LIB} ${GLUT_LIB} ${GLU_LIB}
+        ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS}
     )
 endif()

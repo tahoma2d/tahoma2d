@@ -221,6 +221,8 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 //=============================================================================
 //=============================================================================
 
+#if WITH_CANON
+
 JpgConverter::JpgConverter() {}
 JpgConverter::~JpgConverter() {}
 
@@ -286,11 +288,14 @@ void JpgConverter::convertFromJpg() {
 
 void JpgConverter::run() { convertFromJpg(); }
 
+#endif
+
 //-----------------------------------------------------------------------------
 
 StopMotion::StopMotion() {
   m_opacity         = StopMotionOpacity;
   m_useScaledImages = StopMotionUseScaledImages;
+#if WITH_CANON
   buildAvMap();
   buildIsoMap();
   buildTvMap();
@@ -300,6 +305,7 @@ StopMotion::StopMotion() {
   buildColorTemperatures();
   buildImageQualityMap();
   buildPictureStyleMap();
+#endif
   m_useDirectShow      = StopMotionUseDirectShow;
   m_useMjpg            = StopMotionUseMjpg;
   m_alwaysLiveView     = StopMotionAlwaysLiveView;
@@ -359,11 +365,13 @@ StopMotion::StopMotion() {
 //-----------------------------------------------------------------
 
 StopMotion::~StopMotion() {
+#if WITH_CANON
   if (m_liveViewStatus != LiveViewClosed) endLiveView();
   if (m_sessionOpen) closeCameraSession();
   if (m_camera) releaseCamera();
   if (m_cameraList != NULL) releaseCameraList();
   if (m_isSDKLoaded) closeCanonSDK();
+#endif
   setUseNumpadShortcuts(false);
 }
 
@@ -1144,10 +1152,13 @@ void StopMotion::onTimeout() {
   if (m_liveViewStatus > 0 && m_liveViewStatus < 3 &&
       !TApp::instance()->getCurrentFrame()->isPlaying()) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
-      if (!m_usingWebcam)
+      if (!m_usingWebcam) {
+#if WITH_CANON
         downloadEVFData();
-      else
+#endif
+      } else {
         getWebcamImage();
+      }
       if (getAlwaysLiveView() && currentFrame != m_xSheetFrameNumber - 1 ||
           m_pickLiveViewZoom) {
         m_showLineUpImage = false;
@@ -1160,9 +1171,11 @@ void StopMotion::onTimeout() {
     }
   } else if (m_liveViewStatus == 3 && !m_userCalledPause) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
-      if (!m_usingWebcam)
+      if (!m_usingWebcam) {
+#if WITH_CANON
         downloadEVFData();
-      else
+#endif
+      } else
         getWebcamImage();
     }
   }
@@ -1222,7 +1235,7 @@ bool StopMotion::importImage() {
   TFilePath levelFp = TFilePath(m_filePath) +
                       TFilePath(levelName + L".." + m_fileType.toStdWString());
   TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
-
+  TFilePath actualFile(actualLevelFp.withFrame(frameNumber));
   TFilePath fullResFp =
       scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
   TFilePath fullResFile(fullResFp.withFrame(frameNumber));
@@ -1382,7 +1395,9 @@ bool StopMotion::importImage() {
       saveJpg(m_lineUpImage, liveViewFile);
     }
   }
-
+  if (m_usingWebcam) {
+    // saveJpg(m_newImage, actualFile);
+  }
   TFrameId fid(frameNumber);
   TPointD levelDpi = sl->getDpi();
   /* create the raster */
@@ -1492,7 +1507,11 @@ bool StopMotion::importImage() {
 //-----------------------------------------------------------------
 
 void StopMotion::captureImage() {
-  if (!m_usingWebcam && !m_sessionOpen) {
+  bool sessionOpen = false;
+#if WITH_CANON
+  sessionOpen = m_sessionOpen;
+#endif
+  if (!m_usingWebcam && !sessionOpen) {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
@@ -1558,7 +1577,10 @@ void StopMotion::captureImage() {
     TSystem::mkDir(parentDir);
   }
   m_tempFile = tempFile.getQString();
+
+#if WITH_CANON
   takePicture();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1721,6 +1743,7 @@ void StopMotion::saveXmlFile() {
                                QString::number(m_webcamHeight));
   } else {
     xmlWriter.writeTextElement("Webcam", "no");
+#if WITH_CANON
     xmlWriter.writeTextElement("CameraName",
                                QString::fromStdString(m_cameraName));
     xmlWriter.writeTextElement("Aperture", getCurrentAperture());
@@ -1737,6 +1760,7 @@ void StopMotion::saveXmlFile() {
                                QString::number(m_finalZoomPoint.x));
     xmlWriter.writeTextElement("FocusCheckLocationY",
                                QString::number(m_finalZoomPoint.y));
+#endif
   }
   xmlWriter.writeEndElement();
 
@@ -1792,6 +1816,7 @@ bool StopMotion::loadXmlFile() {
             }
           }
         } else {
+#if WITH_CANON
           openCameraSession();
           QString camName = QString::fromStdString(getCameraName());
           closeCameraSession();
@@ -1799,6 +1824,7 @@ bool StopMotion::loadXmlFile() {
             changeCameras(-1);
             foundCamera = true;
           }
+#endif
         }
       }
       if (xmlReader.name() == "CameraResolutionX") {
@@ -1813,6 +1839,7 @@ bool StopMotion::loadXmlFile() {
               QString(QString::number(x) + " x " + QString::number(y)));
         }
       }
+#if WITH_CANON
       if (xmlReader.name() == "Aperture") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
@@ -1869,6 +1896,7 @@ bool StopMotion::loadXmlFile() {
         text               = xmlReader.readElementText();
         m_finalZoomPoint.y = text.toInt();
       }
+#endif
     }
     xmlReader.readNext();
   }
@@ -2014,7 +2042,13 @@ bool StopMotion::exportImageSequence() {
 // Refresh information that how many & which frames are saved for the current
 // level
 void StopMotion::refreshFrameInfo() {
-  if ((!m_sessionOpen && m_liveViewStatus < 2) && !m_usingWebcam) {
+  bool sessionOpen = false;
+
+#if WITH_CANON
+  sessionOpen = m_sessionOpen;
+#endif
+
+  if ((!sessionOpen && m_liveViewStatus < 2) && !m_usingWebcam) {
     m_frameInfoText = "";
     return;
   }
@@ -2031,16 +2065,17 @@ void StopMotion::refreshFrameInfo() {
   int frameNumber        = m_frameNumber;
 
   TDimension stopMotionRes;
-  bool checkRes = true;
-  if (m_usingWebcam)
-    stopMotionRes = m_liveViewImageDimensions;
-
+  bool checkRes                    = true;
+  if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
+#if WITH_CANON
   else if (m_useScaledImages || !getCurrentImageQuality().contains("Large")) {
     stopMotionRes = m_proxyImageDimensions;
     if (m_proxyImageDimensions == TDimension(0, 0)) {
       checkRes = false;
     }
-  } else
+  }
+#endif
+  else
     stopMotionRes = m_fullImageDimensions;
 
   bool letterOptionEnabled =
@@ -2354,21 +2389,24 @@ void StopMotion::changeCameras(int index) {
 
   // if selected the non-connected state, then disconnect the current camera
   if (index == 0) {
-    m_active               = false;
-    m_webcamDeviceName     = QString();
-    m_webcamDescription    = QString();
-    m_webcamIndex          = -1;
+    m_active            = false;
+    m_webcamDeviceName  = QString();
+    m_webcamDescription = QString();
+    m_webcamIndex       = -1;
+
+#if WITH_CANON
     m_proxyDpi             = TPointD(0.0, 0.0);
     m_proxyImageDimensions = TDimension(0, 0);
 
-    if (m_sessionOpen || m_usingWebcam) {
+    if (m_sessionOpen) {
       if (m_liveViewStatus > 0) {
         endLiveView();
       }
       closeCameraSession();
-      m_usingWebcam = false;
     }
 
+#endif
+    m_usingWebcam = false;
     setTEnvCameraName("");
 
     emit(newCameraSelected(index, false));
@@ -2395,21 +2433,18 @@ void StopMotion::changeCameras(int index) {
       return;
     }
 
+#if WITH_CANON
     if (m_sessionOpen) {
       if (m_liveViewStatus > 0) {
         endLiveView();
         closeCameraSession();
       }
     }
+#endif
 
     setWebcam(new QCamera(cameras.at(index)));
     m_webcamDeviceName  = cameras.at(index).deviceName();
     m_webcamDescription = cameras.at(index).description();
-
-#ifdef MACOSX
-    // this line is needed only in macosx
-    m_stopMotion->getWebcam()->setViewfinder(m_dummyViewFinder);
-#endif
 
     // loading new camera
     getWebcam()->load();
@@ -2447,6 +2482,7 @@ void StopMotion::changeCameras(int index) {
     emit(newWebcamResolutionSelected(sizeCount));
 
   } else {
+#if WITH_CANON
     if (index == -2) {
       index = cameras.size();
     }
@@ -2456,6 +2492,7 @@ void StopMotion::changeCameras(int index) {
     openCameraSession();
     setTEnvCameraName(getCameraName());
     emit(newCameraSelected(index + 1, false));
+#endif
   }
   if (m_useNumpadShortcuts) toggleNumpadShortcuts(true);
   m_liveViewDpi = TPointD(0.0, 0.0);
@@ -2705,11 +2742,19 @@ void StopMotion::setUseDirectShow(int state) {
 //-----------------------------------------------------------------
 
 bool StopMotion::toggleLiveView() {
-  if ((m_sessionOpen || m_usingWebcam) && m_liveViewStatus == 0) {
+  bool sessionOpen = false;
+
+#if WITH_CANON
+  sessionOpen = m_sessionOpen
+#endif
+
+      if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == 0) {
     m_liveViewDpi             = TPointD(0.0, 0.0);
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
+#if WITH_CANON
       startLiveView();
+#endif
     } else
       m_liveViewStatus = 1;
     loadLineUpImage();
@@ -2718,10 +2763,13 @@ bool StopMotion::toggleLiveView() {
     Preferences::instance()->setValue(rewindAfterPlayback, false);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     return true;
-  } else if ((m_sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
-    if (!m_usingWebcam)
+  }
+  else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
+    if (!m_usingWebcam) {
+#if WITH_CANON
       endLiveView();
-    else
+#endif
+    } else
       releaseWebcam();
     m_timer->stop();
     emit(liveViewChanged(false));
@@ -2730,7 +2778,8 @@ bool StopMotion::toggleLiveView() {
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     return false;
-  } else {
+  }
+  else {
     DVGui::warning(tr("No camera selected."));
     return false;
   }
@@ -2748,6 +2797,8 @@ void StopMotion::pauseLiveView() {
     m_userCalledPause = false;
   }
 }
+
+#if WITH_CANON
 
 //-----------------------------------------------------------------
 
@@ -4484,6 +4535,7 @@ void StopMotion::buildPictureStyleMap() {
   m_pictureStyleMap.insert(
       std::pair<EdsUInt32, const char *>(kEdsPictureStyle_PC3, "Computer 3"));
 }
+#endif
 
 //-----------------------------------------------------------------
 std::string StopMotion::getTEnvCameraName() { return StopMotionCameraName; }
@@ -4549,17 +4601,6 @@ public:
 
 //=============================================================================
 
-class StopMotionToggleZoomCommand : public MenuItemHandler {
-public:
-  StopMotionToggleZoomCommand() : MenuItemHandler(MI_StopMotionToggleZoom) {}
-  void execute() {
-    StopMotion *sm = StopMotion::instance();
-    sm->zoomLiveView();
-  }
-} StopMotionToggleZoomCommand;
-
-//=============================================================================
-
 class StopMotionLowerSubsamplingCommand : public MenuItemHandler {
 public:
   StopMotionLowerSubsamplingCommand()
@@ -4598,6 +4639,19 @@ public:
 
 //=============================================================================
 
+class StopMotionExportImageSequence : public MenuItemHandler {
+public:
+  StopMotionExportImageSequence()
+      : MenuItemHandler(MI_StopMotionExportImageSequence) {}
+  void execute() {
+    StopMotion *sm = StopMotion::instance();
+    sm->exportImageSequence();
+  }
+} StopMotionExportImageSequence;
+
+#if WITH_CANON
+//=============================================================================
+
 class StopMotionPickFocusCheck : public MenuItemHandler {
 public:
   StopMotionPickFocusCheck() : MenuItemHandler(MI_StopMotionPickFocusCheck) {}
@@ -4609,12 +4663,12 @@ public:
 
 //=============================================================================
 
-class StopMotionExportImageSequence : public MenuItemHandler {
+class StopMotionToggleZoomCommand : public MenuItemHandler {
 public:
-  StopMotionExportImageSequence()
-      : MenuItemHandler(MI_StopMotionExportImageSequence) {}
+  StopMotionToggleZoomCommand() : MenuItemHandler(MI_StopMotionToggleZoom) {}
   void execute() {
     StopMotion *sm = StopMotion::instance();
-    sm->exportImageSequence();
+    sm->zoomLiveView();
   }
-} StopMotionExportImageSequence;
+} StopMotionToggleZoomCommand;
+#endif

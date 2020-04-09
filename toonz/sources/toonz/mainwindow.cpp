@@ -1620,10 +1620,8 @@ void MainWindow::defineActions() {
   createMenuRenderAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
   createMenuRenderAction(MI_Preview, tr("&Preview"), "Ctrl+R");
   createMenuFileAction(MI_SoundTrack, tr("&Export Soundtrack"), "");
-#ifdef WITH_STOPMOTION
   createMenuFileAction(MI_StopMotionExportImageSequence,
                        tr("&Export Stop Motion Image Sequence"), "");
-#endif
   createMenuRenderAction(MI_SavePreviewedFrames, tr("&Save Previewed Frames"),
                          "");
   createRightClickMenuAction(MI_RegeneratePreview, tr("&Regenerate Preview"),
@@ -2018,10 +2016,8 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
-#ifdef WITH_STOPMOTION
   createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
                           "");
-#endif
   createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
 #ifdef LINETEST
   createMenuWindowsAction(MI_OpenLineTestCapture, tr("&LineTest Capture"), "");
@@ -2366,22 +2362,23 @@ void MainWindow::defineActions() {
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
-#ifdef WITH_STOPMOTION
+
   createAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"), "");
   createAction(MI_StopMotionRaiseOpacity, tr("Raise Stop Motion Opacity"), "");
   createAction(MI_StopMotionLowerOpacity, tr("Lower Stop Motion Opacity"), "");
   createAction(MI_StopMotionToggleLiveView, tr("Toggle Stop Motion Live View"),
                "");
+#ifdef WITH_CANON
   createAction(MI_StopMotionToggleZoom, tr("Toggle Stop Motion Zoom"), "");
   createAction(MI_StopMotionPickFocusCheck, tr("Pick Focus Check Location"),
                "");
+#endif
   createAction(MI_StopMotionLowerSubsampling,
                tr("Lower Stop Motion Level Subsampling"), "");
   createAction(MI_StopMotionRaiseSubsampling,
                tr("Raise Stop Motion Level Subsampling"), "");
   createAction(MI_StopMotionJumpToCamera, tr("Go to Stop Motion Insert Frame"),
                "");
-#endif
 }
 
 //-----------------------------------------------------------------------------

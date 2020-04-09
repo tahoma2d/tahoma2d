@@ -778,7 +778,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion, SIGNAL(optionsChanged()), this,
                        SLOT(refreshOptionsLists()));
 
-  // EOS Connections
+// EOS Connections
+#if WITH_CANON
   ret = ret &&
         connect(m_zoomButton, SIGNAL(pressed()), this, SLOT(onZoomPressed()));
   ret = ret && connect(m_pickZoomButton, SIGNAL(pressed()), this,
@@ -844,6 +845,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(refreshPictureStyleList()));
   ret = ret &&
         connect(m_stopMotion, SIGNAL(modeChanged()), this, SLOT(refreshMode()));
+#endif
 
   // Webcam Specific Connections
   ret = ret && connect(m_stopMotion, SIGNAL(webcamResolutionsChanged()), this,
@@ -1064,8 +1066,10 @@ void StopMotionController::refreshCameraList() {
   m_stopMotion->changeCameras(0);
   m_cameraStatusLabel->hide();
   QList<QCameraInfo> webcams = m_stopMotion->getWebcams();
-
-  int count = m_stopMotion->getCameraCount() + webcams.count();
+  int count                  = webcams.count();
+#if WITH_CANON
+  count += m_stopMotion->getCameraCount();
+#endif
   if (count < 1) {
     m_cameraListCombo->addItem(tr("No camera detected."));
     m_cameraSettingsLabel->setText(tr("No camera detected"));
@@ -1085,6 +1089,7 @@ void StopMotionController::refreshCameraList() {
         maxTextLength = std::max(maxTextLength, fontMetrics().width(camDesc));
       }
     }
+#if WITH_CANON
     if (m_stopMotion->getCameraCount() > 0) {
       QString name;
       m_stopMotion->getCamera(0);
@@ -1095,6 +1100,7 @@ void StopMotionController::refreshCameraList() {
       m_cameraListCombo->addItem(name);
       maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
     }
+#endif
     m_cameraListCombo->setMaximumWidth(maxTextLength + 25);
     m_cameraListCombo->setEnabled(true);
     m_cameraListCombo->setCurrentIndex(0);
@@ -1103,7 +1109,9 @@ void StopMotionController::refreshCameraList() {
   }
   m_stopMotion->updateLevelNameAndFrame(m_levelNameEdit->text().toStdWString());
   refreshOptionsLists();
+#if WITH_CANON
   refreshMode();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1122,7 +1130,7 @@ void StopMotionController::refreshOptionsLists() {
   m_shutterSpeedCombo->clear();
   m_apertureCombo->clear();
   m_exposureCombo->clear();
-
+#if WITH_CANON
   if (m_stopMotion->getCameraCount() == 0) {
     m_shutterSpeedCombo->setDisabled(true);
     m_isoCombo->setDisabled(true);
@@ -1142,10 +1150,11 @@ void StopMotionController::refreshOptionsLists() {
   refreshWhiteBalanceList();
   refreshImageQualityList();
   refreshPictureStyleList();
+#endif
 }
 
 //-----------------------------------------------------------------------------
-
+#if WITH_CANON
 void StopMotionController::refreshMode() {
   if (m_stopMotion->getCameraCount() == 0) {
     m_cameraModeLabel->setText("");
@@ -1309,14 +1318,17 @@ void StopMotionController::refreshPictureStyleList() {
   }
   m_pictureStyleCombo->blockSignals(false);
 }
+#endif
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCameraListComboActivated(int comboIndex) {
   QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-  if (cameras.size() + m_stopMotion->getCameraCount() !=
-      m_cameraListCombo->count() - 1)
-    return;
+  int cameraCount            = cameras.size();
+#if WITH_CANON
+  cameraCount += m_stopMotion->getCameraCount();
+#endif
+  if (cameraCount != m_cameraListCombo->count() - 1) return;
 
   m_stopMotion->changeCameras(comboIndex);
 }
@@ -1467,6 +1479,8 @@ void StopMotionController::onFrameCaptured(QImage &image) {}
 
 //-----------------------------------------------------------------------------
 
+#if WITH_CANON
+
 void StopMotionController::onApertureChanged(int index) {
   m_stopMotion->setAperture(m_apertureCombo->currentText());
 }
@@ -1596,11 +1610,14 @@ void StopMotionController::onFocusNear3() { m_stopMotion->focusNear3(); }
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusFar3() { m_stopMotion->focusFar3(); }
+#endif
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::showEvent(QShowEvent *event) {
+#if WITH_CANON
   m_stopMotion->initializeCanonSDK();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1636,6 +1653,7 @@ void StopMotionController::keyPressEvent(QKeyEvent *event) {
   int key          = event->key();
   TFrameHandle *fh = TApp::instance()->getCurrentFrame();
   int origFrame    = fh->getFrame();
+#if WITH_CANON
   if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) &&
       (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
        key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
@@ -1659,7 +1677,13 @@ void StopMotionController::keyPressEvent(QKeyEvent *event) {
     }
     m_stopMotion->calculateZoomPoint();
     event->accept();
-  } else if (key == Qt::Key_Up || key == Qt::Key_Left) {
+  } else if (m_stopMotion->m_pickLiveViewZoom &&
+             (key == Qt::Key_Escape || key == Qt::Key_Enter ||
+              key == Qt::Key_Return)) {
+    m_stopMotion->toggleZoomPicking();
+  } else
+#endif
+      if (key == Qt::Key_Up || key == Qt::Key_Left) {
     fh->prevFrame();
     event->accept();
   } else if (key == Qt::Key_Down || key == Qt::Key_Right) {
@@ -1671,14 +1695,9 @@ void StopMotionController::keyPressEvent(QKeyEvent *event) {
   } else if (key == Qt::Key_End) {
     fh->lastFrame();
     event->accept();
-  } else if (!m_stopMotion->m_pickLiveViewZoom &&
-             (key == Qt::Key_Return || key == Qt::Key_Enter)) {
+  } else if (key == Qt::Key_Return || key == Qt::Key_Enter) {
     m_captureButton->animateClick();
     event->accept();
-  } else if (m_stopMotion->m_pickLiveViewZoom &&
-             (key == Qt::Key_Escape || key == Qt::Key_Enter ||
-              key == Qt::Key_Return)) {
-    m_stopMotion->toggleZoomPicking();
   }
 
   else

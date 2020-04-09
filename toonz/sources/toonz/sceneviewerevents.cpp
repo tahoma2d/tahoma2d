@@ -16,10 +16,7 @@
 #include "comboviewerpane.h"
 #include "locatorpopup.h"
 #include "cellselection.h"
-
-#ifdef WITH_STOPMOTION
 #include "stopmotion.h"
-#endif
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -310,7 +307,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
 #ifdef LINUX
     // for Linux, create context menu on right click here.
     // could possibly merge with OSX code above
-    if(e->button() == Qt::RightButton) {
+    if (e->button() == Qt::RightButton) {
       m_mouseButton = Qt::NoButton;
       onContextMenu(e->pos(), e->globalPos());
     }
@@ -608,7 +605,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     }
     if (!cursorSet) setToolCursor(this, tool->getCursorId());
 
-#ifdef WITH_STOPMOTION
+#ifdef WITH_CANON
     if (StopMotion::instance()->m_pickLiveViewZoom)
       setToolCursor(this, ToolCursor::ZoomCursor);
 #endif
@@ -754,7 +751,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     pos.y /= m_dpiScale.y;
   }
 
-#ifdef WITH_STOPMOTION
+#ifdef WITH_CANON
   // grab screen picking for stop motion live view zoom
   if (StopMotion::instance()->m_pickLiveViewZoom) {
     StopMotion::instance()->toggleZoomPicking();
@@ -1112,75 +1109,74 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
 //-----------------------------------------------------------------------------
 
 bool SceneViewer::event(QEvent *e) {
-/*
-switch (e->type()) {
-//	case QEvent::Enter:
-//	qDebug() << "[enter] ************************** Enter";
-//	break;
-//	case QEvent::Leave:
-//	qDebug() << "[enter] ************************** Leave";
-//	break;
+  /*
+  switch (e->type()) {
+  //	case QEvent::Enter:
+  //	qDebug() << "[enter] ************************** Enter";
+  //	break;
+  //	case QEvent::Leave:
+  //	qDebug() << "[enter] ************************** Leave";
+  //	break;
 
-case QEvent::TabletPress: {
-  QTabletEvent *te = static_cast<QTabletEvent *>(e);
-  qDebug() << "[enter] ************************** TabletPress mouseState("
-           << m_mouseState << ") tabletState(" << m_tabletState
-           << ") pressure(" << m_pressure << ") pointerType("
-           << te->pointerType() << ") device(" << te->device() << ")";
-} break;
-//	case QEvent::TabletMove:
-//	qDebug() << "[enter] ************************** TabletMove
-//mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
-//<< m_pressure << ")";
-//	break;
-case QEvent::TabletRelease:
-  qDebug() << "[enter] ************************** TabletRelease mouseState("
-           << m_mouseState << ") tabletState(" << m_tabletState << ")";
-  break;
+  case QEvent::TabletPress: {
+    QTabletEvent *te = static_cast<QTabletEvent *>(e);
+    qDebug() << "[enter] ************************** TabletPress mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState
+             << ") pressure(" << m_pressure << ") pointerType("
+             << te->pointerType() << ") device(" << te->device() << ")";
+  } break;
+  //	case QEvent::TabletMove:
+  //	qDebug() << "[enter] ************************** TabletMove
+  //mouseState("<<m_mouseState<<") tabletState("<<m_tabletState<<") pressure("
+  //<< m_pressure << ")";
+  //	break;
+  case QEvent::TabletRelease:
+    qDebug() << "[enter] ************************** TabletRelease mouseState("
+             << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-case QEvent::TouchBegin:
-  qDebug() << "[enter] ************************** TouchBegin";
-  break;
-case QEvent::TouchEnd:
-  qDebug() << "[enter] ************************** TouchEnd";
-  break;
-case QEvent::TouchCancel:
-  qDebug() << "[enter] ************************** TouchCancel";
-  break;
+  case QEvent::TouchBegin:
+    qDebug() << "[enter] ************************** TouchBegin";
+    break;
+  case QEvent::TouchEnd:
+    qDebug() << "[enter] ************************** TouchEnd";
+    break;
+  case QEvent::TouchCancel:
+    qDebug() << "[enter] ************************** TouchCancel";
+    break;
 
-case QEvent::Gesture:
-  qDebug() << "[enter] ************************** Gesture";
-  break;
+  case QEvent::Gesture:
+    qDebug() << "[enter] ************************** Gesture";
+    break;
 
-case QEvent::MouseButtonPress:
-  qDebug()
-      << "[enter] ************************** MouseButtonPress mouseState("
-      << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
-      << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
-  break;
-//	case QEvent::MouseMove:
-//	qDebug() << "[enter] ************************** MouseMove mouseState("
-//<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
-//m_pressure << ")";
-//	break;
-case QEvent::MouseButtonRelease:
-  qDebug()
-      << "[enter] ************************** MouseButtonRelease mouseState("
-      << m_mouseState << ") tabletState(" << m_tabletState << ")";
-  break;
+  case QEvent::MouseButtonPress:
+    qDebug()
+        << "[enter] ************************** MouseButtonPress mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ") pressure("
+        << m_pressure << ") tabletEvent(" << m_tabletEvent << ")";
+    break;
+  //	case QEvent::MouseMove:
+  //	qDebug() << "[enter] ************************** MouseMove mouseState("
+  //<< m_mouseState << ") tabletState("<<m_tabletState<<") pressure(" <<
+  //m_pressure << ")";
+  //	break;
+  case QEvent::MouseButtonRelease:
+    qDebug()
+        << "[enter] ************************** MouseButtonRelease mouseState("
+        << m_mouseState << ") tabletState(" << m_tabletState << ")";
+    break;
 
-case QEvent::MouseButtonDblClick:
-  qDebug() << "[enter] ============================== MouseButtonDblClick";
-  break;
-}
-*/
+  case QEvent::MouseButtonDblClick:
+    qDebug() << "[enter] ============================== MouseButtonDblClick";
+    break;
+  }
+  */
 
-#ifdef WITH_STOPMOTION
   int key = 0;
   if (e->type() == QEvent::KeyPress) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     key                 = keyEvent->key();
-
+#ifdef WITH_CANON
     if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) &&
         (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
          key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
@@ -1211,14 +1207,15 @@ case QEvent::MouseButtonDblClick:
       m_stopMotion->toggleZoomPicking();
       e->accept();
       return true;
-    } else if (m_stopMotion->m_liveViewStatus == 2 &&
-               (key == Qt::Key_Enter || key == Qt::Key_Return)) {
+    } else
+#endif
+        if (m_stopMotion->m_liveViewStatus == 2 &&
+            (key == Qt::Key_Enter || key == Qt::Key_Return)) {
       m_stopMotion->captureImage();
       e->accept();
       return true;
     }
   }
-#endif
 
   if (e->type() == QEvent::Gesture &&
       CommandManager::instance()

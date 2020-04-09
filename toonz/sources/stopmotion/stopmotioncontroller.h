@@ -110,14 +110,7 @@ protected slots:
   void refreshCameraList();
   void refreshCameraListCalled();
   void refreshOptionsLists();
-  void refreshApertureList();
-  void refreshShutterSpeedList();
-  void refreshIsoList();
-  void refreshExposureList();
-  void refreshWhiteBalanceList();
-  void refreshColorTemperatureList();
-  void refreshImageQualityList();
-  void refreshPictureStyleList();
+
   void onCameraListComboActivated(int index);
   void onResolutionComboActivated(const QString &itemText);
   void onCaptureFilterSettingsBtnPressed();
@@ -151,6 +144,8 @@ protected slots:
   void onPreviousXSheetFrame();
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
+
+#if WITH_CANON
   void onApertureChanged(int index);
   void onShutterSpeedChanged(int index);
   void onIsoChanged(int index);
@@ -159,7 +154,6 @@ protected slots:
   void onColorTemperatureChanged(int index);
   void onImageQualityChanged(int index);
   void onPictureStyleChanged(int index);
-  void refreshMode();
   void onZoomPressed();
   void onPickZoomPressed();
   void onFocusNear();
@@ -168,6 +162,26 @@ protected slots:
   void onFocusFar2();
   void onFocusNear3();
   void onFocusFar3();
+  void onApertureChangedSignal(QString);
+  void onIsoChangedSignal(QString);
+  void onShutterSpeedChangedSignal(QString);
+  void onExposureChangedSignal(QString);
+  void onWhiteBalanceChangedSignal(QString);
+  void onColorTemperatureChangedSignal(QString);
+  void onImageQualityChangedSignal(QString);
+  void onPictureStyleChangedSignal(QString);
+  void refreshApertureList();
+  void refreshShutterSpeedList();
+  void refreshIsoList();
+  void refreshExposureList();
+  void refreshWhiteBalanceList();
+  void refreshColorTemperatureList();
+  void refreshImageQualityList();
+  void refreshPictureStyleList();
+  void refreshMode();
+
+#endif
+
   void onCaptureReviewFldEdited();
   void onCaptureReviewSliderChanged(bool ignore);
   void onSubsamplingFldEdited();
@@ -192,14 +206,6 @@ protected slots:
   void onNewCameraSelected(int, bool);
   void onWebcamResolutionsChanged();
   void onNewWebcamResolutionSelected(int);
-  void onApertureChangedSignal(QString);
-  void onIsoChangedSignal(QString);
-  void onShutterSpeedChangedSignal(QString);
-  void onExposureChangedSignal(QString);
-  void onWhiteBalanceChangedSignal(QString);
-  void onColorTemperatureChangedSignal(QString);
-  void onImageQualityChangedSignal(QString);
-  void onPictureStyleChangedSignal(QString);
 
 public slots:
   void openSaveInFolderPopup();
