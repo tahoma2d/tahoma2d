@@ -1946,6 +1946,34 @@ void SceneViewer::drawScene() {
             ->isShowRasterImagesDarkenBlendedInViewerEnabled());
 
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+
+    if (m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
+        (!frameHandle->isPlaying() ||
+         frame == m_stopMotion->getXSheetFrameNumber())) {
+      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+      }
+      if (m_hasStopMotionImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide_opacity =
+            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
+        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+      }
+    }
+
     if (app->getCurrentFrame()->isEditingLevel()) {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
@@ -1982,7 +2010,8 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, args);
     }
 
-    if (m_stopMotion->m_liveViewStatus == 2 &&
+    if (!m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
         (!frameHandle->isPlaying() ||
          frame == m_stopMotion->getXSheetFrameNumber())) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {

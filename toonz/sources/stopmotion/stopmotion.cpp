@@ -64,6 +64,7 @@ TEnv::IntVar StopMotionPlaceOnXSheet("StopMotionPlaceOnXSheet", 1);
 TEnv::IntVar StopMotionReviewTime("StopMotionReviewTime", 1);
 TEnv::IntVar StopMotionUseMjpg("StopMotionUseMjpg", 1);
 TEnv::IntVar StopMotionUseNumpad("StopMotionUseNumpad", 0);
+TEnv::IntVar StopMotionDrawBeneathLevels("StopMotionDrawBeneathLevels", 1);
 
 // Connected camera
 TEnv::StringVar StopMotionCameraName("CamCapCameraName", "");
@@ -313,6 +314,7 @@ StopMotion::StopMotion() {
   m_placeOnXSheet      = StopMotionPlaceOnXSheet;
   m_reviewTime         = StopMotionReviewTime;
   m_useNumpadShortcuts = StopMotionUseNumpad;
+  m_drawBeneathLevels  = StopMotionDrawBeneathLevels;
   m_numpadForStyleSwitching =
       Preferences::instance()->isUseNumpadForSwitchingStylesEnabled();
   setUseNumpadShortcuts(m_useNumpadShortcuts);
@@ -525,6 +527,14 @@ void StopMotion::setUseNumpadShortcuts(bool on) {
   m_useNumpadShortcuts = on;
   StopMotionUseNumpad  = int(on);
   emit(useNumpadSignal(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setDrawBeneathLevels(bool on) {
+  m_drawBeneathLevels         = on;
+  StopMotionDrawBeneathLevels = int(on);
+  emit(drawBeneathLevelsSignal(on));
 }
 
 //-----------------------------------------------------------------

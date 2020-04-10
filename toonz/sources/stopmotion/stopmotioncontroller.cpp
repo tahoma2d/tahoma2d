@@ -538,6 +538,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_directShowCB    = new QCheckBox(this);
     m_useMjpgCB       = new QCheckBox(this);
     m_useNumpadCB     = new QCheckBox(this);
+    m_drawBeneathCB   = new QCheckBox(this);
 
     m_liveViewOnAllFramesCB           = new QCheckBox(this);
     QVBoxLayout *optionsOutsideLayout = new QVBoxLayout;
@@ -579,7 +580,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     checkboxLayout->addWidget(m_liveViewOnAllFramesCB, 2, 0, Qt::AlignRight);
     checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 2,
                               1, Qt::AlignLeft);
-
+    checkboxLayout->addWidget(m_drawBeneathCB, 3, 0, Qt::AlignRight);
+    checkboxLayout->addWidget(new QLabel(tr("Show Camera Below Other Levels")),
+                              3, 1, Qt::AlignLeft);
     checkboxLayout->setColumnStretch(1, 30);
     optionsOutsideLayout->addLayout(checkboxLayout, Qt::AlignLeft);
 
@@ -737,6 +740,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onUseMjpgChanged(int)));
   ret = ret && connect(m_useNumpadCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onUseNumpadChanged(int)));
+  ret = ret && connect(m_drawBeneathCB, SIGNAL(stateChanged(int)), this,
+                       SLOT(onDrawBeneathChanged(int)));
   ret = ret && connect(m_postCaptureReviewFld, SIGNAL(valueEditedByHand()),
                        this, SLOT(onCaptureReviewFldEdited()));
   ret = ret && connect(m_postCaptureReviewFld, SIGNAL(valueChanged(bool)), this,
@@ -761,6 +766,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onUseMjpgSignal(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(useNumpadSignal(bool)), this,
                        SLOT(onUseNumpadSignal(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(drawBeneathLevelsSignal(bool)),
+                       this, SLOT(onDrawBeneathSignal(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(reviewTimeChangedSignal(int)), this,
                        SLOT(onReviewTimeChangedSignal(int)));
 
@@ -860,6 +867,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_directShowCB->setChecked(m_stopMotion->getUseDirectShow());
   m_useMjpgCB->setChecked(m_stopMotion->getUseMjpg());
   m_useNumpadCB->setChecked(m_stopMotion->getUseNumpadShortcuts());
+  m_drawBeneathCB->setChecked(m_stopMotion->m_drawBeneathLevels);
   m_liveViewOnAllFramesCB->setChecked(m_stopMotion->getAlwaysLiveView());
   m_blackScreenForCapture->setChecked(
       m_stopMotion->getBlackCapture() == true ? true : false);
@@ -964,6 +972,18 @@ void StopMotionController::onUseNumpadChanged(int checked) {
 
 void StopMotionController::onUseNumpadSignal(bool on) {
   m_useNumpadCB->setChecked(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onDrawBeneathChanged(int checked) {
+  m_stopMotion->setDrawBeneathLevels(checked);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onDrawBeneathSignal(bool on) {
+  m_drawBeneathCB->setChecked(on);
 }
 
 //-----------------------------------------------------------------------------

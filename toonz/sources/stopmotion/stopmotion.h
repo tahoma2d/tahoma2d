@@ -152,6 +152,7 @@ public:
   bool m_active             = false;
   bool m_userCalledPause    = false;
   bool m_converterSucceeded = false;
+  bool m_drawBeneathLevels  = true;
   QString m_tempFile;
   QTimer* m_timer;
   QList<QSize> m_webcamResolutions;
@@ -205,6 +206,7 @@ public:
   void setUseMjpg(bool on);
   bool getUseMjpg() { return m_useMjpg; }
   void setUseNumpadShortcuts(bool on);
+  void setDrawBeneathLevels(bool on);
   bool getUseNumpadShortcuts() { return m_useNumpadShortcuts; }
   void toggleNumpadShortcuts(bool on);
   void toggleNumpadForFocusCheck(bool on);
@@ -393,6 +395,7 @@ signals:
   void placeOnXSheetSignal(bool);
   void useMjpgSignal(bool);
   void useNumpadSignal(bool);
+  void drawBeneathLevelsSignal(bool);
   void useDirectShowSignal(bool);
   void reviewTimeChangedSignal(int);
   void updateCameraList();

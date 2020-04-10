@@ -86,7 +86,7 @@ class StopMotionController final : public QWidget {
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB;
+      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -138,6 +138,7 @@ protected slots:
   void onUseDirectShowChanged(int checked);
   void onLiveViewOnAllFramesChanged(int checked);
   void onUseNumpadChanged(int checked);
+  void onDrawBeneathChanged(int checked);
   void updateDimensions();
   void onSaveInPathEdited();
   void onSceneSwitched();
@@ -200,6 +201,7 @@ protected slots:
   void onUseDirectShowSignal(bool);
   void onReviewTimeChangedSignal(int);
   void onUseNumpadSignal(bool);
+  void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);
   void onNewCameraSelected(int, bool);
   void onWebcamResolutionsChanged();
