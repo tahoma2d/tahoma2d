@@ -2745,10 +2745,10 @@ bool StopMotion::toggleLiveView() {
   bool sessionOpen = false;
 
 #if WITH_CANON
-  sessionOpen = m_sessionOpen
+  sessionOpen = m_sessionOpen;
 #endif
 
-      if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == 0) {
+  if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == 0) {
     m_liveViewDpi             = TPointD(0.0, 0.0);
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
@@ -2763,8 +2763,7 @@ bool StopMotion::toggleLiveView() {
     Preferences::instance()->setValue(rewindAfterPlayback, false);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     return true;
-  }
-  else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
+  } else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
     if (!m_usingWebcam) {
 #if WITH_CANON
       endLiveView();
@@ -2778,8 +2777,7 @@ bool StopMotion::toggleLiveView() {
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     return false;
-  }
-  else {
+  } else {
     DVGui::warning(tr("No camera selected."));
     return false;
   }
@@ -2798,10 +2796,19 @@ void StopMotion::pauseLiveView() {
   }
 }
 
-#if WITH_CANON
+//-----------------------------------------------------------------
+
+void StopMotion::onImageReady(const bool &status) {
+  m_converterSucceeded = status;
+}
 
 //-----------------------------------------------------------------
 
+void StopMotion::onFinished() { l_quitLoop = true; }
+
+//-----------------------------------------------------------------
+
+#if WITH_CANON
 EdsError StopMotion::initializeCanonSDK() {
   m_error = EdsInitializeSDK();
   if (m_error == EDS_ERR_OK) {
@@ -3944,17 +3951,6 @@ EdsError StopMotion::focusFar3() {
   return err;
 }
 
-//-----------------------------------------------------------------
-
-void StopMotion::onImageReady(const bool &status) {
-  m_converterSucceeded = status;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::onFinished() { l_quitLoop = true; }
-
-//-----------------------------------------------------------------
 //-----------------------------------------------------------------
 
 EdsError StopMotion::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object,

@@ -125,12 +125,6 @@ set(MOC_HEADERS
     cameracapturelevelcontrol.h
     penciltestpopup.h
 )
-else()
-set(MOC_HEADERS
-    ${MOC_HEADERS}
-    cameracapturelevelcontrol_qt.h
-    penciltestpopup_qt.h
-)
 
 set(HEADERS
     ${MOC_HEADERS}
@@ -360,12 +354,6 @@ set(SOURCES
     ../stopmotion/stopmotioncontroller.cpp
 	cameracapturelevelcontrol.cpp
     penciltestpopup.cpp
-)
-else()
-set(SOURCES
-    ${SOURCES}
-	cameracapturelevelcontrol_qt.cpp
-    penciltestpopup_qt.cpp
 )
 
 add_translation(toonz ${HEADERS} ${SOURCES})

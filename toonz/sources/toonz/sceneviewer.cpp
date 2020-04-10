@@ -2000,7 +2000,7 @@ void SceneViewer::drawScene() {
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
 #if WITH_CANON
-        hide opacity =
+        hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();

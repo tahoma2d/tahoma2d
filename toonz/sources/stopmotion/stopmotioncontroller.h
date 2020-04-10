@@ -145,7 +145,7 @@ protected slots:
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
 
-#if WITH_CANON
+  // canon stuff
   void onApertureChanged(int index);
   void onShutterSpeedChanged(int index);
   void onIsoChanged(int index);
@@ -179,8 +179,6 @@ protected slots:
   void refreshImageQualityList();
   void refreshPictureStyleList();
   void refreshMode();
-
-#endif
 
   void onCaptureReviewFldEdited();
   void onCaptureReviewSliderChanged(bool ignore);

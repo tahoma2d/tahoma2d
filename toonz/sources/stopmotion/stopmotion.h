@@ -31,10 +31,12 @@ enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
 //=============================================================================
 // JpgConverter
 //-----------------------------------------------------------------------------
-#if WITH_CANON
+//#if WITH_CANON
 class JpgConverter : public QThread {
   Q_OBJECT
+#if WITH_CANON
   EdsStreamRef m_stream;
+#endif
   TRaster32P m_finalImage;
   bool m_scale     = false;
   int m_scaleWidth = 0;
@@ -42,6 +44,7 @@ class JpgConverter : public QThread {
 public:
   JpgConverter();
   ~JpgConverter();
+#if WITH_CANON
   void setStream(EdsStreamRef stream);
   void setScale(bool scale) { m_scale = scale; }
   void setScaleWidth(bool scaleWidth) { m_scaleWidth = scaleWidth; }
@@ -50,12 +53,13 @@ public:
 
 protected:
   void run() override;
+#endif
 
 signals:
   void imageReady(bool);
 };
 
-#endif
+//#endif
 
 class StopMotion : public QObject {  // Singleton
   Q_OBJECT
@@ -335,10 +339,8 @@ public:
 #endif
 
 public slots:
-#if WITH_CANON
   void onImageReady(const bool&);
   void onFinished();
-#endif
   void onTimeout();
   void onReviewTimeout();
   void update();
@@ -357,7 +359,7 @@ signals:
   void webcamResolutionsChanged();
   void newWebcamResolutionSelected(int);
 
-#if WITH_CANON
+  // canon signals
   void apertureOptionsChanged();
   void isoOptionsChanged();
   void shutterSpeedOptionsChanged();
@@ -375,7 +377,6 @@ signals:
   void imageQualityChangedSignal(QString);
   void pictureStyleChangedSignal(QString);
   void modeChanged();
-#endif
 
   void newDimensions();
   void subsamplingChanged(int);
