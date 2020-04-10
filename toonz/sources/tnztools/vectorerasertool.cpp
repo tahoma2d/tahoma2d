@@ -40,6 +40,8 @@ using namespace ToolUtils;
 
 TEnv::DoubleVar EraseVectorSize("InknpaintEraseVectorSize", 10);
 TEnv::StringVar EraseVectorType("InknpaintEraseVectorType", "Normal");
+TEnv::StringVar EraseVectorInterpolation("InknpaintEraseVectorInterpolation",
+                                         "Linear");
 TEnv::IntVar EraseVectorSelective("InknpaintEraseVectorSelective", 0);
 TEnv::IntVar EraseVectorInvert("InknpaintEraseVectorInvert", 0);
 TEnv::IntVar EraseVectorRange("InknpaintEraseVectorRange", 0);
@@ -55,6 +57,11 @@ namespace {
 #define FREEHAND_ERASE L"Freehand"
 #define POLYLINE_ERASE L"Polyline"
 #define SEGMENT_ERASE L"Segment"
+
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
 
 //-----------------------------------------------------------------------------
 
@@ -294,6 +301,7 @@ private:
   TPropertyGroup m_prop;
 
   TEnumProperty m_eraseType;
+  TEnumProperty m_interpolation;
   TDoubleProperty m_toolSize;
   TBoolProperty m_selective;
   TBoolProperty m_invertOption;
@@ -366,7 +374,8 @@ private:
 
 EraserTool::EraserTool()
     : TTool("T_Eraser")
-    , m_eraseType("Type:")              // "W_ToolOptions_Erasetype"
+    , m_eraseType("Type:")  // "W_ToolOptions_Erasetype"
+    , m_interpolation("interpolation:")
     , m_toolSize("Size:", 1, 1000, 10)  // "W_ToolOptions_EraserToolSize"
     , m_selective("Selective", false)   // "W_ToolOptions_Selective"
     , m_invertOption("Invert", false)   // "W_ToolOptions_Invert"
@@ -392,11 +401,17 @@ EraserTool::EraserTool()
   m_prop.bind(m_selective);
   m_prop.bind(m_invertOption);
   m_prop.bind(m_multi);
+  m_prop.bind(m_interpolation);
+  m_interpolation.addValue(LINEAR_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_INTERPOLATION);
+  m_interpolation.addValue(EASE_OUT_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_OUT_INTERPOLATION);
 
   m_selective.setId("Selective");
   m_invertOption.setId("Invert");
   m_multi.setId("FrameRange");
   m_eraseType.setId("Type");
+  m_interpolation.setId("Interpolation");
 }
 
 //-----------------------------------------------------------------------------
@@ -420,6 +435,12 @@ void EraserTool::updateTranslation() {
   m_eraseType.setItemUIName(FREEHAND_ERASE, tr("Freehand"));
   m_eraseType.setItemUIName(POLYLINE_ERASE, tr("Polyline"));
   m_eraseType.setItemUIName(SEGMENT_ERASE, tr("Segment"));
+
+  m_interpolation.setQStringName(tr(""));
+  m_interpolation.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+  m_interpolation.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+  m_interpolation.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+  m_interpolation.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
 }
 
 //-----------------------------------------------------------------------------
@@ -886,6 +907,15 @@ void EraserTool::multiEraseRect(TFrameId firstFrameId, TFrameId lastFrameId,
   int m = fids.size();
   assert(m > 0);
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
@@ -893,6 +923,7 @@ void EraserTool::multiEraseRect(TFrameId firstFrameId, TFrameId lastFrameId,
     TVectorImageP img = (TVectorImageP)m_level->getFrame(fid, true);
     assert(img);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     TRectD rect = interpolateRect(firstRect, lastRect, t);
     // m_level->setFrame(fid, img); //necessario: se la getFrame ha scompattato
     // una img compressa, senza setFrame le modifiche sulla img fatte qui
@@ -1097,11 +1128,12 @@ void EraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 //----------------------------------------------------------------------
 
 bool EraserTool::onPropertyChanged(std::string propertyName) {
-  EraseVectorType      = ::to_string(m_eraseType.getValue());
-  EraseVectorSize      = m_toolSize.getValue();
-  EraseVectorSelective = m_selective.getValue();
-  EraseVectorInvert    = m_invertOption.getValue();
-  EraseVectorRange     = m_multi.getValue();
+  EraseVectorType          = ::to_string(m_eraseType.getValue());
+  EraseVectorInterpolation = ::to_string(m_interpolation.getValue());
+  EraseVectorSize          = m_toolSize.getValue();
+  EraseVectorSelective     = m_selective.getValue();
+  EraseVectorInvert        = m_invertOption.getValue();
+  EraseVectorRange         = m_multi.getValue();
 
   double x = m_toolSize.getValue();
 
@@ -1125,6 +1157,7 @@ void EraserTool::onEnter() {
   if (m_firstTime) {
     m_toolSize.setValue(EraseVectorSize);
     m_eraseType.setValue(::to_wstring(EraseVectorType.getValue()));
+    m_interpolation.setValue(::to_wstring(EraseVectorInterpolation.getValue()));
     m_selective.setValue(EraseVectorSelective ? 1 : 0);
     m_invertOption.setValue(EraseVectorInvert ? 1 : 0);
     m_multi.setValue(EraseVectorRange ? 1 : 0);
@@ -1537,11 +1570,21 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
     column->getLevelRange(currentRow, startRowInXSheet, endRowInXSheet);
   }
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFrameId <= fid && fid <= lastFrameId);
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
     if (app) {
       if (app->getCurrentFrame()->isEditingScene())
