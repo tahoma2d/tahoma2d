@@ -1386,12 +1386,14 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_resolutionCombo->show();
     m_resolutionCombo->setEnabled(true);
     m_resolutionLabel->show();
-    m_captureFilterSettingsBtn->show();
+    if (m_captureFilterSettingsBtn)
+        m_captureFilterSettingsBtn->show();
     m_cameraStatusLabel->hide();
   } else {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
-    m_captureFilterSettingsBtn->hide();
+    if (m_captureFilterSettingsBtn)
+        m_captureFilterSettingsBtn->hide();
     m_cameraStatusLabel->show();
     if (m_tabBar->tabText(1) == tr("Options")) {
       m_tabBar->insertTab(1, tr("Settings"));
