@@ -5,6 +5,7 @@ popd
 cd toonz && mkdir build && cd build
 QTVERSION=`ls /usr/local/Cellar/qt`
 echo "QT Version detected: $QTVERSION"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
 cmake ../sources \
       -DQT_PATH=/usr/local/Cellar/qt/$QTVERSION/lib/ \
       -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.0.3/libtiff/ \

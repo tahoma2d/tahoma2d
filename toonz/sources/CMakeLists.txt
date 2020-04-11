@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
@@ -402,7 +402,11 @@ elseif(BUILD_ENV_APPLE)
     message("LZO:" ${LZO_INCLUDE_DIR})
 
     pkg_check_modules(MYPAINT_LIB REQUIRED libmypaint)
-    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
+
+    pkg_check_modules(TURBOJPEG REQUIRED libturbojpeg)
+    find_library(TURBOJPEG_LIB turbojpeg ${TURBOJPEG_LIBRARY_DIRS})
+    message("**************** turbojpeg lib:" ${TURBOJPEG_LIB})
+
     if (WITH_CANON)
         set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
     endif()

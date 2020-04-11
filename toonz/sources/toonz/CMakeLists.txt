@@ -416,7 +416,10 @@ if (WITH_CANON)
 endif()
 
 if(BUILD_ENV_APPLE)
-    include_directories(../../sources/mousedragfilter)
+    include_directories(
+       ../../sources/mousedragfilter
+       ${TURBOJPEG_INCLUDE_DIRS}
+    )
 endif()
 
 

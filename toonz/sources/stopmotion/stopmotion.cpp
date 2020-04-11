@@ -222,10 +222,10 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 //=============================================================================
 //=============================================================================
 
-#if WITH_CANON
-
 JpgConverter::JpgConverter() {}
 JpgConverter::~JpgConverter() {}
+
+#if WITH_CANON
 
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
 
@@ -2610,6 +2610,7 @@ bool StopMotion::translateIndex(int index) {
 //-----------------------------------------------------------------
 
 bool StopMotion::initWebcam(int index) {
+#if WIN32
   if (!m_useDirectShow) {
     // the webcam order obtained from Qt isn't always the same order as
     // the one obtained from OpenCV without DirectShow
@@ -2622,7 +2623,9 @@ bool StopMotion::initWebcam(int index) {
   if (m_cvWebcam.isOpened() == false) {
     return false;
   }
-
+#else
+    m_cvWebcam.open(index);
+#endif
   return true;
 }
 
