@@ -178,7 +178,7 @@ void QtOfflineGL::createContext(TDimension rasterSize,
   m_fbo->bind();
 
   printf("create context:%p [thread:0x%x]\n", m_context.get(),
-         QThread::currentThreadId());
+         (unsigned int)(size_t)QThread::currentThreadId());
 
   // Creo il contesto OpenGL - assicurandomi che sia effettivamente creato
   // NOTA: Se il contesto non viene creato, di solito basta ritentare qualche

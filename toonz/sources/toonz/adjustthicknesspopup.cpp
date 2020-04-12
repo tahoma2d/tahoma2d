@@ -465,6 +465,8 @@ AdjustThicknessPopup::SelectionData::SelectionData(const TSelection *sel)
         case LevelSelection::BOUNDARY_STROKES:
           m_this->m_contentType = BOUNDARIES;
           break;
+        default:
+          break;
         }
 
         // Discriminate frames selection modes
@@ -485,6 +487,8 @@ AdjustThicknessPopup::SelectionData::SelectionData(const TSelection *sel)
           m_this->m_frameIdxs = std::move(s);
           break;
         }
+        default:
+          break;
         }
 
         resetIfInvalid();

@@ -1229,6 +1229,8 @@ inline bool Event::process() {
       }
 
       break;
+    default:
+      break;
     }
   }
 

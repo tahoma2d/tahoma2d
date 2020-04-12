@@ -1475,7 +1475,7 @@ DvItemListModel::Status DvDirTreeView::getItemVersionControlStatus(
   SVNStatus s = node->getVersionControlStatus(name);
   if (s.m_path == name) {
     if (s.m_item == "missing" ||
-        s.m_item == "none" && s.m_repoStatus == "added")
+        (s.m_item == "none" && s.m_repoStatus == "added"))
       return DvItemListModel::VC_Missing;
     if (s.m_item == "unversioned") return DvItemListModel::VC_Unversioned;
     // If, for some errors, there is some item added locally but not committed
@@ -1535,7 +1535,7 @@ DvItemListModel::Status DvDirTreeView::getItemVersionControlStatus(
       TFileStatus fs(node->getPath() + levelNames.at(i).toStdWString());
 
       if (s.m_item == "missing" ||
-          s.m_item == "none" && s.m_repoStatus == "added")
+          (s.m_item == "none" && s.m_repoStatus == "added"))
         missingCount++;
       else if (s.m_item == "modified")
         modifiedCount++;

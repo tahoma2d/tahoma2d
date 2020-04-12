@@ -542,7 +542,7 @@ QString FarmServer::execute(const vector<QString> &argv) {
         reply += ",";
       }
 
-      if (!reply.isEmpty()) reply.left(reply.size() - 1);
+      if (!reply.isEmpty()) reply = reply.left(reply.size() - 1);
 
       return reply;
     } else if (argv[0] == "queryHwInfo") {
@@ -727,14 +727,17 @@ std::string getLine(std::istream &is) {
 
   while (!is.eof()) {
     is.get(c);
-    if (c != '\r')
-      if (c != '\n')
-        if (!is.fail())
+    if (c != '\r') {
+      if (c != '\n') {
+        if (!is.fail()) {
           out.append(1, c);
-        else
+        } else {
           break;
-      else
+	}
+      } else {
         break;
+      }
+    }
   }
   return out;
 }

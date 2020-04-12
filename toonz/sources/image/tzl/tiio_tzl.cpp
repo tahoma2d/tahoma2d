@@ -1374,7 +1374,7 @@ bool TLevelWriterTzl::optimize() {
   TLevelP level = lr->loadInfo();
   if (!level || level->getFrameCount() == 0) return false;
   TLevel::Iterator levelIt = level->begin();
-  for (levelIt; levelIt != level->end(); ++levelIt) {
+  for (; levelIt != level->end(); ++levelIt) {
     TToonzImageP img = lr->getFrameReader(levelIt->first)->load();
     assert(img);
     lw->getFrameWriter(levelIt->first)->save(img);

@@ -73,7 +73,7 @@ static unsigned char NotReady   = 1 << 6;
 
 //-----------------------------------------------------------------------------
 
-#define log
+#define log(_str)
 
 class TScannerExpection final : public TException {
   TString m_scannerMsg;

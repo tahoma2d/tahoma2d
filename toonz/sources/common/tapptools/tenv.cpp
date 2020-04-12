@@ -392,8 +392,8 @@ void VariableSet::load() {
     char *s = buffer;
     while (*s == ' ') s++;
     char *t = s;
-    while ('a' <= *s && *s <= 'z' || 'A' <= *s && *s <= 'Z' ||
-           '0' <= *s && *s <= '9' || *s == '_')
+    while (('a' <= *s && *s <= 'z') || ('A' <= *s && *s <= 'Z') ||
+           ('0' <= *s && *s <= '9') || *s == '_')
       s++;
     std::string name(t, s - t);
     if (name.size() == 0) continue;

@@ -65,7 +65,7 @@ void TFilmstripSelection::enableCommands() {
       sl->getSimpleLevel()->getFirstFid(), false);
 
   bool isNotEditableFullColorLevel =
-      (type == OVL_XSHLEVEL && path.getFrame() == TFrameId::NO_FRAME ||
+      ((type == OVL_XSHLEVEL && path.getFrame() == TFrameId::NO_FRAME) ||
        (ri && ri->isScanBW()));
 
   if (doEnable && !isNotEditableFullColorLevel) {

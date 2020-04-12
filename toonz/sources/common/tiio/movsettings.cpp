@@ -112,7 +112,8 @@ void visitAtoms(const QTAtomContainer &atoms, const QTAtom &parent,
     int sonCount = QTCountChildrenOfType(atoms, curr, 0);
 
     char buffer[1024];
-    sprintf(buffer, "%d %d %d", (int)atomType, (int)id, sonCount);
+    snprintf(buffer, sizeof(buffer), "%d %d %d",
+      (int)atomType, (int)id, sonCount);
     string str(buffer);
 
     if (sonCount > 0) {

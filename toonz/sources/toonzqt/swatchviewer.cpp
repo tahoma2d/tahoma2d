@@ -197,10 +197,10 @@ double ZoomFactors[ZOOMLEVELS] = {
     1,     2,     3,      4,      5,     6,     7,    8,     12,   16};
 
 double getQuantizedZoomFactor(double zf, bool forward) {
-  if (forward && zf > ZoomFactors[ZOOMLEVELS - 1] ||
+  if ((forward && zf > ZoomFactors[ZOOMLEVELS - 1]) ||
       areAlmostEqual(zf, ZoomFactors[ZOOMLEVELS - 1], 1e-5))
     return zf;
-  else if (!forward && zf < ZoomFactors[0] ||
+  else if ((!forward && zf < ZoomFactors[0]) ||
            areAlmostEqual(zf, ZoomFactors[0], 1e-5))
     return zf;
 

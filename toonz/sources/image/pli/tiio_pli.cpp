@@ -400,13 +400,16 @@ TImageP TImageReaderPli::doLoad() {
       strokeData.m_options =
           ((StrokeOutlineOptionsTag *)imageTag->m_object[i])->m_options;
       break;
-    case PliTag::AUTOCLOSE_TOLERANCE_GOBJ:
+    case PliTag::AUTOCLOSE_TOLERANCE_GOBJ: {
       // aggiunge curve quadratiche con spessore costante
       AutoCloseToleranceTag *toleranceTag =
           (AutoCloseToleranceTag *)imageTag->m_object[i];
       assert(toleranceTag->m_autoCloseTolerance >= 0);
       outVectImage->setAutocloseTolerance(
           ((double)toleranceTag->m_autoCloseTolerance) / 1000);
+      break;
+    }
+    default:
       break;
     }  // switch(groupTag->m_object[j]->m_type)
   }    // for (i=0; i<imageTag->m_numObjects; i++)

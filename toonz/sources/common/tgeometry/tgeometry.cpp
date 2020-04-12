@@ -1,9 +1,7 @@
 
 
 #include "tgeometry.h"
-#ifdef LINUX
-#include <values.h>
-#endif
+
 
 using namespace std;
 

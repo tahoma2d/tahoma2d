@@ -701,7 +701,7 @@ void RasterPainter::drawRasterImages(QPainter &p, QPolygon cameraPol) {
   p.setClipRegion(QRegion(cameraPol));
   for (i = 0; i < (int)m_nodes.size(); i++) {
     if (m_nodes[i].m_onionMode != Node::eOnionSkinNone) continue;
-    p.resetMatrix();
+    p.resetTransform();
     TRasterP ras = m_nodes[i].m_raster;
     TAffine aff  = TTranslation(-rect.x0, -rect.y0) * flipY * m_nodes[i].m_aff;
     QMatrix matrix(aff.a11, aff.a21, aff.a12, aff.a22, aff.a13, aff.a23);
@@ -711,7 +711,7 @@ void RasterPainter::drawRasterImages(QPainter &p, QPolygon cameraPol) {
     p.drawImage(rect.getP00().x, rect.getP00().y, image);
   }
 
-  p.resetMatrix();
+  p.resetTransform();
   m_nodes.clear();
 }
 

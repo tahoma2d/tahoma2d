@@ -799,7 +799,7 @@ int main(int argc, char *argv[]) {
 
     Sw1.start();
 
-    if (!TSystem::doesExistFileOrLevel(srcFilePath)) return false;
+    if (!TSystem::doesExistFileOrLevel(srcFilePath)) return -2;
     ToonzScene *scene = new ToonzScene();
 
     TImageStyle::setCurrentScene(scene);

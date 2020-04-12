@@ -235,6 +235,8 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button) {
   case FlipConsole::eResetView:
     resetSceneViewer();
     break;
+  default:
+    break;
   }
 }
 
@@ -499,11 +501,11 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   // if the "compare with snapshot" mode is activated, change the mouse cursor
   // on the border handle
   if (m_visualSettings.m_doCompare && isPreviewEnabled()) {
-    if (abs(curPos.x() - width() * m_compareSettings.m_compareX) < 20) {
+    if (std::abs(curPos.x() - width() * m_compareSettings.m_compareX) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleHCursor);
-    } else if (abs((height() - curPos.y()) -
-                   height() * m_compareSettings.m_compareY) < 20) {
+    } else if (std::abs((height() - curPos.y()) -
+                         height() * m_compareSettings.m_compareY) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleVCursor);
     }
@@ -703,7 +705,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     if (!PreviewSubCameraManager::instance()->mousePressEvent(this, event))
       return;
   } else if (m_mouseButton == Qt::LeftButton && m_visualSettings.m_doCompare) {
-    if (abs(m_pos.x() - width() * m_compareSettings.m_compareX) < 20) {
+    if (std::abs(m_pos.x() - width() * m_compareSettings.m_compareX) < 20) {
       m_compareSettings.m_dragCompareX = true;
       m_compareSettings.m_dragCompareY = false;
       m_compareSettings.m_compareY     = ImagePainter::DefaultCompareValue;
@@ -711,8 +713,8 @@ void SceneViewer::onPress(const TMouseEvent &event) {
       m_tabletEvent = false;
       m_tabletState = None;
       return;
-    } else if (abs((height() - m_pos.y()) -
-                   height() * m_compareSettings.m_compareY) < 20) {
+    } else if (std::abs((height() - m_pos.y()) -
+                         height() * m_compareSettings.m_compareY) < 20) {
       m_compareSettings.m_dragCompareY = true;
       m_compareSettings.m_dragCompareX = false;
       m_compareSettings.m_compareX     = ImagePainter::DefaultCompareValue;
@@ -1036,7 +1038,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         TPointD center = aff * TPointD(0, 0);
         if (!m_rotating && !m_zooming) {
           m_rotationDelta += rotationDelta;
-          double absDelta = abs(m_rotationDelta);
+          double absDelta = std::abs(m_rotationDelta);
           if (absDelta >= 10) {
             m_rotating = true;
           }
@@ -1310,7 +1312,7 @@ public:
 
 bool changeFrameSkippingHolds(QKeyEvent *e) {
   if ((e->modifiers() & Qt::ShiftModifier) == 0 ||
-      e->key() != Qt::Key_Down && e->key() != Qt::Key_Up)
+      (e->key() != Qt::Key_Down && e->key() != Qt::Key_Up))
     return false;
   TApp *app        = TApp::instance();
   TFrameHandle *fh = app->getCurrentFrame();

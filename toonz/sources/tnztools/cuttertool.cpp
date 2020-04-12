@@ -225,38 +225,38 @@ public:
         continue;
       }
 
-      diff = abs(intersection.first - w);
+      diff = std::abs(intersection.first - w);
       if (diff < minDiff) {
         minDiff  = diff;
         nearestW = intersection.first;
       }
 
-      diff = abs(intersection.second - w);
+      diff = std::abs(intersection.second - w);
       if (diff < minDiff) {
         minDiff  = diff;
         nearestW = intersection.second;
       }
 
       if (selfStroke->isSelfLoop()) {
-        diff = abs(1 - intersection.first) + w;
+        diff = std::abs(1 - intersection.first) + w;
         if (diff < minDiff) {
           minDiff  = diff;
           nearestW = intersection.first;
         }
 
-        diff = intersection.first + abs(1 - w);
+        diff = intersection.first + std::abs(1 - w);
         if (diff < minDiff) {
           minDiff  = diff;
           nearestW = intersection.first;
         }
 
-        diff = abs(1 - intersection.second) + w;
+        diff = std::abs(1 - intersection.second) + w;
         if (diff < minDiff) {
           minDiff  = diff;
           nearestW = intersection.second;
         }
 
-        diff = intersection.second + abs(1 - w);
+        diff = intersection.second + std::abs(1 - w);
         if (diff < minDiff) {
           minDiff  = diff;
           nearestW = intersection.second;
@@ -272,20 +272,20 @@ public:
 
       intersect(selfStroke, stroke, intersections, false);
       for (auto &intersection : intersections) {
-        diff = abs(intersection.first - w);
+        diff = std::abs(intersection.first - w);
         if (diff < minDiff) {
           minDiff  = diff;
           nearestW = intersection.first;
         }
 
         if (selfStroke->isSelfLoop()) {
-          diff = abs(1 - intersection.first) + w;
+          diff = std::abs(1 - intersection.first) + w;
           if (diff < minDiff) {
             minDiff  = diff;
             nearestW = intersection.first;
           }
 
-          diff = intersection.first + abs(1 - w);
+          diff = intersection.first + std::abs(1 - w);
           if (diff < minDiff) {
             minDiff  = diff;
             nearestW = intersection.first;

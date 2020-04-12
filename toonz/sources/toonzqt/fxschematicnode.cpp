@@ -554,6 +554,8 @@ FxPainter::FxPainter(FxSchematicNode *parent, double width, double height,
     }
     break;
   }
+  default:
+    break;
   }
 }
 
@@ -784,8 +786,8 @@ void FxPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
     else
       menu.addAction(connectToXSheet);
     menu.addAction(duplicateFx);
-    if (zsrc && zsrc->getZeraryFx() &&
-            zsrc->getZeraryFx()->getLinkedFx() != zsrc->getZeraryFx() ||
+    if ((zsrc && zsrc->getZeraryFx() &&
+            zsrc->getZeraryFx()->getLinkedFx() != zsrc->getZeraryFx()) ||
         fx->getLinkedFx() != fx)
       menu.addAction(unlinkFx);
   }
@@ -2441,6 +2443,8 @@ FxSchematicNormalFxNode::FxSchematicNormalFxNode(FxSchematicScene *scene,
     else
       setToolTip(m_name);
   }
+  default:
+    break;
   }
 
   m_nameItem = new SchematicName(this, 72, 20);  // for rename
@@ -2601,6 +2605,8 @@ void FxSchematicNormalFxNode::onNameChanged() {
     else
       setToolTip(m_name);
   }
+  default:
+    break;
   }
 
   setFlag(QGraphicsItem::ItemIsSelectable, true);

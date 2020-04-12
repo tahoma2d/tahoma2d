@@ -1402,10 +1402,10 @@ static bool addAutocloseIntersection(IntersectionData &intData,
     {
       const TThickQuadratic *q = s[i]->m_s->getChunk(0);
 
-      if (areAlmostEqual(q->getP0(), v[0], 1e-2) &&
-              areAlmostEqual(q->getP2(), v[1], 1e-2) ||
-          areAlmostEqual(q->getP0(), v[1], 1e-2) &&
-              areAlmostEqual(q->getP2(), v[0], 1e-2)) {
+      if ((areAlmostEqual(q->getP0(), v[0], 1e-2) &&
+              areAlmostEqual(q->getP2(), v[1], 1e-2)) ||
+          (areAlmostEqual(q->getP0(), v[1], 1e-2) &&
+              areAlmostEqual(q->getP2(), v[0], 1e-2))) {
         return true;
         addIntersection(intData, s, i, ii, DoublePair(0.0, w0), strokeSize,
                         isVectorized);

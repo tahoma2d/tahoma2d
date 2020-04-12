@@ -213,7 +213,7 @@ bool KeyframeMover::moveKeyframes(
     } else if (m_qualifiers & eInsertKeyframes) {
       int s                           = r;
       TStageObject::Keyframe keyframe = stObj->getKeyframe(r);
-      if (!m_qualifiers & eCopyKeyframes) stObj->removeKeyframeWithoutUndo(r);
+      if (!(m_qualifiers & eCopyKeyframes)) stObj->removeKeyframeWithoutUndo(r);
       std::set<int> keyframeToShift;
       while (stObj->isKeyframe(s + dr) && s + dr != r) {
         keyframeToShift.insert(s + dr);

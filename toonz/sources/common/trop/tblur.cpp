@@ -10,7 +10,7 @@
 
 #ifdef USE_SSE2
 #include <emmintrin.h>
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 
 

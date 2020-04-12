@@ -9,8 +9,6 @@
 
 #if defined(MACOSX)
 #include <sys/malloc.h>
-#else
-#include <malloc.h>
 #endif
 
 #define UCHAR unsigned char

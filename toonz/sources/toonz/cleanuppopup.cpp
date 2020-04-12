@@ -456,7 +456,7 @@ void CleanupPopup::buildCleanupList() {
           levelsList.push_back(sl);
         }
         /*---TFrameIdを登録---*/
-        it->second.insert(cell.getFrameId()).second;
+        it->second.insert(cell.getFrameId());
       }
     }
   }
@@ -482,7 +482,7 @@ void CleanupPopup::buildCleanupList() {
           levelsList.push_back(sl);
         }
         /*---TFrameIdを登録---*/
-        it->second.insert(cell.getFrameId()).second;
+        it->second.insert(cell.getFrameId());
       }
     }
   }
@@ -563,8 +563,8 @@ bool CleanupPopup::analyzeCleanupList() {
       }
 
       // Prompt user for file conflict resolution
-      switch (clt.m_resolution =
-                  Resolution(m_overwriteDialog->execute(&clt.m_outputPath))) {
+      clt.m_resolution = Resolution(m_overwriteDialog->execute(&clt.m_outputPath));
+      switch (clt.m_resolution) {
       case CANCEL:
         return false;
 
@@ -591,6 +591,8 @@ bool CleanupPopup::analyzeCleanupList() {
           m_levelAlreadyExists[sl] = false;
           continue;
         }
+      default:
+        break;
       }
 
       TLevelP level(0);  // Current level info. Yeah the init is a shame... :(

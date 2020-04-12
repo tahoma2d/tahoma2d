@@ -189,7 +189,7 @@ bool loadFids(const TFilePath &path, TXshSimpleLevel *sl,
   if (!level || level->getFrameCount() == 0) return false;
   TLevel::Iterator levelIt         = level->begin();
   bool almostOneUnpaintedFidLoaded = false;
-  for (levelIt; levelIt != level->end(); ++levelIt) {
+  for (; levelIt != level->end(); ++levelIt) {
     TFrameId fid                          = levelIt->first;
     std::set<TFrameId>::const_iterator it = selectedFids.find(fid);
     if (it == selectedFids.end()) continue;

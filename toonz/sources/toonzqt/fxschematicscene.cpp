@@ -1468,29 +1468,31 @@ void FxSchematicScene::onUncacheFx() { setEnableCache(false); }
 
 void FxSchematicScene::setEnableCache(bool toggle) {
   QList<TFxP> selectedFxs = m_selection->getFxs();
-  int i;
-  for (i = 0; i < selectedFxs.size(); i++) {
+  for (int i = 0; i < selectedFxs.size(); i++) {
     TFx *fx               = selectedFxs[i].getPointer();
     TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx);
     if (zcfx) fx          = zcfx->getZeraryFx();
     TFxAttributes *attr   = fx->getAttributes();
-    if (!attr->isGrouped() || attr->isGroupEditing())
-      if (toggle)
+    if (!attr->isGrouped() || attr->isGroupEditing()) {
+      if (toggle) {
         TPassiveCacheManager::instance()->enableCache(fx);
-      else
+      } else {
         TPassiveCacheManager::instance()->disableCache(fx);
-    else {
+      }
+    } else {
       QMap<int, FxGroupNode *>::iterator it;
       for (it = m_groupedTable.begin(); it != m_groupedTable.end(); it++) {
         FxGroupNode *group = it.value();
         QList<TFxP> roots  = group->getRootFxs();
-        int j;
-        for (j = 0; j < roots.size(); j++)
-          if (fx == roots[j].getPointer())
-            if (toggle)
+        for (int j = 0; j < roots.size(); j++) {
+          if (fx == roots[j].getPointer()) {
+            if (toggle) {
               TPassiveCacheManager::instance()->enableCache(fx);
-            else
+            } else {
               TPassiveCacheManager::instance()->disableCache(fx);
+	    }
+	  }
+	}
         group->update();
       }
     }

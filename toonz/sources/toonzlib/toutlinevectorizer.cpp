@@ -496,7 +496,7 @@ void OutlineVectorizer::createOutlineStrokes() {
 
   std::list<std::vector<TThickPoint>>::iterator it_outlines =
       m_protoOutlines.begin();
-  for (it_outlines; it_outlines != m_protoOutlines.end(); it_outlines++) {
+  for (; it_outlines != m_protoOutlines.end(); it_outlines++) {
     if (it_outlines->size() > 3) {
       std::vector<TThickPoint> points;
       std::vector<TThickPoint>::iterator it;

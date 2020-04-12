@@ -198,18 +198,22 @@ void PumpTool::draw() {
         double len = stroke->getLength(w);
 
         double len1 = len - actionLen;
-        if (len1 < 0)
-          if (stroke->isSelfLoop())
+        if (len1 < 0) {
+          if (stroke->isSelfLoop()) {
             len1 += totalLen;
-          else
+          } else {
             len1 = 0;
+	  }
+	}
 
         double len2 = len + actionLen;
-        if (len2 > totalLen)
-          if (stroke->isSelfLoop())
+        if (len2 > totalLen) {
+          if (stroke->isSelfLoop()) {
             len2 -= totalLen;
-          else
+          } else {
             len2 = totalLen;
+	  }
+	}
 
         w1 = stroke->getParameterAtLength(len1);
         w2 = stroke->getParameterAtLength(len2);

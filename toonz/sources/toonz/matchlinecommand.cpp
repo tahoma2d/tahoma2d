@@ -101,7 +101,7 @@ MergeCmappedDialog::MergeCmappedDialog(TFilePath &levelPath)
 //    MergeColumns  command
 //*****************************************************************************
 
-bool isVectorColumn(const std::set<int> &columns) {
+static bool isVectorColumn(const std::set<int> &columns) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   std::set<int>::const_iterator column = columns.begin();
   int start, end;

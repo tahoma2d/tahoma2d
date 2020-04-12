@@ -259,10 +259,10 @@ void makeOutline(/*std::ofstream& cout,*/
       areAlmostEqual( tq.getThickP0(), tq.getThickP2(), 1e-2 )*/;
 
   if (isAlmostAPoint ||
-      q_up && checkPointInOutline(q_up->getPoint(parameterTest), tq,
+      (q_up && checkPointInOutline(q_up->getPoint(parameterTest), tq,
                                   parameterTest, error) &&
           q_down && checkPointInOutline(q_down->getPoint(parameterTest), tq,
-                                        parameterTest, error)) {
+                                        parameterTest, error))) {
     /*	if (edge.first)
       cout << "left: "<< *(edge.first);
 else

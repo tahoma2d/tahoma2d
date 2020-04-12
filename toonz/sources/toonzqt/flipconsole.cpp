@@ -672,24 +672,27 @@ void FlipConsole::enableButton(UINT button, bool enable, bool doShowHide) {
   if (!m_playToolBar) return;
 
   QList<QAction *> list = m_playToolBar->actions();
-  int i;
-  for (i = 0; i < (int)list.size(); i++)
+  for (size_t i = 0; i < list.size(); i++)
     if (list[i]->data().toUInt() == button) {
-      if (button == eSound)
-        if (doShowHide)
+      if (button == eSound) {
+        if (doShowHide) {
           m_soundSep->setVisible(enable);
-        else
+        } else {
           m_soundSep->setEnabled(enable);
-      if (button == eHisto) {
-        if (doShowHide)
-          m_histoSep->setVisible(enable && m_customizeMask & eShowHisto);
-        else
-          m_histoSep->setEnabled(enable);
+	}
       }
-      if (doShowHide)
+      if (button == eHisto) {
+        if (doShowHide) {
+          m_histoSep->setVisible(enable && m_customizeMask & eShowHisto);
+        } else {
+          m_histoSep->setEnabled(enable);
+	}
+      }
+      if (doShowHide) {
         list[i]->setVisible(enable);
-      else
+      } else {
         list[i]->setEnabled(enable);
+      }
       if (!enable && list[i]->isChecked()) pressButton((EGadget)button);
 
       return;
@@ -706,6 +709,8 @@ void FlipConsole::enableButton(UINT button, bool enable, bool doShowHide) {
     break;
   case eGBlue:
     if (m_doubleBlue) m_doubleBlue->setEnabledSecondButton(enable);
+    break;
+  default:
     break;
   }
 }

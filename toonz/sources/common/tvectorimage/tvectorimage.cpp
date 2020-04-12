@@ -1031,11 +1031,11 @@ bool TVectorImage::Imp::areWholeGroups(const std::vector<int> &indexes) const {
   UINT i, j;
   for (i = 0; i < indexes.size(); i++) {
     if (m_strokes[indexes[i]]->m_isNewForFill) return false;
-    if (!m_strokes[indexes[i]]->m_groupId.isGrouped() != 0) return false;
+    if (!m_strokes[indexes[i]]->m_groupId.isGrouped()) return false;
     for (j = 0; j < m_strokes.size(); j++) {
       int ret = areDifferentGroup(indexes[i], false, j, false);
       if (ret == -1 ||
-          ret >= 1 && find(indexes.begin(), indexes.end(), j) == indexes.end())
+          (ret >= 1 && find(indexes.begin(), indexes.end(), j) == indexes.end()))
         return false;
     }
   }
@@ -1268,20 +1268,23 @@ void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
       TGroupId())  // if is inside a group, new image is put in that group.
   {
     TGroupId groupId;
-    for (i = m_imp->m_strokes.size() - 1; i >= 0; i--)
+    for (i = m_imp->m_strokes.size() - 1; i >= 0; i--) {
       if (m_imp->m_insideGroup.isParentOf(m_imp->m_strokes[i]->m_groupId)) {
         insertAt = i + 1;
         groupId  = m_imp->m_strokes[i]->m_groupId;
         break;
       }
-    if (insertAt != 0)
-      for (i = 0; i < (int)img->m_imp->m_strokes.size(); i++)
-        if (!img->m_imp->m_strokes[i]->m_groupId.isGrouped())
+    }
+    if (insertAt != 0) {
+      for (i = 0; i < (int)img->m_imp->m_strokes.size(); i++) {
+        if (!img->m_imp->m_strokes[i]->m_groupId.isGrouped()) {
           img->m_imp->m_strokes[i]->m_groupId = groupId;
-        else
+        } else {
           img->m_imp->m_strokes[i]->m_groupId =
               TGroupId(groupId, img->m_imp->m_strokes[i]->m_groupId);
-
+	}
+      }
+    }
   }
 
   // si fondono l'ultimo gruppo ghost della vecchia a e il primo della nuova
@@ -2904,8 +2907,8 @@ void TVectorImage::Imp::regroupGhosts(std::vector<int> &changedStrokes) {
       while (i < m_strokes.size() &&
              ((currGroupId.isGrouped(false) != 0 &&
                m_strokes[i]->m_groupId == currGroupId) ||
-              currGroupId.isGrouped(true) != 0 &&
-                  m_strokes[i]->m_groupId.isGrouped(true) != 0)) {
+              (currGroupId.isGrouped(true) != 0 &&
+                  m_strokes[i]->m_groupId.isGrouped(true) != 0))) {
         if (m_strokes[i]->m_groupId != currGroupId) {
           m_strokes[i]->m_groupId = currGroupId;
           changedStrokes.push_back(i);

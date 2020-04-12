@@ -509,6 +509,8 @@ void ShaderInterface::Parameter::saveData(TOStream &os) {
     os << (int)m_default.m_rgb[0] << (int)m_default.m_rgb[1]
        << (int)m_default.m_rgb[2];
     break;
+  default:
+    break;
   }
 
   os.closeChild();
@@ -551,6 +553,8 @@ void ShaderInterface::Parameter::saveData(TOStream &os) {
        << m_range[0].m_ivec4[1] << m_range[1].m_ivec4[1]
        << m_range[0].m_ivec4[2] << m_range[1].m_ivec4[2]
        << m_range[0].m_ivec4[3] << m_range[1].m_ivec4[3];
+    break;
+  default:
     break;
   }
 
@@ -645,6 +649,8 @@ void ShaderInterface::Parameter::loadData(TIStream &is) {
   case RGB:
     m_default.m_rgb[0] = m_default.m_rgb[1] = m_default.m_rgb[2] = 255;
     break;
+  default:
+    break;
   }
 
   // Attempt loading range from file
@@ -723,6 +729,8 @@ void ShaderInterface::Parameter::loadData(TIStream &is) {
         is >> val, m_default.m_rgb[2] = val;
         break;
       }
+      default:
+        break;
       }
 
       is.closeChild();
@@ -788,6 +796,8 @@ void ShaderInterface::Parameter::loadData(TIStream &is) {
             m_range[0].m_ivec4[1] >> m_range[1].m_ivec4[1] >>
             m_range[0].m_ivec4[2] >> m_range[1].m_ivec4[2] >>
             m_range[0].m_ivec4[3] >> m_range[1].m_ivec4[3];
+        break;
+      default:
         break;
       }
 

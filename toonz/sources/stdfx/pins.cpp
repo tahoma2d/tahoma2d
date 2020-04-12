@@ -468,7 +468,7 @@ static int splitMatrix(double **a, int n, int *index) {
       vv[imax] = vv[j];
     }
     index[j] = imax;
-    if (fabsf(a[j][j]) <= TINY && (j != n - 1)) {
+    if (std::abs(a[j][j]) <= TINY && (j != n - 1)) {
       /*printf("Cazzo, E' singolare %f!\n", a[j][j] );*/
       return imax + 1;
     }

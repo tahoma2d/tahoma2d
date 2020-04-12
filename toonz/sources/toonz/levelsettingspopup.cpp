@@ -279,6 +279,8 @@ private:
     case WhiteTransp:
       setWhiteTransp(value.toBool());
       break;
+    default:
+      break;
     }
     // This signal is for updating the level settings
     TApp::instance()->getCurrentScene()->notifySceneChanged();

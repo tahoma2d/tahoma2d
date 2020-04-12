@@ -317,14 +317,12 @@ void Preferences::initializeOptions() {
   try {
     TSystem::readDirectory(room_fpset, room_path, true, false);
     TFilePathSet::iterator it = room_fpset.begin();
-    int i                     = 0;
-    for (it; it != room_fpset.end(); it++) {
+    for (int i = 0; it != room_fpset.end(); it++, i++) {
       TFilePath newPath = *it;
       if (newPath == room_path) continue;
       if (TFileStatus(newPath).isDirectory()) {
         QString string = QString::fromStdWString(newPath.getWideName());
         m_roomMaps[i]  = string;
-        i++;
       }
     }
   } catch (...) {

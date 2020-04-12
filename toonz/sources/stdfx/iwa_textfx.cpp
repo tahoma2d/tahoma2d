@@ -75,7 +75,7 @@ void Iwa_TextFx::doCompute(TTile &tile, double frame,
   font.fromString(QString::fromStdWString(m_font->getValue()));
 
   double fac = sqrt(fabs(ri.m_affine.det()));
-  int size   = (int)(fac * fabs(font.pixelSize()));
+  int size   = (int)(fac * std::abs(font.pixelSize()));
 
   TPoint center = convert(
       fac * m_center->getValue(frame) -
