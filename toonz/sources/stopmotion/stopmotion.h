@@ -247,6 +247,7 @@ public:
   void raiseOpacity();
   void lowerOpacity();
   void jumpToCameraFrame();
+  void removeStopMotionFrame();
 
   std::string getTEnvCameraName();
   void setTEnvCameraName(std::string name);

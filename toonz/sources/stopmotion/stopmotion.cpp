@@ -523,6 +523,66 @@ void StopMotion::jumpToCameraFrame() {
 
 //-----------------------------------------------------------------
 
+void StopMotion::removeStopMotionFrame() {
+    if (m_xSheetFrameNumber == 1) return;
+    TApp* app = TApp::instance();
+    ToonzScene* scene = app->getCurrentScene()->getScene();
+    TXsheet* xsh = scene->getXsheet();
+
+    int row = m_xSheetFrameNumber - 2;    
+
+    // find which column the level is on.
+    // check with the current column first
+    int col = app->getCurrentColumn()->getColumnIndex();
+    TXshCell cell = xsh->getCell(row, col);
+    TXshSimpleLevelP sl;
+    bool found = false;
+    if (!cell.isEmpty()) {
+        if (cell.getSimpleLevel() != 0) {
+            sl = cell.getSimpleLevel();
+            if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
+                found = true;
+            }
+        }
+    }
+    
+    if (!found) {
+
+        int cols = xsh->getColumnCount();
+        for (int i = 0; i < cols; i++) {
+            cell = xsh->getCell(row, i);
+            if (!cell.isEmpty()) {
+                if (cell.getSimpleLevel() != 0) {
+                    sl = cell.getSimpleLevel();
+                    if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
+                        found = true;
+                        col = i;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if (!found) {
+        //DVGui::error(tr("Could not find an xsheet level with  the current level"));
+        return;
+    }
+
+    TXshCellColumn* xshCellColumn = xsh->getColumn(col)->getCellColumn();
+    if (!xshCellColumn) return;
+
+    int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
+    xshCellColumn->removeCells(row, 1);
+
+    app->getCurrentScene()->getScene()->getXsheet()->updateFrameCount();
+    setXSheetFrameNumber(m_xSheetFrameNumber - 1);
+    app->getCurrentFrame()->prevFrame();
+    app->getCurrentScene()->notifySceneChanged();
+    app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------
+
 void StopMotion::setUseNumpadShortcuts(bool on) {
   m_useNumpadShortcuts = on;
   StopMotionUseNumpad  = int(on);
@@ -583,6 +643,13 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
       action = NULL;
+    }
+    shortcut = "Backspace";
+    action = comm->getActionFromShortcut(shortcut);
+    if (action) {
+        m_oldActionMap.insert(
+            std::pair<std::string, QAction*>(shortcut, action));
+        action = NULL;
     }
     shortcut = "Return";
     action   = comm->getActionFromShortcut(shortcut);
@@ -646,6 +713,11 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       action->setShortcut(QKeySequence("Return"));
       action = NULL;
+    }
+    action = comm->getAction(MI_StopMotionRemoveFrame);
+    if (action) {
+        action->setShortcut(QKeySequence("Backspace"));
+        action = NULL;
     }
     action = comm->getAction(MI_StopMotionToggleLiveView);
     if (action) {
@@ -743,6 +815,12 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
         action->setShortcut(
             QKeySequence(comm->getShortcutFromAction(action).c_str()));
         action = NULL;
+      }
+      action = comm->getAction(MI_StopMotionRemoveFrame);
+      if (action) {
+          action->setShortcut(
+              QKeySequence(comm->getShortcutFromAction(action).c_str()));
+          action = NULL;
       }
 
       // now put back the old shortcuts
@@ -4657,6 +4735,18 @@ public:
     sm->exportImageSequence();
   }
 } StopMotionExportImageSequence;
+
+//=============================================================================
+
+class StopMotionRemoveFrame : public MenuItemHandler {
+public:
+    StopMotionRemoveFrame()
+        : MenuItemHandler(MI_StopMotionRemoveFrame) {}
+    void execute() {
+        StopMotion* sm = StopMotion::instance();
+        sm->removeStopMotionFrame();
+    }
+} StopMotionRemoveFrame;
 
 #if WITH_CANON
 //=============================================================================

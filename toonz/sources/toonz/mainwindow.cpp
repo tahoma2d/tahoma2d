@@ -2379,6 +2379,7 @@ void MainWindow::defineActions() {
                tr("Raise Stop Motion Level Subsampling"), "");
   createAction(MI_StopMotionJumpToCamera, tr("Go to Stop Motion Insert Frame"),
                "");
+  createAction(MI_StopMotionRemoveFrame, tr("Remove frame before Stop Motion Camera"), "");
 }
 
 //-----------------------------------------------------------------------------
