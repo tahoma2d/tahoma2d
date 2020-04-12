@@ -297,7 +297,7 @@ void invalidateIcons() {
   s.m_paintIndex = mask & ToonzCheck::ePaint ? tc->getColorIndex() : -1;
   IconGenerator::instance()->setSettings(s);
 
-   // Force icons to refresh
+  // Force icons to refresh
   TXshLevel *sl = TApp::instance()->getCurrentLevel()->getLevel();
   if (sl) {
     std::vector<TFrameId> fids;
@@ -781,9 +781,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_isBusyOnTabletMove(false) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
-#ifdef WITH_STOPMOTION
   m_stopMotion = StopMotion::instance();
-#endif
+
   // Enables multiple key input.
   setAttribute(Qt::WA_KeyCompression);
   // Enables input methods for Asian languages.
@@ -1146,24 +1145,17 @@ double SceneViewer::getHGuide(int index) { return m_hRuler->getGuide(index); }
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onNewStopMotionImageReady() {
-#ifdef WITH_STOPMOTION
   if (m_stopMotion->m_hasLineUpImage) {
     // if (m_hasStopMotionLineUpImage) delete m_stopMotionLineUpImage;
-    // is there a way to do this without cloning the image twice?
-    // TRasterImageP image     = m_stopMotion->m_lineUpImage->clone();
     m_stopMotionLineUpImage =
         (TRasterImageP)m_stopMotion->m_lineUpImage->clone();
-    // m_stopMotionLineUpImage = (TRasterImage *)image->cloneImage();
     m_stopMotionLineUpImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                                     m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionLineUpImage = true;
   }
   if (m_stopMotion->m_hasLiveViewImage) {
     // if (m_hasStopMotionImage) delete m_stopMotionImage;
-    // is there a way to do this without cloning the image twice?
-    // TRasterImageP image = m_stopMotion->m_liveViewImage->clone();
     m_stopMotionImage = m_stopMotion->m_liveViewImage->clone();
-    // m_stopMotionImage   = (TRasterImage *)image->cloneImage();
     m_stopMotionImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                               m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionImage = true;
@@ -1172,7 +1164,6 @@ void SceneViewer::onNewStopMotionImageReady() {
     }
     onSceneChanged();
   }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1589,6 +1580,31 @@ void SceneViewer::drawOverlay() {
       }
     }
 
+#ifdef WITH_CANON
+    // draw Stop Motion Zoom Box
+    if (m_stopMotion->m_liveViewStatus == 2 &&
+        m_stopMotion->m_pickLiveViewZoom) {
+      glPushMatrix();
+      tglMultMatrix(m_drawCameraAff);
+      m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+      TRect rect  = m_stopMotion->m_zoomRect;
+
+      glColor3d(1.0, 0.0, 0.0);
+
+      // border
+      glBegin(GL_LINE_STRIP);
+      glVertex2d(rect.x0, rect.y0);
+      glVertex2d(rect.x0, rect.y1 - m_pixelSize);
+      glVertex2d(rect.x1 - m_pixelSize, rect.y1 - m_pixelSize);
+      glVertex2d(rect.x1 - m_pixelSize, rect.y0);
+      glVertex2d(rect.x0, rect.y0);
+      glEnd();
+
+      glPopMatrix();
+    }
+
+#endif
+
     // safe area
     if (safeAreaToggle.getStatus() && m_drawEditingLevel == false &&
         !is3DView()) {
@@ -1884,6 +1900,34 @@ void SceneViewer::drawScene() {
     } else
       xr = std::make_pair(xsh, frame);
 
+    TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+    if (m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
+        (!frameHandle->isPlaying() ||
+         frame == m_stopMotion->getXSheetFrameNumber())) {
+      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+      }
+      if (m_hasStopMotionImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide_opacity =
+            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
+        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+      }
+    }
+
     Stage::VisitArgs args;
     args.m_scene       = scene;
     args.m_xsh         = xr.first;
@@ -1904,6 +1948,33 @@ void SceneViewer::drawScene() {
 
     // args.m_currentFrameId = app->getCurrentFrame()->getFid();
     Stage::visit(painter, args);
+
+    if (!m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
+        (!frameHandle->isPlaying() ||
+         frame == m_stopMotion->getXSheetFrameNumber())) {
+      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+      }
+      if (m_hasStopMotionImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide_opacity =
+            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
+        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+      }
+    }
 
     m_minZ = painter.getMinZ();
   } else {
@@ -1930,6 +2001,34 @@ void SceneViewer::drawScene() {
             ->isShowRasterImagesDarkenBlendedInViewerEnabled());
 
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+
+    if (m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
+        (!frameHandle->isPlaying() ||
+         frame == m_stopMotion->getXSheetFrameNumber())) {
+      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+      }
+      if (m_hasStopMotionImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide_opacity =
+            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
+        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+      }
+    }
+
     if (app->getCurrentFrame()->isEditingLevel()) {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
@@ -1966,8 +2065,10 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, args);
     }
 
-#ifdef WITH_STOPMOTION
-    if (!frameHandle->isPlaying() && m_stopMotion->m_liveViewStatus == 2) {
+    if (!m_stopMotion->m_drawBeneathLevels &&
+        m_stopMotion->m_liveViewStatus == 2 &&
+        (!frameHandle->isPlaying() ||
+         frame == m_stopMotion->getXSheetFrameNumber())) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;
@@ -1981,13 +2082,15 @@ void SceneViewer::drawScene() {
         double dpiX, dpiY;
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        bool hide_opacity =
+        bool hide_opacity = false;
+#if WITH_CANON
+        hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+#endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
       }
     }
-#endif
 
     assert(glGetError() == 0);
     painter.flushRasterImages();
@@ -2026,7 +2129,7 @@ double SceneViewer::projectToZ(const TPointD &delta) {
   GLint viewport[4];
   double modelview[16], projection[16];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  for (int i = 0; i < 16; i++)
+  for (int i      = 0; i < 16; i++)
     projection[i] = (double)m_projectionMatrix.constData()[i];
   glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
@@ -2188,9 +2291,8 @@ void SceneViewer::zoomQt(bool forward, bool reset) {
     if (reset || ((m_zoomScale3D < 500 || !forward) &&
                   (m_zoomScale3D > 0.01 || forward))) {
       double oldZoomScale = m_zoomScale3D;
-      m_zoomScale3D =
-          reset ? 1
-                : ImageUtils::getQuantizedZoomFactor(m_zoomScale3D, forward);
+      m_zoomScale3D       = reset ? 1 : ImageUtils::getQuantizedZoomFactor(
+                                      m_zoomScale3D, forward);
 
       m_pan3D = -(m_zoomScale3D / oldZoomScale) * -m_pan3D;
     }
@@ -2211,18 +2313,17 @@ void SceneViewer::zoomQt(bool forward, bool reset) {
     int i;
 
     for (i = 0; i < 2; i++) {
-      TAffine &viewAff = m_viewAff[i];
+      TAffine &viewAff          = m_viewAff[i];
       if (m_isFlippedX) viewAff = viewAff * TScale(-1, 1);
       if (m_isFlippedX) viewAff = viewAff * TScale(1, -1);
-      double scale2 = std::abs(viewAff.det());
+      double scale2             = std::abs(viewAff.det());
       if (m_isFlippedX) viewAff = viewAff * TScale(-1, 1);
       if (m_isFlippedX) viewAff = viewAff * TScale(1, -1);
       if (reset || ((scale2 < 100000 || !forward) &&
                     (scale2 > 0.001 * 0.05 || forward))) {
         double oldZoomScale = sqrt(scale2) * dpiFactor;
-        double zoomScale =
-            reset ? 1
-                  : ImageUtils::getQuantizedZoomFactor(oldZoomScale, forward);
+        double zoomScale    = reset ? 1 : ImageUtils::getQuantizedZoomFactor(
+                                           oldZoomScale, forward);
 
         // threshold value -0.001 is intended to absorb the error of calculation
         if ((oldZoomScale - zoomScaleFittingWithScreen) *
@@ -2523,9 +2624,9 @@ void SceneViewer::fitToCamera() {
   TPointD P11       = cameraAff * cameraRect.getP11();
   TPointD p0        = TPointD(std::min({P00.x, P01.x, P10.x, P11.x}),
                        std::min({P00.y, P01.y, P10.y, P11.y}));
-  TPointD p1        = TPointD(std::max({P00.x, P01.x, P10.x, P11.x}),
+  TPointD p1 = TPointD(std::max({P00.x, P01.x, P10.x, P11.x}),
                        std::max({P00.y, P01.y, P10.y, P11.y}));
-  cameraRect        = TRectD(p0.x, p0.y, p1.x, p1.y);
+  cameraRect = TRectD(p0.x, p0.y, p1.x, p1.y);
 
   // Pan
   if (!is3DView()) {
@@ -2578,8 +2679,8 @@ void SceneViewer::resetZoom() {
   TPointD realCenter(m_viewAff[m_viewMode].a13, m_viewAff[m_viewMode].a23);
   TAffine aff =
       getNormalZoomScale() * TRotation(realCenter, m_rotationAngle[m_viewMode]);
-  aff.a13 = realCenter.x;
-  aff.a23 = realCenter.y;
+  aff.a13               = realCenter.x;
+  aff.a23               = realCenter.y;
   if (m_isFlippedX) aff = aff * TScale(-1, 1);
   if (m_isFlippedY) aff = aff * TScale(1, -1);
   setViewMatrix(aff, m_viewMode);
@@ -2636,17 +2737,16 @@ void SceneViewer::setActualPixelSize() {
   } else
     dpi = sl->getDpi(fid);
 
-  const double inch = Stage::inch;
-  TAffine tempAff   = getNormalZoomScale();
-  if (m_isFlippedX) tempAff = tempAff * TScale(-1, 1);
-  if (m_isFlippedY) tempAff = tempAff * TScale(1, -1);
-  TPointD tempScale = dpi;
+  const double inch             = Stage::inch;
+  TAffine tempAff               = getNormalZoomScale();
+  if (m_isFlippedX) tempAff     = tempAff * TScale(-1, 1);
+  if (m_isFlippedY) tempAff     = tempAff * TScale(1, -1);
+  TPointD tempScale             = dpi;
   if (m_isFlippedX) tempScale.x = -tempScale.x;
   if (m_isFlippedY) tempScale.y = -tempScale.y;
   for (int i = 0; i < m_viewAff.size(); ++i)
-    setViewMatrix(dpi == TPointD(0, 0)
-                      ? tempAff
-                      : TScale(tempScale.x / inch, tempScale.y / inch),
+    setViewMatrix(dpi == TPointD(0, 0) ? tempAff : TScale(tempScale.x / inch,
+                                                          tempScale.y / inch),
                   i);
 
   m_pos         = QPoint(0, 0);
@@ -2929,7 +3029,7 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
 
   TStageObject *pegbar =
       objId != TStageObjectId::NoneId ? xsh->getStageObject(objId) : 0;
-  const TStroke *stroke = 0;
+  const TStroke *stroke                     = 0;
   if (pegbar && pegbar->getSpline()) stroke = pegbar->getSpline()->getStroke();
   if (!stroke) return;
 

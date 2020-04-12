@@ -23,12 +23,8 @@
 #include "comboviewerpane.h"
 #include "historypane.h"
 #include "cleanupsettingspane.h"
-
 #include "vectorguideddrawingpane.h"
-
-#ifdef WITH_STOPMOTION
 #include "stopmotioncontroller.h"
-#endif
 
 #ifdef LINETEST
 #include "linetestpane.h"
@@ -1373,7 +1369,6 @@ OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel",
                                           QObject::tr("History"));
 //=============================================================================
 
-#ifdef WITH_STOPMOTION
 //=============================================================================
 // StopMotion Controller
 //-----------------------------------------------------------------------------
@@ -1398,8 +1393,6 @@ OpenFloatingPanel openStopMotionPanelCommand(
     MI_OpenStopMotionPanel, "StopMotionController",
     QObject::tr("Stop Motion Controller"));
 //-----------------------------------------------------------------------------
-
-#endif
 
 //=============================================================================
 // FxSettings

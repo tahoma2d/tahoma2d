@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
@@ -101,7 +101,7 @@ endif()
 
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
 option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
-option(WITH_STOPMOTION "Build with Stop Motion features - Requires Canon SDK" OFF)
+option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
 
 # avoid using again
 option_defaults_clear()
@@ -166,6 +166,7 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(
             -DMACOSX
             -Di386
+            -D__MACOS__
         )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
@@ -178,6 +179,7 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(
             -DMACOSX
             -Di386
+            -D__MACOS__
         )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -std=c++11 -stdlib=libc++ -fno-implicit-templates -D HAS_QUICKDRAW")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
@@ -227,6 +229,7 @@ if(BUILD_ENV_APPLE)
     set(CMAKE_INSTALL_RPATH ${QT_LIB_PATH})
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${QT_LIB_PATH}" isSystemDir)
+    set(CMAKE_FIND_FRAMEWORK LAST)
     if("${isSystemDir}" STREQUAL "-1")
         set(CMAKE_INSTALL_RPATH "${QT_LIB_PATH}")
     endif()
@@ -259,7 +262,9 @@ if(Qt5Core_VERSION VERSION_LESS QT_MINIMUM_VERSION)
 endif()
 unset(QT_MINIMUM_VERSION)
 
-if(BUILD_ENV_MSVC AND NOT WITH_STOPMOTION)
+
+
+if(BUILD_ENV_MSVC)
     include_directories(
         SYSTEM
         ${SDKROOT}/glut/3.7.6/include
@@ -271,19 +276,15 @@ if(BUILD_ENV_MSVC AND NOT WITH_STOPMOTION)
     )
 endif()
 
-if(BUILD_ENV_MSVC AND WITH_STOPMOTION)
-    find_package(OpenCV 4.1 REQUIRED)
+find_package(OpenCV 4.1 REQUIRED)
+include_directories(
+    ${SDKROOT}/libjpeg-turbo64/include
+    ${OpenCV_INCLUDE_DIRS}
+)
+
+if(WITH_CANON)
     include_directories(
-        SYSTEM
-        ${SDKROOT}/glut/3.7.6/include
-        ${SDKROOT}/zlib-1.2.8
-        ${SDKROOT}/LibJPEG/jpeg-9
         ${SDKROOT}/canon/Header
-        ${SDKROOT}/libjpeg-turbo64/include
-        ${OpenCV_INCLUDE_DIRS}
-    )
-    add_definitions(
-        -DGLUT_NO_LIB_PRAGMA
     )
 endif()
 
@@ -347,9 +348,13 @@ if(BUILD_ENV_MSVC)
     set(SUPERLU_LIB ${SDKROOT}/superlu/SuperLU_${MSVC_LIB_VERSION}_${PLATFORM}.lib)
     set(OPENBLAS_LIB ${SDKROOT}/openblas/libopenblas_${PLATFORM}.lib)
     set(USB_LIB)  # unused
-    if (WITH_STOPMOTION)
-        set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
-        set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
+    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
+    if (WITH_CANON)
+        if(BUILD_ENV_APPLE)
+            set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
+        else()
+            set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        endif()
     endif()
     if(PLATFORM EQUAL 32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
@@ -404,6 +409,19 @@ elseif(BUILD_ENV_APPLE)
     message("LZO:" ${LZO_INCLUDE_DIR})
 
     pkg_check_modules(MYPAINT_LIB REQUIRED libmypaint)
+
+    pkg_check_modules(TURBOJPEG REQUIRED libturbojpeg)
+    find_library(TURBOJPEG_LIB turbojpeg ${TURBOJPEG_LIBRARY_DIRS})
+    message("**************** turbojpeg lib:" ${TURBOJPEG_LIB})
+
+    if (WITH_CANON)
+        if(BUILD_ENV_APPLE)
+            set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
+        else()
+            set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        endif()
+    endif()
+
 elseif(BUILD_ENV_UNIXLIKE)
     if(BUILD_TARGET_WIN)
         find_library(GL_LIB opengl32)
@@ -464,6 +482,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
     pkg_search_module(MYPAINT_LIB REQUIRED libmypaint libmypaint-1.3>=1.3)
+    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
 endif()
 
 

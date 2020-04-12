@@ -74,7 +74,8 @@ class StopMotionController final : public QWidget {
       *m_focusFar3Button, *m_captureFilterSettingsBtn;
   QHBoxLayout *m_focusAndZoomLayout;
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
-      *m_kelvinLabel, *m_resolutionLabel, *m_directShowLabel;
+      *m_kelvinLabel, *m_resolutionLabel, *m_directShowLabel,
+      *m_cameraStatusLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
 
@@ -85,7 +86,7 @@ class StopMotionController final : public QWidget {
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB;
+      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -103,19 +104,13 @@ protected:
   void hideEvent(QHideEvent *event);
   // void mousePressEvent(QMouseEvent *event) override;
   // void keyPressEvent(QKeyEvent *event);
+  void keyPressEvent(QKeyEvent *event) override;
 
 protected slots:
   void refreshCameraList();
   void refreshCameraListCalled();
   void refreshOptionsLists();
-  void refreshApertureList();
-  void refreshShutterSpeedList();
-  void refreshIsoList();
-  void refreshExposureList();
-  void refreshWhiteBalanceList();
-  void refreshColorTemperatureList();
-  void refreshImageQualityList();
-  void refreshPictureStyleList();
+
   void onCameraListComboActivated(int index);
   void onResolutionComboActivated(const QString &itemText);
   void onCaptureFilterSettingsBtnPressed();
@@ -143,12 +138,15 @@ protected slots:
   void onUseDirectShowChanged(int checked);
   void onLiveViewOnAllFramesChanged(int checked);
   void onUseNumpadChanged(int checked);
+  void onDrawBeneathChanged(int checked);
   void updateDimensions();
   void onSaveInPathEdited();
   void onSceneSwitched();
   void onPreviousXSheetFrame();
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
+
+  // canon stuff
   void onApertureChanged(int index);
   void onShutterSpeedChanged(int index);
   void onIsoChanged(int index);
@@ -157,7 +155,6 @@ protected slots:
   void onColorTemperatureChanged(int index);
   void onImageQualityChanged(int index);
   void onPictureStyleChanged(int index);
-  void refreshMode();
   void onZoomPressed();
   void onPickZoomPressed();
   void onFocusNear();
@@ -166,6 +163,24 @@ protected slots:
   void onFocusFar2();
   void onFocusNear3();
   void onFocusFar3();
+  void onApertureChangedSignal(QString);
+  void onIsoChangedSignal(QString);
+  void onShutterSpeedChangedSignal(QString);
+  void onExposureChangedSignal(QString);
+  void onWhiteBalanceChangedSignal(QString);
+  void onColorTemperatureChangedSignal(QString);
+  void onImageQualityChangedSignal(QString);
+  void onPictureStyleChangedSignal(QString);
+  void refreshApertureList();
+  void refreshShutterSpeedList();
+  void refreshIsoList();
+  void refreshExposureList();
+  void refreshWhiteBalanceList();
+  void refreshColorTemperatureList();
+  void refreshImageQualityList();
+  void refreshPictureStyleList();
+  void refreshMode();
+
   void onCaptureReviewFldEdited();
   void onCaptureReviewSliderChanged(bool ignore);
   void onSubsamplingFldEdited();
@@ -186,18 +201,11 @@ protected slots:
   void onUseDirectShowSignal(bool);
   void onReviewTimeChangedSignal(int);
   void onUseNumpadSignal(bool);
+  void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);
   void onNewCameraSelected(int, bool);
   void onWebcamResolutionsChanged();
   void onNewWebcamResolutionSelected(int);
-  void onApertureChangedSignal(QString);
-  void onIsoChangedSignal(QString);
-  void onShutterSpeedChangedSignal(QString);
-  void onExposureChangedSignal(QString);
-  void onWhiteBalanceChangedSignal(QString);
-  void onColorTemperatureChangedSignal(QString);
-  void onImageQualityChangedSignal(QString);
-  void onPictureStyleChangedSignal(QString);
 
 public slots:
   void openSaveInFolderPopup();
