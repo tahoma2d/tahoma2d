@@ -106,12 +106,93 @@ public:
 
   Room *getCurrentRoom() const;
   void refreshWriteSettings();
-  /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
+
+  /*-- Animate tool + mode switching shortcuts --*/
+  void toggleEditNextMode();
+  void toggleEditPosition();
+  void toggleEditRotation();
+  void toggleEditNextScale();
+  void toggleEditNextShear();
+  void toggleEditNextCenter();
+  void toggleEditNextAll();
+
+  /*-- Selection tool + mode switching shortcuts --*/
+  void toggleSelectionNextType();
+  void toggleSelectionRectangular();
+  void toggleSelectionFreehand();
+  void toggleSelectionPolyline();
+
+  /*-- Geometric tool + shape switching shortcuts --*/
+  void toggleGeometricNextShape();
+  void toggleGeometricRectangle();
+  void toggleGeometricCircle();
+  void toggleGeometricEllipse();
+  void toggleGeometricLine();
+  void toggleGeometricPolyline();
+  void toggleGeometricArc();
+  void toggleGeometricPolygon();
+
+  /*-- Type tool + style switching shortcuts --*/
+  void toggleTypeNextStyle();
+  void toggleTypeOblique();
+  void toggleTypeRegular();
+  void toggleTypeBoldOblique();
+  void toggleTypeBold();
+
+  /*-- Fill tool + mode switching shortcuts --*/
+  void toggleFillNextType();
+  void toggleFillNormal();
+  void toggleFillRectangular();
+  void toggleFillFreehand();
+  void toggleFillPolyline();
+  void toggleFillNextMode();
   void toggleFillAreas();
   void toggleFillLines();
-  /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
+  void toggleFillLinesAndAreas();
+
+  /*-- Eraser tool + type switching shortcuts --*/
+  void toggleEraserNextType();
+  void toggleEraserNormal();
+  void toggleEraserRectangular();
+  void toggleEraserFreehand();
+  void toggleEraserPolyline();
+  void toggleEraserSegment();
+
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  void toggleTapeNextType();
+  void toggleTapeNormal();
+  void toggleTapeRectangular();
+  void toggleTapeNextMode();
+  void toggleTapeEndpointToEndpoint();
+  void toggleTapeEndpointToLine();
+  void toggleTapeLineToLine();
+
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  void togglePickStyleNextMode();
   void togglePickStyleAreas();
   void togglePickStyleLines();
+  void togglePickStyleLinesAndAreas();
+
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  void toggleRGBPickerNextType();
+  void toggleRGBPickerNormal();
+  void toggleRGBPickerRectangular();
+  void toggleRGBPickerFreehand();
+  void toggleRGBPickerPolyline();
+
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  void ToggleSkeletonNextMode();
+  void ToggleSkeletonBuildSkeleton();
+  void ToggleSkeletonAnimate();
+  void ToggleSkeletonInverseKinematics();
+
+  /*-- Plastic tool + mode switching shortcuts --*/
+  void TogglePlasticNextMode();
+  void TogglePlasticEditMesh();
+  void TogglePlasticPaintRigid();
+  void TogglePlasticBuildSkeleton();
+  void TogglePlasticAnimate();
+
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();
