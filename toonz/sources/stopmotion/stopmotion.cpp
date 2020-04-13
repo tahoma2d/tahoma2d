@@ -371,19 +371,19 @@ StopMotion::StopMotion() {
 //-----------------------------------------------------------------
 
 StopMotion::~StopMotion() {
+  disconnectAllCameras();
 #if WITH_CANON
-  if (m_liveViewStatus != LiveViewClosed) endLiveView();
-  if (m_sessionOpen) closeCameraSession();
   if (m_camera) releaseCamera();
   if (m_cameraList != NULL) releaseCameraList();
   if (m_isSDKLoaded) closeCanonSDK();
 #endif
-  setUseNumpadShortcuts(false);
 }
 
 //-----------------------------------------------------------------------------
 
 void StopMotion::onSceneSwitched() {
+  disconnectAllCameras();
+
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -391,13 +391,13 @@ void StopMotion::onSceneSwitched() {
   m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
                    .getParentDir()
                    .getQString();
-  m_frameNumber       = 1;
-  m_xSheetFrameNumber = 0;
+  m_frameNumber = 1;
 
   TLevelSet *levelSet = scene->getLevelSet();
   std::vector<TXshLevel *> levels;
   levelSet->listLevels(levels);
-  int size = levels.size();
+  int size   = levels.size();
+  bool found = false;
   for (int i = 0; i < size; i++) {
     TXshLevel *level = levels[i];
     if (level->getType() == OVL_XSHLEVEL) {
@@ -410,15 +410,52 @@ void StopMotion::onSceneSwitched() {
         m_frameNumber = sl->getFrameCount() + 1;
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
         loadXmlFile();
+        found = true;
         break;
       }
     }
+  }
+
+  if (!found) {
+    setXSheetFrameNumber(1);
   }
   emit(levelNameChanged(m_levelName));
   emit(filePathChanged(m_filePath));
   emit(frameNumberChanged(m_frameNumber));
   emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   refreshFrameInfo();
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::disconnectAllCameras() {
+  m_active            = false;
+  m_webcamDeviceName  = QString();
+  m_webcamDescription = QString();
+  m_webcamIndex       = -1;
+
+#if WITH_CANON
+  m_proxyDpi             = TPointD(0.0, 0.0);
+  m_proxyImageDimensions = TDimension(0, 0);
+
+  if (m_sessionOpen) {
+    if (m_liveViewStatus > 0) {
+      endCanonLiveView();
+    }
+    closeCameraSession();
+  }
+
+#endif
+  if (m_usingWebcam) {
+    releaseWebcam();
+    m_usingWebcam = false;
+  }
+  m_liveViewStatus = LiveViewClosed;
+  setTEnvCameraName("");
+  emit(liveViewChanged(false));
+
+  emit(newCameraSelected(0, false));
+  toggleNumpadShortcuts(false);
 }
 
 //-----------------------------------------------------------------
@@ -528,61 +565,60 @@ void StopMotion::jumpToCameraFrame() {
 //-----------------------------------------------------------------
 
 void StopMotion::removeStopMotionFrame() {
-    if (m_xSheetFrameNumber == 1) return;
-    TApp* app = TApp::instance();
-    ToonzScene* scene = app->getCurrentScene()->getScene();
-    TXsheet* xsh = scene->getXsheet();
+  if (m_xSheetFrameNumber == 1) return;
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
 
-    int row = m_xSheetFrameNumber - 2;    
+  int row = m_xSheetFrameNumber - 2;
 
-    // find which column the level is on.
-    // check with the current column first
-    int col = app->getCurrentColumn()->getColumnIndex();
-    TXshCell cell = xsh->getCell(row, col);
-    TXshSimpleLevelP sl;
-    bool found = false;
-    if (!cell.isEmpty()) {
+  // find which column the level is on.
+  // check with the current column first
+  int col       = app->getCurrentColumn()->getColumnIndex();
+  TXshCell cell = xsh->getCell(row, col);
+  TXshSimpleLevelP sl;
+  bool found = false;
+  if (!cell.isEmpty()) {
+    if (cell.getSimpleLevel() != 0) {
+      sl = cell.getSimpleLevel();
+      if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
+        found = true;
+      }
+    }
+  }
+
+  if (!found) {
+    int cols = xsh->getColumnCount();
+    for (int i = 0; i < cols; i++) {
+      cell = xsh->getCell(row, i);
+      if (!cell.isEmpty()) {
         if (cell.getSimpleLevel() != 0) {
-            sl = cell.getSimpleLevel();
-            if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
-                found = true;
-            }
+          sl = cell.getSimpleLevel();
+          if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
+            found = true;
+            col   = i;
+            break;
+          }
         }
+      }
     }
-    
-    if (!found) {
+  }
+  if (!found) {
+    // DVGui::error(tr("Could not find an xsheet level with  the current
+    // level"));
+    return;
+  }
 
-        int cols = xsh->getColumnCount();
-        for (int i = 0; i < cols; i++) {
-            cell = xsh->getCell(row, i);
-            if (!cell.isEmpty()) {
-                if (cell.getSimpleLevel() != 0) {
-                    sl = cell.getSimpleLevel();
-                    if (sl.getPointer()->getName() == m_levelName.toStdWString()) {
-                        found = true;
-                        col = i;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    if (!found) {
-        //DVGui::error(tr("Could not find an xsheet level with  the current level"));
-        return;
-    }
+  TXshCellColumn *xshCellColumn = xsh->getColumn(col)->getCellColumn();
+  if (!xshCellColumn) return;
 
-    TXshCellColumn* xshCellColumn = xsh->getColumn(col)->getCellColumn();
-    if (!xshCellColumn) return;
+  xshCellColumn->removeCells(row, 1);
 
-    int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
-    xshCellColumn->removeCells(row, 1);
-
-    app->getCurrentScene()->getScene()->getXsheet()->updateFrameCount();
-    setXSheetFrameNumber(m_xSheetFrameNumber - 1);
-    app->getCurrentFrame()->prevFrame();
-    app->getCurrentScene()->notifySceneChanged();
-    app->getCurrentXsheet()->notifyXsheetChanged();
+  app->getCurrentScene()->getScene()->getXsheet()->updateFrameCount();
+  setXSheetFrameNumber(m_xSheetFrameNumber - 1);
+  app->getCurrentFrame()->prevFrame();
+  app->getCurrentScene()->notifySceneChanged();
+  app->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 //-----------------------------------------------------------------
@@ -649,11 +685,11 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       action = NULL;
     }
     shortcut = "Backspace";
-    action = comm->getActionFromShortcut(shortcut);
+    action   = comm->getActionFromShortcut(shortcut);
     if (action) {
-        m_oldActionMap.insert(
-            std::pair<std::string, QAction*>(shortcut, action));
-        action = NULL;
+      m_oldActionMap.insert(
+          std::pair<std::string, QAction *>(shortcut, action));
+      action = NULL;
     }
     shortcut = "Return";
     action   = comm->getActionFromShortcut(shortcut);
@@ -716,6 +752,11 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     action = comm->getAction(MI_StopMotionCapture);
     if (action) {
       action->setShortcut(QKeySequence("Return"));
+      action = NULL;
+    }
+    action = comm->getAction(MI_StopMotionRemoveFrame);
+    if (action) {
+      action->setShortcut(QKeySequence("Backspace"));
       action = NULL;
     }
     action = comm->getAction(MI_StopMotionRemoveFrame);
@@ -822,9 +863,9 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       }
       action = comm->getAction(MI_StopMotionRemoveFrame);
       if (action) {
-          action->setShortcut(
-              QKeySequence(comm->getShortcutFromAction(action).c_str()));
-          action = NULL;
+        action->setShortcut(
+            QKeySequence(comm->getShortcutFromAction(action).c_str()));
+        action = NULL;
       }
 
       // now put back the old shortcuts
@@ -1297,9 +1338,6 @@ bool StopMotion::importImage() {
       }
     }
   }
-  if (getReviewTime() > 0) {
-    m_reviewTimer->start(getReviewTime() * 1000);
-  }
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
@@ -1509,6 +1547,11 @@ bool StopMotion::importImage() {
   // if (m_saveOnCaptureCB->isChecked()) sl->save();
   // for now always save.  This can be tweaked later
   sl->save();
+
+  if (getReviewTime() > 0) {
+    m_liveViewStatus = LiveViewPaused;
+    m_reviewTimer->start(getReviewTime() * 1000);
+  }
 
   /* placement in xsheet */
   if (!getPlaceOnXSheet()) {
@@ -1800,6 +1843,333 @@ void StopMotion::postImportProcess() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::saveXmlFile() {
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
+
+  std::wstring levelName = m_levelName.toStdWString();
+  TFilePath parentDir    = scene->decodeFilePath(TFilePath(m_filePath));
+  TFilePath tempFile     = parentDir + TFilePath(levelName + L".xml");
+  QString xmlFileName    = tempFile.getQString();
+  QFile xmlFile(xmlFileName);
+  xmlFile.open(QIODevice::WriteOnly);
+  QXmlStreamWriter xmlWriter(&xmlFile);
+  xmlWriter.setAutoFormatting(true);
+  xmlWriter.writeStartDocument();
+  xmlWriter.writeStartElement("body");
+  xmlWriter.writeStartElement("SceneInfo");
+  xmlWriter.writeTextElement("LevelName", QString::fromStdWString(levelName));
+  xmlWriter.writeTextElement("CurrentFrame",
+                             QString::number(m_xSheetFrameNumber));
+  xmlWriter.writeEndElement();
+
+  xmlWriter.writeStartElement("CameraInfo");
+  if (m_usingWebcam) {
+    xmlWriter.writeTextElement("Webcam", "yes");
+    xmlWriter.writeTextElement("CameraName", m_webcamDescription);
+    xmlWriter.writeTextElement("CameraResolutionX",
+                               QString::number(m_webcamWidth));
+    xmlWriter.writeTextElement("CameraResolutionY",
+                               QString::number(m_webcamHeight));
+  } else {
+    xmlWriter.writeTextElement("Webcam", "no");
+#if WITH_CANON
+    xmlWriter.writeTextElement("CameraName",
+                               QString::fromStdString(m_cameraName));
+    xmlWriter.writeTextElement("Aperture", getCurrentAperture());
+    xmlWriter.writeTextElement("ShutterSpeed", getCurrentShutterSpeed());
+    xmlWriter.writeTextElement("ISO", getCurrentIso());
+    xmlWriter.writeTextElement("PictureStyle", getCurrentPictureStyle());
+    xmlWriter.writeTextElement("ImageQuality", getCurrentImageQuality());
+    xmlWriter.writeTextElement("WhiteBalance", getCurrentWhiteBalance());
+    xmlWriter.writeTextElement("ColorTemperature",
+                               getCurrentColorTemperature());
+    xmlWriter.writeTextElement("ExposureCompensation",
+                               getCurrentExposureCompensation());
+    xmlWriter.writeTextElement("FocusCheckLocationX",
+                               QString::number(m_finalZoomPoint.x));
+    xmlWriter.writeTextElement("FocusCheckLocationY",
+                               QString::number(m_finalZoomPoint.y));
+#endif
+  }
+  xmlWriter.writeEndElement();
+
+  xmlWriter.writeStartElement("Images");
+  xmlWriter.writeTextElement("Frame", "Yes");
+  xmlWriter.writeEndElement();
+  xmlWriter.writeEndElement();
+  xmlWriter.writeEndDocument();
+  xmlFile.close();
+}
+
+//-----------------------------------------------------------------------------
+
+bool StopMotion::loadXmlFile() {
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
+
+  bool webcam      = false;
+  bool foundCamera = false;
+  QString text;
+  int x;
+  int y;
+
+  std::wstring levelName = m_levelName.toStdWString();
+  TFilePath parentDir    = scene->decodeFilePath(TFilePath(m_filePath));
+  TFilePath tempFile     = parentDir + TFilePath(levelName + L".xml");
+  QString xmlFileName    = tempFile.getQString();
+  QFile xmlFile(xmlFileName);
+  if (!xmlFile.exists()) return false;
+  xmlFile.open(QIODevice::ReadOnly);
+
+  QXmlStreamReader xmlReader;
+  xmlReader.setDevice(&xmlFile);
+  xmlReader.readNext();
+  while (!xmlReader.atEnd()) {
+    if (xmlReader.isStartElement()) {
+      if (xmlReader.name() == "Webcam") {
+        text                      = xmlReader.readElementText();
+        if (text == "yes") webcam = true;
+      }
+      if (xmlReader.name() == "CameraName") {
+        text = xmlReader.readElementText();
+        if (webcam) {
+          QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+          if (cameras.size() > 0) {
+            for (int i = 0; i < cameras.size(); i++) {
+              if (cameras.at(i).description() == text) {
+                changeCameras(i + 1);
+                foundCamera = true;
+                break;
+              }
+            }
+          }
+        } else {
+#if WITH_CANON
+          openCameraSession();
+          QString camName = QString::fromStdString(getCameraName());
+          closeCameraSession();
+          if (text == camName) {
+            changeCameras(-1);
+            foundCamera = true;
+          }
+#endif
+        }
+      }
+      if (xmlReader.name() == "CameraResolutionX") {
+        text = xmlReader.readElementText();
+        x    = text.toInt();
+      }
+      if (xmlReader.name() == "CameraResolutionY") {
+        text = xmlReader.readElementText();
+        y    = text.toInt();
+        if (foundCamera == true && webcam == true) {
+          setWebcamResolution(
+              QString(QString::number(x) + " x " + QString::number(y)));
+        }
+      }
+#if WITH_CANON
+      if (xmlReader.name() == "Aperture") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setAperture(text);
+        }
+      }
+      if (xmlReader.name() == "ShutterSpeed") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setShutterSpeed(text);
+        }
+      }
+      if (xmlReader.name() == "ISO") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setIso(text);
+        }
+      }
+      if (xmlReader.name() == "PictureStyle") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setPictureStyle(text);
+        }
+      }
+      if (xmlReader.name() == "ImageQuality") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setImageQuality(text);
+        }
+      }
+      if (xmlReader.name() == "WhiteBalance") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setWhiteBalance(text);
+        }
+      }
+      if (xmlReader.name() == "ColorTemperature") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setColorTemperature(text);
+        }
+      }
+      if (xmlReader.name() == "ExposureCompensation") {
+        text = xmlReader.readElementText();
+        if (foundCamera == true && webcam == false) {
+          setExposureCompensation(text);
+        }
+      }
+      if (xmlReader.name() == "FocusCheckLocationX") {
+        text               = xmlReader.readElementText();
+        m_finalZoomPoint.x = text.toInt();
+      }
+      if (xmlReader.name() == "FocusCheckLocationY") {
+        text               = xmlReader.readElementText();
+        m_finalZoomPoint.y = text.toInt();
+      }
+#endif
+    }
+    xmlReader.readNext();
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool StopMotion::exportImageSequence() {
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
+
+  std::wstring levelName = m_levelName.toStdWString();
+
+  if (levelName.empty()) {
+    DVGui::error(
+        tr("No level name specified: please choose a valid level name"));
+    return false;
+  }
+  int frameNumber = m_frameNumber;
+
+  TFilePath parentDir     = scene->decodeFilePath(TFilePath(m_filePath));
+  TFilePath fullResFolder = scene->decodeFilePath(
+      TFilePath(m_filePath) + TFilePath(levelName + L"_FullRes"));
+  TFilePath liveViewFolder = scene->decodeFilePath(
+      TFilePath(m_filePath) + TFilePath(levelName + L"_LiveView"));
+
+  TFilePath levelFp = TFilePath(m_filePath) +
+                      TFilePath(levelName + L".." + m_fileType.toStdWString());
+  TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
+
+  TFilePath fullResFp =
+      scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
+  TFilePath fullResFile(fullResFp.withFrame(frameNumber));
+
+  TFilePath liveViewFp =
+      scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
+  TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
+
+  TFilePath tempFile = parentDir + "temp.jpg";
+
+  TXshSimpleLevel *sl = 0;
+  TXshLevel *level    = scene->getLevelSet()->getLevel(levelName);
+
+  if (level == NULL) {
+    DVGui::error(tr("No level exists with the current name."));
+    return false;
+  }
+
+  /* if the existing level is not a raster level, then return */
+  if (level->getType() != OVL_XSHLEVEL) {
+    DVGui::error(tr("This is not an image level."));
+    return false;
+  }
+  if (!level->getSimpleLevel()->getProperties()->isStopMotionLevel()) {
+    DVGui::error(tr("This is not a stop motion level."));
+    return false;
+  }
+  sl = level->getSimpleLevel();
+
+  if (scene->decodeFilePath(sl->getPath()) != actualLevelFp) {
+    DVGui::error(
+        tr("The save in path specified does not match with the existing "
+           "level."));
+    return false;
+  }
+
+  // find which column the level is on.
+  // check with the first column
+  int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
+  int r0, r1, row;
+  xsh->getColumn(col)->getRange(r0, r1);
+  TXshSimpleLevel *colLevel = xsh->getCell(r0, col).getSimpleLevel();
+  if (colLevel != sl) {
+    int cols = xsh->getColumnCount();
+    for (int i = 0; i < cols; i++) {
+      xsh->getColumn(col)->getRange(r0, r1);
+      colLevel = xsh->getCell(r0, col).getSimpleLevel();
+      if (colLevel == sl) {
+        col = i;
+        break;
+      }
+    }
+    DVGui::error(tr("Could not find an xsheet level with  the current level"));
+    return false;
+  }
+
+  row = r0;
+  xsh->getColumn(col)->getLevelRange(row, r0, r1);
+
+  GenericSaveFilePopup *m_saveSequencePopup =
+      new GenericSaveFilePopup("Export Image Sequence");
+  m_saveSequencePopup->setFileMode(true);
+  TFilePath fp = m_saveSequencePopup->getPath();
+  if (fp == TFilePath()) {
+    DVGui::error(tr("No export path given."));
+    return false;
+  }
+
+  TFilePath sourceFile;
+  TFilePath exportFilePath =
+      scene->decodeFilePath(fp + TFilePath(levelName + L"..jpg"));
+  TFilePath exportFile;
+  int exportFrameNumber = 1;
+  for (int i = r0; i <= r1; i++) {
+    int cellNumber = xsh->getCell(i, col).getFrameId().getNumber();
+    fullResFile    = fullResFp.withFrame(cellNumber);
+    if (TFileStatus(fullResFile).doesExist()) {
+      sourceFile = fullResFile;
+    } else {
+      sourceFile = actualLevelFp.withFrame(cellNumber);
+    }
+
+    if (!TFileStatus(sourceFile).doesExist()) {
+      DVGui::error(tr("Could not find the source file."));
+      return false;
+    }
+    exportFile = exportFilePath.withFrame(exportFrameNumber);
+    if (TFileStatus(exportFile).doesExist()) {
+      QString question = tr("Overwrite existing files?");
+      int ret          = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                              QObject::tr("Cancel"));
+      if (ret == 0 || ret == 2) return false;
+    }
+    TSystem::copyFile(exportFile, sourceFile);
+    exportFrameNumber++;
+    if (!TFileStatus(exportFile).doesExist()) {
+      DVGui::error(tr("An error occurred.  Aborting."));
+      return false;
+    }
+  }
+  QString message1 = tr("Successfully exported ");
+  QString message2 = tr(" images.");
+  QString finalMessage =
+      message1 + QString::number(exportFrameNumber - 1) + message2;
+  DVGui::MsgBoxInPopup(DVGui::MsgType(DVGui::INFORMATION), finalMessage);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -2472,7 +2842,10 @@ void StopMotion::setToNextNewLevel() {
 
 //-----------------------------------------------------------------
 
-void StopMotion::refreshCameraList() { emit(updateCameraList()); }
+void StopMotion::refreshCameraList() {
+  disconnectAllCameras();
+  emit(updateCameraList());
+}
 
 //-----------------------------------------------------------------
 
@@ -2481,28 +2854,7 @@ void StopMotion::changeCameras(int index) {
 
   // if selected the non-connected state, then disconnect the current camera
   if (index == 0) {
-    m_active            = false;
-    m_webcamDeviceName  = QString();
-    m_webcamDescription = QString();
-    m_webcamIndex       = -1;
-
-#if WITH_CANON
-    m_proxyDpi             = TPointD(0.0, 0.0);
-    m_proxyImageDimensions = TDimension(0, 0);
-
-    if (m_sessionOpen) {
-      if (m_liveViewStatus > 0) {
-        endLiveView();
-      }
-      closeCameraSession();
-    }
-
-#endif
-    m_usingWebcam = false;
-    setTEnvCameraName("");
-
-    emit(newCameraSelected(index, false));
-    toggleNumpadShortcuts(false);
+    disconnectAllCameras();
     return;
   }
 
@@ -2528,7 +2880,7 @@ void StopMotion::changeCameras(int index) {
 #if WITH_CANON
     if (m_sessionOpen) {
       if (m_liveViewStatus > 0) {
-        endLiveView();
+        endCanonLiveView();
         closeCameraSession();
       }
     }
@@ -2706,7 +3058,7 @@ bool StopMotion::initWebcam(int index) {
     return false;
   }
 #else
-    m_cvWebcam.open(index);
+  m_cvWebcam.open(index);
 #endif
   return true;
 }
@@ -2848,7 +3200,7 @@ bool StopMotion::toggleLiveView() {
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
 #if WITH_CANON
-      startLiveView();
+      startCanonLiveView();
 #endif
     } else
       m_liveViewStatus = 1;
@@ -2861,7 +3213,7 @@ bool StopMotion::toggleLiveView() {
   } else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
     if (!m_usingWebcam) {
 #if WITH_CANON
-      endLiveView();
+      endCanonLiveView();
 #endif
     } else
       releaseWebcam();
@@ -2871,6 +3223,7 @@ bool StopMotion::toggleLiveView() {
       Preferences::instance()->setValue(rewindAfterPlayback, true);
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    m_liveViewStatus = LiveViewClosed;
     return false;
   } else {
     DVGui::warning(tr("No camera selected."));
@@ -3430,12 +3783,21 @@ EdsError StopMotion::setAperture(QString aperture) {
   while (it != m_avMap.end()) {
     if (it->second == aperture.toStdString()) {
       value = it->first;
-      break;
+      err =
+          EdsSetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(value), &value);
+      if (err == EDS_ERR_OK) {
+        break;
+      } else {
+        // some aperture values have two entries in the avMap
+        it++;
+        value = it->first;
+        err   = EdsSetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(value),
+                                 &value);
+        break;
+      }
     }
     it++;
   }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(value), &value);
   emit(apertureChangedSignal(aperture));
   return err;
 }
@@ -3675,7 +4037,7 @@ EdsError StopMotion::takePicture() {
 
 //-----------------------------------------------------------------
 
-EdsError StopMotion::startLiveView() {
+EdsError StopMotion::startCanonLiveView() {
   if (m_camera && m_sessionOpen) {
     EdsError err = EDS_ERR_OK;
     // Get the output device for the live view image
@@ -3702,7 +4064,7 @@ EdsError StopMotion::startLiveView() {
 
 //-----------------------------------------------------------------
 
-EdsError StopMotion::endLiveView() {
+EdsError StopMotion::endCanonLiveView() {
   EdsError err = EDS_ERR_OK;
   // Get the output device for the live view image
   EdsUInt32 device;
@@ -4084,29 +4446,61 @@ EdsError StopMotion::handlePropertyEvent(EdsPropertyEvent event,
     emit(instance()->apertureOptionsChanged());
   }
 
+  if (property == kEdsPropID_Av && event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->apertureChangedSignal(instance()->getCurrentAperture()));
+  }
+
   if (property == kEdsPropID_Tv &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->shutterSpeedOptionsChanged());
+  }
+  if (property == kEdsPropID_Tv && event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->shutterSpeedChangedSignal(
+        instance()->getCurrentShutterSpeed()));
   }
   if (property == kEdsPropID_ISOSpeed &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->isoOptionsChanged());
   }
+  if (property == kEdsPropID_ISOSpeed &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->isoChangedSignal(instance()->getCurrentIso()));
+  }
   if (property == kEdsPropID_ExposureCompensation &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->exposureOptionsChanged());
+  }
+  if (property == kEdsPropID_ExposureCompensation &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->exposureChangedSignal(
+        instance()->getCurrentExposureCompensation()));
   }
   if (property == kEdsPropID_WhiteBalance &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->whiteBalanceOptionsChanged());
   }
+  if (property == kEdsPropID_WhiteBalance &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->whiteBalanceChangedSignal(
+        instance()->getCurrentWhiteBalance()));
+  }
   if (property == kEdsPropID_PictureStyle &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->pictureStyleOptionsChanged());
   }
+  if (property == kEdsPropID_PictureStyle &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->pictureStyleChangedSignal(
+        instance()->getCurrentPictureStyle()));
+  }
   if (property == kEdsPropID_ImageQuality &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
     emit(instance()->imageQualityOptionsChanged());
+  }
+  if (property == kEdsPropID_ImageQuality &&
+      event == kEdsPropertyEvent_PropertyChanged) {
+    emit(instance()->imageQualityChangedSignal(
+        instance()->getCurrentImageQuality()));
   }
 
   return EDS_ERR_OK;
@@ -4748,12 +5142,11 @@ public:
 
 class StopMotionRemoveFrame : public MenuItemHandler {
 public:
-    StopMotionRemoveFrame()
-        : MenuItemHandler(MI_StopMotionRemoveFrame) {}
-    void execute() {
-        StopMotion* sm = StopMotion::instance();
-        sm->removeStopMotionFrame();
-    }
+  StopMotionRemoveFrame() : MenuItemHandler(MI_StopMotionRemoveFrame) {}
+  void execute() {
+    StopMotion *sm = StopMotion::instance();
+    sm->removeStopMotionFrame();
+  }
 } StopMotionRemoveFrame;
 
 #if WITH_CANON

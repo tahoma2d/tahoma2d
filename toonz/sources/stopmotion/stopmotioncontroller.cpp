@@ -448,21 +448,32 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_mainControlsPage->setLayout(controlLayout);
 
     // Make Settings Page
-
-    m_isoCombo            = new QComboBox(this);
-    m_shutterSpeedCombo   = new QComboBox(this);
+    m_apertureLabel  = new QLabel(tr(""), this);
+    m_apertureSlider = new QSlider(Qt::Horizontal, this);
+    m_apertureSlider->setRange(0, 10);
+    m_apertureSlider->setTickInterval(1);
+    m_apertureSlider->setFixedWidth(300);
+    m_isoLabel  = new QLabel(tr(""), this);
+    m_isoSlider = new QSlider(Qt::Horizontal, this);
+    m_isoSlider->setRange(0, 10);
+    m_isoSlider->setTickInterval(1);
+    m_isoSlider->setFixedWidth(300);
+    m_shutterSpeedLabel  = new QLabel(tr(""), this);
+    m_shutterSpeedSlider = new QSlider(Qt::Horizontal, this);
+    m_shutterSpeedSlider->setRange(0, 10);
+    m_shutterSpeedSlider->setTickInterval(1);
+    m_shutterSpeedSlider->setFixedWidth(300);
+    m_kelvinValueLabel = new QLabel(tr("Temperature: "), this);
+    m_kelvinSlider     = new QSlider(Qt::Horizontal, this);
+    m_kelvinSlider->setRange(0, 10);
+    m_kelvinSlider->setTickInterval(1);
+    m_kelvinSlider->setFixedWidth(300);
     m_exposureCombo       = new QComboBox(this);
-    m_apertureCombo       = new QComboBox(this);
     m_whiteBalanceCombo   = new QComboBox(this);
-    m_kelvinCombo         = new QComboBox(this);
     m_imageQualityCombo   = new QComboBox(this);
     m_pictureStyleCombo   = new QComboBox(this);
     m_cameraSettingsLabel = new QLabel(tr("Camera Model"), this);
     m_cameraModeLabel     = new QLabel(tr("Camera Mode"), this);
-    m_kelvinLabel         = new QLabel(tr("Temperature: "), this);
-    m_isoCombo->setFixedWidth(fontMetrics().width("000000") + 25);
-    m_shutterSpeedCombo->setFixedWidth(fontMetrics().width("000000") + 25);
-    m_apertureCombo->setFixedWidth(fontMetrics().width("000000") + 25);
     m_exposureCombo->setFixedWidth(fontMetrics().width("000000") + 25);
     QVBoxLayout *settingsLayout = new QVBoxLayout;
     settingsLayout->setSpacing(0);
@@ -476,29 +487,44 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                                     Qt::AlignCenter);
       settingsGridLayout->addWidget(m_cameraModeLabel, 1, 0, 1, 2,
                                     Qt::AlignCenter);
-      settingsGridLayout->addWidget(new QLabel(tr("Shutter Speed: ")), 2, 0,
+      settingsGridLayout->addWidget(new QLabel(" ", this), 2, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_shutterSpeedLabel, 3, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_shutterSpeedSlider, 4, 0, 1, 2,
+                                    Qt::AlignCenter);
+
+      settingsGridLayout->addWidget(m_apertureLabel, 5, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_apertureSlider, 6, 0, 1, 2,
+                                    Qt::AlignCenter);
+
+      settingsGridLayout->addWidget(m_isoLabel, 7, 0, 1, 2, Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_isoSlider, 8, 0, 1, 2, Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 9, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(tr("White Balance: ")), 10, 0,
                                     Qt::AlignRight);
-      settingsGridLayout->addWidget(m_shutterSpeedCombo, 2, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("Iso: ")), 3, 0,
+      settingsGridLayout->addWidget(m_whiteBalanceCombo, 10, 1, Qt::AlignLeft);
+      settingsGridLayout->addWidget(m_kelvinValueLabel, 11, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_kelvinSlider, 12, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 13, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(tr("Picture Style: ")), 14, 0,
                                     Qt::AlignRight);
-      settingsGridLayout->addWidget(m_isoCombo, 3, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("Aperture: ")), 4, 0,
+      settingsGridLayout->addWidget(m_pictureStyleCombo, 14, 1, Qt::AlignLeft);
+      settingsGridLayout->addWidget(new QLabel(tr("Image Quality: ")), 15, 0,
                                     Qt::AlignRight);
-      settingsGridLayout->addWidget(m_apertureCombo, 4, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("Exposure: ")), 5, 0,
+      settingsGridLayout->addWidget(m_imageQualityCombo, 15, 1, Qt::AlignLeft);
+      settingsGridLayout->addWidget(new QLabel(tr("Exposure: ")), 16, 0,
                                     Qt::AlignRight);
-      settingsGridLayout->addWidget(m_exposureCombo, 5, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("Image Quality: ")), 6, 0,
-                                    Qt::AlignRight);
-      settingsGridLayout->addWidget(m_imageQualityCombo, 6, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("Picture Style: ")), 7, 0,
-                                    Qt::AlignRight);
-      settingsGridLayout->addWidget(m_pictureStyleCombo, 7, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(new QLabel(tr("White Balance: ")), 8, 0,
-                                    Qt::AlignRight);
-      settingsGridLayout->addWidget(m_whiteBalanceCombo, 8, 1, Qt::AlignLeft);
-      settingsGridLayout->addWidget(m_kelvinLabel, 9, 0, Qt::AlignRight);
-      settingsGridLayout->addWidget(m_kelvinCombo, 9, 1, Qt::AlignLeft);
+      settingsGridLayout->addWidget(m_exposureCombo, 16, 1, Qt::AlignLeft);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 17, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 19, 0, 1, 2,
+                                    Qt::AlignCenter);
 
       settingsGridLayout->setColumnStretch(1, 30);
     }
@@ -819,17 +845,20 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret &&
         connect(m_stopMotion, SIGNAL(colorTemperatureChangedSignal(QString)),
                 this, SLOT(onColorTemperatureChangedSignal(QString)));
-  ret = ret && connect(m_apertureCombo, SIGNAL(currentIndexChanged(int)), this,
+  // ret = ret && connect(m_apertureCombo, SIGNAL(currentIndexChanged(int)),
+  // this,
+  //                     SLOT(onApertureChanged(int)));
+  ret = ret && connect(m_apertureSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onApertureChanged(int)));
-  ret = ret && connect(m_shutterSpeedCombo, SIGNAL(currentIndexChanged(int)),
-                       this, SLOT(onShutterSpeedChanged(int)));
-  ret = ret && connect(m_isoCombo, SIGNAL(currentIndexChanged(int)), this,
+  ret = ret && connect(m_shutterSpeedSlider, SIGNAL(valueChanged(int)), this,
+                       SLOT(onShutterSpeedChanged(int)));
+  ret = ret && connect(m_isoSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onIsoChanged(int)));
   ret = ret && connect(m_exposureCombo, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onExposureChanged(int)));
   ret = ret && connect(m_whiteBalanceCombo, SIGNAL(currentIndexChanged(int)),
                        this, SLOT(onWhiteBalanceChanged(int)));
-  ret = ret && connect(m_kelvinCombo, SIGNAL(currentIndexChanged(int)), this,
+  ret = ret && connect(m_kelvinSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onColorTemperatureChanged(int)));
   ret = ret && connect(m_imageQualityCombo, SIGNAL(currentIndexChanged(int)),
                        this, SLOT(onImageQualityChanged(int)));
@@ -1135,27 +1164,26 @@ void StopMotionController::refreshCameraList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshOptionsLists() {
-  m_apertureCombo->blockSignals(true);
-  m_isoCombo->blockSignals(true);
-  m_shutterSpeedCombo->blockSignals(true);
+  m_apertureSlider->blockSignals(true);
+  m_isoSlider->blockSignals(true);
+  m_shutterSpeedSlider->blockSignals(true);
   m_exposureCombo->blockSignals(true);
   m_whiteBalanceCombo->blockSignals(true);
-  m_kelvinCombo->blockSignals(true);
+  m_kelvinSlider->blockSignals(true);
   m_imageQualityCombo->blockSignals(true);
   m_pictureStyleCombo->blockSignals(true);
 
-  m_isoCombo->clear();
-  m_shutterSpeedCombo->clear();
-  m_apertureCombo->clear();
+  // m_isoCombo->clear();
+  // m_shutterSpeedCombo->clear();
+  // m_apertureSlider->clear();
   m_exposureCombo->clear();
 #if WITH_CANON
-  if (m_stopMotion->getCameraCount() == 0) {
-    m_shutterSpeedCombo->setDisabled(true);
-    m_isoCombo->setDisabled(true);
-    m_apertureCombo->setDisabled(true);
+    m_shutterSpeedSlider->setDisabled(true);
+    m_isoSlider->setDisabled(true);
+    m_apertureSlider->setDisabled(true);
     m_exposureCombo->setDisabled(true);
     m_whiteBalanceCombo->setDisabled(true);
-    m_kelvinCombo->setDisabled(true);
+    m_kelvinSlider->setDisabled(true);
     m_imageQualityCombo->setDisabled(true);
     m_pictureStyleCombo->setDisabled(true);
     return;
@@ -1191,19 +1219,24 @@ void StopMotionController::refreshMode() {
 
 void StopMotionController::refreshApertureList() {
 #if WITH_CANON
-  m_apertureCombo->blockSignals(true);
-  m_apertureCombo->clear();
+  m_apertureSlider->blockSignals(true);
+  int count = 0;
   m_stopMotion->getAvailableApertures();
-  m_apertureCombo->addItems(m_stopMotion->getApertureOptions());
+  count = m_stopMotion->getApertureOptions().size();
 
-  if (m_apertureCombo->count() == 0) {
-    m_apertureCombo->addItem(tr("Auto"));
-    m_apertureCombo->setDisabled(true);
+  if (count == 0) {
+    m_apertureLabel->setText(tr("Aperture: Auto"));
+    m_apertureSlider->setDisabled(true);
+    m_apertureSlider->setRange(0, 0);
   } else {
-    m_apertureCombo->setEnabled(true);
-    m_apertureCombo->setCurrentText(m_stopMotion->getCurrentAperture());
+    m_apertureSlider->setEnabled(true);
+    m_apertureLabel->setText(tr("Aperture: ") +
+                             m_stopMotion->getCurrentAperture());
+    m_apertureSlider->setRange(0, count - 1);
+    m_apertureSlider->setValue(m_stopMotion->getApertureOptions().lastIndexOf(
+        m_stopMotion->getCurrentAperture()));
   }
-  m_apertureCombo->blockSignals(false);
+  m_apertureSlider->blockSignals(false);
 #endif
 }
 
@@ -1211,19 +1244,25 @@ void StopMotionController::refreshApertureList() {
 
 void StopMotionController::refreshShutterSpeedList() {
 #if WITH_CANON
-  m_shutterSpeedCombo->blockSignals(true);
-  m_shutterSpeedCombo->clear();
+  m_shutterSpeedSlider->blockSignals(true);
+  int count = 0;
   m_stopMotion->getAvailableShutterSpeeds();
-  m_shutterSpeedCombo->addItems(m_stopMotion->getShutterSpeedOptions());
+  count = m_stopMotion->getShutterSpeedOptions().size();
 
-  if (m_shutterSpeedCombo->count() == 0) {
-    m_shutterSpeedCombo->addItem(tr("Auto"));
-    m_shutterSpeedCombo->setDisabled(true);
+  if (count == 0) {
+    m_shutterSpeedLabel->setText(tr("Shutter Speed: Auto"));
+    m_shutterSpeedSlider->setDisabled(true);
+    m_shutterSpeedSlider->setRange(0, 0);
   } else {
-    m_shutterSpeedCombo->setEnabled(true);
-    m_shutterSpeedCombo->setCurrentText(m_stopMotion->getCurrentShutterSpeed());
+    m_shutterSpeedSlider->setEnabled(true);
+    m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
+                                 m_stopMotion->getCurrentShutterSpeed());
+    m_shutterSpeedSlider->setRange(0, count - 1);
+    m_shutterSpeedSlider->setValue(
+        m_stopMotion->getShutterSpeedOptions().lastIndexOf(
+            m_stopMotion->getCurrentShutterSpeed()));
   }
-  m_shutterSpeedCombo->blockSignals(false);
+  m_shutterSpeedSlider->blockSignals(false);
 #endif
 }
 
@@ -1231,20 +1270,23 @@ void StopMotionController::refreshShutterSpeedList() {
 
 void StopMotionController::refreshIsoList() {
 #if WITH_CANON
-  m_isoCombo->blockSignals(true);
-  m_isoCombo->clear();
+  m_isoSlider->blockSignals(true);
+  int count = 0;
   m_stopMotion->getAvailableIso();
-  m_isoCombo->addItems(m_stopMotion->getIsoOptions());
+  count = m_stopMotion->getIsoOptions().size();
 
-  if (m_isoCombo->count() == 0) {
-    m_isoCombo->addItem(tr("Auto"));
-    m_isoCombo->setDisabled(true);
+  if (count == 0) {
+    m_isoLabel->setText(tr("Iso: ") + tr("Auto"));
+    m_isoSlider->setDisabled(true);
+    m_isoSlider->setRange(0, 0);
   } else {
-    m_isoCombo->setEnabled(true);
-    std::string currIso = m_stopMotion->getCurrentIso().toStdString();
-    m_isoCombo->setCurrentText(m_stopMotion->getCurrentIso());
+    m_isoSlider->setEnabled(true);
+    m_isoLabel->setText(tr("Iso: ") + m_stopMotion->getCurrentIso());
+    m_isoSlider->setRange(0, count - 1);
+    m_isoSlider->setValue(m_stopMotion->getIsoOptions().lastIndexOf(
+        m_stopMotion->getCurrentIso()));
   }
-  m_isoCombo->blockSignals(false);
+  m_isoSlider->blockSignals(false);
 #endif
 }
 
@@ -1294,24 +1336,25 @@ void StopMotionController::refreshWhiteBalanceList() {
 
 void StopMotionController::refreshColorTemperatureList() {
 #if WITH_CANON
-  m_kelvinCombo->blockSignals(true);
-  m_kelvinCombo->clear();
-  m_kelvinCombo->addItems(m_stopMotion->getColorTemperatureOptions());
-  std::string ct = m_stopMotion->getCurrentWhiteBalance().toStdString();
-  int kCount     = m_kelvinCombo->count();
-  if (m_kelvinCombo->count() == 0 ||
+  m_kelvinSlider->blockSignals(true);
+  int count = 0;
+  count     = m_stopMotion->getColorTemperatureOptions().size();
+
+  if (count == 0 ||
       m_stopMotion->getCurrentWhiteBalance() != "Color Temperature") {
     // m_kelvinCombo->addItem(tr("Disabled"));
-    m_kelvinCombo->setDisabled(true);
-    m_kelvinCombo->hide();
-    m_kelvinLabel->hide();
+    m_kelvinSlider->setDisabled(true);
+    m_kelvinSlider->hide();
+    m_kelvinValueLabel->hide();
   } else {
-    m_kelvinCombo->show();
-    m_kelvinLabel->show();
-    m_kelvinCombo->setEnabled(true);
-    m_kelvinCombo->setCurrentText(m_stopMotion->getCurrentColorTemperature());
+    m_kelvinSlider->show();
+    m_kelvinValueLabel->show();
+    m_kelvinSlider->setEnabled(true);
+    m_kelvinSlider->setRange(0, count - 1);
+    m_kelvinValueLabel->setText(tr("Temperature: ") +
+                                m_stopMotion->getCurrentColorTemperature());
   }
-  m_kelvinCombo->blockSignals(false);
+  m_kelvinSlider->blockSignals(false);
 #endif
 }
 
@@ -1378,22 +1421,19 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
     m_cameraStatusLabel->hide();
-  }
-  if (useWebcam) {
+  } else if (useWebcam) {
     if (m_tabBar->tabText(1) == tr("Settings")) {
       m_tabBar->removeTab(1);
     }
     m_resolutionCombo->show();
     m_resolutionCombo->setEnabled(true);
     m_resolutionLabel->show();
-    if (m_captureFilterSettingsBtn)
-        m_captureFilterSettingsBtn->show();
+    if (m_captureFilterSettingsBtn) m_captureFilterSettingsBtn->show();
     m_cameraStatusLabel->hide();
   } else {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
-    if (m_captureFilterSettingsBtn)
-        m_captureFilterSettingsBtn->hide();
+    if (m_captureFilterSettingsBtn) m_captureFilterSettingsBtn->hide();
     m_cameraStatusLabel->show();
     if (m_tabBar->tabText(1) == tr("Options")) {
       m_tabBar->insertTab(1, tr("Settings"));
@@ -1518,7 +1558,15 @@ void StopMotionController::onFrameCaptured(QImage &image) {}
 
 void StopMotionController::onApertureChanged(int index) {
 #if WITH_CANON
-  m_stopMotion->setAperture(m_apertureCombo->currentText());
+  m_apertureSlider->blockSignals(true);
+  QStringList apertureOptions = m_stopMotion->getApertureOptions();
+  m_stopMotion->setAperture(apertureOptions.at(m_apertureSlider->value()));
+  m_apertureSlider->setRange(0, apertureOptions.size() - 1);
+  m_apertureSlider->setValue(
+      apertureOptions.lastIndexOf(m_stopMotion->getCurrentAperture()));
+  m_apertureLabel->setText(tr("Aperture: ") +
+                           m_stopMotion->getCurrentAperture());
+  m_apertureSlider->blockSignals(false);
 #endif
 }
 
@@ -1526,7 +1574,14 @@ void StopMotionController::onApertureChanged(int index) {
 
 void StopMotionController::onApertureChangedSignal(QString text) {
 #if WITH_CANON
-  m_apertureCombo->setCurrentText(m_stopMotion->getCurrentAperture());
+  m_apertureSlider->blockSignals(true);
+  QStringList apertureOptions = m_stopMotion->getApertureOptions();
+  m_apertureLabel->setText(tr("Aperture: ") +
+                           m_stopMotion->getCurrentAperture());
+  m_apertureSlider->setRange(0, apertureOptions.size() - 1);
+  m_apertureSlider->setValue(
+      apertureOptions.lastIndexOf(m_stopMotion->getCurrentAperture()));
+  m_apertureSlider->blockSignals(false);
 #endif
 }
 
@@ -1534,7 +1589,16 @@ void StopMotionController::onApertureChangedSignal(QString text) {
 
 void StopMotionController::onShutterSpeedChanged(int index) {
 #if WITH_CANON
-  m_stopMotion->setShutterSpeed(m_shutterSpeedCombo->currentText());
+  m_shutterSpeedSlider->blockSignals(true);
+  QStringList shutterSpeedOptions = m_stopMotion->getShutterSpeedOptions();
+  m_stopMotion->setShutterSpeed(
+      shutterSpeedOptions.at(m_shutterSpeedSlider->value()));
+  m_shutterSpeedSlider->setRange(0, shutterSpeedOptions.size() - 1);
+  m_shutterSpeedSlider->setValue(
+      shutterSpeedOptions.lastIndexOf(m_stopMotion->getCurrentShutterSpeed()));
+  m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
+                               m_stopMotion->getCurrentShutterSpeed());
+  m_shutterSpeedSlider->blockSignals(false);
 #endif
 }
 
@@ -1542,7 +1606,14 @@ void StopMotionController::onShutterSpeedChanged(int index) {
 
 void StopMotionController::onShutterSpeedChangedSignal(QString text) {
 #if WITH_CANON
-  m_shutterSpeedCombo->setCurrentText(m_stopMotion->getCurrentShutterSpeed());
+  m_shutterSpeedSlider->blockSignals(true);
+  QStringList shutterSpeedOptions = m_stopMotion->getShutterSpeedOptions();
+  m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
+                               m_stopMotion->getCurrentShutterSpeed());
+  m_shutterSpeedSlider->setRange(0, shutterSpeedOptions.size() - 1);
+  m_shutterSpeedSlider->setValue(
+      shutterSpeedOptions.lastIndexOf(m_stopMotion->getCurrentShutterSpeed()));
+  m_shutterSpeedSlider->blockSignals(false);
 #endif
 }
 
@@ -1550,7 +1621,13 @@ void StopMotionController::onShutterSpeedChangedSignal(QString text) {
 
 void StopMotionController::onIsoChanged(int index) {
 #if WITH_CANON
-  m_stopMotion->setIso(m_isoCombo->currentText());
+  m_isoSlider->blockSignals(true);
+  QStringList isoOptions = m_stopMotion->getIsoOptions();
+  m_stopMotion->setIso(isoOptions.at(m_isoSlider->value()));
+  m_isoSlider->setRange(0, isoOptions.size() - 1);
+  m_isoSlider->setValue(isoOptions.lastIndexOf(m_stopMotion->getCurrentIso()));
+  m_isoLabel->setText(tr("Iso: ") + m_stopMotion->getCurrentIso());
+  m_isoSlider->blockSignals(false);
 #endif
 }
 
@@ -1558,7 +1635,12 @@ void StopMotionController::onIsoChanged(int index) {
 
 void StopMotionController::onIsoChangedSignal(QString text) {
 #if WITH_CANON
-  m_isoCombo->setCurrentText(m_stopMotion->getCurrentIso());
+  m_isoSlider->blockSignals(true);
+  QStringList isoOptions = m_stopMotion->getIsoOptions();
+  m_isoSlider->setRange(0, isoOptions.size() - 1);
+  m_isoSlider->setValue(isoOptions.lastIndexOf(m_stopMotion->getCurrentIso()));
+  m_isoLabel->setText(tr("Iso: ") + m_stopMotion->getCurrentIso());
+  m_isoSlider->blockSignals(false);
 #endif
 }
 
@@ -1566,7 +1648,9 @@ void StopMotionController::onIsoChangedSignal(QString text) {
 
 void StopMotionController::onExposureChanged(int index) {
 #if WITH_CANON
+  m_exposureCombo->blockSignals(true);
   m_stopMotion->setExposureCompensation(m_exposureCombo->currentText());
+  m_exposureCombo->blockSignals(false);
 #endif
 }
 
@@ -1574,8 +1658,10 @@ void StopMotionController::onExposureChanged(int index) {
 
 void StopMotionController::onExposureChangedSignal(QString text) {
 #if WITH_CANON
+  m_exposureCombo->blockSignals(true);
   m_exposureCombo->setCurrentText(
       m_stopMotion->getCurrentExposureCompensation());
+  m_exposureCombo->blockSignals(false);
 #endif
 }
 
@@ -1583,7 +1669,9 @@ void StopMotionController::onExposureChangedSignal(QString text) {
 
 void StopMotionController::onWhiteBalanceChanged(int index) {
 #if WITH_CANON
+  m_whiteBalanceCombo->blockSignals(true);
   m_stopMotion->setWhiteBalance(m_whiteBalanceCombo->currentText());
+  m_whiteBalanceCombo->blockSignals(false);
 #endif
 }
 
@@ -1591,8 +1679,10 @@ void StopMotionController::onWhiteBalanceChanged(int index) {
 
 void StopMotionController::onWhiteBalanceChangedSignal(QString text) {
 #if WITH_CANON
+  m_whiteBalanceCombo->blockSignals(true);
   m_whiteBalanceCombo->setCurrentText(m_stopMotion->getCurrentWhiteBalance());
   refreshColorTemperatureList();
+  m_whiteBalanceCombo->blockSignals(false);
 #endif
 }
 
@@ -1600,7 +1690,15 @@ void StopMotionController::onWhiteBalanceChangedSignal(QString text) {
 
 void StopMotionController::onColorTemperatureChanged(int index) {
 #if WITH_CANON
-  m_stopMotion->setColorTemperature(m_kelvinCombo->currentText());
+  m_kelvinSlider->blockSignals(true);
+  QStringList kelvinOptions = m_stopMotion->getColorTemperatureOptions();
+  m_stopMotion->setColorTemperature(kelvinOptions.at(m_kelvinSlider->value()));
+  m_kelvinSlider->setRange(0, kelvinOptions.size() - 1);
+  m_kelvinSlider->setValue(
+      kelvinOptions.lastIndexOf(m_stopMotion->getCurrentColorTemperature()));
+  m_kelvinValueLabel->setText(tr("Temperature: ") +
+                              m_stopMotion->getCurrentColorTemperature());
+  m_kelvinSlider->blockSignals(false);
 #endif
 }
 
@@ -1608,7 +1706,14 @@ void StopMotionController::onColorTemperatureChanged(int index) {
 
 void StopMotionController::onColorTemperatureChangedSignal(QString text) {
 #if WITH_CANON
-  m_kelvinCombo->setCurrentText(m_stopMotion->getCurrentColorTemperature());
+  m_kelvinSlider->blockSignals(true);
+  QStringList kelvinOptions = m_stopMotion->getColorTemperatureOptions();
+  m_kelvinSlider->setRange(0, kelvinOptions.size() - 1);
+  m_kelvinSlider->setValue(
+      kelvinOptions.lastIndexOf(m_stopMotion->getCurrentColorTemperature()));
+  m_kelvinValueLabel->setText(tr("Temperature: ") +
+                              m_stopMotion->getCurrentColorTemperature());
+  m_kelvinSlider->blockSignals(false);
 #endif
 }
 
@@ -1616,7 +1721,9 @@ void StopMotionController::onColorTemperatureChangedSignal(QString text) {
 
 void StopMotionController::onImageQualityChanged(int index) {
 #if WITH_CANON
+  m_imageQualityCombo->blockSignals(true);
   m_stopMotion->setImageQuality(m_imageQualityCombo->currentText());
+  m_imageQualityCombo->blockSignals(false);
 #endif
 }
 
@@ -1624,7 +1731,9 @@ void StopMotionController::onImageQualityChanged(int index) {
 
 void StopMotionController::onImageQualityChangedSignal(QString text) {
 #if WITH_CANON
+  m_imageQualityCombo->blockSignals(true);
   m_imageQualityCombo->setCurrentText(m_stopMotion->getCurrentImageQuality());
+  m_imageQualityCombo->blockSignals(false);
 #endif
 }
 
@@ -1632,7 +1741,9 @@ void StopMotionController::onImageQualityChangedSignal(QString text) {
 
 void StopMotionController::onPictureStyleChanged(int index) {
 #if WITH_CANON
+  m_pictureStyleCombo->blockSignals(true);
   m_stopMotion->setPictureStyle(m_pictureStyleCombo->currentText());
+  m_pictureStyleCombo->blockSignals(false);
 #endif
 }
 
@@ -1640,7 +1751,9 @@ void StopMotionController::onPictureStyleChanged(int index) {
 
 void StopMotionController::onPictureStyleChangedSignal(QString text) {
 #if WITH_CANON
+  m_pictureStyleCombo->blockSignals(true);
   m_pictureStyleCombo->setCurrentText(m_stopMotion->getCurrentPictureStyle());
+  m_pictureStyleCombo->blockSignals(false);
 #endif
 }
 

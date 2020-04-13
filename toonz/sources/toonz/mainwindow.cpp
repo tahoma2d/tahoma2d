@@ -443,12 +443,123 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler("MI_ResetRoomLayout", this, &MainWindow::resetRoomsLayout);
   setCommandHandler(MI_AutoFillToggle, this, &MainWindow::autofillToggle);
 
-  /*-- FillAreas,FillLinesに直接切り替えるコマンド --*/
+  /*-- Animate tool + mode switching shortcuts --*/
+  setCommandHandler(MI_EditNextMode, this, &MainWindow::toggleEditNextMode);
+  setCommandHandler(MI_EditPosition, this, &MainWindow::toggleEditPosition);
+  setCommandHandler(MI_EditRotation, this, &MainWindow::toggleEditRotation);
+  setCommandHandler(MI_EditScale, this, &MainWindow::toggleEditNextScale);
+  setCommandHandler(MI_EditShear, this, &MainWindow::toggleEditNextShear);
+  setCommandHandler(MI_EditCenter, this, &MainWindow::toggleEditNextCenter);
+  setCommandHandler(MI_EditAll, this, &MainWindow::toggleEditNextAll);
+
+  /*-- Selection tool + type switching shortcuts --*/
+  setCommandHandler(MI_SelectionNextType, this,
+                    &MainWindow::toggleSelectionNextType);
+  setCommandHandler(MI_SelectionRectangular, this,
+                    &MainWindow::toggleSelectionRectangular);
+  setCommandHandler(MI_SelectionFreehand, this,
+                    &MainWindow::toggleSelectionFreehand);
+  setCommandHandler(MI_SelectionPolyline, this,
+                    &MainWindow::toggleSelectionPolyline);
+
+  /*-- Geometric tool + shape switching shortcuts --*/
+  setCommandHandler(MI_GeometricNextShape, this,
+                    &MainWindow::toggleGeometricNextShape);
+  setCommandHandler(MI_GeometricRectangle, this,
+                    &MainWindow::toggleGeometricRectangle);
+  setCommandHandler(MI_GeometricCircle, this,
+                    &MainWindow::toggleGeometricCircle);
+  setCommandHandler(MI_GeometricEllipse, this,
+                    &MainWindow::toggleGeometricEllipse);
+  setCommandHandler(MI_GeometricLine, this, &MainWindow::toggleGeometricLine);
+  setCommandHandler(MI_GeometricPolyline, this,
+                    &MainWindow::toggleGeometricPolyline);
+  setCommandHandler(MI_GeometricArc, this, &MainWindow::toggleGeometricArc);
+  setCommandHandler(MI_GeometricPolygon, this,
+                    &MainWindow::toggleGeometricPolygon);
+
+  /*-- Type tool + style switching shortcuts --*/
+  setCommandHandler(MI_TypeNextStyle, this, &MainWindow::toggleTypeNextStyle);
+  setCommandHandler(MI_TypeOblique, this, &MainWindow::toggleTypeOblique);
+  setCommandHandler(MI_TypeRegular, this, &MainWindow::toggleTypeRegular);
+  setCommandHandler(MI_TypeBoldOblique, this,
+                    &MainWindow::toggleTypeBoldOblique);
+  setCommandHandler(MI_TypeBold, this, &MainWindow::toggleTypeBold);
+
+  /*-- Fill tool + type/mode switching shortcuts --*/
+  setCommandHandler(MI_FillNextType, this, &MainWindow::toggleFillNextType);
+  setCommandHandler(MI_FillNormal, this, &MainWindow::toggleFillNormal);
+  setCommandHandler(MI_FillRectangular, this,
+                    &MainWindow::toggleFillRectangular);
+  setCommandHandler(MI_FillFreehand, this, &MainWindow::toggleFillFreehand);
+  setCommandHandler(MI_FillPolyline, this, &MainWindow::toggleFillPolyline);
+  setCommandHandler(MI_FillNextMode, this, &MainWindow::toggleFillNextMode);
   setCommandHandler(MI_FillAreas, this, &MainWindow::toggleFillAreas);
   setCommandHandler(MI_FillLines, this, &MainWindow::toggleFillLines);
-  /*-- StylepickerAreas,StylepickerLinesに直接切り替えるコマンド --*/
+  setCommandHandler(MI_FillLinesAndAreas, this,
+                    &MainWindow::toggleFillLinesAndAreas);
+
+  /*-- Eraser tool + type switching shortcuts --*/
+  setCommandHandler(MI_EraserNextType, this, &MainWindow::toggleEraserNextType);
+  setCommandHandler(MI_EraserNormal, this, &MainWindow::toggleEraserNormal);
+  setCommandHandler(MI_EraserRectangular, this,
+                    &MainWindow::toggleEraserRectangular);
+  setCommandHandler(MI_EraserFreehand, this, &MainWindow::toggleEraserFreehand);
+  setCommandHandler(MI_EraserPolyline, this, &MainWindow::toggleEraserPolyline);
+  setCommandHandler(MI_EraserSegment, this, &MainWindow::toggleEraserSegment);
+
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  setCommandHandler(MI_TapeNextType, this, &MainWindow::toggleTapeNextType);
+  setCommandHandler(MI_TapeNormal, this, &MainWindow::toggleTapeNormal);
+  setCommandHandler(MI_TapeRectangular, this,
+                    &MainWindow::toggleTapeRectangular);
+  setCommandHandler(MI_TapeNextMode, this, &MainWindow::toggleTapeNextMode);
+  setCommandHandler(MI_TapeEndpointToEndpoint, this,
+                    &MainWindow::toggleTapeEndpointToEndpoint);
+  setCommandHandler(MI_TapeEndpointToLine, this,
+                    &MainWindow::toggleTapeEndpointToLine);
+  setCommandHandler(MI_TapeLineToLine, this, &MainWindow::toggleTapeLineToLine);
+
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  setCommandHandler(MI_PickStyleNextMode, this,
+                    &MainWindow::togglePickStyleNextMode);
   setCommandHandler(MI_PickStyleAreas, this, &MainWindow::togglePickStyleAreas);
   setCommandHandler(MI_PickStyleLines, this, &MainWindow::togglePickStyleLines);
+  setCommandHandler(MI_PickStyleLinesAndAreas, this,
+                    &MainWindow::togglePickStyleLinesAndAreas);
+
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  setCommandHandler(MI_RGBPickerNextType, this,
+                    &MainWindow::toggleRGBPickerNextType);
+  setCommandHandler(MI_RGBPickerNormal, this,
+                    &MainWindow::toggleRGBPickerNormal);
+  setCommandHandler(MI_RGBPickerRectangular, this,
+                    &MainWindow::toggleRGBPickerRectangular);
+  setCommandHandler(MI_RGBPickerFreehand, this,
+                    &MainWindow::toggleRGBPickerFreehand);
+  setCommandHandler(MI_RGBPickerPolyline, this,
+                    &MainWindow::toggleRGBPickerPolyline);
+
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  setCommandHandler(MI_SkeletonNextMode, this,
+                    &MainWindow::ToggleSkeletonNextMode);
+  setCommandHandler(MI_SkeletonBuildSkeleton, this,
+                    &MainWindow::ToggleSkeletonBuildSkeleton);
+  setCommandHandler(MI_SkeletonAnimate, this,
+                    &MainWindow::ToggleSkeletonAnimate);
+  setCommandHandler(MI_SkeletonInverseKinematics, this,
+                    &MainWindow::ToggleSkeletonInverseKinematics);
+
+  /*-- Plastic tool + mode switching shortcuts --*/
+  setCommandHandler(MI_PlasticNextMode, this,
+                    &MainWindow::TogglePlasticNextMode);
+  setCommandHandler(MI_PlasticEditMesh, this,
+                    &MainWindow::TogglePlasticEditMesh);
+  setCommandHandler(MI_PlasticPaintRigid, this,
+                    &MainWindow::TogglePlasticPaintRigid);
+  setCommandHandler(MI_PlasticBuildSkeleton, this,
+                    &MainWindow::TogglePlasticBuildSkeleton);
+  setCommandHandler(MI_PlasticAnimate, this, &MainWindow::TogglePlasticAnimate);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
@@ -2298,6 +2409,20 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_BrushPreset", tr("Brush Preset"), "");
   createToolOptionsAction("A_ToolOption_GeometricShape", tr("Geometric Shape"),
                           "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Rectangle",
+                          tr("Geometric Shape Rectangle"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Circle",
+                          tr("Geometric Shape Circle"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Ellipse",
+                          tr("Geometric Shape Ellipse"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Line",
+                          tr("Geometric Shape Line"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Polyline",
+                          tr("Geometric Shape Polyline"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Arc",
+                          tr("Geometric Shape Arc"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:Polygon",
+                          tr("Geometric Shape Polygon"), "");
   createToolOptionsAction("A_ToolOption_GeometricEdge", tr("Geometric Edge"),
                           "");
   createToolOptionsAction("A_ToolOption_Mode", tr("Mode"), "");
@@ -2305,6 +2430,12 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_Mode:Lines", tr("Mode - Lines"), "");
   createToolOptionsAction("A_ToolOption_Mode:Lines & Areas",
                           tr("Mode - Lines & Areas"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Endpoint to Endpoint",
+                          tr("Mode - Endpoint to Endpoint"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Endpoint to Line",
+                          tr("Mode - Endpoint to Line"), "");
+  createToolOptionsAction("A_ToolOption_Mode:Line to Line",
+                          tr("Mode - Line to Line"), "");
   createToolOptionsAction("A_ToolOption_Type", tr("Type"), "");
   createToolOptionsAction("A_ToolOption_Type:Normal", tr("Type - Normal"), "");
   createToolOptionsAction("A_ToolOption_Type:Rectangular",
@@ -2313,9 +2444,19 @@ void MainWindow::defineActions() {
                           "");
   createToolOptionsAction("A_ToolOption_Type:Polyline", tr("Type - Polyline"),
                           "");
+  createToolOptionsAction("A_ToolOption_Type:Segment", tr("Type - Segment"),
+                          "");
   createToolOptionsAction("A_ToolOption_TypeFont", tr("TypeTool Font"), "");
   createToolOptionsAction("A_ToolOption_TypeSize", tr("TypeTool Size"), "");
   createToolOptionsAction("A_ToolOption_TypeStyle", tr("TypeTool Style"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Oblique",
+                          tr("TypeTool Style - Oblique"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Regular",
+                          tr("TypeTool Style - Regular"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Bold Oblique",
+                          tr("TypeTool Style - Bold Oblique"), "");
+  createToolOptionsAction("A_ToolOption_TypeStyle:Bold",
+                          tr("TypeTool Style - Bold"), "");
 
   createToolOptionsAction("A_ToolOption_EditToolActiveAxis", tr("Active Axis"),
                           "");
@@ -2332,6 +2473,11 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_EditToolActiveAxis:All",
                           tr("Active Axis - All"), "");
 
+  createToolOptionsAction("A_ToolOption_SkeletonMode", tr("Skeleton Mode"), "");
+  createToolOptionsAction("A_ToolOption_SkeletonMode:Edit Mesh",
+                          tr("Edit Mesh Mode"), "");
+  createToolOptionsAction("A_ToolOption_SkeletonMode:Paint Rigid",
+                          tr("Paint Rigid Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Build Skeleton",
                           tr("Build Skeleton Mode"), "");
   createToolOptionsAction("A_ToolOption_SkeletonMode:Animate",
@@ -2350,15 +2496,143 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_AutopaintLines",
                           tr("Fill Tool - Autopaint Lines"), "");
 
-  /*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
+  /*-- Animate tool + mode switching shortcuts --*/
+  createAction(MI_EditNextMode, tr("Animate Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_EditPosition, tr("Animate Tool - Position"), "",
+               ToolCommandType);
+  createAction(MI_EditRotation, tr("Animate Tool - Rotation"), "",
+               ToolCommandType);
+  createAction(MI_EditScale, tr("Animate Tool - Scale"), "", ToolCommandType);
+  createAction(MI_EditShear, tr("Animate Tool - Shear"), "", ToolCommandType);
+  createAction(MI_EditCenter, tr("Animate Tool - Center"), "", ToolCommandType);
+  createAction(MI_EditAll, tr("Animate Tool - All"), "", ToolCommandType);
+
+  /*-- Selection tool + type switching shortcuts --*/
+  createAction(MI_SelectionNextType, tr("Selection Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_SelectionRectangular, tr("Selection Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_SelectionFreehand, tr("Selection Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "",
+               ToolCommandType);
+
+  /*-- Geometric tool + shape switching shortcuts --*/
+  createAction(MI_GeometricNextShape, tr("Geometric Tool - Next Shape"), "",
+               ToolCommandType);
+  createAction(MI_GeometricRectangle, tr("Geometric Tool - Rectangle"), "",
+               ToolCommandType);
+  createAction(MI_GeometricCircle, tr("Geometric Tool - Circle"), "",
+               ToolCommandType);
+  createAction(MI_GeometricEllipse, tr("Geometric Tool - Ellipse"), "",
+               ToolCommandType);
+  createAction(MI_GeometricLine, tr("Geometric Tool - Line"), "",
+               ToolCommandType);
+  createAction(MI_GeometricPolyline, tr("Geometric Tool - Polyline"), "",
+               ToolCommandType);
+  createAction(MI_GeometricArc, tr("Geometric Tool - Arc"), "",
+               ToolCommandType);
+  createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "",
+               ToolCommandType);
+
+  /*-- Type tool + style switching shortcuts --*/
+  createAction(MI_TypeNextStyle, tr("Type Tool - Next Style"), "",
+               ToolCommandType);
+  createAction(MI_TypeOblique, tr("Type Tool - Oblique"), "", ToolCommandType);
+  createAction(MI_TypeRegular, tr("Type Tool - Regular"), "", ToolCommandType);
+  createAction(MI_TypeBoldOblique, tr("Type Tool - Bold Oblique"), "",
+               ToolCommandType);
+  createAction(MI_TypeBold, tr("Type Tool - Bold"), "", ToolCommandType);
+
+  /*-- Fill tool + type/mode switching shortcuts --*/
+  createAction(MI_FillNextType, tr("Fill Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_FillNormal, tr("Fill Tool - Normal"), "", ToolCommandType);
+  createAction(MI_FillRectangular, tr("Fill Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_FillFreehand, tr("Fill Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_FillPolyline, tr("Fill Tool - Polyline"), "",
+               ToolCommandType);
+  createAction(MI_FillNextMode, tr("Fill Tool - Next Mode"), "",
+               ToolCommandType);
   createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
   createAction(MI_FillLines, tr("Fill Tool - Lines"), "", ToolCommandType);
+  createAction(MI_FillLinesAndAreas, tr("Fill Tool - Lines & Areas"), "",
+               ToolCommandType);
 
-  /*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
-   * --*/
+  /*-- Eraser tool + type switching shortcuts --*/
+  createAction(MI_EraserNextType, tr("Eraser Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_EraserNormal, tr("Eraser Tool - Normal"), "",
+               ToolCommandType);
+  createAction(MI_EraserRectangular, tr("Eraser Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_EraserFreehand, tr("Eraser Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_EraserPolyline, tr("Eraser Tool - Polyline"), "",
+               ToolCommandType);
+  createAction(MI_EraserSegment, tr("Eraser Tool - Segment"), "",
+               ToolCommandType);
+
+  /*-- Tape tool + type/mode switching shortcuts --*/
+  createAction(MI_TapeNextType, tr("Tape Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_TapeNormal, tr("Tape Tool - Normal"), "", ToolCommandType);
+  createAction(MI_TapeRectangular, tr("Tape Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_TapeNextMode, tr("Tape Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_TapeEndpointToEndpoint, tr("Tape Tool - Endpoint to Enpoint"),
+               "", ToolCommandType);
+  createAction(MI_TapeEndpointToLine, tr("Tape Tool - Endpoint to Line"), "",
+               ToolCommandType);
+  createAction(MI_TapeLineToLine, tr("Tape Tool - Line to Line"), "",
+               ToolCommandType);
+
+  /*-- Style Picker tool + mode switching shortcuts --*/
+  createAction(MI_PickStyleNextMode, tr("Style Picker Tool - Next Mode"), "",
+               ToolCommandType);
   createAction(MI_PickStyleAreas, tr("Style Picker Tool - Areas"), "",
                ToolCommandType);
   createAction(MI_PickStyleLines, tr("Style Picker Tool - Lines"), "",
+               ToolCommandType);
+  createAction(MI_PickStyleLinesAndAreas,
+               tr("Style Picker Tool - Lines & Areas"), "", ToolCommandType);
+
+  /*-- RGB Picker tool + type switching shortcuts --*/
+  createAction(MI_RGBPickerNextType, tr("RGB Picker Tool - Next Type"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerNormal, tr("RGB Picker Tool - Normal"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerRectangular, tr("RGB Picker Tool - Rectangular"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerFreehand, tr("RGB Picker Tool - Freehand"), "",
+               ToolCommandType);
+  createAction(MI_RGBPickerPolyline, tr("RGB Picker Tool - Polyline"), "",
+               ToolCommandType);
+
+  /*-- Skeleton tool + mode switching shortcuts --*/
+  createAction(MI_SkeletonNextMode, tr("Skeleton Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_SkeletonBuildSkeleton, tr("Skeleton Tool - Build Skeleton"),
+               "", ToolCommandType);
+  createAction(MI_SkeletonAnimate, tr("Skeleton Tool - Animate"), "",
+               ToolCommandType);
+  createAction(MI_SkeletonInverseKinematics,
+               tr("Skeleton Tool - Inverse Kinematics"), "", ToolCommandType);
+
+  /*-- Plastic tool + mode switching shortcuts --*/
+  createAction(MI_PlasticNextMode, tr("Plastic Tool - Next Mode"), "",
+               ToolCommandType);
+  createAction(MI_PlasticEditMesh, tr("Plastic Tool - Edit Mesh"), "",
+               ToolCommandType);
+  createAction(MI_PlasticPaintRigid, tr("Plastic Tool - Paint Rigid"), "",
+               ToolCommandType);
+  createAction(MI_PlasticBuildSkeleton, tr("Plastic Tool - Build Skeleton"), "",
+               ToolCommandType);
+  createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "",
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
@@ -2379,7 +2653,8 @@ void MainWindow::defineActions() {
                tr("Raise Stop Motion Level Subsampling"), "");
   createAction(MI_StopMotionJumpToCamera, tr("Go to Stop Motion Insert Frame"),
                "");
-  createAction(MI_StopMotionRemoveFrame, tr("Remove frame before Stop Motion Camera"), "");
+  createAction(MI_StopMotionRemoveFrame,
+               tr("Remove frame before Stop Motion Camera"), "");
 }
 
 //-----------------------------------------------------------------------------
@@ -2399,8 +2674,230 @@ void MainWindow::onInk1CheckTriggered(bool on) {
   if (inkCheckAction) inkCheckAction->setChecked(false);
 }
 
+//-----------------------------------------------------------------------------
+/*-- Animate tool + mode switching shortcuts --*/
+void MainWindow::toggleEditNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Edit)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_EditToolActiveAxis")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Edit)->trigger();
+}
+
+void MainWindow::toggleEditPosition() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Position")
+      ->trigger();
+}
+
+void MainWindow::toggleEditRotation() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Rotation")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextScale() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Scale")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextShear() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Shear")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextCenter() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:Center")
+      ->trigger();
+}
+
+void MainWindow::toggleEditNextAll() {
+  CommandManager::instance()->getAction(T_Edit)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_EditToolActiveAxis:All")
+      ->trigger();
+}
+
 //---------------------------------------------------------------------------------------
-/*-- FillAreas, FillLinesにキー1つで切り替えるためのコマンド --*/
+/*-- Selection tool + type switching shortcuts --*/
+void MainWindow::toggleSelectionNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Selection)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Selection)->trigger();
+}
+
+void MainWindow::toggleSelectionRectangular() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleSelectionFreehand() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleSelectionPolyline() {
+  CommandManager::instance()->getAction(T_Selection)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+//---------------------------------------------------------------------------------------
+/*-- Geometric tool + shape switching shortcuts --*/
+void MainWindow::toggleGeometricNextShape() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Geometric)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_GeometricShape")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Geometric)->trigger();
+}
+
+void MainWindow::toggleGeometricRectangle() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Rectangle")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricCircle() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Circle")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricEllipse() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Ellipse")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricLine() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Line")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricPolyline() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Polyline")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricArc() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Arc")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricPolygon() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:Polygon")
+      ->trigger();
+}
+//---------------------------------------------------------------------------------------
+/*-- Type tool + mode switching shortcuts --*/
+void MainWindow::toggleTypeNextStyle() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Type)
+    CommandManager::instance()->getAction("A_ToolOption_TypeStyle")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Type)->trigger();
+}
+
+void MainWindow::toggleTypeOblique() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Oblique")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeRegular() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Regular")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeBoldOblique() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Bold Oblique")
+      ->trigger();
+}
+
+void MainWindow::toggleTypeBold() {
+  CommandManager::instance()->getAction(T_Type)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_TypeStyle:Bold")
+      ->trigger();
+}
+
+//---------------------------------------------------------------------------------------
+/*-- Fill tool + type/mode switching shortcuts --*/
+void MainWindow::toggleFillNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Fill)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Fill)->trigger();
+}
+
+void MainWindow::toggleFillNormal() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleFillRectangular() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleFillFreehand() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleFillPolyline() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+void MainWindow::toggleFillNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Fill)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Fill)->trigger();
+}
+
 void MainWindow::toggleFillAreas() {
   CommandManager::instance()->getAction(T_Fill)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Areas")->trigger();
@@ -2411,9 +2908,115 @@ void MainWindow::toggleFillLines() {
   CommandManager::instance()->getAction("A_ToolOption_Mode:Lines")->trigger();
 }
 
+void MainWindow::toggleFillLinesAndAreas() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
+}
+
 //---------------------------------------------------------------------------------------
-/*-- Style picker Area, Style picker Lineににキー1つで切り替えるためのコマンド
- * --*/
+/*-- Eraser tool + type switching shortcuts --*/
+void MainWindow::toggleEraserNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Eraser)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Eraser)->trigger();
+}
+
+void MainWindow::toggleEraserNormal() {
+  CommandManager::instance()->getAction(T_Eraser)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleEraserRectangular() {
+  CommandManager::instance()->getAction(T_Eraser)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleEraserFreehand() {
+  CommandManager::instance()->getAction(T_Eraser)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleEraserPolyline() {
+  CommandManager::instance()->getAction(T_Eraser)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+void MainWindow::toggleEraserSegment() {
+  CommandManager::instance()->getAction(T_Eraser)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Segment")->trigger();
+}
+//---------------------------------------------------------------------------------------
+/*-- Tape tool + type/mode switching shortcuts --*/
+void MainWindow::toggleTapeNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Tape)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Tape)->trigger();
+}
+
+void MainWindow::toggleTapeNormal() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleTapeRectangular() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Tape)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_Tape)->trigger();
+}
+
+void MainWindow::toggleTapeEndpointToEndpoint() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Endpoint to Endpoint")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeEndpointToLine() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Endpoint to Line")
+      ->trigger();
+}
+
+void MainWindow::toggleTapeLineToLine() {
+  CommandManager::instance()->getAction(T_Tape)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Line to Line")
+      ->trigger();
+}
+
+//---------------------------------------------------------------------------------------
+/*-- Style Picker tool + mode switching shortcuts --*/
+void MainWindow::togglePickStyleNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_StylePicker)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_StylePicker)->trigger();
+}
+
 void MainWindow::togglePickStyleAreas() {
   CommandManager::instance()->getAction(T_StylePicker)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Areas")->trigger();
@@ -2422,6 +3025,120 @@ void MainWindow::togglePickStyleAreas() {
 void MainWindow::togglePickStyleLines() {
   CommandManager::instance()->getAction(T_StylePicker)->trigger();
   CommandManager::instance()->getAction("A_ToolOption_Mode:Lines")->trigger();
+}
+
+void MainWindow::togglePickStyleLinesAndAreas() {
+  CommandManager::instance()->getAction(T_StylePicker)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
+}
+//-----------------------------------------------------------------------------
+/*-- RGB Picker tool + type switching shortcuts --*/
+void MainWindow::toggleRGBPickerNextType() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_RGBPicker)
+    CommandManager::instance()->getAction("A_ToolOption_Type")->trigger();
+  else
+    CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+}
+
+void MainWindow::toggleRGBPickerNormal() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+}
+
+void MainWindow::toggleRGBPickerRectangular() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Rectangular")
+      ->trigger();
+}
+
+void MainWindow::toggleRGBPickerFreehand() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freehand")
+      ->trigger();
+}
+
+void MainWindow::toggleRGBPickerPolyline() {
+  CommandManager::instance()->getAction(T_RGBPicker)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+//-----------------------------------------------------------------------------
+/*-- Skeleton tool + type switching shortcuts --*/
+void MainWindow::ToggleSkeletonNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Skeleton)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_SkeletonMode")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Skeleton)->trigger();
+}
+
+void MainWindow::ToggleSkeletonBuildSkeleton() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Build Skeleton")
+      ->trigger();
+}
+
+void MainWindow::ToggleSkeletonAnimate() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Animate")
+      ->trigger();
+}
+
+void MainWindow::ToggleSkeletonInverseKinematics() {
+  CommandManager::instance()->getAction(T_Skeleton)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Inverse Kinematics")
+      ->trigger();
+}
+
+//-----------------------------------------------------------------------------
+/*-- Plastic tool + mode switching shortcuts --*/
+void MainWindow::TogglePlasticNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Plastic)
+    CommandManager::instance()
+        ->getAction("A_ToolOption_SkeletonMode")
+        ->trigger();
+  else
+    CommandManager::instance()->getAction(T_Plastic)->trigger();
+}
+
+void MainWindow::TogglePlasticEditMesh() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Edit Mesh")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticPaintRigid() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Paint Rigid")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticBuildSkeleton() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Build Skeleton")
+      ->trigger();
+}
+
+void MainWindow::TogglePlasticAnimate() {
+  CommandManager::instance()->getAction(T_Plastic)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_SkeletonMode:Animate")
+      ->trigger();
 }
 
 //-----------------------------------------------------------------------------

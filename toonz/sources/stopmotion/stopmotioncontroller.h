@@ -74,15 +74,15 @@ class StopMotionController final : public QWidget {
       *m_focusFar3Button, *m_captureFilterSettingsBtn;
   QHBoxLayout *m_focusAndZoomLayout;
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
-      *m_kelvinLabel, *m_resolutionLabel, *m_directShowLabel,
-      *m_cameraStatusLabel;
+      *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel,
+      *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
-
-  QComboBox *m_cameraListCombo, *m_fileTypeCombo, *m_isoCombo,
-      *m_shutterSpeedCombo, *m_exposureCombo, *m_apertureCombo,
-      *m_whiteBalanceCombo, *m_kelvinCombo, *m_resolutionCombo,
-      *m_imageQualityCombo, *m_pictureStyleCombo;
+  QSlider *m_apertureSlider, *m_shutterSpeedSlider, *m_isoSlider,
+      *m_kelvinSlider;
+  QComboBox *m_cameraListCombo, *m_fileTypeCombo, *m_exposureCombo,
+      *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
+      *m_pictureStyleCombo;
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
