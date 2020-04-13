@@ -1178,6 +1178,7 @@ void StopMotionController::refreshOptionsLists() {
   // m_apertureSlider->clear();
   m_exposureCombo->clear();
 #if WITH_CANON
+  if (m_stopMotion->getCameraCount() == 0) {
     m_shutterSpeedSlider->setDisabled(true);
     m_isoSlider->setDisabled(true);
     m_apertureSlider->setDisabled(true);
