@@ -248,6 +248,7 @@ public:
   void lowerOpacity();
   void jumpToCameraFrame();
   void removeStopMotionFrame();
+  void disconnectAllCameras();
 
   std::string getTEnvCameraName();
   void setTEnvCameraName(std::string name);
@@ -290,8 +291,8 @@ public:
   EdsError closeCameraSession();
   EdsError downloadImage(EdsBaseRef object);
   EdsError takePicture();
-  EdsError startLiveView();
-  EdsError endLiveView();
+  EdsError startCanonLiveView();
+  EdsError endCanonLiveView();
   EdsError downloadEVFData();
   QStringList getIsoOptions() { return m_isoOptions; }
   QStringList getShutterSpeedOptions() { return m_shutterSpeedOptions; }
