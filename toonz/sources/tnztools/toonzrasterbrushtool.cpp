@@ -701,7 +701,7 @@ static void Smooth(std::vector<TThickPoint> &points, int radius) {
   if (points.size() >= 3) {
     std::vector<TThickPoint> pts;
     CatmullRomInterpolate(points[0], points[0], points[1], points[2], 10, pts);
-    std::vector<TThickPoint>::iterator it = points.begin();
+    std::vector<TThickPoint>::iterator it = points.begin() + 1;
     points.insert(it, pts.begin(), pts.end());
 
     pts.clear();

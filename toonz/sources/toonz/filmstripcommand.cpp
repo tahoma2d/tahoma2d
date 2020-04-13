@@ -2499,25 +2499,27 @@ void FilmstripCmd::inbetweenWithoutUndo(
   TVectorImageP img1 = sl->getFrame(fid1, false);
   if (!img0 || !img1) return;
 
+  enum TInbetween::TweenAlgorithm algorithm;
+  switch (interpolation) {
+  case II_Linear:
+    algorithm = TInbetween::LinearInterpolation;
+    break;
+  case II_EaseIn:
+    algorithm = TInbetween::EaseInInterpolation;
+    break;
+  case II_EaseOut:
+    algorithm = TInbetween::EaseOutInterpolation;
+    break;
+  case II_EaseInOut:
+    algorithm = TInbetween::EaseInOutInterpolation;
+    break;
+  }
+
   TInbetween inbetween(img0, img1);
   int i;
   for (i = ia + 1; i < ib; i++) {
     double t = (double)(i - ia) / (double)(ib - ia);
-    double s = t;
-    // in tutte le interpolazioni : s(0) = 0, s(1) = 1
-    switch (interpolation) {
-    case II_Linear:
-      break;
-    case II_EaseIn:
-      s = t * (2 - t);
-      break;  // s'(1) = 0
-    case II_EaseOut:
-      s = t * t;
-      break;  // s'(0) = 0
-    case II_EaseInOut:
-      s = t * t * (3 - 2 * t);
-      break;  // s'(0) = s'(1) = 0
-    }
+    double s = TInbetween::interpolation(t, algorithm);
 
     TVectorImageP vi = inbetween.tween(s);
     sl->setFrame(fids[i], vi);
