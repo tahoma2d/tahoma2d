@@ -1,1 +1,0 @@
-Copy the lib and include folders from libjpeg-turbo64 into this folder.

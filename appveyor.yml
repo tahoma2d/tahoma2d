@@ -11,6 +11,8 @@ clone_depth: 1
 # C:\Qt\5.9 is mapped to C:\Qt\5.9.n for backward compatibility
 install:
 - cmd: >-
+    choco install opencv
+    
     cd thirdparty
 
     copy /Y LibJPEG\jpeg-9\jconfig.vc LibJPEG\jpeg-9\jconfig.h
@@ -50,6 +52,8 @@ after_build:
     copy /Y ..\..\thirdparty\libmypaint\dist\64\libjson-c-2.dll %CONFIGURATION%\OpenToonz
     
     copy /Y ..\..\thirdparty\libmypaint\dist\64\libmypaint-1-4-0.dll %CONFIGURATION%\OpenToonz
+
+    copy /Y ..\..\thirdparty\libjpeg-turbo64\dist\turbojpeg.dll %CONFIGURATION%\OpenToonz
 
     mkdir "%CONFIGURATION%\OpenToonz stuff"
 
