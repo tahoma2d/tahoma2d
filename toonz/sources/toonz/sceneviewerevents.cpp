@@ -75,7 +75,7 @@ namespace {
 
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                     int widgetHeight, double pressure, int devPixRatio) {
-  toonzEvent.m_pos      = TPointD(event->pos().x() * devPixRatio,
+  toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
                              widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
   toonzEvent.m_pressure = 1.0;
@@ -310,7 +310,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
 #ifdef LINUX
     // for Linux, create context menu on right click here.
     // could possibly merge with OSX code above
-    if(e->button() == Qt::RightButton) {
+    if (e->button() == Qt::RightButton) {
       m_mouseButton = Qt::NoButton;
       onContextMenu(e->pos(), e->globalPos());
     }
@@ -931,12 +931,12 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-  {
-    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                 "Qt::MouseEventSynthesizedByApplication"
-              << std::endl;
-    break;
-  }
+    {
+      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
 
   }  // end switch
 
@@ -1032,8 +1032,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         qreal rotationDelta =
             gesture->rotationAngle() - gesture->lastRotationAngle();
         if (m_isFlippedX != m_isFlippedY) rotationDelta = -rotationDelta;
-        TAffine aff    = getViewMatrix().inv();
-        TPointD center = aff * TPointD(0, 0);
+        TAffine aff                                     = getViewMatrix().inv();
+        TPointD center                                  = aff * TPointD(0, 0);
         if (!m_rotating && !m_zooming) {
           m_rotationDelta += rotationDelta;
           double absDelta = abs(m_rotationDelta);
@@ -1174,9 +1174,10 @@ bool SceneViewer::event(QEvent *e) {
     break;
   }
   */
-  if (e->type() == QEvent::Gesture && CommandManager::instance()
-                                          ->getAction(MI_TouchGestureControl)
-                                          ->isChecked()) {
+  if (e->type() == QEvent::Gesture &&
+      CommandManager::instance()
+          ->getAction(MI_TouchGestureControl)
+          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -1216,7 +1217,7 @@ bool SceneViewer::event(QEvent *e) {
 
     // Disable keyboard shortcuts while the tool is busy with a mouse drag
     // operation.
-    if ( tool->isDragging() ) {
+    if (tool->isDragging()) {
       e->accept();
     }
 
@@ -1597,6 +1598,13 @@ void SceneViewer::onContextMenu(const QPoint &pos, const QPoint &globalPos) {
     cvp->addShowHideContextMenu(menu);
   }
 
+  SceneViewerPanel *svp = qobject_cast<SceneViewerPanel *>(
+      parentWidget()->parentWidget()->parentWidget());
+  if (svp) {
+    menu->addSeparator();
+    svp->addShowHideContextMenu(menu);
+  }
+
   menu->exec(globalPos);
   delete menu;
   menuVisible = false;
@@ -1644,13 +1652,13 @@ void SceneViewer::dropEvent(QDropEvent *e) {
 
     IoCmd::loadResources(args);
 
-	if (acceptResourceOrFolderDrop(mimeData->urls())) {
-		// Force Copy Action
-		e->setDropAction(Qt::CopyAction);
-		// For files, don't accept original proposed action in case it's a move
-		e->accept();
-		return;
-	}
+    if (acceptResourceOrFolderDrop(mimeData->urls())) {
+      // Force Copy Action
+      e->setDropAction(Qt::CopyAction);
+      // For files, don't accept original proposed action in case it's a move
+      e->accept();
+      return;
+    }
   }
   e->acceptProposedAction();
 }
@@ -1664,8 +1672,8 @@ void SceneViewer::onToolSwitched() {
 
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (tool) {
-	  tool->updateMatrix();
-	  if (tool->getViewer()) tool->getViewer()->setGuidedStrokePickerMode(0);
+    tool->updateMatrix();
+    if (tool->getViewer()) tool->getViewer()->setGuidedStrokePickerMode(0);
   }
 
   onLevelChanged();
