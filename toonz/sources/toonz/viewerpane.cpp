@@ -66,12 +66,11 @@
 #include "viewerpane.h"
 
 enum CV_Parts {
-    CVPARTS_None = 0,
-    CVPARTS_TOOLBAR = 0x1,
-    CVPARTS_TOOLOPTIONS = 0x2,
-    CVPARTS_FLIPCONSOLE = 0x4,
-    CVPARTS_End = 0x8,
-    CVPARTS_ALL = CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS | CVPARTS_FLIPCONSOLE
+  CVPARTS_None        = 0,
+  CVPARTS_PLAYBAR     = 0x1,
+  CVPARTS_FRAMESLIDER = 0x4,
+  CVPARTS_End         = 0x8,
+  CVPARTS_ALL         = CVPARTS_PLAYBAR | CVPARTS_FRAMESLIDER
 };
 
 using namespace DVGui;
@@ -182,7 +181,6 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
                                   ->getFrameRate());
   updateFrameRange(), updateFrameMarkers();
 
-
   setLayout(mainLayout);
 
   m_visiblePartsFlag = CVPARTS_ALL;
@@ -198,62 +196,69 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
  */
 
 void SceneViewerPanel::updateShowHide() {
-    // flip console
-    m_flipConsole->showHideAllParts(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
-    update();
+  // flip console
+  m_flipConsole->showHidePlaybar(m_visiblePartsFlag & CVPARTS_PLAYBAR);
+  m_flipConsole->showHideFrameSlider(m_visiblePartsFlag & CVPARTS_FRAMESLIDER);
+  update();
 }
 
 //-----------------------------------------------------------------------------
 /*! showing the show/hide commands
  */
 
-void SceneViewerPanel::contextMenuEvent(QContextMenuEvent* event) {
-    QMenu* menu = new QMenu(this);
-    addShowHideContextMenu(menu);
-    menu->exec(event->globalPos());
+void SceneViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
+  QMenu *menu = new QMenu(this);
+  addShowHideContextMenu(menu);
+  menu->exec(event->globalPos());
 }
-
 
 //-----------------------------------------------------------------------------
 
-void SceneViewerPanel::addShowHideContextMenu(QMenu* menu) {
-    QMenu* showHideMenu = menu->addMenu(tr("GUI Show / Hide"));
-    // actions
+void SceneViewerPanel::addShowHideContextMenu(QMenu *menu) {
+  QMenu *showHideMenu = menu->addMenu(tr("GUI Show / Hide"));
 
-    QAction* flipConsoleSHAct = showHideMenu->addAction(tr("Console"));
-    flipConsoleSHAct->setCheckable(true);
-    flipConsoleSHAct->setChecked(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
-    flipConsoleSHAct->setData((UINT)CVPARTS_FLIPCONSOLE);
+  // actions
+  QAction *playbarSHAct     = showHideMenu->addAction(tr("Playback Toolbar"));
+  QAction *frameSliderSHAct = showHideMenu->addAction(tr("Frame Slider"));
 
-    QActionGroup* showHideActGroup = new QActionGroup(this);
-    showHideActGroup->setExclusive(false);
-    showHideActGroup->addAction(flipConsoleSHAct);
+  playbarSHAct->setCheckable(true);
+  playbarSHAct->setChecked(m_visiblePartsFlag & CVPARTS_PLAYBAR);
+  playbarSHAct->setData((UINT)CVPARTS_PLAYBAR);
 
-    connect(showHideActGroup, SIGNAL(triggered(QAction*)), this,
-        SLOT(onShowHideActionTriggered(QAction*)));
+  frameSliderSHAct->setCheckable(true);
+  frameSliderSHAct->setChecked(m_visiblePartsFlag & CVPARTS_FRAMESLIDER);
+  frameSliderSHAct->setData((UINT)CVPARTS_FRAMESLIDER);
 
-    showHideMenu->addSeparator();
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewCamera));
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewTable));
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_FieldGuide));
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_SafeArea));
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewBBox));
-    showHideMenu->addAction(
-        CommandManager::instance()->getAction(MI_ViewColorcard));
-    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewRuler));
+  QActionGroup *showHideActGroup = new QActionGroup(this);
+  showHideActGroup->setExclusive(false);
+  showHideActGroup->addAction(playbarSHAct);
+  showHideActGroup->addAction(frameSliderSHAct);
+
+  connect(showHideActGroup, SIGNAL(triggered(QAction *)), this,
+          SLOT(onShowHideActionTriggered(QAction *)));
+
+  showHideMenu->addSeparator();
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewCamera));
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewTable));
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_FieldGuide));
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_SafeArea));
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewBBox));
+  showHideMenu->addAction(
+      CommandManager::instance()->getAction(MI_ViewColorcard));
+  showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewRuler));
 }
 
 //-----------------------------------------------------------------------------
 /*! slot function for show/hide the parts
  */
 
-void SceneViewerPanel::onShowHideActionTriggered(QAction* act) {
-    CV_Parts part = (CV_Parts)act->data().toUInt();
-    assert(part < CVPARTS_End);
+void SceneViewerPanel::onShowHideActionTriggered(QAction *act) {
+  CV_Parts part = (CV_Parts)act->data().toUInt();
+  assert(part < CVPARTS_End);
 
-    m_visiblePartsFlag ^= part;
+  m_visiblePartsFlag ^= part;
 
-    updateShowHide();
+  updateShowHide();
 }
 
 void SceneViewerPanel::onDrawFrame(
@@ -323,8 +328,8 @@ void SceneViewerPanel::showEvent(QShowEvent *event) {
   ret = ret && connect(sceneHandle, SIGNAL(nameSceneChanged()), this,
                        SLOT(changeWindowTitle()));
   ret =
-      ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString&)),
-          m_flipConsole, SLOT(onPreferenceChanged(const QString&)));
+      ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
+                     m_flipConsole, SLOT(onPreferenceChanged(const QString &)));
   ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
                        SLOT(onXshLevelSwitched(TXshLevel *)));
   ret = ret && connect(levelHandle, SIGNAL(xshLevelChanged()), this,
@@ -387,8 +392,8 @@ void SceneViewerPanel::hideEvent(QHideEvent *event) {
 
   disconnect(app->getCurrentTool(), SIGNAL(toolSwitched()), m_sceneViewer,
              SLOT(onToolSwitched()));
-  disconnect(app->getCurrentScene(), SIGNAL(preferenceChanged(const QString&)),
-      m_flipConsole, SLOT(onPreferenceChanged(const QString&)));
+  disconnect(app->getCurrentScene(), SIGNAL(preferenceChanged(const QString &)),
+             m_flipConsole, SLOT(onPreferenceChanged(const QString &)));
 
   m_flipConsole->setActive(false);
 }
@@ -612,7 +617,7 @@ void SceneViewerPanel::changeWindowTitle() {
           name + tr("   ::   Frame: ") + tr(std::to_string(frame + 1).c_str());
     int col = app->getCurrentColumn()->getColumnIndex();
     if (col < 0) {
-        parentWidget()->setWindowTitle(name);
+      parentWidget()->setWindowTitle(name);
       return;
     }
     TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
@@ -623,7 +628,7 @@ void SceneViewerPanel::changeWindowTitle() {
                       m_sceneViewer->getNormalZoomScale().inv();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name = name + tr("  ::  Zoom : ") +
+        name                                    = name + tr("  ::  Zoom : ") +
                QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
         if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
           name = name + tr(" (Flipped)");
@@ -651,7 +656,7 @@ void SceneViewerPanel::changeWindowTitle() {
                   m_sceneViewer->getNormalZoomScale().inv();
     if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
     if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-    name = name + tr("  ::  Zoom : ") +
+    name                                    = name + tr("  ::  Zoom : ") +
            QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
     if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
       name = name + tr(" (Flipped)");
@@ -830,16 +835,16 @@ void SceneViewerPanel::setFlipVButtonChecked(bool checked) {
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
-    m_visiblePartsFlag = flag;
-    updateShowHide();
+  m_visiblePartsFlag = flag;
+  updateShowHide();
 }
 
 // SaveLoadQSettings
-void SceneViewerPanel::save(QSettings& settings) const {
-    settings.setValue("visibleParts", m_visiblePartsFlag);
+void SceneViewerPanel::save(QSettings &settings) const {
+  settings.setValue("visibleParts", m_visiblePartsFlag);
 }
 
-void SceneViewerPanel::load(QSettings& settings) {
-    m_visiblePartsFlag = settings.value("visibleParts", CVPARTS_ALL).toUInt();
-    updateShowHide();
+void SceneViewerPanel::load(QSettings &settings) {
+  m_visiblePartsFlag = settings.value("visibleParts", CVPARTS_ALL).toUInt();
+  updateShowHide();
 }
