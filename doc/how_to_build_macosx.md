@@ -27,6 +27,7 @@ Apple store usually provides for the most recent macOS version.  For older versi
 
 After installing the application, you will need to start it in order to complete the installation.
 
+
 ### Install Homebrew from https://brew.sh
 
 Check site for any changes in installation instructions, but they will probably just be this:
@@ -127,6 +128,15 @@ $ sudo mkdir /Applications/OpenToonz
 $ sudo cp -r stuff /Applications/OpenToonz/OpenToonz_stuff
 $ sudo chmod -R 777 /Applications/OpenToonz
 ```
+## Building with extended stop motion support for webcams and Canon DSLR cameras.
+You will need one additional library:
+  - The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
+
+Copy the Header and Framework folders from the Canon SDK to `$opentoonz/thirdparty/canon`
+
+Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at the end of line 104, changing the `WITH_CANON` build option from `OFF` to `ON`.
+
+To run the program with stop motion support, you will need to copy the EDSDK.framework directory from the Canon SDK and place it in `Macintosh HD/Library/Frameworks`. It could also be placed in the same folder as `OpenToonz.app`. If opening OpenToonz.app fails because "EDSDK.framework can't be opened", go to `Preferences -> Security & Privacy -> General` and select "Open Anyway". Open OpenToonz again and select "Open" when the "EDSDK.framework can't be opened" warning appears.
 
 ### Running the build
 
