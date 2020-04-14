@@ -230,7 +230,7 @@ JpgConverter::~JpgConverter() {}
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
 
 void JpgConverter::convertFromJpg() {
-   #ifdef MACOSX
+  #ifdef MACOSX
       UInt64 mySize = 0;
   #else
     unsigned __int64 mySize = 0;
