@@ -166,6 +166,7 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(
             -DMACOSX
             -Di386
+            -D__MACOS__
         )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
@@ -178,6 +179,7 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(
             -DMACOSX
             -Di386
+            -D__MACOS__
         )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -std=c++11 -stdlib=libc++ -fno-implicit-templates -D HAS_QUICKDRAW")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
@@ -226,6 +228,7 @@ if(BUILD_ENV_APPLE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
     set(CMAKE_INSTALL_RPATH ${QT_LIB_PATH})
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    set(CMAKE_FIND_FRAMEWORK LAST)
     list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${QT_LIB_PATH}" isSystemDir)
     if("${isSystemDir}" STREQUAL "-1")
         set(CMAKE_INSTALL_RPATH "${QT_LIB_PATH}")
@@ -347,7 +350,11 @@ if(BUILD_ENV_MSVC)
     set(USB_LIB)  # unused
     set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
     if (WITH_CANON)
-        set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        if(BUILD_ENV_APPLE)
+            set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
+        else()
+            set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        endif()
     endif()
     if(PLATFORM EQUAL 32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
@@ -408,7 +415,11 @@ elseif(BUILD_ENV_APPLE)
     message("**************** turbojpeg lib:" ${TURBOJPEG_LIB})
 
     if (WITH_CANON)
-        set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        if(BUILD_ENV_APPLE)
+            set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
+        else()
+            set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
+        endif()
     endif()
 
 elseif(BUILD_ENV_UNIXLIKE)

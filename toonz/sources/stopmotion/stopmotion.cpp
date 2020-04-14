@@ -230,7 +230,11 @@ JpgConverter::~JpgConverter() {}
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
 
 void JpgConverter::convertFromJpg() {
-  unsigned __int64 mySize = 0;
+  #ifdef MACOSX
+      UInt64 mySize = 0;
+  #else
+    unsigned __int64 mySize = 0;
+  #endif
   unsigned char *data     = NULL;
   EdsError err            = EdsGetPointer(m_stream, (EdsVoid **)&data);
   err                     = EdsGetLength(m_stream, &mySize);
@@ -3581,7 +3585,11 @@ EdsError StopMotion::downloadImage(EdsBaseRef object) {
 
   // tj code
 
-  unsigned __int64 mySize = 0;
+  #ifdef MACOSX
+      UInt64 mySize = 0;
+  #else
+    unsigned __int64 mySize = 0;
+  #endif
   unsigned char *data     = NULL;
   err                     = EdsGetPointer(stream, (EdsVoid **)&data);
   err                     = EdsGetLength(stream, &mySize);
