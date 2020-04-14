@@ -857,33 +857,6 @@ OpenFloatingPanel openStyleEditorCommand(MI_OpenStyleControl, "StyleEditor",
                                          QObject::tr("Style Editor"));
 //-----------------------------------------------------------------------------
 
-//=============================================================================
-// SceneViewer
-//-----------------------------------------------------------------------------
-
-class SceneViewerFactory final : public TPanelFactory {
-public:
-  SceneViewerFactory() : TPanelFactory("SceneViewer") {}
-
-  TPanel *createPanel(QWidget *parent) override {
-    SceneViewerPanel *panel = new SceneViewerPanel(parent);
-    panel->setObjectName(getPanelType());
-    panel->setWindowTitle(QObject::tr("Viewer"));
-    panel->setMinimumSize(220, 280);
-    return panel;
-  }
-
-  void initialize(TPanel *panel) override { assert(0); }
-
-} sceneViewerFactory;
-
-//=============================================================================
-OpenFloatingPanel openSceneViewerCommand(MI_OpenLevelView, "SceneViewer",
-                                         QObject::tr("Viewer"));
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
 class ToolbarFactory final : public TPanelFactory {
 public:
   ToolbarFactory() : TPanelFactory("ToolBar") {}
@@ -1326,6 +1299,53 @@ public:
 //=============================================================================
 OpenFloatingPanel openComboViewerCommand(MI_OpenComboViewer, "ComboViewer",
                                          QObject::tr("Combo Viewer"));
+//-----------------------------------------------------------------------------
+
+//=============================================================================
+// SceneViewer
+//-----------------------------------------------------------------------------
+
+SceneViewerPanelContainer::SceneViewerPanelContainer(QWidget* parent)
+    : StyleShortcutSwitchablePanel(parent) {
+    m_sceneViewer = new SceneViewerPanel(parent);
+    setFocusProxy(m_sceneViewer);
+    setWidget(m_sceneViewer);
+
+    m_sceneViewer->initializeTitleBar(getTitleBar());
+}
+// reimplementation of TPanel::widgetInThisPanelIsFocused
+bool SceneViewerPanelContainer::widgetInThisPanelIsFocused() {
+    return m_sceneViewer->hasFocus();
+}
+// reimplementation of TPanel::widgetFocusOnEnter
+void SceneViewerPanelContainer::widgetFocusOnEnter() {
+    m_sceneViewer->onEnterPanel();
+}
+void SceneViewerPanelContainer::widgetClearFocusOnLeave() {
+    m_sceneViewer->onLeavePanel();
+}
+
+
+//-----------------------------------------------------------------------------
+
+class SceneViewerFactory final : public TPanelFactory {
+public:
+    SceneViewerFactory() : TPanelFactory("SceneViewer") {}
+
+    TPanel* createPanel(QWidget* parent) override {
+        SceneViewerPanelContainer* panel = new SceneViewerPanelContainer(parent);
+        panel->setObjectName(getPanelType());
+        panel->setWindowTitle(QObject::tr("Viewer"));
+        panel->setMinimumSize(220, 280);
+        //panel->resize(700, 600);
+        return panel;
+    }
+    void initialize(TPanel* panel) override { assert(0); }
+} sceneViewerFactory;
+
+//=============================================================================
+OpenFloatingPanel openSceneViewerCommand(MI_OpenLevelView, "SceneViewer",
+    QObject::tr("Viewer"));
 //-----------------------------------------------------------------------------
 
 //=============================================================================

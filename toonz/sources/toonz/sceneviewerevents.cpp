@@ -1641,6 +1641,13 @@ void SceneViewer::onContextMenu(const QPoint &pos, const QPoint &globalPos) {
     cvp->addShowHideContextMenu(menu);
   }
 
+  SceneViewerPanel *svp = qobject_cast<SceneViewerPanel *>(
+      parentWidget()->parentWidget()->parentWidget());
+  if (svp) {
+    menu->addSeparator();
+    svp->addShowHideContextMenu(menu);
+  }
+
   menu->exec(globalPos);
   delete menu;
   menuVisible = false;
