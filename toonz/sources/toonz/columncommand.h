@@ -32,6 +32,9 @@ bool canResequence(int index);
 void cloneChild(int index);
 void clearCells(int index);
 
+//! Adds an undo object for converting layer to vector.
+void addConvertToVectorUndo(std::set<int> &newColumnIndices);
+
 }  // namespace
 
 #endif
