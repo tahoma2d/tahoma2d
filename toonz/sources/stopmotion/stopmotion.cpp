@@ -251,9 +251,8 @@ void JpgConverter::convertFromJpg() {
   pixelFormat = TJPF_BGRX;
   imgBuf = (unsigned char *)tjAlloc(width * height * tjPixelSize[pixelFormat]);
   int flags = 0;
-#ifdef WIN32
   flags |= TJFLAG_BOTTOMUP;
-#endif
+
   int factorsNum;
   tjscalingfactor scalingFactor = {1, 1};
   tjscalingfactor *factor       = tjGetScalingFactors(&factorsNum);
@@ -4171,7 +4170,7 @@ EdsError StopMotion::handlePropertyEvent(EdsPropertyEvent event,
 EdsError StopMotion::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
                                       EdsVoid *context) {
   if (event == kEdsStateEvent_Shutdown) {
-    if (instance()->m_sessionOpen) {
+    if (instance()->m_sessionOpen && instance()->getCameraCount() > 0) {
       instance()->closeCameraSession();
       instance()->releaseCamera();
       instance()->m_liveViewStatus = LiveViewClosed;
