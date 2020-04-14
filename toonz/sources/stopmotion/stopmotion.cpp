@@ -433,7 +433,7 @@ void StopMotion::disconnectAllCameras() {
   m_proxyDpi             = TPointD(0.0, 0.0);
   m_proxyImageDimensions = TDimension(0, 0);
 
-  if (m_sessionOpen) {
+  if (m_sessionOpen && getCameraCount() > 0) {
     if (m_liveViewStatus > 0) {
       endCanonLiveView();
     }
@@ -1942,9 +1942,12 @@ bool StopMotion::loadXmlFile() {
           }
         } else {
 #if WITH_CANON
-          openCameraSession();
-          QString camName = QString::fromStdString(getCameraName());
-          closeCameraSession();
+            QString camName = "";
+            if (getCameraCount() > 0) {
+                openCameraSession();
+                camName = QString::fromStdString(getCameraName());
+                closeCameraSession();
+            }
           if (text == camName) {
             changeCameras(-1);
             foundCamera = true;
@@ -2541,7 +2544,7 @@ void StopMotion::changeCameras(int index) {
     }
 
 #if WITH_CANON
-    if (m_sessionOpen) {
+    if (m_sessionOpen && getCameraCount() > 0) {
       if (m_liveViewStatus > 0) {
         endCanonLiveView();
         closeCameraSession();
@@ -4173,9 +4176,9 @@ EdsError StopMotion::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
     if (instance()->m_sessionOpen && instance()->getCameraCount() > 0) {
       instance()->closeCameraSession();
       instance()->releaseCamera();
-      instance()->m_liveViewStatus = LiveViewClosed;
-      emit(instance()->cameraChanged());
     }
+    instance()->m_liveViewStatus = LiveViewClosed;
+    emit(instance()->cameraChanged());
   }
   return EDS_ERR_OK;
 }
