@@ -26,6 +26,7 @@ class FunctionViewer;
 class FlipBook;
 class ToolOptions;
 class ComboViewerPanel;
+class SceneViewerPanel;
 class FxSettings;
 class VectorGuidedDrawingPane;
 
@@ -269,6 +270,25 @@ protected:
   // reimplementation of TPanel::widgetFocusOnEnter
   void widgetFocusOnEnter() override;
   void widgetClearFocusOnLeave() override;
+};
+
+//=========================================================
+// SceneViewerPanel
+//---------------------------------------------------------
+
+class SceneViewerPanelContainer final : public StyleShortcutSwitchablePanel {
+    Q_OBJECT
+        SceneViewerPanel *m_sceneViewer;
+
+public:
+    SceneViewerPanelContainer(QWidget* parent);
+    // reimplementation of TPanel::widgetInThisPanelIsFocused
+    bool widgetInThisPanelIsFocused() override;
+
+protected:
+    // reimplementation of TPanel::widgetFocusOnEnter
+    void widgetFocusOnEnter() override;
+    void widgetClearFocusOnLeave() override;
 };
 
 //=========================================================

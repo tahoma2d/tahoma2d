@@ -61,8 +61,18 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QMainWindow>
+#include <QSettings>
 
 #include "viewerpane.h"
+
+enum CV_Parts {
+    CVPARTS_None = 0,
+    CVPARTS_TOOLBAR = 0x1,
+    CVPARTS_TOOLOPTIONS = 0x2,
+    CVPARTS_FLIPCONSOLE = 0x4,
+    CVPARTS_End = 0x8,
+    CVPARTS_ALL = CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS | CVPARTS_FLIPCONSOLE
+};
 
 using namespace DVGui;
 
@@ -77,17 +87,16 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 #else
 SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
 #endif
-    : StyleShortcutSwitchablePanel(parent) {
-  QFrame *hbox = new QFrame(this);
-  hbox->setFrameStyle(QFrame::StyledPanel);
-  hbox->setObjectName("ViewerPanel");
+    : QFrame(parent) {
+  setFrameStyle(QFrame::StyledPanel);
+  setObjectName("ViewerPanel");
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(hbox);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(0);
 
   // Viewer
-  QWidget *viewer      = new QWidget(hbox);
+  QWidget *viewer      = new QWidget(this);
   QGridLayout *viewerL = new QGridLayout(viewer);
 
   ImageUtils::FullScreenWidget *fsWidget =
@@ -173,15 +182,79 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
                                   ->getFrameRate());
   updateFrameRange(), updateFrameMarkers();
 
-  hbox->setLayout(mainLayout);
 
-  setWidget(hbox);
+  setLayout(mainLayout);
 
-  initializeTitleBar(
-      getTitleBar());  // note: initializeTitleBar() refers to m_sceneViewer
+  m_visiblePartsFlag = CVPARTS_ALL;
+  updateShowHide();
+
+  setFocusProxy(m_sceneViewer);
 }
 
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/*! toggle show/hide of the widgets according to m_visibleFlag
+ */
+
+void SceneViewerPanel::updateShowHide() {
+    // flip console
+    m_flipConsole->showHideAllParts(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
+    update();
+}
+
+//-----------------------------------------------------------------------------
+/*! showing the show/hide commands
+ */
+
+void SceneViewerPanel::contextMenuEvent(QContextMenuEvent* event) {
+    QMenu* menu = new QMenu(this);
+    addShowHideContextMenu(menu);
+    menu->exec(event->globalPos());
+}
+
+
+//-----------------------------------------------------------------------------
+
+void SceneViewerPanel::addShowHideContextMenu(QMenu* menu) {
+    QMenu* showHideMenu = menu->addMenu(tr("GUI Show / Hide"));
+    // actions
+
+    QAction* flipConsoleSHAct = showHideMenu->addAction(tr("Console"));
+    flipConsoleSHAct->setCheckable(true);
+    flipConsoleSHAct->setChecked(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
+    flipConsoleSHAct->setData((UINT)CVPARTS_FLIPCONSOLE);
+
+    QActionGroup* showHideActGroup = new QActionGroup(this);
+    showHideActGroup->setExclusive(false);
+    showHideActGroup->addAction(flipConsoleSHAct);
+
+    connect(showHideActGroup, SIGNAL(triggered(QAction*)), this,
+        SLOT(onShowHideActionTriggered(QAction*)));
+
+    showHideMenu->addSeparator();
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewCamera));
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewTable));
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_FieldGuide));
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_SafeArea));
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewBBox));
+    showHideMenu->addAction(
+        CommandManager::instance()->getAction(MI_ViewColorcard));
+    showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewRuler));
+}
+
+//-----------------------------------------------------------------------------
+/*! slot function for show/hide the parts
+ */
+
+void SceneViewerPanel::onShowHideActionTriggered(QAction* act) {
+    CV_Parts part = (CV_Parts)act->data().toUInt();
+    assert(part < CVPARTS_End);
+
+    m_visiblePartsFlag ^= part;
+
+    updateShowHide();
+}
 
 void SceneViewerPanel::onDrawFrame(
     int frame, const ImagePainter::VisualSettings &settings) {
@@ -229,7 +302,6 @@ SceneViewerPanel::~SceneViewerPanel() {}
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::showEvent(QShowEvent *event) {
-  StyleShortcutSwitchablePanel::showEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -250,7 +322,9 @@ void SceneViewerPanel::showEvent(QShowEvent *event) {
 
   ret = ret && connect(sceneHandle, SIGNAL(nameSceneChanged()), this,
                        SLOT(changeWindowTitle()));
-
+  ret =
+      ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString&)),
+          m_flipConsole, SLOT(onPreferenceChanged(const QString&)));
   ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
                        SLOT(onXshLevelSwitched(TXshLevel *)));
   ret = ret && connect(levelHandle, SIGNAL(xshLevelChanged()), this,
@@ -275,12 +349,12 @@ void SceneViewerPanel::showEvent(QShowEvent *event) {
   // Aggiorno FPS al valore definito nel viewer corrente.
   // frameHandle->setPreviewFrameRate(m_fpsSlider->value());
   m_flipConsole->setActive(true);
+  m_flipConsole->onPreferenceChanged("");
 }
 
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::hideEvent(QHideEvent *event) {
-  StyleShortcutSwitchablePanel::hideEvent(event);
   TApp *app                    = TApp::instance();
   TFrameHandle *frameHandle    = app->getCurrentFrame();
   TSceneHandle *sceneHandle    = app->getCurrentScene();
@@ -313,6 +387,8 @@ void SceneViewerPanel::hideEvent(QHideEvent *event) {
 
   disconnect(app->getCurrentTool(), SIGNAL(toolSwitched()), m_sceneViewer,
              SLOT(onToolSwitched()));
+  disconnect(app->getCurrentScene(), SIGNAL(preferenceChanged(const QString&)),
+      m_flipConsole, SLOT(onPreferenceChanged(const QString&)));
 
   m_flipConsole->setActive(false);
 }
@@ -522,6 +598,7 @@ void SceneViewerPanel::changeWindowTitle() {
   // zoom = sqrt(m_sceneViewer->getViewMatrix().det());
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) return;
+  if (!parentWidget()) return;
   int frame = app->getCurrentFrame()->getFrame();
   QString name;
   if (app->getCurrentFrame()->isEditingScene()) {
@@ -535,7 +612,7 @@ void SceneViewerPanel::changeWindowTitle() {
           name + tr("   ::   Frame: ") + tr(std::to_string(frame + 1).c_str());
     int col = app->getCurrentColumn()->getColumnIndex();
     if (col < 0) {
-      setWindowTitle(name);
+        parentWidget()->setWindowTitle(name);
       return;
     }
     TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
@@ -552,7 +629,7 @@ void SceneViewerPanel::changeWindowTitle() {
           name = name + tr(" (Flipped)");
         }
       }
-      setWindowTitle(name);
+      parentWidget()->setWindowTitle(name);
       return;
     }
     assert(cell.m_level.getPointer());
@@ -581,7 +658,7 @@ void SceneViewerPanel::changeWindowTitle() {
     }
   }
 
-  setWindowTitle(name);
+  parentWidget()->setWindowTitle(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -692,13 +769,6 @@ void SceneViewerPanel::onFrameTypeChanged() {
 
 //-----------------------------------------------------------------------------
 
-void SceneViewerPanel::onPreferenceChanged(const QString &prefName) {
-  m_flipConsole->onPreferenceChanged(prefName);
-  StyleShortcutSwitchablePanel::onPreferenceChanged(prefName);
-}
-
-//-----------------------------------------------------------------------------
-
 void SceneViewerPanel::playAudioFrame(int frame) {
   if (m_first) {
     m_first = false;
@@ -755,4 +825,21 @@ void SceneViewerPanel::setFlipHButtonChecked(bool checked) {
 
 void SceneViewerPanel::setFlipVButtonChecked(bool checked) {
   m_flipConsole->setChecked(FlipConsole::eFlipVertical, checked);
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
+    m_visiblePartsFlag = flag;
+    updateShowHide();
+}
+
+// SaveLoadQSettings
+void SceneViewerPanel::save(QSettings& settings) const {
+    settings.setValue("visibleParts", m_visiblePartsFlag);
+}
+
+void SceneViewerPanel::load(QSettings& settings) {
+    m_visiblePartsFlag = settings.value("visibleParts", CVPARTS_ALL).toUInt();
+    updateShowHide();
 }
