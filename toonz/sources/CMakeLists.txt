@@ -276,7 +276,14 @@ if(BUILD_ENV_MSVC)
     )
 endif()
 
-find_package(OpenCV 4.1 REQUIRED)
+if(BUILD_ENV_MSVC)
+    find_package(OpenCV 4.1 REQUIRED
+        PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/tools/opencv/build"
+    )
+else()
+    find_package(OpenCV 4.1 REQUIRED)
+endif()
+
 include_directories(
     ${SDKROOT}/libjpeg-turbo64/include
     ${OpenCV_INCLUDE_DIRS}
