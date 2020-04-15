@@ -278,7 +278,7 @@ endif()
 
 if(BUILD_ENV_MSVC)
     find_package(OpenCV 4.1 REQUIRED
-        PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/tools/opencv/build"
+        PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/Tools/opencv/build"
     )
 else()
     find_package(OpenCV 4.1 REQUIRED)
