@@ -2516,14 +2516,14 @@ void StopMotion::setToNextNewLevel() {
 void StopMotion::refreshCameraList() {
   QString camera = "";
   bool hasCamera = false;
-  if ((m_sessionOpen || m_usingWebcam) && m_liveViewStatus > 1) {
 #if WITH_CANON
-    if (getCameraCount() > 0 && !m_usingWebcam &&
-        m_cameraName == getCameraName()) {
-      hasCamera = true;
-      camera    = QString::fromStdString(m_cameraName);
-    }
+  if (m_sessionOpen && getCameraCount() > 0 && !m_usingWebcam &&
+      m_cameraName == getCameraName()) {
+    hasCamera = true;
+    camera    = QString::fromStdString(m_cameraName);
+  }
 #endif
+  if (m_usingWebcam) {
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
     if (m_usingWebcam && cameras.size() > 0) {
       for (int i = 0; i < cameras.size(); i++) {
