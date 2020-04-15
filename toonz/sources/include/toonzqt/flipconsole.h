@@ -283,6 +283,8 @@ public:
   void pressButton(EGadget buttonId);
 
   void showHideAllParts(bool);
+  void showHidePlaybar(bool);
+  void showHideFrameSlider(bool);
 
   void enableProgressBar(bool enable);
   void setProgressBarStatus(const std::vector<UCHAR> *status);
