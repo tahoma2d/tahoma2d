@@ -46,6 +46,7 @@
 #include "tcolorstyles.h"
 #include "tstroke.h"
 #include "tpersistset.h"
+#include "columncommand.h"
 
 // Qt includes
 #include <QFrame>
@@ -950,6 +951,7 @@ bool VectorizerPopup::apply() {
                        SLOT(onFinished()), Qt::QueuedConnection);
   assert(ret);
 
+  std::set<int> newColumnIndices;
   int newIndexColumn = c1 + 1;
   for (auto const level : levels) {
     TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
@@ -1017,15 +1019,21 @@ bool VectorizerPopup::apply() {
           }
         }
       }
+      newColumnIndices.insert(newIndexColumn);
       newIndexColumn += 1;
     } else if (vl) {
       std::vector<TFrameId> gomi;
+      newColumnIndices.insert(scene->getXsheet()->getFirstFreeColumnIndex());
       scene->getXsheet()->exposeLevel(
           0, scene->getXsheet()->getFirstFreeColumnIndex(), vl, gomi);
     }
 
     if (m_vectorizer->isCanceled()) break;
   }
+
+  // Add undo object
+  if (!m_vectorizer->isCanceled())
+    ColumnCmd::addConvertToVectorUndo(newColumnIndices);
 
   m_progressDialog->close();
   delete m_vectorizer;
