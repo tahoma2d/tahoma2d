@@ -107,7 +107,7 @@ protected:
   void keyPressEvent(QKeyEvent *event) override;
 
 protected slots:
-  void refreshCameraList();
+  void refreshCameraList(QString activeCamera = "");
   void refreshCameraListCalled();
   void refreshOptionsLists();
 
@@ -180,6 +180,8 @@ protected slots:
   void refreshImageQualityList();
   void refreshPictureStyleList();
   void refreshMode();
+  void onFocusCheckToggled(bool on);
+  void onPickFocusCheckToggled(bool on);
 
   void onCaptureReviewFldEdited();
   void onCaptureReviewSliderChanged(bool ignore);

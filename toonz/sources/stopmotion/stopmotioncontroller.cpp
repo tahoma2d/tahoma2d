@@ -302,14 +302,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_levelNameEdit->setMaximumWidth(380);
 
   m_saveInFolderPopup->hide();
-  m_zoomButton = new QPushButton(tr("Focus Check"), this);
+  m_zoomButton = new QPushButton(tr("Check"), this);
   m_zoomButton->setFixedHeight(28);
-  m_zoomButton->setStyleSheet("padding: 0 2;");
-  m_zoomButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-  m_pickZoomButton = new QPushButton(tr("Pick Focus"), this);
-  m_pickZoomButton->setStyleSheet("padding: 0 2;");
-  m_pickZoomButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+  m_zoomButton->setStyleSheet("padding: 5 2;");
+  m_zoomButton->setMaximumWidth(100);
+  m_zoomButton->setToolTip(tr("Check the focus by zooming in"));
+  m_pickZoomButton = new QPushButton(tr("Pick"), this);
+  m_pickZoomButton->setStyleSheet("padding: 5 2;");
+  m_pickZoomButton->setMaximumWidth(100);
   m_pickZoomButton->setFixedHeight(28);
+  m_pickZoomButton->setToolTip(tr("Pick the location for focus checking"));
   m_focusNearButton = new QPushButton(tr("<"), this);
   m_focusNearButton->setFixedSize(32, 28);
   m_focusFarButton = new QPushButton(tr(">"), this);
@@ -452,22 +454,22 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_apertureSlider = new QSlider(Qt::Horizontal, this);
     m_apertureSlider->setRange(0, 10);
     m_apertureSlider->setTickInterval(1);
-    m_apertureSlider->setFixedWidth(300);
+    m_apertureSlider->setFixedWidth(260);
     m_isoLabel  = new QLabel(tr(""), this);
     m_isoSlider = new QSlider(Qt::Horizontal, this);
     m_isoSlider->setRange(0, 10);
     m_isoSlider->setTickInterval(1);
-    m_isoSlider->setFixedWidth(300);
+    m_isoSlider->setFixedWidth(260);
     m_shutterSpeedLabel  = new QLabel(tr(""), this);
     m_shutterSpeedSlider = new QSlider(Qt::Horizontal, this);
     m_shutterSpeedSlider->setRange(0, 10);
     m_shutterSpeedSlider->setTickInterval(1);
-    m_shutterSpeedSlider->setFixedWidth(300);
+    m_shutterSpeedSlider->setFixedWidth(260);
     m_kelvinValueLabel = new QLabel(tr("Temperature: "), this);
     m_kelvinSlider     = new QSlider(Qt::Horizontal, this);
     m_kelvinSlider->setRange(0, 10);
     m_kelvinSlider->setTickInterval(1);
-    m_kelvinSlider->setFixedWidth(300);
+    m_kelvinSlider->setFixedWidth(260);
     m_exposureCombo       = new QComboBox(this);
     m_whiteBalanceCombo   = new QComboBox(this);
     m_imageQualityCombo   = new QComboBox(this);
@@ -800,14 +802,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   // From Stop Motion Main
   ret = ret && connect(m_stopMotion, SIGNAL(newDimensions()), this,
                        SLOT(updateDimensions()));
-  ret = ret && connect(m_stopMotion, SIGNAL(updateCameraList()), this,
-                       SLOT(refreshCameraList()));
+  ret = ret && connect(m_stopMotion, SIGNAL(updateCameraList(QString)), this,
+                       SLOT(refreshCameraList(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(liveViewChanged(bool)), this,
                        SLOT(onLiveViewChanged(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(newCameraSelected(int, bool)), this,
                        SLOT(onNewCameraSelected(int, bool)));
-  ret = ret && connect(m_stopMotion, SIGNAL(cameraChanged()), this,
-                       SLOT(refreshCameraList()));
+  ret = ret && connect(m_stopMotion, SIGNAL(cameraChanged(QString)), this,
+                       SLOT(refreshCameraList(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(optionsChanged()), this,
                        SLOT(refreshOptionsLists()));
 
@@ -880,6 +882,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(refreshPictureStyleList()));
   ret = ret &&
         connect(m_stopMotion, SIGNAL(modeChanged()), this, SLOT(refreshMode()));
+  ret = ret && connect(m_stopMotion, SIGNAL(focusCheckToggled(bool)), this,
+                       SLOT(onFocusCheckToggled(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(pickFocusCheckToggled(bool)), this,
+                       SLOT(onPickFocusCheckToggled(bool)));
 
   // Webcam Specific Connections
   ret = ret && connect(m_stopMotion, SIGNAL(webcamResolutionsChanged()), this,
@@ -902,7 +908,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       m_stopMotion->getBlackCapture() == true ? true : false);
   m_postCaptureReviewFld->setValue(m_stopMotion->getReviewTime());
 
-  refreshCameraList();
+  refreshCameraList(QString(""));
   onSceneSwitched();
   m_stopMotion->setToNextNewLevel();
   m_saveInFileFld->setPath(m_stopMotion->getFilePath());
@@ -1108,9 +1114,9 @@ void StopMotionController::refreshCameraListCalled() {
 
 //-----------------------------------------------------------------------------
 
-void StopMotionController::refreshCameraList() {
+void StopMotionController::refreshCameraList(QString activeCamera) {
+  m_cameraListCombo->blockSignals(true);
   m_cameraListCombo->clear();
-  m_stopMotion->changeCameras(0);
   m_cameraStatusLabel->hide();
   QList<QCameraInfo> webcams = m_stopMotion->getWebcams();
   int count                  = webcams.count();
@@ -1140,9 +1146,10 @@ void StopMotionController::refreshCameraList() {
     if (m_stopMotion->getCameraCount() > 0) {
       QString name;
       m_stopMotion->getCamera(0);
-      m_stopMotion->openCameraSession();
+      bool open = m_stopMotion->m_sessionOpen;
+      if (!open) m_stopMotion->openCameraSession();
       name = QString::fromStdString(m_stopMotion->getCameraName());
-      m_stopMotion->closeCameraSession();
+      if (!open) m_stopMotion->closeCameraSession();
       m_cameraSettingsLabel->setText(name);
       m_cameraListCombo->addItem(name);
       maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
@@ -1154,6 +1161,8 @@ void StopMotionController::refreshCameraList() {
     m_captureButton->setEnabled(true);
     m_toggleLiveViewButton->setEnabled(true);
   }
+  if (activeCamera != "") m_cameraListCombo->setCurrentText(activeCamera);
+  m_cameraListCombo->blockSignals(false);
   m_stopMotion->updateLevelNameAndFrame(m_levelNameEdit->text().toStdWString());
   refreshOptionsLists();
 #if WITH_CANON
@@ -1422,6 +1431,8 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
     m_cameraStatusLabel->hide();
+    m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+    m_zoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
   } else if (useWebcam) {
     if (m_tabBar->tabText(1) == tr("Settings")) {
       m_tabBar->removeTab(1);
@@ -1755,6 +1766,28 @@ void StopMotionController::onPictureStyleChangedSignal(QString text) {
   m_pictureStyleCombo->blockSignals(true);
   m_pictureStyleCombo->setCurrentText(m_stopMotion->getCurrentPictureStyle());
   m_pictureStyleCombo->blockSignals(false);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onFocusCheckToggled(bool on) {
+#if WITH_CANON
+  if (on)
+    m_zoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
+  else
+    m_zoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onPickFocusCheckToggled(bool on) {
+#if WITH_CANON
+  if (on)
+    m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
+  else
+    m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
 #endif
 }
 

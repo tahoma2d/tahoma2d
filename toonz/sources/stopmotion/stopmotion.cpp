@@ -54,7 +54,7 @@
 #include <QXmlStreamReader>
 
 // Connected camera
-TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 0);
+TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 1);
 TEnv::IntVar StopMotionOpacity("StopMotionOpacity", 100);
 TEnv::IntVar StopMotionUseDirectShow("StopMotionUseDirectShow", 1);
 TEnv::IntVar StopMotionAlwaysLiveView("StopMotionAlwaysLiveView", 0);
@@ -230,14 +230,14 @@ JpgConverter::~JpgConverter() {}
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
 
 void JpgConverter::convertFromJpg() {
-  #ifdef MACOSX
-      UInt64 mySize = 0;
-  #else
-    unsigned __int64 mySize = 0;
-  #endif
-  unsigned char *data     = NULL;
-  EdsError err            = EdsGetPointer(m_stream, (EdsVoid **)&data);
-  err                     = EdsGetLength(m_stream, &mySize);
+#ifdef MACOSX
+  UInt64 mySize = 0;
+#else
+  unsigned __int64 mySize = 0;
+#endif
+  unsigned char *data = NULL;
+  EdsError err        = EdsGetPointer(m_stream, (EdsVoid **)&data);
+  err                 = EdsGetLength(m_stream, &mySize);
 
   int width, height, pixelFormat;
   int inSubsamp, inColorspace;
@@ -982,6 +982,7 @@ void StopMotion::toggleNumpadForFocusCheck(bool on) {
 
 void StopMotion::setXSheetFrameNumber(int frameNumber) {
   m_xSheetFrameNumber = frameNumber;
+  TApp::instance()->getCurrentFrame()->setFrame(frameNumber - 1);
   loadLineUpImage();
   emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -1946,12 +1947,12 @@ bool StopMotion::loadXmlFile() {
           }
         } else {
 #if WITH_CANON
-            QString camName = "";
-            if (getCameraCount() > 0) {
-                openCameraSession();
-                camName = QString::fromStdString(getCameraName());
-                closeCameraSession();
-            }
+          QString camName = "";
+          if (getCameraCount() > 0) {
+            openCameraSession();
+            camName = QString::fromStdString(getCameraName());
+            closeCameraSession();
+          }
           if (text == camName) {
             changeCameras(-1);
             foundCamera = true;
@@ -2513,8 +2514,29 @@ void StopMotion::setToNextNewLevel() {
 //-----------------------------------------------------------------
 
 void StopMotion::refreshCameraList() {
-  disconnectAllCameras();
-  emit(updateCameraList());
+  QString camera = "";
+  bool hasCamera = false;
+  if ((m_sessionOpen || m_usingWebcam) && m_liveViewStatus > 1) {
+#if WITH_CANON
+    if (getCameraCount() > 0 && !m_usingWebcam &&
+        m_cameraName == getCameraName()) {
+      hasCamera = true;
+      camera    = QString::fromStdString(m_cameraName);
+    }
+#endif
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    if (m_usingWebcam && cameras.size() > 0) {
+      for (int i = 0; i < cameras.size(); i++) {
+        if (cameras.at(i).description() == m_webcamDescription) {
+          hasCamera = true;
+          camera    = m_webcamDescription;
+          break;
+        }
+      }
+    }
+  }
+  if (!hasCamera) disconnectAllCameras();
+  emit(updateCameraList(camera));
 }
 
 //-----------------------------------------------------------------
@@ -3583,16 +3605,16 @@ EdsError StopMotion::downloadImage(EdsBaseRef object) {
   err = EdsDownload(object, dirItemInfo.size, stream);
   EdsDownloadComplete(object);
 
-  // tj code
+// tj code
 
-  #ifdef MACOSX
-      UInt64 mySize = 0;
-  #else
-    unsigned __int64 mySize = 0;
-  #endif
-  unsigned char *data     = NULL;
-  err                     = EdsGetPointer(stream, (EdsVoid **)&data);
-  err                     = EdsGetLength(stream, &mySize);
+#ifdef MACOSX
+  UInt64 mySize = 0;
+#else
+  unsigned __int64 mySize = 0;
+#endif
+  unsigned char *data = NULL;
+  err                 = EdsGetPointer(stream, (EdsVoid **)&data);
+  err                 = EdsGetLength(stream, &mySize);
 
   int width, height, pixelFormat;
   // long size;
@@ -3707,6 +3729,14 @@ EdsError StopMotion::takePicture() {
 
 //-----------------------------------------------------------------
 
+void StopMotion::extendCameraOnTime() {
+  EdsError err;
+  EdsInt32 param = 0;
+  err = EdsSendCommand(m_camera, kEdsCameraCommand_ExtendShutDownTimer, param);
+}
+
+//-----------------------------------------------------------------
+
 EdsError StopMotion::startCanonLiveView() {
   if (m_camera && m_sessionOpen) {
     EdsError err = EDS_ERR_OK;
@@ -3754,7 +3784,7 @@ EdsError StopMotion::endCanonLiveView() {
 //-----------------------------------------------------------------
 
 EdsError StopMotion::zoomLiveView() {
-  if (!m_sessionOpen) return EDS_ERR_DEVICE_INVALID;
+  if (!m_sessionOpen || !m_liveViewStatus > 0) return EDS_ERR_DEVICE_INVALID;
   EdsError err = EDS_ERR_OK;
   if (m_pickLiveViewZoom) toggleZoomPicking();
   if (m_liveViewZoom == 1) {
@@ -3770,7 +3800,7 @@ EdsError StopMotion::zoomLiveView() {
   err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_Zoom, 0,
                            sizeof(m_liveViewZoom), &m_liveViewZoom);
   if (m_liveViewZoom == 5) setZoomPoint();
-
+  emit(focusCheckToggled(m_liveViewZoom > 1));
   return err;
 }
 
@@ -3784,6 +3814,7 @@ void StopMotion::makeZoomPoint(TPointD pos) {
 //-----------------------------------------------------------------
 
 void StopMotion::toggleZoomPicking() {
+  if (!m_sessionOpen || !m_liveViewStatus > 0) return;
   if (m_pickLiveViewZoom) {
     m_pickLiveViewZoom = false;
     toggleNumpadForFocusCheck(false);
@@ -3791,6 +3822,8 @@ void StopMotion::toggleZoomPicking() {
     m_pickLiveViewZoom = true;
     toggleNumpadForFocusCheck(true);
   }
+
+  emit(pickFocusCheckToggled(m_pickLiveViewZoom));
 }
 
 //-----------------------------------------------------------------
@@ -4186,7 +4219,13 @@ EdsError StopMotion::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
       instance()->releaseCamera();
     }
     instance()->m_liveViewStatus = LiveViewClosed;
-    emit(instance()->cameraChanged());
+    emit(instance()->cameraChanged(QString("")));
+  }
+  if (event == kEdsStateEvent_WillSoonShutDown) {
+    instance()->extendCameraOnTime();
+    if (instance()->m_liveViewStatus > 1) {
+      instance()->toggleLiveView();
+    }
   }
   return EDS_ERR_OK;
 }

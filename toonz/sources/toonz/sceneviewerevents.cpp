@@ -569,6 +569,15 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     TPointD worldPos = winToWorld(curPos);
     TPointD pos      = tool->getMatrix().inv() * worldPos;
 
+#ifdef WITH_CANON
+    // grab screen picking for stop motion live view zoom
+    if ((event.buttons() & Qt::LeftButton) &&
+        StopMotion::instance()->m_pickLiveViewZoom) {
+      StopMotion::instance()->makeZoomPoint(pos);
+      return;
+    }
+#endif
+
     if (m_locator) {
       m_locator->onChangeViewAff(worldPos);
     }
@@ -754,10 +763,8 @@ void SceneViewer::onPress(const TMouseEvent &event) {
 #ifdef WITH_CANON
   // grab screen picking for stop motion live view zoom
   if (StopMotion::instance()->m_pickLiveViewZoom) {
-    StopMotion::instance()->toggleZoomPicking();
     StopMotion::instance()->makeZoomPoint(pos);
-    if (tool) setToolCursor(this, tool->getCursorId());
-    if (m_mouseButton != Qt::RightButton) return;
+    return;
   }
 #endif
 

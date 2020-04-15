@@ -57,9 +57,9 @@ after_build:
 
     copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world412.dll" %CONFIGURATION%\OpenToonz
 
-    mkdir "%CONFIGURATION%\OpenToonz\portablestuff"
+    mkdir "%CONFIGURATION%\OpenToonz stuff"
 
-    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\OpenToonz\portablestuff"
+    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\OpenToonz stuff"
     
 artifacts:
 - path: toonz\$(PLATFORM)\$(CONFIGURATION)

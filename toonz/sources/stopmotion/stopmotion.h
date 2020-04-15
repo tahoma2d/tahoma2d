@@ -340,6 +340,7 @@ public:
   EdsError focusFar2();
   EdsError focusNear3();
   EdsError focusFar3();
+  void extendCameraOnTime();
 #endif
 
 public slots:
@@ -356,7 +357,7 @@ signals:
   void newLiveViewImageReady();
   void liveViewStopped();
   void newImageReady();
-  void cameraChanged();
+  void cameraChanged(QString);
   void optionsChanged();
   void liveViewChanged(bool);
   void newCameraSelected(int, bool);
@@ -381,6 +382,8 @@ signals:
   void imageQualityChangedSignal(QString);
   void pictureStyleChangedSignal(QString);
   void modeChanged();
+  void focusCheckToggled(bool);
+  void pickFocusCheckToggled(bool);
 
   void newDimensions();
   void subsamplingChanged(int);
@@ -400,7 +403,7 @@ signals:
   void drawBeneathLevelsSignal(bool);
   void useDirectShowSignal(bool);
   void reviewTimeChangedSignal(int);
-  void updateCameraList();
+  void updateCameraList(QString);
 };
 
 #endif  // STOPMOTION_H
