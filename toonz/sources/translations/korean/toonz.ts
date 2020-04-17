@@ -6501,7 +6501,7 @@ Is it OK to release these shortcuts?</source>
         <translation>동영상 형식에 기본 뷰어 사용</translation>
     </message>
     <message>
-        <source>Minimize Raster Memory Fragmentation *</source>
+        <source>Minimize Raster Memory Fragmentation*</source>
         <translation>래스터 메모리 조각화 최소화*</translation>
     </message>
     <message>
@@ -6553,7 +6553,7 @@ Is it OK to release these shortcuts?</source>
         <translation>사용자 정의*</translation>
     </message>
     <message>
-        <source>Custom Project Path(s): </source>
+        <source>Custom Project Path(s):</source>
         <translation>사용자 정의 프로젝트 경로:</translation>
     </message>
     <message>
@@ -6561,7 +6561,7 @@ Is it OK to release these shortcuts?</source>
         <translation>고급:**(공백없음)으로 여러 경로를 구분할 수 있음.</translation>
     </message>
     <message>
-        <source>* Changes will take effect the next time you run Toonz</source>
+        <source>* Changes will take effect the next time you run OpenToonz</source>
         <translation>* 다음에 툰즈를 실행하면 변경 사항이 적용 됨.</translation>
     </message>
     <message>
@@ -6577,8 +6577,8 @@ Is it OK to release these shortcuts?</source>
         <translation>X-시트/ 숫자 열 셀 영역을 클릭하여 현재 프레임 이동</translation>
     </message>
     <message>
-        <source>Color Calibration using 3D Look-up Table *</source>
-        <translation>3D 조회 표를 사용한 색상 보정 *</translation>
+        <source>Color Calibration using 3D Look-up Table*</source>
+        <translation>3D 조회 표를 사용한 색상 보정*</translation>
     </message>
     <message>
         <source>Enable auto-stretch frame</source>
@@ -6621,7 +6621,7 @@ Is it OK to release these shortcuts?</source>
         <translation>가져오기 레벨을 X-시트에 표시</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
         <translation>서브-X시트를 가져올때 하위 폴더 만들기</translation>
     </message>
     <message>
@@ -6657,7 +6657,7 @@ Is it OK to release these shortcuts?</source>
         <translation>원본을 정리 한 도면을 백업으로 유지</translation>
     </message>
     <message>
-        <source>Multi Layer Style Picker : Switch Levels by Picking</source>
+        <source>Multi Layer Style Picker: Switch Levels by Picking</source>
         <translation>멀티 레이어 스타일 선택기: 픽싱을 통한 레벨 전환</translation>
     </message>
     <message>
@@ -6713,7 +6713,7 @@ Is it OK to release these shortcuts?</source>
         <translation>셀 이름을 바꾸는 동안 오픈툰즈 명령 단축키 사용 </translation>
     </message>
     <message>
-        <source>Show Toolbar in the XSheet </source>
+        <source>Show Toolbar in the Xsheet</source>
         <translation>X-시트 도구 모음 표시</translation>
     </message>
     <message>
@@ -6761,7 +6761,7 @@ Is it OK to release these shortcuts?</source>
         <translation>재생 중에 어니언스킨 표시</translation>
     </message>
     <message>
-        <source>Display Lines Only </source>
+        <source>Display Lines Only</source>
         <translation>라인만 표시</translation>
     </message>
     <message>
@@ -7059,12 +7059,12 @@ if both are possible on coding file path.</source>
         <translation>카테고리</translation>
     </message>
     <message>
-        <source>Interval(Minutes): </source>
+        <source>Interval (Minutes):</source>
         <translation>간격(분):</translation>
     </message>
     <message>
-        <source>Undo Memory Size (MB)</source>
-        <translation>실행취소 메모리 크기(MB)</translation>
+        <source>Undo Memory Size (MB):</source>
+        <translation>실행취소 메모리 크기(MB):</translation>
     </message>
     <message>
         <source>Render Task Chunk Size:</source>
@@ -7099,24 +7099,24 @@ if both are possible on coding file path.</source>
         <translation>기능 편집기*:</translation>
     </message>
     <message>
-        <source>Icon Size *</source>
-        <translation>아이콘 크기 *</translation>
+        <source>Level Strip Icon Size*:</source>
+        <translation>아이콘 크기*:</translation>
     </message>
     <message>
-        <source>Viewer  Shrink</source>
-        <translation>뷰어 축소</translation>
+        <source>Viewer Shrink:</source>
+        <translation>뷰어 축소:</translation>
     </message>
     <message>
-        <source>Step</source>
-        <translation>단계</translation>
+        <source>Step:</source>
+        <translation>단계:</translation>
     </message>
     <message>
-        <source>Style *:</source>
+        <source>Style*:</source>
         <translation>스타일*:</translation>
     </message>
     <message>
-        <source>3DLUT File for [%1] *:</source>
-        <translation>[%1]에 대한 3D LUT 파일 *:</translation>
+        <source>3DLUT File for [%1]*:</source>
+        <translation>[%1]에 대한 3D LUT 파일*:</translation>
     </message>
     <message>
         <source>Matte color is used for background when overwriting raster levels with transparent pixels
@@ -7125,7 +7125,7 @@ in non alpha-enabled image format.</source>
 알파 기능이 없는 이미지 형식으로.</translation>
     </message>
     <message>
-        <source>Matte color: </source>
+        <source>Matte color:</source>
         <translation>매트 색상:</translation>
     </message>
     <message>
@@ -7145,32 +7145,32 @@ in non alpha-enabled image format.</source>
         <translation>현재 열 색상:</translation>
     </message>
     <message>
-        <source>Viewer BG Color</source>
-        <translation>뷰어 BG 색상</translation>
+        <source>Viewer BG Color:</source>
+        <translation>뷰어 BG 색상:</translation>
     </message>
     <message>
-        <source>Preview BG Color</source>
-        <translation>미리보기 BG 색상</translation>
+        <source>Preview BG Color:</source>
+        <translation>미리보기 BG 색상:</translation>
     </message>
     <message>
-        <source>ChessBoard Color 1</source>
-        <translation>체스보드 색상 1</translation>
+        <source>Chessboard Color 1:</source>
+        <translation>체스보드 색상 1:</translation>
     </message>
     <message>
-        <source>Chessboard Color 2</source>
-        <translation>체스보드 색상 2</translation>
+        <source>Chessboard Color 2:</source>
+        <translation>체스보드 색상 2:</translation>
     </message>
     <message>
-        <source>Viewer Zoom Center</source>
-        <translation>뷰어 줌 센터</translation>
+        <source>Viewer Zoom Center:</source>
+        <translation>뷰어 줌 센터:</translation>
     </message>
     <message>
-        <source>Language *:</source>
-        <translation>언어 *:</translation>
+        <source>Language*:</source>
+        <translation>언어*:</translation>
     </message>
     <message>
-        <source>Font *:</source>
-        <translation>글꼴 *:</translation>
+        <source>Font*:</source>
+        <translation>글꼴*:</translation>
     </message>
     <message>
         <source>Default File Import Behavior:</source>
@@ -7193,7 +7193,7 @@ in non alpha-enabled image format.</source>
         <translation>컴퓨터에서 FFmpeg 가 있는 경로를 입력하세요.</translation>
     </message>
     <message>
-        <source>FFmpeg Path: </source>
+        <source>FFmpeg Path:</source>
         <translation>FFmpeg 경로:</translation>
     </message>
     <message>
@@ -7209,11 +7209,11 @@ in non alpha-enabled image format.</source>
         <translation>FFmpeg 시간초과:</translation>
     </message>
     <message>
-        <source>Please indicate where you would like exports from Fast Render(MP4) to go.</source>
+        <source>Please indicate where you would like exports from Fast Render (MP4) to go.</source>
         <translation>빠른 랜더(MP4)에서 내보낼 위치를 지정하세요.</translation>
     </message>
     <message>
-        <source>Fast Render Path: </source>
+        <source>Fast Render Path:</source>
         <translation>빠른 렌더 경로:</translation>
     </message>
     <message>
@@ -7229,7 +7229,7 @@ in non alpha-enabled image format.</source>
         <translation>폭:</translation>
     </message>
     <message>
-        <source>  Height:</source>
+        <source>Height:</source>
         <translation>높이:</translation>
     </message>
     <message>
@@ -7277,7 +7277,7 @@ in non alpha-enabled image format.</source>
         <translation>용지 두께:</translation>
     </message>
     <message>
-        <source>Previous  Frames Correction:</source>
+        <source>Previous Frames Correction:</source>
         <translation>이전 프레임 수정:</translation>
     </message>
     <message>
@@ -7289,11 +7289,11 @@ in non alpha-enabled image format.</source>
         <translation>백터 가이드 스타일:</translation>
     </message>
     <message>
-        <source>Ink Color on White Bg:</source>
+        <source>Ink Color on White BG:</source>
         <translation>흰색 BG 잉크 색상:</translation>
     </message>
     <message>
-        <source>Ink Color on Black Bg:</source>
+        <source>Ink Color on Black BG:</source>
         <translation>검은색 BG 잉크색상:</translation>
     </message>
     <message>
@@ -7317,7 +7317,7 @@ in non alpha-enabled image format.</source>
         <translation>카메라 열 표시</translation>
     </message>
     <message>
-        <source># of backups to keep: </source>
+        <source># of backups to keep:</source>
         <translation># 보관할 백업 수:</translation>
     </message>
     <message>
@@ -7345,8 +7345,8 @@ in non alpha-enabled image format.</source>
         <translation>툴바 표시 동작:</translation>
     </message>
     <message>
-        <source>Level Editor Box Color</source>
-        <translation>레벨 편집기 상자 색상</translation>
+        <source>Level Editor Box Color:</source>
+        <translation>레벨 편집기 상자 색상:</translation>
     </message>
     <message>
         <source>Incremental</source>
@@ -7361,8 +7361,8 @@ in non alpha-enabled image format.</source>
         <translation>레벨 전용 도구 표시</translation>
     </message>
     <message>
-        <source>Number of Frames to Play for Short Play</source>
-        <translation>쇼트 플레이에 사용할 프레임 수</translation>
+        <source>Number of Frames to Play for Short Play:</source>
+        <translation>쇼트 플레이에 사용할 프레임 수:</translation>
     </message>
 </context>
 <context>

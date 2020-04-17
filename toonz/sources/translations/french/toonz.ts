@@ -6823,10 +6823,6 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Utiliser le Viseur par Défaut pour les Formats de Film</translation>
     </message>
     <message>
-        <source>Minimize Raster Memory Fragmentation*</source>
-        <translation type="vanished"> Minimiser la Fragmentation de la Mémoire Raster*</translation>
-    </message>
-    <message>
         <source>Save Automatically Every Minutes</source>
         <translation type="vanished">Enregistrer Automatiquement Tous les Minutes</translation>
     </message>
@@ -6872,11 +6868,11 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Step:</source>
-        <translation type="vanished">Pas:</translation>
+        <translation>Pas:</translation>
     </message>
     <message>
         <source>Height*:</source>
-        <translation type="vanished">Hauteur*:</translation>
+        <translation>Hauteur*:</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6887,8 +6883,8 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Exposer les Niveaux Chargés dans le Xsheet</translation>
     </message>
     <message>
-        <source>Create Sub-folder when Importing Sub-xsheet</source>
-        <translation>Créer un Sous-dossier lors de l&apos;Importation d&apos;un Sub-xsheet</translation>
+        <source>Create Sub-folder when Importing Sub-Xsheet</source>
+        <translation>Créer un Sous-dossier lors de l&apos;Importation d&apos;un Sub-Xsheet</translation>
     </message>
     <message>
         <source>Drawing</source>
@@ -6955,11 +6951,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="vanished">Correction des Images Suivantes</translation>
     </message>
     <message>
-        <source>   Previous  Frames Correction: </source>
-        <translation type="vanished">Correction des Images Précédentes</translation>
-    </message>
-    <message>
-        <source>Display Lines Only </source>
+        <source>Display Lines Only</source>
         <translation>Afficher Seulement les Lignes</translation>
     </message>
     <message>
@@ -6972,7 +6964,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Undo Memory Size (MB):</source>
-        <translation type="vanished">Taille de la Mémoire pour l&apos;Annulation (MB):</translation>
+        <translation>Taille de la Mémoire pour l&apos;Annulation (MB):</translation>
     </message>
     <message>
         <source>Render Task Chunk Size:</source>
@@ -6983,12 +6975,8 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Afficher les Information sur les Images Rendues</translation>
     </message>
     <message>
-        <source>*Changes will take effect the next time you run Toonz</source>
-        <translation type="vanished">* Les changements auront effet lors de la prochaine exécution de Toonz</translation>
-    </message>
-    <message>
         <source>Language*:</source>
-        <translation type="vanished">Langue*:</translation>
+        <translation>Langue*:</translation>
     </message>
     <message>
         <source>cm</source>
@@ -7048,7 +7036,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Height:</source>
-        <translation type="vanished">Hauteur:</translation>
+        <translation>Hauteur:</translation>
     </message>
     <message>
         <source>DPI:</source>
@@ -7073,14 +7061,6 @@ Set the output folder path to the subfolder as well.</source>
     <message>
         <source>Transparency Check</source>
         <translation>Contrôle de la transparence</translation>
-    </message>
-    <message>
-        <source>   Ink Color on White Bg: </source>
-        <translation type="vanished">Couleur de l&apos;encre sur le Bg Blanc:</translation>
-    </message>
-    <message>
-        <source>   Ink Color on Black Bg: </source>
-        <translation type="vanished">Couleur de l&apos;encre sur le Bg Noire:</translation>
     </message>
     <message>
         <source> Paint Color: </source>
@@ -7139,12 +7119,12 @@ Set the output folder path to the subfolder as well.</source>
         <translation>Ignorer le Canal Alpha sur les Niveaux de la Colonne 1</translation>
     </message>
     <message>
-        <source>Minimize Raster Memory Fragmentation *</source>
-        <translation type="unfinished"></translation>
+        <source>Minimize Raster Memory Fragmentation*</source>
+        <translation>Minimiser la Fragmentation de la Mémoire Raster*</translation>
     </message>
     <message>
-        <source>* Changes will take effect the next time you run Toonz</source>
-        <translation type="unfinished"></translation>
+        <source>* Changes will take effect the next time you run OpenToonz</source>
+        <translation>* Les changements auront effet lors de la prochaine exécution de OpenToonz</translation>
     </message>
     <message>
         <source>Move Current Frame by Clicking on Xsheet / Numerical Columns Cell Area</source>
@@ -7167,7 +7147,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Multi Layer Style Picker : Switch Levels by Picking</source>
+        <source>Multi Layer Style Picker: Switch Levels by Picking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7183,47 +7163,31 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Undo Memory Size (MB)</source>
+        <source>Viewer BG Color:</source>
+        <translation>Couleur de Fond du Viseur:</translation>
+    </message>
+    <message>
+        <source>Preview BG Color:</source>
+        <translation>Couleur de Fond du Preview:</translation>
+    </message>
+    <message>
+        <source>Level Strip Icon Size*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Icon Size *</source>
+        <source>Viewer Shrink:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Viewer  Shrink</source>
+        <source>Chessboard Color 1:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Step</source>
+        <source>Chessboard Color 2:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Viewer BG Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Preview BG Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ChessBoard Color 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chessboard Color 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Viewer Zoom Center</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language *:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>  Height:</source>
+        <source>Viewer Zoom Center:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7235,16 +7199,16 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Previous  Frames Correction:</source>
-        <translation type="unfinished"></translation>
+        <source>Previous Frames Correction:</source>
+        <translation>Correction des Images Précédentes:</translation>
     </message>
     <message>
-        <source>Ink Color on White Bg:</source>
-        <translation type="unfinished"></translation>
+        <source>Ink Color on White BG:</source>
+        <translation>Couleur de l&apos;encre sur le BG Blanc:</translation>
     </message>
     <message>
-        <source>Ink Color on Black Bg:</source>
-        <translation type="unfinished"></translation>
+        <source>Ink Color on Black BG:</source>
+        <translation>Couleur de l&apos;encre sur le BG Noire:</translation>
     </message>
     <message>
         <source>Paint Color:</source>
@@ -7311,7 +7275,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Custom Project Path(s): </source>
+        <source>Custom Project Path(s):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7335,7 +7299,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Interval(Minutes): </source>
+        <source>Interval (Minutes):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7355,7 +7319,7 @@ Set the output folder path to the subfolder as well.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>FFmpeg Path: </source>
+        <source>FFmpeg Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7436,7 +7400,7 @@ Is it OK to release these shortcuts?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Toolbar in the XSheet </source>
+        <source>Show Toolbar in the Xsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7513,7 +7477,7 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Font *:</source>
+        <source>Font*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7529,11 +7493,11 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please indicate where you would like exports from Fast Render(MP4) to go.</source>
+        <source>Please indicate where you would like exports from Fast Render (MP4) to go.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fast Render Path: </source>
+        <source>Fast Render Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7591,7 +7555,7 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Color Calibration using 3D Look-up Table *</source>
+        <source>Color Calibration using 3D Look-up Table*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7624,7 +7588,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>3DLUT File for [%1] *:</source>
+        <source>3DLUT File for [%1]*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7704,7 +7668,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
         <translation type="unfinished">Fichier</translation>
     </message>
     <message>
-        <source>Style *:</source>
+        <source>Style*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7713,7 +7677,7 @@ in non alpha-enabled image format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Matte color: </source>
+        <source>Matte color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7725,7 +7689,7 @@ in non alpha-enabled image format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source># of backups to keep: </source>
+        <source># of backups to keep:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7757,7 +7721,7 @@ in non alpha-enabled image format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Level Editor Box Color</source>
+        <source>Level Editor Box Color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7781,7 +7745,7 @@ in non alpha-enabled image format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Number of Frames to Play for Short Play</source>
+        <source>Number of Frames to Play for Short Play:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11234,7 +11198,7 @@ S&apos;il vous plaît commettre ou annuler les modifications avant.</translation
         <translation type="vanished">Couleur de Fond du Viseur:</translation>
     </message>
     <message>
-        <source>   Preview BG Color:</source>
+        <source>Preview BG Color:</source>
         <translation type="vanished">Couleur de Fond du Preview:</translation>
     </message>
     <message>

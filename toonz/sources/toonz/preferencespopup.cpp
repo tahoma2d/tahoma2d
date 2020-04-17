@@ -94,7 +94,7 @@ SizeField::SizeField(QSize min, QSize max, QSize value, QWidget* parent)
   lay->setSpacing(5);
   lay->setMargin(0);
   lay->addWidget(m_fieldX, 1);
-  lay->addWidget(new QLabel("X", this), 0);
+  lay->addWidget(new QLabel("x", this), 0);
   lay->addWidget(m_fieldY, 1);
   lay->addStretch(1);
   setLayout(lay);
@@ -909,7 +909,7 @@ void PreferencesPopup::insertDualUIs(
 
 void PreferencesPopup::insertFootNote(QGridLayout* layout) {
   QLabel* note =
-      new QLabel(tr("* Changes will take effect the next time you run Toonz"));
+      new QLabel(tr("* Changes will take effect the next time you run OpenToonz"));
   note->setStyleSheet("font-size: 10px; font: italic;");
   layout->addWidget(note, layout->rowCount(), 0, 1, 2,
                     Qt::AlignLeft | Qt::AlignVCenter);
@@ -921,23 +921,23 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
   const static QMap<PreferencesItemId, QString> uiStringTable = {
       // General
       {defaultViewerEnabled, tr("Use Default Viewer for Movie Formats")},
-      {rasterOptimizedMemory, tr("Minimize Raster Memory Fragmentation *")},
+      {rasterOptimizedMemory, tr("Minimize Raster Memory Fragmentation*")},
       {autosaveEnabled, tr("Save Automatically")},
-      {autosavePeriod, tr("Interval(Minutes): ")},
+      {autosavePeriod, tr("Interval (Minutes):")},
       {autosaveSceneEnabled, tr("Automatically Save the Scene File")},
       {autosaveOtherFilesEnabled, tr("Automatically Save Non-Scene Files")},
       {startupPopupEnabled, tr("Show Startup Window when OpenToonz Starts")},
-      {undoMemorySize, tr("Undo Memory Size (MB)")},
+      {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,
        tr("Replace Toonz Level after SaveLevelAs command")},
       {backupEnabled, tr("Backup Scene and Animation Levels when Saving")},
-      {backupKeepCount, tr("# of backups to keep: ")},
+      {backupKeepCount, tr("# of backups to keep:")},
       {sceneNumberingEnabled, tr("Show Info in Rendered Frames")},
       {watchFileSystemEnabled,
        tr("Watch File System and Update File Browser Automatically")},
       //{ projectRoot,               tr("") },
-      {customProjectRoot, tr("Custom Project Path(s): ")},
+      {customProjectRoot, tr("Custom Project Path(s):")},
       {pathAliasPriority, tr("Path Alias Priority:")},
 
       // Interface
@@ -959,17 +959,17 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Show Raster Images Darken Blended")},
       {showFrameNumberWithLetters,
        tr("Show \"ABC\" Appendix to the Frame Number in Xsheet Cell")},
-      {iconSize, tr("Icon Size *")},
-      {viewShrink, tr("Viewer  Shrink")},
-      {viewStep, tr("Step")},
-      {viewerZoomCenter, tr("Viewer Zoom Center")},
-      {CurrentLanguageName, tr("Language *:")},
-      {interfaceFont, tr("Font *:")},
-      {interfaceFontStyle, tr("Style *:")},
+      {iconSize, tr("Level Strip Icon Size*:")},
+      {viewShrink, tr("Viewer Shrink:")},
+      {viewStep, tr("Step:")},
+      {viewerZoomCenter, tr("Viewer Zoom Center:")},
+      {CurrentLanguageName, tr("Language*:")},
+      {interfaceFont, tr("Font*:")},
+      {interfaceFontStyle, tr("Style*:")},
       {colorCalibrationEnabled,
-       tr("Color Calibration using 3D Look-up Table *")},
+       tr("Color Calibration using 3D Look-up Table*")},
       {colorCalibrationLutPaths,
-       tr("3DLUT File for [%1] *:")
+       tr("3DLUT File for [%1]*:")
            .arg(LutManager::instance()->getMonitorName())},
 
       // Visualization
@@ -980,7 +980,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {importPolicy, tr("Default File Import Behavior:")},
       {autoExposeEnabled, tr("Expose Loaded Levels in Xsheet")},
       {subsceneFolderEnabled,
-       tr("Create Sub-folder when Importing Sub-xsheet")},
+       tr("Create Sub-folder when Importing Sub-Xsheet")},
       {removeSceneNumberFromLoadedLevelName,
        tr("Automatically Remove Scene Number from Loaded Level Name")},
       {IgnoreImageDpi, tr("Use Camera DPI for All Imported Images")},
@@ -989,13 +989,13 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       //{ levelFormats,                           tr("") },
 
       // Saving
-      {rasterBackgroundColor, tr("Matte color: ")},
+      {rasterBackgroundColor, tr("Matte color:")},
       {resetUndoOnSavingLevel, tr("Clear Undo History when Saving Levels")},
 
       // Import / Export
-      {ffmpegPath, tr("FFmpeg Path: ")},
+      {ffmpegPath, tr("FFmpeg Path:")},
       {ffmpegTimeout, tr("FFmpeg Timeout:")},
-      {fastRenderPath, tr("Fast Render Path: ")},
+      {fastRenderPath, tr("Fast Render Path:")},
 
       // Drawing
       {scanLevelType, tr("Scan File Format:")},
@@ -1003,7 +1003,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {newLevelSizeToCameraSizeEnabled,
        tr("New Levels Default to the Current Camera Size")},
       {DefLevelWidth, tr("Width:")},
-      {DefLevelHeight, tr("  Height:")},
+      {DefLevelHeight, tr("Height:")},
       {DefLevelDpi, tr("DPI:")},
       {EnableAutocreation, tr("Enable Autocreation")},
       {NumberingSystem, tr("Numbering System:")},
@@ -1027,7 +1027,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")},
       {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")},
       {multiLayerStylePickerEnabled,
-       tr("Multi Layer Style Picker : Switch Levels by Picking")},
+       tr("Multi Layer Style Picker: Switch Levels by Picking")},
       {cursorBrushType, tr("Basic Cursor Type:")},
       {cursorBrushStyle, tr("Cursor Style:")},
       {cursorOutlineEnabled, tr("Show Cursor Size Outlines")},
@@ -1049,7 +1049,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Enable to Input Cells without Double Clicking")},
       {shortcutCommandsWhileRenamingCellEnabled,
        tr("Enable OpenToonz Commands' Shortcut Keys While Renaming Cell")},
-      {showXSheetToolbar, tr("Show Toolbar in the XSheet ")},
+      {showXSheetToolbar, tr("Show Toolbar in the Xsheet")},
       {expandFunctionHeader,
        tr("Expand Function Editor Header to Match Xsheet Toolbar Height*")},
       {showColumnNumbers, tr("Show Column Numbers in Column Headers")},
@@ -1067,7 +1067,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {blanksCount, tr("Blank Frames:")},
       {blankColor, tr("Blank Frames Color:")},
       {rewindAfterPlayback, tr("Rewind after Playback")},
-      {shortPlayFrameCount, tr("Number of Frames to Play for Short Play")},
+      {shortPlayFrameCount, tr("Number of Frames to Play for Short Play:")},
       {previewAlwaysOpenNewFlip, tr("Display in a New Flipbook Window")},
       {fitToFlipbook, tr("Fit to Flipbook")},
       {generatedMovieViewEnabled, tr("Open Flipbook after Rendering")},
@@ -1075,22 +1075,22 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Onion Skin
       {onionSkinEnabled, tr("Onion Skin ON")},
       {onionPaperThickness, tr("Paper Thickness:")},
-      {backOnionColor, tr("Previous  Frames Correction:")},
+      {backOnionColor, tr("Previous Frames Correction:")},
       {frontOnionColor, tr("Following Frames Correction:")},
-      {onionInksOnly, tr("Display Lines Only ")},
+      {onionInksOnly, tr("Display Lines Only")},
       {onionSkinDuringPlayback, tr("Show Onion Skin During Playback")},
       {useOnionColorsForShiftAndTraceGhosts,
        tr("Use Onion Skin Colors for Reference Drawings of Shift and Trace")},
       {animatedGuidedDrawing, tr("Vector Guided Style:")},
 
       // Colors
-      {viewerBGColor, tr("Viewer BG Color")},
-      {previewBGColor, tr("Preview BG Color")},
-      {levelEditorBoxColor, tr("Level Editor Box Color")},
-      {chessboardColor1, tr("ChessBoard Color 1")},
-      {chessboardColor2, tr("Chessboard Color 2")},
-      {transpCheckInkOnWhite, tr("Ink Color on White Bg:")},
-      {transpCheckInkOnBlack, tr("Ink Color on Black Bg:")},
+      {viewerBGColor, tr("Viewer BG Color:")},
+      {previewBGColor, tr("Preview BG Color:")},
+      {levelEditorBoxColor, tr("Level Editor Box Color:")},
+      {chessboardColor1, tr("Chessboard Color 1:")},
+      {chessboardColor2, tr("Chessboard Color 2:")},
+      {transpCheckInkOnWhite, tr("Ink Color on White BG:")},
+      {transpCheckInkOnBlack, tr("Ink Color on Black BG:")},
       {transpCheckPaint, tr("Paint Color:")},
 
       // Version Control
@@ -1569,7 +1569,7 @@ QWidget* PreferencesPopup::createImportExportPage() {
   insertUI(ffmpegTimeout, lay);
 
   putLabel(tr("Please indicate where you would like exports from Fast "
-              "Render(MP4) to go."),
+              "Render (MP4) to go."),
            lay);
   insertUI(fastRenderPath, lay);
 
