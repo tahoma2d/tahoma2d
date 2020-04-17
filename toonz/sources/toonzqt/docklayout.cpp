@@ -201,9 +201,9 @@ QSize DockLayout::maximumSize() const {
 
 QSize DockLayout::sizeHint() const {
   QSize s(0, 0);
-  int n = m_items.size();
+  int n        = m_items.size();
   if (n > 0) s = QSize(100, 70);  // start with a nice default size
-  int i = 0;
+  int i        = 0;
   while (i < n) {
     QLayoutItem *o = m_items[i];
     s              = s.expandedTo(o->sizeHint());
@@ -466,9 +466,9 @@ void DockLayout::redistribute() {
     // glitchy.
     bool widgetsCanBeFixedWidth =
         !m_regions.front()->checkWidgetsToBeFixedWidth(widgets);
-    if (widgetsCanBeFixedWidth) {
-      for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
-    }
+    // if (widgetsCanBeFixedWidth) {
+    //  for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
+    //}
 
     m_regions.front()->calculateExtremalSizes();
 
@@ -487,12 +487,12 @@ void DockLayout::redistribute() {
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
 
-    if (widgetsCanBeFixedWidth) {
-      for (QWidget *widget : widgets) {
-        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        widget->setMinimumSize(0, 0);
-      }
-    }
+    // if (widgetsCanBeFixedWidth) {
+    //  for (QWidget *widget : widgets) {
+    //    widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+    //    widget->setMinimumSize(0, 0);
+    //  }
+    //}
   }
 
   // Finally, apply Region geometries found
@@ -1498,7 +1498,7 @@ bool DockLayout::restoreState(const State &state) {
   }
 
   // Else, deallocate old regions and substitute with new ones
-  for (j = 0; j < m_regions.size(); ++j) delete m_regions[j];
+  for (j    = 0; j < m_regions.size(); ++j) delete m_regions[j];
   m_regions = newHierarchy;
 
   // Now re-initialize dock widgets' infos.
