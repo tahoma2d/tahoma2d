@@ -120,6 +120,7 @@ set(MOC_HEADERS
     xshrowviewer.h
     quicktoolbar.h
 	xdtsimportpopup.h
+	expressionreferencemanager.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -345,6 +346,7 @@ set(SOURCES
 	separatecolorspopup.cpp
     xdtsio.cpp
 	xdtsimportpopup.cpp
+	expressionreferencemanager.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

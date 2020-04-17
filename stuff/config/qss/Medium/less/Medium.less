@@ -556,9 +556,13 @@
 @function-KeyFrame-color:          darken(desaturate(spin(@keyframe-total-color, 0.0000), 0.7570), 8.4314);
 @function-KeyFrameBorder-color:    lighten(@function-KeyFrame-color, 20);
 @function-SelectedKeyFrame-color:  mix(shade(@function-KeyFrame-color, -40), @cellHighlightTintColor, 60);
+@function-IgnoredKeyFrame-color: rgb(172,42,57);
+@function-SelectedIgnoredKeyFrame-color: mix(shade(@function-IgnoredKeyFrame-color, -40), @cellHighlightTintColor, 60);
 @function-Inbetween-color:         darken(desaturate(spin(@keyframe-inbetween-color, 0.4423), 4.8071), 7.2549);
 @function-InbetweenBorder-color:   lighten(@keyframe-inbetween-color, 20);
 @function-SelectedInbetween-color: mix(shade(@function-Inbetween-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
+@function-IgnoredInbetween-color: rgb(138,105,94);
+@function-SelectedIgnoredInbetween-color: mix(shade(@function-IgnoredInbetween-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
 // Expression Field
 @function-ExpressionFieldBG-color:     lighten(@bg, 61.9608);

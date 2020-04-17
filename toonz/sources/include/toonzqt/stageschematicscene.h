@@ -137,6 +137,8 @@ public:
 
   SchematicViewer *getSchematicViewer() { return m_viewer; }
 
+  StageObjectSelection *getStageSelection() const { return m_selection; }
+
 private:
   StageSchematicNode *addStageSchematicNode(TStageObject *pegbar);
   StageSchematicGroupNode *addStageGroupNode(QList<TStageObject *> objs);

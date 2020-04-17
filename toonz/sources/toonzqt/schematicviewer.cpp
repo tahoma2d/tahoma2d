@@ -13,6 +13,8 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
 #include "toonzqt/dvscrollwidget.h"
+#include "toonzqt/fxselection.h"
+#include "stageobjectselection.h"
 
 // TnzLib includes
 #include "toonz/txsheethandle.h"
@@ -397,12 +399,12 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -435,8 +437,9 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetView) {
 #endif
   if ((scale2 < 100000 || !zoomin) && (scale2 > 0.001 * 0.05 || zoomin)) {
     double oldZoomScale = sqrt(scale2);
-    double zoomScale    = resetView ? 1 : ImageUtils::getQuantizedZoomFactor(
-                                           oldZoomScale, zoomin);
+    double zoomScale =
+        resetView ? 1
+                  : ImageUtils::getQuantizedZoomFactor(oldZoomScale, zoomin);
     QMatrix scale =
         QMatrix().scale(zoomScale / oldZoomScale, zoomScale / oldZoomScale);
 
@@ -701,10 +704,9 @@ bool SchematicSceneViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -792,6 +794,11 @@ SchematicViewer::SchematicViewer(QWidget *parent)
           SIGNAL(doExplodeChild(QList<TStageObjectId>)));
   connect(m_stageScene, SIGNAL(editObject()), this, SIGNAL(editObject()));
   connect(m_fxScene, SIGNAL(editObject()), this, SIGNAL(editObject()));
+
+  connect(m_fxScene->getFxSelection(), SIGNAL(doDelete()), this,
+          SLOT(deleteFxs()));
+  connect(m_stageScene->getStageSelection(), SIGNAL(doDelete()), this,
+          SLOT(deleteStageObjects()));
 
   m_viewer->setScene(m_stageScene);
   m_fxToolbar->hide();
@@ -942,10 +949,10 @@ void SchematicViewer::createActions() {
 
     QIcon nodeSizeIcon =
         createQIcon(m_maximizedNode ? "minimizenodes" : "maximizenodes");
-    m_nodeSize =
-        new QAction(nodeSizeIcon, m_maximizedNode ? tr("&Minimize Nodes")
-                                                  : tr("&Maximize Nodes"),
-                    m_commonToolbar);
+    m_nodeSize = new QAction(
+        nodeSizeIcon,
+        m_maximizedNode ? tr("&Minimize Nodes") : tr("&Maximize Nodes"),
+        m_commonToolbar);
     connect(m_nodeSize, SIGNAL(triggered()), this, SLOT(changeNodeSize()));
 
     QIcon selectModeIcon = createQIcon("selection_schematic");
@@ -1219,3 +1226,15 @@ void SchematicViewer::zoomModeEnabled() { setCursorMode(CursorMode::Zoom); }
 //------------------------------------------------------------------
 
 void SchematicViewer::handModeEnabled() { setCursorMode(CursorMode::Hand); }
+
+//------------------------------------------------------------------
+
+void SchematicViewer::deleteFxs() {
+  emit doDeleteFxs(m_fxScene->getFxSelection());
+}
+
+//------------------------------------------------------------------
+
+void SchematicViewer::deleteStageObjects() {
+  emit doDeleteStageObjects(m_stageScene->getStageSelection());
+}

@@ -253,10 +253,14 @@ class DVAPI SpreadsheetViewer : public QDialog {
   QColor m_keyFrameColor;          // (219,139,54)
   QColor m_keyFrameBorderColor;    // (82,51,20)
   QColor m_selectedKeyFrameColor;  // (237,197,155)
+  QColor m_ignoredKeyFrameColor;
+  QColor m_selectedIgnoredKeyFrameColor;
   // key frame inbetween
   QColor m_inBetweenColor;          // (194,194,176)
   QColor m_inBetweenBorderColor;    // (72,72,65)
   QColor m_selectedInBetweenColor;  // (225,225,216)
+  QColor m_ignoredInBetweenColor;
+  QColor m_selectedIgnoredInBetweenColor;
   // empty cell
   QColor m_selectedEmptyColor;  // (190,190,190)
   // empty cell in the scene range
@@ -266,12 +270,22 @@ class DVAPI SpreadsheetViewer : public QDialog {
                  setKeyFrameBorderColor)
   Q_PROPERTY(QColor SelectedKeyFrameColor READ getSelectedKeyFrameColor WRITE
                  setSelectedKeyFrameColor)
+  Q_PROPERTY(QColor IgnoredKeyFrameColor READ getIgnoredKeyFrameColor WRITE
+                 setIgnoredKeyFrameColor)
+  Q_PROPERTY(
+      QColor SelectedIgnoredKeyFrameColor READ getSelectedIgnoredKeyFrameColor
+          WRITE setSelectedIgnoredKeyFrameColor)
   Q_PROPERTY(
       QColor InBetweenColor READ getInBetweenColor WRITE setInBetweenColor)
   Q_PROPERTY(QColor InBetweenBorderColor READ getInBetweenBorderColor WRITE
                  setInBetweenBorderColor)
   Q_PROPERTY(QColor SelectedInBetweenColor READ getSelectedInBetweenColor WRITE
                  setSelectedInBetweenColor)
+  Q_PROPERTY(QColor IgnoredInBetweenColor READ getIgnoredInBetweenColor WRITE
+                 setIgnoredInBetweenColor)
+  Q_PROPERTY(
+      QColor SelectedIgnoredInBetweenColor READ getSelectedIgnoredInBetweenColor
+          WRITE setSelectedIgnoredInBetweenColor)
   Q_PROPERTY(QColor SelectedEmptyColor READ getSelectedEmptyColor WRITE
                  setSelectedEmptyColor)
   Q_PROPERTY(
@@ -352,6 +366,18 @@ public:
     m_selectedKeyFrameColor = color;
   }
   QColor getSelectedKeyFrameColor() const { return m_selectedKeyFrameColor; }
+
+  void setIgnoredKeyFrameColor(const QColor &color) {
+    m_ignoredKeyFrameColor = color;
+  }
+  QColor getIgnoredKeyFrameColor() const { return m_ignoredKeyFrameColor; }
+  void setSelectedIgnoredKeyFrameColor(const QColor &color) {
+    m_selectedIgnoredKeyFrameColor = color;
+  }
+  QColor getSelectedIgnoredKeyFrameColor() const {
+    return m_selectedIgnoredKeyFrameColor;
+  }
+
   void setInBetweenColor(const QColor &color) { m_inBetweenColor = color; }
   QColor getInBetweenColor() const { return m_inBetweenColor; }
   void setInBetweenBorderColor(const QColor &color) {
@@ -362,6 +388,18 @@ public:
     m_selectedInBetweenColor = color;
   }
   QColor getSelectedInBetweenColor() const { return m_selectedInBetweenColor; }
+
+  void setIgnoredInBetweenColor(const QColor &color) {
+    m_ignoredInBetweenColor = color;
+  }
+  QColor getIgnoredInBetweenColor() const { return m_ignoredInBetweenColor; }
+  void setSelectedIgnoredInBetweenColor(const QColor &color) {
+    m_selectedIgnoredInBetweenColor = color;
+  }
+  QColor getSelectedIgnoredInBetweenColor() const {
+    return m_selectedIgnoredInBetweenColor;
+  }
+
   void setSelectedEmptyColor(const QColor &color) {
     m_selectedEmptyColor = color;
   }

@@ -108,7 +108,7 @@ public:
   }
   int getHistoryType() override { return HistoryType::Schematic; }
 };
-}
+}  // namespace
 
 //======================================================================
 //
@@ -153,9 +153,10 @@ void StageObjectSelection::enableCommands() {
 //-------------------------------------------------------
 
 void StageObjectSelection::deleteSelection() {
-  TStageObjectCmd::deleteSelection(
-      m_selectedObjects.toVector().toStdVector(), m_selectedLinks.toStdList(),
-      m_selectedSplines.toStdList(), m_xshHandle, m_objHandle, m_fxHandle);
+  emit doDelete();
+  // TStageObjectCmd::deleteSelection(
+  //    m_selectedObjects.toVector().toStdVector(), m_selectedLinks.toStdList(),
+  //    m_selectedSplines.toStdList(), m_xshHandle, m_objHandle, m_fxHandle);
 }
 
 //-------------------------------------------------------

@@ -155,6 +155,7 @@ private:
 signals:
   void doCollapse(const QList<TFxP> &);
   void doExplodeChild(const QList<TFxP> &);
+  void doDelete();
 };
 
 #endif

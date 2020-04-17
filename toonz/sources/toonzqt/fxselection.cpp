@@ -35,7 +35,7 @@ bool canGroup(TFx *fx) {
   TOutputFx *ofx = dynamic_cast<TOutputFx *>(fx);
   return (!xfx && !ofx);
 }
-}
+}  // namespace
 
 //=========================================================
 //
@@ -156,10 +156,11 @@ bool FxSelection::isSelected(SchematicLink *link) {
 //---------------------------------------------------------
 
 void FxSelection::deleteSelection() {
-  std::list<TFxP, std::allocator<TFxP>> fxList = m_selectedFxs.toStdList();
-  TFxCommand::deleteSelection(fxList, m_selectedLinks.toStdList(),
-                              m_selectedColIndexes.toStdList(), m_xshHandle,
-                              m_fxHandle);
+  emit doDelete();
+  // std::list<TFxP, std::allocator<TFxP>> fxList = m_selectedFxs.toStdList();
+  // TFxCommand::deleteSelection(fxList, m_selectedLinks.toStdList(),
+  //                            m_selectedColIndexes.toStdList(), m_xshHandle,
+  //                            m_fxHandle);
 }
 
 //---------------------------------------------------------
@@ -524,8 +525,8 @@ bool FxSelection::isConnected() {
     TColumnFx *cfx  = dynamic_cast<TColumnFx *>(selectedFx);
     if (!cfx && !internalFxs->containsFx(selectedFx)) return false;
     TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(selectedFx);
-    if (zfx) selectedFx  = zfx->getZeraryFx();
-    connected            = connected && visitedFxs.contains(selectedFx);
+    if (zfx) selectedFx = zfx->getZeraryFx();
+    connected = connected && visitedFxs.contains(selectedFx);
   }
   return connected;
 }
@@ -535,14 +536,14 @@ bool FxSelection::isConnected() {
 void FxSelection::visitFx(TFx *fx, QList<TFx *> &visitedFxs) {
   if (visitedFxs.contains(fx)) return;
   TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zfx) fx          = zfx->getZeraryFx();
+  if (zfx) fx = zfx->getZeraryFx();
   if (!canGroup(fx)) return;
   visitedFxs.append(fx);
   int i;
   for (i = 0; i < fx->getInputPortCount(); i++) {
     TFx *inputFx              = fx->getInputPort(i)->getFx();
     TZeraryColumnFx *onputZFx = dynamic_cast<TZeraryColumnFx *>(inputFx);
-    if (onputZFx) inputFx     = onputZFx->getZeraryFx();
+    if (onputZFx) inputFx = onputZFx->getZeraryFx();
     if (!inputFx) continue;
     bool canBeGrouped = !inputFx->getAttributes()->isGrouped() ||
                         (inputFx->getAttributes()->getEditingGroupId() ==

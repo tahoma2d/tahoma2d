@@ -20,6 +20,7 @@
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
 #include "xdtsio.h"
+#include "expressionreferencemanager.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -1370,6 +1371,13 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
               .arg(toQString(scenePath.getParentDir())));
     return false;
   }
+
+  // notify user if the scene will be saved including any "broken" expression
+  // reference
+  if (!ExpressionReferenceManager::instance()->askIfParamIsIgnoredOnSave(
+          saveSubxsheet))
+    return false;
+
   if (!overwrite && TFileStatus(scenePath).doesExist()) {
     QString question;
     question = QObject::tr(
