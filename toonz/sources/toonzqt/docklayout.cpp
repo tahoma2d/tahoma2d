@@ -424,7 +424,7 @@ void DockLayout::applyTransform(const QTransform &transform) {
 // check if the region will be with fixed width
 bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   if (m_item) {
-    if (m_item->objectName() == "FilmStrip" ||
+    if (  // m_item->objectName() == "FilmStrip" ||
         m_item->objectName() == "StyleEditor") {
       widgets.push_back(m_item);
       return true;
@@ -466,9 +466,9 @@ void DockLayout::redistribute() {
     // glitchy.
     bool widgetsCanBeFixedWidth =
         !m_regions.front()->checkWidgetsToBeFixedWidth(widgets);
-    // if (widgetsCanBeFixedWidth) {
-    //  for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
-    //}
+    if (widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
+    }
 
     m_regions.front()->calculateExtremalSizes();
 
@@ -487,12 +487,12 @@ void DockLayout::redistribute() {
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
 
-    // if (widgetsCanBeFixedWidth) {
-    //  for (QWidget *widget : widgets) {
-    //    widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-    //    widget->setMinimumSize(0, 0);
-    //  }
-    //}
+    if (widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) {
+        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        widget->setMinimumSize(0, 0);
+      }
+    }
   }
 
   // Finally, apply Region geometries found

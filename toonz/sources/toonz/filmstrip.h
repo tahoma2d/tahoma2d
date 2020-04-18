@@ -128,6 +128,7 @@ signals:
   void orientationToggledSignal(bool);
   void comboBoxToggledSignal();
   void navigatorToggledSignal();
+  void levelSelectedSignal(int);
 
 protected:
   void showEvent(QShowEvent *) override;
@@ -156,7 +157,7 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event) override;
 
   void startDragDrop();
-
+  void createSelectLevelMenu(QMenu *menu);
   void inbetween();
 
   void execNavigatorPan(const QPoint &point);
@@ -170,6 +171,7 @@ protected slots:
   void orientationToggled(bool);
   void comboBoxToggled(bool);
   void navigatorToggled(bool);
+  void levelSelected(int);
 
 private:
   // QSS Properties

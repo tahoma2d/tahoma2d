@@ -1270,7 +1270,7 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
         sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm")))
     menu->addAction(cm->getAction(MI_RevertToLastSaved));
   menu->addSeparator();
-
+  createSelectLevelMenu(menu);
   QMenu *panelMenu           = menu->addMenu(tr("Panel Settings"));
   QAction *toggleOrientation = panelMenu->addAction(tr("Toggle Orientation"));
   QAction *hideComboBox = panelMenu->addAction(tr("Show/Hide Drop Down Menu"));
@@ -1288,6 +1288,43 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
           SLOT(navigatorToggled(bool)));
 
   menu->exec(event->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+void FilmstripFrames::createSelectLevelMenu(QMenu *menu) {
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene) {
+    std::vector<TXshLevel *> levels;
+    scene->getLevelSet()->listLevels(levels);
+    std::vector<TXshLevel *>::iterator it;
+    int i       = 0;
+    bool active = false;
+    QMenu *levelSelectMenu;
+    for (it = levels.begin(); it != levels.end(); ++it) {
+      TXshSimpleLevel *sl = (*it)->getSimpleLevel();
+      if (sl) {
+        // register only used level in xsheet
+        if (!scene->getTopXsheet()->isLevelUsed(sl)) continue;
+        QString levelName = QString::fromStdWString(sl->getName());
+        if (i == 0) {
+          levelSelectMenu = menu->addMenu(tr("Select Level"));
+          active          = true;
+        }
+        if (active) {
+          QAction *action = levelSelectMenu->addAction(levelName);
+          connect(action, &QAction::triggered, [=] { levelSelected(i); });
+        }
+        i++;
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void FilmstripFrames::levelSelected(int index) {
+  emit(levelSelectedSignal(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -1505,6 +1542,8 @@ Filmstrip::Filmstrip(QWidget *parent, Qt::WFlags flags)
           SLOT(comboBoxToggled()));
   connect(m_frames, SIGNAL(navigatorToggledSignal()), this,
           SLOT(navigatorToggled()));
+  connect(m_frames, SIGNAL(levelSelectedSignal(int)), this,
+          SLOT(onChooseLevelComboChanged(int)));
 }
 
 //-----------------------------------------------------------------------------
