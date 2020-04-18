@@ -49,7 +49,9 @@ public:
 #endif
   ~FilmstripFrames();
 
-  bool m_isVertical = true;
+  bool m_isVertical    = true;
+  bool m_showNavigator = true;
+  bool m_showComboBox  = true;
 
   void setBGColor(const QColor &color) { m_bgColor = color; }
   QColor getBGColor() const { return m_bgColor; }
@@ -119,9 +121,13 @@ public:
   int getOneFrameHeight();
   int getOneFrameWidth();
   void setOrientation(bool isVertical);
+  void setNavigator(bool showNavigator);
+  void setComboBox(bool showComboBox);
 
 signals:
   void orientationToggledSignal(bool);
+  void comboBoxToggledSignal();
+  void navigatorToggledSignal();
 
 protected:
   void showEvent(QShowEvent *) override;
@@ -162,6 +168,8 @@ protected slots:
   void onFrameSwitched();
   void getViewer();
   void orientationToggled(bool);
+  void comboBoxToggled(bool);
+  void navigatorToggled(bool);
 
 private:
   // QSS Properties
@@ -223,7 +231,9 @@ class Filmstrip final : public QWidget, public SaveLoadQSettings {
 
   std::vector<TXshSimpleLevel *> m_levels;
   std::map<TXshSimpleLevel *, TFrameId> m_workingFrames;
-  bool m_isVertical = true;
+  bool m_isVertical    = true;
+  bool m_showNavigator = true;
+  bool m_showComboBox  = true;
 
 public:
 #if QT_VERSION >= 0x050500
@@ -261,6 +271,8 @@ public slots:
 
   void onFrameSwitched();
   void orientationToggled(bool);
+  void comboBoxToggled();
+  void navigatorToggled();
 
 private:
   void updateWindowTitle();
