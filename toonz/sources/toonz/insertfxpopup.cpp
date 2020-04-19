@@ -51,6 +51,8 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QMainWindow>
+#include <QLineEdit>
+#include <QLabel>
 
 #include <memory>
 
@@ -138,6 +140,55 @@ TFx *createMacroFxByPath(TFilePath path) {
 //-----------------------------------------------------------------------------
 
 //=============================================================================
+// FxTree
+//=============================================================================
+
+void FxTree::searchItems(const QString &searchWord) {
+  // if search word is empty, show all items
+  if (searchWord.isEmpty()) {
+    int itemCount = topLevelItemCount();
+    for (int i = 0; i < itemCount; ++i) {
+      QTreeWidgetItem *item = topLevelItem(i);
+      int childCount        = item->childCount();
+      for (int j = 0; j < childCount; ++j) item->child(j)->setHidden(false);
+      item->setHidden(false);
+      item->setExpanded(false);
+    }
+    update();
+    return;
+  }
+
+  // hide all items first
+  int itemCount = topLevelItemCount();
+  for (int i = 0; i < itemCount; ++i) {
+    QTreeWidgetItem *item = topLevelItem(i);
+    int childCount        = item->childCount();
+    for (int j = 0; j < childCount; ++j) item->child(j)->setHidden(true);
+    item->setHidden(true);
+    item->setExpanded(false);
+  }
+
+  QList<QTreeWidgetItem *> foundItems =
+      findItems(searchWord, Qt::MatchContains | Qt::MatchRecursive, 0);
+  if (foundItems.isEmpty()) {  // if nothing is found, do nothing but update
+    update();
+    return;
+  }
+
+  // for each item found, show it and show its parent
+  for (auto item : foundItems) {
+    item->setHidden(false);
+    QTreeWidgetItem *parent = item->parent();
+    if (parent) {
+      parent->setHidden(false);
+      parent->setExpanded(true);
+    }
+  }
+
+  update();
+}
+
+//=============================================================================
 /*! \class InsertFxPopup
                 \brief The InsertFxPopup class provides a dialog to browse fx
    and add it to
@@ -157,7 +208,18 @@ InsertFxPopup::InsertFxPopup()
   setTopMargin(0);
   setTopSpacing(0);
 
-  m_fxTree = new QTreeWidget();
+  QHBoxLayout *searchLay = new QHBoxLayout();
+  QLineEdit *searchEdit  = new QLineEdit(this);
+
+  searchLay->setMargin(0);
+  searchLay->setSpacing(5);
+  searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
+  searchLay->addWidget(searchEdit);
+  addLayout(searchLay);
+  connect(searchEdit, SIGNAL(textChanged(const QString &)), this,
+          SLOT(onSearchTextChanged(const QString &)));
+
+  m_fxTree = new FxTree();
   m_fxTree->setIconSize(QSize(21, 17));
   m_fxTree->setColumnCount(1);
   m_fxTree->header()->close();
@@ -225,6 +287,16 @@ InsertFxPopup::InsertFxPopup()
   replaceBtn->setFixedHeight(25);
   connect(replaceBtn, SIGNAL(clicked()), this, SLOT(onReplace()));
   m_buttonLayout->addWidget(replaceBtn);
+}
+
+//-------------------------------------------------------------------
+
+void InsertFxPopup::onSearchTextChanged(const QString &text) {
+  static bool busy = false;
+  if (busy) return;
+  busy = true;
+  m_fxTree->searchItems(text);
+  busy = false;
 }
 
 //-------------------------------------------------------------------
