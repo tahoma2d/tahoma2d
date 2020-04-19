@@ -1260,9 +1260,9 @@ public:
        * -*/
       if (m_target == TARGET_UPPER && i < cc) continue;
 
-      bool negate = m_target == TARGET_CURRENT && cc != i ||
-                    m_target == TARGET_OTHER && cc == i ||
-                    m_target == TARGET_UPPER && cc == i;
+      bool negate = ((m_target == TARGET_CURRENT && cc != i) ||
+                     (m_target == TARGET_OTHER && cc == i) ||
+                     (m_target == TARGET_UPPER && cc == i));
 
       int cmd = m_cmd;
 

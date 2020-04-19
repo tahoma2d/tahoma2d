@@ -140,7 +140,7 @@ void FrameHeadGadget::drawOnionSkinSelection(QPainter &p,
     if (i > 0 || mos > 0) {
       int ya = y;
       int yb;
-      if (i == 0 || mos > 0 && osMask.getMos(i - 1) < 0) {
+      if (i == 0 || (mos > 0 && osMask.getMos(i - 1) < 0)) {
         ya = index2y(currentRow) + 10;
         yb = index2y(currentRow + mos) + 4;
       } else
@@ -177,7 +177,7 @@ bool FrameHeadGadget::eventFilter(QObject *obj, QEvent *e) {
     int x                   = mouseEvent->pos().x();
     int y                   = mouseEvent->pos().y() - index2y(frame);
 
-    if (x > 24 || x > 12 && frame != currentFrame) return false;
+    if (x > 24 || (x > 12 && frame != currentFrame)) return false;
     if (y < 12) {
       bool isMosArea = x < 6;
       // click nel quadratino bianco.
@@ -206,7 +206,7 @@ bool FrameHeadGadget::eventFilter(QObject *obj, QEvent *e) {
     int currentFrame        = getCurrentFrame();
     int x                   = mouseEvent->pos().x();
     int y                   = mouseEvent->pos().y() - index2y(frame);
-    if (x > 24 || x > 12 && frame != currentFrame) return false;
+    if (x > 24 || (x > 12 && frame != currentFrame)) return false;
     if (mouseEvent->button() == Qt::RightButton) return false;
     if (x < 12 && y < 12 && frame == currentFrame &&
         m_buttonPressCellIndex == frame) {

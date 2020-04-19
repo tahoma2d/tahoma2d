@@ -540,7 +540,7 @@ void Region::insertSubRegion(Region *subRegion, int idx) {
 Region *Region::insertItem(DockWidget *item, int idx) {
   Region *newRegion = new Region(m_owner, item);
 
-  if (this) insertSubRegion(newRegion, idx);
+  insertSubRegion(newRegion, idx);
 
   return newRegion;
 }

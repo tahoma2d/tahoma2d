@@ -996,7 +996,7 @@ public:
 
   bool match(const TFrameId &fid) const {
     /*-- ↓SubSequent範囲内にある条件		↓全部ロードする場合 --*/
-    return m_fromFid <= fid && fid <= m_toFid || m_fromFid > m_toFid;
+    return ((m_fromFid <= fid && fid <= m_toFid) || m_fromFid > m_toFid);
   }
   bool isEnabled() const { return m_fromFid <= m_toFid; }
   void reset() {

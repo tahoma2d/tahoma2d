@@ -411,7 +411,7 @@ QList<TFilePath> DvDirVersionControlNode::getMissingFiles() const {
   while (i != m_statusMap.constEnd()) {
     SVNStatus s = i.value();
     if (s.m_item == "missing" ||
-        s.m_item == "none" && s.m_repoStatus == "added") {
+        (s.m_item == "none" && s.m_repoStatus == "added")) {
       TFilePath path(getPath() + TFilePath(s.m_path.toStdWString()));
       std::string dots = path.getDots();
       if (dots != "") {
@@ -433,7 +433,7 @@ QStringList DvDirVersionControlNode::getMissingFiles(
   for (; i != m_statusMap.constEnd(); i++) {
     SVNStatus s = i.value();
     if (s.m_item == "missing" ||
-        s.m_item == "none" && s.m_repoStatus == "added") {
+        (s.m_item == "none" && s.m_repoStatus == "added")) {
       TFilePath path(s.m_path.toStdWString());
       if (!filter.exactMatch(
               QString::fromStdWString(path.withoutParentDir().getWideString())))

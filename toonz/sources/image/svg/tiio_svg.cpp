@@ -1870,7 +1870,7 @@ static void writeRegion(TRegion *r, TPalette *plt, QTextStream &out,
 
   out << "<path  \n";
   TPixel32 col = plt->getStyle(r->getStyle())->getMainColor();
-  if (col == TPixel::Transparent) col == TPixel::White;
+  if (col == TPixel::Transparent) col = TPixel::White;
 
   out << "style=\"fill:rgb(" << col.r << "," << col.g << "," << col.b
       << ")\" \n";

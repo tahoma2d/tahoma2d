@@ -307,6 +307,9 @@ int DvItemListModel::compareData(DataType dataType, int firstIndex,
 
   case VersionControlStatus:
     return firstValue.toInt() < secondValue.toInt();
+
+  default:
+    break;
   }
 
   return 0;
@@ -817,6 +820,8 @@ void DvItemViewerPanel::setVisibility(DvItemListModel::DataType dataType,
     break;
   case DvItemListModel::VersionControlStatus:
     BrowserVersionControlStatusisVisible = value;
+    break;
+  default:
     break;
   }
 }

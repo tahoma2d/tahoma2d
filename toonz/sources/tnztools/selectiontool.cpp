@@ -59,7 +59,7 @@ int tminPoint(std::vector<TPointD> points, bool isX) {
   TPointD p = points[0];
   for (i = 1; i < (int)points.size(); i++) {
     TPointD nextP = points[i];
-    if (isX && p.x < nextP.x || !isX && p.y < nextP.y) continue;
+    if ((isX && p.x < nextP.x) || (!isX && p.y < nextP.y)) continue;
     index = i;
   }
   return index;
@@ -1024,7 +1024,7 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
   m_selectedPoint = NONE;
   if ((isLevelType() || isSelectedFramesType()) && !isSameStyleType()) {
     m_what = Inside;
-    ToolCursor::LevelSelectCursor;
+    m_cursorId = ToolCursor::LevelSelectCursor;
   }
 
   if (shift) return;

@@ -65,7 +65,7 @@ void Tokenizer::setBuffer(std::string buffer) {
       while (s[i] != '"' && s[i] != '\0') token.append(1, s[i++]);
 
       m_tokens.push_back(Token(token, Token::Ident, j));
-    } else if (isascii(s[i]) && isalpha(s[i]) || s[i] == '_') {
+    } else if ((isascii(s[i]) && isalpha(s[i])) || s[i] == '_') {
       // ident
       token = std::string(1, s[i++]);
 
@@ -73,7 +73,7 @@ void Tokenizer::setBuffer(std::string buffer) {
         token.append(1, s[i++]);
 
       m_tokens.push_back(Token(token, Token::Ident, j));
-    } else if (isascii(s[i]) && isdigit(s[i]) || s[i] == '.') {
+    } else if ((isascii(s[i]) && isdigit(s[i])) || s[i] == '.') {
       // number
       while (isascii(s[i]) && isdigit(s[i])) token.append(1, s[i++]);
 
@@ -83,8 +83,8 @@ void Tokenizer::setBuffer(std::string buffer) {
         while (isascii(s[i]) && isdigit(s[i])) token.append(1, s[i++]);
 
         if ((s[i] == 'e' || s[i] == 'E') &&
-            (isascii(s[i + 1]) && isdigit(s[i + 1]) ||
-             (s[i + 1] == '-' || s[i + 1] == '+') && isascii(s[i + 2]) &&
+            (((isascii(s[i + 1]) && isdigit(s[i + 1])) ||
+             s[i + 1] == '-' || s[i + 1] == '+') && isascii(s[i + 2]) &&
                  isdigit(s[i + 2]))) {
           token.append(1, s[i++]);
 

@@ -52,7 +52,7 @@ inline F &get_func_b(RT *t) {
 template <>
 inline TDoubleParamP &get_func_a<TRangeParam, TDoubleParamP>(TRangeParam *t) {
   printf("get_func_a< TRangeParam, TDoubleParamP& >(TRangeParam* t)\n");
-  return std::mem_fun(&TRangeParam::getMin)(t);
+  return std::mem_fn(&TRangeParam::getMin)(t);
 }
 
 template <>
@@ -62,7 +62,7 @@ inline TDoubleParamP &get_func_b<TRangeParam, TDoubleParamP>(TRangeParam *t)
 // t)
 {
   printf("get_func_b< TRangeParam, TDoubleParamP& >(TRangeParam* t)\n");
-  return std::mem_fun(&TRangeParam::getMax)(t);
+  return std::mem_fn(&TRangeParam::getMax)(t);
 }
 
 /* TPointParam */
@@ -73,7 +73,7 @@ inline TDoubleParamP &get_func_a<TPointParam, TDoubleParamP>(TPointParam *t)
 // t)
 {
   printf("get_func_a< TPointParam, TDoubleParamP& >(TPointParam* t)\n");
-  return std::mem_fun(&TPointParam::getX)(t);
+  return std::mem_fn(&TPointParam::getX)(t);
 }
 
 template <>
@@ -83,7 +83,7 @@ inline TDoubleParamP &get_func_b<TPointParam, TDoubleParamP>(TPointParam *t)
 // t)
 {
   printf("get_func_b< TPointParam, TDoubleParamP& >(TPointParam* t)\n");
-  return std::mem_fun(&TPointParam::getY)(t);
+  return std::mem_fn(&TPointParam::getY)(t);
 }
 
 /* valuetype が集約型の場合、 スカラを取得するための関数 */

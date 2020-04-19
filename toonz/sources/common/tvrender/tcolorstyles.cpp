@@ -525,7 +525,7 @@ void TColorStyle::drawStroke(TFlash &flash, const TStroke *s) const {
 void TColorStyle::save(TOutputStreamInterface &os) const {
   std::wstring name = getName();
   bool numberedName =
-      !name.empty() && ('0' <= name[0] && name[0] <= '9' || name[0] == '_');
+      !name.empty() && (('0' <= name[0] && name[0] <= '9') || name[0] == '_');
 
   if (m_flags > 0 || (name.length() == 1 && numberedName))
     os << ("_" + QString::number(m_flags)).toStdString();

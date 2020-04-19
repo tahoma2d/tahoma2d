@@ -236,6 +236,8 @@ void ColorModel::setValues(ColorChannel channel, int v, int u) {
     setValue(eHue, v);
     setValue(eSaturation, u);
     break;
+  default:
+    break;
   }
 }
 
@@ -273,6 +275,8 @@ void ColorModel::getValues(ColorChannel channel, int &u, int &v) {
   case eValue:
     u = getValue(eHue);
     v = getValue(eSaturation);
+    break;
+  default:
     break;
   }
 }

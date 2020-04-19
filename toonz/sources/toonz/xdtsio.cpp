@@ -128,7 +128,7 @@ void XdtsFieldTrackItem::write(QJsonObject &json) const {
 }
 //-----------------------------------------------------------------------------
 
-bool frameLessThan(const QPair<int, int> &v1, const QPair<int, int> &v2) {
+static bool frameLessThan(const QPair<int, int> &v1, const QPair<int, int> &v2) {
   return v1.first < v2.first;
 }
 

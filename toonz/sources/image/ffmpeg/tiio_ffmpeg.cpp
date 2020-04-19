@@ -301,8 +301,8 @@ TRasterImageP Ffmpeg::getImage(int frameIndex) {
       ret->yMirror();
       return TRasterImageP(ret);
     }
-  } else
-    return TRasterImageP();
+  }
+  return TRasterImageP();
 }
 
 double Ffmpeg::getFrameRate() {

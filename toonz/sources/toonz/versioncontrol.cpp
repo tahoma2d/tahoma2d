@@ -318,7 +318,7 @@ VersionControlManager *VersionControlManager::instance() {
 }
 
 //-----------------------------------------------------------------------------
-void setVersionControlCredentials(QString currentPath) {
+static void setVersionControlCredentials(QString currentPath) {
   VersionControl *vc                = VersionControl::instance();
   QList<SVNRepository> repositories = vc->getRepositories();
   int repoCount                     = repositories.size();

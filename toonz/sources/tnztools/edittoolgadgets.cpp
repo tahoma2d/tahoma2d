@@ -1713,6 +1713,8 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
                                      uiConcept.m_params[1]);
     break;
   }
+  default:
+    break;
   }
 
   if (gadget) gadget->setLabel(uiConcept.m_label);

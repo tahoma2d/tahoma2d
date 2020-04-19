@@ -412,8 +412,8 @@ bool TCleanupper::getResampleValues(const TRasterImageP &image, TAffine &aff,
   TRect saveBox          = image->getSavebox();
   bool raster_is_savebox = true;
   if (saveBox == TRect() &&
-      (saveBox.getLx() > 0 && saveBox.getLx() < rasterLx ||
-       saveBox.getLy() > 0 && saveBox.getLy() < rasterLy))
+      ((saveBox.getLx() > 0 && saveBox.getLx() < rasterLx) ||
+       (saveBox.getLy() > 0 && saveBox.getLy() < rasterLy)))
     raster_is_savebox = false;
 
   // Use the same source dpi throughout the level

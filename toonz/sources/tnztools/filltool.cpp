@@ -1906,7 +1906,7 @@ void FillTool::leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) {
 //-----------------------------------------------------------------------------
 
 void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
-  if (m_fillType.getValue() != NORMALFILL && !m_onion.getValue() ||
+  if ((m_fillType.getValue() != NORMALFILL && !m_onion.getValue()) ||
       (m_colorType.getValue() == AREAS && m_onion.getValue()))
     m_rectFill->leftButtonDrag(pos, e);
   else if (!m_onion.getValue() && !m_frameRange.getValue()) {

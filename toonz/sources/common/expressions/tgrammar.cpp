@@ -538,7 +538,7 @@ public:
   bool matchToken(const std::vector<Token> &previousTokens,
                   const Token &token) const override {
     int i = (int)previousTokens.size();
-    return i == 1 && token.getText() == "?" || i == 3 && token.getText() == ":";
+    return ((i == 1 && token.getText() == "?") || (i == 3 && token.getText() == ":"));
   }
   bool isFinished(const std::vector<Token> &previousTokens,
                   const Token &token) const override {
@@ -571,8 +571,8 @@ public:
   }
   bool matchToken(const std::vector<Token> &previousTokens,
                   const Token &token) const override {
-    return previousTokens.empty() && token.getText() == "(" ||
-           previousTokens.size() == 2 && token.getText() == ")";
+    return ((previousTokens.empty() && token.getText() == "(") ||
+            (previousTokens.size() == 2 && token.getText() == ")"));
   }
   bool isFinished(const std::vector<Token> &previousTokens,
                   const Token &token) const override {
@@ -647,9 +647,9 @@ public:
   bool isFinished(const std::vector<Token> &previousTokens,
                   const Token &token) const override {
     if (previousTokens.empty()) return false;
-    return m_minArgCount == 0 && previousTokens.size() == 1 &&
-               token.getText() != "(" ||
-           previousTokens.back().getText() == ")";
+    return ((m_minArgCount == 0 && previousTokens.size() == 1 &&
+               token.getText() != "(") ||
+            (previousTokens.back().getText() == ")"));
   }
   TokenType getTokenType(const std::vector<Token> &previousTokens,
                          const Token &token) const override {

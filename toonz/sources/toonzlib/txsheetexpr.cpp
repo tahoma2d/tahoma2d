@@ -228,9 +228,9 @@ public:
     int i = (int)previousTokens.size();
     if (i == 0)
       return matchObjectName(token) != TStageObjectId::NoneId;
-    else if (i == 1 && token.getText() == "." ||
-             i == 3 && token.getText() == "(" ||
-             i == 5 && token.getText() == ")")
+    else if ((i == 1 && token.getText() == ".") ||
+             (i == 3 && token.getText() == "(") ||
+             (i == 5 && token.getText() == ")"))
       return true;
     else if (i == 2) {
       if (matchChannelName(token) < TStageObject::T_ChannelCount)

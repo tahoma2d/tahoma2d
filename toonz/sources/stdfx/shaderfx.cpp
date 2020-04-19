@@ -310,6 +310,8 @@ Suggestions are welcome as this is a tad beyond ridiculous...
             "This system configuration does not support OpenGL Shader "
             "Programs. Shader Fxs will not be able to render."));
         break;
+      default:
+        break;
       }
 
       sentMsg = true;
@@ -471,6 +473,8 @@ void ShaderFx::initialize() {
       case ShaderInterface::ANGLE_UI:
         param->setMeasureName(l_measureNames[ANGLE]);
         break;
+      default:
+        break;
       }
 
       m_params.push_back(param);
@@ -510,6 +514,8 @@ void ShaderFx::initialize() {
       case ShaderInterface::ANGLE_UI:
         param->getX()->setMeasureName(l_measureNames[ANGLE]);
         param->getY()->setMeasureName(l_measureNames[ANGLE]);
+        break;
+      default:
         break;
       }
 
@@ -552,6 +558,8 @@ void ShaderFx::initialize() {
                 *boost::unsafe_any_cast<TPixelParamP>(&m_params.back()));
       break;
     }
+    default:
+      break;
     }
   }
 
@@ -780,6 +788,8 @@ void ShaderFx::bindParameters(QOpenGLShaderProgram *program, double frame) {
           (GLfloat)value.m / 255.0f);
       break;
     }
+    default:
+      break;
     }
   }
 }

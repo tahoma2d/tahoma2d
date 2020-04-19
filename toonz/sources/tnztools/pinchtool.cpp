@@ -463,8 +463,8 @@ void PinchTool::mouseMove(const TPointD &pos, const TMouseEvent &event) {
   m_curr                = pos;
 
   const int pixelRange = 3;
-  if (abs(m_lastMouseEvent.m_pos.x - event.m_pos.x) < pixelRange &&
-      abs(m_lastMouseEvent.m_pos.y - event.m_pos.y) < pixelRange &&
+  if (std::abs(m_lastMouseEvent.m_pos.x - event.m_pos.x) < pixelRange &&
+      std::abs(m_lastMouseEvent.m_pos.y - event.m_pos.y) < pixelRange &&
       m_lastMouseEvent.getModifiersMask() == event.getModifiersMask())
     return;
 

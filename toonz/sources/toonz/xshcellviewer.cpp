@@ -978,11 +978,11 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
     cellSelection->selectCells(r0, c0, r1 + offset.frame(),
                                c1 + offset.layer());
   } else {
-    CellPosition offset(offset * stride);
-    int movedR0 = std::max(0, r0 + offset.frame());
+    CellPosition offset_(offset * stride);
+    int movedR0 = std::max(0, r0 + offset_.frame());
     int firstCol =
         Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
-    int movedC0   = std::max(firstCol, c0 + offset.layer());
+    int movedC0   = std::max(firstCol, c0 + offset_.layer());
     int diffFrame = movedR0 - r0;
     int diffLayer = movedC0 - c0;
     // It needs to be discussed - I made not to rename cell with arrow key.
@@ -990,8 +990,8 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
     // renameCell();
     cellSelection->selectCells(r0 + diffFrame, c0 + diffLayer, r1 + diffFrame,
                                c1 + diffLayer);
-    int newRow = std::max(0, m_row + offset.frame());
-    int newCol = std::max(firstCol, m_col + offset.layer());
+    int newRow = std::max(0, m_row + offset_.frame());
+    int newCol = std::max(firstCol, m_col + offset_.layer());
     showInRowCol(newRow, newCol, c1 - c0 > 0);
   }
   m_viewer->updateCells();

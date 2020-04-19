@@ -275,7 +275,7 @@ static void searchLevelsToCleanup(
             continue;
           }
           int ltype = sl->getType();
-          if (ltype == TZP_XSHLEVEL && sl->getScannedPath() != TFilePath() ||
+          if ((ltype == TZP_XSHLEVEL && sl->getScannedPath() != TFilePath()) ||
               ltype == OVL_XSHLEVEL || ltype == TZI_XSHLEVEL) {
             wstring levelName     = sl->getName();
             levelTable[levelName] = sl;

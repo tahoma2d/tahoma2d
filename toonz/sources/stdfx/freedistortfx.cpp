@@ -590,7 +590,7 @@ void doBlur(TRasterPT<PIX> &r, double blur0, double blur1, double transp0,
   row = new PIX[std::max(lx, ly)];
   r->lock();
   bufin = r->pixels(0);
-  for (i = 0, cur_blur = blur0 + (blur1 - blur0) * (i - y0) / den, 0.0,
+  for (i = 0, cur_blur = blur0 + (blur1 - blur0) * (i - y0) / den,
       actual_blur = std::max(cur_blur, 0.0);
        i < ly; i++, bufin += wrap, cur_blur += blur_incr,
       actual_blur = std::max(cur_blur, 0.0)) {

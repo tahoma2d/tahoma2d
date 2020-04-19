@@ -93,7 +93,7 @@ void doRGBMCut(TRasterPT<PIXEL> ras, double hi_m, double hi_r, double hi_g,
         pix->b = tcrop((int)pix->b, (int)lo_b, (int)hi_b);
         *pix   = premultiply(*pix);
       }
-      *pix++;
+      pix++;
     }
   }
   ras->unlock();

@@ -131,7 +131,7 @@ public:
       lock();
     } else {
       char s[200];
-      sprintf(s, "in initPic lXY=(%d,%d)\n", m_lX, m_lY);
+      snprintf(s, sizeof(s), "in initPic lXY=(%d,%d)\n", m_lX, m_lY);
       throw SMemAllocError(s);
     }
   }
@@ -322,7 +322,9 @@ public:
         ip.b = (int)pLL.b;
         ip.m = (int)pLL.m;
         break;
-      }
+      default:
+         break;
+     }
     } else
       ip.r = ip.g = ip.b = ip.m = 0;
   }
@@ -358,6 +360,8 @@ public:
         pS->b = (USHORT)ip.b;
         pS->m = (USHORT)ip.m;
         break;
+      default:
+         break;
       }
     }
   }
@@ -466,6 +470,8 @@ public:
                 p->b = PIX_USHORT_FROM_BYTE((UCHAR)ip.b);
                 p->m = PIX_USHORT_FROM_BYTE((UCHAR)ip.m);
               }
+              break;
+            default:
               break;
             }
           }

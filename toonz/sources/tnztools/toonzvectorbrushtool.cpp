@@ -632,7 +632,7 @@ void ToonzVectorBrushTool::onActivate() {
 
 void ToonzVectorBrushTool::onDeactivate() {
   /*---
-   * �h���b�O���Ƀc�[�����؂�ւ�����ꍇ�ɔ����AonDeactivate�ɂ�MouseRelease�Ɠ����������s��
+   * ドラッグ中にツールが切り替わった場合に備え、onDeactivateにもMouseReleaseと同じ処理を行う
    * ---*/
 
   // End current stroke.
@@ -714,7 +714,7 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
                          ? computeThickness(e.m_pressure, m_thickness, m_isPath)
                          : m_thickness.getValue().second * 0.5;
 
-  /*--- �X�g���[�N�̍ŏ���Max�T�C�Y�̉~���`����Ă��܂��s���h�~���� ---*/
+  /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する ---*/
   if (m_pressure.getValue() && e.m_pressure == 1.0)
     thickness = m_thickness.getValue().first * 0.5;
   m_currThickness = thickness;
@@ -1419,7 +1419,7 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
     if (vGuideCount) {
       for (int j = 0; j < vGuideCount; j++) {
         double guide        = viewer->getVGuide(j);
-        double tempDistance = abs(guide - m_mousePos.y);
+        double tempDistance = std::abs(guide - m_mousePos.y);
         if (tempDistance < guideDistance &&
             (distanceToVGuide < 0 || tempDistance < distanceToVGuide)) {
           distanceToVGuide = tempDistance;
@@ -1431,7 +1431,7 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
     if (hGuideCount) {
       for (int j = 0; j < hGuideCount; j++) {
         double guide        = viewer->getHGuide(j);
-        double tempDistance = abs(guide - m_mousePos.x);
+        double tempDistance = std::abs(guide - m_mousePos.x);
         if (tempDistance < guideDistance &&
             (distanceToHGuide < 0 || tempDistance < distanceToHGuide)) {
           distanceToHGuide = tempDistance;
@@ -1441,8 +1441,8 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
       }
     }
     if (useGuides && foundSnap) {
-      double currYDistance = abs(snapPoint.y - m_mousePos.y);
-      double currXDistance = abs(snapPoint.x - m_mousePos.x);
+      double currYDistance = std::abs(snapPoint.y - m_mousePos.y);
+      double currXDistance = std::abs(snapPoint.x - m_mousePos.x);
       double hypotenuse =
           sqrt(pow(currYDistance, 2.0) + pow(currXDistance, 2.0));
       if ((distanceToVGuide >= 0 && distanceToVGuide < hypotenuse) ||
@@ -1473,7 +1473,7 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
 //-------------------------------------------------------------------------------------------------------------
 
 void ToonzVectorBrushTool::draw() {
-  /*--�V���[�g�J�b�g�ł̃c�[���؂�ւ����ɐԓ_���`�����̂�h�~����--*/
+  /*--ショートカットでのツール切り替え時に赤点が描かれるのを防止する--*/
   if (m_minThick == 0 && m_maxThick == 0 &&
       !Preferences::instance()->getShow0ThickLines())
     return;
@@ -1790,7 +1790,7 @@ void ToonzVectorBrushTool::loadLastBrush() {
 }
 
 //------------------------------------------------------------------
-/*!	Brush�APaintBrush�AEraserTool��PencilMode�̂Ƃ���True��Ԃ�
+/*!	Brush、PaintBrush、EraserToolがPencilModeのときにTrueを返す
  */
 bool ToonzVectorBrushTool::isPencilModeActive() { return false; }
 

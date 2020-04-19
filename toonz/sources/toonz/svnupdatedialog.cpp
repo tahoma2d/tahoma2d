@@ -226,7 +226,7 @@ void SVNUpdateDialog::checkFiles() {
              s.m_repoStatus == "modified" || s.m_repoStatus == "modified") {
       if (s.m_path.endsWith(".tnz") &&
           (s.m_item == "missing" ||
-           s.m_item == "none" && s.m_repoStatus == "added")) {
+           (s.m_item == "none" && s.m_repoStatus == "added"))) {
         TFilePath scenePath =
             TFilePath(m_workingDir.toStdWString()) + s.m_path.toStdWString();
         TFilePath iconPath = ToonzScene::getIconPath(scenePath);

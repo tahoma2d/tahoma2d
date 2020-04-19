@@ -655,7 +655,7 @@ rdRegions.m_alphaChannel = rdRegions.m_antiAliasing = false;*/
     int currStrokeIndex = strokeIndex;
     if (!rd.m_isIcon && vim->isInsideGroup() > 0 &&
         ((drawEnteredGroup && !vim->isEnteredGroupStroke(strokeIndex)) ||
-         !drawEnteredGroup && vim->isEnteredGroupStroke(strokeIndex))) {
+         (!drawEnteredGroup && vim->isEnteredGroupStroke(strokeIndex)))) {
       while (strokeIndex < vim->getStrokeCount() &&
              vim->sameGroup(strokeIndex, currStrokeIndex))
         strokeIndex++;

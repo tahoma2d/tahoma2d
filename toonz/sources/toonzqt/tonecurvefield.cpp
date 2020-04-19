@@ -29,8 +29,8 @@ double getPercentAtPoint(QPointF point, QPainterPath path) {
   for (i = 1; i < 100; i++) {
     double p          = double(i) * 0.01;
     QPointF pathPoint = path.pointAtPercent(p);
-    if (abs(pathPoint.x() - point.x()) < 3 &&
-        abs(pathPoint.y() - point.y()) < 3)
+    if (std::abs(pathPoint.x() - point.x()) < 3 &&
+        std::abs(pathPoint.y() - point.y()) < 3)
       return p;
   }
   return 0;
@@ -457,13 +457,13 @@ void ChennelCurveEditor::addControlPoint(double percent) {
 
   QPointF p0 = checkPoint(m_points.at(beforeControlPointIndex));
   // Se sono troppo vicino al punto di controllo precedente ritorno
-  if (abs(p.x() - p0.x()) <= cpMargin) return;
+  if (std::abs(p.x() - p0.x()) <= cpMargin) return;
   double beforeControlPointPercent = getPercentAtPoint(p0, path);
   QPointF p1 = checkPoint(m_points.at(beforeControlPointIndex + 1));
   QPointF p2 = checkPoint(m_points.at(beforeControlPointIndex + 2));
   QPointF p3 = checkPoint(m_points.at(beforeControlPointIndex + 3));
   // Se sono troppo vicino al punto di controllo successivo ritorno
-  if (abs(p3.x() - p.x()) <= cpMargin) return;
+  if (std::abs(p3.x() - p.x()) <= cpMargin) return;
   double nextControlPointPercent = getPercentAtPoint(p3, path);
 
   // Calcolo la velocita' e quindi il coiffciente angolare.

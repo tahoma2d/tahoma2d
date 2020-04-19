@@ -244,10 +244,10 @@ void TFilePath::setPath(std::wstring path) {
     if (path.length() == 2 || !isSlash(path[pos])) m_path.append(1, wslash);
   }
   // se si tratta di un path in formato UNC e' del tipo "\\\\MachineName"
-  else if (path.length() >= 3 && path[0] == L'\\' && path[1] == L'\\' &&
-               iswalnum(path[2]) ||
-           path.length() >= 3 && path[0] == L'/' && path[1] == L'/' &&
-               iswalnum(path[2])) {
+  else if ((path.length() >= 3 && path[0] == L'\\' && path[1] == L'\\' &&
+               iswalnum(path[2])) ||
+           (path.length() >= 3 && path[0] == L'/' && path[1] == L'/' &&
+               iswalnum(path[2]))) {
     isUncName = true;
     m_path.append(2, L'\\');
     m_path.append(1, path[2]);
@@ -281,10 +281,10 @@ void TFilePath::setPath(std::wstring path) {
   // rimuovo l'eventuale '/' finale (a meno che m_path == "/" o m_path ==
   // "<letter>:\"
   // oppure sia UNC (Windows only) )
-  if (!(m_path.length() == 1 && m_path[0] == wslash ||
-        m_path.length() == 3 && iswalpha(m_path[0]) && m_path[1] == L':' &&
-            m_path[2] == wslash) &&
-      m_path.length() > 1 && m_path[m_path.length() - 1] == wslash)
+  if (!((m_path.length() == 1 && m_path[0] == wslash) ||
+        (m_path.length() == 3 && iswalpha(m_path[0]) && m_path[1] == L':' &&
+            m_path[2] == wslash)) &&
+      (m_path.length() > 1 && m_path[m_path.length() - 1] == wslash))
     m_path.erase(m_path.length() - 1, 1);
 
   if (isUncName &&
@@ -507,19 +507,19 @@ else
 //-----------------------------------------------------------------------------
 
 bool TFilePath::isAbsolute() const {
-  return m_path.length() >= 1 && m_path[0] == slash ||
-         m_path.length() >= 2 && iswalpha(m_path[0]) && m_path[1] == ':';
+  return ((m_path.length() >= 1 && m_path[0] == slash) ||
+          (m_path.length() >= 2 && iswalpha(m_path[0]) && m_path[1] == ':'));
 }
 
 //-----------------------------------------------------------------------------
 
 bool TFilePath::isRoot() const {
-  return m_path.length() == 1 && m_path[0] == slash ||
-         m_path.length() == 3 && iswalpha(m_path[0]) && m_path[1] == ':' &&
-             m_path[2] == slash ||
-         m_path.length() > 2 && m_path[0] == slash && m_path[1] == slash &&
+  return ((m_path.length() == 1 && m_path[0] == slash) ||
+          (m_path.length() == 3 && iswalpha(m_path[0]) && m_path[1] == ':' &&
+             m_path[2] == slash) ||
+          ((m_path.length() > 2 && m_path[0] == slash && m_path[1] == slash) &&
              (std::string::npos == m_path.find(slash, 2) ||
-              m_path.find(slash, 2) == m_path.size() - 1);
+              m_path.find(slash, 2) == (m_path.size() - 1))));
 }
 
 //-----------------------------------------------------------------------------
@@ -634,8 +634,8 @@ TFilePath TFilePath::getParentDir() const  // noSlash!
 {
   int i = getLastSlash(m_path);  // cerco l'ultimo slash
   if (i < 0) {
-    if (m_path.length() >= 2 && ('a' <= m_path[0] && m_path[0] <= 'z' ||
-                                 'A' <= m_path[0] && m_path[0] <= 'Z') &&
+    if (m_path.length() >= 2 && (('a' <= m_path[0] && m_path[0] <= 'z') ||
+                                 ('A' <= m_path[0] && m_path[0] <= 'Z')) &&
         m_path[1] == ':')
       return TFilePath(m_path.substr(0, 2));
     else

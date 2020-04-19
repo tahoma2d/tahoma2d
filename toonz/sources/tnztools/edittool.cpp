@@ -489,9 +489,9 @@ public:
     if (norm2(a) < eps || norm2(b) < eps) return;
 
     double fx = b.x / a.x;
-    if (fabs(fx) > 1) fx = tsign(fx) * sqrt(abs(fx));
+    if (fabs(fx) > 1) fx = tsign(fx) * sqrt(std::abs(fx));
     double fy = b.y / a.y;
-    if (fabs(fy) > 1) fy = tsign(fy) * sqrt(abs(fy));
+    if (fabs(fy) > 1) fy = tsign(fy) * sqrt(std::abs(fy));
 
     int constraint = m_constraint;
     if (constraint == ScaleConstraints::None && e.isShiftPressed())

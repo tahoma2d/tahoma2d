@@ -443,7 +443,7 @@ void IntField::onEditingFinished() {
   // Controllo necessario per evitare che il segnale di cambiamento venga emesso
   // piu' volte.
   if ((pos2value(m_slider->value()) == value && m_slider->isVisible()) ||
-      (int)m_roller->getValue() == value && m_roller->isVisible())
+      ((int)m_roller->getValue() == value && m_roller->isVisible()))
     return;
   m_slider->setValue(value2pos(value));
   m_roller->setValue((double)value);
