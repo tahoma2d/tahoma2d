@@ -551,9 +551,25 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_cameraSettingsPage->setLayout(settingsLayout);
 
     // Make Options Page
-    QGroupBox *webcamBox   = new QGroupBox(tr("Webcam Options"), this);
-    QGroupBox *dslrBox     = new QGroupBox(tr("DSLR Options"), this);
-    QGroupBox *controlBox  = new QGroupBox(tr("Motion Control"), this);
+    QGroupBox *webcamBox  = new QGroupBox(tr("Webcam Options"), this);
+    QGroupBox *dslrBox    = new QGroupBox(tr("DSLR Options"), this);
+    QGroupBox *controlBox = new QGroupBox(tr("Motion Control"), this);
+    QGroupBox *timerFrame = new QGroupBox(tr("Time Lapse"), this);
+    m_timerCB             = new QCheckBox(tr("Use time lapse"), this);
+    m_timerIntervalFld    = new DVGui::IntField(this);
+    m_captureTimer        = new QTimer(this);
+    timerFrame->setObjectName("CleanupSettingsFrame");
+    m_timerCB->setChecked(false);
+    m_timerIntervalFld->setRange(0, 60);
+    m_timerIntervalFld->setValue(10);
+    m_timerIntervalFld->setDisabled(true);
+    m_countdownTimer = new QTimer(this);
+
+    // Make the interval timer single-shot. When the capture finished, restart
+    // timer for next frame.
+    // This is because capturing and saving the image needs some time.
+    m_captureTimer->setSingleShot(true);
+
     m_postCaptureReviewFld = new DVGui::IntField(this);
     m_postCaptureReviewFld->setRange(0, 10);
 
@@ -612,6 +628,22 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     controlBox->setLayout(controlLayout);
     controlBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     optionsOutsideLayout->addWidget(controlBox, Qt::AlignCenter);
+
+    QGridLayout *timerLay = new QGridLayout();
+    timerLay->setMargin(8);
+    timerLay->setHorizontalSpacing(3);
+    timerLay->setVerticalSpacing(5);
+    {
+      timerLay->addWidget(m_timerCB, 0, 0, 1, 2);
+
+      timerLay->addWidget(new QLabel(tr("Interval(sec):"), this), 1, 0,
+                          Qt::AlignRight);
+      timerLay->addWidget(m_timerIntervalFld, 1, 1);
+    }
+    timerLay->setColumnStretch(0, 0);
+    timerLay->setColumnStretch(1, 1);
+    timerFrame->setLayout(timerLay);
+    optionsOutsideLayout->addWidget(timerFrame);
 
     checkboxLayout->addWidget(m_placeOnXSheetCB, 0, 0, 1, 1, Qt::AlignRight);
     checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
@@ -926,6 +958,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   // Serial Port Connections
   ret = ret && connect(m_controlDeviceCombo, SIGNAL(currentIndexChanged(int)),
                        this, SLOT(serialPortChanged(int)));
+
+  // Time Lapse
+  ret = ret && connect(m_timerCB, SIGNAL(toggled(bool)), this,
+                       SLOT(onTimerCBToggled(bool)));
+  ret = ret && connect(m_captureTimer, SIGNAL(timeout()), this,
+                       SLOT(onCaptureTimerTimeout()));
+  ret = ret &&
+        connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(onCountDown()));
 
   assert(ret);
 
@@ -1900,28 +1940,11 @@ void StopMotionController::showEvent(QShowEvent *event) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::hideEvent(QHideEvent *event) {
-  // disconnect(m_apertureCombo, SIGNAL(currentIndexChanged(int)), this,
-  //           SLOT(onApertureChanged(int)));
-  // disconnect(m_shutterSpeedCombo, SIGNAL(currentIndexChanged(int)), this,
-  //           SLOT(onShutterSpeedChanged(int)));
-  // disconnect(m_isoCombo, SIGNAL(currentIndexChanged(int)), this,
-  //           SLOT(onIsoChanged(int)));
-  // disconnect(m_exposureCombo, SIGNAL(currentIndexChanged(int)), this,
-  //           SLOT(onExposureChanged(int)));
-
-  // disconnect(m_stopMotion, SIGNAL(cameraChanged()), this,
-  //           SLOT(refreshCameraList()));
-  // disconnect(m_stopMotion, SIGNAL(optionsChanged()), this,
-  //           SLOT(refreshOptionsLists()));
-  // disconnect(m_stopMotion, SIGNAL(apertureOptionsChanged()), this,
-  //           SLOT(refreshApertureList()));
-  // disconnect(m_stopMotion, SIGNAL(shutterSpeedOptionsChanged()), this,
-  //           SLOT(refreshShutterSpeedList()));
-  // disconnect(m_stopMotion, SIGNAL(isoOptionsChanged()), this,
-  //           SLOT(refreshIsoList()));
-  // disconnect(m_stopMotion, SIGNAL(exposureOptionsChanged()), this,
-  //           SLOT(refreshExposureList()));
-  // disconnect(m_stopMotion, SIGNAL(modeChanged()), this, SLOT(refreshMode()));
+  // stop interval timer if it is active
+  if (m_timerCB->isChecked() && m_captureButton->isChecked()) {
+    m_captureButton->setChecked(false);
+    onCaptureButtonClicked(false);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2024,7 +2047,66 @@ void StopMotionController::onOpacityChanged(int opacity) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCaptureButtonClicked(bool on) {
-  m_stopMotion->captureImage();
+  if (m_timerCB->isChecked()) {
+    m_timerCB->setDisabled(on);
+    m_timerIntervalFld->setDisabled(on);
+    // start interval capturing
+    if (on) {
+      if (m_stopMotion->m_liveViewStatus > 1) {
+        m_captureButton->setText(tr("Stop Capturing"));
+        m_captureTimer->start(m_timerIntervalFld->getValue() * 1000);
+        if (m_timerIntervalFld->getValue() != 0) m_countdownTimer->start(100);
+      }
+    }
+    // stop interval capturing
+    else {
+      m_captureButton->setText(tr("Start Capturing"));
+      m_captureTimer->stop();
+      m_countdownTimer->stop();
+      // hide the count down text
+      // m_videoWidget->showCountDownTime(0);
+    }
+  }
+  // capture immediately
+  else {
+    m_stopMotion->captureImage();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onTimerCBToggled(bool on) {
+  m_timerIntervalFld->setEnabled(on);
+  m_captureButton->setCheckable(on);
+  m_stopMotion->m_isTimeLapse = on;
+  if (on)
+    m_captureButton->setText(tr("Start Capturing"));
+  else
+    m_captureButton->setText(tr("Capture"));
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCaptureTimerTimeout() {
+  if (m_stopMotion->m_liveViewStatus > 0) {
+    m_stopMotion->captureImage();
+    // restart interval timer for capturing next frame (it is single shot)
+    if (m_timerCB->isChecked() && m_captureButton->isChecked()) {
+      m_captureTimer->start(m_timerIntervalFld->getValue() * 1000);
+      // restart the count down as well (for aligning the timing. It is not
+      // single shot)
+      if (m_timerIntervalFld->getValue() != 0) m_countdownTimer->start(100);
+    }
+  } else
+    onCaptureButtonClicked(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCountDown() {
+  m_captureButton->setText(QString::number(
+      m_captureTimer->isActive() ? (m_captureTimer->remainingTime() / 1000 + 1)
+                                 : 0));
 }
 
 //-----------------------------------------------------------------------------

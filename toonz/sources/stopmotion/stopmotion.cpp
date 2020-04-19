@@ -1547,7 +1547,7 @@ bool StopMotion::importImage() {
   // for now always save.  This can be tweaked later
   sl->save();
 
-  if (getReviewTime() > 0) {
+  if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_liveViewStatus = LiveViewPaused;
     m_reviewTimer->start(getReviewTime() * 1000);
   }
@@ -1569,7 +1569,8 @@ bool StopMotion::importImage() {
     xsh->insertCells(row, col);
     xsh->setCell(row, col, TXshCell(sl, fid));
     app->getCurrentColumn()->setColumnIndex(col);
-    if (getReviewTime() == 0) app->getCurrentFrame()->setFrame(row + 1);
+    if (getReviewTime() == 0 || m_isTimeLapse)
+      app->getCurrentFrame()->setFrame(row + 1);
     m_xSheetFrameNumber = row + 2;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
     postImportProcess();
@@ -1617,7 +1618,8 @@ bool StopMotion::importImage() {
     xsh->insertCells(row, foundCol);
     xsh->setCell(row, foundCol, TXshCell(sl, fid));
     app->getCurrentColumn()->setColumnIndex(foundCol);
-    if (getReviewTime() == 0) app->getCurrentFrame()->setFrame(row + 1);
+    if (getReviewTime() == 0 || m_isTimeLapse)
+      app->getCurrentFrame()->setFrame(row + 1);
     m_xSheetFrameNumber = row + 2;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   }
@@ -1630,7 +1632,8 @@ bool StopMotion::importImage() {
     }
     xsh->setCell(row, col, TXshCell(sl, fid));
     app->getCurrentColumn()->setColumnIndex(col);
-    if (getReviewTime() == 0) app->getCurrentFrame()->setFrame(row + 1);
+    if (getReviewTime() == 0 || m_isTimeLapse)
+      app->getCurrentFrame()->setFrame(row + 1);
     m_xSheetFrameNumber = row + 2;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   }
@@ -1655,7 +1658,7 @@ void StopMotion::captureImage() {
           tr("Cannot capture webcam image unless live view is active."));
       return;
     }
-    if (getReviewTime() > 0) {
+    if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
       if (m_liveViewStatus > 0) {
         m_liveViewStatus = 3;
@@ -1667,7 +1670,7 @@ void StopMotion::captureImage() {
     importImage();
     return;
   }
-  if (getBlackCapture()) {
+  if (getBlackCapture() && !m_isTimeLapse) {
     m_fullScreen1->showFullScreen();
     m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
     if (m_screenCount > 1) {
@@ -1684,11 +1687,11 @@ void StopMotion::captureImage() {
     qApp->processEvents(QEventLoop::AllEvents, 1500);
   }
 
-  if (getReviewTime() > 0) {
+  if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
   }
 
-  if (m_liveViewStatus > 0) {
+  if (m_liveViewStatus > 0 && !m_isTimeLapse) {
     m_liveViewStatus = 3;
   }
 
@@ -2937,6 +2940,8 @@ void StopMotion::pauseLiveView() {
   } else if (m_liveViewStatus == 3) {
     m_liveViewStatus  = 2;
     m_userCalledPause = false;
+  } else if (m_liveViewStatus == 0) {
+    toggleLiveView();
   }
 }
 

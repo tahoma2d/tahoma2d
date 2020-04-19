@@ -157,6 +157,7 @@ public:
   bool m_userCalledPause    = false;
   bool m_converterSucceeded = false;
   bool m_drawBeneathLevels  = true;
+  bool m_isTimeLapse        = false;
   QString m_tempFile;
   QTimer* m_timer;
   QList<QSize> m_webcamResolutions;

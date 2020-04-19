@@ -87,13 +87,15 @@ class StopMotionController final : public QWidget {
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB;
+      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
   DVGui::IntField *m_onionOpacityFld, *m_postCaptureReviewFld,
       *m_subsamplingFld;
   PencilTestSaveInFolderPopup *m_saveInFolderPopup;
+  DVGui::IntField *m_timerIntervalFld;
+  QTimer *m_captureTimer, *m_countdownTimer;
 
 public:
   StopMotionController(QWidget *parent = 0);
@@ -147,6 +149,9 @@ protected slots:
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
   void serialPortChanged(int);
+  void onTimerCBToggled(bool);
+  void onCaptureTimerTimeout();
+  void onCountDown();
 
   // canon stuff
   void onApertureChanged(int index);
