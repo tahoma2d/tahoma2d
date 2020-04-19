@@ -22,6 +22,7 @@
 #include "tlevel_io.h"
 #include "toutputproperties.h"
 #include "filebrowserpopup.h"
+#include "tunit.h"
 
 #include "toonz/namebuilder.h"
 #include "toonz/preferences.h"
@@ -4821,6 +4822,16 @@ void StopMotion::sendSerialData() {
     QString s(response);
     std::string text = response.toStdString();
   }
+
+  // for not data sending is not implemented yet, just the frame number.  
+  // These lines are here to be a reference for using column data as movement.
+  //TDoubleParam *param = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X);
+  //double value = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X, m_xSheetFrameNumber - 1);
+  //QString isCam = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getId().isCamera() ? "yep" : "nope";
+  //std::string name = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getName();
+  //TMeasure *measure =param->getMeasure();
+  //const TUnit *unit = measure->getCurrentUnit();
+  //double newValue = unit->convertTo(value);
 }
 
 //-----------------------------------------------------------------
