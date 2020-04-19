@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+﻿cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
@@ -253,6 +253,7 @@ find_package(Qt5 REQUIRED
     LinguistTools
     Multimedia
     MultimediaWidgets
+    SerialPort
 )
 
 set(QT_MINIMUM_VERSION 5.5.0)

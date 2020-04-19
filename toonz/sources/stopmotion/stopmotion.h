@@ -24,6 +24,7 @@ class QCamera;
 class QCameraInfo;
 class QDialog;
 class QTimer;
+class QSerialPort;
 
 enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
 
@@ -31,10 +32,10 @@ enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
 //=============================================================================
 // JpgConverter
 //-----------------------------------------------------------------------------
-//#if WITH_CANON
+
 class JpgConverter : public QThread {
   Q_OBJECT
-#if WITH_CANON
+#ifdef WITH_CANON
   EdsStreamRef m_stream;
 #endif
   TRaster32P m_finalImage;
@@ -44,7 +45,7 @@ class JpgConverter : public QThread {
 public:
   JpgConverter();
   ~JpgConverter();
-#if WITH_CANON
+#ifdef WITH_CANON
   void setStream(EdsStreamRef stream);
   void setScale(bool scale) { m_scale = scale; }
   void setScaleWidth(bool scaleWidth) { m_scaleWidth = scaleWidth; }
@@ -87,7 +88,8 @@ private:
   QSize m_allowedCameraSize;
   QStringList m_isoOptions, m_shutterSpeedOptions, m_apertureOptions,
       m_exposureOptions, m_whiteBalanceOptions, m_colorTempOptions,
-      m_imageQualityOptions, m_pictureStyleOptions;
+      m_imageQualityOptions, m_pictureStyleOptions, m_controlBaudRates,
+      m_serialDevices;
 
   QDialog *m_fullScreen1, *m_fullScreen2, *m_fullScreen3;
   int m_screenCount;
@@ -104,7 +106,9 @@ private:
   QCamera* m_webcam;
   cv::VideoCapture m_cvWebcam;
 
-#if WITH_CANON
+  QSerialPort* m_serialPort;
+
+#ifdef WITH_CANON
   std::map<EdsUInt32, std::string> m_avMap, m_tvMap, m_isoMap, m_modeMap,
       m_exposureMap, m_whiteBalanceMap, m_imageQualityMap, m_pictureStyleMap;
   JpgConverter* m_converter;
@@ -159,7 +163,7 @@ public:
 
   // Canon Public Properties
   bool m_pickLiveViewZoom = false;
-#if WITH_CANON
+#ifdef WITH_CANON
   EdsError m_error              = EDS_ERR_OK;
   EdsUInt32 m_count             = 0;
   EdsCameraListRef m_cameraList = NULL;
@@ -229,6 +233,9 @@ public:
   void lastFrame();
   void nextName();
   void previousName();
+  QStringList getAvailableSerialPorts();
+  bool setSerialPort(QString port);
+  void sendSerialData();
 
   QString getFrameInfoText() { return m_frameInfoText; }
   QString getInfoColorName() { return m_infoColorName; }
@@ -277,7 +284,7 @@ public:
 // void changeResolutions(int index);
 
 // Canon Commands
-#if WITH_CANON
+#ifdef WITH_CANON
   void cameraAdded();
   void closeCanonSDK();
   int getCameraCount();

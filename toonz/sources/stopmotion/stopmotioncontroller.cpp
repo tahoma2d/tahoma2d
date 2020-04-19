@@ -52,6 +52,7 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QToolTip>
+#include <QSerialPort>
 
 #ifdef _WIN32
 #include <dshow.h>
@@ -181,10 +182,12 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Controls"));
   m_tabBar->addSimpleTab(tr("Settings"));
   m_tabBar->addSimpleTab(tr("Options"));
+  // m_tabBar->addSimpleTab(tr("Control"));
   m_tabBarContainer    = new TabBarContainter(this);
   m_mainControlsPage   = new QFrame();
   m_cameraSettingsPage = new QFrame();
   m_optionsPage        = new QFrame();
+  // m_controlPage = new QFrame();
 
   // **********************
   // Make Control Page
@@ -550,6 +553,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     // Make Options Page
     QGroupBox *webcamBox   = new QGroupBox(tr("Webcam Options"), this);
     QGroupBox *dslrBox     = new QGroupBox(tr("DSLR Options"), this);
+    QGroupBox *controlBox  = new QGroupBox(tr("Motion Control"), this);
     m_postCaptureReviewFld = new DVGui::IntField(this);
     m_postCaptureReviewFld->setRange(0, 10);
 
@@ -568,6 +572,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_useNumpadCB     = new QCheckBox(this);
     m_drawBeneathCB   = new QCheckBox(this);
 
+    m_controlDeviceCombo = new QComboBox(this);
+    m_controlDeviceCombo->addItems(m_stopMotion->getAvailableSerialPorts());
+
     m_liveViewOnAllFramesCB           = new QCheckBox(this);
     QVBoxLayout *optionsOutsideLayout = new QVBoxLayout;
     QGridLayout *optionsLayout        = new QGridLayout;
@@ -575,6 +582,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsLayout->setMargin(5);
     QGridLayout *webcamLayout   = new QGridLayout;
     QGridLayout *dslrLayout     = new QGridLayout;
+    QGridLayout *controlLayout  = new QGridLayout;
     QGridLayout *checkboxLayout = new QGridLayout;
 
     dslrLayout->addWidget(m_blackScreenForCapture, 0, 0, Qt::AlignRight);
@@ -597,6 +605,13 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamBox->setLayout(webcamLayout);
     webcamBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     optionsOutsideLayout->addWidget(webcamBox, Qt::AlignCenter);
+
+    controlLayout->addWidget(new QLabel(tr("Port: ")), 0, 0, Qt::AlignRight);
+    controlLayout->addWidget(m_controlDeviceCombo, 0, 1, Qt::AlignLeft);
+    controlLayout->setColumnStretch(1, 30);
+    controlBox->setLayout(controlLayout);
+    controlBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    optionsOutsideLayout->addWidget(controlBox, Qt::AlignCenter);
 
     checkboxLayout->addWidget(m_placeOnXSheetCB, 0, 0, 1, 1, Qt::AlignRight);
     checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
@@ -627,15 +642,30 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     m_optionsPage->setLayout(optionsOutsideLayout);
 
+    // QVBoxLayout *controlOutsideLayout = new QVBoxLayout;
+    // QGridLayout* controlInsideLayout = new QGridLayout;
+
+    // m_controlBaudRateCombo = new QComboBox(this);
+
+    // controlInsideLayout->addWidget(m_controlDeviceCombo, 0, 0, 1, 2,
+    // Qt::AlignCenter);
+    // controlInsideLayout->addWidget(m_controlBaudRateCombo, 1, 0, 1, 2,
+    // Qt::AlignCenter);
+    // controlOutsideLayout->addLayout(controlInsideLayout);
+    // m_controlPage->setLayout(controlOutsideLayout);
+
     QScrollArea *mainArea = makeChooserPageWithoutScrollBar(m_mainControlsPage);
     QScrollArea *settingsArea =
         makeChooserPageWithoutScrollBar(m_cameraSettingsPage);
     QScrollArea *optionsArea = makeChooserPageWithoutScrollBar(m_optionsPage);
+    // QScrollArea* controlArea =
+    // makeChooserPageWithoutScrollBar(m_controlPage);
 
     m_stackedChooser = new QStackedWidget(this);
     m_stackedChooser->addWidget(mainArea);
     m_stackedChooser->addWidget(settingsArea);
     m_stackedChooser->addWidget(optionsArea);
+    // m_stackedChooser->addWidget(controlArea);
     m_stackedChooser->setFocusPolicy(Qt::NoFocus);
 
     QFrame *opacityFrame    = new QFrame();
@@ -893,6 +923,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion, SIGNAL(newWebcamResolutionSelected(int)),
                        this, SLOT(onNewWebcamResolutionSelected(int)));
 
+  // Serial Port Connections
+  ret = ret && connect(m_controlDeviceCombo, SIGNAL(currentIndexChanged(int)),
+                       this, SLOT(serialPortChanged(int)));
+
   assert(ret);
 
   m_placeOnXSheetCB->setChecked(
@@ -1120,7 +1154,7 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
   m_cameraStatusLabel->hide();
   QList<QCameraInfo> webcams = m_stopMotion->getWebcams();
   int count                  = webcams.count();
-#if WITH_CANON
+#ifdef WITH_CANON
   count += m_stopMotion->getCameraCount();
 #endif
   if (count < 1) {
@@ -1142,7 +1176,7 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
         maxTextLength = std::max(maxTextLength, fontMetrics().width(camDesc));
       }
     }
-#if WITH_CANON
+#ifdef WITH_CANON
     if (m_stopMotion->getCameraCount() > 0) {
       QString name;
       m_stopMotion->getCamera(0);
@@ -1165,7 +1199,7 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
   m_cameraListCombo->blockSignals(false);
   m_stopMotion->updateLevelNameAndFrame(m_levelNameEdit->text().toStdWString());
   refreshOptionsLists();
-#if WITH_CANON
+#ifdef WITH_CANON
   refreshMode();
 #endif
 }
@@ -1186,7 +1220,7 @@ void StopMotionController::refreshOptionsLists() {
   // m_shutterSpeedCombo->clear();
   // m_apertureSlider->clear();
   m_exposureCombo->clear();
-#if WITH_CANON
+#ifdef WITH_CANON
   if (m_stopMotion->getCameraCount() == 0) {
     m_shutterSpeedSlider->setDisabled(true);
     m_isoSlider->setDisabled(true);
@@ -1212,7 +1246,7 @@ void StopMotionController::refreshOptionsLists() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshMode() {
-#if WITH_CANON
+#ifdef WITH_CANON
   if (m_stopMotion->getCameraCount() == 0) {
     m_cameraModeLabel->setText("");
     m_cameraStatusLabel->hide();
@@ -1228,7 +1262,7 @@ void StopMotionController::refreshMode() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshApertureList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_apertureSlider->blockSignals(true);
   int count = 0;
   m_stopMotion->getAvailableApertures();
@@ -1253,7 +1287,7 @@ void StopMotionController::refreshApertureList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshShutterSpeedList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_shutterSpeedSlider->blockSignals(true);
   int count = 0;
   m_stopMotion->getAvailableShutterSpeeds();
@@ -1279,7 +1313,7 @@ void StopMotionController::refreshShutterSpeedList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshIsoList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_isoSlider->blockSignals(true);
   int count = 0;
   m_stopMotion->getAvailableIso();
@@ -1303,7 +1337,7 @@ void StopMotionController::refreshIsoList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshExposureList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_exposureCombo->blockSignals(true);
   m_exposureCombo->clear();
   m_stopMotion->getAvailableExposureCompensations();
@@ -1324,7 +1358,7 @@ void StopMotionController::refreshExposureList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshWhiteBalanceList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_whiteBalanceCombo->blockSignals(true);
   m_whiteBalanceCombo->clear();
   m_stopMotion->getAvailableWhiteBalances();
@@ -1345,7 +1379,7 @@ void StopMotionController::refreshWhiteBalanceList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshColorTemperatureList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_kelvinSlider->blockSignals(true);
   int count = 0;
   count     = m_stopMotion->getColorTemperatureOptions().size();
@@ -1371,7 +1405,7 @@ void StopMotionController::refreshColorTemperatureList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshImageQualityList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_imageQualityCombo->blockSignals(true);
   m_imageQualityCombo->clear();
   m_stopMotion->getAvailableImageQualities();
@@ -1391,7 +1425,7 @@ void StopMotionController::refreshImageQualityList() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::refreshPictureStyleList() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_pictureStyleCombo->blockSignals(true);
   m_pictureStyleCombo->clear();
   m_stopMotion->getAvailablePictureStyles();
@@ -1413,7 +1447,7 @@ void StopMotionController::refreshPictureStyleList() {
 void StopMotionController::onCameraListComboActivated(int comboIndex) {
   QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
   int cameraCount            = cameras.size();
-#if WITH_CANON
+#ifdef WITH_CANON
   cameraCount += m_stopMotion->getCameraCount();
 #endif
   if (cameraCount != m_cameraListCombo->count() - 1) return;
@@ -1569,7 +1603,7 @@ void StopMotionController::onFrameCaptured(QImage &image) {}
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onApertureChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_apertureSlider->blockSignals(true);
   QStringList apertureOptions = m_stopMotion->getApertureOptions();
   m_stopMotion->setAperture(apertureOptions.at(m_apertureSlider->value()));
@@ -1585,7 +1619,7 @@ void StopMotionController::onApertureChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onApertureChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_apertureSlider->blockSignals(true);
   QStringList apertureOptions = m_stopMotion->getApertureOptions();
   m_apertureLabel->setText(tr("Aperture: ") +
@@ -1600,7 +1634,7 @@ void StopMotionController::onApertureChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onShutterSpeedChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_shutterSpeedSlider->blockSignals(true);
   QStringList shutterSpeedOptions = m_stopMotion->getShutterSpeedOptions();
   m_stopMotion->setShutterSpeed(
@@ -1617,7 +1651,7 @@ void StopMotionController::onShutterSpeedChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onShutterSpeedChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_shutterSpeedSlider->blockSignals(true);
   QStringList shutterSpeedOptions = m_stopMotion->getShutterSpeedOptions();
   m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
@@ -1632,7 +1666,7 @@ void StopMotionController::onShutterSpeedChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onIsoChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_isoSlider->blockSignals(true);
   QStringList isoOptions = m_stopMotion->getIsoOptions();
   m_stopMotion->setIso(isoOptions.at(m_isoSlider->value()));
@@ -1646,7 +1680,7 @@ void StopMotionController::onIsoChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onIsoChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_isoSlider->blockSignals(true);
   QStringList isoOptions = m_stopMotion->getIsoOptions();
   m_isoSlider->setRange(0, isoOptions.size() - 1);
@@ -1659,7 +1693,7 @@ void StopMotionController::onIsoChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onExposureChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_exposureCombo->blockSignals(true);
   m_stopMotion->setExposureCompensation(m_exposureCombo->currentText());
   m_exposureCombo->blockSignals(false);
@@ -1669,7 +1703,7 @@ void StopMotionController::onExposureChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onExposureChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_exposureCombo->blockSignals(true);
   m_exposureCombo->setCurrentText(
       m_stopMotion->getCurrentExposureCompensation());
@@ -1680,7 +1714,7 @@ void StopMotionController::onExposureChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onWhiteBalanceChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_whiteBalanceCombo->blockSignals(true);
   m_stopMotion->setWhiteBalance(m_whiteBalanceCombo->currentText());
   m_whiteBalanceCombo->blockSignals(false);
@@ -1690,7 +1724,7 @@ void StopMotionController::onWhiteBalanceChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onWhiteBalanceChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_whiteBalanceCombo->blockSignals(true);
   m_whiteBalanceCombo->setCurrentText(m_stopMotion->getCurrentWhiteBalance());
   refreshColorTemperatureList();
@@ -1701,7 +1735,7 @@ void StopMotionController::onWhiteBalanceChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onColorTemperatureChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_kelvinSlider->blockSignals(true);
   QStringList kelvinOptions = m_stopMotion->getColorTemperatureOptions();
   m_stopMotion->setColorTemperature(kelvinOptions.at(m_kelvinSlider->value()));
@@ -1717,7 +1751,7 @@ void StopMotionController::onColorTemperatureChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onColorTemperatureChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_kelvinSlider->blockSignals(true);
   QStringList kelvinOptions = m_stopMotion->getColorTemperatureOptions();
   m_kelvinSlider->setRange(0, kelvinOptions.size() - 1);
@@ -1732,7 +1766,7 @@ void StopMotionController::onColorTemperatureChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onImageQualityChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_imageQualityCombo->blockSignals(true);
   m_stopMotion->setImageQuality(m_imageQualityCombo->currentText());
   m_imageQualityCombo->blockSignals(false);
@@ -1742,7 +1776,7 @@ void StopMotionController::onImageQualityChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onImageQualityChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_imageQualityCombo->blockSignals(true);
   m_imageQualityCombo->setCurrentText(m_stopMotion->getCurrentImageQuality());
   m_imageQualityCombo->blockSignals(false);
@@ -1752,7 +1786,7 @@ void StopMotionController::onImageQualityChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onPictureStyleChanged(int index) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_pictureStyleCombo->blockSignals(true);
   m_stopMotion->setPictureStyle(m_pictureStyleCombo->currentText());
   m_pictureStyleCombo->blockSignals(false);
@@ -1762,7 +1796,7 @@ void StopMotionController::onPictureStyleChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onPictureStyleChangedSignal(QString text) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_pictureStyleCombo->blockSignals(true);
   m_pictureStyleCombo->setCurrentText(m_stopMotion->getCurrentPictureStyle());
   m_pictureStyleCombo->blockSignals(false);
@@ -1772,7 +1806,7 @@ void StopMotionController::onPictureStyleChangedSignal(QString text) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusCheckToggled(bool on) {
-#if WITH_CANON
+#ifdef WITH_CANON
   if (on)
     m_zoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
   else
@@ -1783,7 +1817,7 @@ void StopMotionController::onFocusCheckToggled(bool on) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onPickFocusCheckToggled(bool on) {
-#if WITH_CANON
+#ifdef WITH_CANON
   if (on)
     m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
   else
@@ -1794,7 +1828,7 @@ void StopMotionController::onPickFocusCheckToggled(bool on) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onZoomPressed() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->zoomLiveView();
 #endif
 }
@@ -1802,7 +1836,7 @@ void StopMotionController::onZoomPressed() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onPickZoomPressed() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->toggleZoomPicking();
 #endif
 }
@@ -1810,7 +1844,7 @@ void StopMotionController::onPickZoomPressed() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusNear() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusNear();
 #endif
 }
@@ -1818,7 +1852,7 @@ void StopMotionController::onFocusNear() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusFar() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusFar();
 #endif
 }
@@ -1826,7 +1860,7 @@ void StopMotionController::onFocusFar() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusNear2() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusNear2();
 #endif
 }
@@ -1834,7 +1868,7 @@ void StopMotionController::onFocusNear2() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusFar2() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusFar2();
 #endif
 }
@@ -1842,7 +1876,7 @@ void StopMotionController::onFocusFar2() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusNear3() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusNear3();
 #endif
 }
@@ -1850,7 +1884,7 @@ void StopMotionController::onFocusNear3() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFocusFar3() {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->focusFar3();
 #endif
 }
@@ -1858,7 +1892,7 @@ void StopMotionController::onFocusFar3() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::showEvent(QShowEvent *event) {
-#if WITH_CANON
+#ifdef WITH_CANON
   m_stopMotion->initializeCanonSDK();
 #endif
 }
@@ -1896,7 +1930,7 @@ void StopMotionController::keyPressEvent(QKeyEvent *event) {
   int key          = event->key();
   TFrameHandle *fh = TApp::instance()->getCurrentFrame();
   int origFrame    = fh->getFrame();
-#if WITH_CANON
+#ifdef WITH_CANON
   if ((m_stopMotion->m_pickLiveViewZoom || m_stopMotion->m_zooming) &&
       (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
        key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
@@ -2037,6 +2071,12 @@ void StopMotionController::onSceneSwitched() {
   // m_saveInFolderPopup->updateParentFolder();
   // m_saveInFileFld->setPath(m_saveInFolderPopup->getParentPath());
   // m_stopMotion->refreshFrameInfo();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::serialPortChanged(int index) {
+  m_stopMotion->setSerialPort(m_controlDeviceCombo->currentText());
 }
 
 //-----------------------------------------------------------------------------

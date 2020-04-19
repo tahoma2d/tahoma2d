@@ -52,6 +52,8 @@
 #include <QTimer>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 // Connected camera
 TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 1);
@@ -225,7 +227,7 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 JpgConverter::JpgConverter() {}
 JpgConverter::~JpgConverter() {}
 
-#if WITH_CANON
+#ifdef WITH_CANON
 
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
 
@@ -299,7 +301,7 @@ void JpgConverter::run() { convertFromJpg(); }
 StopMotion::StopMotion() {
   m_opacity         = StopMotionOpacity;
   m_useScaledImages = StopMotionUseScaledImages;
-#if WITH_CANON
+#ifdef WITH_CANON
   buildAvMap();
   buildIsoMap();
   buildTvMap();
@@ -340,6 +342,7 @@ StopMotion::StopMotion() {
       m_fullScreen3->setStyleSheet("background-color:black;");
     }
   }
+  m_serialPort = new QSerialPort(this);
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TSceneHandle *sceneHandle   = TApp::instance()->getCurrentScene();
@@ -371,7 +374,7 @@ StopMotion::StopMotion() {
 
 StopMotion::~StopMotion() {
   disconnectAllCameras();
-#if WITH_CANON
+#ifdef WITH_CANON
   if (m_camera) releaseCamera();
   if (m_cameraList != NULL) releaseCameraList();
   if (m_isSDKLoaded) closeCanonSDK();
@@ -433,7 +436,7 @@ void StopMotion::disconnectAllCameras() {
   m_webcamDescription = QString();
   m_webcamIndex       = -1;
 
-#if WITH_CANON
+#ifdef WITH_CANON
   m_proxyDpi             = TPointD(0.0, 0.0);
   m_proxyImageDimensions = TDimension(0, 0);
 
@@ -985,6 +988,7 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
   TApp::instance()->getCurrentFrame()->setFrame(frameNumber - 1);
   loadLineUpImage();
   emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
+  sendSerialData();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
@@ -1281,7 +1285,7 @@ void StopMotion::onTimeout() {
       !TApp::instance()->getCurrentFrame()->isPlaying()) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
-#if WITH_CANON
+#ifdef WITH_CANON
         downloadEVFData();
 #endif
       } else {
@@ -1300,7 +1304,7 @@ void StopMotion::onTimeout() {
   } else if (m_liveViewStatus == 3 && !m_userCalledPause) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
-#if WITH_CANON
+#ifdef WITH_CANON
         downloadEVFData();
 #endif
       } else
@@ -1638,7 +1642,7 @@ bool StopMotion::importImage() {
 
 void StopMotion::captureImage() {
   bool sessionOpen = false;
-#if WITH_CANON
+#ifdef WITH_CANON
   sessionOpen = m_sessionOpen;
 #endif
   if (!m_usingWebcam && !sessionOpen) {
@@ -1708,7 +1712,7 @@ void StopMotion::captureImage() {
   }
   m_tempFile = tempFile.getQString();
 
-#if WITH_CANON
+#ifdef WITH_CANON
   takePicture();
 #endif
 }
@@ -1873,7 +1877,7 @@ void StopMotion::saveXmlFile() {
                                QString::number(m_webcamHeight));
   } else {
     xmlWriter.writeTextElement("Webcam", "no");
-#if WITH_CANON
+#ifdef WITH_CANON
     xmlWriter.writeTextElement("CameraName",
                                QString::fromStdString(m_cameraName));
     xmlWriter.writeTextElement("Aperture", getCurrentAperture());
@@ -1946,7 +1950,7 @@ bool StopMotion::loadXmlFile() {
             }
           }
         } else {
-#if WITH_CANON
+#ifdef WITH_CANON
           QString camName = "";
           if (getCameraCount() > 0) {
             openCameraSession();
@@ -1972,7 +1976,7 @@ bool StopMotion::loadXmlFile() {
               QString(QString::number(x) + " x " + QString::number(y)));
         }
       }
-#if WITH_CANON
+#ifdef WITH_CANON
       if (xmlReader.name() == "Aperture") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
@@ -2177,7 +2181,7 @@ bool StopMotion::exportImageSequence() {
 void StopMotion::refreshFrameInfo() {
   bool sessionOpen = false;
 
-#if WITH_CANON
+#ifdef WITH_CANON
   sessionOpen = m_sessionOpen;
 #endif
 
@@ -2200,7 +2204,7 @@ void StopMotion::refreshFrameInfo() {
   TDimension stopMotionRes;
   bool checkRes                    = true;
   if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
-#if WITH_CANON
+#ifdef WITH_CANON
   else if (m_useScaledImages || !getCurrentImageQuality().contains("Large")) {
     stopMotionRes = m_proxyImageDimensions;
     if (m_proxyImageDimensions == TDimension(0, 0)) {
@@ -2516,7 +2520,7 @@ void StopMotion::setToNextNewLevel() {
 void StopMotion::refreshCameraList() {
   QString camera = "";
   bool hasCamera = false;
-#if WITH_CANON
+#ifdef WITH_CANON
   if (m_sessionOpen && getCameraCount() > 0 && !m_usingWebcam &&
       m_cameraName == getCameraName()) {
     hasCamera = true;
@@ -2569,7 +2573,7 @@ void StopMotion::changeCameras(int index) {
       return;
     }
 
-#if WITH_CANON
+#ifdef WITH_CANON
     if (m_sessionOpen && getCameraCount() > 0) {
       if (m_liveViewStatus > 0) {
         endCanonLiveView();
@@ -2618,7 +2622,7 @@ void StopMotion::changeCameras(int index) {
     emit(newWebcamResolutionSelected(sizeCount));
 
   } else {
-#if WITH_CANON
+#ifdef WITH_CANON
     if (index == -2) {
       index = cameras.size();
     }
@@ -2736,7 +2740,7 @@ bool StopMotion::translateIndex(int index) {
 //-----------------------------------------------------------------
 
 bool StopMotion::initWebcam(int index) {
-#if WIN32
+#ifdef WIN32
   if (!m_useDirectShow) {
     // the webcam order obtained from Qt isn't always the same order as
     // the one obtained from OpenCV without DirectShow
@@ -2883,7 +2887,7 @@ void StopMotion::setUseDirectShow(int state) {
 bool StopMotion::toggleLiveView() {
   bool sessionOpen = false;
 
-#if WITH_CANON
+#ifdef WITH_CANON
   sessionOpen = m_sessionOpen;
 #endif
 
@@ -2891,7 +2895,7 @@ bool StopMotion::toggleLiveView() {
     m_liveViewDpi             = TPointD(0.0, 0.0);
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
-#if WITH_CANON
+#ifdef WITH_CANON
       startCanonLiveView();
 #endif
     } else
@@ -2904,7 +2908,7 @@ bool StopMotion::toggleLiveView() {
     return true;
   } else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
     if (!m_usingWebcam) {
-#if WITH_CANON
+#ifdef WITH_CANON
       endCanonLiveView();
 #endif
     } else
@@ -2948,7 +2952,7 @@ void StopMotion::onFinished() { l_quitLoop = true; }
 
 //-----------------------------------------------------------------
 
-#if WITH_CANON
+#ifdef WITH_CANON
 EdsError StopMotion::initializeCanonSDK() {
   m_error = EdsInitializeSDK();
   if (m_error == EDS_ERR_OK) {
@@ -4736,6 +4740,85 @@ void StopMotion::buildPictureStyleMap() {
 #endif
 
 //-----------------------------------------------------------------
+
+QStringList StopMotion::getAvailableSerialPorts() {
+  QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+  QStringList ports;
+  ports.push_back(tr("No Device"));
+  int size = list.size();
+  for (int i = 0; i < size; i++) {
+    std::string desc  = list.at(i).description().toStdString();
+    std::string port  = list.at(i).portName().toStdString();
+    std::string maker = list.at(i).manufacturer().toStdString();
+    ports.push_back(list.at(i).portName());
+    if (list.at(i).hasProductIdentifier()) {
+      std::string id =
+          QString::number(list.at(i).productIdentifier()).toStdString();
+    }
+    if (list.at(i).hasVendorIdentifier()) {
+      std::string id =
+          QString::number(list.at(i).vendorIdentifier()).toStdString();
+    }
+  }
+  return ports;
+}
+
+//-----------------------------------------------------------------
+
+bool StopMotion::setSerialPort(QString port) {
+  if (m_serialPort->isOpen()) m_serialPort->close();
+  QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+  QStringList ports;
+  bool success = false;
+  int size     = list.size();
+  for (int i = 0; i < size; i++) {
+    if (port == list.at(i).portName()) {
+      m_serialPort->setPort(list.at(i));
+    }
+  }
+  // m_serialPort->setBaudRate(9600);
+  bool connected = m_serialPort->open(QIODevice::ReadWrite);
+  if (connected) {
+    success = m_serialPort->setBaudRate(QSerialPort::Baud9600) &
+              m_serialPort->setParity(QSerialPort::NoParity) &
+              m_serialPort->setDataBits(QSerialPort::Data8) &
+              m_serialPort->setStopBits(QSerialPort::OneStop) &
+              m_serialPort->setFlowControl(QSerialPort::NoFlowControl);
+    std::string fNumber     = std::to_string(m_xSheetFrameNumber);
+    char const *fNumberChar = fNumber.c_str();
+    m_serialPort->write(fNumberChar);
+    m_serialPort->waitForBytesWritten(10);
+    QByteArray DataReceive = m_serialPort->readLine();
+    while (m_serialPort->waitForReadyRead(30)) {
+      DataReceive += m_serialPort->readLine();
+    }
+    QByteArray response = DataReceive;
+    QString s(response);
+    std::string text = response.toStdString();
+    //}
+  }
+  return success;
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::sendSerialData() {
+  if (m_serialPort->isOpen()) {
+    std::string fNumber     = std::to_string(m_xSheetFrameNumber);
+    char const *fNumberChar = fNumber.c_str();
+    m_serialPort->write(fNumberChar);
+    m_serialPort->waitForBytesWritten(10);
+    QByteArray DataReceive = m_serialPort->readLine();
+    while (m_serialPort->waitForReadyRead(30)) {
+      DataReceive += m_serialPort->readLine();
+    }
+    QByteArray response = DataReceive;
+    QString s(response);
+    std::string text = response.toStdString();
+  }
+}
+
+//-----------------------------------------------------------------
 std::string StopMotion::getTEnvCameraName() { return StopMotionCameraName; }
 //-----------------------------------------------------------------
 void StopMotion::setTEnvCameraName(std::string name) {
@@ -4858,7 +4941,7 @@ public:
   }
 } StopMotionRemoveFrame;
 
-#if WITH_CANON
+#ifdef WITH_CANON
 //=============================================================================
 
 class StopMotionPickFocusCheck : public MenuItemHandler {

@@ -1919,7 +1919,7 @@ void SceneViewer::drawScene() {
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
-#if WITH_CANON
+#ifdef WITH_CANON
         hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
 #endif
@@ -1967,7 +1967,7 @@ void SceneViewer::drawScene() {
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
-#if WITH_CANON
+#ifdef WITH_CANON
         hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
 #endif
@@ -2020,7 +2020,7 @@ void SceneViewer::drawScene() {
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
-#if WITH_CANON
+#ifdef WITH_CANON
         hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
 #endif
@@ -2083,7 +2083,7 @@ void SceneViewer::drawScene() {
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
-#if WITH_CANON
+#ifdef WITH_CANON
         hide_opacity =
             m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
 #endif

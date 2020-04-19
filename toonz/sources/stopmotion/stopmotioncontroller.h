@@ -65,6 +65,7 @@ class StopMotionController final : public QWidget {
   QFrame *m_mainControlsPage;
   QFrame *m_cameraSettingsPage;
   QFrame *m_optionsPage;
+  // QFrame* m_controlPage;
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for style types.
   QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton;
@@ -82,7 +83,7 @@ class StopMotionController final : public QWidget {
       *m_kelvinSlider;
   QComboBox *m_cameraListCombo, *m_fileTypeCombo, *m_exposureCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
-      *m_pictureStyleCombo;
+      *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
@@ -145,6 +146,7 @@ protected slots:
   void onPreviousXSheetFrame();
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
+  void serialPortChanged(int);
 
   // canon stuff
   void onApertureChanged(int index);
