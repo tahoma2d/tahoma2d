@@ -494,8 +494,9 @@ TFx *InsertFxPopup::createFx() {
   TXsheet *xsh      = scene->getXsheet();
 
   QTreeWidgetItem *item = m_fxTree->currentItem();
-  QString text          = item->data(0, Qt::UserRole).toString();
+  if (item == NULL) return 0;
 
+  QString text = item->data(0, Qt::UserRole).toString();
   if (text.isEmpty()) return 0;
 
   TFx *fx;
