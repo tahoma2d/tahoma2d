@@ -24,6 +24,10 @@ class FxTree final : public QTreeWidget {
 
 public:
   void searchItems(const QString &searchWord = QString());
+
+private:
+  void displayAll(QTreeWidgetItem *item);
+  void hideAll(QTreeWidgetItem *item);
 };
 
 //=============================================================================

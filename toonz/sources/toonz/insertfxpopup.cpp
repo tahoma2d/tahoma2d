@@ -143,16 +143,34 @@ TFx *createMacroFxByPath(TFilePath path) {
 // FxTree
 //=============================================================================
 
+void FxTree::displayAll(QTreeWidgetItem *item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    displayAll(item->child(i));
+  }
+  item->setHidden(false);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
+void FxTree::hideAll(QTreeWidgetItem *item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    hideAll(item->child(i));
+  }
+  item->setHidden(true);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
 void FxTree::searchItems(const QString &searchWord) {
   // if search word is empty, show all items
   if (searchWord.isEmpty()) {
     int itemCount = topLevelItemCount();
     for (int i = 0; i < itemCount; ++i) {
-      QTreeWidgetItem *item = topLevelItem(i);
-      int childCount        = item->childCount();
-      for (int j = 0; j < childCount; ++j) item->child(j)->setHidden(false);
-      item->setHidden(false);
-      item->setExpanded(false);
+      displayAll(topLevelItem(i));
     }
     update();
     return;
@@ -161,11 +179,7 @@ void FxTree::searchItems(const QString &searchWord) {
   // hide all items first
   int itemCount = topLevelItemCount();
   for (int i = 0; i < itemCount; ++i) {
-    QTreeWidgetItem *item = topLevelItem(i);
-    int childCount        = item->childCount();
-    for (int j = 0; j < childCount; ++j) item->child(j)->setHidden(true);
-    item->setHidden(true);
-    item->setExpanded(false);
+    hideAll(topLevelItem(i));
   }
 
   QList<QTreeWidgetItem *> foundItems =
@@ -177,11 +191,10 @@ void FxTree::searchItems(const QString &searchWord) {
 
   // for each item found, show it and show its parent
   for (auto item : foundItems) {
-    item->setHidden(false);
-    QTreeWidgetItem *parent = item->parent();
-    if (parent) {
-      parent->setHidden(false);
-      parent->setExpanded(true);
+    while (item) {
+      item->setHidden(false);
+      item->setExpanded(true);
+      item = item->parent();
     }
   }
 
