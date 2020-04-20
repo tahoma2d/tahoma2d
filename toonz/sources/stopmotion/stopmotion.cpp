@@ -442,7 +442,7 @@ void StopMotion::disconnectAllCameras() {
   m_proxyImageDimensions = TDimension(0, 0);
 
   if (m_sessionOpen && getCameraCount() > 0) {
-    if (m_liveViewStatus > 0) {
+    if (m_liveViewStatus > LiveViewClosed) {
       endCanonLiveView();
     }
     closeCameraSession();
@@ -464,7 +464,8 @@ void StopMotion::disconnectAllCameras() {
 //-----------------------------------------------------------------
 
 void StopMotion::onPlaybackChanged() {
-  if (TApp::instance()->getCurrentFrame()->isPlaying() || m_liveViewStatus == 0)
+  if (TApp::instance()->getCurrentFrame()->isPlaying() ||
+      m_liveViewStatus == LiveViewClosed)
     return;
 
   int r0, r1, step;
@@ -996,7 +997,8 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 //-----------------------------------------------------------------
 
 bool StopMotion::loadLineUpImage() {
-  if (m_liveViewStatus < 1) return false;
+  if (m_liveViewStatus == LiveViewClosed || m_liveViewStatus == LiveViewPaused)
+    return false;
   m_hasLineUpImage = false;
   // first see if the level exists in the current level set
   ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
@@ -1282,7 +1284,7 @@ void StopMotion::setSubsampling() {
 void StopMotion::onTimeout() {
   int currentFrame = TApp::instance()->getCurrentFrame()->getFrame();
   // int destinationFrame = m_xSheetFrameNumber - 1;
-  if (m_liveViewStatus > 0 && m_liveViewStatus < 3 &&
+  if (m_liveViewStatus > LiveViewClosed && m_liveViewStatus < LiveViewPaused &&
       !TApp::instance()->getCurrentFrame()->isPlaying()) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
@@ -1298,11 +1300,11 @@ void StopMotion::onTimeout() {
       } else {
         m_showLineUpImage = true;
       }
-    } else if (m_liveViewStatus == 2) {
-      m_liveViewStatus = 3;
+    } else if (m_liveViewStatus == LiveViewOpen) {
+      m_liveViewStatus = LiveViewPaused;
       TApp::instance()->getCurrentScene()->notifySceneChanged();
     }
-  } else if (m_liveViewStatus == 3 && !m_userCalledPause) {
+  } else if (m_liveViewStatus == LiveViewPaused && !m_userCalledPause) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
@@ -1317,8 +1319,8 @@ void StopMotion::onTimeout() {
 //-----------------------------------------------------------------------------
 
 void StopMotion::onReviewTimeout() {
-  if (m_liveViewStatus > 0) {
-    m_liveViewStatus = 2;
+  if (m_liveViewStatus > LiveViewClosed) {
+    m_liveViewStatus = LiveViewOpen;
     m_timer->start(40);
   }
   TApp::instance()->getCurrentFrame()->setFrame(m_xSheetFrameNumber - 1);
@@ -1649,7 +1651,7 @@ void StopMotion::captureImage() {
 #ifdef WITH_CANON
   sessionOpen = m_sessionOpen;
 #endif
-  if (!m_usingWebcam && !sessionOpen) {
+  if ((!m_usingWebcam && !sessionOpen) || m_liveViewStatus == LiveViewPaused) {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
@@ -1661,8 +1663,8 @@ void StopMotion::captureImage() {
     }
     if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
-      if (m_liveViewStatus > 0) {
-        m_liveViewStatus = 3;
+      if (m_liveViewStatus > LiveViewClosed) {
+        m_liveViewStatus = LiveViewPaused;
       }
     }
     m_lineUpImage    = m_liveViewImage;
@@ -1692,8 +1694,8 @@ void StopMotion::captureImage() {
     m_timer->stop();
   }
 
-  if (m_liveViewStatus > 0 && !m_isTimeLapse) {
-    m_liveViewStatus = 3;
+  if (m_liveViewStatus > LiveViewClosed && !m_isTimeLapse) {
+    m_liveViewStatus = LiveViewPaused;
   }
 
   if (m_hasLiveViewImage) {
@@ -2189,7 +2191,7 @@ void StopMotion::refreshFrameInfo() {
   sessionOpen = m_sessionOpen;
 #endif
 
-  if ((!sessionOpen && m_liveViewStatus < 2) && !m_usingWebcam) {
+  if ((!sessionOpen && m_liveViewStatus < LiveViewOpen) && !m_usingWebcam) {
     m_frameInfoText = "";
     return;
   }
@@ -2579,7 +2581,7 @@ void StopMotion::changeCameras(int index) {
 
 #ifdef WITH_CANON
     if (m_sessionOpen && getCameraCount() > 0) {
-      if (m_liveViewStatus > 0) {
+      if (m_liveViewStatus > LiveViewClosed) {
         endCanonLiveView();
         closeCameraSession();
       }
@@ -2767,7 +2769,7 @@ bool StopMotion::initWebcam(int index) {
 
 void StopMotion::releaseWebcam() {
   m_cvWebcam.release();
-  m_liveViewStatus = 0;
+  m_liveViewStatus = LiveViewClosed;
   emit(liveViewStopped());
 }
 
@@ -2782,7 +2784,7 @@ void StopMotion::setWebcamResolution(QString resolution) {
   // the split text must be "<width>" "x" and "<height>"
   if (texts.size() != 3) return;
   int tempStatus   = m_liveViewStatus;
-  m_liveViewStatus = 0;
+  m_liveViewStatus = LiveViewClosed;
   bool startTimer  = false;
   if (m_timer->isActive()) {
     m_timer->stop();
@@ -2854,7 +2856,7 @@ void StopMotion::getWebcamImage() {
     memcpy(rawData, imgBuf, size);
     m_liveViewImage->unlock();
     m_hasLiveViewImage = true;
-    m_liveViewStatus   = 2;
+    m_liveViewStatus   = LiveViewOpen;
     if (m_hasLiveViewImage &&
         (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0)) {
       TCamera *camera =
@@ -2895,7 +2897,7 @@ bool StopMotion::toggleLiveView() {
   sessionOpen = m_sessionOpen;
 #endif
 
-  if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == 0) {
+  if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == LiveViewClosed) {
     m_liveViewDpi             = TPointD(0.0, 0.0);
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
@@ -2903,14 +2905,15 @@ bool StopMotion::toggleLiveView() {
       startCanonLiveView();
 #endif
     } else
-      m_liveViewStatus = 1;
+      m_liveViewStatus = LiveViewStarting;
     loadLineUpImage();
     m_timer->start(40);
     emit(liveViewChanged(true));
     Preferences::instance()->setValue(rewindAfterPlayback, false);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     return true;
-  } else if ((sessionOpen || m_usingWebcam) && m_liveViewStatus > 0) {
+  } else if ((sessionOpen || m_usingWebcam) &&
+             m_liveViewStatus > LiveViewClosed) {
     if (!m_usingWebcam) {
 #ifdef WITH_CANON
       endCanonLiveView();
@@ -2934,14 +2937,14 @@ bool StopMotion::toggleLiveView() {
 //-----------------------------------------------------------------
 
 void StopMotion::pauseLiveView() {
-  if (m_liveViewStatus == 2) {
-    m_liveViewStatus  = 3;
+  if (m_liveViewStatus == LiveViewOpen) {
+    m_liveViewStatus  = LiveViewPaused;
     m_userCalledPause = true;
     emit(liveViewStopped());
-  } else if (m_liveViewStatus == 3) {
-    m_liveViewStatus  = 2;
+  } else if (m_liveViewStatus == LiveViewPaused) {
+    m_liveViewStatus  = LiveViewOpen;
     m_userCalledPause = false;
-  } else if (m_liveViewStatus == 0) {
+  } else if (m_liveViewStatus == LiveViewClosed) {
     toggleLiveView();
   }
 }
@@ -2998,7 +3001,7 @@ int StopMotion::getCameraCount() {
     if (m_count == 0) {
       m_error          = EDS_ERR_DEVICE_NOT_FOUND;
       m_sessionOpen    = false;
-      m_liveViewStatus = 0;
+      m_liveViewStatus = LiveViewClosed;
     }
     return m_count;
   } else
@@ -3794,7 +3797,8 @@ EdsError StopMotion::endCanonLiveView() {
 //-----------------------------------------------------------------
 
 EdsError StopMotion::zoomLiveView() {
-  if (!m_sessionOpen || !m_liveViewStatus > 0) return EDS_ERR_DEVICE_INVALID;
+  if (!m_sessionOpen || !m_liveViewStatus > LiveViewClosed)
+    return EDS_ERR_DEVICE_INVALID;
   EdsError err = EDS_ERR_OK;
   if (m_pickLiveViewZoom) toggleZoomPicking();
   if (m_liveViewZoom == 1) {
@@ -3824,7 +3828,7 @@ void StopMotion::makeZoomPoint(TPointD pos) {
 //-----------------------------------------------------------------
 
 void StopMotion::toggleZoomPicking() {
-  if (!m_sessionOpen || !m_liveViewStatus > 0) return;
+  if (!m_sessionOpen || !m_liveViewStatus > LiveViewClosed) return;
   if (m_pickLiveViewZoom) {
     m_pickLiveViewZoom = false;
     toggleNumpadForFocusCheck(false);
@@ -4020,7 +4024,8 @@ EdsError StopMotion::downloadEVFData() {
     if (!m_converterSucceeded) return EDS_ERR_UNEXPECTED_EXCEPTION;
 
     // make sure not to set to LiveViewOpen if it has been turned off
-    if (m_liveViewStatus > 0) {
+    if (m_liveViewStatus > LiveViewClosed &&
+        m_liveViewStatus < LiveViewPaused) {
       m_liveViewStatus = LiveViewOpen;
     }
     emit(newLiveViewImageReady());
@@ -4233,7 +4238,7 @@ EdsError StopMotion::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
   }
   if (event == kEdsStateEvent_WillSoonShutDown) {
     instance()->extendCameraOnTime();
-    if (instance()->m_liveViewStatus > 1) {
+    if (instance()->m_liveViewStatus > LiveViewStarting) {
       instance()->toggleLiveView();
     }
   }
@@ -4823,15 +4828,21 @@ void StopMotion::sendSerialData() {
     std::string text = response.toStdString();
   }
 
-  // for not data sending is not implemented yet, just the frame number.  
+  // for not data sending is not implemented yet, just the frame number.
   // These lines are here to be a reference for using column data as movement.
-  //TDoubleParam *param = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X);
-  //double value = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X, m_xSheetFrameNumber - 1);
-  //QString isCam = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getId().isCamera() ? "yep" : "nope";
-  //std::string name = TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getName();
-  //TMeasure *measure =param->getMeasure();
-  //const TUnit *unit = measure->getCurrentUnit();
-  //double newValue = unit->convertTo(value);
+  // TDoubleParam *param =
+  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X);
+  // double value =
+  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X,
+  // m_xSheetFrameNumber - 1);
+  // QString isCam =
+  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getId().isCamera()
+  // ? "yep" : "nope";
+  // std::string name =
+  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getName();
+  // TMeasure *measure =param->getMeasure();
+  // const TUnit *unit = measure->getCurrentUnit();
+  // double newValue = unit->convertTo(value);
 }
 
 //-----------------------------------------------------------------
