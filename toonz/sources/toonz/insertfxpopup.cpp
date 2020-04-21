@@ -51,6 +51,8 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QMainWindow>
+#include <QLineEdit>
+#include <QLabel>
 
 #include <memory>
 
@@ -138,6 +140,68 @@ TFx *createMacroFxByPath(TFilePath path) {
 //-----------------------------------------------------------------------------
 
 //=============================================================================
+// FxTree
+//=============================================================================
+
+void FxTree::displayAll(QTreeWidgetItem *item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    displayAll(item->child(i));
+  }
+  item->setHidden(false);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
+void FxTree::hideAll(QTreeWidgetItem *item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    hideAll(item->child(i));
+  }
+  item->setHidden(true);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
+void FxTree::searchItems(const QString &searchWord) {
+  // if search word is empty, show all items
+  if (searchWord.isEmpty()) {
+    int itemCount = topLevelItemCount();
+    for (int i = 0; i < itemCount; ++i) {
+      displayAll(topLevelItem(i));
+    }
+    update();
+    return;
+  }
+
+  // hide all items first
+  int itemCount = topLevelItemCount();
+  for (int i = 0; i < itemCount; ++i) {
+    hideAll(topLevelItem(i));
+  }
+
+  QList<QTreeWidgetItem *> foundItems =
+      findItems(searchWord, Qt::MatchContains | Qt::MatchRecursive, 0);
+  if (foundItems.isEmpty()) {  // if nothing is found, do nothing but update
+    update();
+    return;
+  }
+
+  // for each item found, show it and show its parent
+  for (auto item : foundItems) {
+    while (item) {
+      item->setHidden(false);
+      item->setExpanded(true);
+      item = item->parent();
+    }
+  }
+
+  update();
+}
+
+//=============================================================================
 /*! \class InsertFxPopup
                 \brief The InsertFxPopup class provides a dialog to browse fx
    and add it to
@@ -157,7 +221,18 @@ InsertFxPopup::InsertFxPopup()
   setTopMargin(0);
   setTopSpacing(0);
 
-  m_fxTree = new QTreeWidget();
+  QHBoxLayout *searchLay = new QHBoxLayout();
+  QLineEdit *searchEdit  = new QLineEdit(this);
+
+  searchLay->setMargin(0);
+  searchLay->setSpacing(5);
+  searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
+  searchLay->addWidget(searchEdit);
+  addLayout(searchLay);
+  connect(searchEdit, SIGNAL(textChanged(const QString &)), this,
+          SLOT(onSearchTextChanged(const QString &)));
+
+  m_fxTree = new FxTree();
   m_fxTree->setIconSize(QSize(21, 17));
   m_fxTree->setColumnCount(1);
   m_fxTree->header()->close();
@@ -212,19 +287,32 @@ InsertFxPopup::InsertFxPopup()
 
   QPushButton *insertBtn = new QPushButton(tr("Insert"), this);
   insertBtn->setFixedSize(65, 25);
+  insertBtn->setObjectName("PushButton_NoPadding");
   connect(insertBtn, SIGNAL(clicked()), this, SLOT(onInsert()));
   insertBtn->setDefault(true);
   m_buttonLayout->addWidget(insertBtn);
 
   QPushButton *addBtn = new QPushButton(tr("Add"), this);
   addBtn->setFixedSize(65, 25);
+  addBtn->setObjectName("PushButton_NoPadding");
   connect(addBtn, SIGNAL(clicked()), this, SLOT(onAdd()));
   m_buttonLayout->addWidget(addBtn);
 
   QPushButton *replaceBtn = new QPushButton(tr("Replace"), this);
   replaceBtn->setFixedHeight(25);
+  replaceBtn->setObjectName("PushButton_NoPadding");
   connect(replaceBtn, SIGNAL(clicked()), this, SLOT(onReplace()));
   m_buttonLayout->addWidget(replaceBtn);
+}
+
+//-------------------------------------------------------------------
+
+void InsertFxPopup::onSearchTextChanged(const QString &text) {
+  static bool busy = false;
+  if (busy) return;
+  busy = true;
+  m_fxTree->searchItems(text);
+  busy = false;
 }
 
 //-------------------------------------------------------------------
@@ -422,8 +510,9 @@ TFx *InsertFxPopup::createFx() {
   TXsheet *xsh      = scene->getXsheet();
 
   QTreeWidgetItem *item = m_fxTree->currentItem();
-  QString text          = item->data(0, Qt::UserRole).toString();
+  if (item == NULL) return 0;
 
+  QString text = item->data(0, Qt::UserRole).toString();
   if (text.isEmpty()) return 0;
 
   TFx *fx;
