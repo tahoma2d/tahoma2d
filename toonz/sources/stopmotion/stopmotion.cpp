@@ -456,7 +456,7 @@ void StopMotion::disconnectAllCameras() {
   m_liveViewStatus = LiveViewClosed;
   setTEnvCameraName("");
   emit(liveViewChanged(false));
-
+  emit(liveViewStopped());
   emit(newCameraSelected(0, false));
   toggleNumpadShortcuts(false);
 }
@@ -997,7 +997,7 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 //-----------------------------------------------------------------
 
 bool StopMotion::loadLineUpImage() {
-  if (m_liveViewStatus == LiveViewClosed || m_liveViewStatus == LiveViewPaused)
+  if (m_liveViewStatus == LiveViewClosed || m_userCalledPause)
     return false;
   m_hasLineUpImage = false;
   // first see if the level exists in the current level set
@@ -1651,7 +1651,7 @@ void StopMotion::captureImage() {
 #ifdef WITH_CANON
   sessionOpen = m_sessionOpen;
 #endif
-  if ((!m_usingWebcam && !sessionOpen) || m_liveViewStatus == LiveViewPaused) {
+  if ((!m_usingWebcam && !sessionOpen) || m_userCalledPause) {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
@@ -2548,6 +2548,8 @@ void StopMotion::refreshCameraList() {
 //-----------------------------------------------------------------
 
 void StopMotion::changeCameras(int index) {
+  // note: index is negative if this is called to load DSLR from load settings
+
   QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
 
   // if selected the non-connected state, then disconnect the current camera
@@ -2560,6 +2562,22 @@ void StopMotion::changeCameras(int index) {
   index -= 1;
   m_active = true;
 
+  // first see if the index didn't actually change
+  if (cameras.size() > 0 && index < cameras.size() && index >= 0) {
+      if (cameras.at(index).deviceName() == m_webcamDeviceName) {
+          return;
+      }
+  }
+
+#ifdef WITH_CANON
+  if ((index > cameras.size() - 1) && m_sessionOpen) return;
+#endif
+
+  // close live view if open
+  if (m_liveViewStatus > LiveViewClosed) {
+      toggleLiveView();
+  }
+
   // Check if its a webcam or DSLR
   // Webcams are listed first, so see if one of them is selected
   if (index < 0 || index > cameras.size() - 1) {
@@ -2571,16 +2589,9 @@ void StopMotion::changeCameras(int index) {
 
   // in case the camera is not changed
   if (m_usingWebcam) {
-    if (cameras.at(index).deviceName() == m_webcamDeviceName) {
-      return;
-    }
-
 #ifdef WITH_CANON
     if (m_sessionOpen && getCameraCount() > 0) {
-      if (m_liveViewStatus > LiveViewClosed) {
-        endCanonLiveView();
         closeCameraSession();
-      }
     }
 #endif
 
@@ -2625,19 +2636,24 @@ void StopMotion::changeCameras(int index) {
 
   } else {
 #ifdef WITH_CANON
+    openCameraSession();
+    setTEnvCameraName(getCameraName());
     if (index == -2) {
       index = cameras.size();
     }
     m_webcamDeviceName  = QString();
     m_webcamDescription = QString();
     m_webcamIndex       = -1;
-    openCameraSession();
-    setTEnvCameraName(getCameraName());
+    
     emit(newCameraSelected(index + 1, false));
 #endif
   }
   if (m_useNumpadShortcuts) toggleNumpadShortcuts(true);
   m_liveViewDpi = TPointD(0.0, 0.0);
+  m_hasLineUpImage = false;
+  m_hasLiveViewImage = false;
+  emit(liveViewStopped());
+  emit(liveViewChanged(false));
   refreshFrameInfo();
 }
 
@@ -4023,7 +4039,7 @@ EdsError StopMotion::downloadEVFData() {
 
     // make sure not to set to LiveViewOpen if it has been turned off
     if (m_liveViewStatus > LiveViewClosed &&
-        m_liveViewStatus < LiveViewPaused) {
+        !m_userCalledPause) {
       m_liveViewStatus = LiveViewOpen;
     }
     emit(newLiveViewImageReady());

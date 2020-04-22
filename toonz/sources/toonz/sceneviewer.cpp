@@ -1168,7 +1168,11 @@ void SceneViewer::onNewStopMotionImageReady() {
 
 //-----------------------------------------------------------------------------
 
-void SceneViewer::onStopMotionLiveViewStopped() { onSceneChanged(); }
+void SceneViewer::onStopMotionLiveViewStopped() {
+    m_hasStopMotionImage = false;
+    m_hasStopMotionLineUpImage = false;
+    onSceneChanged();
+}
 
 //-----------------------------------------------------------------------------
 void SceneViewer::initializeGL() {
