@@ -281,10 +281,11 @@ if(BUILD_ENV_MSVC)
     find_package(OpenCV 4.1 REQUIRED
         PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/Tools/opencv/build"
     )
+elseif(BUILD_ENV_UNIXLIKE)
+    find_package(OpenCV 3.2 REQUIRED)
 else()
     find_package(OpenCV 4.1 REQUIRED)
 endif()
-
 include_directories(
     ${SDKROOT}/libjpeg-turbo64/include
     ${OpenCV_INCLUDE_DIRS}
@@ -490,7 +491,9 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
     pkg_search_module(MYPAINT_LIB REQUIRED libmypaint libmypaint-1.3>=1.3)
-    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
+
+    find_library(TURBOJPEG_LIB turbojpeg)
+    message("**************** turbojpeg lib:" ${TURBOJPEG_LIB})
 endif()
 
 

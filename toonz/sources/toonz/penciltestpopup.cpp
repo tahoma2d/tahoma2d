@@ -1282,7 +1282,7 @@ PencilTestPopup::PencilTestPopup()
   m_captureButton          = new QPushButton(tr("Capture\n[Return key]"), this);
   QPushButton* closeButton = new QPushButton(tr("Close"), this);
 
-#if WIN32
+#ifdef WIN32
   m_captureFilterSettingsBtn = new QPushButton(this);
 #else
   m_captureFilterSettingsBtn = 0;
@@ -1931,7 +1931,7 @@ void PencilTestPopup::onTimeout() { getWebcamImage(); }
 //-----------------------------------------------------------------------------
 
 int PencilTestPopup::translateIndex(int camIndex) {
-#if WIN32
+#ifdef WIN32
   // We are using Qt to get the camera info and supported resolutions, but
   // we are using OpenCV to actually get the images.
   // The camera index from OpenCV and from Qt don't always agree,
@@ -2021,7 +2021,7 @@ void PencilTestPopup::getWebcamImage() {
   if (m_cvWebcam.isOpened() == false) {
     if (m_cameraListCombo->currentIndex() <= 0) return;
     int camIndex = m_cameraListCombo->currentIndex() - 1;
-#if WIN32
+#ifdef WIN32
     if (!m_useDirectShow) {
       // the webcam order obtained from Qt isn't always the same order as
       // the one obtained from OpenCV without DirectShow
