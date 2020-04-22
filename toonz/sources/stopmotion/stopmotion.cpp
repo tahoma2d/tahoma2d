@@ -1737,9 +1737,7 @@ void StopMotion::saveJpg(TRaster32P image, TFilePath path) {
   int width  = image->getLx();
   int height = image->getLy();
   int flags  = 0;
-#ifdef WIN32
   flags |= TJFLAG_BOTTOMUP;
-#endif
 
   image->lock();
   uchar *rawData = image->getRawData();
@@ -1806,9 +1804,7 @@ bool StopMotion::loadJpg(TFilePath path, TRaster32P &image) {
     success = false;
 
   int flags = 0;
-#ifdef WIN32
   flags |= TJFLAG_BOTTOMUP;
-#endif
   if (success &&
       tjDecompress2(tjInstance, jpegBuf, jpegSize, imgBuf, width, 0, height,
                     pixelFormat, flags) < 0)
@@ -2760,7 +2756,11 @@ bool StopMotion::initWebcam(int index) {
     return false;
   }
 #else
+  m_webcamIndex = index;
   m_cvWebcam.open(index);
+  if (m_cvWebcam.isOpened() == false) {
+      return false;
+  }
 #endif
   return true;
 }
@@ -3642,9 +3642,7 @@ EdsError StopMotion::downloadImage(EdsBaseRef object) {
   pixelFormat = TJPF_BGRX;
   imgBuf = (unsigned char *)tjAlloc(width * height * tjPixelSize[pixelFormat]);
   int flags = 0;
-#ifdef WIN32
   flags |= TJFLAG_BOTTOMUP;
-#endif
   int tempWidth, tempHeight;
 
   if (m_useScaledImages) {
