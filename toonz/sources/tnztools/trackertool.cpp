@@ -112,6 +112,7 @@ hook->setAPos(fid, hook->getBPos(fid));
 }
     makeCurrent();
 return TDataP(); */
+    return (NULL);
   }
 
   TDataP pasteData(const TDataP &data) { return TDataP(); }

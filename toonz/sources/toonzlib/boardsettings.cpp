@@ -113,6 +113,8 @@ QString BoardItem::getContentText(ToonzScene *scene) {
     TOutputProperties *oprop = scene->getProperties()->getOutputProperties();
     return scene->decodeFilePath(oprop->getPath()).getQString();
   } break;
+  default:
+    break;
   }
   return QString();
 }

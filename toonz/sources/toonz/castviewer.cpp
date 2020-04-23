@@ -298,11 +298,11 @@ void CastTreeViewer::dragMoveEvent(QDragMoveEvent *event) {
         (scene->isUntitled()) ? L"Untitled" : scene->getSceneName();
     rootName = rootName.fromStdWString(name);
   }
-  if (m_dropTargetItem &&
+  if ((m_dropTargetItem &&
           m_dropTargetItem->data(0, Qt::DisplayRole).toString() ==
-              AudioFolderName ||
-      m_dropFilePath != TFilePath() &&
-          m_dropTargetItem->data(0, Qt::DisplayRole).toString() == rootName)
+              AudioFolderName) ||
+      (m_dropFilePath != TFilePath() &&
+          m_dropTargetItem->data(0, Qt::DisplayRole).toString() == rootName))
     m_dropTargetItem = 0;
 
   if (!m_dropTargetItem)

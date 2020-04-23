@@ -45,8 +45,8 @@ public:
       if (!m_sel) throw SMemAllocError(" in initColorSelection");
     } else {
       char s[200];
-      sprintf(s, " in initColorSelection lXY=(%d,%d)\n", CSTPic<P>::m_lX,
-              CSTPic<P>::m_lY);
+      snprintf(s, sizeof(s), " in initColorSelection lXY=(%d,%d)\n",
+               CSTPic<P>::m_lX, CSTPic<P>::m_lY);
       throw SMemAllocError(s);
     }
   }

@@ -189,7 +189,9 @@ void FileBrowserPopup::addFilterType(const QString &type) {
 //-----------------------------------------------------------------------------
 
 void FileBrowserPopup::setFileMode(bool isDirectoryOnly) {
-  if (m_isDirectoryOnly = isDirectoryOnly) {
+
+  m_isDirectoryOnly = isDirectoryOnly;
+  if (isDirectoryOnly) {
     m_nameFieldLabel->setText(tr("Folder name:"));
     connect(m_browser, SIGNAL(treeFolderChanged(const TFilePath &)), this,
             SLOT(onFilePathClicked(const TFilePath &)));
@@ -2134,7 +2136,7 @@ bool ReplaceParentDirectoryPopup::execute() {
       std::vector<TFrameId> frames;
       sl->getFids(frames);
       std::vector<TFrameId>::iterator f_it = frames.begin();
-      for (f_it; f_it != frames.end(); f_it++)
+      for (; f_it != frames.end(); f_it++)
         IconGenerator::instance()->invalidate(sl, *f_it);
 
       somethingChanged = true;

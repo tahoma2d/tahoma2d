@@ -26,8 +26,6 @@
 
 #if defined(MACOSX)
 #include <sys/malloc.h>
-#else
-#include <malloc.h>
 #endif
 
 #include <assert.h>
@@ -311,7 +309,7 @@ static IMAGERGB *iopen(int fd, OpenMode openMode, unsigned int type,
 
   if ((image->tmpbuf = ibufalloc(image, BPP(image->type))) == 0) {
     char xs[1024];
-    sprintf(xs, "%d", image->xsize);
+    snprintf(xs, sizeof(xs), "%d", image->xsize);
 
     TSystem::outputDebug(string("iopen: error on tmpbuf alloc %d\n") + xs);
     return NULL;

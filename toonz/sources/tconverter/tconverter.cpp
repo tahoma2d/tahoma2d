@@ -422,7 +422,7 @@ int main(int argc, char *argv[]) {
         exit(1);
       }
 
-      if (!TSystem::doesExistFileOrLevel(tnzFilePath)) return false;
+      if (!TSystem::doesExistFileOrLevel(tnzFilePath)) return -1;
       ToonzScene *scene = new ToonzScene();
       try {
         scene->loadTnzFile(tnzFilePath);

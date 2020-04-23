@@ -504,7 +504,7 @@ void LoadImagesPopup::onFilePathClicked(const TFilePath &fp) {
   if (!level || level->getFrameCount() == 0) goto clear;
 
   it = level->begin();
-  m_to, m_from = it->first.getNumber();
+  m_to = m_from = it->first.getNumber();
 
   for (; it != level->end(); ++it) m_to = it->first.getNumber();
 
@@ -810,6 +810,8 @@ void FlipBook::onButtonPressed(FlipConsole::EGadget button) {
 
   case FlipConsole::eSave:
     saveImages();
+    break;
+  default:
     break;
   }
 }
@@ -2237,7 +2239,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   if (path.getType() == "scr") return NULL;
 
   // Avi and movs may be viewed by an external viewer, depending on preferences
-  if (path.getType() == "mov" || path.getType() == "avi" && !flipbook) {
+  if ((path.getType() == "mov" || path.getType() == "avi") && !flipbook) {
     QString str;
     QSettings().value("generatedMovieViewEnabled", str);
     if (str.toInt() != 0) {

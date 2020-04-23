@@ -72,7 +72,7 @@ public:
 class FilmstripFrameHeadGadget final : public FrameHeadGadget {
   Q_OBJECT
   FilmstripFrames *m_filmstrip;
-  int m_dy;
+  int m_dy, m_dx;
   int m_highlightedghostFrame;
 
 public:
@@ -81,6 +81,10 @@ public:
   int getY() const override;
   int index2y(int index) const override;
   int y2index(int y) const override;
+
+  int getX() const;
+  int index2x(int index) const;
+  int x2index(int y) const;
 
   void drawOnionSkinSelection(QPainter &p, const QColor &lightColor,
                               const QColor &darkColor) override;

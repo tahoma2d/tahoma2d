@@ -124,8 +124,8 @@ void CommandManager::define(CommandId id, CommandType type,
   node->m_type    = type;
   node->m_qaction = qaction;
   node->m_qaction->setEnabled(
-      node->m_enabled &&
-          (!!node->m_handler || node->m_qaction->actionGroup() != 0) ||
+      (node->m_enabled &&
+          (node->m_handler || node->m_qaction->actionGroup() != 0)) ||
       node->m_type == MiscCommandType ||
       node->m_type == ToolModifierCommandType);
 

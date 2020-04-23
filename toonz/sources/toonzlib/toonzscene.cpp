@@ -1043,6 +1043,8 @@ static LevelType getLevelType(const TFilePath &fp) {
   case TFileType::MESH_LEVEL:
     ret.m_ltype = MESH_XSHLEVEL;
     break;
+  default:
+    break;
   }
 
   return ret;

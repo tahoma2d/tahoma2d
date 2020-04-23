@@ -379,6 +379,8 @@ double TDoubleParam::Imp::getValue(int segmentIndex, double frame) {
   case TDoubleKeyframe::SimilarShape:
     value = getSimilarShapeValue(k0, k1, frame, m_measure);
     break;
+  default:
+    break;
   }
   if (convertUnit) value = k0.convertFrom(m_measure, value);
   return value;

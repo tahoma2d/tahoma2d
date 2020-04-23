@@ -1106,7 +1106,7 @@ void TColorUtils::buildColorChipPalette(QList<QPair<TPixel32, TPoint>> &palette,
       // remove the coner information from the corner point
       QMap<EdgePoint::QUADRANT, int>::const_iterator i = corners.constBegin();
       while (i != corners.constEnd()) {
-        edgePoints[i.value()].info & ~i.key();
+        edgePoints[i.value()].info &= ~i.key();
         ++i;
       }
       if (colorChips.count() >= maxColorCount) break;

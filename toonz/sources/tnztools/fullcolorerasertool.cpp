@@ -108,7 +108,7 @@ void eraseImage(const TRasterImageP &ri, const TRaster32P &image,
     TPixel32 *outPix    = workRas->pixels(y);
     TPixel32 *outEndPix = outPix + workRas->getLx();
     TPixel32 *inPix     = image->pixels(y);
-    for (outPix; outPix != outEndPix; outPix++, inPix++) {
+    for (; outPix != outEndPix; outPix++, inPix++) {
       if (outPix->m == 0) continue;
       TPixel32 pix = depremultiply(*outPix);
       pix.m =

@@ -44,13 +44,13 @@ bool ToonzVersion::hasAppNote(void) {
 }
 std::string ToonzVersion::getAppVersionString(void) {
   char buffer[50];
-  sprintf(buffer, "%.1f", applicationVersion);
+  snprintf(buffer, sizeof(buffer), "%.1f", applicationVersion);
   std::string appver = std::string(buffer);
   return appver;
 }
 std::string ToonzVersion::getAppRevisionString(void) {
   char buffer[50];
-  sprintf(buffer, "%g", applicationRevision);
+  snprintf(buffer, sizeof(buffer), "%g", applicationRevision);
   std::string apprev = std::string(buffer);
   return apprev;
 }

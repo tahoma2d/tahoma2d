@@ -744,11 +744,13 @@ void Particles_Engine::do_render(
 
     std::string alias;
     TRasterImageP rimg;
-    if (rimg = partLevel[part->level]->frame(ndx)) {
+    rimg = partLevel[part->level]->frame(ndx);
+    if (rimg) {
       ras = rimg->getRaster();
     } else {
       alias = "PART: " + (*part_ports[part->level])->getAlias(ndx, riNew);
-      if (rimg = TImageCache::instance()->get(alias, false)) {
+      rimg = TImageCache::instance()->get(alias, false);
+      if (rimg) {
         ras = rimg->getRaster();
 
         // Check that the raster resolution is sufficient for our purposes
@@ -864,7 +866,7 @@ void Particles_Engine::fill_array(TTile *ctrl1, int &regioncount,
         if (myarray[i - 1]) myarray[i] = myarray[i - 1];
       }
     }
-    *pix++;
+    pix++;
   }
 
   for (j = 1; j < ly; j++) {
@@ -1035,7 +1037,7 @@ void Particles_Engine::fill_single_region(
           //           int a=0;
         }
         i++;
-        *pix++;
+        pix++;
       }
     }
   } else {
@@ -1065,7 +1067,7 @@ void Particles_Engine::fill_single_region(
         } else {
         }
         i++;
-        *pix++;
+        pix++;
       }
     }
   }

@@ -107,7 +107,7 @@ TFilePath TMyPaintBrushStyle::decodePath(const TFilePath &path) const {
 }
 
 //-----------------------------------------------------------------------------
-std::string mybToVersion3(std::string origStr) {
+static std::string mybToVersion3(std::string origStr) {
   std::string outStr   = "";
   std::string comment  = "";
   bool settingsStarted = false;

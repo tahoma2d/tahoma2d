@@ -785,8 +785,8 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     /*-- ParticleFxのTextureポートに繋がっていない場合 --*/
     if (m_particleDescendentCount == 0) {
       if (!xl ||
-          xl->getType() != PLI_XSHLEVEL && xl->getType() != TZP_XSHLEVEL &&
-              xl->getType() != CHILD_XSHLEVEL)
+          (xl->getType() != PLI_XSHLEVEL && xl->getType() != TZP_XSHLEVEL &&
+              xl->getType() != CHILD_XSHLEVEL))
         return PlacedFx();
     }
     /*-- ParticleFxのTextureポートに繋がっている場合 --*/

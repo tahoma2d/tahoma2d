@@ -1222,7 +1222,7 @@ TPointD Primitive::checkGuideSnapping(TPointD pos) {
     if (vGuideCount) {
       for (int j = 0; j < vGuideCount; j++) {
         double guide        = viewer->getVGuide(j);
-        double tempDistance = abs(guide - pos.y);
+        double tempDistance = std::abs(guide - pos.y);
         if (tempDistance < guideDistance &&
             (distanceToVGuide < 0 || tempDistance < distanceToVGuide)) {
           distanceToVGuide = tempDistance;
@@ -1234,7 +1234,7 @@ TPointD Primitive::checkGuideSnapping(TPointD pos) {
     if (hGuideCount) {
       for (int j = 0; j < hGuideCount; j++) {
         double guide        = viewer->getHGuide(j);
-        double tempDistance = abs(guide - pos.x);
+        double tempDistance = std::abs(guide - pos.x);
         if (tempDistance < guideDistance &&
             (distanceToHGuide < 0 || tempDistance < distanceToHGuide)) {
           distanceToHGuide = tempDistance;
@@ -1244,8 +1244,8 @@ TPointD Primitive::checkGuideSnapping(TPointD pos) {
       }
     }
     if (useGuides && m_param->m_foundSnap) {
-      double currYDistance = abs(m_param->m_snapPoint.y - pos.y);
-      double currXDistance = abs(m_param->m_snapPoint.x - pos.x);
+      double currYDistance = std::abs(m_param->m_snapPoint.y - pos.y);
+      double currXDistance = std::abs(m_param->m_snapPoint.x - pos.x);
       double hypotenuse =
           sqrt(pow(currYDistance, 2.0) + pow(currXDistance, 2.0));
       if ((distanceToVGuide >= 0 && distanceToVGuide < hypotenuse) ||

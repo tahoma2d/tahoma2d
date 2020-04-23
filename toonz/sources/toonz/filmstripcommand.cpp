@@ -629,7 +629,7 @@ public:
           ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
           if (scene) {
             TCamera *camera = scene->getCurrentCamera();
-            TPointD dpi = dpi = camera->getDpi();
+            TPointD dpi = camera->getDpi();
             dpiX              = dpi.x;
             dpiY              = dpi.y;
           } else
