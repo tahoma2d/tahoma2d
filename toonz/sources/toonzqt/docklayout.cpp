@@ -201,9 +201,9 @@ QSize DockLayout::maximumSize() const {
 
 QSize DockLayout::sizeHint() const {
   QSize s(0, 0);
-  int n = m_items.size();
+  int n        = m_items.size();
   if (n > 0) s = QSize(100, 70);  // start with a nice default size
-  int i = 0;
+  int i        = 0;
   while (i < n) {
     QLayoutItem *o = m_items[i];
     s              = s.expandedTo(o->sizeHint());
@@ -424,7 +424,7 @@ void DockLayout::applyTransform(const QTransform &transform) {
 // check if the region will be with fixed width
 bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   if (m_item) {
-    if (m_item->objectName() == "FilmStrip" ||
+    if (  // m_item->objectName() == "FilmStrip" ||
         m_item->objectName() == "StyleEditor") {
       widgets.push_back(m_item);
       return true;
@@ -1498,7 +1498,7 @@ bool DockLayout::restoreState(const State &state) {
   }
 
   // Else, deallocate old regions and substitute with new ones
-  for (j = 0; j < m_regions.size(); ++j) delete m_regions[j];
+  for (j    = 0; j < m_regions.size(); ++j) delete m_regions[j];
   m_regions = newHierarchy;
 
   // Now re-initialize dock widgets' infos.
