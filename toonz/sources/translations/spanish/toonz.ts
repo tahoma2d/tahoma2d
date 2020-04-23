@@ -7280,7 +7280,7 @@ También establecer la ruta de salida a esa carpeta.</translation>
     </message>
     <message>
         <source>Viewer Shrink:</source>
-        <translation>Visor Reducción:</translation>
+        <translation>Visor      Reducción:</translation>
     </message>
     <message>
         <source>Viewer BG Color:</source>
