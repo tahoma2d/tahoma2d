@@ -424,7 +424,7 @@ void DockLayout::applyTransform(const QTransform &transform) {
 // check if the region will be with fixed width
 bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   if (m_item) {
-    if (  // m_item->objectName() == "FilmStrip" ||
+    if (  (m_item->objectName() == "FilmStrip" && m_item->getCanFixWidth()) ||
         m_item->objectName() == "StyleEditor") {
       widgets.push_back(m_item);
       return true;
