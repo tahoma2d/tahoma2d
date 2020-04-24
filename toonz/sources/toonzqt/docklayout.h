@@ -171,6 +171,9 @@ class DVAPI DockWidget : public QFrame {
 public:
   void maximizeDock();
 
+  bool getCanFixWidth() { return m_canFixWidth; }
+  void setCanFixWidth(bool fixed) { m_canFixWidth = fixed; }
+
 protected:
   // Private attributes for dragging purposes
   bool m_floating;   // Whether this window is floating or docked
@@ -185,6 +188,12 @@ protected:
 
   // Maximization
   bool m_maximized;
+
+  // Level Strip and Style Editor use a fixed width on 
+  // window resize to minimize user frustration
+  // This variable is only used by Level Strip right now.
+  // This is only true if the level strip is vertical.
+  bool m_canFixWidth = false;
 
 private:
   QPoint m_dragInitialPos;
