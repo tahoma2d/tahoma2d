@@ -693,6 +693,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     // QScrollArea* controlArea =
     // makeChooserPageWithoutScrollBar(m_controlPage);
 
+    mainArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    settingsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    optionsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
     m_stackedChooser = new QStackedWidget(this);
     m_stackedChooser->addWidget(mainArea);
     m_stackedChooser->addWidget(settingsArea);
@@ -995,7 +999,9 @@ StopMotionController::~StopMotionController() {}
 //-----------------------------------------------------------------------------
 
 void StopMotionController::setPage(int index) {
-  if (m_stopMotion->m_usingWebcam && index > 0) index += 1;
+  if (index > 0 && m_tabBar->tabText(1) != tr("Settings")) {
+    index += 1;
+  }
   m_stackedChooser->setCurrentIndex(index);
 }
 
@@ -1381,15 +1387,21 @@ void StopMotionController::refreshExposureList() {
   m_exposureCombo->blockSignals(true);
   m_exposureCombo->clear();
   m_stopMotion->getAvailableExposureCompensations();
-  m_exposureCombo->addItems(m_stopMotion->getExposureOptions());
-
+  QStringList options = m_stopMotion->getExposureOptions();
+  m_exposureCombo->addItems(options);
+  int maxTextLength = 0;
+  for (int i = 0; i < options.size(); i++) {
+    maxTextLength = std::max(maxTextLength, fontMetrics().width(options.at(i)));
+  }
   if (m_exposureCombo->count() == 0) {
     m_exposureCombo->addItem(tr("Disabled"));
     m_exposureCombo->setDisabled(true);
+    m_exposureCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
   } else {
     m_exposureCombo->setEnabled(true);
     m_exposureCombo->setCurrentText(
         m_stopMotion->getCurrentExposureCompensation());
+    m_exposureCombo->setMaximumWidth(maxTextLength + 25);
   }
   m_exposureCombo->blockSignals(false);
 #endif
@@ -1402,14 +1414,20 @@ void StopMotionController::refreshWhiteBalanceList() {
   m_whiteBalanceCombo->blockSignals(true);
   m_whiteBalanceCombo->clear();
   m_stopMotion->getAvailableWhiteBalances();
-  m_whiteBalanceCombo->addItems(m_stopMotion->getWhiteBalanceOptions());
-
+  QStringList options = m_stopMotion->getWhiteBalanceOptions();
+  m_whiteBalanceCombo->addItems(options);
+  int maxTextLength = 0;
+  for (int i = 0; i < options.size(); i++) {
+    maxTextLength = std::max(maxTextLength, fontMetrics().width(options.at(i)));
+  }
   if (m_whiteBalanceCombo->count() == 0) {
     m_whiteBalanceCombo->addItem(tr("Disabled"));
     m_whiteBalanceCombo->setDisabled(true);
+    m_whiteBalanceCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
   } else {
     m_whiteBalanceCombo->setEnabled(true);
     m_whiteBalanceCombo->setCurrentText(m_stopMotion->getCurrentWhiteBalance());
+    m_whiteBalanceCombo->setMaximumWidth(maxTextLength + 25);
   }
   m_whiteBalanceCombo->blockSignals(false);
   refreshColorTemperatureList();
@@ -1449,14 +1467,20 @@ void StopMotionController::refreshImageQualityList() {
   m_imageQualityCombo->blockSignals(true);
   m_imageQualityCombo->clear();
   m_stopMotion->getAvailableImageQualities();
-  m_imageQualityCombo->addItems(m_stopMotion->getImageQualityOptions());
-
+  QStringList options = m_stopMotion->getImageQualityOptions();
+  m_imageQualityCombo->addItems(options);
+  int maxTextLength = 0;
+  for (int i = 0; i < options.size(); i++) {
+    maxTextLength = std::max(maxTextLength, fontMetrics().width(options.at(i)));
+  }
   if (m_imageQualityCombo->count() == 0) {
     m_imageQualityCombo->addItem(tr("Disabled"));
     m_imageQualityCombo->setDisabled(true);
+    m_imageQualityCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
   } else {
     m_imageQualityCombo->setEnabled(true);
     m_imageQualityCombo->setCurrentText(m_stopMotion->getCurrentImageQuality());
+    m_imageQualityCombo->setMaximumWidth(maxTextLength + 25);
   }
   m_imageQualityCombo->blockSignals(false);
 #endif
@@ -1469,14 +1493,20 @@ void StopMotionController::refreshPictureStyleList() {
   m_pictureStyleCombo->blockSignals(true);
   m_pictureStyleCombo->clear();
   m_stopMotion->getAvailablePictureStyles();
+  QStringList options = m_stopMotion->getPictureStyleOptions();
   m_pictureStyleCombo->addItems(m_stopMotion->getPictureStyleOptions());
-
+  int maxTextLength = 0;
+  for (int i = 0; i < options.size(); i++) {
+    maxTextLength = std::max(maxTextLength, fontMetrics().width(options.at(i)));
+  }
   if (m_pictureStyleCombo->count() == 0) {
     m_pictureStyleCombo->addItem(tr("Disabled"));
     m_pictureStyleCombo->setDisabled(true);
+    m_pictureStyleCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
   } else {
     m_pictureStyleCombo->setEnabled(true);
     m_pictureStyleCombo->setCurrentText(m_stopMotion->getCurrentPictureStyle());
+    m_pictureStyleCombo->setMaximumWidth(maxTextLength + 25);
   }
   m_pictureStyleCombo->blockSignals(false);
 #endif
@@ -1934,7 +1964,20 @@ void StopMotionController::onFocusFar3() {
 void StopMotionController::showEvent(QShowEvent *event) {
 #ifdef WITH_CANON
   m_stopMotion->initializeCanonSDK();
+  if (!m_stopMotion->m_sessionOpen) {
+    if (m_tabBar->tabText(1) == tr("Settings")) {
+      m_tabBar->removeTab(1);
+    }
+  }
+#else
+  if (m_tabBar->tabText(1) == tr("Settings")) {
+    m_tabBar->removeTab(1);
+  }
 #endif
+  if (!m_stopMotion->m_usingWebcam) {
+    m_resolutionCombo->hide();
+    m_resolutionLabel->hide();
+  }
 }
 
 //-----------------------------------------------------------------------------

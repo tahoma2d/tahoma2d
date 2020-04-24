@@ -1169,9 +1169,9 @@ void SceneViewer::onNewStopMotionImageReady() {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onStopMotionLiveViewStopped() {
-    m_hasStopMotionImage = false;
-    m_hasStopMotionLineUpImage = false;
-    onSceneChanged();
+  m_hasStopMotionImage       = false;
+  m_hasStopMotionLineUpImage = false;
+  onSceneChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -2489,7 +2489,7 @@ void SceneViewer::zoomQt(const QPoint &center, double factor) {
         } else {
           // viewAff = TScale(factor) * viewAff;
           setViewMatrix(TScale(factor) * viewAff, i);
-	}
+        }
       }
     }
   }

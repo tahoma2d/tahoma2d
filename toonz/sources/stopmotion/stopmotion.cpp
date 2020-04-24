@@ -997,8 +997,7 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 //-----------------------------------------------------------------
 
 bool StopMotion::loadLineUpImage() {
-  if (m_liveViewStatus == LiveViewClosed || m_userCalledPause)
-    return false;
+  if (m_liveViewStatus == LiveViewClosed || m_userCalledPause) return false;
   m_hasLineUpImage = false;
   // first see if the level exists in the current level set
   ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
@@ -2564,9 +2563,9 @@ void StopMotion::changeCameras(int index) {
 
   // first see if the index didn't actually change
   if (cameras.size() > 0 && index < cameras.size() && index >= 0) {
-      if (cameras.at(index).deviceName() == m_webcamDeviceName) {
-          return;
-      }
+    if (cameras.at(index).deviceName() == m_webcamDeviceName) {
+      return;
+    }
   }
 
 #ifdef WITH_CANON
@@ -2575,7 +2574,7 @@ void StopMotion::changeCameras(int index) {
 
   // close live view if open
   if (m_liveViewStatus > LiveViewClosed) {
-      toggleLiveView();
+    toggleLiveView();
   }
 
   // Check if its a webcam or DSLR
@@ -2591,7 +2590,7 @@ void StopMotion::changeCameras(int index) {
   if (m_usingWebcam) {
 #ifdef WITH_CANON
     if (m_sessionOpen && getCameraCount() > 0) {
-        closeCameraSession();
+      closeCameraSession();
     }
 #endif
 
@@ -2644,13 +2643,13 @@ void StopMotion::changeCameras(int index) {
     m_webcamDeviceName  = QString();
     m_webcamDescription = QString();
     m_webcamIndex       = -1;
-    
+
     emit(newCameraSelected(index + 1, false));
 #endif
   }
   if (m_useNumpadShortcuts) toggleNumpadShortcuts(true);
-  m_liveViewDpi = TPointD(0.0, 0.0);
-  m_hasLineUpImage = false;
+  m_liveViewDpi      = TPointD(0.0, 0.0);
+  m_hasLineUpImage   = false;
   m_hasLiveViewImage = false;
   emit(liveViewStopped());
   emit(liveViewChanged(false));
@@ -2775,7 +2774,7 @@ bool StopMotion::initWebcam(int index) {
   m_webcamIndex = index;
   m_cvWebcam.open(index);
   if (m_cvWebcam.isOpened() == false) {
-      return false;
+    return false;
   }
 #endif
   return true;
@@ -4038,8 +4037,7 @@ EdsError StopMotion::downloadEVFData() {
     if (!m_converterSucceeded) return EDS_ERR_UNEXPECTED_EXCEPTION;
 
     // make sure not to set to LiveViewOpen if it has been turned off
-    if (m_liveViewStatus > LiveViewClosed &&
-        !m_userCalledPause) {
+    if (m_liveViewStatus > LiveViewClosed && !m_userCalledPause) {
       m_liveViewStatus = LiveViewOpen;
     }
     emit(newLiveViewImageReady());
