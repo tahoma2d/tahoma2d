@@ -99,6 +99,7 @@ private:
   bool m_turnOnRewind            = false;
 
   QTimer* m_reviewTimer;
+  
   std::map<std::string, QAction*> m_oldActionMap;
 
   // Webcam Properties
@@ -161,6 +162,9 @@ public:
   QString m_tempFile;
   QTimer* m_timer;
   QList<QSize> m_webcamResolutions;
+  int m_intervalTime = 10;
+  bool m_intervalStarted = false;
+  QTimer* m_intervalTimer, * m_countdownTimer;
 
   // Canon Public Properties
   bool m_pickLiveViewZoom = false;
@@ -237,6 +241,11 @@ public:
   QStringList getAvailableSerialPorts();
   bool setSerialPort(QString port);
   void sendSerialData();
+  void toggleInterval(bool on);
+  void startInterval();
+  void stopInterval();
+  void setIntervalAmount(int value);
+  void restartInterval();
 
   QString getFrameInfoText() { return m_frameInfoText; }
   QString getInfoColorName() { return m_infoColorName; }
@@ -360,6 +369,7 @@ public slots:
   bool importImage();
   void onSceneSwitched();
   void onPlaybackChanged();
+  void onIntervalCaptureTimerTimeout();
 
 signals:
   void newLiveViewImageReady();
@@ -412,6 +422,10 @@ signals:
   void useDirectShowSignal(bool);
   void reviewTimeChangedSignal(int);
   void updateCameraList(QString);
+  void intervalToggled(bool);
+  void intervalStarted();
+  void intervalStopped();
+  void intervalAmountChanged(int);
 };
 
 #endif  // STOPMOTION_H

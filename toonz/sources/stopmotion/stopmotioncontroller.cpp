@@ -557,18 +557,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QGroupBox *timerFrame = new QGroupBox(tr("Time Lapse"), this);
     m_timerCB             = new QCheckBox(tr("Use time lapse"), this);
     m_timerIntervalFld    = new DVGui::IntField(this);
-    m_captureTimer        = new QTimer(this);
     timerFrame->setObjectName("CleanupSettingsFrame");
     m_timerCB->setChecked(false);
     m_timerIntervalFld->setRange(0, 60);
     m_timerIntervalFld->setValue(10);
     m_timerIntervalFld->setDisabled(true);
-    m_countdownTimer = new QTimer(this);
-
-    // Make the interval timer single-shot. When the capture finished, restart
-    // timer for next frame.
-    // This is because capturing and saving the image needs some time.
-    m_captureTimer->setSingleShot(true);
 
     m_postCaptureReviewFld = new DVGui::IntField(this);
     m_postCaptureReviewFld->setRange(0, 10);
@@ -965,11 +958,21 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
   // Time Lapse
   ret = ret && connect(m_timerCB, SIGNAL(toggled(bool)), this,
-                       SLOT(onTimerCBToggled(bool)));
-  ret = ret && connect(m_captureTimer, SIGNAL(timeout()), this,
-                       SLOT(onCaptureTimerTimeout()));
+                       SLOT(onIntervalTimerCBToggled(bool)));
+  ret = ret && connect(m_timerIntervalFld, SIGNAL(valueChanged(bool)), this,
+      SLOT(onIntervalSliderValueChanged(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(intervalAmountChanged(int)), this,
+      SLOT(onIntervalAmountChanged(int)));
+  ret = ret && connect(m_stopMotion, SIGNAL(intervalToggled(bool)), this,
+      SLOT(onIntervalToggled(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(intervalStarted()), this,
+      SLOT(onIntervalStarted()));
+  ret = ret && connect(m_stopMotion, SIGNAL(intervalStopped()), this,
+      SLOT(onIntervalStopped()));
+  ret = ret && connect(m_stopMotion->m_intervalTimer, SIGNAL(timeout()), this,
+                       SLOT(onIntervalCaptureTimerTimeout()));
   ret = ret &&
-        connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(onCountDown()));
+        connect(m_stopMotion->m_countdownTimer, SIGNAL(timeout()), this, SLOT(onIntervalCountDownTimeout()));
 
   assert(ret);
 
@@ -2091,23 +2094,13 @@ void StopMotionController::onOpacityChanged(int opacity) {
 
 void StopMotionController::onCaptureButtonClicked(bool on) {
   if (m_timerCB->isChecked()) {
-    m_timerCB->setDisabled(on);
-    m_timerIntervalFld->setDisabled(on);
     // start interval capturing
     if (on) {
-      if (m_stopMotion->m_liveViewStatus > 1) {
-        m_captureButton->setText(tr("Stop Capturing"));
-        m_captureTimer->start(m_timerIntervalFld->getValue() * 1000);
-        if (m_timerIntervalFld->getValue() != 0) m_countdownTimer->start(100);
-      }
+        m_stopMotion->startInterval();
     }
     // stop interval capturing
     else {
-      m_captureButton->setText(tr("Start Capturing"));
-      m_captureTimer->stop();
-      m_countdownTimer->stop();
-      // hide the count down text
-      // m_videoWidget->showCountDownTime(0);
+        m_stopMotion->stopInterval();
     }
   }
   // capture immediately
@@ -2118,38 +2111,69 @@ void StopMotionController::onCaptureButtonClicked(bool on) {
 
 //-----------------------------------------------------------------------------
 
-void StopMotionController::onTimerCBToggled(bool on) {
-  m_timerIntervalFld->setEnabled(on);
-  m_captureButton->setCheckable(on);
-  m_stopMotion->m_isTimeLapse = on;
-  if (on)
-    m_captureButton->setText(tr("Start Capturing"));
-  else
-    m_captureButton->setText(tr("Capture"));
+void StopMotionController::onIntervalTimerCBToggled(bool on) {
+    m_stopMotion->toggleInterval(on);
 }
 
 //-----------------------------------------------------------------------------
 
-void StopMotionController::onCaptureTimerTimeout() {
-  if (m_stopMotion->m_liveViewStatus > 0) {
-    m_stopMotion->captureImage();
-    // restart interval timer for capturing next frame (it is single shot)
-    if (m_timerCB->isChecked() && m_captureButton->isChecked()) {
-      m_captureTimer->start(m_timerIntervalFld->getValue() * 1000);
-      // restart the count down as well (for aligning the timing. It is not
-      // single shot)
-      if (m_timerIntervalFld->getValue() != 0) m_countdownTimer->start(100);
-    }
-  } else
+void StopMotionController::onIntervalSliderValueChanged(bool on) {
+    m_stopMotion->setIntervalAmount(m_timerIntervalFld->getValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onIntervalCaptureTimerTimeout() {
+  if (m_stopMotion->m_liveViewStatus < 1) {
     onCaptureButtonClicked(false);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
-void StopMotionController::onCountDown() {
+void StopMotionController::onIntervalCountDownTimeout() {
   m_captureButton->setText(QString::number(
-      m_captureTimer->isActive() ? (m_captureTimer->remainingTime() / 1000 + 1)
+      m_stopMotion->m_intervalTimer->isActive() ? (m_stopMotion->m_intervalTimer->remainingTime() / 1000 + 1)
                                  : 0));
+}
+
+//-----------------------------------------------------------------------------
+void StopMotionController::onIntervalAmountChanged(int value) {
+    m_timerIntervalFld->blockSignals(true);
+    m_timerIntervalFld->setValue(value);
+    m_timerIntervalFld->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+void StopMotionController::onIntervalToggled(bool on) {
+    m_timerCB->blockSignals(true);
+    m_timerIntervalFld->setEnabled(on);
+    m_captureButton->setCheckable(on);
+    if (on)
+        m_captureButton->setText(tr("Start Capturing"));
+    else
+        m_captureButton->setText(tr("Capture"));
+    m_timerCB->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+void StopMotionController::onIntervalStarted() {
+    m_captureButton->setText(tr("Stop Capturing"));
+    m_timerCB->setDisabled(true);
+    m_timerIntervalFld->setDisabled(true);
+    m_captureButton->blockSignals(true);
+    m_captureButton->setChecked(true);
+    m_captureButton->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+void StopMotionController::onIntervalStopped() {
+    m_captureButton->setText(tr("Start Capturing"));
+    m_timerCB->setDisabled(false);
+    m_timerIntervalFld->setDisabled(false);
+    m_captureButton->blockSignals(true);
+    m_captureButton->setChecked(false);
+    m_captureButton->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------

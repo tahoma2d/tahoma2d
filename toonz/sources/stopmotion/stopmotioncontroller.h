@@ -95,7 +95,6 @@ class StopMotionController final : public QWidget {
       *m_subsamplingFld;
   PencilTestSaveInFolderPopup *m_saveInFolderPopup;
   DVGui::IntField *m_timerIntervalFld;
-  QTimer *m_captureTimer, *m_countdownTimer;
 
 public:
   StopMotionController(QWidget *parent = 0);
@@ -149,9 +148,14 @@ protected slots:
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
   void serialPortChanged(int);
-  void onTimerCBToggled(bool);
-  void onCaptureTimerTimeout();
-  void onCountDown();
+  void onIntervalTimerCBToggled(bool);
+  void onIntervalSliderValueChanged(bool);
+  void onIntervalCaptureTimerTimeout();
+  void onIntervalCountDownTimeout();
+  void onIntervalAmountChanged(int);
+  void onIntervalToggled(bool);
+  void onIntervalStarted();
+  void onIntervalStopped();
 
   // canon stuff
   void onApertureChanged(int index);

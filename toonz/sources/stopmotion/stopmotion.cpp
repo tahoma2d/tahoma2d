@@ -328,6 +328,13 @@ StopMotion::StopMotion() {
   m_timer        = new QTimer(this);
   m_reviewTimer  = new QTimer(this);
   m_reviewTimer->setSingleShot(true);
+  m_intervalTimer = new QTimer(this);
+  m_countdownTimer = new QTimer(this);
+
+  // Make the interval timer single-shot. When the capture finished, restart
+  // timer for next frame.
+  // This is because capturing and saving the image needs some time.
+  m_intervalTimer->setSingleShot(true);
 
   m_fullScreen1 = new QDialog();
   m_fullScreen1->setModal(false);
@@ -361,6 +368,8 @@ StopMotion::StopMotion() {
                        SLOT(onSceneSwitched()));
   ret = ret && connect(frameHandle, SIGNAL(isPlayingStatusChanged()), this,
                        SLOT(onPlaybackChanged()));
+  ret = ret && connect(m_intervalTimer, SIGNAL(timeout()), this,
+      SLOT(onIntervalCaptureTimerTimeout()));
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -455,6 +464,13 @@ void StopMotion::disconnectAllCameras() {
   }
   m_liveViewStatus = LiveViewClosed;
   setTEnvCameraName("");
+
+  m_isTimeLapse = false;
+  m_intervalStarted = false;
+  m_intervalTimer->stop();
+  m_countdownTimer->stop();
+  emit(intervalToggled(false));
+
   emit(liveViewChanged(false));
   emit(liveViewStopped());
   emit(newCameraSelected(0, false));
@@ -639,6 +655,70 @@ void StopMotion::setDrawBeneathLevels(bool on) {
   m_drawBeneathLevels         = on;
   StopMotionDrawBeneathLevels = int(on);
   emit(drawBeneathLevelsSignal(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::toggleInterval(bool on) {
+    m_isTimeLapse = on;
+    emit(intervalToggled(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::startInterval() {
+    if (m_liveViewStatus > 1) {
+        m_intervalTimer->start(m_intervalTime * 1000);
+        if (m_intervalTime != 0) m_countdownTimer->start(100);
+        m_intervalStarted = true;
+        emit(intervalStarted());
+    }
+    else {
+        DVGui::warning(tr("Please start live view before using time lapse."));
+        m_intervalStarted = false;
+        emit(intervalStopped());
+    }
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::stopInterval() {
+    m_intervalTimer->stop();
+    m_countdownTimer->stop();
+    m_intervalStarted = false;
+    emit(intervalStopped());
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setIntervalAmount(int value) {
+    m_intervalTime = value;
+    emit(intervalAmountChanged(value));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::onIntervalCaptureTimerTimeout() {
+    if (m_liveViewStatus > 0) {
+        captureImage();        
+    }
+    else {
+        DVGui::warning(tr("Please start live view before using time lapse."));
+        m_intervalStarted = false;
+        emit(intervalStopped());
+    }
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::restartInterval() {
+    // restart interval timer for capturing next frame (it is single shot)
+    if (m_isTimeLapse && m_intervalStarted) {
+        m_intervalTimer->start(m_intervalTime * 1000);
+        // restart the count down as well (for aligning the timing. It is not
+        // single shot)
+        if (m_intervalTime != 0) m_countdownTimer->start(100);
+    }
 }
 
 //-----------------------------------------------------------------
@@ -1840,6 +1920,9 @@ void StopMotion::postImportProcess() {
   emit(frameNumberChanged(m_frameNumber));
   /* notify */
   refreshFrameInfo();
+
+  if (m_isTimeLapse && m_intervalStarted) restartInterval();
+
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -2554,6 +2637,7 @@ void StopMotion::changeCameras(int index) {
   // if selected the non-connected state, then disconnect the current camera
   if (index == 0) {
     disconnectAllCameras();
+    stopInterval();
     return;
   }
 
@@ -2651,6 +2735,7 @@ void StopMotion::changeCameras(int index) {
   m_liveViewDpi      = TPointD(0.0, 0.0);
   m_hasLineUpImage   = false;
   m_hasLiveViewImage = false;
+  stopInterval();
   emit(liveViewStopped());
   emit(liveViewChanged(false));
   refreshFrameInfo();
