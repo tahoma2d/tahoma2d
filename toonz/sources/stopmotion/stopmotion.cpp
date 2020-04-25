@@ -328,7 +328,7 @@ StopMotion::StopMotion() {
   m_timer        = new QTimer(this);
   m_reviewTimer  = new QTimer(this);
   m_reviewTimer->setSingleShot(true);
-  m_intervalTimer = new QTimer(this);
+  m_intervalTimer  = new QTimer(this);
   m_countdownTimer = new QTimer(this);
 
   // Make the interval timer single-shot. When the capture finished, restart
@@ -344,7 +344,7 @@ StopMotion::StopMotion() {
     m_fullScreen2 = new QDialog();
     m_fullScreen2->setModal(false);
     m_fullScreen2->setStyleSheet("background-color:black;");
-    if (m_screenCount == 3) {
+    if (m_screenCount > 2) {
       m_fullScreen3 = new QDialog();
       m_fullScreen3->setModal(false);
       m_fullScreen3->setStyleSheet("background-color:black;");
@@ -369,7 +369,7 @@ StopMotion::StopMotion() {
   ret = ret && connect(frameHandle, SIGNAL(isPlayingStatusChanged()), this,
                        SLOT(onPlaybackChanged()));
   ret = ret && connect(m_intervalTimer, SIGNAL(timeout()), this,
-      SLOT(onIntervalCaptureTimerTimeout()));
+                       SLOT(onIntervalCaptureTimerTimeout()));
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -465,7 +465,7 @@ void StopMotion::disconnectAllCameras() {
   m_liveViewStatus = LiveViewClosed;
   setTEnvCameraName("");
 
-  m_isTimeLapse = false;
+  m_isTimeLapse     = false;
   m_intervalStarted = false;
   m_intervalTimer->stop();
   m_countdownTimer->stop();
@@ -550,6 +550,120 @@ void StopMotion::setBlackCapture(bool on) {
   m_blackCapture         = on;
   StopMotionBlackCapture = int(on);
   emit(blackCaptureSignal(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen1Color(TPixel32 color) {
+  m_screen1Color = color;
+  emit(screen1ColorChanged(color));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen2Color(TPixel32 color) {
+  m_screen2Color = color;
+  emit(screen2ColorChanged(color));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen3Color(TPixel32 color) {
+  m_screen3Color = color;
+  emit(screen3ColorChanged(color));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen1UseOverlay(bool on) {
+  m_useScreen1Overlay = on;
+  emit(screen1OverlayChanged(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen2UseOverlay(bool on) {
+  m_useScreen2Overlay = on;
+  emit(screen2OverlayChanged(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::setScreen3UseOverlay(bool on) {
+  m_useScreen3Overlay = on;
+  emit(screen3OverlayChanged(on));
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::showOverlays() {
+  if (getBlackCapture()) {
+    m_fullScreen1->setStyleSheet("background-color: rgb(0,0,0);");
+    if (m_screenCount > 1) {
+      m_fullScreen2->setStyleSheet("background-color: rgb(0,0,0);");
+    }
+    if (m_screenCount > 2) {
+      m_fullScreen3->setStyleSheet("background-color: rgb(0,0,0);");
+    }
+  } else {
+    QString style1 = QString("background-color: rgb(%1,%2,%3);")
+                         .arg(m_screen1Color.r)
+                         .arg(m_screen1Color.g)
+                         .arg(m_screen1Color.b);
+    m_fullScreen1->setStyleSheet(style1);
+    if (m_screenCount > 1) {
+      QString style2 = QString("background-color: rgb(%1,%2,%3);")
+                           .arg(m_screen2Color.r)
+                           .arg(m_screen2Color.g)
+                           .arg(m_screen2Color.b);
+      m_fullScreen2->setStyleSheet(style2);
+    }
+    if (m_screenCount > 2) {
+      QString style3 = QString("background-color: rgb(%1,%2,%3);")
+                           .arg(m_screen3Color.r)
+                           .arg(m_screen3Color.g)
+                           .arg(m_screen3Color.b);
+      m_fullScreen3->setStyleSheet(style3);
+    }
+  }
+  bool shown = false;
+  if ((getBlackCapture() || m_useScreen1Overlay) && !m_isTimeLapse) {
+    m_fullScreen1->showFullScreen();
+    m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
+    shown = true;
+  }
+  if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay) &&
+      !m_isTimeLapse) {
+    m_fullScreen2->showFullScreen();
+    m_fullScreen2->setGeometry(QApplication::desktop()->screenGeometry(1));
+    shown = true;
+  }
+  if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay) &&
+      !m_isTimeLapse) {
+    m_fullScreen3->showFullScreen();
+    m_fullScreen3->setGeometry(QApplication::desktop()->screenGeometry(2));
+    shown = true;
+  }
+
+  if (shown) {
+    // this allows the full screen qdialogs to go full screen before
+    // taking a photo
+    qApp->processEvents(QEventLoop::AllEvents, 1500);
+  }
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::hideOverlays() {
+  if ((getBlackCapture() || m_useScreen1Overlay)) {
+    m_fullScreen1->hide();
+  }
+  if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
+    m_fullScreen2->hide();
+  }
+  if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
+    m_fullScreen3->hide();
+  }
 }
 
 //-----------------------------------------------------------------
@@ -660,65 +774,63 @@ void StopMotion::setDrawBeneathLevels(bool on) {
 //-----------------------------------------------------------------
 
 void StopMotion::toggleInterval(bool on) {
-    m_isTimeLapse = on;
-    emit(intervalToggled(on));
+  m_isTimeLapse = on;
+  emit(intervalToggled(on));
 }
 
 //-----------------------------------------------------------------
 
 void StopMotion::startInterval() {
-    if (m_liveViewStatus > 1) {
-        m_intervalTimer->start(m_intervalTime * 1000);
-        if (m_intervalTime != 0) m_countdownTimer->start(100);
-        m_intervalStarted = true;
-        emit(intervalStarted());
-    }
-    else {
-        DVGui::warning(tr("Please start live view before using time lapse."));
-        m_intervalStarted = false;
-        emit(intervalStopped());
-    }
+  if (m_liveViewStatus > 1) {
+    m_intervalTimer->start(m_intervalTime * 1000);
+    if (m_intervalTime != 0) m_countdownTimer->start(100);
+    m_intervalStarted = true;
+    emit(intervalStarted());
+  } else {
+    DVGui::warning(tr("Please start live view before using time lapse."));
+    m_intervalStarted = false;
+    emit(intervalStopped());
+  }
 }
 
 //-----------------------------------------------------------------
 
 void StopMotion::stopInterval() {
-    m_intervalTimer->stop();
-    m_countdownTimer->stop();
-    m_intervalStarted = false;
-    emit(intervalStopped());
+  m_intervalTimer->stop();
+  m_countdownTimer->stop();
+  m_intervalStarted = false;
+  emit(intervalStopped());
 }
 
 //-----------------------------------------------------------------
 
 void StopMotion::setIntervalAmount(int value) {
-    m_intervalTime = value;
-    emit(intervalAmountChanged(value));
+  m_intervalTime = value;
+  emit(intervalAmountChanged(value));
 }
 
 //-----------------------------------------------------------------
 
 void StopMotion::onIntervalCaptureTimerTimeout() {
-    if (m_liveViewStatus > 0) {
-        captureImage();        
-    }
-    else {
-        DVGui::warning(tr("Please start live view before using time lapse."));
-        m_intervalStarted = false;
-        emit(intervalStopped());
-    }
+  if (m_liveViewStatus > 0) {
+    captureImage();
+  } else {
+    DVGui::warning(tr("Please start live view before using time lapse."));
+    m_intervalStarted = false;
+    emit(intervalStopped());
+  }
 }
 
 //-----------------------------------------------------------------
 
 void StopMotion::restartInterval() {
-    // restart interval timer for capturing next frame (it is single shot)
-    if (m_isTimeLapse && m_intervalStarted) {
-        m_intervalTimer->start(m_intervalTime * 1000);
-        // restart the count down as well (for aligning the timing. It is not
-        // single shot)
-        if (m_intervalTime != 0) m_countdownTimer->start(100);
-    }
+  // restart interval timer for capturing next frame (it is single shot)
+  if (m_isTimeLapse && m_intervalStarted) {
+    m_intervalTimer->start(m_intervalTime * 1000);
+    // restart the count down as well (for aligning the timing. It is not
+    // single shot)
+    if (m_intervalTime != 0) m_countdownTimer->start(100);
+  }
 }
 
 //-----------------------------------------------------------------
@@ -1408,17 +1520,7 @@ void StopMotion::onReviewTimeout() {
 //-----------------------------------------------------------------------------
 
 bool StopMotion::importImage() {
-  if (getBlackCapture()) {
-    m_fullScreen1->hide();
-
-    if (m_screenCount > 1) {
-      m_fullScreen2->hide();
-
-      if (m_screenCount == 3) {
-        m_fullScreen3->hide();
-      }
-    }
-  }
+  hideOverlays();
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
@@ -1740,6 +1842,9 @@ void StopMotion::captureImage() {
           tr("Cannot capture webcam image unless live view is active."));
       return;
     }
+
+    showOverlays();
+
     if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
       if (m_liveViewStatus > LiveViewClosed) {
@@ -1752,22 +1857,7 @@ void StopMotion::captureImage() {
     importImage();
     return;
   }
-  if (getBlackCapture() && !m_isTimeLapse) {
-    m_fullScreen1->showFullScreen();
-    m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
-    if (m_screenCount > 1) {
-      m_fullScreen2->showFullScreen();
-      m_fullScreen2->setGeometry(QApplication::desktop()->screenGeometry(1));
-
-      if (m_screenCount == 3) {
-        m_fullScreen3->showFullScreen();
-        m_fullScreen3->setGeometry(QApplication::desktop()->screenGeometry(2));
-      }
-    }
-    // this allows the full screen qdialogs to go full screen before
-    // taking a photo
-    qApp->processEvents(QEventLoop::AllEvents, 1500);
-  }
+  showOverlays();
 
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
@@ -2735,7 +2825,9 @@ void StopMotion::changeCameras(int index) {
   m_liveViewDpi      = TPointD(0.0, 0.0);
   m_hasLineUpImage   = false;
   m_hasLiveViewImage = false;
-  stopInterval();
+  if (m_isTimeLapse && m_intervalStarted) {
+    stopInterval();
+  }
   emit(liveViewStopped());
   emit(liveViewChanged(false));
   refreshFrameInfo();

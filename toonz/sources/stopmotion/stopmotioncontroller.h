@@ -10,6 +10,7 @@
 // TnzQt includes
 #include "toonzqt/tabbar.h"
 #include "toonzqt/gutil.h"
+#include "toonzqt/colorfield.h"
 
 // Qt includes
 #include <QWidget>
@@ -48,6 +49,7 @@ class QPushButton;
 class QTabWidget;
 class QToolBar;
 class QTimer;
+class QGroupBox;
 
 //=============================================================================
 // StopMotionController
@@ -65,29 +67,32 @@ class StopMotionController final : public QWidget {
   QFrame *m_mainControlsPage;
   QFrame *m_cameraSettingsPage;
   QFrame *m_optionsPage;
-  // QFrame* m_controlPage;
+  QFrame *m_motionPage;
+  QFrame *m_lightPage;
   QStackedWidget *m_stackedChooser;
-  TabBarContainter *m_tabBarContainer;  //!< Tabs container for style types.
+  TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
   QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton;
-  QPushButton *m_fileFormatOptionButton, *m_captureButton, *m_zoomButton,
+  QPushButton *m_captureButton, *m_zoomButton,  // *m_fileFormatOptionButton,
       *m_pickZoomButton, *m_focusNearButton, *m_focusFarButton,
       *m_focusNear2Button, *m_focusNear3Button, *m_focusFar2Button,
-      *m_focusFar3Button, *m_captureFilterSettingsBtn;
+      *m_focusFar3Button, *m_captureFilterSettingsBtn, *m_testLightsButton;
   QHBoxLayout *m_focusAndZoomLayout;
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
       *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel,
-      *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel;
+      *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel,
+      *m_screen1OverlayLabel, *m_screen2OverlayLabel, *m_screen3OverlayLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
   QSlider *m_apertureSlider, *m_shutterSpeedSlider, *m_isoSlider,
       *m_kelvinSlider;
-  QComboBox *m_cameraListCombo, *m_fileTypeCombo, *m_exposureCombo,
+  QComboBox *m_cameraListCombo, *m_exposureCombo,  // *m_fileTypeCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
       *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB;
+      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB,
+      *m_screen1OverlayCB, *m_screen2OverlayCB, *m_screen3OverlayCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -95,6 +100,11 @@ class StopMotionController final : public QWidget {
       *m_subsamplingFld;
   PencilTestSaveInFolderPopup *m_saveInFolderPopup;
   DVGui::IntField *m_timerIntervalFld;
+  DVGui::ColorField *m_screen1ColorFld, *m_screen2ColorFld, *m_screen3ColorFld;
+  QGroupBox *m_screen1Box;
+  QGroupBox *m_screen2Box;
+  QGroupBox *m_screen3Box;
+  QTimer *m_lightTestTimer;
 
 public:
   StopMotionController(QWidget *parent = 0);
@@ -116,7 +126,7 @@ protected slots:
   void onCameraListComboActivated(int index);
   void onResolutionComboActivated(const QString &itemText);
   void onCaptureFilterSettingsBtnPressed();
-  void onFileFormatOptionButtonPressed();
+  // void onFileFormatOptionButtonPressed();
   void onLevelNameEdited();
   void onNextName();
   void onPreviousName();
@@ -124,7 +134,7 @@ protected slots:
   void onPreviousFrame();
   void onNextNewLevel();
   void onLastFrame();
-  void onFileTypeActivated();
+  // void onFileTypeActivated();
   void onFrameNumberChanged();
   void onXSheetFrameNumberChanged();
   void onFrameCaptured(QImage &image);
@@ -147,7 +157,11 @@ protected slots:
   void onPreviousXSheetFrame();
   void onNextXSheetFrame();
   void setToCurrentXSheetFrame();
+
+  // motion control
   void serialPortChanged(int);
+
+  // time lapse
   void onIntervalTimerCBToggled(bool);
   void onIntervalSliderValueChanged(bool);
   void onIntervalCaptureTimerTimeout();
@@ -156,6 +170,22 @@ protected slots:
   void onIntervalToggled(bool);
   void onIntervalStarted();
   void onIntervalStopped();
+
+  // lights and screens
+  void setScreen1Color(const TPixel32 &value, bool isDragging);
+  void setScreen2Color(const TPixel32 &value, bool isDragging);
+  void setScreen3Color(const TPixel32 &value, bool isDragging);
+  void onScreen1OverlayToggled(bool);
+  void onScreen2OverlayToggled(bool);
+  void onScreen3OverlayToggled(bool);
+  void onTestLightsPressed();
+  void onTestLightsTimeout();
+  void onScreen1ColorChanged(TPixel32);
+  void onScreen2ColorChanged(TPixel32);
+  void onScreen3ColorChanged(TPixel32);
+  void onScreen1OverlayChanged(bool);
+  void onScreen2OverlayChanged(bool);
+  void onScreen3OverlayChanged(bool);
 
   // canon stuff
   void onApertureChanged(int index);
@@ -201,7 +231,7 @@ protected slots:
   void onSubsamplingChanged(int);
   void onFilePathChanged(QString);
   void onLevelNameChanged(QString);
-  void onFileTypeChanged(QString);
+  // void onFileTypeChanged(QString);
   void onXSheetFrameNumberChanged(int);
   void onFrameNumberChanged(int);
   void onFrameInfoTextChanged(QString);

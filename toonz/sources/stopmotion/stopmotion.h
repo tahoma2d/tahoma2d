@@ -92,14 +92,19 @@ private:
       m_serialDevices;
 
   QDialog *m_fullScreen1, *m_fullScreen2, *m_fullScreen3;
-  int m_screenCount;
   bool m_useMjpg                 = true;
   bool m_useNumpadShortcuts      = false;
   bool m_numpadForStyleSwitching = true;
   bool m_turnOnRewind            = false;
 
+  bool m_useScreen1Overlay = false;
+  bool m_useScreen2Overlay = false;
+  bool m_useScreen3Overlay = false;
+
   QTimer* m_reviewTimer;
-  
+  TPixel32 m_screen1Color, m_screen2Color,
+      m_screen3Color = TPixel32(0, 0, 0, 255);
+
   std::map<std::string, QAction*> m_oldActionMap;
 
   // Webcam Properties
@@ -162,9 +167,10 @@ public:
   QString m_tempFile;
   QTimer* m_timer;
   QList<QSize> m_webcamResolutions;
-  int m_intervalTime = 10;
+  int m_intervalTime     = 10;
+  int m_screenCount      = 1;
   bool m_intervalStarted = false;
-  QTimer* m_intervalTimer, * m_countdownTimer;
+  QTimer *m_intervalTimer, *m_countdownTimer;
 
   // Canon Public Properties
   bool m_pickLiveViewZoom = false;
@@ -239,13 +245,27 @@ public:
   void nextName();
   void previousName();
   QStringList getAvailableSerialPorts();
+
+  // motion control
   bool setSerialPort(QString port);
   void sendSerialData();
+
+  // time lapse
   void toggleInterval(bool on);
   void startInterval();
   void stopInterval();
   void setIntervalAmount(int value);
   void restartInterval();
+
+  // light and screens
+  void setScreen1Color(TPixel32 color);
+  void setScreen2Color(TPixel32 color);
+  void setScreen3Color(TPixel32 color);
+  void setScreen1UseOverlay(bool on);
+  void setScreen2UseOverlay(bool on);
+  void setScreen3UseOverlay(bool on);
+  void showOverlays();
+  void hideOverlays();
 
   QString getFrameInfoText() { return m_frameInfoText; }
   QString getInfoColorName() { return m_infoColorName; }
@@ -422,10 +442,20 @@ signals:
   void useDirectShowSignal(bool);
   void reviewTimeChangedSignal(int);
   void updateCameraList(QString);
+
+  // time lapse
   void intervalToggled(bool);
   void intervalStarted();
   void intervalStopped();
   void intervalAmountChanged(int);
+
+  // light and screens
+  void screen1ColorChanged(TPixel32);
+  void screen2ColorChanged(TPixel32);
+  void screen3ColorChanged(TPixel32);
+  void screen1OverlayChanged(bool);
+  void screen2OverlayChanged(bool);
+  void screen3OverlayChanged(bool);
 };
 
 #endif  // STOPMOTION_H

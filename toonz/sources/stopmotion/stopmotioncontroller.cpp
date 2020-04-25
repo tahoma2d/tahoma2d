@@ -182,12 +182,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Controls"));
   m_tabBar->addSimpleTab(tr("Settings"));
   m_tabBar->addSimpleTab(tr("Options"));
-  // m_tabBar->addSimpleTab(tr("Control"));
+  m_tabBar->addSimpleTab(tr("Light"));
+  m_tabBar->addSimpleTab(tr("Motion"));
   m_tabBarContainer    = new TabBarContainter(this);
-  m_mainControlsPage   = new QFrame();
-  m_cameraSettingsPage = new QFrame();
-  m_optionsPage        = new QFrame();
-  // m_controlPage = new QFrame();
+  m_mainControlsPage   = new QFrame(this);
+  m_cameraSettingsPage = new QFrame(this);
+  m_optionsPage        = new QFrame(this);
+  m_motionPage         = new QFrame(this);
+  m_lightPage          = new QFrame(this);
 
   // **********************
   // Make Control Page
@@ -222,12 +224,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   // (frame 10 is displayed as "1" with this option)
   int startFrame =
       Preferences::instance()->isShowFrameNumberWithLettersEnabled() ? 10 : 1;
-  m_frameNumberEdit        = new FrameNumberLineEdit(this, startFrame);
-  m_frameInfoLabel         = new QLabel("", this);
-  m_fileTypeCombo          = new QComboBox(this);
-  m_fileFormatOptionButton = new QPushButton(tr("Options"), this);
-  m_fileFormatOptionButton->setFixedHeight(28);
-  m_fileFormatOptionButton->setStyleSheet("padding: 0 2;");
+  m_frameNumberEdit = new FrameNumberLineEdit(this, startFrame);
+  m_frameInfoLabel  = new QLabel("", this);
+
   m_xSheetFrameNumberEdit = new DVGui::IntLineEdit(this, 1, 1);
   m_saveInFileFld =
       new DVGui::FileField(this, m_saveInFolderPopup->getParentPath());
@@ -241,9 +240,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_previousXSheetFrameButton        = new QToolButton(this);
   m_onionOpacityFld                  = new DVGui::IntField(this);
   m_captureButton                    = new QPushButton(tr("Capture"), this);
+
+  // choosing the file type is disabled for simplicty
+  // too many options can be a bad thing
+  // m_fileTypeCombo          = new QComboBox(this);
+  // m_fileFormatOptionButton = new QPushButton(tr("Options"), this);
+  // m_fileFormatOptionButton->setFixedHeight(28);
+  // m_fileFormatOptionButton->setStyleSheet("padding: 0 2;");
   // QPushButton *subfolderButton = new QPushButton(tr("Subfolder"), this);
-  m_fileTypeCombo->addItems({"jpg", "png", "tga", "tif"});
-  m_fileTypeCombo->setCurrentIndex(0);
+  // m_fileTypeCombo->addItems({"jpg", "png", "tga", "tif"});
+  // m_fileTypeCombo->setCurrentIndex(0);
 
   fileFrame->setObjectName("CleanupSettingsFrame");
   m_frameNumberEdit->setObjectName("LargeSizedText");
@@ -398,16 +404,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         levelLay->setColumnStretch(1, 1);
         fileLay->addLayout(levelLay, 0);
 
-        QHBoxLayout *fileTypeLay = new QHBoxLayout();
-        fileTypeLay->setMargin(0);
-        fileTypeLay->setSpacing(3);
-        {
-          fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
-          fileTypeLay->addWidget(m_fileTypeCombo, 1);
-          fileTypeLay->addSpacing(10);
-          fileTypeLay->addWidget(m_fileFormatOptionButton);
-        }
-        fileLay->addLayout(fileTypeLay, 0);
+        // QHBoxLayout *fileTypeLay = new QHBoxLayout();
+        // fileTypeLay->setMargin(0);
+        // fileTypeLay->setSpacing(3);
+        //{
+        //  fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
+        //  fileTypeLay->addWidget(m_fileTypeCombo, 1);
+        //  fileTypeLay->addSpacing(10);
+        //  fileTypeLay->addWidget(m_fileFormatOptionButton);
+        //}
+        // fileLay->addLayout(fileTypeLay, 0);
 
         QHBoxLayout *saveInLay = new QHBoxLayout();
         saveInLay->setMargin(0);
@@ -553,7 +559,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     // Make Options Page
     QGroupBox *webcamBox  = new QGroupBox(tr("Webcam Options"), this);
     QGroupBox *dslrBox    = new QGroupBox(tr("DSLR Options"), this);
-    QGroupBox *controlBox = new QGroupBox(tr("Motion Control"), this);
     QGroupBox *timerFrame = new QGroupBox(tr("Time Lapse"), this);
     m_timerCB             = new QCheckBox(tr("Use time lapse"), this);
     m_timerIntervalFld    = new DVGui::IntField(this);
@@ -569,7 +574,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_subsamplingFld = new DVGui::IntField(this);
     m_subsamplingFld->setRange(1, 30);
     m_subsamplingFld->setDisabled(true);
-    m_blackScreenForCapture = new QCheckBox(this);
 
     m_placeOnXSheetCB = new QCheckBox(this);
     m_placeOnXSheetCB->setToolTip(tr("Place the frame in the XSheet"));
@@ -581,9 +585,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_useNumpadCB     = new QCheckBox(this);
     m_drawBeneathCB   = new QCheckBox(this);
 
-    m_controlDeviceCombo = new QComboBox(this);
-    m_controlDeviceCombo->addItems(m_stopMotion->getAvailableSerialPorts());
-
     m_liveViewOnAllFramesCB           = new QCheckBox(this);
     QVBoxLayout *optionsOutsideLayout = new QVBoxLayout;
     QGridLayout *optionsLayout        = new QGridLayout;
@@ -591,12 +592,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsLayout->setMargin(5);
     QGridLayout *webcamLayout   = new QGridLayout;
     QGridLayout *dslrLayout     = new QGridLayout;
-    QGridLayout *controlLayout  = new QGridLayout;
     QGridLayout *checkboxLayout = new QGridLayout;
 
-    dslrLayout->addWidget(m_blackScreenForCapture, 0, 0, Qt::AlignRight);
-    dslrLayout->addWidget(new QLabel(tr("Black Screen for Capture")), 0, 1,
-                          Qt::AlignLeft);
     dslrLayout->addWidget(m_useScaledFullSizeImages, 1, 0, Qt::AlignRight);
     dslrLayout->addWidget(new QLabel(tr("Use Reduced Resolution Images")), 1, 1,
                           Qt::AlignLeft);
@@ -614,13 +611,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamBox->setLayout(webcamLayout);
     webcamBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     optionsOutsideLayout->addWidget(webcamBox, Qt::AlignCenter);
-
-    controlLayout->addWidget(new QLabel(tr("Port: ")), 0, 0, Qt::AlignRight);
-    controlLayout->addWidget(m_controlDeviceCombo, 0, 1, Qt::AlignLeft);
-    controlLayout->setColumnStretch(1, 30);
-    controlBox->setLayout(controlLayout);
-    controlBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    optionsOutsideLayout->addWidget(controlBox, Qt::AlignCenter);
 
     QGridLayout *timerLay = new QGridLayout();
     timerLay->setMargin(8);
@@ -641,16 +631,18 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     checkboxLayout->addWidget(m_placeOnXSheetCB, 0, 0, 1, 1, Qt::AlignRight);
     checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
                               Qt::AlignLeft);
-    checkboxLayout->addWidget(m_useNumpadCB, 1, 0, Qt::AlignRight);
-    checkboxLayout->addWidget(
-        new QLabel(tr("Use Numpad Shortcuts When Active")), 1, 1,
-        Qt::AlignLeft);
-    checkboxLayout->addWidget(m_liveViewOnAllFramesCB, 2, 0, Qt::AlignRight);
-    checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 2,
-                              1, Qt::AlignLeft);
-    checkboxLayout->addWidget(m_drawBeneathCB, 3, 0, Qt::AlignRight);
+    checkboxLayout->addWidget(m_drawBeneathCB, 1, 0, Qt::AlignRight);
     checkboxLayout->addWidget(new QLabel(tr("Show Camera Below Other Levels")),
-                              3, 1, Qt::AlignLeft);
+                              1, 1, Qt::AlignLeft);
+
+    checkboxLayout->addWidget(m_useNumpadCB, 2, 0, Qt::AlignRight);
+    checkboxLayout->addWidget(
+        new QLabel(tr("Use Numpad Shortcuts When Active")), 2, 1,
+        Qt::AlignLeft);
+    checkboxLayout->addWidget(m_liveViewOnAllFramesCB, 3, 0, Qt::AlignRight);
+    checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 3,
+                              1, Qt::AlignLeft);
+
     checkboxLayout->setColumnStretch(1, 30);
     optionsOutsideLayout->addLayout(checkboxLayout, Qt::AlignLeft);
 
@@ -667,24 +659,101 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     m_optionsPage->setLayout(optionsOutsideLayout);
 
-    // QVBoxLayout *controlOutsideLayout = new QVBoxLayout;
-    // QGridLayout* controlInsideLayout = new QGridLayout;
+    m_blackScreenForCapture         = new QCheckBox(this);
+    QVBoxLayout *lightOutsideLayout = new QVBoxLayout;
+    m_testLightsButton              = new QPushButton(tr("Test"), this);
+    m_testLightsButton->setMaximumWidth(150);
+    m_testLightsButton->setFixedHeight(28);
+    m_testLightsButton->setSizePolicy(QSizePolicy::Maximum,
+                                      QSizePolicy::Maximum);
+    m_testLightsButton->setStyleSheet("padding: 2px;");
+    m_lightTestTimer = new QTimer(this);
+    m_lightTestTimer->setSingleShot(true);
+    m_screen1ColorFld = new DVGui::ColorField(
+        this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
+    m_screen1OverlayCB    = new QCheckBox(this);
+    m_screen1OverlayLabel = new QLabel(tr("Enable Overlay"), this);
 
-    // m_controlBaudRateCombo = new QComboBox(this);
+    m_screen2ColorFld = new DVGui::ColorField(
+        this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
+    m_screen2OverlayCB    = new QCheckBox(this);
+    m_screen2OverlayLabel = new QLabel(tr("Enable Overlay"), this);
 
-    // controlInsideLayout->addWidget(m_controlDeviceCombo, 0, 0, 1, 2,
-    // Qt::AlignCenter);
-    // controlInsideLayout->addWidget(m_controlBaudRateCombo, 1, 0, 1, 2,
-    // Qt::AlignCenter);
-    // controlOutsideLayout->addLayout(controlInsideLayout);
-    // m_controlPage->setLayout(controlOutsideLayout);
+    m_screen3ColorFld = new DVGui::ColorField(
+        this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
+    m_screen3OverlayCB    = new QCheckBox(this);
+    m_screen3OverlayLabel = new QLabel(tr("Enable Overlay"), this);
+
+    QGridLayout *lightTopLayout = new QGridLayout;
+    lightTopLayout->addWidget(m_blackScreenForCapture, 0, 0, Qt::AlignRight);
+    lightTopLayout->addWidget(new QLabel(tr("Blackout all Screens")), 0, 1,
+                              Qt::AlignLeft);
+    lightTopLayout->setColumnStretch(1, 30);
+    lightOutsideLayout->addLayout(lightTopLayout);
+
+    m_screen1Box               = new QGroupBox(tr("Screen 1"), this);
+    QGridLayout *screen1Layout = new QGridLayout;
+    screen1Layout->addWidget(m_screen1OverlayCB, 0, 0, Qt::AlignRight);
+    screen1Layout->addWidget(m_screen1OverlayLabel, 0, 1, Qt::AlignLeft);
+    screen1Layout->addWidget(m_screen1ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen1Layout->setColumnStretch(1, 30);
+    m_screen1Box->setLayout(screen1Layout);
+    m_screen1Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    lightOutsideLayout->addWidget(m_screen1Box, Qt::AlignCenter);
+
+    m_screen2Box               = new QGroupBox(tr("Screen 2"), this);
+    QGridLayout *screen2Layout = new QGridLayout;
+    screen2Layout->addWidget(m_screen2OverlayCB, 0, 0, Qt::AlignRight);
+    screen2Layout->addWidget(m_screen2OverlayLabel, 0, 1, Qt::AlignLeft);
+    screen2Layout->addWidget(m_screen2ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen2Layout->setColumnStretch(1, 30);
+    m_screen2Box->setLayout(screen2Layout);
+    m_screen2Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    lightOutsideLayout->addWidget(m_screen2Box, Qt::AlignCenter);
+
+    m_screen3Box               = new QGroupBox(tr("Screen 3"), this);
+    QGridLayout *screen3Layout = new QGridLayout;
+    screen3Layout->addWidget(m_screen3OverlayCB, 0, 0, Qt::AlignRight);
+    screen3Layout->addWidget(m_screen3OverlayLabel, 0, 1, Qt::AlignLeft);
+    screen3Layout->addWidget(m_screen3ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen3Layout->setColumnStretch(1, 30);
+    m_screen3Box->setLayout(screen3Layout);
+    m_screen3Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    lightOutsideLayout->addWidget(m_screen3Box, Qt::AlignCenter);
+
+    QHBoxLayout *testLayout = new QHBoxLayout;
+    testLayout->addWidget(m_testLightsButton, Qt::AlignHCenter);
+    lightOutsideLayout->addLayout(testLayout);
+    lightOutsideLayout->addStretch();
+    m_lightPage->setLayout(lightOutsideLayout);
+
+    if (m_stopMotion->m_screenCount < 3) m_screen3Box->hide();
+    if (m_stopMotion->m_screenCount < 2) m_screen2Box->hide();
+
+    QVBoxLayout *motionOutsideLayout = new QVBoxLayout;
+    // QGridLayout* motionInsideLayout = new QGridLayout;
+    m_controlDeviceCombo = new QComboBox(this);
+    m_controlDeviceCombo->addItems(m_stopMotion->getAvailableSerialPorts());
+
+    QGroupBox *motionBox      = new QGroupBox(tr("Motion Control"), this);
+    QGridLayout *motionLayout = new QGridLayout;
+    motionLayout->addWidget(new QLabel(tr("Port: ")), 0, 0, Qt::AlignRight);
+    motionLayout->addWidget(m_controlDeviceCombo, 0, 1, Qt::AlignLeft);
+    motionLayout->setColumnStretch(1, 30);
+    motionBox->setLayout(motionLayout);
+    motionBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    motionOutsideLayout->addWidget(motionBox, Qt::AlignCenter);
+    motionOutsideLayout->addStretch();
+
+    // motionOutsideLayout->addLayout(motionInsideLayout);
+    m_motionPage->setLayout(motionOutsideLayout);
 
     QScrollArea *mainArea = makeChooserPageWithoutScrollBar(m_mainControlsPage);
     QScrollArea *settingsArea =
         makeChooserPageWithoutScrollBar(m_cameraSettingsPage);
     QScrollArea *optionsArea = makeChooserPageWithoutScrollBar(m_optionsPage);
-    // QScrollArea* controlArea =
-    // makeChooserPageWithoutScrollBar(m_controlPage);
+    QScrollArea *lightArea   = makeChooserPageWithoutScrollBar(m_lightPage);
+    QScrollArea *motionArea  = makeChooserPageWithoutScrollBar(m_motionPage);
 
     mainArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     settingsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -694,7 +763,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_stackedChooser->addWidget(mainArea);
     m_stackedChooser->addWidget(settingsArea);
     m_stackedChooser->addWidget(optionsArea);
-    // m_stackedChooser->addWidget(controlArea);
+    m_stackedChooser->addWidget(lightArea);
+    m_stackedChooser->addWidget(motionArea);
     m_stackedChooser->setFocusPolicy(Qt::NoFocus);
 
     QFrame *opacityFrame    = new QFrame();
@@ -757,8 +827,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   if (m_captureFilterSettingsBtn)
     ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(pressed()), this,
                          SLOT(onCaptureFilterSettingsBtnPressed()));
-  ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
-                       SLOT(onFileFormatOptionButtonPressed()));
+  // ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
+  //                     SLOT(onFileFormatOptionButtonPressed()));
   ret = ret && connect(m_levelNameEdit, SIGNAL(levelNameEdited()), this,
                        SLOT(onLevelNameEdited()));
   ret = ret &&
@@ -789,8 +859,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   //                     SLOT(openSaveInFolderPopup()));
   ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
                        SLOT(onSaveInPathEdited()));
-  ret = ret && connect(m_fileTypeCombo, SIGNAL(activated(int)), this,
-                       SLOT(onFileTypeActivated()));
+  // ret = ret && connect(m_fileTypeCombo, SIGNAL(activated(int)), this,
+  //                     SLOT(onFileTypeActivated()));
   ret = ret && connect(m_frameNumberEdit, SIGNAL(editingFinished()), this,
                        SLOT(onFrameNumberChanged()));
   ret = ret && connect(m_xSheetFrameNumberEdit, SIGNAL(editingFinished()), this,
@@ -801,8 +871,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onFilePathChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(levelNameChanged(QString)), this,
                        SLOT(onLevelNameChanged(QString)));
-  ret = ret && connect(m_stopMotion, SIGNAL(fileTypeChanged(QString)), this,
-                       SLOT(onFileTypeChanged(QString)));
+  // ret = ret && connect(m_stopMotion, SIGNAL(fileTypeChanged(QString)), this,
+  //                     SLOT(onFileTypeChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(frameInfoTextChanged(QString)),
                        this, SLOT(onFrameInfoTextChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(xSheetFrameNumberChanged(int)),
@@ -952,6 +1022,39 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion, SIGNAL(newWebcamResolutionSelected(int)),
                        this, SLOT(onNewWebcamResolutionSelected(int)));
 
+  // Lighting Connections
+  ret = ret &&
+        connect(m_screen1ColorFld, SIGNAL(colorChanged(const TPixel32 &, bool)),
+                this, SLOT(setScreen1Color(const TPixel32 &, bool)));
+  ret = ret &&
+        connect(m_screen2ColorFld, SIGNAL(colorChanged(const TPixel32 &, bool)),
+                this, SLOT(setScreen2Color(const TPixel32 &, bool)));
+  ret = ret &&
+        connect(m_screen3ColorFld, SIGNAL(colorChanged(const TPixel32 &, bool)),
+                this, SLOT(setScreen3Color(const TPixel32 &, bool)));
+  ret = ret && connect(m_screen1OverlayCB, SIGNAL(toggled(bool)), this,
+                       SLOT(onScreen1OverlayToggled(bool)));
+  ret = ret && connect(m_screen2OverlayCB, SIGNAL(toggled(bool)), this,
+                       SLOT(onScreen2OverlayToggled(bool)));
+  ret = ret && connect(m_screen3OverlayCB, SIGNAL(toggled(bool)), this,
+                       SLOT(onScreen3OverlayToggled(bool)));
+  ret = ret && connect(m_lightTestTimer, SIGNAL(timeout()), this,
+                       SLOT(onTestLightsTimeout()));
+  ret = ret && connect(m_testLightsButton, SIGNAL(pressed()), this,
+                       SLOT(onTestLightsPressed()));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen1ColorChanged(TPixel32)),
+                       this, SLOT(onScreen1ColorChanged(TPixel32)));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen2ColorChanged(TPixel32)),
+                       this, SLOT(onScreen2ColorChanged(TPixel32)));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen3ColorChanged(TPixel32)),
+                       this, SLOT(onScreen3ColorChanged(TPixel32)));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen1OverlayChanged(bool)), this,
+                       SLOT(onScreen1OverlayChanged(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen2OverlayChanged(bool)), this,
+                       SLOT(onScreen2OverlayChanged(bool)));
+  ret = ret && connect(m_stopMotion, SIGNAL(screen3OverlayChanged(bool)), this,
+                       SLOT(onScreen3OverlayChanged(bool)));
+
   // Serial Port Connections
   ret = ret && connect(m_controlDeviceCombo, SIGNAL(currentIndexChanged(int)),
                        this, SLOT(serialPortChanged(int)));
@@ -960,19 +1063,19 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_timerCB, SIGNAL(toggled(bool)), this,
                        SLOT(onIntervalTimerCBToggled(bool)));
   ret = ret && connect(m_timerIntervalFld, SIGNAL(valueChanged(bool)), this,
-      SLOT(onIntervalSliderValueChanged(bool)));
+                       SLOT(onIntervalSliderValueChanged(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(intervalAmountChanged(int)), this,
-      SLOT(onIntervalAmountChanged(int)));
+                       SLOT(onIntervalAmountChanged(int)));
   ret = ret && connect(m_stopMotion, SIGNAL(intervalToggled(bool)), this,
-      SLOT(onIntervalToggled(bool)));
+                       SLOT(onIntervalToggled(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(intervalStarted()), this,
-      SLOT(onIntervalStarted()));
+                       SLOT(onIntervalStarted()));
   ret = ret && connect(m_stopMotion, SIGNAL(intervalStopped()), this,
-      SLOT(onIntervalStopped()));
+                       SLOT(onIntervalStopped()));
   ret = ret && connect(m_stopMotion->m_intervalTimer, SIGNAL(timeout()), this,
                        SLOT(onIntervalCaptureTimerTimeout()));
-  ret = ret &&
-        connect(m_stopMotion->m_countdownTimer, SIGNAL(timeout()), this, SLOT(onIntervalCountDownTimeout()));
+  ret = ret && connect(m_stopMotion->m_countdownTimer, SIGNAL(timeout()), this,
+                       SLOT(onIntervalCountDownTimeout()));
 
   assert(ret);
 
@@ -987,12 +1090,22 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_liveViewOnAllFramesCB->setChecked(m_stopMotion->getAlwaysLiveView());
   m_blackScreenForCapture->setChecked(
       m_stopMotion->getBlackCapture() == true ? true : false);
+  if (m_stopMotion->getBlackCapture()) {
+    m_screen1Box->setDisabled(true);
+    m_screen2Box->setDisabled(true);
+    m_screen3Box->setDisabled(true);
+  }
   m_postCaptureReviewFld->setValue(m_stopMotion->getReviewTime());
 
   refreshCameraList(QString(""));
   onSceneSwitched();
   m_stopMotion->setToNextNewLevel();
   m_saveInFileFld->setPath(m_stopMotion->getFilePath());
+
+#ifndef _WIN32
+  m_directShowCB->hide();
+  m_directShowLabel->hide();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1041,7 +1154,112 @@ void StopMotionController::onBlackScreenForCaptureChanged(int checked) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onBlackCaptureSignal(bool on) {
+  m_blackScreenForCapture->blockSignals(true);
   m_blackScreenForCapture->setChecked(on);
+  m_screen1Box->setDisabled(on);
+  m_screen2Box->setDisabled(on);
+  m_screen3Box->setDisabled(on);
+  m_blackScreenForCapture->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::setScreen1Color(const TPixel32 &bgColor,
+                                           bool isDragging) {
+  m_stopMotion->setScreen1Color(bgColor);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::setScreen2Color(const TPixel32 &bgColor,
+                                           bool isDragging) {
+  m_stopMotion->setScreen2Color(bgColor);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::setScreen3Color(const TPixel32 &bgColor,
+                                           bool isDragging) {
+  m_stopMotion->setScreen3Color(bgColor);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen1OverlayToggled(bool on) {
+  m_stopMotion->setScreen1UseOverlay(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen2OverlayToggled(bool on) {
+  m_stopMotion->setScreen2UseOverlay(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen3OverlayToggled(bool on) {
+  m_stopMotion->setScreen3UseOverlay(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen1ColorChanged(TPixel32 color) {
+  m_screen1ColorFld->blockSignals(true);
+  m_screen1ColorFld->setColor(color);
+  m_screen1ColorFld->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen2ColorChanged(TPixel32 color) {
+  m_screen2ColorFld->blockSignals(true);
+  m_screen2ColorFld->setColor(color);
+  m_screen2ColorFld->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen3ColorChanged(TPixel32 color) {
+  m_screen3ColorFld->blockSignals(true);
+  m_screen3ColorFld->setColor(color);
+  m_screen3ColorFld->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen1OverlayChanged(bool on) {
+  m_screen1OverlayCB->blockSignals(true);
+  m_screen1OverlayCB->setChecked(on);
+  m_screen1OverlayCB->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen2OverlayChanged(bool on) {
+  m_screen2OverlayCB->blockSignals(true);
+  m_screen2OverlayCB->setChecked(on);
+  m_screen2OverlayCB->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onScreen3OverlayChanged(bool on) {
+  m_screen3OverlayCB->blockSignals(true);
+  m_screen3OverlayCB->setChecked(on);
+  m_screen3OverlayCB->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onTestLightsPressed() {
+  m_stopMotion->showOverlays();
+  m_lightTestTimer->start(2000);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onTestLightsTimeout() {
+  m_stopMotion->hideOverlays();
 }
 
 //-----------------------------------------------------------------------------
@@ -1159,11 +1377,11 @@ void StopMotionController::onLevelNameChanged(QString levelName) {
   m_levelNameEdit->setText(levelName);
 }
 
-//-----------------------------------------------------------------------------
-
-void StopMotionController::onFileTypeChanged(QString fileType) {
-  m_fileTypeCombo->setCurrentText(fileType);
-}
+////-----------------------------------------------------------------------------
+//
+// void StopMotionController::onFileTypeChanged(QString fileType) {
+//  m_fileTypeCombo->setCurrentText(fileType);
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -1601,17 +1819,17 @@ void StopMotionController::onCaptureFilterSettingsBtnPressed() {
   }
 }
 
-//-----------------------------------------------------------------------------
-
-void StopMotionController::onFileFormatOptionButtonPressed() {
-  if (m_fileTypeCombo->currentIndex() == 0) return;
-  // Tentatively use the preview output settings
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-  if (!scene) return;
-  TOutputProperties *prop = scene->getProperties()->getPreviewProperties();
-  std::string ext         = m_fileTypeCombo->currentText().toStdString();
-  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
-}
+////-----------------------------------------------------------------------------
+//
+// void StopMotionController::onFileFormatOptionButtonPressed() {
+//  if (m_fileTypeCombo->currentIndex() == 0) return;
+//  // Tentatively use the preview output settings
+//  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+//  if (!scene) return;
+//  TOutputProperties *prop = scene->getProperties()->getPreviewProperties();
+//  std::string ext         = m_fileTypeCombo->currentText().toStdString();
+//  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -2096,11 +2314,11 @@ void StopMotionController::onCaptureButtonClicked(bool on) {
   if (m_timerCB->isChecked()) {
     // start interval capturing
     if (on) {
-        m_stopMotion->startInterval();
+      m_stopMotion->startInterval();
     }
     // stop interval capturing
     else {
-        m_stopMotion->stopInterval();
+      m_stopMotion->stopInterval();
     }
   }
   // capture immediately
@@ -2112,13 +2330,13 @@ void StopMotionController::onCaptureButtonClicked(bool on) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onIntervalTimerCBToggled(bool on) {
-    m_stopMotion->toggleInterval(on);
+  m_stopMotion->toggleInterval(on);
 }
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onIntervalSliderValueChanged(bool on) {
-    m_stopMotion->setIntervalAmount(m_timerIntervalFld->getValue());
+  m_stopMotion->setIntervalAmount(m_timerIntervalFld->getValue());
 }
 
 //-----------------------------------------------------------------------------
@@ -2133,47 +2351,48 @@ void StopMotionController::onIntervalCaptureTimerTimeout() {
 
 void StopMotionController::onIntervalCountDownTimeout() {
   m_captureButton->setText(QString::number(
-      m_stopMotion->m_intervalTimer->isActive() ? (m_stopMotion->m_intervalTimer->remainingTime() / 1000 + 1)
-                                 : 0));
+      m_stopMotion->m_intervalTimer->isActive()
+          ? (m_stopMotion->m_intervalTimer->remainingTime() / 1000 + 1)
+          : 0));
 }
 
 //-----------------------------------------------------------------------------
 void StopMotionController::onIntervalAmountChanged(int value) {
-    m_timerIntervalFld->blockSignals(true);
-    m_timerIntervalFld->setValue(value);
-    m_timerIntervalFld->blockSignals(false);
+  m_timerIntervalFld->blockSignals(true);
+  m_timerIntervalFld->setValue(value);
+  m_timerIntervalFld->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 void StopMotionController::onIntervalToggled(bool on) {
-    m_timerCB->blockSignals(true);
-    m_timerIntervalFld->setEnabled(on);
-    m_captureButton->setCheckable(on);
-    if (on)
-        m_captureButton->setText(tr("Start Capturing"));
-    else
-        m_captureButton->setText(tr("Capture"));
-    m_timerCB->blockSignals(false);
+  m_timerCB->blockSignals(true);
+  m_timerIntervalFld->setEnabled(on);
+  m_captureButton->setCheckable(on);
+  if (on)
+    m_captureButton->setText(tr("Start Capturing"));
+  else
+    m_captureButton->setText(tr("Capture"));
+  m_timerCB->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 void StopMotionController::onIntervalStarted() {
-    m_captureButton->setText(tr("Stop Capturing"));
-    m_timerCB->setDisabled(true);
-    m_timerIntervalFld->setDisabled(true);
-    m_captureButton->blockSignals(true);
-    m_captureButton->setChecked(true);
-    m_captureButton->blockSignals(false);
+  m_captureButton->setText(tr("Stop Capturing"));
+  m_timerCB->setDisabled(true);
+  m_timerIntervalFld->setDisabled(true);
+  m_captureButton->blockSignals(true);
+  m_captureButton->setChecked(true);
+  m_captureButton->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 void StopMotionController::onIntervalStopped() {
-    m_captureButton->setText(tr("Start Capturing"));
-    m_timerCB->setDisabled(false);
-    m_timerIntervalFld->setDisabled(false);
-    m_captureButton->blockSignals(true);
-    m_captureButton->setChecked(false);
-    m_captureButton->blockSignals(false);
+  m_captureButton->setText(tr("Start Capturing"));
+  m_timerCB->setDisabled(false);
+  m_timerIntervalFld->setDisabled(false);
+  m_captureButton->blockSignals(true);
+  m_captureButton->setChecked(false);
+  m_captureButton->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2190,11 +2409,11 @@ void StopMotionController::openSaveInFolderPopup() {
   }
 }
 
-//-----------------------------------------------------------------------------
-
-void StopMotionController::onFileTypeActivated() {
-  m_stopMotion->setFileType(m_fileTypeCombo->currentText());
-}
+////-----------------------------------------------------------------------------
+//
+// void StopMotionController::onFileTypeActivated() {
+//  m_stopMotion->setFileType(m_fileTypeCombo->currentText());
+//}
 
 //-----------------------------------------------------------------------------
 
