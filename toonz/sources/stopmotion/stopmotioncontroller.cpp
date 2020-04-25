@@ -758,6 +758,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     mainArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     settingsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     optionsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    lightArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    motionArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     m_stackedChooser = new QStackedWidget(this);
     m_stackedChooser->addWidget(mainArea);
