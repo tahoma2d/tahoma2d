@@ -204,15 +204,15 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 //-----------------------------------------------------------------------------
 
 StopMotion::StopMotion() {
-  m_opacity         = StopMotionOpacity;
-  
-  m_webcam = new Webcam();
-  m_canon = Canon::instance();
-  m_serial = new StopMotionSerial();
-  m_light = new StopMotionLight();
+  m_opacity = StopMotionOpacity;
 
-  m_alwaysLiveView     = StopMotionAlwaysLiveView;
-  
+  m_webcam = new Webcam();
+  m_canon  = Canon::instance();
+  m_serial = new StopMotionSerial();
+  m_light  = new StopMotionLight();
+
+  m_alwaysLiveView = StopMotionAlwaysLiveView;
+
   m_placeOnXSheet      = StopMotionPlaceOnXSheet;
   m_reviewTime         = StopMotionReviewTime;
   m_useNumpadShortcuts = StopMotionUseNumpad;
@@ -230,7 +230,7 @@ StopMotion::StopMotion() {
   // Make the interval timer single-shot. When the capture finished, restart
   // timer for next frame.
   // This is because capturing and saving the image needs some time.
-  m_intervalTimer->setSingleShot(true);  
+  m_intervalTimer->setSingleShot(true);
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TSceneHandle *sceneHandle   = TApp::instance()->getCurrentScene();
@@ -249,9 +249,11 @@ StopMotion::StopMotion() {
                        SLOT(onPlaybackChanged()));
   ret = ret && connect(m_intervalTimer, SIGNAL(timeout()), this,
                        SLOT(onIntervalCaptureTimerTimeout()));
-  ret = ret && connect(m_canon, SIGNAL(newCanonImageReady()), this, SLOT(importImage()));
+  ret = ret && connect(m_canon, SIGNAL(newCanonImageReady()), this,
+                       SLOT(importImage()));
   assert(ret);
-  ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this, SLOT(onCanonCameraChanged(QString)));
+  ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this,
+                       SLOT(onCanonCameraChanged(QString)));
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -319,13 +321,10 @@ void StopMotion::onSceneSwitched() {
 //-----------------------------------------------------------------
 
 void StopMotion::disconnectAllCameras() {
-
-
   if (m_liveViewStatus > LiveViewClosed) {
-      m_canon->resetCanon(true);
-  }
-  else {
-      m_canon->resetCanon(false);
+    m_canon->resetCanon(true);
+  } else {
+    m_canon->resetCanon(false);
   }
 
   if (m_usingWebcam) {
@@ -1216,19 +1215,17 @@ void StopMotion::onTimeout() {
 #ifdef WITH_CANON
         bool success = m_canon->downloadEVFData();
         if (success) {
-            setLiveViewImage();
-        }
-        else {
-            m_hasLiveViewImage = false;
+          setLiveViewImage();
+        } else {
+          m_hasLiveViewImage = false;
         }
 #endif
       } else {
         bool success = m_webcam->getWebcamImage(m_liveViewImage);
         if (success) {
-            setLiveViewImage();
-        }
-        else {
-            m_hasLiveViewImage = false;
+          setLiveViewImage();
+        } else {
+          m_hasLiveViewImage = false;
         }
       }
       if ((!getAlwaysLiveView() && currentFrame != m_xSheetFrameNumber - 1) ||
@@ -1245,24 +1242,21 @@ void StopMotion::onTimeout() {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
-          bool success = m_canon->downloadEVFData();
-          if (success) {
-              setLiveViewImage();
-          }
-          else {
-              m_hasLiveViewImage = false;
-          }
+        bool success = m_canon->downloadEVFData();
+        if (success) {
+          setLiveViewImage();
+        } else {
+          m_hasLiveViewImage = false;
+        }
 #endif
+      } else {
+        bool success = m_webcam->getWebcamImage(m_liveViewImage);
+        if (success) {
+          setLiveViewImage();
+        } else {
+          m_hasLiveViewImage = false;
+        }
       }
-      else {
-          bool success = m_webcam->getWebcamImage(m_liveViewImage);
-          if (success) {
-              setLiveViewImage();
-          }
-          else {
-              m_hasLiveViewImage = false;
-          }
-      } 
     }
   }
 }
@@ -1270,41 +1264,40 @@ void StopMotion::onTimeout() {
 //-----------------------------------------------------------------------------
 
 void StopMotion::setLiveViewImage() {
-    m_hasLiveViewImage = true;
+  m_hasLiveViewImage = true;
 
-    // make sure not to set to LiveViewOpen if it has been turned off
-    if (m_liveViewStatus > LiveViewClosed && !m_userCalledPause) {
-        m_liveViewStatus = LiveViewOpen;
+  // make sure not to set to LiveViewOpen if it has been turned off
+  if (m_liveViewStatus > LiveViewClosed && !m_userCalledPause) {
+    m_liveViewStatus = LiveViewOpen;
+  }
+
+  if (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0) {
+    TCamera *camera =
+        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+    TDimensionD size = camera->getSize();
+    m_liveViewImageDimensions =
+        TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
+    double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
+                                 m_liveViewImageDimensions.ly / size.ly);
+    m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
+
+    if (!m_usingWebcam) {
+      minimumDpi = std::min(m_fullImageDimensions.lx / size.lx,
+                            m_fullImageDimensions.ly / size.ly);
+      m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
+    } else {
+      m_fullImageDimensions = m_liveViewImageDimensions;
+      m_fullImageDpi        = m_liveViewDpi;
     }
-    
-    if (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0) {
-        TCamera* camera =
-            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-        TDimensionD size = camera->getSize();
-        m_liveViewImageDimensions =
-            TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
-        double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
-            m_liveViewImageDimensions.ly / size.ly);
-        m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
 
-        if (!m_usingWebcam) {
-            minimumDpi = std::min(m_fullImageDimensions.lx / size.lx,
-                m_fullImageDimensions.ly / size.ly);
-            m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
-        }
-        else {
-            m_fullImageDimensions = m_liveViewImageDimensions;
-            m_fullImageDpi = m_liveViewDpi;
-        }
-
-        emit(newDimensions());
-    }
-    emit(newLiveViewImageReady());
+    emit(newDimensions());
+  }
+  emit(newLiveViewImageReady());
 }
 //
 ////-----------------------------------------------------------------------------
 //
-//void StopMotion::setLiveViewImage() {
+// void StopMotion::setLiveViewImage() {
 //    m_hasLiveViewImage = true;
 //    m_liveViewStatus = LiveViewOpen;
 //    if (m_hasLiveViewImage &&
@@ -1771,15 +1764,19 @@ void StopMotion::saveXmlFile() {
     xmlWriter.writeTextElement("CameraName",
                                QString::fromStdString(m_canon->m_cameraName));
     xmlWriter.writeTextElement("Aperture", m_canon->getCurrentAperture());
-    xmlWriter.writeTextElement("ShutterSpeed", m_canon->getCurrentShutterSpeed());
+    xmlWriter.writeTextElement("ShutterSpeed",
+                               m_canon->getCurrentShutterSpeed());
     xmlWriter.writeTextElement("ISO", m_canon->getCurrentIso());
-    xmlWriter.writeTextElement("PictureStyle", m_canon->getCurrentPictureStyle());
-    xmlWriter.writeTextElement("ImageQuality", m_canon->getCurrentImageQuality());
-    xmlWriter.writeTextElement("WhiteBalance", m_canon->getCurrentWhiteBalance());
+    xmlWriter.writeTextElement("PictureStyle",
+                               m_canon->getCurrentPictureStyle());
+    xmlWriter.writeTextElement("ImageQuality",
+                               m_canon->getCurrentImageQuality());
+    xmlWriter.writeTextElement("WhiteBalance",
+                               m_canon->getCurrentWhiteBalance());
     xmlWriter.writeTextElement("ColorTemperature",
-        m_canon->getCurrentColorTemperature());
+                               m_canon->getCurrentColorTemperature());
     xmlWriter.writeTextElement("ExposureCompensation",
-        m_canon->getCurrentExposureCompensation());
+                               m_canon->getCurrentExposureCompensation());
     xmlWriter.writeTextElement("FocusCheckLocationX",
                                QString::number(m_canon->m_finalZoomPoint.x));
     xmlWriter.writeTextElement("FocusCheckLocationY",
@@ -1843,7 +1840,7 @@ bool StopMotion::loadXmlFile() {
 #ifdef WITH_CANON
           QString camName = "";
           if (m_canon->getCameraCount() > 0) {
-              m_canon->openCameraSession();
+            m_canon->openCameraSession();
             camName = QString::fromStdString(m_canon->getCameraName());
             m_canon->closeCameraSession();
           }
@@ -1870,57 +1867,57 @@ bool StopMotion::loadXmlFile() {
       if (xmlReader.name() == "Aperture") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setAperture(text);
+          m_canon->setAperture(text);
         }
       }
       if (xmlReader.name() == "ShutterSpeed") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setShutterSpeed(text);
+          m_canon->setShutterSpeed(text);
         }
       }
       if (xmlReader.name() == "ISO") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setIso(text);
+          m_canon->setIso(text);
         }
       }
       if (xmlReader.name() == "PictureStyle") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setPictureStyle(text);
+          m_canon->setPictureStyle(text);
         }
       }
       if (xmlReader.name() == "ImageQuality") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setImageQuality(text);
+          m_canon->setImageQuality(text);
         }
       }
       if (xmlReader.name() == "WhiteBalance") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setWhiteBalance(text);
+          m_canon->setWhiteBalance(text);
         }
       }
       if (xmlReader.name() == "ColorTemperature") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setColorTemperature(text);
+          m_canon->setColorTemperature(text);
         }
       }
       if (xmlReader.name() == "ExposureCompensation") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-            m_canon->setExposureCompensation(text);
+          m_canon->setExposureCompensation(text);
         }
       }
       if (xmlReader.name() == "FocusCheckLocationX") {
-        text               = xmlReader.readElementText();
+        text                        = xmlReader.readElementText();
         m_canon->m_finalZoomPoint.x = text.toInt();
       }
       if (xmlReader.name() == "FocusCheckLocationY") {
-        text               = xmlReader.readElementText();
+        text                        = xmlReader.readElementText();
         m_canon->m_finalZoomPoint.y = text.toInt();
       }
 #endif
@@ -2095,7 +2092,8 @@ void StopMotion::refreshFrameInfo() {
   bool checkRes                    = true;
   if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
 #ifdef WITH_CANON
-  else if (m_canon->m_useScaledImages || !m_canon->getCurrentImageQuality().contains("Large")) {
+  else if (m_canon->m_useScaledImages ||
+           !m_canon->getCurrentImageQuality().contains("Large")) {
     stopMotionRes = m_canon->m_proxyImageDimensions;
     if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
       checkRes = false;
@@ -2411,8 +2409,8 @@ void StopMotion::refreshCameraList() {
   QString camera = "";
   bool hasCamera = false;
 #ifdef WITH_CANON
-  if (m_canon->m_sessionOpen && m_canon->getCameraCount() > 0 && !m_usingWebcam &&
-      m_canon->m_cameraName == m_canon->getCameraName()) {
+  if (m_canon->m_sessionOpen && m_canon->getCameraCount() > 0 &&
+      !m_usingWebcam && m_canon->m_cameraName == m_canon->getCameraName()) {
     hasCamera = true;
     camera    = QString::fromStdString(m_canon->m_cameraName);
   }
@@ -2479,7 +2477,7 @@ void StopMotion::changeCameras(int index) {
   if (m_usingWebcam) {
 #ifdef WITH_CANON
     if (m_canon->m_sessionOpen && m_canon->getCameraCount() > 0) {
-        m_canon->closeCameraSession();
+      m_canon->closeCameraSession();
     }
 #endif
 
@@ -2493,7 +2491,7 @@ void StopMotion::changeCameras(int index) {
     m_webcam->refreshWebcamResolutions();
 
     QList<QSize> webcamResolutions = m_webcam->getWebcamResolutions();
-    int sizeCount       = webcamResolutions.count() - 1;
+    int sizeCount                  = webcamResolutions.count() - 1;
 
     int width;
     int height;
@@ -2524,7 +2522,7 @@ void StopMotion::changeCameras(int index) {
 
   } else {
 #ifdef WITH_CANON
-      m_canon->openCameraSession();
+    m_canon->openCameraSession();
     setTEnvCameraName(m_canon->getCameraName());
     if (index == -2) {
       index = cameras.size();
@@ -2548,39 +2546,39 @@ void StopMotion::changeCameras(int index) {
 //-----------------------------------------------------------------
 
 void StopMotion::setWebcamResolution(QString resolution) {
-    m_webcam->releaseWebcam();
+  m_webcam->releaseWebcam();
 
-    // resolution is written in the itemText with the format "<width> x
-    // <height>" (e.g. "800 x 600")
-    QStringList texts = resolution.split(' ');
-    // the split text must be "<width>" "x" and "<height>"
-    if (texts.size() != 3) return;
+  // resolution is written in the itemText with the format "<width> x
+  // <height>" (e.g. "800 x 600")
+  QStringList texts = resolution.split(' ');
+  // the split text must be "<width>" "x" and "<height>"
+  if (texts.size() != 3) return;
 
-    int tempStatus = m_liveViewStatus;
-    m_liveViewStatus = LiveViewClosed;
+  int tempStatus   = m_liveViewStatus;
+  m_liveViewStatus = LiveViewClosed;
 
-    bool startTimer = false;
-    if (m_timer->isActive()) {
-        m_timer->stop();
-        startTimer = true;
-    }
+  bool startTimer = false;
+  if (m_timer->isActive()) {
+    m_timer->stop();
+    startTimer = true;
+  }
 
-    qApp->processEvents(QEventLoop::AllEvents, 1000);
+  qApp->processEvents(QEventLoop::AllEvents, 1000);
 
-    m_webcam->setWebcamWidth(texts[0].toInt());
-    m_webcam->setWebcamHeight(texts[2].toInt());
+  m_webcam->setWebcamWidth(texts[0].toInt());
+  m_webcam->setWebcamHeight(texts[2].toInt());
 
-    m_liveViewDpi = TPointD(0.0, 0.0);
-    m_liveViewStatus = tempStatus;
-    if (startTimer) m_timer->start(40);
+  m_liveViewDpi    = TPointD(0.0, 0.0);
+  m_liveViewStatus = tempStatus;
+  if (startTimer) m_timer->start(40);
 
-    // update env
-    setTEnvCameraResolution(resolution.toStdString());
+  // update env
+  setTEnvCameraResolution(resolution.toStdString());
 
-    refreshFrameInfo();
+  refreshFrameInfo();
 
-    int index = m_webcam->getIndexOfResolution();
-    emit(newWebcamResolutionSelected(index));
+  int index = m_webcam->getIndexOfResolution();
+  emit(newWebcamResolutionSelected(index));
 }
 
 //-----------------------------------------------------------------
@@ -2597,7 +2595,7 @@ bool StopMotion::toggleLiveView() {
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
 #ifdef WITH_CANON
-        m_canon->startCanonLiveView();
+      m_canon->startCanonLiveView();
 #endif
     } else
       m_liveViewStatus = LiveViewStarting;
@@ -2611,13 +2609,12 @@ bool StopMotion::toggleLiveView() {
              m_liveViewStatus > LiveViewClosed) {
     if (!m_usingWebcam) {
 #ifdef WITH_CANON
-        m_canon->endCanonLiveView();
+      m_canon->endCanonLiveView();
 #endif
+    } else {
+      m_webcam->releaseWebcam();
     }
-    else {
-        m_webcam->releaseWebcam();
-    }
-    
+
     m_timer->stop();
     emit(liveViewStopped());
     emit(liveViewChanged(false));
@@ -2651,7 +2648,7 @@ void StopMotion::pauseLiveView() {
 //-----------------------------------------------------------------
 
 void StopMotion::onCanonCameraChanged(QString camera) {
-    emit(cameraChanged(camera));
+  emit(cameraChanged(camera));
 }
 
 //-----------------------------------------------------------------

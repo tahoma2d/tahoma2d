@@ -502,7 +502,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleHCursor);
     } else if (std::abs((height() - curPos.y()) -
-                         height() * m_compareSettings.m_compareY) < 20) {
+                        height() * m_compareSettings.m_compareY) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleVCursor);
     }
@@ -720,7 +720,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
       m_tabletState = None;
       return;
     } else if (std::abs((height() - m_pos.y()) -
-                         height() * m_compareSettings.m_compareY) < 20) {
+                        height() * m_compareSettings.m_compareY) < 20) {
       m_compareSettings.m_dragCompareY = true;
       m_compareSettings.m_dragCompareX = false;
       m_compareSettings.m_compareX     = ImagePainter::DefaultCompareValue;
@@ -1186,7 +1186,8 @@ bool SceneViewer::event(QEvent *e) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     key                 = keyEvent->key();
 #ifdef WITH_CANON
-    if ((m_stopMotion->m_canon->m_pickLiveViewZoom || m_stopMotion->m_canon->m_zooming) &&
+    if ((m_stopMotion->m_canon->m_pickLiveViewZoom ||
+         m_stopMotion->m_canon->m_zooming) &&
         (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
          key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
          key == Qt::Key_6 || key == Qt::Key_8)) {

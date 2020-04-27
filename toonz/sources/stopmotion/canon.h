@@ -29,81 +29,80 @@ class QSerialPort;
 
 #include <QThread>
 
-
 class Canon : public QObject {
   Q_OBJECT
 
 public:
-    static Canon* instance() {
-        static Canon _instance;
-        return &_instance;
-    };
+  static Canon* instance() {
+    static Canon _instance;
+    return &_instance;
+  };
 
 private:
 #ifdef WITH_CANON
-    std::map<EdsUInt32, std::string> m_avMap, m_tvMap, m_isoMap, m_modeMap,
-        m_exposureMap, m_whiteBalanceMap, m_imageQualityMap, m_pictureStyleMap;
-    JpgConverter* m_converter;
-    static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event,
-        EdsBaseRef object,
-        EdsVoid* context);
+  std::map<EdsUInt32, std::string> m_avMap, m_tvMap, m_isoMap, m_modeMap,
+      m_exposureMap, m_whiteBalanceMap, m_imageQualityMap, m_pictureStyleMap;
+  JpgConverter* m_converter;
+  static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event,
+                                                EdsBaseRef object,
+                                                EdsVoid* context);
 
-    static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event,
-        EdsPropertyID property,
-        EdsUInt32 param,
-        EdsVoid* context);
+  static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event,
+                                                  EdsPropertyID property,
+                                                  EdsUInt32 param,
+                                                  EdsVoid* context);
 
-    static EdsError EDSCALLBACK handleStateEvent(EdsStateEvent event,
-        EdsUInt32 parameter,
-        EdsVoid* context);
-    static EdsError EDSCALLBACK handleCameraAddedEvent(EdsVoid* context);
+  static EdsError EDSCALLBACK handleStateEvent(EdsStateEvent event,
+                                               EdsUInt32 parameter,
+                                               EdsVoid* context);
+  static EdsError EDSCALLBACK handleCameraAddedEvent(EdsVoid* context);
 
-    void buildAvMap();
-    void buildTvMap();
-    void buildIsoMap();
-    void buildModeMap();
-    void buildExposureMap();
-    void buildWhiteBalanceMap();
-    void buildImageQualityMap();
-    void buildPictureStyleMap();
+  void buildAvMap();
+  void buildTvMap();
+  void buildIsoMap();
+  void buildModeMap();
+  void buildExposureMap();
+  void buildWhiteBalanceMap();
+  void buildImageQualityMap();
+  void buildPictureStyleMap();
 #endif
 
 private:
-    QStringList m_isoOptions, m_shutterSpeedOptions, m_apertureOptions,
-        m_exposureOptions, m_whiteBalanceOptions, m_colorTempOptions,
-        m_imageQualityOptions, m_pictureStyleOptions;
+  QStringList m_isoOptions, m_shutterSpeedOptions, m_apertureOptions,
+      m_exposureOptions, m_whiteBalanceOptions, m_colorTempOptions,
+      m_imageQualityOptions, m_pictureStyleOptions;
 
 public:
   Canon();
   ~Canon();
 
 #ifdef WITH_CANON
-  EdsError m_error = EDS_ERR_OK;
-  EdsUInt32 m_count = 0;
+  EdsError m_error              = EDS_ERR_OK;
+  EdsUInt32 m_count             = 0;
   EdsCameraListRef m_cameraList = NULL;
-  EdsCameraRef m_camera = NULL;
-  EdsUInt32 m_liveViewZoom = 1;
-  bool m_isSDKLoaded = false;
-  bool m_sessionOpen = false;
-  bool m_zooming = false;
+  EdsCameraRef m_camera         = NULL;
+  EdsUInt32 m_liveViewZoom      = 1;
+  bool m_isSDKLoaded            = false;
+  bool m_sessionOpen            = false;
+  bool m_zooming                = false;
   std::string m_cameraName;
   TDimension m_proxyImageDimensions = TDimension(0, 0);
-  TPointD m_proxyDpi = TPointD(0.0, 0.0);
-  TPoint m_liveViewZoomOffset = TPoint(0, 0);
-  bool m_liveViewZoomReadyToPick = true;
-  TPointD m_liveViewZoomPickPoint = TPointD(0.0, 0.0);
-  TPoint m_zoomRectDimensions = TPoint(0, 0);
-  TPoint m_calculatedZoomPoint = TPoint(0, 0);
-  TPoint m_finalZoomPoint = TPoint(0, 0);
-  TRect m_zoomRect = TRect(0, 0, 0, 0);
+  TPointD m_proxyDpi                = TPointD(0.0, 0.0);
+  TPoint m_liveViewZoomOffset       = TPoint(0, 0);
+  bool m_liveViewZoomReadyToPick    = true;
+  TPointD m_liveViewZoomPickPoint   = TPointD(0.0, 0.0);
+  TPoint m_zoomRectDimensions       = TPoint(0, 0);
+  TPoint m_calculatedZoomPoint      = TPoint(0, 0);
+  TPoint m_finalZoomPoint           = TPoint(0, 0);
+  TRect m_zoomRect                  = TRect(0, 0, 0, 0);
 #endif
-  bool m_useScaledImages = true;
-  bool m_converterSucceeded = false;
-  bool m_pickLiveViewZoom = false;
+  bool m_useScaledImages           = true;
+  bool m_converterSucceeded        = false;
+  bool m_pickLiveViewZoom          = false;
   TDimension m_fullImageDimensions = TDimension(0, 0);
-  TPointD m_fullImageDpi = TPointD(0.0, 0.0); 
+  TPointD m_fullImageDpi           = TPointD(0.0, 0.0);
 
-  // Canon Commands
+// Canon Commands
 #ifdef WITH_CANON
   void cameraAdded();
   void closeAll();
@@ -175,33 +174,33 @@ public:
 #endif
 
 public slots:
-    void onImageReady(const bool&);
-    void onFinished();
+  void onImageReady(const bool&);
+  void onFinished();
 
 signals:
-    // canon signals
-    void apertureOptionsChanged();
-    void isoOptionsChanged();
-    void shutterSpeedOptionsChanged();
-    void exposureOptionsChanged();
-    void whiteBalanceOptionsChanged();
-    void colorTemperatureChanged();
-    void imageQualityOptionsChanged();
-    void pictureStyleOptionsChanged();
-    void apertureChangedSignal(QString);
-    void isoChangedSignal(QString);
-    void shutterSpeedChangedSignal(QString);
-    void exposureChangedSignal(QString);
-    void whiteBalanceChangedSignal(QString);
-    void colorTemperatureChangedSignal(QString);
-    void imageQualityChangedSignal(QString);
-    void pictureStyleChangedSignal(QString);
-    void modeChanged();
-    void focusCheckToggled(bool);
-    void pickFocusCheckToggled(bool);
-    void scaleFullSizeImagesSignal(bool);
-    void newCanonImageReady();
-    void canonCameraChanged(QString);
+  // canon signals
+  void apertureOptionsChanged();
+  void isoOptionsChanged();
+  void shutterSpeedOptionsChanged();
+  void exposureOptionsChanged();
+  void whiteBalanceOptionsChanged();
+  void colorTemperatureChanged();
+  void imageQualityOptionsChanged();
+  void pictureStyleOptionsChanged();
+  void apertureChangedSignal(QString);
+  void isoChangedSignal(QString);
+  void shutterSpeedChangedSignal(QString);
+  void exposureChangedSignal(QString);
+  void whiteBalanceChangedSignal(QString);
+  void colorTemperatureChangedSignal(QString);
+  void imageQualityChangedSignal(QString);
+  void pictureStyleChangedSignal(QString);
+  void modeChanged();
+  void focusCheckToggled(bool);
+  void pickFocusCheckToggled(bool);
+  void scaleFullSizeImagesSignal(bool);
+  void newCanonImageReady();
+  void canonCameraChanged(QString);
 };
 
 #endif  // CANON_H

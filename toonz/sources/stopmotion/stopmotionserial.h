@@ -12,19 +12,19 @@ class QSerialPort;
 //-----------------------------------------------------------------------------
 
 class StopMotionSerial : public QObject {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    StopMotionSerial();
-    ~StopMotionSerial();
+  StopMotionSerial();
+  ~StopMotionSerial();
 
-    QStringList m_controlBaudRates, m_serialDevices;
+  QStringList m_controlBaudRates, m_serialDevices;
 
-    QSerialPort* m_serialPort;
+  QSerialPort* m_serialPort;
 
-    // motion control
-    QStringList getAvailableSerialPorts();
-    bool setSerialPort(QString port);
-    void sendSerialData();
+  // motion control
+  QStringList getAvailableSerialPorts();
+  bool setSerialPort(QString port);
+  void sendSerialData();
 };
 #endif  // STOPMOTIONSERIAL_H

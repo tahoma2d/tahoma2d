@@ -48,7 +48,6 @@ public:
   TRaster32P getImage() { return m_finalImage; }
   void convertFromJpg();
 
-
 protected:
   void run() override;
 #endif

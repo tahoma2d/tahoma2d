@@ -1,7 +1,6 @@
 #include "webcam.h"
 #include "tenv.h"
 
-
 #ifdef WIN32
 #include <Windows.h>
 #include <mfobjects.h>
@@ -23,22 +22,20 @@ TEnv::IntVar StopMotionUseMjpg("StopMotionUseMjpg", 1);
 //-----------------------------------------------------------------------------
 
 Webcam::Webcam() {
-	m_useDirectShow = StopMotionUseDirectShow;
-	m_useMjpg = StopMotionUseMjpg;
+  m_useDirectShow = StopMotionUseDirectShow;
+  m_useMjpg       = StopMotionUseMjpg;
 }
 
 //-----------------------------------------------------------------
 
-Webcam::~Webcam() {
-
-}
+Webcam::~Webcam() {}
 
 //-----------------------------------------------------------------
 
 QList<QCameraInfo> Webcam::getWebcams() {
-    m_webcams.clear();
-    m_webcams = QCameraInfo::availableCameras();
-    return m_webcams;
+  m_webcams.clear();
+  m_webcams = QCameraInfo::availableCameras();
+  return m_webcams;
 }
 
 //-----------------------------------------------------------------
@@ -49,149 +46,142 @@ void Webcam::setWebcam(QCamera* camera) { m_webcam = camera; }
 
 bool Webcam::initWebcam(int index) {
 #ifdef WIN32
-    if (!m_useDirectShow) {
-        // the webcam order obtained from Qt isn't always the same order as
-        // the one obtained from OpenCV without DirectShow
-        translateIndex(index);
-        m_cvWebcam.open(m_webcamIndex);
-    }
-    else {
-        m_webcamIndex = index;
-        m_cvWebcam.open(m_webcamIndex, cv::CAP_DSHOW);
-    }
-    if (m_cvWebcam.isOpened() == false) {
-        return false;
-    }
-#else
+  if (!m_useDirectShow) {
+    // the webcam order obtained from Qt isn't always the same order as
+    // the one obtained from OpenCV without DirectShow
+    translateIndex(index);
+    m_cvWebcam.open(m_webcamIndex);
+  } else {
     m_webcamIndex = index;
-    m_cvWebcam.open(index);
-    if (m_cvWebcam.isOpened() == false) {
-        return false;
-    }
+    m_cvWebcam.open(m_webcamIndex, cv::CAP_DSHOW);
+  }
+  if (m_cvWebcam.isOpened() == false) {
+    return false;
+  }
+#else
+  m_webcamIndex = index;
+  m_cvWebcam.open(index);
+  if (m_cvWebcam.isOpened() == false) {
+    return false;
+  }
 #endif
-    return true;
+  return true;
 }
 
 //-----------------------------------------------------------------
 
-void Webcam::releaseWebcam() {
-    m_cvWebcam.release();
-}
+void Webcam::releaseWebcam() { m_cvWebcam.release(); }
 
 //-----------------------------------------------------------------
 
 int Webcam::getIndexOfResolution() {
-    return m_webcamResolutions.indexOf(QSize(m_webcamWidth, m_webcamHeight));
+  return m_webcamResolutions.indexOf(QSize(m_webcamWidth, m_webcamHeight));
 }
 
 //-----------------------------------------------------------------
 
-bool Webcam::getWebcamImage(TRaster32P &tempImage) {
-    bool error = false;
-    cv::Mat imgOriginal;
-    cv::Mat imgCorrected;
+bool Webcam::getWebcamImage(TRaster32P& tempImage) {
+  bool error = false;
+  cv::Mat imgOriginal;
+  cv::Mat imgCorrected;
 
-    if (m_cvWebcam.isOpened() == false) {
-        initWebcam(m_webcamIndex);
-        // mjpg is used by many webcams
-        // opencv runs very slow on some webcams without it.
-        if (m_useMjpg) {
-            m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
-            m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-        }
-        m_cvWebcam.set(3, m_webcamWidth);
-        m_cvWebcam.set(4, m_webcamHeight);
-        if (!m_cvWebcam.isOpened()) {
-            error = true;
-        }
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+    // mjpg is used by many webcams
+    // opencv runs very slow on some webcams without it.
+    if (m_useMjpg) {
+      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
+                     cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
+      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
+                     cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
     }
-
-    bool blnFrameReadSuccessfully =
-        m_cvWebcam.read(imgOriginal);  // get next frame
-
-    if (!blnFrameReadSuccessfully ||
-        imgOriginal.empty()) {  // if frame not read successfully
-        std::cout << "error: frame not read from webcam\n";
-        error = true;  // print error message to std out
+    m_cvWebcam.set(3, m_webcamWidth);
+    m_cvWebcam.set(4, m_webcamHeight);
+    if (!m_cvWebcam.isOpened()) {
+      error = true;
     }
+  }
 
-    if (!error) {
-        cv::cvtColor(imgOriginal, imgCorrected, cv::COLOR_BGR2BGRA);
-        cv::flip(imgCorrected, imgCorrected, 0);
-        int width = m_cvWebcam.get(3);
-        int height = m_cvWebcam.get(4);
-        int size = imgCorrected.total() * imgCorrected.elemSize();
+  bool blnFrameReadSuccessfully =
+      m_cvWebcam.read(imgOriginal);  // get next frame
 
-        tempImage = TRaster32P(width, height);
-        //m_liveViewImage = TRaster32P(width, height);
-        tempImage->lock();
-        uchar* imgBuf = imgCorrected.data;
-        uchar* rawData = tempImage->getRawData();
-        memcpy(rawData, imgBuf, size);
-        tempImage->unlock();
-    }
-    if (error) {
-        return false;
-    }
-    else {
-        return true;
-    }
+  if (!blnFrameReadSuccessfully ||
+      imgOriginal.empty()) {  // if frame not read successfully
+    std::cout << "error: frame not read from webcam\n";
+    error = true;  // print error message to std out
+  }
 
+  if (!error) {
+    cv::cvtColor(imgOriginal, imgCorrected, cv::COLOR_BGR2BGRA);
+    cv::flip(imgCorrected, imgCorrected, 0);
+    int width  = m_cvWebcam.get(3);
+    int height = m_cvWebcam.get(4);
+    int size   = imgCorrected.total() * imgCorrected.elemSize();
+
+    tempImage = TRaster32P(width, height);
+    // m_liveViewImage = TRaster32P(width, height);
+    tempImage->lock();
+    uchar* imgBuf  = imgCorrected.data;
+    uchar* rawData = tempImage->getRawData();
+    memcpy(rawData, imgBuf, size);
+    tempImage->unlock();
+  }
+  if (error) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 //-----------------------------------------------------------------
 
 void Webcam::setUseDirectShow(int state) {
-    m_useDirectShow = state;
-    StopMotionUseDirectShow = state;
-    emit(useDirectShowSignal(state));
+  m_useDirectShow         = state;
+  StopMotionUseDirectShow = state;
+  emit(useDirectShowSignal(state));
 }
 
 //-----------------------------------------------------------------
 
 void Webcam::setUseMjpg(bool on) {
-    m_useMjpg = on;
-    StopMotionUseMjpg = int(on);
-    emit(useMjpgSignal(on));
+  m_useMjpg         = on;
+  StopMotionUseMjpg = int(on);
+  emit(useMjpgSignal(on));
 }
 
 //-----------------------------------------------------------------
 
 void Webcam::clearWebcam() {
-    m_webcamDescription = QString();
-    m_webcamDeviceName = QString();
-    m_webcamIndex = -1;
+  m_webcamDescription = QString();
+  m_webcamDeviceName  = QString();
+  m_webcamIndex       = -1;
 }
 
 //-----------------------------------------------------------------
 
-void Webcam::clearWebcamResolutions() {
-    m_webcamResolutions.clear();
-}
+void Webcam::clearWebcamResolutions() { m_webcamResolutions.clear(); }
 
 //-----------------------------------------------------------------
 
 void Webcam::refreshWebcamResolutions() {
-    clearWebcamResolutions();
-    m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
+  clearWebcamResolutions();
+  m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
 }
 
 //-----------------------------------------------------------------
 
 bool Webcam::translateIndex(int index) {
-    // We are using Qt to get the camera info and supported resolutions, but
-    // we are using OpenCV to actually get the images.
-    // The camera index from OpenCV and from Qt don't always agree,
-    // So this checks the name against the correct index.
-    m_webcamIndex = index;
+  // We are using Qt to get the camera info and supported resolutions, but
+  // we are using OpenCV to actually get the images.
+  // The camera index from OpenCV and from Qt don't always agree,
+  // So this checks the name against the correct index.
+  m_webcamIndex = index;
 
 #ifdef WIN32
 
-    // Thanks to:
-    // https://elcharolin.wordpress.com/2017/08/28/webcam-capture-with-the-media-foundation-sdk/
-    // for the webcam enumeration here
+// Thanks to:
+// https://elcharolin.wordpress.com/2017/08/28/webcam-capture-with-the-media-foundation-sdk/
+// for the webcam enumeration here
 
 #define CLEAN_ATTRIBUTES()                                                     \
   if (attributes) {                                                            \
@@ -207,59 +197,59 @@ bool Webcam::translateIndex(int index) {
   CoTaskMemFree(devices);                                                      \
   return hr;
 
-    HRESULT hr = S_OK;
+  HRESULT hr = S_OK;
 
-    // this is important!!
-    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+  // this is important!!
+  hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
-    UINT32 count = 0;
-    IMFAttributes* attributes = NULL;
-    IMFActivate** devices = NULL;
+  UINT32 count              = 0;
+  IMFAttributes* attributes = NULL;
+  IMFActivate** devices     = NULL;
 
-    if (FAILED(hr)) {
-        CLEAN_ATTRIBUTES()
-    }
-    // Create an attribute store to specify enumeration parameters.
-    hr = MFCreateAttributes(&attributes, 1);
-
-    if (FAILED(hr)) {
-        CLEAN_ATTRIBUTES()
-    }
-
-    // The attribute to be requested is devices that can capture video
-    hr = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,
-        MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-    if (FAILED(hr)) {
-        CLEAN_ATTRIBUTES()
-    }
-    // Enummerate the video capture devices
-    hr = MFEnumDeviceSources(attributes, &devices, &count);
-
-    if (FAILED(hr)) {
-        CLEAN_ATTRIBUTES()
-    }
-    // if there are any available devices
-    if (count > 0) {
-        WCHAR* nameString = NULL;
-        // Get the human-friendly name of the device
-        UINT32 cchName;
-
-        for (int i = 0; i < count; i++) {
-            hr = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME,
-                &nameString, &cchName);
-            std::string desc = m_webcamDescription.toStdString();
-            if (nameString == m_webcamDescription.toStdWString()) {
-                m_webcamIndex = i;
-                break;
-            }
-            // devices[0]->ShutdownObject();
-        }
-
-        CoTaskMemFree(nameString);
-    }
-    // clean
+  if (FAILED(hr)) {
     CLEAN_ATTRIBUTES()
+  }
+  // Create an attribute store to specify enumeration parameters.
+  hr = MFCreateAttributes(&attributes, 1);
+
+  if (FAILED(hr)) {
+    CLEAN_ATTRIBUTES()
+  }
+
+  // The attribute to be requested is devices that can capture video
+  hr = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,
+                           MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+  if (FAILED(hr)) {
+    CLEAN_ATTRIBUTES()
+  }
+  // Enummerate the video capture devices
+  hr = MFEnumDeviceSources(attributes, &devices, &count);
+
+  if (FAILED(hr)) {
+    CLEAN_ATTRIBUTES()
+  }
+  // if there are any available devices
+  if (count > 0) {
+    WCHAR* nameString = NULL;
+    // Get the human-friendly name of the device
+    UINT32 cchName;
+
+    for (int i = 0; i < count; i++) {
+      hr = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME,
+                                          &nameString, &cchName);
+      std::string desc = m_webcamDescription.toStdString();
+      if (nameString == m_webcamDescription.toStdWString()) {
+        m_webcamIndex = i;
+        break;
+      }
+      // devices[0]->ShutdownObject();
+    }
+
+    CoTaskMemFree(nameString);
+  }
+  // clean
+  CLEAN_ATTRIBUTES()
 #else
-    return true;
+  return true;
 #endif
 }

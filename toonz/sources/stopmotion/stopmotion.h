@@ -55,9 +55,9 @@ private:
   QString m_infoColorName    = "";
   QString m_frameInfoToolTip = "";
 
-  //options
-  int m_opacity              = 255.0;
-  int m_subsampling          = 1;
+  // options
+  int m_opacity     = 255.0;
+  int m_subsampling = 1;
   QSize m_allowedCameraSize;
   bool m_useNumpadShortcuts      = false;
   bool m_numpadForStyleSwitching = true;
@@ -78,13 +78,13 @@ public:
   StopMotionSerial* m_serial;
   StopMotionLight* m_light;
 
-  bool m_usingWebcam     = false;
-  bool m_placeOnXSheet   = true;
-  bool m_alwaysLiveView     = false;
-  bool m_userCalledPause    = false;
-  bool m_drawBeneathLevels  = true;
-  bool m_isTimeLapse        = false;
-  int m_reviewTime       = 2;
+  bool m_usingWebcam       = false;
+  bool m_placeOnXSheet     = true;
+  bool m_alwaysLiveView    = false;
+  bool m_userCalledPause   = false;
+  bool m_drawBeneathLevels = true;
+  bool m_isTimeLapse       = false;
+  int m_reviewTime         = 2;
   QString m_tempFile;
 
   // timers
@@ -230,8 +230,6 @@ signals:
   void intervalStarted();
   void intervalStopped();
   void intervalAmountChanged(int);
-
-
 };
 
 #endif  // STOPMOTION_H

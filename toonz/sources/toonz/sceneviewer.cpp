@@ -1924,8 +1924,8 @@ void SceneViewer::drawScene() {
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
 #ifdef WITH_CANON
-        hide_opacity =
-            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
+        hide_opacity = m_stopMotion->m_canon->m_zooming ||
+                       m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -1972,8 +1972,8 @@ void SceneViewer::drawScene() {
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
 #ifdef WITH_CANON
-        hide_opacity =
-            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
+        hide_opacity = m_stopMotion->m_canon->m_zooming ||
+                       m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2025,8 +2025,8 @@ void SceneViewer::drawScene() {
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
 #ifdef WITH_CANON
-        hide_opacity =
-            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
+        hide_opacity = m_stopMotion->m_canon->m_zooming ||
+                       m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2088,8 +2088,8 @@ void SceneViewer::drawScene() {
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
 #ifdef WITH_CANON
-        hide_opacity =
-            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
+        hide_opacity = m_stopMotion->m_canon->m_zooming ||
+                       m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);

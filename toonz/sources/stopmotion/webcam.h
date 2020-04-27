@@ -14,42 +14,42 @@
 class QCamera;
 class QCameraInfo;
 
-class Webcam : public QObject { 
-  Q_OBJECT  
+class Webcam : public QObject {
+  Q_OBJECT
 
 public:
-    Webcam();
-    ~Webcam();
+  Webcam();
+  ~Webcam();
 
-    void setWebcamDeviceName(QString name) { m_webcamDeviceName = name; }
-    QString getWebcamDeviceName() { return m_webcamDeviceName; }
+  void setWebcamDeviceName(QString name) { m_webcamDeviceName = name; }
+  QString getWebcamDeviceName() { return m_webcamDeviceName; }
 
-    void setWebcamDescription(QString desc) { m_webcamDescription = desc; }
-    QString getWebcamDescription() { return m_webcamDescription; }
+  void setWebcamDescription(QString desc) { m_webcamDescription = desc; }
+  QString getWebcamDescription() { return m_webcamDescription; }
 
-    void setWebcamIndex(int index) { m_webcamIndex = index; }
-    int getWebcamIndex() { return m_webcamIndex; }
+  void setWebcamIndex(int index) { m_webcamIndex = index; }
+  int getWebcamIndex() { return m_webcamIndex; }
 
-    int getWebcamWidth() { return m_webcamWidth; }
-    int getWebcamHeight() { return m_webcamHeight; }
-    void setWebcamWidth(int width) { m_webcamWidth = width; }
-    void setWebcamHeight(int height) { m_webcamHeight = height; }
-  
-    void releaseWebcam();
+  int getWebcamWidth() { return m_webcamWidth; }
+  int getWebcamHeight() { return m_webcamHeight; }
+  void setWebcamWidth(int width) { m_webcamWidth = width; }
+  void setWebcamHeight(int height) { m_webcamHeight = height; }
+
+  void releaseWebcam();
   void clearWebcam();
   QList<QCameraInfo> getWebcams();
   QCamera* getWebcam() { return m_webcam; }
   void setWebcam(QCamera* camera);
   bool initWebcam(int index = 0);
-  bool getWebcamImage(TRaster32P &tempImage);
+  bool getWebcamImage(TRaster32P& tempImage);
 
   bool translateIndex(int index);
-  
+
   QList<QSize> getWebcamResolutions() { return m_webcamResolutions; }
   int getIndexOfResolution();
   void clearWebcamResolutions();
   void refreshWebcamResolutions();
-  
+
   void setUseMjpg(bool on);
   bool getUseMjpg() { return m_useMjpg; }
   bool getUseDirectShow() { return m_useDirectShow; }
@@ -64,15 +64,15 @@ private:
   // Webcam Public Properties
   QString m_webcamDeviceName;
   QString m_webcamDescription;
-  int m_webcamIndex = -1;
+  int m_webcamIndex    = -1;
   bool m_useDirectShow = true;
-  int m_webcamWidth = 0;
-  int m_webcamHeight = 0;
-  bool m_useMjpg = true;
+  int m_webcamWidth    = 0;
+  int m_webcamHeight   = 0;
+  bool m_useMjpg       = true;
 
 signals:
-    void useMjpgSignal(bool);
-    void useDirectShowSignal(bool);
+  void useMjpgSignal(bool);
+  void useDirectShowSignal(bool);
 };
 
 #endif  // WEBCAM_H
