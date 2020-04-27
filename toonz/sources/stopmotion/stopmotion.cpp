@@ -1,17 +1,5 @@
 #include "stopmotion.h"
 
-#ifdef WIN32
-#include <Windows.h>
-#include <mfobjects.h>
-#include <mfapi.h>
-#include <mfidl.h>
-#pragma comment(lib, "Mfplat.lib")
-#pragma comment(lib, "Mf.lib")
-#pragma comment(lib, "Mfreadwrite.lib")
-#pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "shlwapi.lib")
-#endif
-
 // TnzCore includes
 #include "menubarcommandids.h"
 #include "tapp.h"
@@ -39,7 +27,6 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/levelproperties.h"
 #include "toonz/tstageobjecttree.h"
-
 #include "toonzqt/menubarcommand.h"
 
 #include <QApplication>
@@ -53,19 +40,12 @@
 #include <QTimer>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
-#include <QSerialPort>
-#include <QSerialPortInfo>
 
 // Connected camera
-TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 1);
 TEnv::IntVar StopMotionOpacity("StopMotionOpacity", 100);
-TEnv::IntVar StopMotionUseDirectShow("StopMotionUseDirectShow", 1);
 TEnv::IntVar StopMotionAlwaysLiveView("StopMotionAlwaysLiveView", 0);
-
-TEnv::IntVar StopMotionBlackCapture("StopMotionBlackCapture", 0);
 TEnv::IntVar StopMotionPlaceOnXSheet("StopMotionPlaceOnXSheet", 1);
 TEnv::IntVar StopMotionReviewTime("StopMotionReviewTime", 1);
-TEnv::IntVar StopMotionUseMjpg("StopMotionUseMjpg", 1);
 TEnv::IntVar StopMotionUseNumpad("StopMotionUseNumpad", 0);
 TEnv::IntVar StopMotionDrawBeneathLevels("StopMotionDrawBeneathLevels", 1);
 
@@ -75,7 +55,6 @@ TEnv::StringVar StopMotionCameraName("CamCapCameraName", "");
 TEnv::StringVar StopMotionCameraResolution("CamCapCameraResolution", "");
 
 namespace {
-bool l_quitLoop = false;
 
 TPointD getCurrentCameraDpi() {
   TCamera *camera =
@@ -222,101 +201,18 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 
 };  // namespace
 
-//=============================================================================
-//=============================================================================
-
-JpgConverter::JpgConverter() {}
-JpgConverter::~JpgConverter() {}
-
-#ifdef WITH_CANON
-
-void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
-
-void JpgConverter::convertFromJpg() {
-#ifdef MACOSX
-  UInt64 mySize = 0;
-#else
-  unsigned __int64 mySize = 0;
-#endif
-  unsigned char *data = NULL;
-  EdsError err        = EdsGetPointer(m_stream, (EdsVoid **)&data);
-  err                 = EdsGetLength(m_stream, &mySize);
-
-  int width, height, pixelFormat;
-  int inSubsamp, inColorspace;
-  tjhandle tjInstance   = NULL;
-  unsigned char *imgBuf = NULL;
-  tjInstance            = tjInitDecompress();
-  tjDecompressHeader3(tjInstance, data, mySize, &width, &height, &inSubsamp,
-                      &inColorspace);
-
-  if (width < 0 || height < 0) {
-    emit(imageReady(false));
-    return;
-  }
-
-  pixelFormat = TJPF_BGRX;
-  imgBuf = (unsigned char *)tjAlloc(width * height * tjPixelSize[pixelFormat]);
-  int flags = 0;
-  flags |= TJFLAG_BOTTOMUP;
-
-  int factorsNum;
-  tjscalingfactor scalingFactor = {1, 1};
-  tjscalingfactor *factor       = tjGetScalingFactors(&factorsNum);
-  int i                         = 0;
-  int tempWidth, tempHeight;
-  while (i < factorsNum) {
-    scalingFactor = factor[i];
-    i++;
-    tempWidth  = TJSCALED(width, scalingFactor);
-    tempHeight = TJSCALED(height, scalingFactor);
-  }
-  tjDecompress2(tjInstance, data, mySize, imgBuf, width,
-                width * tjPixelSize[pixelFormat], height, pixelFormat, flags);
-
-  m_finalImage = TRaster32P(width, height);
-  m_finalImage->lock();
-  uchar *rawData = m_finalImage->getRawData();
-  memcpy(rawData, imgBuf, width * height * tjPixelSize[pixelFormat]);
-  m_finalImage->unlock();
-
-  tjFree(imgBuf);
-  imgBuf = NULL;
-  tjDestroy(tjInstance);
-  tjInstance = NULL;
-
-  if (m_stream != NULL) {
-    EdsRelease(m_stream);
-    m_stream = NULL;
-  }
-  data = NULL;
-  emit(imageReady(true));
-}
-
-void JpgConverter::run() { convertFromJpg(); }
-
-#endif
-
 //-----------------------------------------------------------------------------
 
 StopMotion::StopMotion() {
   m_opacity         = StopMotionOpacity;
-  m_useScaledImages = StopMotionUseScaledImages;
-#ifdef WITH_CANON
-  buildAvMap();
-  buildIsoMap();
-  buildTvMap();
-  buildModeMap();
-  buildExposureMap();
-  buildWhiteBalanceMap();
-  buildColorTemperatures();
-  buildImageQualityMap();
-  buildPictureStyleMap();
-#endif
-  m_useDirectShow      = StopMotionUseDirectShow;
-  m_useMjpg            = StopMotionUseMjpg;
+  
+  m_webcam = new Webcam();
+  m_canon = Canon::instance();
+  m_serial = new StopMotionSerial();
+  m_light = new StopMotionLight();
+
   m_alwaysLiveView     = StopMotionAlwaysLiveView;
-  m_blackCapture       = StopMotionBlackCapture;
+  
   m_placeOnXSheet      = StopMotionPlaceOnXSheet;
   m_reviewTime         = StopMotionReviewTime;
   m_useNumpadShortcuts = StopMotionUseNumpad;
@@ -334,23 +230,7 @@ StopMotion::StopMotion() {
   // Make the interval timer single-shot. When the capture finished, restart
   // timer for next frame.
   // This is because capturing and saving the image needs some time.
-  m_intervalTimer->setSingleShot(true);
-
-  m_fullScreen1 = new QDialog();
-  m_fullScreen1->setModal(false);
-  m_fullScreen1->setStyleSheet("background-color:black;");
-  m_screenCount = QApplication::desktop()->screenCount();
-  if (m_screenCount > 1) {
-    m_fullScreen2 = new QDialog();
-    m_fullScreen2->setModal(false);
-    m_fullScreen2->setStyleSheet("background-color:black;");
-    if (m_screenCount > 2) {
-      m_fullScreen3 = new QDialog();
-      m_fullScreen3->setModal(false);
-      m_fullScreen3->setStyleSheet("background-color:black;");
-    }
-  }
-  m_serialPort = new QSerialPort(this);
+  m_intervalTimer->setSingleShot(true);  
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TSceneHandle *sceneHandle   = TApp::instance()->getCurrentScene();
@@ -362,14 +242,16 @@ StopMotion::StopMotion() {
   ret = ret && connect(m_reviewTimer, SIGNAL(timeout()), this,
                        SLOT(onReviewTimeout()));
   ret = ret && connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-  ret =
-      ret && connect(this, SIGNAL(newImageReady()), this, SLOT(importImage()));
+
   ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
                        SLOT(onSceneSwitched()));
   ret = ret && connect(frameHandle, SIGNAL(isPlayingStatusChanged()), this,
                        SLOT(onPlaybackChanged()));
   ret = ret && connect(m_intervalTimer, SIGNAL(timeout()), this,
                        SLOT(onIntervalCaptureTimerTimeout()));
+  ret = ret && connect(m_canon, SIGNAL(newCanonImageReady()), this, SLOT(importImage()));
+  assert(ret);
+  ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this, SLOT(onCanonCameraChanged(QString)));
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -384,11 +266,7 @@ StopMotion::StopMotion() {
 
 StopMotion::~StopMotion() {
   disconnectAllCameras();
-#ifdef WITH_CANON
-  if (m_camera) releaseCamera();
-  if (m_cameraList != NULL) releaseCameraList();
-  if (m_isSDKLoaded) closeCanonSDK();
-#endif
+  m_canon->closeAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -441,27 +319,21 @@ void StopMotion::onSceneSwitched() {
 //-----------------------------------------------------------------
 
 void StopMotion::disconnectAllCameras() {
-  m_active            = false;
-  m_webcamDeviceName  = QString();
-  m_webcamDescription = QString();
-  m_webcamIndex       = -1;
 
-#ifdef WITH_CANON
-  m_proxyDpi             = TPointD(0.0, 0.0);
-  m_proxyImageDimensions = TDimension(0, 0);
 
-  if (m_sessionOpen && getCameraCount() > 0) {
-    if (m_liveViewStatus > LiveViewClosed) {
-      endCanonLiveView();
-    }
-    closeCameraSession();
+  if (m_liveViewStatus > LiveViewClosed) {
+      m_canon->resetCanon(true);
+  }
+  else {
+      m_canon->resetCanon(false);
   }
 
-#endif
   if (m_usingWebcam) {
-    releaseWebcam();
+    m_webcam->releaseWebcam();
     m_usingWebcam = false;
   }
+  m_webcam->clearWebcam();
+
   m_liveViewStatus = LiveViewClosed;
   setTEnvCameraName("");
 
@@ -530,140 +402,10 @@ void StopMotion::raiseOpacity() {
 
 //-----------------------------------------------------------------
 
-void StopMotion::setUseScaledImages(bool on) {
-  m_useScaledImages         = on;
-  StopMotionUseScaledImages = int(on);
-  emit(scaleFullSizeImagesSignal(on));
-}
-
-//-----------------------------------------------------------------
-
 void StopMotion::setAlwaysLiveView(bool on) {
   m_alwaysLiveView         = on;
   StopMotionAlwaysLiveView = int(on);
   emit(liveViewOnAllFramesSignal(on));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setBlackCapture(bool on) {
-  m_blackCapture         = on;
-  StopMotionBlackCapture = int(on);
-  emit(blackCaptureSignal(on));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen1Color(TPixel32 color) {
-  m_screen1Color = color;
-  emit(screen1ColorChanged(color));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen2Color(TPixel32 color) {
-  m_screen2Color = color;
-  emit(screen2ColorChanged(color));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen3Color(TPixel32 color) {
-  m_screen3Color = color;
-  emit(screen3ColorChanged(color));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen1UseOverlay(bool on) {
-  m_useScreen1Overlay = on;
-  emit(screen1OverlayChanged(on));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen2UseOverlay(bool on) {
-  m_useScreen2Overlay = on;
-  emit(screen2OverlayChanged(on));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setScreen3UseOverlay(bool on) {
-  m_useScreen3Overlay = on;
-  emit(screen3OverlayChanged(on));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::showOverlays() {
-  if (getBlackCapture()) {
-    m_fullScreen1->setStyleSheet("background-color: rgb(0,0,0);");
-    if (m_screenCount > 1) {
-      m_fullScreen2->setStyleSheet("background-color: rgb(0,0,0);");
-    }
-    if (m_screenCount > 2) {
-      m_fullScreen3->setStyleSheet("background-color: rgb(0,0,0);");
-    }
-  } else {
-    QString style1 = QString("background-color: rgb(%1,%2,%3);")
-                         .arg(m_screen1Color.r)
-                         .arg(m_screen1Color.g)
-                         .arg(m_screen1Color.b);
-    m_fullScreen1->setStyleSheet(style1);
-    if (m_screenCount > 1) {
-      QString style2 = QString("background-color: rgb(%1,%2,%3);")
-                           .arg(m_screen2Color.r)
-                           .arg(m_screen2Color.g)
-                           .arg(m_screen2Color.b);
-      m_fullScreen2->setStyleSheet(style2);
-    }
-    if (m_screenCount > 2) {
-      QString style3 = QString("background-color: rgb(%1,%2,%3);")
-                           .arg(m_screen3Color.r)
-                           .arg(m_screen3Color.g)
-                           .arg(m_screen3Color.b);
-      m_fullScreen3->setStyleSheet(style3);
-    }
-  }
-  bool shown = false;
-  if ((getBlackCapture() || m_useScreen1Overlay) && !m_isTimeLapse) {
-    m_fullScreen1->showFullScreen();
-    m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
-    shown = true;
-  }
-  if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay) &&
-      !m_isTimeLapse) {
-    m_fullScreen2->showFullScreen();
-    m_fullScreen2->setGeometry(QApplication::desktop()->screenGeometry(1));
-    shown = true;
-  }
-  if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay) &&
-      !m_isTimeLapse) {
-    m_fullScreen3->showFullScreen();
-    m_fullScreen3->setGeometry(QApplication::desktop()->screenGeometry(2));
-    shown = true;
-  }
-
-  if (shown) {
-    // this allows the full screen qdialogs to go full screen before
-    // taking a photo
-    qApp->processEvents(QEventLoop::AllEvents, 1500);
-  }
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::hideOverlays() {
-  if ((getBlackCapture() || m_useScreen1Overlay)) {
-    m_fullScreen1->hide();
-  }
-  if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
-    m_fullScreen2->hide();
-  }
-  if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
-    m_fullScreen3->hide();
-  }
 }
 
 //-----------------------------------------------------------------
@@ -680,14 +422,6 @@ void StopMotion::setReviewTime(int time) {
   m_reviewTime         = time;
   StopMotionReviewTime = time;
   emit(reviewTimeChangedSignal(time));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setUseMjpg(bool on) {
-  m_useMjpg         = on;
-  StopMotionUseMjpg = int(on);
-  emit(useMjpgSignal(on));
 }
 
 //-----------------------------------------------------------------
@@ -1182,7 +916,7 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
   TApp::instance()->getCurrentFrame()->setFrame(frameNumber - 1);
   loadLineUpImage();
   emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
-  sendSerialData();
+  m_serial->sendSerialData();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
@@ -1270,7 +1004,7 @@ bool StopMotion::loadLineUpImage() {
       liveViewFolder + TFilePath(levelName + L"..jpg"));
   TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
   if (TFileStatus(liveViewFile).doesExist()) {
-    if (loadJpg(liveViewFile, m_lineUpImage)) {
+    if (JpgConverter::loadJpg(liveViewFile, m_lineUpImage)) {
       m_hasLineUpImage = true;
       return true;
     }
@@ -1474,19 +1208,31 @@ void StopMotion::setSubsampling() {
 
 void StopMotion::onTimeout() {
   int currentFrame = TApp::instance()->getCurrentFrame()->getFrame();
-  // int destinationFrame = m_xSheetFrameNumber - 1;
+
   if (m_liveViewStatus > LiveViewClosed && m_liveViewStatus < LiveViewPaused &&
       !TApp::instance()->getCurrentFrame()->isPlaying()) {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
-        downloadEVFData();
+        bool success = m_canon->downloadEVFData();
+        if (success) {
+            setLiveViewImage();
+        }
+        else {
+            m_hasLiveViewImage = false;
+        }
 #endif
       } else {
-        getWebcamImage();
+        bool success = m_webcam->getWebcamImage(m_liveViewImage);
+        if (success) {
+            setLiveViewImage();
+        }
+        else {
+            m_hasLiveViewImage = false;
+        }
       }
-      if (getAlwaysLiveView() && currentFrame != m_xSheetFrameNumber - 1 ||
-          m_pickLiveViewZoom) {
+      if ((!getAlwaysLiveView() && currentFrame != m_xSheetFrameNumber - 1) ||
+          m_canon->m_pickLiveViewZoom) {
         m_showLineUpImage = false;
       } else {
         m_showLineUpImage = true;
@@ -1499,13 +1245,88 @@ void StopMotion::onTimeout() {
     if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
-        downloadEVFData();
+          bool success = m_canon->downloadEVFData();
+          if (success) {
+              setLiveViewImage();
+          }
+          else {
+              m_hasLiveViewImage = false;
+          }
 #endif
-      } else
-        getWebcamImage();
+      }
+      else {
+          bool success = m_webcam->getWebcamImage(m_liveViewImage);
+          if (success) {
+              setLiveViewImage();
+          }
+          else {
+              m_hasLiveViewImage = false;
+          }
+      } 
     }
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::setLiveViewImage() {
+    m_hasLiveViewImage = true;
+
+    // make sure not to set to LiveViewOpen if it has been turned off
+    if (m_liveViewStatus > LiveViewClosed && !m_userCalledPause) {
+        m_liveViewStatus = LiveViewOpen;
+    }
+    
+    if (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0) {
+        TCamera* camera =
+            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+        TDimensionD size = camera->getSize();
+        m_liveViewImageDimensions =
+            TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
+        double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
+            m_liveViewImageDimensions.ly / size.ly);
+        m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
+
+        if (!m_usingWebcam) {
+            minimumDpi = std::min(m_fullImageDimensions.lx / size.lx,
+                m_fullImageDimensions.ly / size.ly);
+            m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
+        }
+        else {
+            m_fullImageDimensions = m_liveViewImageDimensions;
+            m_fullImageDpi = m_liveViewDpi;
+        }
+
+        emit(newDimensions());
+    }
+    emit(newLiveViewImageReady());
+}
+//
+////-----------------------------------------------------------------------------
+//
+//void StopMotion::setLiveViewImage() {
+//    m_hasLiveViewImage = true;
+//    m_liveViewStatus = LiveViewOpen;
+//    if (m_hasLiveViewImage &&
+//        (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0)) {
+//        TCamera* camera =
+//            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+//        TDimensionD size = camera->getSize();
+//        m_liveViewImageDimensions =
+//            TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
+//        double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
+//            m_liveViewImageDimensions.ly / size.ly);
+//        m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
+//
+//        m_fullImageDimensions = m_liveViewImageDimensions;
+//
+//        m_fullImageDpi = m_liveViewDpi;
+//
+//        emit(newDimensions());
+//    }
+//
+//    emit(newLiveViewImageReady());
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -1520,7 +1341,7 @@ void StopMotion::onReviewTimeout() {
 //-----------------------------------------------------------------------------
 
 bool StopMotion::importImage() {
-  hideOverlays();
+  m_light->hideOverlays();
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
@@ -1700,17 +1521,15 @@ bool StopMotion::importImage() {
 
   // move the temp file
   if (!m_usingWebcam) {
-    if (m_useScaledImages) {
+    if (m_canon->m_useScaledImages) {
       TSystem::copyFile(fullResFile, tempFile);
       TSystem::deleteFile(tempFile);
     }
     if (m_hasLineUpImage) {
-      saveJpg(m_lineUpImage, liveViewFile);
+      JpgConverter::saveJpg(m_lineUpImage, liveViewFile);
     }
   }
-  if (m_usingWebcam) {
-    // saveJpg(m_newImage, actualFile);
-  }
+
   TFrameId fid(frameNumber);
   TPointD levelDpi = sl->getDpi();
   /* create the raster */
@@ -1830,7 +1649,7 @@ bool StopMotion::importImage() {
 void StopMotion::captureImage() {
   bool sessionOpen = false;
 #ifdef WITH_CANON
-  sessionOpen = m_sessionOpen;
+  sessionOpen = m_canon->m_sessionOpen;
 #endif
   if ((!m_usingWebcam && !sessionOpen) || m_userCalledPause) {
     DVGui::warning(tr("Please start live view before capturing an image."));
@@ -1843,7 +1662,7 @@ void StopMotion::captureImage() {
       return;
     }
 
-    showOverlays();
+    m_light->showOverlays();
 
     if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
@@ -1857,7 +1676,7 @@ void StopMotion::captureImage() {
     importImage();
     return;
   }
-  showOverlays();
+  m_light->showOverlays();
 
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
@@ -1888,111 +1707,8 @@ void StopMotion::captureImage() {
   m_tempFile = tempFile.getQString();
 
 #ifdef WITH_CANON
-  takePicture();
+  m_canon->takePicture();
 #endif
-}
-
-//-----------------------------------------------------------------------------
-
-void StopMotion::saveJpg(TRaster32P image, TFilePath path) {
-  unsigned char *jpegBuf = NULL; /* Dynamically allocate the JPEG buffer */
-  unsigned long jpegSize = 0;
-  int pixelFormat        = TJPF_BGRX;
-  int outQual            = 95;
-  int subSamp            = TJSAMP_411;
-  bool success           = false;
-  tjhandle tjInstance;
-
-  int width  = image->getLx();
-  int height = image->getLy();
-  int flags  = 0;
-  flags |= TJFLAG_BOTTOMUP;
-
-  image->lock();
-  uchar *rawData = image->getRawData();
-  if ((tjInstance = tjInitCompress()) != NULL) {
-    if (tjCompress2(tjInstance, rawData, width, 0, height, pixelFormat,
-                    &jpegBuf, &jpegSize, subSamp, outQual, flags) >= 0) {
-      success = true;
-    }
-  }
-  image->unlock();
-  tjDestroy(tjInstance);
-  tjInstance = NULL;
-
-  if (success) {
-    /* Write the JPEG image to disk. */
-    QFile fullImage(path.getQString());
-    fullImage.open(QIODevice::WriteOnly);
-    QDataStream dataStream(&fullImage);
-    dataStream.writeRawData((const char *)jpegBuf, jpegSize);
-    fullImage.close();
-  }
-  tjFree(jpegBuf);
-  jpegBuf = NULL;
-}
-
-//-----------------------------------------------------------------------------
-
-bool StopMotion::loadJpg(TFilePath path, TRaster32P &image) {
-  long size;
-  int inSubsamp, inColorspace, width, height;
-  unsigned long jpegSize;
-  unsigned char *jpegBuf;
-  FILE *jpegFile;
-  QString qPath      = path.getQString();
-  QByteArray ba      = qPath.toLocal8Bit();
-  const char *c_path = ba.data();
-  bool success       = true;
-  tjhandle tjInstance;
-
-  /* Read the JPEG file into memory. */
-  if ((jpegFile = fopen(c_path, "rb")) == NULL) success = false;
-  if (success && fseek(jpegFile, 0, SEEK_END) < 0 ||
-      ((size = ftell(jpegFile)) < 0) || fseek(jpegFile, 0, SEEK_SET) < 0)
-    success                         = false;
-  if (success && size == 0) success = false;
-  jpegSize                          = (unsigned long)size;
-  if (success && (jpegBuf = (unsigned char *)tjAlloc(jpegSize)) == NULL)
-    success = false;
-  if (success && fread(jpegBuf, jpegSize, 1, jpegFile) < 1) success = false;
-  fclose(jpegFile);
-  jpegFile = NULL;
-
-  if (success && (tjInstance = tjInitDecompress()) == NULL) success = false;
-
-  if (success &&
-      tjDecompressHeader3(tjInstance, jpegBuf, jpegSize, &width, &height,
-                          &inSubsamp, &inColorspace) < 0)
-    success = false;
-
-  int pixelFormat       = TJPF_BGRX;
-  unsigned char *imgBuf = NULL;
-  if (success &&
-      (imgBuf = tjAlloc(width * height * tjPixelSize[pixelFormat])) == NULL)
-    success = false;
-
-  int flags = 0;
-  flags |= TJFLAG_BOTTOMUP;
-  if (success &&
-      tjDecompress2(tjInstance, jpegBuf, jpegSize, imgBuf, width, 0, height,
-                    pixelFormat, flags) < 0)
-    success = false;
-  tjFree(jpegBuf);
-  jpegBuf = NULL;
-  tjDestroy(tjInstance);
-  tjInstance = NULL;
-
-  image = TRaster32P(width, height);
-  image->lock();
-  uchar *rawData = image->getRawData();
-  memcpy(rawData, imgBuf, width * height * tjPixelSize[pixelFormat]);
-  image->unlock();
-
-  tjFree(imgBuf);
-  imgBuf = NULL;
-
-  return success;
 }
 
 //-----------------------------------------------------------------------------
@@ -2044,30 +1760,30 @@ void StopMotion::saveXmlFile() {
   xmlWriter.writeStartElement("CameraInfo");
   if (m_usingWebcam) {
     xmlWriter.writeTextElement("Webcam", "yes");
-    xmlWriter.writeTextElement("CameraName", m_webcamDescription);
+    xmlWriter.writeTextElement("CameraName", m_webcam->getWebcamDescription());
     xmlWriter.writeTextElement("CameraResolutionX",
-                               QString::number(m_webcamWidth));
+                               QString::number(m_webcam->getWebcamWidth()));
     xmlWriter.writeTextElement("CameraResolutionY",
-                               QString::number(m_webcamHeight));
+                               QString::number(m_webcam->getWebcamHeight()));
   } else {
     xmlWriter.writeTextElement("Webcam", "no");
 #ifdef WITH_CANON
     xmlWriter.writeTextElement("CameraName",
-                               QString::fromStdString(m_cameraName));
-    xmlWriter.writeTextElement("Aperture", getCurrentAperture());
-    xmlWriter.writeTextElement("ShutterSpeed", getCurrentShutterSpeed());
-    xmlWriter.writeTextElement("ISO", getCurrentIso());
-    xmlWriter.writeTextElement("PictureStyle", getCurrentPictureStyle());
-    xmlWriter.writeTextElement("ImageQuality", getCurrentImageQuality());
-    xmlWriter.writeTextElement("WhiteBalance", getCurrentWhiteBalance());
+                               QString::fromStdString(m_canon->m_cameraName));
+    xmlWriter.writeTextElement("Aperture", m_canon->getCurrentAperture());
+    xmlWriter.writeTextElement("ShutterSpeed", m_canon->getCurrentShutterSpeed());
+    xmlWriter.writeTextElement("ISO", m_canon->getCurrentIso());
+    xmlWriter.writeTextElement("PictureStyle", m_canon->getCurrentPictureStyle());
+    xmlWriter.writeTextElement("ImageQuality", m_canon->getCurrentImageQuality());
+    xmlWriter.writeTextElement("WhiteBalance", m_canon->getCurrentWhiteBalance());
     xmlWriter.writeTextElement("ColorTemperature",
-                               getCurrentColorTemperature());
+        m_canon->getCurrentColorTemperature());
     xmlWriter.writeTextElement("ExposureCompensation",
-                               getCurrentExposureCompensation());
+        m_canon->getCurrentExposureCompensation());
     xmlWriter.writeTextElement("FocusCheckLocationX",
-                               QString::number(m_finalZoomPoint.x));
+                               QString::number(m_canon->m_finalZoomPoint.x));
     xmlWriter.writeTextElement("FocusCheckLocationY",
-                               QString::number(m_finalZoomPoint.y));
+                               QString::number(m_canon->m_finalZoomPoint.y));
 #endif
   }
   xmlWriter.writeEndElement();
@@ -2126,10 +1842,10 @@ bool StopMotion::loadXmlFile() {
         } else {
 #ifdef WITH_CANON
           QString camName = "";
-          if (getCameraCount() > 0) {
-            openCameraSession();
-            camName = QString::fromStdString(getCameraName());
-            closeCameraSession();
+          if (m_canon->getCameraCount() > 0) {
+              m_canon->openCameraSession();
+            camName = QString::fromStdString(m_canon->getCameraName());
+            m_canon->closeCameraSession();
           }
           if (text == camName) {
             changeCameras(-1);
@@ -2154,58 +1870,58 @@ bool StopMotion::loadXmlFile() {
       if (xmlReader.name() == "Aperture") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setAperture(text);
+            m_canon->setAperture(text);
         }
       }
       if (xmlReader.name() == "ShutterSpeed") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setShutterSpeed(text);
+            m_canon->setShutterSpeed(text);
         }
       }
       if (xmlReader.name() == "ISO") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setIso(text);
+            m_canon->setIso(text);
         }
       }
       if (xmlReader.name() == "PictureStyle") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setPictureStyle(text);
+            m_canon->setPictureStyle(text);
         }
       }
       if (xmlReader.name() == "ImageQuality") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setImageQuality(text);
+            m_canon->setImageQuality(text);
         }
       }
       if (xmlReader.name() == "WhiteBalance") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setWhiteBalance(text);
+            m_canon->setWhiteBalance(text);
         }
       }
       if (xmlReader.name() == "ColorTemperature") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setColorTemperature(text);
+            m_canon->setColorTemperature(text);
         }
       }
       if (xmlReader.name() == "ExposureCompensation") {
         text = xmlReader.readElementText();
         if (foundCamera == true && webcam == false) {
-          setExposureCompensation(text);
+            m_canon->setExposureCompensation(text);
         }
       }
       if (xmlReader.name() == "FocusCheckLocationX") {
         text               = xmlReader.readElementText();
-        m_finalZoomPoint.x = text.toInt();
+        m_canon->m_finalZoomPoint.x = text.toInt();
       }
       if (xmlReader.name() == "FocusCheckLocationY") {
         text               = xmlReader.readElementText();
-        m_finalZoomPoint.y = text.toInt();
+        m_canon->m_finalZoomPoint.y = text.toInt();
       }
 #endif
     }
@@ -2356,7 +2072,7 @@ void StopMotion::refreshFrameInfo() {
   bool sessionOpen = false;
 
 #ifdef WITH_CANON
-  sessionOpen = m_sessionOpen;
+  sessionOpen = m_canon->m_sessionOpen;
 #endif
 
   if ((!sessionOpen && m_liveViewStatus < LiveViewOpen) && !m_usingWebcam) {
@@ -2379,9 +2095,9 @@ void StopMotion::refreshFrameInfo() {
   bool checkRes                    = true;
   if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
 #ifdef WITH_CANON
-  else if (m_useScaledImages || !getCurrentImageQuality().contains("Large")) {
-    stopMotionRes = m_proxyImageDimensions;
-    if (m_proxyImageDimensions == TDimension(0, 0)) {
+  else if (m_canon->m_useScaledImages || !m_canon->getCurrentImageQuality().contains("Large")) {
+    stopMotionRes = m_canon->m_proxyImageDimensions;
+    if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
       checkRes = false;
     }
   }
@@ -2695,19 +2411,19 @@ void StopMotion::refreshCameraList() {
   QString camera = "";
   bool hasCamera = false;
 #ifdef WITH_CANON
-  if (m_sessionOpen && getCameraCount() > 0 && !m_usingWebcam &&
-      m_cameraName == getCameraName()) {
+  if (m_canon->m_sessionOpen && m_canon->getCameraCount() > 0 && !m_usingWebcam &&
+      m_canon->m_cameraName == m_canon->getCameraName()) {
     hasCamera = true;
-    camera    = QString::fromStdString(m_cameraName);
+    camera    = QString::fromStdString(m_canon->m_cameraName);
   }
 #endif
   if (m_usingWebcam) {
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
     if (m_usingWebcam && cameras.size() > 0) {
       for (int i = 0; i < cameras.size(); i++) {
-        if (cameras.at(i).description() == m_webcamDescription) {
+        if (cameras.at(i).description() == m_webcam->getWebcamDescription()) {
           hasCamera = true;
-          camera    = m_webcamDescription;
+          camera    = m_webcam->getWebcamDescription();
           break;
         }
       }
@@ -2733,17 +2449,16 @@ void StopMotion::changeCameras(int index) {
 
   // There is a "Select Camera" as the first index
   index -= 1;
-  m_active = true;
 
   // first see if the index didn't actually change
   if (cameras.size() > 0 && index < cameras.size() && index >= 0) {
-    if (cameras.at(index).deviceName() == m_webcamDeviceName) {
+    if (cameras.at(index).deviceName() == m_webcam->getWebcamDeviceName()) {
       return;
     }
   }
 
 #ifdef WITH_CANON
-  if ((index > cameras.size() - 1) && m_sessionOpen) return;
+  if ((index > cameras.size() - 1) && m_canon->m_sessionOpen) return;
 #endif
 
   // close live view if open
@@ -2757,34 +2472,34 @@ void StopMotion::changeCameras(int index) {
     m_usingWebcam = false;
   } else {
     m_usingWebcam = true;
-    m_webcamIndex = index;
+    m_webcam->setWebcamIndex(index);
   }
 
   // in case the camera is not changed
   if (m_usingWebcam) {
 #ifdef WITH_CANON
-    if (m_sessionOpen && getCameraCount() > 0) {
-      closeCameraSession();
+    if (m_canon->m_sessionOpen && m_canon->getCameraCount() > 0) {
+        m_canon->closeCameraSession();
     }
 #endif
 
-    setWebcam(new QCamera(cameras.at(index)));
-    m_webcamDeviceName  = cameras.at(index).deviceName();
-    m_webcamDescription = cameras.at(index).description();
+    m_webcam->setWebcam(new QCamera(cameras.at(index)));
+    m_webcam->setWebcamDeviceName(cameras.at(index).deviceName());
+    m_webcam->setWebcamDescription(cameras.at(index).description());
 
     // loading new camera
-    getWebcam()->load();
+    m_webcam->getWebcam()->load();
 
-    m_webcamResolutions.clear();
+    m_webcam->refreshWebcamResolutions();
 
-    m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
-    int sizeCount       = m_webcamResolutions.count() - 1;
+    QList<QSize> webcamResolutions = m_webcam->getWebcamResolutions();
+    int sizeCount       = webcamResolutions.count() - 1;
 
     int width;
     int height;
-    for (int s = 0; s < m_webcamResolutions.size(); s++) {
-      width  = m_webcamResolutions.at(s).width();
-      height = m_webcamResolutions.at(s).height();
+    for (int s = 0; s < webcamResolutions.size(); s++) {
+      width  = webcamResolutions.at(s).width();
+      height = webcamResolutions.at(s).height();
     }
     // see if we can set the webcam resolution to the current camera resolution
     TDimension res = TApp::instance()
@@ -2792,31 +2507,29 @@ void StopMotion::changeCameras(int index) {
                          ->getScene()
                          ->getCurrentCamera()
                          ->getRes();
-    if (m_webcamResolutions.contains(QSize(res.lx, res.ly))) {
+    if (webcamResolutions.contains(QSize(res.lx, res.ly))) {
       width     = res.lx;
       height    = res.ly;
-      sizeCount = m_webcamResolutions.indexOf(QSize(res.lx, res.ly));
+      sizeCount = webcamResolutions.indexOf(QSize(res.lx, res.ly));
     }
 
-    getWebcam()->unload();
+    m_webcam->getWebcam()->unload();
 
     setWebcamResolution(
         QString(QString::number(width) + " x " + QString::number(height)));
-    setTEnvCameraName(m_webcamDescription.toStdString());
+    setTEnvCameraName(m_webcam->getWebcamDescription().toStdString());
     emit(newCameraSelected(index + 1, true));
     emit(webcamResolutionsChanged());
     emit(newWebcamResolutionSelected(sizeCount));
 
   } else {
 #ifdef WITH_CANON
-    openCameraSession();
-    setTEnvCameraName(getCameraName());
+      m_canon->openCameraSession();
+    setTEnvCameraName(m_canon->getCameraName());
     if (index == -2) {
       index = cameras.size();
     }
-    m_webcamDeviceName  = QString();
-    m_webcamDescription = QString();
-    m_webcamIndex       = -1;
+    m_webcam->clearWebcam();
 
     emit(newCameraSelected(index + 1, false));
 #endif
@@ -2832,252 +2545,42 @@ void StopMotion::changeCameras(int index) {
   emit(liveViewChanged(false));
   refreshFrameInfo();
 }
-
-//-----------------------------------------------------------------
-
-QList<QCameraInfo> StopMotion::getWebcams() {
-  m_webcams.clear();
-  m_webcams = QCameraInfo::availableCameras();
-  return m_webcams;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::setWebcam(QCamera *camera) { m_webcam = camera; }
-
-//-----------------------------------------------------------------
-
-bool StopMotion::translateIndex(int index) {
-  // We are using Qt to get the camera info and supported resolutions, but
-  // we are using OpenCV to actually get the images.
-  // The camera index from OpenCV and from Qt don't always agree,
-  // So this checks the name against the correct index.
-  m_webcamIndex = index;
-
-#ifdef WIN32
-
-// Thanks to:
-// https://elcharolin.wordpress.com/2017/08/28/webcam-capture-with-the-media-foundation-sdk/
-// for the webcam enumeration here
-
-#define CLEAN_ATTRIBUTES()                                                     \
-  if (attributes) {                                                            \
-    attributes->Release();                                                     \
-    attributes = NULL;                                                         \
-  }                                                                            \
-  for (DWORD i = 0; i < count; i++) {                                          \
-    if (&devices[i]) {                                                         \
-      devices[i]->Release();                                                   \
-      devices[i] = NULL;                                                       \
-    }                                                                          \
-  }                                                                            \
-  CoTaskMemFree(devices);                                                      \
-  return hr;
-
-  HRESULT hr = S_OK;
-
-  // this is important!!
-  hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-
-  UINT32 count              = 0;
-  IMFAttributes *attributes = NULL;
-  IMFActivate **devices     = NULL;
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // Create an attribute store to specify enumeration parameters.
-  hr = MFCreateAttributes(&attributes, 1);
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-
-  // The attribute to be requested is devices that can capture video
-  hr = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,
-                           MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // Enummerate the video capture devices
-  hr = MFEnumDeviceSources(attributes, &devices, &count);
-
-  if (FAILED(hr)) {
-    CLEAN_ATTRIBUTES()
-  }
-  // if there are any available devices
-  if (count > 0) {
-    WCHAR *nameString = NULL;
-    // Get the human-friendly name of the device
-    UINT32 cchName;
-
-    for (int i = 0; i < count; i++) {
-      hr = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME,
-                                          &nameString, &cchName);
-      std::string desc = m_webcamDescription.toStdString();
-      if (nameString == m_webcamDescription.toStdWString()) {
-        m_webcamIndex = i;
-        break;
-      }
-      // devices[0]->ShutdownObject();
-    }
-
-    CoTaskMemFree(nameString);
-  }
-  // clean
-  CLEAN_ATTRIBUTES()
-#else
-  return true;
-#endif
-}
-
-//-----------------------------------------------------------------
-
-bool StopMotion::initWebcam(int index) {
-#ifdef WIN32
-  if (!m_useDirectShow) {
-    // the webcam order obtained from Qt isn't always the same order as
-    // the one obtained from OpenCV without DirectShow
-    translateIndex(index);
-    m_cvWebcam.open(m_webcamIndex);
-  } else {
-    m_webcamIndex = index;
-    m_cvWebcam.open(m_webcamIndex, cv::CAP_DSHOW);
-  }
-  if (m_cvWebcam.isOpened() == false) {
-    return false;
-  }
-#else
-  m_webcamIndex = index;
-  m_cvWebcam.open(index);
-  if (m_cvWebcam.isOpened() == false) {
-    return false;
-  }
-#endif
-  return true;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::releaseWebcam() {
-  m_cvWebcam.release();
-  m_liveViewStatus = LiveViewClosed;
-  emit(liveViewStopped());
-}
-
 //-----------------------------------------------------------------
 
 void StopMotion::setWebcamResolution(QString resolution) {
-  m_cvWebcam.release();
+    m_webcam->releaseWebcam();
 
-  // resolution is written in the itemText with the format "<width> x
-  // <height>" (e.g. "800 x 600")
-  QStringList texts = resolution.split(' ');
-  // the split text must be "<width>" "x" and "<height>"
-  if (texts.size() != 3) return;
-  int tempStatus   = m_liveViewStatus;
-  m_liveViewStatus = LiveViewClosed;
-  bool startTimer  = false;
-  if (m_timer->isActive()) {
-    m_timer->stop();
-    startTimer = true;
-  }
-  qApp->processEvents(QEventLoop::AllEvents, 1000);
+    // resolution is written in the itemText with the format "<width> x
+    // <height>" (e.g. "800 x 600")
+    QStringList texts = resolution.split(' ');
+    // the split text must be "<width>" "x" and "<height>"
+    if (texts.size() != 3) return;
 
-  m_webcamWidth  = texts[0].toInt();
-  m_webcamHeight = texts[2].toInt();
+    int tempStatus = m_liveViewStatus;
+    m_liveViewStatus = LiveViewClosed;
 
-  m_liveViewDpi    = TPointD(0.0, 0.0);
-  m_liveViewStatus = tempStatus;
-  if (startTimer) m_timer->start(40);
-
-  // update env
-  setTEnvCameraResolution(resolution.toStdString());
-
-  refreshFrameInfo();
-
-  int index = m_webcamResolutions.indexOf(QSize(m_webcamWidth, m_webcamHeight));
-  emit(newWebcamResolutionSelected(index));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::getWebcamImage() {
-  bool error = false;
-  cv::Mat imgOriginal;
-  cv::Mat imgCorrected;
-
-  if (m_cvWebcam.isOpened() == false) {
-    initWebcam(m_webcamIndex);
-    // mjpg is used by many webcams
-    // opencv runs very slow on some webcams without it.
-    if (m_useMjpg) {
-      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                     cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
-      m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                     cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-    }
-    m_cvWebcam.set(3, m_webcamWidth);
-    m_cvWebcam.set(4, m_webcamHeight);
-    if (!m_cvWebcam.isOpened()) {
-      m_hasLiveViewImage = false;
-      error              = true;
-    }
-  }
-
-  bool blnFrameReadSuccessfully =
-      m_cvWebcam.read(imgOriginal);  // get next frame
-
-  if (!blnFrameReadSuccessfully ||
-      imgOriginal.empty()) {  // if frame not read successfully
-    std::cout << "error: frame not read from webcam\n";
-    error = true;  // print error message to std out
-  }
-
-  if (!error) {
-    cv::cvtColor(imgOriginal, imgCorrected, cv::COLOR_BGR2BGRA);
-    cv::flip(imgCorrected, imgCorrected, 0);
-    int width  = m_cvWebcam.get(3);
-    int height = m_cvWebcam.get(4);
-    int size   = imgCorrected.total() * imgCorrected.elemSize();
-
-    m_liveViewImage = TRaster32P(width, height);
-    m_liveViewImage->lock();
-    uchar *imgBuf  = imgCorrected.data;
-    uchar *rawData = m_liveViewImage->getRawData();
-    memcpy(rawData, imgBuf, size);
-    m_liveViewImage->unlock();
-    m_hasLiveViewImage = true;
-    m_liveViewStatus   = LiveViewOpen;
-    if (m_hasLiveViewImage &&
-        (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0)) {
-      TCamera *camera =
-          TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-      TDimensionD size = camera->getSize();
-      m_liveViewImageDimensions =
-          TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
-      double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
-                                   m_liveViewImageDimensions.ly / size.ly);
-      m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
-
-      m_fullImageDimensions = m_liveViewImageDimensions;
-
-      m_fullImageDpi = m_liveViewDpi;
-
-      emit(newDimensions());
+    bool startTimer = false;
+    if (m_timer->isActive()) {
+        m_timer->stop();
+        startTimer = true;
     }
 
-    emit(newLiveViewImageReady());
-  } else
-    m_hasLiveViewImage = false;
-}
+    qApp->processEvents(QEventLoop::AllEvents, 1000);
 
-//-----------------------------------------------------------------
+    m_webcam->setWebcamWidth(texts[0].toInt());
+    m_webcam->setWebcamHeight(texts[2].toInt());
 
-void StopMotion::setUseDirectShow(int state) {
-  m_useDirectShow         = state;
-  StopMotionUseDirectShow = state;
-  emit(useDirectShowSignal(state));
+    m_liveViewDpi = TPointD(0.0, 0.0);
+    m_liveViewStatus = tempStatus;
+    if (startTimer) m_timer->start(40);
+
+    // update env
+    setTEnvCameraResolution(resolution.toStdString());
+
+    refreshFrameInfo();
+
+    int index = m_webcam->getIndexOfResolution();
+    emit(newWebcamResolutionSelected(index));
 }
 
 //-----------------------------------------------------------------
@@ -3086,7 +2589,7 @@ bool StopMotion::toggleLiveView() {
   bool sessionOpen = false;
 
 #ifdef WITH_CANON
-  sessionOpen = m_sessionOpen;
+  sessionOpen = m_canon->m_sessionOpen;
 #endif
 
   if ((sessionOpen || m_usingWebcam) && m_liveViewStatus == LiveViewClosed) {
@@ -3094,7 +2597,7 @@ bool StopMotion::toggleLiveView() {
     m_liveViewImageDimensions = TDimension(0, 0);
     if (!m_usingWebcam) {
 #ifdef WITH_CANON
-      startCanonLiveView();
+        m_canon->startCanonLiveView();
 #endif
     } else
       m_liveViewStatus = LiveViewStarting;
@@ -3108,11 +2611,15 @@ bool StopMotion::toggleLiveView() {
              m_liveViewStatus > LiveViewClosed) {
     if (!m_usingWebcam) {
 #ifdef WITH_CANON
-      endCanonLiveView();
+        m_canon->endCanonLiveView();
 #endif
-    } else
-      releaseWebcam();
+    }
+    else {
+        m_webcam->releaseWebcam();
+    }
+    
     m_timer->stop();
+    emit(liveViewStopped());
     emit(liveViewChanged(false));
     if (m_turnOnRewind) {
       Preferences::instance()->setValue(rewindAfterPlayback, true);
@@ -3143,1895 +2650,8 @@ void StopMotion::pauseLiveView() {
 
 //-----------------------------------------------------------------
 
-void StopMotion::onImageReady(const bool &status) {
-  m_converterSucceeded = status;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::onFinished() { l_quitLoop = true; }
-
-//-----------------------------------------------------------------
-
-#ifdef WITH_CANON
-EdsError StopMotion::initializeCanonSDK() {
-  m_error = EdsInitializeSDK();
-  if (m_error == EDS_ERR_OK) {
-    m_isSDKLoaded = true;
-  }
-  if (!m_error)
-    m_error = EdsSetCameraAddedHandler(StopMotion::handleCameraAddedEvent,
-                                       (EdsVoid *)this);
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-EdsCameraListRef StopMotion::getCameraList() {
-  if (!m_isSDKLoaded) initializeCanonSDK();
-  if (m_isSDKLoaded) {
-    m_error = EdsGetCameraList(&m_cameraList);
-  }
-  return m_cameraList;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::releaseCameraList() {
-  if (m_cameraList != NULL) m_error = EdsRelease(m_cameraList);
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-int StopMotion::getCameraCount() {
-  if (m_cameraList == NULL) {
-    getCameraList();
-  }
-  if (m_cameraList != NULL) {
-    m_error = EdsGetChildCount(m_cameraList, &m_count);
-    if (m_count == 0) {
-      m_error          = EDS_ERR_DEVICE_NOT_FOUND;
-      m_sessionOpen    = false;
-      m_liveViewStatus = LiveViewClosed;
-    }
-    return m_count;
-  } else
-    return -1;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getCamera(int index) {
-  if (m_count == 0) {
-    m_error = EDS_ERR_DEVICE_NOT_FOUND;
-  }
-  if (m_count > 0) {
-    m_error = EdsGetChildAtIndex(m_cameraList, index, &m_camera);
-  }
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::releaseCamera() {
-  if (m_camera != NULL) {
-    m_error = EdsRelease(m_camera);
-  }
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::cameraAdded() {
-  if (!m_active) refreshCameraList();
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::closeCanonSDK() {
-  if (m_isSDKLoaded) {
-    EdsTerminateSDK();
-  }
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::openCameraSession() {
-  if (m_camera != NULL) {
-    m_error                                  = EdsOpenSession(m_camera);
-    if (m_error == EDS_ERR_OK) m_sessionOpen = true;
-  }
-  m_error =
-      EdsSetObjectEventHandler(m_camera, kEdsObjectEvent_All,
-                               StopMotion::handleObjectEvent, (EdsVoid *)this);
-
-  m_error = EdsSetPropertyEventHandler(m_camera, kEdsPropertyEvent_All,
-                                       StopMotion::handlePropertyEvent,
-                                       (EdsVoid *)this);
-
-  m_error = EdsSetCameraStateEventHandler(m_camera, kEdsStateEvent_All,
-                                          StopMotion::handleStateEvent,
-                                          (EdsVoid *)this);
-
-  // We can't handle raw images yet, so make sure we are getting jpgs
-  if (getCurrentImageQuality().contains("RAW"))
-    setImageQuality("Large Fine Jpeg");
-
-  EdsUInt32 saveto = kEdsSaveTo_Host;
-  m_error          = EdsSetPropertyData(m_camera, kEdsPropID_SaveTo, 0,
-                               sizeof(EdsUInt32), &saveto);
-  EdsCapacity newCapacity = {0x7FFFFFFF, 0x1000, 1};
-  m_error                 = EdsSetCapacity(m_camera, newCapacity);
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::closeCameraSession() {
-  if (m_camera != NULL) {
-    m_error       = EdsCloseSession(m_camera);
-    m_sessionOpen = false;
-  }
-  return m_error;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::refreshOptions() {
-  getAvailableShutterSpeeds();
-  getAvailableIso();
-  getAvailableApertures();
-  getAvailableExposureCompensations();
-  getAvailableWhiteBalances();
-  buildColorTemperatures();
-  getAvailableImageQualities();
-  getAvailablePictureStyles();
-}
-
-//-----------------------------------------------------------------
-
-std::string StopMotion::getCameraName() {
-  EdsChar name[EDS_MAX_NAME];
-  EdsError err = EDS_ERR_OK;
-  EdsDataType dataType;
-  EdsUInt32 dataSize;
-  m_error = EdsGetPropertySize(m_camera, kEdsPropID_ProductName, 0, &dataType,
-                               &dataSize);
-
-  if (m_error == EDS_ERR_OK) {
-    m_error =
-        EdsGetPropertyData(m_camera, kEdsPropID_ProductName, 0, dataSize, name);
-  }
-  m_cameraName = name;
-  return m_cameraName;
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getMode() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType modeType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_AEMode, 0, &modeType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_AEMode, 0, sizeof(size), &data);
-
-  return QString::fromStdString(m_modeMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableIso() {
-  EdsPropertyDesc *IsoDesc = new EdsPropertyDesc;
-  EdsError err             = EDS_ERR_OK;
-  m_isoOptions.clear();
-
-  err       = EdsGetPropertyDesc(m_camera, kEdsPropID_ISOSpeed, IsoDesc);
-  int count = IsoDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_isoOptions.push_back(
-          QString::fromStdString(m_isoMap[IsoDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete IsoDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableShutterSpeeds() {
-  EdsPropertyDesc *TvDesc = new EdsPropertyDesc;
-  EdsError err            = EDS_ERR_OK;
-  m_shutterSpeedOptions.clear();
-
-  err       = EdsGetPropertyDesc(m_camera, kEdsPropID_Tv, TvDesc);
-  int count = TvDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_shutterSpeedOptions.push_back(
-          QString::fromStdString(m_tvMap[TvDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete TvDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableApertures() {
-  EdsPropertyDesc *AvDesc = new EdsPropertyDesc;
-  EdsError err            = EDS_ERR_OK;
-  m_apertureOptions.clear();
-
-  err       = EdsGetPropertyDesc(m_camera, kEdsPropID_Av, AvDesc);
-  int count = AvDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_apertureOptions.push_back(
-          QString::fromStdString(m_avMap[AvDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete AvDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableExposureCompensations() {
-  EdsPropertyDesc *exposureDesc = new EdsPropertyDesc;
-  EdsError err                  = EDS_ERR_OK;
-  m_exposureOptions.clear();
-
-  err = EdsGetPropertyDesc(m_camera, kEdsPropID_ExposureCompensation,
-                           exposureDesc);
-  int count = exposureDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_exposureOptions.push_back(
-          QString::fromStdString(m_exposureMap[exposureDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete exposureDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableWhiteBalances() {
-  EdsPropertyDesc *whiteBalanceDesc = new EdsPropertyDesc;
-  EdsError err                      = EDS_ERR_OK;
-  m_whiteBalanceOptions.clear();
-
-  err = EdsGetPropertyDesc(m_camera, kEdsPropID_WhiteBalance, whiteBalanceDesc);
-  int count = whiteBalanceDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_whiteBalanceOptions.push_back(QString::fromStdString(
-          m_whiteBalanceMap[whiteBalanceDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete whiteBalanceDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailableImageQualities() {
-  EdsPropertyDesc *imageQualityDesc = new EdsPropertyDesc;
-  EdsError err                      = EDS_ERR_OK;
-  m_imageQualityOptions.clear();
-
-  err = EdsGetPropertyDesc(m_camera, kEdsPropID_ImageQuality, imageQualityDesc);
-  int count = imageQualityDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      QString quality = QString::fromStdString(
-          m_imageQualityMap[imageQualityDesc->propDesc[i]]);
-      if (!quality.contains("RAW")) {
-        m_imageQualityOptions.push_back(quality);
-      }
-      i++;
-    }
-  }
-  delete imageQualityDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::getAvailablePictureStyles() {
-  EdsPropertyDesc *pictureStyleDesc = new EdsPropertyDesc;
-  EdsError err                      = EDS_ERR_OK;
-  m_pictureStyleOptions.clear();
-
-  err = EdsGetPropertyDesc(m_camera, kEdsPropID_PictureStyle, pictureStyleDesc);
-  int count = pictureStyleDesc->numElements;
-  if (count > 0) {
-    int i = 0;
-    while (i < count) {
-      m_pictureStyleOptions.push_back(QString::fromStdString(
-          m_pictureStyleMap[pictureStyleDesc->propDesc[i]]));
-      i++;
-    }
-  }
-  delete pictureStyleDesc;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildColorTemperatures() {
-  m_colorTempOptions.clear();
-  int i = 2800;
-  while (i <= 10000) {
-    m_colorTempOptions.push_back(QString::number(i));
-    i += 100;
-  }
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentShutterSpeed() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType tvType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_Tv, 0, &tvType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(size), &data);
-
-  return QString::fromStdString(m_tvMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentIso() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType isoType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_ISOSpeed, 0, &isoType, &size);
-  err =
-      EdsGetPropertyData(m_camera, kEdsPropID_ISOSpeed, 0, sizeof(size), &data);
-
-  return QString::fromStdString(m_isoMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentAperture() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType avType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_Av, 0, &avType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(size), &data);
-
-  return QString::fromStdString(m_avMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentExposureCompensation() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType exposureType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_ExposureCompensation, 0,
-                           &exposureType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_ExposureCompensation, 0,
-                           sizeof(size), &data);
-
-  return QString::fromStdString(m_exposureMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentWhiteBalance() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType whiteBalanceType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_WhiteBalance, 0,
-                           &whiteBalanceType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_WhiteBalance, 0, sizeof(size),
-                           &data);
-  std::string wbString = m_whiteBalanceMap[data];
-  return QString::fromStdString(m_whiteBalanceMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentImageQuality() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType imageQualityType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_ImageQuality, 0,
-                           &imageQualityType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_ImageQuality, 0, sizeof(size),
-                           &data);
-  std::string wbString = m_imageQualityMap[data];
-  return QString::fromStdString(m_imageQualityMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentPictureStyle() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType pictureStyleType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_PictureStyle, 0,
-                           &pictureStyleType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_PictureStyle, 0, sizeof(size),
-                           &data);
-  std::string wbString = m_pictureStyleMap[data];
-  return QString::fromStdString(m_pictureStyleMap[data]);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentColorTemperature() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType colorTempType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_ColorTemperature, 0,
-                           &colorTempType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_ColorTemperature, 0,
-                           sizeof(size), &data);
-
-  return QString::number(data);
-}
-
-//-----------------------------------------------------------------
-
-QString StopMotion::getCurrentBatteryLevel() {
-  EdsError err = EDS_ERR_OK;
-  EdsDataType batteryLevelType;
-  EdsUInt32 size;
-  EdsUInt32 data;
-  QString result;
-
-  err = EdsGetPropertySize(m_camera, kEdsPropID_BatteryLevel, 0,
-                           &batteryLevelType, &size);
-  err = EdsGetPropertyData(m_camera, kEdsPropID_BatteryLevel, 0, sizeof(size),
-                           &data);
-  if (data == 0xffffffff) {
-    result = tr("AC Power");
-  } else if (data >= 80) {
-    result = tr("Full");
-  } else {
-    // at least  the 60D reports battery values as 59, 49. . .
-    // round up
-    if (data % 10 == 9) data += 1;
-    result = QString::number(data) + "%";
-  }
-  return result;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setShutterSpeed(QString shutterSpeed) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_tvMap.begin();
-  while (it != m_tvMap.end()) {
-    if (it->second == shutterSpeed.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(value), &value);
-  emit(shutterSpeedChangedSignal(shutterSpeed));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setIso(QString iso) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_isoMap.begin();
-  while (it != m_isoMap.end()) {
-    if (it->second == iso.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_ISOSpeed, 0, sizeof(value),
-                           &value);
-  emit(isoChangedSignal(iso));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setAperture(QString aperture) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_avMap.begin();
-  while (it != m_avMap.end()) {
-    if (it->second == aperture.toStdString()) {
-      value = it->first;
-      err =
-          EdsSetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(value), &value);
-      if (err == EDS_ERR_OK) {
-        break;
-      } else {
-        // some aperture values have two entries in the avMap
-        it++;
-        value = it->first;
-        err   = EdsSetPropertyData(m_camera, kEdsPropID_Av, 0, sizeof(value),
-                                 &value);
-        break;
-      }
-    }
-    it++;
-  }
-  emit(apertureChangedSignal(aperture));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setExposureCompensation(QString exposure) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_exposureMap.begin();
-  while (it != m_exposureMap.end()) {
-    if (it->second == exposure.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_ExposureCompensation, 0,
-                           sizeof(value), &value);
-  emit(exposureChangedSignal(exposure));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setWhiteBalance(QString whiteBalance) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_whiteBalanceMap.begin();
-  while (it != m_whiteBalanceMap.end()) {
-    if (it->second == whiteBalance.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_WhiteBalance, 0, sizeof(value),
-                           &value);
-  emit(whiteBalanceChangedSignal(whiteBalance));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setImageQuality(QString quality) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_imageQualityMap.begin();
-  while (it != m_imageQualityMap.end()) {
-    if (it->second == quality.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_ImageQuality, 0, sizeof(value),
-                           &value);
-  emit(imageQualityChangedSignal(quality));
-  m_proxyImageDimensions = TDimension(0, 0);
-  m_proxyDpi             = TPointD(0.0, 0.0);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setPictureStyle(QString style) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  auto it = m_pictureStyleMap.begin();
-  while (it != m_pictureStyleMap.end()) {
-    if (it->second == style.toStdString()) {
-      value = it->first;
-      break;
-    }
-    it++;
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_PictureStyle, 0, sizeof(value),
-                           &value);
-  err = EdsSetPropertyData(m_camera, kEdsPropID_PictureStyle, 0, sizeof(value),
-                           &value);
-  emit(pictureStyleChangedSignal(style));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setColorTemperature(QString temp) {
-  EdsError err = EDS_ERR_OK;
-  EdsUInt32 value;
-  value = temp.toInt();
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_ColorTemperature, 0,
-                           sizeof(value), &value);
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_ColorTemperature, 0,
-                           sizeof(value), &value);
-  emit(colorTemperatureChangedSignal(temp));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::downloadImage(EdsBaseRef object) {
-  EdsError err        = EDS_ERR_OK;
-  EdsStreamRef stream = NULL;
-  EdsDirectoryItemInfo dirItemInfo;
-
-  err = EdsGetDirectoryItemInfo(object, &dirItemInfo);
-  err = EdsCreateMemoryStream(0, &stream);
-  err = EdsDownload(object, dirItemInfo.size, stream);
-  EdsDownloadComplete(object);
-
-// tj code
-
-#ifdef MACOSX
-  UInt64 mySize = 0;
-#else
-  unsigned __int64 mySize = 0;
-#endif
-  unsigned char *data = NULL;
-  err                 = EdsGetPointer(stream, (EdsVoid **)&data);
-  err                 = EdsGetLength(stream, &mySize);
-
-  int width, height, pixelFormat;
-  // long size;
-  int inSubsamp, inColorspace;
-  // unsigned long jpegSize;
-  tjhandle tjInstance   = NULL;
-  unsigned char *imgBuf = NULL;
-  tjInstance            = tjInitDecompress();
-  tjDecompressHeader3(tjInstance, data, mySize, &width, &height, &inSubsamp,
-                      &inColorspace);
-
-  pixelFormat = TJPF_BGRX;
-  imgBuf = (unsigned char *)tjAlloc(width * height * tjPixelSize[pixelFormat]);
-  int flags = 0;
-  flags |= TJFLAG_BOTTOMUP;
-  int tempWidth, tempHeight;
-
-  if (m_useScaledImages) {
-    int factorsNum;
-    tjscalingfactor scalingFactor = {1, 1};
-    tjscalingfactor *factor       = tjGetScalingFactors(&factorsNum);
-    int intRatio                  = (float)width / (float)height * 100.0;
-    int i                         = 0;
-
-    TCamera *camera =
-        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-    TDimension res = camera->getRes();
-
-    // find the scaling factor that is at least as big as the current camera
-    while (i < factorsNum) {
-      scalingFactor = factor[i];
-      tempWidth     = TJSCALED(width, scalingFactor);
-      if (tempWidth < res.lx && i > 0) {
-        scalingFactor = factor[i - 1];
-        break;
-      }
-      i++;
-    }
-    // make sure the scaling factor has the right aspect ratio
-    while (i >= 0) {
-      tempWidth  = TJSCALED(width, scalingFactor);
-      tempHeight = TJSCALED(height, scalingFactor);
-      if ((int)((float)tempWidth / (float)tempHeight * 100.0) == intRatio) {
-        break;
-      }
-      i--;
-      scalingFactor = factor[i];
-    }
-  } else {
-    tempWidth  = width;
-    tempHeight = height;
-  }
-
-  if (m_useScaledImages || !getCurrentImageQuality().contains("Large")) {
-    TCamera *camera =
-        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-    TDimensionD size       = camera->getSize();
-    m_proxyImageDimensions = TDimension(tempWidth, tempHeight);
-    double minimumDpi      = std::min(m_proxyImageDimensions.lx / size.lx,
-                                 m_proxyImageDimensions.ly / size.ly);
-    m_proxyDpi = TPointD(minimumDpi, minimumDpi);
-  }
-
-  tjDecompress2(tjInstance, data, mySize, imgBuf, tempWidth,
-                tempWidth * tjPixelSize[pixelFormat], tempHeight, pixelFormat,
-                flags);
-
-  m_newImage = TRaster32P(tempWidth, tempHeight);
-  m_newImage->lock();
-  uchar *rawData = m_newImage->getRawData();
-  memcpy(rawData, imgBuf, tempWidth * tempHeight * tjPixelSize[pixelFormat]);
-  m_newImage->unlock();
-
-  tjFree(imgBuf);
-  imgBuf = NULL;
-  tjDestroy(tjInstance);
-  tjInstance = NULL;
-
-  // end tj code
-
-  if (m_useScaledImages) {
-    QFile fullImage(m_tempFile);
-    fullImage.open(QIODevice::WriteOnly);
-    QDataStream dataStream(&fullImage);
-    dataStream.writeRawData((const char *)data, mySize);
-    fullImage.close();
-  }
-
-  EdsRelease(stream);
-  stream = NULL;
-  if (object) EdsRelease(object);
-
-  if (err == EDS_ERR_OK) {
-    emit(newImageReady());
-  }
-
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::takePicture() {
-  EdsError err;
-  err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-                       kEdsCameraCommand_ShutterButton_Completely_NonAF);
-  err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-                       kEdsCameraCommand_ShutterButton_OFF);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::extendCameraOnTime() {
-  EdsError err;
-  EdsInt32 param = 0;
-  err = EdsSendCommand(m_camera, kEdsCameraCommand_ExtendShutDownTimer, param);
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::startCanonLiveView() {
-  if (m_camera && m_sessionOpen) {
-    EdsError err = EDS_ERR_OK;
-    // Get the output device for the live view image
-    EdsUInt32 device;
-    err = EdsGetPropertyData(m_camera, kEdsPropID_Evf_OutputDevice, 0,
-                             sizeof(device), &device);
-    // PC live view starts by setting the PC as the output device for the live
-    // view image.
-    if (err == EDS_ERR_OK) {
-      device |= kEdsEvfOutputDevice_PC;
-      err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_OutputDevice, 0,
-                               sizeof(device), &device);
-    }
-    if (err == EDS_ERR_OK) {
-      m_liveViewStatus = LiveViewStarting;
-    }
-    // A property change event notification is issued from the camera if
-    // property settings are made successfully. Start downloading of the live
-    // view image once the property change notification arrives.
-    return err;
-  } else
-    return EDS_ERR_DEVICE_NOT_FOUND;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::endCanonLiveView() {
-  EdsError err = EDS_ERR_OK;
-  // Get the output device for the live view image
-  EdsUInt32 device;
-  err = EdsGetPropertyData(m_camera, kEdsPropID_Evf_OutputDevice, 0,
-                           sizeof(device), &device);
-  // PC live view ends if the PC is disconnected from the live view image output
-  // device.
-  if (err == EDS_ERR_OK) {
-    device &= ~kEdsEvfOutputDevice_PC;
-    err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_OutputDevice, 0,
-                             sizeof(device), &device);
-  }
-  m_liveViewStatus = LiveViewClosed;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::zoomLiveView() {
-  if (!m_sessionOpen || !m_liveViewStatus > LiveViewClosed)
-    return EDS_ERR_DEVICE_INVALID;
-  EdsError err = EDS_ERR_OK;
-  if (m_pickLiveViewZoom) toggleZoomPicking();
-  if (m_liveViewZoom == 1) {
-    m_liveViewZoom = 5;
-    m_zooming      = true;
-    toggleNumpadForFocusCheck(true);
-  } else if (m_liveViewZoom == 5) {
-    m_liveViewZoom = 1;
-    m_zooming      = false;
-    toggleNumpadForFocusCheck(false);
-  }
-
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_Zoom, 0,
-                           sizeof(m_liveViewZoom), &m_liveViewZoom);
-  if (m_liveViewZoom == 5) setZoomPoint();
-  emit(focusCheckToggled(m_liveViewZoom > 1));
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::makeZoomPoint(TPointD pos) {
-  m_liveViewZoomPickPoint = pos;
-  calculateZoomPoint();
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::toggleZoomPicking() {
-  if (!m_sessionOpen || !m_liveViewStatus > LiveViewClosed) return;
-  if (m_pickLiveViewZoom) {
-    m_pickLiveViewZoom = false;
-    toggleNumpadForFocusCheck(false);
-  } else {
-    m_pickLiveViewZoom = true;
-    toggleNumpadForFocusCheck(true);
-  }
-
-  emit(pickFocusCheckToggled(m_pickLiveViewZoom));
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::setZoomPoint() {
-  EdsError err              = EDS_ERR_OK;
-  m_liveViewZoomReadyToPick = false;
-  EdsPoint zoomPoint;
-
-  calculateZoomPoint();
-
-  zoomPoint.x = m_finalZoomPoint.x;
-  zoomPoint.y = m_finalZoomPoint.y;
-
-  // make sure this is set AFTER starting zoom
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_ZoomPosition, 0,
-                           sizeof(zoomPoint), &zoomPoint);
-  m_liveViewZoomReadyToPick = true;
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::calculateZoomPoint() {
-  bool outOfBounds = false;
-  if (m_liveViewZoomPickPoint == TPointD(0.0, 0.0)) {
-    m_calculatedZoomPoint =
-        TPoint(m_fullImageDimensions.lx / 2, m_fullImageDimensions.ly / 2);
-    m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
-    m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
-  } else {
-    // get the image size in OpenToonz dimensions
-    double maxFullWidth =
-        (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
-    double maxFullHeight =
-        (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
-    // OpenToonz coordinates are based on center at 0, 0
-    // convert that to top left based coordinates
-    double newX = m_liveViewZoomPickPoint.x + maxFullWidth / 2.0;
-    double newY = -m_liveViewZoomPickPoint.y + maxFullHeight / 2.0;
-    // convert back to the normal image dimensions to talk to the camera
-    m_calculatedZoomPoint.x = newX / Stage::inch * m_fullImageDpi.x;
-    m_calculatedZoomPoint.y = newY / Stage::inch * m_fullImageDpi.x;
-    // the Canon SDK wants the top left corner of the zoom rect, not the center
-    m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
-    m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
-    // finally make sure everything actually fits on the image
-    if (m_finalZoomPoint.x < 0) {
-      m_finalZoomPoint.x = 0;
-      outOfBounds        = true;
-    }
-    if (m_finalZoomPoint.y < 0) {
-      m_finalZoomPoint.y = 0;
-      outOfBounds        = true;
-    }
-    if (m_finalZoomPoint.x >
-        m_fullImageDimensions.lx - (m_zoomRectDimensions.x)) {
-      m_finalZoomPoint.x = m_fullImageDimensions.lx - (m_zoomRectDimensions.x);
-      outOfBounds        = true;
-    }
-    if (m_finalZoomPoint.y >
-        m_fullImageDimensions.ly - (m_zoomRectDimensions.y)) {
-      m_finalZoomPoint.y = m_fullImageDimensions.ly - (m_zoomRectDimensions.y);
-      outOfBounds        = true;
-    }
-
-    // if out of bounds, recalculate backwards to get the correct location
-    if (outOfBounds) {
-      TPoint tempCalculated;
-      // recenter the point in the rect
-      tempCalculated.x = m_finalZoomPoint.x + (m_zoomRectDimensions.x / 2);
-      tempCalculated.y = m_finalZoomPoint.y + (m_zoomRectDimensions.y / 2);
-      // convert to OpenToonz Dimensions
-      newX = tempCalculated.x / m_fullImageDpi.x * Stage::inch;
-      newY = tempCalculated.y / m_fullImageDpi.y * Stage::inch;
-      // get center based coordinates
-      m_liveViewZoomPickPoint.x = newX - (maxFullWidth / 2.0);
-      m_liveViewZoomPickPoint.y = (newY - (maxFullHeight / 2.0)) * -1;
-    }
-  }
-
-  // calculate the zoom rectangle position on screen
-
-  // get the image size in OpenToonz dimensions
-  double maxFullWidth =
-      (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
-  double maxFullHeight =
-      (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
-  m_zoomRect =
-      TRect(m_finalZoomPoint.x, m_finalZoomPoint.y + m_zoomRectDimensions.y,
-            m_finalZoomPoint.x + m_zoomRectDimensions.x, m_finalZoomPoint.y);
-  TRect tempCalculated;
-
-  // convert to OpenToonz Dimensions
-  tempCalculated.x0 = m_zoomRect.x0 / m_fullImageDpi.x * Stage::inch;
-  tempCalculated.y0 = m_zoomRect.y0 / m_fullImageDpi.y * Stage::inch;
-  tempCalculated.x1 = m_zoomRect.x1 / m_fullImageDpi.x * Stage::inch;
-  tempCalculated.y1 = m_zoomRect.y1 / m_fullImageDpi.y * Stage::inch;
-  // get center based coordinates
-  m_zoomRect.x0 = tempCalculated.x0 - (maxFullWidth / 2.0);
-  m_zoomRect.y0 = (tempCalculated.y0 - (maxFullHeight / 2.0)) * -1;
-  m_zoomRect.x1 = tempCalculated.x1 - (maxFullWidth / 2.0);
-  m_zoomRect.y1 = (tempCalculated.y1 - (maxFullHeight / 2.0)) * -1;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::downloadEVFData() {
-  EdsError err            = EDS_ERR_OK;
-  EdsStreamRef stream     = NULL;
-  EdsEvfImageRef evfImage = NULL;
-
-  // Create memory stream.
-  err = EdsCreateMemoryStream(0, &stream);
-  // Create EvfImageRef.
-  if (err == EDS_ERR_OK) {
-    err = EdsCreateEvfImageRef(stream, &evfImage);
-  }
-  // Download live view image data.
-  if (err == EDS_ERR_OK) {
-    err = EdsDownloadEvfImage(m_camera, evfImage);
-  }
-
-  EdsDataType evfZoom;
-  EdsDataType evfZoomPos;
-  EdsDataType evfZoomRect;
-  EdsUInt32 size;
-  EdsUInt32 sizePos;
-  EdsUInt32 sizeRect;
-  EdsUInt32 sizeImagePos;
-  EdsUInt32 sizeCoordSys;
-  EdsUInt32 zoomAmount;
-  EdsPoint zoomPos;
-  EdsRect zoomRect;
-  EdsPoint imagePos;
-  EdsSize coordSys;
-
-  err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_Zoom, 0, &evfZoom, &size);
-  err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_Zoom, 0, sizeof(size),
-                           &zoomAmount);
-
-  // this is the top left corner of the zoomed image
-  err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_ZoomPosition, 0,
-                           &evfZoomPos, &sizePos);
-  err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0, sizePos,
-                           &zoomPos);
-  // this is the size of the zoomed image
-  err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_ZoomRect, 0, &evfZoomRect,
-                           &sizeRect);
-  err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomRect, 0, sizeRect,
-                           &zoomRect);
-
-  err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_ImagePosition, 0,
-                           &evfZoomRect, &sizeImagePos);
-  err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_ImagePosition, 0,
-                           sizeImagePos, &imagePos);
-  // this returns the size of the full image
-  err = EdsGetPropertySize(evfImage, kEdsPropID_Evf_CoordinateSystem, 0,
-                           &evfZoomRect, &sizeCoordSys);
-  err = EdsGetPropertyData(evfImage, kEdsPropID_Evf_CoordinateSystem, 0,
-                           sizeCoordSys, &coordSys);
-
-  // Get the incidental data of the image.
-  if (err == EDS_ERR_OK) {
-    JpgConverter *converter = new JpgConverter;
-    converter->setStream(stream);
-    converter->setScale(m_useScaledImages);
-
-    connect(converter, SIGNAL(imageReady(bool)), this, SLOT(onImageReady(bool)),
-            Qt::QueuedConnection);
-    connect(converter, SIGNAL(finished()), this, SLOT(onFinished()),
-            Qt::QueuedConnection);
-
-    converter->start();
-
-    while (!l_quitLoop)
-      QCoreApplication::processEvents(QEventLoop::AllEvents |
-                                      QEventLoop::WaitForMoreEvents);
-
-    l_quitLoop         = false;
-    m_liveViewImage    = converter->getImage();
-    m_hasLiveViewImage = true;
-    delete converter;
-    if (!m_converterSucceeded) return EDS_ERR_UNEXPECTED_EXCEPTION;
-
-    // make sure not to set to LiveViewOpen if it has been turned off
-    if (m_liveViewStatus > LiveViewClosed && !m_userCalledPause) {
-      m_liveViewStatus = LiveViewOpen;
-    }
-    emit(newLiveViewImageReady());
-
-    if (m_hasLiveViewImage &&
-        (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0)) {
-      TCamera *camera =
-          TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-      TDimensionD size = camera->getSize();
-      m_liveViewImageDimensions =
-          TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
-      double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
-                                   m_liveViewImageDimensions.ly / size.ly);
-      m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
-
-      m_fullImageDimensions = TDimension(coordSys.width, coordSys.height);
-      minimumDpi            = std::min(m_fullImageDimensions.lx / size.lx,
-                            m_fullImageDimensions.ly / size.ly);
-      m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
-
-      emit(newDimensions());
-    }
-    // sometimes zoomRect returns the wrong dimensions if called too fast
-    if (zoomRect.size.width < 5000 && zoomRect.size.height < 5000) {
-      m_zoomRectDimensions = TPoint(zoomRect.size.width, zoomRect.size.height);
-      if (m_zoomRect == TRect(0, 0, 0, 0)) {
-        m_zoomRect = TRect(zoomPos.x, zoomPos.y + zoomRect.size.height,
-                           zoomPos.x + zoomRect.size.width, zoomPos.y);
-        calculateZoomPoint();
-      }
-    }
-    if (zoomAmount == 5 && m_zoomRectDimensions == TPoint(0, 0)) {
-      setZoomPoint();
-    }
-  }
-
-  if (stream != NULL) {
-    EdsRelease(stream);
-  }
-  stream = NULL;
-  if (evfImage != NULL) {
-    EdsRelease(evfImage);
-    evfImage = NULL;
-  }
-
-  // calculate dpi data
-
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusNear() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Near1);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusFar() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Far1);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusNear2() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Near2);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusFar2() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Far2);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusNear3() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Near3);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::focusFar3() {
-  EdsError err = EDS_ERR_OK;
-  err          = EdsSendCommand(m_camera, kEdsCameraCommand_DriveLensEvf,
-                       kEdsEvfDriveLens_Far3);
-  return err;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object,
-                                       EdsVoid *context) {
-  if (event == kEdsObjectEvent_DirItemRequestTransfer) {
-    instance()->downloadImage(object);
-  }
-
-  return EDS_ERR_OK;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::handlePropertyEvent(EdsPropertyEvent event,
-                                         EdsPropertyID property,
-                                         EdsUInt32 param, EdsVoid *context) {
-  if (property == kEdsPropID_Evf_OutputDevice &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    if (instance()->m_liveViewStatus == LiveViewStarting)
-      instance()->m_liveViewStatus = LiveViewOpen;
-  }
-  if (property == kEdsPropID_AEMode &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->modeChanged());
-  }
-  if (property == kEdsPropID_BatteryLevel &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->modeChanged());
-  }
-  if (property == kEdsPropID_Av &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->apertureOptionsChanged());
-  }
-
-  if (property == kEdsPropID_Av && event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->apertureChangedSignal(instance()->getCurrentAperture()));
-  }
-
-  if (property == kEdsPropID_Tv &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->shutterSpeedOptionsChanged());
-  }
-  if (property == kEdsPropID_Tv && event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->shutterSpeedChangedSignal(
-        instance()->getCurrentShutterSpeed()));
-  }
-  if (property == kEdsPropID_ISOSpeed &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->isoOptionsChanged());
-  }
-  if (property == kEdsPropID_ISOSpeed &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->isoChangedSignal(instance()->getCurrentIso()));
-  }
-  if (property == kEdsPropID_ExposureCompensation &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->exposureOptionsChanged());
-  }
-  if (property == kEdsPropID_ExposureCompensation &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->exposureChangedSignal(
-        instance()->getCurrentExposureCompensation()));
-  }
-  if (property == kEdsPropID_WhiteBalance &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->whiteBalanceOptionsChanged());
-  }
-  if (property == kEdsPropID_WhiteBalance &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->whiteBalanceChangedSignal(
-        instance()->getCurrentWhiteBalance()));
-  }
-  if (property == kEdsPropID_PictureStyle &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->pictureStyleOptionsChanged());
-  }
-  if (property == kEdsPropID_PictureStyle &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->pictureStyleChangedSignal(
-        instance()->getCurrentPictureStyle()));
-  }
-  if (property == kEdsPropID_ImageQuality &&
-      event == kEdsPropertyEvent_PropertyDescChanged) {
-    emit(instance()->imageQualityOptionsChanged());
-  }
-  if (property == kEdsPropID_ImageQuality &&
-      event == kEdsPropertyEvent_PropertyChanged) {
-    emit(instance()->imageQualityChangedSignal(
-        instance()->getCurrentImageQuality()));
-  }
-
-  return EDS_ERR_OK;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
-                                      EdsVoid *context) {
-  if (event == kEdsStateEvent_Shutdown) {
-    if (instance()->m_sessionOpen && instance()->getCameraCount() > 0) {
-      instance()->closeCameraSession();
-      instance()->releaseCamera();
-    }
-    instance()->m_liveViewStatus = LiveViewClosed;
-    emit(instance()->cameraChanged(QString("")));
-  }
-  if (event == kEdsStateEvent_WillSoonShutDown) {
-    instance()->extendCameraOnTime();
-    if (instance()->m_liveViewStatus > LiveViewStarting) {
-      instance()->toggleLiveView();
-    }
-  }
-  return EDS_ERR_OK;
-}
-
-//-----------------------------------------------------------------
-
-EdsError StopMotion::handleCameraAddedEvent(EdsVoid *context) {
-  instance()->cameraAdded();
-  return EDS_ERR_OK;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildAvMap() {
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x00, "00"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x08, "1"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x0B, "1.1"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x0C, "1.2"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x0D, "1.2"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x10, "1.4"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x13, "1.6"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x14, "1.8"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x15, "1.8"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x18, "2"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x1B, "2.2"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x1C, "2.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x1D, "2.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x20, "2.8"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x23, "3.2"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x24, "3.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x25, "3.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x28, "4"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x2B, "4.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x2C, "4.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x2D, "5.0"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x30, "5.6"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x33, "6.3"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x34, "6.7"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x35, "7.1"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x38, "8"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x3B, "9"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x3C, "9.5"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x3D, "10"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x40, "11"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x43, "13"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x44, "13"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x45, "14"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x48, "16"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x4B, "18"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x4C, "19"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x4D, "20"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x50, "22"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x53, "25"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x54, "27"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x55, "29"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x58, "32"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x5B, "36"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x5C, "38"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x5D, "40"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x60, "45"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x63, "51"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x64, "54"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x65, "57"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x68, "64"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x6B, "72"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x6C, "76"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x6D, "80"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0x70, "91"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0xFF, "Auto"));
-  m_avMap.insert(std::pair<EdsUInt32, const char *>(0xffffffff, "unknown"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildIsoMap() {
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x00, "Auto"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x28, "6"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x30, "12"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x38, "25"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x40, "50"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x48, "100"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x4b, "125"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x4d, "160"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x50, "200"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x53, "250"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x55, "320"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x58, "400"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x5b, "500"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x5d, "640"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x60, "800"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x63, "1000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x65, "1250"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x68, "1600"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x6b, "2000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x6d, "2500"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x70, "3200"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x73, "4000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x75, "5000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x78, "6400"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x7b, "8000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x7d, "10000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x80, "12800"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x83, "16000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x85, "20000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x88, "25600"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x8b, "32000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x8d, "40000"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x90, "51200"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0x98, "102400"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0xa0, "204800"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0xa8, "409600"));
-  m_isoMap.insert(std::pair<EdsUInt32, const char *>(0xffffffff, "unknown"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildTvMap() {
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x04, "Auto"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x0c, "Bulb"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x10, "30\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x13, "25\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x14, "20\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x15, "20\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x18, "15\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x1B, "13\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x1C, "10\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x1D, "10\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x20, "8\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x23, "6\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x24, "6\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x25, "5\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x28, "4\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x2B, "3\"2"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x2C, "3\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x2D, "2\"5"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x30, "2\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x33, "1\"6"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x34, "1\"5"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x35, "1\"3"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x38, "1\""));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x3B, "0\"8"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x3C, "0\"7"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x3D, "0\"6"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x40, "0\"5"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x43, "0\"4"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x44, "0\"3"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x45, "0\"3"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x48, "1/4"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x4B, "1/5"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x4C, "1/6"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x4D, "1/6"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x50, "1/8"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x53, "1/10"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x54, "1/10"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x55, "1/13"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x58, "1/15"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x5B, "1/20"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x5C, "1/20"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x5D, "1/25"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x60, "1/30"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x63, "1/40"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x64, "1/45"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x65, "1/50"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x68, "1/60"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x6B, "1/80"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x6C, "1/90"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x6D, "1/100"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x70, "1/125"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x73, "1/160"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x74, "1/180"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x75, "1/200"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x78, "1/250"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x7B, "1/320"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x7C, "1/350"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x7D, "1/400"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x80, "1/500"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x83, "1/640"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x84, "1/750"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x85, "1/800"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x88, "1/1000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x8B, "1/1250"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x8C, "1/1500"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x8D, "1/1600"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x90, "1/2000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x93, "1/2500"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x94, "1/3000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x95, "1/3200"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x98, "1/4000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x9B, "1/5000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x9C, "1/6000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0x9D, "1/6400"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0xA0, "1/8000"));
-  m_tvMap.insert(std::pair<EdsUInt32, const char *>(0xffffffff, "unknown"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildModeMap() {
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(0, "P"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(1, "Tv"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(2, "Av"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(3, "M"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(55, "FV"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(4, "Bulb"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(5, "A-DEP"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(6, "DEP"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(7, "C1"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(16, "C2"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(17, "C3"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(8, "Lock"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(9, "GreenMode"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(10, "Night Portrait"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(11, "Sports"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(13, "LandScape"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(14, "Close-Up"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(15, "No Strobo"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(12, "Portrait"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(19, "Creative Auto"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(20, "Movies"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(25, "SCN"));
-  m_modeMap.insert(
-      std::pair<EdsUInt32, const char *>(22, "Scene Intelligent Auto"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(29, "Creative filters"));
-  m_modeMap.insert(std::pair<EdsUInt32, const char *>(0xffffffff, "unknown"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildExposureMap() {
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x28, "+5"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x25, "+4 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x24, "+4 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x23, "+4 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x20, "+4"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x1D, "+3 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x1C, "+3 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x1B, "+3 1/3"));
-
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x18, "+3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x15, "+2 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x14, "+2 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x13, "+2 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x10, "+2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x0d, "+1 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x0c, "+1 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x0b, "+1 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x08, "+1"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x05, "+2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x04, "+1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x03, "+1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0x00, "0"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xfd, "-1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xfc, "-1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xfb, "-2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xf8, "-1"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xf5, "-1 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xf4, "-1 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xf3, "-1 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xf0, "-2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xed, "-2 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xec, "-2 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xeb, "-2 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xe8, "-3"));
-
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xE5, "-3 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xE4, "-3 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xE3, "-3 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xE0, "-4"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xDD, "-4 1/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xDC, "-4 1/2"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xDB, "-4 2/3"));
-  m_exposureMap.insert(std::pair<EdsUInt32, const char *>(0xD8, "-5"));
-
-  m_exposureMap.insert(
-      std::pair<EdsUInt32, const char *>(0xffffffff, "unknown"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildWhiteBalanceMap() {
-  m_whiteBalanceMap.insert(
-      std::pair<EdsUInt32, const char *>(0, "Auto: Ambience Priority"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(1, "Daylight"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(2, "Cloudy"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(3, "Tungsten"));
-  m_whiteBalanceMap.insert(
-      std::pair<EdsUInt32, const char *>(4, "Fluorescent"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(5, "Flash"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(6, "Manual"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(8, "Shade"));
-  m_whiteBalanceMap.insert(
-      std::pair<EdsUInt32, const char *>(9, "Color Temperature"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(10, "Custom 1"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(11, "Custom 2"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(12, "Custom 3"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(15, "Manual 2"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(16, "Manual 3"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(18, "Manual 4"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(19, "Manual 5"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(20, "Custom 4"));
-  m_whiteBalanceMap.insert(std::pair<EdsUInt32, const char *>(21, "Custom 5"));
-  m_whiteBalanceMap.insert(
-      std::pair<EdsUInt32, const char *>(23, "Auto: White Priority"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildImageQualityMap() {
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_LR, "RAW"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRLJF, "RAW + Large Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRMJF, "RAW + Middle Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRSJF, "RAW + Small Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRLJN, "RAW + Large Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRMJN, "RAW + Middle Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRSJN, "RAW + Small Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRS1JF, "RAW + Small1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRS1JN, "RAW + Small1 Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRS2JF, "RAW + Small2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRS3JF, "RAW + Small3 Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRLJ, "RAW + Large Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRM1J, "RAW + Middle1 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRM2J, "RAW + Middle2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LRSJ, "RAW + Small Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MR, "Middle Raw(Small RAW1)"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRLJF, "Middle Raw(Small RAW1) + Large Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRMJF, "Middle Raw(Small RAW1) + Middle Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRSJF, "Middle Raw(Small RAW1) + Small Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRLJN, "Middle Raw(Small RAW1) + Large Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRMJN, "Middle Raw(Small RAW1) + Middle Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRSJN, "Middle Raw(Small RAW1) + Small Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRS1JF, "Middle RAW + Small1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRS1JN, "Middle RAW + Small1 Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRS2JF, "Middle RAW + Small2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRS3JF, "Middle RAW + Small3 Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRLJ, "Middle Raw + Large Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRM1J, "Middle Raw + Middle1 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRM2J, "Middle Raw + Middle2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MRSJ, "Middle Raw + Small Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SR, "Small RAW(Small RAW2)"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRLJF, "Small RAW(Small RAW2) + Large Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRMJF, "Small RAW(Small RAW2) + Middle Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRSJF, "Small RAW(Small RAW2) + Small Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRLJN, "Small RAW(Small RAW2) + Large Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRMJN, "Small RAW(Small RAW2) + Middle Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRSJN, "Small RAW(Small RAW2) + Small Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRS1JF, "Small RAW + Small1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRS1JN, "Small RAW + Small1 Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRS2JF, "Small RAW + Small2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRS3JF, "Small RAW + Small3 Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRLJ, "Small RAW + Large Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRM1J, "Small RAW + Middle1 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRM2J, "Small RAW + Middle2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SRSJ, "Small RAW + Small Jpeg"));
-
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_CR, "CRAW"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRLJF, "CRAW + Large Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRMJF, "CRAW + Middle Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM1JF, "CRAW + Middle1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM2JF, "CRAW + Middle2 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRSJF, "CRAW + Small Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRS1JF, "CRAW + Small1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRS2JF, "CRAW + Small2 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRS3JF, "CRAW + Small3 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRLJN, "CRAW + Large Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRMJN, "CRAW + Middle Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM1JN, "CRAW + Middle1 Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM2JN, "CRAW + Middle2 Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRSJN, "CRAW + Small Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRS1JN, "CRAW + Small1 Normal Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRLJ, "CRAW + Large Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM1J, "CRAW + Middle1 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRM2J, "CRAW + Middle2 Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_CRSJ, "CRAW + Small Jpeg"));
-
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LJF, "Large Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_LJN, "Large Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MJF, "Middle Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_MJN, "Middle Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SJF, "Small Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_SJN, "Small Normal Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_S1JF, "Small1 Fine Jpeg"));
-  m_imageQualityMap.insert(std::pair<EdsUInt32, const char *>(
-      EdsImageQuality_S1JN, "Small1 Normal Jpeg"));
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_S2JF, "Small2 Jpeg"));
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_S3JF, "Small3 Jpeg"));
-
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_LJ, "Large Jpeg"));
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_M1J, "Middle1 Jpeg"));
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_M2J, "Middle2 Jpeg"));
-  m_imageQualityMap.insert(
-      std::pair<EdsUInt32, const char *>(EdsImageQuality_SJ, "Small Jpeg"));
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::buildPictureStyleMap() {
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_Standard, "Standard"));
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_Portrait, "Portrait"));
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_Landscape, "Landscape"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_Neutral, "Neutral"));
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_Faithful, "Faithful"));
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_Monochrome, "Monochrome"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_Auto, "Auto"));
-  m_pictureStyleMap.insert(std::pair<EdsUInt32, const char *>(
-      kEdsPictureStyle_FineDetail, "Fine Detail"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_User1, "User 1"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_User2, "User 2"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_User3, "User 3"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_PC1, "Computer 1"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_PC2, "Computer 2"));
-  m_pictureStyleMap.insert(
-      std::pair<EdsUInt32, const char *>(kEdsPictureStyle_PC3, "Computer 3"));
-}
-#endif
-
-//-----------------------------------------------------------------
-
-QStringList StopMotion::getAvailableSerialPorts() {
-  QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-  QStringList ports;
-  ports.push_back(tr("No Device"));
-  int size = list.size();
-  for (int i = 0; i < size; i++) {
-    std::string desc  = list.at(i).description().toStdString();
-    std::string port  = list.at(i).portName().toStdString();
-    std::string maker = list.at(i).manufacturer().toStdString();
-    ports.push_back(list.at(i).portName());
-    if (list.at(i).hasProductIdentifier()) {
-      std::string id =
-          QString::number(list.at(i).productIdentifier()).toStdString();
-    }
-    if (list.at(i).hasVendorIdentifier()) {
-      std::string id =
-          QString::number(list.at(i).vendorIdentifier()).toStdString();
-    }
-  }
-  return ports;
-}
-
-//-----------------------------------------------------------------
-
-bool StopMotion::setSerialPort(QString port) {
-  if (m_serialPort->isOpen()) m_serialPort->close();
-  QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-  QStringList ports;
-  bool success = false;
-  int size     = list.size();
-  for (int i = 0; i < size; i++) {
-    if (port == list.at(i).portName()) {
-      m_serialPort->setPort(list.at(i));
-    }
-  }
-  // m_serialPort->setBaudRate(9600);
-  bool connected = m_serialPort->open(QIODevice::ReadWrite);
-  if (connected) {
-    success = m_serialPort->setBaudRate(QSerialPort::Baud9600) &
-              m_serialPort->setParity(QSerialPort::NoParity) &
-              m_serialPort->setDataBits(QSerialPort::Data8) &
-              m_serialPort->setStopBits(QSerialPort::OneStop) &
-              m_serialPort->setFlowControl(QSerialPort::NoFlowControl);
-    std::string fNumber     = std::to_string(m_xSheetFrameNumber);
-    char const *fNumberChar = fNumber.c_str();
-    m_serialPort->write(fNumberChar);
-    m_serialPort->waitForBytesWritten(10);
-    QByteArray DataReceive = m_serialPort->readLine();
-    while (m_serialPort->waitForReadyRead(30)) {
-      DataReceive += m_serialPort->readLine();
-    }
-    QByteArray response = DataReceive;
-    QString s(response);
-    std::string text = response.toStdString();
-    //}
-  }
-  return success;
-}
-
-//-----------------------------------------------------------------
-
-void StopMotion::sendSerialData() {
-  if (m_serialPort->isOpen()) {
-    std::string fNumber     = std::to_string(m_xSheetFrameNumber);
-    char const *fNumberChar = fNumber.c_str();
-    m_serialPort->write(fNumberChar);
-    m_serialPort->waitForBytesWritten(10);
-    QByteArray DataReceive = m_serialPort->readLine();
-    while (m_serialPort->waitForReadyRead(30)) {
-      DataReceive += m_serialPort->readLine();
-    }
-    QByteArray response = DataReceive;
-    QString s(response);
-    std::string text = response.toStdString();
-  }
-
-  // for not data sending is not implemented yet, just the frame number.
-  // These lines are here to be a reference for using column data as movement.
-  // TDoubleParam *param =
-  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X);
-  // double value =
-  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getParam(TStageObject::T_X,
-  // m_xSheetFrameNumber - 1);
-  // QString isCam =
-  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getId().isCamera()
-  // ? "yep" : "nope";
-  // std::string name =
-  // TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getStageObjectTree()->getStageObject(0)->getName();
-  // TMeasure *measure =param->getMeasure();
-  // const TUnit *unit = measure->getCurrentUnit();
-  // double newValue = unit->convertTo(value);
+void StopMotion::onCanonCameraChanged(QString camera) {
+    emit(cameraChanged(camera));
 }
 
 //-----------------------------------------------------------------
@@ -5165,7 +2785,7 @@ public:
   StopMotionPickFocusCheck() : MenuItemHandler(MI_StopMotionPickFocusCheck) {}
   void execute() {
     StopMotion *sm = StopMotion::instance();
-    sm->toggleZoomPicking();
+    sm->m_canon->toggleZoomPicking();
   }
 } StopMotionPickFocusCheck;
 
@@ -5176,7 +2796,7 @@ public:
   StopMotionToggleZoomCommand() : MenuItemHandler(MI_StopMotionToggleZoom) {}
   void execute() {
     StopMotion *sm = StopMotion::instance();
-    sm->zoomLiveView();
+    sm->m_canon->zoomLiveView();
   }
 } StopMotionToggleZoomCommand;
 #endif

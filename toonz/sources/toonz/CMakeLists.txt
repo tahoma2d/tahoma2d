@@ -122,6 +122,11 @@ set(MOC_HEADERS
 	xdtsimportpopup.h
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
+    ../stopmotion/webcam.h
+    ../stopmotion/jpgconverter.h
+    ../stopmotion/canon.h
+    ../stopmotion/stopmotionserial.h
+    ../stopmotion/stopmotionlight.h
     cameracapturelevelcontrol.h
     penciltestpopup.h
 )
@@ -352,6 +357,11 @@ set(SOURCES
     predict3d.cpp
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
+    ../stopmotion/webcam.cpp
+    ../stopmotion/jpgconverter.cpp
+    ../stopmotion/canon.cpp
+    ../stopmotion/stopmotionserial.cpp
+    ../stopmotion/stopmotionlight.cpp
 	cameracapturelevelcontrol.cpp
     penciltestpopup.cpp
 )

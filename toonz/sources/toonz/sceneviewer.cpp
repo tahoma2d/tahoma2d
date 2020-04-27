@@ -1159,7 +1159,7 @@ void SceneViewer::onNewStopMotionImageReady() {
     m_stopMotionImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                               m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionImage = true;
-    if (m_stopMotion->m_pickLiveViewZoom) {
+    if (m_stopMotion->m_canon->m_pickLiveViewZoom) {
       setToolCursor(this, ToolCursor::ZoomCursor);
     }
     onSceneChanged();
@@ -1587,11 +1587,11 @@ void SceneViewer::drawOverlay() {
 #ifdef WITH_CANON
     // draw Stop Motion Zoom Box
     if (m_stopMotion->m_liveViewStatus == 2 &&
-        m_stopMotion->m_pickLiveViewZoom) {
+        m_stopMotion->m_canon->m_pickLiveViewZoom) {
       glPushMatrix();
       tglMultMatrix(m_drawCameraAff);
       m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
-      TRect rect  = m_stopMotion->m_zoomRect;
+      TRect rect  = m_stopMotion->m_canon->m_zoomRect;
 
       glColor3d(1.0, 0.0, 0.0);
 
@@ -1925,7 +1925,7 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity =
-            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -1973,7 +1973,7 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity =
-            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2026,7 +2026,7 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity =
-            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2089,7 +2089,7 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity =
-            m_stopMotion->m_zooming || m_stopMotion->m_pickLiveViewZoom;
+            m_stopMotion->m_canon->m_zooming || m_stopMotion->m_canon->m_pickLiveViewZoom;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
