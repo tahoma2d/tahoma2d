@@ -36,6 +36,16 @@ Canon::Canon() {
 
 Canon::~Canon() {}
 
+//-----------------------------------------------------------------
+
+void Canon::onImageReady(const bool& status) { m_converterSucceeded = status; }
+
+//-----------------------------------------------------------------
+
+void Canon::onFinished() { l_quitLoop = true; }
+
+//-----------------------------------------------------------------
+
 #ifdef WITH_CANON
 EdsError Canon::initializeCanonSDK() {
   m_error = EdsInitializeSDK();
@@ -1162,12 +1172,6 @@ bool Canon::downloadEVFData() {
 }
 
 //-----------------------------------------------------------------
-
-void Canon::onImageReady(const bool& status) { m_converterSucceeded = status; }
-
-//-----------------------------------------------------------------
-
-void Canon::onFinished() { l_quitLoop = true; }
 
 EdsError Canon::focusNear() {
   EdsError err = EDS_ERR_OK;

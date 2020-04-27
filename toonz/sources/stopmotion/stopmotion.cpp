@@ -268,7 +268,9 @@ StopMotion::StopMotion() {
 
 StopMotion::~StopMotion() {
   disconnectAllCameras();
+#ifdef WITH_CANON
   m_canon->closeAll();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -321,11 +323,13 @@ void StopMotion::onSceneSwitched() {
 //-----------------------------------------------------------------
 
 void StopMotion::disconnectAllCameras() {
+#ifdef WITH_CANON
   if (m_liveViewStatus > LiveViewClosed) {
     m_canon->resetCanon(true);
   } else {
     m_canon->resetCanon(false);
   }
+#endif
 
   if (m_usingWebcam) {
     m_webcam->releaseWebcam();
@@ -1649,7 +1653,7 @@ void StopMotion::captureImage() {
     return;
   }
   if (m_usingWebcam) {
-    if (!m_hasLiveViewImage) {
+    if (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen) {
       DVGui::warning(
           tr("Cannot capture webcam image unless live view is active."));
       return;

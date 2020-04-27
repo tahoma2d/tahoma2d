@@ -1149,7 +1149,9 @@ void StopMotionController::setPage(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onScaleFullSizeImagesChanged(int checked) {
+#ifdef WITH_CANON
   m_stopMotion->m_canon->setUseScaledImages(checked > 0 ? true : false);
+#endif
 }
 
 //-----------------------------------------------------------------------------
