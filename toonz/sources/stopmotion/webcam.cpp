@@ -65,6 +65,17 @@ bool Webcam::initWebcam(int index) {
     return false;
   }
 #endif
+  // mjpg is used by many webcams
+  // opencv runs very slow on some webcams without it.
+  if (m_useMjpg) {
+    m_cvWebcam.set(cv::CAP_PROP_FOURCC,
+                   cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
+    m_cvWebcam.set(cv::CAP_PROP_FOURCC,
+                   cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+  }
+  m_cvWebcam.set(3, m_webcamWidth);
+  m_cvWebcam.set(4, m_webcamHeight);
+
   return true;
 }
 
@@ -87,6 +98,7 @@ bool Webcam::getWebcamImage(TRaster32P& tempImage) {
 
   if (m_cvWebcam.isOpened() == false) {
     initWebcam(m_webcamIndex);
+
     // mjpg is used by many webcams
     // opencv runs very slow on some webcams without it.
     if (m_useMjpg) {
@@ -97,6 +109,7 @@ bool Webcam::getWebcamImage(TRaster32P& tempImage) {
     }
     m_cvWebcam.set(3, m_webcamWidth);
     m_cvWebcam.set(4, m_webcamHeight);
+
     if (!m_cvWebcam.isOpened()) {
       error = true;
     }
@@ -166,6 +179,238 @@ void Webcam::clearWebcamResolutions() { m_webcamResolutions.clear(); }
 void Webcam::refreshWebcamResolutions() {
   clearWebcamResolutions();
   m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
+}
+
+//-----------------------------------------------------------------
+
+bool Webcam::getWebcamAutofocusStatus() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return false;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_AUTOFOCUS);
+    if (value > 0.0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------
+void Webcam::setWebcamAutofocusStatus(bool on) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = on ? 1.0 : 0.0;
+    m_cvWebcam.set(cv::CAP_PROP_AUTOFOCUS, value);
+    value = m_cvWebcam.get(cv::CAP_PROP_AUTOFOCUS);
+  }
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamFocusValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_FOCUS);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamFocusValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_FOCUS, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_FOCUS);
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamExposureValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_EXPOSURE);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamExposureValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+  m_cvWebcam.set(cv::CAP_PROP_EXPOSURE, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_EXPOSURE);
+  getWebcamExposureValue();
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamBrightnessValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_BRIGHTNESS);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamBrightnessValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_BRIGHTNESS, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_BRIGHTNESS);
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamContrastValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_CONTRAST);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamContrastValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_CONTRAST, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_CONTRAST);
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamGainValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_GAIN);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamGainValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_GAIN, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_GAIN);
+}
+
+//-----------------------------------------------------------------
+int Webcam::getWebcamSaturationValue() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return 0;
+    }
+  }
+  if (m_cvWebcam.isOpened()) {
+    double value = m_cvWebcam.get(cv::CAP_PROP_SATURATION);
+    return static_cast<int>(value);
+  }
+  return 0.0;
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::setWebcamSaturationValue(int value) {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_SATURATION, value);
+  value = m_cvWebcam.get(cv::CAP_PROP_SATURATION);
+}
+
+//-----------------------------------------------------------------
+
+void Webcam::openSettingsWindow() {
+  if (m_cvWebcam.isOpened() == false) {
+    initWebcam(m_webcamIndex);
+
+    if (!m_cvWebcam.isOpened()) {
+      return;
+    }
+  }
+  m_cvWebcam.set(cv::CAP_PROP_SETTINGS, 1.0);
 }
 
 //-----------------------------------------------------------------

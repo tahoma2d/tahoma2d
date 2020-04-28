@@ -693,14 +693,14 @@ void FlipConsole::enableButton(UINT button, bool enable, bool doShowHide) {
           m_soundSep->setVisible(enable);
         } else {
           m_soundSep->setEnabled(enable);
-	}
+        }
       }
       if (button == eHisto) {
         if (doShowHide) {
           m_histoSep->setVisible(enable && m_customizeMask & eShowHisto);
         } else {
           m_histoSep->setEnabled(enable);
-	}
+        }
       }
       if (doShowHide) {
         list[i]->setVisible(enable);
@@ -1674,6 +1674,13 @@ void FlipConsole::doButtonPressed(UINT button) {
     break;
 
   case eFilledRaster:
+    return;
+
+  case eFlipHorizontal:
+  case eFlipVertical:
+  case eZoomIn:
+  case eZoomOut:
+  case eResetView:
     return;
 
   default:

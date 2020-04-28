@@ -55,6 +55,29 @@ public:
   bool getUseDirectShow() { return m_useDirectShow; }
   void setUseDirectShow(int state);
 
+  bool getWebcamAutofocusStatus();
+  void setWebcamAutofocusStatus(bool on);
+
+  int getWebcamFocusValue();
+  void setWebcamFocusValue(int value);
+
+  int getWebcamExposureValue();
+  void setWebcamExposureValue(int value);
+
+  int getWebcamBrightnessValue();
+  void setWebcamBrightnessValue(int value);
+
+  int getWebcamContrastValue();
+  void setWebcamContrastValue(int value);
+
+  int getWebcamGainValue();
+  void setWebcamGainValue(int value);
+
+  int getWebcamSaturationValue();
+  void setWebcamSaturationValue(int value);
+
+  void openSettingsWindow();
+
 private:
   // Webcam Properties
   QList<QCameraInfo> m_webcams;
@@ -69,6 +92,9 @@ private:
   int m_webcamWidth    = 0;
   int m_webcamHeight   = 0;
   bool m_useMjpg       = true;
+
+  int m_webcamFocusValue       = 0;
+  bool m_webcamAutofocusStatus = true;
 
 signals:
   void useMjpgSignal(bool);

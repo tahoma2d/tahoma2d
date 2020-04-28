@@ -208,18 +208,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   QGroupBox *fileFrame = new QGroupBox(tr("File"), this);
   m_levelNameEdit      = new LevelNameLineEdit(this);
 
-#ifdef _WIN32
-  m_captureFilterSettingsBtn = new QPushButton(this);
-#else
-  m_captureFilterSettingsBtn = 0;
-#endif
-  if (m_captureFilterSettingsBtn) {
-    m_captureFilterSettingsBtn->setObjectName("GearButton");
-    m_captureFilterSettingsBtn->setFixedSize(28, 28);
-    m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
-    m_captureFilterSettingsBtn->setToolTip(tr("Webcam Settings..."));
-  }
-
   // set the start frame 10 if the option in preferences
   // "Show ABC Appendix to the Frame Number in Xsheet Cell" is active.
   // (frame 10 is displayed as "1" with this option)
@@ -350,16 +338,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                           Qt::AlignRight);
         camLay->addWidget(m_cameraListCombo, 0, 1, Qt::AlignLeft);
         camLay->addWidget(refreshCamListButton, 0, 2, Qt::AlignLeft);
-        if (m_captureFilterSettingsBtn) {
-          camLay->addWidget(m_captureFilterSettingsBtn, 0, 3, Qt::AlignLeft);
-          camLay->addWidget(m_resolutionLabel, 1, 0, Qt::AlignRight);
-          camLay->addWidget(m_resolutionCombo, 1, 1, 1, 3, Qt::AlignLeft);
-          camLay->setColumnStretch(3, 30);
-        } else {
-          camLay->addWidget(m_resolutionLabel, 1, 0, Qt::AlignRight);
-          camLay->addWidget(m_resolutionCombo, 1, 1, 1, 2, Qt::AlignLeft);
-          camLay->setColumnStretch(2, 30);
-        }
+        // if (m_captureFilterSettingsBtn) {
+        //  camLay->addWidget(m_captureFilterSettingsBtn, 0, 3, Qt::AlignLeft);
+        //  camLay->addWidget(m_resolutionLabel, 1, 0, Qt::AlignRight);
+        //  camLay->addWidget(m_resolutionCombo, 1, 1, 1, 3, Qt::AlignLeft);
+        //  camLay->setColumnStretch(3, 30);
+        //} else {
+        //}
+        camLay->addWidget(m_resolutionLabel, 1, 0, Qt::AlignRight);
+        camLay->addWidget(m_resolutionCombo, 1, 1, 1, 2, Qt::AlignLeft);
+        camLay->setColumnStretch(2, 30);
         camLay->addWidget(m_cameraStatusLabel, 2, 1, 1, 2, Qt::AlignLeft);
       }
       controlLayout->addLayout(camLay, 0);
@@ -460,6 +448,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_mainControlsPage->setLayout(controlLayout);
 
     // Make Settings Page
+    QVBoxLayout *innerSettingsLayout = new QVBoxLayout;
+    m_noCameraFrame                  = new QFrame();
+    QHBoxLayout *noCameraLayout      = new QHBoxLayout();
+    noCameraLayout->addStretch();
+    noCameraLayout->addWidget(
+        new QLabel(tr("Select a camera to change settings.")));
+    noCameraLayout->addStretch();
+    m_noCameraFrame->setLayout(noCameraLayout);
+    innerSettingsLayout->addWidget(m_noCameraFrame);
+
     m_apertureLabel  = new QLabel(tr(""), this);
     m_apertureSlider = new QSlider(Qt::Horizontal, this);
     m_apertureSlider->setRange(0, 10);
@@ -555,7 +553,120 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     // settingsLayout->addStretch();
     settingsLayout->addLayout(m_focusAndZoomLayout);
     settingsLayout->addStretch();
-    m_cameraSettingsPage->setLayout(settingsLayout);
+    m_dslrFrame = new QFrame();
+    m_dslrFrame->setLayout(settingsLayout);
+    innerSettingsLayout->addWidget(m_dslrFrame);
+    m_dslrFrame->hide();
+
+    QVBoxLayout *webcamSettingsLayout = new QVBoxLayout;
+    webcamSettingsLayout->setSpacing(0);
+    webcamSettingsLayout->setMargin(5);
+    QHBoxLayout *webcamLabelLayout = new QHBoxLayout();
+    m_webcamLabel = new QLabel("insert webcam name here", this);
+    webcamLabelLayout->addStretch();
+    webcamLabelLayout->addWidget(m_webcamLabel);
+    webcamLabelLayout->addStretch();
+    webcamSettingsLayout->addLayout(webcamLabelLayout);
+    webcamSettingsLayout->addSpacing(10);
+
+    // webcam focus
+    m_webcamAutoFocusGB = new QGroupBox(tr("Manual Focus"), this);
+    m_webcamAutoFocusGB->setCheckable(true);
+
+    m_webcamFocusSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamFocusSlider->setRange(0, 255);
+    m_webcamFocusSlider->setTickInterval(5);
+
+    QHBoxLayout *webcamFocusLay = new QHBoxLayout();
+    webcamFocusLay->addWidget(new QLabel(tr("Focus: "), this), 0);
+    webcamFocusLay->addWidget(m_webcamFocusSlider, 1);
+    m_webcamAutoFocusGB->setLayout(webcamFocusLay);
+    webcamSettingsLayout->addWidget(m_webcamAutoFocusGB);
+    webcamSettingsLayout->addSpacing(5);
+
+    QGridLayout *webcamGridLay = new QGridLayout();
+    webcamGridLay->setMargin(0);
+    webcamGridLay->setSpacing(3);
+    webcamGridLay->setColumnStretch(0, 0);
+    webcamGridLay->setColumnStretch(1, 1);
+
+    // webcam exposure
+    m_webcamExposureSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamExposureSlider->setRange(-13, -1);
+    m_webcamExposureSlider->setTickInterval(1);
+
+    QHBoxLayout *webcamExposureLay = new QHBoxLayout();
+    webcamExposureLay->addWidget(m_webcamExposureSlider, 1);
+    webcamGridLay->addWidget(new QLabel(tr("Exposure: "), this), 0, 0, 1, 1,
+                             Qt::AlignRight);
+    webcamGridLay->addLayout(webcamExposureLay, 0, 1, 1, 1);
+
+    // webcam brightness
+    m_webcamBrightnessSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamBrightnessSlider->setRange(0, 255);
+
+    QHBoxLayout *webcamBrightnessLay = new QHBoxLayout();
+    webcamBrightnessLay->addWidget(m_webcamBrightnessSlider, 1);
+    webcamGridLay->addWidget(new QLabel(tr("Brightness: "), this), 1, 0, 1, 1,
+                             Qt::AlignRight);
+    webcamGridLay->addLayout(webcamBrightnessLay, 1, 1, 1, 1);
+
+    // webcam contrast
+    m_webcamContrastSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamContrastSlider->setRange(0, 255);
+
+    QHBoxLayout *webcamContrastLay = new QHBoxLayout();
+    webcamContrastLay->addWidget(m_webcamContrastSlider, 1);
+    webcamGridLay->addWidget(new QLabel(tr("Contrast: "), this), 2, 0, 1, 1,
+                             Qt::AlignRight);
+    webcamGridLay->addLayout(webcamContrastLay, 2, 1, 1, 1);
+
+    // webcam gain
+    m_webcamGainSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamGainSlider->setRange(0, 255);
+
+    QHBoxLayout *webcamGainLay = new QHBoxLayout();
+    webcamGainLay->addWidget(m_webcamGainSlider, 1);
+    webcamGridLay->addWidget(new QLabel(tr("Gain: "), this), 3, 0, 1, 1,
+                             Qt::AlignRight);
+    webcamGridLay->addLayout(webcamGainLay, 3, 1, 1, 1);
+
+    // webcam saturation
+    m_webcamSaturationSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamSaturationSlider->setRange(0, 255);
+
+    QHBoxLayout *webcamSaturationLay = new QHBoxLayout();
+    webcamSaturationLay->addWidget(m_webcamSaturationSlider, 1);
+    webcamGridLay->addWidget(new QLabel(tr("Saturation: "), this), 4, 0, 1, 1,
+                             Qt::AlignRight);
+    webcamGridLay->addLayout(webcamSaturationLay, 4, 1, 1, 1);
+
+#ifdef _WIN32
+    m_captureFilterSettingsBtn = new QPushButton(this);
+#else
+    m_captureFilterSettingsBtn = 0;
+#endif
+    if (m_captureFilterSettingsBtn) {
+      m_captureFilterSettingsBtn->setObjectName("GearButton");
+      m_captureFilterSettingsBtn->setFixedSize(128, 28);
+      m_captureFilterSettingsBtn->setText(tr("More"));
+      m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
+      m_captureFilterSettingsBtn->setToolTip(tr("Webcam Settings..."));
+      webcamGridLay->addWidget(m_captureFilterSettingsBtn, 5, 0, 1, 2,
+                               Qt::AlignCenter);
+    }
+
+    webcamSettingsLayout->addLayout(webcamGridLay);
+
+    webcamSettingsLayout->addStretch();
+    m_webcamFrame = new QFrame();
+    m_webcamFrame->setSizePolicy(QSizePolicy::Expanding,
+                                 QSizePolicy::Expanding);
+    m_webcamFrame->setLayout(webcamSettingsLayout);
+    innerSettingsLayout->addWidget(m_webcamFrame);
+    m_webcamFrame->hide();
+    innerSettingsLayout->addStretch();
+    m_cameraSettingsPage->setLayout(innerSettingsLayout);
 
     // Make Options Page
     QGroupBox *webcamBox  = new QGroupBox(tr("Webcam Options"), this);
@@ -602,6 +713,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     dslrBox->setLayout(dslrLayout);
     dslrBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     optionsOutsideLayout->addWidget(dslrBox, Qt::AlignCenter);
+    dslrBox->hide();
 
     webcamLayout->addWidget(m_directShowCB, 0, 0, Qt::AlignRight);
     webcamLayout->addWidget(m_directShowLabel, 0, 1, Qt::AlignLeft);
@@ -612,6 +724,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamBox->setLayout(webcamLayout);
     webcamBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     optionsOutsideLayout->addWidget(webcamBox, Qt::AlignCenter);
+    webcamBox->hide();
 
     QGridLayout *timerLay = new QGridLayout();
     timerLay->setMargin(8);
@@ -1035,6 +1148,20 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onWebcamResolutionsChanged()));
   ret = ret && connect(m_stopMotion, SIGNAL(newWebcamResolutionSelected(int)),
                        this, SLOT(onNewWebcamResolutionSelected(int)));
+  ret = ret && connect(m_webcamFocusSlider, SIGNAL(valueChanged(int)), this,
+                       SLOT(onWebcamFocusSliderChanged(int)));
+  ret = ret && connect(m_webcamAutoFocusGB, SIGNAL(toggled(bool)), this,
+                       SLOT(onWebcamAutofocusToggled(bool)));
+  ret = ret && connect(m_webcamExposureSlider, SIGNAL(valueChanged(int)), this,
+                       SLOT(onWebcamExposureSliderChanged(int)));
+  ret = ret && connect(m_webcamBrightnessSlider, SIGNAL(valueChanged(int)),
+                       this, SLOT(onWebcamBrightnessSliderChanged(int)));
+  ret = ret && connect(m_webcamContrastSlider, SIGNAL(valueChanged(int)), this,
+                       SLOT(onWebcamContrastSliderChanged(int)));
+  ret = ret && connect(m_webcamGainSlider, SIGNAL(valueChanged(int)), this,
+                       SLOT(onWebcamGainSliderChanged(int)));
+  ret = ret && connect(m_webcamSaturationSlider, SIGNAL(valueChanged(int)),
+                       this, SLOT(onWebcamSaturationSliderChanged(int)));
 
   // Lighting Connections
   ret = ret &&
@@ -1792,23 +1919,37 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_cameraStatusLabel->hide();
     m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
     m_zoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+    m_dslrFrame->hide();
+    m_webcamFrame->hide();
+    m_noCameraFrame->show();
+    // if (m_tabBar->tabText(1) == tr("Settings")) {
+    //    m_tabBar->removeTab(1);
+    //}
   } else if (useWebcam) {
-    if (m_tabBar->tabText(1) == tr("Settings")) {
-      m_tabBar->removeTab(1);
-    }
     m_resolutionCombo->show();
     m_resolutionCombo->setEnabled(true);
     m_resolutionLabel->show();
     if (m_captureFilterSettingsBtn) m_captureFilterSettingsBtn->show();
     m_cameraStatusLabel->hide();
+    m_webcamFrame->show();
+    m_dslrFrame->hide();
+    m_noCameraFrame->hide();
+    getWebcamStatus();
+    // if (m_tabBar->tabText(1) == tr("Options")) {
+    //    m_tabBar->insertTab(1, tr("Settings"));
+    //}
+    m_webcamLabel->setText(m_cameraListCombo->currentText());
   } else {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
     if (m_captureFilterSettingsBtn) m_captureFilterSettingsBtn->hide();
     m_cameraStatusLabel->show();
-    if (m_tabBar->tabText(1) == tr("Options")) {
-      m_tabBar->insertTab(1, tr("Settings"));
-    }
+    m_dslrFrame->show();
+    m_webcamFrame->hide();
+    m_noCameraFrame->hide();
+    // if (m_tabBar->tabText(1) == tr("Options")) {
+    //  m_tabBar->insertTab(1, tr("Settings"));
+    //}
   }
 }
 
@@ -1836,6 +1977,75 @@ void StopMotionController::onResolutionComboActivated(const QString &itemText) {
   m_stopMotion->setWebcamResolution(itemText);
 }
 
+////-----------------------------------------------------------------------------
+//
+// void StopMotionController::onWebcamFocusFldEdited() {
+//    int value = m_webcamFocusSlider->getValue();
+//    value = value + abs((value % 5) - 5);
+//    m_stopMotion->m_webcam->setWebcamFocusValue(value);
+//}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamAutofocusToggled(bool on) {
+  m_stopMotion->m_webcam->setWebcamAutofocusStatus(!on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamFocusSliderChanged(int value) {
+  // int value = m_webcamFocusSlider->getValue();
+  value = value + abs((value % 5) - 5);
+  m_stopMotion->m_webcam->setWebcamFocusValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamExposureSliderChanged(int value) {
+  m_stopMotion->m_webcam->setWebcamExposureValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamBrightnessSliderChanged(int value) {
+  m_stopMotion->m_webcam->setWebcamBrightnessValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamContrastSliderChanged(int value) {
+  m_stopMotion->m_webcam->setWebcamContrastValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamGainSliderChanged(int value) {
+  m_stopMotion->m_webcam->setWebcamGainValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onWebcamSaturationSliderChanged(int value) {
+  m_stopMotion->m_webcam->setWebcamSaturationValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::getWebcamStatus() {
+  m_webcamAutoFocusGB->setChecked(
+      !m_stopMotion->m_webcam->getWebcamAutofocusStatus());
+  m_webcamFocusSlider->setValue(m_stopMotion->m_webcam->getWebcamFocusValue());
+  m_webcamExposureSlider->setValue(
+      m_stopMotion->m_webcam->getWebcamExposureValue());
+  m_webcamBrightnessSlider->setValue(
+      m_stopMotion->m_webcam->getWebcamBrightnessValue());
+  m_webcamContrastSlider->setValue(
+      m_stopMotion->m_webcam->getWebcamContrastValue());
+  m_webcamGainSlider->setValue(m_stopMotion->m_webcam->getWebcamGainValue());
+  m_webcamSaturationSlider->setValue(
+      m_stopMotion->m_webcam->getWebcamSaturationValue());
+}
+
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCaptureFilterSettingsBtnPressed() {
@@ -1848,7 +2058,9 @@ void StopMotionController::onCaptureFilterSettingsBtnPressed() {
     if (cameras.at(c).deviceName() ==
         m_stopMotion->m_webcam->getWebcamDeviceName()) {
 #ifdef _WIN32
-      openCaptureFilterSettings(this, cameras.at(c).description());
+      m_stopMotion->m_webcam->openSettingsWindow();
+// openCaptureFilterSettings(this, cameras.at(c).description());
+
 #endif
       return;
     }
@@ -2233,21 +2445,32 @@ void StopMotionController::onFocusFar3() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::showEvent(QShowEvent *event) {
+  bool hasCanon  = false;
+  bool hasWebcam = false;
 #ifdef WITH_CANON
   m_stopMotion->m_canon->initializeCanonSDK();
   if (!m_stopMotion->m_canon->m_sessionOpen) {
-    if (m_tabBar->tabText(1) == tr("Settings")) {
-      m_tabBar->removeTab(1);
-    }
+    m_dslrFrame->hide();
+  } else {
+    m_dslrFrame->show();
+    hasCanon = true;
   }
 #else
-  if (m_tabBar->tabText(1) == tr("Settings")) {
-    m_tabBar->removeTab(1);
-  }
+  m_dslrFrame->hide();
 #endif
   if (!m_stopMotion->m_usingWebcam) {
     m_resolutionCombo->hide();
     m_resolutionLabel->hide();
+    m_webcamFrame->hide();
+  } else {
+    hasWebcam = true;
+    m_webcamFrame->show();
+  }
+
+  if (!hasWebcam && !hasCanon) {
+    m_noCameraFrame->show();
+  } else {
+    m_noCameraFrame->hide();
   }
 }
 

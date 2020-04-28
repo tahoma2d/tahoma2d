@@ -69,6 +69,9 @@ class StopMotionController final : public QWidget {
   QFrame *m_optionsPage;
   QFrame *m_motionPage;
   QFrame *m_lightPage;
+  QFrame *m_dslrFrame;
+  QFrame *m_webcamFrame;
+  QFrame *m_noCameraFrame;
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
   QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton;
@@ -80,11 +83,14 @@ class StopMotionController final : public QWidget {
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
       *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel,
       *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel,
-      *m_screen1OverlayLabel, *m_screen2OverlayLabel, *m_screen3OverlayLabel;
+      *m_screen1OverlayLabel, *m_screen2OverlayLabel, *m_screen3OverlayLabel,
+      *m_webcamLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
   QSlider *m_apertureSlider, *m_shutterSpeedSlider, *m_isoSlider,
-      *m_kelvinSlider;
+      *m_kelvinSlider, *m_webcamFocusSlider, *m_webcamWhiteBalanceSlider,
+      *m_webcamExposureSlider, *m_webcamBrightnessSlider,
+      *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider;
   QComboBox *m_cameraListCombo, *m_exposureCombo,  // *m_fileTypeCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
@@ -104,6 +110,7 @@ class StopMotionController final : public QWidget {
   QGroupBox *m_screen1Box;
   QGroupBox *m_screen2Box;
   QGroupBox *m_screen3Box;
+  QGroupBox *m_webcamAutoFocusGB, *m_webcamWhiteBalanceGB, *m_webcamExposureGB;
   QTimer *m_lightTestTimer;
 
 public:
@@ -112,8 +119,8 @@ public:
 
 protected:
   void updateStopMotion();
-  void showEvent(QShowEvent *event);
-  void hideEvent(QHideEvent *event);
+  void showEvent(QShowEvent *event) override;
+  void hideEvent(QHideEvent *event) override;
   // void mousePressEvent(QMouseEvent *event) override;
   // void keyPressEvent(QKeyEvent *event);
   void keyPressEvent(QKeyEvent *event) override;
@@ -122,7 +129,6 @@ protected slots:
   void refreshCameraList(QString activeCamera = "");
   void refreshCameraListCalled();
   void refreshOptionsLists();
-
   void onCameraListComboActivated(int index);
   void onResolutionComboActivated(const QString &itemText);
   void onCaptureFilterSettingsBtnPressed();
@@ -134,6 +140,7 @@ protected slots:
   void onPreviousFrame();
   void onNextNewLevel();
   void onLastFrame();
+
   // void onFileTypeActivated();
   void onFrameNumberChanged();
   void onXSheetFrameNumberChanged();
@@ -247,8 +254,18 @@ protected slots:
   void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);
   void onNewCameraSelected(int, bool);
+
+  // webcam
   void onWebcamResolutionsChanged();
   void onNewWebcamResolutionSelected(int);
+  void onWebcamAutofocusToggled(bool);
+  void onWebcamFocusSliderChanged(int value);
+  void onWebcamExposureSliderChanged(int value);
+  void onWebcamBrightnessSliderChanged(int value);
+  void onWebcamContrastSliderChanged(int value);
+  void onWebcamGainSliderChanged(int value);
+  void onWebcamSaturationSliderChanged(int value);
+  void getWebcamStatus();
 
 public slots:
   void openSaveInFolderPopup();
