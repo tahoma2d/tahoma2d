@@ -248,6 +248,7 @@ Range in seconds
 class TSoundDeviceException final : public TException {
 public:
   enum Type {
+    NoDevice,           // no device found
     FailedInit,  // fallimento del costruttore
     UnableOpenDevice,
     UnableCloseDevice,

@@ -845,17 +845,25 @@ void TXshSoundColumn::play(ColumnLevel *columnLevel, int currentFrame) {
 //-----------------------------------------------------------------------------
 
 void TXshSoundColumn::play(int currentFrame) {
-  TSoundTrackP soundTrack = getOverallSoundTrack(currentFrame);
+  try {
+    TSoundTrackP soundTrack = getOverallSoundTrack(currentFrame);
 
-  if (!soundTrack) return;
+    if (!soundTrack) return;
 
-  int spf        = m_levels.at(0)->getSoundLevel()->getSamplePerFrame();
-  int startFrame = (currentFrame - getFirstRow());
+    int spf        = m_levels.at(0)->getSoundLevel()->getSamplePerFrame();
+    int startFrame = (currentFrame - getFirstRow());
 
-  int s0 = startFrame * spf;
-  int s1 = getMaxFrame() * spf;
+    int s0 = startFrame * spf;
+    int s1 = getMaxFrame() * spf;
 
-  play(soundTrack, s0, s1, false);
+    play(soundTrack, s0, s1, false);
+  } catch (TSoundDeviceException &e) {
+    if (e.getType() == TSoundDeviceException::NoDevice) {
+      std::cout << ::to_string(e.getMessage()) << std::endl;
+    } else {
+      throw TSoundDeviceException(e.getType(), e.getMessage());
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -943,10 +951,17 @@ void TXshSoundColumn::onTimerOut() {
 
 void TXshSoundColumn::scrub(int fromFrame, int toFrame) {
   if (!isCamstandVisible()) return;
-  TSoundTrackP soundTrack = getOverallSoundTrack(fromFrame, toFrame + 1);
-  if (!soundTrack) return;
-
-  play(soundTrack, 0, soundTrack->getSampleCount(), false);
+  try {
+    TSoundTrackP soundTrack = getOverallSoundTrack(fromFrame, toFrame + 1);
+    if (!soundTrack) return;
+    play(soundTrack, 0, soundTrack->getSampleCount(), false);
+  } catch (TSoundDeviceException &e) {
+    if (e.getType() == TSoundDeviceException::NoDevice) {
+      std::cout << ::to_string(e.getMessage()) << std::endl;
+    } else {
+      throw TSoundDeviceException(e.getType(), e.getMessage());
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1006,6 +1021,8 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   if (format.m_sampleRate >= 44100) format.m_sampleRate = 22050;
 #else
   QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+  if (info.deviceName().length() == 0) throw TSoundDeviceException(TSoundDeviceException::NoDevice,
+								  "No device found, check QAudio backends");
   QList<int> ssrs = info.supportedSampleRates();
   if (!ssrs.contains(format.m_sampleRate)) format.m_sampleRate = 44100;
   QAudioFormat qFormat;
