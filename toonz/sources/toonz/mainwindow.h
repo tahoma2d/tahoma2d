@@ -272,6 +272,8 @@ private:
                             const char *defaultShortcut);
   QAction *createToolOptionsAction(const char *id, const QString &name,
                                    const QString &defaultShortcut);
+  QAction *createStopMotionAction(const char *id, const QString &name,
+                                  const QString &defaultShortcut);
 
 protected slots:
   void onCurrentRoomChanged(int newRoomIndex);
