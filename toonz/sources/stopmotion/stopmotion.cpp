@@ -430,6 +430,10 @@ void StopMotion::setReviewTime(int time) {
 //-----------------------------------------------------------------
 
 void StopMotion::jumpToCameraFrame() {
+  if (m_liveViewStatus == LiveViewPaused && !m_userCalledPause) {
+    m_liveViewStatus = LiveViewOpen;
+  }
+  if (m_hasLineUpImage) m_showLineUpImage = true;
   TApp::instance()->getCurrentFrame()->setFrame(m_xSheetFrameNumber - 1);
 }
 
@@ -647,12 +651,12 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     }
 
     // now set all new shortcuts
-    action = comm->getAction(MI_PrevDrawing);
+    action = comm->getAction(MI_PrevFrame);
     if (action) {
       action->setShortcut(QKeySequence("1"));
       action = NULL;
     }
-    action = comm->getAction(MI_NextDrawing);
+    action = comm->getAction(MI_StopMotionNextFrame);
     if (action) {
       action->setShortcut(QKeySequence("2"));
       action = NULL;
@@ -717,13 +721,13 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     // unset the new shortcuts first
     if (m_oldActionMap.size() > 0) {
       QAction *action;
-      action = comm->getAction(MI_PrevDrawing);
+      action = comm->getAction(MI_PrevFrame);
       if (action) {
         action->setShortcut(
             QKeySequence(comm->getShortcutFromAction(action).c_str()));
         action = NULL;
       }
-      action = comm->getAction(MI_NextDrawing);
+      action = comm->getAction(MI_StopMotionNextFrame);
       if (action) {
         action->setShortcut(
             QKeySequence(comm->getShortcutFromAction(action).c_str()));
@@ -826,12 +830,12 @@ void StopMotion::toggleNumpadForFocusCheck(bool on) {
   if (m_useNumpadShortcuts) {
     if (on) {
       QAction *action;
-      action = comm->getAction(MI_PrevDrawing);
+      action = comm->getAction(MI_PrevFrame);
       if (action) {
         action->setShortcut(QKeySequence(""));
         action = NULL;
       }
-      action = comm->getAction(MI_NextDrawing);
+      action = comm->getAction(MI_StopMotionNextFrame);
       if (action) {
         action->setShortcut(QKeySequence(""));
         action = NULL;
@@ -868,12 +872,12 @@ void StopMotion::toggleNumpadForFocusCheck(bool on) {
       }
     } else {
       QAction *action;
-      action = comm->getAction(MI_PrevDrawing);
+      action = comm->getAction(MI_PrevFrame);
       if (action) {
         action->setShortcut(QKeySequence("1"));
         action = NULL;
       }
-      action = comm->getAction(MI_NextDrawing);
+      action = comm->getAction(MI_StopMotionNextFrame);
       if (action) {
         action->setShortcut(QKeySequence("2"));
         action = NULL;
@@ -1212,9 +1216,10 @@ void StopMotion::setSubsampling() {
 void StopMotion::onTimeout() {
   int currentFrame = TApp::instance()->getCurrentFrame()->getFrame();
 
-  if (m_liveViewStatus > LiveViewClosed && m_liveViewStatus < LiveViewPaused &&
-      !TApp::instance()->getCurrentFrame()->isPlaying()) {
-    if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
+  if ((m_liveViewStatus > LiveViewClosed && m_liveViewStatus < LiveViewPaused &&
+       !TApp::instance()->getCurrentFrame()->isPlaying()) ||
+      (m_liveViewStatus == LiveViewPaused && !m_userCalledPause)) {
+    if (getAlwaysLiveView() || (currentFrame >= m_xSheetFrameNumber - 2)) {
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
         bool success = m_canon->downloadEVFData();
@@ -1232,7 +1237,8 @@ void StopMotion::onTimeout() {
           m_hasLiveViewImage = false;
         }
       }
-      if ((!getAlwaysLiveView() && currentFrame != m_xSheetFrameNumber - 1) ||
+      if ((!getAlwaysLiveView() &&
+           !(currentFrame >= m_xSheetFrameNumber - 2)) ||
           m_canon->m_pickLiveViewZoom) {
         m_showLineUpImage = false;
       } else {
@@ -1242,27 +1248,28 @@ void StopMotion::onTimeout() {
       m_liveViewStatus = LiveViewPaused;
       TApp::instance()->getCurrentScene()->notifySceneChanged();
     }
-  } else if (m_liveViewStatus == LiveViewPaused && !m_userCalledPause) {
-    if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
-      if (!m_usingWebcam) {
-#ifdef WITH_CANON
-        bool success = m_canon->downloadEVFData();
-        if (success) {
-          setLiveViewImage();
-        } else {
-          m_hasLiveViewImage = false;
-        }
-#endif
-      } else {
-        bool success = m_webcam->getWebcamImage(m_liveViewImage);
-        if (success) {
-          setLiveViewImage();
-        } else {
-          m_hasLiveViewImage = false;
-        }
-      }
-    }
   }
+  //  else if (m_liveViewStatus == LiveViewPaused && !m_userCalledPause) {
+  //    if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
+  //      if (!m_usingWebcam) {
+  //#ifdef WITH_CANON
+  //        bool success = m_canon->downloadEVFData();
+  //        if (success) {
+  //          setLiveViewImage();
+  //        } else {
+  //          m_hasLiveViewImage = false;
+  //        }
+  //#endif
+  //      } else {
+  //        bool success = m_webcam->getWebcamImage(m_liveViewImage);
+  //        if (success) {
+  //          setLiveViewImage();
+  //        } else {
+  //          m_hasLiveViewImage = false;
+  //        }
+  //      }
+  //    }
+  //  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1644,6 +1651,19 @@ bool StopMotion::importImage() {
 //-----------------------------------------------------------------
 
 void StopMotion::captureImage() {
+  if (m_isTimeLapse && !m_intervalStarted) {
+    startInterval();
+    return;
+  }
+  if (m_isTimeLapse && m_intervalStarted && m_intervalTimer->isActive()) {
+    stopInterval();
+    return;
+  }
+  if (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+
   bool sessionOpen = false;
 #ifdef WITH_CANON
   sessionOpen = m_canon->m_sessionOpen;
@@ -1664,7 +1684,7 @@ void StopMotion::captureImage() {
     if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
       if (m_liveViewStatus > LiveViewClosed) {
-        m_liveViewStatus = LiveViewPaused;
+        // m_liveViewStatus = LiveViewPaused;
       }
     }
     m_lineUpImage    = m_liveViewImage;
@@ -1680,7 +1700,7 @@ void StopMotion::captureImage() {
   }
 
   if (m_liveViewStatus > LiveViewClosed && !m_isTimeLapse) {
-    m_liveViewStatus = LiveViewPaused;
+    // m_liveViewStatus = LiveViewPaused;
   }
 
   if (m_hasLiveViewImage) {
@@ -2546,6 +2566,8 @@ void StopMotion::changeCameras(int index) {
   emit(liveViewStopped());
   emit(liveViewChanged(false));
   refreshFrameInfo();
+  // after all live view data is cleared, start it again.
+  toggleLiveView();
 }
 //-----------------------------------------------------------------
 
@@ -2777,6 +2799,20 @@ public:
     sm->removeStopMotionFrame();
   }
 } StopMotionRemoveFrame;
+
+//=============================================================================
+
+class StopMotionNextFrame : public MenuItemHandler {
+public:
+  StopMotionNextFrame() : MenuItemHandler(MI_StopMotionNextFrame) {}
+  void execute() {
+    StopMotion *sm = StopMotion::instance();
+    int index      = TApp::instance()->getCurrentFrame()->getFrameIndex();
+    if (index < sm->getXSheetFrameNumber() - 1) {
+      TApp::instance()->getCurrentFrame()->setFrame(index + 1);
+    }
+  }
+} StopMotionNextFrame;
 
 #ifdef WITH_CANON
 //=============================================================================

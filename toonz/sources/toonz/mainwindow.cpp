@@ -2655,6 +2655,8 @@ void MainWindow::defineActions() {
                "");
   createAction(MI_StopMotionRemoveFrame,
                tr("Remove frame before Stop Motion Camera"), "");
+  createAction(MI_StopMotionNextFrame,
+               tr("Next Frame including Stop Motion Camera"), "");
 }
 
 //-----------------------------------------------------------------------------

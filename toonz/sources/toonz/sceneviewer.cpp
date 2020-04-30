@@ -1585,6 +1585,16 @@ void SceneViewer::drawOverlay() {
     }
 
 #ifdef WITH_CANON
+    if (m_stopMotion->m_liveViewStatus == StopMotion::LiveViewOpen &&
+        app->getCurrentFrame()->getFrame() ==
+            m_stopMotion->getXSheetFrameNumber() - 1) {
+      int x0, x1, y0, y1;
+      rect().getCoords(&x0, &y0, &x1, &y1);
+      x0 = (-(x1 / 2)) + 15;
+      y0 = ((y1 / 2)) - 15;
+      tglDrawDisk(TPointD(x0, y0), 10);
+    }
+
     // draw Stop Motion Zoom Box
     if (m_stopMotion->m_liveViewStatus == 2 &&
         m_stopMotion->m_canon->m_pickLiveViewZoom) {
@@ -1907,8 +1917,8 @@ void SceneViewer::drawScene() {
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
     if (m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
-        (!frameHandle->isPlaying() ||
-         frame == m_stopMotion->getXSheetFrameNumber())) {
+        (  //! frameHandle->isPlaying() ||
+            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;
@@ -1925,7 +1935,8 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom;
+                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
+                       !m_hasStopMotionLineUpImage;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -1955,8 +1966,8 @@ void SceneViewer::drawScene() {
 
     if (!m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
-        (!frameHandle->isPlaying() ||
-         frame == m_stopMotion->getXSheetFrameNumber())) {
+        (  //! frameHandle->isPlaying() ||
+            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;
@@ -1973,7 +1984,8 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom;
+                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
+                       !m_hasStopMotionLineUpImage;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2008,8 +2020,8 @@ void SceneViewer::drawScene() {
 
     if (m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
-        (!frameHandle->isPlaying() ||
-         frame == m_stopMotion->getXSheetFrameNumber())) {
+        (  //! frameHandle->isPlaying() ||
+            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;
@@ -2026,7 +2038,8 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom;
+                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
+                       !m_hasStopMotionLineUpImage;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
@@ -2071,8 +2084,8 @@ void SceneViewer::drawScene() {
 
     if (!m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
-        (!frameHandle->isPlaying() ||
-         frame == m_stopMotion->getXSheetFrameNumber())) {
+        (  //! frameHandle->isPlaying() ||
+            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
       if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
         Stage::Player smPlayer;
         double dpiX, dpiY;
@@ -2089,7 +2102,8 @@ void SceneViewer::drawScene() {
         bool hide_opacity = false;
 #ifdef WITH_CANON
         hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom;
+                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
+                       !m_hasStopMotionLineUpImage;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);

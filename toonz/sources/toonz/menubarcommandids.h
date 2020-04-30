@@ -434,6 +434,7 @@
 #define MI_StopMotionPickFocusCheck "MI_StopMotionPickFocusCheck"
 #define MI_StopMotionExportImageSequence "MI_StopMotionExportImageSequence"
 #define MI_StopMotionRemoveFrame "MI_StopMotionRemoveFrame"
+#define MI_StopMotionNextFrame "MI_StopMotionNextFrame"
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
