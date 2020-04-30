@@ -808,7 +808,15 @@ bool SceneViewerPanel::hasSoundtrack() {
   TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
   TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
   if (!m_sceneViewer->isPreviewEnabled()) prop->m_isPreview = true;
-  m_sound = xsheetHandle->getXsheet()->makeSound(prop);
+  try {
+    m_sound = xsheetHandle->getXsheet()->makeSound(prop);
+  } catch (TSoundDeviceException &e) {
+       if (e.getType() == TSoundDeviceException::NoDevice) {
+	 std::cout << ::to_string(e.getMessage()) << std::endl;
+         } else {
+           throw TSoundDeviceException(e.getType(), e.getMessage());
+       }
+  }
   if (m_sound == NULL) {
     m_hasSoundtrack = false;
     return false;
