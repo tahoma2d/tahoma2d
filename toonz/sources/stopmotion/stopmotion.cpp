@@ -2839,7 +2839,10 @@ public:
   void execute() {
     StopMotion *sm = StopMotion::instance();
     int index      = TApp::instance()->getCurrentFrame()->getFrameIndex();
-    if (index < sm->getXSheetFrameNumber() - 1) {
+    int maxInXSheet =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
+    int max = std::max(maxInXSheet, sm->getXSheetFrameNumber());
+    if (index < max) {
       TApp::instance()->getCurrentFrame()->setFrame(index + 1);
     }
   }
