@@ -91,7 +91,7 @@ public:
   QTimer* m_timer;
   int m_intervalTime     = 10;
   bool m_intervalStarted = false;
-  QTimer *m_intervalTimer, *m_countdownTimer;
+  QTimer *m_intervalTimer, *m_countdownTimer, *m_webcamOverlayTimer;
 
   // live view and images
   int m_liveViewStatus = LiveViewClosed;
@@ -145,6 +145,8 @@ public:
   bool loadLineUpImage();
   void setLiveViewImage();
   void captureImage();
+  void captureWebcamImage();
+  void captureDslrImage();
   void postImportProcess();
 
   // time lapse
@@ -185,7 +187,7 @@ public slots:
   void onTimeout();
   void onReviewTimeout();
   void onIntervalCaptureTimerTimeout();
-
+  void captureWebcamOnTimeout();
   void update();
   bool importImage();
   void onSceneSwitched();

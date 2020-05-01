@@ -139,6 +139,7 @@ void StopMotionLight::showOverlays() {
     // taking a photo
     qApp->processEvents(QEventLoop::AllEvents, 1500);
   }
+  m_overlaysReady = true;
 }
 
 //-----------------------------------------------------------------
@@ -153,4 +154,12 @@ void StopMotionLight::hideOverlays() {
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
     m_fullScreen3->hide();
   }
+  m_overlaysReady = false;
+}
+
+//-----------------------------------------------------------------
+
+bool StopMotionLight::useOverlays() {
+  return m_blackCapture || m_useScreen1Overlay || m_useScreen2Overlay ||
+         m_useScreen3Overlay;
 }

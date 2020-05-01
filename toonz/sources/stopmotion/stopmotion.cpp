@@ -224,13 +224,15 @@ StopMotion::StopMotion() {
   m_timer        = new QTimer(this);
   m_reviewTimer  = new QTimer(this);
   m_reviewTimer->setSingleShot(true);
-  m_intervalTimer  = new QTimer(this);
-  m_countdownTimer = new QTimer(this);
+  m_intervalTimer      = new QTimer(this);
+  m_countdownTimer     = new QTimer(this);
+  m_webcamOverlayTimer = new QTimer(this);
 
   // Make the interval timer single-shot. When the capture finished, restart
   // timer for next frame.
   // This is because capturing and saving the image needs some time.
   m_intervalTimer->setSingleShot(true);
+  m_webcamOverlayTimer->setSingleShot(true);
 
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TSceneHandle *sceneHandle   = TApp::instance()->getCurrentScene();
@@ -249,6 +251,8 @@ StopMotion::StopMotion() {
                        SLOT(onPlaybackChanged()));
   ret = ret && connect(m_intervalTimer, SIGNAL(timeout()), this,
                        SLOT(onIntervalCaptureTimerTimeout()));
+  ret = ret && connect(m_webcamOverlayTimer, SIGNAL(timeout()), this,
+                       SLOT(captureWebcamOnTimeout()));
   ret = ret && connect(m_canon, SIGNAL(newCanonImageReady()), this,
                        SLOT(importImage()));
   assert(ret);
@@ -1345,8 +1349,6 @@ void StopMotion::onReviewTimeout() {
 //-----------------------------------------------------------------------------
 
 bool StopMotion::importImage() {
-  m_light->hideOverlays();
-
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = scene->getXsheet();
@@ -1361,6 +1363,9 @@ bool StopMotion::importImage() {
   if (m_usingWebcam) {
     m_newImage = m_liveViewImage;
   }
+
+  m_light->hideOverlays();
+
   int frameNumber = m_frameNumber;
 
   /* create parent directory if it does not exist */
@@ -1672,15 +1677,21 @@ void StopMotion::captureImage() {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
+
   if (m_usingWebcam) {
-    if (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen) {
-      DVGui::warning(
-          tr("Cannot capture webcam image unless live view is active."));
-      return;
-    }
+    captureWebcamImage();
+  } else {
+    captureDslrImage();
+  }
+}
 
+//-----------------------------------------------------------------------------
+
+void StopMotion::captureWebcamImage() {
+  if (m_light->useOverlays()) {
     m_light->showOverlays();
-
+    m_webcamOverlayTimer->start(500);
+  } else {
     if (getReviewTime() > 0 && !m_isTimeLapse) {
       m_timer->stop();
       if (m_liveViewStatus > LiveViewClosed) {
@@ -1693,6 +1704,26 @@ void StopMotion::captureImage() {
     importImage();
     return;
   }
+}
+
+//-----------------------------------------------------------------------------
+void StopMotion::captureWebcamOnTimeout() {
+  if (getReviewTime() > 0 && !m_isTimeLapse) {
+    m_timer->stop();
+    if (m_liveViewStatus > LiveViewClosed) {
+      // m_liveViewStatus = LiveViewPaused;
+    }
+  }
+  m_lineUpImage    = m_liveViewImage;
+  m_hasLineUpImage = true;
+  emit(newLiveViewImageReady());
+  importImage();
+  return;
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::captureDslrImage() {
   m_light->showOverlays();
 
   if (getReviewTime() > 0 && !m_isTimeLapse) {
