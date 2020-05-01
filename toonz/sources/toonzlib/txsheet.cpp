@@ -1475,20 +1475,28 @@ TSoundTrack *TXsheet::makeSound(SoundProperties *properties) {
 //-----------------------------------------------------------------------------
 
 void TXsheet::scrub(int frame, bool isPreview) {
-  double fps =
+  try {
+    double fps =
       getScene()->getProperties()->getOutputProperties()->getFrameRate();
 
-  TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-  prop->m_isPreview              = isPreview;
+    TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
+    prop->m_isPreview              = isPreview;
 
-  TSoundTrack *st = makeSound(prop);  // Absorbs prop's ownership
-  if (!st) return;
+    TSoundTrack *st = makeSound(prop);  // Absorbs prop's ownership
+    if (!st) return;
 
-  double samplePerFrame = st->getSampleRate() / fps;
+    double samplePerFrame = st->getSampleRate() / fps;
 
-  double s0 = frame * samplePerFrame, s1 = s0 + samplePerFrame;
+    double s0 = frame * samplePerFrame, s1 = s0 + samplePerFrame;
 
-  play(st, s0, s1, false);
+    play(st, s0, s1, false);
+  } catch (TSoundDeviceException &e) {
+    if (e.getType() == TSoundDeviceException::NoDevice) {
+      std::cout << ::to_string(e.getMessage()) << std::endl;
+    } else {
+      throw TSoundDeviceException(e.getType(), e.getMessage());
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
