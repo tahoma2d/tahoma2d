@@ -428,6 +428,8 @@
 #define MI_StopMotionLowerOpacity "MI_StopMotionLowerOpacity"
 #define MI_StopMotionToggleLiveView "MI_StopMotionToggleLiveView"
 #define MI_StopMotionToggleZoom "MI_StopMotionToggleZoom"
+#define MI_StopMotionToggleUseLiveViewImages                                   \
+  "MI_StopMotionToggleUseLiveViewImages"
 #define MI_StopMotionLowerSubsampling "MI_StopMotionLowerSubsampling"
 #define MI_StopMotionRaiseSubsampling "MI_StopMotionRaiseSubsampling"
 #define MI_StopMotionJumpToCamera "MI_StopMotionJumpToCamera"

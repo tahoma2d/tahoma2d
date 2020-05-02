@@ -228,17 +228,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   QToolButton *nextXSheetFrameButton = new QToolButton(this);
   m_previousXSheetFrameButton        = new QToolButton(this);
   m_onionOpacityFld                  = new DVGui::IntField(this);
-  m_captureButton                    = new QPushButton(tr("Capture"), this);
 
-  // choosing the file type is disabled for simplicty
+  // should choosing the file type is disabled for simplicty
   // too many options can be a bad thing
-  // m_fileTypeCombo          = new QComboBox(this);
-  // m_fileFormatOptionButton = new QPushButton(tr("Options"), this);
-  // m_fileFormatOptionButton->setFixedHeight(28);
-  // m_fileFormatOptionButton->setStyleSheet("padding: 0 2;");
+  m_fileTypeCombo          = new QComboBox(this);
+  m_fileFormatOptionButton = new QPushButton(tr("Options"), this);
+  m_fileFormatOptionButton->setFixedHeight(28);
+  m_fileFormatOptionButton->setStyleSheet("padding: 0 2;");
   // QPushButton *subfolderButton = new QPushButton(tr("Subfolder"), this);
-  // m_fileTypeCombo->addItems({"jpg", "png", "tga", "tif"});
-  // m_fileTypeCombo->setCurrentIndex(0);
+  m_fileTypeCombo->addItems({"jpg", "png", "tga", "tif"});
+  m_fileTypeCombo->setCurrentIndex(0);
 
   fileFrame->setObjectName("CleanupSettingsFrame");
   m_frameNumberEdit->setObjectName("LargeSizedText");
@@ -288,11 +287,17 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_toggleLiveViewButton = new QPushButton(tr("Start Live View"));
   m_toggleLiveViewButton->setObjectName("LargeSizedText");
   m_toggleLiveViewButton->setFixedHeight(35);
+  m_captureButton = new QPushButton(tr("Capture"), this);
   m_captureButton->setObjectName("LargeSizedText");
   m_captureButton->setFixedHeight(35);
   QCommonStyle style;
   m_captureButton->setIcon(style.standardIcon(QStyle::SP_DialogOkButton));
   m_captureButton->setIconSize(QSize(20, 20));
+  m_alwaysUseLiveViewImagesButton = new QPushButton(tr("LV"));
+  m_alwaysUseLiveViewImagesButton->setObjectName("LargeSizedText");
+  m_alwaysUseLiveViewImagesButton->setFixedHeight(35);
+  m_alwaysUseLiveViewImagesButton->setFixedWidth(35);
+  m_alwaysUseLiveViewImagesButton->setCheckable(true);
 
   // subfolderButton->setObjectName("SubfolderButton");
   // subfolderButton->setIconSize(QSize(15, 15));
@@ -393,16 +398,16 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         levelLay->setColumnStretch(1, 1);
         fileLay->addLayout(levelLay, 0);
 
-        // QHBoxLayout *fileTypeLay = new QHBoxLayout();
-        // fileTypeLay->setMargin(0);
-        // fileTypeLay->setSpacing(3);
-        //{
-        //  fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
-        //  fileTypeLay->addWidget(m_fileTypeCombo, 1);
-        //  fileTypeLay->addSpacing(10);
-        //  fileTypeLay->addWidget(m_fileFormatOptionButton);
-        //}
-        // fileLay->addLayout(fileTypeLay, 0);
+        QHBoxLayout *fileTypeLay = new QHBoxLayout();
+        fileTypeLay->setMargin(0);
+        fileTypeLay->setSpacing(3);
+        {
+          fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
+          fileTypeLay->addWidget(m_fileTypeCombo, 1);
+          fileTypeLay->addSpacing(10);
+          fileTypeLay->addWidget(m_fileFormatOptionButton);
+        }
+        fileLay->addLayout(fileTypeLay, 0);
 
         QHBoxLayout *saveInLay = new QHBoxLayout();
         saveInLay->setMargin(0);
@@ -895,6 +900,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QHBoxLayout *controlButtonLay = new QHBoxLayout();
     controlButtonLay->addWidget(m_captureButton, 0);
     controlButtonLay->addWidget(m_toggleLiveViewButton, 0);
+    controlButtonLay->addWidget(m_alwaysUseLiveViewImagesButton, 0);
     controlButtonFrame->setLayout(controlButtonLay);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -944,8 +950,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   if (m_captureFilterSettingsBtn)
     ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(pressed()), this,
                          SLOT(onCaptureFilterSettingsBtnPressed()));
-  // ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
-  //                     SLOT(onFileFormatOptionButtonPressed()));
+  ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
+                       SLOT(onFileFormatOptionButtonPressed()));
   ret = ret && connect(m_levelNameEdit, SIGNAL(levelNameEdited()), this,
                        SLOT(onLevelNameEdited()));
   ret = ret &&
@@ -976,20 +982,25 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   //                     SLOT(openSaveInFolderPopup()));
   ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
                        SLOT(onSaveInPathEdited()));
-  // ret = ret && connect(m_fileTypeCombo, SIGNAL(activated(int)), this,
-  //                     SLOT(onFileTypeActivated()));
+  ret = ret && connect(m_fileTypeCombo, SIGNAL(activated(int)), this,
+                       SLOT(onFileTypeActivated()));
   ret = ret && connect(m_frameNumberEdit, SIGNAL(editingFinished()), this,
                        SLOT(onFrameNumberChanged()));
   ret = ret && connect(m_xSheetFrameNumberEdit, SIGNAL(editingFinished()), this,
                        SLOT(onXSheetFrameNumberChanged()));
   ret = ret && connect(m_toggleLiveViewButton, SIGNAL(clicked()), this,
                        SLOT(onLiveViewToggleClicked()));
+  ret = ret && connect(m_alwaysUseLiveViewImagesButton, SIGNAL(clicked()), this,
+                       SLOT(onAlwaysUseLiveViewImagesButtonClicked()));
+  ret =
+      ret && connect(m_stopMotion, SIGNAL(alwaysUseLiveViewImagesToggled(bool)),
+                     this, SLOT(onAlwaysUseLiveViewImagesToggled(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(filePathChanged(QString)), this,
                        SLOT(onFilePathChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(levelNameChanged(QString)), this,
                        SLOT(onLevelNameChanged(QString)));
-  // ret = ret && connect(m_stopMotion, SIGNAL(fileTypeChanged(QString)), this,
-  //                     SLOT(onFileTypeChanged(QString)));
+  ret = ret && connect(m_stopMotion, SIGNAL(fileTypeChanged(QString)), this,
+                       SLOT(onFileTypeChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(frameInfoTextChanged(QString)),
                        this, SLOT(onFrameInfoTextChanged(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(xSheetFrameNumberChanged(int)),
@@ -1098,9 +1109,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_canon,
                        SIGNAL(colorTemperatureChangedSignal(QString)), this,
                        SLOT(onColorTemperatureChangedSignal(QString)));
-  // ret = ret && connect(m_apertureCombo, SIGNAL(currentIndexChanged(int)),
-  // this,
-  //                     SLOT(onApertureChanged(int)));
   ret = ret && connect(m_apertureSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onApertureChanged(int)));
   ret = ret && connect(m_shutterSpeedSlider, SIGNAL(valueChanged(int)), this,
@@ -1531,11 +1539,11 @@ void StopMotionController::onLevelNameChanged(QString levelName) {
   m_levelNameEdit->setText(levelName);
 }
 
-////-----------------------------------------------------------------------------
-//
-// void StopMotionController::onFileTypeChanged(QString fileType) {
-//  m_fileTypeCombo->setCurrentText(fileType);
-//}
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onFileTypeChanged(QString fileType) {
+  m_fileTypeCombo->setCurrentText(fileType);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1922,6 +1930,7 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_dslrFrame->hide();
     m_webcamFrame->hide();
     m_noCameraFrame->show();
+    m_alwaysUseLiveViewImagesButton->hide();
     // if (m_tabBar->tabText(1) == tr("Settings")) {
     //    m_tabBar->removeTab(1);
     //}
@@ -1934,6 +1943,7 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_webcamFrame->show();
     m_dslrFrame->hide();
     m_noCameraFrame->hide();
+    m_alwaysUseLiveViewImagesButton->hide();
     getWebcamStatus();
     // if (m_tabBar->tabText(1) == tr("Options")) {
     //    m_tabBar->insertTab(1, tr("Settings"));
@@ -1947,6 +1957,7 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_dslrFrame->show();
     m_webcamFrame->hide();
     m_noCameraFrame->hide();
+    m_alwaysUseLiveViewImagesButton->show();
     // if (m_tabBar->tabText(1) == tr("Options")) {
     //  m_tabBar->insertTab(1, tr("Settings"));
     //}
@@ -2067,17 +2078,17 @@ void StopMotionController::onCaptureFilterSettingsBtnPressed() {
   }
 }
 
-////-----------------------------------------------------------------------------
-//
-// void StopMotionController::onFileFormatOptionButtonPressed() {
-//  if (m_fileTypeCombo->currentIndex() == 0) return;
-//  // Tentatively use the preview output settings
-//  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-//  if (!scene) return;
-//  TOutputProperties *prop = scene->getProperties()->getPreviewProperties();
-//  std::string ext         = m_fileTypeCombo->currentText().toStdString();
-//  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
-//}
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onFileFormatOptionButtonPressed() {
+  if (m_fileTypeCombo->currentIndex() == 0) return;
+  // Tentatively use the preview output settings
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  TOutputProperties *prop = scene->getProperties()->getPreviewProperties();
+  std::string ext         = m_fileTypeCombo->currentText().toStdString();
+  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
+}
 
 //-----------------------------------------------------------------------------
 
@@ -2451,12 +2462,15 @@ void StopMotionController::showEvent(QShowEvent *event) {
   m_stopMotion->m_canon->initializeCanonSDK();
   if (!m_stopMotion->m_canon->m_sessionOpen) {
     m_dslrFrame->hide();
+    m_alwaysUseLiveViewImagesButton->hide();
   } else {
     m_dslrFrame->show();
+    m_alwaysUseLiveViewImagesButton->show();
     hasCanon = true;
   }
 #else
   m_dslrFrame->hide();
+  m_alwaysUseLiveViewImagesButton->hide();
 #endif
   if (!m_stopMotion->m_usingWebcam) {
     m_resolutionCombo->hide();
@@ -2550,6 +2564,20 @@ void StopMotionController::keyPressEvent(QKeyEvent *event) {
 
 void StopMotionController::onLiveViewToggleClicked() {
   m_stopMotion->toggleLiveView();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onAlwaysUseLiveViewImagesButtonClicked() {
+  m_stopMotion->toggleAlwaysUseLiveViewImages();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onAlwaysUseLiveViewImagesToggled(bool on) {
+  m_alwaysUseLiveViewImagesButton->blockSignals(true);
+  m_alwaysUseLiveViewImagesButton->setChecked(on);
+  m_alwaysUseLiveViewImagesButton->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2683,11 +2711,11 @@ void StopMotionController::openSaveInFolderPopup() {
   }
 }
 
-////-----------------------------------------------------------------------------
-//
-// void StopMotionController::onFileTypeActivated() {
-//  m_stopMotion->setFileType(m_fileTypeCombo->currentText());
-//}
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onFileTypeActivated() {
+  m_stopMotion->setFileType(m_fileTypeCombo->currentText());
+}
 
 //-----------------------------------------------------------------------------
 

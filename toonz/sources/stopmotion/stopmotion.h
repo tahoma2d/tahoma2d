@@ -23,6 +23,8 @@
 #include "stopmotionserial.h"
 #include "stopmotionlight.h"
 
+#include "toonz/txshsimplelevel.h"
+
 #include <QObject>
 #include <QThread>
 
@@ -62,8 +64,9 @@ private:
   bool m_useNumpadShortcuts      = false;
   bool m_numpadForStyleSwitching = true;
   bool m_turnOnRewind            = false;
-  QTimer* m_reviewTimer;
+
   std::map<std::string, QAction*> m_oldActionMap;
+  std::map<int, TRaster32P> m_liveViewImageMap;
 
 public:
   enum LiveViewStatus {
@@ -91,11 +94,13 @@ public:
   QTimer* m_timer;
   int m_intervalTime     = 10;
   bool m_intervalStarted = false;
+  QTimer* m_reviewTimer;
   QTimer *m_intervalTimer, *m_countdownTimer, *m_webcamOverlayTimer;
 
   // live view and images
   int m_liveViewStatus = LiveViewClosed;
   bool m_hasLiveViewImage, m_hasLineUpImage, m_showLineUpImage;
+  bool m_alwaysUseLiveViewImages = false;
   TRaster32P m_liveViewImage, m_newImage, m_lineUpImage;
   TDimension m_liveViewImageDimensions = TDimension(0, 0);
   TDimension m_fullImageDimensions     = TDimension(0, 0);
@@ -143,11 +148,14 @@ public:
   bool toggleLiveView();
   void pauseLiveView();
   bool loadLineUpImage();
+  bool loadLiveViewImage(int row, TRaster32P& image);
   void setLiveViewImage();
   void captureImage();
   void captureWebcamImage();
   void captureDslrImage();
   void postImportProcess();
+  void toggleAlwaysUseLiveViewImages();
+  bool buildLiveViewMap(TXshSimpleLevel* sl);
 
   // time lapse
   void toggleInterval(bool on);
@@ -209,6 +217,7 @@ signals:
   void liveViewChanged(bool);
   void liveViewOnAllFramesSignal(bool);
   void newDimensions();
+  void alwaysUseLiveViewImagesToggled(bool);
 
   // file stuff
   void filePathChanged(QString);

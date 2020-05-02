@@ -1915,6 +1915,7 @@ void SceneViewer::drawScene() {
       xr = std::make_pair(xsh, frame);
 
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
+
     if (m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
         (  //! frameHandle->isPlaying() ||
@@ -2081,7 +2082,22 @@ void SceneViewer::drawScene() {
 
       Stage::visit(painter, args);
     }
-
+    if (m_stopMotion->m_alwaysUseLiveViewImages &&
+        m_stopMotion->m_liveViewStatus > 0 &&
+        frame != m_stopMotion->getXSheetFrameNumber() - 1 &&
+        m_hasStopMotionImage && !m_stopMotion->m_reviewTimer->isActive()) {
+      TRaster32P image;
+      bool hasImage = m_stopMotion->loadLiveViewImage(frame, image);
+      if (hasImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity = 255;
+        painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
+                              smPlayer);
+      }
+    }
     if (!m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
         (  //! frameHandle->isPlaying() ||

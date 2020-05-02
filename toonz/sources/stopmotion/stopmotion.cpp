@@ -24,7 +24,6 @@
 #include "toonz/stage.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/txshlevelhandle.h"
-#include "toonz/txshsimplelevel.h"
 #include "toonz/levelproperties.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonzqt/menubarcommand.h"
@@ -290,6 +289,7 @@ void StopMotion::onSceneSwitched() {
                    .getParentDir()
                    .getQString();
   m_frameNumber = 1;
+  m_liveViewImageMap.clear();
 
   TLevelSet *levelSet = scene->getLevelSet();
   std::vector<TXshLevel *> levels;
@@ -308,6 +308,7 @@ void StopMotion::onSceneSwitched() {
         m_frameNumber = sl->getFrameCount() + 1;
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
         loadXmlFile();
+        buildLiveViewMap(sl);
         found = true;
         break;
       }
@@ -322,6 +323,52 @@ void StopMotion::onSceneSwitched() {
   emit(frameNumberChanged(m_frameNumber));
   emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   refreshFrameInfo();
+}
+
+//-----------------------------------------------------------------
+
+bool StopMotion::buildLiveViewMap(TXshSimpleLevel *sl) {
+  m_liveViewImageMap.clear();
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
+
+  std::wstring levelName = m_levelName.toStdWString();
+  if (levelName.empty()) {
+    return false;
+  }
+
+  if (m_usingWebcam) {
+    return false;
+  }
+
+  TFilePath liveViewFolder = scene->decodeFilePath(
+      TFilePath(m_filePath) + TFilePath(levelName + L"_LiveView"));
+
+  TFilePath levelFp = TFilePath(m_filePath) +
+                      TFilePath(levelName + L".." + m_fileType.toStdWString());
+  TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
+  TFilePath liveViewFp =
+      scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
+
+  if (!TSystem::doesExistFileOrLevel(liveViewFolder)) return false;
+
+  int count = sl->getFrameCount();
+  std::vector<TFrameId> fids;
+  sl->getFids(fids);
+  for (TFrameId id : fids) {
+    int frameNumber = id.getNumber();
+    if (TSystem::doesExistFileOrLevel(liveViewFp.withFrame(frameNumber))) {
+      TRaster32P image;
+      JpgConverter::loadJpg(liveViewFp.withFrame(frameNumber), image);
+      m_liveViewImageMap.insert(std::pair<int, TRaster32P>(frameNumber, image));
+    }
+  }
+
+  if (m_liveViewImageMap.size() > 0) {
+    return true;
+  } else
+    return false;
 }
 
 //-----------------------------------------------------------------
@@ -935,7 +982,19 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 
 bool StopMotion::loadLineUpImage() {
   if (m_liveViewStatus == LiveViewClosed || m_userCalledPause) return false;
-  m_hasLineUpImage = false;
+  int row;
+  if (m_xSheetFrameNumber == 1) {
+    row = 0;
+  } else {
+    row = m_xSheetFrameNumber - 2;
+  }
+  m_hasLineUpImage = loadLiveViewImage(row, m_lineUpImage);
+  return m_hasLineUpImage;
+}
+
+//-----------------------------------------------------------------
+
+bool StopMotion::loadLiveViewImage(int row, TRaster32P &image) {
   // first see if the level exists in the current level set
   ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
   TLevelSet *levelSet      = currentScene->getLevelSet();
@@ -951,7 +1010,7 @@ bool StopMotion::loadLineUpImage() {
   // level with the same path
   TXshLevel *level_samePath = levelSet->getLevel(*(currentScene), levelFp);
 
-  TFilePath actualLevelFp = currentScene->decodeFilePath(levelFp);
+  // TFilePath actualLevelFp = currentScene->decodeFilePath(levelFp);
   TXshSimpleLevelP sl;
   if (level_sameName && level_samePath && level_sameName == level_samePath) {
     sl                 = dynamic_cast<TXshSimpleLevel *>(level_sameName);
@@ -963,16 +1022,9 @@ bool StopMotion::loadLineUpImage() {
     return false;
 
   // next we need to find the column the level is on
-
   TApp *app    = TApp::instance();
   TXsheet *xsh = currentScene->getXsheet();
-  int row;
-  if (m_xSheetFrameNumber == 1) {
-    row = 0;
-  } else {
-    row = m_xSheetFrameNumber - 2;
-  }
-  int col = app->getCurrentColumn()->getColumnIndex();
+  int col      = app->getCurrentColumn()->getColumnIndex();
 
   int foundCol = -1;
   // most possibly, it's in the current column
@@ -994,29 +1046,42 @@ bool StopMotion::loadLineUpImage() {
 
   // note found row represents the last row found that uses
   // the active level
-
+  TXshCell cell = xsh->getCell(row, foundCol);
+  if (!(cell.getSimpleLevel() != 0 &&
+        cell.getSimpleLevel() == level_sameName->getSimpleLevel())) {
+    return false;
+  }
   TFrameId frameId = xsh->getCell(row, foundCol).getFrameId();
 
   int frameNumber = frameId.getNumber();
 
   if (m_usingWebcam) {
     if (frameNumber > 0) {
-      m_lineUpImage    = sl->getFrame(frameId, false)->raster();
-      m_hasLineUpImage = true;
+      image = sl->getFrame(frameId, false)->raster();
       return true;
     } else
       return false;
   }
 
-  // now check to see if a file actually exists there
+  // first check if the image is in the live view map
+  std::map<int, TRaster32P>::iterator it;
+  it = m_liveViewImageMap.find(frameNumber);
+  if (it != m_liveViewImageMap.end()) {
+    image = m_liveViewImageMap.find(frameNumber)->second;
+    return true;
+  }
+
+  // it's not in the map
+  // now check to see if a file actually exists
+  // then put it in the map
   TFilePath liveViewFolder = currentScene->decodeFilePath(
       TFilePath(m_filePath) + TFilePath(levelName + L"_LiveView"));
   TFilePath liveViewFp = currentScene->decodeFilePath(
       liveViewFolder + TFilePath(levelName + L"..jpg"));
   TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
   if (TFileStatus(liveViewFile).doesExist()) {
-    if (JpgConverter::loadJpg(liveViewFile, m_lineUpImage)) {
-      m_hasLineUpImage = true;
+    if (JpgConverter::loadJpg(liveViewFile, image)) {
+      m_liveViewImageMap.insert(std::pair<int, TRaster32P>(frameNumber, image));
       return true;
     }
   }
@@ -1536,6 +1601,17 @@ bool StopMotion::importImage() {
     }
     if (m_hasLineUpImage) {
       JpgConverter::saveJpg(m_lineUpImage, liveViewFile);
+      // check the live view image map to see if there is already
+      // an image with this framenumber.  Overwrite if it exists
+      std::map<int, TRaster32P>::iterator it;
+      it = m_liveViewImageMap.find(frameNumber);
+      if (it != m_liveViewImageMap.end()) {
+        m_liveViewImageMap.find(frameNumber)->second = m_lineUpImage;
+        return true;
+      } else {
+        m_liveViewImageMap.insert(
+            std::pair<int, TRaster32P>(m_frameNumber, m_lineUpImage));
+      }
     }
   }
 
@@ -2392,8 +2468,8 @@ void StopMotion::refreshFrameInfo() {
 void StopMotion::updateLevelNameAndFrame(std::wstring levelName) {
   if (levelName != m_levelName.toStdWString()) {
     m_levelName = QString::fromStdWString(levelName);
-    loadLineUpImage();
   }
+  m_liveViewImageMap.clear();
   emit(levelNameChanged(m_levelName));
   // m_previousLevelButton->setDisabled(levelName == L"A");
 
@@ -2419,6 +2495,14 @@ void StopMotion::updateLevelNameAndFrame(std::wstring levelName) {
       startFrame  = withLetter ? ((int)(lastNum / 10) + 1) * 10 : lastNum + 1;
     }
   }
+  if (level_p) {
+    TXshSimpleLevel *sl = level_p->getSimpleLevel();
+    if (sl && sl->getType() == OVL_XSHLEVEL &&
+        sl->getProperties()->isStopMotionLevel()) {
+      buildLiveViewMap(sl);
+    }
+  }
+  loadLineUpImage();
   m_frameNumber = startFrame;
   emit(frameNumberChanged(startFrame));
   refreshFrameInfo();
@@ -2704,6 +2788,14 @@ void StopMotion::pauseLiveView() {
 
 //-----------------------------------------------------------------
 
+void StopMotion::toggleAlwaysUseLiveViewImages() {
+  m_alwaysUseLiveViewImages = !m_alwaysUseLiveViewImages;
+  emit(alwaysUseLiveViewImagesToggled(m_alwaysUseLiveViewImages));
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
+//-----------------------------------------------------------------
+
 void StopMotion::onCanonCameraChanged(QString camera) {
   emit(cameraChanged(camera));
 }
@@ -2841,12 +2933,24 @@ public:
     int index      = TApp::instance()->getCurrentFrame()->getFrameIndex();
     int maxInXSheet =
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
-    int max = std::max(maxInXSheet, sm->getXSheetFrameNumber());
+    int max = std::max(maxInXSheet, sm->getXSheetFrameNumber() - 1);
     if (index < max) {
       TApp::instance()->getCurrentFrame()->setFrame(index + 1);
     }
   }
 } StopMotionNextFrame;
+
+//=============================================================================
+
+class StopMotionToggleUseLiveViewImagesCommand : public MenuItemHandler {
+public:
+  StopMotionToggleUseLiveViewImagesCommand()
+      : MenuItemHandler(MI_StopMotionToggleUseLiveViewImages) {}
+  void execute() {
+    StopMotion *sm = StopMotion::instance();
+    sm->toggleAlwaysUseLiveViewImages();
+  }
+} StopMotionToggleUseLiveViewImagesCommand;
 
 #ifdef WITH_CANON
 //=============================================================================

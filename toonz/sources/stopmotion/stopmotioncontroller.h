@@ -74,8 +74,9 @@ class StopMotionController final : public QWidget {
   QFrame *m_noCameraFrame;
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
-  QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton;
-  QPushButton *m_captureButton, *m_zoomButton,  // *m_fileFormatOptionButton,
+  QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton,
+      *m_alwaysUseLiveViewImagesButton;
+  QPushButton *m_captureButton, *m_zoomButton, *m_fileFormatOptionButton,
       *m_pickZoomButton, *m_focusNearButton, *m_focusFarButton,
       *m_focusNear2Button, *m_focusNear3Button, *m_focusFar2Button,
       *m_focusFar3Button, *m_captureFilterSettingsBtn, *m_testLightsButton;
@@ -91,7 +92,7 @@ class StopMotionController final : public QWidget {
       *m_kelvinSlider, *m_webcamFocusSlider, *m_webcamWhiteBalanceSlider,
       *m_webcamExposureSlider, *m_webcamBrightnessSlider,
       *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider;
-  QComboBox *m_cameraListCombo, *m_exposureCombo,  // *m_fileTypeCombo,
+  QComboBox *m_cameraListCombo, *m_exposureCombo, *m_fileTypeCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
@@ -132,7 +133,7 @@ protected slots:
   void onCameraListComboActivated(int index);
   void onResolutionComboActivated(const QString &itemText);
   void onCaptureFilterSettingsBtnPressed();
-  // void onFileFormatOptionButtonPressed();
+  void onFileFormatOptionButtonPressed();
   void onLevelNameEdited();
   void onNextName();
   void onPreviousName();
@@ -141,7 +142,7 @@ protected slots:
   void onNextNewLevel();
   void onLastFrame();
 
-  // void onFileTypeActivated();
+  void onFileTypeActivated();
   void onFrameNumberChanged();
   void onXSheetFrameNumberChanged();
   void onFrameCaptured(QImage &image);
@@ -230,6 +231,8 @@ protected slots:
   void refreshMode();
   void onFocusCheckToggled(bool on);
   void onPickFocusCheckToggled(bool on);
+  void onAlwaysUseLiveViewImagesButtonClicked();
+  void onAlwaysUseLiveViewImagesToggled(bool);
 
   void onCaptureReviewFldEdited();
   void onCaptureReviewSliderChanged(bool ignore);
@@ -238,7 +241,7 @@ protected slots:
   void onSubsamplingChanged(int);
   void onFilePathChanged(QString);
   void onLevelNameChanged(QString);
-  // void onFileTypeChanged(QString);
+  void onFileTypeChanged(QString);
   void onXSheetFrameNumberChanged(int);
   void onFrameNumberChanged(int);
   void onFrameInfoTextChanged(QString);
