@@ -164,6 +164,8 @@ public:
   int m_cursorId;
   double m_pW;
 
+  int m_lockedStrokeIndex;
+
   TPropertyGroup m_prop;
   TBoolProperty m_snapAtIntersection;
 
@@ -300,7 +302,7 @@ public:
     return w;
   }
 
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override {
     if (getViewer() && getViewer()->getGuidedStrokePickerMode()) {
       getViewer()->doPickGuideStroke(pos);
       return;
@@ -315,8 +317,9 @@ public:
 
     TStroke *strokeRef;
 
-    if (vi->getNearestStroke(pos, pW, strokeIndex, dist) && pW >= 0 &&
-        pW <= 1) {
+    if (getNearestStrokeWithLock(pos, pW, strokeIndex, dist,
+                                 e.isCtrlPressed()) &&
+        pW >= 0 && pW <= 1) {
       double w;
 
       strokeRef = vi->getStroke(strokeIndex);
@@ -408,7 +411,7 @@ public:
     double dist, pW;
     UINT stroke;
 
-    if (vi->getNearestStroke(pos, pW, stroke, dist)) {
+    if (getNearestStrokeWithLock(pos, pW, stroke, dist, e.isCtrlPressed())) {
       TStroke *strokeRef = vi->getStroke(stroke);
 
       if (m_snapAtIntersection.getValue()) {
@@ -451,6 +454,31 @@ public:
   bool onPropertyChanged(std::string propertyName) override {
     SnapAtIntersection = (int)(m_snapAtIntersection.getValue());
     return true;
+  }
+
+  bool getNearestStrokeWithLock(const TPointD &p, double &outW,
+                                UINT &strokeIndex, double &dist2, bool lock) {
+    TVectorImageP vi = TImageP(getImage(false));
+    if (!vi) return false;
+
+    if (m_lockedStrokeIndex >= vi->getStrokeCount()) {
+      m_lockedStrokeIndex = -1;
+    }
+
+    if (lock && m_lockedStrokeIndex >= 0) {
+      TStroke *stroke = vi->getStroke(m_lockedStrokeIndex);
+      strokeIndex     = m_lockedStrokeIndex;
+      return stroke->getNearestW(p, outW, dist2);
+    }
+
+    UINT index;
+    if (vi->getNearestStroke(p, outW, index, dist2)) {
+      m_lockedStrokeIndex = index;
+      strokeIndex         = index;
+      return true;
+    }
+
+    return false;
   }
 
 } cutterTool;
