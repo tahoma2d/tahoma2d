@@ -1533,6 +1533,12 @@ ProjectPopup QLabel {
 #GearButton::menu-indicator {
   image: "";
 }
+#LiveViewButton {
+  qproperty-icon: url('../Default/imgs/white/liveview.svg');
+}
+#LiveViewButton::menu-indicator {
+  image: "";
+}
 #SubfolderButton {
   qproperty-icon: url('../Default/imgs/white/subfolder.svg');
   padding-left: 6px;

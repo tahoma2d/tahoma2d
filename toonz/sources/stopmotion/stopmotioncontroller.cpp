@@ -293,11 +293,15 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   QCommonStyle style;
   m_captureButton->setIcon(style.standardIcon(QStyle::SP_DialogOkButton));
   m_captureButton->setIconSize(QSize(20, 20));
-  m_alwaysUseLiveViewImagesButton = new QPushButton(tr("LV"));
-  m_alwaysUseLiveViewImagesButton->setObjectName("LargeSizedText");
+  m_alwaysUseLiveViewImagesButton = new QPushButton();
+  // m_alwaysUseLiveViewImagesButton->setObjectName("LargeSizedText");
+  m_alwaysUseLiveViewImagesButton->setObjectName("LiveViewButton");
   m_alwaysUseLiveViewImagesButton->setFixedHeight(35);
   m_alwaysUseLiveViewImagesButton->setFixedWidth(35);
   m_alwaysUseLiveViewImagesButton->setCheckable(true);
+  m_alwaysUseLiveViewImagesButton->setIconSize(QSize(25, 25));
+  m_alwaysUseLiveViewImagesButton->setToolTip(
+      tr("Show original live view images in timeline"));
 
   // subfolderButton->setObjectName("SubfolderButton");
   // subfolderButton->setIconSize(QSize(15, 15));
@@ -309,12 +313,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_zoomButton->setFixedHeight(28);
   m_zoomButton->setStyleSheet("padding: 5 2;");
   m_zoomButton->setMaximumWidth(100);
-  m_zoomButton->setToolTip(tr("Check the focus by zooming in"));
+  m_zoomButton->setToolTip(tr("Zoom in to check focus"));
+  m_zoomButton->setCheckable(true);
   m_pickZoomButton = new QPushButton(tr("Pick"), this);
   m_pickZoomButton->setStyleSheet("padding: 5 2;");
   m_pickZoomButton->setMaximumWidth(100);
   m_pickZoomButton->setFixedHeight(28);
-  m_pickZoomButton->setToolTip(tr("Pick the location for focus checking"));
+  m_pickZoomButton->setToolTip(tr("Set focus check location"));
+  m_pickZoomButton->setCheckable(true);
   m_focusNearButton = new QPushButton(tr("<"), this);
   m_focusNearButton->setFixedSize(32, 28);
   m_focusFarButton = new QPushButton(tr(">"), this);
@@ -1071,8 +1077,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
   // EOS Connections
   ret = ret &&
-        connect(m_zoomButton, SIGNAL(pressed()), this, SLOT(onZoomPressed()));
-  ret = ret && connect(m_pickZoomButton, SIGNAL(pressed()), this,
+        connect(m_zoomButton, SIGNAL(clicked()), this, SLOT(onZoomPressed()));
+  ret = ret && connect(m_pickZoomButton, SIGNAL(clicked()), this,
                        SLOT(onPickZoomPressed()));
   ret = ret && connect(m_focusNearButton, SIGNAL(pressed()), this,
                        SLOT(onFocusNear()));
@@ -1927,6 +1933,8 @@ void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
     m_cameraStatusLabel->hide();
     m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
     m_zoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+    m_pickZoomButton->setChecked(false);
+    m_zoomButton->setChecked(false);
     m_dslrFrame->hide();
     m_webcamFrame->hide();
     m_noCameraFrame->show();
@@ -2371,10 +2379,14 @@ void StopMotionController::onPictureStyleChangedSignal(QString text) {
 
 void StopMotionController::onFocusCheckToggled(bool on) {
 #ifdef WITH_CANON
-  if (on)
+  if (on) {
     m_zoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
-  else
+  } else {
     m_zoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+  }
+  m_zoomButton->blockSignals(true);
+  m_zoomButton->setChecked(on);
+  m_zoomButton->blockSignals(false);
 #endif
 }
 
@@ -2382,10 +2394,15 @@ void StopMotionController::onFocusCheckToggled(bool on) {
 
 void StopMotionController::onPickFocusCheckToggled(bool on) {
 #ifdef WITH_CANON
-  if (on)
+  if (on) {
     m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 255, 0, 255);");
-  else
+
+  } else {
     m_pickZoomButton->setStyleSheet("border:1px solid rgb(0, 0, 0, 0);");
+  }
+  m_pickZoomButton->blockSignals(true);
+  m_pickZoomButton->setChecked(on);
+  m_pickZoomButton->blockSignals(false);
 #endif
 }
 

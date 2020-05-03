@@ -944,21 +944,26 @@ void Canon::makeZoomPoint(TPointD pos) {
 //-----------------------------------------------------------------
 
 void Canon::toggleZoomPicking() {
-  if (!m_sessionOpen || !StopMotion::instance()->m_liveViewStatus > 0) return;
-  if (m_pickLiveViewZoom) {
-    m_pickLiveViewZoom = false;
-    StopMotion::instance()->toggleNumpadForFocusCheck(false);
-  } else {
-    m_pickLiveViewZoom = true;
-    StopMotion::instance()->toggleNumpadForFocusCheck(true);
+  if (m_sessionOpen && StopMotion::instance()->m_liveViewStatus > 0 &&
+      !m_zooming) {
+    if (m_pickLiveViewZoom) {
+      m_pickLiveViewZoom = false;
+      StopMotion::instance()->toggleNumpadForFocusCheck(false);
+    } else {
+      m_pickLiveViewZoom = true;
+      if (m_liveViewZoomPickPoint == TPointD(0.0, 0.0)) {
+        makeZoomPoint(m_liveViewZoomPickPoint);
+      }
+      StopMotion::instance()->toggleNumpadForFocusCheck(true);
+    }
   }
-
   emit(pickFocusCheckToggled(m_pickLiveViewZoom));
 }
 
 //-----------------------------------------------------------------
 
 EdsError Canon::setZoomPoint() {
+  // make sure this is set AFTER starting zoom
   EdsError err              = EDS_ERR_OK;
   m_liveViewZoomReadyToPick = false;
   EdsPoint zoomPoint;
@@ -968,7 +973,6 @@ EdsError Canon::setZoomPoint() {
   zoomPoint.x = m_finalZoomPoint.x;
   zoomPoint.y = m_finalZoomPoint.y;
 
-  // make sure this is set AFTER starting zoom
   err = EdsSetPropertyData(m_camera, kEdsPropID_Evf_ZoomPosition, 0,
                            sizeof(zoomPoint), &zoomPoint);
   m_liveViewZoomReadyToPick = true;
