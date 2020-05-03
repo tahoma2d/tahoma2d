@@ -656,6 +656,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = "-";
@@ -663,6 +664,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = "Enter";
@@ -670,6 +672,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = "Backspace";
@@ -677,6 +680,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = "Return";
@@ -684,6 +688,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = "*";
@@ -691,6 +696,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
     }
     shortcut = ".";
@@ -698,7 +704,16 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     if (action) {
       m_oldActionMap.insert(
           std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
       action = NULL;
+    }
+    shortcut = "/";
+    action = comm->getActionFromShortcut(shortcut);
+    if (action) {
+        m_oldActionMap.insert(
+            std::pair<std::string, QAction*>(shortcut, action));
+        action->setShortcut(QKeySequence(""));
+        action = NULL;
     }
 
     // now set all new shortcuts
@@ -752,6 +767,11 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       action->setShortcut(QKeySequence("5"));
       action = NULL;
     }
+    action = comm->getAction(MI_StopMotionToggleUseLiveViewImages);
+    if (action) {
+        action->setShortcut(QKeySequence("."));
+        action = NULL;
+    }
     action = comm->getAction(MI_StopMotionToggleZoom);
     if (action) {
       action->setShortcut(QKeySequence("*"));
@@ -759,7 +779,7 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     }
     action = comm->getAction(MI_StopMotionPickFocusCheck);
     if (action) {
-      action->setShortcut(QKeySequence("."));
+      action->setShortcut(QKeySequence("/"));
       action = NULL;
     }
     action = comm->getAction(MI_ShortPlay);
@@ -825,6 +845,12 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
         action->setShortcut(
             QKeySequence(comm->getShortcutFromAction(action).c_str()));
         action = NULL;
+      }
+      action = comm->getAction(MI_StopMotionToggleUseLiveViewImages);
+      if (action) {
+          action->setShortcut(
+              QKeySequence(comm->getShortcutFromAction(action).c_str()));
+          action = NULL;
       }
       action = comm->getAction(MI_StopMotionToggleZoom);
       if (action) {

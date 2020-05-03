@@ -84,7 +84,6 @@ class StopMotionController final : public QWidget {
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
       *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel,
       *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel,
-      *m_screen1OverlayLabel, *m_screen2OverlayLabel, *m_screen3OverlayLabel,
       *m_webcamLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
@@ -96,10 +95,9 @@ class StopMotionController final : public QWidget {
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
-  QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
-      *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB,
-      *m_screen1OverlayCB, *m_screen2OverlayCB, *m_screen3OverlayCB;
+  QCheckBox* m_blackScreenForCapture, * m_useScaledFullSizeImages,
+      * m_placeOnXSheetCB, * m_directShowCB, * m_liveViewOnAllFramesCB,
+      * m_useMjpgCB, * m_useNumpadCB, * m_drawBeneathCB, * m_timerCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -111,7 +109,7 @@ class StopMotionController final : public QWidget {
   QGroupBox *m_screen1Box;
   QGroupBox *m_screen2Box;
   QGroupBox *m_screen3Box;
-  QGroupBox *m_webcamAutoFocusGB, *m_webcamWhiteBalanceGB, *m_webcamExposureGB;
+  QGroupBox *m_webcamAutoFocusGB;
   QTimer *m_lightTestTimer;
 
 public:

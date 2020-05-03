@@ -765,8 +765,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         new QLabel(tr("Use Numpad Shortcuts When Active")), 2, 1,
         Qt::AlignLeft);
     checkboxLayout->addWidget(m_liveViewOnAllFramesCB, 3, 0, Qt::AlignRight);
-    checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 3,
-                              1, Qt::AlignLeft);
+    m_liveViewOnAllFramesCB->hide();
+    //checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 3,
+    //                          1, Qt::AlignLeft);
 
     checkboxLayout->setColumnStretch(1, 30);
     optionsOutsideLayout->addLayout(checkboxLayout, Qt::AlignLeft);
@@ -774,9 +775,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsLayout->addWidget(new QLabel(tr("Capture Review Time: ")), 0, 0,
                              Qt::AlignRight);
     optionsLayout->addWidget(m_postCaptureReviewFld, 0, 1);
-    optionsLayout->addWidget(new QLabel(tr("Level Subsampling: ")), 1, 0,
-                             Qt::AlignRight);
+    //optionsLayout->addWidget(new QLabel(tr("Level Subsampling: ")), 1, 0,
+    //                         Qt::AlignRight);
     optionsLayout->addWidget(m_subsamplingFld, 1, 1);
+    m_subsamplingFld->hide();
     optionsLayout->setColumnStretch(1, 30);
     optionsLayout->setRowStretch(2, 30);
     optionsOutsideLayout->addLayout(optionsLayout, Qt::AlignLeft);
@@ -796,51 +798,43 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_lightTestTimer->setSingleShot(true);
     m_screen1ColorFld = new DVGui::ColorField(
         this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
-    m_screen1OverlayCB    = new QCheckBox(this);
-    m_screen1OverlayLabel = new QLabel(tr("Enable Overlay"), this);
 
     m_screen2ColorFld = new DVGui::ColorField(
         this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
-    m_screen2OverlayCB    = new QCheckBox(this);
-    m_screen2OverlayLabel = new QLabel(tr("Enable Overlay"), this);
 
     m_screen3ColorFld = new DVGui::ColorField(
         this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
-    m_screen3OverlayCB    = new QCheckBox(this);
-    m_screen3OverlayLabel = new QLabel(tr("Enable Overlay"), this);
 
     QGridLayout *lightTopLayout = new QGridLayout;
     lightTopLayout->addWidget(m_blackScreenForCapture, 0, 0, Qt::AlignRight);
-    // lightTopLayout->addWidget(new QLabel(tr("Blackout all Screens")), 0, 1,
-    // Qt::AlignLeft);
     lightTopLayout->setColumnStretch(1, 30);
     lightOutsideLayout->addLayout(lightTopLayout);
 
     m_screen1Box               = new QGroupBox(tr("Screen 1"), this);
+    m_screen1Box->setCheckable(true);
+    m_screen1Box->setChecked(false);
     QGridLayout *screen1Layout = new QGridLayout;
-    screen1Layout->addWidget(m_screen1OverlayCB, 0, 0, Qt::AlignRight);
-    screen1Layout->addWidget(m_screen1OverlayLabel, 0, 1, Qt::AlignLeft);
-    screen1Layout->addWidget(m_screen1ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen1Layout->addWidget(m_screen1ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
     screen1Layout->setColumnStretch(1, 30);
     m_screen1Box->setLayout(screen1Layout);
     m_screen1Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     lightOutsideLayout->addWidget(m_screen1Box, Qt::AlignCenter);
 
     m_screen2Box               = new QGroupBox(tr("Screen 2"), this);
+    m_screen2Box->setCheckable(true);
+    m_screen2Box->setChecked(false);
     QGridLayout *screen2Layout = new QGridLayout;
-    screen2Layout->addWidget(m_screen2OverlayCB, 0, 0, Qt::AlignRight);
-    screen2Layout->addWidget(m_screen2OverlayLabel, 0, 1, Qt::AlignLeft);
-    screen2Layout->addWidget(m_screen2ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen2Layout->addWidget(m_screen2ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
     screen2Layout->setColumnStretch(1, 30);
     m_screen2Box->setLayout(screen2Layout);
     m_screen2Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     lightOutsideLayout->addWidget(m_screen2Box, Qt::AlignCenter);
 
     m_screen3Box               = new QGroupBox(tr("Screen 3"), this);
+    m_screen3Box->setCheckable(true);
+    m_screen3Box->setChecked(false);
     QGridLayout *screen3Layout = new QGridLayout;
-    screen3Layout->addWidget(m_screen3OverlayCB, 0, 0, Qt::AlignRight);
-    screen3Layout->addWidget(m_screen3OverlayLabel, 0, 1, Qt::AlignLeft);
-    screen3Layout->addWidget(m_screen3ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
+    screen3Layout->addWidget(m_screen3ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
     screen3Layout->setColumnStretch(1, 30);
     m_screen3Box->setLayout(screen3Layout);
     m_screen3Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -1187,11 +1181,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret &&
         connect(m_screen3ColorFld, SIGNAL(colorChanged(const TPixel32 &, bool)),
                 this, SLOT(setScreen3Color(const TPixel32 &, bool)));
-  ret = ret && connect(m_screen1OverlayCB, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_screen1Box, SIGNAL(toggled(bool)), this,
                        SLOT(onScreen1OverlayToggled(bool)));
-  ret = ret && connect(m_screen2OverlayCB, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_screen2Box, SIGNAL(toggled(bool)), this,
                        SLOT(onScreen2OverlayToggled(bool)));
-  ret = ret && connect(m_screen3OverlayCB, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_screen3Box, SIGNAL(toggled(bool)), this,
                        SLOT(onScreen3OverlayToggled(bool)));
   ret = ret && connect(m_lightTestTimer, SIGNAL(timeout()), this,
                        SLOT(onTestLightsTimeout()));
@@ -1396,25 +1390,25 @@ void StopMotionController::onScreen3ColorChanged(TPixel32 color) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onScreen1OverlayChanged(bool on) {
-  m_screen1OverlayCB->blockSignals(true);
-  m_screen1OverlayCB->setChecked(on);
-  m_screen1OverlayCB->blockSignals(false);
+  m_screen1Box->blockSignals(true);
+  m_screen1Box->setChecked(on);
+  m_screen1Box->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onScreen2OverlayChanged(bool on) {
-  m_screen2OverlayCB->blockSignals(true);
-  m_screen2OverlayCB->setChecked(on);
-  m_screen2OverlayCB->blockSignals(false);
+  m_screen2Box->blockSignals(true);
+  m_screen2Box->setChecked(on);
+  m_screen2Box->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onScreen3OverlayChanged(bool on) {
-  m_screen3OverlayCB->blockSignals(true);
-  m_screen3OverlayCB->setChecked(on);
-  m_screen3OverlayCB->blockSignals(false);
+  m_screen3Box->blockSignals(true);
+  m_screen3Box->setChecked(on);
+  m_screen3Box->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
