@@ -1916,34 +1916,6 @@ void SceneViewer::drawScene() {
 
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
 
-    if (m_stopMotion->m_drawBeneathLevels &&
-        m_stopMotion->m_liveViewStatus == 2 &&
-        (  //! frameHandle->isPlaying() ||
-            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
-      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        smPlayer.m_opacity = 255;
-        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
-      }
-      if (m_hasStopMotionImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        bool hide_opacity = false;
-#ifdef WITH_CANON
-        hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
-                       !m_hasStopMotionLineUpImage;
-#endif
-        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
-        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
-      }
-    }
-
     Stage::VisitArgs args;
     args.m_scene       = scene;
     args.m_xsh         = xr.first;
@@ -1963,8 +1935,26 @@ void SceneViewer::drawScene() {
     args.m_guidedBackStroke       = guidedBackStroke;
 
     // args.m_currentFrameId = app->getCurrentFrame()->getFid();
-    Stage::visit(painter, args);
 
+    if (m_stopMotion->m_alwaysUseLiveViewImages &&
+        m_stopMotion->m_liveViewStatus > 0 &&
+        frame != m_stopMotion->getXSheetFrameNumber() - 1 &&
+        m_hasStopMotionImage && !m_stopMotion->m_reviewTimer->isActive()) {
+      TRaster32P image;
+      bool hasImage = m_stopMotion->loadLiveViewImage(frame, image);
+      if (hasImage) {
+        Stage::Player smPlayer;
+        double dpiX, dpiY;
+        m_stopMotionImage->getDpi(dpiX, dpiY);
+        smPlayer.m_dpiAff     = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity    = 255;
+        smPlayer.m_sl         = m_stopMotion->m_sl;
+        args.m_liveViewImage  = static_cast<TRasterImageP>(image);
+        args.m_liveViewPlayer = smPlayer;
+        // painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
+        //                      smPlayer);
+      }
+    }
     if (!m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
         (  //! frameHandle->isPlaying() ||
@@ -1973,9 +1963,13 @@ void SceneViewer::drawScene() {
         Stage::Player smPlayer;
         double dpiX, dpiY;
         m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        smPlayer.m_opacity = 255;
-        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
+        smPlayer.m_dpiAff   = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+        smPlayer.m_opacity  = 255;
+        smPlayer.m_sl       = m_stopMotion->m_sl;
+        args.m_lineupImage  = m_stopMotionLineUpImage;
+        args.m_lineupPlayer = smPlayer;
+        // painter.onRasterImage(m_stopMotionLineUpImage.getPointer(),
+        // smPlayer);
       }
       if (m_hasStopMotionImage) {
         Stage::Player smPlayer;
@@ -1989,9 +1983,14 @@ void SceneViewer::drawScene() {
                        !m_hasStopMotionLineUpImage;
 #endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
-        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+        smPlayer.m_sl      = m_stopMotion->m_sl;
+        args.m_liveViewImage  = m_stopMotionImage;
+        args.m_liveViewPlayer = smPlayer;
+        // painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
       }
     }
+
+    Stage::visit(painter, args);
 
     m_minZ = painter.getMinZ();
   } else {
@@ -2018,34 +2017,6 @@ void SceneViewer::drawScene() {
             ->isShowRasterImagesDarkenBlendedInViewerEnabled());
 
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
-
-    if (m_stopMotion->m_drawBeneathLevels &&
-        m_stopMotion->m_liveViewStatus == 2 &&
-        (  //! frameHandle->isPlaying() ||
-            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
-      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        smPlayer.m_opacity = 255;
-        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
-      }
-      if (m_hasStopMotionImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        bool hide_opacity = false;
-#ifdef WITH_CANON
-        hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
-                       !m_hasStopMotionLineUpImage;
-#endif
-        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
-        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
-      }
-    }
 
     if (app->getCurrentFrame()->isEditingLevel()) {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
@@ -2080,50 +2051,61 @@ void SceneViewer::drawScene() {
       args.m_guidedFrontStroke      = guidedFrontStroke;
       args.m_guidedBackStroke       = guidedBackStroke;
 
-      Stage::visit(painter, args);
-    }
-    if (m_stopMotion->m_alwaysUseLiveViewImages &&
-        m_stopMotion->m_liveViewStatus > 0 &&
-        frame != m_stopMotion->getXSheetFrameNumber() - 1 &&
-        m_hasStopMotionImage && !m_stopMotion->m_reviewTimer->isActive()) {
-      TRaster32P image;
-      bool hasImage = m_stopMotion->loadLiveViewImage(frame, image);
-      if (hasImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        smPlayer.m_opacity = 255;
-        painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
-                              smPlayer);
+      if (m_stopMotion->m_alwaysUseLiveViewImages &&
+          m_stopMotion->m_liveViewStatus > 0 &&
+          frame != m_stopMotion->getXSheetFrameNumber() - 1 &&
+          m_hasStopMotionImage && !m_stopMotion->m_reviewTimer->isActive()) {
+        TRaster32P image;
+        bool hasImage = m_stopMotion->loadLiveViewImage(frame, image);
+        if (hasImage) {
+          Stage::Player smPlayer;
+          double dpiX, dpiY;
+          m_stopMotionImage->getDpi(dpiX, dpiY);
+          smPlayer.m_dpiAff    = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+          smPlayer.m_opacity   = 255;
+          smPlayer.m_sl        = m_stopMotion->m_sl;
+          args.m_liveViewImage = static_cast<TRasterImageP>(image);
+          args.m_liveViewPlayer = smPlayer;
+          // painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
+          //                      smPlayer);
+        }
       }
-    }
-    if (!m_stopMotion->m_drawBeneathLevels &&
-        m_stopMotion->m_liveViewStatus == 2 &&
-        (  //! frameHandle->isPlaying() ||
-            frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
-      if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff  = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        smPlayer.m_opacity = 255;
-        painter.onRasterImage(m_stopMotionLineUpImage.getPointer(), smPlayer);
-      }
-      if (m_hasStopMotionImage) {
-        Stage::Player smPlayer;
-        double dpiX, dpiY;
-        m_stopMotionImage->getDpi(dpiX, dpiY);
-        smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
-        bool hide_opacity = false;
+      if (!m_stopMotion->m_drawBeneathLevels &&
+          m_stopMotion->m_liveViewStatus == 2 &&
+          (  //! frameHandle->isPlaying() ||
+              frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
+        if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
+          Stage::Player smPlayer;
+          double dpiX, dpiY;
+          m_stopMotionLineUpImage->getDpi(dpiX, dpiY);
+          smPlayer.m_dpiAff   = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+          smPlayer.m_opacity  = 255;
+          smPlayer.m_sl       = m_stopMotion->m_sl;
+          args.m_lineupImage  = m_stopMotionLineUpImage;
+          args.m_lineupPlayer = smPlayer;
+          // painter.onRasterImage(m_stopMotionLineUpImage.getPointer(),
+          // smPlayer);
+        }
+        if (m_hasStopMotionImage) {
+          Stage::Player smPlayer;
+          double dpiX, dpiY;
+          m_stopMotionImage->getDpi(dpiX, dpiY);
+          smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
+          bool hide_opacity = false;
 #ifdef WITH_CANON
-        hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
-                       !m_hasStopMotionLineUpImage;
+          hide_opacity = m_stopMotion->m_canon->m_zooming ||
+                         m_stopMotion->m_canon->m_pickLiveViewZoom ||
+                         !m_hasStopMotionLineUpImage;
 #endif
-        smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
-        painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+          smPlayer.m_opacity =
+              hide_opacity ? 255.0 : m_stopMotion->getOpacity();
+          smPlayer.m_sl         = m_stopMotion->m_sl;
+          args.m_liveViewImage  = m_stopMotionImage;
+          args.m_liveViewPlayer = smPlayer;
+          // painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
+        }
       }
+      Stage::visit(painter, args);
     }
 
     assert(glGetError() == 0);

@@ -89,6 +89,7 @@ public:
   bool m_isTimeLapse       = false;
   int m_reviewTime         = 2;
   QString m_tempFile;
+  TXshSimpleLevel* m_sl;
 
   // timers
   QTimer* m_timer;

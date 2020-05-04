@@ -754,11 +754,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsOutsideLayout->addWidget(timerFrame);
 
     checkboxLayout->addWidget(m_placeOnXSheetCB, 0, 0, 1, 1, Qt::AlignRight);
-    checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
-                              Qt::AlignLeft);
+    // checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
+    //                          Qt::AlignLeft);
+    m_placeOnXSheetCB->hide();
     checkboxLayout->addWidget(m_drawBeneathCB, 1, 0, Qt::AlignRight);
-    checkboxLayout->addWidget(new QLabel(tr("Show Camera Below Other Levels")),
-                              1, 1, Qt::AlignLeft);
+    // checkboxLayout->addWidget(new QLabel(tr("Show Camera Below Other
+    // Levels")),
+    //                          1, 1, Qt::AlignLeft);
+    m_drawBeneathCB->hide();
 
     checkboxLayout->addWidget(m_useNumpadCB, 2, 0, Qt::AlignRight);
     checkboxLayout->addWidget(
@@ -766,7 +769,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         Qt::AlignLeft);
     checkboxLayout->addWidget(m_liveViewOnAllFramesCB, 3, 0, Qt::AlignRight);
     m_liveViewOnAllFramesCB->hide();
-    //checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")), 3,
+    // checkboxLayout->addWidget(new QLabel(tr("Show Live View on All Frames")),
+    // 3,
     //                          1, Qt::AlignLeft);
 
     checkboxLayout->setColumnStretch(1, 30);
@@ -775,7 +779,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsLayout->addWidget(new QLabel(tr("Capture Review Time: ")), 0, 0,
                              Qt::AlignRight);
     optionsLayout->addWidget(m_postCaptureReviewFld, 0, 1);
-    //optionsLayout->addWidget(new QLabel(tr("Level Subsampling: ")), 1, 0,
+    // optionsLayout->addWidget(new QLabel(tr("Level Subsampling: ")), 1, 0,
     //                         Qt::AlignRight);
     optionsLayout->addWidget(m_subsamplingFld, 1, 1);
     m_subsamplingFld->hide();
@@ -810,7 +814,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     lightTopLayout->setColumnStretch(1, 30);
     lightOutsideLayout->addLayout(lightTopLayout);
 
-    m_screen1Box               = new QGroupBox(tr("Screen 1"), this);
+    m_screen1Box = new QGroupBox(tr("Screen 1"), this);
     m_screen1Box->setCheckable(true);
     m_screen1Box->setChecked(false);
     QGridLayout *screen1Layout = new QGridLayout;
@@ -820,7 +824,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen1Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     lightOutsideLayout->addWidget(m_screen1Box, Qt::AlignCenter);
 
-    m_screen2Box               = new QGroupBox(tr("Screen 2"), this);
+    m_screen2Box = new QGroupBox(tr("Screen 2"), this);
     m_screen2Box->setCheckable(true);
     m_screen2Box->setChecked(false);
     QGridLayout *screen2Layout = new QGridLayout;
@@ -830,7 +834,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen2Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     lightOutsideLayout->addWidget(m_screen2Box, Qt::AlignCenter);
 
-    m_screen3Box               = new QGroupBox(tr("Screen 3"), this);
+    m_screen3Box = new QGroupBox(tr("Screen 3"), this);
     m_screen3Box->setCheckable(true);
     m_screen3Box->setChecked(false);
     QGridLayout *screen3Layout = new QGridLayout;

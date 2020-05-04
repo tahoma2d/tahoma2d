@@ -212,6 +212,11 @@ public:
 
   const ImagePainter::VisualSettings *m_vs;
 
+  TRasterImageP m_liveViewImage;
+  TRasterImageP m_lineupImage;
+  Stage::Player m_liveViewPlayer;
+  Stage::Player m_lineupPlayer;
+
 public:
   StageBuilder();
   virtual ~StageBuilder();
@@ -361,7 +366,21 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
 
   TXshCell cell = xsh->getCell(row, col);
   TXshLevel *xl = cell.m_level.getPointer();
-  if (!xl) return;
+  // check the previous row for a stop motion layer
+  if (!xl) {
+    cell = xsh->getCell(row - 1, col);
+    xl   = cell.m_level.getPointer();
+    if (!xl) {
+      return;
+    } else {
+      xl                  = cell.m_level.getPointer();
+      TXshSimpleLevel *sl = xl->getSimpleLevel();
+      if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl) {
+        row -= 1;
+      } else
+        return;
+    }
+  }
 
   ZPlacement cameraPlacement;
   if (m_subXSheetStack.empty())
@@ -801,7 +820,7 @@ void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
   player.m_frame = level->guessIndex(fid);
   player.m_fid   = fid;
   if (!m_onionSkinMask.isEmpty() && m_onionSkinMask.isEnabled())
-    player.m_onionSkinDistance = 0;
+    player.m_onionSkinDistance  = 0;
   player.m_isCurrentColumn      = true;
   player.m_isCurrentXsheetLevel = true;
   player.m_isEditingLevel       = true;
@@ -813,8 +832,9 @@ void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
 
 void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
   std::vector<int> masks;
-  int m = players.size();
-  int h = 0;
+  int m                = players.size();
+  int h                = 0;
+  bool stopMotionShown = false;
   for (; h < m; h++) {
     Player &player = players[h];
     unsigned int i = 0;
@@ -838,7 +858,30 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
       }
     }
     player.m_isPlaying = isPlaying;
-    visitor.onImage(player);
+    if (m_liveViewImage && player.m_sl == m_liveViewPlayer.m_sl) {
+      if (m_lineupImage) {
+        m_lineupPlayer.m_sl = NULL;
+        visitor.onRasterImage(m_lineupImage.getPointer(), m_lineupPlayer);
+        stopMotionShown = true;
+      }
+      if (m_liveViewImage) {
+        m_liveViewPlayer.m_sl = NULL;
+        visitor.onRasterImage(m_liveViewImage.getPointer(), m_liveViewPlayer);
+        stopMotionShown = true;
+      }
+    } else {
+      visitor.onImage(player);
+    }
+  }
+  if (!stopMotionShown && (m_liveViewImage || m_lineupImage)) {
+    if (m_lineupImage) {
+      m_lineupPlayer.m_sl = NULL;
+      visitor.onRasterImage(m_lineupImage.getPointer(), m_lineupPlayer);
+    }
+    if (m_liveViewImage) {
+      m_liveViewPlayer.m_sl = NULL;
+      visitor.onRasterImage(m_liveViewImage.getPointer(), m_liveViewPlayer);
+    }
   }
   // vale solo per TAB pro
   for (h = 0; h < (int)masks.size(); h++) visitor.disableMask();
@@ -877,6 +920,14 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   sb.m_isGuidedDrawingEnabled = args.m_isGuidedDrawingEnabled;
   sb.m_guidedFrontStroke      = args.m_guidedFrontStroke;
   sb.m_guidedBackStroke       = args.m_guidedBackStroke;
+  if (args.m_liveViewImage) {
+    sb.m_liveViewImage  = args.m_liveViewImage;
+    sb.m_liveViewPlayer = args.m_liveViewPlayer;
+  }
+  if (args.m_lineupImage) {
+    sb.m_lineupImage  = args.m_lineupImage;
+    sb.m_lineupPlayer = args.m_lineupPlayer;
+  }
   Player::m_onionSkinFrontSize     = 0;
   Player::m_onionSkinBackSize      = 0;
   Player::m_firstFrontOnionSkin    = 0;

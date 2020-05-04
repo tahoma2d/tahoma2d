@@ -95,9 +95,9 @@ class StopMotionController final : public QWidget {
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
-  QCheckBox* m_blackScreenForCapture, * m_useScaledFullSizeImages,
-      * m_placeOnXSheetCB, * m_directShowCB, * m_liveViewOnAllFramesCB,
-      * m_useMjpgCB, * m_useNumpadCB, * m_drawBeneathCB, * m_timerCB;
+  QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
+      *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
+      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;

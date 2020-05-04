@@ -336,6 +336,7 @@ public:
 
     m_flash.popMatrix();
   }
+  void onRasterImage(TRasterImage *ri, const Stage::Player &data) override{};
   void beginMask() override { m_flash.beginMask(); }
   void endMask() override { m_flash.endMask(); }
   void enableMask() override { m_flash.enableMask(); }

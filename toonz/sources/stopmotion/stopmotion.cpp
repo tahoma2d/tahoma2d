@@ -309,6 +309,7 @@ void StopMotion::onSceneSwitched() {
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
         loadXmlFile();
         buildLiveViewMap(sl);
+        m_sl = sl;
         found = true;
         break;
       }
@@ -708,12 +709,12 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       action = NULL;
     }
     shortcut = "/";
-    action = comm->getActionFromShortcut(shortcut);
+    action   = comm->getActionFromShortcut(shortcut);
     if (action) {
-        m_oldActionMap.insert(
-            std::pair<std::string, QAction*>(shortcut, action));
-        action->setShortcut(QKeySequence(""));
-        action = NULL;
+      m_oldActionMap.insert(
+          std::pair<std::string, QAction *>(shortcut, action));
+      action->setShortcut(QKeySequence(""));
+      action = NULL;
     }
 
     // now set all new shortcuts
@@ -769,8 +770,8 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
     }
     action = comm->getAction(MI_StopMotionToggleUseLiveViewImages);
     if (action) {
-        action->setShortcut(QKeySequence("."));
-        action = NULL;
+      action->setShortcut(QKeySequence("."));
+      action = NULL;
     }
     action = comm->getAction(MI_StopMotionToggleZoom);
     if (action) {
@@ -848,9 +849,9 @@ void StopMotion::toggleNumpadShortcuts(bool on) {
       }
       action = comm->getAction(MI_StopMotionToggleUseLiveViewImages);
       if (action) {
-          action->setShortcut(
-              QKeySequence(comm->getShortcutFromAction(action).c_str()));
-          action = NULL;
+        action->setShortcut(
+            QKeySequence(comm->getShortcutFromAction(action).c_str()));
+        action = NULL;
       }
       action = comm->getAction(MI_StopMotionToggleZoom);
       if (action) {
@@ -1660,7 +1661,7 @@ bool StopMotion::importImage() {
   // if (m_saveOnCaptureCB->isChecked()) sl->save();
   // for now always save.  This can be tweaked later
   sl->save();
-
+  m_sl = sl;
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_liveViewStatus = LiveViewPaused;
     m_reviewTimer->start(getReviewTime() * 1000);
