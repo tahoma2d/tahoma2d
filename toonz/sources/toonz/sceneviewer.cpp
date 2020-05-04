@@ -1955,7 +1955,7 @@ void SceneViewer::drawScene() {
         //                      smPlayer);
       }
     }
-    if (!m_stopMotion->m_drawBeneathLevels &&
+    if (//!m_stopMotion->m_drawBeneathLevels &&
         m_stopMotion->m_liveViewStatus == 2 &&
         (  //! frameHandle->isPlaying() ||
             frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
@@ -2070,7 +2070,7 @@ void SceneViewer::drawScene() {
           //                      smPlayer);
         }
       }
-      if (!m_stopMotion->m_drawBeneathLevels &&
+      if (//!m_stopMotion->m_drawBeneathLevels &&
           m_stopMotion->m_liveViewStatus == 2 &&
           (  //! frameHandle->isPlaying() ||
               frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
