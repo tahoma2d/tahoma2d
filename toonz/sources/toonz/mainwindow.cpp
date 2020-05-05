@@ -2098,9 +2098,9 @@ void MainWindow::defineActions() {
 
 // createRightClickMenuAction(MI_OpenCurrentScene,   tr("&Current Scene"),
 // "");
-#ifdef LINETEST
+
   createMenuWindowsAction(MI_OpenExport, tr("&Export"), "");
-#endif
+
   createMenuWindowsAction(MI_OpenFileBrowser, tr("&File Browser"), "");
   createMenuWindowsAction(MI_OpenFileViewer, tr("&Flipbook"), "");
   createMenuWindowsAction(MI_OpenFunctionEditor, tr("&Function Editor"), "");

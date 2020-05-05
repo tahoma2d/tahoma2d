@@ -96,8 +96,8 @@
 #define MI_OpenToolOptionBar "MI_OpenToolOptionBar"
 #define MI_OpenLevelView "MI_OpenLevelView"
 #define MI_OpenStopMotionPanel "MI_OpenStopMotionPanel"
-#ifdef LINETEST
 #define MI_OpenExport "MI_OpenExport"
+#ifdef LINETEST
 #define MI_OpenLineTestView "MI_OpenLineTestView"
 #define MI_OpenLineTestCapture "MI_OpenLineTestCapture"
 #define MI_Capture "MI_Capture"

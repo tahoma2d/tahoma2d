@@ -1103,7 +1103,6 @@ public:
 // ExportFactory
 //-----------------------------------------------------------------------------
 
-#ifdef LINETEST
 class ExportFactory final : public TPanelFactory {
 public:
   ExportFactory() : TPanelFactory("Export") {}
@@ -1125,7 +1124,6 @@ OpenFloatingPanel openExportPanelCommand(MI_OpenExport, "Export",
 // ColorModelViewerFactory
 //-----------------------------------------------------------------------------
 
-#endif
 
 #ifndef LINETEST
 class ColorModelViewerFactory final : public TPanelFactory {
