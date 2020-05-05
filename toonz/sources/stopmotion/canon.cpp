@@ -1329,7 +1329,8 @@ EdsError Canon::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
                                  EdsVoid* context) {
   if (event == kEdsStateEvent_Shutdown) {
     if (instance()->m_sessionOpen && instance()->getCameraCount() > 0) {
-      instance()->closeCameraSession();
+      //instance()->closeCameraSession();
+      instance()->m_sessionOpen = false;
       instance()->releaseCamera();
     }
     StopMotion::instance()->m_liveViewStatus = 0;
