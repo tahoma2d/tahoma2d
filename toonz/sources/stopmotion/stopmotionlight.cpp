@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QWindow>
 
 TEnv::IntVar StopMotionBlackCapture("StopMotionBlackCapture", 0);
 
@@ -146,13 +147,16 @@ void StopMotionLight::showOverlays() {
 
 void StopMotionLight::hideOverlays() {
   if ((getBlackCapture() || m_useScreen1Overlay)) {
-    m_fullScreen1->hide();
+    m_fullScreen1->close();
+    m_fullScreen1->windowHandle()->close();
   }
   if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
-    m_fullScreen2->hide();
+    m_fullScreen2->close();
+    m_fullScreen2->windowHandle()->close();
   }
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
-    m_fullScreen3->hide();
+    m_fullScreen3->close();
+    m_fullScreen3->windowHandle()->close();
   }
   m_overlaysReady = false;
 }

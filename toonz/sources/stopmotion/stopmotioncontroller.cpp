@@ -945,36 +945,36 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(setPage(int)));
 
   // Control Page
-  ret = ret && connect(refreshCamListButton, SIGNAL(pressed()), this,
+  ret = ret && connect(refreshCamListButton, SIGNAL(clicked()), this,
                        SLOT(refreshCameraListCalled()));
   ret = ret && connect(m_cameraListCombo, SIGNAL(activated(int)), this,
                        SLOT(onCameraListComboActivated(int)));
   ret = ret && connect(m_resolutionCombo, SIGNAL(activated(const QString &)),
                        this, SLOT(onResolutionComboActivated(const QString &)));
   if (m_captureFilterSettingsBtn)
-    ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(pressed()), this,
+    ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(clicked()), this,
                          SLOT(onCaptureFilterSettingsBtnPressed()));
-  ret = ret && connect(m_fileFormatOptionButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_fileFormatOptionButton, SIGNAL(clicked()), this,
                        SLOT(onFileFormatOptionButtonPressed()));
   ret = ret && connect(m_levelNameEdit, SIGNAL(levelNameEdited()), this,
                        SLOT(onLevelNameEdited()));
   ret = ret &&
-        connect(nextLevelButton, SIGNAL(pressed()), this, SLOT(onNextName()));
-  ret = ret && connect(m_previousLevelButton, SIGNAL(pressed()), this,
+        connect(nextLevelButton, SIGNAL(clicked()), this, SLOT(onNextName()));
+  ret = ret && connect(m_previousLevelButton, SIGNAL(clicked()), this,
                        SLOT(onPreviousName()));
-  ret = ret && connect(nextOpenLevelButton, SIGNAL(pressed()), this,
+  ret = ret && connect(nextOpenLevelButton, SIGNAL(clicked()), this,
                        SLOT(onNextNewLevel()));
   ret = ret &&
-        connect(nextFrameButton, SIGNAL(pressed()), this, SLOT(onNextFrame()));
+        connect(nextFrameButton, SIGNAL(clicked()), this, SLOT(onNextFrame()));
   ret = ret &&
-        connect(lastFrameButton, SIGNAL(pressed()), this, SLOT(onLastFrame()));
-  ret = ret && connect(m_previousFrameButton, SIGNAL(pressed()), this,
+        connect(lastFrameButton, SIGNAL(clicked()), this, SLOT(onLastFrame()));
+  ret = ret && connect(m_previousFrameButton, SIGNAL(clicked()), this,
                        SLOT(onPreviousFrame()));
-  ret = ret && connect(nextXSheetFrameButton, SIGNAL(pressed()), this,
+  ret = ret && connect(nextXSheetFrameButton, SIGNAL(clicked()), this,
                        SLOT(onNextXSheetFrame()));
-  ret = ret && connect(m_previousXSheetFrameButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_previousXSheetFrameButton, SIGNAL(clicked()), this,
                        SLOT(onPreviousXSheetFrame()));
-  ret = ret && connect(m_setToCurrentXSheetFrameButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_setToCurrentXSheetFrameButton, SIGNAL(clicked()), this,
                        SLOT(setToCurrentXSheetFrame()));
   ret = ret && connect(m_onionOpacityFld, SIGNAL(valueEditedByHand()), this,
                        SLOT(onOnionOpacityFldEdited()));
@@ -1078,17 +1078,17 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         connect(m_zoomButton, SIGNAL(clicked()), this, SLOT(onZoomPressed()));
   ret = ret && connect(m_pickZoomButton, SIGNAL(clicked()), this,
                        SLOT(onPickZoomPressed()));
-  ret = ret && connect(m_focusNearButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_focusNearButton, SIGNAL(clicked()), this,
                        SLOT(onFocusNear()));
   ret = ret &&
-        connect(m_focusFarButton, SIGNAL(pressed()), this, SLOT(onFocusFar()));
-  ret = ret && connect(m_focusNear2Button, SIGNAL(pressed()), this,
+        connect(m_focusFarButton, SIGNAL(clicked()), this, SLOT(onFocusFar()));
+  ret = ret && connect(m_focusNear2Button, SIGNAL(clicked()), this,
                        SLOT(onFocusNear2()));
-  ret = ret && connect(m_focusFar2Button, SIGNAL(pressed()), this,
+  ret = ret && connect(m_focusFar2Button, SIGNAL(clicked()), this,
                        SLOT(onFocusFar2()));
-  ret = ret && connect(m_focusNear3Button, SIGNAL(pressed()), this,
+  ret = ret && connect(m_focusNear3Button, SIGNAL(clicked()), this,
                        SLOT(onFocusNear3()));
-  ret = ret && connect(m_focusFar3Button, SIGNAL(pressed()), this,
+  ret = ret && connect(m_focusFar3Button, SIGNAL(clicked()), this,
                        SLOT(onFocusFar3()));
   ret = ret &&
         connect(m_stopMotion->m_canon, SIGNAL(apertureChangedSignal(QString)),
@@ -1193,7 +1193,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onScreen3OverlayToggled(bool)));
   ret = ret && connect(m_lightTestTimer, SIGNAL(timeout()), this,
                        SLOT(onTestLightsTimeout()));
-  ret = ret && connect(m_testLightsButton, SIGNAL(pressed()), this,
+  ret = ret && connect(m_testLightsButton, SIGNAL(clicked()), this,
                        SLOT(onTestLightsPressed()));
   ret = ret &&
         connect(m_stopMotion->m_light, SIGNAL(screen1ColorChanged(TPixel32)),
