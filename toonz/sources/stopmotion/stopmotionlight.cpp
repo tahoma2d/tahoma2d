@@ -162,7 +162,7 @@ void StopMotionLight::hideOverlays() {
   }
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
 #ifndef WIN32
-    m_fullScreen1->showNormal();
+    m_fullScreen3->showNormal();
 #endif
     m_fullScreen3->close();
     m_fullScreen3->windowHandle()->close();
