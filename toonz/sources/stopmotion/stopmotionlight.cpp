@@ -147,14 +147,23 @@ void StopMotionLight::showOverlays() {
 
 void StopMotionLight::hideOverlays() {
   if ((getBlackCapture() || m_useScreen1Overlay)) {
+#ifndef WIN32
+    m_fullScreen1->showNormal();
+#endif
     m_fullScreen1->close();
     m_fullScreen1->windowHandle()->close();
   }
   if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
+#ifndef WIN32
+    m_fullScreen2->showNormal();
+#endif
     m_fullScreen2->close();
     m_fullScreen2->windowHandle()->close();
   }
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
+#ifndef WIN32
+    m_fullScreen1->showNormal();
+#endif
     m_fullScreen3->close();
     m_fullScreen3->windowHandle()->close();
   }
