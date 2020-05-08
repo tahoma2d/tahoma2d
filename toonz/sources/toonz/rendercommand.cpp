@@ -46,7 +46,6 @@
 #include "trop.h"
 #include "tconvert.h"
 #include "tfiletype.h"
-#include "tflash.h"
 #include "timagecache.h"
 #include "tthreadmessage.h"
 
@@ -219,7 +218,6 @@ public:
   }
 
   bool init(bool isPreview);  // true if r0<=r1
-  void flashRender();
   void rasterRender(bool isPreview);
   void multimediaRender();
   void onRender();
@@ -342,54 +340,6 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
   m_multimediaRender = outputSettings.getMultimediaRendering();
 
   return true;
-}
-
-//===================================================================
-
-void RenderCommand::flashRender() {
-  ToonzScene *scene       = TApp::instance()->getCurrentScene()->getScene();
-  TSceneProperties *sprop = scene->getProperties();
-  FILE *fileP             = fopen(m_fp, "wb");
-  if (!fileP) return;
-  DVGui::ProgressDialog pb("rendering " + toQString(m_fp), "Cancel", 0,
-                           m_numFrames);
-  pb.show();
-
-  TDimension cameraSize = scene->getCurrentCamera()->getRes();
-  double frameRate      = sprop->getOutputProperties()->getFrameRate();
-  TFlash flash(cameraSize.lx, cameraSize.ly, m_numFrames, frameRate,
-               sprop->getOutputProperties()->getFileFormatProperties("swf"));
-  flash.setBackgroundColor(sprop->getBgColor());
-
-  std::vector<TXshSoundColumn *> columns;
-  scene->getSoundColumns(columns);
-  if (!columns.empty()) {
-    TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-    prop->m_frameRate              = frameRate;
-    TSoundTrack *st                = scene->getXsheet()->makeSound(prop);
-    if (st) flash.putSound(st, 0);
-  }
-
-  int i = 0;
-  for (i = 0; i < m_numFrames; ++i, m_r += m_stepd) {
-    flash.beginFrame(m_step * i + 1);
-    TRasterFxP rfx = buildSceneFx(scene, m_r, 0, false);
-    assert(rfx);
-    rfx->compute(flash,
-                 tround(m_r));  // WARNING: This should accept a DOUBLE...
-    flash.endFrame(i == m_numFrames - 1, 0, true);
-    if (pb.wasCanceled()) break;
-    pb.setValue(i + 1);
-  }
-
-  flash.writeMovie(fileP);
-  fclose(fileP);
-
-  TSystem::showDocument(m_fp);
-  // QDesktopServices::openUrl(QUrl(toQString(m_fp)));
-
-  TImageCache::instance()->remove(::to_string(m_fp.getWideString() + L".0"));
-  TNotifier::instance()->notify(TSceneNameChange());
 }
 
 //===================================================================
@@ -762,8 +712,7 @@ public:
 
 //---------------------------------------------------------
 
-//! Specialized render invocation for multimedia rendering. Flash rendering
-//! is currently not supported in this mode.
+//! Specialized render invocation for multimedia rendering. 
 void RenderCommand::multimediaRender() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   std::string ext   = m_fp.getType();
@@ -913,12 +862,9 @@ void RenderCommand::doRender(bool isPreview) {
             MultipleRender で Schematic Flows または Fx Schematic Terminal Nodes
     が選択されている場合
     --*/
-    if (m_multimediaRender &&
-        m_fp.getType() !=
-            "swf")  // swf is not currently supported on multimedia...
+    if (m_multimediaRender)
       multimediaRender();
-    else if (!isPreview && m_fp.getType() == "swf")
-      flashRender();
+    
     else
       /*-- 通常のRendering --*/
       rasterRender(isPreview);

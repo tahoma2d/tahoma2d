@@ -14,7 +14,6 @@
 #include "tstrokeprop.h"
 #include "ttessellator.h"
 #include "tcolorfunctions.h"
-#include "tflash.h"
 #include "tofflinegl.h"
 #include "drawutil.h"
 #include "trop.h"
@@ -607,15 +606,6 @@ void TSolidColorStyle::drawRegion(const TColorFunction *cf,
 
 //-----------------------------------------------------------------------------
 
-void TSolidColorStyle::drawRegion(TFlash &flash, const TRegion *r) const {
-  flash.setFillColor(getMainColor());
-  flash.setLineColor(TPixel::Transparent);
-  flash.setThickness(0);
-  flash.drawRegion(*r);
-}
-
-//-----------------------------------------------------------------------------
-
 //=============================================================================
 
 void TSolidColorStyle::drawStroke(const TColorFunction *cf,
@@ -712,12 +702,6 @@ int TSolidColorStyle::getTagId() const { return 3; }
 
 //-----------------------------------------------------------------------------
 
-void TSolidColorStyle::setFill(TFlash &flash) const {
-  flash.setFillColor(getMainColor());
-}
-
-//-----------------------------------------------------------------------------
-
 void TSolidColorStyle::loadData(TInputStreamInterface &is) {
   TPixel32 color;
   is >> color;
@@ -742,17 +726,6 @@ TCenterLineStrokeStyle::TCenterLineStrokeStyle(const TPixel32 &color,
 
 TColorStyle *TCenterLineStrokeStyle::clone() const {
   return new TCenterLineStrokeStyle(*this);
-}
-
-//-----------------------------------------------------------------------------
-
-void TCenterLineStrokeStyle::drawStroke(TFlash &flash, const TStroke *s) const {
-  if (m_width == 0) return;
-
-  flash.setThickness(m_width);
-  flash.setLineColor(getAverageColor());
-  flash.drawCenterline(s, true);
-  flash.setThickness(0);
 }
 
 //------------------------------------------------------------------------------------
@@ -1286,40 +1259,6 @@ void TRasterImagePatternStrokeStyle::drawStroke(
   glDisable(GL_BLEND);
 }
 
-//---------------------------------------------------------------------------------------------------------------
-
-void TRasterImagePatternStrokeStyle::drawStroke(TFlash &flash,
-                                                const TStroke *stroke) const {
-  flash.drawHangedObjects();
-  if (m_level->getFrameCount() == 0) {
-    // if( rd.m_clippingRect!=TRect() && !
-    // convert(rd.m_aff*stroke->getBBox()).overlaps( rd.m_clippingRect ) )
-    // return;
-    TCenterLineStrokeStyle *appStyle =
-        new TCenterLineStrokeStyle(TPixel32(255, 0, 0, 255), 0x0, 2.0);
-    // flash.pushMatrix();
-    // flash.multMatrix(rd.m_aff);
-    appStyle->drawStroke(flash, stroke);
-    // glPopMatrix();
-    return;
-  }
-
-  std::vector<TAffine> transformations;
-  computeTransformations(transformations, stroke);
-  assert(m_level->begin() != m_level->end());
-  TLevel::Iterator lit = m_level->begin();
-
-  for (UINT i = 0; i < transformations.size(); i++) {
-    TRasterImageP img                = m_level->frame(lit->first);
-    if (++lit == m_level->end()) lit = m_level->begin();
-    assert(img);
-    flash.pushMatrix();
-    flash.multMatrix(transformations[i] * TScale(2.0));
-    flash.buildImage(img.getPointer(), false);
-    flash.popMatrix();
-  }
-}
-
 //-----------------------------------------------------------------------------
 
 void TRasterImagePatternStrokeStyle::loadData(TInputStreamInterface &is) {
@@ -1725,81 +1664,6 @@ void TVectorImagePatternStrokeStyle::drawStroke(
       }
       glPopMatrix();
     }
-  }
-}
-
-//---------------------------------------------------------------------------------------------------------------
-
-void TVectorImagePatternStrokeStyle::drawStroke(TFlash &flash,
-                                                const TStroke *stroke) const {
-  flash.drawHangedObjects();
-
-  const int frameCount = m_level->getFrameCount();
-  if (frameCount == 0) {
-    // if( rd.m_clippingRect!=TRect() && !
-    // convert(rd.m_aff*stroke->getBBox()).overlaps( rd.m_clippingRect ) )
-    // return;
-    TCenterLineStrokeStyle *appStyle =
-        new TCenterLineStrokeStyle(TPixel32(255, 0, 0, 255), 0x0, 2.0);
-    // flash.pushMatrix();
-    // flash.multMatrix(rd.m_aff);
-    appStyle->drawStroke(flash, stroke);
-    // glPopMatrix();
-    return;
-  }
-  UINT cpCount    = stroke->getControlPointCount();
-  UINT sampleStep = (cpCount < 10) ? 1 : (UINT)((double)cpCount / 10.0);
-
-  double thickSum = 0;
-  UINT count      = 0;
-  for (UINT cp = 0; cp < cpCount; cp += sampleStep) {
-    thickSum += stroke->getControlPoint(cp).thick;
-    count++;
-  }
-  double averageThick = thickSum / (double)count;
-
-  if (averageThick < 2.0) return;
-  const double length = stroke->getLength();
-  assert(m_level->begin() != m_level->end());
-  TLevel::Iterator lit = m_level->begin();
-  double s             = 0;
-
-  while (s < length) {
-    TFrameId fid                     = lit->first;
-    TVectorImageP img                = m_level->frame(fid);
-    if (++lit == m_level->end()) lit = m_level->begin();
-    assert(img);
-    if (img->getType() != TImage::VECTOR) return;
-    double t       = stroke->getParameterAtLength(s);
-    TThickPoint p  = stroke->getThickPoint(t);
-    TPointD v      = stroke->getSpeed(t);
-    double ang     = rad2degree(atan(v)) + m_rotation;
-    TRectD bbox    = img->getBBox();
-    TPointD center = 0.5 * (bbox.getP00() + bbox.getP11());
-    // double rx = bbox.getLx() * 0.5;
-    double ry              = bbox.getLy() * 0.5;
-    if (ry * ry < 1e-5) ry = p.thick;
-    double sc              = p.thick / ry;
-    if (sc < 0.0001) sc    = 0.0001;
-    TAffine aff =
-        TTranslation(p) * TRotation(ang) * TScale(sc) * TTranslation(-center);
-    // TVectorRenderData rd2(rd, rd.m_aff * aff);
-    // c'era un crash se, dopo aver fatto new color, si selezionava un pattern
-    // e si disegnava (stack overflow). Ora r2 prende la palette
-    // dell'immagine caricata
-    TVectorImage *imgPointer = img.getPointer();
-
-    // TVectorRenderData rd2(rd.m_aff * aff,rd.m_clippingRect,
-    //                  img->getPalette(),rd.m_cf,rd.m_antiAliasing);
-
-    flash.pushMatrix();
-    flash.multMatrix(aff);
-    flash.buildImage(imgPointer, false);
-    // flash.draw(imgPointer, 0);
-    flash.popMatrix();
-
-    double ds = std::max(2.0, sc * bbox.getLx() + m_space);
-    s += ds;
   }
 }
 

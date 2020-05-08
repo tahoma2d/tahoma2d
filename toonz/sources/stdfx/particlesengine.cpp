@@ -11,7 +11,6 @@
 #include "tsystem.h"
 #include "timagecache.h"
 #include "tconvert.h"
-#include "tflash.h"
 
 #include "trasterimage.h"
 
@@ -411,7 +410,7 @@ void Particles_Engine::normalize_values(struct particles_values &values,
 /*-----------------------------------------------------------------*/
 
 void Particles_Engine::render_particles(
-    TFlash *flash, TTile *tile, std::vector<TRasterFxPort *> part_ports,
+    TTile *tile, std::vector<TRasterFxPort *> part_ports,
     const TRenderSettings &ri, TDimension &p_size, TPointD &p_offset,
     std::map<int, TRasterFxPort *> ctrl_ports, std::vector<TLevelP> partLevel,
     float dpi, int curr_frame, int shrink, double startx, double starty,
@@ -621,7 +620,7 @@ void Particles_Engine::render_particles(
               part.lifetime <=
                   part.genlifetime)  // This last... shouldn't always be?
           {
-            do_render(flash, &part, tile, part_ports, porttiles, ri, p_size,
+            do_render(&part, tile, part_ports, porttiles, ri, p_size,
                       p_offset, last_frame[part.level], partLevel, values,
                       opacity_range, dist_frame, partScales);
           }
@@ -633,7 +632,7 @@ void Particles_Engine::render_particles(
           if (dist_frame <= part.trail && part.scale && part.lifetime > 0 &&
               part.lifetime <= part.genlifetime)  // Same here..?
           {
-            do_render(flash, &part, tile, part_ports, porttiles, ri, p_size,
+            do_render(&part, tile, part_ports, porttiles, ri, p_size,
                       p_offset, last_frame[part.level], partLevel, values,
                       opacity_range, dist_frame, partScales);
           }
@@ -649,7 +648,7 @@ void Particles_Engine::render_particles(
 //-----------------------------------------------------------------
 /*- render_particles から呼ばれる。粒子の数だけ繰り返し -*/
 void Particles_Engine::do_render(
-    TFlash *flash, Particle *part, TTile *tile,
+    Particle *part, TTile *tile,
     std::vector<TRasterFxPort *> part_ports, std::map<int, TTile *> porttiles,
     const TRenderSettings &ri, TDimension &p_size, TPointD &p_offset,
     int lastframe, std::vector<TLevelP> partLevel,
@@ -711,35 +710,6 @@ void Particles_Engine::do_render(
   /*- 縮小済みのParticleのサイズ -*/
   partResolution = TDimensionD(tceil(bbox.getLx()), tceil(bbox.getLy()));
 
-  if (flash) {
-    if (!partLevel[part->level]->frame(ndx)) {
-      if (part_ports[0]->isConnected()) {
-        TTile auxTile;
-        TRaster32P tmp;
-        tmp = TRaster32P(p_size);
-        (*part_ports[0])
-            ->allocateAndCompute(auxTile, p_offset, p_size, tmp, ndx, ri);
-        partLevel[part->level]->setFrame(ndx,
-                                         TRasterImageP(auxTile.getRaster()));
-      }
-    }
-
-    flash->pushMatrix();
-
-    const TAffine aff;
-
-    flash->multMatrix(scaleM * aff.place(0, 0, part->x, part->y));
-
-    // if(curr_opacity!=1.0 || part->gencol.fadecol || part->fincol.fadecol ||
-    // part->foutcol.fadecol)
-    {
-      TColorFader cf(TPixel32::Red, .5);
-      flash->draw(partLevel[part->level]->frame(ndx), &cf);
-    }
-    // flash->draw(partLevel->frame(ndx), 0);
-
-    flash->popMatrix();
-  } else {
     TRasterP ras;
 
     std::string alias;
@@ -837,7 +807,7 @@ void Particles_Engine::do_render(
       TRop::over(tileRas, rfinalpart, M);
     else
       throw TException("ParticlesFx: unsupported Pixel Type");
-  }
+  
 }
 
 /*-----------------------------------------------------------------*/

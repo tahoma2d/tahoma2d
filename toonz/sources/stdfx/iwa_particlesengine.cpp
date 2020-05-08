@@ -9,7 +9,6 @@
 #include "tsystem.h"
 #include "timagecache.h"
 #include "tconvert.h"
-#include "tflash.h"
 
 #include "trasterimage.h"
 
@@ -503,7 +502,6 @@ void Iwa_Particles_Engine::normalize_values(struct particles_values &values,
 /*-----------------------------------------------------------------*/
 
 void Iwa_Particles_Engine::render_particles(
-    TFlash *flash,                           /*-  0 が入ってくる -*/
     TTile *tile,                             /*- 結果を格納するTile -*/
     std::vector<TRasterFxPort *> part_ports, /*- テクスチャ素材画像のポート -*/
     const TRenderSettings &ri,
@@ -824,7 +822,7 @@ void Iwa_Particles_Engine::render_particles(
                 part.lifetime <=
                     part.genlifetime)  // This last... shouldn't always be?
             {
-              do_render(flash, &part, tile, part_ports, porttiles, ri, p_size,
+              do_render(&part, tile, part_ports, porttiles, ri, p_size,
                         p_offset, last_frame[part.level], partLevel, values,
                         opacity_range, dist_frame, partScales, &baseImgTile);
             }
@@ -842,7 +840,7 @@ void Iwa_Particles_Engine::render_particles(
                 part.lifetime > 0 &&
                 part.lifetime <= part.genlifetime)  // Same here..?
             {
-              do_render(flash, &part, tile, part_ports, porttiles, ri, p_size,
+              do_render(&part, tile, part_ports, porttiles, ri, p_size,
                         p_offset, last_frame[part.level], partLevel, values,
                         opacity_range, dist_frame, partScales, &baseImgTile);
             }
@@ -869,7 +867,7 @@ void Iwa_Particles_Engine::render_particles(
 -----------------------------------------------------------------*/
 
 void Iwa_Particles_Engine::do_render(
-    TFlash *flash, Iwa_Particle *part, TTile *tile,
+    Iwa_Particle *part, TTile *tile,
     std::vector<TRasterFxPort *> part_ports, std::map<int, TTile *> porttiles,
     const TRenderSettings &ri, TDimension &p_size, TPointD &p_offset,
     int lastframe, std::vector<TLevelP> partLevel,
@@ -966,32 +964,6 @@ void Iwa_Particles_Engine::do_render(
   /*- 縮小済みのParticleのサイズ -*/
   partResolution = TDimensionD(tceil(bbox.getLx()), tceil(bbox.getLy()));
 
-  if (flash) {
-    if (!partLevel[part->level]->frame(ndx)) {
-      if (part_ports[0]->isConnected()) {
-        TTile auxTile;
-        /*- テクスチャは出力タイルと同じbpcにする -*/
-        (*part_ports[0])
-            ->allocateAndCompute(auxTile, p_offset, p_size, tile->getRaster(),
-                                 ndx, ri);
-        partLevel[part->level]->setFrame(ndx,
-                                         TRasterImageP(auxTile.getRaster()));
-      }
-    }
-
-    flash->pushMatrix();
-
-    const TAffine aff;
-
-    flash->multMatrix(scaleM * aff.place(0, 0, part->x, part->y));
-
-    {
-      TColorFader cf(TPixel32::Red, .5);
-      flash->draw(partLevel[part->level]->frame(ndx), &cf);
-    }
-
-    flash->popMatrix();
-  } else {
     TRasterP ras;
 
     std::string alias;
@@ -1098,7 +1070,7 @@ void Iwa_Particles_Engine::do_render(
     else {
       throw TException("ParticlesFx: unsupported Pixel Type");
     }
-  }
+  
 }
 
 /*-----------------------------------------------------------------*/

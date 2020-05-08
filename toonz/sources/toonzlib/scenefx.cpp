@@ -99,12 +99,6 @@ public:
 
   std::string getPluginId() const override { return std::string(); }
 
-  void compute(TFlash &flash, int frame) override {
-    if (!m_port.isConnected()) return;
-
-    TRasterFxP(m_port.getFx())->compute(flash, m_frame);
-  }
-
   void doCompute(TTile &tile, double frame,
                  const TRenderSettings &ri) override {
     if (!m_port.isConnected()) {

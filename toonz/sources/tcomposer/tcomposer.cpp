@@ -36,7 +36,6 @@
 // TnzImage includes
 #include "timage_io.h"
 #include "tnzimage.h"
-#include "tflash.h"
 
 #ifdef _WIN32
 #include "avicodecrestrictions.h"

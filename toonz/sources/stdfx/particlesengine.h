@@ -34,13 +34,13 @@ public:
                         const TRenderSettings &ri);
 
   void render_particles(
-      TFlash *flash, TTile *tile, std::vector<TRasterFxPort *> part_ports,
+      TTile *tile, std::vector<TRasterFxPort *> part_ports,
       const TRenderSettings &ri, TDimension &p_size, TPointD &p_offset,
       std::map<int, TRasterFxPort *> ctrl_ports, std::vector<TLevelP> partLevel,
       float dpi, int curr_frame, int shrink, double startx, double starty,
       double endx, double endy, std::vector<int> lastframe, unsigned long fxId);
 
-  void do_render(TFlash *flash, Particle *part, TTile *tile,
+  void do_render(Particle *part, TTile *tile,
                  std::vector<TRasterFxPort *> part_ports,
                  std::map<int, TTile *> porttiles, const TRenderSettings &ri,
                  TDimension &p_size, TPointD &p_offset, int lastframe,
