@@ -261,9 +261,8 @@ public:
   }
 
   TFxP makeFx() {
-    return (!m_fx)
-               ? TFxP()
-               : (m_aff == TAffine()) ? m_fx : TFxUtil::makeAffine(m_fx, m_aff);
+    return (!m_fx) ? TFxP() : (m_aff == TAffine()) ? m_fx : TFxUtil::makeAffine(
+                                                                m_fx, m_aff);
   }
 };
 
@@ -780,7 +779,7 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     if (m_particleDescendentCount == 0) {
       if (!xl ||
           (xl->getType() != PLI_XSHLEVEL && xl->getType() != TZP_XSHLEVEL &&
-              xl->getType() != CHILD_XSHLEVEL))
+           xl->getType() != CHILD_XSHLEVEL))
         return PlacedFx();
     }
     /*-- ParticleFxのTextureポートに繋がっている場合 --*/

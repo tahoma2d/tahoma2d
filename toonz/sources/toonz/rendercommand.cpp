@@ -153,7 +153,7 @@ public:
             isPreview ? *scene->getProperties()->getPreviewProperties()
                       : *scene->getProperties()->getOutputProperties();
         outputSettings.getRange(r0, r1, step);
-        const TRenderSettings rs = outputSettings.getRenderSettings();
+        const TRenderSettings rs    = outputSettings.getRenderSettings();
         if (r0 == 0 && r1 == -1) r0 = 0, r1 = scene->getFrameCount() - 1;
 
         double timeStretchFactor =
@@ -243,7 +243,7 @@ bool RenderCommand::init(bool isPreview) {
     m_r0 = 0;
     m_r1 = scene->getFrameCount() - 1;
   }
-  if (m_r0 < 0) m_r0 = 0;
+  if (m_r0 < 0) m_r0                       = 0;
   if (m_r1 >= scene->getFrameCount()) m_r1 = scene->getFrameCount() - 1;
   if (m_r1 < m_r0) {
     DVGui::warning(QObject::tr(
@@ -298,7 +298,7 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
       fp.getType() == "pict")  // pct e' un formato"livello" (ha i settings di
                                // quicktime) ma fatto di diversi frames
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
-  fp = scene->decodeFilePath(fp);
+  fp   = scene->decodeFilePath(fp);
   if (!TFileStatus(fp.getParentDir()).doesExist()) {
     try {
       TFilePath parent = fp.getParentDir();
@@ -381,9 +381,8 @@ public:
                  bool isPreview)
       : DVGui::ProgressDialog(
             QObject::tr("Precomputing %1 Frames", "RenderListener").arg(steps) +
-                ((isPreview) ? ""
-                             : QObject::tr(" of %1", "RenderListener")
-                                   .arg(toQString(path))),
+                ((isPreview) ? "" : QObject::tr(" of %1", "RenderListener")
+                                        .arg(toQString(path))),
             QObject::tr("Cancel"), 0, steps, TApp::instance()->getMainWindow())
       , m_renderer(renderer)
       , m_frameCounter(0)
@@ -712,7 +711,7 @@ public:
 
 //---------------------------------------------------------
 
-//! Specialized render invocation for multimedia rendering. 
+//! Specialized render invocation for multimedia rendering.
 void RenderCommand::multimediaRender() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   std::string ext   = m_fp.getType();
@@ -864,7 +863,7 @@ void RenderCommand::doRender(bool isPreview) {
     --*/
     if (m_multimediaRender)
       multimediaRender();
-    
+
     else
       /*-- 通常のRendering --*/
       rasterRender(isPreview);
