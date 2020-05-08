@@ -22,7 +22,6 @@
 #include "toonz/txshcolumn.h"
 #include "toonz/sceneproperties.h"
 #include "toonz/onionskinmask.h"
-#include "toonz/screensavermaker.h"
 #include "toonz/tstageobject.h"
 #include "toonz/dpiscale.h"
 #include "toonz/stage.h"
