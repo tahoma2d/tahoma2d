@@ -29,6 +29,7 @@
 #include "toonz/multimediarenderer.h"
 #include "toutputproperties.h"
 #include "toonz/imagestyles.h"
+#include "tproperty.h"
 
 // TnzSound includes
 #include "tnzsound.h"
