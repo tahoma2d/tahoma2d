@@ -78,7 +78,7 @@ inline std::string removeTrailingH(std::string handle) {
 //
 //------------------------------------------------------------
 
-// return true iff column ancestorIndex is column descentIndex or its parent or
+// return true if column ancestorIndex is column descentIndex or its parent or
 // the parent of the parent, etc.
 static bool isAncestorOf(int ancestorIndex, int descendentIndex) {
   TStageObjectId ancestorId   = TStageObjectId::ColumnId(ancestorIndex);
@@ -93,7 +93,7 @@ static bool isAncestorOf(int ancestorIndex, int descendentIndex) {
 
 static void getHooks(std::vector<HookData> &hooks, TXsheet *xsh, int row,
                      int col, TPointD dpiScale) {
-  // nota. hook position is in the coordinate system of the parent object.
+  // note. hook position is in the coordinate system of the parent object.
   // a inch is Stage::inch
 
   TXshCell cell = xsh->getCell(row, col);
@@ -342,7 +342,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
 
   int selectedDevice = pick(e.m_pos);
 
-  // cambio drawing
+  // change drawing
   if (selectedDevice == TD_ChangeDrawing ||
       selectedDevice == TD_IncrementDrawing ||
       selectedDevice == TD_DecrementDrawing) {
@@ -356,7 +356,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
     return;
   }
 
-  // click su un hook: attacca la colonna corrente tramite quell'hook
+  // click on a hook: attach the current column via that hook
   if (TD_Hook <= selectedDevice && selectedDevice < TD_Hook + 50) {
     TXsheet *xsh         = app->getCurrentXsheet()->getXsheet();
     TStageObjectId objId = TStageObjectId::ColumnId(currentColumnIndex);
@@ -381,7 +381,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
   bool justSelected = false;
 
   if (m_device < 0) {
-    // nessun gadget cliccato. Eventualmente seleziono la colonna
+    // No gadget clicked.  Select the column
     std::vector<int> columnIndexes;
     getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, getPixelSize() * 5,
                                     false);
@@ -414,12 +414,21 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
 
   // lock/unlock: modalita IK
   if (TD_LockStageObject <= m_device && m_device < TD_LockStageObject + 1000) {
+      Skeleton* skeleton = new Skeleton();
+      buildSkeleton(*skeleton, currentColumnIndex);
     int columnIndex = m_device - TD_LockStageObject;
-    int frame       = app->getCurrentFrame()->getFrame();
-    togglePinnedStatus(columnIndex, frame, e.isShiftPressed());
-    invalidate();
-    m_dragTool = 0;
-    return;
+    int frame = app->getCurrentFrame()->getFrame();
+    if (skeleton->getBoneByColumnIndex(columnIndex) == skeleton->getRootBone()) {
+        app->getCurrentColumn()->setColumnIndex(columnIndex);
+        m_device = TD_Translation;
+    }
+    else if (e.isShiftPressed()) {
+        togglePinnedStatus(columnIndex, frame, e.isShiftPressed());
+        invalidate();
+        m_dragTool = 0;
+        return;
+    }
+    else return;
   }
 
   switch (m_device) {
@@ -989,7 +998,7 @@ void SkeletonTool::drawIKBone(const TPointD &a, const TPointD &b) {
 //-------------------------------------------------------------------
 
 void SkeletonTool::computeMagicLinks() {
-  // TODO: spostare qui il calcolo dei magic link
+  // TODO: move the calculation of the magic links here
 }
 
 //-------------------------------------------------------------------
