@@ -345,15 +345,11 @@ void LevelCreatePopup::showEvent(QShowEvent *) {
     m_dpiLabel->hide();
     m_widthFld->setDecimals(0);
     m_heightFld->setDecimals(0);
-    m_widthFld->setMeasure("camera.lx");
-    m_heightFld->setMeasure("camera.ly");
   } else {
     m_dpiFld->show();
     m_dpiLabel->show();
     m_widthFld->setDecimals(4);
     m_heightFld->setDecimals(4);
-    m_widthFld->setMeasure("level.lx");
-    m_heightFld->setMeasure("level.ly");
   }
 }
 
@@ -604,6 +600,13 @@ bool LevelCreatePopup::apply() {
 void LevelCreatePopup::update() {
   updatePath();
   Preferences *pref = Preferences::instance();
+  if (pref->getUnits() == "pixel") {
+    m_widthFld->setMeasure("camera.lx");
+    m_heightFld->setMeasure("camera.ly");
+  } else {
+    m_widthFld->setMeasure("level.lx");
+    m_heightFld->setMeasure("level.ly");
+  }
   if (pref->isNewLevelSizeToCameraSizeEnabled()) {
     TCamera *currCamera =
         TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();

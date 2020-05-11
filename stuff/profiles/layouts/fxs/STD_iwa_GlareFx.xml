@@ -1,0 +1,13 @@
+<fxlayout help_command="iexplore" help_file="BokehIwa.html">
+	<page name="Glare Iwa">
+		<control>renderMode</control>
+		<control>intensity</control>
+		<control>size</control>
+		<control>rotation</control>
+		<control>noise_factor</control>
+		<control>noise_size</control>
+		<control>noise_octave</control>
+		<control>noise_evolution</control>
+		<control>noise_offset</control>
+	</page>
+</fxlayout>
