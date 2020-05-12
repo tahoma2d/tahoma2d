@@ -289,6 +289,8 @@ public:
   TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
   int getCursorId() const override { return m_cursor; }
+  TPointD getCenteredCursorPos(const TPointD &originalCursorPos);
+  void fixMousePos(TPointD pos, bool precise = false);
 
   int getColorClass() const { return 2; }
 
@@ -350,6 +352,35 @@ void PaintBrushTool::updateTranslation() {
   m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
 
   m_onlyEmptyAreas.setQStringName(tr("Selective", NULL));
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+TPointD PaintBrushTool::getCenteredCursorPos(const TPointD &originalCursorPos) {
+  TXshLevelHandle *levelHandle = m_application->getCurrentLevel();
+  TXshSimpleLevel *level = levelHandle ? levelHandle->getSimpleLevel() : 0;
+  TDimension resolution =
+      level ? level->getProperties()->getImageRes() : TDimension(0, 0);
+
+  bool xEven = (resolution.lx % 2 == 0);
+  bool yEven = (resolution.ly % 2 == 0);
+
+  TPointD centeredCursorPos = originalCursorPos;
+
+  if (xEven) centeredCursorPos.x -= 0.5;
+  if (yEven) centeredCursorPos.y -= 0.5;
+
+  return centeredCursorPos;
+}
+
+//-----------------------------------------------------------------------------
+
+void PaintBrushTool::fixMousePos(TPointD pos, bool precise) {
+  m_mousePos = getCenteredCursorPos(pos);
+  if (precise) {
+    TPointD pp(tround(m_mousePos.x), tround(m_mousePos.y));
+    m_mousePos = pp;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -419,11 +450,12 @@ bool PaintBrushTool::onPropertyChanged(std::string propertyName) {
 //-----------------------------------------------------------------------------
 
 void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
+  fixMousePos(pos);
   m_selecting = true;
   TImageP image(getImage(true));
   if (m_colorType.getValue() == LINES) m_colorTypeBrush = INK;
   if (m_colorType.getValue() == AREAS) m_colorTypeBrush = PAINT;
-  if (m_colorType.getValue() == ALL) m_colorTypeBrush = INKNPAINT;
+  if (m_colorType.getValue() == ALL) m_colorTypeBrush   = INKNPAINT;
 
   if (TToonzImageP ti = image) {
     TRasterCM32P ras = ti->getRaster();
@@ -434,7 +466,7 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_tileSaver           = new TTileSaverCM32(ras, tileSet);
       m_rasterTrack         = new RasterStrokeGenerator(
           ras, PAINTBRUSH, m_colorTypeBrush, styleId,
-          TThickPoint(pos + convert(ras->getCenter()), thickness),
+          TThickPoint(m_mousePos + convert(ras->getCenter()), thickness),
           m_onlyEmptyAreas.getValue(), 0, false);
       /*-- 現在のFidを記憶 --*/
       m_workingFrameId = getFrameId();
@@ -450,15 +482,15 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_selecting) return;
 
-  m_mousePos = pos;
+  fixMousePos(pos);
   if (TToonzImageP ri = TImageP(getImage(true))) {
     /*--- マウスを動かしながらショートカットでこのツールに切り替わった場合、
             いきなりleftButtonDragから呼ばれることがあり、m_rasterTrackが無い可能性がある
 　---*/
     if (m_rasterTrack) {
       int thickness = m_toolSize.getValue();
-      m_rasterTrack->add(
-          TThickPoint(pos + convert(ri->getRaster()->getCenter()), thickness));
+      m_rasterTrack->add(TThickPoint(
+          m_mousePos + convert(ri->getRaster()->getCenter()), thickness));
       m_tileSaver->save(m_rasterTrack->getLastRect());
       TRect modifiedBbox = m_rasterTrack->generateLastPieceOfStroke(true);
       invalidate();
@@ -471,7 +503,7 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 void PaintBrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   if (!m_selecting) return;
 
-  m_mousePos = pos;
+  fixMousePos(pos);
 
   finishBrush();
 }
@@ -479,9 +511,7 @@ void PaintBrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 //-----------------------------------------------------------------------------
 
 void PaintBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-  m_mousePos = pos;
-  TPointD pp(tround(pos.x), tround(pos.y));
-  m_mousePos = pp;
+  fixMousePos(pos, true);
   invalidate();
 }
 

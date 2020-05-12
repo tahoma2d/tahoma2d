@@ -284,7 +284,7 @@ void eraseStroke(const TToonzImageP &ti, TStroke *stroke,
   if (!invert)
     area = rasterErasedArea.enlarge(2);
   else
-    area = ras->getBounds();
+    area                = ras->getBounds();
   TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
   tileSet->add(ras, area);
   TUndoManager::manager()->add(new RectRasterUndo(
@@ -497,6 +497,8 @@ public:
   void onDeactivate() override;
   /*-- Brush、PaintBrush、EraserToolがPencilModeのときにTrueを返す --*/
   bool isPencilModeActive() override;
+  TPointD getCenteredCursorPos(const TPointD &originalCursorPos);
+  TPointD fixMousePos(TPointD pos, bool precise = false);
 
 private:
   /*-- 終了処理 --*/
@@ -644,6 +646,36 @@ void EraserTool::updateTranslation() {
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
   m_pencil.setQStringName(tr("Pencil Mode"));
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+TPointD EraserTool::getCenteredCursorPos(const TPointD &originalCursorPos) {
+  TXshLevelHandle *levelHandle = m_application->getCurrentLevel();
+  TXshSimpleLevel *level = levelHandle ? levelHandle->getSimpleLevel() : 0;
+  TDimension resolution =
+      level ? level->getProperties()->getImageRes() : TDimension(0, 0);
+
+  bool xEven = (resolution.lx % 2 == 0);
+  bool yEven = (resolution.ly % 2 == 0);
+
+  TPointD centeredCursorPos = originalCursorPos;
+
+  if (xEven) centeredCursorPos.x -= 0.5;
+  if (yEven) centeredCursorPos.y -= 0.5;
+
+  return centeredCursorPos;
+}
+
+//-----------------------------------------------------------------------------
+
+TPointD EraserTool::fixMousePos(TPointD pos, bool precise) {
+  TPointD fixedPos = getCenteredCursorPos(pos);
+  if (precise) {
+    TPointD pp(tround(fixedPos.x), tround(fixedPos.y));
+    fixedPos = pp;
+  }
+  return fixedPos;
 }
 
 //------------------------------------------------------------------------
@@ -881,29 +913,30 @@ void EraserTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     }
     if (m_eraseType.getValue() == NORMALERASE) {
       TRasterCM32P raster = ti->getRaster();
+      TPointD fixedPos    = fixMousePos(pos);
       TThickPoint intPos;
       /*--Areasタイプの時は常にPencilと同じ消し方にする--*/
       if (m_pencil.getValue() || m_colorType.getValue() == AREAS)
-        intPos = TThickPoint(pos + convert(raster->getCenter()),
+        intPos = TThickPoint(fixedPos + convert(raster->getCenter()),
                              m_toolSize.getValue());
       else
-        intPos = TThickPoint(pos + convert(raster->getCenter()),
+        intPos = TThickPoint(fixedPos + convert(raster->getCenter()),
                              m_toolSize.getValue() - 1);
       int currentStyle = 0;
       if (m_currentStyle.getValue())
         currentStyle = TTool::getApplication()->getCurrentLevelStyleIndex();
-      m_tileSet   = new TTileSetCM32(raster->getSize());
-      m_tileSaver = new TTileSaverCM32(raster, m_tileSet);
+      m_tileSet      = new TTileSetCM32(raster->getSize());
+      m_tileSaver    = new TTileSaverCM32(raster, m_tileSet);
       TPointD halfThick(m_toolSize.getValue() * 0.5,
                         m_toolSize.getValue() * 0.5);
-      invalidateRect = TRectD(pos - halfThick, pos + halfThick);
+      invalidateRect = TRectD(fixedPos - halfThick, fixedPos + halfThick);
       if (m_hardness.getValue() == 100 || m_pencil.getValue() ||
           m_colorType.getValue() == AREAS) {
         if (m_colorType.getValue() == LINES) {
           m_colorTypeEraser = INK;
         }
         if (m_colorType.getValue() == AREAS) m_colorTypeEraser = PAINT;
-        if (m_colorType.getValue() == ALL) m_colorTypeEraser = INKNPAINT;
+        if (m_colorType.getValue() == ALL) m_colorTypeEraser   = INKNPAINT;
         m_normalEraser = new RasterStrokeGenerator(
             raster, ERASE, m_colorTypeEraser, 0, intPos,
             m_currentStyle.getValue(), currentStyle,
@@ -917,7 +950,7 @@ void EraserTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         m_workRas   = TRaster32P(raster->getSize());
         m_workRas->clear();
         TPointD center = raster->getCenterD();
-        TThickPoint point(pos + center, m_toolSize.getValue());
+        TThickPoint point(fixedPos + center, m_toolSize.getValue());
         m_points.push_back(point);
         m_bluredBrush = new BluredBrush(m_workRas, m_toolSize.getValue(),
                                         m_brushPad, false);
@@ -974,7 +1007,8 @@ void EraserTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
   double pixelSize2 = getPixelSize() * getPixelSize();
 
-  m_brushPos = m_mousePos = pos;
+  m_mousePos = pos;
+  m_brushPos = fixMousePos(pos);
   if (!m_selecting) return;
 
   TImageP image(getImage(true));
@@ -997,10 +1031,11 @@ void EraserTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       invalidate(invalidateRect.enlarge(2));
     }
     if (m_eraseType.getValue() == NORMALERASE) {
+      TPointD fixedPos = fixMousePos(pos);
       if (m_normalEraser &&
           (m_hardness.getValue() == 100 || m_pencil.getValue() ||
            m_colorType.getValue() == AREAS)) {
-        TPointD pp(pos.x, pos.y);
+        TPointD pp(fixedPos.x, fixedPos.y);
         TThickPoint intPos;
         if (m_pencil.getValue() || m_colorType.getValue() == AREAS)
           intPos = TThickPoint(pp + convert(ti->getRaster()->getCenter()),
@@ -1032,10 +1067,10 @@ void EraserTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         assert(m_workRas.getPointer() && m_backupRas.getPointer());
 
         TThickPoint old = m_points.back();
-        if (norm2(pos - old) < 4) return;
+        if (norm2(fixedPos - old) < 4) return;
 
         int thickness = m_toolSize.getValue();
-        TThickPoint point(pos + rasCenter, thickness);
+        TThickPoint point(fixedPos + rasCenter, thickness);
         TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5);
         m_points.push_back(mid);
         m_points.push_back(point);
@@ -1184,6 +1219,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
       }
     }
     if (m_eraseType.getValue() == NORMALERASE) {
+      TPointD fixedPos          = fixMousePos(pos);
       TTool::Application *app   = TTool::getApplication();
       int currentStyle          = app->getCurrentLevelStyleIndex();
       TXshLevel *level          = app->getCurrentLevel()->getLevel();
@@ -1208,7 +1244,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
       } else {
         if (m_points.size() != 1) {
           TPointD rasCenter = ti->getRaster()->getCenterD();
-          TThickPoint point(pos + rasCenter, m_toolSize.getValue());
+          TThickPoint point(fixedPos + rasCenter, m_toolSize.getValue());
           m_points.push_back(point);
           int m = m_points.size();
           std::vector<TThickPoint> points;
@@ -1485,7 +1521,7 @@ void EraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   }
 
   default:
-    m_brushPos = pos;
+    m_brushPos = fixMousePos(pos);
     break;
   }
 
@@ -1666,11 +1702,10 @@ void EraserTool::storeUndoAndRefresh() {
     TUndoManager::manager()->add(new RasterBluredEraserUndo(
         m_tileSet, m_points,
         TTool::getApplication()->getCurrentLevelStyleIndex(),
-        m_currentStyle.getValue(),
-        TTool::getApplication()
-            ->getCurrentLevel()
-            ->getLevel()
-            ->getSimpleLevel(),
+        m_currentStyle.getValue(), TTool::getApplication()
+                                       ->getCurrentLevel()
+                                       ->getLevel()
+                                       ->getSimpleLevel(),
         m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId,
         m_toolSize.getValue(), m_hardness.getValue() * 0.01,
         m_colorType.getValue()));
