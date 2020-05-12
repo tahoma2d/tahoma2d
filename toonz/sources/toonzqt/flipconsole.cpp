@@ -693,14 +693,14 @@ void FlipConsole::enableButton(UINT button, bool enable, bool doShowHide) {
           m_soundSep->setVisible(enable);
         } else {
           m_soundSep->setEnabled(enable);
-	}
+        }
       }
       if (button == eHisto) {
         if (doShowHide) {
           m_histoSep->setVisible(enable && m_customizeMask & eShowHisto);
         } else {
           m_histoSep->setEnabled(enable);
-	}
+        }
       }
       if (doShowHide) {
         list[i]->setVisible(enable);
@@ -1436,8 +1436,32 @@ void FlipConsole::onButtonPressed(int button) {
   if (m_playbackExecutor.isRunning() &&
       (button == FlipConsole::ePlay || button == FlipConsole::eLoop)) {
     pressButton(ePause);
-  } else
+  } else {
+    if (button == FlipConsole::ePlay || button == FlipConsole::eLoop) {
+      bool stoppedOther = false;
+      int i;
+      FlipConsole *playingConsole = 0;
+      for (i = 0; i < m_visibleConsoles.size(); i++) {
+        playingConsole = m_visibleConsoles.at(i);
+        if (playingConsole == this) continue;
+        if (playingConsole->m_playbackExecutor.isRunning()) {
+          playingConsole->doButtonPressed(ePause);
+          playingConsole->setChecked(ePlay, false);
+          playingConsole->setChecked(eLoop, false);
+          playingConsole->setChecked(ePause, true);
+          stoppedOther = true;
+        }
+      }
+      if (stoppedOther) {
+        setChecked(ePlay, false);
+        setChecked(eLoop, false);
+        setChecked(ePause, true);
+        return;
+      }
+    }
+
     doButtonPressed(button);
+  }
 
   if (m_areLinked) pressLinkedConsoleButton(button, this);
 }
@@ -1561,7 +1585,19 @@ void FlipConsole::doButtonPressed(UINT button) {
     return;
 
   case ePause:
-    if (!m_playbackExecutor.isRunning() && !m_isLinkedPlaying) return;
+    if (!m_playbackExecutor.isRunning() && !m_isLinkedPlaying) {
+      int i;
+      FlipConsole *playingConsole = 0;
+      for (i = 0; i < m_visibleConsoles.size(); i++) {
+        playingConsole = m_visibleConsoles.at(i);
+        if (playingConsole->m_playbackExecutor.isRunning())
+          playingConsole->doButtonPressed(button);
+        playingConsole->setChecked(ePlay, false);
+        playingConsole->setChecked(eLoop, false);
+        playingConsole->setChecked(ePause, true);
+      }
+      return;
+    }
 
     m_isLinkedPlaying = false;
 
