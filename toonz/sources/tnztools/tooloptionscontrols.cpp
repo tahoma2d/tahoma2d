@@ -138,7 +138,7 @@ void ToolOptionCheckbox::doClick(bool checked) {
   notifyTool();
 
   // for updating a cursor without any effect to the tool options
-  if(m_toolHandle) m_toolHandle->notifyToolCursorTypeChanged();
+  if (m_toolHandle) m_toolHandle->notifyToolCursorTypeChanged();
 }
 
 //=============================================================================
@@ -166,7 +166,7 @@ ToolOptionSlider::ToolOptionSlider(TTool *tool, TDoubleProperty *property,
   m_lineEdit->parentWidget()->setMaximumWidth(widgetWidth);
   // set the maximum width of the slider to 250 pixels
   setMaximumWidth(250 + widgetWidth);
-
+  setMinimumWidth(50 + widgetWidth);
   updateStatus();
   connect(this, SIGNAL(valueChanged(bool)), SLOT(onValueChanged(bool)));
   // synchronize the state with the same widgets in other tool option bars
@@ -273,7 +273,7 @@ ToolOptionPairSlider::ToolOptionPairSlider(TTool *tool,
   m_rightMargin = widgetWidth + 12;
   // set the maximum width of the slider to 300 pixels
   setMaximumWidth(300 + m_leftMargin + m_rightMargin);
-
+  setMinimumWidth(120 + m_leftMargin + m_rightMargin);
   setLeftText(leftName);
   setRightText(rightName);
 
@@ -387,6 +387,7 @@ ToolOptionIntPairSlider::ToolOptionIntPairSlider(TTool *tool,
   TIntPairProperty::Range range = property->getRange();
   setRange(range.first, range.second);
   setMaximumWidth(300);
+  setMinimumWidth(200);
   updateStatus();
   connect(this, SIGNAL(valuesChanged(bool)), SLOT(onValuesChanged(bool)));
 }
@@ -499,6 +500,7 @@ ToolOptionIntSlider::ToolOptionIntSlider(TTool *tool, TIntProperty *property,
   TIntProperty::Range range = property->getRange();
   setRange(range.first, range.second);
   setMaximumWidth(300);
+  setMinimumWidth(50);
   updateStatus();
   connect(this, SIGNAL(valueChanged(bool)), SLOT(onValueChanged(bool)));
   // synchronize the state with the same widgets in other tool option bars
@@ -625,7 +627,7 @@ void ToolOptionCombo::loadEntries() {
                       }");
       }
     }
-    int tmpWidth = fontMetrics().width(items[i].UIName);
+    int tmpWidth                      = fontMetrics().width(items[i].UIName);
     if (tmpWidth > maxWidth) maxWidth = tmpWidth;
   }
 
@@ -659,8 +661,8 @@ void ToolOptionCombo::onActivated(int index) {
 
 void ToolOptionCombo::doShowPopup() {
   if (Preferences::instance()->getDropdownShortcutsCycleOptions()) {
-    const TEnumProperty::Range &range = m_property->getRange();
-    int theIndex                      = currentIndex() + 1;
+    const TEnumProperty::Range &range           = m_property->getRange();
+    int theIndex                                = currentIndex() + 1;
     if (theIndex >= (int)range.size()) theIndex = 0;
     doOnActivated(theIndex);
   } else {
@@ -742,8 +744,8 @@ void ToolOptionFontCombo::onActivated(int index) {
 void ToolOptionFontCombo::doShowPopup() {
   if (!isInVisibleViewer(this)) return;
   if (Preferences::instance()->getDropdownShortcutsCycleOptions()) {
-    const TEnumProperty::Range &range = m_property->getRange();
-    int theIndex                      = currentIndex() + 1;
+    const TEnumProperty::Range &range           = m_property->getRange();
+    int theIndex                                = currentIndex() + 1;
     if (theIndex >= (int)range.size()) theIndex = 0;
     onActivated(theIndex);
     setCurrentIndex(theIndex);
@@ -1419,8 +1421,8 @@ void PegbarCenterField::onChange(TMeasuredValue *fld, bool addToUndo) {
 
   TStageObject *obj = xsh->getStageObject(objId);
 
-  double v       = fld->getValue(TMeasuredValue::MainUnit);
-  TPointD center = obj->getCenter(frame);
+  double v                           = fld->getValue(TMeasuredValue::MainUnit);
+  TPointD center                     = obj->getCenter(frame);
   if (!m_firstMouseDrag) m_oldCenter = center;
   if (m_index == 0)
     center.x = v;
@@ -1511,7 +1513,7 @@ PropertyMenuButton::PropertyMenuButton(QWidget *parent, TTool *tool,
   setIcon(icon);
   setToolTip(tooltip);
 
-  QMenu *menu = new QMenu(tooltip, this);
+  QMenu *menu                     = new QMenu(tooltip, this);
   if (!tooltip.isEmpty()) tooltip = tooltip + " ";
 
   QActionGroup *actiongroup = new QActionGroup(this);
@@ -1597,14 +1599,14 @@ bool SelectionScaleField::applyChange(bool addToUndo) {
     return false;
   using namespace DragSelectionTool;
   DragTool *scaleTool = createNewScaleTool(m_tool, ScaleType::GLOBAL);
-  double p                               = getValue();
-  if (p == 0) p = 0.00001;
-  FourPoints points = m_tool->getBBox();
-  TPointD center                       = m_tool->getCenter();
-  TPointD p0M                          = points.getPoint(7);
-  TPointD p1M                          = points.getPoint(5);
-  TPointD pM1                          = points.getPoint(6);
-  TPointD pM0                          = points.getPoint(4);
+  double p            = getValue();
+  if (p == 0) p       = 0.00001;
+  FourPoints points   = m_tool->getBBox();
+  TPointD center      = m_tool->getCenter();
+  TPointD p0M         = points.getPoint(7);
+  TPointD p1M         = points.getPoint(5);
+  TPointD pM1         = points.getPoint(6);
+  TPointD pM0         = points.getPoint(4);
   int pointIndex;
   TPointD sign(1, 1);
   TPointD scaleFactor = m_tool->m_deformValues.m_scaleValue;
