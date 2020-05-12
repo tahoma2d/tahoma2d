@@ -109,7 +109,7 @@ protected:
   QHBoxLayout *m_layout;
 
 public:
-  ToolOptionsBox(QWidget *parent, bool isScrollable = false);
+  ToolOptionsBox(QWidget *parent, bool isScrollable = true);
   ~ToolOptionsBox();
 
   virtual void
