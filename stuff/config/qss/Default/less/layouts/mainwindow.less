@@ -529,3 +529,45 @@ QListView {
   &:extend(.tab-container);
   background-color: @tabbar-bg-color;
 }
+
+
+/* -----------------------------------------------------------------------------
+   Tool Options - Override DvScroll Widget
+----------------------------------------------------------------------------- */
+
+#toolOptionsPanel {
+  QPushButton {
+    background-color: @button-bg-color;
+  border: 1 solid @button-border-color;
+  border-radius: 2;
+  color: @button-text-color;
+  margin: 0;
+  padding: 0;
+  &:hover {
+    background-color: @button-bg-color-hover;
+    border-color: @button-border-color-hover;
+    color: @button-text-color-hover;
+  } 
+  &:pressed {
+    background-color: @button-bg-color-pressed;
+    border-color: @button-border-color-pressed;
+    color: @button-text-color-pressed;
+  }
+  &:checked {
+    background-color: @button-bg-color-checked;
+    border-color: @button-border-color-checked;
+    color: @button-text-color-checked;
+    &:hover {
+      background-color: @button-bg-color-checked-hover;
+      &:pressed {
+        background: @button-bg-color-checked-hover-pressed;
+      }
+    }
+  }
+  &:disabled {
+    background-color: @button-bg-color-disabled;
+    border-color: @button-border-color-disabled;
+    color: @button-text-color-disabled;
+  }
+  }
+}

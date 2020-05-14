@@ -114,7 +114,7 @@ ToolOptionsBox::ToolOptionsBox(QWidget *parent, bool isScrollable)
     toolContainer->setSizePolicy(QSizePolicy::MinimumExpanding,
                                  QSizePolicy::Fixed);
     toolContainer->setFixedHeight(24);
-
+    toolContainer->setObjectName("toolOptionsPanel");
     toolContainer->setLayout(m_layout);
   } else
     setLayout(m_layout);
@@ -458,8 +458,9 @@ void ToolOptionControlBuilder::visit(TPointerProperty *p) {
 GenericToolOptionsBox::GenericToolOptionsBox(QWidget *parent, TTool *tool,
                                              TPaletteHandle *pltHandle,
                                              int propertyGroupIdx,
-                                             ToolHandle *toolHandle)
-    : ToolOptionsBox(parent) {
+                                             ToolHandle *toolHandle,
+                                             bool scrollable)
+    : ToolOptionsBox(parent, scrollable) {
   setObjectName("toolOptionsPanel");
 
   ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);

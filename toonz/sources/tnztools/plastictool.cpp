@@ -401,19 +401,23 @@ PlasticToolOptionsBox::PlasticToolOptionsBox(QWidget *parent, TTool *tool,
       return space;
     }
   };
-
+  setObjectName("toolOptionsPanel");
   // Create Mesh button
   QPushButton *meshifyButton = new QPushButton(tr("Create Mesh"));
+
   // Add skeleton id-related widgets
   QLabel *skelIdLabel = new QLabel(tr("Skeleton:"));
   m_skelIdComboBox    = new SkelIdsComboBox;
   m_addSkelButton     = new QPushButton("+");  // Connected in the show event
   m_removeSkelButton  = new QPushButton("-");  // Connected in the show event
   // Add sub-options for each mode group
-  for (int m         = 0; m != PlasticTool::MODES_COUNT; ++m)
-    m_subToolbars[m] = new GenericToolOptionsBox(0, tool, pltHandle, m);
+  for (int m = 0; m != PlasticTool::MODES_COUNT; ++m)
+    m_subToolbars[m] =
+        new GenericToolOptionsBox(0, tool, pltHandle, m, 0, false);
 
   meshifyButton->setFixedHeight(20);
+  int buttonWidth = fontMetrics().width(meshifyButton->text()) + 20;
+  meshifyButton->setFixedWidth(buttonWidth);
   QAction *meshifyAction =
       CommandManager::instance()->getAction("A_ToolOption_Meshify");
   meshifyButton->addAction(meshifyAction);
