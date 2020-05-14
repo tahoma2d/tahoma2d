@@ -698,6 +698,43 @@ QListView {
   background-color: #393939;
 }
 /* -----------------------------------------------------------------------------
+   Tool Options - Override DvScroll Widget
+----------------------------------------------------------------------------- */
+#toolOptionsPanel QPushButton {
+  background-color: #696969;
+  border: 1 solid #484848;
+  border-radius: 2;
+  color: #f3f3f3;
+  margin: 0;
+  padding: 0;
+}
+#toolOptionsPanel QPushButton:hover {
+  background-color: #767676;
+  border-color: #484848;
+  color: #f3f3f3;
+}
+#toolOptionsPanel QPushButton:pressed {
+  background-color: #313131;
+  border-color: #2c2c2c;
+  color: #f3f3f3;
+}
+#toolOptionsPanel QPushButton:checked {
+  background-color: #313131;
+  border-color: #2c2c2c;
+  color: #f3f3f3;
+}
+#toolOptionsPanel QPushButton:checked:hover {
+  background-color: #363636;
+}
+#toolOptionsPanel QPushButton:checked:hover:pressed {
+  background: #313131;
+}
+#toolOptionsPanel QPushButton:disabled {
+  background-color: #555555;
+  border-color: #484848;
+  color: rgba(230, 230, 230, 0.4);
+}
+/* -----------------------------------------------------------------------------
    Push Button
 ----------------------------------------------------------------------------- */
 .Button,
