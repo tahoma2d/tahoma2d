@@ -431,6 +431,7 @@ public slots:
 
   void onButtonPressed(FlipConsole::EGadget button);
   void fitToCamera();
+  void fitToCameraOutline();
   void swapCompared();
   void regeneratePreviewFrame();
   void regeneratePreview();
