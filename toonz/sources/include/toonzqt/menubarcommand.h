@@ -64,7 +64,8 @@ enum CommandType {
   ZoomCommandType,
   MiscCommandType,
   MenuCommandType,
-  VisualizationButtonCommandType
+  VisualizationButtonCommandType,
+  StopMotionCommandType
 };
 
 //-----------------------------------------------------------------------------

@@ -371,7 +371,6 @@ void RowArea::drawCurrentRowGadget(QPainter &p, int r0, int r1) {
   p.fillRect(header, m_viewer->getCurrentRowBgColor());
 }
 
-#ifdef WITH_STOPMOTION
 //-----------------------------------------------------------------------------
 
 void RowArea::drawStopMotionCameraIndicator(QPainter &p) {
@@ -389,7 +388,6 @@ void RowArea::drawStopMotionCameraIndicator(QPainter &p) {
 }
 
 //-----------------------------------------------------------------------------
-#endif
 
 void RowArea::drawOnionSkinBackground(QPainter &p, int r0, int r1) {
   const Orientation *o = m_viewer->orientation();
@@ -849,14 +847,10 @@ void RowArea::paintEvent(QPaintEvent *event) {
     // current frame
     drawCurrentRowGadget(p, r0, r1);
 
-#ifdef WITH_STOPMOTION
   StopMotion *stopMotion = StopMotion::instance();
-  if (stopMotion->getPlaceOnXSheet() &&
-      (stopMotion->m_liveViewStatus > 0)) {
+  if (stopMotion->getPlaceOnXSheet() && (stopMotion->m_liveViewStatus > 0)) {
     drawStopMotionCameraIndicator(p);
   }
-
-#endif
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       Preferences::instance()->isCurrentTimelineIndicatorEnabled() &&

@@ -920,7 +920,6 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         if (is.getTagParam("isStopMotionLevel", v))
           isStopMotionLevel = std::stoi(v);
 
-
         m_properties->setDpiPolicy(dpiPolicy);
         m_properties->setDpi(TPointD(xdpi, ydpi));
         m_properties->setSubsampling(subsampling);
@@ -1464,7 +1463,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
   // backup
   if (Preferences::instance()->isBackupEnabled() && dOldPath == dDstPath &&
       TSystem::doesExistFileOrLevel(dDstPath))
-    saveBackup(dDstPath);
+    if (!getProperties()->isStopMotionLevel()) saveBackup(dDstPath);
 
   if (isAreadOnlyLevel(dDstPath)) {
     if (m_editableRange.empty() &&
