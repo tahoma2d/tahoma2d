@@ -1289,9 +1289,9 @@ void DvDirModel::onFolderChanged(const TFilePath &path) { refreshFolder(path); }
 void DvDirModel::refresh(const QModelIndex &index) {
   if (!index.isValid()) return;
   DvDirModelNode *node = getNode(index);
-  if (!node) return;
+  if (!node || node->getChildCount() < 1) return;
   emit layoutAboutToBeChanged();
-  emit beginRemoveRows(index, 0, node->getChildCount());
+  emit beginRemoveRows(index, 0, node->getChildCount() - 1);
   node->refreshChildren();
   emit endRemoveRows();
   emit layoutChanged();
