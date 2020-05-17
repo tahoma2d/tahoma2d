@@ -105,6 +105,8 @@ public:
   // icons from toonz levels
   QPixmap getIcon(TXshLevel *sl, const TFrameId &fid, bool filmStrip = true,
                   bool onDemand = false);
+  QPixmap getSizedIcon(TXshLevel *sl, const TFrameId &fid, std::string newId,
+                       TDimension dim = TDimension(0, 0));
   void invalidate(TXshLevel *sl, const TFrameId &fid,
                   bool onlyFilmStrip = false);
   void remove(TXshLevel *sl, const TFrameId &fid, bool onlyFilmStrip = false);
