@@ -4,7 +4,7 @@ git:
   depth: 1
   
 sudo: required
-dist: trusty
+dist: xenial
 
 install:
     - bash ci-scripts/$TRAVIS_OS_NAME/travis-install.sh

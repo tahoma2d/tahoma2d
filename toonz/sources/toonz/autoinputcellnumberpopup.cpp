@@ -5,12 +5,7 @@
 #include "menubarcommandids.h"
 #include "cellselection.h"
 #include "columnselection.h"
-
-#ifdef WITH_STOPMOTION
 #include "penciltestpopup.h"
-#else
-#include "penciltestpopup_qt.h"
-#endif
 
 // TnzQt includes
 #include "toonzqt/intfield.h"
@@ -277,7 +272,7 @@ AutoInputCellNumberPopup::AutoInputCellNumberPopup()
   bool ret = true;
   ret      = ret && connect(m_overwriteBtn, SIGNAL(clicked()), this,
                        SLOT(onOverwritePressed()));
-  ret      = ret &&
+  ret = ret &&
         connect(m_insertBtn, SIGNAL(clicked()), this, SLOT(onInsertPressed()));
   ret = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
   assert(ret);

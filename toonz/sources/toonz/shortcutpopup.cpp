@@ -227,6 +227,7 @@ ShortcutTree::ShortcutTree(QWidget *parent) : QTreeWidget(parent) {
 
   addFolder(tr("Tools"), ToolCommandType);
   addFolder(tr("Tool Modifiers"), ToolModifierCommandType);
+  addFolder(tr("Stop Motion"), StopMotionCommandType);
   addFolder(tr("Visualization"), ZoomCommandType);
   addFolder(tr("Misc"), MiscCommandType);
   addFolder(tr("RGBA Channels"), RGBACommandType);

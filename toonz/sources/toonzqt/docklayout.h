@@ -189,7 +189,7 @@ protected:
   // Maximization
   bool m_maximized;
 
-  // Level Strip and Style Editor use a fixed width on 
+  // Level Strip and Style Editor use a fixed width on
   // window resize to minimize user frustration
   // This variable is only used by Level Strip right now.
   // This is only true if the level strip is vertical.

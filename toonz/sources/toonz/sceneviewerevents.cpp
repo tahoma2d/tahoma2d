@@ -16,10 +16,7 @@
 #include "comboviewerpane.h"
 #include "locatorpopup.h"
 #include "cellselection.h"
-
-#ifdef WITH_STOPMOTION
 #include "stopmotion.h"
-#endif
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -505,7 +502,7 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleHCursor);
     } else if (std::abs((height() - curPos.y()) -
-                         height() * m_compareSettings.m_compareY) < 20) {
+                        height() * m_compareSettings.m_compareY) < 20) {
       cursorSet = true;
       setToolCursor(this, ToolCursor::ScaleVCursor);
     }
@@ -574,6 +571,15 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     TPointD worldPos = winToWorld(curPos);
     TPointD pos      = tool->getMatrix().inv() * worldPos;
 
+#ifdef WITH_CANON
+    // grab screen picking for stop motion live view zoom
+    if ((event.buttons() & Qt::LeftButton) &&
+        StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
+      StopMotion::instance()->m_canon->makeZoomPoint(pos);
+      return;
+    }
+#endif
+
     if (m_locator) {
       m_locator->onChangeViewAff(worldPos);
     }
@@ -610,8 +616,8 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     }
     if (!cursorSet) setToolCursor(this, tool->getCursorId());
 
-#ifdef WITH_STOPMOTION
-    if (StopMotion::instance()->m_pickLiveViewZoom)
+#ifdef WITH_CANON
+    if (StopMotion::instance()->m_canon->m_pickLiveViewZoom)
       setToolCursor(this, ToolCursor::ZoomCursor);
 #endif
     m_pos          = curPos;
@@ -714,7 +720,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
       m_tabletState = None;
       return;
     } else if (std::abs((height() - m_pos.y()) -
-                         height() * m_compareSettings.m_compareY) < 20) {
+                        height() * m_compareSettings.m_compareY) < 20) {
       m_compareSettings.m_dragCompareY = true;
       m_compareSettings.m_dragCompareX = false;
       m_compareSettings.m_compareX     = ImagePainter::DefaultCompareValue;
@@ -756,13 +762,11 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     pos.y /= m_dpiScale.y;
   }
 
-#ifdef WITH_STOPMOTION
+#ifdef WITH_CANON
   // grab screen picking for stop motion live view zoom
-  if (StopMotion::instance()->m_pickLiveViewZoom) {
-    StopMotion::instance()->m_pickLiveViewZoom = false;
-    StopMotion::instance()->makeZoomPoint(pos);
-    if (tool) setToolCursor(this, tool->getCursorId());
-    if (m_mouseButton != Qt::RightButton) return;
+  if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
+    StopMotion::instance()->m_canon->makeZoomPoint(pos);
+    return;
   }
 #endif
 
@@ -1176,6 +1180,53 @@ bool SceneViewer::event(QEvent *e) {
     break;
   }
   */
+
+  int key = 0;
+  if (e->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    key                 = keyEvent->key();
+#ifdef WITH_CANON
+    if ((m_stopMotion->m_canon->m_pickLiveViewZoom ||
+         m_stopMotion->m_canon->m_zooming) &&
+        (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
+         key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
+         key == Qt::Key_6 || key == Qt::Key_8)) {
+      if (m_stopMotion->m_canon->m_liveViewZoomReadyToPick == true) {
+        if (key == Qt::Key_Left || key == Qt::Key_4) {
+          m_stopMotion->m_canon->m_liveViewZoomPickPoint.x -= 10;
+        }
+        if (key == Qt::Key_Right || key == Qt::Key_6) {
+          m_stopMotion->m_canon->m_liveViewZoomPickPoint.x += 10;
+        }
+        if (key == Qt::Key_Up || key == Qt::Key_8) {
+          m_stopMotion->m_canon->m_liveViewZoomPickPoint.y += 10;
+        }
+        if (key == Qt::Key_Down || key == Qt::Key_2) {
+          m_stopMotion->m_canon->m_liveViewZoomPickPoint.y -= 10;
+        }
+        if (m_stopMotion->m_canon->m_zooming) {
+          m_stopMotion->m_canon->setZoomPoint();
+        }
+      }
+      m_stopMotion->m_canon->calculateZoomPoint();
+      e->accept();
+      return true;
+    } else if (m_stopMotion->m_canon->m_pickLiveViewZoom &&
+               (key == Qt::Key_Escape || key == Qt::Key_Enter ||
+                key == Qt::Key_Return)) {
+      m_stopMotion->m_canon->toggleZoomPicking();
+      e->accept();
+      return true;
+    } else
+#endif
+        if (m_stopMotion->m_liveViewStatus == 2 &&
+            (key == Qt::Key_Enter || key == Qt::Key_Return)) {
+      m_stopMotion->captureImage();
+      e->accept();
+      return true;
+    }
+  }
+
   if (e->type() == QEvent::Gesture &&
       CommandManager::instance()
           ->getAction(MI_TouchGestureControl)

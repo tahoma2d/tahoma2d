@@ -1256,7 +1256,8 @@ public:
       if (m_target == TARGET_SELECTED && !isSelected) continue;
 
       /*-
-       * Skip if target is "right side of current column" mode and i is left of current column
+       * Skip if target is "right side of current column" mode and i is left of
+       * current column
        * -*/
       if (m_target == TARGET_UPPER && i < cc) continue;
 
@@ -1358,14 +1359,13 @@ ColumnsStatusCommand
 // pasting the newly created vector column.
 class ConvertToVectorUndo final : public PasteColumnsUndo {
 public:
-  ConvertToVectorUndo(std::set<int> indices) : PasteColumnsUndo(indices) {};
+  ConvertToVectorUndo(std::set<int> indices) : PasteColumnsUndo(indices){};
 
   QString getHistoryString() override {
     return QObject::tr("Convert to Vectors");
   }
 };
 
-void ColumnCmd::addConvertToVectorUndo(std::set<int> &newColumnIndices)
-{
-    TUndoManager::manager()->add(new ConvertToVectorUndo(newColumnIndices));
+void ColumnCmd::addConvertToVectorUndo(std::set<int> &newColumnIndices) {
+  TUndoManager::manager()->add(new ConvertToVectorUndo(newColumnIndices));
 }

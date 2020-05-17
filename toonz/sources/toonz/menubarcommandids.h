@@ -96,12 +96,7 @@
 #define MI_OpenToolOptionBar "MI_OpenToolOptionBar"
 #define MI_OpenLevelView "MI_OpenLevelView"
 #define MI_OpenStopMotionPanel "MI_OpenStopMotionPanel"
-#ifdef LINETEST
 #define MI_OpenExport "MI_OpenExport"
-#define MI_OpenLineTestView "MI_OpenLineTestView"
-#define MI_OpenLineTestCapture "MI_OpenLineTestCapture"
-#define MI_Capture "MI_Capture"
-#endif
 #define MI_BrightnessAndContrast "MI_BrightnessAndContrast"
 #define MI_Antialias "MI_Antialias"
 #define MI_AdjustLevels "MI_AdjustLevels"
@@ -177,9 +172,6 @@
 #define MI_ViewBBox "MI_ViewBBox"
 #define MI_ViewTable "MI_ViewTable"
 #define MI_FieldGuide "MI_FieldGuide"
-#ifdef LINETEST
-#define MI_CapturePanelFieldGuide "MI_CapturePanelFieldGuide"
-#endif
 #define MI_RasterizePli "MI_RasterizePli"
 #define MI_SafeArea "MI_SafeArea"
 #define MI_ViewColorcard "MI_ViewColorcard"
@@ -428,9 +420,15 @@
 #define MI_StopMotionLowerOpacity "MI_StopMotionLowerOpacity"
 #define MI_StopMotionToggleLiveView "MI_StopMotionToggleLiveView"
 #define MI_StopMotionToggleZoom "MI_StopMotionToggleZoom"
+#define MI_StopMotionToggleUseLiveViewImages                                   \
+  "MI_StopMotionToggleUseLiveViewImages"
 #define MI_StopMotionLowerSubsampling "MI_StopMotionLowerSubsampling"
 #define MI_StopMotionRaiseSubsampling "MI_StopMotionRaiseSubsampling"
 #define MI_StopMotionJumpToCamera "MI_StopMotionJumpToCamera"
+#define MI_StopMotionPickFocusCheck "MI_StopMotionPickFocusCheck"
+#define MI_StopMotionExportImageSequence "MI_StopMotionExportImageSequence"
+#define MI_StopMotionRemoveFrame "MI_StopMotionRemoveFrame"
+#define MI_StopMotionNextFrame "MI_StopMotionNextFrame"
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
