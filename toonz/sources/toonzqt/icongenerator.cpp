@@ -118,7 +118,7 @@ bool getIcon(const std::string &iconName, QPixmap &pix,
         ras->getSize().lx > standardSize.lx &&
         ras->getSize().ly > standardSize.ly)
       isHighDpi = true;
-    pix = rasterToQPixmap(ras, false, isHighDpi);
+    pix         = rasterToQPixmap(ras, false, isHighDpi);
     return true;
   }
 
@@ -187,7 +187,7 @@ void makeChessBackground(const TRaster32P &ras) {
 
     int yCol = (y & 4);
 
-    for (int x = 0; pix != lineEnd; ++x, ++pix)
+    for (int x                = 0; pix != lineEnd; ++x, ++pix)
       if (pix->m != 255) *pix = overPix((x & 4) == yCol ? gray1 : gray2, *pix);
   }
 
@@ -605,8 +605,8 @@ TRaster32P SplineIconRenderer::generateRaster(
   double scaleX = 1, scaleY = 1;
   if (sbbox.getLx() > 0.0) scaleX = (double)iconSize.lx / sbbox.getLx();
   if (sbbox.getLy() > 0.0) scaleY = (double)iconSize.ly / sbbox.getLy();
-  double scale         = 0.8 * std::min(scaleX, scaleY);
-  TPointD centerStroke = 0.5 * (sbbox.getP00() + sbbox.getP11());
+  double scale                    = 0.8 * std::min(scaleX, scaleY);
+  TPointD centerStroke            = 0.5 * (sbbox.getP00() + sbbox.getP11());
   TPointD centerPixmap(iconSize.lx * 0.5, iconSize.ly * 0.5);
   glPushMatrix();
   tglMultMatrix(TScale(scale).place(centerStroke, centerPixmap));
@@ -976,10 +976,10 @@ TRaster32P IconGenerator::generateVectorFileIcon(const TFilePath &path,
   TLevelReaderP lr(path);
   TLevelP level = lr->loadInfo();
   if (level->begin() == level->end()) return TRaster32P();
-  TFrameId frameId = fid;
+  TFrameId frameId                       = fid;
   if (fid == TFrameId::NO_FRAME) frameId = level->begin()->first;
-  TImageP img      = lr->getFrameReader(frameId)->load();
-  TVectorImageP vi = img;
+  TImageP img                            = lr->getFrameReader(frameId)->load();
+  TVectorImageP vi                       = img;
   if (!vi) return TRaster32P();
   vi->setPalette(level->getPalette());
   VectorImageIconRenderer vir("", iconSize, vi.getPointer(),
@@ -1117,7 +1117,7 @@ TRaster32P IconGenerator::generateMeshFileIcon(const TFilePath &path,
   TLevelP level = lr->loadInfo();
   if (level->begin() == level->end()) return TRaster32P();
 
-  TFrameId frameId = fid;
+  TFrameId frameId                       = fid;
   if (fid == TFrameId::NO_FRAME) frameId = level->begin()->first;
 
   TMeshImageP mi = lr->getFrameReader(frameId)->load();
@@ -1410,6 +1410,94 @@ QPixmap IconGenerator::getIcon(TXshLevel *xl, const TFrameId &fid,
     if (!filmStrip) m_settings = IconGenerator::Settings();
 
     TDimension iconSize = filmStrip ? m_iconSize : TDimension(80, 60);
+
+    // storeIcon(id, QPixmap());
+
+    int type = sl->getType();
+    switch (type) {
+    case OVL_XSHLEVEL:
+    case TZI_XSHLEVEL:
+      addTask(id, new RasterImageIconRenderer(id, iconSize, sl, fid));
+      break;
+    case PLI_XSHLEVEL:
+      addTask(id,
+              new VectorImageIconRenderer(id, iconSize, sl, fid, m_settings));
+      break;
+    case TZP_XSHLEVEL:
+      // Yep, we could have rasters, due to a cleanupping process
+      if (status == TXshSimpleLevel::Scanned)
+        addTask(id, new RasterImageIconRenderer(id, iconSize, sl, fid));
+      else
+        addTask(id,
+                new ToonzImageIconRenderer(id, iconSize, sl, fid, m_settings));
+      break;
+    case MESH_XSHLEVEL:
+      addTask(id, new MeshImageIconRenderer(id, iconSize, sl, fid, m_settings));
+      break;
+    default:
+      assert(false);
+      break;
+    }
+
+    m_settings = oldSettings;
+  }
+
+  return QPixmap();
+}
+
+//-----------------------------------------------------------------------------
+
+QPixmap IconGenerator::getSizedIcon(TXshLevel *xl, const TFrameId &fid,
+                                    std::string newId, TDimension dim) {
+  if (!xl) return QPixmap();
+
+  if (TXshChildLevel *cl = xl->getChildLevel()) {
+    std::string id = XsheetIconRenderer::getId(cl, fid.getNumber() - 1);
+    QPixmap pix;
+    if (::getIcon(id, pix)) return pix;
+
+    // if (onDemand) return pix;
+
+    TDimension iconSize = TDimension(80, 60);
+    if (dim != TDimension(0, 0)) {
+      iconSize = dim;
+    }
+
+    // The icon must be calculated - add an IconRenderer task.
+    // storeIcon(id, QPixmap());   //It was automatically added by the former
+    // access
+    addTask(id, new XsheetIconRenderer(id, iconSize, cl->getXsheet()));
+  }
+
+  if (TXshSimpleLevel *sl = xl->getSimpleLevel()) {
+    // make thumbnails for cleanup preview and cameratest to be the same as
+    // normal TLV
+    std::string id;
+    int status = sl->getFrameStatus(fid);
+    if (sl->getType() == TZP_XSHLEVEL &&
+        status & TXshSimpleLevel::CleanupPreview) {
+      sl->setFrameStatus(fid, status & ~TXshSimpleLevel::CleanupPreview);
+      id = sl->getIconId(fid);
+      sl->setFrameStatus(fid, status);
+    } else
+      id = sl->getIconId(fid);
+
+    id += newId;
+
+    QPixmap pix;
+    if (::getIcon(id, pix, xl->getSimpleLevel())) return pix;
+
+    // if (onDemand) return pix;
+
+    IconGenerator::Settings oldSettings = m_settings;
+
+    // Disable transparency check for cast and xsheet icons
+    // if (!filmStrip) m_settings = IconGenerator::Settings();
+
+    TDimension iconSize = TDimension(80, 60);
+    if (dim != TDimension(0, 0)) {
+      iconSize = dim;
+    }
 
     // storeIcon(id, QPixmap());
 
