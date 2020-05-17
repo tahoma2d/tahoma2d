@@ -42,11 +42,6 @@
 #include "timagecache.h"
 #include "tthread.h"
 
-// Couldn't place it...
-#ifdef LINETEST
-#include "tnzcamera.h"
-#endif
-
 // Qt includes
 #include <QStackedWidget>
 #include <QSettings>
@@ -64,10 +59,6 @@ TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 1);
 TEnv::IntVar FieldGuideToggleAction("FieldGuideToggleAction", 0);
 TEnv::IntVar ViewBBoxToggleAction("ViewBBoxToggleAction1", 1);
 TEnv::IntVar EditInPlaceToggleAction("EditInPlaceToggleAction", 0);
-#ifdef LINETEST
-TEnv::IntVar CapturePanelFieldGuideToggleAction(
-    "CapturePanelFieldGuideToggleAction", 0);
-#endif
 TEnv::IntVar RasterizePliToggleAction("RasterizePliToggleAction", 0);
 TEnv::IntVar SafeAreaToggleAction("SafeAreaToggleAction", 0);
 TEnv::IntVar ViewColorcardToggleAction("ViewColorcardToggleAction", 1);
@@ -1302,10 +1293,6 @@ void MainWindow::onMenuCheckboxChanged() {
     ViewBBoxToggleAction = isChecked;
   else if (cm->getAction(MI_FieldGuide) == action)
     FieldGuideToggleAction = isChecked;
-#ifdef LINETEST
-  else if (cm->getAction(MI_CapturePanelFieldGuide) == action)
-    CapturePanelFieldGuideToggleAction = isChecked;
-#endif
   else if (cm->getAction(MI_RasterizePli) == action) {
     if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
     RasterizePliToggleAction                            = isChecked;
@@ -1448,10 +1435,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   }
 
   TImageCache::instance()->clear(true);
-#ifdef LINETEST
-  if (TnzCamera::instance()->isCameraConnected())
-    TnzCamera::instance()->cameraDisconnect();
-#endif
 
   event->accept();
   TThread::shutdown();
@@ -1864,9 +1847,6 @@ void MainWindow::defineActions() {
   createMenuLevelAction(MI_BrightnessAndContrast,
                         tr("&Brightness and Contrast..."), "");
   createMenuLevelAction(MI_LinesFade, tr("&Color Fade..."), "");
-#ifdef LINETEST
-  createMenuLevelAction(MI_Capture, tr("&Capture"), "");
-#endif
   QAction *action =
       createMenuLevelAction(MI_CanvasSize, tr("&Canvas Size..."), "");
   if (action) action->setDisabled(true);
@@ -2004,11 +1984,6 @@ void MainWindow::defineActions() {
                FieldGuideToggleAction ? 1 : 0, MenuViewCommandType);
   createToggle(MI_ViewBBox, tr("&Raster Bounding Box"), "",
                ViewBBoxToggleAction ? 1 : 0, MenuViewCommandType);
-#ifdef LINETEST
-  createToggle(MI_CapturePanelFieldGuide, tr("&Field Guide in Capture Window"),
-               "", CapturePanelFieldGuideToggleAction ? 1 : 0,
-               MenuViewCommandType);
-#endif
   createToggle(MI_SafeArea, tr("&Safe Area"), "", SafeAreaToggleAction ? 1 : 0,
                MenuViewCommandType);
   createToggle(MI_ViewColorcard, tr("&Camera BG Color"), "",
@@ -2105,11 +2080,11 @@ void MainWindow::defineActions() {
                    DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);
   DockingCheck::instance()->setToggle(toggle);
 
-// createRightClickMenuAction(MI_OpenCurrentScene,   tr("&Current Scene"),
-// "");
-#ifdef LINETEST
+  // createRightClickMenuAction(MI_OpenCurrentScene,   tr("&Current Scene"),
+  // "");
+
   createMenuWindowsAction(MI_OpenExport, tr("&Export"), "");
-#endif
+
   createMenuWindowsAction(MI_OpenFileBrowser, tr("&File Browser"), "");
   createMenuWindowsAction(MI_OpenFileViewer, tr("&Flipbook"), "");
   createMenuWindowsAction(MI_OpenFunctionEditor, tr("&Function Editor"), "");
@@ -2137,10 +2112,6 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
                           "");
   createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
-#ifdef LINETEST
-  createMenuWindowsAction(MI_OpenLineTestCapture, tr("&LineTest Capture"), "");
-  createMenuWindowsAction(MI_OpenLineTestView, tr("&LineTest Viewer"), "");
-#endif
   createMenuWindowsAction(MI_OpenXshView, tr("&Xsheet"), "");
   createMenuWindowsAction(MI_OpenTimelineView, tr("&Timeline"), "");
   //  createAction(MI_TestAnimation,     "Test Animation",   "Ctrl+Return");

@@ -26,14 +26,9 @@
 #include "vectorguideddrawingpane.h"
 #include "stopmotioncontroller.h"
 
-#ifdef LINETEST
-#include "linetestpane.h"
-#include "linetestcapturepane.h"
-#else
 #include "tasksviewer.h"
 #include "batchserversviewer.h"
 #include "colormodelviewer.h"
-#endif
 
 #include "curveio.h"
 #include "menubarcommandids.h"
@@ -1031,7 +1026,6 @@ public:
   void initialize(TPanel *panel) override { assert(0); }
 } flipbookFactory;
 
-#ifndef LINETEST
 //=============================================================================
 // TasksViewerFactory
 //-----------------------------------------------------------------------------
@@ -1053,7 +1047,6 @@ public:
     panel->setWidget(new BatchServersViewer(panel));
   }
 } batchServersViewerFactory;
-#endif
 
 class BrowserFactory final : public TPanelFactory {
 public:
@@ -1099,7 +1092,6 @@ public:
 // ExportFactory
 //-----------------------------------------------------------------------------
 
-#ifdef LINETEST
 class ExportFactory final : public TPanelFactory {
 public:
   ExportFactory() : TPanelFactory("Export") {}
@@ -1121,9 +1113,6 @@ OpenFloatingPanel openExportPanelCommand(MI_OpenExport, "Export",
 // ColorModelViewerFactory
 //-----------------------------------------------------------------------------
 
-#endif
-
-#ifndef LINETEST
 class ColorModelViewerFactory final : public TPanelFactory {
 public:
   ColorModelViewerFactory() : TPanelFactory("ColorModel") {}
@@ -1132,8 +1121,6 @@ public:
     panel->resize(400, 300);
   }
 } colorModelViewerFactory;
-
-#endif
 
 //=============================================================================
 // FunctionViewerFactory
@@ -1198,61 +1185,6 @@ public:
 OpenFloatingPanel openTScriptConsoleCommand("MI_OpenScriptConsole",
                                             "ScriptConsole",
                                             QObject::tr("Script Console"));
-//------------------------------------------------------------------------------
-
-#ifdef LINETEST
-
-//=============================================================================
-// LineTestViewer
-//-----------------------------------------------------------------------------
-
-class LineTestFactory final : public TPanelFactory {
-public:
-  LineTestFactory() : TPanelFactory("LineTestViewer") {}
-
-  TPanel *createPanel(QWidget *parent) {
-    LineTestPane *panel = new LineTestPane(parent);
-    panel->setObjectName(getPanelType());
-    panel->setMinimumSize(220, 280);
-    return panel;
-  }
-
-  void initialize(TPanel *panel) { assert(0); }
-
-} lineTestFactory;
-
-//=============================================================================
-OpenFloatingPanel openLineTestViewerCommand(MI_OpenLineTestView,
-                                            "LineTestViewer",
-                                            QObject::tr("LineTest Viewer"));
-//-----------------------------------------------------------------------------
-
-//=============================================================================
-// LineTestCapturePane
-//-----------------------------------------------------------------------------
-
-class LineTestCaptureFactory final : public TPanelFactory {
-public:
-  LineTestCaptureFactory() : TPanelFactory("LineTestCapture") {}
-
-  TPanel *createPanel(QWidget *parent) {
-    LineTestCapturePane *panel = new LineTestCapturePane(parent);
-    panel->setObjectName(getPanelType());
-    //     panel->setMinimumSize(220, 280);
-    return panel;
-  }
-
-  void initialize(TPanel *panel) { assert(0); }
-
-} LineTestCaptureFactory;
-
-//=============================================================================
-OpenFloatingPanel openLineTestCaptureCommand(MI_OpenLineTestCapture,
-                                             "LineTestCapture",
-                                             QObject::tr("LineTest Capture"));
-//-----------------------------------------------------------------------------
-
-#endif  // LINETEST
 
 //=============================================================================
 // ComboViewer : Viewer + Toolbar + Tool Options

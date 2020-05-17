@@ -2130,8 +2130,6 @@ public:
 void SubsceneCmd::collapse(std::set<int> &indices) {
   if (indices.empty()) return;
 
-#ifndef LINETEST
-
   // User must decide if pegbars must be collapsed too
   QString question(QObject::tr("Collapsing columns: what you want to do?"));
 
@@ -2142,10 +2140,6 @@ void SubsceneCmd::collapse(std::set<int> &indices) {
 
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
-
-#else
-  int ret = 1;
-#endif
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
@@ -2236,8 +2230,6 @@ void SubsceneCmd::collapse(const QList<TStageObjectId> &objects) {
 void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   if (fxs.isEmpty()) return;
 
-#ifndef LINETEST
-
   QString question(QObject::tr("Collapsing columns: what you want to do?"));
   QList<QString> list;
   list.append(
@@ -2245,10 +2237,6 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   list.append(QObject::tr("Include only selected columns in the sub-xsheet."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
-
-#else
-  int ret = 1;
-#endif
 
   std::set<int> indices;
   std::set<TFx *> internalFx;
@@ -2308,8 +2296,6 @@ void SubsceneCmd::explode(int index) {
   TXshChildLevel *childLevel = cell.getChildLevel();
   if (!childLevel) return;
 
-#ifndef LINETEST
-
   /*- Pegbarを親Sheetに持って出るか？の質問ダイアログ -*/
   QString question(QObject::tr("Exploding Sub-xsheet: what you want to do?"));
   QList<QString> list;
@@ -2317,10 +2303,6 @@ void SubsceneCmd::explode(int index) {
   list.append(QObject::tr("Bring only columns in the main xsheet."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
-
-#else
-  int ret = 2;
-#endif
 
   // Collect column stage object informations
   TStageObjectId colId    = TStageObjectId::ColumnId(index);

@@ -34,7 +34,6 @@ class TXsheet;
 class TXshSimpleLevel;
 class TXshLevel;
 class TFrameId;
-class TFlash;
 class OnionSkinMask;
 class TFx;
 class TXshColumn;

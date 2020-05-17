@@ -153,9 +153,6 @@ set(HEADERS
     keyframemover.h
     keyframeselection.h
     kis_tablet_support_win8.h
-    linetestcapturepane.h
-    linetestpane.h
-    linetestviewer.h
     menubarcommandids.h
     moviegenerator.h
     scanlist.h
@@ -251,9 +248,6 @@ set(SOURCES
     layerheaderpanel.cpp
     levelcreatepopup.cpp
     levelsettingspopup.cpp
-    linetestcapturepane.cpp
-    linetestpane.cpp
-    linetestviewer.cpp
     lipsyncpopup.cpp
     magpiefileimportpopup.cpp
     outputsettingspopup.cpp

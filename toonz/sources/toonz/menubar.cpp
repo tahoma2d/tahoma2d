@@ -1159,12 +1159,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
     addMenuItem(arrangeMenu, MI_SendBackward);
   }
 
-// Menu' SCAN CLEANUP
-#ifdef LINETEST
-  QMenu *scanCleanupMenu = addMenu(tr("Scan"));
-#else
+  // Menu' SCAN CLEANUP
   QMenu *scanCleanupMenu = addMenu(tr("Scan && Cleanup"), fullMenuBar);
-#endif
   addMenuItem(scanCleanupMenu, MI_DefineScanner);
   addMenuItem(scanCleanupMenu, MI_ScanSettings);
   addMenuItem(scanCleanupMenu, MI_Scan);
@@ -1236,10 +1232,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(levelMenu, MI_ReplaceParentDirectory);
   levelMenu->addSeparator();
   addMenuItem(levelMenu, MI_RemoveUnused);
-#ifdef LINETEST
-  levelMenu->addSeparator();
-  addMenuItem(levelMenu, MI_Capture);
-#endif
 
   // Menu' XSHEET
   QMenu *xsheetMenu = addMenu(tr("Xsheet"), fullMenuBar);
@@ -1387,10 +1379,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_VectorGuidedDrawing);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_RasterizePli);
-#ifdef LINETEST
-  viewMenu->addSeparator();
-  addMenuItem(viewMenu, MI_CapturePanelFieldGuide);
-#endif
 
   // Menu' WINDOWS
   QMenu *windowsMenu   = addMenu(tr("Windows"), fullMenuBar);
@@ -1432,12 +1420,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenStopMotionPanel);
   addMenuItem(windowsMenu, MI_StartupPopup);
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
-#ifdef LINETEST
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenExport);
-  addMenuItem(windowsMenu, MI_OpenLineTestCapture);
-  addMenuItem(windowsMenu, MI_OpenLineTestView);
-#endif
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_MaximizePanel);
   addMenuItem(windowsMenu, MI_FullScreenWindow);

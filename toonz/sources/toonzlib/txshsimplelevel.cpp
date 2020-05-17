@@ -800,8 +800,7 @@ void TXshSimpleLevel::setFrame(const TFrameId &fid, const TImageP &img) {
 
   if (frameStatus == Normal) {
     // Only a normal frame can have these. Justified since:
-    //  a) PLIs have nothing to share with cleanup stuff
-    //  b) The latter is used only in LineTest - which does not have Cleanup
+    //  PLIs have nothing to share with cleanup stuff
 
     if (m_type == PLI_XSHLEVEL) {
       const std::string &imageId2 = rasterized(imageId);
