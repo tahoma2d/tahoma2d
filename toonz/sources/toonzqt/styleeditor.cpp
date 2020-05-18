@@ -3303,15 +3303,13 @@ void StyleEditor::onStyleSwitched() {
   bool isStyleNull    = setStyle(m_editedStyle.getPointer());
   bool isColorInField = palette->getPaletteName() == L"EmptyColorFieldPalette";
   bool isValidIndex   = styleIndex > 0 || isColorInField;
-  bool isCleanUpPalette = palette->isCleanupPalette();
 
   /* ------ update the status text ------ */
   if (!isStyleNull && isValidIndex) {
     QString statusText;
     // palette type
-    if (isCleanUpPalette)
-      statusText = tr("[CLEANUP]  ");
-    else if (palette->getGlobalName() != L"")
+
+    if (palette->getGlobalName() != L"")
       statusText = tr("[STUDIO]  ");
     else
       statusText = tr("[LEVEL]  ");
@@ -3333,7 +3331,7 @@ void StyleEditor::onStyleSwitched() {
   } else {
     m_parent->setWindowTitle(tr("Style Editor - No Valid Style Selected"));
   }
-  enable(!isStyleNull && isValidIndex, isColorInField, isCleanUpPalette);
+  enable(!isStyleNull && isValidIndex, isColorInField, false);
 }
 
 //-----------------------------------------------------------------------------

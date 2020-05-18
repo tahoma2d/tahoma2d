@@ -10,7 +10,7 @@
 #include "menubarcommandids.h"
 #include "filmstripselection.h"
 #include "onionskinmaskgui.h"
-#include "comboviewerpane.h"
+#include "viewerpane.h"
 
 // TnzQt includes
 #include "toonzqt/icongenerator.h"

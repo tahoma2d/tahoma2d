@@ -46,29 +46,23 @@
 #endif
 
 #include "./mov/tiio_mov.h"
-#include "./3gp/tiio_3gp.h"
-#include "./zcc/tiio_zcc.h"
+
 
 #elif defined(MACOSX)
 #include "./mov/tiio_movM.h"
-#include "./3gp/tiio_3gpM.h"
 
 #elif defined(LINUX)  // No more supported by the way...
 // #include "./mov/tiio_movL.h"
 #include "./mov/tiio_mov_proxy.h"
-#include "./3gp/tiio_3gp_proxy.h"
 #endif
 
 // Common includes
-#include "./quantel/tiio_quantel.h"
-#include "./sgi/tiio_sgi.h"
 #include "./tga/tiio_tga.h"
 #include "./png/tiio_png.h"
 #include "./tif/tiio_tif.h"
 #include "./tzp/tiio_tzp.h"
 #include "./tzp/tiio_plt.h"
 #include "./psd/tiio_psd.h"
-#include "./avi/tiio_avi.h"
 #include "./pli/tiio_pli.h"
 #include "./tzl/tiio_tzl.h"
 #include "./svg/tiio_svg.h"
@@ -84,7 +78,6 @@
 
 // TLIBMAIN
 void initImageIo(bool lightVersion) {
-  if (!lightVersion) {
     TLevelWriter::define("pli", TLevelWriterPli::create, false);
     TLevelReader::define("pli", TLevelReaderPli::create);
     TFileType::declare("pli", TFileType::VECTOR_LEVEL);
@@ -117,10 +110,6 @@ void initImageIo(bool lightVersion) {
     Tiio::defineWriterMaker("plt", Tiio::makePltWriter, false);
     TFileType::declare("plt", TFileType::RASTER_IMAGE);
 
-    Tiio::defineReaderMaker("nol", Tiio::makePngReader);
-    Tiio::defineWriterMaker("nol", Tiio::makePngWriter, true);
-    TFileType::declare("nol", TFileType::RASTER_IMAGE);
-
     TLevelWriter::define("psd", TLevelWriterPsd::create, false);
     TLevelReader::define("psd", TLevelReaderPsd::create);
     TFileType::declare("psd", TFileType::RASTER_LEVEL);
@@ -128,8 +117,6 @@ void initImageIo(bool lightVersion) {
     TLevelWriter::define("mesh", TLevelWriterMesh::create, false);
     TLevelReader::define("mesh", TLevelReaderMesh::create);
     TFileType::declare("mesh", TFileType::MESH_IMAGE);
-
-  }  // !lightversion
 
   TFileType::declare("tpl", TFileType::PALETTE_LEVEL);
 
@@ -149,19 +136,9 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterProperties("tif", new Tiio::TifWriterProperties());
 
   Tiio::defineReaderMaker("tiff", Tiio::makeTifReader);
-  Tiio::defineWriterMaker("tiff", Tiio::makeTifWriter, true);
+  Tiio::defineWriterMaker("tiff", Tiio::makeTifWriter, false);
   TFileType::declare("tiff", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tiff", new Tiio::TifWriterProperties());
-
-  Tiio::defineReaderMaker("sgi", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, true);
-  TFileType::declare("sgi", TFileType::RASTER_IMAGE);
-  Tiio::defineWriterProperties("sgi", new Tiio::SgiWriterProperties());
-
-  Tiio::defineReaderMaker("rgb", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("rgb", Tiio::makeSgiWriter, true);
-  TFileType::declare("rgb", TFileType::RASTER_IMAGE);
-  Tiio::defineWriterProperties("rgb", new Tiio::SgiWriterProperties());
 
   TLevelWriter::define("spritesheet", TLevelWriterSprite::create, true);
   TFileType::declare("spritesheet", TFileType::RASTER_LEVEL);
@@ -194,45 +171,14 @@ void initImageIo(bool lightVersion) {
 #endif
   // end ffmpeg
 
-  if (!lightVersion) {
-#ifdef _WIN32
-
-    TLevelWriter::define("avi", TLevelWriterAvi::create, true);
-    TLevelReader::define("avi", TLevelReaderAvi::create);
-    TFileType::declare("avi", TFileType::RASTER_LEVEL);
-    Tiio::defineWriterProperties("avi", new Tiio::AviWriterProperties());
-
-#endif  // _WIN32
+  
 
     if (IsQuickTimeInstalled()) {
       TLevelWriter::define("mov", TLevelWriterMov::create, true);
       TLevelReader::define("mov", TLevelReaderMov::create);
       TFileType::declare("mov", TFileType::RASTER_LEVEL);
       Tiio::defineWriterProperties("mov", new Tiio::MovWriterProperties());
-
-      TLevelWriter::define("3gp", TLevelWriter3gp::create, true);
-      TLevelReader::define("3gp", TLevelReader3gp::create);
-      TFileType::declare("3gp", TFileType::RASTER_LEVEL);
-      Tiio::defineWriterProperties("3gp", new Tiio::MovWriterProperties());
     }
 
-    /*
-#if (defined(_WIN32) && !defined(x64))
-
-TLevelWriter::define("pct", TLevelWriterPicPct::create, true);
-TLevelReader::define("pct", TLevelReaderPicPct::create);
-TFileType::declare("pct", TFileType::RASTER_LEVEL);
-Tiio::defineWriterProperties("pct", new Tiio::PctWriterProperties());
-TLevelWriter::define("pic", TLevelWriterPicPct::create, true);
-TLevelReader::define("pic", TLevelReaderPicPct::create);
-TFileType::declare("pic", TFileType::RASTER_LEVEL);
-
-TLevelWriter::define("pict", TLevelWriterPicPct::create, true);
-TLevelReader::define("pict", TLevelReaderPicPct::create);
-TFileType::declare("pict", TFileType::RASTER_LEVEL);
-Tiio::defineWriterProperties("pict", new Tiio::PctWriterProperties());
-
-#endif    // _WIN32 && 32-bit
-*/
-  }
+  
 }

@@ -20,7 +20,6 @@
 class QStackedWidget;
 class TPanel;
 class UpdateChecker;
-class ComboViewerPanel;
 class TopBar;
 //-----------------------------------------------------------------------------
 
@@ -216,7 +215,7 @@ private:
   Room *createPltEditRoom();
   Room *createFarmRoom();
   */
-  Room *createCleanupRoom();
+  
   Room *createPltEditRoom();
   Room *createInknPaintRoom();
   Room *createXsheetRoom();

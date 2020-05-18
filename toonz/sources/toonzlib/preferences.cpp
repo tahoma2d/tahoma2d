@@ -365,11 +365,11 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Default");
-  define(pixelsOnly, "pixelsOnly", QMetaType::Bool, false);
+  define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
   define(oldCameraUnits, "oldCameraUnits", QMetaType::QString, "inch");
-  define(linearUnits, "linearUnits", QMetaType::QString, "mm");
-  define(cameraUnits, "cameraUnits", QMetaType::QString, "inch");
+  define(linearUnits, "linearUnits", QMetaType::QString, "pixel");
+  define(cameraUnits, "cameraUnits", QMetaType::QString, "pixel");
   define(CurrentRoomChoice, "CurrentRoomChoice", QMetaType::QString, "Default");
   define(functionEditorToggle, "functionEditorToggle", QMetaType::Int,
          (int)ShowGraphEditorInPopup);
@@ -445,7 +445,7 @@ void Preferences::definePreferenceItems() {
   define(scanLevelType, "scanLevelType", QMetaType::QString, "tif");
   define(DefLevelType, "DefLevelType", QMetaType::Int, TZP_XSHLEVEL);
   define(newLevelSizeToCameraSizeEnabled, "newLevelSizeToCameraSizeEnabled",
-         QMetaType::Bool, false);
+         QMetaType::Bool, true);
   define(DefLevelWidth, "DefLevelWidth", QMetaType::Double,
          TCamera().getSize().lx, 0.1, std::numeric_limits<double>::max());
   define(DefLevelHeight, "DefLevelHeight", QMetaType::Double,

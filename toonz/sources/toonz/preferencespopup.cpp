@@ -7,7 +7,6 @@
 #include "versioncontrol.h"
 #include "levelsettingspopup.h"
 #include "tapp.h"
-#include "cleanupsettingsmodel.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -374,14 +373,6 @@ void PreferencesPopup::onPixelsOnlyChanged() {
     camSize.lx = camRes.lx / Stage::standardDpi;
     camSize.ly = camRes.ly / Stage::standardDpi;
     camera->setSize(camSize);
-    TDimension cleanupRes = CleanupSettingsModel::instance()
-                                ->getCurrentParameters()
-                                ->m_camera.getRes();
-    TDimensionD cleanupSize;
-    cleanupSize.lx = cleanupRes.lx / Stage::standardDpi;
-    cleanupSize.ly = cleanupRes.ly / Stage::standardDpi;
-    CleanupSettingsModel::instance()->getCurrentParameters()->m_camera.setSize(
-        cleanupSize);
 
     m_pref->storeOldUnits();
 
@@ -440,12 +431,12 @@ void PreferencesPopup::beforeRoomChoiceChanged() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onDefLevelTypeChanged() {
-  bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
-                  !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
-  m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
-  m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
-  if (!m_pref->getBoolValue(pixelsOnly))
-    m_controlIdMap.key(DefLevelDpi)->setEnabled(isRaster);
+  //bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
+  //                !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
+  //m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
+  //m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
+  //if (!m_pref->getBoolValue(pixelsOnly))
+  //  m_controlIdMap.key(DefLevelDpi)->setEnabled(isRaster);
 }
 
 //-----------------------------------------------------------------------------
@@ -546,8 +537,7 @@ void PreferencesPopup::onOnionColorChanged() {
 
 //-----------------------------------------------------------------------------
 
-void invalidateIcons();  // implemented in sceneviewer.cpp; in which fucking
-                         // header  I can put this declaration?!
+void invalidateIcons();  
 
 void PreferencesPopup::onTranspCheckDataChanged() { invalidateIcons(); }
 
@@ -1384,26 +1374,26 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
   int row = lay->rowCount();
-  lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
-                 Qt::AlignRight | Qt::AlignVCenter);
-  lay->addWidget(createUI(pixelsOnly), row, 1);
+  //lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
+  //               Qt::AlignRight | Qt::AlignVCenter);
+  //lay->addWidget(createUI(pixelsOnly), row, 1);
 
-  insertUI(linearUnits, lay, getComboItemList(linearUnits));
-  insertUI(cameraUnits, lay,
-           getComboItemList(linearUnits));  // share items with linearUnits
-  insertUI(CurrentRoomChoice, lay, roomItemList);
+  //insertUI(linearUnits, lay, getComboItemList(linearUnits));
+  //insertUI(cameraUnits, lay,
+  //         getComboItemList(linearUnits));  // share items with linearUnits
+  //insertUI(CurrentRoomChoice, lay, roomItemList);
   insertUI(functionEditorToggle, lay, getComboItemList(functionEditorToggle));
   insertUI(moveCurrentFrameByClickCellArea, lay);
   insertUI(actualPixelViewOnSceneEditingMode, lay);
-  insertUI(levelNameOnEachMarkerEnabled, lay);
+  //insertUI(levelNameOnEachMarkerEnabled, lay);
   insertUI(showRasterImagesDarkenBlendedInViewer, lay);
-  insertUI(showFrameNumberWithLetters, lay);
+  //insertUI(showFrameNumberWithLetters, lay);
   insertUI(iconSize, lay);
   insertDualUIs(viewShrink, viewStep, lay);
-  insertUI(viewerZoomCenter, lay, getComboItemList(viewerZoomCenter));
+  //insertUI(viewerZoomCenter, lay, getComboItemList(viewerZoomCenter));
   insertUI(CurrentLanguageName, lay, languageItemList);
-  insertUI(interfaceFont, lay);  // creates QFontComboBox
-  insertUI(interfaceFontStyle, lay, buildFontStyleList());
+  //insertUI(interfaceFont, lay);  // creates QFontComboBox
+  //insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
 
@@ -1411,10 +1401,10 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertFootNote(lay);
   widget->setLayout(lay);
 
-  if (m_pref->getBoolValue(pixelsOnly)) {
-    m_controlIdMap.key(linearUnits)->setDisabled(true);
-    m_controlIdMap.key(cameraUnits)->setDisabled(true);
-  }
+  //if (m_pref->getBoolValue(pixelsOnly)) {
+  //  m_controlIdMap.key(linearUnits)->setDisabled(true);
+  //  m_controlIdMap.key(cameraUnits)->setDisabled(true);
+  //}
   // pixels unit may deactivated externally on loading scene (see
   // IoCmd::loadScene())
   bool ret = true;
@@ -1425,11 +1415,11 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,
                            &PreferencesPopup::onStyleSheetTypeChanged);
-  m_onEditedFuncMap.insert(pixelsOnly, &PreferencesPopup::onPixelsOnlyChanged);
-  m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
-  m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);
-  m_preEditedFuncMap.insert(CurrentRoomChoice,
-                            &PreferencesPopup::beforeRoomChoiceChanged);
+  //m_onEditedFuncMap.insert(pixelsOnly, &PreferencesPopup::onPixelsOnlyChanged);
+  //m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
+  //m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);
+  //m_preEditedFuncMap.insert(CurrentRoomChoice,
+  //                          &PreferencesPopup::beforeRoomChoiceChanged);
 
   return widget;
 }
@@ -1575,11 +1565,11 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
+  //insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
-  insertUI(newLevelSizeToCameraSizeEnabled, lay);
-  insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
-  insertUI(DefLevelDpi, lay);
+  //insertUI(newLevelSizeToCameraSizeEnabled, lay);
+  //insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
+  //insertUI(DefLevelDpi, lay);
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
   {
     insertUI(NumberingSystem, autoCreationLay,
@@ -1609,11 +1599,11 @@ QWidget* PreferencesPopup::createDrawingPage() {
 
   onDefLevelTypeChanged();
 
-  if (m_pref->getBoolValue(pixelsOnly)) {
-    m_controlIdMap.key(DefLevelDpi)->setDisabled(true);
-    getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
-    getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
-  }
+  //if (m_pref->getBoolValue(pixelsOnly)) {
+  //  m_controlIdMap.key(DefLevelDpi)->setDisabled(true);
+  //  getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
+  //  getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
+  //}
 
   return widget;
 }

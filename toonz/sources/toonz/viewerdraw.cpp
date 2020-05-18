@@ -523,15 +523,6 @@ glPopMatrix();
 //-----------------------------------------------------------------------------
 
 TRectD ViewerDraw::getCameraRect() {
-  if (CleanupPreviewCheck::instance()->isEnabled() ||
-      CameraTestCheck::instance()->isEnabled())
-    return TApp::instance()
-        ->getCurrentScene()
-        ->getScene()
-        ->getProperties()
-        ->getCleanupParameters()
-        ->m_camera.getStageRect();
-  else
     return TApp::instance()
         ->getCurrentScene()
         ->getScene()

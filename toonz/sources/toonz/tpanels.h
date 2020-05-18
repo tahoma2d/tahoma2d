@@ -25,7 +25,6 @@ class SchematicViewer;
 class FunctionViewer;
 class FlipBook;
 class ToolOptions;
-class ComboViewerPanel;
 class SceneViewerPanel;
 class FxSettings;
 class VectorGuidedDrawingPane;
@@ -121,32 +120,6 @@ public:
 protected slots:
   void onColorStyleChanged();
   void onColorChanged(const TPixel32 &color, bool);
-};
-
-//=========================================================
-// CleanupColorFieldEditorController
-//---------------------------------------------------------
-
-class CleanupColorFieldEditorController final
-    : public QObject,
-      public DVGui::CleanupColorField::CleanupColorFieldEditorController {
-  Q_OBJECT
-
-  TPaletteP m_palette;
-  TPaletteHandle *m_colorFieldHandle;
-  DVGui::CleanupColorField *m_currentColorField;
-  bool m_blackColor;
-
-public:
-  CleanupColorFieldEditorController();
-  ~CleanupColorFieldEditorController() {}
-
-  // Indice dello stile corrente == 1
-  void edit(DVGui::CleanupColorField *colorField) override;
-  void hide() override;
-
-protected slots:
-  void onColorStyleChanged();
 };
 
 //=========================================================
@@ -251,25 +224,6 @@ public:
 
 protected slots:
   void onMinimizeButtonToggled(bool);
-};
-
-//=========================================================
-// ComboViewerPanel
-//---------------------------------------------------------
-
-class ComboViewerPanelContainer final : public StyleShortcutSwitchablePanel {
-  Q_OBJECT
-  ComboViewerPanel *m_comboViewer;
-
-public:
-  ComboViewerPanelContainer(QWidget *parent);
-  // reimplementation of TPanel::widgetInThisPanelIsFocused
-  bool widgetInThisPanelIsFocused() override;
-
-protected:
-  // reimplementation of TPanel::widgetFocusOnEnter
-  void widgetFocusOnEnter() override;
-  void widgetClearFocusOnLeave() override;
 };
 
 //=========================================================

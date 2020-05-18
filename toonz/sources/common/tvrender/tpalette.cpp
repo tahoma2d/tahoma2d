@@ -239,7 +239,6 @@ int TPalette::Page::search(TColorStyle *style) const {
 
 TPalette::TPalette()
     : m_version(0)
-    , m_isCleanupPalette(false)
     , m_currentFrame(-1)
     , m_dirtyFlag(false)
     , m_mutex(QMutex::Recursive)
@@ -312,9 +311,6 @@ int TPalette::getFirstUnpagedStyle() const {
  * palette, the new style will be appended to the end of the list.
  */
 int TPalette::addStyle(TColorStyle *style) {
-  // limit the number of cleanup style to 7
-  if (isCleanupPalette() && getStyleInPagesCount() >= 8) return -1;
-
   int styleId = int(m_styles.size());
   if (styleId < 4096) {
     // checking if the style is overlapped
@@ -898,7 +894,7 @@ void TPalette::loadData(TIStream &is) {
 void TPalette::assign(const TPalette *src, bool isFromStudioPalette) {
   if (src == this) return;
   int i;
-  m_isCleanupPalette = src->isCleanupPalette();
+
   // for(i=0;i<getStyleCount();i++) delete getStyle(i);
   m_styles.clear();
   clearPointerContainer(m_pages);
@@ -1009,10 +1005,6 @@ void TPalette::merge(const TPalette *src, bool isFromStudioPalette) {
     assert(dstPage->m_palette == this);
   }
 }
-
-//-------------------------------------------------------------------
-
-void TPalette::setIsCleanupPalette(bool on) { m_isCleanupPalette = on; }
 
 //-------------------------------------------------------------------
 

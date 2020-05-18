@@ -106,8 +106,8 @@ StartupPopup::StartupPopup()
   m_widthFld                = new MeasuredDoubleLineEdit(this);
   m_heightLabel             = new QLabel(tr("Height:"), this);
   m_heightFld               = new MeasuredDoubleLineEdit(this);
-  m_dpiLabel                = new QLabel(tr("DPI:"), this);
-  m_dpiFld                  = new DoubleLineEdit(this, 120);
+  //m_dpiLabel                = new QLabel(tr("DPI:"), this);
+  //m_dpiFld                  = new DoubleLineEdit(this, 120);
   m_resXLabel               = new QLabel(tr("X"), this);
   m_resXFld                 = new DoubleLineEdit(this);
   m_resYFld                 = new DoubleLineEdit(this);
@@ -116,7 +116,7 @@ StartupPopup::StartupPopup()
   m_fpsFld                  = new DoubleLineEdit(this, 24.0);
   m_cameraSettingsWidget    = new CameraSettingsWidget(false);
   m_presetCombo             = new QComboBox(this);
-  m_unitsCB                 = new QComboBox(this);
+  //m_unitsCB                 = new QComboBox(this);
   m_addPresetBtn            = new QPushButton(tr("Add"), this);
   m_removePresetBtn         = new QPushButton(tr("Remove"), this);
   m_showAtStartCB           = new QCheckBox(tr("Show this at startup"), this);
@@ -127,9 +127,9 @@ StartupPopup::StartupPopup()
   QPushButton *loadOtherSceneButton =
       new QPushButton(tr("Open Another Scene..."), this);
   m_projectsCB = new QComboBox(this);
-  QStringList type;
-  type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
-  m_unitsCB->addItems(type);
+  //QStringList type;
+  //type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
+  //m_unitsCB->addItems(type);
 
   // Exclude all character which cannot fit in a filepath (Win).
   // Dots are also prohibited since they are internally managed by Toonz.
@@ -142,7 +142,7 @@ StartupPopup::StartupPopup()
   m_widthFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_heightFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_fpsFld->setRange(1.0, (std::numeric_limits<double>::max)());
-  m_dpiFld->setRange(1.0, (std::numeric_limits<double>::max)());
+  //m_dpiFld->setRange(1.0, (std::numeric_limits<double>::max)());
   m_resXFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_resYFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_autoSaveTimeFld->setRange(1, (std::numeric_limits<int>::max)());
@@ -229,16 +229,16 @@ StartupPopup::StartupPopup()
       newSceneLay->addWidget(m_resXFld, 4, 1);
       newSceneLay->addWidget(m_resXLabel, 4, 2, 1, 1, Qt::AlignCenter);
       newSceneLay->addWidget(m_resYFld, 4, 3);
-      newSceneLay->addWidget(new QLabel(tr("Units:")), 5, 0,
+      //newSceneLay->addWidget(new QLabel(tr("Units:")), 5, 0,
+      //                       Qt::AlignRight | Qt::AlignVCenter);
+      //newSceneLay->addWidget(m_unitsCB, 5, 1, 1, 1);
+      //newSceneLay->addWidget(m_dpiLabel, 5, 2,
+      //                       Qt::AlignRight | Qt::AlignVCenter);
+      //newSceneLay->addWidget(m_dpiFld, 5, 3, 1, 1);
+      newSceneLay->addWidget(m_fpsLabel, 5, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_unitsCB, 5, 1, 1, 1);
-      newSceneLay->addWidget(m_dpiLabel, 5, 2,
-                             Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_dpiFld, 5, 3, 1, 1);
-      newSceneLay->addWidget(m_fpsLabel, 6, 0,
-                             Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_fpsFld, 6, 1, 1, 1);
-      newSceneLay->addWidget(createButton, 7, 1, 1, 3, Qt::AlignLeft);
+      newSceneLay->addWidget(m_fpsFld, 5, 1, 1, 1);
+      newSceneLay->addWidget(createButton, 6, 1, 1, 3, Qt::AlignLeft);
     }
     m_sceneBox->setLayout(newSceneLay);
     guiLay->addWidget(m_sceneBox, 2, 0, 4, 1, Qt::AlignTop);
@@ -294,13 +294,13 @@ StartupPopup::StartupPopup()
         connect(m_resXFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
   ret = ret &&
         connect(m_resYFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
-  ret = ret && connect(m_dpiFld, SIGNAL(editingFinished()), this,
-                       SLOT(onDpiChanged()));
+  //ret = ret && connect(m_dpiFld, SIGNAL(editingFinished()), this,
+  //                     SLOT(onDpiChanged()));
   ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
-  ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),
-                       SLOT(onCameraUnitChanged(int)));
+  //ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),
+  //                     SLOT(onCameraUnitChanged(int)));
   ret = ret &&
         connect(m_removePresetBtn, SIGNAL(clicked()), SLOT(removePreset()));
   ret = ret && connect(m_nameFld, SIGNAL(returnPressedNow()), createButton,
@@ -349,8 +349,8 @@ void StartupPopup::showEvent(QShowEvent *) {
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
-    m_dpiFld->hide();
-    m_dpiLabel->hide();
+    //m_dpiFld->hide();
+    //m_dpiLabel->hide();
   } else {
     m_widthFld->setDecimals(4);
     m_heightFld->setDecimals(4);
@@ -358,12 +358,12 @@ void StartupPopup::showEvent(QShowEvent *) {
     m_resYFld->show();
     m_resXLabel->show();
     m_resTextLabel->show();
-    m_dpiFld->show();
-    m_dpiLabel->show();
+    //m_dpiFld->show();
+    //m_dpiLabel->show();
   }
 
   m_fpsFld->setValue(fps);
-  m_unitsCB->setCurrentText(Preferences::instance()->getCameraUnits());
+  //m_unitsCB->setCurrentText(Preferences::instance()->getCameraUnits());
   m_dpi  = cameraRes.lx / cameraSize.lx;
   m_xRes = cameraRes.lx;
   m_yRes = cameraRes.ly;
@@ -371,7 +371,7 @@ void StartupPopup::showEvent(QShowEvent *) {
   m_resYFld->setValue(m_yRes);
   m_resXFld->setDecimals(0);
   m_resYFld->setDecimals(0);
-  m_dpiFld->setValue(m_dpi);
+  //m_dpiFld->setValue(m_dpi);
 
   int boxWidth  = m_sceneBox->width();
   int boxHeight = m_sceneBox->height();
@@ -613,7 +613,7 @@ void StartupPopup::onProjectChanged(int index) {
   m_widthFld->setValue(size.lx);
   m_heightFld->setValue(size.ly);
   m_dpi = m_xRes / size.lx;
-  m_dpiFld->setValue(m_dpi);
+  //m_dpiFld->setValue(m_dpi);
 }
 
 //-----------------------------------------------------------------------------
@@ -726,7 +726,7 @@ void StartupPopup::onPresetSelected(const QString &str) {
     if (Preferences::instance()->getPixelsOnly()) {
       m_widthFld->setValue((double)xres / Stage::standardDpi);
       m_heightFld->setValue((double)yres / Stage::standardDpi);
-      m_dpiFld->setValue(Stage::standardDpi);
+      //m_dpiFld->setValue(Stage::standardDpi);
     }
     m_resXFld->setValue(m_xRes);
     m_resYFld->setValue(m_yRes);
@@ -859,12 +859,9 @@ void StartupPopup::onSceneChanged() {
 void StartupPopup::onDpiChanged() {
   if (Preferences::instance()->getPixelsOnly()) {
     m_dpi = Stage::standardDpi;
-    m_dpiFld->setValue(Stage::standardDpi);
+    // m_dpiFld->setValue(Stage::standardDpi);
     updateResolution();
-  } else {
-    m_dpi = m_dpiFld->getValue();
-    updateResolution();
-  }
+  } 
 }
 
 //-----------------------------------------------------------------------------
@@ -942,8 +939,8 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->show();
     m_resYFld->show();
     m_resXLabel->show();
-    m_dpiFld->show();
-    m_dpiLabel->show();
+    //m_dpiFld->show();
+    //m_dpiLabel->show();
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(width);
@@ -958,9 +955,9 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
-    m_dpiFld->hide();
-    m_dpiLabel->hide();
-    m_dpiFld->setValue(Stage::standardDpi);
+    //m_dpiFld->hide();
+    //m_dpiLabel->hide();
+    //m_dpiFld->setValue(Stage::standardDpi);
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(m_xRes / Stage::standardDpi);
@@ -992,9 +989,9 @@ void StartupPopup::onAutoSaveTimeChanged() {
 
 void StartupPopup::updateResolution() {
   if (Preferences::instance()->getPixelsOnly()) {
-    if (m_dpiFld->getValue() != Stage::standardDpi) {
-      m_dpiFld->setValue(Stage::standardDpi);
-    }
+    //if (m_dpiFld->getValue() != Stage::standardDpi) {
+    //  m_dpiFld->setValue(Stage::standardDpi);
+    //}
     m_xRes = m_widthFld->getValue() * Stage::standardDpi;
     m_yRes = m_heightFld->getValue() * Stage::standardDpi;
     m_resXFld->setValue(m_xRes);
@@ -1014,9 +1011,9 @@ void StartupPopup::updateSize() {
   m_xRes = m_resXFld->getValue();
   m_yRes = m_resYFld->getValue();
   if (Preferences::instance()->getPixelsOnly()) {
-    if (m_dpiFld->getValue() != Stage::standardDpi) {
-      m_dpiFld->setValue(Stage::standardDpi);
-    }
+    //if (m_dpiFld->getValue() != Stage::standardDpi) {
+    //  m_dpiFld->setValue(Stage::standardDpi);
+    //}
     m_widthFld->setValue((double)m_xRes / Stage::standardDpi);
     m_heightFld->setValue((double)m_yRes / Stage::standardDpi);
   } else {

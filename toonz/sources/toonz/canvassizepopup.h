@@ -73,7 +73,7 @@ class CanvasSizePopup final : public DVGui::Dialog {
 
   QLabel *m_currentXSize;
   QLabel *m_currentYSize;
-  QComboBox *m_unit;
+  //QComboBox *m_unit;
   DVGui::DoubleLineEdit *m_xSizeFld;
   DVGui::DoubleLineEdit *m_ySizeFld;
   DVGui::CheckBox *m_relative;

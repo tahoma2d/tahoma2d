@@ -12,7 +12,6 @@
 #include "toonz/txshcell.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshsimplelevel.h"
-#include "toonz/cleanupcolorstyles.h"
 #include "toonz/txshlevel.h"
 #include "toonz/toonzscene.h"
 #include "toonz/toonzimageutils.h"
@@ -337,35 +336,21 @@ void PaletteCmd::createStyle(TPaletteHandle *paletteHandle,
   int newIndex;
 
   int UnpagedId = palette->getFirstUnpagedStyle();
-  if (UnpagedId != -1 && !palette->isCleanupPalette()) {
+  if (UnpagedId != -1) {
     if (index == -1)
       palette->getStyle(UnpagedId)->setMainColor(TPixel32::Black);
     else
       palette->getStyle(UnpagedId)->setMainColor(
           palette->getStyle(index)->getMainColor());
     newIndex = page->addStyle(UnpagedId);
-  } else if (!palette->isCleanupPalette()) {
+  } else {
     if (index == -1)
       newIndex = page->addStyle(TPixel32::Black);
     else {
       TColorStyle *style          = palette->getStyle(index);
-      TCleanupStyle *cleanupStyle = dynamic_cast<TCleanupStyle *>(style);
-      if ((cleanupStyle || index == 0) && palette->isCleanupPalette()) {
-        TColorCleanupStyle *newCleanupStyle = new TColorCleanupStyle();
-        if (cleanupStyle) {
-          int i;
-          for (i = 0; i < cleanupStyle->getParamCount(); i++)
-            newCleanupStyle->setColorParamValue(
-                i, cleanupStyle->getColorParamValue(i));
-        }
-        newIndex = page->addStyle(newCleanupStyle);
-      } else
-        newIndex = page->addStyle(style->getMainColor());
+      newIndex = page->addStyle(style->getMainColor());
     }
-  } else /*- CleanupPaletteの場合 -*/
-  {
-    newIndex = page->addStyle(new TColorCleanupStyle(TPixel32::Red));
-  }
+  } 
   int newStyleId = page->getStyleId(newIndex);
   /*-  StudioPalette上でStyleを追加した場合、GlobalNameを自動で割り振る -*/
   if (palette->getGlobalName() != L"") {

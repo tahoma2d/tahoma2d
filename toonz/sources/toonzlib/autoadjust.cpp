@@ -7,7 +7,14 @@ write_lut_image ??? quando ?
 */
 
 #include "autoadjust.h"
-#include "cleanupcommon.h"
+
+/*---------------------------------------------------------------------------*/
+
+// unit conversion
+inline double inToPixel(double val, double dpi) { return val * dpi; }
+inline double mmToPixel(double val, double dpi) {
+    return (val * dpi) * (1.0 / 25.4);
+}
 
 #define TO_ABS(x)                                                              \
   {                                                                            \
