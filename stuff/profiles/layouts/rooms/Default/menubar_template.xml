@@ -76,22 +76,6 @@
             <command>MI_SendBackward</command>
         </menu>
     </menu>
-    <menu title="Scan &amp;&amp; Cleanup">
-        <command>MI_DefineScanner</command>
-        <command>MI_ScanSettings</command>
-        <command>MI_Scan</command>
-        <command>MI_SetScanCropbox</command>
-        <command>MI_ResetScanCropbox</command>
-        <separator/>
-        <command>MI_CleanupSettings</command>
-        <command>MI_CleanupPreview</command>
-        <command>MI_OpacityCheck</command>
-        <command>MI_CameraTest</command>
-        <command>MI_Cleanup</command>
-        <separator/>
-        <command>MI_PencilTest</command>
-        <command>MI_Autocenter</command>
-    </menu>
     <menu title="Level">
         <menu title="New">
             <command>MI_NewLevel</command>
@@ -111,7 +95,6 @@
         <command>MI_AddFrames</command>
         <command>MI_Renumber</command>
         <command>MI_ReplaceLevel</command>
-        <command>MI_RevertToCleanedUp</command>
         <command>MI_RevertToLastSaved</command>
         <command>MI_Tracking</command>
         <separator/>
@@ -295,7 +278,6 @@
         <command>MI_OpenStudioPalette</command>
         <command>MI_OpenColorModel</command>
         <separator/>
-        <command>MI_OpenComboViewer</command>
         <command>MI_OpenLevelView</command>
         <command>MI_OpenFileViewer</command>
         <separator/>
@@ -309,7 +291,6 @@
         <command>MI_OpenFileBrowser</command>
         <command>MI_OpenFileBrowser2</command>
         <separator/>
-        <command>MI_OpenCleanupSettings</command>
         <command>MI_OpenTasks</command>
         <command>MI_OpenBatchServers</command>
         <command>MI_OpenTMessage</command>

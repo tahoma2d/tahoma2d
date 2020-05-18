@@ -38,7 +38,6 @@ public:
   void premultiplyFiles();
 
   void addToBatchRenderList();
-  void addToBatchCleanupList();
 
   void collectAssets();
   void importScenes();
