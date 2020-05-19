@@ -1185,7 +1185,6 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
       (clickedFile.getType() == "tnz" || clickedFile.getType() == "tab")) {
     menu->addSeparator();
     menu->addAction(cm->getAction(MI_AddToBatchRenderList));
-    menu->addAction(cm->getAction(MI_AddToBatchCleanupList));
   }
 
   for (i = 0; i < files.size(); i++)

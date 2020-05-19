@@ -141,12 +141,6 @@ public slots:
 class StackedMenuBar final : public QStackedWidget {
   Q_OBJECT
 
-  QMenuBar *createCleanupMenuBar();
-  QMenuBar *createPltEditMenuBar();
-  QMenuBar *createInknPaintMenuBar();
-  QMenuBar *createXsheetMenuBar();
-  QMenuBar *createBatchesMenuBar();
-  QMenuBar *createBrowserMenuBar();
   QMenuBar *createFullMenuBar();
   QMenuBar *loadMenuBar(const TFilePath &fp);
 

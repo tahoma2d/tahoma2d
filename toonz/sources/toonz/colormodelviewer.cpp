@@ -166,7 +166,7 @@ void ColorModelViewer::loadImage(const TFilePath &fp) {
   TPaletteHandle *paletteHandle = getPaletteHandle();
   TPalette *palette             = paletteHandle->getPalette();
 
-  if (!palette || palette->isCleanupPalette()) {
+  if (!palette) {
     DVGui::error(QObject::tr("Cannot load Color Model in current palette."));
     return;
   }

@@ -349,9 +349,9 @@ void InfoViewerImp::setImageInfo() {
       setVal(eBitsSample, QString::number(ii->m_bitsPerSample));
     if (ii->m_samplePerPixel > 0)
       setVal(eSamplePixel, QString::number(ii->m_samplePerPixel));
-    if (ii->m_dpix > 0 || ii->m_dpiy > 0)
-      setVal(eDpi, "(" + QString::number(ii->m_dpix) + ", " +
-                       QString::number(ii->m_dpiy) + ")");
+    //if (ii->m_dpix > 0 || ii->m_dpiy > 0)
+    //  setVal(eDpi, "(" + QString::number(ii->m_dpix) + ", " +
+    //                   QString::number(ii->m_dpiy) + ")");
     TPropertyGroup *pg = ii->m_properties;
     if (pg) {
       setLabel(pg, eOrientation, "Orientation");
@@ -394,21 +394,21 @@ void InfoViewerImp::setImageInfo() {
                  QString::number(r.x1) + ", " + QString::number(r.y1) + ")");
   }
 
-  double dpix, dpiy;
+  //double dpix, dpiy;
 
   if (timg) {
     // setVal(eHPos, QString::number(timg->gethPos()));
-    timg->getDpi(dpix, dpiy);
-    setVal(eDpi,
-           "(" + QString::number(dpix) + ", " + QString::number(dpiy) + ")");
+    //timg->getDpi(dpix, dpiy);
+    //setVal(eDpi,
+    //       "(" + QString::number(dpix) + ", " + QString::number(dpiy) + ")");
     TDimension dim = timg->getRaster()->getSize();
     setVal(eImageSize,
            QString::number(dim.lx) + " X " + QString::number(dim.ly));
     m_palette = timg->getPalette();
   } else if (rimg) {
-    rimg->getDpi(dpix, dpiy);
+    /*rimg->getDpi(dpix, dpiy);
     setVal(eDpi,
-           "(" + QString::number(dpix) + ", " + QString::number(dpiy) + ")");
+           "(" + QString::number(dpix) + ", " + QString::number(dpiy) + ")");*/
     TDimension dim = rimg->getRaster()->getSize();
     setVal(eImageSize,
            QString::number(dim.lx) + " X " + QString::number(dim.ly));
@@ -493,8 +493,8 @@ void InfoViewerImp::setToonzSceneInfo() {
 
   setVal(eCamera, QString::number(cam->getRes().lx) + " X " +
                       QString::number(cam->getRes().ly));
-  setVal(eCameraDpi, QString::number(cam->getDpi().x) + ", " +
-                         QString::number(cam->getDpi().y));
+  //setVal(eCameraDpi, QString::number(cam->getDpi().x) + ", " +
+  //                       QString::number(cam->getDpi().y));
   setVal(eFrameCount, QString::number(scene.getFrameCount()));
   if (set) setVal(eLevelCount, QString::number(set->getLevelCount()));
 

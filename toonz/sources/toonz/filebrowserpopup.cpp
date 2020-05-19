@@ -1985,7 +1985,7 @@ bool LoadColorModelPopup::execute() {
       TApp::instance()->getPaletteController()->getCurrentLevelPalette();
 
   TPalette *palette = paletteHandle->getPalette();
-  if (!palette || palette->isCleanupPalette()) {
+  if (!palette) {
     DVGui::error(QObject::tr("Cannot load Color Model in current palette."));
     return false;
   }

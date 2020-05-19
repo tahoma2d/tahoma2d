@@ -55,7 +55,6 @@
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/preferences.h"
 #include "toonz/glrasterpainter.h"
-#include "toonz/cleanupparameters.h"
 #include "toonz/toonzimageutils.h"
 #include "toonz/txshleveltypes.h"
 #include "subcameramanager.h"
@@ -2398,17 +2397,7 @@ double SceneViewer::getDpiFactor() {
   // use  current level's DPI set in the level settings.
   else if (Preferences::instance()
                ->isActualPixelViewOnSceneEditingModeEnabled()) {
-    if (CleanupPreviewCheck::instance()->isEnabled() ||
-        CameraTestCheck::instance()->isEnabled()) {
-      double cleanupCameraDpi = TApp::instance()
-                                    ->getCurrentScene()
-                                    ->getScene()
-                                    ->getProperties()
-                                    ->getCleanupParameters()
-                                    ->m_camera.getDpi()
-                                    .x;
-      return Stage::inch / cleanupCameraDpi;
-    } else {
+
       TXshSimpleLevel *sl;
       sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
       if (!sl) return Stage::inch / cameraDpi;
@@ -2417,7 +2406,6 @@ double SceneViewer::getDpiFactor() {
       // use default value for the argument of getDpi() (=TFrameId::NO_FRAME）
       // so that the dpi of the first frame in the level will be returned.
       return Stage::inch / sl->getDpi().x;
-    }
   }
   // When the scene editing mode without any option, use the camera dpi
   else {
@@ -2449,7 +2437,6 @@ double SceneViewer::getZoomScaleFittingWithScreen() {
     imgSize = sl->getResolution();
   } else if (Preferences::instance()
                  ->isActualPixelViewOnSceneEditingModeEnabled() &&
-             !CleanupPreviewCheck::instance()->isEnabled() &&
              !CameraTestCheck::instance()->isEnabled()) {
     TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
     if (!sl || sl->getType() == PLI_XSHLEVEL || sl->getDpi() == TPointD())
@@ -2783,19 +2770,7 @@ void SceneViewer::setActualPixelSize() {
   TFrameId fid(app->getCurrentFrame()->getFid());
 
   TPointD dpi;
-  if (CleanupPreviewCheck::instance()->isEnabled()) {
-    // The previewed cleanup image has no image infos yet - retrieve the dpi
-    // through
-    // the cleanup camera data
-    CleanupParameters *cleanupParams = app->getCurrentScene()
-                                           ->getScene()
-                                           ->getProperties()
-                                           ->getCleanupParameters();
-
-    TDimension dim(0, 0);
-    cleanupParams->getOutputImageInfo(dim, dpi.x, dpi.y);
-  } else
-    dpi = sl->getDpi(fid);
+  dpi = sl->getDpi(fid);
 
   const double inch             = Stage::inch;
   TAffine tempAff               = getNormalZoomScale();

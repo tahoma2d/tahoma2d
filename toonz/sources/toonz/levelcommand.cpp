@@ -404,18 +404,6 @@ void revertTo(bool isCleanedUp) {
 //=============================================================================
 
 //=============================================================================
-// RevertToCleanedUpCommand
-//-----------------------------------------------------------------------------
-
-class RevertToCleanedUpCommand final : public MenuItemHandler {
-public:
-  RevertToCleanedUpCommand() : MenuItemHandler(MI_RevertToCleanedUp) {}
-
-  void execute() override { revertTo(true); }
-
-} revertToCleanedUpCommand;
-
-//=============================================================================
 // RevertToLastSaveCommand
 //-----------------------------------------------------------------------------
 

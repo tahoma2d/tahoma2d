@@ -11,7 +11,7 @@
 #include "messagepanel.h"
 #include "iocommand.h"
 #include "tapp.h"
-#include "comboviewerpane.h"
+#include "viewerpane.h"
 #include "startuppopup.h"
 
 // TnzTools includes
@@ -55,7 +55,7 @@
 #include <QMessageBox>
 
 TEnv::IntVar ViewCameraToggleAction("ViewCameraToggleAction", 1);
-TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 1);
+TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 0);
 TEnv::IntVar FieldGuideToggleAction("FieldGuideToggleAction", 0);
 TEnv::IntVar ViewBBoxToggleAction("ViewBBoxToggleAction1", 1);
 TEnv::IntVar EditInPlaceToggleAction("EditInPlaceToggleAction", 0);
@@ -63,7 +63,7 @@ TEnv::IntVar RasterizePliToggleAction("RasterizePliToggleAction", 0);
 TEnv::IntVar SafeAreaToggleAction("SafeAreaToggleAction", 0);
 TEnv::IntVar ViewColorcardToggleAction("ViewColorcardToggleAction", 1);
 TEnv::IntVar ViewGuideToggleAction("ViewGuideToggleAction", 1);
-TEnv::IntVar ViewRulerToggleAction("ViewRulerToggleAction", 1);
+TEnv::IntVar ViewRulerToggleAction("ViewRulerToggleAction", 0);
 TEnv::IntVar TCheckToggleAction("TCheckToggleAction", 0);
 TEnv::IntVar ICheckToggleAction("ICheckToggleAction", 0);
 TEnv::IntVar Ink1CheckToggleAction("Ink1CheckToggleAction", 0);
@@ -73,7 +73,7 @@ TEnv::IntVar BCheckToggleAction("BCheckToggleAction", 0);
 TEnv::IntVar GCheckToggleAction("GCheckToggleAction", 0);
 TEnv::IntVar ACheckToggleAction("ACheckToggleAction", 0);
 TEnv::IntVar LinkToggleAction("LinkToggleAction", 0);
-TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 0);
+TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
@@ -705,15 +705,8 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   FlipBookPool::instance()->load(ToonzFolder::getMyModuleDir() +
                                  TFilePath("fliphistory.ini"));
 
-  /*- レイアウト設定ファイルが見つからなかった場合、初期Roomの生成 -*/
-  // Se leggendo i settings non ho inizializzato le stanze lo faccio ora.
-  // Puo' accadere se si buttano i file di inizializzazione.
+
   if (rooms.empty()) {
-    // CleanupRoom
-    Room *cleanupRoom = createCleanupRoom();
-    m_stackedWidget->addWidget(cleanupRoom);
-    rooms.push_back(cleanupRoom);
-    stackedMenuBar->createMenuBarByName(cleanupRoom->getName());
 
     // PltEditRoom
     Room *pltEditRoom = createPltEditRoom();
@@ -816,46 +809,6 @@ void MainWindow::writeSettings() {
 
 //-----------------------------------------------------------------------------
 
-Room *MainWindow::createCleanupRoom() {
-  Room *cleanupRoom = new Room(this);
-  cleanupRoom->setName("Cleanup");
-  cleanupRoom->setObjectName("CleanupRoom");
-
-  m_topBar->getRoomTabWidget()->addTab(tr("Cleanup"));
-
-  DockLayout *layout = cleanupRoom->dockLayout();
-
-  // Viewer
-  TPanel *viewer = TPanelFactory::createPanel(cleanupRoom, "ComboViewer");
-  if (viewer) {
-    cleanupRoom->addDockWidget(viewer);
-    layout->dockItem(viewer);
-    ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(viewer);
-    if (cvp)
-      // hide all parts
-      cvp->setVisiblePartsFlag(CVPARTS_None);
-  }
-
-  // CleanupSettings
-  TPanel *cleanupSettingsPane =
-      TPanelFactory::createPanel(cleanupRoom, "CleanupSettings");
-  if (cleanupSettingsPane) {
-    cleanupRoom->addDockWidget(cleanupSettingsPane);
-    layout->dockItem(cleanupSettingsPane, viewer, Region::right);
-  }
-
-  // Xsheet
-  TPanel *xsheetPane = TPanelFactory::createPanel(cleanupRoom, "Xsheet");
-  if (xsheetPane) {
-    cleanupRoom->addDockWidget(xsheetPane);
-    layout->dockItem(xsheetPane, viewer, Region::bottom);
-  }
-
-  return cleanupRoom;
-}
-
-//-----------------------------------------------------------------------------
-
 Room *MainWindow::createPltEditRoom() {
   Room *pltEditRoom = new Room(this);
   pltEditRoom->setName("PltEdit");
@@ -871,8 +824,8 @@ Room *MainWindow::createPltEditRoom() {
     pltEditRoom->addDockWidget(viewer);
     layout->dockItem(viewer);
 
-    ComboViewerPanel *cvp = qobject_cast<ComboViewerPanel *>(viewer);
-    if (cvp) cvp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
+    SceneViewerPanel *svp = qobject_cast<SceneViewerPanel*>(viewer);
+    //if (svp) svp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
   }
 
   // Palette
@@ -1491,13 +1444,6 @@ QAction *MainWindow::createMenuEditAction(const char *id, const QString &name,
 
 //-----------------------------------------------------------------------------
 
-QAction *MainWindow::createMenuScanCleanupAction(
-    const char *id, const QString &name, const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuScanCleanupCommandType);
-}
-
-//-----------------------------------------------------------------------------
-
 QAction *MainWindow::createMenuLevelAction(const char *id, const QString &name,
                                            const QString &defaultShortcut) {
   return createAction(id, name, defaultShortcut, MenuLevelCommandType);
@@ -1799,43 +1745,13 @@ void MainWindow::defineActions() {
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
-  createMenuScanCleanupAction(MI_DefineScanner, tr("&Define Scanner..."), "");
-  createMenuScanCleanupAction(MI_ScanSettings, tr("&Scan Settings..."), "");
-  createMenuScanCleanupAction(MI_Scan, tr("&Scan"), "");
-  createMenuScanCleanupAction(MI_Autocenter, tr("&Autocenter..."), "");
 
-  QAction *toggle = createToggle(MI_SetScanCropbox, tr("&Set Cropbox"), "", 0,
-                                 MenuScanCleanupCommandType);
-  if (toggle) {
-    SetScanCropboxCheck::instance()->setToggle(toggle);
-    QString scannerType = QSettings().value("CurrentScannerType").toString();
-    if (scannerType == "TWAIN") toggle->setDisabled(true);
-    toggle = createMenuScanCleanupAction(MI_ResetScanCropbox,
-                                         tr("&Reset Cropbox"), "");
-    if (scannerType == "TWAIN") toggle->setDisabled(true);
-  }
 
-  createMenuScanCleanupAction(MI_CleanupSettings, tr("&Cleanup Settings..."),
-                              "");
-
-  toggle = createToggle(MI_CleanupPreview, tr("&Preview Cleanup"), "", 0,
-                        MenuScanCleanupCommandType);
-  CleanupPreviewCheck::instance()->setToggle(toggle);
-  toggle = createToggle(MI_CameraTest, tr("&Camera Test"), "", 0,
-                        MenuScanCleanupCommandType);
-  CameraTestCheck::instance()->setToggle(toggle);
-
-  createToggle(MI_OpacityCheck, tr("&Opacity Check"), "Alt+1", false,
-               MenuScanCleanupCommandType);
-
-  createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
-
-  createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
+  
 
   createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   createMenuLevelAction(MI_Renumber, tr("&Renumber..."), "");
   createMenuLevelAction(MI_ReplaceLevel, tr("&Replace Level..."), "");
-  createMenuLevelAction(MI_RevertToCleanedUp, tr("&Revert to Cleaned Up"), "");
   createMenuLevelAction(MI_RevertToLastSaved, tr("&Reload"), "");
   createMenuLevelAction(MI_ExposeResource, tr("&Expose in Xsheet"), "");
   createMenuLevelAction(MI_EditLevel, tr("&Display in Level Strip"), "");
@@ -1878,7 +1794,7 @@ void MainWindow::defineActions() {
   collapseAction->setIconText("Collapse");
   collapseAction->setIcon(QIcon(":Resources/collapse.svg"));
 
-  toggle = createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
+  QAction* toggle = createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
                         EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(QIcon(":Resources/edit_in_place.svg"));
@@ -2102,7 +2018,6 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenStudioPalette, tr("&Studio Palette"), "");
   createMenuWindowsAction(MI_OpenSchematic, tr("&Schematic"), "");
   createMenuWindowsAction(MI_FxParamEditor, tr("&FX Editor"), "Ctrl+K");
-  createMenuWindowsAction(MI_OpenCleanupSettings, tr("&Cleanup Settings"), "");
 
   createMenuWindowsAction(MI_OpenFileBrowser2, tr("&Scene Cast"), "");
   createMenuWindowsAction(MI_OpenStyleControl, tr("&Style Editor"), "");
@@ -2117,7 +2032,6 @@ void MainWindow::defineActions() {
   //  createAction(MI_TestAnimation,     "Test Animation",   "Ctrl+Return");
   //  createAction(MI_Export,            "Export",           "Ctrl+E");
 
-  createMenuWindowsAction(MI_OpenComboViewer, tr("&ComboViewer"), "");
   createMenuWindowsAction(MI_OpenHistoryPanel, tr("&History"), "Ctrl+H");
   createMenuWindowsAction(MI_AudioRecording, tr("Record Audio"), "Alt+A");
   createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"),
@@ -2172,8 +2086,6 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_RemoveLevel, tr("Remove Level"), "");
   createRightClickMenuAction(MI_AddToBatchRenderList, tr("Add As Render Task"),
                              "");
-  createRightClickMenuAction(MI_AddToBatchCleanupList,
-                             tr("Add As Cleanup Task"), "");
 
   createRightClickMenuAction(MI_SelectRowKeyframes,
                              tr("Select All Keys in this Frame"), "");

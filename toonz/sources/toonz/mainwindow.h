@@ -20,7 +20,6 @@
 class QStackedWidget;
 class TPanel;
 class UpdateChecker;
-class ComboViewerPanel;
 class TopBar;
 //-----------------------------------------------------------------------------
 
@@ -216,7 +215,7 @@ private:
   Room *createPltEditRoom();
   Room *createFarmRoom();
   */
-  Room *createCleanupRoom();
+  
   Room *createPltEditRoom();
   Room *createInknPaintRoom();
   Room *createXsheetRoom();
@@ -232,8 +231,6 @@ private:
                                 const QString &defaultShortcut);
   QAction *createMenuEditAction(const char *id, const QString &name,
                                 const QString &defaultShortcut);
-  QAction *createMenuScanCleanupAction(const char *id, const QString &name,
-                                       const QString &defaultShortcut);
   QAction *createMenuLevelAction(const char *id, const QString &name,
                                  const QString &defaultShortcut);
   QAction *createMenuXsheetAction(const char *id, const QString &name,

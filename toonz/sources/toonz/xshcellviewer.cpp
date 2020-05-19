@@ -3326,10 +3326,6 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
       }
 
       if (!soundCellsSelected && !soundTextCellsSelected) {
-        if (selectionContainTlvImage(m_viewer->getCellSelection(),
-                                     m_viewer->getXsheet()))
-          replaceLevelMenu->addAction(
-              cmdManager->getAction(MI_RevertToCleanedUp));
         if (selectionContainLevelImage(m_viewer->getCellSelection(),
                                        m_viewer->getXsheet()))
           replaceLevelMenu->addAction(

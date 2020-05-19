@@ -601,8 +601,6 @@ TPalette *Convert2Tlv::buildPalette() {
   TPalette *defaultPalette = new TPalette();
   defaultPalette->loadData(is);
 
-  m_palette->setIsCleanupPalette(false);
-
   TPalette::Page *dstPage = m_palette->getPage(0);
   TPalette::Page *srcPage = defaultPalette->getPage(0);
 

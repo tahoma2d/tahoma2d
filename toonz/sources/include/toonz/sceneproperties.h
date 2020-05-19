@@ -59,8 +59,6 @@ private:
 
   TOutputProperties *m_outputProp, *m_previewProp;
 
-  CleanupParameters *m_cleanupParameters;
-  TScannerParameters *m_scanParameters;
   VectorizerParameters *m_vectorizerParameters;
   CaptureParameters *m_captureParameters;
 
@@ -145,17 +143,7 @@ ratio, level subsampling, etc....
   void saveData(TOStream &os) const;
   void loadData(TIStream &is, bool isLoadingProject);
 
-  /*!
-Returns cleanup parameters \b CleanupParameters, i.e. basic colors.
-  */
-  CleanupParameters *getCleanupParameters() const {
-    return m_cleanupParameters;
-  }
-  /*!
-           Return scanner parameters as Black and white scanner , graytones
-     scanner or a color scanner.
-  */
-  TScannerParameters *getScanParameters() const { return m_scanParameters; }
+
   /*!
            Return vectorizer parameters.
   */

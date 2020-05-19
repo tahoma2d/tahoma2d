@@ -56,46 +56,6 @@
 
 //---------------------------------------------------------
 
-namespace {
-
-#include "bravomark.h"
-
-TRaster32P loadLight() {
-  static TRaster32P ras(137, 48);
-  static bool filled = false;
-
-  if (filled) return ras;
-
-  filled = true;
-
-  ras->lock();
-
-  UINT *pix = (UINT *)ras->getRawData();
-  int count = 0;
-  for (UINT i = 0; i < 5888; i += 2)
-    for (UINT j = 0; j < lightmark137x48[i]; j++, pix++) {
-      *pix = lightmark137x48[i + 1];
-      if (*pix != 0) {
-        TPixel32 *col = (TPixel32 *)pix;
-        col->r        = troundp(0.85 * col->r);
-        col->g        = troundp(0.85 * col->g);
-        col->b        = troundp(0.85 * col->b);
-        col->m        = troundp(0.85 * col->m);
-      }
-      count++;
-    }
-
-  ras->unlock();
-
-  assert(count == 137 * 48);
-
-  return ras;
-}
-
-}  // namespace
-
-//---------------------------------------------------------
-
 //=========================================================
 
 class OnRenderCompleted final : public TThread::Message {

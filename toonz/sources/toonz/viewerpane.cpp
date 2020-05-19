@@ -1,3 +1,4 @@
+#include "viewerpane.h"
 
 
 // TnzCore includes
@@ -63,15 +64,6 @@
 #include <QMainWindow>
 #include <QSettings>
 
-#include "viewerpane.h"
-
-enum CV_Parts {
-  CVPARTS_None        = 0,
-  CVPARTS_PLAYBAR     = 0x1,
-  CVPARTS_FRAMESLIDER = 0x4,
-  CVPARTS_End         = 0x8,
-  CVPARTS_ALL         = CVPARTS_PLAYBAR | CVPARTS_FRAMESLIDER
-};
 
 using namespace DVGui;
 

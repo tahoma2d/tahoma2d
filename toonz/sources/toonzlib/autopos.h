@@ -5,7 +5,6 @@
 
 //#include "cleanup.h"
 #include "trasterimage.h"
-#include "toonz/cleanupparameters.h"
 
 /*---------------------------------------------------------------------------*/
 

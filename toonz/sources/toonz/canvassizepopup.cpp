@@ -539,17 +539,17 @@ CanvasSizePopup::CanvasSizePopup()
 
   addSeparator(tr("New Size"));
 
-  // Unit
-  m_unit = new QComboBox(this);
-  m_unit->addItem(tr("pixel"), "pixel");
-  m_unit->addItem(tr("mm"), "mm");
-  m_unit->addItem(tr("cm"), "cm");
-  m_unit->addItem(tr("field"), "field");
-  m_unit->addItem(tr("inch"), "inch");
-  m_unit->setFixedHeight(DVGui::WidgetHeight);
-  addWidget(tr("Unit:"), m_unit);
-  connect(m_unit, SIGNAL(currentIndexChanged(int)), this,
-          SLOT(onUnitChanged(int)));
+  //// Unit
+  //m_unit = new QComboBox(this);
+  //m_unit->addItem(tr("pixel"), "pixel");
+  //m_unit->addItem(tr("mm"), "mm");
+  //m_unit->addItem(tr("cm"), "cm");
+  //m_unit->addItem(tr("field"), "field");
+  //m_unit->addItem(tr("inch"), "inch");
+  //m_unit->setFixedHeight(DVGui::WidgetHeight);
+  //addWidget(tr("Unit:"), m_unit);
+  //connect(m_unit, SIGNAL(currentIndexChanged(int)), this,
+  //        SLOT(onUnitChanged(int)));
 
   // New Xsize
   m_xSizeFld = new DVGui::DoubleLineEdit(this, dim.lx);
@@ -600,9 +600,9 @@ void CanvasSizePopup::showEvent(QShowEvent *e) {
   TDimension dim = m_sl->getResolution();
   TPointD dpi    = m_sl->getDpi();
   double dimLx   = getMeasuredLength(dim.lx, m_xMeasure, dpi.x,
-                                   m_unit->currentData().toString());
+                                   "pixel");
   double dimLy = getMeasuredLength(dim.ly, m_yMeasure, dpi.y,
-                                   m_unit->currentData().toString());
+      "pixel");
   m_currentXSize->setText(QString::number(dimLx));
   m_currentYSize->setText(QString::number(dimLy));
   m_relative->setChecked(false);
@@ -616,7 +616,7 @@ void CanvasSizePopup::showEvent(QShowEvent *e) {
 void CanvasSizePopup::onSizeChanged() {
   TDimension dim        = m_sl->getResolution();
   TPointD dpi           = m_sl->getDpi();
-  QString unit          = m_unit->currentData().toString();
+  QString unit          = "pixel";
   double measuredXValue = m_relative->isChecked()
                               ? dim.lx + m_xSizeFld->getValue()
                               : m_xSizeFld->getValue();
@@ -639,7 +639,7 @@ void CanvasSizePopup::onRelative(bool toggled) {
   } else {
     TDimension dim = m_sl->getResolution();
     TPointD dpi    = m_sl->getDpi();
-    QString unit   = m_unit->currentData().toString();
+    QString unit   = "pixel";
     double dimLx   = getMeasuredLength(dim.lx, m_xMeasure, dpi.x, unit);
     double dimLy   = getMeasuredLength(dim.ly, m_yMeasure, dpi.y, unit);
     m_xSizeFld->setValue(dimLx);
@@ -655,7 +655,7 @@ void CanvasSizePopup::onUnitChanged(int index) {
     m_ySizeFld->setValue(0);
     return;
   }
-  QString unit = m_unit->itemData(index).toString();
+  QString unit = "pixel";
   if (unit != "pixel") {
     TUnit *measureUnit = m_xMeasure->getUnit(unit.toStdWString());
     m_xMeasure->setCurrentUnit(measureUnit);
@@ -677,7 +677,7 @@ void CanvasSizePopup::onUnitChanged(int index) {
 void CanvasSizePopup::onOkBtn() {
   TDimension dim = m_sl->getResolution();
   TPointD dpi    = m_sl->getDpi();
-  QString unit   = m_unit->currentData().toString();
+  QString unit   = "pixel";
   int newXValue =
       getPixelLength(m_xSizeFld->getValue(), m_xMeasure, dpi.x, unit);
   int newYValue =

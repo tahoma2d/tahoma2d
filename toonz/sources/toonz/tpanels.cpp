@@ -20,9 +20,7 @@
 #include "filebrowser.h"
 #include "filmstrip.h"
 #include "previewfxmanager.h"
-#include "comboviewerpane.h"
 #include "historypane.h"
-#include "cleanupsettingspane.h"
 #include "vectorguideddrawingpane.h"
 #include "stopmotioncontroller.h"
 
@@ -66,7 +64,6 @@
 #include "toonz/tproject.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshcell.h"
-#include "toonz/cleanupcolorstyles.h"
 #include "toonz/palettecmd.h"
 #include "toonz/preferences.h"
 #include "tw/stringtable.h"
@@ -737,86 +734,6 @@ void ColorFieldEditorController::onColorChanged(const TPixel32 &color, bool) {
 }
 
 //=============================================================================
-ColorFieldEditorController colorFieldEditorController;
-//-----------------------------------------------------------------------------
-
-CleanupColorFieldEditorController::CleanupColorFieldEditorController()
-    : m_currentColorField(0)
-    , m_colorFieldHandle(new TPaletteHandle)
-    , m_palette(new TPalette) {
-  std::wstring name = L"EmptyColorFieldPalette";
-  m_palette->setPaletteName(name);
-  m_colorFieldHandle->setPalette(m_palette.getPointer(), 1);
-  DVGui::CleanupColorField::setEditorController(this);
-}
-
-//-----------------------------------------------------------------------------
-
-void CleanupColorFieldEditorController::edit(
-    DVGui::CleanupColorField *colorField) {
-  if (m_currentColorField && m_currentColorField->isEditing())
-    m_currentColorField->setIsEditing(false);
-
-  m_currentColorField = colorField;
-  if (!colorField) return;
-  m_currentColorField->setIsEditing(true);
-
-  // Setto come stile corrente quello del colorField
-  TColorStyle *fieldStyle = colorField->getStyle();
-
-  m_blackColor = dynamic_cast<TBlackCleanupStyle *>(fieldStyle);
-  if (m_blackColor) {
-    m_palette->setStyle(1, new TSolidColorStyle);
-    m_palette->getStyle(1)->setMainColor(fieldStyle->getColorParamValue(1));
-  } else {
-    m_palette->setStyle(1, new TColorCleanupStyle);
-
-    TColorStyle *style = m_palette->getStyle(1);
-    style->setMainColor(fieldStyle->getMainColor());
-    style->setColorParamValue(1, fieldStyle->getColorParamValue(1));
-  }
-
-  // Setto m_colorFieldHandle come paletteHandle corrente.
-  TApp::instance()->getPaletteController()->setCurrentPalette(
-      m_colorFieldHandle);
-
-  connect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)),
-          SLOT(onColorStyleChanged()));
-}
-
-//-----------------------------------------------------------------------------
-
-void CleanupColorFieldEditorController::hide() {
-  disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)), this,
-             SLOT(onColorStyleChanged()));
-}
-
-//-----------------------------------------------------------------------------
-
-void CleanupColorFieldEditorController::onColorStyleChanged() {
-  if (!m_currentColorField) return;
-
-  assert(!!m_palette);
-
-  TColorStyle *style = m_palette->getStyle(1);
-  if (m_blackColor) {
-    if (m_currentColorField->getOutputColor() == style->getMainColor()) return;
-
-    m_currentColorField->setOutputColor(style->getMainColor());
-  } else {
-    if (m_currentColorField->getColor() == style->getMainColor() &&
-        m_currentColorField->getOutputColor() == style->getColorParamValue(1))
-      return;
-
-    m_currentColorField->setStyle(style);
-  }
-}
-
-//=============================================================================
-CleanupColorFieldEditorController cleanupColorFieldEditorController;
-//-----------------------------------------------------------------------------
-
-//=============================================================================
 // style editor
 //-----------------------------------------------------------------------------
 
@@ -1187,53 +1104,6 @@ OpenFloatingPanel openTScriptConsoleCommand("MI_OpenScriptConsole",
                                             QObject::tr("Script Console"));
 
 //=============================================================================
-// ComboViewer : Viewer + Toolbar + Tool Options
-//-----------------------------------------------------------------------------
-
-ComboViewerPanelContainer::ComboViewerPanelContainer(QWidget *parent)
-    : StyleShortcutSwitchablePanel(parent) {
-  m_comboViewer = new ComboViewerPanel(parent);
-  setFocusProxy(m_comboViewer);
-  setWidget(m_comboViewer);
-
-  m_comboViewer->initializeTitleBar(getTitleBar());
-  bool ret = connect(m_comboViewer->getToolOptions(), SIGNAL(newPanelCreated()),
-                     this, SLOT(updateTabFocus()));
-  assert(ret);
-}
-// reimplementation of TPanel::widgetInThisPanelIsFocused
-bool ComboViewerPanelContainer::widgetInThisPanelIsFocused() {
-  return m_comboViewer->hasFocus();
-}
-// reimplementation of TPanel::widgetFocusOnEnter
-void ComboViewerPanelContainer::widgetFocusOnEnter() {
-  m_comboViewer->onEnterPanel();
-}
-void ComboViewerPanelContainer::widgetClearFocusOnLeave() {
-  m_comboViewer->onLeavePanel();
-}
-
-//-----------------------------------------------------------------------------
-
-class ComboViewerFactory final : public TPanelFactory {
-public:
-  ComboViewerFactory() : TPanelFactory("ComboViewer") {}
-  TPanel *createPanel(QWidget *parent) override {
-    ComboViewerPanelContainer *panel = new ComboViewerPanelContainer(parent);
-    panel->setObjectName(getPanelType());
-    panel->setWindowTitle(QObject::tr("Combo Viewer"));
-    panel->resize(700, 600);
-    return panel;
-  }
-  void initialize(TPanel *panel) override { assert(0); }
-} comboViewerFactory;
-
-//=============================================================================
-OpenFloatingPanel openComboViewerCommand(MI_OpenComboViewer, "ComboViewer",
-                                         QObject::tr("Combo Viewer"));
-//-----------------------------------------------------------------------------
-
-//=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
 
@@ -1278,25 +1148,7 @@ OpenFloatingPanel openSceneViewerCommand(MI_OpenLevelView, "SceneViewer",
                                          QObject::tr("Viewer"));
 //-----------------------------------------------------------------------------
 
-//=============================================================================
-// CleanupSettings DockWindow
-//-----------------------------------------------------------------------------
 
-class CleanupSettingsFactory final : public TPanelFactory {
-public:
-  CleanupSettingsFactory() : TPanelFactory("CleanupSettings") {}
-
-  void initialize(TPanel *panel) override {
-    panel->setWidget(new CleanupSettingsPane(panel));
-    panel->setIsMaximizable(false);
-  }
-
-} cleanupSettingsFactory;
-
-//=============================================================================
-OpenFloatingPanel openCleanupSettingsDockCommand(
-    MI_OpenCleanupSettings, "CleanupSettings", QObject::tr("Cleanup Settings"));
-//-----------------------------------------------------------------------------
 
 //=============================================================================
 // History

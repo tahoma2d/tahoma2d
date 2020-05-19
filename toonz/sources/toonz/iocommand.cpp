@@ -14,12 +14,12 @@
 #include "filebrowsermodel.h"
 #include "mainwindow.h"
 #include "overwritepopup.h"
-#include "cleanupsettingspopup.h"
 #include "psdsettingspopup.h"
 #include "filebrowser.h"
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
 #include "xdtsio.h"
+#include "toonz/tcamera.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -1300,11 +1300,9 @@ void IoCmd::newScene() {
   app->getCurrentScene()->setScene(scene);
   // initializeScene() load project cleanup palette: set it to cleanup palette
   // handle.
-  TPalette *palette = scene->getProperties()
-                          ->getCleanupParameters()
-                          ->m_cleanupPalette.getPointer();
+
   PaletteController *paletteController = app->getPaletteController();
-  paletteController->getCurrentCleanupPalette()->setPalette(palette, -1);
+
   paletteController->editLevelPalette();
 
   TFilePath scenePath = scene->getScenePath();
@@ -1326,9 +1324,6 @@ void IoCmd::newScene() {
   app->getCurrentScene()->setDirtyFlag(false);
   app->getCurrentObject()->setIsSpline(false);
   app->getCurrentColumn()->setColumnIndex(0);
-
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  CleanupParameters::GlobalParameters.assign(cp);
 
   // updateCleanupSettingsPopup();
 
@@ -1439,10 +1434,6 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 #endif
   }
 
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  CleanupParameters oldCP(*cp);
-  cp->assign(&CleanupParameters::GlobalParameters);
-
   try {
     scene->save(scenePath, xsheet);
   } catch (const TSystemException &se) {
@@ -1450,8 +1441,6 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   } catch (...) {
     DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
   }
-
-  cp->assign(&oldCP);
 
   // in case of saving subxsheet, revert the level paths after saving
   revertOrgLevelPaths();
@@ -1904,10 +1893,6 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
 
   Previewer::clearAll();
   PreviewFxManager::instance()->reset();
-  // updateCleanupSettingsPopup();
-  /*- CleanupParameterの更新 -*/
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  CleanupParameters::GlobalParameters.assign(cp);
 
   CacheFxCommand::instance()->onSceneLoaded();
 
@@ -1958,27 +1943,13 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     TPointD dpi = scene->getCurrentCamera()->getDpi();
     if (!areAlmostEqual(dpi.x, Stage::standardDpi, 0.1) ||
         !areAlmostEqual(dpi.y, Stage::standardDpi, 0.1)) {
-      QString question = QObject::tr(
-          "This scene is incompatible with pixels only mode of the current "
-          "OpenToonz version.\nWhat would you like to do?");
-      QString turnOffPixelAnswer = QObject::tr("Turn off pixels only mode");
-      QString resizeSceneAnswer =
-          QObject::tr("Keep pixels only mode on and resize the scene");
-      int ret =
-          DVGui::MsgBox(question, turnOffPixelAnswer, resizeSceneAnswer, 0);
-      if (ret == 0) {
-      }                     // do nothing
-      else if (ret == 1) {  // Turn off pixels only mode
-        Preferences::instance()->setValue(pixelsOnly, false);
-        app->getCurrentScene()->notifyPixelUnitSelected(false);
-      } else {  // ret = 2 : Resize the scene
+
         TDimensionD camSize = scene->getCurrentCamera()->getSize();
         TDimension camRes(camSize.lx * Stage::standardDpi,
                           camSize.ly * Stage::standardDpi);
         scene->getCurrentCamera()->setRes(camRes);
         app->getCurrentScene()->setDirtyFlag(true);
         app->getCurrentXsheet()->notifyXsheetChanged();
-      }
     }
   }
 

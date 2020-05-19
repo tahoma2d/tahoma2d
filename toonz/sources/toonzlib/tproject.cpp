@@ -8,7 +8,6 @@
 #include "toonz/txsheet.h"
 #include "toonz/observer.h"
 #include "toonz/toonzfolders.h"
-#include "toonz/cleanupparameters.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -1086,8 +1085,6 @@ void TProjectManager::initializeScene(ToonzScene *scene) {
   project->load(currentProjectPath);
 
   sprop->assign(&project->getSceneProperties());
-  CleanupParameters::GlobalParameters.assign(
-      project->getSceneProperties().getCleanupParameters());
 
   // scene->setProject(this);
   scene->setUntitled();

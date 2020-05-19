@@ -32,9 +32,9 @@ class StartupPopup final : public DVGui::Dialog {
   QLabel *m_fpsLabel;
   QLabel *m_resXLabel;
   QLabel *m_resTextLabel;
-  QLabel *m_dpiLabel;
+  //QLabel *m_dpiLabel;
   QLabel *m_sceneNameLabel;
-  DVGui::DoubleLineEdit *m_dpiFld;
+  //DVGui::DoubleLineEdit *m_dpiFld;
   DVGui::MeasuredDoubleLineEdit *m_widthFld;
   DVGui::MeasuredDoubleLineEdit *m_heightFld;
   DVGui::DoubleLineEdit *m_fpsFld;
@@ -46,7 +46,7 @@ class StartupPopup final : public DVGui::Dialog {
   QCheckBox *m_showAtStartCB;
   QCheckBox *m_autoSaveOnCB;
   QComboBox *m_projectsCB;
-  QComboBox *m_unitsCB;
+  //QComboBox *m_unitsCB;
   QPushButton *m_loadOtherSceneButton;
   QPushButton *m_newProjectButton;
   QComboBox *m_presetCombo;

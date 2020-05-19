@@ -85,12 +85,6 @@ bool pasteStylesDataWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
     styleId            = data->getStyleIndex(i);
     TColorStyle *style = data->getStyle(i)->clone();
 
-    // Se la palette e' di cleanup gli stili devono essere 8.
-    if (palette->isCleanupPalette() && palette->getStyleInPagesCount() >= 8) {
-      delete style;
-      break;
-    }
-
     // For now styles will be inserted regardless the styleId of copied styles
     // are already used in the target palette or not.
     styleId = palette->getFirstUnpagedStyle();
@@ -490,8 +484,7 @@ TStyleSelection::~TStyleSelection() {}
 //-----------------------------------------------------------------------------
 
 void TStyleSelection::enableCommands() {
-  if (m_paletteHandle && m_paletteHandle->getPalette() &&
-      !m_paletteHandle->getPalette()->isCleanupPalette()) {
+  if (m_paletteHandle && m_paletteHandle->getPalette()) {
     enableCommand(this, MI_Cut, &TStyleSelection::cutStyles);
     enableCommand(this, MI_Copy, &TStyleSelection::copyStyles);
     enableCommand(this, MI_Paste, &TStyleSelection::pasteStyles);
@@ -1111,7 +1104,7 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
       // paste color information.
       TCleanupStyle *cleanupStyle =
           dynamic_cast<TCleanupStyle *>(data->getStyle(i));
-      if (cleanupStyle && !palette->isCleanupPalette())
+      if (cleanupStyle)
         palette->setStyle(styleId, cleanupStyle->getMainColor());
       else
         palette->setStyle(styleId, data->getStyle(i)->clone());
