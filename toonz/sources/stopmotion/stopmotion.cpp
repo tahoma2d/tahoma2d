@@ -11,6 +11,7 @@
 #include "toutputproperties.h"
 #include "filebrowserpopup.h"
 #include "tunit.h"
+#include "flipbook.h"
 
 #include "toonz/namebuilder.h"
 #include "toonz/preferences.h"
@@ -27,6 +28,7 @@
 #include "toonz/levelproperties.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonzqt/menubarcommand.h"
+#include "toonzqt/icongenerator.h"
 
 #include <QApplication>
 #include <QCamera>
@@ -253,7 +255,7 @@ StopMotion::StopMotion() {
   ret = ret && connect(m_webcamOverlayTimer, SIGNAL(timeout()), this,
                        SLOT(captureWebcamOnTimeout()));
   ret = ret && connect(m_canon, SIGNAL(newCanonImageReady()), this,
-                       SLOT(importImage()));
+                       SLOT(directDslrImage()));
   assert(ret);
   ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this,
                        SLOT(onCanonCameraChanged(QString)));
@@ -309,7 +311,7 @@ void StopMotion::onSceneSwitched() {
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
         loadXmlFile();
         buildLiveViewMap(sl);
-        m_sl = sl;
+        m_sl  = sl;
         found = true;
         break;
       }
@@ -1672,6 +1674,7 @@ bool StopMotion::importImage() {
     postImportProcess();
     return true;
   }
+
   int row = m_xSheetFrameNumber - 1;
   int col = app->getCurrentColumn()->getColumnIndex();
 
@@ -1811,6 +1814,10 @@ void StopMotion::captureWebcamImage() {
 
 //-----------------------------------------------------------------------------
 void StopMotion::captureWebcamOnTimeout() {
+    if (m_isTestShot) {
+        saveTestShot();
+        return;
+    }
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
     if (m_liveViewStatus > LiveViewClosed) {
@@ -1864,6 +1871,15 @@ void StopMotion::captureDslrImage() {
 
 //-----------------------------------------------------------------------------
 
+void StopMotion::directDslrImage() {
+  if (m_isTestShot)
+    saveTestShot();
+  else
+    importImage();
+}
+
+//-----------------------------------------------------------------------------
+
 void StopMotion::postImportProcess() {
   saveXmlFile();
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
@@ -1883,6 +1899,165 @@ void StopMotion::postImportProcess() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::takeTestShot() {
+  bool sessionOpen = false;
+#ifdef WITH_CANON
+  sessionOpen = m_canon->m_sessionOpen;
+#endif
+  if ((!m_usingWebcam && !sessionOpen) || m_userCalledPause) {
+    DVGui::warning(tr("Please start live view before capturing an image."));
+    return;
+  }
+  m_isTestShot = true;
+  if (m_usingWebcam) {
+      if (m_light->useOverlays()) {
+          m_light->showOverlays();
+          m_webcamOverlayTimer->start(500);
+      }
+      else {
+          saveTestShot();
+      }
+  } else {
+    TApp *app           = TApp::instance();
+    ToonzScene *scene   = app->getCurrentScene()->getScene();
+    TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
+    TFilePath tempFile  = parentDir + "temp.jpg";
+
+    if (!TFileStatus(parentDir).doesExist()) {
+      TSystem::mkDir(parentDir);
+    }
+    m_tempFile = tempFile.getQString();
+#ifdef WITH_CANON
+    m_light->showOverlays();
+    m_canon->takePicture();
+#endif
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::saveTestShot() {
+  m_isTestShot      = false;
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh      = scene->getXsheet();
+
+  std::wstring levelName = m_levelName.toStdWString();
+  if (levelName.empty()) {
+    DVGui::error(
+        tr("No level name specified: please choose a valid level name"));
+    return;
+  }
+
+  if (m_usingWebcam) {
+    m_newImage = m_liveViewImage;
+  }
+
+  m_light->hideOverlays();
+
+  /* create parent directory if it does not exist */
+  TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
+
+  TFilePath testsFolder = scene->decodeFilePath(
+      TFilePath(m_filePath) + TFilePath(levelName + L"_Tests"));
+
+  TFilePath testsThumbsFolder = scene->decodeFilePath(
+      TFilePath(m_filePath) + TFilePath(levelName + L"_Tests") +
+      TFilePath("Thumbs"));
+
+  if (!TFileStatus(parentDir).doesExist()) {
+    QString question;
+    question = tr("Folder %1 doesn't exist.\nDo you want to create it?")
+                   .arg(toQString(parentDir));
+    int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
+    if (ret == 0 || ret == 2) return;
+    try {
+      TSystem::mkDir(parentDir);
+      DvDirModel::instance()->refreshFolder(parentDir.getParentDir());
+    } catch (...) {
+      DVGui::error(tr("Unable to create") + toQString(parentDir));
+      return;
+    }
+  }
+
+  if (!TFileStatus(testsFolder).doesExist()) {
+    try {
+      TSystem::mkDir(testsFolder);
+      DvDirModel::instance()->refreshFolder(testsFolder.getParentDir());
+    } catch (...) {
+      DVGui::error(tr("Unable to create") + toQString(testsFolder));
+      return;
+    }
+  }
+  if (!TFileStatus(testsThumbsFolder).doesExist()) {
+    try {
+      TSystem::mkDir(testsThumbsFolder);
+      DvDirModel::instance()->refreshFolder(testsThumbsFolder.getParentDir());
+    } catch (...) {
+      DVGui::error(tr("Unable to create") + toQString(testsThumbsFolder));
+      return;
+    }
+  }
+
+  TFilePathSet set = TSystem::readDirectory(testsFolder, false, true, false);
+
+  int fileNumber = 0;
+  for (auto const &tempPath : set) {
+    if (tempPath.getUndottedType() == "jpg") {
+      fileNumber++;
+    }
+  }
+
+  TFilePath levelFp = TFilePath(m_filePath) +
+                      TFilePath(levelName + L".." + m_fileType.toStdWString());
+  TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
+  TFilePath actualFile(actualLevelFp.withFrame(fileNumber));
+  TFilePath testsFile = scene->decodeFilePath(
+      testsFolder +
+      TFilePath(levelName + QString::number(fileNumber).toStdWString() +
+                L".jpg"));
+  // TFilePath testsFile(testsFp.withFrame(fileNumber));
+
+  TFilePath testsThumbsFile = scene->decodeFilePath(
+      testsThumbsFolder +
+      TFilePath(levelName + QString::number(fileNumber).toStdWString() +
+                L".jpg"));
+  // TFilePath testsThumbsFile(testsThumbsFp.withFrame(fileNumber));
+
+  TFilePath tempFile = parentDir + "temp.jpg";
+
+  if (!m_usingWebcam && m_canon->m_useScaledImages) {
+    TSystem::copyFile(testsFile, tempFile);
+    TSystem::deleteFile(tempFile);
+  } else {
+    JpgConverter::saveJpg(m_newImage, testsFile);
+  }
+  cv::Mat imgOriginal(m_newImage->getSize().ly, m_newImage->getSize().lx,
+                      CV_8UC4);
+  // tempImage = TRaster32P(width, height);
+  // m_liveViewImage = TRaster32P(width, height);
+  int size = m_newImage->getPixelSize() * m_newImage->getSize().lx *
+             m_newImage->getSize().ly;
+  uchar *imgBuf = imgOriginal.data;
+  m_newImage->lock();
+  uchar *rawData = m_newImage->getRawData();
+  memcpy(imgBuf, rawData, size);
+  m_newImage->unlock();
+  int w = m_newImage->getSize().lx;
+  double r =
+      (double)m_newImage->getSize().lx / (double)m_newImage->getSize().ly;
+  cv::Size dim(120, 120.0 / r);
+  cv::Mat imgThumb(dim, CV_8UC4);
+  cv::resize(imgOriginal, imgThumb, dim);
+  cv::flip(imgThumb, imgThumb, 0);
+  cv::imwrite(testsThumbsFile.getQString().toStdString(), imgThumb);
+
+  emit(updateTestShots());
+  FlipBook *fb = ::viewFile(testsFile);
 }
 
 //-----------------------------------------------------------------------------
