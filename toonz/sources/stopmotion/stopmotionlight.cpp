@@ -115,27 +115,27 @@ void StopMotionLight::showOverlays() {
       m_fullScreen3->setStyleSheet(style3);
     }
   }
-  bool shown       = false;
+  m_shown          = false;
   bool isTimeLapse = StopMotion::instance()->m_isTimeLapse;
   if ((getBlackCapture() || m_useScreen1Overlay) && !isTimeLapse) {
     m_fullScreen1->showFullScreen();
     m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
-    shown = true;
+    m_shown = true;
   }
   if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay) &&
       !isTimeLapse) {
     m_fullScreen2->showFullScreen();
     m_fullScreen2->setGeometry(QApplication::desktop()->screenGeometry(1));
-    shown = true;
+    m_shown = true;
   }
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay) &&
       !isTimeLapse) {
     m_fullScreen3->showFullScreen();
     m_fullScreen3->setGeometry(QApplication::desktop()->screenGeometry(2));
-    shown = true;
+    m_shown = true;
   }
 
-  if (shown) {
+  if (m_shown) {
     // this allows the full screen qdialogs to go full screen before
     // taking a photo
     qApp->processEvents(QEventLoop::AllEvents, 1500);
@@ -146,26 +146,28 @@ void StopMotionLight::showOverlays() {
 //-----------------------------------------------------------------
 
 void StopMotionLight::hideOverlays() {
-  if ((getBlackCapture() || m_useScreen1Overlay)) {
+  if (m_shown) {
+    if ((getBlackCapture() || m_useScreen1Overlay)) {
 #ifndef WIN32
-    m_fullScreen1->showNormal();
+      m_fullScreen1->showNormal();
 #endif
-    m_fullScreen1->close();
-    m_fullScreen1->windowHandle()->close();
-  }
-  if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
+      m_fullScreen1->close();
+      m_fullScreen1->windowHandle()->close();
+    }
+    if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay)) {
 #ifndef WIN32
-    m_fullScreen2->showNormal();
+      m_fullScreen2->showNormal();
 #endif
-    m_fullScreen2->close();
-    m_fullScreen2->windowHandle()->close();
-  }
-  if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
+      m_fullScreen2->close();
+      m_fullScreen2->windowHandle()->close();
+    }
+    if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay)) {
 #ifndef WIN32
-    m_fullScreen3->showNormal();
+      m_fullScreen3->showNormal();
 #endif
-    m_fullScreen3->close();
-    m_fullScreen3->windowHandle()->close();
+      m_fullScreen3->close();
+      m_fullScreen3->windowHandle()->close();
+    }
   }
   m_overlaysReady = false;
 }

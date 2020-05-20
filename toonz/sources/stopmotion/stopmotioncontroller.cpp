@@ -24,7 +24,8 @@
 #include "tlevel_io.h"
 #include "toutputproperties.h"
 #include "tsystem.h"
-
+#include "tfilepath.h"
+#include "flipbook.h"
 // TnzQt includes
 #include "toonzqt/filefield.h"
 #include "toonzqt/intfield.h"
@@ -185,12 +186,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Options"));
   m_tabBar->addSimpleTab(tr("Light"));
   m_tabBar->addSimpleTab(tr("Motion"));
+  m_tabBar->addSimpleTab(tr("Tests"));
   m_tabBarContainer    = new TabBarContainter(this);
   m_mainControlsPage   = new QFrame(this);
   m_cameraSettingsPage = new QFrame(this);
   m_optionsPage        = new QFrame(this);
   m_motionPage         = new QFrame(this);
   m_lightPage          = new QFrame(this);
+  m_testsPage          = new QFrame(this);
 
   // **********************
   // Make Control Page
@@ -872,18 +875,53 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     // motionOutsideLayout->addLayout(motionInsideLayout);
     m_motionPage->setLayout(motionOutsideLayout);
 
+    m_testsOutsideLayout = new QVBoxLayout;
+    m_testsOutsideLayout->setMargin(0);
+    m_testsOutsideLayout->setSpacing(0);
+    m_testsInsideLayout = new QVBoxLayout;
+    m_testsInsideLayout->setMargin(0);
+    m_testsInsideLayout->setSpacing(5);
+    QVBoxLayout *testsButtonLayout = new QVBoxLayout;
+    testsButtonLayout->setContentsMargins(0, 5, 0, 5);
+    testsButtonLayout->setSpacing(0);
+    QFrame *testShotsFrame = new QFrame();
+    testShotsFrame->setContentsMargins(0, 0, 0, 0);
+    testShotsFrame->setStyleSheet("padding:0; margin:0;");
+
+    QScrollArea *testShotsArea = new QScrollArea();
+    testShotsArea->setContentsMargins(0, 0, 0, 0);
+    testShotsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    testShotsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    testShotsArea->setWidgetResizable(true);
+
+    m_takeTestButton = new QPushButton(tr("Test Shot"));
+    m_takeTestButton->setFixedHeight(25);
+    testsButtonLayout->addWidget(m_takeTestButton);
+    m_testsOutsideLayout->addLayout(testsButtonLayout);
+
+    testShotsFrame->setLayout(m_testsInsideLayout);
+    testShotsArea->setWidget(testShotsFrame);
+    m_testsOutsideLayout->addWidget(testShotsArea, 500);
+    m_testsOutsideLayout->addStretch();
+    m_testsInsideLayout->addStretch();
+    m_testsPage->setLayout(m_testsOutsideLayout);
+    m_testsPage->setContentsMargins(0, 0, 0, 0);
+    m_testsPage->setStyleSheet("padding:0; margin:0;");
+
     QScrollArea *mainArea = makeChooserPageWithoutScrollBar(m_mainControlsPage);
     QScrollArea *settingsArea =
         makeChooserPageWithoutScrollBar(m_cameraSettingsPage);
     QScrollArea *optionsArea = makeChooserPageWithoutScrollBar(m_optionsPage);
     QScrollArea *lightArea   = makeChooserPageWithoutScrollBar(m_lightPage);
     QScrollArea *motionArea  = makeChooserPageWithoutScrollBar(m_motionPage);
+    QScrollArea *testsArea   = makeChooserPageWithoutScrollBar(m_testsPage);
 
     mainArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     settingsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     optionsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     lightArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     motionArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    testsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_stackedChooser = new QStackedWidget(this);
     m_stackedChooser->addWidget(mainArea);
@@ -891,6 +929,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_stackedChooser->addWidget(optionsArea);
     m_stackedChooser->addWidget(lightArea);
     m_stackedChooser->addWidget(motionArea);
+    m_stackedChooser->addWidget(testsArea);
     m_stackedChooser->setFocusPolicy(Qt::NoFocus);
 
     QFrame *opacityFrame    = new QFrame();
@@ -1240,12 +1279,20 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_countdownTimer, SIGNAL(timeout()), this,
                        SLOT(onIntervalCountDownTimeout()));
 
+  // Tests
+  ret = ret && connect(m_takeTestButton, SIGNAL(clicked()), this,
+                       SLOT(onTakeTestButtonClicked()));
+  ret = ret && connect(m_stopMotion, SIGNAL(updateTestShots()), this,
+                       SLOT(onRefreshTests()));
+
   assert(ret);
 
   m_placeOnXSheetCB->setChecked(
       m_stopMotion->getPlaceOnXSheet() == true ? true : false);
+
   m_useScaledFullSizeImages->setChecked(
       m_stopMotion->m_canon->m_useScaledImages);
+
   m_onionOpacityFld->setValue(double(100 * m_stopMotion->getOpacity()) / 255.0);
   m_directShowCB->setChecked(m_stopMotion->m_webcam->getUseDirectShow());
   m_useMjpgCB->setChecked(m_stopMotion->m_webcam->getUseMjpg());
@@ -1253,7 +1300,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_drawBeneathCB->setChecked(m_stopMotion->m_drawBeneathLevels);
   m_liveViewOnAllFramesCB->setChecked(m_stopMotion->getAlwaysLiveView());
   m_blackScreenForCapture->setChecked(
-      m_stopMotion->m_light->getBlackCapture() == true ? true : false);
+      m_stopMotion->m_light->getBlackCapture() ? true : false);
   if (m_stopMotion->m_light->getBlackCapture()) {
     m_screen1Box->setDisabled(true);
     m_screen2Box->setDisabled(true);
@@ -1321,10 +1368,7 @@ void StopMotionController::onBlackScreenForCaptureChanged(int checked) {
 
 void StopMotionController::onBlackCaptureSignal(bool on) {
   m_blackScreenForCapture->blockSignals(true);
-  m_blackScreenForCapture->setChecked(on);
-  m_screen1Box->setDisabled(on);
-  m_screen2Box->setDisabled(on);
-  m_screen3Box->setDisabled(on);
+  updateLightsEnabled();
   m_blackScreenForCapture->blockSignals(false);
 }
 
@@ -1396,6 +1440,7 @@ void StopMotionController::onScreen3ColorChanged(TPixel32 color) {
 void StopMotionController::onScreen1OverlayChanged(bool on) {
   m_screen1Box->blockSignals(true);
   m_screen1Box->setChecked(on);
+  updateLightsEnabled();
   m_screen1Box->blockSignals(false);
 }
 
@@ -1404,6 +1449,7 @@ void StopMotionController::onScreen1OverlayChanged(bool on) {
 void StopMotionController::onScreen2OverlayChanged(bool on) {
   m_screen2Box->blockSignals(true);
   m_screen2Box->setChecked(on);
+  updateLightsEnabled();
   m_screen2Box->blockSignals(false);
 }
 
@@ -1412,6 +1458,7 @@ void StopMotionController::onScreen2OverlayChanged(bool on) {
 void StopMotionController::onScreen3OverlayChanged(bool on) {
   m_screen3Box->blockSignals(true);
   m_screen3Box->setChecked(on);
+  updateLightsEnabled();
   m_screen3Box->blockSignals(false);
 }
 
@@ -1426,6 +1473,24 @@ void StopMotionController::onTestLightsPressed() {
 
 void StopMotionController::onTestLightsTimeout() {
   m_stopMotion->m_light->hideOverlays();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::updateLightsEnabled() {
+  bool enabled = true;
+  if (m_blackScreenForCapture->isChecked()) {
+    enabled = false;
+  }
+  m_screen1Box->setEnabled(enabled);
+  m_screen2Box->setEnabled(enabled);
+  m_screen3Box->setEnabled(enabled);
+  if (m_blackScreenForCapture->isChecked() || m_screen1Box->isChecked() ||
+      m_screen2Box->isChecked() || m_screen3Box->isChecked()) {
+    m_testLightsButton->setEnabled(true);
+  } else {
+    m_testLightsButton->setEnabled(false);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1541,6 +1606,7 @@ void StopMotionController::onFilePathChanged(QString filePath) {
 
 void StopMotionController::onLevelNameChanged(QString levelName) {
   m_levelNameEdit->setText(levelName);
+  onRefreshTests();
 }
 
 //-----------------------------------------------------------------------------
@@ -2501,6 +2567,7 @@ void StopMotionController::showEvent(QShowEvent *event) {
   } else {
     m_noCameraFrame->hide();
   }
+  onRefreshTests();
 }
 
 //-----------------------------------------------------------------------------
@@ -2511,6 +2578,23 @@ void StopMotionController::hideEvent(QHideEvent *event) {
     m_captureButton->setChecked(false);
     onCaptureButtonClicked(false);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::resizeEvent(QResizeEvent *event) {
+  int width      = event->size().width();
+  int imageWidth = 1;
+  if (m_testImages.size() > 0) {
+    imageWidth = m_testImages.at(0).width() + 30;
+
+    int perRow = width / imageWidth;
+    if (perRow != m_testsImagesPerRow) {
+      m_testsImagesPerRow = perRow;
+      reflowTestShots();
+    }
+  }
+  QWidget::resizeEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -2756,6 +2840,7 @@ void StopMotionController::onSceneSwitched() {
   // m_saveInFolderPopup->updateParentFolder();
   // m_saveInFileFld->setPath(m_saveInFolderPopup->getParentPath());
   // m_stopMotion->refreshFrameInfo();
+  onRefreshTests();
 }
 
 //-----------------------------------------------------------------------------
@@ -2767,3 +2852,120 @@ void StopMotionController::serialPortChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::updateStopMotion() {}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onTakeTestButtonClicked() {
+  if (m_stopMotion->m_liveViewStatus == StopMotion::LiveViewOpen) {
+    m_stopMotion->takeTestShot();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onRefreshTests() {
+  clearTests();
+  m_testFullResListVector.clear();
+  m_testImages.clear();
+
+  TApp *app              = TApp::instance();
+  ToonzScene *scene      = app->getCurrentScene()->getScene();
+  TXsheet *xsh           = scene->getXsheet();
+  std::wstring levelName = m_levelNameEdit->text().toStdWString();
+  if (levelName == L"") return;
+
+  TFilePath filePath  = TFilePath(m_saveInFileFld->getPath());
+  TFilePath parentDir = scene->decodeFilePath(filePath);
+
+  TFilePath testsFolder = scene->decodeFilePath(
+      TFilePath(filePath) + TFilePath(levelName + L"_Tests"));
+
+  TFilePath testsThumbsFolder = scene->decodeFilePath(
+      TFilePath(filePath) + TFilePath(levelName + L"_Tests") +
+      TFilePath("Thumbs"));
+
+  // if (!TSystem::doesExistFileOrLevel(testsFolder)) return;
+  QString huh = QDir(testsFolder.getQString()).absolutePath();
+  if (!QDir(huh).exists()) return;
+
+  TFilePathSet set = TSystem::readDirectory(testsFolder, false, true, false);
+
+  for (auto const &tempPath : set) {
+    if (tempPath.getUndottedType() == "jpg") {
+      TFrameId tempFrame    = tempPath.getFrame();
+      TFilePath justFolders = tempPath.getParentDir();
+      std::string justName  = tempPath.getName() + ".jpg";
+      TFilePath testsThumbsFile =
+          scene->decodeFilePath(testsThumbsFolder + justName);
+      // TFilePath
+      // testsThumbsFile(testsThumbsFp.withFrame(tempFrame.getNumber()));
+      if (!TSystem::doesExistFileOrLevel(testsThumbsFile)) continue;
+      QPixmap thumb = QPixmap(testsThumbsFile.getQString());
+      m_testFullResListVector.push_back(tempPath);
+      m_testImages.push_back(thumb);
+    }
+  }
+  if (m_testFullResListVector.size() > 0) {
+    int width           = this->width();
+    int padding         = 30;
+    int imageWidth      = m_testImages[0].width();
+    int imageHeight     = m_testImages[0].height();
+    m_testsImagesPerRow = width / imageWidth;
+  }
+  reflowTestShots();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::reflowTestShots() {
+  clearTests();
+
+  if (m_testFullResListVector.size() > 0) {
+    int padding         = 20;
+    int imageWidth      = m_testImages[0].width();
+    int imageHeight     = m_testImages[0].height();
+    QHBoxLayout *layout = new QHBoxLayout();
+    int j               = 0;
+    for (int i = 0; i < m_testImages.size(); i++) {
+      QPushButton *button = new QPushButton();
+      button->setIcon(QIcon(m_testImages.at(i)));
+      button->setFixedHeight(imageHeight + padding);
+      button->setFixedWidth(imageWidth + padding);
+      button->setIconSize(QSize(imageWidth, imageHeight));
+      connect(button, &QPushButton::clicked, [=] {
+        FlipBook *fb = ::viewFile(m_testFullResListVector.at(i));
+      });
+      layout->addWidget(button);
+      j++;
+      if (j >= m_testsImagesPerRow) {
+        m_testHBoxes.push_back(layout);
+        layout = new QHBoxLayout();
+        j      = 0;
+      }
+    }
+    if (j < m_testsImagesPerRow && j > 0) {
+      m_testHBoxes.push_back(layout);
+    }
+  }
+  for (QHBoxLayout *layout : m_testHBoxes) {
+    // m_testsOutsideLayout->addLayout(layout);
+    m_testsInsideLayout->insertLayout(m_testsInsideLayout->count() - 1, layout);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::clearTests() {
+  if (m_testHBoxes.size() > 0) {
+    for (QHBoxLayout *layout : m_testHBoxes) {
+      QLayoutItem *item;
+      while ((item = layout->takeAt(0)) != NULL) {
+        delete item->widget();
+        delete item;
+      }
+      m_testsInsideLayout->removeItem(layout);
+      delete layout;
+    }
+    m_testHBoxes.clear();
+  }
+}

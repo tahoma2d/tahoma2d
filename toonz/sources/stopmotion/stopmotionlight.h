@@ -26,6 +26,7 @@ public:
   bool m_useScreen3Overlay = false;
   bool m_blackCapture      = true;
   bool m_overlaysReady     = false;
+  bool m_shown             = false;
   int m_screenCount        = 1;
   TPixel32 m_screen1Color, m_screen2Color,
       m_screen3Color = TPixel32(0, 0, 0, 255);

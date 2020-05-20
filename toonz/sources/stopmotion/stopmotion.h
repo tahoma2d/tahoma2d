@@ -10,6 +10,7 @@
 #include "EDSDKTypes.h"
 #endif
 
+#include "opencv2/opencv.hpp"
 #include "turbojpeg.h"
 
 // Toonz Includes
@@ -88,6 +89,7 @@ public:
   bool m_drawBeneathLevels = true;
   bool m_isTimeLapse       = false;
   int m_reviewTime         = 2;
+  bool m_isTestShot        = false;
   QString m_tempFile;
   TXshSimpleLevel* m_sl;
 
@@ -191,6 +193,10 @@ public:
   bool loadXmlFile();
   bool exportImageSequence();
 
+  // tests
+  void takeTestShot();
+  void saveTestShot();
+
 public slots:
   // timers
   void onTimeout();
@@ -199,6 +205,7 @@ public slots:
   void captureWebcamOnTimeout();
   void update();
   bool importImage();
+  void directDslrImage();
   void onSceneSwitched();
   void onPlaybackChanged();
   void onCanonCameraChanged(QString);
@@ -242,6 +249,9 @@ signals:
   void intervalStarted();
   void intervalStopped();
   void intervalAmountChanged(int);
+
+  // test shots
+  void updateTestShots();
 };
 
 #endif  // STOPMOTION_H
