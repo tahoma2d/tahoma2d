@@ -69,13 +69,14 @@ class StopMotionController final : public QWidget {
   QFrame *m_optionsPage;
   QFrame *m_motionPage;
   QFrame *m_lightPage;
+  QFrame *m_testsPage;
   QFrame *m_dslrFrame;
   QFrame *m_webcamFrame;
   QFrame *m_noCameraFrame;
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
   QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton,
-      *m_alwaysUseLiveViewImagesButton;
+      *m_alwaysUseLiveViewImagesButton, *m_takeTestButton;
   QPushButton *m_captureButton, *m_zoomButton, *m_fileFormatOptionButton,
       *m_pickZoomButton, *m_focusNearButton, *m_focusFarButton,
       *m_focusNear2Button, *m_focusNear3Button, *m_focusFar2Button,
@@ -112,6 +113,14 @@ class StopMotionController final : public QWidget {
   QGroupBox *m_webcamAutoFocusGB;
   QTimer *m_lightTestTimer;
 
+  // tests variables
+  std::vector<QPixmap> m_testImages;
+  std::vector<TFilePath> m_testFullResListVector;
+  std::vector<QHBoxLayout *> m_testHBoxes;
+  QVBoxLayout *m_testsOutsideLayout;
+  QVBoxLayout *m_testsInsideLayout;
+  int m_testsImagesPerRow;
+
 public:
   StopMotionController(QWidget *parent = 0);
   ~StopMotionController();
@@ -123,6 +132,8 @@ protected:
   // void mousePressEvent(QMouseEvent *event) override;
   // void keyPressEvent(QKeyEvent *event);
   void keyPressEvent(QKeyEvent *event) override;
+  void resizeEvent(QResizeEvent *event) override;
+  void reflowTestShots();
 
 protected slots:
   void refreshCameraList(QString activeCamera = "");
@@ -186,6 +197,7 @@ protected slots:
   void onScreen3OverlayToggled(bool);
   void onTestLightsPressed();
   void onTestLightsTimeout();
+  void updateLightsEnabled();
   void onScreen1ColorChanged(TPixel32);
   void onScreen2ColorChanged(TPixel32);
   void onScreen3ColorChanged(TPixel32);
@@ -267,6 +279,10 @@ protected slots:
   void onWebcamGainSliderChanged(int value);
   void onWebcamSaturationSliderChanged(int value);
   void getWebcamStatus();
+
+  void onTakeTestButtonClicked();
+  void onRefreshTests();
+  void clearTests();
 
 public slots:
   void openSaveInFolderPopup();
