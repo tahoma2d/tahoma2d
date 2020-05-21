@@ -499,6 +499,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_cameraSettingsLabel = new QLabel(tr("Camera Model"), this);
     m_cameraModeLabel     = new QLabel(tr("Camera Mode"), this);
     m_exposureCombo->setFixedWidth(fontMetrics().width("000000") + 25);
+    m_liveViewCompensationLabel  = new QLabel(tr("Live View Offset: 0"), this);
+    m_liveViewCompensationSlider = new QSlider(Qt::Horizontal, this);
+    m_liveViewCompensationSlider->setRange(-15, 12);
+    m_liveViewCompensationSlider->setTickInterval(1);
+    m_liveViewCompensationSlider->setFixedWidth(260);
     QVBoxLayout *settingsLayout = new QVBoxLayout;
     settingsLayout->setSpacing(0);
     settingsLayout->setMargin(5);
@@ -547,7 +552,13 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       settingsGridLayout->addWidget(m_exposureCombo, 16, 1, Qt::AlignLeft);
       settingsGridLayout->addWidget(new QLabel(" ", this), 17, 0, 1, 2,
                                     Qt::AlignCenter);
-      settingsGridLayout->addWidget(new QLabel(" ", this), 19, 0, 1, 2,
+      settingsGridLayout->addWidget(m_liveViewCompensationLabel, 18, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(m_liveViewCompensationSlider, 19, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 20, 0, 1, 2,
+                                    Qt::AlignCenter);
+      settingsGridLayout->addWidget(new QLabel(" ", this), 21, 0, 1, 2,
                                     Qt::AlignCenter);
 
       settingsGridLayout->setColumnStretch(1, 30);
@@ -566,6 +577,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_focusAndZoomLayout->addStretch();
     // settingsLayout->addStretch();
     settingsLayout->addLayout(m_focusAndZoomLayout);
+    m_settingsTakeTestButton = new QPushButton(tr("Test Shot"));
+    m_settingsTakeTestButton->setFixedHeight(25);
+    settingsLayout->addWidget(m_settingsTakeTestButton);
     settingsLayout->addStretch();
     m_dslrFrame = new QFrame();
     m_dslrFrame->setLayout(settingsLayout);
@@ -1152,12 +1166,17 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_canon,
                        SIGNAL(colorTemperatureChangedSignal(QString)), this,
                        SLOT(onColorTemperatureChangedSignal(QString)));
+  ret = ret &&
+        connect(m_stopMotion->m_canon, SIGNAL(liveViewOffsetChangedSignal(int)),
+                this, SLOT(onLiveViewCompensationChangedSignal(int)));
   ret = ret && connect(m_apertureSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onApertureChanged(int)));
   ret = ret && connect(m_shutterSpeedSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onShutterSpeedChanged(int)));
   ret = ret && connect(m_isoSlider, SIGNAL(valueChanged(int)), this,
                        SLOT(onIsoChanged(int)));
+  ret = ret && connect(m_liveViewCompensationSlider, SIGNAL(valueChanged(int)),
+                       this, SLOT(onLiveViewCompensationChanged(int)));
   ret = ret && connect(m_exposureCombo, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onExposureChanged(int)));
   ret = ret && connect(m_whiteBalanceCombo, SIGNAL(currentIndexChanged(int)),
@@ -1193,6 +1212,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret =
       ret && connect(m_stopMotion->m_canon, SIGNAL(pickFocusCheckToggled(bool)),
                      this, SLOT(onPickFocusCheckToggled(bool)));
+  ret = ret && connect(m_settingsTakeTestButton, SIGNAL(clicked()), this,
+                       SLOT(onTakeTestButtonClicked()));
 
   // Webcam Specific Connections
   ret = ret && connect(m_stopMotion, SIGNAL(webcamResolutionsChanged()), this,
@@ -2264,10 +2285,6 @@ void StopMotionController::onShutterSpeedChanged(int index) {
   m_stopMotion->m_canon->setShutterSpeed(
       shutterSpeedOptions.at(m_shutterSpeedSlider->value()));
   m_shutterSpeedSlider->setRange(0, shutterSpeedOptions.size() - 1);
-  m_shutterSpeedSlider->setValue(shutterSpeedOptions.lastIndexOf(
-      m_stopMotion->m_canon->getCurrentShutterSpeed()));
-  m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
-                               m_stopMotion->m_canon->getCurrentShutterSpeed());
   m_shutterSpeedSlider->blockSignals(false);
 #endif
 }
@@ -2279,11 +2296,9 @@ void StopMotionController::onShutterSpeedChangedSignal(QString text) {
   m_shutterSpeedSlider->blockSignals(true);
   QStringList shutterSpeedOptions =
       m_stopMotion->m_canon->getShutterSpeedOptions();
-  m_shutterSpeedLabel->setText(tr("Shutter Speed: ") +
-                               m_stopMotion->m_canon->getCurrentShutterSpeed());
+  m_shutterSpeedLabel->setText(tr("Shutter Speed: ") + text);
   m_shutterSpeedSlider->setRange(0, shutterSpeedOptions.size() - 1);
-  m_shutterSpeedSlider->setValue(shutterSpeedOptions.lastIndexOf(
-      m_stopMotion->m_canon->getCurrentShutterSpeed()));
+  m_shutterSpeedSlider->setValue(shutterSpeedOptions.lastIndexOf(text));
   m_shutterSpeedSlider->blockSignals(false);
 #endif
 }
@@ -2436,6 +2451,31 @@ void StopMotionController::onPictureStyleChangedSignal(QString text) {
   m_pictureStyleCombo->setCurrentText(
       m_stopMotion->m_canon->getCurrentPictureStyle());
   m_pictureStyleCombo->blockSignals(false);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onLiveViewCompensationChanged(int index) {
+#ifdef WITH_CANON
+  m_liveViewCompensationSlider->blockSignals(true);
+  m_stopMotion->m_canon->setLiveViewOffset(
+      m_liveViewCompensationSlider->value());
+  onShutterSpeedChanged(0);
+  m_liveViewCompensationSlider->blockSignals(false);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onLiveViewCompensationChangedSignal(int value) {
+#ifdef WITH_CANON
+  m_liveViewCompensationSlider->blockSignals(true);
+  m_liveViewCompensationSlider->setValue(value);
+  QString labelText = tr("Live View Offset: ");
+  labelText         = labelText + QString::number(value);
+  m_liveViewCompensationLabel->setText(labelText);
+  m_liveViewCompensationSlider->blockSignals(false);
 #endif
 }
 

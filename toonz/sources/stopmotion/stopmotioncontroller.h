@@ -76,7 +76,8 @@ class StopMotionController final : public QWidget {
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
   QPushButton *m_toggleLiveViewButton, *m_setToCurrentXSheetFrameButton,
-      *m_alwaysUseLiveViewImagesButton, *m_takeTestButton;
+      *m_alwaysUseLiveViewImagesButton, *m_takeTestButton,
+      *m_settingsTakeTestButton;
   QPushButton *m_captureButton, *m_zoomButton, *m_fileFormatOptionButton,
       *m_pickZoomButton, *m_focusNearButton, *m_focusFarButton,
       *m_focusNear2Button, *m_focusNear3Button, *m_focusFar2Button,
@@ -85,13 +86,14 @@ class StopMotionController final : public QWidget {
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
       *m_resolutionLabel, *m_directShowLabel, *m_cameraStatusLabel,
       *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel,
-      *m_webcamLabel;
+      *m_webcamLabel, *m_liveViewCompensationLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
   QSlider *m_apertureSlider, *m_shutterSpeedSlider, *m_isoSlider,
       *m_kelvinSlider, *m_webcamFocusSlider, *m_webcamWhiteBalanceSlider,
       *m_webcamExposureSlider, *m_webcamBrightnessSlider,
-      *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider;
+      *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider,
+      *m_liveViewCompensationSlider;
   QComboBox *m_cameraListCombo, *m_exposureCombo, *m_fileTypeCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
@@ -214,6 +216,7 @@ protected slots:
   void onColorTemperatureChanged(int index);
   void onImageQualityChanged(int index);
   void onPictureStyleChanged(int index);
+  void onLiveViewCompensationChanged(int index);
   void onZoomPressed();
   void onPickZoomPressed();
   void onFocusNear();
@@ -230,6 +233,7 @@ protected slots:
   void onColorTemperatureChangedSignal(QString);
   void onImageQualityChangedSignal(QString);
   void onPictureStyleChangedSignal(QString);
+  void onLiveViewCompensationChangedSignal(int);
   void refreshApertureList();
   void refreshShutterSpeedList();
   void refreshIsoList();

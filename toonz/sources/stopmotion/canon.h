@@ -101,6 +101,9 @@ public:
   bool m_pickLiveViewZoom          = false;
   TDimension m_fullImageDimensions = TDimension(0, 0);
   TPointD m_fullImageDpi           = TPointD(0.0, 0.0);
+  int m_liveViewExposureOffset     = 0;
+  QString m_realShutterSpeed;
+  QString m_displayedShutterSpeed;
 
 // Canon Commands
 #ifdef WITH_CANON
@@ -147,7 +150,8 @@ public:
   QString getCurrentImageQuality();
   QString getCurrentPictureStyle();
   QString getCurrentBatteryLevel();
-  EdsError setShutterSpeed(QString shutterSpeed);
+  int getCurrentLiveViewOffset();
+  EdsError setShutterSpeed(QString shutterSpeed, bool withOffset = true);
   EdsError setIso(QString iso);
   EdsError setAperture(QString aperture);
   EdsError setExposureCompensation(QString exposure);
@@ -155,6 +159,7 @@ public:
   EdsError setColorTemperature(QString temp);
   EdsError setImageQuality(QString quality);
   EdsError setPictureStyle(QString style);
+  void setLiveViewOffset(int value);
   QString getMode();
   void refreshOptions();
   EdsError zoomLiveView();
@@ -195,6 +200,7 @@ signals:
   void colorTemperatureChangedSignal(QString);
   void imageQualityChangedSignal(QString);
   void pictureStyleChangedSignal(QString);
+  void liveViewOffsetChangedSignal(int);
   void modeChanged();
   void focusCheckToggled(bool);
   void pickFocusCheckToggled(bool);
