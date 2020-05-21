@@ -1814,10 +1814,10 @@ void StopMotion::captureWebcamImage() {
 
 //-----------------------------------------------------------------------------
 void StopMotion::captureWebcamOnTimeout() {
-    if (m_isTestShot) {
-        saveTestShot();
-        return;
-    }
+  if (m_isTestShot) {
+    saveTestShot();
+    return;
+  }
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
     if (m_liveViewStatus > LiveViewClosed) {
@@ -1876,6 +1876,10 @@ void StopMotion::directDslrImage() {
     saveTestShot();
   else
     importImage();
+
+  if (m_canon->m_liveViewExposureOffset != 0) {
+    m_canon->setShutterSpeed(m_canon->m_realShutterSpeed, false);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1914,13 +1918,12 @@ void StopMotion::takeTestShot() {
   }
   m_isTestShot = true;
   if (m_usingWebcam) {
-      if (m_light->useOverlays()) {
-          m_light->showOverlays();
-          m_webcamOverlayTimer->start(500);
-      }
-      else {
-          saveTestShot();
-      }
+    if (m_light->useOverlays()) {
+      m_light->showOverlays();
+      m_webcamOverlayTimer->start(500);
+    } else {
+      saveTestShot();
+    }
   } else {
     TApp *app           = TApp::instance();
     ToonzScene *scene   = app->getCurrentScene()->getScene();
@@ -2098,7 +2101,7 @@ void StopMotion::saveXmlFile() {
                                QString::fromStdString(m_canon->m_cameraName));
     xmlWriter.writeTextElement("Aperture", m_canon->getCurrentAperture());
     xmlWriter.writeTextElement("ShutterSpeed",
-                               m_canon->getCurrentShutterSpeed());
+                               m_canon->m_displayedShutterSpeed);
     xmlWriter.writeTextElement("ISO", m_canon->getCurrentIso());
     xmlWriter.writeTextElement("PictureStyle",
                                m_canon->getCurrentPictureStyle());

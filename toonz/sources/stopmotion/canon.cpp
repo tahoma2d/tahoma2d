@@ -11,6 +11,20 @@
 #include <QCoreApplication>
 #include <QFile>
 
+#ifdef Q_OS_WIN
+#include <windows.h>  // for Sleep
+#endif
+void doSleep(int ms) {
+  if (ms <= 0) return;
+
+#ifdef Q_OS_WIN
+  Sleep(uint(ms));
+#else
+  struct timespec ts = {ms / 1000, (ms % 1000) * 1000 * 1000};
+  nanosleep(&ts, NULL);
+#endif
+}
+
 TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 1);
 
 namespace {
@@ -187,6 +201,10 @@ EdsError Canon::openCameraSession() {
 //-----------------------------------------------------------------
 
 EdsError Canon::closeCameraSession() {
+  if (m_liveViewExposureOffset != 0) {
+    setShutterSpeed(m_displayedShutterSpeed, false);
+    doSleep(100);
+  }
   if (m_camera != NULL) {
     m_error       = EdsCloseSession(m_camera);
     m_sessionOpen = false;
@@ -411,9 +429,18 @@ QString Canon::getCurrentShutterSpeed() {
 
   err = EdsGetPropertySize(m_camera, kEdsPropID_Tv, 0, &tvType, &size);
   err = EdsGetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(size), &data);
+  m_realShutterSpeed = QString::fromStdString(m_tvMap[data]);
 
-  return QString::fromStdString(m_tvMap[data]);
+  if (m_liveViewExposureOffset == 0) {
+    m_displayedShutterSpeed = m_realShutterSpeed;
+    return m_realShutterSpeed;
+  } else
+    return m_displayedShutterSpeed;
 }
+
+//-----------------------------------------------------------------
+
+int Canon::getCurrentLiveViewOffset() { return m_liveViewExposureOffset; }
 
 //-----------------------------------------------------------------
 
@@ -552,21 +579,72 @@ QString Canon::getCurrentBatteryLevel() {
 
 //-----------------------------------------------------------------
 
-EdsError Canon::setShutterSpeed(QString shutterSpeed) {
+EdsError Canon::setShutterSpeed(QString shutterSpeed, bool withOffset) {
   EdsError err = EDS_ERR_OK;
   EdsUInt32 value;
+
+  if (withOffset) {
+    m_displayedShutterSpeed = shutterSpeed;
+    m_realShutterSpeed      = shutterSpeed;
+    if (m_liveViewExposureOffset != 0) {
+      int index = m_shutterSpeedOptions.indexOf(shutterSpeed);
+      // brighter goes down in shutter speed, so subtract
+
+      if (m_liveViewExposureOffset > 0) {
+        int newValue = index - m_liveViewExposureOffset;
+        // get brighter, go down
+        if (newValue >= 0) {
+          m_realShutterSpeed = m_shutterSpeedOptions.at(newValue);
+        } else
+          m_realShutterSpeed = m_shutterSpeedOptions.at(0);
+      } else {
+        // get darker, go up
+        int newValue = index - m_liveViewExposureOffset;
+        if (newValue < m_shutterSpeedOptions.size()) {
+          m_realShutterSpeed = m_shutterSpeedOptions.at(newValue);
+        } else
+          m_realShutterSpeed =
+              m_shutterSpeedOptions.at(m_shutterSpeedOptions.size() - 1);
+      }
+    }
+  }
+
+  QString usedSpeed = withOffset ? m_realShutterSpeed : shutterSpeed;
+
   auto it = m_tvMap.begin();
   while (it != m_tvMap.end()) {
-    if (it->second == shutterSpeed.toStdString()) {
+    if (it->second == usedSpeed.toStdString()) {
       value = it->first;
-      break;
+      err =
+          EdsSetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(value), &value);
+      if (err == EDS_ERR_OK) {
+        break;
+      } else {
+        // some shutter speed values have two entries in the tvMap
+        it++;
+        value = it->first;
+        err   = EdsSetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(value),
+                                 &value);
+        break;
+      }
     }
     it++;
   }
 
-  err = EdsSetPropertyData(m_camera, kEdsPropID_Tv, 0, sizeof(value), &value);
-  emit(shutterSpeedChangedSignal(shutterSpeed));
+  std::string realSpeed      = m_realShutterSpeed.toStdString();
+  std::string displayedSpeed = m_displayedShutterSpeed.toStdString();
+
+  if (withOffset) {
+    emit(shutterSpeedChangedSignal(m_displayedShutterSpeed));
+  }
   return err;
+}
+
+//-----------------------------------------------------------------
+
+void Canon::setLiveViewOffset(int compensation) {
+  m_liveViewExposureOffset = compensation;
+  emit(liveViewOffsetChangedSignal(m_liveViewExposureOffset));
 }
 
 //-----------------------------------------------------------------
@@ -848,11 +926,25 @@ bool Canon::downloadImage(EdsBaseRef object) {
 //-----------------------------------------------------------------
 
 EdsError Canon::takePicture() {
+  EdsError speedErr;
+  if (m_liveViewExposureOffset != 0) {
+    speedErr = setShutterSpeed(m_displayedShutterSpeed, false);
+    if (speedErr != 0) {
+      DVGui::error(tr("An error occurred.  Please try again."));
+      return speedErr;
+    }
+    doSleep(100);
+  }
+
+  // std::string displayedStr = displayed.toStdString();
+  std::string real = m_realShutterSpeed.toStdString();
+
   EdsError err;
   err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
                        kEdsCameraCommand_ShutterButton_Completely_NonAF);
   err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
                        kEdsCameraCommand_ShutterButton_OFF);
+
   return err;
 }
 
@@ -1273,7 +1365,7 @@ EdsError Canon::handlePropertyEvent(EdsPropertyEvent event,
   }
   if (property == kEdsPropID_Tv && event == kEdsPropertyEvent_PropertyChanged) {
     emit(instance()->shutterSpeedChangedSignal(
-        instance()->getCurrentShutterSpeed()));
+        instance()->m_displayedShutterSpeed));
   }
   if (property == kEdsPropID_ISOSpeed &&
       event == kEdsPropertyEvent_PropertyDescChanged) {
@@ -1328,10 +1420,10 @@ EdsError Canon::handlePropertyEvent(EdsPropertyEvent event,
 EdsError Canon::handleStateEvent(EdsStateEvent event, EdsUInt32 parameter,
                                  EdsVoid* context) {
   if (event == kEdsStateEvent_Shutdown) {
-      instance()->m_sessionOpen = false;
-      instance()->releaseCamera();
+    instance()->m_sessionOpen = false;
+    instance()->releaseCamera();
     if (instance()->m_sessionOpen && instance()->getCameraCount() > 0) {
-      //instance()->closeCameraSession();
+      // instance()->closeCameraSession();
     }
     StopMotion::instance()->m_liveViewStatus = 0;
     emit(instance()->canonCameraChanged(QString("")));
