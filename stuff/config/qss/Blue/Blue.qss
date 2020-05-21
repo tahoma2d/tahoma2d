@@ -1959,7 +1959,6 @@ XsheetViewer {
   qproperty-CurrentRowBgColor: #506082;
   qproperty-OnionSkinAreaBgColor: #303133;
   qproperty-EmptyColumnHeadColor: #5a5d60;
-  qproperty-SelectedColumnTextColor: #E66464;
   qproperty-EmptyCellColor: #393b3d;
   qproperty-NotEmptyColumnColor: #414345;
   qproperty-SelectedEmptyCellColor: #64676a;
@@ -2080,7 +2079,6 @@ XsheetViewer {
 }
 FunctionTreeView {
   qproperty-TextColor: #d6d8dd;
-  qproperty-CurrentTextColor: #E66464;
 }
 /* Function Editor Spreadsheet
 ----------------------------------------------------------------------------- */
@@ -2111,7 +2109,6 @@ SpreadsheetViewer {
   qproperty-SelectedSceneRangeEmptyColor: #6d7073;
   qproperty-TextColor: #d6d8dd;
   qproperty-ColumnHeaderBorderColor: #777b7f;
-  qproperty-SelectedColumnTextColor: #E66464;
 }
 #ExpressionField {
   background-color: #e0e1e2;

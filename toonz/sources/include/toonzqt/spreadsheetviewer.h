@@ -220,7 +220,7 @@ protected:
   void paintEvent(QPaintEvent *) override;
   virtual void drawCells(QPainter &p, int r0, int c0, int r1, int c1) {}
 };
-}
+}  // namespace Spreadsheet
 
 //-------------------------------------------------------------------
 
@@ -279,11 +279,8 @@ class DVAPI SpreadsheetViewer : public QDialog {
           WRITE setSelectedSceneRangeEmptyColor)
 
   QColor m_columnHeaderBorderColor;  // column header border lines (46,47,46)
-  QColor m_selectedColumnTextColor;  // selected column text (red)
   Q_PROPERTY(QColor ColumnHeaderBorderColor READ getColumnHeaderBorderColor
                  WRITE setColumnHeaderBorderColor)
-  Q_PROPERTY(QColor SelectedColumnTextColor READ getSelectedColumnTextColor
-                 WRITE setSelectedColumnTextColor)
 
   Spreadsheet::ScrollArea *m_columnScrollArea;
   Spreadsheet::ScrollArea *m_rowScrollArea;
@@ -379,12 +376,6 @@ public:
   }
   QColor getColumnHeaderBorderColor() const {
     return m_columnHeaderBorderColor;
-  }
-  void setSelectedColumnTextColor(const QColor &color) {
-    m_selectedColumnTextColor = color;
-  }
-  QColor getSelectedColumnTextColor() const {
-    return m_selectedColumnTextColor;
   }
 
   void scroll(QPoint delta);
