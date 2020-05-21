@@ -344,7 +344,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
     // channel name
     painter.setPen(getViewer()->getTextColor());
     if (channel->isCurrent())
-      painter.setPen(getViewer()->getSelectedColumnTextColor());
+      painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
 
     QString text = channel->getShortName();
     int d        = 8;
@@ -357,7 +357,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
       int tmpwidth = (lastGroupColumn) ? width : width * 2;
       painter.setPen(getViewer()->getTextColor());
       if (group == currentGroup)
-        painter.setPen(getViewer()->getSelectedColumnTextColor());
+        painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
       text = group->getShortName();
       painter.drawText(x0 + d, y0, tmpwidth - d, y1 - y0 + 1,
                        Qt::AlignLeft | Qt::AlignVCenter, text);

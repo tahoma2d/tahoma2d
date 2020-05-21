@@ -277,8 +277,9 @@ QVariant StageObjectChannelGroup::data(int role) const {
       return Qt::black;
 #endif
     TStageObjectId currentId = model->getCurrentStageObject()->getId();
-    return m_stageObject->getId() == currentId ? view->getCurrentTextColor()
-                                               : view->getTextColor();
+    return m_stageObject->getId() == currentId
+               ? view->getViewer()->getCurrentTextColor()
+               : view->getTextColor();
   } else
     return ChannelGroup::data(role);
 }
@@ -390,7 +391,7 @@ QVariant FxChannelGroup::data(int role) const {
       return Qt::black;
 #endif
     TFx *currentFx = model->getCurrentFx();
-    return m_fx == currentFx ? view->getCurrentTextColor()
+    return m_fx == currentFx ? view->getViewer()->getCurrentTextColor()
                              : view->getTextColor();
   } else
     return Item::data(role);
@@ -515,7 +516,7 @@ QVariant SkVDChannelGroup::data(int role) const {
             if (vIdx >= 0 &&
                 sd->skeleton(vxSel->skeletonId())->vertex(vIdx).name() ==
                     getLongName())
-              return view->getCurrentTextColor();
+              return view->getViewer()->getCurrentTextColor();
           }
     return view->getTextColor();
   } else
@@ -586,7 +587,8 @@ QVariant FunctionTreeModel::Channel::data(int role) const {
 #else
       return Qt::black;
 #endif
-    return (isCurrent()) ? view->getCurrentTextColor() : view->getTextColor();
+    return (isCurrent()) ? view->getViewer()->getCurrentTextColor()
+                         : view->getTextColor();
   } else
     return TreeModel::Item::data(role);
 }
@@ -1328,7 +1330,11 @@ void FunctionTreeModel::addParameter(TParam *parameter,
 //-----------------------------------------------------------------------------
 
 FunctionTreeView::FunctionTreeView(FunctionViewer *parent)
-    : TreeView(parent), m_scenePath(), m_clickedItem(0), m_draggingChannel(0) {
+    : TreeView(parent)
+    , m_scenePath()
+    , m_clickedItem(0)
+    , m_draggingChannel(0)
+    , m_viewer(parent) {
   assert(parent);
 
   setModel(new FunctionTreeModel(this));
@@ -1543,15 +1549,7 @@ void FunctionTreeView::openContextMenu(FunctionTreeModel::Channel *channel,
                                        const QPoint &globalPos) {
   assert(channel);
 
-  QWidget *pw = dynamic_cast<QWidget *>(parentWidget());
-  if (!pw) return;
-
-  FunctionViewer *fv = dynamic_cast<FunctionViewer *>(pw->parentWidget());
-
-  if (!fv) {
-    assert(fv);
-    return;
-  }
+  if (!m_viewer) return;
 
   QMenu menu;
 
@@ -1567,12 +1565,12 @@ void FunctionTreeView::openContextMenu(FunctionTreeModel::Channel *channel,
   TDoubleParam *curve = channel->getParam();
 
   if (action == &saveCurveAction)
-    fv->emitIoCurve((int)FunctionViewer::eSaveCurve, curve, "");
+    m_viewer->emitIoCurve((int)FunctionViewer::eSaveCurve, curve, "");
   else if (action == &loadCurveAction)
-    fv->emitIoCurve((int)FunctionViewer::eLoadCurve, curve, "");
+    m_viewer->emitIoCurve((int)FunctionViewer::eLoadCurve, curve, "");
   else if (action == &exportDataAction)
-    fv->emitIoCurve((int)FunctionViewer::eExportCurve, curve,
-                    channel->getLongName().toStdString());
+    m_viewer->emitIoCurve((int)FunctionViewer::eExportCurve, curve,
+                          channel->getLongName().toStdString());
 }
 
 //-----------------------------------------------------------------------------
