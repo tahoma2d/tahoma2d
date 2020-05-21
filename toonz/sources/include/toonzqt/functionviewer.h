@@ -126,6 +126,9 @@ public:
   virtual void save(QSettings &settings) const override;
   virtual void load(QSettings &settings) override;
 
+  // refer to the preferences' "Current Column Color"
+  QColor getCurrentTextColor() const;
+
 signals:
 
   void curveChanged();

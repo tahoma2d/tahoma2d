@@ -153,7 +153,7 @@ const QColor TimelineConfigButtonBgColor(255, 255, 255, 0);
 const QColor RowAreaBGColor(164, 164, 164);
 const QColor CurrentFrameBGColor(210, 210, 210);
 
-}  // namespace XsheetGUI;
+}  // namespace XsheetGUI
 
 //=============================================================================
 // XsheetScrollArea
@@ -227,12 +227,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor OnionSkinAreaBgColor READ getOnionSkinAreaBgColor WRITE
                  setOnionSkinAreaBgColor)
   // Column
-  QColor m_emptyColumnHeadColor;     // empty column header (200,200,200)
-  QColor m_selectedColumnTextColor;  // selected column text (red)
+  QColor m_emptyColumnHeadColor;  // empty column header (200,200,200)
   Q_PROPERTY(QColor EmptyColumnHeadColor READ getEmptyColumnHeadColor WRITE
                  setEmptyColumnHeadColor)
-  Q_PROPERTY(QColor SelectedColumnTextColor READ getSelectedColumnTextColor
-                 WRITE setSelectedColumnTextColor)
+
   // Cell
   QColor m_emptyCellColor;          // empty cell (124,124,124)
   QColor m_notEmptyColumnColor;     // occupied column (164,164,164)
@@ -748,9 +746,8 @@ public:
     m_emptyColumnHeadColor = color;
   }
   QColor getEmptyColumnHeadColor() const { return m_emptyColumnHeadColor; }
-  void setSelectedColumnTextColor(const QColor &color) {
-    m_selectedColumnTextColor = color;
-  }
+
+  // specified by preferences
   QColor getSelectedColumnTextColor() const;
 
   // Cell

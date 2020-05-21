@@ -235,9 +235,8 @@ public:
   Channel *getClosestChannel(double frame, double value) const;
 
   void refreshActiveChannels();
-  void refreshData(
-      TXsheet *xsh);  // call this method when the stageObject/Fx structure
-                      // has been modified
+  void refreshData(TXsheet *xsh);  // call this method when the stageObject/Fx
+                                   // structure has been modified
   void resetAll();
 
   void applyShowFilters();
@@ -375,14 +374,12 @@ class FunctionTreeView final : public TreeView {
 
   FunctionTreeModel::Channel *m_draggingChannel;
   QPoint m_dragStartPosition;
+  FunctionViewer *m_viewer;
   //---
 
   // set color by using style sheet
-  QColor m_textColor;         // text color (black)
-  QColor m_currentTextColor;  // current item text color (red)
+  QColor m_textColor;  // text color (black)
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
-  Q_PROPERTY(QColor CurrentTextColor READ getCurrentTextColor WRITE
-                 setCurrentTextColor)
 
 public:
   FunctionTreeView(FunctionViewer *parent);
@@ -393,8 +390,7 @@ public:
 
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
-  void setCurrentTextColor(const QColor &color) { m_currentTextColor = color; }
-  QColor getCurrentTextColor() const { return m_currentTextColor; }
+  FunctionViewer *getViewer() { return m_viewer; }
 
 protected:
   void onClick(TreeModel::Item *item, const QPoint &itemPos,
