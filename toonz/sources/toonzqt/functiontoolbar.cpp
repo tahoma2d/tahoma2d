@@ -51,6 +51,7 @@ FunctionToolbar::FunctionToolbar(QWidget *parent)
   // value field
   m_valueToolbar->addWidget(new QLabel(tr("Value")));
   m_valueFld = new DVGui::MeasuredDoubleLineEdit();
+  m_valueFld->setDecimals(2);
   // frame navigator
   m_frameNavigator = new FrameNavigator(this);
   // keyframe navigator

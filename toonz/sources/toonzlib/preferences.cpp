@@ -372,7 +372,7 @@ void Preferences::definePreferenceItems() {
   define(cameraUnits, "cameraUnits", QMetaType::QString, "pixel");
   define(CurrentRoomChoice, "CurrentRoomChoice", QMetaType::QString, "Default");
   define(functionEditorToggle, "functionEditorToggle", QMetaType::Int,
-         (int)ShowGraphEditorInPopup);
+         (int)ToggleBetweenGraphAndSpreadsheet);
   define(moveCurrentFrameByClickCellArea, "moveCurrentFrameByClickCellArea",
          QMetaType::Bool, true);
   define(actualPixelViewOnSceneEditingMode, "actualPixelViewOnSceneEditingMode",
@@ -454,8 +454,7 @@ void Preferences::definePreferenceItems() {
          0.1, std::numeric_limits<double>::max());
 
   define(EnableAutocreation, "EnableAutocreation", QMetaType::Bool, true);
-  define(NumberingSystem, "NumberingSystem", QMetaType::Int,
-         0);  // Incremental
+  define(NumberingSystem, "NumberingSystem", QMetaType::Int, 0);  // Incremental
   define(EnableAutoStretch, "EnableAutoStretch", QMetaType::Bool, true);
   define(EnableCreationInHoldCells, "EnableCreationInHoldCells",
          QMetaType::Bool, true);
@@ -488,8 +487,8 @@ void Preferences::definePreferenceItems() {
   define(cursorOutlineEnabled, "cursorOutlineEnabled", QMetaType::Bool, true);
   define(levelBasedToolsDisplay, "levelBasedToolsDisplay", QMetaType::Int,
          0);  // Default
-  define(useCtrlAltToResizeBrush, "useCtrlAltToResizeBrush",
-         QMetaType::Bool, true);
+  define(useCtrlAltToResizeBrush, "useCtrlAltToResizeBrush", QMetaType::Bool,
+         true);
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,

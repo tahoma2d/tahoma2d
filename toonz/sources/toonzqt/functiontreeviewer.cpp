@@ -43,6 +43,7 @@
 #include <QApplication>  // for drag&drop
 #include <QDrag>
 #include <QMimeData>
+#include <QBitmap>
 
 #include "toonzqt/functiontreeviewer.h"
 
@@ -562,13 +563,43 @@ bool FunctionTreeModel::Channel::isAnimated() const {
 
 QVariant FunctionTreeModel::Channel::data(int role) const {
   if (role == Qt::DecorationRole) {
-    static QIcon paramAnimOn(":Resources/paramanim_on.svg");
-    static QIcon paramAnimOff(":Resources/paramanim_off.svg");
-    static QIcon paramOn(":Resources/param_on.svg");
-    static QIcon paramOff(":Resources/param_off.svg");
+    QPixmap pixmap(10, 10);
+    QColor color;
+    QString name        = getShortName();
+    std::string strName = name.toStdString();
+    if (name == "X")
+      color = QColor("firebrick");
+    else if (name == "Y")
+      color = QColor("limegreen");
+    else if (name == "Z")
+      color = QColor("deepskyblue");
+    else if (name == "SO")
+      color = QColor("hotpink");
+    else if (name == "Rotation")
+      color = QColor("darkorchid");
+    else if (name == "Scale")
+      color = QColor("gold");
+    else if (name == "Scale H")
+      color = QColor("gold");
+    else if (name == "Scale V")
+      color = QColor("gold");
+    else if (name == "Shear H")
+      color = QColor("darkorange");
+    else if (name == "Shear V")
+      color = QColor("darkorange");
+    else if (name == "posPath")
+      color = QColor("darksalmon");
+    else
+      color = QColor("darkcyan");
+    if (!isActive())
+      color = QColor("dimgray");
+    else if (!m_param->hasKeyframes())
+      color.setAlpha(100);
+    pixmap.fill(color);
 
-    return m_param->hasKeyframes() ? isActive() ? paramAnimOn : paramAnimOff
-                                   : isActive() ? paramOn : paramOff;
+    QIcon param(pixmap);
+    return param;
+
   } else if (role == Qt::DisplayRole) {
     if (m_param->hasUILabel()) {
       return QString::fromStdString(m_param->getUILabel());
@@ -607,7 +638,7 @@ QString FunctionTreeModel::Channel::getShortName() const {
 //-----------------------------------------------------------------------------
 
 QString FunctionTreeModel::Channel::getLongName() const {
-  QString name = getShortName();
+  QString name                = getShortName();
   if (getChannelGroup()) name = getChannelGroup()->getLongName() + " " + name;
   return name;
 }
@@ -1085,7 +1116,7 @@ void FunctionTreeModel::addChannels(TFx *fx, ChannelGroup *groupItem,
 
   std::wstring fxId = L"";
   TMacroFx *macro   = dynamic_cast<TMacroFx *>(fxItem->getFx());
-  if (macro) fxId = fx->getFxId();
+  if (macro) fxId   = fx->getFxId();
 
   const std::string &paramNamePref = fx->getFxType() + ".";
 
@@ -1231,7 +1262,7 @@ void FunctionTreeModel::resetAll() {
 
 void FunctionTreeModel::setCurrentFx(TFx *fx) {
   TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zcfx) fx = zcfx->getZeraryFx();
+  if (zcfx) fx          = zcfx->getZeraryFx();
   if (fx != m_currentFx) {
     if (fx) fx->addRef();
     if (m_currentFx) m_currentFx->release();
@@ -1423,6 +1454,12 @@ void FunctionTreeView::onActivated(const QModelIndex &index) {
         onActivated(item->getChild(c)->createIndex());
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void FunctionTreeView::mouseDoubleClickEvent(QMouseEvent *event) {
+  emit(fit());
 }
 
 //-----------------------------------------------------------------------------

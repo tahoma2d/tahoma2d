@@ -216,6 +216,7 @@ protected:
   void mousePressEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
   void mouseMoveEvent(QMouseEvent *e) override;
+  void mouseDoubleClickEvent(QMouseEvent *) override;
   void wheelEvent(QWheelEvent *e) override;
   void openContextMenu(QMouseEvent *e);
 
@@ -226,8 +227,11 @@ protected:
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
 
+  QColor getChannelColor(QString name, bool active);
+
 public slots:
   void onFrameSwitched();
+  void onFitCalled();
 
 signals:
   // void segmentSelected(TDoubleParam *curve, int segmentIndex);

@@ -48,7 +48,7 @@
 
 using namespace DVGui;
 
-TEnv::IntVar FunctionEditorToggleStatus("FunctionEditorToggleStatus", 0);
+TEnv::IntVar FunctionEditorToggleStatus("FunctionEditorToggleStatus", 1);
 
 //=============================================================================
 //
@@ -150,33 +150,32 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
 
   leftPanel->setLayout(m_leftLayout);
 
-  addWidget(leftPanel);
-
   QVBoxLayout *rightLayout = new QVBoxLayout();
   rightLayout->setMargin(0);
   rightLayout->setSpacing(5);
   {
-    rightLayout->addWidget(m_segmentViewer, 0);
     rightLayout->addWidget(m_treeView, 1);
+    rightLayout->addWidget(m_segmentViewer, 0);
   }
   rightPanel->setLayout(rightLayout);
 
   addWidget(rightPanel);
+  addWidget(leftPanel);
 
   //--- set the splitter's default size
-  setSizes(QList<int>() << 500 << 200);
-  setStretchFactor(0, 5);
-  setStretchFactor(1, 2);
+  setSizes(QList<int>() << 200 << 500);
+  setStretchFactor(1, 5);
+  setStretchFactor(0, 2);
 
   //---- signal-slot connections
   bool ret = true;
   ret      = ret && connect(m_toolbar, SIGNAL(numericalColumnToggled()), this,
                        SLOT(toggleMode()));
-  ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
+  ret = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
                        m_functionGraph, SLOT(update()));
-  ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
+  ret = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
                        m_numericalColumns, SLOT(updateAll()));
-  ret      = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_treeView,
+  ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_treeView,
                        SLOT(update()));
   ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_functionGraph,
                        SLOT(update()));
@@ -199,6 +198,8 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
                        this, SLOT(doSwitchCurrentObject(TStageObject *)));
   ret = ret && connect(m_treeView, SIGNAL(switchCurrentFx(TFx *)), this,
                        SLOT(doSwitchCurrentFx(TFx *)));
+  ret = ret && connect(m_treeView, SIGNAL(fit()), m_functionGraph,
+                       SLOT(onFitCalled()));
 
   ret = ret &&
         connect(ftModel,
@@ -215,6 +216,7 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
   if (m_toggleStart ==
       Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
     m_numericalColumns->hide();
+  m_toggleStatus = FunctionEditorToggleStatus;
 }
 
 //-----------------------------------------------------------------------------
@@ -513,6 +515,7 @@ void FunctionViewer::toggleMode() {
       m_toggleStatus = 1;
     }
   }
+  FunctionEditorToggleStatus = m_toggleStatus;
 }
 
 //-----------------------------------------------------------------------------
@@ -535,6 +538,7 @@ void FunctionViewer::onCurveChanged(bool isDragging) {
       }
     }
   }
+  m_toolbar->setCurve(m_curve);
 }
 
 //-----------------------------------------------------------------------------
@@ -606,7 +610,7 @@ void FunctionViewer::onStageObjectChanged(bool isDragging) {
 void FunctionViewer::onFxSwitched() {
   TFx *fx              = m_fxHandle->getFx();
   TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zfx) fx = zfx->getZeraryFx();
+  if (zfx) fx          = zfx->getZeraryFx();
   static_cast<FunctionTreeModel *>(m_treeView->model())->setCurrentFx(fx);
   m_treeView->updateAll();
   m_functionGraph->update();
@@ -725,6 +729,7 @@ bool FunctionViewer::isExpressionPageActive() {
 //----------------------------------------------------------------------------
 
 void FunctionViewer::save(QSettings &settings) const {
+  FunctionEditorToggleStatus = m_toggleStatus;
   settings.setValue("toggleStatus", m_toggleStatus);
   settings.setValue("showIbtwnValuesInSheet",
                     m_numericalColumns->isIbtwnValueVisible());
@@ -737,7 +742,7 @@ void FunctionViewer::load(QSettings &settings) {
   if (toggleStatus.canConvert(QVariant::Int)) {
     m_toggleStatus = toggleStatus.toInt();
   }
-
+  m_toggleStatus    = FunctionEditorToggleStatus;
   bool ibtwnVisible = settings
                           .value("showIbtwnValuesInSheet",
                                  m_numericalColumns->isIbtwnValueVisible())
