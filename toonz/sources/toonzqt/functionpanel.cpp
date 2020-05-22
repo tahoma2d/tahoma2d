@@ -642,8 +642,8 @@ void FunctionPanel::drawOtherCurves(QPainter &painter) {
     TDoubleParam *curve = channel->getParam();
     QColor color =
         curve == m_curveLabel.curve ? m_selectedColor : getOtherCurvesColor();
-    solidPen.setColor(color);
-    dashedPen.setColor(color);
+    solidPen.setColor(getChannelColor(channel->getShortName(), false));
+    dashedPen.setColor(getChannelColor(channel->getShortName(), false));
     painter.setBrush(Qt::NoBrush);
 
     int kCount = curve->getKeyframeCount();
@@ -663,10 +663,10 @@ void FunctionPanel::drawOtherCurves(QPainter &painter) {
       for (int k = 0; k < kCount; k++) {
         double frame = curve->keyframeIndexToFrame(k);
         QPointF p    = getWinPos(curve, frame, curve->getValue(frame));
-        painter.drawRect(p.x() - 1, p.y() - 1, 3, 3);
+        painter.drawRect(p.x() - 3, p.y() - 3, 7, 7);
         QPointF p2 = getWinPos(curve, frame, curve->getValue(frame, true));
         if (p2.y() != p.y()) {
-          painter.drawRect(p2.x() - 1, p2.y() - 1, 3, 3);
+          painter.drawRect(p2.x() - 3, p2.y() - 3, 7, 7);
           painter.setPen(solidPen);
           painter.drawLine(p, p2);
           painter.setPen(m_textColor);
@@ -892,6 +892,7 @@ void FunctionPanel::drawCurrentCurve(QPainter &painter) {
 
   painter.setRenderHint(QPainter::Antialiasing, true);
   QColor color = Qt::red;
+  color        = getChannelColor(channel->getShortName(), true);
   QPen solidPen(color);
   QPen dashedPen(color);
   QVector<qreal> dashes;
@@ -920,6 +921,7 @@ void FunctionPanel::drawCurrentCurve(QPainter &painter) {
             segmentType == TDoubleKeyframe::SimilarShape ||
             segmentType == TDoubleKeyframe::File)
           color = QColor(185, 0, 0);
+        color   = getChannelColor(channel->getShortName(), true);
         if (getSelection()->isSegmentSelected(curve, k))
           solidPen.setWidth(2);
         else
@@ -963,7 +965,7 @@ void FunctionPanel::drawCurrentCurve(QPainter &painter) {
     case Point:
       painter.setBrush(isSelected ? QColor(255, 126, 0) : m_subColor);
       painter.setPen(m_textColor);
-      r = isHighlighted ? 3 : 2;
+      r = isHighlighted ? 7 : 5;
       drawSquare(painter, p, r);
       break;
 
@@ -1151,7 +1153,7 @@ void FunctionPanel::paintEvent(QPaintEvent *e) {
       // painter.setClipRect(0,oy0,height(),height()-oy0);
       int y = valueToY(currentCurve, m_cursor.value);
       painter.drawLine(ox, y, ox + 10, y);
-      painter.drawText(m_origin.x() + 10, y + 4, QString::number(displayValue));
+      painter.drawText(ox + 15, y + 4, QString::number(displayValue, 'f', 2));
     }
   }
 
@@ -1236,7 +1238,7 @@ void FunctionPanel::mousePressEvent(QMouseEvent *e) {
       m_functionTreeModel ? m_functionTreeModel->getCurrentChannel() : 0;
   if (!currentChannel ||
       (getCurveDistance(currentChannel->getParam(), winPos) > maxDistance &&
-          closestGadgetId < 0)) {
+       closestGadgetId < 0)) {
     // if current channel is undefined or its curve is too far from the clicked
     // point
     // the user is possibly trying to select a different curve
@@ -1413,6 +1415,10 @@ void FunctionPanel::mouseMoveEvent(QMouseEvent *e) {
     update();
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void FunctionPanel::mouseDoubleClickEvent(QMouseEvent *) { fitGraphToWindow(); }
 
 //-----------------------------------------------------------------------------
 
@@ -1742,3 +1748,39 @@ void FunctionPanel::hideEvent(QHideEvent *) {
 //-----------------------------------------------------------------------------
 
 void FunctionPanel::onFrameSwitched() { update(); }
+
+//-----------------------------------------------------------------------------
+
+void FunctionPanel::onFitCalled() { fitGraphToWindow(); }
+
+//-----------------------------------------------------------------------------
+
+QColor FunctionPanel::getChannelColor(QString name, bool active) {
+  QColor color;
+  if (name == "X")
+    color = QColor("firebrick");
+  else if (name == "Y")
+    color = QColor("limegreen");
+  else if (name == "Z")
+    color = QColor("deepskyblue");
+  else if (name == "SO")
+    color = QColor("hotpink");
+  else if (name == "Rotation")
+    color = QColor("darkorchid");
+  else if (name == "Scale")
+    color = QColor("gold");
+  else if (name == "Scale H")
+    color = QColor("gold");
+  else if (name == "Scale V")
+    color = QColor("gold");
+  else if (name == "Shear H")
+    color = QColor("darkorange");
+  else if (name == "Shear V")
+    color = QColor("darkorange");
+  else if (name == "posPath")
+    color = QColor("darksalmon");
+  else
+    color = QColor("darkcyan");
+  if (!active) color.setAlpha(180);
+  return color;
+}

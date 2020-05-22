@@ -542,8 +542,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
 
   m_zLabel             = new ClickableLabel(tr("Z:"), this);
   m_motionPathPosLabel = new ClickableLabel(tr("Position:"), this);
-  m_ewPosLabel         = new ClickableLabel(tr("E/W:"), this);
-  m_nsPosLabel         = new ClickableLabel(tr("N/S:"), this);
+  m_ewPosLabel         = new ClickableLabel(tr("X:"), this);
+  m_nsPosLabel         = new ClickableLabel(tr("Y:"), this);
 
   // Lock E/W
   TBoolProperty *lockProp =
@@ -625,8 +625,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       new PegbarCenterField(m_tool, 0, "field", objHandle, xshHandle, this);
   m_nsCenterField =
       new PegbarCenterField(m_tool, 1, "field", objHandle, xshHandle, this);
-  m_ewCenterLabel = new ClickableLabel(tr("E/W:"), this);
-  m_nsCenterLabel = new ClickableLabel(tr("N/S:"), this);
+  m_ewCenterLabel = new ClickableLabel(tr("X:"), this);
+  m_nsCenterLabel = new ClickableLabel(tr("Y:"), this);
 
   // Lock E/W Center
   lockProp =
@@ -1207,9 +1207,9 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
       new SimpleIconViewField("edit_rotation", tr("Rotation"));
   m_rotationField = new SelectionRotationField(selectionTool, tr("Rotation"));
 
-  m_moveXLabel = new ClickableLabel(tr("E/W:"), this);
+  m_moveXLabel = new ClickableLabel(tr("X:"), this);
   m_moveXField = new SelectionMoveField(selectionTool, 0, "Move X");
-  m_moveYLabel = new ClickableLabel(tr("N/S:"), this);
+  m_moveYLabel = new ClickableLabel(tr("Y:"), this);
   m_moveYField = new SelectionMoveField(selectionTool, 1, "Move Y");
 
   if (rasterSelectionTool) {

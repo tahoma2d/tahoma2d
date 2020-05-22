@@ -407,6 +407,7 @@ protected:
                        const QPoint &globalPos);
   void openContextMenu(FunctionTreeModel::ChannelGroup *group,
                        const QPoint &globalPos);
+  void mouseDoubleClickEvent(QMouseEvent *) override;
 
 public slots:
 
@@ -420,6 +421,7 @@ signals:
 
   void switchCurrentObject(TStageObject *obj);
   void switchCurrentFx(TFx *fx);
+  void fit();
 };
 
 #endif  // FUNCTIONTREEMODEL_H
