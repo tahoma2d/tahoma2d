@@ -249,7 +249,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   if (m_freezedStatus != NO_FREEZED) return;
 
   m_tabletEvent = true;
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
   // For Linux, ignore pressure when not actively pressing
   // Means we are hovering
   if (m_tabletState != None)
@@ -314,7 +314,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletEvent = false;
 #endif
 
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
     // for Linux, create context menu on right click here.
     // could possibly merge with OSX code above
     if (e->button() == Qt::RightButton) {

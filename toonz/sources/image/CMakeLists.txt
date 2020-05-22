@@ -1,6 +1,5 @@
 set(HEADERS
     sgi/tiio_sgi.h
-    tif/tiio_tif.h
     pli/pli_io.h
     pli/tiio_pli.h
     tga/tiio_tga.h
@@ -13,9 +12,6 @@ set(HEADERS
     png/tiio_png.h
     psd/tiio_psd.h
     svg/tiio_svg.h
-    tzp/tiio_plt.h
-    tzp/tiio_tzp.h
-    tzp/toonztags.h
     tzl/tiio_tzl.h
     ../include/tnzimage.h
     ffmpeg/tiio_gif.h
@@ -30,7 +26,6 @@ set(HEADERS
 set(SOURCES
     tiio.cpp
     sgi/filesgi.cpp
-    tif/tiio_tif.cpp
     pli/pli_io.cpp
     pli/tags.cpp
     pli/tiio_pli.cpp
@@ -44,9 +39,6 @@ set(SOURCES
     png/tiio_png.cpp
     psd/tiio_psd.cpp
     svg/tiio_svg.cpp
-    tzp/tiio_plt.cpp
-    tzp/tiio_tzp.cpp
-    tzp/avl.c
     tzl/tiio_tzl.cpp
     ffmpeg/tiio_gif.cpp
     ffmpeg/tiio_webm.cpp
@@ -56,6 +48,25 @@ set(SOURCES
     sprite/tiio_sprite.cpp
     mesh/tiio_mesh.cpp
 )
+
+
+# Can't build this on FreeBSD: libtiff requires internal API access.
+# Probably some one get luck to fix this.
+if(NOT BUILD_TARGET_BSD)
+    set(HEADERS ${HEADERS}
+        tif/tiio_tif.h
+        tzp/tiio_plt.h
+        tzp/tiio_tzp.h
+        tzp/toonztags.h
+    )
+    set(SOURCES ${SOURCES}
+        tif/tiio_tif.cpp
+        tzp/tiio_plt.cpp
+        tzp/tiio_tzp.cpp
+        tzp/avl.c
+    )
+endif()
+
 
 if(BUILD_TARGET_WIN)
     set(HEADERS ${HEADERS}
@@ -86,8 +97,14 @@ message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
     SYSTEM
     ${TIFF_INCLUDE_DIR}
-    ${SDKROOT}/LibJPEG/jpeg-9
 )
+
+if(NOT BUILD_TARGET_BSD)
+    include_directories(
+        ${SDKROOT}/LibJPEG/jpeg-9
+    )
+endif()
+
 
 if(BUILD_ENV_MSVC)
     include_directories(

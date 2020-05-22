@@ -636,7 +636,7 @@ bool TVectorImage::getNearestStroke(const TPointD &p, double &outW,
 
 //-----------------------------------------------------------------------------
 
-#if defined(LINUX) || defined(MACOSX)
+#if defined(LINUX) || defined(FREEBSD) || defined(MACOSX)
 void TVectorImage::render(const TVectorRenderData &rd, TRaster32P &ras) {
   // hardRenderVectorImage(rd,ras,this);
 }

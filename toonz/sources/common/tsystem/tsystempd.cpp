@@ -12,7 +12,6 @@
 #include "tconvert.h"
 
 #include <time.h>
-#include <sys/timeb.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -66,6 +65,27 @@
 #include <QUrl>
 #endif
 
+#ifdef FREEBSD
+#define PLATFORM FREEBSD
+#include <sys/param.h>
+#include <sys/sched.h>
+#include <sys/sysctl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/proc.h>
+#include <sys/vmmeter.h>
+#include <vm/vm_param.h>
+#include <grp.h>
+#include <utime.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <sys/mount.h>
+#include <pwd.h>
+#include <dlfcn.h>
+#define pagetok(__nb) ((__nb) * (getpagesize()))
+#endif
+
+
 #if defined(MACOSX)
 #define PLATFORM MACOSX
 #include <grp.h>
@@ -73,7 +93,6 @@
 #include <sys/param.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/timeb.h>  // for ftime
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -192,6 +211,11 @@ bool TSystem::memoryShortage() {
   // to be done...
   return false;
 
+#elif defined(FREEBSD)
+
+  // to be done...
+  return false;
+
 #else
 
   @ @ @ERROR : PLATFORM NOT SUPPORTED
@@ -253,6 +277,31 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhisicalMemory) {
     assert(!"sysinfo function failed");
   }
   free(sysInfo);
+
+#elif defined(FREEBSD)
+
+  TINT64 ret = 0;
+  size_t size;
+#ifdef __OpenBSD__
+  int mib[] = {CTL_VM, VM_UVMEXP};
+  struct uvmexp  uvmexp;
+#else
+  int mib[] = {CTL_VM, VM_TOTAL};
+  struct vmtotal vmtotal;
+#endif
+
+#ifdef __OpenBSD__
+  size = sizeof(uvmexp);
+  if (sysctl(mib, 2, &uvmexp, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok((guint64)uvmexp.free);
+#else
+  size = sizeof(vmtotal);
+  if (sysctl(mib, 2, &vmtotal, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok(vmtotal.t_free);
+#endif
+  return ret;
 
 #elif defined(MACOSX)
 
@@ -383,6 +432,32 @@ TINT64 TSystem::getMemorySize(bool onlyPhisicalMemory) {
     assert(!"sysinfo function failed");
 
   free(sysInfo);
+  return ret;
+
+#elif defined(FREEBSD)
+
+  TINT64 ret = 0;
+  size_t size;
+#ifdef __OpenBSD__
+  int mib[] = {CTL_VM, VM_UVMEXP};
+  struct uvmexp  uvmexp;
+#else
+  int mib[] = {CTL_VM, VM_TOTAL};
+  struct vmtotal vmtotal;
+#endif
+
+#ifdef __OpenBSD__
+  size = sizeof(uvmexp);
+  if (sysctl(mib, 2, &uvmexp, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok((guint64)uvmexp.npages);
+#else
+  size = sizeof(vmtotal);
+  if (sysctl(mib, 2, &vmtotal, &size, NULL, 0) < 0)
+    return (ret);
+  /* cheat : rm = tot used, add free to get total */
+  ret = pagetok(vmtotal.t_rm + vmtotal.t_free);
+#endif
   return ret;
 
 #elif defined(MACOSX)

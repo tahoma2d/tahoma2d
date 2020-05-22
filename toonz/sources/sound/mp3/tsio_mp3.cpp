@@ -68,7 +68,7 @@ bool FfmpegAudio::checkFfmpeg() {
   }
 #endif
 
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
   QString currentPath = TEnv::getWorkingDirectory().getQString();
   path                = currentPath + "/ffmpeg/ffmpeg";
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) {

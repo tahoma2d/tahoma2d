@@ -153,7 +153,7 @@ void QtOfflineGL::createContext(TDimension rasterSize,
   fmt.setPlane(0);
   fmt.setDirectRendering(false);
 #endif
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(FREEBSD)
   fmt = QGLFormat::defaultFormat();
   // printf("GL Version: %s\n",glGetString(GL_VERSION));
   fmt.setVersion(2, 1); /* XXX? */
@@ -299,7 +299,7 @@ SPECIFICHE  MAC = depth_size 24, stencil_size 8, alpha_size 1
   fmt.setStencil(true);
   fmt.setAccum(false);
   fmt.setPlane(0);
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(FREEBSD)
   fmt.setAlphaBufferSize(1);
   fmt.setAlpha(false);
   fmt.setRgba(true);

@@ -1365,7 +1365,7 @@ void Loader::doLoad(const QString &file) {
   HMODULE handle = LoadLibraryA(file.toLocal8Bit().data());
   printf("doLoad handle:%p path:%s\n", handle, file.toLocal8Bit().data());
 #else
-#if defined(LINUX)
+#if defined(LINUX) || defined(FREEBSD)
   void *handle = dlopen(file.toUtf8().data(), RTLD_NOW | RTLD_LOCAL);
 #else
   void *handle = dlopen(file.toUtf8().data(), RTLD_LOCAL);

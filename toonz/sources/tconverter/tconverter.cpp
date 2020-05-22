@@ -29,7 +29,7 @@
 #include "tvectorrenderdata.h"
 #include "tofflinegl.h"
 
-#if defined(LINUX)
+#if defined(LINUX) || defined(FREEBSD)
 #include <QGuiApplication>
 #endif
 
@@ -359,7 +359,7 @@ void convert(const TFilePath &source, const TFilePath &dest,
 //------------------------------------------------------------------------
 
 int main(int argc, char *argv[]) {
-#if defined(LINUX)
+#if defined(LINUX) || defined(FREEBSD)
   QGuiApplication app(argc, argv);
 #endif
 

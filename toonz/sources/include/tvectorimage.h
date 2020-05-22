@@ -245,7 +245,7 @@ get the stroke nearest at point
 // Gmt. VA TOLTO IL PRIMA POSSIBILE.
 // E' una pessima cosa rendere platform dependent l'interfaccia pubblica di una
 // classe cosi' importante come la VectorImage
-#if defined(LINUX) || defined(MACOSX)
+#if defined(LINUX) || defined(FREEBSD) || defined(MACOSX)
   void render(const TVectorRenderData &rd, TRaster32P &ras);
 #endif
 
@@ -428,7 +428,7 @@ public:
 //-----------------------------------------------------------------------------
 
 // GMT: DA TOGLIERE. vedi sopra
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 DVAPI void hardRenderVectorImage(const TVectorRenderData &rd, TRaster32P &r,
                                  const TVectorImageP &vimg);
 #endif

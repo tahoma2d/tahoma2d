@@ -4597,7 +4597,7 @@ void rop_resample_rgbm_2(TRasterPT<T> rout, const TRasterCM32P &rin,
     }
   }
 
-#if defined(USE_SSE2) && defined(_MSC_VER)
+#if defined(USE_SSE2)
   TRaster32P rout32 = rout;
   if ((TSystem::getCPUExtensions() & TSystem::CpuSupportsSse2) && rout32)
     resample_main_cm32_rgbm_SSE2<TPixel32>(

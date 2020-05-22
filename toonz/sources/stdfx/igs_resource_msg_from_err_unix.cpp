@@ -1,5 +1,5 @@
-#define _POSIX_C_SOURCE 200809L /* int strerror_r() */
-#undef _GNU_SOURCE
+#define _XOPEN_SOURCE 700 /* isascii() */
+#undef _GNU_SOURCE /* int strerror_r() on glibc */
 #include <cerrno>
 #include <cstring> /* memset */
 #include <vector>

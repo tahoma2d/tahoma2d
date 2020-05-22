@@ -13,6 +13,9 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+/* FreeBSD defines atop() macro in standard includes. */
+#undef atop
+
 //===============================================================
 
 //  Forward declarations

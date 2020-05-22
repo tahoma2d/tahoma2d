@@ -26,7 +26,7 @@ string escape(string v) {
   for (;;) {
 // Removing escaping of apostrophe from Windows and OSX as it's not needed and
 // causes problems
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
     i = v.find_first_of("\\\'\"", i);
 #else
     i = v.find_first_of("\\\"", i);

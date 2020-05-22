@@ -29,7 +29,6 @@ using namespace std;
 #ifndef _WIN32
 #include <sys/param.h>
 #include <unistd.h>
-#include <sys/timeb.h>
 #endif
 
 int inline STRICMP(const QString &a, const QString &b) {
@@ -119,7 +118,11 @@ TFilePath getLocalRoot() {
       "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
+#ifdef FREEBSD
+  std::string unixpath = "/usr/local/etc/" + tver.getAppName() + "/tahoma.conf";
+#else
   std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
+#endif
 #endif
   TFilePath name(unixpath);
   Tifstream is(name);

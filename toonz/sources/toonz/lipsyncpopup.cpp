@@ -711,7 +711,7 @@ bool LipSyncPopup::checkRhubarb() {
   folderList.append("./" +
                     QString::fromStdString(TEnv::getApplicationFileName()) +
                     ".app/rhubarb");  // rhubarb folder
-#elif defined LINUX
+#elif defined(LINUX) || defined(FREEBSD)
   // Need to account for symbolic links
   folderList.append(TEnv::getWorkingDirectory().getQString() +
                     "/rhubarb");  // rhubarb folder
