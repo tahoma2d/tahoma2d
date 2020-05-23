@@ -361,11 +361,11 @@ endif()
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 if(BUILD_ENV_MSVC)
-    add_executable(OpenToonz WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
+    add_executable(Tahoma WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
 else()
-    set(MACOSX_BUNDLE_ICON_FILE "OpenToonz.icns")
-    set_source_files_properties(OpenToonz.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    add_executable(OpenToonz MACOSX_BUNDLE OpenToonz.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
+    set(MACOSX_BUNDLE_ICON_FILE "Tahoma.icns")
+    set_source_files_properties(Tahoma.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    add_executable(Tahoma MACOSX_BUNDLE Tahoma.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
     #add_definitions(
     #    -DTNZBASE_EXPORTS
     #    -DTPARAM_EXPORTS
@@ -418,7 +418,7 @@ if(BUILD_TARGET_WIN)
 endif()
 
 if(BUILD_ENV_MSVC AND WITH_CANON)
-    target_link_libraries(OpenToonz
+    target_link_libraries(Tahoma
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} 
@@ -426,7 +426,7 @@ if(BUILD_ENV_MSVC AND WITH_CANON)
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
 elseif(BUILD_ENV_MSVC)
-    target_link_libraries(OpenToonz
+    target_link_libraries(Tahoma
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} strmiids
@@ -440,9 +440,9 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-    add_dependencies(OpenToonz tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Tahoma tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(OpenToonz
+    target_link_libraries(Tahoma
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -457,9 +457,9 @@ elseif(BUILD_ENV_APPLE)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-    add_dependencies(OpenToonz tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Tahoma tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(OpenToonz
+    target_link_libraries(Tahoma
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -479,7 +479,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
 
     target_link_libraries(
-        OpenToonz Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Tahoma Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS}
@@ -489,7 +489,7 @@ endif()
 if(BUILD_ENV_APPLE)
     # CMAKE_RUNTIME_OUTPUT_DIRECTORY should be equivalent to usage on windows despite empty
     # OSX だと CMAKE_RUNTIME_OUTPUT_DIRECTORY が空だが Windows 版と同じ使い方ができるようにしておく
-    get_target_property(bin OpenToonz LOCATION)
+    get_target_property(bin Tahoma LOCATION)
     get_filename_component(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${bin} DIRECTORY)
     # show CMAKE_RUNTIME_OUTPUT_DIRECTORY
     message("CMAKE_RUNTIME_OUTPUT_DIRECTORY:" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -497,34 +497,34 @@ endif()
 
 # copy utilty executables onto the directory after build
 if(LZODRIVER_FOUND)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
 endif()
 
 if(BUILD_ENV_APPLE)
-    get_target_property(loc OpenToonz MACOSX_BUNDLE_NAME)
+    get_target_property(loc Tahoma MACOSX_BUNDLE_NAME)
     message(" ==> App Bundle: " ${loc})
     message(" ==> Mach-o: " ${bin})
     foreach(lib ${EXTRA_LIBS})
         message(" copy:" ${lib} "==>" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-        add_custom_command(TARGET OpenToonz POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_custom_command(TARGET Tahoma POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
 
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
 
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
 
-    add_custom_command(TARGET OpenToonz
+    add_custom_command(TARGET Tahoma
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath @executable_path/. ${bin} || true
     )
-    add_custom_command(TARGET OpenToonz
+    add_custom_command(TARGET Tahoma
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH} ${bin} || true
     )
@@ -533,7 +533,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
     # Setup files on Windows platform while cross compilation.
     install(
         TARGETS
-            OpenToonz
+            Tahoma
         DESTINATION bin
     )
 
@@ -574,7 +574,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
     install(
         DIRECTORY
             ${CMAKE_SOURCE_DIR}/../../stuff
-        DESTINATION share/opentoonz
+        DESTINATION share/tahoma
     )
 elseif(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)
     # Setup files on Linux/Unix platform.
@@ -582,62 +582,62 @@ elseif(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)
     # but useful for package managers.
     #
     # Note that its assumed the destination can be either
-    # - /opt/opentoonz
+    # - /opt/tahoma
     # - /usr
     install(
         TARGETS
-            OpenToonz
+            Tahoma
         DESTINATION bin
     )
 
     # Shell script that copies files to the home directory as needed
     # and sets the library preload path.
-    file(WRITE ${CMAKE_BINARY_DIR}/bin/opentoonz
+    file(WRITE ${CMAKE_BINARY_DIR}/bin/tahoma
 "#!/bin/sh
-OPENTOONZ_BASE=\$(dirname \"\$0\")/..
+TAHOMA_BASE=\$(dirname \"\$0\")/..
 
-if [ ! -d \$HOME/.config/OpenToonz ]; then
-    mkdir -p \$HOME/.config/OpenToonz
+if [ ! -d \$HOME/.config/Tahoma ]; then
+    mkdir -p \$HOME/.config/Tahoma
 fi
 
-if [ ! -d \$HOME/.config/OpenToonz/stuff ]; then
-    cp -r \$OPENTOONZ_BASE/share/opentoonz/stuff \$HOME/.config/OpenToonz
+if [ ! -d \$HOME/.config/Tahoma/stuff ]; then
+    cp -r \$TAHOMA_BASE/share/tahoma/stuff \$HOME/.config/Tahoma
 fi
 
-if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/library ]; then
-    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/library
+if [ ! -d \$HOME/.config/Tahoma/stuff/projects/library ]; then
+    mkdir -p \$HOME/.config/Tahoma/stuff/projects/library
 fi
 
-if [ ! -d \$HOME/.config/OpenToonz/stuff/projects/fxs ]; then
-    mkdir -p \$HOME/.config/OpenToonz/stuff/projects/fxs
+if [ ! -d \$HOME/.config/Tahoma/stuff/projects/fxs ]; then
+    mkdir -p \$HOME/.config/Tahoma/stuff/projects/fxs
 fi
 
-if [ ! -e \$HOME/.config/OpenToonz/SystemVar.ini ]; then
-    cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
+if [ ! -e \$HOME/.config/Tahoma/SystemVar.ini ]; then
+    cat << EOF > $HOME/.config/Tahoma/SystemVar.ini
 [General]
-OPENTOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
-OpenToonzPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
-TOONZCACHEROOT=\"\$HOME/.config/OpenToonz/stuff/cache\"
-TOONZCONFIG=\"\$HOME/.config/OpenToonz/stuff/config\"
-TOONZFXPRESETS=\"\$HOME/.config/OpenToonz/stuff/fxs\"
-TOONZLIBRARY=\"\$HOME/.config/OpenToonz/stuff/library\"
-TOONZPROFILES=\"\$HOME/.config/OpenToonz/stuff/profiles\"
-TOONZPROJECTS=\"$HOME/.config/OpenToonz/stuff/projects\"
-TOONZROOT=\"\$HOME/.config/OpenToonz/stuff\"
-TOONZSTUDIOPALETTE=\"\$HOME/.config/OpenToonz/stuff/studiopalette\"
+TAHOMAROOT=\"\$HOME/.config/Tahoma/stuff\"
+TahomaPROFILES=\"\$HOME/.config/Tahoma/stuff/profiles\"
+TOONZCACHEROOT=\"\$HOME/.config/Tahoma/stuff/cache\"
+TOONZCONFIG=\"\$HOME/.config/Tahoma/stuff/config\"
+TOONZFXPRESETS=\"\$HOME/.config/Tahoma/stuff/fxs\"
+TOONZLIBRARY=\"\$HOME/.config/Tahoma/stuff/library\"
+TOONZPROFILES=\"\$HOME/.config/Tahoma/stuff/profiles\"
+TOONZPROJECTS=\"$HOME/.config/Tahoma/stuff/projects\"
+TOONZROOT=\"\$HOME/.config/Tahoma/stuff\"
+TOONZSTUDIOPALETTE=\"\$HOME/.config/Tahoma/stuff/studiopalette\"
 EOF
 fi
 
-export LD_LIBRARY_PATH=\${OPENTOONZ_BASE}/lib/opentoonz:\${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=\${TAHOMA_BASE}/lib/tahoma:\${LD_LIBRARY_PATH}
 
-exec \$OPENTOONZ_BASE/bin/OpenToonz \"\$@\"
+exec \$TAHOMA_BASE/bin/Tahoma \"\$@\"
 ")
     # only needed for executing without installing
-    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/bin/opentoonz)
+    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/bin/tahoma)
 
     install(
         PROGRAMS
-            ${CMAKE_BINARY_DIR}/bin/opentoonz
+            ${CMAKE_BINARY_DIR}/bin/tahoma
             "$<TARGET_FILE:tcomposer>"
             "$<TARGET_FILE:tconverter>"
             "$<TARGET_FILE:tfarmcontroller>"
@@ -667,13 +667,13 @@ exec \$OPENTOONZ_BASE/bin/OpenToonz \"\$@\"
             "$<TARGET_FILE:tnztools>"
             "$<TARGET_FILE:tnzstdfx>"
             "$<TARGET_FILE:tfarm>"
-        DESTINATION lib/opentoonz
+        DESTINATION lib/tahoma
     )
 
     install(
         DIRECTORY
             ${CMAKE_SOURCE_DIR}/../../stuff
-        DESTINATION share/opentoonz
+        DESTINATION share/tahoma
     )
 
 endif()

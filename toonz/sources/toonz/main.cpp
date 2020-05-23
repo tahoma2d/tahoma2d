@@ -156,7 +156,7 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
     ++i;
   }
 
-  QCoreApplication::setOrganizationName("OpenToonz");
+  QCoreApplication::setOrganizationName("Tahoma");
   QCoreApplication::setOrganizationDomain("");
   QCoreApplication::setApplicationName(
       QString::fromStdString(TEnv::getApplicationName()));
@@ -356,7 +356,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef Q_OS_WIN
-  //	Since currently OpenToonz does not work with OpenGL of software or
+  //	Since currently Tahoma does not work with OpenGL of software or
   // angle,
   //	force Qt to use desktop OpenGL
   a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
@@ -593,7 +593,7 @@ int main(int argc, char *argv[]) {
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + "Initializing OpenToonz ...", Qt::AlignCenter,
+  splash.showMessage(offsetStr + "Initializing Tahoma ...", Qt::AlignCenter,
                      Qt::white);
   a.processEvents();
 
@@ -676,8 +676,8 @@ int main(int argc, char *argv[]) {
 
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
-    splash.showMessage(offsetStr + "Starting OpenToonz Portable ...",
-                       Qt::AlignCenter, Qt::white);
+    splash.showMessage(offsetStr + "Starting Tahoma . . .", Qt::AlignCenter,
+                       Qt::white);
   } else {
     splash.showMessage(offsetStr + "Starting main window ...", Qt::AlignCenter,
                        Qt::white);

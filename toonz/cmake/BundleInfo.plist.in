@@ -5,19 +5,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>OpenToonz</string>
+	<string>Tahoma</string>
 	<key>CFBundleExecutable</key>
-	<string>OpenToonz</string>
+	<string>Tahoma</string>
 	<key>CFBundleIconFile</key>
-	<string>OpenToonz.icns</string>
+	<string>Tahoma.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.opentoonz.OpenToonz</string>
+	<string>io.github.turtletooth.Tahoma</string>
     <key>NSCameraUsageDescription</key>
-    <string>OpenToonz needs access to the camera in order to use Camera Capture</string>
+    <string>Tahoma needs access to the camera in order to use Camera Capture</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>OpenToonz</string>
+	<string>Tahoma</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

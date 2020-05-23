@@ -172,13 +172,12 @@ public:
     m_applicationFullName = m_version.getAppName() + " " + m_applicationVersion;
     if (m_version.hasAppNote())
       m_applicationFullName += " " + m_version.getAppNote();
-      
-    m_moduleName          = m_version.getAppName();
-    m_rootVarName         = toUpper(m_version.getAppName()) + "ROOT";
+
+    m_moduleName  = m_version.getAppName();
+    m_rootVarName = toUpper(m_version.getAppName()) + "ROOT";
 #ifdef _WIN32
-    // from v1.3, registry root is moved to SOFTWARE\\OpenToonz\\OpenToonz
-    m_registryRoot =
-        TFilePath("SOFTWARE\\OpenToonz\\") + m_version.getAppName();
+    // from v1.3, registry root is moved to SOFTWARE\\Tahoma\\Tahoma
+    m_registryRoot = TFilePath("SOFTWARE\\Tahoma\\") + m_version.getAppName();
 #endif
     m_systemVarPrefix = m_version.getAppName();
     updateEnvFile();
@@ -236,7 +235,7 @@ public:
     // macOS 10.12 (Sierra) translocates applications before running them
     // depending on how it was installed. This separates the app from the
     // portablestuff folder and we don't know where it is so we stop treating it
-    // as a portable. Placing portablestuff inside OpenToonz.app will keep
+    // as a portable. Placing portablestuff inside Tahoma.app will keep
     // everything together when it translocates.
     if (!m_isPortable) {
       portableCheck =
@@ -469,7 +468,7 @@ Variable::Variable(std::string name)
 Variable::Variable(std::string name, std::string defaultValue)
     : m_imp(VariableSet::instance()->getImp(name)) {
   // assert(!m_imp->m_defaultDefined);
-  m_imp->m_defaultDefined = true;
+  m_imp->m_defaultDefined              = true;
   if (!m_imp->m_loaded) m_imp->m_value = defaultValue;
 }
 
@@ -566,11 +565,11 @@ TFilePathSet TEnv::getSystemVarPathSetValue(std::string varName) {
   TFilePathSet lst;
   EnvGlobals *eg = EnvGlobals::instance();
   // if the path is registered by command line argument, then use it
-  std::string value = eg->getArgPathValue(varName);
+  std::string value      = eg->getArgPathValue(varName);
   if (value == "") value = eg->getSystemVarValue(varName);
-  int len = (int)value.size();
-  int i   = 0;
-  int j   = value.find(';');
+  int len                = (int)value.size();
+  int i                  = 0;
+  int j                  = value.find(';');
   while (j != std::string::npos) {
     std::string s = value.substr(i, j - i);
     lst.push_back(TFilePath(s));

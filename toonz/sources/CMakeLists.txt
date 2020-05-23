@@ -2,7 +2,7 @@
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
-project(OpenToonz)
+project(Tahoma)
 
 
 #-----------------------------------------------------------------------------
@@ -457,7 +457,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     # the libraries have .pc
     find_package(PkgConfig)
 
-    # This is not required for OpenToonz itself, but libtiff will pick it up if
+    # This is not required for Tahoma itself, but libtiff will pick it up if
     # present and libimage won't be aware causing linker to fail
     pkg_check_modules(LZMA liblzma)
     set(TIFF_LIB ${TIFF_LIBRARY} ${LZMA_LIBRARIES})
@@ -575,12 +575,12 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     # Mirror relative bin/lib location for installation
     # so the generated shell script works in both cases.
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/opentoonz)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/opentoonz)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        set(CMAKE_INSTALL_PREFIX "/opt/opentoonz" CACHE PATH "OpenToonz install prefix" FORCE)
+        set(CMAKE_INSTALL_PREFIX "/opt/tahoma" CACHE PATH "Tahoma install prefix" FORCE)
     endif()
 endif()
 
@@ -648,7 +648,7 @@ if(BUILD_ENV_APPLE)
         $<TARGET_FILE:executable>
     )
     # add capability for retina displays
-    set_target_properties(OpenToonz PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
+    set_target_properties(Tahoma PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
 endif()
 
 if(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)

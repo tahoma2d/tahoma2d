@@ -1,7 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: Manual
-    url: https://opentoonz.readthedocs.io/
+    url: https://tahoma.readthedocs.io/
     about: The official, extensive manual for OpenToonz
   - name: User forum
     url: https://groups.google.com/forum/#!forum/opentoonz_en/categories/

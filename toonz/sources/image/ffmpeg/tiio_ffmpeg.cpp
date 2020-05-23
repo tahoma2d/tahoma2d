@@ -27,7 +27,7 @@ bool Ffmpeg::checkFfmpeg() {
 #endif
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
 
-  // check the OpenToonz root directory next
+  // check the Tahoma root directory next
   path = QDir::currentPath() + "/ffmpeg";
 #if defined(_WIN32)
   path = path + ".exe";
@@ -49,7 +49,7 @@ bool Ffmpeg::checkFfprobe() {
 #endif
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
 
-  // check the OpenToonz root directory next
+  // check the Tahoma root directory next
   path = QDir::currentPath() + "/ffprobe";
 #if defined(_WIN32)
   path = path + ".exe";
@@ -153,7 +153,7 @@ void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
     args << tempName;
   }
   if (m_hasSoundTrack) args = args + m_audioArgs;
-  args = args + postIArgs;
+  args                      = args + postIArgs;
   if (overWriteFiles && !includesOutPath) {  // if includesOutPath is true, you
                                              // need to include the overwrite in
                                              // your postIArgs.
@@ -208,7 +208,7 @@ void Ffmpeg::saveSoundTrack(TSoundTrack *st) {
                 QString::fromStdString(m_path.getName()) + "tempOut.raw";
   m_audioFormat = "s" + QString::number(m_bitsPerSample);
   if (m_bitsPerSample > 8) m_audioFormat = m_audioFormat + "le";
-  std::string strPath = m_audioPath.toStdString();
+  std::string strPath                    = m_audioPath.toStdString();
 
   QByteArray data;
   data.insert(0, (char *)buffer, bufSize);

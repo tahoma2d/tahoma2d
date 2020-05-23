@@ -70,11 +70,11 @@ TFilePath getGlobalRoot() {
 // Leggo la globalRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() +
-                         ".app/Contents/Resources/configfarmroot.txt";
+  std::string unixpath =
+      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
-  std::string unixpath = "/etc/" + tver.getAppName() + "/opentoonz.conf";
+  std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
   TFilePath name(unixpath);
   Tifstream is(name);
@@ -105,8 +105,9 @@ TFilePath getLocalRoot() {
   TFilePath lroot;
 
 #ifdef _WIN32
-  std::string regpath = "SOFTWARE\\" + tver.getAppName() + "\\" + tver.getAppName() +
-                   "\\" + tver.getAppVersionString() + "\\FARMROOT";
+  std::string regpath = "SOFTWARE\\" + tver.getAppName() + "\\" +
+                        tver.getAppName() + "\\" + tver.getAppVersionString() +
+                        "\\FARMROOT";
   TFilePath name(regpath);
   lroot = TFilePath(TSystem::getSystemValue(name).toStdString()) +
           TFilePath("toonzfarm");
@@ -114,11 +115,11 @@ TFilePath getLocalRoot() {
 // Leggo la localRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() +
-                         ".app/Contents/Resources/configfarmroot.txt";
+  std::string unixpath =
+      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
-  std::string unixpath = "/etc/" + tver.getAppName() + "/opentoonz.conf";
+  std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
   TFilePath name(unixpath);
   Tifstream is(name);
@@ -763,8 +764,8 @@ inline QString toString(const TFarmTask &task, int ver) {
     ss += ",";
     ss += QString::number(task.m_platform) + ",";
 
-    int depCount = 0;
-    if (task.m_dependencies) depCount= task.m_dependencies->getTaskCount();
+    int depCount                      = 0;
+    if (task.m_dependencies) depCount = task.m_dependencies->getTaskCount();
 
     ss += QString::number(depCount);
 
@@ -1157,7 +1158,7 @@ CtrlFarmTask *FarmController::getTaskToStart(FarmServerProxy *server) {
                      task->m_platform == server->m_platform)) &&
         (((task->m_status == Waiting && task->m_priority > maxPriority) ||
           (task->m_status == Aborted && task->m_failureCount < 3)) &&
-             task->m_parentId != "")) {
+         task->m_parentId != "")) {
       bool dependenciesCompleted = true;
 
       if (task->m_dependencies) {
@@ -1316,8 +1317,8 @@ bool FarmController::tryToStartTask(CtrlFarmTask *task) {
       map<TaskId, CtrlFarmTask *>::iterator itSubTask =
           m_tasks.find(TaskId(*itSubTaskId));
       if (itSubTask != m_tasks.end()) {
-        CtrlFarmTask *subTask = itSubTask->second;
-        if (tryToStartTask(subTask)) started= true;
+        CtrlFarmTask *subTask                = itSubTask->second;
+        if (tryToStartTask(subTask)) started = true;
       }
     }
 
@@ -1698,7 +1699,7 @@ void FarmController::queryTaskShortInfo(const QString &id, QString &parentId,
 
 void FarmController::attachServer(const QString &name, const QString &addr,
                                   int port) {
-  FarmServerProxy *server                      = 0;
+  FarmServerProxy *server = 0;
   map<QString, FarmServerProxy *>::iterator it = m_servers.begin();
   for (; it != m_servers.end(); ++it) {
     FarmServerProxy *s = it->second;
@@ -1857,8 +1858,8 @@ void FarmController::taskCompleted(const QString &taskId, int exitCode) {
     } else {
       switch (exitCode) {
       case 0:
-        task->m_status = Completed;
-        if (isAScript(task)) task->m_successfullSteps= task->m_stepCount;
+        task->m_status                                = Completed;
+        if (isAScript(task)) task->m_successfullSteps = task->m_stepCount;
         break;
       case RENDER_LICENSE_NOT_FOUND:
         task->m_status = Waiting;

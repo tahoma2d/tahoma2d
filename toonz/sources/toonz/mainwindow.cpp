@@ -705,9 +705,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   FlipBookPool::instance()->load(ToonzFolder::getMyModuleDir() +
                                  TFilePath("fliphistory.ini"));
 
-
   if (rooms.empty()) {
-
     // PltEditRoom
     Room *pltEditRoom = createPltEditRoom();
     m_stackedWidget->addWidget(pltEditRoom);
@@ -824,8 +822,8 @@ Room *MainWindow::createPltEditRoom() {
     pltEditRoom->addDockWidget(viewer);
     layout->dockItem(viewer);
 
-    SceneViewerPanel *svp = qobject_cast<SceneViewerPanel*>(viewer);
-    //if (svp) svp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
+    SceneViewerPanel *svp = qobject_cast<SceneViewerPanel *>(viewer);
+    // if (svp) svp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
   }
 
   // Palette
@@ -1035,7 +1033,7 @@ void MainWindow::onAbout() {
   label->setPixmap(pixmap);
 
   DVGui::Dialog *dialog = new DVGui::Dialog(this, true);
-  dialog->setWindowTitle(tr("About OpenToonz"));
+  dialog->setWindowTitle(tr("About Tahoma"));
   dialog->setTopMargin(0);
   dialog->addWidget(label);
 
@@ -1054,14 +1052,14 @@ void MainWindow::onAbout() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenOnlineManual() {
-  QDesktopServices::openUrl(QUrl(tr("http://opentoonz.readthedocs.io")));
+  QDesktopServices::openUrl(QUrl(tr("http://tahoma.readthedocs.io")));
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://github.com/opentoonz/opentoonz/releases/latest")));
+      QUrl(tr("https://github.com/turtletooth/tahoma/releases/latest")));
 }
 
 //-----------------------------------------------------------------------------
@@ -1076,7 +1074,7 @@ void MainWindow::onOpenCommunityForum() {
 void MainWindow::onOpenReportABug() {
   QString str = QString(
       tr("To report a bug, click on the button below to open a web browser "
-         "window for OpenToonz's Issues page on https://github.com.  Click on "
+         "window for Tahoma's Issues page on https://github.com.  Click on "
          "the 'New issue' button and fill out the form."));
 
   std::vector<QString> buttons = {QObject::tr("Report a Bug"),
@@ -1084,7 +1082,7 @@ void MainWindow::onOpenReportABug() {
   int ret = DVGui::MsgBox(DVGui::INFORMATION, str, buttons, 1);
   if (ret == 1)
     QDesktopServices::openUrl(
-        QUrl("https://github.com/opentoonz/opentoonz/issues"));
+        QUrl("https://github.com/turtletooth/tahoma/issues"));
 }
 //-----------------------------------------------------------------------------
 
@@ -1303,7 +1301,7 @@ extern const char *applicationName;
 extern const char *applicationVersion;
 //-----------------------------------------------------------------------------
 void MainWindow::checkForUpdates() {
-  // Since there is only a single version of Opentoonz, we can do a simple check
+  // Since there is only a single version of Tahoma, we can do a simple check
   // against a string
   QString updateUrl("http://opentoonz.github.io/opentoonz-version.txt");
 
@@ -1745,10 +1743,6 @@ void MainWindow::defineActions() {
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
-
-
-  
-
   createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   createMenuLevelAction(MI_Renumber, tr("&Renumber..."), "");
   createMenuLevelAction(MI_ReplaceLevel, tr("&Replace Level..."), "");
@@ -1794,8 +1788,9 @@ void MainWindow::defineActions() {
   collapseAction->setIconText("Collapse");
   collapseAction->setIcon(QIcon(":Resources/collapse.svg"));
 
-  QAction* toggle = createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
-                        EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
+  QAction *toggle =
+      createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
+                   EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(QIcon(":Resources/edit_in_place.svg"));
 
@@ -2040,7 +2035,7 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_FullScreenWindow,
                           tr("Toggle Main Window's Full Screen Mode"),
                           "Ctrl+`");
-  createMenuHelpAction(MI_About, tr("&About OpenToonz..."), "");
+  createMenuHelpAction(MI_About, tr("&About Tahoma..."), "");
   createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."), "Alt+S");
 
   createMenuHelpAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
@@ -3129,7 +3124,7 @@ void MainWindow::clearCacheFolder() {
 
   message +=
       tr("\nAre you sure?\n\nN.B. Make sure you are not running another "
-         "process of OpenToonz,\nor you may delete necessary files for it.");
+         "process of Tahoma,\nor you may delete necessary files for it.");
 
   QMessageBox::StandardButton ret = QMessageBox::question(
       this, tr("Clear Cache Folder"), message,

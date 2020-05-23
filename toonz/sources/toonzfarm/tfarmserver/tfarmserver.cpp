@@ -76,11 +76,11 @@ TFilePath getGlobalRoot() {
 // Leggo la localRoot da File txt
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() +
-                         ".app/Contents/Resources/configfarmroot.txt";
+  std::string unixpath =
+      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
-  std::string unixpath = "/etc/" + tver.getAppName() + "/opentoonz.conf";
+  std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
   TFilePath name(unixpath);
   Tifstream is(name);
@@ -120,11 +120,11 @@ TFilePath getLocalRoot() {
 #else
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
-  std::string unixpath = "./" + tver.getAppName() + 
-                         ".app/Contents/Resources/configfarmroot.txt";
+  std::string unixpath =
+      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
-  std::string unixpath = "/etc/" + tver.getAppName() + "/opentoonz.conf";
+  std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
   TFilePath name(unixpath);
   Tifstream is(name);
@@ -430,7 +430,7 @@ void Task::run() {
 
   m_log->info(logMsg);
 
-  // ===========
+// ===========
 
 #ifdef _WIN32
   if (m_cmdline.contains("runcasm")) service.mountDisks();
@@ -733,7 +733,7 @@ std::string getLine(std::istream &is) {
           out.append(1, c);
         } else {
           break;
-	}
+        }
       } else {
         break;
       }
@@ -993,8 +993,8 @@ void FarmServerService::onStop() {
   } catch (TException & /*e*/) {
   }
 
-  // i dischi vengono montati al primo task di tipo "runcasm"
-  // e smontati allo stop del servizio
+// i dischi vengono montati al primo task di tipo "runcasm"
+// e smontati allo stop del servizio
 
 #ifdef _WIN32
   unmountDisks();
