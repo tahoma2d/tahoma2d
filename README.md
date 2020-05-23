@@ -1,6 +1,6 @@
 # Tahoma
 
-[![](https://ci.appveyor.com/api/projects/status/oa5l5pc964h8fv49/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma)
+[![](https://ci.appveyor.com/api/projects/status/xbowccy4s2t7a39l/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma)
 [![](https://travis-ci.org/turtletooth/tahoma.svg?branch=master)](https://travis-ci.org/turtletooth/tahoma)
 
 ## What is Tahoma?
