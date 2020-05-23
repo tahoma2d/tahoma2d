@@ -32,7 +32,7 @@
 
 using namespace DVGui;
 
-QString DialogTitle = "OpenToonz 1.4";
+QString DialogTitle = "Tahoma 1.0";
 
 //=============================================================================
 namespace {
@@ -308,16 +308,16 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     // make sure that the window is visible on the screen
     // all popups will popup on the active window the first time
     // so popups moved to other monitors will be moved back
-    // when restarting OpenToonz.
+    // when restarting Tahoma.
 
     // This may be somewhat annoying if a user REALLY wants the popup
     // on another monitor by default, but this is better than
     // a user thinking the program is broken because they didn't notice
     // the popup on another monitor
-    if (x > screen.right() - 50) x = screen.right() - 50;
-    if (x < screen.left()) x = screen.left();
+    if (x > screen.right() - 50) x  = screen.right() - 50;
+    if (x < screen.left()) x        = screen.left();
     if (y > screen.bottom() - 90) y = screen.bottom() - 90;
-    if (y < screen.top()) y = screen.top();
+    if (y < screen.top()) y         = screen.top();
     setGeometry(x, y, values.at(2).toInt(), values.at(3).toInt());
     settings.setValue(m_name, QString::number(x) + " " + QString::number(y) +
                                   " " + QString::number(values.at(2).toInt()) +
@@ -370,10 +370,10 @@ void Dialog::hideEvent(QHideEvent *event) {
   }
   QRect screen = QApplication::desktop()->availableGeometry(currentScreen);
 
-  if (x > screen.right() - 50) x = screen.right() - 50;
-  if (x < screen.left()) x = screen.left();
+  if (x > screen.right() - 50) x  = screen.right() - 50;
+  if (x < screen.left()) x        = screen.left();
   if (y > screen.bottom() - 90) y = screen.bottom() - 90;
-  if (y < screen.top()) y = screen.top();
+  if (y < screen.top()) y         = screen.top();
   move(QPoint(x, y));
   resize(size());
   QRect r = geometry();
@@ -818,7 +818,7 @@ RadioButtonDialog::RadioButtonDialog(const QString &labelText,
                                      const QList<QString> &radioButtonList,
                                      QWidget *parent, Qt::WindowFlags f)
     : Dialog(parent, true, true), m_result(1) {
-  setWindowTitle(tr("OpenToonz"));
+  setWindowTitle(tr("Tahoma"));
 
   setMinimumSize(20, 20);
 
@@ -888,7 +888,7 @@ ProgressDialog::ProgressDialog(const QString &labelText,
                                const QString &cancelButtonText, int minimum,
                                int maximum, QWidget *parent, Qt::WindowFlags f)
     : Dialog(parent, true, true), m_isCanceled(false) {
-  setWindowTitle(tr("OpenToonz"));
+  setWindowTitle(tr("Tahoma"));
 
   setMinimumSize(20, 20);
 
@@ -1347,7 +1347,7 @@ QString DVGui::getText(const QString &title, const QString &labelText,
 
   dialog.addButtonBarWidget(okBtn, cancelBtn);
 
-  int ret = dialog.exec();
+  int ret     = dialog.exec();
   if (ok) *ok = (ret == QDialog::Accepted);
 
   return nameFld->text();

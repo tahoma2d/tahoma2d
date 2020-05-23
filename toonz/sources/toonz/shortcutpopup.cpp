@@ -576,7 +576,7 @@ void ShortcutPopup::showDialog(QString text) {
   if (m_dialog == NULL) {
     m_dialogLabel = new QLabel("", this);
     m_dialog      = new DVGui::Dialog(this, false, false);
-    m_dialog->setWindowTitle(tr("OpenToonz - Setting Shortcuts"));
+    m_dialog->setWindowTitle(tr("Tahoma - Setting Shortcuts"));
     m_dialog->setModal(false);
 
     m_dialog->setTopMargin(10);
@@ -699,9 +699,9 @@ void ShortcutPopup::onLoadPreset() {
 
   if (!showConfirmDialog()) return;
   showDialog(tr("Setting Shortcuts"));
-  if (preset == "OpenToonz") {
+  if (preset == "Tahoma") {
     clearAllShortcuts(false);
-    TFilePath fp = defaultPresetDir + TFilePath("defopentoonz.ini");
+    TFilePath fp = defaultPresetDir + TFilePath("deftahoma.ini");
     setPresetShortcuts(fp);
     return;
   } else if (preset == "Toon Boom Harmony") {
@@ -739,7 +739,7 @@ void ShortcutPopup::onLoadPreset() {
 QStringList ShortcutPopup::buildPresets() {
   QStringList presets;
   presets << ""
-          << "OpenToonz"
+          << "Tahoma"
           //<< "RETAS PaintMan"
           << "Toon Boom Harmony"
           << "Adobe Animate"
@@ -803,8 +803,8 @@ void ShortcutPopup::getCurrentPresetPref() {
   QString name = Preferences::instance()->getShortcutPreset();
   if (name == "DELETED")
     m_presetChoiceCB->setCurrentText("");
-  else if (name == "defopentoonz")
-    m_presetChoiceCB->setCurrentText("OpenToonz");
+  else if (name == "deftahoma")
+    m_presetChoiceCB->setCurrentText("Tahoma");
   else if (name == "otharmony")
     m_presetChoiceCB->setCurrentText("Toon Boom Harmony");
   else if (name == "otadobe")

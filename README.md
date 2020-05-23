@@ -1,27 +1,22 @@
-# OpenToonz
+# Tahoma
 
-[日本語](./doc/README_ja.md)
+[![](https://ci.appveyor.com/api/projects/status/oa5l5pc964h8fv49/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma)
+[![](https://travis-ci.org/turtletooth/tahoma.svg?branch=master)](https://travis-ci.org/turtletooth/tahoma)
 
-[![](https://ci.appveyor.com/api/projects/status/oa5l5pc964h8fv49/branch/master?svg=true)](https://ci.appveyor.com/project/opentoonz/opentoonz)
-[![](https://travis-ci.org/opentoonz/opentoonz.svg?branch=master)](https://travis-ci.org/opentoonz/opentoonz)
+## What is Tahoma?
 
-## What is OpenToonz?
-
-OpenToonz is a 2D animation software published by 
-[DWANGO](http://dwango.co.jp/english/). It is based on **Toonz Studio
+Tahoma is a 2D and stop motion animation software.It is based on **Toonz Studio
 Ghibli Version**, originally developed in Italy by
 [Digital Video, Inc.](http://www.toonz.com/), and customized by
 [Studio Ghibli](http://www.ghibli.jp/) over many years of production.
 
 ## Program Requirements
 
-Please refer to the OpenToonz site at <https://opentoonz.github.io/e/index.html>.
+Please refer to the OpenToonz site at <https://tahoma.github.io/e/index.html>.
 
 ## Installation
 
-Please download and install OpenToonz from the latest installer at <https://opentoonz.github.io/e/index.html>.
-
-Older versions and unstable nightly build are also available at <https://github.com/opentoonz/opentoonz/releases>.
+Please download the latest release at <https://github.com/turtletooth/tahoma/releases>.
 
 ## How to Build Locally
 
@@ -36,7 +31,7 @@ Can't develop but still want to help? Help us test individual Pull Requests befo
 ## Community
 
 - To share tips or to troubleshoot, join the [Google OpenToonz Users forum](https://groups.google.com/forum/#!forum/opentoonz_en)
-- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/opentoonz/opentoonz/issues) and post there.
+- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/turtletooth/tahoma/issues) and post there.
 
 ## Licensing
 

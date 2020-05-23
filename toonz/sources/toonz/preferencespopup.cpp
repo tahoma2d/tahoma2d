@@ -431,11 +431,11 @@ void PreferencesPopup::beforeRoomChoiceChanged() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onDefLevelTypeChanged() {
-  //bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
+  // bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
   //                !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
-  //m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
-  //m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
-  //if (!m_pref->getBoolValue(pixelsOnly))
+  // m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
+  // m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
+  // if (!m_pref->getBoolValue(pixelsOnly))
   //  m_controlIdMap.key(DefLevelDpi)->setEnabled(isRaster);
 }
 
@@ -537,7 +537,7 @@ void PreferencesPopup::onOnionColorChanged() {
 
 //-----------------------------------------------------------------------------
 
-void invalidateIcons();  
+void invalidateIcons();
 
 void PreferencesPopup::onTranspCheckDataChanged() { invalidateIcons(); }
 
@@ -887,8 +887,8 @@ void PreferencesPopup::insertDualUIs(
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::insertFootNote(QGridLayout* layout) {
-  QLabel* note = new QLabel(
-      tr("* Changes will take effect the next time you run OpenToonz"));
+  QLabel* note =
+      new QLabel(tr("* Changes will take effect the next time you run Tahoma"));
   note->setStyleSheet("font-size: 10px; font: italic;");
   layout->addWidget(note, layout->rowCount(), 0, 1, 2,
                     Qt::AlignLeft | Qt::AlignVCenter);
@@ -905,7 +905,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {autosavePeriod, tr("Interval (Minutes):")},
       {autosaveSceneEnabled, tr("Automatically Save the Scene File")},
       {autosaveOtherFilesEnabled, tr("Automatically Save Non-Scene Files")},
-      {startupPopupEnabled, tr("Show Startup Window when OpenToonz Starts")},
+      {startupPopupEnabled, tr("Show Startup Window when Tahoma Starts")},
       {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,
@@ -1027,7 +1027,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {inputCellsWithoutDoubleClickingEnabled,
        tr("Enable to Input Cells without Double Clicking")},
       {shortcutCommandsWhileRenamingCellEnabled,
-       tr("Enable OpenToonz Commands' Shortcut Keys While Renaming Cell")},
+       tr("Enable Tahoma Commands' Shortcut Keys While Renaming Cell")},
       {showXSheetToolbar, tr("Show Toolbar in the Xsheet")},
       {expandFunctionHeader,
        tr("Expand Function Editor Header to Match Xsheet Toolbar Height*")},
@@ -1077,7 +1077,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {automaticSVNFolderRefreshEnabled,
        tr("Automatically Refresh Folder Contents")},
       {latestVersionCheckEnabled,
-       tr("Check for the Latest Version of OpenToonz on Launch")},
+       tr("Check for the Latest Version of Tahoma on Launch")},
 
       // Touch / Tablet Settings
       // TounchGestureControl // Touch Gesture is a checkable command and not in
@@ -1248,8 +1248,8 @@ PreferencesPopup::PreferencesPopup()
 //-----------------------------------------------------------------------------
 
 QWidget* PreferencesPopup::createGeneralPage() {
-  m_projectRootDocuments = new CheckBox(tr("My Documents/OpenToonz*"), this);
-  m_projectRootDesktop   = new CheckBox(tr("Desktop/OpenToonz*"), this);
+  m_projectRootDocuments = new CheckBox(tr("My Documents/Tahoma*"), this);
+  m_projectRootDesktop   = new CheckBox(tr("Desktop/Tahoma*"), this);
   m_projectRootCustom    = new CheckBox(tr("Custom*"), this);
   QWidget* customField   = new QWidget(this);
   QGridLayout* customLay = new QGridLayout();
@@ -1374,26 +1374,26 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
   int row = lay->rowCount();
-  //lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
+  // lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
   //               Qt::AlignRight | Qt::AlignVCenter);
-  //lay->addWidget(createUI(pixelsOnly), row, 1);
+  // lay->addWidget(createUI(pixelsOnly), row, 1);
 
-  //insertUI(linearUnits, lay, getComboItemList(linearUnits));
-  //insertUI(cameraUnits, lay,
+  // insertUI(linearUnits, lay, getComboItemList(linearUnits));
+  // insertUI(cameraUnits, lay,
   //         getComboItemList(linearUnits));  // share items with linearUnits
-  //insertUI(CurrentRoomChoice, lay, roomItemList);
+  // insertUI(CurrentRoomChoice, lay, roomItemList);
   insertUI(functionEditorToggle, lay, getComboItemList(functionEditorToggle));
   insertUI(moveCurrentFrameByClickCellArea, lay);
   insertUI(actualPixelViewOnSceneEditingMode, lay);
-  //insertUI(levelNameOnEachMarkerEnabled, lay);
+  // insertUI(levelNameOnEachMarkerEnabled, lay);
   insertUI(showRasterImagesDarkenBlendedInViewer, lay);
-  //insertUI(showFrameNumberWithLetters, lay);
+  // insertUI(showFrameNumberWithLetters, lay);
   insertUI(iconSize, lay);
   insertDualUIs(viewShrink, viewStep, lay);
-  //insertUI(viewerZoomCenter, lay, getComboItemList(viewerZoomCenter));
+  // insertUI(viewerZoomCenter, lay, getComboItemList(viewerZoomCenter));
   insertUI(CurrentLanguageName, lay, languageItemList);
-  //insertUI(interfaceFont, lay);  // creates QFontComboBox
-  //insertUI(interfaceFontStyle, lay, buildFontStyleList());
+  // insertUI(interfaceFont, lay);  // creates QFontComboBox
+  // insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
 
@@ -1401,7 +1401,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertFootNote(lay);
   widget->setLayout(lay);
 
-  //if (m_pref->getBoolValue(pixelsOnly)) {
+  // if (m_pref->getBoolValue(pixelsOnly)) {
   //  m_controlIdMap.key(linearUnits)->setDisabled(true);
   //  m_controlIdMap.key(cameraUnits)->setDisabled(true);
   //}
@@ -1415,10 +1415,11 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,
                            &PreferencesPopup::onStyleSheetTypeChanged);
-  //m_onEditedFuncMap.insert(pixelsOnly, &PreferencesPopup::onPixelsOnlyChanged);
-  //m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
-  //m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);
-  //m_preEditedFuncMap.insert(CurrentRoomChoice,
+  // m_onEditedFuncMap.insert(pixelsOnly,
+  // &PreferencesPopup::onPixelsOnlyChanged);
+  // m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
+  // m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);
+  // m_preEditedFuncMap.insert(CurrentRoomChoice,
   //                          &PreferencesPopup::beforeRoomChoiceChanged);
 
   return widget;
@@ -1532,8 +1533,8 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  putLabel(tr("OpenToonz can use FFmpeg for additional file formats.\n") +
-               tr("FFmpeg is not bundled with OpenToonz.\n") +
+  putLabel(tr("Tahoma can use FFmpeg for additional file formats.\n") +
+               tr("FFmpeg is not bundled with Tahoma.\n") +
                tr("Please provide the path where FFmpeg is located on your "
                   "computer."),
            lay);
@@ -1565,11 +1566,11 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  //insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
+  // insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
-  //insertUI(newLevelSizeToCameraSizeEnabled, lay);
-  //insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
-  //insertUI(DefLevelDpi, lay);
+  // insertUI(newLevelSizeToCameraSizeEnabled, lay);
+  // insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
+  // insertUI(DefLevelDpi, lay);
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
   {
     insertUI(NumberingSystem, autoCreationLay,
@@ -1599,7 +1600,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
 
   onDefLevelTypeChanged();
 
-  //if (m_pref->getBoolValue(pixelsOnly)) {
+  // if (m_pref->getBoolValue(pixelsOnly)) {
   //  m_controlIdMap.key(DefLevelDpi)->setDisabled(true);
   //  getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
   //  getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
