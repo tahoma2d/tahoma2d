@@ -1100,14 +1100,7 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
         dstType = LINKEDSTYLE;
       //---- 追加ここまで iwasawa
 
-      // For cleanup styles, do not duplicate the cleanup information. Just
-      // paste color information.
-      TCleanupStyle *cleanupStyle =
-          dynamic_cast<TCleanupStyle *>(data->getStyle(i));
-      if (cleanupStyle)
-        palette->setStyle(styleId, cleanupStyle->getMainColor());
-      else
-        palette->setStyle(styleId, data->getStyle(i)->clone());
+      palette->setStyle(styleId, data->getStyle(i)->clone());
 
       // Process the global and original names according to the pasted style
       TColorStyle *pastedStyle = getPalette()->getStyle(styleId);

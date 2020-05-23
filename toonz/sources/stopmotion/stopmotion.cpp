@@ -1876,10 +1876,11 @@ void StopMotion::directDslrImage() {
     saveTestShot();
   else
     importImage();
-
+#ifdef WITH_CANON
   if (m_canon->m_liveViewExposureOffset != 0) {
     m_canon->setShutterSpeed(m_canon->m_realShutterSpeed, false);
   }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1918,13 +1919,16 @@ void StopMotion::takeTestShot() {
   }
   m_isTestShot = true;
   if (m_usingWebcam) {
-    if (m_light->useOverlays()) {
-      m_light->showOverlays();
-      m_webcamOverlayTimer->start(500);
-    } else {
-      saveTestShot();
-    }
-  } else {
+      if (m_light->useOverlays()) {
+          m_light->showOverlays();
+          m_webcamOverlayTimer->start(500);
+      }
+      else {
+          saveTestShot();
+      }
+  }
+#ifdef WITH_CANON
+  else {
     TApp *app           = TApp::instance();
     ToonzScene *scene   = app->getCurrentScene()->getScene();
     TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
@@ -1934,11 +1938,10 @@ void StopMotion::takeTestShot() {
       TSystem::mkDir(parentDir);
     }
     m_tempFile = tempFile.getQString();
-#ifdef WITH_CANON
     m_light->showOverlays();
     m_canon->takePicture();
-#endif
   }
+#endif
 }
 
 //-----------------------------------------------------------------------------
