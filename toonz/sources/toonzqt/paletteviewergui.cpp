@@ -138,16 +138,16 @@ PageViewer::PageViewer(QWidget *parent, PaletteViewType viewType,
   ViewMode defaultChipSize;
   switch (m_viewType) {
   case LEVEL_PALETTE:
-    defaultChipSize = LargeChips;
+    defaultChipSize = SmallChips;
     break;
   case CLEANUP_PALETTE:
     defaultChipSize = SmallChips;
     break;
   case STUDIO_PALETTE:
-    defaultChipSize = MediumChips;
+    defaultChipSize = SmallChips;
     break;
   default:
-    defaultChipSize = LargeChips;
+    defaultChipSize = SmallChips;
     break;
   }
   setViewMode(defaultChipSize);
@@ -325,7 +325,7 @@ void PageViewer::drop(int dstIndexInPage, const QMimeData *mimeData) {
   int dstPageIndex = m_page->getIndex();
   if ((m_page->getStyleId(0) == 0 || m_page->getStyleId(1) == 1) &&
       dstIndexInPage < 2)
-    dstIndexInPage = 2;
+    dstIndexInPage                       = 2;
   if (dstIndexInPage < 0) dstIndexInPage = m_page->getStyleCount();
 
   const PaletteData *paletteData = dynamic_cast<const PaletteData *>(mimeData);
@@ -488,15 +488,15 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
   }
 
   if (m_viewMode == LargeChips) {
-    QString index = QString::number(styleIndex);
-    QFont font    = p.font();
-    int fontSize  = font.pointSize();
+    QString index                = QString::number(styleIndex);
+    QFont font                   = p.font();
+    int fontSize                 = font.pointSize();
     if (fontSize == -1) fontSize = font.pixelSize();
-    int length = index.length() * fontSize;
-    int w      = (length > 11) ? (length) : 11;
-    int h      = 11;
-    int x0     = nameRect.right() - w + 1;
-    int y0     = nameRect.top() - h - 1;
+    int length                   = index.length() * fontSize;
+    int w                        = (length > 11) ? (length) : 11;
+    int h                        = 11;
+    int x0                       = nameRect.right() - w + 1;
+    int y0                       = nameRect.top() - h - 1;
     p.drawText(nameRect.adjusted(6, 1, -6, -1), name);
     QRect indexRect(x0, y0, w, h);
     p.fillRect(indexRect, QBrush(Qt::white));
@@ -560,16 +560,15 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 * start of the name. Otherwise, use center align.
 */
 static void drawChipName(QPainter &p, const QRect &chipRect,
-  const std::wstring &name) {
+                         const std::wstring &name) {
   const QString nameQString = QString::fromStdWString(name);
   QRect textRect = p.boundingRect(chipRect, Qt::AlignCenter, nameQString);
 
   if (chipRect.width() < textRect.width()) {
     // align left if the name is too wide to fit on the chip
-    p.drawText(chipRect.adjusted(4, 0, -4, 0),
-      Qt::AlignLeft | Qt::AlignVCenter, nameQString);
-  }
-  else {
+    p.drawText(chipRect.adjusted(4, 0, -4, 0), Qt::AlignLeft | Qt::AlignVCenter,
+               nameQString);
+  } else {
     // otherwise align by center
     p.drawText(chipRect, Qt::AlignCenter, nameQString);
   }
@@ -590,10 +589,10 @@ void PageViewer::paintEvent(QPaintEvent *e) {
   if (!palette) return;
 
   // [i0,i1] = range celle visibili
-  QRect visibleRect = e->rect();
-  int i0            = posToIndex(visibleRect.topLeft());
-  if (i0 < 0) i0 = 0;
-  int i1 = posToIndex(visibleRect.bottomRight());
+  QRect visibleRect            = e->rect();
+  int i0                       = posToIndex(visibleRect.topLeft());
+  if (i0 < 0) i0               = 0;
+  int i1                       = posToIndex(visibleRect.bottomRight());
   if (i1 >= getChipCount()) i1 = getChipCount() - 1;
 
   if (m_viewMode == List) {
@@ -785,8 +784,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         // display mode
         if (m_nameDisplayMode == Style) {
           drawChipName(p, chipRect, name);
-        }
-        else if (m_nameDisplayMode == Original) {
+        } else if (m_nameDisplayMode == Original) {
           if (origName != L"") {
             tmpFont.setItalic(true);
             p.setFont(tmpFont);
@@ -1176,7 +1174,7 @@ void PageViewer::dragEnterEvent(QDragEnterEvent *event) {
   const PaletteData *paletteData =
       dynamic_cast<const PaletteData *>(event->mimeData());
   if (paletteData && paletteData->hasStyleIndeces()) {
-    //if ((m_viewType == CLEANUP_PALETTE &&
+    // if ((m_viewType == CLEANUP_PALETTE &&
     //     !paletteData->getPalette()->isCleanupPalette()) ||
     //    (m_viewType == LEVEL_PALETTE &&
     //     paletteData->getPalette()->isCleanupPalette())) {
@@ -1190,7 +1188,7 @@ void PageViewer::dragEnterEvent(QDragEnterEvent *event) {
     if (index < 0)
       index = 0;
     else if (index > m_page->getStyleCount())
-      index = m_page->getStyleCount();
+      index             = m_page->getStyleCount();
     m_dropPositionIndex = index;
     update();
     event->acceptProposedAction();
@@ -1210,7 +1208,7 @@ void PageViewer::dragMoveEvent(QDragMoveEvent *event) {
     if (index < 0)
       index = 0;
     else if (index > m_page->getStyleCount())
-      index = m_page->getStyleCount();
+      index             = m_page->getStyleCount();
     m_dropPositionIndex = index;
     update();
     event->acceptProposedAction();
@@ -1286,8 +1284,9 @@ void PageViewer::keyPressEvent(QKeyEvent *e) {
     if (key ==
         cManager->getKeyFromShortcut(cManager->getShortcutFromId(V_ZoomIn)))
       zoomInChip();
-    else if (key == cManager->getKeyFromShortcut(
-                        cManager->getShortcutFromId(V_ZoomOut)))
+    else if (key ==
+             cManager->getKeyFromShortcut(
+                 cManager->getShortcutFromId(V_ZoomOut)))
       zoomOutChip();
     else
       e->ignore();
@@ -1325,13 +1324,19 @@ bool PageViewer::event(QEvent *e) {
       TColorStyle *style = m_page->getStyle(indexInPage);
       if (style) {
         int styleIndex = m_page->getStyleId(indexInPage);
-        toolTip        = "#" + QString::number(styleIndex) + " " +
-                  QString::fromStdWString(style->getName());
+        if (styleIndex == 0) {
+          toolTip =
+              tr("Style 0 is set to full transparent. \nIt can't be changed.  "
+                 "Ever.");
+        } else {
+          toolTip = "#" + QString::number(styleIndex) + " " +
+                    QString::fromStdWString(style->getName());
 
-        int shortcutKey = m_page->getPalette()->getStyleShortcut(styleIndex);
-        if (shortcutKey > 0)
-          toolTip += QString::fromStdWString(std::wstring(L" (") +
-                                             (wchar_t)shortcutKey + L")");
+          int shortcutKey = m_page->getPalette()->getStyleShortcut(styleIndex);
+          if (shortcutKey > 0)
+            toolTip += QString::fromStdWString(std::wstring(L" (") +
+                                               (wchar_t)shortcutKey + L")");
+        }
       }
     }
     if (toolTip != "")
@@ -1396,8 +1401,8 @@ void PageViewer::select(int indexInPage, QMouseEvent *event) {
   }
 
   bool isStyleChanged = false;
-  if (on) selected = true;
-  int styleIndex = m_page->getStyleId(indexInPage);
+  if (on) selected    = true;
+  int styleIndex      = m_page->getStyleId(indexInPage);
   if (selected) {
     setCurrentStyleIndex(styleIndex);
 
@@ -1550,7 +1555,7 @@ void PaletteTabBar::dragEnterEvent(QDragEnterEvent *event) {
   const PaletteData *paletteData =
       dynamic_cast<const PaletteData *>(event->mimeData());
   if (!paletteData) return;
-  //if ((m_pageViewer->getViewType() == CLEANUP_PALETTE &&
+  // if ((m_pageViewer->getViewType() == CLEANUP_PALETTE &&
   //     !paletteData->getPalette()->isCleanupPalette()) ||
   //    (m_pageViewer->getViewType() == LEVEL_PALETTE &&
   //     paletteData->getPalette()->isCleanupPalette())) {

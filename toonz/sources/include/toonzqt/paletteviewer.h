@@ -91,6 +91,7 @@ protected:
 
   QToolBar *m_paletteToolBar;
   QToolBar *m_savePaletteToolBar;
+  QMenu *m_viewMode;
 
   int m_indexPageToDelete;
 
@@ -126,6 +127,7 @@ protected:
   }
   void updatePaletteToolBar();
   void updateSavePaletteToolBar();
+  void updatePaletteMenu();
 
   void resizeEvent(QResizeEvent *event) override;
   void contextMenuEvent(QContextMenuEvent *event) override;
