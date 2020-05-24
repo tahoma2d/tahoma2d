@@ -148,12 +148,12 @@ void RoomTabWidget::contextMenuEvent(QContextMenuEvent *event) {
           menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
       connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
     }
-#if defined(_WIN32) || defined(_CYGWIN_)
-    /*- customize menubar -*/
-    QAction *customizeMenuBar = menu->addAction(
-        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
-    connect(customizeMenuBar, SIGNAL(triggered()), SLOT(onCustomizeMenuBar()));
-#endif
+//#if defined(_WIN32) || defined(_CYGWIN_)
+//    /*- customize menubar -*/
+//    QAction *customizeMenuBar = menu->addAction(
+//        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
+//    connect(customizeMenuBar, SIGNAL(triggered()), SLOT(onCustomizeMenuBar()));
+//#endif
   }
   menu->exec(event->globalPos());
 }
@@ -165,6 +165,8 @@ void RoomTabWidget::updateTabName() {
   if (index < 0) return;
   m_renameTabIndex = -1;
   QString newName  = m_renameTextField->text();
+  newName = newName.simplified();
+  newName.replace(" ", "");
   setTabText(index, newName);
   m_renameTextField->hide();
   emit renameTabRoom(index, newName);

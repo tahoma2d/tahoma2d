@@ -438,6 +438,8 @@ int main(int argc, char *argv[]) {
   bool isRunScript = (loadFilePath.getType() == "toonzscript");
 
   QSplashScreen splash(splashPixmap);
+  splash.setFixedHeight(344);
+  splash.setFixedWidth(610);
   if (!isRunScript) splash.show();
   a.processEvents();
 
@@ -457,7 +459,7 @@ int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
 #endif
 
-  splash.showMessage(offsetStr + "Initializing Toonz environment ...",
+  splash.showMessage(offsetStr + "Initializing Tahoma environment ...",
                      Qt::AlignCenter, Qt::white);
   a.processEvents();
 
