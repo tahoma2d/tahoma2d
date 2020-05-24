@@ -30,6 +30,25 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+enum {
+  eShowCompare         = 0x001,
+  eShowBg              = 0x002,
+  eShowFramerate       = 0x004,
+  eShowVcr             = 0x008,
+  eShowcolorFilter     = 0x010,
+  eShowCustom          = 0x020,
+  eShowHisto           = 0x040,
+  eShowSave            = 0x080,
+  eShowDefineSubCamera = 0x100,
+  eShowFilledRaster    = 0x200,
+  eShowDefineLoadBox   = 0x400,
+  eShowUseLoadBox      = 0x800,
+  eShowViewerControls  = 0x1000,
+  eShowSound           = 0x2000,
+  eShowLocator         = 0x4000,
+  eShowHowMany         = 0x8000
+};
+
 class QToolBar;
 class QLabel;
 class QSlider;
@@ -264,6 +283,8 @@ public:
     doButtonPressed(button);
     setChecked(button, !isChecked(button));
   }
+  UINT getCustomizeMask() { return m_customizeMask; }
+  void setCustomizemask(UINT mask);
 
   // the main (currently the only) use for current flipconsole and setActive is
   // to
@@ -349,6 +370,8 @@ private:
   TPixel m_blankColor;
   int m_blanksToDraw;
   bool m_isLinkable;
+
+  QMenu *m_menu;
 
   QMap<EGadget, QAbstractButton *> m_buttons;
   QMap<EGadget, QAction *> m_actions;

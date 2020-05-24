@@ -57,9 +57,9 @@ after_build:
 
     copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world412.dll" %CONFIGURATION%\Tahoma
 
-    mkdir "%CONFIGURATION%\Tahoma stuff"
+    mkdir "%CONFIGURATION%\Tahoma\portablestuff"
 
-    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\Tahoma stuff"
+    xcopy /Y /E ..\..\stuff "%CONFIGURATION%\Tahoma\portablestuff"
     
 artifacts:
 - path: toonz\$(PLATFORM)\$(CONFIGURATION)

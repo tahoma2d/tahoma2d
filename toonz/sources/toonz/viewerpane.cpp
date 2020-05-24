@@ -1,6 +1,5 @@
 #include "viewerpane.h"
 
-
 // TnzCore includes
 #include "tconvert.h"
 #include "tgeometry.h"
@@ -63,7 +62,6 @@
 #include <QToolBar>
 #include <QMainWindow>
 #include <QSettings>
-
 
 using namespace DVGui;
 
@@ -171,6 +169,18 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
                                   ->getProperties()
                                   ->getOutputProperties()
                                   ->getFrameRate());
+
+  UINT mask;
+  mask = mask | eShowVcr;
+  mask = mask | eShowFramerate;
+  mask = mask | eShowViewerControls;
+  mask = mask | eShowSound;
+  mask = mask | eShowCustom;
+  mask = mask & ~eShowSave;
+  mask = mask & ~eShowLocator;
+  mask = mask & ~eShowHisto;
+  m_flipConsole->setCustomizemask(mask);
+
   updateFrameRange(), updateFrameMarkers();
 
   setLayout(mainLayout);
@@ -803,11 +813,11 @@ bool SceneViewerPanel::hasSoundtrack() {
   try {
     m_sound = xsheetHandle->getXsheet()->makeSound(prop);
   } catch (TSoundDeviceException &e) {
-       if (e.getType() == TSoundDeviceException::NoDevice) {
-	 std::cout << ::to_string(e.getMessage()) << std::endl;
-         } else {
-           throw TSoundDeviceException(e.getType(), e.getMessage());
-       }
+    if (e.getType() == TSoundDeviceException::NoDevice) {
+      std::cout << ::to_string(e.getMessage()) << std::endl;
+    } else {
+      throw TSoundDeviceException(e.getType(), e.getMessage());
+    }
   }
   if (m_sound == NULL) {
     m_hasSoundtrack = false;
@@ -842,9 +852,21 @@ void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
 // SaveLoadQSettings
 void SceneViewerPanel::save(QSettings &settings) const {
   settings.setValue("visibleParts", m_visiblePartsFlag);
+  settings.setValue("consoleParts", m_flipConsole->getCustomizeMask());
 }
 
 void SceneViewerPanel::load(QSettings &settings) {
   m_visiblePartsFlag = settings.value("visibleParts", CVPARTS_ALL).toUInt();
   updateShowHide();
+  UINT mask;
+  mask = mask | eShowVcr;
+  mask = mask | eShowFramerate;
+  mask = mask | eShowViewerControls;
+  mask = mask | eShowSound;
+  mask = mask | eShowCustom;
+  mask = mask & ~eShowSave;
+  mask = mask & ~eShowLocator;
+  mask = mask & ~eShowHisto;
+  m_flipConsole->setCustomizemask(
+      settings.value("consoleParts", mask).toUInt());
 }
