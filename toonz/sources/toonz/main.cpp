@@ -438,8 +438,6 @@ int main(int argc, char *argv[]) {
   bool isRunScript = (loadFilePath.getType() == "toonzscript");
 
   QSplashScreen splash(splashPixmap);
-  splash.setFixedHeight(344);
-  splash.setFixedWidth(610);
   if (!isRunScript) splash.show();
   a.processEvents();
 

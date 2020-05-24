@@ -1,0 +1,545 @@
+// out: ../Medium.qss
+
+// -----------------------------------------------------------------------------
+// DEFAULT
+// -----------------------------------------------------------------------------
+// This is the default theme. All other themes derive from this.
+// -----------------------------------------------------------------------------
+
+// Include All
+@import 'main';
+
+// Resource Location
+@img-url: 'imgs/white';
+
+@bg: #484848;
+@accent: darken(@bg, 13);
+
+@text-color: rgb(230, 230, 230);
+@text-color-disabled: rgba(230, 230, 230, 0.4);
+
+@hl-bg-color: rgb(83, 133, 166);
+@hl-text-color: rgb(255, 255, 255);
+
+@hl-bg-color-secondary: rgba(255, 255, 255, 0.15);
+@hl-text-color-secondary: @text-color;
+
+@dock-bg-color: darken(@bg, 18);
+@dock-placeholder-color: #F77272;
+
+@dialogButtonFrame-bg-color: darken(@bg, 4);
+@dialogButtonFrame-border-color: @accent;
+
+@tooltip-bg-color: #fff;
+@tooltip-border-color: #000;
+@tooltip-text-color: #000;
+
+@label-title: rgb(159, 218, 255);
+@label-error: rgb(255, 0, 0);
+
+// -----------------------------------------------------------------------------
+// Tabs
+// -----------------------------------------------------------------------------
+
+// Container
+@tabbar-bg-color: darken(@bg, 6);
+
+// Tabs
+@tab-bg-color: @tabbar-bg-color;
+@tab-text-color: mix(@tab-bg-color, @text-color, 40);
+
+@tab-bg-color-hover: @tab-bg-color-selected;
+@tab-text-color-hover: @tab-text-color;
+
+@tab-bg-color-selected: @bg;
+@tab-text-color-selected: lighten(@text-color, 15);
+
+// -----------------------------------------------------------------------------
+// Topbar & Workspaces
+// -----------------------------------------------------------------------------
+
+// Topbar
+@topbar-bg-color: @bg;
+
+// Workspace Tabs
+@rooms-tab-bg-color: @tab-bg-color;
+@rooms-tab-text-color: @tab-text-color;
+
+@rooms-tab-bg-color-hover: @tab-bg-color-hover;
+@rooms-text-color-hover: @rooms-tab-text-color;
+
+@rooms-tab-bg-color-selected: @bg;
+@rooms-tab-text-color-selected: @tab-text-color-selected;
+
+// -----------------------------------------------------------------------------
+// Menu
+// -----------------------------------------------------------------------------
+
+@menu-text-color: @text-color;
+@menu-bg-color: darken(@bg, 0);
+@menu-border-color: @accent;
+@menu-separator-color: @menu-border-color;
+@menu-checkbox-text-color-selected: @text-color;
+@menu-item-bg-color-disabled-hover: lighten(@menu-bg-color, 8);
+
+// -----------------------------------------------------------------------------
+// Titlebars
+// -----------------------------------------------------------------------------
+
+@title-bg-color: darken(@bg, 6);
+@title-text-color: lighten(@bg, 30);
+@title-text-color-active: #fff;
+
+@title-active-border-pixmap: 'none';
+
+// -----------------------------------------------------------------------------
+// Scrollbars
+// -----------------------------------------------------------------------------
+
+// Container
+@scrollbar-bg-color: darken(@bg, 8);
+
+// Handle
+@scrollbar-handle-border-size: 1;
+@scrollbar-handle-radius: 4;
+@scrollbar-handle-margin: 3;
+
+@scrollbar-handle-bg-color: lighten(@bg, 4);
+@scrollbar-handle-border-color: @scrollbar-handle-bg-color;
+
+@scrollbar-handle-bg-color-hover: lighten(@scrollbar-handle-bg-color, 8);
+@scrollbar-handle-border-color-hover: @scrollbar-handle-bg-color-hover;
+
+@scrollbar-handle-bg-color-pressed: lighten(@scrollbar-handle-bg-color-hover, 8);
+@scrollbar-handle-border-color-pressed: @scrollbar-handle-bg-color-pressed;
+
+// -----------------------------------------------------------------------------
+// Button
+// -----------------------------------------------------------------------------
+
+@button-bg-color: lighten(@bg, 13);
+@button-border-color: darken(@bg, 0);
+@button-text-color: lighten(@text-color, 5);
+
+@button-bg-color-hover: lighten(@button-bg-color, 5);
+@button-border-color-hover: @button-border-color;
+@button-text-color-hover: @button-text-color;
+
+@button-bg-color-pressed: darken(@button-bg-color, 22);
+@button-border-color-pressed: darken(@button-bg-color-pressed, 2);
+@button-text-color-pressed: @button-text-color;
+
+@button-bg-color-checked: darken(@button-bg-color-pressed, 0);
+@button-border-color-checked: darken(@button-bg-color-checked, 2);
+@button-text-color-checked: @button-text-color;
+
+@button-bg-color-checked-hover: lighten(@button-bg-color-checked, 2);
+@button-bg-color-checked-hover-pressed: @button-bg-color-checked;
+
+@button-bg-color-focus: @hl-bg-color;
+@button-border-color-focus: @button-dialog-border-color;
+@button-text-color-focus: lighten(@button-text-color, 10);
+
+@button-bg-color-focus-hover: lighten(@button-bg-color-focus, 8);
+
+@button-bg-color-disabled: lighten(@bg, 5);
+@button-border-color-disabled: @button-border-color;
+@button-text-color-disabled: @text-color-disabled;
+
+// For QDialogs
+@button-dialog-border-color: darken(@dialogButtonFrame-bg-color, 0);
+
+// Scrollable Buttons
+@scrollable-button-bg-color: @button-bg-color;
+@scrollable-button-bg-color-hover: @button-bg-color-hover;
+@scrollable-button-bg-color-pressed: @button-bg-color-pressed;
+
+@scrollable-button-border-color: red;
+
+// -----------------------------------------------------------------------------
+// Tool Buttons
+// -----------------------------------------------------------------------------
+
+// Main
+@toolbutton-border-size: 1;
+
+@toolbutton-bg-color: rgba(255, 255, 255, 0.00);
+@toolbutton-border-color: @toolbutton-bg-color;
+@toolbutton-text-color: @button-text-color;
+
+@toolbutton-bg-color-hover: @button-bg-color-hover;
+@toolbutton-border-color-hover: @toolbutton-bg-color-hover;
+@toolbutton-text-color-hover: @button-text-color-hover;
+
+@toolbutton-bg-color-pressed: @button-bg-color-pressed;
+@toolbutton-border-color-pressed: @button-border-color-pressed;
+@toolbutton-text-color-pressed: @button-text-color-pressed;
+
+@toolbutton-bg-color-checked: @hl-bg-color;
+@toolbutton-border-color-checked: @toolbutton-bg-color-checked;
+@toolbutton-text-color-checked: @hl-text-color;
+
+@toolbutton-bg-color-checked-hover: lighten(@toolbutton-bg-color-checked, 8);
+@toolbutton-border-color-checked-hover: @toolbutton-bg-color-checked-hover;
+
+// Lock
+@toolbutton-lock-bg-color-checked: #C34040;
+@toolbutton-lock-border-color-checked: @toolbutton-lock-bg-color-checked;
+
+@toolbutton-lock-bg-color-checked-hover: lighten(@toolbutton-lock-bg-color-checked, 15);
+@toolbutton-lock-border-color-checked-hover: @toolbutton-lock-bg-color-checked-hover;
+
+// -----------------------------------------------------------------------------
+// ComboBox
+// -----------------------------------------------------------------------------
+
+@combobox-dropdown-border-size: 0;
+@combobox-dropdown-border-radius: 1;
+@combobox-dropdown-border-color: @button-bg-color;
+@combobox-dropdown-border-color-hover: @button-bg-color-hover;
+
+// For :editable ComboBox with LineEdit
+@combobox-dropdown-bg-color-hover-editable: @button-bg-color-hover;
+@combobox-dropdown-bg-color-disabled-editable: @button-bg-color-disabled;
+
+// -----------------------------------------------------------------------------
+// Textfield
+// -----------------------------------------------------------------------------
+
+@input-bg-color: darken(@bg, 10);
+@input-border-color: darken(@input-bg-color, 1);
+@input-text-color: @text-color;
+
+@input-bg-color-focus: @input-bg-color;
+@input-border-color-focus: @hl-bg-color;
+@input-text-color-focus: @input-text-color;
+
+@input-bg-color-disabled: mix(@input-bg-color, @bg, 50);
+@input-border-color-disabled: mix(@input-border-color, @bg, 50);
+@input-text-color-disabled: @text-color-disabled;
+
+// Text Selection
+@input-selection-text-color: @hl-text-color;
+@input-selection-bg-color: @hl-bg-color;
+
+// -----------------------------------------------------------------------------
+// CheckBox
+// -----------------------------------------------------------------------------
+
+@checkbox-bg-color: @input-bg-color;
+@checkbox-border-color: @input-border-color;
+
+@checkbox-bg-color-hover: @checkbox-bg-color;
+@checkbox-border-color-hover: lighten(@bg, 50);
+@checkbox-text-color-hover: lighten(@text-color, 25);
+
+@checkbox-bg-color-checked: @hl-bg-color;
+@checkbox-border-color-checked: darken(@checkbox-bg-color-checked, 0);
+
+@checkbox-bg-color-checked-hover: @checkbox-bg-color-checked;
+@checkbox-border-color-checked-hover: @checkbox-border-color-hover;
+
+@checkbox-bg-color-disabled: @input-bg-color-disabled;
+@checkbox-border-color-disabled: @checkbox-bg-color-disabled;
+
+@checkbox-bg-color-checked-disabled: lighten(@bg, 10);
+@checkbox-border-color-checked-disabled: @checkbox-bg-color-checked-disabled;
+
+// For RadioButton
+@radiobutton-img-unchecked: 'radiobutton_unchecked.svg';
+@radiobutton-img-unchecked-hover: 'radiobutton_unchecked_hover.svg';
+@radiobutton-img-unchecked-disabled: 'radiobutton_unchecked_disabled.svg';
+
+@radiobutton-img-checked: 'radiobutton_checked.svg';
+@radiobutton-img-checked-disabled: 'radiobutton_checked_disabled.svg';
+
+// -----------------------------------------------------------------------------
+// Slider
+// -----------------------------------------------------------------------------
+
+// Single
+@slider-groove-img: 'slider-groove.svg';
+@slider-groove-img-disabled: 'slider-groove_disabled.svg';
+
+@slider-handle-width: 10;
+@slider-handle-img: 'slider-handle.svg';
+@slider-handle-img-disabled: 'slider-handle_disabled.svg';
+
+// This one is used only for #ViewerFpsSlider
+@slider-handle-margin: -2 -1;
+@slider-handle-bg-color: lighten(@bg, 35);
+@slider-handle-border-color: @slider-handle-bg-color;
+
+// DoublePairField, IntPairField
+@slider-groove-color: darken(@bg, 11);
+@slider-left-handle: @slider-handle-img;
+@slider-right-handle: @slider-handle-img;
+@slider-left-handle-disabled: @slider-handle-img-disabled;
+@slider-right-handle-disabled: @slider-handle-img-disabled;
+
+// -----------------------------------------------------------------------------
+// File Browser / Trees
+// -----------------------------------------------------------------------------
+
+// Trees
+@tree-bg-color: darken(@bg, 8);
+@tree-bg-color-alt: lighten(@tree-bg-color, 2);
+@prefs-tree-bg-color: @tree-bg-color;
+@prefs-tree-hl-color: @hl-bg-color-secondary;
+
+// All Panes
+@browser-folder-text-color: @label-title;
+@browser-folder-text-color-selected: @hl-text-color;
+
+// Left Pane
+@browser-listview-bg-color: @tree-bg-color;
+@browser-listview-bg-color-alt: @browser-listview-bg-color;
+
+// Right Pane
+@browser-itemview-bg-color: @bg;
+@browser-itemview-bg-color-alt: darken(@browser-itemview-bg-color, 3);
+
+// -----------------------------------------------------------------------------
+// Viewer Window
+// -----------------------------------------------------------------------------
+
+// FlipSlider
+@flipmarker-img: 'flipmarker.svg';
+@flipslider-img: 'flipslider.svg';
+@flipslider-base-color: darken(@bg, 10);
+@flipslider-notstarted-color: rgba(205, 101, 101, 0.78);
+@flipslider-started-color: rgb(26, 188, 63);
+@flipslider-finished-color: @flipslider-base-color;
+
+// Ruler
+@viewer-ruler-bg-color: @bg;
+@viewer-ruler-scale-color: @text-color;
+@viewer-ruler-ToolOptionValues-color: darken(@bg, 50);
+
+// -----------------------------------------------------------------------------
+// Progress Bar
+// -----------------------------------------------------------------------------
+
+@progressbar-bg-color: darken(@bg, 10);
+@progressbar-border-color: @accent;
+
+@progressbar-chunk-bg-color: rgb(21, 161, 54);
+@progressbar-chunk-border-color: @accent;
+
+// -----------------------------------------------------------------------------
+// XSheet
+// -----------------------------------------------------------------------------
+
+// XSheet Context Menus
+@xsheet-menu-preview-color:                 #E6E678;
+@xsheet-menu-lock-color:                    #F5F5F5;
+@xsheet-menu-camstand-color:                #FFA480;
+@xsheet-menu-text-color:                    #000;
+
+// XSheet Notes
+@xsheet-notes-text-color:                   #000;
+
+// XSheet Spreadsheet Viewer
+@xsheet-text-color:                         @text-color;
+@xsheet-bg-color:                           darken(@bg, 5);
+@xsheet-empty-bg-color:                     darken(@bg, 8);
+@xsheet-LightLine-color:                    rgba(0, 0, 0, 0.25);
+@xsheet-MarkerLine-color:                   #1E96C4;
+@xsheet-VerticalLine-color:                 rgba(0, 0, 0, 0.6);
+@xsheet-VerticalLineHead-color:             lighten(@bg, 21.9608);
+@xsheet-PreviewFrameText-color:             @label-title;
+@xsheet-CurrentRowBG-color:                 #506082;
+@xsheet-OnionSkinAreaBG-color:              darken(@bg, 7);
+
+@xsheet-EmptyColumnHead-color:              lighten(@bg, 10.1961);
+
+@xsheet-EmptyCell-color:                    darken(@bg, 3.1373);
+@xsheet-NotEmptyColumn-color:               @bg;
+@xsheet-SelectedEmptyCell-color:            lighten(@bg, 14.1176);
+
+@xsheet-LevelColumn-color:                  #4C6E4C;
+@xsheet-LevelColumnBorder-color:            #8FB38F;
+@xsheet-SelectedLevelColumn-color:          lighten(desaturate(@xsheet-LevelColumn-color, 5), 10);
+
+@xsheet-VectorColumn-color:                 #7B7B4C;
+@xsheet-VectorColumnBorder-color:           #BBBB9A;
+@xsheet-SelectedVectorColumn-color:         lighten(desaturate(@xsheet-VectorColumn-color, 5), 10);
+
+@xsheet-ChildColumn-color:                  #6A526B;
+@xsheet-ChildColumnBorder-color:            #B1A3B3;
+@xsheet-SelectedChildColumn-color:          lighten(desaturate(@xsheet-ChildColumn-color, 5), 10);
+
+@xsheet-FullColorColumn-color:              #657A96;
+@xsheet-FullColorColumnBorder-color:        #9EB8BB;
+@xsheet-SelectedFullColorColumn-color:      lighten(desaturate(@xsheet-FullColorColumn-color, 5), 10);
+
+@xsheet-FxColumn-color:                     #56553C;
+@xsheet-FxColumnBorder-color:               #95958A;
+@xsheet-SelectedFxColumn-color:             lighten(desaturate(@xsheet-FxColumn-color, 5), 10);
+
+@xsheet-ReferenceColumn-color:              #616161;
+@xsheet-ReferenceColumnBorder-color:        #A2A2A2;
+@xsheet-SelectedReferenceColumn-color:      lighten(desaturate(@xsheet-ReferenceColumn-color, 5), 10);
+
+@xsheet-PaletteColumn-color:                #3A655F;
+@xsheet-PaletteColumnBorder-color:          #86ACA7;
+@xsheet-SelectedPaletteColumn-color:        lighten(desaturate(@xsheet-PaletteColumn-color, 5), 10);
+
+@xsheet-MeshColumn-color:                   #684D86;
+@xsheet-MeshColumnBorder-color:             #BA92EF;
+@xsheet-SelectedMeshColumn-color:           lighten(desaturate(@xsheet-MeshColumn-color, 5), 10);
+
+@xsheet-SoundTextColumn-color:              #c8c8c8;
+@xsheet-SoundTextColumnBorder-color:        #8c8c8c;
+@xsheet-SelectedSoundTextColumn-color:        lighten(desaturate(@xsheet-SoundTextColumn-color, 5), 10);
+
+@xsheet-SoundColumn-color:                  #657456;
+@xsheet-SoundColumnBorder-color:            #A0AF7D;
+@xsheet-SelectedSoundColumn-color:          lighten(desaturate(@xsheet-SoundColumn-color, 5), 10);
+@xsheet-SoundColumnHL-color:                #34FE5E;
+@xsheet-SoundColumnTrack-color:             #B6C29D;
+
+@xsheet-ColumnHeadPastelizer-color:         #000;
+@xsheet-SelectedColumnHead-color:           #506082;
+
+@xsheet-LightLightBG-color:                 darken(@bg, 3.1373);
+@xsheet-LightBG-color:                      lighten(@bg, 65.8824);
+@xsheet-DarkBG-color:                       lighten(@bg, 60.0000);
+@xsheet-DarkLine-color:                     lighten(@bg, 30.5882);
+
+@xsheet-ActiveCamera-color:                 #2d7dca;
+@xsheet-SelectedActiveCamera-color:         lighten(desaturate(@xsheet-ActiveCamera-color, 5), 10);
+
+@xsheet-OtherCamera-color:                  #6c797b;
+@xsheet-SelectedOtherCamera-color:          lighten(desaturate(@xsheet-OtherCamera-color, 5), 10);
+
+// Timeline
+
+@xsheet-ColumnNameBg-color:                 rgba(0, 0, 0, 0);
+@xsheet-DragBarHighlight-color:             rgba(255, 255, 255, 0.5);
+
+@xsheet-PreviewButtonBgOn-color:            rgba(200, 200, 100, 255);
+@xsheet-PreviewButtonOnImage:               'x_prev_eye_on.svg';
+@xsheet-PreviewButtonBgOff-color:           rgba(255, 255, 255, 0);
+@xsheet-PreviewButtonOffImage:              'x_prev_eye_off.svg';
+
+@xsheet-CamstandButtonBgOn-color:           rgba(235, 144, 107, 255);
+@xsheet-CamstandButtonOnImage:              'x_table_view_on.svg';
+@xsheet-CamstandButtonTranspImage:          'x_table_view_transp.svg';
+@xsheet-CamstandButtonBgOff-color:          rgba(255, 255, 255, 0);
+@xsheet-CamstandButtonOffImage:             'x_table_view_off.svg';
+
+@xsheet-LockButtonBgOn-color:               rgba(255, 255, 255, 0.300);
+@xsheet-LockButtonOnImage:                  'x_lock_on.svg';
+@xsheet-LockButtonBgOff-color:              rgba(255, 255, 255, 0);
+@xsheet-LockButtonOffImage:                 'x_lock_off.svg';
+
+@xsheet-ConfigButtonBg-color:               rgba(255, 255, 255, 0);
+@xsheet-ConfigButtonImage:                  'x_config.svg';
+
+@timeline-PreviewButtonBgOn-color:          rgba(255, 255, 255, 0);
+@timeline-PreviewButtonOnImage:             'timeline_toggle_on.svg';
+@timeline-PreviewButtonBgOff-color:         rgba(255, 255, 255, 0);
+@timeline-PreviewButtonOffImage:            'timeline_toggle_off.svg';
+
+@timeline-CamstandButtonBgOn-color:         rgba(255, 255, 255, 0);
+@timeline-CamstandButtonOnImage:            'timeline_toggle_on.svg';
+@timeline-CamstandButtonTranspImage:        'timeline_toggle_transp.svg';
+@timeline-CamstandButtonBgOff-color:        rgba(255, 255, 255, 0);
+@timeline-CamstandButtonOffImage:           'timeline_toggle_off.svg';
+
+@timeline-LockButtonBgOn-color:             rgba(255, 255, 255, 0);
+@timeline-LockButtonOnImage:                'timeline_toggle_on.svg';
+@timeline-LockButtonBgOff-color:            rgba(255, 255, 255, 0);
+@timeline-LockButtonOffImage:               'timeline_toggle_off.svg';
+
+@timeline-ConfigButtonBg-color:             rgba(255, 255, 255, 0);
+@timeline-ConfigButtonImage:                'timeline_config.svg';
+
+@layerheader-PreviewImage:                  'layer_header_prev_eye.svg';
+@layerheader-PreviewOverImage:              'layer_header_prev_eye_over.svg';
+@layerheader-CamstandImage:                 'layer_header_table_view.svg';
+@layerheader-CamstandOverImage:             'layer_header_table_view_over.svg';
+@layerheader-LockImage:                     'lock_on.svg';
+@layerheader-LockOverImage:                 'lock_on_over.svg';
+
+// -----------------------------------------------------------------------------
+// Schematic Viewer
+// -----------------------------------------------------------------------------
+
+@schematic-viewer-bg-color: darken(@bg, 5);
+
+@schematic-label-text-color: #a0e680;
+
+@schematic-help-button-bg-color: #80a0dc;
+@schematic-help-button-bg-color-hover: lighten(@schematic-help-button-bg-color, 10);
+
+@schematic-TableColor: #62628c;
+@schematic-ActiveCameraColor: #2d7dca;
+@schematic-OtherCameraColor: #6c797b;
+@schematic-GroupColor: #3b6e9c;
+@schematic-PegColor: #9f6e3c;
+@schematic-SplineColor: #6a9d1c;
+@schematic-ActiveOutputcolor: #2d7dca;
+@schematic-OtherOutputcolor: #6c797b;
+@schematic-XsheetColor: #62628c;
+@schematic-NormalFxColor: #6a7e96;
+@schematic-MacroFxColor: #815c79;
+@schematic-ImageAdjustFxColor: #656287;
+@schematic-LayerBlendingFxColor: #4f757d;
+@schematic-MatteFxColor: #ae7171;
+
+// For column based schematic nodes, use the Xsheet viewer colors by default
+@schematic-text-color: @xsheet-text-color;
+@schematic-VerticalLine-color: @xsheet-VerticalLine-color;
+
+@schematic-LevelColumn-color: @xsheet-LevelColumn-color;
+@schematic-VectorColumn-color: @xsheet-VectorColumn-color;
+@schematic-ChildColumn-color: @xsheet-ChildColumn-color;
+@schematic-FullColorColumn-color: @xsheet-FullColorColumn-color;
+@schematic-FxColumn-color: @xsheet-FxColumn-color;
+@schematic-PaletteColumn-color: @xsheet-PaletteColumn-color;
+@schematic-MeshColumn-color: @xsheet-MeshColumn-color;
+@schematic-ReferenceColumn-color: @xsheet-ReferenceColumn-color;
+
+@schematic-PreviewButtonBgOn-color: @xsheet-PreviewButtonBgOn-color;
+@schematic-PreviewButtonOnImage: @xsheet-PreviewButtonOnImage;
+@schematic-PreviewButtonBgOff-color: @xsheet-ReferenceColumn-color;
+@schematic-PreviewButtonOffImage: @xsheet-PreviewButtonOffImage;
+
+@schematic-CamstandButtonBgOn-color: @xsheet-CamstandButtonBgOn-color;
+@schematic-CamstandButtonOnImage: @xsheet-CamstandButtonOnImage;
+@schematic-CamstandButtonTranspImage: @xsheet-CamstandButtonTranspImage;
+@schematic-CamstandButtonBgOff-color: @xsheet-ReferenceColumn-color;
+@schematic-CamstandButtonOffImage: @xsheet-CamstandButtonOffImage;
+
+// -----------------------------------------------------------------------------
+// Function Editor
+// -----------------------------------------------------------------------------
+
+// Function Treeview
+@function-treeview-text-color: @text-color;
+
+// Function Curve Panel
+@function-panel-bg-color: darken(@bg, 5.0980);
+@function-panel-ValueLine-color: darken(@bg, 10);
+@function-panel-FrameLine-color: darken(@bg, 10);
+@function-panel-OtherCurves-color: lighten(@function-panel-bg-color, 30);
+@function-panel-RulerBG-color: darken(@function-panel-bg-color, 3);
+@function-panel-Text-color: @text-color;
+@function-panel-Sub-color: #000;
+@function-panel-Selected-color: #FFA500;
+
+// Function Spreadsheet Viewer
+@function-KeyFrame-color: rgb(153,93,29);
+@function-KeyFrameBorder-color: rgb(201,176,75);
+@function-SelectedKeyFrame-color: lighten(desaturate(@function-KeyFrame-color, 5), 10);
+
+@function-Inbetween-color: rgb(102,98,80);
+@function-InbetweenBorder-color: rgb(205,206,200);
+@function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
+
+@function-SelectedSceneRangeEmpty-color: lighten(@bg, 17.6471);
+
+@function-ExpressionFieldBG-color: lighten(@bg, 61.9608);
+@function-ExpressionFieldBorder-color: darken(@bg, 8.2353);

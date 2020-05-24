@@ -1255,6 +1255,10 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
     maxValue = 100;
 
   m_field  = new ChannelLineEdit(this, 0, minValue, maxValue);
+  if (text == "A") {
+      m_label->setToolTip(tr("Alpha controls the transparency. \nZero is fully transparent."));
+      m_field->setToolTip(tr("Alpha controls the transparency. \nZero is fully transparent."));
+  }
   m_slider = new ColorSlider(Qt::Horizontal, this);
 
   // buttons to increment/decrement the values by 1
@@ -1315,6 +1319,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   ret = ret &&
         connect(subButton, SIGNAL(clicked()), this, SLOT(onSubButtonClicked()));
   assert(ret);
+  setMaximumHeight(30);
 }
 
 //-----------------------------------------------------------------------------
@@ -1585,9 +1590,12 @@ PlainColorPage::PlainColorPage(QWidget *parent)
   }
   setLayout(mainLayout);
 
-  QList<int> list;
-  list << rect().height() / 2 << rect().height() / 2;
-  m_vSplitter->setSizes(list);
+  //QList<int> list;
+  //list << rect().height() / 2 << rect().height() / 2;
+  //m_vSplitter->setSizes(list);
+  m_vSplitter->setStretchFactor(0, 50);
+  m_vSplitter->setStretchFactor(1, 0);
+
 
   // connect(m_squaredColorWheel, SIGNAL(colorChanged(const ColorModel &,
   // bool)),
@@ -2971,13 +2979,15 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   m_alphaAction->setCheckable(true);
   m_rgbAction->setCheckable(true);
   m_wheelAction->setChecked(true);
-  m_hsvAction->setChecked(true);
+  m_hsvAction->setChecked(false);
   m_alphaAction->setChecked(true);
-  m_rgbAction->setChecked(true);
+  m_rgbAction->setChecked(false);
   menu->addAction(m_wheelAction);
-  menu->addAction(m_hsvAction);
   menu->addAction(m_alphaAction);
+  menu->addAction(m_hsvAction);
   menu->addAction(m_rgbAction);
+  m_plainColorPage->m_hsvFrame->setVisible(false);
+  m_plainColorPage->m_rgbFrame->setVisible(false);
 
   QToolButton *toolButton = new QToolButton(this);
   toolButton->setIcon(createQIcon("options"));
@@ -3120,11 +3130,13 @@ QFrame *StyleEditor::createBottomWidget() {
     {
       hLayout->addWidget(m_autoButton);
       hLayout->addWidget(m_applyButton);
-      hLayout->addSpacing(2);
+      //hLayout->addSpacing(2);
       hLayout->addWidget(m_newColor, 1);
       hLayout->addWidget(m_oldColor, 1);
     }
     mainLayout->addLayout(hLayout);
+    m_autoButton->hide();
+    m_applyButton->hide();
 
     // QHBoxLayout *buttonsLayout = new QHBoxLayout;
     // buttonsLayout->setMargin(0);
@@ -3255,8 +3267,8 @@ void StyleEditor::showEvent(QShowEvent *) {
                        SIGNAL(colorSampleChanged(const TPixel32 &)), this,
                        SLOT(setColorSample(const TPixel32 &)));
   m_plainColorPage->m_wheelFrame->setVisible(m_wheelAction->isChecked());
-  m_plainColorPage->m_hsvFrame->setVisible(m_hsvAction->isChecked());
   m_plainColorPage->m_alphaFrame->setVisible(m_alphaAction->isChecked());
+  m_plainColorPage->m_hsvFrame->setVisible(m_hsvAction->isChecked());
   m_plainColorPage->m_rgbFrame->setVisible(m_rgbAction->isChecked());
   updateOrientationButton();
   assert(ret);

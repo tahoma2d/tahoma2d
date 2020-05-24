@@ -6,7 +6,7 @@
 #CleanupSettingsShowButton,
 #OutputSettingsShowButton,
 #FxSettingsPreviewShowButton {
-  image: url('../Default/imgs/white/plus.svg');
+  image: url('../Medium/imgs/white/plus.svg');
   image-position: center center;
   margin: 0;
   padding: 1;
@@ -20,7 +20,7 @@
 #FxSettingsPreviewShowButton:checked {
   background-color: #1e1e1e;
   border-color: #191919;
-  image: url('../Default/imgs/white/minus.svg');
+  image: url('../Medium/imgs/white/minus.svg');
 }
 .button-show:checked:pressed,
 #LoadLevelShowButton:checked:pressed,
@@ -393,9 +393,9 @@ TPanelTitleBar {
   qproperty-TitleColor: #7d7d7d;
   qproperty-ActiveTitleColor: #fff;
   qproperty-BorderPixmap: url('none');
-  qproperty-ActiveBorderPixmap: url('../Default/imgs/white/none');
+  qproperty-ActiveBorderPixmap: url('../Medium/imgs/white/none');
   qproperty-FloatBorderPixmap: url('none');
-  qproperty-FloatActiveBorderPixmap: url('../Default/imgs/white/none');
+  qproperty-FloatActiveBorderPixmap: url('../Medium/imgs/white/none');
 }
 /* -----------------------------------------------------------------------------
    Scrollbars
@@ -472,28 +472,28 @@ QScrollBar::sub-line:vertical {
   height: 16;
 }
 QScrollBar::up-arrow:vertical {
-  image: url('../Default/imgs/white/scroll-up.svg');
+  image: url('../Medium/imgs/white/scroll-up.svg');
   image-position: center center;
 }
 QScrollBar::up-arrow:vertical:pressed {
   margin: 1 0 0 0;
 }
 QScrollBar::down-arrow:vertical {
-  image: url('../Default/imgs/white/scroll-down.svg');
+  image: url('../Medium/imgs/white/scroll-down.svg');
   image-position: center center;
 }
 QScrollBar::down-arrow:vertical:pressed {
   margin: 1 0 0 0;
 }
 QScrollBar::left-arrow:horizontal {
-  image: url('../Default/imgs/white/scroll-left.svg');
+  image: url('../Medium/imgs/white/scroll-left.svg');
   image-position: center center;
 }
 QScrollBar::left-arrow:horizontal:pressed {
   margin: 1 0 0 0;
 }
 QScrollBar::right-arrow:horizontal {
-  image: url('../Default/imgs/white/scroll-right.svg');
+  image: url('../Medium/imgs/white/scroll-right.svg');
   image-position: center center;
 }
 QScrollBar::right-arrow:horizontal:pressed {
@@ -573,18 +573,18 @@ DvScrollWidget QPushButton:pressed,
 }
 #ScrollLeftButton {
   border-right: 1 solid #161616;
-  image: url('../Default/imgs/white/scroll-left.svg');
+  image: url('../Medium/imgs/white/scroll-left.svg');
 }
 #ScrollRightButton {
   border-left: 1 solid #161616;
   margin-left: 3;
-  image: url('../Default/imgs/white/scroll-right.svg');
+  image: url('../Medium/imgs/white/scroll-right.svg');
 }
 #ScrollUpButton {
-  image: url('../Default/imgs/white/scroll-up.svg');
+  image: url('../Medium/imgs/white/scroll-up.svg');
 }
 #ScrollDownButton {
-  image: url('../Default/imgs/white/scroll-down.svg');
+  image: url('../Medium/imgs/white/scroll-down.svg');
 }
 /* -------------------------------------------------------------------------- */
 #keyFrameNavigator {
@@ -596,22 +596,22 @@ DvScrollWidget QPushButton:pressed,
   min-width: 18;
 }
 #keyFrameNavigator #PreviousKey {
-  image: url('../Default/imgs/white/prevkey.svg');
+  image: url('../Medium/imgs/white/prevkey.svg');
 }
 #keyFrameNavigator #PreviousKey:hover {
-  image: url('../Default/imgs/white/prevkey_over.svg');
+  image: url('../Medium/imgs/white/prevkey_over.svg');
 }
 #keyFrameNavigator #PreviousKey:disabled {
-  image: url('../Default/imgs/white/prevkey_disabled.svg');
+  image: url('../Medium/imgs/white/prevkey_disabled.svg');
 }
 #keyFrameNavigator #NextKey {
-  image: url('../Default/imgs/white/nextkey.svg');
+  image: url('../Medium/imgs/white/nextkey.svg');
 }
 #keyFrameNavigator #NextKey:hover {
-  image: url('../Default/imgs/white/nextkey_over.svg');
+  image: url('../Medium/imgs/white/nextkey_over.svg');
 }
 #keyFrameNavigator #NextKey:disabled {
-  image: url('../Default/imgs/white/nextkey_disabled.svg');
+  image: url('../Medium/imgs/white/nextkey_disabled.svg');
 }
 /* -----------------------------------------------------------------------------
    Trees
@@ -655,7 +655,7 @@ QTreeView::branch:has-siblings:adjoins-item,
 QTreeWidget::branch:has-children:closed,
 QTreeView::branch:has-children:closed,
 #FunctionEditorTree::branch:has-children:closed {
-  background: url('../Default/imgs/white/treebranch-closed.svg') no-repeat;
+  background: url('../Medium/imgs/white/treebranch-closed.svg') no-repeat;
   background-position: center center;
   border-image: none;
   image: none;
@@ -664,7 +664,7 @@ QTreeView::branch:has-children:closed,
 QTreeWidget::branch:has-children:open,
 QTreeView::branch:has-children:open,
 #FunctionEditorTree::branch:has-children:open {
-  background: url('../Default/imgs/white/treebranch-open.svg') no-repeat;
+  background: url('../Medium/imgs/white/treebranch-open.svg') no-repeat;
   background-position: center center;
   image: none;
 }
@@ -672,7 +672,7 @@ QTreeView::branch:has-children:open,
 QTreeWidget::branch:has-children:has-siblings:closed,
 QTreeView::branch:has-children:has-siblings:closed,
 #FunctionEditorTree::branch:has-children:has-siblings:closed {
-  background: url('../Default/imgs/white/treebranch-closed.svg') no-repeat;
+  background: url('../Medium/imgs/white/treebranch-closed.svg') no-repeat;
   background-position: center center;
   border-image: none;
   image: none;
@@ -681,7 +681,7 @@ QTreeView::branch:has-children:has-siblings:closed,
 QTreeWidget::branch:has-children:has-siblings:open,
 QTreeView::branch:has-children:has-siblings:open,
 #FunctionEditorTree::branch:has-children:has-siblings:open {
-  background: url('../Default/imgs/white/treebranch-open.svg') no-repeat;
+  background: url('../Medium/imgs/white/treebranch-open.svg') no-repeat;
   background-position: center center;
   border-image: none;
   image: none;
@@ -830,7 +830,7 @@ QComboBox:checked {
 .ComboBox::drop-down,
 QComboBox::drop-down {
   border: 0;
-  image: url('../Default/imgs/white/combo_downarrow.svg');
+  image: url('../Medium/imgs/white/combo_downarrow.svg');
   image-position: center center;
   width: 16;
 }
@@ -852,7 +852,7 @@ QComboBox::drop-down:hover:editable {
 }
 .ComboBox::drop-down:disabled,
 QComboBox::drop-down:disabled {
-  image: url('../Default/imgs/white/combo_downarrow_disabled.svg');
+  image: url('../Medium/imgs/white/combo_downarrow_disabled.svg');
 }
 .ComboBox::drop-down:disabled:editable,
 QComboBox::drop-down:disabled:editable {
@@ -961,7 +961,7 @@ QCheckBox::indicator:checked,
 QGroupBox::indicator:checked {
   background-color: #5385a6;
   border-color: #5385a6;
-  image: url('../Default/imgs/white/checkmark.svg');
+  image: url('../Medium/imgs/white/checkmark.svg');
 }
 .CheckBox::indicator:checked:hover,
 QMenu::indicator:non-exclusive:checked:hover,
@@ -980,7 +980,7 @@ QCheckBox::indicator:checked:disabled,
 QGroupBox::indicator:checked:disabled {
   background-color: #4a4a4a;
   border-color: #4a4a4a;
-  image: url('../Default/imgs/white/checkmark_disabled.svg');
+  image: url('../Medium/imgs/white/checkmark_disabled.svg');
 }
 .CheckBox::indicator:indeterminate,
 QMenu::indicator:non-exclusive:indeterminate,
@@ -990,7 +990,7 @@ QCheckBox::indicator:indeterminate,
 QGroupBox::indicator:indeterminate {
   background-color: #5385a6;
   border-color: #5385a6;
-  image: url('../Default/imgs/white/checkpartially.svg');
+  image: url('../Medium/imgs/white/checkpartially.svg');
 }
 .CheckBox::indicator:indeterminate:disabled,
 QMenu::indicator:non-exclusive:indeterminate:disabled,
@@ -1000,7 +1000,7 @@ QCheckBox::indicator:indeterminate:disabled,
 QGroupBox::indicator:indeterminate:disabled {
   background-color: #4a4a4a;
   border-color: #4a4a4a;
-  image: url('../Default/imgs/white/checkpartially_disabled.svg');
+  image: url('../Medium/imgs/white/checkpartially_disabled.svg');
 }
 .CheckBox::indicator:disabled,
 QMenu::indicator:non-exclusive:disabled,
@@ -1048,21 +1048,21 @@ QMenu::indicator:exclusive:unchecked,
 QMenu::indicator:exclusive:unchecked,
 QRadioButton::indicator:unchecked,
 #CameraSettingsRadioButton_Small::indicator:unchecked {
-  image: url('../Default/imgs/white/radiobutton-dark_unchecked.svg');
+  image: url('../Medium/imgs/white/radiobutton-dark_unchecked.svg');
 }
 .RadioButton::indicator:unchecked:hover,
 QMenu::indicator:exclusive:unchecked:hover,
 QMenu::indicator:exclusive:unchecked:hover,
 QRadioButton::indicator:unchecked:hover,
 #CameraSettingsRadioButton_Small::indicator:unchecked:hover {
-  image: url('../Default/imgs/white/radiobutton-dark_unchecked_hover.svg');
+  image: url('../Medium/imgs/white/radiobutton-dark_unchecked_hover.svg');
 }
 .RadioButton::indicator:checked,
 QMenu::indicator:exclusive:checked,
 QMenu::indicator:exclusive:checked,
 QRadioButton::indicator:checked,
 #CameraSettingsRadioButton_Small::indicator:checked {
-  image: url('../Default/imgs/white/radiobutton_checked.svg');
+  image: url('../Medium/imgs/white/radiobutton_checked.svg');
 }
 .RadioButton::indicator:checked:disabled,
 QMenu::indicator:exclusive:checked:disabled,
@@ -1070,14 +1070,14 @@ QMenu::indicator:exclusive:checked:disabled,
 QRadioButton::indicator:checked:disabled,
 #CameraSettingsRadioButton_Small::indicator:checked:disabled {
   background-color: transparent;
-  image: url('../Default/imgs/white/radiobutton_checked_disabled.svg');
+  image: url('../Medium/imgs/white/radiobutton_checked_disabled.svg');
 }
 .RadioButton::indicator:disabled,
 QMenu::indicator:exclusive:disabled,
 QMenu::indicator:exclusive:disabled,
 QRadioButton::indicator:disabled,
 #CameraSettingsRadioButton_Small::indicator:disabled {
-  image: url('../Default/imgs/white/radiobutton-dark_unchecked_disabled.svg');
+  image: url('../Medium/imgs/white/radiobutton-dark_unchecked_disabled.svg');
 }
 /* -----------------------------------------------------------------------------
    GroupBox
@@ -1117,7 +1117,7 @@ QGroupBox:disabled {
 .Slider::groove:horizontal,
 QSlider::groove:horizontal {
   background-color: transparent;
-  background-image: url('../Default/imgs/white/slider-groove_dark.svg');
+  background-image: url('../Medium/imgs/white/slider-groove_dark.svg');
   background-position: center center;
   background-repeat: repeat-x;
   margin: 0;
@@ -1126,17 +1126,17 @@ QSlider::groove:horizontal {
 }
 .Slider::groove:horizontal:disabled,
 QSlider::groove:horizontal:disabled {
-  background-image: url('../Default/imgs/white/slider-groove_disabled_dark.svg');
+  background-image: url('../Medium/imgs/white/slider-groove_disabled_dark.svg');
 }
 .Slider::handle:horizontal,
 QSlider::handle:horizontal {
   width: 10;
   margin: -2 -1;
-  image: url('../Default/imgs/white/slider-handle.svg');
+  image: url('../Medium/imgs/white/slider-handle.svg');
 }
 .Slider::handle:horizontal:disabled,
 QSlider::handle:horizontal:disabled {
-  image: url('../Default/imgs/white/slider-handle_disabled.svg');
+  image: url('../Medium/imgs/white/slider-handle_disabled.svg');
 }
 /* -----------------------------------------------------------------------------
    Double Slider
@@ -1147,10 +1147,10 @@ QSlider::handle:horizontal:disabled {
   qproperty-LightLineEdgeColor: #191919;
   qproperty-DarkLineColor: #191919;
   qproperty-MiddleLineColor: #191919;
-  qproperty-HandleLeftPixmap: url("../Default/imgs/white/slider-handle.svg");
-  qproperty-HandleRightPixmap: url("../Default/imgs/white/slider-handle.svg");
-  qproperty-HandleLeftGrayPixmap: url("../Default/imgs/white/slider-handle_disabled.svg");
-  qproperty-HandleRightGrayPixmap: url("../Default/imgs/white/slider-handle_disabled.svg");
+  qproperty-HandleLeftPixmap: url("../Medium/imgs/white/slider-handle.svg");
+  qproperty-HandleRightPixmap: url("../Medium/imgs/white/slider-handle.svg");
+  qproperty-HandleLeftGrayPixmap: url("../Medium/imgs/white/slider-handle_disabled.svg");
+  qproperty-HandleRightGrayPixmap: url("../Medium/imgs/white/slider-handle_disabled.svg");
 }
 /* -----------------------------------------------------------------------------
    Progress Bar
@@ -1271,12 +1271,12 @@ ParamsPage {
   width: 18;
 }
 #CameraSettingsRadioButton::indicator:unchecked {
-  image: url('../Default/imgs/white/lock_off.svg');
+  image: url('../Medium/imgs/white/lock_off.svg');
 }
 #CameraSettingsRadioButton::indicator:checked {
   background-color: #C34040;
   border-color: #C34040;
-  image: url('../Default/imgs/white/lock_on.svg');
+  image: url('../Medium/imgs/white/lock_on.svg');
 }
 #CameraSettingsRadioButton::indicator:checked:hover {
   background-color: #d57a7a;
@@ -1298,13 +1298,13 @@ ParamsPage {
 #ForceSquaredPixelButton {
   height: 16;
   border: 1 solid rgba(255, 255, 255, 0);
-  image: url('../Default/imgs/white/fsp_unchecked.svg');
+  image: url('../Medium/imgs/white/fsp_unchecked.svg');
   padding: 2;
   width: 16;
   margin: 0;
 }
 #ForceSquaredPixelButton:checked {
-  image: url('../Default/imgs/white/fsp_checked.svg');
+  image: url('../Medium/imgs/white/fsp_checked.svg');
 }
 /* -----------------------------------------------------------------------------
    Output Settings
@@ -1424,10 +1424,10 @@ QStatusBar #StatusBarLabel {
   min-width: 18;
 }
 #colorSliderAddButton {
-  image: url('../Default/imgs/white/scroll-right.svg');
+  image: url('../Medium/imgs/white/scroll-right.svg');
 }
 #colorSliderSubButton {
-  image: url('../Default/imgs/white/scroll-left.svg');
+  image: url('../Medium/imgs/white/scroll-left.svg');
 }
 #PlainColorPageParts {
   border-bottom: 1 solid #161616;
@@ -1565,24 +1565,24 @@ ProjectPopup QLabel {
    PencilTestPopup / CameraCapture Window
 ----------------------------------------------------------------------------- */
 #GearButton {
-  qproperty-icon: url('../Default/imgs/white/gear.svg');
+  qproperty-icon: url('../Medium/imgs/white/gear.svg');
 }
 #GearButton::menu-indicator {
   image: "";
 }
 #LiveViewButton {
-  qproperty-icon: url('../Default/imgs/white/liveview.svg');
+  qproperty-icon: url('../Medium/imgs/white/liveview.svg');
 }
 #LiveViewButton::menu-indicator {
   image: "";
 }
 #SubfolderButton {
-  qproperty-icon: url('../Default/imgs/white/subfolder.svg');
+  qproperty-icon: url('../Medium/imgs/white/subfolder.svg');
   padding-left: 6px;
   padding-right: 6px;
 }
 #SubcameraButton {
-  qproperty-icon: url('../Default/imgs/white/subcamera.svg');
+  qproperty-icon: url('../Medium/imgs/white/subcamera.svg');
   padding-left: 6px;
   padding-right: 6px;
 }
@@ -1615,14 +1615,14 @@ SchematicViewer {
   qproperty-LayerBlendingFxColor: #4f757d;
   qproperty-MatteFxColor: #ae7171;
   qproperty-SchematicPreviewButtonBgOnColor: #c8c864;
-  qproperty-SchematicPreviewButtonOnImage: url('../Default/imgs/white/x_prev_eye_on.svg');
+  qproperty-SchematicPreviewButtonOnImage: url('../Medium/imgs/white/x_prev_eye_on.svg');
   qproperty-SchematicPreviewButtonBgOffColor: #616161;
-  qproperty-SchematicPreviewButtonOffImage: url('../Default/imgs/white/x_prev_eye_off.svg');
+  qproperty-SchematicPreviewButtonOffImage: url('../Medium/imgs/white/x_prev_eye_off.svg');
   qproperty-SchematicCamstandButtonBgOnColor: #eb906b;
-  qproperty-SchematicCamstandButtonOnImage: url('../Default/imgs/white/x_table_view_on.svg');
-  qproperty-SchematicCamstandButtonTranspImage: url('../Default/imgs/white/x_table_view_transp.svg');
+  qproperty-SchematicCamstandButtonOnImage: url('../Medium/imgs/white/x_table_view_on.svg');
+  qproperty-SchematicCamstandButtonTranspImage: url('../Medium/imgs/white/x_table_view_transp.svg');
   qproperty-SchematicCamstandButtonBgOffColor: #616161;
-  qproperty-SchematicCamstandButtonOffImage: url('../Default/imgs/white/x_table_view_off.svg');
+  qproperty-SchematicCamstandButtonOffImage: url('../Medium/imgs/white/x_table_view_off.svg');
 }
 /* -----------------------------------------------------------------------------
    Schematic Node Viewer
@@ -1726,7 +1726,7 @@ ChannelBar {
   border-bottom: 0;
 }
 IconViewField {
-  qproperty-ThicknessPixmap: url("../Default/imgs/white/selectiontool_thickness.svg");
+  qproperty-ThicknessPixmap: url("../Medium/imgs/white/selectiontool_thickness.svg");
 }
 #EditToolLockButton {
   spacing: 0;
@@ -1741,12 +1741,12 @@ IconViewField {
   width: 18;
 }
 #EditToolLockButton::indicator:unchecked {
-  image: url('../Default/imgs/white/lock_off.svg');
+  image: url('../Medium/imgs/white/lock_off.svg');
 }
 #EditToolLockButton::indicator:checked {
   background-color: #C34040;
   border-color: #C34040;
-  image: url('../Default/imgs/white/lock_on.svg');
+  image: url('../Medium/imgs/white/lock_on.svg');
 }
 #EditToolLockButton::indicator:checked:hover {
   background-color: #d57a7a;
@@ -1755,14 +1755,14 @@ IconViewField {
 PopupButton::menu-indicator {
   border-left: 0;
   height: 17;
-  image: url('../Default/imgs/white/combo_downarrow.svg');
+  image: url('../Medium/imgs/white/combo_downarrow.svg');
   width: 10;
 }
 PopupButton::menu-indicator:hover {
-  image: url('../Default/imgs/white/combo_downarrow.svg');
+  image: url('../Medium/imgs/white/combo_downarrow.svg');
 }
 PopupButton::menu-indicator:disabled {
-  image: url('../Default/imgs/white/combo_downarrow_disabled.svg');
+  image: url('../Medium/imgs/white/combo_downarrow_disabled.svg');
 }
 #Cap,
 #Join {
@@ -1856,7 +1856,7 @@ QToolBar#FlipConsolePlayToolBar QToolButton {
 }
 #ViewerFpsSlider {
   background-color: transparent;
-  background-image: url('../Default/imgs/white/slider-groove_dark.svg');
+  background-image: url('../Medium/imgs/white/slider-groove_dark.svg');
   background-position: center center;
   background-repeat: repeat-x;
   border: 0;
@@ -1897,12 +1897,12 @@ QToolBar#FlipConsolePlayToolBar QToolButton {
 }
 FlipSlider {
   qproperty-PBHeight: 15;
-  qproperty-PBOverlay: url('../Default/imgs/white/flipslider_dark.svg');
+  qproperty-PBOverlay: url('../Medium/imgs/white/flipslider_dark.svg');
   qproperty-PBColorMarginLeft: 1;
   qproperty-PBColorMarginTop: 2;
   qproperty-PBColorMarginRight: 1;
   qproperty-PBColorMarginBottom: 2;
-  qproperty-PBMarker: url('../Default/imgs/white/flipmarker_dark.svg');
+  qproperty-PBMarker: url('../Medium/imgs/white/flipmarker_dark.svg');
   qproperty-PBMarkerMarginLeft: 3;
   qproperty-PBMarkerMarginRight: 3;
   qproperty-notStartedColor: rgba(205, 101, 101, 0.78);
@@ -2009,41 +2009,41 @@ XsheetViewer {
   qproperty-XsheetColumnNameBgColor: rgba(0, 0, 0, 0);
   qproperty-XsheetDragBarHighlightColor: rgba(255, 255, 255, 0.5);
   qproperty-XsheetPreviewButtonBgOnColor: #c8c864;
-  qproperty-XsheetPreviewButtonOnImage: url('../Default/imgs/white/x_prev_eye_on.svg');
+  qproperty-XsheetPreviewButtonOnImage: url('../Medium/imgs/white/x_prev_eye_on.svg');
   qproperty-XsheetPreviewButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-XsheetPreviewButtonOffImage: url('../Default/imgs/white/x_prev_eye_off.svg');
+  qproperty-XsheetPreviewButtonOffImage: url('../Medium/imgs/white/x_prev_eye_off.svg');
   qproperty-XsheetCamstandButtonBgOnColor: #eb906b;
-  qproperty-XsheetCamstandButtonOnImage: url('../Default/imgs/white/x_table_view_on.svg');
-  qproperty-XsheetCamstandButtonTranspImage: url('../Default/imgs/white/x_table_view_transp.svg');
+  qproperty-XsheetCamstandButtonOnImage: url('../Medium/imgs/white/x_table_view_on.svg');
+  qproperty-XsheetCamstandButtonTranspImage: url('../Medium/imgs/white/x_table_view_transp.svg');
   qproperty-XsheetCamstandButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-XsheetCamstandButtonOffImage: url('../Default/imgs/white/x_table_view_off.svg');
+  qproperty-XsheetCamstandButtonOffImage: url('../Medium/imgs/white/x_table_view_off.svg');
   qproperty-XsheetLockButtonBgOnColor: rgba(255, 255, 255, 0.3);
-  qproperty-XsheetLockButtonOnImage: url('../Default/imgs/white/x_lock_on.svg');
+  qproperty-XsheetLockButtonOnImage: url('../Medium/imgs/white/x_lock_on.svg');
   qproperty-XsheetLockButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-XsheetLockButtonOffImage: url('../Default/imgs/white/x_lock_off.svg');
+  qproperty-XsheetLockButtonOffImage: url('../Medium/imgs/white/x_lock_off.svg');
   qproperty-XsheetConfigButtonBgColor: rgba(255, 255, 255, 0);
-  qproperty-XsheetConfigButtonImage: url('../Default/imgs/white/x_config.svg');
+  qproperty-XsheetConfigButtonImage: url('../Medium/imgs/white/x_config.svg');
   qproperty-TimelinePreviewButtonBgOnColor: rgba(255, 255, 255, 0);
-  qproperty-TimelinePreviewButtonOnImage: url('../Default/imgs/white/timeline_toggle_on.svg');
+  qproperty-TimelinePreviewButtonOnImage: url('../Medium/imgs/white/timeline_toggle_on.svg');
   qproperty-TimelinePreviewButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-TimelinePreviewButtonOffImage: url('../Default/imgs/white/timeline_toggle_off.svg');
+  qproperty-TimelinePreviewButtonOffImage: url('../Medium/imgs/white/timeline_toggle_off.svg');
   qproperty-TimelineCamstandButtonBgOnColor: rgba(255, 255, 255, 0);
-  qproperty-TimelineCamstandButtonOnImage: url('../Default/imgs/white/timeline_toggle_on.svg');
-  qproperty-TimelineCamstandButtonTranspImage: url('../Default/imgs/white/timeline_toggle_transp.svg');
+  qproperty-TimelineCamstandButtonOnImage: url('../Medium/imgs/white/timeline_toggle_on.svg');
+  qproperty-TimelineCamstandButtonTranspImage: url('../Medium/imgs/white/timeline_toggle_transp.svg');
   qproperty-TimelineCamstandButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-TimelineCamstandButtonOffImage: url('../Default/imgs/white/timeline_toggle_off.svg');
+  qproperty-TimelineCamstandButtonOffImage: url('../Medium/imgs/white/timeline_toggle_off.svg');
   qproperty-TimelineLockButtonBgOnColor: rgba(255, 255, 255, 0);
-  qproperty-TimelineLockButtonOnImage: url('../Default/imgs/white/timeline_toggle_on.svg');
+  qproperty-TimelineLockButtonOnImage: url('../Medium/imgs/white/timeline_toggle_on.svg');
   qproperty-TimelineLockButtonBgOffColor: rgba(255, 255, 255, 0);
-  qproperty-TimelineLockButtonOffImage: url('../Default/imgs/white/timeline_toggle_off.svg');
+  qproperty-TimelineLockButtonOffImage: url('../Medium/imgs/white/timeline_toggle_off.svg');
   qproperty-TimelineConfigButtonBgColor: rgba(255, 255, 255, 0);
-  qproperty-TimelineConfigButtonImage: url('../Default/imgs/white/timeline_config.svg');
-  qproperty-LayerHeaderPreviewImage: url('../Default/imgs/white/layer_header_prev_eye.svg');
-  qproperty-LayerHeaderPreviewOverImage: url('../Default/imgs/white/layer_header_prev_eye_over.svg');
-  qproperty-LayerHeaderCamstandImage: url('../Default/imgs/white/layer_header_table_view.svg');
-  qproperty-LayerHeaderCamstandOverImage: url('../Default/imgs/white/layer_header_table_view_over.svg');
-  qproperty-LayerHeaderLockImage: url('../Default/imgs/white/lock_on.svg');
-  qproperty-LayerHeaderLockOverImage: url('../Default/imgs/white/lock_on_over.svg');
+  qproperty-TimelineConfigButtonImage: url('../Medium/imgs/white/timeline_config.svg');
+  qproperty-LayerHeaderPreviewImage: url('../Medium/imgs/white/layer_header_prev_eye.svg');
+  qproperty-LayerHeaderPreviewOverImage: url('../Medium/imgs/white/layer_header_prev_eye_over.svg');
+  qproperty-LayerHeaderCamstandImage: url('../Medium/imgs/white/layer_header_table_view.svg');
+  qproperty-LayerHeaderCamstandOverImage: url('../Medium/imgs/white/layer_header_table_view_over.svg');
+  qproperty-LayerHeaderLockImage: url('../Medium/imgs/white/lock_on.svg');
+  qproperty-LayerHeaderLockOverImage: url('../Medium/imgs/white/lock_on_over.svg');
   qproperty-ActiveCameraColor: #2d7dca;
   qproperty-SelectedActiveCameraColor: #5796d3;
   qproperty-OtherCameraColor: #6c797b;
@@ -2122,17 +2122,17 @@ SpreadsheetViewer {
   margin: 0;
 }
 #FunctionSegmentViewerLinkButton {
-  background-image: url('../Default/imgs/white/segment_unlinked.svg');
+  background-image: url('../Medium/imgs/white/segment_unlinked.svg');
   background-repeat: no-repeat;
 }
 #FunctionSegmentViewerLinkButton:hover {
   background-repeat: no-repeat;
 }
 #FunctionSegmentViewerLinkButton:checked {
-  background-image: url('../Default/imgs/white/segment_linked.svg');
+  background-image: url('../Medium/imgs/white/segment_linked.svg');
   background-repeat: no-repeat;
 }
 #FunctionSegmentViewerLinkButton:disabled {
-  background-image: url('../Default/imgs/white/segment_disabled.svg');
+  background-image: url('../Medium/imgs/white/segment_disabled.svg');
   background-repeat: no-repeat;
 }

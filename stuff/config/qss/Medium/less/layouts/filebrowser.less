@@ -1,0 +1,91 @@
+/* -----------------------------------------------------------------------------
+   File Browser
+----------------------------------------------------------------------------- */
+
+/* Left Pane
+----------------------------------------------------------------------------- */
+
+#DirTreeView {
+  background-color: @browser-listview-bg-color;
+  alternate-background-color: @browser-listview-bg-color-alt;
+  border: 1 solid @accent;
+  border-right: 0;
+}
+
+/* Right Pane
+----------------------------------------------------------------------------- */
+
+DvItemViewerPanel {
+  qproperty-TextColor: @text-color;
+  qproperty-AlternateBackground: @browser-itemview-bg-color-alt;
+  qproperty-SelectedTextColor: @hl-text-color;
+  qproperty-FolderTextColor: @browser-folder-text-color;
+  qproperty-SelectedItemBackground: @hl-bg-color;
+}
+
+#FileBrowser {
+  & DvItemViewerPanel {
+    background-color: @browser-itemview-bg-color;
+  }
+  #castFrame {
+    border-top: 1 solid @accent;
+    border-right: 1 solid @accent;
+    border-bottom: 1 solid @accent;
+    margin: 0;
+  }
+  & QToolButton {
+    padding: 1;
+  }
+}
+
+#DvItemViewerButtonBar {
+  // Placeholder
+}
+
+#LoadLevelFrame {
+  &:extend(.frame all);
+}
+
+#LoadLevelShowButton {
+  &:extend(.button-show all);
+}
+
+#PsdSettingsGroupBox {
+    &:extend(.frame all);
+}
+
+StyledTreeView {
+  qproperty-TextColor: @text-color;
+  qproperty-SelectedTextColor: @hl-text-color;
+  qproperty-SelectedItemBackground: @hl-bg-color;
+  qproperty-FolderTextColor: @browser-folder-text-color;
+  qproperty-SelectedFolderTextColor: @browser-folder-text-color-selected;
+  alternate-background-color: @tree-bg-color-alt;
+  background-color: @tree-bg-color;
+  border: 1 solid @accent;
+}
+
+#FileDoesNotExistLabel {
+    color: @label-error;
+}
+
+/* -----------------------------------------------------------------------------
+   Scene Cast
+----------------------------------------------------------------------------- */
+
+#SceneCast {
+  &:extend(#FileBrowser all);
+  & QToolBar {
+    border-top: 1 solid @accent;
+  }
+  & QToolButton {
+    margin: 3 1 2 1;
+    padding: 1;
+  }
+}
+
+// PR #1104
+#CastBrowser {
+  border: 0;
+  margin: 0;
+}

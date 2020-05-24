@@ -1,0 +1,118 @@
+/* -----------------------------------------------------------------------------
+   Tool Bar
+----------------------------------------------------------------------------- */
+
+#ToolBar {
+  & QToolBar {
+    padding-left: 2;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Tool Options
+----------------------------------------------------------------------------- */
+
+
+#ToolOptions {
+  & TPanelTitleBar {
+    border-right: 1 solid @accent;
+    border-bottom: 0;
+  }
+}
+
+#CommandBar {
+  & TPanelTitleBar {
+    border-right: 1 solid @accent;
+    border-bottom: 0;
+  }
+}
+
+IconViewField {
+  qproperty-ThicknessPixmap: url("@{img-url}/selectiontool_thickness.svg");
+}
+
+#EditToolLockButton {
+  // also applies to room tab lock icon
+  // (layouts/mainwindow)
+  spacing: 0;
+  &:hover {
+    background: none;
+  }
+  &::indicator {
+    &:extend(.button-tool all); // add a button style
+    .icon-lock;                 // add the icon
+  }
+}
+
+PopupButton {
+  &::menu-indicator {
+    border-left: 0;
+    height: 17;
+    image: url('@{img-url}/combo_downarrow.svg');
+    width: 10;
+    &:hover {
+      image: url('@{img-url}/combo_downarrow.svg');
+    }
+    &:disabled {
+      image: url('@{img-url}/combo_downarrow_disabled.svg');
+    }
+  }
+}
+
+#Cap,
+#Join {
+  @size: 32;
+  padding: 0 4 0 -8;
+  max-width: @size;
+  min-width: @size;
+  & QMenu {
+    @size: 28;
+    max-width: @size;
+    min-width: @size;
+    &::item {
+      max-width: @size;
+      min-width: @size;
+      padding: 0;
+    }
+  }
+}
+
+QToolBar#MediumPaddingToolBar { //Schematic Toolbars
+    & QToolButton {
+      padding-left: 3;
+      padding-right: 3;
+    }
+}
+
+QToolBar#WidePaddingToolBar { //FrameNavigator
+    & QToolButton {
+      padding-left: 6;
+      padding-right: 6;
+    }  
+}
+
+#CommandBar {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  &::separator:horizontal {
+    margin-right: 3;
+    margin-left: 3;
+  }
+}
+
+#expandButton {
+  &:checked {
+    background-color: transparent;
+    border-color: transparent;
+    color: @text-color;
+    &:hover {
+      background-color: @toolbutton-bg-color-hover;
+      border-color: @toolbutton-border-color-hover;
+    }
+    &:pressed {
+      background-color: @toolbutton-bg-color-pressed;
+      border-color: @toolbutton-border-color-pressed;
+    }
+  }
+}
