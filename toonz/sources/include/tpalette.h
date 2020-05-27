@@ -192,6 +192,8 @@ private:
   StyleAnimationTable
       m_styleAnimationTable;  //!< Table of style animations (per style).
   int m_currentFrame;         //!< Palette's current frame in style animations.
+  bool m_isCleanupPalette;    //!< Whether the palette is used for cleanup
+                              //! purposes.
 
   TImageP m_refImg;
   TFilePath m_refImgPath;
@@ -348,6 +350,11 @@ between RGBA color components.
     return m_askOverwriteFlag;
   }  //!< Returns the ask-overwrite flag.
 
+  void setIsCleanupPalette(
+      bool on);  //!< Sets the palette's identity as a cleanup palette.
+  bool isCleanupPalette() const {
+    return m_isCleanupPalette;
+  }  //!< Returns whether this is a cleanup palette.
 
   const TImageP &getRefImg() const {
     return m_refImg;

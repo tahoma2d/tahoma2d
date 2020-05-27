@@ -16,8 +16,16 @@ set(MOC_HEADERS
     camerasettingspopup.h
     canvassizepopup.h
     castviewer.h
+    cleanuppaletteviewer.h
+    cleanuppopup.h
+    cleanuppreview.h
+    cleanupsettingsmodel.h
+    cleanupsettingspane.h
+    cleanupsettingspopup.h
+    cleanupswatch.h
     colormodelbehaviorpopup.h
     colormodelviewer.h
+    comboviewerpane.h
     commandbar.h
     commandbarpopup.h
     convertpopup.h
@@ -71,6 +79,7 @@ set(MOC_HEADERS
     reslist.h
     ruler.h
     savepresetpopup.h
+    scanpopup.h
     scenesettingspopup.h
     sceneviewer.h
     sceneviewercontextmenu.h
@@ -146,6 +155,7 @@ set(HEADERS
     kis_tablet_support_win8.h
     menubarcommandids.h
     moviegenerator.h
+    scanlist.h
     sceneviewerevents.h
     selectionutils.h
     subcameramanager.h
@@ -189,6 +199,7 @@ set(SOURCES
     previewer.cpp
     previewfxmanager.cpp
     ruler.cpp
+    scanlist.cpp
     tapp.cpp
     toolbar.cpp
     batchserversviewer.cpp
@@ -248,6 +259,7 @@ set(SOURCES
     renumberpopup.cpp
     runscriptcommand.cpp
     savepresetpopup.cpp
+    scanpopup.cpp
     sceneviewercontextmenu.cpp
     scenesettingspopup.cpp
     scriptconsolepanel.cpp
@@ -296,6 +308,12 @@ set(SOURCES
     onionskinmaskgui.cpp
     batches.cpp
     tfarmstuff.cpp
+    cleanuppaletteviewer.cpp
+    cleanuppopup.cpp
+    cleanuppreview.cpp
+    cleanupsettingsmodel.cpp
+    cleanupsettingspopup.cpp
+    cleanupswatch.cpp
     cellkeyframedata.cpp
     cellkeyframeselection.cpp
     keyframemover.cpp
@@ -312,7 +330,9 @@ set(SOURCES
     selectionutils.cpp
     antialiaspopup.cpp
     mergecmapped.cpp
+    comboviewerpane.cpp
     historypane.cpp
+    cleanupsettingspane.cpp
     audiorecordingpopup.cpp
     locatorpopup.cpp
     styleshortcutswitchablepanel.cpp
@@ -511,6 +531,7 @@ if(BUILD_ENV_APPLE)
     endforeach()
 
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
+    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
@@ -539,6 +560,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
 
     install(
         PROGRAMS
+            "$<TARGET_FILE:tcleanup>"
             "$<TARGET_FILE:tcomposer>"
             "$<TARGET_FILE:tconverter>"
             "$<TARGET_FILE:tfarmcontroller>"
@@ -638,6 +660,7 @@ exec \$TAHOMA_BASE/bin/Tahoma \"\$@\"
     install(
         PROGRAMS
             ${CMAKE_BINARY_DIR}/bin/tahoma
+            "$<TARGET_FILE:tcleanup>"
             "$<TARGET_FILE:tcomposer>"
             "$<TARGET_FILE:tconverter>"
             "$<TARGET_FILE:tfarmcontroller>"

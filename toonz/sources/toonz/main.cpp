@@ -6,6 +6,7 @@
 #include "tapp.h"
 #include "iocommand.h"
 #include "previewfxmanager.h"
+#include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
 
 // TnzTools includes

@@ -11,23 +11,6 @@
 
 #include <QFrame>
 
-//enum CV_Parts {
-//    CVPARTS_None = 0,
-//    CVPARTS_TOOLBAR = 0x1,
-//    CVPARTS_TOOLOPTIONS = 0x2,
-//    CVPARTS_FLIPCONSOLE = 0x4,
-//    CVPARTS_End = 0x8,
-//    CVPARTS_ALL = CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS | CVPARTS_FLIPCONSOLE
-//};
-
-enum CV_Parts {
-    CVPARTS_None = 0,
-    CVPARTS_PLAYBAR = 0x1,
-    CVPARTS_FRAMESLIDER = 0x4,
-    CVPARTS_End = 0x8,
-    CVPARTS_ALL = CVPARTS_PLAYBAR | CVPARTS_FRAMESLIDER
-};
-
 class SceneViewer;
 class QPoint;
 class QToolBar;
@@ -59,9 +42,9 @@ class SceneViewerPanel final : public QFrame,
   TPanelTitleBarButton *m_subcameraPreviewButton;
   bool m_onionSkinActive = false;
   UINT m_visiblePartsFlag;
-  bool m_playSound       = true;
-  bool m_hasSoundtrack   = false;
-  bool m_playing         = false;
+  bool m_playSound     = true;
+  bool m_hasSoundtrack = false;
+  bool m_playing       = false;
   double m_fps;
   int m_viewerFps;
   double m_samplesPerFrame;
@@ -79,23 +62,23 @@ public:
   // toggle show/hide of the widgets according to m_visiblePartsFlag
   void setVisiblePartsFlag(UINT flag);
   void updateShowHide();
-  void addShowHideContextMenu(QMenu*);
+  void addShowHideContextMenu(QMenu *);
 
   void onDrawFrame(int frame,
                    const ImagePainter::VisualSettings &settings) override;
 
   void onEnterPanel() {
-      m_sceneViewer->setFocus(Qt::OtherFocusReason);
-      // activate shortcut key for this flipconsole
-      m_flipConsole->makeCurrent();
+    m_sceneViewer->setFocus(Qt::OtherFocusReason);
+    // activate shortcut key for this flipconsole
+    m_flipConsole->makeCurrent();
   }
   void onLeavePanel() { m_sceneViewer->clearFocus(); }
 
   // SaveLoadQSettings
-  virtual void save(QSettings& settings) const override;
-  virtual void load(QSettings& settings) override;
+  virtual void save(QSettings &settings) const override;
+  virtual void load(QSettings &settings) override;
 
-  void initializeTitleBar(TPanelTitleBar* titleBar);
+  void initializeTitleBar(TPanelTitleBar *titleBar);
 
 protected:
   void showEvent(QShowEvent *) override;
@@ -109,7 +92,7 @@ protected:
   void enableFlipConsoleForCamerastand(bool on);
   void playAudioFrame(int frame);
   bool hasSoundtrack();
-  void contextMenuEvent(QContextMenuEvent* event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
 
 public slots:
 
@@ -129,7 +112,7 @@ protected slots:
   void onFrameTypeChanged();
   void onPlayingStatusChanged(bool playing);
   // for showing/hiding the parts
-  void onShowHideActionTriggered(QAction*);
+  void onShowHideActionTriggered(QAction *);
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
 };

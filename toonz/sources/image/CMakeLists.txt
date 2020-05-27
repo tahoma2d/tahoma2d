@@ -1,4 +1,5 @@
 set(HEADERS
+    sgi/tiio_sgi.h
     tif/tiio_tif.h
     pli/pli_io.h
     pli/tiio_pli.h
@@ -6,6 +7,9 @@ set(HEADERS
     compatibility/inforegion.h
     compatibility/tfile_io.h
     compatibility/tnz4.h
+    quantel/filequantel.h
+    quantel/filequantelP.h
+    quantel/tiio_quantel.h
     png/tiio_png.h
     psd/tiio_psd.h
     svg/tiio_svg.h
@@ -15,6 +19,7 @@ set(HEADERS
     tzl/tiio_tzl.h
     ../include/tnzimage.h
     mov/tiio_mov_proxy.h
+    3gp/tiio_3gp_proxy.h
     ffmpeg/tiio_gif.h
     ffmpeg/tiio_webm.h
     ffmpeg/tiio_mp4.h
@@ -25,6 +30,7 @@ set(HEADERS
 
 set(SOURCES
     tiio.cpp
+    sgi/filesgi.cpp
     tif/tiio_tif.cpp
     pli/pli_io.cpp
     pli/tags.cpp
@@ -34,6 +40,8 @@ set(SOURCES
     compatibility/tfile_io.c
     compatibility/tnz4.c
     compatibility/tnz4_cpp.cpp
+    quantel/filequantel.c
+    quantel/tiio_quantel.cpp
     png/tiio_png.cpp
     psd/tiio_psd.cpp
     svg/tiio_svg.cpp
@@ -42,6 +50,7 @@ set(SOURCES
     tzp/avl.c
     tzl/tiio_tzl.cpp
     mov/tiio_mov_proxy.cpp
+    3gp/tiio_3gp_proxy.cpp
     ffmpeg/tiio_gif.cpp
     ffmpeg/tiio_webm.cpp
     ffmpeg/tiio_mp4.cpp
@@ -52,24 +61,32 @@ set(SOURCES
 
 if(BUILD_TARGET_WIN)
     set(HEADERS ${HEADERS}
+        avi/tiio_avi.h
         mov/tiio_mov.h
+        3gp/tiio_3gp.h
     )
     set(SOURCES ${SOURCES}
+        avi/tiio_avi.cpp
         mov/tiio_movW.cpp
+        3gp/tiio_3gpW.cpp
     )
 elseif(BUILD_TARGET_APPLE)
     set(HEADERS ${HEADERS}
         mov/tiio_movM.h
+        3gp/tiio_3gpM.h
     )
     set(SOURCES ${SOURCES}
         mov/tiio_movM.cpp
+        3gp/tiio_3gpM.cpp
     )
 elseif(BUILD_TARGET_UNIX)
     set(HEADERS ${HEADERS}
+        3gp/tiio_3gp_proxy.h
         mov/tiio_mov_proxy.h
     )
     set(SOURCES ${SOURCES}
         mov/tiio_mov_proxy.cpp
+        3gp/tiio_3gp_proxy.cpp
     )
 endif()
 

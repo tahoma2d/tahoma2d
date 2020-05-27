@@ -220,6 +220,8 @@ void FileSelection::enableCommands() {
   enableCommand(this, MI_ConvertFiles, &FileSelection::convertFiles);
   enableCommand(this, MI_AddToBatchRenderList,
                 &FileSelection::addToBatchRenderList);
+  enableCommand(this, MI_AddToBatchCleanupList,
+                &FileSelection::addToBatchCleanupList);
   enableCommand(this, MI_CollectAssets, &FileSelection::collectAssets);
   enableCommand(this, MI_ImportScenes, &FileSelection::importScenes);
   enableCommand(this, MI_ExportScenes, &FileSelection::exportScenes);
@@ -237,6 +239,18 @@ void FileSelection::addToBatchRenderList() {
     BatchesController::instance()->addComposerTask(files[i]);
 
   DVGui::info(QObject::tr(" Task added to the Batch Render List."));
+}
+
+//------------------------------------------------------------------------
+
+void FileSelection::addToBatchCleanupList() {
+  std::vector<TFilePath> files;
+  getSelectedFiles(files);
+  int i;
+  for (i = 0; i < files.size(); i++)
+    BatchesController::instance()->addCleanupTask(files[i]);
+
+  DVGui::info(QObject::tr(" Task added to the Batch Cleanup List."));
 }
 
 //------------------------------------------------------------------------

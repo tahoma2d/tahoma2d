@@ -35,6 +35,9 @@ set(MOC_HEADERS
 set(HEADERS
     ${MOC_HEADERS}
     autoadjust.h
+    autopos.h
+    cleanupcommon.h
+    cleanuppalette.h
     imagebuilders.h
     skeletonlut.h
     tcenterlinevectP.h
@@ -68,6 +71,8 @@ set(HEADERS
     ../include/toonz/boardsettings.h
     ../include/toonz/captureparameters.h
     ../include/toonz/childstack.h
+    ../include/toonz/cleanupcolorstyles.h
+    ../include/toonz/cleanupparameters.h
     ../include/toonz/columnfan.h
     ../include/toonz/controlpointobserver.h
     ../include/toonz/currentimage.h
@@ -115,6 +120,7 @@ set(HEADERS
     ../include/toonz/targetcolors.h
     ../include/toonz/tbinarizer.h
     ../include/toonz/tcamera.h
+    ../include/toonz/tcleanupper.h
     ../include/toonz/tcolumnfx.h
     ../include/toonz/tcolumnfxset.h
     ../include/toonz/tdistort.h
@@ -159,9 +165,13 @@ set(HEADERS
 set(SOURCES
     autoadjust.cpp
     autoclose.cpp
+    autopos.cpp
     captureparameters.cpp
 	cellpositionratio.cpp
     childstack.cpp
+    cleanupcolorstyles.cpp
+    cleanuppalette.cpp
+    cleanupparameters.cpp
     columnfan.cpp
     convert2tlv.cpp
     dpiscale.cpp
@@ -229,6 +239,7 @@ set(SOURCES
     tcenterlineskeletonizer.cpp
     tcenterlinetostrokes.cpp
     tcenterlinevectorizer.cpp
+    tcleanupper.cpp
     tcolumnfx.cpp
     tcolumnfxset.cpp
     tdistort.cpp

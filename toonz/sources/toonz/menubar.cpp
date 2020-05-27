@@ -148,12 +148,13 @@ void RoomTabWidget::contextMenuEvent(QContextMenuEvent *event) {
           menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
       connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
     }
-//#if defined(_WIN32) || defined(_CYGWIN_)
-//    /*- customize menubar -*/
-//    QAction *customizeMenuBar = menu->addAction(
-//        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
-//    connect(customizeMenuBar, SIGNAL(triggered()), SLOT(onCustomizeMenuBar()));
-//#endif
+    //#if defined(_WIN32) || defined(_CYGWIN_)
+    //    /*- customize menubar -*/
+    //    QAction *customizeMenuBar = menu->addAction(
+    //        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
+    //    connect(customizeMenuBar, SIGNAL(triggered()),
+    //    SLOT(onCustomizeMenuBar()));
+    //#endif
   }
   menu->exec(event->globalPos());
 }
@@ -165,7 +166,7 @@ void RoomTabWidget::updateTabName() {
   if (index < 0) return;
   m_renameTabIndex = -1;
   QString newName  = m_renameTextField->text();
-  newName = newName.simplified();
+  newName          = newName.simplified();
   newName.replace(" ", "");
   setTabText(index, newName);
   m_renameTextField->hide();
@@ -224,7 +225,7 @@ StackedMenuBar::StackedMenuBar(QWidget *parent) : QStackedWidget(parent) {
 void StackedMenuBar::createMenuBarByName(const QString &roomName) {
   std::cout << "create " << roomName.toStdString() << std::endl;
 #if defined(_WIN32) || defined(_CYGWIN_)
-    addWidget(createFullMenuBar());
+  addWidget(createFullMenuBar());
 #else
   /* OSX では stacked menu が動いていないのでとりあえず full のみ作成する */
   addWidget(createFullMenuBar());
@@ -422,6 +423,25 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
     addMenuItem(arrangeMenu, MI_SendBackward);
   }
 
+  // Menu' SCAN CLEANUP
+  QMenu *scanCleanupMenu = addMenu(tr("Scan && Cleanup"), fullMenuBar);
+  addMenuItem(scanCleanupMenu, MI_DefineScanner);
+  addMenuItem(scanCleanupMenu, MI_ScanSettings);
+  addMenuItem(scanCleanupMenu, MI_Scan);
+  addMenuItem(scanCleanupMenu, MI_SetScanCropbox);
+  addMenuItem(scanCleanupMenu, MI_ResetScanCropbox);
+  scanCleanupMenu->addSeparator();
+  addMenuItem(scanCleanupMenu, MI_CleanupSettings);
+  addMenuItem(scanCleanupMenu, MI_CleanupPreview);
+  addMenuItem(scanCleanupMenu, MI_CameraTest);
+  addMenuItem(scanCleanupMenu, MI_Cleanup);
+  scanCleanupMenu->addSeparator();
+  addMenuItem(scanCleanupMenu, MI_PencilTest);
+#ifdef LINETEST
+  scanCleanupMenu->addSeparator();
+  addMenuItem(scanCleanupMenu, MI_Autocenter);
+#endif
+
   // Menu' LEVEL
   QMenu *levelMenu = addMenu(tr("Level"), fullMenuBar);
   QMenu *newMenu   = levelMenu->addMenu(tr("New"));
@@ -443,6 +463,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(levelMenu, MI_AddFrames);
   addMenuItem(levelMenu, MI_Renumber);
   addMenuItem(levelMenu, MI_ReplaceLevel);
+  addMenuItem(levelMenu, MI_RevertToCleanedUp);
   addMenuItem(levelMenu, MI_RevertToLastSaved);
   addMenuItem(levelMenu, MI_Tracking);
   levelMenu->addSeparator();
@@ -640,6 +661,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenStudioPalette);
   addMenuItem(windowsMenu, MI_OpenColorModel);
   windowsMenu->addSeparator();
+  addMenuItem(windowsMenu, MI_OpenComboViewer);
   addMenuItem(windowsMenu, MI_OpenLevelView);
   addMenuItem(windowsMenu, MI_OpenFileViewer);
   windowsMenu->addSeparator();
@@ -653,6 +675,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenFileBrowser);
   addMenuItem(windowsMenu, MI_OpenFileBrowser2);
   windowsMenu->addSeparator();
+  addMenuItem(windowsMenu, MI_OpenCleanupSettings);
   addMenuItem(windowsMenu, MI_OpenTasks);
   addMenuItem(windowsMenu, MI_OpenBatchServers);
   addMenuItem(windowsMenu, MI_OpenTMessage);

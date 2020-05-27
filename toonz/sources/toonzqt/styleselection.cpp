@@ -85,6 +85,12 @@ bool pasteStylesDataWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
     styleId            = data->getStyleIndex(i);
     TColorStyle *style = data->getStyle(i)->clone();
 
+    // Se la palette e' di cleanup gli stili devono essere 8.
+    if (palette->isCleanupPalette() && palette->getStyleInPagesCount() >= 8) {
+      delete style;
+      break;
+    }
+
     // For now styles will be inserted regardless the styleId of copied styles
     // are already used in the target palette or not.
     styleId = palette->getFirstUnpagedStyle();
@@ -163,7 +169,7 @@ void deleteStylesWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
                              int pageIndex, std::set<int> *styleIndicesInPage,
                              int fir = 0) {
   if (!palette) palette = pltHandle->getPalette();
-  int n = styleIndicesInPage->size();
+  int n                 = styleIndicesInPage->size();
   if (n == 0) return;
   TPalette::Page *page = palette->getPage(pageIndex);
   assert(page);
@@ -484,7 +490,8 @@ TStyleSelection::~TStyleSelection() {}
 //-----------------------------------------------------------------------------
 
 void TStyleSelection::enableCommands() {
-  if (m_paletteHandle && m_paletteHandle->getPalette()) {
+  if (m_paletteHandle && m_paletteHandle->getPalette() &&
+      !m_paletteHandle->getPalette()->isCleanupPalette()) {
     enableCommand(this, MI_Cut, &TStyleSelection::cutStyles);
     enableCommand(this, MI_Copy, &TStyleSelection::copyStyles);
     enableCommand(this, MI_Paste, &TStyleSelection::pasteStyles);
@@ -1100,7 +1107,15 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
         dstType = LINKEDSTYLE;
       //---- 追加ここまで iwasawa
 
-      palette->setStyle(styleId, data->getStyle(i)->clone());
+      // For cleanup styles, do not duplicate the cleanup information. Just
+      // paste color information.
+      TCleanupStyle *cleanupStyle =
+          dynamic_cast<TCleanupStyle *>(data->getStyle(i));
+      if (cleanupStyle && !palette->isCleanupPalette())
+        if (cleanupStyle)
+          palette->setStyle(styleId, cleanupStyle->getMainColor());
+        else
+          palette->setStyle(styleId, data->getStyle(i)->clone());
 
       // Process the global and original names according to the pasted style
       TColorStyle *pastedStyle = getPalette()->getStyle(styleId);
@@ -1457,7 +1472,7 @@ void TStyleSelection::toggleLink() {
       name[0] = name[0] == L'-' ? L'+' : L'-';
       cs->setGlobalName(name);
       if (name[0] == L'+') somethingHasBeenLinked = true;
-      somethingChanged = true;
+      somethingChanged                            = true;
     }
     undo->setColorStyle(index, oldCs, name);
 

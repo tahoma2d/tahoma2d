@@ -239,6 +239,7 @@ int TPalette::Page::search(TColorStyle *style) const {
 
 TPalette::TPalette()
     : m_version(0)
+    , m_isCleanupPalette(false)
     , m_currentFrame(-1)
     , m_dirtyFlag(false)
     , m_mutex(QMutex::Recursive)
@@ -311,6 +312,9 @@ int TPalette::getFirstUnpagedStyle() const {
  * palette, the new style will be appended to the end of the list.
  */
 int TPalette::addStyle(TColorStyle *style) {
+  // limit the number of cleanup style to 7
+  if (isCleanupPalette() && getStyleInPagesCount() >= 8) return -1;
+
   int styleId = int(m_styles.size());
   if (styleId < 4096) {
     // checking if the style is overlapped
@@ -405,9 +409,9 @@ void TPalette::erasePage(int index) {
   m_pages.erase(m_pages.begin() + index);
   int i;
   for (i = 0; i < getPageCount(); i++) m_pages[i]->m_index = i;
-  for (i = 0; i < page->getStyleCount(); i++)
+  for (i                                = 0; i < page->getStyleCount(); i++)
     m_styles[page->getStyleId(i)].first = 0;
-  page->m_palette = 0;
+  page->m_palette                       = 0;
   delete page;
 }
 
@@ -894,7 +898,7 @@ void TPalette::loadData(TIStream &is) {
 void TPalette::assign(const TPalette *src, bool isFromStudioPalette) {
   if (src == this) return;
   int i;
-
+  m_isCleanupPalette = src->isCleanupPalette();
   // for(i=0;i<getStyleCount();i++) delete getStyle(i);
   m_styles.clear();
   clearPointerContainer(m_pages);
@@ -948,7 +952,7 @@ void TPalette::assign(const TPalette *src, bool isFromStudioPalette) {
        cit != src->m_styleAnimationTable.end(); ++cit) {
     StyleAnimation animation = cit->second;
     for (j = animation.begin(); j != animation.end(); j++)
-      j->second = j->second->clone();
+      j->second                       = j->second->clone();
     m_styleAnimationTable[cit->first] = cit->second;
   }
   m_globalName         = src->getGlobalName();
@@ -994,7 +998,7 @@ void TPalette::merge(const TPalette *src, bool isFromStudioPalette) {
     const Page *srcPage   = src->getPage(i);
     std::wstring pageName = srcPage->getName();
     if (pageName == L"colors" && src->getPaletteName() != L"")
-      pageName = src->getPaletteName();
+      pageName    = src->getPaletteName();
     Page *dstPage = addPage(pageName);  //;
     for (int j = 0; j < srcPage->getStyleCount(); j++) {
       int styleId = srcPage->getStyleId(j);
@@ -1005,6 +1009,10 @@ void TPalette::merge(const TPalette *src, bool isFromStudioPalette) {
     assert(dstPage->m_palette == this);
   }
 }
+
+//-------------------------------------------------------------------
+
+void TPalette::setIsCleanupPalette(bool on) { m_isCleanupPalette = on; }
 
 //-------------------------------------------------------------------
 

@@ -837,7 +837,7 @@ void HexagonalColorWheel::clickLeftWheel(const QPoint &pos) {
   // d is a length from center to edge of the wheel when saturation = 100
   float d = m_triHeight / cosf(phi / 180.0f * 3.1415f);
 
-  int h = (int)theta;
+  int h          = (int)theta;
   if (h > 359) h = 359;
   // clamping
   int s = (int)(std::min(p.length() / d, 1.0) * 100.0f);
@@ -1254,10 +1254,12 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   else  // SV
     maxValue = 100;
 
-  m_field  = new ChannelLineEdit(this, 0, minValue, maxValue);
+  m_field = new ChannelLineEdit(this, 0, minValue, maxValue);
   if (text == "A") {
-      m_label->setToolTip(tr("Alpha controls the transparency. \nZero is fully transparent."));
-      m_field->setToolTip(tr("Alpha controls the transparency. \nZero is fully transparent."));
+    m_label->setToolTip(
+        tr("Alpha controls the transparency. \nZero is fully transparent."));
+    m_field->setToolTip(
+        tr("Alpha controls the transparency. \nZero is fully transparent."));
   }
   m_slider = new ColorSlider(Qt::Horizontal, this);
 
@@ -1590,12 +1592,11 @@ PlainColorPage::PlainColorPage(QWidget *parent)
   }
   setLayout(mainLayout);
 
-  //QList<int> list;
-  //list << rect().height() / 2 << rect().height() / 2;
-  //m_vSplitter->setSizes(list);
+  // QList<int> list;
+  // list << rect().height() / 2 << rect().height() / 2;
+  // m_vSplitter->setSizes(list);
   m_vSplitter->setStretchFactor(0, 50);
   m_vSplitter->setStretchFactor(1, 0);
-
 
   // connect(m_squaredColorWheel, SIGNAL(colorChanged(const ColorModel &,
   // bool)),
@@ -2352,7 +2353,7 @@ void SpecialStyleChooserPage::loadItems() {
         tagId == 2002 ||  // ??
         tagId == 3000 ||  // vector brush
         tagId == 4001     // mypaint brush
-    )
+        )
       continue;
 
     TColorStyle *style = TColorStyle::create(tagId);
@@ -3130,7 +3131,7 @@ QFrame *StyleEditor::createBottomWidget() {
     {
       hLayout->addWidget(m_autoButton);
       hLayout->addWidget(m_applyButton);
-      //hLayout->addSpacing(2);
+      // hLayout->addSpacing(2);
       hLayout->addWidget(m_newColor, 1);
       hLayout->addWidget(m_oldColor, 1);
     }
@@ -3150,7 +3151,7 @@ QFrame *StyleEditor::createBottomWidget() {
   bool ret = true;
   ret      = ret && connect(m_applyButton, SIGNAL(clicked()), this,
                        SLOT(applyButtonClicked()));
-  ret      = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
                        SLOT(autoCheckChanged(bool)));
   ret = ret && connect(m_oldColor, SIGNAL(clicked(const TColorStyle &)), this,
                        SLOT(onOldStyleClicked(const TColorStyle &)));
@@ -3213,9 +3214,9 @@ QFrame *StyleEditor::createVectorPage() {
   bool ret = true;
   ret      = ret && connect(specialButton, SIGNAL(toggled(bool)), this,
                        SLOT(onSpecialButtonToggled(bool)));
-  ret      = ret && connect(customButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(customButton, SIGNAL(toggled(bool)), this,
                        SLOT(onCustomButtonToggled(bool)));
-  ret      = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
                        SLOT(onVectorBrushButtonToggled(bool)));
   assert(ret);
   return vectorOutsideFrame;
@@ -3252,9 +3253,9 @@ void StyleEditor::showEvent(QShowEvent *) {
   bool ret = true;
   ret      = ret && connect(m_paletteHandle, SIGNAL(colorStyleSwitched()),
                        SLOT(onStyleSwitched()));
-  ret      = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged(bool)),
+  ret = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged(bool)),
                        SLOT(onStyleChanged(bool)));
-  ret      = ret && connect(m_paletteHandle, SIGNAL(paletteSwitched()), this,
+  ret = ret && connect(m_paletteHandle, SIGNAL(paletteSwitched()), this,
                        SLOT(onStyleSwitched()));
   if (m_cleanupPaletteHandle)
     ret =
@@ -3315,13 +3316,15 @@ void StyleEditor::onStyleSwitched() {
   bool isStyleNull    = setStyle(m_editedStyle.getPointer());
   bool isColorInField = palette->getPaletteName() == L"EmptyColorFieldPalette";
   bool isValidIndex   = styleIndex > 0 || isColorInField;
+  bool isCleanUpPalette = palette->isCleanupPalette();
 
   /* ------ update the status text ------ */
   if (!isStyleNull && isValidIndex) {
     QString statusText;
     // palette type
-
-    if (palette->getGlobalName() != L"")
+    if (isCleanUpPalette)
+      statusText = tr("[CLEANUP]  ");
+    else if (palette->getGlobalName() != L"")
       statusText = tr("[STUDIO]  ");
     else
       statusText = tr("[LEVEL]  ");
@@ -3343,7 +3346,7 @@ void StyleEditor::onStyleSwitched() {
   } else {
     m_parent->setWindowTitle(tr("Style Editor - No Valid Style Selected"));
   }
-  enable(!isStyleNull && isValidIndex, isColorInField, false);
+  enable(!isStyleNull && isValidIndex, isColorInField, isCleanUpPalette);
 }
 
 //-----------------------------------------------------------------------------

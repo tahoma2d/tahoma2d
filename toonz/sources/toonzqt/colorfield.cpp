@@ -5,6 +5,7 @@
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/menubarcommand.h"
+#include "toonz/cleanupcolorstyles.h"
 #include "tconvert.h"
 #include "tcolorstyles.h"
 #include "trop.h"
@@ -224,11 +225,11 @@ ChannelField::ChannelField(QWidget *parent, const QString &string, int value,
 
   bool ret = connect(m_channelEdit, SIGNAL(textChanged(const QString &)),
                      SLOT(onEditChanged(const QString &)));
-  ret      = ret && connect(m_channelEdit, SIGNAL(editingFinished()),
+  ret = ret && connect(m_channelEdit, SIGNAL(editingFinished()),
                        SLOT(onEditFinished()));
-  ret      = ret && connect(m_channelSlider, SIGNAL(valueChanged(int)),
+  ret = ret && connect(m_channelSlider, SIGNAL(valueChanged(int)),
                        SLOT(onSliderChanged(int)));
-  ret      = ret && connect(m_channelSlider, SIGNAL(sliderReleased()),
+  ret = ret && connect(m_channelSlider, SIGNAL(sliderReleased()),
                        SLOT(onSliderReleased()));
   assert(ret);
 }
@@ -263,8 +264,8 @@ int ChannelField::getChannel() {
                 emit signal valueChanged(int value).
 */
 void ChannelField::onEditChanged(const QString &str) {
-  int value = str.toInt();
-  if (value < 0) value = 0;
+  int value                     = str.toInt();
+  if (value < 0) value          = 0;
   if (value > m_maxValue) value = m_maxValue;
   assert(0 <= value && value <= m_maxValue);
   if (str.toInt() != value) m_channelEdit->setValue(value);
@@ -585,3 +586,260 @@ ColorField::ColorFieldEditorController *ColorField::getEditorController() {
 
 //-----------------------------------------------------------------------
 #define SQUARESIZE 50
+
+void CleanupColorField::onBrightnessChannelChanged(int value, bool dragging) {
+  m_cleanupStyle->setBrightness(value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+//-----------------------------------------------
+
+void CleanupColorField::onContrastChannelChanged(int value, bool dragging) {
+  m_cleanupStyle->setContrast(value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+//-----------------------------------------------
+
+void CleanupColorField::onCThresholdChannelChanged(int value, bool dragging) {
+  ((TBlackCleanupStyle *)m_cleanupStyle)->setColorThreshold((double)value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+//-----------------------------------------------
+
+void CleanupColorField::onWThresholdChannelChanged(int value, bool dragging) {
+  ((TBlackCleanupStyle *)m_cleanupStyle)->setWhiteThreshold((double)value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+void CleanupColorField::onHRangeChannelChanged(int value, bool dragging) {
+  ((TColorCleanupStyle *)m_cleanupStyle)->setHRange(value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+//-----------------------------------------------
+
+void CleanupColorField::onLineWidthChannelChanged(int value, bool dragging) {
+  ((TColorCleanupStyle *)m_cleanupStyle)->setLineWidth(value);
+  m_ph->notifyColorStyleChanged(dragging);
+}
+
+//---------------------------------------------------
+
+void CleanupColorField::mousePressEvent(QMouseEvent *event) {
+  if (event->button() != Qt::LeftButton) return;
+
+  emit StyleSelected(m_cleanupStyle);
+
+  if (getEditorController()) getEditorController()->edit(this);
+}
+
+//-----------------------------------------------
+CleanupColorField::CleanupColorField(QWidget *parent,
+                                     TCleanupStyle *cleanupStyle,
+                                     TPaletteHandle *ph, bool greyMode)
+    : QWidget(parent)
+    , m_style(cleanupStyle)
+    , m_cleanupStyle(cleanupStyle)
+    , m_ph(ph)
+    , m_greyMode(greyMode)
+    , m_notifyEditingChange(true) {
+  TBlackCleanupStyle *bs = dynamic_cast<TBlackCleanupStyle *>(cleanupStyle);
+  TColorCleanupStyle *cs = dynamic_cast<TColorCleanupStyle *>(cleanupStyle);
+  assert(bs || cs);
+
+  m_colorSample = new StyleSample(this, SQUARESIZE / 2, SQUARESIZE);
+  m_brightnessChannel =
+      new ChannelField(this, DVGui::CleanupColorField::tr("Brightness:"),
+                       cleanupStyle->getBrightness(), 100, true, 75, -1);
+  m_contrastChannel =
+      new ChannelField(this, DVGui::CleanupColorField::tr("Contrast:"),
+                       cleanupStyle->getContrast(), 100, true, 75, -1);
+  if (!greyMode) {
+    if (bs) {
+      m_cThresholdChannel =
+          new ChannelField(this, DVGui::CleanupColorField::tr("Color Thres"),
+                           bs->getColorThreshold(), 100, true, 75, -1);
+      m_wThresholdChannel =
+          new ChannelField(this, DVGui::CleanupColorField::tr("White Thres"),
+                           bs->getWhiteThreshold(), 100, true, 75, -1);
+    } else  // cs
+    {
+      m_hRangeChannel =
+          new ChannelField(this, DVGui::CleanupColorField::tr("H Range"),
+                           cs->getHRange(), 120, true, 75, -1);
+      m_lineWidthChannel =
+          new ChannelField(this, DVGui::CleanupColorField::tr("Line Width"),
+                           cs->getLineWidth(), 100, true, 75, -1);
+    }
+  }
+
+  m_colorSample->setStyle(*cleanupStyle);
+
+  //---- layout
+
+  QHBoxLayout *mainLay = new QHBoxLayout();
+  mainLay->setMargin(8);
+  mainLay->setSpacing(5);
+  {
+    mainLay->addWidget(m_colorSample, 0);
+
+    QVBoxLayout *paramLay = new QVBoxLayout();
+    paramLay->setMargin(0);
+    paramLay->setSpacing(3);
+    {
+      paramLay->addWidget(m_brightnessChannel);
+      paramLay->addWidget(m_contrastChannel);
+      if (!greyMode) {
+        if (bs) {
+          paramLay->addWidget(m_cThresholdChannel);
+          paramLay->addWidget(m_wThresholdChannel);
+        } else {
+          paramLay->addWidget(m_hRangeChannel);
+          paramLay->addWidget(m_lineWidthChannel);
+        }
+      }
+    }
+    mainLay->addLayout(paramLay, 1);
+  }
+  setLayout(mainLay);
+
+  //---- signal-slot connections
+
+  bool ret = true;
+  ret = ret && connect(m_brightnessChannel, SIGNAL(valueChanged(int, bool)),
+                       SLOT(onBrightnessChannelChanged(int, bool)));
+  ret = ret && connect(m_contrastChannel, SIGNAL(valueChanged(int, bool)),
+                       SLOT(onContrastChannelChanged(int, bool)));
+  if (!greyMode) {
+    if (bs) {
+      ret = ret && connect(m_cThresholdChannel, SIGNAL(valueChanged(int, bool)),
+                           SLOT(onCThresholdChannelChanged(int, bool)));
+      ret = ret && connect(m_wThresholdChannel, SIGNAL(valueChanged(int, bool)),
+                           SLOT(onWThresholdChannelChanged(int, bool)));
+    } else {
+      ret = ret && connect(m_hRangeChannel, SIGNAL(valueChanged(int, bool)),
+                           SLOT(onHRangeChannelChanged(int, bool)));
+      ret = ret && connect(m_lineWidthChannel, SIGNAL(valueChanged(int, bool)),
+                           SLOT(onLineWidthChannelChanged(int, bool)));
+    }
+  }
+}
+
+//--------------------------------------------------------------
+
+void CleanupColorField::updateColor() {
+  if (m_cleanupStyle->canUpdate()) {
+    m_cleanupStyle->invalidateIcon();
+    m_colorSample->setStyle(*m_cleanupStyle);
+
+    m_brightnessChannel->setChannel(m_cleanupStyle->getBrightness());
+    if (m_cleanupStyle->isContrastEnabled())
+      m_contrastChannel->setChannel(m_cleanupStyle->getContrast());
+
+    TBlackCleanupStyle *bs;
+    TColorCleanupStyle *cs;
+    if ((bs = dynamic_cast<TBlackCleanupStyle *>(m_cleanupStyle)) &&
+        !m_greyMode) {
+      m_cThresholdChannel->setChannel(bs->getColorThreshold());
+      m_wThresholdChannel->setChannel(bs->getWhiteThreshold());
+    } else if ((cs = dynamic_cast<TColorCleanupStyle *>(m_cleanupStyle))) {
+      m_hRangeChannel->setChannel(cs->getHRange());
+      m_lineWidthChannel->setChannel(cs->getLineWidth());
+    }
+  }
+}
+
+//--------------------------------------------------------------
+
+TPixel32 CleanupColorField::getColor() const {
+  return m_cleanupStyle->getMainColor();
+}
+
+//--------------------------------------------------------------
+
+void CleanupColorField::setColor(const TPixel32 &color) {
+  if (m_cleanupStyle->getMainColor() == color) return;
+
+  m_cleanupStyle->setMainColor(color);
+  m_cleanupStyle->invalidateIcon();
+  m_colorSample->setStyle(*m_cleanupStyle);
+  m_ph->notifyColorStyleChanged(false);
+}
+
+//------------------------------------------------------------
+
+TPixel32 CleanupColorField::getOutputColor() const {
+  return m_cleanupStyle->getColorParamValue(1);
+}
+
+//------------------------------------------------------------
+
+void CleanupColorField::setOutputColor(const TPixel32 &color) {
+  if (getOutputColor() == color) return;
+
+  m_cleanupStyle->setColorParamValue(1, color);
+  m_cleanupStyle->invalidateIcon();
+  m_colorSample->setStyle(*m_cleanupStyle);
+  m_ph->notifyColorStyleChanged();
+}
+
+//------------------------------------------------------------
+
+void CleanupColorField::setStyle(TColorStyle *style) {
+  if (getColor() == style->getMainColor() &&
+      getOutputColor() == style->getColorParamValue(1))
+    return;
+
+  m_cleanupStyle->setMainColor(style->getMainColor());
+  m_cleanupStyle->setColorParamValue(1, style->getColorParamValue(1));
+  m_cleanupStyle->invalidateIcon();
+  m_colorSample->setStyle(*m_cleanupStyle);
+  m_ph->notifyColorStyleChanged();
+}
+
+//------------------------------------------------------------
+
+CleanupColorField::CleanupColorFieldEditorController
+    *CleanupColorField::m_editorController = 0;
+
+CleanupColorField::CleanupColorFieldEditorController *
+CleanupColorField::getEditorController() {
+  return m_editorController;
+}
+
+//-----------------------------------------------------------------------------
+
+void CleanupColorField::setEditorController(
+    CleanupColorFieldEditorController *editorController) {
+  m_editorController = editorController;
+}
+
+//------------------------------------------------------------------
+
+void CleanupColorField::mouseDoubleClickEvent(QMouseEvent *event) {
+  QPoint p = event->pos();
+  if (!m_colorSample->visibleRegion().contains(p)) return;
+  emit StyleSelected(m_cleanupStyle);
+  if (!getEditorController()) return;
+
+  CommandManager::instance()->execute("MI_OpenStyleControl");
+  getEditorController()->edit(this);
+}
+
+//-----------------------------------------------------------
+
+void CleanupColorField::hideEvent(QHideEvent *) {
+  if (!getEditorController()) return;
+  getEditorController()->edit(0);
+  getEditorController()->hide();
+  // setEditorController(0);
+}
+
+//-----------------------------------------------------------
+
+void CleanupColorField::setContrastEnabled(bool enable) {
+  m_contrastChannel->setEnabled(enable);
+  m_cleanupStyle->enableContrast(enable);
+}

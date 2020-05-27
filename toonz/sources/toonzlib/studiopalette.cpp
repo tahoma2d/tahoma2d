@@ -338,7 +338,7 @@ bool StudioPalette::hasGlobalName(const TFilePath &path) {
 bool StudioPalette::isLevelPalette(const TFilePath &path) {
   TPalette *palette = getPalette(path);
   if (!palette) return false;
-  bool ret = true;
+  bool ret = !palette->isCleanupPalette();
   delete palette;
   return ret;
 }
@@ -449,6 +449,9 @@ TFilePath StudioPalette::importPalette(const TFilePath &dstFolder,
 
   if (!palette) return TFilePath();
   std::wstring name = srcPath.getWideName();
+
+  assert(!palette->isCleanupPalette());
+  //    convertToLevelPalette(palette.getPointer());
 
   TFilePath fp = makeUniqueName(dstFolder + (name + L".tpl"));
   time_t ltime;

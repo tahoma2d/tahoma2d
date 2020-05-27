@@ -10,7 +10,7 @@
 #include "menubarcommandids.h"
 #include "filmstripselection.h"
 #include "onionskinmaskgui.h"
-#include "viewerpane.h"
+#include "comboviewerpane.h"
 
 // TnzQt includes
 #include "toonzqt/icongenerator.h"
@@ -1261,6 +1261,8 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
   if (!isSubsequenceLevel && !isReadOnly) {
     menu->addAction(cm->getAction(MI_AddFrames));
     menu->addAction(cm->getAction(MI_Renumber));
+    if (sl && sl->getType() == TZP_XSHLEVEL)
+      menu->addAction(cm->getAction(MI_RevertToCleanedUp));
   }
   if (sl &&
       (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||

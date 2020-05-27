@@ -146,10 +146,10 @@ void ColorModelViewer::dropEvent(QDropEvent *event) {
       loadImage(fp);
       setLevel(fp);
     }
-	// Force CopyAction
-	event->setDropAction(Qt::CopyAction);
-	// For files, don't accept original proposed action in case it's a move
-	event->accept();
+    // Force CopyAction
+    event->setDropAction(Qt::CopyAction);
+    // For files, don't accept original proposed action in case it's a move
+    event->accept();
   }
 }
 
@@ -166,7 +166,7 @@ void ColorModelViewer::loadImage(const TFilePath &fp) {
   TPaletteHandle *paletteHandle = getPaletteHandle();
   TPalette *palette             = paletteHandle->getPalette();
 
-  if (!palette) {
+  if (!palette || palette->isCleanupPalette()) {
     DVGui::error(QObject::tr("Cannot load Color Model in current palette."));
     return;
   }
@@ -377,7 +377,7 @@ void ColorModelViewer::showEvent(QShowEvent *e) {
   ToolHandle *toolHandle        = TApp::instance()->getCurrentTool();
   bool ret = connect(paletteHandle, SIGNAL(paletteSwitched()), this,
                      SLOT(showCurrentImage()));
-  ret      = ret && connect(paletteHandle, SIGNAL(paletteChanged()), this,
+  ret = ret && connect(paletteHandle, SIGNAL(paletteChanged()), this,
                        SLOT(showCurrentImage()));
   ret = ret && connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this,
                        SLOT(showCurrentImage()));
@@ -546,8 +546,8 @@ void ColorModelViewer::loadCurrentFrame() {
   m_flipConsole->enableProgressBar(false);
   m_flipConsole->setProgressBarStatus(0);
   m_flipConsole->setFrameRange(1, 1, 1);
-  m_title1 = m_viewerTitle +
-             " :: " + m_currentRefImgPath.withoutParentDir().withFrame(fid);
+  m_title1 = m_viewerTitle + " :: " +
+             m_currentRefImgPath.withoutParentDir().withFrame(fid);
   m_title = "  ::  <Use Current Frame>";
 
   m_imageViewer->setImage(refImg);
@@ -596,8 +596,8 @@ void ColorModelViewer::reloadCurrentFrame() {
   m_flipConsole->enableProgressBar(false);
   m_flipConsole->setProgressBarStatus(0);
   m_flipConsole->setFrameRange(1, 1, 1);
-  m_title1 = m_viewerTitle +
-             " :: " + m_currentRefImgPath.withoutParentDir().withFrame(fids[0]);
+  m_title1 = m_viewerTitle + " :: " +
+             m_currentRefImgPath.withoutParentDir().withFrame(fids[0]);
   m_title = "  ::  <Use Current Frame>";
 
   m_imageViewer->setImage(refImg);

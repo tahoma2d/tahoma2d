@@ -8,6 +8,7 @@
 #include "toonz/txsheet.h"
 #include "toonz/observer.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/cleanupparameters.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -958,7 +959,7 @@ TFilePath TProjectManager::getCurrentProjectPath() {
   }
   fp = searchProjectPath(fp.getParentDir());
   if (!TFileStatus(fp).doesExist())
-    fp = projectNameToProjectPath(TProject::SandboxProjectName);
+    fp     = projectNameToProjectPath(TProject::SandboxProjectName);
   fp       = getLatestVersionProjectPath(fp);
   string s = ::to_string(fp);
   if (s != (string)currentProjectPath) currentProjectPath = s;
@@ -1085,6 +1086,8 @@ void TProjectManager::initializeScene(ToonzScene *scene) {
   project->load(currentProjectPath);
 
   sprop->assign(&project->getSceneProperties());
+  CleanupParameters::GlobalParameters.assign(
+      project->getSceneProperties().getCleanupParameters());
 
   // scene->setProject(this);
   scene->setUntitled();

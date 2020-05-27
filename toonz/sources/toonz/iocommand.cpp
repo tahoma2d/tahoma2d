@@ -14,12 +14,12 @@
 #include "filebrowsermodel.h"
 #include "mainwindow.h"
 #include "overwritepopup.h"
+#include "cleanupsettingspopup.h"
 #include "psdsettingspopup.h"
 #include "filebrowser.h"
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
 #include "xdtsio.h"
-#include "toonz/tcamera.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -189,7 +189,7 @@ public:
   //
   TFilePath process(ToonzScene *scene, ToonzScene *srcScene,
                     TFilePath srcPath) override {
-    TFilePath actualSrcPath = srcPath;
+    TFilePath actualSrcPath     = srcPath;
     if (srcScene) actualSrcPath = srcScene->decodeFilePath(srcPath);
 
     if (!isImportEnabled()) {
@@ -1300,9 +1300,11 @@ void IoCmd::newScene() {
   app->getCurrentScene()->setScene(scene);
   // initializeScene() load project cleanup palette: set it to cleanup palette
   // handle.
-
+  TPalette *palette = scene->getProperties()
+                          ->getCleanupParameters()
+                          ->m_cleanupPalette.getPointer();
   PaletteController *paletteController = app->getPaletteController();
-
+  paletteController->getCurrentCleanupPalette()->setPalette(palette, -1);
   paletteController->editLevelPalette();
 
   TFilePath scenePath = scene->getScenePath();
@@ -1324,6 +1326,9 @@ void IoCmd::newScene() {
   app->getCurrentScene()->setDirtyFlag(false);
   app->getCurrentObject()->setIsSpline(false);
   app->getCurrentColumn()->setColumnIndex(0);
+
+  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
+  CleanupParameters::GlobalParameters.assign(cp);
 
   // updateCleanupSettingsPopup();
 
@@ -1352,7 +1357,7 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   TApp *app          = TApp::instance();
 
   assert(!path.isEmpty());
-  TFilePath scenePath = path;
+  TFilePath scenePath                      = path;
   if (scenePath.getType() == "") scenePath = scenePath.withType("tnz");
   if (scenePath.getType() != "tnz") {
     error(
@@ -1378,7 +1383,7 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 
-  TXsheet *xsheet = 0;
+  TXsheet *xsheet           = 0;
   if (saveSubxsheet) xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   // If the scene will be saved in the different folder, check out the scene
@@ -1434,6 +1439,10 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 #endif
   }
 
+  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
+  CleanupParameters oldCP(*cp);
+  cp->assign(&CleanupParameters::GlobalParameters);
+
   try {
     scene->save(scenePath, xsheet);
   } catch (const TSystemException &se) {
@@ -1441,6 +1450,8 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   } catch (...) {
     DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
   }
+
+  cp->assign(&oldCP);
 
   // in case of saving subxsheet, revert the level paths after saving
   revertOrgLevelPaths();
@@ -1487,8 +1498,8 @@ bool IoCmd::saveScene() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (scene->isUntitled()) {
     static SaveSceneAsPopup *popup = 0;
-    if (!popup) popup = new SaveSceneAsPopup();
-    int ret = popup->exec();
+    if (!popup) popup              = new SaveSceneAsPopup();
+    int ret                        = popup->exec();
     if (ret == QDialog::Accepted) {
       TApp::instance()->getCurrentScene()->setDirtyFlag(false);
       return true;
@@ -1752,9 +1763,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   if (checkSaveOldScene)
     if (!saveSceneIfNeeded(QApplication::tr("Load Scene"))) return false;
   assert(!path.isEmpty());
-  TFilePath scenePath = path;
-  bool importScene    = false;
-  bool isXdts         = scenePath.getType() == "xdts";
+  TFilePath scenePath                      = path;
+  bool importScene                         = false;
+  bool isXdts                              = scenePath.getType() == "xdts";
   if (scenePath.getType() == "") scenePath = scenePath.withType("tnz");
   if (scenePath.getType() != "tnz" && !isXdts) {
     QString msg;
@@ -1851,8 +1862,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     // import if needed
     TProjectManager *pm      = TProjectManager::instance();
     TProjectP currentProject = pm->getCurrentProject();
-    if (!scene->getProject() || scene->getProject()->getProjectPath() !=
-                                    currentProject->getProjectPath()) {
+    if (!scene->getProject() ||
+        scene->getProject()->getProjectPath() !=
+            currentProject->getProjectPath()) {
       ResourceImportDialog resourceLoader;
       // resourceLoader.setImportEnabled(true);
       ResourceImporter importer(scene, currentProject.getPointer(),
@@ -1893,6 +1905,10 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
 
   Previewer::clearAll();
   PreviewFxManager::instance()->reset();
+  // updateCleanupSettingsPopup();
+  /*- CleanupParameterの更新 -*/
+  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
+  CleanupParameters::GlobalParameters.assign(cp);
 
   CacheFxCommand::instance()->onSceneLoaded();
 
@@ -1943,13 +1959,12 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     TPointD dpi = scene->getCurrentCamera()->getDpi();
     if (!areAlmostEqual(dpi.x, Stage::standardDpi, 0.1) ||
         !areAlmostEqual(dpi.y, Stage::standardDpi, 0.1)) {
-
-        TDimensionD camSize = scene->getCurrentCamera()->getSize();
-        TDimension camRes(camSize.lx * Stage::standardDpi,
-                          camSize.ly * Stage::standardDpi);
-        scene->getCurrentCamera()->setRes(camRes);
-        app->getCurrentScene()->setDirtyFlag(true);
-        app->getCurrentXsheet()->notifyXsheetChanged();
+      TDimensionD camSize = scene->getCurrentCamera()->getSize();
+      TDimension camRes(camSize.lx * Stage::standardDpi,
+                        camSize.ly * Stage::standardDpi);
+      scene->getCurrentCamera()->setRes(camRes);
+      app->getCurrentScene()->setDirtyFlag(true);
+      app->getCurrentXsheet()->notifyXsheetChanged();
     }
   }
 
@@ -2113,10 +2128,10 @@ static int loadPSDResource(IoCmd::LoadResourceArguments &args,
   int &row1 = args.row1;
   int &col1 = args.col1;
 
-  int count         = 0;
-  TApp *app         = TApp::instance();
-  ToonzScene *scene = app->getCurrentScene()->getScene();
-  TXsheet *xsh      = scene->getXsheet();
+  int count            = 0;
+  TApp *app            = TApp::instance();
+  ToonzScene *scene    = app->getCurrentScene()->getScene();
+  TXsheet *xsh         = scene->getXsheet();
   if (row0 == -1) row0 = app->getCurrentFrame()->getFrameIndex();
   if (col0 == -1) col0 = app->getCurrentColumn()->getColumnIndex();
 
@@ -2500,8 +2515,8 @@ bool IoCmd::exposeLevel(TXshSimpleLevel *sl, int row, int col,
   if (!insert && !overWrite)
     insertEmptyColumn = beforeCellsInsert(
         xsh, row, col, fids.size(), TXshColumn::toColumnType(sl->getType()));
-  ExposeType type = eNone;
-  if (insert) type = eShiftCells;
+  ExposeType type     = eNone;
+  if (insert) type    = eShiftCells;
   if (overWrite) type = eOverWrite;
   ExposeLevelUndo *undo =
       new ExposeLevelUndo(sl, row, col, frameCount, insertEmptyColumn, type);
@@ -2656,10 +2671,9 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
 
   str = QObject::tr(
             "The following level(s) use path with $scenefolder alias.\n\n") +
-        str +
-        QObject::tr(
-            "\nThey will not be opened properly when you load the "
-            "scene next time.\nWhat do you want to do?");
+        str + QObject::tr(
+                  "\nThey will not be opened properly when you load the "
+                  "scene next time.\nWhat do you want to do?");
 
   int ret = DVGui::MsgBox(
       str, QObject::tr("Copy the levels to correspondent paths"),

@@ -29,6 +29,7 @@
 class QSlider;
 class QImage;
 class QPixmap;
+class TCleanupStyle;
 class TPaletteHandle;
 
 //=============================================================================
@@ -190,6 +191,96 @@ protected slots:
 signals:
   void editingChanged(const TPixel32 &, bool isEditing);
   void colorChanged(const TPixel32 &, bool isDragging);
+};
+
+//=============================================================================
+// CleanupColorField
+//-----------------------------------------------------------------------------
+
+class DVAPI CleanupColorField final : public QWidget {
+  Q_OBJECT
+
+  TPaletteHandle *m_ph;
+  StyleSample *m_colorSample;
+  ChannelField *m_brightnessChannel;
+  ChannelField *m_contrastChannel;
+  ChannelField *m_hRangeChannel;
+  ChannelField *m_lineWidthChannel;
+  ChannelField *m_cThresholdChannel;
+  ChannelField *m_wThresholdChannel;
+
+  TColorStyleP m_style;
+  TCleanupStyle *m_cleanupStyle;
+
+  bool m_greyMode;
+
+  //! If it is true editing changed are notified, setIsEditing emit
+  //! editingChanged signal.
+  bool m_notifyEditingChange;
+
+public:
+  class CleanupColorFieldEditorController {
+  public:
+    CleanupColorFieldEditorController() {}
+    virtual ~CleanupColorFieldEditorController() {}
+
+    virtual void edit(DVGui::CleanupColorField *colorField){};
+    virtual void hide(){};
+  };
+
+  static CleanupColorFieldEditorController *m_editorController;
+
+public:
+  CleanupColorField(QWidget *parent, TCleanupStyle *cleanupStyle,
+                    TPaletteHandle *ph, bool greyMode);
+  ~CleanupColorField() { getEditorController()->edit(0); }
+
+  static void setEditorController(
+      CleanupColorFieldEditorController *editorController);
+  static CleanupColorFieldEditorController *getEditorController();
+
+  void setEditingChangeNotified(bool notify) { m_notifyEditingChange = notify; }
+
+  bool isEditing() const {
+    assert(m_colorSample);
+    return m_colorSample->isEditing();
+  }
+  void setIsEditing(bool isEditing) {
+    assert(m_colorSample);
+    m_colorSample->setIsEditing(isEditing);
+    if (m_notifyEditingChange) emit editingChanged(getColor(), isEditing);
+  }
+
+  void setColor(const TPixel32 &color);
+  TPixel32 getColor() const;
+  void updateColor();
+
+  void setOutputColor(const TPixel32 &color);
+  TPixel32 getOutputColor() const;
+
+  TColorStyle *getStyle() { return (TColorStyle *)m_cleanupStyle; }
+  void setStyle(TColorStyle *style);
+
+  void setContrastEnabled(bool enable);
+
+protected:
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void hideEvent(QHideEvent *) override;
+
+protected slots:
+
+  void onBrightnessChannelChanged(int value, bool dragging);
+  void onContrastChannelChanged(int value, bool dragging);
+  void onCThresholdChannelChanged(int value, bool dragging);
+  void onWThresholdChannelChanged(int value, bool dragging);
+  void onHRangeChannelChanged(int value, bool dragging);
+  void onLineWidthChannelChanged(int value, bool dragging);
+
+signals:
+
+  void editingChanged(const TPixel32 &, bool isEditing);
+  void StyleSelected(TCleanupStyle *);
 };
 
 //-----------------------------------------------------------------------------

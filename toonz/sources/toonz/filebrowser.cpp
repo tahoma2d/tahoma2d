@@ -402,7 +402,7 @@ void FileBrowser::onFwdButtonPushed() {
 void FileBrowser::clearHistory() {
   int size = m_indexHistoryList.size();
   // leave the last item
-  for (int i = 1; i < size; i++) m_indexHistoryList.removeLast();
+  for (int i        = 1; i < size; i++) m_indexHistoryList.removeLast();
   m_currentPosition = 0;
   refreshHistoryButtons();
 }
@@ -1143,7 +1143,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
   for (i = 0; i < (int)files.size(); i++) {
     TFileType::Type type = TFileType::getInfo(files[i]);
     if (areResources && !TFileType::isResource(type)) areResources = false;
-    if (!areScenes && TFileType::isScene(type)) areScenes = true;
+    if (!areScenes && TFileType::isScene(type)) areScenes          = true;
   }
 
   bool areFullcolor = true;
@@ -1164,7 +1164,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     if (clickedFile != TFilePath() && clickedFile.getType() == "tnz")
       title = tr("Load As Sub-xsheet");
     else
-      title = tr("Load");
+      title         = tr("Load");
     QAction *action = new QAction(title, menu);
     ret             = ret &&
           connect(action, SIGNAL(triggered()), this, SLOT(loadResources()));
@@ -1185,6 +1185,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
       (clickedFile.getType() == "tnz" || clickedFile.getType() == "tab")) {
     menu->addSeparator();
     menu->addAction(cm->getAction(MI_AddToBatchRenderList));
+    menu->addAction(cm->getAction(MI_AddToBatchCleanupList));
   }
 
   for (i = 0; i < files.size(); i++)
@@ -1688,7 +1689,7 @@ namespace {
 
 bool parsePathName(const QString &fullpath, QString &parentPath, QString &name,
                    QString &format) {
-  int index = fullpath.lastIndexOf('\\');
+  int index              = fullpath.lastIndexOf('\\');
   if (index == -1) index = fullpath.lastIndexOf('/');
 
   QString filename;

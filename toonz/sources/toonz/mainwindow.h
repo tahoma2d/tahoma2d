@@ -215,7 +215,7 @@ private:
   Room *createPltEditRoom();
   Room *createFarmRoom();
   */
-  
+
   Room *createPltEditRoom();
   Room *createInknPaintRoom();
   Room *createXsheetRoom();
@@ -231,6 +231,8 @@ private:
                                 const QString &defaultShortcut);
   QAction *createMenuEditAction(const char *id, const QString &name,
                                 const QString &defaultShortcut);
+  QAction *createMenuScanCleanupAction(const char *id, const QString &name,
+                                       const QString &defaultShortcut);
   QAction *createMenuLevelAction(const char *id, const QString &name,
                                  const QString &defaultShortcut);
   QAction *createMenuXsheetAction(const char *id, const QString &name,
