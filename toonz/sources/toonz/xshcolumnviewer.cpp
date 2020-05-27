@@ -2660,21 +2660,21 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cmdManager->getAction(MI_ReplaceLevel));
       menu.addAction(cmdManager->getAction(MI_ReplaceParentDirectory));
 
-      if (containsVectorLevel(col)) {
-        menu.addSeparator();
-        QAction *setMask =
-            new QAction(tr("Temporary Mask (Not in final render)"), this);
-        setMask->setCheckable(true);
-        setMask->setChecked(xsh->getColumn(col)->isMask());
-        setMask->setToolTip(
-            tr("Only Toonz Vector levels can be used as masks. \n Masks don't "
-               "show up in final renders."));
-        bool ret = true;
-        ret      = ret &&
-              connect(setMask, &QAction::toggled, [=]() { onSetMask(col); });
-        assert(ret);
-        menu.addAction(setMask);
-      }
+      //if (containsVectorLevel(col)) {
+      //  menu.addSeparator();
+      //  QAction *setMask =
+      //      new QAction(tr("Temporary Mask (Not in final render)"), this);
+      //  setMask->setCheckable(true);
+      //  setMask->setChecked(xsh->getColumn(col)->isMask());
+      //  setMask->setToolTip(
+      //      tr("Only Toonz Vector levels can be used as masks. \n Masks don't "
+      //         "show up in final renders."));
+      //  bool ret = true;
+      //  ret      = ret &&
+      //        connect(setMask, &QAction::toggled, [=]() { onSetMask(col); });
+      //  assert(ret);
+      //  menu.addAction(setMask);
+      //}
     }
   }
 

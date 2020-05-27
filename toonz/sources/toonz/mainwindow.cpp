@@ -2074,7 +2074,7 @@ void MainWindow::defineActions() {
   // createRightClickMenuAction(MI_OpenCurrentScene,   tr("&Current Scene"),
   // "");
 
-  createMenuWindowsAction(MI_OpenExport, tr("&Export"), "");
+  //createMenuWindowsAction(MI_OpenExport, tr("&Export"), "");
 
   createMenuWindowsAction(MI_OpenFileBrowser, tr("&File Browser"), "");
   createMenuWindowsAction(MI_OpenFileViewer, tr("&Flipbook"), "");
