@@ -225,7 +225,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     showOtherSettingsButton = new QPushButton("", this);
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
-    m_renderButton          = new QPushButton(tr("Render"), this);
+    m_renderButton          = new QPushButton(tr("Save and Render"), this);
 
     // Board
     m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
@@ -935,8 +935,8 @@ void OutputSettingsPopup::onNameChanged() {
   }
   if (isReservedFileName_message(name)) {
     TOutputProperties *prop = getProperties();
-    TFilePath fp = prop->getPath();
-    QString name = QString::fromStdString(fp.getName());
+    TFilePath fp            = prop->getPath();
+    QString name            = QString::fromStdString(fp.getName());
     if (name.isEmpty())
       name = QString::fromStdString(scene->getScenePath().getName());
     m_fileNameFld->setText(name);

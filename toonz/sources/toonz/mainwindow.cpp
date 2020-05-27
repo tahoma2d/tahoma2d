@@ -1668,7 +1668,7 @@ void MainWindow::defineActions() {
   createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),
                          "Ctrl+O");
   createMenuRenderAction(MI_PreviewSettings, tr("&Preview Settings..."), "");
-  createMenuRenderAction(MI_Render, tr("&Render"), "Ctrl+Shift+R");
+  createMenuRenderAction(MI_Render, tr("&Save and Render"), "Ctrl+Shift+R");
   createMenuRenderAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
   createMenuRenderAction(MI_Preview, tr("&Preview"), "Ctrl+R");
   createMenuFileAction(MI_SoundTrack, tr("&Export Soundtrack"), "");

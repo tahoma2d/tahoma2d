@@ -297,7 +297,7 @@ old save path.
 If pointer to subXsheet is different from zero save only resources
 used in subXsheet.
 */
-  void save(const TFilePath newScenePath);
+  bool save(const TFilePath newScenePath);
 
   /*!
 Update all resouces paths.

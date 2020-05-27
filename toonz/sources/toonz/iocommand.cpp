@@ -1660,13 +1660,18 @@ bool IoCmd::saveAll() {
   ToonzScene *scene = app->getCurrentScene()->getScene();
   bool untitled     = scene->isUntitled();
   SceneResources resources(scene, 0);
-  resources.save(scene->getScenePath());
+  result = result && resources.save(scene->getScenePath());
   resources.updatePaths();
 
   // for update title bar
   app->getCurrentLevel()->notifyLevelTitleChange();
   app->getCurrentPalette()->notifyPaletteTitleChanged();
   if (untitled) scene->setUntitled();
+  if (!result) {
+    DVGui::warning(
+        QObject::tr("An error occured while saving. \n"
+                    "Please check your work and try again."));
+  }
   return result;
 }
 

@@ -39,6 +39,7 @@
 #include "tenv.h"
 #include "trenderer.h"
 #include "trasterfx.h"
+#include "iocommand.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -735,7 +736,14 @@ void RenderCommand::multimediaRender() {
 
 //===================================================================
 
-void RenderCommand::onRender() { doRender(false); }
+void RenderCommand::onRender() {
+  bool saved = false;
+  saved      = IoCmd::saveAll();
+  if (!saved) {
+    return;
+  }
+  doRender(false);
+}
 
 void RenderCommand::onFastRender() {
   TOutputProperties *prop = TApp::instance()
