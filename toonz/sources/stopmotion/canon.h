@@ -11,6 +11,7 @@
 #endif
 
 #include "turbojpeg.h"
+#include "opencv2/opencv.hpp"
 
 // Toonz Includes
 #include "traster.h"
@@ -96,7 +97,6 @@ public:
   TPoint m_finalZoomPoint           = TPoint(0, 0);
   TRect m_zoomRect                  = TRect(0, 0, 0, 0);
 #endif
-  bool m_useScaledImages           = true;
   bool m_converterSucceeded        = false;
   bool m_pickLiveViewZoom          = false;
   TDimension m_fullImageDimensions = TDimension(0, 0);
@@ -174,8 +174,6 @@ public:
   EdsError focusNear3();
   EdsError focusFar3();
   void extendCameraOnTime();
-  void setUseScaledImages(bool on);
-  bool getUseScaledImages() { return m_useScaledImages; }
 #endif
 
 public slots:

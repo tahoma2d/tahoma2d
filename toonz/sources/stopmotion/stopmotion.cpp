@@ -57,14 +57,6 @@ TEnv::StringVar StopMotionCameraResolution("CamCapCameraResolution", "");
 
 namespace {
 
-TPointD getCurrentCameraDpi() {
-  TCamera *camera =
-      TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-  TDimensionD size = camera->getSize();
-  TDimension res   = camera->getRes();
-  return TPointD(res.lx / size.lx, res.ly / size.ly);
-}
-
 //-----------------------------------------------------------------------------
 
 bool findCell(TXsheet *xsh, int col, const TXshCell &targetCell,
@@ -1395,6 +1387,7 @@ void StopMotion::setLiveViewImage() {
                             m_fullImageDimensions.ly / size.ly);
       m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
     } else {
+      m_liveViewDpi         = TPointD(Stage::standardDpi, Stage::standardDpi);
       m_fullImageDimensions = m_liveViewImageDimensions;
       m_fullImageDpi        = m_liveViewDpi;
     }
@@ -1446,6 +1439,7 @@ bool StopMotion::importImage() {
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = scene->getXsheet();
+  TPointD dpi       = TPointD(Stage::standardDpi, Stage::standardDpi);
 
   std::wstring levelName = m_levelName.toStdWString();
   if (levelName.empty()) {
@@ -1563,21 +1557,7 @@ bool StopMotion::importImage() {
       sl = level->getSimpleLevel();
       sl->setPath(levelFp, true);
       sl->getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
-      TPointD dpi;
-      // Right now always set the dpi to scale to the camera width
-      if (Preferences::instance()->getPixelsOnly() && false)
-        dpi = getCurrentCameraDpi();
-      // Compute the dpi so that the image will fit
-      // to the camera frame
-      else {
-        TCamera *camera =
-            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-        TDimensionD size  = camera->getSize();
-        double minimumDpi = std::min(m_newImage->getLx() / size.lx,
-                                     m_newImage->getLy() / size.ly);
-        dpi = TPointD(minimumDpi, minimumDpi);
-      }
-      sl->getProperties()->setDpi(dpi.x);
+      sl->getProperties()->setDpi(Stage::standardDpi);
       sl->getProperties()->setImageDpi(dpi);
       sl->getProperties()->setImageRes(
           TDimension(m_newImage->getLx(), m_newImage->getLy()));
@@ -1624,10 +1604,9 @@ bool StopMotion::importImage() {
 
   // move the temp file
   if (!m_usingWebcam) {
-    if (m_canon->m_useScaledImages) {
-      TSystem::copyFile(fullResFile, tempFile);
-      TSystem::deleteFile(tempFile);
-    }
+    TSystem::copyFile(fullResFile, tempFile);
+    TSystem::deleteFile(tempFile);
+
     if (m_hasLineUpImage) {
       JpgConverter::saveJpg(m_lineUpImage, liveViewFile);
       // check the live view image map to see if there is already
@@ -1645,12 +1624,12 @@ bool StopMotion::importImage() {
   }
 
   TFrameId fid(frameNumber);
-  TPointD levelDpi = sl->getDpi();
+  TPointD levelDpi = dpi;
   /* create the raster */
   TRaster32P raster = m_newImage;
 
   TRasterImageP ri(raster);
-  ri->setDpi(levelDpi.x, levelDpi.y);
+  ri->setDpi(dpi.x, dpi.x);
 
   /* setting the frame */
   sl->setFrame(fid, ri);
@@ -1919,13 +1898,12 @@ void StopMotion::takeTestShot() {
   }
   m_isTestShot = true;
   if (m_usingWebcam) {
-      if (m_light->useOverlays()) {
-          m_light->showOverlays();
-          m_webcamOverlayTimer->start(500);
-      }
-      else {
-          saveTestShot();
-      }
+    if (m_light->useOverlays()) {
+      m_light->showOverlays();
+      m_webcamOverlayTimer->start(500);
+    } else {
+      saveTestShot();
+    }
   }
 #ifdef WITH_CANON
   else {
@@ -2036,7 +2014,7 @@ void StopMotion::saveTestShot() {
 
   TFilePath tempFile = parentDir + "temp.jpg";
 
-  if (!m_usingWebcam && m_canon->m_useScaledImages) {
+  if (!m_usingWebcam) {
     TSystem::copyFile(testsFile, tempFile);
     TSystem::deleteFile(tempFile);
   } else {
@@ -2044,8 +2022,7 @@ void StopMotion::saveTestShot() {
   }
   cv::Mat imgOriginal(m_newImage->getSize().ly, m_newImage->getSize().lx,
                       CV_8UC4);
-  // tempImage = TRaster32P(width, height);
-  // m_liveViewImage = TRaster32P(width, height);
+
   int size = m_newImage->getPixelSize() * m_newImage->getSize().lx *
              m_newImage->getSize().ly;
   uchar *imgBuf = imgOriginal.data;
@@ -2431,13 +2408,12 @@ void StopMotion::refreshFrameInfo() {
   bool checkRes                    = true;
   if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
 #ifdef WITH_CANON
-  else if (m_canon->m_useScaledImages ||
-           !m_canon->getCurrentImageQuality().contains("Large")) {
-    stopMotionRes = m_canon->m_proxyImageDimensions;
-    if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
-      checkRes = false;
-    }
+
+  stopMotionRes = m_canon->m_proxyImageDimensions;
+  if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
+    checkRes = false;
   }
+
 #endif
   else
     stopMotionRes = m_fullImageDimensions;
