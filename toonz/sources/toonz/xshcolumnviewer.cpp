@@ -2624,6 +2624,15 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
 
+    QAction *flipOrientation = new QAction(tr("Toggle Orientation"), this);
+
+    flipOrientation->setToolTip(tr("Toggle between timeline and xsheet view"));
+    bool ret = true;
+    ret      = ret && connect(flipOrientation, &QAction::triggered,
+                         [=]() { m_viewer->flipOrientation(); });
+    assert(ret);
+    menu.addAction(flipOrientation);
+
     if (isCamera) {
       menu.exec(event->globalPos());
       return;
