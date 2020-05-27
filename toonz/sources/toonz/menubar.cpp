@@ -8,6 +8,7 @@
 #include "cellselection.h"
 #include "mainwindow.h"
 #include "menubarpopup.h"
+#include "docklayout.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -51,7 +52,7 @@ void UrlOpener::open() { QDesktopServices::openUrl(m_url); }
 UrlOpener dvHome(QUrl("http://www.toonz.com/"));
 UrlOpener manual(QUrl("file:///C:/gmt/butta/M&C in EU.pdf"));
 
-TEnv::IntVar LockRoomTabToggle("LockRoomTabToggle", 0);
+TEnv::IntVar LockRoomTabToggle("LockRoomTabToggle", 1);
 
 //=============================================================================
 // RoomTabWidget
@@ -65,6 +66,7 @@ RoomTabWidget::RoomTabWidget(QWidget *parent)
     , m_renameTextField(new DVGui::LineEdit(this))
     , m_isLocked(LockRoomTabToggle != 0) {
   m_renameTextField->hide();
+  DockingCheck::instance()->setIsEnabled(LockRoomTabToggle != 0);
   connect(m_renameTextField, SIGNAL(editingFinished()), this,
           SLOT(updateTabName()));
 }
@@ -200,6 +202,7 @@ void RoomTabWidget::deleteTab() {
 void RoomTabWidget::setIsLocked(bool lock) {
   m_isLocked        = lock;
   LockRoomTabToggle = (lock) ? 1 : 0;
+  DockingCheck::instance()->setIsEnabled(lock);
 }
 
 //-----------------------------------------------------------------------------
@@ -645,13 +648,13 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_RasterizePli);
 
   // Menu' WINDOWS
-  QMenu *windowsMenu   = addMenu(tr("Windows"), fullMenuBar);
-  QMenu *workspaceMenu = windowsMenu->addMenu(tr("Workspace"));
-  {
-    addMenuItem(workspaceMenu, MI_DockingCheck);
-    workspaceMenu->addSeparator();
-    addMenuItem(workspaceMenu, MI_ResetRoomLayout);
-  }
+  QMenu *windowsMenu = addMenu(tr("Windows"), fullMenuBar);
+  // QMenu *workspaceMenu = windowsMenu->addMenu(tr("Workspace"));
+  //{
+  //  addMenuItem(workspaceMenu, MI_DockingCheck);
+  //  workspaceMenu->addSeparator();
+  //  addMenuItem(workspaceMenu, MI_ResetRoomLayout);
+  //}
   addMenuItem(windowsMenu, MI_OpenCommandToolbar);
   addMenuItem(windowsMenu, MI_OpenToolbar);
   addMenuItem(windowsMenu, MI_OpenToolOptionBar);
@@ -689,6 +692,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_MaximizePanel);
   addMenuItem(windowsMenu, MI_FullScreenWindow);
+  windowsMenu->addSeparator();
+  addMenuItem(windowsMenu, MI_ResetRoomLayout);
 
   // Menu' HELP
   QMenu *helpMenu = addMenu(tr("Help"), fullMenuBar);
