@@ -121,7 +121,7 @@ TFilePath ResourceImportStrategy::process(ToonzScene *scene,
   if (srcPath.getWideString().find(L'+') == 0)
     dstPath = srcPath;
   else
-    dstPath = scene->getImportedLevelPath(srcPath);
+    dstPath               = scene->getImportedLevelPath(srcPath);
   TFilePath actualDstPath = scene->decodeFilePath(dstPath);
   assert(actualDstPath != TFilePath());
 
@@ -500,10 +500,10 @@ void SceneResources::getResources() {
 
 //-----------------------------------------------------------------------------
 
-void SceneResources::save(const TFilePath newScenePath) {
+bool SceneResources::save(const TFilePath newScenePath) {
   TFilePath oldScenePath = m_scene->getScenePath();
   m_scene->setScenePath(newScenePath);
-  bool failedSave = false;
+  bool saved = false;
   for (int i = 0; i < (int)m_resources.size(); i++) {
     m_resources[i]->save();
   }
@@ -523,6 +523,8 @@ void SceneResources::save(const TFilePath newScenePath) {
                    "  " + failedList.join("\n  "));
   }
   m_scene->setScenePath(oldScenePath);
+
+  return failedList.isEmpty() ? true : false;
 }
 
 //-----------------------------------------------------------------------------
@@ -576,7 +578,7 @@ ResourceImporter::ResourceImporter(ToonzScene *scene, TProject *dstProject,
       scene->getScenePath() - scene->getProject()->getScenesPath();
   if (relativeScenePath.isAbsolute())
     relativeScenePath = scene->getScenePath().withoutParentDir();
-  TFilePath newFp = dstProject->getScenesPath() + relativeScenePath;
+  TFilePath newFp     = dstProject->getScenesPath() + relativeScenePath;
   makeUnique(newFp);
   m_dstScene->setScenePath(newFp);
 }
@@ -694,7 +696,7 @@ void ResourceCollector::process(TXshSimpleLevel *sl) {
   std::string suffix = ResourceImporter::extractPsdSuffix(path);
   std::map<TFilePath, TFilePath>::iterator it = m_collectedFiles.find(path);
   if (it != m_collectedFiles.end()) {
-    TFilePath destPath = it->second;
+    TFilePath destPath         = it->second;
     if (suffix != "") destPath = ResourceImporter::buildPsd(destPath, suffix);
     sl->setPath(destPath);
   } else {
@@ -710,7 +712,7 @@ void ResourceCollector::process(TXshSimpleLevel *sl) {
         }
       }
       ++m_count;
-      TFilePath destPath = collectedPath;
+      TFilePath destPath         = collectedPath;
       if (suffix != "") destPath = ResourceImporter::buildPsd(destPath, suffix);
       sl->setPath(destPath);
       m_collectedFiles[path] = collectedPath;
