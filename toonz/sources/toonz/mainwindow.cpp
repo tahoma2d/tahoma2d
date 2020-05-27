@@ -73,7 +73,7 @@ TEnv::IntVar BCheckToggleAction("BCheckToggleAction", 0);
 TEnv::IntVar GCheckToggleAction("GCheckToggleAction", 0);
 TEnv::IntVar ACheckToggleAction("ACheckToggleAction", 0);
 TEnv::IntVar LinkToggleAction("LinkToggleAction", 0);
-TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
+// TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
@@ -1257,8 +1257,8 @@ void MainWindow::onMenuCheckboxChanged() {
     ViewRulerToggleAction = isChecked;
   else if (cm->getAction(MI_TCheck) == action)
     TCheckToggleAction = isChecked;
-  else if (cm->getAction(MI_DockingCheck) == action)
-    DockingCheckToggleAction = isChecked;
+  // else if (cm->getAction(MI_DockingCheck) == action)
+  //  DockingCheckToggleAction = isChecked;
   else if (cm->getAction(MI_ICheck) == action)
     ICheckToggleAction = isChecked;
   else if (cm->getAction(MI_Ink1Check) == action)
@@ -2026,10 +2026,10 @@ void MainWindow::defineActions() {
   createFillAction(MI_AutoFillToggle,
                    tr("Toggle Autofill on Current Palette Color"), "Shift+A");
 
-  toggle =
-      createToggle(MI_DockingCheck, tr("&Lock Room Panes"), "",
-                   DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);
-  DockingCheck::instance()->setToggle(toggle);
+  // toggle =
+  //     createToggle(MI_DockingCheck, tr("&Lock Room Panes"), "",
+  //                  DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);
+  // DockingCheck::instance()->setToggle(toggle);
 
   // createRightClickMenuAction(MI_OpenCurrentScene,   tr("&Current Scene"),
   // "");

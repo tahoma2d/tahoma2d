@@ -39,16 +39,16 @@ void DockingCheck::setIsEnabled(bool on) {
 
 //========================================================
 
-class DockingToggleCommand final : public MenuItemHandler {
-public:
-  DockingToggleCommand() : MenuItemHandler("MI_DockingCheck") {}
-
-  void execute() override {
-    DockingCheck *dc = DockingCheck::instance();
-    dc->setIsEnabled(!dc->isEnabled());
-  }
-
-} dockingToggleCommand;
+// class DockingToggleCommand final : public MenuItemHandler {
+// public:
+//  DockingToggleCommand() : MenuItemHandler("MI_DockingCheck") {}
+//
+//  void execute() override {
+//    DockingCheck *dc = DockingCheck::instance();
+//    dc->setIsEnabled(!dc->isEnabled());
+//  }
+//
+//} dockingToggleCommand;
 
 //========================================================
 
