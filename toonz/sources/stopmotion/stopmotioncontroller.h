@@ -98,9 +98,9 @@ class StopMotionController final : public QWidget {
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo;
   LevelNameLineEdit *m_levelNameEdit;
-  QCheckBox *m_blackScreenForCapture, *m_useScaledFullSizeImages,
-      *m_placeOnXSheetCB, *m_directShowCB, *m_liveViewOnAllFramesCB,
-      *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB, *m_timerCB;
+  QCheckBox *m_blackScreenForCapture, *m_placeOnXSheetCB, *m_directShowCB,
+      *m_liveViewOnAllFramesCB, *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB,
+      *m_timerCB;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -162,7 +162,6 @@ protected slots:
   void onLiveViewToggleClicked();
   void onCaptureButtonClicked(bool);
   void setPage(int);
-  void onScaleFullSizeImagesChanged(int checked);
   void onBlackScreenForCaptureChanged(int checked);
   void onPlaceOnXSheetChanged(int checked);
   void onUseMjpgChanged(int checked);
@@ -260,7 +259,6 @@ protected slots:
   void onFrameNumberChanged(int);
   void onFrameInfoTextChanged(QString);
   void onOpacityChanged(int opacity);
-  void onScaleFullSizeImagesSignal(bool);
   void onBlackCaptureSignal(bool);
   void onLiveViewOnAllFramesSignal(bool);
   void onPlaceOnXSheetSignal(bool);

@@ -718,7 +718,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_placeOnXSheetCB = new QCheckBox(this);
     m_placeOnXSheetCB->setToolTip(tr("Place the frame in the XSheet"));
 
-    m_useScaledFullSizeImages = new QCheckBox(this);
     m_directShowLabel = new QLabel(tr("Use Direct Show Webcam Drivers"), this);
     m_directShowCB    = new QCheckBox(this);
     m_useMjpgCB       = new QCheckBox(this);
@@ -734,9 +733,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QGridLayout *dslrLayout     = new QGridLayout;
     QGridLayout *checkboxLayout = new QGridLayout;
 
-    dslrLayout->addWidget(m_useScaledFullSizeImages, 1, 0, Qt::AlignRight);
-    dslrLayout->addWidget(new QLabel(tr("Use Reduced Resolution Images")), 1, 1,
-                          Qt::AlignLeft);
     dslrLayout->setColumnStretch(1, 30);
     dslrBox->setLayout(dslrLayout);
     dslrBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -1068,8 +1064,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onOpacityChanged(int)));
 
   // Options Page
-  ret = ret && connect(m_useScaledFullSizeImages, SIGNAL(stateChanged(int)),
-                       this, SLOT(onScaleFullSizeImagesChanged(int)));
   ret = ret && connect(m_liveViewOnAllFramesCB, SIGNAL(stateChanged(int)), this,
                        SLOT(onLiveViewOnAllFramesChanged(int)));
 
@@ -1093,9 +1087,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onSubsamplingSliderChanged(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(subsamplingChanged(int)), this,
                        SLOT(onSubsamplingChanged(int)));
-  ret = ret &&
-        connect(m_stopMotion->m_canon, SIGNAL(scaleFullSizeImagesSignal(bool)),
-                this, SLOT(onScaleFullSizeImagesSignal(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(liveViewOnAllFramesSignal(bool)),
                        this, SLOT(onLiveViewOnAllFramesSignal(bool)));
   ret = ret && connect(m_stopMotion, SIGNAL(placeOnXSheetSignal(bool)), this,
@@ -1311,9 +1302,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_placeOnXSheetCB->setChecked(
       m_stopMotion->getPlaceOnXSheet() == true ? true : false);
 
-  m_useScaledFullSizeImages->setChecked(
-      m_stopMotion->m_canon->m_useScaledImages);
-
   m_onionOpacityFld->setValue(double(100 * m_stopMotion->getOpacity()) / 255.0);
   m_directShowCB->setChecked(m_stopMotion->m_webcam->getUseDirectShow());
   m_useMjpgCB->setChecked(m_stopMotion->m_webcam->getUseMjpg());
@@ -1351,20 +1339,6 @@ void StopMotionController::setPage(int index) {
     index += 1;
   }
   m_stackedChooser->setCurrentIndex(index);
-}
-
-//-----------------------------------------------------------------------------
-
-void StopMotionController::onScaleFullSizeImagesChanged(int checked) {
-#ifdef WITH_CANON
-  m_stopMotion->m_canon->setUseScaledImages(checked > 0 ? true : false);
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
-void StopMotionController::onScaleFullSizeImagesSignal(bool on) {
-  m_useScaledFullSizeImages->setChecked(on);
 }
 
 //-----------------------------------------------------------------------------

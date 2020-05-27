@@ -33,7 +33,7 @@ class JpgConverter : public QThread {
   EdsStreamRef m_stream;
 #endif
   TRaster32P m_finalImage;
-  bool m_scale     = false;
+  // bool m_scale     = false;
   int m_scaleWidth = 0;
 
 public:
@@ -43,7 +43,7 @@ public:
   static bool loadJpg(TFilePath path, TRaster32P& image);
 #ifdef WITH_CANON
   void setStream(EdsStreamRef stream);
-  void setScale(bool scale) { m_scale = scale; }
+  // void setScale(bool scale) { m_scale = scale; }
   void setScaleWidth(bool scaleWidth) { m_scaleWidth = scaleWidth; }
   TRaster32P getImage() { return m_finalImage; }
   void convertFromJpg();

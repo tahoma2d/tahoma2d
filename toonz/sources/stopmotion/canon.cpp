@@ -25,8 +25,6 @@ void doSleep(int ms) {
 #endif
 }
 
-TEnv::IntVar StopMotionUseScaledImages("StopMotionUseScaledImages", 1);
-
 namespace {
 bool l_quitLoop = false;
 }
@@ -34,7 +32,6 @@ bool l_quitLoop = false;
 //-----------------------------------------------------------------------------
 
 Canon::Canon() {
-  m_useScaledImages = StopMotionUseScaledImages;
 #ifdef WITH_CANON
   buildAvMap();
   buildIsoMap();
@@ -796,14 +793,6 @@ EdsError Canon::setColorTemperature(QString temp) {
 
 //-----------------------------------------------------------------
 
-void Canon::setUseScaledImages(bool on) {
-  m_useScaledImages         = on;
-  StopMotionUseScaledImages = int(on);
-  emit(scaleFullSizeImagesSignal(on));
-}
-
-//-----------------------------------------------------------------
-
 bool Canon::downloadImage(EdsBaseRef object) {
   EdsError err        = EDS_ERR_OK;
   EdsStreamRef stream = NULL;
@@ -814,8 +803,6 @@ bool Canon::downloadImage(EdsBaseRef object) {
   err = EdsDownload(object, dirItemInfo.size, stream);
   EdsDownloadComplete(object);
 
-// tj code
-
 #ifdef MACOSX
   UInt64 mySize = 0;
 #else
@@ -825,93 +812,79 @@ bool Canon::downloadImage(EdsBaseRef object) {
   err                 = EdsGetPointer(stream, (EdsVoid**)&data);
   err                 = EdsGetLength(stream, &mySize);
 
+  // we now have the image in a buffer and the size of the image.
+
+  // For now, we are only dealing with jpg files, so lets get some jpg info.
   int width, height, pixelFormat;
-  // long size;
   int inSubsamp, inColorspace;
-  // unsigned long jpegSize;
   tjhandle tjInstance   = NULL;
   unsigned char* imgBuf = NULL;
   tjInstance            = tjInitDecompress();
   tjDecompressHeader3(tjInstance, data, mySize, &width, &height, &inSubsamp,
                       &inColorspace);
 
-  pixelFormat = TJPF_BGRX;
-  imgBuf = (unsigned char*)tjAlloc(width * height * tjPixelSize[pixelFormat]);
-  int flags = 0;
+  pixelFormat     = TJPF_BGRX;
+  int pixelSize   = tjPixelSize[pixelFormat];
+  UINT bufferSize = width * height * pixelSize;
+  imgBuf          = (unsigned char*)tjAlloc(bufferSize);
+  int flags       = 0;
   flags |= TJFLAG_BOTTOMUP;
-  int tempWidth, tempHeight;
 
-  if (m_useScaledImages) {
-    int factorsNum;
-    tjscalingfactor scalingFactor = {1, 1};
-    tjscalingfactor* factor       = tjGetScalingFactors(&factorsNum);
-    int intRatio                  = (float)width / (float)height * 100.0;
-    int i                         = 0;
+  // don't scale using jpg turbo, you can't control the size exactly
+  // get all the image info uncompressed and put into imgBuf
+  tjDecompress2(tjInstance, data, mySize, imgBuf, width, width * pixelSize,
+                height, pixelFormat, flags);
 
-    TCamera* camera =
-        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-    TDimension res = camera->getRes();
+  // Get camera size info
+  TCamera* camera =
+      TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+  TDimension res         = camera->getRes();
+  TDimensionD size       = camera->getSize();
+  m_proxyImageDimensions = res;
+  m_proxyImageDimensions = TDimension(res.lx, res.ly);
+  double minimumDpi      = Stage::standardDpi;
+  m_proxyDpi             = TPointD(minimumDpi, minimumDpi);
 
-    // find the scaling factor that is at least as big as the current camera
-    while (i < factorsNum) {
-      scalingFactor = factor[i];
-      tempWidth     = TJSCALED(width, scalingFactor);
-      if (tempWidth < res.lx && i > 0) {
-        scalingFactor = factor[i - 1];
-        break;
-      }
-      i++;
-    }
-    // make sure the scaling factor has the right aspect ratio
-    while (i >= 0) {
-      tempWidth  = TJSCALED(width, scalingFactor);
-      tempHeight = TJSCALED(height, scalingFactor);
-      if ((int)((float)tempWidth / (float)tempHeight * 100.0) == intRatio) {
-        break;
-      }
-      i--;
-      scalingFactor = factor[i];
-    }
-  } else {
-    tempWidth  = width;
-    tempHeight = height;
-  }
+  // end tj code
+  // OpenCV image material - note width and height are flipped
+  cv::Mat imgOriginal(height, width, CV_8UC4);
 
-  if (m_useScaledImages || !getCurrentImageQuality().contains("Large")) {
-    TCamera* camera =
-        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-    TDimensionD size       = camera->getSize();
-    m_proxyImageDimensions = TDimension(tempWidth, tempHeight);
-    double minimumDpi      = std::min(m_proxyImageDimensions.lx / size.lx,
-                                 m_proxyImageDimensions.ly / size.ly);
-    m_proxyDpi = TPointD(minimumDpi, minimumDpi);
-  }
+  uchar* origBuf = imgOriginal.data;
 
-  tjDecompress2(tjInstance, data, mySize, imgBuf, tempWidth,
-                tempWidth * tjPixelSize[pixelFormat], tempHeight, pixelFormat,
-                flags);
+  memcpy(origBuf, imgBuf, bufferSize);
 
-  StopMotion::instance()->m_newImage = TRaster32P(tempWidth, tempHeight);
-  StopMotion::instance()->m_newImage->lock();
-  uchar* rawData = StopMotion::instance()->m_newImage->getRawData();
-  memcpy(rawData, imgBuf, tempWidth * tempHeight * tjPixelSize[pixelFormat]);
-  StopMotion::instance()->m_newImage->unlock();
-
+  // got the image, free the jpeg turbo stuff
   tjFree(imgBuf);
   imgBuf = NULL;
   tjDestroy(tjInstance);
   tjInstance = NULL;
 
-  // end tj code
+  // calculate the size of the new image
+  // and resize it down
+  double r = (double)width / (double)height;
+  cv::Size dim(res.lx, res.lx / r);
+  int newWidth  = dim.width;
+  int newHeight = dim.height;
+  cv::Mat imgResized(dim, CV_8UC4);
+  cv::resize(imgOriginal, imgResized, dim);
+  int newSize       = imgResized.total() * imgResized.elemSize();
+  uchar* resizedBuf = imgResized.data;
 
-  if (m_useScaledImages) {
-    QFile fullImage(StopMotion::instance()->m_tempFile);
-    fullImage.open(QIODevice::WriteOnly);
-    QDataStream dataStream(&fullImage);
-    dataStream.writeRawData((const char*)data, mySize);
-    fullImage.close();
-  }
+  // copy the image to m_newImage
+  StopMotion::instance()->m_newImage = TRaster32P(newWidth, newHeight);
+  StopMotion::instance()->m_newImage->lock();
+  uchar* rawData = StopMotion::instance()->m_newImage->getRawData();
+  memcpy(rawData, resizedBuf, newSize);
+  StopMotion::instance()->m_newImage->unlock();
 
+  // write out the full res file
+  QFile fullImage(StopMotion::instance()->m_tempFile);
+  fullImage.open(QIODevice::WriteOnly);
+  QDataStream dataStream(&fullImage);
+  dataStream.writeRawData((const char*)data, mySize);
+  fullImage.close();
+
+  // free the canon stuff
   EdsRelease(stream);
   stream = NULL;
   if (object) EdsRelease(object);
@@ -1219,7 +1192,7 @@ bool Canon::downloadEVFData() {
   if (err == EDS_ERR_OK) {
     JpgConverter* converter = new JpgConverter;
     converter->setStream(stream);
-    converter->setScale(m_useScaledImages);
+    // converter->setScale(m_useScaledImages);
 
     connect(converter, SIGNAL(imageReady(bool)), this, SLOT(onImageReady(bool)),
             Qt::QueuedConnection);
