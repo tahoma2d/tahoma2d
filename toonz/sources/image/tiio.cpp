@@ -117,7 +117,7 @@ void initImageIo(bool lightVersion) {
   TFileType::declare("plt", TFileType::RASTER_IMAGE);
 
   Tiio::defineReaderMaker("nol", Tiio::makePngReader);
-  Tiio::defineWriterMaker("nol", Tiio::makePngWriter, true);
+  Tiio::defineWriterMaker("nol", Tiio::makePngWriter, false);
   TFileType::declare("nol", TFileType::RASTER_IMAGE);
 
   TLevelWriter::define("psd", TLevelWriterPsd::create, false);
@@ -136,7 +136,7 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterProperties("png", new Tiio::PngWriterProperties());
 
   Tiio::defineReaderMaker("tga", Tiio::makeTgaReader);
-  Tiio::defineWriterMaker("tga", Tiio::makeTgaWriter, true);
+  Tiio::defineWriterMaker("tga", Tiio::makeTgaWriter, false);
   TFileType::declare("tga", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tga", new Tiio::TgaWriterProperties());
 
@@ -146,17 +146,17 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterProperties("tif", new Tiio::TifWriterProperties());
 
   Tiio::defineReaderMaker("tiff", Tiio::makeTifReader);
-  Tiio::defineWriterMaker("tiff", Tiio::makeTifWriter, true);
+  Tiio::defineWriterMaker("tiff", Tiio::makeTifWriter, false);
   TFileType::declare("tiff", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tiff", new Tiio::TifWriterProperties());
 
   Tiio::defineReaderMaker("sgi", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, true);
+  Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, false);
   TFileType::declare("sgi", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("sgi", new Tiio::SgiWriterProperties());
 
   Tiio::defineReaderMaker("rgb", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("rgb", Tiio::makeSgiWriter, true);
+  Tiio::defineWriterMaker("rgb", Tiio::makeSgiWriter, false);
   TFileType::declare("rgb", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("rgb", new Tiio::SgiWriterProperties());
 
@@ -206,7 +206,7 @@ void initImageIo(bool lightVersion) {
     TFileType::declare("mov", TFileType::RASTER_LEVEL);
     Tiio::defineWriterProperties("mov", new Tiio::MovWriterProperties());
 
-    TLevelWriter::define("3gp", TLevelWriter3gp::create, true);
+    TLevelWriter::define("3gp", TLevelWriter3gp::create, false);
     TLevelReader::define("3gp", TLevelReader3gp::create);
     TFileType::declare("3gp", TFileType::RASTER_LEVEL);
     Tiio::defineWriterProperties("3gp", new Tiio::MovWriterProperties());
