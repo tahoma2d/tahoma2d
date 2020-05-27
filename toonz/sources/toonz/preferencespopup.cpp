@@ -7,6 +7,7 @@
 #include "versioncontrol.h"
 #include "levelsettingspopup.h"
 #include "tapp.h"
+#include "cleanupsettingsmodel.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -373,6 +374,14 @@ void PreferencesPopup::onPixelsOnlyChanged() {
     camSize.lx = camRes.lx / Stage::standardDpi;
     camSize.ly = camRes.ly / Stage::standardDpi;
     camera->setSize(camSize);
+    TDimension cleanupRes = CleanupSettingsModel::instance()
+                                ->getCurrentParameters()
+                                ->m_camera.getRes();
+    TDimensionD cleanupSize;
+    cleanupSize.lx = cleanupRes.lx / Stage::standardDpi;
+    cleanupSize.ly = cleanupRes.ly / Stage::standardDpi;
+    CleanupSettingsModel::instance()->getCurrentParameters()->m_camera.setSize(
+        cleanupSize);
 
     m_pref->storeOldUnits();
 
@@ -431,10 +440,10 @@ void PreferencesPopup::beforeRoomChoiceChanged() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onDefLevelTypeChanged() {
-  // bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
-  //                !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
-  // m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
-  // m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
+  bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
+                  !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
+  m_controlIdMap.key(DefLevelWidth)->setEnabled(isRaster);
+  m_controlIdMap.key(DefLevelHeight)->setEnabled(isRaster);
   // if (!m_pref->getBoolValue(pixelsOnly))
   //  m_controlIdMap.key(DefLevelDpi)->setEnabled(isRaster);
 }
@@ -1566,10 +1575,10 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  // insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
+  insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
-  // insertUI(newLevelSizeToCameraSizeEnabled, lay);
-  // insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
+  insertUI(newLevelSizeToCameraSizeEnabled, lay);
+  insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   // insertUI(DefLevelDpi, lay);
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
   {
@@ -1602,8 +1611,8 @@ QWidget* PreferencesPopup::createDrawingPage() {
 
   // if (m_pref->getBoolValue(pixelsOnly)) {
   //  m_controlIdMap.key(DefLevelDpi)->setDisabled(true);
-  //  getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
-  //  getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
+  getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
+  getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
   //}
 
   return widget;

@@ -3,6 +3,7 @@
 #include "tapp.h"
 
 // Tnz6 includes
+#include "cleanupsettingspopup.h"
 #include "iocommand.h"
 #include "mainwindow.h"
 #include "cellselection.h"
@@ -364,7 +365,10 @@ void TApp::updateXshLevel() {
 
       m_paletteController->getCurrentLevelPalette()->setPalette(
           xl->getSimpleLevel()->getPalette(), styleIndex);
+      if (xl->getType() == OVL_XSHLEVEL && currentPalette &&
+          currentPalette->isCleanupPalette())
 
+        m_paletteController->editCleanupPalette();
     } else if (xl && xl->getPaletteLevel()) {
       int styleIndex =
           m_paletteController->getCurrentLevelPalette()->getStyleIndex();
@@ -403,6 +407,12 @@ void TApp::updateCurrentFrame() {
 void TApp::onSceneSwitched() {
   // update XSheet
   m_currentXsheet->setXsheet(m_currentScene->getScene()->getXsheet());
+
+  TPalette *palette = m_currentScene->getScene()
+                          ->getProperties()
+                          ->getCleanupParameters()
+                          ->m_cleanupPalette.getPointer();
+  m_paletteController->getCurrentCleanupPalette()->setPalette(palette, -1);
 
   m_paletteController->editLevelPalette();
 
@@ -504,6 +514,13 @@ void TApp::onXshLevelSwitched(TXshLevel *) {
     if (simpleLevel) {
       m_paletteController->getCurrentLevelPalette()->setPalette(
           simpleLevel->getPalette());
+
+      TPalette *currentPalette =
+          m_paletteController->getCurrentPalette()->getPalette();
+
+      if (simpleLevel->getType() == OVL_XSHLEVEL && currentPalette &&
+          currentPalette->isCleanupPalette())
+        m_paletteController->editCleanupPalette();
 
       return;
     }

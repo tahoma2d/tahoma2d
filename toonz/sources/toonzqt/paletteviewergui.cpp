@@ -1174,13 +1174,13 @@ void PageViewer::dragEnterEvent(QDragEnterEvent *event) {
   const PaletteData *paletteData =
       dynamic_cast<const PaletteData *>(event->mimeData());
   if (paletteData && paletteData->hasStyleIndeces()) {
-    // if ((m_viewType == CLEANUP_PALETTE &&
-    //     !paletteData->getPalette()->isCleanupPalette()) ||
-    //    (m_viewType == LEVEL_PALETTE &&
-    //     paletteData->getPalette()->isCleanupPalette())) {
-    //  event->ignore();
-    //  return;
-    //}
+    if ((m_viewType == CLEANUP_PALETTE &&
+         !paletteData->getPalette()->isCleanupPalette()) ||
+        (m_viewType == LEVEL_PALETTE &&
+         paletteData->getPalette()->isCleanupPalette())) {
+      event->ignore();
+      return;
+    }
     int index = posToIndex(event->pos());
     // non si puo' spostare qualcosa nelle prime due posizioni di pagina 0
     // (occupate da BG e FG)
@@ -1555,13 +1555,13 @@ void PaletteTabBar::dragEnterEvent(QDragEnterEvent *event) {
   const PaletteData *paletteData =
       dynamic_cast<const PaletteData *>(event->mimeData());
   if (!paletteData) return;
-  // if ((m_pageViewer->getViewType() == CLEANUP_PALETTE &&
-  //     !paletteData->getPalette()->isCleanupPalette()) ||
-  //    (m_pageViewer->getViewType() == LEVEL_PALETTE &&
-  //     paletteData->getPalette()->isCleanupPalette())) {
-  //  event->ignore();
-  //  return;
-  //}
+  if ((m_pageViewer->getViewType() == CLEANUP_PALETTE &&
+       !paletteData->getPalette()->isCleanupPalette()) ||
+      (m_pageViewer->getViewType() == LEVEL_PALETTE &&
+       paletteData->getPalette()->isCleanupPalette())) {
+    event->ignore();
+    return;
+  }
   event->acceptProposedAction();
 }
 

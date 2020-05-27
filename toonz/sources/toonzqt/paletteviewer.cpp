@@ -560,6 +560,8 @@ void PaletteViewer::updatePaletteToolBar() {
   bool enable            = !palette ? false : true;
   bool enableNewStyleAct = enable;
   // limit the number of cleanup styles to 7
+  if (palette && palette->isCleanupPalette())
+    enableNewStyleAct = (palette->getStyleInPagesCount() < 8);
 
   if (m_viewType != CLEANUP_PALETTE) m_keyFrameButton->setEnabled(enable);
   int i;

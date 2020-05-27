@@ -88,6 +88,8 @@ QWidget *TasksViewer::createToolBar() {
   cmdToolbar->addSeparator();
   add("addrender", tr("&Add Render Task"), cmdToolbar,
       SLOT(addRenderTask(bool)), tr("Add Render"));
+  add("addcleanup", tr("&Add Cleanup Task"), cmdToolbar,
+      SLOT(addCleanupTask(bool)), tr("Add Cleanup"));
 
   QToolBar *saveToolbar = new QToolBar(toolBarWidget);
   saveToolbar->setIconSize(QSize(21, 17));
@@ -1064,7 +1066,7 @@ void TaskTreeView::openContextMenu(TreeModel::Item *gItem,
       int i;
       for (i = 0; i < actions.size(); i++) {
         globalMenu.addAction(actions[i]);
-        if (i == 1 || i == 2 || i == 6) globalMenu.addSeparator();
+        if (i == 1 || i == 3 || i == 6) globalMenu.addSeparator();
       }
     }
     globalMenu.exec(globalPos);

@@ -629,6 +629,7 @@ add_subdirectory(tnztools)
 add_subdirectory(${SDKROOT}/lzo/driver lzodriver)
 
 add_subdirectory(toonz)
+add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)
 add_subdirectory(tconverter)
 add_subdirectory(toonzfarm)

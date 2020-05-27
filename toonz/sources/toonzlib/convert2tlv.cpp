@@ -55,8 +55,8 @@ inline int distance(const TPixel &c1, const TPixel &c2) {
 
 int findClosest(const std::map<TPixel, int> &colorMap, TPixel &curPixColor) {
   std::map<TPixel, int>::const_iterator it = colorMap.begin();
-  int minDistance                          = 1000000000;
-  int index                                = -1;
+  int minDistance = 1000000000;
+  int index       = -1;
   for (; it != colorMap.end(); ++it) {
     int dist = distance(it->first, curPixColor);
     if (dist < minDistance) {
@@ -140,7 +140,7 @@ int getMaxMatte(const TRaster32P &r) {
   for (int i = 0; i < r->getLy(); i++) {
     TPixel32 *pix = r->pixels(i);
     for (int j = 0; j < r->getLx(); j++, pix++) {
-      maxMatte = std::max(maxMatte, (int)pix->m);
+      maxMatte                     = std::max(maxMatte, (int)pix->m);
       if (pix->m != 255) withMatte = true;
     }
   }
@@ -186,7 +186,7 @@ std::map<TPixel, int>::const_iterator Convert2Tlv::findNearestColor(
   // assert((int)colorMap.size()>toIndex);
   // assert((int)colorMap.size()>fromIndex);
   std::map<TPixel, int>::const_iterator ret = m_colorMap.end(),
-                                        it  = m_colorMap.begin();
+                                        it = m_colorMap.begin();
   // std::advance(it, fromIndex);
 
   int mindist = 1000;
@@ -337,7 +337,7 @@ void Convert2Tlv::buildInksForNAAImage(TRasterCM32P &rout,
         curColor = *pixin;
         if ((it = m_colorMap.find(curColor)) == m_colorMap.end()) {
           if (m_lastIndex < 4095) m_colorMap[curColor] = ++m_lastIndex;
-          curIndex = m_lastIndex;
+          curIndex                                     = m_lastIndex;
         } else
           curIndex = it->second;
       }
@@ -540,7 +540,7 @@ void Convert2Tlv::buildToonzRaster(TRasterCM32P &rout, const TRasterP &rin1,
 
 TPalette *Convert2Tlv::buildPalette() {
   std::map<TPixel, int>::const_iterator it = m_colorMap.begin();
-  TPalette::Page *page                     = m_palette->getPage(0);
+  TPalette::Page *page = m_palette->getPage(0);
 
   QList<int> stylesToBeAddedToPage;
 
@@ -600,6 +600,8 @@ TPalette *Convert2Tlv::buildPalette() {
   is.getTagParam("name", gname);
   TPalette *defaultPalette = new TPalette();
   defaultPalette->loadData(is);
+
+  m_palette->setIsCleanupPalette(false);
 
   TPalette::Page *dstPage = m_palette->getPage(0);
   TPalette::Page *srcPage = defaultPalette->getPage(0);
@@ -709,7 +711,7 @@ bool Convert2Tlv::init(std::string &errorMessage) {
   m_colorMap.clear();
 
   try {
-    m_lr1 = TLevelReaderP(m_levelIn1);
+    m_lr1               = TLevelReaderP(m_levelIn1);
     if (m_lr1) m_level1 = m_lr1->loadInfo();
   } catch (...) {
     errorMessage =
@@ -727,7 +729,7 @@ bool Convert2Tlv::init(std::string &errorMessage) {
 
   if (m_levelIn2 != TFilePath()) {
     try {
-      m_lr2 = TLevelReaderP(m_levelIn2);
+      m_lr2             = TLevelReaderP(m_levelIn2);
       if (m_lr2) level2 = m_lr2->loadInfo();
     } catch (...) {
       errorMessage =
@@ -815,7 +817,7 @@ bool Convert2Tlv::init(std::string &errorMessage) {
     for (int i = 0; i < m_palette->getStyleCount(); i++)
       if (m_palette->getStylePage(i)) {
         m_colorMap[m_palette->getStyle(i)->getMainColor()] = i;
-        if (i > m_lastIndex) m_lastIndex = i;
+        if (i > m_lastIndex) m_lastIndex                   = i;
       }
     assert(m_colorMap.size() == m_palette->getStyleInPagesCount());
   }

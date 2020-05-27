@@ -6,6 +6,7 @@
 #include "ttoonzimage.h"
 #include "tools/cursors.h"
 #include "tcolorstyles.h"
+#include "toonz/cleanupcolorstyles.h"
 #include "trasterimage.h"
 #include "tgl.h"
 #include "tenv.h"
@@ -129,6 +130,9 @@ void setCurrentColor(const TPixel32 &color) {
   if (!cs) return;
 
   if (controller->isColorAutoApplyEnabled()) {
+    TCleanupStyle *ccs = dynamic_cast<TCleanupStyle *>(cs);
+    if (ccs) ccs->setCanUpdate(true);
+
     int index = ph->getStyleParamIndex();
     if (0 <= index && index < cs->getColorParamCount())
       cs->setColorParamValue(index, color);
@@ -143,6 +147,8 @@ void setCurrentColor(const TPixel32 &color) {
     TPalette *palette = ph->getPalette();
     if (palette && palette->isKeyframe(styleIndex, palette->getFrame()))
       palette->setKeyframe(styleIndex, palette->getFrame());
+
+    if (ccs) ccs->setCanUpdate(false);
   } else
     controller->setColorSample(color);
 }

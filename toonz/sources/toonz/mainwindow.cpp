@@ -63,7 +63,7 @@ TEnv::IntVar RasterizePliToggleAction("RasterizePliToggleAction", 0);
 TEnv::IntVar SafeAreaToggleAction("SafeAreaToggleAction", 0);
 TEnv::IntVar ViewColorcardToggleAction("ViewColorcardToggleAction", 1);
 TEnv::IntVar ViewGuideToggleAction("ViewGuideToggleAction", 1);
-TEnv::IntVar ViewRulerToggleAction("ViewRulerToggleAction", 0);
+TEnv::IntVar ViewRulerToggleAction("ViewRulerToggleAction", 1);
 TEnv::IntVar TCheckToggleAction("TCheckToggleAction", 0);
 TEnv::IntVar ICheckToggleAction("ICheckToggleAction", 0);
 TEnv::IntVar Ink1CheckToggleAction("Ink1CheckToggleAction", 0);
@@ -1442,6 +1442,13 @@ QAction *MainWindow::createMenuEditAction(const char *id, const QString &name,
 
 //-----------------------------------------------------------------------------
 
+QAction *MainWindow::createMenuScanCleanupAction(
+    const char *id, const QString &name, const QString &defaultShortcut) {
+  return createAction(id, name, defaultShortcut, MenuScanCleanupCommandType);
+}
+
+//-----------------------------------------------------------------------------
+
 QAction *MainWindow::createMenuLevelAction(const char *id, const QString &name,
                                            const QString &defaultShortcut) {
   return createAction(id, name, defaultShortcut, MenuLevelCommandType);
@@ -1743,9 +1750,43 @@ void MainWindow::defineActions() {
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
+  createMenuScanCleanupAction(MI_DefineScanner, tr("&Define Scanner..."), "");
+  createMenuScanCleanupAction(MI_ScanSettings, tr("&Scan Settings..."), "");
+  createMenuScanCleanupAction(MI_Scan, tr("&Scan"), "");
+  createMenuScanCleanupAction(MI_Autocenter, tr("&Autocenter..."), "");
+
+  QAction *toggle = createToggle(MI_SetScanCropbox, tr("&Set Cropbox"), "", 0,
+                                 MenuScanCleanupCommandType);
+  if (toggle) {
+    SetScanCropboxCheck::instance()->setToggle(toggle);
+    QString scannerType = QSettings().value("CurrentScannerType").toString();
+    if (scannerType == "TWAIN") toggle->setDisabled(true);
+    toggle = createMenuScanCleanupAction(MI_ResetScanCropbox,
+                                         tr("&Reset Cropbox"), "");
+    if (scannerType == "TWAIN") toggle->setDisabled(true);
+  }
+
+  createMenuScanCleanupAction(MI_CleanupSettings, tr("&Cleanup Settings..."),
+                              "");
+
+  toggle = createToggle(MI_CleanupPreview, tr("&Preview Cleanup"), "", 0,
+                        MenuScanCleanupCommandType);
+  CleanupPreviewCheck::instance()->setToggle(toggle);
+  toggle = createToggle(MI_CameraTest, tr("&Camera Test"), "", 0,
+                        MenuScanCleanupCommandType);
+  CameraTestCheck::instance()->setToggle(toggle);
+
+  createToggle(MI_OpacityCheck, tr("&Opacity Check"), "Alt+1", false,
+               MenuScanCleanupCommandType);
+
+  createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
+
+  createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
+
   createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   createMenuLevelAction(MI_Renumber, tr("&Renumber..."), "");
   createMenuLevelAction(MI_ReplaceLevel, tr("&Replace Level..."), "");
+  createMenuLevelAction(MI_RevertToCleanedUp, tr("&Revert to Cleaned Up"), "");
   createMenuLevelAction(MI_RevertToLastSaved, tr("&Reload"), "");
   createMenuLevelAction(MI_ExposeResource, tr("&Expose in Xsheet"), "");
   createMenuLevelAction(MI_EditLevel, tr("&Display in Level Strip"), "");
@@ -1788,9 +1829,8 @@ void MainWindow::defineActions() {
   collapseAction->setIconText("Collapse");
   collapseAction->setIcon(QIcon(":Resources/collapse.svg"));
 
-  QAction *toggle =
-      createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
-                   EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
+  toggle = createToggle(MI_ToggleEditInPlace, tr("&Toggle Edit In Place"), "",
+                        EditInPlaceToggleAction ? 1 : 0, MenuXsheetCommandType);
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(QIcon(":Resources/edit_in_place.svg"));
 
@@ -2013,6 +2053,7 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenStudioPalette, tr("&Studio Palette"), "");
   createMenuWindowsAction(MI_OpenSchematic, tr("&Schematic"), "");
   createMenuWindowsAction(MI_FxParamEditor, tr("&FX Editor"), "Ctrl+K");
+  createMenuWindowsAction(MI_OpenCleanupSettings, tr("&Cleanup Settings"), "");
 
   createMenuWindowsAction(MI_OpenFileBrowser2, tr("&Scene Cast"), "");
   createMenuWindowsAction(MI_OpenStyleControl, tr("&Style Editor"), "");
@@ -2027,6 +2068,7 @@ void MainWindow::defineActions() {
   //  createAction(MI_TestAnimation,     "Test Animation",   "Ctrl+Return");
   //  createAction(MI_Export,            "Export",           "Ctrl+E");
 
+  createMenuWindowsAction(MI_OpenComboViewer, tr("&ComboViewer"), "");
   createMenuWindowsAction(MI_OpenHistoryPanel, tr("&History"), "Ctrl+H");
   createMenuWindowsAction(MI_AudioRecording, tr("Record Audio"), "Alt+A");
   createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"),
@@ -2081,6 +2123,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_RemoveLevel, tr("Remove Level"), "");
   createRightClickMenuAction(MI_AddToBatchRenderList, tr("Add As Render Task"),
                              "");
+  createRightClickMenuAction(MI_AddToBatchCleanupList,
+                             tr("Add As Cleanup Task"), "");
 
   createRightClickMenuAction(MI_SelectRowKeyframes,
                              tr("Select All Keys in this Frame"), "");
