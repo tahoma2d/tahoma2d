@@ -1667,7 +1667,7 @@ bool IoCmd::saveAll() {
   app->getCurrentLevel()->notifyLevelTitleChange();
   app->getCurrentPalette()->notifyPaletteTitleChanged();
   if (untitled) scene->setUntitled();
-  if (!result) {
+  if (!result && !untitled) {
     DVGui::warning(
         QObject::tr("An error occured while saving. \n"
                     "Please check your work and try again."));
