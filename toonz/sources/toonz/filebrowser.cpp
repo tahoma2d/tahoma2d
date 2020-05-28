@@ -2082,12 +2082,12 @@ void FileBrowser::onClickedItem(int index) {
   if (0 <= index && index < (int)m_items.size()) {
     // if the folder is clicked, then move the current folder
     TFilePath fp = m_items[index].m_path;
-    if (m_items[index].m_isFolder) {
-      setFolder(fp, true);
-      QModelIndex index = m_folderTreeView->currentIndex();
-      if (index.isValid()) m_folderTreeView->scrollTo(index);
-    } else
-      emit filePathClicked(fp);
+    // if (m_items[index].m_isFolder) {
+    //  setFolder(fp, true);
+    //  QModelIndex index = m_folderTreeView->currentIndex();
+    //  if (index.isValid()) m_folderTreeView->scrollTo(index);
+    //} else
+    emit filePathClicked(fp);
   }
 }
 
@@ -2102,6 +2102,8 @@ void FileBrowser::onDoubleClickedItem(int index) {
       setFolder(fp, true);
       QModelIndex index = m_folderTreeView->currentIndex();
       if (index.isValid()) m_folderTreeView->scrollTo(index);
+    } else if (TFileType::isViewable(TFileType::getInfo(fp))) {
+      CommandManager::instance()->execute(MI_ViewFile);
     } else
       emit filePathDoubleClicked(fp);
   }
