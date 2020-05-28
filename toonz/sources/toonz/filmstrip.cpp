@@ -1553,7 +1553,7 @@ Filmstrip::Filmstrip(QWidget *parent, Qt::WFlags flags)
 void Filmstrip::onChooseLevelComboChanged(int index) {
   TApp *tapp = TApp::instance();
   // empty level
-  if (index == m_chooseLevelCombo->findText(tr("- No Current Level -")))
+  if (index == m_chooseLevelCombo->findText(tr("- No Level -")))
     tapp->getCurrentLevel()->setLevel(0);
   else {
     std::vector<TFrameId> fids;
@@ -1640,7 +1640,7 @@ void Filmstrip::updateChooseLevelComboItems() {
     }
   }
 
-  m_chooseLevelCombo->addItem(tr("- No Current Level -"));
+  m_chooseLevelCombo->addItem(tr("- No Level -"));
 
   // swap the list
   m_workingFrames.clear();
