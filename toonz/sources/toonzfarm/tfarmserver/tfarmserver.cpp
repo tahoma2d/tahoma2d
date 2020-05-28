@@ -46,14 +46,6 @@ using namespace TVER;
 #define NO_ERROR 0
 #endif
 
-#ifdef MACOSX
-#include <sys/sysctl.h>  //To retrieve MAC HW infos
-#endif
-
-#ifdef LINUX
-#include <sys/sysctl.h>
-#endif
-
 // forward declaration
 class FarmServer;
 
@@ -660,35 +652,16 @@ void FarmServer::queryHwInfo(HwInfo &hwInfo) {
   hwInfo.m_cpuCount     = TSystem::getProcessorCount();
   hwInfo.m_type         = Windows;
 #else
-#ifdef __sgi
-  hwInfo.m_cpuCount = sysconf(_SC_NPROC_CONF);
-  hwInfo.m_type     = Irix;
-#else
-
-#ifdef MACOSX
-  int mib[2];
-  TINT64 physMemSize;
-  size_t len;
-
-  mib[0] = CTL_HW;
-  mib[1] = HW_MEMSIZE;
-  len    = sizeof(physMemSize);
-  sysctl(mib, 2, &physMemSize, &len, NULL, 0);
-#endif
-
-#ifdef LINUX
-  TINT64 physMemSize =
-      (TINT64)sysconf(_SC_PHYS_PAGES) * (TINT64)sysconf(_SC_PAGE_SIZE);
-#endif
-
-  hwInfo.m_cpuCount = TSystem::getProcessorCount();
-
   // We can just retrieve the overall physical memory - the rest is defaulted to
   // 500 MB
-  hwInfo.m_totPhysMem   = physMemSize;
-  hwInfo.m_availPhysMem = 500000000;
+  hwInfo.m_totPhysMem   = TSystem::getMemorySize(true);
+  hwInfo.m_availPhysMem = TSystem::getFreeMemorySize(true);
   hwInfo.m_totVirtMem   = 500000000;
   hwInfo.m_availVirtMem = 500000000;
+  hwInfo.m_cpuCount     = TSystem::getProcessorCount();
+#ifdef __sgi
+  hwInfo.m_type         = Irix;
+#else
   hwInfo.m_type         = Linux;
 #endif
 #endif
