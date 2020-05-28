@@ -46,6 +46,10 @@
 #include <QCheckBox>
 #include <QtDebug>
 #include <QXmlStreamReader>
+#include <QLabel>
+#include <QTimer>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 
 void UrlOpener::open() { QDesktopServices::openUrl(m_url); }
 
@@ -802,6 +806,8 @@ TopBar::TopBar(QWidget *parent) : QToolBar(parent) {
   m_roomTabBar     = new RoomTabWidget(this);
   m_stackedMenuBar = new StackedMenuBar(this);
   m_lockRoomCB     = new QCheckBox(this);
+  m_messageLabel   = new QLabel(this);
+  m_messageLabel->setStyleSheet("color: lightgreen;");
 
   m_containerFrame->setObjectName("TopBarTabContainer");
   m_roomTabBar->setObjectName("TopBarTab");
@@ -824,6 +830,8 @@ TopBar::TopBar(QWidget *parent) : QToolBar(parent) {
     }
     mainLayout->addLayout(menuLayout);
     mainLayout->addStretch(1);
+    mainLayout->addWidget(m_messageLabel, 0);
+    mainLayout->addSpacing(2);
     mainLayout->addWidget(m_roomTabBar, 0);
     mainLayout->addSpacing(2);
     mainLayout->addWidget(m_lockRoomCB, 0);
@@ -846,4 +854,19 @@ TopBar::TopBar(QWidget *parent) : QToolBar(parent) {
   ret = ret && connect(m_lockRoomCB, SIGNAL(toggled(bool)), m_roomTabBar,
                        SLOT(setIsLocked(bool)));
   assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void TopBar::setMessage(QString message) {
+  m_messageLabel->setText(message);
+  QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(this);
+  m_messageLabel->setGraphicsEffect(eff);
+  QPropertyAnimation *a = new QPropertyAnimation(eff, "opacity");
+  a->setDuration(4000);
+  a->setStartValue(1);
+  a->setEndValue(0);
+  a->setEasingCurve(QEasingCurve::OutBack);
+  a->start(QPropertyAnimation::DeleteWhenStopped);
+  connect(a, SIGNAL(finished()), m_messageLabel, SLOT(clear()));
 }

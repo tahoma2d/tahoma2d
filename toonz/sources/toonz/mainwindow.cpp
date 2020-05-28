@@ -415,6 +415,9 @@ centralWidget->setLayout(centralWidgetLayout);*/
   /*-- タイトルバーにScene名を表示する --*/
   connect(TApp::instance()->getCurrentScene(), SIGNAL(nameSceneChanged()), this,
           SLOT(changeWindowTitle()));
+  connect(TApp::instance(), SIGNAL(sendMessage(QString)), m_topBar,
+          SLOT(setMessage(QString)));
+
   changeWindowTitle();
 
   // Connetto i comandi che sono in RoomTabWidget
