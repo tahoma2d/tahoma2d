@@ -1672,6 +1672,7 @@ bool IoCmd::saveAll() {
         QObject::tr("An error occured while saving. \n"
                     "Please check your work and try again."));
   }
+  if (result) TApp::instance()->showMessage("Saved");
   return result;
 }
 

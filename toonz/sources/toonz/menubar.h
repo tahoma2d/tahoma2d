@@ -25,6 +25,7 @@ class QHBoxLayout;
 class SubXsheetRoomTabContainer;
 class QCheckBox;
 class QXmlStreamReader;
+class QLabel;
 
 //-----------------------------------------------------------------------------
 
@@ -171,6 +172,7 @@ class TopBar final : public QToolBar {
   RoomTabWidget *m_roomTabBar;
   StackedMenuBar *m_stackedMenuBar;
   QCheckBox *m_lockRoomCB;
+  QLabel *m_messageLabel;
 
 public:
   TopBar(QWidget *parent);
@@ -179,6 +181,9 @@ public:
   QTabBar *getRoomTabWidget() const { return m_roomTabBar; }
 
   StackedMenuBar *getStackedMenuBar() const { return m_stackedMenuBar; }
+
+public slots:
+  void setMessage(QString message);
 
 protected:
   /*--  右クリックで消えないようにする--*/

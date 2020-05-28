@@ -666,9 +666,9 @@ void TApp::autosave() {
   } else
     m_autosaveSuspended = false;
 
-  DVGui::ProgressDialog pb(
-      "Autosaving scene..." + toQString(scene->getScenePath()), 0, 0, 1);
-  pb.show();
+  // DVGui::ProgressDialog pb(
+  //    "Autosaving scene..." + toQString(scene->getScenePath()), 0, 0, 1);
+  // pb.show();
   Preferences *pref = Preferences::instance();
   if (pref->isAutosaveSceneEnabled() && pref->isAutosaveOtherFilesEnabled()) {
     IoCmd::saveAll();
@@ -678,7 +678,7 @@ void TApp::autosave() {
     IoCmd::saveNonSceneFiles();
   }
 
-  pb.setValue(1);
+  // pb.setValue(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -730,3 +730,6 @@ QString TApp::getCurrentRoomName() const {
 
   return currentRoom->getName();
 }
+
+//-----------------------------------------------------------------------------
+void TApp::showMessage(QString message) { emit(sendMessage(message)); }

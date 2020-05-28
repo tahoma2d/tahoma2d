@@ -205,6 +205,8 @@ public:
 
   XsheetViewer *getCurrentXsheetViewer() const { return m_xsheetViewer; }
 
+  void showMessage(QString message);
+
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -246,6 +248,7 @@ signals:
   // NOTE: For now QEvent::TabletLeaveProximity is NOT detected on Windows. See
   // QTBUG-53628.
   void tabletLeft();
+  void sendMessage(QString);
 
   void
   activeViewerChanged();  // TODO: put widgets-related stuffs in some new handle
