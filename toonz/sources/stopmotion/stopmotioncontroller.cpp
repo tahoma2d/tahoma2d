@@ -822,6 +822,13 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen3ColorFld = new DVGui::ColorField(
         this, false, TPixel32(0, 0, 0, 255), 40, true, 60);
 
+    m_showScene1 = new QCheckBox(tr("Use current frame as overlay."), this);
+    m_showScene2 = new QCheckBox(tr("Use current frame as overlay."), this);
+    m_showScene3 = new QCheckBox(tr("Use current frame as overlay."), this);
+    m_showScene1->setToolTip(tr("Use the current scene frame as an overlay."));
+    m_showScene2->setToolTip(tr("Use the current scene frame as an overlay."));
+    m_showScene3->setToolTip(tr("Use the current scene frame as an overlay."));
+
     QGridLayout *lightTopLayout = new QGridLayout;
     lightTopLayout->addWidget(m_blackScreenForCapture, 0, 0, Qt::AlignRight);
     lightTopLayout->setColumnStretch(1, 30);
@@ -831,7 +838,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen1Box->setCheckable(true);
     m_screen1Box->setChecked(false);
     QGridLayout *screen1Layout = new QGridLayout;
-    screen1Layout->addWidget(m_screen1ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
+    screen1Layout->addWidget(m_showScene1, 0, 0, 1, 2, Qt::AlignLeft);
+    screen1Layout->addWidget(m_screen1ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
     screen1Layout->setColumnStretch(1, 30);
     m_screen1Box->setLayout(screen1Layout);
     m_screen1Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -841,7 +849,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen2Box->setCheckable(true);
     m_screen2Box->setChecked(false);
     QGridLayout *screen2Layout = new QGridLayout;
-    screen2Layout->addWidget(m_screen2ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
+    screen2Layout->addWidget(m_showScene2, 0, 0, 1, 2, Qt::AlignLeft);
+    screen2Layout->addWidget(m_screen2ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
     screen2Layout->setColumnStretch(1, 30);
     m_screen2Box->setLayout(screen2Layout);
     m_screen2Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -851,7 +860,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_screen3Box->setCheckable(true);
     m_screen3Box->setChecked(false);
     QGridLayout *screen3Layout = new QGridLayout;
-    screen3Layout->addWidget(m_screen3ColorFld, 0, 0, 1, 2, Qt::AlignLeft);
+    screen3Layout->addWidget(m_showScene3, 0, 0, 1, 2, Qt::AlignLeft);
+    screen3Layout->addWidget(m_screen3ColorFld, 1, 0, 1, 2, Qt::AlignLeft);
     screen3Layout->setColumnStretch(1, 30);
     m_screen3Box->setLayout(screen3Layout);
     m_screen3Box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -1242,6 +1252,18 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onScreen2OverlayToggled(bool)));
   ret = ret && connect(m_screen3Box, SIGNAL(toggled(bool)), this,
                        SLOT(onScreen3OverlayToggled(bool)));
+  ret = ret && connect(m_showScene1, SIGNAL(toggled(bool)), this,
+                       SLOT(onShowScene1Toggled(bool)));
+  ret = ret && connect(m_showScene2, SIGNAL(toggled(bool)), this,
+                       SLOT(onShowScene2Toggled(bool)));
+  ret = ret && connect(m_showScene3, SIGNAL(toggled(bool)), this,
+                       SLOT(onShowScene3Toggled(bool)));
+  ret = ret && connect(m_stopMotion->m_light, SIGNAL(showSceneOn1Changed(bool)),
+                       this, SLOT(onShowSceneOn1Changed(bool)));
+  ret = ret && connect(m_stopMotion->m_light, SIGNAL(showSceneOn2Changed(bool)),
+                       this, SLOT(onShowSceneOn2Changed(bool)));
+  ret = ret && connect(m_stopMotion->m_light, SIGNAL(showSceneOn3Changed(bool)),
+                       this, SLOT(onShowSceneOn3Changed(bool)));
   ret = ret && connect(m_lightTestTimer, SIGNAL(timeout()), this,
                        SLOT(onTestLightsTimeout()));
   ret = ret && connect(m_testLightsButton, SIGNAL(clicked()), this,
@@ -1404,6 +1426,60 @@ void StopMotionController::onScreen2OverlayToggled(bool on) {
 
 void StopMotionController::onScreen3OverlayToggled(bool on) {
   m_stopMotion->m_light->setScreen3UseOverlay(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowScene1Toggled(bool on) {
+  m_stopMotion->m_light->setShowSceneOn1(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowScene2Toggled(bool on) {
+  m_stopMotion->m_light->setShowSceneOn2(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowScene3Toggled(bool on) {
+  m_stopMotion->m_light->setShowSceneOn3(on);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowSceneOn1Changed(bool on) {
+  m_showScene1->blockSignals(true);
+  m_showScene1->setChecked(on);
+  m_showScene1->blockSignals(false);
+  if (on)
+    m_screen1ColorFld->setDisabled(true);
+  else
+    m_screen1ColorFld->setEnabled(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowSceneOn2Changed(bool on) {
+  m_showScene2->blockSignals(true);
+  m_showScene2->setChecked(on);
+  m_showScene2->blockSignals(false);
+  if (on)
+    m_screen2ColorFld->setDisabled(true);
+  else
+    m_screen2ColorFld->setEnabled(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onShowSceneOn3Changed(bool on) {
+  m_showScene3->blockSignals(true);
+  m_showScene3->setChecked(on);
+  m_showScene3->blockSignals(false);
+  if (on)
+    m_screen3ColorFld->setDisabled(true);
+  else
+    m_screen3ColorFld->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
