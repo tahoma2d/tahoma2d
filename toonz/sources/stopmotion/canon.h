@@ -87,21 +87,19 @@ public:
   bool m_sessionOpen            = false;
   bool m_zooming                = false;
   std::string m_cameraName;
-  TDimension m_proxyImageDimensions = TDimension(0, 0);
-  TPointD m_proxyDpi                = TPointD(0.0, 0.0);
-  TPoint m_liveViewZoomOffset       = TPoint(0, 0);
-  bool m_liveViewZoomReadyToPick    = true;
-  TPointD m_liveViewZoomPickPoint   = TPointD(0.0, 0.0);
-  TPoint m_zoomRectDimensions       = TPoint(0, 0);
-  TPoint m_calculatedZoomPoint      = TPoint(0, 0);
-  TPoint m_finalZoomPoint           = TPoint(0, 0);
-  TRect m_zoomRect                  = TRect(0, 0, 0, 0);
+  TPoint m_liveViewZoomOffset     = TPoint(0, 0);
+  bool m_liveViewZoomReadyToPick  = true;
+  TPointD m_liveViewZoomPickPoint = TPointD(0.0, 0.0);
+  TPoint m_zoomRectDimensions     = TPoint(0, 0);
+  TPoint m_calculatedZoomPoint    = TPoint(0, 0);
+  TPoint m_finalZoomPoint         = TPoint(0, 0);
+  TRect m_zoomRect                = TRect(0, 0, 0, 0);
 #endif
-  bool m_converterSucceeded        = false;
-  bool m_pickLiveViewZoom          = false;
-  TDimension m_fullImageDimensions = TDimension(0, 0);
-  TPointD m_fullImageDpi           = TPointD(0.0, 0.0);
-  int m_liveViewExposureOffset     = 0;
+  TDimension m_proxyImageDimensions = TDimension(0, 0);
+  bool m_converterSucceeded         = false;
+  bool m_pickLiveViewZoom           = false;
+  TDimension m_fullImageDimensions  = TDimension(0, 0);
+  int m_liveViewExposureOffset      = 0;
   QString m_realShutterSpeed;
   QString m_displayedShutterSpeed;
 

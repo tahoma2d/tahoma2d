@@ -303,7 +303,8 @@ void StopMotion::onSceneSwitched() {
         setXSheetFrameNumber(xsh->getFrameCount() + 1);
         loadXmlFile();
         buildLiveViewMap(sl);
-        m_sl  = sl;
+        m_sl = sl;
+        getRasterLevelSize(sl, m_canon->m_proxyImageDimensions);
         found = true;
         break;
       }
@@ -390,8 +391,11 @@ void StopMotion::disconnectAllCameras() {
   m_intervalStarted = false;
   m_intervalTimer->stop();
   m_countdownTimer->stop();
-  emit(intervalToggled(false));
 
+  m_liveViewImageDimensions = TDimension(0, 0);
+  m_liveViewDpi             = TPointD(0, 0);
+
+  emit(intervalToggled(false));
   emit(liveViewChanged(false));
   emit(liveViewStopped());
   emit(newCameraSelected(0, false));
@@ -1339,27 +1343,6 @@ void StopMotion::onTimeout() {
       TApp::instance()->getCurrentScene()->notifySceneChanged();
     }
   }
-  //  else if (m_liveViewStatus == LiveViewPaused && !m_userCalledPause) {
-  //    if (getAlwaysLiveView() || (currentFrame == m_xSheetFrameNumber - 1)) {
-  //      if (!m_usingWebcam) {
-  //#ifdef WITH_CANON
-  //        bool success = m_canon->downloadEVFData();
-  //        if (success) {
-  //          setLiveViewImage();
-  //        } else {
-  //          m_hasLiveViewImage = false;
-  //        }
-  //#endif
-  //      } else {
-  //        bool success = m_webcam->getWebcamImage(m_liveViewImage);
-  //        if (success) {
-  //          setLiveViewImage();
-  //        } else {
-  //          m_hasLiveViewImage = false;
-  //        }
-  //      }
-  //    }
-  //  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1372,56 +1355,34 @@ void StopMotion::setLiveViewImage() {
     m_liveViewStatus = LiveViewOpen;
   }
 
-  if (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0) {
-    TCamera *camera =
-        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-    TDimensionD size = camera->getSize();
-    m_liveViewImageDimensions =
-        TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
-    double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
-                                 m_liveViewImageDimensions.ly / size.ly);
-    m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
+  if (m_liveViewDpi == TPointD(0.0, 0.0) || m_liveViewImageDimensions.lx == 0) {
+    m_liveViewImageDimensions = m_liveViewImage->getSize();
 
-    if (!m_usingWebcam) {
-      minimumDpi = std::min(m_fullImageDimensions.lx / size.lx,
-                            m_fullImageDimensions.ly / size.ly);
-      m_fullImageDpi = TPointD(minimumDpi, minimumDpi);
+    if (m_usingWebcam) {
+      m_liveViewDpi = TPointD(Stage::standardDpi, Stage::standardDpi);
     } else {
-      m_liveViewDpi         = TPointD(Stage::standardDpi, Stage::standardDpi);
-      m_fullImageDimensions = m_liveViewImageDimensions;
-      m_fullImageDpi        = m_liveViewDpi;
+      double minimumDpi;
+      if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
+        TCamera *camera =
+            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+        TDimensionD size = camera->getSize();
+        minimumDpi       = std::min(m_liveViewImageDimensions.lx / size.lx,
+                              m_liveViewImageDimensions.ly / size.ly);
+      } else {
+        TDimensionD size = TDimensionD(
+            (double)m_canon->m_proxyImageDimensions.lx / Stage::standardDpi,
+            (double)m_canon->m_proxyImageDimensions.ly / Stage::standardDpi);
+        minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
+                              m_liveViewImageDimensions.ly / size.ly);
+      }
+
+      m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
     }
 
     emit(newDimensions());
   }
   emit(newLiveViewImageReady());
 }
-//
-////-----------------------------------------------------------------------------
-//
-// void StopMotion::setLiveViewImage() {
-//    m_hasLiveViewImage = true;
-//    m_liveViewStatus = LiveViewOpen;
-//    if (m_hasLiveViewImage &&
-//        (m_liveViewDpi.x == 0.0 || m_liveViewImageDimensions.lx == 0)) {
-//        TCamera* camera =
-//            TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-//        TDimensionD size = camera->getSize();
-//        m_liveViewImageDimensions =
-//            TDimension(m_liveViewImage->getLx(), m_liveViewImage->getLy());
-//        double minimumDpi = std::min(m_liveViewImageDimensions.lx / size.lx,
-//            m_liveViewImageDimensions.ly / size.ly);
-//        m_liveViewDpi = TPointD(minimumDpi, minimumDpi);
-//
-//        m_fullImageDimensions = m_liveViewImageDimensions;
-//
-//        m_fullImageDpi = m_liveViewDpi;
-//
-//        emit(newDimensions());
-//    }
-//
-//    emit(newLiveViewImageReady());
-//}
 
 //-----------------------------------------------------------------------------
 
@@ -1624,7 +1585,7 @@ bool StopMotion::importImage() {
   }
 
   TFrameId fid(frameNumber);
-  TPointD levelDpi = dpi;
+
   /* create the raster */
   TRaster32P raster = m_newImage;
 
@@ -2409,14 +2370,16 @@ void StopMotion::refreshFrameInfo() {
   if (m_usingWebcam) stopMotionRes = m_liveViewImageDimensions;
 #ifdef WITH_CANON
 
-  stopMotionRes = m_canon->m_proxyImageDimensions;
-  if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
-    checkRes = false;
+  if (!m_usingWebcam) {
+    stopMotionRes = m_canon->m_proxyImageDimensions;
+    if (m_canon->m_proxyImageDimensions == TDimension(0, 0)) {
+      checkRes = false;
+    }
   }
 
 #endif
-  else
-    stopMotionRes = m_fullImageDimensions;
+  // else
+  //  stopMotionRes = m_fullImageDimensions;
 
   bool letterOptionEnabled =
       Preferences::instance()->isShowFrameNumberWithLettersEnabled();
@@ -2856,9 +2819,10 @@ void StopMotion::changeCameras(int index) {
 #endif
   }
   if (m_useNumpadShortcuts) toggleNumpadShortcuts(true);
-  m_liveViewDpi      = TPointD(0.0, 0.0);
-  m_hasLineUpImage   = false;
-  m_hasLiveViewImage = false;
+  m_liveViewDpi             = TPointD(0.0, 0.0);
+  m_liveViewImageDimensions = TDimension(0, 0);
+  m_hasLineUpImage          = false;
+  m_hasLiveViewImage        = false;
   if (m_isTimeLapse && m_intervalStarted) {
     stopInterval();
   }
@@ -2893,7 +2857,7 @@ void StopMotion::setWebcamResolution(QString resolution) {
   m_webcam->setWebcamWidth(texts[0].toInt());
   m_webcam->setWebcamHeight(texts[2].toInt());
 
-  m_liveViewDpi    = TPointD(0.0, 0.0);
+  m_liveViewDpi    = TPointD(Stage::standardDpi, Stage::standardDpi);
   m_liveViewStatus = tempStatus;
   if (startTimer) m_timer->start(40);
 

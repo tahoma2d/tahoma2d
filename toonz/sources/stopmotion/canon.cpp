@@ -153,7 +153,6 @@ void Canon::closeAll() {
 
 void Canon::resetCanon(bool liveViewOpen) {
 #ifdef WITH_CANON
-  m_proxyDpi             = TPointD(0.0, 0.0);
   m_proxyImageDimensions = TDimension(0, 0);
 
   if (m_sessionOpen && getCameraCount() > 0) {
@@ -750,7 +749,6 @@ EdsError Canon::setImageQuality(QString quality) {
                            &value);
   emit(imageQualityChangedSignal(quality));
   m_proxyImageDimensions = TDimension(0, 0);
-  m_proxyDpi             = TPointD(0.0, 0.0);
   return err;
 }
 
@@ -838,12 +836,10 @@ bool Canon::downloadImage(EdsBaseRef object) {
   // Get camera size info
   TCamera* camera =
       TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
-  TDimension res         = camera->getRes();
-  TDimensionD size       = camera->getSize();
-  m_proxyImageDimensions = res;
-  m_proxyImageDimensions = TDimension(res.lx, res.ly);
-  double minimumDpi      = Stage::standardDpi;
-  m_proxyDpi             = TPointD(minimumDpi, minimumDpi);
+  TDimension res = camera->getRes();
+  if (m_proxyImageDimensions == TDimension(0, 0)) {
+    m_proxyImageDimensions = res;
+  }
 
   // end tj code
   // OpenCV image material - note width and height are flipped
@@ -862,7 +858,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
   // calculate the size of the new image
   // and resize it down
   double r = (double)width / (double)height;
-  cv::Size dim(res.lx, res.lx / r);
+  cv::Size dim(m_proxyImageDimensions.lx, m_proxyImageDimensions.lx / r);
   int newWidth  = dim.width;
   int newHeight = dim.height;
   cv::Mat imgResized(dim, CV_8UC4);
@@ -1047,8 +1043,22 @@ EdsError Canon::setZoomPoint() {
 //-----------------------------------------------------------------
 
 void Canon::calculateZoomPoint() {
-  m_fullImageDimensions = StopMotion::instance()->m_fullImageDimensions;
-  m_fullImageDpi        = StopMotion::instance()->m_fullImageDpi;
+  double minimumDpi = 0.0;
+
+  if (m_proxyImageDimensions == TDimension(0, 0)) {
+    TCamera* camera =
+        TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+    TDimensionD size = camera->getSize();
+    minimumDpi       = std::min(m_fullImageDimensions.lx / size.lx,
+                          m_fullImageDimensions.ly / size.ly);
+  } else {
+    TDimensionD size =
+        TDimensionD((double)m_proxyImageDimensions.lx / Stage::standardDpi,
+                    (double)m_proxyImageDimensions.ly / Stage::standardDpi);
+    minimumDpi = std::min(m_fullImageDimensions.lx / size.lx,
+                          m_fullImageDimensions.ly / size.ly);
+  }
+  TPointD fullImageDpi = TPointD(minimumDpi, minimumDpi);
 
   bool outOfBounds = false;
   if (m_liveViewZoomPickPoint == TPointD(0.0, 0.0)) {
@@ -1059,16 +1069,16 @@ void Canon::calculateZoomPoint() {
   } else {
     // get the image size in OpenToonz dimensions
     double maxFullWidth =
-        (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
+        (double)m_fullImageDimensions.lx / fullImageDpi.x * Stage::inch;
     double maxFullHeight =
-        (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
+        (double)m_fullImageDimensions.ly / fullImageDpi.y * Stage::inch;
     // OpenToonz coordinates are based on center at 0, 0
     // convert that to top left based coordinates
     double newX = m_liveViewZoomPickPoint.x + maxFullWidth / 2.0;
     double newY = -m_liveViewZoomPickPoint.y + maxFullHeight / 2.0;
     // convert back to the normal image dimensions to talk to the camera
-    m_calculatedZoomPoint.x = newX / Stage::inch * m_fullImageDpi.x;
-    m_calculatedZoomPoint.y = newY / Stage::inch * m_fullImageDpi.x;
+    m_calculatedZoomPoint.x = newX / Stage::inch * fullImageDpi.x;
+    m_calculatedZoomPoint.y = newY / Stage::inch * fullImageDpi.x;
     // the Canon SDK wants the top left corner of the zoom rect, not the center
     m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
     m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
@@ -1099,8 +1109,8 @@ void Canon::calculateZoomPoint() {
       tempCalculated.x = m_finalZoomPoint.x + (m_zoomRectDimensions.x / 2);
       tempCalculated.y = m_finalZoomPoint.y + (m_zoomRectDimensions.y / 2);
       // convert to OpenToonz Dimensions
-      newX = tempCalculated.x / m_fullImageDpi.x * Stage::inch;
-      newY = tempCalculated.y / m_fullImageDpi.y * Stage::inch;
+      newX = tempCalculated.x / fullImageDpi.x * Stage::inch;
+      newY = tempCalculated.y / fullImageDpi.y * Stage::inch;
       // get center based coordinates
       m_liveViewZoomPickPoint.x = newX - (maxFullWidth / 2.0);
       m_liveViewZoomPickPoint.y = (newY - (maxFullHeight / 2.0)) * -1;
@@ -1111,19 +1121,19 @@ void Canon::calculateZoomPoint() {
 
   // get the image size in OpenToonz dimensions
   double maxFullWidth =
-      (double)m_fullImageDimensions.lx / m_fullImageDpi.x * Stage::inch;
+      (double)m_fullImageDimensions.lx / fullImageDpi.x * Stage::inch;
   double maxFullHeight =
-      (double)m_fullImageDimensions.ly / m_fullImageDpi.y * Stage::inch;
+      (double)m_fullImageDimensions.ly / fullImageDpi.y * Stage::inch;
   m_zoomRect =
       TRect(m_finalZoomPoint.x, m_finalZoomPoint.y + m_zoomRectDimensions.y,
             m_finalZoomPoint.x + m_zoomRectDimensions.x, m_finalZoomPoint.y);
   TRect tempCalculated;
 
   // convert to OpenToonz Dimensions
-  tempCalculated.x0 = m_zoomRect.x0 / m_fullImageDpi.x * Stage::inch;
-  tempCalculated.y0 = m_zoomRect.y0 / m_fullImageDpi.y * Stage::inch;
-  tempCalculated.x1 = m_zoomRect.x1 / m_fullImageDpi.x * Stage::inch;
-  tempCalculated.y1 = m_zoomRect.y1 / m_fullImageDpi.y * Stage::inch;
+  tempCalculated.x0 = m_zoomRect.x0 / fullImageDpi.x * Stage::inch;
+  tempCalculated.y0 = m_zoomRect.y0 / fullImageDpi.y * Stage::inch;
+  tempCalculated.x1 = m_zoomRect.x1 / fullImageDpi.x * Stage::inch;
+  tempCalculated.y1 = m_zoomRect.y1 / fullImageDpi.y * Stage::inch;
   // get center based coordinates
   m_zoomRect.x0 = tempCalculated.x0 - (maxFullWidth / 2.0);
   m_zoomRect.y0 = (tempCalculated.y0 - (maxFullHeight / 2.0)) * -1;
@@ -1134,6 +1144,10 @@ void Canon::calculateZoomPoint() {
 //-----------------------------------------------------------------
 
 bool Canon::downloadEVFData() {
+  // this downloads live view images AND
+  // gets a ton of useful info about the pictures
+  // taken
+
   EdsError err            = EDS_ERR_OK;
   EdsStreamRef stream     = NULL;
   EdsEvfImageRef evfImage = NULL;
@@ -1231,8 +1245,7 @@ bool Canon::downloadEVFData() {
     if (zoomAmount == 5 && m_zoomRectDimensions == TPoint(0, 0)) {
       setZoomPoint();
     }
-    StopMotion::instance()->m_fullImageDimensions =
-        TDimension(coordSys.width, coordSys.height);
+    m_fullImageDimensions = TDimension(coordSys.width, coordSys.height);
 
     return true;
   }

@@ -106,9 +106,10 @@ public:
   bool m_alwaysUseLiveViewImages = false;
   TRaster32P m_liveViewImage, m_newImage, m_lineUpImage;
   TDimension m_liveViewImageDimensions = TDimension(0, 0);
-  TDimension m_fullImageDimensions     = TDimension(0, 0);
-  TPointD m_liveViewDpi                = TPointD(0.0, 0.0);
-  TPointD m_fullImageDpi               = TPointD(0.0, 0.0);
+
+  // Live view for DSLR needs to be scaled to match the camera or
+  // captured images.
+  TPointD m_liveViewDpi = TPointD(0.0, 0.0);
 
   // files and frames
   void setXSheetFrameNumber(int frameNumber);
