@@ -100,7 +100,7 @@ class StopMotionController final : public QWidget {
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_placeOnXSheetCB, *m_directShowCB,
       *m_liveViewOnAllFramesCB, *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB,
-      *m_timerCB;
+      *m_timerCB, *m_showScene1, *m_showScene2, *m_showScene3;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
@@ -205,6 +205,12 @@ protected slots:
   void onScreen1OverlayChanged(bool);
   void onScreen2OverlayChanged(bool);
   void onScreen3OverlayChanged(bool);
+  void onShowScene1Toggled(bool);
+  void onShowScene2Toggled(bool);
+  void onShowScene3Toggled(bool);
+  void onShowSceneOn1Changed(bool);
+  void onShowSceneOn2Changed(bool);
+  void onShowSceneOn3Changed(bool);
 
   // canon stuff
   void onApertureChanged(int index);
