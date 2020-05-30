@@ -1775,7 +1775,14 @@ void StopMotion::captureWebcamOnTimeout() {
 
 void StopMotion::captureDslrImage() {
   m_light->showOverlays();
-
+#ifdef WITH_CANON
+  if (m_canon->m_zooming) {
+    DVGui::warning(
+        tr("Can't capture an image with focus check on.\n"
+           "Please click the Check button in the Settings tab."));
+    return;
+  }
+#endif
   if (getReviewTime() > 0 && !m_isTimeLapse) {
     m_timer->stop();
   }

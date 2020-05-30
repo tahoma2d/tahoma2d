@@ -562,6 +562,16 @@ void SceneViewer::onMove(const TMouseEvent &event) {
       return;
     }
 
+#ifdef WITH_CANON
+    TPointD pickPos = winToWorld(curPos);
+    // grab screen picking for stop motion live view zoom
+    if ((event.buttons() & Qt::LeftButton) &&
+        StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
+      StopMotion::instance()->m_canon->makeZoomPoint(pickPos);
+      return;
+    }
+#endif
+
     TTool *tool = TApp::instance()->getCurrentTool()->getTool();
     if (!tool || !tool->isEnabled()) {
       m_tabletEvent = false;
@@ -570,15 +580,6 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     tool->setViewer(this);
     TPointD worldPos = winToWorld(curPos);
     TPointD pos      = tool->getMatrix().inv() * worldPos;
-
-#ifdef WITH_CANON
-    // grab screen picking for stop motion live view zoom
-    if ((event.buttons() & Qt::LeftButton) &&
-        StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
-      StopMotion::instance()->m_canon->makeZoomPoint(pos);
-      return;
-    }
-#endif
 
     if (m_locator) {
       m_locator->onChangeViewAff(worldPos);
@@ -735,6 +736,15 @@ void SceneViewer::onPress(const TMouseEvent &event) {
 
   if (m_freezedStatus != NO_FREEZED) return;
 
+#ifdef WITH_CANON
+  TPointD pickPos = winToWorld(m_pos);
+  // grab screen picking for stop motion live view zoom
+  if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
+    StopMotion::instance()->m_canon->makeZoomPoint(pickPos);
+    return;
+  }
+#endif
+
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) {
     m_tabletEvent = false;
@@ -761,14 +771,6 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     pos.x /= m_dpiScale.x;
     pos.y /= m_dpiScale.y;
   }
-
-#ifdef WITH_CANON
-  // grab screen picking for stop motion live view zoom
-  if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
-    StopMotion::instance()->m_canon->makeZoomPoint(pos);
-    return;
-  }
-#endif
 
   // separate tablet and mouse events
   if (m_tabletEvent && m_tabletState == Touched) {
@@ -817,6 +819,13 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   // evita i release ripetuti
   if (!m_buttonClicked) return;
   m_buttonClicked = false;
+
+#ifdef WITH_CANON
+  // Stop if we're picking live view for StopMotion
+  if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
+    goto quit;
+  }
+#endif
 
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) {

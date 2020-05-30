@@ -1335,8 +1335,6 @@ public:
     panel->setWidget(stopMotionController);
     panel->setWindowTitle(QObject::tr("Stop Motion Controller"));
     panel->setIsMaximizable(false);
-    panel->setMinimumWidth(320);
-    panel->setMaximumWidth(350);
   }
 } stopMotionPanelFactory;
 
