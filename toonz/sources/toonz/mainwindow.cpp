@@ -13,6 +13,7 @@
 #include "tapp.h"
 #include "viewerpane.h"
 #include "startuppopup.h"
+#include "statusbar.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -73,6 +74,7 @@ TEnv::IntVar BCheckToggleAction("BCheckToggleAction", 0);
 TEnv::IntVar GCheckToggleAction("GCheckToggleAction", 0);
 TEnv::IntVar ACheckToggleAction("ACheckToggleAction", 0);
 TEnv::IntVar LinkToggleAction("LinkToggleAction", 0);
+TEnv::IntVar ShowStatusBarAction("ShowStatusBarAction", 1);
 // TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
@@ -402,6 +404,10 @@ centralWidget->setLayout(centralWidgetLayout);*/
 
   setCentralWidget(m_stackedWidget);
 
+  m_statusBar = new StatusBar(this);
+  setStatusBar(m_statusBar);
+  m_statusBar->setVisible(ShowStatusBarAction == 1 ? true : false);
+
   // Leggo i settings
   readSettings(argumentLayoutFileName);
 
@@ -415,8 +421,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   /*-- タイトルバーにScene名を表示する --*/
   connect(TApp::instance()->getCurrentScene(), SIGNAL(nameSceneChanged()), this,
           SLOT(changeWindowTitle()));
-  connect(TApp::instance(), SIGNAL(sendMessage(QString)), m_topBar,
-          SLOT(setMessage(QString)));
+  connect(TApp::instance(), &TApp::sendMessage,
+          [=](QString message) { m_statusBar->showMessage(message, 2000); });
 
   changeWindowTitle();
 
@@ -1970,6 +1976,12 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
   createToggle(MI_ACheck, tr("&Gap Check"), "", ACheckToggleAction ? 1 : 0,
                MenuViewCommandType);
+  QAction *showStatusBarAction =
+      createToggle(MI_ShowStatusBar, tr("&Show Status Bar"), "",
+                   ShowStatusBarAction ? 1 : 0, MenuViewCommandType);
+  connect(showStatusBarAction, SIGNAL(triggered(bool)), this,
+          SLOT(toggleStatusBar(bool)));
+
   QAction *shiftTraceAction = createToggle(MI_ShiftTrace, tr("Shift and Trace"),
                                            "", false, MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace.svg"));
@@ -3197,6 +3209,27 @@ void MainWindow::clearCacheFolder() {
     }
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::toggleStatusBar(bool on) {
+  if (!on) {
+    m_statusBar->hide();
+    ShowStatusBarAction = 0;
+  } else {
+    m_statusBar->show();
+    ShowStatusBarAction = 1;
+  }
+  m_statusBar->showMessage("Hi John.", 5000);
+}
+
+//-----------------------------------------------------------------------------
+
+class ToggleStatusBar final : public MenuItemHandler {
+public:
+  ToggleStatusBar() : MenuItemHandler("MI_ShowStatusBar") {}
+  void execute() override {}
+} toggleStatusBar;
 
 //-----------------------------------------------------------------------------
 

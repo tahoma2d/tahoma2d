@@ -650,6 +650,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_VectorGuidedDrawing);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_RasterizePli);
+  viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_ShowStatusBar);
 
   // Menu' WINDOWS
   QMenu *windowsMenu = addMenu(tr("Windows"), fullMenuBar);

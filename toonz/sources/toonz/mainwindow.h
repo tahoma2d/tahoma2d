@@ -21,6 +21,7 @@ class QStackedWidget;
 class TPanel;
 class UpdateChecker;
 class TopBar;
+class StatusBar;
 //-----------------------------------------------------------------------------
 
 class Room final : public TMainWindow {
@@ -62,6 +63,7 @@ class MainWindow final : public QMainWindow {
   UpdateChecker *m_updateChecker;
 
   TopBar *m_topBar;
+  StatusBar *m_statusBar;
 
   QActionGroup *m_toolsActionGroup;
 
@@ -287,6 +289,8 @@ protected slots:
   void onInk1CheckTriggered(bool on);
 
   void onUpdateCheckerDone(bool);
+
+  void toggleStatusBar(bool);
 
 public slots:
   /*--- タイトルにシーン名を入れる ---*/

@@ -735,6 +735,36 @@ QListView {
   color: rgba(233, 233, 233, 0.4);
 }
 /* -----------------------------------------------------------------------------
+   Status Bar - Bottom of Main Window
+----------------------------------------------------------------------------- */
+#StatusBar {
+  background-color: #303030;
+  color: #e9e9e9;
+  border-top: 1px outset #0c0c0c;
+}
+#StatusBar:disabled {
+  color: rgba(233, 233, 233, 0.4);
+}
+#MainWindowLabel {
+  background-color: #303030;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #e9e9e9;
+  border-left: 2px outset #4c4c4c;
+}
+#MainWindowLabel:disabled {
+  color: rgba(233, 233, 233, 0.4);
+}
+#MainWindowPlainLabel {
+  background-color: #303030;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #e9e9e9;
+}
+#MainWindowPlainLabel:disabled {
+  color: rgba(233, 233, 233, 0.4);
+}
+/* -----------------------------------------------------------------------------
    Push Button
 ----------------------------------------------------------------------------- */
 .Button,
