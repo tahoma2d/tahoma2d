@@ -510,7 +510,7 @@ void Preferences::definePreferenceItems() {
          "inputCellsWithoutDoubleClickingEnabled", QMetaType::Bool, false);
   define(shortcutCommandsWhileRenamingCellEnabled,
          "shortcutCommandsWhileRenamingCellEnabled", QMetaType::Bool, false);
-  define(showXSheetToolbar, "showXSheetToolbar", QMetaType::Bool, true);
+  define(showXSheetToolbar, "showXSheetToolbar", QMetaType::Bool, false);
   define(expandFunctionHeader, "expandFunctionHeader", QMetaType::Bool, false);
   define(showColumnNumbers, "showColumnNumbers", QMetaType::Bool, false);
   define(syncLevelRenumberWithXsheet, "syncLevelRenumberWithXsheet",

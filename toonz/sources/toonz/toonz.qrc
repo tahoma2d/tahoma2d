@@ -152,6 +152,8 @@
         <file>Resources/new_raster_level.svg</file>
         <file>Resources/new_toonz_raster_level.svg</file>
         <file>Resources/new_vector_level.svg</file>
+        <file>Resources/new_level.svg</file>
+        <file>Resources/new_level_rollover.svg</file>
         <file>Resources/newmemo.svg</file>
         <file>Resources/newmemo_disabled.svg</file>
         <file>Resources/newstyle.png</file>
