@@ -206,9 +206,16 @@ public:
   XsheetViewer *getCurrentXsheetViewer() const { return m_xsheetViewer; }
 
   void showMessage(QString message);
+  void sendShowTitleBars(bool on, bool force = false);
+  bool getShowTitleBars() { return m_showTitleBars; }
+  void setShowTitleBars(bool on);
+  bool getCanHideTitleBars() { return m_canHideTitleBars; }
+  void setCanHideTitleBars(bool on);
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
+  bool m_showTitleBars    = true;
+  bool m_canHideTitleBars = false;
 
 private:
   void updateXshLevel();
@@ -249,6 +256,7 @@ signals:
   // QTBUG-53628.
   void tabletLeft();
   void sendMessage(QString);
+  void showTitleBars(bool);
 
   void
   activeViewerChanged();  // TODO: put widgets-related stuffs in some new handle

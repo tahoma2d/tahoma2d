@@ -96,6 +96,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWidget(new XsheetViewer(panel));
     panel->resize(500, 300);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } xsheetViewerFactory;
 
@@ -111,6 +114,9 @@ public:
     XsheetViewer *xsh = (XsheetViewer *)panel->widget();
     xsh->flipOrientation();
     panel->resize(500, 300);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } timelineViewerFactory;
 
@@ -122,7 +128,7 @@ public:
 // SchematicSceneViewerFactory
 //---------------------------------------------------------
 
-class SchematicSceneViewerFactory final : public QObject, public TPanelFactory {
+class SchematicSceneViewerFactory : public TPanelFactory {
 public:
   SchematicSceneViewerFactory() : TPanelFactory("Schematic") {}
 
@@ -131,6 +137,9 @@ public:
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Schematic"));
     panel->setMinimumSize(230, 200);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -444,6 +453,7 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
 
   setWidget(m_paletteViewer);
   initializeTitleBar();
+  // hideTitleBar();
 }
 
 //-----------------------------------------------------------------------------
@@ -575,7 +585,9 @@ public:
     PaletteViewerPanel *panel = new PaletteViewerPanel(parent);
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr(("Level Palette")));
-
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -648,7 +660,9 @@ public:
     StudioPaletteViewerPanel *panel = new StudioPaletteViewerPanel(parent);
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Studio Palette"));
-
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -840,6 +854,9 @@ public:
     StyleEditorPanel *panel = new StyleEditorPanel(parent);
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Style Editor"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -863,6 +880,9 @@ public:
     panel->setFixedWidth(45);  // 35
     toolbar->setFixedWidth(35);
     panel->setWindowTitle(QString(""));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } toolbarFactory;
 
@@ -885,6 +905,9 @@ public:
   TPanel *createPanel(QWidget *parent) override {
     TPanel *panel = new CommandBarPanel(parent);
     panel->setObjectName(getPanelType());
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
   void initialize(TPanel *panel) override {}
@@ -923,6 +946,9 @@ public:
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(getPanelType());
     panel->resize(600, panel->height());
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
   void initialize(TPanel *panel) override { assert(0); }
@@ -1086,6 +1112,9 @@ public:
     Filmstrip *filmstrip = new Filmstrip(panel);
     panel->setWidget(filmstrip);
     panel->setIsMaximizable(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } filmStripFactory;
 //=============================================================================
@@ -1100,6 +1129,9 @@ public:
     ExportPanel *panel = new ExportPanel(parent);
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Export"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -1134,6 +1166,9 @@ public:
     FunctionViewerPanel *panel = new FunctionViewerPanel(parent);
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Function Editor"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -1335,6 +1370,9 @@ public:
     panel->setWidget(stopMotionController);
     panel->setWindowTitle(QObject::tr("Stop Motion Controller"));
     panel->setIsMaximizable(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } stopMotionPanelFactory;
 

@@ -162,6 +162,9 @@ signals:
 
   void closeButtonPressed();
   void doubleClick(QMouseEvent *me);
+
+public slots:
+  void showTitleBar(bool on) { setVisible(on); }
 };
 
 //-----------------------------------------------------------------------------
@@ -260,7 +263,8 @@ signals:
 
 //-----------------------------------------------------------------------------
 
-class TPanelFactory {
+class TPanelFactory : public QObject {
+  Q_OBJECT
   QString m_panelType;
   static QMap<QString, TPanelFactory *> &tableInstance();
 
