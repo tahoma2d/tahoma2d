@@ -469,6 +469,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_noteButton             = new QToolButton(this);
   m_precNoteButton         = new QToolButton(this);
   m_nextNoteButton         = new QToolButton(this);
+  m_newLevelButton         = new QToolButton(this);
   m_frameDisplayStyleCombo = new QComboBox(this);
   m_layerHeaderPanel       = new LayerHeaderPanel(m_viewer, this);
 
@@ -484,11 +485,22 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   // m_flipOrientationButton->setIcon(flipOrientationIcon);
   // m_flipOrientationButton->setToolTip(tr("Toggle Xsheet/Timeline"));
 
+  m_newLevelButton->setObjectName("ToolbarToolButton");
+  m_newLevelButton->setFixedSize(34, 25);
+  m_newLevelButton->setIconSize(QSize(30, 20));
+  QIcon newLevelIcon = createQIcon("newmemo");
+  newLevelIcon.addFile(QString(":Resources/newmemo_disabled.svg"), QSize(),
+                       QIcon::Disabled);
+  m_newLevelButton->setIcon(newLevelIcon);
+  m_newLevelButton->setToolTip(tr("Add New Level"));
+
+  m_noteButton->getContentsMargins(0, 0, 0, 0);
+  m_noteButton->setStyleSheet("padding: 0px; margin: 0px;");
   m_noteButton->setObjectName("ToolbarToolButton");
-  m_noteButton->setFixedSize(34, 25);
-  m_noteButton->setIconSize(QSize(30, 20));
-  QIcon addNoteIcon = createQIcon("newmemo");
-  addNoteIcon.addFile(QString(":Resources/newmemo_disabled.svg"), QSize(),
+  m_noteButton->setFixedSize(32, 16);
+  m_noteButton->setIconSize(QSize(30, 15));
+  QIcon addNoteIcon = createQIcon("footermemo");
+  addNoteIcon.addFile(QString(":Resources/footermemo_disabled.svg"), QSize(),
                       QIcon::Disabled);
   m_noteButton->setIcon(addNoteIcon);
   m_noteButton->setToolTip(tr("Add New Memo"));
@@ -517,7 +529,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_frameDisplayStyleCombo->addItems(frameDisplayStyles);
   m_frameDisplayStyleCombo->setCurrentIndex(
       (int)m_viewer->getFrameDisplayStyle());
-
+  m_frameDisplayStyleCombo->hide();
   // layout
   createLayout();
 
@@ -531,6 +543,10 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
         connect(m_precNoteButton, SIGNAL(clicked()), this, SLOT(precNote()));
   ret = ret &&
         connect(m_nextNoteButton, SIGNAL(clicked()), this, SLOT(nextNote()));
+
+  ret = ret && connect(m_newLevelButton, &QToolButton::clicked, [=]() {
+          CommandManager::instance()->execute("MI_NewLevel");
+        });
 
   ret =
       ret && connect(m_frameDisplayStyleCombo, SIGNAL(currentIndexChanged(int)),
@@ -554,6 +570,7 @@ void NoteArea::removeLayout() {
   currentLayout->removeWidget(m_noteButton);
   currentLayout->removeWidget(m_precNoteButton);
   currentLayout->removeWidget(m_nextNoteButton);
+  currentLayout->removeWidget(m_newLevelButton);
   currentLayout->removeWidget(m_frameDisplayStyleCombo);
   currentLayout->removeWidget(m_layerHeaderPanel);
   delete currentLayout;
@@ -577,7 +594,9 @@ void NoteArea::createLayout() {
     mainLayout->setMargin(1);
     mainLayout->setSpacing(0);
     {
-      // mainLayout->addWidget(m_flipOrientationButton, 0, centerAlign);
+      mainLayout->addStretch(1);
+
+      mainLayout->addWidget(m_newLevelButton, 0, centerAlign);
 
       mainLayout->addStretch(1);
 
@@ -591,8 +610,6 @@ void NoteArea::createLayout() {
       }
       mainLayout->addLayout(buttonsLayout, 0);
 
-      mainLayout->addStretch(1);
-
       mainLayout->addWidget(m_frameDisplayStyleCombo, 0);
     }
     panelLayout->addLayout(mainLayout);
@@ -602,6 +619,15 @@ void NoteArea::createLayout() {
   setLayout(panelLayout);
 
   m_layerHeaderPanel->showOrHide(o);
+  if (!o->isVerticalTimeline()) {
+    m_precNoteButton->hide();
+    m_nextNoteButton->hide();
+    m_noteButton->hide();
+  } else {
+    m_precNoteButton->show();
+    m_nextNoteButton->show();
+    m_noteButton->show();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -677,6 +703,182 @@ void NoteArea::precNote() {
 //-----------------------------------------------------------------------------
 
 void NoteArea::onFrameDisplayStyleChanged(int id) {
+  m_viewer->setFrameDisplayStyle((XsheetViewer::FrameDisplayStyle)id);
+  m_viewer->updateRows();
+}
+
+//=============================================================================
+// FooterNoteArea
+//-----------------------------------------------------------------------------
+
+#if QT_VERSION >= 0x050500
+FooterNoteArea::FooterNoteArea(QWidget *parent, XsheetViewer *viewer,
+                               Qt::WindowFlags flags)
+#else
+NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
+#endif
+    : QFrame(parent)
+    , m_viewer(viewer)
+    , m_noteButton(nullptr)
+    , m_precNoteButton(nullptr)
+    , m_nextNoteButton(nullptr) {
+
+  setFrameStyle(QFrame::StyledPanel);
+  setObjectName("cornerWidget");
+
+  m_noteButton     = new QToolButton(this);
+  m_precNoteButton = new QToolButton(this);
+  m_nextNoteButton = new QToolButton(this);
+  m_noteButton->getContentsMargins(0, 0, 0, 0);
+  m_noteButton->setStyleSheet("padding: 0px; margin: 0px;");
+
+  m_precNoteButton->getContentsMargins(0, 0, 0, 0);
+  m_precNoteButton->setStyleSheet("padding: 0px; margin: 0px;");
+
+  m_nextNoteButton->getContentsMargins(0, 0, 0, 0);
+  m_nextNoteButton->setStyleSheet("padding: 0px; margin: 0px;");
+
+  //-----
+
+  m_noteButton->setObjectName("ToolbarToolButton");
+  m_noteButton->setFixedSize(32, 16);
+  m_noteButton->setIconSize(QSize(30, 15));
+  QIcon addNoteIcon = createQIcon("footermemo");
+  addNoteIcon.addFile(QString(":Resources/footermemo_disabled.svg"), QSize(),
+                      QIcon::Disabled);
+  m_noteButton->setIcon(addNoteIcon);
+  m_noteButton->setToolTip(tr("Add New Memo"));
+
+  m_precNoteButton->setObjectName("ToolbarToolButton");
+  m_precNoteButton->setFixedSize(16, 16);
+  m_precNoteButton->setIconSize(QSize(16, 16));
+  QIcon precNoteIcon = createQIcon("prevkey");
+  precNoteIcon.addFile(QString(":Resources/prevkey_disabled.svg"), QSize(),
+                       QIcon::Disabled);
+  m_precNoteButton->setIcon(precNoteIcon);
+  m_precNoteButton->setToolTip(tr("Previous Memo"));
+
+  m_nextNoteButton->setObjectName("ToolbarToolButton");
+  m_nextNoteButton->setFixedSize(16, 16);
+  m_nextNoteButton->setIconSize(QSize(16, 16));
+  QIcon nextNoteIcon = createQIcon("nextkey");
+  nextNoteIcon.addFile(QString(":Resources/nextkey_disabled.svg"), QSize(),
+                       QIcon::Disabled);
+  m_nextNoteButton->setIcon(nextNoteIcon);
+  m_nextNoteButton->setToolTip(tr("Next Memo"));
+
+  // layout
+  createLayout();
+
+  // signal-slot connections
+  bool ret = true;
+
+  ret = ret && connect(m_noteButton, SIGNAL(clicked()), SLOT(toggleNewNote()));
+  ret = ret &&
+        connect(m_precNoteButton, SIGNAL(clicked()), this, SLOT(precNote()));
+  ret = ret &&
+        connect(m_nextNoteButton, SIGNAL(clicked()), this, SLOT(nextNote()));
+
+  ret = ret && connect(m_viewer, &XsheetViewer::orientationChanged, this,
+                       &FooterNoteArea::onXsheetOrientationChanged);
+
+  updateButtons();
+
+  assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::removeLayout() {
+  QLayout *currentLayout = layout();
+  if (!currentLayout) return;
+
+  currentLayout->removeWidget(m_noteButton);
+  currentLayout->removeWidget(m_precNoteButton);
+  currentLayout->removeWidget(m_nextNoteButton);
+  delete currentLayout;
+}
+
+void FooterNoteArea::createLayout() {
+  const Orientation *o = Orientations::leftToRight();
+  QRect rect           = o->rect(PredefinedRect::FOOTER_NOTE_AREA);
+
+  setFixedSize(rect.size());
+
+  QHBoxLayout *buttonsLayout = new QHBoxLayout();
+  buttonsLayout->setMargin(0);
+  buttonsLayout->setSpacing(0);
+  {
+    buttonsLayout->addWidget(m_precNoteButton, 0);
+    buttonsLayout->addWidget(m_noteButton, 1);
+    buttonsLayout->addWidget(m_nextNoteButton, 0);
+  }
+  setLayout(buttonsLayout);
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::updateButtons() {
+  TXshNoteSet *notes = m_viewer->getXsheet()->getNotes();
+
+  int count = notes->getCount();
+  m_nextNoteButton->setEnabled(false);
+  m_precNoteButton->setEnabled(false);
+  if (count == 0) return;
+  int currentNoteIndex = m_viewer->getCurrentNoteIndex();
+  if (currentNoteIndex == -1 || count == 1)
+    m_nextNoteButton->setEnabled(true);
+  else {
+    if (count > currentNoteIndex + 1) m_nextNoteButton->setEnabled(true);
+    if (currentNoteIndex > 0) m_precNoteButton->setEnabled(true);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::onXsheetOrientationChanged(
+    const Orientation *newOrientation) {
+  removeLayout();
+  createLayout();
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::toggleNewNote() {
+  if (!m_newNotePopup)
+    m_newNotePopup.reset(new XsheetGUI::NotePopup(m_viewer, -1));
+
+  if (m_newNotePopup->isVisible()) {
+    m_newNotePopup->activateWindow();
+  } else {
+    m_newNotePopup->show();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::nextNote() {
+  int currentNoteIndex = m_viewer->getCurrentNoteIndex();
+  TXshNoteSet *notes   = m_viewer->getXsheet()->getNotes();
+  // Se ho una sola nota la rendo corrente e la visualizzo
+  if (notes->getCount() == 1) {
+    m_viewer->setCurrentNoteIndex(0);
+    return;
+  }
+
+  m_viewer->setCurrentNoteIndex(++currentNoteIndex);
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::precNote() {
+  int currentNoteIndex = m_viewer->getCurrentNoteIndex();
+  m_viewer->setCurrentNoteIndex(--currentNoteIndex);
+}
+
+//-----------------------------------------------------------------------------
+
+void FooterNoteArea::onFrameDisplayStyleChanged(int id) {
   m_viewer->setFrameDisplayStyle((XsheetViewer::FrameDisplayStyle)id);
   m_viewer->updateRows();
 }

@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 
 #include "orientation.h"
+#include "xshnoteviewer.h"
 
 using boost::optional;
 
@@ -23,10 +24,10 @@ class LayerFooterPanel final : public QWidget {
 
   QSlider *m_frameZoomSlider;
 
-  bool isCtrlPressed         = false;
-  bool m_zoomInHighlighted   = false;
-  bool m_zoomOutHighlighted  = false;
-  bool m_addLevelHighlighted = false;
+  bool isCtrlPressed        = false;
+  bool m_zoomInHighlighted  = false;
+  bool m_zoomOutHighlighted = false;
+  // bool m_addLevelHighlighted = false;
 
 private:
   XsheetViewer *m_viewer;
@@ -47,6 +48,8 @@ public:
 
   void onControlPressed(bool pressed);
   const bool isControlPressed();
+
+  XsheetGUI::FooterNoteArea *m_noteArea;
 
 protected:
   void paintEvent(QPaintEvent *event) override;

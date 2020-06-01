@@ -88,6 +88,9 @@
         <file>Resources/folderpreset_close.svg</file>
         <file>Resources/folderup.svg</file>
         <file>Resources/folderup_over.svg</file>
+        <file>Resources/footermemo.svg</file>
+        <file>Resources/footermemo_disabled.svg</file>
+        <file>Resources/footermemo_over.svg</file>
         <file>Resources/framefirst.svg</file>
         <file>Resources/framefirst_click.svg</file>
         <file>Resources/framefirst_over.svg</file>
