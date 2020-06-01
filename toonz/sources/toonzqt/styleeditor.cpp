@@ -1055,12 +1055,12 @@ void ColorSlider::mousePressEvent(QMouseEvent *event) {
     if (opt.orientation == Qt::Vertical) {
       upsideDown     = true;
       int handleSize = handleRect.height();
-      pos            = event->pos().y() - handleSize / 2;
-      span           = grooveRect.height() - handleSize;
+      pos            = event->pos().y();
+      span           = grooveRect.height();
     } else {
       int handleSize = QPixmap(":Resources/h_chandle_center.svg").width();
-      pos            = event->pos().x() - handleSize / 2;
-      span           = grooveRect.width() - handleSize;
+      pos            = event->pos().x();
+      span           = grooveRect.width();
     }
     int value = QStyle::sliderValueFromPosition(minimum(), maximum(), pos, span,
                                                 upsideDown);
