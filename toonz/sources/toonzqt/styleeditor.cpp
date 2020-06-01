@@ -984,10 +984,11 @@ void ColorSlider::setColor(const ColorModel &color) { m_color = color; }
 void ColorSlider::paintEvent(QPaintEvent *event) {
   QPainter p(this);
 
-  int x = rect().x();
-  int y = rect().y();
-  int w = width();
-  int h = height();
+  int x          = rect().x();
+  int y          = rect().y();
+  int w          = width();
+  int h          = height();
+  int handleSize = svgToPixmap(":Resources/h_chandle_center.svg").width();
 
   bool isVertical = orientation() == Qt::Vertical;
 
@@ -998,13 +999,14 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
 
   if (m_channel == eAlpha) {
     static QPixmap checkboard(":Resources/backg.png");
-    p.drawTiledPixmap(x, y, w, h, checkboard);
+    p.drawTiledPixmap(x + (handleSize / 2), y + 1, w - handleSize, h,
+                      checkboard);
   }
 
   if (!bgPixmap.isNull()) {
-    p.drawTiledPixmap(x, y, w, h, bgPixmap);
-    p.setPen(Qt::white);
-    p.drawLine(x, y + h, x + w, y + h);
+    p.drawTiledPixmap(x + (handleSize / 2), y + 1, w - handleSize, h, bgPixmap);
+    p.setPen(Qt::black);
+    p.drawRect(x + (handleSize / 2), y + 1, x + w - handleSize, y + h);
   }
 
   /*!
@@ -1017,9 +1019,9 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
     static QPixmap vHandlePixmap(":Resources/v_chandle.png");
     p.drawPixmap(0, pos, vHandlePixmap);
   } else {
-    static QPixmap hHandleUpPm(":Resources/h_chandleUp.png");
-    static QPixmap hHandleDownPm(":Resources/h_chandleDown.png");
-    static QPixmap hHandleCenterPm(":Resources/h_chandleCenter.png");
+    static QPixmap hHandleUpPm(":Resources/h_chandle_up.svg");
+    static QPixmap hHandleDownPm(":Resources/h_chandle_down.svg");
+    static QPixmap hHandleCenterPm(":Resources/h_chandle_center.svg");
     int pos = QStyle::sliderPositionFromValue(
         0, maximum(), value(), width() - hHandleCenterPm.width(), false);
     p.drawPixmap(pos, 0, hHandleUpPm);
@@ -1056,7 +1058,7 @@ void ColorSlider::mousePressEvent(QMouseEvent *event) {
       pos            = event->pos().y() - handleSize / 2;
       span           = grooveRect.height() - handleSize;
     } else {
-      int handleSize = QPixmap(":Resources/h_chandleCenter.png").width();
+      int handleSize = QPixmap(":Resources/h_chandle_center.svg").width();
       pos            = event->pos().x() - handleSize / 2;
       span           = grooveRect.width() - handleSize;
     }
@@ -1222,12 +1224,14 @@ void ChannelLineEdit::focusOutEvent(QFocusEvent *e) {
 
 void ChannelLineEdit::paintEvent(QPaintEvent *e) {
   IntLineEdit::paintEvent(e);
-
+  /* commenting out instead of deleting in-case this was for a specific reason
+  but since we now have QLineEdit focus it is perhaps redundant
   if (m_isEditing) {
     QPainter p(this);
     p.setPen(Qt::yellow);
     p.drawRect(rect().adjusted(0, 0, -1, -1));
   }
+  */
 }
 
 //*****************************************************************************
@@ -1270,7 +1274,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   m_field->setObjectName("colorSliderField");
-  m_field->setFixedWidth(fontMetrics().width('0') * 6 + 5);
+  m_field->setFixedWidth(fontMetrics().width('0') * 4 + 5);
   m_field->setMinimumHeight(7);
 
   addButton->setObjectName("colorSliderAddButton");
@@ -1295,12 +1299,12 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   mainLayout->setSpacing(1);
   {
     mainLayout->addWidget(m_label, 0);
-    mainLayout->addSpacing(2);
-    mainLayout->addWidget(m_field, 0);
-    mainLayout->addSpacing(2);
     mainLayout->addWidget(subButton, 0);
-    mainLayout->addWidget(m_slider, 1);
+    mainLayout->addSpacing(1);
+    mainLayout->addWidget(m_field, 0);
+    mainLayout->addSpacing(1);
     mainLayout->addWidget(addButton, 0);
+    mainLayout->addWidget(m_slider, 1);
   }
   setLayout(mainLayout);
 
@@ -3006,7 +3010,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-      hLayout->addSpacing(4);
+      hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }
