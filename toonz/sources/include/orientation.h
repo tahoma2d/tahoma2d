@@ -136,8 +136,10 @@ enum class PredefinedRect {
   PANEL_PREVIEW_LAYER,
   PANEL_LOCK,
   PANEL_LAYER_NAME,
-  ADD_LEVEL_AREA,
-  ADD_LEVEL
+  // ADD_LEVEL_AREA,
+  // ADD_LEVEL,
+  FOOTER_NOTE_OBJ_AREA,
+  FOOTER_NOTE_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked

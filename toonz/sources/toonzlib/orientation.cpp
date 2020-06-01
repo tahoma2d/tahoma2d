@@ -1115,7 +1115,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
       QRect(0, 0, LAYER_HEADER_WIDTH + 2, LAYER_FOOTER_PANEL_HEIGHT));
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
 
-  QRect zoomSlider, zoomIn, zoomOut, addLevel;
+  QRect zoomSlider, zoomIn, zoomOut, noteArea;  // addLevel,
 
   zoomSlider =
       QRect(layerFooterPanel.width() - 100, 0, 81, LAYER_FOOTER_PANEL_HEIGHT);
@@ -1130,9 +1130,13 @@ LeftToRightOrientation::LeftToRightOrientation() {
   addRect(PredefinedRect::ZOOM_OUT_AREA, zoomOut);
   addRect(PredefinedRect::ZOOM_OUT, zoomOut.adjusted(1, 1, 0, 0));
 
-  addLevel = QRect(zoomOut.left() - 24, 0, 16, LAYER_FOOTER_PANEL_HEIGHT);
-  addRect(PredefinedRect::ADD_LEVEL_AREA, addLevel);
-  addRect(PredefinedRect::ADD_LEVEL, addLevel.adjusted(1, 1, 0, 0));
+  //   addLevel = QRect(zoomOut.left() - 24, 0, 16, LAYER_FOOTER_PANEL_HEIGHT);
+  //   addRect(PredefinedRect::ADD_LEVEL_AREA, addLevel);
+  //   addRect(PredefinedRect::ADD_LEVEL, addLevel.adjusted(1, 1, 0, 0));
+
+  noteArea = QRect(zoomOut.left() - 75, 0, 68, LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::FOOTER_NOTE_AREA, noteArea);
+  addRect(PredefinedRect::FOOTER_NOTE_OBJ_AREA, noteArea.adjusted(1, 0, 0, 0));
 
   // Flags
   addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
