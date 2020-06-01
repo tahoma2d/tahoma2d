@@ -125,6 +125,7 @@ class NoteArea final : public QFrame {
   QToolButton *m_noteButton;
   QToolButton *m_nextNoteButton;
   QToolButton *m_precNoteButton;
+  QToolButton *m_newLevelButton;
 
   QComboBox *m_frameDisplayStyleCombo;
 
@@ -142,6 +143,44 @@ public:
 
 protected slots:
   // void flipOrientation();
+  void toggleNewNote();
+  void nextNote();
+  void precNote();
+
+  void onFrameDisplayStyleChanged(int id);
+  void onXsheetOrientationChanged(const Orientation *orientation);
+
+protected:
+  void removeLayout();
+  void createLayout();
+};
+
+//=============================================================================
+// NoteArea
+//-----------------------------------------------------------------------------
+
+class FooterNoteArea final : public QFrame {
+  Q_OBJECT
+
+  std::unique_ptr<NotePopup> m_newNotePopup;  // Popup used to create new note
+  XsheetViewer *m_viewer;
+
+  QToolButton *m_noteButton;
+  QToolButton *m_nextNoteButton;
+  QToolButton *m_precNoteButton;
+
+public:
+#if QT_VERSION >= 0x050500
+  FooterNoteArea(QWidget *parent = 0, XsheetViewer *viewer = 0,
+                 Qt::WindowFlags flags = 0);
+#else
+  FooterNoteArea(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
+#endif
+
+  void updatePopup() { m_newNotePopup->update(); }
+  void updateButtons();
+
+protected slots:
   void toggleNewNote();
   void nextNote();
   void precNote();

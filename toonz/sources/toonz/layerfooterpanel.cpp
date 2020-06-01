@@ -29,6 +29,7 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
   setFixedSize(rect.size());
 
   setMouseTracking(true);
+  m_noteArea = new XsheetGUI::FooterNoteArea(this, m_viewer);
 
   m_frameZoomSlider = new QSlider(Qt::Horizontal, this);
   m_frameZoomSlider->setMinimum(20);
@@ -75,6 +76,13 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   QRect sliderObjRect = o->rect(PredefinedRect::ZOOM_SLIDER);
   m_frameZoomSlider->setGeometry(sliderObjRect);
 
+  QRect noteAreaRect = o->rect(PredefinedRect::FOOTER_NOTE_AREA);
+  p.fillRect(noteAreaRect, Qt::NoBrush);
+
+  QRect noteObjRect = o->rect(PredefinedRect::FOOTER_NOTE_OBJ_AREA);
+  m_noteArea->setFixedSize(o->rect(PredefinedRect::FOOTER_NOTE_AREA).size());
+  m_noteArea->setGeometry(noteObjRect);
+
   static QPixmap zoomIn = svgToPixmap(":Resources/zoom_in.svg");
   static QPixmap zoomInRollover =
       svgToPixmap(":Resources/zoom_in_rollover.svg");
@@ -85,10 +93,10 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
       svgToPixmap(":Resources/zoom_out_rollover.svg");
   const QRect zoomOutImgRect = o->rect(PredefinedRect::ZOOM_OUT);
 
-  static QPixmap addLevel = svgToPixmap(":Resources/new_level.svg");
-  static QPixmap addLevelRollover =
-      svgToPixmap(":Resources/new_level_rollover.svg");
-  const QRect addLevelImgRect = o->rect(PredefinedRect::ADD_LEVEL);
+  // static QPixmap addLevel = svgToPixmap(":Resources/new_level.svg");
+  // static QPixmap addLevelRollover =
+  //    svgToPixmap(":Resources/new_level_rollover.svg");
+  // const QRect addLevelImgRect = o->rect(PredefinedRect::ADD_LEVEL);
 
   p.setRenderHint(QPainter::SmoothPixmapTransform, true);
   if (m_zoomInHighlighted)
@@ -101,10 +109,10 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   else
     p.drawPixmap(zoomOutImgRect, zoomOut);
 
-  if (m_addLevelHighlighted)
-    p.drawPixmap(addLevelImgRect, addLevelRollover);
-  else
-    p.drawPixmap(addLevelImgRect, addLevel);
+  // if (m_addLevelHighlighted)
+  //  p.drawPixmap(addLevelImgRect, addLevelRollover);
+  // else
+  //  p.drawPixmap(addLevelImgRect, addLevel);
 
   p.setPen(withAlpha(m_viewer->getTextColor(), 0.5));
 
@@ -122,17 +130,17 @@ void LayerFooterPanel::showOrHide(const Orientation *o) {
 
 //-----------------------------------------------------------------------------
 void LayerFooterPanel::enterEvent(QEvent *) {
-  m_zoomInHighlighted   = false;
-  m_zoomOutHighlighted  = false;
-  m_addLevelHighlighted = false;
+  m_zoomInHighlighted  = false;
+  m_zoomOutHighlighted = false;
+  // m_addLevelHighlighted = false;
 
   update();
 }
 
 void LayerFooterPanel::leaveEvent(QEvent *) {
-  m_zoomInHighlighted   = false;
-  m_zoomOutHighlighted  = false;
-  m_addLevelHighlighted = false;
+  m_zoomInHighlighted  = false;
+  m_zoomOutHighlighted = false;
+  // m_addLevelHighlighted = false;
 
   update();
 }
@@ -151,9 +159,10 @@ void LayerFooterPanel::mousePressEvent(QMouseEvent *event) {
       int newFactor = isCtrlPressed ? m_frameZoomSlider->minimum()
                                     : m_frameZoomSlider->value() - 10;
       m_frameZoomSlider->setValue(newFactor);
-    } else if (o->rect(PredefinedRect::ADD_LEVEL_AREA).contains(pos)) {
-      CommandManager::instance()->execute("MI_NewLevel");
     }
+    // else if (o->rect(PredefinedRect::ADD_LEVEL_AREA).contains(pos)) {
+    //  CommandManager::instance()->execute("MI_NewLevel");
+    //}
   }
 
   update();
@@ -164,19 +173,21 @@ void LayerFooterPanel::mouseMoveEvent(QMouseEvent *event) {
 
   QPoint pos = event->pos();
 
-  m_zoomInHighlighted   = false;
-  m_zoomOutHighlighted  = false;
-  m_addLevelHighlighted = false;
+  m_zoomInHighlighted  = false;
+  m_zoomOutHighlighted = false;
+  // m_addLevelHighlighted = false;
   if (o->rect(PredefinedRect::ZOOM_IN_AREA).contains(pos)) {
     m_zoomInHighlighted = true;
     m_tooltip           = tr("Zoom in (Ctrl-click to zoom in all the way)");
   } else if (o->rect(PredefinedRect::ZOOM_OUT_AREA).contains(pos)) {
     m_zoomOutHighlighted = true;
     m_tooltip            = tr("Zoom out (Ctrl-click to zoom out all the way)");
-  } else if (o->rect(PredefinedRect::ADD_LEVEL_AREA).contains(pos)) {
-    m_addLevelHighlighted = true;
-    m_tooltip             = tr("Add a new level.");
-  } else {
+  }
+  // else if (o->rect(PredefinedRect::ADD_LEVEL_AREA).contains(pos)) {
+  //  m_addLevelHighlighted = true;
+  //  m_tooltip             = tr("Add a new level.");
+  //}
+  else {
     m_tooltip = tr("");
   }
 
