@@ -464,6 +464,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
     , m_playToolBar(0)
     , m_colorFilterGroup(0)
     , m_fpsLabel(0)
+    , m_timeLabel(0)
     , m_consoleOwner(consoleOwner)
     , m_enableBlankFrameButton(0) {
   if (m_customizeId != "SceneViewerConsole") {
@@ -823,6 +824,7 @@ void FlipConsole::playNextFrame() {
 
   m_currFrameSlider->setValue(m_currentFrame);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
+  updateCurrentTime();
   m_settings.m_blankColor        = TPixel::Transparent;
   m_settings.m_recomputeIfNeeded = true;
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
@@ -1756,7 +1758,7 @@ void FlipConsole::doButtonPressed(UINT button) {
 
   m_currFrameSlider->setValue(m_currentFrame);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
-
+  updateCurrentTime();
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 }
 
@@ -1775,6 +1777,11 @@ QFrame *FlipConsole::createFrameSlider() {
   m_currFrameSlider->setRange(0, 0);
   m_currFrameSlider->setValue(0);
 
+  m_timeLabel = new QLabel(QString("00:00:00"), frameSliderFrame);
+  m_timeLabel->setFixedWidth(m_fpsLabel->fontMetrics().width("00:00:00"));
+  m_timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  m_timeLabel->setStyleSheet("padding: 0px; margin: 0px;");
+
   if (m_drawBlanksEnabled) {
     m_enableBlankFrameButton = new QPushButton(this);
     m_enableBlankFrameButton->setCheckable(true);
@@ -1790,6 +1797,7 @@ QFrame *FlipConsole::createFrameSlider() {
   frameSliderLayout->setSpacing(5);
   frameSliderLayout->setMargin(2);
   {
+    frameSliderLayout->addWidget(m_timeLabel, 0);
     frameSliderLayout->addWidget(m_editCurrFrame, 0);
     frameSliderLayout->addWidget(m_currFrameSlider, 1);
     if (m_drawBlanksEnabled)
@@ -1903,16 +1911,21 @@ void FlipConsole::OnSetCurrentFrame() {
   if (m_step > 1) {
     newFrame -= ((newFrame - m_from) % m_step);
     m_editCurrFrame->setText(QString::number(newFrame));
+    updateCurrentTime();
   }
 
   int i, deltaFrame = newFrame - m_currentFrame;
 
-  if (m_framesCount == 0) m_editCurrFrame->setText(QString::number(1));
+  if (m_framesCount == 0) {
+    m_editCurrFrame->setText(QString::number(1));
+    updateCurrentTime();
+  }
 
   if (m_framesCount == 0 || newFrame == m_currentFrame || newFrame == 0) return;
 
   if (newFrame > m_to) {
     m_editCurrFrame->setText(QString::number(m_currentFrame));
+    updateCurrentTime();
     return;
   }
 
@@ -1958,6 +1971,7 @@ void FlipConsole::OnSetCurrentFrame(int index) {
 
   assert(m_currentFrame <= m_to);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
+  updateCurrentTime();
 
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 
@@ -1980,6 +1994,21 @@ void FlipConsole::setCurrentFrame(int frame, bool forceResetting) {
 
   m_editCurrFrame->setValue(m_currentFrame);
   m_currFrameSlider->setValue(m_currentFrame);
+  updateCurrentTime();
+}
+
+//--------------------------------------------------------------------
+
+void FlipConsole::updateCurrentTime() {
+  int seconds        = (int)((double)(m_currentFrame) / m_sceneFps);
+  int frames         = (m_currentFrame) % (int)m_sceneFps;
+  int minutes        = seconds / 60;
+  int realSeconds    = minutes > 0 ? seconds % minutes : seconds;
+  QString strMinutes = QString("%1").arg(minutes, 2, 10, QChar('0'));
+  QString strSeconds = QString("%1").arg(realSeconds, 2, 10, QChar('0'));
+  QString strFrames  = QString("%1").arg(frames, 2, 10, QChar('0'));
+  QString time       = strMinutes + ":" + strSeconds + ":" + strFrames;
+  m_timeLabel->setText(time);
 }
 
 //--------------------------------------------------------------------

@@ -347,9 +347,10 @@ private:
   ToolBarContainer *m_playToolBarContainer;
   QFrame *m_frameSliderFrame;
 
-  QLabel *m_fpsLabel;
+  QLabel *m_fpsLabel, *m_timeLabel;
   QScrollBar *m_fpsSlider;
   DVGui::IntLineEdit *m_fpsField;
+  QColor m_fpsFieldColor = QColor(1, 1, 1);
   QAction *m_fpsFieldAction;
   QAction *m_fpsLabelAction;
   QAction *m_fpsSliderAction;
@@ -394,6 +395,7 @@ private:
   void createPlayToolBar(QWidget *customWidget);
   DVGui::IntLineEdit *m_editCurrFrame;
   FlipSlider *m_currFrameSlider;
+  void updateCurrentTime();
 
   void doButtonPressed(UINT button);
   static void pressLinkedConsoleButton(UINT button, FlipConsole *skipIt);
