@@ -100,7 +100,6 @@ void RoomTabWidget::mousePressEvent(QMouseEvent *event) {
       TApp::instance()->setCanHideTitleBars(
           !TApp::instance()->getCanHideTitleBars());
       bool canHide = TApp::instance()->getCanHideTitleBars();
-      bool shown   = TApp::instance()->getShowTitleBars();
       if (m_isLocked && !canHide) {
         TApp::instance()->sendShowTitleBars(true, true);
       } else if (m_isLocked && canHide) {

@@ -86,8 +86,8 @@ std::pair<double, double> getCurrentDpi() {
 
 }  // namespace
 
-TEnv::IntVar ShowTitleBarsWhenLocked("ShowTitleBarsWhenLocked", 1);
-TEnv::IntVar CanHideTitleBarsWhenLocked("CanHideTitleBarsWhenLocked", 0);
+TEnv::IntVar ShowTitleBarsWhenLocked("ShowTitleBarsWhenLocked", 0);
+TEnv::IntVar CanHideTitleBarsWhenLocked("CanHideTitleBarsWhenLocked", 1);
 
 //=============================================================================
 // TApp

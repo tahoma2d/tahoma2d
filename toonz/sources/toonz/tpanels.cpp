@@ -453,7 +453,6 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
 
   setWidget(m_paletteViewer);
   initializeTitleBar();
-  // hideTitleBar();
 }
 
 //-----------------------------------------------------------------------------
@@ -1062,6 +1061,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWindowTitle(QObject::tr("Tasks"));
     panel->setWidget(new TasksViewer(panel));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } tasksViewerFactory;
 
@@ -1071,6 +1073,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWindowTitle(QObject::tr("Batch Servers"));
     panel->setWidget(new BatchServersViewer(panel));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } batchServersViewerFactory;
 
@@ -1081,6 +1086,9 @@ public:
     FileBrowser *browser = new FileBrowser(panel, 0, false, true);
     panel->setWidget(browser);
     panel->setWindowTitle(QObject::tr("File Browser"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     TFilePath currentProjectFolder =
         TProjectManager::instance()->getCurrentProjectPath().getParentDir();
     browser->setFolder(currentProjectFolder, true);
@@ -1098,6 +1106,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWidget(new CastBrowser(panel));
     panel->setWindowTitle(QObject::tr("Scene Cast"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } castViewerFactory;
 
@@ -1151,6 +1162,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWidget(new ColorModelViewer(panel));
     panel->resize(400, 300);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } colorModelViewerFactory;
 
@@ -1191,6 +1205,9 @@ public:
     panel->setWindowTitle(QObject::tr("Message Center"));
     panel->setWidget(new TMessageViewer(panel));
     panel->setMinimumHeight(80);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } TMessageViewerFactory;
 
@@ -1208,6 +1225,9 @@ public:
   TPanel *createPanel(QWidget *parent) override {
     ScriptConsolePanel *panel = new ScriptConsolePanel(parent);
     panel->setObjectName(getPanelType());
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
 
     // panel->setWindowTitle(QObject::tr("Function Editor"));
     // panel->setMinimumSize(220, 200);
@@ -1324,6 +1344,9 @@ public:
   void initialize(TPanel *panel) override {
     panel->setWidget(new CleanupSettingsPane(panel));
     panel->setIsMaximizable(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 
 } cleanupSettingsFactory;
@@ -1347,6 +1370,9 @@ public:
     panel->setWidget(historyPane);
     panel->setWindowTitle(QObject::tr("History"));
     panel->setIsMaximizable(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
   }
 } historyPanelFactory;
 
@@ -1440,6 +1466,9 @@ public:
     panel->setWindowTitle(QObject::tr("Fx Settings"));
     panel->setMinimumSize(390, 85);
     panel->allowMultipleInstances(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     return panel;
   }
 
@@ -1475,6 +1504,9 @@ public:
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Vector Guided Drawing Controls"));
     panel->setMinimumSize(387, 265);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
 
     return panel;
   }
