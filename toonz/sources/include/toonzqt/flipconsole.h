@@ -85,6 +85,7 @@ public:
 signals:
   void nextFrame(int fps);  // Must be connect with Qt::BlockingQueuedConnection
                             // connection type.
+  void playbackAborted();
 };
 
 //-----------------------------------------------------------------------------
@@ -331,6 +332,7 @@ signals:
 
   void playStateChanged(bool isPlaying);
   void sliderReleased();
+  void changeSceneFps(int);
 
 private:
   UINT m_customizeMask;
@@ -421,6 +423,7 @@ protected slots:
   void onButtonPressed(int button);
   void incrementCurrentFrame(int delta);
   void onNextFrame(int fps);
+  void setFpsFieldColors();
   void onCustomizeButtonPressed(QAction *);
   bool drawBlanks(int from, int to);
   void onSliderRelease();
@@ -429,6 +432,8 @@ protected slots:
 
 public slots:
   void onPreferenceChanged(const QString &);
+  void resetToSceneFps();
+  void setSceneFpsToCurrent();
 
 private:
   friend class PlaybackExecutor;

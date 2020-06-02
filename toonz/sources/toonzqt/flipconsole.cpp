@@ -7,6 +7,7 @@
 #include "toonzqt/dvscrollwidget.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/flipconsoleowner.h"
+#include "toonzqt/dvdialog.h"
 
 // TnzLib includes
 #include "toonz/preferences.h"
@@ -256,6 +257,7 @@ void PlaybackExecutor::run() {
   }
 
   m_abort = false;
+  emit(playbackAborted());
 }
 
 //==========================================================================================
@@ -513,6 +515,12 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
 
   bool ret = connect(&m_playbackExecutor, SIGNAL(nextFrame(int)), this,
                      SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
+  ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
+                       SLOT(setFpsFieldColors()));
+  ret = ret && connect(m_fpsField, SIGNAL(controlClickEvent()), this,
+                       SLOT(resetToSceneFps()));
+  ret = ret && connect(m_fpsField, SIGNAL(controlAltClickEvent()), this,
+                       SLOT(setSceneFpsToCurrent()));
 
   assert(ret);
 
@@ -799,6 +807,22 @@ void FlipConsole::onNextFrame(int fps) {
 
 //----------------------------------------------------------------------------
 
+void FlipConsole::setFpsFieldColors() {
+  if (m_fpsField) {
+    if (m_fpsField->getValue() == m_sceneFps) {
+      m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+      m_fpsField->setToolTip("");
+    } else {
+      m_fpsField->setLineEditBackgroundColor(QColor(255, 69, 0));
+      m_fpsField->setToolTip(
+          tr("This value is different than the scene framerate.\n"
+             "Control click to reset."));
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+
 void FlipConsole::playNextFrame() {
   int from = m_from, to = m_to;
   if (m_markerFrom <= m_markerTo) from = m_markerFrom, to = m_markerTo;
@@ -846,6 +870,7 @@ void FlipConsole::setFrameRate(int val, bool forceUpdate) {
     setCurrentFPS(val);
   }
   m_sceneFps = val;
+  setFpsFieldColors();
 }
 
 //-----------------------------------------------------------------------------
@@ -853,6 +878,23 @@ void FlipConsole::setFrameRate(int val, bool forceUpdate) {
 void FlipConsole::setCurrentFPS(bool dragging) {
   setCurrentFPS(m_fpsField->getValue());
   m_fpsSlider->setValue(m_fps);
+}
+
+//-----------------------------------------------------------------------------
+
+void FlipConsole::resetToSceneFps() {
+  setCurrentFPS(m_sceneFps);
+  m_fpsSlider->setValue(m_sceneFps);
+}
+
+//-----------------------------------------------------------------------------
+
+void FlipConsole::setSceneFpsToCurrent() {
+  if (m_fps == abs(m_fps) && m_fps != m_sceneFps) {
+    emit(changeSceneFps(m_fps));
+  } else if (m_fps != abs(m_fps)) {
+    DVGui::warning(tr("Cannot set the scene fps to a negative value."));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -868,7 +910,9 @@ void FlipConsole::setCurrentFPS(int val) {
     m_reverse = (val < 0);
 
   if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS "));
-  if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+  if (m_fpsField) {
+    setFpsFieldColors();
+  }
 
   m_playbackExecutor.resetFps(m_fps);
 }
@@ -1587,7 +1631,9 @@ void FlipConsole::doButtonPressed(UINT button) {
     if ((m_fps == 0 || m_framesCount == 0) && m_playbackExecutor.isRunning()) {
       doButtonPressed(ePause);
       if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS ") + QString::number(m_fps));
-      if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+      if (m_fpsField) {
+        setFpsFieldColors();
+      }
       return;
     }
     if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS	") + "/");
@@ -1647,7 +1693,9 @@ void FlipConsole::doButtonPressed(UINT button) {
       m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
     }
     if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS "));
-    if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+    if (m_fpsField) {
+      setFpsFieldColors();
+    }
     // setChecked(ePlay,   false);
     // setChecked(eLoop,   false);
     connect(m_editCurrFrame, SIGNAL(editingFinished()), this,

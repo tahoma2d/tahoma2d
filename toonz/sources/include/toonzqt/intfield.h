@@ -118,6 +118,10 @@ public:
 
   void setLineEditBackgroundColor(QColor color);
 
+signals:
+  void controlClickEvent();
+  void controlAltClickEvent();
+
 protected:
   /*! If focus is lost and current text value is out of range emit signal
                   \b editingFinished.*/

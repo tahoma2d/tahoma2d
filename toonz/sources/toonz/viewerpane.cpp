@@ -149,6 +149,8 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
   ret = ret &&
         connect(m_flipConsole, SIGNAL(playStateChanged(bool)),
                 TApp::instance()->getCurrentFrame(), SLOT(setPlaying(bool)));
+  ret = ret && connect(m_flipConsole, SIGNAL(changeSceneFps(int)), this,
+                       SLOT(changeSceneFps(int)));
   ret = ret && connect(m_flipConsole, SIGNAL(playStateChanged(bool)), this,
                        SLOT(onPlayingStatusChanged(bool)));
   ret = ret &&
@@ -178,15 +180,15 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
                                   ->getOutputProperties()
                                   ->getFrameRate());
 
-  UINT mask;
-  mask = mask | eShowVcr;
-  mask = mask | eShowFramerate;
-  mask = mask | eShowViewerControls;
-  mask = mask | eShowSound;
-  mask = mask | eShowCustom;
-  mask = mask & ~eShowSave;
-  mask = mask & ~eShowLocator;
-  mask = mask & ~eShowHisto;
+  UINT mask = 0;
+  mask      = mask | eShowVcr;
+  mask      = mask | eShowFramerate;
+  mask      = mask | eShowViewerControls;
+  mask      = mask | eShowSound;
+  mask      = mask | eShowCustom;
+  mask      = mask & ~eShowSave;
+  mask      = mask & ~eShowLocator;
+  mask      = mask & ~eShowHisto;
   m_flipConsole->setCustomizemask(mask);
 
   updateFrameRange(), updateFrameMarkers();
@@ -850,6 +852,27 @@ void SceneViewerPanel::setFlipVButtonChecked(bool checked) {
   m_flipConsole->setChecked(FlipConsole::eFlipVertical, checked);
 }
 
+void SceneViewerPanel::changeSceneFps(int value) {
+  double oldFps = TApp::instance()
+                      ->getCurrentScene()
+                      ->getScene()
+                      ->getProperties()
+                      ->getOutputProperties()
+                      ->getFrameRate();
+
+  if ((double)value == oldFps) return;
+  TApp::instance()
+      ->getCurrentScene()
+      ->getScene()
+      ->getProperties()
+      ->getOutputProperties()
+      ->setFrameRate(value);
+  TApp::instance()->getCurrentScene()->getScene()->updateSoundColumnFrameRate();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  TApp::instance()->getCurrentXsheet()->getXsheet()->updateFrameCount();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
@@ -857,24 +880,28 @@ void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
   updateShowHide();
 }
 
+//-----------------------------------------------------------------------------
+
 // SaveLoadQSettings
 void SceneViewerPanel::save(QSettings &settings) const {
   settings.setValue("visibleParts", m_visiblePartsFlag);
   settings.setValue("consoleParts", m_flipConsole->getCustomizeMask());
 }
 
+//-----------------------------------------------------------------------------
+
 void SceneViewerPanel::load(QSettings &settings) {
   m_visiblePartsFlag = settings.value("visibleParts", CVPARTS_ALL).toUInt();
   updateShowHide();
-  UINT mask;
-  mask = mask | eShowVcr;
-  mask = mask | eShowFramerate;
-  mask = mask | eShowViewerControls;
-  mask = mask | eShowSound;
-  mask = mask | eShowCustom;
-  mask = mask & ~eShowSave;
-  mask = mask & ~eShowLocator;
-  mask = mask & ~eShowHisto;
+  UINT mask = 0;
+  mask      = mask | eShowVcr;
+  mask      = mask | eShowFramerate;
+  mask      = mask | eShowViewerControls;
+  mask      = mask | eShowSound;
+  mask      = mask | eShowCustom;
+  mask      = mask & ~eShowSave;
+  mask      = mask & ~eShowLocator;
+  mask      = mask & ~eShowHisto;
   m_flipConsole->setCustomizemask(
       settings.value("consoleParts", mask).toUInt());
 }
