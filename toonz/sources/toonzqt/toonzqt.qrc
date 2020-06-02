@@ -166,10 +166,9 @@
       <file>Resources/grad_g.png</file>
       <file>Resources/grad_b.png</file>
       <file>Resources/grad_m.png</file>
-      <file>Resources/h_chandle_down.svg</file>
-      <file>Resources/h_chandle_center.svg</file>
-      <file>Resources/h_chandle_top.svg</file>
-      <file>Resources/v_chandle_down.svg</file>
+      <file>Resources/h_chandleDown.png</file>
+      <file>Resources/h_chandleCenter.png</file>
+      <file>Resources/h_chandleUp.png</file>
       <file>Resources/schematic_palette.png</file>
       <file>Resources/schematic_tablenode.png</file>
       <file>Resources/port_red.svg</file>
