@@ -57,13 +57,13 @@ $ ls -l /usr/local/lib/cmake/glew
 $ rm /usr/local/lib/cmake/glew
 ```
 
-### Set up OpenToonz repository
+### Set up Tahoma repository
 
-These steps will put the OpenToonz repository under /Users/yourlogin/Documents.
+These steps will put the Tahoma repository under /Users/yourlogin/Documents.
 ```
 $ cd ~/Documents   #or where you want to store the repository#
-$ git clone https://github.com/opentoonz/opentoonz
-$ cd opentoonz
+$ git clone https://github.com/turtletooth/tahoma
+$ cd tahoma
 $ git lfs pull
 $ cd thirdparty/boost
 $ mv ~/Downloads/boost_1_72_0.tar.bz2 .   #or whatever the boost filename you downloaded is#
@@ -76,16 +76,16 @@ $ ./configure --disable-lzma && make
 
 ### Configure build for QT version
 
-Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at line 160 (64-bit OS) or 172 (32-bit OS) and modify the root path for the QT lib directory
+Edit the `/Users/yourlogin/Documents/tahoma/toonz/sources/CMakeLists.txt` file at line 160 (64-bit OS) or 172 (32-bit OS) and modify the root path for the QT lib directory
 
 If you installed QT using `brew`, you can get the version and path to use with: `$ brew info qt`.  The lib path will look something like this: `/usr/local/Cellar/qt/5.12.2/lib`
 If you downloaded the QT installer and installed to `/Users/yourlogin/Qt`, your lib path may look something like this: `~/Qt/5.12.2/clang_64/lib` or `~/Qt/5.12.2/clang_32/lib`
 
-### Configure environment and Build OpenToonz
+### Configure environment and Build Tahoma
 
 1. Create the build directory with the following:
 ```
-$ cd ~/Documents/opentoonz/toonz
+$ cd ~/Documents/tahoma/toonz
 $ mkdir build
 $ cd build
 $ export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
@@ -105,15 +105,15 @@ $ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 $ CMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.12.2 cmake -G Xcode ../sources -B.   #replace QT path with your installed QT version#
 ```
 
-- Open Xcode app and open project /Users/yourlogin/Documents/opentoonz/toonz/build/OpenToonz.xcodeproj
-- Change `ALL_BUILD` to `OpenToonz`
+- Open Xcode app and open project /Users/yourlogin/Documents/tahoma/toonz/build/Tahoma.xcodeproj
+- Change `ALL_BUILD` to `Tahoma`
 - Start build with: Product -> Build
 
     - NOTE about rebuilding in Xcode: The initial build should succeed without any errors.  There after, the build will succeed but the following 3 errors can be ignored:
 
 ```
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: for: /Users/yourlogin/Documents/opentoonz/toonz/build/toonz/Debug/OpenToonz.app/Contents/MacOS/OpenToonz (for architecture x86_64) option "-add_rpath @executable_path/." would duplicate path, file already has LC_RPATH for: @executable_path/.
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: for: /Users/yourlogin/Documents/opentoonz/toonz/build/toonz/Debug/OpenToonz.app/Contents/MacOS/OpenToonz (for architecture x86_64) option "-add_rpath /usr/local/Cellar/qt/5.12.2/lib/" would duplicate path, file already has LC_RPATH for: /usr/local/Cellar/qt/5.12.2/lib/
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: for: /Users/yourlogin/Documents/tahoma/toonz/build/toonz/Debug/Tahoma.app/Contents/MacOS/Tahoma (for architecture x86_64) option "-add_rpath @executable_path/." would duplicate path, file already has LC_RPATH for: @executable_path/.
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: for: /Users/yourlogin/Documents/tahoma/toonz/build/toonz/Debug/Tahoma.app/Contents/MacOS/Tahoma (for architecture x86_64) option "-add_rpath /usr/local/Cellar/qt/5.12.2/lib/" would duplicate path, file already has LC_RPATH for: /usr/local/Cellar/qt/5.12.2/lib/
 Command /bin/sh emitted errors but did not return a nonzero exit code to indicate failure
 ```
 
@@ -121,34 +121,34 @@ Side note: If you want the option to build by command line and Xcode, create a s
 
 ### Create the stuff Directory
 
-If you have installed OpenToonz on the machine already, you can skip this.  Otherwise, you need to create the stuff folder with the following:
+If you have installed Tahoma on the machine already, you can skip this.  Otherwise, you need to create the stuff folder with the following:
 ```
-$ cd ~/Documents/opentoonz
-$ sudo mkdir /Applications/OpenToonz
-$ sudo cp -r stuff /Applications/OpenToonz/OpenToonz_stuff
-$ sudo chmod -R 777 /Applications/OpenToonz
+$ cd ~/Documents/tahoma
+$ sudo mkdir /Applications/Tahoma
+$ sudo cp -r stuff /Applications/Tahoma/Tahoma_stuff
+$ sudo chmod -R 777 /Applications/Tahoma
 ```
 ## Building with extended stop motion support for webcams and Canon DSLR cameras.
 You will need one additional library:
   - The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
-Copy the Header and Framework folders from the Canon SDK to `$opentoonz/thirdparty/canon`
+Copy the Header and Framework folders from the Canon SDK to `$tahoma/thirdparty/canon`
 
-Edit the `/Users/yourlogin/Documents/opentoonz/toonz/sources/CMakeLists.txt` file at the end of line 104, changing the `WITH_CANON` build option from `OFF` to `ON`.
+Edit the `/Users/yourlogin/Documents/tahoma/toonz/sources/CMakeLists.txt` file at the end of line 104, changing the `WITH_CANON` build option from `OFF` to `ON`.
 
-To run the program with stop motion support, you will need to copy the EDSDK.framework directory from the Canon SDK and place it in `Macintosh HD/Library/Frameworks`. It could also be placed in the same folder as `OpenToonz.app`. If opening OpenToonz.app fails because "EDSDK.framework can't be opened", go to `Preferences -> Security & Privacy -> General` and select "Open Anyway". Open OpenToonz again and select "Open" when the "EDSDK.framework can't be opened" warning appears.
+To run the program with stop motion support, you will need to copy the EDSDK.framework directory from the Canon SDK and place it in `Macintosh HD/Library/Frameworks`. It could also be placed in the same folder as `Tahoma.app`. If opening Tahoma.app fails because "EDSDK.framework can't be opened", go to `Preferences -> Security & Privacy -> General` and select "Open Anyway". Open Tahoma again and select "Open" when the "EDSDK.framework can't be opened" warning appears.
 
 ### Running the build
 
 - If built using command line, run the following:
 ```
-$ open ~/Documents/opentoonz/build/toonz/OpenToonz.app
+$ open ~/Documents/tahoma/build/toonz/Tahoma.app
 ```
 
 - If built using Xcode, do the following:
 
-    - Open Scheme editor for OpenToonz: Product -> Scheme -> Edit Scheme
+    - Open Scheme editor for Tahoma: Product -> Scheme -> Edit Scheme
     - Uncheck: Run -> Options -> Document Versions
     - Run in Debug mode: Product -> Run
 
-    - To open with command line or from Finder window, the application is found in `/Users/yourlogin/Documents/opentoonz/toonz/build/Debug/OpenToonz.app`
+    - To open with command line or from Finder window, the application is found in `/Users/yourlogin/Documents/tahoma/toonz/build/Debug/Tahoma.app`
