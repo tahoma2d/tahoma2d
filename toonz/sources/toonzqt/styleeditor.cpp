@@ -998,13 +998,11 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
 
   if (m_channel == eAlpha) {
     static QPixmap checkboard(":Resources/backg.png");
-    p.drawTiledPixmap(x, y, w, h, checkboard);
+    p.drawTiledPixmap(x, y + 1, w, h, checkboard);
   }
 
   if (!bgPixmap.isNull()) {
-    p.drawTiledPixmap(x, y, w, h, bgPixmap);
-    p.setPen(Qt::white);
-    p.drawLine(x, y + h, x + w, y + h);
+    p.drawTiledPixmap(x, y + 1, w, h, bgPixmap);
   }
 
   /*!
@@ -1223,11 +1221,14 @@ void ChannelLineEdit::focusOutEvent(QFocusEvent *e) {
 void ChannelLineEdit::paintEvent(QPaintEvent *e) {
   IntLineEdit::paintEvent(e);
 
+  /* Now that stylesheets added lineEdit focus this is likely redundant,
+   * commenting out in-case it is still required.
   if (m_isEditing) {
     QPainter p(this);
     p.setPen(Qt::yellow);
     p.drawRect(rect().adjusted(0, 0, -1, -1));
   }
+  */
 }
 
 //*****************************************************************************
@@ -1270,7 +1271,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   m_field->setObjectName("colorSliderField");
-  m_field->setFixedWidth(fontMetrics().width('0') * 6 + 5);
+  m_field->setFixedWidth(fontMetrics().width('0') * 4);
   m_field->setMinimumHeight(7);
 
   addButton->setObjectName("colorSliderAddButton");
