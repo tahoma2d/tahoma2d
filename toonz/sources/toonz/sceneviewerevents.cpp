@@ -820,14 +820,19 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   if (!m_buttonClicked) return;
   m_buttonClicked = false;
 
+  // tool is declared up here to prevent an error with jumping to goto before
+  // all variables are instantiated.
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+
+  bool canonJumpToQuit = false;
 #ifdef WITH_CANON
   // Stop if we're picking live view for StopMotion
   if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
-    goto quit;
+    canonJumpToQuit = true;
   }
 #endif
+  if (canonJumpToQuit) goto quit;
 
-  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) {
     if (!m_toolDisableReason.isEmpty() && m_mouseButton == Qt::LeftButton &&
         !m_editPreviewSubCamera)
