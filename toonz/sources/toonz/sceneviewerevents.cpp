@@ -819,13 +819,14 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   // evita i release ripetuti
   if (!m_buttonClicked) return;
   m_buttonClicked = false;
-
+  bool canonJumpToQuit = false;
 #ifdef WITH_CANON
   // Stop if we're picking live view for StopMotion
   if (StopMotion::instance()->m_canon->m_pickLiveViewZoom) {
-    goto quit;
+    canonJumpToQuit = true;
   }
 #endif
+  if (canonJumpToQuit) goto quit;
 
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) {
