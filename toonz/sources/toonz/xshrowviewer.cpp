@@ -882,9 +882,9 @@ void RowArea::paintEvent(QPaintEvent *event) {
   p.setPen(m_viewer->getVerticalLineColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(0, -1, -1, 0));
+    p.drawRect(toBeUpdated.adjusted(-1, -1, -1, 0));
   else
-    p.drawRect(toBeUpdated.adjusted(-1, 0, 0, -1));
+    p.drawRect(toBeUpdated.adjusted(-1, -1, 0, -1));
 }
 
 //-----------------------------------------------------------------------------
