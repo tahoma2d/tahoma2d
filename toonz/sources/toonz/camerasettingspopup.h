@@ -41,6 +41,7 @@ class CameraSettingsPopup final : public QDialog {
   TStageObject *getCameraObject();
   TCamera *getCamera();
   void updateWindowTitle();
+  bool m_hideAlreadyCalled = false;
 
 public:
   CameraSettingsPopup();

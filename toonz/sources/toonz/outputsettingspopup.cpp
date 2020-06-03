@@ -690,6 +690,7 @@ void OutputSettingsPopup::showEvent(QShowEvent *) {
                        SLOT(updateField()));
   updateField();
   assert(ret);
+  m_hideAlreadyCalled = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -697,15 +698,18 @@ void OutputSettingsPopup::showEvent(QShowEvent *) {
 void OutputSettingsPopup::hideEvent(QHideEvent *e) {
   TSceneHandle *sceneHandle   = TApp::instance()->getCurrentScene();
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
-  bool ret = disconnect(sceneHandle, SIGNAL(sceneChanged()), this,
-                        SLOT(updateField()));
-  ret = ret && disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
+  if (!m_hideAlreadyCalled) {
+    bool ret = disconnect(sceneHandle, SIGNAL(sceneChanged()), this,
                           SLOT(updateField()));
+    ret = ret && disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                            SLOT(updateField()));
 
-  ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetChanged()), this,
-                          SLOT(updateField()));
-  assert(ret);
+    ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetChanged()), this,
+                            SLOT(updateField()));
+    assert(ret);
+  }
   Dialog::hideEvent(e);
+  m_hideAlreadyCalled = true;
 }
 
 //-----------------------------------------------------------------------------
