@@ -2229,9 +2229,9 @@ void MainWindow::defineActions() {
   createToolAction(T_Skeleton, "skeleton", tr("Skeleton Tool"), "V");
   createToolAction(T_Tracker, "tracker", tr("Tracker Tool"), "");
   createToolAction(T_Hook, "hook", tr("Hook Tool"), "O");
-  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "Shift+Space");
-  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "Ctrl+Space");
-  createToolAction(T_Hand, "hand", tr("Hand Tool"), "Space");
+  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "");
+  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "");
+  createToolAction(T_Hand, "hand", tr("Hand Tool"), "");
   createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X");
   createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "");
   createToolAction(T_Finger, "finger", tr("Finger Tool"), "");

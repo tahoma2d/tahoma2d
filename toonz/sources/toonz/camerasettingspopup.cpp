@@ -145,6 +145,7 @@ void CameraSettingsPopup::showEvent(QShowEvent *e) {
   ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)),
                        SLOT(onLevelSwitched(TXshLevel *)));
   assert(ret);
+  m_hideAlreadyCalled = false;
 }
 
 void CameraSettingsPopup::hideEvent(QHideEvent *e) {
@@ -162,22 +163,25 @@ void CameraSettingsPopup::hideEvent(QHideEvent *e) {
   TXsheetHandle *xsheetHandle  = TApp::instance()->getCurrentXsheet();
   TXshLevelHandle *levelHandle = TApp::instance()->getCurrentLevel();
 
-  bool ret = true;
-  ret      = ret && disconnect(sceneHandle, SIGNAL(sceneChanged()), this,
-                          SLOT(updateFields()));
-  ret = ret && disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
-                          SLOT(updateFields()));
-  ret = ret && disconnect(objectHandle, SIGNAL(objectChanged(bool)), this,
-                          SLOT(updateFields(bool)));
-  ret = ret && disconnect(objectHandle, SIGNAL(objectSwitched()), this,
-                          SLOT(updateFields()));
-  ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetSwitched()), this,
-                          SLOT(updateFields()));
-  ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetChanged()), this,
-                          SLOT(updateFields()));
-  ret = ret && disconnect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)),
-                          this, SLOT(onLevelSwitched(TXshLevel *)));
-  assert(ret);
+  if (!m_hideAlreadyCalled) {
+    bool ret = true;
+    ret      = ret && disconnect(sceneHandle, SIGNAL(sceneChanged()), this,
+                            SLOT(updateFields()));
+    ret = ret && disconnect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                            SLOT(updateFields()));
+    ret = ret && disconnect(objectHandle, SIGNAL(objectChanged(bool)), this,
+                            SLOT(updateFields(bool)));
+    ret = ret && disconnect(objectHandle, SIGNAL(objectSwitched()), this,
+                            SLOT(updateFields()));
+    ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetSwitched()), this,
+                            SLOT(updateFields()));
+    ret = ret && disconnect(xsheetHandle, SIGNAL(xsheetChanged()), this,
+                            SLOT(updateFields()));
+    ret = ret && disconnect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)),
+                            this, SLOT(onLevelSwitched(TXshLevel *)));
+    assert(ret);
+  }
+  m_hideAlreadyCalled = true;
 }
 
 CameraSettingsPopup *CameraSettingsPopup::createPopup(

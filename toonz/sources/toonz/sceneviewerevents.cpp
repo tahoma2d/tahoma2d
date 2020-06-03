@@ -17,6 +17,7 @@
 #include "locatorpopup.h"
 #include "cellselection.h"
 #include "stopmotion.h"
+#include "tstopwatch.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -490,6 +491,49 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   bool cursorSet  = false;
   m_lastMousePos  = curPos;
 
+  if (event.buttons() == Qt::LeftButton && m_mouseRotating > 0) {
+    if (m_mouseRotating == 1) {
+      TPointD pos = winToWorld(event.mousePos() * getDevPixRatio());
+      ;
+      m_mouseRotating = 2;
+      m_angle         = 0.0;
+      m_dragging      = true;
+      m_oldPos        = pos;
+      m_oldMousePos   = event.m_pos;
+      m_sw.start(true);
+      return;
+    }
+    // panning
+    mouseRotate(event);
+    return;
+  } else if (event.buttons() == Qt::LeftButton && m_mouseZooming > 0) {
+    if (m_mouseZooming == 1) {
+      m_mouseZooming              = 2;
+      m_dragging                  = true;
+      int v                       = 1;
+      if (event.isAltPressed()) v = -1;
+      m_oldY                      = event.m_pos.y;
+      // m_center = getViewer()->winToWorld(e.m_pos);
+      m_center = TPointD(event.m_pos.x, event.m_pos.y);
+      m_factor = 1;
+      return;
+    }
+    // panning
+    mouseZoom(event);
+    return;
+  } else if (event.buttons() == Qt::LeftButton && m_mousePanning > 0) {
+    if (m_mousePanning == 1) {
+      m_mousePanning = 2;
+      m_dragging     = true;
+      m_oldPos       = event.m_pos;
+      m_sw.start(true);
+      return;
+    }
+    // panning
+    mousePan(event);
+    return;
+  }
+
   if (m_editPreviewSubCamera) {
     if (!PreviewSubCameraManager::instance()->mouseMoveEvent(this, event))
       return;
@@ -672,6 +716,15 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onPress(const TMouseEvent &event) {
+  if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
+    if (m_mouseZooming > 0) setToolCursor(this, ToolCursor::ZoomCursor);
+    if (m_mouseRotating > 0) setToolCursor(this, ToolCursor::RotateCursor);
+    if (m_mousePanning > 0) setToolCursor(this, ToolCursor::PanCursor);
+    m_pos           = event.mousePos() * getDevPixRatio();
+    m_mouseButton   = event.button();
+    m_buttonClicked = true;
+    return;
+  }
   if (m_mouseButton != Qt::NoButton) {
     if (event.m_isTablet && m_mouseState != None) {
       //      qDebug() << "[onPress] Switched from MousePress to TabletPress";
@@ -816,6 +869,42 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onRelease(const TMouseEvent &event) {
+  if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
+    if (m_resetOnRelease) {
+      m_mousePanning   = 0;
+      m_mouseRotating  = 0;
+      m_mouseZooming   = 0;
+      m_resetOnRelease = false;
+    } else if (m_mousePanning > 0)
+      m_mousePanning = 1;
+    else if (m_mouseRotating > 0)
+      m_mouseRotating = 1;
+    else if (m_mouseZooming > 0)
+      m_mouseZooming = 1;
+    m_dragging       = false;
+    m_sw.stop();
+    invalidateAll();
+    GLInvalidateAll();
+    invalidateToolStatus();
+
+    // duplicate quit from below
+    m_mouseButton = Qt::NoButton;
+    // Leave m_tabletEvent as-is in order to check whether the onRelease is
+    // called
+    // from tabletEvent or not in mouseReleaseEvent.
+    if (m_tabletState == Released)  // only clear if tabletRelease event
+      m_tabletEvent = false;
+    // If m_tabletState is "Touched", we've been called by tabletPress event.
+    // Don't clear it out table state so the tablePress event will process
+    // correctly.
+    if (m_tabletState != Touched) m_tabletState = None;
+    m_mouseState                                = None;
+    m_tabletMove                                = false;
+    m_pressure                                  = 0;
+    m_buttonClicked                             = false;
+    return;
+  }
+
   // evita i release ripetuti
   if (!m_buttonClicked) return;
   m_buttonClicked = false;
@@ -1257,13 +1346,56 @@ bool SceneViewer::event(QEvent *e) {
     m_gestureActive = true;
     return true;
   }
+  bool isTyping = false;
+  TTool *tool   = TApp::instance()->getCurrentTool()->getTool();
+  if (tool && tool->isEnabled() && tool->getName() == T_Type &&
+      tool->isActive())
+    isTyping = true;
+
+  if (!isTyping && (e->type() == QEvent::ShortcutOverride ||
+                    e->type() == QEvent::KeyPress)) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    if (keyEvent->key() == Qt::Key_Space) {
+      if (keyEvent->modifiers() & Qt::ControlModifier) {
+        if (m_mouseRotating == 0) {
+          m_mouseRotating = 1;
+        }
+      } else if (keyEvent->modifiers() & Qt::ShiftModifier) {
+        if (m_mouseZooming == 0) {
+          m_mouseZooming = 1;
+        }
+      } else if (m_mousePanning == 0) {
+        m_mousePanning = 1;
+      }
+      e->accept();
+      return true;
+    }
+  }
+  if (e->type() == QEvent::KeyRelease) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    if (keyEvent->key() == Qt::Key_Space) {
+      if (keyEvent->isAutoRepeat()) {
+        e->accept();
+        return true;
+      } else {
+        if (m_dragging)
+          m_resetOnRelease = true;
+        else {
+          m_mousePanning  = 0;
+          m_mouseZooming  = 0;
+          m_mouseRotating = 0;
+        }
+        e->accept();
+        return true;
+      }
+    }
+  }
   if (e->type() == QEvent::ShortcutOverride || e->type() == QEvent::KeyPress) {
     if (!((QKeyEvent *)e)->isAutoRepeat()) {
       TApp::instance()->getCurrentTool()->storeTool();
     }
   }
   if (e->type() == QEvent::ShortcutOverride) {
-    TTool *tool = TApp::instance()->getCurrentTool()->getTool();
     if (tool && tool->isEnabled() && tool->getName() == T_Type &&
         tool->isActive())
       e->accept();
@@ -1745,4 +1877,62 @@ void SceneViewer::onToolSwitched() {
 
   onLevelChanged();
   update();
+}
+
+void SceneViewer::mousePan(const TMouseEvent &e) {
+  if (m_sw.getTotalTime() < 10) return;
+  m_sw.stop();
+  m_sw.start(true);
+  TPointD delta = e.m_pos - m_oldPos;
+  delta.y       = -delta.y;
+  pan(delta);
+  m_oldPos = e.m_pos;
+}
+
+void SceneViewer::mouseZoom(const TMouseEvent &e) {
+  int d    = m_oldY - e.m_pos.y;
+  m_oldY   = e.m_pos.y;
+  double f = exp(-d * 0.01);
+  m_factor = f;
+  zoom(m_center, f);
+}
+
+void SceneViewer::mouseRotate(const TMouseEvent &e) {
+  if (m_sw.getTotalTime() < 50) return;
+
+  double u = 50;
+  if (false)
+    m_center = TPointD(0, 0);
+  else {
+    TAffine aff              = getViewMatrix().inv();
+    if (getIsFlippedX()) aff = aff * TScale(-1, 1);
+    if (getIsFlippedY()) aff = aff * TScale(1, -1);
+    u                        = u * sqrt(aff.det());
+    m_center                 = aff * TPointD(0, 0);
+  }
+
+  m_sw.stop();
+  m_sw.start(true);
+
+  TPointD p = winToWorld(e.mousePos() * getDevPixRatio());
+  if (is3DView()) {
+    TPointD d     = e.m_pos - m_oldMousePos;
+    m_oldMousePos = e.m_pos;
+    double factor = 0.5;
+    rotate3D(factor * d.x, -factor * d.y);
+  } else {
+    TPointD a = p - m_center;
+    TPointD b = m_oldPos - m_center;
+    if (norm2(a) > 0 && norm2(b) > 0) {
+      double ang = asin(cross(b, a) / (norm(a) * norm(b))) * M_180_PI;
+      m_angle    = m_angle + ang;
+      rotate(m_center, m_angle);
+    }
+  }
+  m_oldPos = p;
+
+  tglDrawSegment(TPointD(-u + m_center.x, m_center.y),
+                 TPointD(u + m_center.x, m_center.y));
+  tglDrawSegment(TPointD(m_center.x, -u + m_center.y),
+                 TPointD(m_center.x, u + m_center.y));
 }

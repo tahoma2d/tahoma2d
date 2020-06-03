@@ -39,6 +39,7 @@ class QTouchEvent;
 class QOpenGLFramebufferObject;
 class LutCalibrator;
 class StopMotion;
+class TStopWatch;
 
 namespace ImageUtils {
 class FullScreenWidget;
@@ -91,6 +92,24 @@ class SceneViewer final : public GLWidgetForHighDpi,
   bool m_rotating                        = false;
   bool m_zooming                         = false;
   bool m_panning                         = false;
+
+  // These are for mouse based zoom, rotate, pan
+  int m_mouseRotating   = 0;
+  int m_mouseZooming    = 0;
+  int m_mousePanning    = 0;
+  bool m_resetOnRelease = false;
+  // shared variables
+  TStopWatch m_sw;
+  TPointD m_oldPos;
+  TPointD m_center;
+  bool m_dragging;
+  // zoom variables
+  int m_oldY;
+  double m_factor;
+  // rotate variables
+  double m_angle;
+  TPointD m_oldMousePos;
+
   QPointF m_firstPanPoint;
   QPointF m_undoPoint;
   double m_scaleFactor;    // used for zoom gesture
@@ -359,6 +378,10 @@ protected:
 
   // center: window coordinate, pixels, topleft origin
   void zoomQt(const QPoint &center, double scaleFactor);
+
+  void mousePan(const TMouseEvent &e);
+  void mouseZoom(const TMouseEvent &e);
+  void mouseRotate(const TMouseEvent &e);
 
   // overriden from TTool::Viewer
   void pan(const TPointD &delta) override { panQt(QPointF(delta.x, delta.y)); }
