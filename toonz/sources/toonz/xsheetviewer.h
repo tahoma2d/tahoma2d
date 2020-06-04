@@ -241,6 +241,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
                  setNotEmptyColumnColor)
   Q_PROPERTY(QColor SelectedEmptyCellColor READ getSelectedEmptyCellColor WRITE
                  setSelectedEmptyCellColor)
+  // Play range
+  QColor m_playRangeColor;
+  Q_PROPERTY(
+      QColor PlayRangeColor READ getPlayRangeColor WRITE setPlayRangeColor)
 
   // TZP column
   QColor m_levelColumnColor;          //(127,219,127)
@@ -761,6 +765,12 @@ public:
     m_selectedEmptyCellColor = color;
   }
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
+  
+  // play range
+  QColor getPlayRangeColor() const { return m_playRangeColor; }
+  void setPlayRangeColor(const QColor &color) {
+    m_playRangeColor = color;
+  }
 
   // TZP column
   void setLevelColumnColor(const QColor &color) { m_levelColumnColor = color; }

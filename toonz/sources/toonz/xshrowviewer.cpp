@@ -291,7 +291,7 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
     QRect previewBoxRect = o->rect(PredefinedRect::PREVIEW_FRAME_AREA)
                                .adjusted(0, 0, -frameAdj, 0)
                                .translated(basePoint);
-    p.fillRect(previewBoxRect, m_viewer->getNotEmptyColumnColor());
+    p.fillRect(previewBoxRect, m_viewer->getPlayRangeColor());
 
     if (!o->isVerticalTimeline()) {
       if (r == playR0) {
