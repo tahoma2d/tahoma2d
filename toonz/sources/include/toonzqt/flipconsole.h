@@ -85,6 +85,7 @@ public:
 signals:
   void nextFrame(int fps);  // Must be connect with Qt::BlockingQueuedConnection
                             // connection type.
+  void playbackAborted();
 };
 
 //-----------------------------------------------------------------------------
@@ -331,6 +332,7 @@ signals:
 
   void playStateChanged(bool isPlaying);
   void sliderReleased();
+  void changeSceneFps(int);
 
 private:
   UINT m_customizeMask;
@@ -347,9 +349,10 @@ private:
   ToolBarContainer *m_playToolBarContainer;
   QFrame *m_frameSliderFrame;
 
-  QLabel *m_fpsLabel;
+  QLabel *m_fpsLabel, *m_timeLabel;
   QScrollBar *m_fpsSlider;
   DVGui::IntLineEdit *m_fpsField;
+  QColor m_fpsFieldColor = QColor(1, 1, 1);
   QAction *m_fpsFieldAction;
   QAction *m_fpsLabelAction;
   QAction *m_fpsSliderAction;
@@ -394,6 +397,7 @@ private:
   void createPlayToolBar(QWidget *customWidget);
   DVGui::IntLineEdit *m_editCurrFrame;
   FlipSlider *m_currFrameSlider;
+  void updateCurrentTime();
 
   void doButtonPressed(UINT button);
   static void pressLinkedConsoleButton(UINT button, FlipConsole *skipIt);
@@ -419,6 +423,7 @@ protected slots:
   void onButtonPressed(int button);
   void incrementCurrentFrame(int delta);
   void onNextFrame(int fps);
+  void setFpsFieldColors();
   void onCustomizeButtonPressed(QAction *);
   bool drawBlanks(int from, int to);
   void onSliderRelease();
@@ -427,6 +432,8 @@ protected slots:
 
 public slots:
   void onPreferenceChanged(const QString &);
+  void resetToSceneFps();
+  void setSceneFpsToCurrent();
 
 private:
   friend class PlaybackExecutor;

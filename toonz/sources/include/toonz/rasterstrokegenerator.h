@@ -77,7 +77,8 @@ public:
   // raggio "points.thick" +2 pixel a bordo
   TRect getBBox(const std::vector<TThickPoint> &points) const;
 
-  TRect getLastRect() const;
+  TRect getLastRect(bool isStraight = false) const;
 
-  TRect generateLastPieceOfStroke(bool isPencil, bool closeStroke = false);
+  TRect generateLastPieceOfStroke(bool isPencil, bool closeStroke = false,
+                                  bool isStraight = false);
 };

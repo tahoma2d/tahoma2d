@@ -238,6 +238,17 @@ void IntLineEdit::mouseMoveEvent(QMouseEvent *e) {
 //-----------------------------------------------------------------------------
 
 void IntLineEdit::mouseReleaseEvent(QMouseEvent *e) {
+  if (e->modifiers() & Qt::ControlModifier &&
+      e->modifiers() & Qt::AltModifier) {
+    emit(controlAltClickEvent());
+    clearFocus();
+    return;
+  } else if (e->modifiers() & Qt::ControlModifier) {
+    emit(controlClickEvent());
+    clearFocus();
+    return;
+  }
+
   if ((e->buttons() == Qt::NoButton && m_mouseDragEditing)) {
     m_mouseDragEditing = false;
     clearFocus();
@@ -284,7 +295,7 @@ IntField::IntField(QWidget *parent, bool isMaxRangeLimited, bool isRollerHide)
   m_slider = new QSlider(Qt::Horizontal, this);
   ret      = ret && connect(m_slider, SIGNAL(valueChanged(int)), this,
                        SLOT(onSliderChanged(int)));
-  ret      = ret && connect(m_slider, SIGNAL(sliderReleased()), this,
+  ret = ret && connect(m_slider, SIGNAL(sliderReleased()), this,
                        SLOT(onSliderReleased()));
 
   ret = ret && connect(m_lineEdit, SIGNAL(editingFinished()), this,
@@ -392,7 +403,7 @@ int IntField::pos2value(int x) const {
   else if (posRatio <= 0.9)
     t = -0.26 + 0.4 * posRatio;
   else
-    t = -8.0 + 9.0 * posRatio;
+    t              = -8.0 + 9.0 * posRatio;
   double sliderVal = (double)m_slider->minimum() + rangeSize * t;
   return (int)round(sliderVal * pow(0.1, NonLinearSliderPrecision));
 }

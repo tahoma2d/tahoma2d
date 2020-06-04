@@ -105,11 +105,15 @@ void RasterStrokeGenerator::generateStroke(bool isPencil) const {
 //-----------------------------------------------------------
 
 TRect RasterStrokeGenerator::generateLastPieceOfStroke(bool isPencil,
-                                                       bool closeStroke) {
+                                                       bool closeStroke,
+                                                       bool isStraight) {
   std::vector<TThickPoint> points;
   int size = m_points.size();
 
-  if (size == 3) {
+  if (isStraight) {
+    points.push_back(m_points[0]);
+    points.push_back(m_points[2]);
+  } else if (size == 3) {
     points.push_back(m_points[0]);
     points.push_back(m_points[1]);
   } else if (size == 1)
@@ -324,11 +328,13 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
 
 //-----------------------------------------------------------
 
-TRect RasterStrokeGenerator::getLastRect() const {
+TRect RasterStrokeGenerator::getLastRect(bool isStraight) const {
   std::vector<TThickPoint> points;
   int size = m_points.size();
-
-  if (size == 3) {
+  if (isStraight) {
+    points.push_back(m_points[0]);
+    points.push_back(m_points[2]);
+  } else if (size == 3) {
     points.push_back(m_points[0]);
     points.push_back(m_points[1]);
   } else if (size == 1)
