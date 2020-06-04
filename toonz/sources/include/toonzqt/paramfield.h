@@ -25,7 +25,6 @@
 #include "tdoubleparam.h"
 #include "toonz/tfxhandle.h"
 #include "historytypes.h"
-#include "../toonz/pane.h"
 
 #undef DVAPI
 #undef DVVAR
