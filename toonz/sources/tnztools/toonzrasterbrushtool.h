@@ -226,7 +226,6 @@ protected:
   bool m_propertyUpdating = false;
 
   bool m_isStraight = false;
-  bool m_isLockedVH = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
 
