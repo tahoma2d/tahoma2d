@@ -517,10 +517,12 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
                      SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
   ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
                        SLOT(setFpsFieldColors()));
-  ret = ret && connect(m_fpsField, SIGNAL(controlClickEvent()), this,
-                       SLOT(resetToSceneFps()));
-  ret = ret && connect(m_fpsField, SIGNAL(controlAltClickEvent()), this,
-                       SLOT(setSceneFpsToCurrent()));
+  if (m_fpsField) {
+    ret = ret && connect(m_fpsField, SIGNAL(controlClickEvent()), this,
+                         SLOT(resetToSceneFps()));
+    ret = ret && connect(m_fpsField, SIGNAL(controlAltClickEvent()), this,
+                         SLOT(setSceneFpsToCurrent()));
+  }
 
   assert(ret);
 
@@ -1826,7 +1828,7 @@ QFrame *FlipConsole::createFrameSlider() {
   m_currFrameSlider->setValue(0);
 
   m_timeLabel = new QLabel(QString("00:00:00"), frameSliderFrame);
-  m_timeLabel->setFixedWidth(m_fpsLabel->fontMetrics().width("00:00:00"));
+  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().width("00:00:00"));
   m_timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_timeLabel->setStyleSheet("padding: 0px; margin: 0px;");
 
@@ -1859,6 +1861,8 @@ QFrame *FlipConsole::createFrameSlider() {
           SLOT(OnSetCurrentFrame(int)));
   connect(m_currFrameSlider, SIGNAL(flipSliderReleased()), this,
           SLOT(OnFrameSliderRelease()));
+
+  if (!m_fpsField) m_timeLabel->hide();
 
   return frameSliderFrame;
 }

@@ -79,5 +79,6 @@ public:
 
   TRect getLastRect() const;
 
-  TRect generateLastPieceOfStroke(bool isPencil, bool closeStroke = false);
+  TRect generateLastPieceOfStroke(bool isPencil, bool closeStroke = false,
+                                  bool isStraight = false);
 };
