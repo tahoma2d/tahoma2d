@@ -656,7 +656,7 @@ void ParamField::setFxHandle(TFxHandle *fxHandle) {
 
 ParamFieldKeyToggle::ParamFieldKeyToggle(QWidget *parent, std::string name)
     : QWidget(parent), m_status(NOT_ANIMATED), m_highlighted(false) {
-  setFixedSize(15, 15);
+  setFixedSize(18, 18);
 }
 
 //-----------------------------------------------------------------------------
@@ -691,21 +691,29 @@ ParamFieldKeyToggle::Status ParamFieldKeyToggle::getStatus() const {
 void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   QPainter p(this);
 
+  QIcon ico;
+  int iconSize = 18;
+
   switch (m_status) {
   case NOT_ANIMATED:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_noanim.svg")));
+    m_pixmap = new QPixmap(":Resources/keyframe_noanim.svg");
+    ico.addPixmap(*m_pixmap);
+    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case KEYFRAME:
-    p.drawPixmap(rect(), QPixmap(svgToPixmap(":Resources/keyframe_key.svg")));
+    m_pixmap = new QPixmap(":Resources/keyframe_key.svg");
+    ico.addPixmap(*m_pixmap);
+    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case MODIFIED:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_modified.svg")));
+    m_pixmap = new QPixmap(":Resources/keyframe_modified.svg");
+    ico.addPixmap(*m_pixmap);
+    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   default:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_inbetween.svg")));
+    m_pixmap = new QPixmap(":Resources/keyframe_inbetween.svg");
+    ico.addPixmap(*m_pixmap);
+    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   }
   if (m_highlighted) {

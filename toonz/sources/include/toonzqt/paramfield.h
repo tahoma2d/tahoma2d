@@ -109,6 +109,7 @@ class DVAPI ParamFieldKeyToggle final : public QWidget {
   Q_OBJECT
 
 public:
+  QPixmap *m_pixmap;
   enum Status { NOT_ANIMATED, NOT_KEYFRAME, MODIFIED, KEYFRAME };
 
 private:
