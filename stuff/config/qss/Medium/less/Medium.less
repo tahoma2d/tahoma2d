@@ -5,15 +5,15 @@
 // -----------------------------------------------------------------------------
 // This is the default theme. All other themes derive from this.
 // -----------------------------------------------------------------------------
-
 // Include All
 @import 'main';
 
 // Resource Location
 @img-url: 'imgs/white';
 
-@bg: #484848;
-@accent: darken(@bg, 13);
+@bg: #484848;               // normal
+@bg-dark: darken(@bg, 10);    // dark
+@accent: darken(@bg, 15);     // darkest
 
 @text-color: rgb(230, 230, 230);
 @text-color-disabled: rgba(230, 230, 230, 0.4);
@@ -25,7 +25,7 @@
 @hl-text-color-secondary: @text-color;
 
 @dock-bg-color: darken(@bg, 18);
-@dock-placeholder-color: #F77272;
+@dock-placeholder-color: rgba(0, 0, 0, 0.5);
 
 @dialogButtonFrame-bg-color: darken(@bg, 4);
 @dialogButtonFrame-border-color: @accent;
@@ -41,18 +41,18 @@
 // Tabs
 // -----------------------------------------------------------------------------
 
-// Container
 @tabbar-bg-color: darken(@bg, 6);
 
 // Tabs
 @tab-bg-color: @tabbar-bg-color;
 @tab-text-color: mix(@tab-bg-color, @text-color, 40);
+@tab-border-color: @accent;
 
 @tab-bg-color-hover: @tab-bg-color-selected;
 @tab-text-color-hover: @tab-text-color;
 
 @tab-bg-color-selected: @bg;
-@tab-text-color-selected: lighten(@text-color, 15);
+@tab-text-color-selected: @text-color;
 
 // -----------------------------------------------------------------------------
 // Topbar & Workspaces
@@ -68,8 +68,8 @@
 @rooms-tab-bg-color-hover: @tab-bg-color-hover;
 @rooms-text-color-hover: @rooms-tab-text-color;
 
-@rooms-tab-bg-color-selected: @bg;
-@rooms-tab-text-color-selected: @tab-text-color-selected;
+@rooms-tab-bg-color-selected: @hl-bg-color;
+@rooms-tab-text-color-selected: @hl-text-color;
 
 // -----------------------------------------------------------------------------
 // Menu
@@ -83,21 +83,11 @@
 @menu-item-bg-color-disabled-hover: lighten(@menu-bg-color, 8);
 
 // -----------------------------------------------------------------------------
-// Titlebars
-// -----------------------------------------------------------------------------
-
-@title-bg-color: darken(@bg, 6);
-@title-text-color: lighten(@bg, 30);
-@title-text-color-active: #fff;
-
-@title-active-border-pixmap: 'none';
-
-// -----------------------------------------------------------------------------
 // Scrollbars
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color: darken(@bg, 8);
+@scrollbar-bg-color: @bg-dark;
 
 // Handle
 @scrollbar-handle-border-size: 1;
@@ -153,8 +143,7 @@
 @scrollable-button-bg-color: @button-bg-color;
 @scrollable-button-bg-color-hover: @button-bg-color-hover;
 @scrollable-button-bg-color-pressed: @button-bg-color-pressed;
-
-@scrollable-button-border-color: red;
+@scrollable-button-border-color: @button-border-color;
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
@@ -208,6 +197,7 @@
 
 @input-bg-color: darken(@bg, 10);
 @input-border-color: darken(@input-bg-color, 1);
+@input-border-radius: 2;
 @input-text-color: @text-color;
 
 @input-bg-color-focus: @input-bg-color;
@@ -278,12 +268,27 @@
 @slider-right-handle-disabled: @slider-handle-img-disabled;
 
 // -----------------------------------------------------------------------------
+// Titlebars
+// -----------------------------------------------------------------------------
+
+@title-bg-color: darken(@bg, 6);
+@title-text-color: lighten(@bg, 30);
+@title-text-color-active: #fff;
+
+@title-active-border-pixmap: 'none';
+
+@title-button-rollover-color: @button-bg-color-hover;
+@title-button-pressed-color: @hl-bg-color;
+@title-button-freeze-color: @toolbutton-lock-bg-color-checked;
+@title-button-preview-color: rgb(0, 255, 157);
+
+// -----------------------------------------------------------------------------
 // File Browser / Trees
 // -----------------------------------------------------------------------------
 
 // Trees
-@tree-bg-color: darken(@bg, 8);
-@tree-bg-color-alt: lighten(@tree-bg-color, 2);
+@tree-bg-color: darken(@bg, 10);
+@tree-bg-color-alt: lighten(@tree-bg-color, 3);
 @prefs-tree-bg-color: @tree-bg-color;
 @prefs-tree-hl-color: @hl-bg-color-secondary;
 
@@ -295,9 +300,16 @@
 @browser-listview-bg-color: @tree-bg-color;
 @browser-listview-bg-color-alt: @browser-listview-bg-color;
 
-// Right Pane
-@browser-itemview-bg-color: @bg;
-@browser-itemview-bg-color-alt: darken(@browser-itemview-bg-color, 3);
+// Right Pane: Order Column
+@browser-itemview-col-color: @bg;
+@browser-itemview-col-color-sorted: @browser-itemview-col-color;
+@browser-itemview-col-text-color: @text-color;
+@browser-itemview-col-border-color: @accent;
+@browser-itemview-col-relief-color: @browser-itemview-col-color;
+
+// Right Pane: BG
+@browser-itemview-bg-color: @tree-bg-color;
+@browser-itemview-bg-color-alt: @tree-bg-color-alt;
 
 // -----------------------------------------------------------------------------
 // Viewer Window
@@ -492,15 +504,6 @@
 // For column based schematic nodes, use the Xsheet viewer colors by default
 @schematic-text-color: @xsheet-text-color;
 @schematic-VerticalLine-color: @xsheet-VerticalLine-color;
-
-@schematic-LevelColumn-color: @xsheet-LevelColumn-color;
-@schematic-VectorColumn-color: @xsheet-VectorColumn-color;
-@schematic-ChildColumn-color: @xsheet-ChildColumn-color;
-@schematic-FullColorColumn-color: @xsheet-FullColorColumn-color;
-@schematic-FxColumn-color: @xsheet-FxColumn-color;
-@schematic-PaletteColumn-color: @xsheet-PaletteColumn-color;
-@schematic-MeshColumn-color: @xsheet-MeshColumn-color;
-@schematic-ReferenceColumn-color: @xsheet-ReferenceColumn-color;
 
 @schematic-PreviewButtonBgOn-color: @xsheet-PreviewButtonBgOn-color;
 @schematic-PreviewButtonOnImage: @xsheet-PreviewButtonOnImage;

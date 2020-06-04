@@ -14,7 +14,13 @@ class Room;
 //! icon buttons placed on the panel titlebar (cfr. viewerpane.h)
 class TPanelTitleBarButton : public QWidget {
   Q_OBJECT
-  QPixmap m_standardPixmap, m_rolloverPixmap, m_pressedPixmap;
+  QString m_standardPixmapName;
+  QPixmap m_standardPixmap;
+  QColor m_rolloverColor;
+  QColor m_pressedColor;
+  QColor m_freezeColor;
+  QColor m_previewColor;
+
   bool m_rollover;
   TPanelTitleBarButtonSet *m_buttonSet;
   int m_id;
@@ -23,17 +29,21 @@ protected:
   bool m_pressed;
 
 public:
-  TPanelTitleBarButton(QWidget *parent, const QString &standardPixmapName,
-                       const QString &rolloverPixmapName,
-                       const QString &pressedPixmapName);
-
-  TPanelTitleBarButton(QWidget *parent, const QPixmap &standardPixmap,
-                       const QPixmap &rolloverPixmap,
-                       const QPixmap &pressedPixmap);
+  TPanelTitleBarButton(QWidget *parent, const QString &standardPixmapName);
+  TPanelTitleBarButton(QWidget *parent, const QPixmap &standardPixmap);
 
   //! call this method to make a radio button. id is the button identifier
   void setButtonSet(TPanelTitleBarButtonSet *buttonSet, int id);
   int getId() const { return m_id; }
+
+  void setRolloverColor(const QColor &color) { m_rolloverColor = color; }
+  QColor getRolloverColor() const { return m_rolloverColor; }
+  void setPressedColor(const QColor &color) { m_pressedColor = color; }
+  QColor getPressedColor() const { return m_pressedColor; }
+  void setFreezeColor(const QColor &color) { m_freezeColor = color; }
+  QColor getFreezeColor() const { return m_freezeColor; }
+  void setPreviewColor(const QColor &color) { m_previewColor = color; }
+  QColor getPreviewColor() const { return m_previewColor; }
 
 public slots:
   void setPressed(bool pressed);  // n.b. doesn't emit signals. calls update()
@@ -45,6 +55,11 @@ protected:
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
   void mousePressEvent(QMouseEvent *event) override;
+
+  Q_PROPERTY(QColor RolloverColor READ getRolloverColor WRITE setRolloverColor);
+  Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
+  Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
+  Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
 
 signals:
   //! emitted when the user press the button
@@ -61,11 +76,8 @@ class TPanelTitleBarButtonForSafeArea final : public TPanelTitleBarButton {
   Q_OBJECT
 public:
   TPanelTitleBarButtonForSafeArea(QWidget *parent,
-                                  const QString &standardPixmapName,
-                                  const QString &rolloverPixmapName,
-                                  const QString &pressedPixmapName)
-      : TPanelTitleBarButton(parent, standardPixmapName, rolloverPixmapName,
-                             pressedPixmapName) {}
+                                  const QString &standardPixmapName)
+      : TPanelTitleBarButton(parent, standardPixmapName) {}
   void getSafeAreaNameList(QList<QString> &nameList);
 
 protected:

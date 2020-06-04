@@ -478,10 +478,8 @@ void PaletteViewerPanel::reset() {
 
 void PaletteViewerPanel::initializeTitleBar() {
   m_isCurrentButton = new TPanelTitleBarButton(
-      getTitleBar(), svgToPixmap(":Resources/switch.svg"),
-      svgToPixmap(":Resources/switch_over.svg"),
-      svgToPixmap(":Resources/switch_on.svg"));
-  getTitleBar()->add(QPoint(-54, 2), m_isCurrentButton);
+      getTitleBar(), svgToPixmap(":Resources/switch.svg"));
+  getTitleBar()->add(QPoint(-54, 0), m_isCurrentButton);
   m_isCurrentButton->setPressed(true);
   connect(m_isCurrentButton, SIGNAL(toggled(bool)),
           SLOT(onCurrentButtonToggled(bool)));
@@ -987,9 +985,8 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   int iconWidth = 20;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(
-          titleBar, ":Resources/pane_safe_off.svg",
-          ":Resources/pane_safe_over.svg", ":Resources/pane_safe_on.svg");
+      new TPanelTitleBarButtonForSafeArea(titleBar,
+                                          ":Resources/pane_safe_off.svg");
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -1004,9 +1001,7 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   x += 33 + iconWidth;
   // minimize button
-  m_button = new TPanelTitleBarButton(titleBar, ":Resources/pane_minimize.svg",
-                                      ":Resources/pane_minimize_over.svg",
-                                      ":Resources/pane_minimize_on.svg");
+  m_button = new TPanelTitleBarButton(titleBar, ":Resources/pane_minimize.svg");
   m_button->setToolTip(tr("Minimize"));
   m_button->setPressed(false);
 

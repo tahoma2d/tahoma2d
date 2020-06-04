@@ -197,13 +197,10 @@ void TPanel::restoreFloatingPanelState() {
 //-----------------------------------------------------------------------------
 
 TPanelTitleBarButton::TPanelTitleBarButton(QWidget *parent,
-                                           const QString &standardPixmapName,
-                                           const QString &rolloverPixmapName,
-                                           const QString &pressedPixmapName)
+                                           const QString &standardPixmapName)
     : QWidget(parent)
     , m_standardPixmap(standardPixmapName)
-    , m_rolloverPixmap(rolloverPixmapName)
-    , m_pressedPixmap(pressedPixmapName)
+    , m_standardPixmapName(standardPixmapName)
     , m_rollover(false)
     , m_pressed(false)
     , m_buttonSet(0)
@@ -214,13 +211,9 @@ TPanelTitleBarButton::TPanelTitleBarButton(QWidget *parent,
 //-----------------------------------------------------------------------------
 
 TPanelTitleBarButton::TPanelTitleBarButton(QWidget *parent,
-                                           const QPixmap &standardPixmap,
-                                           const QPixmap &rolloverPixmap,
-                                           const QPixmap &pressedPixmap)
+                                           const QPixmap &standardPixmap)
     : QWidget(parent)
     , m_standardPixmap(standardPixmap)
-    , m_rolloverPixmap(rolloverPixmap)
-    , m_pressedPixmap(pressedPixmap)
     , m_rollover(false)
     , m_pressed(false)
     , m_buttonSet(0)
@@ -250,9 +243,29 @@ void TPanelTitleBarButton::setPressed(bool pressed) {
 
 void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   QPainter painter(this);
+
+  // create color states for the button
+  QPixmap standard_pm(m_standardPixmap.size());
+  QPixmap rollover_pm(m_standardPixmap.size());
+  QPixmap pressed_pm(m_standardPixmap.size());
+  standard_pm.fill(Qt::transparent);
+  rollover_pm.fill(QColor(getRolloverColor()));
+  pressed_pm.fill(QColor(getPressedColor()));
+
+  // set unique colors if filename contains string
+  if (m_standardPixmapName.contains("freeze", Qt::CaseInsensitive)) {
+    pressed_pm.fill(QColor(getFreezeColor()));
+  }
+  if (m_standardPixmapName.contains("preview", Qt::CaseInsensitive)) {
+    pressed_pm.fill(QColor(getPreviewColor()));
+  }
+
+  // compose the state colors
   painter.drawPixmap(
-      0, 0, m_pressed ? m_pressedPixmap : m_rollover ? m_rolloverPixmap
-                                                     : m_standardPixmap);
+      0, 0, m_pressed ? pressed_pm : m_rollover ? rollover_pm : standard_pm);
+  // compose the icon
+  painter.drawPixmap(0, 0, m_standardPixmap);
+
   painter.end();
 }
 
