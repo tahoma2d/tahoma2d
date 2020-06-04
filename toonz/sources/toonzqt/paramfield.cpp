@@ -656,7 +656,7 @@ void ParamField::setFxHandle(TFxHandle *fxHandle) {
 
 ParamFieldKeyToggle::ParamFieldKeyToggle(QWidget *parent, std::string name)
     : QWidget(parent), m_status(NOT_ANIMATED), m_highlighted(false) {
-  setFixedSize(18, 18);
+  setFixedSize(20, 20);
 }
 
 //-----------------------------------------------------------------------------
@@ -692,33 +692,53 @@ void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   QPainter p(this);
 
   QIcon ico;
-  int iconSize = 18;
+  int iconSize = 20;
+  int radius   = 3;
+
+  // create rounded rect for key button states
+  p.setRenderHint(p.Antialiasing);
+  QPainterPath path;
+  path.addRoundedRect(QRectF(0, 0, iconSize, iconSize), radius, radius);
+  QPen pen(Qt::transparent);
+  p.setPen(pen);
 
   switch (m_status) {
   case NOT_ANIMATED:
-    m_pixmap = new QPixmap(":Resources/keyframe_noanim.svg");
-    ico.addPixmap(*m_pixmap);
+    p.fillPath(path, getKeyOffColor());
+    p.drawPath(path);
+    m_pixmap = QPixmap(":Resources/key_no.svg");
+    ico.addPixmap(m_pixmap);
     ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case KEYFRAME:
-    m_pixmap = new QPixmap(":Resources/keyframe_key.svg");
-    ico.addPixmap(*m_pixmap);
+    p.fillPath(path, getKeyOnColor());
+    p.drawPath(path);
+    m_pixmap = QPixmap(":Resources/key_no.svg");
+    ico.addPixmap(m_pixmap);
     ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case MODIFIED:
-    m_pixmap = new QPixmap(":Resources/keyframe_modified.svg");
-    ico.addPixmap(*m_pixmap);
+    p.fillPath(path, getKeyModifiedColor());
+    p.drawPath(path);
+    m_pixmap = QPixmap(":Resources/key_no.svg");
+    ico.addPixmap(m_pixmap);
     ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   default:
-    m_pixmap = new QPixmap(":Resources/keyframe_inbetween.svg");
-    ico.addPixmap(*m_pixmap);
+    p.fillPath(path, getKeyInbetweenColor());
+    p.drawPath(path);
+    m_pixmap = QPixmap(":Resources/key_no.svg");
+    ico.addPixmap(m_pixmap);
     ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   }
+
   if (m_highlighted) {
-    p.fillRect(rect(), QBrush(QColor(50, 100, 255, 100)));
+    p.fillPath(path, getKeyHighlightColor());
+    p.drawPath(path);
   }
+
+  p.end();
 }
 
 //-----------------------------------------------------------------------------
