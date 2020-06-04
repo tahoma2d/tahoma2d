@@ -705,33 +705,22 @@ void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   switch (m_status) {
   case NOT_ANIMATED:
     p.fillPath(path, getKeyOffColor());
-    p.drawPath(path);
-    m_pixmap = QPixmap(":Resources/key_no.svg");
-    ico.addPixmap(m_pixmap);
-    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case KEYFRAME:
     p.fillPath(path, getKeyOnColor());
-    p.drawPath(path);
-    m_pixmap = QPixmap(":Resources/key_no.svg");
-    ico.addPixmap(m_pixmap);
-    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case MODIFIED:
     p.fillPath(path, getKeyModifiedColor());
-    p.drawPath(path);
-    m_pixmap = QPixmap(":Resources/key_no.svg");
-    ico.addPixmap(m_pixmap);
-    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   default:
     p.fillPath(path, getKeyInbetweenColor());
-    p.drawPath(path);
-    m_pixmap = QPixmap(":Resources/key_no.svg");
-    ico.addPixmap(m_pixmap);
-    ico.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   }
+  p.drawPath(path);
+
+  m_pixmap = QPixmap(":Resources/keyframe.svg");
+  ico.addPixmap(m_pixmap);
+  ico.paint(&p, QRect(0, 0, iconSize, iconSize));
 
   if (m_highlighted) {
     p.fillPath(path, getKeyHighlightColor());
