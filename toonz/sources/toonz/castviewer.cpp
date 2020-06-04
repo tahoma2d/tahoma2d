@@ -465,8 +465,6 @@ CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
   // style sheet
   setObjectName("CastBrowser");
   setFrameStyle(QFrame::StyledPanel);
-  setStyleSheet("QSplitter::handle {height:4px;}");
-  setStyleSheet("#CastBrowser { margin:1px;border:0px }");
 
   m_treeViewer = new CastTreeViewer(this);
   m_treeViewer->resize(300, m_treeViewer->size().height());
@@ -478,8 +476,8 @@ CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
   boxLayout->setSpacing(0);
 
   m_folderName = new QLabel("", box);
-  m_folderName->setFrameStyle(QFrame::StyledPanel);
-  m_folderName->setStyleSheet("border-bottom: 1px solid black");
+  m_folderName->setObjectName("CastBrowserFolderName");
+  m_folderName->setFrameStyle(QFrame::Box);
   m_itemViewer = new DvItemViewer(box, false, true, DvItemViewer::Cast);
   DvItemViewerPanel *viewerPanel = m_itemViewer->getPanel();
   viewerPanel->setMissingTextColor(QColor(200, 0, 0));

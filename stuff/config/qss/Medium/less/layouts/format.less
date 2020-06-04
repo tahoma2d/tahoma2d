@@ -7,16 +7,16 @@
   & #CleanupSettingsFrame {
     // space out the boxes vertically
     // needs margin for good placement
+    &:extend(.frame all);
     margin-top: 2;
     margin-bottom: 4;
   }
   & QGroupBox {
     margin-bottom: 3;
   }
-}
-
-#CleanupSettingsFrame {
-  &:extend(.frame all);
+  & QScrollArea {
+    &:extend(.frame all);
+  }
 }
 
 #CleanupSettingsShowButton {

@@ -7,7 +7,7 @@
 
 #DirTreeView {
   background-color: @browser-listview-bg-color;
-  alternate-background-color: @browser-listview-bg-color-alt;
+  alternate-background-color: @browser-listview-bg-color;
   border: 1 solid @accent;
   border-right: 0;
 }
@@ -22,7 +22,13 @@ DvItemViewerPanel {
   qproperty-FolderTextColor: @browser-folder-text-color;
   qproperty-SelectedItemBackground: @hl-bg-color;
 }
-
+DvItemViewerTitleBar {
+  qproperty-ColColor: @browser-itemview-col-color;
+  qproperty-ColSortedColor: @browser-itemview-col-color-sorted;
+  qproperty-ColTextColor: @browser-itemview-col-text-color;
+  qproperty-ColBorderColor: @browser-itemview-col-border-color;
+  qproperty-ColReliefColor: @browser-itemview-col-relief-color;
+}
 #FileBrowser {
   & DvItemViewerPanel {
     background-color: @browser-itemview-bg-color;
@@ -84,8 +90,13 @@ StyledTreeView {
   }
 }
 
-// PR #1104
 #CastBrowser {
   border: 0;
   margin: 0;
+  & QSplitter::handle {
+    height: 4;
+  }
+}
+#CastBrowserFolderName {
+  border-bottom: 1px solid @accent;
 }

@@ -10,15 +10,15 @@
 // Resource Location
 @img-url: '../Medium/imgs/black';
 
-@bg: #808080;
+@bg: #DBDBDB;
 @accent: darken(@bg, 25);
 @text-color: #000;
-@text-color-disabled: rgba(0, 0, 0, 0.466);
+@text-color-disabled: rgba(43, 20, 20, 0.466);
 
 @dock-bg-color: darken(@bg, 35);
 
-@hl-bg-color: rgb(34, 91, 175);
-@hl-text-color: #FFFFFF;
+@hl-bg-color: #F19A86;
+@hl-text-color: rgb(0, 0, 0);
 @hl-bg-color-secondary: lighten(@bg, 12);
 
 @label-title: rgb(0, 0, 0);
@@ -90,7 +90,7 @@
 // -----------------------------------------------------------------------------
 
 // Trees
-@tree-bg-color: darken(@bg, 5);
+@tree-bg-color: lighten(@bg, 0);
 @tree-bg-color-alt: lighten(@tree-bg-color, 3);
 @prefs-tree-bg-color: @tree-bg-color;
 @prefs-tree-hl-color: lighten(@prefs-tree-bg-color, 8);
@@ -104,7 +104,7 @@
 @browser-listview-bg-color-alt: @browser-listview-bg-color;
 
 // Right Pane
-@browser-itemview-bg-color: @bg;
+@browser-itemview-bg-color: @tree-bg-color;
 @browser-itemview-bg-color-alt: darken(@browser-itemview-bg-color, 3);
 
 // -----------------------------------------------------------------------------
@@ -161,9 +161,10 @@
 // Textfield
 // -----------------------------------------------------------------------------
 
-@input-bg-color: lighten(@bg, 40);
-@input-text-color: @text-color;
-@input-border-color: darken(@bg, 18);
+@input-bg-color: darken(@bg, 30);
+@input-text-color: rgb(255, 255, 255);
+@input-border-color: darken(@input-bg-color, 5);
+@input-border-radius: 2;
 
 @input-border-color-focus: rgb(1, 89, 253);
 

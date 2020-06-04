@@ -265,9 +265,8 @@ void FlipBook::addFreezeButtonToTitleBar() {
   TPanel *panel = qobject_cast<TPanel *>(parentWidget());
   if (panel) {
     TPanelTitleBar *titleBar = panel->getTitleBar();
-    m_freezeButton           = new TPanelTitleBarButton(
-        titleBar, ":Resources/pane_freeze_off.svg",
-        ":Resources/pane_freeze_over.svg", ":Resources/pane_freeze_on.svg");
+    m_freezeButton =
+        new TPanelTitleBarButton(titleBar, ":Resources/pane_freeze.svg");
     m_freezeButton->setToolTip("Freeze");
     titleBar->add(QPoint(-64, 0), m_freezeButton);
     connect(m_freezeButton, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
@@ -503,7 +502,7 @@ void LoadImagesPopup::onFilePathClicked(const TFilePath &fp) {
 
   if (!level || level->getFrameCount() == 0) goto clear;
 
-  it = level->begin();
+  it   = level->begin();
   m_to = m_from = it->first.getNumber();
 
   for (; it != level->end(); ++it) m_to = it->first.getNumber();
