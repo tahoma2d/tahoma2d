@@ -1376,9 +1376,16 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
 
 void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
                                           const TMouseEvent &e) {
+  TRectD invalidateRect;
   if (m_isStraight) {
-    m_lastPoint = pos;
+    invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+    m_lastPoint    = pos;
     if (e.isCtrlPressed()) {
+      double distance = (m_brushPos.x - m_maxCursorThick + 1) * 0.5;
+      TRectD brushRect =
+          TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
+                 TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
+      invalidateRect += (brushRect);
       double denominator = m_lastPoint.x - m_firstPoint.x;
       if (denominator == 0) denominator == 0.001;
       double slope = ((m_lastPoint.y - m_firstPoint.y) / denominator);
@@ -1406,6 +1413,8 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     }
     m_mousePos = pos;
     m_brushPos = getCenteredCursorPos(pos);
+    // invalidateRect += TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+    invalidate(invalidateRect);
     return;
   }
 
@@ -1423,7 +1432,6 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   double thickness  = (m_pressure.getValue())
                          ? computeThickness(e.m_pressure, m_rasThickness) * 2
                          : maxThickness;
-  TRectD invalidateRect;
   if (m_isMyPaintStyleSelected) {
     TRasterP ras = ti->getRaster();
     TPointD point(centeredPos + rasCenter);
@@ -1885,7 +1893,6 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 void ToonzRasterBrushTool::draw() {
   if (m_isStraight) {
     tglDrawSegment(m_firstPoint, m_lastPoint);
-    invalidate(TRectD(m_firstPoint, m_lastPoint).enlarge(2));
   }
 
   if (m_minThick == 0 && m_maxThick == 0 &&
