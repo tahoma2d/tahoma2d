@@ -723,6 +723,11 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     m_pos           = event.mousePos() * getDevPixRatio();
     m_mouseButton   = event.button();
     m_buttonClicked = true;
+    if (m_tabletEvent && m_tabletState == Touched) {
+      m_tabletState = StartStroke;
+    } else if (m_mouseButton == Qt::LeftButton) {
+      m_mouseState = StartStroke;
+    }
     return;
   }
   if (m_mouseButton != Qt::NoButton) {
