@@ -2548,7 +2548,7 @@ void CellArea::paintEvent(QPaintEvent *event) {
           ->rect((col < 0) ? PredefinedRect::CAMERA_CELL : PredefinedRect::CELL)
           .translated(xy)
           .adjusted(0, 0, -1 - frameAdj, 0);
-  p.setPen(Qt::black);
+  p.setPen(m_viewer->getCellFocusColor());
   p.setBrush(Qt::NoBrush);
   for (int i = 0; i < 2; i++)  // thick border within cell
     p.drawRect(QRect(rect.topLeft() + QPoint(i, i),
