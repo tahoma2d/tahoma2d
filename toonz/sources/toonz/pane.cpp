@@ -104,6 +104,10 @@ void TPanel::paintEvent(QPaintEvent *e) {
     painter.drawRect(dockRect);
   }
 
+  if (m_floating && !m_panelTitleBar->isVisible()) {
+    m_panelTitleBar->showTitleBar(true);
+  }
+
   painter.end();
 }
 
@@ -127,6 +131,9 @@ void TPanel::onCloseButtonPressed() {
 void TPanel::enterEvent(QEvent *event) {
   // Only when Toonz application is active
   QWidget *w = qApp->activeWindow();
+  // if (m_floating) {
+  //    m_panelTitleBar->showTitleBar(true);
+  //}
   if (w) {
     // grab the focus, unless a line-edit is focused currently
     bool shouldSetFocus = true;
@@ -243,10 +250,9 @@ void TPanelTitleBarButton::setPressed(bool pressed) {
 
 void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   QPainter painter(this);
-  painter.drawPixmap(0, 0,
-                     m_pressed
-                         ? m_pressedPixmap
-                         : m_rollover ? m_rolloverPixmap : m_standardPixmap);
+  painter.drawPixmap(
+      0, 0, m_pressed ? m_pressedPixmap : m_rollover ? m_rolloverPixmap
+                                                     : m_standardPixmap);
   painter.end();
 }
 

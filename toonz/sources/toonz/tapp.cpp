@@ -2,6 +2,8 @@
 
 #include "tapp.h"
 
+#include "tenv.h"
+
 // Tnz6 includes
 #include "cleanupsettingspopup.h"
 #include "iocommand.h"
@@ -84,6 +86,9 @@ std::pair<double, double> getCurrentDpi() {
 
 }  // namespace
 
+TEnv::IntVar ShowTitleBarsWhenLocked("ShowTitleBarsWhenLocked", 0);
+TEnv::IntVar CanHideTitleBarsWhenLocked("CanHideTitleBarsWhenLocked", 1);
+
 //=============================================================================
 // TApp
 //-----------------------------------------------------------------------------
@@ -103,7 +108,9 @@ TApp::TApp()
     , m_autosaveTimer(0)
     , m_autosaveSuspended(false)
     , m_isStarting(false)
-    , m_isPenCloseToTablet(false) {
+    , m_isPenCloseToTablet(false)
+    , m_canHideTitleBars(CanHideTitleBarsWhenLocked == 1 ? true : false)
+    , m_showTitleBars(ShowTitleBarsWhenLocked == 1 ? true : false) {
   m_currentScene         = new TSceneHandle();
   m_currentXsheet        = new TXsheetHandle();
   m_currentFrame         = new TFrameHandle();
@@ -207,6 +214,8 @@ TApp::TApp()
 
   UnitParameters::setCurrentDpiGetter(getCurrentDpi);
   assert(ret);
+
+  if (!m_canHideTitleBars) m_showTitleBars = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -733,3 +742,36 @@ QString TApp::getCurrentRoomName() const {
 
 //-----------------------------------------------------------------------------
 void TApp::showMessage(QString message) { emit(sendMessage(message)); }
+
+//-----------------------------------------------------------------------------
+
+void TApp::sendShowTitleBars(bool on, bool force) {
+  if (m_canHideTitleBars || force) {
+    m_showTitleBars         = on;
+    ShowTitleBarsWhenLocked = on ? 1 : 0;
+    emit(showTitleBars(on));
+  } else if (!m_canHideTitleBars) {
+    m_showTitleBars         = true;
+    ShowTitleBarsWhenLocked = 1;
+    emit(showTitleBars(true));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TApp::setShowTitleBars(bool on) {
+  if (m_canHideTitleBars) {
+    m_showTitleBars         = on;
+    ShowTitleBarsWhenLocked = on ? 1 : 0;
+  } else {
+    m_showTitleBars         = true;
+    ShowTitleBarsWhenLocked = 1;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TApp::setCanHideTitleBars(bool on) {
+  m_canHideTitleBars         = on;
+  CanHideTitleBarsWhenLocked = on ? 1 : 0;
+}
