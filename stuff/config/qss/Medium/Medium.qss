@@ -120,7 +120,7 @@ PaletteViewer QToolBar QToolButton:hover {
 }
 .button-flat:pressed,
 PaletteViewer QToolBar QToolButton:pressed {
-  background-color: #222222;
+  background-color: #272727;
 }
 /* -----------------------------------------------------------------------------
    Component: Frames
@@ -136,7 +136,7 @@ PaletteViewer QToolBar QToolButton:pressed {
 #SolidLineFrame,
 #FunctionParametersPanel,
 QGroupBox {
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   border-radius: 2;
 }
 /* -----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ QSplitter::handle {
   width: 4;
 }
 #TDockPlaceholder {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #F77272;
 }
 TPanel {
   background-color: #1a1a1a;
@@ -183,7 +183,7 @@ TPanel {
 #TopBar {
   background: #484848;
   border: 0;
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
   height: 21;
 }
 #TopBar #EditToolLockButton {
@@ -242,9 +242,9 @@ QMenuBar::item:pressed {
   background-color: #5385a6;
 }
 #TopBarTab QToolButton {
-  border-left: 2 solid #222222;
-  border-top: 1 solid #222222;
-  border-right: 1 solid #222222;
+  border-left: 2 solid #272727;
+  border-top: 1 solid #272727;
+  border-right: 1 solid #272727;
   border-bottom: 0;
   margin-left: -1;
   margin-top: 0;
@@ -254,7 +254,7 @@ QMenuBar::item:pressed {
 ----------------------------------------------------------------------------- */
 QMenu {
   background-color: #484848;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   color: #e6e6e6;
   padding: 2 0;
 }
@@ -283,14 +283,14 @@ QMenu::item:disabled:selected {
   /* fix for disabled indicator */
 }
 QMenu::separator {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
   height: 0;
   margin: 2 0;
 }
 QMenu::icon {
   border-radius: 2;
   margin: 0 0 0 3;
-  padding: 0;
+  padding: 1;
 }
 QMenu::icon:checked {
   background-color: #5385a6;
@@ -303,7 +303,7 @@ QMenu::indicator {
 ----------------------------------------------------------------------------- */
 TPanelTitleBar {
   background-color: #393939;
-  border-color: #222222;
+  border-color: #272727;
   border-style: solid;
   border-width: 0 0 1 0;
   height: 20;
@@ -436,12 +436,12 @@ QToolBar {
   padding: 0;
 }
 QToolBar::separator:horizontal {
-  border-left: 1 solid #222222;
+  border-left: 1 solid #272727;
   margin: 0 1;
   width: 0;
 }
 QToolBar::separator:vertical {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
   height: 0;
   margin: 1 0;
 }
@@ -466,8 +466,8 @@ DvScrollWidget QPushButton,
 #ScrollRightButton QPushButton,
 #ScrollUpButton QPushButton,
 #ScrollDownButton QPushButton {
-  background-color: #484848;
-  border: 0 solid #222222;
+  background-color: #696969;
+  border: 0 solid #272727;
   border-radius: 0;
   padding: 0;
   max-width: 16;
@@ -496,11 +496,11 @@ DvScrollWidget QPushButton:pressed,
   min-width: 16;
 }
 #ScrollLeftButton {
-  border-right: 1 solid #222222;
+  border-right: 1 solid #272727;
   image: url('imgs/white/scroll-left.svg');
 }
 #ScrollRightButton {
-  border-left: 1 solid #222222;
+  border-left: 1 solid #272727;
   margin-left: 3;
   image: url('imgs/white/scroll-right.svg');
 }
@@ -512,12 +512,14 @@ DvScrollWidget QPushButton:pressed,
 }
 /* -------------------------------------------------------------------------- */
 #keyFrameNavigator {
-  background: none;
+  background: transparent;
   margin: 0;
   padding: 0;
 }
 #keyFrameNavigator QToolButton {
-  min-width: 18;
+  max-width: 20;
+  max-height: 20;
+  border: 0;
 }
 #keyFrameNavigator #PreviousKey {
   image: url('imgs/white/prevkey.svg');
@@ -536,6 +538,29 @@ DvScrollWidget QPushButton:pressed,
 }
 #keyFrameNavigator #NextKey:disabled {
   image: url('imgs/white/nextkey_disabled.svg');
+}
+#keyFrameNavigator #KeyNo,
+#keyFrameNavigator #KeyPartial,
+#keyFrameNavigator #KeyTotal {
+  image: url(':Resources/keyframe.svg');
+}
+#keyFrameNavigator #KeyNo {
+  background-color: #696969;
+}
+#keyFrameNavigator #KeyNo:hover {
+  background-color: #767676;
+}
+#keyFrameNavigator #KeyPartial {
+  background-color: lime;
+}
+#keyFrameNavigator #KeyPartial:hover {
+  background-color: lightgreen;
+}
+#keyFrameNavigator #KeyTotal {
+  background-color: orange;
+}
+#keyFrameNavigator #KeyTotal:hover {
+  background-color: yellow;
 }
 /* -----------------------------------------------------------------------------
    Item Tree
@@ -621,7 +646,7 @@ QListView {
 #TabBarContainer {
   background-color: #393939;
   qproperty-BottomAboveLineColor: #393939;
-  qproperty-BottomBelowLineColor: #222222;
+  qproperty-BottomBelowLineColor: #272727;
 }
 QTabBar {
   background-color: #393939;
@@ -633,13 +658,13 @@ QTabBar QToolButton {
   margin-right: 0;
   margin-top: -1;
   margin-bottom: 0;
-  border-bottom: 1 solid #222222;
-  border-left: 1 solid #222222;
+  border-bottom: 1 solid #272727;
+  border-left: 1 solid #272727;
   padding: 3 2 2 2;
 }
 QTabBar QToolButton:hover {
-  border-bottom: 1 solid #222222;
-  border-left: 1 solid #222222;
+  border-bottom: 1 solid #272727;
+  border-left: 1 solid #272727;
 }
 QTabBar QToolButton:disabled {
   color: rgba(230, 230, 230, 0.4);
@@ -647,7 +672,7 @@ QTabBar QToolButton:disabled {
 QTabBar::tab {
   margin-top: -1;
   background-color: #393939;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   border-right: 0;
   color: #a1a1a1;
   min-width: 8ex;
@@ -663,7 +688,7 @@ QTabBar::tab:hover {
 }
 QTabBar::tab:last,
 QTabBar::tab:only-one {
-  border-right: 1 solid #222222;
+  border-right: 1 solid #272727;
 }
 /* -----------------------------------------------------------------------------
    Tool Options - Override DvScroll Widget
@@ -829,7 +854,7 @@ QComboBox::drop-down:disabled:editable {
 .ComboBox QAbstractItemView,
 QComboBox QAbstractItemView {
   background-color: #484848;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   selection-background-color: #5385a6;
   selection-color: #ffffff;
 }
@@ -1126,7 +1151,7 @@ QSlider::handle:horizontal:disabled {
 QProgressBar {
   text-align: center;
   background-color: #2f2f2f;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   border-radius: 3;
   /* 2 fits inside 3 */
   padding: 0;
@@ -1135,7 +1160,7 @@ QProgressBar::chunk {
   margin: -1;
   /* hide border of chunk except for right side */
   background-color: #15a136;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   border-radius: 2;
 }
 /* -----------------------------------------------------------------------------
@@ -1146,7 +1171,7 @@ QProgressBar::chunk {
 #DirTreeView {
   background-color: #2f2f2f;
   alternate-background-color: #2f2f2f;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   border-right: 0;
 }
 /* Right Pane
@@ -1162,7 +1187,7 @@ DvItemViewerTitleBar {
   qproperty-ColColor: #484848;
   qproperty-ColSortedColor: #484848;
   qproperty-ColTextColor: #e6e6e6;
-  qproperty-ColBorderColor: #222222;
+  qproperty-ColBorderColor: #272727;
   qproperty-ColReliefColor: #484848;
 }
 #FileBrowser DvItemViewerPanel,
@@ -1171,9 +1196,9 @@ DvItemViewerTitleBar {
 }
 #FileBrowser #castFrame,
 #SceneCast #castFrame {
-  border-top: 1 solid #222222;
-  border-right: 1 solid #222222;
-  border-bottom: 1 solid #222222;
+  border-top: 1 solid #272727;
+  border-right: 1 solid #272727;
+  border-bottom: 1 solid #272727;
   margin: 0;
 }
 #FileBrowser QToolButton,
@@ -1188,7 +1213,7 @@ StyledTreeView {
   qproperty-SelectedFolderTextColor: #ffffff;
   alternate-background-color: #363636;
   background-color: #2f2f2f;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
 }
 #FileDoesNotExistLabel {
   color: #ff0000;
@@ -1197,7 +1222,7 @@ StyledTreeView {
    Scene Cast
 ----------------------------------------------------------------------------- */
 #SceneCast QToolBar {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
 }
 #SceneCast QToolButton {
   margin: 3 1 2 1;
@@ -1211,7 +1236,7 @@ StyledTreeView {
   height: 4;
 }
 #CastBrowserFolderName {
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #272727;
 }
 /* -----------------------------------------------------------------------------
    Level Strip
@@ -1328,14 +1353,14 @@ PencilTestPopup {
   margin-left: -4;
 }
 #StopMotionController #bottomWidget {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
   padding: 3 2 8 3;
 }
 #StopMotionController #bottomWidget QPushButton {
   padding: 3 5;
 }
 #StopMotionTabBar::tab::first {
-  border-left: 1 solid #222222;
+  border-left: 1 solid #272727;
 }
 /* -----------------------------------------------------------------------------
    Unknowns + Legacy
@@ -1369,7 +1394,7 @@ QStatusBar #StatusBarLabel {
   margin-left: -5px;
 }
 #StyleEditor #bottomWidget {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
   padding: 3 2 8 3;
 }
 #StyleEditor #bottomWidget QPushButton {
@@ -1408,7 +1433,7 @@ QStatusBar #StatusBarLabel {
   image: url('imgs/white/scroll-left.svg');
 }
 #PlainColorPageParts {
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
 }
 #PlainColorPageParts QLineEdit {
   max-width: 35;
@@ -1447,11 +1472,11 @@ PaletteViewer QToolBar QToolButton {
   border-left: 0;
 }
 #PaletteTabBar::tab:only-one {
-  border-right: 1 solid #222222;
+  border-right: 1 solid #272727;
 }
 #PageViewer {
   qproperty-TextColor: #e6e6e6;
-  qproperty-ListLineColor: #222222;
+  qproperty-ListLineColor: #272727;
 }
 #PaletteLockButton {
   border-radius: 0;
@@ -1479,7 +1504,7 @@ QDialog {
 }
 QDialog #dialogButtonFrame {
   background-color: #3e3e3e;
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
 }
 QDialog #dialogButtonFrame QPushButton {
   border-color: #3e3e3e;
@@ -1510,7 +1535,7 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
 #PreferencesPopup QListWidget {
   background-color: #2f2f2f;
   alternate-background-color: #2f2f2f;
-  border: 1 solid #222222;
+  border: 1 solid #272727;
   font-size: 13px;
 }
 #PreferencesPopup QListWidget::item {
@@ -1529,7 +1554,7 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
    Keyboard Shortcuts
 ----------------------------------------------------------------------------- */
 #ShortcutTree {
-  border: 1 solid #222222;
+  border: 1 solid #272727;
 }
 #ShortcutTree::item {
   padding: 1 0;
@@ -1574,7 +1599,7 @@ ProjectPopup QLabel {
 ----------------------------------------------------------------------------- */
 SchematicViewer {
   qproperty-TextColor: #e6e6e6;
-  qproperty-VerticalLineColor: rgba(0, 0, 0, 0.6);
+  qproperty-VerticalLineColor: #272727;
   qproperty-LevelColumnColor: #4C6E4C;
   qproperty-VectorColumnColor: #7B7B4C;
   qproperty-ChildColumnColor: #6A526B;
@@ -1625,13 +1650,13 @@ SchematicViewer {
 }
 #SchematicSceneViewer {
   background-color: #3b3b3b;
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
 }
 /* -----------------------------------------------------------------------------
    FX Settings
 ----------------------------------------------------------------------------- */
 FxSettings QToolBar {
-  border: 1 1 0 1 solid #222222;
+  border: 1 1 0 1 solid #272727;
   min-height: 23;
   padding: 3 0;
 }
@@ -1675,7 +1700,7 @@ ChannelBar {
   color: #e6e6e6;
 }
 #Tasks QToolBar {
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
   margin: 0;
   padding: 0;
 }
@@ -1692,11 +1717,11 @@ ChannelBar {
    Tool Options
 ----------------------------------------------------------------------------- */
 #ToolOptions TPanelTitleBar {
-  border-right: 1 solid #222222;
+  border-right: 1 solid #272727;
   border-bottom: 0;
 }
 #CommandBar TPanelTitleBar {
-  border-right: 1 solid #222222;
+  border-right: 1 solid #272727;
   border-bottom: 0;
 }
 IconViewField {
@@ -1789,7 +1814,7 @@ QToolBar#WidePaddingToolBar QToolButton {
    ComboViewer / Viewer / FlipBook
 ----------------------------------------------------------------------------- */
 #ComboViewerPanel Toolbar {
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
 }
 #ComboViewerPanel Toolbar::separator:horizontal {
   margin: 0 0 0 2;
@@ -1798,14 +1823,14 @@ QToolBar#WidePaddingToolBar QToolButton {
   margin: 2 0 3 2;
 }
 #ComboViewerToolOptions {
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
 }
 #ComboViewer #ToolBarContainer,
 #ViewerPanel #ToolBarContainer,
 FlipBook #ToolBarContainer {
   background-color: transparent;
-  border-top: 2 solid #222222;
-  border-bottom: 1 solid #222222;
+  border-top: 2 solid #272727;
+  border-bottom: 1 solid #272727;
   padding-right: -1;
 }
 #flipCustomize {
@@ -1898,7 +1923,7 @@ Ruler {
 ----------------------------------------------------------------------------- */
 #xsheetArea,
 #ScrollArea {
-  background-color: #343434;
+  background-color: #3b3b3b;
   border: 0;
 }
 #xsheetScrollArea {
@@ -1906,6 +1931,19 @@ Ruler {
 }
 #cornerWidget QToolButton {
   padding: 0;
+}
+#XsheetCellArea QLineEdit {
+  margin-top: 1;
+}
+#XsheetCellArea QLineEdit:focus {
+  border-radius: 0;
+  border-width: 2;
+  border-left-width: 2;
+  border-color: black;
+  background-color: rgba(0, 0, 0, 0.65);
+}
+#RenameCellField {
+  padding-right: 3;
 }
 /* xsheetColumnHeader (Context Menus)
 ----------------------------------------------------------------------------- */
@@ -1930,52 +1968,54 @@ Ruler {
 ----------------------------------------------------------------------------- */
 XsheetViewer {
   qproperty-TextColor: #e6e6e6;
-  qproperty-BGColor: #3b3b3b;
-  qproperty-LightLineColor: rgba(0, 0, 0, 0.25);
+  qproperty-BGColor: #404040;
+  qproperty-LightLineColor: #272727;
   qproperty-MarkerLineColor: #1E96C4;
-  qproperty-VerticalLineColor: rgba(0, 0, 0, 0.6);
-  qproperty-VerticalLineHeadColor: #808080;
+  qproperty-VerticalLineColor: #272727;
+  qproperty-VerticalLineHeadColor: #272727;
   qproperty-PreviewFrameTextColor: #9fdaff;
-  qproperty-CurrentRowBgColor: #506082;
-  qproperty-OnionSkinAreaBgColor: #363636;
-  qproperty-EmptyColumnHeadColor: #626262;
-  qproperty-EmptyCellColor: #404040;
-  qproperty-NotEmptyColumnColor: #484848;
-  qproperty-SelectedEmptyCellColor: #6c6c6c;
+  qproperty-CurrentRowBgColor: rgba(83, 133, 166, 0.7);
+  qproperty-OnionSkinAreaBgColor: #393939;
+  qproperty-CellFocusColor: #000;
+  qproperty-EmptyColumnHeadColor: #484848;
+  qproperty-EmptyCellColor: #393939;
+  qproperty-NotEmptyColumnColor: #404040;
+  qproperty-SelectedEmptyCellColor: rgba(83, 133, 166, 0.3);
   qproperty-LevelColumnColor: #4C6E4C;
   qproperty-LevelColumnBorderColor: #8FB38F;
-  qproperty-SelectedLevelColumnColor: #678667;
+  qproperty-SelectedLevelColumnColor: #6d9a6d;
   qproperty-VectorColumnColor: #7B7B4C;
   qproperty-VectorColumnBorderColor: #BBBB9A;
-  qproperty-SelectedVectorColumnColor: #949466;
+  qproperty-SelectedVectorColumnColor: #a5a56e;
   qproperty-ChildColumnColor: #6A526B;
   qproperty-ChildColumnBorderColor: #B1A3B3;
-  qproperty-SelectedChildColumnColor: #816e82;
+  qproperty-SelectedChildColumnColor: #947595;
   qproperty-FullcolorColumnColor: #657A96;
   qproperty-FullcolorColumnBorderColor: #9EB8BB;
-  qproperty-SelectedFullcolorColumnColor: #8895a6;
+  qproperty-SelectedFullcolorColumnColor: #92a1b6;
   qproperty-FxColumnColor: #56553C;
   qproperty-FxColumnBorderColor: #95958A;
-  qproperty-SelectedFxColumnColor: #6f6e56;
+  qproperty-SelectedFxColumnColor: #83825b;
   qproperty-ReferenceColumnColor: #616161;
   qproperty-ReferenceColumnBorderColor: #A2A2A2;
-  qproperty-SelectedReferenceColumnColor: #7a7a7a;
+  qproperty-SelectedReferenceColumnColor: #878787;
   qproperty-PaletteColumnColor: #3A655F;
   qproperty-PaletteColumnBorderColor: #86ACA7;
-  qproperty-SelectedPaletteColumnColor: #52807a;
+  qproperty-SelectedPaletteColumnColor: #56968d;
   qproperty-MeshColumnColor: #684D86;
   qproperty-MeshColumnBorderColor: #BA92EF;
-  qproperty-SelectedMeshColumnColor: #82689e;
+  qproperty-SelectedMeshColumnColor: #8e72ae;
   qproperty-SoundTextColumnColor: #c8c8c8;
   qproperty-SoundTextColumnBorderColor: #8c8c8c;
-  qproperty-SelectedSoundTextColumnColor: #e2e2e2;
+  qproperty-SelectedSoundTextColumnColor: #eeeeee;
   qproperty-SoundColumnColor: #657456;
   qproperty-SoundColumnBorderColor: #A0AF7D;
-  qproperty-SelectedSoundColumnColor: #7e8b72;
+  qproperty-SelectedSoundColumnColor: #8b9c7a;
   qproperty-SoundColumnHlColor: #34FE5E;
   qproperty-SoundColumnTrackColor: #B6C29D;
-  qproperty-ColumnHeadPastelizer: #000;
-  qproperty-SelectedColumnHead: #506082;
+  qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0.5);
+  qproperty-SelectedColumnHead: rgba(83, 133, 166, 0.7);
+  qproperty-PlayRangeColor: #484848;
   qproperty-LightLightBGColor: #404040;
   qproperty-LightBGColor: #f0f0f0;
   qproperty-DarkBGColor: #e1e1e1;
@@ -2043,7 +2083,7 @@ XsheetViewer {
    Function Editor
 ----------------------------------------------------------------------------- */
 #FunctionEditor QToolBar {
-  border-bottom: 1 solid #222222;
+  border-bottom: 1 solid #272727;
 }
 #FunctionEditor QToolBar QToolBar {
   border: 0;
@@ -2055,7 +2095,7 @@ XsheetViewer {
   height: 18;
 }
 #FunctionEditorTree {
-  border-top: 1 solid #222222;
+  border-top: 1 solid #272727;
 }
 FunctionTreeView {
   qproperty-TextColor: #e6e6e6;
@@ -2074,21 +2114,21 @@ FunctionPanel {
 }
 SpreadsheetViewer {
   qproperty-LightLightBGColor: #404040;
-  qproperty-CurrentRowBgColor: #506082;
-  qproperty-LightLineColor: rgba(0, 0, 0, 0.25);
+  qproperty-CurrentRowBgColor: rgba(83, 133, 166, 0.7);
+  qproperty-LightLineColor: #272727;
   qproperty-MarkerLineColor: #1E96C4;
-  qproperty-BGColor: #484848;
-  qproperty-VerticalLineColor: rgba(0, 0, 0, 0.6);
-  qproperty-KeyFrameColor: #995d1d;
-  qproperty-KeyFrameBorderColor: #c9b04b;
-  qproperty-SelectedKeyFrameColor: #be772b;
-  qproperty-InBetweenColor: #666250;
-  qproperty-InBetweenBorderColor: #cdcec8;
-  qproperty-SelectedInBetweenColor: #7d7a6c;
-  qproperty-SelectedEmptyColor: #6c6c6c;
+  qproperty-BGColor: #404040;
+  qproperty-VerticalLineColor: #272727;
+  qproperty-KeyFrameColor: orange;
+  qproperty-KeyFrameBorderColor: #ffc04d;
+  qproperty-SelectedKeyFrameColor: #fab538;
+  qproperty-InBetweenColor: cyan;
+  qproperty-InBetweenBorderColor: #4dffff;
+  qproperty-SelectedInBetweenColor: #38fafa;
+  qproperty-SelectedEmptyColor: rgba(83, 133, 166, 0.3);
   qproperty-SelectedSceneRangeEmptyColor: #757575;
   qproperty-TextColor: #e6e6e6;
-  qproperty-ColumnHeaderBorderColor: #808080;
+  qproperty-ColumnHeaderBorderColor: #272727;
 }
 #ExpressionField {
   background-color: #e6e6e6;
@@ -2109,4 +2149,13 @@ SpreadsheetViewer {
 #FunctionSegmentViewerLinkButton:disabled {
   background-image: url('imgs/white/segment_disabled.svg');
   background-repeat: no-repeat;
+}
+/* Keyframe Button Colors
+----------------------------------------------------------------------------- */
+ParamFieldKeyToggle {
+  qproperty-KeyOffColor: #696969;
+  qproperty-KeyModifiedColor: red;
+  qproperty-KeyOnColor: orange;
+  qproperty-KeyInbetweenColor: cyan;
+  qproperty-KeyHighlightColor: rgba(255, 255, 255, 0.3);
 }

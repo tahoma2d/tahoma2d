@@ -153,7 +153,7 @@ QMenu {
   &::icon {
     border-radius: 2;
     margin: 0 0 0 3;
-    padding: 0;
+    padding: 1;
     &:checked {
       background-color: @hl-bg-color;
     }
@@ -372,7 +372,7 @@ QToolButton {
 
 .DvScrollWidget {
   & QPushButton {
-    background-color: @bg;
+    background-color: @button-bg-color;
     border: 0 solid @accent;
     border-radius: 0;
     padding: 0;
@@ -420,11 +420,13 @@ DvScrollWidget {
 /* -------------------------------------------------------------------------- */
 
 #keyFrameNavigator {
-  background: none;
+  background: transparent;
   margin: 0;
   padding: 0;
   & QToolButton {
-    min-width: 18;
+    max-width: 20;
+    max-height: 20;
+    border: 0;
   }
   #PreviousKey {
     image: url('@{img-url}/prevkey.svg');
@@ -443,6 +445,29 @@ DvScrollWidget {
 	  &:disabled {
 		  image: url('@{img-url}/nextkey_disabled.svg');
 	  }
+  }
+  #KeyNo,
+  #KeyPartial,
+  #KeyTotal {
+    image: url(':Resources/keyframe.svg');
+  }
+  #KeyNo {
+    background-color: @keyframe-off-color;
+    &:hover {
+      background-color: @keyframe-off-color-hover;
+    }
+  }
+  #KeyPartial {
+    background-color: @keyframe-partial-color;
+    &:hover {
+      background-color: @keyframe-partial-color-hover;
+    }
+  }
+  #KeyTotal {
+    background-color: @keyframe-total-color;
+    &:hover {
+      background-color: @keyframe-total-color-hover;
+    }
   }
 }
 
