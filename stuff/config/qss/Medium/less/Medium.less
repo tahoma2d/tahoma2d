@@ -12,8 +12,8 @@
 @img-url: 'imgs/white';
 
 @bg: #484848;               // normal
-@bg-dark: darken(@bg, 10);    // dark
-@accent: darken(@bg, 15);     // darkest
+@bg-dark: darken(@bg, 13);    // dark
+@accent: darken(@bg, 13);     // darkest
 
 @text-color: rgb(230, 230, 230);
 @text-color-disabled: rgba(230, 230, 230, 0.4);
@@ -25,7 +25,7 @@
 @hl-text-color-secondary: @text-color;
 
 @dock-bg-color: darken(@bg, 18);
-@dock-placeholder-color: rgba(0, 0, 0, 0.5);
+@dock-placeholder-color: #F77272;
 
 @dialogButtonFrame-bg-color: darken(@bg, 4);
 @dialogButtonFrame-border-color: @accent;
@@ -87,7 +87,7 @@
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color: @bg-dark;
+@scrollbar-bg-color: darken(@bg, 10);
 
 // Handle
 @scrollbar-handle-border-size: 1;
@@ -339,6 +339,22 @@
 @progressbar-chunk-border-color: @accent;
 
 // -----------------------------------------------------------------------------
+// Keyframes
+// -----------------------------------------------------------------------------
+
+@keyframe-off-color: @button-bg-color;
+@keyframe-off-color-hover: @button-bg-color-hover;
+@keyframe-partial-color: lime;
+@keyframe-partial-color-hover: lightgreen;
+@keyframe-total-color: orange;
+@keyframe-total-color-hover: yellow;
+
+// For use in FX Settings Panels
+@keyframe-highlight-color: rgba(255, 255, 255, 0.3);
+@keyframe-inbetween-color: cyan;
+@keyframe-modified-color: red;
+
+// -----------------------------------------------------------------------------
 // XSheet
 // -----------------------------------------------------------------------------
 
@@ -353,68 +369,71 @@
 
 // XSheet Spreadsheet Viewer
 @xsheet-text-color:                         @text-color;
-@xsheet-bg-color:                           darken(@bg, 5);
-@xsheet-empty-bg-color:                     darken(@bg, 8);
-@xsheet-LightLine-color:                    rgba(0, 0, 0, 0.25);
+@xsheet-bg-color:                           darken(@bg, 3); // frame number column
+@xsheet-empty-bg-color:                     darken(@bg, 5); // column space
+@xsheet-LightLine-color:                    darken(@bg, 13);
 @xsheet-MarkerLine-color:                   #1E96C4;
-@xsheet-VerticalLine-color:                 rgba(0, 0, 0, 0.6);
-@xsheet-VerticalLineHead-color:             lighten(@bg, 21.9608);
+@xsheet-VerticalLine-color:                 darken(@bg, 13);
+@xsheet-VerticalLineHead-color:             darken(@bg, 13); // function editior header
 @xsheet-PreviewFrameText-color:             @label-title;
-@xsheet-CurrentRowBG-color:                 #506082;
-@xsheet-OnionSkinAreaBG-color:              darken(@bg, 7);
+@xsheet-CurrentRowBG-color:                 fade(@hl-bg-color, 70);
+@xsheet-OnionSkinAreaBG-color:              darken(@title-bg-color, 0);
+@xsheet-CellArea-bg-color-focus:            rgba(0, 0, 0, 0.65);
+@xsheet-CellFocus-color:                    #000;
 
-@xsheet-EmptyColumnHead-color:              lighten(@bg, 10.1961);
+@xsheet-EmptyColumnHead-color:              @bg;
 
-@xsheet-EmptyCell-color:                    darken(@bg, 3.1373);
-@xsheet-NotEmptyColumn-color:               @bg;
-@xsheet-SelectedEmptyCell-color:            lighten(@bg, 14.1176);
+@xsheet-EmptyCell-color:                    darken(@bg, 6);
+@xsheet-NotEmptyColumn-color:               darken(@bg, 3);
+@xsheet-SelectedEmptyCell-color:            fade(@hl-bg-color, 30);//lighten(@bg, 14.1176);
 
 @xsheet-LevelColumn-color:                  #4C6E4C;
 @xsheet-LevelColumnBorder-color:            #8FB38F;
-@xsheet-SelectedLevelColumn-color:          lighten(desaturate(@xsheet-LevelColumn-color, 5), 10);
+@xsheet-SelectedLevelColumn-color:          lighten(@xsheet-LevelColumn-color, 15);
 
 @xsheet-VectorColumn-color:                 #7B7B4C;
 @xsheet-VectorColumnBorder-color:           #BBBB9A;
-@xsheet-SelectedVectorColumn-color:         lighten(desaturate(@xsheet-VectorColumn-color, 5), 10);
+@xsheet-SelectedVectorColumn-color:         lighten(@xsheet-VectorColumn-color, 15);
 
 @xsheet-ChildColumn-color:                  #6A526B;
 @xsheet-ChildColumnBorder-color:            #B1A3B3;
-@xsheet-SelectedChildColumn-color:          lighten(desaturate(@xsheet-ChildColumn-color, 5), 10);
+@xsheet-SelectedChildColumn-color:          lighten(@xsheet-ChildColumn-color, 15);
 
 @xsheet-FullColorColumn-color:              #657A96;
 @xsheet-FullColorColumnBorder-color:        #9EB8BB;
-@xsheet-SelectedFullColorColumn-color:      lighten(desaturate(@xsheet-FullColorColumn-color, 5), 10);
+@xsheet-SelectedFullColorColumn-color:      lighten(@xsheet-FullColorColumn-color, 15);
 
 @xsheet-FxColumn-color:                     #56553C;
 @xsheet-FxColumnBorder-color:               #95958A;
-@xsheet-SelectedFxColumn-color:             lighten(desaturate(@xsheet-FxColumn-color, 5), 10);
+@xsheet-SelectedFxColumn-color:             lighten(@xsheet-FxColumn-color, 15);
 
 @xsheet-ReferenceColumn-color:              #616161;
 @xsheet-ReferenceColumnBorder-color:        #A2A2A2;
-@xsheet-SelectedReferenceColumn-color:      lighten(desaturate(@xsheet-ReferenceColumn-color, 5), 10);
+@xsheet-SelectedReferenceColumn-color:      lighten(@xsheet-ReferenceColumn-color, 15);
 
 @xsheet-PaletteColumn-color:                #3A655F;
 @xsheet-PaletteColumnBorder-color:          #86ACA7;
-@xsheet-SelectedPaletteColumn-color:        lighten(desaturate(@xsheet-PaletteColumn-color, 5), 10);
+@xsheet-SelectedPaletteColumn-color:        lighten(@xsheet-PaletteColumn-color, 15);
 
 @xsheet-MeshColumn-color:                   #684D86;
 @xsheet-MeshColumnBorder-color:             #BA92EF;
-@xsheet-SelectedMeshColumn-color:           lighten(desaturate(@xsheet-MeshColumn-color, 5), 10);
+@xsheet-SelectedMeshColumn-color:           lighten(@xsheet-MeshColumn-color, 15);
 
 @xsheet-SoundTextColumn-color:              #c8c8c8;
 @xsheet-SoundTextColumnBorder-color:        #8c8c8c;
-@xsheet-SelectedSoundTextColumn-color:        lighten(desaturate(@xsheet-SoundTextColumn-color, 5), 10);
+@xsheet-SelectedSoundTextColumn-color:        lighten(@xsheet-SoundTextColumn-color, 15);
 
 @xsheet-SoundColumn-color:                  #657456;
 @xsheet-SoundColumnBorder-color:            #A0AF7D;
-@xsheet-SelectedSoundColumn-color:          lighten(desaturate(@xsheet-SoundColumn-color, 5), 10);
+@xsheet-SelectedSoundColumn-color:          lighten(@xsheet-SoundColumn-color, 15);
 @xsheet-SoundColumnHL-color:                #34FE5E;
 @xsheet-SoundColumnTrack-color:             #B6C29D;
 
-@xsheet-ColumnHeadPastelizer-color:         #000;
-@xsheet-SelectedColumnHead-color:           #506082;
+@xsheet-ColumnHeadPastelizer-color:         rgba(0, 0, 0, 0.5);
+@xsheet-SelectedColumnHead-color:           fade(@hl-bg-color, 70);
+@xsheet-PlayRange-Color:                    lighten(@bg, 0);
 
-@xsheet-LightLightBG-color:                 darken(@bg, 3.1373);
+@xsheet-LightLightBG-color:                 darken(@bg, 3.1373); // function editor bg
 @xsheet-LightBG-color:                      lighten(@bg, 65.8824);
 @xsheet-DarkBG-color:                       lighten(@bg, 60.0000);
 @xsheet-DarkLine-color:                     lighten(@bg, 30.5882);
@@ -534,12 +553,12 @@
 @function-panel-Selected-color: #FFA500;
 
 // Function Spreadsheet Viewer
-@function-KeyFrame-color: rgb(153,93,29);
-@function-KeyFrameBorder-color: rgb(201,176,75);
+@function-KeyFrame-color: @keyframe-total-color; //rgb(153,93,29);
+@function-KeyFrameBorder-color: lighten(@function-KeyFrame-color, 15); //rgb(201,176,75);
 @function-SelectedKeyFrame-color: lighten(desaturate(@function-KeyFrame-color, 5), 10);
 
-@function-Inbetween-color: rgb(102,98,80);
-@function-InbetweenBorder-color: rgb(205,206,200);
+@function-Inbetween-color: @keyframe-inbetween-color; //rgb(102,98,80);
+@function-InbetweenBorder-color: lighten(@keyframe-inbetween-color, 15); //rgb(205,206,200);
 @function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
 
 @function-SelectedSceneRangeEmpty-color: lighten(@bg, 17.6471);

@@ -110,6 +110,25 @@ class DVAPI ParamFieldKeyToggle final : public QWidget {
 
 public:
   enum Status { NOT_ANIMATED, NOT_KEYFRAME, MODIFIED, KEYFRAME };
+  QPixmap m_pixmap;
+  QIcon m_icon;
+
+  // keyframe colors
+  QColor m_keyOffColor;
+  QColor m_keyOnColor;
+  QColor m_keyModifiedColor;
+  QColor m_keyHighlightColor;
+  QColor m_keyInbetweenColor;
+
+  // keyframe colors
+  Q_PROPERTY(QColor KeyOffColor READ getKeyOffColor WRITE setKeyOffColor)
+  Q_PROPERTY(QColor KeyOnColor READ getKeyOnColor WRITE setKeyOnColor)
+  Q_PROPERTY(QColor KeyModifiedColor READ getKeyModifiedColor WRITE
+                 setKeyModifiedColor)
+  Q_PROPERTY(QColor KeyInbetweenColor READ getKeyInbetweenColor WRITE
+                 setKeyInbetweenColor)
+  Q_PROPERTY(QColor KeyHighlightColor READ getKeyHighlightColor WRITE
+                 setKeyHighlightColor)
 
 private:
   Status m_status;
@@ -129,6 +148,22 @@ protected:
   void mousePressEvent(QMouseEvent *) override;
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
+
+  // keyframe colors
+  void setKeyOffColor(const QColor &color) { m_keyOffColor = color; }
+  QColor getKeyOffColor() const { return m_keyOffColor; }
+  void setKeyOnColor(const QColor &color) { m_keyOnColor = color; }
+  QColor getKeyOnColor() const { return m_keyOnColor; }
+  void setKeyModifiedColor(const QColor &color) { m_keyModifiedColor = color; }
+  QColor getKeyModifiedColor() const { return m_keyModifiedColor; }
+  void setKeyHighlightColor(const QColor &color) {
+    m_keyHighlightColor = color;
+  }
+  QColor getKeyHighlightColor() const { return m_keyHighlightColor; }
+  void setKeyInbetweenColor(const QColor &color) {
+    m_keyInbetweenColor = color;
+  }
+  QColor getKeyInbetweenColor() const { return m_keyInbetweenColor; }
 
 signals:
   void keyToggled();

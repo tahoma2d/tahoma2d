@@ -8,6 +8,8 @@
 
 // TnzBase includes
 #include "tbasefx.h"
+#include "tparamcontainer.h"
+#include "tparamset.h"
 
 // TnzLib includes
 #include "toonz/tstageobject.h"
@@ -114,6 +116,20 @@ bool isColumnSelectionTerminalFx(TFx *fx, TFxSet *terminalFxs,
   }
 
   return false;
+}
+
+//------------------------------------------------------
+
+template <typename ParamCont>
+void setGrammerToParams(const ParamCont *cont,
+                        const TSyntax::Grammar *grammer) {
+  for (int p = 0; p != cont->getParamCount(); ++p) {
+    TParam &param = *cont->getParam(p);
+    if (TDoubleParam *dp = dynamic_cast<TDoubleParam *>(&param))
+      dp->setGrammar(grammer);
+    else if (TParamSet *paramSet = dynamic_cast<TParamSet *>(&param))
+      setGrammerToParams(paramSet, grammer);
+  }
 }
 
 }  // namespace
@@ -326,7 +342,7 @@ TStageObjectId TColumnDataElement::restoreColumn(TXsheet *xsh, int index,
   TPointD dagPos = TConst::nowhere;
   if (column) {
     if (column->getFx())
-      dagPos = column->getFx()->getAttributes()->getDagNodePos();
+      dagPos            = column->getFx()->getAttributes()->getDagNodePos();
     if (doClone) column = column->clone();
     xsh->insertColumn(index, column);
   } else
@@ -1165,6 +1181,23 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
 
       obj->setDagNodePos(oldPos + offset);
     }
+  }
+
+  // reset grammers for all parameters of pasted stage objects and fxs
+  // or they fails to refer to other parameters via expression
+  // if they are pasted in different xsheet
+  TSyntax::Grammar *grammar = xsh->getStageObjectTree()->getGrammar();
+  for (auto id : restoredIds) {
+    TStageObject *obj = xsh->getStageObject(id);
+    for (int c = 0; c != TStageObject::T_ChannelCount; ++c)
+      obj->getParam((TStageObject::Channel)c)->setGrammar(grammar);
+    if (const PlasticSkeletonDeformationP &sd =
+            obj->getPlasticSkeletonDeformation())
+      sd->setGrammar(grammar);
+  }
+  std::map<TFx *, TFx *>::const_iterator it;
+  for (it = fxTable.begin(); it != fxTable.end(); ++it) {
+    setGrammerToParams(it->second->getParams(), grammar);
   }
 
   return restoredIds;

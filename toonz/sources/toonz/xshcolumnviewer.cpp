@@ -763,10 +763,10 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   bool isCameraSelected = col == -1 && isCurrent && !isEditingSpline;
 
   QColor pastelizer(m_viewer->getColumnHeadPastelizer());
-  pastelizer.setAlpha(50);
+  pastelizer.setAlpha(0);
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
-  colorSelection.setAlpha(170);
+  // colorSelection.setAlpha(170);
   p.fillRect(rect, isSelected ? colorSelection : pastelizer);
 }
 
