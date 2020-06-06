@@ -931,6 +931,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Interface
       {CurrentStyleSheetName, tr("Theme:")},
+      {iconTheme, tr("Enable dark icons")},
       {pixelsOnly, tr("All imported images will use the same DPI")},
       //{ oldUnits,                               tr("") },
       //{ oldCameraUnits,                         tr("") },
@@ -1383,10 +1384,16 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
-  int row = lay->rowCount();
-  lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
+  //insertUI(iconTheme, lay);
+
+  lay->addWidget(new QLabel(tr("Icon theme:"), this), 2, 0,
                  Qt::AlignRight | Qt::AlignVCenter);
-  lay->addWidget(createUI(pixelsOnly), row, 1);
+  lay->addWidget(createUI(iconTheme), 2, 1);
+
+  int row = lay->rowCount();
+  lay->addWidget(new QLabel(tr("Pixels Only:"), this), 3, 0,
+                 Qt::AlignRight | Qt::AlignVCenter);
+  lay->addWidget(createUI(pixelsOnly), 3, 1);
 
   insertUI(linearUnits, lay, getComboItemList(linearUnits));
   insertUI(cameraUnits, lay,

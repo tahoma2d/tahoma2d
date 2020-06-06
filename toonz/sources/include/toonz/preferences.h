@@ -186,6 +186,7 @@ public:
 
   // Interface  tab
   QStringList getStyleSheetList() const { return m_styleSheetList; }
+  bool getIconTheme() const {return getBoolValue(iconTheme); }
   void storeOldUnits();  // OK
   void resetOldUnits();  // OK
   QStringList getLanguageList() const { return m_languageList; }
