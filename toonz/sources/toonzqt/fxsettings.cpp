@@ -657,9 +657,7 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
   // TabBar
   m_tabBar = new TabBar(this);
   // This widget is used to set the background color of the tabBar
-  // using the styleSheet.
-  // It is also used to take 6px on the left before the tabBar
-  // and to draw the two lines on the bottom size
+  // using the styleSheet and to draw the two lines on the bottom size.
   m_tabBarContainer = new TabBarContainter(this);
   m_pagesList       = new QStackedWidget(this);
 
@@ -675,12 +673,12 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
 
   //----layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(1);
+  mainLayout->setMargin(0);
   mainLayout->setSpacing(0);
   {
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setMargin(0);
-    hLayout->addSpacing(6);
+    hLayout->addSpacing(-1);
     {
       hLayout->addWidget(m_tabBar);
       hLayout->addStretch(1);
@@ -978,7 +976,7 @@ ParamViewer::ParamViewer(QWidget *parent, Qt::WFlags flags)
   showSwatchButton->setFocusPolicy(Qt::NoFocus);
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->setMargin(1);
+  mainLayout->setMargin(0);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_tablePageSet, 1);
