@@ -27,9 +27,7 @@ LayerHeaderPanel::LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent,
   QRect rect           = o->rect(PredefinedRect::LAYER_HEADER_PANEL);
 
   setObjectName("layerHeaderPanel");
-
   setFixedSize(rect.size());
-
   setMouseTracking(true);
 }
 
@@ -62,11 +60,6 @@ void LayerHeaderPanel::paintEvent(QPaintEvent *event) {
 
   const Orientation *o = Orientations::leftToRight();
 
-  QColor background      = m_viewer->getBGColor();
-  QColor slightlyLighter = {mix(background, Qt::white, 0.95)};
-  QRect rect             = QRect(QPoint(0, 0), size());
-  p.fillRect(rect.adjusted(0, 0, -3, 0), slightlyLighter);
-
   QImage preview = (m_buttonHighlighted == PreviewButton
                         ? m_viewer->getLayerHeaderPreviewOverImage()
                         : m_viewer->getLayerHeaderPreviewImage());
@@ -80,22 +73,6 @@ void LayerHeaderPanel::paintEvent(QPaintEvent *event) {
   drawIcon(p, PredefinedRect::PANEL_EYE, boost::none, preview);
   drawIcon(p, PredefinedRect::PANEL_PREVIEW_LAYER, boost::none, camstand);
   drawIcon(p, PredefinedRect::PANEL_LOCK, boost::none, lock);
-
-  QRect numberRect = o->rect(PredefinedRect::LAYER_NUMBER);
-
-  int leftadj = 2;
-  if (Preferences::instance()->isShowColumnNumbersEnabled()) {
-    p.drawText(numberRect, Qt::AlignCenter | Qt::TextSingleLine, "#");
-
-    leftadj += 20;
-  }
-
-  QRect nameRect =
-      o->rect(PredefinedRect::PANEL_LAYER_NAME).adjusted(leftadj, 0, -1, 0);
-  p.drawText(nameRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine,
-             QObject::tr("Layer name"));
-
-  drawLines(p, numberRect, nameRect);
 }
 
 void LayerHeaderPanel::drawIcon(QPainter &p, PredefinedRect rect,

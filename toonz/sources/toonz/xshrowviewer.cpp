@@ -291,7 +291,7 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
     QRect previewBoxRect = o->rect(PredefinedRect::PREVIEW_FRAME_AREA)
                                .adjusted(0, 0, -frameAdj, 0)
                                .translated(basePoint);
-    p.fillRect(previewBoxRect, m_viewer->getNotEmptyColumnColor());
+    p.fillRect(previewBoxRect, m_viewer->getPlayRangeColor());
 
     if (!o->isVerticalTimeline()) {
       if (r == playR0) {
@@ -882,9 +882,9 @@ void RowArea::paintEvent(QPaintEvent *event) {
   p.setPen(m_viewer->getVerticalLineColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(0, -1, -1, 0));
+    p.drawRect(toBeUpdated.adjusted(-1, -1, -1, 0));
   else
-    p.drawRect(toBeUpdated.adjusted(-1, 0, 0, -1));
+    p.drawRect(toBeUpdated.adjusted(-1, -1, 0, -1));
 }
 
 //-----------------------------------------------------------------------------

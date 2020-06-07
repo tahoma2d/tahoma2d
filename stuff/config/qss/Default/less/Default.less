@@ -5,15 +5,15 @@
 // -----------------------------------------------------------------------------
 // This is the default theme. All other themes derive from this.
 // -----------------------------------------------------------------------------
-
 // Include All
 @import 'main';
 
 // Resource Location
 @img-url: 'imgs/white';
 
-@bg: #484848;
-@accent: darken(@bg, 13);
+@bg: #484848;               // normal
+@bg-dark: darken(@bg, 13);    // dark
+@accent: darken(@bg, 13);     // darkest
 
 @text-color: rgb(230, 230, 230);
 @text-color-disabled: rgba(230, 230, 230, 0.4);
@@ -41,18 +41,18 @@
 // Tabs
 // -----------------------------------------------------------------------------
 
-// Container
 @tabbar-bg-color: darken(@bg, 6);
 
 // Tabs
 @tab-bg-color: @tabbar-bg-color;
 @tab-text-color: mix(@tab-bg-color, @text-color, 40);
+@tab-border-color: @accent;
 
 @tab-bg-color-hover: @tab-bg-color-selected;
 @tab-text-color-hover: @tab-text-color;
 
 @tab-bg-color-selected: @bg;
-@tab-text-color-selected: lighten(@text-color, 15);
+@tab-text-color-selected: @text-color;
 
 // -----------------------------------------------------------------------------
 // Topbar & Workspaces
@@ -68,8 +68,8 @@
 @rooms-tab-bg-color-hover: @tab-bg-color-hover;
 @rooms-text-color-hover: @rooms-tab-text-color;
 
-@rooms-tab-bg-color-selected: @bg;
-@rooms-tab-text-color-selected: @tab-text-color-selected;
+@rooms-tab-bg-color-selected: @hl-bg-color;
+@rooms-tab-text-color-selected: @hl-text-color;
 
 // -----------------------------------------------------------------------------
 // Menu
@@ -83,21 +83,11 @@
 @menu-item-bg-color-disabled-hover: lighten(@menu-bg-color, 8);
 
 // -----------------------------------------------------------------------------
-// Titlebars
-// -----------------------------------------------------------------------------
-
-@title-bg-color: darken(@bg, 6);
-@title-text-color: lighten(@bg, 30);
-@title-text-color-active: #fff;
-
-@title-active-border-pixmap: 'none';
-
-// -----------------------------------------------------------------------------
 // Scrollbars
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color: darken(@bg, 8);
+@scrollbar-bg-color: darken(@bg, 10);
 
 // Handle
 @scrollbar-handle-border-size: 1;
@@ -153,8 +143,7 @@
 @scrollable-button-bg-color: @button-bg-color;
 @scrollable-button-bg-color-hover: @button-bg-color-hover;
 @scrollable-button-bg-color-pressed: @button-bg-color-pressed;
-
-@scrollable-button-border-color: red;
+@scrollable-button-border-color: @button-border-color;
 
 // -----------------------------------------------------------------------------
 // Tool Buttons
@@ -208,6 +197,7 @@
 
 @input-bg-color: darken(@bg, 10);
 @input-border-color: darken(@input-bg-color, 1);
+@input-border-radius: 2;
 @input-text-color: @text-color;
 
 @input-bg-color-focus: @input-bg-color;
@@ -278,12 +268,27 @@
 @slider-right-handle-disabled: @slider-handle-img-disabled;
 
 // -----------------------------------------------------------------------------
+// Titlebars
+// -----------------------------------------------------------------------------
+
+@title-bg-color: darken(@bg, 6);
+@title-text-color: lighten(@bg, 30);
+@title-text-color-active: #fff;
+
+@title-active-border-pixmap: 'none';
+
+@title-button-rollover-color: @button-bg-color-hover;
+@title-button-pressed-color: @hl-bg-color;
+@title-button-freeze-color: @toolbutton-lock-bg-color-checked;
+@title-button-preview-color: rgb(0, 255, 157);
+
+// -----------------------------------------------------------------------------
 // File Browser / Trees
 // -----------------------------------------------------------------------------
 
 // Trees
-@tree-bg-color: darken(@bg, 8);
-@tree-bg-color-alt: lighten(@tree-bg-color, 2);
+@tree-bg-color: darken(@bg, 10);
+@tree-bg-color-alt: lighten(@tree-bg-color, 3);
 @prefs-tree-bg-color: @tree-bg-color;
 @prefs-tree-hl-color: @hl-bg-color-secondary;
 
@@ -295,9 +300,16 @@
 @browser-listview-bg-color: @tree-bg-color;
 @browser-listview-bg-color-alt: @browser-listview-bg-color;
 
-// Right Pane
-@browser-itemview-bg-color: @bg;
-@browser-itemview-bg-color-alt: darken(@browser-itemview-bg-color, 3);
+// Right Pane: Order Column
+@browser-itemview-col-color: @bg;
+@browser-itemview-col-color-sorted: @browser-itemview-col-color;
+@browser-itemview-col-text-color: @text-color;
+@browser-itemview-col-border-color: @accent;
+@browser-itemview-col-relief-color: @browser-itemview-col-color;
+
+// Right Pane: BG
+@browser-itemview-bg-color: @tree-bg-color;
+@browser-itemview-bg-color-alt: @tree-bg-color-alt;
 
 // -----------------------------------------------------------------------------
 // Viewer Window
@@ -327,6 +339,22 @@
 @progressbar-chunk-border-color: @accent;
 
 // -----------------------------------------------------------------------------
+// Keyframes
+// -----------------------------------------------------------------------------
+
+@keyframe-off-color: @button-bg-color;
+@keyframe-off-color-hover: @button-bg-color-hover;
+@keyframe-partial-color: lime;
+@keyframe-partial-color-hover: lightgreen;
+@keyframe-total-color: orange;
+@keyframe-total-color-hover: yellow;
+
+// For use in FX Settings Panels
+@keyframe-highlight-color: rgba(255, 255, 255, 0.3);
+@keyframe-inbetween-color: cyan;
+@keyframe-modified-color: red;
+
+// -----------------------------------------------------------------------------
 // XSheet
 // -----------------------------------------------------------------------------
 
@@ -341,68 +369,71 @@
 
 // XSheet Spreadsheet Viewer
 @xsheet-text-color:                         @text-color;
-@xsheet-bg-color:                           darken(@bg, 5);
-@xsheet-empty-bg-color:                     darken(@bg, 8);
-@xsheet-LightLine-color:                    rgba(0, 0, 0, 0.25);
+@xsheet-bg-color:                           darken(@bg, 3); // frame number column
+@xsheet-empty-bg-color:                     darken(@bg, 5); // column space
+@xsheet-LightLine-color:                    darken(@bg, 13);
 @xsheet-MarkerLine-color:                   #1E96C4;
-@xsheet-VerticalLine-color:                 rgba(0, 0, 0, 0.6);
-@xsheet-VerticalLineHead-color:             lighten(@bg, 21.9608);
+@xsheet-VerticalLine-color:                 darken(@bg, 13);
+@xsheet-VerticalLineHead-color:             darken(@bg, 13); // function editior header
 @xsheet-PreviewFrameText-color:             @label-title;
-@xsheet-CurrentRowBG-color:                 #506082;
-@xsheet-OnionSkinAreaBG-color:              darken(@bg, 7);
+@xsheet-CurrentRowBG-color:                 fade(@hl-bg-color, 70);
+@xsheet-OnionSkinAreaBG-color:              darken(@title-bg-color, 0);
+@xsheet-CellArea-bg-color-focus:            rgba(0, 0, 0, 0.65);
+@xsheet-CellFocus-color:                    #000;
 
-@xsheet-EmptyColumnHead-color:              lighten(@bg, 10.1961);
+@xsheet-EmptyColumnHead-color:              @bg;
 
-@xsheet-EmptyCell-color:                    darken(@bg, 3.1373);
-@xsheet-NotEmptyColumn-color:               @bg;
-@xsheet-SelectedEmptyCell-color:            lighten(@bg, 14.1176);
+@xsheet-EmptyCell-color:                    darken(@bg, 6);
+@xsheet-NotEmptyColumn-color:               darken(@bg, 3);
+@xsheet-SelectedEmptyCell-color:            fade(@hl-bg-color, 30);//lighten(@bg, 14.1176);
 
 @xsheet-LevelColumn-color:                  #4C6E4C;
 @xsheet-LevelColumnBorder-color:            #8FB38F;
-@xsheet-SelectedLevelColumn-color:          lighten(desaturate(@xsheet-LevelColumn-color, 5), 10);
+@xsheet-SelectedLevelColumn-color:          lighten(@xsheet-LevelColumn-color, 15);
 
 @xsheet-VectorColumn-color:                 #7B7B4C;
 @xsheet-VectorColumnBorder-color:           #BBBB9A;
-@xsheet-SelectedVectorColumn-color:         lighten(desaturate(@xsheet-VectorColumn-color, 5), 10);
+@xsheet-SelectedVectorColumn-color:         lighten(@xsheet-VectorColumn-color, 15);
 
 @xsheet-ChildColumn-color:                  #6A526B;
 @xsheet-ChildColumnBorder-color:            #B1A3B3;
-@xsheet-SelectedChildColumn-color:          lighten(desaturate(@xsheet-ChildColumn-color, 5), 10);
+@xsheet-SelectedChildColumn-color:          lighten(@xsheet-ChildColumn-color, 15);
 
 @xsheet-FullColorColumn-color:              #657A96;
 @xsheet-FullColorColumnBorder-color:        #9EB8BB;
-@xsheet-SelectedFullColorColumn-color:      lighten(desaturate(@xsheet-FullColorColumn-color, 5), 10);
+@xsheet-SelectedFullColorColumn-color:      lighten(@xsheet-FullColorColumn-color, 15);
 
 @xsheet-FxColumn-color:                     #56553C;
 @xsheet-FxColumnBorder-color:               #95958A;
-@xsheet-SelectedFxColumn-color:             lighten(desaturate(@xsheet-FxColumn-color, 5), 10);
+@xsheet-SelectedFxColumn-color:             lighten(@xsheet-FxColumn-color, 15);
 
 @xsheet-ReferenceColumn-color:              #616161;
 @xsheet-ReferenceColumnBorder-color:        #A2A2A2;
-@xsheet-SelectedReferenceColumn-color:      lighten(desaturate(@xsheet-ReferenceColumn-color, 5), 10);
+@xsheet-SelectedReferenceColumn-color:      lighten(@xsheet-ReferenceColumn-color, 15);
 
 @xsheet-PaletteColumn-color:                #3A655F;
 @xsheet-PaletteColumnBorder-color:          #86ACA7;
-@xsheet-SelectedPaletteColumn-color:        lighten(desaturate(@xsheet-PaletteColumn-color, 5), 10);
+@xsheet-SelectedPaletteColumn-color:        lighten(@xsheet-PaletteColumn-color, 15);
 
 @xsheet-MeshColumn-color:                   #684D86;
 @xsheet-MeshColumnBorder-color:             #BA92EF;
-@xsheet-SelectedMeshColumn-color:           lighten(desaturate(@xsheet-MeshColumn-color, 5), 10);
+@xsheet-SelectedMeshColumn-color:           lighten(@xsheet-MeshColumn-color, 15);
 
 @xsheet-SoundTextColumn-color:              #c8c8c8;
 @xsheet-SoundTextColumnBorder-color:        #8c8c8c;
-@xsheet-SelectedSoundTextColumn-color:        lighten(desaturate(@xsheet-SoundTextColumn-color, 5), 10);
+@xsheet-SelectedSoundTextColumn-color:        lighten(@xsheet-SoundTextColumn-color, 15);
 
 @xsheet-SoundColumn-color:                  #657456;
 @xsheet-SoundColumnBorder-color:            #A0AF7D;
-@xsheet-SelectedSoundColumn-color:          lighten(desaturate(@xsheet-SoundColumn-color, 5), 10);
+@xsheet-SelectedSoundColumn-color:          lighten(@xsheet-SoundColumn-color, 15);
 @xsheet-SoundColumnHL-color:                #34FE5E;
 @xsheet-SoundColumnTrack-color:             #B6C29D;
 
-@xsheet-ColumnHeadPastelizer-color:         #000;
-@xsheet-SelectedColumnHead-color:           #506082;
+@xsheet-ColumnHeadPastelizer-color:         rgba(0, 0, 0, 0.5);
+@xsheet-SelectedColumnHead-color:           fade(@hl-bg-color, 70);
+@xsheet-PlayRange-Color:                    lighten(@bg, 0);
 
-@xsheet-LightLightBG-color:                 darken(@bg, 3.1373);
+@xsheet-LightLightBG-color:                 darken(@bg, 3.1373); // function editor bg
 @xsheet-LightBG-color:                      lighten(@bg, 65.8824);
 @xsheet-DarkBG-color:                       lighten(@bg, 60.0000);
 @xsheet-DarkLine-color:                     lighten(@bg, 30.5882);
@@ -493,15 +524,6 @@
 @schematic-text-color: @xsheet-text-color;
 @schematic-VerticalLine-color: @xsheet-VerticalLine-color;
 
-@schematic-LevelColumn-color: @xsheet-LevelColumn-color;
-@schematic-VectorColumn-color: @xsheet-VectorColumn-color;
-@schematic-ChildColumn-color: @xsheet-ChildColumn-color;
-@schematic-FullColorColumn-color: @xsheet-FullColorColumn-color;
-@schematic-FxColumn-color: @xsheet-FxColumn-color;
-@schematic-PaletteColumn-color: @xsheet-PaletteColumn-color;
-@schematic-MeshColumn-color: @xsheet-MeshColumn-color;
-@schematic-ReferenceColumn-color: @xsheet-ReferenceColumn-color;
-
 @schematic-PreviewButtonBgOn-color: @xsheet-PreviewButtonBgOn-color;
 @schematic-PreviewButtonOnImage: @xsheet-PreviewButtonOnImage;
 @schematic-PreviewButtonBgOff-color: @xsheet-ReferenceColumn-color;
@@ -531,12 +553,12 @@
 @function-panel-Selected-color: #FFA500;
 
 // Function Spreadsheet Viewer
-@function-KeyFrame-color: rgb(153,93,29);
-@function-KeyFrameBorder-color: rgb(201,176,75);
+@function-KeyFrame-color: @keyframe-total-color; //rgb(153,93,29);
+@function-KeyFrameBorder-color: lighten(@function-KeyFrame-color, 15); //rgb(201,176,75);
 @function-SelectedKeyFrame-color: lighten(desaturate(@function-KeyFrame-color, 5), 10);
 
-@function-Inbetween-color: rgb(102,98,80);
-@function-InbetweenBorder-color: rgb(205,206,200);
+@function-Inbetween-color: @keyframe-inbetween-color; //rgb(102,98,80);
+@function-InbetweenBorder-color: lighten(@keyframe-inbetween-color, 15); //rgb(205,206,200);
 @function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
 
 @function-SelectedSceneRangeEmpty-color: lighten(@bg, 17.6471);

@@ -656,7 +656,7 @@ void ParamField::setFxHandle(TFxHandle *fxHandle) {
 
 ParamFieldKeyToggle::ParamFieldKeyToggle(QWidget *parent, std::string name)
     : QWidget(parent), m_status(NOT_ANIMATED), m_highlighted(false) {
-  setFixedSize(15, 15);
+  setFixedSize(20, 20);
 }
 
 //-----------------------------------------------------------------------------
@@ -691,26 +691,43 @@ ParamFieldKeyToggle::Status ParamFieldKeyToggle::getStatus() const {
 void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   QPainter p(this);
 
+  QIcon ico;
+  int iconSize = 20;
+  int radius   = 3;
+
+  // create rounded rect for key button states
+  p.setRenderHint(p.Antialiasing);
+  QPainterPath path;
+  path.addRoundedRect(QRectF(0, 0, iconSize, iconSize), radius, radius);
+  QPen pen(Qt::transparent);
+  p.setPen(pen);
+
   switch (m_status) {
   case NOT_ANIMATED:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_noanim.svg")));
+    p.fillPath(path, getKeyOffColor());
     break;
   case KEYFRAME:
-    p.drawPixmap(rect(), QPixmap(svgToPixmap(":Resources/keyframe_key.svg")));
+    p.fillPath(path, getKeyOnColor());
     break;
   case MODIFIED:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_modified.svg")));
+    p.fillPath(path, getKeyModifiedColor());
     break;
   default:
-    p.drawPixmap(rect(),
-                 QPixmap(svgToPixmap(":Resources/keyframe_inbetween.svg")));
+    p.fillPath(path, getKeyInbetweenColor());
     break;
   }
+  p.drawPath(path);
+
+  m_pixmap = QPixmap(":Resources/keyframe.svg");
+  ico.addPixmap(m_pixmap);
+  ico.paint(&p, QRect(0, 0, iconSize, iconSize));
+
   if (m_highlighted) {
-    p.fillRect(rect(), QBrush(QColor(50, 100, 255, 100)));
+    p.fillPath(path, getKeyHighlightColor());
+    p.drawPath(path);
   }
+
+  p.end();
 }
 
 //-----------------------------------------------------------------------------

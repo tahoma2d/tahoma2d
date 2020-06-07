@@ -45,12 +45,6 @@
         <file>Resources/folder_open.svg</file>
         <file>Resources/folderanim_close.svg</file>
         <file>Resources/folderanim_open.svg</file>
-        <file>Resources/key_no.svg</file>
-        <file>Resources/key_no_over.svg</file>
-        <file>Resources/key_partial.svg</file>
-        <file>Resources/key_partial_over.svg</file>
-        <file>Resources/key_total.svg</file>
-        <file>Resources/key_total_over.svg</file>
         <file>Resources/magpie.svg</file>
         <file>Resources/maximizenodes_off.svg</file>
         <file>Resources/maximizenodes_on.svg</file>
@@ -166,9 +160,9 @@
       <file>Resources/grad_g.png</file>
       <file>Resources/grad_b.png</file>
       <file>Resources/grad_m.png</file>
-      <file>Resources/h_chandleUp.png</file>
       <file>Resources/h_chandleDown.png</file>
       <file>Resources/h_chandleCenter.png</file>
+      <file>Resources/h_chandleUp.png</file>
       <file>Resources/schematic_palette.png</file>
       <file>Resources/schematic_tablenode.png</file>
       <file>Resources/port_red.svg</file>
@@ -306,10 +300,7 @@
       <file>Resources/fxicons/fx_iwa_bokeh_ref.png</file>
       <file>Resources/fxicons/fx_iwa_soapbubble.png</file>
       <file>Resources/fxicons/fx_unidentified.png</file>
-      <file>Resources/keyframe_noanim.svg</file>
-      <file>Resources/keyframe_key.svg</file>
-      <file>Resources/keyframe_modified.svg</file>
-      <file>Resources/keyframe_inbetween.svg</file>
+      <file>Resources/keyframe.svg</file>
       <file>Resources/switchport_on.svg</file>
       <file>Resources/switchport_off.svg</file>
       <file>Resources/switchport_over.svg</file>
