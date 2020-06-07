@@ -1,12 +1,10 @@
 <RCC>
     <qresource prefix="/">
-		<file>icons/light/index.theme</file>
+	    <file>icons/light/index.theme</file>
 
 		<file>icons/dark/index.theme</file>
 
-		<file>Resources/pane_3d_off.svg</file>
-        <file>Resources/pane_3d_on.svg</file>
-        <file>Resources/pane_3d_over.svg</file>
+		<file>Resources/pane_3d.svg</file>
         <file>Resources/3Dside_l.svg</file>
         <file>Resources/3Dside_r.svg</file>
         <file>Resources/3Dtop.svg</file>
