@@ -949,7 +949,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Interface
       {CurrentStyleSheetName, tr("Theme:")},
-      {iconTheme, tr("Enable dark icons")},
+      {iconTheme, tr("Switch to dark icons")},
       {pixelsOnly, tr("All imported images will use the same DPI")},
       //{ oldUnits,                               tr("") },
       //{ oldCameraUnits,                         tr("") },
