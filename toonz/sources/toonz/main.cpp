@@ -671,13 +671,8 @@ int main(int argc, char *argv[]) {
                      Qt::white);
   a.processEvents();
 
-  // Set icon paths:
-  // There's a default path supported on all platforms which is :icons/
-  // (lower-case i), add more paths as nessesary.
-  QStringList iconSearchPathList = {":Resources/"};
-  QIcon::setThemeSearchPaths(iconSearchPathList);
-
   // Set icon themes:
+  // For QIcon's used with QIcon::fromTheme()
   if (Preferences::instance()->getIconTheme()) {
     // :icons/light/
     QIcon::setThemeName("light");
