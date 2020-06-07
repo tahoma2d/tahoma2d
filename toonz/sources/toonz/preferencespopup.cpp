@@ -1138,8 +1138,8 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
         {tr("On Demand"), Preferences::LoadOnDemand}}},
       {scanLevelType, {{"tif", "tif"}, {"png", "png"}}},
       {DefLevelType,
-       {{tr("Toonz Vector Level"), PLI_XSHLEVEL},
-        {tr("Toonz Raster Level"), TZP_XSHLEVEL},
+       {{tr("Vector Level"), PLI_XSHLEVEL},
+        {tr("Smart Raster Level"), TZP_XSHLEVEL},
         {tr("Raster Level"), OVL_XSHLEVEL}}},
       {NumberingSystem,
        {{tr("Incremental"), 0}, {tr("Use Xsheet as Animation Sheet"), 1}}},
@@ -1238,11 +1238,7 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-    {
-      categoryLayout->addWidget(new QLabel(tr("Category"), this), 0,
-                                Qt::AlignLeft | Qt::AlignVCenter);
-      categoryLayout->addWidget(categoryList, 1);
-    }
+    { categoryLayout->addWidget(categoryList, 1); }
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(stackedWidget, 1);
   }

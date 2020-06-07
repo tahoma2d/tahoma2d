@@ -1975,7 +1975,7 @@ XsheetViewer {
   qproperty-VerticalLineHeadColor: #272727;
   qproperty-PreviewFrameTextColor: #9fdaff;
   qproperty-CurrentRowBgColor: rgba(83, 133, 166, 0.7);
-  qproperty-OnionSkinAreaBgColor: #393939;
+  qproperty-OnionSkinAreaBgColor: #404040;
   qproperty-CellFocusColor: #000;
   qproperty-EmptyColumnHeadColor: #484848;
   qproperty-EmptyCellColor: #393939;

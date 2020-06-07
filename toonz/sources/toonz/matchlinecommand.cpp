@@ -215,7 +215,7 @@ bool checkColumnValidity(int column) {
 
     if (cell[i].getSimpleLevel()->getType() != TZP_XSHLEVEL) {
       DVGui::warning(QObject::tr(
-          "Match lines can be applied to Toonz raster levels only."));
+          "Match lines can be applied to Smart Raster levels only."));
       return false;
     }
     if (level != cell[i].getSimpleLevel()) {
@@ -288,8 +288,9 @@ public:
   }
 
   int getSize() const override {
-    return sizeof *this + (sizeof(TXshLevelP) + sizeof(TXshSimpleLevel *)) *
-                              m_createdLevels.size();
+    return sizeof *this +
+           (sizeof(TXshLevelP) + sizeof(TXshSimpleLevel *)) *
+               m_createdLevels.size();
   }
 };
 
@@ -585,7 +586,7 @@ void doDeleteCommand(bool isMatchline) {
     }
     if (cell.m_level->getType() != TZP_XSHLEVEL) {
       DVGui::warning(QObject::tr(
-          "Match lines can be deleted from Toonz raster levels only"));
+          "Match lines can be deleted from Smart Raster levels only"));
       return;
     }
   }

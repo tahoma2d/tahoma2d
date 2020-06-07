@@ -1643,8 +1643,8 @@ void MainWindow::defineActions() {
   newVectorLevelAction->setIconText(tr("New Vector Level"));
   newVectorLevelAction->setIcon(QIcon(":Resources/new_vector_level.svg"));
   QAction *newToonzRasterLevelAction = createMenuLevelAction(
-      MI_NewToonzRasterLevel, tr("&New Toonz Raster Level"), "");
-  newToonzRasterLevelAction->setIconText(tr("New Toonz Raster Level"));
+      MI_NewToonzRasterLevel, tr("&New Smart Raster Level"), "");
+  newToonzRasterLevelAction->setIconText(tr("New Smart Raster Level"));
   newToonzRasterLevelAction->setIcon(
       QIcon(":Resources/new_toonz_raster_level.svg"));
   QAction *newRasterLevelAction =
@@ -2118,10 +2118,9 @@ void MainWindow::defineActions() {
   // createRightClickMenuAction(MI_PremultiplyFile,      tr("Premultiply"),
   // "");
   createMenuLevelAction(MI_ConvertToVectors, tr("Convert to Vectors..."), "");
-  createMenuLevelAction(MI_ConvertToToonzRaster, tr("Vectors to Toonz Raster"),
+  createMenuLevelAction(MI_ConvertToToonzRaster, tr("Vectors to Smart Raster"),
                         "");
-  createMenuLevelAction(MI_ConvertVectorToVector,
-                        tr("Replace Vectors with Simplified Vectors"), "");
+  createMenuLevelAction(MI_ConvertVectorToVector, tr("Simplify Vectors"), "");
   createMenuLevelAction(MI_Tracking, tr("Tracking..."), "");
   createRightClickMenuAction(MI_RemoveLevel, tr("Remove Level"), "");
   createRightClickMenuAction(MI_AddToBatchRenderList, tr("Add As Render Task"),
@@ -2213,7 +2212,8 @@ void MainWindow::defineActions() {
   createToolAction(T_Geometric, "geometric", tr("Geometric Tool"), "G");
   createToolAction(T_Type, "type", tr("Type Tool"), "Y");
   createToolAction(T_Fill, "fill", tr("Fill Tool"), "F");
-  createToolAction(T_PaintBrush, "paintbrush", tr("Paint Brush Tool"), "");
+  createToolAction(T_PaintBrush, "paintbrush", tr("Smart Raster Paint Tool"),
+                   "");
   createToolAction(T_Eraser, "eraser", tr("Eraser Tool"), "E");
   createToolAction(T_Tape, "tape", tr("Tape Tool"), "T");
   createToolAction(T_StylePicker, "stylepicker", tr("Style Picker Tool"), "K");
