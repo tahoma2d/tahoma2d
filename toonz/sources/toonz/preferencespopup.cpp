@@ -1258,11 +1258,7 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-    {
-      categoryLayout->addWidget(new QLabel(tr("Category"), this), 0,
-                                Qt::AlignLeft | Qt::AlignVCenter);
-      categoryLayout->addWidget(categoryList, 1);
-    }
+    categoryLayout->addWidget(categoryList, 1);
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(stackedWidget, 1);
   }
