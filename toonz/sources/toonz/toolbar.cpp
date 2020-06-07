@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 #include <QObject>
 
-TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 0);
+TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 1);
 
 namespace {
 struct {
@@ -41,7 +41,7 @@ struct {
                     {T_Geometric, false, 0},   {T_Type, true, 0},
                     {T_Fill, false, 0},        {T_PaintBrush, false, 0},
                     {"Separator_2", false, 0}, {T_Eraser, false, 0},
-                    {T_Tape, false, 0},        {T_Finger, false, 0},
+                    {T_Tape, false, 0},  //{T_Finger, false, 0},
                     {"Separator_3", false, 0}, {T_StylePicker, false, 0},
                     {T_RGBPicker, false, 0},   {T_Ruler, false, 0},
                     {"Separator_4", false, 0}, {T_ControlPointEditor, false, 0},
@@ -77,7 +77,7 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
   m_expandButton->setCheckable(true);
   m_expandButton->setChecked(m_isExpanded);
   m_expandButton->setArrowType((isVertical) ? Qt::DownArrow : Qt::RightArrow);
-
+  m_expandButton->hide();
   m_expandAction = addWidget(m_expandButton);
 
   connect(m_expandButton, SIGNAL(toggled(bool)), this,

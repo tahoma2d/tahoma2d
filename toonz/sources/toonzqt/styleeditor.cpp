@@ -3021,7 +3021,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-      hLayout->addSpacing(0);
+      hLayout->addSpacing(-1);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }

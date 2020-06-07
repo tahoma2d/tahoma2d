@@ -127,7 +127,7 @@ void Separator::paintEvent(QPaintEvent *) {
   p.drawText(contents.left(), 10, m_name);
 
   // make the line semi-transparent
-  QColor lineColor = palette().alternateBase().color();
+  QColor lineColor = Qt::black;
   lineColor.setAlpha(128);
 
   p.setPen(lineColor);
