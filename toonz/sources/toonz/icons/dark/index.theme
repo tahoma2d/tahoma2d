@@ -1,0 +1,16 @@
+[Icon Theme]
+Name=dark
+Comment=a dark icon set for use in light themes
+Inherits=light
+
+Directories=16/subfolder,24/subfolder
+
+[16/subfolder]
+Size=16
+Context=App
+Type=Scalabe
+
+[24/subfolder]
+Size=24
+Context=App
+Type=Scalable
