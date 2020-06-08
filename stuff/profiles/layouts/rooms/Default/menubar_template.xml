@@ -310,6 +310,8 @@
         <command>MI_StartupPopup</command>
         <command>MI_OpenGuidedDrawingControls</command>
         <separator/>
+        <command>MI_OpenExport</command>
+        <separator/>
         <command>MI_MaximizePanel</command>
         <command>MI_FullScreenWindow</command>
         <separator/>
