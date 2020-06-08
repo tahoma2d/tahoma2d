@@ -143,7 +143,7 @@ public:
   TFilePath getStuffDir() {
     if (m_stuffDir) return *m_stuffDir;
     if (m_isPortable)
-      return TFilePath((getWorkingDirectory() + "\\portablestuff\\"));
+      return TFilePath((getWorkingDirectory() + "\\tahomastuff\\"));
 
     return TFilePath(getSystemVarValue(m_rootVarName));
   }
@@ -226,21 +226,20 @@ public:
     m_workingDirectory           = workingDirectory;
 
     // check if portable
-    TFilePath portableCheck =
-        TFilePath(m_workingDirectory + "\\portablestuff\\");
+    TFilePath portableCheck = TFilePath(m_workingDirectory + "\\tahomastuff\\");
     TFileStatus portableStatus(portableCheck);
     m_isPortable = portableStatus.doesExist();
 
 #ifdef MACOSX
     // macOS 10.12 (Sierra) translocates applications before running them
     // depending on how it was installed. This separates the app from the
-    // portablestuff folder and we don't know where it is so we stop treating it
-    // as a portable. Placing portablestuff inside Tahoma.app will keep
+    // tahomastuff folder and we don't know where it is so we stop treating it
+    // as a portable. Placing stuff inside Tahoma.app will keep
     // everything together when it translocates.
     if (!m_isPortable) {
       portableCheck =
           TFilePath(m_workingDirectory + "\\" + getApplicationFileName() +
-                    ".app\\portablestuff\\");
+                    ".app\\tahomastuff\\");
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)

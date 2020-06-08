@@ -28,8 +28,17 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QComboBox>
+#include <QStandardPaths>
 
 using namespace DVGui;
+
+//===================================================================
+
+TFilePath getDocumentsPath() {
+  QString documentsPath =
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
+  return TFilePath(documentsPath);
+}
 
 //=============================================================================
 // ProjectDvDirModelProjectNode
@@ -83,7 +92,7 @@ void ProjectDvDirModelRootNode::refreshChildren() {
   if (m_children.empty()) {
     TProjectManager *pm = TProjectManager::instance();
     std::vector<TFilePath> projectRoots;
-    pm->getProjectRoots(projectRoots);
+    // pm->getProjectRoots(projectRoots);
 
     int i;
     for (i = 0; i < (int)projectRoots.size(); i++) {
@@ -278,7 +287,7 @@ ProjectPopup::ProjectPopup(bool isModal)
   m_model              = new ProjectDirModel;
   m_treeView           = new DvDirTreeView(this);
   m_projectLocationFld =
-      new DVGui::FileField(this, pm->getCurrentProjectRoot().getQString());
+      new DVGui::FileField(this, getDocumentsPath().getQString());
   m_projectLocationFld->setMaximumWidth(380);
 
   m_nameFld->setMaximumHeight(WidgetHeight);
@@ -359,7 +368,7 @@ void ProjectPopup::updateChooseProjectCombo() {
   m_chooseProjectCombo->addItem("sandbox");
 
   std::vector<TFilePath> prjRoots;
-  pm->getProjectRoots(prjRoots);
+  // pm->getProjectRoots(prjRoots);
   for (int i = 0; i < prjRoots.size(); i++) {
     TFilePathSet fps;
     TSystem::readDirectory_Dir_ReadExe(fps, prjRoots[i]);
@@ -599,25 +608,25 @@ void ProjectCreatePopup::createProject() {
     return;
   }
 
-  if (pm->getProjectPathByName(projectName) != TFilePath()) {
-    error(tr("Project '%1' already exists").arg(m_nameFld->text()));
-    // project already exists
-    return;
-  }
+  // if (pm->getProjectPathByName(projectName) != TFilePath()) {
+  //  error(tr("Project '%1' already exists").arg(m_nameFld->text()));
+  //  // project already exists
+  //  return;
+  //}
 
-  TFilePath currentProjectRoot;
-  DvDirModelFileFolderNode *node =
-      dynamic_cast<DvDirModelFileFolderNode *>(m_treeView->getCurrentNode());
-  if (node)
-    currentProjectRoot = node->getPath();
-  else
-    currentProjectRoot       = pm->getCurrentProjectRoot();
   TFilePath newLocation      = TFilePath(m_projectLocationFld->getPath());
   std::string newLocStr      = newLocation.getQString().toStdString();
   TFilePath projectFolder    = newLocation + projectName;
   TFilePath projectPath      = pm->projectFolderToProjectPath(projectFolder);
   std::string projectPathStr = projectPath.getQString().toStdString();
-  TProject *project          = new TProject();
+
+  if (TSystem::doesExistFileOrLevel(projectPath)) {
+    error(tr("Project '%1' already exists").arg(m_nameFld->text()));
+    // project already exists
+    return;
+  }
+
+  TProject *project = new TProject();
   updateProjectFromFields(project);
   TProjectP currentProject = pm->getCurrentProject();
   project->setSceneProperties(currentProject->getSceneProperties());

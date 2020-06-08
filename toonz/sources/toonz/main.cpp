@@ -204,10 +204,10 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   /*--
    * TOONZPROJECTSのパスセットを取得する。（TOONZPROJECTSはセミコロンで区切って複数設定可能）
    * --*/
-  TFilePathSet projectsRoots = ToonzFolder::getProjectsFolders();
-  TFilePathSet::iterator it;
-  for (it = projectsRoots.begin(); it != projectsRoots.end(); ++it)
-    projectManager->addProjectsRoot(*it);
+  // TFilePathSet projectsRoots = ToonzFolder::getProjectsFolders();
+  // TFilePathSet::iterator it;
+  // for (it = projectsRoots.begin(); it != projectsRoots.end(); ++it)
+  //  projectManager->addProjectsRoot(*it);
 
   /*-- もしまだ無ければ、TOONZROOT/sandboxにsandboxプロジェクトを作る --*/
   projectManager->createSandboxIfNeeded();

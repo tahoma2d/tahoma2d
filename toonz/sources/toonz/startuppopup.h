@@ -28,7 +28,6 @@ class StartupPopup final : public DVGui::Dialog {
   DVGui::LineEdit *m_nameFld;
   DVGui::FileField *m_pathFld;
   DVGui::FileField *m_projectLocationFld;
-  QLabel *m_newProjectLabel;
   QLabel *m_projectNameLabel;
   QLabel *m_widthLabel;
   QLabel *m_heightLabel;

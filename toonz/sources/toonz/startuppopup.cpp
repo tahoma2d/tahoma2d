@@ -17,6 +17,7 @@
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/doublefield.h"
+#include "toonzqt/lineedit.h"
 
 // TnzLib includes
 #include "toonz/toonzscene.h"
@@ -108,7 +109,6 @@ StartupPopup::StartupPopup()
                                 .getParentDir()
                                 .getQString();
   m_projectLocationFld->setPath(currProjectPath);
-  m_newProjectLabel  = new QLabel(tr("*New"), this);
   m_projectNameLabel = new QLabel("", this);
   m_sceneNameLabel   = new QLabel(tr("Scene Name:"));
   m_widthLabel       = new QLabel(tr("Width:"), this);
@@ -198,7 +198,6 @@ StartupPopup::StartupPopup()
       projectLay->addWidget(m_projectsCB, 1);
       projectLay->addWidget(m_projectNameLabel, 0);
       projectLay->addWidget(m_projectLocationFld, 1);
-      projectLay->addWidget(m_newProjectLabel, 0);
       projectLay->addWidget(newProjectButton, 0);
       // newProjectButton->hide();
       m_projectsCB->hide();
@@ -460,63 +459,11 @@ void StartupPopup::onCreateButton() {
   TFilePath projectFolder = TFilePath(m_projectLocationFld->getPath());
   TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
   if (!checkProject()) {
-    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Create project"))) return;
-
-    // QFileInfo fi(m_nameFld->text());
-
-    // if (!isValidFileName(fi.baseName())) {
-    //    error(
-    //        tr("Project Name cannot be empty or contain any of the following "
-    //            "characters:\n \\ / : * ? \" < > |"));
-    //    return;
-    //}
-
-    // if (isReservedFileName_message(fi.baseName())) {
-    //    return;
-    //}
-
-    // TFilePath projectName = TFilePath(m_nameFld->text().toStdWString());
-    // if (projectName == TFilePath()) {
-    //    return;
-    //}
-
-    // if (projectName.isAbsolute()) {
-    //    error(tr("Bad project name: '%1' looks like an absolute file path")
-    //        .arg(m_nameFld->text()));
-    //    return;
-    //}
-
-    // if (pm->getProjectPathByName(projectName) != TFilePath()) {
-    //    error(tr("Project '%1' already exists").arg(m_nameFld->text()));
-    //    // project already exists
-    //    return;
-    //}
-    std::vector<std::string> projectFolderNames;
-    pm->getFolderNames(projectFolderNames);
-
-    std::string projectPathStr = projectPath.getQString().toStdString();
-    TProject *project          = new TProject();
-    for (int i = 0; i < projectFolderNames.size(); i++) {
-      project->setFolder(projectFolderNames[i]);
-    }
-    TProjectP currentProject = pm->getCurrentProject();
-    project->setSceneProperties(currentProject->getSceneProperties());
-    try {
-      bool isSaved = project->save(projectPath);
-      if (!isSaved) {
-        DVGui::error(tr("It is not possible to create the %1 project.")
-                         .arg(toQString(projectPath)));
-        return;
-      }
-
-    } catch (TSystemException se) {
-      DVGui::warning(QString::fromStdWString(se.getMessage()));
-      return;
-    }
-    pm->setCurrentProjectPath(projectPath);
-    IoCmd::newScene();
-    DvDirModel::instance()->refreshFolder(projectFolder.getParentDir());
-    accept();
+    DVGui::warning(
+        tr("The project needs to be a valid project.\n"
+           "Please select a valid project or create a new project."));
+    m_projectLocationFld->setFocus();
+    return;
   }
 
   assert(TFileStatus(projectPath).doesExist());
@@ -620,7 +567,7 @@ void StartupPopup::updateProjectCB() {
   m_projectsCB->addItem("sandbox");
 
   std::vector<TFilePath> prjRoots;
-  pm->getProjectRoots(prjRoots);
+  // pm->getProjectRoots(prjRoots);
   for (int i = 0; i < prjRoots.size(); i++) {
     TFilePathSet fps;
     TSystem::readDirectory_Dir_ReadExe(fps, prjRoots[i]);
@@ -677,21 +624,27 @@ void StartupPopup::onProjectLocationChanged() {
   TProjectManager *pm = TProjectManager::instance();
   TFilePath path      = TFilePath(m_projectLocationFld->getPath());
   if (!TSystem::doesExistFileOrLevel(path)) {
-    DVGui::warning(
-        tr("This is not a valid folder.  Please choose an existing location."));
-    m_projectLocationFld->setPath(TApp::instance()
-                                      ->getCurrentScene()
-                                      ->getScene()
-                                      ->getProject()
-                                      ->getProjectFolder()
-                                      .getQString());
-    m_projectNameLabel->setText(QString::fromStdString(TApp::instance()
-                                                           ->getCurrentScene()
-                                                           ->getScene()
-                                                           ->getProject()
-                                                           ->getProjectFolder()
-                                                           .getName()));
-    return;
+    path =
+        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(path);
+    m_projectLocationFld->setPath(path.getQString());
+    if (!TSystem::doesExistFileOrLevel(path)) {
+      DVGui::warning(tr(
+          "This is not a valid folder.  Please choose an existing location."));
+      // m_projectLocationFld->setPath(TApp::instance()
+      //                                  ->getCurrentScene()
+      //                                  ->getScene()
+      //                                  ->getProject()
+      //                                  ->getProjectFolder()
+      //                                  .getQString());
+      // m_projectNameLabel->setText(QString::fromStdString(TApp::instance()
+      //                                                       ->getCurrentScene()
+      //                                                       ->getScene()
+      //                                                       ->getProject()
+      //                                                       ->getProjectFolder()
+      //                                                       .getName()));
+      checkProject();
+      return;
+    }
   }
   if (!pm->isProject(path)) {
     QStringList buttonList;
@@ -1185,11 +1138,14 @@ bool StartupPopup::checkProject() {
   TFilePath currPath = TFilePath(m_projectLocationFld->getPath());
   bool isProject     = TProjectManager::instance()->isProject(currPath);
   if (isProject) {
-    m_newProjectLabel->hide();
     m_projectNameLabel->setText(QString::fromStdString(currPath.getName()));
+    m_projectLocationFld->getField()->setStyleSheet(
+        m_pathFld->getField()->styleSheet());
+    m_projectLocationFld->setToolTip(tr(""));
   } else {
-    m_newProjectLabel->show();
-    m_projectNameLabel->setText(QString::fromStdString(currPath.getName()));
+    m_projectNameLabel->setText("");
+    m_projectLocationFld->getField()->setStyleSheet("color: red;");
+    m_projectLocationFld->setToolTip(tr("Not a valid project location"));
   }
   return isProject;
 }
