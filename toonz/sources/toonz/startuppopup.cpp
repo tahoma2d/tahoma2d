@@ -11,6 +11,7 @@
 #include "menubarcommandids.h"
 #include "tenv.h"
 #include "toonz/stage.h"
+#include "projectpopup.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -99,13 +100,21 @@ StartupPopup::StartupPopup()
   m_sceneBox   = new QGroupBox(tr("Create a New Scene"), this);
   m_recentBox  = new QGroupBox(tr("Recent Scenes [Project]"), this);
   m_projectBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  m_nameFld        = new LineEdit(this);
-  m_pathFld        = new FileField(this);
-  m_sceneNameLabel = new QLabel(tr("Scene Name:"));
-  m_widthLabel     = new QLabel(tr("Width:"), this);
-  m_widthFld       = new MeasuredDoubleLineEdit(this);
-  m_heightLabel    = new QLabel(tr("Height:"), this);
-  m_heightFld      = new MeasuredDoubleLineEdit(this);
+  m_nameFld               = new LineEdit(this);
+  m_pathFld               = new FileField(this);
+  m_projectLocationFld    = new FileField(this);
+  QString currProjectPath = TProjectManager::instance()
+                                ->getCurrentProjectPath()
+                                .getParentDir()
+                                .getQString();
+  m_projectLocationFld->setPath(currProjectPath);
+  m_newProjectLabel  = new QLabel(tr("*New"), this);
+  m_projectNameLabel = new QLabel("", this);
+  m_sceneNameLabel   = new QLabel(tr("Scene Name:"));
+  m_widthLabel       = new QLabel(tr("Width:"), this);
+  m_widthFld         = new MeasuredDoubleLineEdit(this);
+  m_heightLabel      = new QLabel(tr("Height:"), this);
+  m_heightFld        = new MeasuredDoubleLineEdit(this);
   // m_dpiLabel                = new QLabel(tr("DPI:"), this);
   // m_dpiFld                  = new DoubleLineEdit(this, 120);
   m_resXLabel            = new QLabel(tr("X"), this);
@@ -187,7 +196,12 @@ StartupPopup::StartupPopup()
     projectLay->setMargin(8);
     {
       projectLay->addWidget(m_projectsCB, 1);
+      projectLay->addWidget(m_projectNameLabel, 0);
+      projectLay->addWidget(m_projectLocationFld, 1);
+      projectLay->addWidget(m_newProjectLabel, 0);
       projectLay->addWidget(newProjectButton, 0);
+      // newProjectButton->hide();
+      m_projectsCB->hide();
     }
     m_projectBox->setLayout(projectLay);
     guiLay->addWidget(m_projectBox, 1, 0, 1, 1, Qt::AlignCenter);
@@ -202,9 +216,10 @@ StartupPopup::StartupPopup()
       newSceneLay->addWidget(m_nameFld, 0, 1, 1, 3);
 
       // Save In
-      newSceneLay->addWidget(new QLabel(tr("Save In:")), 1, 0,
-                             Qt::AlignRight | Qt::AlignVCenter);
+      // newSceneLay->addWidget(new QLabel(tr("Save In:")), 1, 0,
+      //                       Qt::AlignRight | Qt::AlignVCenter);
       newSceneLay->addWidget(m_pathFld, 1, 1, 1, 3);
+      m_pathFld->hide();
       newSceneLay->addWidget(new QLabel(tr("Camera Size:")), 2, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       QHBoxLayout *resListLay = new QHBoxLayout();
@@ -278,6 +293,8 @@ StartupPopup::StartupPopup()
                        SLOT(onSceneChanged()));
   ret = ret && connect(newProjectButton, SIGNAL(clicked()), this,
                        SLOT(onNewProjectButtonPressed()));
+  ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
+                       SLOT(onProjectLocationChanged()));
   ret = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
                        SLOT(onLoadSceneButtonPressed()));
   ret = ret && connect(m_projectsCB, SIGNAL(currentIndexChanged(int)),
@@ -309,7 +326,10 @@ StartupPopup::StartupPopup()
                        SLOT(onAutoSaveOnChanged(int)));
   ret = ret && connect(m_autoSaveTimeFld, SIGNAL(editingFinished()), this,
                        SLOT(onAutoSaveTimeChanged()));
+  ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
+                       SLOT(checkProject()));
   assert(ret);
+  checkProject();
 }
 
 //-----------------------------------------------------------------------------
@@ -435,6 +455,79 @@ void StartupPopup::refreshRecentScenes() {
 //-----------------------------------------------------------------------------
 
 void StartupPopup::onCreateButton() {
+  TProjectManager *pm = TProjectManager::instance();
+
+  TFilePath projectFolder = TFilePath(m_projectLocationFld->getPath());
+  TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
+  if (!checkProject()) {
+    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Create project"))) return;
+
+    // QFileInfo fi(m_nameFld->text());
+
+    // if (!isValidFileName(fi.baseName())) {
+    //    error(
+    //        tr("Project Name cannot be empty or contain any of the following "
+    //            "characters:\n \\ / : * ? \" < > |"));
+    //    return;
+    //}
+
+    // if (isReservedFileName_message(fi.baseName())) {
+    //    return;
+    //}
+
+    // TFilePath projectName = TFilePath(m_nameFld->text().toStdWString());
+    // if (projectName == TFilePath()) {
+    //    return;
+    //}
+
+    // if (projectName.isAbsolute()) {
+    //    error(tr("Bad project name: '%1' looks like an absolute file path")
+    //        .arg(m_nameFld->text()));
+    //    return;
+    //}
+
+    // if (pm->getProjectPathByName(projectName) != TFilePath()) {
+    //    error(tr("Project '%1' already exists").arg(m_nameFld->text()));
+    //    // project already exists
+    //    return;
+    //}
+    std::vector<std::string> projectFolderNames;
+    pm->getFolderNames(projectFolderNames);
+
+    std::string projectPathStr = projectPath.getQString().toStdString();
+    TProject *project          = new TProject();
+    for (int i = 0; i < projectFolderNames.size(); i++) {
+      project->setFolder(projectFolderNames[i]);
+    }
+    TProjectP currentProject = pm->getCurrentProject();
+    project->setSceneProperties(currentProject->getSceneProperties());
+    try {
+      bool isSaved = project->save(projectPath);
+      if (!isSaved) {
+        DVGui::error(tr("It is not possible to create the %1 project.")
+                         .arg(toQString(projectPath)));
+        return;
+      }
+
+    } catch (TSystemException se) {
+      DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return;
+    }
+    pm->setCurrentProjectPath(projectPath);
+    IoCmd::newScene();
+    DvDirModel::instance()->refreshFolder(projectFolder.getParentDir());
+    accept();
+  }
+
+  assert(TFileStatus(projectPath).doesExist());
+  pm->setCurrentProjectPath(projectPath);
+  IoCmd::newScene();
+  m_pathFld->setPath(TApp::instance()
+                         ->getCurrentScene()
+                         ->getScene()
+                         ->getProject()
+                         ->getScenesPath()
+                         .getQString());
   if (m_nameFld->text().trimmed() == "") {
     DVGui::warning(tr("The name cannot be empty."));
     m_nameFld->setFocus();
@@ -522,7 +615,7 @@ void StartupPopup::updateProjectCB() {
 
   TProjectManager *pm = TProjectManager::instance();
 
-  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "sandbox_otprj.xml";
+  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "tahomaproject.xml";
   m_projectPaths.push_back(sandboxFp);
   m_projectsCB->addItem("sandbox");
 
@@ -563,7 +656,70 @@ void StartupPopup::updateProjectCB() {
                          ->getProject()
                          ->getScenesPath()
                          .getQString());
+  m_projectLocationFld->setPath(TApp::instance()
+                                    ->getCurrentScene()
+                                    ->getScene()
+                                    ->getProject()
+                                    ->getProjectFolder()
+                                    .getQString());
+  m_projectNameLabel->setText(QString::fromStdString(TApp::instance()
+                                                         ->getCurrentScene()
+                                                         ->getScene()
+                                                         ->getProject()
+                                                         ->getProjectFolder()
+                                                         .getName()));
   m_updating = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::onProjectLocationChanged() {
+  TProjectManager *pm = TProjectManager::instance();
+  TFilePath path      = TFilePath(m_projectLocationFld->getPath());
+  if (!TSystem::doesExistFileOrLevel(path)) {
+    DVGui::warning(
+        tr("This is not a valid folder.  Please choose an existing location."));
+    m_projectLocationFld->setPath(TApp::instance()
+                                      ->getCurrentScene()
+                                      ->getScene()
+                                      ->getProject()
+                                      ->getProjectFolder()
+                                      .getQString());
+    m_projectNameLabel->setText(QString::fromStdString(TApp::instance()
+                                                           ->getCurrentScene()
+                                                           ->getScene()
+                                                           ->getProject()
+                                                           ->getProjectFolder()
+                                                           .getName()));
+    return;
+  }
+  if (!pm->isProject(path)) {
+    QStringList buttonList;
+    buttonList.append(tr("Yes"));
+    buttonList.append(tr("No"));
+    int answer = DVGui::MsgBox(tr("No project found at this location \n"
+                                  "What would you like to do?"),
+                               tr("Make a new project"), tr("Cancel"), 1, this);
+    if (answer != 1) {
+      m_projectLocationFld->setPath(TApp::instance()
+                                        ->getCurrentScene()
+                                        ->getScene()
+                                        ->getProject()
+                                        ->getProjectFolder()
+                                        .getQString());
+      m_projectNameLabel->setText(
+          QString::fromStdString(TApp::instance()
+                                     ->getCurrentScene()
+                                     ->getScene()
+                                     ->getProject()
+                                     ->getProjectFolder()
+                                     .getName()));
+    } else {
+      ProjectCreatePopup *popup = new ProjectCreatePopup();
+      popup->setPath(path.getQString());
+      popup->exec();
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1021,6 +1177,21 @@ void StartupPopup::updateSize() {
     m_heightFld->setValue((double)m_yRes / m_dpi);
   }
   m_presetCombo->setCurrentIndex(0);
+}
+
+//-----------------------------------------------------------------------------
+
+bool StartupPopup::checkProject() {
+  TFilePath currPath = TFilePath(m_projectLocationFld->getPath());
+  bool isProject     = TProjectManager::instance()->isProject(currPath);
+  if (isProject) {
+    m_newProjectLabel->hide();
+    m_projectNameLabel->setText(QString::fromStdString(currPath.getName()));
+  } else {
+    m_newProjectLabel->show();
+    m_projectNameLabel->setText(QString::fromStdString(currPath.getName()));
+  }
+  return isProject;
 }
 
 //-----------------------------------------------------------------------------

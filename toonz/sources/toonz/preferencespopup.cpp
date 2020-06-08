@@ -581,15 +581,15 @@ void PreferencesPopup::onAutoSavePeriodExternallyChanged() {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onProjectRootChanged() {
-  int index = 0;
-  // if (m_projectRootStuff->isChecked())
-  index |= 0x08;
-  if (m_projectRootDocuments->isChecked()) index |= 0x04;
-  if (m_projectRootDesktop->isChecked()) index |= 0x02;
-  if (m_projectRootCustom->isChecked()) index |= 0x01;
-  m_pref->setValue(projectRoot, index);
-}
+// void PreferencesPopup::onProjectRootChanged() {
+//  int index = 0;
+//  // if (m_projectRootStuff->isChecked())
+//  index |= 0x08;
+//  if (m_projectRootDocuments->isChecked()) index |= 0x04;
+//  if (m_projectRootDesktop->isChecked()) index |= 0x02;
+//  if (m_projectRootCustom->isChecked()) index |= 0x01;
+//  m_pref->setValue(projectRoot, index);
+//}
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onPixelUnitExternallySelected(bool on) {
@@ -1253,21 +1253,21 @@ PreferencesPopup::PreferencesPopup()
 //-----------------------------------------------------------------------------
 
 QWidget* PreferencesPopup::createGeneralPage() {
-  m_projectRootDocuments = new CheckBox(tr("My Documents/Tahoma*"), this);
-  m_projectRootDesktop   = new CheckBox(tr("Desktop/Tahoma*"), this);
-  m_projectRootCustom    = new CheckBox(tr("Custom*"), this);
-  QWidget* customField   = new QWidget(this);
-  QGridLayout* customLay = new QGridLayout();
-  setupLayout(customLay, 5);
-  {
-    insertUI(customProjectRoot, customLay);
-    customLay->addWidget(
-        new QLabel(
-            tr("Advanced: Multiple paths can be separated by ** (No Spaces)"),
-            this),
-        customLay->rowCount(), 0, 1, 2, Qt::AlignLeft | Qt::AlignVCenter);
-  }
-  customField->setLayout(customLay);
+  // m_projectRootDocuments = new CheckBox(tr("My Documents/Tahoma*"), this);
+  // m_projectRootDesktop   = new CheckBox(tr("Desktop/Tahoma*"), this);
+  // m_projectRootCustom    = new CheckBox(tr("Custom*"), this);
+  // QWidget* customField   = new QWidget(this);
+  // QGridLayout* customLay = new QGridLayout();
+  // setupLayout(customLay, 5);
+  //{
+  //  insertUI(customProjectRoot, customLay);
+  //  customLay->addWidget(
+  //      new QLabel(
+  //          tr("Advanced: Multiple paths can be separated by ** (No Spaces)"),
+  //          this),
+  //      customLay->rowCount(), 0, 1, 2, Qt::AlignLeft | Qt::AlignVCenter);
+  //}
+  // customField->setLayout(customLay);
 
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
@@ -1290,14 +1290,14 @@ QWidget* PreferencesPopup::createGeneralPage() {
   insertUI(sceneNumberingEnabled, lay);
   insertUI(watchFileSystemEnabled, lay);
 
-  QGridLayout* projectRootLay =
-      insertGroupBox(tr("Additional Project Locations"), lay);
-  {
-    projectRootLay->addWidget(m_projectRootDocuments, 0, 0, 1, 2);
-    projectRootLay->addWidget(m_projectRootDesktop, 1, 0, 1, 2);
-    projectRootLay->addWidget(m_projectRootCustom, 2, 0, 1, 2);
-    projectRootLay->addWidget(customField, 3, 0, 1, 2);
-  }
+  // QGridLayout* projectRootLay =
+  //    insertGroupBox(tr("Additional Project Locations"), lay);
+  //{
+  //  projectRootLay->addWidget(m_projectRootDocuments, 0, 0, 1, 2);
+  //  projectRootLay->addWidget(m_projectRootDesktop, 1, 0, 1, 2);
+  //  projectRootLay->addWidget(m_projectRootCustom, 2, 0, 1, 2);
+  //  projectRootLay->addWidget(customField, 3, 0, 1, 2);
+  //}
 
   insertUI(pathAliasPriority, lay, getComboItemList(pathAliasPriority));
 
@@ -1305,11 +1305,11 @@ QWidget* PreferencesPopup::createGeneralPage() {
   insertFootNote(lay);
   widget->setLayout(lay);
 
-  int projectPaths = m_pref->getIntValue(projectRoot);
-  m_projectRootDocuments->setChecked(projectPaths & 0x04);
-  m_projectRootDesktop->setChecked(projectPaths & 0x02);
-  m_projectRootCustom->setChecked(projectPaths & 0x01);
-  if (!(projectPaths & 0x01)) customField->hide();
+  // int projectPaths = m_pref->getIntValue(projectRoot);
+  // m_projectRootDocuments->setChecked(projectPaths & 0x04);
+  // m_projectRootDesktop->setChecked(projectPaths & 0x02);
+  // m_projectRootCustom->setChecked(projectPaths & 0x01);
+  // if (!(projectPaths & 0x01)) customField->hide();
 
   QComboBox* pathAliasPriorityCB = getUI<QComboBox*>(pathAliasPriority);
   pathAliasPriorityCB->setToolTip(
@@ -1341,14 +1341,15 @@ QWidget* PreferencesPopup::createGeneralPage() {
   ret = ret && connect(m_pref, SIGNAL(autoSavePeriodChanged()), this,
                        SLOT(onAutoSavePeriodExternallyChanged()));
 
-  ret = ret && connect(m_projectRootDocuments, SIGNAL(stateChanged(int)),
-                       SLOT(onProjectRootChanged()));
-  ret = ret && connect(m_projectRootDesktop, SIGNAL(stateChanged(int)),
-                       SLOT(onProjectRootChanged()));
-  ret = ret && connect(m_projectRootCustom, SIGNAL(stateChanged(int)),
-                       SLOT(onProjectRootChanged()));
-  ret = ret && connect(m_projectRootCustom, SIGNAL(clicked(bool)), customField,
-                       SLOT(setVisible(bool)));
+  // ret = ret && connect(m_projectRootDocuments, SIGNAL(stateChanged(int)),
+  //                     SLOT(onProjectRootChanged()));
+  // ret = ret && connect(m_projectRootDesktop, SIGNAL(stateChanged(int)),
+  //                     SLOT(onProjectRootChanged()));
+  // ret = ret && connect(m_projectRootCustom, SIGNAL(stateChanged(int)),
+  //                     SLOT(onProjectRootChanged()));
+  // ret = ret && connect(m_projectRootCustom, SIGNAL(clicked(bool)),
+  // customField,
+  //                     SLOT(setVisible(bool)));
   assert(ret);
 
   return widget;

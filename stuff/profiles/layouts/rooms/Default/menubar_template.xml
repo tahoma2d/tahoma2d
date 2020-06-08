@@ -15,12 +15,9 @@
         <separator/>
         <command>MI_LoadColorModel</command>
         <separator/>
-        <menu title="Project Management">
-            <command>MI_NewProject</command>
-            <command>MI_ProjectSettings</command>
-            <separator/>
-            <command>MI_SaveDefaultSettings</command>
-        </menu>
+        <command>MI_NewProject</command>
+        <separator/>
+        <command>MI_SaveDefaultSettings</command>
         <separator/>
         <menu title="Import">
             <command>MI_ImportMagpieFile</command>

@@ -277,11 +277,14 @@ ProjectPopup::ProjectPopup(bool isModal)
   m_nameFld            = new LineEdit();
   m_model              = new ProjectDirModel;
   m_treeView           = new DvDirTreeView(this);
+  m_projectLocationFld =
+      new DVGui::FileField(this, pm->getCurrentProjectRoot().getQString());
+  m_projectLocationFld->setMaximumWidth(380);
 
   m_nameFld->setMaximumHeight(WidgetHeight);
   m_treeView->setModel(m_model);
   m_treeView->setStyleSheet("border:1px solid rgb(120,120,120);");
-
+  m_treeView->hide();
   //----layout
   m_topLayout->setMargin(5);
   m_topLayout->setSpacing(10);
@@ -300,6 +303,10 @@ ProjectPopup::ProjectPopup(bool isModal)
       upperLayout->addWidget(m_prjNameLabel, 1, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       upperLayout->addWidget(m_nameFld, 1, 1);
+
+      upperLayout->addWidget(new QLabel(tr("Create Project In:"), this), 2, 0,
+                             Qt::AlignRight | Qt::AlignVCenter);
+      upperLayout->addWidget(m_projectLocationFld, 2, 1);
     }
     upperLayout->setColumnStretch(0, 0);
     upperLayout->setColumnStretch(1, 1);
@@ -312,9 +319,10 @@ ProjectPopup::ProjectPopup(bool isModal)
       QString qName    = QString::fromStdString(name);
       FileField *ff    = new FileField(0, qName);
       m_folderFlds.append(qMakePair(name, ff));
-      upperLayout->addWidget(new QLabel("+" + qName, this), i + 2, 0,
-                             Qt::AlignRight | Qt::AlignVCenter);
-      upperLayout->addWidget(ff, i + 2, 1);
+      // upperLayout->addWidget(new QLabel("+" + qName, this), i + 2, 0,
+      //                       Qt::AlignRight | Qt::AlignVCenter);
+      upperLayout->addWidget(ff, i + 3, 1);
+      ff->hide();
     }
     std::vector<std::tuple<QString, std::string>> cbs = {
         std::make_tuple(tr("Append $scenepath to +drawings"),
@@ -330,6 +338,7 @@ ProjectPopup::ProjectPopup(bool isModal)
       cb->setMaximumHeight(WidgetHeight);
       upperLayout->addWidget(cb, currentRow + i, 1);
       m_useScenePathCbs.append(qMakePair(folderName, cb));
+      cb->hide();
     }
     m_topLayout->addLayout(upperLayout);
   }
@@ -345,7 +354,7 @@ void ProjectPopup::updateChooseProjectCombo() {
 
   TProjectManager *pm = TProjectManager::instance();
 
-  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "sandbox_otprj.xml";
+  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "tahomaproject.xml";
   m_projectPaths.push_back(sandboxFp);
   m_chooseProjectCombo->addItem("sandbox");
 
@@ -525,8 +534,8 @@ void ProjectSettingsPopup::onUseSceneChekboxChanged(int) {
 
 //-----------------------------------------------------------------------------
 
-OpenPopupCommandHandler<ProjectSettingsPopup> openProjectSettingsPopup(
-    MI_ProjectSettings);
+// OpenPopupCommandHandler<ProjectSettingsPopup> openProjectSettingsPopup(
+//    MI_ProjectSettings);
 
 //=============================================================================
 /*! \class ProjectCreatePopup
@@ -602,11 +611,13 @@ void ProjectCreatePopup::createProject() {
   if (node)
     currentProjectRoot = node->getPath();
   else
-    currentProjectRoot = pm->getCurrentProjectRoot();
-
-  TFilePath projectFolder = currentProjectRoot + projectName;
-  TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
-  TProject *project       = new TProject();
+    currentProjectRoot       = pm->getCurrentProjectRoot();
+  TFilePath newLocation      = TFilePath(m_projectLocationFld->getPath());
+  std::string newLocStr      = newLocation.getQString().toStdString();
+  TFilePath projectFolder    = newLocation + projectName;
+  TFilePath projectPath      = pm->projectFolderToProjectPath(projectFolder);
+  std::string projectPathStr = projectPath.getQString().toStdString();
+  TProject *project          = new TProject();
   updateProjectFromFields(project);
   TProjectP currentProject = pm->getCurrentProject();
   project->setSceneProperties(currentProject->getSceneProperties());
@@ -651,6 +662,20 @@ void ProjectCreatePopup::showEvent(QShowEvent *) {
   index                          = m_model->index(0, 0, QModelIndex());
   selection->select(index, QItemSelectionModel::Select);
   m_treeView->setSelectionModel(selection);
+
+  resize(600, 150);
+  QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+  sizePolicy.setHorizontalStretch(0);
+  sizePolicy.setVerticalStretch(0);
+  setSizePolicy(sizePolicy);
+  setMinimumSize(QSize(600, 150));
+  setMaximumSize(QSize(600, 150));
+  setFixedSize(width(), height());
+  setSizeGripEnabled(false);
+}
+
+void ProjectCreatePopup::setPath(QString path) {
+  m_projectLocationFld->setPath(path);
 }
 
 //-----------------------------------------------------------------------------

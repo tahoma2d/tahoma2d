@@ -217,7 +217,8 @@ DvDirModelFileFolderNode *DvDirModelFileFolderNode::createNode(
     DvDirModelNode *parent, const TFilePath &path) {
   DvDirModelFileFolderNode *node;
   // check the project nodes under the Poject Root Node
-  if (QString::fromStdWString(parent->getName()).startsWith("Project root") &&
+  if (  // QString::fromStdWString(parent->getName()).startsWith("Project root")
+        // &&
       TProjectManager::instance()->isProject(path))
     node = new DvDirModelProjectNode(parent, path);
   else {
@@ -1070,21 +1071,21 @@ void DvDirModelRootNode::refreshChildren() {
     addChild(new DvDirModelHistoryNode(this));
 
     TProjectManager *pm = TProjectManager::instance();
-    std::vector<TFilePath> projectRoots;
-    pm->getProjectRoots(projectRoots);
+    // std::vector<TFilePath> projectRoots;
+    // pm->getProjectRoots(projectRoots);
 
-    int i;
-    for (i = 0; i < (int)projectRoots.size(); i++) {
-      TFilePath projectRoot = projectRoots[i];
-      std::wstring roothDir = projectRoot.getWideString();
-      DvDirModelSpecialFileFolderNode *projectRootNode =
-          new DvDirModelSpecialFileFolderNode(
-              this, L"Project root (" + roothDir + L")", projectRoot);
-      projectRootNode->setPixmap(
-          QPixmap(svgToPixmap(":Resources/projects.svg")));
-      m_projectRootNodes.push_back(projectRootNode);
-      addChild(projectRootNode);
-    }
+    // int i;
+    // for (i = 0; i < (int)projectRoots.size(); i++) {
+    //  TFilePath projectRoot = projectRoots[i];
+    //  std::wstring roothDir = projectRoot.getWideString();
+    //  DvDirModelSpecialFileFolderNode *projectRootNode =
+    //      new DvDirModelSpecialFileFolderNode(
+    //          this, L"Project root (" + roothDir + L")", projectRoot);
+    //  projectRootNode->setPixmap(
+    //      QPixmap(svgToPixmap(":Resources/projects.svg")));
+    //  m_projectRootNodes.push_back(projectRootNode);
+    //  addChild(projectRootNode);
+    //}
 
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
     m_sandboxProjectNode = new DvDirModelProjectNode(this, sandboxProjectPath);
@@ -1280,11 +1281,15 @@ void DvDirModel::onFolderChanged(const TFilePath &path) { refreshFolder(path); }
 void DvDirModel::refresh(const QModelIndex &index) {
   if (!index.isValid()) return;
   DvDirModelNode *node = getNode(index);
-  if (!node || node->getChildCount() < 1) return;
+  if (!node) return;
   emit layoutAboutToBeChanged();
-  emit beginRemoveRows(index, 0, node->getChildCount() - 1);
+  bool emitBeginAndEnd         = false;
+  int rc                       = rowCount(index);
+  int cc                       = node->getChildCount();
+  if (cc < rc) emitBeginAndEnd = true;
+  if (emitBeginAndEnd) emit beginRemoveRows(index, 0, node->getChildCount());
   node->refreshChildren();
-  emit endRemoveRows();
+  if (emitBeginAndEnd) emit endRemoveRows();
   emit layoutChanged();
 }
 

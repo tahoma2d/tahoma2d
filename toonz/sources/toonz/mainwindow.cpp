@@ -1665,7 +1665,7 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_ImportMagpieFile,
                        tr("&Import Toonz Lip Sync File..."), "");
   createMenuFileAction(MI_NewProject, tr("&New Project..."), "");
-  createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
+  // createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
   createMenuFileAction(MI_SaveDefaultSettings, tr("&Save Default Settings"),
                        "");
   createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),

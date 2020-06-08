@@ -118,6 +118,8 @@ protected:
   QComboBox *m_chooseProjectCombo;
   QList<TFilePath> m_projectPaths;
 
+  DVGui::FileField *m_projectLocationFld;
+
 public:
   ProjectPopup(bool isModal);
   // da TProjectManager::Listener
@@ -160,6 +162,7 @@ class ProjectCreatePopup final : public ProjectPopup {
 
 public:
   ProjectCreatePopup();
+  void setPath(QString path);
 
 public slots:
   void createProject();

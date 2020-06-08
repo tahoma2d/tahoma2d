@@ -27,14 +27,17 @@ class StartupPopup final : public DVGui::Dialog {
 
   DVGui::LineEdit *m_nameFld;
   DVGui::FileField *m_pathFld;
+  DVGui::FileField *m_projectLocationFld;
+  QLabel *m_newProjectLabel;
+  QLabel *m_projectNameLabel;
   QLabel *m_widthLabel;
   QLabel *m_heightLabel;
   QLabel *m_fpsLabel;
   QLabel *m_resXLabel;
   QLabel *m_resTextLabel;
-  //QLabel *m_dpiLabel;
+  // QLabel *m_dpiLabel;
   QLabel *m_sceneNameLabel;
-  //DVGui::DoubleLineEdit *m_dpiFld;
+  // DVGui::DoubleLineEdit *m_dpiFld;
   DVGui::MeasuredDoubleLineEdit *m_widthFld;
   DVGui::MeasuredDoubleLineEdit *m_heightFld;
   DVGui::DoubleLineEdit *m_fpsFld;
@@ -46,7 +49,7 @@ class StartupPopup final : public DVGui::Dialog {
   QCheckBox *m_showAtStartCB;
   QCheckBox *m_autoSaveOnCB;
   QComboBox *m_projectsCB;
-  //QComboBox *m_unitsCB;
+  // QComboBox *m_unitsCB;
   QPushButton *m_loadOtherSceneButton;
   QPushButton *m_newProjectButton;
   QComboBox *m_presetCombo;
@@ -95,6 +98,8 @@ public slots:
   void onCameraUnitChanged(int index);
   void onAutoSaveOnChanged(int index);
   void onAutoSaveTimeChanged();
+  bool checkProject();
+  void onProjectLocationChanged();
 };
 
 class StartupLabel : public QLabel {
