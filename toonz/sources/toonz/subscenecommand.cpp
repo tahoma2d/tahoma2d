@@ -538,6 +538,11 @@ void bringObjectOut(TStageObject *obj, TXsheet *xsh,
     assert(id.isPegbar());
     pegbarIndex++;
     TStageObjectId outerId = TStageObjectId::PegbarId(pegbarIndex);
+    // find the first available pegbar id
+    while (xsh->getStageObjectTree()->getStageObject(outerId, false)) {
+      pegbarIndex++;
+      outerId = TStageObjectId::PegbarId(pegbarIndex);
+    }
     TStageObject *outerObj =
         xsh->getStageObjectTree()->getStageObject(outerId, true);
     outerObj->setDagNodePos((*it)->getDagNodePos());
@@ -600,8 +605,8 @@ set<int> explodeStageObjects(
   if (!onlyColumn) {
     // add a pegbar to represent the table
     TStageObject *table = subXsh->getStageObject(TStageObjectId::TableId);
-    /*- 空いてるIndexまでpegbarIndexを進める -*/
-    int pegbarIndex = 2;
+    // find the first available pegbar index
+    int pegbarIndex = 0;
     while (
         outerTree->getStageObject(TStageObjectId::PegbarId(pegbarIndex), false))
       pegbarIndex++;
