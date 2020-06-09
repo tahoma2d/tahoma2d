@@ -713,10 +713,10 @@ int main(int argc, char *argv[]) {
   TMeasureManager::instance()->                 // Loads camera-related units
       addCameraMeasures(getCurrentCameraSize);  //
 
-  TFilePathSet fps = ToonzFolder::getProjectsFolders();
-  TFilePathSet::iterator fpIt;
-  for (fpIt = fps.begin(); fpIt != fps.end(); ++fpIt)
-    TProjectManager::instance()->addProjectsRoot(*fpIt);
+  // TFilePathSet fps = ToonzFolder::getProjectsFolders();
+  // TFilePathSet::iterator fpIt;
+  // for (fpIt = fps.begin(); fpIt != fps.end(); ++fpIt)
+  //  TProjectManager::instance()->addProjectsRoot(*fpIt);
 
   TFilePath libraryFolder = ToonzFolder::getLibraryFolder();
   TRasterImagePatternStrokeStyle::setRootDir(libraryFolder);

@@ -68,8 +68,8 @@ private:
   Preferences* m_pref;
   FormatProperties* m_formatProperties;
 
-  DVGui::CheckBox *m_projectRootDocuments, *m_projectRootDesktop,
-      *m_projectRootCustom;
+  // DVGui::CheckBox *m_projectRootDocuments, *m_projectRootDesktop,
+  //    *m_projectRootCustom;
   QPushButton* m_editLevelFormat;
   QComboBox* m_levelFormatNames;
 
@@ -147,7 +147,7 @@ private slots:
 
   void onAutoSaveExternallyChanged();
   void onAutoSavePeriodExternallyChanged();
-  void onProjectRootChanged();
+  // void onProjectRootChanged();
   void onPixelUnitExternallySelected(bool on);
   void onInterfaceFontChanged(const QString& text);
   void onLutPathChanged();

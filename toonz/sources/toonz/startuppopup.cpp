@@ -11,11 +11,13 @@
 #include "menubarcommandids.h"
 #include "tenv.h"
 #include "toonz/stage.h"
+#include "projectpopup.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/doublefield.h"
+#include "toonzqt/lineedit.h"
 
 // TnzLib includes
 #include "toonz/toonzscene.h"
@@ -99,8 +101,14 @@ StartupPopup::StartupPopup()
   m_sceneBox   = new QGroupBox(tr("Create a New Scene"), this);
   m_recentBox  = new QGroupBox(tr("Recent Scenes [Project]"), this);
   m_projectBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  m_nameFld        = new LineEdit(this);
-  m_pathFld        = new FileField(this);
+  m_nameFld               = new LineEdit(this);
+  m_pathFld               = new FileField(this);
+  m_projectLocationFld    = new FileField(this);
+  QString currProjectPath = TProjectManager::instance()
+                                ->getCurrentProjectPath()
+                                .getParentDir()
+                                .getQString();
+  m_projectLocationFld->setPath(currProjectPath);
   m_sceneNameLabel = new QLabel(tr("Scene Name:"));
   m_widthLabel     = new QLabel(tr("Width:"), this);
   m_widthFld       = new MeasuredDoubleLineEdit(this);
@@ -126,7 +134,6 @@ StartupPopup::StartupPopup()
   QPushButton *newProjectButton = new QPushButton(tr("New Project..."), this);
   QPushButton *loadOtherSceneButton =
       new QPushButton(tr("Open Another Scene..."), this);
-  m_projectsCB = new QComboBox(this);
   // QStringList type;
   // type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
   // m_unitsCB->addItems(type);
@@ -138,10 +145,13 @@ StartupPopup::StartupPopup()
 
   m_widthFld->setMeasure("camera.lx");
   m_heightFld->setMeasure("camera.ly");
+  m_widthFld->setFixedWidth(60);
+  m_heightFld->setFixedWidth(60);
 
   m_widthFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_heightFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_fpsFld->setRange(1.0, (std::numeric_limits<double>::max)());
+  m_fpsFld->setFixedWidth(30);
   // m_dpiFld->setRange(1.0, (std::numeric_limits<double>::max)());
   m_resXFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_resYFld->setRange(0.1, (std::numeric_limits<double>::max)());
@@ -165,8 +175,8 @@ StartupPopup::StartupPopup()
   m_sceneBox->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setFixedWidth(200);
-  m_sceneBox->setMinimumWidth(480);
-  m_projectBox->setMinimumWidth(480);
+  m_sceneBox->setFixedWidth(480);
+  m_projectBox->setFixedWidth(480);
   m_buttonFrame->setFixedHeight(34);
 
   //--- layout
@@ -186,7 +196,7 @@ StartupPopup::StartupPopup()
     projectLay->setSpacing(8);
     projectLay->setMargin(8);
     {
-      projectLay->addWidget(m_projectsCB, 1);
+      projectLay->addWidget(m_projectLocationFld, 1);
       projectLay->addWidget(newProjectButton, 0);
     }
     m_projectBox->setLayout(projectLay);
@@ -199,13 +209,14 @@ StartupPopup::StartupPopup()
       // Scene Name
       newSceneLay->addWidget(m_sceneNameLabel, 0, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_nameFld, 0, 1, 1, 3);
+      newSceneLay->addWidget(m_nameFld, 0, 1, 1, 5);
 
       // Save In
-      newSceneLay->addWidget(new QLabel(tr("Save In:")), 1, 0,
-                             Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_pathFld, 1, 1, 1, 3);
-      newSceneLay->addWidget(new QLabel(tr("Camera Size:")), 2, 0,
+      // newSceneLay->addWidget(new QLabel(tr("Save In:")), 1, 0,
+      //                       Qt::AlignRight | Qt::AlignVCenter);
+      newSceneLay->addWidget(m_pathFld, 1, 1, 1, 5);
+      m_pathFld->hide();
+      newSceneLay->addWidget(new QLabel(tr("Preset:")), 2, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       QHBoxLayout *resListLay = new QHBoxLayout();
       resListLay->setSpacing(3);
@@ -215,7 +226,7 @@ StartupPopup::StartupPopup()
         resListLay->addWidget(m_addPresetBtn, 0);
         resListLay->addWidget(m_removePresetBtn, 0);
       }
-      newSceneLay->addLayout(resListLay, 2, 1, 1, 3, Qt::AlignLeft);
+      newSceneLay->addLayout(resListLay, 2, 1, 1, 5, Qt::AlignLeft);
 
       // Width - Height
       newSceneLay->addWidget(m_widthLabel, 3, 0,
@@ -224,21 +235,22 @@ StartupPopup::StartupPopup()
       newSceneLay->addWidget(m_heightLabel, 3, 2,
                              Qt::AlignRight | Qt::AlignVCenter);
       newSceneLay->addWidget(m_heightFld, 3, 3);
+      newSceneLay->addWidget(m_fpsLabel, 3, 4,
+                             Qt::AlignRight | Qt::AlignVCenter);
+      QHBoxLayout *fpsLay = new QHBoxLayout();
+      fpsLay->addWidget(m_fpsFld);
+      fpsLay->addWidget(new QLabel(tr("fps"), this));
+      newSceneLay->addLayout(fpsLay, 3, 5);
 
       newSceneLay->addWidget(m_resTextLabel, 4, 0, 1, 1, Qt::AlignRight);
       newSceneLay->addWidget(m_resXFld, 4, 1);
       newSceneLay->addWidget(m_resXLabel, 4, 2, 1, 1, Qt::AlignCenter);
       newSceneLay->addWidget(m_resYFld, 4, 3);
-      // newSceneLay->addWidget(new QLabel(tr("Units:")), 5, 0,
+      // newSceneLay->addWidget(m_fpsLabel, 5, 0,
       //                       Qt::AlignRight | Qt::AlignVCenter);
-      // newSceneLay->addWidget(m_unitsCB, 5, 1, 1, 1);
-      // newSceneLay->addWidget(m_dpiLabel, 5, 2,
-      //                       Qt::AlignRight | Qt::AlignVCenter);
-      // newSceneLay->addWidget(m_dpiFld, 5, 3, 1, 1);
-      newSceneLay->addWidget(m_fpsLabel, 5, 0,
-                             Qt::AlignRight | Qt::AlignVCenter);
-      newSceneLay->addWidget(m_fpsFld, 5, 1, 1, 1);
+      // newSceneLay->addWidget(m_fpsFld, 5, 1, 1, 1);
       newSceneLay->addWidget(createButton, 6, 1, 1, 3, Qt::AlignLeft);
+      newSceneLay->setColumnStretch(4, 1);
     }
     m_sceneBox->setLayout(newSceneLay);
     guiLay->addWidget(m_sceneBox, 2, 0, 4, 1, Qt::AlignTop);
@@ -278,10 +290,10 @@ StartupPopup::StartupPopup()
                        SLOT(onSceneChanged()));
   ret = ret && connect(newProjectButton, SIGNAL(clicked()), this,
                        SLOT(onNewProjectButtonPressed()));
+  ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
+                       SLOT(onProjectLocationChanged()));
   ret = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
                        SLOT(onLoadSceneButtonPressed()));
-  ret = ret && connect(m_projectsCB, SIGNAL(currentIndexChanged(int)),
-                       SLOT(onProjectChanged(int)));
   ret = ret &&
         connect(createButton, SIGNAL(clicked()), this, SLOT(onCreateButton()));
   ret = ret && connect(m_showAtStartCB, SIGNAL(stateChanged(int)), this,
@@ -294,13 +306,9 @@ StartupPopup::StartupPopup()
         connect(m_resXFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
   ret = ret &&
         connect(m_resYFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
-  // ret = ret && connect(m_dpiFld, SIGNAL(editingFinished()), this,
-  //                     SLOT(onDpiChanged()));
   ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
-  // ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),
-  //                     SLOT(onCameraUnitChanged(int)));
   ret = ret &&
         connect(m_removePresetBtn, SIGNAL(clicked()), SLOT(removePreset()));
   ret = ret && connect(m_nameFld, SIGNAL(returnPressedNow()), createButton,
@@ -309,14 +317,16 @@ StartupPopup::StartupPopup()
                        SLOT(onAutoSaveOnChanged(int)));
   ret = ret && connect(m_autoSaveTimeFld, SIGNAL(editingFinished()), this,
                        SLOT(onAutoSaveTimeChanged()));
+  ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
+                       SLOT(checkProject()));
   assert(ret);
+  checkProject();
 }
 
 //-----------------------------------------------------------------------------
 
 void StartupPopup::showEvent(QShowEvent *) {
   loadPresetList();
-  updateProjectCB();
   m_nameFld->setFocus();
   m_pathFld->setPath(TApp::instance()
                          ->getCurrentScene()
@@ -349,8 +359,6 @@ void StartupPopup::showEvent(QShowEvent *) {
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
-    // m_dpiFld->hide();
-    // m_dpiLabel->hide();
   } else {
     m_widthFld->setDecimals(4);
     m_heightFld->setDecimals(4);
@@ -358,8 +366,6 @@ void StartupPopup::showEvent(QShowEvent *) {
     m_resYFld->show();
     m_resXLabel->show();
     m_resTextLabel->show();
-    // m_dpiFld->show();
-    // m_dpiLabel->show();
   }
 
   m_fpsFld->setValue(fps);
@@ -435,6 +441,27 @@ void StartupPopup::refreshRecentScenes() {
 //-----------------------------------------------------------------------------
 
 void StartupPopup::onCreateButton() {
+  TProjectManager *pm = TProjectManager::instance();
+
+  TFilePath projectFolder = TFilePath(m_projectLocationFld->getPath());
+  TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
+  if (!checkProject()) {
+    DVGui::warning(
+        tr("The project needs to be a valid project.\n"
+           "Please select a valid project or create a new project."));
+    m_projectLocationFld->setFocus();
+    return;
+  }
+
+  assert(TFileStatus(projectPath).doesExist());
+  pm->setCurrentProjectPath(projectPath);
+  IoCmd::newScene();
+  m_pathFld->setPath(TApp::instance()
+                         ->getCurrentScene()
+                         ->getScene()
+                         ->getProject()
+                         ->getScenesPath()
+                         .getQString());
   if (m_nameFld->text().trimmed() == "") {
     DVGui::warning(tr("The name cannot be empty."));
     m_nameFld->setFocus();
@@ -515,55 +542,40 @@ void StartupPopup::onCreateButton() {
 
 //-----------------------------------------------------------------------------
 
-void StartupPopup::updateProjectCB() {
-  m_updating = true;
-  m_projectPaths.clear();
-  m_projectsCB->clear();
-
+void StartupPopup::onProjectLocationChanged() {
   TProjectManager *pm = TProjectManager::instance();
-
-  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "sandbox_otprj.xml";
-  m_projectPaths.push_back(sandboxFp);
-  m_projectsCB->addItem("sandbox");
-
-  std::vector<TFilePath> prjRoots;
-  pm->getProjectRoots(prjRoots);
-  for (int i = 0; i < prjRoots.size(); i++) {
-    TFilePathSet fps;
-    TSystem::readDirectory_Dir_ReadExe(fps, prjRoots[i]);
-
-    TFilePathSet::iterator it;
-    for (it = fps.begin(); it != fps.end(); ++it) {
-      TFilePath fp(*it);
-      if (pm->isProject(fp)) {
-        m_projectPaths.push_back(pm->projectFolderToProjectPath(fp));
-        TFilePath prjFile = pm->getProjectPathByProjectFolder(fp);
-        m_projectsCB->addItem(QString::fromStdString(prjFile.getName()));
-      }
+  TFilePath path      = TFilePath(m_projectLocationFld->getPath());
+  if (!TSystem::doesExistFileOrLevel(path)) {
+    path =
+        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(path);
+    m_projectLocationFld->setPath(path.getQString());
+    if (!TSystem::doesExistFileOrLevel(path)) {
+      DVGui::warning(tr(
+          "This is not a valid folder.  Please choose an existing location."));
+      checkProject();
+      return;
     }
   }
-  // Add in project of current project if outside known Project root folders
-  TProjectP currentProject   = pm->getCurrentProject();
-  TFilePath currentProjectFP = currentProject->getProjectPath();
-  if (m_projectPaths.indexOf(currentProjectFP) == -1) {
-    m_projectPaths.push_back(currentProjectFP);
-    m_projectsCB->addItem(
-        QString::fromStdString(currentProject->getName().getName()));
-  }
-  int i;
-  for (i = 0; i < m_projectPaths.size(); i++) {
-    if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-      m_projectsCB->setCurrentIndex(i);
-      break;
+  if (!pm->isProject(path)) {
+    QStringList buttonList;
+    buttonList.append(tr("Yes"));
+    buttonList.append(tr("No"));
+    int answer = DVGui::MsgBox(tr("No project found at this location \n"
+                                  "What would you like to do?"),
+                               tr("Make a new project"), tr("Cancel"), 1, this);
+    if (answer != 1) {
+      m_projectLocationFld->setPath(TApp::instance()
+                                        ->getCurrentScene()
+                                        ->getScene()
+                                        ->getProject()
+                                        ->getProjectFolder()
+                                        .getQString());
+    } else {
+      ProjectCreatePopup *popup = new ProjectCreatePopup();
+      popup->setPath(path.getQString());
+      popup->exec();
     }
   }
-  m_pathFld->setPath(TApp::instance()
-                         ->getCurrentScene()
-                         ->getScene()
-                         ->getProject()
-                         ->getScenesPath()
-                         .getQString());
-  m_updating = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -613,7 +625,6 @@ void StartupPopup::onProjectChanged(int index) {
   m_widthFld->setValue(size.lx);
   m_heightFld->setValue(size.ly);
   m_dpi = m_xRes / size.lx;
-  // m_dpiFld->setValue(m_dpi);
 }
 
 //-----------------------------------------------------------------------------
@@ -726,7 +737,6 @@ void StartupPopup::onPresetSelected(const QString &str) {
     if (Preferences::instance()->getPixelsOnly()) {
       m_widthFld->setValue((double)xres / Stage::standardDpi);
       m_heightFld->setValue((double)yres / Stage::standardDpi);
-      // m_dpiFld->setValue(Stage::standardDpi);
     }
     m_resXFld->setValue(m_xRes);
     m_resYFld->setValue(m_yRes);
@@ -850,7 +860,7 @@ void StartupPopup::onSceneChanged() {
   if (!TApp::instance()->getCurrentScene()->getScene()->isUntitled()) {
     hide();
   } else {
-    updateProjectCB();
+    // updateProjectCB();
   }
 }
 
@@ -859,7 +869,6 @@ void StartupPopup::onSceneChanged() {
 void StartupPopup::onDpiChanged() {
   if (Preferences::instance()->getPixelsOnly()) {
     m_dpi = Stage::standardDpi;
-    // m_dpiFld->setValue(Stage::standardDpi);
     updateResolution();
   }
 }
@@ -887,14 +896,14 @@ void StartupPopup::onRecentSceneClicked(int index) {
     DVGui::warning(msg);
     refreshRecentScenes();
   } else {
-    if (RecentFiles::instance()->getFileProject(index) != "-") {
-      QString projectName = RecentFiles::instance()->getFileProject(index);
-      int projectIndex    = m_projectsCB->findText(projectName);
-      if (projectIndex >= 0) {
-        TFilePath projectFp = m_projectPaths[projectIndex];
-        TProjectManager::instance()->setCurrentProjectPath(projectFp);
-      }
-    }
+    // if (RecentFiles::instance()->getFileProject(index) != "-") {
+    //  QString projectName = RecentFiles::instance()->getFileProject(index);
+    //  int projectIndex    = m_projectsCB->findText(projectName);
+    //  if (projectIndex >= 0) {
+    //    TFilePath projectFp = m_projectPaths[projectIndex];
+    //    TProjectManager::instance()->setCurrentProjectPath(projectFp);
+    //  }
+    //}
     IoCmd::loadScene(TFilePath(path.toStdWString()), false, true);
     QString origProjectName = RecentFiles::instance()->getFileProject(index);
     QString projectName     = QString::fromStdString(TApp::instance()
@@ -939,8 +948,6 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->show();
     m_resYFld->show();
     m_resXLabel->show();
-    // m_dpiFld->show();
-    // m_dpiLabel->show();
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(width);
@@ -955,9 +962,6 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
-    // m_dpiFld->hide();
-    // m_dpiLabel->hide();
-    // m_dpiFld->setValue(Stage::standardDpi);
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(m_xRes / Stage::standardDpi);
@@ -989,9 +993,6 @@ void StartupPopup::onAutoSaveTimeChanged() {
 
 void StartupPopup::updateResolution() {
   if (Preferences::instance()->getPixelsOnly()) {
-    // if (m_dpiFld->getValue() != Stage::standardDpi) {
-    //  m_dpiFld->setValue(Stage::standardDpi);
-    //}
     m_xRes = m_widthFld->getValue() * Stage::standardDpi;
     m_yRes = m_heightFld->getValue() * Stage::standardDpi;
     m_resXFld->setValue(m_xRes);
@@ -1011,9 +1012,6 @@ void StartupPopup::updateSize() {
   m_xRes = m_resXFld->getValue();
   m_yRes = m_resYFld->getValue();
   if (Preferences::instance()->getPixelsOnly()) {
-    // if (m_dpiFld->getValue() != Stage::standardDpi) {
-    //  m_dpiFld->setValue(Stage::standardDpi);
-    //}
     m_widthFld->setValue((double)m_xRes / Stage::standardDpi);
     m_heightFld->setValue((double)m_yRes / Stage::standardDpi);
   } else {
@@ -1021,6 +1019,22 @@ void StartupPopup::updateSize() {
     m_heightFld->setValue((double)m_yRes / m_dpi);
   }
   m_presetCombo->setCurrentIndex(0);
+}
+
+//-----------------------------------------------------------------------------
+
+bool StartupPopup::checkProject() {
+  TFilePath currPath = TFilePath(m_projectLocationFld->getPath());
+  bool isProject     = TProjectManager::instance()->isProject(currPath);
+  if (isProject) {
+    m_projectLocationFld->getField()->setStyleSheet(
+        m_pathFld->getField()->styleSheet());
+    m_projectLocationFld->setToolTip(tr(""));
+  } else {
+    m_projectLocationFld->getField()->setStyleSheet("color: red;");
+    m_projectLocationFld->setToolTip(tr("Not a valid project location"));
+  }
+  return isProject;
 }
 
 //-----------------------------------------------------------------------------

@@ -381,13 +381,13 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_LoadColorModel);
   fileMenu->addSeparator();
-  QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
-  {
-    addMenuItem(projectManagementMenu, MI_NewProject);
-    addMenuItem(projectManagementMenu, MI_ProjectSettings);
-    projectManagementMenu->addSeparator();
-    addMenuItem(projectManagementMenu, MI_SaveDefaultSettings);
-  }
+  addMenuItem(fileMenu, MI_NewProject);
+  fileMenu->addSeparator();
+  addMenuItem(fileMenu, MI_SaveDefaultSettings);
+  // QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
+  //{
+  //  //addMenuItem(projectManagementMenu, MI_ProjectSettings);
+  //}
   fileMenu->addSeparator();
   QMenu *importMenu = fileMenu->addMenu(tr("Import"));
   { addMenuItem(importMenu, MI_ImportMagpieFile); }

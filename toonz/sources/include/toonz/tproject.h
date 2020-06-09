@@ -108,11 +108,11 @@ public:
   };
 
 private:
-  std::vector<TFilePath> m_projectsRoots;
+  // std::vector<TFilePath> m_projectsRoots;
   std::vector<TFilePath> m_svnProjectsRoots;
   std::set<Listener *> m_listeners;
 
-  void addDefaultProjectsRoot();
+  // void addDefaultProjectsRoot();
 
   TProjectManager();
   void notifyListeners();
@@ -135,12 +135,12 @@ public:
 
   void saveTemplate(ToonzScene *scene);
 
-  void addProjectsRoot(const TFilePath &fp);
+  // void addProjectsRoot(const TFilePath &fp);
   void addSVNProjectsRoot(const TFilePath &fp);
 
   //! returns the project root of the current project (if this fails, then
   //! returns the first project root)
-  TFilePath getCurrentProjectRoot();
+  // TFilePath getCurrentProjectRoot();
 
   TFilePath projectPathToProjectName(const TFilePath &projectPath);
   TFilePath projectNameToProjectPath(const TFilePath &projectName);
@@ -166,9 +166,9 @@ public:
   TFilePath getSandboxProjectFolder();
   TFilePath getSandboxProjectPath();
 
-  void getProjectRoots(std::vector<TFilePath> &projectRoots) const {
-    projectRoots = m_projectsRoots;
-  }
+  // void getProjectRoots(std::vector<TFilePath> &projectRoots) const {
+  //  projectRoots = m_projectsRoots;
+  //}
 
   bool isProject(const TFilePath &projectFolder);
 };

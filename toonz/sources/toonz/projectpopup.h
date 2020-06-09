@@ -107,16 +107,14 @@ class ProjectPopup : public DVGui::Dialog, public TProjectManager::Listener {
   Q_OBJECT
 
 protected:
-  ProjectDirModel *m_model;
-  DvDirTreeView *m_treeView;
   DVGui::LineEdit *m_nameFld;
   QList<QPair<std::string, DVGui::FileField *>> m_folderFlds;
   QList<QPair<std::string, DVGui::CheckBox *>> m_useScenePathCbs;
 
   QLabel *m_prjNameLabel;
   QLabel *m_choosePrjLabel;
-  QComboBox *m_chooseProjectCombo;
-  QList<TFilePath> m_projectPaths;
+
+  DVGui::FileField *m_projectLocationFld;
 
 public:
   ProjectPopup(bool isModal);
@@ -127,8 +125,6 @@ public:
 
   void updateProjectFromFields(TProject *);
   void updateFieldsFromProject(TProject *);
-
-  void updateChooseProjectCombo();
 
 protected:
   void showEvent(QShowEvent *) override;
@@ -147,8 +143,6 @@ public:
 public slots:
   void onFolderChanged();
   void onUseSceneChekboxChanged(int);
-
-  void onChooseProjectChanged(int);
 };
 
 //=============================================================================
@@ -160,6 +154,7 @@ class ProjectCreatePopup final : public ProjectPopup {
 
 public:
   ProjectCreatePopup();
+  void setPath(QString path);
 
 public slots:
   void createProject();

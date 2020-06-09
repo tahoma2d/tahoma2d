@@ -2067,8 +2067,10 @@ void FileBrowser::onSelectedItems(const std::set<int> &indexes) {
   }
 
   for (it = indexes.begin(); it != indexes.end(); ++it) {
-    filePaths.insert(m_items[*it].m_path);
-    frameIDs.insert(frameIDs.begin(), m_items[*it].m_frameIds);
+    if (*it < m_items.size()) {
+      filePaths.insert(m_items[*it].m_path);
+      frameIDs.insert(frameIDs.begin(), m_items[*it].m_frameIds);
+    }
   }
 
   // reuse the list of TFrameId in order to skip loadInfo() when loading the
