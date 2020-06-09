@@ -305,10 +305,10 @@ void FileBrowserPopup::onApplyPressed() {
       if (!m_isDirectoryOnly)
         pathSet.insert(*it);
       else {
-        if (TFileStatus(*it).isDirectory())
-          pathSet.insert(*it);
-        else
-          pathSet.insert(folder);
+        // if (TFileStatus(*it).isDirectory())
+        //  pathSet.insert(*it);
+        // else
+        pathSet.insert(folder);
       }
     }
     if (!m_multiSelectionEnabled) break;

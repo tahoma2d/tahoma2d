@@ -1666,8 +1666,8 @@ void MainWindow::defineActions() {
                        tr("&Import Toonz Lip Sync File..."), "");
   createMenuFileAction(MI_NewProject, tr("&New Project..."), "");
   // createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
-  createMenuFileAction(MI_SaveDefaultSettings, tr("&Save Default Settings"),
-                       "");
+  createMenuFileAction(MI_SaveDefaultSettings,
+                       tr("&Save Project Default Settings"), "");
   createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),
                          "Ctrl+O");
   createMenuRenderAction(MI_PreviewSettings, tr("&Preview Settings..."), "");

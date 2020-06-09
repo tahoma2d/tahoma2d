@@ -28,7 +28,6 @@ class StartupPopup final : public DVGui::Dialog {
   DVGui::LineEdit *m_nameFld;
   DVGui::FileField *m_pathFld;
   DVGui::FileField *m_projectLocationFld;
-  QLabel *m_projectNameLabel;
   QLabel *m_widthLabel;
   QLabel *m_heightLabel;
   QLabel *m_fpsLabel;
@@ -47,7 +46,6 @@ class StartupPopup final : public DVGui::Dialog {
   QList<TFilePath> m_projectPaths;
   QCheckBox *m_showAtStartCB;
   QCheckBox *m_autoSaveOnCB;
-  QComboBox *m_projectsCB;
   // QComboBox *m_unitsCB;
   QPushButton *m_loadOtherSceneButton;
   QPushButton *m_newProjectButton;
@@ -83,7 +81,6 @@ public slots:
   void onRecentSceneClicked(int index);
   void onCreateButton();
   void onShowAtStartChanged(int index);
-  void updateProjectCB();
   void onProjectChanged(int index);
   void onNewProjectButtonPressed();
   void onLoadSceneButtonPressed();
