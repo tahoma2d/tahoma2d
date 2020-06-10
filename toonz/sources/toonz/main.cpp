@@ -415,6 +415,11 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
+  // Set icon theme search paths
+  QStringList themeSearchPathsList = {":/icons"};
+  QIcon::setThemeSearchPaths(themeSearchPathsList);
+  //qDebug() << "All icon theme search paths:" << QIcon::themeSearchPaths();
+
   TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
@@ -583,6 +588,11 @@ int main(int argc, char *argv[]) {
                      Qt::white);
   a.processEvents();
 
+  // Set active icon theme
+  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+                                                              : "light");
+  //qDebug() << "Icon theme name:" << QIcon::themeName();
+
   // stile
   QApplication::setStyle("windows");
 
@@ -670,16 +680,6 @@ int main(int argc, char *argv[]) {
   splash.showMessage(offsetStr + "Loading style sheet ...", Qt::AlignCenter,
                      Qt::white);
   a.processEvents();
-
-  // Set icon themes:
-  // For QIcon's used with QIcon::fromTheme()
-  if (Preferences::instance()->getIconTheme()) {
-    // :icons/light/
-    QIcon::setThemeName("light");
-    // :icons/dark/
-  } else {
-    QIcon::setThemeName("dark");
-  }
 
   // Carico lo styleSheet
   QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();

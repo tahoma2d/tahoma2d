@@ -356,19 +356,10 @@ void PreferencesPopup::onStyleSheetTypeChanged() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onIconThemeChanged() {
-  if (Preferences::instance()->getIconTheme()) {
-    // :icons/light/
-    QIcon::setThemeName("light");
-  } else {
-    // :icons/dark/
-    QIcon::setThemeName("dark");
-  }
-
-  // Set stylesheet again to update icon theme
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString currentStyle = m_pref->getCurrentStyleSheetPath();
-  qApp->setStyleSheet(currentStyle);
-  QApplication::restoreOverrideCursor();
+  // Switch between dark or light icons (requires reboot)
+  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+                                                              : "light");
+  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
 }
 
 //-----------------------------------------------------------------------------
@@ -1398,7 +1389,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
-  lay->addWidget(new QLabel(tr("Icon Theme:"), this), 2, 0,
+  lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
                  Qt::AlignRight | Qt::AlignVCenter);
   lay->addWidget(createUI(iconTheme), 2, 1);
 
