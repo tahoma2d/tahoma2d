@@ -208,16 +208,29 @@ QIcon createQIcon(const char *iconSVGName) {
   QString click  = QString(":Resources/") + iconSVGName + "_click.svg";
   QString over   = QString(":Resources/") + iconSVGName + "_over.svg";
 
+  // Theme icons to extract pixmaps from to build icon, if no file exists in the
+  // theme then we use the fallback.
+  QIcon themeIconNormal = QIcon::fromTheme(iconSVGName, QIcon(normal));
+  QIcon themeIconClick  = QIcon::fromTheme(iconSVGName, QIcon(click));
+  QIcon themeIconOver   = QIcon::fromTheme(iconSVGName, QIcon(over));
+
+  // Convert theme icons into pixmaps
+  QSize pmSize(48, 48);  // Just grab the largest file that exists, we don't
+                         // support multiple size icons anyway.
+  QPixmap pmNormal = themeIconNormal.pixmap(pmSize, QIcon::Normal, QIcon::Off);
+  QPixmap pmClick  = themeIconClick.pixmap(pmSize, QIcon::Normal, QIcon::Off);
+  QPixmap pmOver   = themeIconOver.pixmap(pmSize, QIcon::Normal, QIcon::Off);
+
   QIcon icon;
-  icon.addFile(normal, QSize(), QIcon::Normal, QIcon::Off);
-  if (QFile::exists(click))
-    icon.addFile(click, QSize(), QIcon::Normal, QIcon::On);
+  icon.addPixmap(pmNormal, QIcon::Normal, QIcon::Off);
+  if (!themeIconClick.isNull())
+    icon.addPixmap(pmClick, QIcon::Normal, QIcon::On);
   else
-    icon.addFile(normal, QSize(), QIcon::Normal, QIcon::On);
-  if (QFile::exists(over))
-    icon.addFile(over, QSize(), QIcon::Active);
+    icon.addPixmap(pmNormal, QIcon::Normal, QIcon::On);
+  if (!themeIconOver.isNull())
+    icon.addPixmap(pmOver, QIcon::Active);
   else
-    icon.addFile(normal, QSize(), QIcon::Active);
+    icon.addPixmap(pmNormal, QIcon::Active);
 
   return icon;
 }
