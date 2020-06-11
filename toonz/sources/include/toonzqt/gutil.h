@@ -102,6 +102,9 @@ svgToPixmap(const QString &svgFilePath, const QSize &size = QSize(),
 int DVAPI getDevPixRatio();
 
 //-----------------------------------------------------------------------------
+
+QPixmap DVAPI generateDisabledPixmap(QPixmap &input);
+
 QIcon DVAPI createQIcon(const char *iconSVGName);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
 QIcon DVAPI createQIconOnOff(const char *iconSVGName, bool withOver = true);

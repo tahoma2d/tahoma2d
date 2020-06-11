@@ -203,20 +203,47 @@ int getDevPixRatio() {
 
 //-----------------------------------------------------------------------------
 
+QPixmap generateDisabledPixmap(QPixmap &input) {
+  // Generate disabled pixmaps for icons by reducing opacity of input pixmap
+  QPixmap pmInput = input;
+  QPixmap pmDisabled(pmInput.size());
+  pmDisabled.fill(Qt::transparent);
+  QPainter p(&pmDisabled);
+  p.setBackgroundMode(Qt::TransparentMode);
+  p.setBackground(QBrush(Qt::transparent));
+  p.eraseRect(pmInput.rect());
+  p.setOpacity(0.2);
+  p.drawPixmap(0, 0, pmInput);
+  p.end();
+
+  return pmDisabled;
+}
+
+//-----------------------------------------------------------------------------
+
 QIcon createQIcon(const char *iconSVGName) {
   QString normal = QString(":Resources/") + iconSVGName + ".svg";
   QString click  = QString(":Resources/") + iconSVGName + "_click.svg";
   QString over   = QString(":Resources/") + iconSVGName + "_over.svg";
 
-  // Theme icons to extract pixmaps from to build icon, if no file exists in the
-  // theme then we use the fallback.
-  QIcon themeIconNormal = QIcon::fromTheme(iconSVGName, QIcon(normal));
-  QIcon themeIconClick  = QIcon::fromTheme(iconSVGName, QIcon(click));
-  QIcon themeIconOver   = QIcon::fromTheme(iconSVGName, QIcon(over));
+  QIcon themeIconNormal;
+  QIcon themeIconClick;
+  QIcon themeIconOver;
+
+  // Check if theme icon exists, give it priority
+  // If it doesn't, fallback to old resource
+  if (QIcon::hasThemeIcon(QString(iconSVGName))) {
+    themeIconNormal = QIcon::fromTheme(iconSVGName);
+    themeIconClick  = QIcon::fromTheme(QString(iconSVGName) + "_click");
+    themeIconOver  = QIcon::fromTheme(QString(iconSVGName) + "_over");
+  } else {
+    themeIconNormal = QIcon(normal);
+    themeIconClick  = QIcon(click);
+    themeIconOver  = QIcon(over);
+  }
 
   // Convert theme icons into pixmaps
-  QSize pmSize(48, 48);  // Just grab the largest file that exists, we don't
-                         // support multiple size icons anyway.
+  QSize pmSize(48, 48);  // Just grab the largest file that may exist
   QPixmap pmNormal = themeIconNormal.pixmap(pmSize, QIcon::Normal, QIcon::Off);
   QPixmap pmClick  = themeIconClick.pixmap(pmSize, QIcon::Normal, QIcon::Off);
   QPixmap pmOver   = themeIconOver.pixmap(pmSize, QIcon::Normal, QIcon::Off);
@@ -231,6 +258,10 @@ QIcon createQIcon(const char *iconSVGName) {
     icon.addPixmap(pmOver, QIcon::Active);
   else
     icon.addPixmap(pmNormal, QIcon::Active);
+
+  // Draw disabled pixmap, by reducing opacity of normal pixmap
+  if (!pmNormal.isNull())
+    icon.addPixmap(generateDisabledPixmap(pmNormal), QIcon::Disabled);
 
   return icon;
 }
@@ -257,11 +288,21 @@ QIcon createQIconOnOff(const char *iconSVGName, bool withOver) {
   QString off  = QString(":Resources/") + iconSVGName + "_off.svg";
   QString over = QString(":Resources/") + iconSVGName + "_over.svg";
 
-  // Theme icons to extract pixmaps from to build icon, if no file exists in the
-  // theme then we use the fallback.
-  QIcon themeIconOn   = QIcon::fromTheme(iconSVGName, QIcon(on));
-  QIcon themeIconOff  = QIcon::fromTheme(iconSVGName, QIcon(off));
-  QIcon themeIconOver = QIcon::fromTheme(iconSVGName, QIcon(over));
+  QIcon themeIconOn;
+  QIcon themeIconOff;
+  QIcon themeIconOver;
+
+  // Check if theme icon exists, give it priority
+  // If it doesn't, fallback to old resource
+  if (QIcon::hasThemeIcon(QString(iconSVGName))) {
+    themeIconOn = QIcon::fromTheme(QString(iconSVGName) + "_on");
+    themeIconOff  = QIcon::fromTheme(QString(iconSVGName) + "_off");
+    themeIconOver  = QIcon::fromTheme(QString(iconSVGName) + "_over");
+  } else {
+    themeIconOn = QIcon(on);
+    themeIconOff  = QIcon(off);
+    themeIconOver  = QIcon(over);
+  }
 
   // Convert theme icons into pixmaps
   QSize pmSize(48, 48);  // Just grab the largest file that exists, we don't
@@ -277,6 +318,11 @@ QIcon createQIconOnOff(const char *iconSVGName, bool withOver) {
     icon.addPixmap(pmOver, QIcon::Active);
   else
     icon.addPixmap(pmOn, QIcon::Active);
+
+  // Draw disabled pixmap, by reducing opacity of main pixmap
+  if (!pmOn.isNull())
+    icon.addPixmap(generateDisabledPixmap(pmOn), QIcon::Disabled);
+
   return icon;
 }
 
