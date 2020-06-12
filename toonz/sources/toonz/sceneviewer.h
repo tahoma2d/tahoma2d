@@ -308,6 +308,8 @@ public:
   void bindFBO() override;
   void releaseFBO() override;
 
+  void resetNavigation();
+
 public:
   // SceneViewer's gadget public functions
   TPointD winToWorld(const QPointF &pos) const;

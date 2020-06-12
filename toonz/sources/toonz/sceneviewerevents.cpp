@@ -533,6 +533,18 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     mousePan(event);
     return;
   }
+  if (m_mouseZooming > 0) {
+    setToolCursor(this, ToolCursor::ZoomCursor);
+    return;
+  }
+  if (m_mouseRotating > 0) {
+    setToolCursor(this, ToolCursor::RotateCursor);
+    return;
+  }
+  if (m_mousePanning > 0) {
+    setToolCursor(this, ToolCursor::PanCursor);
+    return;
+  }
 
   if (m_editPreviewSubCamera) {
     if (!PreviewSubCameraManager::instance()->mouseMoveEvent(this, event))
@@ -716,10 +728,8 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onPress(const TMouseEvent &event) {
+  m_dragging = true;
   if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
-    if (m_mouseZooming > 0) setToolCursor(this, ToolCursor::ZoomCursor);
-    if (m_mouseRotating > 0) setToolCursor(this, ToolCursor::RotateCursor);
-    if (m_mousePanning > 0) setToolCursor(this, ToolCursor::PanCursor);
     m_pos           = event.mousePos() * getDevPixRatio();
     m_mouseButton   = event.button();
     m_buttonClicked = true;
@@ -874,6 +884,7 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onRelease(const TMouseEvent &event) {
+  m_dragging = false;
   if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
     if (m_resetOnRelease) {
       m_mousePanning   = 0;
@@ -886,7 +897,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
       m_mouseRotating = 1;
     else if (m_mouseZooming > 0)
       m_mouseZooming = 1;
-    m_dragging       = false;
+
     m_sw.stop();
     invalidateAll();
     GLInvalidateAll();
@@ -1351,32 +1362,42 @@ bool SceneViewer::event(QEvent *e) {
     m_gestureActive = true;
     return true;
   }
-  bool isTyping = false;
-  TTool *tool   = TApp::instance()->getCurrentTool()->getTool();
+  bool isTyping     = false;
+  bool toolEnabled  = false;
+  bool toolDragging = false;
+  bool toolActive   = false;
+  TTool *tool       = TApp::instance()->getCurrentTool()->getTool();
   if (tool && tool->isEnabled() && tool->getName() == T_Type &&
-      tool->isActive())
+      tool->isActive()) {
     isTyping = true;
+  }
+  if (tool && tool->isEnabled()) toolEnabled   = true;
+  if (tool && tool->isActive()) toolActive     = true;
+  if (tool && tool->isDragging()) toolDragging = true;
 
-  if (!isTyping && (e->type() == QEvent::ShortcutOverride ||
-                    e->type() == QEvent::KeyPress)) {
+  if (!isTyping && !m_dragging && (e->type() == QEvent::ShortcutOverride ||
+                                   e->type() == QEvent::KeyPress)) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     if (keyEvent->key() == Qt::Key_Space) {
       if (keyEvent->modifiers() & Qt::ControlModifier) {
         if (m_mouseRotating == 0) {
           m_mouseRotating = 1;
+          setToolCursor(this, ToolCursor::RotateCursor);
         }
       } else if (keyEvent->modifiers() & Qt::ShiftModifier) {
         if (m_mouseZooming == 0) {
           m_mouseZooming = 1;
+          setToolCursor(this, ToolCursor::ZoomCursor);
         }
       } else if (m_mousePanning == 0) {
         m_mousePanning = 1;
+        setToolCursor(this, ToolCursor::PanCursor);
       }
       e->accept();
       return true;
     }
   }
-  if (e->type() == QEvent::KeyRelease) {
+  if (!isTyping && e->type() == QEvent::KeyRelease) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     if (keyEvent->key() == Qt::Key_Space) {
       if (keyEvent->isAutoRepeat()) {
@@ -1389,6 +1410,7 @@ bool SceneViewer::event(QEvent *e) {
           m_mousePanning  = 0;
           m_mouseZooming  = 0;
           m_mouseRotating = 0;
+          if (tool) setToolCursor(this, tool->getCursorId());
         }
         e->accept();
         return true;
@@ -1428,7 +1450,8 @@ bool SceneViewer::event(QEvent *e) {
     return true;
   }
   if (e->type() == QEvent::KeyRelease) {
-    if (!((QKeyEvent *)e)->isAutoRepeat()) {
+    if (!((QKeyEvent *)e)->isAutoRepeat() &&
+        ((QKeyEvent *)e)->key() != Qt::Key_Space) {
       QWidget *focusWidget = QApplication::focusWidget();
       if (focusWidget == 0 ||
           QString(focusWidget->metaObject()->className()) == "SceneViewer")
@@ -1884,6 +1907,8 @@ void SceneViewer::onToolSwitched() {
   update();
 }
 
+//-----------------------------------------------------------------------------
+
 void SceneViewer::mousePan(const TMouseEvent &e) {
   if (m_sw.getTotalTime() < 10) return;
   m_sw.stop();
@@ -1894,6 +1919,8 @@ void SceneViewer::mousePan(const TMouseEvent &e) {
   m_oldPos = e.m_pos;
 }
 
+//-----------------------------------------------------------------------------
+
 void SceneViewer::mouseZoom(const TMouseEvent &e) {
   int d    = m_oldY - e.m_pos.y;
   m_oldY   = e.m_pos.y;
@@ -1901,6 +1928,8 @@ void SceneViewer::mouseZoom(const TMouseEvent &e) {
   m_factor = f;
   zoom(m_center, f);
 }
+
+//-----------------------------------------------------------------------------
 
 void SceneViewer::mouseRotate(const TMouseEvent &e) {
   if (m_sw.getTotalTime() < 50) return;
@@ -1940,4 +1969,16 @@ void SceneViewer::mouseRotate(const TMouseEvent &e) {
                  TPointD(u + m_center.x, m_center.y));
   tglDrawSegment(TPointD(m_center.x, -u + m_center.y),
                  TPointD(m_center.x, u + m_center.y));
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::resetNavigation() {
+  if (m_dragging)
+    m_resetOnRelease = true;
+  else {
+    m_mousePanning  = 0;
+    m_mouseZooming  = 0;
+    m_mouseRotating = 0;
+  }
 }

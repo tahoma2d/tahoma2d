@@ -545,15 +545,15 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_ewPosLabel         = new ClickableLabel(tr("X:"), this);
   m_nsPosLabel         = new ClickableLabel(tr("Y:"), this);
 
-  // Lock E/W
+  // Lock X
   TBoolProperty *lockProp =
-      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Position E/W"));
+      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Position X"));
   if (lockProp)
     m_lockEWPosCheckbox =
         new ToolOptionCheckbox(m_tool, lockProp, toolHandle, this);
-  // Lock N/S
+  // Lock Y
   lockProp =
-      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Position N/S"));
+      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Position Y"));
   if (lockProp)
     m_lockNSPosCheckbox =
         new ToolOptionCheckbox(m_tool, lockProp, toolHandle, this);
@@ -628,15 +628,13 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_ewCenterLabel = new ClickableLabel(tr("X:"), this);
   m_nsCenterLabel = new ClickableLabel(tr("Y:"), this);
 
-  // Lock E/W Center
-  lockProp =
-      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Center E/W"));
+  // Lock X Center
+  lockProp = dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Center X"));
   if (lockProp)
     m_lockEWCenterCheckbox =
         new ToolOptionCheckbox(m_tool, lockProp, toolHandle, this);
-  // Lock N/S Center
-  lockProp =
-      dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Center N/S"));
+  // Lock Y Center
+  lockProp = dynamic_cast<TBoolProperty *>(m_pg->getProperty("Lock Center Y"));
   if (lockProp)
     m_lockNSCenterCheckbox =
         new ToolOptionCheckbox(m_tool, lockProp, toolHandle, this);

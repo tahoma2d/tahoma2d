@@ -9,6 +9,7 @@
 #include "iocommand.h"
 #include "mainwindow.h"
 #include "cellselection.h"
+#include "sceneviewer.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -61,6 +62,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QKeyEvent>
 
 //===================================================================
 
@@ -726,6 +728,17 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
 
     m_isPenCloseToTablet = false;
     emit tabletLeft();
+  }
+  if (e->type() == QEvent::KeyRelease) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    if (keyEvent->key() == Qt::Key_Space) {
+      if (!keyEvent->isAutoRepeat()) {
+        SceneViewer *viewer = getActiveViewer();
+        if (viewer) {
+          viewer->resetNavigation();
+        }
+      }
+    }
   }
 
   return false;  // I want just peek at the event. It must be processed anyway.

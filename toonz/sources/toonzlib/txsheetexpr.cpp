@@ -82,7 +82,7 @@ public:
     TMeasure *measure = m_param->getMeasure();
     if (measure) {
       const TUnit *unit = measure->getCurrentUnit();
-      if (unit) value = unit->convertTo(value);
+      if (unit) value   = unit->convertTo(value);
     }
     return value;
   }
@@ -193,9 +193,9 @@ public:
 
   TStageObject::Channel matchChannelName(const Token &token) const {
     std::string s = toLower(token.getText());
-    if (s == "ns")
+    if (s == "ns" || s == "y")
       return TStageObject::T_Y;
-    else if (s == "ew")
+    else if (s == "ew" || s == "x")
       return TStageObject::T_X;
     else if (s == "rot" || s == "ang" || s == "angle")
       return TStageObject::T_Angle;
@@ -542,8 +542,9 @@ public:
         const QString &vertexName =
             QString::fromStdString(tokens[VERTEX_NAME].getText());
         if (SkVD *skvd = skdp->vertexDeformation(vertexName)) {
-          const Component *componentsEnd = m_components + sizeof(m_components) /
-                                                              sizeof(Component),
+          const Component *componentsEnd =
+                              m_components +
+                              sizeof(m_components) / sizeof(Component),
                           *component = std::find(m_components, componentsEnd,
                                                  tokens[COMPONENT].getText());
 
