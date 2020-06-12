@@ -177,7 +177,7 @@ void ExportSceneDvDirModelRootNode::refreshChildren() {
   //{
   TProjectManager *pm = TProjectManager::instance();
   std::vector<TFilePath> projectRoots;
-  pm->getProjectRoots(projectRoots);
+  // pm->getProjectRoots(projectRoots);
 
   int i;
   for (i = 0; i < (int)projectRoots.size(); i++) {
@@ -264,7 +264,7 @@ DvDirModelNode *ExportSceneDvDirModel::getNode(const QModelIndex &index) const {
 QModelIndex ExportSceneDvDirModel::index(int row, int column,
                                          const QModelIndex &parent) const {
   if (column != 0) return QModelIndex();
-  DvDirModelNode *parentNode = m_root;
+  DvDirModelNode *parentNode       = m_root;
   if (parent.isValid()) parentNode = getNode(parent);
   if (row < 0 || row >= parentNode->getChildCount()) return QModelIndex();
   DvDirModelNode *node = parentNode->getChild(row);
@@ -454,9 +454,9 @@ ExportSceneTreeView::ExportSceneTreeView(QWidget *parent)
   // bottom horizontal scrollbar to resize contents...
   bool ret = connect(this, SIGNAL(expanded(const QModelIndex &)), this,
                      SLOT(resizeToConts()));
-  ret      = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
+  ret = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
                        SLOT(resizeToConts()));
-  ret      = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
+  ret = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
                        SLOT(resizeToConts()));
 
   assert(ret);
@@ -672,16 +672,8 @@ TFilePath ExportScenePopup::createNewProject() {
     return TFilePath();
   }
 
-  TFilePath currentProjectRoot;
-  DvDirModelFileFolderNode *node = dynamic_cast<DvDirModelFileFolderNode *>(
-      m_projectTreeView->getCurrentNode());
-  if (node)
-    currentProjectRoot = node->getPath();
-  else
-    currentProjectRoot = pm->getCurrentProjectRoot();
-  TFilePath projectFolder = currentProjectRoot + projectName;
-  TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
-  TProject *project       = new TProject();
+  TFilePath projectPath = pm->projectNameToProjectPath(projectName);
+  TProject *project     = new TProject();
 
   TProjectP currentProject = pm->getCurrentProject();
   assert(currentProject);
@@ -690,7 +682,7 @@ TFilePath ExportScenePopup::createNewProject() {
     project->setFolder(currentProject->getFolderName(i),
                        currentProject->getFolder(i));
   project->save(projectPath);
-  DvDirModel::instance()->refreshFolder(currentProjectRoot);
+  DvDirModel::instance()->refreshFolder(projectPath.getParentDir());
 
   return projectPath;
 }

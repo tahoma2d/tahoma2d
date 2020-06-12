@@ -597,17 +597,19 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
     if (pegbar && pegbar->getKeyframeRange(r0, r1)) padding += 9;
   }
 
-  // make the field semi-transparent
-  QColor bgColor        = m_viewer->getColumnHeadPastelizer();
-  QString styleSheetStr = QString(
-                              "#RenameCellField { padding-right:%1px; "
-                              "background-color:rgba(%2,%3,%4,75); color:%5;}")
-                              .arg(padding)
-                              .arg(bgColor.red())
-                              .arg(bgColor.green())
-                              .arg(bgColor.blue())
-                              .arg(m_viewer->getTextColor().name());
-  setStyleSheet(styleSheetStr);
+  // removed by konero 6/4/20
+  //// make the field semi-transparent
+  // QColor bgColor        = m_viewer->getColumnHeadPastelizer();
+  // QString styleSheetStr = QString(
+  //                            "#RenameCellField { padding-right:%1px; "
+  //                            "background-color:rgba(%2,%3,%4,75);
+  //                            color:%5;}")
+  //                            .arg(padding)
+  //                            .arg(bgColor.red())
+  //                            .arg(bgColor.green())
+  //                            .arg(bgColor.blue())
+  //                            .arg(m_viewer->getTextColor().name());
+  // setStyleSheet(styleSheetStr);
 
   TXshCell cell = xsh->getCell(row, col);
   QPoint xy     = m_viewer->positionToXY(CellPosition(row, col)) - QPoint(1, 2);
@@ -1066,6 +1068,7 @@ CellArea::CellArea(XsheetViewer *parent, Qt::WFlags flags)
   setMouseTracking(true);
   m_renameCell->hide();
   setFocusPolicy(Qt::NoFocus);
+  setObjectName("XsheetCellArea");
 }
 
 //-----------------------------------------------------------------------------
@@ -2559,7 +2562,7 @@ void CellArea::paintEvent(QPaintEvent *event) {
           ->rect((col < 0) ? PredefinedRect::CAMERA_CELL : PredefinedRect::CELL)
           .translated(xy)
           .adjusted(0, 0, -1 - frameAdj, 0);
-  p.setPen(Qt::black);
+  p.setPen(m_viewer->getCellFocusColor());
   p.setBrush(Qt::NoBrush);
   for (int i = 0; i < 2; i++)  // thick border within cell
     p.drawRect(QRect(rect.topLeft() + QPoint(i, i),

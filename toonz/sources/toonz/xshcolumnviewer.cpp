@@ -763,10 +763,10 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   bool isCameraSelected = col == -1 && isCurrent && !isEditingSpline;
 
   QColor pastelizer(m_viewer->getColumnHeadPastelizer());
-  pastelizer.setAlpha(50);
+  pastelizer.setAlpha(0);
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
-  colorSelection.setAlpha(170);
+  // colorSelection.setAlpha(170);
   p.fillRect(rect, isSelected ? colorSelection : pastelizer);
 }
 
@@ -1701,12 +1701,12 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
     }
   }
 
-  p.setPen(grey150);
+  p.setPen(m_viewer->getVerticalLineColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(0, 0, -1, -3));
+    p.drawRect(toBeUpdated.adjusted(0, -1, -1, -3));
   else
-    p.drawRect(toBeUpdated.adjusted(0, 0, -3, -1));
+    p.drawRect(toBeUpdated.adjusted(-1, 0, -3, -1));
 
   if (getDragTool()) getDragTool()->drawColumnsArea(p);
 }
@@ -2669,21 +2669,22 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cmdManager->getAction(MI_ReplaceLevel));
       menu.addAction(cmdManager->getAction(MI_ReplaceParentDirectory));
 
-      if (containsVectorLevel(col)) {
-        menu.addSeparator();
-        QAction *setMask =
-            new QAction(tr("Temporary Mask (Not in final render)"), this);
-        setMask->setCheckable(true);
-        setMask->setChecked(xsh->getColumn(col)->isMask());
-        setMask->setToolTip(
-            tr("Only Toonz Vector levels can be used as masks. \n Masks don't "
-               "show up in final renders."));
-        bool ret = true;
-        ret      = ret &&
-              connect(setMask, &QAction::toggled, [=]() { onSetMask(col); });
-        assert(ret);
-        menu.addAction(setMask);
-      }
+      // if (containsVectorLevel(col)) {
+      //  menu.addSeparator();
+      //  QAction *setMask =
+      //      new QAction(tr("Temporary Mask (Not in final render)"), this);
+      //  setMask->setCheckable(true);
+      //  setMask->setChecked(xsh->getColumn(col)->isMask());
+      //  setMask->setToolTip(
+      //      tr("Only Toonz Vector levels can be used as masks. \n Masks don't
+      //      "
+      //         "show up in final renders."));
+      //  bool ret = true;
+      //  ret      = ret &&
+      //        connect(setMask, &QAction::toggled, [=]() { onSetMask(col); });
+      //  assert(ret);
+      //  menu.addAction(setMask);
+      //}
     }
   }
 

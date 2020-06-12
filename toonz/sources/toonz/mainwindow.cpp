@@ -1649,8 +1649,8 @@ void MainWindow::defineActions() {
   newVectorLevelAction->setIconText(tr("New Vector Level"));
   newVectorLevelAction->setIcon(QIcon(":Resources/new_vector_level.svg"));
   QAction *newToonzRasterLevelAction = createMenuLevelAction(
-      MI_NewToonzRasterLevel, tr("&New Toonz Raster Level"), "");
-  newToonzRasterLevelAction->setIconText(tr("New Toonz Raster Level"));
+      MI_NewToonzRasterLevel, tr("&New Smart Raster Level"), "");
+  newToonzRasterLevelAction->setIconText(tr("New Smart Raster Level"));
   newToonzRasterLevelAction->setIcon(
       QIcon(":Resources/new_toonz_raster_level.svg"));
   QAction *newRasterLevelAction =
@@ -1671,9 +1671,9 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_ImportMagpieFile,
                        tr("&Import Toonz Lip Sync File..."), "");
   createMenuFileAction(MI_NewProject, tr("&New Project..."), "");
-  createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
-  createMenuFileAction(MI_SaveDefaultSettings, tr("&Save Default Settings"),
-                       "");
+  // createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
+  createMenuFileAction(MI_SaveDefaultSettings,
+                       tr("&Save Project Default Settings"), "");
   createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),
                          "Ctrl+O");
   createMenuRenderAction(MI_PreviewSettings, tr("&Preview Settings..."), "");
@@ -2130,10 +2130,9 @@ void MainWindow::defineActions() {
   // createRightClickMenuAction(MI_PremultiplyFile,      tr("Premultiply"),
   // "");
   createMenuLevelAction(MI_ConvertToVectors, tr("Convert to Vectors..."), "");
-  createMenuLevelAction(MI_ConvertToToonzRaster, tr("Vectors to Toonz Raster"),
+  createMenuLevelAction(MI_ConvertToToonzRaster, tr("Vectors to Smart Raster"),
                         "");
-  createMenuLevelAction(MI_ConvertVectorToVector,
-                        tr("Replace Vectors with Simplified Vectors"), "");
+  createMenuLevelAction(MI_ConvertVectorToVector, tr("Simplify Vectors"), "");
   createMenuLevelAction(MI_Tracking, tr("Tracking..."), "");
   createRightClickMenuAction(MI_RemoveLevel, tr("Remove Level"), "");
   createRightClickMenuAction(MI_AddToBatchRenderList, tr("Add As Render Task"),
@@ -2225,7 +2224,8 @@ void MainWindow::defineActions() {
   createToolAction(T_Geometric, "geometric", tr("Geometric Tool"), "G");
   createToolAction(T_Type, "type", tr("Type Tool"), "Y");
   createToolAction(T_Fill, "fill", tr("Fill Tool"), "F");
-  createToolAction(T_PaintBrush, "paintbrush", tr("Paint Brush Tool"), "");
+  createToolAction(T_PaintBrush, "paintbrush", tr("Smart Raster Paint Tool"),
+                   "");
   createToolAction(T_Eraser, "eraser", tr("Eraser Tool"), "E");
   createToolAction(T_Tape, "tape", tr("Tape Tool"), "T");
   createToolAction(T_StylePicker, "stylepicker", tr("Style Picker Tool"), "K");
@@ -2241,9 +2241,9 @@ void MainWindow::defineActions() {
   createToolAction(T_Skeleton, "skeleton", tr("Skeleton Tool"), "V");
   createToolAction(T_Tracker, "tracker", tr("Tracker Tool"), "");
   createToolAction(T_Hook, "hook", tr("Hook Tool"), "O");
-  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "Shift+Space");
-  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "Ctrl+Space");
-  createToolAction(T_Hand, "hand", tr("Hand Tool"), "Space");
+  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "");
+  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "");
+  createToolAction(T_Hand, "hand", tr("Hand Tool"), "");
   createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X");
   createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "");
   createToolAction(T_Finger, "finger", tr("Finger Tool"), "");

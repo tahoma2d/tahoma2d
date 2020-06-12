@@ -91,6 +91,7 @@ protected:
 
   QToolBar *m_paletteToolBar;
   QToolBar *m_savePaletteToolBar;
+  QToolBar *m_newPageToolbar;
   QMenu *m_viewMode;
 
   int m_indexPageToDelete;

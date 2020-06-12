@@ -533,7 +533,7 @@ public:
         m_indexes(indexes) {
     int i;
     for (i = 0; i < fids.size(); i++) {
-      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t)this) +
+      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t) this) +
                    "-" + QString::number(i);
       TToonzImageP image = sl->getFrame(fids[i], false);
       assert(image);
@@ -545,7 +545,7 @@ public:
     int i;
 
     for (i = 0; i < m_fids.size(); i++) {
-      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t)this) +
+      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t) this) +
                    "-" + QString::number(i);
       TImageP img = TImageCache::instance()->get(id, false)->cloneImage();
 
@@ -576,7 +576,7 @@ public:
     int i;
     for (i = 0; i < m_fids.size(); i++)
       TImageCache::instance()->remove("DeleteMatchlineUndo" +
-                                      QString::number((uintptr_t)this) + "-" +
+                                      QString::number((uintptr_t) this) + "-" +
                                       QString::number(i));
   }
 
@@ -778,7 +778,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence,
       if (!timg || !tmatch) {
         getImageProgressBar->close();
         DVGui::warning(QObject::tr(
-            "Match lines can be applied to Toonz raster levels only."));
+            "Match lines can be applied to Smart Raster levels only."));
         /*-- 前に遡ってキャッシュを消去 --*/
         i--;
         for (; i >= 0; i--) {
@@ -810,7 +810,7 @@ void doMatchlines(int column, int mColumn, int index, int inkPrevalence,
 
   if (matchingLevels.empty()) {
     DVGui::warning(
-        QObject::tr("Match lines can be applied to Toonz raster levels only."));
+        QObject::tr("Match lines can be applied to Smart Raster levels only."));
     return;
   }
 

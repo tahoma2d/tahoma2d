@@ -412,7 +412,7 @@ void ItemViewPlayWidget::PlayManager::setInfo(DvItemListModel *model,
   m_pixmap =
       model->getItemData(index, DvItemListModel::Thumbnail).value<QPixmap>();
   if (!m_pixmap.isNull()) m_iconSize = m_pixmap.size();
-  m_path                             = path;
+  m_path = path;
   getFileFids(m_path, m_fids);
 }
 
@@ -1141,8 +1141,9 @@ void DvItemViewerPanel::paintTableItem(QPainter &p, int index) {
   // Version Control status pixmap
   QPixmap statusPixmap = getStatusPixmap(status);
   if (!statusPixmap.isNull()) {
-    p.drawPixmap(x + 1, y + 1, statusPixmap.scaled(15, 15, Qt::KeepAspectRatio,
-                                                   Qt::SmoothTransformation));
+    p.drawPixmap(x + 1, y + 1,
+                 statusPixmap.scaled(15, 15, Qt::KeepAspectRatio,
+                                     Qt::SmoothTransformation));
     x += 15;
   }
 
@@ -1232,7 +1233,7 @@ void DvItemViewerPanel::mousePressEvent(QMouseEvent *event) {
         int a = index, b = index;
         while (a > 0 && !m_selection->isSelected(a - 1)) a--;
         if (a == 0) a = index;
-        int k         = getItemCount();
+        int k = getItemCount();
         while (b < k && !m_selection->isSelected(b + 1)) b++;
         if (b == k) b = index;
         int i;
@@ -1489,9 +1490,9 @@ void DvItemViewer::setModel(DvItemListModel *model) {
 //-----------------------------------------------------------------------------
 
 void DvItemViewer::updateContentSize() {
-  int w              = m_panel->getContentMinimumWidth();
+  int w = m_panel->getContentMinimumWidth();
   if (w < width()) w = width();
-  int h              = m_panel->getContentHeight(w) +
+  int h = m_panel->getContentHeight(w) +
           20;  // 20 is margin for showing the empty area
   if (h < height()) h = height();
   m_panel->resize(w, h);
@@ -1755,14 +1756,14 @@ void DvItemViewerTitleBar::paintEvent(QPaintEvent *) {
   QRect rect(0, 0, width(), height());
 
   QBrush nb    = QBrush(Qt::NoBrush);
-  QPalette pal = QPalette(nb, nb, QBrush(QColor(255, 255, 255, 30)),
-                          QBrush(QColor(0, 0, 0, 110)),
+  QPalette pal = QPalette(nb, nb, QBrush(QColor(getColBorderColor())),
+                          QBrush(QColor(getColBorderColor())),
                           QBrush(QColor(Qt::gray)), nb, nb, nb, nb);
 
-  p.fillRect(rect, QColor(0, 0, 0, 90));  // bg color
+  p.fillRect(rect, getColColor());
 
-  p.setPen(QColor(200, 200, 200, 255));  // text color
-  int h  = 0;                            // fontMetrics().descent();
+  p.setPen(getColTextColor());
+  int h  = 0;  // fontMetrics().descent();
   int y  = rect.top();
   int ly = rect.height();
   int lx = rect.width();
@@ -1778,11 +1779,11 @@ void DvItemViewerTitleBar::paintEvent(QPaintEvent *) {
     // paint background
     QColor bgColor;
     if (dataType == model->getCurrentOrderType())
-      bgColor = QColor(255, 255, 255, 30);
+      bgColor = QColor(getColSortedColor());
     else
       bgColor = QColor(0, 0, 0, 0);
 
-    QRect typeRect(x, y, columnLx, ly);
+    QRect typeRect(x - 1, y - 1, columnLx + 1, ly + 1);
     QBrush brush(bgColor);
     qDrawShadePanel(&p, typeRect, pal, false, 1, &brush);
 
@@ -1793,7 +1794,7 @@ void DvItemViewerTitleBar::paintEvent(QPaintEvent *) {
         arrowIcon = createQIconPNG("arrow_up");
       else
         arrowIcon = createQIconPNG("arrow_down");
-      p.drawPixmap(QRect(x + columnLx - 10, y + 6, 8, 8),
+      p.drawPixmap(QRect(x + columnLx - 11, y + 6, 8, 8),
                    arrowIcon.pixmap(8, 8));
     }
 

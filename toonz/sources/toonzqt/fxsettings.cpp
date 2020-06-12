@@ -618,7 +618,7 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
     QLayoutItem *item = layout->itemAtPosition(r, 1);
     if (!item) continue;
 
-    QSize itemSize = getItemSize(item);
+    QSize itemSize                                        = getItemSize(item);
     if (maxWidgetWidth < itemSize.width()) maxWidgetWidth = itemSize.width();
     fieldsHeight += itemSize.height();
   }
@@ -657,9 +657,7 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
   // TabBar
   m_tabBar = new TabBar(this);
   // This widget is used to set the background color of the tabBar
-  // using the styleSheet.
-  // It is also used to take 6px on the left before the tabBar
-  // and to draw the two lines on the bottom size
+  // using the styleSheet and to draw the two lines on the bottom size.
   m_tabBarContainer = new TabBarContainter(this);
   m_pagesList       = new QStackedWidget(this);
 
@@ -675,12 +673,12 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
 
   //----layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(1);
+  mainLayout->setMargin(0);
   mainLayout->setSpacing(0);
   {
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setMargin(0);
-    hLayout->addSpacing(6);
+    hLayout->addSpacing(-1);
     {
       hLayout->addWidget(m_tabBar);
       hLayout->addStretch(1);
@@ -871,7 +869,7 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   std::string tagName;
   if (!is.matchTag(tagName) || tagName != "page")
     throw TException("expected <page>");
-  std::string pageName = is.getTagAttribute("name");
+  std::string pageName         = is.getTagAttribute("name");
   if (pageName == "") pageName = "page";
 
   ParamsPage *paramsPage = new ParamsPage(this, m_parent);
@@ -978,7 +976,7 @@ ParamViewer::ParamViewer(QWidget *parent, Qt::WFlags flags)
   showSwatchButton->setFocusPolicy(Qt::NoFocus);
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->setMargin(1);
+  mainLayout->setMargin(0);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_tablePageSet, 1);
@@ -1148,7 +1146,7 @@ FxSettings::FxSettings(QWidget *parent, const TPixel32 &checkCol1,
   bool ret = true;
   ret      = ret && connect(m_paramViewer, SIGNAL(currentFxParamChanged()),
                        SLOT(updateViewer()));
-  ret      = ret &&
+  ret = ret &&
         connect(m_viewer, SIGNAL(pointPositionChanged(int, const TPointD &)),
                 SLOT(onPointChanged(int, const TPointD &)));
   ret = ret && connect(m_paramViewer, SIGNAL(preferredSizeChanged(QSize)), this,
@@ -1297,10 +1295,10 @@ void FxSettings::setFx(const TFxP &currentFx, const TFxP &actualFx) {
     TFxUtil::setKeyframe(currentFxWithoutCamera, m_frameHandle->getFrameIndex(),
                          actualFx, m_frameHandle->getFrameIndex());
 
-  ToonzScene *scene = 0;
+  ToonzScene *scene        = 0;
   if (m_sceneHandle) scene = m_sceneHandle->getScene();
 
-  int frameIndex = 0;
+  int frameIndex                = 0;
   if (m_frameHandle) frameIndex = m_frameHandle->getFrameIndex();
 
   m_paramViewer->setFx(currentFxWithoutCamera, actualFx, frameIndex, scene);
@@ -1360,7 +1358,7 @@ void FxSettings::setCurrentFx() {
   if (TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx.getPointer()))
     fx = zfx->getZeraryFx();
   else
-    hasEmptyInput = hasEmptyInputPort(fx);
+    hasEmptyInput   = hasEmptyInputPort(fx);
   int frame         = m_frameHandle->getFrame();
   ToonzScene *scene = m_sceneHandle->getScene();
   actualFx          = fx;

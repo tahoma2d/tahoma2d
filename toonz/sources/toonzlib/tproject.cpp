@@ -22,6 +22,7 @@
 // Qt includes
 #include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
 
 // STD includes
 #include <fstream>
@@ -123,9 +124,12 @@ std::wstring getProjectSuffix(const TFilePath &path) {
 TFilePath getProjectFile(const TFilePath &fp) {
   const std::wstring &fpName     = fp.getWideName();
   const std::wstring &folderName = fp.getParentDir().getWideName();
+  std::wstring tahoma            = L"tahomaproject";
   QDir dir(fp.getQString());
+  TFilePath path = fp + (tahoma + xmlExt);
+  if (TFileStatus(path).doesExist()) return path;
   for (int i = 0; i < prjSuffixCount; ++i) {
-    TFilePath path = fp + (fpName + prjSuffix[i] + xmlExt);
+    path = fp + (fpName + prjSuffix[i] + xmlExt);
     if (TFileStatus(path).doesExist()) return path;
 
     QStringList filters;
@@ -144,6 +148,7 @@ TFilePath getProjectFile(const TFilePath &fp) {
 //! this function updates it to the most recent; otherwise,
 //! it is left untouched.
 TFilePath getLatestVersionProjectPath(const TFilePath &path) {
+  return path.withName(L"tahomaproject");
   const std::wstring &suffix = getProjectSuffix(path);
   for (int i = 1; i < prjSuffixCount; ++i)
     if (suffix == prjSuffix[i]) {
@@ -173,7 +178,7 @@ TFilePath searchProjectPath(TFilePath folder) {
   if (projectPath != TFilePath()) return projectPath;
 
   // If none exist in the folder, build the name with the most recent suffix
-  return folder + TFilePath(projectName + prjSuffix[0] + xmlExt);
+  return folder + TFilePath(L"tahomaproject" + xmlExt);
 }
 
 //===================================================================
@@ -197,11 +202,27 @@ void hideOlderProjectFiles(const TFilePath &folderPath) {
   const std::wstring &name = folderPath.getWideName();
 
   TFilePath path;
-  for (int i = 1; i < prjSuffixCount; ++i) {
+  for (int i = 0; i < prjSuffixCount; ++i) {
     path = folderPath + (name + prjSuffix[i] + xmlExt);
     if (TFileStatus(path).doesExist())
       TSystem::renameFile(path.withType("xml_"), path);
   }
+}
+
+//===================================================================
+
+TFilePath getDocumentsPath() {
+  QString documentsPath =
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
+  return TFilePath(documentsPath);
+}
+
+//===================================================================
+
+TFilePath getDesktopPath() {
+  QString desktopPath =
+      QStandardPaths::standardLocations(QStandardPaths::DesktopLocation)[0];
+  return TFilePath(desktopPath);
 }
 
 }  // namespace
@@ -691,6 +712,7 @@ void TProject::load(const TFilePath &projectPath) {
 bool TProject::isAProjectPath(const TFilePath &fp) {
   if (fp.isAbsolute() && fp.getType() == "xml") {
     const std::wstring &fpName = fp.getWideName();
+    if (fpName == L"tahomaproject") return true;
     for (int i = 0; i < prjSuffixCount; ++i)
       if (fpName.find(prjSuffix[i]) != std::wstring::npos) return true;
   }
@@ -764,12 +786,12 @@ TProjectManager *TProjectManager::instance() {
 /*! Adds the specified folder \b fp in the projecs roots container.\n
         If \b fp is already contained in the container, the method does nothing.
         \note \b fp must be a folder and not a file path.*/
-void TProjectManager::addProjectsRoot(const TFilePath &root) {
-  // assert(TFileStatus(root).isDirectory());
-  if (std::find(m_projectsRoots.begin(), m_projectsRoots.end(), root) ==
-      m_projectsRoots.end())
-    m_projectsRoots.push_back(root);
-}
+// void TProjectManager::addProjectsRoot(const TFilePath &root) {
+//  // assert(TFileStatus(root).isDirectory());
+//  if (std::find(m_projectsRoots.begin(), m_projectsRoots.end(), root) ==
+//      m_projectsRoots.end())
+//    m_projectsRoots.push_back(root);
+//}
 
 //-------------------------------------------------------------------
 
@@ -786,25 +808,25 @@ void TProjectManager::addSVNProjectsRoot(const TFilePath &root) {
 
 //-------------------------------------------------------------------
 
-void TProjectManager::addDefaultProjectsRoot() {
-  addProjectsRoot(TEnv::getStuffDir() + "projects");
-}
+// void TProjectManager::addDefaultProjectsRoot() {
+//  addProjectsRoot(TEnv::getStuffDir() + "projects");
+//}
 
 //-------------------------------------------------------------------
 
-TFilePath TProjectManager::getCurrentProjectRoot() {
-  TFilePath currentProjectPath = getCurrentProjectPath();
-  int i;
-  for (i = 0; i < (int)m_projectsRoots.size(); i++)
-    if (m_projectsRoots[i].isAncestorOf(currentProjectPath))
-      return m_projectsRoots[i];
-  for (i = 0; i < (int)m_svnProjectsRoots.size(); i++)
-    if (m_svnProjectsRoots[i].isAncestorOf(currentProjectPath))
-      return m_svnProjectsRoots[i];
-  if (m_projectsRoots.empty())
-    addDefaultProjectsRoot();  // shouldn't be necessary
-  return m_projectsRoots[0];
-}
+// TFilePath TProjectManager::getCurrentProjectRoot() {
+//  TFilePath currentProjectPath = getCurrentProjectPath();
+//  int i;
+//  for (i = 0; i < (int)m_projectsRoots.size(); i++)
+//    if (m_projectsRoots[i].isAncestorOf(currentProjectPath))
+//      return m_projectsRoots[i];
+//  for (i = 0; i < (int)m_svnProjectsRoots.size(); i++)
+//    if (m_svnProjectsRoots[i].isAncestorOf(currentProjectPath))
+//      return m_svnProjectsRoots[i];
+//  if (m_projectsRoots.empty())
+//    addDefaultProjectsRoot();  // shouldn't be necessary
+//  return m_projectsRoots[0];
+//}
 
 //-------------------------------------------------------------------
 /*! Returns the name of the specified \b projectPath.
@@ -814,40 +836,28 @@ TFilePath TProjectManager::projectPathToProjectName(
     const TFilePath &projectPath) {
   assert(projectPath.isAbsolute());
   TFilePath projectFolder = projectPath.getParentDir();
-  if (m_projectsRoots.empty()) addDefaultProjectsRoot();
+  // if (m_projectsRoots.empty()) addDefaultProjectsRoot();
 
+  // keep allowing for older project types
   std::wstring fpName = projectPath.getWideName();
   for (int i = 0; i < prjSuffixCount; ++i) {
     //	  std::wstring::size_type const i = fpName.find(prjSuffix[i]);
     if (fpName.find(prjSuffix[i]) != std::wstring::npos)
       return TFilePath(fpName.substr(0, fpName.find(prjSuffix[i])));
   }
-
-  int i;
-  for (i = 0; i < (int)m_projectsRoots.size(); i++) {
-    if (m_projectsRoots[i].isAncestorOf(projectFolder))
-      return projectFolder - m_projectsRoots[i];
-  }
-  for (i = 0; i < (int)m_svnProjectsRoots.size(); i++) {
-    if (m_svnProjectsRoots[i].isAncestorOf(projectFolder))
-      return projectFolder - m_svnProjectsRoots[i];
-  }
-  // non dovrei mai arrivare qui: il progetto non sta sotto un project root
   return projectFolder.withoutParentDir();
 }
 
 //-------------------------------------------------------------------
-/*! Returns an absolute path of the specified \b projectName.\n
-        \note The returned project path is always computed used the first
-   project root in the container.*/
+// Returns an absolute path of the specified \b projectName.
 TFilePath TProjectManager::projectNameToProjectPath(
     const TFilePath &projectName) {
   assert(!TProject::isAProjectPath(projectName));
   assert(!projectName.isAbsolute());
-  if (m_projectsRoots.empty()) addDefaultProjectsRoot();
+  // if (m_projectsRoots.empty()) addDefaultProjectsRoot();
   if (projectName == TProject::SandboxProjectName)
     return searchProjectPath(TEnv::getStuffDir() + projectName);
-  return searchProjectPath(m_projectsRoots[0] + projectName);
+  return searchProjectPath(getDocumentsPath() + projectName);
 }
 
 //-------------------------------------------------------------------
@@ -871,16 +881,25 @@ TFilePath TProjectManager::getProjectPathByName(const TFilePath &projectName) {
   assert(!projectName.isAbsolute());
   // TFilePath relativeProjectPath = projectName + (projectName.getName() +
   // projectPathSuffix);
-  if (m_projectsRoots.empty()) addDefaultProjectsRoot();
+  // if (m_projectsRoots.empty()) addDefaultProjectsRoot();
   if (projectName == TProject::SandboxProjectName)
     return searchProjectPath(TEnv::getStuffDir() + projectName);
-  int i, n = (int)m_projectsRoots.size();
-  for (i = 0; i < n; i++) {
-    TFilePath projectPath = searchProjectPath(m_projectsRoots[i] + projectName);
-    assert(TProject::isAProjectPath(projectPath));
-    if (TFileStatus(projectPath).doesExist()) return projectPath;
-  }
-  for (i = 0; i < (int)m_svnProjectsRoots.size(); i++) {
+
+  TFilePath projectPath = searchProjectPath(getDocumentsPath() + projectName);
+  assert(TProject::isAProjectPath(projectPath));
+  if (TFileStatus(projectPath).doesExist()) return projectPath;
+
+  projectPath = searchProjectPath(getDesktopPath() + projectName);
+  assert(TProject::isAProjectPath(projectPath));
+  if (TFileStatus(projectPath).doesExist()) return projectPath;
+
+  // search the projects folder
+  TFilePath projects = TFilePath(TEnv::getStuffDir() + TFilePath("projects"));
+  projectPath        = searchProjectPath(projects + projectName);
+  assert(TProject::isAProjectPath(projectPath));
+  if (TFileStatus(projectPath).doesExist()) return projectPath;
+
+  for (int i = 0; i < (int)m_svnProjectsRoots.size(); i++) {
     TFilePath projectPath =
         searchProjectPath(m_svnProjectsRoots[i] + projectName);
     assert(TProject::isAProjectPath(projectPath));
@@ -1149,6 +1168,7 @@ TFilePath TProjectManager::getSandboxProjectPath() {
 }
 
 bool TProjectManager::isProject(const TFilePath &projectFolder) {
+  if (!projectFolder.isAbsolute()) return false;
   TFilePath projectPath = projectFolderToProjectPath(projectFolder);
   return TFileStatus(projectPath).doesExist();
 }

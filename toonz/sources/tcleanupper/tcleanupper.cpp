@@ -523,17 +523,17 @@ int main(int argc, char *argv[]) {
   TFilePath logFilePath = lRootDir + "tcleanup.log";
   TUserLogAppend m_userLog(logFilePath);
 
-  TFilePathSet fps = ToonzFolder::getProjectsFolders();
-  TFilePathSet::iterator fpIt;
-  for (fpIt = fps.begin(); fpIt != fps.end(); ++fpIt)
-    TProjectManager::instance()->addProjectsRoot(*fpIt);
+  // TFilePathSet fps = ToonzFolder::getProjectsFolders();
+  // TFilePathSet::iterator fpIt;
+  // for (fpIt = fps.begin(); fpIt != fps.end(); ++fpIt)
+  //  TProjectManager::instance()->addProjectsRoot(*fpIt);
 
   TFilePath libraryFolder = ToonzFolder::getLibraryFolder();
   TRasterImagePatternStrokeStyle::setRootDir(libraryFolder);
   TVectorImagePatternStrokeStyle::setRootDir(libraryFolder);
   TPalette::setRootDir(libraryFolder);
   TImageStyle::setLibraryDir(libraryFolder);
-  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheRoot);
 
@@ -843,4 +843,3 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 //------------------------------------------------------------------------
-

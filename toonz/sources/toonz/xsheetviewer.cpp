@@ -390,11 +390,11 @@ void XsheetViewer::positionSections() {
     if (o->isVerticalTimeline()) {
       headerFrame = headerFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT,
                                          XsheetGUI::TOOLBAR_HEIGHT);
-      bodyFrame   = bodyFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
+      bodyFrame = bodyFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
     } else {
       headerLayer = headerLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT,
                                          XsheetGUI::TOOLBAR_HEIGHT);
-      bodyLayer   = bodyLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
+      bodyLayer = bodyLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
     }
   } else {
     m_toolbar->showToolbar(false);
@@ -723,9 +723,9 @@ void XsheetViewer::updateAreeSize() {
           positionToXY(CellPosition(xsh->getFrameCount() + 1, firstCol));
 
       ColumnFan *fan = xsh->getColumnFan(m_orientation);
-      areaFilled.setY(
-          areaFilled.y() + 1 +
-          (fan->isActive(firstCol) ? o->cellHeight() : o->foldedCellSize()));
+      areaFilled.setY(areaFilled.y() + 1 + (fan->isActive(firstCol)
+                                                ? o->cellHeight()
+                                                : o->foldedCellSize()));
     }
   }
   if (viewArea.width() < areaFilled.x()) viewArea.setWidth(areaFilled.x());
@@ -817,9 +817,9 @@ QPoint XsheetViewer::positionToXY(const CellPosition &pos) const {
   // area
   // since the layers are flipped
 
-  usePoint.setY(
-      usePoint.y() - o->cellHeight() +
-      (fan->isActive(pos.layer()) ? o->cellHeight() : o->foldedCellSize()));
+  usePoint.setY(usePoint.y() - o->cellHeight() + (fan->isActive(pos.layer())
+                                                      ? o->cellHeight()
+                                                      : o->foldedCellSize()));
   int columnCount = std::max(1, xsh->getColumnCount());
   int colsHeight  = o->colToLayerAxis(columnCount, fan);
 
@@ -949,8 +949,8 @@ bool XsheetViewer::areCameraCellsSelected() {
 
 void XsheetViewer::setScrubHighlight(int row, int startRow, int col) {
   if (m_scrubCol == -1) m_scrubCol = col;
-  m_scrubRow0 = std::min(row, startRow);
-  m_scrubRow1 = std::max(row, startRow);
+  m_scrubRow0                      = std::min(row, startRow);
+  m_scrubRow1                      = std::max(row, startRow);
   return;
 }
 
@@ -1155,12 +1155,12 @@ void XsheetViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-  {
-    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                 "Qt::MouseEventSynthesizedByApplication"
-              << std::endl;
-    break;
-  }
+    {
+      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
 
   }  // end switch
 }
@@ -1332,6 +1332,7 @@ void XsheetViewer::onSceneSwitched() {
   updateAllAree();
   clearNoteWidgets();
   m_noteArea->updateButtons();
+  m_layerFooterPanel->m_noteArea->updateButtons();
 }
 
 //-----------------------------------------------------------------------------
@@ -1390,8 +1391,8 @@ void XsheetViewer::onCurrentColumnSwitched() {
 void XsheetViewer::scrollToColumn(int col) {
   int colNext = col + (m_orientation->isVerticalTimeline() ? 1 : -1);
   if (colNext < 0) colNext = -1;
-  int x0 = columnToLayerAxis(col);
-  int x1 = columnToLayerAxis(colNext);
+  int x0                   = columnToLayerAxis(col);
+  int x1                   = columnToLayerAxis(colNext);
 
   if (orientation()->isVerticalTimeline())
     scrollToHorizontalRange(x0, x1);
@@ -1560,6 +1561,7 @@ void XsheetViewer::discardNoteWidget() {
   delete m_noteWidgets.at(m_currentNoteIndex);
   m_noteWidgets.removeAt(m_currentNoteIndex);
   m_noteArea->updateButtons();
+  m_layerFooterPanel->m_noteArea->updateButtons();
   updateCells();
 }
 
@@ -1574,6 +1576,7 @@ QList<XsheetGUI::NoteWidget *> XsheetViewer::getNotesWidget() const {
 void XsheetViewer::addNoteWidget(XsheetGUI::NoteWidget *w) {
   m_noteWidgets.push_back(w);
   m_noteArea->updateButtons();
+  m_layerFooterPanel->m_noteArea->updateButtons();
 }
 
 //-----------------------------------------------------------------------------
@@ -1585,6 +1588,7 @@ int XsheetViewer::getCurrentNoteIndex() const { return m_currentNoteIndex; }
 void XsheetViewer::setCurrentNoteIndex(int currentNoteIndex) {
   m_currentNoteIndex = currentNoteIndex;
   m_noteArea->updateButtons();
+  m_layerFooterPanel->m_noteArea->updateButtons();
 
   if (currentNoteIndex < 0) return;
 
@@ -1603,7 +1607,10 @@ void XsheetViewer::setCurrentNoteIndex(int currentNoteIndex) {
 
 //-----------------------------------------------------------------------------
 
-void XsheetViewer::resetXsheetNotes() { m_noteArea->updateButtons(); }
+void XsheetViewer::resetXsheetNotes() {
+  m_noteArea->updateButtons();
+  m_layerFooterPanel->m_noteArea->updateButtons();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1611,6 +1618,7 @@ void XsheetViewer::updateNoteWidgets() {
   int i;
   for (i = 0; i < m_noteWidgets.size(); i++) m_noteWidgets.at(i)->update();
   m_noteArea->updatePopup();
+  m_layerFooterPanel->m_noteArea->updatePopup();
   updateCells();
 }
 

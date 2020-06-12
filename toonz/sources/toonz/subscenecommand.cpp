@@ -211,7 +211,7 @@ bool mustRemoveColumn(int &from, int &to, TXshChildLevel *childLevel,
     if (app != childLevel) {
       removeColumn = false;
       if (from != -1 && to != -1) {
-        rangeFound = from <= row && row <= to;
+        rangeFound            = from <= row && row <= to;
         if (!rangeFound) from = to = -1;
       }
       continue;
@@ -496,7 +496,7 @@ TFx *explodeFxSubTree(TFx *innerFx, QMap<TFx *, QPair<TFx *, int>> &fxs,
       sortedFx.insert(fxs[terminalFx].second, fxs[terminalFx].first);
     }
     if (outPorts.empty()) return 0;
-    TFx *root                          = sortedFx.begin().value();
+    TFx *root = sortedFx.begin().value();
     QMultiMap<int, TFx *>::iterator it = sortedFx.begin();
     outerDag->removeFromXsheet(it.value());
     for (++it; it != sortedFx.end(); ++it) {
@@ -538,6 +538,11 @@ void bringObjectOut(TStageObject *obj, TXsheet *xsh,
     assert(id.isPegbar());
     pegbarIndex++;
     TStageObjectId outerId = TStageObjectId::PegbarId(pegbarIndex);
+    // find the first available pegbar id
+    while (xsh->getStageObjectTree()->getStageObject(outerId, false)) {
+      pegbarIndex++;
+      outerId = TStageObjectId::PegbarId(pegbarIndex);
+    }
     TStageObject *outerObj =
         xsh->getStageObjectTree()->getStageObject(outerId, true);
     outerObj->setDagNodePos((*it)->getDagNodePos());
@@ -600,8 +605,8 @@ set<int> explodeStageObjects(
   if (!onlyColumn) {
     // add a pegbar to represent the table
     TStageObject *table = subXsh->getStageObject(TStageObjectId::TableId);
-    /*- 空いてるIndexまでpegbarIndexを進める -*/
-    int pegbarIndex = 2;
+    // find the first available pegbar index
+    int pegbarIndex = 0;
     while (
         outerTree->getStageObject(TStageObjectId::PegbarId(pegbarIndex), false))
       pegbarIndex++;
@@ -806,7 +811,7 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
       if (outPorts.empty() || linkToXsheet)
         outerDag->addToXsheet(root);
       else
-        for (int j = 0; j < outPorts.size(); j++) outPorts[j]->setFx(root);
+        for (int j    = 0; j < outPorts.size(); j++) outPorts[j]->setFx(root);
       explosionLinked = true;
     }
   }
@@ -863,7 +868,7 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
   int groupId    = outerDag->getNewGroupId();
   for (it = fxs.begin(); it != fxs.end(); it++) {
     QPair<TFx *, int> pair = it.value();
-    TFx *outerFx           = pair.first;
+    TFx *outerFx = pair.first;
     outerFx->getAttributes()->setGroupId(groupId);
     outerFx->getAttributes()->setGroupName(L"Group " +
                                            std::to_wstring(groupId));
@@ -1123,9 +1128,16 @@ void bringPegbarsInsideChildXsheet(TXsheet *xsh, TXsheet *childXsh,
   for (pegbarIt = pegbarIds.begin(); pegbarIt != pegbarIds.end(); ++pegbarIt) {
     TStageObjectId id        = *pegbarIt;
     TStageObjectParams *data = xsh->getStageObject(id)->getParams();
-    childXsh->getStageObject(id)->assignParams(data);
+    TStageObject *obj        = childXsh->getStageObject(id);
+    obj->assignParams(data);
     delete data;
-    childXsh->getStageObject(id)->setParent(xsh->getStageObjectParent(id));
+    obj->setParent(xsh->getStageObjectParent(id));
+
+    // reset grammers of all parameters or they fails to refer to other
+    // parameters via expression
+    for (int c = 0; c != TStageObject::T_ChannelCount; ++c)
+      childXsh->getStageObjectTree()->setGrammar(
+          obj->getParam((TStageObject::Channel)c));
   }
 }
 
@@ -1586,8 +1598,8 @@ public:
       }
     QMap<TFx *, FxConnections>::const_iterator it2;
     for (it2 = m_fxConnections.begin(); it2 != m_fxConnections.end(); it2++) {
-      TFx *fx                     = it2.key();
-      FxConnections connections   = it2.value();
+      TFx *fx                   = it2.key();
+      FxConnections connections = it2.value();
       QMap<int, TFx *> inputLinks = connections.getInputLinks();
       QMap<int, TFx *>::const_iterator it3;
       for (it3 = inputLinks.begin(); it3 != inputLinks.end(); it3++)
@@ -1709,7 +1721,7 @@ public:
       outFx->addRef();
     }
 
-    for (int i = 0; i < m_pegObjects.size(); i++)
+    for (int i                              = 0; i < m_pegObjects.size(); i++)
       m_parentIds[m_pegObjects[i]->getId()] = m_pegObjects[i]->getParent();
 
     QMap<TStageObjectSpline *, TStageObjectSpline *>::iterator it3;
@@ -2423,7 +2435,7 @@ void SubsceneCmd::explode(int index) {
 
     TFx *root = 0;
     assert(!columnOutputConnections.empty());
-    QList<TFxPort *> ports = columnOutputConnections.begin().value();
+    QList<TFxPort *> ports   = columnOutputConnections.begin().value();
     if (!ports.empty()) root = (*ports.begin())->getFx();
 
     ExplodeChildUndoRemovingColumn *undo = new ExplodeChildUndoRemovingColumn(

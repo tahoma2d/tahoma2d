@@ -254,8 +254,12 @@ void FileBrowserPopup::onOkPressed() {
     } else {
       if (!m_isDirectoryOnly)
         pathSet.insert(*pt);
-      else
-        pathSet.insert(folder);
+      else {
+        if (TFileStatus(*pt).isDirectory())
+          pathSet.insert(*pt);
+        else
+          pathSet.insert(folder);
+      }
     }
 
     if (!m_multiSelectionEnabled) break;
@@ -300,8 +304,12 @@ void FileBrowserPopup::onApplyPressed() {
     } else {
       if (!m_isDirectoryOnly)
         pathSet.insert(*it);
-      else
+      else {
+        // if (TFileStatus(*it).isDirectory())
+        //  pathSet.insert(*it);
+        // else
         pathSet.insert(folder);
+      }
     }
     if (!m_multiSelectionEnabled) break;
     ++it;
@@ -338,8 +346,13 @@ void FileBrowserPopup::onFilePathsSelected(
     QString text;
     if (!m_isDirectoryOnly)
       text = QString::fromStdWString(fp.getLevelNameW());
-    else
-      text = QString::fromStdWString(m_browser->getFolder().getWideString());
+    else {
+      if (TFileStatus(fp).isDirectory())
+        text = fp.getQString();
+      else
+        text = QString::fromStdWString(m_browser->getFolder().getWideString());
+    }
+    std::string textStr = text.toStdString();
 
     m_nameField->setText(text);
   } else

@@ -104,6 +104,7 @@ public slots:
   void onButtonPressed(FlipConsole::EGadget button);
   void setFlipHButtonChecked(bool checked);
   void setFlipVButtonChecked(bool checked);
+  void changeSceneFps(int value);
 
 protected slots:
 

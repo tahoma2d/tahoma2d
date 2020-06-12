@@ -454,7 +454,7 @@ LevelSettingsPopup::LevelSettingsPopup()
     if (Preferences::instance()->getUnits() == "pixel")
       dpiBox = new QGroupBox(tr("Resolution"), this);
     else
-      dpiBox = new QGroupBox(tr("DPI && Resolution"), this);
+      dpiBox               = new QGroupBox(tr("DPI && Resolution"), this);
     QGridLayout *dpiLayout = new QGridLayout();
     dpiLayout->setMargin(5);
     dpiLayout->setSpacing(5);
@@ -679,7 +679,7 @@ LevelSettingsValues LevelSettingsPopup::getValues(TXshLevelP level) {
   // leveltype
   switch (levelType) {
   case ToonzRaster:
-    values.typeStr = tr("Toonz Raster level");
+    values.typeStr = tr("Smart Raster level");
     break;
   case Raster:
     values.typeStr = tr("Raster level");
@@ -688,7 +688,7 @@ LevelSettingsValues LevelSettingsPopup::getValues(TXshLevelP level) {
     values.typeStr = tr("Mesh level");
     break;
   case ToonzVector:
-    values.typeStr = tr("Toonz Vector level");
+    values.typeStr = tr("Vector level");
     break;
   case Palette:
     values.typeStr = tr("Palette level");
@@ -1321,7 +1321,7 @@ void LevelSettingsPopup::onWidthFieldChanged() {
     if (dpi.x <= 0) continue;
     TDimension res = sl->getResolution();
     if (res.lx <= 0) continue;
-    dpi.x = res.lx / lx;
+    dpi.x                                 = res.lx / lx;
     if (m_squarePixCB->isChecked()) dpi.y = dpi.x;
 
     LevelProperties::DpiPolicy oldPolicy = sl->getProperties()->getDpiPolicy();
@@ -1361,7 +1361,7 @@ void LevelSettingsPopup::onHeightFieldChanged() {
     if (dpi.y <= 0) continue;
     TDimension res = sl->getResolution();
     if (res.ly <= 0) continue;
-    dpi.y = res.ly / ly;
+    dpi.y                                 = res.ly / ly;
     if (m_squarePixCB->isChecked()) dpi.x = dpi.y;
 
     LevelProperties::DpiPolicy oldPolicy = sl->getProperties()->getDpiPolicy();

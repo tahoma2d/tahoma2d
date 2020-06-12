@@ -7,6 +7,7 @@
 #include "toonzqt/dvscrollwidget.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/flipconsoleowner.h"
+#include "toonzqt/dvdialog.h"
 
 // TnzLib includes
 #include "toonz/preferences.h"
@@ -256,6 +257,7 @@ void PlaybackExecutor::run() {
   }
 
   m_abort = false;
+  emit(playbackAborted());
 }
 
 //==========================================================================================
@@ -464,6 +466,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
     , m_playToolBar(0)
     , m_colorFilterGroup(0)
     , m_fpsLabel(0)
+    , m_timeLabel(0)
     , m_consoleOwner(consoleOwner)
     , m_enableBlankFrameButton(0) {
   if (m_customizeId != "SceneViewerConsole") {
@@ -512,6 +515,14 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
 
   bool ret = connect(&m_playbackExecutor, SIGNAL(nextFrame(int)), this,
                      SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
+  ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
+                       SLOT(setFpsFieldColors()));
+  if (m_fpsField) {
+    ret = ret && connect(m_fpsField, SIGNAL(controlClickEvent()), this,
+                         SLOT(resetToSceneFps()));
+    ret = ret && connect(m_fpsField, SIGNAL(controlAltClickEvent()), this,
+                         SLOT(setSceneFpsToCurrent()));
+  }
 
   assert(ret);
 
@@ -798,6 +809,22 @@ void FlipConsole::onNextFrame(int fps) {
 
 //----------------------------------------------------------------------------
 
+void FlipConsole::setFpsFieldColors() {
+  if (m_fpsField) {
+    if (m_fpsField->getValue() == m_sceneFps) {
+      m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+      m_fpsField->setToolTip("");
+    } else {
+      m_fpsField->setLineEditBackgroundColor(QColor(255, 69, 0));
+      m_fpsField->setToolTip(
+          tr("This value is different than the scene framerate.\n"
+             "Control click to reset."));
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+
 void FlipConsole::playNextFrame() {
   int from = m_from, to = m_to;
   if (m_markerFrom <= m_markerTo) from = m_markerFrom, to = m_markerTo;
@@ -823,6 +850,7 @@ void FlipConsole::playNextFrame() {
 
   m_currFrameSlider->setValue(m_currentFrame);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
+  updateCurrentTime();
   m_settings.m_blankColor        = TPixel::Transparent;
   m_settings.m_recomputeIfNeeded = true;
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
@@ -844,6 +872,7 @@ void FlipConsole::setFrameRate(int val, bool forceUpdate) {
     setCurrentFPS(val);
   }
   m_sceneFps = val;
+  setFpsFieldColors();
 }
 
 //-----------------------------------------------------------------------------
@@ -851,6 +880,23 @@ void FlipConsole::setFrameRate(int val, bool forceUpdate) {
 void FlipConsole::setCurrentFPS(bool dragging) {
   setCurrentFPS(m_fpsField->getValue());
   m_fpsSlider->setValue(m_fps);
+}
+
+//-----------------------------------------------------------------------------
+
+void FlipConsole::resetToSceneFps() {
+  setCurrentFPS(m_sceneFps);
+  m_fpsSlider->setValue(m_sceneFps);
+}
+
+//-----------------------------------------------------------------------------
+
+void FlipConsole::setSceneFpsToCurrent() {
+  if (m_fps == abs(m_fps) && m_fps != m_sceneFps) {
+    emit(changeSceneFps(m_fps));
+  } else if (m_fps != abs(m_fps)) {
+    DVGui::warning(tr("Cannot set the scene fps to a negative value."));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -866,7 +912,9 @@ void FlipConsole::setCurrentFPS(int val) {
     m_reverse = (val < 0);
 
   if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS "));
-  if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+  if (m_fpsField) {
+    setFpsFieldColors();
+  }
 
   m_playbackExecutor.resetFps(m_fps);
 }
@@ -1585,7 +1633,9 @@ void FlipConsole::doButtonPressed(UINT button) {
     if ((m_fps == 0 || m_framesCount == 0) && m_playbackExecutor.isRunning()) {
       doButtonPressed(ePause);
       if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS ") + QString::number(m_fps));
-      if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+      if (m_fpsField) {
+        setFpsFieldColors();
+      }
       return;
     }
     if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS	") + "/");
@@ -1645,7 +1695,9 @@ void FlipConsole::doButtonPressed(UINT button) {
       m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
     }
     if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS "));
-    if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::transparent);
+    if (m_fpsField) {
+      setFpsFieldColors();
+    }
     // setChecked(ePlay,   false);
     // setChecked(eLoop,   false);
     connect(m_editCurrFrame, SIGNAL(editingFinished()), this,
@@ -1756,7 +1808,7 @@ void FlipConsole::doButtonPressed(UINT button) {
 
   m_currFrameSlider->setValue(m_currentFrame);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
-
+  updateCurrentTime();
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 }
 
@@ -1775,6 +1827,11 @@ QFrame *FlipConsole::createFrameSlider() {
   m_currFrameSlider->setRange(0, 0);
   m_currFrameSlider->setValue(0);
 
+  m_timeLabel = new QLabel(QString("00:00:00"), frameSliderFrame);
+  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().width("00:00:00"));
+  m_timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  m_timeLabel->setStyleSheet("padding: 0px; margin: 0px;");
+
   if (m_drawBlanksEnabled) {
     m_enableBlankFrameButton = new QPushButton(this);
     m_enableBlankFrameButton->setCheckable(true);
@@ -1790,6 +1847,7 @@ QFrame *FlipConsole::createFrameSlider() {
   frameSliderLayout->setSpacing(5);
   frameSliderLayout->setMargin(2);
   {
+    frameSliderLayout->addWidget(m_timeLabel, 0);
     frameSliderLayout->addWidget(m_editCurrFrame, 0);
     frameSliderLayout->addWidget(m_currFrameSlider, 1);
     if (m_drawBlanksEnabled)
@@ -1803,6 +1861,8 @@ QFrame *FlipConsole::createFrameSlider() {
           SLOT(OnSetCurrentFrame(int)));
   connect(m_currFrameSlider, SIGNAL(flipSliderReleased()), this,
           SLOT(OnFrameSliderRelease()));
+
+  if (!m_fpsField) m_timeLabel->hide();
 
   return frameSliderFrame;
 }
@@ -1903,16 +1963,21 @@ void FlipConsole::OnSetCurrentFrame() {
   if (m_step > 1) {
     newFrame -= ((newFrame - m_from) % m_step);
     m_editCurrFrame->setText(QString::number(newFrame));
+    updateCurrentTime();
   }
 
   int i, deltaFrame = newFrame - m_currentFrame;
 
-  if (m_framesCount == 0) m_editCurrFrame->setText(QString::number(1));
+  if (m_framesCount == 0) {
+    m_editCurrFrame->setText(QString::number(1));
+    updateCurrentTime();
+  }
 
   if (m_framesCount == 0 || newFrame == m_currentFrame || newFrame == 0) return;
 
   if (newFrame > m_to) {
     m_editCurrFrame->setText(QString::number(m_currentFrame));
+    updateCurrentTime();
     return;
   }
 
@@ -1958,6 +2023,7 @@ void FlipConsole::OnSetCurrentFrame(int index) {
 
   assert(m_currentFrame <= m_to);
   m_editCurrFrame->setText(QString::number(m_currentFrame));
+  updateCurrentTime();
 
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 
@@ -1980,6 +2046,21 @@ void FlipConsole::setCurrentFrame(int frame, bool forceResetting) {
 
   m_editCurrFrame->setValue(m_currentFrame);
   m_currFrameSlider->setValue(m_currentFrame);
+  updateCurrentTime();
+}
+
+//--------------------------------------------------------------------
+
+void FlipConsole::updateCurrentTime() {
+  int seconds        = (int)((double)(m_currentFrame) / m_sceneFps);
+  int frames         = (m_currentFrame) % (int)m_sceneFps;
+  int minutes        = seconds / 60;
+  int realSeconds    = minutes > 0 ? seconds % minutes : seconds;
+  QString strMinutes = QString("%1").arg(minutes, 2, 10, QChar('0'));
+  QString strSeconds = QString("%1").arg(realSeconds, 2, 10, QChar('0'));
+  QString strFrames  = QString("%1").arg(frames, 2, 10, QChar('0'));
+  QString time       = strMinutes + ":" + strSeconds + ":" + strFrames;
+  m_timeLabel->setText(time);
 }
 
 //--------------------------------------------------------------------

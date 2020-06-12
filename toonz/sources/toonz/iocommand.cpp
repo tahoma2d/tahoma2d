@@ -1812,33 +1812,35 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     DVGui::warning(msg);
   }
   if (sceneProject && !sceneProject->isCurrent()) {
-    QString currentProjectName = QString::fromStdWString(
-        pm->getCurrentProject()->getName().getWideString());
-    QString sceneProjectName =
-        QString::fromStdWString(sceneProject->getName().getWideString());
-
-    /*QString question = "The Scene '"
-            + QString::fromStdWString(scenePath.getWideString())
-+ "' belongs to project '" + sceneProjectName + "'.\n"
-+ "What do you want to do?";*/
-    QString question =
-        QObject::tr(
-            "The Scene '%1' belongs to project '%2'.\nWhat do you want to do?")
-            .arg(QString::fromStdWString(scenePath.getWideString()))
-            .arg(sceneProjectName);
-    QString importAnswer        = QObject::tr("Import Scene");
-    QString switchProjectAnswer = QObject::tr("Change Project");
-    QString cancelAnswer        = QObject::tr("Cancel");
-    int ret = DVGui::MsgBox(question, importAnswer, switchProjectAnswer,
-                            cancelAnswer, 0);
-    if (ret == 3 || ret == 0) {
-      newScene();
-      return false;
-    }
-    if (ret == 2)
-      pm->setCurrentProjectPath(sceneProject->getProjectPath());
-    else
-      importScene = true;
+    pm->setCurrentProjectPath(sceneProject->getProjectPath());
+    //    QString currentProjectName = QString::fromStdWString(
+    //        pm->getCurrentProject()->getName().getWideString());
+    //    QString sceneProjectName =
+    //        QString::fromStdWString(sceneProject->getName().getWideString());
+    //
+    //    /*QString question = "The Scene '"
+    //            + QString::fromStdWString(scenePath.getWideString())
+    //+ "' belongs to project '" + sceneProjectName + "'.\n"
+    //+ "What do you want to do?";*/
+    //    QString question =
+    //        QObject::tr(
+    //            "The Scene '%1' belongs to project '%2'.\nWhat do you want to
+    //            do?")
+    //            .arg(QString::fromStdWString(scenePath.getWideString()))
+    //            .arg(sceneProjectName);
+    //    QString importAnswer        = QObject::tr("Import Scene");
+    //    QString switchProjectAnswer = QObject::tr("Change Project");
+    //    QString cancelAnswer        = QObject::tr("Cancel");
+    //    int ret = DVGui::MsgBox(question, importAnswer, switchProjectAnswer,
+    //                            cancelAnswer, 0);
+    //    if (ret == 3 || ret == 0) {
+    //      newScene();
+    //      return false;
+    //    }
+    //    if (ret == 2)
+    //      pm->setCurrentProjectPath(sceneProject->getProjectPath());
+    //    else
+    //      importScene = true;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

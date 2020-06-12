@@ -264,25 +264,25 @@ QString InfoViewerImp::getTypeString() {
   QString ext = QString::fromStdString(m_path.getType());
 
   if (ext == "tlv" || ext == "tzp" || ext == "tzu")
-    return "Toonz Cmapped Raster Level";
+    return "Smart Raster Level";
   else if (ext == "pli" || ext == "svg")
-    return "Toonz Vector Level";
+    return "Vector Level";
   else if (ext == "mov" || ext == "avi" || ext == "3gp")
     return "Movie File";
   else if (ext == "tnz")
-    return "Toonz Scene";
+    return "Tahoma Scene";
   else if (ext == "tab")
     return "Tab Scene";
   else if (ext == "plt")
-    return "Toonz Palette";
+    return "Tahoma Palette";
   else if (ext == "wav" || ext == "aiff" || ext == "mp3")
     return "Audio File";
   else if (ext == "mesh")
-    return "Toonz Mesh Level";
+    return "Mesh Level";
   else if (ext == "pic")
     return "Pic File";
   else if (Tiio::makeReader(ext.toStdString()))
-    return (m_fids.size() == 1) ? "Single Raster Image" : "Raster Image Level";
+    return (m_fids.size() == 1) ? "Single Raster Image" : "Raster Level";
   else if (ext == "psd")
     return "Photoshop Image";
   else
@@ -349,7 +349,7 @@ void InfoViewerImp::setImageInfo() {
       setVal(eBitsSample, QString::number(ii->m_bitsPerSample));
     if (ii->m_samplePerPixel > 0)
       setVal(eSamplePixel, QString::number(ii->m_samplePerPixel));
-    //if (ii->m_dpix > 0 || ii->m_dpiy > 0)
+    // if (ii->m_dpix > 0 || ii->m_dpiy > 0)
     //  setVal(eDpi, "(" + QString::number(ii->m_dpix) + ", " +
     //                   QString::number(ii->m_dpiy) + ")");
     TPropertyGroup *pg = ii->m_properties;
@@ -370,7 +370,7 @@ void InfoViewerImp::setImageInfo() {
     m_separator1.hide();
 
   const TContentHistory *ch = 0;
-  if (lr) ch = lr->getContentHistory();
+  if (lr) ch                = lr->getContentHistory();
 
   if (ch) {
     QString str = ch->serialize();
@@ -394,12 +394,12 @@ void InfoViewerImp::setImageInfo() {
                  QString::number(r.x1) + ", " + QString::number(r.y1) + ")");
   }
 
-  //double dpix, dpiy;
+  // double dpix, dpiy;
 
   if (timg) {
     // setVal(eHPos, QString::number(timg->gethPos()));
-    //timg->getDpi(dpix, dpiy);
-    //setVal(eDpi,
+    // timg->getDpi(dpix, dpiy);
+    // setVal(eDpi,
     //       "(" + QString::number(dpix) + ", " + QString::number(dpiy) + ")");
     TDimension dim = timg->getRaster()->getSize();
     setVal(eImageSize,
@@ -493,7 +493,7 @@ void InfoViewerImp::setToonzSceneInfo() {
 
   setVal(eCamera, QString::number(cam->getRes().lx) + " X " +
                       QString::number(cam->getRes().ly));
-  //setVal(eCameraDpi, QString::number(cam->getDpi().x) + ", " +
+  // setVal(eCameraDpi, QString::number(cam->getDpi().x) + ", " +
   //                       QString::number(cam->getDpi().y));
   setVal(eFrameCount, QString::number(scene.getFrameCount()));
   if (set) setVal(eLevelCount, QString::number(set->getLevelCount()));

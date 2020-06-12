@@ -135,7 +135,11 @@ enum class PredefinedRect {
   PANEL_EYE,
   PANEL_PREVIEW_LAYER,
   PANEL_LOCK,
-  PANEL_LAYER_NAME
+  PANEL_LAYER_NAME,
+  // ADD_LEVEL_AREA,
+  // ADD_LEVEL,
+  FOOTER_NOTE_OBJ_AREA,
+  FOOTER_NOTE_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked
@@ -215,14 +219,14 @@ protected:
 
 public:
   virtual CellPosition xyToPosition(const QPoint &xy,
-                                    const ColumnFan *fan) const          = 0;
+                                    const ColumnFan *fan) const = 0;
   virtual QPoint positionToXY(const CellPosition &position,
                               const ColumnFan *fan) const                = 0;
   virtual CellPositionRatio xyToPositionRatio(const QPoint &xy) const    = 0;
   virtual QPoint positionRatioToXY(const CellPositionRatio &ratio) const = 0;
 
   virtual int colToLayerAxis(int layer, const ColumnFan *fan) const = 0;
-  virtual int rowToFrameAxis(int frame) const                       = 0;
+  virtual int rowToFrameAxis(int frame) const = 0;
 
   virtual QPoint frameLayerToXY(int frameAxis, int layerAxis) const = 0;
   QRect frameLayerRect(const NumberRange &frameAxis,

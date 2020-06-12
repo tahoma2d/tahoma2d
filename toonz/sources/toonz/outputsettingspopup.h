@@ -58,6 +58,7 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QPushButton *m_boardSettingsBtn;
 
   bool m_isPreviewSettings;
+  bool m_hideAlreadyCalled = false;
 
   void updatePresetComboItems();
   void translateResampleOptions();

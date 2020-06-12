@@ -4,25 +4,21 @@
 
 #StyleEditor {
   & #TabBarContainer {
-    margin-left: -5; // reset left edge margin
+    margin-left: -5px;
   }
   & #bottomWidget {
     border-top: 1 solid @accent;
     padding: 3 2 8 3;
     & QPushButton {
-      // override above margin reset
       padding: 3 5;
     }
   }
 }
 
 #StyleEditorTabBar {
-  padding: 0;
-  margin: 0;
   &::tab {
-    &:extend(.tab-flat all);
-    &:first {
-      border-left: 1 solid @accent;
+    &:first, &:only-one {
+      border-left: 0;
     }
   }
 }
@@ -34,7 +30,6 @@
 /* -------------------------------------------------------------------------- */
 
 /* Horizontal QSlider */
-
 #colorSlider {
   &::groove:horizontal {
     height: 1;
@@ -53,7 +48,7 @@
   image-position: center center;
   min-height: 16;
   padding: 0;
-  min-width: 18;
+  min-width: 10;
   &:hover {
     &:extend(.button-tool:hover);
   }
@@ -78,9 +73,7 @@
 }
 
 #colorSliderLabel, 
-#colorSliderField {
-  // Placeholder
-}
+#colorSliderField {}
 
 /* -----------------------------------------------------------------------------
    Palette Viewer / Studio Palette
@@ -113,29 +106,34 @@ PaletteViewer {
       margin: 0; // very compact space so we remove margin
     }
     & QToolButton {
-      &:extend(.button-flat all);
+      &:extend(.button-flat all); // use flat style for button
       margin: 0;
       padding: 2 0 2 0;
-
     }
+  }
+  & #ToolBarContainer {
+    border-top: 1 solid @accent;
+    margin: 0;
+    padding: 0;
   }
 }
 
-#StudioPalette {
-  // placeholder
-}
-
+#StudioPalette {}
 #PaletteTabBar {
   &::tab {
-    &:extend(.tab-flat all);
-    padding-bottom: 4;  // allow QToolBar's bottom border to show
-                        // since default tab padding is 3 (vert)
-                        // this adds 1 extra (3+1)
+    &:first, &:only-one {
+      border-left: 0;
+    }
+    &:only-one {
+      border-right: 1 solid @tab-border-color;
+    }
   }
 }
 
 #PageViewer {
   qproperty-TextColor: @text-color;
+  qproperty-ListLineColor: @accent;
+
 }
 
 #PaletteLockButton {

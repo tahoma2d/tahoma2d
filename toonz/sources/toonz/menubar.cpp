@@ -71,6 +71,7 @@ RoomTabWidget::RoomTabWidget(QWidget *parent)
     , m_isLocked(LockRoomTabToggle != 0) {
   m_renameTextField->hide();
   DockingCheck::instance()->setIsEnabled(LockRoomTabToggle != 0);
+  TApp::instance()->setShowTitleBars(LockRoomTabToggle == 0);
   connect(m_renameTextField, SIGNAL(editingFinished()), this,
           SLOT(updateTabName()));
 }
@@ -95,6 +96,19 @@ void RoomTabWidget::swapIndex(int firstIndex, int secondIndex) {
 void RoomTabWidget::mousePressEvent(QMouseEvent *event) {
   m_renameTextField->hide();
   if (event->button() == Qt::LeftButton) {
+    if (event->modifiers() == (Qt::ControlModifier | Qt::AltModifier)) {
+      TApp::instance()->setCanHideTitleBars(
+          !TApp::instance()->getCanHideTitleBars());
+      bool canHide = TApp::instance()->getCanHideTitleBars();
+      if (m_isLocked && !canHide) {
+        TApp::instance()->sendShowTitleBars(true, true);
+      } else if (m_isLocked && canHide) {
+        TApp::instance()->sendShowTitleBars(false, true);
+      } else if (!m_isLocked) {
+        TApp::instance()->sendShowTitleBars(true, true);
+      }
+      return;
+    }
     m_clickedTabIndex = tabAt(event->pos());
     if (m_clickedTabIndex < 0) return;
     setCurrentIndex(m_clickedTabIndex);
@@ -207,6 +221,11 @@ void RoomTabWidget::setIsLocked(bool lock) {
   m_isLocked        = lock;
   LockRoomTabToggle = (lock) ? 1 : 0;
   DockingCheck::instance()->setIsEnabled(lock);
+  if (m_isLocked) {
+    TApp::instance()->sendShowTitleBars(false);
+  } else {
+    TApp::instance()->sendShowTitleBars(true, true);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -362,13 +381,13 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_LoadColorModel);
   fileMenu->addSeparator();
-  QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
-  {
-    addMenuItem(projectManagementMenu, MI_NewProject);
-    addMenuItem(projectManagementMenu, MI_ProjectSettings);
-    projectManagementMenu->addSeparator();
-    addMenuItem(projectManagementMenu, MI_SaveDefaultSettings);
-  }
+  addMenuItem(fileMenu, MI_NewProject);
+  fileMenu->addSeparator();
+  addMenuItem(fileMenu, MI_SaveDefaultSettings);
+  // QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
+  //{
+  //  //addMenuItem(projectManagementMenu, MI_ProjectSettings);
+  //}
   fileMenu->addSeparator();
   QMenu *importMenu = fileMenu->addMenu(tr("Import"));
   { addMenuItem(importMenu, MI_ImportMagpieFile); }
