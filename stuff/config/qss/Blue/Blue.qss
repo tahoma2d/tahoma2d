@@ -1467,6 +1467,11 @@ PaletteViewer QToolBar QToolButton {
   margin: 0;
   padding: 2 0 2 0;
 }
+PaletteViewer #ToolBarContainer {
+  border-top: 1 solid #212223;
+  margin: 0;
+  padding: 0;
+}
 #PaletteTabBar::tab:first,
 #PaletteTabBar::tab:only-one {
   border-left: 0;
@@ -1975,7 +1980,7 @@ XsheetViewer {
   qproperty-VerticalLineHeadColor: #212223;
   qproperty-PreviewFrameTextColor: #9fdaff;
   qproperty-CurrentRowBgColor: rgba(83, 133, 166, 0.7);
-  qproperty-OnionSkinAreaBgColor: #323435;
+  qproperty-OnionSkinAreaBgColor: #3a3b3d;
   qproperty-CellFocusColor: #000;
   qproperty-EmptyColumnHeadColor: #414345;
   qproperty-EmptyCellColor: #323435;
