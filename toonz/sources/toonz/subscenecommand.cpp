@@ -478,7 +478,7 @@ TFx *explodeFxSubTree(TFx *innerFx, QMap<TFx *, QPair<TFx *, int>> &fxs,
   if (!xsheetFx) {
     if (innerDag->getCurrentOutputFx() == innerFx)
       innerFx = innerFx->getInputPort(0)->getFx();
-    if (!innerFx) return 0;
+    if (!innerFx) return nullptr;
     bringFxOut(innerFx, fxs, outerDag, fxGroupData);
     TOutputFx *outFx = dynamic_cast<TOutputFx *>(innerFx);
     if (outFx)
@@ -488,36 +488,70 @@ TFx *explodeFxSubTree(TFx *innerFx, QMap<TFx *, QPair<TFx *, int>> &fxs,
   } else {
     TFxSet *innerTerminals = innerDag->getTerminalFxs();
     int i, terminalCount = innerTerminals->getFxCount();
-    if (!terminalCount) return 0;
+    if (!terminalCount) {
+      fxs[innerFx] = QPair<TFx *, int>(nullptr, -1);
+      return nullptr;
+    }
     QMultiMap<int, TFx *> sortedFx;
     for (i = 0; i < terminalCount; i++) {
       TFx *terminalFx = innerTerminals->getFx(i);
       bringFxOut(terminalFx, fxs, outerDag, fxGroupData);
       sortedFx.insert(fxs[terminalFx].second, fxs[terminalFx].first);
     }
-    if (outPorts.empty()) return 0;
-    TFx *root                          = sortedFx.begin().value();
-    QMultiMap<int, TFx *>::iterator it = sortedFx.begin();
-    outerDag->removeFromXsheet(it.value());
-    for (++it; it != sortedFx.end(); ++it) {
+    // Xsheet nodes can be "merged" if:
+    // a) the subxsheet node is directly connected to the Xsheet node in the
+    // parent fxdag, AND b) only the active output node is connected to the
+    // Xsheet node in the child fxdag
+    if (outPorts.empty() && xsheetFx->getOutputConnectionCount() == 1) {
+      if (innerDag->getCurrentOutputFx() ==
+          xsheetFx->getOutputConnection(0)->getOwnerFx())
+        return nullptr;
+    }
+
+    TFx *root = sortedFx.begin().value();
+
+    // If only one node is connected to the Xsheet node, then skip bringing it
+    // out.
+    if (terminalCount == 1) {
+      fxs[innerFx] = QPair<TFx *, int>(root, sortedFx.begin().key());
+      return root;
+    }
+
+    // Replace the child Xsheet node by the Over Fx node
+    TFx *overFx = TFx::create("overFx");
+    outerDag->assignUniqueId(overFx);
+    outerDag->getInternalFxs()->addFx(overFx);
+    setFxParamToCurrentScene(overFx, outerXsheet);
+    TPointD pos = root->getAttributes()->getDagNodePos();
+    overFx->getAttributes()->setDagNodePos((pos == TConst::nowhere)
+                                               ? TConst::nowhere
+                                               : TPointD(pos.x + 150, pos.y));
+
+    const TFxPortDG *group = overFx->dynamicPortGroup(0);
+    for (int i = 0; i < sortedFx.size(); i++) {
+      TFxPort *port = new TRasterFxPort;
+      if (!overFx->addInputPort(
+              group->portsPrefix() + QString::number(i + 1).toStdString(), port,
+              0))
+        delete port;
+    }
+
+    int portId      = sortedFx.size() - 1;
+    int columnIndex = -1;
+    for (auto it = sortedFx.begin(); it != sortedFx.end(); ++it, --portId) {
       TFx *fx = it.value();
       assert(fx);
-      TFx *overFx = TFx::create("overFx");
-      outerDag->assignUniqueId(overFx);
-      outerDag->getInternalFxs()->addFx(overFx);
-      setFxParamToCurrentScene(overFx, outerXsheet);
-      overFx->getInputPort(0)->setFx(fx);
-      overFx->getInputPort(1)->setFx(root);
+
+      overFx->getInputPort(portId)->setFx(fx);
       outerDag->removeFromXsheet(fx);
-      TPointD pos = root->getAttributes()->getDagNodePos();
-      overFx->getAttributes()->setDagNodePos((pos == TConst::nowhere)
-                                                 ? TConst::nowhere
-                                                 : TPointD(pos.x + 150, pos.y));
-      root = overFx;
-      // e' brutto... mi serve solo per mettere gli over dentro il gruppo
-      fxs[overFx] = QPair<TFx *, int>(overFx, -1);
+      // set the firstly-found column index
+      if (columnIndex == -1) columnIndex = it.key();
     }
-    return root;
+
+    // register fx
+    fxs[innerFx] = QPair<TFx *, int>(overFx, columnIndex);
+
+    return overFx;
   }
 }
 
@@ -796,50 +830,61 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
   FxDag *outerDag      = xsh->getFxDag();
   bool explosionLinked = false;
 
-  // porto fuori tutti gli effetti che partono da un nodo di output (escluso
-  // quello attaccato all'Xsheet
-  // o che ha tra i padri il nodo xsheet)
-  int i;
-  for (i = 0; i < innerDag->getOutputFxCount(); i++) {
+  // taking out all the effects that start from the xsheet.
+  // xsheet node will be replaced by the over fx node if necessary.
+  // root will be null if the xsheet node will not bring out to the parent
+  // fxdag.
+  TFx *root = explodeFxSubTree(innerDag->getXsheetFx(), fxs, outerDag, xsh,
+                               innerDag, fxGroupData, outPorts);
+
+  // in case the child and parent Xsheet nodes will be "merged"
+  if (!root && innerDag->getTerminalFxs()->getFxCount()) {
+    TFxSet *internals = innerDag->getTerminalFxs();
+    for (int j = 0; j < internals->getFxCount(); j++) {
+      TFx *fx = internals->getFx(j);
+      outerDag->addToXsheet(fxs[fx].first);
+    }
+    explosionLinked = true;
+  }
+
+  // taking out all the effects that start from output nodes
+  for (int i = 0; i < innerDag->getOutputFxCount(); i++) {
     TOutputFx *outFx = innerDag->getOutputFx(i);
-    if (isConnectedToXsheet(outFx)) continue;
+    bool isCurrent   = (outFx == innerDag->getCurrentOutputFx());
+    // the link is done before tracing from the current out put node.
+    // it means that all the fxs before the output node are already exploded and
+    // connected.
+    if (isCurrent && explosionLinked) continue;
 
     TFx *root = explodeFxSubTree(outFx, fxs, outerDag, xsh, innerDag,
                                  fxGroupData, outPorts);
+    // If the output node is not connected to any other node
     if (!root) continue;
-    if (outFx == innerDag->getCurrentOutputFx()) {
-      if (outPorts.empty() || linkToXsheet)
-        outerDag->addToXsheet(root);
-      else
-        for (int j = 0; j < outPorts.size(); j++) outPorts[j]->setFx(root);
+
+    if (isCurrent) {
+      // link the root node to the xsheet node if:
+      // a) the subxsheet column is connected to the xsheet node, OR
+      // b) the original subxsheet column will not be deleted and the exploded
+      // column will be inserted.
+      //    (this case happens when the subxsheet column contains multiple
+      //     levels. outPorts is empty in such case)
+      if (linkToXsheet)
+        outerDag->addToXsheet(root);  // connect to the xsheet node
+      for (int j = 0; j < outPorts.size(); j++) outPorts[j]->setFx(root);
+
       explosionLinked = true;
     }
   }
 
-  // porto fuori tutti gli effetti che partono dall'xsheet
-  TFx *root = explodeFxSubTree(innerDag->getXsheetFx(), fxs, outerDag, xsh,
-                               innerDag, fxGroupData, outPorts);
-  if (!explosionLinked) {
-    if (outPorts.empty()) {
-      assert(root == 0);
-      TFxSet *internals = innerDag->getTerminalFxs();
-      for (int j = 0; j < internals->getFxCount(); j++) {
-        TFx *fx = internals->getFx(j);
-        outerDag->addToXsheet(fxs[fx].first);
-      }
-    } else if (!linkToXsheet) {
-      for (int j = 0; j < outPorts.size(); j++) outPorts[j]->setFx(root);
-    } else
-      outerDag->addToXsheet(root);
-  }
-
-  // Porto fuori tutti gli altri effetti!
+  // taking out all the other effects!
   TFxSet *innerInternals = innerDag->getInternalFxs();
-  for (i = 0; i < innerInternals->getFxCount(); i++) {
+  for (int i = 0; i < innerInternals->getFxCount(); i++) {
     TFx *fx = innerInternals->getFx(i);
-    if (fxs.contains(fx) || isConnectedToXsheet(fx)) continue;
+    if (fxs.contains(fx)) continue;
     explodeFxSubTree(fx, fxs, outerDag, xsh, innerDag, fxGroupData, outPorts);
   }
+
+  assert(explosionLinked);
 
   // cerco il punto medio tra tutti i nodi
   TPointD middlePoint(0.0, 0.0);
@@ -869,6 +914,9 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
   for (it = fxs.begin(); it != fxs.end(); it++) {
     QPair<TFx *, int> pair = it.value();
     TFx *outerFx           = pair.first;
+    // skip redundant item. in case when only one node is input to the xsheet
+    // node in the inner dag
+    if (outerFx->getAttributes()->getGroupId() == groupId) continue;
     outerFx->getAttributes()->setGroupId(groupId);
     outerFx->getAttributes()->setGroupName(L"Group " +
                                            std::to_wstring(groupId));
@@ -2322,7 +2370,6 @@ void SubsceneCmd::explode(int index) {
   list.append(QObject::tr("Bring only columns in the main xsheet."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
-
   // Collect column stage object informations
   TStageObjectId colId    = TStageObjectId::ColumnId(index);
   TStageObjectId parentId = xsh->getStageObjectParent(colId);
@@ -2377,10 +2424,7 @@ void SubsceneCmd::explode(int index) {
   for (i = 0; i < outFxCount; i++)
     oldOutFxs.insert(xsh->getFxDag()->getOutputFx(i));
 
-  /*- SubXsheetカラムノードから繋がっているFxPortのリストを取得 (outPorts) -*/
   std::vector<TFxPort *> outPorts;
-  for (i = 0; i < columnFx->getOutputConnectionCount(); i++)
-    outPorts.push_back(columnFx->getOutputConnection(i));
 
   // Cannot remove the column if it contains frames of a TXshSimpleLevel.
   int from, to;
@@ -2397,6 +2441,13 @@ void SubsceneCmd::explode(int index) {
   TPointD stageSubPos = obj->getDagNodePos();
 
   if (removeColumn) {
+    /*- SubXsheetカラムノードから繋がっているFxPortのリストを取得 (outPorts) -*/
+    for (i = 0; i < columnFx->getOutputConnectionCount(); i++)
+      outPorts.push_back(columnFx->getOutputConnection(i));
+
+    bool wasLinkedToXsheet =
+        xsh->getFxDag()->getTerminalFxs()->containsFx(columnFx);
+
     // Collect data for undo
     std::set<int> indexes;
     indexes.insert(index);
@@ -2426,7 +2477,7 @@ void SubsceneCmd::explode(int index) {
     set<int> newIndexes =
         ::explode(xsh, childLevel->getXsheet(), index, parentId, objGroupData,
                   stageSubPos, fxGroupData, fxSubPos, pegObjects, splines,
-                  outPorts, ret == 2, false);
+                  outPorts, ret == 2, wasLinkedToXsheet);
 
     /*- Redoのためのデータの取得 -*/
     StageObjectsData *newData = new StageObjectsData();
@@ -2444,6 +2495,9 @@ void SubsceneCmd::explode(int index) {
         objGroupNames);
     TUndoManager::manager()->add(undo);
   } else {
+    // keep outPorts empty since the exploded node will be re-cocnected to the
+    // xsheet node
+
     // Collect information for undo
     TCellData *cellData = new TCellData();
     cellData->setCells(xsh, from, index, to, index);
