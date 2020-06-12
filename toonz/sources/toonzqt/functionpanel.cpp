@@ -24,6 +24,7 @@
 
 // Qt includes
 #include <QPainter>
+#include <QPainterPath>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QMenu>

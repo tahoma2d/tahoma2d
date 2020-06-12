@@ -114,7 +114,7 @@ public:
     if (m_lockCenterX)
       delta = TPointD(0.0, delta.y);
     else if (m_lockCenterY)
-      delta = TPointD(delta.x, 0.0);
+      delta  = TPointD(delta.x, 0.0);
     m_center = m_oldCenter + (m_affine * delta) * factor;
     TTool::getApplication()
         ->getCurrentTool()
@@ -488,9 +488,9 @@ public:
     const double eps = 1e-8;
     if (norm2(a) < eps || norm2(b) < eps) return;
 
-    double fx = b.x / a.x;
+    double fx            = b.x / a.x;
     if (fabs(fx) > 1) fx = tsign(fx) * sqrt(std::abs(fx));
-    double fy = b.y / a.y;
+    double fy            = b.y / a.y;
     if (fabs(fy) > 1) fy = tsign(fy) * sqrt(std::abs(fy));
 
     int constraint = m_constraint;
@@ -511,8 +511,8 @@ public:
       fy = byax / bxay;
     }
     if (fabs(fx) > eps && fabs(fy) > eps) {
-      double oldv0 = getOldValue(0);
-      double oldv1 = getOldValue(1);
+      double oldv0                   = getOldValue(0);
+      double oldv1                   = getOldValue(1);
       if (fabs(oldv0) < 0.001) oldv0 = 0.001;
       if (fabs(oldv1) < 0.001) oldv1 = 0.001;
       // precise control with pressing Alt key
@@ -753,17 +753,17 @@ EditTool::EditTool()
     , m_scaleConstraint("Scale Constraint:")  // W_ToolOptions_ScaleConstraint
     , m_autoSelect("Auto Select Column")      // W_ToolOptions_AutoSelect
     , m_globalKeyframes("Global Key", false)  // W_ToolsOptions_GlobalKeyframes
-    , m_lockCenterX("Lock Center E/W", false)
-    , m_lockCenterY("Lock Center N/S", false)
-    , m_lockPositionX("Lock Position E/W", false)
-    , m_lockPositionY("Lock Position N/S", false)
+    , m_lockCenterX("Lock Center X", false)
+    , m_lockCenterY("Lock Center Y", false)
+    , m_lockPositionX("Lock Position X", false)
+    , m_lockPositionY("Lock Position Y", false)
     , m_lockRotation("Lock Rotation", false)
     , m_lockShearH("Lock Shear H", false)
     , m_lockShearV("Lock Shear V", false)
     , m_lockScaleH("Lock Scale H", false)
     , m_lockScaleV("Lock Scale V", false)
     , m_lockGlobalScale("Lock Global Scale", false)
-    , m_showEWNSposition("E/W and N/S Positions", true)
+    , m_showEWNSposition("X and Y Positions", true)
     , m_showZposition("Z Position", true)
     , m_showSOposition("SO", true)
     , m_showRotation("Rotation", true)
@@ -846,17 +846,17 @@ void EditTool::updateTranslation() {
   m_autoSelect.setItemUIName(L"Pegbar", tr("Pegbar"));
 
   m_globalKeyframes.setQStringName(tr("Global Key"));
-  m_lockCenterX.setQStringName(tr("Lock Center E/W"));
-  m_lockCenterY.setQStringName(tr("Lock Center N/S"));
-  m_lockPositionX.setQStringName(tr("Lock Position E/W"));
-  m_lockPositionY.setQStringName(tr("Lock Position N/S"));
+  m_lockCenterX.setQStringName(tr("Lock Center X"));
+  m_lockCenterY.setQStringName(tr("Lock Center Y"));
+  m_lockPositionX.setQStringName(tr("Lock Position X"));
+  m_lockPositionY.setQStringName(tr("Lock Position Y"));
   m_lockRotation.setQStringName(tr("Lock Rotation"));
   m_lockShearH.setQStringName(tr("Lock Shear H"));
   m_lockShearV.setQStringName(tr("Lock Shear V"));
   m_lockScaleH.setQStringName(tr("Lock Scale H"));
   m_lockScaleV.setQStringName(tr("Lock Scale V"));
   m_lockGlobalScale.setQStringName(tr("Lock Global Scale"));
-  m_showEWNSposition.setQStringName(tr("E/W and N/S Positions"));
+  m_showEWNSposition.setQStringName(tr("X and Y Positions"));
   m_showZposition.setQStringName(tr("Z Position"));
   m_showSOposition.setQStringName(tr("SO"));
   m_showRotation.setQStringName(tr("Rotation"));

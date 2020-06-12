@@ -42,6 +42,7 @@
 #include "tools/strokeselection.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QGLWidget>  // for QGLWidget::convertToGLFormat
 #include <QFont>
 #include <QFontMetrics>
@@ -58,7 +59,7 @@ void mapToVector(const std::map<int, VIStroke *> &theMap,
                  std::vector<int> &theVect) {
   assert(theMap.size() == theVect.size());
   std::map<int, VIStroke *>::const_iterator it = theMap.begin();
-  UINT i                                       = 0;
+  UINT i = 0;
   for (; it != theMap.end(); ++it) {
     theVect[i++] = it->first;
   }
@@ -1784,8 +1785,9 @@ bool ToolUtils::doUpdateXSheet(TXshSimpleLevel *sl,
             cells[i].m_level->getType() == CHILD_XSHLEVEL) {
           TXshChildLevel *level = cells[i].m_level->getChildLevel();
           // make sure we haven't already checked the level
-          if (level && std::find(childLevels.begin(), childLevels.end(),
-                                 level) == childLevels.end()) {
+          if (level &&
+              std::find(childLevels.begin(), childLevels.end(), level) ==
+                  childLevels.end()) {
             childLevels.push_back(level);
             TXsheet *subXsh = level->getXsheet();
             ret |= doUpdateXSheet(sl, oldFids, newFids, subXsh, childLevels);
