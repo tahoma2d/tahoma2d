@@ -10,6 +10,7 @@
 #include "mainwindow.h"
 #include "cellselection.h"
 #include "sceneviewer.h"
+#include "statusbar.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -746,15 +747,28 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
 
 //-----------------------------------------------------------------------------
 
+void TApp::setStatusBar(StatusBar *statusBar) { m_statusBar = statusBar; }
+
+//-----------------------------------------------------------------------------
+
+void TApp::setStatusBarFrameInfo(QString text) {
+  if (m_statusBar) m_statusBar->updateFrameText(text);
+}
+
+//-----------------------------------------------------------------------------
+
+void TApp::showMessage(QString message) {
+  if (m_statusBar) m_statusBar->setMessageText(message);
+}
+
+//-----------------------------------------------------------------------------
+
 QString TApp::getCurrentRoomName() const {
   Room *currentRoom = dynamic_cast<Room *>(getCurrentRoom());
   if (!currentRoom) return QString();
 
   return currentRoom->getName();
 }
-
-//-----------------------------------------------------------------------------
-void TApp::showMessage(QString message) { emit(sendMessage(message)); }
 
 //-----------------------------------------------------------------------------
 

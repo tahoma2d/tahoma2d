@@ -124,6 +124,7 @@ class DVAPI SchematicSceneViewer final : public QGraphicsView {
   QTouchDevice::DeviceType m_touchDevice = QTouchDevice::TouchScreen;
   bool m_zooming                         = false;
   bool m_panning                         = false;
+  bool m_panningArmed                    = false;
   double m_scaleFactor;  // used for zoom gesture
 
   bool m_stylusUsed = false;
@@ -146,6 +147,7 @@ protected:
   void mouseMoveEvent(QMouseEvent *me) override;
   void mouseReleaseEvent(QMouseEvent *me) override;
   void keyPressEvent(QKeyEvent *ke) override;
+  void keyReleaseEvent(QKeyEvent *ke) override;
   void wheelEvent(QWheelEvent *me) override;
   void showEvent(QShowEvent *se) override;
   void enterEvent(QEvent *e) override;

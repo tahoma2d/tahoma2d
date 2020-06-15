@@ -3103,7 +3103,7 @@ QFrame *StyleEditor::createBottomWidget() {
   QFrame *bottomWidget = new QFrame(this);
   m_autoButton         = new QPushButton(tr("Auto"));
   m_oldColor           = new DVGui::StyleSample(this, 42, 30);
-  m_newColor           = new DVGui::StyleSample(this, 30, 30);
+  m_newColor           = new DVGui::StyleSample(this, 32, 32);
   m_applyButton        = new QPushButton(tr("Apply"));
   m_fillColorWidget    = new QFrame(this);
 
@@ -3124,9 +3124,9 @@ QFrame *StyleEditor::createBottomWidget() {
   m_oldColor->setEnable(false);
   m_newColor->setToolTip(tr("Current Style"));
   m_newColor->setEnable(false);
-  m_newColor->setFixedWidth(30);
+  m_newColor->setFixedWidth(32);
 
-  m_fillColorWidget->setFixedHeight(30);
+  m_fillColorWidget->setFixedHeight(32);
   m_fillColorWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   QHBoxLayout *fillColorLayout = new QHBoxLayout(this);
   fillColorLayout->addWidget(new QLabel(" ", this));
@@ -3523,7 +3523,9 @@ void StyleEditor::enable(bool enabled, bool enabledOnlyFirstTab,
       m_oldColor->setColor(TPixel32::Transparent);
       m_newColor->setColor(TPixel32::Transparent);
       m_fillColorWidget->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
-    }
+      m_fillColorWidget->hide();
+    } else
+      m_fillColorWidget->show();
   }
 
   // lock button behavior

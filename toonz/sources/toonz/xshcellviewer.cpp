@@ -2655,7 +2655,13 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
   assert(!m_isPanning);
   m_isMousePressed = true;
   int frameAdj     = m_viewer->getFrameZoomAdjustment();
-  if (event->button() == Qt::LeftButton) {
+
+  if (event->button() == Qt::MidButton || m_viewer->m_panningArmed) {
+    m_pos       = event->pos();
+    m_isPanning = true;
+  }
+
+  else if (event->button() == Qt::LeftButton) {
     assert(getDragTool() == 0);
 
     TPoint pos(event->pos().x(), event->pos().y());
@@ -2817,9 +2823,6 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
     }
     m_viewer->dragToolClick(event);
-  } else if (event->button() == Qt::MidButton) {
-    m_pos       = event->pos();
-    m_isPanning = true;
   }
   event->accept();
   update();

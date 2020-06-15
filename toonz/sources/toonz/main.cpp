@@ -123,7 +123,7 @@ static void toonzRunOutOfContMemHandler(unsigned long size) {
 #ifdef _WIN32
   static bool firstTime = true;
   if (firstTime) {
-    MessageBox(NULL, (LPCWSTR)L"Run out of contiguous physical memory: please save all and restart Toonz!",
+    MessageBox(NULL, (LPCWSTR)L"Run out of contiguous physical memory: please save all and restart Tahoma!",
 				   (LPCWSTR)L"Warning", MB_OK | MB_SYSTEMMODAL);
     firstTime = false;
   }

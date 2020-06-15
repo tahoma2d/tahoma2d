@@ -615,6 +615,7 @@ public:
   TCellKeyframeSelection *getCellKeyframeSelection() const {
     return m_cellKeyframeSelection;
   }
+  bool m_panningArmed = false;
 
   bool areCellsSelectedEmpty();
   /*! Return true if selection contain only sound cell.*/
@@ -1221,6 +1222,7 @@ protected:
   // display the upper-directional smart tab only when the ctrl key is pressed
   void keyReleaseEvent(QKeyEvent *event) override;
   void enterEvent(QEvent *) override;
+  void leaveEvent(QEvent *) override;
   void wheelEvent(QWheelEvent *event) override;
   void timerEvent(QTimerEvent *) override;
 

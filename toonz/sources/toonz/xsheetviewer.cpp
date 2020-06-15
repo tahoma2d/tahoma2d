@@ -1274,6 +1274,9 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
         locals.scrollHorizTo(x, visibleRect);
       }
       break;
+    case Qt::Key_Space:
+      m_panningArmed = true;
+      break;
     }
     break;
   }
@@ -1288,9 +1291,17 @@ void XsheetViewer::keyReleaseEvent(QKeyEvent *event) {
     m_columnArea->onControlPressed(false);
     m_layerFooterPanel->onControlPressed(false);
   }
+  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
+    m_panningArmed = false;
 }
+//-----------------------------------------------------------------------------
+
+void XsheetViewer::leaveEvent(QEvent *) { m_panningArmed = false; }
+
+//-----------------------------------------------------------------------------
 
 void XsheetViewer::enterEvent(QEvent *) {
+  m_panningArmed = false;
   m_cellArea->onControlPressed(false);
   m_columnArea->onControlPressed(false);
   TApp *app = TApp::instance();
@@ -1640,9 +1651,10 @@ void XsheetViewer::changeWindowTitle() {
   QString sceneName = QString::fromStdWString(scene->getSceneName());
   if (sceneName.isEmpty()) sceneName = tr("Untitled");
   if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-  QString name   = tr("Scene: ") + sceneName;
-  int frameCount = scene->getFrameCount();
-  name           = name + "   ::   " + tr(std::to_string(frameCount).c_str()) +
+  QString name      = tr("Scene: ") + sceneName;
+  QString separator = "   |   ";
+  int frameCount    = scene->getFrameCount();
+  name = name + separator + tr(std::to_string(frameCount).c_str()) +
          (frameCount == 1 ? tr(" Frame") : tr(" Frames"));
 
   // subXsheet or not
@@ -1654,7 +1666,7 @@ void XsheetViewer::changeWindowTitle() {
   TXshLevel *level = app->getCurrentLevel()->getLevel();
   if (level) {
     QString levelName = QString::fromStdWString(level->getName());
-    name += tr("  Level: ") + levelName;
+    name += separator + tr("  Level: ") + levelName;
   }
   // cell selection range
   if ((TSelection *)getCellSelection() ==
@@ -1662,12 +1674,12 @@ void XsheetViewer::changeWindowTitle() {
       !getCellSelection()->isEmpty()) {
     int r0, r1, c0, c1;
     getCellSelection()->getSelectedCells(r0, c0, r1, c1);
-    name += tr("   Selected: ") + QString::number(r1 - r0 + 1) +
+    name += separator + tr("   Selected: ") + QString::number(r1 - r0 + 1) +
             ((r1 - r0 + 1 == 1) ? tr(" frame : ") : tr(" frames * ")) +
             QString::number(c1 - c0 + 1) +
             ((c1 - c0 + 1 == 1) ? tr(" column") : tr(" columns"));
   }
-
+  TApp::instance()->setStatusBarFrameInfo(name);
   parentWidget()->setWindowTitle(name);
 }
 

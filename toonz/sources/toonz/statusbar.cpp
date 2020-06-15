@@ -18,67 +18,39 @@
 
 #include "tools/tool.h"
 
-
 #include "tools/toolhandle.h"
 
 #include <QLayout>
 #include <QLabel>
 
-
 StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
   setObjectName("StatusBar");
-	m_currentFrameLabel = new QLabel(tr("Level: 1   Frame: 1"), this);
-	m_currentFrameLabel->setObjectName("MainWindowPlainLabel");
+  m_currentFrameLabel = new QLabel(tr("Level: 1   Frame: 1"), this);
+  m_currentFrameLabel->setObjectName("MainWindowPlainLabel");
 
-	m_infoLabel = new QLabel(tr("Info goes here."), this);
-	m_infoLabel->setObjectName("MainWindowLabel");
+  m_infoLabel = new QLabel(tr("Info goes here."), this);
+  m_infoLabel->setObjectName("MainWindowPlainLabel");
 
-	m_messageLabel = new QLabel(tr("Messages here?"), this);
-	m_messageLabel->setObjectName("MainWindowLabel");	
-	
-	addWidget(m_currentFrameLabel, 0);
-	addWidget(m_infoLabel, 0);
-	addPermanentWidget(m_messageLabel, 0);
+  addWidget(m_infoLabel, 0);
+  addPermanentWidget(m_currentFrameLabel, 0);
 
-    TApp* app = TApp::instance();
-    TFrameHandle* frameHandle = app->getCurrentFrame();
-    TSceneHandle* sceneHandle = app->getCurrentScene();
-    TXshLevelHandle* levelHandle = app->getCurrentLevel();
-    TObjectHandle* objectHandle = app->getCurrentObject();
-    TXsheetHandle* xshHandle = app->getCurrentXsheet();
+  TApp* app                    = TApp::instance();
+  TFrameHandle* frameHandle    = app->getCurrentFrame();
+  TXshLevelHandle* levelHandle = app->getCurrentLevel();
 
-    bool ret = true;
+  bool ret = true;
 
-    ret = ret && connect(xshHandle, SIGNAL(xsheetChanged()), this,
-        SLOT(updateFrameText()));
-    ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
-        SLOT(updateFrameText()));
-    ret = ret && connect(sceneHandle, SIGNAL(sceneChanged()), this,
-        SLOT(updateFrameText()));
-    ret = ret && connect(sceneHandle, SIGNAL(nameSceneChanged()), this,
-        SLOT(updateFrameText()));
+  ret = ret && connect(frameHandle, SIGNAL(frameTypeChanged()), this,
+                       SLOT(updateInfoText()));
+  ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()), this,
+                       SLOT(updateInfoText()));
+  ret = ret && connect(levelHandle, SIGNAL(xshLevelChanged()), this,
+                       SLOT(updateInfoText()));
 
+  assert(ret);
 
-    ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel*)), this,
-        SLOT(onXshLevelSwitched(TXshLevel*)));
-    ret = ret && connect(levelHandle, SIGNAL(xshLevelTitleChanged()), this,
-        SLOT(updateFrameText()));
-    ret = ret && connect(levelHandle, SIGNAL(xshLevelChanged()), this,
-        SLOT(updateFrameText()));
-    ret = ret && connect(frameHandle, SIGNAL(frameSwitched()), this,
-        SLOT(updateFrameText()));
-
-
-    ret = ret && connect(frameHandle, SIGNAL(frameTypeChanged()), this,
-        SLOT(updateInfoText()));
-    ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()),
-        this, SLOT(updateInfoText()));
-
-    assert(ret);
-
-    updateInfoText();
-    updateFrameText();
-
+  makeMap();
+  updateInfoText();
 }
 
 //-----------------------------------------------------------------------------
@@ -87,100 +59,130 @@ StatusBar::~StatusBar() {}
 
 //-----------------------------------------------------------------------------
 
-void StatusBar::updateFrameText() {
-    TApp* app = TApp::instance();
-    // zoom = sqrt(m_sceneViewer->getViewMatrix().det());
-    ToonzScene* scene = app->getCurrentScene()->getScene();
-    if (!scene) return;
-    if (!parentWidget()) return;
-    int frame = app->getCurrentFrame()->getFrame();
-    QString name;
-    if (app->getCurrentFrame()->isEditingScene()) {
-        TProject* project = scene->getProject();
-        QString sceneName = QString::fromStdWString(scene->getSceneName());
-        if (sceneName.isEmpty()) sceneName = tr("Untitled");
-        if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-        name = tr("[SCENE]: ") + sceneName;
-        if (frame >= 0)
-            name =
-            name + tr("   ::   Frame: ") + tr(std::to_string(frame + 1).c_str());
-        int col = app->getCurrentColumn()->getColumnIndex();
-        if (col < 0) {
-            m_currentFrameLabel->setText(name);
-            return;
-        }
-        TXsheet* xsh = app->getCurrentXsheet()->getXsheet();
-        TXshCell cell = xsh->getCell(frame, col);
-        if (cell.isEmpty()) {
-            m_currentFrameLabel->setText(name);
-            return;
-        }
-        assert(cell.m_level.getPointer());
-        TFilePath fp(cell.m_level->getName());
-        QString imageName =
-            QString::fromStdWString(fp.withFrame(cell.m_frameId).getWideString());
-        name = name + tr("   ::   Level: ") + imageName;
-    }
-    else {
-        TXshLevel* level = app->getCurrentLevel()->getLevel();
-        if (level) {
-            TFilePath fp(level->getName());
-            QString imageName = QString::fromStdWString(
-                fp.withFrame(app->getCurrentFrame()->getFid()).getWideString());
-            name = name + tr("[LEVEL]: ") + imageName;
-        }
-    }
-    m_currentFrameLabel->setText(name);
+void StatusBar::updateFrameText(QString text) {
+  m_currentFrameLabel->setText(text);
 }
 
 //-----------------------------------------------------------------------------
 
 void StatusBar::updateInfoText() {
-    TApp *app = TApp::instance();
-    ToolHandle* toolHandle = app->getCurrentTool();
-    TTool* tool = toolHandle->getTool();
-    std::string name = tool->getName();
-    tool->getToolType();
-    int target = tool->getTargetType();
+  TApp* app              = TApp::instance();
+  ToolHandle* toolHandle = app->getCurrentTool();
+  TTool* tool            = toolHandle->getTool();
+  std::string name       = tool->getName();
+  tool->getToolType();
+  int target = tool->getTargetType();
 
-    int type = -1;
-    TXshLevelHandle* levelHandle = app->getCurrentLevel();
-    TXshLevel* level = levelHandle->getLevel();
-    if (level) {
-        type = level->getType();
-    }
-    bool isRaster = false;
-    bool isVector = false;
-    bool isToonzRaster = false;
-    bool isEmpty = false;
-    if (type >= 0) {
+  int type                     = -1;
+  TXshLevelHandle* levelHandle = app->getCurrentLevel();
+  TXshLevel* level             = levelHandle->getLevel();
+  if (level) {
+    type = level->getType();
+  }
+  bool isRaster        = false;
+  bool isVector        = false;
+  bool isSmartRaster   = false;
+  bool isEmpty         = false;
+  std::string namePlus = "";
+  if (type >= 0) {
+    if (type == TXshLevelType::PLI_XSHLEVEL) {
+      isVector = true;
+      namePlus = "Vector";
+    } else if (type == TXshLevelType::TZP_XSHLEVEL) {
+      isSmartRaster = true;
+      namePlus      = "SmartRaster";
+    } else if (type == TXshLevelType::OVL_XSHLEVEL) {
+      isRaster = true;
+      namePlus = "Raster";
+    } else if (type == NO_XSHLEVEL)
+      isEmpty = true;
+  }
+  QString text = "";
+  if (m_infoMap.find(name + namePlus) != m_infoMap.end()) {
+    text += m_infoMap[name + namePlus];
+    int i = 0;
+    i++;
+  } else if (m_infoMap.find(name) != m_infoMap.end()) {
+    text += m_infoMap[name];
+    int i = 0;
+    i++;
+  }
 
-        if (type == TXshLevelType::PLI_XSHLEVEL) isVector = true;
-        else if (type == TXshLevelType::TZP_XSHLEVEL) isToonzRaster = true;
-        else if (type == TXshLevelType::OVL_XSHLEVEL) isRaster = true;
-        else if (type == NO_XSHLEVEL) isEmpty = true;
-    }
-    QString text = "";
-    if (name == "T_Hand") {
-        text += "Hand Tool: Drag to see different areas in thew viewer.";
-    } else if (name == "T_Selection") {
-        text += "Selection Tool: Select parts of your image to transform it.";
-    } else if (name == "T_Dummy" && !isEmpty) {
-        text += "This tool doesn't work on this layer type.";
-    }
-
-
-    m_infoLabel->setText(text);
+  m_infoLabel->setText(text);
 }
 
 //-----------------------------------------------------------------------------
 
-void StatusBar::updateMessageText() {
-
+void StatusBar::setMessageText(QString text) {
+  std::string strText = text.toStdString();
+  QString newText     = QString::fromStdString(strText);
+  this->showMessage("Yo", 5000);
+  m_infoLabel->setText(text);
 }
 
 //-----------------------------------------------------------------------------
 
-void StatusBar::onXshLevelSwitched(TXshLevel*) {
-
+void StatusBar::makeMap() {
+  QString spacer = "                    ";
+  // tools
+  m_infoMap.insert({"T_Hand", "Hand Tool: Pans the workspace (Space)"});
+  m_infoMap.insert(
+      {"T_Selection",
+       "Selection Tool: Select parts of your image to transform it."});
+  m_infoMap.insert({"T_Edit",
+                    "Animate Tool: Modifies the position, rotation and size of "
+                    "the current column"});
+  m_infoMap.insert({"T_Brush", "Brush Tool: Draws in the work area freehand"});
+  m_infoMap.insert(
+      {"T_BrushVector", "Brush Tool: Draws in the work area freehand" + spacer +
+                            "Shift - Straight Lines"});
+  m_infoMap.insert(
+      {"T_BrushSmartRaster", "Brush Tool: Draws in the work area freehand" +
+                                 spacer + "Shift - Straight Lines" + spacer +
+                                 "Control - Vertical and Horizontal Lines"});
+  m_infoMap.insert(
+      {"T_BrushRaster", "Brush Tool: Draws in the work area freehand" + spacer +
+                            "Shift - Straight Lines" + spacer +
+                            "Control - Vertical and Horizontal Lines"});
+  m_infoMap.insert({"T_Geometric", "Geometry Tool: Draws geometric shapes"});
+  m_infoMap.insert({"T_Type", "Type Tool: Adds text"});
+  m_infoMap.insert(
+      {"T_PaintBrush",
+       "Smart Raster Painter: Paints areas in Smart Raster leves"});
+  m_infoMap.insert(
+      {"T_Fill", "Fill Tool: Fills drawing areas with the current style"});
+  m_infoMap.insert({"T_Eraser", "Eraser: Erases lines and areas"});
+  m_infoMap.insert(
+      {"T_Tape", "Tape Tool: Closes gaps in raster, joins edges in vector"});
+  m_infoMap.insert(
+      {"T_StylePicker", "Style Picker: Selects style on current drawing"});
+  m_infoMap.insert(
+      {"T_RGBPicker",
+       "RGB Picker: Picks color on screen and applies to current style"});
+  m_infoMap.insert({"T_ControlPointEditor",
+                    "Control Point Editor: Modifies vector lines by editing "
+                    "its control points"});
+  m_infoMap.insert({"T_Pinch", "Pinch Tool: Pulls vector drawings"});
+  m_infoMap.insert({"T_Pump", "Pump Tool: Changes vector thickness"});
+  m_infoMap.insert({"T_Magnet", "Magnet Tool: Deforms vector lines"});
+  m_infoMap.insert(
+      {"T_Bender", "Bend Tool: Bends vector shapes around the first click"});
+  m_infoMap.insert({"T_Iron", "Iron Tool: Smooths vector lines"});
+  m_infoMap.insert({"T_Cutter", "Cutter Tool: Splits vector lines"});
+  m_infoMap.insert({"T_Hook", ""});
+  m_infoMap.insert({"T_Skeleton",
+                    "Skeleton Tool: Allows to build a skeleton and animate in "
+                    "a cut-out workflow"});
+  m_infoMap.insert(
+      {"T_Tracker",
+       "Tracker: Tracks specific regions in a sequence of images"});
+  m_infoMap.insert({"T_Plastic",
+                    "Plastic Tool: Builds a mesh that allows to deform and "
+                    "animate a level"});
+  m_infoMap.insert({"T_Zoom", "Zoom Tool: Zooms viewer"});
+  m_infoMap.insert({"T_Rotate", "Rotate Tool: Rotate the workspace"});
+  m_infoMap.insert({"T_Ruler", ""});
+  m_infoMap.insert(
+      {"T_Finger", "Finger Tool: Smudges small areas to cover with line"});
+  m_infoMap.insert({"T_Dummy", "This tool doesn't work on this layer type."});
 }
