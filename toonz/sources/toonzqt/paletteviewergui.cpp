@@ -734,10 +734,12 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         if ((int)style->getMainColor().m !=
             (int)style->getMainColor().maxChannelValue) {
           QRect bottomRect = chipRect;
-          if (m_viewMode == LargeChips) {
-            bottomRect.adjust(0, bottomRect.height() - 12, 0, 0);
-          } else
-            bottomRect.adjust(0, bottomRect.height() - 6, 0, 0);
+          if (styleIndex != 0) {
+            if (m_viewMode == LargeChips) {
+              bottomRect.adjust(0, bottomRect.height() - 12, 0, 0);
+            } else
+              bottomRect.adjust(0, bottomRect.height() - 6, 0, 0);
+          }
 
           TRaster32P icon = style->getIcon(qsize2Dimension(bottomRect.size()));
           p.drawPixmap(bottomRect.left(), bottomRect.top(),
@@ -785,7 +787,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       }
 
       // draw style name
-      if (m_viewMode != SmallChips) {
+      if (m_viewMode != SmallChips && styleIndex != 0) {
         if (m_viewMode == MediumChips) {
           tmpFont.setPixelSize(EnvSoftwareCurrentFontSize_StyleName);
           p.setFont(tmpFont);
@@ -824,12 +826,12 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         }
       }
 
-      // draw the frame border if the style is selected or current
-      if (m_styleSelection->isSelected(m_page->getIndex(), i) ||
-          currentStyleIndex == styleIndex) {
-        p.setBrush(Qt::NoBrush);
-        p.drawRect(chipRect.adjusted(3, 3, -3, -3));
-      }
+      //// draw the frame border if the style is selected or current
+      // if (m_styleSelection->isSelected(m_page->getIndex(), i) ||
+      //    currentStyleIndex == styleIndex) {
+      //  p.setBrush(Qt::NoBrush);
+      //  p.drawRect(chipRect.adjusted(3, 3, -3, -3));
+      //}
 
       // draw border
       p.setPen(Qt::black);

@@ -728,6 +728,36 @@ QTabBar::tab:only-one {
   color: rgba(43, 20, 20, 0.466);
 }
 /* -----------------------------------------------------------------------------
+   Status Bar - Bottom of Main Window
+----------------------------------------------------------------------------- */
+#StatusBar {
+  background-color: #DBDBDB;
+  color: #000;
+  border-top: 1px outset #828282;
+}
+#StatusBar:disabled {
+  color: rgba(43, 20, 20, 0.466);
+}
+#MainWindowLabel {
+  background-color: #DBDBDB;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #000;
+  border-left: 2px outset #9b9b9b;
+}
+#MainWindowLabel:disabled {
+  color: rgba(43, 20, 20, 0.466);
+}
+#MainWindowPlainLabel {
+  background-color: #DBDBDB;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #000;
+}
+#MainWindowPlainLabel:disabled {
+  color: rgba(43, 20, 20, 0.466);
+}
+/* -----------------------------------------------------------------------------
    Push Button
 ----------------------------------------------------------------------------- */
 .Button,

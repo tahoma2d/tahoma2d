@@ -51,13 +51,13 @@ StyleSample::StyleSample(QWidget *parent, int sizeX, int sizeY)
     , m_bgRas(sizeX, sizeY)
     , m_style(0)
     , m_clickEnabled(false)
-    , m_chessColor1(0, 0, 0)
-    , m_chessColor2(255, 255, 255)
+    , m_chessColor1(180, 180, 180)
+    , m_chessColor2(239, 239, 239)
     , m_isEditing(false) {
   setMinimumSize(sizeX, sizeY);
   setColor(TPixel32::Transparent);
   TRop::checkBoard(m_bgRas, m_chessColor1, m_chessColor2,
-                   TDimensionD(sizeX / 8, sizeX / 8), TPointD(0, 0));
+                   TDimensionD(sizeX / 4, sizeX / 4), TPointD(0, 0));
   setEnable(true);
 }
 

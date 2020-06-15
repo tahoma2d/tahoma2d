@@ -22,6 +22,7 @@ class PaletteController;
 class QTimer;
 class TXshLevel;
 class QMainWindow;
+class StatusBar;
 
 class TMainWindow;
 class ComboViewerPanel;
@@ -87,7 +88,7 @@ class TApp final : public QObject,
   int m_autosavePeriod;  // minutes
   bool m_autosaveSuspended;
   QTimer *m_autosaveTimer;
-
+  StatusBar *m_statusBar;
   TApp();
 
   bool m_isStarting;
@@ -212,6 +213,9 @@ public:
   bool getCanHideTitleBars() { return m_canHideTitleBars; }
   void setCanHideTitleBars(bool on);
 
+  void setStatusBar(StatusBar *statusBar);
+  void setStatusBarFrameInfo(QString text);
+
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
   bool m_showTitleBars    = true;
@@ -255,7 +259,6 @@ signals:
   // NOTE: For now QEvent::TabletLeaveProximity is NOT detected on Windows. See
   // QTBUG-53628.
   void tabletLeft();
-  void sendMessage(QString);
   void showTitleBars(bool);
 
   void

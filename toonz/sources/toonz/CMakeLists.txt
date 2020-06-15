@@ -89,6 +89,7 @@ set(MOC_HEADERS
     shortcutpopup.h
     soundtrackexport.h
     startuppopup.h
+    statusbar.h
     styleshortcutswitchablepanel.h
     svncleanupdialog.h
     svncommitdialog.h
@@ -266,6 +267,7 @@ set(SOURCES
     shortcutpopup.cpp
     soundtrackexport.cpp
     startuppopup.cpp
+    statusbar.cpp
     subcameramanager.cpp
     kis_tablet_support_win8.cpp
     timestretchpopup.cpp

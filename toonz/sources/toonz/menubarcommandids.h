@@ -219,6 +219,7 @@
 #define MI_BlueChannelGreyscale "MI_BlueChannelGreyscale"
 
 // #define MI_DockingCheck "MI_DockingCheck"
+#define MI_ShowStatusBar "MI_ShowStatusBar"
 
 #define MI_OpenFileViewer "MI_OpenFileViewer"
 #define MI_OpenFileBrowser2 "MI_OpenFileBrowser2"

@@ -13,6 +13,7 @@
 #include "tapp.h"
 #include "viewerpane.h"
 #include "startuppopup.h"
+#include "statusbar.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -73,6 +74,7 @@ TEnv::IntVar BCheckToggleAction("BCheckToggleAction", 0);
 TEnv::IntVar GCheckToggleAction("GCheckToggleAction", 0);
 TEnv::IntVar ACheckToggleAction("ACheckToggleAction", 0);
 TEnv::IntVar LinkToggleAction("LinkToggleAction", 0);
+TEnv::IntVar ShowStatusBarAction("ShowStatusBarAction", 1);
 // TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
@@ -402,6 +404,11 @@ centralWidget->setLayout(centralWidgetLayout);*/
 
   setCentralWidget(m_stackedWidget);
 
+  m_statusBar = new StatusBar(this);
+  setStatusBar(m_statusBar);
+  m_statusBar->setVisible(ShowStatusBarAction == 1 ? true : false);
+  TApp::instance()->setStatusBar(m_statusBar);
+
   // Leggo i settings
   readSettings(argumentLayoutFileName);
 
@@ -415,8 +422,6 @@ centralWidget->setLayout(centralWidgetLayout);*/
   /*-- タイトルバーにScene名を表示する --*/
   connect(TApp::instance()->getCurrentScene(), SIGNAL(nameSceneChanged()), this,
           SLOT(changeWindowTitle()));
-  connect(TApp::instance(), SIGNAL(sendMessage(QString)), m_topBar,
-          SLOT(setMessage(QString)));
 
   changeWindowTitle();
 
@@ -1399,7 +1404,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 QAction *MainWindow::createAction(const char *id, const QString &name,
                                   const QString &defaultShortcut,
-                                  CommandType type) {
+                                  QString newStatusTip, CommandType type) {
   QAction *action = new DVAction(name, this);
   addAction(action);
 #ifdef MACOSX
@@ -1419,113 +1424,144 @@ QAction *MainWindow::createAction(const char *id, const QString &name,
 #endif
   CommandManager::instance()->define(id, type, defaultShortcut.toStdString(),
                                      action);
+  action->setStatusTip(newStatusTip);
   return action;
 }
 
 //-----------------------------------------------------------------------------
 
-QAction *MainWindow::createRightClickMenuAction(
-    const char *id, const QString &name, const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, RightClickMenuCommandType);
+QAction *MainWindow::createRightClickMenuAction(const char *id,
+                                                const QString &name,
+                                                const QString &defaultShortcut,
+                                                QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      RightClickMenuCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuFileAction(const char *id, const QString &name,
-                                          const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuFileCommandType);
+                                          const QString &defaultShortcut,
+                                          QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuFileCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuEditAction(const char *id, const QString &name,
-                                          const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuEditCommandType);
+                                          const QString &defaultShortcut,
+                                          QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuEditCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
-QAction *MainWindow::createMenuScanCleanupAction(
-    const char *id, const QString &name, const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuScanCleanupCommandType);
+QAction *MainWindow::createMenuScanCleanupAction(const char *id,
+                                                 const QString &name,
+                                                 const QString &defaultShortcut,
+                                                 QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuScanCleanupCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuLevelAction(const char *id, const QString &name,
-                                           const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuLevelCommandType);
+                                           const QString &defaultShortcut,
+                                           QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuLevelCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuXsheetAction(const char *id, const QString &name,
-                                            const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuXsheetCommandType);
+                                            const QString &defaultShortcut,
+                                            QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuXsheetCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuCellsAction(const char *id, const QString &name,
-                                           const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuCellsCommandType);
+                                           const QString &defaultShortcut,
+                                           QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuCellsCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuViewAction(const char *id, const QString &name,
-                                          const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuViewCommandType);
+                                          const QString &defaultShortcut,
+                                          QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuViewCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuWindowsAction(const char *id,
                                              const QString &name,
-                                             const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuWindowsCommandType);
+                                             const QString &defaultShortcut,
+                                             QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuWindowsCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuPlayAction(const char *id, const QString &name,
-                                          const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuPlayCommandType);
+                                          const QString &defaultShortcut,
+                                          QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuPlayCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuRenderAction(const char *id, const QString &name,
-                                            const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuRenderCommandType);
+                                            const QString &defaultShortcut,
+                                            QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuRenderCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuHelpAction(const char *id, const QString &name,
-                                          const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, MenuHelpCommandType);
+                                          const QString &defaultShortcut,
+                                          QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      MenuHelpCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createRGBAAction(const char *id, const QString &name,
-                                      const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, RGBACommandType);
+                                      const QString &defaultShortcut,
+                                      QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip, RGBACommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createFillAction(const char *id, const QString &name,
-                                      const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, FillCommandType);
+                                      const QString &defaultShortcut,
+                                      QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip, FillCommandType);
 }
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuAction(const char *id, const QString &name,
-                                      QList<QString> list) {
+                                      QList<QString> list,
+                                      QString newStatusTip) {
   QMenu *menu     = new DVMenuAction(name, this, list);
   QAction *action = menu->menuAction();
+  action->setStatusTip(newStatusTip);
   CommandManager::instance()->define(id, MenuCommandType, "", action);
   return action;
 }
@@ -1533,22 +1569,27 @@ QAction *MainWindow::createMenuAction(const char *id, const QString &name,
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createViewerAction(const char *id, const QString &name,
-                                        const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, ZoomCommandType);
+                                        const QString &defaultShortcut,
+                                        QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip, ZoomCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createVisualizationButtonAction(const char *id,
-                                                     const QString &name) {
-  return createAction(id, name, "", VisualizationButtonCommandType);
+                                                     const QString &name,
+                                                     QString newStatusTip) {
+  return createAction(id, name, "", newStatusTip,
+                      VisualizationButtonCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMiscAction(const char *id, const QString &name,
-                                      const char *defaultShortcut) {
+                                      const char *defaultShortcut,
+                                      QString newStatusTip) {
   QAction *action = new DVAction(name, this);
+  action->setStatusTip(newStatusTip);
   CommandManager::instance()->define(id, MiscCommandType, defaultShortcut,
                                      action);
   return action;
@@ -1558,9 +1599,11 @@ QAction *MainWindow::createMiscAction(const char *id, const QString &name,
 
 QAction *MainWindow::createToolOptionsAction(const char *id,
                                              const QString &name,
-                                             const QString &defaultShortcut) {
+                                             const QString &defaultShortcut,
+                                             QString newStatusTip) {
   QAction *action = new DVAction(name, this);
   addAction(action);
+  action->setStatusTip(newStatusTip);
   CommandManager::instance()->define(id, ToolModifierCommandType,
                                      defaultShortcut.toStdString(), action);
   return action;
@@ -1569,16 +1612,19 @@ QAction *MainWindow::createToolOptionsAction(const char *id,
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createStopMotionAction(const char *id, const QString &name,
-                                            const QString &defaultShortcut) {
-  return createAction(id, name, defaultShortcut, StopMotionCommandType);
+                                            const QString &defaultShortcut,
+                                            QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      StopMotionCommandType);
 }
 
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createToggle(const char *id, const QString &name,
                                   const QString &defaultShortcut,
-                                  bool startStatus, CommandType type) {
-  QAction *action = createAction(id, name, defaultShortcut, type);
+                                  bool startStatus, CommandType type,
+                                  QString newStatusTip) {
+  QAction *action = createAction(id, name, defaultShortcut, newStatusTip, type);
   action->setCheckable(true);
   if (startStatus == true) action->trigger();
   bool ret =
@@ -1591,7 +1637,8 @@ QAction *MainWindow::createToggle(const char *id, const QString &name,
 
 QAction *MainWindow::createToolAction(const char *id, const char *iconName,
                                       const QString &name,
-                                      const QString &defaultShortcut) {
+                                      const QString &defaultShortcut,
+                                      QString newStatusTip) {
   QString normalResource = QString(":Resources/") + iconName + ".svg";
   QString overResource   = QString(":Resources/") + iconName + "_rollover.svg";
   QIcon icon;
@@ -1601,6 +1648,7 @@ QAction *MainWindow::createToolAction(const char *id, const char *iconName,
   QAction *action = new DVAction(icon, name, this);
   action->setCheckable(true);
   action->setActionGroup(m_toolsActionGroup);
+  action->setStatusTip(newStatusTip);
 
   // When the viewer is maximized (not fullscreen) the toolbar is hided and the
   // action are disabled,
@@ -1970,6 +2018,12 @@ void MainWindow::defineActions() {
                MenuViewCommandType);
   createToggle(MI_ACheck, tr("&Gap Check"), "", ACheckToggleAction ? 1 : 0,
                MenuViewCommandType);
+  QAction *showStatusBarAction =
+      createToggle(MI_ShowStatusBar, tr("&Show Status Bar"), "",
+                   ShowStatusBarAction ? 1 : 0, MenuViewCommandType);
+  connect(showStatusBarAction, SIGNAL(triggered(bool)), this,
+          SLOT(toggleStatusBar(bool)));
+
   QAction *shiftTraceAction = createToggle(MI_ShiftTrace, tr("Shift and Trace"),
                                            "", false, MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace.svg"));
@@ -1979,8 +2033,8 @@ void MainWindow::defineActions() {
   createToggle(MI_NoShift, tr("No Shift"), "", false, MenuViewCommandType);
   CommandManager::instance()->enable(MI_EditShift, false);
   CommandManager::instance()->enable(MI_NoShift, false);
-  shiftTraceAction =
-      createAction(MI_ResetShift, tr("Reset Shift"), "", MenuViewCommandType);
+  shiftTraceAction = createAction(MI_ResetShift, tr("Reset Shift"), "", "",
+                                  MenuViewCommandType);
   shiftTraceAction->setIcon(QIcon(":Resources/shift_and_trace_reset.svg"));
 
   QAction *GuidedDrawingAction = createToggle(
@@ -2206,35 +2260,69 @@ void MainWindow::defineActions() {
 
   createRightClickMenuAction(MI_SeparateColors, tr("Separate Colors..."), "");
 
-  createToolAction(T_Edit, "edit", tr("Animate Tool"), "A");
-  createToolAction(T_Selection, "selection", tr("Selection Tool"), "S");
-  createToolAction(T_Brush, "brush", tr("Brush Tool"), "B");
-  createToolAction(T_Geometric, "geometric", tr("Geometric Tool"), "G");
-  createToolAction(T_Type, "type", tr("Type Tool"), "Y");
-  createToolAction(T_Fill, "fill", tr("Fill Tool"), "F");
-  createToolAction(T_PaintBrush, "paintbrush", tr("Smart Raster Paint Tool"),
-                   "");
-  createToolAction(T_Eraser, "eraser", tr("Eraser Tool"), "E");
-  createToolAction(T_Tape, "tape", tr("Tape Tool"), "T");
-  createToolAction(T_StylePicker, "stylepicker", tr("Style Picker Tool"), "K");
-  createToolAction(T_RGBPicker, "RGBpicker", tr("RGB Picker Tool"), "R");
+  createToolAction(T_Edit, "edit", tr("Animate Tool"), "A",
+                   tr("Animate Tool: Modifies the position, rotation and size "
+                      "of the current column"));
+  createToolAction(
+      T_Selection, "selection", tr("Selection Tool"), "S",
+      tr("Selection Tool: Select parts of your image to transform it."));
+  createToolAction(T_Brush, "brush", tr("Brush Tool"), "B",
+                   tr("Brush Tool: Draws in the work area freehand"));
+  createToolAction(T_Geometric, "geometric", tr("Geometry Tool"), "G",
+                   tr("Geometry Tool: Draws geometric shapes"));
+  createToolAction(T_Type, "type", tr("Type Tool"), "Y",
+                   tr("Type Tool: Adds text"));
+  createToolAction(T_Fill, "fill", tr("Fill Tool"), "F",
+                   tr("Fill Tool: Fills drawing areas with the current style"));
+  createToolAction(
+      T_PaintBrush, "paintbrush", tr("Smart Raster Paint Tool"), "",
+      tr("Smart Raster Paint: Paints areas in Smart Raster levels"));
+  createToolAction(T_Eraser, "eraser", tr("Eraser Tool"), "E",
+                   tr("Eraser Tool: Erases lines and areas"));
+  createToolAction(
+      T_Tape, "tape", tr("Tape Tool"), "T",
+      tr("Tape Tool: Closes gaps in raster, joins edges in vector"));
+  createToolAction(T_StylePicker, "stylepicker", tr("Style Picker Tool"), "K",
+                   tr("Style Picker: Selects style on current drawing"));
+  createToolAction(
+      T_RGBPicker, "RGBpicker", tr("RGB Picker Tool"), "R",
+      tr("RBG Picker: Picks color on screen and applies to current style"));
   createToolAction(T_ControlPointEditor, "controlpointeditor",
-                   tr("Control Point Editor Tool"), "C");
-  createToolAction(T_Pinch, "pinch", tr("Pinch Tool"), "M");
-  createToolAction(T_Pump, "pump", tr("Pump Tool"), "");
-  createToolAction(T_Magnet, "magnet", tr("Magnet Tool"), "");
-  createToolAction(T_Bender, "bender", tr("Bender Tool"), "");
-  createToolAction(T_Iron, "iron", tr("Iron Tool"), "");
-  createToolAction(T_Cutter, "cutter", tr("Cutter Tool"), "");
-  createToolAction(T_Skeleton, "skeleton", tr("Skeleton Tool"), "V");
-  createToolAction(T_Tracker, "tracker", tr("Tracker Tool"), "");
+                   tr("Control Point Editor Tool"), "C",
+                   tr("Control Point Editor: Modifies vector lines by editing "
+                      "its control points"));
+  createToolAction(T_Pinch, "pinch", tr("Pinch Tool"), "M",
+                   tr("Pinch Tool: Pulls vector drawings"));
+  createToolAction(T_Pump, "pump", tr("Pump Tool"), "",
+                   tr("Pump Tool: Changes vector thickness"));
+  createToolAction(T_Magnet, "magnet", tr("Magnet Tool"), "",
+                   tr("Magnet Tool: Deforms vector lines"));
+  createToolAction(
+      T_Bender, "bender", tr("Bender Tool"), "",
+      tr("Bender Tool: Bends vector shapes around the first click"));
+  createToolAction(T_Iron, "iron", tr("Iron Tool"), "",
+                   tr("Iron Tool: Smooths out vector lines"));
+  createToolAction(T_Cutter, "cutter", tr("Cutter Tool"), "",
+                   tr("Cutter Tool: Splits vector lines"));
+  createToolAction(T_Skeleton, "skeleton", tr("Skeleton Tool"), "V",
+                   tr("Skeleton Tool: Allows to build a skeleton and animate "
+                      "in a cut-out workflow"));
+  createToolAction(
+      T_Tracker, "tracker", tr("Tracker Tool"), "",
+      tr("Tracker Tool: Tracks specific regions in a sequence of images"));
   createToolAction(T_Hook, "hook", tr("Hook Tool"), "O");
-  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "");
-  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "");
-  createToolAction(T_Hand, "hand", tr("Hand Tool"), "");
-  createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X");
+  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "",
+                   tr("Zoom Tool: Zooms viewer"));
+  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "",
+                   tr("Rotate Tool: Rotate the viewer"));
+  createToolAction(T_Hand, "hand", tr("Hand Tool"), "",
+                   tr("Hand Tool: Pans the workspace (Space)"));
+  createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X",
+                   tr("Plastic Tool: Builds a mesh that allows to deform and "
+                      "animate a level"));
   createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "");
-  createToolAction(T_Finger, "finger", tr("Finger Tool"), "");
+  createToolAction(T_Finger, "finger", tr("Finger Tool"), "",
+                   tr("Finger Tool: Smudges small areas to cover with line"));
 
   createViewerAction(V_ZoomIn, tr("Zoom In"), "+");
   createViewerAction(V_ZoomOut, tr("Zoom Out"), "-");
@@ -2429,142 +2517,151 @@ void MainWindow::defineActions() {
                           tr("Fill Tool - Autopaint Lines"), "");
 
   /*-- Animate tool + mode switching shortcuts --*/
-  createAction(MI_EditNextMode, tr("Animate Tool - Next Mode"), "",
+  createAction(MI_EditNextMode, tr("Animate Tool - Next Mode"), "", "",
                ToolCommandType);
-  createAction(MI_EditPosition, tr("Animate Tool - Position"), "",
+  createAction(MI_EditPosition, tr("Animate Tool - Position"), "", "",
                ToolCommandType);
-  createAction(MI_EditRotation, tr("Animate Tool - Rotation"), "",
+  createAction(MI_EditRotation, tr("Animate Tool - Rotation"), "", "",
                ToolCommandType);
-  createAction(MI_EditScale, tr("Animate Tool - Scale"), "", ToolCommandType);
-  createAction(MI_EditShear, tr("Animate Tool - Shear"), "", ToolCommandType);
-  createAction(MI_EditCenter, tr("Animate Tool - Center"), "", ToolCommandType);
-  createAction(MI_EditAll, tr("Animate Tool - All"), "", ToolCommandType);
+  createAction(MI_EditScale, tr("Animate Tool - Scale"), "", "",
+               ToolCommandType);
+  createAction(MI_EditShear, tr("Animate Tool - Shear"), "", "",
+               ToolCommandType);
+  createAction(MI_EditCenter, tr("Animate Tool - Center"), "", "",
+               ToolCommandType);
+  createAction(MI_EditAll, tr("Animate Tool - All"), "", "", ToolCommandType);
 
   /*-- Selection tool + type switching shortcuts --*/
-  createAction(MI_SelectionNextType, tr("Selection Tool - Next Type"), "",
+  createAction(MI_SelectionNextType, tr("Selection Tool - Next Type"), "", "",
                ToolCommandType);
   createAction(MI_SelectionRectangular, tr("Selection Tool - Rectangular"), "",
+               "", ToolCommandType);
+  createAction(MI_SelectionFreehand, tr("Selection Tool - Freehand"), "", "",
                ToolCommandType);
-  createAction(MI_SelectionFreehand, tr("Selection Tool - Freehand"), "",
-               ToolCommandType);
-  createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "",
+  createAction(MI_SelectionPolyline, tr("Selection Tool - Polyline"), "", "",
                ToolCommandType);
 
   /*-- Geometric tool + shape switching shortcuts --*/
-  createAction(MI_GeometricNextShape, tr("Geometric Tool - Next Shape"), "",
+  createAction(MI_GeometricNextShape, tr("Geometric Tool - Next Shape"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricRectangle, tr("Geometric Tool - Rectangle"), "",
+  createAction(MI_GeometricRectangle, tr("Geometric Tool - Rectangle"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricCircle, tr("Geometric Tool - Circle"), "",
+  createAction(MI_GeometricCircle, tr("Geometric Tool - Circle"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricEllipse, tr("Geometric Tool - Ellipse"), "",
+  createAction(MI_GeometricEllipse, tr("Geometric Tool - Ellipse"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricLine, tr("Geometric Tool - Line"), "",
+  createAction(MI_GeometricLine, tr("Geometric Tool - Line"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricPolyline, tr("Geometric Tool - Polyline"), "",
+  createAction(MI_GeometricPolyline, tr("Geometric Tool - Polyline"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricArc, tr("Geometric Tool - Arc"), "",
+  createAction(MI_GeometricArc, tr("Geometric Tool - Arc"), "", "",
                ToolCommandType);
-  createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "",
+  createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "", "",
                ToolCommandType);
 
   /*-- Type tool + style switching shortcuts --*/
-  createAction(MI_TypeNextStyle, tr("Type Tool - Next Style"), "",
+  createAction(MI_TypeNextStyle, tr("Type Tool - Next Style"), "", "",
                ToolCommandType);
-  createAction(MI_TypeOblique, tr("Type Tool - Oblique"), "", ToolCommandType);
-  createAction(MI_TypeRegular, tr("Type Tool - Regular"), "", ToolCommandType);
-  createAction(MI_TypeBoldOblique, tr("Type Tool - Bold Oblique"), "",
+  createAction(MI_TypeOblique, tr("Type Tool - Oblique"), "", "",
                ToolCommandType);
-  createAction(MI_TypeBold, tr("Type Tool - Bold"), "", ToolCommandType);
+  createAction(MI_TypeRegular, tr("Type Tool - Regular"), "", "",
+               ToolCommandType);
+  createAction(MI_TypeBoldOblique, tr("Type Tool - Bold Oblique"), "", "",
+               ToolCommandType);
+  createAction(MI_TypeBold, tr("Type Tool - Bold"), "", "", ToolCommandType);
 
   /*-- Fill tool + type/mode switching shortcuts --*/
-  createAction(MI_FillNextType, tr("Fill Tool - Next Type"), "",
+  createAction(MI_FillNextType, tr("Fill Tool - Next Type"), "", "",
                ToolCommandType);
-  createAction(MI_FillNormal, tr("Fill Tool - Normal"), "", ToolCommandType);
-  createAction(MI_FillRectangular, tr("Fill Tool - Rectangular"), "",
+  createAction(MI_FillNormal, tr("Fill Tool - Normal"), "", "",
                ToolCommandType);
-  createAction(MI_FillFreehand, tr("Fill Tool - Freehand"), "",
+  createAction(MI_FillRectangular, tr("Fill Tool - Rectangular"), "", "",
                ToolCommandType);
-  createAction(MI_FillPolyline, tr("Fill Tool - Polyline"), "",
+  createAction(MI_FillFreehand, tr("Fill Tool - Freehand"), "", "",
                ToolCommandType);
-  createAction(MI_FillNextMode, tr("Fill Tool - Next Mode"), "",
+  createAction(MI_FillPolyline, tr("Fill Tool - Polyline"), "", "",
                ToolCommandType);
-  createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", ToolCommandType);
-  createAction(MI_FillLines, tr("Fill Tool - Lines"), "", ToolCommandType);
-  createAction(MI_FillLinesAndAreas, tr("Fill Tool - Lines & Areas"), "",
+  createAction(MI_FillNextMode, tr("Fill Tool - Next Mode"), "", "",
+               ToolCommandType);
+  createAction(MI_FillAreas, tr("Fill Tool - Areas"), "", "", ToolCommandType);
+  createAction(MI_FillLines, tr("Fill Tool - Lines"), "", "", ToolCommandType);
+  createAction(MI_FillLinesAndAreas, tr("Fill Tool - Lines & Areas"), "", "",
                ToolCommandType);
 
   /*-- Eraser tool + type switching shortcuts --*/
-  createAction(MI_EraserNextType, tr("Eraser Tool - Next Type"), "",
+  createAction(MI_EraserNextType, tr("Eraser Tool - Next Type"), "", "",
                ToolCommandType);
-  createAction(MI_EraserNormal, tr("Eraser Tool - Normal"), "",
+  createAction(MI_EraserNormal, tr("Eraser Tool - Normal"), "", "",
                ToolCommandType);
-  createAction(MI_EraserRectangular, tr("Eraser Tool - Rectangular"), "",
+  createAction(MI_EraserRectangular, tr("Eraser Tool - Rectangular"), "", "",
                ToolCommandType);
-  createAction(MI_EraserFreehand, tr("Eraser Tool - Freehand"), "",
+  createAction(MI_EraserFreehand, tr("Eraser Tool - Freehand"), "", "",
                ToolCommandType);
-  createAction(MI_EraserPolyline, tr("Eraser Tool - Polyline"), "",
+  createAction(MI_EraserPolyline, tr("Eraser Tool - Polyline"), "", "",
                ToolCommandType);
-  createAction(MI_EraserSegment, tr("Eraser Tool - Segment"), "",
+  createAction(MI_EraserSegment, tr("Eraser Tool - Segment"), "", "",
                ToolCommandType);
 
   /*-- Tape tool + type/mode switching shortcuts --*/
-  createAction(MI_TapeNextType, tr("Tape Tool - Next Type"), "",
+  createAction(MI_TapeNextType, tr("Tape Tool - Next Type"), "", "",
                ToolCommandType);
-  createAction(MI_TapeNormal, tr("Tape Tool - Normal"), "", ToolCommandType);
-  createAction(MI_TapeRectangular, tr("Tape Tool - Rectangular"), "",
+  createAction(MI_TapeNormal, tr("Tape Tool - Normal"), "", "",
                ToolCommandType);
-  createAction(MI_TapeNextMode, tr("Tape Tool - Next Mode"), "",
+  createAction(MI_TapeRectangular, tr("Tape Tool - Rectangular"), "", "",
+               ToolCommandType);
+  createAction(MI_TapeNextMode, tr("Tape Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_TapeEndpointToEndpoint,
-               tr("Tape Tool - Endpoint to Endpoint"), "", ToolCommandType);
+               tr("Tape Tool - Endpoint to Endpoint"), "", "", ToolCommandType);
   createAction(MI_TapeEndpointToLine, tr("Tape Tool - Endpoint to Line"), "",
-               ToolCommandType);
-  createAction(MI_TapeLineToLine, tr("Tape Tool - Line to Line"), "",
+               "", ToolCommandType);
+  createAction(MI_TapeLineToLine, tr("Tape Tool - Line to Line"), "", "",
                ToolCommandType);
 
   /*-- Style Picker tool + mode switching shortcuts --*/
   createAction(MI_PickStyleNextMode, tr("Style Picker Tool - Next Mode"), "",
+               "", ToolCommandType);
+  createAction(MI_PickStyleAreas, tr("Style Picker Tool - Areas"), "", "",
                ToolCommandType);
-  createAction(MI_PickStyleAreas, tr("Style Picker Tool - Areas"), "",
-               ToolCommandType);
-  createAction(MI_PickStyleLines, tr("Style Picker Tool - Lines"), "",
+  createAction(MI_PickStyleLines, tr("Style Picker Tool - Lines"), "", "",
                ToolCommandType);
   createAction(MI_PickStyleLinesAndAreas,
-               tr("Style Picker Tool - Lines & Areas"), "", ToolCommandType);
+               tr("Style Picker Tool - Lines & Areas"), "", "",
+               ToolCommandType);
 
   /*-- RGB Picker tool + type switching shortcuts --*/
-  createAction(MI_RGBPickerNextType, tr("RGB Picker Tool - Next Type"), "",
+  createAction(MI_RGBPickerNextType, tr("RGB Picker Tool - Next Type"), "", "",
                ToolCommandType);
-  createAction(MI_RGBPickerNormal, tr("RGB Picker Tool - Normal"), "",
+  createAction(MI_RGBPickerNormal, tr("RGB Picker Tool - Normal"), "", "",
                ToolCommandType);
   createAction(MI_RGBPickerRectangular, tr("RGB Picker Tool - Rectangular"), "",
+               "", ToolCommandType);
+  createAction(MI_RGBPickerFreehand, tr("RGB Picker Tool - Freehand"), "", "",
                ToolCommandType);
-  createAction(MI_RGBPickerFreehand, tr("RGB Picker Tool - Freehand"), "",
-               ToolCommandType);
-  createAction(MI_RGBPickerPolyline, tr("RGB Picker Tool - Polyline"), "",
+  createAction(MI_RGBPickerPolyline, tr("RGB Picker Tool - Polyline"), "", "",
                ToolCommandType);
 
   /*-- Skeleton tool + mode switching shortcuts --*/
-  createAction(MI_SkeletonNextMode, tr("Skeleton Tool - Next Mode"), "",
+  createAction(MI_SkeletonNextMode, tr("Skeleton Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_SkeletonBuildSkeleton, tr("Skeleton Tool - Build Skeleton"),
-               "", ToolCommandType);
-  createAction(MI_SkeletonAnimate, tr("Skeleton Tool - Animate"), "",
+               "", "", ToolCommandType);
+  createAction(MI_SkeletonAnimate, tr("Skeleton Tool - Animate"), "", "",
                ToolCommandType);
   createAction(MI_SkeletonInverseKinematics,
-               tr("Skeleton Tool - Inverse Kinematics"), "", ToolCommandType);
+               tr("Skeleton Tool - Inverse Kinematics"), "", "",
+               ToolCommandType);
 
   /*-- Plastic tool + mode switching shortcuts --*/
-  createAction(MI_PlasticNextMode, tr("Plastic Tool - Next Mode"), "",
+  createAction(MI_PlasticNextMode, tr("Plastic Tool - Next Mode"), "", "",
                ToolCommandType);
-  createAction(MI_PlasticEditMesh, tr("Plastic Tool - Edit Mesh"), "",
+  createAction(MI_PlasticEditMesh, tr("Plastic Tool - Edit Mesh"), "", "",
                ToolCommandType);
-  createAction(MI_PlasticPaintRigid, tr("Plastic Tool - Paint Rigid"), "",
+  createAction(MI_PlasticPaintRigid, tr("Plastic Tool - Paint Rigid"), "", "",
                ToolCommandType);
   createAction(MI_PlasticBuildSkeleton, tr("Plastic Tool - Build Skeleton"), "",
-               ToolCommandType);
-  createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "",
+               "", ToolCommandType);
+  createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "", "",
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
@@ -3197,6 +3294,27 @@ void MainWindow::clearCacheFolder() {
     }
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::toggleStatusBar(bool on) {
+  if (!on) {
+    m_statusBar->hide();
+    ShowStatusBarAction = 0;
+  } else {
+    m_statusBar->show();
+    ShowStatusBarAction = 1;
+  }
+  m_statusBar->showMessage("Hi John.", 5000);
+}
+
+//-----------------------------------------------------------------------------
+
+class ToggleStatusBar final : public MenuItemHandler {
+public:
+  ToggleStatusBar() : MenuItemHandler("MI_ShowStatusBar") {}
+  void execute() override {}
+} toggleStatusBar;
 
 //-----------------------------------------------------------------------------
 

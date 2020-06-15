@@ -633,3 +633,37 @@ QTabBar {
     }
   }
 }
+
+/* -----------------------------------------------------------------------------
+   Status Bar - Bottom of Main Window
+----------------------------------------------------------------------------- */
+
+#StatusBar {
+  background-color: @bg;
+  color: @text-color;
+  border-top: 1px outset @dock-bg-color;
+  &:disabled {
+    color: @text-color-disabled;
+  }
+}
+
+#MainWindowLabel {
+  background-color: @bg;
+  padding-left: 10px; 
+  padding-right: 10px;
+  color: @text-color;
+  border-left: 2px outset @menu-border-color;
+  &:disabled {
+    color: @text-color-disabled;
+  }
+}
+
+#MainWindowPlainLabel {
+  background-color: @bg;
+  padding-left: 10px; 
+  padding-right: 10px;
+  color: @text-color;
+  &:disabled {
+    color: @text-color-disabled;
+  }
+}
