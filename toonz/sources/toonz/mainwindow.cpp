@@ -3305,7 +3305,6 @@ void MainWindow::toggleStatusBar(bool on) {
     m_statusBar->show();
     ShowStatusBarAction = 1;
   }
-  m_statusBar->showMessage("Hi John.", 5000);
 }
 
 //-----------------------------------------------------------------------------

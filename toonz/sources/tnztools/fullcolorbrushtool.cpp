@@ -308,10 +308,35 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
   if (!ri) return;
 
-  if (e.isShiftPressed() || e.isCtrlPressed()) {
+  if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
+    m_addingAssistant = true;
+    m_assistantPoints.push_back(pos);
+    return;
+  }
+  if (e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed()) {
+    m_addingAssistant                  = true;
+    std::vector<TPointD> pointsToClear = m_assistantPoints;
+    m_assistantPoints.clear();
+    for (auto point : pointsToClear) {
+      TRectD pointRect =
+          TRectD(point.x - 3, point.y - 3, point.x + 3, point.y + 3);
+      invalidate(pointRect);
+    }
+
+    return;
+  }
+
+  if ((e.isShiftPressed() || e.isCtrlPressed()) && !e.isAltPressed()) {
     m_isStraight = true;
     m_firstPoint = pos;
     m_lastPoint  = pos;
+  }
+
+  if (e.isAltPressed()) {
+    m_snapAssistant = true;
+    m_isStraight    = true;
+    m_firstPoint    = pos;
+    m_lastPoint     = pos;
   }
 
   /* update color here since the current style might be switched with numpad
@@ -361,11 +386,78 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
 void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
                                         const TMouseEvent &e) {
+  if ((e.isCtrlPressed() && e.isAltPressed()) ||
+      (e.isShiftPressed() && e.isAltPressed()) || m_addingAssistant) {
+    return;
+  }
   TRectD invalidateRect;
   if (m_isStraight) {
     invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
     m_lastPoint    = pos;
-    if (e.isCtrlPressed()) {
+    if (e.isAltPressed()) {
+      double distance = (m_brushPos.x - m_maxCursorThick + 1) * 0.5;
+      TRectD brushRect =
+          TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
+                 TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
+      invalidateRect += (brushRect);
+
+      // let's get info about our current location
+      double denominator = m_lastPoint.x - m_firstPoint.x;
+      if (denominator == 0) denominator == 0.001;
+      double slope = ((m_lastPoint.y - m_firstPoint.y) / denominator);
+      double angle = std::atan(slope) * (180 / 3.14159);
+
+      // now let's get the angle of each of the assistant points
+      std::vector<double> anglesToAssistants;
+      for (auto point : m_assistantPoints) {
+        double newDenominator = point.x - m_firstPoint.x;
+        if (newDenominator == 0) newDenominator == 0.001;
+        double newSlope = ((point.y - m_firstPoint.y) / newDenominator);
+        double newAngle = std::atan(newSlope) * (180 / 3.14159);
+        anglesToAssistants.push_back(newAngle);
+      }
+
+      // figure out which angle is closer
+      TPointD pointToUse = TPointD();
+      double difference  = 360;
+      for (int i = 0; i < anglesToAssistants.size(); i++) {
+        double newDifference = abs(angle - anglesToAssistants.at(i));
+        if (newDifference < difference) {
+          difference = newDifference;
+          pointToUse = m_assistantPoints.at(i);
+        }
+      }
+
+      double distanceFirstToLast =
+          std::sqrt(std::pow((m_lastPoint.x - m_firstPoint.x), 2) +
+                    std::pow((m_lastPoint.y - m_firstPoint.y), 2));
+      double distanceLastToAssistant =
+          std::sqrt(std::pow((pointToUse.x - m_lastPoint.x), 2) +
+                    std::pow((pointToUse.y - m_lastPoint.y), 2));
+      double distanceFirstToAssistant =
+          std::sqrt(std::pow((pointToUse.x - m_firstPoint.x), 2) +
+                    std::pow((pointToUse.y - m_firstPoint.y), 2));
+
+      if (distanceFirstToAssistant == 0.0) distanceFirstToAssistant = 0.001;
+
+      double ratio = distanceFirstToLast / distanceFirstToAssistant;
+
+      double newX;
+      double newY;
+
+      // flip the direction if the last point is farther than the first point
+      if (distanceFirstToAssistant < distanceLastToAssistant &&
+          distanceFirstToLast < distanceLastToAssistant) {
+        newX = ((1 + ratio) * m_firstPoint.x) - (ratio * pointToUse.x);
+        newY = ((1 + ratio) * m_firstPoint.y) - (ratio * pointToUse.y);
+      } else {
+        newX = ((1 - ratio) * m_firstPoint.x) + (ratio * pointToUse.x);
+        newY = ((1 - ratio) * m_firstPoint.y) + (ratio * pointToUse.y);
+      }
+
+      m_lastPoint = TPointD(newX, newY);
+      invalidateRect += TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+    } else if (e.isCtrlPressed()) {
       double distance = (m_brushPos.x - m_maxCursorThick + 1) * 0.5;
       TRectD brushRect =
           TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
@@ -375,7 +467,6 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
       if (denominator == 0) denominator == 0.001;
       double slope = ((m_lastPoint.y - m_firstPoint.y) / denominator);
       double angle = std::atan(slope) * (180 / 3.14159);
-      int blah     = 0;
       if (abs(angle) > 67.5)
         m_lastPoint.x = m_firstPoint.x;
       else if (abs(angle) < 22.5)
@@ -441,6 +532,12 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
 
+  if ((e.isAltPressed() && e.isCtrlPressed()) ||
+      (e.isShiftPressed() && e.isAltPressed()) || m_addingAssistant) {
+    m_addingAssistant = false;
+    return;
+  }
+
   TRasterImageP ri = (TRasterImageP)getImage(true);
   if (!ri) return;
 
@@ -449,10 +546,11 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   TRasterP ras      = ri->getRaster();
   TPointD rasCenter = ras->getCenterD();
   TPointD point;
-  if (!e.isCtrlPressed())
-    point = TPointD(pos + rasCenter);
-  else
+  if (e.isCtrlPressed() || m_snapAssistant || e.isAltPressed())
     point = TPointD(m_lastPoint + rasCenter);
+  else
+    point = TPointD(pos + rasCenter);
+
   double pressure;
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
@@ -496,8 +594,9 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
 
   notifyImageChanged();
   m_strokeRect.empty();
-  m_mousePressed = false;
-  m_isStraight   = false;
+  m_mousePressed  = false;
+  m_isStraight    = false;
+  m_snapAssistant = false;
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -547,15 +646,15 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   // locals.addMinMax(m_thickness, int(add));
   //} else
-  if (e.isCtrlPressed() && e.isAltPressed()) {
-    const TPointD &diff = pos - m_mousePos;
-    double max          = diff.x / 2;
-    double min          = diff.y / 2;
+  // if (e.isCtrlPressed() && e.isAltPressed()) {
+  //  const TPointD &diff = pos - m_mousePos;
+  //  double max          = diff.x / 2;
+  //  double min          = diff.y / 2;
 
-    locals.addMinMaxSeparate(m_thickness, int(min), int(max));
-  } else {
-    m_brushPos = pos;
-  }
+  //  locals.addMinMaxSeparate(m_thickness, int(min), int(max));
+  //} else {
+  m_brushPos = pos;
+  //}
 
   m_mousePos = pos;
   invalidate();
@@ -567,6 +666,15 @@ void FullColorBrushTool::draw() {
   if (TRasterImageP ri = TRasterImageP(getImage(false))) {
     if (m_isStraight) {
       tglDrawSegment(m_firstPoint, m_lastPoint);
+    }
+
+    if (m_assistantPoints.size() > 0) {
+      for (auto point : m_assistantPoints) {
+        glColor3d(0.0, 1.0, 0.0);
+        tglDrawCircle(point, 5.0);
+        glColor3d(1.0, 1.0, 0.0);
+        tglDrawCircle(point, 8.0);
+      }
     }
 
     // If toggled off, don't draw brush outline

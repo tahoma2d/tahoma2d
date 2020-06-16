@@ -1468,19 +1468,20 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
                     std::pow((pointToUse.y - m_firstPoint.y), 2));
 
       if (distanceFirstToAssistant == 0.0) distanceFirstToAssistant = 0.001;
+
       double ratio = distanceFirstToLast / distanceFirstToAssistant;
-      double newX  = ((1 - ratio) * m_firstPoint.x) + (ratio * pointToUse.x);
-      double newY  = ((1 - ratio) * m_firstPoint.y) + (ratio * pointToUse.y);
+
+      double newX;
+      double newY;
 
       // flip the direction if the last point is farther than the first point
       if (distanceFirstToAssistant < distanceLastToAssistant &&
           distanceFirstToLast < distanceLastToAssistant) {
-        double xDistance    = m_lastPoint.x - m_firstPoint.x;
-        double yDistance    = m_lastPoint.y - m_firstPoint.y;
-        double newXDistance = newX - m_firstPoint.x;
-        double newYDistance = newY - m_firstPoint.y;
         newX = ((1 + ratio) * m_firstPoint.x) - (ratio * pointToUse.x);
         newY = ((1 + ratio) * m_firstPoint.y) - (ratio * pointToUse.y);
+      } else {
+        newX = ((1 - ratio) * m_firstPoint.x) + (ratio * pointToUse.x);
+        newY = ((1 - ratio) * m_firstPoint.y) + (ratio * pointToUse.y);
       }
 
       m_lastPoint = TPointD(newX, newY);
