@@ -226,6 +226,9 @@ protected:
   bool m_propertyUpdating = false;
 
   bool m_isStraight = false;
+  std::vector<TPointD> m_assistantPoints;
+  bool m_addingAssistant = false;
+  bool m_snapAssistant   = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
 

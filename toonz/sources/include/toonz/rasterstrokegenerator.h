@@ -65,7 +65,7 @@ public:
   void add(const TThickPoint &p);
 
   // Disegna il tratto interamente
-  void generateStroke(bool isPencil) const;
+  void generateStroke(bool isPencil, bool isStraight = false) const;
 
   // Ritorna m_points
   std::vector<TThickPoint> getPointsSequence() { return m_points; }
