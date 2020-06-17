@@ -1617,8 +1617,9 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
 
     if (key == Qt::Key_Shift || key == Qt::Key_Control || key == Qt::Key_Alt ||
         key == Qt::Key_AltGr) {
-      // quando l'utente preme shift/ctrl ecc. alcuni tool (es. pinch) devono
-      // cambiare subito la forma del cursore, senza aspettare il prossimo move
+      // when the user presses shift / ctrl etc. some tools (eg pinch) must
+      // immediately change the shape of the cursor, without waiting for the
+      // next move
       TMouseEvent toonzEvent;
       initToonzEvent(toonzEvent, event);
       toonzEvent.m_pos = TPointD(m_lastMousePos.x(),
@@ -1704,8 +1705,9 @@ void SceneViewer::keyReleaseEvent(QKeyEvent *event) {
 
   if (key == Qt::Key_Shift || key == Qt::Key_Control || key == Qt::Key_Alt ||
       key == Qt::Key_AltGr) {
-    // quando l'utente preme shift/ctrl ecc. alcuni tool (es. pinch) devono
-    // cambiare subito la forma del cursore, senza aspettare il prossimo move
+    // when the user presses shift / ctrl etc. some tools (eg pinch)
+    // must immediately change the shape of the cursor, without waiting for the
+    // next move
     TMouseEvent toonzEvent;
     initToonzEvent(toonzEvent, event);
     toonzEvent.m_pos = TPointD(m_lastMousePos.x(),

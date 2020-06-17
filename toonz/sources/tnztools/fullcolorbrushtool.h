@@ -126,6 +126,9 @@ protected:
   bool m_isStraight = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
+  std::vector<TPointD> m_assistantPoints;
+  bool m_addingAssistant = false;
+  bool m_snapAssistant   = false;
 
   bool m_propertyUpdating = false;
 };

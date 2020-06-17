@@ -55,6 +55,8 @@ public:
       //!  are not).
       m_isStopMotionLevel;
 
+  std::vector<TPointD> m_vanishingPoints;
+
 public:
   LevelOptions();  //!< Constructs with default values.
 
@@ -228,6 +230,14 @@ ie
     m_options.m_isStopMotionLevel = isStopMotion;
   }
   bool isStopMotionLevel() const { return m_options.m_isStopMotionLevel; }
+
+  void setVanishingPoints(std::vector<TPointD> vanishingPoints) {
+    m_options.m_vanishingPoints = vanishingPoints;
+  }
+
+  std::vector<TPointD> getVanishingPoints() {
+    return m_options.m_vanishingPoints;
+  }
 
 private:
   TPointD m_imageDpi;

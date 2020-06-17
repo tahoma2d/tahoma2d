@@ -44,7 +44,8 @@ void RasterStrokeGenerator::add(const TThickPoint &p) {
 //-----------------------------------------------------------
 
 // Disegna il tratto interamente
-void RasterStrokeGenerator::generateStroke(bool isPencil) const {
+void RasterStrokeGenerator::generateStroke(bool isPencil,
+                                           bool isStraight) const {
   std::vector<TThickPoint> points(m_points);
   int size = points.size();
   // Prende un buffer trasparente di appoggio
@@ -62,8 +63,13 @@ void RasterStrokeGenerator::generateStroke(bool isPencil) const {
     placeOver(m_raster, rasBuffer, newOrigin);
   } else if (size <= 3) {
     std::vector<TThickPoint> partialPoints;
-    partialPoints.push_back(points[0]);
-    partialPoints.push_back(points[1]);
+    if (isStraight && size == 3) {
+      partialPoints.push_back(points[0]);
+      partialPoints.push_back(points[2]);
+    } else {
+      partialPoints.push_back(points[0]);
+      partialPoints.push_back(points[1]);
+    }
     rasterBrush(rasBuffer, partialPoints, m_styleId, !isPencil);
     placeOver(m_raster, rasBuffer, newOrigin);
   } else if (size % 2 == 1) /*-- 奇数の場合 --*/
