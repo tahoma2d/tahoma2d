@@ -1246,9 +1246,26 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
     }
   }
 
+  TXshLevel *level          = app->getCurrentLevel()->getLevel();
+  TXshSimpleLevelP simLevel = level->getSimpleLevel();
+  m_assistantPoints         = simLevel->getProperties()->getVanishingPoints();
+
   if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
     m_addingAssistant = true;
-    m_assistantPoints.push_back(pos);
+    bool deletedPoint = false;
+    for (int i = 0; i < m_assistantPoints.size(); i++) {
+      if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 5) &&
+          areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 5)) {
+        m_assistantPoints.erase(m_assistantPoints.begin() + i);
+        deletedPoint     = true;
+        TRectD pointRect = TRectD(pos.x - 3, pos.y - 3, pos.x + 3, pos.y + 3);
+        invalidate(pointRect);
+        break;
+      }
+    }
+    if (!deletedPoint) m_assistantPoints.push_back(pos);
+    simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
+    level->setDirtyFlag(true);
     return;
   }
   if (e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed()) {
@@ -1432,27 +1449,41 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
 
       // let's get info about our current location
       double denominator = m_lastPoint.x - m_firstPoint.x;
-      if (denominator == 0) denominator == 0.001;
-      double slope = ((m_lastPoint.y - m_firstPoint.y) / denominator);
+      double numerator   = m_lastPoint.y - m_firstPoint.y;
+      if (areAlmostEqual(denominator, 0.0, 0.0001)) {
+        denominator = denominator < 0 ? -0.0001 : 0.0001;
+      }
+      if (areAlmostEqual(numerator, 0.0, 0.0001)) {
+        numerator = numerator < 0 ? -0.0001 : 0.0001;
+      }
+      double slope = (numerator / denominator);
       double angle = std::atan(slope) * (180 / 3.14159);
 
       // now let's get the angle of each of the assistant points
       std::vector<double> anglesToAssistants;
       for (auto point : m_assistantPoints) {
         double newDenominator = point.x - m_firstPoint.x;
-        if (newDenominator == 0) newDenominator == 0.001;
-        double newSlope = ((point.y - m_firstPoint.y) / newDenominator);
+        double newNumerator   = point.y - m_firstPoint.y;
+        if (areAlmostEqual(newDenominator, 0.0, 0.0001)) {
+          newDenominator = newDenominator < 0 ? -0.0001 : 0.0001;
+        }
+        if (areAlmostEqual(newNumerator, 0.0, 0.0001)) {
+          newNumerator = newNumerator < 0 ? -0.0001 : 0.0001;
+        }
+
+        double newSlope = (newNumerator / newDenominator);
         double newAngle = std::atan(newSlope) * (180 / 3.14159);
         anglesToAssistants.push_back(newAngle);
       }
 
       // figure out which angle is closer
-      TPointD pointToUse = TPointD();
+      TPointD pointToUse = TPointD(0.0, 0.0);
       double difference  = 360;
+
       for (int i = 0; i < anglesToAssistants.size(); i++) {
         double newDifference = abs(angle - anglesToAssistants.at(i));
-        if (newDifference < difference) {
-          difference = newDifference;
+        if (newDifference < difference || (180 - newDifference) < difference) {
+          difference = std::min(newDifference, (180 - newDifference));
           pointToUse = m_assistantPoints.at(i);
         }
       }
@@ -2132,6 +2163,16 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
 
     m_strokeRect.empty();
     m_lastRect.empty();
+  }
+
+  TXshLevelHandle *level = getApplication()->getCurrentLevel();
+  TXshSimpleLevel *sl;
+  if (level) sl = level->getSimpleLevel();
+  if (sl) {
+    if (sl->getProperties()->getVanishingPoints() != m_assistantPoints) {
+      m_assistantPoints = sl->getProperties()->getVanishingPoints();
+      invalidate();
+    }
   }
 }
 

@@ -905,6 +905,14 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         int whiteTransp                      = 0;
         int antialiasSoftness                = 0;
         int isStopMotionLevel                = 0;
+        double vanishingPoint1x              = 0.0;
+        double vanishingPoint1y              = 0.0;
+        double vanishingPoint2x              = 0.0;
+        double vanishingPoint2y              = 0.0;
+        double vanishingPoint3x              = 0.0;
+        double vanishingPoint3y              = 0.0;
+        double vanishingPoint4x              = 0.0;
+        double vanishingPoint4y              = 0.0;
         LevelProperties::DpiPolicy dpiPolicy = LevelProperties::DP_ImageDpi;
         if (is.getTagParam("dpix", v)) xdpi = std::stod(v);
         if (is.getTagParam("dpiy", v)) ydpi = std::stod(v);
@@ -919,6 +927,41 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         if (is.getTagParam("isStopMotionLevel", v))
           isStopMotionLevel = std::stoi(v);
 
+        if (is.getTagParam("vanishingPoint1x", v))
+          vanishingPoint1x = std::stod(v);
+        if (is.getTagParam("vanishingPoint1y", v))
+          vanishingPoint1y = std::stod(v);
+        if (is.getTagParam("vanishingPoint2x", v))
+          vanishingPoint2x = std::stod(v);
+        if (is.getTagParam("vanishingPoint2y", v))
+          vanishingPoint2y = std::stod(v);
+        if (is.getTagParam("vanishingPoint3x", v))
+          vanishingPoint3x = std::stod(v);
+        if (is.getTagParam("vanishingPoint3y", v))
+          vanishingPoint3y = std::stod(v);
+        if (is.getTagParam("vanishingPoint4x", v))
+          vanishingPoint4x = std::stod(v);
+        if (is.getTagParam("vanishingPoint4y", v))
+          vanishingPoint4y = std::stod(v);
+
+        std::vector<TPointD> vanishingPoints;
+        if (vanishingPoint1x != 0.0 && vanishingPoint1y != 0.0) {
+          vanishingPoints.push_back(
+              TPointD(vanishingPoint1x, vanishingPoint1y));
+        }
+        if (vanishingPoint2x != 0.0 && vanishingPoint2y != 0.0) {
+          vanishingPoints.push_back(
+              TPointD(vanishingPoint2x, vanishingPoint2y));
+        }
+        if (vanishingPoint3x != 0.0 && vanishingPoint2y != 0.0) {
+          vanishingPoints.push_back(
+              TPointD(vanishingPoint3x, vanishingPoint3y));
+        }
+        if (vanishingPoint4x != 0.0 && vanishingPoint2y != 0.0) {
+          vanishingPoints.push_back(
+              TPointD(vanishingPoint4x, vanishingPoint4y));
+        }
+
         m_properties->setDpiPolicy(dpiPolicy);
         m_properties->setDpi(TPointD(xdpi, ydpi));
         m_properties->setSubsampling(subsampling);
@@ -926,6 +969,7 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         m_properties->setDoAntialias(antialiasSoftness);
         m_properties->setWhiteTransp(whiteTransp);
         m_properties->setIsStopMotion(isStopMotionLevel);
+        m_properties->setVanishingPoints(vanishingPoints);
         if (isStopMotionLevel == 1) setIsReadOnly(true);
       } else
         throw TException("unexpected tag " + tagName);
@@ -1371,6 +1415,27 @@ void TXshSimpleLevel::saveData(TOStream &os) {
   } else if (getProperties()->isStopMotionLevel()) {
     attr["isStopMotionLevel"] =
         std::to_string(getProperties()->isStopMotionLevel());
+  } else if (getProperties()->getVanishingPoints().size() > 0) {
+    std::vector<TPointD> vanishingPoints =
+        getProperties()->getVanishingPoints();
+    int size = vanishingPoints.size();
+
+    if (size > 0) {
+      attr["vanishingPoint1x"] = std::to_string(vanishingPoints.at(0).x);
+      attr["vanishingPoint1y"] = std::to_string(vanishingPoints.at(0).y);
+    }
+    if (size > 1) {
+      attr["vanishingPoint2x"] = std::to_string(vanishingPoints.at(1).x);
+      attr["vanishingPoint2y"] = std::to_string(vanishingPoints.at(1).y);
+    }
+    if (size > 2) {
+      attr["vanishingPoint3x"] = std::to_string(vanishingPoints.at(2).x);
+      attr["vanishingPoint3y"] = std::to_string(vanishingPoints.at(2).y);
+    }
+    if (size > 3) {
+      attr["vanishingPoint4x"] = std::to_string(vanishingPoints.at(3).x);
+      attr["vanishingPoint4y"] = std::to_string(vanishingPoints.at(3).y);
+    }
   }
 
   if (m_type == TZI_XSHLEVEL) attr["type"] = "s";
