@@ -442,15 +442,16 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
   bool notify = false;
 
-  if (m_gadget == NoGadget || m_gadget == NoGadget_InBox) {
-    if (!e.isCtrlPressed()) {
-      if (m_gadget == NoGadget_InBox)
-        m_gadget = TranslateGadget;
-      else
-        m_gadget = RotateGadget;
-      // m_curveStatus = NoCurve;
+  if (!e.isCtrlPressed() &&
+      (m_gadget == NoGadget || m_gadget == NoGadget_InBox)) {
+    if (m_gadget == NoGadget_InBox) {
+      m_gadget = TranslateGadget;
+    } else {
+      m_gadget = RotateGadget;
     }
-    int row = getViewer()->posToRow(e.m_pos, 5 * getPixelSize(), false, true);
+
+    int row = getViewer()->posToRow(e.m_pos, getPixelSize() * getPixelSize(),
+                                    false, true);
     if (row >= 0) {
       int index         = -1;
       TApplication *app = TTool::getApplication();
@@ -475,6 +476,8 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         notify              = true;
       }
     }
+  } else if (e.isCtrlPressed()) {
+    m_gadget = NoGadget_InBox;
   }
 
   m_oldAff = m_aff[m_ghostIndex];
