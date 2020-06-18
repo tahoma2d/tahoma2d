@@ -1531,7 +1531,11 @@ bool IoCmd::saveLevel(const TFilePath &path) {
   if (realPath.getType() == "")
     realPath = TFilePath(realPath.getWideString() + ::to_wstring(dotts + ext));
 
-  saveLevel(realPath, sl, false);
+  // changes made by pojienie in OpenToonz #3355
+  bool ret = saveLevel(realPath, sl, false);
+  if (!ret) {  // save level failed
+    return false;
+  }
   RecentFiles::instance()->addFilePath(toQString(realPath), RecentFiles::Level);
 
   TApp::instance()

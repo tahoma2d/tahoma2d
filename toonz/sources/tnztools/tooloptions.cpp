@@ -2561,6 +2561,10 @@ ShiftTraceToolOptionBox::ShiftTraceToolOptionBox(QWidget *parent, TTool *tool)
 
   m_resetPrevGhostBtn  = new QPushButton(tr("Reset Previous"), this);
   m_resetAfterGhostBtn = new QPushButton(tr("Reset Following"), this);
+  int buttonWidth      = fontMetrics().width(m_resetPrevGhostBtn->text()) + 10;
+  m_resetPrevGhostBtn->setFixedWidth(buttonWidth);
+  buttonWidth = fontMetrics().width(m_resetAfterGhostBtn->text()) + 10;
+  m_resetAfterGhostBtn->setFixedWidth(buttonWidth);
 
   m_prevRadioBtn  = new QRadioButton(tr("Previous Drawing"), this);
   m_afterRadioBtn = new QRadioButton(tr("Following Drawing"), this);
