@@ -1309,10 +1309,21 @@ void SceneViewer::drawBackground() {
   if (m_visualSettings.m_colorMask == 0) {
     TPixel32 bgColor;
 
-    if (isPreviewEnabled())
-      bgColor = Preferences::instance()->getPreviewBgColor();
-    else
-      bgColor = Preferences::instance()->getViewerBgColor();
+    if (isPreviewEnabled()) {
+      if (Preferences::instance()->getUseThemeViewerColors()) {
+        QColor qtBgColor = getPreviewBGColor();
+        bgColor =
+            TPixel32(qtBgColor.red(), qtBgColor.green(), qtBgColor.blue());
+      } else
+        bgColor = Preferences::instance()->getPreviewBgColor();
+    } else {
+      if (Preferences::instance()->getUseThemeViewerColors()) {
+        QColor qtBgColor = getBGColor();
+        bgColor =
+            TPixel32(qtBgColor.red(), qtBgColor.green(), qtBgColor.blue());
+      } else
+        bgColor = Preferences::instance()->getViewerBgColor();
+    }
     glClearColor(bgColor.r / 255.0f, bgColor.g / 255.0f, bgColor.b / 255.0f,
                  1.0);
   } else

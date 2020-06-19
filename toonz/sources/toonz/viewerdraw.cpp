@@ -227,7 +227,13 @@ void ViewerDraw::drawCameraMask(SceneViewer *viewer) {
   }
 
   // set the camera mask color same as the previewBG color
-  TPixel32 maskColor = Preferences::instance()->getPreviewBgColor();
+  TPixel32 maskColor;
+  if (Preferences::instance()->getUseThemeViewerColors()) {
+    QColor qtMaskColor = viewer->getPreviewBGColor();
+    maskColor =
+        TPixel32(qtMaskColor.red(), qtMaskColor.green(), qtMaskColor.blue());
+  } else
+    maskColor = Preferences::instance()->getPreviewBgColor();
   double mask_r, mask_g, mask_b;
   mask_r = (double)maskColor.r / 255.0;
   mask_g = (double)maskColor.g / 255.0;

@@ -5,10 +5,20 @@
 
 #include <QStatusBar>;
 #include <unordered_map>
+#include <QLabel>
 
-class QLabel;
+// class StatusLabel;
 class MainWindow;
 class TXshLevel;
+
+class StatusLabel : public QLabel {
+  Q_OBJECT
+
+public:
+  StatusLabel(const QString& text, QWidget* parent = nullptr)
+      : QLabel(text, parent) {}
+  ~StatusLabel(){};
+};
 
 //-----------------------------------------------------------------------------
 
@@ -20,12 +30,12 @@ public:
 
   ~StatusBar();
 
-  void setMessageText(QString text);
   void updateFrameText(QString text);
 
 protected:
-  QLabel *m_currentFrameLabel, *m_infoLabel;  // , * m_messageLabel;
+  StatusLabel *m_currentFrameLabel, *m_infoLabel;
   std::unordered_map<std::string, QString> m_infoMap;
+  void showEvent(QShowEvent*) override;
   void makeMap();
 
 protected slots:

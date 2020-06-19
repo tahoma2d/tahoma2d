@@ -68,6 +68,13 @@ class SceneViewer final : public GLWidgetForHighDpi,
                           public Previewer::Listener {
   Q_OBJECT
 
+  Q_PROPERTY(QColor BGColor READ getBGColor WRITE setBGColor)
+  QColor m_bgColor;
+
+  Q_PROPERTY(
+      QColor PreviewBGColor READ getPreviewBGColor WRITE setPreviewBGColor)
+  QColor m_previewBgColor;
+
   double m_pressure;
   QPointF m_lastMousePos;
   QPointF m_pos;
@@ -309,6 +316,11 @@ public:
   void releaseFBO() override;
 
   void resetNavigation();
+
+  void setBGColor(const QColor &color) { m_bgColor = color; }
+  QColor getBGColor() const { return m_bgColor; }
+  void setPreviewBGColor(const QColor &color) { m_previewBgColor = color; }
+  QColor getPreviewBGColor() const { return m_previewBgColor; }
 
 public:
   // SceneViewer's gadget public functions

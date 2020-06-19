@@ -476,17 +476,12 @@ void TabBarContainter::paintEvent(QPaintEvent *event) {
 
 ToolBarContainer::ToolBarContainer(QWidget *parent) : QFrame(parent) {
   setObjectName("ToolBarContainer");
-  setFrameStyle(QFrame::StyledPanel);
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
 //-----------------------------------------------------------------------------
 
-void ToolBarContainer::paintEvent(QPaintEvent *event) {
-  QPainter p(this);
-  p.setPen(QColor(120, 120, 120));
-  p.drawLine(0, 0, width(), 0);
-}
+void ToolBarContainer::paintEvent(QPaintEvent *event) {}
 
 //=============================================================================
 

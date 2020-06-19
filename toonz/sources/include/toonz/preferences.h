@@ -435,6 +435,9 @@ public:
   // Colors  tab
   TPixel getViewerBgColor() const { return getColorValue(viewerBGColor); }
   TPixel getPreviewBgColor() const { return getColorValue(previewBGColor); }
+  bool getUseThemeViewerColors() const {
+    return getBoolValue(useThemeViewerColors);
+  }
   TPixel getLevelEditorBoxColor() const {
     return getColorValue(levelEditorBoxColor);
   }
