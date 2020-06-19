@@ -556,6 +556,7 @@ void PreferencesPopup::onUseThemeViewerColorsChanged() {
   bool enable = m_pref->getBoolValue(useThemeViewerColors);
   m_controlIdMap.key(viewerBGColor)->setEnabled(!enable);
   m_controlIdMap.key(previewBGColor)->setEnabled(!enable);
+  notifySceneChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1810,8 +1811,6 @@ QWidget* PreferencesPopup::createColorsPage() {
                            &PreferencesPopup::notifySceneChanged);
   m_onEditedFuncMap.insert(useThemeViewerColors,
                            &PreferencesPopup::onUseThemeViewerColorsChanged);
-  m_onEditedFuncMap.insert(useThemeViewerColors,
-                           &PreferencesPopup::notifySceneChanged);
 
   bool enable = m_pref->getBoolValue(useThemeViewerColors);
   if (enable) {

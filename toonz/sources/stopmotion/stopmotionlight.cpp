@@ -219,6 +219,7 @@ void StopMotionLight::showOverlays() {
     // taking a photo
     qApp->processEvents(QEventLoop::AllEvents, 1500);
   }
+  m_pixmapFrame = -1;
   m_overlaysReady = true;
 }
 
@@ -263,7 +264,7 @@ bool StopMotionLight::useOverlays() {
 QPixmap StopMotionLight::getSceneImage(TDimension size) {
   TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-  int frame              = StopMotion::instance()->getXSheetFrameNumber() - 1;
+  int frame = TApp::instance()->getCurrentFrame()->getFrame();
   if (frame == -1) frame = 0;
 
   bool isEmpty = true;
