@@ -555,6 +555,7 @@ void Preferences::definePreferenceItems() {
          QColor(128, 128, 128));
   define(previewBGColor, "previewBGColor", QMetaType::QColor,
          QColor(64, 64, 64));
+  define(useThemeViewerColors, "useThemeViewerColors", QMetaType::Bool, true);
   define(levelEditorBoxColor, "levelEditorBoxColor", QMetaType::QColor,
          QColor(128, 128, 128));
   define(chessboardColor1, "chessboardColor1", QMetaType::QColor,

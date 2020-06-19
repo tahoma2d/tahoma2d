@@ -1664,92 +1664,167 @@ QAction *MainWindow::createToolAction(const char *id, const char *iconName,
 //-----------------------------------------------------------------------------
 
 void MainWindow::defineActions() {
-  createMenuFileAction(MI_NewScene, tr("&New Scene"), "Ctrl+N");
-  createMenuFileAction(MI_LoadScene, tr("&Load Scene..."), "Ctrl+L");
-  createMenuFileAction(MI_SaveScene, tr("&Save Scene"), "Ctrl+Shift+S");
-  createMenuFileAction(MI_SaveSceneAs, tr("&Save Scene As..."), "");
-  createMenuFileAction(MI_SaveAll, tr("&Save All"), "Ctrl+S");
-  createMenuFileAction(MI_RevertScene, tr("&Revert Scene"), "");
+  QString separator = "                    ";
+  createMenuFileAction(MI_NewScene, tr("&New Scene"), "Ctrl+N",
+                       tr("Create a new scene."));
+  createMenuFileAction(MI_LoadScene, tr("&Load Scene..."), "Ctrl+L",
+                       tr("Load an existing scene."));
+  createMenuFileAction(MI_SaveScene, tr("&Save Scene"), "Ctrl+Shift+S",
+                       tr("Save ONLY the scene.") + separator +
+                           tr("This does NOT save levels or images."));
+  createMenuFileAction(MI_SaveSceneAs, tr("&Save Scene As..."), "",
+                       tr("Save ONLY the scene with a new name.") + separator +
+                           tr("This does NOT save levels or images."));
+  createMenuFileAction(MI_SaveAll, tr("&Save All"), "Ctrl+S",
+                       tr("Save the scene info and the levels and images.") +
+                           separator + tr("Saves everything."));
+  createMenuFileAction(MI_RevertScene, tr("&Revert Scene"), "",
+                       tr("Revert the scene to its previously saved state."));
 
   QAction *act = CommandManager::instance()->getAction(MI_RevertScene);
   if (act) act->setEnabled(false);
 
   QList<QString> files;
 
-  createMenuFileAction(MI_LoadFolder, tr("&Load Folder..."), "");
-  createMenuFileAction(MI_LoadSubSceneFile, tr("&Load As Sub-xsheet..."), "");
-  createMenuAction(MI_OpenRecentScene, tr("&Open Recent Scene File"), files);
-  createMenuAction(MI_OpenRecentLevel, tr("&Open Recent Level File"), files);
+  createMenuFileAction(
+      MI_LoadFolder, tr("&Load Folder..."), "",
+      tr("Load the contents of a folder into the current scene."));
+  createMenuFileAction(
+      MI_LoadSubSceneFile, tr("&Load As Sub-xsheet..."), "",
+      tr("Load an existing scene into the current scene as a sub-xsheet"));
+  createMenuAction(MI_OpenRecentScene, tr("&Open Recent Scene File"), files,
+                   tr("Load a recently used scene."));
+  createMenuAction(MI_OpenRecentLevel, tr("&Open Recent Level File"), files,
+                   tr("Load a recently used level."));
   createMenuFileAction(MI_ClearRecentScene, tr("&Clear Recent Scene File List"),
-                       "");
+                       "", tr("Remove everything from the recent scene list."));
   createMenuFileAction(MI_ClearRecentLevel, tr("&Clear Recent level File List"),
-                       "");
-  createMenuLevelAction(MI_NewLevel, tr("&New Level..."), "Alt+N");
+                       "", tr("Remove everything from the recent level list."));
+  createMenuLevelAction(MI_NewLevel, tr("&New Level..."), "Alt+N",
+                        tr("Create a new drawing layer."));
 
   QAction *newVectorLevelAction =
-      createMenuLevelAction(MI_NewVectorLevel, tr("&New Vector Level"), "");
+      createMenuLevelAction(MI_NewVectorLevel, tr("&New Vector Level"), "",
+                            tr("Create a new vector level.") + separator +
+                                tr("Vectors can be manipulated easily and have "
+                                   "some extra tools and features."));
   newVectorLevelAction->setIconText(tr("New Vector Level"));
   newVectorLevelAction->setIcon(QIcon(":Resources/new_vector_level.svg"));
   QAction *newToonzRasterLevelAction = createMenuLevelAction(
-      MI_NewToonzRasterLevel, tr("&New Smart Raster Level"), "");
+      MI_NewToonzRasterLevel, tr("&New Smart Raster Level"), "",
+      tr("Create a new Smart Raster level.") + separator +
+          tr("Smart Raster levels are color mapped making the colors easier to "
+             "adjust at any time."));
   newToonzRasterLevelAction->setIconText(tr("New Smart Raster Level"));
   newToonzRasterLevelAction->setIcon(
       QIcon(":Resources/new_toonz_raster_level.svg"));
-  QAction *newRasterLevelAction =
-      createMenuLevelAction(MI_NewRasterLevel, tr("&New Raster Level"), "");
+  QAction *newRasterLevelAction = createMenuLevelAction(
+      MI_NewRasterLevel, tr("&New Raster Level"), "",
+      tr("Create a new raster level") + separator +
+          tr("Raster levels are traditonal drawing levels") + separator +
+          tr("Imported images will be imported as raster levels."));
   newRasterLevelAction->setIconText(tr("New Raster Level"));
   newRasterLevelAction->setIcon(QIcon(":Resources/new_raster_level.svg"));
-  QAction *loadLevelAction =
-      createMenuLevelAction(MI_LoadLevel, tr("&Load Level..."), "");
+  QAction *loadLevelAction = createMenuLevelAction(
+      MI_LoadLevel, tr("&Load Level..."), "", tr("Load an existing level."));
   loadLevelAction->setIcon(QIcon(":Resources/load_level.svg"));
-  createMenuLevelAction(MI_SaveLevel, tr("&Save Level"), "");
-  createMenuLevelAction(MI_SaveAllLevels, tr("&Save All Levels"), "");
-  createMenuLevelAction(MI_SaveLevelAs, tr("&Save Level As..."), "");
-  createMenuLevelAction(MI_ExportLevel, tr("&Export Level..."), "");
-  createMenuFileAction(MI_ConvertFileWithInput, tr("&Convert File..."), "");
-  createRightClickMenuAction(MI_SavePaletteAs, tr("&Save Palette As..."), "");
-  createRightClickMenuAction(MI_OverwritePalette, tr("&Save Palette"), "");
-  createMenuFileAction(MI_LoadColorModel, tr("&Load Color Model..."), "");
+  createMenuLevelAction(MI_SaveLevel, tr("&Save Level"), "",
+                        tr("Save the current level.") + separator +
+                            tr("This does not save the scene info."));
+  createMenuLevelAction(MI_SaveAllLevels, tr("&Save All Levels"), "",
+                        tr("Save all levels loaded into the scene.") +
+                            separator +
+                            tr("This does not save the scene info."));
+  createMenuLevelAction(MI_SaveLevelAs, tr("&Save Level As..."), "",
+                        tr("Save the current level as a different name.") +
+                            separator +
+                            tr("This does not save the scene info."));
+  createMenuLevelAction(MI_ExportLevel, tr("&Export Level..."), "",
+                        tr("Export the current level as an image sequence."));
+  createMenuFileAction(
+      MI_ConvertFileWithInput, tr("&Convert File..."), "",
+      tr("Convert an existing file or image sequnce to another format."));
+  createRightClickMenuAction(
+      MI_SavePaletteAs, tr("&Save Palette As..."), "",
+      tr("Save the current style palette as a separate file with a new name."));
+  createRightClickMenuAction(
+      MI_OverwritePalette, tr("&Save Palette"), "",
+      tr("Save the current style palette as a separate file."));
+  createMenuFileAction(MI_LoadColorModel, tr("&Load Color Model..."), "",
+                       tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,
-                       tr("&Import Toonz Lip Sync File..."), "");
-  createMenuFileAction(MI_NewProject, tr("&New Project..."), "");
+                       tr("&Import Toonz Lip Sync File..."), "",
+                       tr("Import a lip sync file to be applied to a level."));
+  createMenuFileAction(MI_NewProject, tr("&New Project..."), "",
+                       tr("Create a new project.") + separator +
+                           tr("A project is a container for a collection of "
+                              "related scenes and drawings."));
   // createMenuFileAction(MI_ProjectSettings, tr("&Project Settings..."), "");
   createMenuFileAction(MI_SaveDefaultSettings,
-                       tr("&Save Project Default Settings"), "");
-  createMenuRenderAction(MI_OutputSettings, tr("&Output Settings..."),
-                         "Ctrl+O");
-  createMenuRenderAction(MI_PreviewSettings, tr("&Preview Settings..."), "");
-  createMenuRenderAction(MI_Render, tr("&Save and Render"), "Ctrl+Shift+R");
-  createMenuRenderAction(MI_FastRender, tr("&Fast Render to MP4"), "Alt+R");
-  createMenuRenderAction(MI_Preview, tr("&Preview"), "Ctrl+R");
-  createMenuFileAction(MI_SoundTrack, tr("&Export Soundtrack"), "");
-  createStopMotionAction(MI_StopMotionExportImageSequence,
-                         tr("&Export Stop Motion Image Sequence"), "");
-  createMenuRenderAction(MI_SavePreviewedFrames, tr("&Save Previewed Frames"),
-                         "");
+                       tr("&Save Project Default Settings"), "",
+                       tr("Use the current scene's settings as a template for "
+                          "all new scenes in the current project."));
+  createMenuRenderAction(
+      MI_OutputSettings, tr("&Output Settings..."), "Ctrl+O",
+      tr("Control the output settings for the current scene.") + separator +
+          tr("You can render from the output settings window also."));
+  createMenuRenderAction(
+      MI_PreviewSettings, tr("&Preview Settings..."), "",
+      tr("Control the settings that will be used to preview the scene."));
+  createMenuRenderAction(
+      MI_Render, tr("&Save and Render"), "Ctrl+Shift+R",
+      tr("Saves the current scene and renders according to the settings and "
+         "location set in Output Settings."));
+  createMenuRenderAction(
+      MI_FastRender, tr("&Fast Render to MP4"), "Alt+R",
+      tr("Exports an MP4 file to the location specified in the preferences.") +
+          separator + tr("This is quicker than going into the Output Settings "
+                         "and setting up an MP4 render."));
+  createMenuRenderAction(
+      MI_Preview, tr("&Preview"), "Ctrl+R",
+      tr("Previews the current scene with all effects applied."));
+  createMenuFileAction(
+      MI_SoundTrack, tr("&Export Soundtrack"), "",
+      tr("Exports the soundtrack to the current scene as a wav file."));
+  createStopMotionAction(
+      MI_StopMotionExportImageSequence,
+      tr("&Export Stop Motion Image Sequence"), "",
+      tr("Exports the full resolution stop motion image sequence.") +
+          separator + tr("This is especially useful if using a DSLR camera."));
+  createMenuRenderAction(
+      MI_SavePreviewedFrames, tr("&Save Previewed Frames"), "",
+      tr("Save the images created during preview to a specified location."));
   createRightClickMenuAction(MI_RegeneratePreview, tr("&Regenerate Preview"),
-                             "");
+                             "", tr("Recreates a set of preview images."));
   createRightClickMenuAction(MI_RegenerateFramePr,
-                             tr("&Regenerate Frame Preview"), "");
-  createRightClickMenuAction(MI_ClonePreview, tr("&Clone Preview"), "");
+                             tr("&Regenerate Frame Preview"), "",
+                             tr("Regenerate the frame preview."));
+  createRightClickMenuAction(MI_ClonePreview, tr("&Clone Preview"), "",
+                             tr("Creates a clone of the previewed images."));
   createRightClickMenuAction(MI_FreezePreview, tr("&Freeze//Unfreeze Preview"),
-                             "");
+                             "", tr("Prevent the preview from being updated."));
   CommandManager::instance()->setToggleTexts(
       MI_FreezePreview, tr("Freeze Preview"), tr("Unfreeze Preview"));
   // createAction(MI_SavePreview,         "&Save Preview",		"");
   createRightClickMenuAction(MI_SavePreset, tr("&Save As Preset"), "");
   QAction *preferencesAction =
-      createMenuFileAction(MI_Preferences, tr("&Preferences..."), "Ctrl+U");
+      createMenuFileAction(MI_Preferences, tr("&Preferences..."), "Ctrl+U",
+                           tr("Change Tahoma's settings."));
   preferencesAction->setIcon(QIcon(":Resources/preferences.svg"));
-  createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "");
-  createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "");
+  createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "",
+                       tr("Change the shortcuts of Tahoma."));
+  createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "",
+                       tr("Print the scene's exposure sheet."));
   createMenuFileAction(MI_ExportXDTS,
                        tr("Export Exchange Digital Time Sheet (XDTS)"), "");
-  createMenuFileAction("MI_RunScript", tr("Run Script..."), "");
-  createMenuFileAction("MI_OpenScriptConsole", tr("Open Script Console..."),
-                       "");
+  createMenuFileAction(
+      "MI_RunScript", tr("Run Script"), "",
+      tr("Run a script to perform a series of actions on a scene."));
+  createMenuFileAction(
+      "MI_OpenScriptConsole", tr("Open Script Console"), "",
+      tr("Open a console window where you can enter script commands."));
   createMenuFileAction(MI_Print, tr("&Print Current Frame..."), "Ctrl+P");
-  createMenuFileAction(MI_Quit, tr("&Quit"), "Ctrl+Q");
+  createMenuFileAction(MI_Quit, tr("&Quit"), "Ctrl+Q", tr("Bye."));
 #ifndef NDEBUG
   createMenuFileAction("MI_ReloadStyle", tr("Reload qss"), "");
 #endif

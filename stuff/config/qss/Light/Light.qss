@@ -732,20 +732,19 @@ QTabBar::tab:only-one {
 ----------------------------------------------------------------------------- */
 #StatusBar {
   background-color: #DBDBDB;
-  color: #000;
+  color: darkblue;
   border-top: 1px outset #828282;
 }
 #StatusBar:disabled {
   color: rgba(43, 20, 20, 0.466);
 }
-#MainWindowLabel {
+#MainWindowMessageLabel {
   background-color: #DBDBDB;
   padding-left: 10px;
   padding-right: 10px;
-  color: #000;
-  border-left: 2px outset #9b9b9b;
+  color: #F19A86;
 }
-#MainWindowLabel:disabled {
+#MainWindowMessageLabel:disabled {
   color: rgba(43, 20, 20, 0.466);
 }
 #MainWindowPlainLabel {
@@ -1865,7 +1864,7 @@ QToolBar#WidePaddingToolBar QToolButton {
 #ViewerPanel #ToolBarContainer,
 FlipBook #ToolBarContainer {
   background-color: transparent;
-  border-top: 2 solid #9b9b9b;
+  border-top: 1 solid #9b9b9b;
   border-bottom: 1 solid #9b9b9b;
   padding-right: -1;
 }
@@ -1951,6 +1950,10 @@ Ruler {
 }
 #RulerToolOptionValues {
   color: #5b5b5b;
+}
+SceneViewer {
+  qproperty-BGColor: #d1d1d1;
+  qproperty-PreviewBGColor: #c7c7c7;
 }
 /* -----------------------------------------------------------------------------
    XSheet Viewer

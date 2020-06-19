@@ -12,6 +12,8 @@
 @img-url: 'imgs/white';
 
 @bg: #484848;               // normal
+@bg-darkish: darken(@bg, 4);
+@bg-darker: darken(@bg, 8);
 @bg-dark: darken(@bg, 13);    // dark
 @accent: darken(@bg, 13);     // darkest
 
@@ -36,6 +38,8 @@
 
 @label-title: rgb(159, 218, 255);
 @label-error: rgb(255, 0, 0);
+
+@status-hl-color: orange;
 
 // -----------------------------------------------------------------------------
 // Tabs
@@ -87,14 +91,14 @@
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color: darken(@bg, 10);
+@scrollbar-bg-color: @bg;
 
 // Handle
 @scrollbar-handle-border-size: 1;
 @scrollbar-handle-radius: 4;
 @scrollbar-handle-margin: 3;
 
-@scrollbar-handle-bg-color: lighten(@bg, 4);
+@scrollbar-handle-bg-color: lighten(@bg, 6);
 @scrollbar-handle-border-color: @scrollbar-handle-bg-color;
 
 @scrollbar-handle-bg-color-hover: lighten(@scrollbar-handle-bg-color, 8);

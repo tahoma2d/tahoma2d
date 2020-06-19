@@ -11,7 +11,7 @@ using namespace DVGui;
 // TabBar
 //-----------------------------------------------------------------------------
 
-TabBar::TabBar(QWidget *parent) : QTabBar(parent) {}
+TabBar::TabBar(QWidget *parent) : QTabBar(parent) { setMouseTracking(true); }
 
 //-----------------------------------------------------------------------------
 

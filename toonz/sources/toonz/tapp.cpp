@@ -49,6 +49,8 @@
 #include "toonz/tcamera.h"
 #include "toonz/preferences.h"
 
+#include "toonzqt/tabbar.h"
+
 // TnzCore includes
 #include "tbigmemorymanager.h"
 #include "ttoonzimage.h"
@@ -741,6 +743,45 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
       }
     }
   }
+  if (watched->objectName() == "StyleEditorTabBar" &&
+      e->type() == QEvent::MouseMove) {
+    // m_statusBar->clearMessage();
+    DVGui::TabBar *bar = static_cast<DVGui::TabBar *>(watched);
+    int index          = bar->tabAt(static_cast<QMouseEvent *>(e)->pos());
+    if (bar->tabText(index) == tr("Color")) {
+      // bar->setStatusTip(tr("Adjust the color value(s) of the selected
+      // style."));
+      m_statusBar->showMessage(
+          tr("Adjust the color value(s) of the selected style."), 0);
+    } else if (bar->tabText(index) == tr("Texture")) {
+      // bar->setStatusTip(tr("Apply a texture to the selected style.  This only
+      // works on Vector and Smart Raster Levels.  Smart Raster levels require
+      // preview to be on to see the style."));
+      m_statusBar->showMessage(
+          tr("Apply a texture to the selected style.                    This "
+             "only works on Vector and Smart Raster Levels.                    "
+             "Smart Raster levels require preview to be on to see the style."));
+    } else if (bar->tabText(index) == tr("Vector")) {
+      // bar->setStatusTip(tr("Apply unique strokes and fills to vector
+      // styles."));
+      m_statusBar->showMessage(
+          tr("Apply unique strokes and fills to vector styles."));
+    } else if (bar->tabText(index) == tr("Raster")) {
+      // bar->setStatusTip(tr("Use MyPaint brushes on Smart Raster and Raster
+      // levels."));
+      m_statusBar->showMessage(
+          tr("Use MyPaint brushes on Smart Raster and Raster levels."));
+    } else if (bar->tabText(index) == tr("Settings")) {
+      // bar->setStatusTip(tr("Adjust the settings depending on the style you
+      // have selected."));
+      m_statusBar->showMessage(
+          tr("Adjust the settings depending on the style you have selected."));
+    }
+  }
+  if (watched->objectName() == "StyleEditorTabBar" &&
+      e->type() == QEvent::Leave) {
+    m_statusBar->clearMessage();
+  }
 
   return false;  // I want just peek at the event. It must be processed anyway.
 }
@@ -758,7 +799,7 @@ void TApp::setStatusBarFrameInfo(QString text) {
 //-----------------------------------------------------------------------------
 
 void TApp::showMessage(QString message) {
-  if (m_statusBar) m_statusBar->setMessageText(message);
+  if (m_statusBar) m_statusBar->showMessage(message, 2000);
 }
 
 //-----------------------------------------------------------------------------

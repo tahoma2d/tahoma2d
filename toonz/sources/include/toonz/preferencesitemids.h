@@ -155,6 +155,7 @@ enum PreferencesItemId {
   // Colors
   viewerBGColor,
   previewBGColor,
+  useThemeViewerColors,
   levelEditorBoxColor,
   chessboardColor1,
   chessboardColor2,

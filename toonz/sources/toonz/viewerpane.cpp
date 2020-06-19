@@ -132,6 +132,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
   m_flipConsole =
       new FlipConsole(mainLayout, buttonMask, false, m_keyFrameButton,
                       "SceneViewerConsole", this, true);
+  mainLayout->addWidget(m_flipConsole);
 
   m_flipConsole->enableButton(FlipConsole::eMatte, false, false);
   m_flipConsole->enableButton(FlipConsole::eSave, false, false);
@@ -625,7 +626,7 @@ void SceneViewerPanel::changeWindowTitle() {
                       m_sceneViewer->getNormalZoomScale().inv();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name = name + tr("  ::  Zoom : ") +
+        name                                    = name + tr("  ::  Zoom : ") +
                QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
         if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
           name = name + tr(" (Flipped)");
@@ -653,7 +654,7 @@ void SceneViewerPanel::changeWindowTitle() {
                   m_sceneViewer->getNormalZoomScale().inv();
     if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
     if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-    name = name + tr("  ::  Zoom : ") +
+    name                                    = name + tr("  ::  Zoom : ") +
            QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
     if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
       name = name + tr(" (Flipped)");

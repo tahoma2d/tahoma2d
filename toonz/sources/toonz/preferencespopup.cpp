@@ -552,6 +552,14 @@ void PreferencesPopup::onTranspCheckDataChanged() { invalidateIcons(); }
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onUseThemeViewerColorsChanged() {
+  bool enable = m_pref->getBoolValue(useThemeViewerColors);
+  m_controlIdMap.key(viewerBGColor)->setEnabled(!enable);
+  m_controlIdMap.key(previewBGColor)->setEnabled(!enable);
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onSVNEnabledChanged() {
   if (m_pref->getBoolValue(SVNEnabled)) {
     if (!VersionControl::instance()->testSetup())
@@ -1074,6 +1082,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Colors
       {viewerBGColor, tr("Viewer BG Color:")},
       {previewBGColor, tr("Preview BG Color:")},
+      {useThemeViewerColors,
+       tr("Use the Curent Theme's Viewer Background Colors")},
       {levelEditorBoxColor, tr("Level Editor Box Color:")},
       {chessboardColor1, tr("Chessboard Color 1:")},
       {chessboardColor2, tr("Chessboard Color 2:")},
@@ -1773,7 +1783,7 @@ QWidget* PreferencesPopup::createColorsPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
-
+  insertUI(useThemeViewerColors, lay);
   insertUI(viewerBGColor, lay);
   insertUI(previewBGColor, lay);
   insertUI(levelEditorBoxColor, lay);
@@ -1798,6 +1808,16 @@ QWidget* PreferencesPopup::createColorsPage() {
                            &PreferencesPopup::notifySceneChanged);
   m_onEditedFuncMap.insert(chessboardColor2,
                            &PreferencesPopup::notifySceneChanged);
+  m_onEditedFuncMap.insert(useThemeViewerColors,
+                           &PreferencesPopup::onUseThemeViewerColorsChanged);
+  m_onEditedFuncMap.insert(useThemeViewerColors,
+                           &PreferencesPopup::notifySceneChanged);
+
+  bool enable = m_pref->getBoolValue(useThemeViewerColors);
+  if (enable) {
+    m_controlIdMap.key(viewerBGColor)->setDisabled(true);
+    m_controlIdMap.key(previewBGColor)->setDisabled(true);
+  }
 
   return widget;
 }

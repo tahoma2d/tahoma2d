@@ -1379,6 +1379,9 @@ bool PageViewer::event(QEvent *e) {
         }
       }
     }
+    if (indexInPage == m_page->getStyleCount()) {
+      toolTip = tr("New Style");
+    }
     if (toolTip != "")
       QToolTip::showText(helpEvent->globalPos(), toolTip);
     else

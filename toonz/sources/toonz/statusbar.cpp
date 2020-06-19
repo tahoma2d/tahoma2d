@@ -25,10 +25,10 @@
 
 StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
   setObjectName("StatusBar");
-  m_currentFrameLabel = new QLabel(tr("Level: 1   Frame: 1"), this);
+  m_currentFrameLabel = new StatusLabel(tr("Level: 1   Frame: 1"), this);
   m_currentFrameLabel->setObjectName("MainWindowPlainLabel");
 
-  m_infoLabel = new QLabel(tr("Info goes here."), this);
+  m_infoLabel = new StatusLabel(tr("Info goes here."), this);
   m_infoLabel->setObjectName("MainWindowPlainLabel");
 
   addWidget(m_infoLabel, 0);
@@ -56,6 +56,10 @@ StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
 //-----------------------------------------------------------------------------
 
 StatusBar::~StatusBar() {}
+
+//-----------------------------------------------------------------------------
+
+void StatusBar::showEvent(QShowEvent* event) {}
 
 //-----------------------------------------------------------------------------
 
@@ -113,19 +117,10 @@ void StatusBar::updateInfoText() {
 
 //-----------------------------------------------------------------------------
 
-void StatusBar::setMessageText(QString text) {
-  std::string strText = text.toStdString();
-  QString newText     = QString::fromStdString(strText);
-  this->showMessage("Yo", 5000);
-  m_infoLabel->setText(text);
-}
-
-//-----------------------------------------------------------------------------
-
 void StatusBar::makeMap() {
   QString spacer = "                    ";
   // tools
-  m_infoMap.insert({"T_Hand", "Hand Tool: Pans the workspace (Space)"});
+  m_infoMap.insert({"T_Hand", "<b>Hand Tool:</b> Pans the workspace (Space)"});
   m_infoMap.insert(
       {"T_Selection",
        "Selection Tool: Select parts of your image to transform it."});

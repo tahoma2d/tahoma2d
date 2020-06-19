@@ -136,6 +136,7 @@ private:
   void onOnionColorChanged();
   // Colors
   void onTranspCheckDataChanged();
+  void onUseThemeViewerColorsChanged();
   // Version Control
   void onSVNEnabledChanged();
   // Commonly used
