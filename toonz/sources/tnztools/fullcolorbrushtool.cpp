@@ -376,7 +376,8 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
       4001)  // mypaint brush case
     pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
   else
-    pressure = m_enabledPressure ? e.m_pressure : 1.0;
+    pressure    = m_enabledPressure ? e.m_pressure : 1.0;
+  m_oldPressure = pressure;
 
   m_tileSet   = new TTileSetFullColor(ras->getSize());
   m_tileSaver = new TTileSaverFullColor(ras, m_tileSet);
@@ -519,6 +520,13 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
         }
       }
     }
+
+    if (getApplication()->getCurrentLevelStyle()->getTagId() ==
+        4001)  // mypaint brush case
+      m_oldPressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
+    else
+      m_oldPressure = m_enabledPressure ? e.m_pressure : 1.0;
+
     m_mousePos = pos;
     m_brushPos = pos;
     invalidate(invalidateRect);
@@ -589,6 +597,9 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
   else
     pressure = m_enabledPressure ? e.m_pressure : 1.0;
+  if (m_isStraight) {
+    pressure = m_oldPressure;
+  }
 
   m_strokeSegmentRect.empty();
   m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
@@ -629,6 +640,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   m_mousePressed  = false;
   m_isStraight    = false;
   m_snapAssistant = false;
+  m_oldPressure   = -1.0;
 }
 
 //---------------------------------------------------------------------------------------------------------------

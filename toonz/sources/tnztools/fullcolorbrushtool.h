@@ -129,6 +129,7 @@ protected:
   std::vector<TPointD> m_assistantPoints;
   bool m_addingAssistant = false;
   bool m_snapAssistant   = false;
+  double m_oldPressure   = -1.0;
 
   bool m_propertyUpdating = false;
 };
