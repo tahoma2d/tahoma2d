@@ -50,8 +50,9 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   /*- サブカメラの消去 -*/
   if (parent->isEditPreviewSubcamera()) {
     action = addAction(tr("Reset Subcamera"));
-    ret    = ret && parent->connect(action, SIGNAL(triggered()),
-                                 SLOT(doDeleteSubCamera()));
+    ret =
+        ret &&
+        parent->connect(action, SIGNAL(triggered()), SLOT(doDeleteSubCamera()));
     addSeparator();
   }
 
@@ -63,13 +64,15 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   if (ImageUtils::FullScreenWidget *fsWidget =
           dynamic_cast<ImageUtils::FullScreenWidget *>(
               m_viewer->parentWidget())) {
-    bool isFullScreen = (fsWidget->windowState() & Qt::WindowFullScreen) != 0;
+    bool isFullScreen = (fsWidget->m_fullScreenFrame->windowState() &
+                         Qt::WindowFullScreen) != 0;
 
     action =
         commandManager->createAction(V_ShowHideFullScreen, this, !isFullScreen);
     addAction(action);
-    ret = ret && parent->connect(action, SIGNAL(triggered()), fsWidget,
-                                 SLOT(toggleFullScreen()));
+    ret = ret &&
+          parent->connect(action, SIGNAL(triggered()), fsWidget,
+                          SLOT(toggleFullScreen()));
   }
 
   // swap compared
@@ -127,8 +130,9 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   // actual pixel size
   action = commandManager->createAction(V_ActualPixelSize, this);
   addAction(action);
-  ret = ret && parent->connect(action, SIGNAL(triggered()),
-                               SLOT(setActualPixelSize()));
+  ret =
+      ret &&
+      parent->connect(action, SIGNAL(triggered()), SLOT(setActualPixelSize()));
 
   // onion skin
   if (Preferences::instance()->isOnionSkinEnabled() &&
@@ -157,9 +161,9 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
                     guidedDrawingMenu, guidedDrawingGroup);
     addOptionAction(tr("All Drawings"), 3, guidedDrawingStatus,
                     guidedDrawingMenu, guidedDrawingGroup);
-    ret =
-        ret && parent->connect(guidedDrawingGroup, SIGNAL(triggered(QAction *)),
-                               this, SLOT(setGuidedDrawingType(QAction *)));
+    ret = ret &&
+          parent->connect(guidedDrawingGroup, SIGNAL(triggered(QAction *)),
+                          this, SLOT(setGuidedDrawingType(QAction *)));
 
     guidedDrawingMenu->addSeparator();
     bool enableOption = guidedDrawingStatus == 1 || guidedDrawingStatus == 2;
@@ -167,8 +171,9 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
     action->setCheckable(true);
     action->setChecked(Preferences::instance()->getGuidedAutoInbetween());
     action->setEnabled(enableOption);
-    ret = ret && parent->connect(action, SIGNAL(triggered()), this,
-                                 SLOT(setGuidedAutoInbetween()));
+    ret = ret &&
+          parent->connect(action, SIGNAL(triggered()), this,
+                          SLOT(setGuidedAutoInbetween()));
     guidedDrawingMenu->addSeparator();
     int guidedInterpolation = Preferences::instance()->getGuidedInterpolation();
     QActionGroup *interpolationGroup = new QActionGroup(this);
@@ -230,22 +235,25 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
     action = addAction(tr("Save Previewed Frames"));
     action->setShortcut(QKeySequence(
         CommandManager::instance()->getKeyFromId(MI_SavePreviewedFrames)));
-    ret = ret && parent->connect(action, SIGNAL(triggered()), this,
-                                 SLOT(savePreviewedFrames()));
+    ret = ret &&
+          parent->connect(action, SIGNAL(triggered()), this,
+                          SLOT(savePreviewedFrames()));
 
     // regenerate preview
     action = addAction(tr("Regenerate Preview"));
     action->setShortcut(QKeySequence(
         CommandManager::instance()->getKeyFromId(MI_RegeneratePreview)));
-    ret = ret && parent->connect(action, SIGNAL(triggered()),
-                                 SLOT(regeneratePreview()));
+    ret =
+        ret &&
+        parent->connect(action, SIGNAL(triggered()), SLOT(regeneratePreview()));
 
     // regenerate frame preview
     action = addAction(tr("Regenerate Frame Preview"));
     action->setShortcut(QKeySequence(
         CommandManager::instance()->getKeyFromId(MI_RegenerateFramePr)));
-    ret = ret && parent->connect(action, SIGNAL(triggered()),
-                                 SLOT(regeneratePreviewFrame()));
+    ret = ret &&
+          parent->connect(action, SIGNAL(triggered()),
+                          SLOT(regeneratePreviewFrame()));
   }
 
   assert(ret);
@@ -299,9 +307,9 @@ void SceneViewerContextMenu::addSelectCommand(QMenu *menu,
   TXsheet *xsh              = TApp::instance()->getCurrentXsheet()->getXsheet();
   TStageObject *stageObject = xsh->getStageObject(id);
   if (!stageObject) return;
-  QString text = (id.isTable()) ? tr("Table") : getName(stageObject);
+  QString text           = (id.isTable()) ? tr("Table") : getName(stageObject);
   if (menu == this) text = tr("Select %1").arg(text);
-  QAction *action = new QAction(text, this);
+  QAction *action        = new QAction(text, this);
   action->setData(id.getCode());
   connect(action, SIGNAL(triggered()), this, SLOT(onSetCurrent()));
   menu->addAction(action);

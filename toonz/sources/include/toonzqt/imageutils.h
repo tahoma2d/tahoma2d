@@ -13,6 +13,7 @@
 // Qt includes
 #include <QWidget>
 #include <QKeyEvent>
+#include <QFrame>
 
 #undef DVAPI
 #undef DVVAR
@@ -101,7 +102,7 @@ void DVAPI convert(
         false /*-- ConvertPopup
                  での指定に合わせて、[レベル名].[フレーム番号].[拡張子]のうち、
                                                                                           [レベル名]と[フレーム番号]の間のドットを消す。 --*/
-);            //!< Converts a saved level to fullcolor, and saves the result.
+    );        //!< Converts a saved level to fullcolor, and saves the result.
 
 void DVAPI convertNaa2Tlv(
     const TFilePath &source,  //!< Level path to convert from.
@@ -124,7 +125,7 @@ void DVAPI convertOldLevel2Tlv(
     const TFrameId &to,       //!< Last source frame to convert.
     FrameTaskNotifier
         *frameNotifier  //!< Observer class for frame success notifications.
-);
+    );
 
 double DVAPI getQuantizedZoomFactor(double zf, bool forward);
 
@@ -140,9 +141,8 @@ void DVAPI assignFillingInformation(TVectorImage &vi,
                                     const std::vector<TFilledRegionInf> &regs);
 
 void DVAPI getStrokeStyleInformationInArea(
-    const TVectorImageP &vi,
-    std::vector<std::pair<int, int>>
-        &strokesInfo,  // pair:strokeIndex, styleIndex
+    const TVectorImageP &vi, std::vector<std::pair<int, int>>
+                                 &strokesInfo,  // pair:strokeIndex, styleIndex
     const TRectD &area);
 
 //*********************************************************************************************
@@ -164,6 +164,7 @@ class DVAPI FullScreenWidget final : public QWidget {
 
 public:
   FullScreenWidget(QWidget *parent = 0);
+  QFrame *m_fullScreenFrame;
 
   void setWidget(
       QWidget *widget);  //!< Sets the content, surrendering ownership.

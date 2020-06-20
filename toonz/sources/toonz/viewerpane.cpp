@@ -171,6 +171,12 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WFlags flags)
 
   ret = ret && connect(app->getCurrentScene(), SIGNAL(sceneSwitched()), this,
                        SLOT(onSceneSwitched()));
+  ret = ret && connect(fsWidget->m_fullScreenFrame, &QFrame::windowTitleChanged,
+                       [=](const QString &title) {
+                         if (title == "hidden") {
+                           viewerL->addWidget(fsWidget, 1, 1, 19, 13);
+                         }
+                       });
 
   assert(ret);
   m_flipConsole->setChecked(FlipConsole::eSound, true);

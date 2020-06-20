@@ -41,6 +41,8 @@
 
 // TnzQt includes
 #include <QApplication>
+#include <QScreen>
+#include <QWindow>
 #ifdef _WIN32
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
@@ -891,12 +893,9 @@ FullScreenWidget::FullScreenWidget(QWidget *parent) : QWidget(parent) {
   layout->setSpacing(0);
 
   setLayout(layout);
-
-#ifdef _WIN32
-  // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
-  winId();
-  QWindowsWindowFunctions::setHasBorderInFullScreen(windowHandle(), true);
-#endif
+  m_fullScreenFrame     = new QFrame();
+  QHBoxLayout *fsLayout = new QHBoxLayout(this);
+  m_fullScreenFrame->setLayout(fsLayout);
 }
 
 //---------------------------------------------------------------------------------
@@ -911,16 +910,32 @@ void FullScreenWidget::setWidget(QWidget *widget) {
 //---------------------------------------------------------------------------------
 
 bool FullScreenWidget::toggleFullScreen(bool quit) {
-  if (windowState() & Qt::WindowFullScreen) {
-    hide();
-    setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-    showNormal();
+  Qt::WindowStates state = m_fullScreenFrame->windowState();
+  bool isFull = m_fullScreenFrame->windowState() & Qt::WindowFullScreen;
+  if (m_fullScreenFrame->windowState() & Qt::WindowFullScreen) {
+    m_fullScreenFrame->setWindowTitle("hidden");
+    m_fullScreenFrame->setWindowState(m_fullScreenFrame->windowState() ^
+                                      Qt::WindowFullScreen);
+    m_fullScreenFrame->hide();
+    m_fullScreenFrame->setWindowFlags(windowFlags() &
+                                      ~(Qt::Window | Qt::WindowStaysOnTopHint));
     m_widget->setFocus();
     return true;
   } else if (!quit) {
-    setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-    showFullScreen();
-
+    QPoint globalCursorPos = QCursor::pos();
+    QScreen *screen        = qApp->screenAt(globalCursorPos);
+    m_fullScreenFrame->setWindowTitle("not hidden");
+    m_fullScreenFrame->layout()->addWidget(this);
+    m_fullScreenFrame->setWindowFlags(windowFlags() | Qt::Window |
+                                      Qt::WindowStaysOnTopHint);
+    m_fullScreenFrame->showNormal();
+    m_fullScreenFrame->setGeometry(screen->geometry());
+    m_fullScreenFrame->showFullScreen();
+    if (m_fullScreenFrame->windowHandle())
+      m_fullScreenFrame->windowHandle()->setScreen(screen);
+    QWindowsWindowFunctions::setHasBorderInFullScreen(
+        m_fullScreenFrame->windowHandle(), true);
+    m_fullScreenFrame->winId();
     return true;
   }
 

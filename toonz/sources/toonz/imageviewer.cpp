@@ -318,7 +318,8 @@ void ImageViewer::contextMenuEvent(QContextMenuEvent *event) {
 #ifdef _WIN32
     if (ImageUtils::FullScreenWidget *fsWidget =
             dynamic_cast<ImageUtils::FullScreenWidget *>(parentWidget())) {
-      bool isFullScreen = (fsWidget->windowState() & Qt::WindowFullScreen) != 0;
+      bool isFullScreen = (fsWidget->m_fullScreenFrame->windowState() &
+                           Qt::WindowFullScreen) != 0;
 
       action = menu->addAction(isFullScreen ? tr("Exit Full Screen Mode")
                                             : tr("Full Screen Mode"));
@@ -594,7 +595,7 @@ void ImageViewer::paintGL() {
   } else if (m_draggingZoomSelection || m_rectRGBPick) {
     fromPos = TPoint(m_pressedMousePos.x - width() * 0.5,
                      height() * 0.5 - m_pressedMousePos.y);
-    toPos   = TPoint(m_pos.x() - width() * 0.5, height() * 0.5 - m_pos.y());
+    toPos = TPoint(m_pos.x() - width() * 0.5, height() * 0.5 - m_pos.y());
   }
   if (fromPos != TPoint() || toPos != TPoint()) {
     if (m_rectRGBPick) {
@@ -991,7 +992,7 @@ void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
   if (m_lutCalibrator && m_lutCalibrator->isValid() && isRas32(img)) {
     TPointD start = getViewAff().inv() * TPointD(startPos.x - width() / 2,
                                                  startPos.y - height() / 2);
-    TPointD end   = getViewAff().inv() *
+    TPointD end = getViewAff().inv() *
                   TPointD(endPos.x - width() / 2, endPos.y - height() / 2);
     pix = picker.pickAverageColor(TRectD(start, end));
   } else
@@ -1177,12 +1178,12 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-  {
-    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                 "Qt::MouseEventSynthesizedByApplication"
-              << std::endl;
-    break;
-  }
+    {
+      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
 
   }  // end switch
 
@@ -1483,9 +1484,10 @@ bool ImageViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture && CommandManager::instance()
-                                          ->getAction(MI_TouchGestureControl)
-                                          ->isChecked()) {
+  if (e->type() == QEvent::Gesture &&
+      CommandManager::instance()
+          ->getAction(MI_TouchGestureControl)
+          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
