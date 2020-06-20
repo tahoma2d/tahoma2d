@@ -400,6 +400,7 @@ public:
     m_type.setItemUIName(L"Line", tr("Line"));
     m_type.setItemUIName(L"Polyline", tr("Polyline"));
     m_type.setItemUIName(L"Arc", tr("Arc"));
+    m_type.setItemUIName(L"MultiArc", tr("MultiArc"));
     m_type.setItemUIName(L"Polygon", tr("Polygon"));
 
     m_toolSize.setQStringName(tr("Size:"));
@@ -731,32 +732,43 @@ public:
 };
 
 //=============================================================================
-// Arc Primitive Class Declaration
+// Multi Arc Primitive Class Declaration
 //-----------------------------------------------------------------------------
 
-class ArcPrimitive final : public Primitive {
+class MultiArcPrimitive : public Primitive {
   TStroke *m_stroke;
   TPointD m_startPoint, m_endPoint, m_centralPoint;
   int m_clickNumber;
   TPixel32 m_color;
 
 public:
-  ArcPrimitive(PrimitiveParam *param, GeometricTool *tool, bool reasterTool)
+  MultiArcPrimitive(PrimitiveParam *param, GeometricTool *tool,
+                    bool reasterTool)
       : Primitive(param, tool, reasterTool), m_stroke(0), m_clickNumber(0) {}
 
-  ~ArcPrimitive() {
-    if (m_stroke) delete m_stroke;
-  }
+  ~MultiArcPrimitive() { delete m_stroke; }
 
-  std::string getName() const override {
-    return "Arc";
-  }  // _ToolOptions_ShapeArc";}
+  std::string getName() const override { return "MultiArc"; }
 
   TStroke *makeStroke() const override;
   void draw() override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   void onEnter() override;
+};
+
+//=============================================================================
+// Arc Primitive Class Declaration
+//-----------------------------------------------------------------------------
+
+class ArcPrimitive final : public MultiArcPrimitive {
+public:
+  ArcPrimitive(PrimitiveParam *param, GeometricTool *tool, bool reasterTool)
+      : MultiArcPrimitive(param, tool, reasterTool) {}
+
+  std::string getName() const override {
+    return "Arc";
+  }  // _ToolOptions_ShapeArc";}
 };
 
 //=============================================================================
@@ -812,6 +824,7 @@ public:
       addPrimitive(new LinePrimitive(&m_param, this, true));
       addPrimitive(new MultiLinePrimitive(&m_param, this, true));
       addPrimitive(new ArcPrimitive(&m_param, this, true));
+      addPrimitive(new MultiArcPrimitive(&m_param, this, true));
       addPrimitive(new PolygonPrimitive(&m_param, this, true));
     } else  // targetType == 1
     {
@@ -822,6 +835,7 @@ public:
       addPrimitive(new LinePrimitive(&m_param, this, false));
       addPrimitive(new MultiLinePrimitive(&m_param, this, false));
       addPrimitive(new ArcPrimitive(&m_param, this, false));
+      addPrimitive(new MultiArcPrimitive(&m_param, this, true));
       addPrimitive(new PolygonPrimitive(&m_param, this, false));
     }
   }
@@ -2134,7 +2148,7 @@ void EllipsePrimitive::onEnter() {
 // Arc Primitive Class Implementation
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::draw() {
+void MultiArcPrimitive::draw() {
   drawSnap();
 
   switch (m_clickNumber) {
@@ -2165,11 +2179,13 @@ void ArcPrimitive::draw() {
 
 //-----------------------------------------------------------------------------
 
-TStroke *ArcPrimitive::makeStroke() const { return new TStroke(*m_stroke); }
+TStroke *MultiArcPrimitive::makeStroke() const {
+  return new TStroke(*m_stroke);
+}
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
+void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
@@ -2227,7 +2243,7 @@ void ArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
+void MultiArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   TPointD newPos = calculateSnap(pos);
   newPos         = checkGuideSnapping(pos);
 
@@ -2268,7 +2284,7 @@ void ArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::onEnter() {
+void MultiArcPrimitive::onEnter() {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
