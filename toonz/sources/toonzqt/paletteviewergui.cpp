@@ -41,6 +41,8 @@
 TEnv::IntVar EnvSoftwareCurrentFontSize_StyleName(
     "SoftwareCurrentFontSize_StyleName", 11);
 
+TEnv::IntVar ShowStyleIndex("ShowStyleIndex", 0);
+
 using namespace PaletteViewerGUI;
 using namespace DVGui;
 
@@ -225,6 +227,20 @@ void PageViewer::setCurrentStyleIndex(int index) {
 int PageViewer::getCurrentStyleIndex() const {
   return getPaletteHandle()->getStyleIndex();
 }
+
+//-----------------------------------------------------------------------------
+
+void PageViewer::toggleShowStyleIndex() {
+  if (ShowStyleIndex == 1) {
+    ShowStyleIndex = 0;
+  } else {
+    ShowStyleIndex = 1;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+bool PageViewer::getShowStyleIndex() { return ShowStyleIndex == 1; }
 
 //-----------------------------------------------------------------------------
 /*! Set current page to \b page and update view.
@@ -842,13 +858,15 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       tmpFont.setPointSize(9);
       tmpFont.setItalic(false);
       p.setFont(tmpFont);
-      int indexWidth = fontMetrics().width(QString().setNum(styleIndex)) + 4;
-      QRect indexRect(chipRect.bottomRight() + QPoint(-indexWidth, -14),
-                      chipRect.bottomRight());
-      p.setPen(Qt::black);
-      p.setBrush(Qt::white);
-      p.drawRect(indexRect);
-      p.drawText(indexRect, Qt::AlignCenter, QString().setNum(styleIndex));
+      if (ShowStyleIndex == 1) {
+        int indexWidth = fontMetrics().width(QString().setNum(styleIndex)) + 4;
+        QRect indexRect(chipRect.bottomRight() + QPoint(-indexWidth, -14),
+                        chipRect.bottomRight());
+        p.setPen(Qt::black);
+        p.setBrush(Qt::white);
+        p.drawRect(indexRect);
+        p.drawText(indexRect, Qt::AlignCenter, QString().setNum(styleIndex));
+      }
 
       // draw "Autopaint for lines" indicator
       int offset = 0;
@@ -900,7 +918,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
     // draw new style chip
     if (!m_page->getPalette()->isLocked()) {
       i              = getChipCount();
-      QRect chipRect = getItemRect(i);  // .adjusted(4, 4, -5, -5);
+      QRect chipRect = getItemRect(i).adjusted(0, -1, 0, -1);
       p.setPen(QColor(200, 200, 200));
       p.fillRect(chipRect, QBrush(QColor(0, 0, 0, 64)));
       p.drawRect(chipRect);

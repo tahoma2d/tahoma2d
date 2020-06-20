@@ -461,6 +461,20 @@ void PaletteViewer::createSavePaletteToolBar() {
   addViewAction(tr("&Large Thumbnails View"), PageViewer::LargeChips);
   addViewAction(tr("&List View"), PageViewer::List);
 
+  m_viewMode->addSeparator();
+  QAction *showStyleIndex = new QAction(tr("Show Style Index"), this);
+  showStyleIndex->setCheckable(true);
+  if (m_pageViewer)
+    showStyleIndex->setChecked(m_pageViewer->getShowStyleIndex());
+  connect(showStyleIndex, &QAction::toggled, [=](bool checked) {
+    if (m_pageViewer) m_pageViewer->toggleShowStyleIndex();
+    if (m_pageViewer) m_pageViewer->update();
+    bool setChecked              = false;
+    if (m_pageViewer) setChecked = m_pageViewer->getShowStyleIndex();
+    showStyleIndex->setChecked(setChecked);
+  });
+  m_viewMode->addAction(showStyleIndex);
+
   QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
   QAction *saveAsPalette  = new QAction(
       saveAsPaletteIcon, tr("&Save Palette As"), m_savePaletteToolBar);
