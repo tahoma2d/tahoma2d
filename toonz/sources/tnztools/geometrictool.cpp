@@ -776,6 +776,11 @@ public:
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   bool keyDown(QKeyEvent *event) override;
   void onEnter() override;
+  void onDeactivate() override {
+    delete m_stroke;
+    m_hasLastStroke = false;
+    m_clickNumber = 0;
+  }
 };
 
 //=============================================================================
