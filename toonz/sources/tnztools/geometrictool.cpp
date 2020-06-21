@@ -46,6 +46,8 @@ TEnv::IntVar GeometricEdgeCount("InknpaintGeometricEdgeCount", 3);
 TEnv::IntVar GeometricSelective("InknpaintGeometricSelective", 0);
 TEnv::IntVar GeometricGroupIt("InknpaintGeometricGroupIt", 0);
 TEnv::IntVar GeometricAutofill("InknpaintGeometricAutofill", 0);
+TEnv::IntVar GeometricJoin("InknpaintGeometricJoin", 0);
+TEnv::IntVar GeometricSmooth("InknpaintGeometricSmooth", 0);
 TEnv::IntVar GeometricPencil("InknpaintGeometricPencil", 0);
 TEnv::DoubleVar GeometricBrushHardness("InknpaintGeometricHardness", 100);
 TEnv::DoubleVar GeometricOpacity("InknpaintGeometricOpacity", 100);
@@ -307,6 +309,8 @@ public:
   TIntProperty m_edgeCount;
   TBoolProperty m_autogroup;
   TBoolProperty m_autofill;
+  TBoolProperty m_join;
+  TBoolProperty m_smooth;
   TBoolProperty m_selective;
   TBoolProperty m_pencil;
   TEnumProperty m_capStyle;
@@ -334,6 +338,8 @@ public:
       , m_edgeCount("Polygon Sides:", 3, 15, 3)
       , m_autogroup("Auto Group", false)
       , m_autofill("Auto Fill", false)
+      , m_join("Join Vector", false)
+      , m_smooth("Smooth", false)
       , m_selective("Selective", false)
       , m_pencil("Pencil Mode", false)
       , m_capStyle("Cap")
@@ -354,6 +360,8 @@ public:
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
+      m_prop[0].bind(m_join);
+      m_prop[0].bind(m_smooth);
       m_prop[0].bind(m_snap);
       m_snap.setId("Snap");
       m_prop[0].bind(m_snapSensitivity);
@@ -388,6 +396,8 @@ public:
     m_selective.setId("Selective");
     m_autogroup.setId("AutoGroup");
     m_autofill.setId("Autofill");
+    m_join.setId("JoinVector");
+    m_smooth.setId("Smooth");
     m_type.setId("GeometricShape");
     m_edgeCount.setId("GeometricEdge");
   }
@@ -410,6 +420,8 @@ public:
     m_edgeCount.setQStringName(tr("Polygon Sides:"));
     m_autogroup.setQStringName(tr("Auto Group"));
     m_autofill.setQStringName(tr("Auto Fill"));
+    m_join.setQStringName(tr("Join Vector"));
+    m_smooth.setQStringName(tr("Smooth"));
     m_selective.setQStringName(tr("Selective"));
     m_pencil.setQStringName(tr("Pencil Mode"));
 
@@ -736,6 +748,7 @@ public:
 //-----------------------------------------------------------------------------
 
 class MultiArcPrimitive : public Primitive {
+  bool m_hasLastStroke;
   TStroke *m_stroke;
   TPointD m_startPoint, m_endPoint, m_centralPoint;
   int m_clickNumber;
@@ -748,6 +761,7 @@ public:
   MultiArcPrimitive(PrimitiveParam *param, GeometricTool *tool,
                     bool reasterTool)
       : Primitive(param, tool, reasterTool)
+      , m_hasLastStroke(false)
       , m_stroke(0)
       , m_clickNumber(0)
       , m_isSingleArc(false) {}
@@ -932,6 +946,8 @@ public:
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
       m_param.m_autogroup.setValue(GeometricGroupIt ? 1 : 0);
+      m_param.m_join.setValue(GeometricJoin ? 1 : 0);
+      m_param.m_smooth.setValue(GeometricSmooth ? 1 : 0);
       m_param.m_autofill.setValue(GeometricAutofill ? 1 : 0);
       std::wstring typeCode = ::to_wstring(GeometricType.getValue());
       m_param.m_type.setValue(typeCode);
@@ -1037,6 +1053,10 @@ public:
             QString::fromStdString(getName()));
       }
       GeometricGroupIt = m_param.m_autofill.getValue();
+    } else if (propertyName == m_param.m_join.getName()) {
+      GeometricJoin = m_param.m_join.getValue();
+    } else if (propertyName == m_param.m_smooth.getName()) {
+      GeometricJoin = m_param.m_smooth.getValue();
     } else if (propertyName == m_param.m_selective.getName())
       GeometricSelective = m_param.m_selective.getValue();
     else if (propertyName == m_param.m_pencil.getName())
@@ -1071,7 +1091,7 @@ public:
     return false;
   }
 
-  void addStroke() {
+  void addStroke(bool joinLastStroke = false) {
     if (!m_primitive) return;
     TStroke *stroke = m_primitive->makeStroke();
     if (!stroke) return;
@@ -1142,6 +1162,16 @@ public:
                                                          stroke->getBBox());
 
         vi->addStroke(stroke);
+        if (joinLastStroke && m_param.m_join.getValue()) {
+          int strokeNumber = vi->getStrokeCount();
+          vi->joinStroke(
+              strokeNumber - 2, strokeNumber - 1,
+              vi->getStroke(strokeNumber - 2)->getControlPointCount() - 1, 0,
+              m_param.m_smooth.getValue());
+          stroke = vi->getStroke(strokeNumber - 2);
+          TUndoManager::manager()->popUndo(1);
+        }
+
         TUndoManager::manager()->add(new UndoPencil(
             vi->getStroke(vi->getStrokeCount() - 1), fillInformation, sl, id,
             m_isFrameCreated, m_isLevelCreated, m_param.m_autogroup.getValue(),
@@ -2247,13 +2277,15 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
     break;
 
   case 2:
-    m_tool->addStroke();
+    m_tool->addStroke(m_hasLastStroke);
+
     m_stroke = 0;
 
     m_clickNumber = 0;
     if (!m_isSingleArc) {
-      m_clickNumber = 1;
-      m_startPoint  = m_endPoint;
+      m_hasLastStroke = true;
+      m_clickNumber   = 1;
+      m_startPoint    = m_endPoint;
     }
     break;
   }
@@ -2265,7 +2297,8 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
   if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
     delete m_stroke;
-    m_clickNumber = 0;
+    m_clickNumber   = 0;
+    m_hasLastStroke = false;
     return true;
   }
   return false;
