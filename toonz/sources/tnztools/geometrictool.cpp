@@ -779,7 +779,7 @@ public:
   void onDeactivate() override {
     delete m_stroke;
     m_hasLastStroke = false;
-    m_clickNumber = 0;
+    m_clickNumber   = 0;
   }
 };
 
@@ -1173,7 +1173,19 @@ public:
               strokeNumber - 2, strokeNumber - 1,
               vi->getStroke(strokeNumber - 2)->getControlPointCount() - 1, 0,
               m_param.m_smooth.getValue());
+          vi->notifyChangedStrokes(strokeNumber - 2);
           stroke = vi->getStroke(strokeNumber - 2);
+
+          int lastPoint  = stroke->getControlPointCount() - 1;
+          TThickPoint p0 = stroke->getControlPoint(0);
+          TThickPoint pn = stroke->getControlPoint(lastPoint);
+          if (p0 == pn) {
+            vi->joinStroke(strokeNumber - 2, strokeNumber - 2, 0, lastPoint,
+                           m_param.m_smooth.getValue());
+            vi->notifyChangedStrokes(strokeNumber - 2);
+            stroke = vi->getStroke(strokeNumber - 2);
+          }
+
           TUndoManager::manager()->popUndo(1);
         }
 
