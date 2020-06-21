@@ -48,7 +48,7 @@ public:
   void setName(QString name) { m_name = name; }
 
   void save();
-  void load(const TFilePath &fp);
+  std::pair<DockLayout *, DockLayout::State> load(const TFilePath &fp);
 };
 
 //-----------------------------------------------------------------------------
@@ -71,6 +71,7 @@ class MainWindow final : public QMainWindow {
 
   /*-- show layout name in the title bar --*/
   QString m_layoutName;
+  std::vector<std::pair<DockLayout *, DockLayout::State>> m_panelStates;
 
 public:
 #if QT_VERSION >= 0x050500
