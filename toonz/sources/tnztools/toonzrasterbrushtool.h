@@ -229,11 +229,11 @@ protected:
   std::vector<TPointD> m_assistantPoints;
   bool m_addingAssistant = false;
   bool m_snapAssistant   = false;
-  int m_dragCount        = 0;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
-  double m_oldPressure  = -1.0;
-  double m_oldThickness = -1.0;
+  double m_oldPressure = -1.0;
+  // double m_oldThickness = -1.0;
+  // int m_dragCount        = 0;
 
 protected:
   static void drawLine(const TPointD &point, const TPointD &centre,

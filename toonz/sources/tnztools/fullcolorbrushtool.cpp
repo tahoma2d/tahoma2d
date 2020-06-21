@@ -521,11 +521,12 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
       }
     }
 
-    if (getApplication()->getCurrentLevelStyle()->getTagId() ==
-        4001)  // mypaint brush case
-      m_oldPressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
-    else
-      m_oldPressure = m_enabledPressure ? e.m_pressure : 1.0;
+    // keep this here for possible eventual variable width
+    // if (getApplication()->getCurrentLevelStyle()->getTagId() ==
+    //    4001)  // mypaint brush case
+    //  m_oldPressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
+    // else
+    //  m_oldPressure = m_enabledPressure ? e.m_pressure : 1.0;
 
     m_mousePos = pos;
     m_brushPos = pos;
