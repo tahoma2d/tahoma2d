@@ -741,10 +741,16 @@ class MultiArcPrimitive : public Primitive {
   int m_clickNumber;
   TPixel32 m_color;
 
+protected:
+  bool m_isSingleArc;
+
 public:
   MultiArcPrimitive(PrimitiveParam *param, GeometricTool *tool,
                     bool reasterTool)
-      : Primitive(param, tool, reasterTool), m_stroke(0), m_clickNumber(0) {}
+      : Primitive(param, tool, reasterTool)
+      , m_stroke(0)
+      , m_clickNumber(0)
+      , m_isSingleArc(false) {}
 
   ~MultiArcPrimitive() { delete m_stroke; }
 
@@ -754,6 +760,7 @@ public:
   void draw() override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
+  bool keyDown(QKeyEvent *event) override;
   void onEnter() override;
 };
 
@@ -764,7 +771,9 @@ public:
 class ArcPrimitive final : public MultiArcPrimitive {
 public:
   ArcPrimitive(PrimitiveParam *param, GeometricTool *tool, bool reasterTool)
-      : MultiArcPrimitive(param, tool, reasterTool) {}
+      : MultiArcPrimitive(param, tool, reasterTool) {
+    m_isSingleArc = true;
+  }
 
   std::string getName() const override {
     return "Arc";
@@ -2185,7 +2194,7 @@ TStroke *MultiArcPrimitive::makeStroke() const {
 
 //-----------------------------------------------------------------------------
 
-void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
+void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
@@ -2217,8 +2226,13 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
     break;
 
   case 1:
+    if (e.isShiftPressed())
+      m_endPoint = rectify(m_startPoint, pos);
+    else
+      m_endPoint = newPos;
+
     points[0] = TThickPoint(m_startPoint, thick);
-    points[8] = TThickPoint(newPos, thick);
+    points[8] = TThickPoint(m_endPoint, thick);
     points[4] = TThickPoint(0.5 * (points[0] + points[8]), thick);
     points[2] = TThickPoint(0.5 * (points[0] + points[4]), thick);
     points[6] = TThickPoint(0.5 * (points[4] + points[8]), thick);
@@ -2234,11 +2248,27 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
   case 2:
     m_tool->addStroke();
-    m_stroke      = 0;
+    m_stroke = 0;
+
     m_clickNumber = 0;
+    if (!m_isSingleArc) {
+      m_clickNumber = 1;
+      m_startPoint  = m_endPoint;
+    }
     break;
   }
   resetSnap();
+}
+
+//-----------------------------------------------------------------------------
+
+bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+    delete m_stroke;
+    m_clickNumber = 0;
+    return true;
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
