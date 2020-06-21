@@ -530,8 +530,6 @@ public:
 
   unsigned int find(const Region *subRegion) const;
 
-  bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets);
-
 private:
   // Setters - private
   void setOrientation(bool orientation) { m_orientation = orientation; }

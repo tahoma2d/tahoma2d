@@ -277,7 +277,7 @@ void Room::save() {
 
 //-----------------------------------------------------------------------------
 
-void Room::load(const TFilePath &fp) {
+std::pair<DockLayout *, DockLayout::State> Room::load(const TFilePath &fp) {
   QSettings settings(toQString(fp), QSettings::IniFormat);
 
   setPath(fp);
@@ -352,6 +352,7 @@ void Room::load(const TFilePath &fp) {
   layout->restoreState(state);
 
   setName(settings.value("name").toString());
+  return std::make_pair(layout, state);
 }
 
 //=============================================================================
@@ -694,7 +695,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
     TFilePath roomPath = roomPaths[i];
     if (TFileStatus(roomPath).doesExist()) {
       Room *room = new Room(this);
-      room->load(roomPath);
+      m_panelStates.push_back(room->load(roomPath));
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getName());
 
@@ -1296,6 +1297,21 @@ void MainWindow::onMenuCheckboxChanged() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::showEvent(QShowEvent *event) {
+  QTimer *nt = new QTimer(this);
+
+  nt->setSingleShot(true);
+  nt->setInterval(10);
+
+  connect(nt, &QTimer::timeout, [=]() {
+    int roomsSize = m_panelStates.size();
+    for (auto iter : m_panelStates) {
+      iter.first->restoreState(iter.second);
+    }
+  });
+  nt->connect(nt, SIGNAL(timeout()), SLOT(deleteLater()));
+
+  nt->start();
+
   getCurrentRoom()->layout()->setEnabled(true);  // See main function in
                                                  // main.cpp
   if (Preferences::instance()->isStartupPopupEnabled() &&
