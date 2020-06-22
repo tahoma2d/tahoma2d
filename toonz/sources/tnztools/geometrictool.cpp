@@ -338,7 +338,7 @@ public:
       , m_edgeCount("Polygon Sides:", 3, 15, 3)
       , m_autogroup("Auto Group", false)
       , m_autofill("Auto Fill", false)
-      , m_join("Join Vector", false)
+      , m_join("JoinStrokes", false)
       , m_smooth("Smooth", false)
       , m_selective("Selective", false)
       , m_pencil("Pencil Mode", false)
@@ -396,7 +396,7 @@ public:
     m_selective.setId("Selective");
     m_autogroup.setId("AutoGroup");
     m_autofill.setId("Autofill");
-    m_join.setId("JoinVector");
+    m_join.setId("JoinVectors");
     m_smooth.setId("Smooth");
     m_type.setId("GeometricShape");
     m_edgeCount.setId("GeometricEdge");
@@ -420,7 +420,7 @@ public:
     m_edgeCount.setQStringName(tr("Polygon Sides:"));
     m_autogroup.setQStringName(tr("Auto Group"));
     m_autofill.setQStringName(tr("Auto Fill"));
-    m_join.setQStringName(tr("Join Vector"));
+    m_join.setQStringName(tr("Join Vectors"));
     m_smooth.setQStringName(tr("Smooth"));
     m_selective.setQStringName(tr("Selective"));
     m_pencil.setQStringName(tr("Pencil Mode"));
