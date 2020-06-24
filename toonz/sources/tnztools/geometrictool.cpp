@@ -743,7 +743,9 @@ public:
 
 class MultiArcPrimitive : public Primitive {
   bool m_hasLastStroke;
+  bool m_endStroke;
   TStroke *m_stroke;
+  TPointD m_firstPoint;
   TPointD m_startPoint, m_endPoint, m_centralPoint;
   int m_clickNumber;
   TPixel32 m_color;
@@ -756,6 +758,7 @@ public:
                     bool reasterTool)
       : Primitive(param, tool, reasterTool)
       , m_hasLastStroke(false)
+      , m_endStroke(false)
       , m_stroke(0)
       , m_clickNumber(0)
       , m_isSingleArc(false) {}
@@ -774,6 +777,7 @@ public:
     delete m_stroke;
     m_hasLastStroke = false;
     m_clickNumber   = 0;
+    m_endStroke     = false;
   }
 };
 
@@ -2198,11 +2202,21 @@ void EllipsePrimitive::onEnter() {
 void MultiArcPrimitive::draw() {
   drawSnap();
 
+  double pixelSize = m_tool->getPixelSize();
+
   switch (m_clickNumber) {
   case 1:
     tglColor(m_color);
     tglDrawSegment(m_startPoint, m_endPoint);
+
+    if (!m_isSingleArc) {
+      tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                        (m_color.b + 127) % 255, m_color.m));
+
+      tglDrawCircle(m_firstPoint, joinDistance * pixelSize);
+    }
     break;
+
   case 2:
     assert(m_stroke);
     if (m_stroke) {
@@ -2219,6 +2233,13 @@ void MultiArcPrimitive::draw() {
       }
 
       drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
+
+      if (!m_isSingleArc && !m_endStroke) {
+        tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                          (m_color.b + 127) % 255, m_color.m));
+
+        tglDrawCircle(m_firstPoint, joinDistance * pixelSize);
+      }
     }
     break;
   };
@@ -2240,6 +2261,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
   std::vector<TThickPoint> points(9);
   double thick = getThickness();
+  double dist  = joinDistance * joinDistance;
 
   switch (m_clickNumber) {
   case 0:
@@ -2259,12 +2281,16 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
     if (!m_isEditing) return;
 
-    m_endPoint = m_startPoint = newPos;
+    m_endPoint = m_startPoint = m_firstPoint = newPos;
     m_clickNumber++;
     break;
 
   case 1:
-    if (e.isShiftPressed())
+    m_endStroke =
+        tdistance2(newPos, m_firstPoint) < dist * m_tool->getPixelSize();
+    if (m_endStroke)
+      m_endPoint = m_firstPoint;
+    else if (e.isShiftPressed())
       m_endPoint = rectify(m_startPoint, pos);
     else
       m_endPoint = newPos;
@@ -2287,13 +2313,15 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   case 2:
     m_tool->addStroke(m_hasLastStroke);
 
-    m_stroke = 0;
+    m_stroke        = 0;
+    m_clickNumber   = 0;
+    m_hasLastStroke = false;
 
-    m_clickNumber = 0;
-    if (!m_isSingleArc) {
+    if (!m_isSingleArc && !m_endStroke) {
       m_hasLastStroke = true;
       m_clickNumber   = 1;
       m_startPoint    = m_endPoint;
+      m_endStroke     = false;
     }
     break;
   }
@@ -2307,6 +2335,7 @@ bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
     delete m_stroke;
     m_clickNumber   = 0;
     m_hasLastStroke = false;
+    m_endStroke     = false;
     return true;
   }
   return false;
