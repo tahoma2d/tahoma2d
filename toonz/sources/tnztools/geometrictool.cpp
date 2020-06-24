@@ -771,10 +771,14 @@ public:
   void draw() override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDoubleClick(const TPointD &, const TMouseEvent &e) override {
+    onDeactivate();
+  }
   bool keyDown(QKeyEvent *event) override;
   void onEnter() override;
   void onDeactivate() override {
     delete m_stroke;
+    m_stroke        = 0;
     m_hasLastStroke = false;
     m_clickNumber   = 0;
     m_endStroke     = false;
@@ -2313,15 +2317,13 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   case 2:
     m_tool->addStroke(m_hasLastStroke);
 
-    m_stroke        = 0;
-    m_clickNumber   = 0;
-    m_hasLastStroke = false;
-
     if (!m_isSingleArc && !m_endStroke) {
       m_hasLastStroke = true;
       m_clickNumber   = 1;
       m_startPoint    = m_endPoint;
       m_endStroke     = false;
+    } else {
+      onDeactivate();
     }
     break;
   }
@@ -2332,10 +2334,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
 bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
   if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-    delete m_stroke;
-    m_clickNumber   = 0;
-    m_hasLastStroke = false;
-    m_endStroke     = false;
+    onDeactivate();
     return true;
   }
   return false;
