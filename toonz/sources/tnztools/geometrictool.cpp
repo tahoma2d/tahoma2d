@@ -46,7 +46,6 @@ TEnv::IntVar GeometricEdgeCount("InknpaintGeometricEdgeCount", 3);
 TEnv::IntVar GeometricSelective("InknpaintGeometricSelective", 0);
 TEnv::IntVar GeometricGroupIt("InknpaintGeometricGroupIt", 0);
 TEnv::IntVar GeometricAutofill("InknpaintGeometricAutofill", 0);
-TEnv::IntVar GeometricJoin("InknpaintGeometricJoin", 0);
 TEnv::IntVar GeometricSmooth("InknpaintGeometricSmooth", 0);
 TEnv::IntVar GeometricPencil("InknpaintGeometricPencil", 0);
 TEnv::DoubleVar GeometricBrushHardness("InknpaintGeometricHardness", 100);
@@ -309,7 +308,6 @@ public:
   TIntProperty m_edgeCount;
   TBoolProperty m_autogroup;
   TBoolProperty m_autofill;
-  TBoolProperty m_join;
   TBoolProperty m_smooth;
   TBoolProperty m_selective;
   TBoolProperty m_pencil;
@@ -338,7 +336,6 @@ public:
       , m_edgeCount("Polygon Sides:", 3, 15, 3)
       , m_autogroup("Auto Group", false)
       , m_autofill("Auto Fill", false)
-      , m_join("JoinStrokes", false)
       , m_smooth("Smooth", false)
       , m_selective("Selective", false)
       , m_pencil("Pencil Mode", false)
@@ -360,7 +357,6 @@ public:
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
-      m_prop[0].bind(m_join);
       m_prop[0].bind(m_smooth);
       m_prop[0].bind(m_snap);
       m_snap.setId("Snap");
@@ -396,7 +392,6 @@ public:
     m_selective.setId("Selective");
     m_autogroup.setId("AutoGroup");
     m_autofill.setId("Autofill");
-    m_join.setId("JoinVectors");
     m_smooth.setId("Smooth");
     m_type.setId("GeometricShape");
     m_edgeCount.setId("GeometricEdge");
@@ -420,7 +415,6 @@ public:
     m_edgeCount.setQStringName(tr("Polygon Sides:"));
     m_autogroup.setQStringName(tr("Auto Group"));
     m_autofill.setQStringName(tr("Auto Fill"));
-    m_join.setQStringName(tr("Join Vectors"));
     m_smooth.setQStringName(tr("Smooth"));
     m_selective.setQStringName(tr("Selective"));
     m_pencil.setQStringName(tr("Pencil Mode"));
@@ -951,7 +945,6 @@ public:
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
       m_param.m_autogroup.setValue(GeometricGroupIt ? 1 : 0);
-      m_param.m_join.setValue(GeometricJoin ? 1 : 0);
       m_param.m_smooth.setValue(GeometricSmooth ? 1 : 0);
       m_param.m_autofill.setValue(GeometricAutofill ? 1 : 0);
       std::wstring typeCode = ::to_wstring(GeometricType.getValue());
@@ -1058,10 +1051,8 @@ public:
             QString::fromStdString(getName()));
       }
       GeometricGroupIt = m_param.m_autofill.getValue();
-    } else if (propertyName == m_param.m_join.getName()) {
-      GeometricJoin = m_param.m_join.getValue();
     } else if (propertyName == m_param.m_smooth.getName()) {
-      GeometricJoin = m_param.m_smooth.getValue();
+      GeometricSmooth = m_param.m_smooth.getValue();
     } else if (propertyName == m_param.m_selective.getName())
       GeometricSelective = m_param.m_selective.getValue();
     else if (propertyName == m_param.m_pencil.getName())
@@ -1167,7 +1158,7 @@ public:
                                                          stroke->getBBox());
 
         vi->addStroke(stroke);
-        if (joinLastStroke && m_param.m_join.getValue()) {
+        if (joinLastStroke) {
           int strokeNumber = vi->getStrokeCount();
           vi->joinStroke(
               strokeNumber - 2, strokeNumber - 1,
