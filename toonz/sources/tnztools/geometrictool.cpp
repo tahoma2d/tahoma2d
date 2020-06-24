@@ -863,7 +863,7 @@ public:
       addPrimitive(new LinePrimitive(&m_param, this, false));
       addPrimitive(new MultiLinePrimitive(&m_param, this, false));
       addPrimitive(new ArcPrimitive(&m_param, this, false));
-      addPrimitive(new MultiArcPrimitive(&m_param, this, true));
+      addPrimitive(new MultiArcPrimitive(&m_param, this, false));
       addPrimitive(new PolygonPrimitive(&m_param, this, false));
     }
   }
