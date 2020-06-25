@@ -2316,6 +2316,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
   case 2:
     m_tool->addStroke(m_hasLastStroke);
+    m_stroke = 0;
 
     if (!m_isSingleArc && !m_endStroke) {
       m_hasLastStroke = true;
@@ -2355,8 +2356,7 @@ void MultiArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     break;
   case 2:
     m_centralPoint = TThickPoint(newPos, getThickness());
-    TThickQuadratic q(m_stroke->getControlPoint(0), m_centralPoint,
-                      m_stroke->getControlPoint(8));
+    TThickQuadratic q(m_startPoint, m_centralPoint, m_endPoint);
     TThickQuadratic q0, q1, q00, q01, q10, q11;
 
     q.split(0.5, q0, q1);
@@ -2367,7 +2367,6 @@ void MultiArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     assert(q01.getP2() == q10.getP0());
     assert(q10.getP2() == q11.getP0());
 
-    m_stroke->setControlPoint(0, q00.getP0());
     m_stroke->setControlPoint(1, q00.getP1());
     m_stroke->setControlPoint(2, q00.getP2());
     m_stroke->setControlPoint(3, q01.getP1());
@@ -2375,7 +2374,6 @@ void MultiArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     m_stroke->setControlPoint(5, q10.getP1());
     m_stroke->setControlPoint(6, q10.getP2());
     m_stroke->setControlPoint(7, q11.getP1());
-    m_stroke->setControlPoint(8, q11.getP2());
     break;
   }
   m_tool->invalidate();

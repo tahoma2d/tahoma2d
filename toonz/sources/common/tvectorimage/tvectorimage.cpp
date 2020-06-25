@@ -1034,8 +1034,8 @@ bool TVectorImage::Imp::areWholeGroups(const std::vector<int> &indexes) const {
     if (!m_strokes[indexes[i]]->m_groupId.isGrouped()) return false;
     for (j = 0; j < m_strokes.size(); j++) {
       int ret = areDifferentGroup(indexes[i], false, j, false);
-      if (ret == -1 ||
-          (ret >= 1 && find(indexes.begin(), indexes.end(), j) == indexes.end()))
+      if (ret == -1 || (ret >= 1 && find(indexes.begin(), indexes.end(), j) ==
+                                        indexes.end()))
         return false;
     }
   }
@@ -1282,7 +1282,7 @@ void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
         } else {
           img->m_imp->m_strokes[i]->m_groupId =
               TGroupId(groupId, img->m_imp->m_strokes[i]->m_groupId);
-	}
+        }
       }
     }
   }
@@ -2154,7 +2154,8 @@ VIStroke *TVectorImage::Imp::joinStroke(int index1, int index2, int cpIndex1,
 
   // check if the both ends are at the same postion
   bool isSamePos = isAlmostZero(tdistance2(stroke1->getControlPoint(cpIndex1),
-                                           stroke2->getControlPoint(cpIndex2)));
+                                           stroke2->getControlPoint(cpIndex2)),
+                                1e-4);
   // connecting the ends in the same shape at the same postion
   // means just making the shape self-looped
   if (isSamePos && index1 == index2) {
@@ -2908,7 +2909,7 @@ void TVectorImage::Imp::regroupGhosts(std::vector<int> &changedStrokes) {
              ((currGroupId.isGrouped(false) != 0 &&
                m_strokes[i]->m_groupId == currGroupId) ||
               (currGroupId.isGrouped(true) != 0 &&
-                  m_strokes[i]->m_groupId.isGrouped(true) != 0))) {
+               m_strokes[i]->m_groupId.isGrouped(true) != 0))) {
         if (m_strokes[i]->m_groupId != currGroupId) {
           m_strokes[i]->m_groupId = currGroupId;
           changedStrokes.push_back(i);
