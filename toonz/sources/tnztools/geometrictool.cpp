@@ -892,7 +892,10 @@ public:
   void changeType(std::wstring name) {
     std::map<std::wstring, Primitive *>::iterator it =
         m_primitiveTable.find(name);
-    if (it != m_primitiveTable.end()) m_primitive = it->second;
+    if (it != m_primitiveTable.end()) {
+      if (m_primitive) m_primitive->onDeactivate();
+      m_primitive = it->second;
+    }
   }
 
   void leftButtonDown(const TPointD &p, const TMouseEvent &e) override {
