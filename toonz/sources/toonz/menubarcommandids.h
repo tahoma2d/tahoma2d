@@ -347,6 +347,7 @@
 #define MI_GeometricLine "MI_GeometricLine"
 #define MI_GeometricPolyline "MI_GeometricPolyline"
 #define MI_GeometricArc "MI_GeometricArc"
+#define MI_GeometricMultiArc "MI_GeometricMultiArc"
 #define MI_GeometricPolygon "MI_GeometricPolygon"
 
 #define MI_TypeNextStyle "MI_TypeNextStyle"
