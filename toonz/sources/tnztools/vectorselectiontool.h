@@ -358,6 +358,7 @@ private:
 private:
   TEnumProperty m_selectionTarget;  //!< Selected target content (strokes, whole
                                     //! image, styles...).
+  TBoolProperty m_includeIntersection;
   TBoolProperty m_constantThickness;
 
   StrokeSelection m_strokeSelection;        //!< Standard selection of a set of
@@ -384,7 +385,7 @@ private:
   void doOnActivate() override;
   void doOnDeactivate() override;
 
-  void selectRegionVectorImage();
+  void selectRegionVectorImage(bool includeIntersect);
 
   void updateTranslation() override;
 
