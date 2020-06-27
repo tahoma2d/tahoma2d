@@ -38,6 +38,7 @@ using namespace ToolUtils;
 
 class GeometricTool;
 class MultiLinePrimitive;
+class MultiArcPrimitive;
 
 TEnv::DoubleVar GeometricSize("InknpaintGeometricSize", 1);
 TEnv::DoubleVar GeometricRasterSize("InknpaintGeometricRasterSize", 1);
@@ -205,6 +206,81 @@ public:
   void setNewVertex(const std::vector<TPointD> &vertex) {
     m_newVertex = vertex;
   }
+
+  int getSize() const override { return sizeof(this); }
+
+  QString getToolName();
+  int getHistoryType() override { return HistoryType::GeometricTool; }
+};
+
+//-----------------------------------------------------------------------------
+
+class MultiArcPrimitiveUndoData {
+private:
+  TStroke *m_stroke;
+  TStroke *m_strokeTemp;
+  TPointD m_startPoint, m_endPoint, m_centralPoint;
+  int m_clickNumber;
+  TPixel32 m_color;
+
+public:
+  MultiArcPrimitiveUndoData(TStroke *stroke, TStroke *strokeTemp,
+                            TPointD startPoint, TPointD endPoint,
+                            TPointD centralPoint, int clickNumber,
+                            TPixel32 color)
+      : m_stroke(0)
+      , m_strokeTemp(0)
+      , m_startPoint(startPoint)
+      , m_endPoint(endPoint)
+      , m_centralPoint(centralPoint)
+      , m_clickNumber(clickNumber)
+      , m_color(color) {
+    if (stroke) {
+      m_stroke = new TStroke(*stroke);
+    }
+    if (strokeTemp) {
+      m_strokeTemp = new TStroke(*strokeTemp);
+    }
+  }
+
+  ~MultiArcPrimitiveUndoData() {
+    delete m_stroke;
+    delete m_strokeTemp;
+  }
+
+  void replace(MultiArcPrimitive *tool) const;
+};
+
+//-----------------------------------------------------------------------------
+
+class MultiArcPrimitiveUndo final : public TUndo {
+  MultiArcPrimitive *m_tool;
+  MultiArcPrimitiveUndoData m_undo;
+  MultiArcPrimitiveUndoData *m_redo;
+
+public:
+  MultiArcPrimitiveUndo(MultiArcPrimitive *tool, TStroke *stroke,
+                        TStroke *strokeTemp, TPointD startPoint,
+                        TPointD endPoint, TPointD centralPoint, int clickNumber,
+                        TPixel32 color)
+      : TUndo()
+      , m_tool(tool)
+      , m_undo(stroke, strokeTemp, startPoint, endPoint, centralPoint,
+               clickNumber, color)
+      , m_redo(0) {}
+
+  ~MultiArcPrimitiveUndo() { delete m_redo; }
+
+  void setRedoData(TStroke *stroke, TStroke *strokeTemp, TPointD startPoint,
+                   TPointD endPoint, TPointD centralPoint, int clickNumber,
+                   TPixel32 color) {
+    m_redo =
+        new MultiArcPrimitiveUndoData(stroke, strokeTemp, startPoint, endPoint,
+                                      centralPoint, clickNumber, color);
+  }
+
+  void undo() const override;
+  void redo() const override;
 
   int getSize() const override { return sizeof(this); }
 
@@ -748,6 +824,7 @@ class MultiArcPrimitive : public Primitive {
   TPointD m_startPoint, m_endPoint, m_centralPoint;
   int m_clickNumber;
   TPixel32 m_color;
+  int m_undoCount;
 
 protected:
   bool m_isSingleArc;
@@ -759,7 +836,8 @@ public:
       , m_stroke(0)
       , m_strokeTemp(0)
       , m_clickNumber(0)
-      , m_isSingleArc(false) {}
+      , m_isSingleArc(false)
+      , m_undoCount(0) {}
 
   ~MultiArcPrimitive() { delete m_stroke; }
 
@@ -778,8 +856,66 @@ public:
     m_stroke      = 0;
     m_strokeTemp  = 0;
     m_clickNumber = 0;
+    TUndoManager::manager()->popUndo(m_undoCount);
+    m_undoCount = 0;
   }
+
+  void replaceData(TStroke *stroke, TStroke *strokeTemp, TPointD startPoint,
+                   TPointD endPoint, TPointD centralPoint, int clickNumber,
+                   TPixel32 color) {
+    delete m_stroke;
+    delete m_strokeTemp;
+    m_stroke       = stroke;
+    m_strokeTemp   = strokeTemp;
+    m_startPoint   = startPoint;
+    m_endPoint     = endPoint;
+    m_centralPoint = centralPoint;
+    m_clickNumber  = clickNumber;
+    m_color        = color;
+  }
+
+  void decreaseUndo() { --m_undoCount; }
+
+  void increaseUndo() { ++m_undoCount; }
 };
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndoData::replace(MultiArcPrimitive *tool) const {
+  TStroke *stroke     = 0;
+  TStroke *strokeTemp = 0;
+  if (m_stroke) {
+    stroke = new TStroke(*m_stroke);
+  }
+  if (m_strokeTemp) {
+    strokeTemp = new TStroke(*m_strokeTemp);
+  }
+  tool->replaceData(stroke, strokeTemp, m_startPoint, m_endPoint,
+                    m_centralPoint, m_clickNumber, m_color);
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndo::undo() const {
+  m_undo.replace(m_tool);
+  m_tool->decreaseUndo();
+  TTool::getApplication()->getCurrentTool()->getTool()->invalidate();
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndo::redo() const {
+  m_redo->replace(m_tool);
+  m_tool->increaseUndo();
+  TTool::getApplication()->getCurrentTool()->getTool()->invalidate();
+}
+
+//----------------------------------------------------------------------------
+
+QString MultiArcPrimitiveUndo::getToolName() {
+  return QString("Geometric Tool %1")
+      .arg(QString::fromStdString(m_tool->getName()));
+}
 
 //=============================================================================
 // Arc Primitive Class Declaration
@@ -2249,6 +2385,10 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   double thick = getThickness();
   double dist  = joinDistance * joinDistance;
 
+  MultiArcPrimitiveUndo *undo = new MultiArcPrimitiveUndo(
+      this, m_stroke, m_strokeTemp, m_startPoint, m_endPoint, m_centralPoint,
+      m_clickNumber, m_color);
+
   switch (m_clickNumber) {
   case 0:
     if (app->getCurrentObject()->isSpline()) {
@@ -2306,6 +2446,8 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
                          getSmooth());
           delete m_stroke;
           m_stroke = new TStroke(*vi->getStroke(0));
+          TUndoManager::manager()->popUndo(m_undoCount);
+          m_undoCount = 0;
           m_tool->addStroke();
           onDeactivate();
         }
@@ -2314,13 +2456,21 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
         m_strokeTemp = 0;
       }
     } else {
-      m_stroke = m_strokeTemp;
+      m_stroke     = m_strokeTemp;
       m_strokeTemp = 0;
+      TUndoManager::manager()->popUndo(m_undoCount);
+      m_undoCount = 0;
       m_tool->addStroke();
       onDeactivate();
     }
     break;
   }
+
+  undo->setRedoData(m_stroke, m_strokeTemp, m_startPoint, m_endPoint,
+                    m_centralPoint, m_clickNumber, m_color);
+  TUndoManager::manager()->add(undo);
+  ++m_undoCount;
+
   resetSnap();
 }
 
@@ -2328,7 +2478,11 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
 void MultiArcPrimitive::leftButtonDoubleClick(const TPointD &,
                                               const TMouseEvent &e) {
-  if (m_stroke) m_tool->addStroke();
+  if (m_stroke) {
+    TUndoManager::manager()->popUndo(m_undoCount);
+    m_undoCount = 0;
+    m_tool->addStroke();
+  }
   onDeactivate();
 }
 
@@ -2336,7 +2490,11 @@ void MultiArcPrimitive::leftButtonDoubleClick(const TPointD &,
 
 bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
   if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-    if (m_stroke) m_tool->addStroke();
+    if (m_stroke) {
+      TUndoManager::manager()->popUndo(m_undoCount);
+      m_undoCount = 0;
+      m_tool->addStroke();
+    }
     onDeactivate();
     return true;
   }
