@@ -342,7 +342,7 @@ TStageObjectId TColumnDataElement::restoreColumn(TXsheet *xsh, int index,
   TPointD dagPos = TConst::nowhere;
   if (column) {
     if (column->getFx())
-      dagPos            = column->getFx()->getAttributes()->getDagNodePos();
+      dagPos = column->getFx()->getAttributes()->getDagNodePos();
     if (doClone) column = column->clone();
     xsh->insertColumn(index, column);
   } else

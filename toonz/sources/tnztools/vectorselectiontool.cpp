@@ -39,6 +39,8 @@ namespace {
 VectorSelectionTool l_vectorSelectionTool(TTool::Vectors);
 TEnv::IntVar l_strokeSelectConstantThickness("SelectionToolConstantThickness",
                                              0);
+TEnv::IntVar l_strokeSelectIncludeIntersection(
+    "SelectionToolIncludeIntersection", 0);
 
 const int l_dragThreshold = 10;  //!< Distance, in pixels, the user has to
                                  //!  move from a button press to trigger a
@@ -63,7 +65,7 @@ FourPoints getFourPointsFromVectorImage(const TVectorImageP &img,
       TStroke *s = img->getStroke(i);
 
       for (int j = 0; j < s->getControlPointCount(); j++) {
-        double thick                           = s->getControlPoint(j).thick;
+        double thick = s->getControlPoint(j).thick;
         if (maxThickness < thick) maxThickness = thick;
       }
     }
@@ -80,7 +82,7 @@ FourPoints getFourPointsFromVectorImage(const TVectorImageP &img,
         bbox += s->getBBox();
 
       for (int j = 0; j < s->getControlPointCount(); j++) {
-        double thick                           = s->getControlPoint(j).thick;
+        double thick = s->getControlPoint(j).thick;
         if (maxThickness < thick) maxThickness = thick;
       }
     }
@@ -933,8 +935,8 @@ struct Data {
   VectorChangeThicknessTool &m_tool;
   const TVectorImage &m_vi;
 };
-}
-}  // setStrokeThickness
+}  // namespace SetStrokeThickness
+}  // namespace
 
 void DragSelectionTool::VectorChangeThicknessTool::setStrokesThickness(
     TVectorImage &vi) {
@@ -987,8 +989,8 @@ struct Data {
   TVectorImage &m_vi;
   double m_newThickness;
 };
-}
-}
+}  // namespace ChangeImageThickness
+}  // namespace
 
 void DragSelectionTool::VectorChangeThicknessTool::changeImageThickness(
     TVectorImage &vi, double newThickness) {
@@ -1204,6 +1206,7 @@ public:
 VectorSelectionTool::VectorSelectionTool(int targetType)
     : SelectionTool(targetType)
     , m_selectionTarget("Mode:")
+    , m_includeIntersection("Include Intersection", false)
     , m_constantThickness("Preserve Thickness", false)
     , m_levelSelection(m_strokeSelection)
     , m_capStyle("Cap")
@@ -1214,6 +1217,7 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
     , m_resetCenter(true) {
   assert(targetType == TTool::Vectors);
   m_prop.bind(m_selectionTarget);
+  m_prop.bind(m_includeIntersection);
   m_prop.bind(m_constantThickness);
 
   m_selectionTarget.addValue(NORMAL_TYPE);
@@ -1228,6 +1232,7 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
 
   m_strokeSelection.setView(this);
 
+  m_includeIntersection.setId("IncludeIntersection");
   m_constantThickness.setId("PreserveThickness");
   m_selectionTarget.setId("SelectionMode");
 
@@ -1334,6 +1339,7 @@ void VectorSelectionTool::updateTranslation() {
   m_selectionTarget.setItemUIName(BOUNDARY_LEVEL_TYPE,
                                   tr("Boundaries on Whole Level"));
 
+  m_includeIntersection.setQStringName(tr("Include Intersection"));
   m_constantThickness.setQStringName(tr("Preserve Thickness"));
 
   m_capStyle.setQStringName(tr("Cap"));
@@ -1359,9 +1365,8 @@ void VectorSelectionTool::updateSelectionTarget() {
     selectedStrokes.swap(
         m_strokeSelection.getSelection());  // current selection change
 
-    m_strokeSelection
-        .makeCurrent();  // Empties any (different) previously current
-                         // selection on its own
+    m_strokeSelection.makeCurrent();  // Empties any (different) previously
+                                      // current selection on its own
     selectedStrokes.swap(m_strokeSelection.getSelection());
     return;
   }
@@ -1478,8 +1483,8 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
   bool modifiableSel = isModifiableSelectionType(),
        strokeAtPos   = getStrokeIndexFromPos(index, vi, pos, getPixelSize(),
                                            getViewer()->getViewMatrix()),
-       addStroke    = strokeAtPos && !m_strokeSelection.isSelected(index),
-       toggleStroke = strokeAtPos && e.isShiftPressed();
+       addStroke     = strokeAtPos && !m_strokeSelection.isSelected(index),
+       toggleStroke  = strokeAtPos && e.isShiftPressed();
 
   m_selecting =
       (modifiableSel && !strokeAtPos  // There must be no stroke under cursor
@@ -1488,9 +1493,8 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
            || (m_strokeSelectionType.getIndex() !=
                POLYLINE_SELECTION_IDX)  // or the tool support immediate
                                         // selection on clear
-           ||
-           m_strokeSelection
-               .isEmpty()));  // or the strokes list was already cleared
+           || m_strokeSelection
+                  .isEmpty()));  // or the strokes list was already cleared
 
   bool clearTargets     = !(strokeAtPos || e.isShiftPressed() || m_selecting),
        clearSelection   = (addStroke || !strokeAtPos) && !e.isShiftPressed(),
@@ -1528,7 +1532,7 @@ void VectorSelectionTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_strokeSelectionType.getIndex() == POLYLINE_SELECTION_IDX &&
       !m_polyline.empty()) {
     closePolyline(pos);
-    selectRegionVectorImage();
+    selectRegionVectorImage(m_includeIntersection.getValue());
 
     m_selecting = false;
     invalidate();
@@ -1661,7 +1665,8 @@ void VectorSelectionTool::leftButtonUp(const TPointD &pos,
 
       closeFreehand(pos);
 
-      if (m_stroke->getControlPointCount() > 3) selectRegionVectorImage();
+      if (m_stroke->getControlPointCount() > 3)
+        selectRegionVectorImage(m_includeIntersection.getValue());
 
       delete m_stroke;  // >:(
       m_stroke = 0;
@@ -1927,6 +1932,7 @@ bool VectorSelectionTool::selectStroke(int index, bool toggle) {
 
 void VectorSelectionTool::onActivate() {
   if (m_firstTime) {
+    m_includeIntersection.setValue(l_strokeSelectIncludeIntersection ? 1 : 0);
     m_constantThickness.setValue(l_strokeSelectConstantThickness ? 1 : 0);
     m_strokeSelection.setSceneHandle(
         TTool::getApplication()->getCurrentScene());
@@ -1966,9 +1972,8 @@ void VectorSelectionTool::onImageChanged() {
     m_strokeSelection.setImage(vi);
 
     if (!(vi && selectedImg)  // Retain the styles selection ONLY
-        ||
-        vi->getPalette() !=
-            selectedImg->getPalette())  // if palettes still match
+        || vi->getPalette() !=
+               selectedImg->getPalette())  // if palettes still match
       selectedStyles().clear();
   } else {
     // Remove any eventual stroke index outside the valid range
@@ -2028,6 +2033,8 @@ bool VectorSelectionTool::onPropertyChanged(std::string propertyName) {
 
   if (SelectionTool::onPropertyChanged(propertyName)) return true;
 
+  if (propertyName == m_includeIntersection.getName())
+    l_strokeSelectIncludeIntersection = (int)(m_includeIntersection.getValue());
   if (propertyName == m_constantThickness.getName())
     l_strokeSelectConstantThickness = (int)(m_constantThickness.getValue());
   else if (propertyName == m_selectionTarget.getName())
@@ -2155,7 +2162,7 @@ void VectorSelectionTool::selectionOutlineStyle(int &capStyle, int &joinStyle) {
     const TStroke::OutlineOptions &options =
         vi->getStroke(*it)->outlineOptions();
 
-    if (capStyle != options.m_capStyle) capStyle    = -1;
+    if (capStyle != options.m_capStyle) capStyle = -1;
     if (joinStyle != options.m_joinStyle) joinStyle = -1;
     if (capStyle < 0 && joinStyle < 0) return;
   }
@@ -2163,7 +2170,7 @@ void VectorSelectionTool::selectionOutlineStyle(int &capStyle, int &joinStyle) {
 
 //-----------------------------------------------------------------------------
 
-void VectorSelectionTool::selectRegionVectorImage() {
+void VectorSelectionTool::selectRegionVectorImage(bool includeIntersect) {
   if (!m_stroke) return;
 
   TVectorImageP vi(getImage(false));
@@ -2188,6 +2195,14 @@ void VectorSelectionTool::selectRegionVectorImage() {
 
       if (region->contains(*currentStroke, true))
         selectionChanged = selectStroke(s, false) || selectionChanged;
+    }
+
+    if (includeIntersect) {
+      std::vector<DoublePair> intersections;
+      intersect(m_stroke, currentStroke, intersections, false);
+      if (intersections.size() > 0) {
+        selectionChanged = selectStroke(s, false) || selectionChanged;
+      }
     }
   }
 

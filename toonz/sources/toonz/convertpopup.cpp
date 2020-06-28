@@ -898,7 +898,7 @@ Convert2Tlv *ConvertPopup::makeTlvConverter(const TFilePath &sourceFilePath) {
   }
   int from = -1, to = -1;
   if (m_srcFilePaths.size() == 1 && m_fromFld->isEnabled() &&
-    m_toFld->isEnabled()) {
+      m_toFld->isEnabled()) {
     from = m_fromFld->getValue();
     to   = m_toFld->getValue();
   }

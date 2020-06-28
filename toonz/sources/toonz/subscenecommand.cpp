@@ -211,7 +211,7 @@ bool mustRemoveColumn(int &from, int &to, TXshChildLevel *childLevel,
     if (app != childLevel) {
       removeColumn = false;
       if (from != -1 && to != -1) {
-        rangeFound            = from <= row && row <= to;
+        rangeFound = from <= row && row <= to;
         if (!rangeFound) from = to = -1;
       }
       continue;
@@ -913,7 +913,7 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
   int groupId    = outerDag->getNewGroupId();
   for (it = fxs.begin(); it != fxs.end(); it++) {
     QPair<TFx *, int> pair = it.value();
-    TFx *outerFx = pair.first;
+    TFx *outerFx           = pair.first;
     // skip redundant item. in case when only one node is input to the xsheet
     // node in the inner dag
     if (outerFx->getAttributes()->getGroupId() == groupId) continue;
@@ -1646,8 +1646,8 @@ public:
       }
     QMap<TFx *, FxConnections>::const_iterator it2;
     for (it2 = m_fxConnections.begin(); it2 != m_fxConnections.end(); it2++) {
-      TFx *fx                   = it2.key();
-      FxConnections connections = it2.value();
+      TFx *fx                     = it2.key();
+      FxConnections connections   = it2.value();
       QMap<int, TFx *> inputLinks = connections.getInputLinks();
       QMap<int, TFx *>::const_iterator it3;
       for (it3 = inputLinks.begin(); it3 != inputLinks.end(); it3++)
@@ -1769,7 +1769,7 @@ public:
       outFx->addRef();
     }
 
-    for (int i                              = 0; i < m_pegObjects.size(); i++)
+    for (int i = 0; i < m_pegObjects.size(); i++)
       m_parentIds[m_pegObjects[i]->getId()] = m_pegObjects[i]->getParent();
 
     QMap<TStageObjectSpline *, TStageObjectSpline *>::iterator it3;
@@ -2370,7 +2370,6 @@ void SubsceneCmd::explode(int index) {
   list.append(QObject::tr("Bring only columns in the main xsheet."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
-
   // Collect column stage object informations
   TStageObjectId colId    = TStageObjectId::ColumnId(index);
   TStageObjectId parentId = xsh->getStageObjectParent(colId);
@@ -2487,7 +2486,7 @@ void SubsceneCmd::explode(int index) {
 
     TFx *root = 0;
     assert(!columnOutputConnections.empty());
-    QList<TFxPort *> ports   = columnOutputConnections.begin().value();
+    QList<TFxPort *> ports = columnOutputConnections.begin().value();
     if (!ports.empty()) root = (*ports.begin())->getFx();
 
     ExplodeChildUndoRemovingColumn *undo = new ExplodeChildUndoRemovingColumn(
