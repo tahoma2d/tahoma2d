@@ -860,7 +860,13 @@ void StartupPopup::onSceneChanged() {
   if (!TApp::instance()->getCurrentScene()->getScene()->isUntitled()) {
     hide();
   } else {
-    // updateProjectCB();
+    TFilePath path = TApp::instance()
+                         ->getCurrentScene()
+                         ->getScene()
+                         ->getProject()
+                         ->getProjectFolder();
+    std::string pathStr = path.getQString().toStdString();
+    m_projectLocationFld->setPath(path.getQString());
   }
 }
 
