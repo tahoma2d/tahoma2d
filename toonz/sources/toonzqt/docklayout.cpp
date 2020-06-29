@@ -421,14 +421,64 @@ void DockLayout::applyTransform(const QTransform &transform) {
 }
 
 //------------------------------------------------------
+// check if the region will be with fixed width
+bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
+                                        bool &fromDocking) {
+  if (m_item) {
+    if (m_item->wasFloating()) {
+      fromDocking = true;
+      m_item->clearWasFloating();
+      return false;
+    }
+    if ((m_item->objectName() == "FilmStrip" && m_item->getCanFixWidth()) ||
+        m_item->objectName() == "StyleEditor" ||
+        m_item->objectName() == "StopMotionController") {
+      widgets.push_back(m_item);
+      return true;
+    } else
+      return false;
+  }
+  if (m_childList.empty()) return false;
+  // for horizontal orientation, return true if all items are to be fixed
+  if (m_orientation == horizontal) {
+    bool ret = true;
+    for (Region *childRegion : m_childList) {
+      if (!childRegion->checkWidgetsToBeFixedWidth(widgets, fromDocking))
+        ret = false;
+    }
+    return ret;
+  }
+  // for vertical orientation, return true if at least one item is to be fixed
+  else {
+    bool ret = false;
+    for (Region *childRegion : m_childList) {
+      if (childRegion->checkWidgetsToBeFixedWidth(widgets, fromDocking))
+        ret = true;
+    }
+    return ret;
+  }
+}
+
+//------------------------------------------------------
 
 void DockLayout::redistribute() {
   if (!m_regions.empty()) {
-    // std::vector<QWidget *> widgets;
+    std::vector<QWidget *> widgets;
 
     // Recompute extremal region sizes
     // NOTA: Sarebbe da fare solo se un certo flag lo richiede; altrimenti tipo
     // per resize events e' inutile...
+
+    // let's force the width of the film strip / style editor not to change
+    // check recursively from the root region, if the widgets can be fixed.
+    // it avoids all widgets in horizontal alignment to be fixed, or UI becomes
+    // glitchy.
+    bool fromDocking = false;
+    bool widgetsCanBeFixedWidth =
+        !m_regions.front()->checkWidgetsToBeFixedWidth(widgets, fromDocking);
+    if (!fromDocking && widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
+    }
 
     m_regions.front()->calculateExtremalSizes();
 
@@ -446,6 +496,13 @@ void DockLayout::redistribute() {
     // Recompute Layout geometry
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
+
+    if (!fromDocking && widgetsCanBeFixedWidth) {
+      for (QWidget *widget : widgets) {
+        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        widget->setMinimumSize(0, 0);
+      }
+    }
   }
 
   // Finally, apply Region geometries found
@@ -690,7 +747,8 @@ Region *DockLayout::dockItemPrivate(DockWidget *item, Region *r, int idx) {
   item->onDock(true);
 
   item->setDockedAppearance();
-  item->m_floating = false;
+  item->m_floating    = false;
+  item->m_wasFloating = true;
 
   if (!r) {
     // Insert new root region

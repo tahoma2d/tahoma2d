@@ -1303,10 +1303,12 @@ void MainWindow::showEvent(QShowEvent *event) {
   nt->setInterval(10);
 
   connect(nt, &QTimer::timeout, [=]() {
+#ifdef WIN32
     int roomsSize = m_panelStates.size();
     for (auto iter : m_panelStates) {
       iter.first->restoreState(iter.second);
     }
+#endif
   });
   nt->connect(nt, SIGNAL(timeout()), SLOT(deleteLater()));
 
