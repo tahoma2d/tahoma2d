@@ -1145,6 +1145,21 @@ void closeSubXsheet(int dlevel) {
 
 //=============================================================================
 
+// returns true if there is at least one pegbar to be brought inside subxsheet
+// on collase in order to see if the confirmation dialog is needed
+bool hasPegbarsToBringInsideChildXsheet(TXsheet *xsh,
+                                        const std::set<int> &indices) {
+  for (auto itr = indices.cbegin(); itr != indices.cend(); itr++) {
+    TStageObjectId id =
+        xsh->getStageObjectParent(TStageObjectId::ColumnId(*itr));
+    // check the parent node
+    if (id.isPegbar() || id.isCamera()) return true;
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 void bringPegbarsInsideChildXsheet(TXsheet *xsh, TXsheet *childXsh,
                                    std::set<int> indices,
                                    std::set<int> newIndices) {
@@ -2197,16 +2212,22 @@ public:
 void SubsceneCmd::collapse(std::set<int> &indices) {
   if (indices.empty()) return;
 
-  // User must decide if pegbars must be collapsed too
-  QString question(QObject::tr("Collapsing columns: what you want to do?"));
+  TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
+  bool onlyColumns = true;
+  if (hasPegbarsToBringInsideChildXsheet(xsh, indices)) {
+    // User must decide if pegbars must be collapsed too
+    QString question(QObject::tr("Collapsing columns: what you want to do?"));
 
-  QList<QString> list;
-  list.append(
-      QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
-  list.append(QObject::tr("Include only selected columns in the sub-xsheet."));
+    QList<QString> list;
+    list.append(
+        QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
+    list.append(
+        QObject::tr("Include only selected columns in the sub-xsheet."));
 
-  int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
-  if (ret == 0) return;
+    int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
+    if (ret == 0) return;
+    onlyColumns = (ret == 2);
+  }
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
@@ -2214,7 +2235,6 @@ void SubsceneCmd::collapse(std::set<int> &indices) {
   // Retrieve current status to backup it in the UNDO
   StageObjectsData *oldData = new StageObjectsData();
 
-  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   oldData->storeColumns(indices, xsh, 0);
   oldData->storeColumnFxs(indices, xsh, 0);
 
@@ -2228,7 +2248,7 @@ void SubsceneCmd::collapse(std::set<int> &indices) {
   getParents(indices, parents);
 
   // Perform the collapse
-  collapseColumns(indices, ret == 2);
+  collapseColumns(indices, onlyColumns);
   setColumnOutputConnections(columnOutputConnections);
 
   // Retrieve current status to backup it in the REDO
@@ -2297,24 +2317,29 @@ void SubsceneCmd::collapse(const QList<TStageObjectId> &objects) {
 void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   if (fxs.isEmpty()) return;
 
-  QString question(QObject::tr("Collapsing columns: what you want to do?"));
-  QList<QString> list;
-  list.append(
-      QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
-  list.append(QObject::tr("Include only selected columns in the sub-xsheet."));
-  int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
-  if (ret == 0) return;
-
   std::set<int> indices;
   std::set<TFx *> internalFx;
   getColumnIndexesAndInternalFxs(fxs, indices, internalFx);
+
+  TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
+  bool onlyColumns = true;
+  if (hasPegbarsToBringInsideChildXsheet(xsh, indices)) {
+    QString question(QObject::tr("Collapsing columns: what you want to do?"));
+    QList<QString> list;
+    list.append(
+        QObject::tr("Include relevant pegbars in the sub-xsheet as well."));
+    list.append(
+        QObject::tr("Include only selected columns in the sub-xsheet."));
+    int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
+    if (ret == 0) return;
+    onlyColumns = (ret == 2);
+  }
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
 
   StageObjectsData *oldData = new StageObjectsData();
 
-  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   oldData->storeColumns(indices, xsh, 0);
   oldData->storeColumnFxs(indices, xsh, 0);
 
@@ -2330,7 +2355,7 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   QMap<TFx *, FxConnections> fxConnections;
   getFxConnections(fxConnections, internalFx, xsh);
 
-  collapseColumns(indices, internalFx, ret == 2);
+  collapseColumns(indices, internalFx, onlyColumns);
 
   indices.clear();
   indices.insert(index);
