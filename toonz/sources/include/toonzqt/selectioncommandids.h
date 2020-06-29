@@ -17,6 +17,7 @@
 #define MI_ToggleLinkToStudioPalette "MI_ToggleLinkToStudioPalette"
 #define MI_RemoveReferenceToStudioPalette "MI_RemoveReferenceToStudioPalette"
 #define MI_Clear "MI_Clear"
+#define MI_ClearFrames "MI_ClearFrames"
 #define MI_SelectAll "MI_SelectAll"
 #define MI_InvertSelection "MI_InvertSelection"
 

@@ -50,6 +50,7 @@ public:
   void mergeFrames();
   void pasteInto();
   void deleteFrames();
+  void clearFrames();
   void insertEmptyFrames();
   void addFrames();
   void reverseFrames();

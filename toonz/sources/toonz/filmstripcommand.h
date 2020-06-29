@@ -31,6 +31,7 @@ void paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void merge(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void pasteInto(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void cut(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
+void deleteFrames(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void clear(TXshSimpleLevel *sl, std::set<TFrameId> &frames);
 void insert(TXshSimpleLevel *sl, const std::set<TFrameId> &frames,
             bool withUndo);

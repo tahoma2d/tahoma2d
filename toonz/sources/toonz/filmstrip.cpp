@@ -1244,6 +1244,7 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(cm->getAction(MI_PasteInto));
     menu->addAction(cm->getAction(MI_Insert));
     menu->addAction(cm->getAction(MI_Clear));
+    menu->addAction(cm->getAction(MI_ClearFrames));
     menu->addSeparator();
     menu->addAction(cm->getAction(MI_Reverse));
     menu->addAction(cm->getAction(MI_Swing));

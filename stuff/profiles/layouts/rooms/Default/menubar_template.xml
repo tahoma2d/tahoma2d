@@ -106,6 +106,7 @@
         <command>MI_ExportLevel</command>
         <separator/>
         <command>MI_AddFrames</command>
+        <command>MI_ClearFrames</command>
         <command>MI_Renumber</command>
         <command>MI_ReplaceLevel</command>
         <command>MI_RevertToCleanedUp</command>
