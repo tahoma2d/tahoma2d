@@ -2676,8 +2676,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       //  setMask->setCheckable(true);
       //  setMask->setChecked(xsh->getColumn(col)->isMask());
       //  setMask->setToolTip(
-      //      tr("Only Toonz Vector levels can be used as masks. \n Masks don't
-      //      "
+      //      tr("Only Toonz Vector levels can be used as masks. \n Masks don't "
       //         "show up in final renders."));
       //  bool ret = true;
       //  ret      = ret &&
