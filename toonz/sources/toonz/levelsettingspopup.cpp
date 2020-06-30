@@ -566,32 +566,37 @@ void LevelSettingsPopup::showEvent(QShowEvent *e) {
   assert(ret);
   updateLevelSettings();
   onPreferenceChanged("");
+  m_hideAlreadyCalled = false;
 }
 
 //-----------------------------------------------------------------------------
 
 void LevelSettingsPopup::hideEvent(QHideEvent *e) {
-  bool ret =
-      disconnect(TApp::instance()->getCurrentSelection(),
-                 SIGNAL(selectionSwitched(TSelection *, TSelection *)), this,
-                 SLOT(onSelectionSwitched(TSelection *, TSelection *)));
-  ret = ret && disconnect(TApp::instance()->getCurrentSelection(),
-                          SIGNAL(selectionChanged(TSelection *)), this,
-                          SLOT(updateLevelSettings()));
+  if (!m_hideAlreadyCalled) {
+    bool ret =
+        disconnect(TApp::instance()->getCurrentSelection(),
+                   SIGNAL(selectionSwitched(TSelection *, TSelection *)), this,
+                   SLOT(onSelectionSwitched(TSelection *, TSelection *)));
+    ret = ret && disconnect(TApp::instance()->getCurrentSelection(),
+                            SIGNAL(selectionChanged(TSelection *)), this,
+                            SLOT(updateLevelSettings()));
 
-  CastSelection *castSelection = dynamic_cast<CastSelection *>(
-      TApp::instance()->getCurrentSelection()->getSelection());
-  if (castSelection)
-    ret = ret && disconnect(castSelection, SIGNAL(itemSelectionChanged()), this,
-                            SLOT(onCastSelectionChanged()));
+    CastSelection *castSelection = dynamic_cast<CastSelection *>(
+        TApp::instance()->getCurrentSelection()->getSelection());
+    if (castSelection)
+      ret = ret && disconnect(castSelection, SIGNAL(itemSelectionChanged()),
+                              this, SLOT(onCastSelectionChanged()));
 
-  ret = ret && disconnect(TApp::instance()->getCurrentScene(),
+    ret =
+        ret && disconnect(TApp::instance()->getCurrentScene(),
                           SIGNAL(sceneChanged()), this, SLOT(onSceneChanged()));
-  ret = ret && disconnect(TApp::instance()->getCurrentScene(),
-                          SIGNAL(preferenceChanged(const QString &)), this,
-                          SLOT(onPreferenceChanged(const QString &)));
+    ret = ret && disconnect(TApp::instance()->getCurrentScene(),
+                            SIGNAL(preferenceChanged(const QString &)), this,
+                            SLOT(onPreferenceChanged(const QString &)));
 
-  assert(ret);
+    assert(ret);
+    m_hideAlreadyCalled = true;
+  }
   Dialog::hideEvent(e);
 }
 
