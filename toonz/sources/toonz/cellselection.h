@@ -45,6 +45,7 @@ public:
 
   void copyCells();
   void pasteCells();
+  void pasteDuplicateCells();
   void deleteCells();
   void cutCells();
   void cutCells(bool withoutCopy);
