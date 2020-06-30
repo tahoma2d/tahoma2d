@@ -2316,15 +2316,16 @@ void MultiArcPrimitive::draw() {
 
   switch (m_clickNumber) {
   case 1:
-    tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
-                      (m_color.b + 127) % 255, m_color.m));
+    tglColor(m_color);
     tglDrawSegment(m_startPoint, m_endPoint);
 
     if (m_stroke) {
-      tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
-
-      tglColor(m_color);
       drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
+      if (m_stroke->getControlPoint(0) == m_endPoint) {
+        tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                          (m_color.b + 127) % 255, m_color.m));
+      }
+      tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
     }
 
     break;
@@ -2348,9 +2349,10 @@ void MultiArcPrimitive::draw() {
       drawStrokeCenterline(*m_strokeTemp, sqrt(tglGetPixelSize2()));
 
     if (m_stroke && m_stroke->getControlPoint(0) != m_endPoint) {
-      tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
-                        (m_color.b + 127) % 255, m_color.m));
-
+      if (m_stroke->getControlPoint(0) == m_endPoint) {
+        tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                          (m_color.b + 127) % 255, m_color.m));
+      }
       tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
     }
     break;
