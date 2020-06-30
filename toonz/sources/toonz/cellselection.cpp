@@ -1974,9 +1974,16 @@ void TCellSelection::pasteDuplicateCells() {
       cellsVector.push_back(cell);
     }
 
+    // now put the set into a vector since it's easier to deal with
+    std::vector<TXshCell> uniqueCells;
+    std::set<TXshCell>::iterator it = cells.begin();
+    while (it != cells.end()) {
+      uniqueCells.push_back(*it);
+      it++;
+    }
+
     TXshSimpleLevel *sl;
     TXshLevelP level;
-    std::set<TXshCell>::iterator it = cells.begin();
 
     // check that the selection only includes types that can be duplicated and
     // edited
@@ -2019,23 +2026,68 @@ void TCellSelection::pasteDuplicateCells() {
 
     // now actually duplicate
     std::vector<std::pair<TXshCell, TXshCell>> cellPairs;
-    it = cells.begin();
-    while (it != cells.end()) {
-      level = it->m_level;
+
+    for (int i = 0; i < uniqueCells.size(); i++) {
+      level = uniqueCells[i].m_level;
       if (level) {
-        sl = it->getSimpleLevel();
+        sl = uniqueCells[i].getSimpleLevel();
         if (sl) {
           std::set<TFrameId> frames;
-          TFrameId fid = it->getFrameId();
+          TFrameId fid = uniqueCells[i].getFrameId();
           frames.insert(fid);
           FilmstripCmd::duplicate(sl, frames, true);
+
+          // see if we need to increment the frameId of
+          // other cells in the same level
+          std::set<int> cellsVectorAlreadyIncremented;
+          std::set<int> cellsPairsAlreadyIncremented;
+          for (int j = 0; j < uniqueCells.size(); j++) {
+            if (j == i) continue;
+            TXshSimpleLevel *tempSl;
+            TXshLevelP tempLevel;
+            tempLevel = uniqueCells[j].m_level;
+            if (tempLevel) {
+              tempSl = uniqueCells[j].getSimpleLevel();
+              if (tempSl) {
+                if (tempSl == sl) {
+                  TFrameId tempId    = uniqueCells[j].getFrameId();
+                  TFrameId currentId = uniqueCells[i].getFrameId();
+
+                  if (tempId.getNumber() > currentId.getNumber()) {
+                    tempId = TFrameId(tempId.getNumber() + 1, 0);
+
+                    // keep cellsVector in sync with uniqueCells
+                    for (int k = 0; k < cellsVector.size(); k++) {
+                      if (cellsVector[k] == uniqueCells[j] &&
+                          cellsVectorAlreadyIncremented.find(k) ==
+                              cellsVectorAlreadyIncremented.end()) {
+                        cellsVector[k].m_frameId = tempId;
+                        cellsVectorAlreadyIncremented.insert(k);
+                      }
+                    }
+                    // and with cellPairs
+                    for (int k = 0; k < cellPairs.size(); k++) {
+                      if (cellPairs[k].first == uniqueCells[j] &&
+                          cellsPairsAlreadyIncremented.find(k) ==
+                              cellsPairsAlreadyIncremented.end()) {
+                        cellPairs[k].first.m_frameId = tempId;
+                        cellPairs[k].second.m_frameId =
+                            cellPairs[k].second.m_frameId + 1;
+                        cellsPairsAlreadyIncremented.insert(k);
+                      }
+                    }
+                    uniqueCells[j].m_frameId = tempId;
+                  }
+                }
+              }
+            }
+          }
           TXshCell newCell;
           newCell.m_level   = sl;
           newCell.m_frameId = fid + 1;
-          cellPairs.push_back(std::make_pair(*it, newCell));
+          cellPairs.push_back(std::make_pair(uniqueCells[i], newCell));
         }
       }
-      it++;
     }
 
     // turn off sync with xsheet if it wasn't on originally
@@ -2160,6 +2212,7 @@ void TCellSelection::pasteDuplicateCells() {
   }
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TUndoManager::manager()->endBlock();
+  clipboard->clear();
 }
 
 //-----------------------------------------------------------------------------
