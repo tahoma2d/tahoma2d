@@ -1186,18 +1186,18 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
   // reset grammers for all parameters of pasted stage objects and fxs
   // or they fails to refer to other parameters via expression
   // if they are pasted in different xsheet
-  TSyntax::Grammar *grammar = xsh->getStageObjectTree()->getGrammar();
+  TSyntax::Grammar *grammer = xsh->getStageObjectTree()->getGrammar();
   for (auto id : restoredIds) {
     TStageObject *obj = xsh->getStageObject(id);
     for (int c = 0; c != TStageObject::T_ChannelCount; ++c)
-      obj->getParam((TStageObject::Channel)c)->setGrammar(grammar);
+      obj->getParam((TStageObject::Channel)c)->setGrammar(grammer);
     if (const PlasticSkeletonDeformationP &sd =
             obj->getPlasticSkeletonDeformation())
-      sd->setGrammar(grammar);
+      sd->setGrammar(grammer);
   }
   std::map<TFx *, TFx *>::const_iterator it;
   for (it = fxTable.begin(); it != fxTable.end(); ++it) {
-    setGrammerToParams(it->second->getParams(), grammar);
+    setGrammerToParams(it->second->getParams(), grammer);
   }
 
   return restoredIds;
