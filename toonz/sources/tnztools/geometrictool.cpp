@@ -2391,6 +2391,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
   switch (m_clickNumber) {
   case 0:
+    m_endPoint = newPos;
     if (app->getCurrentObject()->isSpline()) {
       m_isEditing = true;
       m_color     = TPixel32::Red;
@@ -2411,11 +2412,12 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
     break;
 
   case 1:
-    points[0] = TThickPoint(m_startPoint, thick);
-    points[8] = TThickPoint(m_endPoint, thick);
-    points[4] = TThickPoint(0.5 * (points[0] + points[8]), thick);
-    points[2] = TThickPoint(0.5 * (points[0] + points[4]), thick);
-    points[6] = TThickPoint(0.5 * (points[4] + points[8]), thick);
+    m_centralPoint = newPos;
+    points[0]      = TThickPoint(m_startPoint, thick);
+    points[8]      = TThickPoint(m_endPoint, thick);
+    points[4]      = TThickPoint(0.5 * (points[0] + points[8]), thick);
+    points[2]      = TThickPoint(0.5 * (points[0] + points[4]), thick);
+    points[6]      = TThickPoint(0.5 * (points[4] + points[8]), thick);
 
     points[1]    = TThickPoint(0.5 * (points[0] + points[2]), thick);
     points[3]    = TThickPoint(0.5 * (points[2] + points[4]), thick);
@@ -2426,6 +2428,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
     break;
 
   case 2:
+    m_startPoint = newPos;
     if (!m_isSingleArc) {
       m_clickNumber = 1;
       m_startPoint  = m_endPoint;
