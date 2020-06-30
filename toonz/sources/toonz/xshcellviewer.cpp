@@ -3350,6 +3350,9 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
     menu.addAction(cmdManager->getAction(MI_Cut));
     menu.addAction(cmdManager->getAction(MI_Copy));
     menu.addAction(cmdManager->getAction(MI_Paste));
+    if (!soundTextCellsSelected) {
+      menu.addAction(cmdManager->getAction(MI_PasteDuplicate));
+    }
 
     QMenu *pasteSpecialMenu = new QMenu(tr("Paste Special"), this);
     {

@@ -1480,6 +1480,7 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_CreateBlankDrawing,
                 &TCellSelection::createBlankDrawings);
   enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
+  enableCommand(this, MI_PasteDuplicate, &TCellSelection::pasteDuplicateCells);
 }
 //-----------------------------------------------------------------------------
 // Used in RenameCellField::eventFilter()
@@ -1896,6 +1897,322 @@ void TCellSelection::pasteCells() {
   }
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
+void TCellSelection::pasteDuplicateCells() {
+  int r0, c0, r1, c1;
+  getSelectedCells(r0, c0, r1, c1);
+
+  QClipboard *clipboard     = QApplication::clipboard();
+  const QMimeData *mimeData = clipboard->mimeData();
+
+  TXsheet *xsh         = TApp::instance()->getCurrentXsheet()->getXsheet();
+  XsheetViewer *viewer = TApp::instance()->getCurrentXsheetViewer();
+
+  bool initUndo = false;
+  const TCellKeyframeData *cellKeyframeData =
+      dynamic_cast<const TCellKeyframeData *>(mimeData);
+
+  const TCellData *cellData = dynamic_cast<const TCellData *>(mimeData);
+  if (!cellData && cellKeyframeData) cellData = cellKeyframeData->getCellData();
+  if (!cellData) {
+    DVGui::error(QObject::tr("There are no copied cells to duplicate."));
+    return;
+  }
+  if (cellData) {
+    // go through all the reasons this might fail
+    if (isEmpty()) return;
+
+    if (cellData->getCellCount() == 0) {
+      DVGui::error(QObject::tr("No data to paste."));
+      return;
+    }
+
+    // xsheet columns increase in number as they go to the right
+    // timeline "columns" (visually rows) increase in number as they go up
+    // To paste in the frames the user would expect, we need to adjust the
+    // "column" placement if using the timeline.
+
+    if (viewer && !viewer->orientation()->isVerticalTimeline()) {
+      int cAdj = cellData->getColCount() - 1;
+      c0 -= cAdj;
+      c1 -= cAdj;
+    }
+
+    // make sure we aren't trying to paste anything in locked columns
+    for (int i = 0; i < cellData->getColCount(); i++) {
+      TXshColumn *column = xsh->getColumn(c0 + i);
+      if (column && column->isLocked()) {
+        DVGui::warning(QObject::tr("Cannot paste cells on locked layers."));
+        return;
+      }
+    }
+
+    // make sure the camera column isn't included in the selection
+    if (c0 < 0) {
+      DVGui::warning(QObject::tr("Can't place drawings on the camera column."));
+      return;
+    }
+
+    int oldR0 = r0;
+    int oldC0 = c0;
+    int oldR1 = r1;
+    int oldC1 = c1;
+    if (!cellData->canChange(xsh, c0)) return;
+
+    // find what cells we need
+    int cellCount = cellData->getCellCount();
+
+    // use a pair to ensure that only unique cells are duplicated
+    std::set<TXshCell> cells;
+    std::vector<TXshCell> cellsVector;
+    for (int i = 0; i < cellCount; i++) {
+      TXshCell cell = cellData->getCell(i);
+      cells.insert(cell);
+      cellsVector.push_back(cell);
+    }
+
+    // now put the set into a vector since it's easier to deal with
+    std::vector<TXshCell> uniqueCells;
+    std::set<TXshCell>::iterator it = cells.begin();
+    while (it != cells.end()) {
+      uniqueCells.push_back(*it);
+      it++;
+    }
+
+    TXshSimpleLevel *sl;
+    TXshLevelP level;
+
+    // check that the selection only includes types that can be duplicated and
+    // edited
+    while (it != cells.end()) {
+      if (it->isEmpty()) {
+        it++;
+        continue;
+      }
+      level = it->m_level;
+      if (level) {
+        int levelType = level->getType();
+        if (levelType == ZERARYFX_XSHLEVEL || levelType == PLT_XSHLEVEL ||
+            levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
+            levelType == MESH_XSHLEVEL) {
+          DVGui::warning(
+              QObject::tr("Cannot duplicate a drawing in the current column"));
+          return;
+        } else if (level->getSimpleLevel() &&
+                   level->getSimpleLevel()->isReadOnly()) {
+          DVGui::warning(
+              QObject::tr("Cannot duplicate frames in read only levels"));
+          return;
+        }
+      }
+      it++;
+    }
+
+    // now we do the work of duplicating cells
+
+    // start a undo block first
+    initUndo = true;
+    TUndoManager::manager()->beginBlock();
+
+    // Turn on sync level strip changes with xsheet if it is off
+    bool syncXsheetOn = true;
+    if (!Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) {
+      syncXsheetOn = false;
+      Preferences::instance()->setValue(syncLevelRenumberWithXsheet, true);
+    }
+
+    // now actually duplicate
+    std::vector<std::pair<TXshCell, TXshCell>> cellPairs;
+
+    for (int i = 0; i < uniqueCells.size(); i++) {
+      level = uniqueCells[i].m_level;
+      if (level) {
+        sl = uniqueCells[i].getSimpleLevel();
+        if (sl) {
+          std::set<TFrameId> frames;
+          TFrameId fid = uniqueCells[i].getFrameId();
+          frames.insert(fid);
+          FilmstripCmd::duplicate(sl, frames, true);
+
+          // see if we need to increment the frameId of
+          // other cells in the same level
+          std::set<int> cellsVectorAlreadyIncremented;
+          std::set<int> cellsPairsAlreadyIncremented;
+          for (int j = 0; j < uniqueCells.size(); j++) {
+            if (j == i) continue;
+            TXshSimpleLevel *tempSl;
+            TXshLevelP tempLevel;
+            tempLevel = uniqueCells[j].m_level;
+            if (tempLevel) {
+              tempSl = uniqueCells[j].getSimpleLevel();
+              if (tempSl) {
+                if (tempSl == sl) {
+                  TFrameId tempId    = uniqueCells[j].getFrameId();
+                  TFrameId currentId = uniqueCells[i].getFrameId();
+
+                  if (tempId.getNumber() > currentId.getNumber()) {
+                    tempId = TFrameId(tempId.getNumber() + 1, 0);
+
+                    // keep cellsVector in sync with uniqueCells
+                    for (int k = 0; k < cellsVector.size(); k++) {
+                      if (cellsVector[k] == uniqueCells[j] &&
+                          cellsVectorAlreadyIncremented.find(k) ==
+                              cellsVectorAlreadyIncremented.end()) {
+                        cellsVector[k].m_frameId = tempId;
+                        cellsVectorAlreadyIncremented.insert(k);
+                      }
+                    }
+                    // and with cellPairs
+                    for (int k = 0; k < cellPairs.size(); k++) {
+                      if (cellPairs[k].first == uniqueCells[j] &&
+                          cellsPairsAlreadyIncremented.find(k) ==
+                              cellsPairsAlreadyIncremented.end()) {
+                        cellPairs[k].first.m_frameId = tempId;
+                        cellPairs[k].second.m_frameId =
+                            cellPairs[k].second.m_frameId + 1;
+                        cellsPairsAlreadyIncremented.insert(k);
+                      }
+                    }
+                    uniqueCells[j].m_frameId = tempId;
+                  }
+                }
+              }
+            }
+          }
+          TXshCell newCell;
+          newCell.m_level   = sl;
+          newCell.m_frameId = fid + 1;
+          cellPairs.push_back(std::make_pair(uniqueCells[i], newCell));
+        }
+      }
+    }
+
+    // turn off sync with xsheet if it wasn't on originally
+    if (syncXsheetOn == false) {
+      Preferences::instance()->setValue(syncLevelRenumberWithXsheet, false);
+    }
+
+    // we should now have a vector with all original cells
+    // and a pair vector with the original cell and its duplicate
+    // let's make a new cellData populated with the new cells when needed.
+    std::vector<TXshCell> newCells;
+    for (int i = 0; i < cellsVector.size(); i++) {
+      std::vector<std::pair<TXshCell, TXshCell>>::iterator pairIt =
+          cellPairs.begin();
+      bool found = false;
+      while (pairIt != cellPairs.end()) {
+        if (cellsVector[i] == pairIt->first) {
+          found = true;
+          newCells.push_back(pairIt->second);
+          break;
+        }
+        pairIt++;
+      }
+      if (!found) {
+        newCells.push_back(cellsVector[i]);
+      }
+    }
+
+    TCellData *newCellData = new TCellData(cellData);
+    newCellData->replaceCells(newCells);
+
+    assert(newCellData->getCellCount() == cellData->getCellCount());
+
+    bool isPaste = pasteCellsWithoutUndo(newCellData, r0, c0, r1, c1);
+
+    // Se la selezione corrente e' TCellSelection selezione le celle copiate
+    TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+        TApp::instance()->getCurrentSelection()->getSelection());
+    if (cellSelection) cellSelection->selectCells(r0, c0, r1, c1);
+
+    std::vector<bool> areColumnsEmpty;
+    int c;
+    for (c = c0; c <= c1; c++) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) {
+        areColumnsEmpty.push_back(false);
+        continue;
+      }
+      int newCr0, newCr1;
+      column->getRange(newCr0, newCr1);
+      areColumnsEmpty.push_back(!column || column->isEmpty() ||
+                                (newCr0 == r0 && newCr1 == r1));
+    }
+
+    if (!isPaste) {
+      TUndoManager::manager()->endBlock();
+      if (cellPairs.size() > 0) {
+        TUndoManager::manager()->undo();
+        TUndoManager::manager()->popUndo(1);
+      }
+      return;
+    }
+
+    TUndoManager::manager()->add(new PasteCellsUndo(
+        r0, c0, r1, c1, oldR0, oldC0, oldR1, oldC1, areColumnsEmpty));
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  }
+
+  const TKeyframeData *keyframeData =
+      dynamic_cast<const TKeyframeData *>(mimeData);
+  if (!keyframeData && cellKeyframeData)
+    keyframeData = cellKeyframeData->getKeyframeData();
+  if (keyframeData) {
+    if (keyframeData->m_keyData.empty()) {
+      DVGui::error(QObject::tr(
+          "It is not possible to paste data: there is nothing to paste."));
+      return;
+    }
+    TKeyframeSelection selection;
+    if (isEmpty() &&
+        TApp::instance()->getCurrentObject()->getObjectId() ==
+            TStageObjectId::CameraId(xsh->getCameraColumnIndex()))
+    // Se la selezione e' vuota e l'objectId e' quello della camera sono nella
+    // colonna di camera quindi devo selezionare la row corrente e -1.
+    {
+      int row = TApp::instance()->getCurrentFrame()->getFrame();
+      selection.select(row, -1);
+    } else {
+      // Retrieves all keyframe positions from mime data and translates them by
+      // (r0,c0)
+      std::set<TKeyframeSelection::Position> positions;
+      int newC0 = c0;
+      if (viewer && !viewer->orientation()->isVerticalTimeline() && !cellData)
+        newC0 = c0 - keyframeData->getColumnSpanCount() + 1;
+      TKeyframeSelection::Position offset(keyframeData->getKeyframesOffset());
+      positions.insert(TKeyframeSelection::Position(r0 + offset.first,
+                                                    newC0 + offset.second));
+      keyframeData->getKeyframes(positions);
+      selection.select(positions);
+
+      if (!cellKeyframeData) {
+        // Retrieve the keyframes bbox
+        r1 = positions.rbegin()->first;
+        c1 = c0;
+
+        std::set<TKeyframeSelection::Position>::const_iterator it,
+            end = positions.end();
+        for (it = positions.begin(); it != end; ++it)
+          c1 = std::max(c1, it->second);
+      }
+    }
+    if (!initUndo) {
+      initUndo = true;
+      TUndoManager::manager()->beginBlock();
+    }
+    selection.pasteKeyframesWithShift(r0, r1, c0, c1);
+  }
+
+  if (!initUndo) {
+    DVGui::error(QObject::tr("There are no copied cells to duplicate."));
+    return;
+  }
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  TUndoManager::manager()->endBlock();
+  clipboard->clear();
 }
 
 //-----------------------------------------------------------------------------
