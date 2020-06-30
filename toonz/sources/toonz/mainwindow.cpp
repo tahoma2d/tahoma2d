@@ -1877,6 +1877,7 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_RemoveReferenceToStudioPalette,
                              tr("Remove Reference to Studio Palette"), "");
   createMenuEditAction(MI_Clear, tr("&Delete"), "Del");
+  createMenuEditAction(MI_ClearFrames, tr("&Clear Frames"), "");
   createMenuEditAction(MI_Insert, tr("&Insert"), "Ins");
   createMenuEditAction(MI_InsertAbove, tr("&Insert Above/After"), "Shift+Ins");
   createMenuEditAction(MI_Group, tr("&Group"), "Ctrl+G");

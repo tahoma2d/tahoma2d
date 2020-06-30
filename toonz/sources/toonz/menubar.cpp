@@ -487,6 +487,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(levelMenu, MI_ExportLevel);
   levelMenu->addSeparator();
   addMenuItem(levelMenu, MI_AddFrames);
+  addMenuItem(levelMenu, MI_ClearFrames);
   addMenuItem(levelMenu, MI_Renumber);
   addMenuItem(levelMenu, MI_ReplaceLevel);
   addMenuItem(levelMenu, MI_RevertToCleanedUp);

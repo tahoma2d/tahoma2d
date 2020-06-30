@@ -74,6 +74,7 @@ void TFilmstripSelection::enableCommands() {
     enableCommand(this, MI_Paste, &TFilmstripSelection::pasteFrames);
     enableCommand(this, MI_PasteInto, &TFilmstripSelection::pasteInto);
     enableCommand(this, MI_Clear, &TFilmstripSelection::deleteFrames);
+    enableCommand(this, MI_ClearFrames, &TFilmstripSelection::clearFrames);
     enableCommand(this, MI_Reverse, &TFilmstripSelection::reverseFrames);
     enableCommand(this, MI_Swing, &TFilmstripSelection::swingFrames);
     enableCommand(this, MI_Step2, &TFilmstripSelection::stepFrames, 2);
@@ -278,6 +279,42 @@ void TFilmstripSelection::pasteInto() {
 //-----------------------------------------------------------------------------
 
 void TFilmstripSelection::deleteFrames() {
+  TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
+  if (sl) {
+    // find highest numbered frame
+    int highestFrame = -1;
+    TFrameId fid;
+    int index                       = -1;
+    std::set<TFrameId>::iterator it = m_selectedFrames.begin();
+    while (it != m_selectedFrames.end()) {
+      if (sl->fid2index(*it) > highestFrame) {
+        index        = sl->fid2index(*it);
+        highestFrame = sl->fid2index(*it);
+      }
+      it++;
+    }
+    if (highestFrame > -1) {
+      if (sl->getFrameCount() > highestFrame + 1) {
+        fid = sl->index2fid(highestFrame + 1);
+      } else {
+        highestFrame = -1;
+      }
+    }
+    FilmstripCmd::deleteFrames(sl, m_selectedFrames);
+    selectNone();
+    if (highestFrame > -1) {
+      TApp::instance()->getCurrentFrame()->setFid(fid);
+      select(fid);
+    } else {
+      TApp::instance()->getCurrentFrame()->setFid(sl->getLastFid());
+      select(sl->getLastFid());
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TFilmstripSelection::clearFrames() {
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
   if (sl) FilmstripCmd::clear(sl, m_selectedFrames);
   updateInbetweenRange();
