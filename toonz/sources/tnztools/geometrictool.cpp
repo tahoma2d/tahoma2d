@@ -2324,18 +2324,17 @@ void MultiArcPrimitive::draw() {
 
   switch (m_clickNumber) {
   case 1:
-    tglColor(m_color);
+    tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                      (m_color.b + 127) % 255, m_color.m));
     tglDrawSegment(m_startPoint, m_endPoint);
 
-    if (!m_isSingleArc) {
-      tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
-                        (m_color.b + 127) % 255, m_color.m));
+    if (m_stroke) {
+      tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
 
-      if (m_stroke) {
-        drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
-        tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
-      }
+      tglColor(m_color);
+      drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
     }
+
     break;
 
   case 2:
@@ -2356,8 +2355,7 @@ void MultiArcPrimitive::draw() {
     if (m_strokeTemp)
       drawStrokeCenterline(*m_strokeTemp, sqrt(tglGetPixelSize2()));
 
-    if (!m_isSingleArc && m_stroke &&
-        m_stroke->getControlPoint(0) != m_endPoint) {
+    if (m_stroke && m_stroke->getControlPoint(0) != m_endPoint) {
       tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
                         (m_color.b + 127) % 255, m_color.m));
 
@@ -2389,22 +2387,23 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
       this, m_stroke, m_strokeTemp, m_startPoint, m_endPoint, m_centralPoint,
       m_clickNumber, m_color);
 
+  if (app->getCurrentObject()->isSpline()) {
+    m_isEditing = true;
+    m_color     = TPixel32::Red;
+  } else {
+    const TColorStyle *style = app->getCurrentLevelStyle();
+    if (style) {
+      m_isEditing = style->isStrokeStyle();
+      m_color     = style->getAverageColor();
+    } else {
+      m_isEditing = false;
+      m_color     = TPixel32::Black;
+    }
+  }
+
   switch (m_clickNumber) {
   case 0:
     m_endPoint = newPos;
-    if (app->getCurrentObject()->isSpline()) {
-      m_isEditing = true;
-      m_color     = TPixel32::Red;
-    } else {
-      const TColorStyle *style = app->getCurrentLevelStyle();
-      if (style) {
-        m_isEditing = style->isStrokeStyle();
-        m_color     = style->getAverageColor();
-      } else {
-        m_isEditing = false;
-        m_color     = TPixel32::Black;
-      }
-    }
 
     if (!m_isEditing) return;
 
