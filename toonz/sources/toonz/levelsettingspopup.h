@@ -92,6 +92,7 @@ class LevelSettingsPopup final : public DVGui::Dialog {
 
   SelectedLevelType getType(TXshLevelP);
   LevelSettingsValues getValues(TXshLevelP);
+  bool m_hideAlreadyCalled = false;
 
 public:
   LevelSettingsPopup();
