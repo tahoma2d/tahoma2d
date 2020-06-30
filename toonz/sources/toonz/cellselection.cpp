@@ -1917,6 +1917,10 @@ void TCellSelection::pasteDuplicateCells() {
 
   const TCellData *cellData = dynamic_cast<const TCellData *>(mimeData);
   if (!cellData && cellKeyframeData) cellData = cellKeyframeData->getCellData();
+  if (!cellData) {
+    DVGui::error(QObject::tr("There are no copied cells to duplicate."));
+    return;
+  }
   if (cellData) {
     // go through all the reasons this might fail
     if (isEmpty()) return;
@@ -2150,98 +2154,6 @@ void TCellSelection::pasteDuplicateCells() {
     selection.pasteKeyframesWithShift(r0, r1, c0, c1);
   }
 
-  // if (const DrawingData* drawingData =
-  //    dynamic_cast<const DrawingData*>(mimeData)) {
-  //    if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
-  //        return;
-
-  //    set<TFrameId> frameIds;
-  //    drawingData->getFrames(frameIds);
-  //    TXshSimpleLevel* level = drawingData->getLevel();
-  //    if (level && !frameIds.empty())
-  //        pasteDrawingsInCellWithoutUndo(xsh, level, frameIds, r0, c0);
-  //    if (!initUndo) {
-  //        initUndo = true;
-  //        TUndoManager::manager()->beginBlock();
-  //    }
-  //    TUndoManager::manager()->add(
-  //        new PasteDrawingsInCellUndo(level, frameIds, r0, c0));
-  //}
-  // if (const StrokesData* strokesData =
-  //    dynamic_cast<const StrokesData*>(mimeData)) {
-  //    if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
-  //        return;
-
-  //    TImageP img = xsh->getCell(r0, c0).getImage(false);
-  //    if (!img && r0 > 0) {
-  //        TXshCell cell = xsh->getCell(r0 - 1, c0);
-  //        TXshLevel* xl = cell.m_level.getPointer();
-  //        if (xl && (xl->getType() != OVL_XSHLEVEL ||
-  //            xl->getPath().getFrame() != TFrameId::NO_FRAME))
-  //            img = cell.getImage(false);
-  //    }
-  //    if (!initUndo) {
-  //        initUndo = true;
-  //        TUndoManager::manager()->beginBlock();
-  //    }
-  //    RasterImageData* rasterImageData = 0;
-  //    if (TToonzImageP ti = img) {
-  //        rasterImageData = strokesData->toToonzImageData(ti);
-  //        pasteRasterImageInCell(r0, c0, rasterImageData);
-  //    }
-  //    else if (TRasterImageP ri = img) {
-  //        double dpix, dpiy;
-  //        ri->getDpi(dpix, dpiy);
-  //        if (dpix == 0 || dpiy == 0) {
-  //            TPointD dpi = xsh->getScene()->getCurrentCamera()->getDpi();
-  //            dpix = dpi.x;
-  //            dpiy = dpi.y;
-  //            ri->setDpi(dpix, dpiy);
-  //        }
-  //        rasterImageData = strokesData->toFullColorImageData(ri);
-  //        pasteRasterImageInCell(r0, c0, rasterImageData);
-  //    }
-  //    else
-  //        pasteStrokesInCell(r0, c0, strokesData);
-  //}
-  // if (const RasterImageData* rasterImageData =
-  //    dynamic_cast<const RasterImageData*>(mimeData)) {
-  //    if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
-  //        return;
-
-  //    TImageP img = xsh->getCell(r0, c0).getImage(false);
-  //    if (!img && r0 > 0) {
-  //        TXshCell cell = xsh->getCell(r0 - 1, c0);
-  //        TXshLevel* xl = cell.m_level.getPointer();
-  //        if (xl && (xl->getType() != OVL_XSHLEVEL ||
-  //            xl->getPath().getFrame() != TFrameId::NO_FRAME))
-  //            img = cell.getImage(false);
-  //    }
-  //    const FullColorImageData* fullColData =
-  //        dynamic_cast<const FullColorImageData*>(rasterImageData);
-  //    TToonzImageP ti(img);
-  //    TVectorImageP vi(img);
-  //    if (!initUndo) {
-  //        initUndo = true;
-  //        TUndoManager::manager()->beginBlock();
-  //    }
-  //    if (fullColData && (vi || ti)) {
-  //        DVGui::error(QObject::tr(
-  //            "The copied selection cannot be pasted in the current
-  //            drawing."));
-  //        return;
-  //    }
-  //    if (vi) {
-  //        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
-  //        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
-  //        assert(sl);
-  //        StrokesData* strokesData =
-  //        rasterImageData->toStrokesData(sl->getScene());
-  //        pasteStrokesInCell(r0, c0, strokesData);
-  //    }
-  //    else
-  //        pasteRasterImageInCell(r0, c0, rasterImageData);
-  //}
   if (!initUndo) {
     DVGui::error(QObject::tr("There are no copied cells to duplicate."));
     return;
