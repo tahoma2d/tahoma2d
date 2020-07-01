@@ -447,12 +447,12 @@ void TPanelTitleBar::paintEvent(QPaintEvent *) {
   }
 
   if (dw->isFloating()) {
-    const static QPixmap closeButtonPixmap(
-        svgToPixmap(":/Resources/pane_close.svg", QSize(18, 18)));
-    const static QPixmap closeButtonPixmapOver(
-        svgToPixmap(":/Resources/pane_close_rollover.svg", QSize(18, 18)));
+    const static QPixmap closeButtonPixmap(svgToPixmap(
+        getIconThemePath("actions/18/pane_close.svg"), QSize(18, 18)));
+    const static QPixmap closeButtonPixmapOver(svgToPixmap(
+        getIconThemePath("actions/18/pane_close_rollover.svg"), QSize(18, 18)));
 
-    QPoint closeButtonPos(rect.right() - 18, rect.top() + 1);
+    QPoint closeButtonPos(rect.right() - 18, rect.top());
 
     if (m_closeButtonHighlighted)
       painter.drawPixmap(closeButtonPos, closeButtonPixmapOver);
