@@ -1900,14 +1900,21 @@ else return false;
   */
 
   int getChipCount() const override {
-    return styleManager()->getPatternCount();
+    return styleManager()->getPatternCount() + 1;
   }
 
   void drawChip(QPainter &p, QRect rect, int index) override {
-    assert(0 <= index && index < getChipCount());
-    CustomStyleManager::PatternData pattern = styleManager()->getPattern(index);
-    if (pattern.m_image && !pattern.m_image->isNull())
-      p.drawImage(rect, *pattern.m_image);
+    if (index == 0) {
+      static QImage noSpecialStyleImage(":Resources/no_vectorbrush.png");
+      p.drawImage(rect, noSpecialStyleImage);
+    } else {
+      index -= 1;
+      assert(0 <= index && index <= getChipCount());
+      CustomStyleManager::PatternData pattern =
+          styleManager()->getPattern(index);
+      if (pattern.m_image && !pattern.m_image->isNull())
+        p.drawImage(rect, *pattern.m_image);
+    }
   }
   void onSelect(int index) override;
 };
@@ -1931,13 +1938,19 @@ bool CustomStyleChooserPage::event(QEvent *e) {
   CustomStyleManager *manager = styleManager();
   QHelpEvent *he              = static_cast<QHelpEvent *>(e);
 
-  int chipIdx = posToIndex(he->pos()), chipCount = manager->getPatternCount();
-  if (chipIdx < 0 || chipIdx >= chipCount) return false;
+  int chipIdx   = posToIndex(he->pos());
+  int chipCount = manager->getPatternCount();
+  if (chipIdx == 0) {
+    QToolTip::showText(he->globalPos(),
+                       QObject::tr("Plain color", "CustomStyleChooserPage"));
+  } else {
+    chipIdx--;
+    if (chipIdx < 0 || chipIdx >= chipCount) return false;
 
-  CustomStyleManager::PatternData pattern = manager->getPattern(chipIdx);
-  QToolTip::showText(he->globalPos(),
-                     QString::fromStdString(pattern.m_patternName));
-
+    CustomStyleManager::PatternData pattern = manager->getPattern(chipIdx);
+    QToolTip::showText(he->globalPos(),
+                       QString::fromStdString(pattern.m_patternName));
+  }
   return true;
 }
 
@@ -1946,17 +1959,23 @@ bool CustomStyleChooserPage::event(QEvent *e) {
 void CustomStyleChooserPage::onSelect(int index) {
   if (index < 0 || index >= getChipCount()) return;
 
-  CustomStyleManager::PatternData pattern = styleManager()->getPattern(index);
-
-  if (m_currentIndex < 0) return;
-
-  std::string name = pattern.m_patternName;
-  if (pattern.m_isVector) {
-    TVectorImagePatternStrokeStyle cs(name);
+  if (index == 0) {
+    TSolidColorStyle cs(TPixel32::Black);
     emit styleSelected(cs);
   } else {
-    TRasterImagePatternStrokeStyle cs(name);
-    emit styleSelected(cs);
+    index--;
+    CustomStyleManager::PatternData pattern = styleManager()->getPattern(index);
+
+    if (m_currentIndex < 0) return;
+
+    std::string name = pattern.m_patternName;
+    if (pattern.m_isVector) {
+      TVectorImagePatternStrokeStyle cs(name);
+      emit styleSelected(cs);
+    } else {
+      TRasterImagePatternStrokeStyle cs(name);
+      emit styleSelected(cs);
+    }
   }
 }
 
@@ -2090,14 +2109,20 @@ public:
       return false;
   }
 
-  int getChipCount() const override { return m_textures.size(); }
+  int getChipCount() const override { return m_textures.size() + 1; }
 
   static void loadTexture(const TFilePath &fp);
   static void loadItems();
 
   void drawChip(QPainter &p, QRect rect, int index) override {
-    assert(0 <= index && index < getChipCount());
-    p.drawImage(rect, rasterToQImage(m_textures[index].m_raster));
+    if (index == 0) {
+      static QImage noSpecialStyleImage(":Resources/no_vectorbrush.png");
+      p.drawImage(rect, noSpecialStyleImage);
+    } else {
+      index -= 1;
+      assert(0 <= index && index < getChipCount());
+      p.drawImage(rect, rasterToQImage(m_textures[index].m_raster));
+    }
   }
 
   void onSelect(int index) override;
@@ -2177,11 +2202,17 @@ void TextureStyleChooserPage::loadItems() {
 //-----------------------------------------------------------------------------
 
 void TextureStyleChooserPage::onSelect(int index) {
-  assert(0 <= index && index < (int)m_textures.size());
+  if (index > 0) {
+    --index;
+    assert(0 <= index && index < (int)m_textures.size());
 
-  TTextureStyle style(m_textures[index].m_raster,
-                      TFilePath(m_textures[index].m_name.toStdWString()));
-  emit styleSelected(style);
+    TTextureStyle style(m_textures[index].m_raster,
+                        TFilePath(m_textures[index].m_name.toStdWString()));
+    emit styleSelected(style);
+  } else {
+    TSolidColorStyle cs(TPixel32::Black);
+    emit styleSelected(cs);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2191,8 +2222,14 @@ bool TextureStyleChooserPage::event(QEvent *e) {
     QHelpEvent *helpEvent = dynamic_cast<QHelpEvent *>(e);
     QString toolTip;
     QPoint pos = helpEvent->pos();
-    int index  = posToIndex(pos);
-    if (index >= 0 && index < (int)m_textures.size()) {
+
+    int index = posToIndex(pos);
+
+    if (index == 0) {
+      QToolTip::showText(helpEvent->globalPos(),
+                         QObject::tr("Plain color", "TextureStyleChooserPage"));
+    } else if (index > 0 && index <= (int)m_textures.size()) {
+      index--;
       toolTip = m_textures[index].m_name;
       QToolTip::showText(
           helpEvent->globalPos(),
@@ -2354,7 +2391,7 @@ void SpecialStyleChooserPage::loadItems() {
         tagId == 2000 ||  // imagepattern
         tagId == 2800 ||  // imagepattern
         tagId == 2001 ||  // cleanup
-        tagId == 2002 ||  // ??
+        tagId == 2002 ||  // black cleanup
         tagId == 3000 ||  // vector brush
         tagId == 4001     // mypaint brush
         )
@@ -3021,7 +3058,11 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
+#ifdef WIN32
       hLayout->addSpacing(-1);
+#else
+      hLayout->addSpacing(4);
+#endif
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }
@@ -3710,13 +3751,19 @@ void StyleEditor::selectStyle(const TColorStyle &newStyle) {
 
   // Update editor widgets
   m_newColor->setStyle(*m_editedStyle);
-  TPixel32 color  = m_editedStyle->getMainColor();
-  QString myColor = QString::number(color.r) + ", " + QString::number(color.g) +
-                    ", " + QString::number(color.b);
-  std::string myColorStr = myColor.toStdString();
-  QString styleSheet     = "background-color: rgb(%1);";
-  m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-
+  int tag = m_editedStyle->getTagId();
+  if (tag == 4 || tag == 2000 || tag == 2800) {
+    m_fillColorWidget->hide();
+  } else {
+    m_fillColorWidget->show();
+    TPixel32 color  = m_editedStyle->getMainColor();
+    QString myColor = QString::number(color.r) + ", " +
+                      QString::number(color.g) + ", " +
+                      QString::number(color.b);
+    std::string myColorStr = myColor.toStdString();
+    QString styleSheet     = "background-color: rgb(%1);";
+    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  }
   m_plainColorPage->setColor(*m_editedStyle, getColorParam());
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
@@ -3754,12 +3801,20 @@ void StyleEditor::onParamStyleChanged(bool isDragging) {
 
   m_editedStyle->invalidateIcon();       // Refresh the new color icon
   m_newColor->setStyle(*m_editedStyle);  //
-  TPixel32 color  = m_editedStyle->getMainColor();
-  QString myColor = QString::number(color.r) + ", " + QString::number(color.g) +
-                    ", " + QString::number(color.b);
-  std::string myColorStr = myColor.toStdString();
-  QString styleSheet     = "background-color: rgb(%1);";
-  m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+
+  int tag = m_editedStyle->getTagId();
+  if (tag == 4 || tag == 2000 || tag == 2800) {
+    m_fillColorWidget->hide();
+  } else {
+    TPixel32 color  = m_editedStyle->getMainColor();
+    QString myColor = QString::number(color.r) + ", " +
+                      QString::number(color.g) + ", " +
+                      QString::number(color.b);
+    std::string myColorStr = myColor.toStdString();
+    m_fillColorWidget->show();
+    QString styleSheet = "background-color: rgb(%1);";
+    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  }
 }
 
 //-----------------------------------------------------------------------------
