@@ -413,8 +413,8 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -232;
-  int iconWidth                         = 20;
+  int x                                 = -216;
+  int iconWidth                         = 18;
   TPanelTitleBarButton *button;
 
   // buttons for show / hide toggle for the field guide and the safe area
@@ -455,13 +455,13 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_3d.svg"));
   button->setToolTip(tr("3D View"));
-  x += 21;  // width of pane_table_off.svg = 20px
+  x += + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_cam.svg"));
   button->setToolTip(tr("Camera View"));
-  x += 21;  // width of pane_3d_off.svg = 20px
+  x += + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
@@ -469,7 +469,7 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   // freeze button
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_freeze.svg"));
-  x += 10 + 20;  // width of pane_cam_off.svg = 20px
+  x += 10 + iconWidth;
 
   button->setToolTip(tr("Freeze"));  // RC1
   titleBar->add(QPoint(x, 0), button);
@@ -487,7 +487,7 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   m_subcameraPreviewButton =
       new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_subpreview.svg"));
-  x += 26;  // width of pane_preview_off.svg = 25px
+  x += + 1 + 22;  // width of pane_preview.svg = 22px
 
   titleBar->add(QPoint(x, 0), m_subcameraPreviewButton);
   m_subcameraPreviewButton->setToolTip(tr("Sub-camera Preview"));

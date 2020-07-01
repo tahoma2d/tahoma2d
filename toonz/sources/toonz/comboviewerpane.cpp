@@ -425,8 +425,8 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -232;
-  int iconWidth                         = 20;
+  int x                                 = -216;
+  int iconWidth                         = 18;
   TPanelTitleBarButton *button;
 
   // buttons for show / hide toggle for the field guide and the safe area
@@ -460,20 +460,20 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   // view mode toggles
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_table.svg"));
   button->setToolTip(tr("Camera Stand View"));
-  x += 10 + iconWidth;
+  x += 10 + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
   button->setPressed(true);
 
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_3d.svg"));
   button->setToolTip(tr("3D View"));
-  x += 21;  // width of pane_table_off.svg = 20px
+  x += + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_cam.svg"));
   button->setToolTip(tr("Camera View"));
-  x += 21;  // width of pane_3d_off.svg = 20px
+  x += + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
@@ -481,9 +481,9 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   // freeze button
   button = new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_freeze.svg"));
-  x += 10 + 20;  // width of pane_cam_off.svg = 20px
+  x += 10 + iconWidth;
 
-  button->setToolTip(tr("Freeze"));  // RC1
+  button->setToolTip(tr("Freeze"));
   titleBar->add(QPoint(x, 0), button);
   ret = ret && connect(button, SIGNAL(toggled(bool)), m_sceneViewer,
                        SLOT(freeze(bool)));
@@ -499,7 +499,7 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   m_subcameraPreviewButton =
       new TPanelTitleBarButton(titleBar, getIconThemePath("actions/18/pane_subpreview.svg"));
-  x += 26;  // width of pane_preview_off.svg = 25px
+  x += + 1 + 22;  // width of pane_preview_off.svg = 22px
 
   titleBar->add(QPoint(x, 0), m_subcameraPreviewButton);
   m_subcameraPreviewButton->setToolTip(tr("Sub-camera Preview"));
