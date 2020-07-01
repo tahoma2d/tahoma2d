@@ -1987,6 +1987,7 @@ void TCellSelection::pasteDuplicateCells() {
 
     // check that the selection only includes types that can be duplicated and
     // edited
+    it = cells.begin();
     while (it != cells.end()) {
       if (it->isEmpty()) {
         it++;
@@ -2006,6 +2007,11 @@ void TCellSelection::pasteDuplicateCells() {
           DVGui::warning(
               QObject::tr("Cannot duplicate frames in read only levels"));
           return;
+        }
+        else if (level->getSimpleLevel() && it->getFrameId() == TFrameId::NO_FRAME) {
+            DVGui::warning(
+                QObject::tr("Can only duplicate frames in image sequence levels."));
+            return;
         }
       }
       it++;
