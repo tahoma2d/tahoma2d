@@ -295,23 +295,6 @@ void AddFxContextMenu::loadFxPlugins(QMenu *insertFxGroup, QMenu *addFxGroup,
   }
   std::sort(std::begin(vendors), std::end(vendors));
 
-  // add vendor folders
-  std::map<std::string, QMenu *> insVendors;
-  std::map<std::string, QMenu *> addVendors;
-  std::map<std::string, QMenu *> repVendors;
-  for (std::string vendor : vendors) {
-    std::map<std::string, QMenu *>::iterator v = insVendors.find(vendor);
-    if (v == insVendors.end()) {
-      QString vendorQStr = QString::fromStdString(vendor);
-      insVendors.insert(
-          std::make_pair(vendor, insertFxGroup->addMenu(vendorQStr)));
-      addVendors.insert(
-          std::make_pair(vendor, addFxGroup->addMenu(vendorQStr)));
-      repVendors.insert(
-          std::make_pair(vendor, replaceFxGroup->addMenu(vendorQStr)));
-    }
-  }
-
   // add actions
   for (auto &&plugin : plugin_dict_) {
     PluginDescription *desc = plugin.second->desc_;
@@ -327,39 +310,13 @@ void AddFxContextMenu::loadFxPlugins(QMenu *insertFxGroup, QMenu *addFxGroup,
     replaceAction->setData(
         QVariant("_plg_" + QString::fromStdString(desc->id_)));
 
-    (*insVendors.find(desc->vendor_)).second->addAction(insertAction);
-    (*addVendors.find(desc->vendor_)).second->addAction(addAction);
-    (*repVendors.find(desc->vendor_)).second->addAction(replaceAction);
+    insertFxGroup->addAction(insertAction);
+    addFxGroup->addAction(addAction);
+    replaceFxGroup->addAction(replaceAction);
 
     m_insertActionGroup->addAction(insertAction);
     m_addActionGroup->addAction(addAction);
     m_replaceActionGroup->addAction(replaceAction);
-  }
-
-  // sort actions
-  auto const comp = [](QAction *lhs, QAction *rhs) {
-    return lhs->text() < rhs->text();
-  };
-
-  for (auto &&ins : insVendors) {
-    QList<QAction *> actions = ins.second->actions();
-    ins.second->clear();
-    std::sort(actions.begin(), actions.end(), comp);
-    ins.second->addActions(actions);
-  }
-
-  for (auto &&ins : addVendors) {
-    QList<QAction *> actions = ins.second->actions();
-    ins.second->clear();
-    std::sort(actions.begin(), actions.end(), comp);
-    ins.second->addActions(actions);
-  }
-
-  for (auto &&ins : repVendors) {
-    QList<QAction *> actions = ins.second->actions();
-    ins.second->clear();
-    std::sort(actions.begin(), actions.end(), comp);
-    ins.second->addActions(actions);
   }
 }
 
