@@ -226,6 +226,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
     m_renderButton          = new QPushButton(tr("Render"), this);
+    m_renderButton->setIcon(createQIcon("render"));
+    m_renderButton->setIconSize(QSize(22, 22));
 
     // Board
     m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
