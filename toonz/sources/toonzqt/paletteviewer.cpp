@@ -301,15 +301,13 @@ void PaletteViewer::createTabBar() {
 void PaletteViewer::createPaletteToolBar() {
   m_paletteToolBar->clear();
   m_paletteToolBar->setMovable(false);
-  m_paletteToolBar->setIconSize(QSize(23, 20));
+  m_paletteToolBar->setIconSize(QSize(22, 22));
   m_paletteToolBar->setLayoutDirection(Qt::RightToLeft);
 
   // Lock button to avoid editing the palette by mistake
   if (m_viewType == LEVEL_PALETTE) {
-    QIcon lockIcon = createQIconOnOff("lockpalette");
-
     m_lockPaletteToolButton = new QToolButton(this);
-    m_lockPaletteToolButton->setIcon(lockIcon);
+    m_lockPaletteToolButton->setIcon(createQIcon("lock"));
     m_lockPaletteToolButton->setCheckable(true);
     m_lockPaletteToolButton->setObjectName("PaletteLockButton");
     m_lockPaletteToolButton->setToolTip(tr("Lock Palette"));
@@ -319,16 +317,11 @@ void PaletteViewer::createPaletteToolBar() {
 
     connect(m_lockPaletteToolButton, SIGNAL(clicked(bool)), this,
             SLOT(setIsLocked(bool)));
-
     m_paletteToolBar->addWidget(m_lockPaletteToolButton);
-
   } else if (m_viewType == STUDIO_PALETTE) {
     QToolButton *toolButton = new QToolButton(this);
     toolButton->setPopupMode(QToolButton::InstantPopup);
-
-    QIcon lockIcon = createQIconOnOff("lockpalette");
-    toolButton->setIcon(lockIcon);
-
+    toolButton->setIcon(createQIcon("lock"));
     toolButton->setObjectName("PaletteLockButton");
     toolButton->setToolTip(tr("Lock Palette"));
     toolButton->setCheckable(true);
@@ -354,7 +347,7 @@ void PaletteViewer::createPaletteToolBar() {
   QToolButton *viewModeButton = new QToolButton(this);
   viewModeButton->setPopupMode(QToolButton::InstantPopup);
 
-  QIcon viewModeIcon = createQIcon("options");
+  QIcon viewModeIcon = createQIcon("menu");
   viewModeButton->setIcon(viewModeIcon);
   QMenu *viewMode = new QMenu(QString("Options"), viewModeButton);
   viewMode->setToolTip(tr("Options"));
@@ -443,7 +436,7 @@ current viewer palette type.
 void PaletteViewer::createSavePaletteToolBar() {
   m_savePaletteToolBar->clear();
   m_savePaletteToolBar->setMovable(false);
-  m_savePaletteToolBar->setIconSize(QSize(22, 20));
+  m_savePaletteToolBar->setIconSize(QSize(22, 22));
 
   if (!m_hasSavePaletteToolbar || m_viewType == CLEANUP_PALETTE) {
     m_savePaletteToolBar->hide();
@@ -451,11 +444,11 @@ void PaletteViewer::createSavePaletteToolBar() {
   }
 
   // save palette as
-  QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
+  QIcon saveAsPaletteIcon = createQIcon("saveas");
   QAction *saveAsPalette  = new QAction(
       saveAsPaletteIcon, tr("&Save Palette As"), m_savePaletteToolBar);
   // overwrite palette
-  QIcon savePaletteIcon = createQIconOnOff("savepalette", false);
+  QIcon savePaletteIcon = createQIcon("save");
   QAction *savePalette =
       new QAction(savePaletteIcon, tr("&Save Palette"), m_savePaletteToolBar);
 
@@ -501,8 +494,8 @@ void PaletteViewer::updateTabBar() {
   TPalette *palette = getPalette();
   if (!palette) return;
 
-  QIcon tabIcon(":Resources/palette_tabicon.svg");
-  m_pagesBar->setIconSize(QSize(20, 15));
+  QIcon tabIcon = createQIcon("palette_tab");
+  m_pagesBar->setIconSize(QSize(16, 16));
 
   // Aggiungo i tab in funzione delle pagine di m_palette
   for (i = 0; i < palette->getPageCount(); i++) {
