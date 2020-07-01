@@ -123,7 +123,7 @@ void Ruler::drawVertical(QPainter &p) {
 
   int x0 = 0, x1 = w - 1;
   p.setPen(Qt::DotLine);
-  p.setPen(grey120);
+  p.setPen(getBorderColor());
   p.drawLine(x1, 0, x1, h - 1);
 
   double origin = -getPan() + 0.5 * h;
@@ -135,10 +135,10 @@ void Ruler::drawVertical(QPainter &p) {
     zoom = -zoom;
   }
   for (i = 0; i < count; i++) {
-    QColor color =
-        (m_moving && count - 1 == i ? QColor(0, 255, 255) : QColor(0, 0, 255));
-    double v = guides[i] / (double)getDevPixRatio();
-    int y    = (int)(origin - zoom * v);
+    QColor color = (m_moving && count - 1 == i ? QColor(getHandleDragColor())
+                                               : QColor(getHandleColor()));
+    double v     = guides[i] / (double)getDevPixRatio();
+    int y        = (int)(origin - zoom * v);
     p.fillRect(QRect(x0, y - 1, x1 - x0, 2), QBrush(color));
   }
 
@@ -177,7 +177,7 @@ void Ruler::drawHorizontal(QPainter &p) {
   int y0         = 0;
   int y1         = h - 1;
   p.setPen(Qt::DotLine);
-  p.setPen(grey120);
+  p.setPen(getBorderColor());
   p.drawLine(0, y1, w - 1, y1);
 
   double origin = getPan() + 0.5 * w;
@@ -190,10 +190,10 @@ void Ruler::drawHorizontal(QPainter &p) {
   if (m_hiding) count--;
   double zoom = getZoomScale();
   for (i = 0; i < count; i++) {
-    QColor color =
-        (m_moving && count - 1 == i ? QColor(0, 255, 255) : QColor(0, 0, 255));
-    double v = guides[i] / (double)getDevPixRatio();
-    int x    = (int)(origin + zoom * v);
+    QColor color = (m_moving && count - 1 == i ? QColor(getHandleDragColor())
+                                               : QColor(getHandleColor()));
+    double v     = guides[i] / (double)getDevPixRatio();
+    int x        = (int)(origin + zoom * v);
     p.fillRect(QRect(x - 1, y0, 2, y1 - y0), QBrush(color));
   }
 
