@@ -116,9 +116,9 @@ ExportSceneDvDirModelFileFolderNode::createExposeSceneNode(
 
 QPixmap ExportSceneDvDirModelProjectNode::getPixmap(bool isOpen) const {
   static QPixmap openProjectPixmap(
-      svgToPixmap(":Resources/browser_project_open.svg"));
+      svgToPixmap(getIconThemePath("actions/18/folder_project_on.svg")));
   static QPixmap closeProjectPixmap(
-      svgToPixmap(":Resources/browser_project_close.svg"));
+      svgToPixmap(getIconThemePath("actions/18/folder_project.svg")));
   return isOpen ? openProjectPixmap : closeProjectPixmap;
 }
 
@@ -185,7 +185,8 @@ void ExportSceneDvDirModelRootNode::refreshChildren() {
     ExportSceneDvDirModelSpecialFileFolderNode *projectRootNode =
         new ExportSceneDvDirModelSpecialFileFolderNode(this, L"Project root",
                                                        projectRoot);
-    projectRootNode->setPixmap(QPixmap(svgToPixmap(":Resources/projects.svg")));
+    projectRootNode->setPixmap(QPixmap(
+        svgToPixmap(getIconThemePath("actions/18/folder_project_root.svg"))));
     m_projectRootNodes.push_back(projectRootNode);
     addChild(projectRootNode);
   }

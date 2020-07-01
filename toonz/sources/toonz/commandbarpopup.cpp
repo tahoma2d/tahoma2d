@@ -284,12 +284,10 @@ CommandBarListTree::CommandBarListTree(QWidget* parent) : QTreeWidget(parent) {
   setDragEnabled(true);
   setDragDropMode(QAbstractItemView::DragOnly);
   setColumnCount(1);
-  setIconSize(QSize(21, 17));
+  setIconSize(QSize(21, 18));
   header()->close();
 
-  QIcon menuFolderIcon(":Resources/browser_project_close.svg");
-  menuFolderIcon.addFile(":Resources/browser_project_open.svg", QSize(),
-                         QIcon::Normal, QIcon::On);
+  QIcon menuFolderIcon(createQIcon("folder_project", true));
   invisibleRootItem()->setIcon(0, menuFolderIcon);
 
   QTreeWidgetItem* menuCommandFolder = new QTreeWidgetItem(this);
