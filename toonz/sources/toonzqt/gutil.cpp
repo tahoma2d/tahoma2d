@@ -14,6 +14,7 @@
 #include "tcurves.h"
 #include "trop.h"
 #include "tmsgcore.h"
+#include "toonz/preferences.h"
 
 // Qt includes
 #include <QPixmap>
@@ -203,65 +204,91 @@ int getDevPixRatio() {
 
 //-----------------------------------------------------------------------------
 
-QPixmap generateDisabledPixmap(QPixmap &input) {
-  // Generate disabled pixmaps for icons by reducing opacity of input pixmap
-  QPixmap pmInput = input;
-  QPixmap pmDisabled(pmInput.size());
-  pmDisabled.fill(Qt::transparent);
-  QPainter p(&pmDisabled);
+QPixmap pixmapOpacity(QPixmap &pixmap, double opacity) {
+  // Get device ratio, scale pixmap correctly for hdpi
+  qreal pixelRatio = getDevPixRatio();
+  QSize pixmapSize(pixmap.width() * pixelRatio, pixmap.height() * pixelRatio);
+
+  QPixmap opacityPixmap(pixmapSize);
+  opacityPixmap.setDevicePixelRatio(pixelRatio);
+  opacityPixmap.fill(Qt::transparent);
+
+  QPixmap normalPixmap = pixmap.scaled(pixmapSize, Qt::KeepAspectRatio);
+  normalPixmap.setDevicePixelRatio(pixelRatio);
+
+  QPainter p;
+  p.begin(&opacityPixmap);
   p.setBackgroundMode(Qt::TransparentMode);
   p.setBackground(QBrush(Qt::transparent));
-  p.eraseRect(pmInput.rect());
-  p.setOpacity(0.2);
-  p.drawPixmap(0, 0, pmInput);
+  p.eraseRect(normalPixmap.rect());
+  p.setOpacity(opacity);
+  p.drawPixmap(0, 0, normalPixmap);
   p.end();
 
-  return pmDisabled;
+  return opacityPixmap;
 }
 
 //-----------------------------------------------------------------------------
 
-QIcon createQIcon(const char *iconSVGName) {
-  QString normal = QString(":Resources/") + iconSVGName + ".svg";
-  QString click  = QString(":Resources/") + iconSVGName + "_click.svg";
-  QString over   = QString(":Resources/") + iconSVGName + "_over.svg";
+QString getIconThemePath(const QString &fileSVGPath) {
+  QString theme;
+  if (Preferences::instance()->getIconTheme())
+    theme = ":icons/dark/";
+  else
+    theme = ":icons/light/";
+  // qDebug() << "What is the theme name?" << themeName;
+  return theme + fileSVGPath;
+}
 
-  QIcon themeIconNormal;
-  QIcon themeIconClick;
-  QIcon themeIconOver;
+//-----------------------------------------------------------------------------
 
-  // Check if theme icon exists, give it priority
-  // If it doesn't, fallback to old resource
-  if (QIcon::hasThemeIcon(QString(iconSVGName))) {
-    themeIconNormal = QIcon::fromTheme(iconSVGName);
-    themeIconClick  = QIcon::fromTheme(QString(iconSVGName) + "_click");
-    themeIconOver  = QIcon::fromTheme(QString(iconSVGName) + "_over");
-  } else {
-    themeIconNormal = QIcon(normal);
-    themeIconClick  = QIcon(click);
-    themeIconOver  = QIcon(over);
-  }
+QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
+  // Normal, full opacity icon
+  QIcon iconNormal = QIcon::fromTheme(iconSVGName);
 
-  // Convert theme icons into pixmaps
-  QSize pmSize(48, 48);  // Just grab the largest file that may exist
-  QPixmap pmNormal = themeIconNormal.pixmap(pmSize, QIcon::Normal, QIcon::Off);
-  QPixmap pmClick  = themeIconClick.pixmap(pmSize, QIcon::Normal, QIcon::Off);
-  QPixmap pmOver   = themeIconOver.pixmap(pmSize, QIcon::Normal, QIcon::Off);
+  // Get size of theme icon, we just grab the largest available
+  QSize max(0, 0);
+  for (QList<QSize> sizes = iconNormal.availableSizes(); !sizes.isEmpty();
+       sizes.removeFirst())
+    if (sizes.first().width() > max.width()) max = sizes.first();
 
+  // Convert to pixmap with icon size, this is enough to build the icon, we can
+  // check for other states conditionally.
+  QPixmap normalPixmap = iconNormal.pixmap(max);
   QIcon icon;
-  icon.addPixmap(pmNormal, QIcon::Normal, QIcon::Off);
-  if (!themeIconClick.isNull())
-    icon.addPixmap(pmClick, QIcon::Normal, QIcon::On);
-  else
-    icon.addPixmap(pmNormal, QIcon::Normal, QIcon::On);
-  if (!themeIconOver.isNull())
-    icon.addPixmap(pmOver, QIcon::Active);
-  else
-    icon.addPixmap(pmNormal, QIcon::Active);
 
-  // Draw disabled pixmap, by reducing opacity of normal pixmap
-  if (!pmNormal.isNull())
-    icon.addPixmap(generateDisabledPixmap(pmNormal), QIcon::Disabled);
+  // Check for other states
+  if (!iconNormal.isNull()) {
+    QIcon iconOn   = QIcon::fromTheme(QString(iconSVGName) + "_on");
+    QIcon iconOver = QIcon::fromTheme(QString(iconSVGName) + "_over");
+
+    // The pixmap shown when the icon is idle
+    QPixmap inactivePixmap = pixmapOpacity(iconNormal.pixmap(max), 0.7);
+    // The pixmap shown when the icon is on/clicked/active
+    QPixmap onPixmap       = iconOn.pixmap(max);
+    if (!iconOver.isNull()) {
+      QPixmap overPixmap = iconOver.pixmap(max);
+      icon.addPixmap(overPixmap, QIcon::Active);
+    } else {
+      icon.addPixmap(normalPixmap, QIcon::Active);
+    }
+
+    // The pixmap shown when the icon is disabled
+    QPixmap disabledPixmap = pixmapOpacity(normalPixmap, 0.2);
+    icon.addPixmap(disabledPixmap, QIcon::Disabled);
+
+    // Check if inactive icon should use full opacity
+    if (useFullOpacity)
+      icon.addPixmap(normalPixmap, QIcon::Normal, QIcon::Off);
+    else
+      icon.addPixmap(inactivePixmap, QIcon::Normal, QIcon::Off);
+
+    if (!iconOn.isNull())
+      icon.addPixmap(onPixmap, QIcon::Normal, QIcon::On);
+    else
+      icon.addPixmap(normalPixmap, QIcon::Normal, QIcon::On);
+    
+  }
 
   return icon;
 }
@@ -277,51 +304,6 @@ QIcon createQIconPNG(const char *iconPNGName) {
   icon.addFile(normal, QSize(), QIcon::Normal, QIcon::Off);
   icon.addFile(click, QSize(), QIcon::Normal, QIcon::On);
   icon.addFile(over, QSize(), QIcon::Active);
-
-  return icon;
-}
-
-//-----------------------------------------------------------------------------
-
-QIcon createQIconOnOff(const char *iconSVGName, bool withOver) {
-  QString on   = QString(":Resources/") + iconSVGName + "_on.svg";
-  QString off  = QString(":Resources/") + iconSVGName + "_off.svg";
-  QString over = QString(":Resources/") + iconSVGName + "_over.svg";
-
-  QIcon themeIconOn;
-  QIcon themeIconOff;
-  QIcon themeIconOver;
-
-  // Check if theme icon exists, give it priority
-  // If it doesn't, fallback to old resource
-  if (QIcon::hasThemeIcon(QString(iconSVGName))) {
-    themeIconOn = QIcon::fromTheme(QString(iconSVGName) + "_on");
-    themeIconOff  = QIcon::fromTheme(QString(iconSVGName) + "_off");
-    themeIconOver  = QIcon::fromTheme(QString(iconSVGName) + "_over");
-  } else {
-    themeIconOn = QIcon(on);
-    themeIconOff  = QIcon(off);
-    themeIconOver  = QIcon(over);
-  }
-
-  // Convert theme icons into pixmaps
-  QSize pmSize(48, 48);  // Just grab the largest file that exists, we don't
-                         // support multiple size icons anyway.
-  QPixmap pmOn   = themeIconOn.pixmap(pmSize, QIcon::Normal, QIcon::Off);
-  QPixmap pmOff  = themeIconOff.pixmap(pmSize, QIcon::Normal, QIcon::Off);
-  QPixmap pmOver = themeIconOver.pixmap(pmSize, QIcon::Normal, QIcon::Off);
-
-  QIcon icon;
-  icon.addPixmap(pmOff, QIcon::Normal, QIcon::Off);
-  icon.addPixmap(pmOn, QIcon::Normal, QIcon::On);
-  if (withOver)
-    icon.addPixmap(pmOver, QIcon::Active);
-  else
-    icon.addPixmap(pmOn, QIcon::Active);
-
-  // Draw disabled pixmap, by reducing opacity of main pixmap
-  if (!pmOn.isNull())
-    icon.addPixmap(generateDisabledPixmap(pmOn), QIcon::Disabled);
 
   return icon;
 }
@@ -548,7 +530,6 @@ void TabBarContainter::paintEvent(QPaintEvent *event) {
 
 ToolBarContainer::ToolBarContainer(QWidget *parent) : QFrame(parent) {
   setObjectName("ToolBarContainer");
-  setFrameStyle(QFrame::StyledPanel);
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
@@ -556,8 +537,6 @@ ToolBarContainer::ToolBarContainer(QWidget *parent) : QFrame(parent) {
 
 void ToolBarContainer::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.setPen(QColor(120, 120, 120));
-  p.drawLine(0, 0, width(), 0);
 }
 
 //=============================================================================
