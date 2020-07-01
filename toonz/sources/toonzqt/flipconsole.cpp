@@ -590,8 +590,8 @@ void FlipConsole::setActive(bool active) {
 
 //-----------------------------------------------------------------------------
 
-#define LX 21
-#define LY 17
+#define LX 22
+#define LY 22
 class DoubleButton final : public QToolButton {
   QAction *m_firstAction, *m_secondAction;
   QIcon::Mode m_firstMode, m_secondMode;
@@ -610,6 +610,7 @@ public:
       , m_enabled(true) {
     setFixedSize(LX, LY);
     setMouseTracking(true);
+    setObjectName("flipDoubleButton");
   }
   void setEnabledSecondButton(bool state) {
     if (!state && m_secondAction->isChecked()) m_secondAction->trigger();
@@ -967,7 +968,7 @@ QAction *FlipConsole::createDoubleButton(
 
 void FlipConsole::createOnOffButton(UINT buttonMask, const char *iconStr,
                                     const QString &tip, QActionGroup *group) {
-  QIcon icon      = createQIconOnOff(iconStr);
+  QIcon icon      = createQIcon(iconStr);
   QAction *action = new QAction(icon, tip, m_playToolBar);
   action->setData(QVariant(buttonMask));
   action->setCheckable(true);
@@ -1098,7 +1099,7 @@ void FlipConsole::applyCustomizeMask() {
 
 void FlipConsole::createCustomizeMenu(bool withCustomWidget) {
   if (hasButton(m_gadgetsMask, eCustomize)) {
-    QIcon icon          = createQIcon("options");
+    QIcon icon          = createQIcon("menu");
     QToolButton *button = new QToolButton();
     button->setIcon(icon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
@@ -1174,7 +1175,7 @@ void FlipConsole::createPlayToolBar(QWidget *customWidget) {
   m_playToolBar = new QToolBar(this);
   m_playToolBar->setMovable(false);
   m_playToolBar->setObjectName("FlipConsolePlayToolBar");
-  m_playToolBar->setIconSize(QSize(17, 17));
+  m_playToolBar->setIconSize(QSize(22, 22));
   //	m_playToolBar->setObjectName("chackableButtonToolBar");
 
   // m_playToolBar->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -1716,6 +1717,13 @@ void FlipConsole::doButtonPressed(UINT button) {
     break;
 
   case eFilledRaster:
+    return;
+
+  case eFlipHorizontal:
+  case eFlipVertical:
+  case eZoomIn:
+  case eZoomOut:
+  case eResetView:
     return;
 
   default:
