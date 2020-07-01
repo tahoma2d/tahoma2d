@@ -281,6 +281,10 @@ void TFilmstripSelection::pasteInto() {
 void TFilmstripSelection::deleteFrames() {
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
   if (sl) {
+    if (sl->getFrameCount() <= 1) {
+      DVGui::warning(QObject::tr("Can't delete the last drawing in a level."));
+      return;
+    }
     // find highest numbered frame
     int highestFrame = -1;
     TFrameId fid;
