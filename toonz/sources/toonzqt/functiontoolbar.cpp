@@ -44,6 +44,7 @@
 FunctionToolbar::FunctionToolbar(QWidget *parent)
     : DVGui::ToolBar(parent), m_frameHandle(0), m_curve(0), m_selection(0) {
   setFixedHeight(28);
+  setIconSize(QSize(22, 22));
 
   m_valueToolbar    = new DVGui::ToolBar();
   m_keyframeToolbar = new DVGui::ToolBar();
@@ -63,7 +64,7 @@ FunctionToolbar::FunctionToolbar(QWidget *parent)
   space->setMinimumHeight(22);
   space->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-  QIcon toggleIcon      = createQIconOnOff("swap", false);
+  QIcon toggleIcon      = createQIcon("swap");
   QAction *toggleAction = new QAction(tr("&Open Function Curve Editor"), this);
   assert(toggleAction);
   toggleAction->setIcon(toggleIcon);
