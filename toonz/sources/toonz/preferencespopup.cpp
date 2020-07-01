@@ -1172,8 +1172,7 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
         {tr("Enable Tools For Level Only"), 1},
         {tr("Show Tools For Level Only"), 2}}},
       {xsheetLayoutPreference,
-       {{tr("Compact"), "Compact"}, 
-        {tr("Roomy"), "Roomy"}}},
+       {{tr("Compact"), "Compact"}, {tr("Roomy"), "Roomy"}}},
       {DragCellsBehaviour,
        {{tr("Cells Only"), 0}, {tr("Cells and Column Data"), 1}}},
       {keyframeType,  // note that the value starts from 1, not 0
