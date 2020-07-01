@@ -2426,7 +2426,6 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
     m_startPoint = newPos;
     if (!m_isSingleArc) {
       m_clickNumber = 1;
-      m_startPoint  = m_endPoint;
       if (m_stroke) {
         TVectorImageP vi = new TVectorImage();
         vi->addStroke(m_stroke);
@@ -2439,6 +2438,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
         int count          = m_stroke->getControlPointCount();
         TPointD firstPoint = m_stroke->getControlPoint(0);
         TPointD lastPoint  = m_stroke->getControlPoint(count - 1);
+        m_startPoint       = lastPoint;
         if (firstPoint == lastPoint) {
           vi->joinStroke(0, 0, 0, m_stroke->getControlPointCount() - 1,
                          getSmooth());
@@ -2452,6 +2452,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
       } else {
         m_stroke     = m_strokeTemp;
         m_strokeTemp = 0;
+        m_startPoint = m_endPoint;
       }
     } else {
       m_stroke     = m_strokeTemp;
