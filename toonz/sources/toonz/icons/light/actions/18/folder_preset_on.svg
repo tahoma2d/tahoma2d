@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="18px" height="18px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(0.818182,0,0,0.818182,-6.66134e-16,-6.66134e-16)">
+        <rect x="0" y="0" width="22" height="22" style="fill:rgb(255,162,0);fill-opacity:0;"/>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,0)">
+        <path d="M3,9L2.5,9C2.224,9 2,8.776 2,8.5L2,4C2,3.735 2.105,3.482 2.291,3.294C2.292,3.293 2.293,3.292 2.294,3.291C2.482,3.105 2.735,3 3,3L7,3C7.265,3 7.518,3.105 7.706,3.291C7.707,3.292 7.708,3.293 7.709,3.294C7.895,3.482 8,3.735 8,4L8,5L15,5C15.265,5 15.518,5.105 15.706,5.291C15.707,5.292 15.708,5.293 15.709,5.294C15.895,5.482 16,5.735 16,6L16,8.5C16,8.776 15.776,9 15.5,9L6,9L6,8L15,8L15,6L7.5,6C7.224,6 7,5.776 7,5.5L7,4L3,4L3,9Z" style="fill:rgb(255,233,110);"/>
+    </g>
+    <g transform="matrix(0.933333,0,0,1.25,-1.8,-7)">
+        <path d="M4.607,17.6L16.709,17.6C17.162,17.6 17.566,17.387 17.718,17.069C18.156,16.154 19.059,14.265 19.632,13.069C19.749,12.824 19.699,12.552 19.498,12.339C19.298,12.127 18.971,12 18.623,12L7.006,12C6.535,12 6.12,12.229 5.982,12.565C5.427,13.911 4.071,17.2 4.071,17.2C4.071,17.421 4.311,17.6 4.607,17.6Z" style="fill:rgb(255,233,110);"/>
+        <g transform="matrix(1.07143,0,0,0.8,0.857143,5.6)">
+            <path d="M4,14L3,14L3,15L4,15L4,14ZM3,7L2,7L2,14C2,14.552 2.448,15 3,15L3,7Z" style="fill:rgb(255,233,110);"/>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,1,1)">
+        <path d="M14.934,10L2.077,10L1.773,11L14.577,11L14.934,10Z"/>
+        <g transform="matrix(0.5,0,0,0.5,3.75,5.25)">
+            <rect x="3.5" y="8.5" width="4" height="4" style="fill:white;stroke:black;stroke-width:2px;"/>
+        </g>
+    </g>
+</svg>
+
