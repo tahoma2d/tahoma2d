@@ -961,11 +961,11 @@ void FlipbookPanel::reset() { m_flipbook->reset(); }
 void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   bool ret      = true;
   int x         = -91;
-  int iconWidth = 20;
+  int iconWidth = 18;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
       new TPanelTitleBarButtonForSafeArea(
-          titleBar, getIconThemePath("actions/18/pane_safe_off.svg"));
+          titleBar, getIconThemePath("actions/18/pane_safe.svg"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -980,11 +980,12 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   x += 33 + iconWidth;
   // minimize button
-  m_button = new TPanelTitleBarButton(titleBar, ":Resources/pane_minimize.svg");
+  m_button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_minimize.svg"));
   m_button->setToolTip(tr("Minimize"));
   m_button->setPressed(false);
 
-  titleBar->add(QPoint(x, 1), m_button);
+  titleBar->add(QPoint(x, 0), m_button);
   ret = ret && connect(m_button, SIGNAL(toggled(bool)), this,
                        SLOT(onMinimizeButtonToggled(bool)));
   assert(ret);
