@@ -161,7 +161,7 @@
     STD_posterizeFx
     STD_solarizeFx 
   </Stylize>
-  <Toonz_Level>
+  <Tahoma_Level>
     STD_artContourFx
     STD_calligraphicFx
     STD_blendTzFx
@@ -170,7 +170,7 @@
     STD_paletteFilterFx
     STD_cornerPinFx
     STD_textureFx
-  </Toonz_Level>
+  </Tahoma_Level>
 <Shaders>
   SHADER_caustics
   SHADER_fireball

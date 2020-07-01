@@ -515,7 +515,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, false);
     addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, false);
-  } else if (layout == QString("Classic-revised")) {
+  } else if (layout == QString("Roomy")) {
     THUMBNAIL_HEIGHT = 44;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
     INDENT           = 0;
