@@ -378,8 +378,11 @@ void DockWidget::mouseReleaseEvent(QMouseEvent *me) {
 //! DockWidgets respond to title bar double clicks maximizing the widget in
 //! layout's contents rect.
 void DockWidget::mouseDoubleClickEvent(QMouseEvent *me) {
-  if (!m_floating && isDragGrip(me->pos())) {
-    parentLayout()->setMaximized(this, !m_maximized);
+  std::string name = objectName().toStdString();
+  if (name == "FlipBook" || name == "SceneViewer" || name == "ComboViewer") {
+    if (!m_floating && isDragGrip(me->pos())) {
+      parentLayout()->setMaximized(this, !m_maximized);
+    }
   }
 }
 

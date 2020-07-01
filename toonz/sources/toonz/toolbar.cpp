@@ -84,9 +84,15 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
           SLOT(setIsExpanded(bool)));
 
   updateToolbar();
-  QIcon moreIcon(":Resources/moredown.svg");
-  QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
-  more->setIcon(moreIcon);
+  if (isVertical) {
+    QIcon moreIcon(":Resources/moredown.svg");
+    QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
+    more->setIcon(moreIcon);
+  } else {
+    QIcon moreIcon(":Resources/more.svg");
+    QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
+    more->setIcon(moreIcon);
+  }
 }
 
 //-----------------------------------------------------------------------------
