@@ -2981,7 +2981,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   menu->addAction(m_rgbAction);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("options"));
+  toolButton->setIcon(createQIcon("menu_16"));
   toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -2997,7 +2997,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   displayToolbar->addWidget(toolButton);
   displayToolbar->setMaximumHeight(22);
-  displayToolbar->setIconSize(QSize(18, 18));
+  displayToolbar->setIconSize(QSize(16, 16));
 
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
@@ -3007,7 +3007,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-      hLayout->addSpacing(-1);
+      hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }
