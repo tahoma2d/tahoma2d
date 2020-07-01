@@ -237,7 +237,7 @@ void CastTreeViewer::rebuildCastTree() {
 
   QTreeWidgetItem *root =
       new QTreeWidgetItem((QTreeWidgetItem *)0, QStringList(rootName));
-  static QPixmap clapboard(":Resources/clapboard.png");
+  static QIcon clapboard = createQIcon("clapboard");
   root->setIcon(0, clapboard);
   insertTopLevelItem(0, root);
   populateFolder(root);
