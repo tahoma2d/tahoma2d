@@ -2321,7 +2321,8 @@ void MultiArcPrimitive::draw() {
 
     if (m_stroke) {
       drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
-      if (m_stroke->getControlPoint(0) == m_endPoint) {
+      TPointD firstPoint = m_stroke->getControlPoint(0);
+      if (firstPoint == m_endPoint) {
         tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
                           (m_color.b + 127) % 255, m_color.m));
       }
@@ -2348,8 +2349,9 @@ void MultiArcPrimitive::draw() {
     if (m_strokeTemp)
       drawStrokeCenterline(*m_strokeTemp, sqrt(tglGetPixelSize2()));
 
-    if (m_stroke && m_stroke->getControlPoint(0) != m_endPoint) {
-      if (m_stroke->getControlPoint(0) == m_endPoint) {
+    if (m_stroke) {
+      TPointD firstPoint = m_stroke->getControlPoint(0);
+      if (firstPoint == m_endPoint) {
         tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
                           (m_color.b + 127) % 255, m_color.m));
       }
