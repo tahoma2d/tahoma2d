@@ -326,7 +326,7 @@ ItemInfoView::ItemInfoView(QWidget* parent) : QStackedWidget(parent) {
   m_imgPathField    = new DVGui::FileField(this);
   m_fontCombo       = new QFontComboBox(this);
   m_boldButton =
-      new QPushButton(createQIcon("bold"), tr("Bold"), this);  //#todo
+      new QPushButton(createQIcon("bold"), tr("Bold"), this);
   m_italicButton = new QPushButton(createQIcon("italic"), tr("Italic"), this);
   m_fontColorField =
       new DVGui::ColorField(this, true, TPixel32(0, 0, 0, 255), 25, false, 54);
