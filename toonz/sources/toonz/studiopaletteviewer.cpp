@@ -861,7 +861,7 @@ StudioPaletteViewer::StudioPaletteViewer(QWidget *parent,
 
   QToolBar *newToolbar = new QToolBar(treeToolbarWidget);
   // New folder action
-  QIcon newFolderIcon = createQIconPNG("newfolder");
+  QIcon newFolderIcon = createQIconPNG("folder_new");
   QAction *addFolder =
       new QAction(newFolderIcon, tr("&New Folder"), newToolbar);
   connect(addFolder, SIGNAL(triggered()), studioPltTreeViewer,

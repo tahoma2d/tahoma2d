@@ -473,7 +473,7 @@ void PaletteViewerPanel::reset() {
 
 void PaletteViewerPanel::initializeTitleBar() {
   m_isCurrentButton = new TPanelTitleBarButton(
-      getTitleBar(), svgToPixmap(":Resources/switch.svg"));
+      getTitleBar(), svgToPixmap(getIconThemePath("actions/18/switch.svg")));
   getTitleBar()->add(QPoint(-54, 0), m_isCurrentButton);
   m_isCurrentButton->setPressed(true);
   connect(m_isCurrentButton, SIGNAL(toggled(bool)),
@@ -862,8 +862,8 @@ public:
     panel->setWidget(toolbar);
     panel->setIsMaximizable(false);
     // panel->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-    panel->setFixedWidth(45);  // 35
-    toolbar->setFixedWidth(35);
+    panel->setFixedWidth(40);  // 35
+    toolbar->setFixedWidth(30);
     panel->setWindowTitle(QString(""));
   }
 } toolbarFactory;
@@ -964,8 +964,8 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   int iconWidth = 20;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(titleBar,
-                                          ":Resources/pane_safe_off.svg");
+      new TPanelTitleBarButtonForSafeArea(
+          titleBar, getIconThemePath("actions/18/pane_safe_off.svg"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),

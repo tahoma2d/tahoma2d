@@ -33,6 +33,7 @@ XSheetToolbar::XSheetToolbar(XsheetViewer *parent, Qt::WFlags flags)
   setObjectName("cornerWidget");
   setFixedHeight(30);
   setObjectName("XSheetToolbar");
+  setIconSize(QSize(22, 22));
 }
 
 //-----------------------------------------------------------------------------

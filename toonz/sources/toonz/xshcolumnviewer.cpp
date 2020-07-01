@@ -1703,9 +1703,9 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
   p.setPen(m_viewer->getVerticalLineColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(0, -1, -1, -3));
+    p.drawRect(toBeUpdated.adjusted(-1, 0, -1, -3));
   else
-    p.drawRect(toBeUpdated.adjusted(-1, 0, -3, -1));
+    p.drawRect(toBeUpdated.adjusted(0, 0, -3, -1));
 
   if (getDragTool()) getDragTool()->drawColumnsArea(p);
 }
