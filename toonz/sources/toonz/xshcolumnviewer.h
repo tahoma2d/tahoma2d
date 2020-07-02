@@ -89,6 +89,7 @@ public:
 
 protected:
   void mouseMoveEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
   void focusOutEvent(QFocusEvent *e) override;
   void focusInEvent(QFocusEvent *e) override {}
   void selectCurrent(const QString &text);
