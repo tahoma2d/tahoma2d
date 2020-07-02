@@ -80,12 +80,12 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
 	QRect sliderObjRect = o->rect(PredefinedRect::ZOOM_SLIDER);
 	m_frameZoomSlider->setGeometry(sliderObjRect);
 
-	static QPixmap zoomIn = svgToPixmap(":Resources/zoom_in.svg");
-	static QPixmap zoomInRollover = svgToPixmap(":Resources/zoom_in_rollover.svg");
+	static QPixmap zoomIn = svgToPixmap(getIconThemePath("actions/15/zoom_in.svg"));
+	static QPixmap zoomInRollover = svgToPixmap(getIconThemePath("actions/15/zoom_in_rollover.svg"));
 	const QRect zoomInImgRect = o->rect(PredefinedRect::ZOOM_IN);
 
-	static QPixmap zoomOut = svgToPixmap(":Resources/zoom_out.svg");
-	static QPixmap zoomOutRollover = svgToPixmap(":Resources/zoom_out_rollover.svg");
+	static QPixmap zoomOut = svgToPixmap(getIconThemePath("actions/15/zoom_out.svg"));
+	static QPixmap zoomOutRollover = svgToPixmap(getIconThemePath("actions/15/zoom_out_rollover.svg"));
 	const QRect zoomOutImgRect = o->rect(PredefinedRect::ZOOM_OUT);
 
 	p.setRenderHint(QPainter::SmoothPixmapTransform, true);
@@ -99,7 +99,7 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
 	else
 		p.drawPixmap(zoomOutImgRect, zoomOut);
 
-	p.setPen(withAlpha(m_viewer->getTextColor(), 0.5));
+	p.setPen(m_viewer->getVerticalLineColor());
 
 	QLine line = { leftSide(shorter(zoomOutImgRect)).translated(-2, 0) };
 	p.drawLine(line);
