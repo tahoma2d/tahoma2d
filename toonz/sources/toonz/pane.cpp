@@ -257,7 +257,12 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   painter.drawPixmap(
       0, 0, m_pressed ? pressed_pm : m_rollover ? rollover_pm : standard_pm);
   // compose the icon
-  painter.drawPixmap(0, 0, m_standardPixmap);
+
+  painter.drawPixmap(0, 0,
+                     m_pressed
+                         ? m_standardPixmap
+                         : m_rollover ? m_standardPixmap
+                                      : pixmapOpacity(m_standardPixmap, 0.7));
 
   painter.end();
 }
