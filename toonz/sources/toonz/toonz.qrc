@@ -140,6 +140,7 @@
 		<file>icons/light/console/22/channelblue.svg</file>
 		<file>icons/light/console/22/channelblue_over.svg</file>
 		<file>icons/light/console/22/channelblue_on.svg</file>
+		<file>icons/light/console/22/viewcamera.svg</file>
 
 		<!-- FX / Schematic -->
 		<file>icons/light/actions/22/output.svg</file>
@@ -287,6 +288,9 @@
 		<file>icons/light/actions/18/pane_preview.svg</file>
 		<file>icons/light/actions/18/pane_subpreview.svg</file>
 		<file>icons/light/actions/18/pane_3d.svg</file>
+		<file>icons/light/actions/18/pane_minimize.svg</file>
+		<file>icons/light/actions/18/pane_close.svg</file>
+		<file>icons/light/actions/18/pane_close_rollover.svg</file>
 		
 		<!-- Textstyle -->
 		<file>icons/light/actions/16/bold.svg</file>
