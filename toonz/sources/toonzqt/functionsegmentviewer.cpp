@@ -954,21 +954,23 @@ FunctionSegmentViewer::FunctionSegmentViewer(QWidget *parent,
 
   m_stepFld->setText("1");
 
-  m_prevCurveButton->setFixedSize(50, 15);
-  m_nextCurveButton->setFixedSize(50, 15);
+  m_prevCurveButton->setFixedSize(70, 22);
+  m_nextCurveButton->setFixedSize(70, 22);
   m_prevCurveButton->setFocusPolicy(Qt::NoFocus);
   m_nextCurveButton->setFocusPolicy(Qt::NoFocus);
   m_prevCurveButton->setStyleSheet("padding:0px;");
   m_nextCurveButton->setStyleSheet("padding:0px;");
 
-  m_prevLinkButton->setFixedSize(15, 15);
-  m_nextLinkButton->setFixedSize(15, 15);
+  m_prevLinkButton->setFixedSize(22, 22);
+  m_nextLinkButton->setFixedSize(22, 22);
   m_prevLinkButton->setCheckable(true);
   m_nextLinkButton->setCheckable(true);
   m_prevLinkButton->setFocusPolicy(Qt::NoFocus);
   m_nextLinkButton->setFocusPolicy(Qt::NoFocus);
   m_prevLinkButton->setObjectName("FunctionSegmentViewerLinkButton");
   m_nextLinkButton->setObjectName("FunctionSegmentViewerLinkButton");
+  m_nextLinkButton->setToolTip(tr("Link/Unlink Handles"));
+  m_prevLinkButton->setToolTip(tr("Link/Unlink Handles"));
 
   //---- layout
 
