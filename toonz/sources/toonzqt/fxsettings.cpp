@@ -664,7 +664,6 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
   m_helpButton = new QPushButton(tr(""), this);
   m_helpButton->setIconSize(QSize(22, 22));
   m_helpButton->setIcon(createQIcon("help"));
-  m_helpButton->setIconText(tr("Fx Help"));
   m_helpButton->setFixedWidth(28);
 
   m_parent = dynamic_cast<ParamViewer *>(parent);
