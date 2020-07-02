@@ -1220,7 +1220,6 @@ void FxSettings::createToolBar() {
   m_toolBar->setFixedHeight(24);
   m_toolBar->setIconSize(QSize(22, 22));
   m_toolBar->setObjectName("MediumPaddingToolBar");
-  // m_toolBar->setIconSize(QSize(23, 21));
   //m_toolBar->setSizePolicy(QSizePolicy::MinimumExpanding,
   //QSizePolicy::MinimumExpanding);
 
