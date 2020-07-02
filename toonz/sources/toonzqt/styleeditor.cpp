@@ -3427,12 +3427,20 @@ void StyleEditor::onStyleChanged(bool isDragging) {
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
   m_newColor->setStyle(*m_editedStyle);
-  TPixel32 color  = m_editedStyle->getMainColor();
-  QString myColor = QString::number(color.r) + ", " + QString::number(color.g) +
-                    ", " + QString::number(color.b);
-  std::string myColorStr = myColor.toStdString();
-  QString styleSheet     = "background-color: rgb(%1);";
-  m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  int tag = m_editedStyle->getTagId();
+  if (tag == 4 || tag == 2000 || tag == 2800) {
+    m_fillColorWidget->hide();
+  } else {
+    m_fillColorWidget->show();
+
+    TPixel32 color  = m_editedStyle->getMainColor();
+    QString myColor = QString::number(color.r) + ", " +
+                      QString::number(color.g) + ", " +
+                      QString::number(color.b);
+    std::string myColorStr = myColor.toStdString();
+    QString styleSheet     = "background-color: rgb(%1);";
+    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  }
   m_oldColor->setStyle(
       *m_oldStyle);  // This line is needed for proper undo behavior
 }
@@ -3530,13 +3538,19 @@ void StyleEditor::onColorChanged(const ColorModel &color, bool isDragging) {
     }
 
     m_newColor->setStyle(*m_editedStyle);
-    TPixel32 color  = m_editedStyle->getMainColor();
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "background-color: rgb(%1);";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+    int tag = m_editedStyle->getTagId();
+    if (tag == 4 || tag == 2000 || tag == 2800) {
+      m_fillColorWidget->hide();
+    } else {
+      m_fillColorWidget->show();
+      TPixel32 color  = m_editedStyle->getMainColor();
+      QString myColor = QString::number(color.r) + ", " +
+                        QString::number(color.g) + ", " +
+                        QString::number(color.b);
+      std::string myColorStr = myColor.toStdString();
+      QString styleSheet     = "background-color: rgb(%1);";
+      m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+    }
     m_colorParameterSelector->setStyle(*m_editedStyle);
 
     if (m_autoButton->isChecked()) {
@@ -3678,14 +3692,20 @@ bool StyleEditor::setStyle(TColorStyle *currentStyle) {
     m_plainColorPage->setColor(*currentStyle, getColorParam());
     m_oldColor->setStyle(*currentStyle);
     m_newColor->setStyle(*currentStyle);
-    TPixel32 color  = currentStyle->getMainColor();
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "background-color: rgb(%1);";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
 
+    int tag = currentStyle->getTagId();
+    if (tag == 4 || tag == 2000 || tag == 2800) {
+      m_fillColorWidget->hide();
+    } else {
+      m_fillColorWidget->show();
+      TPixel32 color  = currentStyle->getMainColor();
+      QString myColor = QString::number(color.r) + ", " +
+                        QString::number(color.g) + ", " +
+                        QString::number(color.b);
+      std::string myColorStr = myColor.toStdString();
+      QString styleSheet     = "background-color: rgb(%1);";
+      m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+    }
     setOldStyleToStyle(currentStyle);
   }
 
