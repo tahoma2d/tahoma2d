@@ -480,14 +480,14 @@ public:
   SimpleIconViewField(const QString &iconName, const QString &toolTipStr = "",
                       QWidget *parent = 0)
       : DraggableIconView(parent), m_icon(createQIcon(iconName.toUtf8())) {
-    setMinimumSize(17, 25);
+    setMinimumSize(18, 18);
     setToolTip(toolTipStr);
   }
 
 protected:
   void paintEvent(QPaintEvent *e) {
     QPainter p(this);
-    p.drawPixmap(QRect(0, 4, 17, 17), m_icon.pixmap(17, 17));
+    p.drawPixmap(QRect(0, 2, 18, 18), m_icon.pixmap(18, 18));
   }
 };
 
