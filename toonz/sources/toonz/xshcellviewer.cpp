@@ -2439,7 +2439,7 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
       keyRect.center() + m_viewer->positionToXY(CellPosition(rows.from(), col));
   QPoint end =
       keyRect.center() + m_viewer->positionToXY(CellPosition(rows.to(), col));
-  p.setPen(Qt::white);
+  p.setPen(m_viewer->getTextColor());
   p.drawLine(QLine(begin, end));
 }
 
