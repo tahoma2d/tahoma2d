@@ -661,7 +661,11 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WFlags flags)
   m_tabBarContainer = new TabBarContainter(this);
   m_pagesList       = new QStackedWidget(this);
 
-  m_helpButton = new QPushButton(tr("Fx Help"), this);
+  m_helpButton = new QPushButton(tr(""), this);
+  m_helpButton->setIconSize(QSize(22, 22));
+  m_helpButton->setIcon(createQIcon("help"));
+  m_helpButton->setIconText(tr("Fx Help"));
+  m_helpButton->setFixedWidth(28);
 
   m_parent = dynamic_cast<ParamViewer *>(parent);
   m_pageFxIndexTable.clear();
@@ -1214,7 +1218,7 @@ void FxSettings::setObjectHandle(TObjectHandle *objectHandle) {
 void FxSettings::createToolBar() {
   m_toolBar = new QToolBar(this);
   m_toolBar->setMovable(false);
-  m_toolBar->setFixedHeight(22);
+  m_toolBar->setFixedHeight(24);
   m_toolBar->setIconSize(QSize(22, 22));
   m_toolBar->setObjectName("MediumPaddingToolBar");
   // m_toolBar->setIconSize(QSize(23, 21));
