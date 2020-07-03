@@ -2,13 +2,12 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="18px" height="18px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(1.125,0,0,1.125,0,0)">
-        <rect x="0" y="0" width="16" height="16" style="fill:rgb(59,219,0);fill-opacity:0;"/>
+        <rect x="0" y="0" width="16" height="16" style="fill-opacity:0;"/>
     </g>
     <g transform="matrix(1,0,0,3,0,-29)">
-        <rect x="3" y="11" width="12" height="2" style="fill:rgb(128,128,128);"/>
+        <rect x="3" y="11" width="12" height="2" style="fill:white;fill-opacity:0.4;"/>
     </g>
     <g>
-        <path d="M16.001,3.5C16.001,3.223 15.777,2.999 15.5,2.999L2.5,2.999C2.223,2.999 1.999,3.223 1.999,3.5L1.999,13.5C1.999,13.777 2.223,14.001 2.5,14.001L15.5,14.001C15.777,14.001 16.001,13.777 16.001,13.5L16.001,3.5ZM3.001,11L3.001,12.999L6,12.999L6,11L3.001,11ZM14.999,10L14.999,4.001L3.001,4.001L3.001,10L14.999,10ZM7,12.999L14.999,12.999L14.999,11L7,11L7,12.999Z" style="fill:white;fill-opacity:0.7;"/>
+        <path d="M16.001,3.5C16.001,3.223 15.777,2.999 15.5,2.999L2.5,2.999C2.223,2.999 1.999,3.223 1.999,3.5L1.999,13.5C1.999,13.777 2.223,14.001 2.5,14.001L15.5,14.001C15.777,14.001 16.001,13.777 16.001,13.5L16.001,3.5ZM3.001,11L3.001,12.999L6,12.999L6,11L3.001,11ZM14.999,10L14.999,4.001L3.001,4.001L3.001,10L14.999,10ZM7,12.999L14.999,12.999L14.999,11L7,11L7,12.999Z" style="fill:white;fill-opacity:0.8;"/>
     </g>
 </svg>
-
