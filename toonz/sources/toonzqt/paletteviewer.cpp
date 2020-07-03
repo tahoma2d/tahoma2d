@@ -948,7 +948,16 @@ void PaletteViewer::saveStudioPalette() {
     int ret =
         DVGui::MsgBox(question, tr("Overwrite"), tr("Don't Overwrite"), 0);
     if (ret == 2 || ret == 0) return;
-    sp->setPalette(fp, getPalette(), false);
+    try {
+      sp->setPalette(fp, getPalette(), false);
+    } catch (TSystemException se) {
+      DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return;
+    } catch (...) {
+      DVGui::warning(QString::fromStdWString(fp.getWideString() + L"\n") +
+                     tr("Failed to save palette."));
+      return;
+    }
 
     StudioPaletteCmd::updateAllLinkedStyles(m_paletteHandle, m_xsheetHandle);
 
