@@ -262,7 +262,7 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
                      m_pressed
                          ? m_standardPixmap
                          : m_rollover ? m_standardPixmap
-                                      : pixmapOpacity(m_standardPixmap, 0.7));
+                                      : pixmapOpacity(m_standardPixmap, 0.8));
 
   painter.end();
 }

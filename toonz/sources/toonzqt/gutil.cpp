@@ -263,7 +263,7 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
     QIcon iconOver = QIcon::fromTheme(QString(iconSVGName) + "_over");
 
     // The pixmap shown when the icon is idle
-    QPixmap inactivePixmap = pixmapOpacity(iconNormal.pixmap(max), 0.7);
+    QPixmap inactivePixmap = pixmapOpacity(iconNormal.pixmap(max), 0.8);
     // The pixmap shown when the icon is on/clicked/active
     QPixmap onPixmap       = iconOn.pixmap(max);
     if (!iconOver.isNull()) {
