@@ -2,7 +2,7 @@
 Name=light
 Comment=a light icon set for use in dark themes
 
-Directories=actions/16,actions/18,actions/22,actions/60,console/22,tools/22,devices/22
+Directories=actions/16,actions/18,actions/22,actions/60,console/22,tools/18,tools/22,devices/22
 
 [actions/16]
 Size=16
@@ -19,6 +19,10 @@ Type=Scalable
 [console/22]
 Size=22
 Type=Scalable
+
+[tools/18]
+Size=18
+Type=Scalabe
 
 [tools/22]
 Size=22
