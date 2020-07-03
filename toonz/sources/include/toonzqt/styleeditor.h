@@ -65,6 +65,7 @@ class QPushButton;
 class QTabWidget;
 class QToolBar;
 class QOpenGLFramebufferObject;
+class QWidgetAction;
 
 class ColorSquaredWheel;
 class TabBarContainter;
@@ -73,6 +74,19 @@ class StyleEditor;
 class LutCalibrator;
 
 //=============================================
+
+class HexLineEdit : public QLineEdit {
+  Q_OBJECT
+
+public:
+  HexLineEdit(const QString &contents, QWidget *parent)
+      : QLineEdit(contents, parent) {}
+  ~HexLineEdit() {}
+
+protected:
+  void focusInEvent(QFocusEvent *event) override;
+  void showEvent(QShowEvent *event) override;
+};
 
 //=============================================================================
 namespace StyleEditorGUI {
@@ -605,6 +619,8 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   PaletteController *m_paletteController;
   TPaletteHandle *m_paletteHandle;
   TPaletteHandle *m_cleanupPaletteHandle;
+  HexLineEdit *m_hexLineEdit;
+  QWidgetAction *m_hexAction;
   QWidget *m_parent;
   TXshLevelHandle
       *m_levelHandle;  //!< for clearing the level cache when the color changed
@@ -745,6 +761,9 @@ protected slots:
   void onSpecialButtonToggled(bool on);
   void onCustomButtonToggled(bool on);
   void onVectorBrushButtonToggled(bool on);
+  void onHexChanged();
+  void onHexEdited(const QString &text);
+  void onHideMenu();
 
 private:
   QFrame *createBottomWidget();

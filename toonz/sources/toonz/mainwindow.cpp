@@ -1125,8 +1125,9 @@ void MainWindow::resetRoomsLayout() {
           }
   }*/
 
-  DVGui::info(
-      QObject::tr("The rooms will be reset the next time you run Toonz."));
+  DVGui::MsgBoxInPopup(
+      DVGui::INFORMATION,
+      QObject::tr("The rooms will be reset the next time you run Tahoma."));
 }
 
 void MainWindow::maximizePanel() {
@@ -1304,9 +1305,12 @@ void MainWindow::showEvent(QShowEvent *event) {
 
   connect(nt, &QTimer::timeout, [=]() {
 #ifdef WIN32
-    int roomsSize = m_panelStates.size();
-    for (auto iter : m_panelStates) {
-      iter.first->restoreState(iter.second);
+    if (!m_shownOnce && windowState() == Qt::WindowMaximized) {
+      int roomsSize = m_panelStates.size();
+      for (auto iter : m_panelStates) {
+        iter.first->restoreState(iter.second);
+      }
+      m_shownOnce = true;
     }
 #endif
   });
