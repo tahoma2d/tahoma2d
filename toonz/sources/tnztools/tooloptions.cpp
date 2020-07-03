@@ -2749,7 +2749,7 @@ HandToolOptionsBox::HandToolOptionsBox(QWidget *parent, TTool *tool,
       CommandManager::instance()->getAction(VB_PositionReset);
 
   QPushButton *button = new QPushButton(tr("Reset Position"));
-  int buttonWidth     = fontMetrics().width(button->text()) + 10;
+  int buttonWidth     = fontMetrics().width(button->text()) + 20;
   button->setFixedWidth(buttonWidth);
   button->setFixedHeight(20);
   button->addAction(resetPositionAction);

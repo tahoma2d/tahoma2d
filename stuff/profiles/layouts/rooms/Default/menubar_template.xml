@@ -3,8 +3,10 @@
         <command>MI_NewScene</command>
         <command>MI_LoadScene</command>
         <command>MI_SaveAll</command>
-        <command>MI_SaveScene</command>
-        <command>MI_SaveSceneAs</command>
+        <menu title="Other Save Options">
+            <command>MI_SaveScene</command>
+            <command>MI_SaveSceneAs</command>
+        </menu>
         <command>MI_OpenRecentScene</command>
         <command>MI_RevertScene</command>
         <separator/>
@@ -278,6 +280,9 @@
         <command>MI_RasterizePli</command>
         <separator/>
         <command>MI_ShowStatusBar</command>
+        <separator/>
+        <command>MI_MaximizePanel</command>
+        <command>MI_FullScreenWindow</command>
     </menu>
     <menu title="Windows">
         <command>MI_OpenCommandToolbar</command>
@@ -314,9 +319,6 @@
         <command>MI_OpenGuidedDrawingControls</command>
         <separator/>
         <command>MI_OpenExport</command>
-        <separator/>
-        <command>MI_MaximizePanel</command>
-        <command>MI_FullScreenWindow</command>
         <separator/>
         <command>MI_ResetRoomLayout</command>
     </menu>
