@@ -60,6 +60,7 @@ TPanel::TPanel(QWidget *parent, Qt::WindowFlags flags,
   connect(m_panelTitleBar, SIGNAL(closeButtonPressed()), this,
           SLOT(onCloseButtonPressed()));
   setOrientation(orientation);
+  setCursor(Qt::ArrowCursor);
 }
 
 //-----------------------------------------------------------------------------
@@ -407,6 +408,7 @@ TPanelTitleBar::TPanelTitleBar(QWidget *parent,
     : QFrame(parent), m_isActive(true), m_closeButtonHighlighted(false) {
   setMouseTracking(true);
   setFocusPolicy(Qt::NoFocus);
+  setCursor(Qt::ArrowCursor);
 }
 
 //-----------------------------------------------------------------------------

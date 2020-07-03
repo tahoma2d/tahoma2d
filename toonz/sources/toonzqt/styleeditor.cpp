@@ -57,12 +57,101 @@
 #include <QSplitter>
 #include <QMenu>
 #include <QOpenGLFramebufferObject>
+#include <QWidgetAction>
+
+#include <sstream>
 
 using namespace StyleEditorGUI;
 
 //*****************************************************************************
 //    UndoPaletteChange  definition
 //*****************************************************************************
+
+QString color2Hex(TPixel32 color) {
+  int r = color.r;
+  int g = color.g;
+  int b = color.b;
+  int a = color.m;
+  std::stringstream ss;
+  QString text = "#";
+
+  if (r != 0 && r < 16) {
+    text += "0";
+  } else if (r == 0) {
+    text += "00";
+    if (g == 0) {
+      text += "00";
+      if (b == 0) {
+        text += "00";
+        if (a == 0) {
+          text += "00";
+          return text;
+        }
+      }
+    }
+  }
+  if (text != "#000000") {
+    ss << std::hex << (r << 16 | g << 8 | b);
+    text += QString::fromStdString(ss.str());
+  }
+  if (a < 16) {
+    if (a == 0) {
+      text += "00";
+    } else
+      text += "0";
+  }
+  std::stringstream as;
+  as << std::hex << a;
+  if (as.str() != "ff") {
+    text += QString::fromStdString(as.str());
+  }
+  return text;
+}
+
+bool isHex(QString color) {
+  if (color[0] == "#") {
+    color.remove(0, 1);
+  }
+  bool ok;
+  const unsigned int parsedValue = color.toUInt(&ok, 16);
+  if (ok && (color.length() == 6 || color.length() == 8)) {
+    return true;
+  } else
+    return false;
+}
+
+TPixel32 hex2Color(QString hex) {
+  if (hex[0] == "#") {
+    hex.remove(0, 1);
+  }
+  bool hasAlpha = hex.length() == 8;
+  int length    = hex.length();
+  if (hex.length() != 8 && hex.length() != 6) return TPixel32();
+
+  QStringList values;
+  while (hex.length() >= 2) {
+    values.append(hex.left(2));
+    hex.remove(0, 2);
+  }
+  assert(values.length() == 3 || values.length() == 4);
+
+  TPixel32 color;
+  bool dummy;
+  int r                 = values.at(0).toInt(&dummy, 16);
+  int g                 = values.at(1).toInt(&dummy, 16);
+  int b                 = values.at(2).toInt(&dummy, 16);
+  color.r               = values.at(0).toInt(&dummy, 16);
+  color.g               = values.at(1).toInt(&dummy, 16);
+  color.b               = values.at(2).toInt(&dummy, 16);
+  if (hasAlpha) color.m = values.at(3).toInt(&dummy, 16);
+  return color;
+}
+void HexLineEdit::focusInEvent(QFocusEvent *event) {
+  // QLineEdit::focusInEvent(event);
+  selectAll();
+}
+
+void HexLineEdit::showEvent(QShowEvent *event) { selectAll(); }
 
 namespace {
 
@@ -3028,6 +3117,16 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   menu->addAction(m_alphaAction);
   menu->addAction(m_hsvAction);
   menu->addAction(m_rgbAction);
+
+  m_hexAction   = new QWidgetAction(this);
+  m_hexLineEdit = new HexLineEdit("", this);
+  m_hexLineEdit->setObjectName("HexLineEdit");
+  m_hexAction->setDefaultWidget(m_hexLineEdit);
+  m_hexAction->setText(" ");
+  menu->addAction(m_hexAction);
+  QFontMetrics fm(QApplication::font());
+  m_hexLineEdit->setFixedWidth(75);
+
   m_plainColorPage->m_hsvFrame->setVisible(false);
   m_plainColorPage->m_rgbFrame->setVisible(false);
 
@@ -3118,6 +3217,11 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                        m_plainColorPage, SLOT(toggleOrientation()));
   ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
                        SLOT(updateOrientationButton()));
+  ret = ret && connect(m_hexLineEdit, SIGNAL(returnPressed()), this,
+                       SLOT(onHexChanged()));
+  ret = ret && connect(m_hexLineEdit, SIGNAL(textEdited(const QString &)), this,
+                       SLOT(onHexEdited(const QString &)));
+  ret = ret && connect(menu, SIGNAL(aboutToHide()), this, SLOT(onHideMenu()));
   assert(ret);
   /* ------- initial conditions ------- */
   enable(false, false, false);
@@ -3433,12 +3537,17 @@ void StyleEditor::onStyleChanged(bool isDragging) {
   } else {
     m_fillColorWidget->show();
 
-    TPixel32 color  = m_editedStyle->getMainColor();
+    // TPixel32 color  = m_editedStyle->getMainColor();
+    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
+    QString hexColor = color2Hex(color);
+    m_hexLineEdit->setText(hexColor);
+    m_newColor->setToolTip(hexColor);
+    m_fillColorWidget->setToolTip(hexColor);
     QString myColor = QString::number(color.r) + ", " +
                       QString::number(color.g) + ", " +
                       QString::number(color.b);
     std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "background-color: rgb(%1);";
+    QString styleSheet     = "QFrame {background-color: rgb(%1);}";
     m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
   }
   m_oldColor->setStyle(
@@ -3543,12 +3652,17 @@ void StyleEditor::onColorChanged(const ColorModel &color, bool isDragging) {
       m_fillColorWidget->hide();
     } else {
       m_fillColorWidget->show();
-      TPixel32 color  = m_editedStyle->getMainColor();
+      // TPixel32 color  = m_editedStyle->getMainColor();
+      TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
+      QString hexColor = color2Hex(color);
+      m_hexLineEdit->setText(hexColor);
+      m_newColor->setToolTip(hexColor);
+      m_fillColorWidget->setToolTip(hexColor);
       QString myColor = QString::number(color.r) + ", " +
                         QString::number(color.g) + ", " +
                         QString::number(color.b);
       std::string myColorStr = myColor.toStdString();
-      QString styleSheet     = "background-color: rgb(%1);";
+      QString styleSheet     = "QFrame {background-color: rgb(%1);}";
       m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
     }
     m_colorParameterSelector->setStyle(*m_editedStyle);
@@ -3698,12 +3812,17 @@ bool StyleEditor::setStyle(TColorStyle *currentStyle) {
       m_fillColorWidget->hide();
     } else {
       m_fillColorWidget->show();
-      TPixel32 color  = currentStyle->getMainColor();
+      // TPixel32 color  = currentStyle->getMainColor();
+      TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
+      QString hexColor = color2Hex(color);
+      m_hexLineEdit->setText(hexColor);
+      m_newColor->setToolTip(hexColor);
+      m_fillColorWidget->setToolTip(hexColor);
       QString myColor = QString::number(color.r) + ", " +
                         QString::number(color.g) + ", " +
                         QString::number(color.b);
       std::string myColorStr = myColor.toStdString();
-      QString styleSheet     = "background-color: rgb(%1);";
+      QString styleSheet     = "QFrame {background-color: rgb(%1);}";
       m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
     }
     setOldStyleToStyle(currentStyle);
@@ -3776,12 +3895,17 @@ void StyleEditor::selectStyle(const TColorStyle &newStyle) {
     m_fillColorWidget->hide();
   } else {
     m_fillColorWidget->show();
-    TPixel32 color  = m_editedStyle->getMainColor();
+    // TPixel32 color  = m_editedStyle->getMainColor();
+    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
+    QString hexColor = color2Hex(color);
+    m_hexLineEdit->setText(hexColor);
+    m_newColor->setToolTip(hexColor);
+    m_fillColorWidget->setToolTip(hexColor);
     QString myColor = QString::number(color.r) + ", " +
                       QString::number(color.g) + ", " +
                       QString::number(color.b);
     std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "background-color: rgb(%1);";
+    QString styleSheet     = "QFrame {background-color: rgb(%1); }";
     m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
   }
   m_plainColorPage->setColor(*m_editedStyle, getColorParam());
@@ -3806,6 +3930,25 @@ void StyleEditor::onColorParamChanged() {
     m_plainColorPage->setColor(*m_editedStyle, getColorParam());
     m_settingsPage->setStyle(m_editedStyle);
   }
+  int tag = m_editedStyle->getTagId();
+  if (tag == 4 || tag == 2000 || tag == 2800) {
+    m_fillColorWidget->hide();
+  } else {
+    m_fillColorWidget->show();
+
+    // TPixel32 color  = m_editedStyle->getMainColor();
+    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
+    QString hexColor = color2Hex(color);
+    m_hexLineEdit->setText(hexColor);
+    m_newColor->setToolTip(hexColor);
+    m_fillColorWidget->setToolTip(hexColor);
+    QString myColor = QString::number(color.r) + ", " +
+                      QString::number(color.g) + ", " +
+                      QString::number(color.b);
+    std::string myColorStr = myColor.toStdString();
+    QString styleSheet     = "QFrame {background-color: rgb(%1);}";
+    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -3826,14 +3969,50 @@ void StyleEditor::onParamStyleChanged(bool isDragging) {
   if (tag == 4 || tag == 2000 || tag == 2800) {
     m_fillColorWidget->hide();
   } else {
-    TPixel32 color  = m_editedStyle->getMainColor();
+    TPixel32 color = m_editedStyle->getColorParamValue(getColorParam());
+    // TPixel32 color  = m_editedStyle->getMainColor();
+    QString hexColor = color2Hex(color);
+    m_hexLineEdit->setText(hexColor);
+    m_newColor->setToolTip(hexColor);
+    m_fillColorWidget->setToolTip(hexColor);
     QString myColor = QString::number(color.r) + ", " +
                       QString::number(color.g) + ", " +
                       QString::number(color.b);
     std::string myColorStr = myColor.toStdString();
     m_fillColorWidget->show();
-    QString styleSheet = "background-color: rgb(%1);";
+    QString styleSheet = "QFrame {background-color: rgb(%1);}";
     m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::onHexEdited(const QString &text) {
+  m_hsvAction->setDisabled(true);
+  m_alphaAction->setDisabled(true);
+  m_wheelAction->setDisabled(true);
+  m_rgbAction->setDisabled(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::onHideMenu() {
+  m_hsvAction->setEnabled(true);
+  m_alphaAction->setEnabled(true);
+  m_wheelAction->setEnabled(true);
+  m_rgbAction->setEnabled(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::onHexChanged() {
+  m_hsvAction->parentWidget()->clearFocus();
+  QString hex = m_hexLineEdit->text();
+  if (isHex(hex)) {
+    TPixel32 color = hex2Color(hex);
+    ColorModel cm;
+    cm.setTPixel(color);
+    onColorChanged(cm, false);
   }
 }
 

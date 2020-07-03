@@ -418,15 +418,17 @@ int main(int argc, char *argv[]) {
   TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
-  QPixmap splashPixmap = QIcon(":Resources/splash.svg").pixmap(QSize(610, 344));
+  QPixmap splashPixmap =
+      QIcon(":Resources/splash2.svg").pixmap(QSize(344, 344));
   splashPixmap.setDevicePixelRatio(QApplication::desktop()->devicePixelRatio());
+
 // QPixmap splashPixmap(":Resources/splash.png");
 #ifdef _WIN32
   QFont font("Segoe UI", -1);
 #else
   QFont font("Helvetica", -1);
 #endif
-  font.setPixelSize(13);
+  font.setPixelSize(10);
   font.setWeight(50);
   a.setFont(font);
 
@@ -439,11 +441,15 @@ int main(int argc, char *argv[]) {
   bool isRunScript = (loadFilePath.getType() == "toonzscript");
 
   QSplashScreen splash(splashPixmap);
+  QPainterPath path;
+  path.addRoundedRect(splash.rect(), 7, 7);
+  QRegion mask = QRegion(path.toFillPolygon().toPolygon());
+  splash.setMask(mask);
   if (!isRunScript) splash.show();
   a.processEvents();
 
-  splash.showMessage(offsetStr + "Initializing QGLFormat...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Initializing QGLFormat...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   // OpenGL
@@ -458,8 +464,8 @@ int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
 #endif
 
-  splash.showMessage(offsetStr + "Initializing Tahoma environment ...",
-                     Qt::AlignCenter, Qt::white);
+  splash.showMessage(offsetStr + "Initializing environment...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   // Install run out of contiguous memory callback
@@ -514,8 +520,8 @@ int main(int argc, char *argv[]) {
   // DVDirModel must be instantiated after Version Control initialization...
   FolderListenerManager::instance()->addListener(DvDirModel::instance());
 
-  splash.showMessage(offsetStr + "Loading Translator ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Loading Translator...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   // Carico la traduzione contenuta in toonz.qm (se ï¿½ presente)
@@ -579,8 +585,8 @@ int main(int argc, char *argv[]) {
   // This function has to be called after installTranslator().
   a.setLayoutDirection(Qt::LeftToRight);
 
-  splash.showMessage(offsetStr + "Loading styles ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Loading styles...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   // stile
@@ -588,21 +594,21 @@ int main(int argc, char *argv[]) {
 
   IconGenerator::setFilmstripIconSize(Preferences::instance()->getIconSize());
 
-  splash.showMessage(offsetStr + "Loading shaders ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Loading shaders...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + "Initializing Tahoma ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Initializing Tahoma...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   TTool::setApplication(TApp::instance());
   TApp::instance()->init();
 
-  splash.showMessage(offsetStr + "Loading Plugins...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Loading Plugins...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
   /* poll the thread ends:
    絶対に必要なわけではないが PluginLoader は中で setup
@@ -614,8 +620,8 @@ int main(int argc, char *argv[]) {
     a.processEvents();
   }
 
-  splash.showMessage(offsetStr + "Creating main window ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Creating main window...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
@@ -667,8 +673,8 @@ int main(int argc, char *argv[]) {
     QWindowsWindowFunctions::setHasBorderInFullScreen(w.windowHandle(), true);
 #endif
 
-  splash.showMessage(offsetStr + "Loading style sheet ...", Qt::AlignCenter,
-                     Qt::white);
+  splash.showMessage(offsetStr + "Loading style sheet...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   // Carico lo styleSheet
@@ -677,11 +683,11 @@ int main(int argc, char *argv[]) {
 
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
-    splash.showMessage(offsetStr + "Starting Tahoma . . .", Qt::AlignCenter,
-                       Qt::white);
+    splash.showMessage(offsetStr + "Starting Tahoma...",
+                       Qt::AlignRight | Qt::AlignBottom, Qt::black);
   } else {
-    splash.showMessage(offsetStr + "Starting main window ...", Qt::AlignCenter,
-                       Qt::white);
+    splash.showMessage(offsetStr + "Starting main window...",
+                       Qt::AlignRight | Qt::AlignBottom, Qt::black);
   }
   a.processEvents();
 
@@ -719,7 +725,7 @@ int main(int argc, char *argv[]) {
   if (!loadFilePath.isEmpty()) {
     splash.showMessage(
         QString("Loading file '") + loadFilePath.getQString() + "'...",
-        Qt::AlignCenter, Qt::white);
+        Qt::AlignRight | Qt::AlignBottom, Qt::black);
     loadFilePath = loadFilePath.withType("tnz");
     if (TFileStatus(loadFilePath).doesExist()) IoCmd::loadScene(loadFilePath);
   }

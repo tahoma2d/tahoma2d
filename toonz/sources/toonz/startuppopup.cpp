@@ -45,6 +45,7 @@
 #include <QTextStream>
 #include <QFrame>
 #include <QGroupBox>
+#include <QPainterPath>
 
 using namespace std;
 using namespace DVGui;
@@ -96,7 +97,11 @@ QString removeZeros(QString srcStr) {
 StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
   setWindowTitle(tr("Tahoma Startup"));
-
+  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+  QPainterPath path;
+  path.addRoundedRect(this->rect(), 5, 5);
+  QRegion mask = QRegion(path.toFillPolygon().toPolygon());
+  setMask(mask);
   m_projectBox = new QGroupBox(tr("Current Project"), this);
   m_sceneBox   = new QGroupBox(tr("Create a New Scene"), this);
   m_recentBox  = new QGroupBox(tr("Recent Scenes [Project]"), this);
@@ -132,6 +137,12 @@ StartupPopup::StartupPopup()
   m_autoSaveTimeFld         = new IntLineEdit(this, 10);
   QPushButton *createButton = new QPushButton(tr("Create Scene"), this);
   QPushButton *newProjectButton = new QPushButton(tr("New Project..."), this);
+  QPushButton *closeButton      = new QPushButton(this);
+
+  closeButton->setIcon(QIcon(":/Resources/pane_close.svg"));
+  closeButton->setFixedHeight(20);
+  closeButton->setStyleSheet(
+      "background-color: transparent; margin: 0; padding: 0;");
   QPushButton *loadOtherSceneButton =
       new QPushButton(tr("Open Another Scene..."), this);
   // QStringList type;
@@ -166,8 +177,10 @@ StartupPopup::StartupPopup()
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
   m_removePresetBtn->setStyleSheet(
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
-  QLabel *label = new QLabel();
-  label->setPixmap(QPixmap(":Resources/startup.png"));
+  QLabel *label        = new QLabel();
+  QPixmap splashPixmap = QIcon(":Resources/splash2.svg").pixmap(QSize(24, 24));
+  label->setPixmap(splashPixmap);
+  label->setStyleSheet("margin: 5px;");
   m_projectBox->setObjectName("SolidLineFrame");
   m_sceneBox->setObjectName("SolidLineFrame");
   m_recentBox->setObjectName("SolidLineFrame");
@@ -183,6 +196,14 @@ StartupPopup::StartupPopup()
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
   {
+    QHBoxLayout *topLayout = new QHBoxLayout(this);
+    topLayout->setMargin(0);
+    topLayout->setSpacing(0);
+    topLayout->addWidget(label);
+    topLayout->addStretch(5);
+    topLayout->addWidget(closeButton);
+    m_topLayout->addLayout(topLayout);
+
     QGridLayout *guiLay      = new QGridLayout();
     QHBoxLayout *projectLay  = new QHBoxLayout();
     QGridLayout *newSceneLay = new QGridLayout();
@@ -190,8 +211,6 @@ StartupPopup::StartupPopup()
     guiLay->setMargin(10);
     guiLay->setVerticalSpacing(10);
     guiLay->setHorizontalSpacing(10);
-
-    guiLay->addWidget(label, 0, 0, 1, 2, Qt::AlignLeft);
 
     projectLay->setSpacing(8);
     projectLay->setMargin(8);
@@ -319,6 +338,7 @@ StartupPopup::StartupPopup()
                        SLOT(onAutoSaveTimeChanged()));
   ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
                        SLOT(checkProject()));
+  ret = ret && connect(closeButton, &QPushButton::pressed, [=]() { hide(); });
   assert(ret);
   checkProject();
 }
