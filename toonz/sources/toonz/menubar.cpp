@@ -369,8 +369,11 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(fileMenu, MI_NewScene);
   addMenuItem(fileMenu, MI_LoadScene);
   addMenuItem(fileMenu, MI_SaveAll);
-  addMenuItem(fileMenu, MI_SaveScene);
-  addMenuItem(fileMenu, MI_SaveSceneAs);
+  QMenu *saveOtherMenu = fileMenu->addMenu(tr("Other Save Options"));
+  {
+    addMenuItem(saveOtherMenu, MI_SaveScene);
+    addMenuItem(saveOtherMenu, MI_SaveSceneAs);
+  }
   addMenuItem(fileMenu, MI_OpenRecentScene);
   addMenuItem(fileMenu, MI_RevertScene);
   fileMenu->addSeparator();
@@ -672,6 +675,9 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_RasterizePli);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_ShowStatusBar);
+  viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_MaximizePanel);
+  addMenuItem(viewMenu, MI_FullScreenWindow);
 
   // Menu' WINDOWS
   QMenu *windowsMenu = addMenu(tr("Windows"), fullMenuBar);
@@ -715,9 +721,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenExport);
-  windowsMenu->addSeparator();
-  addMenuItem(windowsMenu, MI_MaximizePanel);
-  addMenuItem(windowsMenu, MI_FullScreenWindow);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_ResetRoomLayout);
 

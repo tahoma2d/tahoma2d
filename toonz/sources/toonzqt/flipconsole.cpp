@@ -1828,7 +1828,7 @@ QFrame *FlipConsole::createFrameSlider() {
   m_currFrameSlider->setValue(0);
 
   m_timeLabel = new QLabel(QString("00:00:00"), frameSliderFrame);
-  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().width("00:00:00"));
+  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().width("00:00:00") + 10);
   m_timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_timeLabel->setStyleSheet("padding: 0px; margin: 0px;");
 
