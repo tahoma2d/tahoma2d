@@ -176,7 +176,8 @@ public:
 
 protected:
   // Private attributes for dragging purposes
-  bool m_floating;   // Whether this window is floating or docked
+  bool m_floating;  // Whether this window is floating or docked
+  bool m_wasFloating;
   bool m_dragging;   // Whether this window is being dragged
   bool m_undocking;  // Still docked, but after a mouse button press on a title
                      // bar.
@@ -220,6 +221,8 @@ public:
   DockLayout *parentLayout() const { return m_parentLayout; }
 
   bool isFloating() const { return m_floating; }
+  bool wasFloating() const { return m_wasFloating; }
+  void clearWasFloating() { m_wasFloating = false; }
   bool isMaximized() const { return m_maximized; }
 
   // Query functions
@@ -530,7 +533,8 @@ public:
 
   unsigned int find(const Region *subRegion) const;
 
-  bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets);
+  bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
+                                  bool &fromDocking);
 
 private:
   // Setters - private
