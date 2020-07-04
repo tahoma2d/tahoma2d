@@ -130,6 +130,7 @@ public:
   void toggleGeometricLine();
   void toggleGeometricPolyline();
   void toggleGeometricArc();
+  void toggleGeometricMultiArc();
   void toggleGeometricPolygon();
 
   /*-- Type tool + style switching shortcuts --*/

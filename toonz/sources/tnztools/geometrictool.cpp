@@ -38,6 +38,7 @@ using namespace ToolUtils;
 
 class GeometricTool;
 class MultiLinePrimitive;
+class MultiArcPrimitive;
 
 TEnv::DoubleVar GeometricSize("InknpaintGeometricSize", 1);
 TEnv::DoubleVar GeometricRasterSize("InknpaintGeometricRasterSize", 1);
@@ -46,6 +47,7 @@ TEnv::IntVar GeometricEdgeCount("InknpaintGeometricEdgeCount", 3);
 TEnv::IntVar GeometricSelective("InknpaintGeometricSelective", 0);
 TEnv::IntVar GeometricGroupIt("InknpaintGeometricGroupIt", 0);
 TEnv::IntVar GeometricAutofill("InknpaintGeometricAutofill", 0);
+TEnv::IntVar GeometricSmooth("InknpaintGeometricSmooth", 0);
 TEnv::IntVar GeometricPencil("InknpaintGeometricPencil", 0);
 TEnv::DoubleVar GeometricBrushHardness("InknpaintGeometricHardness", 100);
 TEnv::DoubleVar GeometricOpacity("InknpaintGeometricOpacity", 100);
@@ -213,6 +215,75 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class MultiArcPrimitiveUndoData {
+private:
+  TStroke *m_stroke;
+  TStroke *m_strokeTemp;
+  TPointD m_startPoint, m_endPoint, m_centralPoint;
+  int m_clickNumber;
+
+public:
+  MultiArcPrimitiveUndoData(TStroke *stroke, TStroke *strokeTemp,
+                            TPointD startPoint, TPointD endPoint,
+                            TPointD centralPoint, int clickNumber)
+      : m_stroke(0)
+      , m_strokeTemp(0)
+      , m_startPoint(startPoint)
+      , m_endPoint(endPoint)
+      , m_centralPoint(centralPoint)
+      , m_clickNumber(clickNumber) {
+    if (stroke) {
+      m_stroke = new TStroke(*stroke);
+    }
+    if (strokeTemp) {
+      m_strokeTemp = new TStroke(*strokeTemp);
+    }
+  }
+
+  ~MultiArcPrimitiveUndoData() {
+    delete m_stroke;
+    delete m_strokeTemp;
+  }
+
+  void replace(MultiArcPrimitive *tool) const;
+};
+
+//-----------------------------------------------------------------------------
+
+class MultiArcPrimitiveUndo final : public TUndo {
+  MultiArcPrimitive *m_tool;
+  MultiArcPrimitiveUndoData m_undo;
+  MultiArcPrimitiveUndoData *m_redo;
+
+public:
+  MultiArcPrimitiveUndo(MultiArcPrimitive *tool, TStroke *stroke,
+                        TStroke *strokeTemp, TPointD startPoint,
+                        TPointD endPoint, TPointD centralPoint, int clickNumber)
+      : TUndo()
+      , m_tool(tool)
+      , m_undo(stroke, strokeTemp, startPoint, endPoint, centralPoint,
+               clickNumber)
+      , m_redo(0) {}
+
+  ~MultiArcPrimitiveUndo() { delete m_redo; }
+
+  void setRedoData(TStroke *stroke, TStroke *strokeTemp, TPointD startPoint,
+                   TPointD endPoint, TPointD centralPoint, int clickNumber) {
+    m_redo = new MultiArcPrimitiveUndoData(stroke, strokeTemp, startPoint,
+                                           endPoint, centralPoint, clickNumber);
+  }
+
+  void undo() const override;
+  void redo() const override;
+
+  int getSize() const override { return sizeof(this); }
+
+  QString getToolName();
+  int getHistoryType() override { return HistoryType::GeometricTool; }
+};
+
+//-----------------------------------------------------------------------------
+
 class FullColorBluredPrimitiveUndo final : public UndoFullColorPencil {
   int m_thickness;
   double m_hardness;
@@ -307,6 +378,7 @@ public:
   TIntProperty m_edgeCount;
   TBoolProperty m_autogroup;
   TBoolProperty m_autofill;
+  TBoolProperty m_smooth;
   TBoolProperty m_selective;
   TBoolProperty m_pencil;
   TEnumProperty m_capStyle;
@@ -334,6 +406,7 @@ public:
       , m_edgeCount("Polygon Sides:", 3, 15, 3)
       , m_autogroup("Auto Group", false)
       , m_autofill("Auto Fill", false)
+      , m_smooth("Smooth", false)
       , m_selective("Selective", false)
       , m_pencil("Pencil Mode", false)
       , m_capStyle("Cap")
@@ -354,6 +427,7 @@ public:
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
+      m_prop[0].bind(m_smooth);
       m_prop[0].bind(m_snap);
       m_snap.setId("Snap");
       m_prop[0].bind(m_snapSensitivity);
@@ -388,6 +462,7 @@ public:
     m_selective.setId("Selective");
     m_autogroup.setId("AutoGroup");
     m_autofill.setId("Autofill");
+    m_smooth.setId("Smooth");
     m_type.setId("GeometricShape");
     m_edgeCount.setId("GeometricEdge");
   }
@@ -400,6 +475,7 @@ public:
     m_type.setItemUIName(L"Line", tr("Line"));
     m_type.setItemUIName(L"Polyline", tr("Polyline"));
     m_type.setItemUIName(L"Arc", tr("Arc"));
+    m_type.setItemUIName(L"MultiArc", tr("MultiArc"));
     m_type.setItemUIName(L"Polygon", tr("Polygon"));
 
     m_toolSize.setQStringName(tr("Size:"));
@@ -409,6 +485,7 @@ public:
     m_edgeCount.setQStringName(tr("Polygon Sides:"));
     m_autogroup.setQStringName(tr("Auto Group"));
     m_autofill.setQStringName(tr("Auto Fill"));
+    m_smooth.setQStringName(tr("Smooth"));
     m_selective.setQStringName(tr("Selective"));
     m_pencil.setQStringName(tr("Pencil Mode"));
 
@@ -481,6 +558,7 @@ public:
   TPointD getSnap(TPointD pos);
   void resetSnap();
   TPointD checkGuideSnapping(TPointD pos);
+  bool getSmooth() { return m_param->m_smooth.getValue(); }
 
   virtual TStroke *makeStroke() const = 0;
 };
@@ -731,32 +809,120 @@ public:
 };
 
 //=============================================================================
-// Arc Primitive Class Declaration
+// Multi Arc Primitive Class Declaration
 //-----------------------------------------------------------------------------
 
-class ArcPrimitive final : public Primitive {
+class MultiArcPrimitive : public Primitive {
   TStroke *m_stroke;
+  TStroke *m_strokeTemp;
   TPointD m_startPoint, m_endPoint, m_centralPoint;
   int m_clickNumber;
   TPixel32 m_color;
+  int m_undoCount;
+
+protected:
+  bool m_isSingleArc;
 
 public:
-  ArcPrimitive(PrimitiveParam *param, GeometricTool *tool, bool reasterTool)
-      : Primitive(param, tool, reasterTool), m_stroke(0), m_clickNumber(0) {}
+  MultiArcPrimitive(PrimitiveParam *param, GeometricTool *tool,
+                    bool reasterTool)
+      : Primitive(param, tool, reasterTool)
+      , m_stroke(0)
+      , m_strokeTemp(0)
+      , m_clickNumber(0)
+      , m_isSingleArc(false)
+      , m_undoCount(0) {}
 
-  ~ArcPrimitive() {
-    if (m_stroke) delete m_stroke;
-  }
+  ~MultiArcPrimitive() { delete m_stroke; }
 
-  std::string getName() const override {
-    return "Arc";
-  }  // _ToolOptions_ShapeArc";}
+  std::string getName() const override { return "MultiArc"; }
 
   TStroke *makeStroke() const override;
   void draw() override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonDoubleClick(const TPointD &, const TMouseEvent &e) override;
+  bool keyDown(QKeyEvent *event) override;
   void onEnter() override;
+  void onDeactivate() override {
+    delete m_stroke;
+    delete m_strokeTemp;
+    m_stroke      = 0;
+    m_strokeTemp  = 0;
+    m_clickNumber = 0;
+    TUndoManager::manager()->popUndo(m_undoCount);
+    m_undoCount = 0;
+  }
+
+  void replaceData(TStroke *stroke, TStroke *strokeTemp, TPointD startPoint,
+                   TPointD endPoint, TPointD centralPoint, int clickNumber) {
+    delete m_stroke;
+    delete m_strokeTemp;
+    m_stroke       = stroke;
+    m_strokeTemp   = strokeTemp;
+    m_startPoint   = startPoint;
+    m_endPoint     = endPoint;
+    m_centralPoint = centralPoint;
+    m_clickNumber  = clickNumber;
+  }
+
+  void decreaseUndo() { --m_undoCount; }
+
+  void increaseUndo() { ++m_undoCount; }
+};
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndoData::replace(MultiArcPrimitive *tool) const {
+  TStroke *stroke     = 0;
+  TStroke *strokeTemp = 0;
+  if (m_stroke) {
+    stroke = new TStroke(*m_stroke);
+  }
+  if (m_strokeTemp) {
+    strokeTemp = new TStroke(*m_strokeTemp);
+  }
+  tool->replaceData(stroke, strokeTemp, m_startPoint, m_endPoint,
+                    m_centralPoint, m_clickNumber);
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndo::undo() const {
+  m_undo.replace(m_tool);
+  m_tool->decreaseUndo();
+  TTool::getApplication()->getCurrentTool()->getTool()->invalidate();
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitiveUndo::redo() const {
+  m_redo->replace(m_tool);
+  m_tool->increaseUndo();
+  TTool::getApplication()->getCurrentTool()->getTool()->invalidate();
+}
+
+//----------------------------------------------------------------------------
+
+QString MultiArcPrimitiveUndo::getToolName() {
+  return QString("Geometric Tool %1")
+      .arg(QString::fromStdString(m_tool->getName()));
+}
+
+//=============================================================================
+// Arc Primitive Class Declaration
+//-----------------------------------------------------------------------------
+
+class ArcPrimitive final : public MultiArcPrimitive {
+public:
+  ArcPrimitive(PrimitiveParam *param, GeometricTool *tool, bool reasterTool)
+      : MultiArcPrimitive(param, tool, reasterTool) {
+    m_isSingleArc = true;
+  }
+
+  std::string getName() const override {
+    return "Arc";
+  }  // _ToolOptions_ShapeArc";}
 };
 
 //=============================================================================
@@ -812,6 +978,7 @@ public:
       addPrimitive(new LinePrimitive(&m_param, this, true));
       addPrimitive(new MultiLinePrimitive(&m_param, this, true));
       addPrimitive(new ArcPrimitive(&m_param, this, true));
+      addPrimitive(new MultiArcPrimitive(&m_param, this, true));
       addPrimitive(new PolygonPrimitive(&m_param, this, true));
     } else  // targetType == 1
     {
@@ -822,6 +989,7 @@ public:
       addPrimitive(new LinePrimitive(&m_param, this, false));
       addPrimitive(new MultiLinePrimitive(&m_param, this, false));
       addPrimitive(new ArcPrimitive(&m_param, this, false));
+      addPrimitive(new MultiArcPrimitive(&m_param, this, false));
       addPrimitive(new PolygonPrimitive(&m_param, this, false));
     }
   }
@@ -848,7 +1016,10 @@ public:
   void changeType(std::wstring name) {
     std::map<std::wstring, Primitive *>::iterator it =
         m_primitiveTable.find(name);
-    if (it != m_primitiveTable.end()) m_primitive = it->second;
+    if (it != m_primitiveTable.end()) {
+      if (m_primitive) m_primitive->onDeactivate();
+      m_primitive = it->second;
+    }
   }
 
   void leftButtonDown(const TPointD &p, const TMouseEvent &e) override {
@@ -909,6 +1080,7 @@ public:
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
       m_param.m_autogroup.setValue(GeometricGroupIt ? 1 : 0);
+      m_param.m_smooth.setValue(GeometricSmooth ? 1 : 0);
       m_param.m_autofill.setValue(GeometricAutofill ? 1 : 0);
       std::wstring typeCode = ::to_wstring(GeometricType.getValue());
       m_param.m_type.setValue(typeCode);
@@ -1014,6 +1186,8 @@ public:
             QString::fromStdString(getName()));
       }
       GeometricGroupIt = m_param.m_autofill.getValue();
+    } else if (propertyName == m_param.m_smooth.getName()) {
+      GeometricSmooth = m_param.m_smooth.getValue();
     } else if (propertyName == m_param.m_selective.getName())
       GeometricSelective = m_param.m_selective.getValue();
     else if (propertyName == m_param.m_pencil.getName())
@@ -1119,6 +1293,7 @@ public:
                                                          stroke->getBBox());
 
         vi->addStroke(stroke);
+
         TUndoManager::manager()->add(new UndoPencil(
             vi->getStroke(vi->getStrokeCount() - 1), fillInformation, sl, id,
             m_isFrameCreated, m_isLevelCreated, m_param.m_autogroup.getValue(),
@@ -2134,30 +2309,53 @@ void EllipsePrimitive::onEnter() {
 // Arc Primitive Class Implementation
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::draw() {
+void MultiArcPrimitive::draw() {
   drawSnap();
+
+  double pixelSize = m_tool->getPixelSize();
 
   switch (m_clickNumber) {
   case 1:
     tglColor(m_color);
     tglDrawSegment(m_startPoint, m_endPoint);
-    break;
-  case 2:
-    assert(m_stroke);
-    if (m_stroke) {
-      tglColor(m_isPrompting ? TPixel32::Green : m_color);
-      if (!m_isPrompting) {
-        glLineStipple(1, 0x5555);
-        glEnable(GL_LINE_STIPPLE);
-        glBegin(GL_LINE_STRIP);
-        tglVertex(m_stroke->getControlPoint(0));
-        tglVertex(m_centralPoint);
-        tglVertex(m_stroke->getControlPoint(8));
-        glEnd();
-        glDisable(GL_LINE_STIPPLE);
-      }
 
+    if (m_stroke) {
       drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
+      TPointD firstPoint = m_stroke->getControlPoint(0);
+      if (firstPoint == m_endPoint) {
+        tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                          (m_color.b + 127) % 255, m_color.m));
+      }
+      tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
+    }
+
+    break;
+
+  case 2:
+    tglColor(m_isPrompting ? TPixel32::Green : m_color);
+    if (!m_isPrompting) {
+      glLineStipple(1, 0x5555);
+      glEnable(GL_LINE_STIPPLE);
+      glBegin(GL_LINE_STRIP);
+      tglVertex(m_startPoint);
+      tglVertex(m_centralPoint);
+      tglVertex(m_endPoint);
+      glEnd();
+      glDisable(GL_LINE_STIPPLE);
+    }
+
+    if (m_stroke) drawStrokeCenterline(*m_stroke, sqrt(tglGetPixelSize2()));
+
+    if (m_strokeTemp)
+      drawStrokeCenterline(*m_strokeTemp, sqrt(tglGetPixelSize2()));
+
+    if (m_stroke) {
+      TPointD firstPoint = m_stroke->getControlPoint(0);
+      if (firstPoint == m_endPoint) {
+        tglColor(TPixel32((m_color.r + 127) % 255, m_color.g,
+                          (m_color.b + 127) % 255, m_color.m));
+      }
+      tglDrawCircle(m_stroke->getControlPoint(0), joinDistance * pixelSize);
     }
     break;
   };
@@ -2165,11 +2363,13 @@ void ArcPrimitive::draw() {
 
 //-----------------------------------------------------------------------------
 
-TStroke *ArcPrimitive::makeStroke() const { return new TStroke(*m_stroke); }
+TStroke *MultiArcPrimitive::makeStroke() const {
+  return new TStroke(*m_stroke);
+}
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
+void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
@@ -2177,71 +2377,157 @@ void ArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
   std::vector<TThickPoint> points(9);
   double thick = getThickness();
+  double dist  = joinDistance * joinDistance;
+
+  MultiArcPrimitiveUndo *undo =
+      new MultiArcPrimitiveUndo(this, m_stroke, m_strokeTemp, m_startPoint,
+                                m_endPoint, m_centralPoint, m_clickNumber);
+
+  if (app->getCurrentObject()->isSpline()) {
+    m_isEditing = true;
+    m_color     = TPixel32::Red;
+  } else {
+    const TColorStyle *style = app->getCurrentLevelStyle();
+    if (style) {
+      m_isEditing = style->isStrokeStyle();
+      m_color     = style->getAverageColor();
+    } else {
+      m_isEditing = false;
+      m_color     = TPixel32::Black;
+    }
+  }
 
   switch (m_clickNumber) {
   case 0:
-    if (app->getCurrentObject()->isSpline()) {
-      m_isEditing = true;
-      m_color     = TPixel32::Red;
-    } else {
-      const TColorStyle *style = app->getCurrentLevelStyle();
-      if (style) {
-        m_isEditing = style->isStrokeStyle();
-        m_color     = style->getAverageColor();
-      } else {
-        m_isEditing = false;
-        m_color     = TPixel32::Black;
-      }
-    }
+    m_endPoint = newPos;
 
     if (!m_isEditing) return;
 
-    m_endPoint = m_startPoint = newPos;
     m_clickNumber++;
     break;
 
   case 1:
-    points[0] = TThickPoint(m_startPoint, thick);
-    points[8] = TThickPoint(newPos, thick);
-    points[4] = TThickPoint(0.5 * (points[0] + points[8]), thick);
-    points[2] = TThickPoint(0.5 * (points[0] + points[4]), thick);
-    points[6] = TThickPoint(0.5 * (points[4] + points[8]), thick);
+    m_centralPoint = newPos;
+    points[0]      = TThickPoint(m_startPoint, thick);
+    points[8]      = TThickPoint(m_endPoint, thick);
+    points[4]      = TThickPoint(0.5 * (points[0] + points[8]), thick);
+    points[2]      = TThickPoint(0.5 * (points[0] + points[4]), thick);
+    points[6]      = TThickPoint(0.5 * (points[4] + points[8]), thick);
 
-    points[1] = TThickPoint(0.5 * (points[0] + points[2]), thick);
-    points[3] = TThickPoint(0.5 * (points[2] + points[4]), thick);
-    points[5] = TThickPoint(0.5 * (points[4] + points[6]), thick);
-    points[7] = TThickPoint(0.5 * (points[6] + points[8]), thick);
-    if (m_stroke) delete m_stroke;
-    m_stroke = new TStroke(points);
+    points[1]    = TThickPoint(0.5 * (points[0] + points[2]), thick);
+    points[3]    = TThickPoint(0.5 * (points[2] + points[4]), thick);
+    points[5]    = TThickPoint(0.5 * (points[4] + points[6]), thick);
+    points[7]    = TThickPoint(0.5 * (points[6] + points[8]), thick);
+    m_strokeTemp = new TStroke(points);
     m_clickNumber++;
     break;
 
   case 2:
-    m_tool->addStroke();
-    m_stroke      = 0;
-    m_clickNumber = 0;
+    m_startPoint = newPos;
+    if (!m_isSingleArc) {
+      m_clickNumber = 1;
+      if (m_stroke) {
+        TVectorImageP vi = new TVectorImage();
+        vi->addStroke(m_stroke);
+        vi->addStroke(m_strokeTemp);
+        m_strokeTemp = 0;
+        vi->joinStroke(0, 1, m_stroke->getControlPointCount() - 1, 0,
+                       getSmooth());
+
+        m_stroke           = new TStroke(*vi->getStroke(0));
+        int count          = m_stroke->getControlPointCount();
+        TPointD firstPoint = m_stroke->getControlPoint(0);
+        TPointD lastPoint  = m_stroke->getControlPoint(count - 1);
+        m_startPoint       = lastPoint;
+        if (firstPoint == lastPoint) {
+          vi->joinStroke(0, 0, 0, m_stroke->getControlPointCount() - 1,
+                         getSmooth());
+          delete m_stroke;
+          m_stroke = new TStroke(*vi->getStroke(0));
+          TUndoManager::manager()->popUndo(m_undoCount);
+          m_undoCount = 0;
+          m_tool->addStroke();
+          onDeactivate();
+        }
+      } else {
+        m_stroke     = m_strokeTemp;
+        m_strokeTemp = 0;
+        m_startPoint = m_endPoint;
+      }
+    } else {
+      m_stroke     = m_strokeTemp;
+      m_strokeTemp = 0;
+      TUndoManager::manager()->popUndo(m_undoCount);
+      m_undoCount = 0;
+      m_tool->addStroke();
+      onDeactivate();
+    }
     break;
   }
+
+  undo->setRedoData(m_stroke, m_strokeTemp, m_startPoint, m_endPoint,
+                    m_centralPoint, m_clickNumber);
+  TUndoManager::manager()->add(undo);
+  ++m_undoCount;
+
   resetSnap();
 }
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
+void MultiArcPrimitive::leftButtonDoubleClick(const TPointD &,
+                                              const TMouseEvent &e) {
+  if (m_stroke) {
+    TUndoManager::manager()->popUndo(m_undoCount);
+    m_undoCount = 0;
+    m_tool->addStroke();
+  }
+  onDeactivate();
+}
+
+//-----------------------------------------------------------------------------
+
+bool MultiArcPrimitive::keyDown(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+    if (m_stroke) {
+      TUndoManager::manager()->popUndo(m_undoCount);
+      m_undoCount = 0;
+      m_tool->addStroke();
+    }
+    onDeactivate();
+    return true;
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   TPointD newPos = calculateSnap(pos);
   newPos         = checkGuideSnapping(pos);
 
+  double dist = joinDistance * joinDistance;
+
   switch (m_clickNumber) {
+  case 0:
+    m_startPoint = newPos;
+    break;
   case 1:
     if (e.isShiftPressed())
       m_endPoint = rectify(m_startPoint, pos);
     else
       m_endPoint = newPos;
+
+    if (m_stroke) {
+      TPointD firstPoint = m_stroke->getControlPoint(0);
+      if (tdistance2(m_endPoint, firstPoint) < dist * m_tool->getPixelSize())
+        m_endPoint = firstPoint;
+    }
     break;
   case 2:
-    m_centralPoint = TThickPoint(newPos, getThickness());
-    TThickQuadratic q(m_stroke->getControlPoint(0), m_centralPoint,
-                      m_stroke->getControlPoint(8));
+    m_centralPoint = newPos;
+    TThickQuadratic q(m_startPoint, TThickPoint(m_centralPoint, getThickness()),
+                      m_endPoint);
     TThickQuadratic q0, q1, q00, q01, q10, q11;
 
     q.split(0.5, q0, q1);
@@ -2252,15 +2538,13 @@ void ArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     assert(q01.getP2() == q10.getP0());
     assert(q10.getP2() == q11.getP0());
 
-    m_stroke->setControlPoint(0, q00.getP0());
-    m_stroke->setControlPoint(1, q00.getP1());
-    m_stroke->setControlPoint(2, q00.getP2());
-    m_stroke->setControlPoint(3, q01.getP1());
-    m_stroke->setControlPoint(4, q01.getP2());
-    m_stroke->setControlPoint(5, q10.getP1());
-    m_stroke->setControlPoint(6, q10.getP2());
-    m_stroke->setControlPoint(7, q11.getP1());
-    m_stroke->setControlPoint(8, q11.getP2());
+    m_strokeTemp->setControlPoint(1, q00.getP1());
+    m_strokeTemp->setControlPoint(2, q00.getP2());
+    m_strokeTemp->setControlPoint(3, q01.getP1());
+    m_strokeTemp->setControlPoint(4, q01.getP2());
+    m_strokeTemp->setControlPoint(5, q10.getP1());
+    m_strokeTemp->setControlPoint(6, q10.getP2());
+    m_strokeTemp->setControlPoint(7, q11.getP1());
     break;
   }
   m_tool->invalidate();
@@ -2268,7 +2552,7 @@ void ArcPrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
 //-----------------------------------------------------------------------------
 
-void ArcPrimitive::onEnter() {
+void MultiArcPrimitive::onEnter() {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
