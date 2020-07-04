@@ -1,0 +1,89 @@
+// -----------------------------------------------------------------------------
+// Tahoma Patch - Needs to be included last
+// -----------------------------------------------------------------------------
+
+/* -----------------------------------------------------------------------------
+   Status Bar - Bottom of Main Window
+----------------------------------------------------------------------------- */
+
+#StatusBar {
+    background-color: @bg;
+    color: @status-hl-color;
+    border-top: 1px outset @dock-bg-color;
+    &:disabled {
+      color: @text-color-disabled;
+    }
+  }
+  
+#MainWindowMessageLabel {
+    background-color: @bg;
+    padding-left: 10px; 
+    padding-right: 10px;
+    color: @hl-bg-color;
+    &:disabled {
+      color: @text-color-disabled;
+    }
+}
+  
+#MainWindowPlainLabel {
+    background-color: @bg;
+    padding-left: 10px; 
+    padding-right: 10px;
+    color: @text-color;
+    &:disabled {
+      color: @text-color-disabled;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   Hex Line Edit - In the Style Editor
+----------------------------------------------------------------------------- */
+#HexLineEdit {
+    margin-left: 7px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+/* -----------------------------------------------------------------------------
+   Add a Line to the Palette Viewer Toolbar
+----------------------------------------------------------------------------- */
+PaletteViewer {
+  & #ToolBarContainer {
+    border-top: 1 solid @accent;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Live View Button in the Stop Motion Controller
+----------------------------------------------------------------------------- */  
+#LiveViewButton {
+    qproperty-icon: url('@{img-url}/liveview.svg');
+    &::menu-indicator{
+      image:"";
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   Theme settings for Viewer BG Colors
+----------------------------------------------------------------------------- */
+SceneViewer {
+    qproperty-BGColor: @bg-darkish;
+    qproperty-PreviewBGColor: @bg-darker;
+  }
+
+/* -----------------------------------------------------------------------------
+   Override a 1 pixel line above the flip console
+----------------------------------------------------------------------------- */
+#ComboViewer,
+#ViewerPanel,
+FlipBook {
+  & #ToolBarContainer {
+    background-color: transparent;
+    border-top: 1 solid @accent;
+    border-bottom: 1 solid @accent;
+    padding-right: -1; // hides right border on #ScrollRightButton when
+                       // fps slider is disabled
+  }
+}

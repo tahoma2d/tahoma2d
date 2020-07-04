@@ -728,35 +728,6 @@ QTabBar::tab:only-one {
   color: rgba(230, 230, 230, 0.4);
 }
 /* -----------------------------------------------------------------------------
-   Status Bar - Bottom of Main Window
------------------------------------------------------------------------------ */
-#StatusBar {
-  background-color: #414345;
-  color: orange;
-  border-top: 1px outset #141516;
-}
-#StatusBar:disabled {
-  color: rgba(230, 230, 230, 0.4);
-}
-#MainWindowMessageLabel {
-  background-color: #414345;
-  padding-left: 10px;
-  padding-right: 10px;
-  color: #5385a6;
-}
-#MainWindowMessageLabel:disabled {
-  color: rgba(230, 230, 230, 0.4);
-}
-#MainWindowPlainLabel {
-  background-color: #414345;
-  padding-left: 10px;
-  padding-right: 10px;
-  color: #d6d8dd;
-}
-#MainWindowPlainLabel:disabled {
-  color: rgba(230, 230, 230, 0.4);
-}
-/* -----------------------------------------------------------------------------
    Push Button
 ----------------------------------------------------------------------------- */
 .Button,
@@ -1436,11 +1407,6 @@ QStatusBar #StatusBarLabel {
 #HexagonalColorWheel {
   qproperty-BGColor: #414345;
 }
-#HexLineEdit {
-  margin-left: 7px;
-  margin-top: 4px;
-  margin-bottom: 4px;
-}
 /* -------------------------------------------------------------------------- */
 /* Horizontal QSlider */
 #colorSlider::groove:horizontal {
@@ -1615,12 +1581,6 @@ ProjectPopup QLabel {
   qproperty-icon: url('../Medium/imgs/white/gear.svg');
 }
 #GearButton::menu-indicator {
-  image: "";
-}
-#LiveViewButton {
-  qproperty-icon: url('../Medium/imgs/white/liveview.svg');
-}
-#LiveViewButton::menu-indicator {
   image: "";
 }
 #SubfolderButton {
@@ -1955,10 +1915,6 @@ Ruler {
 #RulerToolOptionValues {
   color: #000000;
 }
-SceneViewer {
-  qproperty-BGColor: #37393a;
-  qproperty-PreviewBGColor: #2d2f30;
-}
 /* -----------------------------------------------------------------------------
    XSheet Viewer
 ----------------------------------------------------------------------------- */
@@ -2201,4 +2157,76 @@ ParamFieldKeyToggle {
   qproperty-KeyOnColor: orange;
   qproperty-KeyInbetweenColor: cyan;
   qproperty-KeyHighlightColor: rgba(255, 255, 255, 0.3);
+}
+/* -----------------------------------------------------------------------------
+   Status Bar - Bottom of Main Window
+----------------------------------------------------------------------------- */
+#StatusBar {
+  background-color: #414345;
+  color: orange;
+  border-top: 1px outset #141516;
+}
+#StatusBar:disabled {
+  color: rgba(230, 230, 230, 0.4);
+}
+#MainWindowMessageLabel {
+  background-color: #414345;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #5385a6;
+}
+#MainWindowMessageLabel:disabled {
+  color: rgba(230, 230, 230, 0.4);
+}
+#MainWindowPlainLabel {
+  background-color: #414345;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #d6d8dd;
+}
+#MainWindowPlainLabel:disabled {
+  color: rgba(230, 230, 230, 0.4);
+}
+/* -----------------------------------------------------------------------------
+   Hex Line Edit - In the Style Editor
+----------------------------------------------------------------------------- */
+#HexLineEdit {
+  margin-left: 7px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+/* -----------------------------------------------------------------------------
+   Add a Line to the Palette Viewer Toolbar
+----------------------------------------------------------------------------- */
+PaletteViewer #ToolBarContainer {
+  border-top: 1 solid #212223;
+  margin: 0;
+  padding: 0;
+}
+/* -----------------------------------------------------------------------------
+   Live View Button in the Stop Motion Controller
+----------------------------------------------------------------------------- */
+#LiveViewButton {
+  qproperty-icon: url('../Medium/imgs/white/liveview.svg');
+}
+#LiveViewButton::menu-indicator {
+  image: "";
+}
+/* -----------------------------------------------------------------------------
+   Theme settings for Viewer BG Colors
+----------------------------------------------------------------------------- */
+SceneViewer {
+  qproperty-BGColor: #37393a;
+  qproperty-PreviewBGColor: #2d2f30;
+}
+/* -----------------------------------------------------------------------------
+   Override a 1 pixel line above the flip console
+----------------------------------------------------------------------------- */
+#ComboViewer #ToolBarContainer,
+#ViewerPanel #ToolBarContainer,
+FlipBook #ToolBarContainer {
+  background-color: transparent;
+  border-top: 1 solid #212223;
+  border-bottom: 1 solid #212223;
+  padding-right: -1;
 }
