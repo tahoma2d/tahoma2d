@@ -369,6 +369,14 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor SelectedColumnHead READ getSelectedColumnHead WRITE
                  setSelectedColumnHead)
 
+  // For folded column
+  QColor m_foldedColumnBGColor;
+  QColor m_foldedColumnLineColor;
+  Q_PROPERTY(QColor FoldedColumnBGColor READ getFoldedColumnBGColor WRITE
+                 setFoldedColumnBGColor)
+  Q_PROPERTY(QColor FoldedColumnLineColor READ getFoldedColumnLineColor WRITE
+                 setFoldedColumnLineColor)
+
   // Xsheet Column name/Drag bar colors
   QColor m_xsheetColumnNameBgColor;
   QColor m_xsheetDragBarHighlightColor;
@@ -771,16 +779,14 @@ public:
     m_selectedEmptyCellColor = color;
   }
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
-  
+
   // Cell focus
   void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
   QColor getCellFocusColor() const { return m_cellFocusColor; }
 
   // Play range
   QColor getPlayRangeColor() const { return m_playRangeColor; }
-  void setPlayRangeColor(const QColor &color) {
-    m_playRangeColor = color;
-  }
+  void setPlayRangeColor(const QColor &color) { m_playRangeColor = color; }
 
   // TZP column
   void setLevelColumnColor(const QColor &color) { m_levelColumnColor = color; }
@@ -935,6 +941,15 @@ public:
   void getColumnColor(QColor &color, QColor &sidecolor, int index,
                       TXsheet *xsh);
 
+  // For folded column
+  QColor getFoldedColumnBGColor() const { return m_foldedColumnBGColor; }
+  QColor getFoldedColumnLineColor() const { return m_foldedColumnLineColor; }
+  void setFoldedColumnBGColor(const QColor &color) {
+    m_foldedColumnBGColor = color;
+  }
+  void setFoldedColumnLineColor(const QColor &color) {
+    m_foldedColumnLineColor = color;
+  }
   // Xsheet Column Name/Drag Bar
   void setXsheetColumnNameBgColor(const QColor &color) {
     m_xsheetColumnNameBgColor = color;

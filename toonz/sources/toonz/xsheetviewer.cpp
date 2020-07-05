@@ -47,11 +47,11 @@ TEnv::IntVar FrameDisplayStyleInXsheetRowArea(
 //=============================================================================
 namespace XsheetGUI {
 //-----------------------------------------------------------------------------
-
+//#todo
 const int ColumnWidth     = 74;
 const int RowHeight       = 20;
 const int SCROLLBAR_WIDTH = 16;
-const int TOOLBAR_HEIGHT  = 30;
+const int TOOLBAR_HEIGHT  = 29;
 const int ZOOM_FACTOR_MAX = 100;
 const int ZOOM_FACTOR_MIN = 20;
 }  // namespace XsheetGUI

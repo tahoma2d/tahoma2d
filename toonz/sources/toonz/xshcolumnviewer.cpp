@@ -1301,17 +1301,17 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
 
     p.setPen(m_viewer->getDarkLineColor());
     p.fillRect(x0, y0 + 1, rect.width(), 18,
-               QBrush(m_viewer->getDarkBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0, y0 + 17, 2, rect.height() - 34,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 3, y0 + 20, 2, rect.height() - 36,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 6, y0 + 17, 2, rect.height() - 34,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
 
-    p.setPen(m_viewer->getVerticalLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 - 1, y0 + 17, x0 - 1, rect.height());
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 2, y0 + 17, x0 + 2, rect.height());
     p.drawLine(x0 + 5, y0 + 17, x0 + 5, rect.height());
     p.drawLine(x0, y0 + 17, x0 + 1, 17);
@@ -1337,19 +1337,19 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
     x0 = 0;
     y0 = rect.topLeft().y() + 1;
 
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.fillRect(x0 + 1, y0, 18, rect.height(),
-               QBrush(m_viewer->getDarkBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 17, y0, rect.width() - 34, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 20, y0 + 3, rect.width() - 36, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 17, y0 + 6, rect.width() - 34, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
 
-    p.setPen(m_viewer->getVerticalLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 17, y0 - 1, rect.width(), y0 - 1);
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 17, y0 + 2, rect.width(), y0 + 2);
     p.drawLine(x0 + 17, y0 + 5, rect.width(), y0 + 5);
     p.drawLine(x0 + 17, y0, 17, y0 + 1);
