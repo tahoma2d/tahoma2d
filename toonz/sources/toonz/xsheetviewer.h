@@ -195,6 +195,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_darkBgColor;
   QColor m_lightLineColor;  // horizontal lines (146,144,146)
   QColor m_darkLineColor;
+  QColor m_columnIconLineColor;
 
   Q_PROPERTY(QColor LightLightBGColor READ getLightLightBGColor WRITE
                  setLightLightBGColor)
@@ -204,6 +205,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(
       QColor LightLineColor READ getLightLineColor WRITE setLightLineColor)
   Q_PROPERTY(QColor DarkLineColor READ getDarkLineColor WRITE setDarkLineColor)
+  Q_PROPERTY(QColor ColumnIconLineColor READ getColumnIconLineColor WRITE setColumnIconLineColor)
 
   // Row
   QColor m_currentRowBgColor;      // current frame / column (210,210,210)
@@ -732,6 +734,9 @@ public:
   QColor getLightLineColor() const { return m_lightLineColor; }
   void setDarkLineColor(const QColor &color) { m_darkLineColor = color; }
   QColor getDarkLineColor() const { return m_darkLineColor; }
+
+  QColor getColumnIconLineColor() const { return m_columnIconLineColor; }
+  void setColumnIconLineColor(const QColor &color) { m_columnIconLineColor = color; }
 
   // Row
   void setCurrentRowBgColor(const QColor &color) {

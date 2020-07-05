@@ -782,7 +782,7 @@ void ColumnArea::DrawHeader::drawEye() const {
   QRect prevViewRect = o->rect(PredefinedRect::EYE_AREA).translated(orig);
   QRect eyeRect      = o->rect(PredefinedRect::EYE).translated(orig);
   // preview visible toggle
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor()); // Preview border color
 
   if (col < 0 || column->getSoundTextColumn()) {
     if (o->flag(PredefinedFlag::EYE_AREA_BORDER)) p.drawRect(prevViewRect);
@@ -819,7 +819,7 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
   QRect tableViewImgRect =
       o->rect(PredefinedRect::PREVIEW_LAYER).translated(orig);
 
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor());  // Camstand border color
 
   if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn()) {
     if (o->flag(PredefinedFlag::PREVIEW_LAYER_AREA_BORDER))
@@ -859,7 +859,7 @@ void ColumnArea::DrawHeader::drawLock() const {
     bgColor = QColor(255, 255, 255, 128);
 
   // lock button
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor()); // Lock border color
 
   p.fillRect(lockModeRect, bgColor);
   if (o->flag(PredefinedFlag::LOCK_AREA_BORDER)) p.drawRect(lockModeRect);
@@ -889,7 +889,7 @@ void ColumnArea::DrawHeader::drawConfig() const {
                             .translated(orig);
 
   // config button
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor());
   p.fillRect(configRect, bgColor);
   if (o->flag((col < 0) ? PredefinedFlag::CAMERA_CONFIG_AREA_BORDER
                         : PredefinedFlag::CONFIG_AREA_BORDER))
