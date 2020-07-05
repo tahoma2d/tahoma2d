@@ -2981,7 +2981,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   menu->addAction(m_rgbAction);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("menu_16"));
+  toolButton->setIcon(createQIcon("16_menu"));
   toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -3311,11 +3311,11 @@ void StyleEditor::onStyleSwitched() {
     QString statusText;
     // palette type
     if (isCleanUpPalette)
-      statusText = tr("[CLEANUP]  ");
+      statusText = tr("Cleanup ");
     else if (palette->getGlobalName() != L"")
-      statusText = tr("[STUDIO]  ");
+      statusText = tr("Studio ");
     else
-      statusText = tr("[LEVEL]  ");
+      statusText = tr("Level ");
 
     // palette name
     statusText += tr("Palette") + " : " +
