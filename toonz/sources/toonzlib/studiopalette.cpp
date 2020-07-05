@@ -328,7 +328,7 @@ bool StudioPalette::isPalette(const TFilePath &path) {
 //-------------------------------------------------------------------
 /*! check if the palette is studio palette or level palette in order to separate
  * icons in the StudioPaletteTree.
-*/
+ */
 bool StudioPalette::hasGlobalName(const TFilePath &path) {
   return (readPaletteGlobalName(path) != L"");
 }
@@ -376,16 +376,21 @@ void StudioPalette::createFolder(const TFilePath &parentFolderPath,
 
 TFilePath StudioPalette::createPalette(const TFilePath &folderPath,
                                        std::string name) {
-  TPalette *palette    = 0;
+  TPalette *palette = 0;
   if (name == "") name = "new palette";
-  palette              = new TPalette();
-  TFilePath fp         = makeUniqueName(folderPath + (name + ".tpl"));
+  palette      = new TPalette();
+  TFilePath fp = makeUniqueName(folderPath + (name + ".tpl"));
   time_t ltime;
   time(&ltime);
   std::wstring gname = std::to_wstring(ltime) + L"_" + std::to_wstring(rand());
   palette->setGlobalName(gname);
   setStylesGlobalNames(palette);
-  save(fp, palette);
+  try {
+    save(fp, palette);
+  } catch (...) {
+    delete palette;
+    throw;
+  }
   delete palette;
   notifyTreeChange();
   return fp;
@@ -404,7 +409,12 @@ void StudioPalette::setPalette(const TFilePath &palettePath,
     pgn = readPaletteGlobalName(palettePath);
   palette->setGlobalName(pgn);
   setStylesGlobalNames(palette);
-  save(palettePath, palette);
+  try {
+    save(palettePath, palette);
+  } catch (...) {
+    palette->release();
+    throw;
+  }
   palette->release();
   if (notifyPaletteChanged) notifyPaletteChange(palettePath);
 }
@@ -518,7 +528,7 @@ std::pair<TFilePath, int> StudioPalette::getSourceStyle(TColorStyle *cs) {
 
 //-------------------------------------------------------------------
 /*! return if any style in the palette is changed
-*/
+ */
 bool StudioPalette::updateLinkedColors(TPalette *palette) {
   bool paletteIsChanged = false;
   std::map<std::wstring, TPaletteP> table;
@@ -587,6 +597,11 @@ void StudioPalette::save(const TFilePath &path, TPalette *palette) {
   }
 
   TOStream os(path);
+  if (!os) {
+    throw TSystemException(path,
+                           "The studio palette cannot be saved: the output "
+                           "stream status is invalid.");
+  }
   std::map<std::string, std::string> attr;
   attr["name"] = ::to_string(palette->getGlobalName());
   os.openChild("palette", attr);

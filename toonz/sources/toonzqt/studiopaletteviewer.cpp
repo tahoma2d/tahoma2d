@@ -497,13 +497,26 @@ void StudioPaletteTreeViewer::onCurrentItemChanged(QTreeWidgetItem *current,
       return;
     }
     if (ret == 1) {
-      // If the palette is level palette (i.e. NOT stdio palette), just
-      // overwrite it
-      if (gname.empty())
-        StudioPalette::instance()->save(oldPath, m_currentPalette.getPointer());
-      else
-        StudioPalette::instance()->setPalette(
-            oldPath, m_currentPalette.getPointer(), false);
+      try {
+        // If the palette is level palette (i.e. NOT stdio palette), just
+        // overwrite it
+        if (gname.empty())
+          StudioPalette::instance()->save(oldPath,
+                                          m_currentPalette.getPointer());
+        else
+          StudioPalette::instance()->setPalette(
+              oldPath, m_currentPalette.getPointer(), false);
+      } catch (TSystemException se) {
+        DVGui::warning(QString::fromStdWString(se.getMessage()));
+        setCurrentItem(previous);
+        return;
+      } catch (...) {
+        DVGui::warning(
+            QString::fromStdWString(oldPath.getWideString() + L"\n") +
+            tr("Failed to save palette."));
+        setCurrentItem(previous);
+        return;
+      }
     }
     m_currentPalette->setDirtyFlag(false);
   }
