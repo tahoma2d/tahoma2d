@@ -475,6 +475,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_GeometricPolyline, this,
                     &MainWindow::toggleGeometricPolyline);
   setCommandHandler(MI_GeometricArc, this, &MainWindow::toggleGeometricArc);
+  setCommandHandler(MI_GeometricMultiArc, this,
+                    &MainWindow::toggleGeometricMultiArc);
   setCommandHandler(MI_GeometricPolygon, this,
                     &MainWindow::toggleGeometricPolygon);
 
@@ -1256,7 +1258,7 @@ void MainWindow::onMenuCheckboxChanged() {
     FieldGuideToggleAction = isChecked;
   else if (cm->getAction(MI_RasterizePli) == action) {
     if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
-    RasterizePliToggleAction                            = isChecked;
+    RasterizePliToggleAction = isChecked;
   } else if (cm->getAction(MI_SafeArea) == action)
     SafeAreaToggleAction = isChecked;
   else if (cm->getAction(MI_ViewColorcard) == action)
@@ -2539,6 +2541,8 @@ void MainWindow::defineActions() {
                           tr("Geometric Shape Polyline"), "");
   createToolOptionsAction("A_ToolOption_GeometricShape:Arc",
                           tr("Geometric Shape Arc"), "");
+  createToolOptionsAction("A_ToolOption_GeometricShape:MultiArc",
+                          tr("Geometric Shape MultiArc"), "");
   createToolOptionsAction("A_ToolOption_GeometricShape:Polygon",
                           tr("Geometric Shape Polygon"), "");
   createToolOptionsAction("A_ToolOption_GeometricEdge", tr("Geometric Edge"),
@@ -2653,6 +2657,8 @@ void MainWindow::defineActions() {
   createAction(MI_GeometricPolyline, tr("Geometric Tool - Polyline"), "", "",
                ToolCommandType);
   createAction(MI_GeometricArc, tr("Geometric Tool - Arc"), "", "",
+               ToolCommandType);
+  createAction(MI_GeometricMultiArc, tr("Geometric Tool - MultiArc"), "", "",
                ToolCommandType);
   createAction(MI_GeometricPolygon, tr("Geometric Tool - Polygon"), "", "",
                ToolCommandType);
@@ -2942,6 +2948,13 @@ void MainWindow::toggleGeometricArc() {
   CommandManager::instance()->getAction(T_Geometric)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_GeometricShape:Arc")
+      ->trigger();
+}
+
+void MainWindow::toggleGeometricMultiArc() {
+  CommandManager::instance()->getAction(T_Geometric)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_GeometricShape:MultiArc")
       ->trigger();
 }
 
@@ -3319,7 +3332,7 @@ void MainWindow::clearCacheFolder() {
   // 1. $CACHE/[Current ProcessID]
   // 2. $CACHE/temp/[Current scene folder] if the current scene is untitled
 
-  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
 
   TFilePathSet filesToBeRemoved;
@@ -3453,9 +3466,9 @@ RecentFiles::~RecentFiles() {}
 void RecentFiles::addFilePath(QString path, FileType fileType,
                               QString projectName) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
     if (files.at(i) == path) {
@@ -3622,9 +3635,9 @@ void RecentFiles::saveRecentFiles() {
 
 QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
   QList<QString> files =
-      (fileType == Scene) ? m_recentScenes : (fileType == Level)
-                                                 ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+      (fileType == Scene)
+          ? m_recentScenes
+          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
   QList<QString> names;
   int i;
   for (i = 0; i < files.size(); i++) {
@@ -3651,9 +3664,9 @@ void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
     menu->setEnabled(false);
   else {
     CommandId clearActionId =
-        (fileType == Scene) ? MI_ClearRecentScene : (fileType == Level)
-                                                        ? MI_ClearRecentLevel
-                                                        : MI_ClearRecentImage;
+        (fileType == Scene)
+            ? MI_ClearRecentScene
+            : (fileType == Level) ? MI_ClearRecentLevel : MI_ClearRecentImage;
     menu->setActions(names);
     menu->addSeparator();
     QAction *clearAction = CommandManager::instance()->getAction(clearActionId);
