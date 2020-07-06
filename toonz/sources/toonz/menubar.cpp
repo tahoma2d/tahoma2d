@@ -429,6 +429,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(editMenu, MI_PasteAbove);
   // addMenuItem(editMenu, MI_PasteNew);
   addMenuItem(editMenu, MI_PasteInto);
+  addMenuItem(editMenu, MI_PasteDuplicate);
   addMenuItem(editMenu, MI_Insert);
   addMenuItem(editMenu, MI_InsertAbove);
   addMenuItem(editMenu, MI_Clear);
