@@ -441,6 +441,7 @@ public:
       m_prop[0].bind(m_pencil);
       m_pencil.setId("PencilMode");
     }
+    m_prop[0].bind(m_smooth);
 
     m_capStyle.addValue(BUTT_WSTR, QString::fromStdWString(BUTT_WSTR));
     m_capStyle.addValue(ROUNDC_WSTR, QString::fromStdWString(ROUNDC_WSTR));
