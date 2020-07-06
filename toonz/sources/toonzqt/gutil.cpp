@@ -236,7 +236,7 @@ QString getIconThemePath(const QString &fileSVGPath) {
     theme = ":icons/dark/";
   else
     theme = ":icons/light/";
-  // qDebug() << "What is the theme name?" << themeName;
+  // qDebug() << "What is the theme name?" << theme;
   return theme + fileSVGPath;
 }
 

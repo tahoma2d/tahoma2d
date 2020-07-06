@@ -133,7 +133,7 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
     m_leftLayout->addWidget(m_toolbar);
     if (Preferences::instance()->isShowXSheetToolbarEnabled() &&
         Preferences::instance()->isExpandFunctionHeaderEnabled()) {
-      m_spacing = 65;
+      m_spacing = 64;
     } else
       m_spacing = 35;
 

@@ -821,7 +821,7 @@ void ColumnArea::DrawHeader::drawEye() const {
   QRect prevViewRect = o->rect(PredefinedRect::EYE_AREA).translated(orig);
   QRect eyeRect      = o->rect(PredefinedRect::EYE).translated(orig);
   // preview visible toggle
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor()); // Preview border color
 
   if (col < 0 || column->getSoundTextColumn()) {
     if (o->flag(PredefinedFlag::EYE_AREA_BORDER)) p.drawRect(prevViewRect);
@@ -858,7 +858,7 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
   QRect tableViewImgRect =
       o->rect(PredefinedRect::PREVIEW_LAYER).translated(orig);
 
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor());  // Camstand border color
 
   if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn()) {
     if (o->flag(PredefinedFlag::PREVIEW_LAYER_AREA_BORDER))
@@ -898,7 +898,7 @@ void ColumnArea::DrawHeader::drawLock() const {
     bgColor = QColor(255, 255, 255, 128);
 
   // lock button
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor()); // Lock border color
 
   p.fillRect(lockModeRect, bgColor);
   if (o->flag(PredefinedFlag::LOCK_AREA_BORDER)) p.drawRect(lockModeRect);
@@ -928,7 +928,7 @@ void ColumnArea::DrawHeader::drawConfig() const {
                             .translated(orig);
 
   // config button
-  p.setPen(m_viewer->getVerticalLineColor());
+  p.setPen(m_viewer->getColumnIconLineColor());
   p.fillRect(configRect, bgColor);
   if (o->flag((col < 0) ? PredefinedFlag::CAMERA_CONFIG_AREA_BORDER
                         : PredefinedFlag::CONFIG_AREA_BORDER))
@@ -1364,17 +1364,17 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
 
     p.setPen(m_viewer->getDarkLineColor());
     p.fillRect(x0, y0 + 1, rect.width(), 18,
-               QBrush(m_viewer->getDarkBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0, y0 + 17, 2, rect.height() - 34,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 3, y0 + 20, 2, rect.height() - 36,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 6, y0 + 17, 2, rect.height() - 34,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
 
-    p.setPen(m_viewer->getVerticalLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 - 1, y0 + 17, x0 - 1, rect.height());
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 2, y0 + 17, x0 + 2, rect.height());
     p.drawLine(x0 + 5, y0 + 17, x0 + 5, rect.height());
     p.drawLine(x0, y0 + 17, x0 + 1, 17);
@@ -1400,19 +1400,19 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
     x0 = 0;
     y0 = rect.topLeft().y() + 1;
 
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.fillRect(x0 + 1, y0, 18, rect.height(),
-               QBrush(m_viewer->getDarkBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 17, y0, rect.width() - 34, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 20, y0 + 3, rect.width() - 36, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
     p.fillRect(x0 + 17, y0 + 6, rect.width() - 34, 2,
-               QBrush(m_viewer->getLightLightBGColor()));
+               QBrush(m_viewer->getFoldedColumnBGColor()));
 
-    p.setPen(m_viewer->getVerticalLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 17, y0 - 1, rect.width(), y0 - 1);
-    p.setPen(m_viewer->getDarkLineColor());
+    p.setPen(m_viewer->getFoldedColumnLineColor());
     p.drawLine(x0 + 17, y0 + 2, rect.width(), y0 + 2);
     p.drawLine(x0 + 17, y0 + 5, rect.width(), y0 + 5);
     p.drawLine(x0 + 17, y0, 17, y0 + 1);

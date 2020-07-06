@@ -1081,9 +1081,9 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
     int x = horizontalLine.x1();
     int y = horizontalLine.y2() - 1;
     horizontalLine.setP1(QPoint(x, y));
-    color.setAlpha(150);
+   color.setAlpha(255);
   } else if (!o->isVerticalTimeline() && !isAfterMarkers && emptyFrame)
-    color.setAlpha(100);
+   color.setAlpha(50);
   p.setPen(color);
   p.drawLine(horizontalLine);
 }
@@ -1253,11 +1253,11 @@ void CellArea::drawFoldedColumns(QPainter &p, int layerAxis,
   for (int i = 0; i < 3; i++) {
     QRect whiteRect =
         m_viewer->orientation()->foldedRectangle(layerAxis, frameAxis, i);
-    p.fillRect(whiteRect, QBrush(Qt::white));
+    p.fillRect(whiteRect, QBrush(m_viewer->getFoldedColumnBGColor()));
   }
 
   // 3 dark lines
-  p.setPen(m_viewer->getLightLineColor());
+  p.setPen(m_viewer->getFoldedColumnLineColor());
   for (int i = 0; i < 3; i++) {
     QLine darkLine =
         m_viewer->orientation()->foldedRectangleLine(layerAxis, frameAxis, i);
