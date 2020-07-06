@@ -102,7 +102,7 @@ SizeField::SizeField(QSize min, QSize max, QSize value, QWidget* parent)
   bool ret = true;
   ret      = ret && connect(m_fieldX, SIGNAL(editingFinished()), this,
                        SIGNAL(editingFinished()));
-  ret = ret && connect(m_fieldY, SIGNAL(editingFinished()), this,
+  ret      = ret && connect(m_fieldY, SIGNAL(editingFinished()), this,
                        SIGNAL(editingFinished()));
   assert(ret);
 }
@@ -351,6 +351,15 @@ void PreferencesPopup::onStyleSheetTypeChanged() {
   QString currentStyle = m_pref->getCurrentStyleSheetPath();
   qApp->setStyleSheet(currentStyle);
   QApplication::restoreOverrideCursor();
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onIconThemeChanged() {
+  // Switch between dark or light icons (requires reboot)
+  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+                                                              : "light");
+  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
 }
 
 //-----------------------------------------------------------------------------
@@ -620,7 +629,7 @@ void PreferencesPopup::onInterfaceFontChanged(const QString& text) {
   for (ComboBoxItem& item : newStyleItems)
     fontStyleCombo->addItem(item.first, item.second);
   if (!oldTypeface.isEmpty()) {
-    int newIndex               = fontStyleCombo->findText(oldTypeface);
+    int newIndex = fontStyleCombo->findText(oldTypeface);
     if (newIndex < 0) newIndex = 0;
     fontStyleCombo->setCurrentIndex(newIndex);
   }
@@ -728,7 +737,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
       for (const ComboBoxItem& item : comboItems)
         combo->addItem(item.first, item.second);
       combo->setCurrentIndex(combo->findData(item.value));
-      ret = connect(combo, SIGNAL(currentIndexChanged(int)), this,
+      ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
                     SLOT(onChange()));
       widget = combo;
     } else {  // create IntLineEdit
@@ -765,7 +774,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
     if (id == interfaceFont) {  // create QFontComboBox
       QFontComboBox* combo = new QFontComboBox(this);
       combo->setCurrentText(item.value.toString());
-      ret = connect(combo, SIGNAL(currentIndexChanged(const QString&)), this,
+      ret    = connect(combo, SIGNAL(currentIndexChanged(const QString&)), this,
                     SLOT(onInterfaceFontChanged(const QString&)));
       widget = combo;
     } else if (!comboItems.isEmpty()) {  // create QComboBox
@@ -773,7 +782,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
       for (const ComboBoxItem& item : comboItems)
         combo->addItem(item.first, item.second);
       combo->setCurrentIndex(combo->findData(item.value));
-      ret = connect(combo, SIGNAL(currentIndexChanged(int)), this,
+      ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
                     SLOT(onChange()));
       widget = combo;
     } else {  // create FileField
@@ -796,7 +805,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
   {
     ColorField* field =
         new ColorField(this, false, colorToTPixel(item.value.value<QColor>()));
-    ret = connect(field, SIGNAL(colorChanged(const TPixel32&, bool)), this,
+    ret    = connect(field, SIGNAL(colorChanged(const TPixel32&, bool)), this,
                   SLOT(onColorFieldChanged(const TPixel32&, bool)));
     widget = field;
   } break;
@@ -939,6 +948,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Interface
       {CurrentStyleSheetName, tr("Theme:")},
+      {iconTheme, tr("Switch to dark icons")},
       {pixelsOnly, tr("All imported images will use the same DPI")},
       //{ oldUnits,                               tr("") },
       //{ oldCameraUnits,                         tr("") },
@@ -1247,7 +1257,7 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-    { categoryLayout->addWidget(categoryList, 1); }
+    categoryLayout->addWidget(categoryList, 1);
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(stackedWidget, 1);
   }
@@ -1345,9 +1355,9 @@ QWidget* PreferencesPopup::createGeneralPage() {
   bool ret = true;
   ret      = ret && connect(m_pref, SIGNAL(stopAutoSave()), this,
                        SLOT(onAutoSaveExternallyChanged()));
-  ret = ret && connect(m_pref, SIGNAL(startAutoSave()), this,
+  ret      = ret && connect(m_pref, SIGNAL(startAutoSave()), this,
                        SLOT(onAutoSaveExternallyChanged()));
-  ret = ret && connect(m_pref, SIGNAL(autoSavePeriodChanged()), this,
+  ret      = ret && connect(m_pref, SIGNAL(autoSavePeriodChanged()), this,
                        SLOT(onAutoSavePeriodExternallyChanged()));
 
   // ret = ret && connect(m_projectRootDocuments, SIGNAL(stateChanged(int)),
@@ -1389,13 +1399,18 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
   int row = lay->rowCount();
-  // lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
-  //               Qt::AlignRight | Qt::AlignVCenter);
-  // lay->addWidget(createUI(pixelsOnly), row, 1);
+  lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
+                 Qt::AlignRight | Qt::AlignVCenter);
+  lay->addWidget(createUI(iconTheme), 2, 1);
 
   // insertUI(linearUnits, lay, getComboItemList(linearUnits));
   // insertUI(cameraUnits, lay,
-  //         getComboItemList(linearUnits));  // share items with linearUnits
+  //          getComboItemList(linearUnits));  // share items with linearUnits
+
+  // lay->addWidget(new QLabel(tr("Pixels Only:"), this), 5, 0,
+  //                Qt::AlignRight | Qt::AlignVCenter);
+  // lay->addWidget(createUI(pixelsOnly), 5, 1);
+
   // insertUI(CurrentRoomChoice, lay, roomItemList);
   insertUI(functionEditorToggle, lay, getComboItemList(functionEditorToggle));
   insertUI(moveCurrentFrameByClickCellArea, lay);
@@ -1430,12 +1445,12 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,
                            &PreferencesPopup::onStyleSheetTypeChanged);
-  // m_onEditedFuncMap.insert(pixelsOnly,
-  // &PreferencesPopup::onPixelsOnlyChanged);
+  m_onEditedFuncMap.insert(iconTheme, &PreferencesPopup::onIconThemeChanged);
+  // m_onEditedFuncMap.insert(pixelsOnly, &PreferencesPopup::onPixelsOnlyChanged);
   // m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
   // m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);
   // m_preEditedFuncMap.insert(CurrentRoomChoice,
-  //                          &PreferencesPopup::beforeRoomChoiceChanged);
+  //                           &PreferencesPopup::beforeRoomChoiceChanged);
 
   return widget;
 }

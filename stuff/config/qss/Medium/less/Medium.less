@@ -12,6 +12,7 @@
 @img-url: 'imgs/white';
 
 @bg: #484848;               // normal
+@bg-dark: darken(@bg, 13);    // dark
 @accent: darken(@bg, 13);     // darkest
 
 @text-color: rgb(230, 230, 230);
@@ -86,14 +87,14 @@
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color: @bg;
+@scrollbar-bg-color: darken(@bg, 10);
 
 // Handle
 @scrollbar-handle-border-size: 1;
 @scrollbar-handle-radius: 4;
 @scrollbar-handle-margin: 3;
 
-@scrollbar-handle-bg-color: lighten(@bg, 6);
+@scrollbar-handle-bg-color: lighten(@bg, 4);
 @scrollbar-handle-border-color: @scrollbar-handle-bg-color;
 
 @scrollbar-handle-bg-color-hover: lighten(@scrollbar-handle-bg-color, 8);
@@ -376,7 +377,7 @@
 @xsheet-VerticalLineHead-color:             darken(@bg, 13); // function editior header
 @xsheet-PreviewFrameText-color:             @label-title;
 @xsheet-CurrentRowBG-color:                 fade(@hl-bg-color, 70);
-@xsheet-OnionSkinAreaBG-color:              @xsheet-bg-color;
+@xsheet-OnionSkinAreaBG-color:              darken(@title-bg-color, 0);
 @xsheet-CellArea-bg-color-focus:            rgba(0, 0, 0, 0.65);
 @xsheet-CellFocus-color:                    #000;
 

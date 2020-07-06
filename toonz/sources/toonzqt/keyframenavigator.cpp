@@ -38,9 +38,7 @@ using namespace std;
 KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
     : QToolBar(parent), m_frameHandle(frameHandle), m_panel(0) {
   setLayoutDirection(Qt::LeftToRight);
-
   setIconSize(QSize(20, 20));
-
   setObjectName("keyFrameNavigator");
 
   // previous key button

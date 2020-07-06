@@ -1,11 +1,331 @@
 <RCC>
-    <qresource prefix="/">
-        <file>Resources/pane_3d.svg</file>
+	<qresource prefix="/">
+		<!-- Files for LIGHT icon theme =================================== -->
+		<file>icons/light/index.theme</file>
+
+		<!-- Tools -->
+		<file>icons/light/tools/22/edit.svg</file>
+		<file>icons/light/tools/22/brush.svg</file>
+		<file>icons/light/tools/22/paintbrush.svg</file>
+		<file>icons/light/tools/22/eraser.svg</file>
+		<file>icons/light/tools/22/geometric.svg</file>
+		<file>icons/light/tools/22/fill.svg</file>
+		<file>icons/light/tools/22/controlpointeditor.svg</file>
+		<file>icons/light/tools/22/cutter.svg</file>
+		<file>icons/light/tools/22/finger.svg</file>
+		<file>icons/light/tools/22/hook.svg</file>
+		<file>icons/light/tools/22/iron.svg</file>
+		<file>icons/light/tools/22/magnet.svg</file>
+		<file>icons/light/tools/22/stylepicker.svg</file>
+		<file>icons/light/tools/22/RGBpicker.svg</file>
+		<file>icons/light/tools/22/pinch.svg</file>
+		<file>icons/light/tools/22/bender.svg</file>
+		<file>icons/light/tools/22/plastic.svg</file>
+		<file>icons/light/tools/22/pump.svg</file>
+		<file>icons/light/tools/22/ruler.svg</file>
+		<file>icons/light/tools/22/selection.svg</file>
+		<file>icons/light/tools/22/skeleton.svg</file>
+		<file>icons/light/tools/22/type.svg</file>
+		<file>icons/light/tools/22/tracker.svg</file>
+		<file>icons/light/tools/22/tape.svg</file>
+		<file>icons/light/tools/22/hand.svg</file>
+		<file>icons/light/tools/22/rotate.svg</file>
+		<file>icons/light/tools/22/zoom.svg</file>
+		
+		<!-- Common -->
+		<file>icons/light/actions/16/16_menu.svg</file>
+		<file>icons/light/actions/22/menu.svg</file>
+
+		<file>icons/light/actions/22/lock.svg</file>
+		<file>icons/light/actions/22/lock_on.svg</file>
+
+		<file>icons/light/actions/22/file_copy.svg</file>
+		<file>icons/light/actions/22/cut.svg</file>
+		<file>icons/light/actions/22/paste.svg</file>
+		<file>icons/light/actions/22/paste_into.svg</file>
+		<file>icons/light/actions/22/select_all.svg</file>
+		<file>icons/light/actions/22/invert_selection.svg</file>
+		<file>icons/light/actions/22/save.svg</file>
+		<file>icons/light/actions/22/saveas.svg</file>
+		<file>icons/light/actions/22/saveall.svg</file>
+		<file>icons/light/actions/22/cog.svg</file>
+		<file>icons/light/actions/22/clear.svg</file>
+		<file>icons/light/actions/22/undo.svg</file>
+		<file>icons/light/actions/22/redo.svg</file>
+		<file>icons/light/actions/22/delete.svg</file>
+
+		<!-- Scan and Cleanup -->
+		<file>icons/light/actions/22/preview_settings.svg</file>
+		<file>icons/light/actions/22/preview.svg</file>
+		<file>icons/light/actions/22/cleanup_settings.svg</file>
+		<file>icons/light/actions/22/cleanup_preview.svg</file>
+		<file>icons/light/actions/22/cleanup.svg</file>
+		
+		<!-- File Browser -->
+		<file>icons/light/actions/18/my_computer.svg</file>
+		<file>icons/light/actions/18/my_documents.svg</file>
+		<file>icons/light/actions/18/network.svg</file>
+		<file>icons/light/actions/18/desktop.svg</file>
+		<file>icons/light/actions/18/library.svg</file>
+		<file>icons/light/actions/18/history.svg</file>
+		<file>icons/light/actions/16/fb_fwd.svg</file>
+		<file>icons/light/actions/16/fb_back.svg</file>
+		<file>icons/light/actions/16/fb_up.svg</file>
+		<file>icons/light/actions/16/fb_down.svg</file>
+		<file>icons/light/actions/16/viewlist.svg</file>
+		<file>icons/light/actions/16/viewicon.svg</file>
+
+		<file>icons/light/actions/18/folder_project_root.svg</file>
+		<file>icons/light/actions/60/folder_browser.svg</file>
+		<file>icons/light/actions/60/folder_browser_link.svg</file>
+		<file>icons/light/actions/60/folder_browser_up.svg</file>
+		
+		<!-- SVN -->
+		<file>icons/light/actions/18/folder_vc.svg</file>
+		<file>icons/light/actions/18/folder_vc_on.svg</file>
+		
+		<!-- Render -->
+		<file>icons/light/actions/22/render.svg</file>
+		<file>icons/light/actions/22/output_settings.svg</file>
+		<file>icons/light/actions/22/fast_render_mp4.svg</file>
+		
+		<!-- Level -->
+		<file>icons/light/actions/22/load_level.svg</file>
+		<file>icons/light/actions/22/remove_level.svg</file>
+		<file>icons/light/actions/22/merge_levels.svg</file>
+		
+		<!-- Console playbar -->
+		<file>icons/light/console/22/play.svg</file>
+		<file>icons/light/console/22/pause.svg</file>
+		<file>icons/light/console/22/stop.svg</file>
+		<file>icons/light/console/22/record.svg</file>
+		<file>icons/light/console/22/loop.svg</file>
+		<file>icons/light/console/22/framefirst.svg</file>
+		<file>icons/light/console/22/framelast.svg</file>
+		<file>icons/light/console/22/frameprev.svg</file>
+		<file>icons/light/console/22/framenext.svg</file>
+		<file>icons/light/console/22/snapshot.svg</file>
+		<file>icons/light/console/22/compare.svg</file>
+		<file>icons/light/console/22/histograms.svg</file>
+		<file>icons/light/console/22/sound.svg</file>
+		<file>icons/light/console/22/sound_on.svg</file>
+		<file>icons/light/console/22/preview_black.svg</file>
+		<file>icons/light/console/22/preview_checkboard.svg</file>
+		<file>icons/light/console/22/preview_white.svg</file>
+		<file>icons/light/console/22/locator.svg</file>
+		<file>icons/light/console/22/define_subcamera_preview.svg</file>
+		<file>icons/light/console/22/use_subcamera_preview.svg</file>
+		<file>icons/light/console/22/half_R.svg</file>
+		<file>icons/light/console/22/half_R_on.svg</file>
+		<file>icons/light/console/22/half_R_over.svg</file>
+		<file>icons/light/console/22/half_G.svg</file>
+		<file>icons/light/console/22/half_G_on.svg</file>
+		<file>icons/light/console/22/half_G_over.svg</file>
+		<file>icons/light/console/22/half_B.svg</file>
+		<file>icons/light/console/22/half_B_on.svg</file>
+		<file>icons/light/console/22/half_B_over.svg</file>
+		<file>icons/light/console/22/half_bw.svg</file>
+		<file>icons/light/console/22/half_bw_on.svg</file>
+		<file>icons/light/console/22/half_bw_over.svg</file>
+		<file>icons/light/console/22/channelmatte.svg</file>
+		<file>icons/light/console/22/channelmatte_on.svg</file>
+		<file>icons/light/console/22/channelred.svg</file>
+		<file>icons/light/console/22/channelred_over.svg</file>
+		<file>icons/light/console/22/channelred_on.svg</file>
+		<file>icons/light/console/22/channelgreen.svg</file>
+		<file>icons/light/console/22/channelgreen_over.svg</file>
+		<file>icons/light/console/22/channelgreen_on.svg</file>
+		<file>icons/light/console/22/channelblue.svg</file>
+		<file>icons/light/console/22/channelblue_over.svg</file>
+		<file>icons/light/console/22/channelblue_on.svg</file>
+		<file>icons/light/console/22/viewcamera.svg</file>
+
+		<!-- FX / Schematic -->
+		<file>icons/light/actions/22/output.svg</file>
+		<file>icons/light/actions/22/fx_logo.svg</file>
+		<file>icons/light/actions/22/switchport.svg</file>
+		<file>icons/light/actions/22/switchport_on.svg</file>
+		<file>icons/light/actions/22/motionpath.svg</file>
+		<file>icons/light/actions/22/pegbar.svg</file>
+		<file>icons/light/actions/22/camera.svg</file>
+		<file>icons/light/actions/22/iconifynodes.svg</file>
+		<file>icons/light/actions/22/iconifynodes_on.svg</file>
+		<file>icons/light/actions/22/reorder.svg</file>
+		<file>icons/light/actions/22/restore.svg</file>
+		<file>icons/light/actions/22/maximizenodes.svg</file>
+		<file>icons/light/actions/22/minimizenodes.svg</file>
+		<file>icons/light/actions/22/swap.svg</file>
+		<file>icons/light/actions/18/fx.svg</file>
+		
+		<!-- Viewer -->
+		<file>icons/light/actions/22/zoomin.svg</file>
+		<file>icons/light/actions/22/zoomout.svg</file>
+		<file>icons/light/actions/22/reset.svg</file>
+		<file>icons/light/actions/22/fliphoriz.svg</file>
+		<file>icons/light/actions/22/flipvert.svg</file>
+		<file>icons/light/actions/22/actual_pixel_size.svg</file>
+		<file>icons/light/actions/22/fit_to_window.svg</file>
+
+		<!-- Arrange -->
+		<file>icons/light/actions/22/move_back_one.svg</file>
+		<file>icons/light/actions/22/move_forward_one.svg</file>
+		<file>icons/light/actions/22/move_to_back.svg</file>
+		<file>icons/light/actions/22/move_to_front.svg</file>
+		
+		<!-- XSheet & Cells -->
+		<file>icons/light/actions/22/reverse.svg</file>
+		<file>icons/light/actions/22/swing.svg</file>
+		<file>icons/light/actions/22/random.svg</file>
+		<file>icons/light/actions/22/repeat.svg</file>
+		<file>icons/light/actions/22/time_stretch.svg</file>
+		<file>icons/light/actions/22/insert_multiple_keys.svg</file>
+		<file>icons/light/actions/22/remove_multiple_keys.svg</file>
+		<file>icons/light/actions/22/renumber.svg</file>
+		
+		<file>icons/light/actions/22/new_document.svg</file>
+		<file>icons/light/actions/22/new_raster_level.svg</file>
+		<file>icons/light/actions/22/new_note_level.svg</file>
+		<file>icons/light/actions/22/new_vector_level.svg</file>
+		<file>icons/light/actions/22/new_toonz_raster_level.svg</file>
+		<file>icons/light/actions/22/fx_new.svg</file>
+		
+		<file>icons/light/actions/22/on_1s.svg</file>
+		<file>icons/light/actions/22/on_2s.svg</file>
+		<file>icons/light/actions/22/on_3s.svg</file>
+		<file>icons/light/actions/22/on_4s.svg</file>
+		<file>icons/light/actions/22/on_with_empty.svg</file>
+		
+		<file>icons/light/actions/22/step_plus.svg</file>
+		<file>icons/light/actions/22/step_minus.svg</file>
+		<file>icons/light/actions/22/step_2.svg</file>
+		<file>icons/light/actions/22/step_3.svg</file>
+		<file>icons/light/actions/22/step_4.svg</file>
+		
+		<file>icons/light/actions/22/sub_collapse.svg</file>
+		<file>icons/light/actions/22/sub_explode.svg</file>
+		<file>icons/light/actions/22/sub_enter.svg</file>
+		<file>icons/light/actions/22/sub_leave.svg</file>
+		<file>icons/light/actions/22/fold_column.svg</file>
+		<file>icons/light/actions/22/sub_edit_in_place.svg</file>
+		<file>icons/light/actions/22/sub_clone.svg</file>
+		<file>icons/light/actions/22/duplicate.svg</file>
+		<file>icons/light/actions/22/onionskin_toggle.svg</file>
+		
+		<file>icons/light/actions/22/insert_frame.svg</file>
+		<file>icons/light/actions/22/remove_frame.svg</file>
+		
+		<file>icons/light/actions/22/add_cell.svg</file>
+		<file>icons/light/actions/22/add_cells.svg</file>
+		<file>icons/light/actions/22/tracking_options.svg</file>
+		<file>icons/light/actions/22/level_settings.svg</file>
+		<file>icons/light/actions/22/level_info.svg</file>
+		
+		<file>icons/light/actions/22/camera_settings.svg</file>
+		
+		<!-- Group -->
+		<file>icons/light/actions/22/group.svg</file>
+		<file>icons/light/actions/22/ungroup.svg</file>
+		<file>icons/light/actions/22/enter_group.svg</file>
+		<file>icons/light/actions/22/leave_group.svg</file>
+		
+		<!-- Modes, Types, Options -->
+		<file>icons/light/actions/22/ink_check.svg</file>
+		<file>icons/light/actions/22/inks_only.svg</file>
+		<file>icons/light/actions/22/transparency_check.svg</file>
+		<file>icons/light/actions/22/fill_check.svg</file>
+		<file>icons/light/actions/22/gap_check.svg</file>
+		<file>icons/light/actions/22/paint_check.svg</file>
+		<file>icons/light/actions/22/ink_no1_check.svg</file>
+		<file>icons/light/actions/22/blackbg_check.svg</file>
+
+		<file>icons/light/actions/22/mode_lines.svg</file>
+		<file>icons/light/actions/22/mode_areas.svg</file>
+		<file>icons/light/actions/22/mode_areas_lines.svg</file>
+
+		<file>icons/light/actions/22/fill_rectangular.svg</file>
+		<file>icons/light/actions/22/fill_normal.svg</file>
+		<file>icons/light/actions/22/fill_freehand.svg</file>
+		<file>icons/light/actions/22/fill_polyline.svg</file>
+		<file>icons/light/actions/22/fill_auto.svg</file>
+
+		<file>icons/light/actions/22/type_lasso.svg</file>
+		<file>icons/light/actions/22/type_rectangular.svg</file>
+		<file>icons/light/actions/22/type_polyline.svg</file>
+		<file>icons/light/actions/22/type_normal.svg</file>
+		<file>icons/light/actions/22/type_erase_segment.svg</file>
+
+		<!-- Folders -->
+		<file>icons/light/actions/18/folder.svg</file>
+		<file>icons/light/actions/18/folder_on.svg</file>
+		<file>icons/light/actions/16/folder_new.svg</file>
+		<file>icons/light/actions/18/folder_project_on.svg</file>
+		<file>icons/light/actions/18/folder_project.svg</file>
+		<file>icons/light/actions/18/folder_inactive.svg</file>
+		<file>icons/light/actions/18/folder_inactive_on.svg</file>
+		<file>icons/light/actions/18/folder_anim_on.svg</file>
+		<file>icons/light/actions/18/folder_anim.svg</file>
+		<file>icons/light/actions/18/folder_anim_inactive.svg</file>
+		<file>icons/light/actions/18/folder_anim_inactive_on.svg</file>
+		<file>icons/light/actions/18/folder_preset_on.svg</file>
+		<file>icons/light/actions/18/folder_preset.svg</file>
+		
+		<!-- Palette -->
+		<file>icons/light/actions/22/newstyle.svg</file>
+		<file>icons/light/actions/22/newpage.svg</file>
+		<file>icons/light/actions/16/palette.svg</file>
+		<file>icons/light/actions/16/palette_tab.svg</file>
+		<file>icons/light/actions/22/dragpalette.svg</file>
+		<file>icons/light/actions/18/switch.svg</file>
+		
+		<!-- Titlebars -->
+		<file>icons/light/actions/18/pane_table.svg</file>
+		<file>icons/light/actions/18/pane_safe.svg</file>
+		<file>icons/light/actions/18/pane_grid.svg</file>
+		<file>icons/light/actions/18/pane_cam.svg</file>
+		<file>icons/light/actions/18/pane_freeze.svg</file>
+		<file>icons/light/actions/18/pane_preview.svg</file>
+		<file>icons/light/actions/18/pane_subpreview.svg</file>
+		<file>icons/light/actions/18/pane_3d.svg</file>
+		<file>icons/light/actions/18/pane_minimize.svg</file>
+		<file>icons/light/actions/18/pane_close.svg</file>
+		<file>icons/light/actions/18/pane_close_rollover.svg</file>
+		
+		<!-- Textstyle -->
+		<file>icons/light/actions/16/bold.svg</file>
+		<file>icons/light/actions/16/italic.svg</file>
+		<file>icons/light/actions/16/underline.svg</file>
+		<file>icons/light/actions/16/align_left.svg</file>
+		<file>icons/light/actions/16/align_right.svg</file>
+		<file>icons/light/actions/16/align_center.svg</file>
+		
+		<!-- Devices -->
+		<file>icons/light/devices/22/printer.svg</file>
+		<file>icons/light/devices/22/scanner.svg</file>
+		
+		<!-- Misc -->
+		<file>icons/light/actions/16/minus.svg</file>
+		<file>icons/light/actions/16/plus.svg</file>
+		<file>icons/light/actions/22/web.svg</file>
+		<file>icons/light/actions/22/help.svg</file>
+		<file>icons/light/actions/22/info.svg</file>
+		<file>icons/light/actions/22/notice.svg</file>
+		<file>icons/light/actions/22/run_script.svg</file>
+		<file>icons/light/actions/22/console.svg</file>
+		<file>icons/light/actions/22/camera_capture.svg</file>
+		
+		<!-- Keyframe -->
+		<file>icons/light/actions/20/key_off.svg</file>
+		<file>icons/light/actions/20/key_on.svg</file>
+		<file>icons/light/actions/20/key_on_modified.svg</file>
+
+		<!-- ================================================== -->
+		<!-- Legacy resources ================================= -->
+		<!-- ================================================== -->
+		
+		<file>Resources/pane_3d.svg</file>
         <file>Resources/3Dside_l.svg</file>
         <file>Resources/3Dside_r.svg</file>
         <file>Resources/3Dtop.svg</file>
-        <file>Resources/RGBpicker.svg</file>
-        <file>Resources/RGBpicker_rollover.svg</file>
         <file>Resources/arrow_down.png</file>
         <file>Resources/arrow_down_over.png</file>
         <file>Resources/arrow_left.png</file>
@@ -16,219 +336,70 @@
         <file>Resources/arrow_up_over.png</file>
         <file>Resources/backg.png</file>
         <file>Resources/bender.png</file>
-        <file>Resources/bender.svg</file>
-        <file>Resources/bender_rollover.svg</file>
-        <file>Resources/bottomover.png</file>
         <file>Resources/broken.svg</file>
         <file>Resources/brush.png</file>
-        <file>Resources/brush.svg</file>
-        <file>Resources/brush_rollover.svg</file>
-        <file>Resources/camera.png</file>
         <file>Resources/camera.svg</file>
         <file>Resources/camera_small.svg</file>
-        <file>Resources/camera_selected.png</file>
-        <file>Resources/camerastand_toggle.png</file>
-        <file>Resources/canvas.svg</file>
         <file>Resources/center.png</file>
-        <file>Resources/centerHTitle.png</file>
-        <file>Resources/centerHTitle_inactive.png</file>
-        <file>Resources/centerVTitle.png</file>
-        <file>Resources/channelblue.svg</file>
-        <file>Resources/channelblue_click.svg</file>
-        <file>Resources/channelblue_over.svg</file>
-        <file>Resources/channelgreen.svg</file>
-        <file>Resources/channelgreen_click.svg</file>
-        <file>Resources/channelgreen_over.svg</file>
-        <file>Resources/channelmatte.svg</file>
-        <file>Resources/channelmatte_click.svg</file>
-        <file>Resources/channelmatte_over.svg</file>
-        <file>Resources/channelred.svg</file>
-        <file>Resources/channelred_click.svg</file>
-        <file>Resources/channelred_over.svg</file>
-        <file>Resources/check.png</file>
         <file>Resources/clapboard.png</file>
         <file>Resources/cleanup_failed.svg</file>
         <file>Resources/cleanup_done.svg</file>
         <file>Resources/cleanup_done_with_errors.svg</file>
         <file>Resources/cleanup_computing.svg</file>
         <file>Resources/cleanup_suspended.svg</file>
-        <file>Resources/clone.svg</file>
         <file>Resources/pane_close.svg</file>
         <file>Resources/pane_close_rollover.svg</file>
-        <file>Resources/collapse.svg</file>
-        <file>Resources/controlpointeditor.svg</file>
-        <file>Resources/controlpointeditor_rollover.svg</file>
-        <file>Resources/compare.svg</file>
-        <file>Resources/compare_click.svg</file>
-        <file>Resources/compare_over.svg</file>
         <file>Resources/curve.svg</file>
-        <file>Resources/custom_off.svg</file>
-        <file>Resources/custom_on.svg</file>
         <file>Resources/cutter.png</file>
-        <file>Resources/cutter.svg</file>
-        <file>Resources/cutter_rollover.svg</file>
-        <file>Resources/paintbrush.svg</file>
-        <file>Resources/paintbrush_rollover.svg</file>
-        <file>Resources/desktop.svg</file>
-        <file>Resources/downTitle.png</file>
-        <file>Resources/edit.svg</file>
-        <file>Resources/edit_in_place.svg</file>
-        <file>Resources/edit_rollover.svg</file>
-        <file>Resources/emptychip.png</file>
         <file>Resources/eraser.png</file>
-        <file>Resources/eraser.svg</file>
-        <file>Resources/eraser_rollover.svg</file>
         <file>Resources/farm_tasks.svg</file>
         <file>Resources/fill.png</file>
-        <file>Resources/fill.svg</file>
-        <file>Resources/fill_rollover.svg</file>
-        <file>Resources/folderpreset_open.svg</file>
-        <file>Resources/folderpreset_close.svg</file>
-        <file>Resources/folderup.svg</file>
-        <file>Resources/folderup_over.svg</file>
         <file>Resources/footermemo.svg</file>
         <file>Resources/footermemo_disabled.svg</file>
         <file>Resources/footermemo_over.svg</file>
-        <file>Resources/framefirst.svg</file>
-        <file>Resources/framefirst_click.svg</file>
-        <file>Resources/framefirst_over.svg</file>
-        <file>Resources/framelast.svg</file>
-        <file>Resources/framelast_click.svg</file>
-        <file>Resources/framelast_over.svg</file>
-        <file>Resources/framenext.svg</file>
-        <file>Resources/framenext_click.svg</file>
-        <file>Resources/framenext_over.svg</file>
-        <file>Resources/frameprev.svg</file>
-        <file>Resources/frameprev_click.svg</file>
-        <file>Resources/frameprev_over.svg</file>
-        <file>Resources/pane_freeze.svg</file>
-        <file>Resources/fx.svg</file>
-        <file>Resources/geometric.svg</file>
-        <file>Resources/geometric_rollover.svg</file>
-        <file>Resources/h_slider.png</file>
-        <file>Resources/hand.svg</file>
-        <file>Resources/hand_rollover.svg</file>
-        <file>Resources/histograms.svg</file>
-        <file>Resources/histograms_click.svg</file>
-        <file>Resources/histograms_over.svg</file>
-        <file>Resources/history.svg</file>
-        <file>Resources/hook.svg</file>
-        <file>Resources/hook_rollover.svg</file>
+		<file>Resources/pane_freeze.svg</file>
         <file>Resources/iron.png</file>
-        <file>Resources/iron.svg</file>
-        <file>Resources/iron_rollover.svg</file>
         <file>Resources/iconplay.png</file>
         <file>Resources/iconpause.png</file>
         <file>Resources/key.svg</file>
-        <file>Resources/leftTitle.png</file>
-        <file>Resources/leftTitle_inactive.png</file>
-        <file>Resources/library.svg</file>
-        <file>Resources/link_child.bmp</file>
-        <file>Resources/link_child_rollover.bmp</file>
-        <file>Resources/link_closed.bmp</file>
-        <file>Resources/link_closed_rollover.bmp</file>
-        <file>Resources/link_parent.bmp</file>
-        <file>Resources/load_level.svg</file>
-        <file>Resources/lock.png</file>
-        <file>Resources/lock_over.png</file>
-        <file>Resources/loop.svg</file>
-        <file>Resources/loop_click.svg</file>
-        <file>Resources/loop_over.svg</file>
-        <file>Resources/lock_toggle.png</file>
         <file>Resources/magnet.png</file>
-        <file>Resources/magnet.svg</file>
-        <file>Resources/magnet_rollover.svg</file>
-        <file>Resources/menu.svg</file>
-        <file>Resources/merge.svg</file>
-        <file>Resources/more.svg</file>
-        <file>Resources/moredown.svg</file>
         <file>Resources/motionpath_fileicon.svg</file>
         <file>Resources/motionpath.svg</file>
         <file>Resources/motionpath_delete.svg</file>
         <file>Resources/motionpath_rot.svg</file>
         <file>Resources/move.png</file>
-        <file>Resources/my_computer.svg</file>
-        <file>Resources/my_documents.svg</file>
-        <file>Resources/network.svg</file>
-        <file>Resources/new_raster_level.svg</file>
-        <file>Resources/new_toonz_raster_level.svg</file>
-        <file>Resources/new_vector_level.svg</file>
         <file>Resources/new_level.svg</file>
         <file>Resources/new_level_rollover.svg</file>
-        <file>Resources/newmemo.svg</file>
+		<file>Resources/newmemo.svg</file>
         <file>Resources/newmemo_disabled.svg</file>
-        <file>Resources/newstyle.png</file>
-        <file>Resources/newstyle_click.png</file>
-        <file>Resources/newstyle_over.png</file>
         <file>Resources/no_specialstyle.png</file>
         <file>Resources/no_vectorbrush.png</file>
         <file>Resources/no_mypaintbrush.png</file>
-        <file>Resources/palette_add_color.bmp</file>
-        <file>Resources/palette_add_page.bmp</file>
-        <file>Resources/palette_chooser.bmp</file>
-        <file>Resources/palette_color.bmp</file>
-        <file>Resources/palette_color.png</file>
         <file>Resources/palette_header.svg</file>
-        <file>Resources/palette_key.bmp</file>
-        <file>Resources/palette_pattern.bmp</file>
-        <file>Resources/palette_settings.bmp</file>
-        <file>Resources/palette_texture.bmp</file>
-        <file>Resources/palette_view_mode.bmp</file>
         <file>Resources/paletteicon.svg</file>
         <file>Resources/pan.png</file>
-        <file>Resources/pause.svg</file>
-        <file>Resources/pause_click.svg</file>
-        <file>Resources/pause_disabled.svg</file>
-        <file>Resources/pause_over.svg</file>
         <file>Resources/pegging_top_arrow.png</file>
         <file>Resources/pegging_topright_arrow.png</file>
         <file>Resources/pen.png</file>
         <file>Resources/picker.png</file>
         <file>Resources/pinch.png</file>
-        <file>Resources/pinch.svg</file>
         <file>Resources/pinch_angle.png</file>
         <file>Resources/pinch_curve.png</file>
         <file>Resources/pinch_point.png</file>
-        <file>Resources/pinch_rollover.svg</file>
         <file>Resources/pinch_wave.png</file>
-        <file>Resources/plaincolor_off.svg</file>
-        <file>Resources/plaincolor_on.svg</file>
-        <file>Resources/plastic.svg</file>
-        <file>Resources/plastic_rollover.svg</file>
-        <file>Resources/play.svg</file>
-        <file>Resources/play_click.svg</file>
-        <file>Resources/play_disabled.svg</file>
-        <file>Resources/play_over.svg</file>
-        <file>Resources/preferences.svg</file>
-        <file>Resources/preview_toggle.png</file>
-        <file>Resources/previuos_folder.png</file>
-        <file>Resources/projects.svg</file>
         <file>Resources/psd.svg</file>
         <file>Resources/pump.png</file>
-        <file>Resources/pump.svg</file>
-        <file>Resources/pump_rollover.svg</file>
-        <file>Resources/record.svg</file>
-        <file>Resources/record_click.svg</file>
-        <file>Resources/record_disabled.svg</file>
-        <file>Resources/record_over.svg</file>
-        <file>Resources/redo.svg</file>
         <file>Resources/render_failed.svg</file>
         <file>Resources/render_done.svg</file>
         <file>Resources/render_done_with_errors.svg</file>
         <file>Resources/render_computing.svg</file>
         <file>Resources/render_suspended.svg</file>
-        <file>Resources/repeat_icon.svg</file>
         <file>Resources/resizeColumnNode.svg</file>
-        <file>Resources/rightTitle_inactive.png</file>
-        <file>Resources/rightTitle.png</file>
         <file>Resources/rot.png</file>
         <file>Resources/rot_bottom_left.png</file>
         <file>Resources/rot_bottom_right.png</file>
         <file>Resources/rot_top_left.png</file>
         <file>Resources/rotate.png</file>
-        <file>Resources/rotate.svg</file>
-        <file>Resources/rotate_rollover.svg</file>
-        <file>Resources/savescreen.png</file>
         <file>Resources/scale.png</file>
         <file>Resources/scale_h.png</file>
         <file>Resources/scale_inv.png</file>
@@ -237,129 +408,38 @@
         <file>Resources/schematic_spline_aim_rhomb.svg</file>
         <file>Resources/schematic_spline_aim_square.svg</file>
         <file>Resources/selected_key.svg</file>
-        <file>Resources/selection.svg</file>
         <file>Resources/selection_add.png</file>
         <file>Resources/selection_convert.png</file>
-        <file>Resources/selection_rollover.svg</file>
-        <file>Resources/settings_off.svg</file>
-        <file>Resources/settings_on.svg</file>
         <file>Resources/shear.png</file>
-        <file>Resources/skeleton.svg</file>
-        <file>Resources/skeleton_rollover.svg</file>
-        <file>Resources/snapshot.svg</file>
-        <file>Resources/snapshot_click.svg</file>
-        <file>Resources/snapshot_over.svg</file>
-        <file>Resources/sound.svg</file>
-        <file>Resources/sound_click.svg</file>
-        <file>Resources/sound_over.svg</file>
         <file>Resources/sound_header_off.svg</file>
         <file>Resources/sound_header_on.svg</file>
-        <file>Resources/sound_toggle.png</file>
-        <file>Resources/special_off.svg</file>
-        <file>Resources/special_on.svg</file>
         <file>Resources/splash.svg</file>
         <file>Resources/splash2.svg</file>
         <file>Resources/pane_table.svg</file>
         <file>Resources/startup.png</file>
-        <file>Resources/start_off.svg</file>
-        <file>Resources/start_on.svg</file>
-        <file>Resources/stop.svg</file>
-        <file>Resources/stop_click.svg</file>
-        <file>Resources/stop_disabled.svg</file>
-        <file>Resources/stop_over.svg</file>
-        <file>Resources/stop_off.svg</file>
-        <file>Resources/stop_on.svg</file>
         <file>Resources/stroke_select.png</file>
-        <file>Resources/stylepicker.svg</file>
-        <file>Resources/stylepicker_rollover.svg</file>
-        <file>Resources/sub.png</file>
-        <file>Resources/sub2.png</file>
-        <file>Resources/sub3.png</file>
-        <file>Resources/sub4.png</file>
-        <file>Resources/sub_enter.svg</file>
-        <file>Resources/sub_leave.svg</file>
-        <file>Resources/swap_off.svg</file>
-        <file>Resources/swap_on.svg</file>
         <file>Resources/svg.svg</file>
-        <file>Resources/switch.svg</file>
-        <file>Resources/table_view_act.png</file>
         <file>Resources/tape.png</file>
-        <file>Resources/tape.svg</file>
-        <file>Resources/tape_rollover.svg</file>
-        <file>Resources/texture_off.svg</file>
-        <file>Resources/texture_on.svg</file>
-        <file>Resources/thumbnails_view_act.png</file>
-        <file>Resources/timestretch.svg</file>
-        <file>Resources/toggle_audibility_click.png</file>
-        <file>Resources/toggle_audibility_over.png</file>
-        <file>Resources/toggle_lock.png</file>
         <file>Resources/toolbar_arrow.svg</file>
         <file>Resources/touch.svg</file>
-        <file>Resources/tracker.svg</file>
-        <file>Resources/tracker_rollover.svg</file>
-        <file>Resources/type.svg</file>
         <file>Resources/type_in.png</file>
         <file>Resources/type_out.png</file>
-        <file>Resources/type_rollover.svg</file>
-        <file>Resources/tzpicon.png</file>
-        <file>Resources/tzuicon.png</file>
         <file>Resources/unknown.svg</file>
-        <file>Resources/upTitle.png</file>
-        <file>Resources/v_chandle.png</file>
         <file>Resources/pane_cam.svg</file>
-        <file>Resources/viewicon_off.svg</file>
-        <file>Resources/viewicon_on.svg</file>
-        <file>Resources/viewicon_over.svg</file>
-        <file>Resources/viewlist_off.svg</file>
-        <file>Resources/viewlist_on.svg</file>
-        <file>Resources/viewlist_over.svg</file>
         <file>Resources/pane_preview.svg</file>
-        <file>Resources/undo.svg</file>
-        <file>Resources/viewtable_off.svg</file>
-        <file>Resources/viewtable_on.svg</file>
-        <file>Resources/viewtable_over.svg</file>
         <file>Resources/work.png</file>
         <file>Resources/zoom.png</file>
-        <file>Resources/zoom.svg</file>
-        <file>Resources/zoom_rollover.svg</file>
-        <file>Resources/browser_folder_open.svg</file>
-        <file>Resources/browser_folder_close.svg</file>
         <file>Resources/browser_scene_open.svg</file>
         <file>Resources/browser_scene_close.svg</file>
-        <file>Resources/browser_project_open.svg</file>
-        <file>Resources/browser_project_close.svg</file>
-        <file>Resources/half_R.svg</file>
-        <file>Resources/half_R_click.svg</file>
-        <file>Resources/half_R_over.svg</file>
-        <file>Resources/half_G.svg</file>
-        <file>Resources/half_G_click.svg</file>
-        <file>Resources/half_G_over.svg</file>
-        <file>Resources/half_B.svg</file>
-        <file>Resources/half_B_click.svg</file>
-        <file>Resources/half_B_over.svg</file>
-        <file>Resources/half_bw.svg</file>
-        <file>Resources/half_bw_click.svg</file>
-        <file>Resources/half_bw_over.svg</file>
         <file>Resources/addcleanup_off.svg</file>
         <file>Resources/addcleanup_on.svg</file>
         <file>Resources/addrender_off.svg</file>
         <file>Resources/addrender_on.svg</file>
-        <file>Resources/delete_off.svg</file>
-        <file>Resources/delete_on.svg</file>
-        <file>Resources/save_off.svg</file>
-        <file>Resources/save_on.svg</file>
-        <file>Resources/saveas_off.svg</file>
-        <file>Resources/saveas_on.svg</file>
         <file>Resources/load_off.svg</file>
         <file>Resources/load_on.svg</file>
         <file>Resources/flip_h.png</file>
         <file>Resources/flip_v.png</file>
         <file>Resources/level_select.png</file>
-        <file>Resources/vcroot.svg</file>
-        <file>Resources/vcfolder_open.png</file>
-        <file>Resources/vcfolder_close.svg</file>
-        <file>Resources/vcfolder_mis_open.svg</file>
-        <file>Resources/vcfolder_mis_close.svg</file>
         <file>Resources/browser_vcproject_close.svg</file>
         <file>Resources/browser_vcproject_open.svg</file>
         <file>Resources/waiting.gif</file>
@@ -374,12 +454,6 @@
         <file>Resources/plus.png</file>
         <file>Resources/missing.svg</file>
         <file>Resources/forbidden.png</file>
-        <file>Resources/define_subcamera_preview.svg</file>
-        <file>Resources/define_subcamera_preview_over.svg</file>
-        <file>Resources/define_subcamera_preview_click.svg</file>
-        <file>Resources/use_subcamera_preview.svg</file>
-        <file>Resources/use_subcamera_preview_over.svg</file>
-        <file>Resources/use_subcamera_preview_click.svg</file>
         <file>Resources/pane_subpreview.svg</file>
         <file>Resources/round_cap.svg</file>
         <file>Resources/butt_cap.svg</file>
@@ -388,82 +462,51 @@
         <file>Resources/bevel_join.svg</file>
         <file>Resources/miter_join.svg</file>
         <file>Resources/init.js</file>
-        <file>Resources/scripticon.png</file>
         <file>Resources/pane_safe.svg</file>
         <file>Resources/pane_minimize.svg</file>
         <file>Resources/pane_grid.svg</file>
-        <file>Resources/folderup_icon.svg</file>      
-        <file>Resources/link_icon.svg</file>
-        <file>Resources/folder_icon.svg</file>
-      <file>Resources/fb_history_back_enable.svg</file>
-      <file>Resources/fb_history_back_disable.svg</file>
-      <file>Resources/fb_history_fwd_enable.svg</file>
-      <file>Resources/fb_history_fwd_disable.svg</file>
-      <file>Resources/x_prev_eye.png</file>
-      <file>Resources/x_table_view.png</file>
-      <file>Resources/x_table_view_transp.png</file>
-      <file>Resources/x_lock.svg</file>
-      <file>Resources/filmstrip_inbetween.svg</file>
-      <file>Resources/history_normal.png</file>
-      <file>Resources/history_brush.png</file>
-      <file>Resources/history_eraser.png</file>
-      <file>Resources/history_fill.png</file>
-      <file>Resources/history_paintbrush.png</file>
-      <file>Resources/history_autoclose.png</file>
-      <file>Resources/history_geometric.png</file>
-      <file>Resources/history_controlpointeditor.png</file>
-      <file>Resources/history_move.png</file>
-      <file>Resources/history_finger.png</file>
-      <file>Resources/history_palette.png</file>
-      <file>Resources/history_fx.png</file>
-      <file>Resources/history_schematic.png</file>
-      <file>Resources/history_xsheet.png</file>
-      <file>Resources/history_filmstrip.png</file>
-      <file>Resources/history_unidentified.png</file>
-      <file>Resources/cln_suspended.svg</file>
-      <file>Resources/cln_done_with_errors.svg</file>
-      <file>Resources/cln_computing.svg</file>
-      <file>Resources/cln_done.svg</file>
-      <file>Resources/cln_failed.svg</file>
-      <file>Resources/match_lup_nogap.png</file>
-      <file>Resources/match_rup_nogap.png</file>
-      <file>Resources/match_lup_gap.png</file>
-      <file>Resources/match_rup_gap.png</file>
-      <file>Resources/finger.svg</file>
-      <file>Resources/finger_rollover.svg</file>
-      <file>Resources/ruler.svg</file>
-      <file>Resources/ruler_rollover.svg</file>
-      <file>Resources/locator.svg</file>
-      <file>Resources/locator_click.svg</file>
-      <file>Resources/locator_over.svg</file>
-      <file>Resources/refresh.svg</file>
-      <file>Resources/refresh_over.svg</file>
-      <file>Resources/zoom_in.svg</file>
-      <file>Resources/zoom_out.svg</file>
-      <file>Resources/zoom_in_rollover.svg</file>
-      <file>Resources/zoom_out_rollover.svg</file>
-      <file>Resources/colorchiporder_leftup.svg</file>
-      <file>Resources/colorchiporder_lowleft.svg</file>
-      <file>Resources/colorchiporder_upleft.svg</file>
-      <file>Resources/timeline2xsheet.svg</file>
-      <file>Resources/xsheet2timeline.svg</file>
-      <file>Resources/shift_and_trace.svg</file>
-      <file>Resources/shift_and_trace_edit.svg</file>
-      <file>Resources/shift_and_trace_reset.svg</file>
-      <file>Resources/up.svg</file>
-      <file>Resources/down.svg</file>
-      <file>Resources/zoomin.svg</file>
-      <file>Resources/zoomin_over.svg</file>
-      <file>Resources/zoomout.svg</file>
-      <file>Resources/zoomout_over.svg</file>
-      <file>Resources/fliphoriz_on.svg</file>
-      <file>Resources/fliphoriz_off.svg</file>
-      <file>Resources/fliphoriz_over.svg</file>
-      <file>Resources/flipvert_on.svg</file>
-      <file>Resources/flipvert_off.svg</file>
-      <file>Resources/flipvert_over.svg</file>
-      <file>Resources/reset.svg</file>
-      <file>Resources/reset_over.svg</file>
-      <file>Resources/xdts.svg</file>
+		<file>Resources/filmstrip_inbetween.svg</file>
+		<file>Resources/history_normal.png</file>
+		<file>Resources/history_brush.png</file>
+		<file>Resources/history_eraser.png</file>
+		<file>Resources/history_fill.png</file>
+		<file>Resources/history_paintbrush.png</file>
+		<file>Resources/history_autoclose.png</file>
+		<file>Resources/history_geometric.png</file>
+		<file>Resources/history_controlpointeditor.png</file>
+		<file>Resources/history_move.png</file>
+		<file>Resources/history_finger.png</file>
+		<file>Resources/history_palette.png</file>
+		<file>Resources/history_fx.png</file>
+		<file>Resources/history_schematic.png</file>
+		<file>Resources/history_xsheet.png</file>
+		<file>Resources/history_filmstrip.png</file>
+		<file>Resources/history_unidentified.png</file>
+		<file>Resources/cln_suspended.svg</file>
+		<file>Resources/cln_done_with_errors.svg</file>
+		<file>Resources/cln_computing.svg</file>
+		<file>Resources/cln_done.svg</file>
+		<file>Resources/cln_failed.svg</file>
+		<file>Resources/match_lup_nogap.png</file>
+		<file>Resources/match_rup_nogap.png</file>
+		<file>Resources/match_lup_gap.png</file>
+		<file>Resources/match_rup_gap.png</file>
+		<file>Resources/refresh.svg</file>
+		<file>Resources/refresh_over.svg</file>
+		<file>Resources/zoom_in.svg</file>
+		<file>Resources/zoom_out.svg</file>
+		<file>Resources/zoom_in_rollover.svg</file>
+		<file>Resources/zoom_out_rollover.svg</file>
+		<file>Resources/colorchiporder_leftup.svg</file>
+		<file>Resources/colorchiporder_lowleft.svg</file>
+		<file>Resources/colorchiporder_upleft.svg</file>
+		<file>Resources/timeline2xsheet.svg</file>
+		<file>Resources/xsheet2timeline.svg</file>
+		<file>Resources/shift_and_trace.svg</file>
+		<file>Resources/shift_and_trace_edit.svg</file>
+		<file>Resources/shift_and_trace_reset.svg</file>
+		<file>Resources/xdts.svg</file>
+		<file>Resources/scripticon.png</file>
+		<file>Resources/savescreen.png</file>
     </qresource>
 </RCC>

@@ -42,6 +42,7 @@ CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
   QIcon moreIcon(":Resources/more.svg");
   QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
   more->setIcon(moreIcon);
+  setIconSize(QSize(22, 22));
 }
 
 //-----------------------------------------------------------------------------

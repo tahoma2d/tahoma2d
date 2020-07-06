@@ -14,6 +14,7 @@
 #include "tcurves.h"
 #include "trop.h"
 #include "tmsgcore.h"
+#include "toonz/preferences.h"
 
 // Qt includes
 #include <QPixmap>
@@ -203,21 +204,91 @@ int getDevPixRatio() {
 
 //-----------------------------------------------------------------------------
 
-QIcon createQIcon(const char *iconSVGName) {
-  QString normal = QString(":Resources/") + iconSVGName + ".svg";
-  QString click  = QString(":Resources/") + iconSVGName + "_click.svg";
-  QString over   = QString(":Resources/") + iconSVGName + "_over.svg";
+QPixmap pixmapOpacity(QPixmap &pixmap, double opacity) {
+  // Get device ratio, scale pixmap correctly for hdpi
+  qreal pixelRatio = getDevPixRatio();
+  QSize pixmapSize(pixmap.width() * pixelRatio, pixmap.height() * pixelRatio);
 
+  QPixmap opacityPixmap(pixmapSize);
+  opacityPixmap.setDevicePixelRatio(pixelRatio);
+  opacityPixmap.fill(Qt::transparent);
+
+  QPixmap normalPixmap = pixmap.scaled(pixmapSize, Qt::KeepAspectRatio);
+  normalPixmap.setDevicePixelRatio(pixelRatio);
+
+  QPainter p;
+  p.begin(&opacityPixmap);
+  p.setBackgroundMode(Qt::TransparentMode);
+  p.setBackground(QBrush(Qt::transparent));
+  p.eraseRect(normalPixmap.rect());
+  p.setOpacity(opacity);
+  p.drawPixmap(0, 0, normalPixmap);
+  p.end();
+
+  return opacityPixmap;
+}
+
+//-----------------------------------------------------------------------------
+
+QString getIconThemePath(const QString &fileSVGPath) {
+  QString theme;
+  if (Preferences::instance()->getIconTheme())
+    theme = ":icons/dark/";
+  else
+    theme = ":icons/light/";
+  // qDebug() << "What is the theme name?" << themeName;
+  return theme + fileSVGPath;
+}
+
+//-----------------------------------------------------------------------------
+
+QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
+  // Normal, full opacity icon
+  QIcon iconNormal = QIcon::fromTheme(iconSVGName);
+
+  // Get size of theme icon, we just grab the largest available
+  QSize max(0, 0);
+  for (QList<QSize> sizes = iconNormal.availableSizes(); !sizes.isEmpty();
+       sizes.removeFirst())
+    if (sizes.first().width() > max.width()) max = sizes.first();
+
+  // Convert to pixmap with icon size, this is enough to build the icon, we can
+  // check for other states conditionally.
+  QPixmap normalPixmap = iconNormal.pixmap(max);
   QIcon icon;
-  icon.addFile(normal, QSize(), QIcon::Normal, QIcon::Off);
-  if (QFile::exists(click))
-    icon.addFile(click, QSize(), QIcon::Normal, QIcon::On);
-  else
-    icon.addFile(normal, QSize(), QIcon::Normal, QIcon::On);
-  if (QFile::exists(over))
-    icon.addFile(over, QSize(), QIcon::Active);
-  else
-    icon.addFile(normal, QSize(), QIcon::Active);
+
+  // Check for other states
+  if (!iconNormal.isNull()) {
+    QIcon iconOn   = QIcon::fromTheme(QString(iconSVGName) + "_on");
+    QIcon iconOver = QIcon::fromTheme(QString(iconSVGName) + "_over");
+
+    // The pixmap shown when the icon is idle
+    QPixmap inactivePixmap = pixmapOpacity(iconNormal.pixmap(max), 0.8);
+    // The pixmap shown when the icon is on/clicked/active
+    QPixmap onPixmap       = iconOn.pixmap(max);
+    if (!iconOver.isNull()) {
+      QPixmap overPixmap = iconOver.pixmap(max);
+      icon.addPixmap(overPixmap, QIcon::Active);
+    } else {
+      icon.addPixmap(normalPixmap, QIcon::Active);
+    }
+
+    // The pixmap shown when the icon is disabled
+    QPixmap disabledPixmap = pixmapOpacity(normalPixmap, 0.2);
+    icon.addPixmap(disabledPixmap, QIcon::Disabled);
+
+    // Check if inactive icon should use full opacity
+    if (useFullOpacity)
+      icon.addPixmap(normalPixmap, QIcon::Normal, QIcon::Off);
+    else
+      icon.addPixmap(inactivePixmap, QIcon::Normal, QIcon::Off);
+
+    if (!iconOn.isNull())
+      icon.addPixmap(onPixmap, QIcon::Normal, QIcon::On);
+    else
+      icon.addPixmap(normalPixmap, QIcon::Normal, QIcon::On);
+    
+  }
 
   return icon;
 }
@@ -481,7 +552,9 @@ ToolBarContainer::ToolBarContainer(QWidget *parent) : QFrame(parent) {
 
 //-----------------------------------------------------------------------------
 
-void ToolBarContainer::paintEvent(QPaintEvent *event) {}
+void ToolBarContainer::paintEvent(QPaintEvent *event) {
+  QPainter p(this);
+}
 
 //=============================================================================
 

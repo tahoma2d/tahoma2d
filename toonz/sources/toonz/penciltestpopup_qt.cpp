@@ -1546,19 +1546,19 @@ PencilTestPopup::PencilTestPopup()
   if (m_captureFilterSettingsBtn) {
     m_captureFilterSettingsBtn->setObjectName("GearButton");
     m_captureFilterSettingsBtn->setFixedSize(23, 23);
-    m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
+    m_captureFilterSettingsBtn->setIconSize(QSize(18, 18));
     m_captureFilterSettingsBtn->setToolTip(
         tr("Video Capture Filter Settings..."));
   }
 
   subfolderButton->setObjectName("SubfolderButton");
-  subfolderButton->setIconSize(QSize(15, 15));
+  subfolderButton->setIconSize(QSize(18, 18));
   m_saveInFileFld->setMaximumWidth(380);
 
   m_saveInFolderPopup->hide();
 
   m_subcameraButton->setObjectName("SubcameraButton");
-  m_subcameraButton->setIconSize(QSize(15, 15));
+  m_subcameraButton->setIconSize(QSize(18, 18));
   m_subcameraButton->setCheckable(true);
   m_subcameraButton->setChecked(false);
   subCamWidget->setHidden(true);

@@ -71,7 +71,7 @@ SVNCommitDialog::SVNCommitDialog(QWidget *parent, const QString &workingDir,
 
   if (m_folderOnly) {
     m_treeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    m_treeWidget->setIconSize(QSize(21, 17));
+    m_treeWidget->setIconSize(QSize(21, 18));
   }
   m_treeWidget->setStyleSheet("QTreeWidget { border: 1px solid gray; }");
 
@@ -619,7 +619,7 @@ void SVNCommitDialog::addUnversionedItem(const QString &relativePath) {
   QTreeWidgetItem *parent = 0;
   QString tempString      = "";
 
-  QIcon folderIcon = QIcon(":Resources/vcfolder_close.svg");
+  QIcon folderIcon = QIcon(createQIcon("folder_vc", true));
 
   int levelCount = list.count();
   for (int i = 0; i < levelCount; i++) {
@@ -668,7 +668,7 @@ void SVNCommitDialog::addUnversionedFolders(const QDir &dir,
       dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
   int count = entries.count();
 
-  QIcon folderIcon = QIcon(":Resources/vcfolder_close.svg");
+  QIcon folderIcon = QIcon(createQIcon("folder_vc", true));
 
   for (int i = 0; i < count; i++) {
     QString entry = entries.at(i);
@@ -732,7 +732,7 @@ void SVNCommitDialog::addModifiedItem(const QString &relativePath) {
   QString tempString      = "";
 
   QBrush brush(Qt::red);
-  QIcon folderIcon = QIcon(":Resources/vcfolder_close.svg");
+  QIcon folderIcon = QIcon(createQIcon("folder_vc", true));
 
   int levelCount = list.count();
   for (int i = 0; i < levelCount; i++) {

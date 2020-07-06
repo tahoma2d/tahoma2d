@@ -657,9 +657,6 @@ void ParamField::setFxHandle(TFxHandle *fxHandle) {
 ParamFieldKeyToggle::ParamFieldKeyToggle(QWidget *parent, std::string name)
     : QWidget(parent), m_status(NOT_ANIMATED), m_highlighted(false) {
   setFixedSize(20, 20);
-
-  m_pixmap = QPixmap(":Resources/keyframe.svg");
-  m_icon.addPixmap(m_pixmap);
 }
 
 //-----------------------------------------------------------------------------
@@ -694,6 +691,7 @@ ParamFieldKeyToggle::Status ParamFieldKeyToggle::getStatus() const {
 void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   QPainter p(this);
 
+  QIcon icon;
   int iconSize = 20;
   int radius   = 3;
 
@@ -707,20 +705,30 @@ void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
   switch (m_status) {
   case NOT_ANIMATED:
     p.fillPath(path, getKeyOffColor());
+    m_pixmap = QPixmap(getIconThemePath("actions/20/key_off.svg"));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case KEYFRAME:
     p.fillPath(path, getKeyOnColor());
+    m_pixmap = QPixmap(getIconThemePath("actions/20/key_on.svg"));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case MODIFIED:
     p.fillPath(path, getKeyModifiedColor());
+    m_pixmap = QPixmap(getIconThemePath("actions/20/key_on_modified.svg"));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   default:
     p.fillPath(path, getKeyInbetweenColor());
+    m_pixmap = QPixmap(getIconThemePath("actions/20/key_on.svg"));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   }
   p.drawPath(path);
-
-  m_icon.paint(&p, QRect(0, 0, iconSize, iconSize));
 
   if (m_highlighted) {
     p.fillPath(path, getKeyHighlightColor());

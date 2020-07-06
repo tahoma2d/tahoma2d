@@ -1518,10 +1518,12 @@ Filmstrip::Filmstrip(QWidget *parent, Qt::WFlags flags)
   m_frameArea->setWidget(m_frames);
 
   m_chooseLevelCombo->setMaxVisibleItems(50);
+  m_chooseLevelCombo->setObjectName("filmLevelCombo");
+  
   // layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
   mainLayout->setMargin(0);
-  mainLayout->setSpacing(3);
+  mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_chooseLevelCombo, 0);
     mainLayout->addWidget(m_frameArea, 1);

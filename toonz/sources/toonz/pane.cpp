@@ -247,11 +247,11 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
 
   // create color states for the button
   QPixmap standard_pm(m_standardPixmap.size());
-  QPixmap rollover_pm(m_standardPixmap.size());
   QPixmap pressed_pm(m_standardPixmap.size());
+  QPixmap rollover_pm(m_standardPixmap.size());
   standard_pm.fill(Qt::transparent);
-  rollover_pm.fill(QColor(getRolloverColor()));
   pressed_pm.fill(QColor(getPressedColor()));
+  rollover_pm.fill(QColor(getOverColor()));
 
   // set unique colors if filename contains string
   if (m_standardPixmapName.contains("freeze", Qt::CaseInsensitive)) {
@@ -265,7 +265,12 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   painter.drawPixmap(
       0, 0, m_pressed ? pressed_pm : m_rollover ? rollover_pm : standard_pm);
   // compose the icon
-  painter.drawPixmap(0, 0, m_standardPixmap);
+
+  painter.drawPixmap(0, 0,
+                     m_pressed
+                         ? m_standardPixmap
+                         : m_rollover ? m_standardPixmap
+                                      : pixmapOpacity(m_standardPixmap, 0.8));
 
   painter.end();
 }
@@ -452,16 +457,16 @@ void TPanelTitleBar::paintEvent(QPaintEvent *) {
 
     painter.setBrush(Qt::NoBrush);
     painter.setPen(isPanelActive ? m_activeTitleColor : m_titleColor);
-    painter.drawText(QPointF(10, 15), titleText);
+    painter.drawText(QPointF(8, 13), titleText);
   }
 
   if (dw->isFloating()) {
-    const static QPixmap closeButtonPixmap(
-        svgToPixmap(":/Resources/pane_close.svg", QSize(18, 18)));
-    const static QPixmap closeButtonPixmapOver(
-        svgToPixmap(":/Resources/pane_close_rollover.svg", QSize(18, 18)));
+    const static QPixmap closeButtonPixmap(svgToPixmap(
+        getIconThemePath("actions/18/pane_close.svg"), QSize(18, 18)));
+    const static QPixmap closeButtonPixmapOver(svgToPixmap(
+        getIconThemePath("actions/18/pane_close_rollover.svg"), QSize(18, 18)));
 
-    QPoint closeButtonPos(rect.right() - 18, rect.top() + 1);
+    QPoint closeButtonPos(rect.right() - 18, rect.top());
 
     if (m_closeButtonHighlighted)
       painter.drawPixmap(closeButtonPos, closeButtonPixmapOver);

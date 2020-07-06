@@ -325,10 +325,10 @@ TPanelTitleBarButton {
    Scrollbars
 ----------------------------------------------------------------------------- */
 QAbstractScrollArea::corner {
-  background-color: #202020;
+  background-color: #060606;
 }
 QScrollBar {
-  background-color: #202020;
+  background-color: #060606;
   border: 0;
 }
 QScrollBar:horizontal {
@@ -340,26 +340,26 @@ QScrollBar:vertical {
   width: 16;
 }
 QScrollBar::handle {
-  border: 1 solid #2f2f2f;
+  border: 1 solid #2a2a2a;
   border-radius: 4;
 }
 QScrollBar::handle:horizontal:hover,
 QScrollBar::handle:vertical:hover {
-  background-color: #444444;
-  border-color: #444444;
+  background-color: #3f3f3f;
+  border-color: #3f3f3f;
 }
 QScrollBar::handle:horizontal:pressed,
 QScrollBar::handle:vertical:pressed {
-  background-color: #585858;
-  border-color: #585858;
+  background-color: #535353;
+  border-color: #535353;
 }
 QScrollBar::handle:horizontal {
-  background-color: #2f2f2f;
+  background-color: #2a2a2a;
   margin: 3 16;
   min-width: 20;
 }
 QScrollBar::handle:vertical {
-  background-color: #2f2f2f;
+  background-color: #2a2a2a;
   margin: 16 3;
   min-height: 20;
 }
@@ -369,13 +369,13 @@ QScrollBar::add-line {
 }
 QScrollBar::add-line:horizontal {
   subcontrol-position: right;
-  background-color: #202020;
+  background-color: #060606;
   margin: 0;
   width: 16;
 }
 QScrollBar::add-line:vertical {
   subcontrol-position: bottom;
-  background-color: #202020;
+  background-color: #060606;
   margin: 0;
   height: 16;
 }
@@ -385,13 +385,13 @@ QScrollBar::sub-line {
 }
 QScrollBar::sub-line:horizontal {
   subcontrol-position: left;
-  background-color: #202020;
+  background-color: #060606;
   margin: 0;
   width: 16;
 }
 QScrollBar::sub-line:vertical {
   subcontrol-position: top;
-  background-color: #202020;
+  background-color: #060606;
   margin: 0;
   height: 16;
 }
@@ -1466,11 +1466,6 @@ PaletteViewer QToolBar::separator:horizontal {
 PaletteViewer QToolBar QToolButton {
   margin: 0;
   padding: 2 0 2 0;
-}
-PaletteViewer #ToolBarContainer {
-  border-top: 1 solid #060606;
-  margin: 0;
-  padding: 0;
 }
 #PaletteTabBar::tab:first,
 #PaletteTabBar::tab:only-one {

@@ -107,8 +107,15 @@ signals:
 
 class DVAPI ParamFieldKeyToggle final : public QWidget {
   Q_OBJECT
-
 public:
+
+  // keyframe colors
+  Q_PROPERTY(QColor KeyOffColor READ getKeyOffColor WRITE setKeyOffColor)
+  Q_PROPERTY(QColor KeyOnColor READ getKeyOnColor WRITE setKeyOnColor)
+  Q_PROPERTY(QColor KeyModifiedColor READ getKeyModifiedColor WRITE setKeyModifiedColor)
+  Q_PROPERTY(QColor KeyInbetweenColor READ getKeyInbetweenColor WRITE setKeyInbetweenColor)
+  Q_PROPERTY(QColor KeyHighlightColor READ getKeyHighlightColor WRITE setKeyHighlightColor)
+
   enum Status { NOT_ANIMATED, NOT_KEYFRAME, MODIFIED, KEYFRAME };
   QPixmap m_pixmap;
   QIcon m_icon;
@@ -120,15 +127,15 @@ public:
   QColor m_keyHighlightColor;
   QColor m_keyInbetweenColor;
 
-  // keyframe colors
-  Q_PROPERTY(QColor KeyOffColor READ getKeyOffColor WRITE setKeyOffColor)
-  Q_PROPERTY(QColor KeyOnColor READ getKeyOnColor WRITE setKeyOnColor)
-  Q_PROPERTY(QColor KeyModifiedColor READ getKeyModifiedColor WRITE
-                 setKeyModifiedColor)
-  Q_PROPERTY(QColor KeyInbetweenColor READ getKeyInbetweenColor WRITE
-                 setKeyInbetweenColor)
-  Q_PROPERTY(QColor KeyHighlightColor READ getKeyHighlightColor WRITE
-                 setKeyHighlightColor)
+  // // keyframe colors
+  // Q_PROPERTY(QColor KeyOffColor READ getKeyOffColor WRITE setKeyOffColor)
+  // Q_PROPERTY(QColor KeyOnColor READ getKeyOnColor WRITE setKeyOnColor)
+  // Q_PROPERTY(QColor KeyModifiedColor READ getKeyModifiedColor WRITE
+  //                setKeyModifiedColor)
+  // Q_PROPERTY(QColor KeyInbetweenColor READ getKeyInbetweenColor WRITE
+  //                setKeyInbetweenColor)
+  // Q_PROPERTY(QColor KeyHighlightColor READ getKeyHighlightColor WRITE
+  //                setKeyHighlightColor)
 
 private:
   Status m_status;
@@ -154,11 +161,10 @@ protected:
   QColor getKeyOffColor() const { return m_keyOffColor; }
   void setKeyOnColor(const QColor &color) { m_keyOnColor = color; }
   QColor getKeyOnColor() const { return m_keyOnColor; }
-  void setKeyModifiedColor(const QColor &color) { m_keyModifiedColor = color; }
+  void setKeyModifiedColor(const QColor &color) {
+    m_keyModifiedColor = color;}
   QColor getKeyModifiedColor() const { return m_keyModifiedColor; }
-  void setKeyHighlightColor(const QColor &color) {
-    m_keyHighlightColor = color;
-  }
+  void setKeyHighlightColor(const QColor &color) { m_keyHighlightColor = color; }
   QColor getKeyHighlightColor() const { return m_keyHighlightColor; }
   void setKeyInbetweenColor(const QColor &color) {
     m_keyInbetweenColor = color;

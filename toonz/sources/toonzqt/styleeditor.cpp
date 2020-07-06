@@ -1313,8 +1313,9 @@ void ChannelLineEdit::focusOutEvent(QFocusEvent *e) {
 
 void ChannelLineEdit::paintEvent(QPaintEvent *e) {
   IntLineEdit::paintEvent(e);
-  /* commenting out instead of deleting in-case this was for a specific reason
-  but since we now have QLineEdit focus it is perhaps redundant
+
+  /* Now that stylesheets added lineEdit focus this is likely redundant,
+   * commenting out in-case it is still required.
   if (m_isEditing) {
     QPainter p(this);
     p.setPen(Qt::yellow);
@@ -3131,7 +3132,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   m_plainColorPage->m_rgbFrame->setVisible(false);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("options"));
+  toolButton->setIcon(createQIcon("menu"));
   toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -3147,7 +3148,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   displayToolbar->addWidget(toolButton);
   displayToolbar->setMaximumHeight(22);
-  displayToolbar->setIconSize(QSize(18, 18));
+  displayToolbar->setIconSize(QSize(16, 16));
 
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
@@ -3157,11 +3158,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-#ifdef WIN32
-      hLayout->addSpacing(-1);
-#else
-      hLayout->addSpacing(4);
-#endif
+      hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }

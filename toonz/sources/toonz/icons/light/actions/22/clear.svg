@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="22px" height="22px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-188,-4)">
+        <g id="Tools">
+            <g id="Brush">
+            </g>
+            <g id="Eraser">
+            </g>
+            <g id="PaintBrush">
+            </g>
+            <g transform="matrix(-1,0,0,1,226.257,102.495)">
+                <g id="Fill">
+                </g>
+            </g>
+            <g id="Tape">
+            </g>
+            <g id="Geometry">
+            </g>
+            <g id="Zoom">
+            </g>
+            <g id="Eyedropper">
+            </g>
+            <g id="Eyedropper1" serif:id="Eyedropper">
+            </g>
+            <g id="Magnet">
+            </g>
+            <g id="Iron">
+            </g>
+            <g id="Cutter">
+            </g>
+            <g id="Tracker2">
+            </g>
+            <g id="Tracker1">
+            </g>
+            <g id="Rotate">
+            </g>
+        </g>
+        <g id="Edit">
+            <g id="Clear" transform="matrix(1.07852,0,0,1.07852,119.739,-0.978593)">
+                <path d="M75.3,21.325L72.9,21.325L73.5,17.825L75.3,21.325ZM68.8,19.625L67.6,17.525L71,16.325L68.8,19.625ZM80,16.525L78.8,18.625L76.1,16.325L80,16.525ZM67,13.125L68.2,11.125L71,13.325L67,13.125ZM78.2,10.025L79.4,12.125L76.1,13.325L78.2,10.025ZM71.7,8.325L74.1,8.325L73.5,11.925L71.7,8.325Z" style="fill:white;fill-rule:nonzero;"/>
+            </g>
+            <g id="SaveAll">
+            </g>
+            <g id="SaveAll1" serif:id="SaveAll">
+            </g>
+            <g id="MoveToBack">
+            </g>
+            <g id="MoveToFront">
+            </g>
+            <g id="MoveBackOne">
+            </g>
+            <g id="MoveForwardOne">
+            </g>
+            <g id="FileCopy">
+            </g>
+            <g id="Paste">
+            </g>
+        </g>
+    </g>
+</svg>
+

@@ -107,15 +107,11 @@ StudioPaletteTreeViewer::StudioPaletteTreeViewer(
 
   header()->close();
   setUniformRowHeights(true);
-  setIconSize(QSize(21, 17));
+  setIconSize(QSize(21, 18));
 
   QList<QTreeWidgetItem *> paletteItems;
 
-  QString open  = QString(":Resources/folder_close.svg");
-  QString close = QString(":Resources/folder_open.svg");
-  m_folderIcon.addFile(close, QSize(21, 17), QIcon::Normal, QIcon::On);
-  m_folderIcon.addFile(open, QSize(21, 17), QIcon::Normal, QIcon::Off);
-
+  //#todo
   QString levelPaletteIcon = QString(":Resources/palette.svg");
   m_levelPaletteIcon.addPixmap(levelPaletteIcon, QIcon::Normal, QIcon::On);
   QString studioPaletteIcon = QString(":Resources/studiopalette.svg");
@@ -199,7 +195,7 @@ QTreeWidgetItem *StudioPaletteTreeViewer::createRootItem(TFilePath path) {
   if (rootName != "Global Palettes") rootName = "Project Palettes";
   QTreeWidgetItem *rootItem =
       new QTreeWidgetItem((QTreeWidget *)0, QStringList(rootName));
-  rootItem->setIcon(0, m_folderIcon);
+  rootItem->setIcon(0, createQIcon("folder", true));
   rootItem->setData(1, Qt::UserRole, toQString(path));
 
   refreshItem(rootItem);
@@ -237,7 +233,7 @@ QTreeWidgetItem *StudioPaletteTreeViewer::createItem(const TFilePath path) {
       item->setIcon(0, m_levelPaletteIcon);
     item->setFlags(item->flags() | Qt::ItemNeverHasChildren);
   } else if (studioPalette->isFolder(path)) {
-    item->setIcon(0, m_folderIcon);
+    item->setIcon(0, createQIcon("folder", true));
     item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
   }
   item->setData(1, Qt::UserRole, toQString(path));

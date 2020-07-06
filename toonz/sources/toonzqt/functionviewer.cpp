@@ -101,7 +101,7 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
   //----
   m_treeView->resize(150, m_treeView->size().height());
   m_treeView->setMinimumWidth(0);
-  m_treeView->setIconSize(QSize(21, 17));
+  m_treeView->setIconSize(QSize(21, 18));
 
   FunctionTreeModel *ftModel =
       dynamic_cast<FunctionTreeModel *>(m_treeView->model());

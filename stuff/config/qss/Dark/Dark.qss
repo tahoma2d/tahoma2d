@@ -325,10 +325,10 @@ TPanelTitleBarButton {
    Scrollbars
 ----------------------------------------------------------------------------- */
 QAbstractScrollArea::corner {
-  background-color: #303030;
+  background-color: #161616;
 }
 QScrollBar {
-  background-color: #303030;
+  background-color: #161616;
   border: 0;
 }
 QScrollBar:horizontal {
@@ -340,26 +340,26 @@ QScrollBar:vertical {
   width: 16;
 }
 QScrollBar::handle {
-  border: 1 solid #3f3f3f;
+  border: 1 solid #3a3a3a;
   border-radius: 4;
 }
 QScrollBar::handle:horizontal:hover,
 QScrollBar::handle:vertical:hover {
-  background-color: #545454;
-  border-color: #545454;
+  background-color: #4f4f4f;
+  border-color: #4f4f4f;
 }
 QScrollBar::handle:horizontal:pressed,
 QScrollBar::handle:vertical:pressed {
-  background-color: #686868;
-  border-color: #686868;
+  background-color: #636363;
+  border-color: #636363;
 }
 QScrollBar::handle:horizontal {
-  background-color: #3f3f3f;
+  background-color: #3a3a3a;
   margin: 3 16;
   min-width: 20;
 }
 QScrollBar::handle:vertical {
-  background-color: #3f3f3f;
+  background-color: #3a3a3a;
   margin: 16 3;
   min-height: 20;
 }
@@ -369,13 +369,13 @@ QScrollBar::add-line {
 }
 QScrollBar::add-line:horizontal {
   subcontrol-position: right;
-  background-color: #303030;
+  background-color: #161616;
   margin: 0;
   width: 16;
 }
 QScrollBar::add-line:vertical {
   subcontrol-position: bottom;
-  background-color: #303030;
+  background-color: #161616;
   margin: 0;
   height: 16;
 }
@@ -385,13 +385,13 @@ QScrollBar::sub-line {
 }
 QScrollBar::sub-line:horizontal {
   subcontrol-position: left;
-  background-color: #303030;
+  background-color: #161616;
   margin: 0;
   width: 16;
 }
 QScrollBar::sub-line:vertical {
   subcontrol-position: top;
-  background-color: #303030;
+  background-color: #161616;
   margin: 0;
   height: 16;
 }
@@ -1467,11 +1467,6 @@ PaletteViewer QToolBar QToolButton {
   margin: 0;
   padding: 2 0 2 0;
 }
-PaletteViewer #ToolBarContainer {
-  border-top: 1 solid #161616;
-  margin: 0;
-  padding: 0;
-}
 #PaletteTabBar::tab:first,
 #PaletteTabBar::tab:only-one {
   border-left: 0;
@@ -1974,7 +1969,7 @@ XsheetViewer {
   qproperty-VerticalLineHeadColor: #0f0f0f;
   qproperty-PreviewFrameTextColor: #9fdaff;
   qproperty-CurrentRowBgColor: rgba(83, 133, 166, 0.7);
-  qproperty-OnionSkinAreaBgColor: #2b2b2b;
+  qproperty-OnionSkinAreaBgColor: #262626;
   qproperty-CellFocusColor: #000;
   qproperty-EmptyColumnHeadColor: #444444;
   qproperty-EmptyCellColor: #303030;

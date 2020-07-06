@@ -805,7 +805,6 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   pastelizer.setAlpha(0);
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
-  // colorSelection.setAlpha(170);
   p.fillRect(rect, isSelected ? colorSelection : pastelizer);
 }
 
@@ -1767,7 +1766,7 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
   p.setPen(m_viewer->getVerticalLineColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(0, -1, -1, -3));
+    p.drawRect(toBeUpdated.adjusted(-1, 0, -1, -3));
   else
     p.drawRect(toBeUpdated.adjusted(-1, 0, -3, -1));
 

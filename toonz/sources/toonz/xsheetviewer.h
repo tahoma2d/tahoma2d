@@ -772,14 +772,16 @@ public:
     m_selectedEmptyCellColor = color;
   }
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
-
+  
   // Cell focus
   void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
   QColor getCellFocusColor() const { return m_cellFocusColor; }
 
-  // play range
+  // Play range
   QColor getPlayRangeColor() const { return m_playRangeColor; }
-  void setPlayRangeColor(const QColor &color) { m_playRangeColor = color; }
+  void setPlayRangeColor(const QColor &color) {
+    m_playRangeColor = color;
+  }
 
   // TZP column
   void setLevelColumnColor(const QColor &color) { m_levelColumnColor = color; }

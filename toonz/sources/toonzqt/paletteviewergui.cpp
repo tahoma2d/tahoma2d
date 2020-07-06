@@ -572,9 +572,9 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 
 //-----------------------------------------------------------------------------
 /*! Draw the chip name \b name inside rectangle \b chipRect using painter \b p.
-* If the name is too wide to fit on the chip, use left align - to show the
-* start of the name. Otherwise, use center align.
-*/
+ * If the name is too wide to fit on the chip, use left align - to show the
+ * start of the name. Otherwise, use center align.
+ */
 static void drawChipName(QPainter &p, const QRect &chipRect,
                          const std::wstring &name) {
   const QString nameQString = QString::fromStdWString(name);
@@ -1685,8 +1685,8 @@ PaletteIconWidget::PaletteIconWidget(QWidget *parent, Qt::WindowFlags flags)
 PaletteIconWidget::PaletteIconWidget(QWidget *parent, Qt::WFlags flags)
 #endif
     : QWidget(parent, flags), m_isOver(false) {
-  setFixedSize(30, 20);
-  setToolTip(QObject::tr("Palette"));
+  setFixedSize(30, 22);
+  setToolTip(QObject::tr("Click & Drag Palette into Studio Palette"));
 }
 
 //-----------------------------------------------------------------------------
@@ -1697,12 +1697,12 @@ PaletteIconWidget::~PaletteIconWidget() {}
 
 void PaletteIconWidget::paintEvent(QPaintEvent *) {
   QPainter p(this);
-
   if (m_isOver) {
     static QPixmap dragPaletteIconPixmapOver(
         svgToPixmap(":Resources/dragpalette_over.svg"));
     p.drawPixmap(5, 1, dragPaletteIconPixmapOver);
-  } else {
+  }
+  if (!m_isOver) {
     static QPixmap dragPaletteIconPixmap(
         svgToPixmap(":Resources/dragpalette.svg"));
     p.drawPixmap(5, 1, dragPaletteIconPixmap);
@@ -1719,8 +1719,14 @@ void PaletteIconWidget::mousePressEvent(QMouseEvent *me) {
 
   m_mousePressPos = me->pos();
   m_dragged       = false;
-
+  setCursor(QCursor(Qt::DragMoveCursor));
   me->accept();
+}
+
+//-----------------------------------------------------------------------------
+
+void PaletteIconWidget::mouseReleaseEvent(QMouseEvent *me) {
+  setCursor(QCursor(Qt::OpenHandCursor));
 }
 
 //-----------------------------------------------------------------------------
@@ -1736,7 +1742,10 @@ void PaletteIconWidget::mouseMoveEvent(QMouseEvent *me) {
 
 //-----------------------------------------------------------------------------
 
-void PaletteIconWidget::enterEvent(QEvent *event) { m_isOver = true; }
+void PaletteIconWidget::enterEvent(QEvent *event) {
+  m_isOver = true;
+  setCursor(QCursor(Qt::OpenHandCursor));
+}
 
 //-----------------------------------------------------------------------------
 

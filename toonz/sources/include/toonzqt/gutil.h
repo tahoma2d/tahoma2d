@@ -48,6 +48,10 @@ class TStroke;
 
 //-----------------------------------------------------------------------------
 
+QString DVAPI getIconThemePath(const QString &filePath);
+
+//-----------------------------------------------------------------------------
+
 QString DVAPI fileSizeString(qint64 size, int precision = 2);
 
 //-----------------------------------------------------------------------------
@@ -102,7 +106,9 @@ svgToPixmap(const QString &svgFilePath, const QSize &size = QSize(),
 int DVAPI getDevPixRatio();
 
 //-----------------------------------------------------------------------------
-QIcon DVAPI createQIcon(const char *iconSVGName);
+
+QPixmap DVAPI pixmapOpacity(QPixmap &input, double opacity = 1.0);
+QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
 QIcon DVAPI createQIconOnOff(const char *iconSVGName, bool withOver = true);
 QIcon DVAPI createQIconOnOffPNG(const char *iconPNGName, bool withOver = true);

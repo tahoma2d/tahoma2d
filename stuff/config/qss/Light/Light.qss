@@ -1467,11 +1467,6 @@ PaletteViewer QToolBar QToolButton {
   margin: 0;
   padding: 2 0 2 0;
 }
-PaletteViewer #ToolBarContainer {
-  border-top: 1 solid #9b9b9b;
-  margin: 0;
-  padding: 0;
-}
 #PaletteTabBar::tab:first,
 #PaletteTabBar::tab:only-one {
   border-left: 0;
