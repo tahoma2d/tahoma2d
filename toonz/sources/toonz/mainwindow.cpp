@@ -1765,6 +1765,7 @@ void MainWindow::defineActions() {
   // createMenuEditAction(MI_PasteNew,     tr("&Paste New"),  "");
   createMenuCellsAction(MI_MergeFrames, tr("&Merge"), "");
   createMenuEditAction(MI_PasteInto, tr("&Paste Into"), "");
+  createMenuEditAction(MI_PasteDuplicate, tr("&Paste as a Copy"), "");
   createRightClickMenuAction(MI_PasteValues, tr("&Paste Color && Name"), "");
   createRightClickMenuAction(MI_PasteColors, tr("Paste Color"), "");
   createRightClickMenuAction(MI_PasteNames, tr("Paste Name"), "");

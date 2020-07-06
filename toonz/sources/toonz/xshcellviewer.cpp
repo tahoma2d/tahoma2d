@@ -3349,6 +3349,9 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
     {
       pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteInto));
       pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteNumbers));
+      if (!soundTextCellsSelected) {
+        pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteDuplicate));
+      }
     }
     menu.addMenu(pasteSpecialMenu);
 
