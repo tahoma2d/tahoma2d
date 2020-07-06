@@ -536,7 +536,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_nsPosField =
       new PegbarChannelField(m_tool, TStageObject::T_Y, "field", frameHandle,
                              objHandle, xshHandle, this);
-  m_zField = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
+  m_zField        = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
                                     frameHandle, objHandle, xshHandle, this);
   m_noScaleZField = new NoScaleField(m_tool, "field");
 
@@ -665,7 +665,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_zField->setPrecision(4);
   m_noScaleZField->setPrecision(4);
 
-  bool splined                        = isCurrentObjectSplined();
+  bool splined = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
 
@@ -1298,7 +1298,7 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   // assert(ret);
   bool ret = connect(m_scaleXField, SIGNAL(valueChange(bool)),
                      SLOT(onScaleXValueChanged(bool)));
-  ret = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
+  ret      = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
                        SLOT(onScaleYValueChanged(bool)));
   if (m_setSaveboxCheckbox)
     ret = ret && connect(m_setSaveboxCheckbox, SIGNAL(toggled(bool)),
@@ -1439,6 +1439,7 @@ GeometricToolOptionsBox::GeometricToolOptionsBox(QWidget *parent, TTool *tool,
     , m_poligonSideField(0)
     , m_shapeField(0)
     , m_snapCheckbox(0)
+    , m_smoothCheckbox(0)
     , m_snapSensitivityCombo(0)
     , m_tool(tool)
     , m_pencilMode(0) {
@@ -1472,6 +1473,13 @@ GeometricToolOptionsBox::GeometricToolOptionsBox(QWidget *parent, TTool *tool,
     m_poligonSideLabel->setEnabled(false);
     m_poligonSideField->setEnabled(false);
   }
+
+  m_smoothCheckbox =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Smooth"));
+  if (m_shapeField->getProperty()->getValue() != L"MultiArc") {
+    m_smoothCheckbox->setEnabled(false);
+  }
+
   bool ret = connect(m_shapeField, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onShapeValueChanged(int)));
 
@@ -1521,9 +1529,11 @@ void GeometricToolOptionsBox::updateStatus() {
 
 void GeometricToolOptionsBox::onShapeValueChanged(int index) {
   const TEnumProperty::Range &range = m_shapeField->getProperty()->getRange();
-  bool enabled                      = range[index] == L"Polygon";
-  m_poligonSideLabel->setEnabled(enabled);
-  m_poligonSideField->setEnabled(enabled);
+  bool polygonEnabled               = range[index] == L"Polygon";
+  m_poligonSideLabel->setEnabled(polygonEnabled);
+  m_poligonSideField->setEnabled(polygonEnabled);
+
+  m_smoothCheckbox->setEnabled(range[index] == L"MultiArc");
 }
 
 //-----------------------------------------------------------------------------
@@ -1709,11 +1719,11 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
-  ret = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
+  ret      = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolTypeChanged(int)));
-  ret = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
                        SLOT(onOnionModeToggled(bool)));
-  ret = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
                        SLOT(onMultiFrameModeToggled(bool)));
   assert(ret);
   if (m_colorMode->getProperty()->getValue() == L"Lines") {
@@ -2312,9 +2322,9 @@ TapeToolOptionsBox::TapeToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_typeMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onToolTypeChanged(int)));
-  ret = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
+  ret      = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolModeChanged(int)));
-  ret = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
+  ret      = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
                        SLOT(onJoinStrokesModeChanged()));
   assert(ret);
 }
@@ -2401,10 +2411,11 @@ protected:
       p.setPen(Qt::black);
     p.setBrush(Qt::NoBrush);
 
-    p.drawText(rect(), Qt::AlignCenter, QString("R:%1 G:%2 B:%3")
-                                            .arg(m_color.red())
-                                            .arg(m_color.green())
-                                            .arg(m_color.blue()));
+    p.drawText(rect(), Qt::AlignCenter,
+               QString("R:%1 G:%2 B:%3")
+                   .arg(m_color.red())
+                   .arg(m_color.green())
+                   .arg(m_color.blue()));
   }
 };
 
@@ -2836,7 +2847,7 @@ void ToolOptions::onToolSwitched() {
   TTool *tool = app->getCurrentTool()->getTool();
   if (tool) {
     // c'e' un tool corrente
-    ToolOptionsBox *panel = 0;
+    ToolOptionsBox *panel                            = 0;
     std::map<TTool *, ToolOptionsBox *>::iterator it = m_panels.find(tool);
     if (it == m_panels.end()) {
       // ... senza panel associato
