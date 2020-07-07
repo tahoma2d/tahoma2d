@@ -270,6 +270,7 @@ protected:
   // reimplementation of TPanel::widgetFocusOnEnter
   void widgetFocusOnEnter() override;
   void widgetClearFocusOnLeave() override;
+  bool isActivatableOnEnter() override { return true; }
 };
 
 //=========================================================
@@ -289,6 +290,7 @@ protected:
   // reimplementation of TPanel::widgetFocusOnEnter
   void widgetFocusOnEnter() override;
   void widgetClearFocusOnLeave() override;
+  bool isActivatableOnEnter() override { return true; }
 };
 
 //=========================================================
