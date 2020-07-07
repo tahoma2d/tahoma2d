@@ -652,6 +652,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
     m_selection.makeCurrent();
   } else if (pointType == ControlPointEditorStroke::CONTROL_POINT) {
     if (e.isAltPressed()) {
+      m_action = NONE;
       m_selection.selectNone();
       m_selection.select(pointIndex);
       initUndo();
