@@ -102,8 +102,8 @@ bool checkCreatorString(const QString &creator) {
     if (pos >= 0 && len >= 4) {
       QString v;
       if (len > 4) v = creator.mid(pos + 3, len - 4);
-      bool ok        = true;
-      mask           = v.toInt(&ok, 16);
+      bool ok = true;
+      mask    = v.toInt(&ok, 16);
     }
   }
   return (mask & compatibility.neededMask) == compatibility.neededMask &&
@@ -169,8 +169,8 @@ void getIndexesRangefromFids(TXshSimpleLevel *level,
 
   std::set<TFrameId>::const_iterator it;
   for (it = fids.begin(); it != fids.end(); ++it) {
-    int index                        = level->guessIndex(*it);
-    if (index > toIndex) toIndex     = index;
+    int index = level->guessIndex(*it);
+    if (index > toIndex) toIndex = index;
     if (index < fromIndex) fromIndex = index;
   }
 }
@@ -909,13 +909,13 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         if (is.getTagParam("dpix", v)) xdpi = std::stod(v);
         if (is.getTagParam("dpiy", v)) ydpi = std::stod(v);
         if (xdpi != 0 && ydpi != 0) dpiPolicy = LevelProperties::DP_CustomDpi;
-        std::string dpiType                   = is.getTagAttribute("dpiType");
-        if (dpiType == "image") dpiPolicy     = LevelProperties::DP_ImageDpi;
-        if (is.getTagParam("type", v) && v == "s") type       = TZI_XSHLEVEL;
-        if (is.getTagParam("subsampling", v)) subsampling     = std::stoi(v);
-        if (is.getTagParam("premultiply", v)) doPremultiply   = std::stoi(v);
+        std::string dpiType = is.getTagAttribute("dpiType");
+        if (dpiType == "image") dpiPolicy = LevelProperties::DP_ImageDpi;
+        if (is.getTagParam("type", v) && v == "s") type = TZI_XSHLEVEL;
+        if (is.getTagParam("subsampling", v)) subsampling = std::stoi(v);
+        if (is.getTagParam("premultiply", v)) doPremultiply = std::stoi(v);
         if (is.getTagParam("antialias", v)) antialiasSoftness = std::stoi(v);
-        if (is.getTagParam("whiteTransp", v)) whiteTransp     = std::stoi(v);
+        if (is.getTagParam("whiteTransp", v)) whiteTransp = std::stoi(v);
         if (is.getTagParam("isStopMotionLevel", v))
           isStopMotionLevel = std::stoi(v);
 
@@ -1050,9 +1050,8 @@ static TFilePath getLevelPathAndSetNameWithPsdLevelName(
       if (removeFileName) wLevelName = list[1].toStdWString();
 
       TLevelSet *levelSet = xshLevel->getScene()->getLevelSet();
-      if (levelSet &&
-          levelSet->hasLevel(
-              wLevelName))  // levelSet should be asserted instead
+      if (levelSet && levelSet->hasLevel(
+                          wLevelName))  // levelSet should be asserted instead
         levelSet->renameLevel(xshLevel, wLevelName);
 
       xshLevel->setName(wLevelName);
@@ -1556,6 +1555,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
     overwritePalette      = false;
     TFilePath palettePath = dDstPath.withNoFrame().withType("tpl");
     StudioPalette::instance()->save(palettePath, getPalette());
+    getPalette()->setDirtyFlag(false);
   }
 
   saveSimpleLevel(dDstPath, overwritePalette);
@@ -1588,8 +1588,8 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
   std::vector<TFrameId> fids;
   getFids(fids);
 
-  bool isLevelModified                = getProperties()->getDirtyFlag();
-  bool isPaletteModified              = false;
+  bool isLevelModified   = getProperties()->getDirtyFlag();
+  bool isPaletteModified = false;
   if (getPalette()) isPaletteModified = getPalette()->getDirtyFlag();
 
   if (isLevelModified || isPaletteModified) {
@@ -1835,11 +1835,11 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
 std::string TXshSimpleLevel::getImageId(const TFrameId &fid,
                                         int frameStatus) const {
   if (frameStatus < 0) frameStatus = getFrameStatus(fid);
-  std::string prefix               = "L";
+  std::string prefix = "L";
   if (frameStatus & CleanupPreview)
     prefix = "P";
   else if ((frameStatus & (Scanned | Cleanupped)) == Scanned)
-    prefix            = "S";
+    prefix = "S";
   std::string imageId = m_idBase + "_" + prefix + fid.expand();
   return imageId;
 }
@@ -2265,13 +2265,14 @@ TFilePath TXshSimpleLevel::getExistingHookFile(
 
   int f, fCount = hookFiles.size();
   for (f = 0; f != fCount; ++f) {
-    fPattern            = locals::getPattern(hookFiles[f]);
+    fPattern = locals::getPattern(hookFiles[f]);
     if (fPattern < p) p = fPattern, h = f;
   }
 
   assert(h >= 0);
-  return (h < 0) ? TFilePath() : decodedLevelPath.getParentDir() +
-                                     TFilePath(hookFiles[h].toStdWString());
+  return (h < 0) ? TFilePath()
+                 : decodedLevelPath.getParentDir() +
+                       TFilePath(hookFiles[h].toStdWString());
 }
 
 //-----------------------------------------------------------------------------
