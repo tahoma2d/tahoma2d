@@ -3532,7 +3532,7 @@ void StyleEditor::onStyleChanged(bool isDragging) {
   m_settingsPage->setStyle(m_editedStyle);
   m_newColor->setStyle(*m_editedStyle);
   int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800) {
+  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
     m_fillColorWidget->hide();
   } else {
     m_fillColorWidget->show();
@@ -3648,7 +3648,7 @@ void StyleEditor::onColorChanged(const ColorModel &color, bool isDragging) {
 
     m_newColor->setStyle(*m_editedStyle);
     int tag = m_editedStyle->getTagId();
-    if (tag == 4 || tag == 2000 || tag == 2800) {
+    if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
       m_fillColorWidget->hide();
     } else {
       m_fillColorWidget->show();
@@ -3808,7 +3808,7 @@ bool StyleEditor::setStyle(TColorStyle *currentStyle) {
     m_newColor->setStyle(*currentStyle);
 
     int tag = currentStyle->getTagId();
-    if (tag == 4 || tag == 2000 || tag == 2800) {
+    if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
       m_fillColorWidget->hide();
     } else {
       m_fillColorWidget->show();
@@ -3891,7 +3891,7 @@ void StyleEditor::selectStyle(const TColorStyle &newStyle) {
   // Update editor widgets
   m_newColor->setStyle(*m_editedStyle);
   int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800) {
+  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
     m_fillColorWidget->hide();
   } else {
     m_fillColorWidget->show();
@@ -3931,7 +3931,7 @@ void StyleEditor::onColorParamChanged() {
     m_settingsPage->setStyle(m_editedStyle);
   }
   int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800) {
+  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
     m_fillColorWidget->hide();
   } else {
     m_fillColorWidget->show();
@@ -3966,7 +3966,7 @@ void StyleEditor::onParamStyleChanged(bool isDragging) {
   m_newColor->setStyle(*m_editedStyle);  //
 
   int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800) {
+  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
     m_fillColorWidget->hide();
   } else {
     TPixel32 color = m_editedStyle->getColorParamValue(getColorParam());

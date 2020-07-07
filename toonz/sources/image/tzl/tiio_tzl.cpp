@@ -40,7 +40,7 @@ char *reverse(char *buffer, int size) {
   }
   return buffer;
 }
-}
+}  // namespace
 
 static int tfwrite(const char *data, const unsigned int count, FILE *f) {
   return fwrite(data, sizeof(char), count, f);
@@ -208,8 +208,8 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
       if (version >= 12) fread(&length, sizeof(TINT32), 1, chan);
 
 #if !TNZ_LITTLE_ENDIAN
-      number                    = swapTINT32(number);
-      offs                      = swapTINT32(offs);
+      number = swapTINT32(number);
+      offs   = swapTINT32(offs);
       if (version == 12) length = swapTINT32(length);
 #endif
       //		std::cout << "#" << i << std::hex << " n 0x" << number
@@ -270,16 +270,16 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
         level->setFrame(TFrameId(i), TImageP());
   }
 
-  res.lx                                        = lx;
-  res.ly                                        = ly;
-  if (_offsetTablePos) *_offsetTablePos         = offsetTablePos;
+  res.lx = lx;
+  res.ly = ly;
+  if (_offsetTablePos) *_offsetTablePos = offsetTablePos;
   if (_iconOffsetTablePos) *_iconOffsetTablePos = iconOffsetTablePos;
 
   if (_frameCount) *_frameCount = frameCount;
 
   return true;
 }
-}
+}  // namespace
 
 static bool adjustIconAspectRatio(TDimension &outDimension,
                                   TDimension inDimension, TDimension imageRes) {
@@ -295,7 +295,7 @@ static bool adjustIconAspectRatio(TDimension &outDimension,
       double(ly) / inDimension.ly)
     iconLx = tround((double(lx) * inDimension.ly) / ly);
   else
-    iconLy     = tround((double(ly) * inDimension.lx) / lx);
+    iconLy = tround((double(ly) * inDimension.lx) / lx);
   outDimension = TDimension(iconLx, iconLy);
   return true;
 }
@@ -1084,7 +1084,7 @@ void TLevelWriterTzl::renumberFids(
   frameOffsTableTemp        = m_frameOffsTable;
   TzlOffsetMap::iterator it = frameOffsTableTemp.begin();
   while (it != frameOffsTableTemp.end()) {
-    TFrameId fid = it->first;
+    TFrameId fid                                     = it->first;
     std::map<TFrameId, TFrameId>::const_iterator it2 = renumberTable.find(fid);
     if (it2 == renumberTable.end()) remove(fid);
     it++;
@@ -1403,12 +1403,11 @@ bool TLevelWriterTzl::optimize() {
 
 void TLevelReaderTzl::readPalette() {
   TFilePath pltfp = m_path.withNoFrame().withType("tpl");
-  TFileStatus fs(pltfp);
-  TPersist *p = 0;
+  TPersist *p     = 0;
   TIStream is(pltfp);
   TPalette *palette = 0;
 
-  if (is && fs.doesExist()) {
+  if (is) {
     std::string tagName;
     if (is.matchTag(tagName) && tagName == "palette") {
       std::string gname;
