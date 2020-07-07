@@ -4,7 +4,11 @@ For files in the "stuff/library/mypaint brushes" directory: Please see the licen
 
 - - - - - - - - - - - - - - - -
 
-OpenToonz
+Tahoma
+
+All contributions by Jeremy Bullock:
+Copyright (c) 2016 - 2020, Jeremy Bullock
+All rights reserved.
 
 All contributions by DWANGO:
 Copyright (c) 2016 - 2020, DWANGO Co., Ltd.
