@@ -720,6 +720,8 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(windowsMenu, MI_OpenStopMotionPanel);
   addMenuItem(windowsMenu, MI_StartupPopup);
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
+  // windowsMenu->addSeparator();
+  // addMenuItem(windowsMenu, MI_OpenExport);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenExport);
   windowsMenu->addSeparator();
