@@ -2421,7 +2421,7 @@ void MainWindow::defineActions() {
   createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X",
                    tr("Plastic Tool: Builds a mesh that allows to deform and "
                       "animate a level"));
-  createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "");
+  createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "", tr("Ruler Tool: Measure distances on the canvas"));
   createToolAction(T_Finger, "finger", tr("Finger Tool"), "",
                    tr("Finger Tool: Smudges small areas to cover with line"));
 

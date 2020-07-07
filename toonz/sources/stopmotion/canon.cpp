@@ -873,6 +873,9 @@ bool Canon::downloadImage(EdsBaseRef object) {
   memcpy(rawData, resizedBuf, newSize);
   StopMotion::instance()->m_newImage->unlock();
 
+  m_proxyImageDimensions = StopMotion::instance()->m_newImage->getSize();
+
+
   // write out the full res file
   QFile fullImage(StopMotion::instance()->m_tempFile);
   fullImage.open(QIODevice::WriteOnly);

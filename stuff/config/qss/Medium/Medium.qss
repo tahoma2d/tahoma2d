@@ -2118,12 +2118,12 @@ SpreadsheetViewer {
   qproperty-MarkerLineColor: #1E96C4;
   qproperty-BGColor: #404040;
   qproperty-VerticalLineColor: #272727;
-  qproperty-KeyFrameColor: orange;
-  qproperty-KeyFrameBorderColor: #ffc04d;
-  qproperty-SelectedKeyFrameColor: #fab538;
-  qproperty-InBetweenColor: cyan;
-  qproperty-InBetweenBorderColor: #4dffff;
-  qproperty-SelectedInBetweenColor: #38fafa;
+  qproperty-KeyFrameColor: rgba(191, 146, 64, 0.1);
+  qproperty-KeyFrameBorderColor: orange;
+  qproperty-SelectedKeyFrameColor: rgba(191, 146, 64, 0.5);
+  qproperty-InBetweenColor: rgba(64, 191, 191, 0.1);
+  qproperty-InBetweenBorderColor: cyan;
+  qproperty-SelectedInBetweenColor: rgba(64, 191, 191, 0.5);
   qproperty-SelectedEmptyColor: rgba(83, 133, 166, 0.3);
   qproperty-SelectedSceneRangeEmptyColor: #757575;
   qproperty-TextColor: #e6e6e6;

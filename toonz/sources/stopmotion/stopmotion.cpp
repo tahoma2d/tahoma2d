@@ -43,7 +43,7 @@
 #include <QXmlStreamReader>
 
 // Connected camera
-TEnv::IntVar StopMotionOpacity("StopMotionOpacity", 100);
+TEnv::IntVar StopMotionOpacity("StopMotionOpacity", 204);
 TEnv::IntVar StopMotionAlwaysLiveView("StopMotionAlwaysLiveView", 0);
 TEnv::IntVar StopMotionPlaceOnXSheet("StopMotionPlaceOnXSheet", 1);
 TEnv::IntVar StopMotionReviewTime("StopMotionReviewTime", 1);

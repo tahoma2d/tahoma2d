@@ -552,13 +552,13 @@
 @function-panel-Selected-color: #FFA500;
 
 // Function Spreadsheet Viewer
-@function-KeyFrame-color: @keyframe-total-color; //rgb(153,93,29);
-@function-KeyFrameBorder-color: lighten(@function-KeyFrame-color, 15); //rgb(201,176,75);
-@function-SelectedKeyFrame-color: lighten(desaturate(@function-KeyFrame-color, 5), 10);
+@function-KeyFrame-color: fadeout(desaturate(@keyframe-total-color, 50), 90); 
+@function-KeyFrameBorder-color: @keyframe-total-color; 
+@function-SelectedKeyFrame-color: fadeout(desaturate(@keyframe-total-color, 50), 50);
 
-@function-Inbetween-color: @keyframe-inbetween-color; //rgb(102,98,80);
-@function-InbetweenBorder-color: lighten(@keyframe-inbetween-color, 15); //rgb(205,206,200);
-@function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
+@function-Inbetween-color: fadeout(desaturate(@keyframe-inbetween-color, 50), 90); 
+@function-InbetweenBorder-color: @keyframe-inbetween-color; //rgb(205,206,200);
+@function-SelectedInbetween-color: fadeout(desaturate(@keyframe-inbetween-color, 50), 50);
 
 @function-SelectedSceneRangeEmpty-color: lighten(@bg, 17.6471);
 
