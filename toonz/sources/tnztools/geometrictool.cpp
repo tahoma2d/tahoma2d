@@ -427,7 +427,6 @@ public:
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
-      m_prop[0].bind(m_smooth);
       m_prop[0].bind(m_snap);
       m_snap.setId("Snap");
       m_prop[0].bind(m_snapSensitivity);
