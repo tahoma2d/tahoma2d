@@ -64,12 +64,6 @@
 #define MI_Undo "MI_Undo"
 #define MI_Redo "MI_Redo"
 
-#define MI_DefineScanner "MI_DefineScanner"
-#define MI_ScanSettings "MI_ScanSettings"
-#define MI_Scan "MI_Scan"
-#define MI_Autocenter "MI_Autocenter"
-#define MI_SetScanCropbox "MI_SetScanCropbox"
-#define MI_ResetScanCropbox "MI_ResetScanCropbox"
 #define MI_CleanupSettings "MI_CleanupSettings"
 #define MI_CleanupPreview "MI_CleanupPreview"
 #define MI_CameraTest "MI_CameraTest"

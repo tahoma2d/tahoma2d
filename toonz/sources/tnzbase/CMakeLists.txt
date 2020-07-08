@@ -4,27 +4,7 @@ set(MOC_HEADERS
 )
 
 set(HEADERS ${MOC_HEADERS}
-    ../common/twain/ttwain.h
-    ../common/twain/ttwain_capability.h
-    ../common/twain/ttwain_conversion.h
-    ../common/twain/ttwain_error.h
-    ../common/twain/ttwain_global_def.h
-    ../common/twain/ttwain_state.h
-    ../common/twain/ttwain_statePD.h
-    ../common/twain/ttwain_util.h
-    ../common/twain/ttwain_utilP.h
-    ../common/twain/ttwain_utilPD.h
-    ../common/twain/ttwain_win.h
-    ../common/twain/ttwain_winPD.h
-    ../common/twain/ttwainP.h
-    ../common/twain/twain.h
     ../include/permissionsmanager.h
-    ../include/tscanner.h
-    tscanner/tscannerutil.h
-    tscanner/tscannerepson.h
-    tscanner/tscannertwain.h
-    tscanner/TScannerIO/TScannerIO.h
-    tscanner/TScannerIO/TUSBScannerIO.h
     ../include/tcubicbezier.h
     ../include/tdoublekeyframe.h
     ../include/tdoubleparam.h
@@ -108,50 +88,7 @@ set(SOURCES
     ../common/expressions/tparser.cpp
     ../common/expressions/ttokenizer.cpp
     ../common/tunit/tunit.cpp
-    tscanner/tscannerutil.cpp
-    tscanner/tscannerepson.cpp
 )
-
-if(BUILD_TARGET_WIN)
-    set(SOURCES ${SOURCES}
-        tscanner/TScannerIO/TUSBScannerIO_W.cpp
-    )
-else()
-    set(SOURCES ${SOURCES}
-        tscanner/TScannerIO/TUSBScannerIO_M.cpp
-    )
-endif()
-
-set(OBJCSOURCES
-    ../common/twain/ttwain_capability.c
-    ../common/twain/ttwain_conversion.c
-    ../common/twain/ttwain_error.c
-    ../common/twain/ttwain_state.c
-    ../common/twain/ttwain_util.c
-    ../common/twain/ttwain_win.c
-    tscanner/tscanner.cpp
-    tscanner/tscannertwain.cpp
-)
-
-if(BUILD_TARGET_WIN)
-    set(OBJCSOURCES ${OBJCSOURCES}
-        ../common/twain/ttwain_stateW.c
-        ../common/twain/ttwain_utilW.c
-        ../common/twain/ttwain_winW.c
-    )
-elseif(BUILD_TARGET_APPLE)
-    set(OBJCSOURCES ${OBJCSOURCES}
-        ../common/twain/ttwain_stateM.c
-        ../common/twain/ttwain_utilM.c
-        ../common/twain/ttwain_winM.c
-    )
-elseif(BUILD_TARGET_UNIX)
-    set(OBJCSOURCES ${OBJCSOURCES}
-        ../common/twain/ttwain_stateX.c
-        ../common/twain/ttwain_utilX.c
-        ../common/twain/ttwain_winX.c
-    )
-endif()
 
 if(BUILD_ENV_APPLE)
     #set_source_files_properties(${OBJCSOURCES} PROPERTIES LANGUAGE OBJCXX)
@@ -193,14 +130,12 @@ if(BUILD_ENV_MSVC)
         tnzcore
     )
 elseif(BUILD_ENV_APPLE)
-    find_library(TWAIN_LIB TWAIN)
     find_library(IOKIT_LIB IOKit)
     find_library(COCOA_LIB Cocoa)
 
     set(EXTRA_LIBS
         "$<TARGET_FILE:tnzcore>"
         ${USB_LIB}
-        ${TWAIN_LIB}
         ${IOKIT_LIB}
         ${COCOA_LIB}
     )

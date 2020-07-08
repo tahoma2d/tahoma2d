@@ -114,39 +114,3 @@ void CleanupPreviewCheck::setIsEnabled(bool on) {
 //-----------------------------------------------------------------------------
 
 void CleanupPreviewCheck::setToggle(QAction *toggle) { m_toggle = toggle; }
-
-//=============================================================================
-/*! \class SetScanCropBoxCheck
-                \brief The SetScanCropBoxCheck class allows visualization in
-   "Set Crop Box" mode, from scan menu
-*/
-//=============================================================================
-
-SetScanCropboxCheck::SetScanCropboxCheck() : m_enabled(false), m_toggle(0) {}
-
-//-----------------------------------------------------------------------------
-
-/*! Return current \b SetScanCropBoxCheck instance.
-*/
-SetScanCropboxCheck *SetScanCropboxCheck::instance() {
-  static SetScanCropboxCheck _instance;
-  return &_instance;
-}
-
-//-----------------------------------------------------------------------------
-
-void SetScanCropboxCheck::setToggle(QAction *toggle) { m_toggle = toggle; }
-
-//-----------------------------------------------------------------------------
-
-void SetScanCropboxCheck::setIsEnabled(bool on) {
-  if (!m_toggle) return;
-  m_enabled = on;
-  m_toggle->setChecked(on);
-}
-
-//-----------------------------------------------------------------------------
-
-void SetScanCropboxCheck::uncheck() {
-  if (isEnabled()) m_toggle->trigger();
-}

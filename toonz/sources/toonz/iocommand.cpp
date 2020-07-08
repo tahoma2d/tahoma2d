@@ -1334,7 +1334,6 @@ void IoCmd::newScene() {
 
   CleanupPreviewCheck::instance()->setIsEnabled(false);
   CameraTestCheck::instance()->setIsEnabled(false);
-  SetScanCropboxCheck::instance()->setIsEnabled(false);
 
   if (!TApp::instance()->isApplicationStarting())
     QApplication::clipboard()->clear();

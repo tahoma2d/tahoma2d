@@ -116,24 +116,4 @@ private:
   CleanupPreviewCheck();
 };
 
-//=============================================================================
-
-class DVAPI SetScanCropboxCheck {
-  bool m_enabled;
-  QAction *m_toggle;
-
-public:
-  static SetScanCropboxCheck *instance();
-
-  void setToggle(QAction *toggle);
-
-  bool isEnabled() const { return m_enabled; }
-  void setIsEnabled(bool on);
-
-  void uncheck();
-
-private:
-  SetScanCropboxCheck();
-};
-
 #endif

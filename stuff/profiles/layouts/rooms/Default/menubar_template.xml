@@ -76,22 +76,6 @@
             <command>MI_SendBackward</command>
         </menu>
     </menu>
-    <menu title="Scan &amp;&amp; Cleanup">
-        <command>MI_DefineScanner</command>
-        <command>MI_ScanSettings</command>
-        <command>MI_Scan</command>
-        <command>MI_SetScanCropbox</command>
-        <command>MI_ResetScanCropbox</command>
-        <separator/>
-        <command>MI_CleanupSettings</command>
-        <command>MI_CleanupPreview</command>
-        <command>MI_OpacityCheck</command>
-        <command>MI_CameraTest</command>
-        <command>MI_Cleanup</command>
-        <separator/>
-        <command>MI_PencilTest</command>
-        <command>MI_Autocenter</command>
-    </menu>
     <menu title="Level">
         <menu title="New">
             <command>MI_NewLevel</command>
@@ -240,6 +224,15 @@
         <command>MI_NextKeyframe</command>
         <separator/>
         <command>MI_Link</command>
+    </menu>
+    <menu title="Cleanup">
+        <command>MI_CleanupSettings</command>
+        <command>MI_CleanupPreview</command>
+        <command>MI_OpacityCheck</command>
+        <command>MI_CameraTest</command>
+        <command>MI_Cleanup</command>
+        <separator/>
+        <command>MI_PencilTest</command>
     </menu>
     <menu title="Render">
         <command>MI_PreviewSettings</command>

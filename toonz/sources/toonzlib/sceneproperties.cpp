@@ -15,7 +15,6 @@
 // TnzBase includes
 #include "toutputproperties.h"
 #include "trasterfx.h"
-#include "tscanner.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -27,7 +26,6 @@
 
 TSceneProperties::TSceneProperties()
     : m_cleanupParameters(new CleanupParameters())
-    , m_scanParameters(new TScannerParameters())
     , m_vectorizerParameters(new VectorizerParameters())
     , m_captureParameters(new CaptureParameters())
     , m_outputProp(new TOutputProperties())
@@ -55,7 +53,6 @@ TSceneProperties::TSceneProperties()
 
 TSceneProperties::~TSceneProperties() {
   delete m_cleanupParameters;
-  delete m_scanParameters;
   delete m_vectorizerParameters;
   delete m_captureParameters;
   clearPointerContainer(m_cameras);
@@ -74,7 +71,6 @@ void TSceneProperties::assign(const TSceneProperties *sprop) {
   *m_previewProp = *sprop->m_previewProp;
 
   m_cleanupParameters->assign(sprop->m_cleanupParameters);
-  m_scanParameters->assign(sprop->m_scanParameters);
 
   assert(sprop->m_vectorizerParameters);
   *m_vectorizerParameters = *sprop->m_vectorizerParameters;
@@ -302,9 +298,6 @@ void TSceneProperties::saveData(TOStream &os) const {
   os.closeChild();
   os.openChild("cleanupParameters");
   m_cleanupParameters->saveData(os);
-  os.closeChild();
-  os.openChild("scanParameters");
-  m_scanParameters->saveData(os);
   os.closeChild();
   os.openChild("vectorizerParameters");
   m_vectorizerParameters->saveData(os);
@@ -681,9 +674,6 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
       m_cleanupParameters->m_cleanupPalette->loadData(is);
     } else if (tagName == "cleanupParameters") {
       m_cleanupParameters->loadData(is, !isLoadingProject);
-    } else if (tagName == "scanParameters") {
-      // m_scanParameters->adaptToCurrentScanner(); Rallenta tutto!!!
-      m_scanParameters->loadData(is);
     } else if (tagName == "vectorizerParameters") {
       m_vectorizerParameters->loadData(is);
     } else if (tagName == "captureParameters") {
