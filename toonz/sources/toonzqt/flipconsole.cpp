@@ -1718,6 +1718,13 @@ void FlipConsole::doButtonPressed(UINT button) {
   case eFilledRaster:
     return;
 
+  case eFlipHorizontal:
+  case eFlipVertical:
+  case eZoomIn:
+  case eZoomOut:
+  case eResetView:
+    return;
+
   default:
     assert(false);
     break;
