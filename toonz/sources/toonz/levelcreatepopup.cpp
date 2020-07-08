@@ -187,7 +187,6 @@ LevelCreatePopup::LevelCreatePopup()
   m_levelTypeOm->addItem(tr("Vector Level"), (int)PLI_XSHLEVEL);
   m_levelTypeOm->addItem(tr("Smart Raster Level"), (int)TZP_XSHLEVEL);
   m_levelTypeOm->addItem(tr("Raster Level"), (int)OVL_XSHLEVEL);
-  m_levelTypeOm->addItem(tr("Scan Level"), (int)TZI_XSHLEVEL);
 
   if (Preferences::instance()->getUnits() == "pixel") {
     m_widthFld->setMeasure("camera.lx");

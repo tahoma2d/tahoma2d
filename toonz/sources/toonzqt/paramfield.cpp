@@ -22,6 +22,7 @@
 #include <QComboBox>
 #include <QFontComboBox>
 #include <QKeyEvent>
+#include <QPainterPath>
 
 using namespace DVGui;
 

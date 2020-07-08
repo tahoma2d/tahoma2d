@@ -1902,27 +1902,11 @@ void MainWindow::defineActions() {
   touchToggle->setEnabled(true);
   touchToggle->setIcon(QIcon(":Resources/touch.svg"));
 
-  createMenuScanCleanupAction(MI_DefineScanner, tr("&Define Scanner..."), "");
-  createMenuScanCleanupAction(MI_ScanSettings, tr("&Scan Settings..."), "");
-  createMenuScanCleanupAction(MI_Scan, tr("&Scan"), "");
-  createMenuScanCleanupAction(MI_Autocenter, tr("&Autocenter..."), "");
-
-  QAction *toggle = createToggle(MI_SetScanCropbox, tr("&Set Cropbox"), "", 0,
-                                 MenuScanCleanupCommandType);
-  if (toggle) {
-    SetScanCropboxCheck::instance()->setToggle(toggle);
-    QString scannerType = QSettings().value("CurrentScannerType").toString();
-    if (scannerType == "TWAIN") toggle->setDisabled(true);
-    toggle = createMenuScanCleanupAction(MI_ResetScanCropbox,
-                                         tr("&Reset Cropbox"), "");
-    if (scannerType == "TWAIN") toggle->setDisabled(true);
-  }
-
   createMenuScanCleanupAction(MI_CleanupSettings, tr("&Cleanup Settings..."),
                               "");
 
-  toggle = createToggle(MI_CleanupPreview, tr("&Preview Cleanup"), "", 0,
-                        MenuScanCleanupCommandType);
+  QAction *toggle = createToggle(MI_CleanupPreview, tr("&Preview Cleanup"), "",
+                                 0, MenuScanCleanupCommandType);
   CleanupPreviewCheck::instance()->setToggle(toggle);
   toggle = createToggle(MI_CameraTest, tr("&Camera Test"), "", 0,
                         MenuScanCleanupCommandType);
@@ -2421,7 +2405,8 @@ void MainWindow::defineActions() {
   createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X",
                    tr("Plastic Tool: Builds a mesh that allows to deform and "
                       "animate a level"));
-  createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "", tr("Ruler Tool: Measure distances on the canvas"));
+  createToolAction(T_Ruler, "ruler", tr("Ruler Tool"), "",
+                   tr("Ruler Tool: Measure distances on the canvas"));
   createToolAction(T_Finger, "finger", tr("Finger Tool"), "",
                    tr("Finger Tool: Smudges small areas to cover with line"));
 
@@ -3333,7 +3318,7 @@ void MainWindow::clearCacheFolder() {
   // 1. $CACHE/[Current ProcessID]
   // 2. $CACHE/temp/[Current scene folder] if the current scene is untitled
 
-  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
 
   TFilePathSet filesToBeRemoved;
@@ -3467,9 +3452,9 @@ RecentFiles::~RecentFiles() {}
 void RecentFiles::addFilePath(QString path, FileType fileType,
                               QString projectName) {
   QList<QString> files =
-      (fileType == Scene)
-          ? m_recentScenes
-          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
+      (fileType == Scene) ? m_recentScenes : (fileType == Level)
+                                                 ? m_recentLevels
+                                                 : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
     if (files.at(i) == path) {
@@ -3636,9 +3621,9 @@ void RecentFiles::saveRecentFiles() {
 
 QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
   QList<QString> files =
-      (fileType == Scene)
-          ? m_recentScenes
-          : (fileType == Level) ? m_recentLevels : m_recentFlipbookImages;
+      (fileType == Scene) ? m_recentScenes : (fileType == Level)
+                                                 ? m_recentLevels
+                                                 : m_recentFlipbookImages;
   QList<QString> names;
   int i;
   for (i = 0; i < files.size(); i++) {
@@ -3665,9 +3650,9 @@ void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
     menu->setEnabled(false);
   else {
     CommandId clearActionId =
-        (fileType == Scene)
-            ? MI_ClearRecentScene
-            : (fileType == Level) ? MI_ClearRecentLevel : MI_ClearRecentImage;
+        (fileType == Scene) ? MI_ClearRecentScene : (fileType == Level)
+                                                        ? MI_ClearRecentLevel
+                                                        : MI_ClearRecentImage;
     menu->setActions(names);
     menu->addSeparator();
     QAction *clearAction = CommandManager::instance()->getAction(clearActionId);

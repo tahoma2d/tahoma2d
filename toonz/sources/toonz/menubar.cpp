@@ -453,25 +453,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
     addMenuItem(arrangeMenu, MI_SendBackward);
   }
 
-  // Menu' SCAN CLEANUP
-  QMenu *scanCleanupMenu = addMenu(tr("Scan && Cleanup"), fullMenuBar);
-  addMenuItem(scanCleanupMenu, MI_DefineScanner);
-  addMenuItem(scanCleanupMenu, MI_ScanSettings);
-  addMenuItem(scanCleanupMenu, MI_Scan);
-  addMenuItem(scanCleanupMenu, MI_SetScanCropbox);
-  addMenuItem(scanCleanupMenu, MI_ResetScanCropbox);
-  scanCleanupMenu->addSeparator();
-  addMenuItem(scanCleanupMenu, MI_CleanupSettings);
-  addMenuItem(scanCleanupMenu, MI_CleanupPreview);
-  addMenuItem(scanCleanupMenu, MI_CameraTest);
-  addMenuItem(scanCleanupMenu, MI_Cleanup);
-  scanCleanupMenu->addSeparator();
-  addMenuItem(scanCleanupMenu, MI_PencilTest);
-#ifdef LINETEST
-  scanCleanupMenu->addSeparator();
-  addMenuItem(scanCleanupMenu, MI_Autocenter);
-#endif
-
   // Menu' LEVEL
   QMenu *levelMenu = addMenu(tr("Level"), fullMenuBar);
   QMenu *newMenu   = levelMenu->addMenu(tr("New"));
@@ -644,6 +625,15 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(renderMenu, MI_Render);
   renderMenu->addSeparator();
   addMenuItem(renderMenu, MI_FastRender);
+
+  // Menu' SCAN CLEANUP
+  QMenu* scanCleanupMenu = addMenu(tr("Cleanup"), fullMenuBar);
+  addMenuItem(scanCleanupMenu, MI_CleanupSettings);
+  addMenuItem(scanCleanupMenu, MI_CleanupPreview);
+  addMenuItem(scanCleanupMenu, MI_CameraTest);
+  addMenuItem(scanCleanupMenu, MI_Cleanup);
+  scanCleanupMenu->addSeparator();
+  addMenuItem(scanCleanupMenu, MI_PencilTest);
 
   // Menu' VIEW
   QMenu *viewMenu = addMenu(tr("View"), fullMenuBar);

@@ -26,7 +26,6 @@ class TPropertyGroup;
 class TPalette;
 class TSceneProperties;
 class CleanupParameters;
-class TScannerParameters;
 class TCamera;
 class TOutputProperties;
 class TStageObjectTree;
@@ -60,7 +59,6 @@ private:
   TOutputProperties *m_outputProp, *m_previewProp;
 
   CleanupParameters *m_cleanupParameters;
-  TScannerParameters *m_scanParameters;
   VectorizerParameters *m_vectorizerParameters;
   CaptureParameters *m_captureParameters;
 
@@ -85,7 +83,6 @@ public:
   \li	a new CleanupParameters object that sets to default some basic
 attributes
   as basic transformation, rotation angle, scale factor, x-y offsets etc...;
-  \li a new TScannerParameters object (parameters to manage the scanner);
 \li a new TOutputProperties object for the output and one for the preview ;
 
   Sets internal attributes to default as background color, guides size and
@@ -151,11 +148,6 @@ Returns cleanup parameters \b CleanupParameters, i.e. basic colors.
   CleanupParameters *getCleanupParameters() const {
     return m_cleanupParameters;
   }
-  /*!
-           Return scanner parameters as Black and white scanner , graytones
-     scanner or a color scanner.
-  */
-  TScannerParameters *getScanParameters() const { return m_scanParameters; }
 
   /*!
            Return vectorizer parameters.
