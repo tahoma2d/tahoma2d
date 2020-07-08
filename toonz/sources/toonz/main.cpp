@@ -78,6 +78,7 @@
 #include <QSettings>
 #include <QLibraryInfo>
 #include <QHash>
+#include <QPainterPath>
 
 #ifdef _WIN32
 #ifndef x64
