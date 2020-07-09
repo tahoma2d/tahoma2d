@@ -1532,7 +1532,7 @@ bool IoCmd::saveLevel(const TFilePath &path) {
     realPath = TFilePath(realPath.getWideString() + ::to_wstring(dotts + ext));
 
   bool ret = saveLevel(realPath, sl, false);
-  if(!ret){ //save level failed
+  if (!ret) {  // save level failed
     return false;
   }
 
@@ -2948,6 +2948,8 @@ public:
       }
       if (sl->getPath().getType() == "pli")
         palettePath = sl->getPath();
+      else if (sl->getType() & FULLCOLOR_TYPE)
+        palettePath = FullColorPalette::instance()->getPath();
       else
         palettePath = sl->getPath().withType("tpl");
     }
@@ -2987,6 +2989,8 @@ public:
 
     if (sl && sl->getPath().getType() == "pli")
       sl->save(palettePath, TFilePath(), true);
+    else if (sl->getType() & FULLCOLOR_TYPE)
+      FullColorPalette::instance()->savePalette(scene);
     else
       StudioPalette::instance()->save(palettePath, palette);
     /*- Dirtyフラグの変更 -*/
