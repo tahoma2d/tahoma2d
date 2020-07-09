@@ -2376,8 +2376,9 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   TPointD newPos = getSnap(pos);
 
   std::vector<TThickPoint> points(9);
-  double thick = getThickness();
-  double dist  = joinDistance * joinDistance;
+  double thick     = getThickness();
+  double dist      = joinDistance * joinDistance;
+  bool strokeAdded = false;
 
   MultiArcPrimitiveUndo *undo =
       new MultiArcPrimitiveUndo(this, m_stroke, m_strokeTemp, m_startPoint,
@@ -2448,6 +2449,7 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
           m_undoCount = 0;
           m_tool->addStroke();
           onDeactivate();
+          strokeAdded = true;
         }
       } else {
         m_stroke     = m_strokeTemp;
@@ -2461,14 +2463,19 @@ void MultiArcPrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
       m_undoCount = 0;
       m_tool->addStroke();
       onDeactivate();
+      strokeAdded = true;
     }
     break;
   }
 
-  undo->setRedoData(m_stroke, m_strokeTemp, m_startPoint, m_endPoint,
-                    m_centralPoint, m_clickNumber);
-  TUndoManager::manager()->add(undo);
-  ++m_undoCount;
+  if (strokeAdded) {
+    delete undo;
+  } else {
+    undo->setRedoData(m_stroke, m_strokeTemp, m_startPoint, m_endPoint,
+                      m_centralPoint, m_clickNumber);
+    TUndoManager::manager()->add(undo);
+    ++m_undoCount;
+  }
 
   resetSnap();
 }
