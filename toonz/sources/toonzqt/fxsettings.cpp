@@ -243,41 +243,67 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
       setPageField(is, fx, false);
       m_mainLayout->addLayout(m_horizontalLayout, currentRow, 1, 1, 2);
     } else if (tagName == "vbox") {
-      int shrink            = 0;
-      std::string shrinkStr = is.getTagAttribute("shrink");
-      if (shrinkStr != "") {
-        shrink              = QString::fromStdString(shrinkStr).toInt();
-        std::string label   = is.getTagAttribute("label");
-        QCheckBox *checkBox = new QCheckBox(this);
-        QHBoxLayout *sepLay = new QHBoxLayout();
-        sepLay->setMargin(0);
-        sepLay->setSpacing(5);
-        sepLay->addWidget(checkBox, 0);
-        sepLay->addWidget(new Separator(QString::fromStdString(label), this),
-                          1);
-        int currentRow = m_mainLayout->rowCount();
-        m_mainLayout->addLayout(sepLay, currentRow, 0, 1, 2);
-        m_mainLayout->setRowStretch(currentRow, 0);
+      int shrink                   = 0;
+      std::string shrinkStr        = is.getTagAttribute("shrink");
+      std::string modeSensitiveStr = is.getTagAttribute("modeSensitive");
+      if (shrinkStr != "" || modeSensitiveStr != "") {
+        QWidget *tmpWidget;
+        if (shrinkStr != "") {
+          tmpWidget           = new QWidget(this);
+          shrink              = QString::fromStdString(shrinkStr).toInt();
+          std::string label   = is.getTagAttribute("label");
+          QCheckBox *checkBox = new QCheckBox(this);
+          QHBoxLayout *sepLay = new QHBoxLayout();
+          sepLay->setMargin(0);
+          sepLay->setSpacing(5);
+          sepLay->addWidget(checkBox, 0);
+          sepLay->addWidget(new Separator(QString::fromStdString(label), this),
+                            1);
+          int currentRow = m_mainLayout->rowCount();
+          m_mainLayout->addLayout(sepLay, currentRow, 0, 1, 2);
+          m_mainLayout->setRowStretch(currentRow, 0);
+          //--- signal-slot connection
+          connect(checkBox, SIGNAL(toggled(bool)), tmpWidget,
+                  SLOT(setVisible(bool)));
+          checkBox->setChecked(shrink == 1);
+          tmpWidget->setVisible(shrink == 1);
+        } else {  // modeSensitiveStr != ""
+          QList<int> modes;
+          QStringList modeListStr =
+              QString::fromStdString(is.getTagAttribute("mode"))
+                  .split(',', QString::SkipEmptyParts);
+          for (QString modeNum : modeListStr) modes.push_back(modeNum.toInt());
+          // find the mode combobox
+          ModeChangerParamField *modeChanger = nullptr;
+          for (int r = 0; r < m_mainLayout->rowCount(); r++) {
+            QLayoutItem *li = m_mainLayout->itemAtPosition(r, 1);
+            if (!li || !li->widget()) continue;
+            ModeChangerParamField *field =
+                dynamic_cast<ModeChangerParamField *>(li->widget());
+            if (!field ||
+                field->getParamName().toStdString() != modeSensitiveStr)
+              continue;
+            modeChanger = field;
+            break;
+          }
+          assert(modeChanger);
+          tmpWidget = new ModeSensitiveBox(this, modeChanger, modes);
+        }
+
+        int currentRow           = m_mainLayout->rowCount();
         QGridLayout *keepMainLay = m_mainLayout;
-        /*-- レイアウトを一時的に差し替え --*/
-        m_mainLayout = new QGridLayout(this);
-        m_mainLayout->setMargin(12);
+        // temporary switch the layout
+        m_mainLayout = new QGridLayout();
+        m_mainLayout->setMargin(0);
         m_mainLayout->setVerticalSpacing(10);
         m_mainLayout->setHorizontalSpacing(5);
         m_mainLayout->setColumnStretch(0, 0);
         m_mainLayout->setColumnStretch(1, 1);
         setPageField(is, fx, true);
-
-        QWidget *tmpWidget = new QWidget(this);
         tmpWidget->setLayout(m_mainLayout);
-        /*-- レイアウト戻し --*/
+        // turn back the layout
         m_mainLayout = keepMainLay;
-        m_mainLayout->addWidget(tmpWidget, currentRow + 1, 0, 1, 2);
-        //--- signal-slot connection
-        connect(checkBox, SIGNAL(toggled(bool)), tmpWidget,
-                SLOT(setVisible(bool)));
-        checkBox->setChecked(shrink == 1);
-        tmpWidget->setVisible(shrink == 1);
+        m_mainLayout->addWidget(tmpWidget, currentRow, 0, 1, 2);
       } else
         setPageField(is, fx, true);
     }
@@ -611,6 +637,8 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
   }
 
   /*-- Widget側の最適な縦サイズおよび横幅の最大値を得る --*/
+  QMap<int, int> heightsByMode;
+  int maxModeHeight = 0;
   for (int r = 0; r < layout->rowCount(); r++) {
     /*-- Column1にある可能性のあるもの：ParamField, Histogram, Layout,
      * RgbLinkButtons --*/
@@ -618,10 +646,28 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
     QLayoutItem *item = layout->itemAtPosition(r, 1);
     if (!item) continue;
 
+    ModeSensitiveBox *box = dynamic_cast<ModeSensitiveBox *>(item->widget());
+    if (box) {
+      // if (box->isHidden()) continue;
+      QGridLayout *innerLay = dynamic_cast<QGridLayout *>(box->layout());
+      if (!innerLay) continue;
+      int tmpHeight = 0;
+      updateMaximumPageSize(innerLay, maxLabelWidth, maxWidgetWidth, tmpHeight);
+      for (int mode : box->modes()) {
+        heightsByMode[mode] += tmpHeight;
+        maxModeHeight = std::max(maxModeHeight, heightsByMode[mode]);
+      }
+
+      // attempt to align the label column
+      innerLay->setColumnMinimumWidth(0, maxLabelWidth);
+      continue;
+    }
+
     QSize itemSize = getItemSize(item);
     if (maxWidgetWidth < itemSize.width()) maxWidgetWidth = itemSize.width();
     fieldsHeight += itemSize.height();
   }
+  if (maxModeHeight > 0) fieldsHeight += maxModeHeight;
 
   if (layout->rowCount() > 1) fieldsHeight += (layout->rowCount() - 1) * 10;
 }
