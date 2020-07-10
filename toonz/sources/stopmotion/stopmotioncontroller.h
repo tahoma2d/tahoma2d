@@ -45,11 +45,11 @@ class QStackedWidget;
 class QSlider;
 class QRadioButton;
 class QButtonGroup;
-class QPushButton;
 class QTabWidget;
 class QToolBar;
 class QTimer;
 class QGroupBox;
+class QPushButton;
 
 //=============================================================================
 // StopMotionController
@@ -119,6 +119,7 @@ class StopMotionController final : public QWidget {
   std::vector<QPixmap> m_testImages;
   std::vector<TFilePath> m_testFullResListVector;
   std::vector<QHBoxLayout *> m_testHBoxes;
+  std::vector<QString> m_testTooltips;
   QVBoxLayout *m_testsOutsideLayout;
   QVBoxLayout *m_testsInsideLayout;
   int m_testsImagesPerRow;

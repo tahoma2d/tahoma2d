@@ -41,6 +41,7 @@
 #include <QTimer>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QDomDocument>
 
 // Connected camera
 TEnv::IntVar StopMotionOpacity("StopMotionOpacity", 204);
@@ -1964,21 +1965,18 @@ void StopMotion::saveTestShot() {
     }
   }
 
-  TFilePath levelFp = TFilePath(m_filePath) +
-                      TFilePath(levelName + L".." + m_fileType.toStdWString());
-  TFilePath actualLevelFp = scene->decodeFilePath(levelFp);
-  TFilePath actualFile(actualLevelFp.withFrame(fileNumber));
   TFilePath testsFile = scene->decodeFilePath(
       testsFolder +
-      TFilePath(levelName + QString::number(fileNumber).toStdWString() +
+      TFilePath(levelName + L"+" + QString::number(fileNumber).toStdWString() +
                 L".jpg"));
-  // TFilePath testsFile(testsFp.withFrame(fileNumber));
+
+  TFilePath testsXml =
+      scene->decodeFilePath(testsFolder + TFilePath(levelName + L"_tests.xml"));
 
   TFilePath testsThumbsFile = scene->decodeFilePath(
       testsThumbsFolder +
-      TFilePath(levelName + QString::number(fileNumber).toStdWString() +
+      TFilePath(levelName + L"+" + QString::number(fileNumber).toStdWString() +
                 L".jpg"));
-  // TFilePath testsThumbsFile(testsThumbsFp.withFrame(fileNumber));
 
   TFilePath tempFile = parentDir + "temp.jpg";
 
@@ -2006,9 +2004,157 @@ void StopMotion::saveTestShot() {
   cv::resize(imgOriginal, imgThumb, dim);
   cv::flip(imgThumb, imgThumb, 0);
   cv::imwrite(testsThumbsFile.getQString().toStdString(), imgThumb);
-
+  saveTestXml(testsXml, fileNumber);
   emit(updateTestShots());
   FlipBook *fb = ::viewFile(testsFile);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotion::saveTestXml(TFilePath testsXml, int number) {
+  QString xmlFileName = testsXml.getQString();
+  if (!TSystem::doesExistFileOrLevel(testsXml)) {
+    QFile xmlFile(xmlFileName);
+    xmlFile.open(QIODevice::WriteOnly);
+    QXmlStreamWriter xmlWriter(&xmlFile);
+    xmlWriter.setAutoFormatting(true);
+    xmlWriter.writeStartDocument();
+    xmlWriter.writeStartElement("body");
+
+    xmlWriter.writeStartElement("Test_" + QString::number(number));
+    if (m_usingWebcam) {
+      xmlWriter.writeTextElement("Webcam", "yes");
+      xmlWriter.writeTextElement("CameraName",
+                                 m_webcam->getWebcamDescription());
+      xmlWriter.writeTextElement("CameraResolutionX",
+                                 QString::number(m_webcam->getWebcamWidth()));
+      xmlWriter.writeTextElement("CameraResolutionY",
+                                 QString::number(m_webcam->getWebcamHeight()));
+    } else {
+      xmlWriter.writeTextElement("Webcam", "no");
+#ifdef WITH_CANON
+      xmlWriter.writeTextElement("CameraName",
+                                 QString::fromStdString(m_canon->m_cameraName));
+      xmlWriter.writeTextElement("Aperture", m_canon->getCurrentAperture());
+      xmlWriter.writeTextElement("ShutterSpeed",
+                                 m_canon->m_displayedShutterSpeed);
+      xmlWriter.writeTextElement("ISO", m_canon->getCurrentIso());
+      xmlWriter.writeTextElement("PictureStyle",
+                                 m_canon->getCurrentPictureStyle());
+      xmlWriter.writeTextElement("ImageQuality",
+                                 m_canon->getCurrentImageQuality());
+      xmlWriter.writeTextElement("WhiteBalance",
+                                 m_canon->getCurrentWhiteBalance());
+      xmlWriter.writeTextElement("ColorTemperature",
+                                 m_canon->getCurrentColorTemperature());
+      xmlWriter.writeTextElement("ExposureCompensation",
+                                 m_canon->getCurrentExposureCompensation());
+#endif
+    }
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndDocument();
+    xmlFile.close();
+  } else {
+    QFile file(xmlFileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+      qDebug() << "Failed to open file";
+      return;
+    }
+    QDomDocument document;
+    if (!document.setContent(&file)) {
+      qDebug() << "failed to parse file";
+      file.close();
+      return;
+    }
+    file.close();
+
+    QDomElement docEle = document.documentElement();
+
+    QDomElement newTest =
+        document.createElement("Test_" + QString::number(number));
+
+    if (m_usingWebcam) {
+      QDomElement webcam = document.createElement("Webcam");
+      newTest.appendChild(webcam);
+      webcam.appendChild(document.createTextNode("yes"));
+
+      QDomElement cameraName = document.createElement("CameraName");
+      newTest.appendChild(cameraName);
+      cameraName.appendChild(
+          document.createTextNode(m_webcam->getWebcamDescription()));
+
+      QDomElement resolutionX = document.createElement("CameraResolutionX");
+      newTest.appendChild(resolutionX);
+      resolutionX.appendChild(
+          document.createTextNode(QString::number(m_webcam->getWebcamWidth())));
+
+      QDomElement resolutionY = document.createElement("CameraResolutionY");
+      newTest.appendChild(resolutionY);
+      resolutionY.appendChild(document.createTextNode(
+          QString::number(m_webcam->getWebcamHeight())));
+    }
+
+    else {
+      QDomElement webcam = document.createElement("Webcam");
+      newTest.appendChild(webcam);
+      webcam.appendChild(document.createTextNode("no"));
+#ifdef WITH_CANON
+      QDomElement cameraName = document.createElement("CameraName");
+      newTest.appendChild(cameraName);
+      cameraName.appendChild(document.createTextNode(
+          QString::fromStdString(m_canon->m_cameraName)));
+
+      QDomElement aperture = document.createElement("Aperture");
+      newTest.appendChild(aperture);
+      aperture.appendChild(
+          document.createTextNode(m_canon->getCurrentAperture()));
+
+      QDomElement shutterSpeed = document.createElement("ShutterSpeed");
+      newTest.appendChild(shutterSpeed);
+      shutterSpeed.appendChild(
+          document.createTextNode(m_canon->m_displayedShutterSpeed));
+
+      QDomElement iso = document.createElement("ISO");
+      newTest.appendChild(iso);
+      iso.appendChild(document.createTextNode(m_canon->getCurrentIso()));
+
+      QDomElement pictureStyle = document.createElement("PictureStyle");
+      newTest.appendChild(pictureStyle);
+      pictureStyle.appendChild(
+          document.createTextNode(m_canon->getCurrentPictureStyle()));
+
+      QDomElement imageQuality = document.createElement("ImageQuality");
+      newTest.appendChild(imageQuality);
+      imageQuality.appendChild(
+          document.createTextNode(m_canon->getCurrentImageQuality()));
+
+      QDomElement whiteBalance = document.createElement("WhiteBalance");
+      newTest.appendChild(whiteBalance);
+      whiteBalance.appendChild(
+          document.createTextNode(m_canon->getCurrentWhiteBalance()));
+
+      QDomElement colorTemperature = document.createElement("ColorTemperature");
+      newTest.appendChild(colorTemperature);
+      colorTemperature.appendChild(
+          document.createTextNode(m_canon->getCurrentColorTemperature()));
+
+      QDomElement exposureCompensation =
+          document.createElement("ExposureCompensation");
+      newTest.appendChild(exposureCompensation);
+      exposureCompensation.appendChild(
+          document.createTextNode(m_canon->getCurrentExposureCompensation()));
+#endif
+    }
+    docEle.appendChild(newTest);
+    file.open(QIODevice::WriteOnly);
+    file.resize(0);
+    QTextStream stream;
+    stream.setDevice(&file);
+    document.save(stream, 4);
+
+    file.close();
+  }
 }
 
 //-----------------------------------------------------------------------------

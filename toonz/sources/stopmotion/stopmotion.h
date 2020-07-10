@@ -197,6 +197,7 @@ public:
   // tests
   void takeTestShot();
   void saveTestShot();
+  void saveTestXml(TFilePath testsXml, int number);
 
 public slots:
   // timers
