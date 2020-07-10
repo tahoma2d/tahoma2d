@@ -55,6 +55,7 @@
 #include <QToolButton>
 #include <QToolTip>
 #include <QSerialPort>
+#include <QDomDocument>
 
 #ifdef _WIN32
 #include <dshow.h>
@@ -2957,6 +2958,7 @@ void StopMotionController::onRefreshTests() {
   clearTests();
   m_testFullResListVector.clear();
   m_testImages.clear();
+  m_testTooltips.clear();
 
   TApp *app              = TApp::instance();
   ToonzScene *scene      = app->getCurrentScene()->getScene();
@@ -2974,6 +2976,30 @@ void StopMotionController::onRefreshTests() {
       TFilePath(filePath) + TFilePath(levelName + L"_Tests") +
       TFilePath("Thumbs"));
 
+  TFilePath testsXml =
+      scene->decodeFilePath(testsFolder + TFilePath(levelName + L"_tests.xml"));
+  // load xml file for tooltip
+  QDomDocument document;
+  bool loadedDocument = false;
+  {
+    QString xmlFileName = testsXml.getQString();
+    QFile file(xmlFileName);
+    if (file.exists()) {
+      if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open file";
+      }
+      if (!document.setContent(&file)) {
+        qDebug() << "failed to parse file";
+
+      } else {
+        loadedDocument = true;
+      }
+      file.close();
+    }
+  }
+  QDomElement domBody;
+  if (loadedDocument) domBody = document.documentElement();
+
   // if (!TSystem::doesExistFileOrLevel(testsFolder)) return;
   QString huh = QDir(testsFolder.getQString()).absolutePath();
   if (!QDir(huh).exists()) return;
@@ -2984,7 +3010,11 @@ void StopMotionController::onRefreshTests() {
     if (tempPath.getUndottedType() == "jpg") {
       TFrameId tempFrame    = tempPath.getFrame();
       TFilePath justFolders = tempPath.getParentDir();
-      std::string justName  = tempPath.getName() + ".jpg";
+      QString name          = tempPath.getQString();
+      name                  = name.remove(
+          0, name.lastIndexOf(QString::fromStdString(tempPath.getName())));
+      name                 = name.remove(name.size() - 4, name.size() - 1);
+      std::string justName = name.toStdString() + ".jpg";
       TFilePath testsThumbsFile =
           scene->decodeFilePath(testsThumbsFolder + justName);
       // TFilePath
@@ -2993,9 +3023,72 @@ void StopMotionController::onRefreshTests() {
       QPixmap thumb = QPixmap(testsThumbsFile.getQString());
       m_testFullResListVector.push_back(tempPath);
       m_testImages.push_back(thumb);
+      QString imageNumber   = tempPath.getQString();
+      std::string imgNumStr = imageNumber.toStdString();
+      imageNumber = imageNumber.remove(0, imageNumber.lastIndexOf("+") + 1);
+      imgNumStr   = imageNumber.toStdString();
+      imageNumber =
+          imageNumber.remove(imageNumber.size() - 4, imageNumber.size() - 1);
+      imgNumStr            = imageNumber.toStdString();
+      QDomElement testInfo = domBody.firstChildElement("Test_" + imageNumber);
+      if (!testInfo.isNull()) {
+        bool isWebcam =
+            testInfo.firstChildElement("Webcam").firstChild().nodeValue() ==
+            "yes";
+        if (isWebcam) {
+          QString tooltipString;
+          tooltipString =
+              testInfo.firstChildElement("CameraName").firstChild().nodeValue();
+          tooltipString += "\nWidth: " +
+                           testInfo.firstChildElement("CameraResolutionX")
+                               .firstChild()
+                               .nodeValue();
+          tooltipString += "\nHeight: " +
+                           testInfo.firstChildElement("CameraResolutionY")
+                               .firstChild()
+                               .nodeValue();
+          m_testTooltips.push_back(tooltipString);
+        } else {
+          QString tooltipString;
+          tooltipString =
+              testInfo.firstChildElement("CameraName").firstChild().nodeValue();
+          tooltipString +=
+              "\nAperture: " +
+              testInfo.firstChildElement("Aperture").firstChild().nodeValue();
+          tooltipString += "\nShutter Speed: " +
+                           testInfo.firstChildElement("ShutterSpeed")
+                               .firstChild()
+                               .nodeValue();
+          tooltipString +=
+              "\nISO: " +
+              testInfo.firstChildElement("ISO").firstChild().nodeValue();
+          tooltipString += "\nPicture Style: " +
+                           testInfo.firstChildElement("PictureStyle")
+                               .firstChild()
+                               .nodeValue();
+          tooltipString += "\nImage Quality: " +
+                           testInfo.firstChildElement("ImageQuality")
+                               .firstChild()
+                               .nodeValue();
+          QString wb = testInfo.firstChildElement("WhiteBalance")
+                           .firstChild()
+                           .nodeValue();
+          tooltipString += "\nWhite Balance: " + wb;
+          if (wb == "Color Temperature")
+            tooltipString += "\nColor Temperature: " +
+                             testInfo.firstChildElement("ColorTemperature")
+                                 .firstChild()
+                                 .nodeValue();
+          // tooltipString += "\nExposure Compensation: " +
+          // testInfo.firstChildElement("ExposureCompensation").firstChild().nodeValue();
+          m_testTooltips.push_back(tooltipString);
+        }
+      } else {
+        m_testTooltips.push_back("");
+      }
     }
   }
-  if (m_testFullResListVector.size() > 0) {
+  if (m_testFullResListVector.size() > 0 && m_testImages[0].width() != 0) {
     int width           = this->width();
     int padding         = 30;
     int imageWidth      = m_testImages[0].width();
@@ -3017,11 +3110,12 @@ void StopMotionController::reflowTestShots() {
     QHBoxLayout *layout = new QHBoxLayout();
     int j               = 0;
     for (int i = 0; i < m_testImages.size(); i++) {
-      QPushButton *button = new QPushButton();
+      QPushButton *button = new QPushButton(this);
       button->setIcon(QIcon(m_testImages.at(i)));
       button->setFixedHeight(imageHeight + padding);
       button->setFixedWidth(imageWidth + padding);
       button->setIconSize(QSize(imageWidth, imageHeight));
+      button->setToolTip(m_testTooltips.at(i));
       connect(button, &QPushButton::clicked, [=] {
         FlipBook *fb = ::viewFile(m_testFullResListVector.at(i));
       });
