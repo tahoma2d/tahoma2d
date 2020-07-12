@@ -1503,7 +1503,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
                    o->rowToFrameAxis(offset);  // pixels since start of clip
 
   int trackWidth = trackBounds.length();
-  int lastMin, lastMax;
   DoublePair minmax;
   soundLevel->getValueAtPixel(o, soundPixel, minmax);
 
@@ -1511,8 +1510,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   double pmax = minmax.second;
 
   int center = trackBounds.middle();
-  lastMin    = tcrop((int)pmin, -trackWidth / 2, 0) + center;
-  lastMax    = tcrop((int)pmax, 0, trackWidth / 2 - 1) + center;
 
   bool scrub = m_viewer->isScrubHighlighted(row, col);
 
@@ -1525,7 +1522,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     pmin = minmax.first;
     pmax = minmax.second;
 
-    center = trackBounds.middle();
     min    = tcrop((int)pmin, -trackWidth / 2, 0) + center;
     max    = tcrop((int)pmax, 0, trackWidth / 2 - 1) + center;
 
@@ -1545,14 +1541,9 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     if (!o->isVerticalTimeline() || i != begin) {
       // "audio track" in the middle of the column
       p.setPen(m_viewer->getSoundColumnTrackColor());
-      QLine minLine = o->horizontalLine(i, NumberRange(lastMin, min));
-      p.drawLine(minLine);
-      QLine maxLine = o->horizontalLine(i, NumberRange(lastMax, max));
-      p.drawLine(maxLine);
+      QLine midLine = o->horizontalLine(i, NumberRange(min, max));
+      p.drawLine(midLine);
     }
-
-    lastMin = min;
-    lastMax = max;
   }
 
   // yellow clipped border
