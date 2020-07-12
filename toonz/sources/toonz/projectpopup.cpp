@@ -20,6 +20,9 @@
 // TnzCore includes
 #include "tsystem.h"
 #include "tenv.h"
+#include "tapp.h"
+#include "toonz/tscenehandle.h"
+#include "toonz/toonzscene.h"
 
 // Qt includes
 #include <QPushButton>
@@ -50,6 +53,7 @@ ProjectPopup::ProjectPopup(bool isModal)
 
   m_choosePrjLabel = new QLabel(tr("Project:"), this);
   m_prjNameLabel   = new QLabel(tr("Project Name:"), this);
+  m_pathFieldLabel = new QLabel(tr("Create Project In:"), this);
   m_nameFld        = new LineEdit();
 
   m_projectLocationFld =
@@ -70,7 +74,7 @@ ProjectPopup::ProjectPopup(bool isModal)
                              Qt::AlignRight | Qt::AlignVCenter);
       upperLayout->addWidget(m_nameFld, 0, 1);
 
-      upperLayout->addWidget(new QLabel(tr("Create Project In:"), this), 1, 0,
+      upperLayout->addWidget(m_pathFieldLabel, 1, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       upperLayout->addWidget(m_projectLocationFld, 1, 1);
     }
@@ -175,11 +179,12 @@ void ProjectPopup::showEvent(QShowEvent *) {
 //-----------------------------------------------------------------------------
 
 ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
-  setWindowTitle(tr("Project Settings"));
+  setWindowTitle(tr("Switch Project"));
 
   m_prjNameLabel->hide();
   m_nameFld->hide();
-  m_choosePrjLabel->show();
+  m_choosePrjLabel->hide();
+  m_pathFieldLabel->setText(tr("Project:"));
 
   int i;
   for (i = 0; i < m_folderFlds.size(); i++) {
@@ -191,6 +196,97 @@ ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
     connect(cb, SIGNAL(stateChanged(int)), this,
             SLOT(onUseSceneChekboxChanged(int)));
   }
+  connect(m_projectLocationFld, &DVGui::FileField::pathChanged, this,
+          &ProjectSettingsPopup::projectChanged);
+}
+
+//-----------------------------------------------------------------------------
+
+void ProjectSettingsPopup::projectChanged() {
+  TProjectManager *pm     = TProjectManager::instance();
+  TFilePath projectFolder = TFilePath(m_projectLocationFld->getPath());
+  TFilePath path          = pm->projectFolderToProjectPath(projectFolder);
+
+  if (path == pm->getCurrentProjectPath()) {
+    return;
+  }
+  if (!TSystem::doesExistFileOrLevel(projectFolder)) {
+    projectFolder =
+        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(
+            projectFolder);
+    m_projectLocationFld->setPath(projectFolder.getQString());
+    if (!TSystem::doesExistFileOrLevel(projectFolder)) {
+      DVGui::warning(tr(
+          "This is not a valid folder.  Please choose an existing location."));
+      m_projectLocationFld->setPath(m_oldPath.getQString());
+      return;
+    }
+  }
+  if (!pm->isProject(projectFolder)) {
+    QStringList buttonList;
+    buttonList.append(tr("Yes"));
+    buttonList.append(tr("No"));
+    int answer = DVGui::MsgBox(tr("No project found at this location \n"
+                                  "What would you like to do?"),
+                               tr("Make a new project"), tr("Cancel"), 1, this);
+    if (answer != 1) {
+      m_projectLocationFld->blockSignals(true);
+      m_projectLocationFld->setPath(TApp::instance()
+                                        ->getCurrentScene()
+                                        ->getScene()
+                                        ->getProject()
+                                        ->getProjectFolder()
+                                        .getQString());
+      m_projectLocationFld->blockSignals(false);
+    } else {
+      ProjectCreatePopup *popup = new ProjectCreatePopup();
+      popup->setPath(projectFolder.getQString());
+      popup->exec();
+      accept();
+      return;
+    }
+  }
+
+  if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change Project"))) {
+    m_projectLocationFld->blockSignals(true);
+    m_projectLocationFld->setPath(TApp::instance()
+                                      ->getCurrentScene()
+                                      ->getScene()
+                                      ->getProject()
+                                      ->getProjectFolder()
+                                      .getQString());
+    m_projectLocationFld->blockSignals(false);
+    return;
+  }
+
+  pm->setCurrentProjectPath(path);
+
+  TProject *projectP =
+      TProjectManager::instance()->getCurrentProject().getPointer();
+
+  // In case the project file was upgraded to current version, save it now
+  if (projectP->getProjectPath() != path) {
+    projectP->save();
+  }
+
+  updateFieldsFromProject(projectP);
+  IoCmd::newScene();
+  accept();
+}
+
+//-----------------------------------------------------------------------------
+
+void ProjectSettingsPopup::onProjectChanged() {
+  m_projectLocationFld->blockSignals(true);
+  m_projectLocationFld->setPath(TApp::instance()
+                                    ->getCurrentScene()
+                                    ->getScene()
+                                    ->getProject()
+                                    ->getProjectFolder()
+                                    .getQString());
+  m_projectLocationFld->blockSignals(false);
+  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject.getPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -223,20 +319,49 @@ void ProjectSettingsPopup::onUseSceneChekboxChanged(int) {
 
 //-----------------------------------------------------------------------------
 
-// OpenPopupCommandHandler<ProjectSettingsPopup> openProjectSettingsPopup(
-//    MI_ProjectSettings);
+void ProjectSettingsPopup::showEvent(QShowEvent *) {
+  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject.getPointer());
+
+  m_nameFld->setText("");
+
+  m_projectLocationFld->blockSignals(true);
+  m_projectLocationFld->setPath(TProjectManager::instance()
+                                    ->getCurrentProjectPath()
+                                    .getParentDir()
+                                    .getQString());
+  m_oldPath = TFilePath(m_projectLocationFld->getPath());
+  m_projectLocationFld->blockSignals(false);
+
+  resize(600, 75);
+  QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+  sizePolicy.setHorizontalStretch(0);
+  sizePolicy.setVerticalStretch(0);
+  setSizePolicy(sizePolicy);
+  setMinimumSize(QSize(600, 75));
+  setMaximumSize(QSize(600, 75));
+  setFixedSize(width(), height());
+  setSizeGripEnabled(false);
+}
+
+//-----------------------------------------------------------------------------
+
+OpenPopupCommandHandler<ProjectSettingsPopup> openProjectSettingsPopup(
+    MI_ProjectSettings);
 
 //=============================================================================
-/*! \class ProjectCreatePopup
-                \brief The ProjectCreatePopup class provides a modal dialog to
+/* class ProjectCreatePopup
+   The ProjectCreatePopup class provides a modal dialog to
    create a new project.
 
-                Inherits \b ProjectPopup.
+   Inherits ProjectPopup.
 */
 //-----------------------------------------------------------------------------
 
 ProjectCreatePopup::ProjectCreatePopup() : ProjectPopup(true) {
   setWindowTitle(tr("New Project"));
+
+  m_pathFieldLabel->setText(tr("Create Project In:"));
 
   QPushButton *okBtn = new QPushButton(tr("OK"), this);
   okBtn->setDefault(true);

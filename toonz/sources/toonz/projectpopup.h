@@ -15,89 +15,7 @@ class LineEdit;
 class CheckBox;
 }
 
-class DvDirTreeView;
 class QComboBox;
-
-//=============================================================================
-// ProjectDvDirModelRootNode
-
-class ProjectDvDirModelRootNode final : public DvDirModelNode {
-public:
-  ProjectDvDirModelRootNode();
-  void refreshChildren() override;
-};
-
-//=============================================================================
-// ProjectDvDirModelFileFolderNode
-
-class ProjectDvDirModelFileFolderNode : public DvDirModelFileFolderNode {
-public:
-  ProjectDvDirModelFileFolderNode(DvDirModelNode *parent, std::wstring name,
-                                  const TFilePath &path)
-      : DvDirModelFileFolderNode(parent, name, path) {}
-  ProjectDvDirModelFileFolderNode(DvDirModelNode *parent, const TFilePath &path)
-      : DvDirModelFileFolderNode(parent, path) {}
-  DvDirModelNode *makeChild(std::wstring name) override;
-  DvDirModelFileFolderNode *createNode(DvDirModelNode *parent,
-                                       const TFilePath &path);
-};
-
-//=============================================================================
-// ProjectDvDirModelSpecialFileFolderNode
-
-class ProjectDvDirModelSpecialFileFolderNode final
-    : public ProjectDvDirModelFileFolderNode {
-  QPixmap m_pixmap;
-
-public:
-  ProjectDvDirModelSpecialFileFolderNode(DvDirModelNode *parent,
-                                         std::wstring name,
-                                         const TFilePath &path)
-      : ProjectDvDirModelFileFolderNode(parent, name, path) {}
-  QPixmap getPixmap(bool isOpen) const override { return m_pixmap; }
-  void setPixmap(const QPixmap &pixmap) { m_pixmap = pixmap; }
-};
-
-//=============================================================================
-// ProjectDvDirModelProjectNode
-
-class ProjectDvDirModelProjectNode final
-    : public ProjectDvDirModelFileFolderNode {
-public:
-  ProjectDvDirModelProjectNode(DvDirModelNode *parent, const TFilePath &path)
-      : ProjectDvDirModelFileFolderNode(parent, path) {}
-  void makeCurrent() {}
-  QPixmap getPixmap(bool isOpen) const override;
-};
-
-//=============================================================================
-// ProjectDirModel
-
-class ProjectDirModel final : public QAbstractItemModel {
-  DvDirModelNode *m_root;
-
-public:
-  ProjectDirModel();
-  ~ProjectDirModel();
-
-  DvDirModelNode *getNode(const QModelIndex &index) const;
-  QModelIndex index(int row, int column,
-                    const QModelIndex &parent) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  QModelIndex childByName(const QModelIndex &parent,
-                          const std::wstring &name) const;
-  int columnCount(const QModelIndex &parent) const override { return 1; }
-  QVariant data(const QModelIndex &index,
-                int role = Qt::DisplayRole) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-  bool setData(const QModelIndex &index, const QVariant &value,
-               int role = Qt::EditRole) override;
-  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-  bool hasChildren(const QModelIndex &parent) const override;
-  void refresh(const QModelIndex &index);
-  void refreshFolderChild(const QModelIndex &i = QModelIndex());
-  QModelIndex getIndexByNode(DvDirModelNode *node) const;
-};
 
 //=============================================================================
 // ProjectPopup
@@ -113,6 +31,7 @@ protected:
 
   QLabel *m_prjNameLabel;
   QLabel *m_choosePrjLabel;
+  QLabel *m_pathFieldLabel;
 
   DVGui::FileField *m_projectLocationFld;
 
@@ -137,12 +56,19 @@ protected:
 class ProjectSettingsPopup final : public ProjectPopup {
   Q_OBJECT
 
+  TFilePath m_oldPath;
+
 public:
   ProjectSettingsPopup();
 
 public slots:
   void onFolderChanged();
   void onUseSceneChekboxChanged(int);
+  void projectChanged();
+  void onProjectChanged() override;
+
+protected:
+  void showEvent(QShowEvent *) override;
 };
 
 //=============================================================================
