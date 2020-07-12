@@ -154,7 +154,7 @@ bool DvDirTreeViewDelegate::editorEvent(QEvent *ev, QAbstractItemModel *model,
         m_treeView->expand(index);
     }
 
-    if (  //(pnode && pnode->isCurrent() == false && 14 < x && x < 26) ||
+    if ((pnode && pnode->isCurrent() == false && 14 < x && x < 26) ||
         (vcpNode && vcpNode->isCurrent() == false && 14 < x && x < 26)) {
       if (pnode)
         pnode->makeCurrent();
@@ -212,8 +212,7 @@ void DvDirTreeViewDelegate::paint(QPainter *painter,
   DvDirVersionControlNode *vcNode =
       dynamic_cast<DvDirVersionControlNode *>(node);
 
-  // rect.adjust((pnode || vcpNode) ? 31 : 22, 0, 0, 0);
-  rect.adjust((vcpNode) ? 31 : 22, 0, 0, 0);
+  rect.adjust((pnode || vcpNode) ? 31 : 22, 0, 0, 0);
 
   // draw text
   QVariant d   = index.data();
@@ -232,8 +231,7 @@ void DvDirTreeViewDelegate::paint(QPainter *painter,
   painter->drawText(rect, Qt::AlignVCenter | Qt::AlignLeft, name);
 
   // project folder node, version control node
-  // if (pnode || vcpNode) {
-  if (vcpNode) {
+  if (pnode || vcpNode) {
     painter->setPen(m_treeView->getTextColor());
     if ((pnode && pnode->isCurrent()) || (vcpNode && vcpNode->isCurrent()))
       painter->setBrush(Qt::red);
