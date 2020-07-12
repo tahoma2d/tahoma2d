@@ -674,6 +674,9 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
       m_cleanupParameters->m_cleanupPalette->loadData(is);
     } else if (tagName == "cleanupParameters") {
       m_cleanupParameters->loadData(is, !isLoadingProject);
+    } else if (tagName == "scanParameters") {
+      while (is.matchTag(tagName)) {
+      }
     } else if (tagName == "vectorizerParameters") {
       m_vectorizerParameters->loadData(is);
     } else if (tagName == "captureParameters") {
