@@ -1,4 +1,4 @@
-
+// Soli Deo gloria
 
 // Tnz6 includes
 #include "mainwindow.h"
