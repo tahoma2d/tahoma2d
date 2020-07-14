@@ -727,13 +727,19 @@ QRectF StageSchematicNodePort::boundingRect() const {
 
 //--------------------------------------------------------
 
+void StageSchematicNodePort::setCanShowNumbers(bool canShowNumbers) {
+  m_canShowNumbers = canShowNumbers;
+}
+
+//--------------------------------------------------------
+
 void StageSchematicNodePort::paint(QPainter *painter,
                                    const QStyleOptionGraphicsItem *option,
                                    QWidget *widget) {
   // StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(getNode());
   StageSchematicScene *scene =
       dynamic_cast<StageSchematicScene *>(this->scene());
-  if (scene && scene->isShowLetterOnPortFlagEnabled()) {
+  if (scene && scene->isShowLetterOnPortFlagEnabled() && m_canShowNumbers) {
     painter->setBrush(QColor(255, 255, 255, 255));
     painter->setPen(QColor(180, 180, 180, 255));
     painter->drawRect(boundingRect());
@@ -1051,6 +1057,7 @@ StageSchematicNodeDock::StageSchematicNodeDock(StageSchematicNode *parent,
   setFlag(QGraphicsItem::ItemIsSelectable, false);
   setFlag(QGraphicsItem::ItemIsFocusable, false);
   m_port = new StageSchematicNodePort(this, type);
+  m_port->setCanShowNumbers(getNode()->getCanShowNumbers());
 
   m_handleSpinBox = new SchematicHandleSpinBox(this);
 
@@ -1058,7 +1065,8 @@ StageSchematicNodeDock::StageSchematicNodeDock(StageSchematicNode *parent,
   if (isParentPort) {
     StageSchematicScene *stageScene =
         dynamic_cast<StageSchematicScene *>(scene());
-    if (stageScene && stageScene->isShowLetterOnPortFlagEnabled())
+    if (m_parent->getCanShowNumbers() && stageScene &&
+        stageScene->isShowLetterOnPortFlagEnabled())
       m_port->setPos(m_handleSpinBox->boundingRect().width(), 0);
     m_handleSpinBox->setPos(0, 1);
   } else
@@ -1105,7 +1113,8 @@ QRectF StageSchematicNodeDock::boundingRect() const {
       dynamic_cast<StageSchematicScene *>(scene());
   QRectF portRect = m_port->boundingRect();
   portRect.moveTopLeft(QPointF(0, 0));
-  if (stageScene && stageScene->isShowLetterOnPortFlagEnabled()) {
+  if (m_parent->getCanShowNumbers() && stageScene &&
+      stageScene->isShowLetterOnPortFlagEnabled()) {
     QRectF handleRect = m_handleSpinBox->boundingRect();
     handleRect.moveTopLeft(QPointF(portRect.width(), handleRect.topLeft().y()));
 #if QT_VERSION >= 0x050000
@@ -1134,7 +1143,7 @@ void StageSchematicNodeDock::onModifyHandle(int increase) {
   if (handle[0] == 'H' && handle.length() > 1)
     index = -(std::stoi(handle.substr(1)));
   else
-    index = handle[0] - 'A';
+    index = handle[0] - 'B';
   index += -increase;  //==1 ? -1 : 1;
 
   int min = (getNode()->getStageObject()->getId().isColumn())
@@ -1143,7 +1152,7 @@ void StageSchematicNodeDock::onModifyHandle(int increase) {
   index = tcrop(index, min, 25);
 
   if (index >= 0)
-    handle = std::string(1, (char)('A' + index));
+    handle = "B";
   else
     handle = "H" + std::to_string(-index);
 
@@ -1225,30 +1234,33 @@ void StageSchematicNodeDock::onPortReleased(const QPointF &pos) {
 void StageSchematicNodeDock::onTimeOut() {
   StageSchematicScene *stageScene =
       dynamic_cast<StageSchematicScene *>(scene());
-  if (stageScene && stageScene->isShowLetterOnPortFlagEnabled())
-    m_handleSpinBox->show();
-  StageSchematicNodePort *port = getPort();
-  int i;
-  for (i = 0; i < port->getLinkCount(); i++) {
-    SchematicLink *link      = port->getLink(i);
-    SchematicPort *startPort = link->getStartPort();
-    SchematicPort *endPort   = link->getEndPort();
-    QPointF startPos         = startPort->getLinkEndPoint();
-    QPointF endPos           = endPort->getLinkEndPoint();
-    if (startPort == port) {
-      if (port->getType() == 101 && startPos.x() > endPos.x())
-        startPos = mapToScene(0, boundingRect().height() * 0.5);
-      if (port->getType() == 102 && startPos.x() < endPos.x())
-        startPos =
-            mapToScene(boundingRect().width(), boundingRect().height() * 0.5);
-      link->updatePath(startPos, endPos);
-    } else {
-      if (port->getType() == 101 && startPos.x() < endPos.x())
-        endPos = mapToScene(0, boundingRect().height() * 0.5);
-      if (port->getType() == 102 && startPos.x() > endPos.x())
-        endPos =
-            mapToScene(boundingRect().width(), boundingRect().height() * 0.5);
-      link->updatePath(startPos, endPos);
+
+  if (m_parent->getCanShowNumbers()) {
+    if (stageScene && stageScene->isShowLetterOnPortFlagEnabled())
+      m_handleSpinBox->show();
+    StageSchematicNodePort *port = getPort();
+    int i;
+    for (i = 0; i < port->getLinkCount(); i++) {
+      SchematicLink *link      = port->getLink(i);
+      SchematicPort *startPort = link->getStartPort();
+      SchematicPort *endPort   = link->getEndPort();
+      QPointF startPos         = startPort->getLinkEndPoint();
+      QPointF endPos           = endPort->getLinkEndPoint();
+      if (startPort == port) {
+        if (port->getType() == 101 && startPos.x() > endPos.x())
+          startPos = mapToScene(0, boundingRect().height() * 0.5);
+        if (port->getType() == 102 && startPos.x() < endPos.x())
+          startPos =
+              mapToScene(boundingRect().width(), boundingRect().height() * 0.5);
+        link->updatePath(startPos, endPos);
+      } else {
+        if (port->getType() == 101 && startPos.x() < endPos.x())
+          endPos = mapToScene(0, boundingRect().height() * 0.5);
+        if (port->getType() == 102 && startPos.x() > endPos.x())
+          endPos =
+              mapToScene(boundingRect().width(), boundingRect().height() * 0.5);
+        link->updatePath(startPos, endPos);
+      }
     }
   }
 }
@@ -1303,8 +1315,11 @@ void StageSchematicSplineDock::paint(QPainter *painter,
 
 StageSchematicNode::StageSchematicNode(StageSchematicScene *scene,
                                        TStageObject *obj, int width, int height,
-                                       bool isGroup)
-    : SchematicNode(scene), m_stageObject(obj), m_isGroup(isGroup) {
+                                       bool isGroup, bool canShowNumbers)
+    : SchematicNode(scene)
+    , m_stageObject(obj)
+    , m_isGroup(isGroup)
+    , m_canShowNumbers(canShowNumbers) {
   m_stageObject->addRef();
   m_width  = width;
   m_height = height;
@@ -1356,7 +1371,7 @@ StageSchematicNode::StageSchematicNode(StageSchematicScene *scene,
   else
     m_parentDock = new StageSchematicNodeDock(this, true, eStageParentPort);
   addPort(0, m_parentDock->getPort());
-  if (scene->isShowLetterOnPortFlagEnabled())
+  if (m_canShowNumbers && scene->isShowLetterOnPortFlagEnabled())
     m_parentDock->setPos(-m_parentDock->boundingRect().width(), m_height - 15);
   else
     m_parentDock->setPos(0, 0);
@@ -1369,7 +1384,7 @@ StageSchematicNode::StageSchematicNode(StageSchematicScene *scene,
     childDock = new StageSchematicNodeDock(this, false, eStageChildPort);
   addPort(1, childDock->getPort());
   m_childDocks.append(childDock);
-  if (scene->isShowLetterOnPortFlagEnabled())
+  if (m_canShowNumbers && scene->isShowLetterOnPortFlagEnabled())
     childDock->setPos(m_width, m_height - 15);
   else
     childDock->setPos(m_width - 18, 0);
@@ -1407,7 +1422,7 @@ StageSchematicNodePort *StageSchematicNode::makeChildPort(
   int k;
   QString newPortName;
   for (k = 0;; k++) {
-    newPortName = QString(1, (char)('A' + k));
+    newPortName = "H" + QString::number(1 + k);
     int j;
     for (j = 0; j < n; j++) {
       QString name = m_childDocks[j]->getPort()->getHandle();
@@ -1415,17 +1430,22 @@ StageSchematicNodePort *StageSchematicNode::makeChildPort(
     }
     if (j == n) break;
   }
+
   StageSchematicScene *stageScene =
       dynamic_cast<StageSchematicScene *>(scene());
   if (stageScene && stageScene->isShowLetterOnPortFlagEnabled()) {
-    StageSchematicNodeDock *newDock;
-    if (m_isGroup)
-      newDock = new StageSchematicNodeDock(this, false, eStageChildGroupPort);
-    else
-      newDock = new StageSchematicNodeDock(this, false, eStageChildPort);
-    addPort(m_childDocks.size() + 1, newDock->getPort());
-    m_childDocks.append(newDock);
-    newDock->getPort()->setHandle(newPortName);
+    if (getCanShowNumbers()) {
+      StageSchematicNodeDock *newDock;
+      if (m_isGroup)
+        newDock = new StageSchematicNodeDock(this, false, eStageChildGroupPort);
+      else
+        newDock = new StageSchematicNodeDock(this, false, eStageChildPort);
+      addPort(m_childDocks.size() + 1, newDock->getPort());
+      m_childDocks.append(newDock);
+      newDock->getPort()->setHandle(newPortName);
+      newDock->getPort()->setCanShowNumbers(
+          newDock->getNode()->getCanShowNumbers());
+    }
   }
   updateChildDockPositions();
   return dock->getPort();
@@ -1457,7 +1477,8 @@ void StageSchematicNode::updateChildDockPositions() {
   int i, size = m_childDocks.size();
   StageSchematicScene *stageScene =
       dynamic_cast<StageSchematicScene *>(scene());
-  if (stageScene && stageScene->isShowLetterOnPortFlagEnabled()) {
+  if (m_canShowNumbers && stageScene &&
+      stageScene->isShowLetterOnPortFlagEnabled()) {
     double portHeight = m_childDocks.at(0)->getPort()->boundingRect().height();
     double height     = size * portHeight;
     double y          = (m_height - 15 - portHeight * 0.5) + height * 0.5;
@@ -1545,9 +1566,11 @@ void StageSchematicNode::onHandleReleased() {
     }
 
     i = 0;
-    while (labels.contains(QString(1, (char)('A' + i)))) i++;
-    freePort->setHandle(QString(1, (char)('A' + i)));
-    freePort->update();
+    while (labels.contains("H" + QString::number(1 + i))) i++;
+    if (freePort != 0) {
+      freePort->setHandle("H" + QString::number(1 + i));
+      freePort->update();
+    }
   }
 }
 
@@ -1559,7 +1582,7 @@ void StageSchematicNode::onHandleReleased() {
 
 StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
-    : StageSchematicNode(scene, pegbar, 90, 18) {
+    : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   std::string name = m_stageObject->getFullName();
   std::string id   = m_stageObject->getId().toString();
   m_name           = QString::fromStdString(name);
@@ -1641,7 +1664,7 @@ void StageSchematicPegbarNode::onNameChanged() {
 
 StageSchematicTableNode::StageSchematicTableNode(StageSchematicScene *scene,
                                                  TStageObject *pegbar)
-    : StageSchematicNode(scene, pegbar, 90, 18) {
+    : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   m_parentDock->hide();
   updateChildDockPositions();
 
@@ -2003,7 +2026,7 @@ void StageSchematicColumnNode::onCameraStandToggleClicked(int state) {
 
 StageSchematicCameraNode::StageSchematicCameraNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
-    : StageSchematicNode(scene, pegbar, 90, 18) {
+    : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   std::string name = m_stageObject->getFullName();
   m_name           = QString::fromStdString(name);
 

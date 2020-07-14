@@ -1491,6 +1491,12 @@ void XsheetViewer::scrollToVerticalRange(int y0, int y1) {
 
 //-----------------------------------------------------------------------------
 
+int XsheetViewer::getColumnScrollValue() {
+  return m_columnScrollArea->horizontalScrollBar()->value();
+}
+
+//-----------------------------------------------------------------------------
+
 void XsheetViewer::onSelectionSwitched(TSelection *oldSelection,
                                        TSelection *newSelection) {
   if ((TSelection *)getCellSelection() == oldSelection) {

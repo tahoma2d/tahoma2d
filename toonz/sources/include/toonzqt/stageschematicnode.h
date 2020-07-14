@@ -209,6 +209,7 @@ protected:
 
 class StageSchematicNodePort final : public SchematicPort {
   QString m_handle;
+  bool m_canShowNumbers = true;
 
 public:
   StageSchematicNodePort(StageSchematicNodeDock *parent, int type);
@@ -221,6 +222,8 @@ public:
   QString getHandle() { return m_handle; }
 
   bool linkTo(SchematicPort *port, bool checkOnly = false) override;
+
+  void setCanShowNumbers(bool canShowNumbers);
 
 private:
   SchematicPort *searchPort(const QPointF &scenePos) override;
@@ -375,10 +378,12 @@ protected:
   bool m_isGroup;
   QString m_name;
   SchematicName *m_nameItem;
+  bool m_canShowNumbers = true;
 
 public:
   StageSchematicNode(StageSchematicScene *scene, TStageObject *obj, int width,
-                     int height, bool isGroup = false);
+                     int height, bool isGroup = false,
+                     bool canShowNumbers = true);
   ~StageSchematicNode();
 
   void setWidth(const qreal &width) { m_width = width; }
@@ -398,6 +403,7 @@ public:
   StageSchematicNodePort *makeParentPort(const QString &label);
   virtual void updateChildDockPositions();  // TODO: commento! doxygen
   void setPosition(const QPointF &newPos) override;
+  bool getCanShowNumbers() { return m_canShowNumbers; }
 
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
