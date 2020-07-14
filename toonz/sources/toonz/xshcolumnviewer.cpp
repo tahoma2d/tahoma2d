@@ -432,7 +432,8 @@ void ChangeObjectParent::refresh() {
       newText          = QString("Col ") + indexStr;
       QString tempText = newText;
       std::string name = tree->getStageObject(i)->getName();
-      if (name.length() > 0 && name != tempText.replace(" ", "").toStdString()) {
+      if (name.length() > 0 &&
+          name != tempText.replace(" ", "").toStdString()) {
         newText += " (" + QString::fromStdString(name) + " )";
       }
       columnList.append(newText);
@@ -533,18 +534,20 @@ void ChangeObjectHandle::refresh() {
   assert(xsh);
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   TStageObject *stageObject      = xsh->getStageObject(currentObjectId);
-  m_width                        = 28;
+  m_width                        = 55;
 
   int i;
   QString str;
   if (stageObject->getParent().isColumn()) {
     for (i = 0; i < 20; i++) addItem(str.number(20 - i));
   }
-  for (i = 0; i < 26; i++) addItem(QString(char('A' + i)));
-
+  // for (i = 0; i < 26; i++) addItem(QString(char('A' + i)));
+  addItem(QString("Base"));
   std::string handle = stageObject->getParentHandle();
-  if (handle[0] == 'H' && handle.length() > 1) handle = handle.substr(1);
-
+  if (handle[0] == 'H' && handle.length() > 1)
+    handle = handle.substr(1);
+  else
+    (handle = "Base");
   selectCurrent(QString::fromStdString(handle));
 }
 
@@ -555,7 +558,10 @@ void ChangeObjectHandle::onTextChanged(const QString &text) {
   assert(m_objectHandle);
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   QString handle                 = text;
-  if (text.toInt() != 0) handle  = QString("H") + handle;
+  if (text.toInt() != 0)
+    handle = QString("H") + handle;
+  else if (text == "Base")
+    handle = "B";
   if (handle.isEmpty()) return;
   std::vector<TStageObjectId> ids;
   ids.push_back(currentObjectId);
@@ -1172,14 +1178,16 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
       column->getPaletteColumn())
     return;
 
+  TStageObjectId columnId = m_viewer->getObjectId(col);
+  TStageObjectId parentId = xsh->getStageObjectParent(columnId);
+  if (!xsh->getStageObject(columnId)->getParent().isColumn()) return;
+
   QRect parenthandleRect =
       o->rect(PredefinedRect::PARENT_HANDLE_NAME).translated(orig);
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER))
     p.drawRect(parenthandleRect);
 
-  TStageObjectId columnId = m_viewer->getObjectId(col);
-  TStageObjectId parentId = xsh->getStageObjectParent(columnId);
   p.setPen(m_viewer->getVerticalLineColor());
   p.drawRect(parenthandleRect.adjusted(2, 0, 0, 0));
   p.setPen(m_viewer->getTextColor());
@@ -2268,18 +2276,23 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                 .adjusted(0, 0, -20, 0)
                 .contains(mouseInCell)) {
           m_changeObjectParent->refresh();
+
           m_changeObjectParent->show(
               QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
                      m_viewer->positionToXY(CellPosition(0, m_col)) +
-                     QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4)));
+                     QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
+                     QPoint(m_viewer->getColumnScrollValue(), 0)));
           return;
         }
-        if (o->rect(PredefinedRect::PARENT_HANDLE_NAME).contains(mouseInCell)) {
+        TStageObjectId columnId = m_viewer->getObjectId(m_col);
+        bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+        if (isColumn &&
+            o->rect(PredefinedRect::PARENT_HANDLE_NAME).contains(mouseInCell)) {
           m_changeObjectHandle->refresh();
-          m_changeObjectHandle->show(
-              QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                     m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                     QPoint(2, 0)));
+          m_changeObjectHandle->show(QPoint(
+              o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+              m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
+              QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
           return;
         }
 

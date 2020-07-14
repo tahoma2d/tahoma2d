@@ -134,7 +134,8 @@ void TStageObjectTree::checkIntegrity() {
       columnIndexTable.insert(index);
     } else if (id.isPegbar()) {
       assert(imp->getParent() != TStageObjectId());
-      assert(imp->getParent().isPegbar() || imp->getParent().isTable());
+      assert(imp->getParent().isPegbar() || imp->getParent().isTable() ||
+             imp->getParent().isCamera());
     } else if (id.isTable())
       assert(imp->getParent() == TStageObjectId());
     else if (id.isCamera())  // la camera puo' essere attaccata dovunque
