@@ -832,6 +832,9 @@
   <item>"STD_inoAddFx"	"Add Ino"	</item>
   <item>"STD_inoAddFx.opacity"	"Opacity"	</item>
   <item>"STD_inoAddFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoAddFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoAddFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoAddFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoColorBurnFx"	"Color Burn Ino"	</item>
   <item>"STD_inoColorBurnFx.opacity"	"Opacity"	</item>
   <item>"STD_inoColorBurnFx.clipping_mask"	"Clipping Mask"	</item>
