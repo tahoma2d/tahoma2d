@@ -1335,7 +1335,7 @@ extern const char *applicationVersion;
 void MainWindow::checkForUpdates() {
   // Since there is only a single version of Tahoma, we can do a simple check
   // against a string
-  QString updateUrl("https://turtletooth.com/files/tahoma-version.txt");
+  QString updateUrl("https://tahoma2d.org/files/tahoma-version.txt");
 
   m_updateChecker = new UpdateChecker(updateUrl);
   connect(m_updateChecker, SIGNAL(done(bool)), this,
