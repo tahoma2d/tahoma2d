@@ -166,6 +166,7 @@ protected slots:
   void setIsLocked(bool lock);
 
   void onSwitchToPage(int pageIndex);
+  void onShowNewStyleButtonToggled();
 };
 
 #endif  // PALETTEVIEWER_H

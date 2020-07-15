@@ -40,6 +40,7 @@
 // enable to set font size for style name separately from other texts
 TEnv::IntVar EnvSoftwareCurrentFontSize_StyleName(
     "SoftwareCurrentFontSize_StyleName", 11);
+extern TEnv::IntVar ShowNewStyleButton;
 
 using namespace PaletteViewerGUI;
 using namespace DVGui;
@@ -230,6 +231,7 @@ int PageViewer::getCurrentStyleIndex() const {
 /*! Set current page to \b page and update view.
  */
 void PageViewer::setPage(TPalette::Page *page) {
+  if (m_page == page) return;
   m_page = page;
   computeSize();
   update();
@@ -556,20 +558,19 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 
 //-----------------------------------------------------------------------------
 /*! Draw the chip name \b name inside rectangle \b chipRect using painter \b p.
-* If the name is too wide to fit on the chip, use left align - to show the
-* start of the name. Otherwise, use center align.
-*/
+ * If the name is too wide to fit on the chip, use left align - to show the
+ * start of the name. Otherwise, use center align.
+ */
 static void drawChipName(QPainter &p, const QRect &chipRect,
-  const std::wstring &name) {
+                         const std::wstring &name) {
   const QString nameQString = QString::fromStdWString(name);
   QRect textRect = p.boundingRect(chipRect, Qt::AlignCenter, nameQString);
 
   if (chipRect.width() < textRect.width()) {
     // align left if the name is too wide to fit on the chip
-    p.drawText(chipRect.adjusted(4, 0, -4, 0),
-      Qt::AlignLeft | Qt::AlignVCenter, nameQString);
-  }
-  else {
+    p.drawText(chipRect.adjusted(4, 0, -4, 0), Qt::AlignLeft | Qt::AlignVCenter,
+               nameQString);
+  } else {
     // otherwise align by center
     p.drawText(chipRect, Qt::AlignCenter, nameQString);
   }
@@ -580,6 +581,7 @@ static void drawChipName(QPainter &p, const QRect &chipRect,
  */
 void PageViewer::paintEvent(QPaintEvent *e) {
   QPainter p(this);
+  QColor textColor = p.pen().color();
   if (m_chipPerRow == 0) {
     p.drawText(QPoint(5, 25), tr("- No Styles -"));
     return;
@@ -656,10 +658,11 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       // toggle link
       drawToggleLink(p, chipRect, m_page->getStyle(i));
     }
-     if (!m_page->getPalette()->isLocked()) {
+    if (ShowNewStyleButton && !m_page->getPalette()->isLocked()) {
       int j      = getChipCount();
       QRect rect = getItemRect(j);
-      p.setPen(QColor(200, 200, 200));
+      p.setPen(
+          QColor(textColor.red(), textColor.green(), textColor.blue(), 128));
       // p.fillRect(rect, QBrush(QColor(0, 0, 0, 64)));
       // p.drawRect(rect);
       tmpFont.setPointSize(16);
@@ -671,7 +674,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       // revert font set
       p.setFont(preFont);
       p.setPen(Qt::black);
-     }
+    }
 
   } else {
     int currentStyleIndex = getCurrentStyleIndex();
@@ -805,8 +808,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         // display mode
         if (m_nameDisplayMode == Style) {
           drawChipName(p, chipRect, name);
-        }
-        else if (m_nameDisplayMode == Original) {
+        } else if (m_nameDisplayMode == Original) {
           if (origName != L"") {
             tmpFont.setItalic(true);
             p.setFont(tmpFont);
@@ -900,11 +902,12 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       // draw link indicator
       drawToggleLink(p, chipRect, style);
     }
-     // draw new style chip
-    if (!m_page->getPalette()->isLocked()) {
+    // draw new style chip
+    if (ShowNewStyleButton && !m_page->getPalette()->isLocked()) {
       i              = getChipCount();
-      QRect chipRect = getItemRect(i).adjusted(0, -1, 0, -1);
-      p.setPen(QColor(200, 200, 200));
+      QRect chipRect = getItemRect(i).adjusted(4, 4, -5, -5);
+      p.setPen(
+          QColor(textColor.red(), textColor.green(), textColor.blue(), 128));
       p.fillRect(chipRect, QBrush(QColor(0, 0, 0, 64)));
       p.drawRect(chipRect);
       tmpFont.setPointSize(16);
@@ -993,13 +996,14 @@ void PageViewer::mousePressEvent(QMouseEvent *event) {
   }
   m_dragStartPosition = pos;
   if (indexInPage < 0 || indexInPage >= getChipCount()) {
-    if (indexInPage == getChipCount() && !m_page->getPalette()->isLocked()) {
+    if (ShowNewStyleButton && indexInPage == getChipCount() &&
+        !m_page->getPalette()->isLocked()) {
       PaletteCmd::createStyle(getPaletteHandle(), getPage());
     } else {
       // the user clicked out of the color chips.wants to deselect everything
       // (leaving the selection active, for a possible paste)
-    m_styleSelection->select(pageIndex);
-    m_styleSelection->makeCurrent();
+      m_styleSelection->select(pageIndex);
+      m_styleSelection->makeCurrent();
     }
 
     update();
@@ -1366,8 +1370,8 @@ bool PageViewer::event(QEvent *e) {
     if (0 <= indexInPage && indexInPage < m_page->getStyleCount()) {
       TColorStyle *style = m_page->getStyle(indexInPage);
       if (style) {
-        int styleIndex = m_page->getStyleId(indexInPage);        
-       toolTip        = "#" + QString::number(styleIndex) + " " +
+        int styleIndex = m_page->getStyleId(indexInPage);
+        toolTip        = "#" + QString::number(styleIndex) + " " +
                   QString::fromStdWString(style->getName());
 
         int shortcutKey = m_page->getPalette()->getStyleShortcut(styleIndex);
@@ -1376,8 +1380,8 @@ bool PageViewer::event(QEvent *e) {
                                              (wchar_t)shortcutKey + L")");
       }
     }
-     if (indexInPage == m_page->getStyleCount()) {
-        toolTip = tr("New Style");
+    if (ShowNewStyleButton && indexInPage == m_page->getStyleCount()) {
+      toolTip = tr("New Style");
     }
     if (toolTip != "")
       QToolTip::showText(helpEvent->globalPos(), toolTip);
@@ -1471,7 +1475,8 @@ void PageViewer::computeSize() {
   QSize chipSize = getChipSize();
   m_chipPerRow   = m_viewMode == List ? 1 : (w - 8) / chipSize.width();
   if (m_chipPerRow == 0) m_chipPerRow = 1;
-  int rowCount = (chipCount + m_chipPerRow) / m_chipPerRow;
+  if (ShowNewStyleButton) chipCount++;
+  int rowCount = (chipCount + m_chipPerRow - 1) / m_chipPerRow;
   setMinimumSize(w, rowCount * chipSize.height() + 10);
 }
 
