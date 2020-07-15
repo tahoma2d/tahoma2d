@@ -246,6 +246,7 @@ bool PageViewer::getShowStyleIndex() { return ShowStyleIndex == 1; }
 /*! Set current page to \b page and update view.
  */
 void PageViewer::setPage(TPalette::Page *page) {
+  if (m_page == page) return;
   m_page = page;
   computeSize();
   update();
@@ -595,6 +596,8 @@ static void drawChipName(QPainter &p, const QRect &chipRect,
  */
 void PageViewer::paintEvent(QPaintEvent *e) {
   QPainter p(this);
+  QColor textColor = p.pen().color();
+
   if (m_chipPerRow == 0) {
     p.drawText(QPoint(5, 25), tr("- No Styles -"));
     return;
@@ -674,9 +677,8 @@ void PageViewer::paintEvent(QPaintEvent *e) {
     if (!m_page->getPalette()->isLocked()) {
       int j      = getChipCount();
       QRect rect = getItemRect(j);
-      p.setPen(QColor(200, 200, 200));
-      // p.fillRect(rect, QBrush(QColor(0, 0, 0, 64)));
-      // p.drawRect(rect);
+      p.setPen(
+          QColor(textColor.red(), textColor.green(), textColor.blue(), 128));
       tmpFont.setPointSize(16);
       tmpFont.setBold(true);
       p.setFont(tmpFont);
@@ -918,8 +920,9 @@ void PageViewer::paintEvent(QPaintEvent *e) {
     // draw new style chip
     if (!m_page->getPalette()->isLocked()) {
       i              = getChipCount();
-      QRect chipRect = getItemRect(i).adjusted(0, -1, 0, -1);
-      p.setPen(QColor(200, 200, 200));
+      QRect chipRect = getItemRect(i).adjusted(4, 4, -5, -5);
+      p.setPen(
+          QColor(textColor.red(), textColor.green(), textColor.blue(), 128));
       p.fillRect(chipRect, QBrush(QColor(0, 0, 0, 64)));
       p.drawRect(chipRect);
       tmpFont.setPointSize(16);
