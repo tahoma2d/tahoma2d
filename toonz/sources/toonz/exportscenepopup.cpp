@@ -537,7 +537,7 @@ ExportScenePopup::ExportScenePopup(std::vector<TFilePath> scenes)
   QGridLayout *newProjectLayout = new QGridLayout(newProjectWidget);
 
   m_newProjectButton =
-      new QRadioButton(tr("Create New Project"), newProjectWidget);
+      new QRadioButton(tr("New Project in Documents"), newProjectWidget);
   group->addButton(m_newProjectButton, 1);
   newProjectLayout->addWidget(m_newProjectButton, 0, 0, 1, 2, Qt::AlignLeft);
 
