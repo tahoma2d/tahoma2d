@@ -428,15 +428,19 @@ void ChangeObjectParent::refresh() {
       newText = QString("Peg ") + indexStr;
       pegbarList.append(newText);
     }
-    if (id.isColumn() && (!xsh->isColumnEmpty(index) || index < 2)) {
+    if (id.isColumn() && !xsh->isColumnEmpty(index)) {
       newText          = QString("Col ") + indexStr;
       QString tempText = newText;
-      std::string name = tree->getStageObject(i)->getName();
-      if (name.length() > 0 &&
-          name != tempText.replace(" ", "").toStdString()) {
-        newText += " (" + QString::fromStdString(name) + " )";
+      if (xsh->getColumn(index)->getColumnType() !=
+              TXshColumn::eSoundTextType &&
+          xsh->getColumn(index)->getColumnType() != TXshColumn::eSoundType) {
+        std::string name = tree->getStageObject(i)->getName();
+        if (name.length() > 0 &&
+            name != tempText.replace(" ", "").toStdString()) {
+          newText += " (" + QString::fromStdString(name) + " )";
+        }
+        columnList.append(newText);
       }
-      columnList.append(newText);
     }
     if (newText.length() > theLongestTxt.length()) theLongestTxt = newText;
   }
@@ -2271,29 +2275,31 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
             event->button() == Qt::RightButton)
           return;
+        if (!xsh->getColumn(m_col)->getSoundTextColumn()) {
+          if (o->rect(PredefinedRect::PEGBAR_NAME)
+                  .adjusted(0, 0, -20, 0)
+                  .contains(mouseInCell)) {
+            m_changeObjectParent->refresh();
 
-        if (o->rect(PredefinedRect::PEGBAR_NAME)
-                .adjusted(0, 0, -20, 0)
-                .contains(mouseInCell)) {
-          m_changeObjectParent->refresh();
-
-          m_changeObjectParent->show(
-              QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                     m_viewer->positionToXY(CellPosition(0, m_col)) +
-                     QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
-                     QPoint(m_viewer->getColumnScrollValue(), 0)));
-          return;
-        }
-        TStageObjectId columnId = m_viewer->getObjectId(m_col);
-        bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
-        if (isColumn &&
-            o->rect(PredefinedRect::PARENT_HANDLE_NAME).contains(mouseInCell)) {
-          m_changeObjectHandle->refresh();
-          m_changeObjectHandle->show(QPoint(
-              o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-              m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-              QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
-          return;
+            m_changeObjectParent->show(QPoint(
+                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+                m_viewer->positionToXY(CellPosition(0, m_col)) +
+                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
+                QPoint(m_viewer->getColumnScrollValue(), 0)));
+            return;
+          }
+          TStageObjectId columnId = m_viewer->getObjectId(m_col);
+          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+          if (isColumn &&
+              o->rect(PredefinedRect::PARENT_HANDLE_NAME)
+                  .contains(mouseInCell)) {
+            m_changeObjectHandle->refresh();
+            m_changeObjectHandle->show(QPoint(
+                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+                m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
+                QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
+            return;
+          }
         }
 
         setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
