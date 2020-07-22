@@ -2,6 +2,7 @@
 #include "../toonz/tapp.h"
 #include "tsystem.h"
 #include "tsound.h"
+#include "tenv.h"
 
 #include <QProcess>
 #include <QDir>
@@ -30,12 +31,20 @@ bool Ffmpeg::checkFfmpeg() {
   // check the Tahoma root directory next
   path = QDir::currentPath() + "/ffmpeg";
 #if defined(_WIN32)
-  path = path + ".exe";
+  path = path + ".exe";	
 #endif
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
     return true;
   }
+    
+#ifdef MACOSX
+    path = QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/ffmpeg";
+    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+        Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/");
+        return true;
+    }
+#endif
 
   // give up
   return false;
@@ -58,6 +67,14 @@ bool Ffmpeg::checkFfprobe() {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
     return true;
   }
+    
+#ifdef MACOSX
+    path = QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/ffprobe";
+    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+        Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/");
+        return true;
+    }
+#endif
 
   // give up
   return false;

@@ -282,9 +282,13 @@ if(BUILD_ENV_MSVC)
         PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/Tools/opencv/build"
     )
 elseif(BUILD_ENV_UNIXLIKE)
-    find_package(OpenCV 3.2 REQUIRED)
+    find_package(OpenCV 4.1 REQUIRED
+        PATHS "/Users/turtletooth/opencv_build/"
+    )
 else()
-    find_package(OpenCV 4.1 REQUIRED)
+    find_package(OpenCV 4.1 REQUIRED
+        PATHS "/Users/turtletooth/opencv_build/"
+    )
 endif()
 include_directories(
     ${SDKROOT}/libjpeg-turbo64/include
