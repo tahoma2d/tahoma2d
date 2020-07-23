@@ -63,6 +63,7 @@
 #include "toonz/imagestyles.h"
 #include "toutputproperties.h"
 #include "toonz/studiopalette.h"
+#include "toonz/tpalettehandle.h"
 
 // TnzCore includes
 #include "tofflinegl.h"
@@ -3000,6 +3001,82 @@ public:
         ->notifyPaletteDirtyFlagChanged();
   }
 } overwritePaletteCommandHandler;
+
+//=============================================================================
+// Save Default palette
+//-----------------------------------------------------------------------------
+class SaveAsDefaultPaletteCommandHandler final : public MenuItemHandler {
+public:
+  SaveAsDefaultPaletteCommandHandler()
+      : MenuItemHandler(MI_SaveAsDefaultPalette) {}
+
+  void execute() override {
+    TPalette *palette = TApp::instance()->getCurrentPalette()->getPalette();
+    if (!palette) {
+      DVGui::warning("No current palette");
+      return;
+    }
+
+    int levelType = UNKNOWN_XSHLEVEL;
+    QString levelTypeStr, displayStr;
+
+    if (palette->isDefaultPalette()) {
+      levelType = palette->getDefaultPaletteType();
+    } else {
+      TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
+      if (!level) {
+        DVGui::warning("No current level.");
+        return;
+      }
+      TXshSimpleLevel *sl = level->getSimpleLevel();
+      if (!sl) {
+        DVGui::warning("Current level is not a simple level.");
+        return;
+      }
+      levelType = sl->getType();
+    }
+
+    switch (levelType) {
+    case TZP_XSHLEVEL:
+      levelTypeStr = "smart_raster";
+      displayStr   = "Smart Raster";
+      break;
+    case PLI_XSHLEVEL:
+      levelTypeStr = "vector";
+      displayStr   = "Vector";
+      break;
+    case OVL_XSHLEVEL:
+      levelTypeStr = "raster";
+      displayStr   = "Raster";
+      break;
+    default:
+      DVGui::warning(
+          "This is not a Vector, Smart Raster or Raster level palette.");
+      return;
+    }
+
+    TFilePath palettePath =
+        ToonzFolder::getMyModuleDir() +
+        TFilePath(levelTypeStr.toStdString() + "_default.tpl");
+
+    TFileStatus pfs(palettePath);
+    if (pfs.doesExist()) {
+      QString question;
+      int ret;
+      question = "A default " + displayStr +
+                 " palette exists. Are you sure you want to overwrite with the "
+                 "current?";
+      ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                          QObject::tr("Don't Overwrite"), 0);
+
+      if (ret == 2 || ret == 0) return;
+    }
+
+    StudioPalette::instance()->save(palettePath, palette);
+    TApp::instance()->getPaletteController()->setDefaultPalette(levelType,
+                                                                palette);
+  }
+} saveDefaultPaletteCommandHandler;
 
 //=============================================================================
 // Save scene and levels

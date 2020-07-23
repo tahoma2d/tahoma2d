@@ -1774,6 +1774,10 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(
       MI_OverwritePalette, tr("&Save Palette"), "",
       tr("Save the current style palette as a separate file."));
+  createRightClickMenuAction(MI_SaveAsDefaultPalette,
+                             tr("&Save As Default Palette"), "",
+                             tr("Save the current style palette as the default "
+                                "for new levels of the current level type."));
   createMenuFileAction(MI_LoadColorModel, tr("&Load Color Model..."), "",
                        tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,

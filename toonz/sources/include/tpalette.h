@@ -194,6 +194,8 @@ private:
   int m_currentFrame;         //!< Palette's current frame in style animations.
   bool m_isCleanupPalette;    //!< Whether the palette is used for cleanup
                               //! purposes.
+  bool m_isDefaultPalette;   //!< Whether the palette is a level default palette
+  int m_defaultPaletteType;  //!< Indicates default palette's type
 
   TImageP m_refImg;
   TFilePath m_refImgPath;
@@ -354,6 +356,20 @@ between RGBA color components.
       bool on);  //!< Sets the palette's identity as a cleanup palette.
   bool isCleanupPalette() const {
     return m_isCleanupPalette;
+  }  //!< Returns whether this is a cleanup palette.
+
+  void setIsDefaultPalette(bool on) {
+    m_isDefaultPalette = on;
+  }  //!< Sets the palette's identity as a cleanup palette.
+  bool isDefaultPalette() const {
+    return m_isDefaultPalette;
+  }  //!< Returns whether this is a cleanup palette.
+
+  void setDefaultPaletteType(int levelType) {
+    m_defaultPaletteType = levelType;
+  }  //!< Sets the palette's identity as a cleanup palette.
+  int getDefaultPaletteType() const {
+    return m_defaultPaletteType;
   }  //!< Returns whether this is a cleanup palette.
 
   const TImageP &getRefImg() const {

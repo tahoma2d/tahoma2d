@@ -6,14 +6,40 @@
 #include "toonz/tscenehandle.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshlevel.h"
+#include "toonz/txshleveltypes.h"
+#include "toonz/toonzfolders.h"
 
 // TnzBase includes
 #include "tenv.h"
+#include "tsystem.h"
+#include "tstream.h"
 
 #include "toonz/palettecontroller.h"
 
 TEnv::IntVar PaletteControllerAutoApplyState("PaletteControllerAutoApplyState",
                                              1);
+
+TPalette *loadDefaultPalette(QString levelType) {
+  TFilePath palettePath = ToonzFolder::getMyModuleDir() +
+                          TFilePath(levelType.toStdString() + "_default.tpl");
+  TFileStatus pfs(palettePath);
+
+  TPalette *defaultPalette = new TPalette();
+
+  if (!pfs.doesExist() || !pfs.isReadable()) return defaultPalette;
+
+  TIStream is(palettePath);
+  if (!is) return defaultPalette;
+
+  std::string tagName;
+  if (!is.matchTag(tagName) || tagName != "palette") return defaultPalette;
+
+  std::string gname;
+  is.getTagParam("name", gname);
+  defaultPalette->loadData(is);
+
+  return defaultPalette;
+}
 
 PaletteController::PaletteController()
     : QObject()
@@ -22,7 +48,10 @@ PaletteController::PaletteController()
     , m_originalCurrentPalette(0)
     , m_currentPalette(0)
     , m_colorAutoApplyEnabled(true)
-    , m_colorSample() {
+    , m_colorSample()
+    , m_defaultRaster(0)
+    , m_defaultToonzRaster(0)
+    , m_defaultVector(0) {
   m_currentLevelPalette   = new TPaletteHandle;
   m_currentCleanupPalette = new TPaletteHandle;
   m_currentPalette        = new TPaletteHandle;
@@ -41,6 +70,21 @@ PaletteController::PaletteController()
 
   QObject::connect(m_currentLevelPalette, SIGNAL(paletteLockChanged()), this,
                    SLOT(editLevelPalette()));
+
+  m_defaultRaster = loadDefaultPalette("raster");
+  m_defaultRaster->setPaletteName(L"Default Raster Palette");
+  m_defaultRaster->setIsDefaultPalette(true);
+  m_defaultRaster->setDefaultPaletteType(OVL_XSHLEVEL);
+
+  m_defaultToonzRaster = loadDefaultPalette("smart_raster");
+  m_defaultToonzRaster->setPaletteName(L"Default Smart Raster Palette");
+  m_defaultToonzRaster->setIsDefaultPalette(true);
+  m_defaultToonzRaster->setDefaultPaletteType(TZP_XSHLEVEL);
+
+  m_defaultVector = loadDefaultPalette("vector");
+  m_defaultVector->setPaletteName(L"Default Vector Palette");
+  m_defaultVector->setIsDefaultPalette(true);
+  m_defaultVector->setDefaultPaletteType(PLI_XSHLEVEL);
 }
 
 //-----------------------------------------------------------------------------
@@ -115,5 +159,38 @@ void PaletteController::setColorSample(const TPixel32 &color) {
   if (m_colorSample != color) {
     m_colorSample = color;
     emit colorSampleChanged(m_colorSample);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+TPalette *PaletteController::getDefaultPalette(int levelType) {
+  switch (levelType) {
+  case PLI_XSHLEVEL:
+    return m_defaultVector;
+  case TZP_XSHLEVEL:
+    return m_defaultToonzRaster;
+  case OVL_XSHLEVEL:
+    return m_defaultRaster;
+  default:
+    break;
+  }
+
+  return 0;
+}
+
+void PaletteController::setDefaultPalette(int levelType, TPalette *palette) {
+  switch (levelType) {
+  case PLI_XSHLEVEL:
+    m_defaultVector = palette;
+    break;
+  case TZP_XSHLEVEL:
+    m_defaultToonzRaster = palette;
+    break;
+  case OVL_XSHLEVEL:
+    m_defaultRaster = palette;
+    break;
+  default:
+    break;
   }
 }

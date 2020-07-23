@@ -3,6 +3,7 @@
 #include "toonz/fullcolorpalette.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
+#include "toonz/toonzfolders.h"
 #include "tsystem.h"
 #include "tstream.h"
 #include "tpalette.h"
@@ -43,10 +44,15 @@ TPalette *FullColorPalette::getPalette(ToonzScene *scene) {
   m_palette->addRef();
   TFilePath fullPath = scene->decodeFilePath(m_fullcolorPalettePath);
   if (!TSystem::doesExistFileOrLevel(fullPath)) {
-    // Per I francesi che hanno il nome vecchio della paletta
-    // Verra' caricata la vecchia ma salvata col nome nuovo!
+    // For the French who have the old name of the headstock
+    // The old one will be loaded but saved with the new name!
     TFilePath app("+palettes\\fullcolorPalette.tpl");
     fullPath = scene->decodeFilePath(app);
+
+    // If fullcolorPalette not found, look fora default raster palette is
+    // defined
+    if (!TSystem::doesExistFileOrLevel(fullPath))
+      fullPath = ToonzFolder::getMyModuleDir() + "raster_default.tpl";
   }
   if (TSystem::doesExistFileOrLevel(fullPath)) {
     TPalette *app = new TPalette();
