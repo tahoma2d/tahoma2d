@@ -31,7 +31,7 @@ bool Ffmpeg::checkFfmpeg() {
   // check the Tahoma root directory next
   path = QDir::currentPath() + "/ffmpeg";
 #if defined(_WIN32)
-  path = path + ".exe";	
+  path = path + ".exe";
 #endif
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());

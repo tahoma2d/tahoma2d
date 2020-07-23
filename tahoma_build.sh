@@ -2,7 +2,7 @@
 export QTDIR=/usr/local/Cellar/qt/5.15.0
 export TOONZDIR=toonz/build/toonz/Release
 
-echo ">>> Copying stuff to $TOONZDIR/Tahoma.app/portablestuff"
+echo ">>> Copying stuff to $TOONZDIR/Tahoma.app/tahomastuff"
 cp -R stuff $TOONZDIR/Tahoma.app/tahomastuff
 
 echo ">>> Configuring Tahoma.app for deployment"
@@ -34,8 +34,8 @@ do
    fi
 done
    
-echo ">>> Creating Tahoma-OTX-osx.dmg"
+echo ">>> Creating Tahoma-osx.dmg"
 
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma.app -dmg -verbose=0
 
-mv $TOONZDIR/Tahoma.dmg $TOONZDIR/../Tahoma-osx.dmg
+mv $TOONZDIR/Tahoma.dmg $TOONZDIR/../../Tahoma-osx.dmg
