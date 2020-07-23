@@ -25,6 +25,7 @@
 // TnzCore includes
 #include "tconvert.h"
 #include "tsystem.h"
+#include "tenv.h"
 
 // Qt includes
 #include <QVBoxLayout>
@@ -38,6 +39,7 @@
 #include <QLabel>
 #include <QDrag>
 
+TEnv::IntVar ShowNewStyleButton("ShowNewStyleButton", 1);
 using namespace PaletteViewerGUI;
 
 //=============================================================================
@@ -1219,4 +1221,18 @@ void PaletteViewer::setIsLocked(bool lock) {
 
 void PaletteViewer::onSwitchToPage(int pageIndex) {
   m_pagesBar->setCurrentIndex(pageIndex);
+}
+
+//-----------------------------------------------------------------------------
+
+void PaletteViewer::onShowNewStyleButtonToggled() {
+  ShowNewStyleButton = (ShowNewStyleButton == 1) ? 0 : 1;
+  QAction *act       = dynamic_cast<QAction *>(sender());
+  if (act) {
+    QString str = (ShowNewStyleButton) ? tr("Hide New Style Button")
+                                       : tr("Show New Style Button");
+    act->setText(str);
+  }
+  m_pageViewer->computeSize();
+  m_pageViewer->update();
 }

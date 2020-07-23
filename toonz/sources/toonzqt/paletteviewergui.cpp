@@ -40,6 +40,7 @@
 // enable to set font size for style name separately from other texts
 TEnv::IntVar EnvSoftwareCurrentFontSize_StyleName(
     "SoftwareCurrentFontSize_StyleName", 11);
+extern TEnv::IntVar ShowNewStyleButton;
 
 TEnv::IntVar ShowStyleIndex("ShowStyleIndex", 0);
 
@@ -573,9 +574,9 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 
 //-----------------------------------------------------------------------------
 /*! Draw the chip name \b name inside rectangle \b chipRect using painter \b p.
-* If the name is too wide to fit on the chip, use left align - to show the
-* start of the name. Otherwise, use center align.
-*/
+ * If the name is too wide to fit on the chip, use left align - to show the
+ * start of the name. Otherwise, use center align.
+ */
 static void drawChipName(QPainter &p, const QRect &chipRect,
                          const std::wstring &name) {
   const QString nameQString = QString::fromStdWString(name);
