@@ -366,18 +366,18 @@ void TApp::updateXshLevel() {
       if (!xl && frame > 0) {
         TXshCell cell = xsheet->getCell(frame - 1, column);
         xl            = cell.m_level.getPointer();
+      }
 
-        // If we're on an empty cell and auto create is enabled,
-        // the current level will be the last level before us
-        if (!xl && Preferences::instance()->isAutoCreateEnabled()) {
-          int r0, r1;
-          xsheet->getCellRange(column, r0, r1);
-          for (int r = std::max(r0, std::min(r1, frame)); r >= r0; r--) {
-            TXshCell cell = xsheet->getCell(r, column);
-            if (cell.isEmpty()) continue;
-            xl = cell.m_level.getPointer();
-            break;
-          }
+      // If we're on an empty cell and auto create is enabled,
+      // the current level will be the last level before us
+      if (!xl && Preferences::instance()->isAutoCreateEnabled()) {
+        int r0, r1;
+        xsheet->getCellRange(column, r0, r1);
+        for (int r = std::max(r0, std::min(r1, frame)); r >= r0; r--) {
+          TXshCell cell = xsheet->getCell(r, column);
+          if (cell.isEmpty()) continue;
+          xl = cell.m_level.getPointer();
+          break;
         }
       }
     }
