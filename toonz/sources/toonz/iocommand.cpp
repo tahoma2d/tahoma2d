@@ -3030,7 +3030,7 @@ public:
       }
       TXshSimpleLevel *sl = level->getSimpleLevel();
       if (!sl) {
-        DVGui::warning("Current level is not a simple level.");
+        DVGui::warning("Current level is not a drawing level.");
         return;
       }
       levelType = sl->getType();
