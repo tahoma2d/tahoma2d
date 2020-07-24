@@ -52,7 +52,7 @@ TPalette *FullColorPalette::getPalette(ToonzScene *scene) {
     // If fullcolorPalette not found, look fora default raster palette is
     // defined
     if (!TSystem::doesExistFileOrLevel(fullPath))
-      fullPath = ToonzFolder::getMyModuleDir() + "raster_default.tpl";
+      fullPath = ToonzFolder::getMyPalettesDir() + "raster_default.tpl";
   }
   if (TSystem::doesExistFileOrLevel(fullPath)) {
     TPalette *app = new TPalette();

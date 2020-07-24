@@ -20,7 +20,7 @@ TEnv::IntVar PaletteControllerAutoApplyState("PaletteControllerAutoApplyState",
                                              1);
 
 TPalette *loadDefaultPalette(QString levelType) {
-  TFilePath palettePath = ToonzFolder::getMyModuleDir() +
+  TFilePath palettePath = ToonzFolder::getMyPalettesDir() +
                           TFilePath(levelType.toStdString() + "_default.tpl");
   TFileStatus pfs(palettePath);
 

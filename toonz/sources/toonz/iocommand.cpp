@@ -3055,9 +3055,11 @@ public:
       return;
     }
 
+    TFilePath fp = ToonzFolder::getMyPalettesDir();
+    if (!TFileStatus(fp).doesExist()) TSystem::mkDir(fp);
+
     TFilePath palettePath =
-        ToonzFolder::getMyModuleDir() +
-        TFilePath(levelTypeStr.toStdString() + "_default.tpl");
+        fp + TFilePath(levelTypeStr.toStdString() + "_default.tpl");
 
     TFileStatus pfs(palettePath);
     if (pfs.doesExist()) {
