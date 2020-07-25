@@ -988,6 +988,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Saving
       {rasterBackgroundColor, tr("Matte color:")},
       {resetUndoOnSavingLevel, tr("Clear Undo History when Saving Levels")},
+      {doNotShowPopupSaveScene, tr("Do not show Save Scene popup warning")},
 
       // Import / Export
       {ffmpegPath, tr("FFmpeg Path:")},
@@ -1530,6 +1531,7 @@ QWidget* PreferencesPopup::createSavingPage() {
   lay->addWidget(matteColorLabel, 0, 0, 1, 3, Qt::AlignLeft);
   insertUI(rasterBackgroundColor, lay);
   insertUI(resetUndoOnSavingLevel, lay);
+  insertUI(doNotShowPopupSaveScene, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
