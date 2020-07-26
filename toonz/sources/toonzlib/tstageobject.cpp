@@ -1815,7 +1815,11 @@ void TStageObject::loadData(TIStream &is) {
     for (; itKfInd != keyframeIndexSet.end(); itKfInd++)
       setkey(m_scale, *itKfInd);
   }
-  updateKeyframes();
+  // Calling updateKeyframes() here may cause failure to load expressions
+  // especially if it refers to a curve which is to be loaded AFTER this
+  // function while loading scene process. So I will skip it assuming that
+  // updateKeyframes() will be called when it is actually needed.
+  // updateKeyframes();
   if (m_spline != 0 && isUppkEnabled())
     m_spline->addParam(m_posPath.getPointer());
   invalidate();

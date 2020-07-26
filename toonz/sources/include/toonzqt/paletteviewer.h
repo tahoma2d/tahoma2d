@@ -169,6 +169,7 @@ protected slots:
   void setIsLocked(bool lock);
 
   void onSwitchToPage(int pageIndex);
+  void onShowNewStyleButtonToggled();
 
 private:
   void setSaveDefaultText(QAction *action, int levelType);
