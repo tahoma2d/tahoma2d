@@ -322,7 +322,6 @@
     <menu title="Help">
         <command>MI_OpenOnlineManual</command>
         <command>MI_OpenWhatsNew</command>
-        <command>MI_OpenCommunityForum</command>
         <separator/>
         <command>MI_OpenReportABug</command>
         <separator/>
