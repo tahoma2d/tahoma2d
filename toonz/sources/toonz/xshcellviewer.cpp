@@ -57,6 +57,7 @@
 #include "toonz/txshpalettelevel.h"
 #include "toonz/doubleparamcmd.h"
 #include "toonz/preferences.h"
+#include "toonz/palettecontroller.h"
 
 // TnzBase includes
 #include "tdoublekeyframe.h"
@@ -867,6 +868,12 @@ void RenameCellField::renameCell() {
         TXshSimpleLevel *sl = xl->getSimpleLevel();
         if (levelType == TZP_XSHLEVEL || levelType == OVL_XSHLEVEL)
           sl->setFrame(fid, sl->createEmptyFrame());
+        if (levelType == TZP_XSHLEVEL || levelType == PLI_XSHLEVEL) {
+          TPalette *defaultPalette =
+              TApp::instance()->getPaletteController()->getDefaultPalette(
+                  levelType);
+          if (defaultPalette) sl->setPalette(defaultPalette->clone());
+        }
       } else
         xl = scene->createNewLevel(TZI_XSHLEVEL, levelName);
     }

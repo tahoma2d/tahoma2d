@@ -9,6 +9,8 @@
 #include "tsystem.h"
 #include "tstream.h"
 
+#include "toonz/txshleveltypes.h"
+
 // Qt includes
 #include <QMutexLocker>
 
@@ -246,7 +248,9 @@ TPalette::TPalette()
     , m_isLocked(false)
     , m_askOverwriteFlag(false)
     , m_shortcutScopeIndex(0)
-    , m_currentStyleId(1) {
+    , m_currentStyleId(1)
+    , m_isDefaultPalette(false)
+    , m_defaultPaletteType(UNKNOWN_XSHLEVEL) {
   QString tempName(QObject::tr("colors"));
   std::wstring pageName = tempName.toStdWString();
   Page *page            = addPage(pageName);

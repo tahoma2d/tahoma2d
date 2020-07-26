@@ -505,6 +505,12 @@ TImage *TTool::touchImage() {
   int levelType    = pref->getDefLevelType();
   TXshLevel *xl    = scene->createNewLevel(levelType);
   sl               = xl->getSimpleLevel();
+  if (levelType == TZP_XSHLEVEL || levelType == PLI_XSHLEVEL) {
+    TPalette *defaultPalette =
+        getApplication()->getPaletteController()->getDefaultPalette(levelType);
+    if (defaultPalette) sl->setPalette(defaultPalette->clone());
+  }
+
   m_isLevelCreated = true;
 
   // create the drawing

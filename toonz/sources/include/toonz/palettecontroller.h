@@ -25,6 +25,7 @@
 //    Forward declarations
 
 class TPaletteHandle;
+class TPalette;
 
 //=====================================================
 
@@ -50,6 +51,10 @@ class DVAPI PaletteController final : public QObject {
   TPixel32 m_colorSample;
   bool m_colorAutoApplyEnabled;
 
+  TPalette *m_defaultVector;
+  TPalette *m_defaultToonzRaster;
+  TPalette *m_defaultRaster;
+
 public:
   PaletteController();
   ~PaletteController();
@@ -63,6 +68,9 @@ public:
   TPaletteHandle *getCurrentPalette() const { return m_currentPalette; }
 
   void setCurrentPalette(TPaletteHandle *paletteHandle);
+
+  TPalette *getDefaultPalette(int levelType);
+  void setDefaultPalette(int levelType, TPalette *palette);
 
   // centralized handling of color auto-apply. see StyleEditor.
   // when ColorAutoApply is disabled then changes should made on the ColorSample

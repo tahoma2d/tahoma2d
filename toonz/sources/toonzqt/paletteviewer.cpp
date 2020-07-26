@@ -21,6 +21,8 @@
 #include "toonz/studiopalette.h"
 #include "toonz/tframehandle.h"
 #include "toonz/fullcolorpalette.h"
+#include "toonz/txshlevelhandle.h"
+#include "toonz/txshleveltypes.h"
 
 // TnzCore includes
 #include "tconvert.h"
@@ -89,6 +91,7 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
     , m_indexPageToDelete(-1)
     , m_viewType(viewType)
     , m_frameHandle(0)
+    , m_levelHandle(0)
     , m_paletteHandle(0)
     , m_changeStyleCommand(0)
     , m_xsheetHandle(0)
@@ -273,7 +276,8 @@ void PaletteViewer::setXsheetHandle(TXsheetHandle *xsheetHandle) {
  * selection
  */
 void PaletteViewer::setLevelHandle(TXshLevelHandle *levelHandle) {
-  m_pageViewer->setLevelHandle(levelHandle);
+  m_levelHandle = levelHandle;
+  m_pageViewer->setLevelHandle(m_levelHandle);
 }
 
 //-----------------------------------------------------------------------------
@@ -307,7 +311,11 @@ void PaletteViewer::enableSaveAction(bool enable) {
   for (i = 0; i < actions.count() - 1; i++) {
     QAction *act = actions[i];
     if (act->text() == tr("&Save Palette As") ||
-        act->text() == tr("&Save Palette"))
+        act->text() == tr("&Save Palette") ||
+        act->text() == tr("&Save As Default Vector Palette") ||
+        act->text() == tr("&Save As Default Smart Raster Palette") ||
+        act->text() == tr("&Save As Default Raster Palette") ||
+        act->text() == tr("&Save As Default Palette"))
       act->setEnabled(enable);
   }
 }
@@ -484,6 +492,12 @@ void PaletteViewer::createSavePaletteToolBar() {
   QAction *savePalette =
       new QAction(savePaletteIcon, tr("&Save Palette"), m_savePaletteToolBar);
   savePalette->setToolTip(tr("Save the palette."));
+  QAction *saveDefaultPalette =
+      new QAction(tr("&Save As Default Palette"), m_savePaletteToolBar);
+  saveDefaultPalette->setToolTip(
+      tr("Save the palette as the default for new levels of the current level "
+         "type."));
+
   if (m_viewType == STUDIO_PALETTE) {
     connect(savePalette, SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
     m_viewMode->addSeparator();
@@ -503,6 +517,12 @@ void PaletteViewer::createSavePaletteToolBar() {
             CommandManager::instance()->getAction("MI_OverwritePalette"),
             SIGNAL(triggered()));
     m_viewMode->addAction(savePalette);
+
+    // save as default palette
+    connect(saveDefaultPalette, SIGNAL(triggered()),
+            CommandManager::instance()->getAction("MI_SaveAsDefaultPalette"),
+            SIGNAL(triggered()));
+    m_viewMode->addAction(saveDefaultPalette);
   }
 
   viewModeButton->setMenu(m_viewMode);
@@ -589,11 +609,25 @@ void PaletteViewer::updateSavePaletteToolBar() {
   int i;
   for (i = 0; i < actions.count(); i++) {
     QAction *act = actions[i];
+
     if (act->text() == tr("&Save Palette As") ||
         act->text() == tr("&Save Palette") ||
         act->text() == tr("&Palette Gizmo"))
       act->setEnabled(enable);
-    else if (m_viewType != STUDIO_PALETTE && i == 1)  // move action
+    else if (act->text() == tr("&Save As Default Vector Palette") ||
+             act->text() == tr("&Save As Default Smart Raster Palette") ||
+             act->text() == tr("&Save As Default Raster Palette") ||
+             act->text() == tr("&Save As Default Palette")) {
+      if (m_levelHandle) {
+        int levelType = m_levelHandle->getLevel()
+                            ? m_levelHandle->getLevel()->getType()
+                            : getPalette()
+                                  ? getPalette()->getDefaultPaletteType()
+                                  : UNKNOWN_XSHLEVEL;
+        setSaveDefaultText(act, levelType);
+      }
+      act->setEnabled(enable);
+    } else if (m_viewType != STUDIO_PALETTE && i == 1)  // move action
       actions[i]->setVisible(enable);
     else
       actions[i]->setEnabled(true);
@@ -611,11 +645,25 @@ void PaletteViewer::updatePaletteMenu() {
   int i;
   for (i = 0; i < actions.count(); i++) {
     QAction *act = actions[i];
+
     if (act->text() == tr("&Save Palette As") ||
         act->text() == tr("&Save Palette") ||
         act->text() == tr("&Palette Gizmo"))
       act->setEnabled(enable);
-    else
+    else if (act->text() == tr("&Save As Default Vector Palette") ||
+             act->text() == tr("&Save As Default Smart Raster Palette") ||
+             act->text() == tr("&Save As Default Raster Palette") ||
+             act->text() == tr("&Save As Default Palette")) {
+      if (m_levelHandle) {
+        int levelType = m_levelHandle->getLevel()
+                            ? m_levelHandle->getLevel()->getType()
+                            : getPalette()
+                                  ? getPalette()->getDefaultPaletteType()
+                                  : UNKNOWN_XSHLEVEL;
+        setSaveDefaultText(act, levelType);
+      }
+      act->setEnabled(enable);
+    } else
       actions[i]->setEnabled(true);
 
     if (act->data().canConvert<int>()) {
@@ -648,6 +696,23 @@ void PaletteViewer::setChangeStyleCommand(
 //-----------------------------------------------------------------------------
 /*! Create and open the Right-click menu.
  */
+void PaletteViewer::setSaveDefaultText(QAction *action, int levelType) {
+  switch (levelType) {
+  case PLI_XSHLEVEL:
+    action->setText(tr("&Save As Default Vector Palette"));
+    break;
+  case TZP_XSHLEVEL:
+    action->setText(tr("&Save As Default Smart Raster Palette"));
+    break;
+  case OVL_XSHLEVEL:
+    action->setText(tr("&Save As Default Raster Palette"));
+    break;
+  default:
+    action->setText(tr("&Save As Default Palette"));
+    break;
+  }
+}
+
 void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
   m_indexPageToDelete = -1;
   QPoint pos          = event->pos();
@@ -679,6 +744,17 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(
         CommandManager::instance()->getAction("MI_OverwritePalette"));
     menu->addAction(CommandManager::instance()->getAction("MI_SavePaletteAs"));
+    QAction *action =
+        CommandManager::instance()->getAction("MI_SaveAsDefaultPalette");
+    menu->addAction(action);
+
+    if (m_levelHandle) {
+      int levelType = m_levelHandle->getLevel()
+                          ? m_levelHandle->getLevel()->getType()
+                          : getPalette() ? getPalette()->getDefaultPaletteType()
+                                         : UNKNOWN_XSHLEVEL;
+      setSaveDefaultText(action, levelType);
+    }
   }
 
   if (m_viewType == LEVEL_PALETTE && !getPalette()->isLocked() &&

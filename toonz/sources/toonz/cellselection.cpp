@@ -480,6 +480,10 @@ bool pasteStrokesInCellWithoutUndo(
       TXshLevel *xl     = scene->createNewLevel(PLI_XSHLEVEL);
       if (!xl) return false;
       sl = xl->getSimpleLevel();
+      TPalette *defaultPalette =
+          TApp::instance()->getPaletteController()->getDefaultPalette(
+              PLI_XSHLEVEL);
+      if (defaultPalette) sl->setPalette(defaultPalette->clone());
       assert(sl);
       app->getCurrentScene()->notifyCastChange();
     }
@@ -658,7 +662,13 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
       if (!xl) return false;
       isLevelCreated = true;
       sl             = xl->getSimpleLevel();
-      assert(sl);
+      if (levelType == TZP_XSHLEVEL) {
+        TPalette *defaultPalette =
+            TApp::instance()->getPaletteController()->getDefaultPalette(
+                levelType);
+        if (defaultPalette) sl->setPalette(defaultPalette->clone());
+      }
+	  assert(sl);
       app->getCurrentScene()->notifyCastChange();
 
       if (levelType == TZP_XSHLEVEL || levelType == OVL_XSHLEVEL) {
@@ -2837,6 +2847,13 @@ static void createNewDrawing(TXsheet *xsh, int row, int col,
     // no level found. create it
     TXshLevel *xl = xsh->getScene()->createNewLevel(preferredLevelType);
     sl            = xl->getSimpleLevel();
+    if (preferredLevelType == TZP_XSHLEVEL ||
+        preferredLevelType == PLI_XSHLEVEL) {
+      TPalette *defaultPalette =
+          TApp::instance()->getPaletteController()->getDefaultPalette(
+              preferredLevelType);
+      if (defaultPalette) sl->setPalette(defaultPalette->clone());
+    }
     TApp::instance()->getCurrentScene()->notifyCastChange();
     levelCreated = true;
   } else {
@@ -3271,6 +3288,9 @@ TXshSimpleLevel *TCellSelection::getNewToonzRasterLevel(
   TXshLevel *level =
       scene->createNewLevel(TZP_XSHLEVEL, newName, TDimension(), 0, fp);
   TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+  TPalette *defaultPalette =
+      TApp::instance()->getPaletteController()->getDefaultPalette(TZP_XSHLEVEL);
+  if (defaultPalette) sl->setPalette(defaultPalette->clone());
   return sl;
 }
 
