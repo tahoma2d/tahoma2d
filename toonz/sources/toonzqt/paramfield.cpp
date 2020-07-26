@@ -1243,12 +1243,30 @@ void SpectrumParamField::onKeyRemoved(int keyIndex) {
 }
 
 //=============================================================================
+// Mode Sensitive Box
+//-----------------------------------------------------------------------------
+
+ModeSensitiveBox::ModeSensitiveBox(QWidget *parent,
+                                   ModeChangerParamField *modeChanger,
+                                   QList<int> modes)
+    : QWidget(parent), m_modes(modes) {
+  connect(modeChanger, SIGNAL(modeChanged(int)), this,
+          SLOT(onModeChanged(int)));
+}
+
+//-----------------------------------------------------------------------------
+
+void ModeSensitiveBox::onModeChanged(int modeValue) {
+  setVisible(m_modes.contains(modeValue));
+}
+
+//=============================================================================
 // EnumParamField
 //-----------------------------------------------------------------------------
 
 EnumParamField::EnumParamField(QWidget *parent, QString name,
                                const TIntEnumParamP &param)
-    : ParamField(parent, name, param) {
+    : ModeChangerParamField(parent, name, param) {
   QString str;
   m_paramName = str.fromStdString(param->getName());
   m_om        = new QComboBox(this);
@@ -1300,6 +1318,8 @@ void EnumParamField::onChange(const QString &str) {
   emit currentParamChanged();
   emit actualParamChanged();
 
+  emit modeChanged(m_actualParam->getValue());
+
   if (undo) TUndoManager::manager()->add(undo);
 }
 
@@ -1312,6 +1332,7 @@ void EnumParamField::setParam(const TParamP &current, const TParamP &actual,
   assert(m_currentParam);
   assert(m_actualParam);
   update(frame);
+  emit modeChanged(m_actualParam->getValue());
 }
 
 //-----------------------------------------------------------------------------
@@ -1336,7 +1357,7 @@ void EnumParamField::update(int frame) {
 
 BoolParamField::BoolParamField(QWidget *parent, QString name,
                                const TBoolParamP &param)
-    : ParamField(parent, name, param) {
+    : ModeChangerParamField(parent, name, param) {
   QString str;
   m_paramName = str.fromStdString(param->getName());
   if (!param->hasUILabel()) m_interfaceName = name;
@@ -1362,6 +1383,8 @@ void BoolParamField::onToggled(bool checked) {
   emit currentParamChanged();
   emit actualParamChanged();
 
+  emit modeChanged((checked) ? 1 : 0);
+
   TBoolParamP boolParam = m_actualParam;
   if (boolParam)
     TUndoManager::manager()->add(new BoolParamFieldUndo(
@@ -1377,6 +1400,7 @@ void BoolParamField::setParam(const TParamP &current, const TParamP &actual,
   assert(m_currentParam);
   assert(m_actualParam);
   update(frame);
+  emit modeChanged((m_actualParam->getValue()) ? 1 : 0);
 }
 
 //-----------------------------------------------------------------------------
