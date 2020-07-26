@@ -2769,9 +2769,8 @@ public:
 
     QString question;
     question = QObject::tr(
-        "This action will not normally save any unsaved level changes, only "
-        "scene changes. Did you want to save scene only or did you really mean "
-        "to save all?");
+        "This only saves scene data, not unsaved level changes. Did you want "
+        "to save only the scene, or save all?");
     QString checkBoxLabel = QObject::tr("Do not show again.");
     QStringList buttons;
     buttons << QObject::tr("Save Scene Only") << QObject::tr("Save All");
