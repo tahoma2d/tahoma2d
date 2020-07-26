@@ -11,89 +11,86 @@
 
 AboutClickableLabel::AboutClickableLabel(QWidget* parent, Qt::WindowFlags f)
     : QLabel(parent) {
-    setStyleSheet("text-decoration: underline;");
+  setStyleSheet("text-decoration: underline;");
 }
 
 AboutClickableLabel::~AboutClickableLabel() {}
 
 void AboutClickableLabel::mousePressEvent(QMouseEvent* event) {
-    emit clicked();
+  emit clicked();
 }
 
+AboutPopup::AboutPopup(QWidget* parent)
+    : DVGui::Dialog(parent, true, "About Tahoma") {
+  setFixedWidth(300);
+  setFixedHeight(350);
 
-AboutPopup::AboutPopup(QWidget *parent) 
-	: DVGui::Dialog(parent, true, "About Tahoma") {
-    setFixedWidth(300);
-    setFixedHeight(350);
+  setWindowTitle(tr("About Tahoma"));
+  setTopMargin(0);
 
+  TFilePath baseLicensePath   = TEnv::getStuffDir() + "doc/LICENSE";
+  TFilePath tahomaLicensePath = baseLicensePath + "LICENSE.txt";
 
-    setWindowTitle(tr("About Tahoma"));
-    setTopMargin(0);
-   
-    TFilePath baseLicensePath = TEnv::getStuffDir() + "doc/LICENSE";
-    TFilePath tahomaLicensePath = baseLicensePath + "LICENSE.txt";
+  QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+  QLabel* logo = new QLabel(this);
 
-    QLabel* logo = new QLabel(this);
+  logo->setPixmap(QPixmap::fromImage(QImage(":Resources/startup.png")));
+  mainLayout->addWidget(logo);
 
-    logo->setPixmap(QPixmap::fromImage(QImage(":Resources/startup.png")));
-    mainLayout->addWidget(logo);
+  QString name = QString::fromStdString(TEnv::getApplicationFullName());
+  name += "\nBuilt: " __DATE__;
+  mainLayout->addWidget(new QLabel(name));
 
-    QString name = QString::fromStdString(TEnv::getApplicationFullName());
-    name += "\nBuilt: " __DATE__;
-    mainLayout->addWidget(new QLabel(name));
+  QLabel* blankLabel = new QLabel(this);
+  blankLabel->setText(tr(" "));
+  blankLabel->setWordWrap(true);
 
-    QLabel *blankLabel = new QLabel(this);
-    blankLabel->setText(tr(" "));
-    blankLabel->setWordWrap(true);
+  mainLayout->addWidget(blankLabel);
 
-    mainLayout->addWidget(blankLabel);
+  AboutClickableLabel* licenseLink = new AboutClickableLabel(this);
+  licenseLink->setText(tr("Tahoma License"));
 
+  connect(licenseLink, &AboutClickableLabel::clicked, [=]() {
+    if (TSystem::isUNC(tahomaLicensePath))
+      QDesktopServices::openUrl(
+          QUrl(QString::fromStdWString(tahomaLicensePath.getWideString())));
+    else
+      QDesktopServices::openUrl(QUrl::fromLocalFile(
+          QString::fromStdWString(tahomaLicensePath.getWideString())));
+  });
 
-    AboutClickableLabel* licenseLink = new AboutClickableLabel(this);
-    licenseLink->setText(tr("Tahoma License"));
+  mainLayout->addWidget(licenseLink);
 
-    connect(licenseLink, &AboutClickableLabel::clicked, [=]() {
-        if (TSystem::isUNC(tahomaLicensePath))
-            QDesktopServices::openUrl(
-                QUrl(QString::fromStdWString(tahomaLicensePath.getWideString())));
-        else
-            QDesktopServices::openUrl(QUrl::fromLocalFile(
-                QString::fromStdWString(tahomaLicensePath.getWideString())));
-        });
+  AboutClickableLabel* thirdPartyLink = new AboutClickableLabel(this);
+  thirdPartyLink->setText(tr("Third Party Licenses"));
 
-    mainLayout->addWidget(licenseLink);
+  connect(thirdPartyLink, &AboutClickableLabel::clicked, [=]() {
+    if (TSystem::isUNC(baseLicensePath))
+      QDesktopServices::openUrl(
+          QUrl(QString::fromStdWString(baseLicensePath.getWideString())));
+    else
+      QDesktopServices::openUrl(QUrl::fromLocalFile(
+          QString::fromStdWString(baseLicensePath.getWideString())));
+  });
 
-    AboutClickableLabel* thirdPartyLink = new AboutClickableLabel(this);
-    thirdPartyLink->setText(tr("Third Party Licenses"));
+  mainLayout->addWidget(thirdPartyLink);
 
-    connect(thirdPartyLink, &AboutClickableLabel::clicked, [=]() {
-        if (TSystem::isUNC(baseLicensePath))
-            QDesktopServices::openUrl(
-                QUrl(QString::fromStdWString(baseLicensePath.getWideString())));
-        else
-            QDesktopServices::openUrl(QUrl::fromLocalFile(
-                QString::fromStdWString(baseLicensePath.getWideString())));
-        });
+  QLabel* ffmpegLabel = new QLabel(this);
+  ffmpegLabel->setText(
+      tr("Tahoma ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
+  mainLayout->addWidget(ffmpegLabel);
 
-    mainLayout->addWidget(thirdPartyLink);
-    
-    QLabel *ffmpegLabel = new QLabel(this);
-    ffmpegLabel->setText(tr("Tahoma ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
-    mainLayout->addWidget(ffmpegLabel);
-    
-    mainLayout->addStretch();
+  mainLayout->addStretch();
 
-    QFrame* mainFrame = new QFrame(this);
-    mainFrame->setLayout(mainLayout);
-    mainFrame->setFixedWidth(300); 
+  QFrame* mainFrame = new QFrame(this);
+  mainFrame->setLayout(mainLayout);
+  mainFrame->setFixedWidth(300);
 
-    addWidget(mainFrame);
+  addWidget(mainFrame);
 
-    QPushButton* button = new QPushButton(tr("Close"), this);
-    button->setDefault(true);
-    addButtonBarWidget(button);
-    connect(button, SIGNAL(clicked()), this, SLOT(accept()));
-
+  QPushButton* button = new QPushButton(tr("Close"), this);
+  button->setDefault(true);
+  addButtonBarWidget(button);
+  connect(button, SIGNAL(clicked()), this, SLOT(accept()));
 }

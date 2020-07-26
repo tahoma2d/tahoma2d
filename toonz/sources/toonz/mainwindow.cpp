@@ -569,8 +569,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
-  setCommandHandler(MI_OpenCommunityForum, this,
-                    &MainWindow::onOpenCommunityForum);
+  // setCommandHandler(MI_OpenCommunityForum, this,
+  //                  &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
@@ -1057,10 +1057,10 @@ void MainWindow::onOpenWhatsNew() {
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onOpenCommunityForum() {
-  QDesktopServices::openUrl(
-      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
-}
+// void MainWindow::onOpenCommunityForum() {
+//  QDesktopServices::openUrl(
+//      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -2206,7 +2206,7 @@ void MainWindow::defineActions() {
 
   createMenuHelpAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
   createMenuHelpAction(MI_OpenWhatsNew, tr("&What's New..."), "");
-  createMenuHelpAction(MI_OpenCommunityForum, tr("&Community Forum..."), "");
+  // createMenuHelpAction(MI_OpenCommunityForum, tr("&Community Forum..."), "");
   createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
 
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,

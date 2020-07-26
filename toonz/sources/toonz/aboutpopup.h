@@ -12,21 +12,19 @@
 class QPushButton;
 class QLineEdit;
 
-
-
 class AboutClickableLabel : public QLabel {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit AboutClickableLabel(QWidget* parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
-    ~AboutClickableLabel();
+  explicit AboutClickableLabel(QWidget* parent   = Q_NULLPTR,
+                               Qt::WindowFlags f = Qt::WindowFlags());
+  ~AboutClickableLabel();
 
 signals:
-    void clicked();
+  void clicked();
 
 protected:
-    void mousePressEvent(QMouseEvent* event);
-
+  void mousePressEvent(QMouseEvent* event);
 };
 
 //=============================================================================
@@ -34,13 +32,12 @@ protected:
 //-----------------------------------------------------------------------------
 
 class AboutPopup final : public DVGui::Dialog {
-    Q_OBJECT
+  Q_OBJECT
 
-        QPushButton* m_closeBtn;
+  QPushButton* m_closeBtn;
 
 public:
-    AboutPopup(QWidget* parent);
-
+  AboutPopup(QWidget* parent);
 };
 
 #endif  // ABOUTPOPUP_H
