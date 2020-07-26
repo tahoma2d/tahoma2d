@@ -597,6 +597,9 @@ void Preferences::definePreferenceItems() {
   define(shmall, "shmall", QMetaType::Int, -1);
   define(shmmni, "shmmni", QMetaType::Int, -1);
 #endif
+
+  define(doNotShowPopupSaveScene, "doNotShowPopupSaveScene", QMetaType::Bool,
+         false);
 }
 
 //-----------------------------------------------------------------

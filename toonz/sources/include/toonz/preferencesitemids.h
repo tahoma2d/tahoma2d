@@ -197,6 +197,8 @@ enum PreferencesItemId {
   // LineTestFpsCapture,
   // guidedDrawingType,
 
+  doNotShowPopupSaveScene,
+
   PreferencesItemCount
 };
 

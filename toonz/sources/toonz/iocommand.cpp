@@ -2762,7 +2762,33 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
 class SaveSceneCommandHandler final : public MenuItemHandler {
 public:
   SaveSceneCommandHandler() : MenuItemHandler(MI_SaveScene) {}
-  void execute() override { IoCmd::saveScene(); }
+  void execute() override {
+    if (Preferences::instance()->getBoolValue(doNotShowPopupSaveScene)) {
+      IoCmd::saveScene();
+      return;
+    }
+
+    QString question;
+    question = QObject::tr(
+        "This only saves scene data, not unsaved level changes. Did you want "
+        "to save only the scene, or save all?");
+    QString checkBoxLabel = QObject::tr("Do not show again.");
+    QStringList buttons;
+    buttons << QObject::tr("Save Scene Only") << QObject::tr("Save All");
+    DVGui::MessageAndCheckboxDialog *saveDialog = DVGui::createMsgandCheckbox(
+        DVGui::WARNING, question, checkBoxLabel, buttons, 0, Qt::Unchecked);
+    int ret     = saveDialog->exec();
+    int checked = saveDialog->getChecked();
+    saveDialog->deleteLater();
+
+    if (checked > 0)
+      Preferences::instance()->setValue(doNotShowPopupSaveScene, true);
+
+    if (ret == 1)
+      IoCmd::saveScene();
+    else if (ret == 2)
+      IoCmd::saveAll();
+  }
 } saveSceneCommandHandler;
 
 //---------------------------------------------------------------------------
