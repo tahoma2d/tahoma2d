@@ -14,6 +14,7 @@
 #include "viewerpane.h"
 #include "startuppopup.h"
 #include "statusbar.h"
+#include "aboutpopup.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -409,6 +410,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setStatusBar(m_statusBar);
   m_statusBar->setVisible(ShowStatusBarAction == 1 ? true : false);
   TApp::instance()->setStatusBar(m_statusBar);
+
+  m_aboutPopup = new AboutPopup(this);
 
   // Leggo i settings
   readSettings(argumentLayoutFileName);
@@ -1037,28 +1040,7 @@ void MainWindow::onUpgradeTabPro() {}
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onAbout() {
-  QLabel *label  = new QLabel();
-  QPixmap pixmap = QIcon(":Resources/splash.svg").pixmap(QSize(610, 344));
-  pixmap.setDevicePixelRatio(QApplication::desktop()->devicePixelRatio());
-  label->setPixmap(pixmap);
-
-  DVGui::Dialog *dialog = new DVGui::Dialog(this, true);
-  dialog->setWindowTitle(tr("About Tahoma"));
-  dialog->setTopMargin(0);
-  dialog->addWidget(label);
-
-  QString name = QString::fromStdString(TEnv::getApplicationFullName());
-  name += " (built " __DATE__ " " __TIME__ ")";
-  dialog->addWidget(new QLabel(name));
-
-  QPushButton *button = new QPushButton(tr("Close"), dialog);
-  button->setDefault(true);
-  dialog->addButtonBarWidget(button);
-  connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
-
-  dialog->exec();
-}
+void MainWindow::onAbout() { m_aboutPopup->exec(); }
 
 //-----------------------------------------------------------------------------
 

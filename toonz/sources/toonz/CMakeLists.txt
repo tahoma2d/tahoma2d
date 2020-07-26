@@ -1,6 +1,7 @@
 set(VERSION 1.4)
 
 set(MOC_HEADERS
+    aboutpopup.h
     addfilmstripframespopup.h
     adjustlevelspopup.h
     adjustthicknesspopup.h
@@ -234,6 +235,7 @@ set(SOURCES
     fileselection.cpp
     filmstripselection.cpp
     keyframeselection.cpp
+    aboutpopup.cpp
     addfilmstripframespopup.cpp
     camerasettingspopup.cpp
     convertpopup.cpp
