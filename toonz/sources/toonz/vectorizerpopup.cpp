@@ -36,6 +36,7 @@
 #include "toonz/sceneproperties.h"
 #include "toonz/imagemanager.h"
 #include "toonz/Naa2TlvConverter.h"
+#include "toonz/palettecontroller.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -304,8 +305,12 @@ void Vectorizer::setLevel(const TXshSimpleLevelP &level) {
   if (sl->getType() == TZP_XSHLEVEL) {
     palette = sl->getPalette()->clone();
     replaceMyPaintBrushStyles(palette);
-  } else
-    palette = new TPalette;
+  } else {
+    TPalette *defaultPalette =
+        TApp::instance()->getPaletteController()->getDefaultPalette(
+            PLI_XSHLEVEL);
+    palette = defaultPalette ? defaultPalette->clone() : new TPalette;
+  }
 
   palette->setPaletteName(vl->getName());
   vl->setPalette(palette);

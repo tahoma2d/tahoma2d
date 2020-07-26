@@ -22,6 +22,7 @@ class TPanel;
 class UpdateChecker;
 class TopBar;
 class StatusBar;
+class AboutPopup;
 //-----------------------------------------------------------------------------
 
 class Room final : public TMainWindow {
@@ -65,7 +66,7 @@ class MainWindow final : public QMainWindow {
 
   TopBar *m_topBar;
   StatusBar *m_statusBar;
-
+  AboutPopup *m_aboutPopup;
   QActionGroup *m_toolsActionGroup;
 
   QStackedWidget *m_stackedWidget;
@@ -100,7 +101,7 @@ public:
   void onAbout();
   void onOpenOnlineManual();
   void onOpenWhatsNew();
-  void onOpenCommunityForum();
+  // void onOpenCommunityForum();
   void onOpenReportABug();
   void checkForUpdates();
   int getRoomCount() const;

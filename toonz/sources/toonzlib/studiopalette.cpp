@@ -218,6 +218,14 @@ TFilePath StudioPalette::getProjectPalettesRoot() {
 
 //-------------------------------------------------------------------
 
+TFilePath StudioPalette::getPersonalPalettesRoot() {
+  TFilePath folderName = ToonzFolder::getMyPalettesDir();
+  if (folderName.isEmpty()) return TFilePath();
+  return folderName;
+}
+
+//-------------------------------------------------------------------
+
 static bool loadRefImg(TPalette *palette, TFilePath dir) {
   assert(palette);
   TFilePath fp = palette->getRefImgPath();
@@ -492,6 +500,9 @@ TFilePath StudioPalette::getPalettePath(std::wstring paletteId) {
   TFilePath fp = searchPalette(m_root, paletteId);
   if (fp == TFilePath()) {
     fp = searchPalette(getProjectPalettesRoot(), paletteId);
+  }
+  if (fp == TFilePath()) {
+    fp = searchPalette(getPersonalPalettesRoot(), paletteId);
   }
   table[paletteId] = fp;
   return fp;

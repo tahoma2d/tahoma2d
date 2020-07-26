@@ -185,6 +185,10 @@ TFilePath ToonzFolder::getRoomsFile(std::string fn) {
   return ToonzFolder::getRoomsFile(TFilePath(fn));
 }
 
+TFilePath ToonzFolder::getMyPalettesDir() {
+  return getMyModuleDir() + "palettes";
+}
+
 //===================================================================
 
 FolderListenerManager::FolderListenerManager() {}

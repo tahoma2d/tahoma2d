@@ -14,6 +14,7 @@
 #include "viewerpane.h"
 #include "startuppopup.h"
 #include "statusbar.h"
+#include "aboutpopup.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -410,6 +411,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   m_statusBar->setVisible(ShowStatusBarAction == 1 ? true : false);
   TApp::instance()->setStatusBar(m_statusBar);
 
+  m_aboutPopup = new AboutPopup(this);
+
   // Leggo i settings
   readSettings(argumentLayoutFileName);
 
@@ -566,8 +569,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
-  setCommandHandler(MI_OpenCommunityForum, this,
-                    &MainWindow::onOpenCommunityForum);
+  // setCommandHandler(MI_OpenCommunityForum, this,
+  //                  &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
@@ -1037,28 +1040,7 @@ void MainWindow::onUpgradeTabPro() {}
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onAbout() {
-  QLabel *label  = new QLabel();
-  QPixmap pixmap = QIcon(":Resources/splash.svg").pixmap(QSize(610, 344));
-  pixmap.setDevicePixelRatio(QApplication::desktop()->devicePixelRatio());
-  label->setPixmap(pixmap);
-
-  DVGui::Dialog *dialog = new DVGui::Dialog(this, true);
-  dialog->setWindowTitle(tr("About Tahoma"));
-  dialog->setTopMargin(0);
-  dialog->addWidget(label);
-
-  QString name = QString::fromStdString(TEnv::getApplicationFullName());
-  name += " (built " __DATE__ " " __TIME__ ")";
-  dialog->addWidget(new QLabel(name));
-
-  QPushButton *button = new QPushButton(tr("Close"), dialog);
-  button->setDefault(true);
-  dialog->addButtonBarWidget(button);
-  connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
-
-  dialog->exec();
-}
+void MainWindow::onAbout() { m_aboutPopup->exec(); }
 
 //-----------------------------------------------------------------------------
 
@@ -1075,10 +1057,10 @@ void MainWindow::onOpenWhatsNew() {
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onOpenCommunityForum() {
-  QDesktopServices::openUrl(
-      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
-}
+// void MainWindow::onOpenCommunityForum() {
+//  QDesktopServices::openUrl(
+//      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -1774,6 +1756,10 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(
       MI_OverwritePalette, tr("&Save Palette"), "",
       tr("Save the current style palette as a separate file."));
+  createRightClickMenuAction(MI_SaveAsDefaultPalette,
+                             tr("&Save As Default Palette"), "",
+                             tr("Save the current style palette as the default "
+                                "for new levels of the current level type."));
   createMenuFileAction(MI_LoadColorModel, tr("&Load Color Model..."), "",
                        tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,
@@ -2224,7 +2210,7 @@ void MainWindow::defineActions() {
 
   createMenuHelpAction(MI_OpenOnlineManual, tr("&Online Manual..."), "F1");
   createMenuHelpAction(MI_OpenWhatsNew, tr("&What's New..."), "");
-  createMenuHelpAction(MI_OpenCommunityForum, tr("&Community Forum..."), "");
+  // createMenuHelpAction(MI_OpenCommunityForum, tr("&Community Forum..."), "");
   createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
 
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,

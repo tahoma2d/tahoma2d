@@ -77,6 +77,8 @@ bool isInStudioPalette(TFilePath path) {
     return true;
   if (isInStudioPaletteFolder(path, studioPalette->getProjectPalettesRoot()))
     return true;
+  if (isInStudioPaletteFolder(path, studioPalette->getPersonalPalettesRoot()))
+    return true;
   return false;
 }
 
@@ -129,6 +131,10 @@ StudioPaletteTreeViewer::StudioPaletteTreeViewer(
   TFilePath projectPalettePath = studioPalette->getProjectPalettesRoot();
   if (TSystem::doesExistFileOrLevel(projectPalettePath))
     paletteItems.append(createRootItem(projectPalettePath));
+
+  TFilePath personalPalettePath = studioPalette->getPersonalPalettesRoot();
+  if (TSystem::doesExistFileOrLevel(personalPalettePath))
+    paletteItems.append(createRootItem(personalPalettePath));
 
   insertTopLevelItems(0, paletteItems);
 
@@ -196,7 +202,11 @@ void StudioPaletteTreeViewer::setStdPaletteHandle(
 
 QTreeWidgetItem *StudioPaletteTreeViewer::createRootItem(TFilePath path) {
   QString rootName = QString::fromStdWString(path.getWideName());
-  if (rootName != "Global Palettes") rootName = "Project Palettes";
+  if (rootName != "Global Palettes")
+    if (path == StudioPalette::instance()->getPersonalPalettesRoot())
+      rootName = "Personal Palettes";
+    else
+      rootName = "Project Palettes";
   QTreeWidgetItem *rootItem =
       new QTreeWidgetItem((QTreeWidget *)0, QStringList(rootName));
   rootItem->setIcon(0, m_folderIcon);
@@ -215,7 +225,8 @@ bool StudioPaletteTreeViewer::isRootItem(QTreeWidgetItem *item) {
 
   StudioPalette *studioPalette = StudioPalette::instance();
   if (path == studioPalette->getLevelPalettesRoot() ||
-      path == studioPalette->getProjectPalettesRoot())
+      path == studioPalette->getProjectPalettesRoot() ||
+      path == studioPalette->getPersonalPalettesRoot())
     return true;
 
   return false;
@@ -318,6 +329,10 @@ void StudioPaletteTreeViewer::refresh() {
   TFilePath projectPalettePath = studioPalette->getProjectPalettesRoot();
   if (!TSystem::doesExistFileOrLevel(projectPalettePath)) return;
   refreshItem(getItem(projectPalettePath));
+
+  TFilePath personalPalettePath = studioPalette->getPersonalPalettesRoot();
+  if (!TSystem::doesExistFileOrLevel(personalPalettePath)) return;
+  refreshItem(getItem(personalPalettePath));
 
   // refresh all expanded items
   QList<QTreeWidgetItem *> items =
@@ -898,7 +913,8 @@ void StudioPaletteTreeViewer::contextMenuEvent(QContextMenuEvent *event) {
 
     if (studioPalette->isFolder(path) &&
         studioPalette->getLevelPalettesRoot() != path &&
-        studioPalette->getProjectPalettesRoot() != path) {
+        studioPalette->getProjectPalettesRoot() != path &&
+        studioPalette->getPersonalPalettesRoot() != path) {
       menu.addSeparator();
       createMenuAction(menu, "", tr("Delete Folder"), "deleteItems()");
     } else if (studioPalette->isPalette(path)) {

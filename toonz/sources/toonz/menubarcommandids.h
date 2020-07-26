@@ -36,6 +36,7 @@
 #define MI_ExportLevel "MI_ExportLevel"
 #define MI_SavePaletteAs "MI_SavePaletteAs"
 #define MI_OverwritePalette "MI_OverwritePalette"
+#define MI_SaveAsDefaultPalette "MI_SaveAsDefaultPalette"
 #define MI_LoadColorModel "MI_LoadColorModel"
 #define MI_ImportMagpieFile "MI_ImportMagpieFile"
 #define MI_NewNoteLevel "MI_NewNoteLevel"
@@ -428,7 +429,7 @@
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
-#define MI_OpenCommunityForum "MI_OpenCommunityForum"
+// #define MI_OpenCommunityForum "MI_OpenCommunityForum"
 #define MI_OpenReportABug "MI_OpenReportABug"
 
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"

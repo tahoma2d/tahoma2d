@@ -519,6 +519,11 @@ bool LevelCreatePopup::apply() {
     sl->getProperties()->setImageDpi(TPointD(dpi, dpi));
     sl->getProperties()->setImageRes(TDimension(xres, yres));
   }
+  if (lType == TZP_XSHLEVEL || lType == PLI_XSHLEVEL) {
+    TPalette *defaultPalette =
+        TApp::instance()->getPaletteController()->getDefaultPalette(lType);
+    if (defaultPalette) sl->setPalette(defaultPalette->clone());
+  }
 
   /*-- これからLevelを配置しようとしているセルが空いているかどうかのチェック
    * --*/

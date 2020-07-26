@@ -159,6 +159,7 @@ elseif(BUILD_ENV_APPLE)
     message("PLATFORM:" ${PLATFORM})
     if(PLATFORM EQUAL 64)
         set(QT_PATH "~/Qt5.9.2/5.9.2/clang_64/lib" CACHE PATH "Qt installation directory")
+        # set(QT_PATH "/usr/local/Cellar/qt/5.15.0/lib" CACHE PATH "Qt installation directory")
         set(QT_LIB_PATH "${QT_PATH}/")
         set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
 
@@ -169,6 +170,7 @@ elseif(BUILD_ENV_APPLE)
             -D__MACOS__
         )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
     elseif(PLATFORM EQUAL 32)
         set(QT_PATH "~/Qt5.9.2/5.9.2/clang_32/lib" CACHE PATH "Qt installation directory")
@@ -284,7 +286,9 @@ if(BUILD_ENV_MSVC)
 elseif(BUILD_ENV_UNIXLIKE)
     find_package(OpenCV 3.2 REQUIRED)
 else()
-    find_package(OpenCV 4.1 REQUIRED)
+    find_package(OpenCV 4.1 REQUIRED
+        # PATHS "/Users/turtletooth/opencv_build/"
+    )
 endif()
 include_directories(
     ${SDKROOT}/libjpeg-turbo64/include

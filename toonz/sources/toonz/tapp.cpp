@@ -48,6 +48,7 @@
 #include "toonz/txshleveltypes.h"
 #include "toonz/tcamera.h"
 #include "toonz/preferences.h"
+#include "toonz/fullcolorpalette.h"
 
 #include "toonzqt/tabbar.h"
 
@@ -360,11 +361,24 @@ void TApp::updateXshLevel() {
       TXshCell cell = xsheet->getCell(frame, column);
       xl            = cell.m_level.getPointer();
 
-      // Se sono su una cella vuota successiva a celle di un certo livello
-      // prendo questo come livello corrente.
+      // If I'm on an empty cell next to cells of a certain level
+      // I take this as the current level.
       if (!xl && frame > 0) {
         TXshCell cell = xsheet->getCell(frame - 1, column);
         xl            = cell.m_level.getPointer();
+      }
+
+      // If we're on an empty cell and auto create is enabled,
+      // the current level will be the last level before us
+      if (!xl && Preferences::instance()->isAutoCreateEnabled()) {
+        int r0, r1;
+        xsheet->getCellRange(column, r0, r1);
+        for (int r = std::max(r0, std::min(r1, frame)); r >= r0; r--) {
+          TXshCell cell = xsheet->getCell(r, column);
+          if (cell.isEmpty()) continue;
+          xl = cell.m_level.getPointer();
+          break;
+        }
       }
     }
 
@@ -388,8 +402,25 @@ void TApp::updateXshLevel() {
           m_paletteController->getCurrentLevelPalette()->getStyleIndex();
       m_paletteController->getCurrentLevelPalette()->setPalette(
           xl->getPaletteLevel()->getPalette(), styleIndex);
-    } else
-      m_paletteController->getCurrentLevelPalette()->setPalette(0);
+    } else {
+      TPalette *defaultPalette = 0;
+      // Show default level type palette on empty columns when autocreate is
+      // enabled
+      if (column >= 0 && xsheet->isColumnEmpty(column) &&
+          Preferences::instance()->isAutoCreateEnabled()) {
+        int defaultLevelType = Preferences::instance()->getDefLevelType();
+        if (defaultLevelType == OVL_XSHLEVEL) {
+          ToonzScene *scene = m_currentScene->getScene();
+          defaultPalette    = FullColorPalette::instance()->getPalette(scene);
+        }
+
+        if (!defaultPalette)
+          defaultPalette =
+              m_paletteController->getDefaultPalette(defaultLevelType);
+      }
+      m_paletteController->getCurrentLevelPalette()->setPalette(defaultPalette,
+                                                                1);
+    }
   }
 }
 

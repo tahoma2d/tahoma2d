@@ -393,6 +393,66 @@ void CommandBarListTree::mousePressEvent(QMouseEvent* event) {
   QTreeWidget::mousePressEvent(event);
 }
 
+//-----------------------------------------------------------------------------
+
+void CommandBarListTree::displayAll(QTreeWidgetItem* item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    displayAll(item->child(i));
+  }
+  item->setHidden(false);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
+void CommandBarListTree::hideAll(QTreeWidgetItem* item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    hideAll(item->child(i));
+  }
+  item->setHidden(true);
+  item->setExpanded(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarListTree::searchItems(const QString& searchWord) {
+  // if search word is empty, show all items
+  if (searchWord.isEmpty()) {
+    int itemCount = topLevelItemCount();
+    for (int i = 0; i < itemCount; ++i) {
+      displayAll(topLevelItem(i));
+    }
+    update();
+    return;
+  }
+
+  // hide all items first
+  int itemCount = topLevelItemCount();
+  for (int i = 0; i < itemCount; ++i) {
+    hideAll(topLevelItem(i));
+  }
+
+  QList<QTreeWidgetItem*> foundItems =
+      findItems(searchWord, Qt::MatchContains | Qt::MatchRecursive, 0);
+  if (foundItems.isEmpty()) {  // if nothing is found, do nothing but update
+    update();
+    return;
+  }
+
+  // for each item found, show it and show its parent
+  for (auto item : foundItems) {
+    while (item) {
+      item->setHidden(false);
+      item->setExpanded(true);
+      item = item->parent();
+    }
+  }
+
+  update();
+}
+
 //=============================================================================
 // CommandBarPopup
 //-----------------------------------------------------------------------------
@@ -434,6 +494,8 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
   nf.setItalic(true);
   noticeLabel->setFont(nf);
 
+  QLineEdit* searchEdit = new QLineEdit(this);
+
   //--- layout
   QVBoxLayout* mainLay = new QVBoxLayout();
   m_topLayout->setMargin(0);
@@ -446,10 +508,20 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
     {
       mainUILay->addWidget(commandBarLabel, 0, 0);
       mainUILay->addWidget(commandItemListLabel, 0, 1);
-      mainUILay->addWidget(m_menuBarTree, 1, 0);
-      mainUILay->addWidget(m_commandListTree, 1, 1);
 
-      mainUILay->addWidget(noticeLabel, 2, 0, 1, 2);
+      mainUILay->addWidget(m_menuBarTree, 1, 0, 2, 1);
+
+      QHBoxLayout* searchLay = new QHBoxLayout();
+      searchLay->setMargin(0);
+      searchLay->setSpacing(5);
+      {
+        searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
+        searchLay->addWidget(searchEdit);
+      }
+      mainUILay->addLayout(searchLay, 1, 1);
+      mainUILay->addWidget(m_commandListTree, 2, 1);
+
+      mainUILay->addWidget(noticeLabel, 3, 0, 1, 2);
     }
     mainUILay->setRowStretch(0, 0);
     mainUILay->setRowStretch(1, 1);
@@ -473,6 +545,9 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
 
   bool ret = connect(okBtn, SIGNAL(clicked()), this, SLOT(onOkPressed()));
   ret      = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+  ret = ret && connect(searchEdit, SIGNAL(textChanged(const QString&)), this,
+                       SLOT(onSearchTextChanged(const QString&)));
+
   assert(ret);
 }
 
@@ -482,4 +557,12 @@ void CommandBarPopup::onOkPressed() {
   m_menuBarTree->saveMenuTree(m_path);
 
   accept();
+}
+
+void CommandBarPopup::onSearchTextChanged(const QString& text) {
+  static bool busy = false;
+  if (busy) return;
+  busy = true;
+  m_commandListTree->searchItems(text);
+  busy = false;
 }

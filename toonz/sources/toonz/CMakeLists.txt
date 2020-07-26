@@ -1,6 +1,7 @@
 set(VERSION 1.4)
 
 set(MOC_HEADERS
+    aboutpopup.h
     addfilmstripframespopup.h
     adjustlevelspopup.h
     adjustthicknesspopup.h
@@ -234,6 +235,7 @@ set(SOURCES
     fileselection.cpp
     filmstripselection.cpp
     keyframeselection.cpp
+    aboutpopup.cpp
     addfilmstripframespopup.cpp
     camerasettingspopup.cpp
     convertpopup.cpp
@@ -531,7 +533,7 @@ if(BUILD_ENV_APPLE)
     endforeach()
 
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
-    add_custom_command(TARGET OpenToonz POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
+    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
     add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)

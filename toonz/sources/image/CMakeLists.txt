@@ -100,7 +100,7 @@ add_definitions(
 )
 
 if(BUILD_ENV_APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.dylib")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-install_name,@executable_path/libimage.dylib")
     add_dependencies(image tnzcore tnzbase toonzlib)
 endif()
 
@@ -146,6 +146,7 @@ elseif(BUILD_ENV_APPLE)
             NAMES QD
             PATHS OSX10_6_SDK_PATH
         )
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -F ${OSX_10_6_SDK_PATH}")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -F ${OSX_10_6_SDK_PATH}")
     endif()
     set(EXTRA_LIBS

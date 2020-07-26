@@ -170,6 +170,9 @@ protected slots:
 
   void onSwitchToPage(int pageIndex);
   void onShowNewStyleButtonToggled();
+
+private:
+  void setSaveDefaultText(QAction *action, int levelType);
 };
 
 #endif  // PALETTEVIEWER_H

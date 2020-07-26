@@ -77,6 +77,7 @@ public:
 
   TFilePath getLevelPalettesRoot();
   TFilePath getProjectPalettesRoot();
+  TFilePath getPersonalPalettesRoot();
 
   // TFilePath getRefImage(const TFilePath palettePath);
 
