@@ -2347,7 +2347,7 @@ calculateTask:
 
 //-----------------------------------------------------------------------------
 
-inline void FrameCountReader::stopReading() { m_executor.cancelAll(); }
+void FrameCountReader::stopReading() { m_executor.cancelAll(); }
 
 //=============================================================================
 // FrameCountTask methods
@@ -2419,6 +2419,3 @@ void FrameCountTask::onCanceled(TThread::RunnableP thisTask) {
 
 OpenFloatingPanel openBrowserPane(MI_OpenFileBrowser, "Browser",
                                   QObject::tr("File Browser"));
-
-OpenFloatingPanel openPreproductionBoardPane(MI_OpenPreproductionBoard, "PreproductionBoard",
-                                  QObject::tr("Preproduction Board"));
