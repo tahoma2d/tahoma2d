@@ -322,11 +322,12 @@ CommandBarListTree::CommandBarListTree(QWidget* parent) : QTreeWidget(parent) {
   addFolder(ShortcutTree::tr("Visualization"), VisualizationButtonCommandType);
   addFolder(ShortcutTree::tr("Misc"), MiscCommandType);
   addFolder(ShortcutTree::tr("RGBA Channels"), RGBACommandType);
+  addFolder(ShortcutTree::tr("Stop Motion"), StopMotionCommandType);
 
   sortItems(0, Qt::AscendingOrder);
 
   CommandBarSeparatorItem* sep = new CommandBarSeparatorItem(0);
-  sep->setToolTip(0, QObject::tr("[Drag&Drop] to copy separator to menu bar"));
+  sep->setToolTip(0, QObject::tr("[Drag&Drop] to copy separator to toolbar"));
   addTopLevelItem(sep);
 }
 
@@ -347,7 +348,7 @@ void CommandBarListTree::addFolder(const QString& title, int commandType,
   CommandManager::instance()->getActions((CommandType)commandType, actions);
   for (int i = 0; i < (int)actions.size(); i++) {
     CommandBarCommandItem* item = new CommandBarCommandItem(folder, actions[i]);
-    item->setToolTip(0, QObject::tr("[Drag&Drop] to copy command to menu bar"));
+    item->setToolTip(0, QObject::tr("[Drag&Drop] to copy command to toolbar"));
   }
 }
 
@@ -480,7 +481,7 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
   okBtn->setFocusPolicy(Qt::NoFocus);
   cancelBtn->setFocusPolicy(Qt::NoFocus);
 
-  QLabel* commandItemListLabel = new QLabel(tr("Toolbar Items"), this);
+  QLabel* commandItemListLabel = new QLabel(tr("Commands"), this);
 
   QFont f("Arial", 15, QFont::Bold);
   commandBarLabel->setFont(f);
@@ -488,7 +489,7 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
 
   QLabel* noticeLabel =
       new QLabel(tr("Duplicated commands will be ignored. Only "
-                    "the last one will appear in the menu bar."),
+                    "the last one will appear in the toolbar."),
                  this);
   QFont nf("Arial", 9, QFont::Normal);
   nf.setItalic(true);
@@ -506,10 +507,10 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
     mainUILay->setHorizontalSpacing(8);
     mainUILay->setVerticalSpacing(5);
     {
-      mainUILay->addWidget(commandBarLabel, 0, 0);
-      mainUILay->addWidget(commandItemListLabel, 0, 1);
+      mainUILay->addWidget(commandItemListLabel, 0, 0);
+      mainUILay->addWidget(commandBarLabel, 0, 1);
 
-      mainUILay->addWidget(m_menuBarTree, 1, 0, 2, 1);
+      mainUILay->addWidget(m_menuBarTree, 1, 1, 2, 1);
 
       QHBoxLayout* searchLay = new QHBoxLayout();
       searchLay->setMargin(0);
@@ -518,8 +519,8 @@ CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
         searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
         searchLay->addWidget(searchEdit);
       }
-      mainUILay->addLayout(searchLay, 1, 1);
-      mainUILay->addWidget(m_commandListTree, 2, 1);
+      mainUILay->addLayout(searchLay, 1, 0);
+      mainUILay->addWidget(m_commandListTree, 2, 0);
 
       mainUILay->addWidget(noticeLabel, 3, 0, 1, 2);
     }
