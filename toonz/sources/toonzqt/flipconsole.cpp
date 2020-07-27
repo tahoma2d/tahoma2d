@@ -805,6 +805,10 @@ void FlipConsole::onNextFrame(int fps) {
     else
       m_fpsField->setLineEditBackgroundColor(Qt::red);
   }
+  if (m_stopAt > 0 && m_currentFrame >= m_stopAt) {
+    doButtonPressed(ePause);
+    m_stopAt = -1;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1525,12 +1529,14 @@ void FlipConsole::onButtonPressed(int button) {
           playingConsole->setChecked(eLoop, false);
           playingConsole->setChecked(ePause, true);
           stoppedOther = true;
+          m_stopAt     = -1;
         }
       }
       if (stoppedOther) {
         setChecked(ePlay, false);
         setChecked(eLoop, false);
         setChecked(ePause, true);
+        m_stopAt = -1;
         return;
       }
     }
@@ -1676,13 +1682,14 @@ void FlipConsole::doButtonPressed(UINT button) {
           playingConsole->setChecked(ePause, true);
         }
       }
+      m_stopAt = -1;
       return;
     }
 
     m_isLinkedPlaying = false;
 
     if (m_playbackExecutor.isRunning()) m_playbackExecutor.abort();
-
+    m_stopAt       = -1;
     m_isPlay       = false;
     m_blanksToDraw = 0;
 
@@ -1811,6 +1818,10 @@ void FlipConsole::doButtonPressed(UINT button) {
   updateCurrentTime();
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 }
+
+//--------------------------------------------------------------------
+
+void FlipConsole::setStopAt(int frame) { m_stopAt = frame; }
 
 //--------------------------------------------------------------------
 

@@ -286,6 +286,7 @@ public:
   }
   UINT getCustomizeMask() { return m_customizeMask; }
   void setCustomizemask(UINT mask);
+  void setStopAt(int frame);
 
   // the main (currently the only) use for current flipconsole and setActive is
   // to
@@ -362,6 +363,7 @@ private:
   std::vector<int> m_gadgetsMask;
   int m_from, m_to, m_step;
   int m_currentFrame, m_framesCount;
+  int m_stopAt = -1;
   ImagePainter::VisualSettings m_settings;
 
   bool m_isPlay;
