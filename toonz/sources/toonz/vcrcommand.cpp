@@ -16,6 +16,10 @@
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
+#include "toonz/toonzscene.h"
+#include "toonz/tscenehandle.h"
+#include "toonz/sceneproperties.h"
+#include "toutputproperties.h"
 
 #include <QApplication>
 
@@ -137,18 +141,32 @@ public:
   ShortPlayCommand() : MenuItemHandler(MI_ShortPlay) {}
 
   void execute() override {
-    int row                 = TApp::instance()->getCurrentFrame()->getFrame();
+    int currentFrame        = TApp::instance()->getCurrentFrame()->getFrame();
     int shortPlayFrameCount = Preferences::instance()->getShortPlayFrameCount();
     int maxFrame =
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
 
-    int count    = std::min(row, maxFrame);
-    int newFrame = std::max(0, count - shortPlayFrameCount);
+    int stopFrame = std::min(currentFrame, maxFrame);
 
-    TApp::instance()->getCurrentFrame()->setFrame(newFrame);
+    int r0, r1, step;
+    TApp::instance()
+        ->getCurrentScene()
+        ->getScene()
+        ->getProperties()
+        ->getPreviewProperties()
+        ->getRange(r0, r1, step);
+    if (stopFrame < r0) {
+      stopFrame = r0 + shortPlayFrameCount;
+    }
+    if (r1 > 0 && stopFrame > r1) {
+      stopFrame = r1;
+    }
+
+    int startFrame = std::max(0, stopFrame - shortPlayFrameCount);
+
+    TApp::instance()->getCurrentFrame()->setFrame(startFrame);
     FlipConsole *console = FlipConsole::getCurrent();
-    console->setStopAt(count + 1);
-
+    console->setStopAt(stopFrame + 1);
     CommandManager::instance()->execute(MI_Play);
   }
 };
