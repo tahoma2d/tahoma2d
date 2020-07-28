@@ -2,8 +2,12 @@
 	<page name="Text Iwa">
  	<vbox>
 		<control>targetType</control>
-		<control>columnIndex</control>
-		<control>text</control>
+		<vbox modeSensitive="targetType" mode="1">
+			<control>columnIndex</control>
+		</vbox>
+		<vbox modeSensitive="targetType" mode="2">
+			<control>text</control>
+		</vbox>
 		<control>hAlign</control>
 		<control>center</control>
 		<control>width</control>
