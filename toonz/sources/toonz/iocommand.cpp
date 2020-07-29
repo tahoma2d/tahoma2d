@@ -3100,6 +3100,13 @@ public:
       if (ret == 2 || ret == 0) return;
     }
 
+    if (!palette->isDefaultPalette()) {
+      palette = palette->clone();
+      palette->setPaletteName(L"Default " + displayStr.toStdWString() +
+                              L" Palette");
+      palette->setIsDefaultPalette(true);
+    }
+
     StudioPalette::instance()->save(palettePath, palette);
     TApp::instance()->getPaletteController()->setDefaultPalette(levelType,
                                                                 palette);
