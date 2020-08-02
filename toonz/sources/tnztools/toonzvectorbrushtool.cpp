@@ -1165,6 +1165,7 @@ bool ToonzVectorBrushTool::doGuidedAutoInbetween(
 
       bool frameCreated = m_isFrameCreated;
       m_isFrameCreated  = false;
+      touchImage();
       resultBack        = doFrameRangeStrokes(
           oFid, fStroke, cFid, cStroke,
           Preferences::instance()->getGuidedInterpolation(), breakAngles,
@@ -1199,6 +1200,7 @@ bool ToonzVectorBrushTool::doGuidedAutoInbetween(
 
       bool frameCreated = m_isFrameCreated;
       m_isFrameCreated  = false;
+      touchImage();
       resultFront       = doFrameRangeStrokes(
           cFid, cStroke, oFid, fStroke,
           Preferences::instance()->getGuidedInterpolation(), breakAngles,
