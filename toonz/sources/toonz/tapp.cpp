@@ -593,6 +593,10 @@ void TApp::onPaletteChanged() { m_currentScene->setDirtyFlag(true); }
 //-----------------------------------------------------------------------------
 
 void TApp::onLevelColorStyleSwitched() {
+  TXshLevel *sl = m_currentLevel->getLevel();
+  if (!sl || (sl->getType() != TZP_XSHLEVEL && sl->getType() != PLI_XSHLEVEL))
+    return;
+
   TPaletteHandle *ph = m_paletteController->getCurrentLevelPalette();
   assert(ph);
 
@@ -610,14 +614,12 @@ void TApp::onLevelColorStyleSwitched() {
 
       IconGenerator::instance()->setSettings(s);
 
-      TXshLevel *sl = m_currentLevel->getLevel();
-      if (!sl) return;
-
-      std::vector<TFrameId> fids;
-      sl->getFids(fids);
-
-      for (int i = 0; i < (int)fids.size(); i++)
-        IconGenerator::instance()->invalidate(sl, fids[i]);
+      if (sl->getType() == PLI_XSHLEVEL) {
+        std::vector<TFrameId> fids;
+        sl->getFids(fids);
+        for (int i = 0; i < (int)fids.size(); i++)
+          IconGenerator::instance()->invalidate(sl, fids[i]);
+      }
 
       m_currentLevel->notifyLevelViewChange();
     }

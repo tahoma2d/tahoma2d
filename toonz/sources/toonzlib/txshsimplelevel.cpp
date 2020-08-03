@@ -1600,6 +1600,7 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
 
     if (TSystem::doesExistFileOrLevel(decodedFp)) {
       TLevelReaderP lr(decodedFp);
+      lr->doReadPalette(false);
       const TImageInfo *imageInfo = m_frames.empty()
                                         ? lr->getImageInfo()
                                         : lr->getImageInfo(*(m_frames.begin()));
