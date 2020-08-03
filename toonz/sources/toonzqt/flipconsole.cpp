@@ -831,7 +831,8 @@ void FlipConsole::setFpsFieldColors() {
 
 void FlipConsole::playNextFrame() {
   int from = m_from, to = m_to;
-  if (m_markerFrom <= m_markerTo) from = m_markerFrom, to = m_markerTo;
+  if (m_markerFrom <= m_markerTo && m_stopAt == -1)
+    from = m_markerFrom, to = m_markerTo;
 
   if (m_framesCount == 0 ||
       (m_isPlay && m_currentFrame == (m_reverse ? from : to))) {
@@ -1604,9 +1605,12 @@ void FlipConsole::doButtonPressed(UINT button) {
 
   int from = m_from, to = m_to;
   // When the level editing mode, ignore the preview frame range marker
-  if (m_markerFrom <= m_markerTo && m_frameHandle &&
-      m_frameHandle->isEditingScene())
-    from = m_markerFrom, to = m_markerTo;
+  if ((m_markerFrom <= m_markerTo && m_frameHandle &&
+       m_frameHandle->isEditingScene()) &&
+      m_stopAt == -1) {
+    from = m_markerFrom;
+    to   = m_markerTo;
+  }
 
   bool linked = m_areLinked && m_isLinkable;
 

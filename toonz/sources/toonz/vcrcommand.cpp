@@ -16,10 +16,6 @@
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
-#include "toonz/toonzscene.h"
-#include "toonz/tscenehandle.h"
-#include "toonz/sceneproperties.h"
-#include "toutputproperties.h"
 
 #include <QApplication>
 
@@ -147,20 +143,6 @@ public:
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
 
     int stopFrame = std::min(currentFrame, maxFrame);
-
-    int r0, r1, step;
-    TApp::instance()
-        ->getCurrentScene()
-        ->getScene()
-        ->getProperties()
-        ->getPreviewProperties()
-        ->getRange(r0, r1, step);
-    if (stopFrame < r0) {
-      stopFrame = r0 + shortPlayFrameCount;
-    }
-    if (r1 > 0 && stopFrame > r1) {
-      stopFrame = r1;
-    }
 
     int startFrame = std::max(0, stopFrame - shortPlayFrameCount);
 
