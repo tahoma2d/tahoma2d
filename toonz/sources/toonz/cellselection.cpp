@@ -1248,6 +1248,8 @@ public:
   void redo() const override {
     insertLevelAndFrameIfNeeded();
 
+    IconGenerator::instance()->invalidate(m_level.getPointer(), m_frameId);
+
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     notifyImageChanged();
   }
@@ -2428,6 +2430,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   CreateBlankDrawingUndo *undo = new CreateBlankDrawingUndo(
       sl, frame, toolHandle->getTool()->m_isLevelCreated, palette);
   TUndoManager::manager()->add(undo);
+
+  IconGenerator::instance()->invalidate(sl, frame);
 
   // Reset back to what these were
   if (!isAutoCreateEnabled)
