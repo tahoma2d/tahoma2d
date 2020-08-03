@@ -222,11 +222,12 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   QPushButton *removePresetButton         = NULL;
 
   m_dominantFieldOm = 0;
+  m_renderButton    = new QPushButton(tr("Save and Render"), this);
+  if (isPreview) m_renderButton->setText("Preview");
   if (!isPreview) {
     showOtherSettingsButton = new QPushButton("", this);
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
-    m_renderButton          = new QPushButton(tr("Save and Render"), this);
 
     // Board
     m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
@@ -605,9 +606,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     }
     advancedSettingsBox->setLayout(fileSetBoxLay);
     m_topLayout->addWidget(advancedSettingsBox, 0);
-    if (!isPreview) {
-      m_topLayout->addWidget(m_renderButton);
-    }
+
+    m_topLayout->addWidget(m_renderButton);
     m_topLayout->addStretch(1);
   }
 
@@ -624,9 +624,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
                   SLOT(onFormatChanged(const QString &)));
     ret = ret && connect(m_fileFormatButton, SIGNAL(pressed()), this,
                          SLOT(openSettingsPopup()));
-    ret = ret && connect(m_renderButton, SIGNAL(pressed()), this,
-                         SLOT(onRenderClicked()));
   }
+  ret = ret && connect(m_renderButton, SIGNAL(pressed()), this,
+                       SLOT(onRenderClicked()));
   ret = ret &&
         connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
                 SLOT(onCameraChanged(const QString &)));
@@ -777,7 +777,10 @@ void OutputSettingsPopup::onSubcameraChecked(int state) {
 //-----------------------------------------------------------------------------
 
 void OutputSettingsPopup::onRenderClicked() {
-  CommandManager::instance()->execute("MI_Render");
+  if (m_isPreviewSettings) {
+    CommandManager::instance()->execute("MI_Preview");
+  } else
+    CommandManager::instance()->execute("MI_Render");
 }
 
 //-----------------------------------------------------------------------------
