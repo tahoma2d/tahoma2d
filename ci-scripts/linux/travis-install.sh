@@ -1,4 +1,4 @@
-sudo add-apt-repository --yes ppa:beineri/opt-qt-5.14.1-xenial
+sudo add-apt-repository --yes ppa:beineri/opt-qt597-xenial
 sudo add-apt-repository --yes ppa:achadwick/mypaint-testing
 sudo add-apt-repository --yes ppa:litenstein/opencv3-xenial
 sudo apt-get update
