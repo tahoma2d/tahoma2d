@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Tahoma
+Comment=2D animation
+Icon=io.github.Tahoma
+Exec=tahoma
+Categories=Graphics;
+Terminal=false
