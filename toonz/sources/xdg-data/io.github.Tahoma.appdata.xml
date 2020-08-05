@@ -5,21 +5,19 @@
   <name>Tahoma</name>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>BSD-3-Clause</project_license>
-  <developer_name>DWANGO Co., Ltd.</developer_name>
+  <developer_name>Tahoma</developer_name>
   <summary>2D animation</summary>
   <description>
     <p>
-      This is software for producing a 2D animation.
+      This is software for producing 2D and stop motion animation.
     </p>
     <p>
-      It is based on the software "Toonz", which was developed
-      by Digital Video S.p.A. in Italy, customized by Studio Ghibli,
-      and has been used for creating its works for many years.
-      Dwango launched the OpenToonz project in cooperation
-      with Digital Video and Studio Ghibli.
+      Tahoma is based on OpenToonz which itself is based on "Toonz",
+      developed by Digital Video S.p.A. in Italy and customized by
+      Studio Ghibli.
     </p>
   </description>
-  <url type="homepage">https://tahoma.github.io/e/</url>
+  <url type="homepage">https://tahoma2d.org</url>
   <url type="bugtracker">https://github.com/turtletooth/tahoma/issues</url>
   <screenshots>
     <screenshot type="default">
@@ -28,6 +26,6 @@
   </screenshots>
   <content_rating type="oars-1.1" />
   <releases>
-    <release version="1.4.0" date="2020-01-31"></release>
+    <release version="1.0" date="2020-01-31"></release>
   </releases>
 </component>
