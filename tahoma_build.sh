@@ -5,6 +5,14 @@ export TOONZDIR=toonz/build/toonz/Release
 echo ">>> Copying stuff to $TOONZDIR/Tahoma.app/tahomastuff"
 cp -R stuff $TOONZDIR/Tahoma.app/tahomastuff
 
+echo ">>> Copying FFmpeg to $TOONZDIR/Tahoma.app/ffmpeg"
+# This assumes an FFmpeg directory is in Downloads & that the executables are directly in that directory
+# (not in ffmpeg/bin or etc.) - path may need to be adjusted
+cp -R ~/Downloads/ffmpeg $TOONZDIR/Tahoma.app/ffmpeg
+
+echo ">>> Copying canon framework to $TOONZDIR/Tahoma.app/Contents/Frameworks/EDSDK.Framework"
+cp -R thirdparty/canon/Framework $TOONZDIR/Tahoma.app/Contents/Frameworks
+
 echo ">>> Configuring Tahoma.app for deployment"
 
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma.app -verbose=0 -always-overwrite \
