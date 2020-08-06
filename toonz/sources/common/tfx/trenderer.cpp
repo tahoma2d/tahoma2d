@@ -28,8 +28,8 @@
 #include <QThreadStorage>
 
 // Debug
-//#define DIAGNOSTICS
-//#include "diagnostics.h"
+// #define DIAGNOSTICS
+// #include "diagnostics.h"
 
 #include <queue>
 #include <functional>
@@ -1424,7 +1424,8 @@ void TRendererImp::startRendering(
     // If the render contains offscreen render, then prepare the
     // QOffscreenSurface
     // in main (GUI) thread. For now it is used only in the plasticDeformerFx.
-    if (alias.find("plasticDeformerFx") != std::string::npos &&
+    if ((alias.find("plasticDeformerFx") != std::string::npos ||
+         alias.find("iwa_FlowPaintBrushFx") != std::string::npos) &&
         QThread::currentThread() == qGuiApp->thread()) {
       rs.m_offScreenSurface.reset(new QOffscreenSurface());
       rs.m_offScreenSurface->setFormat(QSurfaceFormat::defaultFormat());

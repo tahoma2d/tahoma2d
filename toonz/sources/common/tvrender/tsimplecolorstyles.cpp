@@ -1407,6 +1407,14 @@ void TRasterImagePatternStrokeStyle::getObsoleteTagIds(
   ids.push_back(100);
 }
 
+//-----------------------------------------------------------------------------
+
+TRectD TRasterImagePatternStrokeStyle::getStrokeBBox(
+    const TStroke *stroke) const {
+  TRectD rect = TColorStyle::getStrokeBBox(stroke);
+  return rect.enlarge(std::max(rect.getLx() * 0.25, rect.getLy() * 0.25));
+}
+
 //*************************************************************************************
 //    TVectorImagePatternStrokeStyle  implementation
 //*************************************************************************************
@@ -1859,6 +1867,14 @@ TStrokeProp *TVectorImagePatternStrokeStyle::makeStrokeProp(
 void TVectorImagePatternStrokeStyle::getObsoleteTagIds(
     std::vector<int> &ids) const {
   // ids.push_back(100);
+}
+
+//-----------------------------------------------------------------------------
+
+TRectD TVectorImagePatternStrokeStyle::getStrokeBBox(
+    const TStroke *stroke) const {
+  TRectD rect = TColorStyle::getStrokeBBox(stroke);
+  return rect.enlarge(std::max(rect.getLx() * 0.25, rect.getLy() * 0.25));
 }
 
 //*************************************************************************************
