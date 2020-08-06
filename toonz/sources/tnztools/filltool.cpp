@@ -237,14 +237,12 @@ public:
   void onAdd() override {}
 
   int getSize() const override {
-    int size1 = m_regionFillInformation
-                    ? m_regionFillInformation->capacity() *
-                          sizeof(m_regionFillInformation)
-                    : 0;
-    int size2 = m_strokeFillInformation
-                    ? m_strokeFillInformation->capacity() *
-                          sizeof(m_strokeFillInformation)
-                    : 0;
+    int size1 = m_regionFillInformation ? m_regionFillInformation->capacity() *
+                                              sizeof(m_regionFillInformation)
+                                        : 0;
+    int size2 = m_strokeFillInformation ? m_strokeFillInformation->capacity() *
+                                              sizeof(m_strokeFillInformation)
+                                        : 0;
     return sizeof(*this) + size1 + size2 + 500;
   }
 
@@ -640,11 +638,10 @@ public:
   }
 
   int getSize() const override {
-    int size =
-        m_selectingStroke
-            ? m_selectingStroke->getControlPointCount() * sizeof(TThickPoint) +
-                  100
-            : 0;
+    int size = m_selectingStroke ? m_selectingStroke->getControlPointCount() *
+                                           sizeof(TThickPoint) +
+                                       100
+                                 : 0;
     return sizeof(*this) +
            m_regionFillInformation->capacity() *
                sizeof(m_regionFillInformation) +
@@ -870,7 +867,7 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 
     vi->findRegions();
 
-    std::vector<TFilledRegionInf> *regionFillInformation = 0;
+    std::vector<TFilledRegionInf> *regionFillInformation    = 0;
     std::vector<std::pair<int, int>> *strokeFillInformation = 0;
     if (colorType != LINES) {
       regionFillInformation = new std::vector<TFilledRegionInf>;
@@ -1648,9 +1645,9 @@ public:
     {
       double k = dy / dx; /*-- 直線の傾き --*/
       /*--- roundでは負値のときにうまく繋がらない ---*/
-      int start = std::min((int)floor(m_startPosition.x + 0.5),
+      int start      = std::min((int)floor(m_startPosition.x + 0.5),
                            (int)floor(m_mousePosition.x + 0.5));
-      int end = std::max((int)floor(m_startPosition.x + 0.5),
+      int end        = std::max((int)floor(m_startPosition.x + 0.5),
                          (int)floor(m_mousePosition.x + 0.5));
       double start_x = (m_startPosition.x < m_mousePosition.x)
                            ? m_startPosition.x
@@ -1673,9 +1670,9 @@ public:
     {
       double k = dx / dy; /*-- 直線の傾き --*/
       /*--- roundでは負値のときにうまく繋がらない ---*/
-      int start = std::min((int)floor(m_startPosition.y + 0.5),
+      int start      = std::min((int)floor(m_startPosition.y + 0.5),
                            (int)floor(m_mousePosition.y + 0.5));
-      int end = std::max((int)floor(m_startPosition.y + 0.5),
+      int end        = std::max((int)floor(m_startPosition.y + 0.5),
                          (int)floor(m_mousePosition.y + 0.5));
       double start_x = (m_startPosition.y < m_mousePosition.y)
                            ? m_startPosition.x
@@ -1773,7 +1770,7 @@ int FillTool::getCursorId() const {
   if (m_colorType.getValue() == LINES)
     ret = ToolCursor::FillCursorL;
   else {
-    ret                                      = ToolCursor::FillCursor;
+    ret = ToolCursor::FillCursor;
     if (m_colorType.getValue() == AREAS) ret = ret | ToolCursor::Ex_Area;
     if (!m_autopaintLines.getValue())
       ret = ret | ToolCursor::Ex_Fill_NoAutopaint;
@@ -1860,6 +1857,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       // drawCross(m_firstPoint, 6);
       invalidate();
     } else {
+      // When using tablet on windows, the mouse press event may be called AFTER
+      // tablet release. It causes unwanted another "first click" just after
+      // frame-range-filling. Calling processEvents() here to make sure to
+      // consume the mouse press event in advance.
+      qApp->processEvents();
       // SECONDO CLICK
       TFrameId fid = getCurrentFid();
       MultiFiller filler(m_firstPoint, pos, params,
@@ -2011,7 +2013,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   // Onion Skin
   else if (propertyName == m_onion.getName()) {
     if (m_onion.getValue()) FillType = ::to_string(m_fillType.getValue());
-    FillOnion                        = (int)(m_onion.getValue());
+    FillOnion = (int)(m_onion.getValue());
   }
   // Frame Range
   else if (propertyName == m_frameRange.getName()) {
@@ -2031,7 +2033,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   // Segment
   else if (propertyName == m_segment.getName()) {
     if (m_segment.getValue()) FillType = ::to_string(m_fillType.getValue());
-    FillSegment                        = (int)(m_segment.getValue());
+    FillSegment = (int)(m_segment.getValue());
   }
 
   // Autopaint
@@ -2286,9 +2288,9 @@ void FillTool::onActivate() {
   bool ret = true;
   ret      = ret && connect(TTool::m_application->getCurrentFrame(),
                        SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
-  ret = ret && connect(TTool::m_application->getCurrentScene(),
+  ret      = ret && connect(TTool::m_application->getCurrentScene(),
                        SIGNAL(sceneSwitched()), this, SLOT(onFrameSwitched()));
-  ret = ret &&
+  ret      = ret &&
         connect(TTool::m_application->getCurrentColumn(),
                 SIGNAL(columnIndexSwitched()), this, SLOT(onFrameSwitched()));
   assert(ret);
