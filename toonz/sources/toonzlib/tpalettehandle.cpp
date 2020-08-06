@@ -149,6 +149,8 @@ void TPaletteHandle::setPalette(TPalette *palette, int styleIndex) {
     m_styleParamIndex = 0;
 
     emit paletteSwitched();
+    // to let ToonzCheck to update the current index
+    emit broadcastColorStyleSwitched();
   }
 }
 
