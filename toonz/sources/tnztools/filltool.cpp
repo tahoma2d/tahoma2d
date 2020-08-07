@@ -1860,6 +1860,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       // drawCross(m_firstPoint, 6);
       invalidate();
     } else {
+      // When using tablet on windows, the mouse press event may be called AFTER
+      // tablet release. It causes unwanted another "first click" just after
+      // frame-range-filling. Calling processEvents() here to make sure to
+      // consume the mouse press event in advance.
+      qApp->processEvents();
       // SECONDO CLICK
       TFrameId fid = getCurrentFid();
       MultiFiller filler(m_firstPoint, pos, params,
