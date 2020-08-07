@@ -14,9 +14,6 @@ script:
 matrix:
     include:
         - os: linux
-          compiler: gcc
-          cache: ccache
-        - os: linux
           compiler: clang
         - os: osx
           osx_image: xcode10.1
