@@ -102,6 +102,7 @@ public:
   int m_liveViewExposureOffset      = 0;
   QString m_realShutterSpeed;
   QString m_displayedShutterSpeed;
+  QString m_imageQuality;
 
 // Canon Commands
 #ifdef WITH_CANON
