@@ -327,10 +327,10 @@ public:
   }
 
   double compute(double vars[3]) const override {
-    double s                = (m_seed.get() != 0) ? m_seed->compute(vars) : 0;
-    double period           = m_period->compute(vars);
+    double s      = (m_seed.get() != 0) ? m_seed->compute(vars) : 0;
+    double period = m_period->compute(vars);
     if (period == 0) period = 1;
-    double f                = m_arg->compute(vars);
+    double f = m_arg->compute(vars);
 
     double f0    = period * std::floor(f / period);
     double f1    = period * (std::floor(f / period) + 1);
@@ -736,11 +736,11 @@ public:
       while (k > 0) nodes[--k] = popNode(stack);
     } else {
       while (k > 1) nodes[--k] = popNode(stack);
-      nodes[0]                 = new VariableNode(calc, CalculatorNode::FRAME);
+      nodes[0] = new VariableNode(calc, CalculatorNode::FRAME);
     }
 
     // add default values
-    for (int i         = 0; i < m; i++)
+    for (int i = 0; i < m; i++)
       nodes[n - m + i] = new NumberNode(calc, m_optionalArgDefaults[i]);
   }
 };
@@ -1159,7 +1159,7 @@ public:
   double operator()(double x, double length, double height) const {
     if (length <= 0.0) return 0.0;
     if (height <= 0.0) height = length;
-    double q                  = x / length;
+    double q = x / length;
     return height * (q - floor(q));
   }
 };

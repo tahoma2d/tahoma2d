@@ -663,7 +663,7 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
       continue;
     }
 
-    QSize itemSize                                        = getItemSize(item);
+    QSize itemSize = getItemSize(item);
     if (maxWidgetWidth < itemSize.width()) maxWidgetWidth = itemSize.width();
     fieldsHeight += itemSize.height();
   }

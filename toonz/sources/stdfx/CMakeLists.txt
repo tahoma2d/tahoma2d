@@ -80,6 +80,7 @@ set(HEADERS
     iwa_spingradientfx.h
     iwa_lineargradientfx.h
     iwa_glarefx.h
+    iwa_fractalnoisefx.h
 )
 
 set(SOURCES
@@ -266,6 +267,7 @@ set(SOURCES
     iwa_spingradientfx.cpp
     iwa_lineargradientfx.cpp
     iwa_glarefx.cpp
+    iwa_fractalnoisefx.cpp
 )
 
 set(OBJCSOURCES

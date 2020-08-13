@@ -598,7 +598,6 @@ static void drawChipName(QPainter &p, const QRect &chipRect,
 void PageViewer::paintEvent(QPaintEvent *e) {
   QPainter p(this);
   QColor textColor = p.pen().color();
-
   if (m_chipPerRow == 0) {
     p.drawText(QPoint(5, 25), tr("- No Styles -"));
     return;
