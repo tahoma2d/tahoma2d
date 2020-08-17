@@ -1433,11 +1433,15 @@ bool StopMotion::importImage() {
       scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
   TFilePath fullResFile(fullResFp.withFrame(frameNumber));
 
+
+  TFilePath fullResRawFile(fullResFile.getQString().replace(fullResFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+  m_tempRaw = fullResRawFile.getQString();
   TFilePath liveViewFp =
       scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
   TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
 
   TFilePath tempFile = parentDir + "temp.jpg";
+  TFilePath tempRaw = parentDir + "temp.cr2";
 
   TXshSimpleLevel *sl = 0;
   TXshLevel *level    = scene->getLevelSet()->getLevel(levelName);
@@ -1568,6 +1572,12 @@ bool StopMotion::importImage() {
   if (!m_usingWebcam) {
     TSystem::copyFile(fullResFile, tempFile);
     TSystem::deleteFile(tempFile);
+
+    if (TSystem::doesExistFileOrLevel(TFilePath(tempRaw))) {
+        TSystem::copyFile(fullResRawFile, tempRaw);
+        TSystem::deleteFile(tempRaw);
+    }
+    
 
     if (m_hasLineUpImage) {
       JpgConverter::saveJpg(m_lineUpImage, liveViewFile);
@@ -1806,11 +1816,13 @@ void StopMotion::captureDslrImage() {
 
   TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
   TFilePath tempFile  = parentDir + "temp.jpg";
+  TFilePath tempRaw = parentDir + "temp.cr2";
 
   if (!TFileStatus(parentDir).doesExist()) {
     TSystem::mkDir(parentDir);
   }
   m_tempFile = tempFile.getQString();
+  m_tempRaw = tempRaw.getQString();
 
 #ifdef WITH_CANON
   m_canon->takePicture();
@@ -1880,11 +1892,13 @@ void StopMotion::takeTestShot() {
     ToonzScene *scene   = app->getCurrentScene()->getScene();
     TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
     TFilePath tempFile  = parentDir + "temp.jpg";
+    TFilePath tempRaw = parentDir + "temp.cr2";
 
     if (!TFileStatus(parentDir).doesExist()) {
       TSystem::mkDir(parentDir);
     }
     m_tempFile = tempFile.getQString();
+    m_tempRaw = tempRaw.getQString();
     m_light->showOverlays();
     m_canon->takePicture();
   }
@@ -1978,11 +1992,19 @@ void StopMotion::saveTestShot() {
       TFilePath(levelName + L"+" + QString::number(fileNumber).toStdWString() +
                 L".jpg"));
 
+  TFilePath fullResRawFile(testsThumbsFile.getQString().replace(testsThumbsFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+  m_tempRaw = fullResRawFile.getQString();
+
   TFilePath tempFile = parentDir + "temp.jpg";
+  TFilePath tempRaw = parentDir + "temp.cr2";
 
   if (!m_usingWebcam) {
     TSystem::copyFile(testsFile, tempFile);
     TSystem::deleteFile(tempFile);
+    if (TSystem::doesExistFileOrLevel(TFilePath(tempRaw))) {
+        TSystem::copyFile(fullResRawFile, tempRaw);
+        TSystem::deleteFile(tempRaw);
+    }
   } else {
     JpgConverter::saveJpg(m_newImage, testsFile);
   }
@@ -2387,12 +2409,6 @@ bool StopMotion::exportImageSequence() {
       scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
   TFilePath fullResFile(fullResFp.withFrame(frameNumber));
 
-  TFilePath liveViewFp =
-      scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
-  TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
-
-  TFilePath tempFile = parentDir + "temp.jpg";
-
   TXshSimpleLevel *sl = 0;
   TXshLevel *level    = scene->getLevelSet()->getLevel(levelName);
 
@@ -2465,11 +2481,14 @@ bool StopMotion::exportImageSequence() {
       sourceFile = actualLevelFp.withFrame(cellNumber);
     }
 
+    TFilePath sourceRawFile(sourceFile.getQString().replace(sourceFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+
     if (!TFileStatus(sourceFile).doesExist()) {
       DVGui::error(tr("Could not find the source file."));
       return false;
     }
     exportFile = exportFilePath.withFrame(exportFrameNumber);
+    TFilePath exportRawFile(exportFile.getQString().replace(exportFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
     if (TFileStatus(exportFile).doesExist()) {
       QString question = tr("Overwrite existing files?");
       int ret          = DVGui::MsgBox(question, QObject::tr("Overwrite"),
@@ -2477,6 +2496,9 @@ bool StopMotion::exportImageSequence() {
       if (ret == 0 || ret == 2) return false;
     }
     TSystem::copyFile(exportFile, sourceFile);
+    if (TSystem::doesExistFileOrLevel(sourceRawFile)) {
+        TSystem::copyFile(exportRawFile, sourceRawFile);
+    }
     exportFrameNumber++;
     if (!TFileStatus(exportFile).doesExist()) {
       DVGui::error(tr("An error occurred.  Aborting."));
