@@ -90,7 +90,7 @@ public:
   bool m_isTimeLapse       = false;
   int m_reviewTime         = 2;
   bool m_isTestShot        = false;
-  QString m_tempFile;
+  QString m_tempFile, m_tempRaw;
   TXshSimpleLevel* m_sl;
 
   // timers

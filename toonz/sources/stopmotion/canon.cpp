@@ -800,7 +800,6 @@ bool Canon::downloadImage(EdsBaseRef object) {
   EdsSize jpgSize;
   EdsImageInfo imgInfo;
   bool isRaw = false;
-
   unsigned char* imgBuf = NULL;
 
   int width, height;
@@ -808,8 +807,9 @@ bool Canon::downloadImage(EdsBaseRef object) {
 
   err = EdsGetDirectoryItemInfo(object, &dirItemInfo);
   std::string itemName = dirItemInfo.szFileName;
+
   if (itemName.at(itemName.length() - 1) == '2') {
-      isRaw = true;
+      isRaw = true; 
   }
 
   err = EdsCreateMemoryStream(0, &stream);
@@ -821,8 +821,36 @@ bool Canon::downloadImage(EdsBaseRef object) {
       err = EdsDownload(object, dirItemInfo.size, jpgStream);
   }
   EdsDownloadComplete(object);
-
+  std::string iq = m_imageQuality.toStdString();
   if (isRaw) {
+      // If the settings are set to jpg and raw, only get the raw and then return
+      if ((m_imageQuality.toLower().contains("jpeg") || m_imageQuality.toLower().contains("jpg")) && m_imageQuality.toLower().contains("raw")) {
+#ifdef MACOSX
+          UInt64 rawStreamSize = 0;
+#else
+          unsigned __int64 rawStreamSize = 0;
+#endif
+          unsigned char* rawStreamData = NULL;
+
+          err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
+          err = EdsGetLength(stream, &rawStreamSize);
+
+          QFile fullImage(StopMotion::instance()->m_tempRaw);
+          fullImage.open(QIODevice::WriteOnly);
+          QDataStream dataStream(&fullImage);
+          dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
+          fullImage.close();
+
+          EdsRelease(stream);
+          EdsRelease(jpgStream);
+          stream = NULL;
+          jpgStream = NULL;
+          if (object) EdsRelease(object);
+          return err;
+          StopMotion::instance()->m_tempRaw = TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(TFilePath("+extras")).getQString();
+      }
+
+
       err = EdsCreateImageRef(stream, &imgRef);
       EdsGetImageInfo(imgRef, kEdsImageSrc_Preview, &imgInfo);
       
@@ -837,15 +865,22 @@ bool Canon::downloadImage(EdsBaseRef object) {
   }
 
 
-
 #ifdef MACOSX
-  UInt64 mySize = 0;
+  UInt64 jpgStreamSize = 0;
+  UInt64 rawStreamSize = 0;
 #else
-  unsigned __int64 mySize = 0;
+  unsigned __int64 jpgStreamSize = 0;
+  unsigned __int64 rawStreamSize = 0;
 #endif
-  unsigned char* data = NULL;
-  err                 = EdsGetPointer(jpgStream, (EdsVoid**)&data);
-  err                 = EdsGetLength(jpgStream, &mySize);
+  unsigned char* jpgStreamData = NULL;
+  unsigned char* rawStreamData = NULL;
+  err                 = EdsGetPointer(jpgStream, (EdsVoid**)&jpgStreamData);
+  err                 = EdsGetLength(jpgStream, &jpgStreamSize);
+
+  if (isRaw) {
+      err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
+      err = EdsGetLength(stream, &rawStreamSize);
+  }
 
   // we now have the image in a buffer and the size of the image.
 
@@ -856,7 +891,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
       tjhandle tjInstance = NULL;
       
       tjInstance = tjInitDecompress();
-      tjDecompressHeader3(tjInstance, data, mySize, &width, &height, &inSubsamp,
+      tjDecompressHeader3(tjInstance, jpgStreamData, jpgStreamSize, &width, &height, &inSubsamp,
           &inColorspace);
 
       pixelFormat = TJPF_BGRX;
@@ -868,7 +903,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
 
       // don't scale using jpg turbo, you can't control the size exactly
       // get all the image info uncompressed and put into imgBuf
-      tjDecompress2(tjInstance, data, mySize, imgBuf, width, width * pixelSize,
+      tjDecompress2(tjInstance, jpgStreamData, jpgStreamSize, imgBuf, width, width * pixelSize,
           height, pixelFormat, flags);
       tjDestroy(tjInstance);
       tjInstance = NULL;
@@ -888,7 +923,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
   if (isRaw) {
       cv::Mat rawOriginal(height, width, CV_8UC3);
       uchar* rawBuf = rawOriginal.data;
-      memcpy(rawBuf, data, mySize);
+      memcpy(rawBuf, jpgStreamData, jpgStreamSize);
       cv::cvtColor(rawOriginal, imgOriginal, cv::COLOR_RGB2BGRA);
       cv::flip(imgOriginal, imgOriginal, 0);
   }
@@ -900,8 +935,6 @@ bool Canon::downloadImage(EdsBaseRef object) {
       tjFree(imgBuf);
       imgBuf = NULL;
   }
-
-  
 
   // calculate the size of the new image
   // and resize it down
@@ -929,10 +962,15 @@ bool Canon::downloadImage(EdsBaseRef object) {
       QFile fullImage(StopMotion::instance()->m_tempFile);
       fullImage.open(QIODevice::WriteOnly);
       QDataStream dataStream(&fullImage);
-      dataStream.writeRawData((const char*)data, mySize);
+      dataStream.writeRawData((const char*)jpgStreamData, jpgStreamSize);
       fullImage.close();
   }
   else {
+      QFile fullImage(StopMotion::instance()->m_tempRaw);
+      fullImage.open(QIODevice::WriteOnly);
+      QDataStream dataStream(&fullImage);
+      dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
+      fullImage.close();
       JpgConverter::saveJpg(StopMotion::instance()->m_newImage, TFilePath(StopMotion::instance()->m_tempFile));
   }
 
