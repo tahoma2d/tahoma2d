@@ -54,7 +54,8 @@ const std::string
     /*! Default outputs folder: is used to save all rendered scenes.*/
     TProject::Outputs = "outputs",
     /*! Default palettes folder: is used for color design (色指定)*/
-    TProject::Palettes = "palettes";
+    TProject::Palettes = "palettes",
+    TProject::StopMotion = "stopmotion";
 //! Default project name
 const TFilePath TProject::SandboxProjectName("sandbox");
 
@@ -944,7 +945,7 @@ void TProjectManager::getFolderNames(std::vector<std::string> &names) {
   }
   const std::string stdNames[] = {TProject::Inputs,  TProject::Drawings,
                                   TProject::Scenes,  TProject::Extras,
-                                  TProject::Outputs, TProject::Scripts};
+                                  TProject::Outputs, TProject::Scripts, TProject::StopMotion};
   for (auto const &name : stdNames) {
     // se il nome non e' gia' stato inserito lo aggiungo
     if (std::find(names.begin(), names.end(), name) == names.end())

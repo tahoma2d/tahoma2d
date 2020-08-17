@@ -233,6 +233,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_previousXSheetFrameButton        = new QToolButton(this);
   m_onionOpacityFld                  = new DVGui::IntField(this);
 
+  m_captureFramesCombo = new QComboBox(this);
+  m_captureFramesCombo->addItems({ "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s" });
+  m_captureFramesCombo->setCurrentIndex(m_stopMotion->getCaptureNumberOfFrames() - 1);
+
   // should choosing the file type is disabled for simplicty
   // too many options can be a bad thing
   m_fileTypeCombo          = new QComboBox(this);
@@ -412,10 +416,12 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         fileTypeLay->setMargin(0);
         fileTypeLay->setSpacing(3);
         {
-          fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
+          //fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
           fileTypeLay->addWidget(m_fileTypeCombo, 1);
-          fileTypeLay->addSpacing(10);
+          //fileTypeLay->addSpacing(10);
           fileTypeLay->addWidget(m_fileFormatOptionButton);
+          m_fileTypeCombo->hide();
+          m_fileFormatOptionButton->hide();
         }
         fileLay->addLayout(fileTypeLay, 0);
 
@@ -423,8 +429,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         saveInLay->setMargin(0);
         saveInLay->setSpacing(3);
         {
-          saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0);
+          //saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0);
           saveInLay->addWidget(m_saveInFileFld, 1);
+          m_saveInFileFld->hide();
         }
         fileLay->addLayout(saveInLay, 0);
         // fileLay->addWidget(subfolderButton, 0);
@@ -437,7 +444,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       displayLay->setHorizontalSpacing(3);
       displayLay->setVerticalSpacing(5);
       {
-        displayLay->addWidget(new QLabel(tr("XSheet Frame:"), this), 0, 0,
+          displayLay->addWidget(new QLabel(tr("Expose as: ")), 0, 0, Qt::AlignRight);
+          displayLay->addWidget(m_captureFramesCombo, 0, 1, Qt::AlignLeft);
+        displayLay->addWidget(new QLabel(tr("XSheet Frame:"), this), 1, 0,
                               Qt::AlignRight);
         QHBoxLayout *xsheetLay = new QHBoxLayout();
         xsheetLay->setMargin(0);
@@ -450,7 +459,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                                Qt::AlignCenter);
           xsheetLay->addStretch(50);
         }
-        displayLay->addLayout(xsheetLay, 0, 1);
+        displayLay->addLayout(xsheetLay, 1, 1);
       }
       displayLay->setColumnStretch(0, 0);
       displayLay->setColumnStretch(1, 1);
@@ -1036,6 +1045,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onPreviousXSheetFrame()));
   ret = ret && connect(m_setToCurrentXSheetFrameButton, SIGNAL(clicked()), this,
                        SLOT(setToCurrentXSheetFrame()));
+  ret = ret && connect(m_captureFramesCombo, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(onCaptureFramesChanged(int)));
+  ret = ret && connect(m_stopMotion, SIGNAL(captureNumberOfFramesChanged(int)),
+      this, SLOT(onCaptureNumberOfFramesChanged(int)));
   ret = ret && connect(m_onionOpacityFld, SIGNAL(valueEditedByHand()), this,
                        SLOT(onOnionOpacityFldEdited()));
   ret = ret && connect(m_onionOpacityFld, SIGNAL(valueChanged(bool)), this,
@@ -1666,6 +1679,12 @@ void StopMotionController::onFrameNumberChanged(int frameNumber) {
 
 void StopMotionController::onXSheetFrameNumberChanged(int frameNumber) {
   m_xSheetFrameNumberEdit->setValue(frameNumber);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCaptureNumberOfFramesChanged(int frames) {
+    m_captureFramesCombo->setCurrentIndex(frames - 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -2917,6 +2936,12 @@ void StopMotionController::onFrameNumberChanged() {
 
 void StopMotionController::onXSheetFrameNumberChanged() {
   m_stopMotion->setXSheetFrameNumber(m_xSheetFrameNumberEdit->getValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCaptureFramesChanged(int index) {
+    m_stopMotion->setCaptureNumberOfFrames(index + 1);
 }
 
 //-----------------------------------------------------------------------------

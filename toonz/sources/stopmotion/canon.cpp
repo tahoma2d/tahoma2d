@@ -847,7 +847,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
           jpgStream = NULL;
           if (object) EdsRelease(object);
           return err;
-          StopMotion::instance()->m_tempRaw = TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(TFilePath("+extras")).getQString();
+          StopMotion::instance()->m_tempRaw = TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(TFilePath("+stopmotion")).getQString();
       }
 
 

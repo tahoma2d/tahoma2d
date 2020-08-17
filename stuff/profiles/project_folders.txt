@@ -4,3 +4,4 @@ scenes
 extras
 outputs
 palettes
+stopmotion
