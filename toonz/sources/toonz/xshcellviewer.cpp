@@ -3009,6 +3009,7 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
     int k0, k1;
     bool isKeyframeFrame = pegbar && pegbar->getKeyframeRange(k0, k1) &&
                            k0 <= row && row <= k1 + 1;
+                           
     // If you are in the keyframe area, open a function editor
     if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell)) {
       QAction *action =

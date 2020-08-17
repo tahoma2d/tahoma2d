@@ -923,9 +923,9 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
 
   double pixelSize = getPixelSize();
   if (!bbox.isEmpty()) {
-    double maxDist  = 8 * pixelSize;
+    double maxDist  = 17 * pixelSize;
     double maxDist2 = maxDist * maxDist;
-    double p        = (12 * pixelSize) - 3 * pixelSize;
+    double p        = (15 * pixelSize);
     m_selectedPoint = NONE;
     if (tdistance2(bbox.getP00(), pos) < maxDist2 + p)
       m_selectedPoint = P00;

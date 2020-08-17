@@ -125,7 +125,7 @@ public:
                            /*
            upComputesWholeTile は Screen, Min, Blendでtrueにして使用している。
            */
-                           );
+  );
 };
 FX_PLUGIN_IDENTIFIER(ino_blend_add, "inoAddFx");
 //------------------------------------------------------------
@@ -157,7 +157,7 @@ fxをreplaceすると、
   m_refernce --> m_down(=port1)
 となる
 */
-  const bool up_is = (this->m_up.isConnected() &&
+  const bool up_is   = (this->m_up.isConnected() &&
                       this->m_up.getFx()->getTimeRegion().contains(frame));
   const bool down_is = (this->m_down.isConnected() &&
                         this->m_down.getFx()->getTimeRegion().contains(frame));
@@ -201,7 +201,7 @@ fxをreplaceすると、
                      tround(upBBox.getLx())  // getLx() = "x1>=x0?x1-x0:0"
                      ,
                      tround(upBBox.getLy())  // getLy() = "y1>=y0?y1-y0:0"
-                     );
+  );
   if ((upSize.lx <= 0) || (upSize.ly <= 0)) {
     return;
   }
@@ -230,7 +230,7 @@ fxをreplaceすると、
 void ino_blend_add::dryComputeUpAndDown(TRectD &rect, double frame,
                                         const TRenderSettings &rs,
                                         bool upComputesWholeTile) {
-  const bool up_is = (this->m_up.isConnected() &&
+  const bool up_is   = (this->m_up.isConnected() &&
                       this->m_up.getFx()->getTimeRegion().contains(frame));
   const bool down_is = (this->m_down.isConnected() &&
                         this->m_down.getFx()->getTimeRegion().contains(frame));
