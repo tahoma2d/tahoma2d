@@ -96,7 +96,7 @@ class StopMotionController final : public QWidget {
       *m_liveViewCompensationSlider;
   QComboBox *m_cameraListCombo, *m_exposureCombo, *m_fileTypeCombo,
       *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
-      *m_pictureStyleCombo, *m_controlDeviceCombo;
+      *m_pictureStyleCombo, *m_controlDeviceCombo, *m_captureFramesCombo;
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_placeOnXSheetCB, *m_directShowCB,
       *m_liveViewOnAllFramesCB, *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB,
@@ -157,6 +157,8 @@ protected slots:
   void onFileTypeActivated();
   void onFrameNumberChanged();
   void onXSheetFrameNumberChanged();
+  void onCaptureFramesChanged(int index);
+  void onCaptureNumberOfFramesChanged(int frames);
   void onFrameCaptured(QImage &image);
   void onOnionOpacityFldEdited();
   void onOnionOpacitySliderChanged(bool ignore);

@@ -257,9 +257,9 @@ StopMotion::StopMotion() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 
   setToNextNewLevel();
-  m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
-                   .getParentDir()
-                   .getQString();
+  //m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
+  //                 .getParentDir()
+  //                 .getQString();
 }
 
 //-----------------------------------------------------------------
@@ -1006,6 +1006,13 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 
 //-----------------------------------------------------------------
 
+void StopMotion::setCaptureNumberOfFrames(int frames) {
+    m_captureNumberOfFrames = frames;
+    emit(captureNumberOfFramesChanged(frames));
+}
+
+//-----------------------------------------------------------------
+
 bool StopMotion::loadLineUpImage() {
   if (m_liveViewStatus == LiveViewClosed || m_userCalledPause) return false;
   int row;
@@ -1635,18 +1642,16 @@ bool StopMotion::importImage() {
       col += 1;
       xsh->insertColumn(col);
     }
-    xsh->insertCells(row, col);
-    xsh->setCell(row, col, TXshCell(sl, fid));
+    for (int i = 0; i < m_captureNumberOfFrames; i++) {
+        xsh->insertCells(row + i, col);
+        xsh->setCell(row + i, col, TXshCell(sl, fid));
+    }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTime() == 0 || m_isTimeLapse)
-      app->getCurrentFrame()->setFrame(row + 1);
-    m_xSheetFrameNumber = row + 2;
+      app->getCurrentFrame()->setFrame(row + m_captureNumberOfFrames);
+    m_xSheetFrameNumber = row + 1 + m_captureNumberOfFrames;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
     postImportProcess();
-    // if (m_newImage->getLx() > 2000) {
-    //  m_subsampling = 4;
-    //  setSubsampling();
-    //}
     return true;
   }
 
@@ -1683,13 +1688,14 @@ bool StopMotion::importImage() {
 
   // if there is a column containing the same level
   if (foundRow >= 0) {
-    // put the cell at the bottom
-    xsh->insertCells(row, foundCol);
-    xsh->setCell(row, foundCol, TXshCell(sl, fid));
+    for (int i = 0; i < m_captureNumberOfFrames; i++) {
+        xsh->insertCells(row + i, foundCol);
+        xsh->setCell(row + i, foundCol, TXshCell(sl, fid));
+    }
     app->getCurrentColumn()->setColumnIndex(foundCol);
     if (getReviewTime() == 0 || m_isTimeLapse)
-      app->getCurrentFrame()->setFrame(row + 1);
-    m_xSheetFrameNumber = row + 2;
+      app->getCurrentFrame()->setFrame(row + m_captureNumberOfFrames);
+    m_xSheetFrameNumber = row + 1 + m_captureNumberOfFrames;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   }
   // if the level is registered in the scene, but is not placed in the xsheet,
@@ -1699,11 +1705,13 @@ bool StopMotion::importImage() {
       col += 1;
       xsh->insertColumn(col);
     }
-    xsh->setCell(row, col, TXshCell(sl, fid));
+    for (int i = 0; i < m_captureNumberOfFrames; i++) {
+        xsh->setCell(row + i, col, TXshCell(sl, fid));
+    }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTime() == 0 || m_isTimeLapse)
-      app->getCurrentFrame()->setFrame(row + 1);
-    m_xSheetFrameNumber = row + 2;
+      app->getCurrentFrame()->setFrame(row + m_captureNumberOfFrames);
+    m_xSheetFrameNumber = row + 1 + m_captureNumberOfFrames;
     emit(xSheetFrameNumberChanged(m_xSheetFrameNumber));
   }
   postImportProcess();

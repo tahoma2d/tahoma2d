@@ -51,9 +51,10 @@ private:
   // file stuff
   int m_frameNumber          = 1;
   int m_xSheetFrameNumber    = 1;
+  int m_captureNumberOfFrames = 1;
   QString m_levelName        = "";
   QString m_fileType         = "jpg";
-  QString m_filePath         = "+extras";
+  QString m_filePath         = "+stopmotion";
   QString m_frameInfoText    = "";
   QString m_infoColorName    = "";
   QString m_frameInfoToolTip = "";
@@ -114,6 +115,8 @@ public:
   // files and frames
   void setXSheetFrameNumber(int frameNumber);
   int getXSheetFrameNumber() { return m_xSheetFrameNumber; }
+  void setCaptureNumberOfFrames(int frames);
+  int getCaptureNumberOfFrames() { return m_captureNumberOfFrames; }
   void setFrameNumber(int frameNumber);
   int getFrameNumber() { return m_frameNumber; }
   void setLevelName(QString levelName);
@@ -236,6 +239,7 @@ signals:
   void frameNumberChanged(int);
   void frameInfoTextChanged(QString);
   void xSheetFrameNumberChanged(int);
+  void captureNumberOfFramesChanged(int);
 
   // options
   void optionsChanged();

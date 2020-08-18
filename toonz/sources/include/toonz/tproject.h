@@ -36,6 +36,7 @@ public:
   static const std::string Outputs;
   static const std::string Scripts;
   static const std::string Palettes;
+  static const std::string StopMotion;
 
   static const TFilePath SandboxProjectName;
 
