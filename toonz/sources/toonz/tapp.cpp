@@ -789,7 +789,7 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
       }
     }
   }
-  if (watched->objectName() == "StyleEditorTabBar" &&
+  if (watched && watched->objectName() == "StyleEditorTabBar" && e &&
       e->type() == QEvent::MouseMove) {
     // m_statusBar->clearMessage();
     DVGui::TabBar *bar = static_cast<DVGui::TabBar *>(watched);
