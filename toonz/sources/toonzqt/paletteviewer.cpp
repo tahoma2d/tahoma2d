@@ -472,18 +472,24 @@ void PaletteViewer::createSavePaletteToolBar() {
   addViewAction(tr("&List View"), PageViewer::List);
 
   m_viewMode->addSeparator();
-  QAction *showStyleIndex = new QAction(tr("Show Style Index"), this);
-  showStyleIndex->setCheckable(true);
+  m_showStyleIndex = new QAction(tr("Show Style Index"), this);
+  m_showStyleIndex->setCheckable(true);
   if (m_pageViewer)
-    showStyleIndex->setChecked(m_pageViewer->getShowStyleIndex());
-  connect(showStyleIndex, &QAction::toggled, [=](bool checked) {
+    m_showStyleIndex->setChecked(m_pageViewer->getShowStyleIndex());
+  connect(m_showStyleIndex, &QAction::toggled, [=](bool checked) {
     if (m_pageViewer) m_pageViewer->toggleShowStyleIndex();
     if (m_pageViewer) m_pageViewer->update();
     bool setChecked              = false;
     if (m_pageViewer) setChecked = m_pageViewer->getShowStyleIndex();
-    showStyleIndex->setChecked(setChecked);
+    m_showStyleIndex->setChecked(setChecked);
   });
-  m_viewMode->addAction(showStyleIndex);
+
+  connect(m_viewMode, &QMenu::aboutToShow, [=]() {
+    m_showStyleIndex->blockSignals(true);
+    m_showStyleIndex->setChecked(m_pageViewer->getShowStyleIndex());
+    m_showStyleIndex->blockSignals(false);
+  });
+  m_viewMode->addAction(m_showStyleIndex);
 
   QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
   QAction *saveAsPalette  = new QAction(

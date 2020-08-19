@@ -93,7 +93,7 @@ protected:
   QToolBar *m_savePaletteToolBar;
   QToolBar *m_newPageToolbar;
   QMenu *m_viewMode;
-
+  QAction *m_showStyleIndex;
   int m_indexPageToDelete;
 
   PaletteViewType m_viewType;
