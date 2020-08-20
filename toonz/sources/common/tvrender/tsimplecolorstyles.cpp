@@ -391,8 +391,8 @@ private:
   void recordList(GLuint listId, TVectorImage *image,
                   const TVectorRenderData &rd) {
     QMutexLocker sl(&m_mutex);
-    TRectD bbox       = image->getBBox();
-    double ry         = bbox.getLy() * 0.5;
+    TRectD bbox = image->getBBox();
+    double ry   = bbox.getLy() * 0.5;
     if (ry < 1e-5) ry = 1e-5;
     TAffine identity;
     TRect rect;
@@ -623,7 +623,7 @@ void TSolidColorStyle::drawStroke(const TColorFunction *cf,
   };  // locals
 
   TPixel32 color = m_color;
-  if (cf) color  = (*cf)(color);
+  if (cf) color = (*cf)(color);
 
   if (color.m == 0) return;
 
@@ -740,7 +740,7 @@ void TCenterLineStrokeStyle::drawStroke(const TColorFunction *cf,
   int i, n = stroke->getChunkCount();
   if (n == 0) return;
   TPixel32 color = m_color;
-  if (cf) color  = (*cf)(m_color);
+  if (cf) color = (*cf)(m_color);
   if (color.m == 0) return;
   tglColor(color);
   double pixelSize = sqrt(tglGetPixelSize2());
@@ -1485,21 +1485,21 @@ void TVectorImagePatternStrokeStyle::computeTransformations(
   double s             = 0;
 
   while (s < length) {
-    TFrameId fid                     = lit->first;
-    TVectorImageP img                = m_level->frame(fid);
+    TFrameId fid      = lit->first;
+    TVectorImageP img = m_level->frame(fid);
     if (++lit == m_level->end()) lit = m_level->begin();
     assert(img);
     if (img->getType() != TImage::VECTOR) return;
-    double t               = stroke->getParameterAtLength(s);
-    TThickPoint p          = stroke->getThickPoint(t);
-    TPointD v              = stroke->getSpeed(t);
-    double ang             = rad2degree(atan(v)) + m_rotation;
-    TRectD bbox            = img->getBBox();
-    TPointD center         = 0.5 * (bbox.getP00() + bbox.getP11());
-    double ry              = bbox.getLy() * 0.5;
+    double t       = stroke->getParameterAtLength(s);
+    TThickPoint p  = stroke->getThickPoint(t);
+    TPointD v      = stroke->getSpeed(t);
+    double ang     = rad2degree(atan(v)) + m_rotation;
+    TRectD bbox    = img->getBBox();
+    TPointD center = 0.5 * (bbox.getP00() + bbox.getP11());
+    double ry      = bbox.getLy() * 0.5;
     if (ry * ry < 1e-5) ry = p.thick;
-    double sc              = p.thick / ry;
-    if (sc < 0.0001) sc    = 0.0001;
+    double sc = p.thick / ry;
+    if (sc < 0.0001) sc = 0.0001;
     TAffine aff =
         TTranslation(p) * TRotation(ang) * TScale(sc) * TTranslation(-center);
     transformations.push_back(aff);
@@ -1618,8 +1618,8 @@ void TVectorImagePatternStrokeStyle::drawStroke(
     UINT i, size = transformations.size();
 
     for (i = 0; i < size; i++) {
-      TFrameId fid                     = lit->first;
-      TVectorImageP img                = m_level->frame(fid);
+      TFrameId fid      = lit->first;
+      TVectorImageP img = m_level->frame(fid);
       if (++lit == m_level->end()) lit = m_level->begin();
       assert(img);
       if (!img) continue;
@@ -1641,14 +1641,15 @@ void TVectorImagePatternStrokeStyle::drawStroke(
 
       CHECK_GL_ERROR
 #ifdef _WIN32
+      // currently drawing with the display list doesn't work properly
 
-      GLuint listId = DisplayListManager::instance()->getDisplayListId(
-          imgPointer, m_name, fid, rd);
-      if (listId != 0) {
-        CHECK_GL_ERROR
-        glCallList(listId);
-        CHECK_GL_ERROR
-      } else
+      // GLuint listId = DisplayListManager::instance()->getDisplayListId(
+      //    imgPointer, m_name, fid, rd);
+      // if (listId != 0) {
+      //  CHECK_GL_ERROR
+      //  glCallList(listId);
+      //  CHECK_GL_ERROR
+      //} else
 #endif
 
       {
@@ -1737,4 +1738,4 @@ TColorStyle::Declaration s0(new TCenterLineStrokeStyle());
 TColorStyle::Declaration s1(new TSolidColorStyle());
 TColorStyle::Declaration s3(new TRasterImagePatternStrokeStyle());
 TColorStyle::Declaration s4(new TVectorImagePatternStrokeStyle());
-}
+}  // namespace
