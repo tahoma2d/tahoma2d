@@ -4,28 +4,18 @@
 
 #StyleEditor {
   & #TabBarContainer {
-    margin-left: -5; // reset left edge margin
+    margin-left: -5px;
   }
   & #bottomWidget {
     border-top: 1 solid @accent;
     padding: 3 2 8 3;
     & QPushButton {
-      // override above margin reset
       padding: 3 5;
     }
   }
 }
 
-#StyleEditorTabBar {
-  padding: 0;
-  margin: 0;
-  &::tab {
-    &:extend(.tab-flat all);
-    &:first {
-      border-left: 1 solid @accent;
-    }
-  }
-}
+//#StyleEditorTabBar {}
 
 #HexagonalColorWheel {
   qproperty-BGColor: @bg;
@@ -34,7 +24,6 @@
 /* -------------------------------------------------------------------------- */
 
 /* Horizontal QSlider */
-
 #colorSlider {
   &::groove:horizontal {
     height: 1;
@@ -53,7 +42,7 @@
   image-position: center center;
   min-height: 16;
   padding: 0;
-  min-width: 18;
+  min-width: 10;
   &:hover {
     &:extend(.button-tool:hover);
   }
@@ -77,10 +66,8 @@
   }
 }
 
-#colorSliderLabel, 
-#colorSliderField {
-  // Placeholder
-}
+//#colorSliderLabel, 
+//#colorSliderField {}
 
 /* -----------------------------------------------------------------------------
    Palette Viewer / Studio Palette
@@ -109,33 +96,45 @@ PaletteViewer {
     }
   }
   & QToolBar {
+    background: transparent;
     &::separator:horizontal {
       margin: 0; // very compact space so we remove margin
     }
     & QToolButton {
-      &:extend(.button-flat all);
-      margin: 0;
-      padding: 2 0 2 0;
-
+      &:extend(.button-flat all); // use flat style for button
+      padding: 0;
+      padding-right: -2;
+      padding-left: -1;
+    }
+    & #keyFrameNavigator {
+      & #NextKey,
+      #PreviousKey,
+      #KeyNo,
+      #KeyPartial,
+      #KeyTotal {
+        // Adjust for pixel perfect alignment
+        max-width: 20px;
+        max-height: 20px;
+        padding: 1;
+        border: 0;
+        margin: 0;
+      }
     }
   }
 }
 
-#StudioPalette {
-  // placeholder
-}
-
-#PaletteTabBar {
-  &::tab {
-    &:extend(.tab-flat all);
-    padding-bottom: 4;  // allow QToolBar's bottom border to show
-                        // since default tab padding is 3 (vert)
-                        // this adds 1 extra (3+1)
-  }
-}
+// #StudioPalette {}
 
 #PageViewer {
   qproperty-TextColor: @text-color;
+  qproperty-SelectedBorderColor: @palette-SelectedBorderColor;
+  qproperty-NumpadShortcutBgColor: @palette-NumpadShortcutBgColor;
+  qproperty-NumpadShortcutBorderColor: @palette-NumpadShortcutBorderColor;
+
+  qproperty-SeparatorColor: @palette-SeparatorColor;
+  qproperty-CurrentCellColor: @palette-CurrentCellColor;
+  qproperty-SelectedCellColor: @palette-SelectedCellColor;
+  qproperty-ListNumpadShortcutBorderColor: @palette-ListNumpadShortcutBorderColor;
 }
 
 #PaletteLockButton {
