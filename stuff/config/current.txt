@@ -832,6 +832,9 @@
   <item>"STD_inoAddFx"	"Add Ino"	</item>
   <item>"STD_inoAddFx.opacity"	"Opacity"	</item>
   <item>"STD_inoAddFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoAddFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoAddFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoAddFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoColorBurnFx"	"Color Burn Ino"	</item>
   <item>"STD_inoColorBurnFx.opacity"	"Opacity"	</item>
   <item>"STD_inoColorBurnFx.clipping_mask"	"Clipping Mask"	</item>
@@ -1316,6 +1319,28 @@
   <item>"STD_iwa_GlareFx.noise_evolution"	"Noise Evolution"		</item>
   <item>"STD_iwa_GlareFx.noise_offset"	"Noise Offset"		</item>
 
+  <item>"STD_iwa_FractalNoiseFx"	"Fractal Noise Iwa"	</item>
+  <item>"STD_iwa_FractalNoiseFx.fractalType"	"Fractal Type"	</item>
+  <item>"STD_iwa_FractalNoiseFx.noiseType"	"Noise Type"	</item>
+  <item>"STD_iwa_FractalNoiseFx.invert"	"Invert"	</item>
+  <item>"STD_iwa_FractalNoiseFx.rotation"	"Rotation"	</item>
+  <item>"STD_iwa_FractalNoiseFx.uniformScaling"	"Uniform Scaling"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scale"	"Scale"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleW"	"Scale W"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleH"	"Scale H"	</item>
+  <item>"STD_iwa_FractalNoiseFx.offsetTurbulence"	"Offset Turbulence"	</item>
+  <item>"STD_iwa_FractalNoiseFx.perspectiveOffset"	"Perspective Offset"	</item>
+  <item>"STD_iwa_FractalNoiseFx.complexity"	"Complexity"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subInfluence"	"Sub Influence"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subScaling"	"Sub Scaling"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subRotation"	"Sub Rotation"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subOffset"	"Sub Offset"	</item>
+  <item>"STD_iwa_FractalNoiseFx.evolution"	"Evolution"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolution"	"Cycle Evolution"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolutionRange"	"Cycle (in Evolution)"	</item>
+  <item>"STD_iwa_FractalNoiseFx.dynamicIntensity"	"Dynamic Intensity"	</item>
+  <item>"STD_iwa_FractalNoiseFx.alphaRendering"	"Alpha Rendering"	</item>
+  
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->
 
   <item>STD_iwa_TiledParticlesFx "Tiled Particles Iwa" </item>

@@ -497,10 +497,36 @@ protected slots:
 };
 
 //=============================================================================
+// Mode Sensitive Box
+//-----------------------------------------------------------------------------
+
+class ModeChangerParamField : public ParamField {
+  Q_OBJECT
+public:
+  ModeChangerParamField(QWidget *parent, QString paramName,
+                        const TParamP &param, bool addEmptyLabel = true)
+      : ParamField(parent, paramName, param, addEmptyLabel) {}
+signals:
+  void modeChanged(int);
+};
+
+class DVAPI ModeSensitiveBox final : public QWidget {
+  Q_OBJECT
+  QList<int> m_modes;
+
+public:
+  ModeSensitiveBox(QWidget *parent, ModeChangerParamField *modeChanger,
+                   QList<int> modes);
+  QList<int> modes() { return m_modes; }
+protected slots:
+  void onModeChanged(int mode);
+};
+
+//=============================================================================
 // EnumParamField
 //-----------------------------------------------------------------------------
 
-class EnumParamField final : public ParamField {
+class EnumParamField final : public ModeChangerParamField {
   Q_OBJECT
 
   TIntEnumParamP m_currentParam, m_actualParam;
@@ -523,7 +549,7 @@ protected slots:
 // BoolParamField
 //-----------------------------------------------------------------------------
 
-class DVAPI BoolParamField final : public ParamField {
+class DVAPI BoolParamField final : public ModeChangerParamField {
   Q_OBJECT
 
   TBoolParamP m_currentParam, m_actualParam;

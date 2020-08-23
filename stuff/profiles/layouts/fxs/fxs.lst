@@ -143,6 +143,7 @@
     STD_noiseFx 
     STD_iwa_PNPerspectiveFx
     STD_saltpepperNoiseFx 
+    STD_iwa_FractalNoiseFx 
   </Noise>
   <Render>
     STD_cloudsFx 
