@@ -1,6 +1,7 @@
 
 
 #include "toonzqt/gutil.h"
+#include "toonz/preferences.h"
 
 // TnzQt includes
 #include "toonzqt/dvdialog.h"
@@ -203,22 +204,103 @@ int getDevPixRatio() {
 
 //-----------------------------------------------------------------------------
 
-QIcon createQIcon(const char *iconSVGName) {
-  QString normal = QString(":Resources/") + iconSVGName + ".svg";
-  QString click  = QString(":Resources/") + iconSVGName + "_click.svg";
-  QString over   = QString(":Resources/") + iconSVGName + "_over.svg";
+QString getIconThemePath(const QString &fileSVGPath) {
+  // Use as follows:
+  // QPixmap pixmapIcon = getIconThemePath("path/to/file.svg");
+  // Is equal to:            :icons/*theme*/path/to/file.svg
 
+  // Set themeable directory
+  static QString theme = Preferences::instance()->getIconTheme()
+                             ? ":icons/dark/"
+                             : ":icons/light/";
+
+  // If no file in light icon theme directory, fallback to dark directory
+  if (!QFile::exists(QString(theme + fileSVGPath))) theme = ":icons/dark/";
+
+  return theme + fileSVGPath;
+}
+
+//-----------------------------------------------------------------------------
+
+QPixmap setOpacity(QPixmap &pixmap, const qreal &opacity) {
+  static int devPixRatio = getDevPixRatio();
+  const QSize pixmapSize(pixmap.width() * devPixRatio,
+                         pixmap.height() * devPixRatio);
+
+  QPixmap opacityPixmap(pixmapSize);
+  opacityPixmap.setDevicePixelRatio(devPixRatio);
+  opacityPixmap.fill(Qt::transparent);
+
+  if (!pixmap.isNull()) {
+    QPainter p(&opacityPixmap);
+    QPixmap normalPixmap = pixmap.scaled(pixmapSize, Qt::KeepAspectRatio);
+    normalPixmap.setDevicePixelRatio(devPixRatio);
+    p.setBackgroundMode(Qt::TransparentMode);
+    p.setBackground(QBrush(Qt::transparent));
+    p.eraseRect(normalPixmap.rect());
+    p.setOpacity(opacity);
+    p.drawPixmap(0, 0, normalPixmap);
+  }
+  return opacityPixmap;
+}
+
+//-----------------------------------------------------------------------------
+
+QPixmap recolorPixmap(QPixmap &pixmap, QColor color) {
+  // Change black pixels to any chosen color
+  QImage img = pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+  for (int y = 0; y < img.height(); y++) {
+    QRgb *pixel = reinterpret_cast<QRgb *>(img.scanLine(y));
+    QRgb *end   = pixel + img.width();
+    for (; pixel != end; pixel++) {
+      // Only recolor zero value (black) pixels
+      if (QColor::fromRgba(*pixel).value() == 0)
+        *pixel =
+            QColor(color.red(), color.green(), color.blue(), qAlpha(*pixel))
+                .rgba();
+    }
+  }
+  return pixmap = QPixmap::fromImage(img);
+}
+
+//-----------------------------------------------------------------------------
+
+QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
+  QIcon normalIcon = QIcon::fromTheme(iconSVGName);
+
+  QSize iconSize(0, 0);  // Get largest
+  for (QList<QSize> sizes = normalIcon.availableSizes(); !sizes.isEmpty();
+       sizes.removeFirst())
+    if (sizes.first().width() > iconSize.width()) iconSize = sizes.first();
+
+  const qreal offOpacity      = 0.8;
+  const qreal disabledOpacity = 0.15;
+  QString overStr             = QString(iconSVGName) + "_over";
+  QString onStr               = QString(iconSVGName) + "_on";
+  QPixmap normalPm            = recolorPixmap(normalIcon.pixmap(iconSize));
+  QPixmap overPm = recolorPixmap(QIcon::fromTheme(overStr).pixmap(iconSize));
+  QPixmap onPm   = recolorPixmap(QIcon::fromTheme(onStr).pixmap(iconSize));
   QIcon icon;
-  icon.addFile(normal, QSize(), QIcon::Normal, QIcon::Off);
-  if (QFile::exists(click))
-    icon.addFile(click, QSize(), QIcon::Normal, QIcon::On);
-  else
-    icon.addFile(normal, QSize(), QIcon::Normal, QIcon::On);
-  if (QFile::exists(over))
-    icon.addFile(over, QSize(), QIcon::Active);
-  else
-    icon.addFile(normal, QSize(), QIcon::Active);
 
+  // Off
+  icon.addPixmap(useFullOpacity ? normalPm : setOpacity(normalPm, offOpacity),
+                 QIcon::Normal, QIcon::Off);
+  icon.addPixmap(setOpacity(normalPm, disabledOpacity), QIcon::Disabled);
+
+  // Over
+  icon.addPixmap(!overPm.isNull() ? overPm : normalPm, QIcon::Active);
+
+  // On
+  if (!onPm.isNull()) {
+    icon.addPixmap(onPm, QIcon::Normal, QIcon::On);
+    icon.addPixmap(setOpacity(onPm, disabledOpacity), QIcon::Disabled,
+                   QIcon::On);
+  } else {
+    // If file doesn't exist, let's add an opaque normal pixmap
+    icon.addPixmap(normalPm, QIcon::Normal, QIcon::On);
+    icon.addPixmap(setOpacity(normalPm, disabledOpacity), QIcon::Disabled,
+                   QIcon::On);
+  }
   return icon;
 }
 
@@ -234,23 +316,6 @@ QIcon createQIconPNG(const char *iconPNGName) {
   icon.addFile(click, QSize(), QIcon::Normal, QIcon::On);
   icon.addFile(over, QSize(), QIcon::Active);
 
-  return icon;
-}
-
-//-----------------------------------------------------------------------------
-
-QIcon createQIconOnOff(const char *iconSVGName, bool withOver) {
-  QString on   = QString(":Resources/") + iconSVGName + "_on.svg";
-  QString off  = QString(":Resources/") + iconSVGName + "_off.svg";
-  QString over = QString(":Resources/") + iconSVGName + "_over.svg";
-
-  QIcon icon;
-  icon.addFile(off, QSize(), QIcon::Normal, QIcon::Off);
-  icon.addFile(on, QSize(), QIcon::Normal, QIcon::On);
-  if (withOver)
-    icon.addFile(over, QSize(), QIcon::Active);
-  else
-    icon.addFile(on, QSize(), QIcon::Active);
   return icon;
 }
 
@@ -476,17 +541,12 @@ void TabBarContainter::paintEvent(QPaintEvent *event) {
 
 ToolBarContainer::ToolBarContainer(QWidget *parent) : QFrame(parent) {
   setObjectName("ToolBarContainer");
-  setFrameStyle(QFrame::StyledPanel);
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
 //-----------------------------------------------------------------------------
 
-void ToolBarContainer::paintEvent(QPaintEvent *event) {
-  QPainter p(this);
-  p.setPen(QColor(120, 120, 120));
-  p.drawLine(0, 0, width(), 0);
-}
+void ToolBarContainer::paintEvent(QPaintEvent *event) { QPainter p(this); }
 
 //=============================================================================
 
