@@ -117,6 +117,7 @@ private:
   void onPathAliasPriorityChanged();
   // Interface
   void onStyleSheetTypeChanged();
+  void onIconThemeChanged();
   void onPixelsOnlyChanged();
   void onUnitChanged();
   void beforeRoomChoiceChanged();

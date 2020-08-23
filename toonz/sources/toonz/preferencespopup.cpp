@@ -355,6 +355,15 @@ void PreferencesPopup::onStyleSheetTypeChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onIconThemeChanged() {
+  // Switch between dark or light icons
+  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+                                                              : "light");
+  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onPixelsOnlyChanged() {
   QComboBox* unitOm           = getUI<QComboBox*>(linearUnits);
   QComboBox* cameraUnitOm     = getUI<QComboBox*>(cameraUnits);
@@ -931,6 +940,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Interface
       {CurrentStyleSheetName, tr("Theme:")},
+      {iconTheme, tr("Switch to dark icons")},
       {pixelsOnly, tr("All imported images will use the same DPI")},
       //{ oldUnits,                               tr("") },
       //{ oldCameraUnits,                         tr("") },
@@ -1239,11 +1249,7 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-    {
-      categoryLayout->addWidget(new QLabel(tr("Category"), this), 0,
-                                Qt::AlignLeft | Qt::AlignVCenter);
-      categoryLayout->addWidget(categoryList, 1);
-    }
+    categoryLayout->addWidget(categoryList, 1);
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(stackedWidget, 1);
   }
@@ -1383,14 +1389,18 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
-  int row = lay->rowCount();
-  lay->addWidget(new QLabel(tr("Pixels Only:"), this), row, 0,
+  lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
                  Qt::AlignRight | Qt::AlignVCenter);
-  lay->addWidget(createUI(pixelsOnly), row, 1);
+  lay->addWidget(createUI(iconTheme), 2, 1);
 
   insertUI(linearUnits, lay, getComboItemList(linearUnits));
   insertUI(cameraUnits, lay,
            getComboItemList(linearUnits));  // share items with linearUnits
+
+  lay->addWidget(new QLabel(tr("Pixels Only:"), this), 5, 0,
+                 Qt::AlignRight | Qt::AlignVCenter);
+  lay->addWidget(createUI(pixelsOnly), 5, 1);
+
   insertUI(CurrentRoomChoice, lay, roomItemList);
   insertUI(functionEditorToggle, lay, getComboItemList(functionEditorToggle));
   insertUI(moveCurrentFrameByClickCellArea, lay);
@@ -1425,6 +1435,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,
                            &PreferencesPopup::onStyleSheetTypeChanged);
+  m_onEditedFuncMap.insert(iconTheme, &PreferencesPopup::onIconThemeChanged);
   m_onEditedFuncMap.insert(pixelsOnly, &PreferencesPopup::onPixelsOnlyChanged);
   m_onEditedFuncMap.insert(linearUnits, &PreferencesPopup::onUnitChanged);
   m_onEditedFuncMap.insert(cameraUnits, &PreferencesPopup::onUnitChanged);

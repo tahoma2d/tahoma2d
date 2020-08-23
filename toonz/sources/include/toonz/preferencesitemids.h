@@ -24,6 +24,7 @@ enum PreferencesItemId {
   //----------
   // Interface
   CurrentStyleSheetName,
+  iconTheme,
   pixelsOnly,
   oldUnits,
   oldCameraUnits,
