@@ -415,6 +415,14 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
+  // Set icon theme search paths
+  QStringList themeSearchPathsList = {":/icons"};
+  QIcon::setThemeSearchPaths(themeSearchPathsList);
+  // qDebug() << "All icon theme search paths:" << QIcon::themeSearchPaths();
+
+  // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
+  QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+
   TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
@@ -582,6 +590,11 @@ int main(int argc, char *argv[]) {
   splash.showMessage(offsetStr + "Loading styles ...", Qt::AlignCenter,
                      Qt::white);
   a.processEvents();
+
+  // Set default start icon theme
+  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+                                                              : "light");
+  // qDebug() << "Icon theme name:" << QIcon::themeName();
 
   // stile
   QApplication::setStyle("windows");
