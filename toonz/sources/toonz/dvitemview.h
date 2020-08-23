@@ -443,7 +443,31 @@ class DvItemViewerTitleBar final : public QWidget {
   int m_dragColumnIndex;
   QPoint m_pos;
 
+  QColor m_colColor;
+  QColor m_colSortedColor;
+  QColor m_colTextColor;
+  QColor m_colBorderColor;
+  QColor m_colRaisedColor;
+
+  Q_PROPERTY(QColor ColColor READ getColColor WRITE setColColor);
+  Q_PROPERTY(QColor ColSortedColor READ getColColor WRITE setColSortedColor);
+  Q_PROPERTY(QColor ColTextColor READ getColColor WRITE setColTextColor);
+  Q_PROPERTY(QColor ColBorderColor READ getColColor WRITE setColBorderColor);
+  Q_PROPERTY(
+      QColor ColRaisedColor READ getColRaisedColor WRITE setColRaisedColor);
+
 public:
+  void setColColor(const QColor &color) { m_colColor = color; }
+  QColor getColColor() const { return m_colColor; }
+  void setColSortedColor(const QColor &color) { m_colSortedColor = color; }
+  QColor getColSortedColor() const { return m_colSortedColor; }
+  void setColTextColor(const QColor &color) { m_colTextColor = color; }
+  QColor getColTextColor() const { return m_colTextColor; }
+  void setColBorderColor(const QColor &color) { m_colBorderColor = color; }
+  QColor getColBorderColor() const { return m_colBorderColor; }
+  void setColRaisedColor(const QColor &color) { m_colRaisedColor = color; }
+  QColor getColRaisedColor() const { return m_colRaisedColor; }
+
   DvItemViewerTitleBar(DvItemViewer *itemViewer, QWidget *parent = 0,
                        bool isInteractive = true);
 

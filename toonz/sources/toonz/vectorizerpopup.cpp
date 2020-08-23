@@ -750,12 +750,12 @@ paramsLayout->addWidget(m_cThicknessRatio, row++, 1);*/
 
   //---------------------- Toolbar --------------------------
 
-  QAction *swatchAct = new QAction(createQIconOnOff("preview", true),
-                                   tr("Toggle Swatch Preview"), this);
+  QAction *swatchAct =
+      new QAction(createQIcon("preview"), tr("Toggle Swatch Preview"), this);
   swatchAct->setCheckable(true);
   leftToolBar->addAction(swatchAct);
 
-  QAction *centerlineAct = new QAction(createQIconOnOff("opacitycheck", true),
+  QAction *centerlineAct = new QAction(createQIcon("opacitycheck"),
                                        tr("Toggle Centerlines Check"), this);
   centerlineAct->setCheckable(true);
   leftToolBar->addAction(centerlineAct);
@@ -771,15 +771,15 @@ paramsLayout->addWidget(m_cThicknessRatio, row++, 1);*/
   rightToolBar->addSeparator();
 
   QAction *saveAct =
-      new QAction(createQIconOnOff("save", false), tr("Save Settings"), this);
+      new QAction(createQIcon("save"), tr("Save Settings"), this);
   rightToolBar->addAction(saveAct);
   QAction *loadAct =
-      new QAction(createQIconOnOff("load", false), tr("Load Settings"), this);
+      new QAction(createQIcon("load"), tr("Load Settings"), this);
   rightToolBar->addAction(loadAct);
   rightToolBar->addSeparator();
 
-  QAction *resetAct = new QAction(createQIconOnOff("resetsize", false),
-                                  tr("Reset Settings"), this);
+  QAction *resetAct =
+      new QAction(createQIcon("resetsize"), tr("Reset Settings"), this);
   rightToolBar->addAction(resetAct);
 
   connect(swatchAct, SIGNAL(triggered(bool)), m_swatchArea,

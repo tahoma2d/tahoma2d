@@ -69,7 +69,7 @@ Toolbar::Toolbar(QWidget *parent, bool isVertical)
   else
     setOrientation(Qt::Horizontal);
 
-  setIconSize(QSize(23, 23));
+  setIconSize(QSize(20, 20));
   setToolButtonStyle(Qt::ToolButtonIconOnly);
 
   m_expandButton = new QToolButton(this);

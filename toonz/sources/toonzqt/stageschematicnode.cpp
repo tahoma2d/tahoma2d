@@ -1326,10 +1326,10 @@ StageSchematicNode::StageSchematicNode(StageSchematicScene *scene,
       QIcon(":Resources/schematic_spline_aim_square.svg"), 0);
   m_cpToggle = new SchematicToggle_SplineOptions(
       this, QIcon(":Resources/schematic_spline_cp.svg"), 0);
-  m_pathToggle->setSize(7, 7);
-  m_cpToggle->setSize(7, 7);
-  m_cpToggle->setPos(m_splineDock->pos() - QPointF(7, 0));
-  m_pathToggle->setPos(m_cpToggle->pos() - QPointF(7, 0));
+  m_pathToggle->setSize(16, 16);
+  m_cpToggle->setSize(16, 16);
+  m_cpToggle->setPos(m_splineDock->pos() - QPointF(16, 0));
+  m_pathToggle->setPos(m_cpToggle->pos() - QPointF(16, 0));
   m_pathToggle->setToolTip(tr("Toggle Autorotate Along Motion Path"));
   m_cpToggle->setToolTip(tr("Toggle Link Motion Path to Control Points"));
 

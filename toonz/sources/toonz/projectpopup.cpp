@@ -37,9 +37,9 @@ using namespace DVGui;
 
 QPixmap ProjectDvDirModelProjectNode::getPixmap(bool isOpen) const {
   static QPixmap openProjectPixmap(
-      svgToPixmap(":Resources/browser_project_open.svg"));
+      svgToPixmap(getIconThemePath("actions/18/folder_project_on.svg")));
   static QPixmap closeProjectPixmap(
-      svgToPixmap(":Resources/browser_project_close.svg"));
+      svgToPixmap(getIconThemePath("actions/18/folder_project.svg")));
   return isOpen ? openProjectPixmap : closeProjectPixmap;
 }
 
@@ -92,7 +92,8 @@ void ProjectDvDirModelRootNode::refreshChildren() {
       ProjectDvDirModelSpecialFileFolderNode *projectRootNode =
           new ProjectDvDirModelSpecialFileFolderNode(
               this, L"Project root (" + rootDir + L")", projectRoot);
-      projectRootNode->setPixmap(svgToPixmap(":Resources/projects.svg"));
+      projectRootNode->setPixmap(
+          svgToPixmap(getIconThemePath("actions/18/folder_project_root.svg")));
       addChild(projectRootNode);
     }
 
@@ -280,7 +281,6 @@ ProjectPopup::ProjectPopup(bool isModal)
 
   m_nameFld->setMaximumHeight(WidgetHeight);
   m_treeView->setModel(m_model);
-  m_treeView->setStyleSheet("border:1px solid rgb(120,120,120);");
 
   //----layout
   m_topLayout->setMargin(5);

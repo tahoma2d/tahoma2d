@@ -115,10 +115,10 @@ ExportSceneDvDirModelFileFolderNode::createExposeSceneNode(
 // ExportSceneDvDirModelProjectNode
 
 QPixmap ExportSceneDvDirModelProjectNode::getPixmap(bool isOpen) const {
-  static QPixmap openProjectPixmap(
-      svgToPixmap(":Resources/browser_project_open.svg"));
-  static QPixmap closeProjectPixmap(
-      svgToPixmap(":Resources/browser_project_close.svg"));
+  static QPixmap openProjectPixmap(recolorPixmap(
+      svgToPixmap(getIconThemePath("actions/18/folder_project_on.svg"))));
+  static QPixmap closeProjectPixmap(recolorPixmap(
+      svgToPixmap(getIconThemePath("actions/18/folder_project.svg"))));
   return isOpen ? openProjectPixmap : closeProjectPixmap;
 }
 
@@ -185,7 +185,8 @@ void ExportSceneDvDirModelRootNode::refreshChildren() {
     ExportSceneDvDirModelSpecialFileFolderNode *projectRootNode =
         new ExportSceneDvDirModelSpecialFileFolderNode(this, L"Project root",
                                                        projectRoot);
-    projectRootNode->setPixmap(QPixmap(svgToPixmap(":Resources/projects.svg")));
+    projectRootNode->setPixmap(QPixmap(recolorPixmap(
+        svgToPixmap(getIconThemePath("actions/18/folder_project_root.svg")))));
     m_projectRootNodes.push_back(projectRootNode);
     addChild(projectRootNode);
   }
@@ -264,7 +265,7 @@ DvDirModelNode *ExportSceneDvDirModel::getNode(const QModelIndex &index) const {
 QModelIndex ExportSceneDvDirModel::index(int row, int column,
                                          const QModelIndex &parent) const {
   if (column != 0) return QModelIndex();
-  DvDirModelNode *parentNode = m_root;
+  DvDirModelNode *parentNode       = m_root;
   if (parent.isValid()) parentNode = getNode(parent);
   if (row < 0 || row >= parentNode->getChildCount()) return QModelIndex();
   DvDirModelNode *node = parentNode->getChild(row);
@@ -443,7 +444,7 @@ QSize ExportSceneTreeViewDelegate::sizeHint(const QStyleOptionViewItem &option,
 
 ExportSceneTreeView::ExportSceneTreeView(QWidget *parent)
     : StyledTreeView(parent) {
-  setStyleSheet("border:1px solid rgb(120,120,120);");
+  setStyleSheet("border:1px solid rgba(0,0,0,0.5);");
   m_model = new ExportSceneDvDirModel();
   setModel(m_model);
   header()->close();
@@ -454,9 +455,9 @@ ExportSceneTreeView::ExportSceneTreeView(QWidget *parent)
   // bottom horizontal scrollbar to resize contents...
   bool ret = connect(this, SIGNAL(expanded(const QModelIndex &)), this,
                      SLOT(resizeToConts()));
-  ret      = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
+  ret = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
                        SLOT(resizeToConts()));
-  ret      = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
+  ret = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
                        SLOT(resizeToConts()));
 
   assert(ret);
@@ -678,7 +679,7 @@ TFilePath ExportScenePopup::createNewProject() {
   if (node)
     currentProjectRoot = node->getPath();
   else
-    currentProjectRoot = pm->getCurrentProjectRoot();
+    currentProjectRoot    = pm->getCurrentProjectRoot();
   TFilePath projectFolder = currentProjectRoot + projectName;
   TFilePath projectPath   = pm->projectFolderToProjectPath(projectFolder);
   TProject *project       = new TProject();

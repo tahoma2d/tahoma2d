@@ -196,6 +196,29 @@ class DVAPI SchematicViewer final : public QWidget {
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
 
+  QColor m_linkColor;  // link color
+  Q_PROPERTY(QColor LinkColor READ getLinkColor WRITE setLinkColor)
+
+  QColor m_selectedLinkColor;  // selected link color
+  Q_PROPERTY(QColor SelectedLinkColor READ getSelectedLinkColor WRITE
+                 setSelectedLinkColor)
+
+  // Selected Node Border Color
+  QColor m_selectedBorderColor;
+  Q_PROPERTY(QColor SelectedBorderColor READ getSelectedBorderColor WRITE
+                 setSelectedBorderColor)
+
+  // Motion Path Link Color
+  QColor m_motionPathLinkColor;
+  Q_PROPERTY(QColor MotionPathLinkColor READ getMotionPathLinkColor WRITE
+                 setMotionPathLinkColor)
+
+  // Motion Path Selected Link Color
+  QColor m_motionPathSelectedLinkColor;
+  Q_PROPERTY(
+      QColor MotionPathSelectedLinkColor READ getMotionPathSelectedLinkColor
+          WRITE setMotionPathSelectedLinkColor)
+
   // TZP column
   QColor m_levelColumnColor;  //(127,219,127)
   Q_PROPERTY(QColor LevelColumnColor READ getLevelColumnColor WRITE
@@ -342,6 +365,36 @@ public:
     m_verticalLineColor = color;
   }
   QColor getVerticalLineColor() const { return m_verticalLineColor; }
+
+  // Link Color
+  void setLinkColor(const QColor &color) { m_linkColor = color; }
+  QColor getLinkColor() const { return m_linkColor; }
+
+  // Selected Link Color
+  void setSelectedLinkColor(const QColor &color) {
+    m_selectedLinkColor = color;
+  }
+  QColor getSelectedLinkColor() const { return m_selectedLinkColor; }
+
+  // Selected Node Border Color
+  void setSelectedBorderColor(const QColor &color) {
+    m_selectedBorderColor = color;
+  }
+  QColor getSelectedBorderColor() const { return m_selectedBorderColor; }
+
+  // Motion Path Link Color
+  void setMotionPathLinkColor(const QColor &color) {
+    m_motionPathLinkColor = color;
+  }
+  QColor getMotionPathLinkColor() const { return m_motionPathLinkColor; }
+
+  // Motion Path Selected Link Color
+  void setMotionPathSelectedLinkColor(const QColor &color) {
+    m_motionPathSelectedLinkColor = color;
+  }
+  QColor getMotionPathSelectedLinkColor() const {
+    return m_motionPathSelectedLinkColor;
+  }
 
   // TZP column
   void setLevelColumnColor(const QColor &color) { m_levelColumnColor = color; }

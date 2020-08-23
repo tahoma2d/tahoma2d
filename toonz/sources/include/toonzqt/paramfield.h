@@ -107,8 +107,41 @@ signals:
 
 class DVAPI ParamFieldKeyToggle final : public QWidget {
   Q_OBJECT
-
 public:
+  QPixmap m_pixmap;
+
+  // keyframe colors
+  QColor m_keyBorderOffColor;
+  QColor m_keyBorderOnColor;
+  QColor m_keyBorderModifiedColor;
+  QColor m_keyBorderInbetweenColor;
+  QColor m_keyBorderHighlightColor;
+  QColor m_keyOffColor;
+  QColor m_keyOnColor;
+  QColor m_keyModifiedColor;
+  QColor m_keyHighlightColor;
+  QColor m_keyInbetweenColor;
+
+  // keyframe colors
+  Q_PROPERTY(QColor KeyBorderOffColor READ getKeyBorderOffColor WRITE
+                 setKeyBorderOffColor)
+  Q_PROPERTY(QColor KeyBorderOnColor READ getKeyBorderOnColor WRITE
+                 setKeyBorderOnColor)
+  Q_PROPERTY(QColor KeyBorderModifiedColor READ getKeyBorderModifiedColor WRITE
+                 setKeyBorderModifiedColor)
+  Q_PROPERTY(QColor KeyBorderInbetweenColor READ getKeyBorderInbetweenColor
+                 WRITE setKeyBorderInbetweenColor)
+  Q_PROPERTY(QColor KeyBorderHighlightColor READ getKeyBorderHighlightColor
+                 WRITE setKeyBorderHighlightColor)
+  Q_PROPERTY(QColor KeyOffColor READ getKeyOffColor WRITE setKeyOffColor)
+  Q_PROPERTY(QColor KeyOnColor READ getKeyOnColor WRITE setKeyOnColor)
+  Q_PROPERTY(QColor KeyModifiedColor READ getKeyModifiedColor WRITE
+                 setKeyModifiedColor)
+  Q_PROPERTY(QColor KeyInbetweenColor READ getKeyInbetweenColor WRITE
+                 setKeyInbetweenColor)
+  Q_PROPERTY(QColor KeyHighlightColor READ getKeyHighlightColor WRITE
+                 setKeyHighlightColor)
+
   enum Status { NOT_ANIMATED, NOT_KEYFRAME, MODIFIED, KEYFRAME };
 
 private:
@@ -129,6 +162,44 @@ protected:
   void mousePressEvent(QMouseEvent *) override;
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
+
+  // keyframe colors
+  void setKeyBorderOffColor(const QColor &color) {
+    m_keyBorderOffColor = color;
+  }
+  QColor getKeyBorderOffColor() const { return m_keyBorderOffColor; }
+  void setKeyBorderOnColor(const QColor &color) { m_keyBorderOnColor = color; }
+  QColor getKeyBorderOnColor() const { return m_keyBorderOnColor; }
+  void setKeyBorderModifiedColor(const QColor &color) {
+    m_keyBorderModifiedColor = color;
+  }
+  QColor getKeyBorderModifiedColor() const { return m_keyBorderModifiedColor; }
+  void setKeyBorderInbetweenColor(const QColor &color) {
+    m_keyBorderInbetweenColor = color;
+  }
+  QColor getKeyBorderInbetweenColor() const {
+    return m_keyBorderInbetweenColor;
+  }
+  void setKeyBorderHighlightColor(const QColor &color) {
+    m_keyBorderHighlightColor = color;
+  }
+  QColor getKeyBorderHighlightColor() const {
+    return m_keyBorderHighlightColor;
+  }
+  void setKeyOffColor(const QColor &color) { m_keyOffColor = color; }
+  QColor getKeyOffColor() const { return m_keyOffColor; }
+  void setKeyOnColor(const QColor &color) { m_keyOnColor = color; }
+  QColor getKeyOnColor() const { return m_keyOnColor; }
+  void setKeyModifiedColor(const QColor &color) { m_keyModifiedColor = color; }
+  QColor getKeyModifiedColor() const { return m_keyModifiedColor; }
+  void setKeyHighlightColor(const QColor &color) {
+    m_keyHighlightColor = color;
+  }
+  QColor getKeyHighlightColor() const { return m_keyHighlightColor; }
+  void setKeyInbetweenColor(const QColor &color) {
+    m_keyInbetweenColor = color;
+  }
+  QColor getKeyInbetweenColor() const { return m_keyInbetweenColor; }
 
 signals:
   void keyToggled();

@@ -378,13 +378,13 @@ ShortcutPopup::ShortcutPopup()
   m_exportButton->setToolTip(tr("Export Current Shortcuts"));
   m_deletePresetButton = new QPushButton(tr("Delete"), this);
   m_deletePresetButton->setToolTip(tr("Delete Current Preset"));
-  m_deletePresetButton->setIcon(QIcon(":Resources/delete_on.svg"));
+  m_deletePresetButton->setIcon(createQIcon("delete"));
   m_savePresetButton = new QPushButton(tr("Save As"), this);
   m_savePresetButton->setToolTip(tr("Save Current Shortcuts as New Preset"));
-  m_savePresetButton->setIcon(QIcon(":Resources/saveas_on.svg"));
+  m_savePresetButton->setIcon(createQIcon("saveas"));
   m_loadPresetButton = new QPushButton(tr("Load"));
   m_loadPresetButton->setToolTip(tr("Use selected preset as shortcuts"));
-  m_loadPresetButton->setIcon(QIcon(":Resources/green.png"));
+  m_loadPresetButton->setIcon(createQIcon("load"));
   QGroupBox *presetBox = new QGroupBox(tr("Shortcut Presets"), this);
   presetBox->setObjectName("SolidLineFrame");
   m_clearAllShortcutsButton = new QPushButton(tr("Clear All Shortcuts"));

@@ -325,7 +325,7 @@ void PageViewer::drop(int dstIndexInPage, const QMimeData *mimeData) {
   int dstPageIndex = m_page->getIndex();
   if ((m_page->getStyleId(0) == 0 || m_page->getStyleId(1) == 1) &&
       dstIndexInPage < 2)
-    dstIndexInPage = 2;
+    dstIndexInPage                       = 2;
   if (dstIndexInPage < 0) dstIndexInPage = m_page->getStyleCount();
 
   const PaletteData *paletteData = dynamic_cast<const PaletteData *>(mimeData);
@@ -453,17 +453,15 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
         StudioPalette::instance()->getSourceStyle(style);
     if (g.first != TFilePath() && g.second >= 0)
       name += "  " + toQString(g.first) + ":" + QString::number(g.second);
-    if (style->getFlags() != 0) name += "(autopaint)";
+    if (style->getFlags() != 0) name += " (autopaint)";
 
     TPoint pickedPos = style->getPickedPosition().pos;
     if (pickedPos != TPoint())
       name += QString(" (%1,%2)").arg(pickedPos.x).arg(pickedPos.y);
 
-    p.drawText(nameRect.adjusted(6, 4, -6, -4), name);
+    p.drawText(nameRect.adjusted(10, 4, -6, -4), name);
 
-    QColor borderCol(getTextColor());
-    borderCol.setAlphaF(0.3);
-    p.setPen(borderCol);
+    p.setPen(getSeparatorColor());
   }
 
   if (m_viewMode == SmallChips && style->getFlags() != 0) {
@@ -488,15 +486,15 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
   }
 
   if (m_viewMode == LargeChips) {
-    QString index = QString::number(styleIndex);
-    QFont font    = p.font();
-    int fontSize  = font.pointSize();
+    QString index                = QString::number(styleIndex);
+    QFont font                   = p.font();
+    int fontSize                 = font.pointSize();
     if (fontSize == -1) fontSize = font.pixelSize();
-    int length = index.length() * fontSize;
-    int w      = (length > 11) ? (length) : 11;
-    int h      = 11;
-    int x0     = nameRect.right() - w + 1;
-    int y0     = nameRect.top() - h - 1;
+    int length                   = index.length() * fontSize;
+    int w                        = (length > 11) ? (length) : 11;
+    int h                        = 11;
+    int x0                       = nameRect.right() - w + 1;
+    int y0                       = nameRect.top() - h - 1;
     p.drawText(nameRect.adjusted(6, 1, -6, -1), name);
     QRect indexRect(x0, y0, w, h);
     p.fillRect(indexRect, QBrush(Qt::white));
@@ -556,27 +554,26 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
 
 //-----------------------------------------------------------------------------
 /*! Draw the chip name \b name inside rectangle \b chipRect using painter \b p.
-* If the name is too wide to fit on the chip, use left align - to show the
-* start of the name. Otherwise, use center align.
-*/
+ * If the name is too wide to fit on the chip, use left align - to show the
+ * start of the name. Otherwise, use center align.
+ */
 static void drawChipName(QPainter &p, const QRect &chipRect,
-  const std::wstring &name) {
+                         const std::wstring &name) {
   const QString nameQString = QString::fromStdWString(name);
   QRect textRect = p.boundingRect(chipRect, Qt::AlignCenter, nameQString);
 
   if (chipRect.width() < textRect.width()) {
     // align left if the name is too wide to fit on the chip
-    p.drawText(chipRect.adjusted(4, 0, -4, 0),
-      Qt::AlignLeft | Qt::AlignVCenter, nameQString);
-  }
-  else {
+    p.drawText(chipRect.adjusted(4, 0, -4, 0), Qt::AlignLeft | Qt::AlignVCenter,
+               nameQString);
+  } else {
     // otherwise align by center
     p.drawText(chipRect, Qt::AlignCenter, nameQString);
   }
 }
 
 //-----------------------------------------------------------------------------
-/*! Pain current page styles using current view mode.
+/*! Paint current page styles using current view mode.
  */
 void PageViewer::paintEvent(QPaintEvent *e) {
   QPainter p(this);
@@ -589,15 +586,15 @@ void PageViewer::paintEvent(QPaintEvent *e) {
   TPalette *palette = (m_page) ? m_page->getPalette() : 0;
   if (!palette) return;
 
-  // [i0,i1] = range celle visibili
-  QRect visibleRect = e->rect();
-  int i0            = posToIndex(visibleRect.topLeft());
-  if (i0 < 0) i0 = 0;
-  int i1 = posToIndex(visibleRect.bottomRight());
+  // [i0,i1] = visible cell range
+  QRect visibleRect            = e->rect();
+  int i0                       = posToIndex(visibleRect.topLeft());
+  if (i0 < 0) i0               = 0;
+  int i1                       = posToIndex(visibleRect.bottomRight());
   if (i1 >= getChipCount()) i1 = getChipCount() - 1;
 
   if (m_viewMode == List) {
-    // disegno le celle
+    // draw the cells
     int i;
     int currentStyleIndexInPage = -1;
     for (i = i0; i <= i1; i++) {
@@ -607,51 +604,45 @@ void PageViewer::paintEvent(QPaintEvent *e) {
 
       QRect chipRect = getColorChipRect(i);
       p.setPen(Qt::black);
-      drawColorChip(p, chipRect, style);
+      drawColorChip(p, chipRect.adjusted(-2, 0, -2, 0), style);
+
+      // current style
+      if (i == currentStyleIndexInPage && 0 <= i && i < getChipCount()) {
+        QRect rect = getItemRect(i);
+        if (!m_styleSelection->isSelected(m_page->getIndex(), i)) {
+          p.fillRect(rect.adjusted(21, 0, -3, 0), getCurrentCellColor());
+        }
+      }
+
+      // selected
+      if (m_styleSelection->isSelected(m_page->getIndex(), i)) {
+        QRect itemRect = getItemRect(i);
+        p.fillRect(itemRect.adjusted(21, 0, -3, 0), getSelectedCellColor());
+      }
 
       // name, index and shortcut
       QRect nameRect = getColorNameRect(i);
-      drawColorName(p, nameRect, style, styleIndex);
+      drawColorName(p, nameRect.adjusted(-2, 0, -3, 0), style, styleIndex);
 
       // if numpad shortcut is activated, draw shortcut scope
       if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&
           m_viewType == LEVEL_PALETTE &&
           palette->getStyleShortcut(styleIndex) >= 0) {
-        p.setPen(QPen(QColor(0, 0, 0, 128), 2));
+        p.setPen(QPen(QColor(getListNumpadShortcutBorderColor()), 2));
+        p.drawLine(nameRect.topLeft() + QPoint(0, 1),
+                   nameRect.bottomLeft() + QPoint(0, 0));
+        p.setPen(QPen(QColor(getListNumpadShortcutBorderColor()), 2));
         p.drawLine(nameRect.topLeft() + QPoint(2, 1),
                    nameRect.bottomLeft() + QPoint(2, 0));
-        p.setPen(QPen(QColor(255, 255, 255, 128), 2));
-        p.drawLine(nameRect.topLeft() + QPoint(4, 1),
-                   nameRect.bottomLeft() + QPoint(4, 0));
-      }
 
-      // selezione
-      if (m_styleSelection->isSelected(m_page->getIndex(), i)) {
-        p.setPen(Qt::white);
-        QRect itemRect = getItemRect(i);
-        p.drawRect(itemRect);
-        p.drawRect(chipRect.adjusted(1, 1, -1, -1));
-      }
-      // stile corrente
-      if (i == currentStyleIndexInPage && 0 <= i && i < getChipCount()) {
-        QRect rect = getItemRect(i);
-
-        p.setPen(QColor(180, 210, 255));
-        p.drawRect(rect.adjusted(1, 1, -1, -1));
-
-        p.setPen(Qt::white);
-        p.drawRect(rect.adjusted(2, 2, -2, -2));
-        p.setPen(Qt::black);
-        p.drawRect(rect.adjusted(3, 3, -3, -3));
-
-        if (!m_styleSelection->isSelected(m_page->getIndex(), i)) {
-          p.setPen(QColor(225, 225, 225));
-          p.drawRect(rect.adjusted(1, 1, -1, -1));
-        }
+        // draw a separator line between shortcut border and name
+        p.setPen(QPen(QColor(getSeparatorColor())));
+        p.drawLine(nameRect.topLeft() + QPoint(3, 1),
+                   nameRect.bottomLeft() + QPoint(3, 0));
       }
 
       // toggle link
-      drawToggleLink(p, chipRect, m_page->getStyle(i));
+      drawToggleLink(p, chipRect.adjusted(0, 0, -2, 0), m_page->getStyle(i));
     }
   } else {
     int currentStyleIndex = getCurrentStyleIndex();
@@ -667,10 +658,10 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         QRect itemRect = getItemRect(i);
         // paint dark
         p.setPen(Qt::NoPen);
-        p.setBrush(QColor(0, 0, 0, 64));
+        p.setBrush(QColor(getNumpadShortcutBgColor()));
         p.drawRect(itemRect);
         // check the neighbours and draw light lines
-        p.setPen(QPen(QColor(255, 255, 255, 128), 2));
+        p.setPen(QPen(QColor(getNumpadShortcutBorderColor()), 2));
         // top
         if (!hasShortcut(i - m_chipPerRow))
           p.drawLine(itemRect.topLeft(), itemRect.topRight() - QPoint(1, 0));
@@ -687,12 +678,12 @@ void PageViewer::paintEvent(QPaintEvent *e) {
                      itemRect.bottomRight() - QPoint(0, 1));
       }
 
-      // draw white frame if the style is selected or current
+      // draw frame if the style is selected or current
       if (m_styleSelection->isSelected(m_page->getIndex(), i) ||
           currentStyleIndex == styleIndex) {
         QRect itemRect = getItemRect(i).adjusted(0, -1, 0, 1);
         p.setPen(Qt::NoPen);
-        p.setBrush(Qt::white);
+        p.setBrush(getSelectedBorderColor());
         p.drawRoundRect(itemRect, 7, 25);
       }
       // paint style
@@ -785,8 +776,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         // display mode
         if (m_nameDisplayMode == Style) {
           drawChipName(p, chipRect, name);
-        }
-        else if (m_nameDisplayMode == Original) {
+        } else if (m_nameDisplayMode == Original) {
           if (origName != L"") {
             tmpFont.setItalic(true);
             p.setFont(tmpFont);
@@ -1190,7 +1180,7 @@ void PageViewer::dragEnterEvent(QDragEnterEvent *event) {
     if (index < 0)
       index = 0;
     else if (index > m_page->getStyleCount())
-      index = m_page->getStyleCount();
+      index             = m_page->getStyleCount();
     m_dropPositionIndex = index;
     update();
     event->acceptProposedAction();
@@ -1210,7 +1200,7 @@ void PageViewer::dragMoveEvent(QDragMoveEvent *event) {
     if (index < 0)
       index = 0;
     else if (index > m_page->getStyleCount())
-      index = m_page->getStyleCount();
+      index             = m_page->getStyleCount();
     m_dropPositionIndex = index;
     update();
     event->acceptProposedAction();
@@ -1286,8 +1276,9 @@ void PageViewer::keyPressEvent(QKeyEvent *e) {
     if (key ==
         cManager->getKeyFromShortcut(cManager->getShortcutFromId(V_ZoomIn)))
       zoomInChip();
-    else if (key == cManager->getKeyFromShortcut(
-                        cManager->getShortcutFromId(V_ZoomOut)))
+    else if (key ==
+             cManager->getKeyFromShortcut(
+                 cManager->getShortcutFromId(V_ZoomOut)))
       zoomOutChip();
     else
       e->ignore();
@@ -1396,8 +1387,8 @@ void PageViewer::select(int indexInPage, QMouseEvent *event) {
   }
 
   bool isStyleChanged = false;
-  if (on) selected = true;
-  int styleIndex = m_page->getStyleId(indexInPage);
+  if (on) selected    = true;
+  int styleIndex      = m_page->getStyleId(indexInPage);
   if (selected) {
     setCurrentStyleIndex(styleIndex);
 
@@ -1620,7 +1611,7 @@ PaletteIconWidget::PaletteIconWidget(QWidget *parent, Qt::WFlags flags)
 #endif
     : QWidget(parent, flags), m_isOver(false) {
   setFixedSize(30, 20);
-  setToolTip(QObject::tr("Palette"));
+  setToolTip(QObject::tr("Click & Drag Palette into Studio Palette"));
 }
 
 //-----------------------------------------------------------------------------
@@ -1631,14 +1622,15 @@ PaletteIconWidget::~PaletteIconWidget() {}
 
 void PaletteIconWidget::paintEvent(QPaintEvent *) {
   QPainter p(this);
-
+  // generate icon and extract the pixmaps
+  QIcon dragPaletteIcon = createQIcon("dragpalette");
   if (m_isOver) {
     static QPixmap dragPaletteIconPixmapOver(
-        svgToPixmap(":Resources/dragpalette_over.svg"));
+        dragPaletteIcon.pixmap(20, QIcon::Active));
     p.drawPixmap(5, 1, dragPaletteIconPixmapOver);
   } else {
     static QPixmap dragPaletteIconPixmap(
-        svgToPixmap(":Resources/dragpalette.svg"));
+        dragPaletteIcon.pixmap(20, QIcon::Normal, QIcon::Off));
     p.drawPixmap(5, 1, dragPaletteIconPixmap);
   }
 }

@@ -9,6 +9,7 @@
 #include "toonzqt/checkbox.h"
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/dvdialog.h"
+#include <toonzqt/gutil.h>
 
 // TnzLib includes
 #include "toonz/toonzfolders.h"
@@ -240,14 +241,14 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   m_fspChk->setFixedSize(20, 20);
   m_fspChk->setCheckable(true);
   m_fspChk->setChecked(true);
-
   m_fspChk->setToolTip(tr("Force Squared Pixel"));
   m_fspChk->setObjectName("ForceSquaredPixelButton");
+  m_fspChk->setIcon(createQIcon("squarepixel"));
   m_addPresetBtn->setObjectName("PushButton_NoPadding");
   m_removePresetBtn->setObjectName("PushButton_NoPadding");
 
-  m_inchPrev->setFixedSize(11, 21);
-  m_dotPrev->setFixedSize(11, 21);
+  m_inchPrev->setFixedSize(13, 13);
+  m_dotPrev->setFixedSize(13, 13);
   m_inchPrev->setObjectName("CameraSettingsRadioButton_Small");
   m_dotPrev->setObjectName("CameraSettingsRadioButton_Small");
 

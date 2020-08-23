@@ -51,7 +51,7 @@ namespace XsheetGUI {
 const int ColumnWidth     = 74;
 const int RowHeight       = 20;
 const int SCROLLBAR_WIDTH = 16;
-const int TOOLBAR_HEIGHT  = 30;
+const int TOOLBAR_HEIGHT  = 29;
 const int ZOOM_FACTOR_MAX = 100;
 const int ZOOM_FACTOR_MIN = 20;
 }  // namespace XsheetGUI
@@ -384,17 +384,17 @@ void XsheetViewer::positionSections() {
 
   if (Preferences::instance()->isShowXSheetToolbarEnabled()) {
     m_toolbar->showToolbar(true);
-    int w = visibleRegion().boundingRect().width() - 5;
+    int w = visibleRegion().boundingRect().width();
     m_toolbarScrollArea->setGeometry(0, 0, w, XsheetGUI::TOOLBAR_HEIGHT);
     m_toolbar->setFixedWidth(w);
     if (o->isVerticalTimeline()) {
       headerFrame = headerFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT,
                                          XsheetGUI::TOOLBAR_HEIGHT);
-      bodyFrame   = bodyFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
+      bodyFrame = bodyFrame.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
     } else {
       headerLayer = headerLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT,
                                          XsheetGUI::TOOLBAR_HEIGHT);
-      bodyLayer   = bodyLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
+      bodyLayer = bodyLayer.adjusted(XsheetGUI::TOOLBAR_HEIGHT, 0);
     }
   } else {
     m_toolbar->showToolbar(false);
@@ -723,9 +723,9 @@ void XsheetViewer::updateAreeSize() {
           positionToXY(CellPosition(xsh->getFrameCount() + 1, firstCol));
 
       ColumnFan *fan = xsh->getColumnFan(m_orientation);
-      areaFilled.setY(
-          areaFilled.y() + 1 +
-          (fan->isActive(firstCol) ? o->cellHeight() : o->foldedCellSize()));
+      areaFilled.setY(areaFilled.y() + 1 + (fan->isActive(firstCol)
+                                                ? o->cellHeight()
+                                                : o->foldedCellSize()));
     }
   }
   if (viewArea.width() < areaFilled.x()) viewArea.setWidth(areaFilled.x());
@@ -817,9 +817,9 @@ QPoint XsheetViewer::positionToXY(const CellPosition &pos) const {
   // area
   // since the layers are flipped
 
-  usePoint.setY(
-      usePoint.y() - o->cellHeight() +
-      (fan->isActive(pos.layer()) ? o->cellHeight() : o->foldedCellSize()));
+  usePoint.setY(usePoint.y() - o->cellHeight() + (fan->isActive(pos.layer())
+                                                      ? o->cellHeight()
+                                                      : o->foldedCellSize()));
   int columnCount = std::max(1, xsh->getColumnCount());
   int colsHeight  = o->colToLayerAxis(columnCount, fan);
 
@@ -949,8 +949,8 @@ bool XsheetViewer::areCameraCellsSelected() {
 
 void XsheetViewer::setScrubHighlight(int row, int startRow, int col) {
   if (m_scrubCol == -1) m_scrubCol = col;
-  m_scrubRow0 = std::min(row, startRow);
-  m_scrubRow1 = std::max(row, startRow);
+  m_scrubRow0                      = std::min(row, startRow);
+  m_scrubRow1                      = std::max(row, startRow);
   return;
 }
 
@@ -1155,12 +1155,12 @@ void XsheetViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-  {
-    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                 "Qt::MouseEventSynthesizedByApplication"
-              << std::endl;
-    break;
-  }
+    {
+      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
 
   }  // end switch
 }
@@ -1390,8 +1390,8 @@ void XsheetViewer::onCurrentColumnSwitched() {
 void XsheetViewer::scrollToColumn(int col) {
   int colNext = col + (m_orientation->isVerticalTimeline() ? 1 : -1);
   if (colNext < 0) colNext = -1;
-  int x0 = columnToLayerAxis(col);
-  int x1 = columnToLayerAxis(colNext);
+  int x0                   = columnToLayerAxis(col);
+  int x1                   = columnToLayerAxis(colNext);
 
   if (orientation()->isVerticalTimeline())
     scrollToHorizontalRange(x0, x1);

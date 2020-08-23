@@ -182,6 +182,9 @@ signals:
 class DVAPI FlipConsole final : public QWidget {
   Q_OBJECT
 
+  QColor m_fpsFieldColor;
+  Q_PROPERTY(QColor FpsFieldColor READ getFpsFieldColor WRITE setFpsFieldColor)
+
 public:
   enum EGadget {
     eBegin,
@@ -303,6 +306,9 @@ public:
     return std::find(buttonMask.begin(), buttonMask.end(), buttonId) ==
            buttonMask.end();
   }
+
+  void setFpsFieldColor(const QColor &color) { m_fpsFieldColor = color; }
+  QColor getFpsFieldColor() const { return m_fpsFieldColor; }
 
 signals:
 

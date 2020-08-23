@@ -189,7 +189,6 @@ void FileBrowserPopup::addFilterType(const QString &type) {
 //-----------------------------------------------------------------------------
 
 void FileBrowserPopup::setFileMode(bool isDirectoryOnly) {
-
   m_isDirectoryOnly = isDirectoryOnly;
   if (isDirectoryOnly) {
     m_nameFieldLabel->setText(tr("Folder name:"));
@@ -656,8 +655,9 @@ void SaveSubSceneAsPopup::initFolder() {
 namespace {
 QPushButton *createShowButton(QWidget *parent) {
   QPushButton *button = new QPushButton(parent);
-  button->setObjectName("LoadLevelShowButton");
+  button->setObjectName("menuToggleButton");
   button->setFixedSize(15, 15);
+  button->setIcon(createQIcon("menu_toggle"));
   button->setCheckable(true);
   button->setChecked(false);
   button->setAutoDefault(false);
@@ -1222,10 +1222,10 @@ bool LoadLevelPopup::execute() {
       args.frameIdsSet.push_back(tmp_fids);
     }
 
-    int xFrom = m_xFrom->text().toInt();
+    int xFrom             = m_xFrom->text().toInt();
     if (xFrom) args.xFrom = xFrom;
-    int xTo = m_xTo->text().toInt();
-    if (xTo) args.xTo = xTo;
+    int xTo               = m_xTo->text().toInt();
+    if (xTo) args.xTo     = xTo;
 
     args.levelName             = m_levelName->text().toStdWString();
     args.step                  = m_stepCombo->currentIndex();
@@ -1576,7 +1576,7 @@ bool SaveLevelAsPopup::execute() {
     TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(
         TApp::instance()->getCurrentLevel()->getLevel());
     if (!sl) return false;
-    std::string ext = sl->getPath().getType();
+    std::string ext            = sl->getPath().getType();
     if (fp.getType() == "") fp = fp.withType(ext);
 
     IoCmd::LoadResourceArguments args(fp);
@@ -2233,7 +2233,7 @@ void BrowserPopup::initFolder(TFilePath path) {
   }
   if (!TFileStatus(path).doesExist()) {
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-    if (scene) path = scene->decodeFilePath(path);
+    if (scene) path   = scene->decodeFilePath(path);
   }
 
   if (!path.getType().empty()) path = path.getParentDir();
@@ -2302,8 +2302,8 @@ void BrowserPopupController::openPopup(QStringList filters,
 QString BrowserPopupController::getPath(bool codePath) {
   m_isExecute = false;
   if (!m_browserPopup) return QString();
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-  TFilePath fp      = m_browserPopup->getPath();
+  ToonzScene *scene         = TApp::instance()->getCurrentScene()->getScene();
+  TFilePath fp              = m_browserPopup->getPath();
   if (scene && codePath) fp = scene->codeFilePath(fp);
   std::cout << ::to_string(fp) << std::endl;
   return toQString(fp);

@@ -480,14 +480,14 @@ public:
   SimpleIconViewField(const QString &iconName, const QString &toolTipStr = "",
                       QWidget *parent = 0)
       : DraggableIconView(parent), m_icon(createQIcon(iconName.toUtf8())) {
-    setMinimumSize(17, 25);
+    setMinimumSize(18, 18);
     setToolTip(toolTipStr);
   }
 
 protected:
   void paintEvent(QPaintEvent *e) {
     QPainter p(this);
-    p.drawPixmap(QRect(0, 4, 17, 17), m_icon.pixmap(17, 17));
+    p.drawPixmap(QRect(0, 2, 18, 18), m_icon.pixmap(18, 18));
   }
 };
 
@@ -536,7 +536,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_nsPosField =
       new PegbarChannelField(m_tool, TStageObject::T_Y, "field", frameHandle,
                              objHandle, xshHandle, this);
-  m_zField        = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
+  m_zField = new PegbarChannelField(m_tool, TStageObject::T_Z, "field",
                                     frameHandle, objHandle, xshHandle, this);
   m_noScaleZField = new NoScaleField(m_tool, "field");
 
@@ -667,7 +667,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_zField->setPrecision(4);
   m_noScaleZField->setPrecision(4);
 
-  bool splined = isCurrentObjectSplined();
+  bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
 
@@ -1262,8 +1262,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
     m_isVectorSelction = true;
 
     // change Thick
-    IconViewField *thicknessIconView =
-        new IconViewField(this, IconViewField::Icon_Thickness);
+    SimpleIconViewField *thicknessIconView =
+        new SimpleIconViewField("thickness", tr("Thickness"), this);
     m_thickChangeField = new ThickChangeField(selectionTool, tr("Thickness"));
 
     connect(thicknessIconView, SIGNAL(onMousePress(QMouseEvent *)),
@@ -1300,7 +1300,7 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   // assert(ret);
   bool ret = connect(m_scaleXField, SIGNAL(valueChange(bool)),
                      SLOT(onScaleXValueChanged(bool)));
-  ret      = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
+  ret = ret && connect(m_scaleYField, SIGNAL(valueChange(bool)),
                        SLOT(onScaleYValueChanged(bool)));
   if (m_setSaveboxCheckbox)
     ret = ret && connect(m_setSaveboxCheckbox, SIGNAL(toggled(bool)),
@@ -1721,11 +1721,11 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
-  ret      = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
+  ret = ret && connect(m_toolType, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolTypeChanged(int)));
-  ret      = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
                        SLOT(onOnionModeToggled(bool)));
-  ret      = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
                        SLOT(onMultiFrameModeToggled(bool)));
   assert(ret);
   if (m_colorMode->getProperty()->getValue() == L"Lines") {
@@ -2135,7 +2135,7 @@ public:
     QPainter p(this);
     p.setPen(QColor(64, 64, 64));
     p.drawLine(0, 0, 0, 25);
-    p.setPen(Qt::white);
+    p.setPen(QColor(0, 0, 0, 125));
     p.drawLine(1, 0, 1, 25);
   }
 };
@@ -2324,9 +2324,9 @@ TapeToolOptionsBox::TapeToolOptionsBox(QWidget *parent, TTool *tool,
 
   bool ret = connect(m_typeMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onToolTypeChanged(int)));
-  ret      = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
+  ret = ret && connect(m_toolMode, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onToolModeChanged(int)));
-  ret      = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_joinStrokesMode, SIGNAL(toggled(bool)), this,
                        SLOT(onJoinStrokesModeChanged()));
   assert(ret);
 }
@@ -2413,11 +2413,10 @@ protected:
       p.setPen(Qt::black);
     p.setBrush(Qt::NoBrush);
 
-    p.drawText(rect(), Qt::AlignCenter,
-               QString("R:%1 G:%2 B:%3")
-                   .arg(m_color.red())
-                   .arg(m_color.green())
-                   .arg(m_color.blue()));
+    p.drawText(rect(), Qt::AlignCenter, QString("R:%1 G:%2 B:%3")
+                                            .arg(m_color.red())
+                                            .arg(m_color.green())
+                                            .arg(m_color.blue()));
   }
 };
 
@@ -2845,7 +2844,7 @@ void ToolOptions::onToolSwitched() {
   TTool *tool = app->getCurrentTool()->getTool();
   if (tool) {
     // c'e' un tool corrente
-    ToolOptionsBox *panel                            = 0;
+    ToolOptionsBox *panel = 0;
     std::map<TTool *, ToolOptionsBox *>::iterator it = m_panels.find(tool);
     if (it == m_panels.end()) {
       // ... senza panel associato

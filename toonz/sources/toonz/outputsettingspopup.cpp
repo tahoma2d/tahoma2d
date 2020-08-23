@@ -226,6 +226,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
     m_renderButton          = new QPushButton(tr("Render"), this);
+    m_renderButton->setIcon(createQIcon("render"));
+    m_renderButton->setIconSize(QSize(20, 20));
 
     // Board
     m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
@@ -290,8 +292,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   m_channelWidthOm->addItem(tr("16 bit"), "16 bit");
 
   if (!isPreview) {
-    showOtherSettingsButton->setObjectName("OutputSettingsShowButton");
+    showOtherSettingsButton->setObjectName("menuToggleButton");
     showOtherSettingsButton->setFixedSize(15, 15);
+    showOtherSettingsButton->setIcon(createQIcon("menu_toggle"));
     showOtherSettingsButton->setCheckable(true);
     showOtherSettingsButton->setChecked(false);
     showOtherSettingsButton->setFocusPolicy(Qt::NoFocus);
@@ -314,8 +317,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
                     << tr("Fx Schematic Terminal Nodes");
     m_multimediaOm->addItems(multimediaTypes);
 
-    showCameraSettingsButton->setObjectName("OutputSettingsShowButton");
+    showCameraSettingsButton->setObjectName("menuToggleButton");
     showCameraSettingsButton->setFixedSize(15, 15);
+    showCameraSettingsButton->setIcon(createQIcon("menu_toggle"));
     showCameraSettingsButton->setCheckable(true);
     showCameraSettingsButton->setChecked(true);
     showCameraSettingsButton->setFocusPolicy(Qt::NoFocus);
@@ -935,8 +939,8 @@ void OutputSettingsPopup::onNameChanged() {
   }
   if (isReservedFileName_message(name)) {
     TOutputProperties *prop = getProperties();
-    TFilePath fp = prop->getPath();
-    QString name = QString::fromStdString(fp.getName());
+    TFilePath fp            = prop->getPath();
+    QString name            = QString::fromStdString(fp.getName());
     if (name.isEmpty())
       name = QString::fromStdString(scene->getScenePath().getName());
     m_fileNameFld->setText(name);

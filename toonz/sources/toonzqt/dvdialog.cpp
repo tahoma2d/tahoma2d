@@ -127,7 +127,7 @@ void Separator::paintEvent(QPaintEvent *) {
   p.drawText(contents.left(), 10, m_name);
 
   // make the line semi-transparent
-  QColor lineColor = palette().alternateBase().color();
+  QColor lineColor = Qt::black;
   lineColor.setAlpha(128);
 
   p.setPen(lineColor);
@@ -314,10 +314,10 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     // on another monitor by default, but this is better than
     // a user thinking the program is broken because they didn't notice
     // the popup on another monitor
-    if (x > screen.right() - 50) x = screen.right() - 50;
-    if (x < screen.left()) x = screen.left();
+    if (x > screen.right() - 50) x  = screen.right() - 50;
+    if (x < screen.left()) x        = screen.left();
     if (y > screen.bottom() - 90) y = screen.bottom() - 90;
-    if (y < screen.top()) y = screen.top();
+    if (y < screen.top()) y         = screen.top();
     setGeometry(x, y, values.at(2).toInt(), values.at(3).toInt());
     settings.setValue(m_name, QString::number(x) + " " + QString::number(y) +
                                   " " + QString::number(values.at(2).toInt()) +
@@ -370,10 +370,10 @@ void Dialog::hideEvent(QHideEvent *event) {
   }
   QRect screen = QApplication::desktop()->availableGeometry(currentScreen);
 
-  if (x > screen.right() - 50) x = screen.right() - 50;
-  if (x < screen.left()) x = screen.left();
+  if (x > screen.right() - 50) x  = screen.right() - 50;
+  if (x < screen.left()) x        = screen.left();
   if (y > screen.bottom() - 90) y = screen.bottom() - 90;
-  if (y < screen.top()) y = screen.top();
+  if (y < screen.top()) y         = screen.top();
   move(QPoint(x, y));
   resize(size());
   QRect r = geometry();
@@ -1347,7 +1347,7 @@ QString DVGui::getText(const QString &title, const QString &labelText,
 
   dialog.addButtonBarWidget(okBtn, cancelBtn);
 
-  int ret = dialog.exec();
+  int ret     = dialog.exec();
   if (ok) *ok = (ret == QDialog::Accepted);
 
   return nameFld->text();

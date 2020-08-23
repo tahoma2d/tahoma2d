@@ -402,7 +402,7 @@ void FileBrowser::onFwdButtonPushed() {
 void FileBrowser::clearHistory() {
   int size = m_indexHistoryList.size();
   // leave the last item
-  for (int i = 1; i < size; i++) m_indexHistoryList.removeLast();
+  for (int i        = 1; i < size; i++) m_indexHistoryList.removeLast();
   m_currentPosition = 0;
   refreshHistoryButtons();
 }
@@ -918,20 +918,23 @@ QVariant FileBrowser::getItemData(int index, DataType dataType,
     QSize iconSize = m_itemViewer->getPanel()->getIconSize();
     // parent folder icons
     if (item.m_path == m_folder.getParentDir()) {
-      static QPixmap folderUpPixmap(svgToPixmap(":Resources/folderup_icon.svg",
-                                                iconSize, Qt::KeepAspectRatio));
+      static QPixmap folderUpPixmap(
+          svgToPixmap(getIconThemePath("actions/60/folder_browser_up.svg"),
+                      iconSize, Qt::KeepAspectRatio));
       return folderUpPixmap;
     }
     // folder icons
     else if (item.m_isFolder) {
       if (item.m_isLink) {
-        static QPixmap linkIcon(svgToPixmap(":Resources/link_icon.svg",
-                                            iconSize, Qt::KeepAspectRatio));
-        return linkIcon;
+        static QPixmap folderLinkPixmap(
+            svgToPixmap(getIconThemePath("actions/60/folder_browser_link.svg"),
+                        iconSize, Qt::KeepAspectRatio));
+        return folderLinkPixmap;
       } else {
-        static QPixmap folderIcon(svgToPixmap(":Resources/folder_icon.svg",
-                                              iconSize, Qt::KeepAspectRatio));
-        return folderIcon;
+        static QPixmap folderPixmap(
+            svgToPixmap(getIconThemePath("actions/60/folder_browser.svg"),
+                        iconSize, Qt::KeepAspectRatio));
+        return folderPixmap;
       }
     }
 
@@ -1143,7 +1146,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
   for (i = 0; i < (int)files.size(); i++) {
     TFileType::Type type = TFileType::getInfo(files[i]);
     if (areResources && !TFileType::isResource(type)) areResources = false;
-    if (!areScenes && TFileType::isScene(type)) areScenes = true;
+    if (!areScenes && TFileType::isScene(type)) areScenes          = true;
   }
 
   bool areFullcolor = true;
@@ -1164,7 +1167,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     if (clickedFile != TFilePath() && clickedFile.getType() == "tnz")
       title = tr("Load As Sub-xsheet");
     else
-      title = tr("Load");
+      title         = tr("Load");
     QAction *action = new QAction(title, menu);
     ret             = ret &&
           connect(action, SIGNAL(triggered()), this, SLOT(loadResources()));
@@ -1689,7 +1692,7 @@ namespace {
 
 bool parsePathName(const QString &fullpath, QString &parentPath, QString &name,
                    QString &format) {
-  int index = fullpath.lastIndexOf('\\');
+  int index              = fullpath.lastIndexOf('\\');
   if (index == -1) index = fullpath.lastIndexOf('/');
 
   QString filename;

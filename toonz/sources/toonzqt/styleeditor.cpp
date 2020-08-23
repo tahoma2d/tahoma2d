@@ -837,7 +837,7 @@ void HexagonalColorWheel::clickLeftWheel(const QPoint &pos) {
   // d is a length from center to edge of the wheel when saturation = 100
   float d = m_triHeight / cosf(phi / 180.0f * 3.1415f);
 
-  int h = (int)theta;
+  int h          = (int)theta;
   if (h > 359) h = 359;
   // clamping
   int s = (int)(std::min(p.length() / d, 1.0) * 100.0f);
@@ -998,13 +998,11 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
 
   if (m_channel == eAlpha) {
     static QPixmap checkboard(":Resources/backg.png");
-    p.drawTiledPixmap(x, y, w, h, checkboard);
+    p.drawTiledPixmap(x, y + 1, w, h, checkboard);
   }
 
   if (!bgPixmap.isNull()) {
-    p.drawTiledPixmap(x, y, w, h, bgPixmap);
-    p.setPen(Qt::white);
-    p.drawLine(x, y + h, x + w, y + h);
+    p.drawTiledPixmap(x, y + 1, w, h, bgPixmap);
   }
 
   /*!
@@ -1223,11 +1221,14 @@ void ChannelLineEdit::focusOutEvent(QFocusEvent *e) {
 void ChannelLineEdit::paintEvent(QPaintEvent *e) {
   IntLineEdit::paintEvent(e);
 
+  /* Now that stylesheets added lineEdit focus this is likely redundant,
+   * commenting out in-case it is still required.
   if (m_isEditing) {
     QPainter p(this);
     p.setPen(Qt::yellow);
     p.drawRect(rect().adjusted(0, 0, -1, -1));
   }
+  */
 }
 
 //*****************************************************************************
@@ -1270,7 +1271,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   m_field->setObjectName("colorSliderField");
-  m_field->setFixedWidth(fontMetrics().width('0') * 6 + 5);
+  m_field->setFixedWidth(fontMetrics().width('0') * 4);
   m_field->setMinimumHeight(7);
 
   addButton->setObjectName("colorSliderAddButton");
@@ -2344,7 +2345,7 @@ void SpecialStyleChooserPage::loadItems() {
         tagId == 2002 ||  // ??
         tagId == 3000 ||  // vector brush
         tagId == 4001     // mypaint brush
-    )
+        )
       continue;
 
     TColorStyle *style = TColorStyle::create(tagId);
@@ -2692,6 +2693,7 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
         QPushButton *pushButton = new QPushButton;
         pushButton->setToolTip(tr("Reset to default"));
         pushButton->setIcon(createQIcon("delete"));
+        pushButton->setFixedSize(24, 24);
         m_paramsLayout->addWidget(pushButton, p, 2);
         ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
                                SLOT(onValueReset())) &&
@@ -2980,14 +2982,14 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   menu->addAction(m_rgbAction);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("options"));
+  toolButton->setIcon(createQIcon("menu"));
   toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
   toolButton->setToolTip(tr("Show or hide parts of the Color Page."));
   QToolBar *displayToolbar = new QToolBar(this);
   m_toggleOrientationAction =
-      displayToolbar->addAction(QIcon(":Resources/orientation_h.svg"), "");
+      displayToolbar->addAction(createQIcon("orientation_h"), "");
   m_toggleOrientationAction->setToolTip(
       tr("Toggle orientation of the Color Page."));
   QWidget *toggleOrientationButton =
@@ -2996,7 +2998,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   displayToolbar->addWidget(toolButton);
   displayToolbar->setMaximumHeight(22);
-  displayToolbar->setIconSize(QSize(18, 18));
+  displayToolbar->setIconSize(QSize(16, 16));
 
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
@@ -3006,7 +3008,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-      hLayout->addSpacing(4);
+      hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }
@@ -3138,7 +3140,7 @@ QFrame *StyleEditor::createBottomWidget() {
   bool ret = true;
   ret      = ret && connect(m_applyButton, SIGNAL(clicked()), this,
                        SLOT(applyButtonClicked()));
-  ret      = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
                        SLOT(autoCheckChanged(bool)));
   ret = ret && connect(m_oldColor, SIGNAL(clicked(const TColorStyle &)), this,
                        SLOT(onOldStyleClicked(const TColorStyle &)));
@@ -3201,9 +3203,9 @@ QFrame *StyleEditor::createVectorPage() {
   bool ret = true;
   ret      = ret && connect(specialButton, SIGNAL(toggled(bool)), this,
                        SLOT(onSpecialButtonToggled(bool)));
-  ret      = ret && connect(customButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(customButton, SIGNAL(toggled(bool)), this,
                        SLOT(onCustomButtonToggled(bool)));
-  ret      = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
+  ret = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
                        SLOT(onVectorBrushButtonToggled(bool)));
   assert(ret);
   return vectorOutsideFrame;
@@ -3240,9 +3242,9 @@ void StyleEditor::showEvent(QShowEvent *) {
   bool ret = true;
   ret      = ret && connect(m_paletteHandle, SIGNAL(colorStyleSwitched()),
                        SLOT(onStyleSwitched()));
-  ret      = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged(bool)),
+  ret = ret && connect(m_paletteHandle, SIGNAL(colorStyleChanged(bool)),
                        SLOT(onStyleChanged(bool)));
-  ret      = ret && connect(m_paletteHandle, SIGNAL(paletteSwitched()), this,
+  ret = ret && connect(m_paletteHandle, SIGNAL(paletteSwitched()), this,
                        SLOT(onStyleSwitched()));
   if (m_cleanupPaletteHandle)
     ret =
@@ -3274,9 +3276,9 @@ void StyleEditor::hideEvent(QHideEvent *) {
 
 void StyleEditor::updateOrientationButton() {
   if (m_plainColorPage->getIsVertical()) {
-    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_h.svg"));
+    m_toggleOrientationAction->setIcon(createQIcon("orientation_h"));
   } else {
-    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_v.svg"));
+    m_toggleOrientationAction->setIcon(createQIcon("orientation_v"));
   }
 }
 
@@ -3310,11 +3312,11 @@ void StyleEditor::onStyleSwitched() {
     QString statusText;
     // palette type
     if (isCleanUpPalette)
-      statusText = tr("[CLEANUP]  ");
+      statusText = tr("Cleanup ");
     else if (palette->getGlobalName() != L"")
-      statusText = tr("[STUDIO]  ");
+      statusText = tr("Studio ");
     else
-      statusText = tr("[LEVEL]  ");
+      statusText = tr("Level ");
 
     // palette name
     statusText += tr("Palette") + " : " +

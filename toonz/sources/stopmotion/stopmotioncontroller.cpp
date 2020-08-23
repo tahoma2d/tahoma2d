@@ -209,7 +209,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   if (m_captureFilterSettingsBtn) {
     m_captureFilterSettingsBtn->setObjectName("GearButton");
     m_captureFilterSettingsBtn->setFixedSize(28, 28);
-    m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
+    m_captureFilterSettingsBtn->setIconSize(QSize(18, 18));
     m_captureFilterSettingsBtn->setToolTip(tr("Webcam Settings..."));
   }
 

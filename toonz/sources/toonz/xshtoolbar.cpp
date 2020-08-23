@@ -31,8 +31,9 @@ XSheetToolbar::XSheetToolbar(XsheetViewer *parent, Qt::WFlags flags)
 #endif
     : CommandBar(parent, flags, isCollapsible, true), m_viewer(parent) {
   setObjectName("cornerWidget");
-  setFixedHeight(30);
+  setFixedHeight(29);
   setObjectName("XSheetToolbar");
+  setIconSize(QSize(20, 20));
 }
 
 //-----------------------------------------------------------------------------
