@@ -473,10 +473,8 @@ void PaletteViewerPanel::reset() {
 
 void PaletteViewerPanel::initializeTitleBar() {
   m_isCurrentButton = new TPanelTitleBarButton(
-      getTitleBar(), svgToPixmap(":Resources/switch.svg"),
-      svgToPixmap(":Resources/switch_over.svg"),
-      svgToPixmap(":Resources/switch_on.svg"));
-  getTitleBar()->add(QPoint(-54, 2), m_isCurrentButton);
+      getTitleBar(), svgToPixmap(getIconThemePath("actions/18/switch.svg")));
+  getTitleBar()->add(QPoint(-54, 0), m_isCurrentButton);
   m_isCurrentButton->setPressed(true);
   connect(m_isCurrentButton, SIGNAL(toggled(bool)),
           SLOT(onCurrentButtonToggled(bool)));
@@ -864,8 +862,8 @@ public:
     panel->setWidget(toolbar);
     panel->setIsMaximizable(false);
     // panel->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-    panel->setFixedWidth(45);  // 35
-    toolbar->setFixedWidth(35);
+    panel->setFixedWidth(40);  // 35
+    toolbar->setFixedWidth(30);
     panel->setWindowTitle(QString(""));
   }
 } toolbarFactory;
@@ -963,12 +961,11 @@ void FlipbookPanel::reset() { m_flipbook->reset(); }
 void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   bool ret      = true;
   int x         = -91;
-  int iconWidth = 20;
+  int iconWidth = 18;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
       new TPanelTitleBarButtonForSafeArea(
-          titleBar, ":Resources/pane_safe_off.svg",
-          ":Resources/pane_safe_over.svg", ":Resources/pane_safe_on.svg");
+          titleBar, getIconThemePath("actions/18/pane_safe.svg"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -983,13 +980,12 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   x += 33 + iconWidth;
   // minimize button
-  m_button = new TPanelTitleBarButton(titleBar, ":Resources/pane_minimize.svg",
-                                      ":Resources/pane_minimize_over.svg",
-                                      ":Resources/pane_minimize_on.svg");
+  m_button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_minimize.svg"));
   m_button->setToolTip(tr("Minimize"));
   m_button->setPressed(false);
 
-  titleBar->add(QPoint(x, 1), m_button);
+  titleBar->add(QPoint(x, 0), m_button);
   ret = ret && connect(m_button, SIGNAL(toggled(bool)), this,
                        SLOT(onMinimizeButtonToggled(bool)));
   assert(ret);
@@ -1096,8 +1092,8 @@ public:
 // ExportFactory
 //-----------------------------------------------------------------------------
 
-//class ExportFactory final : public TPanelFactory {
-//public:
+// class ExportFactory final : public TPanelFactory {
+// public:
 //  ExportFactory() : TPanelFactory("Export") {}
 //
 //  TPanel *createPanel(QWidget *parent) {
@@ -1110,7 +1106,7 @@ public:
 //  void initialize(TPanel *panel) { assert(0); }
 //} exportFactory;
 //
-//OpenFloatingPanel openExportPanelCommand(MI_OpenExport, "Export",
+// OpenFloatingPanel openExportPanelCommand(MI_OpenExport, "Export",
 //                                         QObject::tr("Export"));
 
 //=============================================================================
