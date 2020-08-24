@@ -16,6 +16,7 @@
 #include <QRadioButton>
 #include <QPushButton>
 #include <QTextEdit>
+#include <QPainterPath>
 
 #include "tgeometry.h"
 #include "tparam.h"

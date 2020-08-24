@@ -695,7 +695,7 @@ void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
 
   // Create rounded rect for key button states
   QPainter p(this);
-  p.setRenderHint(p.Antialiasing);
+  p.setRenderHint(p.Antialiasing, true);
   QPainterPath path;
   path.addRoundedRect(
       QRectF(0.5, 0.5, 19, 19), radius,

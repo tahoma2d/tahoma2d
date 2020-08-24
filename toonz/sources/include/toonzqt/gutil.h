@@ -108,9 +108,9 @@ int DVAPI getDevPixRatio();
 
 //-----------------------------------------------------------------------------
 
-QPixmap DVAPI setOpacity(QPixmap &pixmap, const qreal &opacity = 0.8);
+QPixmap DVAPI setOpacity(QPixmap pixmap, const qreal &opacity = 0.8);
 QPixmap DVAPI recolorPixmap(
-    QPixmap &pixmap, QColor color = Preferences::instance()->getIconTheme()
+    QPixmap pixmap, QColor color = Preferences::instance()->getIconTheme()
                                         ? Qt::black
                                         : Qt::white);
 QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false);
