@@ -157,7 +157,8 @@ StartupPopup::StartupPopup()
   m_removePresetBtn->setStyleSheet(
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
   QLabel *label = new QLabel();
-  label->setPixmap(QPixmap(getIconThemePath("misc/startup.png")));
+  label->setPixmap(
+      QPixmap(QString(":icons/") + QIcon::themeName() + "/misc/startup.png"));
   m_projectBox->setObjectName("SolidLineFrame");
   m_sceneBox->setObjectName("SolidLineFrame");
   m_recentBox->setObjectName("SolidLineFrame");
