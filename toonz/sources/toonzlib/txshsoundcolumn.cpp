@@ -156,7 +156,7 @@ bool lessThan(const ColumnLevel *s1, const ColumnLevel *s2) {
 
 TXshSoundColumn::TXshSoundColumn()
     : m_player(0)
-    , m_volume(0.4)
+    , m_volume(1)
     , m_currentPlaySoundTrack(0)
     , m_isOldVersion(false) {
   m_timer.setInterval(500);
