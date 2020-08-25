@@ -480,14 +480,14 @@ public:
   SimpleIconViewField(const QString &iconName, const QString &toolTipStr = "",
                       QWidget *parent = 0)
       : DraggableIconView(parent), m_icon(createQIcon(iconName.toUtf8())) {
-    setMinimumSize(17, 25);
+    setMinimumSize(18, 18);
     setToolTip(toolTipStr);
   }
 
 protected:
   void paintEvent(QPaintEvent *e) {
     QPainter p(this);
-    p.drawPixmap(QRect(0, 4, 17, 17), m_icon.pixmap(17, 17));
+    p.drawPixmap(QRect(0, 2, 18, 18), m_icon.pixmap(18, 18));
   }
 };
 
@@ -1260,8 +1260,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
     m_isVectorSelction = true;
 
     // change Thick
-    IconViewField *thicknessIconView =
-        new IconViewField(this, IconViewField::Icon_Thickness);
+    SimpleIconViewField *thicknessIconView =
+        new SimpleIconViewField("thickness", tr("Thickness"), this);
     m_thickChangeField = new ThickChangeField(selectionTool, tr("Thickness"));
 
     connect(thicknessIconView, SIGNAL(onMousePress(QMouseEvent *)),
@@ -2133,7 +2133,7 @@ public:
     QPainter p(this);
     p.setPen(QColor(64, 64, 64));
     p.drawLine(0, 0, 0, 25);
-    p.setPen(Qt::white);
+    p.setPen(QColor(0, 0, 0, 125));
     p.drawLine(1, 0, 1, 25);
   }
 };

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="20px" height="20px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect x="0" y="0" width="20" height="20" style="fill-opacity:0;"/>
+    <g transform="matrix(1.33333,0,0,1.33333,-3.33333,-3.33333)">
+        <circle cx="10" cy="10" r="3" style="fill:black;"/>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <path d="M17.5,14C19.432,14 21,15.568 21,17.5C21,19.432 19.432,21 17.5,21C15.568,21 14,19.432 14,17.5C14,15.568 15.568,14 17.5,14ZM20,17.5L16,15L16,20L20,17.5Z" style="fill:black;"/>
+    </g>
+    <path d="M3,14L3,17L6,17L6,18L3,18C2.448,18 2,17.552 2,17L2,14L3,14ZM2,6L2,3C2,2.448 2.448,2 3,2L6,2L6,3L3,3L3,6L2,6ZM17,6L17,3L14,3L14,2L17,2C17.552,2 18,2.448 18,3L18,6L17,6Z" style="fill:black;"/>
+</svg>

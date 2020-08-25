@@ -202,11 +202,25 @@ void IntLineEdit::focusOutEvent(QFocusEvent *e) {
 
 // for fps edit in flip console
 void IntLineEdit::setLineEditBackgroundColor(QColor color) {
-  QString sheet = QString("background-color: rgb(") +
-                  QString::number(color.red()) + QString(",") +
-                  QString::number(color.green()) + QString(",") +
-                  QString::number(color.blue()) + QString(",") +
-                  QString::number(color.alpha()) + QString(");");
+  // Set text color based on luminescence of bg color
+  int value           = 0;
+  double luminescence = ((0.299 * color.red()) + (0.587 * color.green()) +
+                         (0.114 * color.blue())) /
+                        255;
+  if (luminescence > 0.5)
+    value = 0;  // black
+  else
+    value = 255;  // white
+
+  QString sheet =
+      QString("background-color: rgb(") + QString::number(color.red()) +
+      QString(",") + QString::number(color.green()) + QString(",") +
+      QString::number(color.blue()) + QString(",") +
+      QString::number(color.alpha()) +
+      QString(");" +
+              QString("color: rgb(" + QString::number(value) + QString(",") +
+                      QString::number(value) + QString(",") +
+                      QString::number(value) + QString(");")));
   setStyleSheet(sheet);
 }
 

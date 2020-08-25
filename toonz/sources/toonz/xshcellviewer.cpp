@@ -331,46 +331,36 @@ bool isGlobalKeyFrameWithSameTypeDiffFromLinear(TStageObject *stageObject,
   TDoubleKeyframe::Type type =
       stageObject->getParam(TStageObject::T_Angle)->getKeyframeAt(frame).m_type;
   if (type == TDoubleKeyframe::Linear) return false;
-  if (type !=
-          stageObject->getParam(TStageObject::T_X)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_Y)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_Z)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_SO)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_ScaleX)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_ScaleY)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_Scale)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_Path)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_ShearX)
-              ->getKeyframeAt(frame)
-              .m_type ||
-      type !=
-          stageObject->getParam(TStageObject::T_ShearY)
-              ->getKeyframeAt(frame)
-              .m_type)
+  if (type != stageObject->getParam(TStageObject::T_X)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_Y)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_Z)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_SO)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_ScaleX)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_ScaleY)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_Scale)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_Path)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_ShearX)
+                  ->getKeyframeAt(frame)
+                  .m_type ||
+      type != stageObject->getParam(TStageObject::T_ShearY)
+                  ->getKeyframeAt(frame)
+                  .m_type)
     return false;
   return true;
 }
@@ -393,46 +383,36 @@ bool isGlobalKeyFrameWithSamePrevTypeDiffFromLinear(TStageObject *stageObject,
                                    ->getKeyframeAt(frame)
                                    .m_prevType;
   if (type == TDoubleKeyframe::Linear) return false;
-  if (type !=
-          stageObject->getParam(TStageObject::T_X)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_Y)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_Z)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_SO)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_ScaleX)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_ScaleY)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_Scale)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_Path)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_ShearX)
-              ->getKeyframeAt(frame)
-              .m_prevType ||
-      type !=
-          stageObject->getParam(TStageObject::T_ShearY)
-              ->getKeyframeAt(frame)
-              .m_prevType)
+  if (type != stageObject->getParam(TStageObject::T_X)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_Y)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_Z)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_SO)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_ScaleX)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_ScaleY)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_Scale)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_Path)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_ShearX)
+                  ->getKeyframeAt(frame)
+                  .m_prevType ||
+      type != stageObject->getParam(TStageObject::T_ShearY)
+                  ->getKeyframeAt(frame)
+                  .m_prevType)
     return false;
   return true;
 }
@@ -597,20 +577,6 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
     int r0, r1;
     if (pegbar && pegbar->getKeyframeRange(r0, r1)) padding += 9;
   }
-
-  // removed by konero 6/4/20
-  //// make the field semi-transparent
-  // QColor bgColor        = m_viewer->getColumnHeadPastelizer();
-  // QString styleSheetStr = QString(
-  //                            "#RenameCellField { padding-right:%1px; "
-  //                            "background-color:rgba(%2,%3,%4,75);
-  //                            color:%5;}")
-  //                            .arg(padding)
-  //                            .arg(bgColor.red())
-  //                            .arg(bgColor.green())
-  //                            .arg(bgColor.blue())
-  //                            .arg(m_viewer->getTextColor().name());
-  // setStyleSheet(styleSheetStr);
 
   TXshCell cell = xsh->getCell(row, col);
   QPoint xy     = m_viewer->positionToXY(CellPosition(row, col)) - QPoint(1, 2);
@@ -1113,6 +1079,8 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
       distance > 0 && ((row - offset) % distance) == 0 && row != 0;
   QColor color = isAfterMarkers ? m_viewer->getMarkerLineColor()
                                 : m_viewer->getLightLineColor();
+  color.setAlpha(isAfterMarkers ? m_viewer->getMarkerLineColor().alpha()
+                                : m_viewer->getLightLineColor().alpha());
 
   int frameAxis        = m_viewer->rowToFrameAxis(row);
   QLine horizontalLine = m_viewer->orientation()->horizontalLine(
@@ -1122,9 +1090,10 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
     int x = horizontalLine.x1();
     int y = horizontalLine.y2() - 1;
     horizontalLine.setP1(QPoint(x, y));
-    color.setAlpha(150);
+    color.setAlpha(120);
   } else if (!o->isVerticalTimeline() && !isAfterMarkers && emptyFrame)
-    color.setAlpha(100);
+    color.setAlpha(isAfterMarkers ? m_viewer->getMarkerLineColor().alpha()
+                                  : m_viewer->getLightLineColor().alpha());
   p.setPen(color);
   p.drawLine(horizontalLine);
 }
@@ -1294,11 +1263,11 @@ void CellArea::drawFoldedColumns(QPainter &p, int layerAxis,
   for (int i = 0; i < 3; i++) {
     QRect whiteRect =
         m_viewer->orientation()->foldedRectangle(layerAxis, frameAxis, i);
-    p.fillRect(whiteRect, QBrush(Qt::white));
+    p.fillRect(whiteRect, QBrush(m_viewer->getFoldedColumnBGColor()));
   }
 
   // 3 dark lines
-  p.setPen(m_viewer->getLightLineColor());
+  p.setPen(m_viewer->getFoldedColumnLineColor());
   for (int i = 0; i < 3; i++) {
     QLine darkLine =
         m_viewer->orientation()->foldedRectangleLine(layerAxis, frameAxis, i);
@@ -1479,7 +1448,13 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
                                    isSelected);
 
   // cells background
-  p.fillRect(rect, QBrush(cellColor));
+  if (o->isVerticalTimeline())
+    // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
+    // pick up the hue of the cell color to make the separator line more
+    // pleasing to the eye.
+    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+  else
+    p.fillRect(rect, QBrush(cellColor));
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -1529,8 +1504,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     pmin = minmax.first;
     pmax = minmax.second;
 
-    min    = tcrop((int)pmin, -trackWidth / 2, 0) + center;
-    max    = tcrop((int)pmax, 0, trackWidth / 2 - 1) + center;
+    min = tcrop((int)pmin, -trackWidth / 2, 0) + center;
+    max = tcrop((int)pmax, 0, trackWidth / 2 - 1) + center;
 
     if (scrub && i % 2) {
       p.setPen(m_viewer->getSoundColumnHlColor());
@@ -1728,9 +1703,17 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
                       : (isActive ? m_viewer->getActiveCameraColor()
                                   : m_viewer->getOtherCameraColor());
       cellColor.setAlpha(50);
+
       // paint cell
-      p.fillRect(rect, QBrush(cellColor));
+      if (o->isVerticalTimeline())
+        // Paint the cell edge-to-edge, we use LightLineColor with low opacity
+        // to pick up the hue of the cell color to make the separator line more
+        // pleasing to the eye.
+        p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+      else
+        p.fillRect(rect, QBrush(cellColor));
     }
+
     drawFrameSeparator(p, row, col, true);
 
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
@@ -1782,7 +1765,13 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
   }
 
   // paint cell
-  p.fillRect(rect, QBrush(cellColor));
+  if (o->isVerticalTimeline())
+    // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
+    // pick up the hue of the cell color to make the separator line more
+    // pleasing to the eye.
+    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+  else
+    p.fillRect(rect, QBrush(cellColor));
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -1836,15 +1825,14 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
   nameRect.adjust(0, 0, -frameAdj, 0);
 
   // draw text in red if the file does not exist
-  bool isRed                                  = false;
-  TXshSimpleLevel *sl                         = cell.getSimpleLevel();
+  bool isRed          = false;
+  TXshSimpleLevel *sl = cell.getSimpleLevel();
   if (sl && !sl->isFid(cell.m_frameId)) isRed = true;
-  TXshChildLevel *cl                          = cell.getChildLevel();
+  TXshChildLevel *cl = cell.getChildLevel();
   if (cl && cell.getFrameId().getNumber() - 1 >= cl->getFrameCount())
     isRed = true;
   QColor penColor =
-      isRed ? QColor(230, 100, 100)  // m_viewer->getSelectedColumnTextColor()
-            : m_viewer->getTextColor();
+      isRed ? QColor(m_viewer->getErrorTextColor()) : m_viewer->getTextColor();
   p.setPen(penColor);
 
   QString fontName = Preferences::instance()->getInterfaceFont();
@@ -1939,8 +1927,9 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   bool isSelected                   = cellSelection->isCellSelected(row, col) ||
                     columnSelection->isColumnSelected(col);
 
-  if (row > 0) prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
-                                                       // nothing to draw
+  if (row > 0)
+    prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
+                                            // nothing to draw
 
   bool sameLevel = prevCell.m_level.getPointer() == cell.m_level.getPointer();
 
@@ -2003,7 +1992,13 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
                                  isSelected);
 
   // paint cell
-  p.fillRect(rect, QBrush(cellColor));
+  if (o->isVerticalTimeline())
+    // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
+    // pick up the hue of the cell color to make the separator line more
+    // pleasing to the eye.
+    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+  else
+    p.fillRect(rect, QBrush(cellColor));
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2046,7 +2041,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
 #ifdef _WIN32
     fontName = "Arial";
 #else
-    fontName          = "Helvetica";
+    fontName = "Helvetica";
 #endif
   }
   static QFont font(fontName, -1, QFont::Normal);
@@ -2078,7 +2073,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
 #if QT_VERSION >= 0x050500
   QString elidaName = elideText(text, metric, nameRect.width(), "~");
 #else
-  QString elidaName   = elideText(text, font, nameRect.width(), "~");
+  QString elidaName = elideText(text, font, nameRect.width(), "~");
 #endif
 
   if (!sameLevel || prevCell.m_frameId != cell.m_frameId)
@@ -2099,7 +2094,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   bool isSelected               = cellSelection->isCellSelected(row, col);
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);
-  TXshCell nextCell     = xsh->getCell(row + 1, col);
+  TXshCell nextCell = xsh->getCell(row + 1, col);
 
   bool sameLevel = prevCell.m_level.getPointer() == cell.m_level.getPointer();
 
@@ -2110,8 +2105,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   bool isAfterMarkers =
       distance > 0 && ((row - offset) % distance) == 0 && row != 0;
 
-  bool isRed                         = false;
-  TXshPaletteLevel *pl               = cell.getPaletteLevel();
+  bool isRed           = false;
+  TXshPaletteLevel *pl = cell.getPaletteLevel();
   if (pl && !pl->getPalette()) isRed = true;
 
   QPoint xy = m_viewer->positionToXY(CellPosition(row, col));
@@ -2175,7 +2170,14 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     sideColor = m_viewer->getPaletteColumnBorderColor();
   }
 
-  p.fillRect(rect, QBrush(cellColor));
+  // paint cell
+  if (o->isVerticalTimeline())
+    // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
+    // pick up the hue of the cell color to make the separator line more
+    // pleasing to the eye.
+    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+  else
+    p.fillRect(rect, QBrush(cellColor));
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2232,9 +2234,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     }
 
     nameRect.adjust(0, 0, -frameAdj, 0);
-    QColor penColor =
-        isRed ? QColor(230, 100, 100)  // m_viewer->getSelectedColumnTextColor()
-              : m_viewer->getTextColor();
+    QColor penColor = isRed ? QColor(m_viewer->getErrorTextColor())
+                            : m_viewer->getTextColor();
     p.setPen(penColor);
     // il nome va scritto se e' diverso dalla cella precedente oppure se
     // siamo su una marker line
@@ -2243,7 +2244,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 #ifdef _WIN32
       fontName = "Arial";
 #else
-      fontName        = "Helvetica";
+      fontName = "Helvetica";
 #endif
     }
     static QFont font(fontName, -1, QFont::Normal);
@@ -2451,7 +2452,7 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
       keyRect.center() + m_viewer->positionToXY(CellPosition(rows.from(), col));
   QPoint end =
       keyRect.center() + m_viewer->positionToXY(CellPosition(rows.to(), col));
-  p.setPen(Qt::white);
+  p.setPen(m_viewer->getTextColor());
   p.drawLine(QLine(begin, end));
 }
 
@@ -2808,10 +2809,9 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         setDragTool(XsheetGUI::DragTool::makeLevelMoverTool(m_viewer));
     } else {
       m_viewer->getKeyframeSelection()->selectNone();
-      if (isSoundColumn &&
-          o->rect(PredefinedRect::PREVIEW_TRACK)
-              .adjusted(0, 0, -frameAdj, 0)
-              .contains(mouseInCell))
+      if (isSoundColumn && o->rect(PredefinedRect::PREVIEW_TRACK)
+                               .adjusted(0, 0, -frameAdj, 0)
+                               .contains(mouseInCell))
         setDragTool(XsheetGUI::DragTool::makeSoundScrubTool(
             m_viewer, column->getSoundColumn()));
       else if (isSoundColumn &&
@@ -2943,10 +2943,9 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
                       : QString::fromStdWString(levelName) + QString(" ") +
                             QString::fromStdString(frameNumber));
     }
-  } else if (isSoundColumn &&
-             o->rect(PredefinedRect::PREVIEW_TRACK)
-                 .adjusted(0, 0, -frameAdj, 0)
-                 .contains(mouseInCell))
+  } else if (isSoundColumn && o->rect(PredefinedRect::PREVIEW_TRACK)
+                                  .adjusted(0, 0, -frameAdj, 0)
+                                  .contains(mouseInCell))
     m_tooltip = tr("Click and drag to play");
   else if (m_levelExtenderRect.contains(pos))
     m_tooltip = tr("Click and drag to repeat selected cells");

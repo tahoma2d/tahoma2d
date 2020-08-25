@@ -16,10 +16,15 @@ class TPanelTitleBarButton : public QWidget {
   Q_OBJECT
   QString m_standardPixmapName;
   QPixmap m_standardPixmap;
-  QColor m_rolloverColor;
+  QColor m_overColor;
   QColor m_pressedColor;
   QColor m_freezeColor;
   QColor m_previewColor;
+
+  Q_PROPERTY(QColor OverColor READ getOverColor WRITE setOverColor);
+  Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
+  Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
+  Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
 
   bool m_rollover;
   TPanelTitleBarButtonSet *m_buttonSet;
@@ -36,8 +41,8 @@ public:
   void setButtonSet(TPanelTitleBarButtonSet *buttonSet, int id);
   int getId() const { return m_id; }
 
-  void setRolloverColor(const QColor &color) { m_rolloverColor = color; }
-  QColor getRolloverColor() const { return m_rolloverColor; }
+  void setOverColor(const QColor &color) { m_overColor = color; }
+  QColor getOverColor() const { return m_overColor; }
   void setPressedColor(const QColor &color) { m_pressedColor = color; }
   QColor getPressedColor() const { return m_pressedColor; }
   void setFreezeColor(const QColor &color) { m_freezeColor = color; }
@@ -56,10 +61,10 @@ protected:
   void leaveEvent(QEvent *) override;
   void mousePressEvent(QMouseEvent *event) override;
 
-  Q_PROPERTY(QColor RolloverColor READ getRolloverColor WRITE setRolloverColor);
-  Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
-  Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
-  Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
+  //Q_PROPERTY(QColor RolloverColor READ getRolloverColor WRITE setRolloverColor);
+  //Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
+  //Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
+  //Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
 
 signals:
   //! emitted when the user press the button

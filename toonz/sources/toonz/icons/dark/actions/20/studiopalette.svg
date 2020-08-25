@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="20px" height="20px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect x="0" y="0" width="20" height="20" style="fill-opacity:0;"/>
+    <g>
+        <path d="M17,17L14,17L14,16L17,16L17,14L18,14L18,16L17,16L17,17ZM6,14L8,14L8,16L6,16L6,14ZM9,14L11,14L11,16L9,16L9,14ZM14,14L14,15L13,15L13,16L12,16L12,14L14,14ZM16,7L5,7L5,15L4,15L4,6L16,6L16,7ZM14,13L14,11L15,11L15,10L18,10L18,11L15,11L15,13L17,13L17,14L15,14L15,13L14,13ZM6,11L8,11L8,13L6,13L6,11ZM9,11L11,11L11,13L9,13L9,11ZM13,11L13,13L12,13L12,11L13,11ZM14,5L3,5L3,13L2,13L2,4L14,4L14,5ZM6,8L8,8L8,10L6,10L6,8ZM9,8L11,8L11,10L9,10L9,8ZM14,10L12,10L12,8L14,8L14,10ZM17,9L15,9L15,8L17,8L17,9Z"/>
+    </g>
+</svg>

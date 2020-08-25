@@ -488,10 +488,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_newLevelButton->setObjectName("ToolbarToolButton");
   m_newLevelButton->setFixedSize(34, 25);
   m_newLevelButton->setIconSize(QSize(30, 20));
-  QIcon newLevelIcon = createQIcon("newmemo");
-  newLevelIcon.addFile(QString(":Resources/newmemo_disabled.svg"), QSize(),
-                       QIcon::Disabled);
-  m_newLevelButton->setIcon(newLevelIcon);
+  m_newLevelButton->setIcon(createQIcon("newmemo"));
   m_newLevelButton->setToolTip(tr("Add New Level"));
 
   m_noteButton->getContentsMargins(0, 0, 0, 0);
@@ -506,21 +503,15 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_noteButton->setToolTip(tr("Add New Memo"));
 
   m_precNoteButton->setObjectName("ToolbarToolButton");
-  m_precNoteButton->setFixedSize(18, 25);
+  m_precNoteButton->setFixedSize(17, 25);
   m_precNoteButton->setIconSize(QSize(17, 17));
-  QIcon precNoteIcon = createQIcon("prevkey");
-  precNoteIcon.addFile(QString(":Resources/prevkey_disabled.svg"), QSize(),
-                       QIcon::Disabled);
-  m_precNoteButton->setIcon(precNoteIcon);
+  m_precNoteButton->setIcon(createQIcon("prevkey"));
   m_precNoteButton->setToolTip(tr("Previous Memo"));
 
   m_nextNoteButton->setObjectName("ToolbarToolButton");
-  m_nextNoteButton->setFixedSize(18, 25);
+  m_nextNoteButton->setFixedSize(17, 25);
   m_nextNoteButton->setIconSize(QSize(17, 17));
-  QIcon nextNoteIcon = createQIcon("nextkey");
-  nextNoteIcon.addFile(QString(":Resources/nextkey_disabled.svg"), QSize(),
-                       QIcon::Disabled);
-  m_nextNoteButton->setIcon(nextNoteIcon);
+  m_nextNoteButton->setIcon(createQIcon("nextkey"));
   m_nextNoteButton->setToolTip(tr("Next Memo"));
 
   QStringList frameDisplayStyles;

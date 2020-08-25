@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <QColor>
 #include "traster.h"
+#include "toonz/preferences.h"
 
 #undef DVAPI
 #undef DVVAR
@@ -45,6 +46,10 @@ class QIcon;
 class TFilePath;
 class QPainterPath;
 class TStroke;
+
+//-----------------------------------------------------------------------------
+
+QString DVAPI getIconThemePath(const QString &filePath);
 
 //-----------------------------------------------------------------------------
 
@@ -102,9 +107,14 @@ svgToPixmap(const QString &svgFilePath, const QSize &size = QSize(),
 int DVAPI getDevPixRatio();
 
 //-----------------------------------------------------------------------------
-QIcon DVAPI createQIcon(const char *iconSVGName);
+
+QPixmap DVAPI setOpacity(QPixmap pixmap, const qreal &opacity = 0.8);
+QPixmap DVAPI recolorPixmap(
+    QPixmap pixmap, QColor color = Preferences::instance()->getIconTheme()
+                                        ? Qt::black
+                                        : Qt::white);
+QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
-QIcon DVAPI createQIconOnOff(const char *iconSVGName, bool withOver = true);
 QIcon DVAPI createQIconOnOffPNG(const char *iconPNGName, bool withOver = true);
 
 inline QSize dimension2QSize(const TDimension &sz) {

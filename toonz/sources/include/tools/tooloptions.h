@@ -331,8 +331,6 @@ protected:
       QPixmap RotationPixmap READ getRotationPixmap WRITE setRotationPixmap);
   Q_PROPERTY(
       QPixmap PositionPixmap READ getPositionPixmap WRITE setPositionPixmap);
-  Q_PROPERTY(
-      QPixmap ThicknessPixmap READ getThicknessPixmap WRITE setThicknessPixmap);
 
 public:
   IconViewField(QWidget *parent = 0, IconType iconType = Icon_ScalePeg);
@@ -348,10 +346,6 @@ public:
   QPixmap getPositionPixmap() const { return m_pm[Icon_Position]; }
   void setPositionPixmap(const QPixmap &pixmap) {
     m_pm[Icon_Position] = pixmap;
-  }
-  QPixmap getThicknessPixmap() const { return m_pm[Icon_Thickness]; }
-  void setThicknessPixmap(const QPixmap &pixmap) {
-    m_pm[Icon_Thickness] = pixmap;
   }
 
 protected:

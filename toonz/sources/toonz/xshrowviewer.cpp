@@ -135,7 +135,7 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
       int x = horizontalLine.x1();
       int y = horizontalLine.y2() - (isAfterMarkers ? 6 : 3);
       horizontalLine.setP1(QPoint(x, y));
-      if (!isAfterMarkers) p.setPen(m_viewer->getTextColor());
+      if (!isAfterMarkers) p.setPen(m_viewer->getFrameRangeMarkerLineColor());
     }
     p.drawLine(horizontalLine);
   }
@@ -291,7 +291,6 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
     QRect previewBoxRect = o->rect(PredefinedRect::PREVIEW_FRAME_AREA)
                                .adjusted(0, 0, -frameAdj, 0)
                                .translated(basePoint);
-    // p.fillRect(previewBoxRect, m_viewer->getNotEmptyColumnColor());
     p.fillRect(previewBoxRect, m_viewer->getPlayRangeColor());
 
     if (!o->isVerticalTimeline()) {
@@ -426,17 +425,34 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
   TPixel frontPixel, backPixel;
   bool inksOnly;
   Preferences::instance()->getOnionData(frontPixel, backPixel, inksOnly);
+
+  // Fill
   QColor frontColor((int)frontPixel.r, (int)frontPixel.g, (int)frontPixel.b,
                     128);
   QColor backColor((int)backPixel.r, (int)backPixel.g, (int)backPixel.b, 128);
+
+  // Line, outline
   QColor frontDotColor((int)frontPixel.r, (int)frontPixel.g, (int)frontPixel.b);
   QColor backDotColor((int)backPixel.r, (int)backPixel.g, (int)backPixel.b);
+  QColor frontDotColorDark(frontDotColor.darker(200));
+  QColor backDotColorDark(backDotColor.darker(200));
+  QColor frontDotOutlineColor;
+  QColor backDotOutlineColor;
+  if (m_viewer->getOnionSkinAreaBgColor().value() > 128) {
+    // Set darker outline colors if onion skin area value is above 50% to make
+    // sure the dots have good visibility across all themes.
+    frontDotOutlineColor = frontDotColorDark;
+    backDotOutlineColor  = backDotColorDark;
+  } else {
+    frontDotOutlineColor = frontDotColor;
+    backDotOutlineColor  = backDotColor;
+  }
   QPen frontPen, backPen;
 
   // If the onion skin is disabled, draw dash line instead.
   if (osMask.isEnabled()) {
-    frontPen.setColor(frontDotColor);
-    backPen.setColor(backDotColor);
+    frontPen.setColor(frontDotOutlineColor);
+    backPen.setColor(backDotOutlineColor);
   } else {
     frontPen.setStyle(Qt::DashLine);
     frontPen.setColor(QColor(128, 128, 128));
@@ -457,7 +473,7 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
   int maxMos   = 0;
   int mosCount = osMask.getMosCount();
   for (int i = 0; i < mosCount; i++) {
-    int mos                  = osMask.getMos(i);
+    int mos = osMask.getMos(i);
     if (minMos > mos) minMos = mos;
     if (maxMos < mos) maxMos = mos;
   }
@@ -507,10 +523,10 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
   int angle180 = 16 * 180;
   int turn =
       m_viewer->orientation()->dimension(PredefinedDimension::ONION_TURN) * 16;
-  p.setPen(backDotColor);
+  p.setPen(backDotOutlineColor);
   p.setBrush(QBrush(backColor));
   p.drawChord(handleRect, turn, angle180);
-  p.setPen(frontDotColor);
+  p.setPen(frontDotOutlineColor);
   p.setBrush(QBrush(frontColor));
   p.drawChord(handleRect, turn + angle180, angle180);
 
@@ -521,7 +537,7 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
     // skip drawing if the frame is under the mouse cursor
     if (m_showOnionToSet == Mos && currentRow + mos == m_row) continue;
 
-    p.setPen(mos < 0 ? backDotColor : frontDotColor);
+    p.setPen(mos < 0 ? backDotOutlineColor : frontDotOutlineColor);
     if (osMask.isEnabled())
       p.setBrush(mos < 0 ? backDotColor : frontDotColor);
     else
@@ -545,9 +561,17 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
     // skip drawing if the frame is under the mouse cursor
     if (m_showOnionToSet == Fos && fos == m_row) continue;
 
-    p.setPen(QColor(0, 255, 255, 128));
+    // Depending on the brightness, make sure dot can be seen on onion area
+    if (m_viewer->getOnionSkinAreaBgColor().value() > 128)
+      p.setPen(QColor(25, 118, 170, 255));
+    else
+      p.setPen(QColor(0, 255, 255, 128));
     if (osMask.isEnabled())
-      p.setBrush(QBrush(QColor(0, 255, 255, 128)));
+      // Depending on the brightness, make sure dot can be seen on onion area
+      if (m_viewer->getOnionSkinAreaBgColor().value() > 128)
+        p.setBrush(QBrush(QColor(0, 165, 255, 148)));
+      else
+        p.setBrush(QBrush(QColor(0, 255, 255, 148)));
     else
       p.setBrush(Qt::NoBrush);
     QPoint topLeft = m_viewer->positionToXY(CellPosition(fos, -1));
@@ -1314,10 +1338,10 @@ void RowArea::setMarker(int index) {
     if (m_r1 < 1) m_r1 = 1;
   }
   if (index == 0) {
-    m_r0                  = m_row;
+    m_r0 = m_row;
     if (m_r1 < m_r0) m_r1 = m_r0;
   } else if (index == 1) {
-    m_r1                  = m_row;
+    m_r1 = m_row;
     if (m_r1 < m_r0) m_r0 = m_r1;
     m_r1 -= (step == 0) ? (m_r1 - m_r0) : (m_r1 - m_r0) % step;
   }
@@ -1373,4 +1397,4 @@ void RowArea::onRemoveMarkers() {
 
 //-----------------------------------------------------------------------------
 
-}  // namespace XsheetGUI;
+}  // namespace XsheetGUI

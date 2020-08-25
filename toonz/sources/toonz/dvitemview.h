@@ -443,6 +443,19 @@ class DvItemViewerTitleBar final : public QWidget {
   int m_dragColumnIndex;
   QPoint m_pos;
 
+  QColor m_colColor;
+  QColor m_colSortedColor;
+  QColor m_colTextColor;
+  QColor m_colBorderColor;
+  QColor m_colRaisedColor;
+
+  Q_PROPERTY(QColor ColColor READ getColColor WRITE setColColor);
+  Q_PROPERTY(QColor ColSortedColor READ getColColor WRITE setColSortedColor);
+  Q_PROPERTY(QColor ColTextColor READ getColColor WRITE setColTextColor);
+  Q_PROPERTY(QColor ColBorderColor READ getColColor WRITE setColBorderColor);
+  Q_PROPERTY(
+      QColor ColRaisedColor READ getColRaisedColor WRITE setColRaisedColor);
+
 public:
   void setColColor(const QColor &color) { m_colColor = color; }
   QColor getColColor() const { return m_colColor; }
@@ -467,19 +480,19 @@ protected:
   void mousePressEvent(QMouseEvent *) override;
   void paintEvent(QPaintEvent *) override;
 
-private:
-  QColor m_colColor;
-  QColor m_colSortedColor;
-  QColor m_colTextColor;
-  QColor m_colBorderColor;
-  QColor m_colRaisedColor;
+//private:
+  //QColor m_colColor;
+  //QColor m_colSortedColor;
+  //QColor m_colTextColor;
+  //QColor m_colBorderColor;
+  //QColor m_colRaisedColor;
 
-  Q_PROPERTY(QColor ColColor READ getColColor WRITE setColColor);
-  Q_PROPERTY(QColor ColSortedColor READ getColColor WRITE setColSortedColor);
-  Q_PROPERTY(QColor ColTextColor READ getColColor WRITE setColTextColor);
-  Q_PROPERTY(QColor ColBorderColor READ getColColor WRITE setColBorderColor);
-  Q_PROPERTY(
-      QColor ColRaisedColor READ getColRaisedColor WRITE setColRaisedColor);
+  //Q_PROPERTY(QColor ColColor READ getColColor WRITE setColColor);
+  //Q_PROPERTY(QColor ColSortedColor READ getColColor WRITE setColSortedColor);
+  //Q_PROPERTY(QColor ColTextColor READ getColColor WRITE setColTextColor);
+  //Q_PROPERTY(QColor ColBorderColor READ getColColor WRITE setColBorderColor);
+  //Q_PROPERTY(
+  //    QColor ColRaisedColor READ getColRaisedColor WRITE setColRaisedColor);
 };
 
 //=============================================================================

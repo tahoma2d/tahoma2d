@@ -6,7 +6,7 @@ QDialog {
   background-color: @bg;
   & #dialogButtonFrame {
     background-color: @dialogButtonFrame-bg-color;
-    border-top: 1 solid @dialogButtonFrame-border-color;
+    border-top: 1 solid @accent;
     & QPushButton {
       border-color: @button-dialog-border-color;
       outline: 0;
@@ -52,7 +52,6 @@ QDialog {
       padding: 3;
       &:hover {
         .hl-color-secondary;
-        background-color: @prefs-tree-hl-color;
       }
       &:selected {
         .hl-color;
@@ -92,24 +91,20 @@ ProjectPopup {
    PencilTestPopup / CameraCapture Window
 ----------------------------------------------------------------------------- */
 
-PencilTestPopup {
-}
+//PencilTestPopup {}
 
 #GearButton {
-  qproperty-icon: url('@{img-url}/gear.svg');
   &::menu-indicator{
-    image:"";
+    image: url("");
   }
 }
 
 #SubfolderButton {
-  qproperty-icon: url('@{img-url}/subfolder.svg');
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #SubcameraButton {
-  qproperty-icon: url('@{img-url}/subcamera.svg');
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
 }

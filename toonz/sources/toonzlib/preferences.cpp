@@ -365,6 +365,7 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Dark");
+  define(iconTheme, "iconTheme", QMetaType::Bool, false);
   define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
   define(oldCameraUnits, "oldCameraUnits", QMetaType::QString, "inch");

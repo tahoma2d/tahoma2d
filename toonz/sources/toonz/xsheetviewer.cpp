@@ -51,7 +51,7 @@ namespace XsheetGUI {
 const int ColumnWidth     = 74;
 const int RowHeight       = 20;
 const int SCROLLBAR_WIDTH = 16;
-const int TOOLBAR_HEIGHT  = 30;
+const int TOOLBAR_HEIGHT  = 29;
 const int ZOOM_FACTOR_MAX = 100;
 const int ZOOM_FACTOR_MIN = 20;
 }  // namespace XsheetGUI
@@ -384,7 +384,7 @@ void XsheetViewer::positionSections() {
 
   if (Preferences::instance()->isShowXSheetToolbarEnabled()) {
     m_toolbar->showToolbar(true);
-    int w = visibleRegion().boundingRect().width() - 5;
+    int w = visibleRegion().boundingRect().width();
     m_toolbarScrollArea->setGeometry(0, 0, w, XsheetGUI::TOOLBAR_HEIGHT);
     m_toolbar->setFixedWidth(w);
     if (o->isVerticalTimeline()) {

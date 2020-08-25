@@ -245,27 +245,31 @@ void TPanelTitleBarButton::setPressed(bool pressed) {
 void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   QPainter painter(this);
 
-  // create color states for the button
-  QPixmap standard_pm(m_standardPixmap.size());
-  QPixmap rollover_pm(m_standardPixmap.size());
-  QPixmap pressed_pm(m_standardPixmap.size());
-  standard_pm.fill(Qt::transparent);
-  rollover_pm.fill(QColor(getRolloverColor()));
-  pressed_pm.fill(QColor(getPressedColor()));
+  // Create color states for the button
+  QPixmap normalPixmap(m_standardPixmap.size());
+  QPixmap onPixmap(m_standardPixmap.size());
+  QPixmap overPixmap(m_standardPixmap.size());
+  normalPixmap.fill(Qt::transparent);
+  onPixmap.fill(QColor(getPressedColor()));
+  overPixmap.fill(QColor(getOverColor()));
 
-  // set unique colors if filename contains string
+  // Set unique 'pressed' colors if filename contains...
   if (m_standardPixmapName.contains("freeze", Qt::CaseInsensitive)) {
-    pressed_pm.fill(QColor(getFreezeColor()));
+    onPixmap.fill(QColor(getFreezeColor()));
   }
   if (m_standardPixmapName.contains("preview", Qt::CaseInsensitive)) {
-    pressed_pm.fill(QColor(getPreviewColor()));
+    onPixmap.fill(QColor(getPreviewColor()));
   }
 
-  // compose the state colors
+  // Compose the state colors
   painter.drawPixmap(
-      0, 0, m_pressed ? pressed_pm : m_rollover ? rollover_pm : standard_pm);
-  // compose the icon
-  painter.drawPixmap(0, 0, m_standardPixmap);
+      0, 0, m_pressed ? onPixmap : m_rollover ? overPixmap : normalPixmap);
+
+  // Icon
+  QPixmap panePixmap    = recolorPixmap(m_standardPixmap);
+  QPixmap paneOffPixmap = setOpacity(panePixmap, 0.8);
+  painter.drawPixmap(
+      0, 0, m_pressed ? panePixmap : m_rollover ? panePixmap : paneOffPixmap);
 
   painter.end();
 }
@@ -452,16 +456,17 @@ void TPanelTitleBar::paintEvent(QPaintEvent *) {
 
     painter.setBrush(Qt::NoBrush);
     painter.setPen(isPanelActive ? m_activeTitleColor : m_titleColor);
-    painter.drawText(QPointF(10, 15), titleText);
+    painter.drawText(QPointF(8, 13), titleText);
   }
 
   if (dw->isFloating()) {
+    QIcon paneCloseIcon = createQIcon("pane_close");
     const static QPixmap closeButtonPixmap(
-        svgToPixmap(":/Resources/pane_close.svg", QSize(18, 18)));
+        paneCloseIcon.pixmap(18, 18, QIcon::Normal, QIcon::Off));
     const static QPixmap closeButtonPixmapOver(
-        svgToPixmap(":/Resources/pane_close_rollover.svg", QSize(18, 18)));
+        paneCloseIcon.pixmap(18, 18, QIcon::Active));
 
-    QPoint closeButtonPos(rect.right() - 18, rect.top() + 1);
+    QPoint closeButtonPos(rect.right() - 18, rect.top());
 
     if (m_closeButtonHighlighted)
       painter.drawPixmap(closeButtonPos, closeButtonPixmapOver);

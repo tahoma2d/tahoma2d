@@ -195,6 +195,8 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_darkBgColor;
   QColor m_lightLineColor;  // horizontal lines (146,144,146)
   QColor m_darkLineColor;
+  QColor m_columnIconLineColor;
+  QColor m_timelineIconLineColor;
 
   Q_PROPERTY(QColor LightLightBGColor READ getLightLightBGColor WRITE
                  setLightLightBGColor)
@@ -204,6 +206,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(
       QColor LightLineColor READ getLightLineColor WRITE setLightLineColor)
   Q_PROPERTY(QColor DarkLineColor READ getDarkLineColor WRITE setDarkLineColor)
+  Q_PROPERTY(QColor ColumnIconLineColor READ getColumnIconLineColor WRITE
+                 setColumnIconLineColor)
+  Q_PROPERTY(QColor TimelineIconLineColor READ getTimelineIconLineColor WRITE
+                 setTimelineIconLineColor)
 
   // Row
   QColor m_currentRowBgColor;      // current frame / column (210,210,210)
@@ -211,8 +217,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_verticalLineColor;      // vertical lines
   QColor m_verticalLineHeadColor;  // vertical lines in column head
   QColor m_textColor;              // text color (black)
+  QColor m_errorTextColor;         // error text color (red, probably)
   QColor m_previewFrameTextColor;  // frame number in preview range (blue)
   QColor m_onionSkinAreaBgColor;
+  QColor m_frameRangeMarkerLineColor;  // timeline frame markers
   Q_PROPERTY(QColor CurrentRowBgColor READ getCurrentRowBgColor WRITE
                  setCurrentRowBgColor)
   Q_PROPERTY(
@@ -222,10 +230,14 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor VerticalLineHeadColor READ getVerticalLineHeadColor WRITE
                  setVerticalLineHeadColor)
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
+  Q_PROPERTY(
+      QColor ErrorTextColor READ getErrorTextColor WRITE setErrorTextColor)
   Q_PROPERTY(QColor PreviewFrameTextColor READ getPreviewFrameTextColor WRITE
                  setPreviewFrameTextColor)
   Q_PROPERTY(QColor OnionSkinAreaBgColor READ getOnionSkinAreaBgColor WRITE
                  setOnionSkinAreaBgColor)
+  Q_PROPERTY(QColor FrameRangeMarkerLineColor READ getFrameRangeMarkerLineColor
+                 WRITE setFrameRangeMarkerLineColor)
   // Column
   QColor m_emptyColumnHeadColor;  // empty column header (200,200,200)
   Q_PROPERTY(QColor EmptyColumnHeadColor READ getEmptyColumnHeadColor WRITE
@@ -368,6 +380,14 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_selectedColumnHead;
   Q_PROPERTY(QColor SelectedColumnHead READ getSelectedColumnHead WRITE
                  setSelectedColumnHead)
+
+  // For folded column
+  QColor m_foldedColumnBGColor;
+  QColor m_foldedColumnLineColor;
+  Q_PROPERTY(QColor FoldedColumnBGColor READ getFoldedColumnBGColor WRITE
+                 setFoldedColumnBGColor)
+  Q_PROPERTY(QColor FoldedColumnLineColor READ getFoldedColumnLineColor WRITE
+                 setFoldedColumnLineColor)
 
   // Xsheet Column name/Drag bar colors
   QColor m_xsheetColumnNameBgColor;
@@ -727,6 +747,21 @@ public:
   void setDarkLineColor(const QColor &color) { m_darkLineColor = color; }
   QColor getDarkLineColor() const { return m_darkLineColor; }
 
+  QColor getColumnIconLineColor() const { return m_columnIconLineColor; }
+  void setColumnIconLineColor(const QColor &color) {
+    m_columnIconLineColor = color;
+  }
+  QColor getTimelineIconLineColor() const { return m_timelineIconLineColor; }
+  void setTimelineIconLineColor(const QColor &color) {
+    m_timelineIconLineColor = color;
+  }
+  QColor getFrameRangeMarkerLineColor() const {
+    return m_frameRangeMarkerLineColor;
+  }
+  void setFrameRangeMarkerLineColor(const QColor &color) {
+    m_frameRangeMarkerLineColor = color;
+  }
+
   // Row
   void setCurrentRowBgColor(const QColor &color) {
     m_currentRowBgColor = color;
@@ -744,6 +779,8 @@ public:
   QColor getVerticalLineHeadColor() const { return m_verticalLineHeadColor; }
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
+  void setErrorTextColor(const QColor &color) { m_errorTextColor = color; }
+  QColor getErrorTextColor() const { return m_errorTextColor; }
   void setPreviewFrameTextColor(const QColor &color) {
     m_previewFrameTextColor = color;
   }
@@ -778,7 +815,7 @@ public:
   void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
   QColor getCellFocusColor() const { return m_cellFocusColor; }
 
-  // play range
+  // Play range
   QColor getPlayRangeColor() const { return m_playRangeColor; }
   void setPlayRangeColor(const QColor &color) { m_playRangeColor = color; }
 
@@ -935,6 +972,15 @@ public:
   void getColumnColor(QColor &color, QColor &sidecolor, int index,
                       TXsheet *xsh);
 
+  // For folded column
+  QColor getFoldedColumnBGColor() const { return m_foldedColumnBGColor; }
+  QColor getFoldedColumnLineColor() const { return m_foldedColumnLineColor; }
+  void setFoldedColumnBGColor(const QColor &color) {
+    m_foldedColumnBGColor = color;
+  }
+  void setFoldedColumnLineColor(const QColor &color) {
+    m_foldedColumnLineColor = color;
+  }
   // Xsheet Column Name/Drag Bar
   void setXsheetColumnNameBgColor(const QColor &color) {
     m_xsheetColumnNameBgColor = color;

@@ -1,6 +1,6 @@
 
-// The Less compiler has trouble compiling Qt selectors when they have been
-// extended to, so extend Qt selectors to mixins as workaround for now
+// Note: The compiler has trouble with Qt names when they have been extended to
+// so we extend Qt names to mixins as a workaround for now.
 
 /* -----------------------------------------------------------------------------
    Push Button
@@ -8,7 +8,9 @@
 
 .Button {
   background-color: @button-bg-color;
-  border: 1 solid @button-border-color;
+  border-color: @button-border-color;
+  border-width: @button-border-width;
+  border-style: solid;
   border-radius: 2;
   color: @button-text-color;
   margin: 0;
@@ -29,6 +31,7 @@
     color: @button-text-color-checked;
     &:hover {
       background-color: @button-bg-color-checked-hover;
+      border-color: @button-border-color-checked-hover;
       &:pressed {
         background: @button-bg-color-checked-hover-pressed;
       }
@@ -50,7 +53,7 @@ QPushButton {
 }
 
 /* -----------------------------------------------------------------------------
-   Combo Box
+   ComboBox
 ----------------------------------------------------------------------------- */
 
 .ComboBox {
@@ -62,6 +65,8 @@ QPushButton {
     background-color: @input-bg-color;
     border-color: @input-border-color;
     padding: 1 0 1 3;
+    selection-background-color: @input-selection-bg-color;
+    selection-color: @input-selection-text-color;
   }
   &:hover {
     background-color: @button-bg-color-hover;
@@ -69,11 +74,10 @@ QPushButton {
       background-color: @input-bg-color;
     }
   }
-  &:focus {
+  &:checked {
     border-color: @input-border-color-focus;
   }
-  &:checked {
-    &:extend(.ComboBox);
+  &:focus {
     border-color: @input-border-color-focus;
   }
   &:disabled {
@@ -107,8 +111,8 @@ QPushButton {
   & QAbstractItemView {
     background-color: @menu-bg-color;
     border: 1 solid @menu-border-color;
-    selection-background-color: @hl-bg-color;
-    selection-color: @hl-text-color;
+    selection-background-color: @menu-item-bg-color-selected;
+    selection-color: @menu-item-text-color-selected;
   }
 }
 
@@ -160,10 +164,10 @@ QPlainTextEdit
   &::indicator {
     background-color: @checkbox-bg-color;
     border: 1 solid @checkbox-border-color;
-    border-radius: 2;
-    height: 9;      /* fix for QGroupBox */
+    border-radius: @checkbox-border-radius;
+    height: @checkbox-size;      /* fix for QGroupBox */
     padding: 1;
-    width: 9;       /* fix for QMenu */
+    width: @checkbox-size;       /* fix for QMenu */
     &:hover {
       background-color: @checkbox-bg-color-hover;
       border-color: @checkbox-border-color-hover;
@@ -171,7 +175,7 @@ QPlainTextEdit
     &:checked {
       background-color: @checkbox-bg-color-checked;
       border-color: @checkbox-border-color-checked;
-      image: url('@{img-url}/checkmark.svg');
+      image: url('@{img-url}/@{checkbox-img}');
       &:hover {
         &:extend(.CheckBox::indicator:hover);
         background-color: @checkbox-bg-color-checked-hover;
@@ -180,20 +184,20 @@ QPlainTextEdit
       &:disabled {
         background-color: @checkbox-bg-color-checked-disabled;
         border-color: @checkbox-border-color-checked-disabled;
-        image: url('@{img-url}/checkmark_disabled.svg');
+        image: url('@{img-url}/@{checkbox-img-disabled}');
       }
     }
     &:indeterminate {
       background-color: @checkbox-bg-color-checked;
       border-color: @checkbox-border-color-checked;
-      image: url('@{img-url}/checkpartially.svg');
+      image: url('@{img-url}/@{checkbox-partially-img}');
       &:hover {
         &:extend(.CheckBox::indicator:hover);
       }
       &:disabled {
         background-color: @checkbox-bg-color-checked-disabled;
         border-color: @checkbox-border-color-checked-disabled;
-        image: url('@{img-url}/checkpartially_disabled.svg');
+        image: url('@{img-url}/@{checkbox-partially-img-disabled}');
       }
     }
     &:disabled {
@@ -208,7 +212,7 @@ QCheckBox {
 }
 
 /* -----------------------------------------------------------------------------
-   Radio Button
+   RadioButton
 ----------------------------------------------------------------------------- */
 
 .RadioButton {
@@ -225,7 +229,7 @@ QCheckBox {
   padding: 0;
   margin: 0;
   &::indicator {
-    @size: 11;
+    @size: 13;
     width: @size;
     height: @size;
     background-color: transparent;

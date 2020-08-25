@@ -39,6 +39,7 @@ CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
   setObjectName("cornerWidget");
   setObjectName("CommandBar");
   fillToolbar(this, isXsheetToolbar);
+  setIconSize(QSize(20, 20));
   QIcon moreIcon(":Resources/more.svg");
   QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
   more->setIcon(moreIcon);

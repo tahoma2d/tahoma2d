@@ -10,7 +10,11 @@ QWidget {
   }
 }
 
-QFrame { border: 0; margin: 0; padding: 0; }
+QFrame {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
 
 QToolTip,
 #helpToolTip {
@@ -34,7 +38,7 @@ QSplitter::handle {
 
 TPanel {
   background-color: @dock-bg-color;
-} 
+}
 
 /* -----------------------------------------------------------------------------
    Topbar
@@ -43,17 +47,14 @@ TPanel {
 #TopBar {
   background: @topbar-bg-color;
   border: 0;
-  border-bottom: 1 solid @accent;
-  height: 21;
+  border-bottom: 1 solid @topbar-border-color;
   & #EditToolLockButton {
     background: @topbar-bg-color;
     spacing: 0;
     &::indicator {
-      // inherits from #ToolOptions
+      // inherits from #ToolOptions window
       background: none;
       border: none;
-      height: 18;
-      margin: 1 2 0 0;
       padding-left: 0;
       padding-right: 0;
     }
@@ -93,16 +94,28 @@ QMenuBar {
 ----------------------------------------------------------------------------- */
 
 #TopBarTab {
+  margin: 0;
+  padding: 0;
   &::tab {
-    margin: 0;
-    padding: 2 7 3 8;
-    border-bottom: 0;
-    &:hover, &:selected {
-      border-bottom: 0;
+    background-color: @rooms-tab-bg-color;
+    border-top: 1 solid @tab-border-color;
+    border-right: 1 solid @tab-border-color;
+    color: @rooms-tab-text-color;
+    margin: 0 0 -1 0;
+    padding: 2 8 3 8;
+    &:hover {
+      background-color: @rooms-tab-bg-color-hover;
+      color: @tab-text-color-hover;
     }
     &:selected {
-      color: @rooms-tab-text-color-selected;
       background-color: @rooms-tab-bg-color-selected;
+      color: @rooms-tab-text-color-selected;
+    }
+    &:first {
+      border-left: 1 solid @accent;
+    }
+    &:last {
+      border-right: 1 solid @accent;
     }
   }
   & QToolButton {
@@ -125,22 +138,23 @@ QMenu {
   color: @menu-text-color;
   padding: 2 0;
   &::item {
+    border: 0;
     padding: 3 28;
     &:selected {
-      .hl-color;
+      background-color: @menu-item-bg-color-selected;
+      color: @menu-item-text-color-selected;
     }
     &:checked {
       color: @menu-checkbox-text-color-selected;
       &:selected {
-        .hl-color;
+        background-color: @menu-item-bg-color-selected;
+        color: @menu-item-text-color-selected;
       }
     }
     &:disabled {
       background: none;
       color: @text-color-disabled;
       &:selected {
-        background-color: @menu-item-bg-color-disabled-hover;
-        border-color: transparent;
         color: @text-color-disabled; /* fix for disabled indicator */
       }
     }
@@ -152,10 +166,14 @@ QMenu {
   }
   &::icon {
     border-radius: 2;
-    margin: 0 0 0 3;
-    padding: 1;
+    position: absolute;
+    left: 5;
+    padding: 0;
+    margin: 0;
+    qproperty-icon: url('@{img-url}/none');
     &:checked {
-      background-color: @hl-bg-color;
+      background-color: @menu-icon-checked-bg-color;
+      border: 1 solid @menu-icon-checked-border-color;
     }
   }
   &::indicator {
@@ -181,11 +199,9 @@ QMenu {
 
 TPanelTitleBar {
   background-color: @title-bg-color;
-  border-color: @accent;
-  border-style: solid;
-  border-width: 0 0 1 0;
-  height: 20;
-  min-height: 20;
+  border-bottom: @title-border-width solid @title-border-color;
+  height: 18;
+  min-height: 18;
   qproperty-TitleColor: @title-text-color;
   qproperty-ActiveTitleColor: @title-text-color-active;
   // QSS only works when pixmaps are set to 'none'
@@ -196,10 +212,10 @@ TPanelTitleBar {
 }
 
 TPanelTitleBarButton {
-  qproperty-RolloverColor: @title-button-rollover-color;
   qproperty-PressedColor: @title-button-pressed-color;
   qproperty-FreezeColor: @title-button-freeze-color;
   qproperty-PreviewColor: @title-button-preview-color;
+  qproperty-OverColor: @title-button-rollover-color;
 }
 
 /* -----------------------------------------------------------------------------
@@ -214,12 +230,12 @@ QScrollBar {
   background-color: @scrollbar-bg-color;
   border: 0;
   &:horizontal {
-    height: 16;
+    height: 15;
     margin: 0;
   }
   &:vertical {
     margin: 0;
-    width: 16;
+    width: 15;
   }
 
   &::handle {
@@ -243,7 +259,7 @@ QScrollBar {
     }
     &:vertical {
       background-color: @scrollbar-handle-bg-color;
-      margin: 16 @scrollbar-handle-margin;
+      margin: 16 @scrollbar-handle-margin 16 @scrollbar-handle-margin;
       min-height: 20;
     }
   }
@@ -282,8 +298,7 @@ QScrollBar {
     }
   }
 
-  @arrow-pressed: 1 0 0 0; // press effect shortcut
-                           // nudge arrow down 1 on pressed event
+  @arrow-pressed: 1 0 0 0; // press effect shortcut, nudge arrow down 1
 
   &::up-arrow:vertical {
     image: url('@{img-url}/scroll-up.svg');
@@ -327,12 +342,12 @@ QScrollBar {
 }
 
 /* -----------------------------------------------------------------------------
-   Tool Bars
+   QToolBar
 ----------------------------------------------------------------------------- */
 
-// this applies to QToolBar
-// !!!! this is not the #ToolBar window !!!!
-// look in [layouts/toolbar] for the window
+/* This applies to QToolBar, this is not the #ToolBar window, although the
+  properties here also apply in the window, you should look in
+  [layouts/toolbar] if you want window control. */
 
 QToolBar {
   padding: 0;
@@ -358,17 +373,28 @@ QToolBar {
 
 QToolButton {
   &:extend(.button-tool all);
+  margin-left: 1;
+  margin-right: 1;
+  padding: 0;
   &::menu-indicator {
     image: none;
   }
   &::menu-button {
     border-image: none;
   }
+  &#qt_toolbar_ext_button {
+    padding: 0;
+    border: 0;
+    margin: 0;
+    qproperty-icon: url('@{img-url}/toolbar_extension_horizontal.png');
+    &:hover {
+      background-color: @button-bg-color-hover;
+    }
+    &:pressed {
+      background-color: @button-bg-color-checked;
+    }
+  }
 }
-
-/* -------------------------------------------------------------------------- */
-/* Scrollable QToolBar Buttons
-/* -------------------------------------------------------------------------- */
 
 .DvScrollWidget {
   & QPushButton {
@@ -387,8 +413,9 @@ QToolButton {
 }
 
 DvScrollWidget {
-  // Can't extend to a Qt selector so we use
-  // a mixin instead
+  /* Multiple classes can use the same style as DvScrollWidget, and
+    since the compiler can't handle extending to Qt names we place the
+    style in a mixin and extend the name to it instead. */
   &:extend(.DvScrollWidget all);
 }
 
@@ -419,54 +446,113 @@ DvScrollWidget {
 
 /* -------------------------------------------------------------------------- */
 
+/* For the buttons to display a BG color we need to set a blank image, setting
+   an empty URL solves this. */
 #keyFrameNavigator {
   background: transparent;
   margin: 0;
   padding: 0;
-  & QToolButton {
-    max-width: 20;
-    max-height: 20;
-    border: 0;
-  }
   #PreviousKey {
-    image: url('@{img-url}/prevkey.svg');
-    &:hover {
-      image: url('@{img-url}/prevkey_over.svg');
-    }
+    margin: 0 2;
+    padding-right: -1;
+    width: 20px;
+    height: 20px;
+    image: url('');
 	  &:disabled {
-		  image: url('@{img-url}/prevkey_disabled.svg');
+		  image: url('');
 	  }
   }
   #NextKey {
-    image: url('@{img-url}/nextkey.svg');
-    &:hover {
-      image: url('@{img-url}/nextkey_over.svg');
-    }
+    margin: 0 2;
+    padding-right: -1;
+    width: 20px;
+    height: 20px;
+    image: url('');
 	  &:disabled {
-		  image: url('@{img-url}/nextkey_disabled.svg');
+		  image: url('');
 	  }
   }
   #KeyNo,
   #KeyPartial,
   #KeyTotal {
-    image: url(':Resources/keyframe.svg');
+    margin: 0;
+    padding-right: -1;
+    width: 20px;
+    height: 20px;
+    image: url('');
+    &:disabled {
+      image: url('');
+    }
   }
   #KeyNo {
     background-color: @keyframe-off-color;
+    border: 1 solid @keyframe-off-border-color;
+    image: url('');
+    &:disabled {
+      image: url('');
+    }
     &:hover {
       background-color: @keyframe-off-color-hover;
+      border-color: @keyframe-off-border-color-hover;
     }
   }
   #KeyPartial {
     background-color: @keyframe-partial-color;
+    border: 1 solid @keyframe-partial-border-color;
+    image: url('');
     &:hover {
       background-color: @keyframe-partial-color-hover;
+      border-color: @keyframe-partial-border-color-hover;
     }
   }
   #KeyTotal {
     background-color: @keyframe-total-color;
+    border: 1 solid @keyframe-total-border-color;
     &:hover {
       background-color: @keyframe-total-color-hover;
+      border-color: @keyframe-total-border-color-hover;
+    }
+  }
+  & QToolButton#qt_toolbar_ext_button {
+    // adjust for style
+    padding-bottom: 3;
+    border-radius: 2;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Tab Containers
+----------------------------------------------------------------------------- */
+
+#TabBarContainer {
+  .tab-container;
+}
+
+QTabBar {
+  background-color: @tabbar-bg-color;
+}
+
+/* -----------------------------------------------------------------------------
+   Tabs
+----------------------------------------------------------------------------- */
+
+QTabBar {
+  &::tab {
+    &:extend(.tab-flat all);
+  }
+  & QToolButton {
+    /* Scroll buttons */
+    margin: 0;
+    background-color: @bg;
+    border-radius: 0;
+    border: 1 solid @accent;
+    border-top: 0;
+    padding: 3 2 2 2;
+    &:hover, &:pressed {
+      border-color: @accent;
+    }
+    &:disabled {
+      color: @text-color-disabled;
     }
   }
 }
@@ -490,8 +576,7 @@ DvScrollWidget {
   
   &::branch {
     &:adjoins-item {
-      // Adding a blank URL hides in-built branch design
-      // where it is not wanted.
+      /* blank URL hides default Qt branch icons where it is not wanted */
       border-image: url('');
     }
     &:has-siblings {
@@ -539,58 +624,6 @@ QListView {
   outline: 0; // hide focus border
   background: @tree-bg-color;
   alternate-background-color: @tree-bg-color-alt;
-}
-
-/* -----------------------------------------------------------------------------
-   Tabs
------------------------------------------------------------------------------ */
-
-#TabBarContainer {
-  background-color: @tabbar-bg-color;
-  qproperty-BottomAboveLineColor: @tabbar-bg-color;
-  qproperty-BottomBelowLineColor: @accent;
-}
-QTabBar {
-  background-color: @tabbar-bg-color;
-  margin-bottom: 1;
-  &::tear {}
-  & QToolButton {
-    background-color: @bg;
-    border-radius: 0;
-    margin-right: 0;
-    margin-top: -1;
-    margin-bottom: 0;
-    border-bottom: 1 solid @accent;
-    border-left: 1 solid @accent;
-    padding: 3 2 2 2;
-    &:hover {
-      border-bottom: 1 solid @accent;
-      border-left: 1 solid @accent;
-    }
-    &:disabled {
-      color: @text-color-disabled;
-    }
-  }
-  &::tab {
-    margin-top: -1; // hide top border
-    background-color: @tabbar-bg-color;
-    border: 1 solid @tab-border-color;
-    border-right: 0;
-    color: @tab-text-color;
-    min-width: 8ex;
-    padding: 3 4 4 4; // y = helps borders to show for the TabBar
-    &:selected {
-      background-color: @tab-bg-color-selected;
-      border-bottom-color: @bg;
-      color: @tab-text-color-selected;
-    }
-    &:hover {
-      background-color: @tab-bg-color-hover;
-    }
-    &:last, &:only-one {
-      border-right: 1 solid @tab-border-color;
-    }
-  }
 }
 
 /* -----------------------------------------------------------------------------

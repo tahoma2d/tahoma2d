@@ -202,6 +202,9 @@ signals:
 class DVAPI FlipConsole final : public QWidget {
   Q_OBJECT
 
+  QColor m_fpsFieldColor;
+  Q_PROPERTY(QColor FpsFieldColor READ getFpsFieldColor WRITE setFpsFieldColor)
+
 public:
   enum EGadget {
     eBegin,
@@ -327,6 +330,9 @@ public:
            buttonMask.end();
   }
 
+  void setFpsFieldColor(const QColor &color) { m_fpsFieldColor = color; }
+  QColor getFpsFieldColor() const { return m_fpsFieldColor; }
+
 signals:
 
   void buttonPressed(FlipConsole::EGadget button);
@@ -353,7 +359,7 @@ private:
   QLabel *m_fpsLabel, *m_timeLabel;
   QScrollBar *m_fpsSlider;
   DVGui::IntLineEdit *m_fpsField;
-  QColor m_fpsFieldColor = QColor(1, 1, 1);
+  //QColor m_fpsFieldColor = QColor(1, 1, 1);
   QAction *m_fpsFieldAction;
   QAction *m_fpsLabelAction;
   QAction *m_fpsSliderAction;
