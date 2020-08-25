@@ -1803,8 +1803,8 @@ ChannelBar {
 ParamFieldKeyToggle {
   qproperty-KeyOffColor: rgba(0, 0, 0, 0);
   qproperty-KeyBorderOffColor: rgba(0, 0, 0, 0);
-  qproperty-KeyModifiedColor: #d8c971;
-  qproperty-KeyBorderModifiedColor: #62581b;
+  qproperty-KeyModifiedColor: #beb062;
+  qproperty-KeyBorderModifiedColor: #3b3619;
   qproperty-KeyOnColor: #c77a27;
   qproperty-KeyBorderOnColor: #724616;
   qproperty-KeyInbetweenColor: #c0ba80;

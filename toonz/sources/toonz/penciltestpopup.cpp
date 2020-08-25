@@ -1345,7 +1345,7 @@ PencilTestPopup::PencilTestPopup()
   m_captureFilterSettingsBtn->setObjectName("GearButton");
   m_captureFilterSettingsBtn->setFixedSize(24, 24);
   m_captureFilterSettingsBtn->setIconSize(QSize(16, 16));
-  m_captureFilterSettingsBtn->setIcon(createQIcon("gear");
+  m_captureFilterSettingsBtn->setIcon(createQIcon("gear"));
   m_captureFilterSettingsBtn->setToolTip(tr("Options"));
   m_captureFilterSettingsBtn->setMenu(createOptionsMenu());
 
