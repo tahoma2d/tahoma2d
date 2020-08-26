@@ -507,6 +507,9 @@
 		<file>Resources/eraser.png</file>
 		<file>Resources/farm_tasks.svg</file>
 		<file>Resources/fill.png</file>
+		<file>Resources/footermemo.svg</file>
+		<file>Resources/footermemo_disabled.svg</file>
+		<file>Resources/footermemo_over.svg</file>
 		<file>Resources/iron.png</file>
 		<file>Resources/iconplay.png</file>
 		<file>Resources/iconpause.png</file>
@@ -550,6 +553,7 @@
 		<file>Resources/selection_convert.png</file>
 		<file>Resources/shear.png</file>
 		<file>Resources/splash.svg</file>
+		<file>Resources/splash2.svg</file>
 		<file>Resources/stroke_select.png</file>
 		<file>Resources/tape.png</file>
 		<file>Resources/touch.svg</file>
