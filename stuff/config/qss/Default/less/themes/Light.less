@@ -13,7 +13,7 @@
 // Resource Location
 @img-url: '../Default/imgs/black';
 
-@bg:                    #EFEFEF;
+@bg:                    #DBDBDB;
 @accent:                darken(@bg, 20);
 @dock-bg-color:         darken(@bg, 30);
 @hl-bg-color:           #a0c1dd;
@@ -55,10 +55,10 @@
 @title-text-color-active:      @text-color;
 
 // Title pane icon colors
-@title-button-pressed-color:   darken(@hl-bg-color, 4);
+@title-button-pressed-color:   darken(@hl-bg-color, 8);
 @title-button-rollover-color:  darken(@title-bg-color, 20);
 @title-button-freeze-color:    #e0625c;
-@title-button-preview-color:   #28C840;
+@title-button-preview-color:   #2cb856;
 
 // -----------------------------------------------------------------------------
 // Button
@@ -193,7 +193,7 @@
 
 @xsheet-EmptyCell-color:                    @xsheet-OnionSkinAreaBG-color;
 @xsheet-NotEmptyColumn-color:               @xsheet-bg-color;
-@xsheet-SelectedEmptyCell-color:            fade(lighten(mix(@xsheet-EmptyCell-color, @hl-bg-color-secondary, 50), -15), 50);
+@xsheet-SelectedEmptyCell-color:            fade(mix(lighten(@xsheet-EmptyCell-color, -20), @cellHighlightTintColor, 80), 50);
 
 @xsheet-LevelColumn-color:                  #9ed49e;
 @xsheet-VectorColumn-color:                 #d3cf9a;
