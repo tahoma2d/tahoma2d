@@ -398,7 +398,7 @@
 @xsheet-OnionSkinAreaBG-color:              darken(@bg, 6);
 @xsheet-EmptyColumnHead-color:              @bg;
 @xsheet-ColumnHeadPastelizer-color:         rgba(0, 0, 0, 0);
-@xsheet-SelectedColumnHead-color:           rgba(255, 255, 255, 0.239);
+@xsheet-SelectedColumnHead-color:           fade(tint(@cellHighlightTintColor, 80), 30);
 @xsheet-PlayRange-Color:                    @bg;
 @xsheet-LightBG-color:                      lighten(@bg, 65.8824);
 @xsheet-DarkBG-color:                       lighten(@bg, 60.0000);
@@ -414,12 +414,14 @@
 // Level Type Colors Adjustment
 @columnBorderDesaturation:                  0;
 @columnBorderDarkness:                      10;
-@cellHighlightLightness:                    10;
-@cellHighlightDesaturation:                 0;
+@cellHighlightLightness:                    -20;
+@cellHighlightDesaturation:                 8;
+@cellHighlightTintColor:                    @hl-bg-color;
+@cellHighlightTintAmount:                   77;
 
 @xsheet-EmptyCell-color:                    @xsheet-OnionSkinAreaBG-color;
 @xsheet-NotEmptyColumn-color:               darken(@bg, 3);
-@xsheet-SelectedEmptyCell-color:            lighten(@xsheet-EmptyCell-color, 10);
+@xsheet-SelectedEmptyCell-color:            fade(mix(lighten(@xsheet-EmptyCell-color, 20), @cellHighlightTintColor, 80), 50);
 
 @xsheet-LevelColumn-color:                  #4C6E4C;
 @xsheet-VectorColumn-color:                 #7B7B4C;
@@ -552,10 +554,10 @@
 // Keyframe Colors
 @function-KeyFrame-color:          darken(desaturate(spin(@keyframe-total-color, 0.0000), 0.7570), 8.4314);
 @function-KeyFrameBorder-color:    lighten(@function-KeyFrame-color, 20);
-@function-SelectedKeyFrame-color:  lighten(desaturate(@function-KeyFrame-color, 15), 15);
+@function-SelectedKeyFrame-color:  mix(shade(@function-KeyFrame-color, -40), @cellHighlightTintColor, 60);
 @function-Inbetween-color:         darken(desaturate(spin(@keyframe-inbetween-color, 0.4423), 4.8071), 7.2549);
 @function-InbetweenBorder-color:   lighten(@keyframe-inbetween-color, 20);
-@function-SelectedInbetween-color: lighten(desaturate(@function-Inbetween-color, 5), 10);
+@function-SelectedInbetween-color: mix(shade(@function-Inbetween-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
 // Expression Field
 @function-ExpressionFieldBG-color:     lighten(@bg, 61.9608);

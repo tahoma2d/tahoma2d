@@ -189,8 +189,7 @@
 // Level Type Colors Adjustment
 @columnBorderDesaturation:                  8;
 @columnBorderDarkness:                      15;
-@cellHighlightLightness:                    -10;
-@cellHighlightDesaturation:                 10;
+@cellHighlightLightness:                    10;
 
 @xsheet-EmptyCell-color:                    @xsheet-OnionSkinAreaBG-color;
 @xsheet-NotEmptyColumn-color:               @xsheet-bg-color;
@@ -214,7 +213,8 @@
 @timeline-FrameRangeMarkerLine-color:       rgba(0, 0, 0, 0.3);
 
 // Orientation: XSheet
-@xsheet-CamstandButtonBgOn-color:           rgba(235, 144, 107, 1);
+@xsheet-CamstandButtonBgOn-color:           rgb(255, 166, 131);
+@xsheet-PreviewButtonBgOn-color:            rgb(233, 233, 127);
 
 // -----------------------------------------------------------------------------
 // Schematic Viewer
@@ -237,3 +237,5 @@
 @function-panel-Text-color: @text-color;
 @function-panel-Sub-color: #fff;
 @function-panel-Selected-color: #ffe033;
+
+@function-SelectedKeyFrame-color:  mix(shade(@function-KeyFrame-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
