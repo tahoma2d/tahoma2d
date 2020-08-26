@@ -98,50 +98,50 @@ XsheetViewer {
   // Level Type Colors
   qproperty-LevelColumnColor: @xsheet-LevelColumn-color;
   qproperty-LevelColumnBorderColor: desaturate(darken(@xsheet-LevelColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedLevelColumnColor: desaturate(lighten(@xsheet-LevelColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedLevelColumnColor: mix(shade(@xsheet-LevelColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-VectorColumnColor: @xsheet-VectorColumn-color;
   qproperty-VectorColumnBorderColor: desaturate(darken(@xsheet-VectorColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedVectorColumnColor: desaturate(lighten(@xsheet-VectorColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedVectorColumnColor: mix(shade(@xsheet-VectorColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-ChildColumnColor: @xsheet-ChildColumn-color;
   qproperty-ChildColumnBorderColor: desaturate(darken(@xsheet-ChildColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedChildColumnColor: desaturate(lighten(@xsheet-ChildColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedChildColumnColor: mix(shade(@xsheet-ChildColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-FullcolorColumnColor: @xsheet-FullColorColumn-color;
   qproperty-FullcolorColumnBorderColor: desaturate(darken(@xsheet-FullColorColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedFullcolorColumnColor: desaturate(lighten(@xsheet-FullColorColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedFullcolorColumnColor: mix(shade(@xsheet-FullColorColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-FxColumnColor: @xsheet-FxColumn-color;
   qproperty-FxColumnBorderColor: desaturate(darken(@xsheet-FxColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedFxColumnColor: desaturate(lighten(@xsheet-FxColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedFxColumnColor: mix(shade(@xsheet-FxColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-ReferenceColumnColor: @xsheet-ReferenceColumn-color;
   qproperty-ReferenceColumnBorderColor: desaturate(darken(@xsheet-ReferenceColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedReferenceColumnColor: desaturate(lighten(@xsheet-ReferenceColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedReferenceColumnColor: mix(shade(@xsheet-ReferenceColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-PaletteColumnColor: @xsheet-PaletteColumn-color;
   qproperty-PaletteColumnBorderColor: desaturate(darken(@xsheet-PaletteColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedPaletteColumnColor: desaturate(lighten(@xsheet-PaletteColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedPaletteColumnColor: mix(shade(@xsheet-PaletteColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-MeshColumnColor: @xsheet-MeshColumn-color;
   qproperty-MeshColumnBorderColor: desaturate(darken(@xsheet-MeshColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedMeshColumnColor: desaturate(lighten(@xsheet-MeshColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedMeshColumnColor: mix(shade(@xsheet-MeshColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
   
   qproperty-SoundTextColumnColor: @xsheet-SoundTextColumn-color;
   qproperty-SoundTextColumnBorderColor: desaturate(darken(@xsheet-SoundTextColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedSoundTextColumnColor: desaturate(lighten(@xsheet-SoundTextColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedSoundTextColumnColor: mix(shade(@xsheet-SoundTextColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-SoundColumnColor: @xsheet-SoundColumn-color;
   qproperty-SoundColumnBorderColor: desaturate(darken(@xsheet-SoundColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
-  qproperty-SelectedSoundColumnColor: desaturate(lighten(@xsheet-SoundColumn-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedSoundColumnColor: mix(shade(@xsheet-SoundColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
   qproperty-SoundColumnHlColor: @xsheet-SoundColumnHL-color;
   qproperty-SoundColumnTrackColor: @xsheet-SoundColumnTrack-color;
 
   qproperty-ActiveCameraColor: @xsheet-ActiveCamera-color;
-  qproperty-SelectedActiveCameraColor: desaturate(lighten(@xsheet-ActiveCamera-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedActiveCameraColor: mix(shade(@xsheet-ActiveCamera-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
   qproperty-OtherCameraColor: @xsheet-OtherCamera-color;
-  qproperty-SelectedOtherCameraColor: desaturate(lighten(@xsheet-OtherCamera-color, @cellHighlightLightness), @cellHighlightDesaturation);
+  qproperty-SelectedOtherCameraColor: mix(shade(@xsheet-OtherCamera-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
 
   qproperty-LightLightBGColor: @function-LightLightBG-color;
   qproperty-LightBGColor: @xsheet-LightBG-color;
