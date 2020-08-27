@@ -186,7 +186,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Settings"));
   m_tabBar->addSimpleTab(tr("Options"));
   m_tabBar->addSimpleTab(tr("Light"));
-  m_tabBar->addSimpleTab(tr("Motion"));
+  //m_tabBar->addSimpleTab(tr("Motion"));
   m_tabBar->addSimpleTab(tr("Tests"));
   m_tabBarContainer    = new TabBarContainter(this);
   m_mainControlsPage   = new QFrame(this);
@@ -958,8 +958,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_stackedChooser->addWidget(settingsArea);
     m_stackedChooser->addWidget(optionsArea);
     m_stackedChooser->addWidget(lightArea);
-    m_stackedChooser->addWidget(motionArea);
     m_stackedChooser->addWidget(testsArea);
+    m_stackedChooser->addWidget(motionArea);
     m_stackedChooser->setFocusPolicy(Qt::NoFocus);
 
     QFrame *opacityFrame    = new QFrame();
