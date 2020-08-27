@@ -338,6 +338,7 @@
 		<file>icons/dark/actions/20/resequence.svg</file>
 
 		<file>icons/dark/actions/30/newmemo.svg</file>
+		<file>icons/dark/actions/30/footermemo.svg</file>
 		<file>icons/dark/actions/20/toggle_xsheet_orientation.svg</file>
 		<file>icons/dark/actions/15/zoom_in.svg</file>
 		<file>icons/dark/actions/15/zoom_in_rollover.svg</file>
@@ -480,7 +481,7 @@
 		<!-- Light =============================================== -->
 
 		<file>icons/light/misc/startup.png</file>
-		
+		<file>icons/light/misc/footermemo.svg</file>
 		<!-- ===================================================== -->
 		<!-- Legacy resources ==================================== -->
 		
@@ -507,9 +508,6 @@
 		<file>Resources/eraser.png</file>
 		<file>Resources/farm_tasks.svg</file>
 		<file>Resources/fill.png</file>
-		<file>Resources/footermemo.svg</file>
-		<file>Resources/footermemo_disabled.svg</file>
-		<file>Resources/footermemo_over.svg</file>
 		<file>Resources/iron.png</file>
 		<file>Resources/iconplay.png</file>
 		<file>Resources/iconpause.png</file>
