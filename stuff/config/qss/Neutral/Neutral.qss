@@ -1699,7 +1699,7 @@ SchematicViewer {
   qproperty-TextColor: #000;
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-LevelColumnColor: #78a578;
-  qproperty-VectorColumnColor: #a7a163;
+  qproperty-VectorColumnColor: #a7637d;
   qproperty-ChildColumnColor: #9a759c;
   qproperty-FullcolorColumnColor: #839bb1;
   qproperty-FxColumnColor: #928562;
@@ -2224,9 +2224,9 @@ XsheetViewer {
   qproperty-LevelColumnColor: #78a578;
   qproperty-LevelColumnBorderColor: #537d53;
   qproperty-SelectedLevelColumnColor: #90bd98;
-  qproperty-VectorColumnColor: #a7a163;
-  qproperty-VectorColumnBorderColor: #797444;
-  qproperty-SelectedVectorColumnColor: #bbba84;
+  qproperty-VectorColumnColor: #a7637d;
+  qproperty-VectorColumnBorderColor: #794459;
+  qproperty-SelectedVectorColumnColor: #bb809c;
   qproperty-ChildColumnColor: #9a759c;
   qproperty-ChildColumnBorderColor: #715272;
   qproperty-SelectedChildColumnColor: #af91b9;
