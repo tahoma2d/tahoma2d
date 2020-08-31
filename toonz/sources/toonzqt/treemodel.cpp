@@ -1,5 +1,6 @@
 
 
+#include "toonzqt/gutil.h"
 #include "toonzqt/treemodel.h"
 
 #include <QStringList>
@@ -145,8 +146,7 @@ void TreeModel::Item::setChildren(QList<Item *> &newChildren) {
 
 QVariant TreeModel::Item::data(int role) const {
   if (role == Qt::DecorationRole)
-    return QIcon(isOpen() ? ":Resources/folder_open.png"
-                          : ":Resources/folder_close.png");
+    return createQIcon("folder", true);
   else
     return QVariant();
 }

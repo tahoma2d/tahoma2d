@@ -669,8 +669,9 @@ void SaveSubSceneAsPopup::initFolder() {
 namespace {
 QPushButton *createShowButton(QWidget *parent) {
   QPushButton *button = new QPushButton(parent);
-  button->setObjectName("LoadLevelShowButton");
+  button->setObjectName("menuToggleButton");
   button->setFixedSize(15, 15);
+  button->setIcon(createQIcon("menu_toggle"));
   button->setCheckable(true);
   button->setChecked(false);
   button->setAutoDefault(false);

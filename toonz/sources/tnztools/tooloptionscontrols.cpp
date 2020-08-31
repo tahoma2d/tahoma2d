@@ -617,10 +617,10 @@ void ToolOptionCombo::loadEntries() {
               itemStr);
       if (!hasIcon) {
         hasIcon = true;
-        setIconSize(QSize(17, 17));
+        setIconSize(QSize(18, 18));
         // add margin between items if they are with icons
         setView(new QListView());
-        view()->setIconSize(QSize(17, 17));
+        view()->setIconSize(QSize(18, 18));
         setStyleSheet(
             "QComboBox  QAbstractItemView::item{ \
                        margin: 5 0 0 0;\

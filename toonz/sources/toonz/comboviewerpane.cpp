@@ -425,13 +425,14 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -232;
-  int iconWidth                         = 20;
+  int x                                 = -216;
+  int iconWidth                         = 18;
   TPanelTitleBarButton *button;
 
   // buttons for show / hide toggle for the field guide and the safe area
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(titleBar, ":Resources/pane_safe.svg");
+      new TPanelTitleBarButtonForSafeArea(
+          titleBar, getIconThemePath("actions/18/pane_safe.svg"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -444,7 +445,8 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   safeAreaButton->setPressed(
       CommandManager::instance()->getAction(MI_SafeArea)->isChecked());
 
-  button = new TPanelTitleBarButton(titleBar, ":Resources/pane_grid.svg");
+  button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_grid.svg"));
   button->setToolTip(tr("Field Guide"));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
@@ -458,48 +460,52 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
 
   // view mode toggles
-  button = new TPanelTitleBarButton(titleBar, ":Resources/pane_table.svg");
+  button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_table.svg"));
   button->setToolTip(tr("Camera Stand View"));
-  x += 10 + iconWidth;
+  x += 10 + 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
   button->setPressed(true);
 
-  button = new TPanelTitleBarButton(titleBar, ":Resources/pane_3d.svg");
+  button = new TPanelTitleBarButton(titleBar,
+                                    getIconThemePath("actions/18/pane_3d.svg"));
   button->setToolTip(tr("3D View"));
-  x += 21;  // width of pane_table_off.svg = 20px
+  x += +1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
-  button = new TPanelTitleBarButton(titleBar, ":Resources/pane_cam.svg");
+  button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_cam.svg"));
   button->setToolTip(tr("Camera View"));
-  x += 21;  // width of pane_3d_off.svg = 20px
+  x += +1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));
 
   // freeze button
-  button = new TPanelTitleBarButton(titleBar, ":Resources/pane_freeze.svg");
-  x += 10 + 20;  // width of pane_cam_off.svg = 20px
+  button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_freeze.svg"));
+  x += 10 + iconWidth;
 
-  button->setToolTip(tr("Freeze"));  // RC1
+  button->setToolTip(tr("Freeze"));
   titleBar->add(QPoint(x, 0), button);
   ret = ret && connect(button, SIGNAL(toggled(bool)), m_sceneViewer,
                        SLOT(freeze(bool)));
 
   // preview toggles
-  m_previewButton =
-      new TPanelTitleBarButton(titleBar, ":Resources/pane_preview.svg");
+  m_previewButton = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_preview.svg"));
   x += 10 + iconWidth;
   titleBar->add(QPoint(x, 0), m_previewButton);
   m_previewButton->setToolTip(tr("Preview"));
   ret = ret && connect(m_previewButton, SIGNAL(toggled(bool)),
                        SLOT(enableFullPreview(bool)));
 
-  m_subcameraPreviewButton =
-      new TPanelTitleBarButton(titleBar, ":Resources/pane_subpreview.svg");
-  x += 26;  // width of pane_preview_off.svg = 25px
+  m_subcameraPreviewButton = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/18/pane_subpreview.svg"));
+  x += +1 + 22;  // width of pane_preview_off.svg = 22px
 
   titleBar->add(QPoint(x, 0), m_subcameraPreviewButton);
   m_subcameraPreviewButton->setToolTip(tr("Sub-camera Preview"));
@@ -608,7 +614,7 @@ void ComboViewerPanel::changeWindowTitle() {
     if (sceneName.isEmpty()) sceneName = tr("Untitled");
 
     if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-    name = tr("[SCENE]: ") + sceneName;
+    name = tr("Scene: ") + sceneName;
     if (frame >= 0)
       name =
           name + tr("   ::   Frame: ") + tr(std::to_string(frame + 1).c_str());
@@ -638,10 +644,10 @@ void ComboViewerPanel::changeWindowTitle() {
     name = name + tr("   ::   Level: ") + imageName;
 
     if (!m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff                             = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name = name + "  ::  Zoom : " +
+      name                                    = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -653,15 +659,16 @@ void ComboViewerPanel::changeWindowTitle() {
                  ->isActualPixelViewOnSceneEditingModeEnabled() &&
              TApp::instance()->getCurrentLevel()->getSimpleLevel() &&
              !CleanupPreviewCheck::instance()
-                  ->isEnabled()               // cleanup preview must be OFF
-             && !CameraTestCheck::instance()  // camera test mode must be OFF
-                                              // neither
-                     ->isEnabled() &&
+                  ->isEnabled()  // cleanup preview must be OFF
+             &&
+             !CameraTestCheck::instance()  // camera test mode must be OFF
+                                           // neither
+                  ->isEnabled() &&
              !m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff                             = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name = name + "  ::  Zoom : " +
+      name                                    = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -676,12 +683,12 @@ void ComboViewerPanel::changeWindowTitle() {
       QString imageName = QString::fromStdWString(
           fp.withFrame(app->getCurrentFrame()->getFid()).getWideString());
 
-      name = name + tr("[LEVEL]: ") + imageName;
+      name = name + tr("Level: ") + imageName;
       if (!m_sceneViewer->is3DView()) {
         TAffine aff = m_sceneViewer->getViewMatrix();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name = name + "  ::  Zoom : " +
+        name                                    = name + "  ::  Zoom : " +
                QString::number((int)(100.0 * sqrt(aff.det()) *
                                      m_sceneViewer->getDpiFactor())) +
                "%";

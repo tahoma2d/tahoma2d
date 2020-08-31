@@ -1313,8 +1313,9 @@ void ChannelLineEdit::focusOutEvent(QFocusEvent *e) {
 
 void ChannelLineEdit::paintEvent(QPaintEvent *e) {
   IntLineEdit::paintEvent(e);
-  /* commenting out instead of deleting in-case this was for a specific reason
-  but since we now have QLineEdit focus it is perhaps redundant
+
+  /* Now that stylesheets added lineEdit focus this is likely redundant,
+   * commenting out in-case it is still required.
   if (m_isEditing) {
     QPainter p(this);
     p.setPen(Qt::yellow);
@@ -2831,6 +2832,7 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
         QPushButton *pushButton = new QPushButton;
         pushButton->setToolTip(tr("Reset to default"));
         pushButton->setIcon(createQIcon("delete"));
+        pushButton->setFixedSize(24, 24);
         m_paramsLayout->addWidget(pushButton, p, 2);
         ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
                                SLOT(onValueReset())) &&
@@ -3131,14 +3133,14 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   m_plainColorPage->m_rgbFrame->setVisible(false);
 
   QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("options"));
+  toolButton->setIcon(createQIcon("menu"));
   toolButton->setFixedSize(22, 22);
   toolButton->setMenu(menu);
   toolButton->setPopupMode(QToolButton::InstantPopup);
   toolButton->setToolTip(tr("Show or hide parts of the Color Page."));
   QToolBar *displayToolbar = new QToolBar(this);
   m_toggleOrientationAction =
-      displayToolbar->addAction(QIcon(":Resources/orientation_h.svg"), "");
+      displayToolbar->addAction(createQIcon("orientation_h"), "");
   m_toggleOrientationAction->setToolTip(
       tr("Toggle orientation of the Color Page."));
   QWidget *toggleOrientationButton =
@@ -3147,7 +3149,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   displayToolbar->addWidget(toolButton);
   displayToolbar->setMaximumHeight(22);
-  displayToolbar->setIconSize(QSize(18, 18));
+  displayToolbar->setIconSize(QSize(16, 16));
 
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
@@ -3157,11 +3159,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
     {
-#ifdef WIN32
-      hLayout->addSpacing(-1);
-#else
-      hLayout->addSpacing(4);
-#endif
+      hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
       hLayout->addStretch();
     }
@@ -3450,9 +3448,9 @@ void StyleEditor::hideEvent(QHideEvent *) {
 
 void StyleEditor::updateOrientationButton() {
   if (m_plainColorPage->getIsVertical()) {
-    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_h.svg"));
+    m_toggleOrientationAction->setIcon(createQIcon("orientation_h"));
   } else {
-    m_toggleOrientationAction->setIcon(QIcon(":Resources/orientation_v.svg"));
+    m_toggleOrientationAction->setIcon(createQIcon("orientation_v"));
   }
 }
 
@@ -3486,11 +3484,11 @@ void StyleEditor::onStyleSwitched() {
     QString statusText;
     // palette type
     if (isCleanUpPalette)
-      statusText = tr("[CLEANUP]  ");
+      statusText = tr("Cleanup ");
     else if (palette->getGlobalName() != L"")
-      statusText = tr("[STUDIO]  ");
+      statusText = tr("Studio ");
     else
-      statusText = tr("[LEVEL]  ");
+      statusText = tr("Level ");
 
     // palette name
     statusText += tr("Palette") + " : " +

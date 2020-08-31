@@ -11,6 +11,7 @@
 
 #include "toonz/preferences.h"
 #include "toonzqt/lutcalibrator.h"
+#include "toonzqt/gutil.h"
 #include <QPushButton>
 #include <QDialog>
 
@@ -40,7 +41,7 @@ void ChannelHistoGraph::setValues() {
   // normalize with the maximum value
   int maxValue = 1;
   for (i = 0; i < COMBOHIST_RESOLUTION_W; i++) {
-    int count = m_channelValuePtr[i];
+    int count                      = m_channelValuePtr[i];
     if (maxValue < count) maxValue = count;
   }
 
@@ -149,8 +150,8 @@ void RGBHistoGraph::setValues() {
   imgPainter.setCompositionMode(QPainter::CompositionMode_Plus);
 
   for (int chan = 0; chan < 3; chan++) {
-    imgPainter.setPen((chan == 0) ? Qt::red
-                                  : (chan == 1) ? Qt::green : Qt::blue);
+    imgPainter.setPen((chan == 0) ? Qt::red : (chan == 1) ? Qt::green
+                                                          : Qt::blue);
 
     for (int i = 0; i < COMBOHIST_RESOLUTION_W; i++) {
       int v = m_rgbValues[chan][i];
@@ -248,8 +249,9 @@ ChannelHisto::ChannelHisto(int channelIndex, int *channelValue,
   QPushButton *showAlphaChannelButton = 0;
   if (channelIndex == 3) {
     showAlphaChannelButton = new QPushButton("", this);
-    showAlphaChannelButton->setObjectName("FxSettingsPreviewShowButton");
+    showAlphaChannelButton->setObjectName("menuToggleButton");
     showAlphaChannelButton->setFixedSize(15, 15);
+    showAlphaChannelButton->setIcon(createQIcon("menu_toggle"));
     showAlphaChannelButton->setCheckable(true);
     showAlphaChannelButton->setChecked(false);
     showAlphaChannelButton->setFocusPolicy(Qt::NoFocus);
@@ -338,11 +340,10 @@ void ComboHistoRGBLabel::paintEvent(QPaintEvent *pe) {
     p.setPen(Qt::black);
   p.setBrush(Qt::NoBrush);
 
-  p.drawText(rect(), Qt::AlignCenter,
-             tr("R:%1 G:%2 B:%3")
-                 .arg(m_color.red())
-                 .arg(m_color.green())
-                 .arg(m_color.blue()));
+  p.drawText(rect(), Qt::AlignCenter, tr("R:%1 G:%2 B:%3")
+                                          .arg(m_color.red())
+                                          .arg(m_color.green())
+                                          .arg(m_color.blue()));
 }
 
 //=============================================================================
@@ -351,9 +352,9 @@ void ComboHistoRGBLabel::paintEvent(QPaintEvent *pe) {
 
 ComboHistogram::ComboHistogram(QWidget *parent)
     : QWidget(parent), m_raster(0), m_palette(0) {
-  for (int chan = 0; chan < 4; chan++)
+  for (int chan        = 0; chan < 4; chan++)
     m_histograms[chan] = new ChannelHisto(chan, &m_channelValue[chan][0], this);
-  m_histograms[4] = new ChannelHisto(4, &m_channelValue[0][0], this);
+  m_histograms[4]      = new ChannelHisto(4, &m_channelValue[0][0], this);
 
   // RGB label
   m_rgbLabel = new ComboHistoRGBLabel(QColor(128, 128, 128), this);
@@ -416,7 +417,7 @@ ComboHistogram::~ComboHistogram() {
 void ComboHistogram::setRaster(const TRasterP &raster,
                                const TPaletteP &palette) {
   if (palette.getPointer()) m_palette = palette;
-  m_raster = raster;
+  m_raster                            = raster;
   computeChannelsValue();
 
   for (int i = 0; i < 5; i++) m_histograms[i]->refleshValue();

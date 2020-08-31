@@ -16,44 +16,44 @@
 ----------------------------------------------------------------------------- */
 
 DvItemViewerPanel {
+  background-color: @browser-itemview-bg-color;
   qproperty-TextColor: @text-color;
   qproperty-AlternateBackground: @browser-itemview-bg-color-alt;
   qproperty-SelectedTextColor: @hl-text-color;
   qproperty-FolderTextColor: @browser-folder-text-color;
-  qproperty-SelectedItemBackground: @hl-bg-color;
+  qproperty-SelectedItemBackground: @browser-selected-item-bg-color;
 }
 DvItemViewerTitleBar {
   qproperty-ColColor: @browser-itemview-col-color;
   qproperty-ColSortedColor: @browser-itemview-col-color-sorted;
   qproperty-ColTextColor: @browser-itemview-col-text-color;
   qproperty-ColBorderColor: @browser-itemview-col-border-color;
-  qproperty-ColReliefColor: @browser-itemview-col-relief-color;
 }
+
 #FileBrowser {
-  & DvItemViewerPanel {
-    background-color: @browser-itemview-bg-color;
+  background-color: @filebrowser-bg-color;
+  & QLabel {
+    background-color: transparent;
   }
+  & QToolBar {
+    background-color: @filebrowser-bg-color;
+    & QToolButton {
+      &:extend(.button-tool all);
+    }
+  }
+  //& #buttonBar {}
   #castFrame {
     border-top: 1 solid @accent;
     border-right: 1 solid @accent;
     border-bottom: 1 solid @accent;
     margin: 0;
   }
-  & QToolButton {
-    padding: 1;
-  }
 }
 
-#DvItemViewerButtonBar {
-  // Placeholder
-}
+//#DvItemViewerButtonBar {}
 
 #LoadLevelFrame {
   &:extend(.frame all);
-}
-
-#LoadLevelShowButton {
-  &:extend(.button-show all);
 }
 
 #PsdSettingsGroupBox {
@@ -83,9 +83,15 @@ StyledTreeView {
   &:extend(#FileBrowser all);
   & QToolBar {
     border-top: 1 solid @accent;
+    &::separator {
+      &:horizontal {
+        margin-left: 2;
+        margin-right: 0;
+      }
+    }
   }
   & QToolButton {
-    margin: 3 1 2 1;
+    margin: 3 0 2 2;
     padding: 1;
   }
 }

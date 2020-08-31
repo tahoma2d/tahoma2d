@@ -1346,22 +1346,23 @@ PencilTestPopup::PencilTestPopup()
   m_captureButton->setIcon(style.standardIcon(QStyle::SP_DialogOkButton));
   m_captureButton->setIconSize(QSize(30, 30));
 
-  if (m_captureFilterSettingsBtn) {
-    m_captureFilterSettingsBtn->setObjectName("GearButton");
-    m_captureFilterSettingsBtn->setFixedSize(23, 23);
-    m_captureFilterSettingsBtn->setIconSize(QSize(15, 15));
-    m_captureFilterSettingsBtn->setToolTip(tr("Options"));
-    m_captureFilterSettingsBtn->setMenu(createOptionsMenu());
-  }
+  m_captureFilterSettingsBtn->setObjectName("GearButton");
+  m_captureFilterSettingsBtn->setFixedSize(24, 24);
+  m_captureFilterSettingsBtn->setIconSize(QSize(16, 16));
+  m_captureFilterSettingsBtn->setIcon(createQIcon("gear"));
+  m_captureFilterSettingsBtn->setToolTip(tr("Options"));
+  m_captureFilterSettingsBtn->setMenu(createOptionsMenu());
 
   subfolderButton->setObjectName("SubfolderButton");
-  subfolderButton->setIconSize(QSize(15, 15));
+  subfolderButton->setIconSize(QSize(16, 16));
+  subfolderButton->setIcon(createQIcon("folder_new"));
   m_saveInFileFld->setMaximumWidth(380);
 
   m_saveInFolderPopup->hide();
 
   m_subcameraButton->setObjectName("SubcameraButton");
-  m_subcameraButton->setIconSize(QSize(15, 15));
+  m_subcameraButton->setIconSize(QSize(16, 16));
+  m_subcameraButton->setIcon(createQIcon("subcamera"));
   m_subcameraButton->setCheckable(true);
   m_subcameraButton->setChecked(false);
   subCamWidget->setHidden(true);

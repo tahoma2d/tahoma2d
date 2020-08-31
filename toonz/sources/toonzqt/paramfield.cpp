@@ -658,9 +658,6 @@ void ParamField::setFxHandle(TFxHandle *fxHandle) {
 ParamFieldKeyToggle::ParamFieldKeyToggle(QWidget *parent, std::string name)
     : QWidget(parent), m_status(NOT_ANIMATED), m_highlighted(false) {
   setFixedSize(20, 20);
-
-  m_pixmap = QPixmap(":Resources/keyframe.svg");
-  m_icon.addPixmap(m_pixmap);
 }
 
 //-----------------------------------------------------------------------------
@@ -693,37 +690,66 @@ ParamFieldKeyToggle::Status ParamFieldKeyToggle::getStatus() const {
 //-----------------------------------------------------------------------------
 
 void ParamFieldKeyToggle::paintEvent(QPaintEvent *e) {
+  QIcon icon;
+  const int iconSize = 20;
+  const int radius   = 2;
+
+  // Create rounded rect for key button states
   QPainter p(this);
-
-  int iconSize = 20;
-  int radius   = 3;
-
-  // create rounded rect for key button states
-  p.setRenderHint(p.Antialiasing);
+  p.setRenderHint(p.Antialiasing, true);
   QPainterPath path;
-  path.addRoundedRect(QRectF(0, 0, iconSize, iconSize), radius, radius);
-  QPen pen(Qt::transparent);
+  path.addRoundedRect(
+      QRectF(0.5, 0.5, 19, 19), radius,
+      radius);  // Nudge rect by half pixel so QPen looks pixel perfect
+  QPen pen = QColor(0, 0, 0, 0);
   p.setPen(pen);
 
   switch (m_status) {
   case NOT_ANIMATED:
+    pen = QColor(getKeyBorderOffColor());
+    p.setPen(pen);
     p.fillPath(path, getKeyOffColor());
+    m_pixmap = QPixmap(createQIcon("key_off").pixmap(
+        iconSize, iconSize, QIcon::Normal, QIcon::Off));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case KEYFRAME:
+    pen = QColor(getKeyBorderOnColor());
+    p.setPen(pen);
     p.fillPath(path, getKeyOnColor());
+    m_pixmap =
+        QPixmap(createQIcon("key_on", true)
+                    .pixmap(iconSize, iconSize, QIcon::Normal, QIcon::Off));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   case MODIFIED:
+    pen = QColor(getKeyBorderModifiedColor());
+    p.setPen(pen);
     p.fillPath(path, getKeyModifiedColor());
+    m_pixmap =
+        QPixmap(createQIcon("key_modified", true)
+                    .pixmap(iconSize, iconSize, QIcon::Normal, QIcon::Off));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   default:
+    pen = QColor(getKeyBorderInbetweenColor());
+    p.setPen(pen);
     p.fillPath(path, getKeyInbetweenColor());
+    m_pixmap =
+        QPixmap(createQIcon("key_on", true)
+                    .pixmap(iconSize, iconSize, QIcon::Normal, QIcon::Off));
+    icon.addPixmap(m_pixmap);
+    icon.paint(&p, QRect(0, 0, iconSize, iconSize));
     break;
   }
   p.drawPath(path);
 
-  m_icon.paint(&p, QRect(0, 0, iconSize, iconSize));
-
   if (m_highlighted) {
+    pen = QColor(getKeyBorderHighlightColor());
+    p.setPen(pen);
     p.fillPath(path, getKeyHighlightColor());
     p.drawPath(path);
   }

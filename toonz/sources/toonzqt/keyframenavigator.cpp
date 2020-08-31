@@ -38,18 +38,12 @@ using namespace std;
 KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
     : QToolBar(parent), m_frameHandle(frameHandle), m_panel(0) {
   setLayoutDirection(Qt::LeftToRight);
-
   setIconSize(QSize(20, 20));
-
   setObjectName("keyFrameNavigator");
 
   // previous key button
-  QPixmap emptyPrevPixmap(
-      23, 23);  // set transparent icon to show button's background
-  emptyPrevPixmap.fill(Qt::transparent);
-  QIcon emptyPrevIcon(emptyPrevPixmap);
-
-  m_actPreviewKey = new QAction(emptyPrevIcon, tr("Previous Key"), this);
+  QIcon prevKeyIcon = createQIcon("prevkey");
+  m_actPreviewKey   = new QAction(prevKeyIcon, tr("Previous Key"), this);
   connect(m_actPreviewKey, SIGNAL(triggered()), SLOT(togglePrevKeyAct()));
   addAction(m_actPreviewKey);
   QWidget *prevWidget = widgetForAction(
@@ -57,12 +51,8 @@ KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
   prevWidget->setObjectName("PreviousKey");
 
   // key off button
-  QPixmap emptyKeyNo(20,
-                     20);  // set transparent icon to show button's background
-  emptyKeyNo.fill(Qt::transparent);
-  QIcon emptyKeyIcon(emptyKeyNo);
-
-  m_actKeyNo = new QAction(emptyKeyIcon, tr("Set Key"), this);
+  QIcon keyIcon = createQIcon("key_off");
+  m_actKeyNo    = new QAction(keyIcon, tr("Set Key"), this);
   connect(m_actKeyNo, SIGNAL(triggered()), SLOT(toggleKeyAct()));
   addAction(m_actKeyNo);
   QWidget *keyNoWidget =
@@ -70,12 +60,8 @@ KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
   keyNoWidget->setObjectName("KeyNo");
 
   // key partial button
-  QPixmap emptyKeyPartial(
-      20, 20);  // set transparent icon to show button's background
-  emptyKeyPartial.fill(Qt::transparent);
-  QIcon emptyKeyPartialIcon(emptyKeyPartial);
-
-  m_actKeyPartial = new QAction(emptyKeyPartialIcon, tr("Set Key"), this);
+  QIcon keyPartialIcon = createQIcon("key_partial", true);
+  m_actKeyPartial      = new QAction(keyPartialIcon, tr("Set Key"), this);
   connect(m_actKeyPartial, SIGNAL(triggered()), SLOT(toggleKeyAct()));
   addAction(m_actKeyPartial);
   QWidget *keyPartialWidget = widgetForAction(
@@ -83,12 +69,8 @@ KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
   keyPartialWidget->setObjectName("KeyPartial");
 
   // key total button
-  QPixmap emptyKeyTotal(
-      20, 20);  // set transparent icon to show button's background
-  emptyKeyTotal.fill(Qt::transparent);
-  QIcon emptyKeyTotalIcon(emptyKeyTotal);
-
-  m_actKeyTotal = new QAction(emptyKeyTotalIcon, tr("Set Key"), this);
+  QIcon keyTotalIcon = createQIcon("key_on", true);
+  m_actKeyTotal      = new QAction(keyTotalIcon, tr("Set Key"), this);
   connect(m_actKeyTotal, SIGNAL(triggered()), SLOT(toggleKeyAct()));
   addAction(m_actKeyTotal);
   QWidget *keyTotalWidget =
@@ -96,12 +78,8 @@ KeyframeNavigator::KeyframeNavigator(QWidget *parent, TFrameHandle *frameHandle)
   keyTotalWidget->setObjectName("KeyTotal");
 
   // next key button
-  QPixmap emptyNextPixmap(
-      23, 23);  // set transparent icon to show button's background
-  emptyNextPixmap.fill(Qt::transparent);
-  QIcon emptyNextIcon(emptyNextPixmap);
-
-  m_actNextKey = new QAction(emptyNextIcon, tr("Next Key"), this);
+  QIcon nextKeyIcon = createQIcon("nextkey");
+  m_actNextKey      = new QAction(nextKeyIcon, tr("Next Key"), this);
   connect(m_actNextKey, SIGNAL(triggered()), SLOT(toggleNextKeyAct()));
   addAction(m_actNextKey);
   QWidget *nextWidget =

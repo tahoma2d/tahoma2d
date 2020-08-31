@@ -109,14 +109,9 @@ StudioPaletteTreeViewer::StudioPaletteTreeViewer(
 
   header()->close();
   setUniformRowHeights(true);
-  setIconSize(QSize(21, 17));
+  setIconSize(QSize(21, 18));
 
   QList<QTreeWidgetItem *> paletteItems;
-
-  QString open  = QString(":Resources/folder_close.svg");
-  QString close = QString(":Resources/folder_open.svg");
-  m_folderIcon.addFile(close, QSize(21, 17), QIcon::Normal, QIcon::On);
-  m_folderIcon.addFile(open, QSize(21, 17), QIcon::Normal, QIcon::Off);
 
   QString levelPaletteIcon = QString(":Resources/palette.svg");
   m_levelPaletteIcon.addPixmap(levelPaletteIcon, QIcon::Normal, QIcon::On);
@@ -140,7 +135,7 @@ StudioPaletteTreeViewer::StudioPaletteTreeViewer(
 
   bool ret = connect(this, SIGNAL(itemChanged(QTreeWidgetItem *, int)),
                      SLOT(onItemChanged(QTreeWidgetItem *, int)));
-  ret      = ret && connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+  ret = ret && connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
                        SLOT(onItemClicked(QTreeWidgetItem *, int)));
   ret =
       ret &&
@@ -209,7 +204,7 @@ QTreeWidgetItem *StudioPaletteTreeViewer::createRootItem(TFilePath path) {
       rootName = "Project Palettes";
   QTreeWidgetItem *rootItem =
       new QTreeWidgetItem((QTreeWidget *)0, QStringList(rootName));
-  rootItem->setIcon(0, m_folderIcon);
+  rootItem->setIcon(0, createQIcon("folder", true));
   rootItem->setData(1, Qt::UserRole, toQString(path));
 
   refreshItem(rootItem);
@@ -248,7 +243,7 @@ QTreeWidgetItem *StudioPaletteTreeViewer::createItem(const TFilePath path) {
       item->setIcon(0, m_levelPaletteIcon);
     item->setFlags(item->flags() | Qt::ItemNeverHasChildren);
   } else if (studioPalette->isFolder(path)) {
-    item->setIcon(0, m_folderIcon);
+    item->setIcon(0, createQIcon("folder", true));
     item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
   }
   item->setData(1, Qt::UserRole, toQString(path));
@@ -963,8 +958,8 @@ void StudioPaletteTreeViewer::contextMenuEvent(QContextMenuEvent *event) {
     QTreeWidgetItem *item = items[i];
     QRect rect            = visualItemRect(item);
     if (QRect(0, rect.y(), width(), rect.height()).contains(event->pos()))
-      isClickInSelection = true;
-    TFilePath path = getItemPath(item);
+      isClickInSelection                             = true;
+    TFilePath path                                   = getItemPath(item);
     if (studioPalette->isFolder(path)) areAllPalette = false;
   }
   if (!isClickInSelection) return;
@@ -1007,8 +1002,9 @@ void StudioPaletteTreeViewer::mousePressEvent(QMouseEvent *event) {
 void StudioPaletteTreeViewer::mouseMoveEvent(QMouseEvent *event) {
   // If left button is not pressed return; is not drag event.
   if (!(event->buttons() & Qt::LeftButton)) return;
-  if (!m_startPos.isNull() && (m_startPos - event->pos()).manhattanLength() >=
-                                  QApplication::startDragDistance())
+  if (!m_startPos.isNull() &&
+      (m_startPos - event->pos()).manhattanLength() >=
+          QApplication::startDragDistance())
     startDragDrop();
 }
 
@@ -1160,7 +1156,7 @@ void StudioPaletteTreeViewer::dropEvent(QDropEvent *event) {
     pltName = tr("the palette \"%1\"")
                   .arg(QString::fromStdWString(palettePaths[0].getWideName()));
   else
-    pltName = tr("the selected palettes");
+    pltName       = tr("the selected palettes");
   QString dstName = QString::fromStdWString(newPath.getWideName());
 
   QString question =

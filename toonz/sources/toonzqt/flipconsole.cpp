@@ -581,8 +581,8 @@ void FlipConsole::setActive(bool active) {
 
 //-----------------------------------------------------------------------------
 
-#define LX 21
-#define LY 17
+#define LX 22
+#define LY 22
 class DoubleButton final : public QToolButton {
   QAction *m_firstAction, *m_secondAction;
   QIcon::Mode m_firstMode, m_secondMode;
@@ -601,6 +601,7 @@ public:
       , m_enabled(true) {
     setFixedSize(LX, LY);
     setMouseTracking(true);
+    setObjectName("flipDoubleButton");
   }
   void setEnabledSecondButton(bool state) {
     if (!state && m_secondAction->isChecked()) m_secondAction->trigger();
@@ -975,8 +976,10 @@ QAction *FlipConsole::createDoubleButton(
     UINT buttonMask1, UINT buttonMask2, const char *iconStr1,
     const char *iconStr2, const QString &tip1, const QString &tip2,
     QActionGroup *group, DoubleButton *&widget) {
-  QAction *action1 = new QAction(createQIcon(iconStr1), tip1, m_playToolBar);
-  QAction *action2 = new QAction(createQIcon(iconStr2), tip2, m_playToolBar);
+  QAction *action1 =
+      new QAction(createQIcon(iconStr1, true), tip1, m_playToolBar);
+  QAction *action2 =
+      new QAction(createQIcon(iconStr2, true), tip2, m_playToolBar);
   m_actions[(EGadget)buttonMask1] = action1;
   m_actions[(EGadget)buttonMask2] = action2;
 
@@ -1001,7 +1004,7 @@ QAction *FlipConsole::createDoubleButton(
 
 void FlipConsole::createOnOffButton(UINT buttonMask, const char *iconStr,
                                     const QString &tip, QActionGroup *group) {
-  QIcon icon      = createQIconOnOff(iconStr);
+  QIcon icon      = createQIcon(iconStr);
   QAction *action = new QAction(icon, tip, m_playToolBar);
   action->setData(QVariant(buttonMask));
   action->setCheckable(true);
@@ -1174,7 +1177,7 @@ void FlipConsole::setCustomizemask(UINT mask) {
 
 void FlipConsole::createCustomizeMenu(bool withCustomWidget) {
   if (hasButton(m_gadgetsMask, eCustomize)) {
-    QIcon icon          = createQIcon("options");
+    QIcon icon          = createQIcon("menu");
     QToolButton *button = new QToolButton();
     button->setIcon(icon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
@@ -1251,7 +1254,7 @@ void FlipConsole::createPlayToolBar(QWidget *customWidget) {
   m_playToolBar = new QToolBar(this);
   m_playToolBar->setMovable(false);
   m_playToolBar->setObjectName("FlipConsolePlayToolBar");
-  m_playToolBar->setIconSize(QSize(17, 17));
+  m_playToolBar->setIconSize(QSize(20, 20));
   //	m_playToolBar->setObjectName("chackableButtonToolBar");
 
   // m_playToolBar->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -1325,7 +1328,7 @@ void FlipConsole::createPlayToolBar(QWidget *customWidget) {
                                        playGroup, "A_Flip_Loop");
 
   if (hasButton(m_gadgetsMask, eNext))
-    createButton(eNext, "framenext", tr("&Next frame"), false);
+    createButton(eNext, "framenext", tr("&Next Frame"), false);
   if (hasButton(m_gadgetsMask, eLast))
     createButton(eLast, "framelast", tr("&Last Frame"), false);
 
@@ -1402,10 +1405,9 @@ void FlipConsole::createPlayToolBar(QWidget *customWidget) {
     if (hasButton(m_gadgetsMask, eZoomOut))
       createButton(eZoomOut, "zoomout", tr("&Zoom Out"), false);
     if (hasButton(m_gadgetsMask, eFlipHorizontal))
-      createOnOffButton(eFlipHorizontal, "fliphoriz", tr("&Flip Horizontally"),
-                        0);
+      createButton(eFlipHorizontal, "fliphoriz", tr("&Flip Horizontally"), 0);
     if (hasButton(m_gadgetsMask, eFlipVertical))
-      createOnOffButton(eFlipVertical, "flipvert", tr("&Flip Vertically"), 0);
+      createButton(eFlipVertical, "flipvert", tr("&Flip Vertically"), 0);
     if (hasButton(m_gadgetsMask, eResetView))
       createButton(eResetView, "reset", tr("&Reset View"), false);
     m_viewerSep = m_playToolBar->addSeparator();
@@ -1658,8 +1660,8 @@ void FlipConsole::doButtonPressed(UINT button) {
     m_reverse = (m_fps < 0);
 
     if (!linked) {
-      // if the play button pressed at the end frame, then go back to the start
-      // frame and play
+      // if the play button pressed at the end frame, then go back to the
+      // start frame and play
       if (m_currentFrame <= from ||
           m_currentFrame >=
               to)  // the first frame of the playback is drawn right now
@@ -1941,8 +1943,8 @@ void FlipConsole::setFrameRange(int from, int to, int step, int current) {
   }
 
   if (m_playbackExecutor.isRunning() ||
-      m_isLinkedPlaying)  // if in playing mode, the slider and the frame field
-                          // are already set in the timer!
+      m_isLinkedPlaying)  // if in playing mode, the slider and the frame
+                          // field are already set in the timer!
     return;
 
   // limit the current frame in the range from-to
@@ -2116,62 +2118,25 @@ void FlipConsole::onPreferenceChanged(const QString &prefName) {
       if (m_blanksCount > 1) buttonText += "s";
       m_enableBlankFrameButton->setText(buttonText);
 
-      //--- use white text for dark color and vice versa
+      // Set text color based on luminescence of blankColor color
       QString textColor;
-      QString dimmedTextColor;
-      int val = (int)m_blankColor.r * 30 + (int)m_blankColor.g * 59 +
-                (int)m_blankColor.b * 11;
-      if (val < 12800) {
-        textColor       = QString("white");
-        dimmedTextColor = QString("rgb(200,200,200)");
-      } else {
-        textColor       = QString("black");
-        dimmedTextColor = QString("rgb(55,55,55)");
-      }
-
-      int dc = 150;
-      QColor lightBevel(std::min(m_blankColor.r + dc, 255),
-                        std::min(m_blankColor.g + dc, 255),
-                        std::min(m_blankColor.b + dc, 255));
-      QColor darkBevel(std::max(m_blankColor.r - dc, 0),
-                       std::max(m_blankColor.g - dc, 0),
-                       std::max(m_blankColor.b - dc, 0));
+      double luminescence =
+          ((0.299 * (int)m_blankColor.r) + (0.587 * (int)m_blankColor.g) +
+           (0.114 * (int)m_blankColor.b)) /
+          255;
+      if (luminescence > 0.5)
+        textColor = QString("black");
+      else
+        textColor = QString("white");
 
       m_enableBlankFrameButton->setStyleSheet(
-          QString("#enableBlankFrameButton{ \
-              background-color: transparent; \
-              padding: 2px;\
-              font-weight: bold; \
-              font-size: 12px; \
-              color: %11;\
-              border-style: inset; \
-              border-left-color: rgb(%5,%6,%7); \
-              border-top-color: rgb(%5,%6,%7); \
-              border-right-color: rgb(%8,%9,%10); \
-              border-bottom-color: rgb(%8,%9,%10); \
-              border-width: 2px; \
-              border-radius: 3px; \
-            } \
-            #enableBlankFrameButton:checked { \
+          QString("#enableBlankFrameButton:checked { \
               background-color: rgb(%1,%2,%3); \
-              color: %4; \
-              border-style: outset; \
-              border-left-color: rgb(%8,%9,%10); \
-              border-top-color: rgb(%8,%9,%10); \
-              border-right-color: rgb(%5,%6,%7); \
-              border-bottom-color: rgb(%5,%6,%7); \
-            } ")
+              color: %4;}")
               .arg(m_blankColor.r)
               .arg(m_blankColor.g)
               .arg(m_blankColor.b)
-              .arg(textColor)
-              .arg(lightBevel.red())
-              .arg(lightBevel.green())
-              .arg(lightBevel.blue())
-              .arg(darkBevel.red())
-              .arg(darkBevel.green())
-              .arg(darkBevel.blue())
-              .arg(dimmedTextColor));
+              .arg(textColor));
       m_enableBlankFrameButton->update();
     }
   }

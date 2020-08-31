@@ -83,14 +83,16 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   m_noteArea->setFixedSize(o->rect(PredefinedRect::FOOTER_NOTE_AREA).size());
   m_noteArea->setGeometry(noteObjRect);
 
-  static QPixmap zoomIn = svgToPixmap(":Resources/zoom_in.svg");
-  static QPixmap zoomInRollover =
-      svgToPixmap(":Resources/zoom_in_rollover.svg");
+  static QPixmap zoomIn =
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/15/zoom_in.svg")));
+  static QPixmap zoomInRollover = recolorPixmap(
+      svgToPixmap(getIconThemePath("actions/15/zoom_in_rollover.svg")));
   const QRect zoomInImgRect = o->rect(PredefinedRect::ZOOM_IN);
 
-  static QPixmap zoomOut = svgToPixmap(":Resources/zoom_out.svg");
-  static QPixmap zoomOutRollover =
-      svgToPixmap(":Resources/zoom_out_rollover.svg");
+  static QPixmap zoomOut =
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/15/zoom_out.svg")));
+  static QPixmap zoomOutRollover = recolorPixmap(
+      svgToPixmap(getIconThemePath("actions/15/zoom_out_rollover.svg")));
   const QRect zoomOutImgRect = o->rect(PredefinedRect::ZOOM_OUT);
 
   // static QPixmap addLevel = svgToPixmap(":Resources/new_level.svg");

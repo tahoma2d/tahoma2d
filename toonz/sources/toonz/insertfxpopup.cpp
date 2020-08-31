@@ -120,7 +120,7 @@ TFx *createMacroFxByPath(TFilePath path) {
     std::string inFxOldId   = oldPortName;
     inFxOldId.erase(0, inFxOldId.find_last_of("_") + 1);
     assert(oldNewId.contains(::to_wstring(inFxOldId)));
-    std::string inFxNewId   = ::to_string(oldNewId[::to_wstring(inFxOldId)]);
+    std::string inFxNewId   = ::to_string(oldNewId[ ::to_wstring(inFxOldId)]);
     std::string newPortName = oldPortName;
     newPortName.erase(newPortName.find_last_of("_") + 1,
                       newPortName.size() - 1);
@@ -233,24 +233,15 @@ InsertFxPopup::InsertFxPopup()
           SLOT(onSearchTextChanged(const QString &)));
 
   m_fxTree = new FxTree();
-  m_fxTree->setIconSize(QSize(21, 17));
+  m_fxTree->setIconSize(QSize(21, 18));
   m_fxTree->setColumnCount(1);
   m_fxTree->header()->close();
 
   m_fxTree->setObjectName("FxTreeView");
   m_fxTree->setAlternatingRowColors(true);
 
-  QString open  = QString(":Resources/folder_close.svg");
-  QString close = QString(":Resources/folder_open.svg");
-  m_folderIcon.addFile(close, QSize(22, 22), QIcon::Normal, QIcon::On);
-  m_folderIcon.addFile(open, QSize(22, 22), QIcon::Normal, QIcon::Off);
-
-  QString presetOpen  = QString(":Resources/folderpreset_close.svg");
-  QString presetClose = QString(":Resources/folderpreset_open.svg");
-  m_presetIcon.addFile(presetClose, QSize(22, 22), QIcon::Normal, QIcon::On);
-  m_presetIcon.addFile(presetOpen, QSize(22, 22), QIcon::Normal, QIcon::Off);
-
-  m_fxIcon = QIcon(QString(":Resources/fx.svg"));
+  m_presetIcon = createQIcon("folder_preset", true);
+  m_fxIcon     = createQIcon("fx");
 
   QList<QTreeWidgetItem *> fxItems;
 
@@ -263,7 +254,7 @@ InsertFxPopup::InsertFxPopup()
   // add 'Plugins' directory
   auto plugins =
       new QTreeWidgetItem((QTreeWidget *)NULL, QStringList("Plugins"));
-  plugins->setIcon(0, m_folderIcon);
+  plugins->setIcon(0, createQIcon("folder", true));
   m_fxTree->addTopLevelItem(plugins);
 
   // create vendor / Fx
@@ -273,7 +264,7 @@ InsertFxPopup::InsertFxPopup()
       PluginLoader::create_menu_items(
           [&](QTreeWidgetItem *firstlevel_item) {
             plugins->addChild(firstlevel_item);
-            firstlevel_item->setIcon(0, m_folderIcon);
+            firstlevel_item->setIcon(0, createQIcon("folder"));
           },
           [&](QTreeWidgetItem *secondlevel_item) {
             secondlevel_item->setIcon(0, m_fxIcon);
@@ -339,7 +330,7 @@ void InsertFxPopup::loadFolder(QTreeWidgetItem *parent) {
 
       std::unique_ptr<QTreeWidgetItem> folder(
           new QTreeWidgetItem((QTreeWidget *)0, QStringList(folderName)));
-      folder->setIcon(0, m_folderIcon);
+      folder->setIcon(0, createQIcon("folder", true));
 
       loadFolder(folder.get());
       m_is->closeChild();
@@ -422,7 +413,7 @@ void InsertFxPopup::loadMacro() {
       QTreeWidgetItem *macroFolder =
           new QTreeWidgetItem((QTreeWidget *)0, QStringList(tr("Macro")));
       macroFolder->setData(0, Qt::UserRole, QVariant(toQString(fp)));
-      macroFolder->setIcon(0, m_folderIcon);
+      macroFolder->setIcon(0, createQIcon("folder", true));
       m_fxTree->addTopLevelItem(macroFolder);
       for (TFilePathSet::iterator it = macros.begin(); it != macros.end();
            ++it) {
