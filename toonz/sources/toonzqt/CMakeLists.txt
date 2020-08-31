@@ -27,6 +27,7 @@ set(MOC_HEADERS
     ../include/toonzqt/functiontreeviewer.h
     ../include/toonzqt/functionviewer.h
     ../include/toonzqt/fxhistogramrender.h
+    ../include/toonzqt/fxiconmanager.h
     ../include/toonzqt/fxschematicnode.h
     ../include/toonzqt/fxschematicscene.h
     ../include/toonzqt/fxselection.h
@@ -87,7 +88,6 @@ set(HEADERS
     ../include/toonzqt/dvmimedata.h
     ../include/toonzqt/flipconsoleowner.h
     ../include/toonzqt/freelayout.h
-    ../include/toonzqt/fxiconmanager.h
     ../include/toonzqt/fxtypes.h
     ../include/toonzqt/glwidget_for_highdpi.h
     ../include/toonzqt/lutcalibrator.h
