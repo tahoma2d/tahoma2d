@@ -1008,10 +1008,17 @@ EdsError Canon::takePicture() {
   std::string real = m_realShutterSpeed.toStdString();
 
   EdsError err;
-  err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-                       kEdsCameraCommand_ShutterButton_Completely_NonAF);
-  err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-                       kEdsCameraCommand_ShutterButton_OFF);
+  if (m_cameraName.find("450D") != std::string::npos || 
+      m_cameraName.find("1000D") != std::string::npos ||
+      m_cameraName.find("40D") != std::string::npos) {
+          err = EdsSendCommand(m_camera, kEdsCameraCommand_TakePicture, 0);
+  }
+  else {
+      err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
+          kEdsCameraCommand_ShutterButton_Completely_NonAF);
+      err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
+          kEdsCameraCommand_ShutterButton_OFF);
+  }
 
   return err;
 }
