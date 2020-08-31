@@ -15,7 +15,8 @@
 
 TXshZeraryFxColumn::TXshZeraryFxColumn(int frameCount)
     : m_zeraryColumnFx(new TZeraryColumnFx())
-    , m_zeraryFxLevel(new TXshZeraryFxLevel()) {
+    , m_zeraryFxLevel(new TXshZeraryFxLevel())
+    , m_iconVisible(false) {
   m_zeraryColumnFx->addRef();
   m_zeraryColumnFx->setColumn(this);
   m_zeraryFxLevel->addRef();

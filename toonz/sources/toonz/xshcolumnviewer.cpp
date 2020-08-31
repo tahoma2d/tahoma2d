@@ -17,6 +17,7 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/icongenerator.h"
 #include "toonzqt/intfield.h"
+#include "toonzqt/fxiconmanager.h"
 
 // TnzLib includes
 #include "toonz/txshcolumn.h"
@@ -1093,38 +1094,28 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   // All other thumbnails
   p.setPen(m_viewer->getTextColor());
 
-  // for zerary fx, display fxId here instead of thumbnail
-  TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
-  if (zColumn) {
-    QFont lastfont = p.font();
-    QFont font("Verdana", 8);
-    p.setFont(font);
+  TXshLevelColumn *levelColumn = column->getLevelColumn();
+  TXshMeshColumn *meshColumn   = column->getMeshColumn();
+  TXshZeraryFxColumn *zColumn  = dynamic_cast<TXshZeraryFxColumn *>(column);
 
-    TFx *fx        = zColumn->getZeraryColumnFx()->getZeraryFx();
-    QString fxName = QString::fromStdWString(fx->getFxId());
-    p.drawText(thumbnailImageRect, Qt::TextWrapAnywhere | Qt::TextWordWrap,
-               fxName);
-    p.setFont(lastfont);
+  if (Preferences::instance()->getColumnIconLoadingPolicy() ==
+          Preferences::LoadOnDemand &&
+      ((levelColumn && !levelColumn->isIconVisible()) ||
+       (meshColumn && !meshColumn->isIconVisible()) ||
+       (zColumn && !zColumn->isIconVisible())) &&
+      col >= 0) {
+    // display nothing
   } else {
-    TXshLevelColumn *levelColumn = column->getLevelColumn();
-    TXshMeshColumn *meshColumn   = column->getMeshColumn();
-
-    if (Preferences::instance()->getColumnIconLoadingPolicy() ==
-            Preferences::LoadOnDemand &&
-        ((levelColumn && !levelColumn->isIconVisible()) ||
-         (meshColumn && !meshColumn->isIconVisible())) &&
-        col >= 0) {
-      // display nothing
-    } else {
-      if (!iconPixmap.isNull()) {
-        p.drawPixmap(thumbnailImageRect, iconPixmap);
-      }
-      // notify that the column icon is already shown
-      if (levelColumn)
-        levelColumn->setIconVisible(true);
-      else if (meshColumn)
-        meshColumn->setIconVisible(true);
+    if (!iconPixmap.isNull()) {
+      p.drawPixmap(thumbnailImageRect, iconPixmap);
     }
+    // notify that the column icon is already shown
+    if (levelColumn)
+      levelColumn->setIconVisible(true);
+    else if (meshColumn)
+      meshColumn->setIconVisible(true);
+    else if (zColumn)
+      zColumn->setIconVisible(true);
   }
 }
 
@@ -1708,21 +1699,27 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
   if (!xl)
     return QPixmap();
   else {
-    bool onDemand = false;
+    TXshColumn *column          = xsh->getColumn(columnIndex);
+    TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
+    bool onDemand               = false;
     if (Preferences::instance()->getColumnIconLoadingPolicy() ==
         Preferences::LoadOnDemand) {
       onDemand = m_viewer->getCurrentColumn() != columnIndex;
       if (!onDemand) {
-        TXshColumn *column           = xsh->getColumn(columnIndex);
         TXshLevelColumn *levelColumn = column->getLevelColumn();
         TXshMeshColumn *meshColumn   = column->getMeshColumn();
         if ((levelColumn && !levelColumn->isIconVisible()) ||
-            (meshColumn && !meshColumn->isIconVisible()))
+            (meshColumn && !meshColumn->isIconVisible()) ||
+            (zColumn && !zColumn->isIconVisible()))
           return QPixmap();
       }
     }
     QPixmap icon =
-        IconGenerator::instance()->getIcon(xl, cell.m_frameId, false, onDemand);
+        zColumn
+            ? FxIconPixmapManager::instance()->getFxIconPm(
+                  zColumn->getZeraryColumnFx()->getZeraryFx()->getFxType())
+            : IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
+                                                 onDemand);
     QRect thumbnailImageRect = o->rect(PredefinedRect::THUMBNAIL);
     if (thumbnailImageRect.isEmpty()) return QPixmap();
     return scalePixmapKeepingAspectRatio(icon, thumbnailImageRect.size());
@@ -2308,6 +2305,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           // toggle columnIcon visibility with alt+click
           TXshLevelColumn *levelColumn = column->getLevelColumn();
           TXshMeshColumn *meshColumn   = column->getMeshColumn();
+          TXshZeraryFxColumn *zColumn =
+              dynamic_cast<TXshZeraryFxColumn *>(column);
           if (Preferences::instance()->getColumnIconLoadingPolicy() ==
                   Preferences::LoadOnDemand &&
               (event->modifiers() & Qt::AltModifier)) {
@@ -2315,6 +2314,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
               levelColumn->setIconVisible(!levelColumn->isIconVisible());
             else if (meshColumn)
               meshColumn->setIconVisible(!meshColumn->isIconVisible());
+            else if (zColumn)
+              zColumn->setIconVisible(!zColumn->isIconVisible());
           }
         }
       }
