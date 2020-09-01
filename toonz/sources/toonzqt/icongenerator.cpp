@@ -53,7 +53,7 @@
 //-----------------------------------
 
 namespace {
-const TDimension IconSize(80, 60);
+const TDimension IconSize(160, 90);
 TDimension FilmstripIconSize(0, 0);
 
 // Access name-based storage
