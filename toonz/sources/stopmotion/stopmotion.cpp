@@ -1634,7 +1634,7 @@ bool StopMotion::importImage() {
   }
 
   int row = m_xSheetFrameNumber - 1;
-  int col = app->getCurrentColumn()->getColumnIndex();
+  int col = std::max(0, app->getCurrentColumn()->getColumnIndex());
 
   // if the level is newly created or imported, then insert a new column
   if (state == NEWLEVEL) {
