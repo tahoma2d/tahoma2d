@@ -228,7 +228,6 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     showOtherSettingsButton = new QPushButton("", this);
     otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
     otherSettingsFrame      = new QFrame(this);
-    m_renderButton          = new QPushButton(tr("Render"), this);
     m_renderButton->setIcon(createQIcon("render"));
     m_renderButton->setIconSize(QSize(20, 20));
 
