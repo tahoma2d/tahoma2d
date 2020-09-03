@@ -12,7 +12,7 @@ Ghibli Version**, originally developed in Italy by
 
 ## Program Requirements
 
-Please refer to the OpenToonz site at <https://tahoma.github.io/e/index.html>.
+Please refer to the Tahoma site at <https://tahoma2d.org/download>.
 
 ## Installation
 
