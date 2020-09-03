@@ -1034,7 +1034,11 @@ void XsheetViewer::showEvent(QShowEvent *) {
                        SLOT(updateColumnArea()));
 
   assert(ret);
-  refreshContentSize(0, 0);
+
+  positionSections();
+  refreshContentSize(0, 0);  
+  updateAllAree();
+
   changeWindowTitle();
 }
 
