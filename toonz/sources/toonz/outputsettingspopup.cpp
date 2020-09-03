@@ -329,6 +329,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 
     showAdvancedSettingsButton->setObjectName("OutputSettingsShowButton");
     showAdvancedSettingsButton->setFixedSize(15, 15);
+    showAdvancedSettingsButton->setIcon(createQIcon("menu_toggle"));
     showAdvancedSettingsButton->setCheckable(true);
     showAdvancedSettingsButton->setChecked(false);
     showAdvancedSettingsButton->setFocusPolicy(Qt::NoFocus);
