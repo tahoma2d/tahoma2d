@@ -535,6 +535,8 @@ public:
 
   bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
                                   bool &fromDocking);
+  bool checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
+                                   bool &fromDocking);
 
 private:
   // Setters - private
