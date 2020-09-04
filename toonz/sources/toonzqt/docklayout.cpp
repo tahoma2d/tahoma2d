@@ -461,9 +461,47 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
 
 //------------------------------------------------------
 
+bool Region::checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
+                                         bool &fromDocking) {
+  if (m_item) {
+    if (m_item->wasFloating()) {
+      fromDocking = true;
+      m_item->clearWasFloating();
+      return false;
+    }
+    if ((m_item->objectName() == "Timeline")) {
+      widgets.push_back(m_item);
+      return true;
+    } else
+      return false;
+  }
+  if (m_childList.empty()) return false;
+  // for vertical orientation, return true if all items are to be fixed
+  if (m_orientation == vertical) {
+    bool ret = true;
+    for (Region *childRegion : m_childList) {
+      if (!childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
+        ret = false;
+    }
+    return ret;
+  }
+  // for horizontal orientation, return true if at least one item is to be fixed
+  else {
+    bool ret = false;
+    for (Region *childRegion : m_childList) {
+      if (childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
+        ret = true;
+    }
+    return ret;
+  }
+}
+
+//------------------------------------------------------
+
 void DockLayout::redistribute() {
   if (!m_regions.empty()) {
     std::vector<QWidget *> widgets;
+    std::vector<QWidget *> fixedHeightWidgets;
 
     // Recompute extremal region sizes
     // NOTA: Sarebbe da fare solo se un certo flag lo richiede; altrimenti tipo
@@ -476,8 +514,16 @@ void DockLayout::redistribute() {
     bool fromDocking = false;
     bool widgetsCanBeFixedWidth =
         !m_regions.front()->checkWidgetsToBeFixedWidth(widgets, fromDocking);
+    bool widgetsCanBeFixedHeight = false;
+    if (!fromDocking)
+      widgetsCanBeFixedHeight = !m_regions.front()->checkWidgetsToBeFixedHeight(
+          fixedHeightWidgets, fromDocking);
     if (!fromDocking && widgetsCanBeFixedWidth) {
       for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
+    }
+    if (!fromDocking && widgetsCanBeFixedHeight) {
+      for (QWidget *widget : fixedHeightWidgets)
+        widget->setFixedHeight(widget->height());
     }
 
     m_regions.front()->calculateExtremalSizes();
@@ -499,6 +545,12 @@ void DockLayout::redistribute() {
 
     if (!fromDocking && widgetsCanBeFixedWidth) {
       for (QWidget *widget : widgets) {
+        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        widget->setMinimumSize(0, 0);
+      }
+    }
+    if (!fromDocking && widgetsCanBeFixedHeight) {
+      for (QWidget *widget : fixedHeightWidgets) {
         widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         widget->setMinimumSize(0, 0);
       }
