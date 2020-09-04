@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="11px" height="13px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <rect id="rect4" x="0" y="0" width="11" height="13" style="fill:none;"/>
-    <g id="g6">
-        <rect id="rect8" x="1" y="1" width="9" height="11" style="fill:white;"/>
-        <path id="path10" d="M11,0L11,13L0,13L0,0L11,0ZM1,1L1,12L10,12L10,1L1,1Z" style="fill-rule:nonzero;"/>
-        <path id="path12" d="M6,3L4,3L4,5L6,5L6,3ZM8,3L8,5L7,5L7,6L6,6L6,8L8,8L8,9L6,9L6,10L9,10L9,11L4,11L4,6L3,6L3,5L2,5L2,3L3,3L3,2L7,2L7,3L8,3Z" style="fill-rule:nonzero;"/>
+<svg width="11px" height="11px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="rect4" transform="matrix(1,0,0,1,0,-1)">
+        <rect x="0" y="0" width="11" height="13" style="fill:none;"/>
+    </g>
+    <path d="M5.5,0L11,5.5L5.5,11L0,5.5L5.5,0Z"/>
+    <g transform="matrix(0.817027,0,0,0.776366,1.00635,1.22999)">
+        <path d="M5.5,0L11,5.5L5.5,11L0,5.5L5.5,0Z" style="fill:white;"/>
     </g>
 </svg>

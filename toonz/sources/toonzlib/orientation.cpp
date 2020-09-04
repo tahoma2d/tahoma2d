@@ -11,7 +11,7 @@ using std::pair;
 
 namespace {
 const int KEY_ICON_WIDTH      = 11;
-const int KEY_ICON_HEIGHT     = 13;
+const int KEY_ICON_HEIGHT     = 11;
 const int EASE_TRIANGLE_SIZE  = 4;
 const int PLAY_MARKER_SIZE    = 10;
 const int ONION_SIZE          = 19;
@@ -297,7 +297,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
                 (CELL_HEIGHT - KEY_ICON_HEIGHT) / 2, KEY_ICON_WIDTH,
                 KEY_ICON_HEIGHT);
   addRect(PredefinedRect::KEY_ICON, keyRect);
-  QRect cameraKeyRect((CAMERA_CELL_WIDTH - KEY_ICON_WIDTH) / 2 + 1,
+  QRect cameraKeyRect((CAMERA_CELL_WIDTH - KEY_ICON_WIDTH) / 2 + 3,
                       (CELL_HEIGHT - KEY_ICON_HEIGHT) / 2, KEY_ICON_WIDTH,
                       KEY_ICON_HEIGHT);
   addRect(PredefinedRect::CAMERA_KEY_ICON, cameraKeyRect);

@@ -640,6 +640,7 @@ int main(int argc, char *argv[]) {
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
+  w.setWindowState(Qt::WindowMaximized);
 
   if (isRunScript) {
     // load script
