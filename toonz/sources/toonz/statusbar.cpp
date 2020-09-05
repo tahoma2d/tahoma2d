@@ -30,7 +30,7 @@ StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
 
   m_infoLabel = new StatusLabel(tr("Info goes here."), this);
   m_infoLabel->setObjectName("MainWindowPlainLabel");
-
+  m_infoLabel->setMinimumWidth(1);
   addWidget(m_infoLabel, 0);
   addPermanentWidget(m_currentFrameLabel, 0);
 
