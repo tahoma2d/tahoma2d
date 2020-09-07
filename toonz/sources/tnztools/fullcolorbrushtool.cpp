@@ -315,7 +315,6 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     m_active = false;
     return;
   }
-
   TXshSimpleLevelP simLevel = level->getSimpleLevel();
   m_assistantPoints         = simLevel->getProperties()->getVanishingPoints();
 
