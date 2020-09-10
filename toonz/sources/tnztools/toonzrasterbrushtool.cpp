@@ -1246,10 +1246,14 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
     }
   }
 
-  TXshLevel *level          = app->getCurrentLevel()->getLevel();
+  TXshLevel *level = app->getCurrentLevel()->getLevel();
+  if (level == NULL) {
+    m_active = false;
+    return;
+  }
   TXshSimpleLevelP simLevel = level->getSimpleLevel();
-  m_assistantPoints         = simLevel->getProperties()->getVanishingPoints();
 
+  m_assistantPoints = simLevel->getProperties()->getVanishingPoints();
   if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
     m_addingAssistant = true;
     bool deletedPoint = false;
