@@ -356,16 +356,16 @@ void PreferencesPopup::onStyleSheetTypeChanged() {
   QApplication::restoreOverrideCursor();
   
   if (currentStyle.contains("Light") || currentStyle.contains("Neutral")) {
+      m_pref->setValue(iconTheme, true);
       if (iconThemeName != "dark") {
-          m_pref->setValue(iconTheme, true);
           //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
           //    : "light");
           DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
       }
   }
   else {
+      m_pref->setValue(iconTheme, false);
       if (iconThemeName != "light") {
-          m_pref->setValue(iconTheme, false);
           //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
           //    : "light");
           DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
