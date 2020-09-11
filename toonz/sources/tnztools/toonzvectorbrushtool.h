@@ -210,6 +210,13 @@ protected:
   TMouseEvent m_lastDragEvent;  //!< Previous mouse-drag event.
 
   bool m_propertyUpdating = false;
+
+  bool m_isStraight = false;
+  std::vector<TPointD> m_assistantPoints;
+  bool m_addingAssistant = false;
+  bool m_snapAssistant   = false;
+  TPointD m_firstPoint;
+  TPointD m_lastPoint;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H
