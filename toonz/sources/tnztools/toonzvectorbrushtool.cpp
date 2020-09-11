@@ -752,31 +752,9 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
     level->setDirtyFlag(true);
     return;
   }
-  if (e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed()) {
-    m_addingAssistant                  = true;
-    std::vector<TPointD> pointsToClear = m_assistantPoints;
-    m_assistantPoints.clear();
-    for (auto point : pointsToClear) {
-      TRectD pointRect =
-          TRectD(point.x - 3, point.y - 3, point.x + 3, point.y + 3);
-      invalidate(pointRect);
-    }
 
-    return;
-  }
-
-  if ((e.isShiftPressed() || e.isCtrlPressed()) && !e.isAltPressed()) {
-    m_isStraight = true;
-    m_firstPoint = pos;
-    m_lastPoint  = pos;
-  }
-
-  if (e.isAltPressed()) {
-    m_snapAssistant = true;
-    m_isStraight    = true;
-    m_firstPoint    = pos;
-    m_lastPoint     = pos;
-  }
+  m_firstPoint = pos;
+  m_lastPoint  = pos;
 
   // assert(0<=m_styleId && m_styleId<2);
   m_track.clear();
@@ -811,16 +789,16 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
     return;
   }
 
-  if ((e.isCtrlPressed() && e.isAltPressed()) ||
-      (e.isShiftPressed() && e.isAltPressed()) || m_addingAssistant) {
+  if ((e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) || m_addingAssistant) {
     return;
   }
   TRectD invalidateRect;
 
-  if (m_isStraight) {
-    invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
-    m_lastPoint    = pos;
-    if (e.isAltPressed()) {
+  m_lastPoint    = pos;
+  bool nonShiftStraight = false;
+    if (e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) {
+      invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+      nonShiftStraight = true;
       double distance = (m_brushPos.x) * 0.5;
       TRectD brushRect =
           TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
@@ -897,7 +875,9 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
 
       m_lastPoint = TPointD(newX, newY);
       invalidateRect += TRectD(m_firstPoint, m_lastPoint).enlarge(2);
-    } else if (e.isCtrlPressed()) {
+    } else if (e.isCtrlPressed() && !e.isAltPressed() && !e.isShiftPressed()) {
+      invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+      nonShiftStraight = true;
       double distance = (m_brushPos.x) * 0.5;
       TRectD brushRect =
           TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
@@ -952,7 +932,7 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
         }
       }
     }
-  }
+  
 
   m_lastDragPos   = pos;
   m_lastDragEvent = e;
@@ -974,22 +954,27 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
 
   m_currThickness = thickness;
 
-  m_mousePos       = pos;
-  m_lastSnapPoint  = pos;
+  m_mousePos       = m_lastPoint;
+  m_lastSnapPoint  = m_lastPoint;
   m_foundLastSnap  = false;
   m_foundFirstSnap = false;
   m_snapSelf       = false;
-  m_altPressed     = e.isAltPressed() && !e.isCtrlPressed();
+  m_toggleSnap     = e.isAltPressed() && !e.isCtrlPressed();
 
-  checkStrokeSnapping(false, m_altPressed);
-  checkGuideSnapping(false, m_altPressed);
-  m_brushPos = m_lastSnapPoint;
+  if (!nonShiftStraight) {
+      checkStrokeSnapping(false, m_toggleSnap);
+      checkGuideSnapping(false, m_toggleSnap);
+      m_brushPos = m_lastSnapPoint;
+  }
+  else {
+      m_brushPos = m_lastPoint;
+  }
 
   if (m_foundLastSnap)
     invalidateRect +=
         TRectD(m_lastSnapPoint - snapThick, m_lastSnapPoint + snapThick);
 
-  if (e.isShiftPressed()) {
+  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
     m_smoothStroke.clearPoints();
     m_track.add(TThickPoint(m_brushPos, thickness),
                 getPixelSize() * getPixelSize());
@@ -1029,17 +1014,21 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     return;
   }
 
-  if ((e.isAltPressed() && e.isCtrlPressed()) ||
-      (e.isShiftPressed() && e.isAltPressed()) || m_addingAssistant) {
+  if ((e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) || m_addingAssistant) {
     m_addingAssistant = false;
     return;
+  }
+
+  bool nonShiftStraight = false;
+  if ((e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) || (!e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed())) {
+      nonShiftStraight = true;
   }
 
   if (m_isPath) {
     double error = 20.0 * getPixelSize();
 
     TStroke *stroke;
-    if (e.isShiftPressed()) {
+    if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
       m_track.removeMiddlePoints();
       stroke = m_track.makeStroke(0);
     } else {
@@ -1077,8 +1066,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     notifyImageChanged();
     TUndoManager::manager()->add(undo);
 
-    m_isStraight      = false;
-    m_snapAssistant   = false;
     m_addingAssistant = false;
 
     return;
@@ -1089,13 +1076,11 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     m_styleId = 0;
     m_track.clear();
 
-    m_isStraight      = false;
-    m_snapAssistant   = false;
     m_addingAssistant = false;
     return;
   }
 
-  if (vi && (m_snap.getValue() != m_altPressed) && m_foundLastSnap) {
+  if (vi && (m_snap.getValue() != m_toggleSnap) && m_foundLastSnap) {
     addTrackPoint(TThickPoint(m_lastSnapPoint, m_currThickness),
                   getPixelSize() * getPixelSize());
   }
@@ -1111,7 +1096,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   error *= getPixelSize();
 
   TStroke *stroke;
-  if (e.isShiftPressed()) {
+  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
     m_track.removeMiddlePoints();
     stroke = m_track.makeStroke(0);
   } else {
@@ -1230,9 +1215,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   }
   assert(stroke);
   m_track.clear();
-  m_altPressed      = false;
-  m_isStraight      = false;
-  m_snapAssistant   = false;
+  m_toggleSnap = false;
   m_addingAssistant = false;
 }
 
@@ -1538,9 +1521,9 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   m_firstSnapPoint = pos;
   m_foundFirstSnap = false;
-  m_altPressed     = e.isAltPressed() && !e.isCtrlPressed();
-  checkStrokeSnapping(true, m_altPressed);
-  checkGuideSnapping(true, m_altPressed);
+  m_toggleSnap = e.isAltPressed() && !e.isCtrlPressed();
+  checkStrokeSnapping(true, m_toggleSnap);
+  checkGuideSnapping(true, m_toggleSnap);
   m_brushPos = m_firstSnapPoint;
   // In order to draw the snap indicator
   if (m_foundFirstSnap)
@@ -1718,7 +1701,7 @@ void ToonzVectorBrushTool::draw() {
 
   // snapping
   TVectorImageP vi = img;
-  if (m_snap.getValue() != m_altPressed) {
+  if (m_snap.getValue() != m_toggleSnap) {
     m_pixelSize  = getPixelSize();
     double thick = 6.0 * m_pixelSize;
     if (m_foundFirstSnap) {
