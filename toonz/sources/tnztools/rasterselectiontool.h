@@ -242,7 +242,7 @@ public:
   bool onPropertyChanged(std::string propertyName) override;
   bool getNoAntialiasingValue() { return m_noAntialiasing.getValue(); }
 
-  bool isSelectionEditable() { return m_rasterSelection.isEditable(); }
+  bool isSelectionEditable() override { return m_rasterSelection.isEditable(); }
 
 protected:
   void updateTranslation() override;

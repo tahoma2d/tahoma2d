@@ -32,7 +32,7 @@ public:
 
   void redo() const override { toggleAutopaint(); }
 
-  void onAdd() { redo(); }
+  void onAdd() override { redo(); }
 
   int getSize() const override { return sizeof(*this); }
 

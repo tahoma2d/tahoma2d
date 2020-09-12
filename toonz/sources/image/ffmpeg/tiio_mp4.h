@@ -19,12 +19,12 @@ class TLevelWriterMp4 : public TLevelWriter {
 public:
   TLevelWriterMp4(const TFilePath &path, TPropertyGroup *winfo);
   ~TLevelWriterMp4();
-  void setFrameRate(double fps);
+  void setFrameRate(double fps) override;
 
   TImageWriterP getFrameWriter(TFrameId fid) override;
   void save(const TImageP &image, int frameIndex);
 
-  void saveSoundTrack(TSoundTrack *st);
+  void saveSoundTrack(TSoundTrack *st) override;
 
   static TLevelWriter *create(const TFilePath &path, TPropertyGroup *winfo) {
     return new TLevelWriterMp4(path, winfo);

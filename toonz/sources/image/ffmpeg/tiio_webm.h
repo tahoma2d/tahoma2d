@@ -18,12 +18,12 @@ class TLevelWriterWebm : public TLevelWriter {
 public:
   TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo);
   ~TLevelWriterWebm();
-  void setFrameRate(double fps);
+  void setFrameRate(double fps) override;
 
   TImageWriterP getFrameWriter(TFrameId fid) override;
   void save(const TImageP &image, int frameIndex);
 
-  void saveSoundTrack(TSoundTrack *st);
+  void saveSoundTrack(TSoundTrack *st) override;
 
   static TLevelWriter *create(const TFilePath &path, TPropertyGroup *winfo) {
     return new TLevelWriterWebm(path, winfo);

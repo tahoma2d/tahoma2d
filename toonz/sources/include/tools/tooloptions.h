@@ -696,7 +696,7 @@ class ShiftTraceToolOptionBox final : public ToolOptionsBox {
   void resetGhost(int index);
 
 protected:
-  void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
   void hideEvent(QShowEvent *);
 
 public:

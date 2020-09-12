@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 /*------------------------------------
 Iwa_BokehFx
@@ -139,11 +139,11 @@ protected:
 public:
   Iwa_BokehFx();
 
-  void doCompute(TTile &tile, double frame, const TRenderSettings &settings);
+  void doCompute(TTile &tile, double frame, const TRenderSettings &settings) override;
 
-  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info);
+  bool doGetBBox(double frame, TRectD &bBox, const TRenderSettings &info) override;
 
-  bool canHandle(const TRenderSettings &info, double frame);
+  bool canHandle(const TRenderSettings &info, double frame) override;
 };
 
 #endif
