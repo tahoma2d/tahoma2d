@@ -190,12 +190,12 @@ private:
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
-  void setScanPath(const TFilePath path) const {
-    TXshSimpleLevelP sl = m_xl->getSimpleLevel();
-    if (!sl || sl->getType() != TZP_XSHLEVEL) return;
-    sl->setScannedPath(path);
-    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-  }
+  //void setScanPath(const TFilePath path) const {
+  //  TXshSimpleLevelP sl = m_xl->getSimpleLevel();
+  //  if (!sl || sl->getType() != TZP_XSHLEVEL) return;
+  //  sl->setScannedPath(path);
+  //  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  //}
 
   void setDpiType(LevelProperties::DpiPolicy policy) const {
     TXshSimpleLevelP sl = m_xl->getSimpleLevel();
@@ -256,9 +256,9 @@ private:
     case Path:
       setPath(TFilePath(value.toString()));
       break;
-    case ScanPath:
-      setScanPath(TFilePath(value.toString()));
-      break;
+    //case ScanPath:
+    //  setScanPath(TFilePath(value.toString()));
+    //  break;
     case DpiType:
       setDpiType(LevelProperties::DpiPolicy(value.toInt()));
       break;
@@ -442,6 +442,8 @@ LevelSettingsPopup::LevelSettingsPopup()
                             Qt::AlignRight | Qt::AlignVCenter);
       nameLayout->addWidget(m_scanPathFld, 2, 1);
       nameLayout->addWidget(m_typeLabel, 3, 1);
+      scanPathLabel->hide();
+      m_scanPathFld->hide();
     }
     nameLayout->setColumnStretch(0, 0);
     nameLayout->setColumnStretch(1, 1);
