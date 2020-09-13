@@ -187,7 +187,7 @@ void getCameraSection(T3DPointD points[4], int row, double z)
 //-----------------------------------------------------------------------------
 /*! when camera view mode, draw the mask plane outside of the camera box
 */
-void ViewerDraw::drawCameraMask(SceneViewer *viewer) {
+void ViewerDraw::drawCameraMask(SceneViewer *viewer, double alpha) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   //  TAffine viewMatrix = viewer->getViewMatrix();
@@ -234,11 +234,15 @@ void ViewerDraw::drawCameraMask(SceneViewer *viewer) {
         TPixel32(qtMaskColor.red(), qtMaskColor.green(), qtMaskColor.blue());
   } else
     maskColor = Preferences::instance()->getPreviewBgColor();
-  double mask_r, mask_g, mask_b;
+  double mask_r, mask_g, mask_b, mask_a;
   mask_r = (double)maskColor.r / 255.0;
   mask_g = (double)maskColor.g / 255.0;
   mask_b = (double)maskColor.b / 255.0;
-  glColor3d(mask_r, mask_g, mask_b);
+  mask_a = alpha;
+
+  glEnable(GL_BLEND); //Enable blending.
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4d(mask_r, mask_g, mask_b, mask_a);
 
   if (cameraRect.overlaps(bounds)) {
     double x0 = cameraRect.x0;
@@ -258,6 +262,7 @@ void ViewerDraw::drawCameraMask(SceneViewer *viewer) {
   } else {
     tglFillRect(bounds);
   }
+  glDisable(GL_BLEND); //Enable blending.
 }
 
 //-----------------------------------------------------------------------------
