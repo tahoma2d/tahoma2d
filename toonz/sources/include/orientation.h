@@ -218,6 +218,7 @@ protected:
   map<PredefinedFlag, bool> _flags;
 
 public:
+  virtual ~Orientation(){};
   virtual CellPosition xyToPosition(const QPoint &xy,
                                     const ColumnFan *fan) const = 0;
   virtual QPoint positionToXY(const CellPosition &position,

@@ -52,6 +52,7 @@ class TopToBottomOrientation : public Orientation {
 
 public:
   TopToBottomOrientation();
+  virtual ~TopToBottomOrientation(){};
 
   virtual CellPosition xyToPosition(const QPoint &xy,
                                     const ColumnFan *fan) const override;
@@ -117,6 +118,7 @@ class LeftToRightOrientation : public Orientation {
 
 public:
   LeftToRightOrientation();
+  virtual ~LeftToRightOrientation(){};
 
   virtual CellPosition xyToPosition(const QPoint &xy,
                                     const ColumnFan *fan) const override;
