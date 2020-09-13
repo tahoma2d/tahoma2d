@@ -349,18 +349,38 @@ void PreferencesPopup::onPathAliasPriorityChanged() {
 void PreferencesPopup::onStyleSheetTypeChanged() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QString currentStyle = m_pref->getCurrentStyleSheetPath();
+  QString iconThemeName = QIcon::themeName();
+  std::string styleString = currentStyle.toStdString();
+  std::string iconThemeString = iconThemeName.toStdString();
   qApp->setStyleSheet(currentStyle);
   QApplication::restoreOverrideCursor();
+  
+  if (currentStyle.contains("Light") || currentStyle.contains("Neutral")) {
+      m_pref->setValue(iconTheme, true);
+      if (iconThemeName != "dark") {
+          //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+          //    : "light");
+          DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
+      }
+  }
+  else {
+      m_pref->setValue(iconTheme, false);
+      if (iconThemeName != "light") {
+          //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+          //    : "light");
+          DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
+      }
+  }
 }
 
-//-----------------------------------------------------------------------------
-
-void PreferencesPopup::onIconThemeChanged() {
-  // Switch between dark or light icons
-  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-                                                              : "light");
-  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
-}
+////-----------------------------------------------------------------------------
+//
+//void PreferencesPopup::onIconThemeChanged() {
+//  // Switch between dark or light icons
+//  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+//                                                              : "light");
+//  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -948,7 +968,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Interface
       {CurrentStyleSheetName, tr("Theme:")},
-      {iconTheme, tr("Switch to dark icons")},
+      //{iconTheme, tr("Switch to dark icons")},
       {pixelsOnly, tr("All imported images will use the same DPI")},
       //{ oldUnits,                               tr("") },
       //{ oldCameraUnits,                         tr("") },
@@ -1399,9 +1419,9 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
-  lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
-                 Qt::AlignRight | Qt::AlignVCenter);
-  lay->addWidget(createUI(iconTheme), 2, 1);
+  //lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
+  //               Qt::AlignRight | Qt::AlignVCenter);
+  //lay->addWidget(createUI(iconTheme), 2, 1);
 
   // insertUI(linearUnits, lay, getComboItemList(linearUnits));
   // insertUI(cameraUnits, lay,
