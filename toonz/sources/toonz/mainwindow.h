@@ -315,7 +315,8 @@ protected slots:
   void onUpdateCheckerDone(bool);
 
   void toggleStatusBar(bool);
-  void toggleTransparency(bool);
+  void toggleTransparency(bool, double value = 0.5);
+  void makeTransparencyDialog();
 
 public slots:
   /*--- タイトルにシーン名を入れる ---*/
