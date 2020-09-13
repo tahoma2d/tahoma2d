@@ -67,6 +67,7 @@ class MainWindow final : public QMainWindow {
   TopBar *m_topBar;
   StatusBar *m_statusBar;
   AboutPopup *m_aboutPopup;
+  QDialog *m_transparencyTogglerWindow;
   QActionGroup *m_toolsActionGroup;
 
   QStackedWidget *m_stackedWidget;
@@ -314,6 +315,7 @@ protected slots:
   void onUpdateCheckerDone(bool);
 
   void toggleStatusBar(bool);
+  void toggleTransparency(bool);
 
 public slots:
   /*--- タイトルにシーン名を入れる ---*/

@@ -2228,6 +2228,29 @@ void MainWindow::defineActions() {
   connect(showStatusBarAction, SIGNAL(triggered(bool)), this,
           SLOT(toggleStatusBar(bool)));
 
+  QAction *toggleTransparencyAction =
+      createToggle(MI_ToggleTransparent, tr("&Toggle Transparency"), "", 0,
+                   MenuViewCommandType);
+  connect(toggleTransparencyAction, SIGNAL(triggered(bool)), this,
+          SLOT(toggleTransparency(bool)));
+
+  m_transparencyTogglerWindow = new QDialog();
+  m_transparencyTogglerWindow->setWindowFlags(Qt::WindowStaysOnTopHint |
+                                              Qt::WindowCloseButtonHint);
+  connect(m_transparencyTogglerWindow, &QDialog::finished, [=](int result) {
+    toggleTransparency(false);
+    toggleTransparencyAction->setChecked(false);
+  });
+  m_transparencyTogglerWindow->setFixedHeight(50);
+  m_transparencyTogglerWindow->setFixedWidth(250);
+  QPushButton *toggleButton = new QPushButton(this);
+  toggleButton->setText(tr("Click to reset Tahoma transparency."));
+  connect(toggleButton, &QPushButton::clicked,
+          [=]() { m_transparencyTogglerWindow->accept(); });
+  QVBoxLayout *togglerLayout = new QVBoxLayout(this);
+  togglerLayout->addWidget(toggleButton);
+  m_transparencyTogglerWindow->setLayout(togglerLayout);
+
   toggle = createToggle(MI_ShiftTrace, tr("Shift and Trace"), "", false,
                         MenuViewCommandType);
   toggle->setIcon(createQIcon("shift_and_trace"));
@@ -3642,11 +3665,30 @@ void MainWindow::toggleStatusBar(bool on) {
 
 //-----------------------------------------------------------------------------
 
+void MainWindow::toggleTransparency(bool on) {
+  if (!on) {
+    this->setProperty("windowOpacity", 1.0);
+  } else {
+    this->setProperty("windowOpacity", 0.5);
+    m_transparencyTogglerWindow->show();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 class ToggleStatusBar final : public MenuItemHandler {
 public:
   ToggleStatusBar() : MenuItemHandler("MI_ShowStatusBar") {}
   void execute() override {}
 } toggleStatusBar;
+
+//-----------------------------------------------------------------------------
+
+class ToggleTransparency final : public MenuItemHandler {
+public:
+  ToggleTransparency() : MenuItemHandler("MI_ToggleTransparent") {}
+  void execute() override {}
+} toggleTransparency;
 
 //-----------------------------------------------------------------------------
 
