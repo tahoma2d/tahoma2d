@@ -81,6 +81,7 @@ TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 TEnv::IntVar TouchGestureControl("TouchGestureControl", 0);
+TEnv::IntVar TransparencySliderValue("TransparencySliderValue", 50);
 
 //=============================================================================
 namespace {
@@ -3653,11 +3654,11 @@ void MainWindow::toggleStatusBar(bool on) {
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::toggleTransparency(bool on, double value) {
+void MainWindow::toggleTransparency(bool on) {
   if (!on) {
     this->setProperty("windowOpacity", 1.0);
   } else {
-    this->setProperty("windowOpacity", value);
+    this->setProperty("windowOpacity", (double)TransparencySliderValue/100);
     m_transparencyTogglerWindow->show();
   }
 }
@@ -3673,29 +3674,21 @@ void MainWindow::makeTransparencyDialog() {
   m_transparencyTogglerWindow->setFixedWidth(250);
   m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma Transparency"));
   QPushButton *toggleButton = new QPushButton(this);
-  toggleButton->setText(tr("Click to reset Tahoma transparency."));
+  toggleButton->setText(tr("Close to turn off Transparency."));
   connect(toggleButton, &QPushButton::clicked,
           [=]() { m_transparencyTogglerWindow->accept(); });
-  QSlider *transparencySlider = new QSlider(this);
-  transparencySlider->setRange(30, 100);
-  transparencySlider->setValue(50);
-  transparencySlider->setOrientation(Qt::Horizontal);
-  connect(transparencySlider, &QSlider::valueChanged,
-          [=](int value) { toggleTransparency(true, (double)value / 100); });
-  // connect(static_cast<QApplication*>(QApplication::instance()),
-  // &QApplication::applicationStateChanged,
-  //    [=](Qt::ApplicationState state) {
-  //        if (state == Qt::ApplicationActive)
-  //            m_transparencyTogglerWindow->setWindowFlags(Qt::WindowStaysOnTopHint);
-  //        else
-  //            m_transparencyTogglerWindow->setWindowFlags(m_transparencyTogglerWindow->windowFlags()
-  //            & ~Qt::WindowStaysOnTopHint);
-  //    });
+  m_transparencySlider = new QSlider(this);
+  m_transparencySlider->setRange(30, 100);
+  m_transparencySlider->setValue(TransparencySliderValue);
+  m_transparencySlider->setOrientation(Qt::Horizontal);
+  connect(m_transparencySlider, &QSlider::valueChanged,
+      [=](int value) { TransparencySliderValue = value;
+       toggleTransparency(true); });
 
   QVBoxLayout *togglerLayout       = new QVBoxLayout(this);
   QHBoxLayout *togglerSliderLayout = new QHBoxLayout(this);
   togglerSliderLayout->addWidget(new QLabel(tr("Amount: "), this));
-  togglerSliderLayout->addWidget(transparencySlider);
+  togglerSliderLayout->addWidget(m_transparencySlider);
   togglerLayout->addLayout(togglerSliderLayout);
   togglerLayout->addWidget(toggleButton);
 
