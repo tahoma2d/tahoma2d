@@ -377,6 +377,7 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent,
   m_toolsActionGroup = new QActionGroup(this);
   m_toolsActionGroup->setExclusive(true);
   m_currentRoomsChoice = Preferences::instance()->getCurrentRoomChoice();
+  makeTransparencyDialog();
   defineActions();
   // user defined shortcuts will be loaded here
   CommandManager::instance()->loadShortcuts();
@@ -2228,6 +2229,16 @@ void MainWindow::defineActions() {
   connect(showStatusBarAction, SIGNAL(triggered(bool)), this,
           SLOT(toggleStatusBar(bool)));
 
+  QAction *toggleTransparencyAction =
+      createToggle(MI_ToggleTransparent, tr("&Toggle Transparency"), "", 0,
+                   MenuViewCommandType);
+  connect(toggleTransparencyAction, SIGNAL(triggered(bool)), this,
+          SLOT(toggleTransparency(bool)));
+  connect(m_transparencyTogglerWindow, &QDialog::finished, [=](int result) {
+    toggleTransparency(false);
+    toggleTransparencyAction->setChecked(false);
+  });
+
   toggle = createToggle(MI_ShiftTrace, tr("Shift and Trace"), "", false,
                         MenuViewCommandType);
   toggle->setIcon(createQIcon("shift_and_trace"));
@@ -3642,11 +3653,70 @@ void MainWindow::toggleStatusBar(bool on) {
 
 //-----------------------------------------------------------------------------
 
+void MainWindow::toggleTransparency(bool on, double value) {
+  if (!on) {
+    this->setProperty("windowOpacity", 1.0);
+  } else {
+    this->setProperty("windowOpacity", value);
+    m_transparencyTogglerWindow->show();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::makeTransparencyDialog() {
+  m_transparencyTogglerWindow = new QDialog();
+  m_transparencyTogglerWindow->setWindowFlags(Qt::WindowStaysOnTopHint |
+                                              Qt::WindowCloseButtonHint);
+
+  m_transparencyTogglerWindow->setFixedHeight(100);
+  m_transparencyTogglerWindow->setFixedWidth(250);
+  m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma Transparency"));
+  QPushButton *toggleButton = new QPushButton(this);
+  toggleButton->setText(tr("Click to reset Tahoma transparency."));
+  connect(toggleButton, &QPushButton::clicked,
+          [=]() { m_transparencyTogglerWindow->accept(); });
+  QSlider *transparencySlider = new QSlider(this);
+  transparencySlider->setRange(30, 100);
+  transparencySlider->setValue(50);
+  transparencySlider->setOrientation(Qt::Horizontal);
+  connect(transparencySlider, &QSlider::valueChanged,
+          [=](int value) { toggleTransparency(true, (double)value / 100); });
+  // connect(static_cast<QApplication*>(QApplication::instance()),
+  // &QApplication::applicationStateChanged,
+  //    [=](Qt::ApplicationState state) {
+  //        if (state == Qt::ApplicationActive)
+  //            m_transparencyTogglerWindow->setWindowFlags(Qt::WindowStaysOnTopHint);
+  //        else
+  //            m_transparencyTogglerWindow->setWindowFlags(m_transparencyTogglerWindow->windowFlags()
+  //            & ~Qt::WindowStaysOnTopHint);
+  //    });
+
+  QVBoxLayout *togglerLayout       = new QVBoxLayout(this);
+  QHBoxLayout *togglerSliderLayout = new QHBoxLayout(this);
+  togglerSliderLayout->addWidget(new QLabel(tr("Amount: "), this));
+  togglerSliderLayout->addWidget(transparencySlider);
+  togglerLayout->addLayout(togglerSliderLayout);
+  togglerLayout->addWidget(toggleButton);
+
+  m_transparencyTogglerWindow->setLayout(togglerLayout);
+}
+
+//-----------------------------------------------------------------------------
+
 class ToggleStatusBar final : public MenuItemHandler {
 public:
   ToggleStatusBar() : MenuItemHandler("MI_ShowStatusBar") {}
   void execute() override {}
 } toggleStatusBar;
+
+//-----------------------------------------------------------------------------
+
+class ToggleTransparency final : public MenuItemHandler {
+public:
+  ToggleTransparency() : MenuItemHandler("MI_ToggleTransparent") {}
+  void execute() override {}
+} toggleTransparency;
 
 //-----------------------------------------------------------------------------
 

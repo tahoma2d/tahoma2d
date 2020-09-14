@@ -666,6 +666,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_RasterizePli);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_ShowStatusBar);
+  addMenuItem(viewMenu, MI_ToggleTransparent);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_MaximizePanel);
   addMenuItem(viewMenu, MI_FullScreenWindow);

@@ -72,6 +72,7 @@
 		<file>icons/dark/actions/16/saveas.svg</file>
 		<file>icons/dark/actions/16/saveall.svg</file>
 		<file>icons/dark/actions/16/gear.svg</file>
+		<file>icons/dark/actions/16/settings_reset.svg</file>
 		<file>icons/dark/actions/20/clear.svg</file>
 		<file>icons/dark/actions/16/undo.svg</file>
 		<file>icons/dark/actions/16/redo.svg</file>
@@ -99,7 +100,7 @@
 
 		<!-- Scan and Cleanup -->
 		<file>icons/dark/actions/20/preview_settings.svg</file>
-		<file>icons/dark/actions/18/preview.svg</file>
+		<file>icons/dark/actions/16/preview.svg</file>
 		<file>icons/dark/actions/20/save_previewed_frames.svg</file>
 		<file>icons/dark/actions/20/cleanup_settings.svg</file>
 		<file>icons/dark/actions/20/cleanup_preview.svg</file>
@@ -108,6 +109,7 @@
 		<file>icons/dark/actions/20/autocenter.svg</file>
 		<file>icons/dark/actions/20/camera_capture.svg</file>
 		<file>icons/dark/actions/16/subcamera.svg</file>
+		<file>icons/dark/actions/16/centerline.svg</file>
 
 		<!-- File Browser -->
 		<file>icons/dark/actions/16/my_computer.svg</file>
@@ -517,6 +519,8 @@
 		<file>Resources/motionpath_delete.svg</file>
 		<file>Resources/motionpath_rot.svg</file>
 		<file>Resources/move.png</file>
+		<file>Resources/more.svg</file>
+		<file>Resources/moredown.svg</file>
 		<file>Resources/no_specialstyle.png</file>
 		<file>Resources/no_vectorbrush.png</file>
 		<file>Resources/no_mypaintbrush.png</file>
@@ -552,6 +556,7 @@
 		<file>Resources/shear.png</file>
 		<file>Resources/splash.svg</file>
 		<file>Resources/splash2.svg</file>
+		<file>Resources/startup.png</file>
 		<file>Resources/stroke_select.png</file>
 		<file>Resources/tape.png</file>
 		<file>Resources/touch.svg</file>

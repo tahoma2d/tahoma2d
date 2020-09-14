@@ -639,7 +639,7 @@ CleanupSettings::CleanupSettings(QWidget *parent)
   rightToolBar->addAction(loadAct);
   rightToolBar->addSeparator();
   QAction *resetAct =
-      new QAction(createQIcon("resetsize"), tr("Reset Settings"), this);
+      new QAction(createQIcon("settings_reset"), tr("Reset Settings"), this);
   rightToolBar->addAction(resetAct);
 
   //  Model-related stuff

@@ -760,13 +760,14 @@ paramsLayout->addWidget(m_cThicknessRatio, row++, 1);*/
   swatchAct->setCheckable(true);
   leftToolBar->addAction(swatchAct);
 
-  QAction *centerlineAct = new QAction(createQIcon("opacitycheck"),
+  QAction *centerlineAct = new QAction(createQIcon("centerline"),
                                        tr("Toggle Centerlines Check"), this);
   centerlineAct->setCheckable(true);
   leftToolBar->addAction(centerlineAct);
 
   QToolButton *visibilityButton = new QToolButton(this);
-  visibilityButton->setIcon(createQIcon("options"));
+  visibilityButton->setIcon(createQIcon("menu"));
+  visibilityButton->setText(tr("Options"));
   visibilityButton->setPopupMode(QToolButton::InstantPopup);
 
   QMenu *visibilityMenu = new QMenu(visibilityButton);
@@ -784,7 +785,7 @@ paramsLayout->addWidget(m_cThicknessRatio, row++, 1);*/
   rightToolBar->addSeparator();
 
   QAction *resetAct =
-      new QAction(createQIcon("resetsize"), tr("Reset Settings"), this);
+      new QAction(createQIcon("settings_reset"), tr("Reset Settings"), this);
   rightToolBar->addAction(resetAct);
 
   connect(swatchAct, SIGNAL(triggered(bool)), m_swatchArea,
