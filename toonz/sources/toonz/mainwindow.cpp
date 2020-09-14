@@ -3678,11 +3678,11 @@ void MainWindow::makeTransparencyDialog() {
   connect(toggleButton, &QPushButton::clicked,
           [=]() { m_transparencyTogglerWindow->accept(); });
   m_transparencySlider = new QSlider(this);
-  m_transparencySlider->setRange(30, 100);
-  m_transparencySlider->setValue(TransparencySliderValue);
+  m_transparencySlider->setRange(-100, -30);
+  m_transparencySlider->setValue(TransparencySliderValue * -1);
   m_transparencySlider->setOrientation(Qt::Horizontal);
   connect(m_transparencySlider, &QSlider::valueChanged,
-      [=](int value) { TransparencySliderValue = value;
+      [=](int value) { TransparencySliderValue = value * -1;
        toggleTransparency(true); });
 
   QVBoxLayout *togglerLayout       = new QVBoxLayout(this);
