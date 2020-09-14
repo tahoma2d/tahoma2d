@@ -18,6 +18,7 @@
 #include "../toonzqt/tdockwindows.h"
 
 class QStackedWidget;
+class QSlider;
 class TPanel;
 class UpdateChecker;
 class TopBar;
@@ -68,6 +69,7 @@ class MainWindow final : public QMainWindow {
   StatusBar *m_statusBar;
   AboutPopup *m_aboutPopup;
   QDialog *m_transparencyTogglerWindow;
+  QSlider* m_transparencySlider;
   QActionGroup *m_toolsActionGroup;
 
   QStackedWidget *m_stackedWidget;
@@ -315,7 +317,7 @@ protected slots:
   void onUpdateCheckerDone(bool);
 
   void toggleStatusBar(bool);
-  void toggleTransparency(bool, double value = 0.5);
+  void toggleTransparency(bool);
   void makeTransparencyDialog();
 
 public slots:
