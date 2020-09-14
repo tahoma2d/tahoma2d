@@ -277,6 +277,7 @@
         <command>MI_RasterizePli</command>
         <separator/>
         <command>MI_ShowStatusBar</command>
+        <command>MI_ToggleTransparent</command>
         <separator/>
         <command>MI_MaximizePanel</command>
         <command>MI_FullScreenWindow</command>
