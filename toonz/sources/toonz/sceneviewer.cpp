@@ -1551,7 +1551,7 @@ void SceneViewer::drawOverlay() {
   if (m_referenceMode == CAMERA_REFERENCE && !m_drawCameraTest) {
     glPushMatrix();
     tglMultMatrix(m_drawCameraAff);
-    ViewerDraw::drawCameraMask(this, 0.7);
+    ViewerDraw::drawCameraMask(this);
     glPopMatrix();
   }
 

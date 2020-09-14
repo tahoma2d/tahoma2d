@@ -36,6 +36,7 @@
 #include <QSettings>
 
 TEnv::StringVar EnvSafeAreaName("SafeAreaName", "PR_safe");
+TEnv::IntVar CameraViewTransparency("CameraViewTransparency", 100);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);
@@ -187,7 +188,7 @@ void getCameraSection(T3DPointD points[4], int row, double z)
 //-----------------------------------------------------------------------------
 /*! when camera view mode, draw the mask plane outside of the camera box
 */
-void ViewerDraw::drawCameraMask(SceneViewer *viewer, double alpha) {
+void ViewerDraw::drawCameraMask(SceneViewer *viewer) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   //  TAffine viewMatrix = viewer->getViewMatrix();
@@ -238,9 +239,9 @@ void ViewerDraw::drawCameraMask(SceneViewer *viewer, double alpha) {
   mask_r = (double)maskColor.r / 255.0;
   mask_g = (double)maskColor.g / 255.0;
   mask_b = (double)maskColor.b / 255.0;
-  mask_a = alpha;
+  mask_a = (double)CameraViewTransparency / 100;
 
-  glEnable(GL_BLEND); //Enable blending.
+  glEnable(GL_BLEND);  // Enable blending.
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4d(mask_r, mask_g, mask_b, mask_a);
 
@@ -262,7 +263,7 @@ void ViewerDraw::drawCameraMask(SceneViewer *viewer, double alpha) {
   } else {
     tglFillRect(bounds);
   }
-  glDisable(GL_BLEND); //Enable blending.
+  glDisable(GL_BLEND);  // Enable blending.
 }
 
 //-----------------------------------------------------------------------------

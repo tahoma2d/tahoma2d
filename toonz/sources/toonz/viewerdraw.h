@@ -32,7 +32,7 @@ enum {  // cfr drawCamera()
 
 TRectD getCameraRect();
 
-void drawCameraMask(SceneViewer *viewer, double alpha = 1.0);
+void drawCameraMask(SceneViewer *viewer);
 void drawGridAndGuides(SceneViewer *viewer, double viewerScale, Ruler *vRuler,
                        Ruler *hRuler, bool gridEnabled);
 

@@ -33,8 +33,10 @@
 #include <QDesktopWidget>
 #include <QDialog>
 #include <QLineEdit>
+#include <QWidgetAction>
 
 extern TEnv::StringVar EnvSafeAreaName;
+extern TEnv::IntVar CameraViewTransparency;
 
 //=============================================================================
 // TPanel
@@ -380,6 +382,23 @@ void TPanelTitleBarButtonForSafeArea::onSetSafeArea() {
     // emit sceneChanged without setting dirty flag
     TApp::instance()->getCurrentScene()->notifySceneChanged(false);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForCameraView::contextMenuEvent(QContextMenuEvent *e) {
+  QMenu menu(this);
+
+  QWidgetAction *sliderAction = new QWidgetAction(this);
+  QSlider *transparencySlider = new QSlider(this);
+  transparencySlider->setRange(20, 100);
+  transparencySlider->setValue(CameraViewTransparency);
+  transparencySlider->setOrientation(Qt::Horizontal);
+  connect(transparencySlider, &QSlider::valueChanged,
+          [=](int value) { CameraViewTransparency = value; });
+  sliderAction->setDefaultWidget(transparencySlider);
+  menu.addAction(sliderAction);
+  menu.exec(e->globalPos());
 }
 
 //-----------------------------------------------------------------------------

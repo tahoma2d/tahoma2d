@@ -61,10 +61,11 @@ protected:
   void leaveEvent(QEvent *) override;
   void mousePressEvent(QMouseEvent *event) override;
 
-  //Q_PROPERTY(QColor RolloverColor READ getRolloverColor WRITE setRolloverColor);
-  //Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
-  //Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
-  //Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
+  // Q_PROPERTY(QColor RolloverColor READ getRolloverColor WRITE
+  // setRolloverColor);
+  // Q_PROPERTY(QColor PressedColor READ getPressedColor WRITE setPressedColor);
+  // Q_PROPERTY(QColor FreezeColor READ getFreezeColor WRITE setFreezeColor);
+  // Q_PROPERTY(QColor PreviewColor READ getPreviewColor WRITE setPreviewColor);
 
 signals:
   //! emitted when the user press the button
@@ -90,6 +91,22 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
 protected slots:
   void onSetSafeArea();
+};
+
+//-----------------------------------------------------------------------------
+/*! specialized button for sage area which enables to choose safe area size by
+ * context menu
+ */
+
+class TPanelTitleBarButtonForCameraView final : public TPanelTitleBarButton {
+  Q_OBJECT
+public:
+  TPanelTitleBarButtonForCameraView(QWidget *parent,
+                                    const QString &standardPixmapName)
+      : TPanelTitleBarButton(parent, standardPixmapName) {}
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 //-----------------------------------------------------------------------------
