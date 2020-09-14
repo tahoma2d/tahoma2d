@@ -1005,6 +1005,8 @@ void PageViewer::mousePressEvent(QMouseEvent *event) {
   if (indexInPage < 0 || indexInPage >= getChipCount()) {
     if (indexInPage == getChipCount() && !m_page->getPalette()->isLocked()) {
       PaletteCmd::createStyle(getPaletteHandle(), getPage());
+      m_styleSelection->select(pageIndex);
+      m_styleSelection->select(pageIndex, indexInPage, true);
     } else {
       // the user clicked out of the color chips.wants to deselect everything
       // (leaving the selection active, for a possible paste)
