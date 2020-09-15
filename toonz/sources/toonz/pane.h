@@ -107,6 +107,8 @@ public:
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event) override;
+signals:
+  void updateViewer();
 };
 
 //-----------------------------------------------------------------------------
