@@ -131,17 +131,20 @@ void StatusBar::makeMap() {
   m_infoMap.insert(
       {"T_BrushVector", "Brush Tool: Draws in the work area freehand" + spacer +
                             "Shift - Straight Lines" + spacer +
-                            "Hold Alt - Toggle Snapping"});
+                        "Control - Straight Lines Snapped to Angles" + spacer +
+                        "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
+                        "Alt - Draw to Vanishing Point" + spacer +
+                            "Hold Ctrl + Shift - Toggle Snapping"});
   m_infoMap.insert({"T_BrushSmartRaster",
                     "Brush Tool: Draws in the work area freehand" + spacer +
                         "Shift - Straight Lines" + spacer +
-                        "Control - Vertical and Horizontal Lines" + spacer +
+                        "Control - Straight Lines Snapped to Angles" + spacer +
                         "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
                         "Alt - Draw to Vanishing Point"});
   m_infoMap.insert(
       {"T_BrushRaster", "Brush Tool: Draws in the work area freehand" + spacer +
                             "Shift - Straight Lines" + spacer +
-                            "Control - Vertical and Horizontal Lines" + spacer +
+                            "Control - Straight Lines Snapped to Angles" + spacer +
                             "Ctrl + Alt - Add / Remove Vanishing Point" +
                             spacer + "Alt - Draw to Vanishing Point"});
   m_infoMap.insert({"T_Geometric", "Geometry Tool: Draws geometric shapes"});
