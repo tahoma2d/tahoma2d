@@ -144,10 +144,10 @@ protected:
 
   void dragCompare(const QPoint &dp);
 
-  void tabletEvent(QTabletEvent *e);
+  void tabletEvent(QTabletEvent *e) override;
   void touchEvent(QTouchEvent *e, int type);
   void gestureEvent(QGestureEvent *e);
-  bool event(QEvent *e);
+  bool event(QEvent *e) override;
 
 public slots:
 

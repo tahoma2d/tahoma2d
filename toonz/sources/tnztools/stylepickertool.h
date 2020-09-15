@@ -42,7 +42,7 @@ public:
 
   int getCursorId() const override;
 
-  bool onPropertyChanged(std::string propertyName);
+  bool onPropertyChanged(std::string propertyName) override;
 
   bool isOrganizePaletteActive() { return m_organizePalette.getValue(); }
 

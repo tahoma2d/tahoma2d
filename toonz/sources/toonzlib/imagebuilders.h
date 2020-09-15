@@ -61,7 +61,7 @@ public:
 
   /* Exposed to allow Fid to be updated due to a renumber operation
   */
-  void setFid(const TFrameId &fid);
+  void setFid(const TFrameId &fid) override;
 
 protected:
   bool getInfo(TImageInfo &info, int imFlags, void *extData) override;

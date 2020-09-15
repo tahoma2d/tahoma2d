@@ -279,9 +279,9 @@ public:
   ~PencilTestPopup();
 
 protected:
-  void showEvent(QShowEvent* event);
-  void hideEvent(QHideEvent* event);
-  void keyPressEvent(QKeyEvent* event);
+  void showEvent(QShowEvent* event) override;
+  void hideEvent(QHideEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
 
   bool event(QEvent* e) override;
 

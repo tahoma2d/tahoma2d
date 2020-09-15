@@ -152,9 +152,9 @@ protected:
   void showEvent(QShowEvent *se) override;
   void enterEvent(QEvent *e) override;
   void leaveEvent(QEvent *e) override;
-  void mouseDoubleClickEvent(QMouseEvent *event);
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-  void tabletEvent(QTabletEvent *e);
+  void tabletEvent(QTabletEvent *e) override;
   void touchEvent(QTouchEvent *e, int type);
   void gestureEvent(QGestureEvent *e);
 

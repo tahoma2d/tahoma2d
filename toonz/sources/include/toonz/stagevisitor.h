@@ -351,7 +351,7 @@ public:
 
   void onImage(const Stage::Player &data) override;
   void onVectorImage(TVectorImage *vi, const Stage::Player &data);
-  void onRasterImage(TRasterImage *ri, const Stage::Player &data);
+  void onRasterImage(TRasterImage *ri, const Stage::Player &data) override;
   void onToonzImage(TToonzImage *ti, const Stage::Player &data);
 
   void beginMask() override;

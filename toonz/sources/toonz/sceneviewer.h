@@ -285,8 +285,8 @@ public:
   bool canSwapCompared() const;
 
   bool isEditPreviewSubcamera() const { return m_editPreviewSubCamera; }
-  bool getIsFlippedX() const { return m_isFlippedX; }
-  bool getIsFlippedY() const { return m_isFlippedY; }
+  bool getIsFlippedX() const override { return m_isFlippedX; }
+  bool getIsFlippedY() const override { return m_isFlippedY; }
   void setEditPreviewSubcamera(bool enabled) {
     m_editPreviewSubCamera = enabled;
   }
@@ -307,10 +307,10 @@ public:
 
   void setIsLocator() { m_isLocator = true; }
   void setIsStyleShortcutSwitchable() { m_isStyleShortcutSwitchable = true; }
-  int getVGuideCount();
-  int getHGuideCount();
-  double getVGuide(int index);
-  double getHGuide(int index);
+  int getVGuideCount() override;
+  int getHGuideCount() override;
+  double getVGuide(int index) override;
+  double getHGuide(int index) override;
 
   void bindFBO() override;
   void releaseFBO() override;

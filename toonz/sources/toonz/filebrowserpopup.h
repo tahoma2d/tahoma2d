@@ -218,7 +218,7 @@ protected:
   void showEvent(QShowEvent *) override;
 
 protected slots:
-  void onFilePathDoubleClicked(const TFilePath &path);
+  void onFilePathDoubleClicked(const TFilePath &path) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -313,7 +313,7 @@ protected slots:
   // the selection
   void onSelectionChanged(TSelection *selection);
 
-  void onFilePathDoubleClicked(const TFilePath &path);
+  void onFilePathDoubleClicked(const TFilePath &path) override;
 
   void onPreferenceChanged(const QString &);
 
