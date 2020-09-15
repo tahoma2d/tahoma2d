@@ -959,7 +959,7 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
   m_foundLastSnap  = false;
   m_foundFirstSnap = false;
   m_snapSelf       = false;
-  m_toggleSnap     = e.isAltPressed() && !e.isCtrlPressed();
+  m_toggleSnap = !e.isAltPressed() && e.isCtrlPressed() && e.isShiftPressed();
 
   if (!nonShiftStraight) {
       checkStrokeSnapping(false, m_toggleSnap);
@@ -1521,7 +1521,7 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   m_firstSnapPoint = pos;
   m_foundFirstSnap = false;
-  m_toggleSnap = e.isAltPressed() && !e.isCtrlPressed();
+  m_toggleSnap = !e.isAltPressed() && e.isCtrlPressed() && e.isShiftPressed();
   checkStrokeSnapping(true, m_toggleSnap);
   checkGuideSnapping(true, m_toggleSnap);
   m_brushPos = m_firstSnapPoint;
