@@ -483,6 +483,8 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   x += +1 + iconWidth;
   titleBar->add(QPoint(x, 0), camButton);
   camButton->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+  connect(camButton, &TPanelTitleBarButtonForCameraView::updateViewer,
+          [=]() { m_sceneViewer->update(); });
 
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));

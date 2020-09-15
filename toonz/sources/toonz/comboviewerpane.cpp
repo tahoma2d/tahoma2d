@@ -475,12 +475,15 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
-  button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/18/pane_cam.svg"));
-  button->setToolTip(tr("Camera View"));
+  TPanelTitleBarButtonForCameraView* camButton =
+      new TPanelTitleBarButtonForCameraView(
+          titleBar, getIconThemePath("actions/18/pane_cam.svg"));
+  camButton->setToolTip(tr("Camera View"));
   x += +1 + iconWidth;
-  titleBar->add(QPoint(x, 0), button);
-  button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+  titleBar->add(QPoint(x, 0), camButton);
+  camButton->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+  connect(camButton, &TPanelTitleBarButtonForCameraView::updateViewer,
+      [=]() { m_sceneViewer->update(); });
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));
 

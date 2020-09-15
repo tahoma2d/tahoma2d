@@ -394,8 +394,10 @@ void TPanelTitleBarButtonForCameraView::contextMenuEvent(QContextMenuEvent *e) {
   transparencySlider->setRange(20, 100);
   transparencySlider->setValue(CameraViewTransparency);
   transparencySlider->setOrientation(Qt::Horizontal);
-  connect(transparencySlider, &QSlider::valueChanged,
-          [=](int value) { CameraViewTransparency = value; });
+  connect(transparencySlider, &QSlider::valueChanged, [=](int value) {
+    CameraViewTransparency = value;
+    emit updateViewer();
+  });
   sliderAction->setDefaultWidget(transparencySlider);
   menu.addAction(sliderAction);
   menu.exec(e->globalPos());
