@@ -231,7 +231,7 @@ project->setUseScenePath(TProject::Extras, false);
   // Imposto la rootDir per ImageCache
 
   /*-- TOONZCACHEROOTの設定  --*/
-  TFilePath cacheDir               = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheDir = ToonzFolder::getCacheRootFolder();
   if (cacheDir.isEmpty()) cacheDir = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheDir);
 
@@ -339,10 +339,10 @@ int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
 
 #ifdef MACOSX
-// This workaround is to avoid missing left button problem on Qt5.6.0.
-// To invalidate m_rightButtonClicked in Qt/qnsview.mm, sending
-// NSLeftButtonDown event before NSLeftMouseDragged event propagated to
-// QApplication. See more details in ../mousedragfilter/mousedragfilter.mm.
+  // This workaround is to avoid missing left button problem on Qt5.6.0.
+  // To invalidate m_rightButtonClicked in Qt/qnsview.mm, sending
+  // NSLeftButtonDown event before NSLeftMouseDragged event propagated to
+  // QApplication. See more details in ../mousedragfilter/mousedragfilter.mm.
 
 #include "mousedragfilter.h"
 
@@ -762,7 +762,7 @@ int main(int argc, char *argv[]) {
   a.processEvents();
 
   // Carico lo styleSheet
-  QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
+  QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
   a.setStyleSheet(currentStyle);
 
   // Perspective grid tool - custom grid

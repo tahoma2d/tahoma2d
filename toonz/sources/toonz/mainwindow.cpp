@@ -1263,7 +1263,7 @@ void MainWindow::onMenuCheckboxChanged() {
     FieldGuideToggleAction = isChecked;
   else if (cm->getAction(MI_RasterizePli) == action) {
     if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
-    RasterizePliToggleAction                            = isChecked;
+    RasterizePliToggleAction = isChecked;
   } else if (cm->getAction(MI_SafeArea) == action)
     SafeAreaToggleAction = isChecked;
   else if (cm->getAction(MI_ViewColorcard) == action)
@@ -3158,7 +3158,7 @@ void MainWindow::clearCacheFolder() {
   // 1. $CACHE/[Current ProcessID]
   // 2. $CACHE/temp/[Current scene folder] if the current scene is untitled
 
-  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
 
   TFilePathSet filesToBeRemoved;
@@ -3310,12 +3310,8 @@ class ReloadStyle final : public MenuItemHandler {
 public:
   ReloadStyle() : MenuItemHandler("MI_ReloadStyle") {}
   void execute() override {
-    QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
-    QFile file(currentStyle);
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QString(file.readAll());
-    qApp->setStyleSheet(styleSheet);
-    file.close();
+    QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
+    qApp->setStyleSheet(currentStyle);
   }
 } reloadStyle;
 

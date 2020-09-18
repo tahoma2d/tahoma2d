@@ -25,6 +25,7 @@
 #include <QStringList>
 #include <QAction>
 #include <QColor>
+#include <QTextStream>
 #include <QStandardPaths>
 
 // boost includes
@@ -401,6 +402,7 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Dark");
+  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString, "");
   define(iconTheme, "iconTheme", QMetaType::Bool, false);
   define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
@@ -993,13 +995,40 @@ QString Preferences::getCurrentLanguage() const {
 
 //-----------------------------------------------------------------
 
-QString Preferences::getCurrentStyleSheetPath() const {
+QString Preferences::getCurrentStyleSheet() const {
   QString currentStyleSheetName = getStringValue(CurrentStyleSheetName);
   if (currentStyleSheetName.isEmpty()) return QString();
   TFilePath path(TEnv::getConfigDir() + "qss");
   QString string = currentStyleSheetName + QString("/") +
                    currentStyleSheetName + QString(".qss");
-  return QString("file:///" + path.getQString() + "/" + string);
+  QString styleSheetPath = path.getQString() + "/" + string;
+
+  QString additionalSheetStr = getStringValue(additionalStyleSheet);
+  // if there is no additional style sheet, return the path and let
+  // Qt to load and parse it
+  if (additionalSheetStr.isEmpty()) return QString("file:///" + styleSheetPath);
+
+  // if there is any additional style sheet, load the style sheet
+  // from the file and combine with it
+  QString styleSheetStr;
+  QFile f(styleSheetPath);
+  if (f.open(QFile::ReadOnly | QFile::Text)) {
+    QTextStream ts(&f);
+    styleSheetStr = ts.readAll();
+  }
+  styleSheetStr += additionalSheetStr;
+
+  // here we will convert all relative paths to absolute paths
+  // or Qt will look for images relative to the current working directory
+  // since it has no idea where the style sheet comes from.
+
+  QString currentStyleFolderPath =
+      path.getQString().replace("\\", "/") + "/" + currentStyleSheetName;
+
+  styleSheetStr.replace(QRegExp("url\\(['\"]([^'\"]+)['\"]\\)"),
+                        "url(\"" + currentStyleFolderPath + QString("/\\1\")"));
+
+  return styleSheetStr;
 }
 
 //-----------------------------------------------------------------
