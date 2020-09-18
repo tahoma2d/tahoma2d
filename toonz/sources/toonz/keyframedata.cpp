@@ -137,9 +137,12 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
         // interpolation between them using preference setting
         TStageObject::Keyframe prevKey = pegbar->getKeyframe(kL);
         for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
-          prevKey.m_channels[i].m_type =
-              TDoubleKeyframe::Type(Preferences::instance()->getKeyframeType());
-          newKey.m_channels[i].m_prevType = prevKey.m_channels[i].m_type;
+          if (newKey.m_channels[i].m_isKeyframe &&
+              prevKey.m_channels[i].m_isKeyframe) {
+            prevKey.m_channels[i].m_type = TDoubleKeyframe::Type(
+                Preferences::instance()->getKeyframeType());
+            newKey.m_channels[i].m_prevType = prevKey.m_channels[i].m_type;
+          }
         }
         pegbar->setKeyframeWithoutUndo(kL, prevKey);
         pegbar->setKeyframeWithoutUndo(row, newKey);
@@ -149,7 +152,9 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
         if (!pegbar->getKeyframeSpan(row - 1, kP, e0, kN, e1)) kP = row - 1;
         TStageObject::Keyframe prevKey = pegbar->getKeyframe(kP);
         for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
-          newKey.m_channels[i].m_prevType = prevKey.m_channels[i].m_type;
+          if (newKey.m_channels[i].m_isKeyframe &&
+              prevKey.m_channels[i].m_isKeyframe)
+            newKey.m_channels[i].m_prevType = prevKey.m_channels[i].m_type;
         }
         pegbar->setKeyframeWithoutUndo(row, newKey);
       }
@@ -161,9 +166,12 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
         // interpolation between them using preference setting
         TStageObject::Keyframe nextKey = pegbar->getKeyframe(kF);
         for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
-          newKey.m_channels[i].m_type =
-              TDoubleKeyframe::Type(Preferences::instance()->getKeyframeType());
-          nextKey.m_channels[i].m_prevType = newKey.m_channels[i].m_type;
+          if (newKey.m_channels[i].m_isKeyframe &&
+              nextKey.m_channels[i].m_isKeyframe) {
+            newKey.m_channels[i].m_type = TDoubleKeyframe::Type(
+                Preferences::instance()->getKeyframeType());
+            nextKey.m_channels[i].m_prevType = newKey.m_channels[i].m_type;
+          }
         }
         pegbar->setKeyframeWithoutUndo(row, newKey);
         pegbar->setKeyframeWithoutUndo(kF, nextKey);
@@ -173,7 +181,10 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
         if (!pegbar->getKeyframeSpan(row + 1, kP, e0, kN, e1)) kN = row + 1;
         TStageObject::Keyframe nextKey = pegbar->getKeyframe(kN);
         for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
-          newKey.m_channels[i].m_type = nextKey.m_channels[i].m_prevType;
+          if (newKey.m_channels[i].m_isKeyframe &&
+              nextKey.m_channels[i].m_isKeyframe) {
+            nextKey.m_channels[i].m_prevType = newKey.m_channels[i].m_type;
+          }
         }
         pegbar->setKeyframeWithoutUndo(row, newKey);
       }
