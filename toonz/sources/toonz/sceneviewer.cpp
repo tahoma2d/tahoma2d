@@ -1717,15 +1717,17 @@ void SceneViewer::drawOverlay() {
     std::vector<TPointD> assistantPoints =
         sl->getProperties()->getVanishingPoints();
     if (assistantPoints.size() > 0) {
-      glPushMatrix();
-      tglMultMatrix(getViewMatrix() * tool->getMatrix());
       if (tool->getToolType() & TTool::LevelTool &&
-          !app->getCurrentObject()->isSpline())
+          !app->getCurrentObject()->isSpline() &&
+          (tool->getName() == "T_Brush" || tool->getName() == "T_Geometric")) {
+        glPushMatrix();
+        tglMultMatrix(getViewMatrix() * tool->getMatrix());
         glScaled(m_dpiScale.x, m_dpiScale.y, 1);
-      ViewerDraw::drawPerspectiveGuides(
-          this, (m_draw3DMode) ? m_zoomScale3D : m_viewAff[m_viewMode].det(),
-          assistantPoints);
-      glPopMatrix();
+        ViewerDraw::drawPerspectiveGuides(
+            this, (m_draw3DMode) ? m_zoomScale3D : m_viewAff[m_viewMode].det(),
+            assistantPoints);
+        glPopMatrix();
+      }
     }
   }
   // Call tool->draw() even if the level is read only (i.e. to show hooks)
