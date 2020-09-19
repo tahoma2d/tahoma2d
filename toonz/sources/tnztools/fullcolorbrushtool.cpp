@@ -335,6 +335,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     if (!deletedPoint) m_assistantPoints.push_back(pos);
     simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
     level->setDirtyFlag(true);
+    invalidate();
     return;
   }
   if (e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed()) {
@@ -503,53 +504,48 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
       invalidateRect += (brushRect);
       double denominator = m_lastPoint.x - m_firstPoint.x;
       if (denominator == 0) denominator == 0.001;
-      double slope = ((m_lastPoint.y - m_firstPoint.y) / denominator);
+      double slope    = ((m_lastPoint.y - m_firstPoint.y) / denominator);
       double radAngle = std::atan(abs(slope));
-      double angle = radAngle * (180 / 3.14159);
+      double angle    = radAngle * (180 / 3.14159);
       if (abs(angle) >= 82.5)
         m_lastPoint.x = m_firstPoint.x;
       else if (abs(angle) < 7.5)
         m_lastPoint.y = m_firstPoint.y;
       else {
-          double xDistance = m_lastPoint.x - m_firstPoint.x;
-          double yDistance = m_lastPoint.y - m_firstPoint.y;
+        double xDistance = m_lastPoint.x - m_firstPoint.x;
+        double yDistance = m_lastPoint.y - m_firstPoint.y;
 
-          double totalDistance = std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
-          double xLength = 0.0;
-          double yLength = 0.0;
-          if (angle >= 7.5 && angle < 22.5) {
-              yLength = std::sin(15 * (3.14159 / 180)) * totalDistance;
-              xLength = std::cos(15 * (3.14159 / 180)) * totalDistance;
-          }
-          else if (angle >= 22.5 && angle < 37.5) {
-              yLength = std::sin(30 * (3.14159 / 180)) * totalDistance;
-              xLength = std::cos(30 * (3.14159 / 180)) * totalDistance;
-          }
-          else if (angle >= 37.5 && angle < 52.5) {
-              yLength = std::sin(45 * (3.14159 / 180)) * totalDistance;
-              xLength = std::cos(45 * (3.14159 / 180)) * totalDistance;
-          }
-          else if (angle >= 52.5 && angle < 67.5) {
-              yLength = std::sin(60 * (3.14159 / 180)) * totalDistance;
-              xLength = std::cos(60 * (3.14159 / 180)) * totalDistance;
-          }
-          else if (angle >= 67.5 && angle < 82.5) {
-              yLength = std::sin(75 * (3.14159 / 180)) * totalDistance;
-              xLength = std::cos(75 * (3.14159 / 180)) * totalDistance;
-          }
+        double totalDistance =
+            std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
+        double xLength = 0.0;
+        double yLength = 0.0;
+        if (angle >= 7.5 && angle < 22.5) {
+          yLength = std::sin(15 * (3.14159 / 180)) * totalDistance;
+          xLength = std::cos(15 * (3.14159 / 180)) * totalDistance;
+        } else if (angle >= 22.5 && angle < 37.5) {
+          yLength = std::sin(30 * (3.14159 / 180)) * totalDistance;
+          xLength = std::cos(30 * (3.14159 / 180)) * totalDistance;
+        } else if (angle >= 37.5 && angle < 52.5) {
+          yLength = std::sin(45 * (3.14159 / 180)) * totalDistance;
+          xLength = std::cos(45 * (3.14159 / 180)) * totalDistance;
+        } else if (angle >= 52.5 && angle < 67.5) {
+          yLength = std::sin(60 * (3.14159 / 180)) * totalDistance;
+          xLength = std::cos(60 * (3.14159 / 180)) * totalDistance;
+        } else if (angle >= 67.5 && angle < 82.5) {
+          yLength = std::sin(75 * (3.14159 / 180)) * totalDistance;
+          xLength = std::cos(75 * (3.14159 / 180)) * totalDistance;
+        }
 
-          if (yDistance == abs(yDistance)) {
-              m_lastPoint.y = m_firstPoint.y + yLength;
-          }
-          else {
-              m_lastPoint.y = m_firstPoint.y - yLength;
-          }
-          if (xDistance == abs(xDistance)) {
-              m_lastPoint.x = m_firstPoint.x + xLength;
-          }
-          else {
-              m_lastPoint.x = m_firstPoint.x - xLength;
-          }
+        if (yDistance == abs(yDistance)) {
+          m_lastPoint.y = m_firstPoint.y + yLength;
+        } else {
+          m_lastPoint.y = m_firstPoint.y - yLength;
+        }
+        if (xDistance == abs(xDistance)) {
+          m_lastPoint.x = m_firstPoint.x + xLength;
+        } else {
+          m_lastPoint.x = m_firstPoint.x - xLength;
+        }
       }
     }
 

@@ -378,6 +378,100 @@ void ViewerDraw::drawGridAndGuides(SceneViewer *viewer, double sc, Ruler *vr,
 
 //-----------------------------------------------------------------------------
 
+void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
+                                       std::vector<TPointD> assistantPoints) {
+  int x1, x2, y1, y2;
+  viewer->rect().getCoords(&x1, &y1, &x2, &y2);
+  TRect clipRect = TRect(x1, y1, x2 + 1, y2 + 1);
+
+  GLfloat modelView[16];
+  glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
+  TAffine modelViewAff(modelView[0], modelView[4], modelView[12], modelView[1],
+                       modelView[5], modelView[13]);
+
+  TRectD cameraRect = getCameraRect();
+
+  TPointD clipCorner[] = {
+      modelViewAff.inv() * TPointD(clipRect.x0, clipRect.y0),
+      modelViewAff.inv() * TPointD(clipRect.x1, clipRect.y0),
+      modelViewAff.inv() * TPointD(clipRect.x1, clipRect.y1),
+      modelViewAff.inv() * TPointD(clipRect.x0, clipRect.y1)};
+
+  TRectD bounds;
+  bounds.x0 = bounds.x1 = clipCorner[0].x;
+  bounds.y0 = bounds.y1 = clipCorner[0].y;
+  int i;
+  for (i = 1; i < 4; i++) {
+    const TPointD &p = clipCorner[i];
+    if (p.x < bounds.x0)
+      bounds.x0 = p.x;
+    else if (p.x > bounds.x1)
+      bounds.x1 = p.x;
+    if (p.y < bounds.y0)
+      bounds.y0 = p.y;
+    else if (p.y > bounds.y1)
+      bounds.y1 = p.y;
+  }
+
+  double interval = 150;  // *sc;
+  glEnable(GL_BLEND);     // Enable blending.
+  glEnable(GL_LINE_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  std::vector<double> reds{0.0, 0.7, 1.0, 0.0, 0.3};
+  std::vector<double> greens{0.0, 0.0, 0.0, 0.4, 0.3};
+  std::vector<double> blues{1.0, 0.7, 0.0, 0.0, 0.3};
+
+  for (int j = 0; j < assistantPoints.size(); j++) {
+    TPointD p = assistantPoints.at(j);
+    if (j < 5) glColor4d(reds.at(j), greens.at(j), blues.at(j), 0.2);
+    TPointD end;
+    bool useX = true;
+    for (double i = bounds.x0; i < bounds.x1; i += interval) {
+      end.y = bounds.y0;
+      end.x = i;
+      tglDrawSegment(p, end);
+    }
+    for (double i = bounds.x0; i < bounds.x1; i += interval) {
+      end.y = bounds.y1;
+      end.x = i;
+      tglDrawSegment(p, end);
+    }
+    for (double i = bounds.y0; i < bounds.y1; i += interval) {
+      end.y = i;
+      end.x = bounds.x0;
+      tglDrawSegment(p, end);
+    }
+    for (double i = bounds.y0; i < bounds.y1; i += interval) {
+      end.y = i;
+      end.x = bounds.x1;
+      tglDrawSegment(p, end);
+    }
+    // double distanceToLeft = std::abs(p.x - bounds.x0);
+    // double distanceToRight = std::abs(p.x - bounds.x1);
+    // double distanceToTop = std::abs(p.y - bounds.y1);
+    // double distanceToBottom = std::abs(p.y - bounds.y0);
+    // double xDistance = std::max(distanceToLeft, distanceToRight);
+    // double yDistance = std::max(distanceToTop, distanceToBottom);
+    // double totalDistance = std::sqrt(std::pow(xDistance, 2) +
+    // std::pow(yDistance, 2));
+    // for (int i = 0; i < 360; i += 15) {
+    //
+    //    //double slope = std::tan(i * (3.14159 / 180));
+    //    double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
+    //    double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
+    //    end.x = p.x + xLength;
+    //    end.y = p.y + yLength;
+    //    tglDrawSegment(p, end);
+    //}
+  }
+
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_BLEND);
+}
+
+//-----------------------------------------------------------------------------
+
 void ViewerDraw::drawColorcard(UCHAR channel) {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TRectD rect       = getCameraRect();

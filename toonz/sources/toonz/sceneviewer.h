@@ -167,6 +167,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
   TRectD m_clipRect;
 
   bool m_isPicking;
+  bool m_showPerspectiveGrids    = true;
+  bool m_canShowPerspectiveGrids = false;
 
   TRaster32P m_3DSideL;
   TRaster32P m_3DSideR;
@@ -264,6 +266,9 @@ public:
     m_vRuler = v;
     m_hRuler = h;
   }
+  bool getShowPerspectiveGrids() { return m_showPerspectiveGrids; }
+  void setShowPerspectiveGrids(bool show);
+  bool getCanShowPerspectiveGrids() { return m_canShowPerspectiveGrids; }
 
   bool is3DView() const override;
   TDimension getViewportSize() const { return TDimension(width(), height()); }

@@ -35,6 +35,8 @@ TRectD getCameraRect();
 void drawCameraMask(SceneViewer *viewer);
 void drawGridAndGuides(SceneViewer *viewer, double viewerScale, Ruler *vRuler,
                        Ruler *hRuler, bool gridEnabled);
+void drawPerspectiveGuides(SceneViewer *viewer, double viewerScale,
+                           std::vector<TPointD> assistantPoints);
 
 void draw3DCamera(unsigned long flags, double zmin, double phi);
 void drawCamera(unsigned long flags, double pixelSize);
