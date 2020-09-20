@@ -301,12 +301,13 @@ class UndoPencil final : public TToolUndo {
 
   bool m_autogroup;
   bool m_autofill;
+  bool m_sendToBack;
 
 public:
   UndoPencil(TStroke *stroke, std::vector<TFilledRegionInf> *fillInformation,
              TXshSimpleLevel *level, const TFrameId &frameId,
              bool m_createdFrame, bool m_createdLevel, bool autogroup = false,
-             bool autofill = false);
+             bool autofill = false, bool sendToBack = false);
   ~UndoPencil();
   void undo() const override;
   void redo() const override;

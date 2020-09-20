@@ -338,7 +338,8 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
                       TStroke *stroke, bool breakAngles, bool autoGroup,
                       bool autoFill, bool frameCreated, bool levelCreated,
                       TXshSimpleLevel *sLevel = NULL,
-                      TFrameId fid            = TFrameId::NO_FRAME) {
+                      TFrameId fid            = TFrameId::NO_FRAME,
+                      bool sendToBack         = false) {
   QMutexLocker lock(vi->getMutex());
 
   if (application->getCurrentObject()->isSpline()) {
@@ -379,10 +380,10 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
       ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                        stroke->getBBox());
       TStroke *str = new TStroke(*strokes[i]);
-      vi->addStroke(str);
-      TUndoManager::manager()->add(new UndoPencil(str, fillInformation, sl, id,
-                                                  frameCreated, levelCreated,
-                                                  autoGroup, autoFill));
+      vi->addStroke(str, true, sendToBack);
+      TUndoManager::manager()->add(
+          new UndoPencil(str, fillInformation, sl, id, frameCreated,
+                         levelCreated, autoGroup, autoFill, sendToBack));
     }
     TUndoManager::manager()->endBlock();
   } else {
@@ -391,10 +392,10 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
     ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                      stroke->getBBox());
     TStroke *str = new TStroke(*stroke);
-    vi->addStroke(str);
-    TUndoManager::manager()->add(new UndoPencil(str, fillInformation, sl, id,
-                                                frameCreated, levelCreated,
-                                                autoGroup, autoFill));
+    vi->addStroke(str, true, sendToBack);
+    TUndoManager::manager()->add(
+        new UndoPencil(str, fillInformation, sl, id, frameCreated, levelCreated,
+                       autoGroup, autoFill, sendToBack));
   }
 
   if (autoGroup && stroke->isSelfLoop()) {
@@ -445,10 +446,11 @@ void addStrokeToImage(TTool::Application *application, const TVectorImageP &vi,
                       TStroke *stroke, bool breakAngles, bool autoGroup,
                       bool autoFill, bool frameCreated, bool levelCreated,
                       TXshSimpleLevel *sLevel = NULL,
-                      TFrameId id             = TFrameId::NO_FRAME) {
+                      TFrameId id             = TFrameId::NO_FRAME,
+                      bool sendToBack         = false) {
   QMutexLocker lock(vi->getMutex());
   addStroke(application, vi.getPointer(), stroke, breakAngles, autoGroup,
-            autoFill, frameCreated, levelCreated, sLevel, id);
+            autoFill, frameCreated, levelCreated, sLevel, id, sendToBack);
   // la notifica viene gia fatta da addStroke!
   // getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
 }
@@ -1196,9 +1198,11 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       stroke->setSelfLoop(true);
       m_snapSelf = false;
     }
-
+    bool sendToBack =
+        e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed();
     addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
-                     false, false, m_isFrameCreated, m_isLevelCreated);
+                     false, false, m_isFrameCreated, m_isLevelCreated, 0,
+                     TFrameId::NO_FRAME, sendToBack);
     TRectD bbox = stroke->getBBox().enlarge(2) + m_track.getModifiedRegion();
 
     invalidate();  // should use bbox?
