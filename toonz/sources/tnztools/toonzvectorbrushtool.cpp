@@ -750,6 +750,7 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
     if (!deletedPoint) m_assistantPoints.push_back(pos);
     simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
     level->setDirtyFlag(true);
+    invalidate();
     return;
   }
 
@@ -789,150 +790,150 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
     return;
   }
 
-  if ((e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) || m_addingAssistant) {
+  if ((e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) ||
+      m_addingAssistant) {
     return;
   }
   TRectD invalidateRect;
 
-  m_lastPoint    = pos;
+  m_lastPoint           = pos;
   bool nonShiftStraight = false;
-    if (e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) {
-      invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
-      nonShiftStraight = true;
-      double distance = (m_brushPos.x) * 0.5;
-      TRectD brushRect =
-          TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
-                 TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
-      invalidateRect += (brushRect);
+  if (e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) {
+    invalidateRect   = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+    nonShiftStraight = true;
+    double distance  = (m_brushPos.x) * 0.5;
+    TRectD brushRect =
+        TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
+               TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
+    invalidateRect += (brushRect);
 
-      // let's get info about our current location
-      double denominator = m_lastPoint.x - m_firstPoint.x;
-      double numerator   = m_lastPoint.y - m_firstPoint.y;
-      if (areAlmostEqual(denominator, 0.0, 0.0001)) {
-        denominator = denominator < 0 ? -0.0001 : 0.0001;
+    // let's get info about our current location
+    double denominator = m_lastPoint.x - m_firstPoint.x;
+    double numerator   = m_lastPoint.y - m_firstPoint.y;
+    if (areAlmostEqual(denominator, 0.0, 0.0001)) {
+      denominator = denominator < 0 ? -0.0001 : 0.0001;
+    }
+    if (areAlmostEqual(numerator, 0.0, 0.0001)) {
+      numerator = numerator < 0 ? -0.0001 : 0.0001;
+    }
+    double slope = (numerator / denominator);
+    double angle = std::atan(slope) * (180 / 3.14159);
+
+    // now let's get the angle of each of the assistant points
+    std::vector<double> anglesToAssistants;
+    for (auto point : m_assistantPoints) {
+      double newDenominator = point.x - m_firstPoint.x;
+      double newNumerator   = point.y - m_firstPoint.y;
+      if (areAlmostEqual(newDenominator, 0.0, 0.0001)) {
+        newDenominator = newDenominator < 0 ? -0.0001 : 0.0001;
       }
-      if (areAlmostEqual(numerator, 0.0, 0.0001)) {
-        numerator = numerator < 0 ? -0.0001 : 0.0001;
-      }
-      double slope = (numerator / denominator);
-      double angle = std::atan(slope) * (180 / 3.14159);
-
-      // now let's get the angle of each of the assistant points
-      std::vector<double> anglesToAssistants;
-      for (auto point : m_assistantPoints) {
-        double newDenominator = point.x - m_firstPoint.x;
-        double newNumerator   = point.y - m_firstPoint.y;
-        if (areAlmostEqual(newDenominator, 0.0, 0.0001)) {
-          newDenominator = newDenominator < 0 ? -0.0001 : 0.0001;
-        }
-        if (areAlmostEqual(newNumerator, 0.0, 0.0001)) {
-          newNumerator = newNumerator < 0 ? -0.0001 : 0.0001;
-        }
-
-        double newSlope = (newNumerator / newDenominator);
-        double newAngle = std::atan(newSlope) * (180 / 3.14159);
-        anglesToAssistants.push_back(newAngle);
+      if (areAlmostEqual(newNumerator, 0.0, 0.0001)) {
+        newNumerator = newNumerator < 0 ? -0.0001 : 0.0001;
       }
 
-      // figure out which angle is closer
-      TPointD pointToUse = TPointD(0.0, 0.0);
-      double difference  = 360;
+      double newSlope = (newNumerator / newDenominator);
+      double newAngle = std::atan(newSlope) * (180 / 3.14159);
+      anglesToAssistants.push_back(newAngle);
+    }
 
-      for (int i = 0; i < anglesToAssistants.size(); i++) {
-        double newDifference = abs(angle - anglesToAssistants.at(i));
-        if (newDifference < difference || (180 - newDifference) < difference) {
-          difference = std::min(newDifference, (180 - newDifference));
-          pointToUse = m_assistantPoints.at(i);
-        }
-      }
+    // figure out which angle is closer
+    TPointD pointToUse = TPointD(0.0, 0.0);
+    double difference  = 360;
 
-      double distanceFirstToLast =
-          std::sqrt(std::pow((m_lastPoint.x - m_firstPoint.x), 2) +
-                    std::pow((m_lastPoint.y - m_firstPoint.y), 2));
-      double distanceLastToAssistant =
-          std::sqrt(std::pow((pointToUse.x - m_lastPoint.x), 2) +
-                    std::pow((pointToUse.y - m_lastPoint.y), 2));
-      double distanceFirstToAssistant =
-          std::sqrt(std::pow((pointToUse.x - m_firstPoint.x), 2) +
-                    std::pow((pointToUse.y - m_firstPoint.y), 2));
-
-      if (distanceFirstToAssistant == 0.0) distanceFirstToAssistant = 0.001;
-
-      double ratio = distanceFirstToLast / distanceFirstToAssistant;
-
-      double newX;
-      double newY;
-
-      // flip the direction if the last point is farther than the first point
-      if (distanceFirstToAssistant < distanceLastToAssistant &&
-          distanceFirstToLast < distanceLastToAssistant) {
-        newX = ((1 + ratio) * m_firstPoint.x) - (ratio * pointToUse.x);
-        newY = ((1 + ratio) * m_firstPoint.y) - (ratio * pointToUse.y);
-      } else {
-        newX = ((1 - ratio) * m_firstPoint.x) + (ratio * pointToUse.x);
-        newY = ((1 - ratio) * m_firstPoint.y) + (ratio * pointToUse.y);
-      }
-
-      m_lastPoint = TPointD(newX, newY);
-      invalidateRect += TRectD(m_firstPoint, m_lastPoint).enlarge(2);
-    } else if (e.isCtrlPressed() && !e.isAltPressed() && !e.isShiftPressed()) {
-      invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
-      nonShiftStraight = true;
-      double distance = (m_brushPos.x) * 0.5;
-      TRectD brushRect =
-          TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
-                 TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
-      invalidateRect += (brushRect);
-
-      double denominator = m_lastPoint.x - m_firstPoint.x;
-      if (denominator == 0) denominator == 0.001;
-      double slope    = ((m_lastPoint.y - m_firstPoint.y) / denominator);
-      double radAngle = std::atan(abs(slope));
-      double angle    = radAngle * (180 / 3.14159);
-      if (abs(angle) >= 82.5) {
-        // make it vertical
-        m_lastPoint.x = m_firstPoint.x;
-      } else if (abs(angle) < 7.5) {
-        // make it horizontal
-        m_lastPoint.y = m_firstPoint.y;
-      } else {
-        double xDistance = m_lastPoint.x - m_firstPoint.x;
-        double yDistance = m_lastPoint.y - m_firstPoint.y;
-
-        double totalDistance =
-            std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
-        double xLength = 0.0;
-        double yLength = 0.0;
-        if (angle >= 7.5 && angle < 22.5) {
-          yLength = std::sin(15 * (3.14159 / 180)) * totalDistance;
-          xLength = std::cos(15 * (3.14159 / 180)) * totalDistance;
-        } else if (angle >= 22.5 && angle < 37.5) {
-          yLength = std::sin(30 * (3.14159 / 180)) * totalDistance;
-          xLength = std::cos(30 * (3.14159 / 180)) * totalDistance;
-        } else if (angle >= 37.5 && angle < 52.5) {
-          yLength = std::sin(45 * (3.14159 / 180)) * totalDistance;
-          xLength = std::cos(45 * (3.14159 / 180)) * totalDistance;
-        } else if (angle >= 52.5 && angle < 67.5) {
-          yLength = std::sin(60 * (3.14159 / 180)) * totalDistance;
-          xLength = std::cos(60 * (3.14159 / 180)) * totalDistance;
-        } else if (angle >= 67.5 && angle < 82.5) {
-          yLength = std::sin(75 * (3.14159 / 180)) * totalDistance;
-          xLength = std::cos(75 * (3.14159 / 180)) * totalDistance;
-        }
-
-        if (yDistance == abs(yDistance)) {
-          m_lastPoint.y = m_firstPoint.y + yLength;
-        } else {
-          m_lastPoint.y = m_firstPoint.y - yLength;
-        }
-        if (xDistance == abs(xDistance)) {
-          m_lastPoint.x = m_firstPoint.x + xLength;
-        } else {
-          m_lastPoint.x = m_firstPoint.x - xLength;
-        }
+    for (int i = 0; i < anglesToAssistants.size(); i++) {
+      double newDifference = abs(angle - anglesToAssistants.at(i));
+      if (newDifference < difference || (180 - newDifference) < difference) {
+        difference = std::min(newDifference, (180 - newDifference));
+        pointToUse = m_assistantPoints.at(i);
       }
     }
-  
+
+    double distanceFirstToLast =
+        std::sqrt(std::pow((m_lastPoint.x - m_firstPoint.x), 2) +
+                  std::pow((m_lastPoint.y - m_firstPoint.y), 2));
+    double distanceLastToAssistant =
+        std::sqrt(std::pow((pointToUse.x - m_lastPoint.x), 2) +
+                  std::pow((pointToUse.y - m_lastPoint.y), 2));
+    double distanceFirstToAssistant =
+        std::sqrt(std::pow((pointToUse.x - m_firstPoint.x), 2) +
+                  std::pow((pointToUse.y - m_firstPoint.y), 2));
+
+    if (distanceFirstToAssistant == 0.0) distanceFirstToAssistant = 0.001;
+
+    double ratio = distanceFirstToLast / distanceFirstToAssistant;
+
+    double newX;
+    double newY;
+
+    // flip the direction if the last point is farther than the first point
+    if (distanceFirstToAssistant < distanceLastToAssistant &&
+        distanceFirstToLast < distanceLastToAssistant) {
+      newX = ((1 + ratio) * m_firstPoint.x) - (ratio * pointToUse.x);
+      newY = ((1 + ratio) * m_firstPoint.y) - (ratio * pointToUse.y);
+    } else {
+      newX = ((1 - ratio) * m_firstPoint.x) + (ratio * pointToUse.x);
+      newY = ((1 - ratio) * m_firstPoint.y) + (ratio * pointToUse.y);
+    }
+
+    m_lastPoint = TPointD(newX, newY);
+    invalidateRect += TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+  } else if (e.isCtrlPressed() && !e.isAltPressed() && !e.isShiftPressed()) {
+    invalidateRect   = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
+    nonShiftStraight = true;
+    double distance  = (m_brushPos.x) * 0.5;
+    TRectD brushRect =
+        TRectD(TPointD(m_brushPos.x - distance, m_brushPos.y - distance),
+               TPointD(m_brushPos.x + distance, m_brushPos.y + distance));
+    invalidateRect += (brushRect);
+
+    double denominator = m_lastPoint.x - m_firstPoint.x;
+    if (denominator == 0) denominator == 0.001;
+    double slope    = ((m_lastPoint.y - m_firstPoint.y) / denominator);
+    double radAngle = std::atan(abs(slope));
+    double angle    = radAngle * (180 / 3.14159);
+    if (abs(angle) >= 82.5) {
+      // make it vertical
+      m_lastPoint.x = m_firstPoint.x;
+    } else if (abs(angle) < 7.5) {
+      // make it horizontal
+      m_lastPoint.y = m_firstPoint.y;
+    } else {
+      double xDistance = m_lastPoint.x - m_firstPoint.x;
+      double yDistance = m_lastPoint.y - m_firstPoint.y;
+
+      double totalDistance =
+          std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
+      double xLength = 0.0;
+      double yLength = 0.0;
+      if (angle >= 7.5 && angle < 22.5) {
+        yLength = std::sin(15 * (3.14159 / 180)) * totalDistance;
+        xLength = std::cos(15 * (3.14159 / 180)) * totalDistance;
+      } else if (angle >= 22.5 && angle < 37.5) {
+        yLength = std::sin(30 * (3.14159 / 180)) * totalDistance;
+        xLength = std::cos(30 * (3.14159 / 180)) * totalDistance;
+      } else if (angle >= 37.5 && angle < 52.5) {
+        yLength = std::sin(45 * (3.14159 / 180)) * totalDistance;
+        xLength = std::cos(45 * (3.14159 / 180)) * totalDistance;
+      } else if (angle >= 52.5 && angle < 67.5) {
+        yLength = std::sin(60 * (3.14159 / 180)) * totalDistance;
+        xLength = std::cos(60 * (3.14159 / 180)) * totalDistance;
+      } else if (angle >= 67.5 && angle < 82.5) {
+        yLength = std::sin(75 * (3.14159 / 180)) * totalDistance;
+        xLength = std::cos(75 * (3.14159 / 180)) * totalDistance;
+      }
+
+      if (yDistance == abs(yDistance)) {
+        m_lastPoint.y = m_firstPoint.y + yLength;
+      } else {
+        m_lastPoint.y = m_firstPoint.y - yLength;
+      }
+      if (xDistance == abs(xDistance)) {
+        m_lastPoint.x = m_firstPoint.x + xLength;
+      } else {
+        m_lastPoint.x = m_firstPoint.x - xLength;
+      }
+    }
+  }
 
   m_lastDragPos   = pos;
   m_lastDragEvent = e;
@@ -962,19 +963,19 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
   m_toggleSnap = !e.isAltPressed() && e.isCtrlPressed() && e.isShiftPressed();
 
   if (!nonShiftStraight) {
-      checkStrokeSnapping(false, m_toggleSnap);
-      checkGuideSnapping(false, m_toggleSnap);
-      m_brushPos = m_lastSnapPoint;
-  }
-  else {
-      m_brushPos = m_lastPoint;
+    checkStrokeSnapping(false, m_toggleSnap);
+    checkGuideSnapping(false, m_toggleSnap);
+    m_brushPos = m_lastSnapPoint;
+  } else {
+    m_brushPos = m_lastPoint;
   }
 
   if (m_foundLastSnap)
     invalidateRect +=
         TRectD(m_lastSnapPoint - snapThick, m_lastSnapPoint + snapThick);
 
-  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
+  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) ||
+      nonShiftStraight) {
     m_smoothStroke.clearPoints();
     m_track.add(TThickPoint(m_brushPos, thickness),
                 getPixelSize() * getPixelSize());
@@ -1014,21 +1015,24 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     return;
   }
 
-  if ((e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) || m_addingAssistant) {
+  if ((e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) ||
+      m_addingAssistant) {
     m_addingAssistant = false;
     return;
   }
 
   bool nonShiftStraight = false;
-  if ((e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) || (!e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed())) {
-      nonShiftStraight = true;
+  if ((e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) ||
+      (!e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed())) {
+    nonShiftStraight = true;
   }
 
   if (m_isPath) {
     double error = 20.0 * getPixelSize();
 
     TStroke *stroke;
-    if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
+    if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) ||
+        nonShiftStraight) {
       m_track.removeMiddlePoints();
       stroke = m_track.makeStroke(0);
     } else {
@@ -1096,7 +1100,8 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   error *= getPixelSize();
 
   TStroke *stroke;
-  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) || nonShiftStraight) {
+  if ((e.isShiftPressed() && !e.isCtrlPressed() && !e.isAltPressed()) ||
+      nonShiftStraight) {
     m_track.removeMiddlePoints();
     stroke = m_track.makeStroke(0);
   } else {
@@ -1215,7 +1220,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   }
   assert(stroke);
   m_track.clear();
-  m_toggleSnap = false;
+  m_toggleSnap      = false;
   m_addingAssistant = false;
 }
 

@@ -1811,6 +1811,15 @@ void SceneViewer::onContextMenu(const QPoint &pos, const QPoint &globalPos) {
        i++)
     columnIndices.push_back(i);
 
+  TXshLevelHandle *level = TApp::instance()->getCurrentLevel();
+  if (level) {
+    TXshSimpleLevel *sl = level->getSimpleLevel();
+    if (sl) {
+      int vp = sl->getProperties()->getVanishingPoints().size();
+      if (vp > 0) m_canShowPerspectiveGrids = true;
+    }
+  }
+
   SceneViewerContextMenu *menu = new SceneViewerContextMenu(this);
 
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
