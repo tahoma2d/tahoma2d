@@ -41,6 +41,10 @@
 #include "tgl.h"
 #include "trop.h"
 
+#ifdef Q_OS_WIN
+#include <WinUser.h>  // for Sleep
+#endif
+
 // Qt includes
 #include <QPainter>
 
@@ -1200,6 +1204,9 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     }
     bool sendToBack =
         e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed();
+#ifdef Q_OS_WIN
+    sendToBack = (GetKeyState(VK_CAPITAL) & 0x0001);
+#endif
     addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
                      false, false, m_isFrameCreated, m_isLevelCreated, 0,
                      TFrameId::NO_FRAME, sendToBack);
