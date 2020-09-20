@@ -81,6 +81,22 @@ AboutPopup::AboutPopup(QWidget* parent)
       tr("Tahoma ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
   mainLayout->addWidget(ffmpegLabel);
 
+  mainLayout->addSpacerItem(new QSpacerItem(this->width(), 10));
+
+  mainLayout->addWidget(
+      new QLabel(tr("Tahoma is made possible with the help of "
+                    "patrons.\nSpecial thanks to:")));
+  mainLayout->addWidget(new QLabel("Rodney Baker"));
+  mainLayout->addWidget(new QLabel("  "));
+
+  AboutClickableLabel* supportLink = new AboutClickableLabel(this);
+  supportLink->setText(tr("Please consider supporting Tahoma on Patreon."));
+  connect(supportLink, &AboutClickableLabel::clicked, [=]() {
+    QDesktopServices::openUrl(QUrl("https://patreon.com/jeremybullock"));
+    ;
+  });
+  supportLink->setToolTip("https://patreon.com/jeremybullock");
+  mainLayout->addWidget(supportLink);
   mainLayout->addStretch();
 
   QFrame* mainFrame = new QFrame(this);
