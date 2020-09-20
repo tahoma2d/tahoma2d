@@ -197,7 +197,7 @@ ChannelField::ChannelField(QWidget *parent, const QString &string, int value,
   QLabel *channelName = new QLabel(string, this);
   m_channelEdit       = new DVGui::IntLineEdit(this, value, 0, maxValue);
   m_channelSlider     = new QSlider(Qt::Horizontal, this);
-
+  m_channelSlider->setFocusPolicy(Qt::NoFocus);
   channelName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   channelName->setFixedWidth(labelWidth);
 
