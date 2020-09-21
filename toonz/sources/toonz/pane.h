@@ -135,7 +135,6 @@ signals:
 class TPanelTitleBar final : public QFrame {
   Q_OBJECT
 
-  bool m_isActive;
   bool m_closeButtonHighlighted;
   std::vector<std::pair<QPoint, QWidget *>> m_buttons;
 
@@ -148,9 +147,6 @@ public:
 
   QSize sizeHint() const override { return minimumSizeHint(); }
   QSize minimumSizeHint() const override;
-
-  void setIsActive(bool value);
-  bool isActive() { return m_isActive; }
 
   // pos = widget position. n.b. if pos.x()<0 then origin is topright corner
   void add(const QPoint &pos, QWidget *widget);
@@ -219,7 +215,6 @@ class TPanel : public TDockWidget {
   std::string m_panelType;
   bool m_isMaximizable;
   bool m_isMaximized;
-  bool m_isActive;
   bool m_multipleInstancesAllowed;
 
   TPanelTitleBar *m_panelTitleBar;
@@ -242,9 +237,6 @@ public:
 
   QList<TPanel *> getHiddenDockWidget() const { return m_hiddenDockWidgets; }
   QByteArray getSavedOldState() const { return m_currentRoomOldState; }
-
-  bool isActive() { return m_isActive; }
-  void setActive(bool value);
 
   // void setTitleBarWidget(TPanelTitleBar *newTitleBar);
 
