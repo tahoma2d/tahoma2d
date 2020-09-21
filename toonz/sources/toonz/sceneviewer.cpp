@@ -1595,6 +1595,7 @@ void SceneViewer::drawOverlay() {
         tglMultMatrix(m_drawCameraAff);
         m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
         ViewerDraw::drawCamera(f, m_pixelSize);
+        ViewerDraw::drawGridsAndOverlays(f, m_pixelSize);
         glPopMatrix();
       }
     }

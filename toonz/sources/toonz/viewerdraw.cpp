@@ -678,6 +678,88 @@ void ViewerDraw::drawSafeArea() {
 
 //-----------------------------------------------------------------------------
 
+void ViewerDraw::drawGridsAndOverlays(unsigned long flags, double pixelSize) {
+    bool cameraRef = 0 != (flags & ViewerDraw::CAMERA_REFERENCE);
+    bool camera3d = 0 != (flags & ViewerDraw::CAMERA_3D);
+    bool solidLine = 0 != (flags & ViewerDraw::SOLID_LINE);
+    bool subcamera = 0 != (flags & ViewerDraw::SUBCAMERA);
+
+    TApp* app = TApp::instance();
+    ToonzScene* scene = app->getCurrentScene()->getScene();
+    TXsheet* xsh = scene->getXsheet();
+    TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+
+    TRectD rect = getCameraRect();
+
+    glLineStipple(1, 0xCCCC);
+    glEnable(GL_LINE_STIPPLE);
+
+    glColor3d(1.0, 0.0, 1.0);
+    glBegin(GL_LINES);
+
+    double lengthX = rect.x1 - rect.x0;
+    double lengthY = rect.y1 - rect.y0;
+
+    double halfX = (rect.x1 - rect.x0) / 2.0;
+    double halfY = (rect.y1 - rect.y0) / 2.0;
+    double thirdX = (rect.x1 - rect.x0) / 3.0;
+    double thirdY = (rect.y1 - rect.y0) / 3.0;
+
+    double phiX = (rect.x1 - rect.x0) / 1.618;
+    double phiY = (rect.y1 - rect.y0) / 1.618;
+
+    // vertical thirds
+    glVertex2d(rect.x0 + thirdX, rect.y0);
+    glVertex2d(rect.x0 + thirdX, rect.y1);
+    glVertex2d(rect.x0 + (thirdX * 2), rect.y0);
+    glVertex2d(rect.x0 + (thirdX * 2), rect.y1);
+
+    // horizontal thirds
+    glVertex2d(rect.x0, rect.y0 + thirdY);
+    glVertex2d(rect.x1, rect.y0 + thirdY);
+    glVertex2d(rect.x0, rect.y0 + (thirdY * 2));
+    glVertex2d(rect.x1, rect.y0 + (thirdY * 2));
+
+
+    // phi thirds
+    glVertex2d(rect.x0 + phiX, rect.y0);
+    glVertex2d(rect.x0 + phiX, rect.y1);
+    glVertex2d(rect.x1 - phiX, rect.y0);
+    glVertex2d(rect.x1 - phiX, rect.y1);
+
+    glVertex2d(rect.x0, rect.y0 + phiY);
+    glVertex2d(rect.x1, rect.y0 + phiY);
+    glVertex2d(rect.x0, rect.y1 - phiY);
+    glVertex2d(rect.x1, rect.y1 - phiY);
+
+    double dx = 0.05 * rect.getP00().x;
+    double dy = 0.05 * rect.getP00().y;
+    //tglDrawSegment(TPointD(-dx, -dy), TPointD(dx, dy));
+    //tglDrawSegment(TPointD(-dx, dy), TPointD(dx, -dy));
+
+    double theta = 30.0 * (3.14159 / 180);
+    double tempXLength = lengthX;
+    double tempYLength = lengthY;
+    double step = 100.0;
+    for (double i = 0.0; tempXLength > 0; i += 1.0) {
+        double opposite = std::tan(theta) * (lengthX - (i * step));
+        if (opposite > 0) {
+            glVertex2d(rect.x0 + (i * step), rect.y0);
+            glVertex2d(rect.x1, rect.y0 + opposite);
+            if (i > 0) {
+                glVertex2d(rect.x1 - (i * step), rect.y1);
+                glVertex2d(rect.x0, rect.y1 - opposite);
+            }
+        }
+        tempXLength = lengthX - (i * step);
+    }
+
+    glEnd();
+    glDisable(GL_LINE_STIPPLE);
+}
+
+//-----------------------------------------------------------------------------
+
 void ViewerDraw::drawCamera(unsigned long flags, double pixelSize) {
   bool cameraRef = 0 != (flags & ViewerDraw::CAMERA_REFERENCE);
   bool camera3d  = 0 != (flags & ViewerDraw::CAMERA_3D);

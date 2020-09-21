@@ -40,7 +40,7 @@ void drawPerspectiveGuides(SceneViewer *viewer, double viewerScale,
 
 void draw3DCamera(unsigned long flags, double zmin, double phi);
 void drawCamera(unsigned long flags, double pixelSize);
-
+void drawGridsAndOverlays(unsigned long flags, double pixelSize);
 void draw3DFrame(double zmin, double phi);
 void drawDisk(int &tableDLId);
 void drawFieldGuide();
