@@ -203,9 +203,7 @@ protected:
                       //! substitution.
       m_firstTime, m_isPath, m_presetsLoaded, m_firstFrameRange;
 
-  /*---
-  ��ƒ���FrameId���N���b�N���ɕۑ����A�}�E�X�����[�X���iUndo�̓o�^���j�ɕʂ̃t���[����
-  �ړ����Ă����Ƃ��̕s����C������B---*/
+
   TFrameId m_workingFrameId;
 
   TPointD m_lastDragPos;        //!< Position where mouse was last dragged.
