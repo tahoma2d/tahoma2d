@@ -410,7 +410,7 @@ class GeometricToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCombo *m_shapeField;
   ToolOptionCheckbox *m_pencilMode;
   ToolOptionIntSlider *m_miterField;
-  ToolOptionCheckbox *m_snapCheckbox, *m_smoothCheckbox;
+  ToolOptionCheckbox *m_snapCheckbox, *m_smoothCheckbox, *m_drawOrderCheckbox;
   ToolOptionCombo *m_snapSensitivityCombo;
   TTool *m_tool;
 
@@ -530,7 +530,7 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   ToolOptionPopupButton *m_joinStyleCombo;
   ToolOptionIntSlider *m_miterField;
   ToolOptionCombo *m_presetCombo;
-  ToolOptionCheckbox *m_snapCheckbox;
+  ToolOptionCheckbox *m_snapCheckbox, *m_drawOrderCheckbox;
   ToolOptionCombo *m_snapSensitivityCombo;
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;

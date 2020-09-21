@@ -56,6 +56,7 @@ TEnv::IntVar GeometricJoinStyle("InknpaintGeometricJoinStyle", 0);
 TEnv::IntVar GeometricMiterValue("InknpaintGeometricMiterValue", 4);
 TEnv::IntVar GeometricSnap("InknpaintGeometricSnap", 0);
 TEnv::IntVar GeometricSnapSensitivity("InknpaintGeometricSnapSensitivity", 0);
+TEnv::IntVar GeometricDrawBehind("InknpaintGeometricDrawBehind", 0);
 
 //-------------------------------------------------------------------
 
@@ -82,9 +83,9 @@ static TPointD rectify(const TPointD &oldPos, const TPointD &pos) {
   const TPointD directions[] = {TPointD(1, 0),  TPointD(h, h),  TPointD(0, 1),
                                 TPointD(-h, h), TPointD(-1, 0), TPointD(-h, -h),
                                 TPointD(0, -1), TPointD(h, -h)};
-  TPointD v                  = pos - oldPos;
-  int j                      = 0;
-  double bestValue           = v * directions[j];
+  TPointD v        = pos - oldPos;
+  int j            = 0;
+  double bestValue = v * directions[j];
   for (int k = 1; k < 8; k++) {
     double value = v * directions[k];
     if (value > bestValue) {
@@ -386,6 +387,7 @@ public:
   TIntProperty m_miterJoinLimit;
   TBoolProperty m_snap;
   TEnumProperty m_snapSensitivity;
+  TBoolProperty m_sendToBack;
   TPropertyGroup m_prop[2];
 
   int m_targetType;
@@ -414,6 +416,7 @@ public:
       , m_miterJoinLimit("Miter:", 0, 100, 4)
       , m_snap("Snap", false)
       , m_snapSensitivity("Sensitivity:")
+      , m_sendToBack("Draw Under", 0)
       , m_targetType(targetType) {
     if (targetType & TTool::Vectors) m_prop[0].bind(m_toolSize);
     if (targetType & TTool::ToonzImage || targetType & TTool::RasterImage) {
@@ -427,6 +430,8 @@ public:
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
+      m_prop[0].bind(m_sendToBack);
+      m_sendToBack.setId("DrawUnder");
       m_prop[0].bind(m_snap);
       m_snap.setId("Snap");
       m_prop[0].bind(m_snapSensitivity);
@@ -506,6 +511,7 @@ public:
       m_snapSensitivity.setItemUIName(LOW_WSTR, tr("Low"));
       m_snapSensitivity.setItemUIName(MEDIUM_WSTR, tr("Med"));
       m_snapSensitivity.setItemUIName(HIGH_WSTR, tr("High"));
+      m_sendToBack.setQStringName(tr("Draw Under"));
     }
   }
 };
@@ -598,7 +604,7 @@ TPointD Primitive::calculateSnap(TPointD pos) {
         else if (areAlmostEqual(outW, 1.0, 1e-3))
           m_param->m_w1 = 1.0;
         else
-          m_param->m_w1 = outW;
+          m_param->m_w1      = outW;
         TThickPoint point1   = stroke->getPoint(m_param->m_w1);
         snapPoint            = TPointD(point1.x, point1.y);
         m_param->m_foundSnap = true;
@@ -1094,6 +1100,7 @@ public:
       m_param.m_miterJoinLimit.setValue(GeometricMiterValue);
       m_firstTime = false;
       m_param.m_snap.setValue(GeometricSnap);
+      m_param.m_sendToBack.setValue(GeometricDrawBehind);
       if (m_targetType & TTool::Vectors) {
         m_param.m_snapSensitivity.setIndex(GeometricSnapSensitivity);
         switch (GeometricSnapSensitivity) {
@@ -1202,6 +1209,8 @@ public:
       GeometricJoinStyle = m_param.m_joinStyle.getIndex();
     else if (propertyName == m_param.m_miterJoinLimit.getName())
       GeometricMiterValue = m_param.m_miterJoinLimit.getValue();
+    else if (propertyName == m_param.m_sendToBack.getName())
+        GeometricDrawBehind = m_param.m_sendToBack.getValue();
     else if (propertyName == m_param.m_snap.getName())
       GeometricSnap = m_param.m_snap.getValue();
     else if (propertyName == m_param.m_snapSensitivity.getName()) {
@@ -1292,12 +1301,12 @@ public:
         ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                          stroke->getBBox());
 
-        vi->addStroke(stroke);
+        vi->addStroke(stroke, true, m_param.m_sendToBack.getValue() > 0);
 
         TUndoManager::manager()->add(new UndoPencil(
-            vi->getStroke(vi->getStrokeCount() - 1), fillInformation, sl, id,
-            m_isFrameCreated, m_isLevelCreated, m_param.m_autogroup.getValue(),
-            m_param.m_autofill.getValue()));
+            stroke, fillInformation, sl, id, m_isFrameCreated, m_isLevelCreated,
+            m_param.m_autogroup.getValue(), m_param.m_autofill.getValue(),
+            m_param.m_sendToBack.getValue() > 0));
 
         if ((Preferences::instance()->getGuidedDrawingType() == 1 ||
              Preferences::instance()->getGuidedDrawingType() == 2) &&
@@ -1309,7 +1318,8 @@ public:
             vbTool->setViewer(m_viewer);
             vbTool->doGuidedAutoInbetween(id, vi, stroke, false,
                                           m_param.m_autogroup.getValue(),
-                                          m_param.m_autofill.getValue(), false);
+                                          m_param.m_autofill.getValue(), false,
+                                          m_param.m_sendToBack.getValue() > 0);
           }
         }
       }
@@ -1494,7 +1504,7 @@ void RectanglePrimitive::leftButtonDown(const TPointD &pos,
     else
       m_startPoint = TPointD((int)pos.x + 0.5, (int)pos.y + 0.5);
   } else
-    m_startPoint = newPos;
+    m_startPoint     = newPos;
   m_selectingRect.x0 = m_startPoint.x;
   m_selectingRect.y0 = m_startPoint.y;
   m_selectingRect.x1 = m_startPoint.x;
@@ -1631,7 +1641,7 @@ void RectanglePrimitive::onEnter() {
     m_color = TPixel32::Red;
   else {
     const TColorStyle *style = app->getCurrentLevelStyle();
-    if (style) m_color = style->getAverageColor();
+    if (style) m_color       = style->getAverageColor();
   }
 }
 
@@ -1719,7 +1729,7 @@ void CirclePrimitive::onEnter() {
     m_color = TPixel32::Red;
   else {
     const TColorStyle *style = app->getCurrentLevelStyle();
-    if (style) m_color = style->getAverageColor();
+    if (style) m_color       = style->getAverageColor();
   }
 }
 
@@ -1902,7 +1912,7 @@ void MultiLinePrimitive::leftButtonDown(const TPointD &pos,
   newPos = getSnap(pos);
 
   // Se clicco nell'ultimo vertice chiudo la linea.
-  TPointD _pos = pos;
+  TPointD _pos       = pos;
   if (m_closed) _pos = m_vertex.front();
 
   if (e.isShiftPressed() && !m_vertex.empty())
@@ -1920,8 +1930,9 @@ void MultiLinePrimitive::leftButtonDown(const TPointD &pos,
 void MultiLinePrimitive::leftButtonDrag(const TPointD &pos,
                                         const TMouseEvent &e) {
   if (m_vertex.size() == 0 || m_isSingleLine) return;
-  if (m_speedMoved || tdistance2(m_vertex[m_vertex.size() - 1], pos) >
-                          sq(7.0 * m_tool->getPixelSize())) {
+  if (m_speedMoved ||
+      tdistance2(m_vertex[m_vertex.size() - 1], pos) >
+          sq(7.0 * m_tool->getPixelSize())) {
     moveSpeed(m_mousePosition - pos);
     m_speedMoved = true;
     m_undo->setNewVertex(m_vertex);
@@ -2066,7 +2077,7 @@ void MultiLinePrimitive::onEnter() {
     m_color = TPixel32::Red;
   else {
     const TColorStyle *style = app->getCurrentLevelStyle();
-    if (style) m_color = style->getAverageColor();
+    if (style) m_color       = style->getAverageColor();
   }
 }
 
@@ -2267,9 +2278,8 @@ TStroke *EllipsePrimitive::makeStroke() const {
     return 0;
 
   return makeEllipticStroke(
-      getThickness(),
-      TPointD(0.5 * (m_selectingRect.x0 + m_selectingRect.x1),
-              0.5 * (m_selectingRect.y0 + m_selectingRect.y1)),
+      getThickness(), TPointD(0.5 * (m_selectingRect.x0 + m_selectingRect.x1),
+                              0.5 * (m_selectingRect.y0 + m_selectingRect.y1)),
       fabs(0.5 * (m_selectingRect.x1 - m_selectingRect.x0)),
       fabs(0.5 * (m_selectingRect.y1 - m_selectingRect.y0)));
 }
@@ -2301,7 +2311,7 @@ void EllipsePrimitive::onEnter() {
     m_color = TPixel32::Red;
   } else {
     const TColorStyle *style = app->getCurrentLevelStyle();
-    if (style) m_color = style->getAverageColor();
+    if (style) m_color       = style->getAverageColor();
   }
 }
 
@@ -2567,7 +2577,7 @@ void MultiArcPrimitive::onEnter() {
     m_color = TPixel32::Red;
   else {
     const TColorStyle *style = app->getCurrentLevelStyle();
-    if (style) m_color = style->getAverageColor();
+    if (style) m_color       = style->getAverageColor();
   }
 }
 

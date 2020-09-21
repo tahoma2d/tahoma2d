@@ -167,10 +167,12 @@ int TVectorImage::addStroke(TStroke *stroke, bool discardPoints,
           }
           m_imp->insertStrokeAt(
               new VIStroke(stroke, m_imp->m_strokes[i]->m_groupId), k + 1);
-        } else
+          return k + 1;
+        } else {
           m_imp->insertStrokeAt(
               new VIStroke(stroke, m_imp->m_strokes[i]->m_groupId), i + 1);
-        return i + 1;
+          return i + 1;
+        }
       }
   }
 
@@ -186,7 +188,10 @@ int TVectorImage::addStroke(TStroke *stroke, bool discardPoints,
   else
     m_imp->insertStrokeAt(new VIStroke(stroke, gid), 0);
   m_imp->m_areValidRegions = false;
-  return m_imp->m_strokes.size() - 1;
+  if (sendToBack)
+    return 0;
+  else
+    return m_imp->m_strokes.size() - 1;
 }
 
 //-----------------------------------------------------------------------------

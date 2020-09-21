@@ -135,13 +135,14 @@ public:
                            int interpolationType, bool breakAngles,
                            bool autoGroup = false, bool autoFill = false,
                            bool drawFirstStroke = true,
-                           bool drawLastStroke = true, bool withUndo = true);
+                           bool drawLastStroke = true, bool withUndo = true,
+                           bool sendToBack = false);
   void checkGuideSnapping(bool beforeMousePress, bool invertCheck);
   void checkStrokeSnapping(bool beforeMousePress, bool invertCheck);
   bool doGuidedAutoInbetween(TFrameId cFid, const TVectorImageP &cvi,
                              TStroke *cStroke, bool breakAngles,
                              bool autoGroup = false, bool autoFill = false,
-                             bool drawStroke = true);
+                             bool drawStroke = true, bool sendToBack = false);
 
 protected:
   TPropertyGroup m_prop[2];
@@ -153,6 +154,7 @@ protected:
   TBoolProperty m_breakAngles;
   TBoolProperty m_pressure;
   TBoolProperty m_snap;
+  TBoolProperty m_sendToBack;
   TEnumProperty m_frameRange;
   TEnumProperty m_snapSensitivity;
   TEnumProperty m_capStyle;
@@ -202,8 +204,8 @@ protected:
       m_firstTime, m_isPath, m_presetsLoaded, m_firstFrameRange;
 
   /*---
-  ì‹Æ’†‚ÌFrameId‚ğƒNƒŠƒbƒN‚É•Û‘¶‚µAƒ}ƒEƒXƒŠƒŠ[ƒXiUndo‚Ì“o˜^j‚É•Ê‚ÌƒtƒŒ[ƒ€‚É
-  ˆÚ“®‚µ‚Ä‚¢‚½‚Æ‚«‚Ì•s‹ï‡‚ğC³‚·‚éB---*/
+  ï¿½ï¿½Æ’ï¿½ï¿½ï¿½FrameIdï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½É•Û‘ï¿½ï¿½ï¿½ï¿½Aï¿½}ï¿½Eï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½Xï¿½ï¿½ï¿½iUndoï¿½Ì“oï¿½^ï¿½ï¿½ï¿½jï¿½É•Ê‚Ìƒtï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½
+  ï¿½Ú“ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Ì•sï¿½ï‡ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B---*/
   TFrameId m_workingFrameId;
 
   TPointD m_lastDragPos;        //!< Position where mouse was last dragged.
