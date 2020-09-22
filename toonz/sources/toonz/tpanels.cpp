@@ -428,7 +428,7 @@ public:
 //-----------------------------------------------------------------------------
 
 PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
-    : StyleShortcutSwitchablePanel(parent) {
+    : StyleShortcutSwitchablePanel(parent), m_isFrozen(false) {
   m_paletteHandle = new TPaletteHandle();
   connect(m_paletteHandle, SIGNAL(colorStyleSwitched()),
           SLOT(onColorStyleSwitched()));
@@ -470,19 +470,20 @@ int PaletteViewerPanel::getViewType() { return m_paletteViewer->getViewMode(); }
 void PaletteViewerPanel::reset() {
   m_paletteViewer->setPaletteHandle(
       TApp::instance()->getPaletteController()->getCurrentLevelPalette());
-  m_isCurrentButton->setPressed(true);
-  setActive(true);
+  m_freezeButton->setPressed(false);
+  setFrozen(false);
 }
 
 //-----------------------------------------------------------------------------
 
 void PaletteViewerPanel::initializeTitleBar() {
-  m_isCurrentButton = new TPanelTitleBarButton(
-      getTitleBar(), svgToPixmap(getIconThemePath("actions/18/switch.svg")));
-  getTitleBar()->add(QPoint(-54, 0), m_isCurrentButton);
-  m_isCurrentButton->setPressed(true);
-  connect(m_isCurrentButton, SIGNAL(toggled(bool)),
-          SLOT(onCurrentButtonToggled(bool)));
+    m_freezeButton = new TPanelTitleBarButton(
+        getTitleBar(), getIconThemePath("actions/20/pane_freeze.svg"));
+    m_freezeButton->setToolTip("Freeze");
+    getTitleBar()->add(QPoint(-54, 0), m_freezeButton);
+    m_freezeButton->setPressed(m_isFrozen);
+    connect(m_freezeButton, SIGNAL(toggled(bool)),
+        SLOT(onFreezeButtonToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -499,23 +500,23 @@ void PaletteViewerPanel::onPaletteSwitched() {
 
 //-----------------------------------------------------------------------------
 
-void PaletteViewerPanel::onCurrentButtonToggled(bool isCurrent) {
-  if (isActive() == isCurrent) return;
+void PaletteViewerPanel::onFreezeButtonToggled(bool frozen) {
+    if (isFrozen() == frozen) return;
 
   TApp *app          = TApp::instance();
   TPaletteHandle *ph = app->getPaletteController()->getCurrentLevelPalette();
   // Se sono sulla palette del livello corrente e le palette e' vuota non
   // consento di bloccare il pannello.
-  if (isActive() && !ph->getPalette()) {
-    m_isCurrentButton->setPressed(true);
-    return;
+  if (!isFrozen() && !ph->getPalette()) {
+      m_freezeButton->setPressed(false);
+      return;
   }
 
-  setActive(isCurrent);
-  m_paletteViewer->enableSaveAction(isCurrent);
+  setFrozen(frozen);
+  m_paletteViewer->enableSaveAction(!frozen);
 
   // Cambio il livello corrente
-  if (isCurrent) {
+  if (!frozen) {
     std::set<TXshSimpleLevel *> levels;
     TXsheet *xsheet = app->getCurrentXsheet()->getXsheet();
     int row, column;
@@ -558,14 +559,14 @@ void PaletteViewerPanel::onCurrentButtonToggled(bool isCurrent) {
 void PaletteViewerPanel::onSceneSwitched() {
   // Se e' il paletteHandle del livello corrente l'aggiornamento viene fatto
   // grazie all'aggiornamento del livello.
-  if (isActive()) return;
+  if (!isFrozen()) return;
 
   // Setto a zero la palette del "paletteHandle bloccato".
   m_paletteHandle->setPalette(0);
   // Sblocco il viewer nel caso in cui il e' bloccato.
-  if (!isActive()) {
-    setActive(true);
-    m_isCurrentButton->setPressed(true);
+  if (isFrozen()) {
+      setFrozen(false);
+      m_freezeButton->setPressed(false);
     m_paletteViewer->setPaletteHandle(
         TApp::instance()->getPaletteController()->getCurrentLevelPalette());
   }
