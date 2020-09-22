@@ -10,6 +10,7 @@
 
 class TPanelTitleBarButtonSet;
 class Room;
+class QMenu;
 
 //! icon buttons placed on the panel titlebar (cfr. viewerpane.h)
 class TPanelTitleBarButton : public QWidget {
@@ -97,13 +98,17 @@ protected slots:
 
 class TPanelTitleBarButtonForCameraView final : public TPanelTitleBarButton {
   Q_OBJECT
+
+      QMenu* m_menu;
+
 public:
-  TPanelTitleBarButtonForCameraView(QWidget *parent,
-                                    const QString &standardPixmapName)
-      : TPanelTitleBarButton(parent, standardPixmapName) {}
+    TPanelTitleBarButtonForCameraView(QWidget* parent,
+        const QString& standardPixmapName);
+      
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+
 signals:
   void updateViewer();
 };
@@ -111,14 +116,15 @@ signals:
 //-----------------------------------------------------------------------------
 
 class TPanelTitleBarButtonForGrids final : public TPanelTitleBarButton {
-  Q_OBJECT
+    Q_OBJECT
+
+        QMenu* m_menu;
 public:
-  TPanelTitleBarButtonForGrids(QWidget *parent,
-                               const QString &standardPixmapName)
-      : TPanelTitleBarButton(parent, standardPixmapName) {}
+    TPanelTitleBarButtonForGrids(QWidget* parent,
+        const QString& standardPixmapName);
+      //: TPanelTitleBarButton(parent, standardPixmapName) {}
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
 signals:
   void updateViewer();

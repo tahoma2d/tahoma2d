@@ -48,6 +48,10 @@ TEnv::IntVar ShowVerticalGrid("ShowVerticalGrid", 0);
 TEnv::IntVar ShowHorizontalGrid("ShowHorizontalGrid", 0);
 TEnv::IntVar VerticalSpacing("VerticalSpacing", 100);
 TEnv::IntVar HorizontalSpacing("HorizontalSpacing", 100);
+TEnv::IntVar HorizontalOffset("HorizontalOffset", 0);
+TEnv::IntVar VerticalOffset("VerticalOffset", 0);
+TEnv::IntVar ShowFieldGuide("ShowFieldGuide", 1);
+TEnv::IntVar GuideOpacity("GuideOpacity", 70);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);
@@ -727,7 +731,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
   glEnable(GL_BLEND);  // Enable blending.
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glColor4d(1.0, 0.3, 1.0, 0.4);
+  glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity / 100.0);
   glLineWidth(0.5f);
 
   double lengthX = rect.x1 - rect.x0;
@@ -741,45 +745,14 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
   double phiX = (rect.x1 - rect.x0) / 1.618;
   double phiY = (rect.y1 - rect.y0) / 1.618;
 
-  if (ShowRuleOfThirds) {
-    // vertical thirds
-    glBegin(GL_LINES);
-    glVertex2d(rect.x0 + thirdX, rect.y0);
-    glVertex2d(rect.x0 + thirdX, rect.y1);
-    glVertex2d(rect.x0 + (thirdX * 2), rect.y0);
-    glVertex2d(rect.x0 + (thirdX * 2), rect.y1);
-
-    // horizontal thirds
-    glVertex2d(rect.x0, rect.y0 + thirdY);
-    glVertex2d(rect.x1, rect.y0 + thirdY);
-    glVertex2d(rect.x0, rect.y0 + (thirdY * 2));
-    glVertex2d(rect.x1, rect.y0 + (thirdY * 2));
-    glEnd();
-  }
-
-  if (ShowGoldenRatio) {
-    // phi thirds
-    glBegin(GL_LINES);
-    glVertex2d(rect.x0 + phiX, rect.y0);
-    glVertex2d(rect.x0 + phiX, rect.y1);
-    glVertex2d(rect.x1 - phiX, rect.y0);
-    glVertex2d(rect.x1 - phiX, rect.y1);
-
-    glVertex2d(rect.x0, rect.y0 + phiY);
-    glVertex2d(rect.x1, rect.y0 + phiY);
-    glVertex2d(rect.x0, rect.y1 - phiY);
-    glVertex2d(rect.x1, rect.y1 - phiY);
-    glEnd();
-  }
-
   if (ShowVerticalGrid) {
-    tglDrawSegment(TPointD(rect.x0 + halfX, bounds.y0),
-                   TPointD(rect.x0 + halfX, bounds.y1));
+    tglDrawSegment(TPointD(rect.x0 + halfX + (VerticalOffset / Stage::standardDpi * Stage::inch), bounds.y0),
+                   TPointD(rect.x0 + halfX + (VerticalOffset / Stage::standardDpi * Stage::inch), bounds.y1));
     int step        = std::max(1, (int)VerticalSpacing);
     double currentX = rect.x0 + halfX;
     for (int i = 1; currentX > bounds.x0; i++) {
       currentX =
-          (rect.x0 + halfX) - (step * i / Stage::standardDpi * Stage::inch);
+          (rect.x0 + halfX) - ((step * i - VerticalOffset) / Stage::standardDpi * Stage::inch);
       glBegin(GL_LINES);
       glVertex2d(currentX, bounds.y0);
       glVertex2d(currentX, bounds.y1);
@@ -788,7 +761,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
     currentX = rect.x0 + halfX;
     for (int i = 1; currentX < bounds.x1; i++) {
       currentX =
-          (rect.x0 + halfX) + (step * i / Stage::standardDpi * Stage::inch);
+          (rect.x0 + halfX) + ((step * i + VerticalOffset) / Stage::standardDpi * Stage::inch);
       glBegin(GL_LINES);
       glVertex2d(currentX, bounds.y0);
       glVertex2d(currentX, bounds.y1);
@@ -797,13 +770,13 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
   }
 
   if (ShowHorizontalGrid) {
-    tglDrawSegment(TPointD(bounds.x0, rect.y0 + halfY),
-                   TPointD(bounds.x1, rect.y0 + halfY));
+    tglDrawSegment(TPointD(bounds.x0, rect.y0 + halfY + (HorizontalOffset / Stage::standardDpi * Stage::inch)),
+                   TPointD(bounds.x1, rect.y0 + halfY + (HorizontalOffset / Stage::standardDpi * Stage::inch)));
     int step        = std::max(1, (int)HorizontalSpacing);
     double currentY = rect.y0 + halfY;
     for (int i = 1; currentY > bounds.y0; i++) {
       currentY =
-          rect.y0 + halfY - (step * i / Stage::standardDpi * Stage::inch);
+          rect.y0 + halfY - ((step * i - HorizontalOffset) / Stage::standardDpi * Stage::inch);
       // double xInPixels =
       glBegin(GL_LINES);
       glVertex2d(bounds.x0, currentY);
@@ -813,7 +786,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
     currentY = rect.y0 + halfY;
     for (int i = 1; currentY < bounds.y1; i++) {
       currentY =
-          rect.y0 + halfY + (step * i / Stage::standardDpi * Stage::inch);
+          rect.y0 + halfY + ((step * i + HorizontalOffset)/ Stage::standardDpi * Stage::inch);
       glBegin(GL_LINES);
       glVertex2d(bounds.x0, currentY);
       glVertex2d(bounds.x1, currentY);
@@ -886,6 +859,72 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
   glLineWidth(1.0f);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewerDraw::drawCameraOverlays(SceneViewer* viewer, unsigned long flags,
+    double pixelSize) {
+    TRectD rect = getCameraRect();
+
+    glEnable(GL_BLEND);  // Enable blending.
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity/100.0);
+    glLineWidth(0.5f);
+
+    double lengthX = rect.x1 - rect.x0;
+    double lengthY = rect.y1 - rect.y0;
+
+    double halfX = (rect.x1 - rect.x0) / 2.0;
+    double halfY = (rect.y1 - rect.y0) / 2.0;
+    double thirdX = (rect.x1 - rect.x0) / 3.0;
+    double thirdY = (rect.y1 - rect.y0) / 3.0;
+
+    double phiX = (rect.x1 - rect.x0) / 1.618;
+    double phiY = (rect.y1 - rect.y0) / 1.618;
+
+    if (ShowRuleOfThirds) {
+        // vertical thirds
+        glBegin(GL_LINES);
+        glVertex2d(rect.x0 + thirdX, rect.y0);
+        glVertex2d(rect.x0 + thirdX, rect.y1);
+        glVertex2d(rect.x0 + (thirdX * 2), rect.y0);
+        glVertex2d(rect.x0 + (thirdX * 2), rect.y1);
+
+        // horizontal thirds
+        glVertex2d(rect.x0, rect.y0 + thirdY);
+        glVertex2d(rect.x1, rect.y0 + thirdY);
+        glVertex2d(rect.x0, rect.y0 + (thirdY * 2));
+        glVertex2d(rect.x1, rect.y0 + (thirdY * 2));
+        glEnd();
+    }
+
+    if (ShowGoldenRatio) {
+        // phi thirds
+        glBegin(GL_LINES);
+        glVertex2d(rect.x0 + phiX, rect.y0);
+        glVertex2d(rect.x0 + phiX, rect.y1);
+        glVertex2d(rect.x1 - phiX, rect.y0);
+        glVertex2d(rect.x1 - phiX, rect.y1);
+
+        glVertex2d(rect.x0, rect.y0 + phiY);
+        glVertex2d(rect.x1, rect.y0 + phiY);
+        glVertex2d(rect.x0, rect.y1 - phiY);
+        glVertex2d(rect.x1, rect.y1 - phiY);
+        glEnd();
+    }
+
+    
+    glLineWidth(1.0f);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+}
+
+//-----------------------------------------------------------------------------
+
+bool ViewerDraw::getShowFieldGuide() {
+    return ShowFieldGuide == 1 ? true : false;
 }
 
 //-----------------------------------------------------------------------------
