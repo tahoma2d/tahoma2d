@@ -428,8 +428,8 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
       bounds.y1 = p.y;
   }
 
-  double interval = 150;  // *sc;
-  glEnable(GL_BLEND);     // Enable blending.
+  double interval = 150;  
+  glEnable(GL_BLEND);     
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -439,46 +439,23 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
 
   for (int j = 0; j < assistantPoints.size(); j++) {
     TPointD p = assistantPoints.at(j);
-    if (j < 5) glColor4d(reds.at(j), greens.at(j), blues.at(j), 0.2);
-    TPointD end;
-    bool useX = true;
-    for (double i = bounds.x0; i < bounds.x1; i += interval) {
-      end.y = bounds.y0;
-      end.x = i;
-      tglDrawSegment(p, end);
+    if (j < 5) glColor4d(reds.at(j), greens.at(j), blues.at(j), (double)GuideOpacity / 100.0);
+    TPointD end;    
+    double distanceToLeft = std::abs(p.x - bounds.x0);
+    double distanceToRight = std::abs(p.x - bounds.x1);
+    double distanceToTop = std::abs(p.y - bounds.y1);
+    double distanceToBottom = std::abs(p.y - bounds.y0);
+    double xDistance = std::max(distanceToLeft, distanceToRight);
+    double yDistance = std::max(distanceToTop, distanceToBottom);
+    double totalDistance = std::sqrt(std::pow(xDistance, 2) +
+        std::pow(yDistance, 2));
+    for (int i = 0; i < 360; i += 5) {
+        double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
+        double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
+        end.x = p.x + xLength;
+        end.y = p.y + yLength;
+        tglDrawSegment(p, end);
     }
-    for (double i = bounds.x0; i < bounds.x1; i += interval) {
-      end.y = bounds.y1;
-      end.x = i;
-      tglDrawSegment(p, end);
-    }
-    for (double i = bounds.y0; i < bounds.y1; i += interval) {
-      end.y = i;
-      end.x = bounds.x0;
-      tglDrawSegment(p, end);
-    }
-    for (double i = bounds.y0; i < bounds.y1; i += interval) {
-      end.y = i;
-      end.x = bounds.x1;
-      tglDrawSegment(p, end);
-    }
-    // double distanceToLeft = std::abs(p.x - bounds.x0);
-    // double distanceToRight = std::abs(p.x - bounds.x1);
-    // double distanceToTop = std::abs(p.y - bounds.y1);
-    // double distanceToBottom = std::abs(p.y - bounds.y0);
-    // double xDistance = std::max(distanceToLeft, distanceToRight);
-    // double yDistance = std::max(distanceToTop, distanceToBottom);
-    // double totalDistance = std::sqrt(std::pow(xDistance, 2) +
-    // std::pow(yDistance, 2));
-    // for (int i = 0; i < 360; i += 15) {
-    //
-    //    //double slope = std::tan(i * (3.14159 / 180));
-    //    double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
-    //    double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
-    //    end.x = p.x + xLength;
-    //    end.y = p.y + yLength;
-    //    tglDrawSegment(p, end);
-    //}
   }
 
   glDisable(GL_LINE_SMOOTH);
