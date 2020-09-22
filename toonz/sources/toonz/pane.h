@@ -94,9 +94,6 @@ protected slots:
 };
 
 //-----------------------------------------------------------------------------
-/*! specialized button for sage area which enables to choose safe area size by
- * context menu
- */
 
 class TPanelTitleBarButtonForCameraView final : public TPanelTitleBarButton {
   Q_OBJECT
@@ -107,6 +104,22 @@ public:
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event) override;
+signals:
+  void updateViewer();
+};
+
+//-----------------------------------------------------------------------------
+
+class TPanelTitleBarButtonForGrids final : public TPanelTitleBarButton {
+  Q_OBJECT
+public:
+  TPanelTitleBarButtonForGrids(QWidget *parent,
+                               const QString &standardPixmapName)
+      : TPanelTitleBarButton(parent, standardPixmapName) {}
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 signals:
   void updateViewer();
 };

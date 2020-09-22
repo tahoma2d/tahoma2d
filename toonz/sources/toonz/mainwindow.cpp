@@ -2173,7 +2173,7 @@ void MainWindow::defineActions() {
                ViewCameraToggleAction ? 1 : 0, MenuViewCommandType);
   createToggle(MI_ViewTable, tr("&Table"), "", ViewTableToggleAction ? 1 : 0,
                MenuViewCommandType);
-  createToggle(MI_FieldGuide, tr("&Field Guide"), "Shift+G",
+  createToggle(MI_FieldGuide, tr("&Grids and Overlays"), "Shift+G",
                FieldGuideToggleAction ? 1 : 0, MenuViewCommandType);
   createToggle(MI_ViewBBox, tr("&Raster Bounding Box"), "",
                ViewBBoxToggleAction ? 1 : 0, MenuViewCommandType);
@@ -3658,7 +3658,7 @@ void MainWindow::toggleTransparency(bool on) {
   if (!on) {
     this->setProperty("windowOpacity", 1.0);
   } else {
-    this->setProperty("windowOpacity", (double)TransparencySliderValue/100);
+    this->setProperty("windowOpacity", (double)TransparencySliderValue / 100);
     m_transparencyTogglerWindow->show();
   }
 }
@@ -3681,9 +3681,10 @@ void MainWindow::makeTransparencyDialog() {
   m_transparencySlider->setRange(-100, -30);
   m_transparencySlider->setValue(TransparencySliderValue * -1);
   m_transparencySlider->setOrientation(Qt::Horizontal);
-  connect(m_transparencySlider, &QSlider::valueChanged,
-      [=](int value) { TransparencySliderValue = value * -1;
-       toggleTransparency(true); });
+  connect(m_transparencySlider, &QSlider::valueChanged, [=](int value) {
+    TransparencySliderValue = value * -1;
+    toggleTransparency(true);
+  });
 
   QVBoxLayout *togglerLayout       = new QVBoxLayout(this);
   QHBoxLayout *togglerSliderLayout = new QHBoxLayout(this);

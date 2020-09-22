@@ -446,19 +446,22 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   safeAreaButton->setPressed(
       CommandManager::instance()->getAction(MI_SafeArea)->isChecked());
 
-  button = new TPanelTitleBarButton(
+  TPanelTitleBarButtonForGrids *gridButton = new TPanelTitleBarButtonForGrids(
       titleBar, getIconThemePath("actions/20/pane_grid.svg"));
-  button->setToolTip(tr("Field Guide"));
+  gridButton->setToolTip(tr("Grids and Overlays\nRight click to adjust."));
   x += 1 + iconWidth;
-  titleBar->add(QPoint(x, 0), button);
-  ret = ret && connect(button, SIGNAL(toggled(bool)),
+  titleBar->add(QPoint(x, 0), gridButton);
+  ret = ret && connect(gridButton, SIGNAL(toggled(bool)),
                        CommandManager::instance()->getAction(MI_FieldGuide),
                        SLOT(trigger()));
-  ret = ret && connect(CommandManager::instance()->getAction(MI_FieldGuide),
-                       SIGNAL(triggered(bool)), button, SLOT(setPressed(bool)));
+  ret = ret &&
+        connect(CommandManager::instance()->getAction(MI_FieldGuide),
+                SIGNAL(triggered(bool)), gridButton, SLOT(setPressed(bool)));
   // initialize state
-  button->setPressed(
+  gridButton->setPressed(
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
+  connect(gridButton, &TPanelTitleBarButtonForGrids::updateViewer,
+          [=]() { m_sceneViewer->update(); });
 
   // view mode toggles
   button = new TPanelTitleBarButton(
