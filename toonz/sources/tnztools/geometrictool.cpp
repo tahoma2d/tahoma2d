@@ -1210,7 +1210,7 @@ public:
     else if (propertyName == m_param.m_miterJoinLimit.getName())
       GeometricMiterValue = m_param.m_miterJoinLimit.getValue();
     else if (propertyName == m_param.m_sendToBack.getName())
-        GeometricDrawBehind = m_param.m_sendToBack.getValue();
+      GeometricDrawBehind = m_param.m_sendToBack.getValue();
     else if (propertyName == m_param.m_snap.getName())
       GeometricSnap = m_param.m_snap.getValue();
     else if (propertyName == m_param.m_snapSensitivity.getName()) {
@@ -1277,7 +1277,10 @@ public:
     }
     /*-- VectorImageの場合 --*/
     else if (vi) {
+      int addedStrokeIndex = -1;
+      bool isSpline        = false;
       if (TTool::getApplication()->getCurrentObject()->isSpline()) {
+        isSpline = true;
         if (!ToolUtils::isJustCreatedSpline(vi.getPointer())) {
           m_primitive->setIsPrompting(true);
           QString question("Are you sure you want to replace the motion path?");
@@ -1301,7 +1304,8 @@ public:
         ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                          stroke->getBBox());
 
-        vi->addStroke(stroke, true, m_param.m_sendToBack.getValue() > 0);
+        addedStrokeIndex =
+            vi->addStroke(stroke, true, m_param.m_sendToBack.getValue() > 0);
 
         TUndoManager::manager()->add(new UndoPencil(
             stroke, fillInformation, sl, id, m_isFrameCreated, m_isLevelCreated,
@@ -1325,6 +1329,8 @@ public:
       }
       if (m_param.m_autogroup.getValue() && stroke->isSelfLoop()) {
         int index = vi->getStrokeCount() - 1;
+        if (m_param.m_sendToBack.getValue() > 0 && !isSpline)
+          index = addedStrokeIndex;
         vi->group(index, 1);
         if (m_param.m_autofill.getValue()) {
           // to avoid filling other strokes, I enter into the new stroke group
