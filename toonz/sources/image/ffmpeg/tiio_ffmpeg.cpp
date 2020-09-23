@@ -46,7 +46,14 @@ bool Ffmpeg::checkFfmpeg() {
     }
 #endif
 
-  // give up
+#ifdef LINUX
+	path = QDir::currentPath() + "/ffmpeg/ffmpeg";
+	if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+		Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/ffmpeg/");
+		return true;
+	}
+#endif
+	// give up
   return false;
 }
 
@@ -76,7 +83,15 @@ bool Ffmpeg::checkFfprobe() {
     }
 #endif
 
-  // give up
+#ifdef LINUX
+	path = QDir::currentPath() + "/ffmpeg/ffprobe";
+	if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+		Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/ffmpeg/");
+		return true;
+	}
+#endif
+
+	// give up
   return false;
 }
 
