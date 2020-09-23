@@ -1035,12 +1035,13 @@ int ToolUtils::UndoModifyListStroke::getSize() const {
 ToolUtils::UndoPencil::UndoPencil(
     TStroke *stroke, std::vector<TFilledRegionInf> *fillInformation,
     TXshSimpleLevel *level, const TFrameId &frameId, bool createdFrame,
-    bool createdLevel, bool autogroup, bool autofill)
+    bool createdLevel, bool autogroup, bool autofill, bool sendToBack)
     : TToolUndo(level, frameId, createdFrame, createdLevel, 0)
     , m_strokeId(stroke->getId())
     , m_fillInformation(fillInformation)
     , m_autogroup(autogroup)
-    , m_autofill(autofill) {
+    , m_autofill(autofill)
+    , m_sendToBack(sendToBack) {
   m_stroke = new TStroke(*stroke);
 }
 
@@ -1113,7 +1114,7 @@ void ToolUtils::UndoPencil::redo() const {
   QMutexLocker sl(image->getMutex());
   TStroke *stroke = new TStroke(*m_stroke);
   stroke->setId(m_strokeId);
-  image->addStroke(stroke);
+  image->addStroke(stroke, true, m_sendToBack);
   if (image->isComputedRegionAlmostOnce()) image->findRegions();
 
   if (m_autogroup && stroke->isSelfLoop()) {
