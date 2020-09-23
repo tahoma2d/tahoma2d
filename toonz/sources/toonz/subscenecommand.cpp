@@ -916,6 +916,7 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
     TFx *outerFx           = pair.first;
     // skip redundant item. in case when only one node is input to the xsheet
     // node in the inner dag
+    if (!outerFx) continue;
     if (outerFx->getAttributes()->getGroupId() == groupId) continue;
     outerFx->getAttributes()->setGroupId(groupId);
     outerFx->getAttributes()->setGroupName(L"Group " +
