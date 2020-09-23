@@ -426,7 +426,7 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -232;
+  int x                                 = -272;
   int iconWidth                         = 20;
   TPanelTitleBarButton *button;
 
@@ -448,17 +448,28 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   button = new TPanelTitleBarButton(
       titleBar, getIconThemePath("actions/20/pane_grid.svg"));
-  button->setToolTip(tr("Field Guide"));
+  button->setToolTip(tr("Grids and Overlays\nRight click to adjust."));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   ret = ret && connect(button, SIGNAL(toggled(bool)),
                        CommandManager::instance()->getAction(MI_FieldGuide),
                        SLOT(trigger()));
-  ret = ret && connect(CommandManager::instance()->getAction(MI_FieldGuide),
-                       SIGNAL(triggered(bool)), button, SLOT(setPressed(bool)));
+  ret = ret &&
+        connect(CommandManager::instance()->getAction(MI_FieldGuide),
+                SIGNAL(triggered(bool)), button, SLOT(setPressed(bool)));
   // initialize state
   button->setPressed(
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
+  
+
+  TPanelTitleBarButtonForGrids* gridMoreButton = new TPanelTitleBarButtonForGrids(
+      titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  gridMoreButton->setToolTip(tr("Grids and Overlays Settings"));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), gridMoreButton);
+  connect(gridMoreButton, &TPanelTitleBarButtonForGrids::updateViewer,
+      [=]() { m_sceneViewer->update(); });
+
 
   // view mode toggles
   button = new TPanelTitleBarButton(
@@ -476,15 +487,20 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
-  TPanelTitleBarButtonForCameraView *camButton =
-      new TPanelTitleBarButtonForCameraView(
+  button = new TPanelTitleBarButton(
           titleBar, getIconThemePath("actions/20/pane_cam.svg"));
-  camButton->setToolTip(tr("Camera View"));
+  button->setToolTip(tr("Camera View"));
   x += +1 + iconWidth;
-  titleBar->add(QPoint(x, 0), camButton);
-  camButton->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
-  connect(camButton, &TPanelTitleBarButtonForCameraView::updateViewer,
-          [=]() { m_sceneViewer->update(); });
+  titleBar->add(QPoint(x, 0), button);
+  button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+
+  TPanelTitleBarButtonForCameraView* camTransparencyButton = new TPanelTitleBarButtonForCameraView(
+      titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  camTransparencyButton->setToolTip(tr("Change camera view transparency."));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), camTransparencyButton);
+  connect(camTransparencyButton, &TPanelTitleBarButtonForCameraView::updateViewer,
+      [=]() { m_sceneViewer->update(); });
 
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));

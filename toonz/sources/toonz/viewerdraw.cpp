@@ -37,6 +37,21 @@
 
 TEnv::StringVar EnvSafeAreaName("SafeAreaName", "PR_safe");
 TEnv::IntVar CameraViewTransparency("CameraViewTransparency", 100);
+TEnv::IntVar IsometricLeftAngle("IsometricLeftAngle", 30);
+TEnv::IntVar IsometricRightAngle("IsometricRightAngle", 30);
+TEnv::IntVar IsometricLeftStep("IsometricLeftStep", 100);
+TEnv::IntVar IsometricRightStep("IsometricRightStep", 100);
+TEnv::IntVar ShowRuleOfThirds("ShowRuleOfThirds", 1);
+TEnv::IntVar ShowGoldenRatio("ShowGoldenRatio", 0);
+TEnv::IntVar ShowIsometricGrid("ShowIsometricGrid", 0);
+TEnv::IntVar ShowVerticalGrid("ShowVerticalGrid", 0);
+TEnv::IntVar ShowHorizontalGrid("ShowHorizontalGrid", 0);
+TEnv::IntVar VerticalSpacing("VerticalSpacing", 100);
+TEnv::IntVar HorizontalSpacing("HorizontalSpacing", 100);
+TEnv::IntVar HorizontalOffset("HorizontalOffset", 0);
+TEnv::IntVar VerticalOffset("VerticalOffset", 0);
+TEnv::IntVar ShowFieldGuide("ShowFieldGuide", 1);
+TEnv::IntVar GuideOpacity("GuideOpacity", 70);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);
@@ -413,8 +428,8 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
       bounds.y1 = p.y;
   }
 
-  double interval = 150;  // *sc;
-  glEnable(GL_BLEND);     // Enable blending.
+  double interval = 150;  
+  glEnable(GL_BLEND);     
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -424,46 +439,23 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
 
   for (int j = 0; j < assistantPoints.size(); j++) {
     TPointD p = assistantPoints.at(j);
-    if (j < 5) glColor4d(reds.at(j), greens.at(j), blues.at(j), 0.2);
-    TPointD end;
-    bool useX = true;
-    for (double i = bounds.x0; i < bounds.x1; i += interval) {
-      end.y = bounds.y0;
-      end.x = i;
-      tglDrawSegment(p, end);
+    if (j < 5) glColor4d(reds.at(j), greens.at(j), blues.at(j), (double)GuideOpacity / 100.0);
+    TPointD end;    
+    double distanceToLeft = std::abs(p.x - bounds.x0);
+    double distanceToRight = std::abs(p.x - bounds.x1);
+    double distanceToTop = std::abs(p.y - bounds.y1);
+    double distanceToBottom = std::abs(p.y - bounds.y0);
+    double xDistance = std::max(distanceToLeft, distanceToRight);
+    double yDistance = std::max(distanceToTop, distanceToBottom);
+    double totalDistance = std::sqrt(std::pow(xDistance, 2) +
+        std::pow(yDistance, 2));
+    for (int i = 0; i < 360; i += 5) {
+        double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
+        double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
+        end.x = p.x + xLength;
+        end.y = p.y + yLength;
+        tglDrawSegment(p, end);
     }
-    for (double i = bounds.x0; i < bounds.x1; i += interval) {
-      end.y = bounds.y1;
-      end.x = i;
-      tglDrawSegment(p, end);
-    }
-    for (double i = bounds.y0; i < bounds.y1; i += interval) {
-      end.y = i;
-      end.x = bounds.x0;
-      tglDrawSegment(p, end);
-    }
-    for (double i = bounds.y0; i < bounds.y1; i += interval) {
-      end.y = i;
-      end.x = bounds.x1;
-      tglDrawSegment(p, end);
-    }
-    // double distanceToLeft = std::abs(p.x - bounds.x0);
-    // double distanceToRight = std::abs(p.x - bounds.x1);
-    // double distanceToTop = std::abs(p.y - bounds.y1);
-    // double distanceToBottom = std::abs(p.y - bounds.y0);
-    // double xDistance = std::max(distanceToLeft, distanceToRight);
-    // double yDistance = std::max(distanceToTop, distanceToBottom);
-    // double totalDistance = std::sqrt(std::pow(xDistance, 2) +
-    // std::pow(yDistance, 2));
-    // for (int i = 0; i < 360; i += 15) {
-    //
-    //    //double slope = std::tan(i * (3.14159 / 180));
-    //    double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
-    //    double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
-    //    end.x = p.x + xLength;
-    //    end.y = p.y + yLength;
-    //    tglDrawSegment(p, end);
-    //}
   }
 
   glDisable(GL_LINE_SMOOTH);
@@ -674,6 +666,242 @@ void ViewerDraw::drawSafeArea() {
   }
 
   glDisable(GL_LINE_STIPPLE);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
+                                      double pixelSize) {
+  TRectD rect = getCameraRect();
+
+  int x1, x2, y1, y2;
+  viewer->rect().getCoords(&x1, &y1, &x2, &y2);
+  TRect clipRect = TRect(x1, y1, x2 + 1, y2 + 1);
+
+  GLfloat modelView[16];
+  glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
+  TAffine modelViewAff(modelView[0], modelView[4], modelView[12], modelView[1],
+                       modelView[5], modelView[13]);
+
+  TPointD clipCorner[] = {
+      modelViewAff.inv() * TPointD(clipRect.x0, clipRect.y0),
+      modelViewAff.inv() * TPointD(clipRect.x1, clipRect.y0),
+      modelViewAff.inv() * TPointD(clipRect.x1, clipRect.y1),
+      modelViewAff.inv() * TPointD(clipRect.x0, clipRect.y1)};
+
+  TRectD bounds;
+  bounds.x0 = bounds.x1 = clipCorner[0].x;
+  bounds.y0 = bounds.y1 = clipCorner[0].y;
+  int i;
+  for (i = 1; i < 4; i++) {
+    const TPointD &p = clipCorner[i];
+    if (p.x < bounds.x0)
+      bounds.x0 = p.x;
+    else if (p.x > bounds.x1)
+      bounds.x1 = p.x;
+    if (p.y < bounds.y0)
+      bounds.y0 = p.y;
+    else if (p.y > bounds.y1)
+      bounds.y1 = p.y;
+  }
+
+  glEnable(GL_BLEND);  // Enable blending.
+  glEnable(GL_LINE_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity / 100.0);
+  glLineWidth(0.5f);
+
+  double lengthX = rect.x1 - rect.x0;
+  double lengthY = rect.y1 - rect.y0;
+
+  double halfX  = (rect.x1 - rect.x0) / 2.0;
+  double halfY  = (rect.y1 - rect.y0) / 2.0;
+  double thirdX = (rect.x1 - rect.x0) / 3.0;
+  double thirdY = (rect.y1 - rect.y0) / 3.0;
+
+  double phiX = (rect.x1 - rect.x0) / 1.618;
+  double phiY = (rect.y1 - rect.y0) / 1.618;
+
+  if (ShowVerticalGrid) {
+    tglDrawSegment(TPointD(rect.x0 + halfX + (VerticalOffset / Stage::standardDpi * Stage::inch), bounds.y0),
+                   TPointD(rect.x0 + halfX + (VerticalOffset / Stage::standardDpi * Stage::inch), bounds.y1));
+    int step        = std::max(1, (int)VerticalSpacing);
+    double currentX = rect.x0 + halfX;
+    for (int i = 1; currentX > bounds.x0; i++) {
+      currentX =
+          (rect.x0 + halfX) - ((step * i - VerticalOffset) / Stage::standardDpi * Stage::inch);
+      glBegin(GL_LINES);
+      glVertex2d(currentX, bounds.y0);
+      glVertex2d(currentX, bounds.y1);
+      glEnd();
+    }
+    currentX = rect.x0 + halfX;
+    for (int i = 1; currentX < bounds.x1; i++) {
+      currentX =
+          (rect.x0 + halfX) + ((step * i + VerticalOffset) / Stage::standardDpi * Stage::inch);
+      glBegin(GL_LINES);
+      glVertex2d(currentX, bounds.y0);
+      glVertex2d(currentX, bounds.y1);
+      glEnd();
+    }
+  }
+
+  if (ShowHorizontalGrid) {
+    tglDrawSegment(TPointD(bounds.x0, rect.y0 + halfY + (HorizontalOffset / Stage::standardDpi * Stage::inch)),
+                   TPointD(bounds.x1, rect.y0 + halfY + (HorizontalOffset / Stage::standardDpi * Stage::inch)));
+    int step        = std::max(1, (int)HorizontalSpacing);
+    double currentY = rect.y0 + halfY;
+    for (int i = 1; currentY > bounds.y0; i++) {
+      currentY =
+          rect.y0 + halfY - ((step * i - HorizontalOffset) / Stage::standardDpi * Stage::inch);
+      // double xInPixels =
+      glBegin(GL_LINES);
+      glVertex2d(bounds.x0, currentY);
+      glVertex2d(bounds.x1, currentY);
+      glEnd();
+    }
+    currentY = rect.y0 + halfY;
+    for (int i = 1; currentY < bounds.y1; i++) {
+      currentY =
+          rect.y0 + halfY + ((step * i + HorizontalOffset)/ Stage::standardDpi * Stage::inch);
+      glBegin(GL_LINES);
+      glVertex2d(bounds.x0, currentY);
+      glVertex2d(bounds.x1, currentY);
+      glEnd();
+    }
+  }
+
+  if (ShowIsometricGrid) {
+    double rightTheta = (double)IsometricRightAngle * (3.14159 / 180);
+    double rightStep  = IsometricRightStep;
+    double rightRun   = std::cos(rightTheta) * rightStep;
+    double rightRise  = std::sin(rightTheta) * rightStep;
+    double rightSlope = rightRise / rightRun;
+
+    {
+      double topRightX    = bounds.y1 / rightSlope;
+      double bottomRightX = bounds.y0 / rightSlope;
+      TPointD startRight  = TPointD(topRightX, bounds.y1);
+      TPointD endRight    = TPointD(bottomRightX, bounds.y0);
+      while (startRight.x > bounds.x0) {
+        glBegin(GL_LINES);
+        glVertex2d(startRight.x, startRight.y);
+        glVertex2d(endRight.x, endRight.y);
+        glEnd();
+        startRight.x -= rightStep / Stage::standardDpi * Stage::inch;
+        endRight.x -= rightStep / Stage::standardDpi * Stage::inch;
+      }
+      startRight = TPointD(topRightX, bounds.y1);
+      endRight   = TPointD(bottomRightX, bounds.y0);
+      while (endRight.x < bounds.x1) {
+        startRight.x += rightStep / Stage::standardDpi * Stage::inch;
+        endRight.x += rightStep / Stage::standardDpi * Stage::inch;
+        glBegin(GL_LINES);
+        glVertex2d(startRight.x + 0.25, startRight.y);
+        glVertex2d(endRight.x + 0.25, endRight.y);
+        glEnd();
+      }
+    }
+
+    double leftTheta = (double)IsometricLeftAngle * (3.14159 / 180);
+    double leftStep  = IsometricLeftStep;
+    double leftRun   = std::cos(leftTheta) * leftStep;
+    double leftRise  = std::sin(leftTheta) * leftStep;
+    double leftSlope = leftRise / leftRun;
+    {
+      double topLeftX    = bounds.y1 / -leftSlope;
+      double bottomLeftX = bounds.y0 / -leftSlope;
+      TPointD startLeft  = TPointD(topLeftX, bounds.y1);
+      TPointD endLeft    = TPointD(bottomLeftX, bounds.y0);
+      while (startLeft.x < bounds.x1) {
+        glBegin(GL_LINES);
+        glVertex2d(startLeft.x, startLeft.y);
+        glVertex2d(endLeft.x, endLeft.y);
+        glEnd();
+        startLeft.x += leftStep / Stage::standardDpi * Stage::inch;
+        endLeft.x += leftStep / Stage::standardDpi * Stage::inch;
+      }
+      startLeft = TPointD(topLeftX, bounds.y1);
+      endLeft   = TPointD(bottomLeftX, bounds.y0);
+      while (endLeft.x > bounds.x0) {
+        startLeft.x -= leftStep / Stage::standardDpi * Stage::inch;
+        endLeft.x -= leftStep / Stage::standardDpi * Stage::inch;
+        glBegin(GL_LINES);
+        glVertex2d(startLeft.x, startLeft.y);
+        glVertex2d(endLeft.x, endLeft.y);
+        glEnd();
+      }
+    }
+  }
+  glLineWidth(1.0f);
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_BLEND);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewerDraw::drawCameraOverlays(SceneViewer* viewer, unsigned long flags,
+    double pixelSize) {
+    TRectD rect = getCameraRect();
+
+    glEnable(GL_BLEND);  // Enable blending.
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity/100.0);
+    glLineWidth(0.5f);
+
+    double lengthX = rect.x1 - rect.x0;
+    double lengthY = rect.y1 - rect.y0;
+
+    double halfX = (rect.x1 - rect.x0) / 2.0;
+    double halfY = (rect.y1 - rect.y0) / 2.0;
+    double thirdX = (rect.x1 - rect.x0) / 3.0;
+    double thirdY = (rect.y1 - rect.y0) / 3.0;
+
+    double phiX = (rect.x1 - rect.x0) / 1.618;
+    double phiY = (rect.y1 - rect.y0) / 1.618;
+
+    if (ShowRuleOfThirds) {
+        // vertical thirds
+        glBegin(GL_LINES);
+        glVertex2d(rect.x0 + thirdX, rect.y0);
+        glVertex2d(rect.x0 + thirdX, rect.y1);
+        glVertex2d(rect.x0 + (thirdX * 2), rect.y0);
+        glVertex2d(rect.x0 + (thirdX * 2), rect.y1);
+
+        // horizontal thirds
+        glVertex2d(rect.x0, rect.y0 + thirdY);
+        glVertex2d(rect.x1, rect.y0 + thirdY);
+        glVertex2d(rect.x0, rect.y0 + (thirdY * 2));
+        glVertex2d(rect.x1, rect.y0 + (thirdY * 2));
+        glEnd();
+    }
+
+    if (ShowGoldenRatio) {
+        // phi thirds
+        glBegin(GL_LINES);
+        glVertex2d(rect.x0 + phiX, rect.y0);
+        glVertex2d(rect.x0 + phiX, rect.y1);
+        glVertex2d(rect.x1 - phiX, rect.y0);
+        glVertex2d(rect.x1 - phiX, rect.y1);
+
+        glVertex2d(rect.x0, rect.y0 + phiY);
+        glVertex2d(rect.x1, rect.y0 + phiY);
+        glVertex2d(rect.x0, rect.y1 - phiY);
+        glVertex2d(rect.x1, rect.y1 - phiY);
+        glEnd();
+    }
+
+    
+    glLineWidth(1.0f);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+}
+
+//-----------------------------------------------------------------------------
+
+bool ViewerDraw::getShowFieldGuide() {
+    return ShowFieldGuide == 1 ? true : false;
 }
 
 //-----------------------------------------------------------------------------

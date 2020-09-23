@@ -1559,13 +1559,13 @@ void SceneViewer::drawOverlay() {
     glPopMatrix();
   }
 
-  // draw FieldGuide
-  if (fieldGuideToggle.getStatus()) {
-    glPushMatrix();
-    tglMultMatrix(m_drawTableAff);
-    ViewerDraw::drawFieldGuide();
-    glPopMatrix();
-  }
+  //// draw FieldGuide
+  // if (fieldGuideToggle.getStatus()) {
+  //  glPushMatrix();
+  //  tglMultMatrix(m_drawTableAff);
+  //  ViewerDraw::drawFieldGuide();
+  //  glPopMatrix();
+  //}
 
   if (!m_drawCameraTest) {
     // draw grid & guides
@@ -1596,6 +1596,17 @@ void SceneViewer::drawOverlay() {
         m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
         ViewerDraw::drawCamera(f, m_pixelSize);
         glPopMatrix();
+        if (fieldGuideToggle.getStatus()) {
+            glPushMatrix();
+            tglMultMatrix(m_drawCameraAff);
+            ViewerDraw::drawCameraOverlays(this, f, m_pixelSize);
+            glPopMatrix();
+          glPushMatrix();
+          tglMultMatrix(m_drawTableAff);
+          if (ViewerDraw::getShowFieldGuide()) ViewerDraw::drawFieldGuide();
+          ViewerDraw::drawGridsAndOverlays(this, f, m_pixelSize);
+          glPopMatrix();
+        }
       }
     }
 

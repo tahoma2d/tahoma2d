@@ -70,7 +70,7 @@ typedef std::vector<Player> PlayerSet;
                 images .pli.
 */
 const double Stage::inch        = 53.33333;
-const double Stage::standardDpi = 120;
+const double Stage::standardDpi = 120.0;
 
 namespace {
 void updateOnionSkinSize(const PlayerSet &players) {

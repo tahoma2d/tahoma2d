@@ -40,12 +40,15 @@ void drawPerspectiveGuides(SceneViewer *viewer, double viewerScale,
 
 void draw3DCamera(unsigned long flags, double zmin, double phi);
 void drawCamera(unsigned long flags, double pixelSize);
-
+void drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
+                          double pixelSize);
+void drawCameraOverlays(SceneViewer* viewer, unsigned long flags,
+    double pixelSize);
 void draw3DFrame(double zmin, double phi);
 void drawDisk(int &tableDLId);
 void drawFieldGuide();
 void drawColorcard(UCHAR channel);
-
+bool getShowFieldGuide();
 void drawSafeArea();
 
 unsigned int createDiskDisplayList();
