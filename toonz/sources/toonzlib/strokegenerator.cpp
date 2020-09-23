@@ -174,7 +174,7 @@ void StrokeGenerator::drawFragments(int first, int last) {
     if (std::abs(tempThickPoint.x) == 0.0 && std::abs(tempThickPoint.y == 0.0)) {
         v = b.thick * tempThickPoint;
     }
-    else v          = b.thick * normalize(tempThickPoint);
+    else v     = b.thick * normalize(tempThickPoint);
     TPointD p0 = b + v;
     TPointD p1 = b - v;
     glBegin(GL_POLYGON);
@@ -193,8 +193,12 @@ void StrokeGenerator::drawFragments(int first, int last) {
     i++;
   }
   if (last < 2) return;
-  v = m_points[last].thick *
-      normalize(rotate90(m_points[last] - m_points[last - 1]));
+  tempThickPoint = rotate90(m_points[last] - m_points[last - 1]);
+  if (std::abs(tempThickPoint.x) == 0.0 && std::abs(tempThickPoint.y == 0.0)) {
+      v = m_points[last].thick * tempThickPoint;
+  }
+  else v = m_points[last].thick *
+      normalize(tempThickPoint);
   TPointD p0 = m_points[last] + v;
   TPointD p1 = m_points[last] - v;
   glBegin(GL_POLYGON);

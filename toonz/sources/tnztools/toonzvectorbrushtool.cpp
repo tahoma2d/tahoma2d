@@ -1267,6 +1267,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
 bool ToonzVectorBrushTool::keyDown(QKeyEvent *event) {
   if (event->key() == Qt::Key_Escape) {
     resetFrameRange();
+    invalidate();
   }
   return false;
 }
