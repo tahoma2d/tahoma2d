@@ -1894,6 +1894,10 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     if (tool && tool->getProperties(1)) tool->getProperties(1)->accept(builder);
     m_drawOrderCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Draw Under"));
+    m_autoCloseCheckbox =
+        dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Close"));
+    m_autoFillCheckbox =
+        dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
     m_snapCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Snap"));
     m_snapSensitivityCombo =

@@ -63,6 +63,8 @@ TEnv::IntVar V_VectorBrushFrameRange("VectorBrushFrameRange", 0);
 TEnv::IntVar V_VectorBrushSnap("VectorBrushSnap", 0);
 TEnv::IntVar V_VectorBrushSnapSensitivity("VectorBrushSnapSensitivity", 0);
 TEnv::IntVar V_VectorBrushDrawBehind("VectorBrushDrawBehind", 0);
+TEnv::IntVar V_VectorBrushAutoClose("VectorBrushAutoClose", 0);
+TEnv::IntVar V_VectorBrushAutoFill("VectorBrushAutoFill", 0);
 TEnv::StringVar V_VectorBrushPreset("VectorBrushPreset", "<custom>");
 
 //-------------------------------------------------------------------
@@ -370,6 +372,7 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
   }
   TFrameId id = application->getCurrentTool()->getTool()->getCurrentFid();
   if (id == TFrameId::NO_FRAME && fid != TFrameId::NO_FRAME) id = fid;
+  int addedStrokeIndex                                          = -1;
   if (!corners.empty()) {
     if (breakAngles)
       split(stroke, corners, strokes);
@@ -384,8 +387,8 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
           new std::vector<TFilledRegionInf>;
       ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                        stroke->getBBox());
-      TStroke *str = new TStroke(*strokes[i]);
-      vi->addStroke(str, true, sendToBack);
+      TStroke *str     = new TStroke(*strokes[i]);
+      addedStrokeIndex = vi->addStroke(str, true, sendToBack);
       TUndoManager::manager()->add(
           new UndoPencil(str, fillInformation, sl, id, frameCreated,
                          levelCreated, autoGroup, autoFill, sendToBack));
@@ -396,15 +399,16 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
         new std::vector<TFilledRegionInf>;
     ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
                                                      stroke->getBBox());
-    TStroke *str = new TStroke(*stroke);
-    vi->addStroke(str, true, sendToBack);
+    TStroke *str     = new TStroke(*stroke);
+    addedStrokeIndex = vi->addStroke(str, true, sendToBack);
     TUndoManager::manager()->add(
         new UndoPencil(str, fillInformation, sl, id, frameCreated, levelCreated,
                        autoGroup, autoFill, sendToBack));
   }
 
   if (autoGroup && stroke->isSelfLoop()) {
-    int index = vi->getStrokeCount() - 1;
+    int index             = vi->getStrokeCount() - 1;
+    if (sendToBack) index = addedStrokeIndex;
     vi->group(index, 1);
     if (autoFill) {
       // to avoid filling other strokes, I enter into the new stroke group
@@ -522,6 +526,8 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
     , m_snap("Snap", false)
     , m_snapSensitivity("Sensitivity:")
     , m_sendToBack("Draw Under", false)
+    , m_autoClose("Auto Close", false)
+    , m_autoFill("Auto Fill", false)
     , m_targetType(targetType)
     , m_workingFrameId(TFrameId()) {
   bind(targetType);
@@ -533,6 +539,12 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
   m_prop[0].bind(m_smooth);
   m_prop[0].bind(m_breakAngles);
   m_prop[0].bind(m_pressure);
+
+  m_prop[0].bind(m_autoClose);
+  m_autoClose.setId("AutoClose");
+
+  m_prop[0].bind(m_autoFill);
+  m_autoFill.setId("AutoFill");
 
   m_prop[0].bind(m_sendToBack);
   m_sendToBack.setId("DrawUnder");
@@ -618,6 +630,8 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_joinStyle.setItemUIName(ROUNDJ_WSTR, tr("Round join"));
   m_joinStyle.setItemUIName(BEVEL_WSTR, tr("Bevel join"));
   m_sendToBack.setQStringName(tr("Draw Under"));
+  m_autoClose.setQStringName(tr("Auto Close"));
+  m_autoFill.setQStringName(tr("Auto Fill"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1168,10 +1182,13 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         curCol   = application->getCurrentColumn()->getColumnIndex();
         curFrame = application->getCurrentFrame()->getFrame();
       }
+
+      if (m_autoClose.getValue()) stroke->setSelfLoop(true);
       bool success = doFrameRangeStrokes(
           m_firstFrameId, m_firstStroke, getFrameId(), stroke,
-          m_frameRange.getIndex(), m_breakAngles.getValue(), false, false,
-          m_firstFrameRange, true, true, m_sendToBack.getValue() > 0);
+          m_frameRange.getIndex(), m_breakAngles.getValue(),
+          m_autoFill.getValue(), m_autoFill.getValue(), m_firstFrameRange, true,
+          true, m_sendToBack.getValue() > 0);
       if (e.isCtrlPressed() && e.isAltPressed() && e.isShiftPressed()) {
         if (application) {
           if (m_firstFrameId > currentId) {
@@ -1208,14 +1225,15 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       stroke->setSelfLoop(true);
       m_snapSelf = false;
     }
-    //    bool m_sendToBack =
-    //        e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed();
+
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
     //#ifdef Q_OS_WIN
     //    m_sendToBack = (GetKeyState(VK_CAPITAL) & 0x0001);
     //#endif
     addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
-                     false, false, m_isFrameCreated, m_isLevelCreated, 0,
-                     TFrameId::NO_FRAME, m_sendToBack.getValue() > 0);
+                     m_autoFill.getValue(), m_autoFill.getValue(),
+                     m_isFrameCreated, m_isLevelCreated, 0, TFrameId::NO_FRAME,
+                     m_sendToBack.getValue() > 0);
     TRectD bbox = stroke->getBBox().enlarge(2) + m_track.getModifiedRegion();
 
     invalidate();  // should use bbox?
@@ -1894,7 +1912,35 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     if (index == 0) resetFrameRange();
   } else if (propertyName == m_sendToBack.getName()) {
     V_VectorBrushDrawBehind = m_sendToBack.getValue();
-  } else if (propertyName == m_snap.getName()) {
+  }
+
+  else if (propertyName == m_autoClose.getName()) {
+    if (!m_autoClose.getValue()) {
+      m_autoFill.setValue(false);
+      V_VectorBrushAutoFill = 0;
+      // this is ugly: it's needed to refresh the GUI of the toolbar after
+      // having set to false the autofill...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          "");  // necessary, otherwise next setTool is ignored...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          QString::fromStdString(getName()));
+    }
+    V_VectorBrushAutoClose = m_autoClose.getValue();
+  } else if (propertyName == m_autoFill.getName()) {
+    if (m_autoFill.getValue()) {
+      m_autoClose.setValue(true);
+      V_VectorBrushAutoClose = 0;
+      // this is ugly: it's needed to refresh the GUI of the toolbar after
+      // having set to false the autofill...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          "");  // necessary, otherwise next setTool is ignored...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          QString::fromStdString(getName()));
+    }
+    V_VectorBrushAutoFill = m_autoFill.getValue();
+  }
+
+  else if (propertyName == m_snap.getName()) {
     V_VectorBrushSnap = m_snap.getValue();
   } else if (propertyName == m_snapSensitivity.getName()) {
     int index                    = m_snapSensitivity.getIndex();
@@ -2035,6 +2081,8 @@ void ToonzVectorBrushTool::loadLastBrush() {
   m_snap.setValue(V_VectorBrushSnap);
   m_snapSensitivity.setIndex(V_VectorBrushSnapSensitivity);
   m_sendToBack.setValue(V_VectorBrushDrawBehind);
+  m_autoClose.setValue(V_VectorBrushAutoClose);
+  m_autoFill.setValue(V_VectorBrushAutoFill);
   switch (V_VectorBrushSnapSensitivity) {
   case 0:
     m_minDistance2 = SNAPPING_LOW;

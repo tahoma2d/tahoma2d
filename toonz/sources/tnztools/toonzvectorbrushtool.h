@@ -155,6 +155,8 @@ protected:
   TBoolProperty m_pressure;
   TBoolProperty m_snap;
   TBoolProperty m_sendToBack;
+  TBoolProperty m_autoFill;
+  TBoolProperty m_autoClose;
   TEnumProperty m_frameRange;
   TEnumProperty m_snapSensitivity;
   TEnumProperty m_capStyle;
@@ -202,7 +204,6 @@ protected:
       m_isPrompting,  //!< Whether the tool is prompting for spline
                       //! substitution.
       m_firstTime, m_isPath, m_presetsLoaded, m_firstFrameRange;
-
 
   TFrameId m_workingFrameId;
 
