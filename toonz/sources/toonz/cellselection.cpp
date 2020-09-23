@@ -820,13 +820,13 @@ public:
       , m_rasterImageData(data->clone()) {}
 
   ~PasteFullColorImageInCellsUndo() { delete m_rasterImageData; }
-
   void redo() const override {
     insertLevelAndFrameIfNeeded();
     TTileSet *tiles = 0;
     bool isLevelCreated;
     pasteRasterImageInCellWithoutUndo(m_row, m_col, m_rasterImageData, &tiles,
                                       isLevelCreated);
+    m_level->setDirtyFlag(true);
     if (tiles) delete tiles;
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
@@ -1867,8 +1867,13 @@ void TCellSelection::pasteCells() {
     } else
       pasteStrokesInCell(r0, c0, strokesData);
   }
-  if (const RasterImageData *rasterImageData =
-          dynamic_cast<const RasterImageData *>(mimeData)) {
+
+  QImage clipImage = clipboard->image();
+  
+
+  const RasterImageData* rasterImageData =
+      dynamic_cast<const RasterImageData*>(mimeData);
+  if (rasterImageData || clipImage.height() > 0) {
     if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
       return;
 
@@ -1884,14 +1889,14 @@ void TCellSelection::pasteCells() {
         dynamic_cast<const FullColorImageData *>(rasterImageData);
     TToonzImageP ti(img);
     TVectorImageP vi(img);
-    if (!initUndo) {
-      initUndo = true;
-      TUndoManager::manager()->beginBlock();
-    }
     if (fullColData && (vi || ti)) {
       DVGui::error(QObject::tr(
           "The copied selection cannot be pasted in the current drawing."));
       return;
+    }
+    if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
     }
     if (vi) {
       TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
@@ -1899,8 +1904,27 @@ void TCellSelection::pasteCells() {
       assert(sl);
       StrokesData *strokesData = rasterImageData->toStrokesData(sl->getScene());
       pasteStrokesInCell(r0, c0, strokesData);
-    } else
-      pasteRasterImageInCell(r0, c0, rasterImageData);
+    }
+    else {
+        TRasterImageP ri(img);
+        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
+        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+        assert(sl);
+        if (clipImage.height() > 0) {
+            std::vector<TRectD> rects;
+            const std::vector<TStroke> strokes;
+            const std::vector<TStroke> originalStrokes;
+            TAffine aff;
+            TRasterP ras = rasterFromQImage(clipImage);
+            rects.push_back(TRectD(0.0 - clipImage.width() / 2, 0.0 - clipImage.height() / 2, clipImage.width(), clipImage.height()));
+            FullColorImageData* qimageData = new FullColorImageData();
+            qimageData->setData(ras, ri->getPalette(), 120.0, 120.0, ri->getRaster()->getSize(),
+                rects, strokes, originalStrokes, aff);
+            rasterImageData = qimageData;
+        }
+        pasteRasterImageInCell(r0, c0, rasterImageData);
+        sl->setDirtyFlag(true);
+    }
   }
   if (!initUndo) {
     DVGui::error(QObject::tr(
