@@ -707,8 +707,7 @@ void ToolUtils::TFullColorRasterUndo::undo() const {
 
   removeLevelAndFrameIfNeeded();
   if (m_level) {
-      m_level->setDirtyFlag(true);
-      //app->getCurrentLevel()->notifyLevelChange();
+    m_level->setDirtyFlag(true);
   }
   app->getCurrentXsheet()->notifyXsheetChanged();
   notifyImageChanged();

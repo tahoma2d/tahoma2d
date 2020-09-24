@@ -1217,34 +1217,38 @@ void RasterSelection::pasteSelection() {
   }
 
   if (clipImage.height() > 0) {
-      std::vector<TRectD> rects;
-      const std::vector<TStroke> strokes;
-      const std::vector<TStroke> originalStrokes;
-      TRasterImageP ri = m_currentImage;
-      TAffine aff;
-      TRasterP ras = rasterFromQImage(clipImage);
-      rects.push_back(TRectD(0.0 - clipImage.width() / 2, 0.0 - clipImage.height() / 2, clipImage.width() / 2, clipImage.height() /2));
-      
-      TRectD r = TRectD(0.0, 0.0, clipImage.width(), clipImage.height());
-      TRect box = getRaster(m_currentImage)->getBounds();
-      r *= convertRasterToWorld(box, m_currentImage);
-      if (!r.isEmpty()) {
-          TStroke stroke = getStrokeByRect(r);
-          if ((int)stroke.getControlPointCount() == 0) return;
-          m_strokes.push_back(stroke);
-          m_originalStrokes.push_back(stroke);
-      }
+    std::vector<TRectD> rects;
+    const std::vector<TStroke> strokes;
+    const std::vector<TStroke> originalStrokes;
+    TRasterImageP ri = m_currentImage;
+    TAffine aff;
+    TRasterP ras = rasterFromQImage(clipImage);
+    rects.push_back(TRectD(0.0 - clipImage.width() / 2,
+                           0.0 - clipImage.height() / 2, clipImage.width() / 2,
+                           clipImage.height() / 2));
 
-      
-      FullColorImageData* qimageData = new FullColorImageData();
+    TRectD r =
+        TRectD(0.0 - (clipImage.width() / 2), 0.0 - (clipImage.height() / 2),
+               clipImage.width() / 2, clipImage.height() / 2);
+    TRect box = getRaster(m_currentImage)->getBounds();
+    r *= convertRasterToWorld(box, m_currentImage);
+    if (!r.isEmpty()) {
+      TStroke stroke = getStrokeByRect(r);
+      if ((int)stroke.getControlPointCount() == 0) return;
+      m_strokes.push_back(stroke);
+      m_originalStrokes.push_back(stroke);
+    }
 
-      qimageData->setData(ras, ri->getPalette(), 120.0, 120.0, ri->getRaster()->getSize(),
-          rects, m_strokes, m_originalStrokes, aff);
-      setSelectionBbox(TRectD(0.0 - clipImage.width() / 2, 0.0 - clipImage.height() / 2, clipImage.width() / 2, clipImage.height() / 2));
+    FullColorImageData *qimageData = new FullColorImageData();
 
+    qimageData->setData(ras, ri->getPalette(), 120.0, 120.0,
+                        ri->getRaster()->getSize(), rects, m_strokes,
+                        m_originalStrokes, aff);
+    setSelectionBbox(TRectD(0.0 - clipImage.width() / 2,
+                            0.0 - clipImage.height() / 2, clipImage.width() / 2,
+                            clipImage.height() / 2));
 
-
-      riData = qimageData;
+    riData = qimageData;
   }
 
   if (!riData) return;
