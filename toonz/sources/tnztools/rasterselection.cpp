@@ -1196,7 +1196,8 @@ void RasterSelection::pasteSelection() {
   if (isFloating()) pasteFloatingSelection();
   selectNone();
   m_isPastedSelection = true;
-  m_oldPalette        = m_currentImage->getPalette()->clone();
+  if (m_currentImage->getPalette())
+    m_oldPalette = m_currentImage->getPalette()->clone();
   if (stData) {
     if (TToonzImageP ti = m_currentImage)
       riData = stData->toToonzImageData(ti);

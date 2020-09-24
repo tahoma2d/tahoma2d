@@ -52,6 +52,7 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
 #include "vectorizerpopup.h"
+#include "tools/rasterselection.h"
 
 // TnzCore includes
 #include "timagecache.h"
@@ -1919,11 +1920,11 @@ void TCellSelection::pasteCells() {
           "The copied selection cannot be pasted in the current drawing."));
       return;
     }
-    if (!initUndo) {
-      initUndo = true;
-      TUndoManager::manager()->beginBlock();
-    }
     if (vi) {
+      if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
+      }
       TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
       if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
       assert(sl);
@@ -1944,7 +1945,7 @@ void TCellSelection::pasteCells() {
               "the level will crop some of the image.\nWhat do you want to "
               "do?");
           int ret = DVGui::MsgBox(question, QObject::tr("Paste in place"),
-                                  QObject::tr("Create a new level."),
+                                  QObject::tr("Create a new level"),
                                   QObject::tr("Cancel"), 1);
           if (ret == 3 || ret == 0) {
             if (initUndo) TUndoManager::manager()->endBlock();
@@ -1978,7 +1979,27 @@ void TCellSelection::pasteCells() {
                             originalStrokes, aff);
         rasterImageData = qimageData;
       }
-      pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      if (sl && toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+        rs->setCurrentImageCell(xsh->getCell(r0, c0));
+        if (rs)
+          rs->pasteSelection(rasterImageData);
+        else {
+          if (!initUndo) {
+            initUndo = true;
+            TUndoManager::manager()->beginBlock();
+          }
+          pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+        }
+      } else {
+        if (!initUndo) {
+          initUndo = true;
+          TUndoManager::manager()->beginBlock();
+        }
+        pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+      }
     }
   }
   if (!initUndo) {

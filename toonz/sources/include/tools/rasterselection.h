@@ -56,9 +56,8 @@ class DVAPI RasterSelection final : public TSelection {
   bool m_noAntialiasing;
 
 private:
-  void pasteSelection(const RasterImageData *data);
-
 public:
+  void pasteSelection(const RasterImageData *data);
   RasterSelection();
   RasterSelection(const RasterSelection &src);
 
@@ -70,7 +69,7 @@ public:
   void setCurrentImage(const TImageP &img, const TXshCell &imageCell) {
     m_currentImage = img, m_currentImageCell = imageCell;
   }
-
+  void setCurrentImageCell(TXshCell cell) { m_currentImageCell = cell; }
   void setStrokes(const std::vector<TStroke> &strokes) { m_strokes = strokes; }
   std::vector<TStroke> getStrokes() const { return m_strokes; }
   std::vector<TStroke> getOriginalStrokes() const { return m_originalStrokes; }
