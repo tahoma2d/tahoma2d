@@ -54,6 +54,7 @@ class DVAPI RasterSelection final : public TSelection {
   int m_transformationCount;
   bool m_isPastedSelection;
   bool m_noAntialiasing;
+  bool m_fromCellSelection = false;
 
 private:
 public:
@@ -144,6 +145,8 @@ Can be different from getSelectionBound() after a free deform transformation. */
   bool isTransformed();
 
   bool isEditable();
+
+  void setIncoming() { m_fromCellSelection = true; }
 };
 
 #endif  // RASTER_SELECTION_H

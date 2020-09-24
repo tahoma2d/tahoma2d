@@ -1042,6 +1042,8 @@ void RasterSelection::pasteFloatingSelection() {
   pasteFloatingSelectionWithoutUndo(m_currentImage, m_floatingSelection,
                                     m_affine, wRect, m_noAntialiasing);
 
+  TXshSimpleLevel* sl = m_currentImageCell.getSimpleLevel();
+  TFrameId id = m_currentImageCell.getFrameId();
   ToolUtils::updateSaveBox(m_currentImageCell.getSimpleLevel(),
                            m_currentImageCell.getFrameId());
 
@@ -1250,6 +1252,32 @@ void RasterSelection::pasteSelection() {
                             clipImage.height() / 2));
 
     riData = qimageData;
+  }
+
+  if (m_fromCellSelection && riData) {
+      m_fromCellSelection = false;
+      std::vector<TRectD> rect;
+      double currentDpiX, currentDpiY;
+      double dpiX, dpiY;
+      std::vector<TStroke> strokes;
+      std::vector<TStroke> originalStrokes;
+      TAffine affine;
+      const FullColorImageData* fullColorData =
+          dynamic_cast<const FullColorImageData*>(riData);
+
+      if (TRasterImageP ri = (TRasterImageP)m_currentImage) {
+          ri->getDpi(currentDpiX, currentDpiY);
+          TRasterP ras;
+          riData->getData(ras, dpiX, dpiY, rect, strokes, originalStrokes,
+              affine, ri->getPalette());
+          if (strokes.size() > 0) {
+              setSelectionBbox(strokes.at(0).getBBox());
+          }
+          //if (ras)          
+          //setSelectionBbox(TRectD(0.0 - ras.getPointer()->getLx() / 2,
+          //    0.0 - ras.getPointer()->getLy() / 2, ras.getPointer()->getLx() / 2,
+          //    ras.getPointer()->getLy() / 2));
+      }
   }
 
   if (!riData) return;

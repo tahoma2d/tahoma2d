@@ -1710,7 +1710,7 @@ static void pasteRasterImageInCell(int row, int col,
   } else if (fullColorTiles) {
     TUndoManager::manager()->add(new PasteFullColorImageInCellsUndo(
         rasterImageData, fullColorTiles, cell.getSimpleLevel(),
-        cell.getFrameId(), oldPalette, createdFrame, isLevelCreated));
+        cell.getFrameId(), oldPalette, createdFrame, isLevelCreated, col));
   }
 }
 
@@ -1951,7 +1951,18 @@ void TCellSelection::pasteCells() {
             if (initUndo) TUndoManager::manager()->endBlock();
             return;
           }
-          if (ret == 2) newLevel = true;
+          if (ret == 2) {
+              if (newLevel) {
+                  while (!xsh->getCell(r0, c0).isEmpty()) {
+                      c0 += 1;
+                      TXshColumn* col = TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(c0);
+                      TApp::instance()->getCurrentColumn()->setColumnIndex(c0);
+                      TApp::instance()->getCurrentColumn()->setColumn(col);
+                      TApp::instance()->getCurrentFrame()->setFrame(r0);
+                  }
+              }
+              newLevel = true;
+          }
         }
 
         std::vector<TRectD> rects;
@@ -1979,21 +1990,32 @@ void TCellSelection::pasteCells() {
                             originalStrokes, aff);
         rasterImageData = qimageData;
       }
-      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
-      if (sl && toolHandle->getTool()->getName() == "T_Selection") {
-        TSelection *ts      = toolHandle->getTool()->getSelection();
-        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
-        rs->setCurrentImageCell(xsh->getCell(r0, c0));
-        if (rs)
-          rs->pasteSelection(rasterImageData);
-        else {
-          if (!initUndo) {
-            initUndo = true;
-            TUndoManager::manager()->beginBlock();
-          }
-          pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
-        }
-      } else {
+      //ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      //TXshCell currentCell = xsh->getCell(r0, c0);
+      //if (false && !currentCell.isEmpty() && sl && toolHandle->getTool()->getName() == "T_Selection") {
+      //  TSelection *ts      = toolHandle->getTool()->getSelection();
+      //  RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+      //  if (rs) {
+      //      if (clipImage.height() > 0) {
+      //          rs->setCurrentImage(xsh->getCell(r0, c0).getImage(true), xsh->getCell(r0, c0));
+      //          rs->pasteSelection(rasterImageData);
+      //      }
+      //      else {
+      //          rs->setIncoming();
+      //          rs->setCurrentImage(xsh->getCell(r0, c0).getImage(true), xsh->getCell(r0, c0));
+      //          rs->pasteSelection();
+      //      }
+      //      return;
+      //  }
+      //  else {
+      //    if (!initUndo) {
+      //      initUndo = true;
+      //      TUndoManager::manager()->beginBlock();
+      //    }
+      //    pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+      //  }
+      //} else 
+      {
         if (!initUndo) {
           initUndo = true;
           TUndoManager::manager()->beginBlock();
