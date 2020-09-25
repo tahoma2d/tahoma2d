@@ -164,6 +164,7 @@ int TVectorImage::addStroke(TStroke *stroke, bool discardPoints,
           while (
               m_imp->m_insideGroup.isParentOf(m_imp->m_strokes[k]->m_groupId)) {
             k--;
+            if (k < 0) break;
           }
           m_imp->insertStrokeAt(
               new VIStroke(stroke, m_imp->m_strokes[i]->m_groupId), k + 1);
