@@ -310,6 +310,8 @@ class DvDirModelRootNode final : public DvDirModelNode {
   DvDirModelMyComputerNode *m_myComputerNode;
   DvDirModelNetworkNode *m_networkNode;
   DvDirModelProjectNode *m_sandboxProjectNode;
+  DvDirModelProjectNode *m_currentProjectNode;
+  std::set<TFilePath> m_projectPaths;
   DvDirModelSceneFolderNode *m_sceneFolderNode;
   std::vector<DvDirModelSpecialFileFolderNode *> m_specialNodes;
 

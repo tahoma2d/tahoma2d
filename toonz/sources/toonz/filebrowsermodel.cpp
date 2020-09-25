@@ -1076,25 +1076,24 @@ void DvDirModelRootNode::refreshChildren() {
     addChild(new DvDirModelHistoryNode(this));
 
     TProjectManager *pm = TProjectManager::instance();
-    // std::vector<TFilePath> projectRoots;
-    // pm->getProjectRoots(projectRoots);
-
-    // int i;
-    // for (i = 0; i < (int)projectRoots.size(); i++) {
-    //   TFilePath projectRoot = projectRoots[i];
-    //   std::wstring roothDir = projectRoot.getWideString();
-    //   DvDirModelSpecialFileFolderNode *projectRootNode =
-    //       new DvDirModelSpecialFileFolderNode(
-    //           this, L"Project root (" + roothDir + L")", projectRoot);
-    //   projectRootNode->setPixmap(QPixmap(recolorPixmap(svgToPixmap(
-    //       getIconThemePath("actions/18/folder_project_root.svg")))));
-    //   m_projectRootNodes.push_back(projectRootNode);
-    //   addChild(projectRootNode);
-    // }
-
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
     m_sandboxProjectNode = new DvDirModelProjectNode(this, sandboxProjectPath);
     addChild(m_sandboxProjectNode);
+
+    TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+    if (projectPath != pm->getSandboxProjectFolder()) {
+        m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
+        m_projectPaths.insert(projectPath);
+        addChild(m_currentProjectNode);
+    }
+
+    if (m_projectPaths.size() > 1) {
+        for (auto i : m_projectPaths) {
+            if (i == projectPath) continue;
+            DvDirModelProjectNode *addedProjectNode = new DvDirModelProjectNode(this, projectPath);
+            addChild(addedProjectNode);
+        }
+    }
 
     // SVN Repositories
     QList<SVNRepository> repositories =
@@ -1117,6 +1116,17 @@ void DvDirModelRootNode::refreshChildren() {
     m_sceneFolderNode =
         new DvDirModelSceneFolderNode(this, L"Scene Folder", TFilePath());
     m_sceneFolderNode->setPixmap(QPixmap(":Resources/clapboard.png"));
+  }
+  else {
+      TProjectManager* pm = TProjectManager::instance();
+      TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+      if (projectPath != pm->getSandboxProjectFolder() && (m_projectPaths.find(projectPath) == m_projectPaths.end())) {
+          std::string rootString = projectPath.getQString().toStdString();
+          m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
+          m_projectPaths.insert(projectPath);
+          addChild(m_currentProjectNode);
+          updateSceneFolderNodeVisibility();
+      }
   }
 }
 
@@ -1172,6 +1182,9 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
     node = m_versionControlNodes[i]->getNodeByPath(path);
     if (node) return node;
   }
+
+  if (m_currentProjectNode && m_currentProjectNode->getPath() == path)
+      return m_currentProjectNode;
 
   // or it could be the sandbox project or in the sandbox project
   if (m_sandboxProjectNode && m_sandboxProjectNode->getPath() == path)
@@ -1475,6 +1488,12 @@ DvDirModel *DvDirModel::instance() {
 void DvDirModel::onSceneSwitched() {
   DvDirModelRootNode *rootNode = dynamic_cast<DvDirModelRootNode *>(m_root);
   if (rootNode) {
+    m_root->refreshChildren();
+    TProjectManager* pm = TProjectManager::instance();
+    TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+    QModelIndex index = getIndexByPath(projectPath);
+    refresh(index);
+
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (scene) {
       if (scene->isUntitled())
