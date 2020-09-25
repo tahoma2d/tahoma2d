@@ -1967,7 +1967,7 @@ void TCellSelection::pasteCells() {
             // New level chosen
 
             // find the next empty column
-            while (!xsh->getCell(r0, c0).isEmpty()) {
+            while (!xsh->isColumnEmpty(c0)) {
               c0 += 1;
             }
             TXshColumn *col =
