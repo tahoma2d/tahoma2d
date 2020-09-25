@@ -351,6 +351,7 @@ DvDirTreeView::DvDirTreeView(QWidget *parent)
 
   ret = ret && connect(dynamic_cast<DvDirModel *>(this->model()),
                        &DvDirModel::projectAdded, [=]() {
+                         collapseAll();
                          setCurrentNode(TProjectManager::instance()
                                             ->getCurrentProjectPath()
                                             .getParentDir(),
