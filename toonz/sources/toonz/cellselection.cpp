@@ -52,7 +52,6 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
 #include "vectorizerpopup.h"
-#include "tools/rasterselection.h"
 
 // TnzCore includes
 #include "timagecache.h"
@@ -1949,11 +1948,13 @@ void TCellSelection::pasteCells() {
         bool tooBig = false;
         if (sl) {
           // offer to make a new level or paste in place
-          tooBig           = true;
-          QString question = QObject::tr(
-              "Do you want to paste the image into the current level\n "
-              "or make a new level?\n\nNote: If the image is too big for the "
-              "current level,\nthe image will be cropped to fit.");
+          if (sl && (sl->getResolution().lx < clipImage.width() ||
+                     sl->getResolution().ly < clipImage.height())) {
+            tooBig = true;
+          }
+
+          QString question =
+              QObject::tr("Paste in place or create a new level?");
           int ret = DVGui::MsgBox(question, QObject::tr("Paste in place"),
                                   QObject::tr("Create a new level"),
                                   QObject::tr("Cancel"), 1);
@@ -1976,6 +1977,12 @@ void TCellSelection::pasteCells() {
             TApp::instance()->getCurrentColumn()->setColumn(col);
             TApp::instance()->getCurrentFrame()->setFrame(r0);
             newLevel = true;
+          } else {
+            if (tooBig) {
+              clipImage =
+                  clipImage.scaled(sl->getResolution().lx,
+                                   sl->getResolution().ly, Qt::KeepAspectRatio);
+            }
           }
         }
 
@@ -2001,8 +2008,6 @@ void TCellSelection::pasteCells() {
         } else {
           dim = TDimension(clipImage.width(), clipImage.height());
         }
-        // the data will be sent over to rasterselection.cpp
-        // to let the selection tool handle the paste.
         qimageData->setData(ras, p, 120.0, 120.0, dim, rects, strokes,
                             originalStrokes, aff);
         rasterImageData = qimageData;
