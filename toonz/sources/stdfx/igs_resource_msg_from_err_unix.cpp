@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L /* int strerror_r() */
+#undef _GNU_SOURCE
 #include <cerrno>
 #include <cstring> /* memset */
 #include <vector>
@@ -120,7 +122,7 @@ HP-UX(v11.23)では、strerror_r()をサポートしない。
 注意::strerror()はThread SafeではなくMulti Threadでは正常動作しない
 */
     errmsg += ::strerror(erno);
-#elif defined(FREEBSD) || ((_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !_GNU_SOURCE)
+#elif !defined(__APPLE__)
     /*
 http://japanese-linux-man-pages.coding-school.com/man/X_strerror_r-3
 より、POSIX.1.2002で規定されたXSI準拠のバージョンのstrerror_r()
@@ -152,21 +154,12 @@ http://japanese-linux-man-pages.coding-school.com/man/X_strerror_r-3
     } else {
       errmsg += "strerror_r() returns bad value";
     }
-#elif defined(__APPLE__)
+#else
     char buff[4096];
     int ret = ::strerror_r(erno, buff, sizeof(buff));
     if (!ret) {
       errmsg += buff;
     }
-#else
-    /* linuxはここに来る?
-http://japanese-linux-man-pages.coding-school.com/man/X_strerror_r-3
-より、GNU仕様のバージョンのstrerror_r()。非標準の拡張
-これはThread Safeか??????
-*/
-    char buff[4096];
-    const char *ret = ::strerror_r(erno, buff, sizeof(buff));
-    errmsg += ret;
 #endif
   }
   errmsg += '\"';
