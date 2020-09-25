@@ -539,8 +539,9 @@ void ToolUtils::TToolUndo::removeLevelAndFrameIfNeeded() const {
           cell = xsh->getCell(cellOps.r0 - 1, m_col);
         for (int r = cellOps.r0; r <= cellOps.r1; r++)
           xsh->setCell(r, m_col, cell);
-      } if (m_cellsData.size() < 1) {
-          xsh->setCell(m_row, m_col, cell);
+      }
+      if (m_cellsData.size() < 1) {
+        xsh->setCell(m_row, m_col, cell);
       }
     }
     if (m_createdLevel) {

@@ -54,11 +54,11 @@ class DVAPI RasterSelection final : public TSelection {
   int m_transformationCount;
   bool m_isPastedSelection;
   bool m_noAntialiasing;
-  bool m_fromCellSelection = false;
 
 private:
-public:
   void pasteSelection(const RasterImageData *data);
+
+public:
   RasterSelection();
   RasterSelection(const RasterSelection &src);
 
@@ -70,7 +70,6 @@ public:
   void setCurrentImage(const TImageP &img, const TXshCell &imageCell) {
     m_currentImage = img, m_currentImageCell = imageCell;
   }
-  void setCurrentImageCell(TXshCell cell) { m_currentImageCell = cell; }
   void setStrokes(const std::vector<TStroke> &strokes) { m_strokes = strokes; }
   std::vector<TStroke> getStrokes() const { return m_strokes; }
   std::vector<TStroke> getOriginalStrokes() const { return m_originalStrokes; }
@@ -145,8 +144,6 @@ Can be different from getSelectionBound() after a free deform transformation. */
   bool isTransformed();
 
   bool isEditable();
-
-  void setIncoming() { m_fromCellSelection = true; }
 };
 
 #endif  // RASTER_SELECTION_H

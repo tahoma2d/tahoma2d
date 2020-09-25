@@ -1894,17 +1894,20 @@ void TCellSelection::pasteCells() {
     } else
       pasteStrokesInCell(r0, c0, strokesData);
   }
-
+  // Raster Time
+  // See if an image was copied from outside Tahoma
   QImage clipImage = clipboard->image();
-
+  // See if the clipboard contains rasterData
   const RasterImageData *rasterImageData =
       dynamic_cast<const RasterImageData *>(mimeData);
   if (rasterImageData || clipImage.height() > 0) {
-    if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
+    if (isEmpty())  // Nothing selected.
       return;
 
+    // get the current image and find out the type
     TImageP img = xsh->getCell(r0, c0).getImage(false);
     if (!img && r0 > 0) {
+      // Try the previous cell.
       TXshCell cell = xsh->getCell(r0 - 1, c0);
       TXshLevel *xl = cell.m_level.getPointer();
       if (xl && (xl->getType() != OVL_XSHLEVEL ||
@@ -1916,10 +1919,13 @@ void TCellSelection::pasteCells() {
     TToonzImageP ti(img);
     TVectorImageP vi(img);
     if (fullColData && (vi || ti)) {
+      // Bail out if the level is Smart Raster or Vector with normal raster
+      // data.
       DVGui::error(QObject::tr(
           "The copied selection cannot be pasted in the current drawing."));
       return;
     }
+    // Convert non-plain raster data to strokes data
     if (vi) {
       if (!initUndo) {
         initUndo = true;
@@ -1930,41 +1936,50 @@ void TCellSelection::pasteCells() {
       assert(sl);
       StrokesData *strokesData = rasterImageData->toStrokesData(sl->getScene());
       pasteStrokesInCell(r0, c0, strokesData);
+      // end strokes stuff
     } else {
-      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
-      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
-      bool newLevel       = false;
+      TXshSimpleLevel *sl   = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl && r0 > 0) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      bool newLevel         = false;
       TRasterImageP ri(img);
       if (clipImage.height() > 0) {
+        // This stuff is only if we have a pasted image from outside Tahoma
+
+        // check the size of the incoming image
         bool tooBig = false;
-        if (sl && (sl->getResolution().lx < clipImage.width() ||
-                   sl->getResolution().ly < clipImage.height())) {
+        if (sl) {
+          // offer to make a new level or paste in place
           tooBig           = true;
           QString question = QObject::tr(
-              "The pasted image is larger than the current level.\nPasting in "
-              "the level will crop some of the image.\nWhat do you want to "
-              "do?");
+              "Do you want to paste the image into the current level\n "
+              "or make a new level?\n\nNote: If the image is too big for the "
+              "current level,\nthe image will be cropped to fit.");
           int ret = DVGui::MsgBox(question, QObject::tr("Paste in place"),
                                   QObject::tr("Create a new level"),
                                   QObject::tr("Cancel"), 1);
           if (ret == 3 || ret == 0) {
+            // Cancel or dialog closed
             if (initUndo) TUndoManager::manager()->endBlock();
             return;
           }
           if (ret == 2) {
-              if (newLevel) {
-                  while (!xsh->getCell(r0, c0).isEmpty()) {
-                      c0 += 1;
-                      TXshColumn* col = TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(c0);
-                      TApp::instance()->getCurrentColumn()->setColumnIndex(c0);
-                      TApp::instance()->getCurrentColumn()->setColumn(col);
-                      TApp::instance()->getCurrentFrame()->setFrame(r0);
-                  }
-              }
-              newLevel = true;
+            // New level chosen
+
+            // find the next empty column
+            while (!xsh->getCell(r0, c0).isEmpty()) {
+              c0 += 1;
+            }
+            TXshColumn *col =
+                TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(
+                    c0);
+            TApp::instance()->getCurrentColumn()->setColumnIndex(c0);
+            TApp::instance()->getCurrentColumn()->setColumn(col);
+            TApp::instance()->getCurrentFrame()->setFrame(r0);
+            newLevel = true;
           }
         }
 
+        // create variables to go into the Full Color Raster Selection data
         std::vector<TRectD> rects;
         const std::vector<TStroke> strokes;
         const std::vector<TStroke> originalStrokes;
@@ -1975,7 +1990,7 @@ void TCellSelection::pasteCells() {
                                clipImage.width() / 2, clipImage.height() / 2));
         FullColorImageData *qimageData = new FullColorImageData();
         TPalette *p;
-        if (!ri)
+        if (!ri || newLevel)
           p = TApp::instance()->getPaletteController()->getDefaultPalette(
               OVL_XSHLEVEL);
         else
@@ -1986,44 +2001,23 @@ void TCellSelection::pasteCells() {
         } else {
           dim = TDimension(clipImage.width(), clipImage.height());
         }
+        // the data will be sent over to rasterselection.cpp
+        // to let the selection tool handle the paste.
         qimageData->setData(ras, p, 120.0, 120.0, dim, rects, strokes,
                             originalStrokes, aff);
         rasterImageData = qimageData;
+        // end of pasted from outside Tahoma stuff
+        // rasterImageData holds all the info either way now.
       }
-      //ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
-      //TXshCell currentCell = xsh->getCell(r0, c0);
-      //if (false && !currentCell.isEmpty() && sl && toolHandle->getTool()->getName() == "T_Selection") {
-      //  TSelection *ts      = toolHandle->getTool()->getSelection();
-      //  RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
-      //  if (rs) {
-      //      if (clipImage.height() > 0) {
-      //          rs->setCurrentImage(xsh->getCell(r0, c0).getImage(true), xsh->getCell(r0, c0));
-      //          rs->pasteSelection(rasterImageData);
-      //      }
-      //      else {
-      //          rs->setIncoming();
-      //          rs->setCurrentImage(xsh->getCell(r0, c0).getImage(true), xsh->getCell(r0, c0));
-      //          rs->pasteSelection();
-      //      }
-      //      return;
-      //  }
-      //  else {
-      //    if (!initUndo) {
-      //      initUndo = true;
-      //      TUndoManager::manager()->beginBlock();
-      //    }
-      //    pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
-      //  }
-      //} else 
-      {
-        if (!initUndo) {
-          initUndo = true;
-          TUndoManager::manager()->beginBlock();
-        }
-        pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+
+      if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
       }
-    }
-  }
+      pasteRasterImageInCell(r0, c0, rasterImageData, newLevel);
+
+    }  // end of full raster stuff
+  }    // end of raster stuff
   if (!initUndo) {
     DVGui::error(QObject::tr(
         "It is not possible to paste data: there is nothing to paste."));
