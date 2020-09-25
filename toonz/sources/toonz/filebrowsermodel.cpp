@@ -1075,24 +1075,25 @@ void DvDirModelRootNode::refreshChildren() {
 
     addChild(new DvDirModelHistoryNode(this));
 
-    TProjectManager *pm = TProjectManager::instance();
+    TProjectManager *pm          = TProjectManager::instance();
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
     m_sandboxProjectNode = new DvDirModelProjectNode(this, sandboxProjectPath);
     addChild(m_sandboxProjectNode);
 
     TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
     if (projectPath != pm->getSandboxProjectFolder()) {
-        m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
-        m_projectPaths.insert(projectPath);
-        addChild(m_currentProjectNode);
+      m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
+      m_projectPaths.insert(projectPath);
+      addChild(m_currentProjectNode);
     }
 
     if (m_projectPaths.size() > 1) {
-        for (auto i : m_projectPaths) {
-            if (i == projectPath) continue;
-            DvDirModelProjectNode *addedProjectNode = new DvDirModelProjectNode(this, projectPath);
-            addChild(addedProjectNode);
-        }
+      for (auto i : m_projectPaths) {
+        if (i == projectPath) continue;
+        DvDirModelProjectNode *addedProjectNode =
+            new DvDirModelProjectNode(this, projectPath);
+        addChild(addedProjectNode);
+      }
     }
 
     // SVN Repositories
@@ -1116,17 +1117,17 @@ void DvDirModelRootNode::refreshChildren() {
     m_sceneFolderNode =
         new DvDirModelSceneFolderNode(this, L"Scene Folder", TFilePath());
     m_sceneFolderNode->setPixmap(QPixmap(":Resources/clapboard.png"));
-  }
-  else {
-      TProjectManager* pm = TProjectManager::instance();
-      TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-      if (projectPath != pm->getSandboxProjectFolder() && (m_projectPaths.find(projectPath) == m_projectPaths.end())) {
-          std::string rootString = projectPath.getQString().toStdString();
-          m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
-          m_projectPaths.insert(projectPath);
-          addChild(m_currentProjectNode);
-          updateSceneFolderNodeVisibility();
-      }
+  } else {
+    TProjectManager *pm   = TProjectManager::instance();
+    TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+    if (projectPath != pm->getSandboxProjectFolder() &&
+        (m_projectPaths.find(projectPath) == m_projectPaths.end())) {
+      std::string rootString = projectPath.getQString().toStdString();
+      m_currentProjectNode   = new DvDirModelProjectNode(this, projectPath);
+      m_projectPaths.insert(projectPath);
+      addChild(m_currentProjectNode);
+      updateSceneFolderNodeVisibility();
+    }
   }
 }
 
@@ -1183,8 +1184,9 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
     if (node) return node;
   }
 
-  if (m_currentProjectNode && m_currentProjectNode->getPath() == path)
-      return m_currentProjectNode;
+  if (m_projectPaths.size() > 0 && m_currentProjectNode &&
+      m_currentProjectNode->getPath() == path)
+    return m_currentProjectNode;
 
   // or it could be the sandbox project or in the sandbox project
   if (m_sandboxProjectNode && m_sandboxProjectNode->getPath() == path)
@@ -1488,12 +1490,15 @@ DvDirModel *DvDirModel::instance() {
 void DvDirModel::onSceneSwitched() {
   DvDirModelRootNode *rootNode = dynamic_cast<DvDirModelRootNode *>(m_root);
   if (rootNode) {
+    int projectPaths = rootNode->getProjectPathsSize();
     m_root->refreshChildren();
-    TProjectManager* pm = TProjectManager::instance();
-    TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-    QModelIndex index = getIndexByPath(projectPath);
-    refresh(index);
-
+    if (rootNode->getProjectPathsSize() != projectPaths) {
+      TProjectManager *pm   = TProjectManager::instance();
+      TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+      QModelIndex index     = getIndexByPath(projectPath);
+      refresh(index);
+      emit(projectAdded());
+    }
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (scene) {
       if (scene->isUntitled())
