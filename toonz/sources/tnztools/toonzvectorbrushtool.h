@@ -157,6 +157,7 @@ protected:
   TBoolProperty m_sendToBack;
   TBoolProperty m_autoFill;
   TBoolProperty m_autoClose;
+  TBoolProperty m_autoGroup;
   TEnumProperty m_frameRange;
   TEnumProperty m_snapSensitivity;
   TEnumProperty m_capStyle;

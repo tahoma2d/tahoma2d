@@ -1896,6 +1896,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Draw Under"));
     m_autoCloseCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Close"));
+    m_autoGroupCheckbox =
+        dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Group"));
     m_autoFillCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
     m_snapCheckbox =

@@ -65,6 +65,7 @@ TEnv::IntVar V_VectorBrushSnapSensitivity("VectorBrushSnapSensitivity", 0);
 TEnv::IntVar V_VectorBrushDrawBehind("VectorBrushDrawBehind", 0);
 TEnv::IntVar V_VectorBrushAutoClose("VectorBrushAutoClose", 0);
 TEnv::IntVar V_VectorBrushAutoFill("VectorBrushAutoFill", 0);
+TEnv::IntVar V_VectorBrushAutoGroup("VectorBrushAutoGroup", 0);
 TEnv::StringVar V_VectorBrushPreset("VectorBrushPreset", "<custom>");
 
 //-------------------------------------------------------------------
@@ -527,6 +528,7 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
     , m_snapSensitivity("Sensitivity:")
     , m_sendToBack("Draw Under", false)
     , m_autoClose("Auto Close", false)
+    , m_autoGroup("Auto Group", false)
     , m_autoFill("Auto Fill", false)
     , m_targetType(targetType)
     , m_workingFrameId(TFrameId()) {
@@ -542,6 +544,9 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
 
   m_prop[0].bind(m_autoClose);
   m_autoClose.setId("AutoClose");
+
+  m_prop[0].bind(m_autoGroup);
+  m_autoGroup.setId("AutoGroup");
 
   m_prop[0].bind(m_autoFill);
   m_autoFill.setId("AutoFill");
@@ -632,6 +637,7 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_sendToBack.setQStringName(tr("Draw Under"));
   m_autoClose.setQStringName(tr("Auto Close"));
   m_autoFill.setQStringName(tr("Auto Fill"));
+  m_autoGroup.setQStringName(tr("Auto Group"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1176,7 +1182,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       if (m_autoClose.getValue()) stroke->setSelfLoop(true);
       m_firstStroke = new TStroke(*stroke);
       if (m_autoClose.getValue()) m_firstStroke->setSelfLoop(true);
-      m_rangeTrack  = m_track;
+      m_rangeTrack = m_track;
     } else {
       TFrameId currentId = getFrameId();
       int curCol = 0, curFrame = 0;
@@ -1190,8 +1196,8 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       bool success = doFrameRangeStrokes(
           m_firstFrameId, m_firstStroke, getFrameId(), stroke,
           m_frameRange.getIndex(), m_breakAngles.getValue(),
-          m_autoFill.getValue(), m_autoFill.getValue(), m_firstFrameRange, true,
-          true, m_sendToBack.getValue() > 0);
+          m_autoGroup.getValue(), m_autoFill.getValue(), m_firstFrameRange,
+          true, true, m_sendToBack.getValue() > 0);
       if (e.isCtrlPressed() && e.isAltPressed() && e.isShiftPressed()) {
         if (application) {
           if (m_firstFrameId > currentId) {
@@ -1234,12 +1240,12 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     //    m_sendToBack = (GetKeyState(VK_CAPITAL) & 0x0001);
     //#endif
     addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
-                     m_autoFill.getValue(), m_autoFill.getValue(),
+                     m_autoGroup.getValue(), m_autoFill.getValue(),
                      m_isFrameCreated, m_isLevelCreated, 0, TFrameId::NO_FRAME,
                      m_sendToBack.getValue() > 0);
     TRectD bbox = stroke->getBBox().enlarge(2) + m_track.getModifiedRegion();
 
-    invalidate();  
+    invalidate();
 
     if ((Preferences::instance()->getGuidedDrawingType() == 1 ||
          Preferences::instance()->getGuidedDrawingType() == 2) &&
@@ -1247,8 +1253,9 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       int fidx     = getApplication()->getCurrentFrame()->getFrameIndex();
       TFrameId fId = getFrameId();
 
-      doGuidedAutoInbetween(fId, vi, stroke, m_breakAngles.getValue(), m_autoFill.getValue(),
-          m_autoFill.getValue(), false, m_sendToBack.getValue() > 0);
+      doGuidedAutoInbetween(fId, vi, stroke, m_breakAngles.getValue(),
+                            m_autoGroup.getValue(), m_autoFill.getValue(),
+                            false, m_sendToBack.getValue() > 0);
 
       if (getApplication()->getCurrentFrame()->isEditingScene())
         getApplication()->getCurrentFrame()->setFrame(fidx);
@@ -1286,8 +1293,8 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
   TVectorImageP firstImage = new TVectorImage();
   TVectorImageP lastImage  = new TVectorImage();
 
-  *first       = *firstStroke;
-  *last        = *lastStroke;
+  *first = *firstStroke;
+  *last  = *lastStroke;
 
   bool swapped = false;
   if (firstFrameId > lastFrameId) {
@@ -1298,8 +1305,8 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
   }
 
   if (m_autoClose.getValue()) {
-      first->setSelfLoop(true);
-      last->setSelfLoop(true);
+    first->setSelfLoop(true);
+    last->setSelfLoop(true);
   }
 
   firstImage->addStroke(first, false, sendToBack);
@@ -1928,7 +1935,9 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
   else if (propertyName == m_autoClose.getName()) {
     if (!m_autoClose.getValue()) {
       m_autoFill.setValue(false);
-      V_VectorBrushAutoFill = 0;
+      m_autoGroup.setValue(false);
+      V_VectorBrushAutoFill  = 0;
+      V_VectorBrushAutoGroup = 0;
       // this is ugly: it's needed to refresh the GUI of the toolbar after
       // having set to false the autofill...
       TTool::getApplication()->getCurrentTool()->setTool(
@@ -1937,10 +1946,37 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
           QString::fromStdString(getName()));
     }
     V_VectorBrushAutoClose = m_autoClose.getValue();
-  } else if (propertyName == m_autoFill.getName()) {
-    if (m_autoFill.getValue()) {
+  } else if (propertyName == m_autoGroup.getName()) {
+    // We need close turned on if on,
+    // We need autofill off if off.
+    if (m_autoGroup.getValue()) {
       m_autoClose.setValue(true);
       V_VectorBrushAutoClose = 1;
+      // this is ugly: it's needed to refresh the GUI of the toolbar after
+      // having set to false the autofill...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          "");  // necessary, otherwise next setTool is ignored...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          QString::fromStdString(getName()));
+    }
+    if (!m_autoGroup.getValue() && m_autoFill.getValue()) {
+      m_autoFill.setValue(false);
+      V_VectorBrushAutoFill = 0;
+      // this is ugly: it's needed to refresh the GUI of the toolbar after
+      // having set to false the autofill...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          "");  // necessary, otherwise next setTool is ignored...
+      TTool::getApplication()->getCurrentTool()->setTool(
+          QString::fromStdString(getName()));
+    }
+    V_VectorBrushAutoGroup = m_autoGroup.getValue();
+  } else if (propertyName == m_autoFill.getName()) {
+    // we need close and group on
+    if (m_autoFill.getValue()) {
+      m_autoClose.setValue(true);
+      m_autoGroup.setValue(true);
+      V_VectorBrushAutoClose = 1;
+      V_VectorBrushAutoGroup = 1;
       // this is ugly: it's needed to refresh the GUI of the toolbar after
       // having set to false the autofill...
       TTool::getApplication()->getCurrentTool()->setTool(
@@ -2095,8 +2131,16 @@ void ToonzVectorBrushTool::loadLastBrush() {
   m_autoClose.setValue(V_VectorBrushAutoClose);
   m_autoFill.setValue(V_VectorBrushAutoFill);
   if (m_autoFill.getValue() && !m_autoClose.getValue()) {
-      m_autoClose.setValue(true);
-      V_VectorBrushAutoClose = 1;
+    m_autoClose.setValue(true);
+    V_VectorBrushAutoClose = 1;
+  }
+  if (m_autoFill.getValue() && !m_autoGroup.getValue()) {
+    m_autoGroup.setValue(true);
+    V_VectorBrushAutoGroup = 1;
+  }
+  if (m_autoGroup.getValue() && !m_autoClose.getValue()) {
+    m_autoClose.setValue(true);
+    V_VectorBrushAutoClose = 1;
   }
   switch (V_VectorBrushSnapSensitivity) {
   case 0:
