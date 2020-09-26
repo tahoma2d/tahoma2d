@@ -524,12 +524,6 @@ void RGBPickerTool::pickStroke() {
     TXshSimpleLevel *level = app->getCurrentLevel()->getSimpleLevel();
     TUndoManager::manager()->add(
         new UndoPickRGBM(palette, styleId, m_currentValue, level));
-    // setCurrentColor(m_currentValue);
-    // if (level) {
-    //  std::vector<TFrameId> fids;
-    //  level->getFids(fids);
-    //  invalidateIcons(level, fids);
-    //}
   }
 }
 
