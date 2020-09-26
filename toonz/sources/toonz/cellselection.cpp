@@ -1925,7 +1925,7 @@ void TCellSelection::pasteCells() {
       return;
     }
     // Convert non-plain raster data to strokes data
-    if (vi) {
+    if (vi && clipImage.isNull()) {
       if (!initUndo) {
         initUndo = true;
         TUndoManager::manager()->beginBlock();
@@ -1946,7 +1946,8 @@ void TCellSelection::pasteCells() {
 
         // check the size of the incoming image
         bool tooBig = false;
-        if (sl) {
+
+        if (sl && sl->getType() == OVL_XSHLEVEL) {
           // offer to make a new level or paste in place
           if (sl && (sl->getResolution().lx < clipImage.width() ||
                      sl->getResolution().ly < clipImage.height())) {
@@ -1984,6 +1985,18 @@ void TCellSelection::pasteCells() {
                                    sl->getResolution().ly, Qt::KeepAspectRatio);
             }
           }
+        } else if (sl) {
+          // not on a raster level
+          // find an empty column
+          while (!xsh->isColumnEmpty(c0)) {
+            c0 += 1;
+          }
+          TXshColumn *col =
+              TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(c0);
+          TApp::instance()->getCurrentColumn()->setColumnIndex(c0);
+          TApp::instance()->getCurrentColumn()->setColumn(col);
+          TApp::instance()->getCurrentFrame()->setFrame(r0);
+          newLevel = true;
         }
 
         // create variables to go into the Full Color Raster Selection data
