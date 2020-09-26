@@ -1119,11 +1119,12 @@ void ToolUtils::UndoPencil::redo() const {
   QMutexLocker sl(image->getMutex());
   TStroke *stroke = new TStroke(*m_stroke);
   stroke->setId(m_strokeId);
-  image->addStroke(stroke, true, m_sendToBack);
+  int addedStrokeIndex = image->addStroke(stroke, true, m_sendToBack);
   if (image->isComputedRegionAlmostOnce()) image->findRegions();
 
   if (m_autogroup && stroke->isSelfLoop()) {
-    int index = image->getStrokeCount() - 1;
+    int index               = image->getStrokeCount() - 1;
+    if (m_sendToBack) index = addedStrokeIndex;
     image->group(index, 1);
     if (m_autofill) {
       // to avoid filling other strokes, I enter into the new stroke group

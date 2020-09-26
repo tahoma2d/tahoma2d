@@ -530,7 +530,8 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   ToolOptionPopupButton *m_joinStyleCombo;
   ToolOptionIntSlider *m_miterField;
   ToolOptionCombo *m_presetCombo;
-  ToolOptionCheckbox *m_snapCheckbox, *m_drawOrderCheckbox;
+  ToolOptionCheckbox *m_snapCheckbox, *m_drawOrderCheckbox,
+      *m_autoCloseCheckbox, *m_autoGroupCheckbox, *m_autoFillCheckbox;
   ToolOptionCombo *m_snapSensitivityCombo;
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;
