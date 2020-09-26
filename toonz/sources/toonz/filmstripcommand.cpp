@@ -1624,7 +1624,7 @@ void FilmstripCmd::paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
     TUndo *undo      = 0;
     TPaletteP plt    = sl->getPalette()->clone();
     QImage clipImage = clipboard->image();
-    if (clipImage.height() > 0) {
+    if (sl && sl->getType() == OVL_XSHLEVEL && !clipImage.isNull()) {
       // This stuff is only if we have a pasted image from outside Tahoma
       if (sl && (sl->getResolution().lx < clipImage.width() ||
                  sl->getResolution().ly < clipImage.height())) {

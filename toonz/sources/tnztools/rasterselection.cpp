@@ -1217,7 +1217,7 @@ void RasterSelection::pasteSelection() {
     }
   }
 
-  if (clipImage.height() > 0) {
+  if (clipImage.height() > 0 && m_currentImage->getType() == OVL_XSHLEVEL) {
     // An image was pasted from outside Tahoma
 
     // Set up variables
