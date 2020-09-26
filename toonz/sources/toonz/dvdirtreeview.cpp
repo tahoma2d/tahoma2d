@@ -349,6 +349,15 @@ DvDirTreeView::DvDirTreeView(QWidget *parent)
   ret = ret && connect(this->model(), SIGNAL(layoutChanged()), this,
                        SLOT(resizeToConts()));
 
+  ret = ret && connect(dynamic_cast<DvDirModel *>(this->model()),
+                       &DvDirModel::projectAdded, [=]() {
+                         collapseAll();
+                         setCurrentNode(TProjectManager::instance()
+                                            ->getCurrentProjectPath()
+                                            .getParentDir(),
+                                        true);
+                       });
+
   if (Preferences::instance()->isWatchFileSystemEnabled()) {
     ret = ret && connect(this, SIGNAL(expanded(const QModelIndex &)), this,
                          SLOT(onExpanded(const QModelIndex &)));

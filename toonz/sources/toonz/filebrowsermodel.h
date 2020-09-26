@@ -310,6 +310,8 @@ class DvDirModelRootNode final : public DvDirModelNode {
   DvDirModelMyComputerNode *m_myComputerNode;
   DvDirModelNetworkNode *m_networkNode;
   DvDirModelProjectNode *m_sandboxProjectNode;
+  DvDirModelProjectNode *m_currentProjectNode;
+  std::set<TFilePath> m_projectPaths;
   DvDirModelSceneFolderNode *m_sceneFolderNode;
   std::vector<DvDirModelSpecialFileFolderNode *> m_specialNodes;
 
@@ -318,6 +320,7 @@ class DvDirModelRootNode final : public DvDirModelNode {
 public:
   DvDirModelRootNode();
   void refreshChildren() override;
+  int getProjectPathsSize() { return m_projectPaths.size(); }
 
   DvDirModelNode *getNodeByPath(const TFilePath &path) override;
   // QPixmap getPixmap(bool isOpen) const;
@@ -381,6 +384,8 @@ public:
     emit beginInsertRows(parent, first, last);
   }
   void notifyEndInsertRows() { emit endInsertRows(); }
+signals:
+  void projectAdded();
 
 protected slots:
   // when the scene switched, update the path of the scene location node
