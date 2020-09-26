@@ -1596,18 +1596,18 @@ void SceneViewer::drawOverlay() {
         m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
         ViewerDraw::drawCamera(f, m_pixelSize);
         glPopMatrix();
-        if (fieldGuideToggle.getStatus()) {
-            glPushMatrix();
-            tglMultMatrix(m_drawCameraAff);
-            ViewerDraw::drawCameraOverlays(this, f, m_pixelSize);
-            glPopMatrix();
-          glPushMatrix();
-          tglMultMatrix(m_drawTableAff);
-          if (ViewerDraw::getShowFieldGuide()) ViewerDraw::drawFieldGuide();
-          ViewerDraw::drawGridsAndOverlays(this, f, m_pixelSize);
-          glPopMatrix();
-        }
       }
+    }
+    if (fieldGuideToggle.getStatus()) {
+      glPushMatrix();
+      tglMultMatrix(m_drawCameraAff);
+      ViewerDraw::drawCameraOverlays(this, m_pixelSize);
+      glPopMatrix();
+      glPushMatrix();
+      tglMultMatrix(m_drawTableAff);
+      if (ViewerDraw::getShowFieldGuide()) ViewerDraw::drawFieldGuide();
+      ViewerDraw::drawGridsAndOverlays(this, m_pixelSize);
+      glPopMatrix();
     }
 
 #ifdef WITH_CANON

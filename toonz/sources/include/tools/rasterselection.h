@@ -70,7 +70,6 @@ public:
   void setCurrentImage(const TImageP &img, const TXshCell &imageCell) {
     m_currentImage = img, m_currentImageCell = imageCell;
   }
-
   void setStrokes(const std::vector<TStroke> &strokes) { m_strokes = strokes; }
   std::vector<TStroke> getStrokes() const { return m_strokes; }
   std::vector<TStroke> getOriginalStrokes() const { return m_originalStrokes; }

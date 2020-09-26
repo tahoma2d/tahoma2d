@@ -251,10 +251,10 @@ bool pasteAreasWithoutUndo(const QMimeData *data, TXshSimpleLevel *sl,
         affine *= sc;
         int i;
         TRectD boxD;
-        if (rects.size() > 0) boxD = rects[0];
+        if (rects.size() > 0) boxD   = rects[0];
         if (strokes.size() > 0) boxD = strokes[0].getBBox();
         for (i = 0; i < rects.size(); i++) boxD += rects[i];
-        for (i = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
+        for (i     = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
         boxD       = affine * boxD;
         TRect box  = ToonzImageUtils::convertWorldToRaster(boxD, ti);
         TPoint pos = box.getP00();
@@ -310,10 +310,10 @@ bool pasteAreasWithoutUndo(const QMimeData *data, TXshSimpleLevel *sl,
         affine *= sc;
         int i;
         TRectD boxD;
-        if (rects.size() > 0) boxD = rects[0];
+        if (rects.size() > 0) boxD   = rects[0];
         if (strokes.size() > 0) boxD = strokes[0].getBBox();
         for (i = 0; i < rects.size(); i++) boxD += rects[i];
-        for (i = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
+        for (i     = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
         boxD       = affine * boxD;
         TRect box  = TRasterImageUtils::convertWorldToRaster(boxD, ri);
         TPoint pos = box.getP00();
@@ -641,13 +641,13 @@ public:
 
         int i;
         TRectD boxD;
-        if (rects.size() > 0) boxD = rects[0];
+        if (rects.size() > 0) boxD   = rects[0];
         if (strokes.size() > 0) boxD = strokes[0].getBBox();
         for (i = 0; i < rects.size(); i++) boxD += rects[i];
-        for (i = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
-        boxD             = affine * boxD;
-        TRect box        = ToonzImageUtils::convertWorldToRaster(boxD, ti);
-        TPoint pos       = box.getP00();
+        for (i     = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
+        boxD       = affine * boxD;
+        TRect box  = ToonzImageUtils::convertWorldToRaster(boxD, ti);
+        TPoint pos = box.getP00();
         TRasterCM32P app = ras;
         TRop::over(ti->getRaster(), app, pos, affine);
         ToolUtils::updateSaveBox(m_level, *it);
@@ -665,9 +665,9 @@ public:
           ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
           if (scene) {
             TCamera *camera = scene->getCurrentCamera();
-            TPointD dpi = camera->getDpi();
-            dpiX              = dpi.x;
-            dpiY              = dpi.y;
+            TPointD dpi     = camera->getDpi();
+            dpiX            = dpi.x;
+            dpiY            = dpi.y;
           } else
             return;
         }
@@ -676,13 +676,13 @@ public:
         affine *= sc;
         int i;
         TRectD boxD;
-        if (rects.size() > 0) boxD = rects[0];
+        if (rects.size() > 0) boxD   = rects[0];
         if (strokes.size() > 0) boxD = strokes[0].getBBox();
         for (i = 0; i < rects.size(); i++) boxD += rects[i];
-        for (i = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
-        boxD             = affine * boxD;
-        TRect box        = TRasterImageUtils::convertWorldToRaster(boxD, ri);
-        TPoint pos       = box.getP00();
+        for (i     = 0; i < strokes.size(); i++) boxD += strokes[i].getBBox();
+        boxD       = affine * boxD;
+        TRect box  = TRasterImageUtils::convertWorldToRaster(boxD, ri);
+        TPoint pos = box.getP00();
         TRasterCM32P app = ras;
         if (app)
           TRop::over(ri->getRaster(), app, ri->getPalette(), pos, affine);
@@ -1621,9 +1621,39 @@ void FilmstripCmd::paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
         (frames.size() == 1) ? !sl->isFid((*frames.begin())) : false;
     TTileSet *tileSet = 0;
     std::map<TFrameId, std::set<int>> indices;
-    TUndo *undo   = 0;
-    TPaletteP plt = sl->getPalette()->clone();
-    bool isPaste  = pasteAreasWithoutUndo(data, sl, frames, &tileSet, indices);
+    TUndo *undo      = 0;
+    TPaletteP plt    = sl->getPalette()->clone();
+    QImage clipImage = clipboard->image();
+    if (clipImage.height() > 0) {
+      // This stuff is only if we have a pasted image from outside Tahoma
+      if (sl && (sl->getResolution().lx < clipImage.width() ||
+                 sl->getResolution().ly < clipImage.height())) {
+        clipImage =
+            clipImage.scaled(sl->getResolution().lx, sl->getResolution().ly,
+                             Qt::KeepAspectRatio);
+      }
+
+      // create variables to go into the Full Color Image data
+      std::vector<TRectD> rects;
+      const std::vector<TStroke> strokes;
+      const std::vector<TStroke> originalStrokes;
+      TAffine aff;
+      TRasterP ras = rasterFromQImage(clipImage);
+      rects.push_back(TRectD(0.0 - clipImage.width() / 2,
+                             0.0 - clipImage.height() / 2,
+                             clipImage.width() / 2, clipImage.height() / 2));
+      FullColorImageData *qimageData = new FullColorImageData();
+
+      TDimension dim = sl->getResolution();
+
+      qimageData->setData(ras, plt, 120.0, 120.0, dim, rects, strokes,
+                          originalStrokes, aff);
+      data = qimageData;
+      // end of pasted from outside Tahoma stuff
+      // rasterImageData holds all the info either way now.
+    }
+
+    bool isPaste = pasteAreasWithoutUndo(data, sl, frames, &tileSet, indices);
     RasterImageData *rasterImageData = dynamic_cast<RasterImageData *>(data);
     StrokesData *strokesData         = dynamic_cast<StrokesData *>(data);
     if (rasterImageData && tileSet)
@@ -1850,7 +1880,7 @@ public:
         // TImageCache::instance()->add("UndoInsertEmptyFrames"+QString::number((UINT)this),
         // img);
         TImageCache::instance()->add(
-            "UndoInsertEmptyFrames" + QString::number((uintptr_t)this), img);
+            "UndoInsertEmptyFrames" + QString::number((uintptr_t) this), img);
       }
     }
     m_updateXSheet =
@@ -1860,7 +1890,7 @@ public:
   ~UndoInsertEmptyFrames() {
     // TImageCache::instance()->remove("UndoInsertEmptyFrames"+QString::number((UINT)this));
     TImageCache::instance()->remove("UndoInsertEmptyFrames" +
-                                    QString::number((uintptr_t)this));
+                                    QString::number((uintptr_t) this));
   }
 
   void undo() const override {
@@ -1887,7 +1917,7 @@ public:
       // (TToonzImageP)TImageCache::instance()->get("UndoInsertEmptyFrames"+QString::number((UINT)this),
       // true);
       TToonzImageP image = (TToonzImageP)TImageCache::instance()->get(
-          "UndoInsertEmptyFrames" + QString::number((uintptr_t)this), true);
+          "UndoInsertEmptyFrames" + QString::number((uintptr_t) this), true);
       if (!image) return;
       for (it = m_frames.begin(); it != m_frames.end(); ++it)
         m_level->setFrame(*it, image);

@@ -672,8 +672,7 @@ void ViewerDraw::drawSafeArea() {
 
 //-----------------------------------------------------------------------------
 
-void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
-                                      double pixelSize) {
+void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
   TRectD rect = getCameraRect();
 
   int x1, x2, y1, y2;
@@ -851,8 +850,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, unsigned long flags,
 
 //-----------------------------------------------------------------------------
 
-void ViewerDraw::drawCameraOverlays(SceneViewer *viewer, unsigned long flags,
-                                    double pixelSize) {
+void ViewerDraw::drawCameraOverlays(SceneViewer *viewer, double pixelSize) {
   TRectD rect = getCameraRect();
 
   glEnable(GL_BLEND);  // Enable blending.

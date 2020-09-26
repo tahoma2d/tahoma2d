@@ -28,6 +28,7 @@
 #include "toonz/tframehandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tstageobject.h"
+#include "toonzqt/gutil.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -1190,11 +1191,13 @@ void RasterSelection::pasteSelection() {
       dynamic_cast<const RasterImageData *>(clipboard->mimeData());
   const StrokesData *stData =
       dynamic_cast<const StrokesData *>(clipboard->mimeData());
-  if (!riData && !stData) return;
+  QImage clipImage = clipboard->image();
+  if (!riData && !stData && clipImage.height() == 0) return;
   if (isFloating()) pasteFloatingSelection();
   selectNone();
   m_isPastedSelection = true;
-  m_oldPalette        = m_currentImage->getPalette()->clone();
+  if (m_currentImage->getPalette())
+    m_oldPalette = m_currentImage->getPalette()->clone();
   if (stData) {
     if (TToonzImageP ti = m_currentImage)
       riData = stData->toToonzImageData(ti);
@@ -1212,6 +1215,45 @@ void RasterSelection::pasteSelection() {
       }
       riData = stData->toFullColorImageData(ri);
     }
+  }
+
+  if (clipImage.height() > 0) {
+    // An image was pasted from outside Tahoma
+
+    // Set up variables
+    std::vector<TRectD> rects;
+    const std::vector<TStroke> strokes;
+    const std::vector<TStroke> originalStrokes;
+    TRasterImageP ri = m_currentImage;
+    TAffine aff;
+    TRasterP ras = rasterFromQImage(clipImage);
+    // center the image in the viewer
+    rects.push_back(TRectD(0.0 - clipImage.width() / 2,
+                           0.0 - clipImage.height() / 2, clipImage.width() / 2,
+                           clipImage.height() / 2));
+
+    TRectD r =
+        TRectD(0.0 - (clipImage.width() / 2), 0.0 - (clipImage.height() / 2),
+               clipImage.width() / 2, clipImage.height() / 2);
+    TRect box = getRaster(m_currentImage)->getBounds();
+    r *= convertRasterToWorld(box, m_currentImage);
+    if (!r.isEmpty()) {
+      TStroke stroke = getStrokeByRect(r);
+      if ((int)stroke.getControlPointCount() == 0) return;
+      m_strokes.push_back(stroke);
+      m_originalStrokes.push_back(stroke);
+    }
+    // pack up the data to send to the next pasteSelection
+    FullColorImageData *qimageData = new FullColorImageData();
+
+    qimageData->setData(ras, ri->getPalette(), 120.0, 120.0,
+                        ri->getRaster()->getSize(), rects, m_strokes,
+                        m_originalStrokes, aff);
+    setSelectionBbox(TRectD(0.0 - clipImage.width() / 2,
+                            0.0 - clipImage.height() / 2, clipImage.width() / 2,
+                            clipImage.height() / 2));
+
+    riData = qimageData;
   }
 
   if (!riData) return;
