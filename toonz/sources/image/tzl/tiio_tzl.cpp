@@ -945,7 +945,7 @@ void TLevelWriterTzl::saveImage(const TImageP &img, const TFrameId &_fid,
   Header *header = (Header *)buff;
 
   TRasterP ras;
-  m_codec->decompress(buff, buffSize, ras);
+  m_codec->decompress(buff, buffSize, ras, false);
   delete[] buff;
   assert((TRasterCM32P)ras);
   assert(ras->getLx() == header->m_lx);
