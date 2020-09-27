@@ -14,6 +14,8 @@
 	<string>io.github.turtletooth.Tahoma</string>
     <key>NSCameraUsageDescription</key>
     <string>Tahoma needs access to the camera in order to use Camera Capture</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Tahoma needs access to the microphone in order to record audio.</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
