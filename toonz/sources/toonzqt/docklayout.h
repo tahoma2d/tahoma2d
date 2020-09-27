@@ -535,8 +535,9 @@ public:
 
   bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
                                   bool &fromDocking);
-  bool checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
-                                   bool &fromDocking);
+  // This causes issues on maximize if the timeline is too tall.
+  // bool checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
+  //                                 bool &fromDocking);
 
 private:
   // Setters - private
