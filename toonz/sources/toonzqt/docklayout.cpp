@@ -458,43 +458,45 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
     return ret;
   }
 }
-
-//------------------------------------------------------
-
-bool Region::checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
-                                         bool &fromDocking) {
-  if (m_item) {
-    if (m_item->wasFloating()) {
-      fromDocking = true;
-      m_item->clearWasFloating();
-      return false;
-    }
-    if ((m_item->objectName() == "Timeline")) {
-      widgets.push_back(m_item);
-      return true;
-    } else
-      return false;
-  }
-  if (m_childList.empty()) return false;
-  // for vertical orientation, return true if all items are to be fixed
-  if (m_orientation == vertical) {
-    bool ret = true;
-    for (Region *childRegion : m_childList) {
-      if (!childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
-        ret = false;
-    }
-    return ret;
-  }
-  // for horizontal orientation, return true if at least one item is to be fixed
-  else {
-    bool ret = false;
-    for (Region *childRegion : m_childList) {
-      if (childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
-        ret = true;
-    }
-    return ret;
-  }
-}
+// As much as I want this to work.
+// This causes issues on maximize if the timeline is too tall.
+////------------------------------------------------------
+//
+// bool Region::checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
+//                                         bool &fromDocking) {
+//  if (m_item) {
+//    if (m_item->wasFloating()) {
+//      fromDocking = true;
+//      m_item->clearWasFloating();
+//      return false;
+//    }
+//    if ((m_item->objectName() == "Timeline")) {
+//      widgets.push_back(m_item);
+//      return true;
+//    } else
+//      return false;
+//  }
+//  if (m_childList.empty()) return false;
+//  // for vertical orientation, return true if all items are to be fixed
+//  if (m_orientation == vertical) {
+//    bool ret = true;
+//    for (Region *childRegion : m_childList) {
+//      if (!childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
+//        ret = false;
+//    }
+//    return ret;
+//  }
+//  // for horizontal orientation, return true if at least one item is to be
+//  fixed
+//  else {
+//    bool ret = false;
+//    for (Region *childRegion : m_childList) {
+//      if (childRegion->checkWidgetsToBeFixedHeight(widgets, fromDocking))
+//        ret = true;
+//    }
+//    return ret;
+//  }
+//}
 
 //------------------------------------------------------
 
@@ -514,17 +516,18 @@ void DockLayout::redistribute() {
     bool fromDocking = false;
     bool widgetsCanBeFixedWidth =
         !m_regions.front()->checkWidgetsToBeFixedWidth(widgets, fromDocking);
-    bool widgetsCanBeFixedHeight = false;
-    if (!fromDocking)
-      widgetsCanBeFixedHeight = !m_regions.front()->checkWidgetsToBeFixedHeight(
-          fixedHeightWidgets, fromDocking);
+    // bool widgetsCanBeFixedHeight = false;
+    // if (!fromDocking)
+    //  widgetsCanBeFixedHeight =
+    //  !m_regions.front()->checkWidgetsToBeFixedHeight(
+    //      fixedHeightWidgets, fromDocking);
     if (!fromDocking && widgetsCanBeFixedWidth) {
       for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
     }
-    if (!fromDocking && widgetsCanBeFixedHeight) {
-      for (QWidget *widget : fixedHeightWidgets)
-        widget->setFixedHeight(widget->height());
-    }
+    // if (!fromDocking && widgetsCanBeFixedHeight) {
+    //  for (QWidget *widget : fixedHeightWidgets)
+    //    widget->setFixedHeight(widget->height());
+    //}
 
     m_regions.front()->calculateExtremalSizes();
 
@@ -549,12 +552,12 @@ void DockLayout::redistribute() {
         widget->setMinimumSize(0, 0);
       }
     }
-    if (!fromDocking && widgetsCanBeFixedHeight) {
-      for (QWidget *widget : fixedHeightWidgets) {
-        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        widget->setMinimumSize(0, 0);
-      }
-    }
+    // if (!fromDocking && widgetsCanBeFixedHeight) {
+    //  for (QWidget *widget : fixedHeightWidgets) {
+    //    widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+    //    widget->setMinimumSize(0, 0);
+    //  }
+    //}
   }
 
   // Finally, apply Region geometries found
