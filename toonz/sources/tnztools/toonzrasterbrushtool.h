@@ -227,8 +227,9 @@ protected:
 
   bool m_isStraight = false;
   std::vector<TPointD> m_assistantPoints;
-  bool m_addingAssistant = false;
-  bool m_snapAssistant   = false;
+  bool m_addingAssistant   = false;
+  bool m_snapAssistant     = false;
+  int m_highlightAssistant = -1;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
   double m_oldPressure = -1.0;

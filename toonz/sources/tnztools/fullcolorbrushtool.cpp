@@ -323,11 +323,13 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     m_addingAssistant = true;
     bool deletedPoint = false;
     for (int i = 0; i < m_assistantPoints.size(); i++) {
-      if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 5) &&
-          areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 5)) {
+      if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 12) &&
+          areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 12)) {
+        TRectD pointRect = TRectD(
+            m_assistantPoints.at(i).x - 15, m_assistantPoints.at(i).y - 15,
+            m_assistantPoints.at(i).x + 15, m_assistantPoints.at(i).x + 15);
         m_assistantPoints.erase(m_assistantPoints.begin() + i);
-        deletedPoint     = true;
-        TRectD pointRect = TRectD(pos.x - 3, pos.y - 3, pos.x + 3, pos.y + 3);
+        deletedPoint = true;
         invalidate(pointRect);
         break;
       }
@@ -730,6 +732,36 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   //}
 
   m_mousePos = pos;
+
+  if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
+    if (m_highlightAssistant != -1 &&
+        m_highlightAssistant < m_assistantPoints.size()) {
+      TRectD pointRect =
+          TRectD(m_assistantPoints.at(m_highlightAssistant).x - 15,
+                 m_assistantPoints.at(m_highlightAssistant).y - 15,
+                 m_assistantPoints.at(m_highlightAssistant).x + 15,
+                 m_assistantPoints.at(m_highlightAssistant).x + 15);
+      invalidate(pointRect);
+    }
+    m_highlightAssistant = -1;
+    for (int i = 0; i < m_assistantPoints.size(); i++) {
+      if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 12) &&
+          areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 12)) {
+        m_highlightAssistant = i;
+        break;
+      }
+    }
+  } else if (m_highlightAssistant != -1 &&
+             m_highlightAssistant < m_assistantPoints.size()) {
+    TRectD pointRect =
+        TRectD(m_assistantPoints.at(m_highlightAssistant).x - 15,
+               m_assistantPoints.at(m_highlightAssistant).y - 15,
+               m_assistantPoints.at(m_highlightAssistant).x + 15,
+               m_assistantPoints.at(m_highlightAssistant).x + 15);
+    invalidate(pointRect);
+    m_highlightAssistant = -1;
+  }
+
   invalidate();
 }
 
@@ -742,11 +774,16 @@ void FullColorBrushTool::draw() {
     }
 
     if (m_assistantPoints.size() > 0) {
-      for (auto point : m_assistantPoints) {
-        glColor3d(0.0, 1.0, 0.0);
-        tglDrawCircle(point, 5.0);
-        glColor3d(1.0, 1.0, 0.0);
-        tglDrawCircle(point, 8.0);
+      for (int i = 0; i < m_assistantPoints.size(); i++) {
+        if (m_highlightAssistant == i) {
+          glColor3d(1.0, 0.0, 0.0);
+          tglDrawDisk(m_assistantPoints.at(i), 15.0);
+        } else {
+          glColor3d(0.0, 1.0, 0.0);
+          tglDrawCircle(m_assistantPoints.at(i), 5.0);
+          glColor3d(1.0, 1.0, 0.0);
+          tglDrawCircle(m_assistantPoints.at(i), 8.0);
+        }
       }
     }
 
