@@ -703,6 +703,11 @@ void TStyleSelection::eraseUnusedStyle() {
   // Verifico quali stili sono usati e quali no
   std::map<int, bool> usedStyleIds;
   int pageCount = palette->getPageCount();
+  // We're on a default palette.  Never delete Style 0 and 1
+  if (palette->isDefaultPalette()) {
+    usedStyleIds[0] = true;
+    usedStyleIds[1] = true;
+  }
   for (auto const level : levels) {
     std::vector<TFrameId> fids;
     level->getFids(fids);
@@ -716,8 +721,9 @@ void TStyleSelection::eraseUnusedStyle() {
         for (j = 0; j < page->getStyleCount(); j++) {
           int styleId = page->getStyleId(j);
           if (m != 0 && usedStyleIds[styleId]) continue;
-          if (i == 0 && j == 0)  // Il primo stile della prima pagina non deve
-                                 // essere mai cancellato
+          if (i == 0 &&
+              (j == 0 || j == 1))  // Il primo stile della prima pagina non deve
+                                   // essere mai cancellato
           {
             usedStyleIds[styleId] = true;
             continue;
