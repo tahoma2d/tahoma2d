@@ -137,13 +137,6 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   if (Preferences::instance()->isOnionSkinEnabled() &&
       !parent->isPreviewEnabled())
     OnioniSkinMaskGUI::addOnionSkinCommand(this);
-  if (parent->getCanShowPerspectiveGrids()) {
-    action = new QAction(tr("Toggle Perspective Grid"), this);
-    connect(action, &QAction::triggered, [=]() {
-      parent->setShowPerspectiveGrids(!parent->getShowPerspectiveGrids());
-    });
-    addAction(action);
-  }
 
   if (tool->getTargetType() & TTool::VectorImage) {
     auto addOptionAction = [](const QString &label, const int data,

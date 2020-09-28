@@ -55,6 +55,13 @@ extern TEnv::IntVar ShowFieldGuide;
 extern TEnv::IntVar GuideOpacity;
 extern TEnv::IntVar HorizontalOffset;
 extern TEnv::IntVar VerticalOffset;
+extern TEnv::IntVar ShowHorizon;
+extern TEnv::IntVar HorizonAngle;
+extern TEnv::IntVar HorizonStep;
+extern TEnv::IntVar HorizonOffset;
+extern TEnv::IntVar ShowVanishingPointRays;
+extern TEnv::IntVar VanishingPointRayAngles;
+extern TEnv::IntVar VanishingPointRayOpacity;
 
 //=============================================================================
 // TPanel
@@ -453,6 +460,52 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
     emit updateViewer();
   });
 
+  QGroupBox* vanishingCheckbox = new QGroupBox(tr("Vanishing Point Rays"), this);
+  vanishingCheckbox->setCheckable(true);
+  vanishingCheckbox->setChecked(ShowVanishingPointRays != 0);
+  connect(vanishingCheckbox, &QGroupBox::toggled, [=](bool value) {
+      ShowVanishingPointRays = value == true ? 1 : 0;
+      emit updateViewer();
+      });
+
+  QSlider* vanishingAngleSlider = new QSlider(this);
+  vanishingAngleSlider->setRange(5, 90);
+  vanishingAngleSlider->setValue(VanishingPointRayAngles);
+  vanishingAngleSlider->setOrientation(Qt::Horizontal);
+  vanishingAngleSlider->setMinimumWidth(300);
+  QLabel* vanishingAngleLabel = new QLabel(this);
+  vanishingAngleLabel->setText(tr("Angle: ") +
+      QString::number(VanishingPointRayAngles));
+  connect(vanishingAngleSlider, &QSlider::valueChanged, [=](int value) {
+      VanishingPointRayAngles = value;
+      vanishingAngleLabel->setText(tr("Angle: ") +
+          QString::number(VanishingPointRayAngles));
+      emit updateViewer();
+      });
+
+  QSlider* vanishingOpacitySlider = new QSlider(this);
+  vanishingOpacitySlider->setRange(1, 100);
+  vanishingOpacitySlider->setValue(VanishingPointRayOpacity);
+  vanishingOpacitySlider->setOrientation(Qt::Horizontal);
+  QLabel* vanishingOpacityLabel = new QLabel(this);
+  vanishingOpacityLabel->setText(tr("Opacity: ") +
+      QString::number(VanishingPointRayOpacity));
+  connect(vanishingOpacitySlider, &QSlider::valueChanged, [=](int value) {
+      VanishingPointRayOpacity = value;
+      vanishingOpacityLabel->setText(tr("Opacity: ") +
+          QString::number(VanishingPointRayOpacity));
+      emit updateViewer();
+      });
+
+  QGridLayout* vanishingLayout = new QGridLayout(this);
+  vanishingLayout->addWidget(vanishingAngleLabel, 0, 0, Qt::AlignRight);
+  vanishingAngleLabel->setFixedWidth(110);
+  vanishingAngleLabel->setAlignment(Qt::AlignRight);
+  vanishingLayout->addWidget(vanishingAngleSlider, 0, 1);
+  vanishingLayout->addWidget(vanishingOpacityLabel, 1, 0, Qt::AlignRight);
+  vanishingLayout->addWidget(vanishingOpacitySlider, 1, 1);
+  vanishingCheckbox->setLayout(vanishingLayout);
+
   QGroupBox *horizontalCheckbox = new QGroupBox(tr("Horizontal Grid"), this);
   horizontalCheckbox->setCheckable(true);
   horizontalCheckbox->setChecked(ShowHorizontalGrid != 0);
@@ -543,6 +596,70 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
   verticalLayout->addWidget(verticalOffsetLabel, 1, 0, Qt::AlignRight);
   verticalLayout->addWidget(verticalOffsetSlider, 1, 1);
   verticalCheckbox->setLayout(verticalLayout);
+
+  
+    QGroupBox* horizonCheckbox = new QGroupBox(tr("Horizon"), this);
+    horizonCheckbox->setCheckable(true);
+    horizonCheckbox->setChecked(ShowHorizon != 0);
+    connect(horizonCheckbox, &QGroupBox::toggled, [=](bool value) {
+        ShowHorizon = value == true ? 1 : 0;
+        emit updateViewer();
+        });
+
+    QSlider* horizonAngleSlider = new QSlider(this);
+    horizonAngleSlider->setRange(-90, 90);
+    horizonAngleSlider->setValue(HorizonAngle);
+    horizonAngleSlider->setOrientation(Qt::Horizontal);
+    horizonAngleSlider->setMinimumWidth(300);
+    QLabel* horizonAngleLabel = new QLabel(this);
+    horizonAngleLabel->setText(tr("Angle: ") +
+        QString::number(HorizonAngle));
+    connect(horizonAngleSlider, &QSlider::valueChanged, [=](int value) {
+        HorizonAngle = value;
+        horizonAngleLabel->setText(tr("Angle: ") +
+            QString::number(HorizonAngle));
+        emit updateViewer();
+        });
+
+    QSlider* horizonStepSlider = new QSlider(this);
+    horizonStepSlider->setRange(2, 100);
+    horizonStepSlider->setValue(HorizonStep);
+    horizonStepSlider->setOrientation(Qt::Horizontal);
+    QLabel* horizonStepLabel = new QLabel(this);
+    horizonStepLabel->setText(tr("Step: ") +
+        QString::number(HorizonStep));
+    connect(horizonStepSlider, &QSlider::valueChanged, [=](int value) {
+        HorizonStep = value;
+        horizonStepLabel->setText(tr("Step: ") +
+            QString::number(HorizonStep));
+        emit updateViewer();
+        });
+
+    QSlider* horizonOffsetSlider = new QSlider(this);
+    horizonOffsetSlider->setRange(-500, 500);
+    horizonOffsetSlider->setValue(HorizonOffset);
+    horizonOffsetSlider->setOrientation(Qt::Horizontal);
+    QLabel* horizonOffsetLabel = new QLabel(this);
+    horizonOffsetLabel->setText(tr("Offset: ") +
+        QString::number(HorizonOffset));
+    connect(horizonOffsetSlider, &QSlider::valueChanged, [=](int value) {
+        HorizonOffset = value;
+        horizonOffsetLabel->setText(tr("Offset: ") +
+            QString::number(HorizonOffset));
+        emit updateViewer();
+        });
+
+    QGridLayout* horizonLayout = new QGridLayout(this);
+    horizonLayout->addWidget(horizonAngleLabel, 0, 0, Qt::AlignRight);
+    horizonAngleLabel->setFixedWidth(110);
+    horizonAngleLabel->setAlignment(Qt::AlignRight);
+    horizonLayout->addWidget(horizonAngleSlider, 0, 1);
+    horizonLayout->addWidget(horizonStepLabel, 1, 0, Qt::AlignRight);
+    horizonLayout->addWidget(horizonStepSlider, 1, 1);
+    horizonLayout->addWidget(horizonOffsetLabel, 2, 0, Qt::AlignRight);
+    horizonLayout->addWidget(horizonOffsetSlider, 2, 1);
+    horizonCheckbox->setLayout(horizonLayout);
+  
 
   QGroupBox *isometricCheckbox = new QGroupBox(tr("Isometric Grid"), this);
   isometricCheckbox->setCheckable(true);
@@ -639,10 +756,13 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
   gridLayout->addWidget(fieldGuideCheckbox, 2, 0, 1, 2);
   gridLayout->addWidget(horizontalCheckbox, 3, 0, 1, 2);
   gridLayout->addWidget(verticalCheckbox, 4, 0, 1, 2);
-  gridLayout->addWidget(isometricCheckbox, 5, 0, 1, 2);
-  gridLayout->addWidget(guideOpacityLabel, 6, 0);
-  gridLayout->addWidget(guideOpacitySlider, 6, 1);
 
+  gridLayout->addWidget(horizonCheckbox, 5, 0, 1, 2);
+  gridLayout->addWidget(isometricCheckbox, 6, 0, 1, 2);
+  gridLayout->addWidget(vanishingCheckbox, 7, 0, 1, 2);
+  
+  gridLayout->addWidget(guideOpacityLabel, 8, 0);
+  gridLayout->addWidget(guideOpacitySlider, 8, 1);
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);
   m_menu->addAction(gridsAction);

@@ -780,7 +780,6 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_toolDisableReason("")
     , m_editPreviewSubCamera(false)
     , m_locator(NULL)
-    , m_showPerspectiveGrids(ShowPerspectiveGrids)
     , m_isLocator(false)
     , m_isBusyOnTabletMove(false) {
   m_visualSettings.m_sceneProperties =
@@ -1724,7 +1723,7 @@ void SceneViewer::drawOverlay() {
   // draw tool gadgets
   TTool *tool         = app->getCurrentTool()->getTool();
   TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
-  if (sl && m_showPerspectiveGrids) {
+  if (sl) {
     std::vector<TPointD> assistantPoints =
         sl->getProperties()->getVanishingPoints();
     if (assistantPoints.size() > 0) {
@@ -3360,11 +3359,4 @@ void SceneViewer::registerContext() {
   TGlContext tglContext(tglGetCurrentContext());
   TGLDisplayListsManager::instance()->attachContext(displayListId, tglContext);
   l_contexts.insert(tglContext);
-}
-
-//-----------------------------------------------------------------------------
-
-void SceneViewer::setShowPerspectiveGrids(bool show) {
-  m_showPerspectiveGrids = show;
-  ShowPerspectiveGrids   = show ? 1 : 0;
 }
