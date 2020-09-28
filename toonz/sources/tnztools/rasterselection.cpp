@@ -1024,6 +1024,19 @@ void RasterSelection::makeFloating() {
 
 void RasterSelection::pasteFloatingSelection() {
   if (!isFloating()) return;
+  if (!m_currentImageCell.getSimpleLevel()) {
+      const TXshCell& imageCell = TTool::getImageCell();
+
+      TImageP image =
+          imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
+
+      TToonzImageP ti = (TToonzImageP)image;
+      TRasterImageP ri = (TRasterImageP)image;
+      if (!ti && !ri) return;
+
+      makeCurrent();
+      setCurrentImage(image, imageCell);
+  }
 
   assert(m_transformationCount != -1 && m_transformationCount != -2);
 
@@ -1201,6 +1214,19 @@ void RasterSelection::pasteSelection() {
   if (isFloating()) pasteFloatingSelection();
   selectNone();
   m_isPastedSelection = true;
+  if (!m_currentImageCell.getSimpleLevel()) {
+      const TXshCell& imageCell = TTool::getImageCell();
+
+      TImageP image =
+          imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
+
+      TToonzImageP ti = (TToonzImageP)image;
+      TRasterImageP ri = (TRasterImageP)image;
+      if (!ti && !ri) return;
+
+      makeCurrent();
+      setCurrentImage(image, imageCell);
+  }
   if (m_currentImage->getPalette())
     m_oldPalette = m_currentImage->getPalette()->clone();
   if (!m_oldPalette)
