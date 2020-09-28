@@ -1671,7 +1671,13 @@ void Filmstrip::updateCurrentLevelComboItem() {
   }
 
   for (int i = 0; i < m_levels.size(); i++) {
-    if (currentLevel->getName() == m_levels[i]->getName()) {
+    TXshSimpleLevel* tempLevel = m_levels[i];
+      std::wstring currName = currentLevel->getName();
+      int type = tempLevel->getType();
+      if (type < 0 || type > MESH_XSHLEVEL) break;
+      std::wstring tempName = tempLevel->getName();
+
+    if (!currentLevel->isEmpty() && !tempLevel->isEmpty() && currentLevel->getName() == tempLevel->getName()) {
       m_chooseLevelCombo->setCurrentIndex(i);
       return;
     }
