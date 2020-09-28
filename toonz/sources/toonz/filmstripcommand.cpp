@@ -37,6 +37,9 @@
 #include "toonz/tcamera.h"
 #include "toonz/preferences.h"
 #include "trop.h"
+#include "tools/toolhandle.h"
+#include "tools/rasterselection.h"
+#include "tools/strokeselection.h"
 
 #include "toonzqt/gutil.h"
 
@@ -274,6 +277,11 @@ bool pasteAreasWithoutUndo(const QMimeData *data, TXshSimpleLevel *sl,
           ToolUtils::updateSaveBox(sl, *it);
         }
       } else if (ri) {
+        if (!ri->getPalette())
+          ri->setPalette(TApp::instance()
+                             ->getPaletteController()
+                             ->getDefaultPalette(sl->getType())
+                             ->clone());
         TRasterP ras;
         double dpiX = 0, dpiY = 0;
         double imgDpiX = 0, imgDpiY = 0;
@@ -652,6 +660,11 @@ public:
         TRop::over(ti->getRaster(), app, pos, affine);
         ToolUtils::updateSaveBox(m_level, *it);
       } else if (ri) {
+        if (!ri->getPalette())
+          ri->setPalette(TApp::instance()
+                             ->getPaletteController()
+                             ->getDefaultPalette(m_level->getType())
+                             ->clone());
         TRasterP ras;
         double dpiX, dpiY;
         std::vector<TRectD> rects;
@@ -1624,10 +1637,39 @@ void FilmstripCmd::paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
     TUndo *undo      = 0;
     TPaletteP plt    = sl->getPalette()->clone();
     QImage clipImage = clipboard->image();
-    if (sl && sl->getType() == OVL_XSHLEVEL && !clipImage.isNull()) {
+
+    FullColorImageData *fullColorData =
+        dynamic_cast<FullColorImageData *>(data);
+
+    if ((!clipImage.isNull() || fullColorData) &&
+        sl->getType() != OVL_XSHLEVEL) {
+      DVGui::error(QObject::tr(
+          "Can't paste full raster data on a non full raster level."));
+      return;
+    }
+
+    TXsheet *xsh           = TApp::instance()->getCurrentXsheet()->getXsheet();
+    ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+    if (toolHandle->getTool()->getName() == "T_Selection") {
+      TSelection *ts      = toolHandle->getTool()->getSelection();
+      RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+      StrokeSelection *ss = dynamic_cast<StrokeSelection *>(ts);
+      if (rs) {
+        toolHandle->getTool()->onActivate();
+        rs->pasteSelection();
+        return;
+      }
+      if (ss) {
+        toolHandle->getTool()->onActivate();
+        ss->paste();
+        return;
+      }
+    }
+
+    if (sl->getType() == OVL_XSHLEVEL && !clipImage.isNull()) {
       // This stuff is only if we have a pasted image from outside Tahoma
-      if (sl && (sl->getResolution().lx < clipImage.width() ||
-                 sl->getResolution().ly < clipImage.height())) {
+      if (sl->getResolution().lx < clipImage.width() ||
+          sl->getResolution().ly < clipImage.height()) {
         clipImage =
             clipImage.scaled(sl->getResolution().lx, sl->getResolution().ly,
                              Qt::KeepAspectRatio);
@@ -1656,6 +1698,7 @@ void FilmstripCmd::paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
     bool isPaste = pasteAreasWithoutUndo(data, sl, frames, &tileSet, indices);
     RasterImageData *rasterImageData = dynamic_cast<RasterImageData *>(data);
     StrokesData *strokesData         = dynamic_cast<StrokesData *>(data);
+
     if (rasterImageData && tileSet)
       undo = new PasteRasterAreasUndo(sl, frames, tileSet, rasterImageData,
                                       plt.getPointer(), isFrameToInsert);

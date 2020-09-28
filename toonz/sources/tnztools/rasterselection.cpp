@@ -1126,7 +1126,7 @@ void RasterSelection::cutSelection() {
 
 //-----------------------------------------------------------------------------
 
-void RasterSelection::pasteSelection(const RasterImageData *riData) {
+bool RasterSelection::pasteSelection(const RasterImageData *riData) {
   std::vector<TRectD> rect;
   double currentDpiX, currentDpiY;
   double dpiX, dpiY;
@@ -1140,18 +1140,18 @@ void RasterSelection::pasteSelection(const RasterImageData *riData) {
     if (fullColorData) {
       DVGui::error(QObject::tr(
           "The copied selection cannot be pasted in the current drawing."));
-      return;
+      return false;
     }
     riData->getData(cmRas, dpiX, dpiY, rect, m_strokes, m_originalStrokes,
                     m_affine, m_currentImage->getPalette());
-    if (!cmRas) return;
+    if (!cmRas) return false;
     m_floatingSelection = cmRas;
   } else if (TRasterImageP ri = (TRasterImageP)m_currentImage) {
     ri->getDpi(currentDpiX, currentDpiY);
     TRasterP ras;
     riData->getData(ras, dpiX, dpiY, rect, m_strokes, m_originalStrokes,
                     m_affine, ri->getPalette());
-    if (!ras) return;
+    if (!ras) return false;
     if (TRasterCM32P rasCM = ras) {
       TDimension dim = rasCM->getSize();
       TRaster32P app = TRaster32P(dim.lx, dim.ly);
@@ -1166,6 +1166,7 @@ void RasterSelection::pasteSelection(const RasterImageData *riData) {
   if (dpiX != 0 && dpiY != 0 && currentDpiX != 0 && currentDpiY != 0)
     sc     = TScale(currentDpiX / dpiX, currentDpiY / dpiY);
   m_affine = m_affine * sc;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1176,6 +1177,10 @@ void RasterSelection::pasteSelection() {
   TImageP image           = tool->touchImage();
 
   if (!image) return;
+
+  TXshLevel *xl       = app->getCurrentLevel()->getLevel();
+  TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
+  int levelType       = sl ? sl->getType() : NO_XSHLEVEL;
 
   if (!isEditable()) {
     DVGui::error(
@@ -1198,6 +1203,12 @@ void RasterSelection::pasteSelection() {
   m_isPastedSelection = true;
   if (m_currentImage->getPalette())
     m_oldPalette = m_currentImage->getPalette()->clone();
+  if (!m_oldPalette)
+    m_oldPalette =
+        app->getPaletteController()->getDefaultPalette(sl->getType())->clone();
+  if (!m_currentImage->getPalette())
+    m_currentImage->setPalette(
+        app->getPaletteController()->getDefaultPalette(sl->getType())->clone());
   if (stData) {
     if (TToonzImageP ti = m_currentImage)
       riData = stData->toToonzImageData(ti);
@@ -1217,7 +1228,8 @@ void RasterSelection::pasteSelection() {
     }
   }
 
-  if (clipImage.height() > 0 && m_currentImage->getType() == OVL_XSHLEVEL) {
+  if (clipImage.height() > 0 && (levelType == OVL_XSHLEVEL ||
+                                 m_currentImage->getType() == OVL_XSHLEVEL)) {
     // An image was pasted from outside Tahoma
 
     // Set up variables
@@ -1257,7 +1269,7 @@ void RasterSelection::pasteSelection() {
   }
 
   if (!riData) return;
-  pasteSelection(riData);
+  if (!pasteSelection(riData)) return;
 
   app->getPaletteController()->getCurrentLevelPalette()->notifyPaletteChanged();
   notify();

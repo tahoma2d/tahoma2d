@@ -52,7 +52,7 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
 #include "vectorizerpopup.h"
-
+#include "tools/rasterselection.h"
 // TnzCore includes
 #include "timagecache.h"
 #include "tundo.h"
@@ -706,6 +706,13 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
     sl   = cell.getSimpleLevel();
     fid  = cell.getFrameId();
     img  = cell.getImage(true);
+    if (!img->getPalette()) {
+      TPalette *tempPalette = TApp::instance()
+                                  ->getPaletteController()
+                                  ->getDefaultPalette(sl->getType())
+                                  ->clone();
+      img->setPalette(tempPalette);
+    }
     TRasterP ras;
     TRasterP outRas;
     double imgDpiX, imgDpiY;
@@ -2010,11 +2017,13 @@ void TCellSelection::pasteCells() {
                                clipImage.width() / 2, clipImage.height() / 2));
         FullColorImageData *qimageData = new FullColorImageData();
         TPalette *p;
-        if (!ri || newLevel)
-          p = TApp::instance()->getPaletteController()->getDefaultPalette(
-              OVL_XSHLEVEL);
+        if (!ri || !ri->getPalette() || newLevel)
+          p = TApp::instance()
+                  ->getPaletteController()
+                  ->getDefaultPalette(OVL_XSHLEVEL)
+                  ->clone();
         else
-          p = ri->getPalette();
+          p = ri->getPalette()->clone();
         TDimension dim;
         if (ri && !newLevel) {
           dim = ri->getRaster()->getSize();
@@ -2026,6 +2035,19 @@ void TCellSelection::pasteCells() {
         rasterImageData = qimageData;
         // end of pasted from outside Tahoma stuff
         // rasterImageData holds all the info either way now.
+      }
+
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+        if (rs) {
+          toolHandle->getTool()->onActivate();
+          rs->pasteSelection();
+          return;
+        }
       }
 
       if (!initUndo) {
