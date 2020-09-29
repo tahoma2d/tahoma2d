@@ -252,7 +252,10 @@ public:
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
 
     clipboard->setMimeData(data, QClipboard::Clipboard);
-
+    TTool::getApplication()
+        ->getPaletteController()
+        ->getCurrentLevelPalette()
+        ->notifyPaletteChanged();
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     notifyImageChanged();
   }

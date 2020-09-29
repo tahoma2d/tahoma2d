@@ -52,6 +52,8 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
 #include "vectorizerpopup.h"
+#include "tools/rasterselection.h"
+#include "tools/strokeselection.h"
 
 // TnzCore includes
 #include "timagecache.h"
@@ -706,6 +708,9 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
     sl   = cell.getSimpleLevel();
     fid  = cell.getFrameId();
     img  = cell.getImage(true);
+    if (!img->getPalette()) {
+      img->setPalette(sl->getPalette());
+    }
     TRasterP ras;
     TRasterP outRas;
     double imgDpiX, imgDpiY;
@@ -1871,15 +1876,52 @@ void TCellSelection::pasteCells() {
                  xl->getPath().getFrame() != TFrameId::NO_FRAME))
         img = cell.getImage(false);
     }
-    if (!initUndo) {
-      initUndo = true;
-      TUndoManager::manager()->beginBlock();
-    }
+    
     RasterImageData *rasterImageData = 0;
     if (TToonzImageP ti = img) {
+
+        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
+        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+        assert(sl);
+        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
+        TXshCell currentCell = xsh->getCell(r0, c0);
+        if (!currentCell.isEmpty() && sl &&
+            toolHandle->getTool()->getName() == "T_Selection") {
+            TSelection* ts = toolHandle->getTool()->getSelection();
+            RasterSelection* rs = dynamic_cast<RasterSelection*>(ts);
+            if (rs) {
+                toolHandle->getTool()->onActivate();
+                rs->pasteSelection();
+                return;
+            }
+        }
+        if (!initUndo) {
+            initUndo = true;
+            TUndoManager::manager()->beginBlock();
+        }
       rasterImageData = strokesData->toToonzImageData(ti);
       pasteRasterImageInCell(r0, c0, rasterImageData);
     } else if (TRasterImageP ri = img) {
+        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
+        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+        assert(sl);
+        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
+        TXshCell currentCell = xsh->getCell(r0, c0);
+        if (!currentCell.isEmpty() && sl &&
+            toolHandle->getTool()->getName() == "T_Selection") {
+            TSelection* ts = toolHandle->getTool()->getSelection();
+            RasterSelection* rs = dynamic_cast<RasterSelection*>(ts);
+            if (rs) {
+                toolHandle->getTool()->onActivate();
+                rs->pasteSelection();
+                return;
+            }
+        }
+
+        if (!initUndo) {
+            initUndo = true;
+            TUndoManager::manager()->beginBlock();
+        }
       double dpix, dpiy;
       ri->getDpi(dpix, dpiy);
       if (dpix == 0 || dpiy == 0) {
@@ -1890,8 +1932,30 @@ void TCellSelection::pasteCells() {
       }
       rasterImageData = strokesData->toFullColorImageData(ri);
       pasteRasterImageInCell(r0, c0, rasterImageData);
-    } else
-      pasteStrokesInCell(r0, c0, strokesData);
+    }
+    else {
+
+        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
+        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+        assert(sl);
+        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
+        TXshCell currentCell = xsh->getCell(r0, c0);
+        if (!currentCell.isEmpty() && sl &&
+            toolHandle->getTool()->getName() == "T_Selection") {
+            TSelection* ts = toolHandle->getTool()->getSelection();
+            StrokeSelection* ss = dynamic_cast<StrokeSelection*>(ts);
+            if (ss) {
+                toolHandle->getTool()->onActivate();
+                ss->paste();
+                return;
+            }
+        }
+        if (!initUndo) {
+            initUndo = true;
+            TUndoManager::manager()->beginBlock();
+        }
+        pasteStrokesInCell(r0, c0, strokesData);
+    }
   }
   // Raster Time
   // See if an image was copied from outside Tahoma
@@ -1926,13 +1990,28 @@ void TCellSelection::pasteCells() {
     }
     // Convert non-plain raster data to strokes data
     if (vi && clipImage.isNull()) {
-      if (!initUndo) {
-        initUndo = true;
-        TUndoManager::manager()->beginBlock();
-      }
-      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
-      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      
+      TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
       assert(sl);
+      
+      ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+          TSelection* ts = toolHandle->getTool()->getSelection();
+          StrokeSelection* ss = dynamic_cast<StrokeSelection*>(ts);
+          if (ss) {
+              toolHandle->getTool()->onActivate();
+              ss->paste();
+              return;
+          }
+      }
+
+      if (!initUndo) {
+          initUndo = true;
+          TUndoManager::manager()->beginBlock();
+      }
       StrokesData *strokesData = rasterImageData->toStrokesData(sl->getScene());
       pasteStrokesInCell(r0, c0, strokesData);
       // end strokes stuff
@@ -2010,11 +2089,13 @@ void TCellSelection::pasteCells() {
                                clipImage.width() / 2, clipImage.height() / 2));
         FullColorImageData *qimageData = new FullColorImageData();
         TPalette *p;
-        if (!ri || newLevel)
-          p = TApp::instance()->getPaletteController()->getDefaultPalette(
-              OVL_XSHLEVEL);
+        if (!ri || !ri->getPalette() || newLevel)
+          p = TApp::instance()
+                  ->getPaletteController()
+                  ->getDefaultPalette(OVL_XSHLEVEL)
+                  ->clone();
         else
-          p = ri->getPalette();
+          p = ri->getPalette()->clone();
         TDimension dim;
         if (ri && !newLevel) {
           dim = ri->getRaster()->getSize();
@@ -2026,6 +2107,19 @@ void TCellSelection::pasteCells() {
         rasterImageData = qimageData;
         // end of pasted from outside Tahoma stuff
         // rasterImageData holds all the info either way now.
+      }
+
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+        if (rs) {
+          toolHandle->getTool()->onActivate();
+          rs->pasteSelection();
+          return;
+        }
       }
 
       if (!initUndo) {

@@ -278,7 +278,7 @@ TPalette::~TPalette() {
 
 TPalette *TPalette::clone() const {
   TPalette *palette = new TPalette;
-  palette->assign(this);
+  if (this && this->m_styles.size() > 0) palette->assign(this);
   return palette;
 }
 
