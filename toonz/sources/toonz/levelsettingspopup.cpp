@@ -320,6 +320,8 @@ LevelSettingsPopup::LevelSettingsPopup()
     , m_whiteTransp(0)
     , m_scanPathFld(0) {
   setWindowTitle(tr("Level Settings"));
+  m_mainFrame->setFixedHeight(280);
+  this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
   m_nameFld             = new LineEdit();
   m_pathFld             = new FileField();  // Path
