@@ -52,6 +52,13 @@ TEnv::IntVar HorizontalOffset("HorizontalOffset", 0);
 TEnv::IntVar VerticalOffset("VerticalOffset", 0);
 TEnv::IntVar ShowFieldGuide("ShowFieldGuide", 0);
 TEnv::IntVar GuideOpacity("GuideOpacity", 70);
+TEnv::IntVar ShowHorizon("ShowHorizon", 0);
+TEnv::IntVar HorizonAngle("HorizonAngle", 0);
+TEnv::IntVar HorizonStep("HorizonStep", 5);
+TEnv::IntVar HorizonOffset("HorizonOffset", 0);
+TEnv::IntVar ShowVanishingPointRays("ShowVanishingPointRays", 1);
+TEnv::IntVar VanishingPointRayAngles("VanishingPointRayAngles", 10);
+TEnv::IntVar VanishingPointRayOpacity("VanishingPointRayOpacity", 80);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);
@@ -395,6 +402,8 @@ void ViewerDraw::drawGridAndGuides(SceneViewer *viewer, double sc, Ruler *vr,
 
 void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
                                        std::vector<TPointD> assistantPoints) {
+
+    if (ShowVanishingPointRays == 0) return;
   int x1, x2, y1, y2;
   viewer->rect().getCoords(&x1, &y1, &x2, &y2);
   TRect clipRect = TRect(x1, y1, x2 + 1, y2 + 1);
@@ -441,7 +450,7 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
     TPointD p = assistantPoints.at(j);
     if (j < 5)
       glColor4d(reds.at(j), greens.at(j), blues.at(j),
-                (double)GuideOpacity / 100.0);
+                (double)VanishingPointRayOpacity / 100.0);
     TPointD end;
     double distanceToLeft   = std::abs(p.x - bounds.x0);
     double distanceToRight  = std::abs(p.x - bounds.x1);
@@ -451,7 +460,7 @@ void ViewerDraw::drawPerspectiveGuides(SceneViewer *viewer, double sc,
     double yDistance        = std::max(distanceToTop, distanceToBottom);
     double totalDistance =
         std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
-    for (int i = 0; i < 360; i += 5) {
+    for (int i = 0; i < 360; i += VanishingPointRayAngles) {
       double yLength = std::sin(i * (3.14159 / 180)) * totalDistance;
       double xLength = std::cos(i * (3.14159 / 180)) * totalDistance;
       end.x          = p.x + xLength;
@@ -779,6 +788,37 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
       glVertex2d(bounds.x1, currentY);
       glEnd();
     }
+  }
+
+  if (ShowHorizon) {
+      double theta = (double)HorizonAngle * (3.14159 / 180);
+      double step = HorizonStep;
+      double run = std::cos(theta) * step;
+      double rise = std::sin(theta) * step;
+      double slope = rise / run;
+      double distance = step;
+      {
+          // find the first y value
+          double startY = (slope * bounds.x0) + (HorizonOffset / Stage::standardDpi * Stage::inch);
+          double endY = (slope * bounds.x1) + (HorizonOffset / Stage::standardDpi * Stage::inch);
+
+          if (slope == 0.0) {
+              startY = (rect.y0 + ((rect.y1 - rect.y0) / 2)) + (HorizonOffset / Stage::standardDpi * Stage::inch);
+              endY = startY;
+          }
+
+          double i = 1.5;
+          while (endY > bounds.y0 || startY > bounds.y0) {
+              glBegin(GL_LINES);
+              glVertex2d(bounds.x0, startY);
+              glVertex2d(bounds.x1, endY);
+              glEnd();
+              endY -= distance / Stage::standardDpi * Stage::inch;
+              startY -= distance / Stage::standardDpi * Stage::inch;
+              distance += step * i;
+              step = step * i;
+          }
+      }
   }
 
   if (ShowIsometricGrid) {
