@@ -935,7 +935,7 @@ void PreferencesPopup::insertDualUIs(
 
 void PreferencesPopup::insertFootNote(QGridLayout* layout) {
   QLabel* note =
-      new QLabel(tr("* Changes will take effect the next time you run Tahoma"));
+      new QLabel(tr("* Changes will take effect the next time you run Tahoma2D"));
   note->setStyleSheet("font-size: 10px; font: italic;");
   layout->addWidget(note, layout->rowCount(), 0, 1, 2,
                     Qt::AlignLeft | Qt::AlignVCenter);
@@ -956,7 +956,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,
-       tr("Replace Toonz Level after SaveLevelAs command")},
+       tr("Replace Vector and Smart Level after SaveLevelAs command")},
       {backupEnabled, tr("Backup Scene and Animation Levels when Saving")},
       {backupKeepCount, tr("# of backups to keep:")},
       {sceneNumberingEnabled, tr("Show Info in Rendered Frames")},
@@ -1076,7 +1076,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {inputCellsWithoutDoubleClickingEnabled,
        tr("Enable to Input Cells without Double Clicking")},
       {shortcutCommandsWhileRenamingCellEnabled,
-       tr("Enable Tahoma Commands' Shortcut Keys While Renaming Cell")},
+       tr("Enable Tahoma2D Commands' Shortcut Keys While Renaming Cell")},
       {showXSheetToolbar, tr("Show Toolbar in the Xsheet")},
       {expandFunctionHeader,
        tr("Expand Function Editor Header to Match Xsheet Toolbar Height*")},
@@ -1128,7 +1128,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {automaticSVNFolderRefreshEnabled,
        tr("Automatically Refresh Folder Contents")},
       {latestVersionCheckEnabled,
-       tr("Check for the Latest Version of Tahoma on Launch")},
+       tr("Check for the Latest Version of Tahoma2D on Launch")},
 
       // Touch / Tablet Settings
       // TounchGestureControl // Touch Gesture is a checkable command and not in
@@ -1501,7 +1501,7 @@ QWidget* PreferencesPopup::createLoadingPage() {
   insertUI(autoExposeEnabled, lay);
   insertUI(subsceneFolderEnabled, lay);
   insertUI(removeSceneNumberFromLoadedLevelName, lay);
-  insertUI(IgnoreImageDpi, lay);
+  //insertUI(IgnoreImageDpi, lay);
   insertUI(initialLoadTlvCachingBehavior, lay,
            getComboItemList(initialLoadTlvCachingBehavior));
   insertUI(columnIconLoadingPolicy, lay,
@@ -1583,10 +1583,9 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  putLabel(tr("Tahoma can use FFmpeg for additional file formats.\n") +
-               tr("FFmpeg is not bundled with Tahoma.\n") +
-               tr("Please provide the path where FFmpeg is located on your "
-                  "computer."),
+  putLabel(tr("Tahoma2D can use FFmpeg for additional file formats.\n") +
+               tr("FFmpeg is bundled with Tahoma2D,\n") +
+               tr("but you can provide the path to a different ffmpeg location."),
            lay);
   insertUI(ffmpegPath, lay);
 
@@ -1616,7 +1615,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
+  //insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
@@ -1633,7 +1632,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertUI(saveUnpaintedInCleanup, lay);
   insertUI(minimizeSaveboxAfterEditing, lay);
   insertUI(useNumpadForSwitchingStyles, lay);
-  insertUI(downArrowInLevelStripCreatesNewFrame, lay);
+  //insertUI(downArrowInLevelStripCreatesNewFrame, lay);
   QGridLayout* replaceVectorsLay = insertGroupBox(
       tr("Replace Vectors with Simplified Vectors Command"), lay);
   {
@@ -1715,8 +1714,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
   QGridLayout* xshToolbarLay = insertGroupBoxUI(showXSheetToolbar, lay);
   { insertUI(expandFunctionHeader, xshToolbarLay); }
   insertUI(showColumnNumbers, lay);
-  insertUI(syncLevelRenumberWithXsheet, lay);
-  insertUI(currentTimelineEnabled, lay);
+  //insertUI(syncLevelRenumberWithXsheet, lay);
+  //insertUI(currentTimelineEnabled, lay);
   insertUI(currentColumnColor, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);

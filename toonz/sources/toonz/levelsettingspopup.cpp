@@ -321,6 +321,7 @@ LevelSettingsPopup::LevelSettingsPopup()
     , m_scanPathFld(0) {
   setWindowTitle(tr("Level Settings"));
   m_mainFrame->setFixedHeight(280);
+  m_mainFrame->setFixedWidth(380);
   this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
   m_nameFld             = new LineEdit();
@@ -403,18 +404,18 @@ LevelSettingsPopup::LevelSettingsPopup()
   m_activateFlags[m_squarePixCB] = dpiWidgetsFlag;
 
   unsigned int rasterWidgetsFlag     = ToonzRaster | Raster | MultiSelection;
-  m_activateFlags[widthLabel]        = rasterWidgetsFlag;
-  m_activateFlags[m_widthFld]        = rasterWidgetsFlag;
-  m_activateFlags[heightLabel]       = rasterWidgetsFlag;
-  m_activateFlags[m_heightFld]       = rasterWidgetsFlag;
+  m_activateFlags[widthLabel]        = rasterWidgetsFlag | HideOnPixelMode;
+  m_activateFlags[m_widthFld]        = rasterWidgetsFlag | HideOnPixelMode;
+  m_activateFlags[heightLabel]       = rasterWidgetsFlag | HideOnPixelMode;
+  m_activateFlags[m_heightFld]       = rasterWidgetsFlag | HideOnPixelMode;
   m_activateFlags[m_useCameraDpiBtn] = dpiWidgetsFlag;
   m_activateFlags[m_cameraDpiLabel] =
       AllTypes | HideOnPixelMode | MultiSelection;
   m_activateFlags[m_imageDpiLabel] = dpiWidgetsFlag;
-  m_activateFlags[m_imageResLabel] = dpiWidgetsFlag;
+  m_activateFlags[m_imageResLabel] = ToonzRaster | Raster;
   m_activateFlags[cameraDpiTitle] = AllTypes | HideOnPixelMode | MultiSelection;
   m_activateFlags[imageDpiTitle]  = dpiWidgetsFlag;
-  m_activateFlags[imageResTitle]  = dpiWidgetsFlag;
+  m_activateFlags[imageResTitle]  = ToonzRaster | Raster;
 
   m_activateFlags[m_doPremultiply]     = Raster | MultiSelection;
   m_activateFlags[m_whiteTransp]       = Raster | MultiSelection;
@@ -480,9 +481,7 @@ LevelSettingsPopup::LevelSettingsPopup()
       dpiLayout->addWidget(imageDpiTitle, 5, 0,
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_imageDpiLabel, 5, 1, 1, 3);
-      dpiLayout->addWidget(imageResTitle, 6, 0,
-                           Qt::AlignRight | Qt::AlignVCenter);
-      dpiLayout->addWidget(m_imageResLabel, 6, 1, 1, 3);
+      
     }
     dpiLayout->setColumnStretch(0, 0);
     dpiLayout->setColumnStretch(1, 1);
@@ -491,6 +490,13 @@ LevelSettingsPopup::LevelSettingsPopup()
     dpiBox->setLayout(dpiLayout);
 
     m_topLayout->addWidget(dpiBox);
+    dpiBox->hide();
+
+    QHBoxLayout* resLayout = new QHBoxLayout(this);
+    resLayout->addWidget(imageResTitle);
+    resLayout->addWidget(m_imageResLabel);
+    resLayout->addStretch();
+    m_topLayout->addLayout(resLayout);
 
     m_topLayout->addWidget(m_doPremultiply);
 

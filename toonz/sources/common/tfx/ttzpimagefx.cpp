@@ -10,6 +10,7 @@
 //**********************************************************************************************
 
 void parseIndexes(std::string indexes, std::vector<std::string> &items) {
+    if (indexes.length() == 1 && indexes == "-") indexes = "";
 #ifdef _MSC_VER
   char seps[] = " ,;";
   char *token;

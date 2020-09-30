@@ -636,7 +636,7 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
         });
 
     QSlider* horizonOffsetSlider = new QSlider(this);
-    horizonOffsetSlider->setRange(-500, 500);
+    horizonOffsetSlider->setRange(-1000, 1000);
     horizonOffsetSlider->setValue(HorizonOffset);
     horizonOffsetSlider->setOrientation(Qt::Horizontal);
     QLabel* horizonOffsetLabel = new QLabel(this);
