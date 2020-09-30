@@ -1,9 +1,9 @@
-# Tahoma
+# Tahoma2D
 
 [![](https://ci.appveyor.com/api/projects/status/xbowccy4s2t7a39l/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma)
 [![](https://travis-ci.org/turtletooth/tahoma.svg?branch=master)](https://travis-ci.org/turtletooth/tahoma)
 
-## What is Tahoma?
+## What is Tahoma2D?
 
 Tahoma is a 2D and stop motion animation software.It is based on **Toonz Studio
 Ghibli Version**, originally developed in Italy by
