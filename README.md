@@ -1,7 +1,7 @@
 # Tahoma2D
 
 [![](https://ci.appveyor.com/api/projects/status/mnc3mepksux9kvap/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma2d)
-[![](https://travis-ci.com/turtletooth/tahoma2d.svg?branch=master)](https://travis-ci.org/turtletooth/tahoma)
+[![](https://travis-ci.com/turtletooth/tahoma2d.svg?branch=master)](https://travis-ci.com/turtletooth/tahoma2d)
 
 ## What is Tahoma2D?
 
