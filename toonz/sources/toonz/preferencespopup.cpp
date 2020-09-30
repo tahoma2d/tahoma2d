@@ -986,7 +986,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Show Raster Images Darken Blended")},
       {showFrameNumberWithLetters,
        tr("Show \"ABC\" Appendix to the Frame Number in Xsheet Cell")},
-      {iconSize, tr("Level Strip Icon Size*:")},
+      {iconSize, tr("Level Strip Thumbnail Size*:")},
       {viewShrink, tr("Viewer Shrink:")},
       {viewStep, tr("Step:")},
       {viewerZoomCenter, tr("Viewer Zoom Center:")},
@@ -1315,18 +1315,9 @@ QWidget* PreferencesPopup::createGeneralPage() {
 
   insertUI(defaultViewerEnabled, lay);
   insertUI(rasterOptimizedMemory, lay);
-  QGridLayout* autoSaveLay = insertGroupBoxUI(autosaveEnabled, lay);
-  {
-    insertUI(autosavePeriod, autoSaveLay);
-    insertUI(autosaveSceneEnabled, autoSaveLay);
-    insertUI(autosaveOtherFilesEnabled, autoSaveLay);
-  }
   insertUI(startupPopupEnabled, lay);
   insertUI(undoMemorySize, lay);
   insertUI(taskchunksize, lay);
-  insertUI(replaceAfterSaveLevelAs, lay);
-  QGridLayout* backupLay = insertGroupBoxUI(backupEnabled, lay);
-  { insertUI(backupKeepCount, backupLay); }
   insertUI(sceneNumberingEnabled, lay);
   insertUI(watchFileSystemEnabled, lay);
 
@@ -1556,7 +1547,15 @@ QWidget* PreferencesPopup::createSavingPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
-
+  QGridLayout* autoSaveLay = insertGroupBoxUI(autosaveEnabled, lay);
+  {
+      insertUI(autosavePeriod, autoSaveLay);
+      insertUI(autosaveSceneEnabled, autoSaveLay);
+      insertUI(autosaveOtherFilesEnabled, autoSaveLay);
+  }
+  insertUI(replaceAfterSaveLevelAs, lay);
+  QGridLayout* backupLay = insertGroupBoxUI(backupEnabled, lay);
+  { insertUI(backupKeepCount, backupLay); }
   QLabel* matteColorLabel =
       new QLabel(tr("Matte color is used for background when overwriting "
                     "raster levels with transparent pixels\nin non "
@@ -1681,7 +1680,7 @@ QWidget* PreferencesPopup::createToolsPage() {
   }
   insertUI(levelBasedToolsDisplay, lay,
            getComboItemList(levelBasedToolsDisplay));
-  insertUI(useCtrlAltToResizeBrush, lay);
+  //insertUI(useCtrlAltToResizeBrush, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);

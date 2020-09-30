@@ -1474,7 +1474,7 @@ void FunctionSegmentViewer::onPrevCurveButtonPressed() {
 
   int r0 = (int)prevKey.m_frame;
   int r1 = (int)currentKey.m_frame;
-
+  m_panel->update();
   m_sheet->getSelection()->selectSegment(m_curve, currentKeyIndex - 1,
                                          QRect(col, r0, 1, r1 - r0 + 1));
   m_sheet->updateAll();
@@ -1507,7 +1507,7 @@ void FunctionSegmentViewer::onNextCurveButtonPressed() {
 
   int r0 = (int)nextKey.m_frame;
   int r1 = (int)nextNextKey.m_frame;
-
+  m_panel->update();
   m_sheet->getSelection()->selectSegment(m_curve, currentKeyIndex + 1,
                                          QRect(col, r0, 1, r1 - r0 + 1));
   m_sheet->updateAll();

@@ -330,6 +330,8 @@ ConvertPopup::ConvertPopup(bool specifyInput)
     , m_isConverting(false) {
   // Su MAC i dialog modali non hanno bottoni di chiusura nella titleBar
   setModal(false);
+  m_mainFrame->setFixedHeight(220);
+  this->layout()->setSizeConstraint(QLayout::SetFixedSize);
   TlvMode_Unpainted            = tr("Unpainted tlv");
   TlvMode_UnpaintedFromNonAA   = tr("Unpainted tlv from non AA source");
   TlvMode_PaintedFromTwoImages = tr("Painted tlv from two images");
