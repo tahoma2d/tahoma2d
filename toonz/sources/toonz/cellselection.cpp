@@ -3115,7 +3115,7 @@ static void createNewDrawing(TXsheet *xsh, int row, int col,
   const Type *Var = dynamic_cast<const Type *>(Data)
 
 void TCellSelection::dPasteCells() {
-  if (isEmpty())  // Se la selezione delle celle e' vuota ritorno.
+  if (isEmpty()) 
     return;
   int r0, c0, r1, c1;
   getSelectedCells(r0, c0, r1, c1);
@@ -3124,7 +3124,10 @@ void TCellSelection::dPasteCells() {
   QClipboard *clipboard     = QApplication::clipboard();
   const QMimeData *mimeData = clipboard->mimeData();
   if (DYNAMIC_CAST(TCellData, cellData, mimeData)) {
-    if (!cellData->canChange(xsh, c0)) return;
+      if (!cellData->canChange(xsh, c0)) {
+          TUndoManager::manager()->endBlock();
+          return;
+      }
     for (int c = 0; c < cellData->getColCount(); c++) {
       for (int r = 0; r < cellData->getRowCount(); r++) {
         TXshCell src = cellData->getCell(r, c);
