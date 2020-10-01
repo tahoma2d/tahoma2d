@@ -408,7 +408,6 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(-DLZ4_STATIC)
     endif()
 
-    pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
     set(OPENBLAS_LIB) # unused?
     if(PLATFORM EQUAL 32)
         find_library(QT_LIB QuickTime)
@@ -491,7 +490,6 @@ elseif(BUILD_ENV_UNIXLIKE)
     find_library(PTHREAD_LIBRARY pthread)
 
     if(NOT BUILD_TARGET_WIN)
-        pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
         pkg_check_modules(FREETYPE REQUIRED freetype2)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
