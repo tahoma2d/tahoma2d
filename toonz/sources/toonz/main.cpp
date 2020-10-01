@@ -468,8 +468,8 @@ int main(int argc, char *argv[]) {
   QGLFormat::setDefaultFormat(fmt);
 
 // seems this function should be called at all systems
-// pheraps in some GLUT-implementations initalization is mere formality
-#if defined(LINUX) || (defined(_WIN32) && defined(__GNUC__))
+// perhaps in some GLUT-implementations initalization is mere formality
+#if defined(LINUX) || defined(_WIN32)
   glutInit(&argc, argv);
 #endif
 
