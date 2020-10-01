@@ -328,7 +328,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
   m_otherColumnBBoxAff = TAffine();
   m_labelPos           = TPointD(0, 0);
   m_label              = "";
-
+  // This undo block ends in leftButtonUp
   TUndoManager::manager()->beginBlock();
   if (!doesApply()) return;
 
