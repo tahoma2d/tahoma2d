@@ -155,9 +155,6 @@ void Iwa_FractalNoiseFx::doCompute(TTile &tile, double frame,
   TAffine subAff = TTranslation(param.subOffset) * TScale(param.subScaling) *
                    TRotation(-param.subRotation);
 
-  TAffine offsetAff =
-      TTranslation((double)outDim.lx * 0.5, (double)outDim.ly * 0.5);
-
   TAffine genAff;
 
   // for cyclic evolution, rotate the sample position in ZW space instead of
@@ -178,7 +175,7 @@ void Iwa_FractalNoiseFx::doCompute(TTile &tile, double frame,
   for (int gen = 0; gen < genCount; gen++) {
     // affine transformation for the current generation
     TAffine currentAff =
-        (globalAff * parentOffsetAff * parentAff * genAff * offsetAff).inv();
+        (globalAff * parentOffsetAff * parentAff * genAff).inv();
     // scale of the current pattern ( used for the Dynamic / Dynamic Twist
     // offset )
     double scale = sqrt(std::abs(currentAff.det()));

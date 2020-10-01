@@ -289,7 +289,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
   /*--- Fill header with background color ---*/
   for (int c = c0; c <= c1; c++) {
     FunctionTreeModel::Channel *channel = m_sheet->getChannel(c);
-    if (!channel) continue;
+    if (!channel) break;
     int x0 = getViewer()->columnToX(c);
     int x1 = getViewer()->columnToX(c + 1) - 1;
     // Column Width
@@ -300,7 +300,15 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
 
   for (int c = c0; c <= c1; ++c) {
     FunctionTreeModel::Channel *channel = m_sheet->getChannel(c);
-    if (!channel) continue;
+    if (!channel) {
+      if (c != c0) {
+        // draw "the end" border
+        int x0 = getViewer()->columnToX(c);
+        painter.setPen(getViewer()->getColumnHeaderBorderColor());
+        painter.drawLine(x0, y0, x0, y3);
+      }
+      break;
+    }
     int i = c - c0 + 1;
     /*---- Channel Column of the current Column and the preceding and following
      * Columns ---*/

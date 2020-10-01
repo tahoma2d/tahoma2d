@@ -421,7 +421,7 @@ void Preferences::definePreferenceItems() {
   define(subsceneFolderEnabled, "subsceneFolderEnabled", QMetaType::Bool, true);
   define(removeSceneNumberFromLoadedLevelName,
          "removeSceneNumberFromLoadedLevelName", QMetaType::Bool, false);
-  define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, false);
+  define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, true);
   define(initialLoadTlvCachingBehavior, "initialLoadTlvCachingBehavior",
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
@@ -532,7 +532,7 @@ void Preferences::definePreferenceItems() {
   define(shortPlayFrameCount, "shortPlayFrameCount", QMetaType::Int, 8, 1, 100);
   define(previewAlwaysOpenNewFlip, "previewAlwaysOpenNewFlip", QMetaType::Bool,
          false);
-  define(fitToFlipbook, "fitToFlipbook", QMetaType::Bool, false);
+  define(fitToFlipbook, "fitToFlipbook", QMetaType::Bool, true);
   define(generatedMovieViewEnabled, "generatedMovieViewEnabled",
          QMetaType::Bool, true);
 

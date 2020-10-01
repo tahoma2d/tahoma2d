@@ -189,11 +189,13 @@ QTabBar::tab:only-one {
 /* -----------------------------------------------------------------------------
    Main
 ----------------------------------------------------------------------------- */
-QWidget {
+QWidget,
+QTextEdit[readOnly="true"] {
   background-color: #484848;
   color: #e6e6e6;
 }
-QWidget:disabled {
+QWidget:disabled,
+QTextEdit[readOnly="true"]:disabled {
   color: rgba(230, 230, 230, 0.4);
 }
 QFrame {
@@ -953,6 +955,7 @@ QComboBox QAbstractItemView {
 .LineEdit,
 QPlainTextEdit,
 QLineEdit,
+QTextEdit,
 #TaskSheetItem,
 #tasksRemoveBox,
 #tasksAddBox {
@@ -967,6 +970,7 @@ QLineEdit,
 .LineEdit:focus,
 QPlainTextEdit:focus,
 QLineEdit:focus,
+QTextEdit:focus,
 #TaskSheetItem:focus,
 #tasksRemoveBox:focus,
 #tasksAddBox:focus {
@@ -977,12 +981,22 @@ QLineEdit:focus,
 .LineEdit:disabled,
 QPlainTextEdit:disabled,
 QLineEdit:disabled,
+QTextEdit:disabled,
 #TaskSheetItem:disabled,
 #tasksRemoveBox:disabled,
 #tasksAddBox:disabled {
   background-color: #3b3b3b;
   border-color: #3a3a3a;
   color: rgba(230, 230, 230, 0.4);
+}
+QTextEdit[readOnly="true"] {
+  border: 0;
+}
+QTextEdit[readOnly="true"]:focus,
+QTextEdit[readOnly="true"]:disabled {
+  background-color: #484848;
+  color: #e6e6e6;
+  border: 0;
 }
 /* -----------------------------------------------------------------------------
    CheckBox
@@ -2152,7 +2166,9 @@ Ruler {
 /* ScrollAreas (Row, Column and Cell)
 ----------------------------------------------------------------------------- */
 #xsheetArea,
-#ScrollArea {
+#ScrollColumnArea,
+#ScrollRowArea,
+#ScrollCellArea {
   background-color: #484848;
   border: 0;
 }
@@ -2324,6 +2340,16 @@ FunctionTreeView {
 }
 /* Function Editor Spreadsheet
 ----------------------------------------------------------------------------- */
+#ScrollRowArea,
+#ScrollCellArea {
+  border-top: 1 solid rgba(0, 0, 0, 0.3);
+}
+#ScrollCellArea {
+  border-left: 1 solid rgba(0, 0, 0, 0.3);
+}
+#ScrollColumnArea {
+  padding-left: 2;
+}
 FunctionPanel {
   qproperty-BGColor: #404040;
   qproperty-ValueLineColor: rgba(0, 0, 0, 0.1);

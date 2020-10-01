@@ -6,7 +6,9 @@
 ----------------------------------------------------------------------------- */
 
 #xsheetArea,
-#ScrollArea {
+#ScrollColumnArea,
+#ScrollRowArea,
+#ScrollCellArea {
   background-color: @xsheet-empty-bg-color;
   border: 0;
 }
@@ -240,6 +242,20 @@ FunctionTreeView {
 // If a qproperty shares the same likeness with XSheet then pair the variables.
 // XSheet should be considered as parent.
 
+
+#ScrollRowArea,
+#ScrollCellArea {  
+  border-top:1 solid @xsheet-VerticalLine-color;
+}
+
+#ScrollCellArea {
+  border-left:1 solid @xsheet-VerticalLine-color;
+}
+
+#ScrollColumnArea {
+  padding-left:2;
+}
+
 FunctionPanel {
   qproperty-BGColor: @function-panel-bg-color;
   qproperty-ValueLineColor: @function-panel-ValueLine-color;
@@ -256,7 +272,7 @@ SpreadsheetViewer {
   qproperty-CurrentRowBgColor: @xsheet-CurrentRowBG-color; // paired
   qproperty-LightLineColor: @xsheet-LightLine-color; // paired
   qproperty-MarkerLineColor: @xsheet-MarkerLine-color; // paired
-  qproperty-BGColor: @xsheet-NotEmptyColumn-color; // paired
+  qproperty-BGColor: @function-ColumnHeaderBG-color;
   qproperty-VerticalLineColor: @xsheet-VerticalLine-color; // paired
   qproperty-KeyFrameColor: @function-KeyFrame-color;
   qproperty-KeyFrameBorderColor: @function-KeyFrameBorder-color;
