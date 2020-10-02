@@ -719,7 +719,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity / 100.0);
-  glLineWidth(0.5f);
+  glLineWidth(1.0f);
 
   double lengthX = rect.x1 - rect.x0;
   double lengthY = rect.y1 - rect.y0;
