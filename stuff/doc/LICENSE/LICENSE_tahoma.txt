@@ -1,9 +1,9 @@
-License Agreement For Tahoma
-[https://github.com/turtletooth/tahoma]
+License Agreement For Tahoma2D
+[https://github.com/turtletooth/tahoma2d]
 
 - - - - - - - - - - - - - - - -
 
-Tahoma
+Tahoma2D
 
 All contributions by Jeremy Bullock:
 Copyright (c) 2016 - 2020, Jeremy Bullock

@@ -4,7 +4,7 @@ For files in the "stuff/library/mypaint brushes" directory: Please see the licen
 
 - - - - - - - - - - - - - - - -
 
-Tahoma
+Tahoma2D
 
 All contributions by Jeremy Bullock:
 Copyright (c) 2016 - 2020, Jeremy Bullock

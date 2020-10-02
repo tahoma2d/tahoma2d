@@ -348,34 +348,35 @@ void PreferencesPopup::onPathAliasPriorityChanged() {
 
 void PreferencesPopup::onStyleSheetTypeChanged() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString currentStyle = m_pref->getCurrentStyleSheetPath();
-  QString iconThemeName = QIcon::themeName();
-  std::string styleString = currentStyle.toStdString();
+  QString currentStyle        = m_pref->getCurrentStyleSheetPath();
+  QString iconThemeName       = QIcon::themeName();
+  std::string styleString     = currentStyle.toStdString();
   std::string iconThemeString = iconThemeName.toStdString();
   qApp->setStyleSheet(currentStyle);
   QApplication::restoreOverrideCursor();
-  
+
   if (currentStyle.contains("Light") || currentStyle.contains("Neutral")) {
-      m_pref->setValue(iconTheme, true);
-      if (iconThemeName != "dark") {
-          //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-          //    : "light");
-          DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
-      }
-  }
-  else {
-      m_pref->setValue(iconTheme, false);
-      if (iconThemeName != "light") {
-          //QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-          //    : "light");
-          DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION), tr("Please restart to reload the icons."));
-      }
+    m_pref->setValue(iconTheme, true);
+    if (iconThemeName != "dark") {
+      // QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+      //    : "light");
+      DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
+                           tr("Please restart to reload the icons."));
+    }
+  } else {
+    m_pref->setValue(iconTheme, false);
+    if (iconThemeName != "light") {
+      // QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
+      //    : "light");
+      DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
+                           tr("Please restart to reload the icons."));
+    }
   }
 }
 
 ////-----------------------------------------------------------------------------
 //
-//void PreferencesPopup::onIconThemeChanged() {
+// void PreferencesPopup::onIconThemeChanged() {
 //  // Switch between dark or light icons
 //  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
 //                                                              : "light");
@@ -934,8 +935,8 @@ void PreferencesPopup::insertDualUIs(
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::insertFootNote(QGridLayout* layout) {
-  QLabel* note =
-      new QLabel(tr("* Changes will take effect the next time you run Tahoma2D"));
+  QLabel* note = new QLabel(
+      tr("* Changes will take effect the next time you run Tahoma2D"));
   note->setStyleSheet("font-size: 10px; font: italic;");
   layout->addWidget(note, layout->rowCount(), 0, 1, 2,
                     Qt::AlignLeft | Qt::AlignVCenter);
@@ -952,7 +953,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {autosavePeriod, tr("Interval (Minutes):")},
       {autosaveSceneEnabled, tr("Automatically Save the Scene File")},
       {autosaveOtherFilesEnabled, tr("Automatically Save Non-Scene Files")},
-      {startupPopupEnabled, tr("Show Startup Window when Tahoma Starts")},
+      {startupPopupEnabled, tr("Show Startup Window when Tahoma2D Starts")},
       {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,
@@ -1410,9 +1411,9 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
 
-  //lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
+  // lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
   //               Qt::AlignRight | Qt::AlignVCenter);
-  //lay->addWidget(createUI(iconTheme), 2, 1);
+  // lay->addWidget(createUI(iconTheme), 2, 1);
 
   // insertUI(linearUnits, lay, getComboItemList(linearUnits));
   // insertUI(cameraUnits, lay,
@@ -1501,7 +1502,7 @@ QWidget* PreferencesPopup::createLoadingPage() {
   insertUI(autoExposeEnabled, lay);
   insertUI(subsceneFolderEnabled, lay);
   insertUI(removeSceneNumberFromLoadedLevelName, lay);
-  //insertUI(IgnoreImageDpi, lay);
+  // insertUI(IgnoreImageDpi, lay);
   insertUI(initialLoadTlvCachingBehavior, lay,
            getComboItemList(initialLoadTlvCachingBehavior));
   insertUI(columnIconLoadingPolicy, lay,
@@ -1549,9 +1550,9 @@ QWidget* PreferencesPopup::createSavingPage() {
   setupLayout(lay);
   QGridLayout* autoSaveLay = insertGroupBoxUI(autosaveEnabled, lay);
   {
-      insertUI(autosavePeriod, autoSaveLay);
-      insertUI(autosaveSceneEnabled, autoSaveLay);
-      insertUI(autosaveOtherFilesEnabled, autoSaveLay);
+    insertUI(autosavePeriod, autoSaveLay);
+    insertUI(autosaveSceneEnabled, autoSaveLay);
+    insertUI(autosaveOtherFilesEnabled, autoSaveLay);
   }
   insertUI(replaceAfterSaveLevelAs, lay);
   QGridLayout* backupLay = insertGroupBoxUI(backupEnabled, lay);
@@ -1583,10 +1584,11 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  putLabel(tr("Tahoma2D can use FFmpeg for additional file formats.\n") +
-               tr("FFmpeg is bundled with Tahoma2D,\n") +
-               tr("but you can provide the path to a different ffmpeg location."),
-           lay);
+  putLabel(
+      tr("Tahoma2D can use FFmpeg for additional file formats.\n") +
+          tr("FFmpeg is bundled with Tahoma2D,\n") +
+          tr("but you can provide the path to a different ffmpeg location."),
+      lay);
   insertUI(ffmpegPath, lay);
 
   putLabel(tr("Number of seconds to wait for FFmpeg to complete processing the "
@@ -1615,7 +1617,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  //insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
+  // insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
@@ -1632,7 +1634,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertUI(saveUnpaintedInCleanup, lay);
   insertUI(minimizeSaveboxAfterEditing, lay);
   insertUI(useNumpadForSwitchingStyles, lay);
-  //insertUI(downArrowInLevelStripCreatesNewFrame, lay);
+  // insertUI(downArrowInLevelStripCreatesNewFrame, lay);
   QGridLayout* replaceVectorsLay = insertGroupBox(
       tr("Replace Vectors with Simplified Vectors Command"), lay);
   {
@@ -1679,7 +1681,7 @@ QWidget* PreferencesPopup::createToolsPage() {
   }
   insertUI(levelBasedToolsDisplay, lay,
            getComboItemList(levelBasedToolsDisplay));
-  //insertUI(useCtrlAltToResizeBrush, lay);
+  // insertUI(useCtrlAltToResizeBrush, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
@@ -1714,8 +1716,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
   QGridLayout* xshToolbarLay = insertGroupBoxUI(showXSheetToolbar, lay);
   { insertUI(expandFunctionHeader, xshToolbarLay); }
   insertUI(showColumnNumbers, lay);
-  //insertUI(syncLevelRenumberWithXsheet, lay);
-  //insertUI(currentTimelineEnabled, lay);
+  // insertUI(syncLevelRenumberWithXsheet, lay);
+  // insertUI(currentTimelineEnabled, lay);
   insertUI(currentColumnColor, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);

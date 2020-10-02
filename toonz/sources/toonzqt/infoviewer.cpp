@@ -270,11 +270,11 @@ QString InfoViewerImp::getTypeString() {
   else if (ext == "mov" || ext == "avi" || ext == "3gp")
     return "Movie File";
   else if (ext == "tnz")
-    return "Tahoma Scene";
+    return "Tahoma2D Scene";
   else if (ext == "tab")
     return "Tab Scene";
   else if (ext == "plt")
-    return "Tahoma Palette";
+    return "Tahoma2D Palette";
   else if (ext == "wav" || ext == "aiff" || ext == "mp3")
     return "Audio File";
   else if (ext == "mesh")

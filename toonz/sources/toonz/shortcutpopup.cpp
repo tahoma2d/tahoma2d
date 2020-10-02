@@ -576,7 +576,7 @@ void ShortcutPopup::showDialog(QString text) {
   if (m_dialog == NULL) {
     m_dialogLabel = new QLabel("", this);
     m_dialog      = new DVGui::Dialog(this, false, false);
-    m_dialog->setWindowTitle(tr("Tahoma - Setting Shortcuts"));
+    m_dialog->setWindowTitle(tr("Tahoma2D - Setting Shortcuts"));
     m_dialog->setModal(false);
 
     m_dialog->setTopMargin(10);
@@ -699,7 +699,7 @@ void ShortcutPopup::onLoadPreset() {
 
   if (!showConfirmDialog()) return;
   showDialog(tr("Setting Shortcuts"));
-  if (preset == "Tahoma") {
+  if (preset == "Tahoma2D") {
     clearAllShortcuts(false);
     TFilePath fp = defaultPresetDir + TFilePath("deftahoma.ini");
     setPresetShortcuts(fp);
@@ -739,7 +739,7 @@ void ShortcutPopup::onLoadPreset() {
 QStringList ShortcutPopup::buildPresets() {
   QStringList presets;
   presets << ""
-          << "Tahoma"
+          << "Tahoma2D"
           //<< "RETAS PaintMan"
           << "Toon Boom Harmony"
           << "Adobe Animate"
@@ -804,7 +804,7 @@ void ShortcutPopup::getCurrentPresetPref() {
   if (name == "DELETED")
     m_presetChoiceCB->setCurrentText("");
   else if (name == "deftahoma")
-    m_presetChoiceCB->setCurrentText("Tahoma");
+    m_presetChoiceCB->setCurrentText("Tahoma2D");
   else if (name == "otharmony")
     m_presetChoiceCB->setCurrentText("Toon Boom Harmony");
   else if (name == "otadobe")

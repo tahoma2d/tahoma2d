@@ -32,7 +32,7 @@
 
 using namespace DVGui;
 
-QString DialogTitle = "Tahoma 1.0";
+QString DialogTitle = "Tahoma2D 1.0";
 
 //=============================================================================
 namespace {
@@ -818,7 +818,7 @@ RadioButtonDialog::RadioButtonDialog(const QString &labelText,
                                      const QList<QString> &radioButtonList,
                                      QWidget *parent, Qt::WindowFlags f)
     : Dialog(parent, true, true), m_result(1) {
-  setWindowTitle(tr("Tahoma"));
+  setWindowTitle(tr("Tahoma2D"));
 
   setMinimumSize(20, 20);
 
@@ -888,7 +888,7 @@ ProgressDialog::ProgressDialog(const QString &labelText,
                                const QString &cancelButtonText, int minimum,
                                int maximum, QWidget *parent, Qt::WindowFlags f)
     : Dialog(parent, true, true), m_isCanceled(false) {
-  setWindowTitle(tr("Tahoma"));
+  setWindowTitle(tr("Tahoma2D"));
 
   setMinimumSize(20, 20);
 
