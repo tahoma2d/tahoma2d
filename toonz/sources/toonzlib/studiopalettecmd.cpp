@@ -663,7 +663,7 @@ void StudioPaletteCmd::updateAllLinkedStyles(TPaletteHandle *paletteHandle,
     }
   }
   if (!paletteHandle || !paletteHandle->getPalette()) return;
-  if (somethingChanged) paletteHandle->notifyColorStyleChanged();
+  if (somethingChanged) paletteHandle->notifyColorStyleChanged(false);
 }
 
 //-----------------------------------------------------------------------------

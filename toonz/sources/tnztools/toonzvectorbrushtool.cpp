@@ -549,7 +549,7 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
   m_autoGroup.setId("AutoGroup");
 
   m_prop[0].bind(m_autoFill);
-  m_autoFill.setId("AutoFill");
+  m_autoFill.setId("Autofill");
 
   m_prop[0].bind(m_sendToBack);
   m_sendToBack.setId("DrawUnder");
