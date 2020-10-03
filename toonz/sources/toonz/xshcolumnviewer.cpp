@@ -465,7 +465,7 @@ void ChangeObjectParent::refresh() {
   // set font size in pixel
   font.setPixelSize(XSHEET_FONT_PX_SIZE);
 
-  m_width             = QFontMetrics(font).width(theLongestTxt) + 22;
+  m_width             = std::max(QFontMetrics(font).width(theLongestTxt) + 22, 71);
   std::string strText = text.toStdString();
   selectCurrent(text);
 }
@@ -2297,27 +2297,29 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             event->button() == Qt::RightButton)
           return;
         if (!xsh->getColumn(m_col)->getSoundTextColumn()) {
-          if (o->rect(PredefinedRect::PEGBAR_NAME)
-                  .adjusted(0, 0, -20, 0)
-                  .contains(mouseInCell)) {
+          TStageObjectId columnId = m_viewer->getObjectId(m_col);
+          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+          bool clickChangeParent = isColumn ? o->rect(PredefinedRect::PEGBAR_NAME)
+              .adjusted(0, 0, -20, 0)
+              .contains(mouseInCell) : o->rect(PredefinedRect::PEGBAR_NAME)
+              .contains(mouseInCell);
+          if (clickChangeParent) {
             m_changeObjectParent->refresh();
             m_changeObjectParent->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(1, m_col)) +
-                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 14) -
+                m_viewer->positionToXY(CellPosition(0, m_col)) +
+                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
                 QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
-          TStageObjectId columnId = m_viewer->getObjectId(m_col);
-          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
           if (isColumn &&
               o->rect(PredefinedRect::PARENT_HANDLE_NAME)
                   .contains(mouseInCell)) {
             m_changeObjectHandle->refresh();
             m_changeObjectHandle->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(1, m_col + 1)) +
-                QPoint(2, 14) - QPoint(m_viewer->getColumnScrollValue(), 0)));
+                m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
+                QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
         }
