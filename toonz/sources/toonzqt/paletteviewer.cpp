@@ -502,23 +502,24 @@ void PaletteViewer::createSavePaletteToolBar() {
 
   if (m_viewType == STUDIO_PALETTE) {
     connect(savePalette, SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
-    m_viewMode->addSeparator();
-    m_viewMode->addAction(savePalette);
+    //m_viewMode->addSeparator();
+    //m_viewMode->addAction(savePalette);
+    m_savePaletteToolBar->addAction(savePalette);
   } else if (m_viewType == LEVEL_PALETTE) {
     // save load palette
     m_viewMode->addSeparator();
+
+    // overwrite palette
+    connect(savePalette, SIGNAL(triggered()),
+        CommandManager::instance()->getAction("MI_OverwritePalette"),
+        SIGNAL(triggered()));
+    m_viewMode->addAction(savePalette);
 
     // save palette as
     connect(saveAsPalette, SIGNAL(triggered()),
             CommandManager::instance()->getAction("MI_SavePaletteAs"),
             SIGNAL(triggered()));
     m_viewMode->addAction(saveAsPalette);
-
-    // overwrite palette
-    connect(savePalette, SIGNAL(triggered()),
-            CommandManager::instance()->getAction("MI_OverwritePalette"),
-            SIGNAL(triggered()));
-    m_viewMode->addAction(savePalette);
 
     // save as default palette
     connect(saveDefaultPalette, SIGNAL(triggered()),
@@ -713,6 +714,7 @@ void PaletteViewer::setSaveDefaultText(QAction *action, int levelType) {
     action->setText(tr("&Save As Default Palette"));
     break;
   }
+  action->setIcon(createQIcon("save"));
 }
 
 void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
@@ -800,6 +802,10 @@ void PaletteViewer::showEvent(QShowEvent *) {
           SLOT(changeWindowTitle()));
   connect(m_paletteHandle, SIGNAL(paletteDirtyFlagChanged()), this,
           SLOT(changeWindowTitle()));
+  if (m_viewType == STUDIO_PALETTE) {
+      CommandManager::instance()->getAction("MI_SaveStudioPalette")->setEnabled(true);
+      connect(CommandManager::instance()->getAction("MI_SaveStudioPalette"), SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
+  }
 
   if (!m_frameHandle) return;
   // Connessione necessaria per aggiornare lo stile in caso di palette animate.
@@ -822,6 +828,12 @@ void PaletteViewer::hideEvent(QHideEvent *) {
              SLOT(changeWindowTitle()));
   disconnect(m_paletteHandle, SIGNAL(paletteDirtyFlagChanged()), this,
              SLOT(changeWindowTitle()));
+  disconnect(m_paletteHandle, SIGNAL(broadcastColorStyleChangedOnMouseRelease()), this,
+      SLOT(onPaletteChanged()));
+  if (m_viewType == STUDIO_PALETTE) {
+      CommandManager::instance()->getAction("MI_SaveStudioPalette")->setEnabled(false);
+      disconnect(CommandManager::instance()->getAction("MI_SaveStudioPalette"), SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
+  }
 
   if (!m_frameHandle) return;
   disconnect(m_frameHandle, SIGNAL(frameSwitched()), this,
