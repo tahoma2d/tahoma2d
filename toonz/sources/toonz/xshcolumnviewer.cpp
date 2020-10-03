@@ -394,6 +394,8 @@ void ChangeObjectParent::refresh() {
   TXsheet *xsh                   = m_xsheetHandle->getXsheet();
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   TStageObjectId parentId = xsh->getStageObject(currentObjectId)->getParent();
+  TStageObject* currentObject = xsh->getStageObject(currentObjectId);
+  std::list<TStageObject*> children = currentObject->getChildren();
   TStageObjectTree *tree  = xsh->getStageObjectTree();
   int objectCount         = tree->getStageObjectCount();
   QString text;
@@ -420,7 +422,10 @@ void ChangeObjectParent::refresh() {
         }
       }
     }
-    if (id == currentObjectId) continue;
+    
+    bool found = (std::find(children.begin(), children.end(), xsh->getStageObject(id)) != children.end());
+
+    if (id == currentObjectId || found) continue;
     if (id.isTable()) {
       newText = QString("Table");
       pegbarList.append(newText);
@@ -2296,11 +2301,10 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                   .adjusted(0, 0, -20, 0)
                   .contains(mouseInCell)) {
             m_changeObjectParent->refresh();
-
             m_changeObjectParent->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(0, m_col)) +
-                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
+                m_viewer->positionToXY(CellPosition(1, m_col)) +
+                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 14) -
                 QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
@@ -2312,8 +2316,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             m_changeObjectHandle->refresh();
             m_changeObjectHandle->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
+                m_viewer->positionToXY(CellPosition(1, m_col + 1)) +
+                QPoint(2, 14) - QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
         }
