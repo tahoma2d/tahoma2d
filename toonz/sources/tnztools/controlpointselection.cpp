@@ -1076,6 +1076,10 @@ void ControlPointSelection::setUnlinear() {
 //-----------------------------------------------------------------------------
 
 void ControlPointSelection::deleteControlPoints() {
+  if (!m_controlPointEditorStroke) {
+    m_arePointsDeleted = true;
+    return;
+  }
   TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
   TVectorImageP vi(tool->getImage(false));
   int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
