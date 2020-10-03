@@ -1766,6 +1766,9 @@ void MainWindow::defineActions() {
       MI_SavePaletteAs, tr("&Save Palette As..."), "",
       tr("Save the current style palette as a separate file with a new name."));
   createRightClickMenuAction(
+      MI_SaveStudioPalette, tr("&Save Studio Palette"), "",
+      tr("Save the current Studio Palette."));
+  createRightClickMenuAction(
       MI_OverwritePalette, tr("&Save Palette"), "",
       tr("Save the current style palette as a separate file."));
   createRightClickMenuAction(MI_SaveAsDefaultPalette,
@@ -2724,6 +2727,8 @@ void MainWindow::defineActions() {
                           tr("Brush Tool - Draw Order"), "");
   createToolOptionsAction("A_ToolOption_Smooth", tr("Smooth"), "");
   createToolOptionsAction("A_ToolOption_Snap", tr("Snap"), "");
+  createToolOptionsAction("A_ToolOption_AutoClose", tr("Auto Close"), "");
+  createToolOptionsAction("A_ToolOption_DrawUnder", tr("Draw Under"), "");
   createToolOptionsAction("A_ToolOption_AutoSelectDrawing",
                           tr("Auto Select Drawing"), "");
   createToolOptionsAction("A_ToolOption_Autofill", tr("Auto Fill"), "");
