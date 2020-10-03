@@ -91,8 +91,8 @@ using namespace DVGui;
 
 TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
 
-const char *rootVarName     = "TOONZROOT";
-const char *systemVarPrefix = "TOONZ";
+const char *rootVarName     = "TAHOMA2DROOT";
+const char *systemVarPrefix = "TAHOMA2D";
 
 #ifdef MACOSX
 #include "tthread.h"

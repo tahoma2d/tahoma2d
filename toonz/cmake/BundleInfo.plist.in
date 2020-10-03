@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Tahoma2D</string>
 	<key>CFBundleIconFile</key>
-	<string>Tahoma.icns</string>
+	<string>Tahoma2D.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.turtletooth.Tahoma2D</string>
     <key>NSCameraUsageDescription</key>

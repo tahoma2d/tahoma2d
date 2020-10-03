@@ -701,7 +701,7 @@ void ShortcutPopup::onLoadPreset() {
   showDialog(tr("Setting Shortcuts"));
   if (preset == "Tahoma2D") {
     clearAllShortcuts(false);
-    TFilePath fp = defaultPresetDir + TFilePath("deftahoma.ini");
+    TFilePath fp = defaultPresetDir + TFilePath("deftahoma2d.ini");
     setPresetShortcuts(fp);
     return;
   } else if (preset == "Toon Boom Harmony") {
@@ -803,7 +803,7 @@ void ShortcutPopup::getCurrentPresetPref() {
   QString name = Preferences::instance()->getShortcutPreset();
   if (name == "DELETED")
     m_presetChoiceCB->setCurrentText("");
-  else if (name == "deftahoma")
+  else if (name == "deftahoma2d")
     m_presetChoiceCB->setCurrentText("Tahoma2D");
   else if (name == "otharmony")
     m_presetChoiceCB->setCurrentText("Toon Boom Harmony");

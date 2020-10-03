@@ -385,9 +385,9 @@ qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 if(BUILD_ENV_MSVC)
     add_executable(Tahoma2D WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
 else()
-    set(MACOSX_BUNDLE_ICON_FILE "Tahoma.icns")
-    set_source_files_properties(Tahoma.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    add_executable(Tahoma2D MACOSX_BUNDLE Tahoma.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
+    set(MACOSX_BUNDLE_ICON_FILE "Tahoma2D.icns")
+    set_source_files_properties(Tahoma2D.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    add_executable(Tahoma2D MACOSX_BUNDLE Tahoma2D.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
     #add_definitions(
     #    -DTNZBASE_EXPORTS
     #    -DTPARAM_EXPORTS
@@ -639,16 +639,15 @@ fi
 if [ ! -e \$HOME/.config/Tahoma2D/SystemVar.ini ]; then
     cat << EOF > $HOME/.config/Tahoma2D/SystemVar.ini
 [General]
-TAHOMAROOT=\"\$HOME/.config/Tahoma2D/stuff\"
-TahomaPROFILES=\"\$HOME/.config/Tahoma2D/stuff/profiles\"
-TOONZCACHEROOT=\"\$HOME/.config/Tahoma2D/stuff/cache\"
-TOONZCONFIG=\"\$HOME/.config/Tahoma2D/stuff/config\"
-TOONZFXPRESETS=\"\$HOME/.config/Tahoma2D/stuff/fxs\"
-TOONZLIBRARY=\"\$HOME/.config/Tahoma2D/stuff/library\"
-TOONZPROFILES=\"\$HOME/.config/Tahoma2D/stuff/profiles\"
-TOONZPROJECTS=\"$HOME/.config/Tahoma2D/stuff/projects\"
-TOONZROOT=\"\$HOME/.config/Tahoma2D/stuff\"
-TOONZSTUDIOPALETTE=\"\$HOME/.config/Tahoma2D/stuff/studiopalette\"
+TAHOMA2DROOT=\"\$HOME/.config/Tahoma2D/stuff\"
+TAHOMA2DPROFILES=\"\$HOME/.config/Tahoma2D/stuff/profiles\"
+TAHOMA2DCACHEROOT=\"\$HOME/.config/Tahoma2D/stuff/cache\"
+TAHOMA2DCONFIG=\"\$HOME/.config/Tahoma2D/stuff/config\"
+TAHOMA2DFXPRESETS=\"\$HOME/.config/Tahoma2D/stuff/fxs\"
+TAHOMA2DLIBRARY=\"\$HOME/.config/Tahoma2D/stuff/library\"
+TAHOMA2DPROJECTS=\"$HOME/.config/Tahoma2D/stuff/projects\"
+TAHOMA2DROOT=\"\$HOME/.config/Tahoma2D/stuff\"
+TAHOMA2DSTUDIOPALETTE=\"\$HOME/.config/Tahoma2D/stuff/studiopalette\"
 EOF
 fi
 
