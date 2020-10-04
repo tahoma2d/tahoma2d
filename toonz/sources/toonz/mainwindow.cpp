@@ -3541,19 +3541,17 @@ void MainWindow::TogglePlasticAnimate() {
 /*-- Brush tool + mode switching shortcuts --*/
 void MainWindow::ToggleBrushAutoFillOff() {
   CommandManager::instance()->getAction(T_Brush)->trigger();
-  if (CommandManager::instance()
-           ->getAction("A_ToolOption_AutoClose")
-           ->isChecked()) {
-    CommandManager::instance()->getAction("A_ToolOption_AutoClose")->trigger();
+  QAction *ac = CommandManager::instance()->getAction("A_ToolOption_AutoClose");
+  if (ac->isChecked()) {
+    ac->trigger();
   }
 }
 
 void MainWindow::ToggleBrushAutoFillOn() {
   CommandManager::instance()->getAction(T_Brush)->trigger();
-  if (!CommandManager::instance()
-           ->getAction("A_ToolOption_Autofill")
-           ->isChecked()) {
-    CommandManager::instance()->getAction("A_ToolOption_Autofill")->trigger();
+  QAction *ac = CommandManager::instance()->getAction("A_ToolOption_Autofill");
+  if (!ac->isChecked()) {
+    ac->trigger();
   }
 }
 
