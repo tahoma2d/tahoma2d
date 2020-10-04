@@ -568,6 +568,10 @@ centralWidget->setLayout(centralWidgetLayout);*/
                     &MainWindow::TogglePlasticBuildSkeleton);
   setCommandHandler(MI_PlasticAnimate, this, &MainWindow::TogglePlasticAnimate);
 
+  /*-- Brush tool + mode switching shortcuts --*/
+  setCommandHandler(MI_BrushAutoFillOff, this, &MainWindow::ToggleBrushAutoFillOff);
+  setCommandHandler(MI_BrushAutoFillOn, this, &MainWindow::ToggleBrushAutoFillOn);
+
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
@@ -3007,6 +3011,11 @@ void MainWindow::defineActions() {
   createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "", "",
                ToolCommandType);
 
+  /*-- Brush tool + mode switching shortcuts --*/
+  createAction(MI_BrushAutoFillOn, tr("Brush Tool - Auto Fill On"), "", "", ToolCommandType);
+  createAction(MI_BrushAutoFillOff, tr("Brush Tool - Auto Fill Off"), "", "",
+               ToolCommandType);
+
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
 
   createStopMotionAction(MI_StopMotionCapture, tr("Capture Stop Motion Frame"),
@@ -3526,6 +3535,26 @@ void MainWindow::TogglePlasticAnimate() {
   CommandManager::instance()
       ->getAction("A_ToolOption_SkeletonMode:Animate")
       ->trigger();
+}
+
+//-----------------------------------------------------------------------------
+/*-- Brush tool + mode switching shortcuts --*/
+void MainWindow::ToggleBrushAutoFillOff() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  if (CommandManager::instance()
+           ->getAction("A_ToolOption_AutoClose")
+           ->isChecked()) {
+    CommandManager::instance()->getAction("A_ToolOption_AutoClose")->trigger();
+  }
+}
+
+void MainWindow::ToggleBrushAutoFillOn() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  if (!CommandManager::instance()
+           ->getAction("A_ToolOption_Autofill")
+           ->isChecked()) {
+    CommandManager::instance()->getAction("A_ToolOption_Autofill")->trigger();
+  }
 }
 
 //-----------------------------------------------------------------------------
