@@ -506,7 +506,10 @@ void adaptLevelToPalette(TXshLevelHandle *currentLevelHandle,
   QApplication::restoreOverrideCursor();
 
   currentLevelHandle->getSimpleLevel()->setPalette(plt);
+
+  std::wstring oldGlobalName = paletteHandle->getPalette()->getGlobalName();
   paletteHandle->setPalette(plt);
+  paletteHandle->getPalette()->setGlobalName(oldGlobalName);
   plt->setDirtyFlag(true);
   paletteHandle->notifyPaletteChanged();
   currentLevelHandle->notifyLevelChange();
