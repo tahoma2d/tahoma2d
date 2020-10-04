@@ -75,7 +75,8 @@ private:
   QPoint m_origin;              // axes origin (window coords)
   QPoint m_startPos, m_oldPos;  // mouse click position, last mouse click/drag
                                 // position (window coords)
-  bool m_isFloating = true;
+  bool m_isFloating   = true;
+  bool m_spacePressed = false;
   struct Gadget {
     Handle m_handle;
     int m_kIndex;
@@ -221,6 +222,7 @@ protected:
   void openContextMenu(QMouseEvent *e);
 
   void keyPressEvent(QKeyEvent *e) override;
+  void keyReleaseEvent(QKeyEvent *e) override;
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
 

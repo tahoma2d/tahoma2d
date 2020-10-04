@@ -787,7 +787,7 @@ void FxPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
       menu.addAction(connectToXSheet);
     menu.addAction(duplicateFx);
     if ((zsrc && zsrc->getZeraryFx() &&
-            zsrc->getZeraryFx()->getLinkedFx() != zsrc->getZeraryFx()) ||
+         zsrc->getZeraryFx()->getLinkedFx() != zsrc->getZeraryFx()) ||
         fx->getLinkedFx() != fx)
       menu.addAction(unlinkFx);
   }
@@ -948,7 +948,7 @@ void FxXSheetPainter::paint(QPainter *painter,
     // Draw the name
     QRectF rect(18, 0, 54, 18);
     painter->drawText(rect, Qt::AlignLeft | Qt::AlignVCenter,
-                      QString(tr("XSheet")));
+                      QString(tr("Xsheet")));
   }
   // small scaled
   else {
@@ -2639,8 +2639,18 @@ void FxSchematicNormalFxNode::onRenderToggleClicked(bool value) {
 
 void FxSchematicNormalFxNode::mouseDoubleClickEvent(
     QGraphicsSceneMouseEvent *me) {
-  QRectF nameArea(0, 0, m_width, 14);
-  if (nameArea.contains(me->pos()) && me->modifiers() == Qt::ControlModifier) {
+  QString fontName = Preferences::instance()->getInterfaceFont();
+  if (fontName == "") {
+#ifdef _WIN32
+    fontName = "Arial";
+#else
+    fontName = "Helvetica";
+#endif
+  }
+  static QFont font(fontName, 10, QFont::Normal);
+  int width = QFontMetrics(font).width(m_name);
+  QRectF nameArea(0, 0, width, 14);
+  if (nameArea.contains(me->pos())) {
     m_nameItem->setPlainText(m_name);
     m_nameItem->show();
     m_nameItem->setFocus();
