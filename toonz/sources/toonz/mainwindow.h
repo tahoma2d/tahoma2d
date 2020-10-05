@@ -200,6 +200,10 @@ public:
   void TogglePlasticPaintRigid();
   void TogglePlasticBuildSkeleton();
   void TogglePlasticAnimate();
+  
+  /*-- Brush Tool + mode switching shortcuts --*/
+  void ToggleBrushAutoFillOff();
+  void ToggleBrushAutoFillOn();
 
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
