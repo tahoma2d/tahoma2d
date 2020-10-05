@@ -168,7 +168,7 @@ StartupPopup::StartupPopup()
   m_removePresetBtn->setStyleSheet(
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
   QLabel *label        = new QLabel();
-  QPixmap splashPixmap = QIcon(":Resources/splash2.svg").pixmap(QSize(24, 24));
+  QPixmap splashPixmap = QIcon(":Resources/startup.svg").pixmap(QSize(200, 24));
   label->setPixmap(splashPixmap);
 
   m_projectBox->setObjectName("SolidLineFrame");

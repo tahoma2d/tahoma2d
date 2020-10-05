@@ -22,7 +22,7 @@ void AboutClickableLabel::mousePressEvent(QMouseEvent* event) {
 
 AboutPopup::AboutPopup(QWidget* parent)
     : DVGui::Dialog(parent, true, "About Tahoma2D") {
-  setFixedWidth(300);
+  setFixedWidth(360);
   setFixedHeight(350);
 
   setWindowTitle(tr("About Tahoma2D"));
@@ -101,7 +101,7 @@ AboutPopup::AboutPopup(QWidget* parent)
 
   QFrame* mainFrame = new QFrame(this);
   mainFrame->setLayout(mainLayout);
-  mainFrame->setFixedWidth(300);
+  mainFrame->setFixedWidth(360);
 
   addWidget(mainFrame);
 
