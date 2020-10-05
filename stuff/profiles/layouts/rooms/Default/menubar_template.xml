@@ -282,7 +282,7 @@
         <command>MI_MaximizePanel</command>
         <command>MI_FullScreenWindow</command>
     </menu>
-    <menu title="Windows">
+    <menu title="Panels">
         <command>MI_OpenCommandToolbar</command>
         <command>MI_OpenToolbar</command>
         <command>MI_OpenToolOptionBar</command>

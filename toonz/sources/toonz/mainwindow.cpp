@@ -1765,9 +1765,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(
       MI_SavePaletteAs, tr("&Save Palette As..."), "",
       tr("Save the current style palette as a separate file with a new name."));
-  createRightClickMenuAction(
-      MI_SaveStudioPalette, tr("&Save Studio Palette"), "",
-      tr("Save the current Studio Palette."));
+  createRightClickMenuAction(MI_SaveStudioPalette, tr("&Save Studio Palette"),
+                             "", tr("Save the current Studio Palette."));
   createRightClickMenuAction(
       MI_OverwritePalette, tr("&Save Palette"), "",
       tr("Save the current style palette as a separate file."));
@@ -2091,7 +2090,7 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
                          "Alt+L");
   createRightClickMenuAction(MI_ToggleXSheetToolbar,
-                             tr("Toggle XSheet Toolbar"), "");
+                             tr("Toggle Xsheet Toolbar"), "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
                              tr("Show/Hide Xsheet Camera Column"), "");
 

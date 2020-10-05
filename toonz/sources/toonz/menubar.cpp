@@ -672,7 +672,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(viewMenu, MI_FullScreenWindow);
 
   // Menu' WINDOWS
-  QMenu *windowsMenu = addMenu(tr("Windows"), fullMenuBar);
+  QMenu *windowsMenu = addMenu(tr("Panels"), fullMenuBar);
   // QMenu *workspaceMenu = windowsMenu->addMenu(tr("Workspace"));
   //{
   //  addMenuItem(workspaceMenu, MI_DockingCheck);
@@ -832,7 +832,7 @@ TopBar::TopBar(QWidget *parent) : QToolBar(parent) {
   m_roomTabBar->setObjectName("TopBarTab");
   m_roomTabBar->setDrawBase(false);
   m_lockRoomCB->setObjectName("EditToolLockButton");
-  m_lockRoomCB->setToolTip(tr("Lock Rooms Tab"));
+  m_lockRoomCB->setToolTip(tr("Lock Rooms"));
   m_lockRoomCB->setChecked(m_roomTabBar->isLocked());
   m_lockRoomCB->setStatusTip(
       tr("Unlocking this enables creating new rooms and rearranging the "

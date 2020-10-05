@@ -1186,7 +1186,8 @@ void FunctionPanel::mousePressEvent(QMouseEvent *e) {
   assert(m_dragTool == 0);
   m_dragTool = 0;
 
-  if (e->button() == Qt::MidButton) {
+  if (e->button() == Qt::MidButton ||
+      (e->button() == Qt::LeftButton && m_spacePressed)) {
     // mid mouse click => panning
     bool xLocked = e->pos().x() <= m_valueAxisX;
     bool yLocked = e->pos().y() <= m_valueAxisX;
@@ -1424,7 +1425,20 @@ void FunctionPanel::mouseDoubleClickEvent(QMouseEvent *) { fitGraphToWindow(); }
 //-----------------------------------------------------------------------------
 
 void FunctionPanel::keyPressEvent(QKeyEvent *e) {
+  if (e->key() == Qt::Key::Key_Space) {
+    m_spacePressed = true;
+    e->accept();
+    return;
+  }
   FunctionPanelZoomer(this).exec(e);
+}
+
+//-----------------------------------------------------------------------------
+
+void FunctionPanel::keyReleaseEvent(QKeyEvent *e) {
+  if (e->key() == Qt::Key::Key_Space && !e->isAutoRepeat())
+    m_spacePressed = false;
+    // accept intentionally not called here.
 }
 
 //-----------------------------------------------------------------------------
@@ -1438,6 +1452,7 @@ void FunctionPanel::enterEvent(QEvent *) {
 
 void FunctionPanel::leaveEvent(QEvent *) {
   m_cursor.visible = false;
+  m_spacePressed   = false;
   update();
 }
 
