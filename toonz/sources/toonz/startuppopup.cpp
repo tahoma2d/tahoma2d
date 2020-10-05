@@ -95,7 +95,7 @@ QString removeZeros(QString srcStr) {
 
 StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
-  setWindowTitle(tr("Tahoma Startup"));
+  setWindowTitle(tr("Tahoma2D Startup"));
 
   m_projectBox = new QGroupBox(tr("Current Project"), this);
   m_sceneBox   = new QGroupBox(tr("Create a New Scene"), this);
@@ -168,7 +168,7 @@ StartupPopup::StartupPopup()
   m_removePresetBtn->setStyleSheet(
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
   QLabel *label        = new QLabel();
-  QPixmap splashPixmap = QIcon(":Resources/splash2.svg").pixmap(QSize(24, 24));
+  QPixmap splashPixmap = QIcon(":Resources/startup.svg").pixmap(QSize(200, 24));
   label->setPixmap(splashPixmap);
 
   m_projectBox->setObjectName("SolidLineFrame");

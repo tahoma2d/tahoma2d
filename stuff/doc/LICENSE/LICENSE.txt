@@ -2,7 +2,7 @@ For licenses of third party libraries exploited in this software, please see the
 
 - - - - - - - - - - - - - - - -
 
-Tahoma
+Tahoma2D
 
 All contributions by Jeremy Bullock:
 Copyright (c) 2016 - 2020, Jeremy Bullock

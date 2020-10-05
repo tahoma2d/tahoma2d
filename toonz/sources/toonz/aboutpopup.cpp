@@ -21,11 +21,11 @@ void AboutClickableLabel::mousePressEvent(QMouseEvent* event) {
 }
 
 AboutPopup::AboutPopup(QWidget* parent)
-    : DVGui::Dialog(parent, true, "About Tahoma") {
-  setFixedWidth(300);
+    : DVGui::Dialog(parent, true, "About Tahoma2D") {
+  setFixedWidth(360);
   setFixedHeight(350);
 
-  setWindowTitle(tr("About Tahoma"));
+  setWindowTitle(tr("About Tahoma2D"));
   setTopMargin(0);
 
   TFilePath baseLicensePath   = TEnv::getStuffDir() + "doc/LICENSE";
@@ -49,7 +49,7 @@ AboutPopup::AboutPopup(QWidget* parent)
   mainLayout->addWidget(blankLabel);
 
   AboutClickableLabel* licenseLink = new AboutClickableLabel(this);
-  licenseLink->setText(tr("Tahoma License"));
+  licenseLink->setText(tr("Tahoma2D License"));
 
   connect(licenseLink, &AboutClickableLabel::clicked, [=]() {
     if (TSystem::isUNC(tahomaLicensePath))
@@ -77,20 +77,20 @@ AboutPopup::AboutPopup(QWidget* parent)
   mainLayout->addWidget(thirdPartyLink);
 
   QLabel* ffmpegLabel = new QLabel(this);
-  ffmpegLabel->setText(
-      tr("Tahoma ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
+  ffmpegLabel->setText(tr(
+      "Tahoma2D ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
   mainLayout->addWidget(ffmpegLabel);
 
   mainLayout->addSpacerItem(new QSpacerItem(this->width(), 10));
 
   mainLayout->addWidget(
-      new QLabel(tr("Tahoma is made possible with the help of "
+      new QLabel(tr("Tahoma2D is made possible with the help of "
                     "patrons.\nSpecial thanks to:")));
   mainLayout->addWidget(new QLabel("Rodney Baker"));
   mainLayout->addWidget(new QLabel("  "));
 
   AboutClickableLabel* supportLink = new AboutClickableLabel(this);
-  supportLink->setText(tr("Please consider supporting Tahoma on Patreon."));
+  supportLink->setText(tr("Please consider supporting Tahoma2D on Patreon."));
   connect(supportLink, &AboutClickableLabel::clicked, [=]() {
     QDesktopServices::openUrl(QUrl("https://patreon.com/jeremybullock"));
     ;
@@ -101,7 +101,7 @@ AboutPopup::AboutPopup(QWidget* parent)
 
   QFrame* mainFrame = new QFrame(this);
   mainFrame->setLayout(mainLayout);
-  mainFrame->setFixedWidth(300);
+  mainFrame->setFixedWidth(360);
 
   addWidget(mainFrame);
 

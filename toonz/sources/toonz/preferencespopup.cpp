@@ -953,7 +953,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {autosavePeriod, tr("Interval (Minutes):")},
       {autosaveSceneEnabled, tr("Automatically Save the Scene File")},
       {autosaveOtherFilesEnabled, tr("Automatically Save Non-Scene Files")},
-      {startupPopupEnabled, tr("Show Startup Window when Tahoma Starts")},
+      {startupPopupEnabled, tr("Show Startup Window when Tahoma2D Starts")},
       {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,

@@ -1051,14 +1051,14 @@ void MainWindow::onAbout() { m_aboutPopup->exec(); }
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenOnlineManual() {
-  QDesktopServices::openUrl(QUrl(tr("http://tahoma.readthedocs.io")));
+  QDesktopServices::openUrl(QUrl(tr("http://tahoma2d.readthedocs.io")));
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://github.com/turtletooth/tahoma/releases/latest")));
+      QUrl(tr("https://github.com/turtletooth/tahoma2d/releases/latest")));
 }
 
 //-----------------------------------------------------------------------------
@@ -1073,7 +1073,7 @@ void MainWindow::onOpenWhatsNew() {
 void MainWindow::onOpenReportABug() {
   QString str = QString(
       tr("To report a bug, click on the button below to open a web browser "
-         "window for Tahoma's Issues page on https://github.com.  Click on "
+         "window for Tahoma2D's Issues page on https://github.com.  Click on "
          "the 'New issue' button and fill out the form."));
 
   std::vector<QString> buttons = {QObject::tr("Report a Bug"),
@@ -1081,7 +1081,7 @@ void MainWindow::onOpenReportABug() {
   int ret = DVGui::MsgBox(DVGui::INFORMATION, str, buttons, 1);
   if (ret == 1)
     QDesktopServices::openUrl(
-        QUrl("https://github.com/turtletooth/tahoma/issues"));
+        QUrl("https://github.com/turtletooth/tahoma2d/issues"));
 }
 //-----------------------------------------------------------------------------
 
@@ -1117,7 +1117,7 @@ void MainWindow::resetRoomsLayout() {
 
   DVGui::MsgBoxInPopup(
       DVGui::INFORMATION,
-      QObject::tr("The rooms will be reset the next time you run Tahoma."));
+      QObject::tr("The rooms will be reset the next time you run Tahoma2D."));
 }
 
 void MainWindow::maximizePanel() {
@@ -1842,10 +1842,10 @@ void MainWindow::defineActions() {
   // createAction(MI_SavePreview,         "&Save Preview",		"");
   createRightClickMenuAction(MI_SavePreset, tr("&Save As Preset"), "");
   menuAct = createMenuFileAction(MI_Preferences, tr("&Preferences..."),
-                                 "Ctrl+U", tr("Change Tahoma's settings."));
+                                 "Ctrl+U", tr("Change Tahoma2D's settings."));
   menuAct->setIcon(createQIcon("gear"));
   createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "",
-                       tr("Change the shortcuts of Tahoma."));
+                       tr("Change the shortcuts of Tahoma2D."));
 
   menuAct = createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "",
                                  tr("Print the scene's exposure sheet."));
@@ -2405,8 +2405,8 @@ void MainWindow::defineActions() {
                                     "Ctrl+`");
   menuAct->setIcon(createQIcon("toggle_fullscreen"));
 
-  menuAct = createMenuHelpAction(MI_About, tr("&About Tahoma..."), "");
-  menuAct->setIconText(tr("About Tahoma..."));
+  menuAct = createMenuHelpAction(MI_About, tr("&About Tahoma2D..."), "");
+  menuAct->setIconText(tr("About Tahoma2D..."));
   menuAct->setIcon(createQIcon("info"));
 
   menuAct = createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."),
@@ -3644,7 +3644,7 @@ void MainWindow::clearCacheFolder() {
 
   message +=
       tr("\nAre you sure?\n\nN.B. Make sure you are not running another "
-         "process of Tahoma,\nor you may delete necessary files for it.");
+         "process of Tahoma2D,\nor you may delete necessary files for it.");
 
   QMessageBox::StandardButton ret = QMessageBox::question(
       this, tr("Clear Cache Folder"), message,
@@ -3703,7 +3703,7 @@ void MainWindow::makeTransparencyDialog() {
 
   m_transparencyTogglerWindow->setFixedHeight(100);
   m_transparencyTogglerWindow->setFixedWidth(250);
-  m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma Transparency"));
+  m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma2D Transparency"));
   QPushButton *toggleButton = new QPushButton(this);
   toggleButton->setText(tr("Close to turn off Transparency."));
   connect(toggleButton, &QPushButton::clicked,

@@ -1,20 +1,20 @@
 # How to contribute
 
-This document describes some points about the contribution process for Tahoma.
+This document describes some points about the contribution process for Tahoma2D.
 
 ## Pull-requests
 
 I love any kind of contributions, such as fixing typos and code refactoring.
-If you fixed or added something useful to Tahoma, please send pull-requests to me.
+If you fixed or added something useful to Tahoma2D, please send pull-requests to me.
 I will first review the request, then I'll accept it, add comments for rework, or decline it.
 
 ### Workflow
 
-0. `fork` Tahoma to your GitHub account from `turtletooth/tahoma`.
-  - (use the `fork` button at the https://github.com/turtletooth/tahoma)
+0. `fork` Tahoma2D to your GitHub account from `turtletooth/tahoma2d`.
+  - (use the `fork` button at the https://github.com/turtletooth/tahoma2d)
 0. `clone` the repository.
-  - `git clone git@github.com:your-github-account/tahoma.git`
-  - `git remote add upstream https://github.com/turtletooth/tahoma.git`, additionally.
+  - `git clone git@github.com:your-github-account/tahoma2d.git`
+  - `git remote add upstream https://github.com/turtletooth/tahoma2d.git`, additionally.
 0. modify the codes.
   - `git checkout -b your-branch-name`
     - `your-branch-name` is a name of your modifications, for example,
@@ -32,7 +32,7 @@ I will first review the request, then I'll accept it, add comments for rework, o
 
 ## Bugs
 
-If you find bugs, please report details about them using [issues](https://github.com/turtletooth/tahoma/issues).
+If you find bugs, please report details about them using [issues](https://github.com/turtletooth/tahoma2d/issues).
 Please include information needed to reproduce the bug, including the operating system 
 and information directly relating to the issue. Links to screen captures of what is 
 observed on screen or video of specific steps to produce the problem are very helpful.  
@@ -56,6 +56,6 @@ please send us those modifications as pull-requests.
 
 Please send us Qt message (`.qm`) files with `.ts` files if you can make the following modifications.
 
-Tahoma uses `.qm` files generated from `.ts` files.
+Tahoma2D uses `.qm` files generated from `.ts` files.
 You can generate `.qm` files by using [Qt Linguist](http://doc.qt.io/qt-5.6/linguist-translators.html).
 Please locate generated `.qm` files in `stuff/config/loc`.

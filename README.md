@@ -5,18 +5,18 @@
 
 ## What is Tahoma2D?
 
-Tahoma is a 2D and stop motion animation software.It is based on **Toonz Studio
+Tahoma2D is a 2D and stop motion animation software.It is based on **Toonz Studio
 Ghibli Version**, originally developed in Italy by
 [Digital Video, Inc.](http://www.toonz.com/), and customized by
 [Studio Ghibli](http://www.ghibli.jp/) over many years of production.
 
 ## Program Requirements
 
-Please refer to the Tahoma site at <https://tahoma2d.org/download>.
+Please refer to the Tahoma2D site at <https://tahoma2d.org/download>.
 
 ## Installation
 
-Please download the latest release at <https://github.com/turtletooth/tahoma/releases>.
+Please download the latest release at <https://github.com/turtletooth/tahoma2d/releases>.
 
 ## How to Build Locally
 
@@ -31,7 +31,7 @@ Can't develop but still want to help? Help us test individual Pull Requests befo
 ## Community
 
 - To share tips or to troubleshoot, join the [Google OpenToonz Users forum](https://groups.google.com/forum/#!forum/opentoonz_en)
-- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/turtletooth/tahoma/issues) and post there.
+- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/turtletooth/tahoma2d/issues) and post there.
 
 ## Licensing
 
