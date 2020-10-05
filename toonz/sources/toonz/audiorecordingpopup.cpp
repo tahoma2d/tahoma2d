@@ -108,7 +108,14 @@ AudioRecordingPopup::AudioRecordingPopup()
   m_pausePlaybackButton->setIconSize(QSize(17, 17));
 
   QStringList inputs = m_audioRecorder->audioInputs();
-  m_deviceListCB->addItems(inputs);
+  int size = inputs.size();
+  for (int i = 0; i < inputs.size(); i++) {
+      std::string inputName = inputs.at(i).toStdString();
+      if (m_deviceListCB->findText(inputs.at(i)) == -1) {
+          m_deviceListCB->addItem(inputs.at(i));
+      }
+  }
+
   QString selectedInput = m_audioRecorder->defaultAudioInput();
   m_deviceListCB->setCurrentText(selectedInput);
   m_audioRecorder->setAudioInput(selectedInput);
@@ -173,15 +180,6 @@ AudioRecordingPopup::AudioRecordingPopup()
   m_playXSheetCB->setChecked(true);
 
   m_probe->setSource(m_audioRecorder);
-  QAudioEncoderSettings audioSettings;
-  audioSettings.setCodec("audio/PCM");
-  audioSettings.setSampleRate(44100);
-  audioSettings.setChannelCount(1);
-  audioSettings.setBitRate(16);
-  audioSettings.setEncodingMode(QMultimedia::ConstantBitRateEncoding);
-  audioSettings.setQuality(QMultimedia::HighQuality);
-  m_audioRecorder->setContainerFormat("wav");
-  m_audioRecorder->setEncodingSettings(audioSettings);
 
   connect(m_probe, SIGNAL(audioBufferProbed(QAudioBuffer)), this,
           SLOT(processBuffer(QAudioBuffer)));
@@ -232,6 +230,30 @@ void AudioRecordingPopup::onRecordButtonPressed() {
     // (rarely)
     // could cause a crash.  I think OT tried to import the level before the
     // final file was fully copied to the new location
+    QAudioFormat format;
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setChannelCount(1);
+    format.setSampleRate(44100);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
+    if (!info.isFormatSupported((format)))
+        format = info.nearestFormat(format);
+
+    int sampleSize = format.sampleSize();
+    int channelCount = format.channelCount();
+    int sampleRate = format.sampleRate();
+    std::string codec = format.codec().toStdString();
+
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setCodec(format.codec());
+    audioSettings.setSampleRate(format.sampleRate());
+    audioSettings.setChannelCount(format.channelCount());
+    audioSettings.setBitRate(format.sampleSize());
+    audioSettings.setEncodingMode(QMultimedia::ConstantBitRateEncoding);
+    audioSettings.setQuality(QMultimedia::HighQuality);
+    m_audioRecorder->setEncodingSettings(audioSettings);
+    m_audioRecorder->setContainerFormat("wav");
     m_audioRecorder->setOutputLocation(
         QUrl::fromLocalFile(m_filePath.getQString()));
     if (TSystem::doesExistFileOrLevel(m_filePath)) {
