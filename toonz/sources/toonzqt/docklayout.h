@@ -533,8 +533,7 @@ public:
 
   unsigned int find(const Region *subRegion) const;
 
-  bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets,
-                                  bool &fromDocking);
+  bool checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets);
   // This causes issues on maximize if the timeline is too tall.
   // bool checkWidgetsToBeFixedHeight(std::vector<QWidget *> &widgets,
   //                                 bool &fromDocking);
