@@ -9,7 +9,10 @@ sudo make install
 sudo ldconfig
 
 echo ">>> Creating appDir"
-rm -rf appdir
+if [ -d appdir ]
+then
+   rm -rf appdir
+fi
 mkdir -p appdir/usr
 
 echo ">>> Copy and configure Tahoma2D installation in appDir"
@@ -20,7 +23,10 @@ mv appdir/usr/lib/tahoma2d/* appdir/usr/lib
 rmdir appdir/usr/lib/tahoma2d
 
 echo ">>> Creating Tahoma2D directory"
-rm -rf Tahoma2D
+if [ -d Tahoma2D ]
+then
+   rm -rf Tahoma2D
+fi
 mkdir Tahoma2D
 
 echo ">>> Copying stuff to Tahoma2D/tahomastuff"
@@ -32,6 +38,10 @@ rmdir appdir/usr/share/tahoma2d
 if [ -d ../../thirdparty/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to Tahoma2D/ffmpeg"
+   if [ -d Tahoma2D/ffmpeg ]
+   then
+      rm -rf Tahoma2D/ffmpeg
+   fi
    cp -R ../../thirdparty/ffmpeg/bin Tahoma2D/ffmpeg
 fi
 
@@ -59,3 +69,4 @@ mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 echo ">>> Creating Tahoma2D Linux package"
 
 tar zcf Tahoma2D-linux.tar.gz Tahoma2D
+
