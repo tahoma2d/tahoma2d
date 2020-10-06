@@ -44,7 +44,12 @@ public:
       : QTreeWidgetItem(parent, UserType), m_action(action) {
     setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled |
              Qt::ItemNeverHasChildren);
-    setText(0, m_action->text().remove("&"));
+    QString tempText = m_action->text();
+    if (tempText.indexOf("&") == 0) {
+        tempText = tempText.remove(0, 1);
+    }
+    tempText = tempText.replace("&&", "&");
+    setText(0, tempText);
     setToolTip(0, QObject::tr("[Drag] to move position"));
   }
   QAction* getAction() const { return m_action; }

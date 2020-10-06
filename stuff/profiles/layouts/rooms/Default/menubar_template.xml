@@ -75,8 +75,8 @@
         <menu title="Arrange">
             <command>MI_BringToFront</command>
             <command>MI_BringForward</command>
-            <command>MI_SendBack</command>
             <command>MI_SendBackward</command>
+            <command>MI_SendBack</command>
         </menu>
     </menu>
 
