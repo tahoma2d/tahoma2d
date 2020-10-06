@@ -57,7 +57,10 @@ public:
   }
   void updateText() {
     QString text = m_action->text();
-    text.remove("&");
+    if (text.indexOf("&") == 0) {
+        text = text.remove(0, 1);
+    }
+    text = text.replace("&&", "&");
     setText(0, text);
     QString shortcut = m_action->shortcut().toString();
     setText(1, shortcut);
