@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef XSHTOOLBAR_H
-#define XSHTOOLBAR_H
+#ifndef QUICKTOOLBAR_H
+#define QUICKTOOLBAR_H
 
 #include <memory>
 
@@ -22,22 +22,22 @@ class QAction;
 namespace XsheetGUI {
 
 //=============================================================================
-// XSheet Toolbar
+// Quick Toolbar
 //-----------------------------------------------------------------------------
 
-class XSheetToolbar final : public CommandBar {
+class QuickToolbar final : public CommandBar {
   Q_OBJECT
 
   XsheetViewer *m_viewer;
 
 public:
 #if QT_VERSION >= 0x050500
-  XSheetToolbar(XsheetViewer *parent = 0, Qt::WindowFlags flags = 0,
+  QuickToolbar(XsheetViewer *parent = 0, Qt::WindowFlags flags = 0,
                 bool isCollapsible = false);
 #else
-  XSheetToolbar(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
+  QuickToolbar(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
 #endif
-  static void toggleXSheetToolbar();
+  static void toggleQuickToolbar();
   void showToolbar(bool show);
 
 protected:
@@ -50,4 +50,4 @@ protected slots:
 
 }  // namespace XsheetGUI;
 
-#endif  // XSHTOOLBAR_H
+#endif  // QUICKTOOLBAR_H

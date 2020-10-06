@@ -1268,11 +1268,11 @@ What do you want to do? </source>
 <context>
     <name>CommandBarPopup</name>
     <message>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation>摄影表工具条</translation>
     </message>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>定制摄影表工具条</translation>
     </message>
     <message>
@@ -5331,7 +5331,7 @@ Please use the frame numbers for reference.</source>
         <translation>刷新</translation>
     </message>
     <message>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation>开关摄影表工具条</translation>
     </message>
     <message>
@@ -7599,7 +7599,7 @@ Is it OK to release these shortcuts?</source>
         <translation>在摄影表显示工具条</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match XSheet Toolbar Height (Requires Restart)</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height (Requires Restart)</source>
         <translation type="vanished">扩展功能编辑器以适配到摄影表工具条的高度(需要重启程序)</translation>
     </message>
     <message>
@@ -7752,7 +7752,7 @@ if both are possible on coding file path.</source>
         <translation>在层级条末端时，按“向下方向键”创建一个新帧</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation>展开功能编辑器头以适配摄影表工具条的高度*</translation>
     </message>
     <message>
@@ -14175,9 +14175,9 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>定制摄影表工具条</translation>
     </message>
 </context>

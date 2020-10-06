@@ -119,7 +119,7 @@ enum PreferencesItemId {
   useArrowKeyToShiftCellSelection,
   inputCellsWithoutDoubleClickingEnabled,
   shortcutCommandsWhileRenamingCellEnabled,
-  showXSheetToolbar,
+  showQuickToolbar,
   expandFunctionHeader,
   showColumnNumbers,
   syncLevelRenumberWithXsheet,

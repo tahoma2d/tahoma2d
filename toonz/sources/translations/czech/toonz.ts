@@ -1264,11 +1264,11 @@ Co chcete dělat?</translation>
 <context>
     <name>CommandBarPopup</name>
     <message>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation>Nástrojový pruh záběru</translation>
     </message>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>Přizpůsobit nástrojový pruh záběru</translation>
     </message>
     <message>
@@ -5462,7 +5462,7 @@ Pro odkaz, prosím, použijte čísla snímků.</translation>
         <translation>&amp;Použít data synchronizace okraje na sloupec</translation>
     </message>
     <message>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation>Přepnout nástrojový pruh záběru</translation>
     </message>
     <message>
@@ -7794,7 +7794,7 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14111,9 +14111,9 @@ Podržte klávesu F3 v prohlížeči pro ukázání pouze tohoto snímku</transl
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>Přizpůsobit nástrojový pruh záběru</translation>
     </message>
 </context>

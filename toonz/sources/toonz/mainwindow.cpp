@@ -569,8 +569,10 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_PlasticAnimate, this, &MainWindow::TogglePlasticAnimate);
 
   /*-- Brush tool + mode switching shortcuts --*/
-  setCommandHandler(MI_BrushAutoFillOff, this, &MainWindow::ToggleBrushAutoFillOff);
-  setCommandHandler(MI_BrushAutoFillOn, this, &MainWindow::ToggleBrushAutoFillOn);
+  setCommandHandler(MI_BrushAutoFillOff, this,
+                    &MainWindow::ToggleBrushAutoFillOff);
+  setCommandHandler(MI_BrushAutoFillOn, this,
+                    &MainWindow::ToggleBrushAutoFillOn);
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
@@ -1709,8 +1711,8 @@ void MainWindow::defineActions() {
       tr("Load the contents of a folder into the current scene."));
   menuAct->setIcon(createQIcon("load_folder"));
   createMenuFileAction(
-      MI_LoadSubSceneFile, tr("&Load As Sub-xsheet..."), "",
-      tr("Load an existing scene into the current scene as a sub-xsheet"));
+      MI_LoadSubSceneFile, tr("&Load As Sub-Scene..."), "",
+      tr("Load an existing scene into the current scene as a sub-scene"));
   createMenuAction(MI_OpenRecentScene, tr("&Open Recent Scene File"), files,
                    tr("Load a recently used scene."));
   createMenuAction(MI_OpenRecentLevel, tr("&Open Recent Level File"), files,
@@ -1989,7 +1991,7 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("revert_level_to_cleanup"));
   menuAct = createMenuLevelAction(MI_RevertToLastSaved, tr("&Reload"), "");
   menuAct->setIcon(createQIcon("reload_level"));
-  createMenuLevelAction(MI_ExposeResource, tr("&Expose in Xsheet"), "");
+  createMenuLevelAction(MI_ExposeResource, tr("&Expose in Scene"), "");
   createMenuLevelAction(MI_EditLevel, tr("&Display in Level Strip"), "");
   menuAct =
       createMenuLevelAction(MI_LevelSettings, tr("&Level Settings..."), "");
@@ -2029,12 +2031,12 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("camera_settings"));
   createMiscAction(MI_CameraStage, tr("&Camera Settings..."), "");
 
-  menuAct = createMenuXsheetAction(MI_OpenChild, tr("&Open Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_OpenChild, tr("&Open Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_enter"));
-  menuAct = createMenuXsheetAction(MI_CloseChild, tr("&Close Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_CloseChild, tr("&Close Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_leave"));
   menuAct =
-      createMenuXsheetAction(MI_ExplodeChild, tr("Explode Sub-Xsheet"), "");
+      createMenuXsheetAction(MI_ExplodeChild, tr("Explode Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_explode"));
   menuAct = createMenuXsheetAction(MI_Collapse, tr("Collapse"), "");
   menuAct->setIcon(createQIcon("sub_collapse"));
@@ -2043,11 +2045,11 @@ void MainWindow::defineActions() {
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(createQIcon("sub_edit_in_place"));
   menuAct = createMenuXsheetAction(MI_SaveSubxsheetAs,
-                                   tr("&Save Sub-Xsheet As..."), "");
+                                   tr("&Save Sub-Scene As..."), "");
   menuAct->setIcon(createQIcon("saveas"));
   menuAct = createMenuXsheetAction(MI_Resequence, tr("Resequence"), "");
   menuAct->setIcon(createQIcon("resequence"));
-  menuAct = createMenuXsheetAction(MI_CloneChild, tr("Clone Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_CloneChild, tr("Clone Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_clone"));
 
   menuAct = createMenuXsheetAction(MI_ApplyMatchLines,
@@ -2093,10 +2095,10 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("clear"));
   createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
                          "Alt+L");
-  createRightClickMenuAction(MI_ToggleXSheetToolbar,
-                             tr("Toggle Xsheet Toolbar"), "");
+  createRightClickMenuAction(MI_ToggleQuickToolbar, tr("Toggle Quick Toolbar"),
+                             "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
-                             tr("Show/Hide Xsheet Camera Column"), "");
+                             tr("Show/Hide Camera Column"), "");
 
   menuAct = createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   menuAct->setIcon(createQIcon("reverse"));
@@ -3011,7 +3013,8 @@ void MainWindow::defineActions() {
                ToolCommandType);
 
   /*-- Brush tool + mode switching shortcuts --*/
-  createAction(MI_BrushAutoFillOn, tr("Brush Tool - Auto Fill On"), "", "", ToolCommandType);
+  createAction(MI_BrushAutoFillOn, tr("Brush Tool - Auto Fill On"), "", "",
+               ToolCommandType);
   createAction(MI_BrushAutoFillOff, tr("Brush Tool - Auto Fill Off"), "", "",
                ToolCommandType);
 

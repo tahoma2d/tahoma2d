@@ -215,12 +215,12 @@ ShortcutTree::ShortcutTree(QWidget *parent) : QTreeWidget(parent) {
   addFolder(tr("Scan & Cleanup"), MenuScanCleanupCommandType,
             menuCommandFolder);
   addFolder(tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(tr("Xsheet"), MenuXsheetCommandType, menuCommandFolder);
+  addFolder(tr("Scene"), MenuXsheetCommandType, menuCommandFolder);
   addFolder(tr("Cells"), MenuCellsCommandType, menuCommandFolder);
   addFolder(tr("Play"), MenuPlayCommandType, menuCommandFolder);
   addFolder(tr("Render"), MenuRenderCommandType, menuCommandFolder);
   addFolder(tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(tr("Windows"), MenuWindowsCommandType, menuCommandFolder);
+  addFolder(tr("Panels"), MenuWindowsCommandType, menuCommandFolder);
   addFolder(tr("Help"), MenuHelpCommandType, menuCommandFolder);
 
   addFolder(tr("Right-click Menu Commands"), RightClickMenuCommandType);

@@ -1742,12 +1742,12 @@ What do you want to do? </source>
     <name>CommandBarPopup</name>
     <message>
         <location filename="../../toonz/commandbarpopup.cpp" line="406"/>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation>Панель инструментов Xsheet</translation>
     </message>
     <message>
         <location filename="../../toonz/commandbarpopup.cpp" line="407"/>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>Настроить панель инструментов Xsheet</translation>
     </message>
     <message>
@@ -6155,7 +6155,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1814"/>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation>Показать/скрыть панель Xsheet</translation>
     </message>
     <message>
@@ -8574,7 +8574,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1052"/>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation>Развернуть заголовок редактора функций, чтобы соответствовать высоте панели инструментов Xsheet*</translation>
     </message>
     <message>
@@ -16904,9 +16904,9 @@ Please refer to the user guide for details.</source>
     </message>
 </context>
 <context>
-    <name>XSheetToolbar</name>
+    <name>QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation type="vanished">Настроить панель инструментов Xsheet</translation>
     </message>
 </context>
@@ -17357,10 +17357,10 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <location filename="../../toonz/xshtoolbar.cpp" line="68"/>
-        <source>Customize XSheet Toolbar</source>
+        <location filename="../../toonz/quicktoolbar.cpp" line="68"/>
+        <source>Customize Quick Toolbar</source>
         <translation>Настроить панель инструментов Xsheet</translation>
     </message>
 </context>

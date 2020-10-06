@@ -1265,11 +1265,11 @@ Was möchten Sie tun?</translation>
 <context>
     <name>CommandBarPopup</name>
     <message>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5453,7 +5453,7 @@ Please use the frame numbers for reference.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7768,7 +7768,7 @@ if both are possible on coding file path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14014,9 +14014,9 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
