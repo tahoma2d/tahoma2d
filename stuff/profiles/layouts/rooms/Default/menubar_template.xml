@@ -55,11 +55,11 @@
         <command>MI_Cut</command>
         <command>MI_Copy</command>
         <command>MI_Paste</command>
-        <command>MI_PasteAbove</command>
+        <command>MI_PasteBelow</command>
         <command>MI_PasteInto</command>
         <command>MI_PasteDuplicate</command>
         <command>MI_Insert</command>
-        <command>MI_InsertAbove</command>
+        <command>MI_InsertBelow</command>
         <command>MI_Clear</command>
         <separator/>
         <command>MI_SelectAll</command>

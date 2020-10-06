@@ -40,9 +40,9 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_Cut, &TColumnSelection::cutColumns);
   enableCommand(this, MI_Copy, &TColumnSelection::copyColumns);
   enableCommand(this, MI_Paste, &TColumnSelection::pasteColumns);
-  enableCommand(this, MI_PasteAbove, &TColumnSelection::pasteColumnsAbove);
+  enableCommand(this, MI_PasteBelow, &TColumnSelection::pasteColumnsBelow);
   enableCommand(this, MI_Clear, &TColumnSelection::deleteColumns);
-  enableCommand(this, MI_InsertAbove, &TColumnSelection::insertColumnsAbove);
+  enableCommand(this, MI_InsertBelow, &TColumnSelection::insertColumnsBelow);
   enableCommand(this, MI_Insert, &TColumnSelection::insertColumns);
   enableCommand(this, MI_Collapse, &TColumnSelection::collapse);
   enableCommand(this, MI_ExplodeChild, &TColumnSelection::explodeChild);
@@ -70,7 +70,7 @@ void TColumnSelection::copyColumns() {
 
 //-----------------------------------------------------------------------------
 // pasteColumns will insert columns before the first column in the selection
-void TColumnSelection::pasteColumns() {
+void TColumnSelection::pasteColumnsBelow() {
   std::set<int> indices;
   if (isEmpty())  // in case that no columns are selected
     indices.insert(0);
@@ -83,7 +83,7 @@ void TColumnSelection::pasteColumns() {
 
 //-----------------------------------------------------------------------------
 // pasteColumnsAbove will insert columns after the last column in the selection
-void TColumnSelection::pasteColumnsAbove() {
+void TColumnSelection::pasteColumns() {
   std::set<int> indices;
   if (isEmpty()) {  // in case that no columns are selected
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -107,13 +107,13 @@ void TColumnSelection::cutColumns() {
 
 //-----------------------------------------------------------------------------
 
-void TColumnSelection::insertColumns() {
+void TColumnSelection::insertColumnsBelow() {
   ColumnCmd::insertEmptyColumns(m_indices);
 }
 
 //-----------------------------------------------------------------------------
 
-void TColumnSelection::insertColumnsAbove() {
+void TColumnSelection::insertColumns() {
   ColumnCmd::insertEmptyColumns(m_indices, true);
 }
 
