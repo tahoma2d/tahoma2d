@@ -1165,7 +1165,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
   if (areResources) {
     QString title;
     if (clickedFile != TFilePath() && clickedFile.getType() == "tnz")
-      title = tr("Load As Sub-xsheet");
+      title = tr("Load As Sub-Scene");
     else
       title         = tr("Load");
     QAction *action = new QAction(title, menu);

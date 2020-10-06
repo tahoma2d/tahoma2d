@@ -370,8 +370,8 @@ public:
   bool isShortcutCommandsWhileRenamingCellEnabled() const {
     return getBoolValue(shortcutCommandsWhileRenamingCellEnabled);
   }
-  bool isShowXSheetToolbarEnabled() const {
-    return getBoolValue(showXSheetToolbar);
+  bool isShowQuickToolbarEnabled() const {
+    return getBoolValue(showQuickToolbar);
   }
   bool isExpandFunctionHeaderEnabled() const {
     return getBoolValue(expandFunctionHeader);

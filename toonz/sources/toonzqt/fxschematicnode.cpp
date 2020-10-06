@@ -264,11 +264,11 @@ void FxColumnPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   QMenu *addMenu = fxScene->getAddFxMenu();
 
   QAction *disconnectFromXSheet =
-      new QAction(tr("&Disconnect from Xsheet"), &menu);
+      new QAction(tr("&Disconnect from Scene"), &menu);
   connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onDisconnectFromXSheet()));
 
-  QAction *connectToXSheet = new QAction(tr("&Connect to Xsheet"), &menu);
+  QAction *connectToXSheet = new QAction(tr("&Connect to Scene"), &menu);
   connect(connectToXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onConnectToXSheet()));
 
@@ -480,11 +480,11 @@ void FxPalettePainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   QMenu menu(fxScene->views()[0]);
 
   QAction *disconnectFromXSheet =
-      new QAction(tr("&Disconnect from Xsheet"), &menu);
+      new QAction(tr("&Disconnect from Scene"), &menu);
   connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onDisconnectFromXSheet()));
 
-  QAction *connectToXSheet = new QAction(tr("&Connect to Xsheet"), &menu);
+  QAction *connectToXSheet = new QAction(tr("&Connect to Scene"), &menu);
   connect(connectToXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onConnectToXSheet()));
 
@@ -716,11 +716,11 @@ void FxPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   connect(deleteFx, SIGNAL(triggered()), fxScene, SLOT(onDeleteFx()));
 
   QAction *disconnectFromXSheet =
-      new QAction(tr("&Disconnect from Xsheet"), &menu);
+      new QAction(tr("&Disconnect from Scene"), &menu);
   connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onDisconnectFromXSheet()));
 
-  QAction *connectToXSheet = new QAction(tr("&Connect to Xsheet"), &menu);
+  QAction *connectToXSheet = new QAction(tr("&Connect to Scene"), &menu);
   connect(connectToXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onConnectToXSheet()));
 
@@ -948,7 +948,7 @@ void FxXSheetPainter::paint(QPainter *painter,
     // Draw the name
     QRectF rect(18, 0, 54, 18);
     painter->drawText(rect, Qt::AlignLeft | Qt::AlignVCenter,
-                      QString(tr("Xsheet")));
+                      QString(tr("Scene")));
   }
   // small scaled
   else {
@@ -1574,11 +1574,11 @@ void FxSchematicPort::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
     }
 
     QAction *disconnectFromXSheet =
-        new QAction(tr("&Disconnect from Xsheet"), &menu);
+        new QAction(tr("&Disconnect from Scene"), &menu);
     connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
             SLOT(onDisconnectFromXSheet()));
 
-    QAction *connectToXSheet = new QAction(tr("&Connect to Xsheet"), &menu);
+    QAction *connectToXSheet = new QAction(tr("&Connect to Scene"), &menu);
     connect(connectToXSheet, SIGNAL(triggered()), fxScene,
             SLOT(onConnectToXSheet()));
 
@@ -2289,7 +2289,7 @@ FxSchematicXSheetNode::FxSchematicXSheetNode(FxSchematicScene *scene,
   inDock->setZValue(2);
   m_xsheetPainter->setZValue(1);
 
-  setToolTip(tr("XSheet"));
+  setToolTip(tr("Scene"));
 }
 
 //-----------------------------------------------------

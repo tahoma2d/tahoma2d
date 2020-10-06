@@ -10,7 +10,7 @@
 #include "xshcolumnviewer.h"
 #include "xshrowviewer.h"
 #include "xshnoteviewer.h"
-#include "xshtoolbar.h"
+#include "quicktoolbar.h"
 #include "layerfooterpanel.h"
 #include "cellkeyframeselection.h"
 #include "saveloadqsettings.h"
@@ -566,7 +566,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   XsheetGUI::RowArea *m_rowArea;
   XsheetGUI::CellArea *m_cellArea;
   XsheetGUI::NoteArea *m_noteArea;
-  XsheetGUI::XSheetToolbar *m_toolbar;
+  XsheetGUI::QuickToolbar *m_toolbar;
   LayerFooterPanel *m_layerFooterPanel;
 
   Spreadsheet::FrameScroller m_frameScroller;

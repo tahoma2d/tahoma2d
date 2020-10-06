@@ -71,7 +71,7 @@ AudioRecordingPopup::AudioRecordingPopup()
   m_playDuration       = new QLabel("00:00");
   m_deviceListCB       = new QComboBox();
   m_audioLevelsDisplay = new AudioLevelsDisplay(this);
-  m_playXSheetCB       = new QCheckBox(tr("Sync with XSheet"), this);
+  m_playXSheetCB       = new QCheckBox(tr("Sync with Scene"), this);
   m_timer              = new QElapsedTimer();
   m_recordedLevels     = QMap<qint64, double>();
   m_oldElapsed         = 0;

@@ -1962,18 +1962,18 @@ QToolBar#WidePaddingToolBar QToolButton {
   padding-left: 2;
   padding-right: 1;
 }
-/* XSheet Toolbar & Command Bar
+/* Quick Toolbar & Command Bar
 ----------------------------------------------------------------------------- */
-#XSheetToolbar {
+#QuickToolbar {
   padding: 0;
   margin: 0;
   border-bottom: 1 solid #111111;
 }
-#XSheetToolbar QToolButton#qt_toolbar_ext_button {
+#QuickToolbar QToolButton#qt_toolbar_ext_button {
   margin: 0;
   margin-top: 3;
 }
-#XSheetToolbar QToolButton {
+#QuickToolbar QToolButton {
   padding: 0;
   padding-right: -1;
   padding-bottom: -1;
@@ -1981,7 +1981,7 @@ QToolBar#WidePaddingToolBar QToolButton {
   margin-left: 2;
   margin-right: 0;
 }
-#XSheetToolbar::separator:horizontal {
+#QuickToolbar::separator:horizontal {
   margin: 0 0 0 2;
 }
 #CommandBar {

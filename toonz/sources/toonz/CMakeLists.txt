@@ -119,7 +119,7 @@ set(MOC_HEADERS
     xsheetviewer.h
     xshnoteviewer.h
     xshrowviewer.h
-    xshtoolbar.h
+    quicktoolbar.h
 	xdtsimportpopup.h
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
@@ -224,7 +224,7 @@ set(SOURCES
     xsheetviewer.cpp
     xshnoteviewer.cpp
     xshrowviewer.cpp
-    xshtoolbar.cpp
+    quicktoolbar.cpp
     sceneviewer.cpp
     sceneviewerevents.cpp
     viewerdraw.cpp

@@ -211,7 +211,7 @@ bool mustRemoveColumn(int &from, int &to, TXshChildLevel *childLevel,
     if (app != childLevel) {
       removeColumn = false;
       if (from != -1 && to != -1) {
-        rangeFound = from <= row && row <= to;
+        rangeFound            = from <= row && row <= to;
         if (!rangeFound) from = to = -1;
       }
       continue;
@@ -913,7 +913,7 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
   int groupId    = outerDag->getNewGroupId();
   for (it = fxs.begin(); it != fxs.end(); it++) {
     QPair<TFx *, int> pair = it.value();
-    TFx *outerFx           = pair.first;
+    TFx *outerFx = pair.first;
     // skip redundant item. in case when only one node is input to the xsheet
     // node in the inner dag
     if (!outerFx) continue;
@@ -1016,7 +1016,7 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 
-  QString getHistoryString() override { return QObject::tr("Close SubXsheet"); }
+  QString getHistoryString() override { return QObject::tr("Close Sub-Scene"); }
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
@@ -1110,7 +1110,7 @@ void openSubXsheet() {
     app->getCurrentFrame()->setFrameIndex(subXsheetFrame);
     changeSaveSubXsheetAsCommand();
   } else
-    DVGui::error(QObject::tr("Select a sub-xsheet cell."));
+    DVGui::error(QObject::tr("Select a sub-scene cell."));
 }
 
 //=============================================================================
@@ -1662,8 +1662,8 @@ public:
       }
     QMap<TFx *, FxConnections>::const_iterator it2;
     for (it2 = m_fxConnections.begin(); it2 != m_fxConnections.end(); it2++) {
-      TFx *fx                     = it2.key();
-      FxConnections connections   = it2.value();
+      TFx *fx                   = it2.key();
+      FxConnections connections = it2.value();
       QMap<int, TFx *> inputLinks = connections.getInputLinks();
       QMap<int, TFx *>::const_iterator it3;
       for (it3 = inputLinks.begin(); it3 != inputLinks.end(); it3++)
@@ -1785,7 +1785,7 @@ public:
       outFx->addRef();
     }
 
-    for (int i = 0; i < m_pegObjects.size(); i++)
+    for (int i                              = 0; i < m_pegObjects.size(); i++)
       m_parentIds[m_pegObjects[i]->getId()] = m_pegObjects[i]->getParent();
 
     QMap<TStageObjectSpline *, TStageObjectSpline *>::iterator it3;
@@ -2220,10 +2220,10 @@ void SubsceneCmd::collapse(std::set<int> &indices) {
     QString question(QObject::tr("Collapsing columns: what you want to do?"));
 
     QList<QString> list;
+    list.append(QObject::tr(
+        "Maintain parenting relationships in the sub-scene as well."));
     list.append(
-        QObject::tr("Maintain parenting relationships in the sub-xsheet as well."));
-    list.append(
-        QObject::tr("Include only selected columns in the sub-xsheet."));
+        QObject::tr("Include only selected columns in the sub-scene."));
 
     int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
     if (ret == 0) return;
@@ -2327,10 +2327,11 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   if (hasPegbarsToBringInsideChildXsheet(xsh, indices)) {
     QString question(QObject::tr("Collapsing columns: what you want to do?"));
     QList<QString> list;
+    list.append(QObject::tr(
+        "Maintain parenting relationships in the sub-scene as well."));
     list.append(
-        QObject::tr("Maintain parenting relationships in the sub-xsheet as well."));
-    list.append(
-        QObject::tr("Include the selected columns in the sub-xsheet without parenting info."));
+        QObject::tr("Include the selected columns in the sub-scene without "
+                    "parenting info."));
     int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
     if (ret == 0) return;
     onlyColumns = (ret == 2);
@@ -2390,10 +2391,12 @@ void SubsceneCmd::explode(int index) {
   if (!childLevel) return;
 
   /*- Pegbarを親Sheetに持って出るか？の質問ダイアログ -*/
-  QString question(QObject::tr("Exploding Sub-xsheet: what you want to do?"));
+  QString question(QObject::tr("Exploding Sub-Scene: what you want to do?"));
   QList<QString> list;
-  list.append(QObject::tr("Maintain parenting relationships in the main xsheet."));
-  list.append(QObject::tr("Bring columns in the main xsheet without parenting."));
+  list.append(
+      QObject::tr("Maintain parenting relationships in the main scene."));
+  list.append(
+      QObject::tr("Bring columns in the main scene without parenting."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
   // Collect column stage object informations
@@ -2512,7 +2515,7 @@ void SubsceneCmd::explode(int index) {
 
     TFx *root = 0;
     assert(!columnOutputConnections.empty());
-    QList<TFxPort *> ports = columnOutputConnections.begin().value();
+    QList<TFxPort *> ports   = columnOutputConnections.begin().value();
     if (!ports.empty()) root = (*ports.begin())->getFx();
 
     ExplodeChildUndoRemovingColumn *undo = new ExplodeChildUndoRemovingColumn(
