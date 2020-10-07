@@ -576,6 +576,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
+  setCommandHandler(MI_SupportTahoma2D, this, &MainWindow::onSupportTahoma2D);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
   // setCommandHandler(MI_OpenCommunityForum, this,
   //                  &MainWindow::onOpenCommunityForum);
@@ -1054,6 +1055,12 @@ void MainWindow::onAbout() { m_aboutPopup->exec(); }
 
 void MainWindow::onOpenOnlineManual() {
   QDesktopServices::openUrl(QUrl(tr("http://tahoma2d.readthedocs.io")));
+}
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::onSupportTahoma2D() {
+    QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
 }
 
 //-----------------------------------------------------------------------------
@@ -2422,6 +2429,10 @@ void MainWindow::defineActions() {
 
   menuAct = createMenuHelpAction(MI_OpenWhatsNew, tr("&What's New..."), "");
   menuAct->setIconText(tr("What's New..."));
+  menuAct->setIcon(createQIcon("web"));
+
+  menuAct = createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
+  menuAct->setIconText(tr("Support Tahoma2D"));
   menuAct->setIcon(createQIcon("web"));
 
   // menuAct = createMenuHelpAction(MI_OpenCommunityForum,
