@@ -203,7 +203,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_saveInFolderPopup = new PencilTestSaveInFolderPopup(this);
   m_cameraListCombo   = new QComboBox(this);
   m_resolutionCombo   = new QComboBox(this);
-  m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 25);
+  m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 40);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
   m_cameraStatusLabel               = new QLabel(tr("Camera Status"), this);
   QPushButton *refreshCamListButton = new QPushButton(tr("Refresh"), this);
@@ -1782,7 +1782,7 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
       maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
     }
 #endif
-    m_cameraListCombo->setMaximumWidth(maxTextLength + 25);
+    m_cameraListCombo->setMaximumWidth(maxTextLength + 40);
     m_cameraListCombo->setEnabled(true);
     m_cameraListCombo->setCurrentIndex(0);
     m_captureButton->setEnabled(true);
