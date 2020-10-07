@@ -5,7 +5,10 @@ popd
 
 cd toonz
 
-mkdir build
+if [ ! -d build ]
+then
+   mkdir build
+fi
 cd build
 
 QTVERSION=`ls /usr/local/Cellar/qt`
@@ -16,6 +19,7 @@ then
    export CANON_FLAG=-DWITH_CANON=ON
 fi
 
+export MACOSX_DEPLOYMENT_TARGET=10.13
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
 cmake ../sources  $CANON_FLAG \
       -DQT_PATH=/usr/local/opt/qt/lib/ \

@@ -9,18 +9,32 @@ then
 fi
 
 echo ">>> Copying stuff to $TOONZDIR/Tahoma2D.app/tahomastuff"
+if [ -d $TOONZDIR/Tahoma2D.app/tahomastuff ]
+then
+   # In case of prior builds, replace stuff folder
+   rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
+fi
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 
 if [ -d thirdparty/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to $TOONZDIR/Tahoma2D.app/ffmpeg"
+   if [ -d $TOONZDIR/Tahoma2D.app/ffmpeg ]
+   then
+      # In case of prior builds, replace ffmpeg folder
+      rm -rf $TOONZDIR/Tahoma2D.app/ffmpeg
+   fi
    cp -R thirdparty/ffmpeg/bin $TOONZDIR/Tahoma2D.app/ffmpeg
 fi
 
 if [ -d thirdparty/canon/Framework ]
 then
    echo ">>> Copying canon framework to $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.Framework"
-   cp -R thirdparty/canon/Framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks ]
+   then
+      mkdir $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   fi
+   cp -R thirdparty/canon/Framework/ $TOONZDIR/Tahoma2D.app/Contents/Frameworks
 fi
 
 echo ">>> Configuring Tahoma2D.app for deployment"

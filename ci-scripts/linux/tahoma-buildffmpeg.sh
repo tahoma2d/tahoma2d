@@ -1,6 +1,6 @@
 cd thirdparty
 
-echo ">>> Cloning openH254"
+echo ">>> Cloning openH264"
 git clone https://github.com/cisco/openh264.git openh264
 
 cd openh264
@@ -20,7 +20,7 @@ git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 cd ffmpeg
 echo "*" >| .gitignore
 
-echo ">>> Configuring to build ffmpeg"
+echo ">>> Configuring to build ffmpeg (shared)"
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
@@ -55,11 +55,59 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
       --disable-libjack \
       --disable-indev=jack
 
-echo ">>> Building ffmpeg"
+echo ">>> Building ffmpeg (shared)"
 make
 
-echo ">>> Installing ffmpeg"
+echo ">>> Installing ffmpeg (shared)"
 sudo make install
 
 sudo ldconfig
+
+echo ">>> Configuring to build ffmpeg (static)"
+
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+./configure  --prefix=/usr/local \
+      --pkg-config-flags="--static" \
+      --extra-cflags="-I/usr/local/include -static" \
+      --extra-ldflags="-L/usr/local/lib -static" \
+      --extra-ldexeflags="-static" \
+      --enable-static \
+      --enable-cross-compile \
+      --enable-pic \
+      --disable-shared \
+      --enable-libopenh264 \
+      --enable-pthreads \
+      --enable-version3 \
+      --enable-avresample \
+      --enable-libmp3lame \
+      --enable-libopus \
+      --enable-libsnappy \
+      --enable-libtheora \
+      --enable-libvorbis \
+      --enable-libvpx \
+      --enable-libwebp \
+      --enable-lzma \
+      --enable-libfreetype \
+      --enable-libopencore-amrnb \
+      --enable-libopencore-amrwb \
+      --enable-libspeex \
+      --disable-ffplay \
+      --disable-htmlpages \
+      --disable-manpages \
+      --disable-podpages \
+      --disable-txtpages \
+      --disable-libjack \
+      --disable-indev=jack
+
+echo ">>> Building ffmpeg (static)"
+make
+
+echo ">>> Installing to tahoma2d/thirdparty/ffmpeg/bin"
+if [ ! -d bin ]
+then
+   mkdir bin
+fi
+
+cp ffmpeg ffprobe bin/
 
