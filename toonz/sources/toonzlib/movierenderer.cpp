@@ -114,8 +114,8 @@ public:
   std::map<double, std::pair<TRasterP, TRasterP>> m_toBeSaved;
   std::vector<std::pair<double, TFxPair>> m_framesToBeRendered;
   std::string m_renderCacheId;
-  /*--- 同じラスタのキャッシュを使いまわすとき、
-          最初のものだけガンマをかけ、以降はそれを使いまわすようにする。
+  /*--- When reusing the cache of the same raster
+          Gamma is applied only to the first one, and it is reused after that.
   ---*/
   std::map<double, bool> m_toBeAppliedGamma;
 

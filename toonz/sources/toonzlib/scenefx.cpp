@@ -578,7 +578,9 @@ FxBuilder::FxBuilder(ToonzScene *scene, TXsheet *xsh, double frame,
 //-------------------------------------------------------------------
 
 TFxP FxBuilder::buildFx() {
+  // start with the output fx
   TFx *outputFx = m_xsh->getFxDag()->getOutputFx(0);
+  // if nothing is going into the output or there are no fx, bail.
   if (!outputFx || outputFx->getInputPortCount() != 1 ||
       outputFx->getInputPort(0)->getFx() == 0)
     return TFxP();
@@ -1140,6 +1142,7 @@ TFxP buildSceneFx(ToonzScene *scene, TXsheet *xsh, double row, int whichLevels,
   fx = TFxUtil::makeAffine(fx, aff);
   if (fx) fx->setName(L"CameraDPI and Shrink NAffineFx");
 
+  // this creates an over fx to lay the current frame over the background color.
   fx = TFxUtil::makeOver(
       TFxUtil::makeColorCard(scene->getProperties()->getBgColor()), fx);
   return fx;
