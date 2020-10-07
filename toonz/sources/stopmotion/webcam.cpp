@@ -180,7 +180,18 @@ void Webcam::refreshWebcamResolutions() {
   clearWebcamResolutions();
   m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
   if (m_webcamResolutions.size() == 0) {
+      m_webcamResolutions.push_back(QSize(640,360));
+      m_webcamResolutions.push_back(QSize(640,480));
+      m_webcamResolutions.push_back(QSize(800,448));
+      m_webcamResolutions.push_back(QSize(800,600));
+      m_webcamResolutions.push_back(QSize(848,480));
+      m_webcamResolutions.push_back(QSize(864,480));
+      m_webcamResolutions.push_back(QSize(960,540));
+      m_webcamResolutions.push_back(QSize(960,720));
+      m_webcamResolutions.push_back(QSize(1024,576));
       m_webcamResolutions.push_back(QSize(1280,720));
+      m_webcamResolutions.push_back(QSize(1600,896));
+      m_webcamResolutions.push_back(QSize(1600,900));
       m_webcamResolutions.push_back(QSize(1920, 1080));
   }
 }
