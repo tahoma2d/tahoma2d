@@ -195,24 +195,23 @@ RenderCommand renderCommand;
 bool RenderCommand::init(bool isPreview) {
   ToonzScene *scene       = TApp::instance()->getCurrentScene()->getScene();
   TSceneProperties *sprop = scene->getProperties();
-  /*-- Preview/Renderに応じてそれぞれのSettingを取得 --*/
+
+  // Get the right output settings depending on if it's a preview or not.
   TOutputProperties &outputSettings = isPreview ? *sprop->getPreviewProperties()
                                                 : *sprop->getOutputProperties();
   outputSettings.getRange(m_r0, m_r1, m_step);
-  /*-- シーン全体のレンダリングの場合、m_r1をScene長に設定 --*/
+  /*-- Use the whole scene if m_r1 < 0 --*/
   if (m_r0 == 0 && m_r1 == -1) {
     m_r0 = 0;
     m_r1 = scene->getFrameCount() - 1;
   }
   if (m_r0 < 0) m_r0                       = 0;
   if (m_r1 >= scene->getFrameCount()) m_r1 = scene->getFrameCount() - 1;
+  // nothing to render
   if (m_r1 < m_r0) {
     DVGui::warning(QObject::tr(
         "The command cannot be executed because the scene is empty."));
     return false;
-    // throw TException("empty scene");
-    // non so perche', ma termina il programma
-    // nonostante il try all'inizio
   }
 
   // Initialize the preview case
@@ -228,7 +227,7 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
 
   if (isPreview) {
     /*--
-     * PreviewではTimeStretchを考慮しないので、そのままフレーム値を格納してゆく
+     * Since time stretch is not considered in Preview, the frame value is stored as it is
      * --*/
     m_numFrames        = (int)(m_r1 - m_r0 + 1);
     m_r                = m_r0;
@@ -250,16 +249,19 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
     return false;
   }
 
-  /*-- ファイル名が指定されていない場合は、シーン名を出力ファイル名にする --*/
+  /*-- If no file name is specified, use the scene name as the output file name. --*/
   if (fp.getWideName() == L"")
     fp = fp.withName(scene->getScenePath().getName());
-  /*-- ラスタ画像の場合、ファイル名にフレーム番号を追加 --*/
+  /*-- For raster images, add the frame number to the filename --*/
   if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE ||
       fp.getType() == "pct" || fp.getType() == "pic" ||
       fp.getType() == "pict")  // pct e' un formato"livello" (ha i settings di
                                // quicktime) ma fatto di diversi frames
+      // Tahoma2D no longer supports the pct, pic or pict file types.
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
   fp   = scene->decodeFilePath(fp);
+
+  // make sure there is a destination to write to.
   if (!TFileStatus(fp.getParentDir()).doesExist()) {
     try {
       TFilePath parent = fp.getParentDir();
@@ -451,7 +453,7 @@ void RenderCommand::rasterRender(bool isPreview) {
                                 : scene->getProperties()->getOutputProperties();
 
   // Build thread count
-  /*-- Dedicated CPUs のコンボボックス (Single, Half, All) --*/
+  /*-- Dedicated CPUs (Single, Half, All) --*/
   int index = prop->getThreadIndex();
 
   const int procCount       = TSystem::getProcessorCount();
@@ -459,7 +461,8 @@ void RenderCommand::rasterRender(bool isPreview) {
 
   int threadCount = threadCounts[index];
 
-  /*-- MovieRendererを作る。Previewの場合はファイルパスは空 --*/
+  /*-- MovieRenderer --*/
+  // construct a renderer
   MovieRenderer movieRenderer(scene, isPreview ? TFilePath() : m_fp,
                               threadCount, isPreview);
 
@@ -475,9 +478,9 @@ void RenderCommand::rasterRender(bool isPreview) {
 
   // Build
 
-  /*-- RenderSettingsをセット --*/
+  /*-- RenderSettings --*/
   movieRenderer.setRenderSettings(rs);
-  /*-- カメラDPIの取得、セット --*/
+  /*-- get and set the dpi --*/
   TPointD cameraDpi = isPreview ? scene->getCurrentPreviewCamera()->getDpi()
                                 : scene->getCurrentCamera()->getDpi();
   movieRenderer.setDpi(cameraDpi.x, cameraDpi.y);
@@ -487,7 +490,7 @@ void RenderCommand::rasterRender(bool isPreview) {
   else
     movieRenderer.enablePrecomputing(true);
 
-  /*-- プログレス ダイアログの作成 --*/
+  /*-- Creating a progress dialog --*/
   RenderListener *listener =
       new RenderListener(movieRenderer.getTRenderer(), m_fp,
                          ((m_numFrames - 1) / m_step) + 1, isPreview);
@@ -495,9 +498,7 @@ void RenderCommand::rasterRender(bool isPreview) {
                    SLOT(onCanceled()));
   movieRenderer.addListener(listener);
 
-  bool fieldRendering = rs.m_fieldPrevalence != TRenderSettings::NoField;
 
-  /*-- buildSceneFxの進行状況を表示するプログレスバー --*/
   QProgressBar *buildSceneProgressBar =
       new QProgressBar(TApp::instance()->getMainWindow());
   buildSceneProgressBar->setAttribute(Qt::WA_DeleteOnClose);
@@ -510,10 +511,19 @@ void RenderCommand::rasterRender(bool isPreview) {
       QObject::tr("Building Schematic...", "RenderCommand"));
   buildSceneProgressBar->show();
 
+
+  // Interlacing
+  bool fieldRendering = rs.m_fieldPrevalence != TRenderSettings::NoField;
+
+
   for (int i = 0; i < m_numFrames; ++i, m_r += m_stepd) {
     buildSceneProgressBar->setValue(i);
 
+    // shift camera if stereoscopic output
     if (rs.m_stereoscopic) scene->shiftCameraX(-rs.m_stereoscopicShift / 2);
+
+    // get the fx for each frame
+    // m_frameB is only used for stereoscopic or interlacing
     TFxPair fx;
     fx.m_frameA = buildSceneFx(scene, m_r, rs.m_shrinkX, isPreview);
 
@@ -527,14 +537,14 @@ void RenderCommand::rasterRender(bool isPreview) {
       scene->shiftCameraX(-rs.m_stereoscopicShift / 2);
     } else
       fx.m_frameB = TRasterFxP();
-    /*-- movieRendererにフレーム毎のFxを登録 --*/
+    /*-- movieRenderer Register Fx for each frame --*/
     movieRenderer.addFrame(m_r, fx);
   }
-  /*-- プログレスバーを閉じる --*/
+
   buildSceneProgressBar->close();
 
-  // resetViewer(); //TODO cancella le immagini dell'eventuale render precedente
-  // FileViewerPopupPool::instance()->getCurrent()->onClose();
+  // resetViewer(); //TODO delete the images of any previous render
+  //FileViewerPopupPool::instance()->getCurrent()->onClose();
 
   movieRenderer.start();
 }
@@ -785,9 +795,12 @@ void RenderCommand::doRender(bool isPreview) {
   bool isWritable = true;
   bool isMultiFrame;
   /*--
-   * 初期化処理。フレーム範囲の計算や、Renderの場合はOutputSettingsから保存先パスも作る
+   * Initialization process. Calculate the frame range, and in the case of Render, also create the save destination path from Output Settings
    * --*/
   if (!init(isPreview)) return;
+
+  // file name stuff
+  // and check ability to write.
   if (m_fp.getDots() == ".") {
     isMultiFrame = false;
     TFileStatus fs(m_fp);
@@ -802,11 +815,11 @@ void RenderCommand::doRender(bool isPreview) {
     QString exp(levelName + ".[0-9]{1,4}." + levelType);
     QRegExp regExp(exp);
     QStringList list        = qDir.entryList(QDir::Files);
-    QStringList livelFrames = list.filter(regExp);
+    QStringList levelFrames = list.filter(regExp);
 
     int i;
-    for (i = 0; i < livelFrames.size() && isWritable; i++) {
-      TFilePath frame = dir + TFilePath(livelFrames[i].toStdWString());
+    for (i = 0; i < levelFrames.size() && isWritable; i++) {
+      TFilePath frame = dir + TFilePath(levelFrames[i].toStdWString());
       if (frame.isEmpty() || !frame.isAbsolute()) continue;
       TFileStatus fs(frame);
       isWritable = fs.isWritable();
@@ -824,16 +837,12 @@ void RenderCommand::doRender(bool isPreview) {
   ToonzScene *scene = 0;
   TCamera *camera   = 0;
 
+  // send it to the appropriate renderer
   try {
-    /*-- Xsheetノードに繋がっている各ラインごとに計算するモード。
-            MultipleRender で Schematic Flows または Fx Schematic Terminal Nodes
-    が選択されている場合
-    --*/
     if (m_multimediaRender)
       multimediaRender();
 
     else
-      /*-- 通常のRendering --*/
       rasterRender(isPreview);
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));

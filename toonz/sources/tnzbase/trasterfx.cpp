@@ -599,8 +599,8 @@ std::string TRasterFx::getAlias(double frame,
   std::string alias = getFxType();
   alias += "[";
 
-  // alias degli effetti connessi alle porte di input separati da virgole
-  // una porta non connessa da luogo a un alias vuoto (stringa vuota)
+  // effect aliases connected to the input ports separated by commas 
+  // an unconnected port gives rise to an empty alias (empty string)
   int i;
   for (i = 0; i < getInputPortCount(); i++) {
     TFxPort *port = getInputPort(i);
@@ -612,7 +612,7 @@ std::string TRasterFx::getAlias(double frame,
     alias += ",";
   }
 
-  // alias dei valori dei parametri dell'effetto al frame dato
+  // alias the values ​​of the effect parameters to the given frame
   for (i = 0; i < getParams()->getParamCount(); i++) {
     TParam *param = getParams()->getParam(i);
     alias += param->getName() + "=" + param->getValueAlias(frame, 3);
@@ -808,7 +808,7 @@ void TRasterFx::compute(TTile &tile, double frame,
 
     TFxPort *port = getInputPort(0);
 
-    // la porta 0 non deve essere una porta di controllo
+    // port 0 must not be a control port
     assert(port->isaControlPort() == false);
 
     if (port->isConnected()) {
@@ -830,13 +830,13 @@ void TRasterFx::compute(TTile &tile, double frame,
                             tfloor(fracInfoTranslation.y));
   TPointD newTilePos(intTilePos.x - intInfoTranslation.x,
                      intTilePos.y - intInfoTranslation.y);
-  /*-- 入力タイルの位置が、小数値を持っていた場合 --*/
+  /*-- If the position of the input tile has a decimal value --*/
   if (tile.m_pos != newTilePos) {
-    /*-- RenderSettingsのaffine行列に位置ずれを足しこむ --*/
+    /*-- Add misalignment to the affine matrix of Render Settings --*/
     TRenderSettings newInfo(info);
     newInfo.m_affine.a13 = fracInfoTranslation.x - intInfoTranslation.x;
     newInfo.m_affine.a23 = fracInfoTranslation.y - intInfoTranslation.y;
-    /*-- タイルの位置は整数値にする --*/
+    /*-- Tile position should be an integer value --*/
     TPointD oldPos(tile.m_pos);
     tile.m_pos = newTilePos;
 
