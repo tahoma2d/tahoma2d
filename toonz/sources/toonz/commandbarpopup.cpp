@@ -44,7 +44,12 @@ public:
       : QTreeWidgetItem(parent, UserType), m_action(action) {
     setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled |
              Qt::ItemNeverHasChildren);
-    setText(0, m_action->text().remove("&"));
+    QString tempText = m_action->text();
+    if (tempText.indexOf("&") == 0) {
+        tempText = tempText.remove(0, 1);
+    }
+    tempText = tempText.replace("&&", "&");
+    setText(0, tempText);
     setToolTip(0, QObject::tr("[Drag] to move position"));
   }
   QAction* getAction() const { return m_action; }
@@ -87,8 +92,8 @@ CommandBarTree::CommandBarTree(TFilePath& path, QWidget* parent)
   if (TFileStatus(path).isWritable())
     fp = path;
   else {
-    if (path.getName() == "xsheettoolbar") {
-      fp = ToonzFolder::getTemplateModuleDir() + TFilePath("xsheettoolbar.xml");
+    if (path.getName() == "quicktoolbar") {
+      fp = ToonzFolder::getTemplateModuleDir() + TFilePath("quicktoolbar.xml");
     } else {
       fp = ToonzFolder::getTemplateModuleDir() + TFilePath("commandbar.xml");
     }
@@ -301,14 +306,14 @@ CommandBarListTree::CommandBarListTree(QWidget* parent) : QTreeWidget(parent) {
   addFolder(ShortcutTree::tr("Scan & Cleanup"), MenuScanCleanupCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Xsheet"), MenuXsheetCommandType,
+  addFolder(ShortcutTree::tr("Scene"), MenuXsheetCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Cells"), MenuCellsCommandType, menuCommandFolder);
   addFolder(ShortcutTree::tr("Play"), MenuPlayCommandType, menuCommandFolder);
   addFolder(ShortcutTree::tr("Render"), MenuRenderCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Windows"), MenuWindowsCommandType,
+  addFolder(ShortcutTree::tr("Panels"), MenuWindowsCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Help"), MenuHelpCommandType, menuCommandFolder);
 
@@ -456,14 +461,14 @@ void CommandBarListTree::searchItems(const QString& searchWord) {
 // CommandBarPopup
 //-----------------------------------------------------------------------------
 
-CommandBarPopup::CommandBarPopup(bool isXsheetToolbar)
+CommandBarPopup::CommandBarPopup(bool isQuickToolbar)
     : Dialog(TApp::instance()->getMainWindow(), true, false,
              "CustomizeCommandBar") {
   QLabel* commandBarLabel;
-  if (isXsheetToolbar) {
-    m_path = ToonzFolder::getMyModuleDir() + TFilePath("xsheettoolbar.xml");
-    commandBarLabel = new QLabel(tr("XSheet Toolbar"));
-    setWindowTitle(tr("Customize XSheet Toolbar"));
+  if (isQuickToolbar) {
+    m_path = ToonzFolder::getMyModuleDir() + TFilePath("quicktoolbar.xml");
+    commandBarLabel = new QLabel(tr("Quick Toolbar"));
+    setWindowTitle(tr("Customize Quick Toolbar"));
   } else {
     m_path = ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
     commandBarLabel = new QLabel(tr("Command Bar"));

@@ -534,8 +534,8 @@ void PreferencesPopup::onShowKeyframesOnCellAreaChanged() {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onShowXSheetToolbarClicked() {
-  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("XSheetToolbar");
+void PreferencesPopup::onShowQuickToolbarClicked() {
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("QuickToolbar");
 }
 
 //-----------------------------------------------------------------------------
@@ -978,7 +978,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {CurrentRoomChoice, tr("Rooms*:")},
       {functionEditorToggle, tr("Function Editor*:")},
       {moveCurrentFrameByClickCellArea,
-       tr("Move Current Frame by Clicking on Xsheet / Numerical Columns Cell "
+       tr("Move Current Frame by Clicking on Layer Header / Numerical Columns "
+          "Cell "
           "Area")},
       {actualPixelViewOnSceneEditingMode,
        tr("Enable Actual Pixel View on Scene Editing Mode")},
@@ -986,7 +987,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showRasterImagesDarkenBlendedInViewer,
        tr("Show Raster Images Darken Blended")},
       {showFrameNumberWithLetters,
-       tr("Show \"ABC\" Appendix to the Frame Number in Xsheet Cell")},
+       tr("Show \"ABC\" Appendix to the Frame Number in Cell")},
       {iconSize, tr("Level Strip Thumbnail Size*:")},
       {viewShrink, tr("Viewer Shrink:")},
       {viewStep, tr("Step:")},
@@ -1006,9 +1007,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Loading
       {importPolicy, tr("Default File Import Behavior:")},
-      {autoExposeEnabled, tr("Expose Loaded Levels in Xsheet")},
-      {subsceneFolderEnabled,
-       tr("Create Sub-folder when Importing Sub-Xsheet")},
+      {autoExposeEnabled, tr("Expose Loaded Levels in the Scene")},
+      {subsceneFolderEnabled, tr("Create Sub-folder when Importing Sub-Scene")},
       {removeSceneNumberFromLoadedLevelName,
        tr("Automatically Remove Scene Number from Loaded Level Name")},
       {IgnoreImageDpi, tr("Use Camera DPI for All Imported Images")},
@@ -1066,7 +1066,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Xsheet
       {xsheetLayoutPreference, tr("Column Header Layout*:")},
       {xsheetStep, tr("Next/Previous Step Frames:")},
-      {xsheetAutopanEnabled, tr("Xsheet Autopan during Playback")},
+      {xsheetAutopanEnabled, tr("Autopan during Playback")},
       {DragCellsBehaviour, tr("Cell-dragging Behaviour:")},
       {ignoreAlphaonColumn1Enabled,
        tr("Ignore Alpha Channel on Levels in Column 1")},
@@ -1078,12 +1078,12 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Enable to Input Cells without Double Clicking")},
       {shortcutCommandsWhileRenamingCellEnabled,
        tr("Enable Tahoma2D Commands' Shortcut Keys While Renaming Cell")},
-      {showXSheetToolbar, tr("Show Toolbar in the Xsheet")},
+      {showQuickToolbar, tr("Show Quick Toolbar")},
       {expandFunctionHeader,
-       tr("Expand Function Editor Header to Match Xsheet Toolbar Height*")},
+       tr("Expand Function Editor Header to Match Quick Toolbar Height*")},
       {showColumnNumbers, tr("Show Column Numbers in Column Headers")},
       {syncLevelRenumberWithXsheet,
-       tr("Sync Level Strip Drawing Number Changes with the Xsheet")},
+       tr("Sync Level Strip Drawing Number Changes with the Scene")},
       {currentTimelineEnabled,
        tr("Show Current Time Indicator (Timeline Mode only)")},
       {currentColumnColor, tr("Current Column Color:")},
@@ -1184,8 +1184,7 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
        {{tr("Vector Level"), PLI_XSHLEVEL},
         {tr("Smart Raster Level"), TZP_XSHLEVEL},
         {tr("Raster Level"), OVL_XSHLEVEL}}},
-      {NumberingSystem,
-       {{tr("Incremental"), 0}, {tr("Use Xsheet as Animation Sheet"), 1}}},
+      {NumberingSystem, {{tr("Incremental"), 0}, {tr("Animation Sheet"), 1}}},
       {vectorSnappingTarget,
        {{tr("Strokes"), 0}, {tr("Guides"), 1}, {tr("All"), 2}}},
       {dropdownShortcutsCycleOptions,
@@ -1246,7 +1245,7 @@ PreferencesPopup::PreferencesPopup()
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
              << tr("Loading") << tr("Saving") << tr("Import/Export")
-             << tr("Drawing") << tr("Tools") << tr("Xsheet") << tr("Animation")
+             << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
              << tr("Preview") << tr("Onion Skin") << tr("Colors")
              << tr("Version Control") << tr("Touch/Tablet Settings");
   categoryList->addItems(categories);
@@ -1715,7 +1714,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertUI(useArrowKeyToShiftCellSelection, lay);
   insertUI(inputCellsWithoutDoubleClickingEnabled, lay);
   insertUI(shortcutCommandsWhileRenamingCellEnabled, lay);
-  QGridLayout* xshToolbarLay = insertGroupBoxUI(showXSheetToolbar, lay);
+  QGridLayout* xshToolbarLay = insertGroupBoxUI(showQuickToolbar, lay);
   { insertUI(expandFunctionHeader, xshToolbarLay); }
   insertUI(showColumnNumbers, lay);
   // insertUI(syncLevelRenumberWithXsheet, lay);
@@ -1730,6 +1729,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
                            &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
   m_onEditedFuncMap.insert(showXsheetCameraColumn,
                            &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
+  m_onEditedFuncMap.insert(showQuickToolbar,
+                           &PreferencesPopup::onShowQuickToolbarClicked);
 
   return widget;
 }

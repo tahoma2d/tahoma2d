@@ -75,9 +75,42 @@
         <menu title="Arrange">
             <command>MI_BringToFront</command>
             <command>MI_BringForward</command>
-            <command>MI_SendBack</command>
             <command>MI_SendBackward</command>
+            <command>MI_SendBack</command>
         </menu>
+    </menu>
+
+    <menu title="Scene">
+        <command>MI_SceneSettings</command>
+        <command>MI_CameraSettings</command>
+        <separator/>
+        <command>MI_OpenChild</command>
+        <command>MI_CloseChild</command>
+        <command>MI_SaveSubxsheetAs</command>
+        <command>MI_Collapse</command>
+        <command>MI_Resequence</command>
+        <command>MI_CloneChild</command>
+        <command>MI_ExplodeChild</command>
+        <command>MI_ToggleEditInPlace</command>
+        <separator/>
+        <command>MI_ApplyMatchLines</command>
+        <command>MI_MergeCmapped</command>
+        <separator/>
+        <command>MI_MergeColumns</command>
+        <command>MI_DeleteMatchLines</command>
+        <command>MI_DeleteInk</command>
+        <separator/>
+        <command>MI_InsertFx</command>
+        <command>MI_NewOutputFx</command>
+        <separator/>
+        <command>MI_InsertSceneFrame</command>
+        <command>MI_RemoveSceneFrame</command>
+        <command>MI_InsertGlobalKeyframe</command>
+        <command>MI_RemoveGlobalKeyframe</command>
+        <separator/>
+        <command>MI_LipSyncPopup</command>
+        <separator/>
+        <command>MI_RemoveEmptyColumns</command>
     </menu>
     <menu title="Level">
         <menu title="New">
@@ -129,38 +162,6 @@
         <command>MI_ReplaceParentDirectory</command>
         <separator/>
         <command>MI_RemoveUnused</command>
-    </menu>
-    <menu title="Xsheet">
-        <command>MI_SceneSettings</command>
-        <command>MI_CameraSettings</command>
-        <separator/>
-        <command>MI_OpenChild</command>
-        <command>MI_CloseChild</command>
-        <command>MI_SaveSubxsheetAs</command>
-        <command>MI_Collapse</command>
-        <command>MI_Resequence</command>
-        <command>MI_CloneChild</command>
-        <command>MI_ExplodeChild</command>
-        <command>MI_ToggleEditInPlace</command>
-        <separator/>
-        <command>MI_ApplyMatchLines</command>
-        <command>MI_MergeCmapped</command>
-        <separator/>
-        <command>MI_MergeColumns</command>
-        <command>MI_DeleteMatchLines</command>
-        <command>MI_DeleteInk</command>
-        <separator/>
-        <command>MI_InsertFx</command>
-        <command>MI_NewOutputFx</command>
-        <separator/>
-        <command>MI_InsertSceneFrame</command>
-        <command>MI_RemoveSceneFrame</command>
-        <command>MI_InsertGlobalKeyframe</command>
-        <command>MI_RemoveGlobalKeyframe</command>
-        <separator/>
-        <command>MI_LipSyncPopup</command>
-        <separator/>
-        <command>MI_RemoveEmptyColumns</command>
     </menu>
     <menu title="Cells">
         <command>MI_Reverse</command>

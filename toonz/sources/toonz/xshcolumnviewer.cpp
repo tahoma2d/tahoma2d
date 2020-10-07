@@ -2299,7 +2299,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           return;
         if (!xsh->getColumn(m_col)->getSoundTextColumn()) {
           int x = 0;
-          x = Preferences::instance()->isShowXSheetToolbarEnabled() ? 30 : 0;
+          x     = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
           TStageObjectId columnId = m_viewer->getObjectId(m_col);
           bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
           bool clickChangeParent =
@@ -2754,7 +2754,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cameraToggle);
     }
     menu.addSeparator();
-    menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
+    menu.addAction(cmdManager->getAction(MI_ToggleQuickToolbar));
 
     QAction *flipOrientation = new QAction(tr("Toggle Orientation"), this);
 

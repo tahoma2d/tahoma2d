@@ -572,7 +572,7 @@ void LoadScenePopup::onFilePathDoubleClicked(const TFilePath &path) {
 // LoadSubScenePopup
 
 LoadSubScenePopup::LoadSubScenePopup()
-    : FileBrowserPopup(tr("Load Sub-Xsheet")) {
+    : FileBrowserPopup(tr("Load Sub-Scene")) {
   setOkText(tr("Load"));
   addFilterType("tnz");
   TFilePath scenePath =
@@ -643,7 +643,7 @@ void SaveSceneAsPopup::initFolder() {
 // SaveSubSceneAsPopup
 
 SaveSubSceneAsPopup::SaveSubSceneAsPopup()
-    : FileBrowserPopup(tr("Sub-xsheet"), Options(FOR_SAVING)) {
+    : FileBrowserPopup(tr("Sub-Scene"), Options(FOR_SAVING)) {
   setOkText(tr("Save"));
   connect(m_nameField, SIGNAL(returnPressedNow()), m_okButton,
           SLOT(animateClick()));
@@ -703,7 +703,7 @@ LoadLevelPopup::LoadLevelPopup()
   m_arrLvlPropWidget                 = new QWidget(this);
   QPushButton *showArrangementButton = createShowButton(this);
   QLabel *arrangementLabel =
-      new QLabel(tr("Level Settings & Arrangement in Xsheet"), this);
+      new QLabel(tr("Level Settings & Arrangement in Scene"), this);
   m_arrangementFrame = new QFrame(this);
   m_xFrom            = new DVGui::IntLineEdit(this, 1, 1);
   m_xTo              = new DVGui::IntLineEdit(this, 1, 1);

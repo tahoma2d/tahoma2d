@@ -57,7 +57,10 @@ public:
   }
   void updateText() {
     QString text = m_action->text();
-    text.remove("&");
+    if (text.indexOf("&") == 0) {
+        text = text.remove(0, 1);
+    }
+    text = text.replace("&&", "&");
     setText(0, text);
     QString shortcut = m_action->shortcut().toString();
     setText(1, shortcut);
@@ -215,12 +218,12 @@ ShortcutTree::ShortcutTree(QWidget *parent) : QTreeWidget(parent) {
   addFolder(tr("Scan & Cleanup"), MenuScanCleanupCommandType,
             menuCommandFolder);
   addFolder(tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(tr("Xsheet"), MenuXsheetCommandType, menuCommandFolder);
+  addFolder(tr("Scene"), MenuXsheetCommandType, menuCommandFolder);
   addFolder(tr("Cells"), MenuCellsCommandType, menuCommandFolder);
   addFolder(tr("Play"), MenuPlayCommandType, menuCommandFolder);
   addFolder(tr("Render"), MenuRenderCommandType, menuCommandFolder);
   addFolder(tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(tr("Windows"), MenuWindowsCommandType, menuCommandFolder);
+  addFolder(tr("Panels"), MenuWindowsCommandType, menuCommandFolder);
   addFolder(tr("Help"), MenuHelpCommandType, menuCommandFolder);
 
   addFolder(tr("Right-click Menu Commands"), RightClickMenuCommandType);

@@ -128,7 +128,7 @@ private:
   void onLevelBasedToolsDisplayChanged();
   // Xsheet
   void onShowKeyframesOnCellAreaChanged();
-  void onShowXSheetToolbarClicked();
+  void onShowQuickToolbarClicked();
   // Preview
   void onBlankCountChanged();
   void onBlankColorChanged();

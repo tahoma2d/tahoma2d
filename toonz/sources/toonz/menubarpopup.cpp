@@ -371,14 +371,14 @@ CommandListTree::CommandListTree(QWidget* parent) : QTreeWidget(parent) {
   addFolder(ShortcutTree::tr("Scan & Cleanup"), MenuScanCleanupCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Xsheet"), MenuXsheetCommandType,
+  addFolder(ShortcutTree::tr("Scene"), MenuXsheetCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Cells"), MenuCellsCommandType, menuCommandFolder);
   addFolder(ShortcutTree::tr("Play"), MenuPlayCommandType, menuCommandFolder);
   addFolder(ShortcutTree::tr("Render"), MenuRenderCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Windows"), MenuWindowsCommandType,
+  addFolder(ShortcutTree::tr("Panels"), MenuWindowsCommandType,
             menuCommandFolder);
   addFolder(ShortcutTree::tr("Help"), MenuHelpCommandType, menuCommandFolder);
 

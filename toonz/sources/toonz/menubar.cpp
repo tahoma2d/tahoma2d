@@ -449,9 +449,42 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   {
     addMenuItem(arrangeMenu, MI_BringToFront);
     addMenuItem(arrangeMenu, MI_BringForward);
-    addMenuItem(arrangeMenu, MI_SendBack);
     addMenuItem(arrangeMenu, MI_SendBackward);
+    addMenuItem(arrangeMenu, MI_SendBack);
   }
+
+  // Menu' Scene
+  QMenu *sceneMenu = addMenu(tr("Scene"), fullMenuBar);
+  addMenuItem(sceneMenu, MI_SceneSettings);
+  addMenuItem(sceneMenu, MI_CameraSettings);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_OpenChild);
+  addMenuItem(sceneMenu, MI_CloseChild);
+  addMenuItem(sceneMenu, MI_SaveSubxsheetAs);
+  addMenuItem(sceneMenu, MI_Collapse);
+  addMenuItem(sceneMenu, MI_Resequence);
+  addMenuItem(sceneMenu, MI_CloneChild);
+  addMenuItem(sceneMenu, MI_ExplodeChild);
+  addMenuItem(sceneMenu, MI_ToggleEditInPlace);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_ApplyMatchLines);
+  addMenuItem(sceneMenu, MI_MergeCmapped);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_MergeColumns);
+  addMenuItem(sceneMenu, MI_DeleteMatchLines);
+  addMenuItem(sceneMenu, MI_DeleteInk);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_InsertFx);
+  addMenuItem(sceneMenu, MI_NewOutputFx);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_InsertSceneFrame);
+  addMenuItem(sceneMenu, MI_RemoveSceneFrame);
+  addMenuItem(sceneMenu, MI_InsertGlobalKeyframe);
+  addMenuItem(sceneMenu, MI_RemoveGlobalKeyframe);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_LipSyncPopup);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_RemoveEmptyColumns);
 
   // Menu' LEVEL
   QMenu *levelMenu = addMenu(tr("Level"), fullMenuBar);
@@ -508,39 +541,6 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(levelMenu, MI_ReplaceParentDirectory);
   levelMenu->addSeparator();
   addMenuItem(levelMenu, MI_RemoveUnused);
-
-  // Menu' XSHEET
-  QMenu *xsheetMenu = addMenu(tr("Xsheet"), fullMenuBar);
-  addMenuItem(xsheetMenu, MI_SceneSettings);
-  addMenuItem(xsheetMenu, MI_CameraSettings);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_OpenChild);
-  addMenuItem(xsheetMenu, MI_CloseChild);
-  addMenuItem(xsheetMenu, MI_SaveSubxsheetAs);
-  addMenuItem(xsheetMenu, MI_Collapse);
-  addMenuItem(xsheetMenu, MI_Resequence);
-  addMenuItem(xsheetMenu, MI_CloneChild);
-  addMenuItem(xsheetMenu, MI_ExplodeChild);
-  addMenuItem(xsheetMenu, MI_ToggleEditInPlace);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_ApplyMatchLines);
-  addMenuItem(xsheetMenu, MI_MergeCmapped);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_MergeColumns);
-  addMenuItem(xsheetMenu, MI_DeleteMatchLines);
-  addMenuItem(xsheetMenu, MI_DeleteInk);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_InsertFx);
-  addMenuItem(xsheetMenu, MI_NewOutputFx);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_InsertSceneFrame);
-  addMenuItem(xsheetMenu, MI_RemoveSceneFrame);
-  addMenuItem(xsheetMenu, MI_InsertGlobalKeyframe);
-  addMenuItem(xsheetMenu, MI_RemoveGlobalKeyframe);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_LipSyncPopup);
-  xsheetMenu->addSeparator();
-  addMenuItem(xsheetMenu, MI_RemoveEmptyColumns);
 
   // Menu' CELLS
   QMenu *cellsMenu = addMenu(tr("Cells"), fullMenuBar);
