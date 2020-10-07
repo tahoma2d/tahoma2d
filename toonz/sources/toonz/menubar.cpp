@@ -426,12 +426,12 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(editMenu, MI_Cut);
   addMenuItem(editMenu, MI_Copy);
   addMenuItem(editMenu, MI_Paste);
-  addMenuItem(editMenu, MI_PasteAbove);
+  addMenuItem(editMenu, MI_PasteBelow);
   // addMenuItem(editMenu, MI_PasteNew);
   addMenuItem(editMenu, MI_PasteInto);
   addMenuItem(editMenu, MI_PasteDuplicate);
   addMenuItem(editMenu, MI_Insert);
-  addMenuItem(editMenu, MI_InsertAbove);
+  addMenuItem(editMenu, MI_InsertBelow);
   addMenuItem(editMenu, MI_Clear);
   editMenu->addSeparator();
   addMenuItem(editMenu, MI_SelectAll);

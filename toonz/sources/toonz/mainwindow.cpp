@@ -1902,8 +1902,8 @@ void MainWindow::defineActions() {
 
   menuAct = createMenuEditAction(MI_Paste, tr("&Paste Insert"), "Ctrl+V");
   menuAct->setIcon(createQIcon("paste"));
-  menuAct = createMenuEditAction(MI_PasteAbove, tr("&Paste Insert Above/After"),
-                                 "Ctrl+Shift+V");
+  menuAct = createMenuEditAction(
+      MI_PasteBelow, tr("&Paste Insert Below/Before"), "Ctrl+Shift+V");
   menuAct->setIcon(createQIcon("paste_above_after"));
   menuAct = createMenuEditAction(MI_PasteDuplicate, tr("&Paste as a Copy"), "");
   menuAct->setIcon(createQIcon("paste_duplicate"));
@@ -1926,7 +1926,7 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_ClearFrames, tr("&Clear Frames"), "");
   menuAct = createMenuEditAction(MI_Insert, tr("&Insert"), "Ins");
   menuAct->setIcon(createQIcon("insert"));
-  menuAct = createMenuEditAction(MI_InsertAbove, tr("&Insert Above/After"),
+  menuAct = createMenuEditAction(MI_InsertBelow, tr("&Insert Below/Before"),
                                  "Shift+Ins");
   menuAct->setIcon(createQIcon("insert_above_after"));
   menuAct = createMenuEditAction(MI_Group, tr("&Group"), "Ctrl+G");

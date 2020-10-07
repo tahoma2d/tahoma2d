@@ -2713,10 +2713,10 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cmdManager->getAction(MI_Cut));
       menu.addAction(cmdManager->getAction(MI_Copy));
       menu.addAction(cmdManager->getAction(MI_Paste));
-      menu.addAction(cmdManager->getAction(MI_PasteAbove));
+      menu.addAction(cmdManager->getAction(MI_PasteBelow));
       menu.addAction(cmdManager->getAction(MI_Clear));
       menu.addAction(cmdManager->getAction(MI_Insert));
-      menu.addAction(cmdManager->getAction(MI_InsertAbove));
+      menu.addAction(cmdManager->getAction(MI_InsertBelow));
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_InsertFx));
       menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
@@ -2821,23 +2821,23 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QAction *act  = cmdManager->getAction(MI_Insert),
-          *act2 = cmdManager->getAction(MI_InsertAbove),
+          *act2 = cmdManager->getAction(MI_InsertBelow),
           *act3 = cmdManager->getAction(MI_Paste),
-          *act4 = cmdManager->getAction(MI_PasteAbove);
+          *act4 = cmdManager->getAction(MI_PasteBelow);
 
   QString actText = act->text(), act2Text = act2->text(),
           act3Text = act3->text(), act4Text = act4->text();
 
   if (o->isVerticalTimeline()) {
-    act->setText(tr("&Insert Before"));
-    act2->setText(tr("&Insert After"));
-    act3->setText(tr("&Paste Insert Before"));
-    act4->setText(tr("&Paste Insert After"));
+    act->setText(tr("&Insert After"));
+    act2->setText(tr("&Insert Before"));
+    act3->setText(tr("&Paste Insert After"));
+    act4->setText(tr("&Paste Insert Before"));
   } else {
-    act->setText(tr("&Insert Below"));
-    act2->setText(tr("&Insert Above"));
-    act3->setText(tr("&Paste Insert Below"));
-    act4->setText(tr("&Paste Insert Above"));
+    act->setText(tr("&Insert Above"));
+    act2->setText(tr("&Insert Below"));
+    act3->setText(tr("&Paste Insert Above"));
+    act4->setText(tr("&Paste Insert Below"));
   }
 
   menu.exec(event->globalPos());
