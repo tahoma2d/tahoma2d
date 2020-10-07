@@ -103,6 +103,7 @@ public:
   void onUpgradeTabPro();
   void onAbout();
   void onOpenOnlineManual();
+  void onSupportTahoma2D();
   void onOpenWhatsNew();
   // void onOpenCommunityForum();
   void onOpenReportABug();
