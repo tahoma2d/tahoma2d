@@ -1605,7 +1605,9 @@ void SceneViewer::drawOverlay() {
       glPushMatrix();
       tglMultMatrix(m_drawTableAff);
       if (ViewerDraw::getShowFieldGuide()) ViewerDraw::drawFieldGuide();
-      ViewerDraw::drawGridsAndOverlays(this, m_pixelSize);
+      if (!m_draw3DMode) {
+        ViewerDraw::drawGridsAndOverlays(this, m_pixelSize);
+      }
       glPopMatrix();
     }
 
@@ -1726,16 +1728,15 @@ void SceneViewer::drawOverlay() {
   if (sl) {
     std::vector<TPointD> assistantPoints =
         sl->getProperties()->getVanishingPoints();
-    if (assistantPoints.size() > 0) {
+    if (!m_draw3DMode && assistantPoints.size() > 0) {
       if (tool->getToolType() & TTool::LevelTool &&
           !app->getCurrentObject()->isSpline() &&
           (tool->getName() == "T_Brush" || tool->getName() == "T_Geometric")) {
         glPushMatrix();
         tglMultMatrix(getViewMatrix() * tool->getMatrix());
         glScaled(m_dpiScale.x, m_dpiScale.y, 1);
-        ViewerDraw::drawPerspectiveGuides(
-            this, (m_draw3DMode) ? m_zoomScale3D : m_viewAff[m_viewMode].det(),
-            assistantPoints);
+        ViewerDraw::drawPerspectiveGuides(this, m_viewAff[m_viewMode].det(),
+                                          assistantPoints);
         glPopMatrix();
       }
     }
