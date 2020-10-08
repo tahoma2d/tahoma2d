@@ -83,19 +83,6 @@ protected:
   void mouseDoubleClickEvent(QMouseEvent *event) override;
   bool event(QEvent *event) override;
 
-  void setMarker(int index);
-
-protected slots:
-
-  void onSetStartMarker();
-  void onSetStopMarker();
-  void onRemoveMarkers();
-
-  // Set start and end marker automatically respect the current row and column.
-  void onSetAutoMarkers();
-
-  // set both the from and to markers at the specified row
-  void onPreviewThis();
 };
 
 }  // namespace XsheetGUI;

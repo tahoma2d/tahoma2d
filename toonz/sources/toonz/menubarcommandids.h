@@ -137,6 +137,12 @@
 #define MI_InsertFx "MI_InsertFx"
 #define MI_NewOutputFx "MI_NewOutputFx"
 
+#define MI_SetInMarker "MI_SetInMarker"
+#define MI_SetOutMarker "MI_SetOutMarker"
+#define MI_ClearMarkers "MI_ClearMarkers"
+#define MI_SetAutoMarkers "MI_SetAutoMarkers"
+#define MI_PreviewThis "MI_PreviewThis"
+
 #define MI_PasteNew "MI_PasteNew"
 #define MI_Autorenumber "MI_Autorenumber"
 #define MI_CreateBlankDrawing "MI_CreateBlankDrawing"

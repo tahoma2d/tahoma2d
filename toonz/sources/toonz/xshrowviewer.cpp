@@ -1201,9 +1201,16 @@ void RowArea::mouseReleaseEvent(QMouseEvent *event) {
   TPoint pos(event->pos().x(), event->pos().y());
 
   int row = m_viewer->xyToPosition(pos).frame();
-  if (m_playRangeActiveInMousePress && row == m_mousePressRow &&
-      (13 <= pos.x && pos.x <= 26 && (row == m_r0 || row == m_r1)))
-    onRemoveMarkers();
+
+  if ((event->modifiers() & Qt::AltModifier) && (event->modifiers() & Qt::ControlModifier)) {
+      CommandManager::instance()->execute(MI_ClearMarkers);
+  }
+  else if (m_mousePressRow == -1 && (event->modifiers() & Qt::ControlModifier)) {
+      CommandManager::instance()->execute(MI_SetInMarker);
+  }
+  else if (m_mousePressRow == -1 && (event->modifiers() & Qt::AltModifier)) {
+      CommandManager::instance()->execute(MI_SetOutMarker);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1213,21 +1220,18 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
       TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
 
   QMenu *menu             = new QMenu(this);
-  QAction *setStartMarker = menu->addAction(tr("Set Start Marker"));
-  connect(setStartMarker, SIGNAL(triggered()), SLOT(onSetStartMarker()));
-  QAction *setStopMarker = menu->addAction(tr("Set Stop Marker"));
-  connect(setStopMarker, SIGNAL(triggered()), SLOT(onSetStopMarker()));
+  menu->addAction(CommandManager::instance()->getAction(MI_SetInMarker));
+  
+  menu->addAction(CommandManager::instance()->getAction(MI_SetOutMarker));
+  
 
-  QAction *setAutoMarkers = menu->addAction(tr("Set Auto Markers"));
-  connect(setAutoMarkers, SIGNAL(triggered()), SLOT(onSetAutoMarkers()));
+  QAction* setAutoMarkers = CommandManager::instance()->getAction(MI_SetAutoMarkers);
+  menu->addAction(setAutoMarkers);
   setAutoMarkers->setEnabled(canSetAutoMarkers());
 
-  QAction *removeMarkers = menu->addAction(tr("Remove Markers"));
-  connect(removeMarkers, SIGNAL(triggered()), SLOT(onRemoveMarkers()));
+  menu->addAction(CommandManager::instance()->getAction(MI_ClearMarkers));
 
-  // set both the from and to markers at the specified row
-  QAction *previewThis = menu->addAction(tr("Preview This"));
-  connect(previewThis, SIGNAL(triggered()), SLOT(onPreviewThis()));
+  menu->addAction(CommandManager::instance()->getAction(MI_PreviewThis));
 
   menu->addSeparator();
 
@@ -1323,76 +1327,6 @@ bool RowArea::event(QEvent *event) {
     m_showOnionToSet = None;
   }
   return QWidget::event(event);
-}
-
-//-----------------------------------------------------------------------------
-
-void RowArea::setMarker(int index) {
-  assert(m_row >= 0);
-  // I use only the step value..
-  int unused0, unused1, step;
-  getPlayRange(unused0, unused1, step);
-  if (m_r0 > m_r1) {
-    m_r0 = 0;
-    m_r1 = TApp::instance()->getCurrentScene()->getScene()->getFrameCount() - 1;
-    if (m_r1 < 1) m_r1 = 1;
-  }
-  if (index == 0) {
-    m_r0 = m_row;
-    if (m_r1 < m_r0) m_r1 = m_r0;
-  } else if (index == 1) {
-    m_r1 = m_row;
-    if (m_r1 < m_r0) m_r0 = m_r1;
-    m_r1 -= (step == 0) ? (m_r1 - m_r0) : (m_r1 - m_r0) % step;
-  }
-  setPlayRange(m_r0, m_r1, step);
-}
-
-//-----------------------------------------------------------------------------
-
-void RowArea::onSetStartMarker() {
-  setMarker(0);
-  update();
-}
-
-//-----------------------------------------------------------------------------
-
-void RowArea::onSetStopMarker() {
-  setMarker(1);
-  update();
-}
-
-//-----------------------------------------------------------------------------
-// set both the from and to markers at the specified row
-void RowArea::onPreviewThis() {
-  assert(m_row >= 0);
-  int r0, r1, step;
-  getPlayRange(r0, r1, step);
-  setPlayRange(m_row, m_row, step);
-  update();
-}
-
-// Set the playing markers to the continuous block of the cell pointed by
-// current row and column
-void RowArea::onSetAutoMarkers() {
-  int currentColumn = m_viewer->getCurrentColumn();
-
-  int top    = getNonEmptyCell(m_row, currentColumn, Direction::up);
-  int bottom = getNonEmptyCell(m_row, currentColumn, Direction::down);
-
-  int r0, r1, step;
-  getPlayRange(r0, r1, step);
-  setPlayRange(top, bottom, step);
-  update();
-}
-
-//-----------------------------------------------------------------------------
-
-void RowArea::onRemoveMarkers() {
-  int step;
-  XsheetGUI::getPlayRange(m_r0, m_r1, step);
-  XsheetGUI::setPlayRange(0, -1, step);
-  update();
 }
 
 //-----------------------------------------------------------------------------
