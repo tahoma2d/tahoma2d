@@ -2,7 +2,7 @@
 
 Understanding the rendering code can be challenging in Tahoma2D
 
-When a render, fast rener, or preview command is given, it is handled in rendercommand.cpp
+When a render, fast render, or preview command is given, it is handled in rendercommand.cpp
 
 ### In rendercommand.cpp:
 - The file destination is verified.
