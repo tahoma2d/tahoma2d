@@ -2,6 +2,8 @@
 #ifndef XDTSIO_H
 #define XDTSIO_H
 
+#include "tfilepath.h"
+
 #include <QString>
 #include <QList>
 #include <QPair>
@@ -77,25 +79,18 @@ class XdtsFrameDataItem {
   // SYMBOL_HYPHEN       Continue previous       All fields
   //                     field instruction
 
+  TFrameId str2Fid(const QString &) const;
+  QString fid2Str(const TFrameId &) const;
+
 public:
   XdtsFrameDataItem() : m_id(Default) {}
-  XdtsFrameDataItem(int cellNumber) : m_id(Default) {
-    m_values.append((cellNumber == 0) ? QString("SYMBOL_NULL_CELL")
-                                      : QString::number(cellNumber));
+  XdtsFrameDataItem(TFrameId fId) : m_id(Default) {
+    m_values.append((fId.getNumber() == -1) ? QString("SYMBOL_NULL_CELL")
+                                            : fid2Str(fId));
   }
   void read(const QJsonObject &json);
   void write(QJsonObject &json) const;
-  int getCellNumber() const {
-    if (m_values.isEmpty()) return 0;
-    QString val = m_values.at(0);
-    if (val == "SYMBOL_NULL_CELL") return 0;
-    // ignore sheet symbols for now
-    else if (val == "SYMBOL_HYPHEN" || val == "SYMBOL_TICK_1" ||
-             val == "SYMBOL_TICK_2")
-      return -1;
-    // return cell number
-    return m_values.at(0).toInt();
-  }
+  TFrameId getFrameId() const;
 };
 
 //"description": "Individual layer frame information",
@@ -111,12 +106,12 @@ class XdtsTrackFrameItem {
   //"required": ["data", "frame"]
 public:
   XdtsTrackFrameItem() = default;
-  XdtsTrackFrameItem(int frame, int cellNumber) : m_frame(frame) {
-    m_data.append(XdtsFrameDataItem(cellNumber));
+  XdtsTrackFrameItem(int frame, TFrameId fId) : m_frame(frame) {
+    m_data.append(XdtsFrameDataItem(fId));
   }
   void read(const QJsonObject &json);
   void write(QJsonObject &json) const;
-  QPair<int, int> frameCellNumber() const;
+  QPair<int, TFrameId> frameFid() const;
 };
 
 //"description": "Individual field layer info",
@@ -137,11 +132,11 @@ public:
   void write(QJsonObject &json) const;
   bool isEmpty() const { return m_frames.isEmpty(); }
   int getTrackNo() const { return m_trackNo; }
-  QVector<int> getCellNumberTrack() const;
+  QVector<TFrameId> getCellFrameIdTrack() const;
 
   QString build(TXshCellColumn *);
-  void addFrame(int frame, int cellNumber) {
-    m_frames.append(XdtsTrackFrameItem(frame, cellNumber));
+  void addFrame(int frame, TFrameId fId) {
+    m_frames.append(XdtsTrackFrameItem(frame, fId));
   }
 };
 
@@ -159,7 +154,7 @@ public:
   void write(QJsonObject &json) const;
   bool isCellField() { return m_fieldId == CELL; }
   QList<int> getOccupiedColumns() const;
-  QVector<int> getColumnTrack(int col) const;
+  QVector<TFrameId> getColumnTrack(int col) const;
 
   void build(TXsheet *, QStringList &);
 };
