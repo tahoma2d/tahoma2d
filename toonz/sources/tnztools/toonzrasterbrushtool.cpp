@@ -1808,6 +1808,8 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   if (m_isStraight && m_isMyPaintStyleSelected && m_oldPressure > 0.0)
     pressure = m_oldPressure;
   finishRasterBrush(centeredPos, pressure);
+  int tc = ToonzCheck::instance()->getChecks();
+  if (tc & ToonzCheck::eGap || tc & ToonzCheck::eAutoclose) invalidate();
 }
 
 //---------------------------------------------------------------------------------------------------------------

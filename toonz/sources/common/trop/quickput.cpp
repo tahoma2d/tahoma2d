@@ -3233,12 +3233,17 @@ void doQuickPutCmapped(const TRaster32P &dn, const TRasterCM32P &up,
   std::vector<TPixel32> paints(palette->getStyleCount());
   std::vector<TPixel32> inks(palette->getStyleCount());
 
-  if (s.m_transparencyCheck)
+  if (s.m_transparencyCheck && !s.m_isOnionSkin) {
     for (int i = 0; i < palette->getStyleCount(); i++) {
-      paints[i] = s.m_transpCheckPaint;
-      inks[i]   = s.m_blackBgCheck ? s.m_transpCheckBg : s.m_transpCheckInk;
+      if (i == s.m_gapCheckIndex) {
+        paints[i] = inks[i] = applyColorScaleCMapped(
+            palette->getStyle(i)->getAverageColor(), s.m_globalColorScale);
+      } else {
+        paints[i] = s.m_transpCheckPaint;
+        inks[i]   = s.m_blackBgCheck ? s.m_transpCheckBg : s.m_transpCheckInk;
+      }
     }
-  else if (s.m_globalColorScale == TPixel::Black)
+  } else if (s.m_globalColorScale == TPixel::Black)
     for (int i  = 0; i < palette->getStyleCount(); i++)
       paints[i] = inks[i] =
           ::premultiply(palette->getStyle(i)->getAverageColor());
