@@ -261,13 +261,12 @@ void Picker::onImage(const Stage::Player &player) {
       double maxDist2  = maxDist * maxDist;
       double checkDist = maxDist2 * 4;
 
-      TStroke *stroke = vi->getStroke(strokeIndex);
+      TStroke *stroke        = vi->getStroke(strokeIndex);
       TThickPoint thickPoint = stroke->getThickPoint(w);
-      double thickness = thickPoint.thick;
-      double len = thickness * pixelSize * sqrt(m_viewAff.det());
-      checkDist = std::max(checkDist, (len * len));
-      if (dist2 < checkDist)
-        picked = true;
+      double thickness       = thickPoint.thick;
+      double len             = thickness * pixelSize * sqrt(m_viewAff.det());
+      checkDist              = std::max(checkDist, (len * len));
+      if (dist2 < checkDist) picked = true;
     }
   } else if (TRasterImageP ri = img) {
     TRaster32P ras = ri->getRaster();
@@ -574,11 +573,12 @@ void RasterPainter::flushRasterImages() {
       m_nodes[i].m_palette->setFrame(m_nodes[i].m_frame);
 
       TPaletteP plt;
+      int styleIndex = -1;
       if ((tc & ToonzCheck::eGap || tc & ToonzCheck::eAutoclose) &&
           m_nodes[i].m_isCurrentColumn) {
-        srcCm          = srcCm->clone();
-        plt            = m_nodes[i].m_palette->clone();
-        int styleIndex = plt->addStyle(TPixel::Magenta);
+        srcCm      = srcCm->clone();
+        plt        = m_nodes[i].m_palette->clone();
+        styleIndex = plt->addStyle(TPixel::Magenta);
         if (tc & ToonzCheck::eAutoclose)
           TAutocloser(srcCm, AutocloseDistance, AutocloseAngle, styleIndex,
                       AutocloseOpacity)
@@ -613,6 +613,9 @@ void RasterPainter::flushRasterImages() {
         Preferences::instance()->getTranspCheckData(
             settings.m_transpCheckBg, settings.m_transpCheckInk,
             settings.m_transpCheckPaint);
+
+        settings.m_isOnionSkin = m_nodes[i].m_onionMode != Node::eOnionSkinNone;
+        settings.m_gapCheckIndex = styleIndex;
 
         TRop::quickPut(viewedRaster, srcCm, plt, aff, settings);
       }
@@ -661,7 +664,7 @@ void RasterPainter::flushRasterImages() {
 #endif
 
 #ifdef GL_EXT_texture3D
-  if( GL_EXT_texture3D ) {
+  if (GL_EXT_texture3D) {
     glDisable(GL_TEXTURE_3D_EXT);
   }
 #endif
@@ -768,7 +771,7 @@ static void drawAutocloses(TVectorImage *vi, TVectorRenderData &rd) {
   buildAutocloseImage(vaux, vi, startPoints, endPoints);
   // temporarily disable fill check, to preserve the gap indicator color
   bool tCheckEnabledOriginal = rd.m_tcheckEnabled;
-  rd.m_tcheckEnabled = false;
+  rd.m_tcheckEnabled         = false;
   // draw
   tglDraw(rd, vaux);
   // restore original value
@@ -1075,11 +1078,11 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
   int alpha                 = 255;
   Node::OnionMode onionMode = Node::eOnionSkinNone;
   if (player.m_onionSkinDistance != c_noOnionSkin) {
-    // GetOnionSkinFade va bene per il vettoriale mentre il raster funziona al
-    // contrario
-    // 1 opaco -> 0 completamente trasparente
-    // inverto quindi il risultato della funzione stando attento al caso 0
-    // (in cui era scolpito il valore 0.9)
+    // GetOnionSkinFade is good for the vector while the raster works at the
+    //    Opposite 1 opaque -> 0 completely transparent
+    //    I therefore reverse the result of the function by being attentive to
+    //    case 0
+    //    (where the value 0.9 was carved)
     double onionSkiFade = player.m_onionSkinDistance == 0
                               ? 0.9
                               : (1.0 - OnionSkinMask::getOnionSkinFade(
