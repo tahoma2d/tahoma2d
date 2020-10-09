@@ -98,6 +98,9 @@ XsheetViewer {
   qproperty-SelectedEmptyCellColor: @xsheet-SelectedEmptyCell-color;
 
   // Level Type Colors
+  qproperty-PegColor: saturate(lighten(@schematic-PegColor, @nodeLightness), @nodeSaturation);
+  qproperty-TableColor: saturate(lighten(@schematic-TableColor, @nodeLightness), @nodeSaturation);
+
   qproperty-LevelColumnColor: @xsheet-LevelColumn-color;
   qproperty-LevelColumnBorderColor: desaturate(darken(@xsheet-LevelColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
   qproperty-SelectedLevelColumnColor: mix(shade(@xsheet-LevelColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
