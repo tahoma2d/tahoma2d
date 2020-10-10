@@ -220,7 +220,17 @@ public:
   std::string getSystemVarPrefix() { return m_systemVarPrefix; }
 
   void setWorkingDirectory() {
-    QString workingDirectoryTmp  = QDir::currentPath();
+    QString workingDirectoryTmp = QDir::currentPath();
+
+#ifdef LINUX
+    QString appPath =
+        workingDirectoryTmp + "/" + QCoreApplication::applicationName();
+    QDir appDir(appPath);
+    appPath = appDir.canonicalPath();
+    if (!appPath.isEmpty())
+      workingDirectoryTmp = TFilePath(appPath).getParentDir().getQString();
+#endif
+
     QByteArray ba                = workingDirectoryTmp.toLatin1();
     const char *workingDirectory = ba.data();
     m_workingDirectory           = workingDirectory;
