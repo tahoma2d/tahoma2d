@@ -6,6 +6,7 @@
 
 #include <QDir>
 #include <QSettings>
+#include <QCoreApplication>
 
 #ifdef LEVO_MACOSX
 
@@ -621,6 +622,12 @@ TFilePath TEnv::getConfigDir() {
   return fp != TFilePath() ? fp + "profiles" : fp;
 }
 */
+TFilePath TEnv::getWorkingDirectory() {
+  TFilePath workingDir(EnvGlobals::instance()->getWorkingDirectory());
+  if (workingDir == TFilePath()) workingDir = TFilePath(QDir::currentPath());
+  return workingDir;
+}
+
 void TEnv::setStuffDir(const TFilePath &stuffDir) {
   EnvGlobals::instance()->setStuffDir(stuffDir);
 }
