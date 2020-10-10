@@ -30,6 +30,7 @@
 #include "tregion.h"
 #include "tgl.h"
 #include "trop.h"
+#include "tropcm.h"
 
 #include "toonz/onionskinmask.h"
 #include "toonz/ttileset.h"
@@ -42,6 +43,7 @@
 #include "autofill.h"
 
 #include "historytypes.h"
+#include "toonz/autoclose.h"
 
 #include <stack>
 
@@ -67,6 +69,11 @@ TEnv::IntVar FillSelective("InknpaintFillSelective", 0);
 TEnv::IntVar FillOnion("InknpaintFillOnion", 0);
 TEnv::IntVar FillSegment("InknpaintFillSegment", 0);
 TEnv::IntVar FillRange("InknpaintFillRange", 0);
+
+extern TEnv::DoubleVar AutocloseDistance;
+extern TEnv::DoubleVar AutocloseAngle;
+extern TEnv::IntVar AutocloseInk;
+extern TEnv::IntVar AutocloseOpacity;
 
 //-----------------------------------------------------------------------------
 namespace {
@@ -237,12 +244,14 @@ public:
   void onAdd() override {}
 
   int getSize() const override {
-    int size1 = m_regionFillInformation ? m_regionFillInformation->capacity() *
-                                              sizeof(m_regionFillInformation)
-                                        : 0;
-    int size2 = m_strokeFillInformation ? m_strokeFillInformation->capacity() *
-                                              sizeof(m_strokeFillInformation)
-                                        : 0;
+    int size1 = m_regionFillInformation
+                    ? m_regionFillInformation->capacity() *
+                          sizeof(m_regionFillInformation)
+                    : 0;
+    int size2 = m_strokeFillInformation
+                    ? m_strokeFillInformation->capacity() *
+                          sizeof(m_strokeFillInformation)
+                    : 0;
     return sizeof(*this) + size1 + size2 + 500;
   }
 
@@ -346,7 +355,7 @@ public:
 
 class RasterFillUndo final : public TRasterUndo {
   FillParameters m_params;
-  bool m_saveboxOnly;
+  bool m_saveboxOnly, m_closeGaps;
 
 public:
   /*RasterFillUndo(TTileSetCM32 *tileSet, TPoint fillPoint,
@@ -359,9 +368,11 @@ public:
                                                            TXshSimpleLevel* sl,
      const TFrameId& fid)*/
   RasterFillUndo(TTileSetCM32 *tileSet, const FillParameters &params,
-                 TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly)
+                 TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly,
+                 bool closeGaps)
       : TRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_params(params)
+      , m_closeGaps(closeGaps)
       , m_saveboxOnly(saveboxOnly) {}
 
   void redo() const override {
@@ -379,9 +390,9 @@ public:
       if (m_params.m_shiftFill) {
         FillParameters aux(m_params);
         aux.m_styleId    = (m_params.m_styleId == 0) ? 1 : 0;
-        recomputeSavebox = fill(r, aux);
+        recomputeSavebox = fill(r, aux, 0, m_closeGaps);
       }
-      recomputeSavebox = fill(r, m_params);
+      recomputeSavebox = fill(r, m_params, 0, m_closeGaps);
     }
     if (m_params.m_fillType == ALL || m_params.m_fillType == LINES) {
       if (m_params.m_segment)
@@ -421,6 +432,7 @@ class RasterRectFillUndo final : public TRasterUndo {
   TStroke *m_s;
   bool m_onlyUnfilled;
   TPalette *m_palette;
+  TXshSimpleLevel *m_level;
 
 public:
   ~RasterRectFillUndo() {
@@ -436,6 +448,7 @@ public:
       , m_paintId(paintId)
       , m_colorType(colorType)
       , m_onlyUnfilled(onlyUnfilled)
+      , m_level(level)
       , m_palette(palette) {
     m_s = s ? new TStroke(*s) : 0;
   }
@@ -444,13 +457,36 @@ public:
     TToonzImageP image = getImage();
     if (!image) return;
     TRasterCM32P ras = image->getRaster();
-    AreaFiller filler(ras);
+    TRasterCM32P tempRaster;
+    if (true) {
+      tempRaster            = ras->clone();
+      TPalette *tempPalette = m_level->getPalette()->clone();
+      int styleIndex        = tempPalette->addStyle(TPixel::Transparent);
+      TAutocloser(tempRaster, AutocloseDistance, AutocloseAngle, styleIndex,
+                  AutocloseOpacity)
+          .exec();
+    } else {
+      tempRaster = ras;
+    }
+
+    AreaFiller filler(tempRaster);
     if (!m_s)
       filler.rectFill(m_fillArea, m_paintId, m_onlyUnfilled,
                       m_colorType != LINES, m_colorType != AREAS);
     else
       filler.strokeFill(m_s, m_paintId, m_onlyUnfilled, m_colorType != LINES,
                         m_colorType != AREAS);
+
+    if (true) {
+      TPixelCM32 *tempPix = tempRaster->pixels();
+      TPixelCM32 *keepPix = ras->pixels();
+      for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+        for (int tempX = 0; tempX < tempRaster->getLx();
+             tempX++, tempPix++, keepPix++) {
+          keepPix->setPaint(tempPix->getPaint());
+        }
+      }
+    }
 
     if (m_palette) {
       TRect rect   = m_fillArea;
@@ -638,10 +674,11 @@ public:
   }
 
   int getSize() const override {
-    int size = m_selectingStroke ? m_selectingStroke->getControlPointCount() *
-                                           sizeof(TThickPoint) +
-                                       100
-                                 : 0;
+    int size =
+        m_selectingStroke
+            ? m_selectingStroke->getControlPointCount() * sizeof(TThickPoint) +
+                  100
+            : 0;
     return sizeof(*this) +
            m_regionFillInformation->capacity() *
                sizeof(m_regionFillInformation) +
@@ -823,13 +860,39 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     /*-- tileSetでFill範囲のRectをUndoに格納しておく --*/
     TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
     tileSet->add(ras, rasterFillArea);
-    AreaFiller filler(ti->getRaster());
+
+    TRasterCM32P tempRaster;
+    if (true) {
+      tempRaster            = ras->clone();
+      TPalette *tempPalette = sl->getPalette()->clone();
+      int styleIndex        = tempPalette->addStyle(TPixel::Transparent);
+      TAutocloser(tempRaster, AutocloseDistance, AutocloseAngle, styleIndex,
+                  AutocloseOpacity)
+          .exec();
+    } else {
+      tempRaster = ras;
+    }
+
+    AreaFiller filler(tempRaster);
     if (!stroke)
       filler.rectFill(rasterFillArea, cs, onlyUnfilled, colorType != LINES,
                       colorType != AREAS);
     else
       filler.strokeFill(stroke, cs, onlyUnfilled, colorType != LINES,
                         colorType != AREAS);
+
+    if (true) {
+      if (true) {
+        TPixelCM32 *tempPix = tempRaster->pixels();
+        TPixelCM32 *keepPix = ras->pixels();
+        for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+          for (int tempX = 0; tempX < tempRaster->getLx();
+               tempX++, tempPix++, keepPix++) {
+            keepPix->setPaint(tempPix->getPaint());
+          }
+        }
+      }
+    }
 
     TPalette *plt = ti->getPalette();
 
@@ -867,7 +930,7 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 
     vi->findRegions();
 
-    std::vector<TFilledRegionInf> *regionFillInformation    = 0;
+    std::vector<TFilledRegionInf> *regionFillInformation = 0;
     std::vector<std::pair<int, int>> *strokeFillInformation = 0;
     if (colorType != LINES) {
       regionFillInformation = new std::vector<TFilledRegionInf>;
@@ -926,7 +989,6 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
     TDimension imageSize = ti->getSize();
     TPointD p(imageSize.lx % 2 ? 0.0 : 0.5, imageSize.ly % 2 ? 0.0 : 0.5);
 
-    /*-- params.m_p = convert(pos-p)では、マイナス座標でずれが生じる --*/
     TPointD tmp_p = pos - p;
     params.m_p = TPoint((int)floor(tmp_p.x + 0.5), (int)floor(tmp_p.y + 0.5));
 
@@ -947,9 +1009,9 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
       if (isShiftFill) {
         FillParameters aux(params);
         aux.m_styleId    = (params.m_styleId == 0) ? 1 : 0;
-        recomputeSavebox = fill(ras, aux, &tileSaver);
+        recomputeSavebox = fill(ras, aux, &tileSaver, true);
       }
-      recomputeSavebox = fill(ras, params, &tileSaver);
+      recomputeSavebox = fill(ras, params, &tileSaver, true);
     }
     if (params.m_fillType == ALL || params.m_fillType == LINES) {
       if (params.m_segment)
@@ -966,12 +1028,12 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
           TTileSet::Tile *t = tileSet->editTile(i);
           t->m_rasterBounds = t->m_rasterBounds + offs;
         }
-      TUndoManager::manager()->add(
-          new RasterFillUndo(tileSet, params, sl, fid,
-                             Preferences::instance()->getFillOnlySavebox()));
+      TUndoManager::manager()->add(new RasterFillUndo(
+          tileSet, params, sl, fid,
+          Preferences::instance()->getFillOnlySavebox(), true));
     }
 
-    // al posto di updateFrame:
+    // instead of updateFrame :
 
     TXshLevel *xl = app->getCurrentLevel()->getLevel();
     if (!xl) return;
@@ -1645,9 +1707,9 @@ public:
     {
       double k = dy / dx; /*-- 直線の傾き --*/
       /*--- roundでは負値のときにうまく繋がらない ---*/
-      int start      = std::min((int)floor(m_startPosition.x + 0.5),
+      int start = std::min((int)floor(m_startPosition.x + 0.5),
                            (int)floor(m_mousePosition.x + 0.5));
-      int end        = std::max((int)floor(m_startPosition.x + 0.5),
+      int end = std::max((int)floor(m_startPosition.x + 0.5),
                          (int)floor(m_mousePosition.x + 0.5));
       double start_x = (m_startPosition.x < m_mousePosition.x)
                            ? m_startPosition.x
@@ -1670,9 +1732,9 @@ public:
     {
       double k = dx / dy; /*-- 直線の傾き --*/
       /*--- roundでは負値のときにうまく繋がらない ---*/
-      int start      = std::min((int)floor(m_startPosition.y + 0.5),
+      int start = std::min((int)floor(m_startPosition.y + 0.5),
                            (int)floor(m_mousePosition.y + 0.5));
-      int end        = std::max((int)floor(m_startPosition.y + 0.5),
+      int end = std::max((int)floor(m_startPosition.y + 0.5),
                          (int)floor(m_mousePosition.y + 0.5));
       double start_x = (m_startPosition.y < m_mousePosition.y)
                            ? m_startPosition.x
@@ -1770,7 +1832,7 @@ int FillTool::getCursorId() const {
   if (m_colorType.getValue() == LINES)
     ret = ToolCursor::FillCursorL;
   else {
-    ret = ToolCursor::FillCursor;
+    ret                                      = ToolCursor::FillCursor;
     if (m_colorType.getValue() == AREAS) ret = ret | ToolCursor::Ex_Area;
     if (!m_autopaintLines.getValue())
       ret = ret | ToolCursor::Ex_Fill_NoAutopaint;
@@ -2013,7 +2075,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   // Onion Skin
   else if (propertyName == m_onion.getName()) {
     if (m_onion.getValue()) FillType = ::to_string(m_fillType.getValue());
-    FillOnion = (int)(m_onion.getValue());
+    FillOnion                        = (int)(m_onion.getValue());
   }
   // Frame Range
   else if (propertyName == m_frameRange.getName()) {
@@ -2033,7 +2095,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   // Segment
   else if (propertyName == m_segment.getName()) {
     if (m_segment.getValue()) FillType = ::to_string(m_fillType.getValue());
-    FillSegment = (int)(m_segment.getValue());
+    FillSegment                        = (int)(m_segment.getValue());
   }
 
   // Autopaint
@@ -2288,9 +2350,9 @@ void FillTool::onActivate() {
   bool ret = true;
   ret      = ret && connect(TTool::m_application->getCurrentFrame(),
                        SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
-  ret      = ret && connect(TTool::m_application->getCurrentScene(),
+  ret = ret && connect(TTool::m_application->getCurrentScene(),
                        SIGNAL(sceneSwitched()), this, SLOT(onFrameSwitched()));
-  ret      = ret &&
+  ret = ret &&
         connect(TTool::m_application->getCurrentColumn(),
                 SIGNAL(columnIndexSwitched()), this, SLOT(onFrameSwitched()));
   assert(ret);

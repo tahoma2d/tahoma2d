@@ -160,8 +160,11 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
 
 void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
                           bool fillPaints, bool fillInks) {
-  // Viene trattato il caso fillInks
-  /*- FillInkのみの場合 -*/
+  // Synopsis:
+  // This gets the color of the pixes at the edge of the rect
+  // Then fills in EVERYTHING with 'color'
+  // Then uses the fill command to fill in the edges with their original color
+  // This makes sure only the enclosed areas not on the edge get filled.
   if (!fillPaints) {
     assert(fillInks);
     assert(m_ras->getBounds().contains(rect));
@@ -176,26 +179,27 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
 
   int dx = r.x1 - r.x0;
   int dy = (r.y1 - r.y0) * m_wrap;
-  if (dx < 2 || dy < 2)  // rect degenere(area contenuta nulla), skippo.
+  if (dx < 2 || dy < 2)  // rect degenerate (null contained area), skip.
     return;
 
   std::vector<int> frameSeed(2 * (r.getLx() + r.getLy() - 2));
 
   int x, y, count1, count2;
-  /*- ptrをRect範囲のスタート地点に移動 -*/
+  /*- Move ptr to the starting point of the Rect range -*/
   Pixel *ptr = m_pixels + r.y0 * m_wrap + r.x0;
   count1     = 0;
   count2     = r.y1 - r.y0 + 1;
 
-  // Se il rettangolo non contiene il bordo del raster e se tutti i pixels
-  // contenuti nel rettangolo sono pure paint non deve fare nulla!
+  //   If the rectangle does not contain the edge of the raster and if
+  // all the pixels contained in the rectangle are pure paint, it must do
+  // nothing!
   if (!rect.contains(m_bounds) && areRectPixelsPurePaint(m_pixels, r, m_wrap))
     return;
 
-  // Viene riempito frameSeed con tutti i paint delle varie aree del rettangolo
-  // di contorno.
-  // Viene verificato se i pixels del rettangolo sono tutti pure paint.
-  /*- 輪郭のPaintのIDをframeseed内に格納 -*/
+  // FrameSeed is filled with all the paints of the various areas of the
+  // boundary rectangle.
+  // It is checked if the pixels of the rectangle are all pure paint.
+
   for (y = r.y0; y <= r.y1; y++, ptr += m_wrap, count1++, count2++) {
     if (r.x0 > 0) frameSeed[count1]                  = ptr->getPaint();
     if (r.x1 < m_ras->getLx() - 1) frameSeed[count2] = (ptr + dx)->getPaint();
@@ -209,7 +213,7 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   }
   assert(count2 == 2 * (r.getLx() + r.getLy() - 2));
 
-  // Viene fillato l'interno e il bordo del rettangolo rect con color
+  // The inside and the edge of the rect rectangle are filled with color
   Pixel *pix = m_pixels + r.y0 * m_wrap + r.x0;
   if (onlyUnfilled)
     for (y = r.y0; y <= r.y1; y++, pix += m_wrap - dx - 1) {
@@ -227,14 +231,14 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
       }
     }
 
-  // Vengono fillati i pixel del rettangolo con i paint (mantenuti in frameSeed)
-  // che
-  // c'erano prima di fillare l'intero rettangolo, in questo modo si riportano
-  // al colore originale le aree che non sono chiuse e non dovevano essere
-  // fillate.
+  // The pixels at the edge of the  rectangle are filled with the paints
+  // (kept in frameSeed) that were there before filling the
+  // entire rectangle, in this way the areas that are not
+  // closed and should not have been filled are restored to
+  // the original color.
   count1 = 0;
   FillParameters params;
-  // in order to make the paint to protlude behind the line
+  // in order to make the paint to protrude behind the line
   params.m_prevailing = false;
   if (r.x0 > 0)
     for (y = r.y0; y <= r.y1; y++) {
