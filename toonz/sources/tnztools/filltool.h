@@ -20,6 +20,10 @@
 #define AREAS L"Areas"
 #define ALL L"Lines & Areas"
 
+#define IGNOREGAPS L"Ignore Gaps"
+#define FILLGAPS L"Fill Gaps"
+#define CLOSEANDFILLGAPS L"Close and Fill"
+
 class NormalLineFillTool;
 namespace {
 class AreaFillTool {
@@ -59,10 +63,13 @@ public:
   void draw();
   void resetMulti();
   void leftButtonDown(const TPointD &pos, const TMouseEvent &, TImage *img);
-  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e,
+                             bool fillGaps, bool closeGaps,
+                             int closeStyleIndex);
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e);
   void mouseMove(const TPointD &pos, const TMouseEvent &e);
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &e);
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e, bool fillGaps,
+                    bool closeGaps, int closeStyleIndex);
   void onImageChanged();
   bool onPropertyChanged(bool multi, bool onlyUnfilled, bool onion, Type type,
                          std::wstring colorType, bool autopaintLines);
@@ -89,6 +96,9 @@ class FillTool final : public QObject, public TTool {
   TDoublePairProperty m_fillDepth;
   TBoolProperty m_segment;
   TDoubleProperty m_maxGapDistance;
+  TDoubleProperty m_rasterGapDistance;
+  TEnumProperty m_closeRasterGaps;
+  TStyleIndexProperty m_closeStyleIndex;
   AreaFillTool *m_rectFill;
   NormalLineFillTool *m_normalLineFillTool;
 

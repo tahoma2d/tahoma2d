@@ -373,7 +373,8 @@ bool floodCheck(const TPixel32 &clickColor, const TPixel32 *targetPix,
 //-----------------------------------------------------------------------------
 /*-- The return value is whether the saveBox has been updated --*/
 bool fill(const TRasterCM32P &r, const FillParameters &params,
-          TTileSaverCM32 *saver, bool closeGaps) {
+          TTileSaverCM32 *saver, bool fillGaps, bool closeGaps,
+          int closeStyleIndex, double autoCloseDistance) {
   TPixelCM32 *pix, *limit, *pix0, *oldpix;
   int oldy, xa, xb, xc, xd, dy;
   int oldxc, oldxd;
@@ -384,16 +385,17 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
   TRasterCM32P tempRaster;
-  int styleIndex = -1;
-  if (closeGaps) {
+  int styleIndex                                 = -1;
+  if (autoCloseDistance < 0.0) autoCloseDistance = AutocloseDistance;
+  if (fillGaps) {
     tempRaster            = r->clone();
     TPalette *tempPalette = params.m_palette->clone();
     styleIndex            = tempPalette->addStyle(TPixel::Transparent);
-    closeGaps = TAutocloser(tempRaster, AutocloseDistance, AutocloseAngle,
-                            styleIndex, AutocloseOpacity)
-                    .exec();
+    fillGaps = TAutocloser(tempRaster, autoCloseDistance, AutocloseAngle,
+                           styleIndex, AutocloseOpacity)
+                   .exec();
   }
-  if (!closeGaps) {
+  if (!fillGaps) {
     tempRaster = r;
   }
 
@@ -447,21 +449,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
 
-  // Attempt to copy the changed pixels from tempRaster to r
-  if (closeGaps) {
-    TPixelCM32 *tempPix = tempRaster->pixels(0);
-    TPixelCM32 *keepPix = r->pixels(0);
-    tempPix += (y * tempRaster->getLx()) + xa - 1;
-    keepPix += (y * r->getLx()) + xa - 1;
-    int i = xa;
-    while (i <= xb) {
-      keepPix->setPaint(tempPix->getPaint());
-      tempPix++;
-      keepPix++;
-      i++;
-    }
-  }
-
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
     seeds.pop();
@@ -488,20 +475,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
            pix->getPaint() == paintAtClickedPos)) {
         fillRow(tempRaster, TPoint(x, y), xc, xd, paint, params.m_palette,
                 saver, params.m_prevailing);
-        // Attempt to copy the changed pixels from tempRaster to r
-        if (closeGaps) {
-          TPixelCM32 *tempPix = tempRaster->pixels(0);
-          TPixelCM32 *keepPix = r->pixels(0);
-          tempPix += (y * tempRaster->getLx()) + xc;
-          keepPix += (y * r->getLx()) + xc;
-          int i = xc;
-          while (i <= xd) {
-            keepPix->setPaint(tempPix->getPaint());
-            tempPix++;
-            keepPix++;
-            i++;
-          }
-        }
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
         if (xd > xb) seeds.push(FillSeed(xb + 1, xd, y, -dy));
         if (oldxd >= xc - 1)
@@ -527,6 +500,22 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     if (!((*borderPix[i]) == borderIndex[i])) {
       saveBoxChanged = true;
       break;
+    }
+  }
+
+  if (fillGaps) {
+    TPixelCM32 *tempPix = tempRaster->pixels();
+    TPixelCM32 *keepPix = r->pixels();
+    for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+      for (int tempX = 0; tempX < tempRaster->getLx();
+           tempX++, tempPix++, keepPix++) {
+        keepPix->setPaint(tempPix->getPaint());
+        if (closeGaps && tempPix->getInk() == styleIndex) {
+          keepPix->setInk(closeStyleIndex);
+          keepPix->setTone(tempPix->getTone());
+        }
+        if (tempPix->getInk() != styleIndex) keepPix->setInk(tempPix->getInk());
+      }
     }
   }
   return saveBoxChanged;
