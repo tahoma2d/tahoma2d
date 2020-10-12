@@ -121,6 +121,7 @@ private:
   void onPixelsOnlyChanged();
   void onUnitChanged();
   void beforeRoomChoiceChanged();
+  void onColorCalibrationChanged();
   // Drawing
   void onDefLevelTypeChanged();
   void onUseNumpadForSwitchingStylesClicked();

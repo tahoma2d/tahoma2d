@@ -132,6 +132,8 @@ protected:
   void resizeGL(int width, int height) override;
   void paintGL() override;
 
+  void showEvent(QShowEvent*) override;
+  void hideEvent(QHideEvent*) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
@@ -157,6 +159,7 @@ public slots:
   void showHistogram();
   void swapCompared();
   void onContextAboutToBeDestroyed();
+  void onPreferenceChanged(const QString& prefName);
 
 private:
   QPointF m_firstPanPoint;

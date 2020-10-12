@@ -9,6 +9,7 @@
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
+#include <QSet>
 
 #undef DVAPI
 #undef DVVAR
@@ -53,7 +54,8 @@ class DVAPI LutCalibrator : public QOpenGLFunctions {
 
 public:
   // static LutCalibrator* instance();
-  LutCalibrator() {}
+    LutCalibrator();
+    ~LutCalibrator();
 
   // to be computed once through the software
   void initialize();
@@ -61,22 +63,23 @@ public:
   bool isValid() { return m_isValid; }
   bool isInitialized() { return m_isInitialized; }
 
-  ~LutCalibrator() {}
-
   void onEndDraw(QOpenGLFramebufferObject*);
 
   void cleanup();
+  void update(bool textureChanged);
 };
 
 class DVAPI LutManager  // singleton
 {
-  bool m_isValid = false;
+    bool m_isValid;
+    QString m_currentLutPath;
+    QSet<LutCalibrator*> m_calibrators;
 
   LutManager();
 
   struct Lut {
     int meshSize;
-    float* data = NULL;
+    float* data = nullptr;
   } m_lut;
 
 public:
@@ -95,6 +98,10 @@ public:
   void convert(TPixel32&);
 
   QString& getMonitorName() const;
+  void registerCalibrator(LutCalibrator* calibrator);
+  void removeCalibrator(LutCalibrator* calibrator);
+
+  void update();
 };
 
 #endif
