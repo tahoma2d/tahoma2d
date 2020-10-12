@@ -76,6 +76,106 @@ extern TEnv::DoubleVar AutocloseAngle;
 extern TEnv::IntVar AutocloseInk;
 extern TEnv::IntVar AutocloseOpacity;
 
+void checkSegments(std::vector<TAutocloser::Segment>& segments,
+    TStroke* stroke, const TRasterCM32P& ras,
+    const TPoint& delta) {
+    TVectorImage vi;
+    TStroke* app = new TStroke();
+    *app = *stroke;
+    app->transform(TTranslation(convert(ras->getCenter())));
+    vi.addStroke(app);
+    vi.findRegions();
+    std::vector<TAutocloser::Segment>::iterator it = segments.begin();
+    for (; it < segments.end(); it++) {
+        if (it == segments.end()) break;
+
+        int i;
+        bool isContained = false;
+        for (i = 0; i < (int)vi.getRegionCount(); i++) {
+            TRegion* reg = vi.getRegion(i);
+            if (reg->contains(convert(it->first + delta)) &&
+                reg->contains(convert(it->second + delta))) {
+                isContained = true;
+                break;
+            }
+        }
+        if (!isContained) {
+            it = segments.erase(it);
+            if (it != segments.end() && it != segments.begin())
+                it--;
+            else if (it == segments.end())
+                break;
+        }
+    }
+}
+
+class AutocloseParameters {
+public:
+    int m_closingDistance, m_inkIndex, m_opacity;
+    double m_spotAngle;
+
+    AutocloseParameters()
+        : m_closingDistance(0), m_inkIndex(0), m_spotAngle(0), m_opacity(1) {}
+};
+
+bool applyAutoclose(const TToonzImageP& ti, int distance, int angle, int opacity, int newInkIndex, 
+    const TRectD& selRect, TStroke* stroke = 0) {
+    if (!ti) return false;
+    
+    TPoint delta;
+    TRasterCM32P ras, raux = ti->getRaster();
+    if (!stroke && raux && !selRect.isEmpty()) {
+        TRectD selArea = selRect;
+        if (selRect.x0 > selRect.x1) {
+            selArea.x1 = selRect.x0;
+            selArea.x0 = selRect.x1;
+        }
+        if (selRect.y0 > selRect.y1) {
+            selArea.y1 = selRect.y0;
+            selArea.y0 = selRect.y1;
+        }
+        TRect myRect = convert(selArea);
+        ras = raux->extract(myRect);
+        delta = myRect.getP00();
+    }
+    else if (stroke) {
+        TRectD selArea = stroke->getBBox();
+        TRect myRect(ToonzImageUtils::convertWorldToRaster(selArea, ti));
+        ras = raux->extract(myRect);
+        delta = myRect.getP00();
+    }
+    else
+        ras = raux;
+    if (!ras) return false;
+
+    TAutocloser ac(ras, distance, angle,
+        newInkIndex, opacity);
+
+    std::vector<TAutocloser::Segment> segments;
+    ac.compute(segments);
+
+    if (stroke)
+        checkSegments(segments, stroke, raux, delta);
+
+    std::vector<TAutocloser::Segment> segments2(segments);
+
+    /*-- segmentが取得できなければfalseを返す --*/
+    if (segments2.empty()) return false;
+
+    int i;
+    if (delta != TPoint(0, 0))
+        for (i = 0; i < (int)segments2.size(); i++) {
+            segments2[i].first += delta;
+            segments2[i].second += delta;
+        }
+
+    ac.draw(segments);
+    return true;
+}
+
+
+
+
 //-----------------------------------------------------------------------------
 namespace {
 
@@ -475,16 +575,18 @@ public:
     TToonzImageP image = getImage();
     if (!image) return;
     TRasterCM32P ras = image->getRaster();
+
+
     TRasterCM32P tempRaster;
     int styleIndex = 4094;
     if (m_fillGaps) {
-      tempRaster            = ras->clone();
-      TPalette *tempPalette = m_level->getPalette()->clone();
-      TAutocloser(tempRaster, m_autoCloseDistance, AutocloseAngle, styleIndex,
-                  AutocloseOpacity)
-          .exec();
-    } else {
-      tempRaster = ras;
+        TToonzImageP tempTi = image->clone();
+        tempRaster = tempTi->getRaster();
+        TRectD doubleFillArea = convert(m_fillArea);
+        applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle, AutocloseOpacity, 4094, doubleFillArea, m_s);
+    }
+    else {
+        tempRaster = ras;
     }
 
     AreaFiller filler(tempRaster);
@@ -895,11 +997,9 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TRasterCM32P tempRaster;
     int styleIndex = 4094;
     if (fillGaps) {
-      tempRaster            = ras->clone();
-      TPalette *tempPalette = sl->getPalette()->clone();
-      TAutocloser(tempRaster, AutocloseDistance, AutocloseAngle, styleIndex,
-                  AutocloseOpacity)
-          .exec();
+      TToonzImageP tempTi = ti->clone();
+      tempRaster = tempTi->getRaster();
+      applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle, AutocloseOpacity, 4094, convert(rasterFillArea), stroke);
     } else {
       tempRaster = ras;
     }
@@ -2221,8 +2321,12 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
     FillSegment                        = (int)(m_segment.getValue());
   }
 
-  else if (propertyName == m_rasterGapDistance.getName())
-    AutocloseDistance = m_rasterGapDistance.getValue();
+  else if (propertyName == m_rasterGapDistance.getName()) {
+      AutocloseDistance = m_rasterGapDistance.getValue();
+      TTool::Application* app = TTool::getApplication();
+      // This is a hack to get the viewer to update with the distance.
+      app->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
+  }
 
   else if (propertyName == m_closeStyleIndex.getName()) {
   }
