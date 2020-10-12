@@ -1206,10 +1206,10 @@ void RowArea::mouseReleaseEvent(QMouseEvent *event) {
       CommandManager::instance()->execute(MI_ClearMarkers);
   }
   else if (m_mousePressRow == -1 && (event->modifiers() & Qt::ControlModifier)) {
-      CommandManager::instance()->execute(MI_SetInMarker);
+      CommandManager::instance()->execute(MI_SetStartMarker);
   }
   else if (m_mousePressRow == -1 && (event->modifiers() & Qt::AltModifier)) {
-      CommandManager::instance()->execute(MI_SetOutMarker);
+      CommandManager::instance()->execute(MI_SetStopMarker);
   }
 }
 
@@ -1220,9 +1220,9 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
       TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
 
   QMenu *menu             = new QMenu(this);
-  menu->addAction(CommandManager::instance()->getAction(MI_SetInMarker));
+  menu->addAction(CommandManager::instance()->getAction(MI_SetStartMarker));
   
-  menu->addAction(CommandManager::instance()->getAction(MI_SetOutMarker));
+  menu->addAction(CommandManager::instance()->getAction(MI_SetStopMarker));
   
 
   QAction* setAutoMarkers = CommandManager::instance()->getAction(MI_SetAutoMarkers);
@@ -1269,23 +1269,6 @@ bool RowArea::canSetAutoMarkers() {
   TXshCell cell =
       m_viewer->getXsheet()->getCell(m_row, m_viewer->getCurrentColumn());
   return cell.isEmpty() ? false : true;
-}
-
-//-----------------------------------------------------------------------------
-int RowArea::getNonEmptyCell(int row, int column, Direction direction) {
-  int currentPos = row;
-  bool exit      = false;
-
-  while (!exit) {
-    TXshCell cell = m_viewer->getXsheet()->getCell(currentPos, column);
-    if (cell.isEmpty()) {
-      (direction == up) ? currentPos++ : currentPos--;
-      exit = true;
-    } else
-      (direction == up) ? currentPos-- : currentPos++;
-  }
-
-  return currentPos;
 }
 
 //-----------------------------------------------------------------------------

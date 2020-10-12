@@ -2147,10 +2147,10 @@ public:
 
 //============================================================
 
-class SetInMarker final : public MenuItemHandler {
+class SetStartMarker final : public MenuItemHandler {
 public:
-    SetInMarker()
-        : MenuItemHandler(MI_SetInMarker) {}
+    SetStartMarker()
+        : MenuItemHandler(MI_SetStartMarker) {}
     void execute() override { 
         int frame = TApp::instance()->getCurrentFrame()->getFrame();
         assert(frame >= 0);
@@ -2167,14 +2167,14 @@ public:
         XsheetGUI::setPlayRange(r0, r1, step);
         TApp::instance()->getCurrentXsheetViewer()->update();
     }
-} SetInMarker;
+} SetStartMarker;
 
 //============================================================
 
-class SetOutMarker final : public MenuItemHandler {
+class SetStopMarker final : public MenuItemHandler {
 public:
-    SetOutMarker()
-        : MenuItemHandler(MI_SetOutMarker) {}
+    SetStopMarker()
+        : MenuItemHandler(MI_SetStopMarker) {}
     void execute() override {
         int frame = TApp::instance()->getCurrentFrame()->getFrame();
         assert(frame >= 0);
@@ -2192,7 +2192,7 @@ public:
         XsheetGUI::setPlayRange(r0, r1, step);
         TApp::instance()->getCurrentXsheetViewer()->update();
     }
-} SetOutMarker;
+} SetStopMarker;
 
 //============================================================
 

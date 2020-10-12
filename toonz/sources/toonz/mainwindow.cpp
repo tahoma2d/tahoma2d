@@ -2094,8 +2094,8 @@ void MainWindow::defineActions() {
                                    tr("Remove Multiple Keys"), "");
   menuAct->setIcon(createQIcon("remove_multiple_keys"));
 
-  menuAct = createMenuXsheetAction(MI_SetInMarker, tr("Set In Marker"), "");
-  menuAct = createMenuXsheetAction(MI_SetOutMarker, tr("Set Out Marker"), "");
+  menuAct = createMenuXsheetAction(MI_SetStartMarker, tr("Set Start Marker"), "");
+  menuAct = createMenuXsheetAction(MI_SetStopMarker, tr("Set Stop Marker"), "");
   menuAct = createMenuXsheetAction(MI_ClearMarkers, tr("Remove Markers"), "");
   menuAct = createMenuXsheetAction(MI_SetAutoMarkers, tr("Set Auto Markers"), "");
   menuAct = createMenuXsheetAction(MI_PreviewThis, tr("Set Markers to Current Frame"), "");
