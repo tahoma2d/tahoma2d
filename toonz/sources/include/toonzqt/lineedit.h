@@ -34,6 +34,7 @@ class DVAPI LineEdit : public QLineEdit {
   bool m_isReturnPressed;
   bool m_forbiddenSpecialChars;
   bool m_mouseDragEditing = false;
+  bool m_typing           = false;
 
 public:
   LineEdit(QWidget *parent = 0, bool forbiddenSpecialChars = false);
@@ -53,6 +54,8 @@ protected:
   void focusInEvent(QFocusEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
   void mouseMoveEvent(QMouseEvent *) override;
+  void focusOutEvent(QFocusEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
 
 signals:
   void focusIn();

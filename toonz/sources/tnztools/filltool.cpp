@@ -476,11 +476,10 @@ public:
     if (!image) return;
     TRasterCM32P ras = image->getRaster();
     TRasterCM32P tempRaster;
-    int styleIndex = -1;
+    int styleIndex = 4094;
     if (m_fillGaps) {
       tempRaster            = ras->clone();
       TPalette *tempPalette = m_level->getPalette()->clone();
-      styleIndex            = tempPalette->addStyle(TPixel::Magenta);
       TAutocloser(tempRaster, m_autoCloseDistance, AutocloseAngle, styleIndex,
                   AutocloseOpacity)
           .exec();
@@ -503,12 +502,18 @@ public:
         for (int tempX = 0; tempX < tempRaster->getLx();
              tempX++, tempPix++, keepPix++) {
           keepPix->setPaint(tempPix->getPaint());
-          if (m_closeGaps && tempPix->getInk() == styleIndex) {
-            keepPix->setInk(m_closeStyleIndex);
-            keepPix->setTone(tempPix->getTone());
+          if (tempPix->getInk() != styleIndex) {
+            if (m_colorType == AREAS && m_closeGaps &&
+                tempPix->getInk() == 4095) {
+              keepPix->setInk(m_closeStyleIndex);
+              keepPix->setTone(tempPix->getTone());
+            } else if (m_colorType != AREAS && tempPix->getInk() == 4095) {
+              keepPix->setInk(m_paintId);
+              keepPix->setTone(tempPix->getTone());
+            } else if (tempPix->getInk() != 4095) {
+              keepPix->setInk(tempPix->getInk());
+            }
           }
-          if (tempPix->getInk() != styleIndex)
-            keepPix->setInk(tempPix->getInk());
         }
       }
     }
@@ -888,11 +893,10 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     tileSet->add(ras, rasterFillArea);
 
     TRasterCM32P tempRaster;
-    int styleIndex = -1;
+    int styleIndex = 4094;
     if (fillGaps) {
       tempRaster            = ras->clone();
       TPalette *tempPalette = sl->getPalette()->clone();
-      styleIndex            = tempPalette->addStyle(TPixel::Transparent);
       TAutocloser(tempRaster, AutocloseDistance, AutocloseAngle, styleIndex,
                   AutocloseOpacity)
           .exec();
@@ -915,12 +919,17 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
         for (int tempX = 0; tempX < tempRaster->getLx();
              tempX++, tempPix++, keepPix++) {
           keepPix->setPaint(tempPix->getPaint());
-          if (closeGaps && tempPix->getInk() == styleIndex) {
-            keepPix->setInk(closeStyleIndex);
-            keepPix->setTone(tempPix->getTone());
+          if (tempPix->getInk() != styleIndex) {
+            if (colorType == AREAS && closeGaps && tempPix->getInk() == 4095) {
+              keepPix->setInk(closeStyleIndex);
+              keepPix->setTone(tempPix->getTone());
+            } else if (colorType != AREAS && tempPix->getInk() == 4095) {
+              keepPix->setInk(cs);
+              keepPix->setTone(tempPix->getTone());
+            } else if (tempPix->getInk() != 4095) {
+              keepPix->setInk(tempPix->getInk());
+            }
           }
-          if (tempPix->getInk() != styleIndex)
-            keepPix->setInk(tempPix->getInk());
         }
       }
     }

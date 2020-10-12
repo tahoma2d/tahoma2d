@@ -285,7 +285,7 @@ private:
 //---------------------------------------------------------
 
 class DVAPI TStyleIndexProperty final : public TProperty {
-  int m_styleIndex = 1;
+  int m_styleIndex = -1;
 
 public:
   TStyleIndexProperty(std::string name, std::wstring value)

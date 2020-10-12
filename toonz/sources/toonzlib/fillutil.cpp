@@ -57,7 +57,8 @@ void fillArea(const TRasterCM32P &ras, TRegion *r, int colorId,
       for (int k = from; k < to; k++, pix++) {
         if (fillPaints && (!onlyUnfilled || pix->getPaint() == 0))
           pix->setPaint(colorId);
-        if (fillInks) pix->setInk(colorId);
+        if (fillInks && pix->getInk() != 4094) pix->setInk(colorId);
+        if (pix->getInk() == 4094) pix->setInk(4095);
       }
     }
   }
@@ -170,7 +171,12 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
     assert(m_ras->getBounds().contains(rect));
     for (int y = rect.y0; y <= rect.y1; y++) {
       TPixelCM32 *pix = m_ras->pixels(y) + rect.x0;
-      for (int x = rect.x0; x <= rect.x1; x++, pix++) pix->setInk(color);
+      for (int x = rect.x0; x <= rect.x1; x++, pix++) {
+        if (pix->getInk() == 4094)
+          pix->setInk(4095);
+        else
+          pix->setInk(color);
+      }
     }
     return;
   }
@@ -220,14 +226,16 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
       for (x = r.x0; x <= r.x1; x++, pix++) {
         if (pix->getPaint() == 0)  // BackgroundStyle
           pix->setPaint(color);
-        if (fillInks) pix->setInk(color);
+        if (fillInks && pix->getInk() != 4094) pix->setInk(color);
+        if (pix->getInk() == 4094) pix->setInk(4095);
       }
     }
   else
     for (y = r.y0; y <= r.y1; y++, pix += m_wrap - dx - 1) {
       for (x = r.x0; x <= r.x1; x++, pix++) {
         pix->setPaint(color);
-        if (fillInks) pix->setInk(color);
+        if (fillInks && pix->getInk() != 4094) pix->setInk(color);
+        if (pix->getInk() == 4094) pix->setInk(4095);
       }
     }
 

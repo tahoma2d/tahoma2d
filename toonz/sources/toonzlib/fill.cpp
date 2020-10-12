@@ -385,12 +385,12 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
   TRasterCM32P tempRaster;
-  int styleIndex                                 = -1;
+  int styleIndex                                 = 4094;
+  int fakeStyleIndex                             = 4095;
   if (autoCloseDistance < 0.0) autoCloseDistance = AutocloseDistance;
   if (fillGaps) {
     tempRaster            = r->clone();
     TPalette *tempPalette = params.m_palette->clone();
-    styleIndex            = tempPalette->addStyle(TPixel::Transparent);
     fillGaps = TAutocloser(tempRaster, autoCloseDistance, AutocloseAngle,
                            styleIndex, AutocloseOpacity)
                    .exec();
@@ -448,6 +448,19 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
           params.m_prevailing);
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
+  // Set the ink on gaps that were used to 4095
+  {
+    TPixelCM32 *tempPix = tempRaster->pixels(0);
+    tempPix += (y * tempRaster->getLx()) + xa - 1;
+    int i = xa;
+    while (i <= xb) {
+      if (tempPix->getInk() == styleIndex) {
+        tempPix->setInk(fakeStyleIndex);
+      }
+      tempPix++;
+      i++;
+    }
+  }
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -475,6 +488,19 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
            pix->getPaint() == paintAtClickedPos)) {
         fillRow(tempRaster, TPoint(x, y), xc, xd, paint, params.m_palette,
                 saver, params.m_prevailing);
+        // Set the ink on gaps that were used to 4095
+        {
+          TPixelCM32 *tempPix = tempRaster->pixels(0);
+          tempPix += (y * tempRaster->getLx()) + xa - 1;
+          int i = xa;
+          while (i <= xb) {
+            if (tempPix->getInk() == styleIndex) {
+              tempPix->setInk(fakeStyleIndex);
+            }
+            tempPix++;
+            i++;
+          }
+        }
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
         if (xd > xb) seeds.push(FillSeed(xb + 1, xd, y, -dy));
         if (oldxd >= xc - 1)
@@ -510,11 +536,15 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
         keepPix->setPaint(tempPix->getPaint());
-        if (closeGaps && tempPix->getInk() == styleIndex) {
-          keepPix->setInk(closeStyleIndex);
-          keepPix->setTone(tempPix->getTone());
+        // This next line takes care of autopaint lines
+        if (tempPix->getInk() != styleIndex) {
+          if (closeGaps && tempPix->getInk() == fakeStyleIndex) {
+            keepPix->setInk(closeStyleIndex);
+            keepPix->setTone(tempPix->getTone());
+          } else if (tempPix->getInk() != fakeStyleIndex) {
+            keepPix->setInk(tempPix->getInk());
+          }
         }
-        if (tempPix->getInk() != styleIndex) keepPix->setInk(tempPix->getInk());
       }
     }
   }

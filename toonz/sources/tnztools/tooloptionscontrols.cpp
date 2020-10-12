@@ -855,7 +855,7 @@ StyleIndexFieldAndChip::StyleIndexFieldAndChip(TTool *tool,
     , m_property(property)
     , m_pltHandle(pltHandle) {
   m_property->addListener(this);
-
+  m_property->setStyleIndex(-1);
   updateStatus();
   connect(this, SIGNAL(textChanged(const QString &)),
           SLOT(onValueChanged(const QString &)));
