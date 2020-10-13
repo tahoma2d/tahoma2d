@@ -380,24 +380,23 @@ RasterPainter::RasterPainter(const TDimension &dim, const TAffine &viewAff,
 
 //-----------------------------------------------------------------------------
 
-//! Utilizzato solo per TAB Pro
 void RasterPainter::beginMask() {
-  flushRasterImages();  // per evitare che venga fatto dopo il beginMask
+  flushRasterImages();  // to prevent it from being done after the beginMask
   ++m_maskLevel;
   TStencilControl::instance()->beginMask();
 }
-//! Utilizzato solo per TAB Pro
+
 void RasterPainter::endMask() {
-  flushRasterImages();  // se ci sono delle immagini raster nella maschera
-                        // devono uscire ora
+  flushRasterImages();  // if there are raster images in the mask
+  // they have to get out now
   --m_maskLevel;
   TStencilControl::instance()->endMask();
 }
-//! Utilizzato solo per TAB Pro
+
 void RasterPainter::enableMask() {
   TStencilControl::instance()->enableMask(TStencilControl::SHOW_INSIDE);
 }
-//! Utilizzato solo per TAB Pro
+
 void RasterPainter::disableMask() {
   flushRasterImages();  // se ci sono delle immagini raster mascherate devono
                         // uscire ora

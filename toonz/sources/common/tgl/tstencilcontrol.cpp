@@ -43,7 +43,7 @@ public:
   int m_stencilBitCount;
   int m_pushCount;
   int m_currentWriting;  // current stencil bit plane.
-  // 0 is the first bit plane ; -1 menas no stencil mask is writing
+  // 0 is the first bit plane ; -1 means no stencil mask is writing
 
   int m_virtualState;
 // the state of the (eventually virtual) top mask.
@@ -53,7 +53,7 @@ public:
 #ifdef _DEBUG
   std::stack<bool> fullState;
 // state of each mask in the stack (except top mask).
-// 'true' means opend; 'false' means close and enabled
+// 'true' means opened; 'false' means closed and enabled
 // Used only for assert
 #endif
 
