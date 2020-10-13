@@ -2793,9 +2793,9 @@ void UndoAddPasteFxs::initialize(TFx *inFx) {
   m_linkIn = TFxCommand::Link(inFx, ifx, 0);
 
   // Furthermore, clone the group stack from inFx into each inserted fx
-  auto const clone_fun = static_cast<void (*)(TFx *, TFx *)>(FxCommandUndo::cloneGroupStack);
-  for_each_fx(
-      [inFx, clone_fun](TFx *toFx) { clone_fun(inFx, toFx); });
+  auto const clone_fun =
+      static_cast<void (*)(TFx *, TFx *)>(FxCommandUndo::cloneGroupStack);
+  for_each_fx([inFx, clone_fun](TFx *toFx) { clone_fun(inFx, toFx); });
 }
 
 //------------------------------------------------------
@@ -2808,7 +2808,8 @@ void UndoAddPasteFxs::redo() const {
     FxCommandUndo::attach(xsh, m_linkIn, false);
 
     // Copiare l'indice di gruppo dell'fx di input
-    auto const copy_fun = static_cast<void (*)(TFx *, TFx *)>(FxCommandUndo::copyGroupEditLevel);
+    auto const copy_fun =
+        static_cast<void (*)(TFx *, TFx *)>(FxCommandUndo::copyGroupEditLevel);
     for_each_fx([this, copy_fun](TFx *toFx) {
       copy_fun(m_linkIn.m_inputFx.getPointer(), toFx);
     });
@@ -3020,11 +3021,14 @@ void UndoReplacePasteFxs::undo() const {
   // Remove m_lastFx's output connections - UndoAddPasteFxs would try to
   // redirect them to the replaced fx's input (due to the 'blind' detach
   // command)
-  int ol, olCount = m_rightmostFx->getOutputConnectionCount();
-  for (ol = olCount - 1; ol >= 0; --ol)
-    if (TFxPort *port = m_rightmostFx->getOutputConnection(ol)) port->setFx(0);
+  if (m_rightmostFx) {
+    int ol, olCount = m_rightmostFx->getOutputConnectionCount();
+    for (ol = olCount - 1; ol >= 0; --ol)
+      if (TFxPort *port = m_rightmostFx->getOutputConnection(ol))
+        port->setFx(0);
 
-  fxDag->removeFromXsheet(m_rightmostFx);
+    fxDag->removeFromXsheet(m_rightmostFx);
+  }
 
   // Reverse the applied commands. Again, the order prevents 'bumped' dag
   // positions
