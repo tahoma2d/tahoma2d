@@ -666,6 +666,25 @@ HexagonalColorWheel::~HexagonalColorWheel() {
 
 //-----------------------------------------------------------------------------
 
+void HexagonalColorWheel::updateColorCalibration() {
+    if (Preferences::instance()->isColorCalibrationEnabled()) {
+        makeCurrent();
+        if (!m_lutCalibrator)
+            m_lutCalibrator = new LutCalibrator();
+        else
+            m_lutCalibrator->cleanup();
+        m_lutCalibrator->initialize();
+        connect(context(), SIGNAL(aboutToBeDestroyed()), this,
+            SLOT(onContextAboutToBeDestroyed()));
+        if (m_lutCalibrator->isValid() && !m_fbo)
+            m_fbo = new QOpenGLFramebufferObject(width(), height());
+        doneCurrent();
+    }
+    update();
+}
+
+//-----------------------------------------------------------------------------
+
 void HexagonalColorWheel::initializeGL() {
   initializeOpenGLFunctions();
 
@@ -1794,6 +1813,12 @@ QByteArray PlainColorPage::getSplitterState() {
 
 void PlainColorPage::setSplitterState(QByteArray state) {
   m_vSplitter->restoreState(state);
+}
+
+//-----------------------------------------------------------------------------
+
+void PlainColorPage::updateColorCalibration() {
+    m_hexagonalColorWheel->updateColorCalibration();
 }
 
 //-----------------------------------------------------------------------------
@@ -4080,4 +4105,10 @@ void StyleEditor::load(QSettings &settings) {
   QVariant splitterState = settings.value("splitterState");
   if (splitterState.canConvert(QVariant::ByteArray))
     m_plainColorPage->setSplitterState(splitterState.toByteArray());
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::updateColorCalibration() {
+    m_plainColorPage->updateColorCalibration();
 }

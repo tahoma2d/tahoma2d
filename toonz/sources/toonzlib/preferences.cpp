@@ -979,8 +979,8 @@ void Preferences::setColorCalibrationLutPath(QString monitorName,
 
 QString Preferences::getColorCalibrationLutPath(QString &monitorName) const {
   PreferencesItem item = m_items.value(colorCalibrationLutPaths);
-  QMap<QString, QString> lutPathMap =
-      item.value.value<QMap<QString, QString>>();
+  QMap<QString, QVariant> lutPathMap =
+      item.value.value<QMap<QString, QVariant>>();
 
-  return lutPathMap.value(monitorName);
+  return lutPathMap.value(monitorName).toString();
 }

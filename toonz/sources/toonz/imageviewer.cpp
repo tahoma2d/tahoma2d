@@ -774,6 +774,23 @@ void ImageViewer::updateCursor(const TPoint &curPos) {
 }
 
 //---------------------------------------------------------------------------------------------
+
+void ImageViewer::showEvent(QShowEvent*) {
+    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
+    bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString&)),
+        this, SLOT(onPreferenceChanged(const QString&)));
+    onPreferenceChanged("ColorCalibration");
+    assert(ret);
+}
+
+//---------------------------------------------------------------------------------------------
+
+void ImageViewer::hideEvent(QHideEvent*) {
+    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
+    if (sceneHandle) sceneHandle->disconnect(this);
+}
+
+//---------------------------------------------------------------------------------------------
 /*! If middle button is pressed pan the image. Update current mouse position.
  */
 void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
@@ -1326,6 +1343,27 @@ void ImageViewer::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+}
+
+//-----------------------------------------------------------------------------
+
+void ImageViewer::onPreferenceChanged(const QString& prefName) {
+    if (prefName == "ColorCalibration") {
+        if (Preferences::instance()->isColorCalibrationEnabled()) {
+            makeCurrent();
+            if (!m_lutCalibrator)
+                m_lutCalibrator = new LutCalibrator();
+            else
+                m_lutCalibrator->cleanup();
+            m_lutCalibrator->initialize();
+            connect(context(), SIGNAL(aboutToBeDestroyed()), this,
+                SLOT(onContextAboutToBeDestroyed()));
+            if (m_lutCalibrator->isValid() && !m_fbo)
+                m_fbo = new QOpenGLFramebufferObject(width(), height());
+            doneCurrent();
+        }
+        update();
+    }
 }
 
 //------------------------------------------------------------------

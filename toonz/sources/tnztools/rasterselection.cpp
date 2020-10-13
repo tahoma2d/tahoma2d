@@ -797,6 +797,19 @@ TStroke getIntersectedStroke(TStroke &stroke, TRectD bbox) {
       TThickPoint p  = getIntersectionPoint(bbox, stroke.getChunk(chunkIndex),
                                            currentSegmentIndex,
                                            chunkIndex == precChunkIndex);
+
+      // exactly match the position with the edge of bbox
+      // or the pasted raster may offset by 1pixel due to truncation in
+      // ToonzImageUtils::convertWorldToRaster()
+      if (areAlmostEqual(p.x, bbox.getP00().x, 1e-6))
+          p.x = bbox.getP00().x;
+      else if (areAlmostEqual(p.x, bbox.getP11().x, 1e-6))
+          p.x = bbox.getP11().x;
+      if (areAlmostEqual(p.y, bbox.getP00().y, 1e-6))
+          p.y = bbox.getP00().y;
+      else if (areAlmostEqual(p.y, bbox.getP11().y, 1e-6))
+          p.y = bbox.getP11().y;
+
       precChunkIndex = chunkIndex;
       addPointToVector(p, outPoints, (int)outPoints.size() % 2 == 1);
       if (!isPrecPointInternal && points.size() > 0 && outPoints.size() > 0) {
