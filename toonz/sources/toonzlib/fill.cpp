@@ -390,7 +390,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   if (autoCloseDistance < 0.0) autoCloseDistance = AutocloseDistance;
   if (fillGaps) {
     tempRaster            = r->clone();
-    TPalette *tempPalette = params.m_palette->clone();
     fillGaps = TAutocloser(tempRaster, autoCloseDistance, AutocloseAngle,
                            styleIndex, AutocloseOpacity)
                    .exec();
