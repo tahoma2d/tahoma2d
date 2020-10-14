@@ -285,10 +285,9 @@ void TStencilControl::Imp::popMask() {
 //---------------------------------------------------------
 //---------------------------------------------------------
 
-// questo forse e' un po' brutto:
-// La maschera e' chiusa.
-// Se e' abilitata,    open = push+open
-// Se e' disabilitata, open =      open
+// this is perhaps a bit ugly : the mask is closed.
+// If it's enabled,    open = push+open
+// If it's disabled, open =      open
 
 void TStencilControl::beginMask(DrawMode drawMode) {
   glPushAttrib(GL_ALL_ATTRIB_BITS);

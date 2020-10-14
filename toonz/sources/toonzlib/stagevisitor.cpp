@@ -73,13 +73,10 @@
 
 using namespace Stage;
 
-/*! \var Stage::inch
-                For historical reasons camera stand is defined in a coordinate
-   system in which
-                an inch is equal to 'Stage::inch' unit.
-                Pay attention: modify this value condition apparent line
-   thickness of
-                images .pli.
+/*! Stage::inch
+   For historical reasons camera stand is defined in a coordinate
+   system in which an inch is equal to 'Stage::inch' unit.
+   Pay attention: modify this value condition apparent line thickness of images .pli.
 */
 // const double Stage::inch = 53.33333;
 
@@ -449,13 +446,10 @@ TRasterP RasterPainter::getRaster(int index, QMatrix &matrix) {
 //-----------------------------------------------------------------------------
 
 /*! Make frame visualization.
-\n	If onon-skin is active, create a new raster with dimension containing
-all
-                frame with onion-skin; recall \b TRop::quickPut with argument
-each frame
-                with onion-skin and new raster. If onion-skin is not active
-recall
-                \b TRop::quickPut with argument current frame and new raster.
+If onon-skin is active, create a new raster with dimension containing
+all frame with onion-skin; recall \b TRop::quickPut with argument
+each frame with onion-skin and new raster. If onion-skin is not active
+recall TRop::quickPut with argument current frame and new raster.
 */
 
 namespace {
@@ -700,6 +694,8 @@ void RasterPainter::flushRasterImages() {
 \n	Draw in painter mode just raster image in m_nodes.
 \n  Onon-skin or channel mode are not considered.
 */
+
+// This doesn't seem to be used anywhere.
 void RasterPainter::drawRasterImages(QPainter &p, QPolygon cameraPol) {
   if (m_nodes.empty()) return;
 
@@ -994,7 +990,7 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
 
 //-----------------------------------------------------
 
-/*! Create a \b Node and put it in \b m_nodes.
+/*! Create a Node and put it in m_nodes.
 */
 void RasterPainter::onRasterImage(TRasterImage *ri,
                                   const Stage::Player &player) {

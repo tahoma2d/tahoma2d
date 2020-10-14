@@ -2085,7 +2085,7 @@ void SceneViewer::drawScene() {
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
 
     if (app->getCurrentFrame()->isEditingLevel()) {
-      Stage::visit(painter, app->getCurrentLevel()->getLevel(),
+      Stage::visitSingleLevel(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
                    app->getCurrentOnionSkin()->getOnionSkinMask(),
                    frameHandle->isPlaying(), useGuidedDrawing, guidedBackStroke,
@@ -3118,7 +3118,7 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
   picker.setDistance(distance);
 
   if (app->getCurrentFrame()->isEditingLevel()) {
-    Stage::visit(picker, app->getCurrentLevel()->getLevel(),
+    Stage::visitSingleLevel(picker, app->getCurrentLevel()->getLevel(),
                  app->getCurrentFrame()->getFid(), osm,
                  app->getCurrentFrame()->isPlaying(), false);
   } else {

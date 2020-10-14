@@ -161,11 +161,10 @@ public:
 
 //=============================================================================
 /*! The StageBuilder class finds and provides data for frame visualization.
-\n	The class contains a \b PlayerSet, a vector of player, of all
+	The class contains a PlayerSet, a vector of player, of all
 necessary information.
 */
-// Tutto cio che riguarda una "colonna maschera" non e' utilizzato in TOONZ ma
-// in TAB Pro.
+// Anything concerning a "mask column" is not used in TOONZ but in TAB Pro.
 //=============================================================================
 
 class StageBuilder {
@@ -221,29 +220,25 @@ public:
   StageBuilder();
   virtual ~StageBuilder();
 
-  /*! Add in \b players vector information about specify cell.
-  \n	Analyze cell in row \b row and column \b col of xsheet \b xsh. If level
-                  containing this cell is a simple level, \b TXshSimpleLevel,
-  create a Pleyer
-                  object with information of the cell. Else if level is a child
-  level,
-                  \b TXshChildLevel, recall \b addFrame().
+  /*! Add in players vector information about specify cell.
+  	Analyze cell in row row and column col of xsheet xsh. If level
+                  containing this cell is a simple level, TXshSimpleLevel,
+  create a Pleyer object with information of the cell. 
+  Else if level is a child level, TXshChildLevel, recall addFrame().
   */
   void addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh, int row,
                int col, int level, int subSheetColIndex = -1);
 
   /*! Verify if onion-skin is active and recall \b addCell().
-  \n	Compute the distance between each cell with active onion-skin and
-  current
-                  cell and recall \b addCell(). If onion-skin is not active
-  recall \b addCell()
-                  with argument current cell.
+  	Compute the distance between each cell with active onion-skin and
+  current cell and recall addCell(). If onion-skin is not active
+  recall addCell() with argument current cell.
   */
   void addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
                             int row, int col, int level,
                             int subSheetColIndex = -1);
 
-  /*!Recall \b addCellWithOnionSkin() for each cell of row \b row.*/
+  /*!Recall addCellWithOnionSkin() for each cell of row row.*/
   // if subSheetColIndex >= 0 it means that this function is called on visiting
   // subxsheet images and it indicates the column index in the current (parent)
   // xsheet. Checking options (like Fill Check etc.) will then valuate this
@@ -252,16 +247,14 @@ public:
                 int level, bool includeUnvisible, bool checkPreviewVisibility,
                 int subSheetColIndex = -1);
 
-  /*! Add in \b players vector information about \b level cell with \b TFrameId
-  \b fid.
-  \n	Compute information for all cell with active onion-skin, if onion-skin
-  is not active
-                  compute information only for current cell.
+  /*! Add in players vector information about \b level cell with \b TFrameId
+  fid. Compute information for all cell with active onion-skin, if onion-skin
+  is not active compute information only for current cell.
   */
   void addSimpleLevelFrame(PlayerSet &players, TXshSimpleLevel *level,
                            const TFrameId &fid);
 
-  /*! Recall \b visitor.onImage(player) for each \b player contained in \b
+  /*! Recall visitor.onImage(player) for each player contained in 
    * players vector.
    */
   void visit(PlayerSet &players, Visitor &visitor, bool isPlaying = false);
@@ -679,6 +672,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     bool isMask        = false;
     if (column && !column->isEmpty()) {
       if (!column->isPreviewVisible() && checkPreviewVisibility) continue;
+      // if (!column->isRendered() || column->isControl()) continue;
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso
       {
@@ -838,10 +832,10 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
   for (; h < m; h++) {
     Player &player = players[h];
     unsigned int i = 0;
-    // vale solo per TAB pro
+
     for (; i < masks.size() && i < player.m_masks.size(); i++)
       if (masks[i] != player.m_masks[i]) break;
-    // vale solo per TAB pro
+
     if (i < masks.size() || i < player.m_masks.size()) {
       while (i < masks.size()) {
         masks.pop_back();
@@ -883,7 +877,7 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
       visitor.onRasterImage(m_liveViewImage.getPointer(), m_liveViewPlayer);
     }
   }
-  // vale solo per TAB pro
+
   for (h = 0; h < (int)masks.size(); h++) visitor.disableMask();
 }
 
@@ -961,7 +955,7 @@ void Stage::visit(Visitor &visitor, ToonzScene *scene, TXsheet *xsh, int row) {
    StageBuilder::addSimpleLevelFrame()
                 and \b StageBuilder::visit().
 */
-void Stage::visit(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
+void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
                   const OnionSkinMask &osm, bool isPlaying,
                   int isGuidedDrawingEnabled, int guidedBackStroke,
                   int guidedFrontStroke) {
@@ -985,11 +979,11 @@ void Stage::visit(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
 
 //-----------------------------------------------------------------------------
 
-void Stage::visit(Visitor &visitor, TXshLevel *level, const TFrameId &fid,
+void Stage::visitSingleLevel (Visitor& visitor, TXshLevel* level, const TFrameId& fid,
                   const OnionSkinMask &osm, bool isPlaying,
                   double isGuidedDrawingEnabled, int guidedBackStroke,
                   int guidedFrontStroke) {
   if (level && level->getSimpleLevel())
-    visit(visitor, level->getSimpleLevel(), fid, osm, isPlaying,
+    visitSimpleLevel(visitor, level->getSimpleLevel(), fid, osm, isPlaying,
           (int)isGuidedDrawingEnabled, guidedBackStroke, guidedFrontStroke);
 }
