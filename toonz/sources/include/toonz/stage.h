@@ -63,17 +63,19 @@ DVAPI void visit(Visitor &visitor, ToonzScene *scene, TXsheet *xsh, int row);
 
 //-----------------------------------------------------------------------------
 
-DVAPI void visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
-                 const OnionSkinMask &osm, bool isPlaying,
-                 int isGuidedDrawingEnabled = 0, int guidedBackStroke = -1,
-                 int guidedFrontStroke = -1);
+DVAPI void visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level,
+                            const TFrameId &fid, const OnionSkinMask &osm,
+                            bool isPlaying, int isGuidedDrawingEnabled = 0,
+                            int guidedBackStroke  = -1,
+                            int guidedFrontStroke = -1);
 
 //-----------------------------------------------------------------------------
 
-DVAPI void visitSingleLevel(Visitor &visitor, TXshLevel *level, const TFrameId &fid,
-                 const OnionSkinMask &osm, bool isPlaying,
-                 double isGuidedDrawingEnabled = 0.0, int guidedBackStroke = -1,
-                 int guidedFrontStroke = -1);
+DVAPI void visitSingleLevel(Visitor &visitor, TXshLevel *level,
+                            const TFrameId &fid, const OnionSkinMask &osm,
+                            bool isPlaying, double isGuidedDrawingEnabled = 0.0,
+                            int guidedBackStroke  = -1,
+                            int guidedFrontStroke = -1);
 
 //-----------------------------------------------------------------------------
 }  // namespace Stage

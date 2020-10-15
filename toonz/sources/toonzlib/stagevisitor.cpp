@@ -76,7 +76,8 @@ using namespace Stage;
 /*! Stage::inch
    For historical reasons camera stand is defined in a coordinate
    system in which an inch is equal to 'Stage::inch' unit.
-   Pay attention: modify this value condition apparent line thickness of images .pli.
+   Pay attention: modify this value condition apparent line thickness of images
+   .pli.
 */
 // const double Stage::inch = 53.33333;
 

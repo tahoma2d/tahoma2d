@@ -2807,7 +2807,8 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       //      new QAction(tr("Temporary Mask (Not in final render)"), this);
       //  setMask->setCheckable(true);
       //  setMask->setChecked(xsh->getColumn(col)->isMask());
-      //  setMask->setToolTip(tr("Only Toonz Vector levels can be used as masks. \n Masks don't"
+      //  setMask->setToolTip(tr("Only Toonz Vector levels can be used as masks.
+      //  \n Masks don't"
       //      "show up in final renders."));
       //  bool ret = true;
       //  ret      = ret &&

@@ -45,6 +45,9 @@
 #include <QMatrix>
 
 #include "toonz/stage.h"
+#include "toonz/fxdag.h"
+#include "toonz/tcolumnfxset.h"
+#include "toonz/tcolumnfx.h"
 
 //#define  NUOVO_ONION
 
@@ -161,7 +164,7 @@ public:
 
 //=============================================================================
 /*! The StageBuilder class finds and provides data for frame visualization.
-	The class contains a PlayerSet, a vector of player, of all
+        The class contains a PlayerSet, a vector of player, of all
 necessary information.
 */
 // Anything concerning a "mask column" is not used in TOONZ but in TAB Pro.
@@ -221,16 +224,16 @@ public:
   virtual ~StageBuilder();
 
   /*! Add in players vector information about specify cell.
-  	Analyze cell in row row and column col of xsheet xsh. If level
+        Analyze cell in row row and column col of xsheet xsh. If level
                   containing this cell is a simple level, TXshSimpleLevel,
-  create a Pleyer object with information of the cell. 
+  create a Pleyer object with information of the cell.
   Else if level is a child level, TXshChildLevel, recall addFrame().
   */
   void addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh, int row,
                int col, int level, int subSheetColIndex = -1);
 
   /*! Verify if onion-skin is active and recall \b addCell().
-  	Compute the distance between each cell with active onion-skin and
+        Compute the distance between each cell with active onion-skin and
   current cell and recall addCell(). If onion-skin is not active
   recall addCell() with argument current cell.
   */
@@ -247,6 +250,10 @@ public:
                 int level, bool includeUnvisible, bool checkPreviewVisibility,
                 int subSheetColIndex = -1);
 
+  void addFrameWithFx(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
+                      int row, int level, bool includeUnvisible,
+                      bool checkPreviewVisibility, int subSheetColIndex = -1);
+
   /*! Add in players vector information about \b level cell with \b TFrameId
   fid. Compute information for all cell with active onion-skin, if onion-skin
   is not active compute information only for current cell.
@@ -254,7 +261,7 @@ public:
   void addSimpleLevelFrame(PlayerSet &players, TXshSimpleLevel *level,
                            const TFrameId &fid);
 
-  /*! Recall visitor.onImage(player) for each player contained in 
+  /*! Recall visitor.onImage(player) for each player contained in
    * players vector.
    */
   void visit(PlayerSet &players, Visitor &visitor, bool isPlaying = false);
@@ -702,6 +709,130 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
 
 //-----------------------------------------------------------------------------
 
+void StageBuilder::addFrameWithFx(PlayerSet &players, ToonzScene *scene,
+                                  TXsheet *xsh, int row, int level,
+                                  bool includeUnvisible,
+                                  bool checkPreviewVisibility,
+                                  int subSheetColIndex) {
+  std::set<std::string> m_multiPortFxs;
+  m_multiPortFxs.insert("inFx");
+  m_multiPortFxs.insert("outFx");
+  m_multiPortFxs.insert("addFx");
+
+  struct locals {
+    static inline void walkFxs(std::vector<int> &columnsToRender, TFx *fx,
+                               bool checkAll,
+                               std::set<std::string> multiPortFxs) {
+      std::wstring fxName = fx->getName();
+      int newCount        = fx->getInputPortCount();
+      if (checkAll) {
+        for (int i = 0; i < newCount; i++) {
+          if (fx->getInputPort(i)->isConnected()) {
+            TFx *newFx          = fx->getInputPort(i)->getFx();
+            std::string newName = newFx->getFxType();
+            bool checkAll = multiPortFxs.find(newName) != multiPortFxs.end();
+            walkFxs(columnsToRender, fx->getInputPort(i)->getFx(), checkAll,
+                    multiPortFxs);
+          }
+        }
+      } else if (newCount > 0 && fx->getInputPort(0)->isConnected()) {
+        TFx *newFx          = fx->getInputPort(0)->getFx();
+        std::string newName = newFx->getFxType();
+        bool checkAll       = multiPortFxs.find(newName) != multiPortFxs.end();
+        walkFxs(columnsToRender, newFx, checkAll, multiPortFxs);
+      } else {
+        if (fxName == L"LevelColumn") {
+          bool needToAdd   = false;
+          TColumnFx *colFx = dynamic_cast<TColumnFx *>(fx);
+          if (colFx) {
+            int colIndex = colFx->getColumnIndex();
+            columnsToRender.push_back(colIndex);
+            int k = 0;
+          }
+        }
+      }
+    }
+  };  // locals
+
+  FxDag *fx = xsh->getFxDag();
+
+  std::vector<int> columnsToRender;
+  TOutputFx *output       = fx->getCurrentOutputFx();
+  TFx *xsheetFx           = output->getInputPort(0)->getFx();
+  TXsheetFx *realXsheetFx = dynamic_cast<TXsheetFx *>(xsheetFx);
+  if (realXsheetFx) {
+    TFxSet *terminalFxs = fx->getTerminalFxs();
+    int terminalFxCount = terminalFxs->getFxCount();
+    for (int i = 0; i < terminalFxCount; i++) {
+      std::set<TFx *> terminalFxsSet;
+      terminalFxs->getFxs(terminalFxsSet);
+
+      for (auto it : terminalFxsSet) {
+        std::string type = it->getFxType();
+        bool checkAll    = m_multiPortFxs.find(type) != m_multiPortFxs.end();
+        locals::walkFxs(columnsToRender, it, checkAll, m_multiPortFxs);
+      }
+    }
+  }
+
+  // int columnCount = xsh->getColumnCount();
+  int columnCount        = columnsToRender.size();
+  unsigned int maskCount = m_masks.size();
+
+  std::vector<std::pair<double, int>> shuffle;
+  for (auto c : columnsToRender) {
+    // for (int c = 0; c < columnCount; c++) {
+    TXshColumnP column = xsh->getColumn(c);
+    assert(column);
+    TStageObject *pegbar = xsh->getStageObject(TStageObjectId::ColumnId(c));
+    double columnSO      = pegbar->getSO(row);
+    shuffle.push_back(std::make_pair(columnSO, c));
+  }
+  std::stable_sort(shuffle.begin(), shuffle.end(), StackingOrder());
+
+  for (int i = 0; i < columnCount; i++) {
+    int c = shuffle[i].second;
+    if (CameraTestCheck::instance()->isEnabled() && c != m_currentColumnIndex)
+      continue;
+    if (level == 0) {
+      // m_isCurrentColumn = (c == m_currentColumnIndex);
+      m_ancestorColumnIndex = c;
+    }
+    TXshColumn *column = xsh->getColumn(c);
+    bool isMask        = false;
+    if (column && !column->isEmpty()) {
+      if (!column->isPreviewVisible() && checkPreviewVisibility) continue;
+      bool rendered = column->isRendered();
+      bool control  = column->isControl();
+      // if (!column->isRendered() || column->isControl()) continue;
+      if (column->isCamstandVisible() ||
+          includeUnvisible)  // if the "eye" is not closed
+      {
+        if (column->isMask()) {
+          isMask = true;
+          std::vector<int> saveMasks;
+          saveMasks.swap(m_masks);
+          int maskIndex   = m_maskPool.size();
+          PlayerSet *mask = new PlayerSet();
+          m_maskPool.push_back(mask);
+          addCellWithOnionSkin(*mask, scene, xsh, row, c, level);
+          std::stable_sort(mask->begin(), mask->end(), PlayerLt());
+          saveMasks.swap(m_masks);
+          m_masks.push_back(maskIndex);
+        } else
+          addCellWithOnionSkin(players, scene, xsh, row, c, level,
+                               subSheetColIndex);
+      }
+    }
+    if (!isMask) {
+      while (m_masks.size() > maskCount) m_masks.pop_back();
+    }
+  }
+  if (level == 0) std::stable_sort(players.begin(), players.end(), PlayerLt());
+}
+
+//-----------------------------------------------------------------------------
+
 void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
                                        TXshSimpleLevel *level,
                                        const TFrameId &fid) {
@@ -928,8 +1059,8 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm->isShiftTraceEnabled();
-  sb.addFrame(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
-              args.m_checkPreviewVisibility);
+  sb.addFrameWithFx(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
+                    args.m_checkPreviewVisibility);
 
   updateOnionSkinSize(sb.m_players);
 
@@ -955,10 +1086,10 @@ void Stage::visit(Visitor &visitor, ToonzScene *scene, TXsheet *xsh, int row) {
    StageBuilder::addSimpleLevelFrame()
                 and \b StageBuilder::visit().
 */
-void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
-                  const OnionSkinMask &osm, bool isPlaying,
-                  int isGuidedDrawingEnabled, int guidedBackStroke,
-                  int guidedFrontStroke) {
+void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level,
+                             const TFrameId &fid, const OnionSkinMask &osm,
+                             bool isPlaying, int isGuidedDrawingEnabled,
+                             int guidedBackStroke, int guidedFrontStroke) {
   StageBuilder sb;
   sb.m_vs                          = &visitor.m_vs;
   sb.m_onionSkinMask               = osm;
@@ -979,11 +1110,12 @@ void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level, const TFr
 
 //-----------------------------------------------------------------------------
 
-void Stage::visitSingleLevel (Visitor& visitor, TXshLevel* level, const TFrameId& fid,
-                  const OnionSkinMask &osm, bool isPlaying,
-                  double isGuidedDrawingEnabled, int guidedBackStroke,
-                  int guidedFrontStroke) {
+void Stage::visitSingleLevel(Visitor &visitor, TXshLevel *level,
+                             const TFrameId &fid, const OnionSkinMask &osm,
+                             bool isPlaying, double isGuidedDrawingEnabled,
+                             int guidedBackStroke, int guidedFrontStroke) {
   if (level && level->getSimpleLevel())
     visitSimpleLevel(visitor, level->getSimpleLevel(), fid, osm, isPlaying,
-          (int)isGuidedDrawingEnabled, guidedBackStroke, guidedFrontStroke);
+                     (int)isGuidedDrawingEnabled, guidedBackStroke,
+                     guidedFrontStroke);
 }

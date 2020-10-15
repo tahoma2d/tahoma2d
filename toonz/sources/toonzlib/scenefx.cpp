@@ -339,7 +339,7 @@ static bool getColumnPlacement(PlacedFx &pf, TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- Objectの位置を得る --*/
+
 static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
                                     TStageObjectId &id, bool isPreview) {
   TStageObject *pegbar = xsh->getStageObjectTree()->getStageObject(id, false);
@@ -364,7 +364,7 @@ static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
   return isVisible;
 }
 
-/*-- typeとindexからStageObjectIdを得る --*/
+/*-- Get StageObjectId from type and index --*/
 namespace {
 TStageObjectId getMotionObjectId(MotionObjectType type, int index) {
   switch (type) {
@@ -401,7 +401,7 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
   const double h = 0.001;
   getColumnPlacement(aff, xsh, row + h, col, isPreview);
 
-  /*-- カラムと、カメラの動きに反応 --*/
+  /*-- Responds to the movement of the column and camera --*/
   TStageObjectId cameraId;
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
@@ -421,18 +421,20 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- オブジェクトの軌跡を、基準点との差分で得る
-        objectId: 移動の参考にするオブジェクト。自分自身の場合はNoneId
+/*-- Obtain the trajectory of the object by the
+     difference from the reference point
+        objectId: The object to be used as a reference for moving.
+        NoneId for myself
 --*/
 static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
                                             TStageObjectId &objectId,
                                             bool isPreview, double shutterStart,
                                             double shutterEnd,
                                             int traceResolution) {
-  /*-- 前後フレームが共に０なら空のリストを返す --*/
+  /*-- Returns an empty list if both front and back frames are 0 --*/
   if (shutterStart == 0.0 && shutterEnd == 0.0) return QList<TPointD>();
 
-  /*-- 現在のカメラを得る --*/
+  /*-- Get the current camera --*/
   TStageObjectId cameraId;
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
@@ -441,10 +443,10 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine dpiAff       = getDpiAffine(camera->getCamera());
 
-  /*-- 基準点の位置を得る --*/
+  /*-- Get the position of the reference point --*/
   TAffine aff;
 
-  /*-- objectIdが有効なものかどうかチェック --*/
+  /*-- Check if objectId is valid --*/
   bool useOwnMotion = false;
   if (objectId == TStageObjectId::NoneId ||
       !xsh->getStageObjectTree()->getStageObject(objectId, false)) {
@@ -458,15 +460,17 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
   TPointD basePos =
       dpiAff.inv() * aff * TPointD(-cameraAff.a13, -cameraAff.a23);
 
-  /*-- 結果を収めるリスト --*/
+  /*-- List of results --*/
   QList<TPointD> points;
-  /*-- 軌跡点間のフレーム間隔 --*/
+  /*-- Frame spacing between locus points --*/
   double dFrame = (shutterStart + shutterEnd) / (double)traceResolution;
-  /*-- 各点の位置を、基準点との差分で格納していく --*/
+  /*-- Store the position of each point as the difference
+       from the reference point --*/
   for (int i = 0; i <= traceResolution; i++) {
-    /*-- 基準位置とのフレーム差 --*/
+    /*-- Frame difference from the reference position --*/
     double frameOffset = -shutterStart + dFrame * (double)i;
-    /*-- 基準位置とのフレーム差が無ければ、基準点に一致するので差分は０を入れる
+    /*-- If there is no frame difference from the reference position,
+    it matches the reference point, so enter 0 for the difference.
      * --*/
     if (frameOffset == 0.0) {
       points.append(TPointD(0.0, 0.0));
@@ -477,7 +481,8 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
     // Proper position cannot be obtained for frame = -1.0
     if (targetFrame == -1.0) targetFrame = -0.9999;
 
-    /*-- 自分自身の動きを使うか、別オブジェクトの動きを使うか --*/
+    /*-- Whether to use your own movement or the
+         movement of another object --*/
     if (useOwnMotion)
       getColumnPlacement(aff, xsh, targetFrame, col, isPreview);
     else
@@ -487,7 +492,7 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
     TPointD tmpPos =
         dpiAff.inv() * aff * TPointD(-cameraAff.a13, -cameraAff.a23);
 
-    /*-- 基準位置との差を記録 --*/
+    /*-- Record the difference from the reference position --*/
     points.append(tmpPos - basePos);
   }
   return points;
@@ -705,7 +710,9 @@ PlacedFx FxBuilder::makePF(TXsheetFx *fx) {
   }
 
   /*--
-   * Xsheetに複数ノードが繋がっていた場合、PlacedFxの条件に従ってOverノードの付く順番を決める
+   * If multiple nodes are connected to the Xsheet,
+   determine the order in which the Over nodes are
+   attached according to the PlacedFx conditions.
    * --*/
   std::sort(pfs.begin(),
             pfs.end());  // Sort each terminal depending on Z/SO/Column index
