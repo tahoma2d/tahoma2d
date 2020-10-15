@@ -62,6 +62,7 @@ extern TEnv::IntVar HorizonOffset;
 extern TEnv::IntVar ShowVanishingPointRays;
 extern TEnv::IntVar VanishingPointRayAngles;
 extern TEnv::IntVar VanishingPointRayOpacity;
+extern TEnv::IntVar CameraStandUseFxOrdering;
 
 //=============================================================================
 // TPanel
@@ -430,6 +431,36 @@ TPanelTitleBarButtonForCameraView::TPanelTitleBarButtonForCameraView(
 
 void TPanelTitleBarButtonForCameraView::mousePressEvent(QMouseEvent *e) {
   m_menu->exec(e->globalPos() + QPoint(-20, 10));
+}
+
+//-----------------------------------------------------------------------------
+
+TPanelTitleBarButtonForCamStandView::TPanelTitleBarButtonForCamStandView(
+    QWidget* parent, const QString& standardPixmapName)
+    : TPanelTitleBarButton(parent, standardPixmapName) {
+    m_menu = new QMenu(this);
+    QWidgetAction* menuAction = new QWidgetAction(this);
+    QWidget* menuWidget = new QWidget(this);
+    QGridLayout* menuLayout = new QGridLayout(this);
+
+    QCheckBox *schematicView = new QCheckBox(this);
+    schematicView->setChecked(CameraStandUseFxOrdering == 1 ? true : false);
+
+    connect(schematicView, &QCheckBox::toggled, [=](bool value) {
+        CameraStandUseFxOrdering = value ? 1 : 0;
+        emit updateViewer();
+        });
+    menuLayout->addWidget(new QLabel(tr("Use Fx Schematic Visiblity: ")), 0, 0, Qt::AlignRight);
+    menuLayout->addWidget(schematicView, 0, 1, Qt::AlignLeft);
+    menuWidget->setLayout(menuLayout);
+    menuAction->setDefaultWidget(menuWidget);
+    m_menu->addAction(menuAction);
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForCamStandView::mousePressEvent(QMouseEvent* e) {
+    m_menu->exec(e->globalPos() + QPoint(-20, 10));
 }
 
 //-----------------------------------------------------------------------------

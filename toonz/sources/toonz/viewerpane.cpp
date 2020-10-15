@@ -426,7 +426,7 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -272;
+  int x                                 = -282;
   int iconWidth                         = 20;
   TPanelTitleBarButton *button;
 
@@ -480,10 +480,18 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
   button->setPressed(true);
 
+  TPanelTitleBarButtonForCamStandView* camStandOptionsButton = new TPanelTitleBarButtonForCamStandView(
+      titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  camStandOptionsButton->setToolTip(tr("Camera Stand View Options"));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), camStandOptionsButton);
+  connect(camStandOptionsButton, &TPanelTitleBarButtonForCamStandView::updateViewer,
+      [=]() { m_sceneViewer->update(); });
+
   button = new TPanelTitleBarButton(titleBar,
                                     getIconThemePath("actions/20/pane_3d.svg"));
   button->setToolTip(tr("3D View"));
-  x += +1 + iconWidth;
+  x += 10;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 

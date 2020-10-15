@@ -89,7 +89,11 @@
 
 #include "sceneviewer.h"
 
-TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 1);
+//TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 1);
+TEnv::IntVar CameraStandUseFxOrdering("CameraStandUseFxOrdering", 0);
+TEnv::IntVar CameraStandShowMattes("CameraStandShowMattes", 0);
+TEnv::IntVar CameraViewUseFxOrdering("CameraViewUseFxOrdering", 0);
+TEnv::IntVar CameraViewShowMattes("CameraViewShowMattes", 0);
 
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelSize);
@@ -2007,8 +2011,6 @@ void SceneViewer::drawScene() {
     args.m_guidedFrontStroke      = guidedFrontStroke;
     args.m_guidedBackStroke       = guidedBackStroke;
 
-    // args.m_currentFrameId = app->getCurrentFrame()->getFid();
-
     if (m_stopMotion->m_alwaysUseLiveViewImages &&
         m_stopMotion->m_liveViewStatus > 0 &&
         frame != m_stopMotion->getXSheetFrameNumber() - 1 &&
@@ -2024,8 +2026,6 @@ void SceneViewer::drawScene() {
         smPlayer.m_sl         = m_stopMotion->m_sl;
         args.m_liveViewImage  = static_cast<TRasterImageP>(image);
         args.m_liveViewPlayer = smPlayer;
-        // painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
-        //                      smPlayer);
       }
     }
     if (  //! m_stopMotion->m_drawBeneathLevels &&
@@ -2041,8 +2041,6 @@ void SceneViewer::drawScene() {
         smPlayer.m_sl       = m_stopMotion->m_sl;
         args.m_lineupImage  = m_stopMotionLineUpImage;
         args.m_lineupPlayer = smPlayer;
-        // painter.onRasterImage(m_stopMotionLineUpImage.getPointer(),
-        // smPlayer);
       }
       if (m_hasStopMotionImage) {
         Stage::Player smPlayer;
@@ -2059,7 +2057,6 @@ void SceneViewer::drawScene() {
         smPlayer.m_sl      = m_stopMotion->m_sl;
         args.m_liveViewImage  = m_stopMotionImage;
         args.m_liveViewPlayer = smPlayer;
-        // painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
       }
     }
 
@@ -2092,7 +2089,7 @@ void SceneViewer::drawScene() {
     TFrameHandle *frameHandle = TApp::instance()->getCurrentFrame();
 
     if (app->getCurrentFrame()->isEditingLevel()) {
-      Stage::visitSingleLevel(painter, app->getCurrentLevel()->getLevel(),
+      Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                               app->getCurrentFrame()->getFid(),
                               app->getCurrentOnionSkin()->getOnionSkinMask(),
                               frameHandle->isPlaying(), useGuidedDrawing,
@@ -2123,6 +2120,7 @@ void SceneViewer::drawScene() {
       args.m_isGuidedDrawingEnabled = useGuidedDrawing;
       args.m_guidedFrontStroke      = guidedFrontStroke;
       args.m_guidedBackStroke       = guidedBackStroke;
+      args.m_useFxVisibility = CameraStandUseFxOrdering == 1 ? true : false;
 
       if (m_stopMotion->m_alwaysUseLiveViewImages &&
           m_stopMotion->m_liveViewStatus > 0 &&
@@ -2139,14 +2137,9 @@ void SceneViewer::drawScene() {
           smPlayer.m_sl        = m_stopMotion->m_sl;
           args.m_liveViewImage = static_cast<TRasterImageP>(image);
           args.m_liveViewPlayer = smPlayer;
-          // painter.onRasterImage(static_cast<TRasterImageP>(image).getPointer(),
-          //                      smPlayer);
         }
       }
-      if (  //! m_stopMotion->m_drawBeneathLevels &&
-          m_stopMotion->m_liveViewStatus == 2 &&
-          (  //! frameHandle->isPlaying() ||
-              frame == m_stopMotion->getXSheetFrameNumber() - 1)) {
+      if (  m_stopMotion->m_liveViewStatus == 2 && frame == m_stopMotion->getXSheetFrameNumber() - 1) {
         if (m_hasStopMotionLineUpImage && m_stopMotion->m_showLineUpImage) {
           Stage::Player smPlayer;
           double dpiX, dpiY;
@@ -2156,8 +2149,6 @@ void SceneViewer::drawScene() {
           smPlayer.m_sl       = m_stopMotion->m_sl;
           args.m_lineupImage  = m_stopMotionLineUpImage;
           args.m_lineupPlayer = smPlayer;
-          // painter.onRasterImage(m_stopMotionLineUpImage.getPointer(),
-          // smPlayer);
         }
         if (m_hasStopMotionImage) {
           Stage::Player smPlayer;
@@ -2175,7 +2166,6 @@ void SceneViewer::drawScene() {
           smPlayer.m_sl         = m_stopMotion->m_sl;
           args.m_liveViewImage  = m_stopMotionImage;
           args.m_liveViewPlayer = smPlayer;
-          // painter.onRasterImage(m_stopMotionImage.getPointer(), smPlayer);
         }
       }
       Stage::visit(painter, args);
@@ -3125,7 +3115,7 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
   picker.setDistance(distance);
 
   if (app->getCurrentFrame()->isEditingLevel()) {
-    Stage::visitSingleLevel(picker, app->getCurrentLevel()->getLevel(),
+    Stage::visit(picker, app->getCurrentLevel()->getLevel(),
                             app->getCurrentFrame()->getFid(), osm,
                             app->getCurrentFrame()->isPlaying(), false);
   } else {

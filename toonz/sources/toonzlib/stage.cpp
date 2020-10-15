@@ -718,12 +718,13 @@ void StageBuilder::addFrameWithFx(PlayerSet &players, ToonzScene *scene,
   m_multiPortFxs.insert("inFx");
   m_multiPortFxs.insert("outFx");
   m_multiPortFxs.insert("addFx");
+  m_multiPortFxs.insert("overFx");
 
   struct locals {
-    static inline void walkFxs(std::vector<int> &columnsToRender, TFx *fx,
+    static inline void walkFxs(std::set<int> &columnsToRender, TFx *fx,
                                bool checkAll,
                                std::set<std::string> multiPortFxs) {
-      std::wstring fxName = fx->getName();
+      std::string fxName = fx->getFxType();
       int newCount        = fx->getInputPortCount();
       if (checkAll) {
         for (int i = 0; i < newCount; i++) {
@@ -741,12 +742,12 @@ void StageBuilder::addFrameWithFx(PlayerSet &players, ToonzScene *scene,
         bool checkAll       = multiPortFxs.find(newName) != multiPortFxs.end();
         walkFxs(columnsToRender, newFx, checkAll, multiPortFxs);
       } else {
-        if (fxName == L"LevelColumn") {
+        if (fxName == "LevelColumn" || fxName == "Toonz_columnFx") {
           bool needToAdd   = false;
           TColumnFx *colFx = dynamic_cast<TColumnFx *>(fx);
           if (colFx) {
             int colIndex = colFx->getColumnIndex();
-            columnsToRender.push_back(colIndex);
+            columnsToRender.insert(colIndex);
             int k = 0;
           }
         }
@@ -756,22 +757,21 @@ void StageBuilder::addFrameWithFx(PlayerSet &players, ToonzScene *scene,
 
   FxDag *fx = xsh->getFxDag();
 
-  std::vector<int> columnsToRender;
+  std::set<int> columnsToRender;
   TOutputFx *output       = fx->getCurrentOutputFx();
   TFx *xsheetFx           = output->getInputPort(0)->getFx();
   TXsheetFx *realXsheetFx = dynamic_cast<TXsheetFx *>(xsheetFx);
   if (realXsheetFx) {
     TFxSet *terminalFxs = fx->getTerminalFxs();
     int terminalFxCount = terminalFxs->getFxCount();
-    for (int i = 0; i < terminalFxCount; i++) {
-      std::set<TFx *> terminalFxsSet;
-      terminalFxs->getFxs(terminalFxsSet);
+    
+    std::set<TFx *> terminalFxsSet;
+    terminalFxs->getFxs(terminalFxsSet);
 
-      for (auto it : terminalFxsSet) {
-        std::string type = it->getFxType();
-        bool checkAll    = m_multiPortFxs.find(type) != m_multiPortFxs.end();
-        locals::walkFxs(columnsToRender, it, checkAll, m_multiPortFxs);
-      }
+    for (auto it : terminalFxsSet) {
+      std::string type = it->getFxType();
+      bool checkAll    = m_multiPortFxs.find(type) != m_multiPortFxs.end();
+      locals::walkFxs(columnsToRender, it, checkAll, m_multiPortFxs);
     }
   }
 
@@ -1059,8 +1059,14 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm->isShiftTraceEnabled();
-  sb.addFrameWithFx(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
-                    args.m_checkPreviewVisibility);
+  if (args.m_useFxVisibility) {
+      sb.addFrameWithFx(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
+          args.m_checkPreviewVisibility);
+  }
+  else {
+      sb.addFrame(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
+          args.m_checkPreviewVisibility);
+  }
 
   updateOnionSkinSize(sb.m_players);
 
@@ -1086,7 +1092,9 @@ void Stage::visit(Visitor &visitor, ToonzScene *scene, TXsheet *xsh, int row) {
    StageBuilder::addSimpleLevelFrame()
                 and \b StageBuilder::visit().
 */
-void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level,
+
+// This is just for a single simple level (drawing level)
+void Stage::visit(Visitor &visitor, TXshSimpleLevel *level,
                              const TFrameId &fid, const OnionSkinMask &osm,
                              bool isPlaying, int isGuidedDrawingEnabled,
                              int guidedBackStroke, int guidedFrontStroke) {
@@ -1109,13 +1117,14 @@ void Stage::visitSimpleLevel(Visitor &visitor, TXshSimpleLevel *level,
 }
 
 //-----------------------------------------------------------------------------
+// This is just for a single level
 
-void Stage::visitSingleLevel(Visitor &visitor, TXshLevel *level,
+void Stage::visit(Visitor &visitor, TXshLevel *level,
                              const TFrameId &fid, const OnionSkinMask &osm,
                              bool isPlaying, double isGuidedDrawingEnabled,
                              int guidedBackStroke, int guidedFrontStroke) {
   if (level && level->getSimpleLevel())
-    visitSimpleLevel(visitor, level->getSimpleLevel(), fid, osm, isPlaying,
+    visit(visitor, level->getSimpleLevel(), fid, osm, isPlaying,
                      (int)isGuidedDrawingEnabled, guidedBackStroke,
                      guidedFrontStroke);
 }

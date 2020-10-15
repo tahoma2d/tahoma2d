@@ -115,6 +115,25 @@ signals:
 
 //-----------------------------------------------------------------------------
 
+class TPanelTitleBarButtonForCamStandView final : public TPanelTitleBarButton {
+    Q_OBJECT
+
+        QMenu* m_menu;
+
+public:
+    TPanelTitleBarButtonForCamStandView(QWidget* parent,
+        const QString& standardPixmapName);
+
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+
+signals:
+    void updateViewer();
+};
+
+//-----------------------------------------------------------------------------
+
 class TPanelTitleBarButtonForGrids final : public TPanelTitleBarButton {
     Q_OBJECT
 
