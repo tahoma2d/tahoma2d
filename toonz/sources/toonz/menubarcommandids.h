@@ -48,6 +48,7 @@
 #define MI_OutputSettings "MI_OutputSettings"
 #define MI_PreviewSettings "MI_PreviewSettings"
 #define MI_Render "MI_Render"
+#define MI_SaveAndRender "MI_SaveAndRender"
 #define MI_FastRender "MI_FastRender"
 #define MI_Preview "MI_Preview"
 #define MI_SoundTrack "MI_SoundTrack"

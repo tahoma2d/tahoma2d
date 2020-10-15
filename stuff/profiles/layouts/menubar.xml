@@ -13,6 +13,7 @@
     <item>MI_SaveLevelAs</item>
     <separator/>
     <item>MI_Render</item>
+    <item>MI_SaveAndRender</item>
     <separator/>
     <item>MI_ShortcutPopup</item> 
     <separator/>

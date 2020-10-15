@@ -174,6 +174,7 @@ public:
       , m_timeStretchFactor(1)
       , m_multimediaRender(0) {
     setCommandHandler("MI_Render", this, &RenderCommand::onRender);
+    setCommandHandler("MI_SaveAndRender", this, &RenderCommand::onSaveAndRender);
     setCommandHandler("MI_FastRender", this, &RenderCommand::onFastRender);
     setCommandHandler("MI_Preview", this, &RenderCommand::onPreview);
   }
@@ -182,6 +183,7 @@ public:
   void rasterRender(bool isPreview);
   void multimediaRender();
   void onRender();
+  void onSaveAndRender();
   void onFastRender();
   void onPreview();
   static void resetBgColor();
@@ -747,13 +749,21 @@ void RenderCommand::multimediaRender() {
 //===================================================================
 
 void RenderCommand::onRender() {
-  bool saved = false;
-  saved      = IoCmd::saveAll();
-  if (!saved) {
-    return;
-  }
   doRender(false);
 }
+
+//===================================================================
+
+void RenderCommand::onSaveAndRender() {
+    bool saved = false;
+    saved = IoCmd::saveAll();
+    if (!saved) {
+        return;
+    }
+    doRender(false);
+}
+
+//===================================================================
 
 void RenderCommand::onFastRender() {
   TOutputProperties *prop = TApp::instance()
@@ -786,6 +796,8 @@ void RenderCommand::onFastRender() {
   doRender(false);
   prop->setPath(currPath);
 }
+
+//---------------------------------------------------------
 
 void RenderCommand::onPreview() { doRender(true); }
 
