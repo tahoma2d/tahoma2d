@@ -245,6 +245,7 @@
         <separator/>
         <command>MI_OutputSettings</command>
         <command>MI_Render</command>
+        <command>MI_SaveAndRender</command>
         <separator/>
         <command>MI_FastRender</command>
     </menu>

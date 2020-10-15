@@ -622,7 +622,7 @@ QMenuBar *StackedMenuBar::createFullMenuBar() {
   addMenuItem(renderMenu, MI_SavePreviewedFrames);
   renderMenu->addSeparator();
   addMenuItem(renderMenu, MI_OutputSettings);
-  addMenuItem(renderMenu, MI_Render);
+  addMenuItem(renderMenu, MI_SaveAndRender);
   renderMenu->addSeparator();
   addMenuItem(renderMenu, MI_FastRender);
 

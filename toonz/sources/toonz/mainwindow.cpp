@@ -1811,7 +1811,12 @@ void MainWindow::defineActions() {
       tr("Control the settings that will be used to preview the scene."));
   menuAct->setIcon(createQIcon("preview_settings"));
   menuAct = createMenuRenderAction(
-      MI_Render, tr("&Save and Render"), "Ctrl+Shift+R",
+      MI_Render, tr("&Render"), "Ctrl+Shift+R",
+      tr("Renders according to the settings and "
+         "location set in Output Settings."));
+  menuAct->setIcon(createQIcon("render"));
+  menuAct = createMenuRenderAction(
+      MI_SaveAndRender, tr("&Save and Render"), "",
       tr("Saves the current scene and renders according to the settings and "
          "location set in Output Settings."));
   menuAct->setIcon(createQIcon("render"));
