@@ -436,7 +436,7 @@
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_SupportTahoma2D "MI_SupportTahoma2D"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
-// #define MI_OpenCommunityForum "MI_OpenCommunityForum"
+#define MI_OpenCommunityForum "MI_OpenCommunityForum"
 #define MI_OpenReportABug "MI_OpenReportABug"
 
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"
