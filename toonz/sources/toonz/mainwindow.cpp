@@ -578,8 +578,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_SupportTahoma2D, this, &MainWindow::onSupportTahoma2D);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
-  // setCommandHandler(MI_OpenCommunityForum, this,
-  //                  &MainWindow::onOpenCommunityForum);
+  setCommandHandler(MI_OpenCommunityForum, this,
+                    &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
@@ -1060,7 +1060,7 @@ void MainWindow::onOpenOnlineManual() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::onSupportTahoma2D() {
-    QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
+  QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
 }
 
 //-----------------------------------------------------------------------------
@@ -1072,10 +1072,9 @@ void MainWindow::onOpenWhatsNew() {
 
 //-----------------------------------------------------------------------------
 
-// void MainWindow::onOpenCommunityForum() {
-//  QDesktopServices::openUrl(
-//      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
-//}
+void MainWindow::onOpenCommunityForum() {
+  QDesktopServices::openUrl(QUrl(tr("https://groups.google.com/g/tahoma2d")));
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1810,10 +1809,9 @@ void MainWindow::defineActions() {
       MI_PreviewSettings, tr("&Preview Settings..."), "",
       tr("Control the settings that will be used to preview the scene."));
   menuAct->setIcon(createQIcon("preview_settings"));
-  menuAct = createMenuRenderAction(
-      MI_Render, tr("&Render"), "Ctrl+Shift+R",
-      tr("Renders according to the settings and "
-         "location set in Output Settings."));
+  menuAct = createMenuRenderAction(MI_Render, tr("&Render"), "Ctrl+Shift+R",
+                                   tr("Renders according to the settings and "
+                                      "location set in Output Settings."));
   menuAct->setIcon(createQIcon("render"));
   menuAct = createMenuRenderAction(
       MI_SaveAndRender, tr("&Save and Render"), "",
@@ -2436,14 +2434,15 @@ void MainWindow::defineActions() {
   menuAct->setIconText(tr("What's New..."));
   menuAct->setIcon(createQIcon("web"));
 
-  menuAct = createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
+  menuAct =
+      createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
   menuAct->setIconText(tr("Support Tahoma2D"));
   menuAct->setIcon(createQIcon("web"));
 
-  // menuAct = createMenuHelpAction(MI_OpenCommunityForum,
-  //                                tr("&Community Forum..."), "");
-  // menuAct->setIconText(tr("Community Forum..."));
-  // menuAct->setIcon(createQIcon("web"));
+  menuAct = createMenuHelpAction(MI_OpenCommunityForum,
+                                 tr("&Community Forum..."), "");
+  menuAct->setIconText(tr("Community Forum..."));
+  menuAct->setIcon(createQIcon("web"));
 
   menuAct = createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
   menuAct->setIconText(tr("Report a Bug..."));

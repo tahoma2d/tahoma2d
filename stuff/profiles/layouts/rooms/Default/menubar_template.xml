@@ -325,6 +325,7 @@
     <menu title="Help">
         <command>MI_OpenOnlineManual</command>
         <command>MI_OpenWhatsNew</command>
+        <command>MI_OpenCommunityForum</command>
         <separator/>
         <command>MI_SupportTahoma2D</command>
         <command>MI_OpenReportABug</command>
