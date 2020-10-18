@@ -95,8 +95,8 @@ public:
   QLayoutItem *takeAt(int) override;
   void setGeometry(const QRect &rect) override;
 
-  void update();        // Re-applies partition found
-  void redistribute();  // Calculates partition
+  void update();                                   // Re-applies partition found
+  void redistribute(bool allowFixedItems = true);  // Calculates partition
   void applyTransform(const QTransform &transform);  // Applies tranformation to
                                                      // known parition - Da
                                                      // rimuovere, non serve...
