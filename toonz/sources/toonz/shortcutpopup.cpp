@@ -58,7 +58,7 @@ public:
   void updateText() {
     QString text = m_action->text();
     if (text.indexOf("&") == 0) {
-        text = text.remove(0, 1);
+      text = text.remove(0, 1);
     }
     text = text.replace("&&", "&");
     setText(0, text);
@@ -128,7 +128,7 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
   }
   Qt::KeyboardModifiers modifiers = event->modifiers();
 
-  // Tasti che non possono essere utilizzati come shortcut
+  // Keys that cannot be used as shortcuts
   if ((modifiers | (Qt::CTRL | Qt::SHIFT | Qt::ALT)) !=
           (Qt::CTRL | Qt::SHIFT | Qt::ALT) ||
       key == Qt::Key_Home || key == Qt::Key_End || key == Qt::Key_PageDown ||
@@ -140,6 +140,15 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
       return;
     } else
       modifiers = 0;
+  }
+
+  // Block the arrows and space
+  int ctl = modifiers | Qt::CTRL;
+  if (key == Qt::Key_Space || ((modifiers == Qt::NoModifier) &&
+                               (key == Qt::Key_Left || key == Qt::Key_Right ||
+                                key == Qt::Key_Up || key == Qt::Key_Down))) {
+    event->ignore();
+    return;
   }
 
   // If "Use Numpad and Tab keys for Switching Styles" option is activated,
