@@ -66,6 +66,7 @@ RoomTabWidget::RoomTabWidget(QWidget *parent)
     : QTabBar(parent)
     , m_clickedTabIndex(-1)
     , m_tabToDeleteIndex(-1)
+    , m_tabToResetIndex(-1)
     , m_renameTabIndex(-1)
     , m_renameTextField(new DVGui::LineEdit(this))
     , m_isLocked(LockRoomTabToggle != 0) {
@@ -157,17 +158,46 @@ void RoomTabWidget::contextMenuEvent(QContextMenuEvent *event) {
   if (m_isLocked) return;
   m_tabToDeleteIndex = -1;
   QMenu *menu        = new QMenu(this);
-  QAction *newRoom   = menu->addAction(tr("New Room"));
-  connect(newRoom, SIGNAL(triggered()), SLOT(addNewTab()));
 
   int index = tabAt(event->pos());
+
+  if (index >= 0) {
+    m_tabToResetIndex       = index;
+    QAction *resetRoomSaved = menu->addAction(
+        tr("Reset Room \"%1\" to Saved Layout").arg(tabText(index)));
+    connect(resetRoomSaved, SIGNAL(triggered()), SLOT(resetTabSaved()));
+    if (m_tabToResetIndex == currentIndex())
+      resetRoomSaved->setEnabled(true);
+    else
+      resetRoomSaved->setEnabled(false);
+
+    QAction *resetRoomDefault = menu->addAction(
+        tr("Reset Room \"%1\" to Default Layout").arg(tabText(index)));
+    connect(resetRoomDefault, SIGNAL(triggered()), SLOT(resetTabDefault()));
+    resetRoomDefault->setEnabled(false);
+    if (m_tabToResetIndex == currentIndex()) {
+      MainWindow *mainWin =
+          dynamic_cast<MainWindow *>(TApp::instance()->getMainWindow());
+      assert(mainWin);
+      Room *room   = mainWin->getRoom(index);
+      TFilePath fp = room->getPath();
+      TFilePath defaultfp =
+          ToonzFolder::getTemplateRoomsDir() + TFilePath(fp.getLevelName());
+      if (TFileStatus(defaultfp).doesExist())
+        resetRoomDefault->setEnabled(true);
+    }
+  }
+
+  QAction *newRoom = menu->addAction(tr("New Room"));
+  connect(newRoom, SIGNAL(triggered()), SLOT(addNewTab()));
+
   if (index >= 0) {
     m_tabToDeleteIndex = index;
-    if (index != currentIndex()) {
-      QAction *deleteRoom =
-          menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
-      connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
-    }
+    QAction *deleteRoom =
+        menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
+    connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
+    deleteRoom->setEnabled(false);
+    if (index != currentIndex()) deleteRoom->setEnabled(true);
     //#if defined(_WIN32) || defined(_CYGWIN_)
     //    /*- customize menubar -*/
     //    QAction *customizeMenuBar = menu->addAction(
@@ -205,7 +235,7 @@ void RoomTabWidget::addNewTab() {
 void RoomTabWidget::deleteTab() {
   assert(m_tabToDeleteIndex != -1);
 
-  QString question(tr("Are you sure you want to remove room %1")
+  QString question(tr("Are you sure you want to remove room \"%1\"?")
                        .arg(tabText(m_tabToDeleteIndex)));
   int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
   if (ret == 0 || ret == 2) return;
@@ -213,6 +243,57 @@ void RoomTabWidget::deleteTab() {
   emit deleteTabRoom(m_tabToDeleteIndex);
   removeTab(m_tabToDeleteIndex);
   m_tabToDeleteIndex = -1;
+}
+
+//-----------------------------------------------------------------------------
+
+void RoomTabWidget::resetTabSaved() {
+  assert(m_tabToResetIndex != -1);
+
+  QString question(
+      tr("Are you sure you want to reset room \"%1\" to the last saved layout?")
+          .arg(tabText(m_tabToResetIndex)));
+  int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
+  if (ret == 0 || ret == 2) return;
+
+  MainWindow *mainWin =
+      dynamic_cast<MainWindow *>(TApp::instance()->getMainWindow());
+  assert(mainWin);
+  Room *room = mainWin->getRoom(m_tabToResetIndex);
+
+  room->reload();
+  setTabText(m_tabToResetIndex, room->getName());
+
+  m_tabToResetIndex = -1;
+}
+
+//-----------------------------------------------------------------------------
+
+void RoomTabWidget::resetTabDefault() {
+  assert(m_tabToResetIndex != -1);
+
+  QString question(
+      tr("Are you sure you want to reset room \"%1\" to the default layout?")
+          .arg(tabText(m_tabToResetIndex)));
+  int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
+  if (ret == 0 || ret == 2) return;
+
+  MainWindow *mainWin =
+      dynamic_cast<MainWindow *>(TApp::instance()->getMainWindow());
+  assert(mainWin);
+  Room *room   = mainWin->getRoom(m_tabToResetIndex);
+  TFilePath fp = room->getPath();
+  TFilePath defaultfp =
+      ToonzFolder::getTemplateRoomsDir() + TFilePath(fp.getLevelName());
+  try {
+    TSystem::copyFile(fp, defaultfp);
+    room->reload();
+    setTabText(m_tabToResetIndex, room->getName());
+  } catch (...) {
+    DVGui::MsgBoxInPopup(DVGui::CRITICAL, QObject::tr("Failed to reset room!"));
+  }
+
+  m_tabToResetIndex = -1;
 }
 
 //-----------------------------------------------------------------------------
