@@ -176,7 +176,7 @@ void CameraCaptureLevelHistogram::mouseMoveEvent(QMouseEvent* event) {
       if (hPos < m_black + 1)
         hPos = m_black + 1;
       else if (hPos > m_white - 1)
-        hPos = m_white - 1;
+        hPos      = m_white - 1;
       float gamma = hPosToGamma(hPos, m_black, m_white);
       if (gamma != m_gamma) {
         m_gamma = gamma;

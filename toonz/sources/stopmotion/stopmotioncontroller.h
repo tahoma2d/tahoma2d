@@ -56,11 +56,10 @@ class QRegExpValidator;
 class QCheckBox;
 
 namespace DVGui {
-    class FileField;
-    class IntField;
-    class IntLineEdit;
+class FileField;
+class IntField;
+class IntLineEdit;
 }  // namespace DVGui
-
 
 //=============================================================================
 // FrameNumberLineEdit
@@ -70,48 +69,48 @@ namespace DVGui {
 //-----------------------------------------------------------------------------
 
 class FrameNumberLineEdit : public DVGui::LineEdit {
-    Q_OBJECT
-        /* having two validators and switch them according to the preferences*/
-        QIntValidator* m_intValidator;
-    QRegExpValidator* m_regexpValidator;
+  Q_OBJECT
+  /* having two validators and switch them according to the preferences*/
+  QIntValidator *m_intValidator;
+  QRegExpValidator *m_regexpValidator;
 
-    void updateValidator();
-    QString m_textOnFocusIn;
+  void updateValidator();
+  QString m_textOnFocusIn;
 
 public:
-    FrameNumberLineEdit(QWidget* parent = 0, int value = 1);
-    ~FrameNumberLineEdit() {}
+  FrameNumberLineEdit(QWidget *parent = 0, int value = 1);
+  ~FrameNumberLineEdit() {}
 
-    /*! Set text in field to \b value. */
-    void setValue(int value);
-    /*! Return an integer with text field value. */
-    int getValue();
+  /*! Set text in field to \b value. */
+  void setValue(int value);
+  /*! Return an integer with text field value. */
+  int getValue();
 
 protected:
-    /*! If focus is lost and current text value is out of range emit signal
-    \b editingFinished.*/
-    void focusInEvent(QFocusEvent*) override;
-    void focusOutEvent(QFocusEvent*) override;
-    void showEvent(QShowEvent* event) override { updateValidator(); }
+  /*! If focus is lost and current text value is out of range emit signal
+  \b editingFinished.*/
+  void focusInEvent(QFocusEvent *) override;
+  void focusOutEvent(QFocusEvent *) override;
+  void showEvent(QShowEvent *event) override { updateValidator(); }
 };
 
 //=============================================================================
 
 class LevelNameLineEdit : public QLineEdit {
-    Q_OBJECT
-        QString m_textOnFocusIn;
+  Q_OBJECT
+  QString m_textOnFocusIn;
 
 public:
-    LevelNameLineEdit(QWidget* parent = 0);
+  LevelNameLineEdit(QWidget *parent = 0);
 
 protected:
-    void focusInEvent(QFocusEvent* e);
+  void focusInEvent(QFocusEvent *e);
 
 protected slots:
-    void onEditingFinished();
+  void onEditingFinished();
 
 signals:
-    void levelNameEdited();
+  void levelNameEdited();
 };
 
 //=============================================================================
@@ -119,33 +118,33 @@ signals:
 //-----------------------------------------------------------------------------
 
 class StopMotionSaveInFolderPopup : public DVGui::Dialog {
-    Q_OBJECT
+  Q_OBJECT
 
-    DVGui::FileField* m_parentFolderField;
-    QLineEdit* m_projectField, * m_episodeField, * m_sequenceField, * m_sceneField,
-        * m_subFolderNameField;
+  DVGui::FileField *m_parentFolderField;
+  QLineEdit *m_projectField, *m_episodeField, *m_sequenceField, *m_sceneField,
+      *m_subFolderNameField;
 
-    QCheckBox* m_subFolderCB, * m_autoSubNameCB, * m_createSceneInFolderCB;
-    QComboBox* m_subNameFormatCombo;
+  QCheckBox *m_subFolderCB, *m_autoSubNameCB, *m_createSceneInFolderCB;
+  QComboBox *m_subNameFormatCombo;
 
-    void createSceneInFolder();
+  void createSceneInFolder();
 
 public:
-    StopMotionSaveInFolderPopup(QWidget* parent = 0);
-    QString getPath();
-    QString getParentPath();
-    void updateParentFolder();
+  StopMotionSaveInFolderPopup(QWidget *parent = 0);
+  QString getPath();
+  QString getParentPath();
+  void updateParentFolder();
 
 protected:
-    void showEvent(QShowEvent* event);
+  void showEvent(QShowEvent *event);
 
 protected slots:
-    void updateSubFolderName();
-    void onAutoSubNameCBClicked(bool);
-    void onShowPopupOnLaunchCBClicked(bool);
-    void onCreateSceneInFolderCBClicked(bool);
-    void onSetAsDefaultBtnPressed();
-    void onOkPressed();
+  void updateSubFolderName();
+  void onAutoSubNameCBClicked(bool);
+  void onShowPopupOnLaunchCBClicked(bool);
+  void onCreateSceneInFolderCBClicked(bool);
+  void onSetAsDefaultBtnPressed();
+  void onOkPressed();
 };
 
 //=============================================================================
@@ -191,15 +190,16 @@ class StopMotionController final : public QWidget {
       *m_webcamExposureSlider, *m_webcamBrightnessSlider,
       *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider,
       *m_liveViewCompensationSlider;
-  QComboBox* m_cameraListCombo, * m_exposureCombo, * m_fileTypeCombo,
-      * m_whiteBalanceCombo, * m_resolutionCombo, * m_imageQualityCombo,
-      * m_pictureStyleCombo, * m_controlDeviceCombo, * m_captureFramesCombo,
-      * m_colorTypeCombo;
+  QComboBox *m_cameraListCombo, *m_exposureCombo, *m_fileTypeCombo,
+      *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
+      *m_pictureStyleCombo, *m_controlDeviceCombo, *m_captureFramesCombo,
+      *m_colorTypeCombo;
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_placeOnXSheetCB, *m_directShowCB,
       *m_liveViewOnAllFramesCB, *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB,
-      *m_timerCB, *m_showScene1, *m_showScene2, *m_showScene3; //, *m_upsideDownCB;
-  CameraCaptureLevelControl* m_camCapLevelControl;
+      *m_timerCB, *m_showScene1, *m_showScene2,
+      *m_showScene3;  //, *m_upsideDownCB;
+  CameraCaptureLevelControl *m_camCapLevelControl;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;

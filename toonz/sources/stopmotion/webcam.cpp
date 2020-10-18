@@ -24,7 +24,7 @@ TEnv::IntVar StopMotionUseMjpg("StopMotionUseMjpg", 1);
 Webcam::Webcam() {
   m_useDirectShow = StopMotionUseDirectShow;
   m_useMjpg       = StopMotionUseMjpg;
-  m_lut = cv::Mat(1, 256, CV_8U);
+  m_lut           = cv::Mat(1, 256, CV_8U);
 }
 
 //-----------------------------------------------------------------
@@ -132,18 +132,18 @@ bool Webcam::getWebcamImage(TRaster32P& tempImage) {
 
     bool convertBack = false;
     if (m_colorMode != 0) {
-        cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_RGB2GRAY);
-        convertBack = true;
+      cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_RGB2GRAY);
+      convertBack = true;
     }
 
     // color and grayscale mode
     if (m_colorMode != 2)
-        adjustLevel(imgCorrected);
+      adjustLevel(imgCorrected);
     else
-        binarize(imgCorrected);
+      binarize(imgCorrected);
 
     if (convertBack) {
-        cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_GRAY2BGRA);
+      cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_GRAY2BGRA);
     }
 
     int width  = m_cvWebcam.get(3);
@@ -199,19 +199,19 @@ void Webcam::refreshWebcamResolutions() {
   clearWebcamResolutions();
   m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
   if (m_webcamResolutions.size() == 0) {
-      m_webcamResolutions.push_back(QSize(640,360));
-      m_webcamResolutions.push_back(QSize(640,480));
-      m_webcamResolutions.push_back(QSize(800,448));
-      m_webcamResolutions.push_back(QSize(800,600));
-      m_webcamResolutions.push_back(QSize(848,480));
-      m_webcamResolutions.push_back(QSize(864,480));
-      m_webcamResolutions.push_back(QSize(960,540));
-      m_webcamResolutions.push_back(QSize(960,720));
-      m_webcamResolutions.push_back(QSize(1024,576));
-      m_webcamResolutions.push_back(QSize(1280,720));
-      m_webcamResolutions.push_back(QSize(1600,896));
-      m_webcamResolutions.push_back(QSize(1600,900));
-      m_webcamResolutions.push_back(QSize(1920, 1080));
+    m_webcamResolutions.push_back(QSize(640, 360));
+    m_webcamResolutions.push_back(QSize(640, 480));
+    m_webcamResolutions.push_back(QSize(800, 448));
+    m_webcamResolutions.push_back(QSize(800, 600));
+    m_webcamResolutions.push_back(QSize(848, 480));
+    m_webcamResolutions.push_back(QSize(864, 480));
+    m_webcamResolutions.push_back(QSize(960, 540));
+    m_webcamResolutions.push_back(QSize(960, 720));
+    m_webcamResolutions.push_back(QSize(1024, 576));
+    m_webcamResolutions.push_back(QSize(1280, 720));
+    m_webcamResolutions.push_back(QSize(1600, 896));
+    m_webcamResolutions.push_back(QSize(1600, 900));
+    m_webcamResolutions.push_back(QSize(1920, 1080));
   }
 }
 
@@ -450,38 +450,37 @@ void Webcam::openSettingsWindow() {
 //-----------------------------------------------------------------
 
 void Webcam::adjustLevel(cv::Mat& image) {
-    if (m_black == 0 && m_white == 255 && m_gamma == 1.0) return;
+  if (m_black == 0 && m_white == 255 && m_gamma == 1.0) return;
 
-    cv::LUT(image, m_lut, image);
+  cv::LUT(image, m_lut, image);
 }
 
 //-----------------------------------------------------------------
 
 void Webcam::binarize(cv::Mat& image) {
-    cv::threshold(image, image, m_threshold, 255, cv::THRESH_BINARY);
+  cv::threshold(image, image, m_threshold, 255, cv::THRESH_BINARY);
 }
 
 //-----------------------------------------------------------------
 
 void Webcam::computeLut() {
+  const float maxChannelValueF = 255.0f;
 
-    const float maxChannelValueF = 255.0f;
+  float value;
 
-    float value;
-
-    uchar* p = m_lut.data;
-    for (int i = 0; i < 256; i++) {
-        if (i <= m_black)
-            value = 0.0f;
-        else if (i >= m_white)
-            value = 1.0f;
-        else {
-            value = (float)(i - m_black) / (float)(m_white - m_black);
-            value = std::pow(value, 1.0f / m_gamma);
-        }
-
-        p[i] = (uchar)std::floor(value * maxChannelValueF);
+  uchar* p = m_lut.data;
+  for (int i = 0; i < 256; i++) {
+    if (i <= m_black)
+      value = 0.0f;
+    else if (i >= m_white)
+      value = 1.0f;
+    else {
+      value = (float)(i - m_black) / (float)(m_white - m_black);
+      value = std::pow(value, 1.0f / m_gamma);
     }
+
+    p[i] = (uchar)std::floor(value * maxChannelValueF);
+  }
 }
 
 //-----------------------------------------------------------------

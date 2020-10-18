@@ -100,11 +100,11 @@ private:
   int m_webcamWidth    = 0;
   int m_webcamHeight   = 0;
   bool m_useMjpg       = true;
-  int m_colorMode = 0;
-  int m_white = 255;
-  int m_black = 0;
-  int m_threshold = 128;
-  double m_gamma = 1.0;
+  int m_colorMode      = 0;
+  int m_white          = 255;
+  int m_black          = 0;
+  int m_threshold      = 128;
+  double m_gamma       = 1.0;
   cv::Mat m_lut;
   cv::Mat m_webcamImage;
 

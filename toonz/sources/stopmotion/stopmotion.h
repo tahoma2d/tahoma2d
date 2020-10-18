@@ -34,7 +34,6 @@ class QCamera;
 class QCameraInfo;
 class QTimer;
 
-
 //=============================================================================
 // FlexibleNameCreator
 // Inherits NameCreator, added function for obtaining the previous name and
@@ -42,9 +41,9 @@ class QTimer;
 
 class FlexibleNameCreator final : public NameCreator {
 public:
-    FlexibleNameCreator() {}
-    std::wstring getPrevious();
-    bool setCurrent(std::wstring name);
+  FlexibleNameCreator() {}
+  std::wstring getPrevious();
+  bool setCurrent(std::wstring name);
 };
 
 //=============================================================================
@@ -65,15 +64,15 @@ private:
   ~StopMotion();
 
   // file stuff
-  int m_frameNumber          = 1;
-  int m_xSheetFrameNumber    = 1;
+  int m_frameNumber           = 1;
+  int m_xSheetFrameNumber     = 1;
   int m_captureNumberOfFrames = 1;
-  QString m_levelName        = "";
-  QString m_fileType         = "jpg";
-  QString m_filePath         = "+stopmotion";
-  QString m_frameInfoText    = "";
-  QString m_infoColorName    = "";
-  QString m_frameInfoToolTip = "";
+  QString m_levelName         = "";
+  QString m_fileType          = "jpg";
+  QString m_filePath          = "+stopmotion";
+  QString m_frameInfoText     = "";
+  QString m_infoColorName     = "";
+  QString m_frameInfoToolTip  = "";
 
   // options
   int m_opacity     = 255.0;

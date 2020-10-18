@@ -2383,8 +2383,8 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
-  menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
-                          "");
+  menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel,
+                                    tr("&Stop Motion Controls"), "");
   menuAct->setIcon(createQIcon("camera_capture"));
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
