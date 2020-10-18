@@ -168,13 +168,14 @@ void RoomTabWidget::contextMenuEvent(QContextMenuEvent *event) {
           menu->addAction(tr("Delete Room \"%1\"").arg(tabText(index)));
       connect(deleteRoom, SIGNAL(triggered()), SLOT(deleteTab()));
     }
-    //#if defined(_WIN32) || defined(_CYGWIN_)
-    //    /*- customize menubar -*/
-    //    QAction *customizeMenuBar = menu->addAction(
-    //        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
-    //    connect(customizeMenuBar, SIGNAL(triggered()),
-    //    SLOT(onCustomizeMenuBar()));
-    //#endif
+#ifdef USE_MENUBAR_XML
+#if defined(_WIN32) || defined(_CYGWIN_)
+    /*- customize menubar -*/
+    QAction *customizeMenuBar = menu->addAction(
+        tr("Customize Menu Bar of Room \"%1\"").arg(tabText(index)));
+    connect(customizeMenuBar, SIGNAL(triggered()), SLOT(onCustomizeMenuBar()));
+#endif
+#endif
   }
   menu->exec(event->globalPos());
 }
@@ -262,10 +263,12 @@ void StackedMenuBar::createMenuBarByName(const QString &roomName) {
 
 void StackedMenuBar::loadAndAddMenubar(const TFilePath &fp) {
 #if defined(_WIN32) || defined(_CYGWIN_)
+#ifdef USE_MENUBAR_XML
   QMenuBar *menuBar = loadMenuBar(fp);
   if (menuBar)
     addWidget(menuBar);
   else
+#endif
     addWidget(createFullMenuBar());
 #else
   /* OSX では stacked menu が動いていないのでとりあえず full のみ作成する */
@@ -876,8 +879,10 @@ TopBar::TopBar(QWidget *parent) : QToolBar(parent) {
                        m_stackedMenuBar, SLOT(insertNewMenuBar()));
   ret = ret && connect(m_roomTabBar, SIGNAL(deleteTabRoom(int)),
                        m_stackedMenuBar, SLOT(deleteMenuBar(int)));
+#ifdef USE_MENUBAR_XML
   ret = ret && connect(m_roomTabBar, SIGNAL(customizeMenuBar(int)),
                        m_stackedMenuBar, SLOT(doCustomizeMenuBar(int)));
+#endif
   ret = ret && connect(m_lockRoomCB, SIGNAL(toggled(bool)), m_roomTabBar,
                        SLOT(setIsLocked(bool)));
   assert(ret);

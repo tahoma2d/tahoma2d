@@ -174,6 +174,7 @@ void makePrivate(Room *room) {
     TSystem::touchParentDir(roomPath);
     room->save();
   }
+#ifdef USE_MENUBAR_XML
   /*- create private menubar settings if not exists -*/
   std::string mbDstFileName = roomPath.getName() + "_menubar.xml";
   TFilePath myMBPath        = layoutDir + mbDstFileName;
@@ -193,6 +194,7 @@ void makePrivate(Room *room) {
                         "Re-installing Toonz will solve this problem."));
     }
   }
+#endif
 }
 
 //-----------------------------------------------------------------------------
