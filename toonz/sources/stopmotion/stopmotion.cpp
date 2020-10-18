@@ -6,7 +6,6 @@
 #include "tenv.h"
 #include "tsystem.h"
 #include "filebrowsermodel.h"
-#include "penciltestpopup.h"
 #include "tlevel_io.h"
 #include "toutputproperties.h"
 #include "filebrowserpopup.h"
@@ -195,6 +194,46 @@ bool getRasterLevelSize(TXshLevel *level, TDimension &dim) {
 
 };  // namespace
 
+//=============================================================================
+
+std::wstring FlexibleNameCreator::getPrevious() {
+  if (m_s.empty() || (m_s[0] == 0 && m_s.size() == 1)) {
+    m_s.push_back('Z' - 'A');
+    m_s.push_back('Z' - 'A');
+    return L"ZZ";
+  }
+  int i = 0;
+  int n = m_s.size();
+  while (i < n) {
+    m_s[i]--;
+    if (m_s[i] >= 0) break;
+    m_s[i] = 'Z' - 'A';
+    i++;
+  }
+  if (i >= n) {
+    n--;
+    m_s.pop_back();
+  }
+  std::wstring s;
+  for (i = n - 1; i >= 0; i--) s.append(1, (wchar_t)(L'A' + m_s[i]));
+  return s;
+}
+
+//-------------------------------------------------------------------
+
+bool FlexibleNameCreator::setCurrent(std::wstring name) {
+  if (name.empty() || name.size() > 2) return false;
+  std::vector<int> newNameBuf;
+  for (std::wstring::iterator it = name.begin(); it != name.end(); ++it) {
+    int s = (int)((*it) - L'A');
+    if (s < 0 || s > 'Z' - 'A') return false;
+    newNameBuf.push_back(s);
+  }
+  m_s.clear();
+  for (int i = newNameBuf.size() - 1; i >= 0; i--) m_s.push_back(newNameBuf[i]);
+  return true;
+}
+
 //-----------------------------------------------------------------------------
 
 StopMotion::StopMotion() {
@@ -257,7 +296,8 @@ StopMotion::StopMotion() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 
   setToNextNewLevel();
-  //m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
+  // m_filePath = scene->getDefaultLevelPath(OVL_TYPE,
+  // m_levelName.toStdWString())
   //                 .getParentDir()
   //                 .getQString();
 }
@@ -1007,8 +1047,8 @@ void StopMotion::setXSheetFrameNumber(int frameNumber) {
 //-----------------------------------------------------------------
 
 void StopMotion::setCaptureNumberOfFrames(int frames) {
-    m_captureNumberOfFrames = frames;
-    emit(captureNumberOfFramesChanged(frames));
+  m_captureNumberOfFrames = frames;
+  emit(captureNumberOfFramesChanged(frames));
 }
 
 //-----------------------------------------------------------------
@@ -1440,15 +1480,15 @@ bool StopMotion::importImage() {
       scene->decodeFilePath(fullResFolder + TFilePath(levelName + L"..jpg"));
   TFilePath fullResFile(fullResFp.withFrame(frameNumber));
 
-
-  TFilePath fullResRawFile(fullResFile.getQString().replace(fullResFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+  TFilePath fullResRawFile(fullResFile.getQString().replace(
+      fullResFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
   m_tempRaw = fullResRawFile.getQString();
   TFilePath liveViewFp =
       scene->decodeFilePath(liveViewFolder + TFilePath(levelName + L"..jpg"));
   TFilePath liveViewFile(liveViewFp.withFrame(frameNumber));
 
   TFilePath tempFile = parentDir + "temp.jpg";
-  TFilePath tempRaw = parentDir + "temp.cr2";
+  TFilePath tempRaw  = parentDir + "temp.cr2";
 
   TXshSimpleLevel *sl = 0;
   TXshLevel *level    = scene->getLevelSet()->getLevel(levelName);
@@ -1581,10 +1621,9 @@ bool StopMotion::importImage() {
     TSystem::deleteFile(tempFile);
 
     if (TSystem::doesExistFileOrLevel(TFilePath(tempRaw))) {
-        TSystem::copyFile(fullResRawFile, tempRaw);
-        TSystem::deleteFile(tempRaw);
+      TSystem::copyFile(fullResRawFile, tempRaw);
+      TSystem::deleteFile(tempRaw);
     }
-    
 
     if (m_hasLineUpImage) {
       JpgConverter::saveJpg(m_lineUpImage, liveViewFile);
@@ -1643,8 +1682,8 @@ bool StopMotion::importImage() {
       xsh->insertColumn(col);
     }
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
-        xsh->insertCells(row + i, col);
-        xsh->setCell(row + i, col, TXshCell(sl, fid));
+      xsh->insertCells(row + i, col);
+      xsh->setCell(row + i, col, TXshCell(sl, fid));
     }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTime() == 0 || m_isTimeLapse)
@@ -1689,8 +1728,8 @@ bool StopMotion::importImage() {
   // if there is a column containing the same level
   if (foundRow >= 0) {
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
-        xsh->insertCells(row + i, foundCol);
-        xsh->setCell(row + i, foundCol, TXshCell(sl, fid));
+      xsh->insertCells(row + i, foundCol);
+      xsh->setCell(row + i, foundCol, TXshCell(sl, fid));
     }
     app->getCurrentColumn()->setColumnIndex(foundCol);
     if (getReviewTime() == 0 || m_isTimeLapse)
@@ -1706,7 +1745,7 @@ bool StopMotion::importImage() {
       xsh->insertColumn(col);
     }
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
-        xsh->setCell(row + i, col, TXshCell(sl, fid));
+      xsh->setCell(row + i, col, TXshCell(sl, fid));
     }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTime() == 0 || m_isTimeLapse)
@@ -1824,13 +1863,13 @@ void StopMotion::captureDslrImage() {
 
   TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
   TFilePath tempFile  = parentDir + "temp.jpg";
-  TFilePath tempRaw = parentDir + "temp.cr2";
+  TFilePath tempRaw   = parentDir + "temp.cr2";
 
   if (!TFileStatus(parentDir).doesExist()) {
     TSystem::mkDir(parentDir);
   }
   m_tempFile = tempFile.getQString();
-  m_tempRaw = tempRaw.getQString();
+  m_tempRaw  = tempRaw.getQString();
 
 #ifdef WITH_CANON
   m_canon->takePicture();
@@ -1900,13 +1939,13 @@ void StopMotion::takeTestShot() {
     ToonzScene *scene   = app->getCurrentScene()->getScene();
     TFilePath parentDir = scene->decodeFilePath(TFilePath(m_filePath));
     TFilePath tempFile  = parentDir + "temp.jpg";
-    TFilePath tempRaw = parentDir + "temp.cr2";
+    TFilePath tempRaw   = parentDir + "temp.cr2";
 
     if (!TFileStatus(parentDir).doesExist()) {
       TSystem::mkDir(parentDir);
     }
     m_tempFile = tempFile.getQString();
-    m_tempRaw = tempRaw.getQString();
+    m_tempRaw  = tempRaw.getQString();
     m_light->showOverlays();
     m_canon->takePicture();
   }
@@ -2000,18 +2039,19 @@ void StopMotion::saveTestShot() {
       TFilePath(levelName + L"+" + QString::number(fileNumber).toStdWString() +
                 L".jpg"));
 
-  TFilePath fullResRawFile(testsThumbsFile.getQString().replace(testsThumbsFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+  TFilePath fullResRawFile(testsThumbsFile.getQString().replace(
+      testsThumbsFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
   m_tempRaw = fullResRawFile.getQString();
 
   TFilePath tempFile = parentDir + "temp.jpg";
-  TFilePath tempRaw = parentDir + "temp.cr2";
+  TFilePath tempRaw  = parentDir + "temp.cr2";
 
   if (!m_usingWebcam) {
     TSystem::copyFile(testsFile, tempFile);
     TSystem::deleteFile(tempFile);
     if (TSystem::doesExistFileOrLevel(TFilePath(tempRaw))) {
-        TSystem::copyFile(fullResRawFile, tempRaw);
-        TSystem::deleteFile(tempRaw);
+      TSystem::copyFile(fullResRawFile, tempRaw);
+      TSystem::deleteFile(tempRaw);
     }
   } else {
     JpgConverter::saveJpg(m_newImage, testsFile);
@@ -2489,14 +2529,16 @@ bool StopMotion::exportImageSequence() {
       sourceFile = actualLevelFp.withFrame(cellNumber);
     }
 
-    TFilePath sourceRawFile(sourceFile.getQString().replace(sourceFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+    TFilePath sourceRawFile(sourceFile.getQString().replace(
+        sourceFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
 
     if (!TFileStatus(sourceFile).doesExist()) {
       DVGui::error(tr("Could not find the source file."));
       return false;
     }
     exportFile = exportFilePath.withFrame(exportFrameNumber);
-    TFilePath exportRawFile(exportFile.getQString().replace(exportFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
+    TFilePath exportRawFile(exportFile.getQString().replace(
+        exportFile.getQString().lastIndexOf("jpg"), 3, "cr2"));
     if (TFileStatus(exportFile).doesExist()) {
       QString question = tr("Overwrite existing files?");
       int ret          = DVGui::MsgBox(question, QObject::tr("Overwrite"),
@@ -2505,7 +2547,7 @@ bool StopMotion::exportImageSequence() {
     }
     TSystem::copyFile(exportFile, sourceFile);
     if (TSystem::doesExistFileOrLevel(sourceRawFile)) {
-        TSystem::copyFile(exportRawFile, sourceRawFile);
+      TSystem::copyFile(exportRawFile, sourceRawFile);
     }
     exportFrameNumber++;
     if (!TFileStatus(exportFile).doesExist()) {

@@ -1985,10 +1985,6 @@ void MainWindow::defineActions() {
   menuAct = createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
   menuAct->setIcon(createQIcon("cleanup"));
 
-  menuAct =
-      createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
-  menuAct->setIcon(createQIcon("camera_capture"));
-
   menuAct = createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   menuAct->setIcon(createQIcon("add_cells"));
 
@@ -2387,8 +2383,9 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
-  createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
+  menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
                           "");
+  menuAct->setIcon(createQIcon("camera_capture"));
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
   menuAct->setIcon(createQIcon("viewer"));

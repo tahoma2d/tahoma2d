@@ -2,6 +2,7 @@
 
 #include "toonzqt/intfield.h"
 #include "toonzqt/doublefield.h"
+#include "stopmotion.h"
 
 #include <QPainter>
 #include <QMouseEvent>
@@ -320,8 +321,10 @@ CameraCaptureLevelControl::CameraCaptureLevelControl(QWidget* parent)
 //-----------------------------------------------------------------------------
 
 void CameraCaptureLevelControl::onHistogramValueChanged(int itemId) {
+  StopMotion* sm = StopMotion::instance();
   if (itemId == CameraCaptureLevelHistogram::ThresholdSlider) {
     m_thresholdFld->setValue(m_histogram->threshold());
+    sm->m_webcam->setThreshold(m_histogram->threshold());
     return;
   }
   if (itemId == CameraCaptureLevelHistogram::BlackSlider) {
@@ -333,7 +336,10 @@ void CameraCaptureLevelControl::onHistogramValueChanged(int itemId) {
   } else if (itemId == CameraCaptureLevelHistogram::GammaSlider) {
     m_gammaFld->setValue(m_histogram->gamma());
   }
-  computeLut();
+  sm->m_webcam->setBlack(m_blackFld->getValue());
+  sm->m_webcam->setWhite(m_whiteFld->getValue());
+  sm->m_webcam->setGamma(m_histogram->gamma());
+  sm->m_webcam->computeLut();
 }
 
 //-----------------------------------------------------------------------------
@@ -359,43 +365,4 @@ void CameraCaptureLevelControl::setMode(bool color_grayscale) {
   m_gammaFld->setVisible(color_grayscale);
   m_thresholdFld->setVisible(!color_grayscale);
   update();
-}
-
-//-----------------------------------------------------------------------------
-
-void CameraCaptureLevelControl::adjustLevel(cv::Mat& image) {
-  int black   = m_histogram->black();
-  int white   = m_histogram->white();
-  float gamma = m_histogram->gamma();
-  if (black == 0 && white == 255 && gamma == 1.0) return;
-
-  cv::LUT(image, m_lut, image);
-}
-
-void CameraCaptureLevelControl::binarize(cv::Mat& image) {
-  cv::threshold(image, image, m_histogram->threshold(), 255, cv::THRESH_BINARY);
-}
-
-void CameraCaptureLevelControl::computeLut() {
-  int black   = m_histogram->black();
-  int white   = m_histogram->white();
-  float gamma = m_histogram->gamma();
-
-  const float maxChannelValueF = 255.0f;
-
-  float value;
-
-  uchar* p = m_lut.data;
-  for (int i = 0; i < 256; i++) {
-    if (i <= black)
-      value = 0.0f;
-    else if (i >= white)
-      value = 1.0f;
-    else {
-      value = (float)(i - black) / (float)(white - black);
-      value = std::pow(value, 1.0f / gamma);
-    }
-
-    p[i] = (uchar)std::floor(value * maxChannelValueF);
-  }
 }
