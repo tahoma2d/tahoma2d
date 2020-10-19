@@ -28,6 +28,14 @@
 #include "tpixelutils.h"
 #include "iocommand.h"
 
+#ifdef MACOSX
+
+#include <AudioToolbox/AudioToolbox.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <AVFoundation/AVFoundation.h>
+
+#endif
+
 // Qt includes
 #include <QMainWindow>
 #include <QAudio>
