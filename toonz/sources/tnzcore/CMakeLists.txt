@@ -244,19 +244,11 @@ set(SOURCES
     ../common/tvrender/tfont_qt.cpp
 )
 
-if(BUILD_TARGET_WIN)
-    set(SOURCES ${SOURCES}
-        ../common/tsound/tsound_nt.cpp
-    )
-elseif(BUILD_TARGET_APPLE)
-    set(SOURCES ${SOURCES}
-        ../common/tsound/tsound_qt.cpp
-    )
-elseif(BUILD_TARGET_UNIX)
-    set(SOURCES ${SOURCES}
-        ../common/tsound/tsound_qt.cpp
-    )
-endif()
+
+set(SOURCES ${SOURCES}
+    ../common/tsound/tsound_qt.cpp
+)
+
 
 add_translation(tnzcore ${HEADERS} ${SOURCES})
 

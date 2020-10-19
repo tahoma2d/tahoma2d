@@ -220,22 +220,13 @@ TXshSoundColumn::TXshSoundColumn()
     : m_player(0)
     , m_volume(0.4)
     , m_currentPlaySoundTrack(0)
-    , m_isOldVersion(false) {
-  m_timer.setInterval(500);
-  m_timer.setSingleShot(true);
-  m_timer.stop();
-
-  connect(&m_timer, SIGNAL(timeout()), this, SLOT(onTimerOut()));
-}
+    , m_isOldVersion(false) {}
 
 //-----------------------------------------------------------------------------
 
 TXshSoundColumn::~TXshSoundColumn() {
   clear();
-  if (m_timer.isActive()) {
-    m_timer.stop();
-    stop();
-  }
+  stop();
 }
 
 //-----------------------------------------------------------------------------
@@ -788,11 +779,7 @@ void TXshSoundColumn::updateFrameRate(double fps) {
 void TXshSoundColumn::setVolume(double value) {
   m_volume = tcrop<double>(value, 0.0, 1.0);
   if (m_player && m_player->isPlaying())
-#ifndef _WIN32
     m_player->setVolume(m_volume);
-#else
-    stop();
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -808,19 +795,10 @@ void TXshSoundColumn::play(TSoundTrackP soundtrack, int s0, int s1, bool loop) {
 
   if (m_player) {
     try {
-#ifndef _WIN32
       m_player->prepareVolume(m_volume);
       TSoundTrackP mixedTrack = soundtrack;
-#else
-      TSoundTrackP mixedTrack = TSoundTrack::create(
-          soundtrack->getFormat(), soundtrack->getSampleCount());
-      mixedTrack = TSop::mix(mixedTrack, soundtrack, 1.0, m_volume);
-#endif
       m_player->play(mixedTrack, s0, s1, loop);
       m_currentPlaySoundTrack = mixedTrack;
-#ifdef _WIN32
-      m_timer.start();
-#endif
     } catch (TSoundDeviceException &) {
     }
   }
@@ -939,13 +917,6 @@ void TXshSoundColumn::clear() {
   }
   m_levels.clear();
 }
-//-----------------------------------------------------------------------------
-
-void TXshSoundColumn::onTimerOut() {
-#ifdef _WIN32
-  if (m_player && m_player->isAllQueuedItemsPlayed()) stop();
-#endif
-}
 
 //-----------------------------------------------------------------------------
 
@@ -954,6 +925,7 @@ void TXshSoundColumn::scrub(int fromFrame, int toFrame) {
   try {
     TSoundTrackP soundTrack = getOverallSoundTrack(fromFrame, toFrame + 1);
     if (!soundTrack) return;
+    if (m_player && m_player->isPlaying()) m_player->stop();
     play(soundTrack, 0, soundTrack->getSampleCount(), false);
   } catch (TSoundDeviceException &e) {
     if (e.getType() == TSoundDeviceException::NoDevice) {
@@ -1015,11 +987,6 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
     format.m_signedSample = true;
   }
 
-// We prefer to have 22050 as a maximum sampleRate (to avoid crashes or
-// another issues)
-#ifdef _WIN32
-  if (format.m_sampleRate >= 44100) format.m_sampleRate = 22050;
-#else
   QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
   if (info.deviceName().length() == 0) throw TSoundDeviceException(TSoundDeviceException::NoDevice,
 								  "No device found, check QAudio backends");
@@ -1043,7 +1010,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
     else
       format.m_signedSample = false;
   }
-#endif
+
   // Create the soundTrack
   double samplePerFrame = format.m_sampleRate / fps;
 

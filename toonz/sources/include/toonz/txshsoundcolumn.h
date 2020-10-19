@@ -8,7 +8,6 @@
 #include "tsound.h"
 
 #include <QList>
-#include <QTimer>
 
 #undef DVAPI
 #undef DVVAR
@@ -45,8 +44,6 @@ class DVAPI TXshSoundColumn final : public QObject, public TXshCellColumn {
   //! From 0.0 to 1.0
   double m_volume;
   bool m_isOldVersion;
-
-  QTimer m_timer;
 
 public:
   TXshSoundColumn();
@@ -153,9 +150,6 @@ protected:
   ColumnLevel *getColumnLevel(int index);
   int getColumnLevelIndex(ColumnLevel *ss) const;
   void clear();
-
-protected slots:
-  void onTimerOut();
 };
 
 #ifdef _WIN32

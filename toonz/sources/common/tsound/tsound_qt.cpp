@@ -6,7 +6,11 @@
 #include "tthreadmessage.h"
 
 #include <errno.h>
+
+#ifndef _WIN32
 #include <unistd.h>
+#endif
+
 #include <queue>
 #include <set>
 

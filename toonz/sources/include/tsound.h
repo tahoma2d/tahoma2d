@@ -373,7 +373,7 @@ Returns true if on the machine there is an audio card installed correctly
 
   bool isFormatSupported(const TSoundTrackFormat &);
 
-#ifndef _WIN32
+
   //! Returns true if is possible to change volume setting on current input
   //! interface
   bool supportsVolume();
@@ -384,7 +384,6 @@ Returns true if on the machine there is an audio card installed correctly
   //! Set the value of volume , between [0,1]
   bool setVolume(double value);
   void prepareVolume(double volume);
-#endif
 
   //! Open the device according to the features of soundtrack
   bool open(const TSoundTrackP &st);
@@ -412,11 +411,6 @@ interaction between sound and mouse
 
   //! Returns if the device is busy with a playback
   bool isPlaying() const;
-
-#ifdef _WIN32
-  //! Return true if the playback of all soundtracks is ended.
-  bool isAllQueuedItemsPlayed();
-#endif
 
   //! Returns if the status of player is in looping
   bool isLooping();
