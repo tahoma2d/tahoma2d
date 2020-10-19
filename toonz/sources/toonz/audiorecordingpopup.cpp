@@ -286,7 +286,9 @@ void AudioRecordingPopup::onRecordButtonPressed() {
 //-----------------------------------------------------------------------------
 
 #ifdef MACOSX
-void AudioRecordingPopup::dealWithMicrophone() {
+// based on
+// https://stackoverflow.com/questions/56084303/opencv-command-line-app-cant-access-camera-under-macos-mojave
+bool AudioRecordingPopup::dealWithMicrophone() {
   AVAuthorizationStatus st =
       [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
   if (st == AVAuthorizationStatusAuthorized) {
