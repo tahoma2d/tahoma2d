@@ -67,6 +67,9 @@ protected:
   void hideEvent(QHideEvent *event);
   void makePaths();
   void resetEverything();
+#ifdef MACOSX
+  bool dealWithMicrophone();
+#endif
 
 private slots:
   void onRecordButtonPressed();

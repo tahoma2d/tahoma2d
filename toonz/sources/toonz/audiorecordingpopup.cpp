@@ -214,6 +214,11 @@ AudioRecordingPopup::~AudioRecordingPopup() {}
 //-----------------------------------------------------------------------------
 
 void AudioRecordingPopup::onRecordButtonPressed() {
+#ifdef MACOSX
+  if (!dealWithMicrophone()) return;
+
+#endif
+
   if (m_audioRecorder->state() == QAudioRecorder::StoppedState) {
     if (m_audioRecorder->status() == QMediaRecorder::UnavailableStatus) {
       DVGui::warning(
@@ -278,6 +283,37 @@ void AudioRecordingPopup::onRecordButtonPressed() {
   }
 }
 
+//-----------------------------------------------------------------------------
+
+#ifdef MACOSX
+void AudioRecordingPopup::dealWithMicrophone() {
+  AVAuthorizationStatus st =
+      [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+  if (st == AVAuthorizationStatusAuthorized) {
+    return true;
+  }
+
+  dispatch_group_t group = dispatch_group_create();
+
+  __block bool accessGranted = false;
+
+  if (st != AVAuthorizationStatusAuthorized) {
+    dispatch_group_enter(group);
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
+                             completionHandler:^(BOOL granted) {
+
+                               accessGranted = granted;
+                               NSLog(@"Granted!");
+                               dispatch_group_leave(group);
+                             }];
+  }
+
+  dispatch_group_wait(
+      group, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)));
+
+  return accessGranted;
+}
+#endif
 //-----------------------------------------------------------------------------
 
 void AudioRecordingPopup::updateRecordDuration(qint64 duration) {
