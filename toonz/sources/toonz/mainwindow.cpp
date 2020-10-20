@@ -1067,7 +1067,7 @@ void MainWindow::onSupportTahoma2D() {
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://github.com/turtletooth/tahoma2d/releases/latest")));
+      QUrl(tr("https://tahoma.readthedocs.io/en/latest/whats_new.html")));
 }
 
 //-----------------------------------------------------------------------------
