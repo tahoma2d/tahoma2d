@@ -128,9 +128,15 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
   xsh->getCellRange(index, r0, r1);
   if (0 <= r0 && r0 <= r1) {
     // column color depends on the level type in the top-most occupied cell
-    TXshCell cell = xsh->getCell(r0, index);
-    int ltype;
-    getCellTypeAndColors(ltype, color, sideColor, cell);
+    if (xsh->getColumn(index)->getSoundColumn()) {
+        color = m_soundColumnColor;
+        sideColor = m_soundColumnBorderColor;
+    }
+    else {
+        TXshCell cell = xsh->getCell(r0, index);
+        int ltype;
+        getCellTypeAndColors(ltype, color, sideColor, cell);
+    }
   }
   if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }

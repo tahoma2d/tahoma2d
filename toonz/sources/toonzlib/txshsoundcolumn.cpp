@@ -6,7 +6,6 @@
 #include "toonz/toonzscene.h"
 #include "toonz/tproject.h"
 #include "toonz/sceneproperties.h"
-#include "toonz/txshsoundlevel.h"
 
 #include "tstream.h"
 #include "toutputproperties.h"
@@ -16,67 +15,7 @@
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
 
-//=============================================================================
-//  ColumnLevel
-//=============================================================================
 
-class ColumnLevel {
-  TXshSoundLevelP m_soundLevel;
-
-  /*!Offsets: in frames. Start offset is a positive number.*/
-  int m_startOffset;
-  /*!Offsets: in frames. End offset is a positive number(to subtract to..).*/
-  int m_endOffset;
-
-  //! Starting frame in the timeline
-  int m_startFrame;
-
-  //! frameRate
-  double m_fps;
-
-public:
-  ColumnLevel(TXshSoundLevel *soundLevel = 0, int startFrame = -1,
-              int startOffset = -1, int endOffset = -1, double fps = -1);
-  ~ColumnLevel();
-  ColumnLevel *clone() const;
-
-  //! Overridden from TXshLevel
-  TXshSoundLevel *getSoundLevel() const { return m_soundLevel.getPointer(); }
-  void setSoundLevel(TXshSoundLevelP level) { m_soundLevel = level; }
-
-  void loadData(TIStream &is);
-  void saveData(TOStream &os);
-
-  void setStartOffset(int value);
-  int getStartOffset() const { return m_startOffset; }
-
-  void setEndOffset(int value);
-  int getEndOffset() const { return m_endOffset; }
-
-  void setOffsets(int startOffset, int endOffset);
-
-  //! Return the starting frame without offsets.
-  void setStartFrame(int frame) { m_startFrame = frame; }
-  int getStartFrame() const { return m_startFrame; }
-
-  //! Return the ending frame without offsets.
-  int getEndFrame() const;
-
-  //! Return frame count without offset.
-  int getFrameCount() const;
-
-  //! Return frame count with offset.
-  int getVisibleFrameCount() const;
-
-  //! Return start frame with offset.
-  int getVisibleStartFrame() const;
-  //! Return last frame with offset.
-  int getVisibleEndFrame() const;
-  //! Updates m_startOfset and m_endOffset.
-  void updateFrameRate(double newFrameRate);
-
-  void setFrameRate(double fps) { m_fps = fps; }
-};
 
 //=============================================================================
 
@@ -372,14 +311,30 @@ const TXshCell &TXshSoundColumn::getCell(int row) const {
   if (!l) return emptyCell;
   TXshSoundLevel *soundLevel = l->getSoundLevel();
   TXshCell *cell = new TXshCell(soundLevel, TFrameId(row - l->getStartFrame()));
-  // La nuova cella aggiunge un reference al TXshSoundLevel; poiche' le celle
-  // delle
-  // TXshSoundColumn non sono strutture persistenti ma sono strutture dinamiche
-  // (vengono ricreate ogni volta) devo occuparmi di fare il release altrimenti
-  // il
-  // TXshSoundLevel non viene mai buttato.
+  // The new cell adds a reference to the TXshSoundLevel; 
+  // since the cells of the TXshSoundColumn are not persistent structures 
+  // but are dynamic structures (they are recreated every time) I have to take 
+  // care of making the release otherwise the TXshSoundLevel is never thrown 
+  // away.
   soundLevel->release();
   return *cell;
+}
+
+//-----------------------------------------------------------------------------
+
+TXshCell TXshSoundColumn::getSoundCell(int row) {
+    static TXshCell emptyCell;
+
+    ColumnLevel* l = getColumnLevelByFrame(row);
+    if (row < 0 || row < getFirstRow() || row > getMaxFrame()) {
+        if (l) emptyCell.m_level = l->getSoundLevel();
+        return emptyCell;
+    }
+
+    if (!l) return emptyCell;
+    TXshSoundLevel* soundLevel = l->getSoundLevel();
+    TXshCell cell(soundLevel, TFrameId(row - l->getStartFrame()));
+    return cell;
 }
 
 //-----------------------------------------------------------------------------

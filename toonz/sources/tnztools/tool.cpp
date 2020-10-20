@@ -855,10 +855,12 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // find the nearest level before it
   if (levelType == NO_XSHLEVEL &&
       !m_application->getCurrentFrame()->isEditingLevel()) {
-    TXshCell cell = xsh->getCell(rowIndex, columnIndex);
-    xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
-    sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
-    levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      if (!column || (column && !column->getSoundColumn())) {
+          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+          xl = cell.isEmpty() ? 0 : (TXshLevel*)(&cell.m_level);
+          sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+          levelType = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      }
   }
 
   if (Preferences::instance()->isAutoCreateEnabled()) {
@@ -866,16 +868,18 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&
         !m_application->getCurrentFrame()->isEditingLevel()) {
-      int r0, r1;
-      xsh->getCellRange(columnIndex, r0, r1);
-      for (int r = std::min(r1, rowIndex); r > r0; r--) {
-        TXshCell cell = xsh->getCell(r, columnIndex);
-        if (cell.isEmpty()) continue;
-        xl        = (TXshLevel *)(&cell.m_level);
-        sl        = cell.getSimpleLevel();
-        levelType = cell.m_level->getType();
-        break;
-      }
+        if (!column || (column && !column->getSoundColumn())) {
+            int r0, r1;
+            xsh->getCellRange(columnIndex, r0, r1);
+            for (int r = std::min(r1, rowIndex); r > r0; r--) {
+                TXshCell cell = xsh->getCell(r, columnIndex);
+                if (cell.isEmpty()) continue;
+                xl = (TXshLevel*)(&cell.m_level);
+                sl = cell.getSimpleLevel();
+                levelType = cell.m_level->getType();
+                break;
+            }
+        }
     }
 
     // If the current tool does not match the current type, check for
