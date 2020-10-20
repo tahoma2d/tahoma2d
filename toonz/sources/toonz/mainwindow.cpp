@@ -161,9 +161,8 @@ void writeRoomList(std::vector<Room *> &rooms) {
 //-----------------------------------------------------------------------------
 
 void makePrivate(Room *room) {
-  TFilePath layoutDir       = ToonzFolder::getMyRoomsDir();
-  TFilePath roomPath        = room->getPath();
-  std::string mbSrcFileName = roomPath.getName() + "_menubar.xml";
+  TFilePath layoutDir = ToonzFolder::getMyRoomsDir();
+  TFilePath roomPath  = room->getPath();
   if (roomPath == TFilePath() || roomPath.getParentDir() != layoutDir) {
     int count = 1;
     for (;;) {
@@ -173,25 +172,6 @@ void makePrivate(Room *room) {
     room->setPath(roomPath);
     TSystem::touchParentDir(roomPath);
     room->save();
-  }
-  /*- create private menubar settings if not exists -*/
-  std::string mbDstFileName = roomPath.getName() + "_menubar.xml";
-  TFilePath myMBPath        = layoutDir + mbDstFileName;
-  if (!TFileStatus(myMBPath).isReadable()) {
-    TFilePath templateRoomMBPath =
-        ToonzFolder::getTemplateRoomsDir() + mbSrcFileName;
-    if (TFileStatus(templateRoomMBPath).doesExist())
-      TSystem::copyFile(myMBPath, templateRoomMBPath);
-    else {
-      TFilePath templateFullMBPath =
-          ToonzFolder::getTemplateRoomsDir() + "menubar_template.xml";
-      if (TFileStatus(templateFullMBPath).doesExist())
-        TSystem::copyFile(myMBPath, templateFullMBPath);
-      else
-        DVGui::warning(
-            QObject::tr("Cannot open menubar settings template file. "
-                        "Re-installing Toonz will solve this problem."));
-    }
   }
 }
 
@@ -684,8 +664,7 @@ void MainWindow::refreshWriteSettings() { writeSettings(); }
 void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
 
-  /*-- Pageを追加すると同時にMenubarを追加する --*/
-  StackedMenuBar *stackedMenuBar = m_topBar->getStackedMenuBar();
+  m_topBar->loadMenubar();
 
   std::vector<Room *> rooms;
 
@@ -713,10 +692,6 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getName());
 
-      /*- ここでMenuBarファイルをロードする -*/
-      std::string mbFileName = roomPath.getName() + "_menubar.xml";
-      stackedMenuBar->loadAndAddMenubar(ToonzFolder::getRoomsFile(mbFileName));
-
       // room->setDockOptions(QMainWindow::DockOptions(
       //  (QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks) &
       //  ~QMainWindow::AllowTabbedDocks));
@@ -733,31 +708,26 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
     Room *pltEditRoom = createPltEditRoom();
     m_stackedWidget->addWidget(pltEditRoom);
     rooms.push_back(pltEditRoom);
-    stackedMenuBar->createMenuBarByName(pltEditRoom->getName());
 
     // InknPaintRoom
     Room *inknPaintRoom = createInknPaintRoom();
     m_stackedWidget->addWidget(inknPaintRoom);
     rooms.push_back(inknPaintRoom);
-    stackedMenuBar->createMenuBarByName(inknPaintRoom->getName());
 
     // XsheetRoom
     Room *xsheetRoom = createXsheetRoom();
     m_stackedWidget->addWidget(xsheetRoom);
     rooms.push_back(xsheetRoom);
-    stackedMenuBar->createMenuBarByName(xsheetRoom->getName());
 
     // BatchesRoom
     Room *batchesRoom = createBatchesRoom();
     m_stackedWidget->addWidget(batchesRoom);
     rooms.push_back(batchesRoom);
-    stackedMenuBar->createMenuBarByName(batchesRoom->getName());
 
     // BrowserRoom
     Room *browserRoom = createBrowserRoom();
     m_stackedWidget->addWidget(browserRoom);
     rooms.push_back(browserRoom);
-    stackedMenuBar->createMenuBarByName(browserRoom->getName());
   }
 
   /*- If the layout files were loaded from template, then save them as private
@@ -1212,11 +1182,6 @@ void MainWindow::deleteRoom(int index) {
     m_topBar->getRoomTabWidget()->insertTab(index, room->getName());
     return;
   }
-
-  /*- delete menubar settings file as well -*/
-  std::string mbFileName = fp.getName() + "_menubar.xml";
-  TFilePath mbFp         = fp.getParentDir() + mbFileName;
-  TSystem::deleteFile(mbFp);
 
   // The old room index must be updated if index < of it
   if (index < m_oldRoomIndex) m_oldRoomIndex--;
