@@ -14,6 +14,7 @@
 #include "toonz/stage.h"
 #include "toonz/textureutils.h"
 #include "toonz/levelset.h"
+#include "toonz/tcamera.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -1968,9 +1969,69 @@ void TXshSimpleLevel::invalidateFrame(const TFrameId &fid) {
 }
 
 //-----------------------------------------------------------------------------
+// note that the palette will always be replaced by the new one.
+void TXshSimpleLevel::initializePalette() {
+  assert(getScene());
+  int type = getType();
+  if (type == TZP_XSHLEVEL || type == PLI_XSHLEVEL) setPalette(new TPalette());
+  if (type == OVL_XSHLEVEL)
+    setPalette(FullColorPalette::instance()->getPalette(getScene()));
+  TPalette *palette = getPalette();
+  if (palette && type != OVL_XSHLEVEL) {
+    palette->setPaletteName(getName());
+    palette->setDirtyFlag(true);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshSimpleLevel::initializeResolutionAndDpi(const TDimension &dim,
+                                                 double dpi) {
+  assert(getScene());
+  if (getProperties()->getImageRes() != TDimension() &&
+      getProperties()->getDpi() != TPointD())
+    return;
+
+  double dpiY = dpi;
+  getProperties()->setDpiPolicy(LevelProperties::DP_ImageDpi);
+  if (dim == TDimension()) {
+    double w, h;
+    Preferences *pref = Preferences::instance();
+    if (pref->isNewLevelSizeToCameraSizeEnabled()) {
+      TDimensionD camSize = getScene()->getCurrentCamera()->getSize();
+      w                   = camSize.lx;
+      h                   = camSize.ly;
+      getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
+      dpi  = getScene()->getCurrentCamera()->getDpi().x;
+      dpiY = getScene()->getCurrentCamera()->getDpi().y;
+    } else {
+      w    = pref->getDefLevelWidth();
+      h    = pref->getDefLevelHeight();
+      dpi  = pref->getDefLevelDpi();
+      dpiY = dpi;
+    }
+
+    getProperties()->setImageRes(TDimension(tround(w * dpi), tround(h * dpiY)));
+  } else
+    getProperties()->setImageRes(dim);
+
+  getProperties()->setImageDpi(TPointD(dpi, dpiY));
+  getProperties()->setDpi(dpi);
+}
+
+//-----------------------------------------------------------------------------
 
 // crea un frame con tipo, dimensioni, dpi, ecc. compatibili con il livello
 TImageP TXshSimpleLevel::createEmptyFrame() {
+  // In case this is the first frame to be created in this level (i.e. the level
+  // file was missing when loading resources) initialize the level in the same
+  // manner as createNewLevel() in order to avoid crash. This can be happened if
+  // the level was not saved after creating and being placed in the xsheet.
+  if (isEmpty()) {
+    initializePalette();
+    initializeResolutionAndDpi();
+  }
+
   TImageP result;
 
   switch (m_type) {
