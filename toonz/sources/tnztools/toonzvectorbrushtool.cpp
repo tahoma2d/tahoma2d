@@ -29,6 +29,7 @@
 #include "toonz/stage2.h"
 #include "toonz/preferences.h"
 #include "toonz/tonionskinmaskhandle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -37,6 +38,7 @@
 #include "tenv.h"
 #include "tregion.h"
 #include "tinbetween.h"
+#include "tsystem.h"
 
 #include "tgl.h"
 #include "trop.h"
@@ -2063,7 +2065,7 @@ void ToonzVectorBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_vector.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() + "brush_vector.txt");
   }
 
   // Rebuild the presets property entries

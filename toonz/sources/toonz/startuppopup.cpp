@@ -635,7 +635,10 @@ void StartupPopup::onProjectChanged(int index) {
 void StartupPopup::loadPresetList() {
   m_presetCombo->clear();
   m_presetCombo->addItem("...");
-  m_presetListFile = ToonzFolder::getReslistPath(false).getQString();
+  m_presetListFile = ToonzFolder::getMyReslistPath(false).getQString();
+  if (!TFileStatus(TFilePath(m_presetListFile)).doesExist())
+    TSystem::copyFile(TFilePath(m_presetListFile),
+                      ToonzFolder::getReslistPath(false));
   QFile file(m_presetListFile);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream in(&file);

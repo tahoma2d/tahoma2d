@@ -10,8 +10,7 @@
 //#include <fstream.h>
 
 inline TFilePath getHistoryFile() {
-  return TEnv::getConfigDir() +
-         (TSystem::getUserName().toStdString() + "_history.txt");
+  return ToonzFolder::getMyModuleDir() + L"file_history.txt";
 }
 
 std::string History::Day::getDate() const {
