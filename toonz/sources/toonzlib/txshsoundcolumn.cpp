@@ -880,7 +880,7 @@ void TXshSoundColumn::scrub(int fromFrame, int toFrame) {
   try {
     TSoundTrackP soundTrack = getOverallSoundTrack(fromFrame, toFrame + 1);
     if (!soundTrack) return;
-    if (m_player && m_player->isPlaying()) m_player->stop();
+    //if (m_player && m_player->isPlaying()) m_player->stop();
     play(soundTrack, 0, soundTrack->getSampleCount(), false);
   } catch (TSoundDeviceException &e) {
     if (e.getType() == TSoundDeviceException::NoDevice) {
