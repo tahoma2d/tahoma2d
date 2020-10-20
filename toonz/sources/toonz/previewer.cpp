@@ -865,10 +865,7 @@ bool Previewer::Imp::doSaveRenderedFrames(TFilePath fp) {
   }
 
   if (fp.getWideName() == L"") fp = fp.withName(scene->getSceneName());
-  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE || ext == "pct" ||
-      fp.getType() == "pic" || ext == "pict")  // pct e' un formato"livello" (ha
-                                               // i settings di quicktime) ma
-                                               // fatto di diversi frames
+  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE)  
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
 
   fp          = scene->decodeFilePath(fp);

@@ -432,7 +432,6 @@ if(BUILD_TARGET_WIN)
     if(PLATFORM EQUAL 32)
         include_directories(
             SYSTEM
-            ${SDKROOT}/quicktime/QT73SDK/CIncludes
         )
     endif()
 endif()

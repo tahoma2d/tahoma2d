@@ -226,7 +226,7 @@ public:
 //  Some useful utility inlines
 
 inline bool isMovieType(std::string type) {
-  return (type == "mov" || type == "avi" || type == "3gp" || type == "webm" ||
+  return (type == "avi" || type == "webm" ||
           type == "mp4");
 }
 
@@ -241,7 +241,7 @@ inline bool isMovieType(const TFilePath &fp) {
 
 inline bool doesSupportRandomAccess(const TFilePath &fp,
                                     bool isToonzOutput = false) {
-  return (fp.getDots() == "..") || (isToonzOutput && fp.getType() == "mov");
+  return (fp.getDots() == "..");
 }
 
 #endif

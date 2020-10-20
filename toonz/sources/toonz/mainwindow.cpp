@@ -3892,11 +3892,6 @@ void RecentFiles::loadRecentFiles() {
   if (!levels.isEmpty()) {
     for (i = 0; i < levels.size(); i++) {
       QString path = levels.at(i).toString();
-#ifdef x64
-      if (path.endsWith(".mov") || path.endsWith(".3gp") ||
-          path.endsWith(".pct") || path.endsWith(".pict"))
-        continue;
-#endif
       m_recentLevels.append(path);
     }
   } else {

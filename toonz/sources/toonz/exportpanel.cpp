@@ -371,8 +371,7 @@ you want to do?";*/
     if (m_frame >= totalFrameCount &&
         Preferences::instance()->isGeneratedMovieViewEnabled()) {
       if (Preferences::instance()->isDefaultViewerEnabled() &&
-          (outPath.getType() == "mov" || outPath.getType() == "avi" ||
-           outPath.getType() == "3gp")) {
+          (outPath.getType() == "avi")) {
         QString name = QString::fromStdString(outPath.getName());
 
         if (!TSystem::showDocument(outPath)) {
@@ -857,7 +856,6 @@ ExportPanel::ExportPanel(QWidget *parent, Qt::WFlags flags)
   m_fileFormat->setFixedHeight(DVGui::WidgetHeight + 2);
   connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
           SLOT(onFormatChanged(const QString &)));
-  // m_fileFormat->setCurrentIndex(formats.indexOf("mov"));
 
   QPushButton *fileFormatButton = new QPushButton(QString(tr("Options")));
   fileFormatButton->setMinimumWidth(75);
@@ -988,10 +986,7 @@ void ExportPanel::generateMovie() {
   QString path      = m_saveInFileFld->getPath();
   TFilePath outPath(path.toStdWString());
   outPath = (outPath + m_fileNameFld->text().toStdWString()).withType(ext);
-  if (TFileType::getInfo(outPath) == TFileType::RASTER_IMAGE ||
-      outPath.getType() == "pct" || outPath.getType() == "pic" ||
-      outPath.getType() == "pict")  // pct e' un formato"livello" (ha i settings
-                                    // di quicktime) ma fatto di diversi frames
+  if (TFileType::getInfo(outPath) == TFileType::RASTER_IMAGE)
     outPath = outPath.withFrame(TFrameId::EMPTY_FRAME);
   RenderController::instance()->generateMovie(scene->decodeFilePath(outPath));
 }

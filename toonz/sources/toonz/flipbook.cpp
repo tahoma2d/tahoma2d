@@ -367,17 +367,14 @@ LoadImagesPopup::LoadImagesPopup(FlipBook *flip)
   m_shrinkField = new DVGui::LineEdit("1", this);
 
   // Define the append/load filter types
-  m_appendFilterTypes << "3gp"
-                      << "mov"
-                      << "jpg"
+  m_appendFilterTypes << "jpg"
                       << "png"
                       << "tga"
                       << "tif"
                       << "tiff"
                       << "bmp"
                       << "sgi"
-                      << "rgb"
-                      << "nol";
+                      << "rgb";
 
 #ifdef _WIN32
   m_appendFilterTypes << "avi";
@@ -658,10 +655,7 @@ bool FlipBook::doSaveImages(TFilePath fp) {
     return true;
   }
 
-  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE || ext == "pct" ||
-      ext == "pic" || ext == "pict")  // pct e' un formato"livello" (ha i
-                                      // settings di quicktime) ma fatto di
-                                      // diversi frames
+  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE)  
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
 
   fp          = scene->decodeFilePath(fp);
@@ -2228,8 +2222,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   }
 
   // Movie files must not have the ".." extension
-  if ((path.getType() == "mov" || path.getType() == "avi" ||
-       path.getType() == "3gp") &&
+  if ((path.getType() == "avi") &&
       path.isLevelName()) {
     DVGui::warning(QObject::tr("%1  has an invalid extension format.")
                        .arg(QString::fromStdString(path.getLevelName())));
@@ -2240,7 +2233,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   if (path.getType() == "scr") return NULL;
 
   // Avi and movs may be viewed by an external viewer, depending on preferences
-  if ((path.getType() == "mov" || path.getType() == "avi") && !flipbook) {
+  if ((path.getType() == "avi") && !flipbook) {
     QString str;
     QSettings().value("generatedMovieViewEnabled", str);
     if (str.toInt() != 0) {
