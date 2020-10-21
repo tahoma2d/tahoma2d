@@ -445,8 +445,8 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
   m_paletteViewer->setLevelHandle(app->getCurrentLevel());
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
-  connect(sceneHandle, SIGNAL(sceneSwitched()), SLOT(onSceneSwitched()));
-
+  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
+  assert(ret);
   CurrentStyleChangeCommand *currentStyleChangeCommand =
       new CurrentStyleChangeCommand();
   m_paletteViewer->setChangeStyleCommand(currentStyleChangeCommand);
@@ -577,6 +577,7 @@ void PaletteViewerPanel::showEvent(QShowEvent *) {
   TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
   bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
                      this, SLOT(onPreferenceChanged(const QString &)));
+  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
   assert(ret);
 }
 
