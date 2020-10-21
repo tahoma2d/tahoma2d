@@ -27,6 +27,7 @@
 #include "toutputproperties.h"
 #include "toonz/tcamera.h"
 #include "toonz/boardsettings.h"
+#include "toonz/toonzfolders.h"
 
 // TnzBase includes
 #include "trasterfx.h"
@@ -221,12 +222,12 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   QPushButton *addPresetButton            = NULL;
   QPushButton *removePresetButton         = NULL;
 
-  m_dominantFieldOm = 0;
-  m_renderButton    = new QPushButton(tr("Render"), this);
-  m_saveAndRenderButton    = new QPushButton(tr("Save and Render"), this);
+  m_dominantFieldOm     = 0;
+  m_renderButton        = new QPushButton(tr("Render"), this);
+  m_saveAndRenderButton = new QPushButton(tr("Save and Render"), this);
   if (isPreview) {
-      m_renderButton->setText("Preview");
-      m_saveAndRenderButton->hide();
+    m_renderButton->setText("Preview");
+    m_saveAndRenderButton->hide();
   }
   if (!isPreview) {
     showOtherSettingsButton = new QPushButton("", this);
@@ -618,7 +619,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     advancedSettingsBox->setLayout(fileSetBoxLay);
     m_topLayout->addWidget(advancedSettingsBox, 0);
 
-    QHBoxLayout* renderButtonLayout = new QHBoxLayout(this);
+    QHBoxLayout *renderButtonLayout = new QHBoxLayout(this);
     renderButtonLayout->addWidget(m_renderButton);
     renderButtonLayout->addWidget(m_saveAndRenderButton);
     m_topLayout->addLayout(renderButtonLayout);
@@ -642,7 +643,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   ret = ret && connect(m_renderButton, SIGNAL(pressed()), this,
                        SLOT(onRenderClicked()));
   ret = ret && connect(m_saveAndRenderButton, SIGNAL(pressed()), this,
-      SLOT(onSaveAndRenderClicked()));
+                       SLOT(onSaveAndRenderClicked()));
   ret = ret &&
         connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
                 SLOT(onCameraChanged(const QString &)));
@@ -802,7 +803,7 @@ void OutputSettingsPopup::onRenderClicked() {
 //-----------------------------------------------------------------------------
 
 void OutputSettingsPopup::onSaveAndRenderClicked() {
-   CommandManager::instance()->execute("MI_SaveAndRender");
+  CommandManager::instance()->execute("MI_SaveAndRender");
 }
 
 //-----------------------------------------------------------------------------
@@ -1366,7 +1367,7 @@ void OutputSettingsPopup::onAddPresetButtonPressed() {
   if (!ok || qs.isEmpty()) return;
 
   if (!qs.endsWith(".txt")) qs.append(".txt");
-  TFilePath fp = TEnv::getConfigDir() + "outputpresets";
+  TFilePath fp = ToonzFolder::getMyModuleDir() + "outputpresets";
   if (!TFileStatus(fp).doesExist()) TSystem::mkDir(fp);
   fp = fp + qs.toStdString();
 
@@ -1459,7 +1460,7 @@ void OutputSettingsPopup::onAddPresetButtonPressed() {
 void OutputSettingsPopup::updatePresetComboItems() {
   m_presetCombo->clear();
   m_presetCombo->addItem(tr("<custom>"));
-  TFilePath folder = TEnv::getConfigDir() + "outputpresets";
+  TFilePath folder = ToonzFolder::getMyModuleDir() + "outputpresets";
 
   TFileStatus fs(folder);
   if (!fs.doesExist()) TSystem::mkDir(folder);
@@ -1508,7 +1509,7 @@ void OutputSettingsPopup::onRemovePresetButtonPressed() {
   if (ret == QMessageBox::Cancel) return;
 
   TFilePath fp =
-      TEnv::getConfigDir() + "outputpresets" +
+      ToonzFolder::getMyModuleDir() + "outputpresets" +
       QString("%1.txt").arg(m_presetCombo->currentText()).toStdString();
   if (TFileStatus(fp).doesExist()) TSystem::deleteFile(fp);
 
@@ -1523,7 +1524,7 @@ void OutputSettingsPopup::onRemovePresetButtonPressed() {
 void OutputSettingsPopup::onPresetSelected(const QString &str) {
   /*-- "<custom>"を選択したら何もせずreturn --*/
   if (m_presetCombo->currentIndex() == 0) return;
-  TFilePath fp = TEnv::getConfigDir() + "outputpresets" +
+  TFilePath fp = ToonzFolder::getMyModuleDir() + "outputpresets" +
                  QString("%1.txt").arg(str).toStdString();
   if (!TFileStatus(fp).doesExist()) {
     QMessageBox::warning(this, tr("Warning"),
