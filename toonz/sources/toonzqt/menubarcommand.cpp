@@ -97,14 +97,16 @@ CommandManager::Node *CommandManager::getNode(CommandId id,
 
 void CommandManager::setShortcut(CommandId id, QAction *action,
                                  std::string shortcutString) {
-  if (shortcutString != "")
-    action->setShortcut(QKeySequence(QString::fromStdString(shortcutString)));
+  QString shortcutQString = QString::fromStdString(shortcutString);
+  if (!canUseShortcut(shortcutQString)) shortcutQString = "";
+  if (shortcutQString != "")
+    action->setShortcut(QKeySequence(shortcutQString));
   else
     action->setShortcut(QKeySequence());
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("shortcuts.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
   settings.beginGroup("shortcuts");
-  settings.setValue(QString(id), QString::fromStdString(shortcutString));
+  settings.setValue(QString(id), shortcutQString);
   settings.endGroup();
 }
 
@@ -125,7 +127,7 @@ void CommandManager::define(CommandId id, CommandType type,
   node->m_qaction = qaction;
   node->m_qaction->setEnabled(
       (node->m_enabled &&
-          (node->m_handler || node->m_qaction->actionGroup() != 0)) ||
+       (node->m_handler || node->m_qaction->actionGroup() != 0)) ||
       node->m_type == MiscCommandType ||
       node->m_type == ToolModifierCommandType);
 
@@ -134,12 +136,24 @@ void CommandManager::define(CommandId id, CommandType type,
   // user defined shortcuts will be loaded afterwards in loadShortcuts()
   QString defaultShortcutQString =
       QString::fromStdString(defaultShortcutString);
+  if (!canUseShortcut(defaultShortcutQString)) defaultShortcutQString = "";
   if (!defaultShortcutQString.isEmpty()) {
     qaction->setShortcut(QKeySequence(defaultShortcutQString));
     m_shortcutTable[defaultShortcutString] = node;
   }
 
   if (type == ToolCommandType) updateToolTip(qaction);
+}
+
+//---------------------------------------------------------
+
+bool CommandManager::canUseShortcut(QString shortcut) {
+  shortcut = shortcut.toLower();
+  if (shortcut == "space" || shortcut == "left" || shortcut == "up" ||
+      shortcut == "right" || shortcut == "down") {
+    return false;
+  }
+  return true;
 }
 
 //---------------------------------------------------------

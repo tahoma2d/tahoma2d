@@ -954,6 +954,7 @@ FunctionSegmentViewer::FunctionSegmentViewer(QWidget *parent,
   validator->setBottom(1);
   m_fromFld->setValidator(validator);
   m_toFld->setValidator(validator);
+  m_paramNameLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   m_stepFld->setEnabled(true);
 

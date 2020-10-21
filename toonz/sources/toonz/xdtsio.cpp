@@ -58,6 +58,24 @@ void XdtsHeader::write(QJsonObject &json) const {
 
 //-----------------------------------------------------------------------------
 
+TFrameId XdtsFrameDataItem::str2Fid(const QString &str) const {
+  bool ok;
+  int frame = str.toInt(&ok);
+  if (ok) return TFrameId(frame);
+  // separate the last word as suffix
+  frame = str.left(str.size() - 1).toInt(&ok);
+  if (!ok) return TFrameId(-1);                              // EMPTY
+  if (!str[str.size() - 1].isLetter()) return TFrameId(-1);  // EMPTY
+  char c = str[str.size() - 1].toLatin1();
+
+  return TFrameId(frame, c);
+}
+
+QString XdtsFrameDataItem::fid2Str(const TFrameId &fid) const {
+  if (fid.getLetter() == 0) return QString::number(fid.getNumber());
+  return QString::number(fid.getNumber()) + QString(fid.getLetter());
+}
+
 void XdtsFrameDataItem::read(const QJsonObject &json) {
   m_id                   = DataId(qRound(json["id"].toDouble()));
   QJsonArray valuesArray = json["values"].toArray();
@@ -71,6 +89,23 @@ void XdtsFrameDataItem::write(QJsonObject &json) const {
   QJsonArray valuesArray;
   foreach (const QString &value, m_values) { valuesArray.append(value); }
   json["values"] = valuesArray;
+}
+
+TFrameId XdtsFrameDataItem::getFrameId() const {
+  // int getCellNumber() const {
+  if (m_values.isEmpty())
+    return TFrameId(-1);  // EMPTY
+                          // if (m_values.isEmpty()) return 0;
+  QString val = m_values.at(0);
+  if (val == "SYMBOL_NULL_CELL")
+    return TFrameId(-1);  // EMPTY
+                          // ignore sheet symbols for now
+  else if (val == "SYMBOL_HYPHEN" || val == "SYMBOL_TICK_1" ||
+           val == "SYMBOL_TICK_2")
+    return TFrameId(-2);  // IGNORE
+                          // return -1;
+                          // return cell number
+  return str2Fid(m_values.at(0));
 }
 
 //-----------------------------------------------------------------------------
@@ -99,8 +134,8 @@ void XdtsTrackFrameItem::write(QJsonObject &json) const {
 
 //-----------------------------------------------------------------------------
 
-QPair<int, int> XdtsTrackFrameItem::frameCellNumber() const {
-  return QPair<int, int>(m_frame, m_data[0].getCellNumber());
+QPair<int, TFrameId> XdtsTrackFrameItem::frameFid() const {
+  return QPair<int, TFrameId>(m_frame, m_data[0].getFrameId());
 }
 
 //-----------------------------------------------------------------------------
@@ -128,36 +163,37 @@ void XdtsFieldTrackItem::write(QJsonObject &json) const {
 }
 //-----------------------------------------------------------------------------
 
-static bool frameLessThan(const QPair<int, int> &v1, const QPair<int, int> &v2) {
+static bool frameLessThan(const QPair<int, TFrameId> &v1,
+                          const QPair<int, TFrameId> &v2) {
   return v1.first < v2.first;
 }
 
-QVector<int> XdtsFieldTrackItem::getCellNumberTrack() const {
-  QList<QPair<int, int>> frameCellNumbers;
+QVector<TFrameId> XdtsFieldTrackItem::getCellFrameIdTrack() const {
+  QList<QPair<int, TFrameId>> frameFids;
   for (const XdtsTrackFrameItem &frame : m_frames)
-    frameCellNumbers.append(frame.frameCellNumber());
-  std::sort(frameCellNumbers.begin(), frameCellNumbers.end(), frameLessThan);
+    frameFids.append(frame.frameFid());
+  std::sort(frameFids.begin(), frameFids.end(), frameLessThan);
 
-  QVector<int> cells;
-  int currentFrame  = 0;
-  int initialNumber = 0;
-  for (QPair<int, int> &frameCellNumber : frameCellNumbers) {
-    while (currentFrame < frameCellNumber.first) {
+  QVector<TFrameId> cells;
+  int currentFrame       = 0;
+  TFrameId initialNumber = TFrameId();
+  for (QPair<int, TFrameId> &frameFid : frameFids) {
+    while (currentFrame < frameFid.first) {
       cells.append((cells.isEmpty()) ? initialNumber : cells.last());
       currentFrame++;
     }
     // CSP may export negative frame data (although it is not allowed in XDTS
     // format specification) so handle such case.
-    if (frameCellNumber.first < 0) {
-      initialNumber = frameCellNumber.second;
+    if (frameFid.first < 0) {
+      initialNumber = frameFid.second;
       continue;
     }
     // ignore sheet symbols for now
-    int cellNumber = frameCellNumber.second;
-    if (cellNumber == -1)
-      cells.append((cells.isEmpty()) ? 0 : cells.last());
+    TFrameId cellFid = frameFid.second;
+    if (cellFid.getNumber() == -2)  // IGNORE case
+      cells.append((cells.isEmpty()) ? TFrameId(-1) : cells.last());
     else
-      cells.append(cellNumber);
+      cells.append(cellFid);
     currentFrame++;
   }
   return cells;
@@ -169,7 +205,7 @@ QString XdtsFieldTrackItem::build(TXshCellColumn *column) {
   TXshCell prevCell;
   int r0, r1;
   column->getRange(r0, r1);
-  if (r0 > 0) addFrame(0, 0);
+  if (r0 > 0) addFrame(0, TFrameId(-1));
   for (int row = r0; row <= r1; row++) {
     TXshCell cell = column->getCell(row);
     // try to register the level
@@ -181,13 +217,13 @@ QString XdtsFieldTrackItem::build(TXshCellColumn *column) {
     if (prevCell == cell) continue;
 
     if (cell.isEmpty())
-      addFrame(row, 0);
+      addFrame(row, TFrameId(-1));
     else
-      addFrame(row, cell.getFrameId().getNumber());
+      addFrame(row, cell.getFrameId());
 
     prevCell = cell;
   }
-  addFrame(r1 + 1, 0);
+  addFrame(r1 + 1, TFrameId(-1));
   if (level)
     return QString::fromStdWString(level->getName());
   else {
@@ -227,12 +263,12 @@ QList<int> XdtsTimeTableFieldItem::getOccupiedColumns() const {
   return ret;
 }
 
-QVector<int> XdtsTimeTableFieldItem::getColumnTrack(int col) const {
+QVector<TFrameId> XdtsTimeTableFieldItem::getColumnTrack(int col) const {
   for (const XdtsFieldTrackItem &track : m_tracks) {
     if (track.getTrackNo() != col) continue;
-    return track.getCellNumberTrack();
+    return track.getCellFrameIdTrack();
   }
-  return QVector<int>();
+  return QVector<TFrameId>();
 }
 
 void XdtsTimeTableFieldItem::build(TXsheet *xsheet, QStringList &columnLabels) {
@@ -467,22 +503,22 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
   QStringList layerNames             = cellHeader.getLayerNames();
   QList<int> columns                 = cellField.getOccupiedColumns();
   for (int column : columns) {
-    QString levelName  = layerNames.at(column);
-    TXshLevel *level   = levels.value(levelName);
-    QVector<int> track = cellField.getColumnTrack(column);
+    QString levelName       = layerNames.at(column);
+    TXshLevel *level        = levels.value(levelName);
+    QVector<TFrameId> track = cellField.getColumnTrack(column);
 
     int row = 0;
     std::vector<TFrameId>::iterator it;
-    for (int f : track) {
-      if (f == 0)  // empty cell
+    for (TFrameId fid : track) {
+      if (fid.getNumber() == -1)  // EMPTY cell case
         row++;
       else
-        xsh->setCell(row++, column, TXshCell(level, TFrameId(f)));
+        xsh->setCell(row++, column, TXshCell(level, fid));
     }
     // if the last cell is not "SYMBOL_NULL_CELL", continue the cell
     // to the end of the sheet
-    int lastFid = track.last();
-    if (lastFid != 0) {
+    TFrameId lastFid = track.last();
+    if (lastFid.getNumber() != -1) {
       for (; row < duration; row++)
         xsh->setCell(row, column, TXshCell(level, TFrameId(lastFid)));
     }

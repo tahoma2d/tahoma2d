@@ -61,7 +61,6 @@ protected slots:
   void resetTabSaved();
   void resetTabDefault();
   void setIsLocked(bool lock);
-  void onCustomizeMenuBar();
 
 signals:
   void indexSwapped(int firstIndex, int secondIndex);
@@ -141,39 +140,13 @@ public slots:
 };
 
 //-----------------------------------------------------------------------------
-/*-- モジュールごとにMenubarの内容を切り替える --*/
-class StackedMenuBar final : public QStackedWidget {
-  Q_OBJECT
-
-  QMenuBar *createFullMenuBar();
-  QMenuBar *loadMenuBar(const TFilePath &fp);
-
-public:
-  StackedMenuBar(QWidget *parent);
-  ~StackedMenuBar(){};
-
-  void createMenuBarByName(const QString &roomName);
-  void loadAndAddMenubar(const TFilePath &fp);
-  bool readMenuRecursive(QXmlStreamReader &, QMenu *);
-
-  QMenu *addMenu(const QString &, QMenuBar *);
-  void addMenuItem(QMenu *, const char *);
-
-protected slots:
-  void onIndexSwapped(int firstIndex, int secondIndex);
-  void insertNewMenuBar();
-  void deleteMenuBar(int index);
-  void doCustomizeMenuBar(int index);
-};
-
-//-----------------------------------------------------------------------------
 
 class TopBar final : public QToolBar {
   Q_OBJECT
 
   QFrame *m_containerFrame;
   RoomTabWidget *m_roomTabBar;
-  StackedMenuBar *m_stackedMenuBar;
+  QMenuBar *m_menuBar;
   QCheckBox *m_lockRoomCB;
   QLabel *m_messageLabel;
 
@@ -183,7 +156,13 @@ public:
 
   QTabBar *getRoomTabWidget() const { return m_roomTabBar; }
 
-  StackedMenuBar *getStackedMenuBar() const { return m_stackedMenuBar; }
+  QMenuBar *getMenuBar() const { return m_menuBar; }
+
+  void loadMenubar();
+
+private:
+  QMenu *addMenu(const QString &, QMenuBar *);
+  void addMenuItem(QMenu *, const char *);
 
 public slots:
   void setMessage(QString message);

@@ -62,7 +62,6 @@ set(MOC_HEADERS
     mainwindow.h
     matchline.h
     menubar.h
-    menubarpopup.h
     meshifypopup.h
     messagepanel.h
     onionskinmaskgui.h
@@ -193,7 +192,6 @@ set(SOURCES
     mainwindow.cpp
     matchline.cpp
     menubar.cpp
-    menubarpopup.cpp
     mergecolumns.cpp
     moviegenerator.cpp
     pane.cpp

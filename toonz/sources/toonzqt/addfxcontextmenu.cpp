@@ -123,7 +123,6 @@ TFx *createMacroFxByPath(TFilePath path, TXsheet *xsheet) {
 TFx *createFx(QAction *action, TXsheetHandle *xshHandle) {
   TXsheet *xsh = xshHandle->getXsheet();
   QString text = action->data().toString();
-
   if (text.isEmpty()) return 0;
 
   TFx *fx = 0;
@@ -638,34 +637,31 @@ QAction *AddFxContextMenu::getAgainCommand(int command) {
       commandStr +
       QString::fromStdWString(TStringTable::translate(fxStr.toStdString()));
   // return the action if the command is the exactly same
-  if (m_againCommand && translatedCommandName == m_againCommand->text())
+  if (m_againCommand && commandName == m_againCommand->data().toString())
     return m_againCommand;
 
   // create an action
   if (!m_againCommand) {
-    m_againCommand = new QAction(translatedCommandName, 0);
-    m_againCommand->setData(QVariant(fxStr));
+    m_againCommand = new QAction();
     connect(m_againCommand, SIGNAL(triggered()), this, SLOT(onAgainCommand()));
   }
-  // compare the m_againCommand's name and commandName
-  else if (translatedCommandName != m_againCommand->text()) {
-    // change the action name
-    m_againCommand->setText(translatedCommandName);
-    m_againCommand->setData(QVariant(fxStr));
-  }
+  // set the action name
+  m_againCommand->setText(translatedCommandName);
+  m_againCommand->setData(commandName);
   return m_againCommand;
 }
 
 //---------------------------------------------------
 /*! change the command behavior according to the command name
-*/
+ */
 void AddFxContextMenu::onAgainCommand() {
-  // TODO: 日本語インタフェースの場合、対応が必要 2016/1/8 shun_iwasawa
-  if (m_againCommand->text().startsWith("Insert")) {
+  QString commandName = m_againCommand->data().toString();
+  m_againCommand->setData(commandName.right(commandName.size() - 2));
+  if (commandName.startsWith("I ")) {
     onInsertFx(m_againCommand);
-  } else if (m_againCommand->text().startsWith("Add")) {
+  } else if (commandName.startsWith("A ")) {
     onAddFx(m_againCommand);
-  } else if (m_againCommand->text().startsWith("Replace")) {
+  } else if (commandName.startsWith("R ")) {
     onReplaceFx(m_againCommand);
   }
 }
