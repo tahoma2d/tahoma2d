@@ -486,7 +486,11 @@ void FilmstripFrames::hideEvent(QHideEvent *) {
   // active viewer change
   disconnect(app, SIGNAL(activeViewerChanged()), this, SLOT(getViewer()));
 
-  if (m_viewer) {
+  // if the level strip is floating during shutting down Tahoma2D
+  // it can cause a crash disconnecting from the viewer which was already
+  // destroyed.  Checking the fps is a janky way to ensure the viewer is 
+  // stil relevant.
+  if (m_viewer && m_viewer->getFPS() > -100) { 
     disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
     disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
     m_viewer = nullptr;
