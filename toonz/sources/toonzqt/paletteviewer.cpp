@@ -101,6 +101,8 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
     , m_hasPageCommand(hasPageCommand)
     , m_isSaveActionEnabled(true)
     , m_lockPaletteAction(0)
+    , m_frozen(false)
+    , m_freezePaletteToolButton(0)
     , m_lockPaletteToolButton(0) {
   setObjectName("OnePixelMarginFrame");
   setFrameStyle(QFrame::StyledPanel);
@@ -376,6 +378,18 @@ void PaletteViewer::createPaletteToolBar() {
     connect(m_lockPaletteToolButton, SIGNAL(clicked(bool)), this,
             SLOT(setIsLocked(bool)));
     m_paletteToolBar->addWidget(m_lockPaletteToolButton);
+
+    m_freezePaletteToolButton = new QToolButton(this);
+    m_freezePaletteToolButton->setIcon(createQIcon("pane_freeze"));
+    m_freezePaletteToolButton->setCheckable(true);
+    m_freezePaletteToolButton->setObjectName("PaletteLockButton");
+    m_freezePaletteToolButton->setToolTip(tr("Stay on Current Palette"));
+
+    connect(m_freezePaletteToolButton, &QToolButton::clicked,
+            [=](bool checked) { emit frozenChanged(checked); });
+    m_paletteToolBar->setStyleSheet("QToolBar{spacing:3px;}");
+    m_paletteToolBar->addWidget(m_freezePaletteToolButton);
+
   } else if (m_viewType == STUDIO_PALETTE) {
     QToolButton *toolButton = new QToolButton(this);
     toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -402,6 +416,11 @@ void PaletteViewer::createPaletteToolBar() {
   }
 
   updatePaletteToolBar();
+}
+
+void PaletteViewer::setIsFrozen(bool frozen) {
+  m_frozen = frozen;
+  m_freezePaletteToolButton->setChecked(frozen);
 }
 
 //-----------------------------------------------------------------------------
@@ -484,7 +503,7 @@ void PaletteViewer::createSavePaletteToolBar() {
   });
   m_viewMode->addAction(m_showStyleIndex);
 
-  //QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
+  // QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
   QIcon saveAsPaletteIcon = createQIcon("saveas");
   QAction *saveAsPalette  = new QAction(
       saveAsPaletteIcon, tr("&Save Palette As"), m_savePaletteToolBar);
@@ -502,8 +521,8 @@ void PaletteViewer::createSavePaletteToolBar() {
 
   if (m_viewType == STUDIO_PALETTE) {
     connect(savePalette, SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
-    //m_viewMode->addSeparator();
-    //m_viewMode->addAction(savePalette);
+    // m_viewMode->addSeparator();
+    // m_viewMode->addAction(savePalette);
     m_savePaletteToolBar->addAction(savePalette);
   } else if (m_viewType == LEVEL_PALETTE) {
     // save load palette
@@ -511,8 +530,8 @@ void PaletteViewer::createSavePaletteToolBar() {
 
     // overwrite palette
     connect(savePalette, SIGNAL(triggered()),
-        CommandManager::instance()->getAction("MI_OverwritePalette"),
-        SIGNAL(triggered()));
+            CommandManager::instance()->getAction("MI_OverwritePalette"),
+            SIGNAL(triggered()));
     m_viewMode->addAction(savePalette);
 
     // save palette as
@@ -803,8 +822,11 @@ void PaletteViewer::showEvent(QShowEvent *) {
   connect(m_paletteHandle, SIGNAL(paletteDirtyFlagChanged()), this,
           SLOT(changeWindowTitle()));
   if (m_viewType == STUDIO_PALETTE) {
-      CommandManager::instance()->getAction("MI_SaveStudioPalette")->setEnabled(true);
-      connect(CommandManager::instance()->getAction("MI_SaveStudioPalette"), SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
+    CommandManager::instance()
+        ->getAction("MI_SaveStudioPalette")
+        ->setEnabled(true);
+    connect(CommandManager::instance()->getAction("MI_SaveStudioPalette"),
+            SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
   }
 
   if (!m_frameHandle) return;
@@ -828,11 +850,15 @@ void PaletteViewer::hideEvent(QHideEvent *) {
              SLOT(changeWindowTitle()));
   disconnect(m_paletteHandle, SIGNAL(paletteDirtyFlagChanged()), this,
              SLOT(changeWindowTitle()));
-  disconnect(m_paletteHandle, SIGNAL(broadcastColorStyleChangedOnMouseRelease()), this,
-      SLOT(onPaletteChanged()));
+  disconnect(m_paletteHandle,
+             SIGNAL(broadcastColorStyleChangedOnMouseRelease()), this,
+             SLOT(onPaletteChanged()));
   if (m_viewType == STUDIO_PALETTE) {
-      CommandManager::instance()->getAction("MI_SaveStudioPalette")->setEnabled(false);
-      disconnect(CommandManager::instance()->getAction("MI_SaveStudioPalette"), SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
+    CommandManager::instance()
+        ->getAction("MI_SaveStudioPalette")
+        ->setEnabled(false);
+    disconnect(CommandManager::instance()->getAction("MI_SaveStudioPalette"),
+               SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
   }
 
   if (!m_frameHandle) return;

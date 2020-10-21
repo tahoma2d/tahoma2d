@@ -445,8 +445,8 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
   m_paletteViewer->setLevelHandle(app->getCurrentLevel());
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
-  connect(sceneHandle, SIGNAL(sceneSwitched()), SLOT(onSceneSwitched()));
-
+  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
+  assert(ret);
   CurrentStyleChangeCommand *currentStyleChangeCommand =
       new CurrentStyleChangeCommand();
   m_paletteViewer->setChangeStyleCommand(currentStyleChangeCommand);
@@ -470,20 +470,17 @@ int PaletteViewerPanel::getViewType() { return m_paletteViewer->getViewMode(); }
 void PaletteViewerPanel::reset() {
   m_paletteViewer->setPaletteHandle(
       TApp::instance()->getPaletteController()->getCurrentLevelPalette());
-  m_freezeButton->setPressed(false);
+  m_paletteViewer->setIsFrozen(false);
   setFrozen(false);
 }
 
 //-----------------------------------------------------------------------------
 
 void PaletteViewerPanel::initializeTitleBar() {
-    m_freezeButton = new TPanelTitleBarButton(
-        getTitleBar(), getIconThemePath("actions/20/pane_freeze.svg"));
-    m_freezeButton->setToolTip("Freeze");
-    getTitleBar()->add(QPoint(-54, 0), m_freezeButton);
-    m_freezeButton->setPressed(m_isFrozen);
-    connect(m_freezeButton, SIGNAL(toggled(bool)),
-        SLOT(onFreezeButtonToggled(bool)));
+  m_paletteViewer->setIsFrozen(m_isFrozen);
+
+  connect(m_paletteViewer, SIGNAL(frozenChanged(bool)),
+          SLOT(onFreezeButtonToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -501,15 +498,16 @@ void PaletteViewerPanel::onPaletteSwitched() {
 //-----------------------------------------------------------------------------
 
 void PaletteViewerPanel::onFreezeButtonToggled(bool frozen) {
-    if (isFrozen() == frozen) return;
+  m_paletteViewer->setIsFrozen(frozen);
+  if (isFrozen() == frozen) return;
 
   TApp *app          = TApp::instance();
   TPaletteHandle *ph = app->getPaletteController()->getCurrentLevelPalette();
   // Se sono sulla palette del livello corrente e le palette e' vuota non
   // consento di bloccare il pannello.
   if (!isFrozen() && !ph->getPalette()) {
-      m_freezeButton->setPressed(false);
-      return;
+    m_paletteViewer->setIsFrozen(false);
+    return;
   }
 
   setFrozen(frozen);
@@ -565,8 +563,8 @@ void PaletteViewerPanel::onSceneSwitched() {
   m_paletteHandle->setPalette(0);
   // Sblocco il viewer nel caso in cui il e' bloccato.
   if (isFrozen()) {
-      setFrozen(false);
-      m_freezeButton->setPressed(false);
+    setFrozen(false);
+    m_paletteViewer->setIsFrozen(false);
     m_paletteViewer->setPaletteHandle(
         TApp::instance()->getPaletteController()->getCurrentLevelPalette());
   }
@@ -575,24 +573,25 @@ void PaletteViewerPanel::onSceneSwitched() {
 
 //-----------------------------------------------------------------------------
 
-void PaletteViewerPanel::showEvent(QShowEvent*) {
-    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
-    bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString&)),
-        this, SLOT(onPreferenceChanged(const QString&)));
-    assert(ret);
+void PaletteViewerPanel::showEvent(QShowEvent *) {
+  TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
+  bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
+                     this, SLOT(onPreferenceChanged(const QString &)));
+  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
+  assert(ret);
 }
 
 //-----------------------------------------------------------------------------
 
-void PaletteViewerPanel::hideEvent(QHideEvent*) {
-    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
-    if (sceneHandle) sceneHandle->disconnect(this);
+void PaletteViewerPanel::hideEvent(QHideEvent *) {
+  TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
+  if (sceneHandle) sceneHandle->disconnect(this);
 }
 
 //-----------------------------------------------------------------------------
 
-void PaletteViewerPanel::onPreferenceChanged(const QString& prefName) {
-    if (prefName == "ColorCalibration") update();
+void PaletteViewerPanel::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "ColorCalibration") update();
 }
 
 //=============================================================================
@@ -865,21 +864,21 @@ StyleEditorPanel::StyleEditorPanel(QWidget *parent) : TPanel(parent) {
 }
 
 //-----------------------------------------------------------------------------
-void StyleEditorPanel::showEvent(QShowEvent*) {
-    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
-    bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString&)),
-        this, SLOT(onPreferenceChanged(const QString&)));
-    onPreferenceChanged("ColorCalibration");
-    assert(ret);
+void StyleEditorPanel::showEvent(QShowEvent *) {
+  TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
+  bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
+                     this, SLOT(onPreferenceChanged(const QString &)));
+  onPreferenceChanged("ColorCalibration");
+  assert(ret);
 }
 //-----------------------------------------------------------------------------
-void StyleEditorPanel::hideEvent(QHideEvent*) {
-    TSceneHandle* sceneHandle = TApp::instance()->getCurrentScene();
-    if (sceneHandle) sceneHandle->disconnect(this);
+void StyleEditorPanel::hideEvent(QHideEvent *) {
+  TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
+  if (sceneHandle) sceneHandle->disconnect(this);
 }
 //-----------------------------------------------------------------------------
-void StyleEditorPanel::onPreferenceChanged(const QString& prefName) {
-    if (prefName == "ColorCalibration") m_styleEditor->updateColorCalibration();
+void StyleEditorPanel::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "ColorCalibration") m_styleEditor->updateColorCalibration();
 }
 
 //-----------------------------------------------------------------------------
