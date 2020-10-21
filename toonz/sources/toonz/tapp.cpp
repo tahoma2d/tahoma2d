@@ -49,6 +49,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/preferences.h"
 #include "toonz/fullcolorpalette.h"
+#include "toonz/txshsoundcolumn.h"
 
 #include "toonzqt/tabbar.h"
 
@@ -310,6 +311,7 @@ int TApp::getCurrentImageType() {
     }
 
     TXsheet *xsh  = getCurrentXsheet()->getXsheet();
+    if (xsh->getColumn(col) && xsh->getColumn(col)->getSoundColumn()) return TImage::VECTOR;
     TXshCell cell = xsh->getCell(row, col);
     if (cell.isEmpty()) {
       int r0, r1;
@@ -357,7 +359,14 @@ void TApp::updateXshLevel() {
     int column      = m_currentColumn->getColumnIndex();
     TXsheet *xsheet = m_currentXsheet->getXsheet();
 
-    if (xsheet && column >= 0 && frame >= 0 && !xsheet->isColumnEmpty(column)) {
+    bool isSoundColumn = false;
+    if (xsheet->getColumn(column) && xsheet->getColumn(column)->getSoundColumn()) {
+        isSoundColumn = true;
+        if (xsheet->getColumn(column)->getSoundColumn()->m_levels.size() > 0) {
+            xl = static_cast<TXshLevel*>(xsheet->getColumn(column)->getSoundColumn()->m_levels.at(0)->getSoundLevel());
+        }
+    }
+    else if (xsheet && column >= 0 && frame >= 0 && !xsheet->isColumnEmpty(column)) {
       TXshCell cell = xsheet->getCell(frame, column);
       xl            = cell.m_level.getPointer();
 

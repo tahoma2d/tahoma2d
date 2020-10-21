@@ -34,6 +34,7 @@
 #include "orientation.h"
 
 #include "toonz/txsheet.h"
+#include "toonz/preferences.h"
 
 using namespace std;
 
@@ -1488,7 +1489,20 @@ void TXsheet::scrub(int frame, bool isPreview) {
     double samplePerFrame = st->getSampleRate() / fps;
 
     double s0 = frame * samplePerFrame, s1 = s0 + samplePerFrame;
-
+    //if (m_player && m_player->isPlaying()) {
+    //    try {
+    //        m_player->stop();
+    //    }
+    //    catch (const std::runtime_error& e) {
+    //        int i = 0;
+    //    }
+    //    catch (const std::exception& e) {
+    //        int i = 0;
+    //    }
+    //    catch (...) { 
+    //        int i = 0;
+    //    }
+    //}
     play(st, s0, s1, false);
   } catch (TSoundDeviceException &e) {
     if (e.getType() == TSoundDeviceException::NoDevice) {
