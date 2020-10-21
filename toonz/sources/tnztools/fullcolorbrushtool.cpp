@@ -205,7 +205,9 @@ void FullColorBrushTool::onActivate() {
         QString::fromStdString(FullcolorBrushPreset.getValue()).toStdWString();
     if (wpreset != CUSTOM_WSTR) {
       initPresets();
+      if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
       m_preset.setValue(wpreset);
+      FullcolorBrushPreset = m_preset.getValueAsString();
       loadPreset();
     } else
       loadLastBrush();
@@ -993,6 +995,7 @@ void FullColorBrushTool::addPreset(QString name) {
 
   // Set the value to the specified one
   m_preset.setValue(preset.m_name);
+  FullcolorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -1006,6 +1009,7 @@ void FullColorBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+  FullcolorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
