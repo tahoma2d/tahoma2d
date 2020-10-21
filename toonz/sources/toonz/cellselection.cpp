@@ -2641,6 +2641,11 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   }
 
   if (!toolHandle->getTool()->m_isFrameCreated) {
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to replace the current drawing with a blank drawing"));
@@ -2784,6 +2789,11 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   bool frameCreated = toolHandle->getTool()->m_isFrameCreated;
   if (!frameCreated) {
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to replace the current or next drawing with a "
