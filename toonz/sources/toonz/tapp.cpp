@@ -310,8 +310,9 @@ int TApp::getCurrentImageType() {
                      : TImage::RASTER;  // and OVL_XSHLEVEL level types
     }
 
-    TXsheet *xsh  = getCurrentXsheet()->getXsheet();
-    if (xsh->getColumn(col) && xsh->getColumn(col)->getSoundColumn()) return TImage::VECTOR;
+    TXsheet *xsh = getCurrentXsheet()->getXsheet();
+    if (xsh->getColumn(col) && xsh->getColumn(col)->getSoundColumn())
+      return TImage::VECTOR;
     TXshCell cell = xsh->getCell(row, col);
     if (cell.isEmpty()) {
       int r0, r1;
@@ -360,13 +361,17 @@ void TApp::updateXshLevel() {
     TXsheet *xsheet = m_currentXsheet->getXsheet();
 
     bool isSoundColumn = false;
-    if (xsheet->getColumn(column) && xsheet->getColumn(column)->getSoundColumn()) {
-        isSoundColumn = true;
-        if (xsheet->getColumn(column)->getSoundColumn()->m_levels.size() > 0) {
-            xl = static_cast<TXshLevel*>(xsheet->getColumn(column)->getSoundColumn()->m_levels.at(0)->getSoundLevel());
-        }
-    }
-    else if (xsheet && column >= 0 && frame >= 0 && !xsheet->isColumnEmpty(column)) {
+    if (xsheet->getColumn(column) &&
+        xsheet->getColumn(column)->getSoundColumn()) {
+      isSoundColumn = true;
+      if (xsheet->getColumn(column)->getSoundColumn()->m_levels.size() > 0) {
+        xl = static_cast<TXshLevel *>(xsheet->getColumn(column)
+                                          ->getSoundColumn()
+                                          ->m_levels.at(0)
+                                          ->getSoundLevel());
+      }
+    } else if (xsheet && column >= 0 && frame >= 0 &&
+               !xsheet->isColumnEmpty(column)) {
       TXshCell cell = xsheet->getCell(frame, column);
       xl            = cell.m_level.getPointer();
 

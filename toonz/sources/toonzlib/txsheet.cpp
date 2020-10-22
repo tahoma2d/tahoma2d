@@ -782,7 +782,7 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allIncreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allIncreaseIsEqual; c++)
-    allIncreaseIsEqual = allIncreaseIsEqual && ends[c] == ends[c + 1];
+    allIncreaseIsEqual       = allIncreaseIsEqual && ends[c] == ends[c + 1];
   if (allIncreaseIsEqual) r1 = ends[0];
 }
 
@@ -816,7 +816,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
   // controllo se devo cambiare la selezione
   bool allDecreaseIsEqual = true;
   for (c = 0; c < ends.size() - 1 && allDecreaseIsEqual; c++)
-    allDecreaseIsEqual = allDecreaseIsEqual && ends[c] == ends[c + 1];
+    allDecreaseIsEqual       = allDecreaseIsEqual && ends[c] == ends[c + 1];
   if (allDecreaseIsEqual) r1 = ends[0];
 }
 
@@ -1478,7 +1478,7 @@ TSoundTrack *TXsheet::makeSound(SoundProperties *properties) {
 void TXsheet::scrub(int frame, bool isPreview) {
   try {
     double fps =
-      getScene()->getProperties()->getOutputProperties()->getFrameRate();
+        getScene()->getProperties()->getOutputProperties()->getFrameRate();
 
     TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
     prop->m_isPreview              = isPreview;
@@ -1489,7 +1489,7 @@ void TXsheet::scrub(int frame, bool isPreview) {
     double samplePerFrame = st->getSampleRate() / fps;
 
     double s0 = frame * samplePerFrame, s1 = s0 + samplePerFrame;
-    //if (m_player && m_player->isPlaying()) {
+    // if (m_player && m_player->isPlaying()) {
     //    try {
     //        m_player->stop();
     //    }
@@ -1499,7 +1499,7 @@ void TXsheet::scrub(int frame, bool isPreview) {
     //    catch (const std::exception& e) {
     //        int i = 0;
     //    }
-    //    catch (...) { 
+    //    catch (...) {
     //        int i = 0;
     //    }
     //}

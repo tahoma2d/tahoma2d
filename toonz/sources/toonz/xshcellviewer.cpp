@@ -1415,8 +1415,7 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   }
 
   TXshCell nextCell;
-  nextCell =
-      soundColumn->getSoundCell(row + 1); // cell in next frame
+  nextCell         = soundColumn->getSoundCell(row + 1);  // cell in next frame
   bool isNextEmpty = nextCell.getFrameId().getNumber() < 0;
 
   int frameAdj   = m_viewer->getFrameZoomAdjustment();
@@ -1425,9 +1424,7 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   cellRect.adjust(0, 0, -frameAdj, 0);
   QRect rect = cellRect.adjusted(
       1, 1,
-      (!m_viewer->orientation()->isVerticalTimeline() && !isNextEmpty
-           ? 2
-           : 0),
+      (!m_viewer->orientation()->isVerticalTimeline() && !isNextEmpty ? 2 : 0),
       0);
   int maxNumFrame = soundColumn->getMaxFrame() + 1;
   int startFrame  = soundColumn->getFirstRow();
