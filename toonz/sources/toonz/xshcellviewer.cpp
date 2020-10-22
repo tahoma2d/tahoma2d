@@ -1415,8 +1415,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   }
 
   TXshCell nextCell;
-  nextCell =
-      m_viewer->getXsheet()->getCell(row + 1, col);  // cell in next frame
+  nextCell         = soundColumn->getSoundCell(row + 1);  // cell in next frame
+  bool isNextEmpty = nextCell.getFrameId().getNumber() < 0;
 
   int frameAdj   = m_viewer->getFrameZoomAdjustment();
   int frameZoomF = m_viewer->getFrameZoomFactor();
@@ -1424,13 +1424,11 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   cellRect.adjust(0, 0, -frameAdj, 0);
   QRect rect = cellRect.adjusted(
       1, 1,
-      (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
-           ? 2
-           : 0),
+      (!m_viewer->orientation()->isVerticalTimeline() && !isNextEmpty ? 2 : 0),
       0);
   int maxNumFrame = soundColumn->getMaxFrame() + 1;
   int startFrame  = soundColumn->getFirstRow();
-  TXshCell cell   = soundColumn->getCell(row);
+  TXshCell cell   = soundColumn->getSoundCell(row);
   if (soundColumn->isCellEmpty(row) || cell.isEmpty() || row > maxNumFrame ||
       row < startFrame) {
     drawFrameSeparator(p, row, col, true);
@@ -2948,7 +2946,7 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
                                             ->getZeraryColumnFx()
                                             ->getZeraryFx()
                                             ->getName());
-  else if ((!xsh->getCell(row, col).isEmpty() && !isSoundColumn) &&  // x > 6 &&
+  else if ((!isSoundColumn && !xsh->getCell(row, col).isEmpty()) &&  // x > 6 &&
            x < (o->cellWidth() - frameAdj)) {
     TXshCell cell          = xsh->getCell(row, col);
     TFrameId fid           = cell.getFrameId();

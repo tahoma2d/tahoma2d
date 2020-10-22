@@ -645,7 +645,8 @@ void SceneViewerPanel::changeWindowTitle() {
       return;
     }
     TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
-    TXshCell cell = xsh->getCell(frame, col);
+    TXshCell cell;
+    if (app->getCurrentColumn()->getColumn() && !app->getCurrentColumn()->getColumn()->getSoundColumn()) cell = xsh->getCell(frame, col);
     if (cell.isEmpty()) {
       if (!m_sceneViewer->is3DView()) {
         TAffine aff = m_sceneViewer->getViewMatrix() *
