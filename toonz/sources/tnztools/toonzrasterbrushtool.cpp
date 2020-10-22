@@ -30,6 +30,7 @@
 #include "toonz/preferences.h"
 #include "toonz/tpalettehandle.h"
 #include "toonz/mypaintbrushstyle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -38,6 +39,7 @@
 #include "tenv.h"
 #include "tregion.h"
 #include "tinbetween.h"
+#include "tsystem.h"
 
 #include "tgl.h"
 #include "trop.h"
@@ -2392,7 +2394,8 @@ void ToonzRasterBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_toonzraster.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() +
+                          "brush_smartraster.txt");
   }
 
   // Rebuild the presets property entries
@@ -2728,6 +2731,8 @@ void BrushPresetManager::load(const TFilePath &fp) {
 //------------------------------------------------------------------
 
 void BrushPresetManager::save() {
+  TSystem::touchParentDir(m_fp);
+
   TOStream os(m_fp);
 
   os.openChild("version");

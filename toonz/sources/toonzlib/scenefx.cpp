@@ -68,9 +68,11 @@ private:
   int m_frame;                 //!< Frame this fx redirects to
   TFxTimeRegion m_timeRegion;  //!< Input (outer) valid column frame range
   TRasterFxPort m_port;        //!< Input port
+  TXshCellColumn *m_cellColumn;
 
 public:
-  TimeShuffleFx() : TRasterFx(), m_frame(0), m_timeRegion() {
+  TimeShuffleFx()
+      : TRasterFx(), m_frame(0), m_timeRegion(), m_cellColumn(nullptr) {
     addInputPort("source", m_port);
   }
   ~TimeShuffleFx() {}
@@ -81,6 +83,7 @@ public:
 
     fx->setFrame(m_frame);
     fx->setTimeRegion(getTimeRegion());
+    fx->setCellColumn(m_cellColumn);
 
     return fx;
   }
@@ -93,11 +96,20 @@ public:
   }
   TFxTimeRegion getTimeRegion() const override { return m_timeRegion; }
 
+  void setCellColumn(TXshCellColumn *cellColumn) { m_cellColumn = cellColumn; }
+
   bool canHandle(const TRenderSettings &info, double frame) override {
     return true;
   }
 
   std::string getPluginId() const override { return std::string(); }
+
+  int getLevelFrame(int frame) const {
+    if (!m_cellColumn) return m_frame;
+    TXshCell cell = m_cellColumn->getCell(tfloor(frame));
+    assert(!cell.isEmpty());
+    return cell.m_frameId.getNumber() - 1;
+  }
 
   void doCompute(TTile &tile, double frame,
                  const TRenderSettings &ri) override {
@@ -107,25 +119,25 @@ public:
     }
 
     // Exchange frame with the stored one
-    TRasterFxP(m_port.getFx())->compute(tile, m_frame, ri);
+    TRasterFxP(m_port.getFx())->compute(tile, getLevelFrame(frame), ri);
   }
 
   bool doGetBBox(double frame, TRectD &bbox,
                  const TRenderSettings &info) override {
     if (!m_port.isConnected()) return false;
-
-    return TRasterFxP(m_port.getFx())->doGetBBox(m_frame, bbox, info);
+    return TRasterFxP(m_port.getFx())
+        ->doGetBBox(getLevelFrame(frame), bbox, info);
   }
 
   std::string getAlias(double frame,
                        const TRenderSettings &info) const override {
-    return TRasterFx::getAlias(m_frame, info);
+    return TRasterFx::getAlias(getLevelFrame(frame), info);
   }
 
   void doDryCompute(TRectD &rect, double frame,
                     const TRenderSettings &info) override {
     if (m_port.isConnected())
-      TRasterFxP(m_port.getFx())->dryCompute(rect, m_frame, info);
+      TRasterFxP(m_port.getFx())->dryCompute(rect, getLevelFrame(frame), info);
   }
 
 private:
@@ -261,8 +273,9 @@ public:
   }
 
   TFxP makeFx() {
-    return (!m_fx) ? TFxP() : (m_aff == TAffine()) ? m_fx : TFxUtil::makeAffine(
-                                                                m_fx, m_aff);
+    return (!m_fx)
+               ? TFxP()
+               : (m_aff == TAffine()) ? m_fx : TFxUtil::makeAffine(m_fx, m_aff);
   }
 };
 
@@ -272,11 +285,13 @@ public:
 
 namespace {
 
-TFxP timeShuffle(TFxP fx, int frame, TFxTimeRegion timeRegion) {
+TFxP timeShuffle(TFxP fx, int frame, TFxTimeRegion timeRegion,
+                 TXshCellColumn *cellColumn) {
   TimeShuffleFx *timeShuffle = new TimeShuffleFx();
 
   timeShuffle->setFrame(frame);
   timeShuffle->setTimeRegion(timeRegion);
+  timeShuffle->setCellColumn(cellColumn);
   if (!timeShuffle->connect("source", fx.getPointer()))
     assert(!"Could not connect ports!");
 
@@ -301,7 +316,7 @@ bool getColumnPlacement(TAffine &aff, TXsheet *xsh, double row, int col,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId           = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine cameraAff    = camera->getPlacement(row);
   double cameraZ       = camera->getZ(row);
@@ -326,7 +341,7 @@ static bool getColumnPlacement(PlacedFx &pf, TXsheet *xsh, double row, int col,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId           = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine cameraAff    = camera->getPlacement(row);
   double cameraZ       = camera->getZ(row);
@@ -353,7 +368,7 @@ static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId           = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine cameraAff    = camera->getPlacement(row);
   double cameraZ       = camera->getZ(row);
@@ -406,7 +421,7 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId           = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine cameraAff    = camera->getPlacement(row + h);
   a                    = aff * TPointD(-cameraAff.a13, -cameraAff.a23);
@@ -437,7 +452,7 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId           = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *camera = xsh->getStageObject(cameraId);
   TAffine dpiAff       = getDpiAffine(camera->getCamera());
 
@@ -511,7 +526,7 @@ QString getNoteText(TXsheet *xsh, double row, int col, int noteColumnIndex,
 
   return cell.getSoundTextLevel()->getFrameText(cell.m_frameId.getNumber() - 1);
 }
-};
+};  // namespace
 
 //***************************************************************************************************
 //    FxBuilder  definition
@@ -812,7 +827,8 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     FxBuilder builder(m_scene, xsh, levelFrame, m_whichLevels, m_isPreview);
 
     // Then, add the TimeShuffleFx
-    pf.m_fx = timeShuffle(builder.buildFx(), levelFrame, lcfx->getTimeRegion());
+    pf.m_fx = timeShuffle(builder.buildFx(), levelFrame, lcfx->getTimeRegion(),
+                          lcfx->getColumn());
     pf.m_fx->setIdentifier(lcfx->getIdentifier());
     pf.m_fx->getAttributes()->passiveCacheDataIdx() =
         lcfx->getAttributes()->passiveCacheDataIdx();
@@ -925,10 +941,10 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
   // Build
   PlacedFx pf;
   pf.m_columnIndex = zcfx->getColumn()->getIndex();
-  pf.m_fx          = fx->clone(
-      false);  // Detach the fx with a clone. Why? It's typically done to
-               // build fx connections in the render-tree freely. Here, it's
-               // used just for particles, I guess...
+  pf.m_fx =
+      fx->clone(false);  // Detach the fx with a clone. Why? It's typically done
+                         // to build fx connections in the render-tree freely.
+                         // Here, it's used just for particles, I guess...
   // Deal with input sub-trees
   for (int i = 0; i < fx->getInputPortCount(); ++i) {
     // Note that only particles should end up here, currently
@@ -1126,7 +1142,7 @@ TFxP buildSceneFx(ToonzScene *scene, TXsheet *xsh, double row, int whichLevels,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId                 = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *cameraPegbar = xsh->getStageObject(cameraId);
   assert(cameraPegbar);
   TCamera *camera = cameraPegbar->getCamera();
@@ -1198,7 +1214,7 @@ DVAPI TFxP buildPartialSceneFx(ToonzScene *scene, double row, const TFxP &root,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId                 = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *cameraPegbar = xsh->getStageObject(cameraId);
   assert(cameraPegbar);
   TCamera *camera = cameraPegbar->getCamera();
@@ -1266,7 +1282,7 @@ DVAPI TFxP buildPostSceneFx(ToonzScene *scene, double frame, int shrink,
   int whichLevels =
       scene->getProperties()->getOutputProperties()->getWhichLevels();
 
-  TXsheet *xsh  = scene->getXsheet();
+  TXsheet *xsh = scene->getXsheet();
   if (!xsh) xsh = scene->getXsheet();
 
   // Do not expand the xsheet node
@@ -1278,7 +1294,7 @@ DVAPI TFxP buildPostSceneFx(ToonzScene *scene, double frame, int shrink,
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
   else
-    cameraId                 = xsh->getStageObjectTree()->getCurrentCameraId();
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
   TStageObject *cameraPegbar = xsh->getStageObject(cameraId);
   assert(cameraPegbar);
   TCamera *camera = cameraPegbar->getCamera();

@@ -26,6 +26,7 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/mypaintbrushstyle.h"
 #include "toonz/preferences.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tgl.h"
@@ -38,6 +39,7 @@
 #include "tstroke.h"
 #include "timagecache.h"
 #include "tpixelutils.h"
+#include "tsystem.h"
 
 // Qt includes
 #include <QCoreApplication>  // Qt translation support
@@ -925,7 +927,7 @@ void FullColorBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_raster.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() + "brush_raster.txt");
   }
 
   // Rebuild the presets property entries

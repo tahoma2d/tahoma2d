@@ -873,11 +873,10 @@ void TFx::saveData(TOStream &os) {
   }
 
   os.openChild("ports");
-  for (PortTable::iterator pit = m_imp->m_portTable.begin();
-       pit != m_imp->m_portTable.end(); ++pit) {
-    os.openChild(pit->first);
-    if (pit->second->isConnected())
-      os << TFxP(pit->second->getFx()).getPointer();
+  for (auto &namePort : m_imp->m_portArray) {
+    os.openChild(namePort.first);
+    if (namePort.second->isConnected())
+      os << TFxP(namePort.second->getFx()).getPointer();
     os.closeChild();
   }
   os.closeChild();

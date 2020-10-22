@@ -600,7 +600,7 @@ void FilmstripFrameHeadGadget::drawShiftTraceMarker(QPainter &p) {
 //-----------------------------------------------------------------------------
 
 bool FilmstripFrameHeadGadget::eventFilter(QObject *obj, QEvent *e) {
-  if (e->type() == QEvent::Close || e->type() == QEvent::Hide) return false;
+  if (e->type() != QEvent::MouseButtonPress && e->type() != QEvent::MouseButtonDblClick && e->type() != QEvent::MouseMove) return false;
 
   // shift & trace case
   if (CommandManager::instance()->getAction(MI_ShiftTrace)->isChecked())

@@ -54,6 +54,7 @@ class QPushButton;
 class CameraCaptureLevelControl;
 class QRegExpValidator;
 class QCheckBox;
+class QComboBox;
 
 namespace DVGui {
 class FileField;
