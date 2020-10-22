@@ -652,7 +652,9 @@ void ToonzVectorBrushTool::onActivate() {
         QString::fromStdString(V_VectorBrushPreset.getValue()).toStdWString();
     if (wpreset != CUSTOM_WSTR) {
       initPresets();
+      if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
       m_preset.setValue(wpreset);
+      V_VectorBrushPreset = m_preset.getValueAsString();
       loadPreset();
     } else
       loadLastBrush();
@@ -2131,6 +2133,7 @@ void ToonzVectorBrushTool::addPreset(QString name) {
 
   // Set the value to the specified one
   m_preset.setValue(preset.m_name);
+  V_VectorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -2144,6 +2147,7 @@ void ToonzVectorBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+  V_VectorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
