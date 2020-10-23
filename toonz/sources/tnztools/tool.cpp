@@ -349,6 +349,15 @@ TImage *TTool::touchImage() {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
+    // If for some reason there is no palette, try and set a default one now.
+    if (!sl->getPalette() &&
+        (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+      TPalette *defaultPalette =
+          getApplication()->getPaletteController()->getDefaultPalette(
+              sl->getType());
+      if (defaultPalette) sl->setPalette(defaultPalette->clone());
+    }
+
     // current cell is not empty
     if (isCreateInHoldCellsEnabled && row > 0 &&
         xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
@@ -443,6 +452,15 @@ TImage *TTool::touchImage() {
       // note: sl should be always !=0 (the column is not empty)
       // if - for some reason - it is == 0 or it is not editable,
       // then we skip to empty-column behaviour
+
+      // If for some reason there is no palette, try and set a default one now.
+      if (!sl->getPalette() &&
+          (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+        TPalette *defaultPalette =
+            getApplication()->getPaletteController()->getDefaultPalette(
+                sl->getType());
+        if (defaultPalette) sl->setPalette(defaultPalette->clone());
+      }
 
       // create the drawing
       // find the proper frameid
