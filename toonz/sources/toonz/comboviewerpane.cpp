@@ -241,11 +241,11 @@ void ComboViewerPanel::updateShowHide() {
 /*! showing the show/hide commands
  */
 
-void ComboViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
-  QMenu *menu = new QMenu(this);
-  addShowHideContextMenu(menu);
-  menu->exec(event->globalPos());
-}
+// void ComboViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
+//  QMenu *menu = new QMenu(this);
+//  addShowHideContextMenu(menu);
+//  menu->exec(event->globalPos());
+//}
 
 //-----------------------------------------------------------------------------
 
