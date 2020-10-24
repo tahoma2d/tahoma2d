@@ -92,7 +92,7 @@ protected:
   void enableFlipConsoleForCamerastand(bool on);
   void playAudioFrame(int frame);
   bool hasSoundtrack();
-  void contextMenuEvent(QContextMenuEvent *event) override;
+  // void contextMenuEvent(QContextMenuEvent *event) override;
 
 public slots:
 
