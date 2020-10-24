@@ -578,6 +578,30 @@ void StartupPopup::onProjectLocationChanged() {
       popup->setPath(path.getQString());
       popup->exec();
     }
+  } else {
+    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change Project"))) {
+      m_projectLocationFld->blockSignals(true);
+      m_projectLocationFld->setPath(TApp::instance()
+                                        ->getCurrentScene()
+                                        ->getScene()
+                                        ->getProject()
+                                        ->getProjectFolder()
+                                        .getQString());
+      m_projectLocationFld->blockSignals(false);
+      return;
+    }
+    TProjectManager *pm   = TProjectManager::instance();
+    TFilePath projectPath = pm->projectFolderToProjectPath(path);
+    pm->setCurrentProjectPath(projectPath);
+    TProject *projectP =
+        TProjectManager::instance()->getCurrentProject().getPointer();
+
+    // In case the project file was upgraded to current version, save it now
+    if (projectP->getProjectPath() != projectPath) {
+      projectP->save();
+    }
+
+    IoCmd::newScene();
   }
 }
 
