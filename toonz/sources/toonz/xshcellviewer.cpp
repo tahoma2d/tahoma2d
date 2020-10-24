@@ -3039,13 +3039,19 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
     int k0, k1;
     bool isKeyframeFrame = pegbar && pegbar->getKeyframeRange(k0, k1) &&
                            k0 <= row && row <= k1 + 1;
-
-    // If you are in the keyframe area, open a function editor
-    if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell)) {
-      QAction *action =
-          CommandManager::instance()->getAction(MI_OpenFunctionEditor);
-      action->trigger();
-      return;
+    if (isKeyframeFrame &&
+        isKeyFrameArea(col, row,
+                       mouseInCell)) {  // They are in the keyframe selection
+      if (pegbar->isKeyframe(row))      // in the keyframe
+      {
+        m_viewer->setCurrentRow(
+            row);  // If you click on the key, change the current row as well
+        setDragTool(XsheetGUI::DragTool::makeKeyframeMoverTool(m_viewer));
+        m_viewer->dragToolClick(event);
+        event->accept();
+        update();
+        return;
+      }
     }
   }
 
@@ -3588,6 +3594,8 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
   }
   connect(actionGroup, SIGNAL(triggered(QAction *)), this,
           SLOT(onStepChanged(QAction *)));
+  menu.addSeparator();
+  menu.addAction(cmdManager->getAction(MI_OpenFunctionEditor));
 }
 
 //-----------------------------------------------------------------------------
