@@ -106,10 +106,10 @@ void main( void )
   if (gl_FragColor.a <= 0.0) discard;
 
   // Perform blending
-  if (s_frag.a > 0.0 && d_frag.a > 0.0) {
+  if (s_alpha > 0.0 && d_alpha > 0.0) {
     vec3 o_pix = SetLumSat(bhue ? s_pix : d_pix, bsat ? s_pix : d_pix, blum ? s_pix : d_pix);
     gl_FragColor.rgb = mix(d_pix, o_pix, balpha);
-  } else if (s_frag.a > 0.0) {
+  } else if (s_alpha > 0.0) {
     gl_FragColor.rgb = s_pix;
   } else {
     gl_FragColor.rgb = d_pix;
