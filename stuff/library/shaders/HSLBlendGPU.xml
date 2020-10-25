@@ -49,7 +49,7 @@
     </Default>
   </Parameter>
   <Parameter>
-    float alpha
+    float balpha
     <Concept>
       percent
     </Concept>
