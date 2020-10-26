@@ -368,8 +368,20 @@ void ProjectSettingsPopup::showEvent(QShowEvent *) {
       folderLabel->setFixedWidth(20);
       folderLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
       m_recentProjectLayout->addWidget(folderLabel, i, 0, Qt::AlignRight);
+      int slashCount    = path.count("\\");
+      QString lookFor   = slashCount > 0 ? "\\" : "//";
+      QString labelText = path;
+      if (labelText.count(lookFor) > 4) {
+        while (labelText.count(lookFor) > 4) {
+          int firstIndex = labelText.indexOf(lookFor, 0);
+          labelText.remove(0, firstIndex + 1);
+        }
+        labelText.insert(0, "..." + lookFor);
+      }
       ClickableProjectLabel *projectLabel =
-          new ClickableProjectLabel(path, this);
+          new ClickableProjectLabel(labelText, this);
+      projectLabel->setPath(path);
+      projectLabel->setToolTip(path);
       m_recentProjectLayout->addWidget(projectLabel, i, 1, Qt::AlignLeft);
       connect(projectLabel, &ClickableProjectLabel::onMouseRelease, [=]() {
         m_projectLocationFld->blockSignals(true);
@@ -563,6 +575,18 @@ ClickableProjectLabel::~ClickableProjectLabel() {}
 
 void ClickableProjectLabel::mouseReleaseEvent(QMouseEvent *event) {
   emit onMouseRelease(event);
+}
+
+//-----------------------------------------------------------------------------
+
+void ClickableProjectLabel::enterEvent(QEvent *) {
+  setStyleSheet("text-decoration: underline;");
+}
+
+//-----------------------------------------------------------------------------
+
+void ClickableProjectLabel::leaveEvent(QEvent *) {
+  setStyleSheet("text-decoration: none;");
 }
 
 //-----------------------------------------------------------------------------
