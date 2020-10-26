@@ -458,6 +458,8 @@ void StartupPopup::onCreateButton() {
 
   assert(TFileStatus(projectPath).doesExist());
   pm->setCurrentProjectPath(projectPath);
+  RecentFiles::instance()->addFilePath(projectFolder.getQString(),
+                                       RecentFiles::Project);
   IoCmd::newScene();
   m_pathFld->setPath(TApp::instance()
                          ->getCurrentScene()
@@ -600,7 +602,8 @@ void StartupPopup::onProjectLocationChanged() {
     if (projectP->getProjectPath() != projectPath) {
       projectP->save();
     }
-
+    RecentFiles::instance()->addFilePath(
+        projectPath.getParentDir().getQString(), RecentFiles::Project);
     IoCmd::newScene();
   }
 }
@@ -957,6 +960,10 @@ void StartupPopup::onRecentSceneClicked(int index) {
     } else
       RecentFiles::instance()->moveFilePath(index, 0, RecentFiles::Scene);
     RecentFiles::instance()->refreshRecentFilesMenu(RecentFiles::Scene);
+    TFilePath projectPath =
+        TProjectManager::instance()->getCurrentProjectPath();
+    RecentFiles::instance()->addFilePath(
+        projectPath.getParentDir().getQString(), RecentFiles::Project);
     hide();
   }
 }

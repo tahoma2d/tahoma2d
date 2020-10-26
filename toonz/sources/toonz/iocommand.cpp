@@ -2909,6 +2909,17 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class ClearRecentProjectListCommandHandler final : public MenuItemHandler {
+public:
+  ClearRecentProjectListCommandHandler()
+      : MenuItemHandler(MI_ClearRecentProject) {}
+  void execute() override {
+    RecentFiles::instance()->clearRecentFilesList(RecentFiles::Project);
+  }
+} clearRecentProjectListCommandHandler;
+
+//-----------------------------------------------------------------------------
+
 class RevertScene final : public MenuItemHandler {
 public:
   RevertScene() : MenuItemHandler(MI_RevertScene) {}

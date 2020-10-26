@@ -7,6 +7,8 @@
 #include "toonz/tproject.h"
 #include "filebrowsermodel.h"
 #include <QList>
+#include <QLabel>
+#include <QMouseEvent>
 
 // forward declaration
 namespace DVGui {
@@ -16,6 +18,8 @@ class CheckBox;
 }
 
 class QComboBox;
+class QGridLayout;
+class QGroupBox;
 
 //=============================================================================
 // ProjectPopup
@@ -34,6 +38,9 @@ protected:
   QLabel *m_pathFieldLabel;
 
   DVGui::FileField *m_projectLocationFld;
+
+  QGridLayout *m_recentProjectLayout;
+  QGroupBox *m_projectGB;
 
 public:
   ProjectPopup(bool isModal);
@@ -87,6 +94,27 @@ public slots:
 
 protected:
   void showEvent(QShowEvent *) override;
+};
+
+// The ClickableLabel class is used to allow click and dragging
+// on a label to change the value of a linked field
+class ClickableProjectLabel : public QLabel {
+  Q_OBJECT
+
+  QString m_path;
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *) override;
+
+public:
+  ClickableProjectLabel(const QString &text, QWidget *parent = nullptr,
+                        Qt::WindowFlags f = Qt::WindowFlags());
+  ~ClickableProjectLabel();
+  void setPath(QString path) { m_path = path; }
+  QString getPath() { return m_path; }
+
+signals:
+  void onMouseRelease(QMouseEvent *event);
 };
 
 #endif  // PROJECTPOPUP_H

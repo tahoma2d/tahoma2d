@@ -9,6 +9,7 @@
 #include "iocommand.h"
 #include "filebrowsermodel.h"
 #include "dvdirtreeview.h"
+#include "mainwindow.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -23,15 +24,16 @@
 #include "tapp.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
+#include "toonz/preferences.h"
 
 // Qt includes
 #include <QPushButton>
 #include <QFileInfo>
 #include <QFormLayout>
-#include <QLabel>
 #include <QMainWindow>
 #include <QComboBox>
 #include <QStandardPaths>
+#include <QGroupBox>
 
 using namespace DVGui;
 
@@ -50,17 +52,24 @@ TFilePath getDocumentsPath() {
 ProjectPopup::ProjectPopup(bool isModal)
     : Dialog(TApp::instance()->getMainWindow(), isModal, false, "Project") {
   TProjectManager *pm = TProjectManager::instance();
-  m_mainFrame->setFixedHeight(100);
+  // m_mainFrame->setFixedHeight(100);
   m_mainFrame->setMinimumWidth(400);
   this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
-  m_choosePrjLabel = new QLabel(tr("Project:"), this);
-  m_prjNameLabel   = new QLabel(tr("Project Name:"), this);
-  m_pathFieldLabel = new QLabel(tr("Create Project In:"), this);
-  m_nameFld        = new LineEdit();
-
+  m_choosePrjLabel      = new QLabel(tr("Project:"), this);
+  m_prjNameLabel        = new QLabel(tr("Project Name:"), this);
+  m_pathFieldLabel      = new QLabel(tr("Create Project In:"), this);
+  m_nameFld             = new LineEdit();
+  m_recentProjectLayout = new QGridLayout(this);
+  m_recentProjectLayout->setSpacing(2);
+  m_recentProjectLayout->setMargin(4);
   m_projectLocationFld =
       new DVGui::FileField(this, getDocumentsPath().getQString());
+  QString defaultProjectLocation =
+      Preferences::instance()->getDefaultProjectPath();
+  if (TSystem::doesExistFileOrLevel(TFilePath(defaultProjectLocation))) {
+    m_projectLocationFld->setPath(defaultProjectLocation);
+  }
 
   m_nameFld->setMaximumHeight(WidgetHeight);
 
@@ -114,6 +123,11 @@ ProjectPopup::ProjectPopup(bool isModal)
       cb->hide();
     }
     m_topLayout->addLayout(upperLayout);
+    m_projectGB = new QGroupBox(tr("Recent Projects"), this);
+    m_projectGB->setLayout(m_recentProjectLayout);
+    m_projectGB->setAlignment(Qt::AlignLeft);
+    m_topLayout->addWidget(m_projectGB);
+    m_projectGB->hide();
   }
 
   pm->addListener(this);
@@ -271,7 +285,8 @@ void ProjectSettingsPopup::projectChanged() {
   if (projectP->getProjectPath() != path) {
     projectP->save();
   }
-
+  RecentFiles::instance()->addFilePath(path.getParentDir().getQString(),
+                                       RecentFiles::Project);
   updateFieldsFromProject(projectP);
   IoCmd::newScene();
   accept();
@@ -326,6 +341,52 @@ void ProjectSettingsPopup::showEvent(QShowEvent *) {
   TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
   updateFieldsFromProject(currentProject.getPointer());
 
+  if (m_recentProjectLayout) {
+    while (m_recentProjectLayout->count() > 0) {
+      QLayoutItem *item = m_recentProjectLayout->takeAt(0);
+      QWidget *widget   = item->widget();
+      if (widget) delete widget;
+      delete item;
+    }
+  }
+
+  RecentFiles *recent = RecentFiles::instance();
+  QList<QString> recentProjects =
+      recent->getFilesNameList(RecentFiles::Project);
+
+  TProjectManager *pm = TProjectManager::instance();
+  static QPixmap closeProjectPixmap(
+      svgToPixmap(getIconThemePath("actions/18/folder_project.svg")));
+  // setPixmap(closeProjectPixmap);
+  int i = 0;
+  for (auto path : recentProjects) {
+    TFilePath projectPath(path);
+    if (TSystem::doesExistFileOrLevel(projectPath) &&
+        pm->isProject(projectPath)) {
+      QLabel *folderLabel = new QLabel(this);
+      folderLabel->setPixmap(closeProjectPixmap);
+      folderLabel->setFixedWidth(20);
+      folderLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+      m_recentProjectLayout->addWidget(folderLabel, i, 0, Qt::AlignRight);
+      ClickableProjectLabel *projectLabel =
+          new ClickableProjectLabel(path, this);
+      m_recentProjectLayout->addWidget(projectLabel, i, 1, Qt::AlignLeft);
+      connect(projectLabel, &ClickableProjectLabel::onMouseRelease, [=]() {
+        m_projectLocationFld->blockSignals(true);
+        m_projectLocationFld->setPath(projectLabel->getPath());
+        m_projectLocationFld->blockSignals(false);
+        projectChanged();
+      });
+      i++;
+    }
+  }
+  if (recentProjects.size() > 0) {
+    m_projectGB->show();
+    m_recentProjectLayout->setColumnStretch(0, 0);
+    m_recentProjectLayout->setColumnStretch(1, 10);
+  } else
+    m_projectGB->hide();
+
   m_nameFld->setText("");
 
   m_projectLocationFld->blockSignals(true);
@@ -336,13 +397,10 @@ void ProjectSettingsPopup::showEvent(QShowEvent *) {
   m_oldPath = TFilePath(m_projectLocationFld->getPath());
   m_projectLocationFld->blockSignals(false);
 
-  resize(600, 75);
   QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   sizePolicy.setHorizontalStretch(0);
   sizePolicy.setVerticalStretch(0);
   setSizePolicy(sizePolicy);
-  setMinimumSize(QSize(600, 75));
-  setMaximumSize(QSize(600, 75));
   setFixedSize(width(), height());
   setSizeGripEnabled(false);
 }
@@ -467,7 +525,11 @@ void ProjectCreatePopup::showEvent(QShowEvent *) {
     cb->setChecked(false);
     cb->blockSignals(signalesAlreadyBlocked);
   }
-
+  QString defaultProjectLocation =
+      Preferences::instance()->getDefaultProjectPath();
+  if (TSystem::doesExistFileOrLevel(TFilePath(defaultProjectLocation))) {
+    m_projectLocationFld->setPath(defaultProjectLocation);
+  }
   m_nameFld->setText("");
 
   resize(600, 150);
@@ -483,6 +545,24 @@ void ProjectCreatePopup::showEvent(QShowEvent *) {
 
 void ProjectCreatePopup::setPath(QString path) {
   m_projectLocationFld->setPath(path);
+}
+
+//=============================================================================
+
+ClickableProjectLabel::ClickableProjectLabel(const QString &text,
+                                             QWidget *parent, Qt::WindowFlags f)
+    : QLabel(text, parent, f) {
+  m_path = text;
+}
+
+//-----------------------------------------------------------------------------
+
+ClickableProjectLabel::~ClickableProjectLabel() {}
+
+//-----------------------------------------------------------------------------
+
+void ClickableProjectLabel::mouseReleaseEvent(QMouseEvent *event) {
+  emit onMouseRelease(event);
 }
 
 //-----------------------------------------------------------------------------

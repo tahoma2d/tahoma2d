@@ -204,7 +204,7 @@ void FileBrowserPopup::setFileMode(bool isDirectoryOnly) {
 //-----------------------------------------------------------------------------
 
 void FileBrowserPopup::setFolder(const TFilePath &folderPath) {
-  m_browser->setFolder(folderPath, true);
+  m_browser->setFolder(folderPath, true, true, true);
 }
 
 //-----------------------------------------------------------------------------

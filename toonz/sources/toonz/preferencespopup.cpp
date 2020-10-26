@@ -470,9 +470,9 @@ void PreferencesPopup::beforeRoomChoiceChanged() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onColorCalibrationChanged() {
-    LutManager::instance()->update();
-    TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
-        "ColorCalibration");
+  LutManager::instance()->update();
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "ColorCalibration");
 }
 
 //-----------------------------------------------------------------------------
@@ -1028,6 +1028,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {rasterBackgroundColor, tr("Matte color:")},
       {resetUndoOnSavingLevel, tr("Clear Undo History when Saving Levels")},
       {doNotShowPopupSaveScene, tr("Do not show Save Scene popup warning")},
+      {defaultProjectPath, tr("Default Project Path:")},
 
       // Import / Export
       {ffmpegPath, tr("FFmpeg Path:")},
@@ -1320,7 +1321,7 @@ QWidget* PreferencesPopup::createGeneralPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
-
+  insertUI(defaultProjectPath, lay);
   insertUI(defaultViewerEnabled, lay);
   insertUI(rasterOptimizedMemory, lay);
   insertUI(startupPopupEnabled, lay);
@@ -1471,7 +1472,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // m_preEditedFuncMap.insert(CurrentRoomChoice,
   //                          &PreferencesPopup::beforeRoomChoiceChanged);
   m_onEditedFuncMap.insert(colorCalibrationEnabled,
-      &PreferencesPopup::onColorCalibrationChanged);
+                           &PreferencesPopup::onColorCalibrationChanged);
 
   return widget;
 }
