@@ -61,8 +61,7 @@ enum StageObjectType {
   CAMERA = 1,
   TABLE  = 2,
   PEGBAR = 5,
-  COLUMN = 6,
-  SPLINE = 8
+  COLUMN = 6
 };
 
 const int StageObjectTypeShift = 28;
@@ -138,8 +137,6 @@ TStageObjectId toStageObjectId(string s) {
       return TStageObjectId::PegbarId(std::stoi(s.substr(3)) - 1);
     else if (s.length() > 6 && s.substr(0, 6) == "Camera")
       return TStageObjectId::CameraId(std::stoi(s.substr(6)) - 1);
-    else if (s.length() > 4 && s.substr(0, 6) == "Path")
-      return TStageObjectId::SplineId(std::stoi(s.substr(4)) - 1);
   }
   return TStageObjectId::NoneId;
 }
@@ -186,12 +183,6 @@ bool TStageObjectId::isColumn() const {
 
 //-----------------------------------------------------------------------------
 
-bool TStageObjectId::isSpline() const {
-  return m_id >> StageObjectTypeShift == SPLINE;
-}
-
-//-----------------------------------------------------------------------------
-
 const TStageObjectId TStageObjectId::NoneId(NONE << StageObjectTypeShift);
 
 //-----------------------------------------------------------------------------
@@ -221,13 +212,6 @@ const TStageObjectId TStageObjectId::ColumnId(int index) {
 
 //-----------------------------------------------------------------------------
 
-const TStageObjectId TStageObjectId::SplineId(int index) {
-  assert(0 <= index && index <= StageObjectMaxIndex);
-  return TStageObjectId(SPLINE << StageObjectTypeShift | index);
-}
-
-//-----------------------------------------------------------------------------
-
 string TStageObjectId::toString() const {
   int index = m_id & StageObjectIndexMask;
   string shortName;
@@ -246,9 +230,6 @@ string TStageObjectId::toString() const {
     break;
   case COLUMN:
     shortName = "Col" + std::to_string(index + 1);
-    break;
-  case SPLINE:
-    shortName = "Path" + std::to_string(index + 1);
     break;
   default:
     shortName = "BadPegbar";

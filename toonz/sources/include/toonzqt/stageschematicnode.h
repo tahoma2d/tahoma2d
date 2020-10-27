@@ -565,7 +565,6 @@ protected:
 
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
-  void setSpline(TStageObjectSpline *spline);
 
 protected slots:
   void onNameChanged();

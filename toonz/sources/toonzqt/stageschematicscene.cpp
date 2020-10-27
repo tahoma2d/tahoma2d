@@ -245,8 +245,6 @@ void StageSchematicScene::updateScene() {
       m_splineTable[spline] = node;
       connect(node, SIGNAL(currentObjectChanged(const TStageObjectId &, bool)),
               this, SLOT(onCurrentObjectChanged(const TStageObjectId &, bool)));
-      connect(node, SIGNAL(setSpline(TStageObjectSpline *)), this,
-              SLOT(onSetSpline(TStageObjectSpline *)));
     }
   }
 
@@ -1112,12 +1110,6 @@ void StageSchematicScene::onCurrentObjectChanged(const TStageObjectId &id,
   m_objHandle->setObjectId(id);
   if (m_frameHandle->isEditingLevel()) return;
   m_objHandle->setIsSpline(isSpline);
-}
-
-//------------------------------------------------------------------
-
-void StageSchematicScene::onSetSpline(TStageObjectSpline *spline) {
-  m_objHandle->setSplineObject(spline);
 }
 
 //------------------------------------------------------------------

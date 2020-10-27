@@ -211,7 +211,6 @@ protected slots:
   void onXsheetChanged();
   void onSceneChanged();
   void onCurrentObjectChanged(const TStageObjectId &, bool);
-  void onSetSpline(TStageObjectSpline *spline);
   void onCurrentColumnChanged(int);
   void onSelectionChanged();
   void onCollapse(QList<TStageObjectId>);

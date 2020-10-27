@@ -140,8 +140,6 @@ void TStageObjectTree::checkIntegrity() {
       assert(imp->getParent() == TStageObjectId());
     else if (id.isCamera())  // la camera puo' essere attaccata dovunque
       cameraCount++;
-    else if (id.isSpline())
-      int i = 0;
     else
       assert(0);
   }
@@ -448,7 +446,6 @@ void TStageObjectTree::saveData(TOStream &os, int occupiedColumnCount,
   for (it = pegbars.begin(); it != pegbars.end(); ++it) {
     TStageObjectId objectId = it->first;
     TStageObject *pegbar    = it->second;
-    if (objectId.isSpline()) continue;
     if (objectId.isColumn() && objectId.getIndex() >= occupiedColumnCount)
       continue;
 

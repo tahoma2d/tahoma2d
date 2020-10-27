@@ -1279,8 +1279,7 @@ void ToolUtils::UndoPath::undo() const {
   TStageObjectId currentObjectId = app->getCurrentObject()->getObjectId();
   TStageObject *stageObject =
       app->getCurrentXsheet()->getXsheet()->getStageObject(currentObjectId);
-  if (stageObject->getSpline() &&
-      stageObject->getSpline()->getId() == m_spline->getId())
+  if (stageObject->getSpline()->getId() == m_spline->getId())
     app->getCurrentObject()->setSplineObject(m_spline);
 
   app->getCurrentTool()->getTool()->notifyImageChanged();

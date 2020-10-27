@@ -2165,10 +2165,6 @@ void StageSchematicSplineNode::onClicked() {
         dynamic_cast<StageSchematicNode *>(m_dock->getPort()->getLinkedNode(0));
     TStageObjectId parentId = parentNode->getStageObject()->getId();
     emit currentObjectChanged(parentId, true);
-  } else {
-    emit currentObjectChanged(TStageObjectId::SplineId(getSpline()->getId()),
-                              true);
-    emit setSpline(getSpline());
   }
 }
 
