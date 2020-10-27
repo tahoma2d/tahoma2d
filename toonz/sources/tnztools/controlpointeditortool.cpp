@@ -355,8 +355,12 @@ void ControlPointEditorTool::updateTranslation() {
 
 void ControlPointEditorTool::initUndo() {
   if (TTool::getApplication()->getCurrentObject()->isSpline()) {
-    m_undo =
-        new UndoPath(getXsheet()->getStageObject(getObjectId())->getSpline());
+    TStageObjectSpline *spline =
+        getXsheet()->getStageObject(getObjectId())->getSpline();
+    if (!spline)
+      spline = TTool::getApplication()->getCurrentObject()->getCurrentSpline();
+    if (!spline) return;
+    m_undo = new UndoPath(spline);
     return;
   }
   TVectorImageP vi(getImage(false));
@@ -800,7 +804,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
   if (m_selection.getPointsDeleted()) {
     m_selection.selectNone();
     m_lastPointSelected = -1;
-    if (m_undo) delete(m_undo);
+    if (m_undo) delete (m_undo);
     m_undo = 0;
     return;
   }
@@ -825,8 +829,8 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
       if (m_lastPointSelected > count - 1) {
         m_selection.selectNone();
         m_lastPointSelected = -1;
-        if (m_undo) delete(m_undo);
-        m_undo              = 0;
+        if (m_undo) delete (m_undo);
+        m_undo = 0;
 
         return;
       }
@@ -898,7 +902,7 @@ void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
                                           const TMouseEvent &e) {
   if (m_selection.getPointsDeleted()) {
     m_selection.setArePointsDeleted(false);
-    if (m_undo) delete(m_undo);
+    if (m_undo) delete (m_undo);
     m_undo = 0;
     return;
   }

@@ -2354,6 +2354,7 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
   createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
                           "");
+  createMenuWindowsAction(MI_OpenIncrementPanel, tr("&Increment Editor"), "");
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
   menuAct->setIcon(createQIcon("viewer"));

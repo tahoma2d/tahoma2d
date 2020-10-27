@@ -61,7 +61,8 @@ enum StageObjectType {
   CAMERA = 1,
   TABLE  = 2,
   PEGBAR = 5,
-  COLUMN = 6
+  COLUMN = 6,
+  SPLINE = 8
 };
 
 const int StageObjectTypeShift = 28;
@@ -137,6 +138,8 @@ TStageObjectId toStageObjectId(string s) {
       return TStageObjectId::PegbarId(std::stoi(s.substr(3)) - 1);
     else if (s.length() > 6 && s.substr(0, 6) == "Camera")
       return TStageObjectId::CameraId(std::stoi(s.substr(6)) - 1);
+    else if (s.length() > 4 && s.substr(0, 6) == "Path")
+      return TStageObjectId::SplineId(std::stoi(s.substr(4)) - 1);
   }
   return TStageObjectId::NoneId;
 }
@@ -183,6 +186,12 @@ bool TStageObjectId::isColumn() const {
 
 //-----------------------------------------------------------------------------
 
+bool TStageObjectId::isSpline() const {
+  return m_id >> StageObjectTypeShift == SPLINE;
+}
+
+//-----------------------------------------------------------------------------
+
 const TStageObjectId TStageObjectId::NoneId(NONE << StageObjectTypeShift);
 
 //-----------------------------------------------------------------------------
@@ -212,6 +221,13 @@ const TStageObjectId TStageObjectId::ColumnId(int index) {
 
 //-----------------------------------------------------------------------------
 
+const TStageObjectId TStageObjectId::SplineId(int index) {
+  assert(0 <= index && index <= StageObjectMaxIndex);
+  return TStageObjectId(SPLINE << StageObjectTypeShift | index);
+}
+
+//-----------------------------------------------------------------------------
+
 string TStageObjectId::toString() const {
   int index = m_id & StageObjectIndexMask;
   string shortName;
@@ -230,6 +246,9 @@ string TStageObjectId::toString() const {
     break;
   case COLUMN:
     shortName = "Col" + std::to_string(index + 1);
+    break;
+  case SPLINE:
+    shortName = "Path" + std::to_string(index + 1);
     break;
   default:
     shortName = "BadPegbar";
@@ -258,8 +277,8 @@ bool setKeyframe(const TDoubleParamP &param, const TDoubleKeyframe &kf,
 
   TDoubleKeyframe kfCopy = kf;
 
-  kfCopy.m_frame = frame;
-  if (easeIn >= 0.0) kfCopy.m_speedIn = TPointD(-easeIn, kfCopy.m_speedIn.y);
+  kfCopy.m_frame                        = frame;
+  if (easeIn >= 0.0) kfCopy.m_speedIn   = TPointD(-easeIn, kfCopy.m_speedIn.y);
   if (easeOut >= 0.0) kfCopy.m_speedOut = TPointD(easeOut, kfCopy.m_speedOut.y);
 
   param->setKeyframe(kfCopy);
@@ -773,7 +792,7 @@ void TStageObject::setCenterAndOffset(const TPointD &center,
 //-----------------------------------------------------------------------------
 
 void TStageObject::setHandle(const std::string &s) {
-  m_handle = s;
+  m_handle                                = s;
   if (!s.empty() && s[0] == 'H') m_offset = m_center = TPointD();
 
   invalidate();
@@ -971,7 +990,7 @@ void TStageObject::removeKeyframeWithoutUndo(int frame) {
 
   if (m_skeletonDeformation) m_skeletonDeformation->deleteKeyframe(frame);
 
-  time = -1;
+  time                                          = -1;
   if ((int)keyframes.size() < 2) m_cycleEnabled = false;
 
   invalidate();
@@ -1304,17 +1323,17 @@ TAffine TStageObject::computeIkRootOffset(int t) {
   TAffine placement                   = foot->getPlacement(t).inv();
   int t0                              = 0;
   const TPinnedRangeSet::Range *range = foot->getPinnedRangeSet()->getRange(t);
-  if (range) t0 = range->first;
+  if (range) t0                       = range->first;
   while (t0 > 0) {
     TStageObject *oldFoot = getPinnedDescendant(t0 - 1);
     if (oldFoot == 0) break;  // oldFoot = this;
     assert(oldFoot != foot);
     TAffine changeFootAff =
         oldFoot->getPlacement(t0).inv() * foot->getPlacement(t0);
-    placement = changeFootAff * placement;
-    foot      = oldFoot;
-    range     = oldFoot->getPinnedRangeSet()->getRange(t0 - 1);
-    t0        = 0;
+    placement     = changeFootAff * placement;
+    foot          = oldFoot;
+    range         = oldFoot->getPinnedRangeSet()->getRange(t0 - 1);
+    t0            = 0;
     if (range) t0 = range->first;
   }
   m_ikflag--;
@@ -1412,7 +1431,7 @@ TAffine TStageObject::getPlacement(double t) {
   if (m_parent)
     place = m_parent->getPlacement(t) * computeLocalPlacement(tt);
   else
-    place = computeLocalPlacement(tt);
+    place        = computeLocalPlacement(tt);
   m_absPlacement = place;
   time           = t;
   return place;
@@ -1855,8 +1874,8 @@ TStageObjectParams *TStageObject::getParams() const {
   data->m_cycleEnabled = m_cycleEnabled;
   data->m_spline       = m_spline;
 
-  data->m_handle       = m_handle;
-  data->m_parentHandle = m_parentHandle;
+  data->m_handle                               = m_handle;
+  data->m_parentHandle                         = m_parentHandle;
   if (m_pinnedRangeSet) data->m_pinnedRangeSet = m_pinnedRangeSet->clone();
 
   return data;
@@ -1922,7 +1941,7 @@ void TStageObject::assignParams(const TStageObjectParams *src,
   m_handle       = src->m_handle;
   m_parentHandle = src->m_parentHandle;
 
-  m_cycleEnabled = src->m_cycleEnabled;
+  m_cycleEnabled                          = src->m_cycleEnabled;
   if (m_pinnedRangeSet) *m_pinnedRangeSet = *src->m_pinnedRangeSet;
   updateKeyframes();
   if (m_spline && isUppkEnabled()) m_spline->addParam(m_posPath.getPointer());

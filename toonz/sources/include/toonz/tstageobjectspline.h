@@ -36,6 +36,7 @@ class TDoubleParam;
 class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   PERSIST_DECLARATION(TStageObjectSpline)
   TStroke *m_stroke;
+  TStroke *m_interpolationStroke;
   DECLARE_CLASS_CODE
   TPointD m_dagNodePos;
 
@@ -44,6 +45,9 @@ class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   std::string m_name;
   bool m_isOpened;
   std::vector<TDoubleParam *> m_posPathParams;
+  bool m_active;
+  int m_color;
+  int m_steps;
 
 public:
   TStageObjectSpline();
@@ -56,6 +60,7 @@ Return spline stroke.
 \sa setStroke()
 */
   const TStroke *getStroke() const;
+  const TStroke *getInterpolationStroke() const;
   /*!
 Set spline stroke to \b stroke.
 \sa getStroke()
@@ -69,6 +74,15 @@ Set spline stroke to \b stroke.
   void setId(int id);
   std::string getName() const;
   void setName(const std::string &name) { m_name = name; }
+
+  void setActive(bool active) { m_active = active; }
+  bool getActive() { return m_active; }
+
+  void setColor(int color) { m_color = color; }
+  bool getColor() { return m_color; }
+
+  void setSteps(int steps) { m_steps = steps; }
+  bool getSteps() { return m_steps; }
 
   bool isOpened() const { return m_isOpened; }
   void setIsOpened(bool value) { m_isOpened = value; }

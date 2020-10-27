@@ -127,6 +127,8 @@ set(MOC_HEADERS
     ../stopmotion/canon.h
     ../stopmotion/stopmotionserial.h
     ../stopmotion/stopmotionlight.h
+    ../stopmotion/increment.h
+    ../stopmotion/incrementpanel.h
     cameracapturelevelcontrol.h
     penciltestpopup.h
 )
@@ -356,6 +358,8 @@ set(SOURCES
     ../stopmotion/canon.cpp
     ../stopmotion/stopmotionserial.cpp
     ../stopmotion/stopmotionlight.cpp
+    ../stopmotion/increment.cpp
+    ../stopmotion/incrementpanel.cpp
 	cameracapturelevelcontrol.cpp
     penciltestpopup.cpp
 )

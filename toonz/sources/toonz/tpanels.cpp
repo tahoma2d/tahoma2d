@@ -25,6 +25,7 @@
 #include "cleanupsettingspane.h"
 #include "vectorguideddrawingpane.h"
 #include "stopmotioncontroller.h"
+#include "incrementpanel.h"
 
 #include "tasksviewer.h"
 #include "batchserversviewer.h"
@@ -445,7 +446,8 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
   m_paletteViewer->setLevelHandle(app->getCurrentLevel());
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
-  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
+  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                     SLOT(onSceneSwitched()));
   assert(ret);
   CurrentStyleChangeCommand *currentStyleChangeCommand =
       new CurrentStyleChangeCommand();
@@ -577,7 +579,8 @@ void PaletteViewerPanel::showEvent(QShowEvent *) {
   TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
   bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
                      this, SLOT(onPreferenceChanged(const QString &)));
-  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(onSceneSwitched()));
+  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                       SLOT(onSceneSwitched()));
   assert(ret);
 }
 
@@ -1442,6 +1445,33 @@ public:
 OpenFloatingPanel openStopMotionPanelCommand(
     MI_OpenStopMotionPanel, "StopMotionController",
     QObject::tr("Stop Motion Controller"));
+//-----------------------------------------------------------------------------
+
+//=============================================================================
+// Increment Panel
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+class IncrementPanelFactory final : public TPanelFactory {
+public:
+  IncrementPanelFactory() : TPanelFactory("IncrementPanel") {}
+
+  void initialize(TPanel *panel) override {
+    IncrementPanel *incrementPanel = new IncrementPanel(panel);
+    panel->setWidget(incrementPanel);
+    panel->setWindowTitle(QObject::tr("Increment Guides"));
+    panel->setIsMaximizable(false);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
+  }
+} incrementPanelFactory;
+
+//=============================================================================
+OpenFloatingPanel openIncrementPanelCommand(MI_OpenIncrementPanel,
+                                            "IncrementPanel",
+                                            QObject::tr("Increment Guides"));
 //-----------------------------------------------------------------------------
 
 //=============================================================================

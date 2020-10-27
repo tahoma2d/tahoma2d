@@ -245,6 +245,8 @@ void StageSchematicScene::updateScene() {
       m_splineTable[spline] = node;
       connect(node, SIGNAL(currentObjectChanged(const TStageObjectId &, bool)),
               this, SLOT(onCurrentObjectChanged(const TStageObjectId &, bool)));
+      connect(node, SIGNAL(setSpline(TStageObjectSpline *)), this,
+              SLOT(onSetSpline(TStageObjectSpline *)));
     }
   }
 
@@ -480,7 +482,7 @@ void StageSchematicScene::updateEditedGroups(
     const QMap<int, QList<SchematicNode *>> &editedGroup) {
   QMap<int, QList<SchematicNode *>>::const_iterator it;
   for (it = editedGroup.begin(); it != editedGroup.end(); it++) {
-    int zValue                                            = 2;
+    int zValue = 2;
     QMap<int, QList<SchematicNode *>>::const_iterator it2 = editedGroup.begin();
     while (it2 != editedGroup.end()) {
       StageSchematicNode *placedObj =
@@ -1110,6 +1112,12 @@ void StageSchematicScene::onCurrentObjectChanged(const TStageObjectId &id,
   m_objHandle->setObjectId(id);
   if (m_frameHandle->isEditingLevel()) return;
   m_objHandle->setIsSpline(isSpline);
+}
+
+//------------------------------------------------------------------
+
+void StageSchematicScene::onSetSpline(TStageObjectSpline *spline) {
+  m_objHandle->setSplineObject(spline);
 }
 
 //------------------------------------------------------------------

@@ -1066,6 +1066,12 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   }
 
   if (m_isPath) {
+    TStageObjectSpline *spline =
+        getXsheet()->getStageObject(getObjectId())->getSpline();
+    if (!spline)
+      spline = TTool::getApplication()->getCurrentObject()->getCurrentSpline();
+    if (!spline) return;
+
     double error = 20.0 * getPixelSize();
 
     TStroke *stroke;
@@ -1099,8 +1105,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
 
     QMutexLocker lock(vi->getMutex());
 
-    TUndo *undo =
-        new UndoPath(getXsheet()->getStageObject(getObjectId())->getSpline());
+    TUndo *undo = new UndoPath(spline);
 
     while (vi->getStrokeCount() > 0) vi->deleteStroke(0);
     vi->addStroke(stroke, false);

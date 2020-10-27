@@ -109,23 +109,29 @@ void PosPathKeyframesUpdater::update(double &s) {
 TStageObjectSpline::TStageObjectSpline()
     : TSmartObject(m_classCode)
     , m_stroke(0)
+    , m_interpolationStroke(0)
     , m_dagNodePos(TConst::nowhere)
     , m_id(-1)
     , m_idBase(std::to_string(idBaseCode++))
     , m_name("")
+    , m_active(false)
+    , m_color(0)
+    , m_steps(0)
     , m_isOpened(false) {
   double d = 30;
   std::vector<TThickPoint> points;
   points.push_back(TPointD(0, 0));
   points.push_back(TPointD(d, 0));
   points.push_back(TPointD(2.0 * d, 0));
-  m_stroke = new TStroke(points);
+  m_stroke              = new TStroke(points);
+  m_interpolationStroke = new TStroke(points);
 }
 
 //-----------------------------------------------------------------------------
 
 TStageObjectSpline::~TStageObjectSpline() {
   delete m_stroke;
+  delete m_interpolationStroke;
   for (int i = 0; i < (int)m_posPathParams.size(); i++)
     m_posPathParams[i]->release();
   m_posPathParams.clear();
@@ -134,10 +140,14 @@ TStageObjectSpline::~TStageObjectSpline() {
 //-----------------------------------------------------------------------------
 
 TStageObjectSpline *TStageObjectSpline::clone() const {
-  TStageObjectSpline *clonedSpline = new TStageObjectSpline();
-  clonedSpline->m_id               = m_id;
-  clonedSpline->m_name             = m_name;
-  clonedSpline->m_stroke           = new TStroke(*m_stroke);
+  TStageObjectSpline *clonedSpline    = new TStageObjectSpline();
+  clonedSpline->m_id                  = m_id;
+  clonedSpline->m_name                = m_name;
+  clonedSpline->m_stroke              = new TStroke(*m_stroke);
+  clonedSpline->m_interpolationStroke = new TStroke(*m_interpolationStroke);
+  clonedSpline->m_color               = m_color;
+  clonedSpline->m_active              = m_active;
+  clonedSpline->m_steps               = m_steps;
   for (int i = 0; i < (int)m_posPathParams.size(); i++)
     clonedSpline->m_posPathParams.push_back(
         (TDoubleParam *)m_posPathParams[i]->clone());
@@ -147,6 +157,12 @@ TStageObjectSpline *TStageObjectSpline::clone() const {
 //-----------------------------------------------------------------------------
 
 const TStroke *TStageObjectSpline::getStroke() const { return m_stroke; }
+
+//-----------------------------------------------------------------------------
+
+const TStroke *TStageObjectSpline::getInterpolationStroke() const {
+  return m_interpolationStroke;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -174,6 +190,7 @@ void TStageObjectSpline::setStroke(TStroke *stroke) {
 
 void TStageObjectSpline::loadData(TIStream &is) {
   std::vector<TThickPoint> points;
+  std::vector<TThickPoint> interpolationPoints;
   VersionNumber tnzVersion = is.getVersion();
   if (tnzVersion < VersionNumber(1, 16)) {
     while (!is.eos()) {
@@ -190,10 +207,18 @@ void TStageObjectSpline::loadData(TIStream &is) {
         is >> m_name;
       else if (tagName == "pos")
         is >> m_dagNodePos.x >> m_dagNodePos.y;
+      else if (tagName == "color")
+        is >> m_color;
+      else if (tagName == "steps")
+        is >> m_steps;
       else if (tagName == "isOpened") {
         int v = 0;
         is >> v;
         m_isOpened = (bool)v;
+      } else if (tagName == "active") {
+        int v = 0;
+        is >> v;
+        m_active = (bool)v;
       } else if (tagName == "stroke") {
         int i, n = 0;
         is >> n;
@@ -202,27 +227,50 @@ void TStageObjectSpline::loadData(TIStream &is) {
           is >> p.x >> p.y >> p.thick;
           points.push_back(p);
         }
+      } else if (tagName == "interpolationStroke") {
+        int i, n = 0;
+        is >> n;
+        for (i = 0; i < n; i++) {
+          TThickPoint p;
+          is >> p.x >> p.y >> p.thick;
+          interpolationPoints.push_back(p);
+        }
       }
+
       is.matchEndTag();
     }
   }
   delete m_stroke;
-  m_stroke = new TStroke(points);
+  delete m_interpolationStroke;
+  m_stroke              = new TStroke(points);
+  m_interpolationStroke = new TStroke(interpolationPoints);
 }
 
 //-----------------------------------------------------------------------------
 
 void TStageObjectSpline::saveData(TOStream &os) {
-  const TStroke *stroke = getStroke();
+  const TStroke *stroke              = getStroke();
+  const TStroke *interpolationStroke = getStroke();
   os.child("splineId") << (int)m_id;
   if (!m_name.empty()) os.child("name") << m_name;
   os.child("isOpened") << (int)m_isOpened;
   os.child("pos") << m_dagNodePos.x << m_dagNodePos.y;
+  os.child("color") << (int)m_color;
+  os.child("active") << (int)m_active;
+  os.child("steps") << (int)m_steps;
   os.openChild("stroke");
   int n = stroke->getControlPointCount();
   os << n;
   for (int i = 0; i < n; i++) {
     TThickPoint p = stroke->getControlPoint(i);
+    os << p.x << p.y << p.thick;
+  }
+  os.closeChild();
+  os.openChild("interpolationStroke");
+  n = interpolationStroke->getControlPointCount();
+  os << n;
+  for (int i = 0; i < n; i++) {
+    TThickPoint p = interpolationStroke->getControlPoint(i);
     os << p.x << p.y << p.thick;
   }
   os.closeChild();

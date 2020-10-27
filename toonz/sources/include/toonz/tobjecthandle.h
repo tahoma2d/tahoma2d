@@ -57,6 +57,7 @@ public:
 
   TVectorImage *getSplineImage() const { return m_splineImage; }
   void setSplineObject(TStageObjectSpline *splineObject);
+  TStageObjectSpline *getCurrentSpline() { return m_currentSpline; }
 
 signals:
   void objectSwitched();

@@ -18,6 +18,7 @@ class PaletteViewer;
 class TPaletteHandle;
 class StyleEditor;
 class StopMotionController;
+class IncrementPanel;
 class TLevel;
 class StudioPaletteViewer;
 class TPanelTitleBarButton;
