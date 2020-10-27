@@ -76,8 +76,8 @@ void TObjectHandle::setObjectId(TStageObjectId objectId) {
 
 //-----------------------------------------------------------------------------
 
-void TObjectHandle::setIsSpline(bool isSpline) {
-  if (m_isSpline != isSpline) {
+void TObjectHandle::setIsSpline(bool isSpline, bool forceUpdate) {
+  if (m_isSpline != isSpline || forceUpdate) {
     m_isSpline = isSpline;
     emit objectSwitched();
   }

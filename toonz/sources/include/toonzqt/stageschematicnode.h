@@ -424,6 +424,7 @@ class StageSchematicPegbarNode final : public StageSchematicNode {
   Q_OBJECT
 
   PegbarPainter *m_pegbarPainter;
+  bool m_visible = true;
 
 public:
   StageSchematicPegbarNode(StageSchematicScene *scene, TStageObject *pegbar);
@@ -565,6 +566,7 @@ protected:
 
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
+  void splineClicked(TStageObjectSpline* spline);
 
 protected slots:
   void onNameChanged();

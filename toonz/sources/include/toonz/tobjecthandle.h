@@ -53,7 +53,7 @@ public:
   void notifyObjectIdSwitched() { emit objectSwitched(); }
 
   bool isSpline() const { return m_isSpline; }
-  void setIsSpline(bool isSpline);
+  void setIsSpline(bool isSpline, bool forceUpdate = false);
 
   TVectorImage *getSplineImage() const { return m_splineImage; }
   void setSplineObject(TStageObjectSpline *splineObject);

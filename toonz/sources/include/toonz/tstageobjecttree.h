@@ -282,6 +282,9 @@ Return a pointer to current stage objetc tree camera \b TCamera.
   void setDagGridDimension(int dim);
   int getDagGridDimension() const;
 
+  TStageObject* getMotionPathViewer();
+  TStageObjectId getMotionPathViewerId();
+
 private:
   // not implemented
   TStageObjectTree(const TStageObjectTree &);
