@@ -14,11 +14,11 @@
 #include "toonz/tstageobjectid.h"
 #include "toonzqt/colorfield.h"
 #include "toonzqt/functionviewer.h"
+
 class PaletteViewer;
 class TPaletteHandle;
 class StyleEditor;
 class StopMotionController;
-class IncrementPanel;
 class TLevel;
 class StudioPaletteViewer;
 class TPanelTitleBarButton;

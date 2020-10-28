@@ -25,7 +25,7 @@
 #include "cleanupsettingspane.h"
 #include "vectorguideddrawingpane.h"
 #include "stopmotioncontroller.h"
-#include "incrementpanel.h"
+#include "motionpathpanel.h"
 
 #include "tasksviewer.h"
 #include "batchserversviewer.h"
@@ -1453,25 +1453,25 @@ OpenFloatingPanel openStopMotionPanelCommand(
 
 //-----------------------------------------------------------------------------
 
-class IncrementPanelFactory final : public TPanelFactory {
+class MotionPathPanelFactory final : public TPanelFactory {
 public:
-  IncrementPanelFactory() : TPanelFactory("IncrementPanel") {}
+    MotionPathPanelFactory() : TPanelFactory("MotionPathPanel") {}
 
   void initialize(TPanel *panel) override {
-    IncrementPanel *incrementPanel = new IncrementPanel(panel);
-    panel->setWidget(incrementPanel);
-    panel->setWindowTitle(QObject::tr("Increment Guides"));
+    MotionPathPanel *motionPathPanel = new MotionPathPanel(panel);
+    panel->setWidget(motionPathPanel);
+    panel->setWindowTitle(QObject::tr("Motion Paths"));
     panel->setIsMaximizable(false);
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
             SLOT(showTitleBar(bool)));
   }
-} incrementPanelFactory;
+} motionPathPanelFactory;
 
 //=============================================================================
-OpenFloatingPanel openIncrementPanelCommand(MI_OpenIncrementPanel,
-                                            "IncrementPanel",
-                                            QObject::tr("Increment Guides"));
+OpenFloatingPanel openMotionPathPanelCommand(MI_OpenMotionPathPanel,
+                                            "MotionPathPanel",
+                                            QObject::tr("Motion Paths"));
 //-----------------------------------------------------------------------------
 
 //=============================================================================

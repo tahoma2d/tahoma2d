@@ -3160,132 +3160,138 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelsize) {
   TXsheet *xsh    = TApp::instance()->getCurrentXsheet()->getXsheet();
   int splineCount = xsh->getStageObjectTree()->getSplineCount();
-  TStageObjectSpline *spline  = 0;
-  if (splineCount > 0) spline = xsh->getStageObjectTree()->getSpline(0);
+
   TStageObjectId objId = TApp::instance()->getCurrentObject()->getObjectId();
 
   TStageObject *pegbar =
       objId != TStageObjectId::NoneId ? xsh->getStageObject(objId) : 0;
 
-  const TStroke *stroke = 0;
+  for (int i = 0; i < splineCount; i++) {
+      TStageObjectSpline* spline = xsh->getStageObjectTree()->getSpline(i);
+      
+      if (!spline->getActive()) continue;
 
-  if (pegbar && pegbar->getSpline()) stroke = pegbar->getSpline()->getStroke();
+      const TStroke* stroke = 0;
+      if (pegbar && pegbar->getSpline()) stroke = pegbar->getSpline()->getStroke();
 
-  bool showSteps = false;
-  if (!stroke && spline) {
-    stroke    = spline->getStroke();
-    showSteps = true;
-  }
-  if (objId == xsh->getStageObjectTree()->getMotionPathViewerId())
-    showSteps = true;
-  if (!stroke) return;
+      bool showSteps = false;
+      if (!stroke && spline) {
+          stroke = spline->getStroke();
+          showSteps = true;
+      }
+      if (objId == xsh->getStageObjectTree()->getMotionPathViewerId())
+          showSteps = true;
+      if (!stroke) return;
 
-  int frame = TApp::instance()->getCurrentFrame()->getFrame();
+      int frame = TApp::instance()->getCurrentFrame()->getFrame();
 
-  TAffine aff;
-  double objZ = 0, objNoScaleZ = 0;
-  if (objId != TStageObjectId::NoneId) {
-    aff         = xsh->getParentPlacement(objId, frame);
-    objZ        = xsh->getZ(objId, frame);
-    objNoScaleZ = xsh->getStageObject(objId)->getGlobalNoScaleZ();
-  }
-
-  glPushMatrix();
-  if (camera3d) {
-    tglMultMatrix(aff);
-    aff = TAffine();
-    glTranslated(0, 0, objZ);
-  } else {
-    TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
-    double camZ             = xsh->getZ(cameraId, frame);
-    TAffine camAff          = xsh->getPlacement(cameraId, frame);
-    TAffine tmp;
-    TStageObject::perspective(tmp, camAff, camZ, aff, objZ, objNoScaleZ);
-    aff = viewMatrix * tmp;
-  }
-
-  if (TApp::instance()->getCurrentObject()->isSpline()) {
-    glColor3d(1.0, 0.5, 0);
-    glLineStipple(1, 0x18FF);
-  } else {
-    glLineStipple(1, 0xCCCC);
-    glColor3d(1, 0, 1);
-  }
-
-  glEnable(GL_LINE_STIPPLE);
-  tglMultMatrix(aff);
-
-  double pixelSize    = std::max(0.1, pixelsize);
-  double strokeLength = stroke->getLength();
-  int n               = (int)(5 + (strokeLength / pixelSize) * 0.1);
-
-  glBegin(GL_LINE_STRIP);
-  for (int i = 0; i < n; i++)
-    tglVertex(stroke->getPoint((double)i / (double)(n - 1)));
-  glEnd();
-  glDisable(GL_LINE_STIPPLE);
-
-  if (!showSteps & (pegbar && pegbar->getSpline())) {
-    int cpCount = stroke->getControlPointCount();
-    for (int i = 0; i * 4 < cpCount; i++) {
-      double t    = stroke->getParameterAtControlPoint(i * 4);
-      TPointD pos = stroke->getPoint(t);
-      tglDrawText(pos, QString::number(i).toStdString().c_str());
-    }
-
-    TAffine parentAff = xsh->getParentPlacement(objId, frame);
-    TAffine aff       = xsh->getPlacement(objId, frame);
-    TPointD center    = Stage::inch * xsh->getCenter(objId, frame);
-    glPushMatrix();
-    tglMultMatrix(parentAff.inv() * TTranslation(aff * center));
-    center = TPointD();
-
-    // draw center
-    // tglDrawDisk(center,pixelSize*5);
-    tglDrawDisk(center, sqrt(tglGetPixelSize2()) * 5);
-
-    glPopMatrix();
-  }
-
-  if (showSteps) {
-    double length          = stroke->getLength(0.0, 1.0);
-    int steps              = 20;
-    double step            = 1.0 / (double)(steps - 1);
-    int points             = length / 20;
-    if (points < 2) points = 2;
-    double currentPosition = 0.0;
-
-    TPointD prePoint, point, postPoint;
-    // glColor3d(1.0, 0.0, 0.0);
-    for (int i = 0; i <= steps; i++) {
-      currentPosition                            = (double)i * step;
-      if (currentPosition > 1.0) currentPosition = 1.0;
-      point    = stroke->getPointAtLength(length * currentPosition);
-      prePoint = (i == 0) ? point : stroke->getPointAtLength(
-                                        length * (currentPosition - 0.02));
-      postPoint =
-          (i == points)
-              ? point
-              : stroke->getPointAtLength(length * (currentPosition + 0.02));
-
-      if (prePoint == postPoint) continue;
-
-      double radian =
-          std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
-      double degree = radian * 180.0 / 3.14159265;
+      TAffine aff;
+      double objZ = 0, objNoScaleZ = 0;
+      if (objId != TStageObjectId::NoneId) {
+          aff = xsh->getParentPlacement(objId, frame);
+          objZ = xsh->getZ(objId, frame);
+          objNoScaleZ = xsh->getStageObject(objId)->getGlobalNoScaleZ();
+      }
 
       glPushMatrix();
-      glTranslated(point.x, point.y, 0);
-      glRotated(degree, 0, 0, 1);
-      glBegin(GL_LINES);
-      glVertex2d(0, 3);
-      glVertex2d(0, -3);
-      glEnd();
-      glPopMatrix();
-    }
-  }
+      if (camera3d) {
+          tglMultMatrix(aff);
+          aff = TAffine();
+          glTranslated(0, 0, objZ);
+      }
+      else {
+          TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+          double camZ = xsh->getZ(cameraId, frame);
+          TAffine camAff = xsh->getPlacement(cameraId, frame);
+          TAffine tmp;
+          TStageObject::perspective(tmp, camAff, camZ, aff, objZ, objNoScaleZ);
+          aff = viewMatrix * tmp;
+      }
 
-  glPopMatrix();
+      if (TApp::instance()->getCurrentObject()->isSpline()) {
+          glColor3d(1.0, 0.5, 0);
+          glLineStipple(1, 0x18FF);
+      }
+      else {
+          glLineStipple(1, 0xCCCC);
+          glColor3d(1, 0, 1);
+      }
+
+      glEnable(GL_LINE_STIPPLE);
+      tglMultMatrix(aff);
+
+      double pixelSize = std::max(0.1, pixelsize);
+      double strokeLength = stroke->getLength();
+      int n = (int)(5 + (strokeLength / pixelSize) * 0.1);
+
+      glBegin(GL_LINE_STRIP);
+      for (int i = 0; i < n; i++)
+          tglVertex(stroke->getPoint((double)i / (double)(n - 1)));
+      glEnd();
+      glDisable(GL_LINE_STIPPLE);
+
+      if (!showSteps & (pegbar && pegbar->getSpline())) {
+          int cpCount = stroke->getControlPointCount();
+          for (int i = 0; i * 4 < cpCount; i++) {
+              double t = stroke->getParameterAtControlPoint(i * 4);
+              TPointD pos = stroke->getPoint(t);
+              tglDrawText(pos, QString::number(i).toStdString().c_str());
+          }
+
+          TAffine parentAff = xsh->getParentPlacement(objId, frame);
+          TAffine aff = xsh->getPlacement(objId, frame);
+          TPointD center = Stage::inch * xsh->getCenter(objId, frame);
+          glPushMatrix();
+          tglMultMatrix(parentAff.inv() * TTranslation(aff * center));
+          center = TPointD();
+
+          // draw center
+          // tglDrawDisk(center,pixelSize*5);
+          tglDrawDisk(center, sqrt(tglGetPixelSize2()) * 5);
+
+          glPopMatrix();
+      }
+
+      if (showSteps) {
+          double length = stroke->getLength(0.0, 1.0);
+          int steps = 20;
+          double step = 1.0 / (double)(steps - 1);
+          int points = length / 20;
+          if (points < 2) points = 2;
+          double currentPosition = 0.0;
+
+          TPointD prePoint, point, postPoint;
+          // glColor3d(1.0, 0.0, 0.0);
+          for (int i = 0; i <= steps; i++) {
+              currentPosition = (double)i * step;
+              if (currentPosition > 1.0) currentPosition = 1.0;
+              point = stroke->getPointAtLength(length * currentPosition);
+              prePoint = (i == 0) ? point : stroke->getPointAtLength(
+                  length * (currentPosition - 0.02));
+              postPoint =
+                  (i == points)
+                  ? point
+                  : stroke->getPointAtLength(length * (currentPosition + 0.02));
+
+              if (prePoint == postPoint) continue;
+
+              double radian =
+                  std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
+              double degree = radian * 180.0 / 3.14159265;
+
+              glPushMatrix();
+              glTranslated(point.x, point.y, 0);
+              glRotated(degree, 0, 0, 1);
+              glBegin(GL_LINES);
+              glVertex2d(0, 3);
+              glVertex2d(0, -3);
+              glEnd();
+              glPopMatrix();
+          }
+      }
+
+      glPopMatrix();
+  }
 }
 
 //-----------------------------------------------------------------------------
