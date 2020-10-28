@@ -8,6 +8,8 @@
 #include "levelsettingspopup.h"
 #include "tapp.h"
 #include "cleanupsettingsmodel.h"
+#include "tenv.h"
+#include "mainwindow.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -29,6 +31,7 @@
 #include "toonz/levelproperties.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/stage.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -51,6 +54,7 @@
 #include <QStringList>
 #include <QListWidget>
 #include <QGroupBox>
+#include <QCheckBox>
 
 using namespace DVGui;
 
@@ -1249,34 +1253,38 @@ PreferencesPopup::PreferencesPopup()
   m_pref = Preferences::instance();
 
   // Category List
-  QListWidget* categoryList = new QListWidget(this);
+  m_categoryList = new QListWidget(this);
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
              << tr("Loading") << tr("Saving") << tr("Import/Export")
              << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
              << tr("Preview") << tr("Onion Skin") << tr("Colors")
              << tr("Version Control") << tr("Touch/Tablet Settings");
-  categoryList->addItems(categories);
-  categoryList->setFixedWidth(160);
-  categoryList->setCurrentRow(0);
-  categoryList->setAlternatingRowColors(true);
+  m_categoryList->addItems(categories);
+  m_categoryList->setFixedWidth(160);
+  m_categoryList->setCurrentRow(0);
+  m_categoryList->setAlternatingRowColors(true);
 
-  QStackedWidget* stackedWidget = new QStackedWidget(this);
-  stackedWidget->addWidget(createGeneralPage());
-  stackedWidget->addWidget(createInterfacePage());
-  stackedWidget->addWidget(createVisualizationPage());
-  stackedWidget->addWidget(createLoadingPage());
-  stackedWidget->addWidget(createSavingPage());
-  stackedWidget->addWidget(createImportExportPage());
-  stackedWidget->addWidget(createDrawingPage());
-  stackedWidget->addWidget(createToolsPage());
-  stackedWidget->addWidget(createXsheetPage());
-  stackedWidget->addWidget(createAnimationPage());
-  stackedWidget->addWidget(createPreviewPage());
-  stackedWidget->addWidget(createOnionSkinPage());
-  stackedWidget->addWidget(createColorsPage());
-  stackedWidget->addWidget(createVersionControlPage());
-  stackedWidget->addWidget(createTouchTabletPage());
+  m_stackedWidget = new QStackedWidget(this);
+  m_stackedWidget->addWidget(createGeneralPage());
+  m_stackedWidget->addWidget(createInterfacePage());
+  m_stackedWidget->addWidget(createVisualizationPage());
+  m_stackedWidget->addWidget(createLoadingPage());
+  m_stackedWidget->addWidget(createSavingPage());
+  m_stackedWidget->addWidget(createImportExportPage());
+  m_stackedWidget->addWidget(createDrawingPage());
+  m_stackedWidget->addWidget(createToolsPage());
+  m_stackedWidget->addWidget(createXsheetPage());
+  m_stackedWidget->addWidget(createAnimationPage());
+  m_stackedWidget->addWidget(createPreviewPage());
+  m_stackedWidget->addWidget(createOnionSkinPage());
+  m_stackedWidget->addWidget(createColorsPage());
+  m_stackedWidget->addWidget(createVersionControlPage());
+  m_stackedWidget->addWidget(createTouchTabletPage());
+  // createImportPrefsPage() must always be last
+  m_stackedWidget->addWidget(createImportPrefsPage());
+
+  QPushButton* importPrefButton = new QPushButton("Import Preferences");
 
   QHBoxLayout* mainLayout = new QHBoxLayout();
   mainLayout->setMargin(0);
@@ -1286,14 +1294,18 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-    categoryLayout->addWidget(categoryList, 1);
-    mainLayout->addLayout(categoryLayout, 0);
-    mainLayout->addWidget(stackedWidget, 1);
+	categoryLayout->addWidget(m_categoryList, 1);
+    categoryLayout->addWidget(importPrefButton, 0);
+	mainLayout->addLayout(categoryLayout, 0);
+    mainLayout->addWidget(m_stackedWidget, 1);
   }
   setLayout(mainLayout);
 
-  bool ret = connect(categoryList, SIGNAL(currentRowChanged(int)),
-                     stackedWidget, SLOT(setCurrentIndex(int)));
+  bool ret = connect(m_categoryList, SIGNAL(currentRowChanged(int)),
+                     m_stackedWidget, SLOT(setCurrentIndex(int)));
+
+  ret = ret && connect(importPrefButton, SIGNAL(clicked()),
+                       SLOT(onImportPreferences()));
 
   assert(ret);
 }
@@ -1471,7 +1483,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // m_preEditedFuncMap.insert(CurrentRoomChoice,
   //                          &PreferencesPopup::beforeRoomChoiceChanged);
   m_onEditedFuncMap.insert(colorCalibrationEnabled,
-      &PreferencesPopup::onColorCalibrationChanged);
+                           &PreferencesPopup::onColorCalibrationChanged);
 
   return widget;
 }
@@ -1925,6 +1937,71 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
 
 //-----------------------------------------------------------------------------
 
+QWidget* PreferencesPopup::createImportPrefsPage() {
+  QWidget* widget  = new QWidget(this);
+  QGridLayout* lay = new QGridLayout();
+  setupLayout(lay);
+
+#ifdef MACOSX
+  QLabel* pathLabel =
+      new QLabel(tr("Select the Tahoma2D application that you want to import "
+                    "preferences from"));
+#else
+  QLabel* pathLabel =
+      new QLabel(tr("Select the folder of the Tahoma2D application that you "
+                    "want to import preferences from"));
+#endif
+
+  lay->addWidget(pathLabel, 1, 1);
+
+  m_importPrefpath = new DVGui::FileField(this);
+  lay->addWidget(m_importPrefpath, 2, 1);
+
+  QGridLayout* importOptions = insertGroupBox(tr("Import Options"), lay);
+  {
+    m_importPrefsCB = new QCheckBox(tr("Preferences and Settings"), this);
+    m_importPrefsCB->setChecked(true);
+    importOptions->addWidget(m_importPrefsCB, 3, 1);
+
+    m_importRoomsCB = new QCheckBox(tr("Room Layouts"), this);
+    m_importRoomsCB->setChecked(true);
+    importOptions->addWidget(m_importRoomsCB, 4, 1);
+
+    m_importProjectsCB = new QCheckBox(tr("Sandbox and Projects"), this);
+    m_importProjectsCB->setChecked(true);
+    importOptions->addWidget(m_importProjectsCB, 5, 1);
+
+    m_importFxPluginsCB = new QCheckBox(tr("Fx and Plugins"), this);
+    m_importFxPluginsCB->setChecked(true);
+    importOptions->addWidget(m_importFxPluginsCB, 6, 1);
+
+    m_importStudioPalettesCB = new QCheckBox(tr("Studio Palettes"), this);
+    m_importStudioPalettesCB->setChecked(true);
+    importOptions->addWidget(m_importStudioPalettesCB, 7, 1);
+
+    m_importLibraryCB = new QCheckBox(tr("Library"), this);
+    m_importLibraryCB->setChecked(true);
+    importOptions->addWidget(m_importLibraryCB, 8, 1);
+
+    m_importToonzfarmCB = new QCheckBox(tr("Toonzfarm"), this);
+    m_importToonzfarmCB->setChecked(true);
+    importOptions->addWidget(m_importToonzfarmCB, 9, 1);
+  }
+
+  QPushButton* importBtn = new QPushButton(tr("Import"));
+  lay->addWidget(importBtn, 10, 1, Qt::AlignHCenter | Qt::AlignBottom);
+
+  lay->setRowStretch(lay->rowCount(), 1);
+
+  widget->setLayout(lay);
+
+  connect(importBtn, SIGNAL(clicked()), SLOT(onImport()));
+
+  return widget;
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onChange() {
   QWidget* senderWidget = qobject_cast<QWidget*>(sender());
   if (!senderWidget) return;
@@ -1973,6 +2050,254 @@ void PreferencesPopup::onColorFieldChanged(const TPixel32& color,
     return;
 
   if (m_onEditedFuncMap.contains(id)) (this->*m_onEditedFuncMap[id])();
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onImportPreferences() {
+  m_categoryList->setCurrentRow(-1);
+  int stackedSize = m_stackedWidget->count();
+  m_stackedWidget->setCurrentIndex(stackedSize - 1);
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onImport() {
+  if (m_importPrefpath->getPath().isEmpty()) {
+#ifdef MACOSX
+    DVGui::error("Please select a Tahoma2D application and try again.");
+#else
+    DVGui::error(
+        "Please select a folder containing a Tahoma2D application and try "
+        "again.");
+#endif
+    return;
+  }
+
+  TFilePath oldStuffPath =
+      TFilePath(m_importPrefpath->getPath() + "/tahomastuff");
+  if (!TFileStatus(oldStuffPath).doesExist()) {
+    DVGui::error("Unable to find the 'tahomastuff' folder in " +
+                 m_importPrefpath->getPath() +
+                 ".\nPlease check path and try again.");
+    return;
+  }
+
+  if (oldStuffPath == TEnv::getStuffDir()) {
+    DVGui::error(
+        "Please choose a different Tahoma2D application and try again.");
+    return;
+  }
+
+  bool useLegacy = false;
+  if (!TFileStatus(oldStuffPath + "profiles/users").doesExist())
+    useLegacy = true;
+
+  TFilePath srcDir, destDir;
+
+  //-------------------
+  // --- Preferences and Settings
+  //-------------------
+  if (m_importPrefsCB->isChecked()) {
+    // -- Settings
+    destDir = ToonzFolder::getMyModuleDir();
+    if (useLegacy)
+      srcDir = oldStuffPath + (L"profiles/layouts/settings." +
+                               TSystem::getUserName().toStdWString());
+    else
+      srcDir = oldStuffPath +
+               (L"profiles/users/" + TSystem::getUserName().toStdWString());
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Settings.\nCould not find " +
+                     srcDir.getQString());
+    else {
+      QString origFfmpegPath = Preferences::instance()->getFfmpegPath();
+
+      QFileInfoList fil = QDir(toQString(srcDir)).entryInfoList();
+      int i;
+      for (i = 0; i < fil.size(); i++) {
+        QFileInfo fi = fil.at(i);
+        if (fi.fileName() == QString(".") || fi.fileName() == QString(".."))
+          continue;
+        TFilePath src  = srcDir + fi.fileName().toStdWString(),
+                  dest = destDir + fi.fileName().toStdWString();
+        if (fi.isDir()) {
+          if (fi.fileName() == QString("layouts")) continue;
+          TSystem::copyDir(dest, src, true);
+        } else
+          TSystem::copyFile(dest, src, true);
+      }
+
+      // Force reload now as we need to clear out the ffmpeg directory to force
+      // it to find it again otherwise it will point to old location
+      Preferences::instance()->load();
+      Preferences::instance()->setValue(ffmpegPath, origFfmpegPath);
+    }
+
+    if (useLegacy) {
+      // -- Environment variables
+      srcDir = oldStuffPath + L"profiles/env";
+      if (!TFileStatus(srcDir).doesExist())
+        DVGui::warning("Failed to process Env.\nCould not find " +
+                       srcDir.getQString());
+      else {
+        if (TFileStatus(srcDir +
+                        (TSystem::getUserName().toStdWString() + L".env"))
+                .doesExist()) {
+          TSystem::copyFile(
+              destDir + L"env.ini",
+              srcDir + (TSystem::getUserName().toStdWString() + L".env"), true);
+          // Force reload now because it will automatically save on quit
+          TEnv::loadAllEnvVariables();
+        }
+      }
+
+      // -- Config
+      srcDir = oldStuffPath + L"config";
+      if (!TFileStatus(srcDir).doesExist())
+        DVGui::warning("Failed to process Config.\nCould not find " +
+                       srcDir.getQString());
+      else {
+        // Only get specific files and directories, if found, from the config
+        // directory
+        std::wstring fileList[7] = {
+            (TSystem::getUserName().toStdWString() + L"_history.txt"),
+            L"brush_raster.txt",
+            L"brush_vector.txt",
+            L"brush_smartraster.txt",
+            L"brush_toonzraster.txt",
+            L"reslist.txt",
+            L"cleanupreslist.txt"};
+        int fileListCount = 7;
+        for (int i = 0; i < fileListCount; i++) {
+          TFilePath srcFile  = srcDir + fileList[i],
+                    destFile = destDir + fileList[i];
+
+          // Filename changes
+          if (destFile.getLevelNameW() ==
+              (TSystem::getUserName().toStdWString() + L"_history.txt"))
+            destFile = destDir + L"file_history.txt";
+          else if (destFile.getLevelNameW() == L"brush_toonzraster.txt")
+            destFile = destDir + L"brush_smartraster.txt";
+
+          if (TFileStatus(srcFile).doesExist())
+            TSystem::copyFile(destFile, srcFile, true);
+        }
+
+        if (TFileStatus(srcDir + L"outputpresets").doesExist())
+          TSystem::copyDir(destDir + L"outputpresets",
+                           srcDir + L"outputpresets", true);
+      }
+    }
+  }
+  //-------------------
+  // --- Room Layouts
+  //-------------------
+  if (m_importRoomsCB->isChecked()) {
+    destDir = ToonzFolder::getMyModuleDir() + L"layouts/Default";
+    if (useLegacy)
+      srcDir = oldStuffPath + (L"profiles/layouts/personal/Default." +
+                               TSystem::getUserName().toStdWString());
+    else
+      srcDir = oldStuffPath +
+               (L"profiles/users/" + TSystem::getUserName().toStdWString() +
+                L"/layouts/Default");
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Room Layouts.\nCould not find " +
+                     srcDir.getQString());
+    else {
+      MainWindow* mainWin =
+          qobject_cast<MainWindow*>(TApp::instance()->getMainWindow());
+
+      mainWin->resetRoomsLayout();
+
+      TSystem::copyDir(destDir, srcDir, true);
+    }
+  }
+  //-------------------
+  // --- Sandbox and Projects
+  //-------------------
+  if (m_importProjectsCB->isChecked()) {
+    // -- Sandbox
+    destDir = TEnv::getStuffDir() + L"sandbox";
+    srcDir  = oldStuffPath + L"sandbox";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Sandbox.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+
+    // -- Projects
+    destDir = TEnv::getStuffDir() + L"projects";
+    srcDir  = oldStuffPath + L"projects";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Projects.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+  }
+  //-------------------
+  // --- Fxs and Plugins
+  //-------------------
+  if (m_importFxPluginsCB->isChecked()) {
+    // -- Fxs
+    destDir = TEnv::getStuffDir() + L"fxs";
+    srcDir  = oldStuffPath + L"fxs";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Fxs.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+
+    // -- Plugins
+    destDir = TEnv::getStuffDir() + L"plugins";
+    srcDir  = oldStuffPath + L"plugins";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Plugins.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+  }
+  //-------------------
+  // --- Studiopalette
+  //-------------------
+  if (m_importStudioPalettesCB->isChecked()) {
+    destDir = TEnv::getStuffDir() + L"studiopalette";
+    srcDir  = oldStuffPath + L"studiopalette";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Studio Palette.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+  }
+  //-------------------
+  // --- Library
+  //-------------------
+  if (m_importLibraryCB->isChecked()) {
+    destDir = TEnv::getStuffDir() + L"library";
+    srcDir  = oldStuffPath + L"library";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Library.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+  }
+  //-------------------
+  // --- Toonzfarm
+  //-------------------
+  if (m_importToonzfarmCB->isChecked()) {
+    destDir = TEnv::getStuffDir() + L"toonzfarm";
+    srcDir  = oldStuffPath + L"toonzfarm";
+    if (!TFileStatus(srcDir).doesExist())
+      DVGui::warning("Failed to process Toonzfarm.\nCould not find " +
+                     srcDir.getQString());
+    else
+      TSystem::copyDir(destDir, srcDir, true);
+  }
+
+  DVGui::MsgBoxInPopup(
+      DVGui::MsgType(INFORMATION),
+      tr("Import complete. Please restart to complete applying the changes."));
 }
 
 //-----------------------------------------------------------------------------

@@ -124,6 +124,8 @@ public:
   // Saving
   void setRasterBackgroundColor();
 
+  void load();
+
 public:
   static Preferences *instance();
 

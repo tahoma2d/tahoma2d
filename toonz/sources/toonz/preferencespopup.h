@@ -26,6 +26,8 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QGroupBox;
+class QListWidget;
+class QStackedWidget;
 
 //==============================================================
 
@@ -73,6 +75,19 @@ private:
   QPushButton* m_editLevelFormat;
   QComboBox* m_levelFormatNames;
 
+  QListWidget* m_categoryList;
+  QStackedWidget* m_stackedWidget;
+
+  // For importing preferences from a different installation
+  DVGui::FileField* m_importPrefpath;
+  QCheckBox* m_importPrefsCB;
+  QCheckBox* m_importRoomsCB;
+  QCheckBox* m_importProjectsCB;
+  QCheckBox* m_importFxPluginsCB;
+  QCheckBox* m_importStudioPalettesCB;
+  QCheckBox* m_importLibraryCB;
+  QCheckBox* m_importToonzfarmCB;
+
 private:
   void rebuildFormatsList();
   QList<ComboBoxItem> buildFontStyleList() const;
@@ -108,6 +123,7 @@ private:
   QWidget* createColorsPage();
   QWidget* createVersionControlPage();
   QWidget* createTouchTabletPage();
+  QWidget* createImportPrefsPage();
 
   //--- callbacks ---
   // General
@@ -160,6 +176,8 @@ private slots:
   void onEditLevelFormat();
   void onLevelFormatEdited();
   void onImportPolicyExternallyChanged(int policy);
+  void onImportPreferences();
+  void onImport();
 };
 
 //**********************************************************************************

@@ -143,6 +143,7 @@ DVAPI TFilePath getWorkingDirectory();
 DVAPI void setStuffDir(const TFilePath &stuffDir);
 
 DVAPI void saveAllEnvVariables();
+DVAPI void loadAllEnvVariables();
 
 // register command line argument paths.
 // returns true on success
