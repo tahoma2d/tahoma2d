@@ -1073,11 +1073,11 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
   TStageObjectId id;
   for (int i = 0; i < xsh->getStageObjectTree()->getStageObjectCount(); i++) {
     id = xsh->getStageObjectTree()->getStageObject(i)->getId();
+    if (id == xsh->getStageObjectTree()->getMotionPathViewerId()) continue;
     if (id.isColumn()) {
       int columnIndex = id.getIndex();
       if (xsh->isColumnEmpty(columnIndex)) continue;
     }
-
     TStageObject *pegbar = xsh->getStageObject(id);
     QString itemName     = (id.isTable())
                            ? tr("Table")

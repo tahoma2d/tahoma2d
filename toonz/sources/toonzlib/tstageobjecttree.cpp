@@ -32,7 +32,7 @@ struct TStageObjectTree::TStageObjectTreeImp {
   TStageObjectId m_currentCameraId;
   TStageObjectId m_currentPreviewCameraId;
   TStageObjectId m_motionPathViewerId;
-  TStageObject* m_motionPathViewer;
+  TStageObject *m_motionPathViewer;
 
   //! Allows to manager pegbar handle.
   HandleManager *m_handleManager;
@@ -91,10 +91,10 @@ TStageObjectTree::TStageObjectTreeImp::~TStageObjectTreeImp() {
 TStageObjectTree::TStageObjectTree() : m_imp(new TStageObjectTreeImp) {
   getStageObject(TStageObjectId::CameraId(0), true);
   getStageObject(TStageObjectId::TableId, true);
-  TStageObjectId id = TStageObjectId::PegbarId(9999);
-  TStageObject* obj = getStageObject(id, true);
+  TStageObjectId id           = TStageObjectId::PegbarId(9999);
+  TStageObject *obj           = getStageObject(id, true);
   m_imp->m_motionPathViewerId = id;
-  m_imp->m_motionPathViewer = obj;
+  m_imp->m_motionPathViewer   = obj;
 /*
   static bool firstTime = true;
   if(firstTime)
@@ -203,14 +203,14 @@ TStageObject *TStageObjectTree::getStageObject(const TStageObjectId &id,
 
 //-----------------------------------------------------------------------------
 
-TStageObject* TStageObjectTree::getMotionPathViewer() {
-    return m_imp->m_motionPathViewer;
+TStageObject *TStageObjectTree::getMotionPathViewer() {
+  return m_imp->m_motionPathViewer;
 }
 
 //-----------------------------------------------------------------------------
 
 TStageObjectId TStageObjectTree::getMotionPathViewerId() {
-    return m_imp->m_motionPathViewerId;
+  return m_imp->m_motionPathViewerId;
 }
 
 //-----------------------------------------------------------------------------

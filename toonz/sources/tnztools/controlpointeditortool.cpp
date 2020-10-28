@@ -800,7 +800,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
   if (m_selection.getPointsDeleted()) {
     m_selection.selectNone();
     m_lastPointSelected = -1;
-    if (m_undo) delete(m_undo);
+    if (m_undo) delete (m_undo);
     m_undo = 0;
     return;
   }
@@ -825,8 +825,8 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
       if (m_lastPointSelected > count - 1) {
         m_selection.selectNone();
         m_lastPointSelected = -1;
-        if (m_undo) delete(m_undo);
-        m_undo              = 0;
+        if (m_undo) delete (m_undo);
+        m_undo = 0;
 
         return;
       }

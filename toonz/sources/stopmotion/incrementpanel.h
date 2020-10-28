@@ -3,7 +3,6 @@
 #ifndef INCREMENTPANEL_H
 #define INCREMENTPANEL_H
 
-
 #include <QObject>
 #include <QWidget>
 
@@ -14,19 +13,15 @@
 class IncrementPanel final : public QWidget {
   Q_OBJECT
 
-
 public:
   IncrementPanel(QWidget *parent = 0);
   ~IncrementPanel();
 
-// protected:
+  // protected:
 
+  // protected slots:
 
-// protected slots:
-
-
-// public slots:
-
+  // public slots:
 };
 
 #endif  // INCREMENTPANEL_H

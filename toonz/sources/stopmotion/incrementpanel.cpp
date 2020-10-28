@@ -4,9 +4,7 @@
 //    IncrementPanel  implementation
 //*****************************************************************************
 
-IncrementPanel::IncrementPanel(QWidget *parent) : QWidget(parent) {
-  
-}
+IncrementPanel::IncrementPanel(QWidget *parent) : QWidget(parent) {}
 
 //-----------------------------------------------------------------------------
 

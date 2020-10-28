@@ -1099,7 +1099,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
 
     QMutexLocker lock(vi->getMutex());
 
-    TUndo* undo =
+    TUndo *undo =
         new UndoPath(getXsheet()->getStageObject(getObjectId())->getSpline());
 
     while (vi->getStrokeCount() > 0) vi->deleteStroke(0);

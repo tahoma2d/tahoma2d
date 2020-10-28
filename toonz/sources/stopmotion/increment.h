@@ -18,15 +18,11 @@ private:
   IncrementGuides();
   ~IncrementGuides();
 
-// public:
+  // public:
 
+  // public slots:
 
-
-// public slots:
-
-
-// signals:
-
+  // signals:
 };
 
 #endif  // INCREMENT_H

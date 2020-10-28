@@ -216,6 +216,7 @@ void StageSchematicScene::updateScene() {
   QList<int> modifiedNodeIds;
   for (int i = 0; i < pegTree->getStageObjectCount(); i++) {
     TStageObject *pegbar = pegTree->getStageObject(i);
+    if (pegbar == pegTree->getMotionPathViewer()) continue;
     if (pegbar->getDagNodePos() == TConst::nowhere)
       modifiedNodeIds.push_back(i);
     else
@@ -245,8 +246,8 @@ void StageSchematicScene::updateScene() {
       m_splineTable[spline] = node;
       connect(node, SIGNAL(currentObjectChanged(const TStageObjectId &, bool)),
               this, SLOT(onCurrentObjectChanged(const TStageObjectId &, bool)));
-      connect(node, SIGNAL(splineClicked(TStageObjectSpline *)),
-          this, SLOT(onSplineClicked(TStageObjectSpline*)));
+      connect(node, SIGNAL(splineClicked(TStageObjectSpline *)), this,
+              SLOT(onSplineClicked(TStageObjectSpline *)));
     }
   }
 
@@ -1116,13 +1117,13 @@ void StageSchematicScene::onCurrentObjectChanged(const TStageObjectId &id,
 
 //------------------------------------------------------------------
 
-void StageSchematicScene::onSplineClicked(TStageObjectSpline* spline) {
-    TStageObjectTree* pegTree = m_xshHandle->getXsheet()->getStageObjectTree();
-    TStageObject* viewer = pegTree->getMotionPathViewer();
-    viewer->setSpline(spline);
-    invalidate();
-    onCurrentObjectChanged(pegTree->getMotionPathViewerId(), true);
-    m_objHandle->setIsSpline(true, true);
+void StageSchematicScene::onSplineClicked(TStageObjectSpline *spline) {
+  TStageObjectTree *pegTree = m_xshHandle->getXsheet()->getStageObjectTree();
+  TStageObject *viewer      = pegTree->getMotionPathViewer();
+  viewer->setSpline(spline);
+  invalidate();
+  onCurrentObjectChanged(pegTree->getMotionPathViewerId(), true);
+  m_objHandle->setIsSpline(true, true);
 }
 
 //------------------------------------------------------------------
