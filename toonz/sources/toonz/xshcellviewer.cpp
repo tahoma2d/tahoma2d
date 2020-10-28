@@ -2723,6 +2723,10 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
     TXsheet *xsh       = m_viewer->getXsheet();
     TXshColumn *column = xsh->getColumn(col);
 
+    // Get out of editing a spline if we are on one.
+    TObjectHandle *objectHandle = TApp::instance()->getCurrentObject();
+    if (objectHandle->isSpline()) objectHandle->setIsSpline(false);
+
     // Check if it's the sound column
     bool isSoundColumn = false;
     if (column) {
