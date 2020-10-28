@@ -1501,7 +1501,6 @@ void StageSchematicNode::updateChildDockPositions() {
 
 void StageSchematicNode::onClicked() {
   TStageObjectId id = m_stageObject->getId();
-  if (id.isPegbar() && id.getIndex() == 9999) return;
   emit currentObjectChanged(id, false);
   if (id.isColumn())
     emit currentColumnChanged(id.getIndex());
@@ -1583,8 +1582,7 @@ void StageSchematicNode::onHandleReleased() {
 
 StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
-    : StageSchematicNode(scene, pegbar, 90, 18, false, false)
-    , m_pegbarPainter(0) {
+    : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   std::string name = m_stageObject->getFullName();
   std::string id   = m_stageObject->getId().toString();
   m_name           = QString::fromStdString(name);
@@ -1594,11 +1592,7 @@ StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
   m_nameItem->setZValue(2);
   connect(m_nameItem, SIGNAL(focusOut()), this, SLOT(onNameChanged()));
   m_nameItem->hide();
-  TStageObjectId realId = m_stageObject->getId();
-  if (realId.isPegbar() && realId.getIndex() == 9999) {
-    m_visible = false;
-    return;
-  }
+
   m_pegbarPainter = new PegbarPainter(this, m_width, m_height, m_name);
   m_pegbarPainter->setZValue(1);
 
@@ -1622,14 +1616,13 @@ QRectF StageSchematicPegbarNode::boundingRect() const {
 void StageSchematicPegbarNode::paint(QPainter *painter,
                                      const QStyleOptionGraphicsItem *option,
                                      QWidget *widget) {
-  if (m_visible) StageSchematicNode::paint(painter, option, widget);
+  StageSchematicNode::paint(painter, option, widget);
 }
 
 //--------------------------------------------------------
 
 void StageSchematicPegbarNode::mouseDoubleClickEvent(
     QGraphicsSceneMouseEvent *me) {
-  if (!m_visible) return;
   QRectF nameArea(18, 0, m_width - 36, 14);
   if (nameArea.contains(me->pos())) {
     m_nameItem->setPlainText(m_name);

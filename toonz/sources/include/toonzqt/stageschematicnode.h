@@ -424,7 +424,6 @@ class StageSchematicPegbarNode final : public StageSchematicNode {
   Q_OBJECT
 
   PegbarPainter *m_pegbarPainter;
-  bool m_visible = true;
 
 public:
   StageSchematicPegbarNode(StageSchematicScene *scene, TStageObject *pegbar);
