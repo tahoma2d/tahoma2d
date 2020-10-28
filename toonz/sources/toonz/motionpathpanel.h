@@ -39,31 +39,6 @@ signals:
 class MotionPathControl : public QWidget {
 	Q_OBJECT
 
-	QImage m_timelinePreviewButtonOnImage;
-	QImage m_timelinePreviewButtonOffImage;
-	Q_PROPERTY(
-		QImage TimelinePreviewButtonOnImage READ getTimelinePreviewButtonOnImage
-		WRITE setTimelinePreviewButtonOnImage)
-		Q_PROPERTY(
-			QImage TimelinePreviewButtonOffImage READ getTimelinePreviewButtonOffImage
-			WRITE setTimelinePreviewButtonOffImage)
-
-		void setTimelinePreviewButtonOnImage(const QImage& image) {
-		m_timelinePreviewButtonOnImage = image;
-	}
-
-	void setTimelinePreviewButtonOffImage(const QImage& image) {
-		m_timelinePreviewButtonOffImage = image;
-	}
-
-	QImage getTimelinePreviewButtonOnImage() const {
-		return m_timelinePreviewButtonOnImage;
-	}
-
-	QImage getTimelinePreviewButtonOffImage() const {
-		return m_timelinePreviewButtonOffImage;
-	}
-
 	TStageObjectSpline* m_spline;
 	bool m_active;
 	QGridLayout* m_controlLayout;
