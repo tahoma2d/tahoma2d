@@ -1714,6 +1714,14 @@ void MainWindow::defineActions() {
           tr("Raster levels are traditonal drawing levels") + separator +
           tr("Imported images will be imported as raster levels."));
   menuAct->setIcon(createQIcon("new_raster_level"));
+
+  menuAct = createMenuLevelAction(
+      MI_NewSpline, tr("&New Motion Path"), "",
+      tr("Create a new motion path.") + separator +
+          tr("Motion paths can be used as animation guides, or you can animate "
+             "objects along a motion path."));
+  menuAct->setIcon(createQIcon("menu_toggle"));
+
   menuAct = createMenuLevelAction(MI_LoadLevel, tr("&Load Level..."), "",
                                   tr("Load an existing level."));
   menuAct->setIcon(createQIcon("load_level"));

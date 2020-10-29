@@ -48,6 +48,7 @@ class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   bool m_active;
   int m_color;
   int m_steps;
+  int m_width;
 
 public:
   TStageObjectSpline();
@@ -79,10 +80,13 @@ Set spline stroke to \b stroke.
   bool getActive() { return m_active; }
 
   void setColor(int color) { m_color = color; }
-  bool getColor() { return m_color; }
+  int getColor() { return m_color; }
 
   void setSteps(int steps) { m_steps = steps; }
-  bool getSteps() { return m_steps; }
+  int getSteps() { return m_steps; }
+
+  void setWidth(int width) { m_width = width; }
+  int getWidth() { return m_width; }
 
   bool isOpened() const { return m_isOpened; }
   void setIsOpened(bool value) { m_isOpened = value; }

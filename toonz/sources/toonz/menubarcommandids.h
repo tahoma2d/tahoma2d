@@ -29,6 +29,7 @@
 #define MI_NewVectorLevel "MI_NewVectorLevel"
 #define MI_NewToonzRasterLevel "MI_NewToonzRasterLevel"
 #define MI_NewRasterLevel "MI_NewRasterLevel"
+#define MI_NewSpline "MI_NewSpline"
 #define MI_LoadLevel "MI_LoadLevel"
 #define MI_LoadFolder "MI_LoadFolder"
 #define MI_SaveLevel "MI_SaveLevel"

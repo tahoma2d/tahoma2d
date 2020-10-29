@@ -1455,7 +1455,7 @@ OpenFloatingPanel openStopMotionPanelCommand(
 
 class MotionPathPanelFactory final : public TPanelFactory {
 public:
-    MotionPathPanelFactory() : TPanelFactory("MotionPathPanel") {}
+  MotionPathPanelFactory() : TPanelFactory("MotionPathPanel") {}
 
   void initialize(TPanel *panel) override {
     MotionPathPanel *motionPathPanel = new MotionPathPanel(panel);
@@ -1470,8 +1470,8 @@ public:
 
 //=============================================================================
 OpenFloatingPanel openMotionPathPanelCommand(MI_OpenMotionPathPanel,
-                                            "MotionPathPanel",
-                                            QObject::tr("Motion Paths"));
+                                             "MotionPathPanel",
+                                             QObject::tr("Motion Paths"));
 //-----------------------------------------------------------------------------
 
 //=============================================================================

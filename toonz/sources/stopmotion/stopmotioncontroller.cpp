@@ -15,6 +15,7 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/tstageobjecttree.h"
+#include "motionpathpanel.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -186,8 +187,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Settings"));
   m_tabBar->addSimpleTab(tr("Options"));
   m_tabBar->addSimpleTab(tr("Light"));
-  // m_tabBar->addSimpleTab(tr("Motion"));
   m_tabBar->addSimpleTab(tr("Tests"));
+  m_tabBar->addSimpleTab(tr("Paths"));
+  // m_tabBar->addSimpleTab(tr("Motion"));
   m_tabBarContainer    = new TabBarContainter(this);
   m_mainControlsPage   = new QFrame(this);
   m_cameraSettingsPage = new QFrame(this);
@@ -195,6 +197,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_motionPage         = new QFrame(this);
   m_lightPage          = new QFrame(this);
   m_testsPage          = new QFrame(this);
+  m_pathsPage          = new QFrame(this);
 
   // **********************
   // Make Control Page
@@ -941,6 +944,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_testsPage->setContentsMargins(0, 0, 0, 0);
     m_testsPage->setStyleSheet("padding:0; margin:0;");
 
+    QVBoxLayout *pathsLayout = new QVBoxLayout(this);
+    pathsLayout->setMargin(0);
+    pathsLayout->setSpacing(0);
+    pathsLayout->addWidget(new MotionPathPanel(this));
+    m_pathsPage->setLayout(pathsLayout);
+    m_pathsPage->setContentsMargins(0, 0, 0, 0);
+    m_pathsPage->setStyleSheet("padding:0; margin:0;");
+
     QScrollArea *mainArea = makeChooserPageWithoutScrollBar(m_mainControlsPage);
     QScrollArea *settingsArea =
         makeChooserPageWithoutScrollBar(m_cameraSettingsPage);
@@ -948,6 +959,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QScrollArea *lightArea   = makeChooserPageWithoutScrollBar(m_lightPage);
     QScrollArea *motionArea  = makeChooserPageWithoutScrollBar(m_motionPage);
     QScrollArea *testsArea   = makeChooserPageWithoutScrollBar(m_testsPage);
+    QScrollArea *pathsArea   = makeChooserPageWithoutScrollBar(m_pathsPage);
 
     mainArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     settingsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -955,6 +967,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     lightArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     motionArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     testsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    pathsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_stackedChooser = new QStackedWidget(this);
     m_stackedChooser->addWidget(mainArea);
@@ -962,6 +975,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_stackedChooser->addWidget(optionsArea);
     m_stackedChooser->addWidget(lightArea);
     m_stackedChooser->addWidget(testsArea);
+    m_stackedChooser->addWidget(pathsArea);
     m_stackedChooser->addWidget(motionArea);
     m_stackedChooser->setFocusPolicy(Qt::NoFocus);
 

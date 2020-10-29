@@ -2455,3 +2455,14 @@ FlipBook #ToolBarContainer {
   border-bottom: 1 solid #5a5a5a;
   padding-right: -1;
 }
+#MotionPathPanel #ToolBarContainer,
+#MotionPathToolbar #ToolBarContainer {
+  background-color: transparent;
+  border-bottom: 1 solid #5a5a5a;
+  padding-right: -1;
+}
+#MotionPathToolbar {
+  background-color: transparent;
+  border-bottom: 1 solid #5a5a5a;
+  padding-right: -1;
+}

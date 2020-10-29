@@ -117,6 +117,7 @@ TStageObjectSpline::TStageObjectSpline()
     , m_active(false)
     , m_color(0)
     , m_steps(0)
+    , m_width(1)
     , m_isOpened(false) {
   double d = 30;
   std::vector<TThickPoint> points;
@@ -148,6 +149,7 @@ TStageObjectSpline *TStageObjectSpline::clone() const {
   clonedSpline->m_color               = m_color;
   clonedSpline->m_active              = m_active;
   clonedSpline->m_steps               = m_steps;
+  clonedSpline->m_width               = m_width;
   for (int i = 0; i < (int)m_posPathParams.size(); i++)
     clonedSpline->m_posPathParams.push_back(
         (TDoubleParam *)m_posPathParams[i]->clone());
@@ -209,6 +211,8 @@ void TStageObjectSpline::loadData(TIStream &is) {
         is >> m_dagNodePos.x >> m_dagNodePos.y;
       else if (tagName == "color")
         is >> m_color;
+      else if (tagName == "width")
+        is >> m_width;
       else if (tagName == "steps")
         is >> m_steps;
       else if (tagName == "isOpened") {
@@ -258,6 +262,7 @@ void TStageObjectSpline::saveData(TOStream &os) {
   os.child("color") << (int)m_color;
   os.child("active") << (int)m_active;
   os.child("steps") << (int)m_steps;
+  os.child("width") << (int)m_width;
   os.openChild("stroke");
   int n = stroke->getControlPointCount();
   os << n;
