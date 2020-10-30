@@ -125,7 +125,15 @@ TStageObjectSpline::TStageObjectSpline()
   points.push_back(TPointD(d, 0));
   points.push_back(TPointD(2.0 * d, 0));
   m_stroke              = new TStroke(points);
-  m_interpolationStroke = new TStroke(points);
+
+  d = 250.0;
+  std::vector<TThickPoint> interpolationPoints;
+  interpolationPoints.push_back(TPointD(0.0, 0.0));
+  interpolationPoints.push_back(TPointD(d, d));
+  interpolationPoints.push_back(TPointD(2.0 * d, 2.0 * d));
+  interpolationPoints.push_back(TPointD(3.0 * d, 3.0 * d));
+  interpolationPoints.push_back(TPointD(4.0 * d, 4.0 * d));
+  m_interpolationStroke = new TStroke(interpolationPoints);
 }
 
 //-----------------------------------------------------------------------------
@@ -162,7 +170,7 @@ const TStroke *TStageObjectSpline::getStroke() const { return m_stroke; }
 
 //-----------------------------------------------------------------------------
 
-const TStroke *TStageObjectSpline::getInterpolationStroke() const {
+TStroke *TStageObjectSpline::getInterpolationStroke() {
   return m_interpolationStroke;
 }
 
@@ -254,7 +262,7 @@ void TStageObjectSpline::loadData(TIStream &is) {
 
 void TStageObjectSpline::saveData(TOStream &os) {
   const TStroke *stroke              = getStroke();
-  const TStroke *interpolationStroke = getStroke();
+  const TStroke *interpolationStroke = getInterpolationStroke();
   os.child("splineId") << (int)m_id;
   if (!m_name.empty()) os.child("name") << m_name;
   os.child("isOpened") << (int)m_isOpened;

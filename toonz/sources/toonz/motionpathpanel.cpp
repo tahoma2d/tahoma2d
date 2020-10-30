@@ -10,6 +10,8 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/menubarcommand.h"
 #include "menubarcommandids.h"
+#include "tstroke.h"
+#include "tgeometry.h"
 
 #include "pane.h"
 
@@ -22,6 +24,8 @@
 #include <QPixmap>
 #include <QSlider>
 #include <QComboBox>
+#include <QPainter>
+#include <QPainterPath>
 
 void MotionPathControl::createControl(TStageObjectSpline* spline) {
   getIconThemePath("actions/20/pane_preview.svg");
@@ -153,6 +157,9 @@ MotionPathPanel::MotionPathPanel(QWidget* parent) : QWidget(parent) {
   m_pathsLayout->setSpacing(0);
   m_mainControlsPage = new QFrame(this);
   m_mainControlsPage->setLayout(m_insideLayout);
+  m_graphArea = new GraphArea(this);
+  m_graphArea->setMaxXValue(1000);
+  m_graphArea->setMaxYValue(1000);
 
   QScrollArea* scrollArea = new QScrollArea();
   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -179,7 +186,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent) : QWidget(parent) {
   container->setLayout(m_toolLayout);
 
   m_controlsLayout = new QHBoxLayout(this);
-  m_controlsLayout->addWidget(new QLabel("teh bottom"));
+  m_controlsLayout->addWidget(m_graphArea);
 
   m_insideLayout->addWidget(container);
   m_insideLayout->addLayout(m_pathsLayout);
@@ -188,6 +195,17 @@ MotionPathPanel::MotionPathPanel(QWidget* parent) : QWidget(parent) {
   setLayout(m_outsideLayout);
   TXsheetHandle* xsh = TApp::instance()->getCurrentXsheet();
   connect(xsh, &TXsheetHandle::xsheetChanged, [=]() { refreshPaths(); });
+  TObjectHandle* object = TApp::instance()->getCurrentObject();
+  connect(object, &TObjectHandle::objectSwitched, [=]() {
+      if (object->isSpline()) {
+          m_currentSpline = object->getCurrentSpline();
+          m_graphArea->setStroke(m_currentSpline->getInterpolationStroke());
+      }
+      else {
+          m_graphArea->clearStroke();
+      }
+      m_graphArea->update();
+      });
 }
 
 //-----------------------------------------------------------------------------
@@ -221,6 +239,140 @@ void MotionPathPanel::refreshPaths() {
   }
   m_pathsLayout->addWidget(new QLabel(" ", this), ++i, 0);
   m_pathsLayout->setRowStretch(i, 500);
+}
+
+//=============================================================================
+
+GraphArea::GraphArea(QWidget* parent)
+    : QWidget(parent)
+{
+    antialiased = false;
+    setBackgroundRole(QPalette::Base);
+    setAutoFillBackground(true);
+    m_stroke = 0;
+}
+
+//=============================================================================
+
+QPointF GraphArea::convertPointToInvertedLocal(TThickPoint point) {
+    float daWidth = (float)width();
+    float daHeight = (float)height();
+
+    float outX = (point.x / m_maxXValue) * daWidth;
+    float outY = (point.y / m_maxXValue) * daHeight;
+
+    outY = std::abs(outY - daHeight);
+    return QPointF(outX, outY);
+}
+
+//=============================================================================
+
+TThickPoint GraphArea::convertInvertedLocalToPoint(QPointF point) {
+    float daWidth = (float)width();
+    float daHeight = (float)height();
+
+    float outX = (point.x() / daWidth) * m_maxXValue;
+    float outY = (point.y() / daHeight) * m_maxYValue;
+
+    outY = std::abs(outY - m_maxYValue);
+    return TThickPoint(outX, outY);
+}
+
+//=============================================================================
+
+QSize GraphArea::sizeHint() const
+{
+    return QSize(400, 200);
+}
+
+//=============================================================================
+
+QSize GraphArea::minimumSizeHint() const
+{
+    return QSize(100, 100);
+}
+
+//=============================================================================
+
+void GraphArea::paintEvent(QPaintEvent* /* event */)
+{
+    
+    QPainter painter(this);
+    painter.setPen(QColor(230, 230, 230));
+    painter.setBrush(brush);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    if (m_stroke) {
+        std::vector<TThickPoint> points;
+        m_stroke->getControlPoints(points);
+        if (points.size() > 0) {
+            assert(points.size() % 2);
+
+            for (int i = 0; i + 2 < points.size(); i += 2) {
+                painter.setPen(QColor(230, 230, 230));
+                QPointF start = convertPointToInvertedLocal(points.at(i));
+                QPointF mid = convertPointToInvertedLocal(points.at(i + 1));
+                QPointF end = convertPointToInvertedLocal(points.at(i + 2));
+
+                QPainterPath path;
+                path.moveTo(start);
+                path.quadTo(mid, end);
+                painter.drawPath(path);
+                if (i + 1 == m_selectedControlPoint) painter.setPen(Qt::red);
+                painter.drawEllipse(mid, 6, 6);
+            }
+        }
+    }
+
+    painter.setRenderHint(QPainter::Antialiasing, false);
+    painter.setPen(palette().dark().color());
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
+}
+
+//=============================================================================
+
+void GraphArea::mousePressEvent(QMouseEvent* event) {
+    if (!m_stroke) return;
+    int x = event->pos().x();
+    int y = event->pos().y();
+    double distance = 50000;
+    int selectedPoint = -0;
+    TThickPoint unlocal(convertInvertedLocalToPoint(QPointF(x, y)));
+    int i = 1;
+    for (; i < m_stroke->getControlPointCount() - 1; i++) {
+        double newDistance = tdistance2(unlocal, m_stroke->getControlPoint(i));
+        if (newDistance < distance) {
+            distance = newDistance;
+            selectedPoint = i;
+        }
+    }
+
+    if (distance < 150.0) {
+        m_selectedControlPoint = selectedPoint;
+    }
+    else m_selectedControlPoint = -1;
+    update();
+}
+
+//=============================================================================
+
+void GraphArea::mouseMoveEvent(QMouseEvent* event) {
+    if (m_selectedControlPoint < 1 || !m_stroke) return;
+    int x = event->pos().x();
+    int y = event->pos().y();
+    TThickPoint unlocal(convertInvertedLocalToPoint(QPointF(x, y)));
+    std::vector<TThickPoint> points;
+    m_stroke->getControlPoints(points);
+    points.at(m_selectedControlPoint) = unlocal;
+    m_stroke->setControlPoint(m_selectedControlPoint, unlocal);
+    update();
+}
+
+//=============================================================================
+
+void GraphArea::mouseReleaseEvent(QMouseEvent* event) {
+    m_selectedControlPoint = -1;
+    update();
 }
 
 //=============================================================================

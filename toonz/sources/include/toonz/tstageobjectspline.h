@@ -61,7 +61,7 @@ Return spline stroke.
 \sa setStroke()
 */
   const TStroke *getStroke() const;
-  const TStroke *getInterpolationStroke() const;
+  TStroke *getInterpolationStroke();
   /*!
 Set spline stroke to \b stroke.
 \sa getStroke()
