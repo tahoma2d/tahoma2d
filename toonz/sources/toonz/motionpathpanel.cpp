@@ -27,6 +27,15 @@
 #include <QPainter>
 #include <QPainterPath>
 
+
+namespace {
+    double distanceSquared(QPoint p1, QPoint p2) {
+        int newX = p1.x() - p2.x();
+        int newY = p1.y() - p2.y();
+        return (newX * newX) + (newY * newY);
+    }
+};
+
 void MotionPathControl::createControl(TStageObjectSpline* spline) {
   getIconThemePath("actions/20/pane_preview.svg");
   m_spline = spline;
@@ -307,21 +316,31 @@ void GraphArea::paintEvent(QPaintEvent* /* event */)
         if (points.size() > 0) {
             assert(points.size() % 2);
 
-            for (int i = 0; i + 2 < points.size(); i += 2) {
+            //for (int i = 0; i + 2 < points.size(); i += 2) {
                 painter.setPen(QColor(230, 230, 230));
-                QPointF start = convertPointToInvertedLocal(points.at(i));
-                QPointF mid = convertPointToInvertedLocal(points.at(i + 1));
-                QPointF end = convertPointToInvertedLocal(points.at(i + 2));
+                painter.setBrush(Qt::NoBrush);
+                QPointF start = convertPointToInvertedLocal(points.at(0));
+                QPointF control1 = convertPointToInvertedLocal(points.at(1));
+                QPointF control2 = convertPointToInvertedLocal(points.at(3));
+                QPointF end = convertPointToInvertedLocal(points.at(4));
 
                 QPainterPath path;
                 path.moveTo(start);
-                path.quadTo(mid, end);
+                path.cubicTo(control1, control2, end);
                 painter.drawPath(path);
-                if (i + 1 == m_selectedControlPoint) painter.setPen(Qt::red);
-                painter.drawEllipse(mid, 6, 6);
-            }
+                if (1 == m_selectedControlPoint) painter.setPen(Qt::red);
+                painter.setBrush(Qt::red);
+                painter.drawEllipse(control1, 6, 6);
+                painter.drawEllipse(control2, 6, 6);
+            //}
+            painter.setPen(QColor(230, 230, 230));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawLine(convertPointToInvertedLocal(points.at(0)), convertPointToInvertedLocal(points.at(1)));
+            painter.drawLine(convertPointToInvertedLocal(points.at(3)), convertPointToInvertedLocal(points.at(4)));
         }
     }
+
+    
 
     painter.setRenderHint(QPainter::Antialiasing, false);
     painter.setPen(palette().dark().color());
@@ -333,21 +352,30 @@ void GraphArea::paintEvent(QPaintEvent* /* event */)
 
 void GraphArea::mousePressEvent(QMouseEvent* event) {
     if (!m_stroke) return;
+    float daWidth = (float)width();
+    float daHeight = (float)height();
     int x = event->pos().x();
     int y = event->pos().y();
     double distance = 50000;
     int selectedPoint = -0;
     TThickPoint unlocal(convertInvertedLocalToPoint(QPointF(x, y)));
-    int i = 1;
-    for (; i < m_stroke->getControlPointCount() - 1; i++) {
-        double newDistance = tdistance2(unlocal, m_stroke->getControlPoint(i));
+
+    std::vector<QPoint> localPoints;
+    int i = 0;
+    for (; i < m_stroke->getControlPointCount(); i++) {
+        localPoints.push_back(convertPointToInvertedLocal(m_stroke->getControlPoint(i)).toPoint());
+    }
+    i = 1;
+    // don't select the first or last points
+    for (; i < localPoints.size() - 1; i++) {
+        double newDistance = distanceSquared(event->pos(), localPoints.at(i));
         if (newDistance < distance) {
             distance = newDistance;
             selectedPoint = i;
         }
     }
 
-    if (distance < 150.0) {
+    if (distance < 50.0) {
         m_selectedControlPoint = selectedPoint;
     }
     else m_selectedControlPoint = -1;
@@ -358,13 +386,30 @@ void GraphArea::mousePressEvent(QMouseEvent* event) {
 
 void GraphArea::mouseMoveEvent(QMouseEvent* event) {
     if (m_selectedControlPoint < 1 || !m_stroke) return;
-    int x = event->pos().x();
-    int y = event->pos().y();
+    int x = std::min(std::max(1, event->pos().x()), width() - 1);
+    int y = std::min(std::max(1, event->pos().y()), height() - 1);
     TThickPoint unlocal(convertInvertedLocalToPoint(QPointF(x, y)));
-    std::vector<TThickPoint> points;
-    m_stroke->getControlPoints(points);
-    points.at(m_selectedControlPoint) = unlocal;
     m_stroke->setControlPoint(m_selectedControlPoint, unlocal);
+    bool changed = false;
+    if ((m_selectedControlPoint + 1) % 4 == 0) {
+        TThickPoint prevPoint1 = m_stroke->getControlPoint(m_selectedControlPoint - 1);
+        TThickPoint prevPoint2 = m_stroke->getControlPoint(m_selectedControlPoint - 2);
+        double newX = (unlocal.x + prevPoint2.x) / 2;
+        double newY = (unlocal.y + prevPoint2.y) / 2;
+        prevPoint1 = TThickPoint(newX, newY);
+        m_stroke->setControlPoint(m_selectedControlPoint - 1, prevPoint1);
+        changed = true;
+    }
+    else if ((m_selectedControlPoint + 1) % 2 == 0) {
+        TThickPoint nextPoint1 = m_stroke->getControlPoint(m_selectedControlPoint + 1);
+        TThickPoint nextPoint2 = m_stroke->getControlPoint(m_selectedControlPoint + 2);
+        double newX = (unlocal.x + nextPoint2.x) / 2;
+        double newY = (unlocal.y + nextPoint2.y) / 2;
+        nextPoint1 = TThickPoint(newX, newY);
+        m_stroke->setControlPoint(m_selectedControlPoint + 1, nextPoint1);
+        changed = true;
+    }
+    if (changed) TApp::instance()->getCurrentScene()->notifySceneChanged();
     update();
 }
 
