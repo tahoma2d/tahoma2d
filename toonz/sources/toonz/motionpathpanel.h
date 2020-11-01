@@ -24,7 +24,6 @@ class QComboBox;
 class TThickPoint;
 class GraphWidget;
 
-
 //=============================================================================
 // ClickablePathLabel
 //-----------------------------------------------------------------------------
@@ -83,8 +82,9 @@ class MotionPathPanel final : public QWidget {
   QFrame* m_mainControlsPage;
   QToolBar* m_toolbar;
   std::vector<MotionPathControl*> m_motionPathControls;
-  TStageObjectSpline *m_currentSpline;
-  GraphWidget *m_graphArea;
+  TStageObjectSpline* m_currentSpline;
+  GraphWidget* m_graphArea;
+
 public:
   MotionPathPanel(QWidget* parent = 0);
   ~MotionPathPanel();
@@ -98,6 +98,5 @@ protected slots:
 
   // public slots:
 };
-
 
 #endif  // MOTIONPATHPANEL_H

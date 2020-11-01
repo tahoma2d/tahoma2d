@@ -54,7 +54,7 @@ public:
 
   bool isSpline() const { return m_isSpline; }
   void setIsSpline(bool isSpline, bool forceUpdate = false);
-  TStageObjectSpline* getCurrentSpline() { return m_currentSpline; }
+  TStageObjectSpline *getCurrentSpline() { return m_currentSpline; }
 
   TVectorImage *getSplineImage() const { return m_splineImage; }
   void setSplineObject(TStageObjectSpline *splineObject);

@@ -28,13 +28,12 @@
 #include <QPainter>
 #include <QPainterPath>
 
-
 namespace {
-    double distanceSquared(QPoint p1, QPoint p2) {
-        int newX = p1.x() - p2.x();
-        int newY = p1.y() - p2.y();
-        return (newX * newX) + (newY * newY);
-    }
+double distanceSquared(QPoint p1, QPoint p2) {
+  int newX = p1.x() - p2.x();
+  int newY = p1.y() - p2.y();
+  return (newX * newX) + (newY * newY);
+}
 };
 
 void MotionPathControl::createControl(TStageObjectSpline* spline) {
@@ -168,8 +167,8 @@ MotionPathPanel::MotionPathPanel(QWidget* parent) : QWidget(parent) {
   m_mainControlsPage = new QFrame(this);
   m_mainControlsPage->setLayout(m_insideLayout);
   m_graphArea = new GraphWidget(this);
-  m_graphArea->setMaxXValue(1000);
-  m_graphArea->setMaxYValue(1000);
+  m_graphArea->setMaxXValue(255);
+  m_graphArea->setMaxYValue(255);
 
   QScrollArea* scrollArea = new QScrollArea();
   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -207,15 +206,19 @@ MotionPathPanel::MotionPathPanel(QWidget* parent) : QWidget(parent) {
   connect(xsh, &TXsheetHandle::xsheetChanged, [=]() { refreshPaths(); });
   TObjectHandle* object = TApp::instance()->getCurrentObject();
   connect(object, &TObjectHandle::objectSwitched, [=]() {
-      if (object->isSpline()) {
-          m_currentSpline = object->getCurrentSpline();
-          m_graphArea->setStroke(m_currentSpline->getInterpolationStroke());
-      }
-      else {
-          m_graphArea->clearStroke();
-      }
-      m_graphArea->update();
-      });
+    if (object->isSpline()) {
+      m_currentSpline = object->getCurrentSpline();
+      m_graphArea->setPoints(m_currentSpline->getInterpolationStroke());
+    } else {
+      m_graphArea->clearPoints();
+    }
+    m_graphArea->update();
+  });
+  connect(m_graphArea, &GraphWidget::controlPointChanged, [=](bool dragging) {
+    if (m_currentSpline)
+      m_currentSpline->setInterpolationStroke(m_graphArea->getPoints());
+    TApp::instance()->getCurrentScene()->notifySceneChanged();
+  });
 }
 
 //-----------------------------------------------------------------------------

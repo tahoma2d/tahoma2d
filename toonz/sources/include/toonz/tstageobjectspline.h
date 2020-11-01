@@ -6,6 +6,7 @@
 #include "tsmartpointer.h"
 #include "tgeometry.h"
 #include "tpersist.h"
+#include <QObject>
 
 #undef DVAPI
 #undef DVVAR
@@ -36,7 +37,7 @@ class TDoubleParam;
 class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   PERSIST_DECLARATION(TStageObjectSpline)
   TStroke *m_stroke;
-  TStroke *m_interpolationStroke;
+  QList<TPointD> m_interpolationStroke;
   DECLARE_CLASS_CODE
   TPointD m_dagNodePos;
 
@@ -61,7 +62,8 @@ Return spline stroke.
 \sa setStroke()
 */
   const TStroke *getStroke() const;
-  TStroke *getInterpolationStroke();
+  QList<TPointD> getInterpolationStroke();
+  void setInterpolationStroke(QList<TPointD>);
   /*!
 Set spline stroke to \b stroke.
 \sa getStroke()

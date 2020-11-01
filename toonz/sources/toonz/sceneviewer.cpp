@@ -249,15 +249,15 @@ void copyBackBufferToFrontBuffer(const TRect &rect) {
 
 #endif
 
-int getCubicYfromX(TCubic c, int x, double& s0, double& s1) {
-    double s = (s1 + s0) * 0.5;
-    TPointD p = c.getPoint(s);
-    if (areAlmostEqual(double(x), p.x, 0.001)) return tround(p.y);
+int getCubicYfromX(TCubic c, int x, double &s0, double &s1) {
+  double s  = (s1 + s0) * 0.5;
+  TPointD p = c.getPoint(s);
+  if (areAlmostEqual(double(x), p.x, 0.001)) return tround(p.y);
 
-    if (x < p.x)
-        return getCubicYfromX(c, x, s0, s);
-    else
-        return getCubicYfromX(c, x, s, s1);
+  if (x < p.x)
+    return getCubicYfromX(c, x, s0, s);
+  else
+    return getCubicYfromX(c, x, s, s1);
 }
 
 const TRectD InvalidateAllRect(0, 0, -1, -1);
@@ -3320,56 +3320,67 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
     // glDisable(GL_LINE_STIPPLE);
 
     if (showSteps && steps > 0) {
-      TStroke* interpolationStroke = spline->getInterpolationStroke();
-      TPointD startPoint = interpolationStroke->getControlPoint(0);
-      TPointD control1 = interpolationStroke->getControlPoint(1);
-      TPointD control2 = interpolationStroke->getControlPoint(3);
-      TPointD endPoint = interpolationStroke->getControlPoint(4);
+      QList<TPointD> interpolationStroke = spline->getInterpolationStroke();
+      int cp                             = 3;
+      TPointD startPoint                 = interpolationStroke.at(cp);
+      TPointD control1                   = interpolationStroke.at(cp + 1);
+      TPointD control2                   = interpolationStroke.at(cp + 2);
+      TPointD endPoint                   = interpolationStroke.at(cp + 3);
       TCubic cubic(startPoint, control1, control2, endPoint);
 
-      double length          = stroke->getLength(0.0, 1.0);
-      double step            = 1.0 / (double)(steps > 1 ? steps - 1 : 1);
+      double length = stroke->getLength(0.0, 1.0);
+      double step   = 1.0 / (double)(steps > 1 ? steps - 1 : 1);
 
       double currentPosition = 0.0;
-      double s0 = 0.0;
-      double s1 = 1.0;
+      double s0              = 0.0;
+      double s1              = 1.0;
 
       TPointD prePoint, point, postPoint;
       for (int i = 0; i <= steps; i++) {
         int y = -1;
-        if (i == 0) y = 0;
-        else if (i == steps) y = 1000;
+        if (i == 0)
+          y = 0;
+        else if (i == steps)
+          y = 255;
         else {
-            currentPosition = (double)i * step;
-            if (currentPosition > 1.0) currentPosition = 1.0;
-            int tempX = currentPosition * 1000;
-            y = getCubicYfromX(cubic, tempX, s0, s1);
+          currentPosition                            = (double)i * step;
+          if (currentPosition > 1.0) currentPosition = 1.0;
+          int tempX                                  = currentPosition * 255.0;
+          if (tempX > endPoint.x) {
+            cp += 3;
+            startPoint = interpolationStroke.at(cp);
+            control1   = interpolationStroke.at(cp + 1);
+            control2   = interpolationStroke.at(cp + 2);
+            endPoint   = interpolationStroke.at(cp + 3);
+            cubic      = TCubic(startPoint, control1, control2, endPoint);
+          }
+          y = getCubicYfromX(cubic, tempX, s0, s1);
         }
 
         if (y >= 0) {
-            double newY = (double)y / 1000.0;
-            point = stroke->getPointAtLength(length * newY);
-            prePoint = (i == 0) ? point : stroke->getPointAtLength(
-                length * (newY - 0.02));
-            postPoint =
-                (i == steps)
-                ? point
-                : stroke->getPointAtLength(length * (newY + 0.02));
+          double newY = std::min((double)y, 255.0) / 255.0;
+          point       = stroke->getPointAtLength(length * newY);
+          prePoint    = (i == 0)
+                         ? point
+                         : stroke->getPointAtLength(length * (newY - 0.02));
+          postPoint = (i == steps)
+                          ? point
+                          : stroke->getPointAtLength(length * (newY + 0.02));
 
-            if (prePoint == postPoint) continue;
+          if (prePoint == postPoint) continue;
 
-            double radian =
-                std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
-            double degree = radian * 180.0 / 3.14159265;
+          double radian =
+              std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
+          double degree = radian * 180.0 / 3.14159265;
 
-            glPushMatrix();
-            glTranslated(point.x, point.y, 0);
-            glRotated(degree, 0, 0, 1);
-            glBegin(GL_LINES);
-            glVertex2d(0, 3 + width);
-            glVertex2d(0, -3 - width);
-            glEnd();
-            glPopMatrix();
+          glPushMatrix();
+          glTranslated(point.x, point.y, 0);
+          glRotated(degree, 0, 0, 1);
+          glBegin(GL_LINES);
+          glVertex2d(0, 3 + width);
+          glVertex2d(0, -3 - width);
+          glEnd();
+          glPopMatrix();
         }
       }
     }
