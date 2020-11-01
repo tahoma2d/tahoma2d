@@ -1969,9 +1969,7 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     if (index == 0) resetFrameRange();
   } else if (propertyName == m_sendToBack.getName()) {
     V_VectorBrushDrawBehind = m_sendToBack.getValue();
-  }
-
-  else if (propertyName == m_autoClose.getName()) {
+  } else if (propertyName == m_autoClose.getName()) {
     if (!m_autoClose.getValue()) {
       m_autoFill.setValue(false);
       m_autoGroup.setValue(false);
@@ -2096,6 +2094,8 @@ void ToonzVectorBrushTool::loadPreset() {
   {
     m_thickness.setValue(
         TDoublePairProperty::Value(preset.m_min, preset.m_max));
+    m_minThick = m_thickness.getValue().first;
+    m_maxThick = m_thickness.getValue().second;
     m_accuracy.setValue(preset.m_acc, true);
     m_smooth.setValue(preset.m_smooth, true);
     m_breakAngles.setValue(preset.m_breakAngles);
@@ -2155,6 +2155,8 @@ void ToonzVectorBrushTool::removePreset() {
 void ToonzVectorBrushTool::loadLastBrush() {
   m_thickness.setValue(
       TDoublePairProperty::Value(V_VectorBrushMinSize, V_VectorBrushMaxSize));
+  m_minThick = m_thickness.getValue().first;
+  m_maxThick = m_thickness.getValue().second;
 
   m_capStyle.setIndex(V_VectorCapStyle);
   m_joinStyle.setIndex(V_VectorJoinStyle);
@@ -2169,20 +2171,30 @@ void ToonzVectorBrushTool::loadLastBrush() {
   m_snap.setValue(V_VectorBrushSnap);
   m_snapSensitivity.setIndex(V_VectorBrushSnapSensitivity);
   m_sendToBack.setValue(V_VectorBrushDrawBehind);
+  m_autoGroup.setValue(V_VectorBrushAutoGroup);
   m_autoClose.setValue(V_VectorBrushAutoClose);
   m_autoFill.setValue(V_VectorBrushAutoFill);
-  if (m_autoFill.getValue() && !m_autoClose.getValue()) {
-    m_autoClose.setValue(true);
-    V_VectorBrushAutoClose = 1;
+
+  bool updateTool = false;
+  if (m_autoFill.getValue()) {
+    if (!m_autoClose.getValue()) {
+      m_autoClose.setValue(true);
+      V_VectorBrushAutoClose = 1;
+      updateTool             = true;
+    }
+    if (!m_autoGroup.getValue()) {
+      m_autoGroup.setValue(true);
+      V_VectorBrushAutoGroup = 1;
+      updateTool             = true;
+    }
   }
-  if (m_autoFill.getValue() && !m_autoGroup.getValue()) {
-    m_autoGroup.setValue(true);
-    V_VectorBrushAutoGroup = 1;
-  }
+
   if (m_autoGroup.getValue() && !m_autoClose.getValue()) {
     m_autoClose.setValue(true);
     V_VectorBrushAutoClose = 1;
+    updateTool             = true;
   }
+
   switch (V_VectorBrushSnapSensitivity) {
   case 0:
     m_minDistance2 = SNAPPING_LOW;
@@ -2193,6 +2205,15 @@ void ToonzVectorBrushTool::loadLastBrush() {
   case 2:
     m_minDistance2 = SNAPPING_HIGH;
     break;
+  }
+
+  if (updateTool) {
+    // this is ugly: it's needed to refresh the GUI of the toolbar after
+    // having set to false the autofill...
+    TTool::getApplication()->getCurrentTool()->setTool(
+        "");  // necessary, otherwise next setTool is ignored...
+    TTool::getApplication()->getCurrentTool()->setTool(
+        QString::fromStdString(getName()));
   }
 }
 

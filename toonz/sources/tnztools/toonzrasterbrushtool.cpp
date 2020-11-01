@@ -2426,6 +2426,8 @@ void ToonzRasterBrushTool::loadPreset() {
   {
     m_rasThickness.setValue(
         TDoublePairProperty::Value(std::max(preset.m_min, 1.0), preset.m_max));
+    m_minThick = m_rasThickness.getValue().first;
+    m_maxThick = m_rasThickness.getValue().second;
     m_brushPad = ToolUtils::getBrushPad(preset.m_max, preset.m_hardness * 0.01);
     m_smooth.setValue(preset.m_smooth, true);
     m_hardness.setValue(preset.m_hardness, true);
@@ -2434,6 +2436,13 @@ void ToonzRasterBrushTool::loadPreset() {
     m_pressure.setValue(preset.m_pressure);
     m_modifierSize.setValue(preset.m_modifierSize);
 
+    setWorkAndBackupImages();
+
+    m_brushPad = getBrushPad(m_rasThickness.getValue().second,
+                             m_hardness.getValue() * 0.01);
+    TRectD rect(m_mousePos - TPointD(m_maxThick + 2, m_maxThick + 2),
+                m_mousePos + TPointD(m_maxThick + 2, m_maxThick + 2));
+    invalidate(rect);
   } catch (...) {
   }
 }
@@ -2484,6 +2493,8 @@ void ToonzRasterBrushTool::removePreset() {
 void ToonzRasterBrushTool::loadLastBrush() {
   m_rasThickness.setValue(
       TDoublePairProperty::Value(RasterBrushMinSize, RasterBrushMaxSize));
+  m_minThick = m_rasThickness.getValue().first;
+  m_maxThick = m_rasThickness.getValue().second;
 
   m_drawOrder.setIndex(BrushDrawOrder);
   m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
@@ -2492,6 +2503,14 @@ void ToonzRasterBrushTool::loadLastBrush() {
   m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(BrushSmooth);
   m_modifierSize.setValue(RasterBrushModifierSize);
+
+  setWorkAndBackupImages();
+
+  m_brushPad = getBrushPad(m_rasThickness.getValue().second,
+                           m_hardness.getValue() * 0.01);
+  TRectD rect(m_mousePos - TPointD(m_maxThick + 2, m_maxThick + 2),
+              m_mousePos + TPointD(m_maxThick + 2, m_maxThick + 2));
+  invalidate(rect);
 }
 
 //------------------------------------------------------------------
