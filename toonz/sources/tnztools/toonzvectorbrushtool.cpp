@@ -1941,16 +1941,33 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     return true;
   }
 
-  // Properties tracked with preset
-  V_VectorBrushMinSize       = m_thickness.getValue().first;
-  V_VectorBrushMaxSize       = m_thickness.getValue().second;
-  V_BrushAccuracy            = m_accuracy.getValue();
-  V_BrushSmooth              = m_smooth.getValue();
-  V_BrushBreakSharpAngles    = m_breakAngles.getValue();
-  V_BrushPressureSensitivity = m_pressure.getValue();
-  V_VectorCapStyle           = m_capStyle.getIndex();
-  V_VectorJoinStyle          = m_joinStyle.getIndex();
-  V_VectorMiterValue         = m_miterJoinLimit.getValue();
+  // Switch to <custom> only if it's a preset property change
+  if (m_preset.getValue() != CUSTOM_WSTR &&
+      (propertyName == m_thickness.getName() ||
+       propertyName == m_accuracy.getName() ||
+       propertyName == m_smooth.getName() ||
+       propertyName == m_breakAngles.getName() ||
+       propertyName == m_pressure.getName() ||
+       propertyName == m_capStyle.getName() ||
+       propertyName == m_joinStyle.getName() ||
+       propertyName == m_miterJoinLimit.getName())) {
+    m_preset.setValue(CUSTOM_WSTR);
+    V_VectorBrushPreset = m_preset.getValueAsString();
+    notifyTool          = true;
+  }
+
+  // Properties tracked with preset. Update only on <custom>
+  if (m_preset.getValue() == CUSTOM_WSTR) {
+    V_VectorBrushMinSize       = m_thickness.getValue().first;
+    V_VectorBrushMaxSize       = m_thickness.getValue().second;
+    V_BrushAccuracy            = m_accuracy.getValue();
+    V_BrushSmooth              = m_smooth.getValue();
+    V_BrushBreakSharpAngles    = m_breakAngles.getValue();
+    V_BrushPressureSensitivity = m_pressure.getValue();
+    V_VectorCapStyle           = m_capStyle.getIndex();
+    V_VectorJoinStyle          = m_joinStyle.getIndex();
+    V_VectorMiterValue         = m_miterJoinLimit.getValue();
+  }
 
   // Properties not tracked with preset
   int frameIndex               = m_frameRange.getIndex();
@@ -2014,21 +2031,6 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
   }
 
   if (propertyName == m_joinStyle.getName()) notifyTool = true;
-
-  // Switch to <custom> only if it's a preset property change
-  if (m_preset.getValue() != CUSTOM_WSTR &&
-      (propertyName == m_thickness.getName() ||
-       propertyName == m_accuracy.getName() ||
-       propertyName == m_smooth.getName() ||
-       propertyName == m_breakAngles.getName() ||
-       propertyName == m_pressure.getName() ||
-       propertyName == m_capStyle.getName() ||
-       propertyName == m_joinStyle.getName() ||
-       propertyName == m_miterJoinLimit.getName())) {
-    m_preset.setValue(CUSTOM_WSTR);
-    V_VectorBrushPreset = m_preset.getValueAsString();
-    notifyTool          = true;
-  }
 
   if (notifyTool) {
     m_propertyUpdating = true;
