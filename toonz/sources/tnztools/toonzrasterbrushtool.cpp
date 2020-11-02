@@ -2348,27 +2348,22 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
     return true;
   }
 
-  /*--- Divide the process according to the changed Property ---*/
+  RasterBrushMinSize       = m_rasThickness.getValue().first;
+  RasterBrushMaxSize       = m_rasThickness.getValue().second;
+  BrushSmooth              = m_smooth.getValue();
+  BrushDrawOrder           = m_drawOrder.getIndex();
+  RasterBrushPencilMode    = m_pencil.getValue();
+  BrushPressureSensitivity = m_pressure.getValue();
+  RasterBrushHardness      = m_hardness.getValue();
+  RasterBrushModifierSize  = m_modifierSize.getValue();
 
-  /*--- determine which type of brush to be modified ---*/
+  // Recalculate/reset based on changed settings
   if (propertyName == m_rasThickness.getName()) {
-    RasterBrushMinSize = m_rasThickness.getValue().first;
-    RasterBrushMaxSize = m_rasThickness.getValue().second;
-
     m_minThick = m_rasThickness.getValue().first;
     m_maxThick = m_rasThickness.getValue().second;
-  } else if (propertyName == m_smooth.getName()) {
-    BrushSmooth = m_smooth.getValue();
-  } else if (propertyName == m_drawOrder.getName()) {
-    BrushDrawOrder = m_drawOrder.getIndex();
-  } else if (propertyName == m_pencil.getName()) {
-    RasterBrushPencilMode = m_pencil.getValue();
-  } else if (propertyName == m_pressure.getName()) {
-    BrushPressureSensitivity = m_pressure.getValue();
-  } else if (propertyName == m_hardness.getName())
-    setWorkAndBackupImages();
-  else if (propertyName == m_modifierSize.getName())
-    RasterBrushModifierSize = m_modifierSize.getValue();
+  }
+
+  if (propertyName == m_hardness.getName()) setWorkAndBackupImages();
 
   if (propertyName == m_hardness.getName() ||
       propertyName == m_rasThickness.getName()) {
@@ -2426,23 +2421,20 @@ void ToonzRasterBrushTool::loadPreset() {
   {
     m_rasThickness.setValue(
         TDoublePairProperty::Value(std::max(preset.m_min, 1.0), preset.m_max));
-    m_minThick = m_rasThickness.getValue().first;
-    m_maxThick = m_rasThickness.getValue().second;
-    m_brushPad = ToolUtils::getBrushPad(preset.m_max, preset.m_hardness * 0.01);
-    m_smooth.setValue(preset.m_smooth, true);
     m_hardness.setValue(preset.m_hardness, true);
+    m_smooth.setValue(preset.m_smooth, true);
     m_drawOrder.setIndex(preset.m_drawOrder);
     m_pencil.setValue(preset.m_pencil);
     m_pressure.setValue(preset.m_pressure);
     m_modifierSize.setValue(preset.m_modifierSize);
 
+    // Recalculate based on updated presets
+    m_minThick = m_rasThickness.getValue().first;
+    m_maxThick = m_rasThickness.getValue().second;
+
     setWorkAndBackupImages();
 
-    m_brushPad = getBrushPad(m_rasThickness.getValue().second,
-                             m_hardness.getValue() * 0.01);
-    TRectD rect(m_mousePos - TPointD(m_maxThick + 2, m_maxThick + 2),
-                m_mousePos + TPointD(m_maxThick + 2, m_maxThick + 2));
-    invalidate(rect);
+    m_brushPad = ToolUtils::getBrushPad(preset.m_max, preset.m_hardness * 0.01);
   } catch (...) {
   }
 }
@@ -2493,24 +2485,21 @@ void ToonzRasterBrushTool::removePreset() {
 void ToonzRasterBrushTool::loadLastBrush() {
   m_rasThickness.setValue(
       TDoublePairProperty::Value(RasterBrushMinSize, RasterBrushMaxSize));
-  m_minThick = m_rasThickness.getValue().first;
-  m_maxThick = m_rasThickness.getValue().second;
-
   m_drawOrder.setIndex(BrushDrawOrder);
   m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
   m_hardness.setValue(RasterBrushHardness);
-
   m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(BrushSmooth);
   m_modifierSize.setValue(RasterBrushModifierSize);
+
+  // Recalculate based on prior values
+  m_minThick = m_rasThickness.getValue().first;
+  m_maxThick = m_rasThickness.getValue().second;
 
   setWorkAndBackupImages();
 
   m_brushPad = getBrushPad(m_rasThickness.getValue().second,
                            m_hardness.getValue() * 0.01);
-  TRectD rect(m_mousePos - TPointD(m_maxThick + 2, m_maxThick + 2),
-              m_mousePos + TPointD(m_maxThick + 2, m_maxThick + 2));
-  invalidate(rect);
 }
 
 //------------------------------------------------------------------
