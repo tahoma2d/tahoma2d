@@ -26,7 +26,8 @@ class GraphWidget : public QWidget {
 
   Qt::MouseButton m_mouseButton;
 
-  int m_curveHeight;
+  //int m_maxHeight;
+  //int m_maxWidth;
 
   int m_LeftRightMargin;
   int m_TopMargin;
@@ -40,12 +41,13 @@ class GraphWidget : public QWidget {
 
   bool m_isEnlarged;
 
-  double m_maxXValue;
-  double m_maxYValue;
+  double m_maxXValue = 255.0;
+  double m_maxYValue = 255.0;
 
 public:
   explicit GraphWidget(QWidget* parent = nullptr);
-
+  QSize minimumSizeHint() const override;
+  QSize sizeHint() const override;
   void setMaxXValue(int x) { m_maxXValue = x; }
   void setMaxYValue(int y) { m_maxYValue = y; }
 
@@ -65,11 +67,15 @@ public:
   void setLinear(bool isLinear);
   void moveCurrentControlPoint(QPointF delta);
 
-  void setEnlarged(bool isEnlarged);
+  //void setEnlarged(bool isEnlarged);
+
+  QPointF convertPointToLocal(QPointF point);
+  QPointF convertPointFromLocal(QPointF point);
 
 protected:
   QPointF viewToStrokePoint(const QPointF& p);
-  int getClosestPointIndex(const QPointF& pos, double& minDistance2) const;
+  QPointF getInvertedPoint(QPointF p);
+  int getClosestPointIndex(QPointF& pos, double& minDistance2);
 
   bool isCentralControlPoint(const int index) const { return index % 3 == 0; }
   bool isLeftControlPoint(const int index) const { return index % 3 == 2; }
@@ -79,7 +85,7 @@ protected:
   void movePoint(int index, const QPointF delta);
   QPointF checkPoint(const QPointF p);
 
-  QPointF getVisibleHandlePos(int index) const;
+  QPointF getVisibleHandlePos(int index);
 
   void moveCentralControlPoint(int index, QPointF delta);
 
