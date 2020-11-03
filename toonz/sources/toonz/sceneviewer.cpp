@@ -249,10 +249,10 @@ void copyBackBufferToFrontBuffer(const TRect &rect) {
 
 #endif
 
-int getCubicYfromX(TCubic c, int x, double &s0, double &s1) {
+double getCubicYfromX(TCubic c, double x, double &s0, double &s1) {
   double s  = (s1 + s0) * 0.5;
   TPointD p = c.getPoint(s);
-  if (areAlmostEqual(double(x), p.x, 0.001)) return tround(p.y);
+  if (areAlmostEqual(x, p.x, 0.001)) return p.y;
 
   if (x < p.x)
     return getCubicYfromX(c, x, s0, s);
@@ -3256,6 +3256,9 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
   }
 
   for (int i = 0; i < splineCount; i++) {
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     TStageObjectSpline *spline = xsh->getStageObjectTree()->getSpline(i);
 
     if (!spline->getActive()) continue;
@@ -3337,15 +3340,15 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
 
       TPointD prePoint, point, postPoint;
       for (int i = 0; i <= steps; i++) {
-        int y = -1;
+        double y = -1;
         if (i == 0)
           y = 0;
         else if (i == steps)
-          y = 255;
+          y = 1000.0;
         else {
           currentPosition                            = (double)i * step;
           if (currentPosition > 1.0) currentPosition = 1.0;
-          int tempX                                  = currentPosition * 255.0;
+          double tempX = std::round(currentPosition * 1000.0);
           if (tempX > endPoint.x) {
             cp += 3;
             startPoint = interpolationStroke.at(cp);
@@ -3358,7 +3361,7 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
         }
 
         if (y >= 0) {
-          double newY = std::min((double)y, 255.0) / 255.0;
+          double newY = std::min((double)y, 1000.0) / 1000.0;
           point       = stroke->getPointAtLength(length * newY);
           prePoint    = (i == 0)
                          ? point
@@ -3386,6 +3389,8 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
     }
     glLineWidth(1.0);
     glPopMatrix();
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
   }
 }
 

@@ -45,27 +45,27 @@ signals:
   void onMouseRelease(QMouseEvent* event);
 };
 
-class MotionPathControl : public QWidget {
-  Q_OBJECT
-
-  TStageObjectSpline* m_spline;
-  bool m_active;
-  QGridLayout* m_controlLayout;
-  TPanelTitleBarButton* m_activeButton;
-  ClickablePathLabel* m_nameLabel;
-  DVGui::IntLineEdit* m_stepsEdit;
-  QSlider* m_widthSlider;
-  QComboBox* m_colorCombo;
-
-public:
-  MotionPathControl(QWidget* parent) : QWidget(parent){};
-  ~MotionPathControl(){};
-
-  void createControl(TStageObjectSpline* spline);
-
-protected:
-  void fillCombo();
-};
+// class MotionPathControl : public QWidget {
+//  Q_OBJECT
+//
+//  TStageObjectSpline* m_spline;
+//  bool m_active;
+//  QGridLayout* m_controlLayout;
+//  TPanelTitleBarButton* m_activeButton;
+//  ClickablePathLabel* m_nameLabel;
+//  DVGui::IntLineEdit* m_stepsEdit;
+//  QSlider* m_widthSlider;
+//  QComboBox* m_colorCombo;
+//
+// public:
+//  MotionPathControl(QWidget* parent) : QWidget(parent){};
+//  ~MotionPathControl(){};
+//
+//  void createControl(TStageObjectSpline* spline);
+//
+// protected:
+//  void fillCombo();
+//};
 
 //=============================================================================
 // MotionPathPanel
@@ -81,7 +81,9 @@ class MotionPathPanel final : public QWidget {
   QVBoxLayout* m_insideLayout;
   QFrame* m_mainControlsPage;
   QToolBar* m_toolbar;
-  std::vector<MotionPathControl*> m_motionPathControls;
+
+  // std::vector<MotionPathControl*> m_motionPathControls;
+  std::vector<TStageObjectSpline*> m_splines;
   TStageObjectSpline* m_currentSpline;
   GraphWidget* m_graphArea;
 
@@ -89,7 +91,10 @@ public:
   MotionPathPanel(QWidget* parent = 0);
   ~MotionPathPanel();
 
+  void createControl(TStageObjectSpline* spline, int number);
+
 protected:
+  void fillCombo(QComboBox* combo, TStageObjectSpline* spline);
   void clearPathsLayout();
   void newPath();
 

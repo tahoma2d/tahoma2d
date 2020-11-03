@@ -2466,3 +2466,12 @@ FlipBook #ToolBarContainer {
   border-bottom: 1 solid #060606;
   padding-right: -1;
 }
+#GraphAreaWidget {
+  border: 1 solid #fff;
+  qproperty-SplineColor: #e6e6e6;
+  qproperty-NonSelectedPointColor: #060606;
+  qproperty-SelectedPointColor: #5385a6;
+}
+#GraphAreaFrame {
+  border: 1 solid #fff;
+}

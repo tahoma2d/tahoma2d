@@ -132,13 +132,13 @@ TStageObjectSpline::TStageObjectSpline()
   m_interpolationStroke.push_back(TPointD(-20, 0));
   m_interpolationStroke.push_back(TPointD(-20, 0));
   m_interpolationStroke.push_back(TPointD(0, 0));
-  m_interpolationStroke.push_back(TPointD(16, 16));
+  m_interpolationStroke.push_back(TPointD(65, 65));
 
-  m_interpolationStroke.push_back(TPointD(239, 239));
-  m_interpolationStroke.push_back(TPointD(255, 255));
-  m_interpolationStroke.push_back(TPointD(275, 255));
-  m_interpolationStroke.push_back(TPointD(275, 255));
-  m_interpolationStroke.push_back(TPointD(295, 255));
+  m_interpolationStroke.push_back(TPointD(935, 935));
+  m_interpolationStroke.push_back(TPointD(1000, 1000));
+  m_interpolationStroke.push_back(TPointD(1020, 1000));
+  m_interpolationStroke.push_back(TPointD(1020, 1000));
+  m_interpolationStroke.push_back(TPointD(1040, 1000));
 }
 
 //-----------------------------------------------------------------------------
