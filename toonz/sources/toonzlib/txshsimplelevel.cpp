@@ -2028,7 +2028,7 @@ TImageP TXshSimpleLevel::createEmptyFrame() {
   // manner as createNewLevel() in order to avoid crash. This can be happened if
   // the level was not saved after creating and being placed in the xsheet.
   if (isEmpty()) {
-    initializePalette();
+    if (!getPalette()) initializePalette();
     initializeResolutionAndDpi();
   }
 

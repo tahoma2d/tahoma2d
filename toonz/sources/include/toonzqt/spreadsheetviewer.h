@@ -300,6 +300,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   // QRect m_selectedCells; // x=col, y=row
   bool m_isComputingSize;
   // const Orientation *m_orientation;
+  bool m_panningArmed = false;
 
 protected:
   Spreadsheet::FrameScroller m_frameScroller;
@@ -386,6 +387,8 @@ public:
   bool isAutoPanning() const {
     return m_autoPanSpeed.x() != 0 || m_autoPanSpeed.y() != 0;
   }
+  void setPanningArmed(bool panningArmed) { m_panningArmed = panningArmed; }
+  bool getPanningArmed() { return m_panningArmed; }
 
   int xToColumn(int x) const;
   int yToRow(int y) const;
@@ -433,8 +436,11 @@ protected:
   void hideEvent(QHideEvent *) override;
   void resizeEvent(QResizeEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
   void timerEvent(QTimerEvent *) override;
+  void enterEvent(QEvent *) override;
+  void leaveEvent(QEvent *) override;
 
 public slots:
   void setRowCount(int rowCount);

@@ -158,8 +158,8 @@ public:
         getSystemVarPathValue(getSystemVarPrefix() + "PROFILES");
     if (profilesDir == TFilePath())
       profilesDir = getStuffDir() + systemPathMap.at("PROFILES");
-    m_envFile =
-        profilesDir + "env" + (TSystem::getUserName().toStdString() + ".env");
+    m_envFile = profilesDir + "users" + TSystem::getUserName().toStdString() +
+                "env.ini";
   }
 
   void init() {

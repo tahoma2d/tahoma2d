@@ -30,6 +30,7 @@
 #include "toonz/preferences.h"
 #include "toonz/tpalettehandle.h"
 #include "toonz/mypaintbrushstyle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -38,6 +39,7 @@
 #include "tenv.h"
 #include "tregion.h"
 #include "tinbetween.h"
+#include "tsystem.h"
 
 #include "tgl.h"
 #include "trop.h"
@@ -1148,7 +1150,9 @@ void ToonzRasterBrushTool::onActivate() {
         QString::fromStdString(RasterBrushPreset.getValue()).toStdWString();
     if (wpreset != CUSTOM_WSTR) {
       initPresets();
+      if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
       m_preset.setValue(wpreset);
+      RasterBrushPreset = m_preset.getValueAsString();
       loadPreset();
     } else
       loadLastBrush();
@@ -2392,7 +2396,8 @@ void ToonzRasterBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_toonzraster.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() +
+                          "brush_smartraster.txt");
   }
 
   // Rebuild the presets property entries
@@ -2457,6 +2462,7 @@ void ToonzRasterBrushTool::addPreset(QString name) {
 
   // Set the value to the specified one
   m_preset.setValue(preset.m_name);
+  RasterBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -2470,6 +2476,7 @@ void ToonzRasterBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+  RasterBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -2728,6 +2735,8 @@ void BrushPresetManager::load(const TFilePath &fp) {
 //------------------------------------------------------------------
 
 void BrushPresetManager::save() {
+  TSystem::touchParentDir(m_fp);
+
   TOStream os(m_fp);
 
   os.openChild("version");

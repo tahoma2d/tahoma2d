@@ -615,7 +615,9 @@ public:
 
 bool hasVisibleChildColumn(const TStageObject *obj, const TXsheet *xsh) {
   if (!obj->getId().isColumn()) return false;  // just in case
-  if (xsh->getColumn(obj->getId().getIndex())->isCamstandVisible()) return true;
+  if (xsh->getColumn(obj->getId().getIndex()) &&
+      xsh->getColumn(obj->getId().getIndex())->isCamstandVisible())
+    return true;
   for (const auto child : obj->getChildren()) {
     if (hasVisibleChildColumn(child, xsh)) return true;
   }

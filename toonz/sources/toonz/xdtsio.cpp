@@ -7,6 +7,7 @@
 #include "toonz/txsheet.h"
 #include "toonz/txshcell.h"
 #include "toonz/txshsimplelevel.h"
+#include "toonz/txshchildlevel.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/preferences.h"
@@ -201,15 +202,17 @@ QVector<TFrameId> XdtsFieldTrackItem::getCellFrameIdTrack() const {
 
 QString XdtsFieldTrackItem::build(TXshCellColumn *column) {
   // register the firstly-found level
-  TXshSimpleLevel *level = nullptr;
+  TXshLevel *level = nullptr;
   TXshCell prevCell;
   int r0, r1;
   column->getRange(r0, r1);
   if (r0 > 0) addFrame(0, TFrameId(-1));
   for (int row = r0; row <= r1; row++) {
     TXshCell cell = column->getCell(row);
-    // try to register the level
-    if (!level && cell.getSimpleLevel()) level = cell.getSimpleLevel();
+    // try to register the level. simple levels and sub xsheet levels are
+    // exported
+    if (!level) level = cell.getSimpleLevel();
+    if (!level) level = cell.getChildLevel();
     // if the level does not match with the registered one,
     // handle as the empty cell
     if (!level || cell.m_level != level) cell = TXshCell();

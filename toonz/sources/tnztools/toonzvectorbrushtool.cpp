@@ -29,6 +29,7 @@
 #include "toonz/stage2.h"
 #include "toonz/preferences.h"
 #include "toonz/tonionskinmaskhandle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -37,6 +38,7 @@
 #include "tenv.h"
 #include "tregion.h"
 #include "tinbetween.h"
+#include "tsystem.h"
 
 #include "tgl.h"
 #include "trop.h"
@@ -650,7 +652,9 @@ void ToonzVectorBrushTool::onActivate() {
         QString::fromStdString(V_VectorBrushPreset.getValue()).toStdWString();
     if (wpreset != CUSTOM_WSTR) {
       initPresets();
+      if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
       m_preset.setValue(wpreset);
+      V_VectorBrushPreset = m_preset.getValueAsString();
       loadPreset();
     } else
       loadLastBrush();
@@ -2063,7 +2067,7 @@ void ToonzVectorBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_vector.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() + "brush_vector.txt");
   }
 
   // Rebuild the presets property entries
@@ -2129,6 +2133,7 @@ void ToonzVectorBrushTool::addPreset(QString name) {
 
   // Set the value to the specified one
   m_preset.setValue(preset.m_name);
+  V_VectorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -2142,6 +2147,7 @@ void ToonzVectorBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+  V_VectorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------

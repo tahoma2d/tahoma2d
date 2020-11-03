@@ -110,7 +110,7 @@ protected:
   void createFrameToolBar();
   void createPlayToolBar();
   void addColorMaskButton(QWidget *parent, const char *iconSVGName, int id);
-  void contextMenuEvent(QContextMenuEvent *event) override;
+  // void contextMenuEvent(QContextMenuEvent *event) override;
   void playAudioFrame(int frame);
   bool hasSoundtrack();
 

@@ -349,6 +349,15 @@ TImage *TTool::touchImage() {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
+    // If for some reason there is no palette, try and set a default one now.
+    if (!sl->getPalette() &&
+        (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+      TPalette *defaultPalette =
+          getApplication()->getPaletteController()->getDefaultPalette(
+              sl->getType());
+      if (defaultPalette) sl->setPalette(defaultPalette->clone());
+    }
+
     // current cell is not empty
     if (isCreateInHoldCellsEnabled && row > 0 &&
         xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
@@ -443,6 +452,15 @@ TImage *TTool::touchImage() {
       // note: sl should be always !=0 (the column is not empty)
       // if - for some reason - it is == 0 or it is not editable,
       // then we skip to empty-column behaviour
+
+      // If for some reason there is no palette, try and set a default one now.
+      if (!sl->getPalette() &&
+          (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+        TPalette *defaultPalette =
+            getApplication()->getPaletteController()->getDefaultPalette(
+                sl->getType());
+        if (defaultPalette) sl->setPalette(defaultPalette->clone());
+      }
 
       // create the drawing
       // find the proper frameid
@@ -856,10 +874,12 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // find the nearest level before it
   if (levelType == NO_XSHLEVEL &&
       !m_application->getCurrentFrame()->isEditingLevel()) {
-    TXshCell cell = xsh->getCell(rowIndex, columnIndex);
-    xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
-    sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
-    levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      if (!column || (column && !column->getSoundColumn())) {
+          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+          xl = cell.isEmpty() ? 0 : (TXshLevel*)(&cell.m_level);
+          sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+          levelType = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      }
   }
 
   if (Preferences::instance()->isAutoCreateEnabled()) {
@@ -867,16 +887,18 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&
         !m_application->getCurrentFrame()->isEditingLevel()) {
-      int r0, r1;
-      xsh->getCellRange(columnIndex, r0, r1);
-      for (int r = std::min(r1, rowIndex); r > r0; r--) {
-        TXshCell cell = xsh->getCell(r, columnIndex);
-        if (cell.isEmpty()) continue;
-        xl        = (TXshLevel *)(&cell.m_level);
-        sl        = cell.getSimpleLevel();
-        levelType = cell.m_level->getType();
-        break;
-      }
+        if (!column || (column && !column->getSoundColumn())) {
+            int r0, r1;
+            xsh->getCellRange(columnIndex, r0, r1);
+            for (int r = std::min(r1, rowIndex); r > r0; r--) {
+                TXshCell cell = xsh->getCell(r, columnIndex);
+                if (cell.isEmpty()) continue;
+                xl = (TXshLevel*)(&cell.m_level);
+                sl = cell.getSimpleLevel();
+                levelType = cell.m_level->getType();
+                break;
+            }
+        }
     }
 
     // If the current tool does not match the current type, check for
