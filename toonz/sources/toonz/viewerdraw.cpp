@@ -58,7 +58,7 @@ TEnv::IntVar HorizonStep("HorizonStep", 5);
 TEnv::IntVar HorizonOffset("HorizonOffset", 0);
 TEnv::IntVar ShowVanishingPointRays("ShowVanishingPointRays", 1);
 TEnv::IntVar VanishingPointRayAngles("VanishingPointRayAngles", 10);
-TEnv::IntVar VanishingPointRayOpacity("VanishingPointRayOpacity", 80);
+TEnv::IntVar VanishingPointRayOpacity("VanishingPointRayOpacity", 35);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);

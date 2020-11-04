@@ -1437,13 +1437,6 @@ ParamsPage {
 /* -----------------------------------------------------------------------------
    Misc 
 ----------------------------------------------------------------------------- */
-PencilTestPopup {
-  min-height: 730px;
-  /* Allow for using a 768 screen */
-  min-width: 512px;
-  /* some clipping will still occur on width, but this
-                        allows for filling half of a 1024 screen */
-}
 #MatchLineButton {
   background-color: #ffffff;
 }
@@ -1693,7 +1686,7 @@ ProjectPopup QLabel {
   color: #000000;
 }
 /* -----------------------------------------------------------------------------
-   PencilTestPopup / CameraCapture Window
+   CameraCapture Window
 ----------------------------------------------------------------------------- */
 #GearButton::menu-indicator {
   image: url("");
@@ -2237,6 +2230,8 @@ XsheetViewer {
   qproperty-EmptyCellColor: #c2c2c2;
   qproperty-NotEmptyColumnColor: #cecece;
   qproperty-SelectedEmptyCellColor: rgba(146, 153, 158, 0.5);
+  qproperty-PegColor: #dfb081;
+  qproperty-TableColor: #cbcbe4;
   qproperty-LevelColumnColor: #9ed49e;
   qproperty-LevelColumnBorderColor: #72b472;
   qproperty-SelectedLevelColumnColor: #92bfa0;

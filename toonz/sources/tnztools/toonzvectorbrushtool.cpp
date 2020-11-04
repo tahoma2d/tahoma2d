@@ -1941,116 +1941,96 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     return true;
   }
 
-  /*--- Divide the process according to the changed Property ---*/
-
-  /*--- determine which type of brush to be modified ---*/
-  if (propertyName == m_thickness.getName()) {
-    V_VectorBrushMinSize = m_thickness.getValue().first;
-    V_VectorBrushMaxSize = m_thickness.getValue().second;
-    m_minThick           = m_thickness.getValue().first;
-    m_maxThick           = m_thickness.getValue().second;
-  } else if (propertyName == m_accuracy.getName()) {
-    V_BrushAccuracy = m_accuracy.getValue();
-  } else if (propertyName == m_smooth.getName()) {
-    V_BrushSmooth = m_smooth.getValue();
-  } else if (propertyName == m_breakAngles.getName()) {
-    V_BrushBreakSharpAngles = m_breakAngles.getValue();
-  } else if (propertyName == m_pressure.getName()) {
-    V_BrushPressureSensitivity = m_pressure.getValue();
-  } else if (propertyName == m_capStyle.getName()) {
-    V_VectorCapStyle = m_capStyle.getIndex();
-  } else if (propertyName == m_joinStyle.getName()) {
-    V_VectorJoinStyle = m_joinStyle.getIndex();
-  } else if (propertyName == m_miterJoinLimit.getName()) {
-    V_VectorMiterValue = m_miterJoinLimit.getValue();
-  } else if (propertyName == m_frameRange.getName()) {
-    int index               = m_frameRange.getIndex();
-    V_VectorBrushFrameRange = index;
-    if (index == 0) resetFrameRange();
-  } else if (propertyName == m_sendToBack.getName()) {
-    V_VectorBrushDrawBehind = m_sendToBack.getValue();
-  }
-
-  else if (propertyName == m_autoClose.getName()) {
-    if (!m_autoClose.getValue()) {
-      m_autoFill.setValue(false);
-      m_autoGroup.setValue(false);
-      V_VectorBrushAutoFill  = 0;
-      V_VectorBrushAutoGroup = 0;
-      // this is ugly: it's needed to refresh the GUI of the toolbar after
-      // having set to false the autofill...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          "");  // necessary, otherwise next setTool is ignored...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          QString::fromStdString(getName()));
-    }
-    V_VectorBrushAutoClose = m_autoClose.getValue();
-  } else if (propertyName == m_autoGroup.getName()) {
-    // We need close turned on if on,
-    // We need autofill off if off.
-    if (m_autoGroup.getValue()) {
-      m_autoClose.setValue(true);
-      V_VectorBrushAutoClose = 1;
-      // this is ugly: it's needed to refresh the GUI of the toolbar after
-      // having set to false the autofill...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          "");  // necessary, otherwise next setTool is ignored...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          QString::fromStdString(getName()));
-    }
-    if (!m_autoGroup.getValue() && m_autoFill.getValue()) {
-      m_autoFill.setValue(false);
-      V_VectorBrushAutoFill = 0;
-      // this is ugly: it's needed to refresh the GUI of the toolbar after
-      // having set to false the autofill...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          "");  // necessary, otherwise next setTool is ignored...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          QString::fromStdString(getName()));
-    }
-    V_VectorBrushAutoGroup = m_autoGroup.getValue();
-  } else if (propertyName == m_autoFill.getName()) {
-    // we need close and group on
-    if (m_autoFill.getValue()) {
-      m_autoClose.setValue(true);
-      m_autoGroup.setValue(true);
-      V_VectorBrushAutoClose = 1;
-      V_VectorBrushAutoGroup = 1;
-      // this is ugly: it's needed to refresh the GUI of the toolbar after
-      // having set to false the autofill...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          "");  // necessary, otherwise next setTool is ignored...
-      TTool::getApplication()->getCurrentTool()->setTool(
-          QString::fromStdString(getName()));
-    }
-    V_VectorBrushAutoFill = m_autoFill.getValue();
-  }
-
-  else if (propertyName == m_snap.getName()) {
-    V_VectorBrushSnap = m_snap.getValue();
-  } else if (propertyName == m_snapSensitivity.getName()) {
-    int index                    = m_snapSensitivity.getIndex();
-    V_VectorBrushSnapSensitivity = index;
-    switch (index) {
-    case 0:
-      m_minDistance2 = SNAPPING_LOW;
-      break;
-    case 1:
-      m_minDistance2 = SNAPPING_MEDIUM;
-      break;
-    case 2:
-      m_minDistance2 = SNAPPING_HIGH;
-      break;
-    }
-  }
-
-  if (propertyName == m_joinStyle.getName()) notifyTool = true;
-
-  if (m_preset.getValue() != CUSTOM_WSTR) {
+  // Switch to <custom> only if it's a preset property change
+  if (m_preset.getValue() != CUSTOM_WSTR &&
+      (propertyName == m_thickness.getName() ||
+       propertyName == m_accuracy.getName() ||
+       propertyName == m_smooth.getName() ||
+       propertyName == m_breakAngles.getName() ||
+       propertyName == m_pressure.getName() ||
+       propertyName == m_capStyle.getName() ||
+       propertyName == m_joinStyle.getName() ||
+       propertyName == m_miterJoinLimit.getName())) {
     m_preset.setValue(CUSTOM_WSTR);
     V_VectorBrushPreset = m_preset.getValueAsString();
     notifyTool          = true;
   }
+
+  // Properties tracked with preset. Update only on <custom>
+  if (m_preset.getValue() == CUSTOM_WSTR) {
+    V_VectorBrushMinSize       = m_thickness.getValue().first;
+    V_VectorBrushMaxSize       = m_thickness.getValue().second;
+    V_BrushAccuracy            = m_accuracy.getValue();
+    V_BrushSmooth              = m_smooth.getValue();
+    V_BrushBreakSharpAngles    = m_breakAngles.getValue();
+    V_BrushPressureSensitivity = m_pressure.getValue();
+    V_VectorCapStyle           = m_capStyle.getIndex();
+    V_VectorJoinStyle          = m_joinStyle.getIndex();
+    V_VectorMiterValue         = m_miterJoinLimit.getValue();
+  }
+
+  // Properties not tracked with preset
+  int frameIndex               = m_frameRange.getIndex();
+  V_VectorBrushFrameRange      = frameIndex;
+  V_VectorBrushDrawBehind      = m_sendToBack.getValue();
+  V_VectorBrushAutoClose       = m_autoClose.getValue();
+  V_VectorBrushAutoGroup       = m_autoGroup.getValue();
+  V_VectorBrushAutoFill        = m_autoFill.getValue();
+  V_VectorBrushSnap            = m_snap.getValue();
+  int snapSensitivityIndex     = m_snapSensitivity.getIndex();
+  V_VectorBrushSnapSensitivity = snapSensitivityIndex;
+
+  // Recalculate/reset based on changed settings
+  m_minThick = m_thickness.getValue().first;
+  m_maxThick = m_thickness.getValue().second;
+
+  if (frameIndex == 0) resetFrameRange();
+
+  switch (snapSensitivityIndex) {
+  case 0:
+    m_minDistance2 = SNAPPING_LOW;
+    break;
+  case 1:
+    m_minDistance2 = SNAPPING_MEDIUM;
+    break;
+  case 2:
+    m_minDistance2 = SNAPPING_HIGH;
+    break;
+  }
+
+  if (propertyName == m_autoClose.getName() && !m_autoClose.getValue()) {
+    m_autoFill.setValue(false);
+    m_autoGroup.setValue(false);
+    V_VectorBrushAutoFill  = m_autoFill.getValue();
+    V_VectorBrushAutoGroup = m_autoGroup.getValue();
+    notifyTool             = true;
+  }
+
+  if (propertyName == m_autoGroup.getName()) {
+    // We need close turned on if on,
+    // We need autofill off if off.
+    if (m_autoGroup.getValue()) {
+      m_autoClose.setValue(true);
+      V_VectorBrushAutoClose = m_autoClose.getValue();
+      notifyTool             = true;
+    }
+    if (!m_autoGroup.getValue() && m_autoFill.getValue()) {
+      m_autoFill.setValue(false);
+      V_VectorBrushAutoFill = m_autoFill.getValue();
+      notifyTool            = true;
+    }
+  }
+
+  // we need close and group on
+  if (propertyName == m_autoFill.getName() && m_autoFill.getValue()) {
+    m_autoClose.setValue(true);
+    m_autoGroup.setValue(true);
+    V_VectorBrushAutoClose = m_autoClose.getValue();
+    V_VectorBrushAutoGroup = m_autoGroup.getValue();
+    notifyTool             = true;
+  }
+
+  if (propertyName == m_joinStyle.getName()) notifyTool = true;
 
   if (notifyTool) {
     m_propertyUpdating = true;
@@ -2104,6 +2084,9 @@ void ToonzVectorBrushTool::loadPreset() {
     m_joinStyle.setIndex(preset.m_join);
     m_miterJoinLimit.setValue(preset.m_miter);
 
+    // Recalculate based on updated presets
+    m_minThick = m_thickness.getValue().first;
+    m_maxThick = m_thickness.getValue().second;
   } catch (...) {
   }
 }
@@ -2153,36 +2136,46 @@ void ToonzVectorBrushTool::removePreset() {
 //------------------------------------------------------------------
 
 void ToonzVectorBrushTool::loadLastBrush() {
+  // Properties tracked with preset
   m_thickness.setValue(
       TDoublePairProperty::Value(V_VectorBrushMinSize, V_VectorBrushMaxSize));
-
   m_capStyle.setIndex(V_VectorCapStyle);
   m_joinStyle.setIndex(V_VectorJoinStyle);
   m_miterJoinLimit.setValue(V_VectorMiterValue);
   m_breakAngles.setValue(V_BrushBreakSharpAngles ? 1 : 0);
   m_accuracy.setValue(V_BrushAccuracy);
-
   m_pressure.setValue(V_BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(V_BrushSmooth);
 
+  // Properties not tracked with preset
   m_frameRange.setIndex(V_VectorBrushFrameRange);
   m_snap.setValue(V_VectorBrushSnap);
   m_snapSensitivity.setIndex(V_VectorBrushSnapSensitivity);
   m_sendToBack.setValue(V_VectorBrushDrawBehind);
+  m_autoGroup.setValue(V_VectorBrushAutoGroup);
   m_autoClose.setValue(V_VectorBrushAutoClose);
   m_autoFill.setValue(V_VectorBrushAutoFill);
-  if (m_autoFill.getValue() && !m_autoClose.getValue()) {
-    m_autoClose.setValue(true);
-    V_VectorBrushAutoClose = 1;
+
+  // Recalculate based on prior values
+  m_minThick = m_thickness.getValue().first;
+  m_maxThick = m_thickness.getValue().second;
+
+  if (m_autoFill.getValue()) {
+    if (!m_autoClose.getValue()) {
+      m_autoClose.setValue(true);
+      V_VectorBrushAutoClose = 1;
+    }
+    if (!m_autoGroup.getValue()) {
+      m_autoGroup.setValue(true);
+      V_VectorBrushAutoGroup = 1;
+    }
   }
-  if (m_autoFill.getValue() && !m_autoGroup.getValue()) {
-    m_autoGroup.setValue(true);
-    V_VectorBrushAutoGroup = 1;
-  }
+
   if (m_autoGroup.getValue() && !m_autoClose.getValue()) {
     m_autoClose.setValue(true);
     V_VectorBrushAutoClose = 1;
   }
+
   switch (V_VectorBrushSnapSensitivity) {
   case 0:
     m_minDistance2 = SNAPPING_LOW;

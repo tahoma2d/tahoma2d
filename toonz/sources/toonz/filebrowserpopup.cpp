@@ -1947,10 +1947,6 @@ LoadColorModelPopup::LoadColorModelPopup()
   setOkText(tr("Load"));
   addFilterType("bmp");
   addFilterType("jpg");
-  addFilterType("nol");
-  addFilterType("pic");
-  addFilterType("pict");
-  addFilterType("pct");
   addFilterType("png");
   addFilterType("rgb");
   addFilterType("sgi");

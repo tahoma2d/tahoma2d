@@ -24,6 +24,7 @@
 #include "stopmotionserial.h"
 #include "stopmotionlight.h"
 
+#include "toonz/namebuilder.h"
 #include "toonz/txshsimplelevel.h"
 
 #include <QObject>
@@ -32,6 +33,20 @@
 class QCamera;
 class QCameraInfo;
 class QTimer;
+
+//=============================================================================
+// FlexibleNameCreator
+// Inherits NameCreator, added function for obtaining the previous name and
+// setting the current name.
+
+class FlexibleNameCreator final : public NameCreator {
+public:
+  FlexibleNameCreator() {}
+  std::wstring getPrevious();
+  bool setCurrent(std::wstring name);
+};
+
+//=============================================================================
 
 enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
 
@@ -49,15 +64,15 @@ private:
   ~StopMotion();
 
   // file stuff
-  int m_frameNumber          = 1;
-  int m_xSheetFrameNumber    = 1;
+  int m_frameNumber           = 1;
+  int m_xSheetFrameNumber     = 1;
   int m_captureNumberOfFrames = 1;
-  QString m_levelName        = "";
-  QString m_fileType         = "jpg";
-  QString m_filePath         = "+stopmotion";
-  QString m_frameInfoText    = "";
-  QString m_infoColorName    = "";
-  QString m_frameInfoToolTip = "";
+  QString m_levelName         = "";
+  QString m_fileType          = "jpg";
+  QString m_filePath          = "+stopmotion";
+  QString m_frameInfoText     = "";
+  QString m_infoColorName     = "";
+  QString m_frameInfoToolTip  = "";
 
   // options
   int m_opacity     = 255.0;

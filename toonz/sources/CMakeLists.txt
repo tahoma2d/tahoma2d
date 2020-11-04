@@ -270,7 +270,7 @@ unset(QT_MINIMUM_VERSION)
 if(BUILD_ENV_MSVC)
     include_directories(
         SYSTEM
-        ${SDKROOT}/glut/3.7.6/include
+        ${SDKROOT}/freeglut/include
         ${SDKROOT}/zlib-1.2.8
         ${SDKROOT}/LibJPEG/jpeg-9
     )
@@ -339,7 +339,7 @@ if(BUILD_ENV_MSVC)
         set(MSVC_LIB_VERSION 2013)
     endif()
 
-    set(GLUT_LIB ${SDKROOT}/glut/3.7.6/lib/glut${PLATFORM}.lib)
+    set(GLUT_LIB ${SDKROOT}/freeglut/lib/x64/freeglut.lib)
     set(GL_LIB opengl32.lib)
     set(Z_LIB
         optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}.lib
@@ -367,9 +367,6 @@ if(BUILD_ENV_MSVC)
         else()
             set(CANON_LIB ${SDKROOT}/canon/library/EDSDK.lib)
         endif()
-    endif()
-    if(PLATFORM EQUAL 32)
-        set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
     endif()
     set(MYPAINT_LIB_INCLUDE_DIRS ${SDKROOT}/libmypaint/dist/${PLATFORM}/include/libmypaint)
     set(MYPAINT_LIB_LDFLAGS ${SDKROOT}/libmypaint/dist/${PLATFORM}/libmypaint.lib)
@@ -408,11 +405,7 @@ elseif(BUILD_ENV_APPLE)
         add_definitions(-DLZ4_STATIC)
     endif()
 
-    pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
     set(OPENBLAS_LIB) # unused?
-    if(PLATFORM EQUAL 32)
-        find_library(QT_LIB QuickTime)
-    endif()
 
     set(JPEG_LIB ${JPEG_LIBRARY})
     set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
@@ -491,7 +484,6 @@ elseif(BUILD_ENV_UNIXLIKE)
     find_library(PTHREAD_LIBRARY pthread)
 
     if(NOT BUILD_TARGET_WIN)
-        pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
         pkg_check_modules(FREETYPE REQUIRED freetype2)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
@@ -641,10 +633,6 @@ add_subdirectory(toonzfarm)
 
 if(BUILD_ENV_APPLE)
     add_subdirectory(mousedragfilter)
-endif()
-
-if((PLATFORM EQUAL 32) AND ((BUILD_TARGET_WIN AND BUILD_ENV_MSVC) OR BUILD_TARGET_APPLE))
-    add_subdirectory(t32bitsrv)
 endif()
 
 if(BUILD_ENV_APPLE)

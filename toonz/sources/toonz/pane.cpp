@@ -762,10 +762,10 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
 
   gridLayout->addWidget(horizonCheckbox, 5, 0, 1, 2);
   gridLayout->addWidget(isometricCheckbox, 6, 0, 1, 2);
-  gridLayout->addWidget(vanishingCheckbox, 7, 0, 1, 2);
   
-  gridLayout->addWidget(guideOpacityLabel, 8, 0);
-  gridLayout->addWidget(guideOpacitySlider, 8, 1);
+  gridLayout->addWidget(guideOpacityLabel, 7, 0);
+  gridLayout->addWidget(guideOpacitySlider, 7, 1);
+  gridLayout->addWidget(vanishingCheckbox, 8, 0, 1, 2);
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);
   m_menu->addAction(gridsAction);

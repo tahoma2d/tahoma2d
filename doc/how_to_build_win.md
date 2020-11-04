@@ -139,17 +139,9 @@ If a previous binary of OpenToonz was already installed, this step and the follo
 1. In the Solution Explorer, select the OpenToonz project within the OpenToonz solution.
 2. In the Project menu, choose Set as StartUp Project.
 
-## Creating the Files for the `srv` Folder
-OpenToonz utilizes the QuickTime SDK's `mov` and associated file formats.  Since the QuickTime SDK only comes in 32-bit versions, the 32-bit file `t32bitsrv.exe` from the QuickTime SDK is used in both the 64-bit and 32-bit versions of OpenToonz.  As a result, the following instructions apply to both the 32 and 64-bit versions of OpenToonz.
-
 ### Qt
 - https://www.qt.io/download-open-source/
 - Install Qt 5.9 (32-bit version) by the  by [Qt Online Installer for Windows](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe).
-
-### QuickTime SDK
-1. Sign in using your Apple developer ID and download `QuickTime 7.3 SDK for Windows.zip` from the following url.
-  - https://developer.apple.com/downloads/?q=quicktime
-2. After installing the QuickTime SDK, copy the contents of `C:\Program Files (x86)\QuickTime SDK` to `$opentoonz/thirdparty/quicktime/QT73SDK`
 
 ### Using CMake to Create a Visual Studio 32-bit Project
 - Follow the same instructions as for the 64-bit version, but change the following:
@@ -163,7 +155,6 @@ OpenToonz utilizes the QuickTime SDK's `mov` and associated file formats.  Since
 ### Layout of the `srv` Folder
 - For the 64-bit version, copy the following files to the `srv` folder:
   - From `$opentoonz/toonz/build32/Release`
-    - t32bitsrv.exe
     - image.dll
     - tnzcore.dll
   - From the 32-bit version of Qt

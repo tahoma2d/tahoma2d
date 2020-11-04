@@ -494,8 +494,6 @@ void TopBar::loadMenubar() {
   addMenuItem(scanCleanupMenu, MI_CleanupPreview);
   addMenuItem(scanCleanupMenu, MI_CameraTest);
   addMenuItem(scanCleanupMenu, MI_Cleanup);
-  scanCleanupMenu->addSeparator();
-  addMenuItem(scanCleanupMenu, MI_PencilTest);
 
   // Menu' VIEW
   QMenu *viewMenu = addMenu(tr("View"), m_menuBar);

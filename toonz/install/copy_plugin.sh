@@ -37,10 +37,6 @@ cp -RH $BINROOT/bin/tfarmcontroller.app/Contents/MacOS/tfarmcontroller $BINROOT/
 echo '   Copy converter...'
 cp -RH $BINROOT/bin/tconverter.app/Contents/MacOS/tconverter $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/
 
-echo '   Copy t32bitsrv...'
-lipo -remove x86_64 $BINROOT/bin/t32bitsrv.app/Contents/MacOS/t32bitsrv -output $BINROOT/bin/t32bitsrv.app/Contents/MacOS/t32bitsrv
-cp -RH $BINROOT/bin/t32bitsrv.app/Contents/MacOS/t32bitsrv $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/
-
 echo '   Copy QTCore 4.8 Frameworks...'
 mkdir -p $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtCore.framework/Versions/4
 cp /Library/Frameworks/QtCore.framework/Versions/4/QtCore $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtCore.framework/Versions/4/
