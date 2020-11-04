@@ -61,9 +61,6 @@ class RowArea final : public QWidget {
 
   // Return when the item-menu setAutoMarkers can be enabled.
   bool canSetAutoMarkers();
-  // Return the number of the last non-empty cell finded. You can set the
-  // direction of the search.
-  int getNonEmptyCell(int row, int column, Direction);
 
 public:
 #if QT_VERSION >= 0x050500
@@ -83,19 +80,6 @@ protected:
   void mouseDoubleClickEvent(QMouseEvent *event) override;
   bool event(QEvent *event) override;
 
-  void setMarker(int index);
-
-protected slots:
-
-  void onSetStartMarker();
-  void onSetStopMarker();
-  void onRemoveMarkers();
-
-  // Set start and end marker automatically respect the current row and column.
-  void onSetAutoMarkers();
-
-  // set both the from and to markers at the specified row
-  void onPreviewThis();
 };
 
 }  // namespace XsheetGUI;

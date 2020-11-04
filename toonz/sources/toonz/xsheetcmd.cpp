@@ -49,7 +49,8 @@
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/stageobjectsdata.h"
 #include "historytypes.h"
-
+#include "xsheetdragtool.h"
+#include "xsheetviewer.h"
 // Tnz6 includes
 #include "cellselection.h"
 #include "columnselection.h"
@@ -2142,3 +2143,129 @@ public:
   }
 
 } ToggleXsheetCameraColumnCommand;
+
+
+//============================================================
+
+class SetStartMarker final : public MenuItemHandler {
+public:
+    SetStartMarker()
+        : MenuItemHandler(MI_SetStartMarker) {}
+    void execute() override { 
+        int frame = TApp::instance()->getCurrentFrame()->getFrame();
+        assert(frame >= 0);
+
+        int r0, r1, step;
+        XsheetGUI::getPlayRange(r0, r1, step);
+        if (r0 > r1) {
+            r0 = 0;
+            r1 = TApp::instance()->getCurrentScene()->getScene()->getFrameCount() - 1;
+            if (r1 < 1) r1 = 1;
+        }
+        r0 = frame;
+        if (r1 < r0) r1 = r0;
+        XsheetGUI::setPlayRange(r0, r1, step);
+        TApp::instance()->getCurrentXsheetViewer()->update();
+    }
+} SetStartMarker;
+
+//============================================================
+
+class SetStopMarker final : public MenuItemHandler {
+public:
+    SetStopMarker()
+        : MenuItemHandler(MI_SetStopMarker) {}
+    void execute() override {
+        int frame = TApp::instance()->getCurrentFrame()->getFrame();
+        assert(frame >= 0);
+
+        int r0, r1, step;
+        XsheetGUI::getPlayRange(r0, r1, step);
+        if (r0 > r1) {
+            r0 = 0;
+            r1 = TApp::instance()->getCurrentScene()->getScene()->getFrameCount() - 1;
+            if (r1 < 1) r1 = 1;
+        }
+        r1 = frame;
+        if (r1 < r0) r0 = r1;
+        r1 -= (step == 0) ? (r1 - r0) : (r1 - r0) % step;
+        XsheetGUI::setPlayRange(r0, r1, step);
+        TApp::instance()->getCurrentXsheetViewer()->update();
+    }
+} SetStopMarker;
+
+//============================================================
+
+class ClearMarkers final : public MenuItemHandler {
+public:
+    ClearMarkers()
+        : MenuItemHandler(MI_ClearMarkers) {}
+    void execute() override {
+        int step, r0, r1;
+        XsheetGUI::getPlayRange(r0, r1, step);
+        XsheetGUI::setPlayRange(0, -1, step);
+        TApp::instance()->getCurrentXsheetViewer()->update();
+    }
+} ClearMarkers;
+
+//============================================================
+
+class SetAutoMarkers final : public MenuItemHandler {
+public:
+    SetAutoMarkers()
+        : MenuItemHandler(MI_SetAutoMarkers) {}
+
+    enum Direction { up = 0, down };
+
+    int getNonEmptyCell(int row, int column, Direction direction) {
+        int currentPos = row;
+        bool exit = false;
+
+        while (!exit) {
+            TXshCell cell = TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(currentPos, column);
+            if (cell.isEmpty()) {
+                (direction == up) ? currentPos++ : currentPos--;
+                exit = true;
+            }
+            else
+                (direction == up) ? currentPos-- : currentPos++;
+        }
+
+        return currentPos;
+    }
+
+    void execute() override {
+        int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
+        int row = TApp::instance()->getCurrentFrame()->getFrame();
+        TXshCell cell =
+            TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(row, col);
+        if (cell.isEmpty()) return;
+        int step, r0, r1;
+
+        int top = getNonEmptyCell(row, col, Direction::up);
+        int bottom = getNonEmptyCell(row, col, Direction::down);
+
+        XsheetGUI::getPlayRange(r0, r1, step);
+        XsheetGUI::setPlayRange(top, bottom, step);
+        TApp::instance()->getCurrentXsheetViewer()->update();
+
+    }
+} SetAutoMarkers;
+
+//============================================================
+
+class PreviewThis final : public MenuItemHandler {
+public:
+    PreviewThis()
+        : MenuItemHandler(MI_PreviewThis) {}
+
+    void execute() override {
+        int row = TApp::instance()->getCurrentFrame()->getFrame();
+        assert(row >= 0);
+        int r0, r1, step;
+        XsheetGUI::getPlayRange(r0, r1, step);
+        XsheetGUI::setPlayRange(row, row, step);
+        TApp::instance()->getCurrentXsheetViewer()->update();
+
+    }
+} PreviewThis;
