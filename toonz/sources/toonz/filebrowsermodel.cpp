@@ -1032,6 +1032,7 @@ DvDirModelRootNode::DvDirModelRootNode()
     : DvDirModelNode(0, L"Root")
     , m_myComputerNode(0)
     , m_networkNode(0)
+    , m_currentProjectNode(0)
     , m_sandboxProjectNode(0) {
   m_nodeType = "Root";
 }
