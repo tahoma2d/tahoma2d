@@ -289,7 +289,7 @@ void BatchesController::setTasksTree(TaskTreeModel *tree) {
 //------------------------------------------------------------------------------
 
 inline bool isMovieType(string type) {
-  return (type == "mov" || type == "avi" || type == "3gp");
+  return (type == "avi");
 }
 
 //------------------------------------------------------------------------------

@@ -20,7 +20,6 @@
 // TnzCore includes
 #include "tlevel_io.h"
 #include "tproperty.h"
-#include "movsettings.h"
 #include "timageinfo.h"
 
 // Qt includes
@@ -294,23 +293,6 @@ FormatSettingsPopup *openFormatSettingsPopup(QWidget *parent,
                                              const std::string &format,
                                              TPropertyGroup *props,
                                              const TFilePath &levelPath) {
-  if (format == "mov" || format == "3gp")  // trattato diversamente; il format
-                                           // popup dei mov e' quello di
-                                           // quicktime
-  {
-    // gmt 26/9/07. con la penna capita spesso di premere ripetutamente il
-    // bottone.
-    // si aprono due popup uno sopra l'altro (brutto di per se e puo' causare
-    // dei crash misteriosi)
-    static bool popupIsOpen = false;
-    if (popupIsOpen) return 0;
-
-    popupIsOpen = true;
-    openMovSettingsPopup(props);
-    popupIsOpen = false;
-
-    return 0;
-  }
 
   if (!props || props->getPropertyCount() == 0) return 0;
 

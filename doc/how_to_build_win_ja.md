@@ -96,17 +96,9 @@ CMake上で、`WITH_STOPMOTION` オプションをONにします。CMake上、�
 ### 実行
 OpenToonz.exe を実行して動作すれば成功です。おめでとうございます。
 
-## `srv` フォルダ内のファイルの生成
-OpenToonz は QuickTime SDK を用いて mov 形式などへ対応しています。 QuickTime SDK は 32 ビット版しかないため、 `t32bitsrv.exe` という 32 ビット版の実行可能ファイルにQuickTime SDKを組み込み、64ビット版の OpenToonz は `t32bitsrv.exe` を経由して QuickTime SDK の機能を使用しています。以下の手順では `t32bitsrv.exe` などと合わせて、 32 ビット版の OpenToonz も生成されます。
-
 ### Qt
 - https://www.qt.io/download-open-source/
 - 64 ビット版と同じインストーラーで Qt 5.9 (32 ビット版) を適当なフォルダにインストールします
-
-### QuickTime SDK
-1. Apple の開発者登録をして下記のURLから `QuickTime 7.3 SDK for Windows.zip` をダウンロードします
-  - https://developer.apple.com/downloads/?q=quicktime
-2. QuickTime SDK をインストールして、 `C:\Program Files (x86)\QuickTime SDK` の中身を `thirdparty/quicktime/QT73SDK` の中にコピーします
 
 ### CMake で Visual Studio の 32 ビット版のプロジェクトを生成する
 - 64 ビット版と同様の手順で、次のようにフォルダ名とターゲットを読み替えます
@@ -120,7 +112,6 @@ OpenToonz は QuickTime SDK を用いて mov 形式などへ対応していま�
 ### `srv` フォルダの配置
 - 64 ビット版の `srv` フォルダの中に下記のファイルをコピーします
   - `$opentoonz/toonz/build32/Release` から
-    - t32bitsrv.exe
     - image.dll
     - tnzcore.dll
   - Qt の 32ビット版のインストール先から

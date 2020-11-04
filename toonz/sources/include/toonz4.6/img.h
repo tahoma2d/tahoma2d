@@ -6,7 +6,6 @@
 #include "tcm.h"
 #include "machine.h"
 #include "pixel.h"
-#include "tnzmovie.h"
 
 #undef TNZAPI
 #ifdef TNZ_IS_IMAGELIB
@@ -123,16 +122,6 @@ typedef struct {
   /*---------------------------------------------------------------*/
 
   IMG_CM_ALGORITHM cm_algorithm;
-
-  /*---------------------------------------------------------------*/
-
-  TNZMOVIE_QUALITY pct_quality;
-  TNZMOVIE_COMPRESSION pct_compression;
-
-  /*---------------------------------------------------------------*/
-
-  TNZMOVIE_QUALITY mov_quality;
-  TNZMOVIE_COMPRESSION mov_compression;
 
   int avi_bpp;
   char *avi_compression;

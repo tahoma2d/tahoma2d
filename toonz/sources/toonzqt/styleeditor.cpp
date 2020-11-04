@@ -2038,7 +2038,7 @@ else return false;
 
 CustomStyleManager *CustomStyleChooserPage::styleManager() {
   static const QString filters(
-      "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.pct *.pic");
+      "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb");
   static CustomStyleManager theManager(TFilePath("custom styles"), filters);
   return &theManager;
 }

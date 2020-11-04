@@ -267,7 +267,7 @@ QString InfoViewerImp::getTypeString() {
     return "Smart Raster Level";
   else if (ext == "pli" || ext == "svg")
     return "Vector Level";
-  else if (ext == "mov" || ext == "avi" || ext == "3gp")
+  else if (ext == "avi")
     return "Movie File";
   else if (ext == "tnz")
     return "Tahoma2D Scene";

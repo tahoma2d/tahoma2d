@@ -448,8 +448,7 @@ int main(int argc, char *argv[]) {
         exit(1);
       }
     }
-    if (ext != "3gp" && ext != "pli") {
-      // assert(ext!="3gp" && ext!="pli" && ext!="tlv");
+    if (ext != "pli") {
       convert(srcFilePath, dstFilePath, range, width, prop, resQuality);
     } else {
       msg = "Cannot convert to ." + ext + " format.";
