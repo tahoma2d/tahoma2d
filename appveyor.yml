@@ -40,7 +40,7 @@ after_build:
 
     C:\Qt\5.9\msvc2015_64\bin\windeployqt.exe %CONFIGURATION%\Tahoma2D\Tahoma2D.exe
 
-    copy /Y ..\..\thirdparty\glut\3.7.6\lib\glut64.dll %CONFIGURATION%\Tahoma2D
+    copy /Y ..\..\thirdparty\freeglut\bin\x64\freeglut.dll %CONFIGURATION%\Tahoma2D
 
     copy /Y ..\..\thirdparty\glew\glew-1.9.0\bin\64bit\glew32.dll %CONFIGURATION%\Tahoma2D
 

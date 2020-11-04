@@ -270,7 +270,7 @@ unset(QT_MINIMUM_VERSION)
 if(BUILD_ENV_MSVC)
     include_directories(
         SYSTEM
-        ${SDKROOT}/glut/3.7.6/include
+        ${SDKROOT}/freeglut/include
         ${SDKROOT}/zlib-1.2.8
         ${SDKROOT}/LibJPEG/jpeg-9
     )
@@ -339,7 +339,7 @@ if(BUILD_ENV_MSVC)
         set(MSVC_LIB_VERSION 2013)
     endif()
 
-    set(GLUT_LIB ${SDKROOT}/glut/3.7.6/lib/glut${PLATFORM}.lib)
+    set(GLUT_LIB ${SDKROOT}/freeglut/lib/x64/freeglut.lib)
     set(GL_LIB opengl32.lib)
     set(Z_LIB
         optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}.lib
