@@ -128,7 +128,6 @@ set(MOC_HEADERS
     ../stopmotion/stopmotionserial.h
     ../stopmotion/stopmotionlight.h
     cameracapturelevelcontrol.h
-    penciltestpopup.h
 )
 
 set(HEADERS
@@ -357,7 +356,6 @@ set(SOURCES
     ../stopmotion/stopmotionserial.cpp
     ../stopmotion/stopmotionlight.cpp
 	cameracapturelevelcontrol.cpp
-    penciltestpopup.cpp
 )
 
 add_translation(toonz ${HEADERS} ${SOURCES})

@@ -1,5 +1,6 @@
 #include "stopmotioncontroller.h"
 #include "webcam.h"
+#include "cameracapturelevelcontrol.h"
 
 // TnzLib includes
 #include "toonz/levelset.h"
@@ -15,6 +16,7 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/tstageobjecttree.h"
+#include "toonz/tproject.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -26,6 +28,9 @@
 #include "tsystem.h"
 #include "tfilepath.h"
 #include "flipbook.h"
+#include "iocommand.h"
+#include "tlevel_io.h"
+
 // TnzQt includes
 #include "toonzqt/filefield.h"
 #include "toonzqt/intfield.h"
@@ -60,6 +65,20 @@
 #ifdef _WIN32
 #include <dshow.h>
 #endif
+
+// Whether to open save-in popup on launch
+TEnv::IntVar CamCapOpenSaveInPopupOnLaunch("CamCapOpenSaveInPopupOnLaunch", 0);
+
+// SaveInFolderPopup settings
+TEnv::StringVar CamCapSaveInParentFolder("CamCapSaveInParentFolder", "");
+TEnv::IntVar CamCapSaveInPopupSubFolder("CamCapSaveInPopupSubFolder", 0);
+TEnv::StringVar CamCapSaveInPopupProject("CamCapSaveInPopupProject", "");
+TEnv::StringVar CamCapSaveInPopupEpisode("CamCapSaveInPopupEpisode", "1");
+TEnv::StringVar CamCapSaveInPopupSequence("CamCapSaveInPopupSequence", "1");
+TEnv::StringVar CamCapSaveInPopupScene("CamCapSaveInPopupScene", "1");
+TEnv::IntVar CamCapSaveInPopupAutoSubName("CamCapSaveInPopupAutoSubName", 1);
+TEnv::IntVar CamCapSaveInPopupCreateSceneInFolder(
+    "CamCapSaveInPopupCreateSceneInFolder", 0);
 
 namespace {
 
@@ -171,7 +190,574 @@ QScrollArea *makeChooserPageWithoutScrollBar(QWidget *chooser) {
   return scrollArea;
 }
 
+//-----------------------------------------------------------------------------
+
+QChar numToLetter(int letterNum) {
+  switch (letterNum) {
+  case 0:
+    return QChar();
+    break;
+  case 1:
+    return 'A';
+    break;
+  case 2:
+    return 'B';
+    break;
+  case 3:
+    return 'C';
+    break;
+  case 4:
+    return 'D';
+    break;
+  case 5:
+    return 'E';
+    break;
+  case 6:
+    return 'F';
+    break;
+  case 7:
+    return 'G';
+    break;
+  case 8:
+    return 'H';
+    break;
+  case 9:
+    return 'I';
+    break;
+  default:
+    return QChar();
+    break;
+  }
+}
+
+int letterToNum(QChar appendix) {
+  if (appendix == QChar('A') || appendix == QChar('a'))
+    return 1;
+  else if (appendix == QChar('B') || appendix == QChar('b'))
+    return 2;
+  else if (appendix == QChar('C') || appendix == QChar('c'))
+    return 3;
+  else if (appendix == QChar('D') || appendix == QChar('d'))
+    return 4;
+  else if (appendix == QChar('E') || appendix == QChar('e'))
+    return 5;
+  else if (appendix == QChar('F') || appendix == QChar('f'))
+    return 6;
+  else if (appendix == QChar('G') || appendix == QChar('g'))
+    return 7;
+  else if (appendix == QChar('H') || appendix == QChar('h'))
+    return 8;
+  else if (appendix == QChar('I') || appendix == QChar('i'))
+    return 9;
+  else
+    return 0;
+}
+
+QString convertToFrameWithLetter(int value, int length = -1) {
+  QString str;
+  str.setNum((int)(value / 10));
+  while (str.length() < length) str.push_front("0");
+  QChar letter = numToLetter(value % 10);
+  if (!letter.isNull()) str.append(letter);
+  return str;
+}
+
 }  // namespace
+
+//=============================================================================
+
+StopMotionSaveInFolderPopup::StopMotionSaveInFolderPopup(QWidget *parent)
+    : Dialog(parent, true, false, "PencilTestSaveInFolder") {
+  setWindowTitle(tr("Create the Destination Subfolder to Save"));
+
+  m_parentFolderField = new DVGui::FileField(this);
+
+  QPushButton *setAsDefaultBtn = new QPushButton(tr("Set As Default"), this);
+  setAsDefaultBtn->setToolTip(
+      tr("Set the current \"Save In\" path as the default."));
+
+  m_subFolderCB = new QCheckBox(tr("Create Subfolder"), this);
+
+  QFrame *subFolderFrame = new QFrame(this);
+
+  QGroupBox *infoGroupBox    = new QGroupBox(tr("Infomation"), this);
+  QGroupBox *subNameGroupBox = new QGroupBox(tr("Subfolder Name"), this);
+
+  m_projectField  = new QLineEdit(this);
+  m_episodeField  = new QLineEdit(this);
+  m_sequenceField = new QLineEdit(this);
+  m_sceneField    = new QLineEdit(this);
+
+  m_autoSubNameCB      = new QCheckBox(tr("Auto Format:"), this);
+  m_subNameFormatCombo = new QComboBox(this);
+  m_subFolderNameField = new QLineEdit(this);
+
+  QCheckBox *showPopupOnLaunchCB =
+      new QCheckBox(tr("Show This on Launch of the Camera Capture"), this);
+  m_createSceneInFolderCB = new QCheckBox(tr("Save Scene in Subfolder"), this);
+
+  QPushButton *okBtn     = new QPushButton(tr("OK"), this);
+  QPushButton *cancelBtn = new QPushButton(tr("Cancel"), this);
+
+  //---- properties
+
+  m_subFolderCB->setChecked(CamCapSaveInPopupSubFolder != 0);
+  subFolderFrame->setEnabled(CamCapSaveInPopupSubFolder != 0);
+
+  // project name
+  QString prjName = QString::fromStdString(CamCapSaveInPopupProject.getValue());
+  if (prjName.isEmpty()) {
+    prjName = TProjectManager::instance()
+                  ->getCurrentProject()
+                  ->getName()
+                  .getQString();
+  }
+  m_projectField->setText(prjName);
+
+  m_episodeField->setText(
+      QString::fromStdString(CamCapSaveInPopupEpisode.getValue()));
+  m_sequenceField->setText(
+      QString::fromStdString(CamCapSaveInPopupSequence.getValue()));
+  m_sceneField->setText(
+      QString::fromStdString(CamCapSaveInPopupScene.getValue()));
+
+  m_autoSubNameCB->setChecked(CamCapSaveInPopupAutoSubName != 0);
+  m_subNameFormatCombo->setEnabled(CamCapSaveInPopupAutoSubName != 0);
+  QStringList items;
+  items << tr("C- + Sequence + Scene") << tr("Sequence + Scene")
+        << tr("Episode + Sequence + Scene")
+        << tr("Project + Episode + Sequence + Scene");
+  m_subNameFormatCombo->addItems(items);
+  m_subNameFormatCombo->setCurrentIndex(CamCapSaveInPopupAutoSubName - 1);
+
+  showPopupOnLaunchCB->setChecked(CamCapOpenSaveInPopupOnLaunch != 0);
+  m_createSceneInFolderCB->setChecked(CamCapSaveInPopupCreateSceneInFolder !=
+                                      0);
+  m_createSceneInFolderCB->setToolTip(
+      tr("Save the current scene in the subfolder.\nSet the output folder path "
+         "to the subfolder as well."));
+
+  addButtonBarWidget(okBtn, cancelBtn);
+
+  //---- layout
+  m_topLayout->setMargin(10);
+  m_topLayout->setSpacing(10);
+  {
+    QGridLayout *saveInLay = new QGridLayout();
+    saveInLay->setMargin(0);
+    saveInLay->setHorizontalSpacing(3);
+    saveInLay->setVerticalSpacing(0);
+    {
+      saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0, 0,
+                           Qt::AlignRight | Qt::AlignVCenter);
+      saveInLay->addWidget(m_parentFolderField, 0, 1);
+      saveInLay->addWidget(setAsDefaultBtn, 1, 1);
+    }
+    saveInLay->setColumnStretch(0, 0);
+    saveInLay->setColumnStretch(1, 1);
+    m_topLayout->addLayout(saveInLay);
+
+    m_topLayout->addWidget(m_subFolderCB, 0, Qt::AlignLeft);
+
+    QVBoxLayout *subFolderLay = new QVBoxLayout();
+    subFolderLay->setMargin(0);
+    subFolderLay->setSpacing(10);
+    {
+      QGridLayout *infoLay = new QGridLayout();
+      infoLay->setMargin(10);
+      infoLay->setHorizontalSpacing(3);
+      infoLay->setVerticalSpacing(10);
+      {
+        infoLay->addWidget(new QLabel(tr("Project:"), this), 0, 0);
+        infoLay->addWidget(m_projectField, 0, 1);
+
+        infoLay->addWidget(new QLabel(tr("Episode:"), this), 1, 0);
+        infoLay->addWidget(m_episodeField, 1, 1);
+
+        infoLay->addWidget(new QLabel(tr("Sequence:"), this), 2, 0);
+        infoLay->addWidget(m_sequenceField, 2, 1);
+
+        infoLay->addWidget(new QLabel(tr("Scene:"), this), 3, 0);
+        infoLay->addWidget(m_sceneField, 3, 1);
+      }
+      infoLay->setColumnStretch(0, 0);
+      infoLay->setColumnStretch(1, 1);
+      infoGroupBox->setLayout(infoLay);
+      subFolderLay->addWidget(infoGroupBox, 0);
+
+      QGridLayout *subNameLay = new QGridLayout();
+      subNameLay->setMargin(10);
+      subNameLay->setHorizontalSpacing(3);
+      subNameLay->setVerticalSpacing(10);
+      {
+        subNameLay->addWidget(m_autoSubNameCB, 0, 0);
+        subNameLay->addWidget(m_subNameFormatCombo, 0, 1);
+
+        subNameLay->addWidget(new QLabel(tr("Subfolder Name:"), this), 1, 0);
+        subNameLay->addWidget(m_subFolderNameField, 1, 1);
+      }
+      subNameLay->setColumnStretch(0, 0);
+      subNameLay->setColumnStretch(1, 1);
+      subNameGroupBox->setLayout(subNameLay);
+      subFolderLay->addWidget(subNameGroupBox, 0);
+
+      subFolderLay->addWidget(m_createSceneInFolderCB, 0, Qt::AlignLeft);
+    }
+    subFolderFrame->setLayout(subFolderLay);
+    m_topLayout->addWidget(subFolderFrame);
+
+    m_topLayout->addWidget(showPopupOnLaunchCB, 0, Qt::AlignLeft);
+
+    m_topLayout->addStretch(1);
+  }
+
+  resize(300, 440);
+
+  //---- signal-slot connection
+  bool ret = true;
+
+  ret = ret && connect(m_subFolderCB, SIGNAL(clicked(bool)), subFolderFrame,
+                       SLOT(setEnabled(bool)));
+  ret = ret && connect(m_projectField, SIGNAL(textEdited(const QString &)),
+                       this, SLOT(updateSubFolderName()));
+  ret = ret && connect(m_episodeField, SIGNAL(textEdited(const QString &)),
+                       this, SLOT(updateSubFolderName()));
+  ret = ret && connect(m_sequenceField, SIGNAL(textEdited(const QString &)),
+                       this, SLOT(updateSubFolderName()));
+  ret = ret && connect(m_sceneField, SIGNAL(textEdited(const QString &)), this,
+                       SLOT(updateSubFolderName()));
+  ret = ret && connect(m_autoSubNameCB, SIGNAL(clicked(bool)), this,
+                       SLOT(onAutoSubNameCBClicked(bool)));
+  ret = ret && connect(m_subNameFormatCombo, SIGNAL(currentIndexChanged(int)),
+                       this, SLOT(updateSubFolderName()));
+
+  ret = ret && connect(showPopupOnLaunchCB, SIGNAL(clicked(bool)), this,
+                       SLOT(onShowPopupOnLaunchCBClicked(bool)));
+  ret = ret && connect(m_createSceneInFolderCB, SIGNAL(clicked(bool)), this,
+                       SLOT(onCreateSceneInFolderCBClicked(bool)));
+  ret = ret && connect(setAsDefaultBtn, SIGNAL(pressed()), this,
+                       SLOT(onSetAsDefaultBtnPressed()));
+
+  ret = ret && connect(okBtn, SIGNAL(clicked(bool)), this, SLOT(onOkPressed()));
+  ret = ret && connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+  assert(ret);
+
+  updateSubFolderName();
+}
+
+//-----------------------------------------------------------------------------
+
+QString StopMotionSaveInFolderPopup::getPath() {
+  if (!m_subFolderCB->isChecked()) return m_parentFolderField->getPath();
+
+  // re-code filepath
+  TFilePath path(m_parentFolderField->getPath() + "\\" +
+                 m_subFolderNameField->text());
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene) {
+    path = scene->decodeFilePath(path);
+    path = scene->codeFilePath(path);
+  }
+  return path.getQString();
+}
+
+//-----------------------------------------------------------------------------
+
+QString StopMotionSaveInFolderPopup::getParentPath() {
+  return m_parentFolderField->getPath();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::showEvent(QShowEvent *event) {
+  // Show "Save the scene" check box only when the scene is untitled
+  bool isUntitled =
+      TApp::instance()->getCurrentScene()->getScene()->isUntitled();
+  m_createSceneInFolderCB->setVisible(isUntitled);
+}
+
+//-----------------------------------------------------------------------------
+namespace {
+QString formatString(QString inStr, int charNum) {
+  if (inStr.isEmpty()) return QString("0").rightJustified(charNum, '0');
+
+  QString numStr, postStr;
+  // find the first non-digit character
+  int index = inStr.indexOf(QRegExp("[^0-9]"), 0);
+
+  if (index == -1)  // only digits
+    numStr = inStr;
+  else if (index == 0)  // only post strings
+    return inStr;
+  else {  // contains both
+    numStr  = inStr.left(index);
+    postStr = inStr.right(inStr.length() - index);
+  }
+  return numStr.rightJustified(charNum, '0') + postStr;
+}
+};  // namespace
+
+void StopMotionSaveInFolderPopup::updateSubFolderName() {
+  if (!m_autoSubNameCB->isChecked()) return;
+
+  QString episodeStr  = formatString(m_episodeField->text(), 3);
+  QString sequenceStr = formatString(m_sequenceField->text(), 3);
+  QString sceneStr    = formatString(m_sceneField->text(), 4);
+
+  QString str;
+
+  switch (m_subNameFormatCombo->currentIndex()) {
+  case 0:  // C- + Sequence + Scene
+    str = QString("C-%1-%2").arg(sequenceStr).arg(sceneStr);
+    break;
+  case 1:  // Sequence + Scene
+    str = QString("%1-%2").arg(sequenceStr).arg(sceneStr);
+    break;
+  case 2:  // Episode + Sequence + Scene
+    str = QString("%1-%2-%3").arg(episodeStr).arg(sequenceStr).arg(sceneStr);
+    break;
+  case 3:  // Project + Episode + Sequence + Scene
+    str = QString("%1-%2-%3-%4")
+              .arg(m_projectField->text())
+              .arg(episodeStr)
+              .arg(sequenceStr)
+              .arg(sceneStr);
+    break;
+  default:
+    return;
+  }
+  m_subFolderNameField->setText(str);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::onAutoSubNameCBClicked(bool on) {
+  m_subNameFormatCombo->setEnabled(on);
+  updateSubFolderName();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::onShowPopupOnLaunchCBClicked(bool on) {
+  CamCapOpenSaveInPopupOnLaunch = (on) ? 1 : 0;
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::onCreateSceneInFolderCBClicked(bool on) {
+  CamCapSaveInPopupCreateSceneInFolder = (on) ? 1 : 0;
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::onSetAsDefaultBtnPressed() {
+  CamCapSaveInParentFolder = m_parentFolderField->getPath().toStdString();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::onOkPressed() {
+  if (!m_subFolderCB->isChecked()) {
+    accept();
+    return;
+  }
+
+  // check the subFolder value
+  QString subFolderName = m_subFolderNameField->text();
+  if (subFolderName.isEmpty()) {
+    DVGui::MsgBox(DVGui::WARNING, tr("Subfolder name should not be empty."));
+    return;
+  }
+
+  int index = subFolderName.indexOf(QRegExp("[\\]:;|=,\\[\\*\\.\"/\\\\]"), 0);
+  if (index >= 0) {
+    DVGui::MsgBox(DVGui::WARNING,
+                  tr("Subfolder name should not contain following "
+                     "characters:  * . \" / \\ [ ] : ; | = , "));
+    return;
+  }
+
+  TFilePath fp(m_parentFolderField->getPath());
+  fp += TFilePath(subFolderName);
+  TFilePath actualFp =
+      TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(fp);
+
+  if (QFileInfo::exists(actualFp.getQString())) {
+    DVGui::MsgBox(DVGui::WARNING,
+                  tr("Folder %1 already exists.").arg(actualFp.getQString()));
+    return;
+  }
+
+  // save the current properties to env data
+  CamCapSaveInPopupSubFolder   = (m_subFolderCB->isChecked()) ? 1 : 0;
+  CamCapSaveInPopupProject     = m_projectField->text().toStdString();
+  CamCapSaveInPopupEpisode     = m_episodeField->text().toStdString();
+  CamCapSaveInPopupSequence    = m_sequenceField->text().toStdString();
+  CamCapSaveInPopupScene       = m_sceneField->text().toStdString();
+  CamCapSaveInPopupAutoSubName = (!m_autoSubNameCB->isChecked())
+                                     ? 0
+                                     : m_subNameFormatCombo->currentIndex() + 1;
+
+  // create folder
+  try {
+    TSystem::mkDir(actualFp);
+  } catch (...) {
+    DVGui::MsgBox(DVGui::CRITICAL,
+                  tr("It is not possible to create the %1 folder.")
+                      .arg(toQString(actualFp)));
+    return;
+  }
+
+  createSceneInFolder();
+  accept();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::createSceneInFolder() {
+  // make sure that the check box is displayed (= the scene is untitled) and is
+  // checked.
+  if (m_createSceneInFolderCB->isHidden() ||
+      !m_createSceneInFolderCB->isChecked())
+    return;
+  // just in case
+  if (!m_subFolderCB->isChecked()) return;
+
+  // set the output folder
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+
+  TFilePath fp(getPath().toStdWString());
+
+  // for the scene folder mode, output destination must be already set to
+  // $scenefolder or its subfolder. See TSceneProperties::onInitialize()
+  if (Preferences::instance()->getPathAliasPriority() !=
+      Preferences::SceneFolderAlias) {
+    TOutputProperties *prop = scene->getProperties()->getOutputProperties();
+    prop->setPath(prop->getPath().withParentDir(fp));
+  }
+
+  // save the scene
+  TFilePath sceneFp =
+      scene->decodeFilePath(fp) +
+      TFilePath(m_subFolderNameField->text().toStdWString()).withType("tnz");
+  IoCmd::saveScene(sceneFp, 0);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionSaveInFolderPopup::updateParentFolder() {
+  // If the parent folder is saved in the scene, use it
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  QString parentFolder =
+      scene->getProperties()->cameraCaptureSaveInPath().getQString();
+  if (parentFolder.isEmpty()) {
+    // else then, if the user-env stores the parent folder value, use it
+    parentFolder = QString::fromStdString(CamCapSaveInParentFolder);
+    // else, use "+extras" project folder
+    if (parentFolder.isEmpty())
+      parentFolder =
+          QString("+%1").arg(QString::fromStdString(TProject::Extras));
+  }
+
+  m_parentFolderField->setPath(parentFolder);
+}
+
+//=============================================================================
+
+FrameNumberLineEdit::FrameNumberLineEdit(QWidget *parent, int value)
+    : LineEdit(parent) {
+  setFixedWidth(54);
+  m_intValidator = new QIntValidator(this);
+  setValue(value);
+  m_intValidator->setRange(1, 9999);
+
+  QRegExp rx("^[0-9]{1,4}[A-Ia-i]?$");
+  m_regexpValidator = new QRegExpValidator(rx, this);
+
+  updateValidator();
+}
+
+//-----------------------------------------------------------------------------
+
+void FrameNumberLineEdit::updateValidator() {
+  if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
+    setValidator(m_regexpValidator);
+  else
+    setValidator(m_intValidator);
+}
+
+//-----------------------------------------------------------------------------
+
+void FrameNumberLineEdit::setValue(int value) {
+  if (value <= 0)
+    value = 1;
+  else if (value > 9999)
+    value = 9999;
+
+  QString str;
+  if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
+    str = convertToFrameWithLetter(value, 3);
+  } else {
+    str.setNum(value);
+    while (str.length() < 4) str.push_front("0");
+  }
+  setText(str);
+  setCursorPosition(0);
+}
+
+//-----------------------------------------------------------------------------
+
+int FrameNumberLineEdit::getValue() {
+  if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
+    QString str = text();
+    // if no letters added
+    if (str.at(str.size() - 1).isDigit())
+      return str.toInt() * 10;
+    else {
+      return str.left(str.size() - 1).toInt() * 10 +
+             letterToNum(str.at(str.size() - 1));
+    }
+  } else
+    return text().toInt();
+}
+
+//-----------------------------------------------------------------------------
+
+void FrameNumberLineEdit::focusInEvent(QFocusEvent *e) {
+  m_textOnFocusIn = text();
+}
+
+void FrameNumberLineEdit::focusOutEvent(QFocusEvent *e) {
+  // if the field is empty, then revert the last input
+  if (text().isEmpty()) setText(m_textOnFocusIn);
+
+  LineEdit::focusOutEvent(e);
+}
+
+//=============================================================================
+
+LevelNameLineEdit::LevelNameLineEdit(QWidget *parent)
+    : QLineEdit(parent), m_textOnFocusIn("") {
+  // Exclude all character which cannot fit in a filepath (Win).
+  // Dots are also prohibited since they are internally managed by Toonz.
+  QRegExp rx("[^\\\\/:?*.\"<>|]+");
+  setValidator(new QRegExpValidator(rx, this));
+  setObjectName("LargeSizedText");
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+}
+
+void LevelNameLineEdit::focusInEvent(QFocusEvent *e) {
+  m_textOnFocusIn = text();
+}
+
+void LevelNameLineEdit::onEditingFinished() {
+  // if the content is not changed, do nothing.
+  if (text() == m_textOnFocusIn) return;
+
+  emit levelNameEdited();
+}
 
 //*****************************************************************************
 //    StopMotionController  implementation
@@ -200,7 +786,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   // Make Control Page
   // **********************
 
-  m_saveInFolderPopup = new PencilTestSaveInFolderPopup(this);
+  m_saveInFolderPopup = new StopMotionSaveInFolderPopup(this);
   m_cameraListCombo   = new QComboBox(this);
   m_resolutionCombo   = new QComboBox(this);
   m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 40);
@@ -603,7 +1189,17 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamSettingsLayout->setSpacing(0);
     webcamSettingsLayout->setMargin(5);
     QHBoxLayout *webcamLabelLayout = new QHBoxLayout();
-    m_webcamLabel = new QLabel("insert webcam name here", this);
+    QGroupBox *imageFrame          = new QGroupBox(tr("Image adjust"), this);
+    m_webcamLabel        = new QLabel("insert webcam name here", this);
+    m_colorTypeCombo     = new QComboBox(this);
+    m_camCapLevelControl = new CameraCaptureLevelControl(this);
+    // m_upsideDownCB = new QCheckBox(tr("Upside down"), this);
+    // m_upsideDownCB->setChecked(false);
+    imageFrame->setObjectName("CleanupSettingsFrame");
+    m_colorTypeCombo->addItems(
+        {tr("Color"), tr("Grayscale"), tr("Black & White")});
+    m_colorTypeCombo->setCurrentIndex(0);
+
     webcamLabelLayout->addStretch();
     webcamLabelLayout->addWidget(m_webcamLabel);
     webcamLabelLayout->addStretch();
@@ -696,6 +1292,25 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       webcamGridLay->addWidget(m_captureFilterSettingsBtn, 5, 0, 1, 2,
                                Qt::AlignCenter);
     }
+
+    QGridLayout *imageLay = new QGridLayout();
+    imageLay->setMargin(8);
+    imageLay->setHorizontalSpacing(3);
+    imageLay->setVerticalSpacing(5);
+    {
+      imageLay->addWidget(new QLabel(tr("Color type:"), this), 0, 0,
+                          Qt::AlignRight);
+      imageLay->addWidget(m_colorTypeCombo, 0, 1);
+
+      imageLay->addWidget(m_camCapLevelControl, 1, 0, 1, 3);
+
+      // imageLay->addWidget(m_upsideDownCB, 2, 0, 1, 3, Qt::AlignLeft);
+    }
+    imageLay->setColumnStretch(0, 0);
+    imageLay->setColumnStretch(1, 0);
+    imageLay->setColumnStretch(2, 1);
+    imageFrame->setLayout(imageLay);
+    webcamGridLay->addWidget(imageFrame, 6, 0, 1, 2);
 
     webcamSettingsLayout->addLayout(webcamGridLay);
 
@@ -1252,6 +1867,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onWebcamGainSliderChanged(int)));
   ret = ret && connect(m_webcamSaturationSlider, SIGNAL(valueChanged(int)),
                        this, SLOT(onWebcamSaturationSliderChanged(int)));
+  ret = ret && connect(m_colorTypeCombo, SIGNAL(currentIndexChanged(int)), this,
+                       SLOT(onColorTypeComboChanged(int)));
+  ret = ret && connect(m_stopMotion->m_webcam, SIGNAL(updateHistogram(cv::Mat)),
+                       this, SLOT(onUpdateHistogramCalled(cv::Mat)));
 
   // Lighting Connections
   ret = ret &&
@@ -2152,6 +2771,19 @@ void StopMotionController::onNewWebcamResolutionSelected(int index) {
 
 void StopMotionController::onResolutionComboActivated(const QString &itemText) {
   m_stopMotion->setWebcamResolution(itemText);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onColorTypeComboChanged(int index) {
+  m_camCapLevelControl->setMode(index != 2);
+  m_stopMotion->m_webcam->setColorMode(index);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onUpdateHistogramCalled(cv::Mat image) {
+  m_camCapLevelControl->updateHistogram(image);
 }
 
 ////-----------------------------------------------------------------------------

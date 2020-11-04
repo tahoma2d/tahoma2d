@@ -1437,13 +1437,6 @@ ParamsPage {
 /* -----------------------------------------------------------------------------
    Misc 
 ----------------------------------------------------------------------------- */
-PencilTestPopup {
-  min-height: 730px;
-  /* Allow for using a 768 screen */
-  min-width: 512px;
-  /* some clipping will still occur on width, but this
-                        allows for filling half of a 1024 screen */
-}
 #MatchLineButton {
   background-color: #565656;
 }
@@ -1693,7 +1686,7 @@ ProjectPopup QLabel {
   color: #9fdaff;
 }
 /* -----------------------------------------------------------------------------
-   PencilTestPopup / CameraCapture Window
+   CameraCapture Window
 ----------------------------------------------------------------------------- */
 #GearButton::menu-indicator {
   image: url("");

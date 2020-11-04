@@ -292,7 +292,7 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     assert(values.size() == 4);
     // Ensure that the dialog is visible in the screen.
     // The dialog opens with some offset to bottom-right direction
-    // if a flag Qt::WindowMaximizeButtonHint is set. (e.g. PencilTestPopup)
+    // if a flag Qt::WindowMaximizeButtonHint is set.
     // Therefore, if the dialog is moved to the bottom-end of the screen,
     // it will be got out of the screen on the next launch.
     // The following position adjustment will also prevent such behavior.

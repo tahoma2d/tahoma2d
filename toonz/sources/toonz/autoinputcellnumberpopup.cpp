@@ -5,7 +5,7 @@
 #include "menubarcommandids.h"
 #include "cellselection.h"
 #include "columnselection.h"
-#include "penciltestpopup.h"
+#include "stopmotioncontroller.h"
 
 // TnzQt includes
 #include "toonzqt/intfield.h"

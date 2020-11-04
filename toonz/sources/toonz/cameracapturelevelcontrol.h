@@ -78,16 +78,11 @@ class CameraCaptureLevelControl : public QFrame {
   DVGui::DoubleLineEdit* m_gammaFld;
   cv::Mat m_lut;
 
-  void computeLut();
-
 public:
   CameraCaptureLevelControl(QWidget* parent = 0);
 
   void updateHistogram(cv::Mat& image) { m_histogram->updateHistogram(image); }
   void setMode(bool color_grayscale);
-
-  void adjustLevel(cv::Mat& image);
-  void binarize(cv::Mat& image);
 
 protected slots:
   void onHistogramValueChanged(int itemId);
