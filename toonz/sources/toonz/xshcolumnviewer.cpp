@@ -52,6 +52,7 @@
 
 // TnzCore includes
 #include "tconvert.h"
+#include "tenv.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -66,6 +67,8 @@
 #include <QDesktopWidget>
 
 #include <QBitmap>
+
+TEnv::IntVar ShowParentColorsInXsheet("ShowParentColorsInXsheet", 1);
 //=============================================================================
 
 namespace {
@@ -1183,9 +1186,25 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
   if (column->getSoundColumn() || column->getSoundTextColumn() ||
       column->getPaletteColumn())
     return;
-
+  if (ShowParentColorsInXsheet == 1) {
+    QColor parentColor = Qt::black;
+    if (parentId.isCamera()) {
+      parentColor = m_viewer->getActiveCameraColor();
+    } else if (parentId.isPegbar()) {
+      parentColor = m_viewer->getPegColor();
+    } else if (parentId.isTable()) {
+      parentColor = m_viewer->getTableColor();
+    } else if (parentId.isColumn()) {
+      int columnIndex = parentId.getIndex();
+      QColor unused;
+      m_viewer->getColumnColor(parentColor, unused, columnIndex, xsh);
+    }
+    if (parentColor != Qt::black) {
+      p.fillRect(pegbarnamerect, parentColor);
+      p.drawRect(pegbarnamerect);
+    }
+  }
   p.setPen(m_viewer->getTextColor());
-
   p.drawText(pegbarnamerect.adjusted(3, 0, 0, 0),
              Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, name);
 }
@@ -2724,7 +2743,9 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_InsertFx));
       menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
-      menu.addAction(cmdManager->getAction(MI_RemoveEmptyColumns));
+      if (!o->isVerticalTimeline()) {
+        menu.addAction(cmdManager->getAction(MI_RemoveEmptyColumns));
+      }
       menu.addSeparator();
       if (m_viewer->getXsheet()->isColumnEmpty(col) ||
           (cell.m_level && cell.m_level->getChildLevel()))
@@ -2762,7 +2783,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
 
     QAction *flipOrientation = new QAction(tr("Toggle Orientation"), this);
 
-    flipOrientation->setToolTip(tr("Toggle between timeline and xsheet view"));
+    flipOrientation->setToolTip(tr("Toggle Between Timeline and Xsheet View"));
     bool ret = true;
     ret      = ret && connect(flipOrientation, &QAction::triggered,
                          [=]() { m_viewer->flipOrientation(); });
@@ -2821,6 +2842,21 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       //  assert(ret);
       //  menu.addAction(setMask);
       //}
+    }
+    if (o->isVerticalTimeline()) {
+      menu.addSeparator();
+      QAction *showParentColors =
+          new QAction(tr("Show Column Parent Colors"), this);
+      showParentColors->setCheckable(true);
+      showParentColors->setChecked(ShowParentColorsInXsheet == 1 ? true
+                                                                 : false);
+      showParentColors->setToolTip(
+          tr("Show the column parent's color in the Xsheet"));
+
+      connect(showParentColors, &QAction::toggled, [=]() {
+        ShowParentColorsInXsheet = showParentColors->isChecked() ? 1 : 0;
+      });
+      menu.addAction(showParentColors);
     }
   }
 

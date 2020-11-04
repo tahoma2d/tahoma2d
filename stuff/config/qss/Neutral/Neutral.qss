@@ -2237,6 +2237,8 @@ XsheetViewer {
   qproperty-EmptyCellColor: #6c6c6c;
   qproperty-NotEmptyColumnColor: #767676;
   qproperty-SelectedEmptyCellColor: rgba(155, 159, 162, 0.5);
+  qproperty-PegColor: #be8a56;
+  qproperty-TableColor: #a4a4bf;
   qproperty-LevelColumnColor: #78a578;
   qproperty-LevelColumnBorderColor: #537d53;
   qproperty-SelectedLevelColumnColor: #90bd98;
