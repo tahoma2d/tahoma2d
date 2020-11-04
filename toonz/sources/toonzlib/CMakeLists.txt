@@ -352,7 +352,6 @@ endif()
 
 include_directories(
     SYSTEM
-    ${SDKROOT}/libusb/libusb-1.0.9/include
 )
 include_directories(
     ../toonzfarm/include
