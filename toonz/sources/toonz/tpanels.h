@@ -40,7 +40,6 @@ class PaletteViewerPanel final : public StyleShortcutSwitchablePanel {
   TPaletteHandle *m_paletteHandle;
   PaletteViewer *m_paletteViewer;
 
-  TPanelTitleBarButton* m_freezeButton;
   bool m_isFrozen;
 
 public:
@@ -57,12 +56,15 @@ public:
 protected:
   void initializeTitleBar();
   bool isActivatableOnEnter() override { return true; }
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
 
 protected slots:
   void onColorStyleSwitched();
   void onPaletteSwitched();
   void onFreezeButtonToggled(bool isFrozen);
   void onSceneSwitched();
+  void onPreferenceChanged(const QString &prefName);
 };
 
 //=========================================================
@@ -98,6 +100,12 @@ class StyleEditorPanel final : public TPanel {
 
 public:
   StyleEditorPanel(QWidget *parent);
+
+protected:
+  void showEvent(QShowEvent *) override;
+  void hideEvent(QHideEvent *) override;
+protected slots:
+  void onPreferenceChanged(const QString &prefName);
 };
 
 //=========================================================

@@ -1254,11 +1254,11 @@ What do you want to do? </source>
 <context>
     <name>CommandBarPopup</name>
     <message>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation>X-시트 툴바</translation>
     </message>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>X-시트 도구모음 사용자 지정</translation>
     </message>
     <message>
@@ -4037,7 +4037,7 @@ Please use the frame numbers for reference.</source>
         <translation>립싱크 데이터 적용(&amp;A)</translation>
     </message>
     <message>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation>X-시트 툴바 전환</translation>
     </message>
     <message>
@@ -6853,7 +6853,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
         <translation>단순한</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation>기능 편집기 헤더를 확장하여 X-시트 도구 모음 높이*</translation>
     </message>
     <message>
@@ -13229,9 +13229,9 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>X-시트 도구모음 사용자 지정</translation>
     </message>
 </context>

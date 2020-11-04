@@ -268,7 +268,7 @@ TPointD ControlPointEditorTool::calculateSnap(TPointD pos) {
           else if (areAlmostEqual(outW, 1.0, 1e-3))
             w = 1.0;
           else
-            w = outW;
+            w               = outW;
           TThickPoint point = stroke->getPoint(w);
           snapPoint         = TPointD(point.x, point.y);
           m_foundSnap       = true;
@@ -560,7 +560,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
     getViewer()->doPickGuideStroke(pos);
     return;
   }
-
+  m_selection.setArePointsDeleted(false);
   m_pos           = pos;
   double pix      = getPixelSize() * 2.0f;
   double maxDist  = 5 * pix;
@@ -797,6 +797,13 @@ void ControlPointEditorTool::moveSegment(const TPointD &delta, bool dragging,
 
 void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
                                             const TMouseEvent &e) {
+  if (m_selection.getPointsDeleted()) {
+    m_selection.selectNone();
+    m_lastPointSelected = -1;
+    if (m_undo) delete(m_undo);
+    m_undo = 0;
+    return;
+  }
   TVectorImageP vi(getImage(true));
   int currentStroke = m_controlPointEditorStroke.getStrokeIndex();
   if (!vi || currentStroke == -1 || m_action == NONE) return;
@@ -814,7 +821,15 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
       TThickPoint cp;
       TPointD controlPoint;
       TPointD newPos;
+      int count = m_controlPointEditorStroke.getControlPointCount();
+      if (m_lastPointSelected > count - 1) {
+        m_selection.selectNone();
+        m_lastPointSelected = -1;
+        if (m_undo) delete(m_undo);
+        m_undo              = 0;
 
+        return;
+      }
       cp = m_controlPointEditorStroke.getControlPoint(m_lastPointSelected);
       controlPoint = TPointD(cp.x, cp.y);
       newPos       = calculateSnap(pos);
@@ -881,6 +896,12 @@ void ControlPointEditorTool::selectRegion(TStroke *stroke) {
 
 void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
                                           const TMouseEvent &e) {
+  if (m_selection.getPointsDeleted()) {
+    m_selection.setArePointsDeleted(false);
+    if (m_undo) delete(m_undo);
+    m_undo = 0;
+    return;
+  }
   TVectorImageP vi(getImage(true));
   int currentStroke = m_controlPointEditorStroke.getStrokeIndex();
   if (!vi || currentStroke == -1) return;
@@ -917,6 +938,7 @@ void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
       m_isImageChanged = false;
     }
   }
+  std::set<int> oldPoints = m_selection.getSelectedPoints();
 
   if (m_action == NONE || !m_isImageChanged) {
     m_undo = 0;
@@ -926,6 +948,16 @@ void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
 
   notifyImageChanged();
   invalidate();
+
+  if (m_action == CP_MOVEMENT) {
+    if (oldPoints.size() >= 1) {
+      for (auto point : oldPoints) {
+        m_selection.select(point);
+        m_lastPointSelected = point;
+      }
+      m_selection.makeCurrent();
+    }
+  }
 
   // Registro l'UNDO
   if (m_undo) {

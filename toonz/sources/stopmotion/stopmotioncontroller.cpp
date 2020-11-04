@@ -186,7 +186,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_tabBar->addSimpleTab(tr("Settings"));
   m_tabBar->addSimpleTab(tr("Options"));
   m_tabBar->addSimpleTab(tr("Light"));
-  //m_tabBar->addSimpleTab(tr("Motion"));
+  // m_tabBar->addSimpleTab(tr("Motion"));
   m_tabBar->addSimpleTab(tr("Tests"));
   m_tabBarContainer    = new TabBarContainter(this);
   m_mainControlsPage   = new QFrame(this);
@@ -203,7 +203,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_saveInFolderPopup = new PencilTestSaveInFolderPopup(this);
   m_cameraListCombo   = new QComboBox(this);
   m_resolutionCombo   = new QComboBox(this);
-  m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 25);
+  m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 40);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
   m_cameraStatusLabel               = new QLabel(tr("Camera Status"), this);
   QPushButton *refreshCamListButton = new QPushButton(tr("Refresh"), this);
@@ -234,8 +234,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_onionOpacityFld                  = new DVGui::IntField(this);
 
   m_captureFramesCombo = new QComboBox(this);
-  m_captureFramesCombo->addItems({ "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s" });
-  m_captureFramesCombo->setCurrentIndex(m_stopMotion->getCaptureNumberOfFrames() - 1);
+  m_captureFramesCombo->addItems(
+      {"1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s"});
+  m_captureFramesCombo->setCurrentIndex(
+      m_stopMotion->getCaptureNumberOfFrames() - 1);
 
   // should choosing the file type is disabled for simplicty
   // too many options can be a bad thing
@@ -416,9 +418,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         fileTypeLay->setMargin(0);
         fileTypeLay->setSpacing(3);
         {
-          //fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
+          // fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
           fileTypeLay->addWidget(m_fileTypeCombo, 1);
-          //fileTypeLay->addSpacing(10);
+          // fileTypeLay->addSpacing(10);
           fileTypeLay->addWidget(m_fileFormatOptionButton);
           m_fileTypeCombo->hide();
           m_fileFormatOptionButton->hide();
@@ -429,7 +431,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         saveInLay->setMargin(0);
         saveInLay->setSpacing(3);
         {
-          //saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0);
+          // saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0);
           saveInLay->addWidget(m_saveInFileFld, 1);
           m_saveInFileFld->hide();
         }
@@ -444,9 +446,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       displayLay->setHorizontalSpacing(3);
       displayLay->setVerticalSpacing(5);
       {
-          displayLay->addWidget(new QLabel(tr("Expose as: ")), 0, 0, Qt::AlignRight);
-          displayLay->addWidget(m_captureFramesCombo, 0, 1, Qt::AlignLeft);
-        displayLay->addWidget(new QLabel(tr("XSheet Frame:"), this), 1, 0,
+        displayLay->addWidget(new QLabel(tr("Expose as: ")), 0, 0,
+                              Qt::AlignRight);
+        displayLay->addWidget(m_captureFramesCombo, 0, 1, Qt::AlignLeft);
+        displayLay->addWidget(new QLabel(tr("Scene Frame:"), this), 1, 0,
                               Qt::AlignRight);
         QHBoxLayout *xsheetLay = new QHBoxLayout();
         xsheetLay->setMargin(0);
@@ -726,7 +729,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_subsamplingFld->setDisabled(true);
 
     m_placeOnXSheetCB = new QCheckBox(this);
-    m_placeOnXSheetCB->setToolTip(tr("Place the frame in the XSheet"));
+    m_placeOnXSheetCB->setToolTip(tr("Place the frame in the Scene"));
 
     m_directShowLabel = new QLabel(tr("Use Direct Show Webcam Drivers"), this);
     m_directShowCB    = new QCheckBox(this);
@@ -777,7 +780,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     optionsOutsideLayout->addWidget(timerFrame);
 
     checkboxLayout->addWidget(m_placeOnXSheetCB, 0, 0, 1, 1, Qt::AlignRight);
-    // checkboxLayout->addWidget(new QLabel(tr("Place on XSheet")), 0, 1,
+    // checkboxLayout->addWidget(new QLabel(tr("Place in Scene")), 0, 1,
     //                          Qt::AlignLeft);
     m_placeOnXSheetCB->hide();
     checkboxLayout->addWidget(m_drawBeneathCB, 1, 0, Qt::AlignRight);
@@ -1046,9 +1049,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_setToCurrentXSheetFrameButton, SIGNAL(clicked()), this,
                        SLOT(setToCurrentXSheetFrame()));
   ret = ret && connect(m_captureFramesCombo, SIGNAL(currentIndexChanged(int)),
-      this, SLOT(onCaptureFramesChanged(int)));
+                       this, SLOT(onCaptureFramesChanged(int)));
   ret = ret && connect(m_stopMotion, SIGNAL(captureNumberOfFramesChanged(int)),
-      this, SLOT(onCaptureNumberOfFramesChanged(int)));
+                       this, SLOT(onCaptureNumberOfFramesChanged(int)));
   ret = ret && connect(m_onionOpacityFld, SIGNAL(valueEditedByHand()), this,
                        SLOT(onOnionOpacityFldEdited()));
   ret = ret && connect(m_onionOpacityFld, SIGNAL(valueChanged(bool)), this,
@@ -1684,7 +1687,7 @@ void StopMotionController::onXSheetFrameNumberChanged(int frameNumber) {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCaptureNumberOfFramesChanged(int frames) {
-    m_captureFramesCombo->setCurrentIndex(frames - 1);
+  m_captureFramesCombo->setCurrentIndex(frames - 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1779,7 +1782,7 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
       maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
     }
 #endif
-    m_cameraListCombo->setMaximumWidth(maxTextLength + 25);
+    m_cameraListCombo->setMaximumWidth(maxTextLength + 40);
     m_cameraListCombo->setEnabled(true);
     m_cameraListCombo->setCurrentIndex(0);
     m_captureButton->setEnabled(true);
@@ -2941,7 +2944,7 @@ void StopMotionController::onXSheetFrameNumberChanged() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCaptureFramesChanged(int index) {
-    m_stopMotion->setCaptureNumberOfFrames(index + 1);
+  m_stopMotion->setCaptureNumberOfFrames(index + 1);
 }
 
 //-----------------------------------------------------------------------------

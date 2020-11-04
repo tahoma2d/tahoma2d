@@ -140,6 +140,7 @@ private:
   std::set<int> m_selectedPoints;
   int m_strokeIndex;
   ControlPointEditorStroke *m_controlPointEditorStroke;
+  bool m_arePointsDeleted = false;
 
 public:
   ControlPointSelection() : m_controlPointEditorStroke(0), m_strokeIndex(-1) {}
@@ -161,6 +162,10 @@ public:
   void addMenuItems(QMenu *menu);
 
   void enableCommands() override;
+
+  bool getPointsDeleted() { return m_arePointsDeleted; }
+  void setArePointsDeleted(bool value) { m_arePointsDeleted = value; }
+  std::set<int> getSelectedPoints() { return m_selectedPoints; }
 
 protected slots:
   void setLinear();

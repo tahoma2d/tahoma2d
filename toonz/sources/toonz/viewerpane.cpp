@@ -219,11 +219,11 @@ void SceneViewerPanel::updateShowHide() {
 /*! showing the show/hide commands
  */
 
-void SceneViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
-  QMenu *menu = new QMenu(this);
-  addShowHideContextMenu(menu);
-  menu->exec(event->globalPos());
-}
+// void SceneViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
+//  QMenu *menu = new QMenu(this);
+//  addShowHideContextMenu(menu);
+//  menu->exec(event->globalPos());
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -454,22 +454,20 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   ret = ret && connect(button, SIGNAL(toggled(bool)),
                        CommandManager::instance()->getAction(MI_FieldGuide),
                        SLOT(trigger()));
-  ret = ret &&
-        connect(CommandManager::instance()->getAction(MI_FieldGuide),
-                SIGNAL(triggered(bool)), button, SLOT(setPressed(bool)));
+  ret = ret && connect(CommandManager::instance()->getAction(MI_FieldGuide),
+                       SIGNAL(triggered(bool)), button, SLOT(setPressed(bool)));
   // initialize state
   button->setPressed(
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
-  
 
-  TPanelTitleBarButtonForGrids* gridMoreButton = new TPanelTitleBarButtonForGrids(
-      titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  TPanelTitleBarButtonForGrids *gridMoreButton =
+      new TPanelTitleBarButtonForGrids(
+          titleBar, getIconThemePath("actions/9/pane_more.svg"));
   gridMoreButton->setToolTip(tr("Grids and Overlays Settings"));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), gridMoreButton);
   connect(gridMoreButton, &TPanelTitleBarButtonForGrids::updateViewer,
-      [=]() { m_sceneViewer->update(); });
-
+          [=]() { m_sceneViewer->update(); });
 
   // view mode toggles
   button = new TPanelTitleBarButton(
@@ -488,19 +486,21 @@ void SceneViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
   button = new TPanelTitleBarButton(
-          titleBar, getIconThemePath("actions/20/pane_cam.svg"));
+      titleBar, getIconThemePath("actions/20/pane_cam.svg"));
   button->setToolTip(tr("Camera View"));
   x += +1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
 
-  TPanelTitleBarButtonForCameraView* camTransparencyButton = new TPanelTitleBarButtonForCameraView(
-      titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  TPanelTitleBarButtonForCameraView *camTransparencyButton =
+      new TPanelTitleBarButtonForCameraView(
+          titleBar, getIconThemePath("actions/9/pane_more.svg"));
   camTransparencyButton->setToolTip(tr("Change camera view transparency."));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), camTransparencyButton);
-  connect(camTransparencyButton, &TPanelTitleBarButtonForCameraView::updateViewer,
-      [=]() { m_sceneViewer->update(); });
+  connect(camTransparencyButton,
+          &TPanelTitleBarButtonForCameraView::updateViewer,
+          [=]() { m_sceneViewer->update(); });
 
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));
@@ -644,8 +644,11 @@ void SceneViewerPanel::changeWindowTitle() {
       parentWidget()->setWindowTitle(name);
       return;
     }
-    TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
-    TXshCell cell = xsh->getCell(frame, col);
+    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+    TXshCell cell;
+    if (app->getCurrentColumn()->getColumn() &&
+        !app->getCurrentColumn()->getColumn()->getSoundColumn())
+      cell = xsh->getCell(frame, col);
     if (cell.isEmpty()) {
       if (!m_sceneViewer->is3DView()) {
         TAffine aff = m_sceneViewer->getViewMatrix() *

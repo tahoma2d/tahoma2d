@@ -127,7 +127,7 @@ void RGBMCutFx::doCompute(TTile &tile, double frame,
       doRGBMCut<TPixel64, USHORT>(raster64, hi_m, hi_r, hi_g, hi_b, lo_m, lo_r,
                                   lo_g, lo_b);
     else
-      throw TException("RGBMCutFx: unsupported Pixel Type");
+      throw TException("RGBACutFx: unsupported Pixel Type");
   }
 }
 

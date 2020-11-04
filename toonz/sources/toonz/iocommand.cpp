@@ -2329,7 +2329,7 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
         QString question =
             QObject::tr(
                 "File '%1' will reload level '%2' as a duplicate column in the "
-                "xsheet.\n\nAllow duplicate?")
+                "scene.\n\nAllow duplicate?")
                 .arg(origName)
                 .arg(QString::fromStdString(path.getName()));
         QString Yes    = QObject::tr("Allow");

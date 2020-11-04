@@ -56,15 +56,15 @@ TFilePathSet ToonzFolder::getProjectsFolders() {
                     TEnv::getSystemPathMap().at("PROJECTS"));
   }
   if (documents) {
-    fps.push_back(getMyDocumentsPath() + "OpenToonz");
-    if (!TSystem::doesExistFileOrLevel(getMyDocumentsPath() + "OpenToonz")) {
-      TSystem::mkDir(getMyDocumentsPath() + "OpenToonz");
+    fps.push_back(getMyDocumentsPath() + "Tahoma2D");
+    if (!TSystem::doesExistFileOrLevel(getMyDocumentsPath() + "Tahoma2D")) {
+      TSystem::mkDir(getMyDocumentsPath() + "Tahoma2D");
     }
   }
   if (desktop) {
-    fps.push_back(getDesktopPath() + "OpenToonz");
-    if (!TSystem::doesExistFileOrLevel(getDesktopPath() + "OpenToonz")) {
-      TSystem::mkDir(getDesktopPath() + "OpenToonz");
+    fps.push_back(getDesktopPath() + "Tahoma2D");
+    if (!TSystem::doesExistFileOrLevel(getDesktopPath() + "Tahoma2D")) {
+      TSystem::mkDir(getDesktopPath() + "Tahoma2D");
     }
   }
   if (custom) {
@@ -131,14 +131,18 @@ TFilePath ToonzFolder::getReslistPath(bool forCleanup) {
   return getConfigDir() + (forCleanup ? "cleanupreslist.txt" : "reslist.txt");
 }
 
+TFilePath ToonzFolder::getMyReslistPath(bool forCleanup) {
+  return getMyModuleDir() + (forCleanup ? "cleanupreslist.txt" : "reslist.txt");
+}
+
 TFilePath ToonzFolder::getTemplateModuleDir() {
   // return getModulesDir() + getModuleName();
   return getModulesDir() + "settings";
 }
 
 TFilePath ToonzFolder::getMyModuleDir() {
-  TFilePath fp(getTemplateModuleDir());
-  return fp.withName(fp.getWideName() + L"." +
+  TFilePath fp(getProfileFolder());
+  return fp.withName(fp.getWideName() + L"/users/" +
                      TSystem::getUserName().toStdWString());
 }
 
@@ -167,11 +171,10 @@ TFilePath ToonzFolder::getTemplateRoomsDir() {
 
 TFilePath ToonzFolder::getMyRoomsDir() {
   // TFilePath fp(getTemplateRoomsDir());
-  TFilePath fp(getProfileFolder());
+  TFilePath fp(getMyModuleDir());
   return fp.withName(
-      fp.getWideName() + L"/layouts/personal/" +
-      Preferences::instance()->getCurrentRoomChoice().toStdWString() + L"." +
-      TSystem::getUserName().toStdWString());
+      fp.getWideName() + L"/layouts/" +
+      Preferences::instance()->getCurrentRoomChoice().toStdWString());
 }
 
 TFilePath ToonzFolder::getRoomsFile(TFilePath filename) {

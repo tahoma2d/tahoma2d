@@ -446,8 +446,8 @@ return true if the method execution can have changed the current tool
   int getFrame();        //!< Returns the actual frame in use.
   int getColumnIndex();  //!< Returns the actual column index.
 
-  TStageObjectId
-  getObjectId();  //!< Returns a pointer to the actual stage object.
+  TStageObjectId getObjectId()
+      const;  //!< Returns a pointer to the actual stage object.
 
   void notifyImageChanged();  //!< Notifies changes on the actual image; used to
                               //! update
@@ -503,7 +503,7 @@ transformation.
 
   QString updateEnabled();  //!< Sets the tool's \a enability and returns a
                             //!  reason in case the tool was disabled.
-  QString updateEnabled(int rowIndex, int columnIndex);
+  virtual QString updateEnabled(int rowIndex, int columnIndex);
 
   bool isColumnLocked(int columnIndex) const;
 

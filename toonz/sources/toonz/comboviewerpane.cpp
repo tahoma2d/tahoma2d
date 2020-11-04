@@ -198,6 +198,22 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
 
   m_flipConsole->setChecked(FlipConsole::eSound, true);
   m_playSound = m_flipConsole->isChecked(FlipConsole::eSound);
+  m_flipConsole->setFrameRate(app->getCurrentScene()
+                                  ->getScene()
+                                  ->getProperties()
+                                  ->getOutputProperties()
+                                  ->getFrameRate());
+
+  UINT mask = 0;
+  mask      = mask | eShowVcr;
+  mask      = mask | eShowFramerate;
+  mask      = mask | eShowViewerControls;
+  mask      = mask | eShowSound;
+  mask      = mask | eShowCustom;
+  mask      = mask & ~eShowSave;
+  mask      = mask & ~eShowLocator;
+  mask      = mask & ~eShowHisto;
+  m_flipConsole->setCustomizemask(mask);
 
   // initial state of the parts
   m_visiblePartsFlag = CVPARTS_ALL;
@@ -216,7 +232,8 @@ void ComboViewerPanel::updateShowHide() {
   // tool options bar
   m_toolOptions->setVisible(m_visiblePartsFlag & CVPARTS_TOOLOPTIONS);
   // flip console
-  m_flipConsole->showHideAllParts(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
+  m_flipConsole->showHidePlaybar(m_visiblePartsFlag & CVPARTS_PLAYBAR);
+  m_flipConsole->showHideFrameSlider(m_visiblePartsFlag & CVPARTS_FRAMESLIDER);
   update();
 }
 
@@ -224,11 +241,11 @@ void ComboViewerPanel::updateShowHide() {
 /*! showing the show/hide commands
  */
 
-void ComboViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
-  QMenu *menu = new QMenu(this);
-  addShowHideContextMenu(menu);
-  menu->exec(event->globalPos());
-}
+// void ComboViewerPanel::contextMenuEvent(QContextMenuEvent *event) {
+//  QMenu *menu = new QMenu(this);
+//  addShowHideContextMenu(menu);
+//  menu->exec(event->globalPos());
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -237,7 +254,8 @@ void ComboViewerPanel::addShowHideContextMenu(QMenu *menu) {
   // actions
   QAction *toolbarSHAct     = showHideMenu->addAction(tr("Toolbar"));
   QAction *toolOptionsSHAct = showHideMenu->addAction(tr("Tool Options Bar"));
-  QAction *flipConsoleSHAct = showHideMenu->addAction(tr("Console"));
+  QAction *playbarSHAct     = showHideMenu->addAction(tr("Playback Toolbar"));
+  QAction *frameSliderSHAct = showHideMenu->addAction(tr("Frame Slider"));
 
   toolbarSHAct->setCheckable(true);
   toolbarSHAct->setChecked(m_visiblePartsFlag & CVPARTS_TOOLBAR);
@@ -247,15 +265,20 @@ void ComboViewerPanel::addShowHideContextMenu(QMenu *menu) {
   toolOptionsSHAct->setChecked(m_visiblePartsFlag & CVPARTS_TOOLOPTIONS);
   toolOptionsSHAct->setData((UINT)CVPARTS_TOOLOPTIONS);
 
-  flipConsoleSHAct->setCheckable(true);
-  flipConsoleSHAct->setChecked(m_visiblePartsFlag & CVPARTS_FLIPCONSOLE);
-  flipConsoleSHAct->setData((UINT)CVPARTS_FLIPCONSOLE);
+  playbarSHAct->setCheckable(true);
+  playbarSHAct->setChecked(m_visiblePartsFlag & CVPARTS_PLAYBAR);
+  playbarSHAct->setData((UINT)CVPARTS_PLAYBAR);
+
+  frameSliderSHAct->setCheckable(true);
+  frameSliderSHAct->setChecked(m_visiblePartsFlag & CVPARTS_FRAMESLIDER);
+  frameSliderSHAct->setData((UINT)CVPARTS_FRAMESLIDER);
 
   QActionGroup *showHideActGroup = new QActionGroup(this);
   showHideActGroup->setExclusive(false);
   showHideActGroup->addAction(toolbarSHAct);
   showHideActGroup->addAction(toolOptionsSHAct);
-  showHideActGroup->addAction(flipConsoleSHAct);
+  showHideActGroup->addAction(playbarSHAct);
+  showHideActGroup->addAction(frameSliderSHAct);
 
   connect(showHideActGroup, SIGNAL(triggered(QAction *)), this,
           SLOT(onShowHideActionTriggered(QAction *)));
@@ -425,7 +448,7 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -232;
+  int x                                 = -272;
   int iconWidth                         = 20;
   TPanelTitleBarButton *button;
 
@@ -447,7 +470,7 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   button = new TPanelTitleBarButton(
       titleBar, getIconThemePath("actions/20/pane_grid.svg"));
-  button->setToolTip(tr("Field Guide"));
+  button->setToolTip(tr("Grids and Overlays\nRight click to adjust."));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   ret = ret && connect(button, SIGNAL(toggled(bool)),
@@ -459,11 +482,20 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   button->setPressed(
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
 
+  TPanelTitleBarButtonForGrids *gridMoreButton =
+      new TPanelTitleBarButtonForGrids(
+          titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  gridMoreButton->setToolTip(tr("Grids and Overlays Settings"));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), gridMoreButton);
+  connect(gridMoreButton, &TPanelTitleBarButtonForGrids::updateViewer,
+          [=]() { m_sceneViewer->update(); });
+
   // view mode toggles
   button = new TPanelTitleBarButton(
       titleBar, getIconThemePath("actions/20/pane_table.svg"));
   button->setToolTip(tr("Camera Stand View"));
-  x += 10 + 1 + iconWidth;
+  x += 10 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
   button->setPressed(true);
@@ -475,15 +507,23 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
-  TPanelTitleBarButtonForCameraView* camButton =
-      new TPanelTitleBarButtonForCameraView(
-          titleBar, getIconThemePath("actions/20/pane_cam.svg"));
-  camButton->setToolTip(tr("Camera View"));
+  button = new TPanelTitleBarButton(
+      titleBar, getIconThemePath("actions/20/pane_cam.svg"));
+  button->setToolTip(tr("Camera View"));
   x += +1 + iconWidth;
-  titleBar->add(QPoint(x, 0), camButton);
-  camButton->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
-  connect(camButton, &TPanelTitleBarButtonForCameraView::updateViewer,
-      [=]() { m_sceneViewer->update(); });
+  titleBar->add(QPoint(x, 0), button);
+  button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+
+  TPanelTitleBarButtonForCameraView *camTransparencyButton =
+      new TPanelTitleBarButtonForCameraView(
+          titleBar, getIconThemePath("actions/9/pane_more.svg"));
+  camTransparencyButton->setToolTip(tr("Change camera view transparency."));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), camTransparencyButton);
+  connect(camTransparencyButton,
+          &TPanelTitleBarButtonForCameraView::updateViewer,
+          [=]() { m_sceneViewer->update(); });
+
   ret = ret && connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
                        SLOT(setReferenceMode(int)));
 
@@ -508,7 +548,7 @@ void ComboViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   m_subcameraPreviewButton = new TPanelTitleBarButton(
       titleBar, getIconThemePath("actions/20/pane_subpreview.svg"));
-  x += +1 + 24;  // width of pane_preview_off.svg = 24px
+  x += +1 + 24;  // width of pane_preview.svg = 24px
 
   titleBar->add(QPoint(x, 0), m_subcameraPreviewButton);
   m_subcameraPreviewButton->setToolTip(tr("Sub-camera Preview"));

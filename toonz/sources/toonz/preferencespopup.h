@@ -121,6 +121,7 @@ private:
   void onPixelsOnlyChanged();
   void onUnitChanged();
   void beforeRoomChoiceChanged();
+  void onColorCalibrationChanged();
   // Drawing
   void onDefLevelTypeChanged();
   void onUseNumpadForSwitchingStylesClicked();
@@ -128,7 +129,7 @@ private:
   void onLevelBasedToolsDisplayChanged();
   // Xsheet
   void onShowKeyframesOnCellAreaChanged();
-  void onShowXSheetToolbarClicked();
+  void onShowQuickToolbarClicked();
   // Preview
   void onBlankCountChanged();
   void onBlankColorChanged();

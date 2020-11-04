@@ -34,10 +34,10 @@
 using namespace ToolUtils;
 
 TEnv::StringVar AutocloseVectorType("InknpaintAutocloseVectorType", "Normal");
-TEnv::DoubleVar AutocloseDistance("InknpaintAutocloseDistance", 10.0);
+TEnv::DoubleVar AutocloseDistance("InknpaintAutocloseDistance", 20.0);
 TEnv::DoubleVar AutocloseAngle("InknpaintAutocloseAngle", 60.0);
 TEnv::IntVar AutocloseRange("InknpaintAutocloseRange", 0);
-TEnv::IntVar AutocloseOpacity("InknpaintAutocloseOpacity", 1);
+TEnv::IntVar AutocloseOpacity("InknpaintAutocloseOpacity", 180);
 #define NORMAL_CLOSE L"Normal"
 #define RECT_CLOSE L"Rectangular"
 #define FREEHAND_CLOSE L"Freehand"
@@ -205,7 +205,7 @@ public:
   }
 
   //------------------------------------------------------------
-  /*--  AutoCloseが実行されたらtrue,実行されなければfalseを返す --*/
+  /*--  AutoClose Returns true if executed, false otherwise --*/
   bool applyAutoclose(const TToonzImageP &ti, const TRectD &selRect = TRectD(),
                       TStroke *stroke = 0) {
     if (!ti) return false;

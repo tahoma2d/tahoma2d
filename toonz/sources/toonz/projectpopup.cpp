@@ -50,6 +50,9 @@ TFilePath getDocumentsPath() {
 ProjectPopup::ProjectPopup(bool isModal)
     : Dialog(TApp::instance()->getMainWindow(), isModal, false, "Project") {
   TProjectManager *pm = TProjectManager::instance();
+  m_mainFrame->setFixedHeight(100);
+  m_mainFrame->setMinimumWidth(400);
+  this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
   m_choosePrjLabel = new QLabel(tr("Project:"), this);
   m_prjNameLabel   = new QLabel(tr("Project Name:"), this);

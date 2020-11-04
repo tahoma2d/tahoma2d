@@ -5,29 +5,29 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>Tahoma</string>
+	<string>Tahoma2D</string>
 	<key>CFBundleExecutable</key>
-	<string>Tahoma</string>
+	<string>Tahoma2D</string>
 	<key>CFBundleIconFile</key>
-	<string>Tahoma.icns</string>
+	<string>Tahoma2D.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.turtletooth.Tahoma</string>
+	<string>io.github.turtletooth.Tahoma2D</string>
     <key>NSCameraUsageDescription</key>
-    <string>Tahoma needs access to the camera in order to use Camera Capture</string>
+    <string>Tahoma2D needs access to the camera in order to use Camera Capture</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Tahoma needs access to the microphone in order to record audio.</string>
+    <string>Tahoma2D needs access to the microphone in order to record audio.</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Tahoma</string>
+	<string>Tahoma2D</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>LSRequiresCarbon</key>

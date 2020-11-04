@@ -1,4 +1,4 @@
-set(VERSION 1.4)
+set(VERSION 1.1)
 
 set(MOC_HEADERS
     aboutpopup.h
@@ -62,7 +62,6 @@ set(MOC_HEADERS
     mainwindow.h
     matchline.h
     menubar.h
-    menubarpopup.h
     meshifypopup.h
     messagepanel.h
     onionskinmaskgui.h
@@ -119,7 +118,7 @@ set(MOC_HEADERS
     xsheetviewer.h
     xshnoteviewer.h
     xshrowviewer.h
-    xshtoolbar.h
+    quicktoolbar.h
 	xdtsimportpopup.h
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
@@ -193,7 +192,6 @@ set(SOURCES
     mainwindow.cpp
     matchline.cpp
     menubar.cpp
-    menubarpopup.cpp
     mergecolumns.cpp
     moviegenerator.cpp
     pane.cpp
@@ -224,7 +222,7 @@ set(SOURCES
     xsheetviewer.cpp
     xshnoteviewer.cpp
     xshrowviewer.cpp
-    xshtoolbar.cpp
+    quicktoolbar.cpp
     sceneviewer.cpp
     sceneviewerevents.cpp
     viewerdraw.cpp
@@ -383,11 +381,11 @@ endif()
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 if(BUILD_ENV_MSVC)
-    add_executable(Tahoma WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
+    add_executable(Tahoma2D WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
 else()
-    set(MACOSX_BUNDLE_ICON_FILE "Tahoma.icns")
-    set_source_files_properties(Tahoma.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    add_executable(Tahoma MACOSX_BUNDLE Tahoma.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
+    set(MACOSX_BUNDLE_ICON_FILE "Tahoma2D.icns")
+    set_source_files_properties(Tahoma2D.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    add_executable(Tahoma2D MACOSX_BUNDLE Tahoma2D.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
     #add_definitions(
     #    -DTNZBASE_EXPORTS
     #    -DTPARAM_EXPORTS
@@ -440,7 +438,7 @@ if(BUILD_TARGET_WIN)
 endif()
 
 if(BUILD_ENV_MSVC AND WITH_CANON)
-    target_link_libraries(Tahoma
+    target_link_libraries(Tahoma2D
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} 
@@ -448,7 +446,7 @@ if(BUILD_ENV_MSVC AND WITH_CANON)
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
 elseif(BUILD_ENV_MSVC)
-    target_link_libraries(Tahoma
+    target_link_libraries(Tahoma2D
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} strmiids
@@ -462,9 +460,9 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-    add_dependencies(Tahoma tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(Tahoma
+    target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -479,9 +477,9 @@ elseif(BUILD_ENV_APPLE)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-    add_dependencies(Tahoma tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(Tahoma
+    target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -501,7 +499,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
 
     target_link_libraries(
-        Tahoma Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Tahoma2D Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS}
@@ -511,7 +509,7 @@ endif()
 if(BUILD_ENV_APPLE)
     # CMAKE_RUNTIME_OUTPUT_DIRECTORY should be equivalent to usage on windows despite empty
     # OSX だと CMAKE_RUNTIME_OUTPUT_DIRECTORY が空だが Windows 版と同じ使い方ができるようにしておく
-    get_target_property(bin Tahoma LOCATION)
+    get_target_property(bin Tahoma2D LOCATION)
     get_filename_component(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${bin} DIRECTORY)
     # show CMAKE_RUNTIME_OUTPUT_DIRECTORY
     message("CMAKE_RUNTIME_OUTPUT_DIRECTORY:" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -519,35 +517,35 @@ endif()
 
 # copy utilty executables onto the directory after build
 if(LZODRIVER_FOUND)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
 endif()
 
 if(BUILD_ENV_APPLE)
-    get_target_property(loc Tahoma MACOSX_BUNDLE_NAME)
+    get_target_property(loc Tahoma2D MACOSX_BUNDLE_NAME)
     message(" ==> App Bundle: " ${loc})
     message(" ==> Mach-o: " ${bin})
     foreach(lib ${EXTRA_LIBS})
         message(" copy:" ${lib} "==>" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-        add_custom_command(TARGET Tahoma POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
 
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
 
-    add_custom_command(TARGET Tahoma POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
+    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
 
-    add_custom_command(TARGET Tahoma
+    add_custom_command(TARGET Tahoma2D
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath @executable_path/. ${bin} || true
     )
-    add_custom_command(TARGET Tahoma
+    add_custom_command(TARGET Tahoma2D
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH} ${bin} || true
     )
@@ -556,7 +554,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
     # Setup files on Windows platform while cross compilation.
     install(
         TARGETS
-            Tahoma
+            Tahoma2D
         DESTINATION bin
     )
 
@@ -598,7 +596,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
     install(
         DIRECTORY
             ${CMAKE_SOURCE_DIR}/../../stuff
-        DESTINATION share/tahoma
+        DESTINATION share/tahoma2d
     )
 elseif(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)
     # Setup files on Linux/Unix platform.
@@ -606,62 +604,61 @@ elseif(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)
     # but useful for package managers.
     #
     # Note that its assumed the destination can be either
-    # - /opt/tahoma
+    # - /opt/tahoma2d
     # - /usr
     install(
         TARGETS
-            Tahoma
+            Tahoma2D
         DESTINATION bin
     )
 
     # Shell script that copies files to the home directory as needed
     # and sets the library preload path.
-    file(WRITE ${CMAKE_BINARY_DIR}/bin/tahoma
+    file(WRITE ${CMAKE_BINARY_DIR}/bin/tahoma2d
 "#!/bin/sh
-TAHOMA_BASE=\$(dirname \"\$0\")/..
+TAHOMA2D_BASE=\$(dirname \"\$0\")/..
 
-if [ ! -d \$HOME/.config/Tahoma ]; then
-    mkdir -p \$HOME/.config/Tahoma
+if [ ! -d \$HOME/.config/Tahoma2D ]; then
+    mkdir -p \$HOME/.config/Tahoma2D
 fi
 
-if [ ! -d \$HOME/.config/Tahoma/stuff ]; then
-    cp -r \$TAHOMA_BASE/share/tahoma/stuff \$HOME/.config/Tahoma
+if [ ! -d \$HOME/.config/Tahoma2D/stuff ]; then
+    cp -r \$TAHOMA2D_BASE/share/tahoma2d/stuff \$HOME/.config/Tahoma2D
 fi
 
-if [ ! -d \$HOME/.config/Tahoma/stuff/projects/library ]; then
-    mkdir -p \$HOME/.config/Tahoma/stuff/projects/library
+if [ ! -d \$HOME/.config/Tahoma2D/stuff/projects/library ]; then
+    mkdir -p \$HOME/.config/Tahoma2D/stuff/projects/library
 fi
 
-if [ ! -d \$HOME/.config/Tahoma/stuff/projects/fxs ]; then
-    mkdir -p \$HOME/.config/Tahoma/stuff/projects/fxs
+if [ ! -d \$HOME/.config/Tahoma2D/stuff/projects/fxs ]; then
+    mkdir -p \$HOME/.config/Tahoma2D/stuff/projects/fxs
 fi
 
-if [ ! -e \$HOME/.config/Tahoma/SystemVar.ini ]; then
-    cat << EOF > $HOME/.config/Tahoma/SystemVar.ini
+if [ ! -e \$HOME/.config/Tahoma2D/SystemVar.ini ]; then
+    cat << EOF > $HOME/.config/Tahoma2D/SystemVar.ini
 [General]
-TAHOMAROOT=\"\$HOME/.config/Tahoma/stuff\"
-TahomaPROFILES=\"\$HOME/.config/Tahoma/stuff/profiles\"
-TOONZCACHEROOT=\"\$HOME/.config/Tahoma/stuff/cache\"
-TOONZCONFIG=\"\$HOME/.config/Tahoma/stuff/config\"
-TOONZFXPRESETS=\"\$HOME/.config/Tahoma/stuff/fxs\"
-TOONZLIBRARY=\"\$HOME/.config/Tahoma/stuff/library\"
-TOONZPROFILES=\"\$HOME/.config/Tahoma/stuff/profiles\"
-TOONZPROJECTS=\"$HOME/.config/Tahoma/stuff/projects\"
-TOONZROOT=\"\$HOME/.config/Tahoma/stuff\"
-TOONZSTUDIOPALETTE=\"\$HOME/.config/Tahoma/stuff/studiopalette\"
+TAHOMA2DROOT=\"\$HOME/.config/Tahoma2D/stuff\"
+TAHOMA2DPROFILES=\"\$HOME/.config/Tahoma2D/stuff/profiles\"
+TAHOMA2DCACHEROOT=\"\$HOME/.config/Tahoma2D/stuff/cache\"
+TAHOMA2DCONFIG=\"\$HOME/.config/Tahoma2D/stuff/config\"
+TAHOMA2DFXPRESETS=\"\$HOME/.config/Tahoma2D/stuff/fxs\"
+TAHOMA2DLIBRARY=\"\$HOME/.config/Tahoma2D/stuff/library\"
+TAHOMA2DPROJECTS=\"$HOME/.config/Tahoma2D/stuff/projects\"
+TAHOMA2DROOT=\"\$HOME/.config/Tahoma2D/stuff\"
+TAHOMA2DSTUDIOPALETTE=\"\$HOME/.config/Tahoma2D/stuff/studiopalette\"
 EOF
 fi
 
-export LD_LIBRARY_PATH=\${TAHOMA_BASE}/lib/tahoma:\${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=\${TAHOMA2D_BASE}/lib/tahoma2d:\${LD_LIBRARY_PATH}
 
-exec \$TAHOMA_BASE/bin/Tahoma \"\$@\"
+exec \$TAHOMA2D_BASE/bin/Tahoma2D \"\$@\"
 ")
     # only needed for executing without installing
-    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/bin/tahoma)
+    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/bin/tahoma2d)
 
     install(
         PROGRAMS
-            ${CMAKE_BINARY_DIR}/bin/tahoma
+            ${CMAKE_BINARY_DIR}/bin/tahoma2d
             "$<TARGET_FILE:tcleanup>"
             "$<TARGET_FILE:tcomposer>"
             "$<TARGET_FILE:tconverter>"
@@ -692,13 +689,13 @@ exec \$TAHOMA_BASE/bin/Tahoma \"\$@\"
             "$<TARGET_FILE:tnztools>"
             "$<TARGET_FILE:tnzstdfx>"
             "$<TARGET_FILE:tfarm>"
-        DESTINATION lib/tahoma
+        DESTINATION lib/tahoma2d
     )
 
     install(
         DIRECTORY
             ${CMAKE_SOURCE_DIR}/../../stuff
-        DESTINATION share/tahoma
+        DESTINATION share/tahoma2d
     )
 
 endif()

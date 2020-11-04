@@ -468,9 +468,10 @@ static TImageP applyCmappedFx(TToonzImageP &ti,
                                          // sicuramente devo cancellare dei
                                          // paint
         TRop::eraseColors(
-            copyRas, PaletteFilterData->m_type == eApplyToInksDeletingAllPaints
-                         ? 0
-                         : &indexes,
+            copyRas,
+            PaletteFilterData->m_type == eApplyToInksDeletingAllPaints
+                ? 0
+                : &indexes,
             false);
 
       /*-- Inkの消去 --*/
@@ -480,10 +481,11 @@ static TImageP applyCmappedFx(TToonzImageP &ti,
                                          // sicuramente devo cancellare degli
                                          // ink
         TRop::eraseColors(
-            copyRas, PaletteFilterData->m_type == eApplyToPaintsDeletingAllInks
-                         ? 0
-                         : &indexes,
-            true);
+            copyRas,
+            PaletteFilterData->m_type == eApplyToPaintsDeletingAllInks
+                ? 0
+                : &indexes,
+            true, PaletteFilterData->m_type == eApplyToInksAndPaints_NoGap);
     }
   }
 

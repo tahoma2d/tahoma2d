@@ -161,9 +161,8 @@ void writeRoomList(std::vector<Room *> &rooms) {
 //-----------------------------------------------------------------------------
 
 void makePrivate(Room *room) {
-  TFilePath layoutDir       = ToonzFolder::getMyRoomsDir();
-  TFilePath roomPath        = room->getPath();
-  std::string mbSrcFileName = roomPath.getName() + "_menubar.xml";
+  TFilePath layoutDir = ToonzFolder::getMyRoomsDir();
+  TFilePath roomPath  = room->getPath();
   if (roomPath == TFilePath() || roomPath.getParentDir() != layoutDir) {
     int count = 1;
     for (;;) {
@@ -173,25 +172,6 @@ void makePrivate(Room *room) {
     room->setPath(roomPath);
     TSystem::touchParentDir(roomPath);
     room->save();
-  }
-  /*- create private menubar settings if not exists -*/
-  std::string mbDstFileName = roomPath.getName() + "_menubar.xml";
-  TFilePath myMBPath        = layoutDir + mbDstFileName;
-  if (!TFileStatus(myMBPath).isReadable()) {
-    TFilePath templateRoomMBPath =
-        ToonzFolder::getTemplateRoomsDir() + mbSrcFileName;
-    if (TFileStatus(templateRoomMBPath).doesExist())
-      TSystem::copyFile(myMBPath, templateRoomMBPath);
-    else {
-      TFilePath templateFullMBPath =
-          ToonzFolder::getTemplateRoomsDir() + "menubar_template.xml";
-      if (TFileStatus(templateFullMBPath).doesExist())
-        TSystem::copyFile(myMBPath, templateFullMBPath);
-      else
-        DVGui::warning(
-            QObject::tr("Cannot open menubar settings template file. "
-                        "Re-installing Toonz will solve this problem."));
-    }
   }
 }
 
@@ -568,11 +548,18 @@ centralWidget->setLayout(centralWidgetLayout);*/
                     &MainWindow::TogglePlasticBuildSkeleton);
   setCommandHandler(MI_PlasticAnimate, this, &MainWindow::TogglePlasticAnimate);
 
+  /*-- Brush tool + mode switching shortcuts --*/
+  setCommandHandler(MI_BrushAutoFillOff, this,
+                    &MainWindow::ToggleBrushAutoFillOff);
+  setCommandHandler(MI_BrushAutoFillOn, this,
+                    &MainWindow::ToggleBrushAutoFillOn);
+
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
+  setCommandHandler(MI_SupportTahoma2D, this, &MainWindow::onSupportTahoma2D);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
-  // setCommandHandler(MI_OpenCommunityForum, this,
-  //                  &MainWindow::onOpenCommunityForum);
+  setCommandHandler(MI_OpenCommunityForum, this,
+                    &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
@@ -677,8 +664,7 @@ void MainWindow::refreshWriteSettings() { writeSettings(); }
 void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
 
-  /*-- Pageを追加すると同時にMenubarを追加する --*/
-  StackedMenuBar *stackedMenuBar = m_topBar->getStackedMenuBar();
+  m_topBar->loadMenubar();
 
   std::vector<Room *> rooms;
 
@@ -706,10 +692,6 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getName());
 
-      /*- ここでMenuBarファイルをロードする -*/
-      std::string mbFileName = roomPath.getName() + "_menubar.xml";
-      stackedMenuBar->loadAndAddMenubar(ToonzFolder::getRoomsFile(mbFileName));
-
       // room->setDockOptions(QMainWindow::DockOptions(
       //  (QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks) &
       //  ~QMainWindow::AllowTabbedDocks));
@@ -726,31 +708,26 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
     Room *pltEditRoom = createPltEditRoom();
     m_stackedWidget->addWidget(pltEditRoom);
     rooms.push_back(pltEditRoom);
-    stackedMenuBar->createMenuBarByName(pltEditRoom->getName());
 
     // InknPaintRoom
     Room *inknPaintRoom = createInknPaintRoom();
     m_stackedWidget->addWidget(inknPaintRoom);
     rooms.push_back(inknPaintRoom);
-    stackedMenuBar->createMenuBarByName(inknPaintRoom->getName());
 
     // XsheetRoom
     Room *xsheetRoom = createXsheetRoom();
     m_stackedWidget->addWidget(xsheetRoom);
     rooms.push_back(xsheetRoom);
-    stackedMenuBar->createMenuBarByName(xsheetRoom->getName());
 
     // BatchesRoom
     Room *batchesRoom = createBatchesRoom();
     m_stackedWidget->addWidget(batchesRoom);
     rooms.push_back(batchesRoom);
-    stackedMenuBar->createMenuBarByName(batchesRoom->getName());
 
     // BrowserRoom
     Room *browserRoom = createBrowserRoom();
     m_stackedWidget->addWidget(browserRoom);
     rooms.push_back(browserRoom);
-    stackedMenuBar->createMenuBarByName(browserRoom->getName());
   }
 
   /*- If the layout files were loaded from template, then save them as private
@@ -1047,29 +1024,34 @@ void MainWindow::onAbout() { m_aboutPopup->exec(); }
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenOnlineManual() {
-  QDesktopServices::openUrl(QUrl(tr("http://tahoma.readthedocs.io")));
+  QDesktopServices::openUrl(QUrl(tr("http://tahoma2d.readthedocs.io")));
+}
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::onSupportTahoma2D() {
+  QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://github.com/turtletooth/tahoma/releases/latest")));
+      QUrl(tr("https://tahoma.readthedocs.io/en/latest/whats_new.html")));
 }
 
 //-----------------------------------------------------------------------------
 
-// void MainWindow::onOpenCommunityForum() {
-//  QDesktopServices::openUrl(
-//      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
-//}
+void MainWindow::onOpenCommunityForum() {
+  QDesktopServices::openUrl(QUrl(tr("https://groups.google.com/g/tahoma2d")));
+}
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenReportABug() {
   QString str = QString(
       tr("To report a bug, click on the button below to open a web browser "
-         "window for Tahoma's Issues page on https://github.com.  Click on "
+         "window for Tahoma2D's Issues page on https://github.com.  Click on "
          "the 'New issue' button and fill out the form."));
 
   std::vector<QString> buttons = {QObject::tr("Report a Bug"),
@@ -1077,7 +1059,7 @@ void MainWindow::onOpenReportABug() {
   int ret = DVGui::MsgBox(DVGui::INFORMATION, str, buttons, 1);
   if (ret == 1)
     QDesktopServices::openUrl(
-        QUrl("https://github.com/turtletooth/tahoma/issues"));
+        QUrl("https://github.com/turtletooth/tahoma2d/issues"));
 }
 //-----------------------------------------------------------------------------
 
@@ -1113,7 +1095,7 @@ void MainWindow::resetRoomsLayout() {
 
   DVGui::MsgBoxInPopup(
       DVGui::INFORMATION,
-      QObject::tr("The rooms will be reset the next time you run Tahoma."));
+      QObject::tr("The rooms will be reset the next time you run Tahoma2D."));
 }
 
 void MainWindow::maximizePanel() {
@@ -1200,11 +1182,6 @@ void MainWindow::deleteRoom(int index) {
     m_topBar->getRoomTabWidget()->insertTab(index, room->getName());
     return;
   }
-
-  /*- delete menubar settings file as well -*/
-  std::string mbFileName = fp.getName() + "_menubar.xml";
-  TFilePath mbFp         = fp.getParentDir() + mbFileName;
-  TSystem::deleteFile(mbFp);
 
   // The old room index must be updated if index < of it
   if (index < m_oldRoomIndex) m_oldRoomIndex--;
@@ -1705,8 +1682,8 @@ void MainWindow::defineActions() {
       tr("Load the contents of a folder into the current scene."));
   menuAct->setIcon(createQIcon("load_folder"));
   createMenuFileAction(
-      MI_LoadSubSceneFile, tr("&Load As Sub-xsheet..."), "",
-      tr("Load an existing scene into the current scene as a sub-xsheet"));
+      MI_LoadSubSceneFile, tr("&Load As Sub-Scene..."), "",
+      tr("Load an existing scene into the current scene as a sub-scene"));
   createMenuAction(MI_OpenRecentScene, tr("&Open Recent Scene File"), files,
                    tr("Load a recently used scene."));
   createMenuAction(MI_OpenRecentLevel, tr("&Open Recent Level File"), files,
@@ -1765,6 +1742,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(
       MI_SavePaletteAs, tr("&Save Palette As..."), "",
       tr("Save the current style palette as a separate file with a new name."));
+  createRightClickMenuAction(MI_SaveStudioPalette, tr("&Save Studio Palette"),
+                             "", tr("Save the current Studio Palette."));
   createRightClickMenuAction(
       MI_OverwritePalette, tr("&Save Palette"), "",
       tr("Save the current style palette as a separate file."));
@@ -1795,8 +1774,12 @@ void MainWindow::defineActions() {
       MI_PreviewSettings, tr("&Preview Settings..."), "",
       tr("Control the settings that will be used to preview the scene."));
   menuAct->setIcon(createQIcon("preview_settings"));
+  menuAct = createMenuRenderAction(MI_Render, tr("&Render"), "Ctrl+Shift+R",
+                                   tr("Renders according to the settings and "
+                                      "location set in Output Settings."));
+  menuAct->setIcon(createQIcon("render"));
   menuAct = createMenuRenderAction(
-      MI_Render, tr("&Save and Render"), "Ctrl+Shift+R",
+      MI_SaveAndRender, tr("&Save and Render"), "",
       tr("Saves the current scene and renders according to the settings and "
          "location set in Output Settings."));
   menuAct->setIcon(createQIcon("render"));
@@ -1836,10 +1819,10 @@ void MainWindow::defineActions() {
   // createAction(MI_SavePreview,         "&Save Preview",		"");
   createRightClickMenuAction(MI_SavePreset, tr("&Save As Preset"), "");
   menuAct = createMenuFileAction(MI_Preferences, tr("&Preferences..."),
-                                 "Ctrl+U", tr("Change Tahoma's settings."));
+                                 "Ctrl+U", tr("Change Tahoma2D's settings."));
   menuAct->setIcon(createQIcon("gear"));
   createMenuFileAction(MI_ShortcutPopup, tr("&Configure Shortcuts..."), "",
-                       tr("Change the shortcuts of Tahoma."));
+                       tr("Change the shortcuts of Tahoma2D."));
 
   menuAct = createMenuFileAction(MI_PrintXsheet, tr("&Print Xsheet"), "",
                                  tr("Print the scene's exposure sheet."));
@@ -1894,8 +1877,8 @@ void MainWindow::defineActions() {
 
   menuAct = createMenuEditAction(MI_Paste, tr("&Paste Insert"), "Ctrl+V");
   menuAct->setIcon(createQIcon("paste"));
-  menuAct = createMenuEditAction(MI_PasteAbove, tr("&Paste Insert Above/After"),
-                                 "Ctrl+Shift+V");
+  menuAct = createMenuEditAction(
+      MI_PasteBelow, tr("&Paste Insert Below/Before"), "Ctrl+Shift+V");
   menuAct->setIcon(createQIcon("paste_above_after"));
   menuAct = createMenuEditAction(MI_PasteDuplicate, tr("&Paste as a Copy"), "");
   menuAct->setIcon(createQIcon("paste_duplicate"));
@@ -1918,7 +1901,7 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_ClearFrames, tr("&Clear Frames"), "");
   menuAct = createMenuEditAction(MI_Insert, tr("&Insert"), "Ins");
   menuAct->setIcon(createQIcon("insert"));
-  menuAct = createMenuEditAction(MI_InsertAbove, tr("&Insert Above/After"),
+  menuAct = createMenuEditAction(MI_InsertBelow, tr("&Insert Below/Before"),
                                  "Shift+Ins");
   menuAct->setIcon(createQIcon("insert_above_after"));
   menuAct = createMenuEditAction(MI_Group, tr("&Group"), "Ctrl+G");
@@ -1983,7 +1966,7 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("revert_level_to_cleanup"));
   menuAct = createMenuLevelAction(MI_RevertToLastSaved, tr("&Reload"), "");
   menuAct->setIcon(createQIcon("reload_level"));
-  createMenuLevelAction(MI_ExposeResource, tr("&Expose in Xsheet"), "");
+  createMenuLevelAction(MI_ExposeResource, tr("&Expose in Scene"), "");
   createMenuLevelAction(MI_EditLevel, tr("&Display in Level Strip"), "");
   menuAct =
       createMenuLevelAction(MI_LevelSettings, tr("&Level Settings..."), "");
@@ -2023,12 +2006,12 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("camera_settings"));
   createMiscAction(MI_CameraStage, tr("&Camera Settings..."), "");
 
-  menuAct = createMenuXsheetAction(MI_OpenChild, tr("&Open Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_OpenChild, tr("&Open Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_enter"));
-  menuAct = createMenuXsheetAction(MI_CloseChild, tr("&Close Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_CloseChild, tr("&Close Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_leave"));
   menuAct =
-      createMenuXsheetAction(MI_ExplodeChild, tr("Explode Sub-Xsheet"), "");
+      createMenuXsheetAction(MI_ExplodeChild, tr("Explode Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_explode"));
   menuAct = createMenuXsheetAction(MI_Collapse, tr("Collapse"), "");
   menuAct->setIcon(createQIcon("sub_collapse"));
@@ -2037,11 +2020,11 @@ void MainWindow::defineActions() {
   toggle->setIconText(tr("Toggle Edit in Place"));
   toggle->setIcon(createQIcon("sub_edit_in_place"));
   menuAct = createMenuXsheetAction(MI_SaveSubxsheetAs,
-                                   tr("&Save Sub-Xsheet As..."), "");
+                                   tr("&Save Sub-Scene As..."), "");
   menuAct->setIcon(createQIcon("saveas"));
   menuAct = createMenuXsheetAction(MI_Resequence, tr("Resequence"), "");
   menuAct->setIcon(createQIcon("resequence"));
-  menuAct = createMenuXsheetAction(MI_CloneChild, tr("Clone Sub-Xsheet"), "");
+  menuAct = createMenuXsheetAction(MI_CloneChild, tr("Clone Sub-Scene"), "");
   menuAct->setIcon(createQIcon("sub_clone"));
 
   menuAct = createMenuXsheetAction(MI_ApplyMatchLines,
@@ -2087,10 +2070,10 @@ void MainWindow::defineActions() {
   menuAct->setIcon(createQIcon("clear"));
   createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
                          "Alt+L");
-  createRightClickMenuAction(MI_ToggleXSheetToolbar,
-                             tr("Toggle XSheet Toolbar"), "");
+  createRightClickMenuAction(MI_ToggleQuickToolbar, tr("Toggle Quick Toolbar"),
+                             "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
-                             tr("Show/Hide Xsheet Camera Column"), "");
+                             tr("Show/Hide Camera Column"), "");
 
   menuAct = createMenuCellsAction(MI_Reverse, tr("&Reverse"), "");
   menuAct->setIcon(createQIcon("reverse"));
@@ -2399,8 +2382,8 @@ void MainWindow::defineActions() {
                                     "Ctrl+`");
   menuAct->setIcon(createQIcon("toggle_fullscreen"));
 
-  menuAct = createMenuHelpAction(MI_About, tr("&About Tahoma..."), "");
-  menuAct->setIconText(tr("About Tahoma..."));
+  menuAct = createMenuHelpAction(MI_About, tr("&About Tahoma2D..."), "");
+  menuAct->setIconText(tr("About Tahoma2D..."));
   menuAct->setIcon(createQIcon("info"));
 
   menuAct = createMenuWindowsAction(MI_StartupPopup, tr("&Startup Popup..."),
@@ -2416,10 +2399,15 @@ void MainWindow::defineActions() {
   menuAct->setIconText(tr("What's New..."));
   menuAct->setIcon(createQIcon("web"));
 
-  // menuAct = createMenuHelpAction(MI_OpenCommunityForum,
-  //                                tr("&Community Forum..."), "");
-  // menuAct->setIconText(tr("Community Forum..."));
-  // menuAct->setIcon(createQIcon("web"));
+  menuAct =
+      createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
+  menuAct->setIconText(tr("Support Tahoma2D"));
+  menuAct->setIcon(createQIcon("web"));
+
+  menuAct = createMenuHelpAction(MI_OpenCommunityForum,
+                                 tr("&Community Forum..."), "");
+  menuAct->setIconText(tr("Community Forum..."));
+  menuAct->setIcon(createQIcon("web"));
 
   menuAct = createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
   menuAct->setIconText(tr("Report a Bug..."));
@@ -2724,6 +2712,8 @@ void MainWindow::defineActions() {
                           tr("Brush Tool - Draw Order"), "");
   createToolOptionsAction("A_ToolOption_Smooth", tr("Smooth"), "");
   createToolOptionsAction("A_ToolOption_Snap", tr("Snap"), "");
+  createToolOptionsAction("A_ToolOption_AutoClose", tr("Auto Close"), "");
+  createToolOptionsAction("A_ToolOption_DrawUnder", tr("Draw Under"), "");
   createToolOptionsAction("A_ToolOption_AutoSelectDrawing",
                           tr("Auto Select Drawing"), "");
   createToolOptionsAction("A_ToolOption_Autofill", tr("Auto Fill"), "");
@@ -3000,6 +2990,12 @@ void MainWindow::defineActions() {
   createAction(MI_PlasticBuildSkeleton, tr("Plastic Tool - Build Skeleton"), "",
                "", ToolCommandType);
   createAction(MI_PlasticAnimate, tr("Plastic Tool - Animate"), "", "",
+               ToolCommandType);
+
+  /*-- Brush tool + mode switching shortcuts --*/
+  createAction(MI_BrushAutoFillOn, tr("Brush Tool - Auto Fill On"), "", "",
+               ToolCommandType);
+  createAction(MI_BrushAutoFillOff, tr("Brush Tool - Auto Fill Off"), "", "",
                ToolCommandType);
 
   createMiscAction("A_FxSchematicToggle", tr("Toggle FX/Stage schematic"), "");
@@ -3524,6 +3520,24 @@ void MainWindow::TogglePlasticAnimate() {
 }
 
 //-----------------------------------------------------------------------------
+/*-- Brush tool + mode switching shortcuts --*/
+void MainWindow::ToggleBrushAutoFillOff() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  QAction *ac = CommandManager::instance()->getAction("A_ToolOption_AutoClose");
+  if (ac->isChecked()) {
+    ac->trigger();
+  }
+}
+
+void MainWindow::ToggleBrushAutoFillOn() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  QAction *ac = CommandManager::instance()->getAction("A_ToolOption_Autofill");
+  if (!ac->isChecked()) {
+    ac->trigger();
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 void MainWindow::onNewVectorLevelButtonPressed() {
   int defaultLevelType = Preferences::instance()->getDefLevelType();
@@ -3613,7 +3627,7 @@ void MainWindow::clearCacheFolder() {
 
   message +=
       tr("\nAre you sure?\n\nN.B. Make sure you are not running another "
-         "process of Tahoma,\nor you may delete necessary files for it.");
+         "process of Tahoma2D,\nor you may delete necessary files for it.");
 
   QMessageBox::StandardButton ret = QMessageBox::question(
       this, tr("Clear Cache Folder"), message,
@@ -3672,7 +3686,7 @@ void MainWindow::makeTransparencyDialog() {
 
   m_transparencyTogglerWindow->setFixedHeight(100);
   m_transparencyTogglerWindow->setFixedWidth(250);
-  m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma Transparency"));
+  m_transparencyTogglerWindow->setWindowTitle(tr("Tahoma2D Transparency"));
   QPushButton *toggleButton = new QPushButton(this);
   toggleButton->setText(tr("Close to turn off Transparency."));
   connect(toggleButton, &QPushButton::clicked,

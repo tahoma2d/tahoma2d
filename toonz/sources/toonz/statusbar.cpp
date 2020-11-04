@@ -128,26 +128,52 @@ void StatusBar::makeMap() {
                     "Animate Tool: Modifies the position, rotation and size of "
                     "the current column"});
   m_infoMap.insert({"T_Brush", "Brush Tool: Draws in the work area freehand"});
-  m_infoMap.insert(
-      {"T_BrushVector", "Brush Tool: Draws in the work area freehand" + spacer +
-                            "Shift - Straight Lines" + spacer +
+  m_infoMap.insert({"T_BrushVector",
+                    "Brush Tool: Draws in the work area freehand" + spacer +
+                        "Shift - Straight Lines" + spacer +
+#ifdef MACOSX
+                        "Cmd - Straight Lines Snapped to Angles" + spacer +
+                        "Cmd + Opt - Add / Remove Vanishing Point" + spacer +
+                        "Opt - Draw to Vanishing Point" + spacer +
+                        "Hold Cmd + Shift - Toggle Snapping"});
+#else
                         "Control - Straight Lines Snapped to Angles" + spacer +
                         "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
                         "Alt - Draw to Vanishing Point" + spacer +
-                            "Hold Ctrl + Shift - Toggle Snapping"});
+                        "Hold Ctrl + Shift - Toggle Snapping"});
+#endif
   m_infoMap.insert({"T_BrushSmartRaster",
                     "Brush Tool: Draws in the work area freehand" + spacer +
                         "Shift - Straight Lines" + spacer +
+#ifdef MACOSX
+                        "Cmd - Straight Lines Snapped to Angles" + spacer +
+                        "Cmd + Opt - Add / Remove Vanishing Point" + spacer +
+                        "Opt - Draw to Vanishing Point"});
+#else
                         "Control - Straight Lines Snapped to Angles" + spacer +
                         "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
                         "Alt - Draw to Vanishing Point"});
-  m_infoMap.insert(
-      {"T_BrushRaster", "Brush Tool: Draws in the work area freehand" + spacer +
-                            "Shift - Straight Lines" + spacer +
-                            "Control - Straight Lines Snapped to Angles" + spacer +
-                            "Ctrl + Alt - Add / Remove Vanishing Point" +
-                            spacer + "Alt - Draw to Vanishing Point"});
+#endif
+  m_infoMap.insert({"T_BrushRaster",
+                    "Brush Tool: Draws in the work area freehand" + spacer +
+                        "Shift - Straight Lines" + spacer +
+#ifdef MACOSX
+                        "Cmd - Straight Lines Snapped to Angles" + spacer +
+                        "Cmd + Opt - Add / Remove Vanishing Point" + spacer +
+                        "Opt - Draw to Vanishing Point"});
+#else
+                        "Control - Straight Lines Snapped to Angles" + spacer +
+                        "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
+                        "Alt - Draw to Vanishing Point"});
+#endif
   m_infoMap.insert({"T_Geometric", "Geometry Tool: Draws geometric shapes"});
+  m_infoMap.insert({ "T_GeometricVector", "Geometry Tool: Draws geometric shapes" +
+                                       spacer +
+#ifdef MACOSX
+                        "Hold Cmd + Shift - Toggle Snapping" });
+#else
+                                       "Hold Ctrl + Shift - Toggle Snapping" });
+#endif
   m_infoMap.insert({"T_Type", "Type Tool: Adds text"});
   m_infoMap.insert(
       {"T_PaintBrush",
