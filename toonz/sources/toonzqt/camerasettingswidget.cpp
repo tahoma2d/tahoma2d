@@ -29,6 +29,7 @@
 #include "tsystem.h"
 #include "tfilepath_io.h"
 #include "tutil.h"
+#include "tenv.h"
 
 // Qt includes
 #include <QGridLayout>
@@ -290,7 +291,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
       gridLay->addWidget(m_lyFld, 1, 4);
 
       gridLay->addWidget(m_arPrev, 2, 2, Qt::AlignRight | Qt::AlignVCenter);
-      //gridLay->addWidget(new QLabel(tr("A/R")), 2, 3, Qt::AlignCenter);
+      // gridLay->addWidget(new QLabel(tr("A/R")), 2, 3, Qt::AlignCenter);
       gridLay->addWidget(m_arFld, 2, 4);
       m_arFld->hide();
       m_arPrev->hide();
@@ -408,7 +409,11 @@ void CameraSettingsWidget::loadPresetList() {
   if (m_presetListFile == "") return;
   m_presetListOm->clear();
   m_presetListOm->addItem(tr("<custom>"));
-
+  if (!TFileStatus(TFilePath(m_presetListFile)).doesExist()) {
+    TFilePath presetTemplate =
+        TEnv::getConfigDir() + TFilePath(m_presetListFile).withoutParentDir();
+    TSystem::copyFile(TFilePath(m_presetListFile), presetTemplate);
+  }
   QFile file(m_presetListFile);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream in(&file);

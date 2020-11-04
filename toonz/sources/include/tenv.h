@@ -136,6 +136,7 @@ DVAPI TFilePathSet getSystemVarPathSetValue(std::string varName);
 DVAPI TFilePath getStuffDir();
 DVAPI TFilePath getConfigDir();
 // DVAPI TFilePath getProfilesDir();
+DVAPI TFilePath getWorkingDirectory();
 
 // per l'utilizzo di ToonzLib senza che sia definita una TOONZROOT
 // bisogna chiamare TEnv::setStuffDir(stuffdir) prima di ogni altra operazione

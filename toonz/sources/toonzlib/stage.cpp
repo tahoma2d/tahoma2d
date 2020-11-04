@@ -677,7 +677,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     }
     TXshColumn *column = xsh->getColumn(c);
     bool isMask        = false;
-    if (column && !column->isEmpty()) {
+    if (column && !column->isEmpty() && !column->getSoundColumn()) {
       if (!column->isPreviewVisible() && checkPreviewVisibility) continue;
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso

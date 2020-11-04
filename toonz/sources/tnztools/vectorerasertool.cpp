@@ -1262,6 +1262,7 @@ void EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
   if (!vi || !eraseStroke) return;
 
   int strokeNumber = vi->getStrokeCount();
+  int colorStyle   = TTool::getApplication()->getCurrentLevelStyleIndex();
   std::vector<int> touchedStrokeIndex;
   std::vector<std::vector<double>> touchedStrokeW;
   std::vector<std::vector<DoublePair>> touchedStrokeRanges;
@@ -1272,6 +1273,10 @@ void EraserTool::eraseSegments(const TVectorImageP vi, TStroke *eraseStroke) {
     std::vector<double> ws;
     TStroke *stroke = vi->getStroke(i);
     bool touched    = false;
+
+    if (m_selective.getValue() && stroke->getStyle() != colorStyle) {
+      continue;
+    }
 
     intersect(eraseStroke, stroke, intersections, false);
 

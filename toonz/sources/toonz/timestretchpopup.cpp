@@ -215,7 +215,7 @@ TimeStretchPopup::TimeStretchPopup()
   m_stretchType->setFixedHeight(DVGui::WidgetHeight);
   QStringList viewType;
   viewType << tr("Selected Cells") << tr("Selected Frame Range")
-           << tr("Whole Xsheet");
+           << tr("Whole Scene");
   m_stretchType->addItems(viewType);
   connect(m_stretchType, SIGNAL(currentIndexChanged(int)),
           SLOT(setCurrentStretchType(int)));

@@ -664,7 +664,7 @@ int main(int argc, char *argv[]) {
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
 
-  QCoreApplication::setOrganizationName("Tahoma");
+  QCoreApplication::setOrganizationName("Tahoma2D");
   QCoreApplication::setOrganizationDomain("");
   QCoreApplication::setApplicationName(
       QString::fromStdString(TEnv::getApplicationName()));

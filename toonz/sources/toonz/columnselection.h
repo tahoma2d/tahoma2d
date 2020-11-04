@@ -33,11 +33,11 @@ public:
 
   void copyColumns();
   void pasteColumns();
-  void pasteColumnsAbove();
+  void pasteColumnsBelow();
   void deleteColumns();
   void cutColumns();
   void insertColumns();
-  void insertColumnsAbove();
+  void insertColumnsBelow();
 
   void collapse();
   void explodeChild();

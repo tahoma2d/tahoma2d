@@ -154,19 +154,16 @@ void TPanel::enterEvent(QEvent *event) {
   //}
   if (w) {
     // grab the focus, unless a line-edit is focused currently
-    bool shouldSetFocus = true;
 
     QWidget *focusWidget = qApp->focusWidget();
-    if (focusWidget) {
-      QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
-      if (lineEdit) {
-        shouldSetFocus = false;
-      }
+    if (focusWidget && dynamic_cast<QLineEdit*>(focusWidget)) {
+        event->accept();
+        return;
     }
 
-    if (shouldSetFocus) {
-      widgetFocusOnEnter();
-    }
+
+    widgetFocusOnEnter();
+
 
     // Some panels (e.g. Viewer, StudioPalette, Palette, ColorModel) are
     // activated when mouse enters. Viewer is activatable only when being
@@ -182,7 +179,13 @@ void TPanel::enterEvent(QEvent *event) {
 //-----------------------------------------------------------------------------
 /*! clear focus when mouse leaves
  */
-void TPanel::leaveEvent(QEvent *event) { widgetClearFocusOnLeave(); }
+void TPanel::leaveEvent(QEvent *event) { 
+    QWidget* focusWidget = qApp->focusWidget();
+    if (focusWidget && dynamic_cast<QLineEdit*>(focusWidget)) {
+        return;
+    }
+    widgetClearFocusOnLeave();
+}
 
 //-----------------------------------------------------------------------------
 /*! load and restore previous geometry and state of the floating panel.
@@ -636,7 +639,7 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
         });
 
     QSlider* horizonOffsetSlider = new QSlider(this);
-    horizonOffsetSlider->setRange(-500, 500);
+    horizonOffsetSlider->setRange(-1000, 1000);
     horizonOffsetSlider->setValue(HorizonOffset);
     horizonOffsetSlider->setOrientation(Qt::Horizontal);
     QLabel* horizonOffsetLabel = new QLabel(this);
@@ -759,10 +762,10 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
 
   gridLayout->addWidget(horizonCheckbox, 5, 0, 1, 2);
   gridLayout->addWidget(isometricCheckbox, 6, 0, 1, 2);
-  gridLayout->addWidget(vanishingCheckbox, 7, 0, 1, 2);
   
-  gridLayout->addWidget(guideOpacityLabel, 8, 0);
-  gridLayout->addWidget(guideOpacitySlider, 8, 1);
+  gridLayout->addWidget(guideOpacityLabel, 7, 0);
+  gridLayout->addWidget(guideOpacitySlider, 7, 1);
+  gridLayout->addWidget(vanishingCheckbox, 8, 0, 1, 2);
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);
   m_menu->addAction(gridsAction);

@@ -421,7 +421,7 @@ void Preferences::definePreferenceItems() {
   define(subsceneFolderEnabled, "subsceneFolderEnabled", QMetaType::Bool, true);
   define(removeSceneNumberFromLoadedLevelName,
          "removeSceneNumberFromLoadedLevelName", QMetaType::Bool, false);
-  define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, false);
+  define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, true);
   define(initialLoadTlvCachingBehavior, "initialLoadTlvCachingBehavior",
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
@@ -511,7 +511,7 @@ void Preferences::definePreferenceItems() {
          "inputCellsWithoutDoubleClickingEnabled", QMetaType::Bool, false);
   define(shortcutCommandsWhileRenamingCellEnabled,
          "shortcutCommandsWhileRenamingCellEnabled", QMetaType::Bool, false);
-  define(showXSheetToolbar, "showXSheetToolbar", QMetaType::Bool, false);
+  define(showQuickToolbar, "showQuickToolbar", QMetaType::Bool, false);
   define(expandFunctionHeader, "expandFunctionHeader", QMetaType::Bool, false);
   define(showColumnNumbers, "showColumnNumbers", QMetaType::Bool, false);
   define(syncLevelRenumberWithXsheet, "syncLevelRenumberWithXsheet",
@@ -532,7 +532,7 @@ void Preferences::definePreferenceItems() {
   define(shortPlayFrameCount, "shortPlayFrameCount", QMetaType::Int, 8, 1, 100);
   define(previewAlwaysOpenNewFlip, "previewAlwaysOpenNewFlip", QMetaType::Bool,
          false);
-  define(fitToFlipbook, "fitToFlipbook", QMetaType::Bool, false);
+  define(fitToFlipbook, "fitToFlipbook", QMetaType::Bool, true);
   define(generatedMovieViewEnabled, "generatedMovieViewEnabled",
          QMetaType::Bool, true);
 
@@ -979,8 +979,8 @@ void Preferences::setColorCalibrationLutPath(QString monitorName,
 
 QString Preferences::getColorCalibrationLutPath(QString &monitorName) const {
   PreferencesItem item = m_items.value(colorCalibrationLutPaths);
-  QMap<QString, QString> lutPathMap =
-      item.value.value<QMap<QString, QString>>();
+  QMap<QString, QVariant> lutPathMap =
+      item.value.value<QMap<QString, QVariant>>();
 
-  return lutPathMap.value(monitorName);
+  return lutPathMap.value(monitorName).toString();
 }

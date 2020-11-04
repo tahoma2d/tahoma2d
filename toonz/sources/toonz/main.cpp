@@ -91,8 +91,8 @@ using namespace DVGui;
 
 TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
 
-const char *rootVarName     = "TOONZROOT";
-const char *systemVarPrefix = "TOONZ";
+const char *rootVarName     = "TAHOMA2DROOT";
+const char *systemVarPrefix = "TAHOMA2D";
 
 #ifdef MACOSX
 #include "tthread.h"
@@ -124,7 +124,7 @@ static void toonzRunOutOfContMemHandler(unsigned long size) {
 #ifdef _WIN32
   static bool firstTime = true;
   if (firstTime) {
-    MessageBox(NULL, (LPCWSTR)L"Run out of contiguous physical memory: please save all and restart Tahoma!",
+    MessageBox(NULL, (LPCWSTR)L"Run out of contiguous physical memory: please save all and restart Tahoma2D!",
 				   (LPCWSTR)L"Warning", MB_OK | MB_SYSTEMMODAL);
     firstTime = false;
   }
@@ -158,7 +158,7 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
     ++i;
   }
 
-  QCoreApplication::setOrganizationName("Tahoma");
+  QCoreApplication::setOrganizationName("Tahoma2D");
   QCoreApplication::setOrganizationDomain("");
   QCoreApplication::setApplicationName(
       QString::fromStdString(TEnv::getApplicationName()));
@@ -468,8 +468,8 @@ int main(int argc, char *argv[]) {
   QGLFormat::setDefaultFormat(fmt);
 
 // seems this function should be called at all systems
-// pheraps in some GLUT-implementations initalization is mere formality
-#if defined(LINUX) || (defined(_WIN32) && defined(__GNUC__))
+// perhaps in some GLUT-implementations initalization is mere formality
+#if defined(LINUX) || defined(_WIN32)
   glutInit(&argc, argv);
 #endif
 
@@ -614,7 +614,7 @@ int main(int argc, char *argv[]) {
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + "Initializing Tahoma...",
+  splash.showMessage(offsetStr + "Initializing Tahoma2D...",
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -698,7 +698,7 @@ int main(int argc, char *argv[]) {
 
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
-    splash.showMessage(offsetStr + "Starting Tahoma...",
+    splash.showMessage(offsetStr + "Starting Tahoma2D...",
                        Qt::AlignRight | Qt::AlignBottom, Qt::black);
   } else {
     splash.showMessage(offsetStr + "Starting main window...",

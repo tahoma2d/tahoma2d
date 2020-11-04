@@ -77,6 +77,8 @@ public:
   void updateView();
 
   void enableSaveAction(bool enable);
+  bool getIsFrozen() { return m_frozen; }
+  void setIsFrozen(bool frozen);
 
 protected:
   TPaletteHandle *m_paletteHandle;
@@ -109,6 +111,8 @@ protected:
 
   QAction *m_lockPaletteAction;
   QToolButton *m_lockPaletteToolButton;
+  QToolButton *m_freezePaletteToolButton;
+  bool m_frozen = false;
 
 protected:
   void createTabBar();
@@ -170,6 +174,9 @@ protected slots:
 
   void onSwitchToPage(int pageIndex);
   void onShowNewStyleButtonToggled();
+
+signals:
+  void frozenChanged(bool frozen);
 
 private:
   void setSaveDefaultText(QAction *action, int levelType);

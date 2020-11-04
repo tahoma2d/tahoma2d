@@ -2,7 +2,7 @@
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
-project(Tahoma)
+project(Tahoma2D)
 
 
 #-----------------------------------------------------------------------------
@@ -270,7 +270,7 @@ unset(QT_MINIMUM_VERSION)
 if(BUILD_ENV_MSVC)
     include_directories(
         SYSTEM
-        ${SDKROOT}/glut/3.7.6/include
+        ${SDKROOT}/freeglut/include
         ${SDKROOT}/zlib-1.2.8
         ${SDKROOT}/LibJPEG/jpeg-9
     )
@@ -339,7 +339,7 @@ if(BUILD_ENV_MSVC)
         set(MSVC_LIB_VERSION 2013)
     endif()
 
-    set(GLUT_LIB ${SDKROOT}/glut/3.7.6/lib/glut${PLATFORM}.lib)
+    set(GLUT_LIB ${SDKROOT}/freeglut/lib/x64/freeglut.lib)
     set(GL_LIB opengl32.lib)
     set(Z_LIB
         optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}.lib
@@ -459,7 +459,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     # the libraries have .pc
     find_package(PkgConfig)
 
-    # This is not required for Tahoma itself, but libtiff will pick it up if
+    # This is not required for Tahoma2D itself, but libtiff will pick it up if
     # present and libimage won't be aware causing linker to fail
     pkg_check_modules(LZMA liblzma)
     set(TIFF_LIB ${TIFF_LIBRARY} ${LZMA_LIBRARIES})
@@ -578,12 +578,12 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     # Mirror relative bin/lib location for installation
     # so the generated shell script works in both cases.
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma2d)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/tahoma2d)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        set(CMAKE_INSTALL_PREFIX "/opt/tahoma" CACHE PATH "Tahoma install prefix" FORCE)
+        set(CMAKE_INSTALL_PREFIX "/opt/tahoma2d" CACHE PATH "Tahoma2D install prefix" FORCE)
     endif()
 endif()
 
@@ -652,7 +652,7 @@ if(BUILD_ENV_APPLE)
         $<TARGET_FILE:executable>
     )
     # add capability for retina displays
-    set_target_properties(Tahoma PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
+    set_target_properties(Tahoma2D PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
 endif()
 
 if(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)

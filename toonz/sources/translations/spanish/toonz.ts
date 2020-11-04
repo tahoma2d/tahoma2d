@@ -1262,11 +1262,11 @@ What do you want to do? </source>
 <context>
     <name>CommandBarPopup</name>
     <message>
-        <source>XSheet Toolbar</source>
+        <source>Quick Toolbar</source>
         <translation>Barra de herramientas de planilla</translation>
     </message>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>Personalizar barra de herramientas de planilla</translation>
     </message>
     <message>
@@ -5288,7 +5288,7 @@ Usar los números de fotograma como referencia.</translation>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <source>Toggle XSheet Toolbar</source>
+        <source>Toggle Quick Toolbar</source>
         <translation>Barra de herramientas de planilla</translation>
     </message>
     <message>
@@ -7549,7 +7549,7 @@ Is it OK to release these shortcuts?</source>
         <translation>Mostrar la barra de herramientas en la planilla</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match XSheet Toolbar Height (Requires Restart)</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height (Requires Restart)</source>
         <translation type="vanished">Expandir editor de funciones para coincidir con la nueva altura de la planilla*</translation>
     </message>
     <message>
@@ -7653,7 +7653,7 @@ Is it OK to release these shortcuts?</source>
         <translation>Herramientas</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height (Requires Restart)</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height (Requires Restart)</source>
         <translation type="vanished">Expandir altura del editor de funciones para coincidir con la de la planilla*</translation>
     </message>
     <message>
@@ -7715,7 +7715,7 @@ la relatividad al resolver la ruta de un archvo.</translation>
         <translation>Flecha abajo al final de cinta de nivel para crear nuevo fotograma</translation>
     </message>
     <message>
-        <source>Expand Function Editor Header to Match Xsheet Toolbar Height*</source>
+        <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
         <translation>También expandir la altura del editor de funciones*</translation>
     </message>
     <message>
@@ -14048,9 +14048,9 @@ Mantener presionada la tecla F3 para ver sólo este fotograma en el visor</trans
     </message>
 </context>
 <context>
-    <name>XsheetGUI::XSheetToolbar</name>
+    <name>XsheetGUI::QuickToolbar</name>
     <message>
-        <source>Customize XSheet Toolbar</source>
+        <source>Customize Quick Toolbar</source>
         <translation>Personalizar barra de herramientas de planilla</translation>
     </message>
 </context>

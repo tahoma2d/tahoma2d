@@ -247,7 +247,7 @@ void GenericPanel::paintEvent(QPaintEvent *e) {
 
 void GenericPanel::mousePressEvent(QMouseEvent *e) {
   assert(!m_dragTool);
-  if (e->button() == Qt::MidButton)
+  if (e->button() == Qt::MidButton || m_viewer->getPanningArmed())
     m_dragTool = new PanTool(this);
   else
     m_dragTool = createDragTool(e);
@@ -351,7 +351,7 @@ void RowPanel::drawCurrentRowGadget(QPainter &p, int r0, int r1) {
   int currentRow = getViewer()->getCurrentRow();
   int y          = getViewer()->rowToY(currentRow);
   if (currentRow < r0 || r1 < currentRow) return;
-  p.fillRect(1, y + 1, width() - 2, 19, getViewer()->getCurrentRowBgColor());
+  p.fillRect(1, y + 1, width() - 1, 19, getViewer()->getCurrentRowBgColor());
 }
 
 //-----------------------------------------------------------------------------
@@ -474,21 +474,21 @@ SpreadsheetViewer::SpreadsheetViewer(QWidget *parent)
 
   // column header
   m_columnScrollArea = new Spreadsheet::ScrollArea;
-  m_columnScrollArea->setObjectName("ScrollArea");
+  m_columnScrollArea->setObjectName("ScrollColumnArea");
   m_columnScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_columnScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_columnScrollArea->setFocusPolicy(Qt::NoFocus);
 
   // row area
   m_rowScrollArea = new Spreadsheet::ScrollArea;
-  m_rowScrollArea->setObjectName("ScrollArea");
+  m_rowScrollArea->setObjectName("ScrollRowArea");
   m_rowScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_rowScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_rowScrollArea->setFocusPolicy(Qt::NoFocus);
 
   // cell area
   m_cellScrollArea = new Spreadsheet::ScrollArea;
-  m_cellScrollArea->setObjectName("ScrollArea");
+  m_cellScrollArea->setObjectName("ScrollCellArea");
   m_cellScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   m_cellScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   // m_cellScrollArea->horizontalScrollBar()->setObjectName("XsheetScrollBar");
@@ -687,13 +687,13 @@ int SpreadsheetViewer::rowToY(int row) const {
 /*!Shift is a consequence of style sheet border.*/
 CellPosition SpreadsheetViewer::xyToPosition(const QPoint &point) const {
   int row = (point.y() + 1) / m_rowHeight;
-  int col = (point.x() + 1) / m_columnWidth;
+  int col = (point.x()) / m_columnWidth;
   return CellPosition(row, col);
 }
 
 /*!Shift is a consequence of style sheet border.*/
 QPoint SpreadsheetViewer::positionToXY(const CellPosition &pos) const {
-  int x = (pos.layer() * m_columnWidth) - 1;
+  int x = (pos.layer() * m_columnWidth);
   int y = (pos.frame() * m_rowHeight) - 1;
   return QPoint(x, y);
 }
@@ -707,8 +707,8 @@ CellRange SpreadsheetViewer::xyRectToRange(const QRect &rect) const {
 bool SpreadsheetViewer::refreshContentSize(int scrollDx, int scrollDy) {
   QSize viewportSize = m_cellScrollArea->viewport()->size();
   QPoint offset      = m_cellScrollArea->widget()->pos();
-  offset =
-      QPoint(std::min(0, offset.x() - scrollDx), std::min(0, offset.y() - scrollDy));
+  offset             = QPoint(std::min(0, offset.x() - scrollDx),
+                  std::min(0, offset.y() - scrollDy));
 
   QSize contentSize(columnToX(m_columnCount + 1), rowToY(m_rowCount + 1));
 
@@ -733,10 +733,11 @@ bool SpreadsheetViewer::refreshContentSize(int scrollDx, int scrollDy) {
 }
 
 void SpreadsheetViewer::showEvent(QShowEvent *) {
-  int viewportHeight      = m_cellScrollArea->height();
-  int contentHeight       = rowToY(m_rowCount * 0 + 50);
-  QScrollBar *vSc         = m_cellScrollArea->verticalScrollBar();
-  int actualContentHeight = std::max(contentHeight, vSc->value() + viewportHeight);
+  int viewportHeight = m_cellScrollArea->height();
+  int contentHeight  = rowToY(m_rowCount * 0 + 50);
+  QScrollBar *vSc    = m_cellScrollArea->verticalScrollBar();
+  int actualContentHeight =
+      std::max(contentHeight, vSc->value() + viewportHeight);
   m_rowScrollArea->widget()->setFixedHeight(actualContentHeight);
   m_cellScrollArea->widget()->setFixedHeight(actualContentHeight);
   if (m_frameHandle)
@@ -832,7 +833,10 @@ m_dragTool->onDrag(&mouseEvent);
 void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
   int frameCount = m_rowCount;
   int row        = m_frameHandle->getFrame();
-
+  if (e->key() == Qt::Key_Space) {
+    m_panningArmed = true;
+    return;
+  }
   if (e->key() == Qt::Key_Up &&
       row > 0) {  // Row = frame precedente a quello settato
     m_frameHandle->setFrame(row - 1);
@@ -881,6 +885,23 @@ void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
     deltaY = y - visibleRect.bottom();
   scroll(QPoint(0, deltaY));
 }
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::keyReleaseEvent(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
+    m_panningArmed = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::enterEvent(QEvent *) { m_panningArmed = false; }
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::leaveEvent(QEvent *) { m_panningArmed = false; }
+
+//-----------------------------------------------------------------------------
 
 void SpreadsheetViewer::frameSwitched() {}
 

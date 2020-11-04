@@ -1239,7 +1239,7 @@ VIStroke::VIStroke(const VIStroke &s, bool sameId)
 
 //-----------------------------------------------------------------------------
 
-void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
+int TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
                               bool sameStrokeId) {
   QMutexLocker sl(m_imp->m_mutex);
 
@@ -1263,16 +1263,16 @@ void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
   // mettere comunque un test qui
   if (srcPlt) mergePalette(tarPlt, styleTable, srcPlt, usedStyles);
 
-  mergeImage(img, affine, styleTable, sameStrokeId);
+  return mergeImage(img, affine, styleTable, sameStrokeId);
 }
 
 //-----------------------------------------------------------------------------
 
-void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
+int TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
                               const std::map<int, int> &styleTable,
                               bool sameStrokeId) {
   int imageSize = img->getStrokeCount();
-  if (imageSize == 0) return;
+  if (imageSize == 0) return 0;
   QMutexLocker sl(m_imp->m_mutex);
 
   m_imp->m_computedAlmostOnce |= img->m_imp->m_computedAlmostOnce;
@@ -1371,6 +1371,7 @@ void TVectorImage::mergeImage(const TVectorImageP &img, const TAffine &affine,
 #ifdef _DEBUG
   checkIntersections();
 #endif
+  return insertAt;
 }
 
 //-----------------------------------------------------------------------------

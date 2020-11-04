@@ -128,9 +128,14 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
   xsh->getCellRange(index, r0, r1);
   if (0 <= r0 && r0 <= r1) {
     // column color depends on the level type in the top-most occupied cell
-    TXshCell cell = xsh->getCell(r0, index);
-    int ltype;
-    getCellTypeAndColors(ltype, color, sideColor, cell);
+    if (xsh->getColumn(index)->getSoundColumn()) {
+      color     = m_soundColumnColor;
+      sideColor = m_soundColumnBorderColor;
+    } else {
+      TXshCell cell = xsh->getCell(r0, index);
+      int ltype;
+      getCellTypeAndColors(ltype, color, sideColor, cell);
+    }
   }
   if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }
@@ -237,7 +242,7 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WFlags flags)
   m_toolbarScrollArea = new XsheetScrollArea(this);
   m_toolbarScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_toolbarScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  m_toolbar = new XsheetGUI::XSheetToolbar(this, 0, true);
+  m_toolbar = new XsheetGUI::QuickToolbar(this, 0, true);
   m_toolbarScrollArea->setWidget(m_toolbar);
 
   QRect noteArea(0, 0, 75, 120);
@@ -382,7 +387,7 @@ void XsheetViewer::positionSections() {
   NumberRange bodyLayer(headerLayer.to(), allLayer.to());
   NumberRange bodyFrame(headerFrame.to(), allFrame.to());
 
-  if (Preferences::instance()->isShowXSheetToolbarEnabled()) {
+  if (Preferences::instance()->isShowQuickToolbarEnabled()) {
     m_toolbar->showToolbar(true);
     int w = visibleRegion().boundingRect().width();
     m_toolbarScrollArea->setGeometry(0, 0, w, XsheetGUI::TOOLBAR_HEIGHT);
@@ -1036,7 +1041,7 @@ void XsheetViewer::showEvent(QShowEvent *) {
   assert(ret);
 
   positionSections();
-  refreshContentSize(0, 0);  
+  refreshContentSize(0, 0);
   updateAllAree();
 
   changeWindowTitle();
@@ -1360,7 +1365,7 @@ void XsheetViewer::onXsheetChanged() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::onPreferenceChanged(const QString &prefName) {
-  if (prefName == "XSheetToolbar") {
+  if (prefName == "QuickToolbar") {
     positionSections();
     refreshContentSize(0, 0);
   } else if (prefName == "XsheetCamera") {

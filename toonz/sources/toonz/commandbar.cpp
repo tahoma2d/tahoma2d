@@ -31,14 +31,14 @@
 
 #if QT_VERSION >= 0x050500
 CommandBar::CommandBar(QWidget *parent, Qt::WindowFlags flags,
-                       bool isCollapsible, bool isXsheetToolbar)
+                       bool isCollapsible, bool isQuickToolbar)
 #else
 CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
 #endif
     : QToolBar(parent), m_isCollapsible(isCollapsible) {
   setObjectName("cornerWidget");
   setObjectName("CommandBar");
-  fillToolbar(this, isXsheetToolbar);
+  fillToolbar(this, isQuickToolbar);
   setIconSize(QSize(20, 20));
   QIcon moreIcon(":Resources/more.svg");
   QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
@@ -47,19 +47,19 @@ CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
 
 //-----------------------------------------------------------------------------
 
-void CommandBar::fillToolbar(CommandBar *toolbar, bool isXsheetToolbar) {
+void CommandBar::fillToolbar(CommandBar *toolbar, bool isQuickToolbar) {
   toolbar->clear();
   TFilePath personalPath;
-  if (isXsheetToolbar) {
+  if (isQuickToolbar) {
     personalPath =
-        ToonzFolder::getMyModuleDir() + TFilePath("xsheettoolbar.xml");
+        ToonzFolder::getMyModuleDir() + TFilePath("quicktoolbar.xml");
   } else {
     personalPath = ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
   }
   if (!TSystem::doesExistFileOrLevel(personalPath)) {
-    if (isXsheetToolbar) {
+    if (isQuickToolbar) {
       personalPath =
-          ToonzFolder::getTemplateModuleDir() + TFilePath("xsheettoolbar.xml");
+          ToonzFolder::getTemplateModuleDir() + TFilePath("quicktoolbar.xml");
     } else {
       personalPath =
           ToonzFolder::getTemplateModuleDir() + TFilePath("commandbar.xml");

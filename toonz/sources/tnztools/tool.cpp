@@ -349,6 +349,15 @@ TImage *TTool::touchImage() {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
+    // If for some reason there is no palette, try and set a default one now.
+    if (!sl->getPalette() &&
+        (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+      TPalette *defaultPalette =
+          getApplication()->getPaletteController()->getDefaultPalette(
+              sl->getType());
+      if (defaultPalette) sl->setPalette(defaultPalette->clone());
+    }
+
     // current cell is not empty
     if (isCreateInHoldCellsEnabled && row > 0 &&
         xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
@@ -443,6 +452,15 @@ TImage *TTool::touchImage() {
       // note: sl should be always !=0 (the column is not empty)
       // if - for some reason - it is == 0 or it is not editable,
       // then we skip to empty-column behaviour
+
+      // If for some reason there is no palette, try and set a default one now.
+      if (!sl->getPalette() &&
+          (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
+        TPalette *defaultPalette =
+            getApplication()->getPaletteController()->getDefaultPalette(
+                sl->getType());
+        if (defaultPalette) sl->setPalette(defaultPalette->clone());
+      }
 
       // create the drawing
       // find the proper frameid
@@ -587,7 +605,7 @@ int TTool::getColumnIndex() {
 
 //-----------------------------------------------------------------------------
 
-TStageObjectId TTool::getObjectId() {
+TStageObjectId TTool::getObjectId() const {
   if (!m_application) return TStageObjectId();
   return m_application->getCurrentObject()->getObjectId();
 }
@@ -831,6 +849,7 @@ QString TTool::updateEnabled() {
   return updateEnabled(rowIndex, columnIndex);
 }
 
+// See the overridden function EditTool::updateEnabled() for the Animate Tool
 QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // Disable every tool during playback
   if (m_application->getCurrentFrame()->isPlaying())
@@ -855,10 +874,12 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // find the nearest level before it
   if (levelType == NO_XSHLEVEL &&
       !m_application->getCurrentFrame()->isEditingLevel()) {
-    TXshCell cell = xsh->getCell(rowIndex, columnIndex);
-    xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
-    sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
-    levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      if (!column || (column && !column->getSoundColumn())) {
+          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+          xl = cell.isEmpty() ? 0 : (TXshLevel*)(&cell.m_level);
+          sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+          levelType = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+      }
   }
 
   if (Preferences::instance()->isAutoCreateEnabled()) {
@@ -866,16 +887,18 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&
         !m_application->getCurrentFrame()->isEditingLevel()) {
-      int r0, r1;
-      xsh->getCellRange(columnIndex, r0, r1);
-      for (int r = std::min(r1, rowIndex); r > r0; r--) {
-        TXshCell cell = xsh->getCell(r, columnIndex);
-        if (cell.isEmpty()) continue;
-        xl        = (TXshLevel *)(&cell.m_level);
-        sl        = cell.getSimpleLevel();
-        levelType = cell.m_level->getType();
-        break;
-      }
+        if (!column || (column && !column->getSoundColumn())) {
+            int r0, r1;
+            xsh->getCellRange(columnIndex, r0, r1);
+            for (int r = std::min(r1, rowIndex); r > r0; r--) {
+                TXshCell cell = xsh->getCell(r, columnIndex);
+                if (cell.isEmpty()) continue;
+                xl = (TXshLevel*)(&cell.m_level);
+                sl = cell.getSimpleLevel();
+                levelType = cell.m_level->getType();
+                break;
+            }
+        }
     }
 
     // If the current tool does not match the current type, check for
@@ -910,17 +933,6 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   if (!filmstrip && columnIndex < 0 && (targetType & TTool::EmptyTarget) &&
       (m_name == T_Type || m_name == T_Geometric || m_name == T_Brush))
     return (enable(false), QString());
-
-  // In case of Animate Tool
-  if (m_name == T_Edit && !filmstrip) {
-    // if an object other than column is selected, then enable the tool
-    // regardless of the current column state
-    if (!m_application->getCurrentObject()->getObjectId().isColumn())
-      return (enable(true), QString());
-    // if a column object is selected, switch the inspected column to it
-    column = xsh->getColumn(
-        m_application->getCurrentObject()->getObjectId().getIndex());
-  }
 
   bool isZeraryCol =
       column ? (column->getZeraryFxColumn() ? true : false) : false;
@@ -1097,17 +1109,17 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
     for (int i = 0; i < mosCount; i++) {
       int cmos = osMask.getMos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!mosBack || cmos > mosBack)) mosBack    = cmos;
+      if (cmos < 0 && (!mosBack || cmos > mosBack)) mosBack = cmos;
       if (cmos > 0 && (!mosFront || cmos < mosFront)) mosFront = cmos;
     }
-    if (mosBack) *backIdx   = mosBack + cidx;
+    if (mosBack) *backIdx = mosBack + cidx;
     if (mosFront) *frontIdx = mosFront + cidx;
 
     // Get closest fixed onionskin
     for (int i = 0; i < fosCount; i++) {
       int cfos = osMask.getFos(i);
       if (cfos == cidx) continue;  // skip current
-      if (cfos < cidx && (fosBack == -1 || cfos > fosBack)) fosBack    = cfos;
+      if (cfos < cidx && (fosBack == -1 || cfos > fosBack)) fosBack = cfos;
       if (cfos > cidx && (fosFront == -1 || cfos < fosFront)) fosFront = cfos;
     }
 
@@ -1125,17 +1137,17 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
     for (int i = 0; i < mosCount; i++) {
       int cmos = osMask.getMos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!mosBack || cmos < mosBack)) mosBack    = cmos;
+      if (cmos < 0 && (!mosBack || cmos < mosBack)) mosBack = cmos;
       if (cmos > 0 && (!mosFront || cmos > mosFront)) mosFront = cmos;
     }
-    if (mosBack) *backIdx   = mosBack + cidx;
+    if (mosBack) *backIdx = mosBack + cidx;
     if (mosFront) *frontIdx = mosFront + cidx;
 
     // Get fixed onionskin
     for (int i = 0; i < fosCount; i++) {
       int cfos = osMask.getFos(i);
       if (cfos == cidx) continue;  // skip current
-      if (cfos < cidx && (fosBack == -1 || cfos < fosBack)) fosBack    = cfos;
+      if (cfos < cidx && (fosBack == -1 || cfos < fosBack)) fosBack = cfos;
       if (cfos > cidx && (fosFront == -1 || cfos > fosFront)) fosFront = cfos;
     }
 
@@ -1180,7 +1192,7 @@ void TTool::Viewer::doPickGuideStroke(const TPointD &pos) {
     TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
     int col      = getApplication()->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
-      TXshCell cell            = xsh->getCell(os, col);
+      TXshCell cell = xsh->getCell(os, col);
       if (!cell.isEmpty()) fid = cell.getFrameId();
     }
   } else
@@ -1263,9 +1275,9 @@ void TTool::tweenSelectedGuideStrokes() {
     TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
     int col      = m_application->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
-      TXshCell cell             = xsh->getCell(backIdx, col);
+      TXshCell cell = xsh->getCell(backIdx, col);
       if (!cell.isEmpty()) bFid = cell.getFrameId();
-      cell                      = xsh->getCell(frontIdx, col);
+      cell = xsh->getCell(frontIdx, col);
       if (!cell.isEmpty()) fFid = cell.getFrameId();
     }
   } else {
@@ -1354,7 +1366,7 @@ void TTool::tweenGuideStrokeToSelected() {
       TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
       int col      = m_application->getCurrentColumn()->getColumnIndex();
       if (xsh && col >= 0) {
-        TXshCell cell             = xsh->getCell(backIdx, col);
+        TXshCell cell = xsh->getCell(backIdx, col);
         if (!cell.isEmpty()) bFid = cell.getFrameId();
       }
     } else
@@ -1368,7 +1380,7 @@ void TTool::tweenGuideStrokeToSelected() {
       TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
       int col      = m_application->getCurrentColumn()->getColumnIndex();
       if (xsh && col >= 0) {
-        TXshCell cell             = xsh->getCell(frontIdx, col);
+        TXshCell cell = xsh->getCell(frontIdx, col);
         if (!cell.isEmpty()) fFid = cell.getFrameId();
       }
     } else
@@ -1463,7 +1475,7 @@ void TTool::flipGuideStrokeDirection(int mode) {
     TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
     int col      = getApplication()->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
-      TXshCell cell            = xsh->getCell(os, col);
+      TXshCell cell = xsh->getCell(os, col);
       if (!cell.isEmpty()) fid = cell.getFrameId();
     }
   } else

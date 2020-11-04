@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Tahoma
+Name=Tahoma2D
 Comment=2D animation
-Icon=io.github.Tahoma
-Exec=tahoma
+Icon=io.github.Tahoma2D
+Exec=tahoma2d
 Categories=Graphics;
 Terminal=false

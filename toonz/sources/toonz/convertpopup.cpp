@@ -752,6 +752,7 @@ void ConvertPopup::onFormatSelected(const QString &format) {
   m_bgColorLabel->setVisible(!isTlv && !isPli && !isOldLevel2Tlv);
 
   m_tlvFrame->setVisible(isTlv);
+  m_mainFrame->setFixedHeight(isTlv ? 425 : 220);
   // m_svgFrame->setVisible(isPli);
 
   if (isTlv) {

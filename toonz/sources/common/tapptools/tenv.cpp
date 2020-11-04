@@ -6,6 +6,7 @@
 
 #include <QDir>
 #include <QSettings>
+#include <QCoreApplication>
 
 #ifdef LEVO_MACOSX
 
@@ -157,8 +158,8 @@ public:
         getSystemVarPathValue(getSystemVarPrefix() + "PROFILES");
     if (profilesDir == TFilePath())
       profilesDir = getStuffDir() + systemPathMap.at("PROFILES");
-    m_envFile =
-        profilesDir + "env" + (TSystem::getUserName().toStdString() + ".env");
+    m_envFile = profilesDir + "users" + TSystem::getUserName().toStdString() +
+                "env.ini";
   }
 
   void init() {
@@ -177,7 +178,7 @@ public:
     m_rootVarName = toUpper(m_version.getAppName()) + "ROOT";
 #ifdef _WIN32
     // from v1.3, registry root is moved to SOFTWARE\\Tahoma\\Tahoma
-    m_registryRoot = TFilePath("SOFTWARE\\Tahoma\\") + m_version.getAppName();
+    m_registryRoot = TFilePath("SOFTWARE\\Tahoma2D\\") + m_version.getAppName();
 #endif
     m_systemVarPrefix = m_version.getAppName();
     updateEnvFile();
@@ -220,7 +221,17 @@ public:
   std::string getSystemVarPrefix() { return m_systemVarPrefix; }
 
   void setWorkingDirectory() {
-    QString workingDirectoryTmp  = QDir::currentPath();
+    QString workingDirectoryTmp = QDir::currentPath();
+
+#ifdef LINUX
+    QString appPath =
+        workingDirectoryTmp + "/" + QCoreApplication::applicationName();
+    QDir appDir(appPath);
+    appPath = appDir.canonicalPath();
+    if (!appPath.isEmpty())
+      workingDirectoryTmp = TFilePath(appPath).getParentDir().getQString();
+#endif
+
     QByteArray ba                = workingDirectoryTmp.toLatin1();
     const char *workingDirectory = ba.data();
     m_workingDirectory           = workingDirectory;
@@ -611,6 +622,12 @@ TFilePath TEnv::getConfigDir() {
   return fp != TFilePath() ? fp + "profiles" : fp;
 }
 */
+TFilePath TEnv::getWorkingDirectory() {
+  TFilePath workingDir(EnvGlobals::instance()->getWorkingDirectory());
+  if (workingDir == TFilePath()) workingDir = TFilePath(QDir::currentPath());
+  return workingDir;
+}
+
 void TEnv::setStuffDir(const TFilePath &stuffDir) {
   EnvGlobals::instance()->setStuffDir(stuffDir);
 }

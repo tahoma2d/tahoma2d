@@ -1408,7 +1408,7 @@ public:
   int getSize() const override { return sizeof(*this); }
 
   QString getHistoryString() override {
-    return QObject::tr("Duplicate Frame in XSheet");
+    return QObject::tr("Duplicate Frame in Scene");
   }
 
   int getHistoryType() override { return HistoryType::Xsheet; }
@@ -1876,52 +1876,51 @@ void TCellSelection::pasteCells() {
                  xl->getPath().getFrame() != TFrameId::NO_FRAME))
         img = cell.getImage(false);
     }
-    
+
     RasterImageData *rasterImageData = 0;
     if (TToonzImageP ti = img) {
-
-        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
-        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
-        assert(sl);
-        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
-        TXshCell currentCell = xsh->getCell(r0, c0);
-        if (!currentCell.isEmpty() && sl &&
-            toolHandle->getTool()->getName() == "T_Selection") {
-            TSelection* ts = toolHandle->getTool()->getSelection();
-            RasterSelection* rs = dynamic_cast<RasterSelection*>(ts);
-            if (rs) {
-                toolHandle->getTool()->onActivate();
-                rs->pasteSelection();
-                return;
-            }
+      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      assert(sl);
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+        if (rs) {
+          toolHandle->getTool()->onActivate();
+          rs->pasteSelection();
+          return;
         }
-        if (!initUndo) {
-            initUndo = true;
-            TUndoManager::manager()->beginBlock();
-        }
+      }
+      if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
+      }
       rasterImageData = strokesData->toToonzImageData(ti);
       pasteRasterImageInCell(r0, c0, rasterImageData);
     } else if (TRasterImageP ri = img) {
-        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
-        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
-        assert(sl);
-        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
-        TXshCell currentCell = xsh->getCell(r0, c0);
-        if (!currentCell.isEmpty() && sl &&
-            toolHandle->getTool()->getName() == "T_Selection") {
-            TSelection* ts = toolHandle->getTool()->getSelection();
-            RasterSelection* rs = dynamic_cast<RasterSelection*>(ts);
-            if (rs) {
-                toolHandle->getTool()->onActivate();
-                rs->pasteSelection();
-                return;
-            }
+      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      assert(sl);
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        RasterSelection *rs = dynamic_cast<RasterSelection *>(ts);
+        if (rs) {
+          toolHandle->getTool()->onActivate();
+          rs->pasteSelection();
+          return;
         }
+      }
 
-        if (!initUndo) {
-            initUndo = true;
-            TUndoManager::manager()->beginBlock();
-        }
+      if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
+      }
       double dpix, dpiy;
       ri->getDpi(dpix, dpiy);
       if (dpix == 0 || dpiy == 0) {
@@ -1932,29 +1931,27 @@ void TCellSelection::pasteCells() {
       }
       rasterImageData = strokesData->toFullColorImageData(ri);
       pasteRasterImageInCell(r0, c0, rasterImageData);
-    }
-    else {
-
-        TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
-        if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
-        assert(sl);
-        ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
-        TXshCell currentCell = xsh->getCell(r0, c0);
-        if (!currentCell.isEmpty() && sl &&
-            toolHandle->getTool()->getName() == "T_Selection") {
-            TSelection* ts = toolHandle->getTool()->getSelection();
-            StrokeSelection* ss = dynamic_cast<StrokeSelection*>(ts);
-            if (ss) {
-                toolHandle->getTool()->onActivate();
-                ss->paste();
-                return;
-            }
+    } else {
+      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      assert(sl);
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
+      if (!currentCell.isEmpty() && sl &&
+          toolHandle->getTool()->getName() == "T_Selection") {
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        StrokeSelection *ss = dynamic_cast<StrokeSelection *>(ts);
+        if (ss) {
+          toolHandle->getTool()->onActivate();
+          ss->paste();
+          return;
         }
-        if (!initUndo) {
-            initUndo = true;
-            TUndoManager::manager()->beginBlock();
-        }
-        pasteStrokesInCell(r0, c0, strokesData);
+      }
+      if (!initUndo) {
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
+      }
+      pasteStrokesInCell(r0, c0, strokesData);
     }
   }
   // Raster Time
@@ -1990,27 +1987,26 @@ void TCellSelection::pasteCells() {
     }
     // Convert non-plain raster data to strokes data
     if (vi && clipImage.isNull()) {
-      
-      TXshSimpleLevel* sl = xsh->getCell(r0, c0).getSimpleLevel();
-      if (!sl) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
+      TXshSimpleLevel *sl = xsh->getCell(r0, c0).getSimpleLevel();
+      if (!sl) sl         = xsh->getCell(r0 - 1, c0).getSimpleLevel();
       assert(sl);
-      
-      ToolHandle* toolHandle = TApp::instance()->getCurrentTool();
-      TXshCell currentCell = xsh->getCell(r0, c0);
+
+      ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
+      TXshCell currentCell   = xsh->getCell(r0, c0);
       if (!currentCell.isEmpty() && sl &&
           toolHandle->getTool()->getName() == "T_Selection") {
-          TSelection* ts = toolHandle->getTool()->getSelection();
-          StrokeSelection* ss = dynamic_cast<StrokeSelection*>(ts);
-          if (ss) {
-              toolHandle->getTool()->onActivate();
-              ss->paste();
-              return;
-          }
+        TSelection *ts      = toolHandle->getTool()->getSelection();
+        StrokeSelection *ss = dynamic_cast<StrokeSelection *>(ts);
+        if (ss) {
+          toolHandle->getTool()->onActivate();
+          ss->paste();
+          return;
+        }
       }
 
       if (!initUndo) {
-          initUndo = true;
-          TUndoManager::manager()->beginBlock();
+        initUndo = true;
+        TUndoManager::manager()->beginBlock();
       }
       StrokesData *strokesData = rasterImageData->toStrokesData(sl->getScene());
       pasteStrokesInCell(r0, c0, strokesData);
@@ -2645,6 +2641,11 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   }
 
   if (!toolHandle->getTool()->m_isFrameCreated) {
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to replace the current drawing with a blank drawing"));
@@ -2788,6 +2789,11 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   bool frameCreated = toolHandle->getTool()->m_isFrameCreated;
   if (!frameCreated) {
+    if (!isAutoCreateEnabled)
+      Preferences::instance()->setValue(EnableAutocreation, false, false);
+    if (!isCreationInHoldCellsEnabled)
+      Preferences::instance()->setValue(EnableCreationInHoldCells, false,
+                                        false);
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to replace the current or next drawing with a "
@@ -3115,8 +3121,7 @@ static void createNewDrawing(TXsheet *xsh, int row, int col,
   const Type *Var = dynamic_cast<const Type *>(Data)
 
 void TCellSelection::dPasteCells() {
-  if (isEmpty()) 
-    return;
+  if (isEmpty()) return;
   int r0, c0, r1, c1;
   getSelectedCells(r0, c0, r1, c1);
   TUndoManager::manager()->beginBlock();
@@ -3124,10 +3129,10 @@ void TCellSelection::dPasteCells() {
   QClipboard *clipboard     = QApplication::clipboard();
   const QMimeData *mimeData = clipboard->mimeData();
   if (DYNAMIC_CAST(TCellData, cellData, mimeData)) {
-      if (!cellData->canChange(xsh, c0)) {
-          TUndoManager::manager()->endBlock();
-          return;
-      }
+    if (!cellData->canChange(xsh, c0)) {
+      TUndoManager::manager()->endBlock();
+      return;
+    }
     for (int c = 0; c < cellData->getColCount(); c++) {
       for (int r = 0; r < cellData->getRowCount(); r++) {
         TXshCell src = cellData->getCell(r, c);

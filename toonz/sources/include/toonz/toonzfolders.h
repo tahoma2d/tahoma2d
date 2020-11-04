@@ -44,6 +44,8 @@ DVAPI TFilePath getLibraryFolder();
 DVAPI TFilePath getReslistPath(bool forCleanup);
 DVAPI TFilePath getCacheRootFolder();
 DVAPI TFilePath getProfileFolder();
+
+DVAPI TFilePath getMyReslistPath(bool forCleanup);
 };
 
 class DVAPI FolderListenerManager {  // singleton

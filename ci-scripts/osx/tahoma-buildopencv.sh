@@ -6,7 +6,10 @@ git clone https://github.com/opencv/opencv.git
 cd opencv
 echo "*" >| .gitignore
 
-mkdir build
+if [ ! -d build ]
+then
+   mkdir build
+fi
 cd build
 
 echo ">>> Cmaking openv"
@@ -49,4 +52,4 @@ echo ">>> Building opencv"
 make -j7 # runs 7 jobs in parallel
 
 echo ">>> Installing opencv"
-make install
+sudo make install

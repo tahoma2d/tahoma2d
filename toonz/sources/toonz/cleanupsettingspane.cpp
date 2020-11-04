@@ -132,7 +132,7 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
   m_rotateOm->addItems(rotate);
   // Camera
   cameraFrame->setObjectName("CleanupSettingsFrame");
-  m_cameraWidget->setCameraPresetListFile(ToonzFolder::getReslistPath(true));
+  m_cameraWidget->setCameraPresetListFile(ToonzFolder::getMyReslistPath(true));
   // LineProcessing
   lineProcFrame->setObjectName("CleanupSettingsFrame");
   QStringList items;
@@ -267,9 +267,9 @@ CleanupSettingsPane::CleanupSettingsPane(QWidget *parent)
   bool ret = true;
   ret      = ret && connect(m_autocenterBox, SIGNAL(clicked(bool)),
                        SLOT(onGenericSettingsChange()));
-  ret      = ret && connect(m_pegHolesOm, SIGNAL(activated(int)),
+  ret = ret && connect(m_pegHolesOm, SIGNAL(activated(int)),
                        SLOT(onGenericSettingsChange()));
-  ret      = ret && connect(m_fieldGuideOm, SIGNAL(activated(int)),
+  ret = ret && connect(m_fieldGuideOm, SIGNAL(activated(int)),
                        SLOT(onGenericSettingsChange()));
 
   ret = ret && connect(m_rotateOm, SIGNAL(activated(int)),
@@ -321,7 +321,7 @@ void CleanupSettingsPane::showEvent(QShowEvent *se) {
     bool ret = true;
     ret      = ret && connect(model, SIGNAL(imageSwitched()), this,
                          SLOT(onImageSwitched()));
-    ret      = ret && connect(model, SIGNAL(modelChanged(bool)), this,
+    ret = ret && connect(model, SIGNAL(modelChanged(bool)), this,
                          SLOT(updateGui(bool)));
     ret = ret && connect(model, SIGNAL(clnLoaded()), this, SLOT(onClnLoaded()));
     assert(ret);
@@ -355,9 +355,9 @@ void CleanupSettingsPane::hideEvent(QHideEvent *he) {
     bool ret = true;
     ret      = ret && disconnect(model, SIGNAL(imageSwitched()), this,
                             SLOT(onImageSwitched()));
-    ret      = ret && disconnect(model, SIGNAL(modelChanged(bool)), this,
+    ret = ret && disconnect(model, SIGNAL(modelChanged(bool)), this,
                             SLOT(updateGui(bool)));
-    ret      = ret &&
+    ret = ret &&
           disconnect(model, SIGNAL(clnLoaded()), this, SLOT(onClnLoaded()));
     assert(ret);
   }

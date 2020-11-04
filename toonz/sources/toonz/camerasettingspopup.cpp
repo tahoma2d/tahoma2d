@@ -83,7 +83,8 @@ CameraSettingsPopup::CameraSettingsPopup()
   m_nameFld              = new LineEdit();
   m_cameraSettingsWidget = new CameraSettingsWidget();
 
-  m_cameraSettingsWidget->setPresetListFile(ToonzFolder::getReslistPath(false));
+  m_cameraSettingsWidget->setPresetListFile(
+      ToonzFolder::getMyReslistPath(false));
 
   //---- layout
   QVBoxLayout *mainLay = new QVBoxLayout();

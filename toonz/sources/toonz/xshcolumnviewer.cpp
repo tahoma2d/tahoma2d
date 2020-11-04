@@ -394,8 +394,10 @@ void ChangeObjectParent::refresh() {
   TXsheet *xsh                   = m_xsheetHandle->getXsheet();
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   TStageObjectId parentId = xsh->getStageObject(currentObjectId)->getParent();
-  TStageObjectTree *tree  = xsh->getStageObjectTree();
-  int objectCount         = tree->getStageObjectCount();
+  TStageObject *currentObject        = xsh->getStageObject(currentObjectId);
+  std::list<TStageObject *> children = currentObject->getChildren();
+  TStageObjectTree *tree             = xsh->getStageObjectTree();
+  int objectCount                    = tree->getStageObjectCount();
   QString text;
   QList<QString> pegbarList;
   QList<QString> columnList;
@@ -420,7 +422,11 @@ void ChangeObjectParent::refresh() {
         }
       }
     }
-    if (id == currentObjectId) continue;
+
+    bool found = (std::find(children.begin(), children.end(),
+                            xsh->getStageObject(id)) != children.end());
+
+    if (id == currentObjectId || found) continue;
     if (id.isTable()) {
       newText = QString("Table");
       pegbarList.append(newText);
@@ -460,7 +466,7 @@ void ChangeObjectParent::refresh() {
   // set font size in pixel
   font.setPixelSize(XSHEET_FONT_PX_SIZE);
 
-  m_width             = QFontMetrics(font).width(theLongestTxt) + 22;
+  m_width = std::max(QFontMetrics(font).width(theLongestTxt) + 22, 71);
   std::string strText = text.toStdString();
   selectCurrent(text);
 }
@@ -474,7 +480,7 @@ void ChangeObjectParent::onTextChanged(const QString &text) {
     hide();
     return;
   }
-  bool isPegbar = false;
+  bool isPegbar                        = false;
   if (text.startsWith("Peg")) isPegbar = true;
   bool isTable                         = false;
   if (text == "Table") isTable         = true;
@@ -736,7 +742,7 @@ void ColumnArea::DrawHeader::levelColors(QColor &columnColor,
   }
   enum { Normal, Reference, Control } usage = Reference;
   if (column) {
-    if (column->isControl()) usage = Control;
+    if (column->isControl()) usage                             = Control;
     if (column->isRendered() || column->getMeshColumn()) usage = Normal;
   }
 
@@ -754,7 +760,7 @@ void ColumnArea::DrawHeader::paletteColors(QColor &columnColor,
                                            QColor &dragColor) const {
   enum { Normal, Reference, Control } usage = Reference;
   if (column) {  // Check if column is a mask
-    if (column->isControl()) usage = Control;
+    if (column->isControl()) usage  = Control;
     if (column->isRendered()) usage = Normal;
   }
 
@@ -1862,11 +1868,11 @@ m_value->setFont(font);*/
 
   bool ret = connect(m_slider, SIGNAL(sliderReleased()), this,
                      SLOT(onSliderReleased()));
-  ret      = ret && connect(m_slider, SIGNAL(sliderMoved(int)), this,
+  ret = ret && connect(m_slider, SIGNAL(sliderMoved(int)), this,
                        SLOT(onSliderChange(int)));
-  ret      = ret && connect(m_slider, SIGNAL(valueChanged(int)), this,
+  ret = ret && connect(m_slider, SIGNAL(valueChanged(int)), this,
                        SLOT(onSliderValueChanged(int)));
-  ret      = ret && connect(m_value, SIGNAL(textChanged(const QString &)), this,
+  ret = ret && connect(m_value, SIGNAL(textChanged(const QString &)), this,
                        SLOT(onValueChanged(const QString &)));
 
   ret = ret && connect(m_filterColorCombo, SIGNAL(activated(int)), this,
@@ -1979,11 +1985,11 @@ SoundColumnPopup::SoundColumnPopup(QWidget *parent)
 
   bool ret = connect(m_slider, SIGNAL(sliderReleased()), this,
                      SLOT(onSliderReleased()));
-  ret      = ret && connect(m_slider, SIGNAL(sliderMoved(int)), this,
+  ret = ret && connect(m_slider, SIGNAL(sliderMoved(int)), this,
                        SLOT(onSliderChange(int)));
-  ret      = ret && connect(m_slider, SIGNAL(valueChanged(int)), this,
+  ret = ret && connect(m_slider, SIGNAL(valueChanged(int)), this,
                        SLOT(onSliderValueChanged(int)));
-  ret      = ret && connect(m_value, SIGNAL(textChanged(const QString &)), this,
+  ret = ret && connect(m_value, SIGNAL(textChanged(const QString &)), this,
                        SLOT(onValueChanged(const QString &)));
   assert(ret);
 }
@@ -2276,8 +2282,12 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
               TSoundTrackP sTrack = s->getCurrentPlaySoundTruck();
               interval            = sTrack->getDuration() * 1000 + 300;
             }
-            if (s->isPlaying() && interval > 0)
-              QTimer::singleShot(interval, this, SLOT(update()));
+            if (s->isPlaying() && interval > 0) {
+              QTimer::singleShot(interval, this, [this, s] {
+                if (s && s->isPlaying()) s->stop();
+                update();
+              });
+            }
           }
           update();
         } else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
@@ -2292,20 +2302,25 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             event->button() == Qt::RightButton)
           return;
         if (!xsh->getColumn(m_col)->getSoundTextColumn()) {
-          if (o->rect(PredefinedRect::PEGBAR_NAME)
-                  .adjusted(0, 0, -20, 0)
-                  .contains(mouseInCell)) {
+          int x = 0;
+          x     = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
+          TStageObjectId columnId = m_viewer->getObjectId(m_col);
+          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+          bool clickChangeParent =
+              isColumn
+                  ? o->rect(PredefinedRect::PEGBAR_NAME)
+                        .adjusted(0, 0, -20, 0)
+                        .contains(mouseInCell)
+                  : o->rect(PredefinedRect::PEGBAR_NAME).contains(mouseInCell);
+          if (clickChangeParent) {
             m_changeObjectParent->refresh();
-
             m_changeObjectParent->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(0, m_col)) +
+                m_viewer->positionToXY(CellPosition(0, m_col)) + QPoint(0, x) +
                 QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 4) -
                 QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
-          TStageObjectId columnId = m_viewer->getObjectId(m_col);
-          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
           if (isColumn &&
               o->rect(PredefinedRect::PARENT_HANDLE_NAME)
                   .contains(mouseInCell)) {
@@ -2313,7 +2328,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             m_changeObjectHandle->show(QPoint(
                 o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
                 m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                QPoint(2, 0) - QPoint(m_viewer->getColumnScrollValue(), 0)));
+                QPoint(2, x) - QPoint(m_viewer->getColumnScrollValue(), 0)));
             return;
           }
         }
@@ -2377,8 +2392,8 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
     return;
   }
 
-  int col = m_viewer->xyToPosition(pos).layer();
-  if (col < -1) col = 0;
+  int col            = m_viewer->xyToPosition(pos).layer();
+  if (col < -1) col  = 0;
   TXsheet *xsh       = m_viewer->getXsheet();
   TXshColumn *column = xsh->getColumn(col);
   QPoint mouseInCell = pos - m_viewer->positionToXY(CellPosition(0, col));
@@ -2702,10 +2717,10 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cmdManager->getAction(MI_Cut));
       menu.addAction(cmdManager->getAction(MI_Copy));
       menu.addAction(cmdManager->getAction(MI_Paste));
-      menu.addAction(cmdManager->getAction(MI_PasteAbove));
+      menu.addAction(cmdManager->getAction(MI_PasteBelow));
       menu.addAction(cmdManager->getAction(MI_Clear));
       menu.addAction(cmdManager->getAction(MI_Insert));
-      menu.addAction(cmdManager->getAction(MI_InsertAbove));
+      menu.addAction(cmdManager->getAction(MI_InsertBelow));
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_InsertFx));
       menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
@@ -2743,7 +2758,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addAction(cameraToggle);
     }
     menu.addSeparator();
-    menu.addAction(cmdManager->getAction(MI_ToggleXSheetToolbar));
+    menu.addAction(cmdManager->getAction(MI_ToggleQuickToolbar));
 
     QAction *flipOrientation = new QAction(tr("Toggle Orientation"), this);
 
@@ -2810,23 +2825,23 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QAction *act  = cmdManager->getAction(MI_Insert),
-          *act2 = cmdManager->getAction(MI_InsertAbove),
+          *act2 = cmdManager->getAction(MI_InsertBelow),
           *act3 = cmdManager->getAction(MI_Paste),
-          *act4 = cmdManager->getAction(MI_PasteAbove);
+          *act4 = cmdManager->getAction(MI_PasteBelow);
 
   QString actText = act->text(), act2Text = act2->text(),
           act3Text = act3->text(), act4Text = act4->text();
 
   if (o->isVerticalTimeline()) {
-    act->setText(tr("&Insert Before"));
-    act2->setText(tr("&Insert After"));
-    act3->setText(tr("&Paste Insert Before"));
-    act4->setText(tr("&Paste Insert After"));
+    act->setText(tr("&Insert After"));
+    act2->setText(tr("&Insert Before"));
+    act3->setText(tr("&Paste Insert After"));
+    act4->setText(tr("&Paste Insert Before"));
   } else {
-    act->setText(tr("&Insert Below"));
-    act2->setText(tr("&Insert Above"));
-    act3->setText(tr("&Paste Insert Below"));
-    act4->setText(tr("&Paste Insert Above"));
+    act->setText(tr("&Insert Above"));
+    act2->setText(tr("&Insert Below"));
+    act3->setText(tr("&Paste Insert Above"));
+    act4->setText(tr("&Paste Insert Below"));
   }
 
   menu.exec(event->globalPos());

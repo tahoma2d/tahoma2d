@@ -5,6 +5,7 @@
 #include "tsystem.h"
 #include "tfilepath_io.h"
 #include "tsound_t.h"
+#include "tenv.h"
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
 #include <QDir>
@@ -53,6 +54,28 @@ bool FfmpegAudio::checkFfmpeg() {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
     return true;
   }
+
+#ifdef MACOSX
+  path = QDir::currentPath() + "/" +
+         QString::fromStdString(TEnv::getApplicationFileName()) +
+         ".app/ffmpeg/ffmpeg";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(
+        ffmpegPath, QDir::currentPath() + "/" +
+                        QString::fromStdString(TEnv::getApplicationFileName()) +
+                        ".app/ffmpeg/");
+    return true;
+  }
+#endif
+
+#ifdef LINUX
+  QString currentPath = TEnv::getWorkingDirectory().getQString();
+  path                = currentPath + "/ffmpeg/ffmpeg";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(ffmpegPath, currentPath + "/ffmpeg/");
+    return true;
+  }
+#endif
 
   // give up
   return false;

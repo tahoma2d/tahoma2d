@@ -345,7 +345,7 @@ protected:
 
 bool PaletteKeyframeNavigator::hasNext() const {
   TPalette *palette = getPalette();
-  if (!palette) return false;
+  if (!palette || palette->getStyleCount() < 1) return false;
   int styleId = getStyleIndex();
   int frame   = getCurrentFrame();
   int n       = palette->getKeyframeCount(styleId);
@@ -363,7 +363,7 @@ bool PaletteKeyframeNavigator::hasNext() const {
 
 bool PaletteKeyframeNavigator::hasPrev() const {
   TPalette *palette = getPalette();
-  if (!palette) return false;
+  if (!palette || palette->getStyleCount() < 1) return false;
   int styleId = getStyleIndex();
   int frame   = getCurrentFrame();
   int n       = palette->getKeyframeCount(styleId);
@@ -389,7 +389,7 @@ bool PaletteKeyframeNavigator::hasKeyframes() const {
 
 bool PaletteKeyframeNavigator::isKeyframe() const {
   TPalette *palette = getPalette();
-  if (!palette) return false;
+  if (!palette || palette->getStyleCount() < 1) return false;
   int frame = getCurrentFrame();
   return palette->isKeyframe(getStyleIndex(), frame);
 }

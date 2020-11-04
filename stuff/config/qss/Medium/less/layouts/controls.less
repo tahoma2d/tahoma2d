@@ -144,9 +144,22 @@ QComboBox {
   }
 }
 
-QPlainTextEdit
-,QLineEdit {
+QPlainTextEdit,
+QLineEdit,
+QTextEdit {
   &:extend(.LineEdit all);
+}
+
+// reset all styles for read-only QtextEdit
+QTextEdit[readOnly="true"]{
+  &:extend(QWidget all);
+  border: 0;
+  &:focus,
+  &:disabled {
+    background-color: @bg;
+    color: @text-color;
+    border: 0;
+  }
 }
 
 /* -----------------------------------------------------------------------------

@@ -585,7 +585,7 @@ CleanupSettings::CleanupSettings(QWidget *parent)
   m_cameraTab = new CameraTab;
   scrollArea->setWidget(m_cameraTab);
 
-  m_cameraTab->setCameraPresetListFile(ToonzFolder::getReslistPath(true));
+  m_cameraTab->setCameraPresetListFile(ToonzFolder::getMyReslistPath(true));
 
   //  Swatch
 

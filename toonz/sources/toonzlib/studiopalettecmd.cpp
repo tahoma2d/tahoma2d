@@ -506,7 +506,10 @@ void adaptLevelToPalette(TXshLevelHandle *currentLevelHandle,
   QApplication::restoreOverrideCursor();
 
   currentLevelHandle->getSimpleLevel()->setPalette(plt);
+
+  std::wstring oldGlobalName = paletteHandle->getPalette()->getGlobalName();
   paletteHandle->setPalette(plt);
+  paletteHandle->getPalette()->setGlobalName(oldGlobalName);
   plt->setDirtyFlag(true);
   paletteHandle->notifyPaletteChanged();
   currentLevelHandle->notifyLevelChange();
@@ -663,7 +666,7 @@ void StudioPaletteCmd::updateAllLinkedStyles(TPaletteHandle *paletteHandle,
     }
   }
   if (!paletteHandle || !paletteHandle->getPalette()) return;
-  if (somethingChanged) paletteHandle->notifyColorStyleChanged();
+  if (somethingChanged) paletteHandle->notifyColorStyleChanged(false);
 }
 
 //-----------------------------------------------------------------------------

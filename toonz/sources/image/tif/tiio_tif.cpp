@@ -734,8 +734,8 @@ void Tiio::TifWriterProperties::updateTranslation() {
   m_bitsPerPixel.setItemUIName(L"48(RGB)", tr("48(RGB)"));
   m_bitsPerPixel.setItemUIName(L" 1(BW)", tr(" 1(BW)"));
   m_bitsPerPixel.setItemUIName(L" 8(GREYTONES)", tr(" 8(GREYTONES)"));
-  m_bitsPerPixel.setItemUIName(L"32(RGBM)", tr("32(RGBM)"));
-  m_bitsPerPixel.setItemUIName(L"64(RGBM)", tr("64(RGBM)"));
+  m_bitsPerPixel.setItemUIName(L"32(RGBM)", tr("32(RGBA)"));
+  m_bitsPerPixel.setItemUIName(L"64(RGBM)", tr("64(RGBA)"));
   m_orientation.setQStringName(tr("Orientation"));
   m_orientation.setItemUIName(TNZ_INFO_ORIENT_TOPLEFT, tr("Top Left"));
   m_orientation.setItemUIName(TNZ_INFO_ORIENT_TOPRIGHT, tr("Top Right"));

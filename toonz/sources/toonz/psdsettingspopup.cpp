@@ -166,7 +166,7 @@ PsdSettingsPopup::PsdSettingsPopup()
   m_modeDescription->setFixedHeight(40);
   m_modeDescription->setMinimumWidth(250);
   m_modeDescription->setReadOnly(true);
-  m_createSubXSheet = new CheckBox(tr("Expose in a Sub-xsheet"));
+  m_createSubXSheet = new CheckBox(tr("Expose in a Sub-Scene"));
   m_createSubXSheet->setMaximumHeight(WidgetHeight);
   m_createSubXSheet->setEnabled(false);
 
@@ -201,8 +201,7 @@ PsdSettingsPopup::PsdSettingsPopup()
   m_psdFolderOptions = new QButtonGroup(this);
   QList<QString> folderOptionsList;
   folderOptionsList << tr("Ignore groups");
-  folderOptionsList << tr(
-      "Expose layers in a group as columns in a sub-xsheet");
+  folderOptionsList << tr("Expose layers in a group as columns in a sub-scene");
   folderOptionsList << tr("Expose layers in a group as frames in a column");
 
   QGridLayout *gridButton = new QGridLayout();

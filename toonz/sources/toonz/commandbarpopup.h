@@ -71,7 +71,7 @@ class CommandBarPopup final : public DVGui::Dialog {
   TFilePath m_path;
 
 public:
-  CommandBarPopup(bool isXsheetToolbar = false);
+  CommandBarPopup(bool isQuickToolbar = false);
 protected slots:
   void onOkPressed();
   void onSearchTextChanged(const QString& text);

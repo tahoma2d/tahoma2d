@@ -316,10 +316,10 @@ get the stroke nearest at point
   TVectorImageP splitSelected(bool removeFlag);
 
   //! Merge the image with the \b img.
-  void mergeImage(const TVectorImageP &img, const TAffine &affine,
+  int mergeImage(const TVectorImageP &img, const TAffine &affine,
                   bool sameStrokeId = true);
 
-  void mergeImage(const TVectorImageP &img, const TAffine &affine,
+  int mergeImage(const TVectorImageP &img, const TAffine &affine,
                   const std::map<int, int> &styleTable,
                   bool sameStrokeId = true);
   //! Merge the image with the vector of image \b images.

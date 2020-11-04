@@ -13,6 +13,7 @@
 #include "trop.h"
 #include "timagecache.h"
 #include "tstopwatch.h"
+#include "timage_io.h"
 
 // TnzBase includes
 #include "trenderresourcemanager.h"
@@ -619,7 +620,7 @@ void TRenderer::addPort(TRenderPort *port) { m_imp->addPort(port); }
 void TRenderer::removePort(TRenderPort *port) { m_imp->removePort(port); }
 
 //---------------------------------------------------------
-
+// Looks like this only handles a single frame?
 unsigned long TRenderer::startRendering(double f, const TRenderSettings &info,
                                         const TFxPair &actualRoot) {
   assert(f >= 0);
@@ -987,8 +988,14 @@ void RenderTask::run() {
     if (!m_fieldRender && !m_stereoscopic) {
       // Common case - just build the first tile
       buildTile(m_tileA);
-      /*-- 通常はここがFxのレンダリング処理 --*/
+      // static int iCount = 0;
+      // QString qPath("C:\\butta\\image_" +
+      //     QString::number(++iCount).rightJustified(3, '0') + ".tif");
+      // TImageWriter::save(TFilePath(qPath.toStdWString()), m_tileA.getRaster());
+      /*-- Normally this is the Fx rendering process --*/
       m_fx.m_frameA->compute(m_tileA, t, m_info);
+      // The tile now has the image.
+      // TImageWriter::save(TFilePath(qPath.toStdWString()), m_tileA.getRaster());
     } else {
       assert(!(m_stereoscopic && m_fieldRender));
       // Field rendering  or stereoscopic case
@@ -1180,8 +1187,8 @@ void TRendererStartInvoker::doStartRender(TRendererImp *renderer,
 }
 
 std::vector<const TFx *> calculateSortedFxs(TRasterFxP rootFx) {
-  std::map<const TFx *, std::set<const TFx *>> E; /* 辺の情報 */
-  std::set<const TFx *> Sources; /* 入次数0のノード群 */
+  std::map<const TFx *, std::set<const TFx *>> E; 
+  std::set<const TFx *> Sources; 
 
   std::queue<const TFx *> Q;
   Q.push(rootFx.getPointer());
@@ -1195,8 +1202,8 @@ std::vector<const TFx *> calculateSortedFxs(TRasterFxP rootFx) {
       continue;
     }
 
-    /* 繋がっている入力ポートの先の Fx を訪問する
-入力ポートが無ければ終了 */
+    /* Visit the Fx beyond the connected input port
+Exit if there is no input port */
     int portCount = vptr->getInputPortCount();
     if (portCount < 1) {
       Sources.insert(vptr);
@@ -1219,7 +1226,7 @@ std::vector<const TFx *> calculateSortedFxs(TRasterFxP rootFx) {
     }
   }
 
-  /* トポロジカルソート */
+  /* Topological sort */
   std::set<const TFx *> visited;
   std::vector<const TFx *> L;
   std::function<void(const TFx *)> visit = [&visit, &visited, &E,
@@ -1398,10 +1405,10 @@ void TRendererImp::startRendering(
     // Build the frame's description alias
     const TRenderer::RenderData &renderData = *it;
 
-    /*--- カメラサイズ (LevelAutoやノイズで使用する) ---*/
+    /*--- Camera size (used for Level Auto and noise) ---*/
     TRenderSettings rs = renderData.m_info;
     rs.m_cameraBox     = camBox;
-    /*--- 途中でPreview計算がキャンセルされたときのフラグ ---*/
+    /*--- Flag when Preview calculation is canceled in the middle ---*/
     rs.m_isCanceled = &renderInfos->m_canceled;
 
     TRasterFxP fx = renderData.m_fxRoot.m_frameA;

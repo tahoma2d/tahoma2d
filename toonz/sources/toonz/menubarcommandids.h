@@ -35,6 +35,7 @@
 #define MI_SaveLevelAs "MI_SaveLevelAs"
 #define MI_ExportLevel "MI_ExportLevel"
 #define MI_SavePaletteAs "MI_SavePaletteAs"
+#define MI_SaveStudioPalette "MI_SaveStudioPalette"
 #define MI_OverwritePalette "MI_OverwritePalette"
 #define MI_SaveAsDefaultPalette "MI_SaveAsDefaultPalette"
 #define MI_LoadColorModel "MI_LoadColorModel"
@@ -47,6 +48,7 @@
 #define MI_OutputSettings "MI_OutputSettings"
 #define MI_PreviewSettings "MI_PreviewSettings"
 #define MI_Render "MI_Render"
+#define MI_SaveAndRender "MI_SaveAndRender"
 #define MI_FastRender "MI_FastRender"
 #define MI_Preview "MI_Preview"
 #define MI_SoundTrack "MI_SoundTrack"
@@ -301,7 +303,7 @@
 #define MI_UnlockSelectedColumns "MI_UnlockSelectedColumns"
 #define MI_UnlockAllColumns "MI_UnlockAllColumns"
 #define MI_ToggleColumnLocks "MI_ToggleColumnLocks"
-#define MI_ToggleXSheetToolbar "MI_ToggleXSheetToolbar"
+#define MI_ToggleQuickToolbar "MI_ToggleQuickToolbar"
 #define MI_FoldColumns "MI_FoldColumns"
 #define MI_ToggleXsheetCameraColumn "MI_ToggleXsheetCameraColumn"
 #define MI_ToggleCurrentTimeIndicator "MI_ToggleCurrentTimeIndicator"
@@ -400,6 +402,9 @@
 #define MI_PlasticBuildSkeleton "MI_PlasticBuildSkeleton"
 #define MI_PlasticAnimate "MI_PlasticAnimate"
 
+#define MI_BrushAutoFillOn "MI_BrushAutoFillOn"
+#define MI_BrushAutoFillOff "MI_BrushAutoFillOff"
+
 #define MI_DeactivateUpperColumns "MI_DeactivateUpperColumns"
 #define MI_CompareToSnapshot "MI_CompareToSnapshot"
 #define MI_PreviewFx "MI_PreviewFx"
@@ -429,8 +434,9 @@
 #define MI_StopMotionNextFrame "MI_StopMotionNextFrame"
 
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
+#define MI_SupportTahoma2D "MI_SupportTahoma2D"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
-// #define MI_OpenCommunityForum "MI_OpenCommunityForum"
+#define MI_OpenCommunityForum "MI_OpenCommunityForum"
 #define MI_OpenReportABug "MI_OpenReportABug"
 
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"

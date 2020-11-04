@@ -1,4 +1,4 @@
-#include "xshtoolbar.h"
+#include "quicktoolbar.h"
 
 // Tnz6 includes
 #include "xsheetviewer.h"
@@ -24,37 +24,37 @@ namespace XsheetGUI {
 //-----------------------------------------------------------------------------
 
 #if QT_VERSION >= 0x050500
-XSheetToolbar::XSheetToolbar(XsheetViewer *parent, Qt::WindowFlags flags,
+QuickToolbar::QuickToolbar(XsheetViewer *parent, Qt::WindowFlags flags,
                              bool isCollapsible)
 #else
-XSheetToolbar::XSheetToolbar(XsheetViewer *parent, Qt::WFlags flags)
+QuickToolbar::QuickToolbar(XsheetViewer *parent, Qt::WFlags flags)
 #endif
     : CommandBar(parent, flags, isCollapsible, true), m_viewer(parent) {
   setObjectName("cornerWidget");
   setFixedHeight(29);
-  setObjectName("XSheetToolbar");
+  setObjectName("QuickToolbar");
   setIconSize(QSize(20, 20));
 }
 
 //-----------------------------------------------------------------------------
 
-void XSheetToolbar::showToolbar(bool show) {
+void QuickToolbar::showToolbar(bool show) {
   if (!m_isCollapsible) return;
   show ? this->show() : this->hide();
 }
 
 //-----------------------------------------------------------------------------
 
-void XSheetToolbar::toggleXSheetToolbar() {
-  bool toolbarEnabled = Preferences::instance()->isShowXSheetToolbarEnabled();
-  Preferences::instance()->setValue(showXSheetToolbar, !toolbarEnabled);
-  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("XSheetToolbar");
+void QuickToolbar::toggleQuickToolbar() {
+  bool toolbarEnabled = Preferences::instance()->isShowQuickToolbarEnabled();
+  Preferences::instance()->setValue(showQuickToolbar, !toolbarEnabled);
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged("QuickToolbar");
 }
 
 //-----------------------------------------------------------------------------
 
-void XSheetToolbar::showEvent(QShowEvent *e) {
-  if (Preferences::instance()->isShowXSheetToolbarEnabled() || !m_isCollapsible)
+void QuickToolbar::showEvent(QShowEvent *e) {
+  if (Preferences::instance()->isShowQuickToolbarEnabled() || !m_isCollapsible)
     show();
   else
     hide();
@@ -63,10 +63,10 @@ void XSheetToolbar::showEvent(QShowEvent *e) {
 
 //-----------------------------------------------------------------------------
 
-void XSheetToolbar::contextMenuEvent(QContextMenuEvent *event) {
+void QuickToolbar::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu = new QMenu(this);
   QAction *customizeCommandBar =
-      menu->addAction(tr("Customize XSheet Toolbar"));
+      menu->addAction(tr("Customize Quick Toolbar"));
   connect(customizeCommandBar, SIGNAL(triggered()),
           SLOT(doCustomizeCommandBar()));
   menu->exec(event->globalPos());
@@ -74,7 +74,7 @@ void XSheetToolbar::contextMenuEvent(QContextMenuEvent *event) {
 
 //-----------------------------------------------------------------------------
 
-void XSheetToolbar::doCustomizeCommandBar() {
+void QuickToolbar::doCustomizeCommandBar() {
   CommandBarPopup *cbPopup = new CommandBarPopup(true);
 
   if (cbPopup->exec()) {
@@ -85,11 +85,11 @@ void XSheetToolbar::doCustomizeCommandBar() {
 
 //============================================================
 
-class ToggleXSheetToolbarCommand final : public MenuItemHandler {
+class ToggleQuickToolbarCommand final : public MenuItemHandler {
 public:
-  ToggleXSheetToolbarCommand() : MenuItemHandler(MI_ToggleXSheetToolbar) {}
-  void execute() override { XSheetToolbar::toggleXSheetToolbar(); }
-} ToggleXSheetToolbarCommand;
+  ToggleQuickToolbarCommand() : MenuItemHandler(MI_ToggleQuickToolbar) {}
+  void execute() override { QuickToolbar::toggleQuickToolbar(); }
+} ToggleQuickToolbarCommand;
 
 //============================================================
 

@@ -1580,7 +1580,7 @@ void StringParamField::onChange() {
   if (m_multiTextFld)
     value = m_multiTextFld->toPlainText().toStdWString();
   else
-    value     = m_textFld->text().toStdWString();
+    value = m_textFld->text().toStdWString();
   TUndo *undo = 0;
 
   if (!m_actualParam || m_actualParam->getValue() == value) return;
@@ -1662,10 +1662,8 @@ FontParamField::FontParamField(QWidget *parent, QString name,
   setLayout(m_layout);
 
   bool ret = true;
-  ret = ret && connect(m_fontCombo, &QFontComboBox::currentFontChanged, this,
-                       &FontParamField::findStyles);
-  ret = ret && connect(m_fontCombo, &QFontComboBox::currentFontChanged, this,
-                       &FontParamField::onChange);
+  ret = ret && connect(m_fontCombo, SIGNAL(activated(const QString &)), this,
+                       SLOT(onChange()));
   ret = ret && connect(m_styleCombo, SIGNAL(activated(const QString &)), this,
                        SLOT(onChange()));
   ret = ret && connect(m_sizeField, SIGNAL(valueChanged(bool)), this,
@@ -1704,9 +1702,15 @@ void FontParamField::onSizeChange(bool isDragging) {
 
 void FontParamField::onChange() {
   QString family = m_fontCombo->currentFont().family();
-  QString style  = m_styleCombo->currentText();
 
-  int size = m_sizeField->getValue();
+  TFontParamP fontParam = m_actualParam;
+  QFont currentFont;
+  currentFont.fromString(QString::fromStdWString(fontParam->getValue()));
+  if (family != currentFont.family()) {
+    findStyles(QFont(family));
+  }
+  QString style = m_styleCombo->currentText();
+  int size      = m_sizeField->getValue();
   int min, max;
   m_sizeField->getRange(min, max);
   if (size < min) size = min;
@@ -1717,9 +1721,6 @@ void FontParamField::onChange() {
 
   TUndo *undo = 0;
 
-  TFontParamP fontParam = m_actualParam;
-  QFont currentFont;
-  currentFont.fromString(QString::fromStdWString(fontParam->getValue()));
   if (fontParam && currentFont != font)
     undo = new FontParamFieldUndo(fontParam, m_interfaceName,
                                   ParamField::m_fxHandleStat);
@@ -1749,10 +1750,10 @@ void FontParamField::update(int frame) {
   if (!m_actualParam || !m_currentParam) return;
   QFont font;
   font.fromString(QString::fromStdWString(m_actualParam->getValue()));
-
-  if (m_fontCombo->currentText() != font.family())
+  if (m_fontCombo->currentText() != font.family()) {
     m_fontCombo->setCurrentFont(font);
-
+    findStyles(font);
+  }
   m_styleCombo->setCurrentText(font.styleName());
   m_sizeField->setValue(font.pixelSize());
 }
@@ -1806,9 +1807,8 @@ ToneCurveParamField::ToneCurveParamField(QWidget *parent, QString name,
 
 void ToneCurveParamField::updateField(const QList<TPointD> value) {
   if (m_actualParam) {
-    assert(m_currentParam &&
-           m_currentParam->getCurrentChannel() ==
-               m_actualParam->getCurrentChannel());
+    assert(m_currentParam && m_currentParam->getCurrentChannel() ==
+                                 m_actualParam->getCurrentChannel());
     m_toneCurveField->setCurrentChannel(m_actualParam->getCurrentChannel());
     assert(m_currentParam &&
            m_currentParam->isLinear() == m_actualParam->isLinear());

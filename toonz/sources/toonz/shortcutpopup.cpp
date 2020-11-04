@@ -57,7 +57,10 @@ public:
   }
   void updateText() {
     QString text = m_action->text();
-    text.remove("&");
+    if (text.indexOf("&") == 0) {
+      text = text.remove(0, 1);
+    }
+    text = text.replace("&&", "&");
     setText(0, text);
     QString shortcut = m_action->shortcut().toString();
     setText(1, shortcut);
@@ -125,7 +128,7 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
   }
   Qt::KeyboardModifiers modifiers = event->modifiers();
 
-  // Tasti che non possono essere utilizzati come shortcut
+  // Keys that cannot be used as shortcuts
   if ((modifiers | (Qt::CTRL | Qt::SHIFT | Qt::ALT)) !=
           (Qt::CTRL | Qt::SHIFT | Qt::ALT) ||
       key == Qt::Key_Home || key == Qt::Key_End || key == Qt::Key_PageDown ||
@@ -137,6 +140,15 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
       return;
     } else
       modifiers = 0;
+  }
+
+  // Block the arrows and space
+  int ctl = modifiers | Qt::CTRL;
+  if (key == Qt::Key_Space || ((modifiers == Qt::NoModifier) &&
+                               (key == Qt::Key_Left || key == Qt::Key_Right ||
+                                key == Qt::Key_Up || key == Qt::Key_Down))) {
+    event->ignore();
+    return;
   }
 
   // If "Use Numpad and Tab keys for Switching Styles" option is activated,
@@ -215,12 +227,12 @@ ShortcutTree::ShortcutTree(QWidget *parent) : QTreeWidget(parent) {
   addFolder(tr("Scan & Cleanup"), MenuScanCleanupCommandType,
             menuCommandFolder);
   addFolder(tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(tr("Xsheet"), MenuXsheetCommandType, menuCommandFolder);
+  addFolder(tr("Scene"), MenuXsheetCommandType, menuCommandFolder);
   addFolder(tr("Cells"), MenuCellsCommandType, menuCommandFolder);
   addFolder(tr("Play"), MenuPlayCommandType, menuCommandFolder);
   addFolder(tr("Render"), MenuRenderCommandType, menuCommandFolder);
   addFolder(tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(tr("Windows"), MenuWindowsCommandType, menuCommandFolder);
+  addFolder(tr("Panels"), MenuWindowsCommandType, menuCommandFolder);
   addFolder(tr("Help"), MenuHelpCommandType, menuCommandFolder);
 
   addFolder(tr("Right-click Menu Commands"), RightClickMenuCommandType);
@@ -576,7 +588,7 @@ void ShortcutPopup::showDialog(QString text) {
   if (m_dialog == NULL) {
     m_dialogLabel = new QLabel("", this);
     m_dialog      = new DVGui::Dialog(this, false, false);
-    m_dialog->setWindowTitle(tr("Tahoma - Setting Shortcuts"));
+    m_dialog->setWindowTitle(tr("Tahoma2D - Setting Shortcuts"));
     m_dialog->setModal(false);
 
     m_dialog->setTopMargin(10);
@@ -699,9 +711,9 @@ void ShortcutPopup::onLoadPreset() {
 
   if (!showConfirmDialog()) return;
   showDialog(tr("Setting Shortcuts"));
-  if (preset == "Tahoma") {
+  if (preset == "Tahoma2D") {
     clearAllShortcuts(false);
-    TFilePath fp = defaultPresetDir + TFilePath("deftahoma.ini");
+    TFilePath fp = defaultPresetDir + TFilePath("deftahoma2d.ini");
     setPresetShortcuts(fp);
     return;
   } else if (preset == "Toon Boom Harmony") {
@@ -739,7 +751,7 @@ void ShortcutPopup::onLoadPreset() {
 QStringList ShortcutPopup::buildPresets() {
   QStringList presets;
   presets << ""
-          << "Tahoma"
+          << "Tahoma2D"
           //<< "RETAS PaintMan"
           << "Toon Boom Harmony"
           << "Adobe Animate"
@@ -803,8 +815,8 @@ void ShortcutPopup::getCurrentPresetPref() {
   QString name = Preferences::instance()->getShortcutPreset();
   if (name == "DELETED")
     m_presetChoiceCB->setCurrentText("");
-  else if (name == "deftahoma")
-    m_presetChoiceCB->setCurrentText("Tahoma");
+  else if (name == "deftahoma2d")
+    m_presetChoiceCB->setCurrentText("Tahoma2D");
   else if (name == "otharmony")
     m_presetChoiceCB->setCurrentText("Toon Boom Harmony");
   else if (name == "otadobe")

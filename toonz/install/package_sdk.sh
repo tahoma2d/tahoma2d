@@ -7,7 +7,7 @@ do
            ;;
         d) DIST=$OPTARG
            ;;
-        h) echo "-t tahoma_repository_dir -d dist_dir"
+        h) echo "-t tahoma2d_repository_dir -d dist_dir"
            exit 1;
            ;;
         \?) exit 1

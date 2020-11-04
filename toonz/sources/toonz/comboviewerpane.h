@@ -35,9 +35,11 @@ enum CV_Parts {
   CVPARTS_None        = 0,
   CVPARTS_TOOLBAR     = 0x1,
   CVPARTS_TOOLOPTIONS = 0x2,
-  CVPARTS_FLIPCONSOLE = 0x4,
-  CVPARTS_End         = 0x8,
-  CVPARTS_ALL = CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS | CVPARTS_FLIPCONSOLE
+  CVPARTS_PLAYBAR     = 0x4,
+  CVPARTS_FRAMESLIDER = 0x8,
+  CVPARTS_End         = 0x16,
+  CVPARTS_ALL = CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS | CVPARTS_PLAYBAR |
+                CVPARTS_FRAMESLIDER
 };
 
 //-----------------------------------------------------------------------------
@@ -108,7 +110,7 @@ protected:
   void createFrameToolBar();
   void createPlayToolBar();
   void addColorMaskButton(QWidget *parent, const char *iconSVGName, int id);
-  void contextMenuEvent(QContextMenuEvent *event) override;
+  // void contextMenuEvent(QContextMenuEvent *event) override;
   void playAudioFrame(int frame);
   bool hasSoundtrack();
 
