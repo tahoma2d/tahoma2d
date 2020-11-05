@@ -424,7 +424,6 @@ void DockLayout::applyTransform(const QTransform &transform) {
 // check if the region will be with fixed width
 bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   if (m_item) {
-
     if ((m_item->objectName() == "FilmStrip" && m_item->getCanFixWidth()) ||
         m_item->objectName() == "StyleEditor" ||
         m_item->objectName() == "StopMotionController") {
@@ -438,8 +437,7 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   if (m_orientation == horizontal) {
     bool ret = true;
     for (Region *childRegion : m_childList) {
-      if (!childRegion->checkWidgetsToBeFixedWidth(widgets))
-        ret = false;
+      if (!childRegion->checkWidgetsToBeFixedWidth(widgets)) ret = false;
     }
     return ret;
   }
@@ -447,8 +445,7 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
   else {
     bool ret = false;
     for (Region *childRegion : m_childList) {
-      if (childRegion->checkWidgetsToBeFixedWidth(widgets))
-        ret = true;
+      if (childRegion->checkWidgetsToBeFixedWidth(widgets)) ret = true;
     }
     return ret;
   }
@@ -456,9 +453,9 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
 
 //------------------------------------------------------
 
-void DockLayout::redistribute() {
+void DockLayout::redistribute(bool allowFixedItems) {
   if (!m_regions.empty()) {
-    std::vector<QWidget *> widgets;
+    std::vector<QWidget *> fixedWidthWidgets;
     std::vector<QWidget *> fixedHeightWidgets;
 
     // Recompute extremal region sizes
@@ -470,10 +467,12 @@ void DockLayout::redistribute() {
     // it avoids all widgets in horizontal alignment to be fixed, or UI becomes
     // glitchy.
     bool widgetsCanBeFixedWidth =
-        !m_regions.front()->checkWidgetsToBeFixedWidth(widgets);
-
-    if (widgetsCanBeFixedWidth) {
-      for (QWidget *widget : widgets) widget->setFixedWidth(widget->width());
+        !m_regions.front()->checkWidgetsToBeFixedWidth(fixedWidthWidgets);
+    if (allowFixedItems) {
+      if (widgetsCanBeFixedWidth) {
+        for (QWidget *widget : fixedWidthWidgets)
+          widget->setFixedWidth(widget->width());
+      }
     }
 
     m_regions.front()->calculateExtremalSizes();
@@ -492,11 +491,12 @@ void DockLayout::redistribute() {
     // Recompute Layout geometry
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
-
-    if (widgetsCanBeFixedWidth) {
-      for (QWidget *widget : widgets) {
-        widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        widget->setMinimumSize(0, 0);
+    if (allowFixedItems) {
+      if (widgetsCanBeFixedWidth) {
+        for (QWidget *widget : fixedWidthWidgets) {
+          widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+          widget->setMinimumSize(0, 0);
+        }
       }
     }
   }
@@ -681,7 +681,7 @@ void DockLayout::dockItem(DockWidget *item, DockPlaceholder *place) {
   place->hide();
   item->hide();
   dockItemPrivate(item, place->m_region, place->m_idx);
-  redistribute();
+  redistribute(false);
   parentWidget()->repaint();
   item->setWindowFlags(Qt::SubWindow);
   item->show();
@@ -910,7 +910,7 @@ bool DockLayout::undockItem(DockWidget *item) {
 
   setMaximized(item, false);
 
-  redistribute();
+  redistribute(false);
 
   return true;
 }

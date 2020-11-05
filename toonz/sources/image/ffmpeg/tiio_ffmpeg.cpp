@@ -37,23 +37,29 @@ bool Ffmpeg::checkFfmpeg() {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
     return true;
   }
-    
+
 #ifdef MACOSX
-    path = QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/ffmpeg";
-    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-        Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/");
-        return true;
-    }
+  path = QDir::currentPath() + "/" +
+         QString::fromStdString(TEnv::getApplicationFileName()) +
+         ".app/ffmpeg/ffmpeg";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(
+        ffmpegPath, QDir::currentPath() + "/" +
+                        QString::fromStdString(TEnv::getApplicationFileName()) +
+                        ".app/ffmpeg/");
+    return true;
+  }
 #endif
 
 #ifdef LINUX
-	path = QDir::currentPath() + "/ffmpeg/ffmpeg";
-	if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-		Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/ffmpeg/");
-		return true;
-	}
+  QString currentPath = TEnv::getWorkingDirectory().getQString();
+  path                = currentPath + "/ffmpeg/ffmpeg";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(ffmpegPath, currentPath + "/ffmpeg/");
+    return true;
+  }
 #endif
-	// give up
+  // give up
   return false;
 }
 
@@ -74,24 +80,30 @@ bool Ffmpeg::checkFfprobe() {
     Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
     return true;
   }
-    
+
 #ifdef MACOSX
-    path = QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/ffprobe";
-    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-        Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/" + QString::fromStdString(TEnv::getApplicationFileName()) + ".app/ffmpeg/");
-        return true;
-    }
+  path = QDir::currentPath() + "/" +
+         QString::fromStdString(TEnv::getApplicationFileName()) +
+         ".app/ffmpeg/ffprobe";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(
+        ffmpegPath, QDir::currentPath() + "/" +
+                        QString::fromStdString(TEnv::getApplicationFileName()) +
+                        ".app/ffmpeg/");
+    return true;
+  }
 #endif
 
 #ifdef LINUX
-	path = QDir::currentPath() + "/ffmpeg/ffprobe";
-	if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-		Preferences::instance()->setValue(ffmpegPath, QDir::currentPath() + "/ffmpeg/");
-		return true;
-	}
+  QString currentPath = TEnv::getWorkingDirectory().getQString();
+  path                = currentPath + "/ffmpeg/ffprobe";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    Preferences::instance()->setValue(ffmpegPath, currentPath + "/ffmpeg/");
+    return true;
+  }
 #endif
 
-	// give up
+  // give up
   return false;
 }
 

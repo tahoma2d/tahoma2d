@@ -26,6 +26,7 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/mypaintbrushstyle.h"
 #include "toonz/preferences.h"
+#include "toonz/toonzfolders.h"
 
 // TnzCore includes
 #include "tgl.h"
@@ -38,6 +39,7 @@
 #include "tstroke.h"
 #include "timagecache.h"
 #include "tpixelutils.h"
+#include "tsystem.h"
 
 // Qt includes
 #include <QCoreApplication>  // Qt translation support
@@ -203,7 +205,9 @@ void FullColorBrushTool::onActivate() {
         QString::fromStdString(FullcolorBrushPreset.getValue()).toStdWString();
     if (wpreset != CUSTOM_WSTR) {
       initPresets();
+      if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
       m_preset.setValue(wpreset);
+      FullcolorBrushPreset = m_preset.getValueAsString();
       loadPreset();
     } else
       loadLastBrush();
@@ -925,7 +929,7 @@ void FullColorBrushTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(TEnv::getConfigDir() + "brush_raster.txt");
+    m_presetsManager.load(ToonzFolder::getMyModuleDir() + "brush_raster.txt");
   }
 
   // Rebuild the presets property entries
@@ -991,6 +995,7 @@ void FullColorBrushTool::addPreset(QString name) {
 
   // Set the value to the specified one
   m_preset.setValue(preset.m_name);
+  FullcolorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------
@@ -1004,6 +1009,7 @@ void FullColorBrushTool::removePreset() {
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
+  FullcolorBrushPreset = m_preset.getValueAsString();
 }
 
 //------------------------------------------------------------------

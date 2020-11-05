@@ -36,7 +36,7 @@ using namespace DVGui;
 
 namespace {
 bool isMovieType(std::string type) {
-  return (type == "mov" || type == "avi" || type == "3gp" || type == "mp4" ||
+  return (type == "avi" || type == "mp4" ||
           type == "webm");
 }
 };  // namespace

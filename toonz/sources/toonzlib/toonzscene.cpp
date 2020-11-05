@@ -615,7 +615,7 @@ void ToonzScene::save(const TFilePath &fp, TXsheet *subxsh) {
     if (!os.checkStatus())
       throw TException("Could not open temporary save file");
 
-    TXsheet *xsh      = subxsh;
+    TXsheet *xsh = subxsh;
     if (xsh == 0) xsh = m_childStack->getTopXsheet();
 
     std::map<std::string, std::string> attr;
@@ -873,7 +873,7 @@ TXshLevel *ToonzScene::createNewLevel(int type, std::wstring levelName,
       /*-- LevelSetの中に同じファイルパスのLevelがあるかをチェック --*/
       if (type != CHILD_XSHLEVEL && type != PLT_XSHLEVEL) {
         if (fp.isEmpty()) fp = getDefaultLevelPath(type, levelName);
-        TFilePath actualFp   = decodeFilePath(fp);
+        TFilePath actualFp = decodeFilePath(fp);
 
         if (TSystem::doesExistFileOrLevel(
                 actualFp))  // if(TFileStatus(actualFp).doesExist()) continue;
@@ -928,46 +928,8 @@ TXshLevel *ToonzScene::createNewLevel(int type, std::wstring levelName,
     sl->setPath(fp);
     sl->setDirtyFlag(true);
 
-    if (type == TZP_XSHLEVEL || type == PLI_XSHLEVEL)
-      sl->setPalette(new TPalette());
-
-    if (type == OVL_XSHLEVEL)
-      sl->setPalette(FullColorPalette::instance()->getPalette(this));
-
-    TPalette *palette = sl->getPalette();
-    if (palette && type != OVL_XSHLEVEL) {
-      palette->setPaletteName(sl->getName());
-      palette->setDirtyFlag(true);
-    }
-
-    if (type == TZP_XSHLEVEL || type == OVL_XSHLEVEL) {
-      double dpiY = dpi;
-      sl->getProperties()->setDpiPolicy(LevelProperties::DP_ImageDpi);
-      if (dim == TDimension()) {
-        double w, h;
-        Preferences *pref = Preferences::instance();
-        if (pref->isNewLevelSizeToCameraSizeEnabled()) {
-          TDimensionD camSize = getCurrentCamera()->getSize();
-          w                   = camSize.lx;
-          h                   = camSize.ly;
-          sl->getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
-          dpi  = getCurrentCamera()->getDpi().x;
-          dpiY = getCurrentCamera()->getDpi().y;
-        } else {
-          w    = pref->getDefLevelWidth();
-          h    = pref->getDefLevelHeight();
-          dpi  = pref->getDefLevelDpi();
-          dpiY = dpi;
-        }
-
-        sl->getProperties()->setImageRes(
-            TDimension(tround(w * dpi), tround(h * dpiY)));
-      } else
-        sl->getProperties()->setImageRes(dim);
-
-      sl->getProperties()->setImageDpi(TPointD(dpi, dpiY));
-      sl->getProperties()->setDpi(dpi);
-    }
+    sl->initializePalette();
+    sl->initializeResolutionAndDpi();
 
     xl = sl;
   }
@@ -1163,7 +1125,7 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
   }
 
   NameModifier nm(levelName);
-  levelName                                         = nm.getNext();
+  levelName = nm.getNext();
   while (m_levelSet->hasLevel(levelName)) levelName = nm.getNext();
 
   // Discriminate sound levels
@@ -1213,7 +1175,7 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
       const Preferences &prefs = *Preferences::instance();
       int formatIdx            = prefs.matchLevelFormat(
           levelPath);  // Should I use actualPath here? It's mostly
-                       // irrelevant anyway, it's for old tzp/tzu...
+                                  // irrelevant anyway, it's for old tzp/tzu...
       if (formatIdx >= 0)
         lp->options() = prefs.levelFormat(formatIdx).m_options;
       else {
@@ -1285,8 +1247,8 @@ TFilePath ToonzScene::decodeFilePath(const TFilePath &path) const {
           return dir + tail;
       }
       if (project) {
-        h                       = ::to_string(head.substr(1));
-        TFilePath f             = project->getFolder(h);
+        h           = ::to_string(head.substr(1));
+        TFilePath f = project->getFolder(h);
         if (f != TFilePath()) s = f.getWideString();
       }
     }
@@ -1418,9 +1380,8 @@ TFilePath ToonzScene::getDefaultLevelPath(int levelType,
     levelPath = TFilePath(levelName + L"..png");
   }
 
-  if (!isUntitled() &&
-      Preferences::instance()->getPathAliasPriority() ==
-          Preferences::SceneFolderAlias)
+  if (!isUntitled() && Preferences::instance()->getPathAliasPriority() ==
+                           Preferences::SceneFolderAlias)
     return TFilePath("$scenefolder") + levelPath;
 
   std::string folderName = getFolderName(levelType);

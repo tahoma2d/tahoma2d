@@ -161,9 +161,8 @@ void writeRoomList(std::vector<Room *> &rooms) {
 //-----------------------------------------------------------------------------
 
 void makePrivate(Room *room) {
-  TFilePath layoutDir       = ToonzFolder::getMyRoomsDir();
-  TFilePath roomPath        = room->getPath();
-  std::string mbSrcFileName = roomPath.getName() + "_menubar.xml";
+  TFilePath layoutDir = ToonzFolder::getMyRoomsDir();
+  TFilePath roomPath  = room->getPath();
   if (roomPath == TFilePath() || roomPath.getParentDir() != layoutDir) {
     int count = 1;
     for (;;) {
@@ -173,25 +172,6 @@ void makePrivate(Room *room) {
     room->setPath(roomPath);
     TSystem::touchParentDir(roomPath);
     room->save();
-  }
-  /*- create private menubar settings if not exists -*/
-  std::string mbDstFileName = roomPath.getName() + "_menubar.xml";
-  TFilePath myMBPath        = layoutDir + mbDstFileName;
-  if (!TFileStatus(myMBPath).isReadable()) {
-    TFilePath templateRoomMBPath =
-        ToonzFolder::getTemplateRoomsDir() + mbSrcFileName;
-    if (TFileStatus(templateRoomMBPath).doesExist())
-      TSystem::copyFile(myMBPath, templateRoomMBPath);
-    else {
-      TFilePath templateFullMBPath =
-          ToonzFolder::getTemplateRoomsDir() + "menubar_template.xml";
-      if (TFileStatus(templateFullMBPath).doesExist())
-        TSystem::copyFile(myMBPath, templateFullMBPath);
-      else
-        DVGui::warning(
-            QObject::tr("Cannot open menubar settings template file. "
-                        "Re-installing Toonz will solve this problem."));
-    }
   }
 }
 
@@ -578,8 +558,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
   setCommandHandler(MI_SupportTahoma2D, this, &MainWindow::onSupportTahoma2D);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
-  // setCommandHandler(MI_OpenCommunityForum, this,
-  //                  &MainWindow::onOpenCommunityForum);
+  setCommandHandler(MI_OpenCommunityForum, this,
+                    &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
@@ -684,8 +664,7 @@ void MainWindow::refreshWriteSettings() { writeSettings(); }
 void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
 
-  /*-- Pageを追加すると同時にMenubarを追加する --*/
-  StackedMenuBar *stackedMenuBar = m_topBar->getStackedMenuBar();
+  m_topBar->loadMenubar();
 
   std::vector<Room *> rooms;
 
@@ -713,10 +692,6 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getName());
 
-      /*- ここでMenuBarファイルをロードする -*/
-      std::string mbFileName = roomPath.getName() + "_menubar.xml";
-      stackedMenuBar->loadAndAddMenubar(ToonzFolder::getRoomsFile(mbFileName));
-
       // room->setDockOptions(QMainWindow::DockOptions(
       //  (QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks) &
       //  ~QMainWindow::AllowTabbedDocks));
@@ -733,31 +708,26 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
     Room *pltEditRoom = createPltEditRoom();
     m_stackedWidget->addWidget(pltEditRoom);
     rooms.push_back(pltEditRoom);
-    stackedMenuBar->createMenuBarByName(pltEditRoom->getName());
 
     // InknPaintRoom
     Room *inknPaintRoom = createInknPaintRoom();
     m_stackedWidget->addWidget(inknPaintRoom);
     rooms.push_back(inknPaintRoom);
-    stackedMenuBar->createMenuBarByName(inknPaintRoom->getName());
 
     // XsheetRoom
     Room *xsheetRoom = createXsheetRoom();
     m_stackedWidget->addWidget(xsheetRoom);
     rooms.push_back(xsheetRoom);
-    stackedMenuBar->createMenuBarByName(xsheetRoom->getName());
 
     // BatchesRoom
     Room *batchesRoom = createBatchesRoom();
     m_stackedWidget->addWidget(batchesRoom);
     rooms.push_back(batchesRoom);
-    stackedMenuBar->createMenuBarByName(batchesRoom->getName());
 
     // BrowserRoom
     Room *browserRoom = createBrowserRoom();
     m_stackedWidget->addWidget(browserRoom);
     rooms.push_back(browserRoom);
-    stackedMenuBar->createMenuBarByName(browserRoom->getName());
   }
 
   /*- If the layout files were loaded from template, then save them as private
@@ -1060,22 +1030,21 @@ void MainWindow::onOpenOnlineManual() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::onSupportTahoma2D() {
-    QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
+  QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://github.com/turtletooth/tahoma2d/releases/latest")));
+      QUrl(tr("https://tahoma.readthedocs.io/en/latest/whats_new.html")));
 }
 
 //-----------------------------------------------------------------------------
 
-// void MainWindow::onOpenCommunityForum() {
-//  QDesktopServices::openUrl(
-//      QUrl(tr("https://groups.google.com/forum/#!forum/opentoonz_en")));
-//}
+void MainWindow::onOpenCommunityForum() {
+  QDesktopServices::openUrl(QUrl(tr("https://groups.google.com/g/tahoma2d")));
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1213,11 +1182,6 @@ void MainWindow::deleteRoom(int index) {
     m_topBar->getRoomTabWidget()->insertTab(index, room->getName());
     return;
   }
-
-  /*- delete menubar settings file as well -*/
-  std::string mbFileName = fp.getName() + "_menubar.xml";
-  TFilePath mbFp         = fp.getParentDir() + mbFileName;
-  TSystem::deleteFile(mbFp);
 
   // The old room index must be updated if index < of it
   if (index < m_oldRoomIndex) m_oldRoomIndex--;
@@ -1810,8 +1774,12 @@ void MainWindow::defineActions() {
       MI_PreviewSettings, tr("&Preview Settings..."), "",
       tr("Control the settings that will be used to preview the scene."));
   menuAct->setIcon(createQIcon("preview_settings"));
+  menuAct = createMenuRenderAction(MI_Render, tr("&Render"), "Ctrl+Shift+R",
+                                   tr("Renders according to the settings and "
+                                      "location set in Output Settings."));
+  menuAct->setIcon(createQIcon("render"));
   menuAct = createMenuRenderAction(
-      MI_Render, tr("&Save and Render"), "Ctrl+Shift+R",
+      MI_SaveAndRender, tr("&Save and Render"), "",
       tr("Saves the current scene and renders according to the settings and "
          "location set in Output Settings."));
   menuAct->setIcon(createQIcon("render"));
@@ -1982,10 +1950,6 @@ void MainWindow::defineActions() {
   menuAct = createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
   menuAct->setIcon(createQIcon("cleanup"));
 
-  menuAct =
-      createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
-  menuAct->setIcon(createQIcon("camera_capture"));
-
   menuAct = createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   menuAct->setIcon(createQIcon("add_cells"));
 
@@ -2093,6 +2057,12 @@ void MainWindow::defineActions() {
   menuAct = createMenuXsheetAction(MI_RemoveGlobalKeyframe,
                                    tr("Remove Multiple Keys"), "");
   menuAct->setIcon(createQIcon("remove_multiple_keys"));
+
+  menuAct = createMenuXsheetAction(MI_SetStartMarker, tr("Set Start Marker"), "");
+  menuAct = createMenuXsheetAction(MI_SetStopMarker, tr("Set Stop Marker"), "");
+  menuAct = createMenuXsheetAction(MI_ClearMarkers, tr("Remove Markers"), "");
+  menuAct = createMenuXsheetAction(MI_SetAutoMarkers, tr("Set Auto Markers"), "");
+  menuAct = createMenuXsheetAction(MI_PreviewThis, tr("Set Markers to Current Frame"), "");
 
   menuAct = createMenuLevelAction(MI_NewNoteLevel, tr("New Note Level"), "");
   menuAct->setIcon(createQIcon("new_note_level"));
@@ -2384,8 +2354,9 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
-  createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
-                          "");
+  menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel,
+                                    tr("&Stop Motion Controls"), "");
+  menuAct->setIcon(createQIcon("camera_capture"));
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
   menuAct->setIcon(createQIcon("viewer"));
@@ -2431,14 +2402,15 @@ void MainWindow::defineActions() {
   menuAct->setIconText(tr("What's New..."));
   menuAct->setIcon(createQIcon("web"));
 
-  menuAct = createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
+  menuAct =
+      createMenuHelpAction(MI_SupportTahoma2D, tr("&Support Tahoma2D..."), "");
   menuAct->setIconText(tr("Support Tahoma2D"));
   menuAct->setIcon(createQIcon("web"));
 
-  // menuAct = createMenuHelpAction(MI_OpenCommunityForum,
-  //                                tr("&Community Forum..."), "");
-  // menuAct->setIconText(tr("Community Forum..."));
-  // menuAct->setIcon(createQIcon("web"));
+  menuAct = createMenuHelpAction(MI_OpenCommunityForum,
+                                 tr("&Community Forum..."), "");
+  menuAct->setIconText(tr("Community Forum..."));
+  menuAct->setIcon(createQIcon("web"));
 
   menuAct = createMenuHelpAction(MI_OpenReportABug, tr("&Report a Bug..."), "");
   menuAct->setIconText(tr("Report a Bug..."));
@@ -3923,11 +3895,6 @@ void RecentFiles::loadRecentFiles() {
   if (!levels.isEmpty()) {
     for (i = 0; i < levels.size(); i++) {
       QString path = levels.at(i).toString();
-#ifdef x64
-      if (path.endsWith(".mov") || path.endsWith(".3gp") ||
-          path.endsWith(".pct") || path.endsWith(".pict"))
-        continue;
-#endif
       m_recentLevels.append(path);
     }
   } else {

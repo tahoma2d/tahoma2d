@@ -370,8 +370,7 @@ void FileSelection::viewFile() {
     if (!TFileType::isViewable(TFileType::getInfo(files[0]))) continue;
 
     if (Preferences::instance()->isDefaultViewerEnabled() &&
-        (files[i].getType() == "mov" || files[i].getType() == "avi" ||
-         files[i].getType() == "3gp"))
+        (files[i].getType() == "avi"))
       QDesktopServices::openUrl(QUrl("file:///" + toQString(files[i])));
     else {
       FlipBook *fb = ::viewFile(files[i]);

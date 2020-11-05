@@ -50,6 +50,7 @@ class OutputSettingsPopup : public DVGui::Dialog {
   DVGui::DoubleLineEdit *m_frameRateFld;
   QPushButton *m_fileFormatButton;
   QPushButton *m_renderButton;
+  QPushButton *m_saveAndRenderButton;
   CameraSettingsPopup *m_cameraSettings;
   QComboBox *m_presetCombo;
 
@@ -94,6 +95,7 @@ protected slots:
   void onStereoChecked(int);
   void onStereoChanged();
   void onRenderClicked();
+  void onSaveAndRenderClicked();
 
   /*-- OutputSettingsのPreset登録/削除/選択 --*/
   void onAddPresetButtonPressed();

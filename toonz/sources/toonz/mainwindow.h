@@ -69,7 +69,7 @@ class MainWindow final : public QMainWindow {
   StatusBar *m_statusBar;
   AboutPopup *m_aboutPopup;
   QDialog *m_transparencyTogglerWindow;
-  QSlider* m_transparencySlider;
+  QSlider *m_transparencySlider;
   QActionGroup *m_toolsActionGroup;
 
   QStackedWidget *m_stackedWidget;
@@ -105,7 +105,7 @@ public:
   void onOpenOnlineManual();
   void onSupportTahoma2D();
   void onOpenWhatsNew();
-  // void onOpenCommunityForum();
+  void onOpenCommunityForum();
   void onOpenReportABug();
   void checkForUpdates();
   int getRoomCount() const;
@@ -201,7 +201,7 @@ public:
   void TogglePlasticPaintRigid();
   void TogglePlasticBuildSkeleton();
   void TogglePlasticAnimate();
-  
+
   /*-- Brush Tool + mode switching shortcuts --*/
   void ToggleBrushAutoFillOff();
   void ToggleBrushAutoFillOn();

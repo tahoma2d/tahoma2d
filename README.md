@@ -30,7 +30,7 @@ Can't develop but still want to help? Help us test individual Pull Requests befo
 
 ## Community
 
-- To share tips or to troubleshoot, join the [Google OpenToonz Users forum](https://groups.google.com/forum/#!forum/opentoonz_en)
+- To share tips or to troubleshoot, join the [Google OpenToonz Users forum](hhttps://groups.google.com/g/tahoma2d)
 - If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/turtletooth/tahoma2d/issues) and post there.
 
 ## Licensing

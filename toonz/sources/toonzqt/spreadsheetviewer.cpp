@@ -247,7 +247,7 @@ void GenericPanel::paintEvent(QPaintEvent *e) {
 
 void GenericPanel::mousePressEvent(QMouseEvent *e) {
   assert(!m_dragTool);
-  if (e->button() == Qt::MidButton)
+  if (e->button() == Qt::MidButton || m_viewer->getPanningArmed())
     m_dragTool = new PanTool(this);
   else
     m_dragTool = createDragTool(e);
@@ -806,13 +806,13 @@ void SpreadsheetViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-  {
-    std::cout << "not supported wheelEvent.source(): "
-                 "Qt::MouseEventSynthesizedByQt, "
-                 "Qt::MouseEventSynthesizedByApplication"
-              << std::endl;
-    break;
-  }
+    {
+      std::cout << "not supported wheelEvent.source(): "
+                   "Qt::MouseEventSynthesizedByQt, "
+                   "Qt::MouseEventSynthesizedByApplication"
+                << std::endl;
+      break;
+    }
 
   }  // end switch
 }
@@ -833,7 +833,10 @@ m_dragTool->onDrag(&mouseEvent);
 void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
   int frameCount = m_rowCount;
   int row        = m_frameHandle->getFrame();
-
+  if (e->key() == Qt::Key_Space) {
+    m_panningArmed = true;
+    return;
+  }
   if (e->key() == Qt::Key_Up &&
       row > 0) {  // Row = frame precedente a quello settato
     m_frameHandle->setFrame(row - 1);
@@ -882,6 +885,23 @@ void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
     deltaY = y - visibleRect.bottom();
   scroll(QPoint(0, deltaY));
 }
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::keyReleaseEvent(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
+    m_panningArmed = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::enterEvent(QEvent *) { m_panningArmed = false; }
+
+//-----------------------------------------------------------------------------
+
+void SpreadsheetViewer::leaveEvent(QEvent *) { m_panningArmed = false; }
+
+//-----------------------------------------------------------------------------
 
 void SpreadsheetViewer::frameSwitched() {}
 

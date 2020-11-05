@@ -112,6 +112,11 @@ void CustomStyleManager::StyleLoaderTask::run() {
       assert(vPalette);
       vimg->setPalette(vPalette);
 
+#ifdef LINUX
+	  TOfflineGL *glContext = 0;
+	  glContext = TOfflineGL::getStock(chipSize);
+	  glContext->clear(TPixel32::White);
+#else
       QOpenGLContext *glContext = new QOpenGLContext();
       if (QOpenGLContext::currentContext())
         glContext->setShareContext(QOpenGLContext::currentContext());
@@ -135,6 +140,7 @@ void CustomStyleManager::StyleLoaderTask::run() {
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
+#endif
 
       TRectD bbox = img->getBBox();
       double scx  = 0.8 * chipSize.lx / bbox.getLx();
@@ -148,6 +154,12 @@ void CustomStyleManager::StyleLoaderTask::run() {
           TTranslation(-0.5 * (bbox.x0 + bbox.x1), -0.5 * (bbox.y0 + bbox.y1));
       TVectorRenderData rd(aff, chipSize, vPalette, 0, true);
 
+#ifdef LINUX
+	  glContext->draw(img, rd);
+	  // No need to clone! The received raster already is a copy of the	
+	  // context's buffer	
+	  ras = glContext->getRaster();  //->clone();
+#else
       tglDraw(rd, vimg.getPointer());
 
       image = new QImage(fb.toImage().scaled(QSize(chipSize.lx, chipSize.ly),
@@ -155,7 +167,7 @@ void CustomStyleManager::StyleLoaderTask::run() {
                                              Qt::SmoothTransformation));
       fb.release();
       glContext->deleteLater();
-
+#endif
     } else if (rimg) {
       TDimension size = rimg->getRaster()->getSize();
       if (size == chipSize)
@@ -170,10 +182,17 @@ void CustomStyleManager::StyleLoaderTask::run() {
         TRop::addBackground(rout, TPixel::White);
         ras = rout;
       }
+#ifndef LINUX
       image = new QImage(chipSize.lx, chipSize.ly, QImage::Format_RGB32);
       convertRaster32ToImage(ras, image);
+#endif
     } else
       assert(!"unsupported type for custom styles!");
+
+#ifdef LINUX
+	image = new QImage(chipSize.lx, chipSize.ly, QImage::Format_RGB32);
+	convertRaster32ToImage(ras, image);
+#endif
 
     m_data.m_patternName = m_fp.getName();
     m_data.m_isVector    = (m_fp.getType() == "pli" || m_fp.getType() == "svg");

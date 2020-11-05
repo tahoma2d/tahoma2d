@@ -613,6 +613,17 @@ public:
   }
 };
 
+bool hasVisibleChildColumn(const TStageObject *obj, const TXsheet *xsh) {
+  if (!obj->getId().isColumn()) return false;  // just in case
+  if (xsh->getColumn(obj->getId().getIndex()) &&
+      xsh->getColumn(obj->getId().getIndex())->isCamstandVisible())
+    return true;
+  for (const auto child : obj->getChildren()) {
+    if (hasVisibleChildColumn(child, xsh)) return true;
+  }
+  return false;
+}
+
 //=============================================================================
 }  // namespace
 //-----------------------------------------------------------------------------
@@ -699,6 +710,7 @@ public:
 
   bool doesApply() const;  // ritorna vero se posso deformare l'oggetto corrente
   void saveOldValues();
+  bool transformEnabled() const;
 
   const TStroke *getSpline() const;
 
@@ -738,6 +750,8 @@ public:
   }
 
   void drawText(const TPointD &p, double unit, std::string text);
+
+  QString updateEnabled(int rowIndex, int columnIndex) override;
 };
 
 //-----------------------------------------------------------------------------
@@ -890,6 +904,16 @@ bool EditTool::doesApply() const {
 
 //-----------------------------------------------------------------------------
 
+bool EditTool::transformEnabled() const {
+  // check if the column transformation is enabled
+  TXsheet *xsh = getXsheet();
+  TStageObjectId objId(getObjectId());
+  TStageObject *pegbar = xsh->getStageObject(objId);
+  return (!objId.isColumn() || hasVisibleChildColumn(pegbar, xsh));
+}
+
+//-----------------------------------------------------------------------------
+
 const TStroke *EditTool::getSpline() const {
   TTool::Application *app    = TTool::getApplication();
   TXsheet *xsh               = app->getCurrentXsheet()->getXsheet();
@@ -971,7 +995,7 @@ void EditTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
     m_dragTool = m_fxGadgetController->createDragTool(m_highlightedDevice);
   }
 
-  if (!m_dragTool) {
+  if (!m_dragTool && transformEnabled()) {
     switch (m_what) {
     case Center:
       m_dragTool = new DragCenterTool(m_lockCenterX.getValue(),
@@ -1389,6 +1413,12 @@ void EditTool::draw() {
 
   /*-- Show nothing on Level Editing mode --*/
   if (TTool::getApplication()->getCurrentFrame()->isEditingLevel()) return;
+
+  // if the column and its children are all hidden, only draw fx gadgets
+  if (!transformEnabled()) {
+    m_fxGadgetController->draw(isPicking());
+    return;
+  }
   const TPixel32 normalColor(250, 127, 240);
   const TPixel32 highlightedColor(150, 255, 140);
 
@@ -1396,10 +1426,11 @@ void EditTool::draw() {
   TXsheet *xsh = getXsheet();
   /*-- Obtain ID of the current editing stage object --*/
   TStageObjectId objId = getObjectId();
-  int frame            = getFrame();
-  TAffine parentAff    = xsh->getParentPlacement(objId, frame);
-  TAffine aff          = xsh->getPlacement(objId, frame);
-  TPointD center       = Stage::inch * xsh->getCenter(objId, frame);
+
+  int frame         = getFrame();
+  TAffine parentAff = xsh->getParentPlacement(objId, frame);
+  TAffine aff       = xsh->getPlacement(objId, frame);
+  TPointD center    = Stage::inch * xsh->getCenter(objId, frame);
 
   /*-- Enable Z translation on 3D view --*/
   if (getViewer()->is3DView()) {
@@ -1676,7 +1707,7 @@ int EditTool::getCursorId() const {
   // cursor for controling the fx gadget
   if (m_highlightedDevice >= 1000)
     ret = ToolCursor::FxGadgetCursor;
-  else {
+  else if (transformEnabled()) {
     // switch cursors depending on the active axis
     std::wstring activeAxis = m_activeAxis.getValue();
     if (activeAxis == L"Position") {
@@ -1724,10 +1755,64 @@ int EditTool::getCursorId() const {
         ret = ToolCursor::MoveCursor;
     } else
       ret = ToolCursor::StrokeSelectCursor;
-  }
+  } else
+    return ToolCursor::DisableCursor;
   // precise control with pressing Alt key
   if (m_isAltPressed) ret = ret | ToolCursor::Ex_Precise;
   return ret;
+}
+
+//-----------------------------------------------------------------------------
+// overriding TTool::updateEnabled()
+QString EditTool::updateEnabled(int rowIndex, int columnIndex) {
+  // toolType = TTool::ColumnTool
+  // targetType = TTool::AllTargets;
+
+  // Disable every tool during playback
+  if (m_application->getCurrentFrame()->isPlaying())
+    return (enable(false), QString());
+
+  // Disable in Level Strip
+  if (m_application->getCurrentFrame()->isEditingLevel())
+    return (
+        enable(false),
+        QObject::tr("The current tool cannot be used in Level Strip mode."));
+
+  // if an object other than column is selected, then enable the tool
+  // regardless of the current column state
+  TStageObjectId objId = m_application->getCurrentObject()->getObjectId();
+  if (!objId.isColumn()) return (enable(true), QString());
+
+  // Retrieve vars and view modes
+  TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+  // if a column object is selected, switch the inspected column to it
+  TXshColumn *column = xsh->getColumn(objId.getIndex());
+
+  // disable if the column is empty
+  if (!column || column->isEmpty()) return (enable(false), QString());
+
+  if (column->getSoundColumn())
+    return (enable(false),
+            QObject::tr("It is not possible to edit the audio column."));
+
+  else if (column->getSoundTextColumn())
+    return (enable(false),
+            QObject::tr(
+                "Note columns can only be edited in the xsheet or timeline."));
+
+  // Enable to control Fx gadgets even on the locked or hidden columns
+  if (m_fxGadgetController && m_fxGadgetController->hasGadget())
+    return (enable(true), QString());
+
+  // Check against unplaced columns
+  if (column->isLocked())
+    return (enable(false), QObject::tr("The current column is locked."));
+
+  // check if the current column and all of its child columns are hidden
+  if (!hasVisibleChildColumn(xsh->getStageObject(objId), xsh))
+    return (enable(false), QObject::tr("The current column is hidden."));
+
+  return (enable(true), QString());
 }
 
 //=============================================================================

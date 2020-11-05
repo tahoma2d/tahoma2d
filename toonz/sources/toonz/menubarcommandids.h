@@ -48,6 +48,7 @@
 #define MI_OutputSettings "MI_OutputSettings"
 #define MI_PreviewSettings "MI_PreviewSettings"
 #define MI_Render "MI_Render"
+#define MI_SaveAndRender "MI_SaveAndRender"
 #define MI_FastRender "MI_FastRender"
 #define MI_Preview "MI_Preview"
 #define MI_SoundTrack "MI_SoundTrack"
@@ -136,6 +137,12 @@
 
 #define MI_InsertFx "MI_InsertFx"
 #define MI_NewOutputFx "MI_NewOutputFx"
+
+#define MI_SetStartMarker "MI_SetStartMarker"
+#define MI_SetStopMarker "MI_SetStopMarker"
+#define MI_ClearMarkers "MI_ClearMarkers"
+#define MI_SetAutoMarkers "MI_SetAutoMarkers"
+#define MI_PreviewThis "MI_PreviewThis"
 
 #define MI_PasteNew "MI_PasteNew"
 #define MI_Autorenumber "MI_Autorenumber"
@@ -410,7 +417,6 @@
 
 #define MI_About "MI_About"
 #define MI_StartupPopup "MI_StartupPopup"
-#define MI_PencilTest "MI_PencilTest"
 #define MI_AudioRecording "MI_AudioRecording"
 #define MI_LipSyncPopup "MI_LipSyncPopup"
 #define MI_AutoInputCellNumber "MI_AutoInputCellNumber"
@@ -435,7 +441,7 @@
 #define MI_OpenOnlineManual "MI_OpenOnlineManual"
 #define MI_SupportTahoma2D "MI_SupportTahoma2D"
 #define MI_OpenWhatsNew "MI_OpenWhatsNew"
-// #define MI_OpenCommunityForum "MI_OpenCommunityForum"
+#define MI_OpenCommunityForum "MI_OpenCommunityForum"
 #define MI_OpenReportABug "MI_OpenReportABug"
 
 #define MI_ClearCacheFolder "MI_ClearCacheFolder"
