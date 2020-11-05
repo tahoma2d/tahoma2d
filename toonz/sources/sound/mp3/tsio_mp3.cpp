@@ -45,7 +45,7 @@ bool FfmpegAudio::checkFfmpeg() {
 #endif
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
 
-  // check the OpenToonz root directory next
+  // check the Tahoma2D root directory next
   path = QDir::currentPath() + "/ffmpeg";
 #if defined(_WIN32)
   path = path + ".exe";

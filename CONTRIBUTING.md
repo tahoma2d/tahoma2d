@@ -49,7 +49,7 @@ If you cannot implement the feature, please make a request here.
 
 ## Translations
 
-Translation source (`.ts`) files for OpenToonz GUI are located in `toonz/sources/translations`.
+Translation source (`.ts`) files for Tahoma2D GUI are located in `toonz/sources/translations`.
 If you create new `.ts` files for your language or update an existing one,
 please send us those modifications as pull-requests.
 [Qt Linguist](http://doc.qt.io/qt-5.6/linguist-translators.html) is useful for translating them.
