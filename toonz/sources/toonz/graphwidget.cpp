@@ -23,11 +23,6 @@
 //-----------------------------------------------------------------------------
 namespace {
 
-// minimum distance between control points
-const double cpMargin = 4.0;
-
-//-----------------------------------------------------------------------------
-
 // not sure if i'll be using this.
 
 double distanceSquared(QPoint p1, QPoint p2) {
@@ -126,26 +121,21 @@ GraphWidget::GraphWidget(QWidget* parent)
     , m_BottomMargin(0)
     , m_isLinear(false)
     , m_isEnlarged(false) {
-  //setFixedSize(m_curveHeight + 2 * m_LeftRightMargin,
+  // setFixedSize(m_curveHeight + 2 * m_LeftRightMargin,
   //             m_curveHeight + m_TopMargin + m_BottomMargin);
   setAttribute(Qt::WA_KeyCompression);
   setFocusPolicy(Qt::StrongFocus);
   setMouseTracking(true);
+  setObjectName("GraphAreaWidget");
 }
 
 //=============================================================================
 
-QSize GraphWidget::sizeHint() const
-{
-    return QSize(400, 200);
-}
+QSize GraphWidget::sizeHint() const { return QSize(400, 200); }
 
 //=============================================================================
 
-QSize GraphWidget::minimumSizeHint() const
-{
-    return QSize(100, 100);
-}
+QSize GraphWidget::minimumSizeHint() const { return QSize(100, 100); }
 
 //-----------------------------------------------------------------------------
 
@@ -174,25 +164,25 @@ QList<TPointD> GraphWidget::getPoints() {
 //-----------------------------------------------------------------------------
 
 QPointF GraphWidget::convertPointToLocal(QPointF point) {
-    float daWidth = (float)width();
-    float daHeight = (float)height();
+  float daWidth  = (float)width();
+  float daHeight = (float)height();
 
-    float outX = (point.x() / m_maxXValue) * daWidth;
-    float outY = (point.y() / m_maxXValue) * daHeight;
+  float outX = std::max(0.0, (point.x() / m_maxXValue) * daWidth - 1.0);
+  float outY = (point.y() / m_maxXValue) * daHeight;
 
-    return QPointF(outX, outY);
+  return QPointF(outX, outY);
 }
 
 //-----------------------------------------------------------------------------
 
 QPointF GraphWidget::convertPointFromLocal(QPointF point) {
-    float daWidth = (float)width();
-    float daHeight = (float)height();
+  float daWidth  = (float)width();
+  float daHeight = (float)height();
 
-    float outX = (point.x() / daWidth) * m_maxXValue;
-    float outY = (point.y() / daHeight) * m_maxYValue;
+  float outX = (point.x() / daWidth) * m_maxXValue;
+  float outY = (point.y() / daHeight) * m_maxYValue;
 
-    return QPointF(outX, outY);
+  return QPointF(outX, outY);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,7 +221,7 @@ void GraphWidget::setLinear(bool isLinear) {
 
 //-----------------------------------------------------------------------------
 
-//void GraphWidget::setEnlarged(bool isEnlarged) {
+// void GraphWidget::setEnlarged(bool isEnlarged) {
 //  if (m_isEnlarged == isEnlarged) return;
 //  m_isEnlarged     = isEnlarged;
 //  int widgetHeight = (m_isEnlarged) ? m_curveHeight * 2 : m_curveHeight;
@@ -267,9 +257,9 @@ QPointF GraphWidget::checkPoint(const QPointF p) {
 //-----------------------------------------------------------------------------
 
 QPointF GraphWidget::getVisibleHandlePos(int index) {
-  QRectF rect(0.0, 0.0, width(), height());
+  QRectF rect(0.0, 0.0, m_maxXValue, m_maxYValue);
   QPointF handlePos(m_points.at(index));
-  //handlePos = convertPointToLocal(handlePos);
+  // handlePos = convertPointToLocal(handlePos);
   if (isCentralControlPoint(index) || rect.contains(handlePos))
     return handlePos;
 
@@ -321,24 +311,24 @@ QPointF GraphWidget::viewToStrokePoint(const QPointF& p) {
 //-----------------------------------------------------------------------------
 
 QPointF GraphWidget::getInvertedPoint(QPointF p) {
-    double x = p.x() - m_LeftRightMargin - 1;
-    double y = p.y() - m_TopMargin;
-    if (m_isEnlarged) {
-        x *= 0.5;
-        y *= 0.5;
-    }
+  double x = p.x() - m_LeftRightMargin - 1;
+  double y = p.y() - m_TopMargin;
+  if (m_isEnlarged) {
+    x *= 0.5;
+    y *= 0.5;
+  }
 
-    else return QPointF(x, height() - y);
+  else
+    return QPointF(x, height() - y);
 }
 
 //-----------------------------------------------------------------------------
 
-int GraphWidget::getClosestPointIndex(QPointF& pos,
-                                      double& minDistance2) {
+int GraphWidget::getClosestPointIndex(QPointF& pos, double& minDistance2) {
   int closestPointIndex = -1;
   minDistance2          = 0;
   enum pointType { Handle = 0, ControlPoint, PseudoHandle } closestPointType;
-  //QRectF rect(0, 0, width(), m_curveHeight);
+
   int i;
   for (i = 3; i < (int)m_points.size() - 3; i++) {
     if (m_isLinear && !isCentralControlPoint(i)) continue;
@@ -349,7 +339,8 @@ int GraphWidget::getClosestPointIndex(QPointF& pos,
             ? ControlPoint
             : (visiblePoint == m_points.at(i)) ? Handle : PseudoHandle;
 
-    double distance2 = qtDistance2(pos, visiblePoint);
+    double distance2 = qtDistance2(convertPointToLocal(pos),
+                                   convertPointToLocal(visiblePoint));
     if (closestPointIndex < 0 || distance2 < minDistance2 ||
         (distance2 == minDistance2 && type < closestPointType)) {
       minDistance2      = distance2;
@@ -378,15 +369,17 @@ void GraphWidget::movePoint(int index, const QPointF delta) {
 //-----------------------------------------------------------------------------
 
 void GraphWidget::setPoint(int index, const QPointF p) {
+  QPointF newP                  = p;
+  if (m_constrainToBounds) newP = checkPoint(p);
   m_points.removeAt(index);
-  m_points.insert(index, p);
+  m_points.insert(index, newP);
 
   int firstIndex = 3;
   int lastIndex  = m_points.size() - 4;
   if (index == firstIndex)
-    emit firstLastXPostionChanged(p.x(), m_points.at(lastIndex).x());
+    emit firstLastXPostionChanged(newP.x(), m_points.at(lastIndex).x());
   if (index == lastIndex)
-    emit firstLastXPostionChanged(m_points.at(firstIndex).x(), p.x());
+    emit firstLastXPostionChanged(m_points.at(firstIndex).x(), newP.x());
 }
 
 //-----------------------------------------------------------------------------
@@ -458,8 +451,7 @@ void GraphWidget::moveCentralControlPoint(int index, QPointF delta) {
 
   QPointF p = m_points.at(index);
   QPointF d = delta;
-  // Trovo il valore di delta im modo tale che il punto di controllo non sia
-  // trascinato fuori dal range consentito
+
   QPointF newPoint = checkPoint(p + delta);
   d                = newPoint - p;
 
@@ -468,21 +460,20 @@ void GraphWidget::moveCentralControlPoint(int index, QPointF delta) {
   double nextDistance = nextP.x() - (p.x() + d.x());
   double precDistance = (p.x() + d.x()) - precP.x();
 
-  if (nextDistance < cpMargin)
-    d = QPointF(nextP.x() - p.x() - cpMargin, d.y());
-  else if (precDistance < cpMargin)
-    d = QPointF(precP.x() - p.x() + cpMargin, d.y());
+  if (nextDistance < m_cpMargin)
+    d = QPointF(nextP.x() - p.x() - m_cpMargin, d.y());
+  else if (precDistance < m_cpMargin)
+    d = QPointF(precP.x() - p.x() + m_cpMargin, d.y());
 
   if (d.isNull()) return;
 
-  // Punto di controllo speciale: il primo visualizzato.
   if (index == 3) {
     QPointF dY = QPointF(0, d.y());
     movePoint(index - 1, dY);
     movePoint(index - 2, dY);
     movePoint(index - 3, dY);
   }
-  // Punto di controllo speciale: l'ultimo visualizzato.
+
   if (index == pointCount - 4) {
     QPointF dY = QPointF(0, d.y());
     movePoint(index + 1, dY);
@@ -501,7 +492,6 @@ void GraphWidget::addControlPoint(double percent) {
   QPainterPath path = getPainterPath();
   QPointF p         = convertPointFromLocal(path.pointAtPercent(percent));
 
-  // Cerco il punto di controllo precedente
   int pointCount = m_points.size();
   int beforeControlPointIndex;
   for (beforeControlPointIndex = pointCount - 1; beforeControlPointIndex >= 0;
@@ -515,17 +505,18 @@ void GraphWidget::addControlPoint(double percent) {
     return;
 
   QPointF p0 = checkPoint(m_points.at(beforeControlPointIndex));
-  // Se sono troppo vicino al punto di controllo precedente ritorno
-  if (std::abs(p.x() - p0.x()) <= cpMargin) return;
-  double beforeControlPointPercent = getPercentAtPoint(convertPointToLocal(p0), path);
+
+  if (std::abs(p.x() - p0.x()) <= m_cpMargin) return;
+  double beforeControlPointPercent =
+      getPercentAtPoint(convertPointToLocal(p0), path);
   QPointF p1 = checkPoint(m_points.at(beforeControlPointIndex + 1));
   QPointF p2 = checkPoint(m_points.at(beforeControlPointIndex + 2));
   QPointF p3 = checkPoint(m_points.at(beforeControlPointIndex + 3));
-  // Se sono troppo vicino al punto di controllo successivo ritorno
-  if (std::abs(p3.x() - p.x()) <= cpMargin) return;
-  double nextControlPointPercent = getPercentAtPoint(convertPointToLocal(p3), path);
 
-  // Calcolo la velocita' e quindi il coiffciente angolare.
+  if (std::abs(p3.x() - p.x()) <= m_cpMargin) return;
+  double nextControlPointPercent =
+      getPercentAtPoint(convertPointToLocal(p3), path);
+
   double t =
       percent * 100 / (nextControlPointPercent - beforeControlPointPercent);
   double s = t - 1;
@@ -535,10 +526,12 @@ void GraphWidget::addControlPoint(double percent) {
 
   int newControlPointIndex = beforeControlPointIndex + 3;
   m_points.insert(newControlPointIndex - 1,
-                  QPointF(p.x() - 16, p.y() - 16 * m));
+                  QPointF(p.x() - (m_maxXValue * 0.063),
+                          p.y() - (m_maxYValue * 0.063) * m));
   m_points.insert(newControlPointIndex, p);
   m_points.insert(newControlPointIndex + 1,
-                  QPointF(p.x() + 16, p.y() + 16 * m));
+                  QPointF(p.x() + (m_maxXValue * 0.063),
+                          p.y() + (m_maxYValue * 0.063) * m));
 
   m_currentControlPointIndex = newControlPointIndex;
   m_preMousePos              = p;
@@ -595,27 +588,26 @@ void GraphWidget::selectPreviousControlPoint() {
 //-----------------------------------------------------------------------------
 
 void GraphWidget::removeControlPoint(int index) {
-  // Non posso eliminare il primo punto di controllo visibile quindi lo rimetto
-  // in condizione iniziale
+  // Don't delete the first cubic
   if (index <= 4) {
     setPoint(0, QPointF(-40, 0));
     setPoint(1, QPointF(-20, 0));
     setPoint(2, QPointF(-20, 0));
     setPoint(3, QPointF(0, 0));
-    setPoint(4, QPointF(16, 16));
+    setPoint(4, QPointF(m_maxXValue * 0.063, m_maxYValue * 0.063));
     update();
     emit controlPointChanged(false);
     return;
   }
-  // Non posso eliminare il l'ultimo punto di controllo visibile quindi lo
-  // rimetto in condizione iniziale
+
+  // Don't delete the last cubic
   if (index >= m_points.size() - 5) {
     int i = m_points.size() - 5;
-    setPoint(i, QPointF(239, 239));
-    setPoint(i + 1, QPointF(255, 255));
-    setPoint(i + 2, QPointF(275, 255));
-    setPoint(i + 3, QPointF(275, 255));
-    setPoint(i + 4, QPointF(295, 255));
+    setPoint(i, QPointF(m_maxXValue * 0.937, m_maxYValue * 0.937));
+    setPoint(i + 1, QPointF(m_maxXValue, m_maxYValue));
+    setPoint(i + 2, QPointF(m_maxXValue + 20, m_maxYValue));
+    setPoint(i + 3, QPointF(m_maxXValue + 20, m_maxYValue));
+    setPoint(i + 4, QPointF(m_maxXValue + 40, m_maxYValue));
     update();
     emit controlPointChanged(false);
     return;
@@ -667,15 +659,11 @@ QPainterPath GraphWidget::getPainterPath() {
     p0 = p3;
   }
 
-  // Cerco le eventuali intersezioni con il bordo.
   QRectF rect(0, 0, width(), height());
-  // QRectF rect(m_LeftRightMargin, m_TopMargin, m_curveHeight, m_curveHeight);
   QRectF r = path.boundingRect();
   if (!rect.contains(QRect(rect.left(), r.top(), rect.width(), r.height()))) {
     QList<QPointF> points = getIntersectedPoint(rect, path);
-    // Se trovo punti di intersezione (per come e' definita la curva devono
-    // essere pari)
-    // faccio l'unione del path calcolato e di nuovi path lineari.
+
     int j = 0;
     for (j = 0; j < points.size(); j++) {
       QPointF p0 = points.at(j);
@@ -695,24 +683,13 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
   QPainter painter(this);
 
   double scale = (m_isEnlarged) ? 2.0 : 1.0;
-  // Disegno il reticolato
   painter.setRenderHint(QPainter::Antialiasing, false);
-  painter.setPen(QColor(250, 250, 250));
-
-  //// Disegno l'histogram.
-  // m_histogramView->draw(&painter, QPoint(m_LeftRightMargin - 10, 0),
-  //    m_curveHeight * scale);
-
-  //// Disegno la barra verticale a sinistra.
-  // m_verticalChannelBar->draw(
-  //    &painter,
-  //    QPoint(0, -2));  //-1 == m_topMargin- il margine della barra(=10+1).
+  painter.setPen(m_splineColor);
 
   QRectF r = rect().adjusted(m_LeftRightMargin, m_TopMargin, -m_LeftRightMargin,
                              -m_BottomMargin);
-  // Disegno la curva entro i limiti del grafo
-  painter.setClipRect(r, Qt::IntersectClip);
 
+  painter.setClipRect(r, Qt::IntersectClip);
   painter.translate(m_LeftRightMargin + 1, height() - m_BottomMargin);
   painter.scale(scale, -scale);
 
@@ -772,13 +749,13 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* e) {
   int y          = tempPos.y();
 
   if (m_constrainToBounds) {
-      if (x < 0)
-          x = 0;
-      else if (x > width())
+    if (x < 0)
+      x = 0;
+    else if (x > width())
       x = width();
-      if (y < 0)
-          y = 0;
-      else if (y > height())
+    if (y < 0)
+      y = 0;
+    else if (y > height())
       y = height();
     tempPos.setX(x);
     tempPos.setY(y);
@@ -807,16 +784,14 @@ void GraphWidget::mousePressEvent(QMouseEvent* e) {
         return;
       }
     }
-    // Se la distanza e' piccola seleziono il control point corrente
-    if (minDistance < 20) {
+
+    if (minDistance <= 20) {
       m_currentControlPointIndex = controlPointIndex;
       m_preMousePos              = posF;
     } else {
       m_currentControlPointIndex = -1;
-      // Se sono sufficentemente lontano da un punto di controllo, ma abbastanza
-      // vicino alla curva
-      // aggiungo un punto di controllo
-      double percent = getPercentAtPoint(getInvertedPoint(e->pos()), getPainterPath());
+      double percent =
+          getPercentAtPoint(getInvertedPoint(e->pos()), getPainterPath());
       if (percent != 0 && minDistance > 20) addControlPoint(percent);
     }
     QPointF currentPointPos = (m_currentControlPointIndex == -1)

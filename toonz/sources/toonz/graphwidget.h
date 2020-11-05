@@ -21,13 +21,41 @@ class TThickPoint;
 class GraphWidget : public QWidget {
   Q_OBJECT
 
+  Q_PROPERTY(QColor SplineColor READ getSplineColor WRITE setSplineColor
+                 DESIGNABLE true)
+  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
+  // true)
+  QColor m_splineColor;
+  QColor getSplineColor() const { return m_splineColor; }
+  void setSplineColor(const QColor& color) { m_splineColor = color; }
+
+  Q_PROPERTY(QColor NonSelectedPointColor READ getNonSelectedPointColor WRITE
+                 setNonSelectedPointColor DESIGNABLE true)
+  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
+  // true)
+  QColor m_nonSelectedPointColor;
+  QColor getNonSelectedPointColor() const { return m_nonSelectedPointColor; }
+  void setNonSelectedPointColor(const QColor& color) {
+    m_nonSelectedPointColor = color;
+  }
+
+  Q_PROPERTY(QColor SelectedPointColor READ getSelectedPointColor WRITE
+                 setSelectedPointColor DESIGNABLE true)
+  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
+  // true)
+  QColor m_SelectedPointColor;
+  QColor getSelectedPointColor() const { return m_SelectedPointColor; }
+  void setSelectedPointColor(const QColor& color) {
+    m_SelectedPointColor = color;
+  }
+
   QList<QPointF> m_points;
   int m_currentControlPointIndex;
 
   Qt::MouseButton m_mouseButton;
 
-  //int m_maxHeight;
-  //int m_maxWidth;
+  // int m_maxHeight;
+  // int m_maxWidth;
 
   int m_LeftRightMargin;
   int m_TopMargin;
@@ -43,6 +71,7 @@ class GraphWidget : public QWidget {
 
   double m_maxXValue = 255.0;
   double m_maxYValue = 255.0;
+  double m_cpMargin  = 20.0;
 
 public:
   explicit GraphWidget(QWidget* parent = nullptr);
@@ -67,7 +96,7 @@ public:
   void setLinear(bool isLinear);
   void moveCurrentControlPoint(QPointF delta);
 
-  //void setEnlarged(bool isEnlarged);
+  // void setEnlarged(bool isEnlarged);
 
   QPointF convertPointToLocal(QPointF point);
   QPointF convertPointFromLocal(QPointF point);
