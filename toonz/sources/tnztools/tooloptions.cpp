@@ -1726,6 +1726,8 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionSlider *>(m_controls.value("Distance:"));
   m_styleIndex =
       dynamic_cast<StyleIndexFieldAndChip *>(m_controls.value("Style Index:"));
+  if (m_rasterGapSettings)
+    m_rasterGapLabel = m_labels.value(m_rasterGapSettings->propertyName());
   if (m_styleIndex)
     m_styleIndexLabel = m_labels.value(m_styleIndex->propertyName());
   if (m_rasterGapSlider)
@@ -1745,38 +1747,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
   }
   assert(ret);
 
-  if (m_targetType == TTool::ToonzImage) {
-    if (m_rasterGapSettings->getProperty()->getValue() == L"Ignore Gaps") {
-      if (m_styleIndex) {
-        m_styleIndex->hide();
-        m_styleIndexLabel->hide();
-      }
-      if (m_rasterGapSlider) {
-        m_rasterGapSlider->hide();
-        m_gapSliderLabel->hide();
-      }
-    }
-    if (m_rasterGapSettings->getProperty()->getValue() == L"Fill Gaps") {
-      if (m_styleIndex) {
-        m_styleIndex->hide();
-        m_styleIndexLabel->hide();
-      }
-      if (m_rasterGapSlider) {
-        m_rasterGapSlider->show();
-        m_gapSliderLabel->show();
-      }
-    }
-    if (m_rasterGapSettings->getProperty()->getValue() == L"Close and Fill") {
-      if (m_styleIndex) {
-        m_styleIndex->show();
-        m_styleIndexLabel->show();
-      }
-      if (m_rasterGapSlider) {
-        m_rasterGapSlider->show();
-        m_gapSliderLabel->show();
-      }
-    }
-  }
+  checkGapSettingsVisibility();
 
   if (m_colorMode->getProperty()->getValue() == L"Lines") {
     m_selectiveMode->setEnabled(false);
@@ -1824,6 +1795,56 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
   }
   enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
   m_onionMode->setEnabled(enabled);
+  checkGapSettingsVisibility();
+}
+
+//-----------------------------------------------------------------------------
+
+void FillToolOptionsBox::checkGapSettingsVisibility() {
+  if (m_targetType == TTool::ToonzImage) {
+    m_rasterGapSettings->show();
+    m_rasterGapLabel->show();
+    const TEnumProperty::Range &range = m_colorMode->getProperty()->getRange();
+    if (range[m_colorMode->currentIndex()] == L"Lines") {
+      m_rasterGapSettings->hide();
+      m_rasterGapLabel->hide();
+      m_styleIndex->hide();
+      m_styleIndexLabel->hide();
+      m_rasterGapSlider->hide();
+      m_gapSliderLabel->hide();
+      return;
+    }
+
+    else if (m_rasterGapSettings->getProperty()->getValue() == L"Ignore Gaps") {
+      if (m_styleIndex) {
+        m_styleIndex->hide();
+        m_styleIndexLabel->hide();
+      }
+      if (m_rasterGapSlider) {
+        m_rasterGapSlider->hide();
+        m_gapSliderLabel->hide();
+      }
+    } else if (m_rasterGapSettings->getProperty()->getValue() == L"Fill Gaps") {
+      if (m_styleIndex) {
+        m_styleIndex->hide();
+        m_styleIndexLabel->hide();
+      }
+      if (m_rasterGapSlider) {
+        m_rasterGapSlider->show();
+        m_gapSliderLabel->show();
+      }
+    } else if (m_rasterGapSettings->getProperty()->getValue() ==
+               L"Close and Fill") {
+      if (m_styleIndex) {
+        m_styleIndex->show();
+        m_styleIndexLabel->show();
+      }
+      if (m_rasterGapSlider) {
+        m_rasterGapSlider->show();
+        m_gapSliderLabel->show();
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

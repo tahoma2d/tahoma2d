@@ -501,10 +501,10 @@ public:
     }
 
     else if (propertyName == m_distance.getName()) {
-        AutocloseDistance = m_distance.getValue();
-        TTool::Application* app = TTool::getApplication();
-        // This is a hack to get the viewer to update with the distance.
-        app->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
+      AutocloseDistance       = m_distance.getValue();
+      TTool::Application *app = TTool::getApplication();
+      // This is a hack to get the viewer to update with the distance.
+      app->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
     }
 
     else if (propertyName == m_angle.getName())

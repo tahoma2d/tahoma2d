@@ -226,7 +226,8 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
       for (x = r.x0; x <= r.x1; x++, pix++) {
         if (pix->getPaint() == 0)  // BackgroundStyle
           pix->setPaint(color);
-        if (fillInks && (pix->getInk() != 4094 && pix->getInk() != 4095)) pix->setInk(color);
+        if (fillInks && (pix->getInk() != 4094 && pix->getInk() != 4095))
+          pix->setInk(color);
         if (pix->getInk() == 4094) pix->setInk(4095);
       }
     }
@@ -234,7 +235,8 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
     for (y = r.y0; y <= r.y1; y++, pix += m_wrap - dx - 1) {
       for (x = r.x0; x <= r.x1; x++, pix++) {
         pix->setPaint(color);
-        if (fillInks && (pix->getInk() != 4094 && pix->getInk() != 4095)) pix->setInk(color);
+        if (fillInks && (pix->getInk() != 4094 && pix->getInk() != 4095))
+          pix->setInk(color);
         if (pix->getInk() == 4094) pix->setInk(4095);
       }
     }

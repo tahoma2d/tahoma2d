@@ -502,13 +502,14 @@ class FillToolOptionsBox final : public ToolOptionsBox {
   ToolOptionPairSlider *m_fillDepthField;
   ToolOptionSlider *m_rasterGapSlider;
   StyleIndexFieldAndChip *m_styleIndex;
-  QLabel *m_gapSliderLabel, *m_styleIndexLabel;
+  QLabel *m_gapSliderLabel, *m_styleIndexLabel, *m_rasterGapLabel;
 
 public:
   FillToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
                      ToolHandle *toolHandle);
 
   void updateStatus();
+  void checkGapSettingsVisibility();
 
 protected slots:
   void onColorModeChanged(int);
