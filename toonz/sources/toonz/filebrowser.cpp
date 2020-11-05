@@ -145,9 +145,8 @@ QMutex levelFileMutex;
 }  // namespace
 
 inline bool isMultipleFrameType(std::string type) {
-  return (type == "tlv" || type == "tzl" || type == "pli" ||
-          type == "avi" || type == "gif" || type == "mp4" ||
-          type == "webm");
+  return (type == "tlv" || type == "tzl" || type == "pli" || type == "avi" ||
+          type == "gif" || type == "mp4" || type == "webm");
 }
 
 //=============================================================================

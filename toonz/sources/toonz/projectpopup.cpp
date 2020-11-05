@@ -368,16 +368,16 @@ void ProjectSettingsPopup::showEvent(QShowEvent *) {
       folderLabel->setFixedWidth(20);
       folderLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
       m_recentProjectLayout->addWidget(folderLabel, i, 0, Qt::AlignRight);
-      int slashCount    = path.count("\\");
-      QString lookFor   = slashCount > 0 ? "\\" : "//";
-      QString labelText = path;
-      if (labelText.count(lookFor) > 4) {
-        while (labelText.count(lookFor) > 4) {
-          int firstIndex = labelText.indexOf(lookFor, 0);
-          labelText.remove(0, firstIndex + 1);
-        }
-        labelText.insert(0, "..." + lookFor);
-      }
+      // int slashCount    = path.count("\\");
+      // QString lookFor   = slashCount > 0 ? "\\" : "//";
+      QString labelText = QString::fromStdString(projectPath.getName());
+      // if (labelText.count(lookFor) > 4) {
+      //  while (labelText.count(lookFor) > 4) {
+      //    int firstIndex = labelText.indexOf(lookFor, 0);
+      //    labelText.remove(0, firstIndex + 1);
+      //  }
+      //  labelText.insert(0, "..." + lookFor);
+      //}
       ClickableProjectLabel *projectLabel =
           new ClickableProjectLabel(labelText, this);
       projectLabel->setPath(path);
