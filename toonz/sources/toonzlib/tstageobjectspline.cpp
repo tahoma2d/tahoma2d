@@ -116,7 +116,7 @@ TStageObjectSpline::TStageObjectSpline()
     , m_name("")
     , m_active(false)
     , m_color(0)
-    , m_steps(0)
+    , m_steps(10)
     , m_width(1)
     , m_isOpened(false) {
   double d = 30;

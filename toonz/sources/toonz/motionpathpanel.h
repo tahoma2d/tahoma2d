@@ -16,7 +16,6 @@ class TPanelTitleBarButton;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
-class QPushButton;
 class QFrame;
 class QToolBar;
 class QSlider;
@@ -44,28 +43,6 @@ public:
 signals:
   void onMouseRelease(QMouseEvent* event);
 };
-
-// class MotionPathControl : public QWidget {
-//  Q_OBJECT
-//
-//  TStageObjectSpline* m_spline;
-//  bool m_active;
-//  QGridLayout* m_controlLayout;
-//  TPanelTitleBarButton* m_activeButton;
-//  ClickablePathLabel* m_nameLabel;
-//  DVGui::IntLineEdit* m_stepsEdit;
-//  QSlider* m_widthSlider;
-//  QComboBox* m_colorCombo;
-//
-// public:
-//  MotionPathControl(QWidget* parent) : QWidget(parent){};
-//  ~MotionPathControl(){};
-//
-//  void createControl(TStageObjectSpline* spline);
-//
-// protected:
-//  void fillCombo();
-//};
 
 //=============================================================================
 // MotionPathPanel

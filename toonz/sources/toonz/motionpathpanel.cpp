@@ -27,6 +27,7 @@
 #include <QComboBox>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPushButton>
 
 namespace {
 double distanceSquared(QPoint p1, QPoint p2) {
@@ -126,6 +127,9 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   bool active = spline->getActive();
   ClickablePathLabel* nameLabel =
       new ClickablePathLabel(QString::fromStdString(spline->getName()), this);
+  ClickablePathLabel* deleteLabel =
+      new ClickablePathLabel("", this);
+  deleteLabel->setPixmap(createQIcon("menu_toggle_on").pixmap(QSize(23, 18)));
   TPanelTitleBarButton* activeButton = new TPanelTitleBarButton(
       this, getIconThemePath("actions/20/pane_preview.svg"));
 
@@ -142,11 +146,14 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   QComboBox* colorCombo = new QComboBox(this);
   fillCombo(colorCombo, spline);
 
+  //QPushButton* removeButton = new QPushButton("-", this);
+
   m_pathsLayout->addWidget(activeButton, number, 0, Qt::AlignLeft);
   m_pathsLayout->addWidget(nameLabel, number, 1, Qt::AlignLeft);
   m_pathsLayout->addWidget(widthSlider, number, 2, Qt::AlignRight);
   m_pathsLayout->addWidget(colorCombo, number, 3, Qt::AlignRight);
   m_pathsLayout->addWidget(stepsEdit, number, 4, Qt::AlignRight);
+  m_pathsLayout->addWidget(deleteLabel, number, 5, Qt::AlignRight);
 
   connect(nameLabel, &ClickablePathLabel::onMouseRelease, [=]() {
     TApp* app = TApp::instance();
@@ -179,14 +186,24 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
             spline->setColor(index);
             TApp::instance()->getCurrentScene()->notifySceneChanged();
           });
+  connect(deleteLabel, &ClickablePathLabel::onMouseRelease,
+      [=]() {
+          const std::vector<TStageObjectId> objIds;
+          const std::list<QPair<TStageObjectId, TStageObjectId>> links;
+          std::list<int> splineIds;
+          splineIds.push_back(spline->getId());
+          TXsheetHandle* xshHandle = TApp::instance()->getCurrentXsheet();
+          TObjectHandle* objHandle = TApp::instance()->getCurrentObject();
+          TFxHandle* fxHandle = TApp::instance()->getCurrentFx();
+          TStageObjectCmd::deleteSelection(objIds, links, splineIds, xshHandle, objHandle, fxHandle, true);
+          refreshPaths();
+      });
 }
 
 void MotionPathPanel::refreshPaths() {
   TXsheetHandle* xsh     = TApp::instance()->getCurrentXsheet();
   TStageObjectTree* tree = xsh->getXsheet()->getStageObjectTree();
-  if (tree->getSplineCount() == m_splines.size()) return;
 
-  m_splines.clear();
   QLayoutItem* child;
   while (m_pathsLayout->count() != 0) {
     child = m_pathsLayout->takeAt(0);
@@ -199,9 +216,9 @@ void MotionPathPanel::refreshPaths() {
   if (tree->getSplineCount() > 0) {
     m_pathsLayout->addWidget(new QLabel(""), 0, 0, Qt::AlignLeft);
     m_pathsLayout->addWidget(new QLabel("Path Name"), 0, 1, Qt::AlignLeft);
-    m_pathsLayout->addWidget(new QLabel("Width"), 0, 2, Qt::AlignLeft);
-    m_pathsLayout->addWidget(new QLabel("Color"), 0, 3, Qt::AlignLeft);
-    m_pathsLayout->addWidget(new QLabel("Steps"), 0, 4, Qt::AlignLeft);
+    m_pathsLayout->addWidget(new QLabel("Width"), 0, 2, Qt::AlignCenter);
+    m_pathsLayout->addWidget(new QLabel("Color"), 0, 3, Qt::AlignCenter);
+    m_pathsLayout->addWidget(new QLabel("Steps"), 0, 4, Qt::AlignCenter);
     int i = 0;
     for (; i < tree->getSplineCount(); i++) {
       // MotionPathControl* control = new MotionPathControl(this);
@@ -210,7 +227,6 @@ void MotionPathPanel::refreshPaths() {
 
     m_pathsLayout->setColumnStretch(0, 0);
     m_pathsLayout->setColumnStretch(1, 500);
-
     m_pathsLayout->addWidget(new QLabel(" ", this), ++i, 0);
     m_pathsLayout->setRowStretch(i, 500);
   }
@@ -270,7 +286,10 @@ void MotionPathPanel::fillCombo(QComboBox* combo, TStageObjectSpline* spline) {
 
 ClickablePathLabel::ClickablePathLabel(const QString& text, QWidget* parent,
                                        Qt::WindowFlags f)
-    : QLabel(text, parent, f) {}
+    : QLabel(text, parent, f) {
+    setMaximumHeight(18);
+    setObjectName("MotionPathLabel");
+}
 
 //-----------------------------------------------------------------------------
 
@@ -285,13 +304,13 @@ void ClickablePathLabel::mouseReleaseEvent(QMouseEvent* event) {
 //-----------------------------------------------------------------------------
 
 void ClickablePathLabel::enterEvent(QEvent*) {
-  setStyleSheet("text-decoration: underline;");
+  
 }
 
 //-----------------------------------------------------------------------------
 
 void ClickablePathLabel::leaveEvent(QEvent*) {
-  setStyleSheet("text-decoration: none;");
+  
 }
 
 //=============================================================================
@@ -305,6 +324,6 @@ public:
     TObjectHandle* obj = app->getCurrentObject();
     obj->setObjectId(
         xsh->getXsheet()->getStageObjectTree()->getMotionPathViewerId());
-    TStageObjectCmd::addNewSpline(xsh, obj, 0);
+    TStageObjectCmd::addNewSpline(xsh, obj, 0, QPointF(0.0, 0.0), true);
   }
 } CreateNewSpline;

@@ -1446,10 +1446,10 @@ void TStageObjectCmd::setAsActiveCamera(TXsheetHandle *xshHandle,
 void TStageObjectCmd::addNewSpline(TXsheetHandle *xshHandle,
                                    TObjectHandle *objHandle,
                                    TColumnHandle *colHandle,
-                                   QPointF initialPos) {
+                                   QPointF initialPos, bool setActive) {
   TXsheet *xsh               = xshHandle->getXsheet();
   TStageObjectSpline *spline = xsh->getStageObjectTree()->createSpline();
-
+  if (setActive) spline->setActive(true);
   if (!initialPos.isNull())
     spline->setDagNodePos(TPointD(initialPos.x(), initialPos.y()));
 
