@@ -170,8 +170,6 @@ DVAPI void defineVectorWriterMaker(const char *ext, Tiio::VectorWriterMaker *fn,
 
 DVAPI void defineWriterProperties(const char *ext, TPropertyGroup *);
 
-DVAPI bool isQuicktimeInstalled();
-
 DVAPI void updateFileWritersPropertiesTranslation();
 
 //-------------------------------------------------------------------

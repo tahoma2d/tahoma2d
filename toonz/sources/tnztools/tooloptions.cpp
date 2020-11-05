@@ -1891,7 +1891,6 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     builder.setSingleValueWidgetType(ToolOptionControlBuilder::FIELD);
 
     addSeparator();
-    if (tool && tool->getProperties(1)) tool->getProperties(1)->accept(builder);
     m_drawOrderCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Draw Under"));
     m_autoCloseCheckbox =
@@ -1904,6 +1903,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Snap"));
     m_snapSensitivityCombo =
         dynamic_cast<ToolOptionCombo *>(m_controls.value("Sensitivity:"));
+
+    if (tool && tool->getProperties(1)) tool->getProperties(1)->accept(builder);
     m_joinStyleCombo =
         dynamic_cast<ToolOptionPopupButton *>(m_controls.value("Join"));
     m_miterField =

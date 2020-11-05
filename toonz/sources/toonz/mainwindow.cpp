@@ -1958,10 +1958,6 @@ void MainWindow::defineActions() {
   menuAct = createMenuScanCleanupAction(MI_Cleanup, tr("&Cleanup"), "");
   menuAct->setIcon(createQIcon("cleanup"));
 
-  menuAct =
-      createMenuScanCleanupAction(MI_PencilTest, tr("&Camera Capture..."), "");
-  menuAct->setIcon(createQIcon("camera_capture"));
-
   menuAct = createMenuLevelAction(MI_AddFrames, tr("&Add Frames..."), "");
   menuAct->setIcon(createQIcon("add_cells"));
 
@@ -2069,6 +2065,12 @@ void MainWindow::defineActions() {
   menuAct = createMenuXsheetAction(MI_RemoveGlobalKeyframe,
                                    tr("Remove Multiple Keys"), "");
   menuAct->setIcon(createQIcon("remove_multiple_keys"));
+
+  menuAct = createMenuXsheetAction(MI_SetStartMarker, tr("Set Start Marker"), "");
+  menuAct = createMenuXsheetAction(MI_SetStopMarker, tr("Set Stop Marker"), "");
+  menuAct = createMenuXsheetAction(MI_ClearMarkers, tr("Remove Markers"), "");
+  menuAct = createMenuXsheetAction(MI_SetAutoMarkers, tr("Set Auto Markers"), "");
+  menuAct = createMenuXsheetAction(MI_PreviewThis, tr("Set Markers to Current Frame"), "");
 
   menuAct = createMenuLevelAction(MI_NewNoteLevel, tr("New Note Level"), "");
   menuAct->setIcon(createQIcon("new_note_level"));
@@ -2360,8 +2362,9 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenToolbar, tr("&Toolbar"), "");
   createMenuWindowsAction(MI_OpenToolOptionBar, tr("&Tool Option Bar"), "");
   createMenuWindowsAction(MI_OpenCommandToolbar, tr("&Command Bar"), "");
-  createMenuWindowsAction(MI_OpenStopMotionPanel, tr("&Stop Motion Controls"),
-                          "");
+  menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel,
+                                    tr("&Stop Motion Controls"), "");
+  menuAct->setIcon(createQIcon("camera_capture"));
   createMenuWindowsAction(MI_OpenMotionPathPanel, tr("&Motion Paths"), "");
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
@@ -3901,11 +3904,6 @@ void RecentFiles::loadRecentFiles() {
   if (!levels.isEmpty()) {
     for (i = 0; i < levels.size(); i++) {
       QString path = levels.at(i).toString();
-#ifdef x64
-      if (path.endsWith(".mov") || path.endsWith(".3gp") ||
-          path.endsWith(".pct") || path.endsWith(".pict"))
-        continue;
-#endif
       m_recentLevels.append(path);
     }
   } else {

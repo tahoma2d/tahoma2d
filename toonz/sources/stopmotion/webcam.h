@@ -77,6 +77,14 @@ public:
   void setWebcamSaturationValue(int value);
 
   void openSettingsWindow();
+  void setLut(cv::Mat lut) { m_lut = lut; }
+  void setColorMode(int mode) { m_colorMode = mode; }
+  void setWhite(int white) { m_white = white; }
+  void setBlack(int black) { m_black = black; }
+  void setThreshold(int threshold) { m_threshold = threshold; }
+  void setGamma(double gamma) { m_gamma = gamma; }
+  void computeLut();
+  cv::Mat getWebcamImage() { return m_webcamImage; }
 
 private:
   // Webcam Properties
@@ -92,13 +100,24 @@ private:
   int m_webcamWidth    = 0;
   int m_webcamHeight   = 0;
   bool m_useMjpg       = true;
+  int m_colorMode      = 0;
+  int m_white          = 255;
+  int m_black          = 0;
+  int m_threshold      = 128;
+  double m_gamma       = 1.0;
+  cv::Mat m_lut;
+  cv::Mat m_webcamImage;
 
   int m_webcamFocusValue       = 0;
   bool m_webcamAutofocusStatus = true;
 
+  void adjustLevel(cv::Mat& image);
+  void binarize(cv::Mat& image);
+
 signals:
   void useMjpgSignal(bool);
   void useDirectShowSignal(bool);
+  void updateHistogram(cv::Mat);
 };
 
 #endif  // WEBCAM_H

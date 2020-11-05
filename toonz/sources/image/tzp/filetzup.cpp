@@ -248,14 +248,6 @@ typedef struct {
 
   /*---------------------------------------------------------------*/
 
-  /*TNZMOVIE_QUALITY      pct_quality;
-TNZMOVIE_COMPRESSION  pct_compression;
-*/
-  /*---------------------------------------------------------------*/
-  /*
-TNZMOVIE_QUALITY     mov_quality;
-TNZMOVIE_COMPRESSION mov_compression;
-*/
   int avi_bpp;
   char *avi_compression;
 } IMG_IO_SETTINGS;

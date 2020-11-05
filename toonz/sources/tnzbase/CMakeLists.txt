@@ -122,7 +122,6 @@ message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
     SYSTEM
     ../common/flash
-    ${SDKROOT}/libusb/libusb-1.0.9/include
 )
 
 if(BUILD_ENV_MSVC)

@@ -22,18 +22,6 @@
 
 #if !defined(x64) && !defined(__GNUC__)
 
-#define list QuickTime_list
-#define map QuickTime_map
-#define iterator QuickTime_iterator
-#define float_t QuickTime_float_t
-#define GetProcessInformation QuickTime_GetProcessInformation
-#define int_fast8_t QuickTime_int_fast8_t
-#define int_fast16_t QuickTime_int_fast16_t
-#define uint_fast16_t QuickTime_uint_fast16_t
-
-#include "QuickTimeComponents.h"
-#include "tquicktime.h"
-
 #undef list
 #undef map
 #undef iterator
@@ -45,22 +33,12 @@
 
 #endif
 
-#include "./mov/tiio_mov.h"
-#include "./3gp/tiio_3gp.h"
 #include "./zcc/tiio_zcc.h"
 
-#elif defined(MACOSX)
-#include "./mov/tiio_movM.h"
-#include "./3gp/tiio_3gpM.h"
-
-#elif defined(LINUX)  // No more supported by the way...
-// #include "./mov/tiio_movL.h"
-#include "./mov/tiio_mov_proxy.h"
-#include "./3gp/tiio_3gp_proxy.h"
 #endif
 
 // Common includes
-#include "./quantel/tiio_quantel.h"
+//#include "./quantel/tiio_quantel.h"
 #include "./sgi/tiio_sgi.h"
 #include "./tga/tiio_tga.h"
 #include "./png/tiio_png.h"
@@ -115,10 +93,6 @@ void initImageIo(bool lightVersion) {
   Tiio::defineReaderMaker("plt", Tiio::makePltReader);
   Tiio::defineWriterMaker("plt", Tiio::makePltWriter, false);
   TFileType::declare("plt", TFileType::RASTER_IMAGE);
-
-  Tiio::defineReaderMaker("nol", Tiio::makePngReader);
-  Tiio::defineWriterMaker("nol", Tiio::makePngWriter, false);
-  TFileType::declare("nol", TFileType::RASTER_IMAGE);
 
   TLevelWriter::define("psd", TLevelWriterPsd::create, false);
   TLevelReader::define("psd", TLevelReaderPsd::create);
@@ -200,31 +174,4 @@ void initImageIo(bool lightVersion) {
 
 #endif  // _WIN32
 
-  if (IsQuickTimeInstalled()) {
-    TLevelWriter::define("mov", TLevelWriterMov::create, true);
-    TLevelReader::define("mov", TLevelReaderMov::create);
-    TFileType::declare("mov", TFileType::RASTER_LEVEL);
-    Tiio::defineWriterProperties("mov", new Tiio::MovWriterProperties());
-
-    TLevelWriter::define("3gp", TLevelWriter3gp::create, false);
-    TLevelReader::define("3gp", TLevelReader3gp::create);
-    TFileType::declare("3gp", TFileType::RASTER_LEVEL);
-    Tiio::defineWriterProperties("3gp", new Tiio::MovWriterProperties());
-  }
-
-  /*
-#if (defined(_WIN32) && !defined(x64))
-TLevelWriter::define("pct", TLevelWriterPicPct::create, true);
-TLevelReader::define("pct", TLevelReaderPicPct::create);
-TFileType::declare("pct", TFileType::RASTER_LEVEL);
-Tiio::defineWriterProperties("pct", new Tiio::PctWriterProperties());
-TLevelWriter::define("pic", TLevelWriterPicPct::create, true);
-TLevelReader::define("pic", TLevelReaderPicPct::create);
-TFileType::declare("pic", TFileType::RASTER_LEVEL);
-TLevelWriter::define("pict", TLevelWriterPicPct::create, true);
-TLevelReader::define("pict", TLevelReaderPicPct::create);
-TFileType::declare("pict", TFileType::RASTER_LEVEL);
-Tiio::defineWriterProperties("pict", new Tiio::PctWriterProperties());
-#endif    // _WIN32 && 32-bit
-*/
 }

@@ -331,33 +331,23 @@ install_name_tool -change /usr/local/Trolltech/Qt-4.8.0/lib/QtOpenGL.framework/V
 install_name_tool -id @executable_path/../Frameworks/QtNetwork.framework/Versions/4/QtNetwork $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtNetwork.framework/Versions/4/QtNetwork
 install_name_tool -change /usr/local/Trolltech/Qt-4.8.0/lib/QtNetwork.framework/Versions/4/QtNetwork @executable_path/../Frameworks/QtNetwork.framework/Versions/4/QtNetwork $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/tcomposer
 
-# modifico le liblrerie in t32bitsrv
-
 #tnzcore
 
 install_name_tool -id @executable_path/../Frameworks/libtnzcore.1.dylib $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/libtnzcore.1.dylib 
-install_name_tool -change libtnzcore.1.dylib @executable_path/../Frameworks/libtnzcore.1.dylib $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/t32bitsrv
 
 
 # image
 
 install_name_tool -id @executable_path/../Frameworks/libimage.1.dylib $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/libimage.1.dylib 
-install_name_tool -change libimage.1.dylib @executable_path/../Frameworks/libimage.1.dylib $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/t32bitsrv
 
 
 # Qt
 
 install_name_tool -id @executable_path/../Frameworks/QtCore.framework/Versions/4/QtCore $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtCore.framework/Versions/4/QtCore
-install_name_tool -change /usr/local/Trolltech/Qt-4.8.0/lib/QtCore.framework/Versions/4/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/4/QtCore $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/t32bitsrv
 
 install_name_tool -id @executable_path/../Frameworks/QtGui.framework/Versions/4/QtGui $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtGui.framework/Versions/4/QtGui
-install_name_tool -change /usr/local/Trolltech/Qt-4.8.0/lib/QtGui.framework/Versions/4/QtGui @executable_path/../Frameworks/QtGui.framework/Versions/4/QtGui $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/t32bitsrv
-
 
 install_name_tool -id @executable_path/../Frameworks/QtNetwork.framework/Versions/4/QtNetwork $BINROOT/bin/Toonz\ 7.1.app/Contents/Frameworks/QtNetwork.framework/Versions/4/QtNetwork
-install_name_tool -change /usr/local/Trolltech/Qt-4.8.0/lib/QtNetwork.framework/Versions/4/QtNetwork @executable_path/../Frameworks/QtNetwork.framework/Versions/4/QtNetwork $BINROOT/bin/Toonz\ 7.1.app/Contents/MacOS/t32bitsrv
-
-
 
 
 # modifico le liblrerie in tcleanup

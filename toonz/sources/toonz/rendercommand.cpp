@@ -87,8 +87,8 @@ public:
 
     if (Preferences::instance()->isGeneratedMovieViewEnabled()) {
       if (!isPreview && (Preferences::instance()->isDefaultViewerEnabled()) &&
-          (m_fp.getType() == "mov" || m_fp.getType() == "avi" ||
-           m_fp.getType() == "3gp" || m_fp.getType() == "mp4" ||
+          (m_fp.getType() == "avi" ||
+           m_fp.getType() == "mp4" ||
            m_fp.getType() == "gif" || m_fp.getType() == "webm")) {
         QString name = QString::fromStdString(m_fp.getName());
         int index;
@@ -255,11 +255,7 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
   if (fp.getWideName() == L"")
     fp = fp.withName(scene->getScenePath().getName());
   /*-- For raster images, add the frame number to the filename --*/
-  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE ||
-      fp.getType() == "pct" || fp.getType() == "pic" ||
-      fp.getType() == "pict")  // pct e' un formato"livello" (ha i settings di
-                               // quicktime) ma fatto di diversi frames
-      // Tahoma2D no longer supports the pct, pic or pict file types.
+  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE) 
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
   fp   = scene->decodeFilePath(fp);
 
@@ -441,7 +437,7 @@ void RenderCommand::rasterRender(bool isPreview) {
   // depth). I tried to make OT to detect the mov settings and adaptively switch
   // the behavior, but ended in vain :-(
   // So I just omitted every mov from applying solid background as a quick fix.
-  if (isMovieType(ext) && ext != "mov") {
+  if (isMovieType(ext)) {
     scene->getProperties()->setBgColor(currBgColor);
   }
   // for non alpha-enabled images (like jpg), background color will be inserted

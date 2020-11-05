@@ -130,7 +130,6 @@ set(MOC_HEADERS
     ../stopmotion/stopmotionserial.h
     ../stopmotion/stopmotionlight.h
     cameracapturelevelcontrol.h
-    penciltestpopup.h
 )
 
 set(HEADERS
@@ -361,7 +360,6 @@ set(SOURCES
     ../stopmotion/stopmotionserial.cpp
     ../stopmotion/stopmotionlight.cpp
 	cameracapturelevelcontrol.cpp
-    penciltestpopup.cpp
 )
 
 add_translation(toonz ${HEADERS} ${SOURCES})
@@ -436,7 +434,6 @@ if(BUILD_TARGET_WIN)
     if(PLATFORM EQUAL 32)
         include_directories(
             SYSTEM
-            ${SDKROOT}/quicktime/QT73SDK/CIncludes
         )
     endif()
 endif()

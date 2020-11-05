@@ -98,10 +98,6 @@ void XDTSImportPopup::updateSuggestions(const QString samplePath) {
   QStringList filters;
   filters << "*.bmp"
           << "*.jpg"
-          << "*.nol"
-          << "*.pic"
-          << "*.pict"
-          << "*.pct"
           << "*.png"
           << "*.rgb"
           << "*.sgi"

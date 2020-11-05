@@ -388,10 +388,7 @@ ConvertPopup::ConvertPopup(bool specifyInput)
            << "gif"
            << "bmp"
            << "avi"
-           << "mov"
            << "jpg"
-           << "pic"
-           << "pict"
            << "rgb"
            << "sgi"
            << "png";
