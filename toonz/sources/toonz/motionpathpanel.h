@@ -29,6 +29,17 @@ class GraphWidget;
 
 class ClickablePathLabel : public QLabel {
   Q_OBJECT
+  Q_PROPERTY(QColor SelectedColor READ getSelectedColor WRITE setSelectedColor
+          DESIGNABLE true)
+      QColor m_selectedColor;
+  QColor getSelectedColor() const { return m_selectedColor; }
+  void setSelectedColor(const QColor& color) { m_selectedColor = color; }
+
+  Q_PROPERTY(QColor HoverColor READ getHoverColor WRITE setHoverColor
+      DESIGNABLE true)
+      QColor m_hoverColor;
+  QColor getHoverColor() const { return m_hoverColor; }
+  void setHoverColor(const QColor& color) { m_hoverColor = color; }
 
 protected:
   void mouseReleaseEvent(QMouseEvent*) override;
@@ -39,6 +50,8 @@ public:
   ClickablePathLabel(const QString& text, QWidget* parent = nullptr,
                      Qt::WindowFlags f = Qt::WindowFlags());
   ~ClickablePathLabel();
+  void setSelected();
+  void clearSelected();
 
 signals:
   void onMouseRelease(QMouseEvent* event);
@@ -63,12 +76,14 @@ class MotionPathPanel final : public QWidget {
   std::vector<TStageObjectSpline*> m_splines;
   TStageObjectSpline* m_currentSpline;
   GraphWidget* m_graphArea;
+  std::vector<ClickablePathLabel*> m_pathLabels;
 
 public:
   MotionPathPanel(QWidget* parent = 0);
   ~MotionPathPanel();
 
   void createControl(TStageObjectSpline* spline, int number);
+  void highlightActiveSpline();
 
 protected:
   void fillCombo(QComboBox* combo, TStageObjectSpline* spline);

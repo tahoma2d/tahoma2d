@@ -2462,15 +2462,18 @@ FlipBook #ToolBarContainer {
   padding-right: -1;
 }
 #GraphAreaWidget {
-  border: 1 solid #fff;
+  border: 1 solid rgba(230, 230, 230, 0.4);
   qproperty-SplineColor: #e6e6e6;
+  qproperty-GraphColor: rgba(230, 230, 230, 0.4);
   qproperty-NonSelectedPointColor: #2c2c2c;
   qproperty-SelectedPointColor: #5385a6;
 }
 #GraphAreaFrame {
-  border: 1 solid #fff;
+  border: 1 solid rgba(230, 230, 230, 0.4);
 }
 #MotionPathLabel {
+  qproperty-SelectedColor: #5385a6;
+  qproperty-HoverColor: #717171;
   border-radius: 2;
   padding-left: 2px;
   padding-right: 2px;

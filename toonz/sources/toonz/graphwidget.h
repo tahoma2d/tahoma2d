@@ -23,16 +23,18 @@ class GraphWidget : public QWidget {
 
   Q_PROPERTY(QColor SplineColor READ getSplineColor WRITE setSplineColor
                  DESIGNABLE true)
-  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
-  // true)
   QColor m_splineColor;
   QColor getSplineColor() const { return m_splineColor; }
   void setSplineColor(const QColor& color) { m_splineColor = color; }
 
+  Q_PROPERTY(QColor GraphColor READ getGraphColor WRITE setGraphColor
+      DESIGNABLE true)
+      QColor m_graphColor;
+  QColor getGraphColor() const { return m_graphColor; }
+  void setGraphColor(const QColor& color) { m_graphColor = color; }
+
   Q_PROPERTY(QColor NonSelectedPointColor READ getNonSelectedPointColor WRITE
                  setNonSelectedPointColor DESIGNABLE true)
-  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
-  // true)
   QColor m_nonSelectedPointColor;
   QColor getNonSelectedPointColor() const { return m_nonSelectedPointColor; }
   void setNonSelectedPointColor(const QColor& color) {
@@ -41,12 +43,10 @@ class GraphWidget : public QWidget {
 
   Q_PROPERTY(QColor SelectedPointColor READ getSelectedPointColor WRITE
                  setSelectedPointColor DESIGNABLE true)
-  // Q_PROPERTY(QColor rectColor READ getRectColor WRITE setRectColor DESIGNABLE
-  // true)
-  QColor m_SelectedPointColor;
-  QColor getSelectedPointColor() const { return m_SelectedPointColor; }
+  QColor m_selectedPointColor;
+  QColor getSelectedPointColor() const { return m_selectedPointColor; }
   void setSelectedPointColor(const QColor& color) {
-    m_SelectedPointColor = color;
+    m_selectedPointColor = color;
   }
 
   QList<QPointF> m_points;

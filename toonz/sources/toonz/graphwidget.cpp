@@ -684,10 +684,19 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
 
   double scale = (m_isEnlarged) ? 2.0 : 1.0;
   painter.setRenderHint(QPainter::Antialiasing, false);
-  painter.setPen(m_splineColor);
+  painter.setPen(m_graphColor);
 
   QRectF r = rect().adjusted(m_LeftRightMargin, m_TopMargin, -m_LeftRightMargin,
                              -m_BottomMargin);
+  int step = width() / 8;
+  for (int i = 1; i < 8; i++) {
+      painter.drawLine(QPoint(step * i, 0), QPoint(step * i, height()));
+  }
+
+  step = height() / 8;
+  for (int i = 1; i < 8; i++) {
+      painter.drawLine(QPoint(0, step * i), QPoint(width(), step * i));
+  }
 
   painter.setClipRect(r, Qt::IntersectClip);
   painter.translate(m_LeftRightMargin + 1, height() - m_BottomMargin);
@@ -702,6 +711,7 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
   bluePen.setWidthF(1.0 / scale);
 
   painter.setPen(blackPen);
+  painter.setPen(m_splineColor);
   painter.setBrush(Qt::NoBrush);
   painter.drawPath(path);
 
@@ -717,7 +727,8 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
       p = nextP;
       continue;
     }
-    painter.setPen(blackPen);
+
+    painter.setPen(m_splineColor);
 
     QPointF handlePos = p;
     if (!m_isLinear) {
@@ -730,9 +741,9 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
     }
 
     painter.setBrush((m_currentControlPointIndex != i)
-                         ? Qt::white
-                         : (p == handlePos) ? Qt::black : Qt::blue);
-    painter.setPen((p == handlePos) ? blackPen : bluePen);
+                         ? m_nonSelectedPointColor
+                         : (p == handlePos) ? m_selectedPointColor : Qt::blue);
+    painter.setPen(m_splineColor);
 
     QRectF pointRect(handlePos.x() - rad, handlePos.y() - rad, 2 * rad,
                      2 * rad);
