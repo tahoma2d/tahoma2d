@@ -1781,10 +1781,14 @@ QString EditTool::updateEnabled(int rowIndex, int columnIndex) {
   // if an object other than column is selected, then enable the tool
   // regardless of the current column state
   TStageObjectId objId = m_application->getCurrentObject()->getObjectId();
-  if (!objId.isColumn()) return (enable(true), QString());
-
-  // Retrieve vars and view modes
   TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+  if (objId == xsh->getStageObjectTree()->getMotionPathViewerId()) {
+      return (enable(false),
+          QObject::tr("It is not possible to animate unlinked motion paths."));
+  }
+
+  if (!objId.isColumn()) return (enable(true), QString());
+  // Retrieve vars and view modes
   // if a column object is selected, switch the inspected column to it
   TXshColumn *column = xsh->getColumn(objId.getIndex());
 

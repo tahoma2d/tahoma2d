@@ -1443,10 +1443,10 @@ void TStageObjectCmd::setAsActiveCamera(TXsheetHandle *xshHandle,
 //
 //-------------------------------------------------------------------
 
-void TStageObjectCmd::addNewSpline(TXsheetHandle *xshHandle,
+TStageObjectSpline* TStageObjectCmd::addNewSpline(TXsheetHandle *xshHandle,
                                    TObjectHandle *objHandle,
-                                   TColumnHandle *colHandle,
-                                   QPointF initialPos, bool setActive) {
+                                   TColumnHandle *colHandle, QPointF initialPos,
+                                   bool setActive) {
   TXsheet *xsh               = xshHandle->getXsheet();
   TStageObjectSpline *spline = xsh->getStageObjectTree()->createSpline();
   if (setActive) spline->setActive(true);
@@ -1465,6 +1465,7 @@ void TStageObjectCmd::addNewSpline(TXsheetHandle *xshHandle,
     TUndoManager::manager()->add(new NewSplineUndo(objId, spline, xshHandle));
   }
   xshHandle->notifyXsheetChanged();
+  return spline;
 }
 
 //===================================================================

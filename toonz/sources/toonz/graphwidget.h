@@ -27,9 +27,9 @@ class GraphWidget : public QWidget {
   QColor getSplineColor() const { return m_splineColor; }
   void setSplineColor(const QColor& color) { m_splineColor = color; }
 
-  Q_PROPERTY(QColor GraphColor READ getGraphColor WRITE setGraphColor
-      DESIGNABLE true)
-      QColor m_graphColor;
+  Q_PROPERTY(
+      QColor GraphColor READ getGraphColor WRITE setGraphColor DESIGNABLE true)
+  QColor m_graphColor;
   QColor getGraphColor() const { return m_graphColor; }
   void setGraphColor(const QColor& color) { m_graphColor = color; }
 

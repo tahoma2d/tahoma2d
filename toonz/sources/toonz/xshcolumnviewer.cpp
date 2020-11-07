@@ -408,6 +408,7 @@ void ChangeObjectParent::refresh() {
   int i;
   for (i = 0; i < objectCount; i++) {
     TStageObjectId id = tree->getStageObject(i)->getId();
+    if (id == tree->getMotionPathViewerId()) continue;
     int index         = id.getIndex();
     QString indexStr(std::to_string(id.getIndex() + 1).c_str());
     QString newText;

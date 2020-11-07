@@ -2471,9 +2471,11 @@ FlipBook #ToolBarContainer {
 #GraphAreaFrame {
   border: 1 solid rgba(230, 230, 230, 0.4);
 }
-#MotionPathLabel {
+MotionPathPanel {
   qproperty-SelectedColor: #5385a6;
   qproperty-HoverColor: #595959;
+}
+#MotionPathLabel {
   border-radius: 2;
   padding-left: 2px;
   padding-right: 2px;

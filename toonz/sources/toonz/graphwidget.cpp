@@ -690,12 +690,12 @@ void GraphWidget::paintEvent(QPaintEvent* e) {
                              -m_BottomMargin);
   int step = width() / 8;
   for (int i = 1; i < 8; i++) {
-      painter.drawLine(QPoint(step * i, 0), QPoint(step * i, height()));
+    painter.drawLine(QPoint(step * i, 0), QPoint(step * i, height()));
   }
 
   step = height() / 8;
   for (int i = 1; i < 8; i++) {
-      painter.drawLine(QPoint(0, step * i), QPoint(width(), step * i));
+    painter.drawLine(QPoint(0, step * i), QPoint(width(), step * i));
   }
 
   painter.setClipRect(r, Qt::IntersectClip);

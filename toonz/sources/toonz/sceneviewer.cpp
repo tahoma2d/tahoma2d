@@ -3171,12 +3171,12 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelsize) {
   TXsheet *xsh    = TApp::instance()->getCurrentXsheet()->getXsheet();
-  int splineCount = xsh->getStageObjectTree()->getSplineCount();
+
 
   TStageObjectId objId = TApp::instance()->getCurrentObject()->getObjectId();
 
   TStageObject *pegbar =
-      objId != TStageObjectId::NoneId ? xsh->getStageObject(objId) : 0;
+      (objId != TStageObjectId::NoneId && objId != xsh->getStageObjectTree()->getMotionPathViewerId()) ? xsh->getStageObject(objId) : 0;
 
   TStageObjectSpline *pegbarSpline = 0;
   if (pegbar && pegbar->getSpline()) {
@@ -3254,11 +3254,8 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
 
     glPopMatrix();
   }
-
+  int splineCount = xsh->getStageObjectTree()->getSplineCount();
   for (int i = 0; i < splineCount; i++) {
-    glEnable(GL_BLEND);
-    glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     TStageObjectSpline *spline = xsh->getStageObjectTree()->getSpline(i);
 
     if (!spline->getActive()) continue;
@@ -3285,6 +3282,9 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
     }
 
     glPushMatrix();
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (camera3d) {
       tglMultMatrix(aff);
       aff = TAffine();
@@ -3388,9 +3388,9 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
       }
     }
     glLineWidth(1.0);
-    glPopMatrix();
     glDisable(GL_LINE_SMOOTH);
     glDisable(GL_BLEND);
+    glPopMatrix();
   }
 }
 
