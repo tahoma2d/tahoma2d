@@ -358,8 +358,11 @@ public:
   QString getFileProject(QString fileName) const;
   QString getFileProject(int index) const;
   void clearRecentFilesList(FileType fileType);
+  void clearAllRecentFilesList(bool saveNow = true);
   void loadRecentFiles();
   void saveRecentFiles();
+
+  void updateStuffPath(QString oldPath, QString newPath);
 
 protected:
   void refreshRecentFilesMenu(FileType fileType);

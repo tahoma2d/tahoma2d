@@ -2224,8 +2224,20 @@ void PreferencesPopup::onImport() {
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Sandbox.\nCould not find " +
                      srcDir.getQString());
-    else
+    else {
       TSystem::copyDir(destDir, srcDir, true);
+
+      // Recent history needs to be updated
+      if (m_importPrefsCB->isChecked() &&
+          TFileStatus(ToonzFolder::getMyModuleDir() + L"RecentFiles.ini")
+              .doesExist()) {
+        RecentFiles::instance()->clearAllRecentFilesList(false);
+        RecentFiles::instance()->loadRecentFiles();
+        RecentFiles::instance()->updateStuffPath(srcDir.getQString(),
+                                                 destDir.getQString());
+        RecentFiles::instance()->saveRecentFiles();
+      }
+    }
 
     // -- Projects
     destDir = TEnv::getStuffDir() + L"projects";
@@ -2233,8 +2245,20 @@ void PreferencesPopup::onImport() {
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Projects.\nCould not find " +
                      srcDir.getQString());
-    else
+    else {
       TSystem::copyDir(destDir, srcDir, true);
+
+      // Recent history needs to be updated
+      if (m_importPrefsCB->isChecked() &&
+          TFileStatus(ToonzFolder::getMyModuleDir() + L"RecentFiles.ini")
+              .doesExist()) {
+        RecentFiles::instance()->clearAllRecentFilesList(false);
+        RecentFiles::instance()->loadRecentFiles();
+        RecentFiles::instance()->updateStuffPath(srcDir.getQString(),
+                                                 destDir.getQString());
+        RecentFiles::instance()->saveRecentFiles();
+      }
+    }
   }
   //-------------------
   // --- Fxs and Plugins
