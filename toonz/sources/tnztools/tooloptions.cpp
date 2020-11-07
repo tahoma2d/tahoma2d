@@ -1095,8 +1095,8 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
  */
 void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   TStageObjectId curObjId = m_objHandle->getObjectId();
-  //TXsheet* xsh = m_xshHandle->getXsheet();
-  //if (curObjId == xsh->getStageObjectTree()->getMotionPathViewerId()) {
+  // TXsheet* xsh = m_xshHandle->getXsheet();
+  // if (curObjId == xsh->getStageObjectTree()->getMotionPathViewerId()) {
   //    m_objHandle->setObjectId(xsh->getStageObjectTree()->getStageObject(0)->getId());
   //    curObjId = m_objHandle->getObjectId();
   //}

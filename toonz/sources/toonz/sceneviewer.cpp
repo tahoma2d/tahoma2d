@@ -3170,13 +3170,15 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
 
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelsize) {
-  TXsheet *xsh    = TApp::instance()->getCurrentXsheet()->getXsheet();
-
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   TStageObjectId objId = TApp::instance()->getCurrentObject()->getObjectId();
 
   TStageObject *pegbar =
-      (objId != TStageObjectId::NoneId && objId != xsh->getStageObjectTree()->getMotionPathViewerId()) ? xsh->getStageObject(objId) : 0;
+      (objId != TStageObjectId::NoneId &&
+       objId != xsh->getStageObjectTree()->getMotionPathViewerId())
+          ? xsh->getStageObject(objId)
+          : 0;
 
   TStageObjectSpline *pegbarSpline = 0;
   if (pegbar && pegbar->getSpline()) {
