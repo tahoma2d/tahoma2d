@@ -15,6 +15,7 @@ then
    rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
 fi
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
+chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
 
 if [ -d thirdparty/ffmpeg/bin ]
 then
