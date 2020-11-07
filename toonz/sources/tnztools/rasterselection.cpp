@@ -1337,6 +1337,7 @@ bool RasterSelection::isEditable() {
 
   if (!filmstrip) {
     int colIndex = app->getCurrentTool()->getTool()->getColumnIndex();
+    if (colIndex < 0) return false;
     int rowIndex = frame->getFrame();
     if (app->getCurrentTool()->getTool()->isColumnLocked(colIndex))
       return false;

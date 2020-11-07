@@ -196,7 +196,7 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
     spline->setWidth(width);
     TApp::instance()->getCurrentScene()->notifySceneChanged();
   });
-  connect(colorCombo, qOverload<int>(&QComboBox::currentIndexChanged),
+  connect(colorCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
           [=](int index) {
 
             spline->setColor(index);
