@@ -91,16 +91,77 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   container->setObjectName("MotionPathToolbar");
   container->setLayout(m_toolLayout);
 
-  m_controlsLayout = new QHBoxLayout(this);
+  m_controlsLayout = new QVBoxLayout(this);
   m_controlsLayout->setMargin(10);
+  m_controlsLayout->setSpacing(3);
   QHBoxLayout* graphLayout = new QHBoxLayout(this);
   graphLayout->setMargin(0);
   graphLayout->setSpacing(0);
   graphLayout->addWidget(m_graphArea);
-  QFrame* graphFrame = new QFrame(this);
-  graphFrame->setLayout(graphLayout);
-  graphFrame->setObjectName("GraphAreaFrame");
-  m_controlsLayout->addWidget(graphFrame);
+  m_graphFrame = new QFrame(this);
+  m_graphFrame->setLayout(graphLayout);
+  m_graphFrame->setObjectName("GraphAreaFrame");
+  m_controlsLayout->addWidget(m_graphFrame);
+
+  m_playToolbar = new QToolBar(this);
+  m_playToolbar->setFixedHeight(18);
+  m_playToolbar->setIconSize(QSize(16, 16));
+  QAction* playAction = new QAction(this);
+  playAction->setIcon(createQIcon("play"));
+  m_playToolbar->addAction(playAction);
+  connect(playAction, &QAction::triggered, [=]() {
+      if (!m_currentSpline) return;
+      m_looping = false;
+      int fps = 24;
+      fps = TApp::instance()
+          ->getCurrentScene()
+          ->getScene()
+          ->getProperties()
+          ->getOutputProperties()
+          ->getFrameRate();
+      m_playbackExecutor.resetFps(fps);
+      m_currentSpline->setCurrentStep(0);
+      m_currentSpline->setIsPlaying(true);
+      if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
+      if (TApp::instance()->getActiveViewer())
+          TApp::instance()->getActiveViewer()->update();
+  });
+
+  QAction* loopAction = new QAction(this);
+  loopAction->setIcon(createQIcon("loop"));
+  m_playToolbar->addAction(loopAction);
+  connect(loopAction, &QAction::triggered, [=]() {
+      if (!m_currentSpline) return;
+      m_looping = true;
+      int fps = 24;
+      fps = TApp::instance()
+          ->getCurrentScene()
+          ->getScene()
+          ->getProperties()
+          ->getOutputProperties()
+          ->getFrameRate();
+      m_playbackExecutor.resetFps(fps);
+      m_currentSpline->setCurrentStep(0);
+      m_currentSpline->setIsPlaying(true);
+      if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
+      if (TApp::instance()->getActiveViewer())
+          TApp::instance()->getActiveViewer()->update();
+      });
+
+  QAction* stopActionAction = new QAction(this);
+  stopActionAction->setIcon(createQIcon("stop"));
+  m_playToolbar->addAction(stopActionAction);
+  connect(stopActionAction, &QAction::triggered, [=]() {
+      m_playbackExecutor.abort();
+      m_looping = false;
+      if (!m_currentSpline) return;
+      m_currentSpline->setIsPlaying(false);
+      m_currentSpline->setCurrentStep(0);
+      if (TApp::instance()->getActiveViewer())
+          TApp::instance()->getActiveViewer()->update();
+      });
+
+  m_controlsLayout->addWidget(m_playToolbar, Qt::AlignCenter);
 
   m_insideLayout->addWidget(container);
   m_insideLayout->addLayout(m_pathsLayout);
@@ -207,28 +268,11 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
     int width = widthSlider->value();
     spline->setWidth(width);
     TApp::instance()->getCurrentScene()->notifySceneChanged();
-    if (m_currentSpline) m_currentSpline->setIsPlaying(false);
-    m_playbackExecutor.abort();
   });
   connect(colorCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
           [=](int index) {
-
             spline->setColor(index);
             TApp::instance()->getCurrentScene()->notifySceneChanged();
-
-            if (!m_currentSpline) return;
-            int fps = 24;
-            // if (TApp::instance()->getActiveViewer()) fps =
-            // TApp::instance()->getActiveViewer()->getFPS();
-            fps = TApp::instance()
-                      ->getCurrentScene()
-                      ->getScene()
-                      ->getProperties()
-                      ->getOutputProperties()
-                      ->getFrameRate();
-            m_playbackExecutor.resetFps(fps);
-            m_currentSpline->setIsPlaying(true);
-            if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
           });
   connect(deleteLabel, &ClickablePathLabel::onMouseRelease, [=]() {
     const std::vector<TStageObjectId> objIds;
@@ -241,9 +285,7 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
                                      objHandle, fxHandle, true);
     refreshPaths();
   });
-  // if (objHandle->isSpline() && spline == objHandle->getCurrentSpline()) {
-  //    m_activeSplineId = spline->getId();
-  //}
+
 }
 
 //-----------------------------------------------------------------------------
@@ -285,6 +327,8 @@ void MotionPathPanel::refreshPaths() {
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::highlightActiveSpline() {
+  m_graphFrame->hide();
+  m_playToolbar->hide();
   if (m_pathLabels.size() > 0) {
     for (auto label : m_pathLabels) {
       if (m_currentSpline &&
@@ -299,6 +343,8 @@ void MotionPathPanel::highlightActiveSpline() {
                       "padding-right: 2px;";
         std::string css = qss.toStdString();
         label->setStyleSheet(qss);
+        m_graphFrame->show();
+        m_playToolbar->show();
       } else {
         QString qss = "background: rgba(" +
                       QString::number(m_selectedColor.red()) + ", " +
@@ -318,7 +364,6 @@ void MotionPathPanel::highlightActiveSpline() {
                       " }";
         std::string css = qss.toStdString();
         label->setStyleSheet(qss);
-        // label->clearSelected();
       }
     }
   }
@@ -383,15 +428,26 @@ void MotionPathPanel::onNextFrame(int) {
   }
   int steps       = m_currentSpline->getSteps();
   int currentStep = m_currentSpline->getCurrentStep();
+  if (m_looping)
   m_currentSpline->setCurrentStep(currentStep >= steps - 1 ? 0
                                                            : currentStep + 1);
+  else {
+      if (currentStep >= steps - 1) {
+          m_currentSpline->setCurrentStep(0);
+          m_currentSpline->setIsPlaying(false);
+          m_looping = false;
+          m_playbackExecutor.abort();
+      }
+      else m_currentSpline->setCurrentStep(currentStep + 1);
+  }
   if (TApp::instance()->getActiveViewer())
     TApp::instance()->getActiveViewer()->update();
 }
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::stopPlayback() {
-  // m_playbackExecutor.abort();
+    if (TApp::instance()->getActiveViewer())
+        TApp::instance()->getActiveViewer()->update();
 }
 
 //=============================================================================

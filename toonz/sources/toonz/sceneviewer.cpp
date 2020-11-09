@@ -3388,7 +3388,7 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
           glVertex2d(0, -3 - width);
           glEnd();
           if (playing && currentStep == i) {
-            tglDrawDisk(TPointD(0, 0), 10);
+            tglDrawDisk(TPointD(0, 0), 4 + width * 3);
           }
           glPopMatrix();
         }

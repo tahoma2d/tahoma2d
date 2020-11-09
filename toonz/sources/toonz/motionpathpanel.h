@@ -91,12 +91,16 @@ class MotionPathPanel final : public QWidget {
   void setHoverColor(const QColor& color) { m_hoverColor = color; }
 
   QHBoxLayout* m_toolLayout;
-  QHBoxLayout* m_controlsLayout;
+  QVBoxLayout* m_controlsLayout;
   QGridLayout* m_pathsLayout;
   QVBoxLayout* m_outsideLayout;
   QVBoxLayout* m_insideLayout;
   QFrame* m_mainControlsPage;
   QToolBar* m_toolbar;
+  QToolBar* m_playToolbar;
+  QFrame* m_graphFrame;
+
+  bool m_looping = false;
 
   // std::vector<MotionPathControl*> m_motionPathControls;
   std::vector<TStageObjectSpline*> m_splines;
