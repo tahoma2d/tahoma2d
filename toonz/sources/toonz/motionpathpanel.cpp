@@ -35,6 +35,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPushButton>
+#include <QLineEdit>
 
 namespace {
 double distanceSquared(QPoint p1, QPoint p2) {
@@ -217,6 +218,7 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   ClickablePathLabel* nameLabel =
       new ClickablePathLabel(QString::fromStdString(spline->getName()), this);
   m_pathLabels.push_back(nameLabel);
+  QLineEdit* nameEdit = new QLineEdit(this);
   ClickablePathLabel* deleteLabel = new ClickablePathLabel("", this);
   deleteLabel->setPixmap(createQIcon("menu_toggle_on").pixmap(QSize(23, 18)));
   TPanelTitleBarButton* activeButton = new TPanelTitleBarButton(
@@ -236,13 +238,38 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   fillCombo(colorCombo, spline);
 
   // QPushButton* removeButton = new QPushButton("-", this);
+  QHBoxLayout* nameLayout = new QHBoxLayout(this);
+  nameLayout->addWidget(nameLabel);
+  nameLayout->addWidget(nameEdit);
+  nameEdit->hide();
+  nameLayout->addStretch();
 
   m_pathsLayout->addWidget(activeButton, number, 0, Qt::AlignLeft);
-  m_pathsLayout->addWidget(nameLabel, number, 1, Qt::AlignLeft);
+  m_pathsLayout->addLayout(nameLayout, number, 1, Qt::AlignLeft);
   m_pathsLayout->addWidget(widthSlider, number, 2, Qt::AlignRight);
   m_pathsLayout->addWidget(colorCombo, number, 3, Qt::AlignRight);
   m_pathsLayout->addWidget(stepsEdit, number, 4, Qt::AlignRight);
   m_pathsLayout->addWidget(deleteLabel, number, 5, Qt::AlignRight);
+
+  connect(nameLabel, &ClickablePathLabel::doubleClicked, [=]() {
+      nameLabel->hide();
+      nameEdit->setText(nameLabel->text());
+      nameEdit->show();
+      nameEdit->setFocus();
+      nameEdit->selectAll();
+  });
+
+  connect(nameEdit, &QLineEdit::editingFinished, [=]() {
+      QString text = nameEdit->text();
+      if (text.length() > 0 && text != nameLabel->text()) {
+          nameLabel->setText(text);
+          if (spline) spline->setName(text.toStdString());
+          TApp::instance()->getCurrentScene()->notifySceneChanged();
+      }
+      nameEdit->hide();
+      nameLabel->show();
+      stepsEdit->clearFocus();
+  });
 
   connect(nameLabel, &ClickablePathLabel::onMouseRelease, [=]() {
     TApp* app = TApp::instance();
@@ -283,6 +310,11 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
     TFxHandle* fxHandle      = TApp::instance()->getCurrentFx();
     TStageObjectCmd::deleteSelection(objIds, links, splineIds, xshHandle,
                                      objHandle, fxHandle, true);
+    nameEdit->show();
+    m_pathsLayout->removeWidget(nameEdit);
+    m_pathsLayout->removeWidget(nameLabel);
+    delete nameEdit;
+    delete nameLabel;
     refreshPaths();
   });
 
@@ -467,6 +499,10 @@ ClickablePathLabel::~ClickablePathLabel() {}
 
 void ClickablePathLabel::mouseReleaseEvent(QMouseEvent* event) {
   emit onMouseRelease(event);
+}
+
+void ClickablePathLabel::mouseDoubleClickEvent(QMouseEvent* event) {
+    emit doubleClicked();
 }
 
 //-----------------------------------------------------------------------------

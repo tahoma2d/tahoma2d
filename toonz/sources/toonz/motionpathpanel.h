@@ -23,6 +23,7 @@ class QSlider;
 class QComboBox;
 class TThickPoint;
 class GraphWidget;
+class QLineEdit;
 
 //=============================================================================
 // ClickablePathLabel
@@ -33,6 +34,7 @@ class ClickablePathLabel : public QLabel {
 
 protected:
   void mouseReleaseEvent(QMouseEvent*) override;
+  void mouseDoubleClickEvent(QMouseEvent* event) override;
   void enterEvent(QEvent*) override;
   void leaveEvent(QEvent*) override;
 
@@ -45,6 +47,7 @@ public:
 
 signals:
   void onMouseRelease(QMouseEvent* event);
+  void doubleClicked();
 };
 
 //-----------------------------------------------------------------------------
