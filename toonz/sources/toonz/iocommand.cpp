@@ -1939,10 +1939,16 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   // set dirty for xdts files since converted tnz is not yet saved
   TApp::instance()->getCurrentScene()->setDirtyFlag(isXdts);
   History::instance()->addItem(scenePath);
-  if (updateRecentFile)
+  if (updateRecentFile) {
     RecentFiles::instance()->addFilePath(
         toQString(scenePath), RecentFiles::Scene,
         QString::fromStdString(scene->getProject()->getName().getName()));
+  }
+  RecentFiles::instance()->addFilePath(TProjectManager::instance()
+                                           ->getCurrentProjectPath()
+                                           .getParentDir()
+                                           .getQString(),
+                                       RecentFiles::Project);
   QApplication::restoreOverrideCursor();
 
   int forbiddenLevelCount = 0;
@@ -2906,6 +2912,17 @@ public:
     RecentFiles::instance()->clearRecentFilesList(RecentFiles::Level);
   }
 } clearRecentLevelFileListCommandHandler;
+
+//-----------------------------------------------------------------------------
+
+class ClearRecentProjectListCommandHandler final : public MenuItemHandler {
+public:
+  ClearRecentProjectListCommandHandler()
+      : MenuItemHandler(MI_ClearRecentProject) {}
+  void execute() override {
+    RecentFiles::instance()->clearRecentFilesList(RecentFiles::Project);
+  }
+} clearRecentProjectListCommandHandler;
 
 //-----------------------------------------------------------------------------
 

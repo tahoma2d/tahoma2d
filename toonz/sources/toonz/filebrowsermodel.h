@@ -305,8 +305,8 @@ public:
 //-----------------------------------------------------------------------------
 
 class DvDirModelRootNode final : public DvDirModelNode {
-  std::vector<DvDirModelFileFolderNode *> m_projectRootNodes;
   std::vector<DvDirModelFileFolderNode *> m_versionControlNodes;
+  std::vector<DvDirModelProjectNode *> m_projectNodes;
   DvDirModelMyComputerNode *m_myComputerNode;
   DvDirModelNetworkNode *m_networkNode;
   DvDirModelProjectNode *m_sandboxProjectNode;
@@ -371,6 +371,8 @@ public:
   void refreshFolder(const TFilePath &folderPath,
                      const QModelIndex &i = QModelIndex());
   void refreshFolderChild(const QModelIndex &i = QModelIndex());
+  // Only used when first launching the program to update recent projects
+  void forceRefresh();
   bool removeRows(int row, int count,
                   const QModelIndex &parent = QModelIndex()) override;
 

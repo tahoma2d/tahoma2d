@@ -249,6 +249,8 @@ void TopBar::loadMenubar() {
     addMenuItem(projectManagementMenu, MI_ProjectSettings);
     projectManagementMenu->addSeparator();
     addMenuItem(projectManagementMenu, MI_SaveDefaultSettings);
+    projectManagementMenu->addSeparator();
+    addMenuItem(projectManagementMenu, MI_ClearRecentProject);
   }
   fileMenu->addSeparator();
   QMenu *importMenu = fileMenu->addMenu(tr("Import"));

@@ -96,6 +96,7 @@ public:
 
   static void setBrowserPopupController(BrowserPopupController *controller);
   static BrowserPopupController *getBrowserPopupController();
+  void forceOpenBrowser();
 
 protected slots:
   /*! Open a static file dialog popup to browse and choose directories. If a

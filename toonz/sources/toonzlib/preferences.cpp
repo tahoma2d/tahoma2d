@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QAction>
 #include <QColor>
+#include <QStandardPaths>
 
 // boost includes
 #include <boost/bind.hpp>
@@ -435,6 +436,11 @@ void Preferences::definePreferenceItems() {
          true);
 
   setCallBack(rasterBackgroundColor, &Preferences::setRasterBackgroundColor);
+
+  QString documentsPath =
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
+  define(defaultProjectPath, "defaultProjectPath", QMetaType::QString,
+         documentsPath);
 
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
