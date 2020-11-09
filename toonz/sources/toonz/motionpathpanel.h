@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QImage>
+#include <QThread>
 
 class TPanelTitleBarButton;
 class QVBoxLayout;
@@ -46,6 +47,30 @@ signals:
   void onMouseRelease(QMouseEvent* event);
 };
 
+//-----------------------------------------------------------------------------
+
+class MotionPathPlaybackExecutor final : public QThread {
+  Q_OBJECT
+
+  int m_fps;
+  bool m_abort;
+
+public:
+  MotionPathPlaybackExecutor();
+
+  void resetFps(int fps);
+
+  void run() override;
+  void abort() { m_abort = true; }
+
+  void emitNextFrame(int fps) { emit nextFrame(fps); }
+
+signals:
+  void nextFrame(int fps);  // Must be connect with Qt::BlockingQueuedConnection
+                            // connection type.
+  void playbackAborted();
+};
+
 //=============================================================================
 // MotionPathPanel
 //-----------------------------------------------------------------------------
@@ -79,6 +104,8 @@ class MotionPathPanel final : public QWidget {
   GraphWidget* m_graphArea;
   std::vector<ClickablePathLabel*> m_pathLabels;
 
+  MotionPathPlaybackExecutor m_playbackExecutor;
+
 public:
   MotionPathPanel(QWidget* parent = 0);
   ~MotionPathPanel();
@@ -93,6 +120,8 @@ protected:
 
 protected slots:
   void refreshPaths();
+  void onNextFrame(int);
+  void stopPlayback();
 
   // public slots:
 };

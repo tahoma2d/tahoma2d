@@ -15,6 +15,11 @@
 #include "tgeometry.h"
 #include "tools/toolhandle.h"
 #include "tools/toolcommandids.h"
+#include "tstopwatch.h"
+#include "sceneviewer.h"
+#include "toonz/toonzscene.h"
+#include "toonz/sceneproperties.h"
+#include "toutputproperties.h"
 
 #include "pane.h"
 
@@ -44,7 +49,7 @@ double distanceSquared(QPoint p1, QPoint p2) {
 //*****************************************************************************
 
 MotionPathPanel::MotionPathPanel(QWidget* parent)
-    : QWidget(parent), m_currentSpline(0) {
+    : QWidget(parent), m_currentSpline(0), m_playbackExecutor() {
   m_outsideLayout = new QVBoxLayout(this);
   m_outsideLayout->setMargin(0);
   m_outsideLayout->setSpacing(0);
@@ -128,6 +133,13 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
       m_currentSpline->setInterpolationStroke(m_graphArea->getPoints());
     TApp::instance()->getCurrentScene()->notifySceneChanged();
   });
+
+  bool ret = connect(&m_playbackExecutor, SIGNAL(nextFrame(int)), this,
+                     SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
+  ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
+                       SLOT(stopPlayback()));
+  assert(ret);
+
   highlightActiveSpline();
 }
 
@@ -195,12 +207,28 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
     int width = widthSlider->value();
     spline->setWidth(width);
     TApp::instance()->getCurrentScene()->notifySceneChanged();
+    if (m_currentSpline) m_currentSpline->setIsPlaying(false);
+    m_playbackExecutor.abort();
   });
   connect(colorCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
           [=](int index) {
 
             spline->setColor(index);
             TApp::instance()->getCurrentScene()->notifySceneChanged();
+
+            if (!m_currentSpline) return;
+            int fps = 24;
+            // if (TApp::instance()->getActiveViewer()) fps =
+            // TApp::instance()->getActiveViewer()->getFPS();
+            fps = TApp::instance()
+                      ->getCurrentScene()
+                      ->getScene()
+                      ->getProperties()
+                      ->getOutputProperties()
+                      ->getFrameRate();
+            m_playbackExecutor.resetFps(fps);
+            m_currentSpline->setIsPlaying(true);
+            if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
           });
   connect(deleteLabel, &ClickablePathLabel::onMouseRelease, [=]() {
     const std::vector<TStageObjectId> objIds;
@@ -346,6 +374,26 @@ void MotionPathPanel::fillCombo(QComboBox* combo, TStageObjectSpline* spline) {
   combo->setCurrentIndex(spline->getColor());
 }
 
+//-----------------------------------------------------------------------------
+
+void MotionPathPanel::onNextFrame(int) {
+  if (!m_currentSpline) {
+    m_playbackExecutor.abort();
+    return;
+  }
+  int steps       = m_currentSpline->getSteps();
+  int currentStep = m_currentSpline->getCurrentStep();
+  m_currentSpline->setCurrentStep(currentStep >= steps - 1 ? 0
+                                                           : currentStep + 1);
+  if (TApp::instance()->getActiveViewer())
+    TApp::instance()->getActiveViewer()->update();
+}
+//-----------------------------------------------------------------------------
+
+void MotionPathPanel::stopPlayback() {
+  // m_playbackExecutor.abort();
+}
+
 //=============================================================================
 
 ClickablePathLabel::ClickablePathLabel(const QString& text, QWidget* parent,
@@ -382,6 +430,106 @@ void ClickablePathLabel::setSelected() {}
 void ClickablePathLabel::clearSelected() {}
 
 //=============================================================================
+
+MotionPathPlaybackExecutor::MotionPathPlaybackExecutor()
+    : m_fps(25), m_abort(false) {}
+
+//-----------------------------------------------------------------------------
+
+void MotionPathPlaybackExecutor::resetFps(int fps) { m_fps = fps; }
+
+//-----------------------------------------------------------------------------
+
+void MotionPathPlaybackExecutor::run() {
+  TStopWatch timer;
+  timer.start();
+
+  TUINT32 timeResolution =
+      250;  // Use a sufficient sampling resolution (currently 1/4 sec).
+            // Fps calculation is made once per sample.
+
+  int fps = m_fps, currSample = 0;
+  TUINT32 playedFramesCount = 0;
+  TUINT32 loadedInstant, nextSampleInstant = timeResolution;
+  TUINT32 sampleTotalLoadingTime = 0;
+
+  TUINT32 lastFrameCounts[4] = {0, 0, 0,
+                                0};  // Keep the last 4 'played frames' counts.
+  TUINT32 lastSampleInstants[4] = {0, 0, 0,
+                                   0};  // Same for the last sampling instants
+  TUINT32 lastLoadingTimes[4] = {0, 0, 0,
+                                 0};  // Same for total sample loading times
+
+  double targetFrameTime =
+      1000.0 / abs(m_fps);  // User-required time between frames
+
+  TUINT32 emissionInstant = 0;  // Effective instant in which loading is invoked
+  double emissionInstantD = 0.0;  // Double precision version of the above
+
+  double lastLoadingTime = 0.0;  // Mean frame loading time in the last sample
+
+  while (!m_abort) {
+    emissionInstant = timer.getTotalTime();
+
+    // Draw the next frame
+    if (playedFramesCount) emit nextFrame(fps);  // Show the next frame, telling
+                                                 // currently measured fps
+
+    //-------- Each nextFrame() blocks until the frame has been shown ---------
+
+    ++playedFramesCount;
+    loadedInstant = timer.getTotalTime();
+    sampleTotalLoadingTime += (loadedInstant - emissionInstant);
+
+    // Recalculate data only after the specified time resolution has passed.
+    if (loadedInstant > nextSampleInstant) {
+      // Sampling instant. Perform calculations.
+
+      // Store values
+      TUINT32 framesCount = playedFramesCount - lastFrameCounts[currSample];
+      TUINT32 elapsedTime = loadedInstant - lastSampleInstants[currSample];
+      double loadingTime =
+          (sampleTotalLoadingTime - lastLoadingTimes[currSample]) /
+          (double)framesCount;
+
+      lastFrameCounts[currSample]    = playedFramesCount;
+      lastSampleInstants[currSample] = loadedInstant;
+      lastLoadingTimes[currSample]   = sampleTotalLoadingTime;
+
+      currSample        = (currSample + 1) % 4;
+      nextSampleInstant = loadedInstant + timeResolution;
+
+      // Rebuild current fps
+      fps             = troundp((1000 * framesCount) / (double)elapsedTime);
+      targetFrameTime = 1000.0 / abs(m_fps);  // m_fps could have changed...
+
+      // In case the playback is too slow to keep the required pace, reset the
+      // emission timeline.
+      // Otherwise, it should be kept as the difference needs to be compensated
+      // to get the required fps.
+      if ((int)emissionInstant - (int)emissionInstantD >
+          20)  // Reset beyond, say, 20 msecs tolerance.
+        emissionInstantD = (double)loadedInstant - loadingTime;
+      else
+        emissionInstantD +=
+            lastLoadingTime -
+            loadingTime;  // Otherwise, just adapt to the new loading time
+
+      lastLoadingTime = loadingTime;
+    }
+
+    // Calculate the new emission instant
+    emissionInstant = std::max((int)(emissionInstantD += targetFrameTime), 0);
+
+    // Sleep until the next emission instant has been reached
+    while (timer.getTotalTime() < emissionInstant) msleep(1);
+  }
+
+  m_abort = false;
+  emit(playbackAborted());
+}
+
+//-----------------------------------------------------------------------------
 
 class CreateNewSpline : public MenuItemHandler {
 public:

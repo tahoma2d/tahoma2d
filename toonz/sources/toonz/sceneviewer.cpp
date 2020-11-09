@@ -3339,6 +3339,8 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
       double currentPosition = 0.0;
       double s0              = 0.0;
       double s1              = 1.0;
+      bool playing           = spline->getIsPlaying();
+      int currentStep        = spline->getCurrentStep();
 
       TPointD prePoint, point, postPoint;
       for (int i = 0; i <= steps; i++) {
@@ -3385,6 +3387,9 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
           glVertex2d(0, 3 + width);
           glVertex2d(0, -3 - width);
           glEnd();
+          if (playing && currentStep == i) {
+            tglDrawDisk(TPointD(0, 0), 10);
+          }
           glPopMatrix();
         }
       }

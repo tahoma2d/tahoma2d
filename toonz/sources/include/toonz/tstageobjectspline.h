@@ -50,6 +50,8 @@ class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   int m_color;
   int m_steps;
   int m_width;
+  int m_currentStep = 0;
+  bool m_playing    = false;
 
 public:
   TStageObjectSpline();
@@ -92,6 +94,12 @@ Set spline stroke to \b stroke.
 
   bool isOpened() const { return m_isOpened; }
   void setIsOpened(bool value) { m_isOpened = value; }
+
+  int getCurrentStep() { return m_currentStep; }
+  void setCurrentStep(int step) { m_currentStep = step; }
+
+  bool getIsPlaying() { return m_playing; }
+  void setIsPlaying(bool playing) { m_playing = playing; }
 
   void loadData(TIStream &is) override;
   void saveData(TOStream &os) override;
