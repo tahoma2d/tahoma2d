@@ -36,6 +36,7 @@
 #include <QPainterPath>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QSizePolicy>
 
 namespace {
 double distanceSquared(QPoint p1, QPoint p2) {
@@ -54,14 +55,29 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_outsideLayout = new QVBoxLayout(this);
   m_outsideLayout->setMargin(0);
   m_outsideLayout->setSpacing(0);
+
   m_insideLayout = new QVBoxLayout(this);
   m_insideLayout->setMargin(0);
   m_insideLayout->setSpacing(0);
+
   m_pathsLayout = new QGridLayout(this);
   m_pathsLayout->setContentsMargins(0, 3, 2, 3);
   m_pathsLayout->setSpacing(2);
+
+  QScrollArea* pathScrollArea = new QScrollArea();
+  pathScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  pathScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  pathScrollArea->setWidgetResizable(true);
+  QFrame* pathFrame = new QFrame(this);
+  pathScrollArea->setWidget(pathFrame);
+  pathScrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+  pathFrame->setLayout(m_pathsLayout);
+  QSizePolicy policy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+  pathFrame->setSizePolicy(policy);
+
   m_mainControlsPage = new QFrame(this);
   m_mainControlsPage->setLayout(m_insideLayout);
+
   m_graphArea = new GraphWidget(this);
   m_graphArea->setMaxXValue(1000);
   m_graphArea->setMaxYValue(1000);
@@ -71,6 +87,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   scrollArea->setWidgetResizable(true);
   scrollArea->setWidget(m_mainControlsPage);
+
   m_outsideLayout->addWidget(scrollArea);
 
   // make the toolbar
@@ -88,6 +105,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_toolLayout->setSpacing(2);
   m_toolLayout->setMargin(2);
   m_toolLayout->addWidget(m_toolbar);
+
   ToolBarContainer* container = new ToolBarContainer(this);
   container->setObjectName("MotionPathToolbar");
   container->setLayout(m_toolLayout);
@@ -95,83 +113,91 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_controlsLayout = new QVBoxLayout(this);
   m_controlsLayout->setMargin(10);
   m_controlsLayout->setSpacing(3);
+
   QHBoxLayout* graphLayout = new QHBoxLayout(this);
   graphLayout->setMargin(0);
   graphLayout->setSpacing(0);
   graphLayout->addWidget(m_graphArea);
+
   m_graphFrame = new QFrame(this);
   m_graphFrame->setLayout(graphLayout);
   m_graphFrame->setObjectName("GraphAreaFrame");
+  m_graphFrame->setFixedHeight(200);
   m_controlsLayout->addWidget(m_graphFrame);
 
   m_playToolbar = new QToolBar(this);
   m_playToolbar->setFixedHeight(18);
   m_playToolbar->setIconSize(QSize(16, 16));
+
   QAction* playAction = new QAction(this);
   playAction->setIcon(createQIcon("play"));
   m_playToolbar->addAction(playAction);
   connect(playAction, &QAction::triggered, [=]() {
-      if (!m_currentSpline) return;
-      m_looping = false;
-      int fps = 24;
-      fps = TApp::instance()
-          ->getCurrentScene()
-          ->getScene()
-          ->getProperties()
-          ->getOutputProperties()
-          ->getFrameRate();
-      m_playbackExecutor.resetFps(fps);
-      m_currentSpline->setCurrentStep(0);
-      m_currentSpline->setIsPlaying(true);
-      if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
-      if (TApp::instance()->getActiveViewer())
-          TApp::instance()->getActiveViewer()->update();
+    if (!m_currentSpline) return;
+    m_looping = false;
+    int fps   = 24;
+    fps       = TApp::instance()
+              ->getCurrentScene()
+              ->getScene()
+              ->getProperties()
+              ->getOutputProperties()
+              ->getFrameRate();
+    m_playbackExecutor.resetFps(fps);
+    m_currentSpline->setCurrentStep(0);
+    m_currentSpline->setIsPlaying(true);
+    if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->update();
   });
 
   QAction* loopAction = new QAction(this);
   loopAction->setIcon(createQIcon("loop"));
   m_playToolbar->addAction(loopAction);
   connect(loopAction, &QAction::triggered, [=]() {
-      if (!m_currentSpline) return;
-      m_looping = true;
-      int fps = 24;
-      fps = TApp::instance()
-          ->getCurrentScene()
-          ->getScene()
-          ->getProperties()
-          ->getOutputProperties()
-          ->getFrameRate();
-      m_playbackExecutor.resetFps(fps);
-      m_currentSpline->setCurrentStep(0);
-      m_currentSpline->setIsPlaying(true);
-      if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
-      if (TApp::instance()->getActiveViewer())
-          TApp::instance()->getActiveViewer()->update();
-      });
+    if (!m_currentSpline) return;
+    m_looping = true;
+    int fps   = 24;
+    fps       = TApp::instance()
+              ->getCurrentScene()
+              ->getScene()
+              ->getProperties()
+              ->getOutputProperties()
+              ->getFrameRate();
+    m_playbackExecutor.resetFps(fps);
+    m_currentSpline->setCurrentStep(0);
+    m_currentSpline->setIsPlaying(true);
+    if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->update();
+  });
 
   QAction* stopActionAction = new QAction(this);
   stopActionAction->setIcon(createQIcon("stop"));
   m_playToolbar->addAction(stopActionAction);
   connect(stopActionAction, &QAction::triggered, [=]() {
-      m_playbackExecutor.abort();
-      m_looping = false;
-      if (!m_currentSpline) return;
-      m_currentSpline->setIsPlaying(false);
-      m_currentSpline->setCurrentStep(0);
-      if (TApp::instance()->getActiveViewer())
-          TApp::instance()->getActiveViewer()->update();
-      });
+    m_playbackExecutor.abort();
+    m_looping = false;
+    if (!m_currentSpline) return;
+    m_currentSpline->setIsPlaying(false);
+    m_currentSpline->setCurrentStep(0);
+    if (TApp::instance()->getActiveViewer())
+      TApp::instance()->getActiveViewer()->update();
+  });
 
   m_controlsLayout->addWidget(m_playToolbar, Qt::AlignCenter);
 
-  m_insideLayout->addWidget(container);
-  m_insideLayout->addLayout(m_pathsLayout);
-  m_insideLayout->addStretch();
+  m_insideLayout->addWidget(container, 0, Qt::AlignTop);
+  m_insideLayout->addWidget(pathScrollArea);
   m_insideLayout->addLayout(m_controlsLayout);
   setLayout(m_outsideLayout);
+
+  TSceneHandle* scene = TApp::instance()->getCurrentScene();
+  connect(scene, &TSceneHandle::castChanged, [=]() { refreshPaths(true); });
   TXsheetHandle* xsh = TApp::instance()->getCurrentXsheet();
   connect(xsh, &TXsheetHandle::xsheetChanged, [=]() { refreshPaths(); });
+
   TObjectHandle* object = TApp::instance()->getCurrentObject();
+
   connect(object, &TObjectHandle::objectSwitched, [=]() {
     if (object->isSpline()) {
       if (object->getObjectId() ==
@@ -190,6 +216,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
     highlightActiveSpline();
     m_graphArea->update();
   });
+
   connect(m_graphArea, &GraphWidget::controlPointChanged, [=](bool dragging) {
     if (m_currentSpline)
       m_currentSpline->setInterpolationStroke(m_graphArea->getPoints());
@@ -198,6 +225,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
 
   bool ret = connect(&m_playbackExecutor, SIGNAL(nextFrame(int)), this,
                      SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
+
   ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
                        SLOT(stopPlayback()));
   assert(ret);
@@ -211,6 +239,10 @@ MotionPathPanel::~MotionPathPanel() {}
 
 //-----------------------------------------------------------------------------
 
+void MotionPathPanel::showEvent(QShowEvent*) { refreshPaths(); }
+
+//-----------------------------------------------------------------------------
+
 void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   getIconThemePath("actions/20/pane_preview.svg");
   TObjectHandle* objHandle = TApp::instance()->getCurrentObject();
@@ -218,7 +250,7 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   ClickablePathLabel* nameLabel =
       new ClickablePathLabel(QString::fromStdString(spline->getName()), this);
   m_pathLabels.push_back(nameLabel);
-  QLineEdit* nameEdit = new QLineEdit(this);
+  QLineEdit* nameEdit             = new QLineEdit(this);
   ClickablePathLabel* deleteLabel = new ClickablePathLabel("", this);
   deleteLabel->setPixmap(createQIcon("menu_toggle_on").pixmap(QSize(23, 18)));
   TPanelTitleBarButton* activeButton = new TPanelTitleBarButton(
@@ -237,12 +269,12 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   QComboBox* colorCombo = new QComboBox(this);
   fillCombo(colorCombo, spline);
 
-  // QPushButton* removeButton = new QPushButton("-", this);
   QHBoxLayout* nameLayout = new QHBoxLayout(this);
   nameLayout->addWidget(nameLabel);
   nameLayout->addWidget(nameEdit);
   nameEdit->hide();
   nameLayout->addStretch();
+  m_nameLayouts.push_back(nameLayout);
 
   m_pathsLayout->addWidget(activeButton, number, 0, Qt::AlignLeft);
   m_pathsLayout->addLayout(nameLayout, number, 1, Qt::AlignLeft);
@@ -252,23 +284,24 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   m_pathsLayout->addWidget(deleteLabel, number, 5, Qt::AlignRight);
 
   connect(nameLabel, &ClickablePathLabel::doubleClicked, [=]() {
-      nameLabel->hide();
-      nameEdit->setText(nameLabel->text());
-      nameEdit->show();
-      nameEdit->setFocus();
-      nameEdit->selectAll();
+    nameLabel->hide();
+    nameEdit->setText(nameLabel->text());
+    nameEdit->show();
+    nameEdit->setFocus();
+    nameEdit->selectAll();
   });
 
   connect(nameEdit, &QLineEdit::editingFinished, [=]() {
-      QString text = nameEdit->text();
-      if (text.length() > 0 && text != nameLabel->text()) {
-          nameLabel->setText(text);
-          if (spline) spline->setName(text.toStdString());
-          TApp::instance()->getCurrentScene()->notifySceneChanged();
-      }
-      nameEdit->hide();
-      nameLabel->show();
-      stepsEdit->clearFocus();
+    QString text = nameEdit->text();
+    nameEdit->hide();
+    nameLabel->show();
+    stepsEdit->clearFocus();
+    if (text.length() > 0 && text != nameLabel->text()) {
+      nameLabel->setText(text);
+      if (spline) spline->setName(text.toStdString());
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    }
   });
 
   connect(nameLabel, &ClickablePathLabel::onMouseRelease, [=]() {
@@ -310,25 +343,31 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
     TFxHandle* fxHandle      = TApp::instance()->getCurrentFx();
     TStageObjectCmd::deleteSelection(objIds, links, splineIds, xshHandle,
                                      objHandle, fxHandle, true);
-    nameEdit->show();
-    m_pathsLayout->removeWidget(nameEdit);
-    m_pathsLayout->removeWidget(nameLabel);
-    delete nameEdit;
-    delete nameLabel;
     refreshPaths();
   });
-
 }
 
 //-----------------------------------------------------------------------------
 
-void MotionPathPanel::refreshPaths() {
+void MotionPathPanel::refreshPaths(bool force) {
   TXsheetHandle* xsh     = TApp::instance()->getCurrentXsheet();
   TStageObjectTree* tree = xsh->getXsheet()->getStageObjectTree();
-  if (tree->getSplineCount() == m_pathLabels.size()) return;
+  if (tree->getSplineCount() == m_pathLabels.size() && !force) return;
   m_pathLabels.clear();
   // m_activeSplineId = -1;
   QLayoutItem* child;
+
+  for (auto layout : m_nameLayouts) {
+    while (layout->count() != 0) {
+      child = layout->takeAt(0);
+      if (child->widget() != 0) {
+        delete child->widget();
+      }
+      delete child;
+    }
+  }
+  m_nameLayouts.clear();
+
   while (m_pathsLayout->count() != 0) {
     child = m_pathsLayout->takeAt(0);
     if (child->widget() != 0) {
@@ -461,16 +500,16 @@ void MotionPathPanel::onNextFrame(int) {
   int steps       = m_currentSpline->getSteps();
   int currentStep = m_currentSpline->getCurrentStep();
   if (m_looping)
-  m_currentSpline->setCurrentStep(currentStep >= steps - 1 ? 0
-                                                           : currentStep + 1);
+    m_currentSpline->setCurrentStep(currentStep >= steps - 1 ? 0
+                                                             : currentStep + 1);
   else {
-      if (currentStep >= steps - 1) {
-          m_currentSpline->setCurrentStep(0);
-          m_currentSpline->setIsPlaying(false);
-          m_looping = false;
-          m_playbackExecutor.abort();
-      }
-      else m_currentSpline->setCurrentStep(currentStep + 1);
+    if (currentStep >= steps - 1) {
+      m_currentSpline->setCurrentStep(0);
+      m_currentSpline->setIsPlaying(false);
+      m_looping = false;
+      m_playbackExecutor.abort();
+    } else
+      m_currentSpline->setCurrentStep(currentStep + 1);
   }
   if (TApp::instance()->getActiveViewer())
     TApp::instance()->getActiveViewer()->update();
@@ -478,8 +517,8 @@ void MotionPathPanel::onNextFrame(int) {
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::stopPlayback() {
-    if (TApp::instance()->getActiveViewer())
-        TApp::instance()->getActiveViewer()->update();
+  if (TApp::instance()->getActiveViewer())
+    TApp::instance()->getActiveViewer()->update();
 }
 
 //=============================================================================
@@ -502,7 +541,7 @@ void ClickablePathLabel::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void ClickablePathLabel::mouseDoubleClickEvent(QMouseEvent* event) {
-    emit doubleClicked();
+  emit doubleClicked();
 }
 
 //-----------------------------------------------------------------------------

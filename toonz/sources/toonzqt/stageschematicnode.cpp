@@ -2213,6 +2213,7 @@ void StageSchematicSplineNode::onNameChanged() {
 
   m_spline->setName(m_splineName.toStdString());
   update();
+  emit splineRenamed();
 }
 
 //--------------------------------------------------------

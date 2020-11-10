@@ -566,6 +566,7 @@ protected:
 signals:
   void currentObjectChanged(const TStageObjectId &id, bool isSpline);
   void splineClicked(TStageObjectSpline *spline);
+  void splineRenamed();
 
 protected slots:
   void onNameChanged();

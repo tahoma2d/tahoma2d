@@ -122,9 +122,7 @@ public:
   void setObjectHandle(TObjectHandle *objHandle);
   void setColumnHandle(TColumnHandle *colHandle);
   void setFxHandle(TFxHandle *fxHandle);
-  void setSceneHandle(TSceneHandle *sceneHandle) {
-    m_sceneHandle = sceneHandle;
-  }
+  void setSceneHandle(TSceneHandle *sceneHandle);
   void setFrameHandle(TFrameHandle *frameHandle) {
     m_frameHandle = frameHandle;
   }
@@ -212,6 +210,7 @@ protected slots:
   void onSceneChanged();
   void onCurrentObjectChanged(const TStageObjectId &, bool);
   void onSplineClicked(TStageObjectSpline *spline);
+  void onSplineRenamed();
   void onCurrentColumnChanged(int);
   void onSelectionChanged();
   void onCollapse(QList<TStageObjectId>);

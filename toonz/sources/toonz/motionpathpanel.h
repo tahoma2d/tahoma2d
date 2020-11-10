@@ -92,6 +92,7 @@ class MotionPathPanel final : public QWidget {
   QColor m_hoverColor;
   QColor getHoverColor() const { return m_hoverColor; }
   void setHoverColor(const QColor& color) { m_hoverColor = color; }
+  std::vector<QHBoxLayout*> m_nameLayouts;
 
   QHBoxLayout* m_toolLayout;
   QVBoxLayout* m_controlsLayout;
@@ -124,9 +125,10 @@ protected:
   void fillCombo(QComboBox* combo, TStageObjectSpline* spline);
   void clearPathsLayout();
   void newPath();
+  void showEvent(QShowEvent*) override;
+  void refreshPaths(bool force = false);
 
 protected slots:
-  void refreshPaths();
   void onNextFrame(int);
   void stopPlayback();
 

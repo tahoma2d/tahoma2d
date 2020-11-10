@@ -188,6 +188,14 @@ void StageSchematicScene::setFxHandle(TFxHandle *fxHandle) {
 
 //------------------------------------------------------------------
 
+void StageSchematicScene::setSceneHandle(TSceneHandle *sceneHandle) {
+  m_sceneHandle = sceneHandle;
+  // connect(m_sceneHandle, &TSceneHandle::castChanged, [=]() { updateScene();
+  // });
+}
+
+//------------------------------------------------------------------
+
 void StageSchematicScene::onSelectionSwitched(TSelection *oldSel,
                                               TSelection *newSel) {
   if (m_selection == oldSel && m_selection != newSel) clearSelection();
@@ -248,6 +256,7 @@ void StageSchematicScene::updateScene() {
               this, SLOT(onCurrentObjectChanged(const TStageObjectId &, bool)));
       connect(node, SIGNAL(splineClicked(TStageObjectSpline *)), this,
               SLOT(onSplineClicked(TStageObjectSpline *)));
+      connect(node, SIGNAL(splineRenamed()), this, SLOT(onSplineRenamed()));
     }
   }
 
@@ -1126,6 +1135,12 @@ void StageSchematicScene::onSplineClicked(TStageObjectSpline *spline) {
   m_objHandle->setIsSpline(true, true);
 }
 
+//------------------------------------------------------------------
+
+void StageSchematicScene::onSplineRenamed() {
+  m_sceneHandle->notifyCastChange();
+  update();
+}
 //------------------------------------------------------------------
 
 void StageSchematicScene::onCurrentColumnChanged(int index) {
