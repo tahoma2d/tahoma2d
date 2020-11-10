@@ -120,9 +120,8 @@ To run the program with stop motion support, you will need to copy the .dll file
   - `$tahoma2d/thirdparty/glew/glew-1.9.0/bin/64bit/glew32.dll`
 
 ### Creating the stuff Folder
-If a previous binary of Tahoma2D was already installed, this step and the following about creating a registry key has already been dealt with.  So feel free to skip these parts.
-
-1. Copy the files from `$tahoma2d/stuff` to an appropriate folder.
+1. Create a `tahomastuff` folder inside the folder where `Tahoma2D.exe` is located.
+1. Copy the files from `$tahoma2d/stuff` to the new folder.
 
 ### Running
 `Tahoma2D.exe` can now be run.  Congratulations!

@@ -110,13 +110,13 @@ TODO: some parts should really be installed in $prefix/ instead... and some othe
 cf. https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 Until then we just follow the Win32/OSX layout.
 
-The `~/.config/tahoma2d/` directory contains your settings, work and other files.
+The `~/.config/Tahoma2D/` directory contains your settings, work and other files.
 
 Initialize this path with the folling commands:
 
 ```
 $ mkdir -p $HOME/.config/Tahoma2D
-$ cp -r tahoma2d/stuff $HOME/.config/tahoma2d/
+$ cp -r tahoma2d/stuff $HOME/.config/Tahoma2D/
 ```
 
 *Currently this is required to run Tahoma2D.*
@@ -126,18 +126,18 @@ $ cp -r tahoma2d/stuff $HOME/.config/tahoma2d/
 TODO: fix the code to discover it automatically
 
 ```
-$ cat << EOF > $HOME/.config/OpenToonz/SystemVar.ini
+$ cat << EOF > $HOME/.config/Tahoma2D/SystemVar.ini
 [General]
-TAHOMA2DROOT="$HOME/.config/OpenToonz/stuff"
-OpenToonzPROFILES="$HOME/.config/OpenToonz/stuff/profiles"
-TOONZCACHEROOT="$HOME/.config/OpenToonz/stuff/cache"
-TOONZCONFIG="$HOME/.config/OpenToonz/stuff/config"
-TOONZFXPRESETS="$HOME/.config/OpenToonz/stuff/fxs"
-TOONZLIBRARY="$HOME/.config/OpenToonz/stuff/library"
-TOONZPROFILES="$HOME/.config/OpenToonz/stuff/profiles"
-TOONZPROJECTS="$HOME/.config/OpenToonz/stuff/projects"
-TOONZROOT="$HOME/.config/OpenToonz/stuff"
-TOONZSTUDIOPALETTE="$HOME/.config/OpenToonz/stuff/studiopalette"
+TAHOMA2DROOT="$HOME/.config/Tahoma2D/stuff"
+TAHOMA2DPROFILES="$HOME/.config/Tahoma2D/stuff/profiles"
+TAHOMA2DCACHEROOT="$HOME/.config/Tahoma2D/stuff/cache"
+TAHOMA2DCONFIG="$HOME/.config/Tahoma2D/stuff/config"
+TAHOMA2DFXPRESETS="$HOME/.config/Tahoma2D/stuff/fxs"
+TAHOMA2DLIBRARY="$HOME/.config/Tahoma2D/stuff/library"
+TAHOMA2DPROFILES="$HOME/.config/Tahoma2D/stuff/profiles"
+TAHOMA2DPROJECTS="$HOME/.config/Tahoma2D/stuff/projects"
+TAHOMA2DROOT="$HOME/.config/Tahoma2D/stuff"
+TAHOMA2DSTUDIOPALETTE="$HOME/.config/Tahoma2D/stuff/studiopalette"
 EOF
 ```
 Note the generated file must not actually contain `$HOME`, this expands to an absolute path in the generated file.
@@ -190,21 +190,21 @@ You can now run the application:
 
 ```
 $ LD_LIBRARY_PATH=./lib/opentoonz:$LD_LIBRARY_PATH
-$ ./bin/OpenToonz
+$ ./bin/Tahoma2D
 ```
 
 ### Performing a System Installation
 
-The steps above show how to run Tahoma2Dfrom the build directory,
-however you may wish to install Tahoma2Donto your system.
+The steps above show how to run Tahoma2D from the build directory,
+however you may wish to install Tahoma2D onto your system.
 
-Tahoma2D will install to `/opt/opentoonz` by default, to do this run:
+Tahoma2D will install to `/opt/tahoma2d` by default, to do this run:
 
 ```
 $ sudo make install
 ```
 
-Then you can launch Tahoma2Dby running `/opt/opentoonz/bin/opentoonz`.
+Then you can launch Tahoma2D by running `/opt/tahoma2d/bin/tahoma2d`.
 
 You can change the installation path by modifying the `CMAKE_INSTALL_PREFIX` CMake variable.
 
