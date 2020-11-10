@@ -5,22 +5,21 @@
 #include "toonz/tobjecthandle.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonz/tstageobjectcmd.h"
-#include "toonzqt/menubarcommand.h"
 #include "toonz/tscenehandle.h"
-#include "graphwidget.h"
+#include "toonz/toonzscene.h"
+#include "toonz/sceneproperties.h"
+#include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/menubarcommand.h"
+#include "tools/toolhandle.h"
+#include "tools/toolcommandids.h"
+#include "graphwidget.h"
 #include "menubarcommandids.h"
 #include "tstroke.h"
 #include "tgeometry.h"
-#include "tools/toolhandle.h"
-#include "tools/toolcommandids.h"
 #include "tstopwatch.h"
 #include "sceneviewer.h"
-#include "toonz/toonzscene.h"
-#include "toonz/sceneproperties.h"
 #include "toutputproperties.h"
-
 #include "pane.h"
 
 #include <QPushButton>
@@ -95,16 +94,26 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_toolbar->addAction(CommandManager::instance()->getAction("MI_NewSpline"));
   m_toolbar->addAction(CommandManager::instance()->getAction("T_Selection"));
   m_toolbar->addAction(CommandManager::instance()->getAction("T_Brush"));
-  m_toolbar->addAction(CommandManager::instance()->getAction("T_Geometric"));
   m_toolbar->addAction(
       CommandManager::instance()->getAction("T_ControlPointEditor"));
   m_toolbar->addAction(CommandManager::instance()->getAction("T_Pinch"));
+  m_toolbar->addAction(CommandManager::instance()->getAction("T_Geometric"));
   m_toolbar->setFixedHeight(18);
   m_toolbar->setIconSize(QSize(16, 16));
   m_toolLayout = new QHBoxLayout(this);
   m_toolLayout->setSpacing(2);
   m_toolLayout->setMargin(2);
   m_toolLayout->addWidget(m_toolbar);
+
+  QStringList geomOptions;
+  geomOptions << tr("Rectangle") << tr("Circle") << tr("Ellipse") << tr("Line") << tr("Polyline") << tr("Arc") << tr("MultiArc"); // << tr("Polygon");
+  m_geometryOptionsBox = new QComboBox(this);
+  m_geometryOptionsBox->addItems(geomOptions);
+  ToolHandle* th = TApp::instance()->getCurrentTool();
+  connect(th, &ToolHandle::toolSwitched, this, &MotionPathPanel::updateTools);
+  connect(m_geometryOptionsBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MotionPathPanel::onGeometricComboChanged);
+  m_toolLayout->addWidget(m_geometryOptionsBox);
+  m_geometryOptionsBox->hide();
 
   ToolBarContainer* container = new ToolBarContainer(this);
   container->setObjectName("MotionPathToolbar");
@@ -239,7 +248,7 @@ MotionPathPanel::~MotionPathPanel() {}
 
 //-----------------------------------------------------------------------------
 
-void MotionPathPanel::showEvent(QShowEvent*) { refreshPaths(); }
+void MotionPathPanel::showEvent(QShowEvent*) { refreshPaths(true); }
 
 //-----------------------------------------------------------------------------
 
@@ -398,96 +407,140 @@ void MotionPathPanel::refreshPaths(bool force) {
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::highlightActiveSpline() {
-  m_graphFrame->hide();
-  m_playToolbar->hide();
-  if (m_pathLabels.size() > 0) {
-    for (auto label : m_pathLabels) {
-      if (m_currentSpline &&
-          m_currentSpline->getName() == label->text().toStdString()) {
-        QString qss = "background: rgb(" +
-                      QString::number(m_selectedColor.red()) + ", " +
-                      QString::number(m_selectedColor.green()) + ", " +
-                      QString::number(m_selectedColor.blue()) +
-                      ");"
-                      "border-radius: 2;"
-                      "padding-left: 2px;"
-                      "padding-right: 2px;";
-        std::string css = qss.toStdString();
-        label->setStyleSheet(qss);
-        m_graphFrame->show();
-        m_playToolbar->show();
-      } else {
-        QString qss = "background: rgba(" +
-                      QString::number(m_selectedColor.red()) + ", " +
-                      QString::number(m_selectedColor.green()) + ", " +
-                      QString::number(m_selectedColor.blue()) +
-                      ", 0);"
-                      " border-radius: 2;"
-                      " padding-left: 2px;"
-                      " padding-right: 2px;"
-                      " :hover{"
-                      " background: rgb(" +
-                      QString::number(m_hoverColor.red()) + ", " +
-                      QString::number(m_hoverColor.green()) + ", " +
-                      QString::number(m_hoverColor.blue()) +
-                      ");"
-                      " text-decoration: underline;"
-                      " }";
-        std::string css = qss.toStdString();
-        label->setStyleSheet(qss);
-      }
+    m_graphFrame->hide();
+    m_playToolbar->hide();
+    if (m_pathLabels.size() > 0) {
+        for (auto label : m_pathLabels) {
+            if (m_currentSpline &&
+                m_currentSpline->getName() == label->text().toStdString()) {
+                QString qss = "background: rgb(" +
+                    QString::number(m_selectedColor.red()) + ", " +
+                    QString::number(m_selectedColor.green()) + ", " +
+                    QString::number(m_selectedColor.blue()) +
+                    ");"
+                    "border-radius: 2;"
+                    "padding-left: 2px;"
+                    "padding-right: 2px;";
+                std::string css = qss.toStdString();
+                label->setStyleSheet(qss);
+                m_graphFrame->show();
+                m_playToolbar->show();
+            }
+            else {
+                QString qss = "background: rgba(" +
+                    QString::number(m_selectedColor.red()) + ", " +
+                    QString::number(m_selectedColor.green()) + ", " +
+                    QString::number(m_selectedColor.blue()) +
+                    ", 0);"
+                    " border-radius: 2;"
+                    " padding-left: 2px;"
+                    " padding-right: 2px;"
+                    " :hover{"
+                    " background: rgb(" +
+                    QString::number(m_hoverColor.red()) + ", " +
+                    QString::number(m_hoverColor.green()) + ", " +
+                    QString::number(m_hoverColor.blue()) +
+                    ");"
+                    " text-decoration: underline;"
+                    " }";
+                std::string css = qss.toStdString();
+                label->setStyleSheet(qss);
+            }
+        }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::fillCombo(QComboBox* combo, TStageObjectSpline* spline) {
-  QPixmap magenta(15, 15);
-  magenta.fill(Qt::magenta);
-  combo->addItem(QIcon(magenta), "");
+    QPixmap magenta(15, 15);
+    magenta.fill(Qt::magenta);
+    combo->addItem(QIcon(magenta), "");
 
-  QPixmap yellow(15, 15);
-  yellow.fill(Qt::yellow);
-  combo->addItem(QIcon(yellow), "");
+    QPixmap yellow(15, 15);
+    yellow.fill(Qt::yellow);
+    combo->addItem(QIcon(yellow), "");
 
-  QPixmap cyan(15, 15);
-  cyan.fill(Qt::cyan);
-  combo->addItem(QIcon(cyan), "");
+    QPixmap cyan(15, 15);
+    cyan.fill(Qt::cyan);
+    combo->addItem(QIcon(cyan), "");
 
-  QPixmap red(15, 15);
-  red.fill(Qt::red);
-  combo->addItem(QIcon(red), "");
+    QPixmap red(15, 15);
+    red.fill(Qt::red);
+    combo->addItem(QIcon(red), "");
 
-  QPixmap blue(15, 15);
-  blue.fill(Qt::blue);
-  combo->addItem(QIcon(blue), "");
+    QPixmap blue(15, 15);
+    blue.fill(Qt::blue);
+    combo->addItem(QIcon(blue), "");
 
-  QPixmap green(15, 15);
-  green.fill(Qt::green);
-  combo->addItem(QIcon(green), "");
+    QPixmap green(15, 15);
+    green.fill(Qt::green);
+    combo->addItem(QIcon(green), "");
 
-  QPixmap black(15, 15);
-  black.fill(Qt::black);
-  combo->addItem(QIcon(black), "");
+    QPixmap black(15, 15);
+    black.fill(Qt::black);
+    combo->addItem(QIcon(black), "");
 
-  QPixmap white(15, 15);
-  white.fill(Qt::white);
-  combo->addItem(QIcon(white), "");
+    QPixmap white(15, 15);
+    white.fill(Qt::white);
+    combo->addItem(QIcon(white), "");
 
-  QPixmap lightGray(15, 15);
-  lightGray.fill(Qt::lightGray);
-  combo->addItem(QIcon(lightGray), "");
+    QPixmap lightGray(15, 15);
+    lightGray.fill(Qt::lightGray);
+    combo->addItem(QIcon(lightGray), "");
 
-  QPixmap gray(15, 15);
-  gray.fill(Qt::gray);
-  combo->addItem(QIcon(gray), "");
+    QPixmap gray(15, 15);
+    gray.fill(Qt::gray);
+    combo->addItem(QIcon(gray), "");
 
-  QPixmap darkGray(15, 15);
-  darkGray.fill(Qt::darkGray);
-  combo->addItem(QIcon(darkGray), "");
+    QPixmap darkGray(15, 15);
+    darkGray.fill(Qt::darkGray);
+    combo->addItem(QIcon(darkGray), "");
 
-  combo->setCurrentIndex(spline->getColor());
+    combo->setCurrentIndex(spline->getColor());
+}
+
+//-----------------------------------------------------------------------------
+
+void MotionPathPanel::updateTools() {
+    ToolHandle* th = TApp::instance()->getCurrentTool();
+    std::string toolName = th->getTool()->getName();
+    if (th->getTool()->getName() == "T_Geometric") {
+        m_geometryOptionsBox->show();
+    }
+    else m_geometryOptionsBox->hide();
+}
+
+//-----------------------------------------------------------------------------
+
+void MotionPathPanel::onGeometricComboChanged(int index) {
+    CommandManager* cm = CommandManager::instance();
+    switch (index) {
+    case 0:
+        cm->execute("MI_GeometricRectangle");
+        break;
+    case 1:
+        cm->execute("MI_GeometricCircle");
+        break;
+    case 2:
+        cm->execute("MI_GeometricEllipse");
+        break;
+    case 3:
+        cm->execute("MI_GeometricLine");
+        break;
+    case 4:
+        cm->execute("MI_GeometricPolyline");
+        break;
+    case 5:
+        cm->execute("MI_GeometricArc");
+        break;
+    case 6:
+        cm->execute("MI_GeometricMultiArc");
+        break;
+    //case 7:
+    //    cm->execute("MI_GeometricPolygon");
+    //    break;
+    }
 }
 
 //-----------------------------------------------------------------------------

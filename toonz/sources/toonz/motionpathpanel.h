@@ -103,6 +103,7 @@ class MotionPathPanel final : public QWidget {
   QToolBar* m_toolbar;
   QToolBar* m_playToolbar;
   QFrame* m_graphFrame;
+  QComboBox* m_geometryOptionsBox;
 
   bool m_looping = false;
 
@@ -131,6 +132,8 @@ protected:
 protected slots:
   void onNextFrame(int);
   void stopPlayback();
+  void updateTools();
+  void onGeometricComboChanged(int);
 
   // public slots:
 };
