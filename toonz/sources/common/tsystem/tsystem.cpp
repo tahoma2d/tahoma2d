@@ -283,7 +283,8 @@ void TSystem::rmDirTree(const TFilePath &path) { ::rmDirTree(toQString(path)); }
 
 //------------------------------------------------------------
 
-void TSystem::copyDir(const TFilePath &dst, const TFilePath &src) {
+void TSystem::copyDir(const TFilePath &dst, const TFilePath &src,
+                      bool overwrite) {
   QFileInfoList fil = QDir(toQString(src)).entryInfoList();
 
   QDir::current().mkdir(toQString(dst));
@@ -296,9 +297,11 @@ void TSystem::copyDir(const TFilePath &dst, const TFilePath &src) {
     if (fi.isDir()) {
       TFilePath srcDir = TFilePath(fi.filePath().toStdString());
       TFilePath dstDir = dst + srcDir.getName();
-      copyDir(dstDir, srcDir);
+      copyDir(dstDir, srcDir, overwrite);
     } else {
       TFilePath srcFi = dst + TFilePath(fi.fileName());
+      if (overwrite && QFile::exists(toQString(srcFi)))
+        QFile::remove(toQString(srcFi));
       QFile::copy(fi.filePath(), toQString(srcFi));
     }
   }

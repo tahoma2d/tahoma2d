@@ -633,6 +633,7 @@ void TEnv::setStuffDir(const TFilePath &stuffDir) {
 }
 
 void TEnv::saveAllEnvVariables() { VariableSet::instance()->save(); }
+void TEnv::loadAllEnvVariables() { VariableSet::instance()->load(); }
 
 bool TEnv::setArgPathValue(std::string key, std::string value) {
   EnvGlobals *eg = EnvGlobals::instance();

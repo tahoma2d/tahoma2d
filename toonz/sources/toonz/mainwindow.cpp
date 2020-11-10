@@ -3880,6 +3880,16 @@ void RecentFiles::clearRecentFilesList(FileType fileType) {
 
 //-----------------------------------------------------------------------------
 
+void RecentFiles::clearAllRecentFilesList(bool saveNow) {
+  m_recentScenes.clear();
+  m_recentSceneProjects.clear();
+  m_recentLevels.clear();
+  m_recentFlipbookImages.clear();
+  if (saveNow) saveRecentFiles();
+}
+
+//-----------------------------------------------------------------------------
+
 void RecentFiles::loadRecentFiles() {
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("RecentFiles.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
@@ -3956,6 +3966,14 @@ void RecentFiles::saveRecentFiles() {
   settings.setValue(QString("Projects"), QVariant(m_recentProjects));
   settings.setValue(QString("FlipbookImages"),
                     QVariant(m_recentFlipbookImages));
+}
+
+//-----------------------------------------------------------------------------
+
+void RecentFiles::updateStuffPath(QString oldPath, QString newPath) {
+  m_recentScenes.replaceInStrings(oldPath, newPath);
+  m_recentLevels.replaceInStrings(oldPath, newPath);
+  m_recentFlipbookImages.replaceInStrings(oldPath, newPath);
 }
 
 //-----------------------------------------------------------------------------

@@ -209,7 +209,9 @@ bool Preferences::LevelFormat::matches(const TFilePath &fp) const {
 //    Preferences  implementation
 //**********************************************************************************
 
-Preferences::Preferences() {
+Preferences::Preferences() { load(); }
+
+void Preferences::load() {
   // load preference file
   TFilePath layoutDir = ToonzFolder::getMyModuleDir();
   TFilePath prefPath  = layoutDir + TFilePath("preferences.ini");
