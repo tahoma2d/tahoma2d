@@ -1692,6 +1692,9 @@ void MainWindow::defineActions() {
                        "", tr("Remove everything from the recent scene list."));
   createMenuFileAction(MI_ClearRecentLevel, tr("&Clear Recent level File List"),
                        "", tr("Remove everything from the recent level list."));
+  createMenuFileAction(MI_ClearRecentProject, tr("&Clear Recent Project List"),
+                       "",
+                       tr("Remove everything from the recent project list."));
 
   menuAct = createMenuLevelAction(MI_NewLevel, tr("&New Level..."), "Alt+N",
                                   tr("Create a new drawing layer."));
@@ -3763,7 +3766,10 @@ void MainWindow::onQuit() { close(); }
 //=============================================================================
 
 RecentFiles::RecentFiles()
-    : m_recentScenes(), m_recentSceneProjects(), m_recentLevels() {}
+    : m_recentScenes()
+    , m_recentSceneProjects()
+    , m_recentLevels()
+    , m_recentProjects() {}
 
 //-----------------------------------------------------------------------------
 
@@ -3783,7 +3789,9 @@ void RecentFiles::addFilePath(QString path, FileType fileType,
   QList<QString> files =
       (fileType == Scene) ? m_recentScenes : (fileType == Level)
                                                  ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+                                                 : (fileType == Project)
+                                                       ? m_recentProjects
+                                                       : m_recentFlipbookImages;
   int i;
   for (i = 0; i < files.size(); i++)
     if (files.at(i) == path) {
@@ -3802,6 +3810,8 @@ void RecentFiles::addFilePath(QString path, FileType fileType,
     m_recentScenes = files;
   else if (fileType == Level)
     m_recentLevels = files;
+  else if (fileType == Project)
+    m_recentProjects = files;
   else
     m_recentFlipbookImages = files;
 
@@ -3817,6 +3827,8 @@ void RecentFiles::moveFilePath(int fromIndex, int toIndex, FileType fileType) {
     m_recentSceneProjects.move(fromIndex, toIndex);
   } else if (fileType == Level)
     m_recentLevels.move(fromIndex, toIndex);
+  else if (fileType == Project)
+    m_recentProjects.move(fromIndex, toIndex);
   else
     m_recentFlipbookImages.move(fromIndex, toIndex);
   saveRecentFiles();
@@ -3830,6 +3842,8 @@ void RecentFiles::removeFilePath(int index, FileType fileType) {
     m_recentSceneProjects.removeAt(index);
   } else if (fileType == Level)
     m_recentLevels.removeAt(index);
+  else if (fileType == Project)
+    m_recentProjects.removeAt(index);
   saveRecentFiles();
 }
 
@@ -3838,8 +3852,10 @@ void RecentFiles::removeFilePath(int index, FileType fileType) {
 QString RecentFiles::getFilePath(int index, FileType fileType) const {
   return (fileType == Scene)
              ? m_recentScenes[index]
-             : (fileType == Level) ? m_recentLevels[index]
-                                   : m_recentFlipbookImages[index];
+             : (fileType == Level)
+                   ? m_recentLevels[index]
+                   : (fileType == Project) ? m_recentProjects[index]
+                                           : m_recentFlipbookImages[index];
 }
 
 //-----------------------------------------------------------------------------
@@ -3865,11 +3881,23 @@ void RecentFiles::clearRecentFilesList(FileType fileType) {
     m_recentSceneProjects.clear();
   } else if (fileType == Level)
     m_recentLevels.clear();
+  else if (fileType == Project)
+    m_recentProjects.clear();
   else
     m_recentFlipbookImages.clear();
 
   refreshRecentFilesMenu(fileType);
   saveRecentFiles();
+}
+
+//-----------------------------------------------------------------------------
+
+void RecentFiles::clearAllRecentFilesList(bool saveNow) {
+  m_recentScenes.clear();
+  m_recentSceneProjects.clear();
+  m_recentLevels.clear();
+  m_recentFlipbookImages.clear();
+  if (saveNow) saveRecentFiles();
 }
 
 //-----------------------------------------------------------------------------
@@ -3914,6 +3942,15 @@ void RecentFiles::loadRecentFiles() {
     if (!level.isEmpty()) m_recentLevels.append(level);
   }
 
+  QList<QVariant> projects = settings.value(QString("Projects")).toList();
+  if (!projects.isEmpty()) {
+    for (i = 0; i < projects.size(); i++)
+      m_recentProjects.append(projects.at(i).toString());
+  } else {
+    QString project = settings.value(QString("Projects")).toString();
+    if (!project.isEmpty()) m_recentProjects.append(project);
+  }
+
   QList<QVariant> flipImages =
       settings.value(QString("FlipbookImages")).toList();
   if (!flipImages.isEmpty()) {
@@ -3927,6 +3964,7 @@ void RecentFiles::loadRecentFiles() {
   refreshRecentFilesMenu(Scene);
   refreshRecentFilesMenu(Level);
   refreshRecentFilesMenu(Flip);
+  refreshRecentFilesMenu(Project);
 }
 
 //-----------------------------------------------------------------------------
@@ -3937,8 +3975,17 @@ void RecentFiles::saveRecentFiles() {
   settings.setValue(QString("Scenes"), QVariant(m_recentScenes));
   settings.setValue(QString("SceneProjects"), QVariant(m_recentSceneProjects));
   settings.setValue(QString("Levels"), QVariant(m_recentLevels));
+  settings.setValue(QString("Projects"), QVariant(m_recentProjects));
   settings.setValue(QString("FlipbookImages"),
                     QVariant(m_recentFlipbookImages));
+}
+
+//-----------------------------------------------------------------------------
+
+void RecentFiles::updateStuffPath(QString oldPath, QString newPath) {
+  m_recentScenes.replaceInStrings(oldPath, newPath);
+  m_recentLevels.replaceInStrings(oldPath, newPath);
+  m_recentFlipbookImages.replaceInStrings(oldPath, newPath);
 }
 
 //-----------------------------------------------------------------------------
@@ -3947,14 +3994,19 @@ QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
   QList<QString> files =
       (fileType == Scene) ? m_recentScenes : (fileType == Level)
                                                  ? m_recentLevels
-                                                 : m_recentFlipbookImages;
+                                                 : (fileType == Project)
+                                                       ? m_recentProjects
+                                                       : m_recentFlipbookImages;
   QList<QString> names;
   int i;
   for (i = 0; i < files.size(); i++) {
     TFilePath path(files.at(i).toStdWString());
     QString str, number;
-    names.append(number.number(i + 1) + QString(". ") +
-                 str.fromStdWString(path.getWideString()));
+    if (fileType != Project)
+      names.append(number.number(i + 1) + QString(". ") +
+                   str.fromStdWString(path.getWideString()));
+    else
+      names.append(str.fromStdWString(path.getWideString()));
   }
   return names;
 }

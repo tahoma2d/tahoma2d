@@ -124,6 +124,8 @@ public:
   // Saving
   void setRasterBackgroundColor();
 
+  void load();
+
 public:
   static Preferences *instance();
 
@@ -271,6 +273,9 @@ public:
   // Saving tab
   TPixel getRasterBackgroundColor() const {
     return getColorValue(rasterBackgroundColor);
+  }
+  QString getDefaultProjectPath() const {
+    return getStringValue(defaultProjectPath);
   }
 
   // Import Export Tab

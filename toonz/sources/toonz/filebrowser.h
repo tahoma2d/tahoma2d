@@ -99,7 +99,7 @@ types to be displayed in the file browser.
   void removeFilterType(const QString &type);
 
   void setFolder(const TFilePath &fp, bool expandNode = false,
-                 bool forceUpdate = false);
+                 bool forceUpdate = false, bool collapseAll = false);
   // process when inputting the folder which is not regitered in the folder tree
   // (e.g. UNC path in Windows)
   void setUnregisteredFolder(const TFilePath &fp);

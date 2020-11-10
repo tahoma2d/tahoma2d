@@ -90,6 +90,27 @@ FileField::BrowserPopupController *FileField::getBrowserPopupController() {
 
 //-----------------------------------------------------------------------------
 
+void FileField::forceOpenBrowser() {
+  QString directory = QString();
+
+  if (!m_browserPopupController) return;
+  m_browserPopupController->openPopup(
+      m_filters, (m_fileMode == QFileDialog::DirectoryOnly),
+      (m_lastSelectedPath == m_descriptionText) ? "" : m_lastSelectedPath,
+      this);
+  if (m_browserPopupController->isExecute())
+    directory = m_browserPopupController->getPath(m_codePath);
+
+  if (!directory.isEmpty()) {
+    setPath(directory);
+    m_lastSelectedPath = directory;
+    emit pathChanged();
+    return;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void FileField::browseDirectory() {
   if (!m_fileBrowseButton->hasFocus()) return;
   QString directory = QString();

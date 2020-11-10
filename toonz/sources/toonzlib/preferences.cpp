@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QAction>
 #include <QColor>
+#include <QStandardPaths>
 
 // boost includes
 #include <boost/bind.hpp>
@@ -208,7 +209,9 @@ bool Preferences::LevelFormat::matches(const TFilePath &fp) const {
 //    Preferences  implementation
 //**********************************************************************************
 
-Preferences::Preferences() {
+Preferences::Preferences() { load(); }
+
+void Preferences::load() {
   // load preference file
   TFilePath layoutDir = ToonzFolder::getMyModuleDir();
   TFilePath prefPath  = layoutDir + TFilePath("preferences.ini");
@@ -435,6 +438,11 @@ void Preferences::definePreferenceItems() {
          true);
 
   setCallBack(rasterBackgroundColor, &Preferences::setRasterBackgroundColor);
+
+  QString documentsPath =
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
+  define(defaultProjectPath, "defaultProjectPath", QMetaType::QString,
+         documentsPath);
 
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");

@@ -24,6 +24,7 @@
 #define MI_OpenRecentLevel "MI_OpenRecentLevel"
 #define MI_ClearRecentScene "MI_ClearRecentScene"
 #define MI_ClearRecentLevel "MI_ClearRecentLevel"
+#define MI_ClearRecentProject "MI_ClearRecentProject"
 #define MI_PrintXsheet "MI_PrintXsheet"
 #define MI_NewLevel "MI_NewLevel"
 #define MI_NewVectorLevel "MI_NewVectorLevel"

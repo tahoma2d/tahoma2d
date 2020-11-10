@@ -145,9 +145,8 @@ QMutex levelFileMutex;
 }  // namespace
 
 inline bool isMultipleFrameType(std::string type) {
-  return (type == "tlv" || type == "tzl" || type == "pli" ||
-          type == "avi" || type == "gif" || type == "mp4" ||
-          type == "webm");
+  return (type == "tlv" || type == "tzl" || type == "pli" || type == "avi" ||
+          type == "gif" || type == "mp4" || type == "webm");
 }
 
 //=============================================================================
@@ -686,7 +685,7 @@ void FileBrowser::refreshCurrentFolderItems() {
 //-----------------------------------------------------------------------------
 
 void FileBrowser::setFolder(const TFilePath &fp, bool expandNode,
-                            bool forceUpdate) {
+                            bool forceUpdate, bool collapseAll) {
   if (fp == m_folder && !forceUpdate) return;
 
   // set the current folder path
@@ -699,7 +698,7 @@ void FileBrowser::setFolder(const TFilePath &fp, bool expandNode,
     m_folderName->setText(toQString(fp));
 
   refreshCurrentFolderItems();
-
+  if (collapseAll) m_folderTreeView->collapseAll();
   if (!TFileStatus(fp).isLink())
     m_folderTreeView->setCurrentNode(fp, expandNode);
 }

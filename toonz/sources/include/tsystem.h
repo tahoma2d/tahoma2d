@@ -153,7 +153,8 @@ DVAPI int getProcessId();
 DVAPI void mkDir(const TFilePath &path);
 DVAPI void rmDir(const TFilePath &path);
 DVAPI void rmDirTree(const TFilePath &path);
-DVAPI void copyDir(const TFilePath &dst, const TFilePath &src);
+DVAPI void copyDir(const TFilePath &dst, const TFilePath &src,
+                   bool overwrite = false);
 DVAPI bool touchParentDir(const TFilePath &fp);
 
 DVAPI void touchFile(const TFilePath &path);
