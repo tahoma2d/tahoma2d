@@ -352,7 +352,6 @@ void Room::reload() {
 
   for (int i = layout->count() - 1; i >= 0; i--) {
     TPanel *pane = static_cast<TPanel *>(layout->itemAt(i)->widget());
-    pane->close();
     removeDockWidget(pane);
   }
 
@@ -1127,12 +1126,13 @@ void MainWindow::resetRoomsLayout() {
         } else {
           TSystem::copyFile(fp, defaultfp);
 
-          QTabBar *roomTabWidget         = m_topBar->getRoomTabWidget();
-          Room *room                     = new Room(this);
-
+          QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
+          Room *room             = new Room(this);
+          room->hide();
           m_panelStates.push_back(room->load(fp));
           m_stackedWidget->addWidget(room);
           roomTabWidget->addTab(room->getName());
+          room->show();
         }
       }
     } catch (...) {
@@ -1229,6 +1229,7 @@ void MainWindow::deleteRoom(int index) {
   if (index < m_oldRoomIndex) m_oldRoomIndex--;
 
   m_stackedWidget->removeWidget(room);
+  m_panelStates.erase(m_panelStates.begin() + index);
   delete room;
 }
 

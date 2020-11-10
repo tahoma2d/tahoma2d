@@ -31,29 +31,6 @@
 
 TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 1);
 
-namespace {
-struct {
-  const char *toolName;
-  bool collapsable;
-  QAction *action;
-} buttonLayout[] = {{T_Edit, false, 0},        {T_Selection, false, 0},
-                    {"Separator_1", false, 0}, {T_Brush, false, 0},
-                    {T_Geometric, false, 0},   {T_Type, true, 0},
-                    {T_Fill, false, 0},        {T_PaintBrush, false, 0},
-                    {"Separator_2", false, 0}, {T_Eraser, false, 0},
-                    {T_Tape, false, 0},  //{T_Finger, false, 0},
-                    {"Separator_3", false, 0}, {T_StylePicker, false, 0},
-                    {T_RGBPicker, false, 0},   {T_Ruler, false, 0},
-                    {"Separator_4", false, 0}, {T_ControlPointEditor, false, 0},
-                    {T_Pinch, true, 0},        {T_Pump, true, 0},
-                    {T_Magnet, true, 0},       {T_Bender, true, 0},
-                    {T_Iron, true, 0},         {T_Cutter, true, 0},
-                    {"Separator_5", true, 0},  {T_Skeleton, true, 0},
-                    {T_Tracker, true, 0},      {T_Hook, true, 0},
-                    {T_Plastic, true, 0},      {"Separator_6", false, 0},
-                    {T_Zoom, false, 0},        {T_Rotate, true, 0},
-                    {T_Hand, false, 0},        {0, false, 0}};
-}  // namespace
 //=============================================================================
 // Toolbar
 //-----------------------------------------------------------------------------
@@ -164,8 +141,8 @@ void Toolbar::updateToolbar() {
   }
 
   // Hide action for now
-  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
-    if (buttonLayout[idx].action) removeAction(buttonLayout[idx].action);
+  for (int idx = 0; m_buttonLayout[idx].toolName; idx++) {
+    if (m_buttonLayout[idx].action) removeAction(m_buttonLayout[idx].action);
   }
 
   removeAction(m_expandAction);
@@ -175,36 +152,35 @@ void Toolbar::updateToolbar() {
   bool actionEnabled     = false;
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
-  for (int idx = 0; buttonLayout[idx].toolName; idx++) {
-    TTool *tool = TTool::getTool(buttonLayout[idx].toolName, targetType);
+  for (int idx = 0; m_buttonLayout[idx].toolName; idx++) {
+    TTool *tool = TTool::getTool(m_buttonLayout[idx].toolName, targetType);
     if (tool) tool->updateEnabled(rowIndex, colIndex);
-    bool isSeparator = !strncmp(buttonLayout[idx].toolName, "Separator", 9);
     bool enable =
         !levelBasedDisplay ? true : (!tool ? actionEnabled : tool->isEnabled());
 
     // Plastic tool should always be available so you can create a mesh
-    if (!enable && !strncmp(buttonLayout[idx].toolName, T_Plastic, 9) &&
+    if (!enable && !strncmp(m_buttonLayout[idx].toolName, T_Plastic, 9) &&
         (m_toolbarLevel & LEVELCOLUMN_XSHLEVEL))
       enable = true;
 
-    if (!m_isExpanded && buttonLayout[idx].collapsable) continue;
+    if (!m_isExpanded && m_buttonLayout[idx].collapsable) continue;
 
-    if (!buttonLayout[idx].action) {
-      if (isSeparator)
-        buttonLayout[idx].action = addSeparator();
+    if (!m_buttonLayout[idx].action) {
+      if (m_buttonLayout[idx].isSeparator)
+        m_buttonLayout[idx].action = addSeparator();
       else
-        buttonLayout[idx].action =
-            CommandManager::instance()->getAction(buttonLayout[idx].toolName);
+        m_buttonLayout[idx].action =
+            CommandManager::instance()->getAction(m_buttonLayout[idx].toolName);
     }
 
     if (levelBasedDisplay != 2)
-      buttonLayout[idx].action->setEnabled(enable);
+      m_buttonLayout[idx].action->setEnabled(enable);
     else if (!enable)
       continue;
 
-    actionEnabled = addAction(buttonLayout[idx].action) || actionEnabled;
+    actionEnabled = addAction(m_buttonLayout[idx].action) || actionEnabled;
 
-    if (isSeparator) actionEnabled = false;
+    if (m_buttonLayout[idx].isSeparator) actionEnabled = false;
   }
 
   addAction(m_expandAction);
