@@ -272,6 +272,9 @@ public:
   TPixel getRasterBackgroundColor() const {
     return getColorValue(rasterBackgroundColor);
   }
+  QString getDefaultProjectPath() const {
+    return getStringValue(defaultProjectPath);
+  }
 
   // Import Export Tab
   QString getFfmpegPath() const { return getStringValue(ffmpegPath); }

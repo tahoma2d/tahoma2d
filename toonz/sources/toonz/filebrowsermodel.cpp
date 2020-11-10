@@ -15,6 +15,7 @@
 
 #include "tapp.h"
 #include "toonz/tscenehandle.h"
+#include "mainwindow.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -774,8 +775,10 @@ void DvDirModelProjectNode::makeCurrent() {
   TProjectManager *pm   = TProjectManager::instance();
   TFilePath projectPath = getProjectPath();
   if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change project"))) return;
-
+  TFilePath projectFolder = getPath();
   pm->setCurrentProjectPath(projectPath);
+  RecentFiles::instance()->addFilePath(projectFolder.getQString(),
+                                       RecentFiles::Project);
   IoCmd::newScene();
 }
 
@@ -1029,6 +1032,7 @@ DvDirModelRootNode::DvDirModelRootNode()
     : DvDirModelNode(0, L"Root")
     , m_myComputerNode(0)
     , m_networkNode(0)
+    , m_currentProjectNode(0)
     , m_sandboxProjectNode(0) {
   m_nodeType = "Root";
 }
@@ -1077,24 +1081,10 @@ void DvDirModelRootNode::refreshChildren() {
 
     TProjectManager *pm          = TProjectManager::instance();
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
+    m_projectPaths.insert(sandboxProjectPath);
     m_sandboxProjectNode = new DvDirModelProjectNode(this, sandboxProjectPath);
     addChild(m_sandboxProjectNode);
-
-    TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-    if (projectPath != pm->getSandboxProjectFolder()) {
-      m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
-      m_projectPaths.insert(projectPath);
-      addChild(m_currentProjectNode);
-    }
-
-    if (m_projectPaths.size() > 1) {
-      for (auto i : m_projectPaths) {
-        if (i == projectPath) continue;
-        DvDirModelProjectNode *addedProjectNode =
-            new DvDirModelProjectNode(this, projectPath);
-        addChild(addedProjectNode);
-      }
-    }
+    m_projectNodes.push_back(m_sandboxProjectNode);
 
     // SVN Repositories
     QList<SVNRepository> repositories =
@@ -1118,10 +1108,25 @@ void DvDirModelRootNode::refreshChildren() {
         new DvDirModelSceneFolderNode(this, L"Scene Folder", TFilePath());
     m_sceneFolderNode->setPixmap(QPixmap(":Resources/clapboard.png"));
   } else {
-    TProjectManager *pm   = TProjectManager::instance();
+    RecentFiles *recent        = RecentFiles::instance();
+    QList<QString> recentFiles = recent->getFilesNameList(RecentFiles::Project);
+    int recentCount            = recentFiles.size();
+    TProjectManager *pm        = TProjectManager::instance();
+    for (auto path : recentFiles) {
+      TFilePath projectPath(path);
+      if (TSystem::doesExistFileOrLevel(projectPath) &&
+          m_projectPaths.find(projectPath) == m_projectPaths.end() &&
+          pm->isProject(projectPath)) {
+        DvDirModelProjectNode *addedProjectNode =
+            new DvDirModelProjectNode(this, projectPath);
+        m_projectPaths.insert(projectPath);
+        addChild(addedProjectNode);
+        m_projectNodes.push_back(addedProjectNode);
+      }
+    }
+
     TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-    if (projectPath != pm->getSandboxProjectFolder() &&
-        (m_projectPaths.find(projectPath) == m_projectPaths.end())) {
+    if (m_projectPaths.find(projectPath) == m_projectPaths.end()) {
       std::string rootString = projectPath.getQString().toStdString();
       m_currentProjectNode   = new DvDirModelProjectNode(this, projectPath);
       m_projectPaths.insert(projectPath);
@@ -1150,15 +1155,14 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
   }
 
   // path could be a project, under some project root
-  for (i = 0; i < (int)m_projectRootNodes.size(); i++) {
-    node = m_projectRootNodes[i]->getNodeByPath(path);
-    if (node) return node;
+  for (i = 0; i < (int)m_projectNodes.size(); i++) {
+    node = m_projectNodes[i];
+    DvDirModelProjectNode *projectNode =
+        dynamic_cast<DvDirModelProjectNode *>(node);
     // search in the project folders
-    for (int j = 0; j < m_projectRootNodes[i]->getChildCount(); j++) {
-      DvDirModelProjectNode *projectNode =
-          dynamic_cast<DvDirModelProjectNode *>(
-              m_projectRootNodes[i]->getChild(j));
-      if (projectNode) {
+    if (projectNode) {
+      if (projectNode->getPath() == path) return node;
+      for (int j = 0; j < m_projectNodes[i]->getChildCount(); j++) {
         // for the normal folder in the project folder
         node = projectNode->getNodeByPath(path);
         if (node) return node;
@@ -1170,10 +1174,6 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
             if (node) return node;
           }
         }
-      } else  // for the normal folder in the project root
-      {
-        node = m_projectRootNodes[i]->getChild(j)->getNodeByPath(path);
-        if (node) return node;
       }
     }
   }
@@ -1340,6 +1340,8 @@ void DvDirModel::refreshFolderChild(const QModelIndex &i) {
   int r;
   for (r = 0; r < count; r++) refreshFolderChild(index(r, 0, i));
 }
+
+void DvDirModel::forceRefresh() { onSceneSwitched(); }
 
 //-----------------------------------------------------------------------------
 

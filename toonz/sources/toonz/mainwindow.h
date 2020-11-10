@@ -338,15 +338,19 @@ signals:
 
 class RecentFiles {
   friend class StartupPopup;
+  friend class DvDirModelRootNode;
+  friend class ProjectPopup;
+  friend class ProjectSettingsPopup;
   QList<QString> m_recentScenes;
   QList<QString> m_recentSceneProjects;
   QList<QString> m_recentLevels;
   QList<QString> m_recentFlipbookImages;
+  QList<QString> m_recentProjects;
 
   RecentFiles();
 
 public:
-  enum FileType { Scene, Level, Flip, None };
+  enum FileType { Scene, Level, Flip, Project, None };
 
   static RecentFiles *instance();
   ~RecentFiles();
