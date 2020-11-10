@@ -113,6 +113,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   connect(th, &ToolHandle::toolSwitched, this, &MotionPathPanel::updateTools);
   connect(m_geometryOptionsBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MotionPathPanel::onGeometricComboChanged);
   m_toolLayout->addWidget(m_geometryOptionsBox);
+  m_toolLayout->addStretch();
   m_geometryOptionsBox->hide();
 
   ToolBarContainer* container = new ToolBarContainer(this);
