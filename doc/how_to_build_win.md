@@ -23,14 +23,14 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 ### boost
 - Boost 1.55.0 or later is required (tested up to 1.61.0).
 - http://www.boost.org/users/history/version_1_61_0.html
-- Download boost_1_73_0.zip from the above link. Extract all contents to the - '$opentoonz/thirdparty/boost' directory.
+- Download boost_1_73_0.zip from the above link. Extract all contents to the - '$tahoma2d/thirdparty/boost' directory.
 - Install the following patch (Make the changes listed in the patch file), if you use Boost 1.55.0 with Visual Studio 2013.
 - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 ## Acquiring the Source Code
 - Note: You can also perform these next commands with Github for Desktop client.
 - Clone the base repository.
-- Throughout the explanation `$opentoonz` will represent the root for the base repository.
+- Throughout the explanation `$tahoma2d` will represent the root for the base repository.
 
 ### lib and dll
 
@@ -43,8 +43,8 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ### Using CMake to Create a Visual Studio Project
 - Launch CMake
-- In `Where is the source code`, navigate to `$opentoonz/toonz/sources`
-- In `Where to build the binaries`, navigate to `$opentoonz/toonz/build`
+- In `Where is the source code`, navigate to `$tahoma2d/toonz/sources`
+- In `Where to build the binaries`, navigate to `$tahoma2d/toonz/build`
 - Or to wherever you usually build to.
 - If the build directory is in the git repository, be sure to add the directory to .gitignore
 - If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
@@ -56,16 +56,16 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ## Setting Up Libraries
 Rename the following files:
-- `$opentoonz/thirdparty/LibJPEG/jpeg-9/jconfig.vc` to `$opentoonz/thirdparty/LibJPEG/jpeg-9/jconfig.h`
-- `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tif_config.vc.h` to `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tif_config.h`
-- `$opentoonz/thirdparty/tiff-4.0.3/libtiff/tiffconf.vc.h to $opentoonz/thirdparty/tiff-4.0.3/libtiff/tiffconf.h`
-- `$opentoonz/thirdparty/libpng-1.6.21/scripts/pnglibconf.h.prebuilt to $opentoonz/thirdparty/libpng-1.6.21/pnglibconf.h`
+- `$tahoma2d/thirdparty/LibJPEG/jpeg-9/jconfig.vc` to `$tahoma2d/thirdparty/LibJPEG/jpeg-9/jconfig.h`
+- `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tif_config.vc.h` to `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tif_config.h`
+- `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tiffconf.vc.h to $tahoma2d/thirdparty/tiff-4.0.3/libtiff/tiffconf.h`
+- `$tahoma2d/thirdparty/libpng-1.6.21/scripts/pnglibconf.h.prebuilt to $tahoma2d/thirdparty/libpng-1.6.21/pnglibconf.h`
 - Note that the destination is a different folder for the last file.
 
 ## Building
-- Open `$opentoonz/toonz/build/OpenToonz.sln` and change to `Debug` or `Release` in the top bar.
+- Open `$tahoma2d/toonz/build/Tahoma2D.sln` and change to `Debug` or `Release` in the top bar.
 - Compile the build.
-- The output will be in the corresponding folder in `$opentoonz/toonz/build/`
+- The output will be in the corresponding folder in `$tahoma2d/toonz/build/`
 
 ## Building with extended stop motion support for webcams and Canon DSLR cameras.
  You will need three additional libraries.
@@ -73,10 +73,10 @@ Rename the following files:
   - [libjpeg-turbo](https://www.libjpeg-turbo.org/)
   - The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
-Copy the following folders into the `$opentoonz/thirdparty` folder.
-  - Copy the Header and library folders from the Canon SDK to `$opentoonz/thirdparty/canon`
+Copy the following folders into the `$tahoma2d/thirdparty` folder.
+  - Copy the Header and library folders from the Canon SDK to `$tahoma2d/thirdparty/canon`
     - Make sure that the library is the one from the EDSDK_64 folder.
-  - Copy the lib and include folders from libjpeg-turbo64 into `$opentoonz/thirdparty/libjpeg-turbo64`.
+  - Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
 
 Check the checkbox in CMake to build with stop motion support.
 On configuring with CMake or in the environmental variables, specify `OpenCV_DIR` to the `build` folder in the install folder of OpenCV (like `C:/opencv/build`).
@@ -85,10 +85,10 @@ To run the program with stop motion support, you will need to copy the .dll file
 
 ## Running the Program
 ### Setting Up the Program's Path
-1. Copy the entire contents of $opentoonz/toonz/build/Release to an appropriate folder.
+1. Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
 
-2. Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. Run the Qt program `windeployqt.exe` with the path for `OpenToonz.exe` as an argument. (Another way to do this is navigate to the exe that was created in your Release folder and drag and drop the Opentoonz.exe on top of the windeployqt.exe This will automatically generate the QT files and folders you will need.)
- - The necessary Qt library files should be in the same folder as `OpenToonz.exe`
+2. Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. Run the Qt program `windeployqt.exe` with the path for `Tahoma2D.exe` as an argument. (Another way to do this is navigate to the exe that was created in your Release folder and drag and drop the Tahoma2D.exe on top of the windeployqt.exe This will automatically generate the QT files and folders you will need.)
+ - The necessary Qt library files should be in the same folder as `Tahoma2D.exe`
   - These include:
     - `Qt5Core.dll`
     - `Qt5Gui.dll`
@@ -99,7 +99,7 @@ To run the program with stop motion support, you will need to copy the .dll file
     - `Qt5Svg.dll`
     - `Qt5Widgets.dll`
     - `Qt5Multimedia.dll`
-  - These files should be in the corresponding folders in the same folder `OpenToonz.exe`
+  - These files should be in the corresponding folders in the same folder `Tahoma2D.exe`
     - `/bearer/qgenericbearer.dll`
     - `/bearer/qnativewifibearer.dll`
     - `/iconengines/qsvgicon.dll`
@@ -115,52 +115,20 @@ To run the program with stop motion support, you will need to copy the .dll file
     - `/imageformats/qwebp.dll`
     - `/platforms/qwindows.dll`
 
-3. Copy the following files to the same folder as `OpenToonz.exe`
-  - `$opentoonz/thirdparty/glut/3.7.6/lib/glut64.dll`
-  - `$opentoonz/thirdparty/glew/glew-1.9.0/bin/64bit/glew32.dll`
-
-4. Copy the `srv` folder from the previous OpenToonz installation to the same folder as `OpenToonz.exe`
-  - If there is no `srv` folder, OpenToonz can still be used.  However, various file formats such as `mov` cannot be used.
-  - Creating the files for `srv` is discussed later.
+3. Copy the following files to the same folder as `Tahoma2D.exe`
+  - `$tahoma2d/thirdparty/freeglut/bin/x64/freeglut.dll`
+  - `$tahoma2d/thirdparty/glew/glew-1.9.0/bin/64bit/glew32.dll`
 
 ### Creating the stuff Folder
-If a previous binary of OpenToonz was already installed, this step and the following about creating a registry key has already been dealt with.  So feel free to skip these parts.
-
-1. Copy the files from `$opentoonz/stuff` to an appropriate folder.
-
-### Creating Registry Keys
-1. Using the registry editor, create the following key and copy the path of the `$opentoonz/stuff` folder from above to it.
-  - HKEY_LOCAL_MACHINE\SOFTWARE\OpenToonz\OpenToonz\TOONZROOT
+1. Create a `tahomastuff` folder inside the folder where `Tahoma2D.exe` is located.
+1. Copy the files from `$tahoma2d/stuff` to the new folder.
 
 ### Running
-`OpenToonz.exe` can now be run.  Congratulations!
+`Tahoma2D.exe` can now be run.  Congratulations!
 
 ## Debugging
-1. In the Solution Explorer, select the OpenToonz project within the OpenToonz solution.
+1. In the Solution Explorer, select the Tahoma2D project within the Tahoma2D solution.
 2. In the Project menu, choose Set as StartUp Project.
-
-### Qt
-- https://www.qt.io/download-open-source/
-- Install Qt 5.9 (32-bit version) by the  by [Qt Online Installer for Windows](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe).
-
-### Using CMake to Create a Visual Studio 32-bit Project
-- Follow the same instructions as for the 64-bit version, but change the following:
-  - `$opentoonz/toonz/build` to `$opentoonz/toonz/build32`
-  - `Visual Studio 14 2015 Win64` to `Visual Studio 14 2015`
-- Change `QT_PATH` to the path of your 32-bit version of Qt
-
-### Building the 32-bit Version
-1. Open `$opentoonz/toonz/build32/OpenToonz.sln`
-
-### Layout of the `srv` Folder
-- For the 64-bit version, copy the following files to the `srv` folder:
-  - From `$opentoonz/toonz/build32/Release`
-    - image.dll
-    - tnzcore.dll
-  - From the 32-bit version of Qt
-    - Qt5Core.dll
-    - Qt5Network.dll
-  - `$opentoonz/thirdparty/glut/3.7.6/lib/glut32.dll`
 
 ## Creating Translation Files
 Qt translation files are generated first from the source code to .ts files, then from .ts files to a .qm file.  These files can be created in Visual Studio if the `translation_` project and `Build translation_??? only` (`translation_???`のみをビルド」) is used.  These files are not created in the default `Build Project Solution`.

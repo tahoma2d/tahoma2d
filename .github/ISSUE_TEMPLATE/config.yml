@@ -2,7 +2,7 @@ blank_issues_enabled: true
 contact_links:
   - name: Manual
     url: https://tahoma2d.readthedocs.io/
-    about: The official, extensive manual for OpenToonz
+    about: The official, extensive manual for Tahoma2D
   - name: User forum
     url: https://groups.google.com/g/tahoma2d
     about: You can ask and answer general questions here, and connect with other users

@@ -1173,12 +1173,12 @@ void Canon::calculateZoomPoint() {
     m_finalZoomPoint.x = m_calculatedZoomPoint.x - (m_zoomRectDimensions.x / 2);
     m_finalZoomPoint.y = m_calculatedZoomPoint.y - (m_zoomRectDimensions.y / 2);
   } else {
-    // get the image size in OpenToonz dimensions
+    // get the image size in Tahoma2D dimensions
     double maxFullWidth =
         (double)m_fullImageDimensions.lx / fullImageDpi.x * Stage::inch;
     double maxFullHeight =
         (double)m_fullImageDimensions.ly / fullImageDpi.y * Stage::inch;
-    // OpenToonz coordinates are based on center at 0, 0
+    // Tahoma2D coordinates are based on center at 0, 0
     // convert that to top left based coordinates
     double newX = m_liveViewZoomPickPoint.x + maxFullWidth / 2.0;
     double newY = -m_liveViewZoomPickPoint.y + maxFullHeight / 2.0;
@@ -1214,7 +1214,7 @@ void Canon::calculateZoomPoint() {
       // recenter the point in the rect
       tempCalculated.x = m_finalZoomPoint.x + (m_zoomRectDimensions.x / 2);
       tempCalculated.y = m_finalZoomPoint.y + (m_zoomRectDimensions.y / 2);
-      // convert to OpenToonz Dimensions
+      // convert to Tahoma2D Dimensions
       newX = tempCalculated.x / fullImageDpi.x * Stage::inch;
       newY = tempCalculated.y / fullImageDpi.y * Stage::inch;
       // get center based coordinates
@@ -1225,7 +1225,7 @@ void Canon::calculateZoomPoint() {
 
   // calculate the zoom rectangle position on screen
 
-  // get the image size in OpenToonz dimensions
+  // get the image size in Tahoma2D dimensions
   double maxFullWidth =
       (double)m_fullImageDimensions.lx / fullImageDpi.x * Stage::inch;
   double maxFullHeight =
@@ -1235,7 +1235,7 @@ void Canon::calculateZoomPoint() {
             m_finalZoomPoint.x + m_zoomRectDimensions.x, m_finalZoomPoint.y);
   TRect tempCalculated;
 
-  // convert to OpenToonz Dimensions
+  // convert to Tahoma2D Dimensions
   tempCalculated.x0 = m_zoomRect.x0 / fullImageDpi.x * Stage::inch;
   tempCalculated.y0 = m_zoomRect.y0 / fullImageDpi.y * Stage::inch;
   tempCalculated.x1 = m_zoomRect.x1 / fullImageDpi.x * Stage::inch;
