@@ -1,14 +1,9 @@
 # Testing Pull Requests (PRs)
 
-When a PR is submitted, it is compiled automatically by AppVeyor and Travis CI. The AppVeyor build creates an artifact which contains the OpenToonz executable and supporting DLLs needed to run.  You can easily download this artifact and run it to test out the PR before it is merged.
+When a PR is submitted, it is compiled automatically by AppVeyor and Travis CI. The AppVeyor build creates an artifact which contains the Tahoma2D executable and supporting DLLs needed to run.  You can easily download this artifact and run it to test out the PR before it is merged.
 
 ## Pre-Testing Notes
 - This can only be tested on Windows. There is no OSX or Linux build that can be tested.
-- You need to have OpenToonz already installed.  Do not uninstall.
-- Your current personal preferences and settings will be used.
-  - Personal settings can change if you change them while testing.
-  - It is recommended that you backup your `C:\OpenToonz #.# stuff` folder before testing a PR.
-- The AppVeyor build does not contain an updated `C:\OpenToonz #.# stuff` folder so any PR changes to default configurations (i.e. stylesheets, FXs, brushes, etc) are not automatically included.
 - It is recommended when testing to use new scenes that you can throw away.
   - If you decide to test on an existing scene, back it up first!
 
@@ -32,15 +27,15 @@ When a PR is submitted, it is compiled automatically by AppVeyor and Travis CI. 
 
 ![](./testing_pr_4.JPG)
 
-- Click on the OpenToonz `.zip` file to begin the download.
+- Click on the Tahoma2D `.zip` file to begin the download.
 
 ![](./testing_pr_5.JPG)
 
 - Once download is complete, go to your Downloads folder and extract the contents of the .zip file anywhere on your computer.
  - You should extract into a separate folder. 
- - ⚠️ **Do not overwrite your current OpenToonz installation!**
+ - ⚠️ **Do not overwrite your current Tahoma2D installation!**
 
-- Enter the folder you extracted everything into and double-click the OpenToonz executable to start.
+- Enter the folder you extracted everything into and double-click the Tahoma2D executable to start.
 
 - Test away!  Report any suggestions or issues related to the change in the PR comments.
 

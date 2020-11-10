@@ -599,7 +599,7 @@ public:
 
   void writeLine(char *buffer) override;
 
-  // for now opentoonz does not support bmp format with alpha channel
+  // for now Tahoma2D does not support bmp format with alpha channel
   bool writeAlphaSupported() const override { return false; }
 };
 

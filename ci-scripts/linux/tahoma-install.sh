@@ -1,7 +1,7 @@
 sudo add-apt-repository --yes ppa:beineri/opt-qt597-xenial
 sudo add-apt-repository --yes ppa:achadwick/mypaint-testing
 sudo apt-get update
-sudo apt-get install -y cmake liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libegl1-mesa-dev libgles2-mesa-dev libglew-dev freeglut3-dev qt59script libsuperlu-dev qt59svg qt59tools qt59multimedia wget libusb-1.0-0-dev libboost-all-dev liblzma-dev libjson-c-dev libmypaint-dev libjpeg-turbo8-dev libglib2.0-dev qt59serialport
+sudo apt-get install -y cmake liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libegl1-mesa-dev libgles2-mesa-dev libglew-dev freeglut3-dev qt59script libsuperlu-dev qt59svg qt59tools qt59multimedia wget libboost-all-dev liblzma-dev libjson-c-dev libmypaint-dev libjpeg-turbo8-dev libglib2.0-dev qt59serialport
 sudo apt-get install -y nasm yasm libgnutls-dev libass-dev libbluray-dev libmp3lame-dev libopus-dev libsnappy-dev libtheora-dev libvorbis-dev libvpx-dev libwebp-dev libxml2-dev libfontconfig1-dev libfreetype6-dev libopencore-amrnb-dev libopencore-amrwb-dev libopenjpeg-dev libspeex-dev libsoxr-dev libopenjp2-7-dev
 sudo apt-get install -y python3-pip
 

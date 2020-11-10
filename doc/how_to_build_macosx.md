@@ -42,7 +42,7 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 
 In a Terminal window, execute the following statements:
 ```
-$ brew install glew lz4 libjpeg libpng lzo pkg-config libusb cmake git-lfs libmypaint qt opencv jpeg-turbo
+$ brew install glew lz4 libjpeg libpng lzo pkg-config cmake git-lfs libmypaint qt opencv jpeg-turbo
 $ git lfs install
 ```
 
