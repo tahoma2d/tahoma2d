@@ -739,7 +739,7 @@ void FrameNumberLineEdit::focusOutEvent(QFocusEvent *e) {
 //=============================================================================
 
 LevelNameLineEdit::LevelNameLineEdit(QWidget *parent)
-    : QLineEdit(parent), m_textOnFocusIn("") {
+    : DVGui::LineEdit(parent), m_textOnFocusIn("") {
   // Exclude all character which cannot fit in a filepath (Win).
   // Dots are also prohibited since they are internally managed by Toonz.
   QRegExp rx("[^\\\\/:?*.\"<>|]+");

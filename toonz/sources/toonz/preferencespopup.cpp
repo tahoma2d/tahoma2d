@@ -1295,9 +1295,9 @@ PreferencesPopup::PreferencesPopup()
     QVBoxLayout* categoryLayout = new QVBoxLayout();
     categoryLayout->setMargin(5);
     categoryLayout->setSpacing(10);
-	categoryLayout->addWidget(m_categoryList, 1);
+    categoryLayout->addWidget(m_categoryList, 1);
     categoryLayout->addWidget(importPrefButton, 0);
-	mainLayout->addLayout(categoryLayout, 0);
+    mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(m_stackedWidget, 1);
   }
   setLayout(mainLayout);

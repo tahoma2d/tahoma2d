@@ -97,7 +97,7 @@ protected:
 
 //=============================================================================
 
-class LevelNameLineEdit : public QLineEdit {
+class LevelNameLineEdit : public DVGui::LineEdit {
   Q_OBJECT
   QString m_textOnFocusIn;
 

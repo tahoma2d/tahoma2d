@@ -183,7 +183,7 @@ EdsError Canon::openCameraSession() {
       m_camera, kEdsStateEvent_All, Canon::handleStateEvent, (EdsVoid*)this);
 
   // We can't handle raw images yet, so make sure we are getting jpgs
-  //if (getCurrentImageQuality().contains("RAW"))
+  // if (getCurrentImageQuality().contains("RAW"))
   //  setImageQuality("Large Fine Jpeg");
 
   EdsUInt32 saveto = kEdsSaveTo_Host;
@@ -510,8 +510,8 @@ QString Canon::getCurrentImageQuality() {
   err = EdsGetPropertyData(m_camera, kEdsPropID_ImageQuality, 0, sizeof(size),
                            &data);
   std::string wbString = m_imageQualityMap[data];
-  QString iq = QString::fromStdString(m_imageQualityMap[data]);
-  m_imageQuality = iq;
+  QString iq           = QString::fromStdString(m_imageQualityMap[data]);
+  m_imageQuality       = iq;
   return iq;
 }
 
@@ -799,114 +799,117 @@ bool Canon::downloadImage(EdsBaseRef object) {
   EdsStreamRef jpgStream = NULL;
   EdsSize jpgSize;
   EdsImageInfo imgInfo;
-  bool isRaw = false;
+  bool isRaw            = false;
   unsigned char* imgBuf = NULL;
 
   int width, height;
   UINT bufferSize;
 
-  err = EdsGetDirectoryItemInfo(object, &dirItemInfo);
+  err                  = EdsGetDirectoryItemInfo(object, &dirItemInfo);
   std::string itemName = dirItemInfo.szFileName;
 
   if (itemName.at(itemName.length() - 1) == '2') {
-      isRaw = true; 
+    isRaw = true;
   }
 
   err = EdsCreateMemoryStream(0, &stream);
   err = EdsCreateMemoryStream(0, &jpgStream);
   if (isRaw) {
-      err = EdsDownload(object, dirItemInfo.size, stream);
-  }
-  else {
-      err = EdsDownload(object, dirItemInfo.size, jpgStream);
+    err = EdsDownload(object, dirItemInfo.size, stream);
+  } else {
+    err = EdsDownload(object, dirItemInfo.size, jpgStream);
   }
   EdsDownloadComplete(object);
   std::string iq = m_imageQuality.toStdString();
   if (isRaw) {
-      // If the settings are set to jpg and raw, only get the raw and then return
-      if ((m_imageQuality.toLower().contains("jpeg") || m_imageQuality.toLower().contains("jpg")) && m_imageQuality.toLower().contains("raw")) {
+    // If the settings are set to jpg and raw, only get the raw and then return
+    if ((m_imageQuality.toLower().contains("jpeg") ||
+         m_imageQuality.toLower().contains("jpg")) &&
+        m_imageQuality.toLower().contains("raw")) {
 #ifdef MACOSX
-          UInt64 rawStreamSize = 0;
+      UInt64 rawStreamSize = 0;
 #else
-          unsigned __int64 rawStreamSize = 0;
+      unsigned __int64 rawStreamSize = 0;
 #endif
-          unsigned char* rawStreamData = NULL;
+      unsigned char* rawStreamData = NULL;
 
-          err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
-          err = EdsGetLength(stream, &rawStreamSize);
+      err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
+      err = EdsGetLength(stream, &rawStreamSize);
 
-          QFile fullImage(StopMotion::instance()->m_tempRaw);
-          fullImage.open(QIODevice::WriteOnly);
-          QDataStream dataStream(&fullImage);
-          dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
-          fullImage.close();
+      QFile fullImage(StopMotion::instance()->m_tempRaw);
+      fullImage.open(QIODevice::WriteOnly);
+      QDataStream dataStream(&fullImage);
+      dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
+      fullImage.close();
 
-          EdsRelease(stream);
-          EdsRelease(jpgStream);
-          stream = NULL;
-          jpgStream = NULL;
-          if (object) EdsRelease(object);
-          return err;
-          StopMotion::instance()->m_tempRaw = TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(TFilePath("+stopmotion")).getQString();
-      }
+      EdsRelease(stream);
+      EdsRelease(jpgStream);
+      stream    = NULL;
+      jpgStream = NULL;
+      if (object) EdsRelease(object);
+      return err;
+      StopMotion::instance()->m_tempRaw =
+          TApp::instance()
+              ->getCurrentScene()
+              ->getScene()
+              ->decodeFilePath(TFilePath("+stopmotion"))
+              .getQString();
+    }
 
+    err = EdsCreateImageRef(stream, &imgRef);
+    EdsGetImageInfo(imgRef, kEdsImageSrc_Preview, &imgInfo);
 
-      err = EdsCreateImageRef(stream, &imgRef);
-      EdsGetImageInfo(imgRef, kEdsImageSrc_Preview, &imgInfo);
-      
-      jpgSize.height = imgInfo.height;
-      jpgSize.width = imgInfo.width;
-      EdsGetImage(imgRef, kEdsImageSrc_Preview, kEdsTargetImageType_RGB, imgInfo.effectiveRect, jpgSize, jpgStream);
+    jpgSize.height = imgInfo.height;
+    jpgSize.width  = imgInfo.width;
+    EdsGetImage(imgRef, kEdsImageSrc_Preview, kEdsTargetImageType_RGB,
+                imgInfo.effectiveRect, jpgSize, jpgStream);
 
-      height = jpgSize.height;
-      width = jpgSize.width;
-      bufferSize = width * height * 4;
-
+    height     = jpgSize.height;
+    width      = jpgSize.width;
+    bufferSize = width * height * 4;
   }
-
 
 #ifdef MACOSX
   UInt64 jpgStreamSize = 0;
   UInt64 rawStreamSize = 0;
 #else
-  unsigned __int64 jpgStreamSize = 0;
-  unsigned __int64 rawStreamSize = 0;
+  unsigned __int64 jpgStreamSize     = 0;
+  unsigned __int64 rawStreamSize     = 0;
 #endif
   unsigned char* jpgStreamData = NULL;
   unsigned char* rawStreamData = NULL;
-  err                 = EdsGetPointer(jpgStream, (EdsVoid**)&jpgStreamData);
-  err                 = EdsGetLength(jpgStream, &jpgStreamSize);
+  err = EdsGetPointer(jpgStream, (EdsVoid**)&jpgStreamData);
+  err = EdsGetLength(jpgStream, &jpgStreamSize);
 
   if (isRaw) {
-      err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
-      err = EdsGetLength(stream, &rawStreamSize);
+    err = EdsGetPointer(stream, (EdsVoid**)&rawStreamData);
+    err = EdsGetLength(stream, &rawStreamSize);
   }
 
   // we now have the image in a buffer and the size of the image.
 
-
   if (!isRaw) {
-      int pixelFormat, pixelSize;
-      int inSubsamp, inColorspace;
-      tjhandle tjInstance = NULL;
-      
-      tjInstance = tjInitDecompress();
-      tjDecompressHeader3(tjInstance, jpgStreamData, jpgStreamSize, &width, &height, &inSubsamp,
-          &inColorspace);
+    int pixelFormat, pixelSize;
+    int inSubsamp, inColorspace;
+    tjhandle tjInstance = NULL;
 
-      pixelFormat = TJPF_BGRX;
-      pixelSize = tjPixelSize[pixelFormat];
-      bufferSize = width * height * pixelSize;
-      imgBuf = (unsigned char*)tjAlloc(bufferSize);
-      int flags = 0;
-      flags |= TJFLAG_BOTTOMUP;
+    tjInstance = tjInitDecompress();
+    tjDecompressHeader3(tjInstance, jpgStreamData, jpgStreamSize, &width,
+                        &height, &inSubsamp, &inColorspace);
 
-      // don't scale using jpg turbo, you can't control the size exactly
-      // get all the image info uncompressed and put into imgBuf
-      tjDecompress2(tjInstance, jpgStreamData, jpgStreamSize, imgBuf, width, width * pixelSize,
-          height, pixelFormat, flags);
-      tjDestroy(tjInstance);
-      tjInstance = NULL;
+    pixelFormat = TJPF_BGRX;
+    pixelSize   = tjPixelSize[pixelFormat];
+    bufferSize  = width * height * pixelSize;
+    imgBuf      = (unsigned char*)tjAlloc(bufferSize);
+    int flags   = 0;
+    flags |= TJFLAG_BOTTOMUP;
+
+    // don't scale using jpg turbo, you can't control the size exactly
+    // get all the image info uncompressed and put into imgBuf
+    tjDecompress2(tjInstance, jpgStreamData, jpgStreamSize, imgBuf, width,
+                  width * pixelSize, height, pixelFormat, flags);
+    tjDestroy(tjInstance);
+    tjInstance = NULL;
   }
 
   // Get camera size info
@@ -921,19 +924,18 @@ bool Canon::downloadImage(EdsBaseRef object) {
   // OpenCV image material - note width and height are flipped
   cv::Mat imgOriginal(height, width, CV_8UC4);
   if (isRaw) {
-      cv::Mat rawOriginal(height, width, CV_8UC3);
-      uchar* rawBuf = rawOriginal.data;
-      memcpy(rawBuf, jpgStreamData, jpgStreamSize);
-      cv::cvtColor(rawOriginal, imgOriginal, cv::COLOR_RGB2BGRA);
-      cv::flip(imgOriginal, imgOriginal, 0);
+    cv::Mat rawOriginal(height, width, CV_8UC3);
+    uchar* rawBuf = rawOriginal.data;
+    memcpy(rawBuf, jpgStreamData, jpgStreamSize);
+    cv::cvtColor(rawOriginal, imgOriginal, cv::COLOR_RGB2BGRA);
+    cv::flip(imgOriginal, imgOriginal, 0);
   }
 
-
   else {
-      uchar* origBuf = imgOriginal.data;
-      memcpy(origBuf, imgBuf, bufferSize);
-      tjFree(imgBuf);
-      imgBuf = NULL;
+    uchar* origBuf = imgOriginal.data;
+    memcpy(origBuf, imgBuf, bufferSize);
+    tjFree(imgBuf);
+    imgBuf = NULL;
   }
 
   // calculate the size of the new image
@@ -956,31 +958,30 @@ bool Canon::downloadImage(EdsBaseRef object) {
 
   m_proxyImageDimensions = StopMotion::instance()->m_newImage->getSize();
 
-
   // write out the full res file
   if (!isRaw) {
-      QFile fullImage(StopMotion::instance()->m_tempFile);
-      fullImage.open(QIODevice::WriteOnly);
-      QDataStream dataStream(&fullImage);
-      dataStream.writeRawData((const char*)jpgStreamData, jpgStreamSize);
-      fullImage.close();
-  }
-  else {
-      QFile fullImage(StopMotion::instance()->m_tempRaw);
-      fullImage.open(QIODevice::WriteOnly);
-      QDataStream dataStream(&fullImage);
-      dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
-      fullImage.close();
-      JpgConverter::saveJpg(StopMotion::instance()->m_newImage, TFilePath(StopMotion::instance()->m_tempFile));
+    QFile fullImage(StopMotion::instance()->m_tempFile);
+    fullImage.open(QIODevice::WriteOnly);
+    QDataStream dataStream(&fullImage);
+    dataStream.writeRawData((const char*)jpgStreamData, jpgStreamSize);
+    fullImage.close();
+  } else {
+    QFile fullImage(StopMotion::instance()->m_tempRaw);
+    fullImage.open(QIODevice::WriteOnly);
+    QDataStream dataStream(&fullImage);
+    dataStream.writeRawData((const char*)rawStreamData, rawStreamSize);
+    fullImage.close();
+    JpgConverter::saveJpg(StopMotion::instance()->m_newImage,
+                          TFilePath(StopMotion::instance()->m_tempFile));
   }
 
   // free the canon stuff
   if (isRaw) {
-      EdsRelease(imgRef);
+    EdsRelease(imgRef);
   }
   EdsRelease(stream);
   EdsRelease(jpgStream);
-  stream = NULL;
+  stream    = NULL;
   jpgStream = NULL;
   if (object) EdsRelease(object);
 
@@ -1008,16 +1009,15 @@ EdsError Canon::takePicture() {
   std::string real = m_realShutterSpeed.toStdString();
 
   EdsError err;
-  if (m_cameraName.find("450D") != std::string::npos || 
+  if (m_cameraName.find("450D") != std::string::npos ||
       m_cameraName.find("1000D") != std::string::npos ||
       m_cameraName.find("40D") != std::string::npos) {
-          err = EdsSendCommand(m_camera, kEdsCameraCommand_TakePicture, 0);
-  }
-  else {
-      err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-          kEdsCameraCommand_ShutterButton_Completely_NonAF);
-      err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
-          kEdsCameraCommand_ShutterButton_OFF);
+    err = EdsSendCommand(m_camera, kEdsCameraCommand_TakePicture, 0);
+  } else {
+    err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
+                         kEdsCameraCommand_ShutterButton_Completely_NonAF);
+    err = EdsSendCommand(m_camera, kEdsCameraCommand_PressShutterButton,
+                         kEdsCameraCommand_ShutterButton_OFF);
   }
 
   return err;

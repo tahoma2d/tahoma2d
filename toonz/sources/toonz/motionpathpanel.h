@@ -23,7 +23,6 @@ class QSlider;
 class QComboBox;
 class TThickPoint;
 class GraphWidget;
-class QLineEdit;
 
 //=============================================================================
 // ClickablePathLabel
@@ -104,6 +103,7 @@ class MotionPathPanel final : public QWidget {
   QToolBar* m_playToolbar;
   QFrame* m_graphFrame;
   QComboBox* m_geometryOptionsBox;
+  DVGui::IntField* m_geometrySidesField;
 
   bool m_looping = false;
 
@@ -134,6 +134,7 @@ protected slots:
   void stopPlayback();
   void updateTools();
   void onGeometricComboChanged(int);
+  void onGeometricSidesChanged(int);
 
   // public slots:
 };

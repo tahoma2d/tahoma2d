@@ -1330,7 +1330,8 @@ void MainWindow::onUpdateCheckerDone(bool error) {
     dialog->deleteLater();
     if (ret == 1) {
       // Write the new last date to file
-      QDesktopServices::openUrl(QObject::tr("https://github.com/turtletooth/tahoma2d/releases/latest"));
+      QDesktopServices::openUrl(QObject::tr(
+          "https://github.com/turtletooth/tahoma2d/releases/latest"));
     }
   }
 
