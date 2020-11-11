@@ -222,18 +222,11 @@ protected:
 private:
   /*!Must be call before readSettings().*/
   void defineActions();
-  /*
-  Room *createPaintRoom();
-  Room *createAnimationRoom();
-  Room *createBrowserRoom();
-  Room *createPltEditRoom();
-  Room *createFarmRoom();
-  */
 
-  Room *createPltEditRoom();
-  Room *createInknPaintRoom();
-  Room *createXsheetRoom();
-  Room *createBatchesRoom();
+  Room *create2DRoom();
+  Room *createStopMotionRoom();
+  Room *createTimingRoom();
+  Room *createFXRoom();
   Room *createBrowserRoom();
 
   QAction *createAction(const char *id, const QString &name,
