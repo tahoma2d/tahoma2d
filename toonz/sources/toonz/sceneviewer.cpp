@@ -253,6 +253,9 @@ double getCubicYfromX(TCubic c, double x, double &s0, double &s1) {
   double s  = (s1 + s0) * 0.5;
   TPointD p = c.getPoint(s);
   if (areAlmostEqual(x, p.x, 0.001)) return p.y;
+  if (areAlmostEqual(s0, s1, 0.0001)) {
+      return p.y;
+  }
 
   if (x < p.x)
     return getCubicYfromX(c, x, s0, s);
