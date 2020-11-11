@@ -136,14 +136,12 @@ TFilePath ToonzFolder::getMyReslistPath(bool forCleanup) {
 }
 
 TFilePath ToonzFolder::getTemplateModuleDir() {
-  // return getModulesDir() + getModuleName();
   return getModulesDir() + "settings";
 }
 
 TFilePath ToonzFolder::getMyModuleDir() {
-  TFilePath fp(getProfileFolder());
-  return fp.withName(fp.getWideName() + L"/users/" +
-                     TSystem::getUserName().toStdWString());
+  return getProfileFolder() +
+         TFilePath(L"users/" + TSystem::getUserName().toStdWString());
 }
 
 TFilePath ToonzFolder::getModuleFile(TFilePath filename) {
@@ -159,22 +157,19 @@ TFilePath ToonzFolder::getModuleFile(std::string fn) {
 
 // turtle
 TFilePath ToonzFolder::getRoomsDir() {
-  return getProfileFolder() + "layouts/rooms";
+  return getProfileFolder() + TFilePath("layouts/rooms");
 }
 
 TFilePath ToonzFolder::getTemplateRoomsDir() {
   return getRoomsDir() +
          Preferences::instance()->getCurrentRoomChoice().toStdWString();
-  // TFilePath fp(getMyModuleDir() + TFilePath(mySettingsFileName));
-  // return getRoomsDir() + getModuleName();
 }
 
 TFilePath ToonzFolder::getMyRoomsDir() {
-  // TFilePath fp(getTemplateRoomsDir());
-  TFilePath fp(getMyModuleDir());
-  return fp.withName(
-      fp.getWideName() + L"/layouts/" +
-      Preferences::instance()->getCurrentRoomChoice().toStdWString());
+  return getMyModuleDir() +
+         TFilePath(
+             L"layouts/" +
+             Preferences::instance()->getCurrentRoomChoice().toStdWString());
 }
 
 TFilePath ToonzFolder::getRoomsFile(TFilePath filename) {
