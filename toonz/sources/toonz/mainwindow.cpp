@@ -704,25 +704,25 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
                                  TFilePath("fliphistory.ini"));
 
   if (rooms.empty()) {
-    // PltEditRoom
-    Room *pltEditRoom = createPltEditRoom();
-    m_stackedWidget->addWidget(pltEditRoom);
-    rooms.push_back(pltEditRoom);
+    // 2D Room
+    Room *room2D = create2DRoom();
+    m_stackedWidget->addWidget(room2D);
+    rooms.push_back(room2D);
 
-    // InknPaintRoom
-    Room *inknPaintRoom = createInknPaintRoom();
-    m_stackedWidget->addWidget(inknPaintRoom);
-    rooms.push_back(inknPaintRoom);
+    // Stop Motion Room
+    Room *roomStopMotion = createStopMotionRoom();
+    m_stackedWidget->addWidget(roomStopMotion);
+    rooms.push_back(roomStopMotion);
 
-    // XsheetRoom
-    Room *xsheetRoom = createXsheetRoom();
-    m_stackedWidget->addWidget(xsheetRoom);
-    rooms.push_back(xsheetRoom);
+    // Timing Room
+    Room *roomTiming = createTimingRoom();
+    m_stackedWidget->addWidget(roomTiming);
+    rooms.push_back(roomTiming);
 
-    // BatchesRoom
-    Room *batchesRoom = createBatchesRoom();
-    m_stackedWidget->addWidget(batchesRoom);
-    rooms.push_back(batchesRoom);
+    // FX Room
+    Room *roomFX = createFXRoom();
+    m_stackedWidget->addWidget(roomFX);
+    rooms.push_back(roomFX);
 
     // BrowserRoom
     Room *browserRoom = createBrowserRoom();
@@ -800,151 +800,246 @@ void MainWindow::writeSettings() {
 
 //-----------------------------------------------------------------------------
 
-Room *MainWindow::createPltEditRoom() {
-  Room *pltEditRoom = new Room(this);
-  pltEditRoom->setName("PltEdit");
-  pltEditRoom->setObjectName("PltEditRoom");
+Room *MainWindow::create2DRoom() {
+  Room *room = new Room(this);
+  room->setName("2D");
+  room->setObjectName("2DRoom");
 
-  m_topBar->getRoomTabWidget()->addTab(tr("PltEdit"));
+  m_topBar->getRoomTabWidget()->addTab("2D");
 
-  DockLayout *layout = pltEditRoom->dockLayout();
+  DockLayout *layout = room->dockLayout();
 
-  // Viewer
-  TPanel *viewer = TPanelFactory::createPanel(pltEditRoom, "ComboViewer");
-  if (viewer) {
-    pltEditRoom->addDockWidget(viewer);
-    layout->dockItem(viewer);
-
-    SceneViewerPanel *svp = qobject_cast<SceneViewerPanel *>(viewer);
-    // if (svp) svp->setVisiblePartsFlag(CVPARTS_TOOLBAR | CVPARTS_TOOLOPTIONS);
-  }
-
-  // Palette
-  TPanel *palettePane = TPanelFactory::createPanel(pltEditRoom, "LevelPalette");
-  if (palettePane) {
-    pltEditRoom->addDockWidget(palettePane);
-    layout->dockItem(palettePane, viewer, Region::bottom);
-  }
+  std::vector<QRect> geometries;
 
   // StyleEditor
-  TPanel *styleEditorPane =
-      TPanelFactory::createPanel(pltEditRoom, "StyleEditor");
+  TPanel *styleEditorPane = TPanelFactory::createPanel(room, "StyleEditor");
   if (styleEditorPane) {
-    pltEditRoom->addDockWidget(styleEditorPane);
-    layout->dockItem(styleEditorPane, viewer, Region::left);
+    styleEditorPane->setGeometry(QRect(34, 30, 259, 358));
+    geometries.push_back(styleEditorPane->geometry());
+    room->addDockWidget(styleEditorPane);
+    layout->dockItem(styleEditorPane);
   }
 
-  // Xsheet
-  TPanel *xsheetPane = TPanelFactory::createPanel(pltEditRoom, "Xsheet");
-  if (xsheetPane) {
-    pltEditRoom->addDockWidget(xsheetPane);
-    layout->dockItem(xsheetPane, palettePane, Region::left);
+  // Timeline
+  TPanel *timelinePane = TPanelFactory::createPanel(room, "Timeline");
+  if (timelinePane) {
+    timelinePane->setGeometry(QRect(34, 764, 1886, 211));
+    geometries.push_back(timelinePane->geometry());
+    room->addDockWidget(timelinePane);
+    layout->dockItem(timelinePane);
   }
 
-  // Studio Palette
-  TPanel *studioPaletteViewer =
-      TPanelFactory::createPanel(pltEditRoom, "StudioPalette");
-  if (studioPaletteViewer) {
-    pltEditRoom->addDockWidget(studioPaletteViewer);
-    layout->dockItem(studioPaletteViewer, xsheetPane, Region::left);
+  // SceneViewer
+  TPanel *sceneViewerPane = TPanelFactory::createPanel(room, "SceneViewer");
+  if (sceneViewerPane) {
+    sceneViewerPane->setGeometry(QRect(297, 30, 1623, 730));
+    geometries.push_back(sceneViewerPane->geometry());
+    room->addDockWidget(sceneViewerPane);
+    layout->dockItem(sceneViewerPane);
   }
 
-  return pltEditRoom;
+  // ToolBar
+  TPanel *toolBarPane = TPanelFactory::createPanel(room, "ToolBar");
+  if (toolBarPane) {
+    toolBarPane->setGeometry(QRect(0, 30, 30, 945));
+    geometries.push_back(toolBarPane->geometry());
+    room->addDockWidget(toolBarPane);
+    layout->dockItem(toolBarPane);
+  }
+
+  // ToolOptions
+  TPanel *toolOptionsPane = TPanelFactory::createPanel(room, "ToolOptions");
+  if (toolOptionsPane) {
+    toolOptionsPane->setGeometry(QRect(0, 0, 1920, 26));
+    geometries.push_back(toolOptionsPane->geometry());
+    room->addDockWidget(toolOptionsPane);
+    layout->dockItem(toolOptionsPane);
+  }
+
+  // LevelPalette
+  TPanel *levelPalettePane = TPanelFactory::createPanel(room, "LevelPalette");
+  if (levelPalettePane) {
+    levelPalettePane->setGeometry(QRect(34, 392, 259, 368));
+    geometries.push_back(levelPalettePane->geometry());
+    room->addDockWidget(levelPalettePane);
+    layout->dockItem(levelPalettePane);
+  }
+
+  DockLayout::State state(geometries, "-1 1 [ 4 [ 3 [ [ [ 0 5 ] 2 ] 1 ] ] ] ");
+
+  layout->restoreState(state);
+
+  m_panelStates.push_back(std::make_pair(layout, state));
+
+  return room;
 }
 
 //-----------------------------------------------------------------------------
 
-Room *MainWindow::createInknPaintRoom() {
-  Room *inknPaintRoom = new Room(this);
-  inknPaintRoom->setName("InknPaint");
-  inknPaintRoom->setObjectName("InknPaintRoom");
+Room *MainWindow::createStopMotionRoom() {
+  Room *room = new Room(this);
+  room->setName("StopMotion");
+  room->setObjectName("StopMotionRoom");
 
-  m_topBar->getRoomTabWidget()->addTab(tr("InknPaint"));
+  m_topBar->getRoomTabWidget()->addTab("StopMotion");
 
-  DockLayout *layout = inknPaintRoom->dockLayout();
+  DockLayout *layout = room->dockLayout();
 
-  // Viewer
-  TPanel *viewer = TPanelFactory::createPanel(inknPaintRoom, "ComboViewer");
-  if (viewer) {
-    inknPaintRoom->addDockWidget(viewer);
-    layout->dockItem(viewer);
+  std::vector<QRect> geometries;
+
+  // SceneViewer
+  TPanel *sceneViewerPane = TPanelFactory::createPanel(room, "SceneViewer");
+  if (sceneViewerPane) {
+    sceneViewerPane->setGeometry(QRect(0, 0, 1529, 774));
+    geometries.push_back(sceneViewerPane->geometry());
+    room->addDockWidget(sceneViewerPane);
+    layout->dockItem(sceneViewerPane);
   }
 
-  // Palette
-  TPanel *palettePane =
-      TPanelFactory::createPanel(inknPaintRoom, "LevelPalette");
-  if (palettePane) {
-    inknPaintRoom->addDockWidget(palettePane);
-    layout->dockItem(palettePane, viewer, Region::bottom);
+  // Timeline
+  TPanel *timelinePane = TPanelFactory::createPanel(room, "Timeline");
+  if (timelinePane) {
+    timelinePane->setGeometry(QRect(0, 778, 1920, 197));
+    geometries.push_back(timelinePane->geometry());
+    room->addDockWidget(timelinePane);
+    layout->dockItem(timelinePane);
   }
 
-  // Filmstrip
-  TPanel *filmStripPane =
-      TPanelFactory::createPanel(inknPaintRoom, "FilmStrip");
-  if (filmStripPane) {
-    inknPaintRoom->addDockWidget(filmStripPane);
-    layout->dockItem(filmStripPane, viewer, Region::right);
+  // Stop Motion Controller
+  TPanel *stopMotionControllerPane =
+      TPanelFactory::createPanel(room, "StopMotionController");
+  if (stopMotionControllerPane) {
+    stopMotionControllerPane->setGeometry(QRect(1533, 0, 387, 774));
+    geometries.push_back(stopMotionControllerPane->geometry());
+    room->addDockWidget(stopMotionControllerPane);
+    layout->dockItem(stopMotionControllerPane);
   }
 
-  return inknPaintRoom;
+  DockLayout::State state(geometries, "-1 1 [ [ 0 2 ] 1 ] ");
+
+  layout->restoreState(state);
+
+  m_panelStates.push_back(std::make_pair(layout, state));
+
+  return room;
 }
 
 //-----------------------------------------------------------------------------
 
-Room *MainWindow::createXsheetRoom() {
-  Room *xsheetRoom = new Room(this);
-  xsheetRoom->setName("Xsheet");
-  xsheetRoom->setObjectName("XsheetRoom");
+Room *MainWindow::createTimingRoom() {
+  Room *room = new Room(this);
+  room->setName("Timing");
+  room->setObjectName("TimingRoom");
 
-  m_topBar->getRoomTabWidget()->addTab(tr("Xsheet"));
+  m_topBar->getRoomTabWidget()->addTab("Timing");
 
-  DockLayout *layout = xsheetRoom->dockLayout();
+  DockLayout *layout = room->dockLayout();
 
-  // Xsheet
-  TPanel *xsheetPane = TPanelFactory::createPanel(xsheetRoom, "Xsheet");
-  if (xsheetPane) {
-    xsheetRoom->addDockWidget(xsheetPane);
-    layout->dockItem(xsheetPane);
+  std::vector<QRect> geometries;
+
+  // SceneViewer
+  TPanel *sceneViewerPane = TPanelFactory::createPanel(room, "SceneViewer");
+  if (sceneViewerPane) {
+    sceneViewerPane->setGeometry(QRect(995, 30, 925, 710));
+    geometries.push_back(sceneViewerPane->geometry());
+    room->addDockWidget(sceneViewerPane);
+    layout->dockItem(sceneViewerPane);
   }
 
-  // FunctionEditor
+  // ToolBar
+  TPanel *toolBarPane = TPanelFactory::createPanel(room, "ToolBar");
+  if (toolBarPane) {
+    toolBarPane->setGeometry(QRect(0, 0, 35, 995));
+    geometries.push_back(toolBarPane->geometry());
+    room->addDockWidget(toolBarPane);
+    layout->dockItem(toolBarPane);
+  }
+
+  // ToolOptions
+  TPanel *toolOptionsPane = TPanelFactory::createPanel(room, "ToolOptions");
+  if (toolOptionsPane) {
+    toolOptionsPane->setGeometry(QRect(39, 0, 1881, 26));
+    geometries.push_back(toolOptionsPane->geometry());
+    room->addDockWidget(toolOptionsPane);
+    layout->dockItem(toolOptionsPane);
+  }
+
+  // Timeline
+  TPanel *timelinePane = TPanelFactory::createPanel(room, "Timeline");
+  if (timelinePane) {
+    timelinePane->setGeometry(QRect(39, 744, 1881, 251));
+    geometries.push_back(timelinePane->geometry());
+    room->addDockWidget(timelinePane);
+    layout->dockItem(timelinePane);
+  }
+
+  // Function Editor
   TPanel *functionEditorPane =
-      TPanelFactory::createPanel(xsheetRoom, "FunctionEditor");
+      TPanelFactory::createPanel(room, "FunctionEditor");
   if (functionEditorPane) {
-    xsheetRoom->addDockWidget(functionEditorPane);
-    layout->dockItem(functionEditorPane, xsheetPane, Region::right);
+    functionEditorPane->setGeometry(QRect(39, 30, 952, 710));
+    geometries.push_back(functionEditorPane->geometry());
+    room->addDockWidget(functionEditorPane);
+    layout->dockItem(functionEditorPane);
   }
 
-  return xsheetRoom;
+  DockLayout::State state(geometries, "-1 0 [ 1 [ 2 [ 4 0 ] 3 ] ] ");
+
+  layout->restoreState(state);
+
+  m_panelStates.push_back(std::make_pair(layout, state));
+
+  return room;
 }
 
 //-----------------------------------------------------------------------------
 
-Room *MainWindow::createBatchesRoom() {
-  Room *batchesRoom = new Room(this);
-  batchesRoom->setName("Batches");
-  batchesRoom->setObjectName("BatchesRoom");
+Room *MainWindow::createFXRoom() {
+  Room *room = new Room(this);
+  room->setName("FX");
+  room->setObjectName("FXRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("Batches");
+  m_topBar->getRoomTabWidget()->addTab("FX");
 
-  DockLayout *layout = batchesRoom->dockLayout();
+  DockLayout *layout = room->dockLayout();
 
-  // Tasks
-  TPanel *tasksViewer = TPanelFactory::createPanel(batchesRoom, "Tasks");
-  if (tasksViewer) {
-    batchesRoom->addDockWidget(tasksViewer);
-    layout->dockItem(tasksViewer);
+  std::vector<QRect> geometries;
+
+  // Timeline
+  TPanel *timelinePane = TPanelFactory::createPanel(room, "Timeline");
+  if (timelinePane) {
+    timelinePane->setGeometry(QRect(0, 743, 1920, 252));
+    geometries.push_back(timelinePane->geometry());
+    room->addDockWidget(timelinePane);
+    layout->dockItem(timelinePane);
   }
 
-  // BatchServers
-  TPanel *batchServersViewer =
-      TPanelFactory::createPanel(batchesRoom, "BatchServers");
-  if (batchServersViewer) {
-    batchesRoom->addDockWidget(batchServersViewer);
-    layout->dockItem(batchServersViewer, tasksViewer, Region::right);
+  // SceneViewer
+  TPanel *sceneViewerPane = TPanelFactory::createPanel(room, "SceneViewer");
+  if (sceneViewerPane) {
+    sceneViewerPane->setGeometry(QRect(849, 0, 1071, 739));
+    geometries.push_back(sceneViewerPane->geometry());
+    room->addDockWidget(sceneViewerPane);
+    layout->dockItem(sceneViewerPane);
   }
 
-  return batchesRoom;
+  // Schematic
+  TPanel *schematicPane = TPanelFactory::createPanel(room, "Schematic");
+  if (schematicPane) {
+    schematicPane->setGeometry(QRect(0, 0, 845, 739));
+    schematicPane->setViewType(0);
+    geometries.push_back(schematicPane->geometry());
+    room->addDockWidget(schematicPane);
+    layout->dockItem(schematicPane);
+  }
+
+  DockLayout::State state(geometries, "-1 1 [ [ 2 1 ] 0 ] ");
+
+  layout->restoreState(state);
+
+  m_panelStates.push_back(std::make_pair(layout, state));
+
+  return room;
 }
 
 //-----------------------------------------------------------------------------
@@ -958,9 +1053,13 @@ Room *MainWindow::createBrowserRoom() {
 
   DockLayout *layout = browserRoom->dockLayout();
 
+  std::vector<QRect> geometries;
+
   // Browser
   TPanel *browserPane = TPanelFactory::createPanel(browserRoom, "Browser");
   if (browserPane) {
+    browserPane->setGeometry(QRect(0, 0, 1920, 497));
+    geometries.push_back(browserPane->geometry());
     browserRoom->addDockWidget(browserPane);
     layout->dockItem(browserPane);
   }
@@ -968,9 +1067,17 @@ Room *MainWindow::createBrowserRoom() {
   // Scene Cast
   TPanel *sceneCastPanel = TPanelFactory::createPanel(browserRoom, "SceneCast");
   if (sceneCastPanel) {
+    sceneCastPanel->setGeometry(QRect(0, 501, 1920, 494));
+    geometries.push_back(sceneCastPanel->geometry());
     browserRoom->addDockWidget(sceneCastPanel);
     layout->dockItem(sceneCastPanel, browserPane, Region::bottom);
   }
+
+  DockLayout::State state(geometries, "-1 1 [ 0 1 ] ");
+
+  layout->restoreState(state);
+
+  m_panelStates.push_back(std::make_pair(layout, state));
 
   return browserRoom;
 }
