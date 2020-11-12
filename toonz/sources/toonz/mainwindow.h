@@ -360,10 +360,10 @@ public:
   void saveRecentFiles();
 
   void updateStuffPath(QString oldPath, QString newPath);
+  QList<QString> getFilesNameList(FileType fileType);
 
 protected:
   void refreshRecentFilesMenu(FileType fileType);
-  QList<QString> getFilesNameList(FileType fileType);
 };
 
 #endif  // TESTCUSTOMTAB_H
