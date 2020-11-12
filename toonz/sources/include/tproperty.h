@@ -285,6 +285,8 @@ private:
 //---------------------------------------------------------
 
 class DVAPI TStyleIndexProperty final : public TProperty {
+  int m_styleIndex = -1;
+
 public:
   TStyleIndexProperty(std::string name, std::wstring value)
       : TProperty(name), m_value(value) {}
@@ -292,6 +294,8 @@ public:
   TProperty *clone() const override { return new TStyleIndexProperty(*this); }
 
   void setValue(std::wstring v) { m_value = v; }
+  void setStyleIndex(int index) { m_styleIndex = index; }
+  int getStyleIndex() { return m_styleIndex; }
   std::wstring getValue() const { return m_value; }
 
   std::string getValueAsString() override { return ::to_string(m_value); }

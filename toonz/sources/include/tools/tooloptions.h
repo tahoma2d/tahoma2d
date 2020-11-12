@@ -66,6 +66,7 @@ class RGBLabel;
 class MeasuredValueField;
 class PaletteController;
 class ClickableLabel;
+class StyleIndexFieldAndChip;
 
 class QLabel;
 class QPushButton;
@@ -495,22 +496,27 @@ class FillToolOptionsBox final : public ToolOptionsBox {
 
   int m_targetType;
   QLabel *m_fillDepthLabel;
-  ToolOptionCombo *m_colorMode, *m_toolType;
+  ToolOptionCombo *m_colorMode, *m_toolType, *m_rasterGapSettings;
   ToolOptionCheckbox *m_selectiveMode, *m_segmentMode, *m_onionMode,
       *m_multiFrameMode, *m_autopaintMode;
   ToolOptionPairSlider *m_fillDepthField;
+  ToolOptionSlider *m_rasterGapSlider;
+  StyleIndexFieldAndChip *m_styleIndex;
+  QLabel *m_gapSliderLabel, *m_styleIndexLabel, *m_rasterGapLabel;
 
 public:
   FillToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
                      ToolHandle *toolHandle);
 
   void updateStatus();
+  void checkGapSettingsVisibility();
 
 protected slots:
   void onColorModeChanged(int);
   void onToolTypeChanged(int);
   void onOnionModeToggled(bool);
   void onMultiFrameModeToggled(bool);
+  void onGapSettingChanged(int);
 };
 
 //=============================================================================

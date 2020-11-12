@@ -26,13 +26,13 @@ public:
               int opacity);
   ~TAutocloser();
 
-  // calcola i segmenti e li disegna sul raster
-  void exec();
+  // calculates the segmentsand draws them on the raster
+  bool exec();
 
-  // non modifica il raster. Si limita a calcolare i segmenti
+  // it does not modify the raster.It just calculates the segments
   void compute(std::vector<Segment> &segments);
 
-  // disegna sul raster i segmenti
+  // draws the segments on the raster
   void draw(const std::vector<Segment> &segments);
 
 private:

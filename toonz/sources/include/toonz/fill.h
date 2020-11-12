@@ -63,7 +63,9 @@ class TTileSaverFullColor;
 
 // returns true if the savebox is changed 9tipically, if you fill the bg)
 DVAPI bool fill(const TRasterCM32P &r, const FillParameters &params,
-                TTileSaverCM32 *saver = 0);
+                TTileSaverCM32 *saver = 0, bool fillGaps = false,
+                bool closeGaps = false, int closeStyleIndex = -1,
+                double autoCloseDistance = -1.0);
 
 DVAPI void fill(const TRaster32P &ras, const TRaster32P &ref,
                 const FillParameters &params, TTileSaverFullColor *saver = 0);
