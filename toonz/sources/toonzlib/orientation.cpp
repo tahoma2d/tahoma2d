@@ -7,8 +7,6 @@
 #include <math.h>
 #include <stdexcept>
 
-using std::pair;
-
 namespace {
 const int KEY_ICON_WIDTH      = 11;
 const int KEY_ICON_HEIGHT     = 11;
@@ -201,11 +199,11 @@ const Orientation *Orientations::topToBottom() {
 const Orientation *Orientations::leftToRight() {
   return instance()._leftToRight;
 }
-const vector<const Orientation *> &Orientations::all() {
+const std::vector<const Orientation *> &Orientations::all() {
   return instance()._all;
 }
 const Orientation *Orientations::byName(const QString &name) {
-  vector<const Orientation *> m_all = all();
+  std::vector<const Orientation *> m_all = all();
   for (auto it = m_all.begin(); it != m_all.end(); it++)
     if ((*it)->name() == name) return *it;
   throw std::runtime_error(
@@ -247,31 +245,31 @@ QLine Orientation::foldedRectangleLine(int layerAxis,
 
 void Orientation::addRect(PredefinedRect which, const QRect &rect) {
   _rects.erase(which);
-  _rects.insert(pair<PredefinedRect, QRect>(which, rect));
+  _rects.emplace(which, rect);
 }
 void Orientation::addLine(PredefinedLine which, const QLine &line) {
   _lines.erase(which);
-  _lines.insert(pair<PredefinedLine, QLine>(which, line));
+  _lines.emplace(which, line);
 }
 void Orientation::addDimension(PredefinedDimension which, int dimension) {
   _dimensions.erase(which);
-  _dimensions.insert(pair<PredefinedDimension, int>(which, dimension));
+  _dimensions.emplace(which, dimension);
 }
 void Orientation::addPath(PredefinedPath which, const QPainterPath &path) {
   _paths.erase(which);
-  _paths.insert(pair<PredefinedPath, QPainterPath>(which, path));
+  _paths.emplace(which, path);
 }
 void Orientation::addPoint(PredefinedPoint which, const QPoint &point) {
   _points.erase(which);
-  _points.insert(pair<PredefinedPoint, QPoint>(which, point));
+  _points.emplace(which, point);
 }
 void Orientation::addRange(PredefinedRange which, const NumberRange &range) {
   _ranges.erase(which);
-  _ranges.insert(pair<PredefinedRange, NumberRange>(which, range));
+  _ranges.emplace(which, range);
 }
 void Orientation::addFlag(PredefinedFlag which, const bool &flag) {
   _flags.erase(which);
-  _flags.insert(pair<PredefinedFlag, bool>(which, flag));
+  _flags.emplace(which, flag);
 }
 /// -------------------------------------------------------------------------------
 

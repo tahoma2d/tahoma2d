@@ -159,7 +159,7 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
 
 //-----------------------------------------------------------------------------
 
-void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
+bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
                           bool fillPaints, bool fillInks) {
   // Synopsis:
   // This gets the color of the pixes at the edge of the rect
@@ -178,7 +178,7 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
           pix->setInk(color);
       }
     }
-    return;
+    return true;
   }
 
   TRect r = m_bounds * rect;
@@ -186,7 +186,7 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   int dx = r.x1 - r.x0;
   int dy = (r.y1 - r.y0) * m_wrap;
   if (dx < 2 || dy < 2)  // rect degenerate (null contained area), skip.
-    return;
+    return false;
 
   std::vector<int> frameSeed(2 * (r.getLx() + r.getLy() - 2));
 
@@ -200,7 +200,7 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   // all the pixels contained in the rectangle are pure paint, it must do
   // nothing!
   if (!rect.contains(m_bounds) && areRectPixelsPurePaint(m_pixels, r, m_wrap))
-    return;
+    return false;
 
   // FrameSeed is filled with all the paints of the various areas of the
   // boundary rectangle.
@@ -283,6 +283,7 @@ void AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
       params.m_styleId = frameSeed[count1++];
       fill(m_ras, params);
     }
+  return true;
 }
 
 //-----------------------------------------------------------------------------

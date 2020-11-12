@@ -89,11 +89,10 @@ const QSet<TXshSimpleLevel *> getLevels(TXshColumn *column) {
 
 bool containsRasterLevel(TColumnSelection *selection) {
   if (!selection || selection->isEmpty()) return false;
-  set<int> indexes = selection->getIndices();
-  TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
-  set<int>::iterator it;
-  for (it = indexes.begin(); it != indexes.end(); it++) {
-    TXshColumn *col = xsh->getColumn(*it);
+  std::set<int> indexes = selection->getIndices();
+  TXsheet *xsh          = TApp::instance()->getCurrentXsheet()->getXsheet();
+  for (auto const &e : indexes) {
+    TXshColumn *col = xsh->getColumn(e);
     if (!col || col->getColumnType() != TXshColumn::eLevelType) continue;
 
     TXshCellColumn *cellCol = col->getCellColumn();
@@ -696,7 +695,7 @@ ColumnArea::DrawHeader::DrawHeader(ColumnArea *nArea, QPainter &nP, int nCol)
   else
     isCurrent = m_viewer->getCurrentColumn() == col;
 
-  orig = m_viewer->positionToXY(CellPosition(0, max(col, -1)));
+  orig = m_viewer->positionToXY(CellPosition(0, std::max(col, -1)));
 }
 
 void ColumnArea::DrawHeader::prepare() const {
@@ -1616,7 +1615,7 @@ void ColumnArea::drawPaletteColumnHead(QPainter &p, int col) {  // AREA
   TColumnSelection *selection = m_viewer->getColumnSelection();
   const Orientation *o        = m_viewer->orientation();
 
-  QPoint orig = m_viewer->positionToXY(CellPosition(0, max(col, -1)));
+  QPoint orig = m_viewer->positionToXY(CellPosition(0, std::max(col, -1)));
 
   QString fontName = Preferences::instance()->getInterfaceFont();
   if (fontName == "") {
@@ -2918,11 +2917,10 @@ void ColumnArea::onSubSampling(QAction *action) {
   TColumnSelection *selection = m_viewer->getColumnSelection();
   TXsheet *xsh                = m_viewer->getXsheet();
   assert(selection && xsh);
-  const set<int> indexes = selection->getIndices();
-  set<int>::const_iterator it;
-  for (it = indexes.begin(); it != indexes.end(); it++) {
-    if (*it < 0) continue;  // Ignore camera column
-    TXshColumn *column          = xsh->getColumn(*it);
+  const std::set<int> indexes = selection->getIndices();
+  for (auto const &e : indexes) {
+    if (e < 0) continue;  // Ignore camera column
+    TXshColumn *column          = xsh->getColumn(e);
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) continue;
     const QSet<TXshSimpleLevel *> levels = getLevels(column);

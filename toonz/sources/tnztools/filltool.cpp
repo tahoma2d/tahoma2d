@@ -998,10 +998,14 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     }
 
     AreaFiller filler(tempRaster);
-    if (!stroke)
-      filler.rectFill(rasterFillArea, cs, onlyUnfilled, colorType != LINES,
-                      colorType != AREAS);
-    else
+    if (!stroke) {
+      bool ret = filler.rectFill(rasterFillArea, cs, onlyUnfilled,
+                                 colorType != LINES, colorType != AREAS);
+      if (!ret) {
+        delete tileSet;
+        return;
+      }
+    } else
       filler.strokeFill(stroke, cs, onlyUnfilled, colorType != LINES,
                         colorType != AREAS);
 
@@ -1031,11 +1035,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 
     // !autopaintLines will temporary disable autopaint line feature
     if ((plt && !hasAutoInks(plt)) || !autopaintLines) plt = 0;
-
-    std::set<int> autoInks;
-    autoInks.insert(3);
-    autoInks.insert(4);
-    autoInks.insert(5);
 
     if (plt) {
       TRect rect   = rasterFillArea;
@@ -1542,6 +1541,7 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
 
   if (m_polyline.size() <= 1) {
     resetMulti();
+    m_isLeftButtonPressed = false;
     return;
   }
 
@@ -1607,6 +1607,7 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
 }
 
 void AreaFillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
+  if (!m_isLeftButtonPressed) return;
   if (m_type == RECT) {
     m_selectingRect.x1 = pos.x;
     m_selectingRect.y1 = pos.y;

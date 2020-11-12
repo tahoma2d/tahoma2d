@@ -23,9 +23,6 @@
 #include <map>
 #include <vector>
 
-using std::map;
-using std::vector;
-
 // Defines timeline direction: top to bottom;  left to right.
 // old (vertical timeline) = new (universal)    = old (kept)
 //                x        =   layer axis       =   column
@@ -38,7 +35,8 @@ class DVAPI NumberRange {
   NumberRange() : _from(0), _to(0) {}
 
 public:
-  NumberRange(int from, int to) : _from(min(from, to)), _to(max(from, to)) {}
+  NumberRange(int from, int to)
+      : _from(std::min(from, to)), _to(std::max(from, to)) {}
 
   int from() const { return _from; }
   int to() const { return _to; }
@@ -209,13 +207,13 @@ enum class PredefinedFlag {
 // Knows everything about geometry of a particular orientation.
 class DVAPI Orientation {
 protected:
-  map<PredefinedRect, QRect> _rects;
-  map<PredefinedLine, QLine> _lines;
-  map<PredefinedDimension, int> _dimensions;
-  map<PredefinedPath, QPainterPath> _paths;
-  map<PredefinedPoint, QPoint> _points;
-  map<PredefinedRange, NumberRange> _ranges;
-  map<PredefinedFlag, bool> _flags;
+  std::map<PredefinedRect, QRect> _rects;
+  std::map<PredefinedLine, QLine> _lines;
+  std::map<PredefinedDimension, int> _dimensions;
+  std::map<PredefinedPath, QPainterPath> _paths;
+  std::map<PredefinedPoint, QPoint> _points;
+  std::map<PredefinedRange, NumberRange> _ranges;
+  std::map<PredefinedFlag, bool> _flags;
 
 public:
   virtual ~Orientation(){};
@@ -288,7 +286,7 @@ protected:
 // Enumerates all orientations available in the system as global const objects.
 class DVAPI Orientations {
   const Orientation *_topToBottom, *_leftToRight;
-  vector<const Orientation *> _all;
+  std::vector<const Orientation *> _all;
 
   Orientations();
 
@@ -302,7 +300,7 @@ public:
   static const Orientation *topToBottom();
   static const Orientation *leftToRight();
 
-  static const vector<const Orientation *> &all();
+  static const std::vector<const Orientation *> &all();
 
   static const Orientation *byName(const QString &name);
 };
