@@ -1021,13 +1021,28 @@ void StageSchematicScene::onSaveSpline() {
     if (spline == 0) throw "no spline";
     TOStream os(fp);
 
-    // Only points are saved
-    const TStroke *stroke = spline->getStroke();
-    int n                 = stroke ? stroke->getControlPointCount() : 0;
+    const TStroke* stroke = spline->getStroke();
+    QList<TPointD> interpStroke = spline->getInterpolationStroke();
+
+    os.child("color") << (int)spline->getColor();
+    os.child("active") << (int)spline->getActive();
+    os.child("steps") << (int)spline->getSteps();
+    os.child("width") << (int)spline->getWidth();
+    os.openChild("stroke");
+    int n = stroke->getControlPointCount();
+    os << n;
     for (int i = 0; i < n; i++) {
-      TThickPoint p = stroke->getControlPoint(i);
-      os << p.x << p.y << p.thick;
+        TThickPoint p = stroke->getControlPoint(i);
+        os << p.x << p.y << p.thick;
     }
+    os.closeChild();
+    os.openChild("interpolationStroke");
+    n = interpStroke.size();
+    os << n;
+    for (auto p : interpStroke) {
+        os << p.x << p.y;
+    }
+    os.closeChild();
   } catch (...) {
     DVGui::warning(QObject::tr("It is not possible to save the motion path."));
   }

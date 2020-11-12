@@ -213,13 +213,7 @@ void TStageObjectSpline::loadData(TIStream &is) {
   std::vector<TThickPoint> points;
   m_interpolationStroke.clear();
   VersionNumber tnzVersion = is.getVersion();
-  if (tnzVersion < VersionNumber(1, 16)) {
-    while (!is.eos()) {
-      TThickPoint p;
-      is >> p.x >> p.y >> p.thick;
-      points.push_back(p);
-    }
-  } else {
+
     std::string tagName;
     while (is.matchTag(tagName)) {
       if (tagName == "splineId")
@@ -262,7 +256,32 @@ void TStageObjectSpline::loadData(TIStream &is) {
 
       is.matchEndTag();
     }
-  }
+    
+    // try loading the old type
+    if (points.size() == 0) {
+        while (!is.eos()) {
+            TThickPoint p;
+            is >> p.x >> p.y >> p.thick;
+            points.push_back(p);
+        }
+        m_interpolationStroke.clear();
+        m_interpolationStroke.push_back(TPointD(-40, 0));
+        m_interpolationStroke.push_back(TPointD(-20, 0));
+        m_interpolationStroke.push_back(TPointD(-20, 0));
+        m_interpolationStroke.push_back(TPointD(0, 0));
+        m_interpolationStroke.push_back(TPointD(65, 65));
+
+        m_interpolationStroke.push_back(TPointD(935, 935));
+        m_interpolationStroke.push_back(TPointD(1000, 1000));
+        m_interpolationStroke.push_back(TPointD(1020, 1000));
+        m_interpolationStroke.push_back(TPointD(1020, 1000));
+        m_interpolationStroke.push_back(TPointD(1040, 1000));
+        m_active = false;
+        m_steps = 10;
+        m_color = 0;
+        m_width = 1;
+    }
+
   delete m_stroke;
   m_stroke = new TStroke(points);
 }
