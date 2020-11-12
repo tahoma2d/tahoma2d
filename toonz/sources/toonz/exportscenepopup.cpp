@@ -681,6 +681,7 @@ TFilePath ExportScenePopup::createNewProject() {
   DvDirModel::instance()->refreshFolder(projectPath.getParentDir());
   std::string newProj = project->getProjectFolder().getQString().toStdString();
   RecentFiles::instance()->addFilePath(project->getProjectFolder().getQString(), RecentFiles::Project);
+  DvDirModel::instance()->forceRefresh();
   return projectPath;
 }
 
