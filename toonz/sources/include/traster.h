@@ -118,7 +118,7 @@ public:
   TDimension getSize() const { return TDimension(m_lx, m_ly); };
 
   //! Returns the length of a row in pixel.
-  int getWrap() const { return m_wrap; };  // lunghezza di una riga in pixel
+  int getWrap() const { return m_wrap; };
 
   TPointD getCenterD() const { return TPointD(0.5 * m_lx, 0.5 * m_ly); };
   TPoint getCenter() const { return TPoint(m_lx / 2, m_ly / 2); };

@@ -1133,10 +1133,11 @@ TAutocloser::TAutocloser(const TRasterP &r, int distance, double angle,
 
 //...............................
 
-void TAutocloser::exec() {
+bool TAutocloser::exec() {
   std::vector<TAutocloser::Segment> segments;
   compute(segments);
   draw(segments);
+  return segments.size() > 0;
 }
 
 //...............................
@@ -1148,6 +1149,7 @@ TAutocloser::~TAutocloser() {}
 void TAutocloser::compute(std::vector<Segment> &closingSegmentArray) {
   m_imp->compute(closingSegmentArray);
 }
+
 //-------------------------------------------------
 
 void TAutocloser::draw(const std::vector<Segment> &closingSegmentArray) {

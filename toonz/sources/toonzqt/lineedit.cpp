@@ -31,6 +31,13 @@ void LineEdit::focusInEvent(QFocusEvent *event) {
 
 //-----------------------------------------------------------------------------
 
+void LineEdit::focusOutEvent(QFocusEvent *event) {
+  m_typing = false;
+  QLineEdit::focusOutEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+
 void LineEdit::keyPressEvent(QKeyEvent *event) {
   if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
     m_isReturnPressed = true;
@@ -69,4 +76,14 @@ void LineEdit::keyPressEvent(QKeyEvent *event) {
 void LineEdit::mouseMoveEvent(QMouseEvent *event) {
   emit(mouseMoved(event));
   QLineEdit::mouseMoveEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+
+void LineEdit::mousePressEvent(QMouseEvent *event) {
+  QLineEdit::mousePressEvent(event);
+  if (!m_typing) {  // only the first click will select all
+    selectAll();
+    m_typing = true;
+  }
 }

@@ -855,7 +855,7 @@ StyleIndexFieldAndChip::StyleIndexFieldAndChip(TTool *tool,
     , m_property(property)
     , m_pltHandle(pltHandle) {
   m_property->addListener(this);
-
+  m_property->setStyleIndex(-1);
   updateStatus();
   connect(this, SIGNAL(textChanged(const QString &)),
           SLOT(onValueChanged(const QString &)));
@@ -889,8 +889,11 @@ void StyleIndexFieldAndChip::onValueChanged(const QString &changedText) {
     else
       style = text();
     m_property->setValue(style.toStdWString());
-  } else
+    m_property->setStyleIndex(std::min(index, plt->getStyleCount() - 1));
+  } else {
     m_property->setValue(changedText.toStdWString());
+    m_property->setStyleIndex(-1);
+  }
 
   repaint();
   // synchronize the state with the same widgets in other tool option bars
