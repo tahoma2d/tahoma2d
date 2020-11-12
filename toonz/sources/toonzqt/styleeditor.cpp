@@ -667,20 +667,29 @@ HexagonalColorWheel::~HexagonalColorWheel() {
 //-----------------------------------------------------------------------------
 
 void HexagonalColorWheel::updateColorCalibration() {
-    if (Preferences::instance()->isColorCalibrationEnabled()) {
-        makeCurrent();
-        if (!m_lutCalibrator)
-            m_lutCalibrator = new LutCalibrator();
-        else
-            m_lutCalibrator->cleanup();
-        m_lutCalibrator->initialize();
-        connect(context(), SIGNAL(aboutToBeDestroyed()), this,
+  if (Preferences::instance()->isColorCalibrationEnabled()) {
+    makeCurrent();
+    if (!m_lutCalibrator)
+      m_lutCalibrator = new LutCalibrator();
+    else
+      m_lutCalibrator->cleanup();
+    m_lutCalibrator->initialize();
+    connect(context(), SIGNAL(aboutToBeDestroyed()), this,
             SLOT(onContextAboutToBeDestroyed()));
-        if (m_lutCalibrator->isValid() && !m_fbo)
-            m_fbo = new QOpenGLFramebufferObject(width(), height());
-        doneCurrent();
-    }
-    update();
+    if (m_lutCalibrator->isValid() && !m_fbo)
+      m_fbo = new QOpenGLFramebufferObject(width(), height());
+    doneCurrent();
+  }
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void HexagonalColorWheel::showEvent(QShowEvent *) {
+  if (m_cuedCalibrationUpdate) {
+    updateColorCalibration();
+    m_cuedCalibrationUpdate = false;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1818,7 +1827,10 @@ void PlainColorPage::setSplitterState(QByteArray state) {
 //-----------------------------------------------------------------------------
 
 void PlainColorPage::updateColorCalibration() {
+  if (m_hexagonalColorWheel->isVisible())
     m_hexagonalColorWheel->updateColorCalibration();
+  else
+    m_hexagonalColorWheel->cueCalibrationUpdate();
 }
 
 //-----------------------------------------------------------------------------
@@ -2037,8 +2049,7 @@ else return false;
 //-----------------------------------------------------------------------------
 
 CustomStyleManager *CustomStyleChooserPage::styleManager() {
-  static const QString filters(
-      "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb");
+  static const QString filters("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb");
   static CustomStyleManager theManager(TFilePath("custom styles"), filters);
   return &theManager;
 }
@@ -4110,5 +4121,5 @@ void StyleEditor::load(QSettings &settings) {
 //-----------------------------------------------------------------------------
 
 void StyleEditor::updateColorCalibration() {
-    m_plainColorPage->updateColorCalibration();
+  m_plainColorPage->updateColorCalibration();
 }

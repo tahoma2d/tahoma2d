@@ -60,11 +60,11 @@ public:
   bool m_canceled;
 
   int m_currentFx;
-  set<double>::iterator m_currentFrame;
+  std::set<double>::iterator m_currentFrame;
   TRenderer *m_currentTRenderer;
 
   TFxSet m_fxsToRender;
-  set<double> m_framesToRender;
+  std::set<double> m_framesToRender;
 
   QEventLoop m_eventLoop;
 
@@ -357,10 +357,9 @@ void MultimediaRenderer::Imp::start() {
     std::wstring fpName =
         m_fp.getWideName() + L"_" + columnName +
         (columnId == columnName ? L"" : L"(" + columnId + L")") +
-        (fxId.empty()
-             ? L""
-             : L"_" + fxName +
-                   (fxId == fxNameNoSpaces ? L"" : L"(" + fxId + L")"));
+        (fxId.empty() ? L"" : L"_" + fxName + (fxId == fxNameNoSpaces
+                                                   ? L""
+                                                   : L"(" + fxId + L")"));
     TFilePath movieFp(m_fp.withName(fpName));
 
     // Initialize a MovieRenderer with our infos
