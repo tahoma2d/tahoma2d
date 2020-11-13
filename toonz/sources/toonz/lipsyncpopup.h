@@ -53,6 +53,7 @@ class LipSyncPopup final : public DVGui::Dialog {
   TXshLevelP m_childLevel;
   DVGui::IntLineEdit *m_startAt;
   int m_col;
+  int m_startFrame = -1;
   bool m_valid = false;
   bool m_isEditingLevel;
   QStringList m_textLines;

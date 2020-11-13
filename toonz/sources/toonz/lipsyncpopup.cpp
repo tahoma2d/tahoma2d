@@ -21,7 +21,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshcell.h"
-#include "soundtrackexport.h"
+#include "tsound_io.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -447,7 +447,7 @@ void LipSyncPopup::refreshSoundLevels() {
     for (int i = 0; i < colCount; i++) {
         TXshColumn* col = xsh->getColumn(i);
         if (col->getSoundColumn()) {
-            m_soundLevels->addItem(QString::number(i));
+            m_soundLevels->addItem(QString::number(i + 1));
         }
     }
 }
@@ -461,37 +461,41 @@ void LipSyncPopup::generateDatFile() {
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::playSound() {
-    int level = m_soundLevels->currentText().toInt();
+    int level = m_soundLevels->currentText().toInt() - 1;
     TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn* col = xsh->getColumn(level);
     TXshSoundColumn* sc = col->getSoundColumn();
     if (sc) {
-        sc->play();
+        int r0, r1;
+        xsh->getCellRange(level, r0, r1);
+        sc->play(r0);
     }
 }
 
 //-----------------------------------------------------------------------------
 void LipSyncPopup::saveAudio() {
     m_audioPath = "";
+    m_startFrame = -1;
     QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
     if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
         TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
     }
-    QString tempPath =
-        TFilePath(cacheRoot + "/rhubarb/temp.wav").getQString();
-    std::string tempSString = tempPath.toStdString();
+    TFilePath audioPath =
+        TFilePath(cacheRoot + "/rhubarb/temp.wav");
+    std::string tempSString = audioPath.getQString().toStdString();
 
-    int level = m_soundLevels->currentText().toInt();
+    int level = m_soundLevels->currentText().toInt() - 1;
     TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn* col = xsh->getColumn(level);
     TXshSoundColumn* sc = col->getSoundColumn();
     if (sc) {
-        //TSoundTrackP st = sc->getCurrentPlaySoundTruck();
-        SoundtrackExport soundSettings;
-        if (soundSettings.hasSoundTrack(level)) {
-            soundSettings.saveSoundtrack(tempPath);
-            m_audioPath = tempPath;
-        }
+
+        int r0, r1;
+        xsh->getCellRange(level, r0, r1);
+        TSoundTrackP st = sc->getOverallSoundTrack(r0);
+        TSoundTrackWriter::save(audioPath, st);
+        m_audioPath = audioPath.getQString();
+        m_startFrame = r0 + 1;
     }
 }
 
@@ -550,7 +554,9 @@ void LipSyncPopup::runRhubarb() {
     rhubarb.close();
     std::string strResults = results.toStdString();
     m_file->setPath(datPath);
-    m_applyButton->setEnabled(true);
+    onPathChanged();
+    m_startAt->setValue(std::max(1, m_startFrame));
+    if (TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) TSystem::deleteFile(TFilePath(m_audioPath));
     int j = 0;
 }
 
