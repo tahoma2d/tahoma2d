@@ -29,10 +29,10 @@ SoundtrackExport::SoundtrackExport() {
 
 //-----------------------------------------------------------------------------
 
-bool SoundtrackExport::hasSoundTrack() {
+bool SoundtrackExport::hasSoundTrack(int col) {
   TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
   TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-  m_sound                        = xsheetHandle->getXsheet()->makeSound(prop);
+  m_sound                        = xsheetHandle->getXsheet()->makeSound(prop, col);
   if (m_sound == NULL) {
     m_hasSoundtrack = false;
     return false;

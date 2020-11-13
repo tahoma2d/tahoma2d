@@ -1435,11 +1435,12 @@ namespace {  // Utility function
 //-----------------------------------------------------------------------------
 
 void searchAudioColumn(TXsheet *xsh, std::vector<TXshSoundColumn *> &sounds,
-                       bool isPreview = true) {
+                       bool isPreview = true, int col = -1) {
   int i       = 0;
   int columns = xsh->getColumnCount();
 
   for (; i < columns; ++i) {
+    if (col > -1 && col != i) continue;
     TXshColumn *column = xsh->getColumn(i);
     if (column) {
       TXshSoundColumn *soundCol = column->getSoundColumn();
@@ -1456,9 +1457,9 @@ void searchAudioColumn(TXsheet *xsh, std::vector<TXshSoundColumn *> &sounds,
 }  // namespace
 //-----------------------------------------------------------------------------
 
-TSoundTrack *TXsheet::makeSound(SoundProperties *properties) {
+TSoundTrack *TXsheet::makeSound(SoundProperties *properties, int col) {
   std::vector<TXshSoundColumn *> sounds;
-  searchAudioColumn(this, sounds, properties->m_isPreview);
+  searchAudioColumn(this, sounds, properties->m_isPreview, col);
   if (!m_imp->m_mixedSound || *properties != *m_soundProperties) {
     if (!sounds.empty() && properties->m_fromFrame <= properties->m_toFrame)
       m_imp->m_mixedSound = sounds[0]->mixingTogether(

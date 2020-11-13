@@ -21,6 +21,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshcell.h"
+#include "soundtrackexport.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -35,7 +36,7 @@
 #include <QTextStream>
 #include <QPainter>
 #include <QSignalMapper>
-
+#include <QComboBox>
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -189,6 +190,14 @@ LipSyncPopup::LipSyncPopup()
   m_restToEnd  = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
   QImage placeHolder(160, 90, QImage::Format_ARGB32);
   placeHolder.fill(Qt::white);
+
+  m_soundLevels = new QComboBox(this);
+  QPushButton* playSound = new QPushButton(tr("Play"), this);
+  QHBoxLayout* soundLayout = new QHBoxLayout(this);
+  soundLayout->addWidget(m_soundLevels);
+  soundLayout->addWidget(playSound);
+  connect(playSound, &QPushButton::pressed, this, &LipSyncPopup::playSound);
+  
   for (int i = 0; i < 10; i++) {
     m_pixmaps[i] = QPixmap::fromImage(placeHolder);
   }
@@ -219,6 +228,8 @@ LipSyncPopup::LipSyncPopup()
   //--- layout
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
+
+  m_topLayout->addLayout(soundLayout);
   {
     QGridLayout *phonemeLay = new QGridLayout();
     phonemeLay->setMargin(10);
@@ -415,6 +426,37 @@ void LipSyncPopup::showEvent(QShowEvent *) {
       i++;
     }
   }
+  refreshSoundLevels();
+}
+
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::refreshSoundLevels() {
+    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    m_soundLevels->clear();
+    int colCount = xsh->getColumnCount();
+    for (int i = 0; i < colCount; i++) {
+        TXshColumn* col = xsh->getColumn(i);
+        if (col->getSoundColumn()) {
+            m_soundLevels->addItem(QString::number(i));
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::playSound() {
+    int level = m_soundLevels->currentText().toInt();
+    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn* col = xsh->getColumn(level);
+    TXshSoundColumn* sc = col->getSoundColumn();
+    if (sc) {
+        sc->play();
+        TSoundTrackP st = sc->getCurrentPlaySoundTruck();
+        SoundtrackExport soundSettings;
+        if (soundSettings.hasSoundTrack(level))
+            soundSettings.saveSoundtrack();
+    }
 }
 
 //-----------------------------------------------------------------------------

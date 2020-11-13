@@ -17,6 +17,7 @@ class QLabel;
 class TXshSimpleLevel;
 class TXshChildLevel;
 class TFrameId;
+class QComboBox;
 
 //=============================================================================
 // LipSyncPopup
@@ -35,6 +36,7 @@ class LipSyncPopup final : public DVGui::Dialog {
   QLabel *m_fvLabel;
   QLabel *m_restLabel;
   QLabel *m_otherLabel;
+  QComboBox* m_soundLevels;
 
   QLabel *m_imageLabels[10];
   QLabel *m_textLabels[10];
@@ -60,12 +62,14 @@ public:
 protected:
   void showEvent(QShowEvent *) override;
   void paintEvent(QPaintEvent *) override;
+  void refreshSoundLevels();
 
 public slots:
   void onApplyButton();
   void imageNavClicked(int id);
   void onPathChanged();
   void onStartValueChanged();
+  void playSound();
 };
 
 #endif  // LIPSYNCPOPUP_H

@@ -499,7 +499,7 @@ in TXsheetImp.
   */
   int getFirstFreeColumnIndex() const;
 
-  TSoundTrack *makeSound(SoundProperties *properties);
+  TSoundTrack *makeSound(SoundProperties *properties, int col = -1);
 #ifdef BUTTA
   /*! Returns \b TSoundTrack with frame rate \b \e frameRate computed calling
           \b TXshSoundColumn::mixingTogether() of all sound column contained in
