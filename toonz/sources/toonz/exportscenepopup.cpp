@@ -175,19 +175,19 @@ void ExportSceneDvDirModelRootNode::refreshChildren() {
   m_childrenValid = true;
   m_children.clear();
 
-
-  TProjectManager *pm = TProjectManager::instance();
+  TProjectManager *pm          = TProjectManager::instance();
   TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
   m_sandboxProjectNode =
       new ExportSceneDvDirModelProjectNode(this, sandboxProjectPath);
   addChild(m_sandboxProjectNode);
 
-  QList<QString> projects = RecentFiles::instance()->getFilesNameList(RecentFiles::Project);
-  int i;
+  QList<QString> projects =
+      RecentFiles::instance()->getFilesNameList(RecentFiles::Project);
+
   for (auto project : projects) {
     TFilePath projectRoot(project);
     if (projectRoot == sandboxProjectPath) continue;
-    ExportSceneDvDirModelProjectNode*projectNode =
+    ExportSceneDvDirModelProjectNode *projectNode =
         new ExportSceneDvDirModelProjectNode(this, projectRoot);
     addChild(projectNode);
   }
@@ -532,8 +532,10 @@ ExportScenePopup::ExportScenePopup(std::vector<TFilePath> scenes)
   QWidget *newProjectWidget     = new QWidget(this);
   QGridLayout *newProjectLayout = new QGridLayout(newProjectWidget);
 
-  m_newProjectButton =
-      new QRadioButton(tr("New Project in Documents"), newProjectWidget);
+  m_newProjectButton    = new QRadioButton(tr("New Project"), newProjectWidget);
+  QString newProjectTip = tr("Create a new project in ") +
+                          Preferences::instance()->getDefaultProjectPath();
+  m_newProjectButton->setToolTip(newProjectTip);
   group->addButton(m_newProjectButton, 1);
   newProjectLayout->addWidget(m_newProjectButton, 0, 0, 1, 2, Qt::AlignLeft);
 
@@ -641,6 +643,9 @@ void ExportScenePopup::onExport() {
   for (i = 0; i < newScenes.size(); i++) collectAssets(newScenes[i]);
 
   QApplication::restoreOverrideCursor();
+  QString message =
+      tr("Scene exported to: ") + projectPath.getParentDir().getQString();
+  DVGui::MsgBoxInPopup(DVGui::MsgType::INFORMATION, message);
   accept();
 }
 
@@ -680,7 +685,8 @@ TFilePath ExportScenePopup::createNewProject() {
   project->save(projectPath);
   DvDirModel::instance()->refreshFolder(projectPath.getParentDir());
   std::string newProj = project->getProjectFolder().getQString().toStdString();
-  RecentFiles::instance()->addFilePath(project->getProjectFolder().getQString(), RecentFiles::Project);
+  RecentFiles::instance()->addFilePath(project->getProjectFolder().getQString(),
+                                       RecentFiles::Project);
   DvDirModel::instance()->forceRefresh();
   return projectPath;
 }

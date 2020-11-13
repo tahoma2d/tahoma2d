@@ -9,6 +9,7 @@
 #include "toonz/observer.h"
 #include "toonz/toonzfolders.h"
 #include "toonz/cleanupparameters.h"
+#include "toonz/preferences.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -54,8 +55,7 @@ const std::string
     /*! Default outputs folder: is used to save all rendered scenes.*/
     TProject::Outputs = "outputs",
     /*! Default palettes folder: is used for color design (色指定)*/
-    TProject::Palettes = "palettes",
-    TProject::StopMotion = "stopmotion";
+    TProject::Palettes = "palettes", TProject::StopMotion = "stopmotion";
 //! Default project name
 const TFilePath TProject::SandboxProjectName("sandbox");
 
@@ -858,7 +858,8 @@ TFilePath TProjectManager::projectNameToProjectPath(
   // if (m_projectsRoots.empty()) addDefaultProjectsRoot();
   if (projectName == TProject::SandboxProjectName)
     return searchProjectPath(TEnv::getStuffDir() + projectName);
-  return searchProjectPath(getDocumentsPath() + projectName);
+  TFilePath defaultPath(Preferences::instance()->getDefaultProjectPath());
+  return searchProjectPath(defaultPath + projectName);
 }
 
 //-------------------------------------------------------------------
@@ -886,7 +887,12 @@ TFilePath TProjectManager::getProjectPathByName(const TFilePath &projectName) {
   if (projectName == TProject::SandboxProjectName)
     return searchProjectPath(TEnv::getStuffDir() + projectName);
 
-  TFilePath projectPath = searchProjectPath(getDocumentsPath() + projectName);
+  TFilePath defaultPath(Preferences::instance()->getDefaultProjectPath());
+  TFilePath projectPath = searchProjectPath(defaultPath + projectName);
+  assert(TProject::isAProjectPath(projectPath));
+  if (TFileStatus(projectPath).doesExist()) return projectPath;
+
+  projectPath = searchProjectPath(getDocumentsPath() + projectName);
   assert(TProject::isAProjectPath(projectPath));
   if (TFileStatus(projectPath).doesExist()) return projectPath;
 
@@ -943,9 +949,10 @@ void TProjectManager::getFolderNames(std::vector<std::string> &names) {
       }
   } catch (...) {
   }
-  const std::string stdNames[] = {TProject::Inputs,  TProject::Drawings,
-                                  TProject::Scenes,  TProject::Extras,
-                                  TProject::Outputs, TProject::Scripts, TProject::StopMotion};
+  const std::string stdNames[] = {TProject::Inputs,    TProject::Drawings,
+                                  TProject::Scenes,    TProject::Extras,
+                                  TProject::Outputs,   TProject::Scripts,
+                                  TProject::StopMotion};
   for (auto const &name : stdNames) {
     // se il nome non e' gia' stato inserito lo aggiungo
     if (std::find(names.begin(), names.end(), name) == names.end())
