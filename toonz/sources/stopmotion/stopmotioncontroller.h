@@ -97,7 +97,7 @@ protected:
 
 //=============================================================================
 
-class LevelNameLineEdit : public QLineEdit {
+class LevelNameLineEdit : public DVGui::LineEdit {
   Q_OBJECT
   QString m_textOnFocusIn;
 
@@ -167,6 +167,7 @@ class StopMotionController final : public QWidget {
   QFrame *m_motionPage;
   QFrame *m_lightPage;
   QFrame *m_testsPage;
+  QFrame *m_pathsPage;
   QFrame *m_dslrFrame;
   QFrame *m_webcamFrame;
   QFrame *m_noCameraFrame;

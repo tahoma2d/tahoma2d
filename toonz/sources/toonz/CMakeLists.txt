@@ -120,6 +120,8 @@ set(MOC_HEADERS
     xshrowviewer.h
     quicktoolbar.h
 	xdtsimportpopup.h
+    motionpathpanel.h
+    graphwidget.h
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
     ../stopmotion/webcam.h
@@ -348,6 +350,8 @@ set(SOURCES
     metnum.cpp
     ObjectTracker.cpp
     predict3d.cpp
+    motionpathpanel.cpp
+    graphwidget.cpp
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
     ../stopmotion/webcam.cpp

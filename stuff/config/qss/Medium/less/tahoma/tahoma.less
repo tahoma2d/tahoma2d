@@ -87,3 +87,46 @@ FlipBook {
                        // fps slider is disabled
   }
 }
+
+#MotionPathPanel,
+#MotionPathToolbar {
+  & #ToolBarContainer {
+    background-color: transparent;
+    border-bottom: 1 solid @accent;
+    padding-right: -1; 
+  }
+}
+
+#MotionPathToolbar {
+  background-color: transparent;
+  border-bottom: 1 solid @accent;
+  padding-right: -1; 
+
+}
+
+#GraphAreaWidget {
+  border: 1 solid @text-color-disabled;
+  qproperty-SplineColor: @text-color;
+  qproperty-GraphColor: @text-color-disabled;
+  qproperty-NonSelectedPointColor: @accent;
+  qproperty-SelectedPointColor: @hl-bg-color;
+}
+
+#GraphAreaFrame {
+  border: 1 solid @text-color-disabled;
+}
+
+MotionPathPanel {
+  qproperty-SelectedColor: @hl-bg-color;
+  qproperty-HoverColor: @button-bg-color-hover;
+}
+
+#MotionPathLabel {
+  border-radius: 2; 
+  padding-left: 2px;
+  padding-right: 2px;
+  &:hover {
+    background: @button-bg-color-hover;
+    text-decoration: underline; 
+  }
+}

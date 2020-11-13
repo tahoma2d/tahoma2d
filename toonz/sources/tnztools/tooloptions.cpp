@@ -1073,11 +1073,11 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
   TStageObjectId id;
   for (int i = 0; i < xsh->getStageObjectTree()->getStageObjectCount(); i++) {
     id = xsh->getStageObjectTree()->getStageObject(i)->getId();
+    if (id == xsh->getStageObjectTree()->getMotionPathViewerId()) continue;
     if (id.isColumn()) {
       int columnIndex = id.getIndex();
       if (xsh->isColumnEmpty(columnIndex)) continue;
     }
-
     TStageObject *pegbar = xsh->getStageObject(id);
     QString itemName     = (id.isTable())
                            ? tr("Table")
@@ -1095,7 +1095,11 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
  */
 void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   TStageObjectId curObjId = m_objHandle->getObjectId();
-
+  // TXsheet* xsh = m_xshHandle->getXsheet();
+  // if (curObjId == xsh->getStageObjectTree()->getMotionPathViewerId()) {
+  //    m_objHandle->setObjectId(xsh->getStageObjectTree()->getStageObject(0)->getId());
+  //    curObjId = m_objHandle->getObjectId();
+  //}
   int index = m_currentStageObjectCombo->findData((int)curObjId.getCode());
 
   // if the item is found
@@ -1105,7 +1109,9 @@ void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   else {
     TStageObject *pegbar = m_xshHandle->getXsheet()->getStageObject(curObjId);
     QString itemName     = QString::fromStdString(pegbar->getName());
+    std::string itemNameString = itemName.toStdString();
     // store the item with ObjectId data
+    if (itemName == "Peg10000") itemName = "Path";
     m_currentStageObjectCombo->addItem(itemName, (int)curObjId.getCode());
     // move the current index to it
     m_currentStageObjectCombo->setCurrentIndex(

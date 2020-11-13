@@ -802,13 +802,13 @@ TStroke getIntersectedStroke(TStroke &stroke, TRectD bbox) {
       // or the pasted raster may offset by 1pixel due to truncation in
       // ToonzImageUtils::convertWorldToRaster()
       if (areAlmostEqual(p.x, bbox.getP00().x, 1e-6))
-          p.x = bbox.getP00().x;
+        p.x = bbox.getP00().x;
       else if (areAlmostEqual(p.x, bbox.getP11().x, 1e-6))
-          p.x = bbox.getP11().x;
+        p.x = bbox.getP11().x;
       if (areAlmostEqual(p.y, bbox.getP00().y, 1e-6))
-          p.y = bbox.getP00().y;
+        p.y = bbox.getP00().y;
       else if (areAlmostEqual(p.y, bbox.getP11().y, 1e-6))
-          p.y = bbox.getP11().y;
+        p.y = bbox.getP11().y;
 
       precChunkIndex = chunkIndex;
       addPointToVector(p, outPoints, (int)outPoints.size() % 2 == 1);
@@ -1038,17 +1038,17 @@ void RasterSelection::makeFloating() {
 void RasterSelection::pasteFloatingSelection() {
   if (!isFloating()) return;
   if (!m_currentImageCell.getSimpleLevel()) {
-      const TXshCell& imageCell = TTool::getImageCell();
+    const TXshCell &imageCell = TTool::getImageCell();
 
-      TImageP image =
-          imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
+    TImageP image =
+        imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
 
-      TToonzImageP ti = (TToonzImageP)image;
-      TRasterImageP ri = (TRasterImageP)image;
-      if (!ti && !ri) return;
+    TToonzImageP ti  = (TToonzImageP)image;
+    TRasterImageP ri = (TRasterImageP)image;
+    if (!ti && !ri) return;
 
-      makeCurrent();
-      setCurrentImage(image, imageCell);
+    makeCurrent();
+    setCurrentImage(image, imageCell);
   }
 
   assert(m_transformationCount != -1 && m_transformationCount != -2);
@@ -1228,17 +1228,17 @@ void RasterSelection::pasteSelection() {
   selectNone();
   m_isPastedSelection = true;
   if (!m_currentImageCell.getSimpleLevel()) {
-      const TXshCell& imageCell = TTool::getImageCell();
+    const TXshCell &imageCell = TTool::getImageCell();
 
-      TImageP image =
-          imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
+    TImageP image =
+        imageCell.getImage(false, 1);  // => See the onImageChanged() warning !
 
-      TToonzImageP ti = (TToonzImageP)image;
-      TRasterImageP ri = (TRasterImageP)image;
-      if (!ti && !ri) return;
+    TToonzImageP ti  = (TToonzImageP)image;
+    TRasterImageP ri = (TRasterImageP)image;
+    if (!ti && !ri) return;
 
-      makeCurrent();
-      setCurrentImage(image, imageCell);
+    makeCurrent();
+    setCurrentImage(image, imageCell);
   }
   if (m_currentImage->getPalette())
     m_oldPalette = m_currentImage->getPalette()->clone();
@@ -1337,6 +1337,7 @@ bool RasterSelection::isEditable() {
 
   if (!filmstrip) {
     int colIndex = app->getCurrentTool()->getTool()->getColumnIndex();
+    if (colIndex < 0) return false;
     int rowIndex = frame->getFrame();
     if (app->getCurrentTool()->getTool()->isColumnLocked(colIndex))
       return false;

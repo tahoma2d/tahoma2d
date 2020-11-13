@@ -73,6 +73,7 @@
 #include "tstroke.h"
 #include "ttoonzimage.h"
 #include "tenv.h"
+#include "tcurves.h"
 
 // Qt includes
 #include <QMenu>
@@ -247,6 +248,20 @@ void copyBackBufferToFrontBuffer(const TRect &rect) {
 }
 
 #endif
+
+double getCubicYfromX(TCubic c, double x, double &s0, double &s1) {
+  double s  = (s1 + s0) * 0.5;
+  TPointD p = c.getPoint(s);
+  if (areAlmostEqual(x, p.x, 0.001)) return p.y;
+  if (areAlmostEqual(s0, s1, 0.0001)) {
+    return p.y;
+  }
+
+  if (x < p.x)
+    return getCubicYfromX(c, x, s0, s);
+  else
+    return getCubicYfromX(c, x, s, s1);
+}
 
 const TRectD InvalidateAllRect(0, 0, -1, -1);
 
@@ -1016,51 +1031,58 @@ void SceneViewer::showEvent(QShowEvent *) {
   TApp *app = TApp::instance();
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
-  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this, SLOT(resetSceneViewer()));
-  ret = ret && connect(sceneHandle, SIGNAL(sceneChanged()), this, SLOT(onSceneChanged()));
+  bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                     SLOT(resetSceneViewer()));
+  ret = ret && connect(sceneHandle, SIGNAL(sceneChanged()), this,
+                       SLOT(onSceneChanged()));
 
   TFrameHandle *frameHandle = app->getCurrentFrame();
-  ret = ret && connect(frameHandle, SIGNAL(frameSwitched()), this, SLOT(onFrameSwitched()));
+  ret = ret && connect(frameHandle, SIGNAL(frameSwitched()), this,
+                       SLOT(onFrameSwitched()));
 
   TPaletteHandle *paletteHandle =
       app->getPaletteController()->getCurrentLevelPalette();
-  ret = ret && connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this, SLOT(update()));
+  ret = ret && connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this,
+                       SLOT(update()));
 
   ret = ret && connect(app->getCurrentObject(), SIGNAL(objectSwitched()), this,
-          SLOT(onObjectSwitched()));
-  ret = ret && connect(app->getCurrentObject(), SIGNAL(objectChanged(bool)), this,
-          SLOT(update()));
+                       SLOT(onObjectSwitched()));
+  ret = ret && connect(app->getCurrentObject(), SIGNAL(objectChanged(bool)),
+                       this, SLOT(update()));
 
-  ret = ret && connect(app->getCurrentOnionSkin(), SIGNAL(onionSkinMaskChanged()), this,
-          SLOT(onOnionSkinMaskChanged()));
+  ret =
+      ret && connect(app->getCurrentOnionSkin(), SIGNAL(onionSkinMaskChanged()),
+                     this, SLOT(onOnionSkinMaskChanged()));
 
   ret = ret && connect(app->getCurrentLevel(), SIGNAL(xshLevelChanged()), this,
-          SLOT(update()));
-  ret = ret && connect(app->getCurrentLevel(), SIGNAL(xshCanvasSizeChanged()), this,
-          SLOT(update()));
+                       SLOT(update()));
+  ret = ret && connect(app->getCurrentLevel(), SIGNAL(xshCanvasSizeChanged()),
+                       this, SLOT(update()));
   // when level is switched, update m_dpiScale in order to show white background
   // for Ink&Paint work properly
-  ret = ret && connect(app->getCurrentLevel(), SIGNAL(xshLevelSwitched(TXshLevel *)), this,
-          SLOT(onLevelSwitched()));
+  ret = ret &&
+        connect(app->getCurrentLevel(), SIGNAL(xshLevelSwitched(TXshLevel *)),
+                this, SLOT(onLevelSwitched()));
 
   ret = ret && connect(app->getCurrentXsheet(), SIGNAL(xsheetChanged()), this,
-          SLOT(onXsheetChanged()));
+                       SLOT(onXsheetChanged()));
   ret = ret && connect(app->getCurrentXsheet(), SIGNAL(xsheetSwitched()), this,
-          SLOT(update()));
+                       SLOT(update()));
 
   // update tooltip when tool options are changed
   ret = ret && connect(app->getCurrentTool(), SIGNAL(toolChanged()), this,
-          SLOT(onToolChanged()));
-  ret = ret && connect(app->getCurrentTool(), SIGNAL(toolCursorTypeChanged()), this,
-          SLOT(onToolChanged()));
+                       SLOT(onToolChanged()));
+  ret = ret && connect(app->getCurrentTool(), SIGNAL(toolCursorTypeChanged()),
+                       this, SLOT(onToolChanged()));
 
-  ret = ret && connect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
+  ret = ret &&
+        connect(app, SIGNAL(tabletLeft()), this, SLOT(resetTabletStatus()));
 
   if (m_stopMotion) {
-      ret = ret && connect(m_stopMotion, SIGNAL(newLiveViewImageReady()), this,
-            SLOT(onNewStopMotionImageReady()));
-      ret = ret && connect(m_stopMotion, SIGNAL(liveViewStopped()), this,
-            SLOT(onStopMotionLiveViewStopped()));
+    ret = ret && connect(m_stopMotion, SIGNAL(newLiveViewImageReady()), this,
+                         SLOT(onNewStopMotionImageReady()));
+    ret = ret && connect(m_stopMotion, SIGNAL(liveViewStopped()), this,
+                         SLOT(onStopMotionLiveViewStopped()));
   }
   assert(ret);
 
@@ -1181,23 +1203,23 @@ void SceneViewer::onStopMotionLiveViewStopped() {
 
 //-----------------------------------------------------------------------------
 
-void SceneViewer::onPreferenceChanged(const QString& prefName) {
-    if (prefName == "ColorCalibration") {
-        if (Preferences::instance()->isColorCalibrationEnabled()) {
-            makeCurrent();
-            if (!m_lutCalibrator)
-                m_lutCalibrator = new LutCalibrator();
-            else
-                m_lutCalibrator->cleanup();
-            m_lutCalibrator->initialize();
-            connect(context(), SIGNAL(aboutToBeDestroyed()), this,
-                SLOT(onContextAboutToBeDestroyed()));
-            if (m_lutCalibrator->isValid() && !m_fbo)
-                m_fbo = new QOpenGLFramebufferObject(width(), height());
-            doneCurrent();
-        }
-        update();
+void SceneViewer::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "ColorCalibration") {
+    if (Preferences::instance()->isColorCalibrationEnabled()) {
+      makeCurrent();
+      if (!m_lutCalibrator)
+        m_lutCalibrator = new LutCalibrator();
+      else
+        m_lutCalibrator->cleanup();
+      m_lutCalibrator->initialize();
+      connect(context(), SIGNAL(aboutToBeDestroyed()), this,
+              SLOT(onContextAboutToBeDestroyed()));
+      if (m_lutCalibrator->isValid() && !m_fbo)
+        m_fbo = new QOpenGLFramebufferObject(width(), height());
+      doneCurrent();
     }
+    update();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2108,12 +2130,13 @@ void SceneViewer::drawScene() {
       args.m_osm         = &osm;
       args.m_xsheetLevel = xsheetLevel;
       args.m_isPlaying   = frameHandle->isPlaying();
-      if (app->getCurrentColumn()->getColumn() && !app->getCurrentColumn()->getColumn()->getSoundColumn())
-      args.m_currentFrameId =
-          app->getCurrentXsheet()
-              ->getXsheet()
-              ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
-              .getFrameId();
+      if (app->getCurrentColumn()->getColumn() &&
+          !app->getCurrentColumn()->getColumn()->getSoundColumn())
+        args.m_currentFrameId =
+            app->getCurrentXsheet()
+                ->getXsheet()
+                ->getCell(app->getCurrentFrame()->getFrame(), args.m_col)
+                .getFrameId();
       args.m_isGuidedDrawingEnabled = useGuidedDrawing;
       args.m_guidedFrontStroke      = guidedFrontStroke;
       args.m_guidedBackStroke       = guidedBackStroke;
@@ -3155,78 +3178,230 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
   TStageObjectId objId = TApp::instance()->getCurrentObject()->getObjectId();
 
   TStageObject *pegbar =
-      objId != TStageObjectId::NoneId ? xsh->getStageObject(objId) : 0;
-  const TStroke *stroke                     = 0;
-  if (pegbar && pegbar->getSpline()) stroke = pegbar->getSpline()->getStroke();
-  if (!stroke) return;
+      (objId != TStageObjectId::NoneId &&
+       objId != xsh->getStageObjectTree()->getMotionPathViewerId())
+          ? xsh->getStageObject(objId)
+          : 0;
 
-  int frame = TApp::instance()->getCurrentFrame()->getFrame();
+  TStageObjectSpline *pegbarSpline = 0;
+  if (pegbar && pegbar->getSpline()) {
+    const TStroke *stroke = 0;
+    pegbarSpline          = pegbar->getSpline();
+    stroke                = pegbar->getSpline()->getStroke();
 
-  TAffine aff;
-  double objZ = 0, objNoScaleZ = 0;
-  if (objId != TStageObjectId::NoneId) {
-    aff         = xsh->getParentPlacement(objId, frame);
-    objZ        = xsh->getZ(objId, frame);
-    objNoScaleZ = xsh->getStageObject(objId)->getGlobalNoScaleZ();
-  }
+    if (!stroke) return;
 
-  glPushMatrix();
-  if (camera3d) {
-    tglMultMatrix(aff);
-    aff = TAffine();
-    glTranslated(0, 0, objZ);
-  } else {
-    TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
-    double camZ             = xsh->getZ(cameraId, frame);
-    TAffine camAff          = xsh->getPlacement(cameraId, frame);
-    TAffine tmp;
-    TStageObject::perspective(tmp, camAff, camZ, aff, objZ, objNoScaleZ);
-    aff = viewMatrix * tmp;
-  }
+    int frame = TApp::instance()->getCurrentFrame()->getFrame();
 
-  if (TApp::instance()->getCurrentObject()->isSpline()) {
-    glColor3d(1.0, 0.5, 0);
-    glLineStipple(1, 0x18FF);
-  } else {
-    glLineStipple(1, 0xCCCC);
-    glColor3d(1, 0, 1);
-  }
+    TAffine aff;
+    double objZ = 0, objNoScaleZ = 0;
+    if (objId != TStageObjectId::NoneId) {
+      aff         = xsh->getParentPlacement(objId, frame);
+      objZ        = xsh->getZ(objId, frame);
+      objNoScaleZ = xsh->getStageObject(objId)->getGlobalNoScaleZ();
+    }
 
-  glEnable(GL_LINE_STIPPLE);
-  tglMultMatrix(aff);
-
-  double pixelSize    = std::max(0.1, pixelsize);
-  double strokeLength = stroke->getLength();
-  int n               = (int)(5 + (strokeLength / pixelSize) * 0.1);
-
-  glBegin(GL_LINE_STRIP);
-  for (int i = 0; i < n; i++)
-    tglVertex(stroke->getPoint((double)i / (double)(n - 1)));
-  glEnd();
-  glDisable(GL_LINE_STIPPLE);
-  int cpCount = stroke->getControlPointCount();
-  for (int i = 0; i * 4 < cpCount; i++) {
-    double t    = stroke->getParameterAtControlPoint(i * 4);
-    TPointD pos = stroke->getPoint(t);
-    tglDrawText(pos, QString::number(i).toStdString().c_str());
-  }
-
-  if (pegbar) {
-    TAffine parentAff = xsh->getParentPlacement(objId, frame);
-    TAffine aff       = xsh->getPlacement(objId, frame);
-    TPointD center    = Stage::inch * xsh->getCenter(objId, frame);
     glPushMatrix();
-    tglMultMatrix(parentAff.inv() * TTranslation(aff * center));
-    center = TPointD();
+    if (camera3d) {
+      tglMultMatrix(aff);
+      aff = TAffine();
+      glTranslated(0, 0, objZ);
+    } else {
+      TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+      double camZ             = xsh->getZ(cameraId, frame);
+      TAffine camAff          = xsh->getPlacement(cameraId, frame);
+      TAffine tmp;
+      TStageObject::perspective(tmp, camAff, camZ, aff, objZ, objNoScaleZ);
+      aff = viewMatrix * tmp;
+    }
 
-    // draw center
-    // tglDrawDisk(center,pixelSize*5);
-    tglDrawDisk(center, sqrt(tglGetPixelSize2()) * 5);
+    if (TApp::instance()->getCurrentObject()->isSpline()) {
+      glColor3d(1.0, 0.5, 0);
+      glLineStipple(1, 0x18FF);
+    } else {
+      glLineStipple(1, 0xCCCC);
+      glColor3d(1, 0, 1);
+    }
+
+    glEnable(GL_LINE_STIPPLE);
+    tglMultMatrix(aff);
+
+    double pixelSize    = std::max(0.1, pixelsize);
+    double strokeLength = stroke->getLength();
+    int n               = (int)(5 + (strokeLength / pixelSize) * 0.1);
+
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < n; i++)
+      tglVertex(stroke->getPoint((double)i / (double)(n - 1)));
+    glEnd();
+    glDisable(GL_LINE_STIPPLE);
+
+    int cpCount = stroke->getControlPointCount();
+    for (int i = 0; i * 4 < cpCount; i++) {
+      double t    = stroke->getParameterAtControlPoint(i * 4);
+      TPointD pos = stroke->getPoint(t);
+      tglDrawText(pos, QString::number(i).toStdString().c_str());
+    }
+    {
+      TAffine parentAff = xsh->getParentPlacement(objId, frame);
+      TAffine aff       = xsh->getPlacement(objId, frame);
+      TPointD center    = Stage::inch * xsh->getCenter(objId, frame);
+      glPushMatrix();
+      tglMultMatrix(parentAff.inv() * TTranslation(aff * center));
+      center = TPointD();
+
+      // draw center
+      // tglDrawDisk(center,pixelSize*5);
+      tglDrawDisk(center, sqrt(tglGetPixelSize2()) * 5);
+
+      glPopMatrix();
+    }
 
     glPopMatrix();
   }
+  int splineCount = xsh->getStageObjectTree()->getSplineCount();
+  for (int i = 0; i < splineCount; i++) {
+    TStageObjectSpline *spline = xsh->getStageObjectTree()->getSpline(i);
 
-  glPopMatrix();
+    if (!spline->getActive()) continue;
+
+    const TStroke *stroke = 0;
+    int steps             = 0;
+
+    bool showSteps = false;
+
+    stroke    = spline->getStroke();
+    showSteps = true;
+    steps     = spline->getSteps();
+
+    if (!stroke) return;
+
+    int frame = TApp::instance()->getCurrentFrame()->getFrame();
+
+    TAffine aff;
+    double objZ = 0, objNoScaleZ = 0;
+    if (objId != TStageObjectId::NoneId) {
+      aff         = xsh->getParentPlacement(objId, frame);
+      objZ        = xsh->getZ(objId, frame);
+      objNoScaleZ = xsh->getStageObject(objId)->getGlobalNoScaleZ();
+    }
+
+    glPushMatrix();
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (camera3d) {
+      tglMultMatrix(aff);
+      aff = TAffine();
+      glTranslated(0, 0, objZ);
+    } else {
+      TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+      double camZ             = xsh->getZ(cameraId, frame);
+      TAffine camAff          = xsh->getPlacement(cameraId, frame);
+      TAffine tmp;
+      TStageObject::perspective(tmp, camAff, camZ, aff, objZ, objNoScaleZ);
+      aff = viewMatrix * tmp;
+    }
+    int width = spline->getWidth();
+    glLineWidth((double)width);
+    std::vector<double> reds{1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+                             0.0, 1.0, 0.7, 0.5, 0.3};
+    std::vector<double> greens{0.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+                               0.0, 1.0, 0.7, 0.5, 0.3};
+    std::vector<double> blues{1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+                              0.0, 1.0, 0.7, 0.5, 0.3};
+
+    int color = spline->getColor();
+    glColor3d(reds.at(color), greens.at(color), blues.at(color));
+
+    // glEnable(GL_LINE_STIPPLE);
+    tglMultMatrix(aff);
+
+    double pixelSize    = std::max(0.1, pixelsize);
+    double strokeLength = stroke->getLength();
+    int n               = (int)(5 + (strokeLength / pixelSize) * 0.1);
+
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < n; i++)
+      tglVertex(stroke->getPoint((double)i / (double)(n - 1)));
+    glEnd();
+    // glDisable(GL_LINE_STIPPLE);
+
+    if (showSteps && steps > 0) {
+      QList<TPointD> interpolationStroke = spline->getInterpolationStroke();
+      int cp                             = 3;
+      TPointD startPoint                 = interpolationStroke.at(cp);
+      TPointD control1                   = interpolationStroke.at(cp + 1);
+      TPointD control2                   = interpolationStroke.at(cp + 2);
+      TPointD endPoint                   = interpolationStroke.at(cp + 3);
+      TCubic cubic(startPoint, control1, control2, endPoint);
+
+      double length = stroke->getLength(0.0, 1.0);
+      double step   = 1.0 / (double)(steps > 1 ? steps - 1 : 1);
+
+      double currentPosition = 0.0;
+      double s0              = 0.0;
+      double s1              = 1.0;
+      bool playing           = spline->getIsPlaying();
+      int currentStep        = spline->getCurrentStep();
+
+      TPointD prePoint, point, postPoint;
+      for (int i = 0; i <= steps; i++) {
+        double y = -1;
+        if (i == 0)
+          y = 0;
+        else if (i == steps)
+          y = 1000.0;
+        else {
+          currentPosition                            = (double)i * step;
+          if (currentPosition > 1.0) currentPosition = 1.0;
+          double tempX = std::round(currentPosition * 1000.0);
+          if (tempX > endPoint.x) {
+            cp += 3;
+            startPoint = interpolationStroke.at(cp);
+            control1   = interpolationStroke.at(cp + 1);
+            control2   = interpolationStroke.at(cp + 2);
+            endPoint   = interpolationStroke.at(cp + 3);
+            cubic      = TCubic(startPoint, control1, control2, endPoint);
+          }
+          y = getCubicYfromX(cubic, tempX, s0, s1);
+        }
+
+        if (y >= 0) {
+          double newY = std::min((double)y, 1000.0) / 1000.0;
+          point       = stroke->getPointAtLength(length * newY);
+          prePoint    = (i == 0)
+                         ? point
+                         : stroke->getPointAtLength(length * (newY - 0.02));
+          postPoint = (i == steps)
+                          ? point
+                          : stroke->getPointAtLength(length * (newY + 0.02));
+
+          if (prePoint == postPoint) continue;
+
+          double radian =
+              std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
+          double degree = radian * 180.0 / 3.14159265;
+
+          glPushMatrix();
+          glTranslated(point.x, point.y, 0);
+          glRotated(degree, 0, 0, 1);
+          glBegin(GL_LINES);
+          glVertex2d(0, 3 + width);
+          glVertex2d(0, -3 - width);
+          glEnd();
+          if (playing && currentStep == i) {
+            tglDrawDisk(TPointD(0, 0), 4 + width * 3);
+          }
+          glPopMatrix();
+        }
+      }
+    }
+    glLineWidth(1.0);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+    glPopMatrix();
+  }
 }
 
 //-----------------------------------------------------------------------------

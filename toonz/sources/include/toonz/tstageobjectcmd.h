@@ -49,9 +49,11 @@ DVAPI void addNewPegbar(TXsheetHandle *xshHandle, TObjectHandle *objHandle,
                         QPointF initialPos = QPointF());
 DVAPI void setAsActiveCamera(TXsheetHandle *xshHandle,
                              TObjectHandle *objHandle);
-DVAPI void addNewSpline(TXsheetHandle *xshHandle, TObjectHandle *objHandle,
-                        TColumnHandle *colHandle,
-                        QPointF initialPos = QPointF());
+DVAPI TStageObjectSpline *addNewSpline(TXsheetHandle *xshHandle,
+                                       TObjectHandle *objHandle,
+                                       TColumnHandle *colHandle,
+                                       QPointF initialPos = QPointF(),
+                                       bool setActive     = false);
 DVAPI void deleteSelection(
     const std::vector<TStageObjectId> &objIds,
     const std::list<QPair<TStageObjectId, TStageObjectId>> &links,

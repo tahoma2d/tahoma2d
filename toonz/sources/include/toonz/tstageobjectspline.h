@@ -6,6 +6,7 @@
 #include "tsmartpointer.h"
 #include "tgeometry.h"
 #include "tpersist.h"
+#include <QObject>
 
 #undef DVAPI
 #undef DVVAR
@@ -36,6 +37,7 @@ class TDoubleParam;
 class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   PERSIST_DECLARATION(TStageObjectSpline)
   TStroke *m_stroke;
+  QList<TPointD> m_interpolationStroke;
   DECLARE_CLASS_CODE
   TPointD m_dagNodePos;
 
@@ -44,6 +46,12 @@ class DVAPI TStageObjectSpline final : public TSmartObject, public TPersist {
   std::string m_name;
   bool m_isOpened;
   std::vector<TDoubleParam *> m_posPathParams;
+  bool m_active;
+  int m_color;
+  int m_steps;
+  int m_width;
+  int m_currentStep = 0;
+  bool m_playing    = false;
 
 public:
   TStageObjectSpline();
@@ -56,6 +64,8 @@ Return spline stroke.
 \sa setStroke()
 */
   const TStroke *getStroke() const;
+  QList<TPointD> getInterpolationStroke();
+  void setInterpolationStroke(QList<TPointD>);
   /*!
 Set spline stroke to \b stroke.
 \sa getStroke()
@@ -70,8 +80,26 @@ Set spline stroke to \b stroke.
   std::string getName() const;
   void setName(const std::string &name) { m_name = name; }
 
+  void setActive(bool active) { m_active = active; }
+  bool getActive() { return m_active; }
+
+  void setColor(int color) { m_color = color; }
+  int getColor() { return m_color; }
+
+  void setSteps(int steps) { m_steps = steps; }
+  int getSteps() { return m_steps; }
+
+  void setWidth(int width) { m_width = width; }
+  int getWidth() { return m_width; }
+
   bool isOpened() const { return m_isOpened; }
   void setIsOpened(bool value) { m_isOpened = value; }
+
+  int getCurrentStep() { return m_currentStep; }
+  void setCurrentStep(int step) { m_currentStep = step; }
+
+  bool getIsPlaying() { return m_playing; }
+  void setIsPlaying(bool playing) { m_playing = playing; }
 
   void loadData(TIStream &is) override;
   void saveData(TOStream &os) override;

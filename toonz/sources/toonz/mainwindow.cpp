@@ -1437,7 +1437,8 @@ void MainWindow::onUpdateCheckerDone(bool error) {
     dialog->deleteLater();
     if (ret == 1) {
       // Write the new last date to file
-      QDesktopServices::openUrl(QObject::tr("https://github.com/turtletooth/tahoma2d/releases/latest"));
+      QDesktopServices::openUrl(QObject::tr(
+          "https://github.com/turtletooth/tahoma2d/releases/latest"));
     }
   }
 
@@ -1824,6 +1825,14 @@ void MainWindow::defineActions() {
           tr("Raster levels are traditonal drawing levels") + separator +
           tr("Imported images will be imported as raster levels."));
   menuAct->setIcon(createQIcon("new_raster_level"));
+
+  menuAct = createMenuLevelAction(
+      MI_NewSpline, tr("&New Motion Path"), "",
+      tr("Create a new motion path.") + separator +
+          tr("Motion paths can be used as animation guides, or you can animate "
+             "objects along a motion path."));
+  menuAct->setIcon(createQIcon("menu_toggle"));
+
   menuAct = createMenuLevelAction(MI_LoadLevel, tr("&Load Level..."), "",
                                   tr("Load an existing level."));
   menuAct->setIcon(createQIcon("load_level"));
@@ -2168,11 +2177,14 @@ void MainWindow::defineActions() {
                                    tr("Remove Multiple Keys"), "");
   menuAct->setIcon(createQIcon("remove_multiple_keys"));
 
-  menuAct = createMenuXsheetAction(MI_SetStartMarker, tr("Set Start Marker"), "");
+  menuAct =
+      createMenuXsheetAction(MI_SetStartMarker, tr("Set Start Marker"), "");
   menuAct = createMenuXsheetAction(MI_SetStopMarker, tr("Set Stop Marker"), "");
   menuAct = createMenuXsheetAction(MI_ClearMarkers, tr("Remove Markers"), "");
-  menuAct = createMenuXsheetAction(MI_SetAutoMarkers, tr("Set Auto Markers"), "");
-  menuAct = createMenuXsheetAction(MI_PreviewThis, tr("Set Markers to Current Frame"), "");
+  menuAct =
+      createMenuXsheetAction(MI_SetAutoMarkers, tr("Set Auto Markers"), "");
+  menuAct = createMenuXsheetAction(MI_PreviewThis,
+                                   tr("Set Markers to Current Frame"), "");
 
   menuAct = createMenuLevelAction(MI_NewNoteLevel, tr("New Note Level"), "");
   menuAct->setIcon(createQIcon("new_note_level"));
@@ -2467,6 +2479,7 @@ void MainWindow::defineActions() {
   menuAct = createMenuWindowsAction(MI_OpenStopMotionPanel,
                                     tr("&Stop Motion Controls"), "");
   menuAct->setIcon(createQIcon("camera_capture"));
+  createMenuWindowsAction(MI_OpenMotionPathPanel, tr("&Motion Paths"), "");
 
   menuAct = createMenuWindowsAction(MI_OpenLevelView, tr("&Viewer"), "");
   menuAct->setIcon(createQIcon("viewer"));

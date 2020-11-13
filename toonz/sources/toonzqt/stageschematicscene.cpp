@@ -188,6 +188,14 @@ void StageSchematicScene::setFxHandle(TFxHandle *fxHandle) {
 
 //------------------------------------------------------------------
 
+void StageSchematicScene::setSceneHandle(TSceneHandle *sceneHandle) {
+  m_sceneHandle = sceneHandle;
+  // connect(m_sceneHandle, &TSceneHandle::castChanged, [=]() { updateScene();
+  // });
+}
+
+//------------------------------------------------------------------
+
 void StageSchematicScene::onSelectionSwitched(TSelection *oldSel,
                                               TSelection *newSel) {
   if (m_selection == oldSel && m_selection != newSel) clearSelection();
@@ -216,6 +224,7 @@ void StageSchematicScene::updateScene() {
   QList<int> modifiedNodeIds;
   for (int i = 0; i < pegTree->getStageObjectCount(); i++) {
     TStageObject *pegbar = pegTree->getStageObject(i);
+    if (pegbar == pegTree->getMotionPathViewer()) continue;
     if (pegbar->getDagNodePos() == TConst::nowhere)
       modifiedNodeIds.push_back(i);
     else
@@ -245,6 +254,9 @@ void StageSchematicScene::updateScene() {
       m_splineTable[spline] = node;
       connect(node, SIGNAL(currentObjectChanged(const TStageObjectId &, bool)),
               this, SLOT(onCurrentObjectChanged(const TStageObjectId &, bool)));
+      connect(node, SIGNAL(splineClicked(TStageObjectSpline *)), this,
+              SLOT(onSplineClicked(TStageObjectSpline *)));
+      connect(node, SIGNAL(splineRenamed()), this, SLOT(onSplineRenamed()));
     }
   }
 
@@ -480,7 +492,7 @@ void StageSchematicScene::updateEditedGroups(
     const QMap<int, QList<SchematicNode *>> &editedGroup) {
   QMap<int, QList<SchematicNode *>>::const_iterator it;
   for (it = editedGroup.begin(); it != editedGroup.end(); it++) {
-    int zValue                                            = 2;
+    int zValue = 2;
     QMap<int, QList<SchematicNode *>>::const_iterator it2 = editedGroup.begin();
     while (it2 != editedGroup.end()) {
       StageSchematicNode *placedObj =
@@ -1009,13 +1021,28 @@ void StageSchematicScene::onSaveSpline() {
     if (spline == 0) throw "no spline";
     TOStream os(fp);
 
-    // Only points are saved
-    const TStroke *stroke = spline->getStroke();
-    int n                 = stroke ? stroke->getControlPointCount() : 0;
+    const TStroke* stroke = spline->getStroke();
+    QList<TPointD> interpStroke = spline->getInterpolationStroke();
+
+    os.child("color") << (int)spline->getColor();
+    os.child("active") << (int)spline->getActive();
+    os.child("steps") << (int)spline->getSteps();
+    os.child("width") << (int)spline->getWidth();
+    os.openChild("stroke");
+    int n = stroke->getControlPointCount();
+    os << n;
     for (int i = 0; i < n; i++) {
-      TThickPoint p = stroke->getControlPoint(i);
-      os << p.x << p.y << p.thick;
+        TThickPoint p = stroke->getControlPoint(i);
+        os << p.x << p.y << p.thick;
     }
+    os.closeChild();
+    os.openChild("interpolationStroke");
+    n = interpStroke.size();
+    os << n;
+    for (auto p : interpStroke) {
+        os << p.x << p.y;
+    }
+    os.closeChild();
   } catch (...) {
     DVGui::warning(QObject::tr("It is not possible to save the motion path."));
   }
@@ -1112,6 +1139,23 @@ void StageSchematicScene::onCurrentObjectChanged(const TStageObjectId &id,
   m_objHandle->setIsSpline(isSpline);
 }
 
+//------------------------------------------------------------------
+
+void StageSchematicScene::onSplineClicked(TStageObjectSpline *spline) {
+  TStageObjectTree *pegTree = m_xshHandle->getXsheet()->getStageObjectTree();
+  TStageObject *viewer      = pegTree->getMotionPathViewer();
+  viewer->setSpline(spline);
+  invalidate();
+  onCurrentObjectChanged(pegTree->getMotionPathViewerId(), true);
+  m_objHandle->setIsSpline(true, true);
+}
+
+//------------------------------------------------------------------
+
+void StageSchematicScene::onSplineRenamed() {
+  m_sceneHandle->notifyCastChange();
+  update();
+}
 //------------------------------------------------------------------
 
 void StageSchematicScene::onCurrentColumnChanged(int index) {
