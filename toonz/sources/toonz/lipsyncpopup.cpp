@@ -46,6 +46,7 @@
 #include <QTextEdit>
 #include <QIcon>
 #include <QAudio>
+
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -198,7 +199,10 @@ LipSyncPopup::LipSyncPopup()
   m_startAt    = new DVGui::IntLineEdit(this, 0);
   m_restToEnd  = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
   
+  m_rhubarb = new QProcess(this);
   m_player = new QMediaPlayer(this);
+  m_progressDialog = new DVGui::ProgressDialog("Analyzing audio...", "", 1, 100, this);
+  m_progressDialog->hide();
   
   QImage placeHolder(160, 90, QImage::Format_ARGB32);
   placeHolder.fill(Qt::white);
@@ -615,23 +619,42 @@ void LipSyncPopup::runRhubarb() {
     }
 
     int frameRate = std::rint(TApp::instance()->getCurrentScene()->getScene()->getProperties()->getOutputProperties()->getFrameRate());
-    args << "--datFrameRate" << QString::number(frameRate);
+    args << "--datFrameRate" << QString::number(frameRate) << "--machineReadable";
 
     args << m_audioPath;
-    QProcess rhubarb;
-    rhubarb.start(path, args);
+    m_progressDialog->show();
+    connect(m_rhubarb, &QProcess::readyReadStandardError, this, &LipSyncPopup::onOutputReady);
+    connect(m_rhubarb, qOverload<int, QProcess::ExitStatus >(&QProcess::finished), this, &LipSyncPopup::onProcessFinished);
+    m_rhubarb->start(path, args);
+    
+}
 
-    rhubarb.waitForFinished();
-    QString results = rhubarb.readAllStandardError();
-    results += rhubarb.readAllStandardOutput();
-    rhubarb.close();
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::onProcessFinished() {
+    //rhubarb->waitForFinished();
+    m_progressDialog->hide();
+    QString results = m_rhubarb->readAllStandardError();
+    results += m_rhubarb->readAllStandardOutput();
+    m_rhubarb->close();
+    delete m_rhubarb;
     std::string strResults = results.toStdString();
-    m_file->setPath(datPath);
+    m_file->setPath(m_datPath.getQString());
     onPathChanged();
     m_startAt->setValue(std::max(1, m_startFrame));
 
     if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) TSystem::deleteFile(TFilePath(m_audioPath));
     m_deleteFile = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::onOutputReady() {
+    QString output = m_rhubarb->readAllStandardError().simplified();
+    int index = output.lastIndexOf("%");
+    QString newString = output.mid(index - 2, 2);
+    m_progressDialog->setValue(newString.toInt());
+    qDebug() << "output: " << output;
 }
 
 //-----------------------------------------------------------------------------

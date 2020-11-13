@@ -21,6 +21,7 @@ class TFrameId;
 class QComboBox;
 class QTextEdit;
 class QIcon;
+class QProcess;
 
 //=============================================================================
 // LipSyncPopup
@@ -67,6 +68,8 @@ class LipSyncPopup final : public DVGui::Dialog {
   TFilePath m_datPath;
   QMediaPlayer* m_player;
   bool m_deleteFile = false;
+  DVGui::ProgressDialog *m_progressDialog;
+  QProcess* m_rhubarb;
 
 public:
   LipSyncPopup();
@@ -87,6 +90,8 @@ public slots:
   void generateDatFile();
   void onLevelChanged(int);
   void onMediaStateChanged(QMediaPlayer::State state);
+  void onProcessFinished();
+  void onOutputReady();
 };
 
 #endif  // LIPSYNCPOPUP_H
