@@ -125,6 +125,7 @@
     STD_iwa_SoapBubbleFx
     STD_targetSpotFx
     STD_iwa_GlareFx
+    STD_iwa_BloomFx
   </Light>
   <Matte>
     STD_erodeDilateFx
