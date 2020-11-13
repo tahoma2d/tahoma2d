@@ -21,13 +21,17 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshcell.h"
+#include "toonz/sceneproperties.h"
 #include "tsound_io.h"
+#include "toonzqt/gutil.h"
+#include "toutputproperties.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
 #include "xsheetdragtool.h"
 #include "historytypes.h"
 #include "tsystem.h"
+#include "tenv.h"
 
 // Qt includes
 #include <QHBoxLayout>
@@ -40,6 +44,8 @@
 #include <QComboBox>
 #include <QProcess>
 #include <QTextEdit>
+#include <QIcon>
+#include <QAudio>
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -191,21 +197,43 @@ LipSyncPopup::LipSyncPopup()
   m_otherLabel = new QLabel(tr("C D G K N R S Th Y Z"));
   m_startAt    = new DVGui::IntLineEdit(this, 0);
   m_restToEnd  = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
+  
+  m_player = new QMediaPlayer(this);
+  
   QImage placeHolder(160, 90, QImage::Format_ARGB32);
   placeHolder.fill(Qt::white);
-
   m_soundLevels = new QComboBox(this);
-  QPushButton* playSound = new QPushButton(tr("Play"), this);
+  m_playButton = new QPushButton(tr(""), this);
+  m_playIcon = createQIcon("play");
+  m_stopIcon = createQIcon("stop");
+  m_playButton->setIcon(m_playIcon);
   QPushButton* generateDatButton = new QPushButton(tr("Generate Data File"), this);
-  QHBoxLayout* soundLayout = new QHBoxLayout(this);
+  QGridLayout* rhubarbLayout = new QGridLayout(this);
   m_scriptEdit = new QTextEdit(this);
+  QHBoxLayout* soundLayout = new QHBoxLayout(this);
+  soundLayout->addWidget(new QLabel(tr("Column: "), this));
   soundLayout->addWidget(m_soundLevels);
-  soundLayout->addWidget(playSound);
-  soundLayout->addWidget(generateDatButton);
-  connect(playSound, &QPushButton::pressed, this, &LipSyncPopup::playSound);
-  connect(generateDatButton, &QPushButton::pressed, this, &LipSyncPopup::generateDatFile);
+  soundLayout->addWidget(m_playButton);
+  soundLayout->addStretch();
+  rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
+  QLabel *scriptLabel = new QLabel(tr("Script: "), this);
+  scriptLabel->setToolTip(tr("A script significantly increases the accuracy of the lip sync."));
 
-  
+  m_audioFile = new DVGui::FileField(this, QString(""));
+  m_audioFile->setFileMode(QFileDialog::ExistingFile);
+  QStringList audioFilters;
+  audioFilters << "wav"
+      << "aiff";
+  m_audioFile->setFilters(QStringList(audioFilters));
+  m_audioFile->setMinimumWidth(500);
+
+  rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
+  rhubarbLayout->addWidget(scriptLabel, 2, 0, 1, 3);
+  rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
+  rhubarbLayout->addWidget(generateDatButton, 4, 4);
+  rhubarbLayout->setSpacing(4);
+  rhubarbLayout->setMargin(10);
+
   for (int i = 0; i < 10; i++) {
     m_pixmaps[i] = QPixmap::fromImage(placeHolder);
   }
@@ -237,8 +265,7 @@ LipSyncPopup::LipSyncPopup()
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
 
-  m_topLayout->addLayout(soundLayout);
-  m_topLayout->addWidget(m_scriptEdit);
+  m_topLayout->addLayout(rhubarbLayout);
   {
     QGridLayout *phonemeLay = new QGridLayout();
     phonemeLay->setMargin(10);
@@ -384,6 +411,10 @@ LipSyncPopup::LipSyncPopup()
         connect(m_file, SIGNAL(pathChanged()), this, SLOT(onPathChanged()));
   ret = ret && connect(m_startAt, SIGNAL(editingFinished()), this,
                        SLOT(onStartValueChanged()));
+  ret = ret && connect(m_playButton, &QPushButton::pressed, this, &LipSyncPopup::playSound);
+  ret = ret && connect(generateDatButton, &QPushButton::pressed, this, &LipSyncPopup::generateDatFile);
+  ret = ret && connect(m_soundLevels, SIGNAL(currentIndexChanged(int)), this,
+      SLOT(onLevelChanged(int)));
 
   assert(ret);
 }
@@ -436,6 +467,7 @@ void LipSyncPopup::showEvent(QShowEvent *) {
     }
   }
   refreshSoundLevels();
+  onLevelChanged(-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -450,32 +482,69 @@ void LipSyncPopup::refreshSoundLevels() {
             m_soundLevels->addItem(QString::number(i + 1));
         }
     }
+    m_soundLevels->addItem(tr("Choose File"));
 }
 
 //-----------------------------------------------------------------------------
 void LipSyncPopup::generateDatFile() {
-    saveAudio();
+    m_audioPath = "";
+    m_startFrame = -1;
+    m_deleteFile = false;
+    if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+        saveAudio();
+        m_deleteFile = true;
+    }
+    else m_audioPath = m_audioFile->getPath();
     runRhubarb();
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::playSound() {
-    int level = m_soundLevels->currentText().toInt() - 1;
-    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    TXshColumn* col = xsh->getColumn(level);
-    TXshSoundColumn* sc = col->getSoundColumn();
-    if (sc) {
-        int r0, r1;
-        xsh->getCellRange(level, r0, r1);
-        sc->play(r0);
+    int count = m_soundLevels->count();
+    if (count - 1 != m_soundLevels->currentIndex()) {
+        int level = m_soundLevels->currentText().toInt() - 1;
+        TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+        TXshColumn* col = xsh->getColumn(level);
+        TXshSoundColumn* sc = col->getSoundColumn();
+        if (sc) {
+            int r0, r1;
+            xsh->getCellRange(level, r0, r1);
+            sc->play(r0);
+        }
+    }
+    else {
+        if (m_player->state() == QMediaPlayer::StoppedState) {
+            m_player->setMedia(QUrl::fromLocalFile(m_audioFile->getPath()));
+            m_player->setVolume(50);
+            m_player->setNotifyInterval(20);
+            connect(m_player, SIGNAL(positionChanged(qint64)), this,
+                SLOT(updatePlaybackDuration(qint64)));
+            connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), this,
+                SLOT(onMediaStateChanged(QMediaPlayer::State)));
+            m_playButton->setIcon(m_stopIcon);
+
+            //m_stoppedAtEnd = false;
+            m_player->play();
+        }
+        else {
+            m_player->stop();
+            m_playButton->setIcon(m_playIcon);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::onMediaStateChanged(QMediaPlayer::State state) {
+    // stopping can happen through the stop button or the file ending
+    if (state == QMediaPlayer::StoppedState) {
+        m_playButton->setIcon(m_playIcon);
     }
 }
 
 //-----------------------------------------------------------------------------
 void LipSyncPopup::saveAudio() {
-    m_audioPath = "";
-    m_startFrame = -1;
     QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
     if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
         TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
@@ -544,6 +613,10 @@ void LipSyncPopup::runRhubarb() {
             args << "-d" << scriptPath;
         }
     }
+
+    int frameRate = std::rint(TApp::instance()->getCurrentScene()->getScene()->getProperties()->getOutputProperties()->getFrameRate());
+    args << "--datFrameRate" << QString::number(frameRate);
+
     args << m_audioPath;
     QProcess rhubarb;
     rhubarb.start(path, args);
@@ -556,8 +629,23 @@ void LipSyncPopup::runRhubarb() {
     m_file->setPath(datPath);
     onPathChanged();
     m_startAt->setValue(std::max(1, m_startFrame));
-    if (TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) TSystem::deleteFile(TFilePath(m_audioPath));
-    int j = 0;
+
+    if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) TSystem::deleteFile(TFilePath(m_audioPath));
+    m_deleteFile = false;
+}
+
+//-----------------------------------------------------------------------------
+
+
+void LipSyncPopup::onLevelChanged(int index) {
+    index = m_soundLevels->currentIndex();
+    int count = m_soundLevels->count();
+    if (index == count - 1) {
+        m_audioFile->show();
+    }
+    else {
+        m_audioFile->hide();
+    }
 }
 
 //-----------------------------------------------------------------------------
