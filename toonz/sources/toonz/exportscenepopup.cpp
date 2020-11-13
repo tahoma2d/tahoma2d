@@ -14,6 +14,7 @@
 #include "toonz/tproject.h"
 #include "toonz/toonzscene.h"
 #include "toonz/sceneresources.h"
+#include "mainwindow.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -173,28 +174,23 @@ void ExportSceneDvDirModelRootNode::add(std::wstring name,
 void ExportSceneDvDirModelRootNode::refreshChildren() {
   m_childrenValid = true;
   m_children.clear();
-  // if(m_children.empty())
-  //{
+
+
   TProjectManager *pm = TProjectManager::instance();
-  std::vector<TFilePath> projectRoots;
-  // pm->getProjectRoots(projectRoots);
-
-  int i;
-  for (i = 0; i < (int)projectRoots.size(); i++) {
-    TFilePath projectRoot = projectRoots[i];
-    ExportSceneDvDirModelSpecialFileFolderNode *projectRootNode =
-        new ExportSceneDvDirModelSpecialFileFolderNode(this, L"Project root",
-                                                       projectRoot);
-    projectRootNode->setPixmap(QPixmap(recolorPixmap(
-        svgToPixmap(getIconThemePath("actions/18/folder_project_root.svg")))));
-    m_projectRootNodes.push_back(projectRootNode);
-    addChild(projectRootNode);
-  }
-
   TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
   m_sandboxProjectNode =
       new ExportSceneDvDirModelProjectNode(this, sandboxProjectPath);
   addChild(m_sandboxProjectNode);
+
+  QList<QString> projects = RecentFiles::instance()->getFilesNameList(RecentFiles::Project);
+  int i;
+  for (auto project : projects) {
+    TFilePath projectRoot(project);
+    if (projectRoot == sandboxProjectPath) continue;
+    ExportSceneDvDirModelProjectNode*projectNode =
+        new ExportSceneDvDirModelProjectNode(this, projectRoot);
+    addChild(projectNode);
+  }
 
   // SVN Repository
   QList<SVNRepository> repositories =
@@ -210,7 +206,6 @@ void ExportSceneDvDirModelRootNode::refreshChildren() {
     node->setPixmap(QPixmap(svgToPixmap(":Resources/vcroot.svg")));
     addChild(node);
   }
-  //}
 }
 
 //-----------------------------------------------------------------------------
@@ -684,7 +679,9 @@ TFilePath ExportScenePopup::createNewProject() {
                        currentProject->getFolder(i));
   project->save(projectPath);
   DvDirModel::instance()->refreshFolder(projectPath.getParentDir());
-
+  std::string newProj = project->getProjectFolder().getQString().toStdString();
+  RecentFiles::instance()->addFilePath(project->getProjectFolder().getQString(), RecentFiles::Project);
+  DvDirModel::instance()->forceRefresh();
   return projectPath;
 }
 

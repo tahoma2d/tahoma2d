@@ -1341,6 +1341,8 @@ void DvDirModel::refreshFolderChild(const QModelIndex &i) {
   for (r = 0; r < count; r++) refreshFolderChild(index(r, 0, i));
 }
 
+//-----------------------------------------------------------------------------
+
 void DvDirModel::forceRefresh() { onSceneSwitched(); }
 
 //-----------------------------------------------------------------------------
