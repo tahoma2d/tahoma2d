@@ -27,6 +27,7 @@
 #include "filebrowsermodel.h"
 #include "xsheetdragtool.h"
 #include "historytypes.h"
+#include "tsystem.h"
 
 // Qt includes
 #include <QHBoxLayout>
@@ -37,6 +38,8 @@
 #include <QPainter>
 #include <QSignalMapper>
 #include <QComboBox>
+#include <QProcess>
+#include <QTextEdit>
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -193,10 +196,15 @@ LipSyncPopup::LipSyncPopup()
 
   m_soundLevels = new QComboBox(this);
   QPushButton* playSound = new QPushButton(tr("Play"), this);
+  QPushButton* generateDatButton = new QPushButton(tr("Generate Data File"), this);
   QHBoxLayout* soundLayout = new QHBoxLayout(this);
+  m_scriptEdit = new QTextEdit(this);
   soundLayout->addWidget(m_soundLevels);
   soundLayout->addWidget(playSound);
+  soundLayout->addWidget(generateDatButton);
   connect(playSound, &QPushButton::pressed, this, &LipSyncPopup::playSound);
+  connect(generateDatButton, &QPushButton::pressed, this, &LipSyncPopup::generateDatFile);
+
   
   for (int i = 0; i < 10; i++) {
     m_pixmaps[i] = QPixmap::fromImage(placeHolder);
@@ -230,6 +238,7 @@ LipSyncPopup::LipSyncPopup()
   m_topLayout->setSpacing(0);
 
   m_topLayout->addLayout(soundLayout);
+  m_topLayout->addWidget(m_scriptEdit);
   {
     QGridLayout *phonemeLay = new QGridLayout();
     phonemeLay->setMargin(10);
@@ -444,6 +453,12 @@ void LipSyncPopup::refreshSoundLevels() {
 }
 
 //-----------------------------------------------------------------------------
+void LipSyncPopup::generateDatFile() {
+    saveAudio();
+    runRhubarb();
+}
+
+//-----------------------------------------------------------------------------
 
 void LipSyncPopup::playSound() {
     int level = m_soundLevels->currentText().toInt();
@@ -452,14 +467,95 @@ void LipSyncPopup::playSound() {
     TXshSoundColumn* sc = col->getSoundColumn();
     if (sc) {
         sc->play();
-        TSoundTrackP st = sc->getCurrentPlaySoundTruck();
-        SoundtrackExport soundSettings;
-        if (soundSettings.hasSoundTrack(level))
-            soundSettings.saveSoundtrack();
     }
 }
 
 //-----------------------------------------------------------------------------
+void LipSyncPopup::saveAudio() {
+    m_audioPath = "";
+    QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
+    if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
+        TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
+    }
+    QString tempPath =
+        TFilePath(cacheRoot + "/rhubarb/temp.wav").getQString();
+    std::string tempSString = tempPath.toStdString();
+
+    int level = m_soundLevels->currentText().toInt();
+    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn* col = xsh->getColumn(level);
+    TXshSoundColumn* sc = col->getSoundColumn();
+    if (sc) {
+        //TSoundTrackP st = sc->getCurrentPlaySoundTruck();
+        SoundtrackExport soundSettings;
+        if (soundSettings.hasSoundTrack(level)) {
+            soundSettings.saveSoundtrack(tempPath);
+            m_audioPath = tempPath;
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void LipSyncPopup::runRhubarb() {
+    QString path = QDir::currentPath() + "/rhubarb/rhubarb";
+#if defined(_WIN32)
+    path = path + ".exe";
+#endif
+    std::string sPath = path.toStdString();
+    if (!TSystem::doesExistFileOrLevel(TFilePath(path))) {
+        DVGui::warning(tr("Rhubarb not found.  Please check the installation and try again."));
+        return;
+    }
+
+#ifdef MACOSX
+    path = QDir::currentPath() + "/" +
+        QString::fromStdString(TEnv::getApplicationFileName()) +
+        ".app/rhubarb/rhubarb";
+    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+        DVGui::warning(tr("Rhubarb not found.  Please check the installation and try again."));
+        return;
+    }
+#endif
+
+    QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
+    if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
+        TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
+    }
+    m_datPath = TFilePath(cacheRoot + "/rhubarb/temp.dat");
+    QString datPath = m_datPath.getQString();
+    std::string tempDatString = datPath.toStdString();
+
+    QStringList args;
+    args << "-o" << datPath << "-f" << "dat" << "--datUsePrestonBlair";
+    if (m_scriptEdit->toPlainText() != "") {
+        QString script = m_scriptEdit->toPlainText();
+        const QString qPath("testQTextStreamEncoding.txt");
+        QString scriptPath = TFilePath(cacheRoot + "/rhubarb/script.txt").getQString();
+
+        QFile qFile(scriptPath);
+        if (qFile.open(QIODevice::WriteOnly)) {
+            QTextStream out(&qFile); 
+            out << script;
+            qFile.close();
+            args << "-d" << scriptPath;
+        }
+    }
+    args << m_audioPath;
+    QProcess rhubarb;
+    rhubarb.start(path, args);
+
+    rhubarb.waitForFinished();
+    QString results = rhubarb.readAllStandardError();
+    results += rhubarb.readAllStandardOutput();
+    rhubarb.close();
+    std::string strResults = results.toStdString();
+    m_file->setPath(datPath);
+    m_applyButton->setEnabled(true);
+    int j = 0;
+}
+
+//-----------------------------------------------------------------------------
+
 
 void LipSyncPopup::onApplyButton() {
   if (!m_valid || (!m_sl && !m_cl)) {

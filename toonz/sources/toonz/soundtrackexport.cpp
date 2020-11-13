@@ -70,12 +70,21 @@ void SoundtrackExport::makeSoundtrack(int r0, int r1, double fps) {
   m_whiteSample = 0;
 }
 
-void SoundtrackExport::saveSoundtrack() {
+void SoundtrackExport::saveSoundtrack(QString path) {
   if (!m_st) {
-    GenericSaveFilePopup *m_saveShortcutsPopup =
-        new GenericSaveFilePopup("Export Soundtrack");
-    m_saveShortcutsPopup->addFilterType("wav");
-    TFilePath fp = m_saveShortcutsPopup->getPath();
+      TFilePath fp = TFilePath();
+      if (path == "") {
+          GenericSaveFilePopup* m_saveShortcutsPopup =
+              new GenericSaveFilePopup("Export Soundtrack");
+          m_saveShortcutsPopup->addFilterType("wav");
+          fp = m_saveShortcutsPopup->getPath();
+      }
+      else {
+          TFilePath tempPath(path);
+          if (TSystem::doesExistFileOrLevel(tempPath.getParentDir())) {
+              fp = tempPath;
+          }
+      }
     if (fp == TFilePath()) return;
 
     TSceneProperties *sprop = m_scene->getProperties();

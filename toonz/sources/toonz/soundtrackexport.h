@@ -21,7 +21,7 @@ public:
   SoundtrackExport();
   bool hasSoundTrack(int col = -1);
   void makeSoundtrack(int r0, int r1, double fps);
-  void saveSoundtrack();
+  void saveSoundtrack(QString path = "");
 
 protected:
   bool m_hasSoundtrack;
