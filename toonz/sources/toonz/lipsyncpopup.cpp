@@ -198,43 +198,46 @@ LipSyncPopup::LipSyncPopup()
   m_otherLabel = new QLabel(tr("C D G K N R S Th Y Z"));
   m_startAt    = new DVGui::IntLineEdit(this, 0);
   m_restToEnd  = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
-  
+
   m_rhubarb = new QProcess(this);
-  m_player = new QMediaPlayer(this);
-  m_progressDialog = new DVGui::ProgressDialog("Analyzing audio...", "", 1, 100, this);
+  m_player  = new QMediaPlayer(this);
+  m_progressDialog =
+      new DVGui::ProgressDialog("Analyzing audio...", "", 1, 100, this);
   m_progressDialog->hide();
-  
+
   QImage placeHolder(160, 90, QImage::Format_ARGB32);
   placeHolder.fill(Qt::white);
   m_soundLevels = new QComboBox(this);
-  m_playButton = new QPushButton(tr(""), this);
-  m_playIcon = createQIcon("play");
-  m_stopIcon = createQIcon("stop");
+  m_playButton  = new QPushButton(tr(""), this);
+  m_playIcon    = createQIcon("play");
+  m_stopIcon    = createQIcon("stop");
   m_playButton->setIcon(m_playIcon);
-  QPushButton* generateDatButton = new QPushButton(tr("Generate Data File"), this);
-  QGridLayout* rhubarbLayout = new QGridLayout(this);
-  m_scriptEdit = new QTextEdit(this);
-  QHBoxLayout* soundLayout = new QHBoxLayout(this);
-  soundLayout->addWidget(new QLabel(tr("Column: "), this));
+  m_generateDatButton        = new QPushButton(tr("Generate Data File"), this);
+  QGridLayout *rhubarbLayout = new QGridLayout(this);
+  m_scriptEdit               = new QTextEdit(this);
+  QHBoxLayout *soundLayout   = new QHBoxLayout(this);
+  m_columnLabel              = new QLabel(tr("Column: "), this);
+  soundLayout->addWidget(m_columnLabel);
   soundLayout->addWidget(m_soundLevels);
   soundLayout->addWidget(m_playButton);
   soundLayout->addStretch();
   rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
-  QLabel *scriptLabel = new QLabel(tr("Script: "), this);
-  scriptLabel->setToolTip(tr("A script significantly increases the accuracy of the lip sync."));
+  m_scriptLabel = new QLabel(tr("Script: "), this);
+  m_scriptLabel->setToolTip(
+      tr("A script significantly increases the accuracy of the lip sync."));
 
   m_audioFile = new DVGui::FileField(this, QString(""));
   m_audioFile->setFileMode(QFileDialog::ExistingFile);
   QStringList audioFilters;
   audioFilters << "wav"
-      << "aiff";
+               << "aiff";
   m_audioFile->setFilters(QStringList(audioFilters));
   m_audioFile->setMinimumWidth(500);
 
   rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
-  rhubarbLayout->addWidget(scriptLabel, 2, 0, 1, 3);
+  rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
   rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
-  rhubarbLayout->addWidget(generateDatButton, 4, 4);
+  rhubarbLayout->addWidget(m_generateDatButton, 4, 4);
   rhubarbLayout->setSpacing(4);
   rhubarbLayout->setMargin(10);
 
@@ -415,10 +418,12 @@ LipSyncPopup::LipSyncPopup()
         connect(m_file, SIGNAL(pathChanged()), this, SLOT(onPathChanged()));
   ret = ret && connect(m_startAt, SIGNAL(editingFinished()), this,
                        SLOT(onStartValueChanged()));
-  ret = ret && connect(m_playButton, &QPushButton::pressed, this, &LipSyncPopup::playSound);
-  ret = ret && connect(generateDatButton, &QPushButton::pressed, this, &LipSyncPopup::generateDatFile);
+  ret = ret && connect(m_playButton, &QPushButton::pressed, this,
+                       &LipSyncPopup::playSound);
+  ret = ret && connect(m_generateDatButton, &QPushButton::pressed, this,
+                       &LipSyncPopup::generateDatFile);
   ret = ret && connect(m_soundLevels, SIGNAL(currentIndexChanged(int)), this,
-      SLOT(onLevelChanged(int)));
+                       SLOT(onLevelChanged(int)));
 
   assert(ret);
 }
@@ -472,207 +477,251 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   }
   refreshSoundLevels();
   onLevelChanged(-1);
+  findRhubarb();
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::refreshSoundLevels() {
-    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    m_soundLevels->clear();
-    int colCount = xsh->getColumnCount();
-    for (int i = 0; i < colCount; i++) {
-        TXshColumn* col = xsh->getColumn(i);
-        if (col->getSoundColumn()) {
-            m_soundLevels->addItem(QString::number(i + 1));
-        }
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_soundLevels->clear();
+  int colCount = xsh->getColumnCount();
+  for (int i = 0; i < colCount; i++) {
+    TXshColumn *col = xsh->getColumn(i);
+    if (col->getSoundColumn()) {
+      m_soundLevels->addItem(QString::number(i + 1));
     }
-    m_soundLevels->addItem(tr("Choose File"));
+  }
+  m_soundLevels->addItem(tr("Choose File"));
 }
 
 //-----------------------------------------------------------------------------
 void LipSyncPopup::generateDatFile() {
-    m_audioPath = "";
-    m_startFrame = -1;
-    m_deleteFile = false;
-    if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
-        saveAudio();
-        m_deleteFile = true;
-    }
-    else m_audioPath = m_audioFile->getPath();
-    runRhubarb();
+  m_audioPath  = "";
+  m_startFrame = -1;
+  m_deleteFile = false;
+  if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+    saveAudio();
+    m_deleteFile = true;
+  } else
+    m_audioPath = m_audioFile->getPath();
+  if (m_audioPath == "" ||
+      !TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) {
+    DVGui::warning(tr("Please choose an audio file and try again."));
+    return;
+  }
+  runRhubarb();
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::playSound() {
-    int count = m_soundLevels->count();
-    if (count - 1 != m_soundLevels->currentIndex()) {
-        int level = m_soundLevels->currentText().toInt() - 1;
-        TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-        TXshColumn* col = xsh->getColumn(level);
-        TXshSoundColumn* sc = col->getSoundColumn();
-        if (sc) {
-            int r0, r1;
-            xsh->getCellRange(level, r0, r1);
-            sc->play(r0);
-        }
+  int count = m_soundLevels->count();
+  if (count - 1 != m_soundLevels->currentIndex()) {
+    int level           = m_soundLevels->currentText().toInt() - 1;
+    TXsheet *xsh        = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *col     = xsh->getColumn(level);
+    TXshSoundColumn *sc = col->getSoundColumn();
+    if (sc) {
+      int r0, r1;
+      xsh->getCellRange(level, r0, r1);
+      sc->play(r0);
     }
-    else {
-        if (m_player->state() == QMediaPlayer::StoppedState) {
-            m_player->setMedia(QUrl::fromLocalFile(m_audioFile->getPath()));
-            m_player->setVolume(50);
-            m_player->setNotifyInterval(20);
-            connect(m_player, SIGNAL(positionChanged(qint64)), this,
-                SLOT(updatePlaybackDuration(qint64)));
-            connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), this,
-                SLOT(onMediaStateChanged(QMediaPlayer::State)));
-            m_playButton->setIcon(m_stopIcon);
+  } else {
+    if (m_player->state() == QMediaPlayer::StoppedState) {
+      m_player->setMedia(QUrl::fromLocalFile(m_audioFile->getPath()));
+      m_player->setVolume(50);
+      m_player->setNotifyInterval(20);
+      connect(m_player, SIGNAL(positionChanged(qint64)), this,
+              SLOT(updatePlaybackDuration(qint64)));
+      connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), this,
+              SLOT(onMediaStateChanged(QMediaPlayer::State)));
+      m_playButton->setIcon(m_stopIcon);
 
-            //m_stoppedAtEnd = false;
-            m_player->play();
-        }
-        else {
-            m_player->stop();
-            m_playButton->setIcon(m_playIcon);
-        }
+      // m_stoppedAtEnd = false;
+      m_player->play();
+    } else {
+      m_player->stop();
+      m_playButton->setIcon(m_playIcon);
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onMediaStateChanged(QMediaPlayer::State state) {
-    // stopping can happen through the stop button or the file ending
-    if (state == QMediaPlayer::StoppedState) {
-        m_playButton->setIcon(m_playIcon);
-    }
+  // stopping can happen through the stop button or the file ending
+  if (state == QMediaPlayer::StoppedState) {
+    m_playButton->setIcon(m_playIcon);
+  }
 }
 
 //-----------------------------------------------------------------------------
 void LipSyncPopup::saveAudio() {
-    QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
-    if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
-        TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
-    }
-    TFilePath audioPath =
-        TFilePath(cacheRoot + "/rhubarb/temp.wav");
-    std::string tempSString = audioPath.getQString().toStdString();
+  QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
+  if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
+    TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
+  }
+  TFilePath audioPath     = TFilePath(cacheRoot + "/rhubarb/temp.wav");
+  std::string tempSString = audioPath.getQString().toStdString();
 
-    int level = m_soundLevels->currentText().toInt() - 1;
-    TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    TXshColumn* col = xsh->getColumn(level);
-    TXshSoundColumn* sc = col->getSoundColumn();
-    if (sc) {
-
-        int r0, r1;
-        xsh->getCellRange(level, r0, r1);
-        TSoundTrackP st = sc->getOverallSoundTrack(r0);
-        TSoundTrackWriter::save(audioPath, st);
-        m_audioPath = audioPath.getQString();
-        m_startFrame = r0 + 1;
-    }
+  int level           = m_soundLevels->currentText().toInt() - 1;
+  TXsheet *xsh        = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TXshColumn *col     = xsh->getColumn(level);
+  TXshSoundColumn *sc = col->getSoundColumn();
+  if (sc) {
+    int r0, r1;
+    xsh->getCellRange(level, r0, r1);
+    TSoundTrackP st = sc->getOverallSoundTrack(r0);
+    TSoundTrackWriter::save(audioPath, st);
+    m_audioPath  = audioPath.getQString();
+    m_startFrame = r0 + 1;
+  }
 }
 
 //-----------------------------------------------------------------------------
-void LipSyncPopup::runRhubarb() {
-    QString path = QDir::currentPath() + "/rhubarb/rhubarb";
+
+QString LipSyncPopup::findRhubarb() {
+  QString path = QDir::currentPath() + "/rhubarb/rhubarb";
+  bool found   = false;
 #if defined(_WIN32)
-    path = path + ".exe";
+  path = path + ".exe";
 #endif
-    std::string sPath = path.toStdString();
-    if (!TSystem::doesExistFileOrLevel(TFilePath(path))) {
-        DVGui::warning(tr("Rhubarb not found.  Please check the installation and try again."));
-        return;
-    }
 
 #ifdef MACOSX
-    path = QDir::currentPath() + "/" +
-        QString::fromStdString(TEnv::getApplicationFileName()) +
-        ".app/rhubarb/rhubarb";
-    if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-        DVGui::warning(tr("Rhubarb not found.  Please check the installation and try again."));
-        return;
-    }
+  path = QDir::currentPath() + "/" +
+         QString::fromStdString(TEnv::getApplicationFileName()) +
+         ".app/rhubarb/rhubarb";
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    found = true;
+  }
+
 #endif
 
-    QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
-    if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
-        TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
+  std::string sPath = path.toStdString();
+  if (!found && TSystem::doesExistFileOrLevel(TFilePath(path))) {
+    found = true;
+  }
+
+  if (found) {
+    m_soundLevels->show();
+    m_playButton->show();
+    m_generateDatButton->show();
+    m_scriptLabel->show();
+    m_scriptEdit->show();
+    m_columnLabel->show();
+    int index = m_soundLevels->currentIndex();
+    int count = m_soundLevels->count();
+    if (index == count - 1) {
+      m_audioFile->show();
+    } else {
+      m_audioFile->hide();
     }
-    m_datPath = TFilePath(cacheRoot + "/rhubarb/temp.dat");
-    QString datPath = m_datPath.getQString();
-    std::string tempDatString = datPath.toStdString();
+    return path;
+  } else {
+    m_soundLevels->hide();
+    m_playButton->hide();
+    m_generateDatButton->hide();
+    m_scriptLabel->hide();
+    m_scriptEdit->hide();
+    m_columnLabel->hide();
+    m_audioFile->hide();
+    return QString("");
+  }
+}
 
-    QStringList args;
-    args << "-o" << datPath << "-f" << "dat" << "--datUsePrestonBlair";
-    if (m_scriptEdit->toPlainText() != "") {
-        QString script = m_scriptEdit->toPlainText();
-        const QString qPath("testQTextStreamEncoding.txt");
-        QString scriptPath = TFilePath(cacheRoot + "/rhubarb/script.txt").getQString();
+//-----------------------------------------------------------------------------
 
-        QFile qFile(scriptPath);
-        if (qFile.open(QIODevice::WriteOnly)) {
-            QTextStream out(&qFile); 
-            out << script;
-            qFile.close();
-            args << "-d" << scriptPath;
-        }
+void LipSyncPopup::runRhubarb() {
+  QString path = findRhubarb();
+
+  QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
+  if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
+    TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
+  }
+  m_datPath                 = TFilePath(cacheRoot + "/rhubarb/temp.dat");
+  QString datPath           = m_datPath.getQString();
+  std::string tempDatString = datPath.toStdString();
+
+  QStringList args;
+  args << "-o" << datPath << "-f"
+       << "dat"
+       << "--datUsePrestonBlair";
+  if (m_scriptEdit->toPlainText() != "") {
+    QString script = m_scriptEdit->toPlainText();
+    const QString qPath("testQTextStreamEncoding.txt");
+    QString scriptPath =
+        TFilePath(cacheRoot + "/rhubarb/script.txt").getQString();
+
+    QFile qFile(scriptPath);
+    if (qFile.open(QIODevice::WriteOnly)) {
+      QTextStream out(&qFile);
+      out << script;
+      qFile.close();
+      args << "-d" << scriptPath;
     }
+  }
 
-    int frameRate = std::rint(TApp::instance()->getCurrentScene()->getScene()->getProperties()->getOutputProperties()->getFrameRate());
-    args << "--datFrameRate" << QString::number(frameRate) << "--machineReadable";
+  int frameRate = std::rint(TApp::instance()
+                                ->getCurrentScene()
+                                ->getScene()
+                                ->getProperties()
+                                ->getOutputProperties()
+                                ->getFrameRate());
+  args << "--datFrameRate" << QString::number(frameRate) << "--machineReadable";
 
-    args << m_audioPath;
-    m_progressDialog->show();
-    connect(m_rhubarb, &QProcess::readyReadStandardError, this, &LipSyncPopup::onOutputReady);
-    connect(m_rhubarb, qOverload<int, QProcess::ExitStatus >(&QProcess::finished), this, &LipSyncPopup::onProcessFinished);
-    m_rhubarb->start(path, args);
-    
+  args << m_audioPath;
+  m_progressDialog->show();
+  connect(m_rhubarb, &QProcess::readyReadStandardError, this,
+          &LipSyncPopup::onOutputReady);
+  connect(m_rhubarb,
+          QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+          &LipSyncPopup::onProcessFinished);
+  m_rhubarb->start(path, args);
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onProcessFinished() {
-    //rhubarb->waitForFinished();
-    m_progressDialog->hide();
-    QString results = m_rhubarb->readAllStandardError();
-    results += m_rhubarb->readAllStandardOutput();
-    m_rhubarb->close();
-    delete m_rhubarb;
-    std::string strResults = results.toStdString();
-    m_file->setPath(m_datPath.getQString());
-    onPathChanged();
-    m_startAt->setValue(std::max(1, m_startFrame));
+  // rhubarb->waitForFinished();
+  m_progressDialog->hide();
+  QString results = m_rhubarb->readAllStandardError();
+  results += m_rhubarb->readAllStandardOutput();
+  m_rhubarb->close();
+  delete m_rhubarb;
+  std::string strResults = results.toStdString();
+  m_file->setPath(m_datPath.getQString());
+  onPathChanged();
+  m_startAt->setValue(std::max(1, m_startFrame));
 
-    if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) TSystem::deleteFile(TFilePath(m_audioPath));
-    m_deleteFile = false;
+  if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath)))
+    TSystem::deleteFile(TFilePath(m_audioPath));
+  m_deleteFile = false;
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onOutputReady() {
-    QString output = m_rhubarb->readAllStandardError().simplified();
-    int index = output.lastIndexOf("%");
-    QString newString = output.mid(index - 2, 2);
-    m_progressDialog->setValue(newString.toInt());
-    qDebug() << "output: " << output;
+  QString output    = m_rhubarb->readAllStandardError().simplified();
+  int index         = output.lastIndexOf("%");
+  QString newString = output.mid(index - 2, 2);
+  m_progressDialog->setValue(newString.toInt());
+  qDebug() << "output: " << output;
 }
 
 //-----------------------------------------------------------------------------
-
 
 void LipSyncPopup::onLevelChanged(int index) {
-    index = m_soundLevels->currentIndex();
-    int count = m_soundLevels->count();
-    if (index == count - 1) {
-        m_audioFile->show();
-    }
-    else {
-        m_audioFile->hide();
-    }
+  index     = m_soundLevels->currentIndex();
+  int count = m_soundLevels->count();
+  if (index == count - 1) {
+    m_audioFile->show();
+  } else {
+    m_audioFile->hide();
+  }
 }
 
 //-----------------------------------------------------------------------------
-
 
 void LipSyncPopup::onApplyButton() {
   if (!m_valid || (!m_sl && !m_cl)) {

@@ -32,7 +32,7 @@ SoundtrackExport::SoundtrackExport() {
 bool SoundtrackExport::hasSoundTrack(int col) {
   TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
   TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-  m_sound                        = xsheetHandle->getXsheet()->makeSound(prop, col);
+  m_sound = xsheetHandle->getXsheet()->makeSound(prop, col);
   if (m_sound == NULL) {
     m_hasSoundtrack = false;
     return false;
@@ -72,19 +72,18 @@ void SoundtrackExport::makeSoundtrack(int r0, int r1, double fps) {
 
 void SoundtrackExport::saveSoundtrack(QString path) {
   if (!m_st) {
-      TFilePath fp = TFilePath();
-      if (path == "") {
-          GenericSaveFilePopup* m_saveShortcutsPopup =
-              new GenericSaveFilePopup("Export Soundtrack");
-          m_saveShortcutsPopup->addFilterType("wav");
-          fp = m_saveShortcutsPopup->getPath();
+    TFilePath fp = TFilePath();
+    if (path == "") {
+      GenericSaveFilePopup *m_saveShortcutsPopup =
+          new GenericSaveFilePopup("Export Soundtrack");
+      m_saveShortcutsPopup->addFilterType("wav");
+      fp = m_saveShortcutsPopup->getPath();
+    } else {
+      TFilePath tempPath(path);
+      if (TSystem::doesExistFileOrLevel(tempPath.getParentDir())) {
+        fp = tempPath;
       }
-      else {
-          TFilePath tempPath(path);
-          if (TSystem::doesExistFileOrLevel(tempPath.getParentDir())) {
-              fp = tempPath;
-          }
-      }
+    }
     if (fp == TFilePath()) return;
 
     TSceneProperties *sprop = m_scene->getProperties();

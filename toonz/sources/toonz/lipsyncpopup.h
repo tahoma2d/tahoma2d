@@ -40,8 +40,8 @@ class LipSyncPopup final : public DVGui::Dialog {
   QLabel *m_fvLabel;
   QLabel *m_restLabel;
   QLabel *m_otherLabel;
-  QComboBox* m_soundLevels;
-  QTextEdit* m_scriptEdit;
+  QComboBox *m_soundLevels;
+  QTextEdit *m_scriptEdit;
   QIcon m_playIcon, m_stopIcon;
 
   QLabel *m_imageLabels[10];
@@ -60,16 +60,19 @@ class LipSyncPopup final : public DVGui::Dialog {
   DVGui::IntLineEdit *m_startAt;
   int m_col;
   int m_startFrame = -1;
-  bool m_valid = false;
+  bool m_valid     = false;
   bool m_isEditingLevel;
   QStringList m_textLines;
   QCheckBox *m_restToEnd;
   QString m_audioPath;
   TFilePath m_datPath;
-  QMediaPlayer* m_player;
+  QMediaPlayer *m_player;
+  QLabel *m_scriptLabel;
+  QLabel *m_columnLabel;
+  QPushButton *m_generateDatButton;
   bool m_deleteFile = false;
   DVGui::ProgressDialog *m_progressDialog;
-  QProcess* m_rhubarb;
+  QProcess *m_rhubarb;
 
 public:
   LipSyncPopup();
@@ -80,6 +83,7 @@ protected:
   void refreshSoundLevels();
   void saveAudio();
   void runRhubarb();
+  QString findRhubarb();
 
 public slots:
   void onApplyButton();
