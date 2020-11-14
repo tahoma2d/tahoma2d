@@ -688,7 +688,6 @@ void LipSyncPopup::onProcessFinished() {
   QString results = m_rhubarb->readAllStandardError();
   results += m_rhubarb->readAllStandardOutput();
   m_rhubarb->close();
-  delete m_rhubarb;
   std::string strResults = results.toStdString();
   m_file->setPath(m_datPath.getQString());
   onPathChanged();
