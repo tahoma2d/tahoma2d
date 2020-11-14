@@ -46,6 +46,7 @@
 #include <QTextEdit>
 #include <QIcon>
 #include <QAudio>
+#include <QGroupBox>
 
 //=============================================================================
 /*! \class LipSyncPopup
@@ -212,17 +213,20 @@ LipSyncPopup::LipSyncPopup()
   m_playIcon    = createQIcon("play");
   m_stopIcon    = createQIcon("stop");
   m_playButton->setIcon(m_playIcon);
-  m_generateDatButton        = new QPushButton(tr("Generate Data File"), this);
+  m_generateDatButton =
+      new QPushButton(tr("Generate Lip Sync Data File"), this);
   QGridLayout *rhubarbLayout = new QGridLayout(this);
   m_scriptEdit               = new QTextEdit(this);
-  QHBoxLayout *soundLayout   = new QHBoxLayout(this);
-  m_columnLabel              = new QLabel(tr("Column: "), this);
+  m_scriptEdit->setFixedHeight(80);
+  QHBoxLayout *soundLayout = new QHBoxLayout(this);
+  m_columnLabel            = new QLabel(tr("Audio Source: "), this);
   soundLayout->addWidget(m_columnLabel);
   soundLayout->addWidget(m_soundLevels);
   soundLayout->addWidget(m_playButton);
   soundLayout->addStretch();
   rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
-  m_scriptLabel = new QLabel(tr("Script: "), this);
+  m_scriptLabel =
+      new QLabel(tr("Audio Script (Optional, Improves accuracy): "), this);
   m_scriptLabel->setToolTip(
       tr("A script significantly increases the accuracy of the lip sync."));
 
@@ -237,9 +241,16 @@ LipSyncPopup::LipSyncPopup()
   rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
   rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
   rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
-  rhubarbLayout->addWidget(m_generateDatButton, 4, 4);
+  rhubarbLayout->addWidget(m_generateDatButton, 4, 3, 1, 2);
   rhubarbLayout->setSpacing(4);
   rhubarbLayout->setMargin(10);
+
+  m_rhubarbBox = new QGroupBox(tr("Generate from Audio File"), this);
+  m_rhubarbBox->setLayout(rhubarbLayout);
+
+  QHBoxLayout *boxHolder = new QHBoxLayout(this);
+  boxHolder->addWidget(m_rhubarbBox);
+  boxHolder->setMargin(8);
 
   for (int i = 0; i < 10; i++) {
     m_pixmaps[i] = QPixmap::fromImage(placeHolder);
@@ -272,7 +283,7 @@ LipSyncPopup::LipSyncPopup()
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
 
-  m_topLayout->addLayout(rhubarbLayout);
+  m_topLayout->addLayout(boxHolder);
   {
     QGridLayout *phonemeLay = new QGridLayout();
     phonemeLay->setMargin(10);
@@ -393,7 +404,9 @@ LipSyncPopup::LipSyncPopup()
   m_buttonLayout->setSpacing(10);
   {
     QHBoxLayout *fileLay = new QHBoxLayout();
-    fileLay->addWidget(new QLabel(tr("Lip Sync Data File: ")), Qt::AlignLeft);
+    QLabel *pathLabel    = new QLabel(tr("Lip Sync Data File: "), this);
+    pathLabel->setStyleSheet("background: rgba(0, 0, 0, 0);");
+    fileLay->addWidget(pathLabel, Qt::AlignLeft);
     fileLay->addWidget(m_file);
     m_buttonLayout->addLayout(fileLay);
     m_buttonLayout->addStretch();
@@ -424,6 +437,8 @@ LipSyncPopup::LipSyncPopup()
                        &LipSyncPopup::generateDatFile);
   ret = ret && connect(m_soundLevels, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onLevelChanged(int)));
+  ret = ret && connect(m_scriptEdit, &QTextEdit::textChanged,
+                       [=]() { m_generateDatButton->setEnabled(true); });
 
   assert(ret);
 }
@@ -477,6 +492,7 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   }
   refreshSoundLevels();
   onLevelChanged(-1);
+  m_generateDatButton->setEnabled(true);
   findRhubarb();
 }
 
@@ -489,7 +505,7 @@ void LipSyncPopup::refreshSoundLevels() {
   for (int i = 0; i < colCount; i++) {
     TXshColumn *col = xsh->getColumn(i);
     if (col->getSoundColumn()) {
-      m_soundLevels->addItem(QString::number(i + 1));
+      m_soundLevels->addItem(tr("Column ") + QString::number(i + 1));
     }
   }
   m_soundLevels->addItem(tr("Choose File"));
@@ -518,9 +534,9 @@ void LipSyncPopup::generateDatFile() {
 void LipSyncPopup::playSound() {
   int count = m_soundLevels->count();
   if (count - 1 != m_soundLevels->currentIndex()) {
-    int level           = m_soundLevels->currentText().toInt() - 1;
-    TXsheet *xsh        = TApp::instance()->getCurrentXsheet()->getXsheet();
-    TXshColumn *col     = xsh->getColumn(level);
+    int level       = m_soundLevels->currentText().split(" ")[1].toInt() - 1;
+    TXsheet *xsh    = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *col = xsh->getColumn(level);
     TXshSoundColumn *sc = col->getSoundColumn();
     if (sc) {
       int r0, r1;
@@ -565,7 +581,7 @@ void LipSyncPopup::saveAudio() {
   TFilePath audioPath     = TFilePath(cacheRoot + "/rhubarb/temp.wav");
   std::string tempSString = audioPath.getQString().toStdString();
 
-  int level           = m_soundLevels->currentText().toInt() - 1;
+  int level           = m_soundLevels->currentText().split(" ")[1].toInt() - 1;
   TXsheet *xsh        = TApp::instance()->getCurrentXsheet()->getXsheet();
   TXshColumn *col     = xsh->getColumn(level);
   TXshSoundColumn *sc = col->getSoundColumn();
@@ -604,12 +620,7 @@ QString LipSyncPopup::findRhubarb() {
   }
 
   if (found) {
-    m_soundLevels->show();
-    m_playButton->show();
-    m_generateDatButton->show();
-    m_scriptLabel->show();
-    m_scriptEdit->show();
-    m_columnLabel->show();
+    m_rhubarbBox->show();
     int index = m_soundLevels->currentIndex();
     int count = m_soundLevels->count();
     if (index == count - 1) {
@@ -619,13 +630,7 @@ QString LipSyncPopup::findRhubarb() {
     }
     return path;
   } else {
-    m_soundLevels->hide();
-    m_playButton->hide();
-    m_generateDatButton->hide();
-    m_scriptLabel->hide();
-    m_scriptEdit->hide();
-    m_columnLabel->hide();
-    m_audioFile->hide();
+    m_rhubarbBox->hide();
     return QString("");
   }
 }
@@ -696,6 +701,7 @@ void LipSyncPopup::onProcessFinished() {
   if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath)))
     TSystem::deleteFile(TFilePath(m_audioPath));
   m_deleteFile = false;
+  m_generateDatButton->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -718,6 +724,7 @@ void LipSyncPopup::onLevelChanged(int index) {
   } else {
     m_audioFile->hide();
   }
+  m_generateDatButton->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------

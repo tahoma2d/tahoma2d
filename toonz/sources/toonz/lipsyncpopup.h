@@ -22,6 +22,7 @@ class QComboBox;
 class QTextEdit;
 class QIcon;
 class QProcess;
+class QGroupBox;
 
 //=============================================================================
 // LipSyncPopup
@@ -70,6 +71,7 @@ class LipSyncPopup final : public DVGui::Dialog {
   QLabel *m_scriptLabel;
   QLabel *m_columnLabel;
   QPushButton *m_generateDatButton;
+  QGroupBox *m_rhubarbBox;
   bool m_deleteFile = false;
   DVGui::ProgressDialog *m_progressDialog;
   QProcess *m_rhubarb;
