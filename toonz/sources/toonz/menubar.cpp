@@ -8,6 +8,7 @@
 #include "cellselection.h"
 #include "mainwindow.h"
 #include "docklayout.h"
+#include "shortcutpopup.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -224,7 +225,7 @@ void RoomTabWidget::setIsLocked(bool lock) {
 
 void TopBar::loadMenubar() {
   // Menu' FILE
-  QMenu *fileMenu = addMenu(tr("File"), m_menuBar);
+  QMenu *fileMenu = addMenu(ShortcutTree::tr("File"), m_menuBar);
   addMenuItem(fileMenu, MI_NewScene);
   addMenuItem(fileMenu, MI_LoadScene);
   addMenuItem(fileMenu, MI_SaveAll);
@@ -280,7 +281,7 @@ void TopBar::loadMenubar() {
   addMenuItem(fileMenu, MI_Quit);
 
   // Menu' EDIT
-  QMenu *editMenu = addMenu(tr("Edit"), m_menuBar);
+  QMenu *editMenu = addMenu(ShortcutTree::tr("Edit"), m_menuBar);
   addMenuItem(editMenu, MI_Undo);
   addMenuItem(editMenu, MI_Redo);
   editMenu->addSeparator();
@@ -315,7 +316,7 @@ void TopBar::loadMenubar() {
   }
 
   // Menu' Scene
-  QMenu *sceneMenu = addMenu(tr("Scene"), m_menuBar);
+  QMenu *sceneMenu = addMenu(ShortcutTree::tr("Scene"), m_menuBar);
   addMenuItem(sceneMenu, MI_SceneSettings);
   addMenuItem(sceneMenu, MI_CameraSettings);
   sceneMenu->addSeparator();
@@ -348,7 +349,7 @@ void TopBar::loadMenubar() {
   addMenuItem(sceneMenu, MI_RemoveEmptyColumns);
 
   // Menu' LEVEL
-  QMenu *levelMenu = addMenu(tr("Level"), m_menuBar);
+  QMenu *levelMenu = addMenu(ShortcutTree::tr("Level"), m_menuBar);
   QMenu *newMenu   = levelMenu->addMenu(tr("New"));
   {
     addMenuItem(newMenu, MI_NewLevel);
@@ -404,7 +405,7 @@ void TopBar::loadMenubar() {
   addMenuItem(levelMenu, MI_RemoveUnused);
 
   // Menu' CELLS
-  QMenu *cellsMenu = addMenu(tr("Cells"), m_menuBar);
+  QMenu *cellsMenu = addMenu(ShortcutTree::tr("Cells"), m_menuBar);
   addMenuItem(cellsMenu, MI_Reverse);
   addMenuItem(cellsMenu, MI_Swing);
   addMenuItem(cellsMenu, MI_Random);
@@ -456,7 +457,7 @@ void TopBar::loadMenubar() {
   addMenuItem(cellsMenu, MI_FillEmptyCell);
 
   // Menu' PLAY
-  QMenu *playMenu = addMenu(tr("Play"), m_menuBar);
+  QMenu *playMenu = addMenu(ShortcutTree::tr("Play"), m_menuBar);
   addMenuItem(playMenu, MI_Play);
   addMenuItem(playMenu, MI_Pause);
   addMenuItem(playMenu, MI_Loop);
@@ -476,7 +477,7 @@ void TopBar::loadMenubar() {
   addMenuItem(playMenu, MI_Link);
 
   // Menu' RENDER
-  QMenu *renderMenu = addMenu(tr("Render"), m_menuBar);
+  QMenu *renderMenu = addMenu(ShortcutTree::tr("Render"), m_menuBar);
   addMenuItem(renderMenu, MI_PreviewSettings);
   addMenuItem(renderMenu, MI_Preview);
   // addMenuItem(renderMenu, MI_SavePreview);
@@ -489,14 +490,14 @@ void TopBar::loadMenubar() {
   addMenuItem(renderMenu, MI_FastRender);
 
   // Menu' SCAN CLEANUP
-  QMenu *scanCleanupMenu = addMenu(tr("Cleanup"), m_menuBar);
+  QMenu *scanCleanupMenu = addMenu(ShortcutTree::tr("Cleanup"), m_menuBar);
   addMenuItem(scanCleanupMenu, MI_CleanupSettings);
   addMenuItem(scanCleanupMenu, MI_CleanupPreview);
   addMenuItem(scanCleanupMenu, MI_CameraTest);
   addMenuItem(scanCleanupMenu, MI_Cleanup);
 
   // Menu' VIEW
-  QMenu *viewMenu = addMenu(tr("View"), m_menuBar);
+  QMenu *viewMenu = addMenu(ShortcutTree::tr("View"), m_menuBar);
   addMenuItem(viewMenu, MI_ViewTable);
   addMenuItem(viewMenu, MI_ViewCamera);
   addMenuItem(viewMenu, MI_ViewColorcard);
@@ -532,7 +533,7 @@ void TopBar::loadMenubar() {
   addMenuItem(viewMenu, MI_FullScreenWindow);
 
   // Menu' WINDOWS
-  QMenu *windowsMenu = addMenu(tr("Panels"), m_menuBar);
+  QMenu *windowsMenu = addMenu(ShortcutTree::tr("Panels"), m_menuBar);
   // QMenu *workspaceMenu = windowsMenu->addMenu(tr("Workspace"));
   //{
   //  addMenuItem(workspaceMenu, MI_DockingCheck);
@@ -580,7 +581,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_ResetRoomLayout);
 
   // Menu' HELP
-  QMenu *helpMenu = addMenu(tr("Help"), m_menuBar);
+  QMenu *helpMenu = addMenu(ShortcutTree::tr("Help"), m_menuBar);
   addMenuItem(helpMenu, MI_OpenOnlineManual);
   addMenuItem(helpMenu, MI_OpenWhatsNew);
   addMenuItem(helpMenu, MI_OpenCommunityForum);
