@@ -570,7 +570,10 @@ void LipSyncPopup::playSound() {
     }
   } else {
     if (m_player->state() == QMediaPlayer::StoppedState) {
-      m_player->setMedia(QUrl::fromLocalFile(m_audioFile->getPath()));
+      TFilePath tempPath(m_audioFile->getPath());
+      ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
+      tempPath = scene->decodeFilePath(tempPath);
+      m_player->setMedia(QUrl::fromLocalFile(tempPath.getQString()));
       m_player->setVolume(50);
       m_player->setNotifyInterval(20);
       connect(m_player, SIGNAL(positionChanged(qint64)), this,
