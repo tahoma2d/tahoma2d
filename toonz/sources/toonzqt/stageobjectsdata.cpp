@@ -75,7 +75,8 @@ FxCanGenerateState canGenerate(const std::set<TFx *> &fxsSet, TFx *fx) {
 
 //! Returns whether the specified fx is a downstream node of the xsheet node.
 bool hasTerminalUpstream(TFx *fx, TFxSet *terminalFxs) {
-  if (TZeraryFx *zfx = dynamic_cast<TZeraryFx *>(fx))
+  TZeraryFx *zfx = dynamic_cast<TZeraryFx *>(fx);
+  if (zfx && zfx->getColumnFx())
     return hasTerminalUpstream(zfx->getColumnFx(), terminalFxs);
 
   if (terminalFxs->containsFx(fx)) return true;
