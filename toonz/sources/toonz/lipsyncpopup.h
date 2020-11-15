@@ -90,7 +90,6 @@ protected:
 public slots:
   void onApplyButton();
   void imageNavClicked(int id);
-  void onPathChanged();
   void onStartValueChanged();
   void playSound();
   void generateDatFile();

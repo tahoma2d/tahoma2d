@@ -25,6 +25,7 @@
 #include "tsound_io.h"
 #include "toonzqt/gutil.h"
 #include "toutputproperties.h"
+#include "toonz/tproject.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -186,7 +187,7 @@ LipSyncPopup::LipSyncPopup()
   setFixedWidth(860);
   setFixedHeight(400);
   m_applyButton = new QPushButton(tr("Apply"), this);
-  m_applyButton->setEnabled(false);
+  // m_applyButton->setEnabled(false);
   m_aiLabel    = new QLabel(tr("A I Drawing"));
   m_oLabel     = new QLabel(tr("O Drawing"));
   m_eLabel     = new QLabel(tr("E Drawing"));
@@ -247,6 +248,7 @@ LipSyncPopup::LipSyncPopup()
 
   m_rhubarbBox = new QGroupBox(tr("Generate from Audio File"), this);
   m_rhubarbBox->setLayout(rhubarbLayout);
+  m_rhubarbBox->hide();
 
   QHBoxLayout *boxHolder = new QHBoxLayout(this);
   boxHolder->addWidget(m_rhubarbBox);
@@ -427,8 +429,6 @@ LipSyncPopup::LipSyncPopup()
 
   ret = ret &&
         connect(m_applyButton, SIGNAL(clicked()), this, SLOT(onApplyButton()));
-  ret = ret &&
-        connect(m_file, SIGNAL(pathChanged()), this, SLOT(onPathChanged()));
   ret = ret && connect(m_startAt, SIGNAL(editingFinished()), this,
                        SLOT(onStartValueChanged()));
   ret = ret && connect(m_playButton, &QPushButton::pressed, this,
@@ -438,6 +438,8 @@ LipSyncPopup::LipSyncPopup()
   ret = ret && connect(m_soundLevels, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onLevelChanged(int)));
   ret = ret && connect(m_scriptEdit, &QTextEdit::textChanged,
+                       [=]() { m_generateDatButton->setEnabled(true); });
+  ret = ret && connect(m_audioFile, &DVGui::FileField::pathChanged,
                        [=]() { m_generateDatButton->setEnabled(true); });
 
   assert(ret);
@@ -499,6 +501,10 @@ void LipSyncPopup::showEvent(QShowEvent *) {
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::refreshSoundLevels() {
+  int currentIndex = 0;
+  if (m_soundLevels->count() > 1) {
+    currentIndex = m_soundLevels->currentIndex();
+  }
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   m_soundLevels->clear();
   int colCount = xsh->getColumnCount();
@@ -509,6 +515,8 @@ void LipSyncPopup::refreshSoundLevels() {
     }
   }
   m_soundLevels->addItem(tr("Choose File"));
+  if (currentIndex < m_soundLevels->count())
+    m_soundLevels->setCurrentIndex(currentIndex);
 }
 
 //-----------------------------------------------------------------------------
@@ -519,8 +527,13 @@ void LipSyncPopup::generateDatFile() {
   if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
     saveAudio();
     m_deleteFile = true;
-  } else
-    m_audioPath = m_audioFile->getPath();
+  } else {
+    TFilePath tempPath(m_audioFile->getPath());
+    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+    tempPath          = scene->decodeFilePath(tempPath);
+    m_audioPath       = tempPath.getQString();
+    ;
+  }
   if (m_audioPath == "" ||
       !TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) {
     DVGui::warning(tr("Please choose an audio file and try again."));
@@ -539,9 +552,15 @@ void LipSyncPopup::playSound() {
     TXshColumn *col = xsh->getColumn(level);
     TXshSoundColumn *sc = col->getSoundColumn();
     if (sc) {
-      int r0, r1;
-      xsh->getCellRange(level, r0, r1);
-      sc->play(r0);
+      if (sc->isPlaying()) {
+        sc->stop();
+        m_playButton->setIcon(m_playIcon);
+      } else {
+        int r0, r1;
+        xsh->getCellRange(level, r0, r1);
+        sc->play(r0);
+        m_playButton->setIcon(m_stopIcon);
+      }
     }
   } else {
     if (m_player->state() == QMediaPlayer::StoppedState) {
@@ -695,7 +714,6 @@ void LipSyncPopup::onProcessFinished() {
   m_rhubarb->close();
   std::string strResults = results.toStdString();
   m_file->setPath(m_datPath.getQString());
-  onPathChanged();
   m_startAt->setValue(std::max(1, m_startFrame));
 
   if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath)))
@@ -730,10 +748,61 @@ void LipSyncPopup::onLevelChanged(int index) {
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onApplyButton() {
+  m_valid = false;
+  m_textLines.clear();
+  QString path = m_file->getPath();
+  if (path.length() == 0) {
+    DVGui::warning(tr("Please choose a lip sync data file to continue."));
+    return;
+  }
+  TFilePath tempPath(path);
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  tempPath          = scene->decodeFilePath(tempPath);
+
+  if (!TSystem::doesExistFileOrLevel(tempPath)) {
+    DVGui::warning(
+        tr("Cannot find the file specified. \nPlease choose a valid lip sync "
+           "data file to continue."));
+    return;
+  }
+  QFile file(tempPath.getQString());
+  if (!file.open(QIODevice::ReadOnly)) {
+    DVGui::warning(tr("Unable to open the file: \n") + file.errorString());
+    return;
+  }
+
+  QTextStream in(&file);
+
+  while (!in.atEnd()) {
+    QString line        = in.readLine();
+    QStringList entries = line.split(" ");
+    if (entries.size() != 2) continue;
+    bool ok;
+    // make sure the first entry is a number
+    int checkInt = entries.at(0).toInt(&ok);
+    if (!ok) continue;
+    // make sure the second entry isn't a number;
+    checkInt = entries.at(1).toInt(&ok);
+    if (ok) continue;
+    m_textLines << entries;
+  }
+  if (m_textLines.size() <= 1) {
+    DVGui::warning(
+        tr("Invalid data file.\n Please choose a valid lip sync data file to "
+           "continue."));
+    m_valid = false;
+    return;
+  } else {
+    m_valid = true;
+  }
+
+  file.close();
+
   if (!m_valid || (!m_sl && !m_cl)) {
     hide();
     return;
   }
+
   int i          = 0;
   int startFrame = m_startAt->getValue() - 1;
   TXsheet *xsh   = TApp::instance()->getCurrentScene()->getScene()->getXsheet();
@@ -831,45 +900,6 @@ void LipSyncPopup::paintEvent(QPaintEvent *) {
       m_imageLabels[i]->setPixmap(m_pixmaps[i]);
     }
   }
-}
-
-//-----------------------------------------------------------------------------
-
-void LipSyncPopup::onPathChanged() {
-  m_textLines.clear();
-  QString path = m_file->getPath();
-  if (path.length() == 0) return;
-  QFile file(path);
-  if (!file.open(QIODevice::ReadOnly)) {
-    DVGui::warning(tr("Unable to open the file: \n") + file.errorString());
-    return;
-  }
-
-  QTextStream in(&file);
-
-  while (!in.atEnd()) {
-    QString line        = in.readLine();
-    QStringList entries = line.split(" ");
-    if (entries.size() != 2) continue;
-    bool ok;
-    // make sure the first entry is a number
-    int checkInt = entries.at(0).toInt(&ok);
-    if (!ok) continue;
-    // make sure the second entry isn't a number;
-    checkInt = entries.at(1).toInt(&ok);
-    if (ok) continue;
-    m_textLines << entries;
-  }
-  if (m_textLines.size() <= 1) {
-    DVGui::warning(tr("Invalid data file."));
-    m_valid = false;
-    m_applyButton->setEnabled(false);
-  } else {
-    m_valid = true;
-    m_applyButton->setEnabled(true);
-  }
-
-  file.close();
 }
 
 //-----------------------------------------------------------------------------
