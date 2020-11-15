@@ -48,6 +48,7 @@
 #include <QIcon>
 #include <QAudio>
 #include <QGroupBox>
+#include <QTimer>
 
 //=============================================================================
 /*! \class LipSyncPopup
@@ -558,8 +559,13 @@ void LipSyncPopup::playSound() {
       } else {
         int r0, r1;
         xsh->getCellRange(level, r0, r1);
+        double duration = sc->getOverallSoundTrack(r0, r1)->getDuration() * 1000;
         sc->play(r0);
         m_playButton->setIcon(m_stopIcon);
+        QTimer::singleShot(duration, [=]() {
+            sc->stop();
+            m_playButton->setIcon(m_playIcon);
+        });
       }
     }
   } else {
