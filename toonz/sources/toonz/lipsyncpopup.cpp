@@ -23,7 +23,6 @@
 #include "toonz/txshcell.h"
 #include "toonz/sceneproperties.h"
 #include "tsound_io.h"
-#include "toonzqt/gutil.h"
 #include "toutputproperties.h"
 #include "toonz/tproject.h"
 
@@ -47,9 +46,8 @@
 #include <QTextEdit>
 #include <QIcon>
 #include <QAudio>
-#include <QGroupBox>
 #include <QTimer>
-
+#include <QStackedWidget>
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -184,23 +182,48 @@ void LipSyncUndo::redo() const {
 
 LipSyncPopup::LipSyncPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "LipSyncPopup") {
-  setWindowTitle(tr("Apply Lip Sync Data"));
+  setWindowTitle(tr("Lip Sync"));
   setFixedWidth(860);
   setFixedHeight(400);
+
+  m_tabBar = new DVGui::TabBar(this);
+  m_tabBar->setDrawBase(false);
+  m_tabBar->setObjectName("StopMotionTabBar");
+  m_tabBar->addSimpleTab(tr("From Audio"));
+  m_tabBar->addSimpleTab(tr("From Data File"));
+  m_tabBar->setTabToolTip(0, tr("Use audio from a column or external file to lip sync."));
+  m_tabBar->setTabToolTip(1, tr("Use a file generated in Papagayo to lip sync."));
+
+  m_tabBarContainer = new TabBarContainter(this);
+  m_audioFrame      = new QFrame(this);
+  m_dataFrame       = new QFrame(this);
+
+  QHBoxLayout *hLayout = new QHBoxLayout;
+  hLayout->setMargin(0);
+  {
+    hLayout->addSpacing(4);
+    hLayout->addWidget(m_tabBar);
+    hLayout->addStretch();
+  }
+  m_tabBarContainer->setLayout(hLayout);
+
+  m_stackedChooser = new QStackedWidget(this);
+  m_stackedChooser->addWidget(m_audioFrame);
+  m_stackedChooser->addWidget(m_dataFrame);
+
   m_applyButton = new QPushButton(tr("Apply"), this);
-  // m_applyButton->setEnabled(false);
-  m_aiLabel    = new QLabel(tr("A I Drawing"));
-  m_oLabel     = new QLabel(tr("O Drawing"));
-  m_eLabel     = new QLabel(tr("E Drawing"));
-  m_uLabel     = new QLabel(tr("U Drawing"));
-  m_lLabel     = new QLabel(tr("L Drawing"));
-  m_wqLabel    = new QLabel(tr("W Q Drawing"));
-  m_mbpLabel   = new QLabel(tr("M B P Drawing"));
-  m_fvLabel    = new QLabel(tr("F V Drawing"));
-  m_restLabel  = new QLabel(tr("Rest Drawing"));
-  m_otherLabel = new QLabel(tr("C D G K N R S Th Y Z"));
-  m_startAt    = new DVGui::IntLineEdit(this, 0);
-  m_restToEnd  = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
+  m_aiLabel     = new QLabel(tr("A I Drawing"));
+  m_oLabel      = new QLabel(tr("O Drawing"));
+  m_eLabel      = new QLabel(tr("E Drawing"));
+  m_uLabel      = new QLabel(tr("U Drawing"));
+  m_lLabel      = new QLabel(tr("L Drawing"));
+  m_wqLabel     = new QLabel(tr("W Q Drawing"));
+  m_mbpLabel    = new QLabel(tr("M B P Drawing"));
+  m_fvLabel     = new QLabel(tr("F V Drawing"));
+  m_restLabel   = new QLabel(tr("Rest Drawing"));
+  m_otherLabel  = new QLabel(tr("C D G K N R S Th Y Z"));
+  m_startAt     = new DVGui::IntLineEdit(this, 0);
+  m_restToEnd   = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
 
   m_rhubarb = new QProcess(this);
   m_player  = new QMediaPlayer(this);
@@ -215,8 +238,6 @@ LipSyncPopup::LipSyncPopup()
   m_playIcon    = createQIcon("play");
   m_stopIcon    = createQIcon("stop");
   m_playButton->setIcon(m_playIcon);
-  m_generateDatButton =
-      new QPushButton(tr("Generate Lip Sync Data File"), this);
   QGridLayout *rhubarbLayout = new QGridLayout(this);
   m_scriptEdit               = new QTextEdit(this);
   m_scriptEdit->setFixedHeight(80);
@@ -243,17 +264,24 @@ LipSyncPopup::LipSyncPopup()
   rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
   rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
   rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
-  rhubarbLayout->addWidget(m_generateDatButton, 4, 3, 1, 2);
   rhubarbLayout->setSpacing(4);
   rhubarbLayout->setMargin(10);
+  m_audioFrame->setLayout(rhubarbLayout);
 
-  m_rhubarbBox = new QGroupBox(tr("Generate from Audio File"), this);
-  m_rhubarbBox->setLayout(rhubarbLayout);
-  m_rhubarbBox->hide();
+  m_file = new DVGui::FileField(this, QString(""));
+  m_file->setFileMode(QFileDialog::ExistingFile);
+  QStringList filters;
+  filters << "txt"
+          << "dat";
+  m_file->setFilters(QStringList(filters));
+  m_file->setMinimumWidth(500);
 
-  QHBoxLayout *boxHolder = new QHBoxLayout(this);
-  boxHolder->addWidget(m_rhubarbBox);
-  boxHolder->setMargin(8);
+  QHBoxLayout *fileLay = new QHBoxLayout();
+  QLabel *pathLabel    = new QLabel(tr("Lip Sync Data File: "), this);
+  pathLabel->setStyleSheet("background: rgba(0, 0, 0, 0);");
+  fileLay->addWidget(pathLabel, Qt::AlignLeft);
+  fileLay->addWidget(m_file);
+  m_dataFrame->setLayout(fileLay);
 
   for (int i = 0; i < 10; i++) {
     m_pixmaps[i] = QPixmap::fromImage(placeHolder);
@@ -263,14 +291,6 @@ LipSyncPopup::LipSyncPopup()
     m_imageLabels[i]->setPixmap(m_pixmaps[i]);
     m_textLabels[i] = new QLabel("temp", this);
   }
-
-  m_file = new DVGui::FileField(this, QString(""));
-  m_file->setFileMode(QFileDialog::ExistingFile);
-  QStringList filters;
-  filters << "txt"
-          << "dat";
-  m_file->setFilters(QStringList(filters));
-  m_file->setMinimumWidth(500);
 
   for (int i = 0; i < 20; i++) {
     if (!(i % 2)) {
@@ -286,7 +306,9 @@ LipSyncPopup::LipSyncPopup()
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
 
-  m_topLayout->addLayout(boxHolder);
+  m_topLayout->addWidget(m_tabBarContainer);
+  m_topLayout->addWidget(m_stackedChooser);
+
   {
     QGridLayout *phonemeLay = new QGridLayout();
     phonemeLay->setMargin(10);
@@ -406,12 +428,6 @@ LipSyncPopup::LipSyncPopup()
   m_buttonLayout->setMargin(0);
   m_buttonLayout->setSpacing(10);
   {
-    QHBoxLayout *fileLay = new QHBoxLayout();
-    QLabel *pathLabel    = new QLabel(tr("Lip Sync Data File: "), this);
-    pathLabel->setStyleSheet("background: rgba(0, 0, 0, 0);");
-    fileLay->addWidget(pathLabel, Qt::AlignLeft);
-    fileLay->addWidget(m_file);
-    m_buttonLayout->addLayout(fileLay);
     m_buttonLayout->addStretch();
     m_buttonLayout->addWidget(m_applyButton);
   }
@@ -434,16 +450,18 @@ LipSyncPopup::LipSyncPopup()
                        SLOT(onStartValueChanged()));
   ret = ret && connect(m_playButton, &QPushButton::pressed, this,
                        &LipSyncPopup::playSound);
-  ret = ret && connect(m_generateDatButton, &QPushButton::pressed, this,
-                       &LipSyncPopup::generateDatFile);
   ret = ret && connect(m_soundLevels, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onLevelChanged(int)));
-  ret = ret && connect(m_scriptEdit, &QTextEdit::textChanged,
-                       [=]() { m_generateDatButton->setEnabled(true); });
-  ret = ret && connect(m_audioFile, &DVGui::FileField::pathChanged,
-                       [=]() { m_generateDatButton->setEnabled(true); });
+  ret = ret && connect(m_tabBar, SIGNAL(currentChanged(int)), this,
+                       SLOT(setPage(int)));
 
   assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void LipSyncPopup::setPage(int index) {
+  m_stackedChooser->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------
@@ -495,7 +513,6 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   }
   refreshSoundLevels();
   onLevelChanged(-1);
-  m_generateDatButton->setEnabled(true);
   findRhubarb();
 }
 
@@ -521,29 +538,6 @@ void LipSyncPopup::refreshSoundLevels() {
 }
 
 //-----------------------------------------------------------------------------
-void LipSyncPopup::generateDatFile() {
-  m_audioPath  = "";
-  m_startFrame = -1;
-  m_deleteFile = false;
-  if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
-    saveAudio();
-    m_deleteFile = true;
-  } else {
-    TFilePath tempPath(m_audioFile->getPath());
-    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-    tempPath          = scene->decodeFilePath(tempPath);
-    m_audioPath       = tempPath.getQString();
-    ;
-  }
-  if (m_audioPath == "" ||
-      !TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) {
-    DVGui::warning(tr("Please choose an audio file and try again."));
-    return;
-  }
-  runRhubarb();
-}
-
-//-----------------------------------------------------------------------------
 
 void LipSyncPopup::playSound() {
   int count = m_soundLevels->count();
@@ -559,20 +553,21 @@ void LipSyncPopup::playSound() {
       } else {
         int r0, r1;
         xsh->getCellRange(level, r0, r1);
-        double duration = sc->getOverallSoundTrack(r0, r1)->getDuration() * 1000;
+        double duration =
+            sc->getOverallSoundTrack(r0, r1)->getDuration() * 1000;
         sc->play(r0);
         m_playButton->setIcon(m_stopIcon);
         QTimer::singleShot(duration, [=]() {
-            sc->stop();
-            m_playButton->setIcon(m_playIcon);
+          sc->stop();
+          m_playButton->setIcon(m_playIcon);
         });
       }
     }
   } else {
     if (m_player->state() == QMediaPlayer::StoppedState) {
       TFilePath tempPath(m_audioFile->getPath());
-      ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
-      tempPath = scene->decodeFilePath(tempPath);
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      tempPath          = scene->decodeFilePath(tempPath);
       m_player->setMedia(QUrl::fromLocalFile(tempPath.getQString()));
       m_player->setVolume(50);
       m_player->setNotifyInterval(20);
@@ -598,6 +593,29 @@ void LipSyncPopup::onMediaStateChanged(QMediaPlayer::State state) {
   if (state == QMediaPlayer::StoppedState) {
     m_playButton->setIcon(m_playIcon);
   }
+}
+
+//-----------------------------------------------------------------------------
+bool LipSyncPopup::setAudioFile() {
+  m_audioPath  = "";
+  m_startFrame = -1;
+  m_deleteFile = false;
+  if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+    saveAudio();
+    m_deleteFile = true;
+  } else {
+    TFilePath tempPath(m_audioFile->getPath());
+    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+    tempPath          = scene->decodeFilePath(tempPath);
+    m_audioPath       = tempPath.getQString();
+    ;
+  }
+  if (m_audioPath == "" ||
+      !TSystem::doesExistFileOrLevel(TFilePath(m_audioPath))) {
+    DVGui::warning(tr("Please choose an audio file and try again."));
+    return false;
+  }
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -648,7 +666,9 @@ QString LipSyncPopup::findRhubarb() {
   }
 
   if (found) {
-    m_rhubarbBox->show();
+    m_tabBarContainer->show();
+    if (m_tabBar->currentIndex() != m_stackedChooser->currentIndex())
+      m_tabBar->setCurrentIndex(m_stackedChooser->currentIndex());
     int index = m_soundLevels->currentIndex();
     int count = m_soundLevels->count();
     if (index == count - 1) {
@@ -658,7 +678,8 @@ QString LipSyncPopup::findRhubarb() {
     }
     return path;
   } else {
-    m_rhubarbBox->hide();
+    m_tabBarContainer->hide();
+    m_stackedChooser->setCurrentIndex(1);
     return QString("");
   }
 }
@@ -707,28 +728,7 @@ void LipSyncPopup::runRhubarb() {
   m_progressDialog->show();
   connect(m_rhubarb, &QProcess::readyReadStandardError, this,
           &LipSyncPopup::onOutputReady);
-  connect(m_rhubarb,
-          QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-          &LipSyncPopup::onProcessFinished);
   m_rhubarb->start(path, args);
-}
-
-//-----------------------------------------------------------------------------
-
-void LipSyncPopup::onProcessFinished() {
-  // rhubarb->waitForFinished();
-  m_progressDialog->hide();
-  QString results = m_rhubarb->readAllStandardError();
-  results += m_rhubarb->readAllStandardOutput();
-  m_rhubarb->close();
-  std::string strResults = results.toStdString();
-  m_file->setPath(m_datPath.getQString());
-  m_startAt->setValue(std::max(1, m_startFrame));
-
-  if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath)))
-    TSystem::deleteFile(TFilePath(m_audioPath));
-  m_deleteFile = false;
-  m_generateDatButton->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -751,15 +751,41 @@ void LipSyncPopup::onLevelChanged(int index) {
   } else {
     m_audioFile->hide();
   }
-  m_generateDatButton->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onApplyButton() {
+  if (m_stackedChooser->currentIndex() == 0) {
+    bool hasAudio = setAudioFile();
+    if (!hasAudio) return;
+    runRhubarb();
+    m_rhubarb->waitForFinished();
+    m_progressDialog->hide();
+    QString results = m_rhubarb->readAllStandardError();
+    results += m_rhubarb->readAllStandardOutput();
+    m_rhubarb->close();
+    int exitCode = -1;
+    if (m_rhubarb->exitStatus() == QProcess::NormalExit) {
+      exitCode = m_rhubarb->exitCode();
+      if (exitCode != 0) {
+        DVGui::warning(
+            tr("An error occurred processing the audio. Please check the audio "
+               "and try again."));
+        return;
+      }
+    }
+    std::string strResults = results.toStdString();
+    m_startAt->setValue(std::max(1, m_startFrame));
+
+    if (m_deleteFile && TSystem::doesExistFileOrLevel(TFilePath(m_audioPath)))
+      TSystem::deleteFile(TFilePath(m_audioPath));
+    m_deleteFile = false;
+  }
   m_valid = false;
   m_textLines.clear();
-  QString path = m_file->getPath();
+  QString path                                    = m_file->getPath();
+  if (m_stackedChooser->currentIndex() == 0) path = m_datPath.getQString();
   if (path.length() == 0) {
     DVGui::warning(tr("Please choose a lip sync data file to continue."));
     return;

@@ -7,6 +7,8 @@
 #include "toonzqt/filefield.h"
 #include "toonz/txshlevel.h"
 #include "toonzqt/intfield.h"
+#include "toonzqt/tabbar.h"
+#include "toonzqt/gutil.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -23,6 +25,7 @@ class QTextEdit;
 class QIcon;
 class QProcess;
 class QGroupBox;
+class QStackedWidget;
 
 //=============================================================================
 // LipSyncPopup
@@ -70,11 +73,15 @@ class LipSyncPopup final : public DVGui::Dialog {
   QMediaPlayer *m_player;
   QLabel *m_scriptLabel;
   QLabel *m_columnLabel;
-  QPushButton *m_generateDatButton;
   QGroupBox *m_rhubarbBox;
   bool m_deleteFile = false;
   DVGui::ProgressDialog *m_progressDialog;
   QProcess *m_rhubarb;
+  QFrame *m_audioFrame;
+  QFrame *m_dataFrame;
+  QStackedWidget *m_stackedChooser;
+  TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
+  DVGui::TabBar *m_tabBar;
 
 public:
   LipSyncPopup();
@@ -92,11 +99,11 @@ public slots:
   void imageNavClicked(int id);
   void onStartValueChanged();
   void playSound();
-  void generateDatFile();
+  bool setAudioFile();
   void onLevelChanged(int);
   void onMediaStateChanged(QMediaPlayer::State state);
-  void onProcessFinished();
   void onOutputReady();
+  void setPage(int);
 };
 
 #endif  // LIPSYNCPOPUP_H
