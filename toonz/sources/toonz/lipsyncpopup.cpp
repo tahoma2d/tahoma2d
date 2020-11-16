@@ -48,6 +48,8 @@
 #include <QAudio>
 #include <QTimer>
 #include <QStackedWidget>
+#include <QSizePolicy>
+
 //=============================================================================
 /*! \class LipSyncPopup
                 \brief The LipSyncPopup class provides a modal dialog to
@@ -188,7 +190,6 @@ LipSyncPopup::LipSyncPopup()
 
   m_tabBar = new DVGui::TabBar(this);
   m_tabBar->setDrawBase(false);
-  m_tabBar->setObjectName("StopMotionTabBar");
   m_tabBar->addSimpleTab(tr("From Audio"));
   m_tabBar->addSimpleTab(tr("From Data File"));
   m_tabBar->setTabToolTip(0, tr("Use audio from a column or external file to lip sync."));
@@ -197,6 +198,8 @@ LipSyncPopup::LipSyncPopup()
   m_tabBarContainer = new TabBarContainter(this);
   m_audioFrame      = new QFrame(this);
   m_dataFrame       = new QFrame(this);
+  m_audioFrame->setContentsMargins(0,0,0,0);
+  m_dataFrame->setContentsMargins(0,0,0,0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
   hLayout->setMargin(0);
@@ -225,29 +228,28 @@ LipSyncPopup::LipSyncPopup()
   m_startAt     = new DVGui::IntLineEdit(this, 0);
   m_restToEnd   = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
 
+  QImage placeHolder(160, 90, QImage::Format_ARGB32);
+  placeHolder.fill(Qt::white);
+
   m_rhubarb = new QProcess(this);
   m_player  = new QMediaPlayer(this);
   m_progressDialog =
       new DVGui::ProgressDialog("Analyzing audio...", "", 1, 100, this);
   m_progressDialog->hide();
-
-  QImage placeHolder(160, 90, QImage::Format_ARGB32);
-  placeHolder.fill(Qt::white);
+  
   m_soundLevels = new QComboBox(this);
   m_playButton  = new QPushButton(tr(""), this);
   m_playIcon    = createQIcon("play");
   m_stopIcon    = createQIcon("stop");
   m_playButton->setIcon(m_playIcon);
-  QGridLayout *rhubarbLayout = new QGridLayout(this);
-  m_scriptEdit               = new QTextEdit(this);
-  m_scriptEdit->setFixedHeight(80);
-  QHBoxLayout *soundLayout = new QHBoxLayout(this);
+
   m_columnLabel            = new QLabel(tr("Audio Source: "), this);
+  QHBoxLayout *soundLayout = new QHBoxLayout(this);
   soundLayout->addWidget(m_columnLabel);
   soundLayout->addWidget(m_soundLevels);
   soundLayout->addWidget(m_playButton);
   soundLayout->addStretch();
-  rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
+
   m_scriptLabel =
       new QLabel(tr("Audio Script (Optional, Improves accuracy): "), this);
   m_scriptLabel->setToolTip(
@@ -259,8 +261,14 @@ LipSyncPopup::LipSyncPopup()
   audioFilters << "wav"
                << "aiff";
   m_audioFile->setFilters(QStringList(audioFilters));
-  m_audioFile->setMinimumWidth(500);
+  m_audioFile->setFixedWidth(840);
 
+  m_scriptEdit = new QTextEdit(this);
+  m_scriptEdit->setFixedHeight(80);
+  m_scriptEdit->setFixedWidth(840);
+
+  QGridLayout *rhubarbLayout = new QGridLayout(this);
+  rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
   rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
   rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
   rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
@@ -274,13 +282,16 @@ LipSyncPopup::LipSyncPopup()
   filters << "txt"
           << "dat";
   m_file->setFilters(QStringList(filters));
-  m_file->setMinimumWidth(500);
-
-  QHBoxLayout *fileLay = new QHBoxLayout();
+  m_file->setFixedWidth(840);
   QLabel *pathLabel    = new QLabel(tr("Lip Sync Data File: "), this);
-  pathLabel->setStyleSheet("background: rgba(0, 0, 0, 0);");
-  fileLay->addWidget(pathLabel, Qt::AlignLeft);
-  fileLay->addWidget(m_file);
+
+  QGridLayout *fileLay = new QGridLayout(this);
+  fileLay->setSpacing(4);
+  fileLay->setMargin(10);
+  fileLay->addWidget(pathLabel, 0, 0, Qt::AlignLeft);
+  fileLay->addWidget(m_file, 1, 0, Qt::AlignLeft);
+  fileLay->addWidget(new QLabel(""), 2, 0, Qt::AlignLeft);
+  fileLay->setRowStretch(2, 3000);
   m_dataFrame->setLayout(fileLay);
 
   for (int i = 0; i < 10; i++) {
@@ -416,20 +427,30 @@ LipSyncPopup::LipSyncPopup()
     i++;
     phonemeLay->addWidget(m_navButtons[i], 8, 9, Qt::AlignCenter);
     i++;
-    phonemeLay->addWidget(new QLabel("", this), 9, Qt::AlignCenter);
-    phonemeLay->addWidget(new QLabel(tr("Insert at Frame: ")), 10, 0, 1, 1,
-                          Qt::AlignRight);
-    phonemeLay->addWidget(m_startAt, 10, 1, 1, 1, Qt::AlignLeft);
-    phonemeLay->addWidget(m_restToEnd, 10, 2, 1, 6, Qt::AlignLeft);
-
     m_topLayout->addLayout(phonemeLay, 0);
   }
 
+  QHBoxLayout *optionsLay = new QHBoxLayout(this);
+  optionsLay->setMargin(10);
+  optionsLay->setSpacing(15);
+  QHBoxLayout* insertAtLay = new QHBoxLayout(this);
+  insertAtLay->setMargin(0);
+  insertAtLay->setSpacing(4);
+  m_insertAtLabel = new QLabel(tr("Insert at Frame: "));
+  insertAtLay->addWidget(m_insertAtLabel);
+  insertAtLay->addWidget(m_startAt);
+  insertAtLay->addStretch();
+  optionsLay->addLayout(insertAtLay);
+  optionsLay->addWidget(m_restToEnd);
+  m_topLayout->addLayout(optionsLay);
+
+  m_topLayout->setAlignment(Qt::AlignHCenter);
   m_buttonLayout->setMargin(0);
-  m_buttonLayout->setSpacing(10);
+  m_buttonLayout->setSpacing(0);
   {
     m_buttonLayout->addStretch();
     m_buttonLayout->addWidget(m_applyButton);
+    m_buttonFrame->setContentsMargins(0, 0, 0, 0);
   }
 
   //---- signal-slot connections
@@ -462,6 +483,20 @@ LipSyncPopup::LipSyncPopup()
 
 void LipSyncPopup::setPage(int index) {
   m_stackedChooser->setCurrentIndex(index);
+  if (index == 1) {
+      m_insertAtLabel->show();
+      m_startAt->show();
+  }
+  else {
+      if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+          m_insertAtLabel->hide();
+          m_startAt->hide();
+      }
+      else {
+          m_insertAtLabel->show();
+          m_startAt->show();
+      }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -535,6 +570,14 @@ void LipSyncPopup::refreshSoundLevels() {
   m_soundLevels->addItem(tr("Choose File"));
   if (currentIndex < m_soundLevels->count())
     m_soundLevels->setCurrentIndex(currentIndex);
+  if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+      m_insertAtLabel->hide();
+      m_startAt->hide();
+  }
+  else {
+      m_insertAtLabel->show();
+      m_startAt->show();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -676,10 +719,11 @@ QString LipSyncPopup::findRhubarb() {
     } else {
       m_audioFile->hide();
     }
+    setPage(m_stackedChooser->currentIndex());
     return path;
   } else {
     m_tabBarContainer->hide();
-    m_stackedChooser->setCurrentIndex(1);
+    setPage(1);
     return QString("");
   }
 }
@@ -750,6 +794,14 @@ void LipSyncPopup::onLevelChanged(int index) {
     m_audioFile->show();
   } else {
     m_audioFile->hide();
+  }
+  if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
+      m_insertAtLabel->hide();
+      m_startAt->hide();
+  }
+  else {
+      m_insertAtLabel->show();
+      m_startAt->show();
   }
 }
 

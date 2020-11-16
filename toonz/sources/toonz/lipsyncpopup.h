@@ -73,6 +73,7 @@ class LipSyncPopup final : public DVGui::Dialog {
   QMediaPlayer *m_player;
   QLabel *m_scriptLabel;
   QLabel *m_columnLabel;
+  QLabel *m_insertAtLabel;
   QGroupBox *m_rhubarbBox;
   bool m_deleteFile = false;
   DVGui::ProgressDialog *m_progressDialog;
