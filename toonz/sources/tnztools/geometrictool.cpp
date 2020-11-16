@@ -1285,14 +1285,16 @@ public:
       bool isSpline        = false;
       if (TTool::getApplication()->getCurrentObject()->isSpline()) {
         isSpline = true;
-        if (!ToolUtils::isJustCreatedSpline(vi.getPointer())) {
-          m_primitive->setIsPrompting(true);
-          QString question("Are you sure you want to replace the motion path?");
-          int ret =
-              DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"), 0);
-          m_primitive->setIsPrompting(false);
-          if (ret == 2 || ret == 0) return;
-        }
+        // if (!ToolUtils::isJustCreatedSpline(vi.getPointer())) {
+        //  m_primitive->setIsPrompting(true);
+        //  QString question("Are you sure you want to replace the motion
+        //  path?");
+        //  int ret =
+        //      DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"),
+        //      0);
+        //  m_primitive->setIsPrompting(false);
+        //  if (ret == 2 || ret == 0) return;
+        //}
         QMutexLocker lock(vi->getMutex());
         TUndo *undo = new UndoPath(
             getXsheet()->getStageObject(getObjectId())->getSpline());
