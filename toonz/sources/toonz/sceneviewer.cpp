@@ -850,11 +850,8 @@ void SceneViewer::setVisual(const ImagePainter::VisualSettings &settings) {
 SceneViewer::~SceneViewer() {
   if (m_fbo) delete m_fbo;
 
-  // release all the registered context (once when exit the software)
-  std::set<TGlContext>::iterator ct, cEnd(l_contexts.end());
-  for (ct = l_contexts.begin(); ct != cEnd; ++ct)
-    TGLDisplayListsManager::instance()->releaseContext(*ct);
-  l_contexts.clear();
+  int ret = l_contexts.erase(m_currentContext);
+  if (ret) TGLDisplayListsManager::instance()->releaseContext(m_currentContext);
 }
 
 //-------------------------------------------------------------------------------
@@ -3559,4 +3556,5 @@ void SceneViewer::registerContext() {
   TGlContext tglContext(tglGetCurrentContext());
   TGLDisplayListsManager::instance()->attachContext(displayListId, tglContext);
   l_contexts.insert(tglContext);
+  m_currentContext = tglContext;
 }

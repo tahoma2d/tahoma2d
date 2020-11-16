@@ -1347,6 +1347,12 @@
   <item>"STD_iwa_FractalNoiseFx.dynamicIntensity"	"Dynamic Intensity"	</item>
   <item>"STD_iwa_FractalNoiseFx.alphaRendering"	"Alpha Rendering"	</item>
   
+  <item>"STD_iwa_BloomFx" 			"Bloom Iwa" 	</item>
+  <item>"STD_iwa_BloomFx.gamma"	"Gamma"		</item>
+  <item>"STD_iwa_BloomFx.gain"	"Gain"		</item>
+  <item>"STD_iwa_BloomFx.size"	"Size"		</item>
+  <item>"STD_iwa_BloomFx.alpha_rendering"	"Alpha Rendering"		</item>
+
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->
 
   <item>STD_iwa_TiledParticlesFx "Tiled Particles Iwa" </item>
