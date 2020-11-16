@@ -1091,17 +1091,17 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       ~Cleanup() { m_this->m_track.clear(), m_this->invalidate(); }
     } cleanup = {this};
 
-    if (!isJustCreatedSpline(vi.getPointer())) {
-      m_isPrompting = true;
+    // if (!isJustCreatedSpline(vi.getPointer())) {
+    //  m_isPrompting = true;
 
-      QString question("Are you sure you want to replace the motion path?");
-      int ret =
-          DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"), 0);
+    //  QString question("Are you sure you want to replace the motion path?");
+    //  int ret =
+    //      DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"), 0);
 
-      m_isPrompting = false;
+    //  m_isPrompting = false;
 
-      if (ret == 2 || ret == 0) return;
-    }
+    //  if (ret == 2 || ret == 0) return;
+    //}
 
     QMutexLocker lock(vi->getMutex());
 
