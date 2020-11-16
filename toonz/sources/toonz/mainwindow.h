@@ -51,6 +51,7 @@ public:
 
   void save();
   std::pair<DockLayout *, DockLayout::State> load(const TFilePath &fp);
+  void reload();
 };
 
 //-----------------------------------------------------------------------------

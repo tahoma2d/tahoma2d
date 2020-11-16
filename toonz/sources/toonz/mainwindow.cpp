@@ -337,6 +337,35 @@ std::pair<DockLayout *, DockLayout::State> Room::load(const TFilePath &fp) {
   return std::make_pair(layout, state);
 }
 
+//-----------------------------------------------------------------------------
+
+void Room::reload() {
+  TFilePath fp = getPath();
+
+  QSettings settings(toQString(fp), QSettings::IniFormat);
+
+  DockLayout *layout = dockLayout();
+  std::vector<QRect> geometries;
+
+  hide();
+  QRect lgeo = layout->geometry();
+
+  for (int i = layout->count() - 1; i >= 0; i--) {
+    TPanel *pane = static_cast<TPanel *>(layout->itemAt(i)->widget());
+    removeDockWidget(pane);
+  }
+
+  DockLayout::State state(geometries, "-1 ");
+  layout->restoreState(state);
+
+  load(fp);
+
+  layout->setGeometry(lgeo);
+  layout->redistribute();
+
+  show();
+}
+
 //=============================================================================
 // MainWindow
 //-----------------------------------------------------------------------------
@@ -1176,33 +1205,46 @@ void MainWindow::autofillToggle() {
 }
 
 void MainWindow::resetRoomsLayout() {
-  if (!m_saveSettingsOnQuit) return;
-
-  m_saveSettingsOnQuit = false;
+  QString question(
+      tr("Are you sure you want to reload and restore default rooms?\nCustom "
+         "rooms will not be touched."));
+  int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
+  if (ret == 0 || ret == 2) return;
 
   TFilePath layoutDir = ToonzFolder::getMyRoomsDir();
   if (layoutDir != TFilePath()) {
-    // TSystem::deleteFile(layoutDir);
-    TSystem::rmDirTree(layoutDir);
-  }
-  /*if (layoutDir != TFilePath()) {
-          try {
-                  TFilePathSet fpset;
-                  TSystem::readDirectory(fpset, layoutDir, true, false);
-                  for (auto const& path : fpset) {
-                          QString fn = toQString(path.withoutParentDir());
-                          if (fn.startsWith("room") || fn.startsWith("popups"))
-  {
-                                  TSystem::deleteFile(path);
-                          }
-                  }
-          } catch (...) {
+    TFilePath layoutTemplateDir = ToonzFolder::getTemplateRoomsDir();
+    TFilePathSet room_fpset;
+    try {
+      TSystem::readDirectory(room_fpset, layoutTemplateDir, false, true);
+      TFilePathSet::iterator it = room_fpset.begin();
+      for (int i = 0; it != room_fpset.end(); it++, i++) {
+        TFilePath defaultfp = *it;
+        if (defaultfp.getType() != "ini") continue;
+        TFilePath fp = layoutDir + defaultfp.getLevelName();
+        if (TFileStatus(fp).doesExist()) {
+          for (i = 0; i < m_stackedWidget->count(); i++) {
+            Room *room = getRoom(i);
+            if (room->getPath() == fp) {
+              room->reload();
+              break;
+            }
           }
-  }*/
+        } else {
+          TSystem::copyFile(fp, defaultfp);
 
-  DVGui::MsgBoxInPopup(
-      DVGui::INFORMATION,
-      QObject::tr("The rooms will be reset the next time you run Tahoma2D."));
+          QTabBar *roomTabWidget = m_topBar->getRoomTabWidget();
+          Room *room             = new Room(this);
+          room->hide();
+          m_panelStates.push_back(room->load(fp));
+          m_stackedWidget->addWidget(room);
+          roomTabWidget->addTab(room->getName());
+          room->show();
+        }
+      }
+    } catch (...) {
+    }
+  }
 }
 
 void MainWindow::maximizePanel() {
@@ -1294,6 +1336,7 @@ void MainWindow::deleteRoom(int index) {
   if (index < m_oldRoomIndex) m_oldRoomIndex--;
 
   m_stackedWidget->removeWidget(room);
+  m_panelStates.erase(m_panelStates.begin() + index);
   delete room;
 }
 
@@ -2498,7 +2541,7 @@ void MainWindow::defineActions() {
   menuAct =
       createMenuWindowsAction(MI_AudioRecording, tr("Record Audio"), "Alt+A");
   menuAct->setIcon(createQIcon("recordaudio"));
-  createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset to Default Rooms"),
+  createMenuWindowsAction(MI_ResetRoomLayout, tr("&Reset All Default Rooms"),
                           "");
   menuAct = createMenuWindowsAction(MI_MaximizePanel,
                                     tr("Toggle Maximize Panel"), "`");

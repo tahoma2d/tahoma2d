@@ -34,6 +34,7 @@ class RoomTabWidget final : public QTabBar {
 
   int m_clickedTabIndex;
   int m_tabToDeleteIndex;
+  int m_tabToResetIndex;
   int m_renameTabIndex;
   DVGui::LineEdit *m_renameTextField;
   bool m_isLocked;
@@ -57,6 +58,8 @@ protected slots:
   void updateTabName();
   void addNewTab();
   void deleteTab();
+  void resetTabSaved();
+  void resetTabDefault();
   void setIsLocked(bool lock);
 
 signals:
