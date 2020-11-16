@@ -2072,7 +2072,7 @@ void FlipConsole::updateCurrentTime() {
   int seconds        = (int)((double)(m_currentFrame) / m_sceneFps);
   int frames         = (m_currentFrame) % (int)m_sceneFps;
   int minutes        = seconds / 60;
-  int realSeconds    = minutes > 0 ? seconds % minutes : seconds;
+  int realSeconds    = seconds - (minutes * 60);
   QString strMinutes = QString("%1").arg(minutes, 2, 10, QChar('0'));
   QString strSeconds = QString("%1").arg(realSeconds, 2, 10, QChar('0'));
   QString strFrames  = QString("%1").arg(frames, 2, 10, QChar('0'));
