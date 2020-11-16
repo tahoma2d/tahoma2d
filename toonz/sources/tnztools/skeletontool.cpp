@@ -383,7 +383,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
   if (m_device < 0) {
     // No gadget clicked.  Select the column
     std::vector<int> columnIndexes;
-    getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, getPixelSize() * 5,
+    getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, getPixelSize() * getPixelSize(),
                                     false);
     if (!columnIndexes.empty()) {
       int columnIndex;
