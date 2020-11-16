@@ -491,14 +491,12 @@ void DockLayout::redistribute(bool allowFixedItems) {
     // Recompute Layout geometry
     m_regions.front()->setGeometry(contentsRect());
     m_regions.front()->redistribute();
-    if (allowFixedItems) {
-      if (widgetsCanBeFixedWidth) {
-        for (QWidget *widget : fixedWidthWidgets) {
-          widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-          widget->setMinimumSize(0, 0);
-        }
-      }
+
+    for (QWidget *widget : fixedWidthWidgets) {
+      widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+      widget->setMinimumSize(0, 0);
     }
+    m_regions.front()->calculateExtremalSizes();
   }
 
   // Finally, apply Region geometries found
