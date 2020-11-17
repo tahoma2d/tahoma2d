@@ -87,6 +87,9 @@ AboutPopup::AboutPopup(QWidget* parent)
       new QLabel(tr("Tahoma2D is made possible with the help of "
                     "patrons.\nSpecial thanks to:")));
   mainLayout->addWidget(new QLabel("Rodney Baker"));
+  mainLayout->addWidget(new QLabel("Hans Jacob Wagner"));
+  mainLayout->addWidget(new QLabel("Pierre Coffin"));
+  mainLayout->addWidget(new QLabel("Adam Earle"));
   mainLayout->addWidget(new QLabel("  "));
 
   AboutClickableLabel* supportLink = new AboutClickableLabel(this);
