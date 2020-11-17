@@ -2235,7 +2235,7 @@ void MainWindow::defineActions() {
   menuAct = createMenuXsheetAction(MI_RemoveEmptyColumns,
                                    tr("Remove Empty Columns"), "");
   menuAct->setIcon(createQIcon("clear"));
-  createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync Data to Column"),
+  createMenuXsheetAction(MI_LipSyncPopup, tr("&Apply Lip Sync to Column"),
                          "Alt+L");
   createRightClickMenuAction(MI_ToggleQuickToolbar, tr("Toggle Quick Toolbar"),
                              "");
