@@ -575,7 +575,7 @@ private:
     if (saver) saver->save(TPoint(x1 + x, y1 + y));                            \
     /*if (buf->getInk()!=damInk)*/                                             \
     /*  oldInks.push_back(pair<TPixelCM32*, int>(buf, buf->getInk()));*/       \
-    buf->setInk(ink);                                                          \
+    if (!clearInk) buf->setInk(ink);                                           \
     pixels.push_back(buf);                                                     \
   }
 
@@ -645,11 +645,29 @@ void InkSegmenter::drawSegment(
       DRAW_SEGMENT(y, x, dy, dx, (buf -= m_wrap), (buf -= (m_wrap - 1)),
                    SET_INK)
   }
-
+  
   if (clearInk) {
+      bool lonelyPixels = true;
+      // make sure we don't put back the original color of isolated pixels.
       for (auto pix : pixels) {
-              buf->setInk(ink);                                                          
-              buf->setTone(255);
+          if ((ePix(pix)->getInk() != damInk && !ePix(pix)->isPurePaint()) || (wPix(pix)->getInk() != damInk && !wPix(pix)->isPurePaint()) ||
+              (sPix(pix)->getInk() != damInk && !sPix(pix)->isPurePaint()) || (nPix(pix)->getInk() != damInk && !nPix(pix)->isPurePaint()) ||
+              (nePix(pix)->getInk() != damInk && !nePix(pix)->isPurePaint()) || (sePix(pix)->getInk() != damInk && !sePix(pix)->isPurePaint()) ||
+              (swPix(pix)->getInk() != damInk && !swPix(pix)->isPurePaint()) || (nwPix(pix)->getInk() != damInk && !nwPix(pix)->isPurePaint())) {
+              lonelyPixels = false;
+              break;
+          }
+      }
+      if (lonelyPixels) {
+          for (auto pix : pixels) {
+              pix->setInk(ink);
+              pix->setTone(255);
+          }
+      }
+      else {
+          for (auto pix : pixels) {
+              pix->setInk(ink);
+          }
       }
   }
 }
