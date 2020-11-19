@@ -2166,6 +2166,8 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   if (m_hardnessField)
     m_hardnessLabel = m_labels.value(m_hardnessField->propertyName());
   m_colorMode  = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
+  if (m_colorMode)
+      m_colorModeLabel = m_labels.value(m_colorMode->propertyName());
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
   m_multiFrameMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
@@ -2192,6 +2194,14 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   if (m_toolType && m_toolType->getProperty()->getValue() == L"Normal") {
     m_invertMode->setEnabled(false);
     m_multiFrameMode->setEnabled(false);
+  }
+
+  if (m_toolType && m_toolType->getProperty()->getValue() == L"Segment") {
+      if (m_colorMode) {
+          m_colorMode->setEnabled(false);
+          m_colorModeLabel->setEnabled(false);
+      }
+      m_invertMode->setEnabled(false);
   }
 
   if (m_colorMode && m_colorMode->getProperty()->getValue() == L"Areas") {
@@ -2224,8 +2234,13 @@ void EraserToolOptionsBox::onPencilModeToggled(bool value) {
 void EraserToolOptionsBox::onToolTypeChanged(int index) {
   const TEnumProperty::Range &range = m_toolType->getProperty()->getRange();
   bool value                        = range[index] != L"Normal";
-  m_invertMode->setEnabled(value);
   m_multiFrameMode->setEnabled(value);
+  bool isSegment = range[index] == L"Segment";
+  if (m_colorMode) {
+      m_colorMode->setDisabled(isSegment);
+      m_colorModeLabel->setDisabled(isSegment);
+  }
+  m_invertMode->setEnabled(!isSegment && value);
 }
 
 //-----------------------------------------------------------------------------
