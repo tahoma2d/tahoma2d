@@ -387,7 +387,7 @@ void FullColorAreaFiller::rectFill(const TRect &rect,
 //=============================================================================
 // InkSegmenter
 
-const int damInk = 3;
+const int damInk = 4094;
 
 //-----------------------------------------------------------------------------
 
@@ -403,9 +403,12 @@ class InkSegmenter {
   TRasterCM32P m_r;
   TTileSaverCM32 *m_saver;
   float m_growFactor;
+  int m_oldInk;
+  bool m_clearInk;
 
 public:
-  InkSegmenter(const TRasterCM32P &r, float growFactor, TTileSaverCM32 *saver)
+  InkSegmenter(const TRasterCM32P &r, float growFactor, TTileSaverCM32 *saver,
+               bool clearInk = false)
       : m_r(r)
       , m_lx(r->getLx())
       , m_ly(r->getLy())
@@ -413,6 +416,8 @@ public:
       , m_buf((TPixelCM32 *)r->getRawData())
       , m_bBox(r->getBounds())
       , m_saver(saver)
+      , m_clearInk(clearInk)
+      , m_oldInk(-1)
       , m_growFactor(growFactor) {
     m_displaceVector[0] = -m_wrap - 1;
     m_displaceVector[1] = -m_wrap;
@@ -445,7 +450,7 @@ public:
     pix = m_buf + p.y * m_wrap + p.x;
 
     /*-- 同じインクの場合はreturn --*/
-    if (pix->getInk() == ink) return false;
+    if (pix->getInk() == ink && !m_clearInk) return false;
 
     if (!ConnectionTable[neighboursCode(pix, p)]) {
       master = slave = pix;
@@ -469,9 +474,13 @@ public:
     inkSegmentFill(p, ink, isSelective, m_saver);
 
     // UINT i;
-
-    drawSegment(d1p1, d1p2, ink, m_saver);
-    drawSegment(d2p1, d2p2, ink, m_saver);
+    if (m_clearInk) {
+      drawSegment(d1p1, d1p2, m_oldInk, m_saver, true);
+      drawSegment(d2p1, d2p2, m_oldInk, m_saver, true);
+    } else {
+      drawSegment(d1p1, d1p2, ink, m_saver);
+      drawSegment(d2p1, d2p2, ink, m_saver);
+    }
 
     /*	for (i=0; i<oldInks.size(); i++)
     (oldInks[i].first)->setInk(ink);*/
@@ -482,7 +491,8 @@ public:
 private:
   void drawSegment(
       const TPoint &p0, const TPoint &p1, int ink,
-      /*vector<pair<TPixelCM32*, int> >& oldInks,*/ TTileSaverCM32 *saver);
+      /*vector<pair<TPixelCM32*, int> >& oldInks,*/ TTileSaverCM32 *saver,
+      bool clearInk = false);
 
   int findTwinPoints(TPixelCM32 *pix, const TPoint &p, TPixelCM32 *&master,
                      TPoint &mp, TPixelCM32 *&slave, TPoint &sp);
@@ -566,13 +576,22 @@ private:
     /*if (buf->getInk()!=damInk)*/                                             \
     /*  oldInks.push_back(pair<TPixelCM32*, int>(buf, buf->getInk()));*/       \
     buf->setInk(ink);                                                          \
+    pixels.push_back(buf);                                                     \
+  }
+
+#define CLEAR_INK                                                              \
+  {                                                                            \
+    if (saver) saver->save(TPoint(x1 + x, y1 + y));                            \
+    buf->setInk(ink);                                                          \
+    buf->setTone(255);                                                         \
   }
 
 //-----------------------------------------------------------------------------
 
 void InkSegmenter::drawSegment(
     const TPoint &p0, const TPoint &p1, int ink,
-    /*vector<pair<TPixelCM32*, int> >& oldInks,*/ TTileSaverCM32 *saver) {
+    /*vector<pair<TPixelCM32*, int> >& oldInks,*/ TTileSaverCM32 *saver,
+    bool clearInk) {
   int x, y, dx, dy, d, incr_1, incr_2;
 
   int x1 = p0.x;
@@ -585,9 +604,9 @@ void InkSegmenter::drawSegment(
     std::swap(y1, y2);
   }
 
-  TPixelCM32 *buf = m_r->pixels() + y1 * m_wrap + x1;
-  /*if (buf->getInk()!=damInk)
-          oldInks.push_back(pair<TPixelCM32*, int>(buf, buf->getInk()));
+  TPixelCM32 *buf                       = m_r->pixels() + y1 * m_wrap + x1;
+  if (buf->getInk() != damInk) m_oldInk = buf->getInk();
+  /*        oldInks.push_back(pair<TPixelCM32*, int>(buf, buf->getInk()));
   if ((m_r->pixels() + y2*m_wrap + x2)->getInk()!=damInk)
           oldInks.push_back(pair<TPixelCM32*, int>(m_r->pixels() + y2*m_wrap +
   x2, (m_r->pixels() + y2*m_wrap + x2)->getInk()));*/
@@ -599,6 +618,14 @@ void InkSegmenter::drawSegment(
 
   buf->setInk(ink);
   (m_r->pixels() + y2 * m_wrap + x2)->setInk(ink);
+
+  std::vector<TPixelCM32*> pixels;
+  if (clearInk) {
+    buf->setTone(255);
+    (m_r->pixels() + y2 * m_wrap + x2)->setTone(255);
+    pixels.push_back(buf);
+    pixels.push_back(m_r->pixels() + y2 * m_wrap + x2);
+  }
 
   dx = x2 - x1;
   dy = y2 - y1;
@@ -618,6 +645,13 @@ void InkSegmenter::drawSegment(
       DRAW_SEGMENT(y, x, dy, dx, (buf -= m_wrap), (buf -= (m_wrap - 1)),
                    SET_INK)
   }
+
+  if (clearInk) {
+      for (auto pix : pixels) {
+              buf->setInk(ink);                                                          
+              buf->setTone(255);
+      }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -631,7 +665,7 @@ void InkSegmenter::inkSegmentFill(const TPoint &p, int ink, bool isSelective,
   TPixelCM32 *pix    = pixels + p.y * m_wrap + x;
   int oldInk;
 
-  if (pix->isPurePaint() || pix->getInk() == ink) return;
+  if (pix->isPurePaint() || (pix->getInk() == ink && !m_clearInk)) return;
 
   if (isSelective) oldInk = pix->getInk();
 
@@ -645,13 +679,14 @@ void InkSegmenter::inkSegmentFill(const TPoint &p, int ink, bool isSelective,
     x               = seed.x;
     y               = seed.y;
     TPixelCM32 *pix = pixels + (y * m_wrap + x);
-    if (pix->isPurePaint() || pix->getInk() == ink || pix->getInk() == damInk ||
-        (isSelective && pix->getInk() != oldInk))
+    if (pix->isPurePaint() || (pix->getInk() == ink && !m_clearInk) ||
+        pix->getInk() == damInk || (isSelective && pix->getInk() != oldInk))
       continue;
 
     if (saver) saver->save(seed);
 
     pix->setInk(ink);
+    if (m_clearInk) pix->setTone(255);
 
     if (x > 0) seeds.push(TPoint(x - 1, y));
     if (y > 0) seeds.push(TPoint(x, y - 1));
@@ -1112,9 +1147,10 @@ int InkSegmenter::nextPointIsGoodRev(TPoint mp, TPoint sp, TPixelCM32 *slave,
 //-----------------------------------------------------------------------------
 
 bool inkSegment(const TRasterCM32P &r, const TPoint &p, int ink,
-                float growFactor, bool isSelective, TTileSaverCM32 *saver) {
+                float growFactor, bool isSelective, TTileSaverCM32 *saver,
+                bool clearInk) {
   r->lock();
-  InkSegmenter is(r, growFactor, saver);
+  InkSegmenter is(r, growFactor, saver, clearInk);
   bool ret = is.compute(p, ink, isSelective);
   r->unlock();
   return ret;
