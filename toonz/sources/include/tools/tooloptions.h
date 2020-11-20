@@ -571,7 +571,7 @@ class EraserToolOptionsBox final : public ToolOptionsBox {
 
   ToolOptionCheckbox *m_pencilMode, *m_invertMode, *m_multiFrameMode;
   ToolOptionCombo *m_toolType, *m_colorMode;
-  QLabel *m_hardnessLabel;
+  QLabel *m_hardnessLabel, *m_colorModeLabel;
   ToolOptionSlider *m_hardnessField;
 
 public:

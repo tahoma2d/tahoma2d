@@ -28,6 +28,7 @@
 #include "toonz/tobjecthandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/preferences.h"
+#include "toonz/fill.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -62,6 +63,7 @@ using namespace ToolUtils;
 #define RECTERASE L"Rectangular"
 #define FREEHANDERASE L"Freehand"
 #define POLYLINEERASE L"Polyline"
+#define SEGMENTERASE L"Segment"
 
 TEnv::DoubleVar EraseSize("InknpaintEraseSize", 10);
 TEnv::StringVar EraseType("InknpaintEraseType", "Normal");
@@ -268,6 +270,59 @@ public:
   int getHistoryType() override { return HistoryType::EraserTool; }
 };
 
+//=============================================================================
+// RasterSegmentEraseUndo
+//-----------------------------------------------------------------------------
+
+class RasterSegmentEraseUndo final : public TRasterUndo {
+  // FillParameters m_params;
+  bool m_saveboxOnly;
+  double m_autoCloseDistance;
+  int m_closeStyleIndex;
+  TPoint m_point;
+
+public:
+  RasterSegmentEraseUndo(TTileSetCM32 *tileSet, TPoint point,
+                         TXshSimpleLevel *sl, const TFrameId &fid,
+                         bool saveboxOnly)
+      : TRasterUndo(tileSet, sl, fid, false, false, 0)
+      , m_point(point)
+      , m_saveboxOnly(saveboxOnly) {}
+
+  void redo() const override {
+    TToonzImageP image = getImage();
+    if (!image) return;
+    bool recomputeSavebox = false;
+    TRasterCM32P r;
+    if (m_saveboxOnly) {
+      TRectD temp = image->getBBox();
+      TRect ttemp = convert(temp);
+      r           = image->getRaster()->extract(ttemp);
+    } else
+      r = image->getRaster();
+
+    inkSegment(r, m_point, 0, 2.51, true, 0, true);
+    if (recomputeSavebox) ToolUtils::updateSaveBox();
+
+    TTool::Application *app = TTool::getApplication();
+    if (app) {
+      app->getCurrentXsheet()->notifyXsheetChanged();
+      notifyImageChanged();
+    }
+  }
+
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
+
+  QString getToolName() override {
+    return QString("Erase Tool : %1").arg("Segment");
+  }
+  int getHistoryType() override { return HistoryType::EraserTool; }
+};
+
+//-----------------------------------------------------------------------------
+
 void eraseStroke(const TToonzImageP &ti, TStroke *stroke,
                  std::wstring eraseType, std::wstring colorType, bool invert,
                  bool selective, bool pencil, int styleId,
@@ -294,6 +349,82 @@ void eraseStroke(const TToonzImageP &ti, TStroke *stroke,
   bool erasePaint = colorType == AREAS || colorType == ALL;
   ToonzImageUtils::eraseImage(ti, image, pos, invert, eraseInk, erasePaint,
                               selective, styleId);
+}
+
+//-----------------------------------------------------------------------------
+
+void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
+                  const TFrameId &fid, bool selective, int styleId) {
+  TTool::Application *app = TTool::getApplication();
+  if (!app) return;
+
+  if (TToonzImageP ti = TToonzImageP(img)) {
+    TPoint offs(0, 0);
+    TRasterCM32P ras = ti->getRaster();
+
+    if (Preferences::instance()->getFillOnlySavebox()) {
+      TRectD bbox = ti->getBBox();
+      TRect ibbox = convert(bbox);
+      offs        = ibbox.getP00();
+      ras         = ti->getRaster()->extract(ibbox);
+    }
+
+    bool recomputeSavebox = false;
+    TPalette *plt         = ti->getPalette();
+
+    if (!ras.getPointer() || ras->isEmpty()) return;
+
+    ras->lock();
+
+    TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
+    TTileSaverCM32 tileSaver(ras, tileSet);
+    TDimension imageSize = ti->getSize();
+    TPointD p(imageSize.lx % 2 ? 0.0 : 0.5, imageSize.ly % 2 ? 0.0 : 0.5);
+
+    TPointD tmp_p = pos - p;
+    TPoint newPoint =
+        TPoint((int)floor(tmp_p.x + 0.5), (int)floor(tmp_p.y + 0.5));
+
+    newPoint += ti->getRaster()->getCenter();
+    newPoint -= offs;
+
+    TRect rasRect(ras->getSize());
+    if (!rasRect.contains(newPoint)) {
+      ras->unlock();
+      return;
+    }
+
+    inkSegment(ras, newPoint, 0, 2.51, true, &tileSaver, true);
+
+    if (tileSaver.getTileSet()->getTileCount() != 0) {
+      static int count = 0;
+      // TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
+      if (offs != TPoint())
+        for (int i = 0; i < tileSet->getTileCount(); i++) {
+          TTileSet::Tile *t = tileSet->editTile(i);
+          t->m_rasterBounds = t->m_rasterBounds + offs;
+        }
+      TUndoManager::manager()->add(new RasterSegmentEraseUndo(
+          tileSet, newPoint, sl, fid,
+          Preferences::instance()->getFillOnlySavebox()));
+    }
+
+    // instead of updateFrame :
+
+    TXshLevel *xl = app->getCurrentLevel()->getLevel();
+    if (!xl) return;
+
+    TXshSimpleLevel *sl = xl->getSimpleLevel();
+    sl->getProperties()->setDirtyFlag(true);
+    if (recomputeSavebox &&
+        Preferences::instance()->isMinimizeSaveboxAfterEditing())
+      ToolUtils::updateSaveBox(sl, fid);
+
+    ras->unlock();
+  }
+
+  TTool *t = app->getCurrentTool()->getTool();
+  if (t) t->notifyImageChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -477,6 +608,10 @@ public:
   void doMultiEraser(const TImageP &img, double t, const TXshSimpleLevelP &sl,
                      const TFrameId &fid, const TVectorImageP &firstImage,
                      const TVectorImageP &lastImage);
+  void doMultiSegmentEraser(const TImageP &img, double t,
+                            const TXshSimpleLevelP &sl, const TFrameId &fid,
+                            const TVectorImageP &firstImage,
+                            const TVectorImageP &lastImage);
 
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   void onEnter() override;
@@ -606,6 +741,7 @@ EraserTool::EraserTool(std::string name)
   m_eraseType.addValue(RECTERASE);
   m_eraseType.addValue(FREEHANDERASE);
   m_eraseType.addValue(POLYLINEERASE);
+  m_eraseType.addValue(SEGMENTERASE);
 
   m_colorType.addValue(LINES);
   m_colorType.addValue(AREAS);
@@ -636,6 +772,7 @@ void EraserTool::updateTranslation() {
   m_eraseType.setItemUIName(RECTERASE, tr("Rectangular"));
   m_eraseType.setItemUIName(FREEHANDERASE, tr("Freehand"));
   m_eraseType.setItemUIName(POLYLINEERASE, tr("Polyline"));
+  m_eraseType.setItemUIName(SEGMENTERASE, tr("Segment"));
 
   m_colorType.setQStringName(tr("Mode:"));
   m_colorType.setItemUIName(LINES, tr("Lines"));
@@ -720,7 +857,8 @@ void EraserTool::draw() {
                     lx % 2 == 0, ly % 2 == 0);
   }
   if ((m_eraseType.getValue() == FREEHANDERASE ||
-       m_eraseType.getValue() == POLYLINEERASE) &&
+       m_eraseType.getValue() == POLYLINEERASE ||
+       m_eraseType.getValue() == SEGMENTERASE) &&
       m_multi.getValue()) {
     TPixel color = TPixel32::Red;
     tglColor(color);
@@ -734,7 +872,9 @@ void EraserTool::draw() {
     for (UINT i = 0; i < m_polyline.size(); i++) tglVertex(m_polyline[i]);
     tglVertex(m_mousePos);
     glEnd();
-  } else if (m_eraseType.getValue() == FREEHANDERASE && !m_track.isEmpty()) {
+  } else if ((m_eraseType.getValue() == FREEHANDERASE ||
+              m_eraseType.getValue() == SEGMENTERASE) &&
+             !m_track.isEmpty()) {
     TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
                        ? TPixel32::White
                        : TPixel32::Black;
@@ -966,7 +1106,8 @@ void EraserTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_workingFrameId = getFrameId();
     }
     if (m_eraseType.getValue() == FREEHANDERASE ||
-        m_eraseType.getValue() == POLYLINEERASE) {
+        m_eraseType.getValue() == POLYLINEERASE ||
+        m_eraseType.getValue() == SEGMENTERASE) {
       int col   = getColumnIndex();
       m_enabled = col >= 0;
 
@@ -1106,7 +1247,8 @@ void EraserTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       }
       invalidate(invalidateRect.enlarge(2) - rasCenter);
     }
-    if (m_eraseType.getValue() == FREEHANDERASE) {
+    if (m_eraseType.getValue() == FREEHANDERASE ||
+        m_eraseType.getValue() == SEGMENTERASE) {
       if (!m_enabled || !m_active) return;
       m_track.add(TThickPoint(pos, m_thick), pixelSize2);
       invalidate(m_track.getModifiedRegion());
@@ -1133,7 +1275,8 @@ void EraserTool::onImageChanged() {
   else {                           // cambio stato.
     m_firstFrameSelected = true;
     if (m_eraseType.getValue() != FREEHANDERASE &&
-        m_eraseType.getValue() != POLYLINEERASE) {
+        m_eraseType.getValue() != POLYLINEERASE &&
+        m_eraseType.getValue() != SEGMENTERASE) {
       assert(!m_selectingRect.isEmpty());
       m_firstRect = m_selectingRect;
     }
@@ -1344,7 +1487,90 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
           invalidate(stroke->getBBox().enlarge(2));
       }
     }
+    if (m_eraseType.getValue() == SEGMENTERASE) {
+      bool isValid = m_enabled && m_active;
+      m_enabled = m_active = false;
+      if (!isValid) return;
+      if (m_track.isEmpty()) return;
+      double pixelSize2 = getPixelSize() * getPixelSize();
 
+      m_track.filterPoints();
+      double error    = (30.0 / 11) * sqrt(pixelSize2);
+      TStroke *stroke = m_track.makeStroke(error);
+
+      stroke->setStyle(1);
+      m_track.clear();
+
+      bool selective          = m_currentStyle.getValue();
+      TTool::Application *app = TTool::getApplication();
+      int styleId             = app->getCurrentLevelStyleIndex();
+      if (m_multi.getValue())  // stroke multi
+      {
+        if (m_firstFrameSelected) {
+          TFrameId tmp = getFrameId();
+          if (m_firstStroke && stroke)
+            multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStroke,
+                            stroke);
+          notifyImageChanged();
+          if (e.isShiftPressed()) {
+            TRectD invalidateRect = m_firstStroke->getBBox();
+            delete m_firstStroke;
+            m_firstStroke = 0;
+            invalidate(invalidateRect.enlarge(2));
+            m_firstStroke  = stroke;
+            invalidateRect = m_firstStroke->getBBox();
+            invalidate(invalidateRect.enlarge(2));
+            m_firstFrameId = getFrameId();
+          } else {
+            if (m_isXsheetCell) {
+              app->getCurrentColumn()->setColumnIndex(m_currCell.first);
+              app->getCurrentFrame()->setFrame(m_currCell.second);
+            } else
+              app->getCurrentFrame()->setFid(m_veryFirstFrameId);
+            resetMulti();
+            delete stroke;
+          }
+        } else  // primo frame
+        {
+          m_firstStroke  = stroke;
+          m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
+          m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
+          invalidate(m_firstStroke->getBBox().enlarge(2));
+        }
+      } else  // stroke non multi
+      {
+        TUndoManager::manager()->beginBlock();
+        int length              = (int)stroke->getLength();
+        TTool::Application *app = TTool::getApplication();
+        if (!app) return;
+
+        TXshLevel *xl       = app->getCurrentLevel()->getLevel();
+        TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
+
+        TToonzImageP ti = TImageP(getImage(true));
+        if (!ti) return;
+        TRasterCM32P ras = ti->getRaster();
+        if (!ras) return;
+
+        for (int i = 0; i < length; i++) {
+          TPointD lengthAt = stroke->getPointAtLength(i);
+          TPointD tmpPos(lengthAt);
+          TPoint ipos((int)(tmpPos.x + ras->getLx() / 2),
+                      (int)(tmpPos.y + ras->getLy() / 2));
+          if (!ras->getBounds().contains(ipos)) continue;
+          TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
+          if ((selective && pix.getInk() != styleId) || pix.isPurePaint())
+            continue;
+          eraseSegment(getImage(true), tmpPos, sl, getCurrentFid(), selective,
+                       styleId);
+        }
+
+        TPointD mousePos = pos;
+
+        TUndoManager::manager()->endBlock();
+        invalidate();
+      }
+    }
     ToolUtils::updateSaveBox();
   }
 
@@ -1623,11 +1849,94 @@ void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, TFrameId &firstFid,
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = sl->getFrame(fid, true);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
-    doMultiEraser(img, backward ? 1 - t : t, sl, fid, firstImage, lastImage);
+    if (m_eraseType.getValue() == SEGMENTERASE)
+      doMultiSegmentEraser(img, backward ? 1 - t : t, sl, fid, firstImage,
+                           lastImage);
+    else
+      doMultiEraser(img, backward ? 1 - t : t, sl, fid, firstImage, lastImage);
     sl->getProperties()->setDirtyFlag(true);
     notifyImageChanged(fid);
   }
   TUndoManager::manager()->endBlock();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void EraserTool::doMultiSegmentEraser(const TImageP &img, double t,
+                                      const TXshSimpleLevelP &sl,
+                                      const TFrameId &fid,
+                                      const TVectorImageP &firstImage,
+                                      const TVectorImageP &lastImage) {
+  //  ColorController::instance()->switchToLevelPalette();
+  int styleId    = TTool::getApplication()->getCurrentLevelStyleIndex();
+  bool selective = m_currentStyle.getValue();
+  if (t == 0) {
+    TStroke *stroke = firstImage->getStroke(0);
+    int length      = (int)stroke->getLength();
+    int styleId     = 0;
+    TToonzImageP ti = img;
+    if (!ti) return;
+    TRasterCM32P ras = ti->getRaster();
+    if (!ras) return;
+
+    for (int i = 0; i < length; i++) {
+      TPointD lengthAt = stroke->getPointAtLength(i);
+      TPointD tmpPos(lengthAt);
+      TPoint ipos((int)(tmpPos.x + ras->getLx() / 2),
+                  (int)(tmpPos.y + ras->getLy() / 2));
+      if (!ras->getBounds().contains(ipos)) continue;
+      TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
+      if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
+      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+    }
+  }
+
+  else if (t == 1) {
+    TStroke *stroke = lastImage->getStroke(0);
+    int length      = (int)stroke->getLength();
+    int styleId     = 0;
+    TToonzImageP ti = img;
+    if (!ti) return;
+    TRasterCM32P ras = ti->getRaster();
+    if (!ras) return;
+
+    for (int i = 0; i < length; i++) {
+      TPointD lengthAt = stroke->getPointAtLength(i);
+      TPointD tmpPos(lengthAt);
+      TPoint ipos((int)(tmpPos.x + ras->getLx() / 2),
+                  (int)(tmpPos.y + ras->getLy() / 2));
+      if (!ras->getBounds().contains(ipos)) continue;
+      TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
+      if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
+      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+    }
+  } else {
+    assert(firstImage->getStrokeCount() == 1);
+    assert(lastImage->getStrokeCount() == 1);
+    TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
+    assert(vi->getStrokeCount() == 1);
+    TStroke *stroke = vi->getStroke(0);
+    int length      = (int)stroke->getLength();
+    int styleId     = 0;
+    TToonzImageP ti = img;
+    if (!ti) return;
+    TRasterCM32P ras = ti->getRaster();
+    if (!ras) return;
+
+    for (int i = 0; i < length; i++) {
+      TPointD lengthAt = stroke->getPointAtLength(i);
+      TPointD tmpPos(lengthAt);
+      TPoint ipos((int)(tmpPos.x + ras->getLx() / 2),
+                  (int)(tmpPos.y + ras->getLy() / 2));
+      if (!ras->getBounds().contains(ipos)) continue;
+      TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
+      if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
+      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+    }
+  }
+
+  TTool::Application *app = TTool::getApplication();
+  if (!app) return;
 }
 
 //-------------------------------------------------------------------------------------------------
