@@ -1359,7 +1359,8 @@ TAffine TStageObject::computeLocalPlacement(double frame) {
       assert(m_spline->getStroke());
       posPath = m_spline->getStroke()->getLength() *
                 m_posPath->getValue(frame) * 0.01;
-      position = m_spline->getStroke()->getPointAtLength(posPath);
+      position = m_spline->getStroke()->getPointAtLength(posPath) -
+                 (m_center * Stage::inch);
       break;
     case PATH_AIM:
       assert(m_spline);
@@ -1367,7 +1368,8 @@ TAffine TStageObject::computeLocalPlacement(double frame) {
       posPath = m_spline->getStroke()->getLength() *
                 m_posPath->getValue(frame) * 0.01;
 
-      position = m_spline->getStroke()->getPointAtLength(posPath);
+      position = m_spline->getStroke()->getPointAtLength(posPath) -
+                 (m_center * Stage::inch);
       if (m_spline->getStroke()->getLength() > 1e-5)
         ang +=
             rad2degree(atan(m_spline->getStroke()->getSpeedAtLength(posPath)));
