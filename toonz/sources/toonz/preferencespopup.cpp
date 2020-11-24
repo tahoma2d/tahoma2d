@@ -911,7 +911,10 @@ void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
     layout->addWidget(widget, layout->rowCount(), 0, 1, 2);
   else {  // insert labels for other types
     int row = layout->rowCount();
-    layout->addWidget(new QLabel(getUIString(id), this), row, 0,
+    QLabel *label = new QLabel(getUIString(id),this);
+    label->setWordWrap(true);
+
+    layout->addWidget(label, row, 0,
                       Qt::AlignRight | Qt::AlignVCenter);
     if (isFileField)
       layout->addWidget(widget, row, 1, 1, 2);
