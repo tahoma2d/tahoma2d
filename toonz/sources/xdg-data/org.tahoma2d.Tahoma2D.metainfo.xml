@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>io.github.Tahoma2D</id>
-  <launchable type="desktop-id">io.github.Tahoma2D.desktop</launchable>
+  <id>org.tahoma2d.Tahoma2D</id>
+  <launchable type="desktop-id">org.tahoma2d.Tahoma2D.desktop</launchable>
   <name>Tahoma2D</name>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>BSD-3-Clause</project_license>
@@ -21,11 +21,11 @@
   <url type="bugtracker">https://github.com/turtletooth/tahoma2d/issues</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/flathub/io.github.Tahoma2D/master/screenshot1.png</image>
+      <image>https://tahoma2d.readthedocs.io/en/latest/_images/interface.png</image>
     </screenshot>
   </screenshots>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
   <releases>
-    <release version="1.1.0" date="2020-10-06"></release>
+    <release version="1.1.0" date="2020-10-06"/>
   </releases>
 </component>
