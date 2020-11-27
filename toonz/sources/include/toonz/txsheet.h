@@ -319,7 +319,11 @@ public:
           \b \e frame, to \b \e center; it calls \b TStageObject::setCenter().
           \sa getCenter()
   */
-  void setCenter(const TStageObjectId &id, int frame, const TPointD &center);
+  void setCenter(const TStageObjectId &id, int frame,
+                 const TPointD &centerPoint, const TPointD &frameCenter);
+  void setCenter(const TStageObjectId &id, int frame, const TPointD &center) {
+    setCenter(id, frame, center, center);
+  }
   /*! Returns parent related to pegbar \b TStageObject with \b \e id
      TStageObjectId specialization;
           it calls \b TStageObject::getParent().

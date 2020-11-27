@@ -120,10 +120,15 @@ public:
         ->getCurrentTool()
         ->getTool()
         ->getXsheet()
-        ->setCenter(m_objId, m_frame, m_center);
+        ->setCenter(m_objId, m_frame, m_center, m_oldCenter);
   }
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {
     if ((m_lockCenterX && m_lockCenterY) || m_firstPos == pos) return;
+    TTool::getApplication()
+        ->getCurrentTool()
+        ->getTool()
+        ->getXsheet()
+        ->setCenter(m_objId, m_frame, m_center);
     UndoStageObjectCenterMove *undo =
         new UndoStageObjectCenterMove(m_objId, m_frame, m_oldCenter, m_center);
     TTool::Application *app = TTool::getApplication();

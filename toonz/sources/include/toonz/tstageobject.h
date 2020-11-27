@@ -291,7 +291,11 @@ object.
   double getParam(Channel type, double frame) const;
 
   //! Sets the center of the \e frame to \e center.
-  void setCenter(double frame, const TPointD &center);
+  void setCenter(double frame, const TPointD &centerPoint,
+                 const TPointD &frameCenter);
+  void setCenter(double frame, const TPointD &center) {
+    setCenter(frame, center, center);
+  }
 
   //! Returns the center of the \e frame.
   TPointD getCenter(double frame) const;
@@ -526,7 +530,7 @@ private:
   PlasticSkeletonDeformationP
       m_skeletonDeformation;  //!< Deformation curves for a plastic skeleton
 
-  TPointD m_center;
+  TPointD m_center, m_frameCenter;
   TPointD m_offset;
 
   // ----For Inverse Kinematics interpolation
