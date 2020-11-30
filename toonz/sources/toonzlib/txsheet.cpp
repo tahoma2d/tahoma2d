@@ -580,9 +580,11 @@ TPointD TXsheet::getCenter(const TStageObjectId &id, int frame) const {
 //-----------------------------------------------------------------------------
 
 void TXsheet::setCenter(const TStageObjectId &id, int frame,
-                        const TPointD &center) {
+                        const TPointD &centerPoint,
+                        const TPointD &frameCenter) {
   assert(id != TStageObjectId::NoneId);
-  m_imp->m_pegTree->getStageObject(id)->setCenter(frame, center);
+  m_imp->m_pegTree->getStageObject(id)->setCenter(frame, centerPoint,
+                                                  frameCenter);
 }
 
 //-----------------------------------------------------------------------------

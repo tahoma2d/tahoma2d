@@ -373,6 +373,7 @@ TStageObject::TStageObject(TStageObjectTree *tree, TStageObjectId id)
     , m_shearx(new TDoubleParam())
     , m_sheary(new TDoubleParam())
     , m_center()
+    , m_frameCenter()
     , m_offset()
     , m_cycleEnabled(false)
     , m_handle("B")
@@ -727,12 +728,14 @@ void TStageObject::enableUppk(bool enabled) {
 
 //-----------------------------------------------------------------------------
 
-void TStageObject::setCenter(double frame, const TPointD &center) {
-  TPointD c = center - getHandlePos(m_handle, (int)frame);
+void TStageObject::setCenter(double frame, const TPointD &centerPoint,
+                             const TPointD &frameCenter) {
+  TPointD c = centerPoint - getHandlePos(m_handle, (int)frame);
 
   TAffine aff   = computeLocalPlacement(frame);
   TPointD delta = aff * c - aff * m_center;
   m_center      = c;
+  m_frameCenter = frameCenter;
   m_offset += delta;
   invalidate();
 }
@@ -765,16 +768,18 @@ void TStageObject::getCenterAndOffset(TPointD &center, TPointD &offset) const {
 
 void TStageObject::setCenterAndOffset(const TPointD &center,
                                       const TPointD &offset) {
-  m_center = center;
-  m_offset = offset;
+  m_center      = center;
+  m_frameCenter = m_center;
+  m_offset      = offset;
   invalidate();
 }
 
 //-----------------------------------------------------------------------------
 
 void TStageObject::setHandle(const std::string &s) {
-  m_handle                                = s;
-  if (!s.empty() && s[0] == 'H') m_offset = m_center = TPointD();
+  m_handle = s;
+  if (!s.empty() && s[0] == 'H')
+    m_offset = m_center = m_frameCenter = TPointD();
 
   invalidate();
 }
@@ -1237,11 +1242,12 @@ TStageObject *TStageObject::clone() {
     cloned->m_skeletonDeformation =
         new PlasticSkeletonDeformation(*m_skeletonDeformation);
 
-  cloned->m_noScaleZ   = m_noScaleZ;
-  cloned->m_center     = m_center;
-  cloned->m_offset     = m_offset;
-  cloned->m_name       = m_name;
-  cloned->m_dagNodePos = m_dagNodePos;
+  cloned->m_noScaleZ    = m_noScaleZ;
+  cloned->m_center      = m_center;
+  cloned->m_frameCenter = m_frameCenter;
+  cloned->m_offset      = m_offset;
+  cloned->m_name        = m_name;
+  cloned->m_dagNodePos  = m_dagNodePos;
 
   return cloned;
 }
@@ -1359,7 +1365,8 @@ TAffine TStageObject::computeLocalPlacement(double frame) {
       assert(m_spline->getStroke());
       posPath = m_spline->getStroke()->getLength() *
                 m_posPath->getValue(frame) * 0.01;
-      position = m_spline->getStroke()->getPointAtLength(posPath);
+      position = m_spline->getStroke()->getPointAtLength(posPath) -
+                 (m_frameCenter * Stage::inch);
       break;
     case PATH_AIM:
       assert(m_spline);
@@ -1367,7 +1374,8 @@ TAffine TStageObject::computeLocalPlacement(double frame) {
       posPath = m_spline->getStroke()->getLength() *
                 m_posPath->getValue(frame) * 0.01;
 
-      position = m_spline->getStroke()->getPointAtLength(posPath);
+      position = m_spline->getStroke()->getPointAtLength(posPath) -
+                 (m_frameCenter * Stage::inch);
       if (m_spline->getStroke()->getLength() > 1e-5)
         ang +=
             rad2degree(atan(m_spline->getStroke()->getSpeedAtLength(posPath)));
@@ -1694,7 +1702,8 @@ void TStageObject::loadData(TIStream &is) {
       if (parentHandle != "") setParentHandle(parentHandle);
     } else if (tagName == "center") {
       is >> m_center.x >> m_center.y >> m_offset.x >> m_offset.y;
-      m_offset = -m_offset;
+      m_offset      = -m_offset;
+      m_frameCenter = m_center;
     } else if (tagName == "name")
       is >> m_name;
     else if (tagName == "x")
@@ -1804,6 +1813,7 @@ void TStageObject::loadData(TIStream &is) {
   if (tnzVersion < VersionNumber(1, 14)) {
     double factor = 1.0 / Stage::inch;
     m_center      = m_center * factor;
+    m_frameCenter = m_center;
     m_offset      = m_offset * factor;
   }
   if (tnzVersion < VersionNumber(1, 16) && !keyframes.empty()) {
@@ -1866,11 +1876,12 @@ TStageObjectParams *TStageObject::getParams() const {
 
 void TStageObject::assignParams(const TStageObjectParams *src,
                                 bool doParametersClone) {
-  m_name     = src->m_name;
-  m_center   = src->m_center;
-  m_noScaleZ = src->m_noScaleZ;
-  m_offset   = src->m_offset;
-  m_status   = src->m_status;
+  m_name        = src->m_name;
+  m_center      = src->m_center;
+  m_frameCenter = m_center;
+  m_noScaleZ    = src->m_noScaleZ;
+  m_offset      = src->m_offset;
+  m_status      = src->m_status;
   if (m_spline) m_spline->release();
   m_spline = src->m_spline;
   if (m_spline) m_spline->addRef();
