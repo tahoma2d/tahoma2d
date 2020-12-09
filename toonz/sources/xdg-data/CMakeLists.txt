@@ -1,3 +1,3 @@
-install(FILES io.github.Tahoma2D.appdata.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/metainfo)
-install(FILES io.github.Tahoma2D.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
-install(FILES io.github.Tahoma2D.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps)
+install(FILES org.tahoma2d.Tahoma2D.metainfo.xml DESTINATION share/metainfo)
+install(FILES org.tahoma2d.Tahoma2D.desktop DESTINATION share/applications)
+install(FILES tahoma2d_128.png DESTINATION share/icons/hicolor/128x128/apps RENAME org.tahoma2d.Tahoma2D.png)
