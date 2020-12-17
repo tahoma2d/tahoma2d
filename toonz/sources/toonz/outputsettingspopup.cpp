@@ -47,7 +47,10 @@
 #include <QFrame>
 #include <QMessageBox>
 #include <QMap>
-
+#include <QListWidget>
+#include <QScrollArea>
+#include <QPropertyAnimation>
+#include <QSpacerItem>
 //-----------------------------------------------------------------------------
 namespace {
 
@@ -163,123 +166,213 @@ enum GranularityOption { c_off, c_large, c_medium, c_small };
                 to set values for frame and time stretch.
 */
 OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
-    : Dialog(TApp::instance()->getMainWindow(), false,
-             Preferences::instance()->getCurrentLanguage() == "English",
+    : Dialog(TApp::instance()->getMainWindow(), false, isPreview,
              isPreview ? "PreviewSettings" : "OutputSettings")
-    , m_subcameraChk(0)
-    , m_applyShrinkChk(0)
-    , m_outputCameraOm(0)
+    , m_subcameraChk(nullptr)
+    , m_applyShrinkChk(nullptr)
+    , m_outputCameraOm(nullptr)
     , m_isPreviewSettings(isPreview)
-    , m_presetCombo(0) {
+    , m_presetCombo(nullptr) {
   setWindowTitle(isPreview ? tr("Preview Settings") : tr("Output Settings"));
+  if (!isPreview) setObjectName("OutputSettingsPopup");
+  // create panel
+  QFrame *panel = createPanel(isPreview);
 
-  QLabel *cameraSettingsLabel   = new QLabel(tr("Camera Settings"), this);
-  QLabel *advancedSettingsLabel = new QLabel(tr("Advanced Settings"), this);
-  QFrame *cameraSettingsBox     = new QFrame(this);
-  QFrame *advancedSettingsBox   = new QFrame(this);
-  QFrame *cameraParametersBox;
+  QPushButton *renderButton = new QPushButton(tr("Render"), this);
+  renderButton->setIcon(createQIcon("render"));
+  renderButton->setIconSize(QSize(20, 20));
+  if (isPreview)
+    renderButton->setText("Preview");
+
+  // preview settings
+  if (isPreview) {
+
+    m_topLayout->setMargin(5);
+    m_topLayout->addWidget(panel, 0);
+    m_topLayout->addWidget(renderButton, 0);
+
+    bool ret = true;
+    ret = ret &&
+      connect(renderButton, SIGNAL(pressed()), this, SLOT(onRenderClicked()));
+
+    return;
+  }
+
+  // outputsettings with category list & scrollable panel
+  QPushButton *addPresetButton    = new QPushButton(tr("Add"), this);
+  QPushButton *removePresetButton = new QPushButton(tr("Remove"), this);
+  m_presetCombo                   = new QComboBox(this);
+
+  addPresetButton->setObjectName("PushButton_NoPadding");
+  removePresetButton->setObjectName("PushButton_NoPadding");
+  QString tooltip =
+      tr("Save current output settings.\nThe parameters to be saved are:\n- "
+         "Camera settings\n- Project folder to be saved in\n- File format\n- "
+         "File options\n- Resample Balance\n- Channel width");
+  addPresetButton->setToolTip(tooltip);
+  /*-- プリセットフォルダを調べ、コンボボックスにアイテムを格納する --*/
+  updatePresetComboItems();
+
+  QListWidget *categoryList = new QListWidget(this);
+  QStringList categories;
+  categories << tr("General") << tr("Camera") << tr("Advanced") << tr("Others");
+  categoryList->addItems(categories);
+  categoryList->setFixedWidth(100);
+  categoryList->setCurrentRow(0);
+
+  m_scrollArea = new QScrollArea(this);
+  m_scrollArea->setWidgetResizable(true);
+  m_scrollArea->setWidget(panel);
+
+  QPushButton *saveAndRenderButton = new QPushButton(tr("Save and Render"), this);
+  saveAndRenderButton->setIcon(createQIcon("render"));
+  saveAndRenderButton->setIconSize(QSize(20, 20));
+
+  m_topLayout->setMargin(5);
+  {
+    QHBoxLayout *presetLay = new QHBoxLayout();
+    presetLay->setMargin(0);
+    presetLay->setSpacing(5);
+    {
+      presetLay->addStretch(1);
+      presetLay->addWidget(new QLabel(tr("Presets:"), this), 1,
+                           Qt::AlignRight | Qt::AlignVCenter);
+      presetLay->addWidget(m_presetCombo, 1);
+      presetLay->addWidget(addPresetButton, 0);
+      presetLay->addWidget(removePresetButton, 0);
+    }
+    m_topLayout->addLayout(presetLay, 0);
+
+    QHBoxLayout *middleLay = new QHBoxLayout();
+    middleLay->setMargin(0);
+    middleLay->setSpacing(5);
+    {
+      middleLay->addWidget(categoryList, 0);
+      middleLay->addWidget(m_scrollArea, 1);
+    }
+    m_topLayout->addLayout(middleLay, 1);
+
+    m_topLayout->addSpacing(5);
+
+    QHBoxLayout *renderButtonLayout = new QHBoxLayout(this);
+    renderButtonLayout->addWidget(renderButton);
+    if (!isPreview)
+      renderButtonLayout->addWidget(saveAndRenderButton);
+    m_topLayout->addLayout(renderButtonLayout);
+    m_topLayout->addStretch(0);
+  }
+
+  bool ret = true;
+  ret      = ret &&
+        connect(renderButton, SIGNAL(pressed()), this, SLOT(onRenderClicked()));
+  ret = ret && connect(saveAndRenderButton, SIGNAL(pressed()), this,
+                       SLOT(onSaveAndRenderClicked()));
+  ret = ret && connect(addPresetButton, SIGNAL(pressed()), this,
+                       SLOT(onAddPresetButtonPressed()));
+  ret = ret && connect(removePresetButton, SIGNAL(pressed()), this,
+                       SLOT(onRemovePresetButtonPressed()));
+  ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)), this,
+                       SLOT(onPresetSelected(const QString &)));
+  ret = ret && connect(categoryList, SIGNAL(itemClicked(QListWidgetItem *)),
+                       this, SLOT(onCategoryActivated(QListWidgetItem *)));
+  assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void OutputSettingsPopup::onCategoryActivated(QListWidgetItem *item) {
+  AnimatedLabel *label;
+  QFrame *frame;
+  if (item->text() == tr("General")) {
+    label = m_generalLabel;
+    frame = m_generalBox;
+  } else if (item->text() == tr("Camera")) {
+    label = m_cameraLabel;
+    frame = m_cameraBox;
+  } else if (item->text() == tr("Advanced")) {
+    label = m_advancedLabel;
+    frame = m_advancedBox;
+  } else if (item->text() == tr("Others")) {
+    label = m_othersLabel;
+    frame = m_othersBox;
+  } else
+    return;
+
+  m_scrollArea->ensureWidgetVisible(frame);
+  QPropertyAnimation *a = new QPropertyAnimation(label, "color");
+  a->setDuration(1000);
+  a->setStartValue(QColor(255, 255, 0, 128));
+  a->setEndValue(QColor(255, 255, 0, 0));
+  a->setEasingCurve(QEasingCurve::OutBack);
+  a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
+  QFrame *panel = new QFrame(this);
+
+  if (!isPreview) {
+    m_generalLabel = new AnimatedLabel(tr("General Settings"), this);
+    m_generalBox = createGeneralSettingsBox(isPreview);
+  }
+  m_cameraLabel = new AnimatedLabel(tr("Camera Settings"), this);
+  m_cameraBox = createCameraSettingsBox(isPreview);
+  m_advancedLabel   = new AnimatedLabel(tr("Advanced Settings"), this);
+  m_advancedBox     = createAdvancedSettingsBox(isPreview);
+  if (!isPreview) {
+    m_othersLabel = new AnimatedLabel(tr("Other Settings"), this);
+    m_othersBox   = createOtherSettingsBox();
+  }
+  QVBoxLayout *lay = new QVBoxLayout();
+  lay->setMargin(5);
+  lay->setSpacing(3);
+  {
+    if (!isPreview) {
+      lay->addWidget(m_generalLabel, 0);
+      lay->addWidget(m_generalBox, 0);
+      lay->addSpacing(10);
+    }
+
+    lay->addWidget(m_cameraLabel, 0);
+    lay->addWidget(m_cameraBox, 0);
+    lay->addSpacing(10);
+
+    lay->addWidget(m_advancedLabel, 0);
+    lay->addWidget(m_advancedBox, 0);
+
+    if (!isPreview) {
+      lay->addSpacing(10);
+      lay->addWidget(m_othersLabel, 0);
+      lay->addWidget(m_othersBox, 0);
+    }
+    lay->addStretch(1);
+  }
+  panel->setLayout(lay);
+  return panel;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
+  QFrame *generalSettingsBox = new QFrame(this);
+  generalSettingsBox->setObjectName("OutputSettingsBox");
+
+  // Frame Start-End
+  m_startFld = new DVGui::IntLineEdit(this);
+  m_endFld = new DVGui::IntLineEdit(this);
+  // Step
+  m_stepFld = new DVGui::IntLineEdit(this);
+
   if (!isPreview) {
     // Save In
     m_saveInFileFld = new DVGui::FileField(0, QString(""));
     // File Name
     m_fileNameFld = new DVGui::LineEdit(QString(""));
     // File Format
-    m_fileFormat       = new QComboBox();
+    m_fileFormat = new QComboBox();
     m_fileFormatButton = new QPushButton(tr("Options"));
 
-    m_cameraSettings    = new CameraSettingsPopup();
-    cameraParametersBox = new QFrame(this);
-  }
-  // Output Camera
-  m_outputCameraOm = new QComboBox();
-  // m_outputCameraOm->hide();
-  if (isPreview) {
-    // Subcamera checkbox
-    m_subcameraChk = new DVGui::CheckBox(tr("Use Sub-Camera"));
-  }
-
-  // Frame Start-End
-  m_startFld = new DVGui::IntLineEdit(this);
-  m_endFld   = new DVGui::IntLineEdit(this);
-  // Step-Shrink
-  m_stepFld   = new DVGui::IntLineEdit(this);
-  m_shrinkFld = new DVGui::IntLineEdit(this);
-  if (isPreview)
-    m_applyShrinkChk =
-        new DVGui::CheckBox(tr("Apply Shrink to Main Viewer"), this);
-  else
-    m_applyShrinkChk = 0;
-  // Resample Balance
-  m_resampleBalanceOm = new QComboBox();
-  // Channel Width
-  m_channelWidthOm = new QComboBox();
-
-  QPushButton *showOtherSettingsButton    = NULL;
-  QLabel *otherSettingsLabel              = NULL;
-  QFrame *otherSettingsFrame              = NULL;
-  QPushButton *showCameraSettingsButton   = NULL;
-  QPushButton *showAdvancedSettingsButton = NULL;
-  QPushButton *addPresetButton            = NULL;
-  QPushButton *removePresetButton         = NULL;
-
-  m_dominantFieldOm     = 0;
-  m_renderButton        = new QPushButton(tr("Render"), this);
-  m_saveAndRenderButton = new QPushButton(tr("Save and Render"), this);
-  if (isPreview) {
-    m_renderButton->setText("Preview");
-    m_saveAndRenderButton->hide();
-  }
-  if (!isPreview) {
-    showOtherSettingsButton = new QPushButton("", this);
-    otherSettingsLabel      = new QLabel(tr("Other Settings"), this);
-    otherSettingsFrame      = new QFrame(this);
-    m_renderButton->setIcon(createQIcon("render"));
-    m_renderButton->setIconSize(QSize(20, 20));
-    m_saveAndRenderButton->setIcon(createQIcon("render"));
-    m_saveAndRenderButton->setIconSize(QSize(20, 20));
-
-    // Board
-    m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
-    m_boardSettingsBtn = new QPushButton(tr("Edit Clapperboard..."), this);
-
-    // Gamma
-    m_gammaFld = new DVGui::DoubleLineEdit();
-    // Dominant Field
-    m_dominantFieldOm = new QComboBox();
-
-    // Stretch
-    TRenderSettings rs = getProperties()->getRenderSettings();
-
-    // Scene Settings FPS
-    double frameRate = getProperties()->getFrameRate();
-    m_frameRateFld   = new DVGui::DoubleLineEdit(this, frameRate);
-
-    m_stretchFromFld = new DVGui::DoubleLineEdit(this, rs.m_timeStretchFrom);
-    m_stretchToFld   = new DVGui::DoubleLineEdit(this, rs.m_timeStretchTo);
-    m_multimediaOm   = new QComboBox(this);
-
-    showCameraSettingsButton   = new QPushButton("", this);
-    showAdvancedSettingsButton = new QPushButton("", this);
-    addPresetButton            = new QPushButton(tr("Add"), this);
-    removePresetButton         = new QPushButton(tr("Remove"), this);
-    m_presetCombo              = new QComboBox(this);
-
-    m_doStereoscopy = new DVGui::CheckBox(tr("Do stereoscopy"), this);
-    m_stereoShift   = new DVGui::DoubleLineEdit(this, 0.05);
-  }
-  // Threads
-  m_threadsComboOm = new QComboBox();
-  // Granularity
-  m_rasterGranularityOm = new QComboBox();
-
-  //----プロパティの設定
-
-  cameraSettingsLabel->setObjectName("OutputSettingsLabel");
-  advancedSettingsLabel->setObjectName("OutputSettingsLabel");
-  cameraSettingsBox->setObjectName("OutputSettingsBox");
-  advancedSettingsBox->setObjectName("OutputSettingsBox");
-
-  if (!isPreview) {
     // File Format
     QStringList formats;
     TImageWriter::getSupportedFormats(formats, true);
@@ -287,8 +380,236 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     Tiio::Writer::getSupportedFormats(formats, true);
     formats.sort();
     m_fileFormat->addItems(formats);
-    cameraParametersBox->setObjectName("OutputSettingsCameraBox");
   }
+
+  //-----
+
+  QVBoxLayout *lay = new QVBoxLayout();
+  lay->setMargin(10);
+  lay->setSpacing(10);
+  {
+    // Frame start/end
+    QGridLayout *frameStepLay = new QGridLayout();
+    frameStepLay->setMargin(0);
+    frameStepLay->setHorizontalSpacing(5);
+    frameStepLay->setVerticalSpacing(10);
+    {
+      frameStepLay->addWidget(new QLabel(tr("Frame Start:"), this), 0, 0,
+        Qt::AlignRight | Qt::AlignVCenter);
+      frameStepLay->addWidget(m_startFld, 0, 1);
+      frameStepLay->addItem(
+        new QSpacerItem(3, 1, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 2);
+      frameStepLay->addWidget(new QLabel(tr("End:"), this), 0, 3,
+        Qt::AlignRight | Qt::AlignVCenter);
+      frameStepLay->addWidget(m_endFld, 0, 4);
+      frameStepLay->addItem(
+        new QSpacerItem(10, 1, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 5);
+      frameStepLay->addWidget(new QLabel(tr("Step:"), this), 0, 6,
+        Qt::AlignRight | Qt::AlignVCenter);
+      frameStepLay->addWidget(m_stepFld, 0, 7);
+
+    }
+    frameStepLay->setColumnStretch(8, 1);
+
+    lay->addLayout(frameStepLay);
+
+    QGridLayout *fileGridLay = new QGridLayout();
+    fileGridLay->setMargin(0);
+    fileGridLay->setHorizontalSpacing(5);
+    fileGridLay->setVerticalSpacing(10);
+    {
+      // Save In
+      fileGridLay->addWidget(new QLabel(tr("Save in:"), this), 0, 0,
+                              Qt::AlignRight | Qt::AlignVCenter);
+      fileGridLay->addWidget(m_saveInFileFld, 0, 1, 1, 3);
+      // File Name
+      fileGridLay->addWidget(new QLabel(tr("Name:"), this), 1, 0,
+                              Qt::AlignRight | Qt::AlignVCenter);
+      fileGridLay->addWidget(m_fileNameFld, 1, 1);
+      // File Format
+      fileGridLay->addWidget(m_fileFormat, 1, 2);
+      fileGridLay->addWidget(m_fileFormatButton, 1, 3);
+    }
+    fileGridLay->setColumnStretch(1, 1);
+
+    lay->addLayout(fileGridLay);
+
+  }
+  generalSettingsBox->setLayout(lay);
+
+  //-----
+
+  bool ret = true;
+  ret = ret && connect(m_startFld, SIGNAL(editingFinished()),
+    SLOT(onFrameFldEditFinished()));
+  ret = ret && connect(m_endFld, SIGNAL(editingFinished()),
+    SLOT(onFrameFldEditFinished()));
+  ret = ret && connect(m_stepFld, SIGNAL(editingFinished()),
+    SLOT(onFrameFldEditFinished()));
+
+  ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
+    SLOT(onPathChanged()));
+  ret = ret && connect(m_fileNameFld, SIGNAL(editingFinished()),
+    SLOT(onNameChanged()));
+  ret = ret &&
+    connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+      SLOT(onFormatChanged(const QString &)));
+  ret = ret && connect(m_fileFormatButton, SIGNAL(pressed()), this,
+    SLOT(openSettingsPopup()));
+
+  assert(ret);
+  return generalSettingsBox;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
+  QFrame *cameraSettingsBox = new QFrame(this);
+  cameraSettingsBox->setObjectName("OutputSettingsBox");
+
+  // Output Camera
+  m_outputCameraOm = new QComboBox();
+  // Shrink
+  m_shrinkFld = new DVGui::IntLineEdit(this);
+
+  if (isPreview) {
+    // Frame Start-End
+    m_startFld = new DVGui::IntLineEdit(this);
+    m_endFld = new DVGui::IntLineEdit(this);
+    // Step
+    m_stepFld = new DVGui::IntLineEdit(this);
+  }
+
+  QFrame *cameraParametersBox = nullptr;
+  if (!isPreview) {
+    m_cameraSettings    = new CameraSettingsPopup();
+    cameraParametersBox = new QFrame(this);
+    cameraParametersBox->setObjectName("OutputSettingsCameraBox");
+  } else {
+    // Subcamera checkbox
+    m_subcameraChk = new DVGui::CheckBox(tr("Use Sub-Camera"));
+    m_applyShrinkChk =
+        new DVGui::CheckBox(tr("Apply Shrink to Main Viewer"), this);
+  }
+  m_outputCameraOm->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
+  //-----
+
+  QVBoxLayout *lay = new QVBoxLayout();
+  lay->setMargin(10);
+  lay->setSpacing(10);
+  {
+    // Output Camera
+    QHBoxLayout *outCamLay = new QHBoxLayout();
+    outCamLay->setMargin(0);
+    outCamLay->setSpacing(5);
+    {
+      outCamLay->addWidget(new QLabel(tr("Output Camera:"), this), 0);
+      outCamLay->addWidget(m_outputCameraOm, 0);
+      outCamLay->addStretch(1);
+    }
+    lay->addLayout(outCamLay);
+
+    if (!isPreview) {
+      QVBoxLayout *camParamLay = new QVBoxLayout();
+      camParamLay->setMargin(5);
+      camParamLay->setSpacing(0);
+      { camParamLay->addWidget(m_cameraSettings); }
+      cameraParametersBox->setLayout(camParamLay);
+
+      lay->addWidget(cameraParametersBox);
+    }
+
+    if (isPreview) {
+      // Frame start/end
+      QGridLayout *frameStepLay = new QGridLayout();
+      frameStepLay->setMargin(0);
+      frameStepLay->setHorizontalSpacing(5);
+      frameStepLay->setVerticalSpacing(10);
+      {
+        frameStepLay->addWidget(new QLabel(tr("Frame Start:"), this), 0, 0,
+          Qt::AlignRight | Qt::AlignVCenter);
+        frameStepLay->addWidget(m_startFld, 0, 1);
+        frameStepLay->addItem(
+          new QSpacerItem(3, 1, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 2);
+        frameStepLay->addWidget(new QLabel(tr("End:"), this), 0, 3,
+          Qt::AlignRight | Qt::AlignVCenter);
+        frameStepLay->addWidget(m_endFld, 0, 4);
+        frameStepLay->addItem(
+          new QSpacerItem(10, 1, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 5);
+        frameStepLay->addWidget(new QLabel(tr("Step:"), this), 0, 6,
+          Qt::AlignRight | Qt::AlignVCenter);
+        frameStepLay->addWidget(m_stepFld, 0, 7);
+
+      }
+      frameStepLay->setColumnStretch(8, 1);
+
+      lay->addLayout(frameStepLay);
+    }
+
+    // Frame start/end
+    QGridLayout *frameShrinkLay = new QGridLayout();
+    frameShrinkLay->setMargin(0);
+    frameShrinkLay->setHorizontalSpacing(5);
+    frameShrinkLay->setVerticalSpacing(10);
+    {
+      frameShrinkLay->addWidget(new QLabel(tr("Shrink:"), this), 1, 0,
+                                Qt::AlignRight | Qt::AlignVCenter);
+      frameShrinkLay->addWidget(m_shrinkFld, 1, 1);
+
+      if (isPreview)
+        frameShrinkLay->addWidget(m_applyShrinkChk, 1, 4, 1, 5,
+                                  Qt::AlignRight | Qt::AlignVCenter);
+    }
+    frameShrinkLay->setColumnStretch(8, 1);
+
+    lay->addLayout(frameShrinkLay);
+  }
+  cameraSettingsBox->setLayout(lay);
+
+  //-----
+
+  bool ret = true;
+  if (isPreview) {
+    ret = ret && connect(m_startFld, SIGNAL(editingFinished()),
+      SLOT(onFrameFldEditFinished()));
+    ret = ret && connect(m_endFld, SIGNAL(editingFinished()),
+      SLOT(onFrameFldEditFinished()));
+    ret = ret && connect(m_stepFld, SIGNAL(editingFinished()),
+      SLOT(onFrameFldEditFinished()));
+  }
+
+  ret      = ret &&
+        connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
+                SLOT(onCameraChanged(const QString &)));
+  ret = ret && connect(m_shrinkFld, SIGNAL(editingFinished()),
+                       SLOT(onFrameFldEditFinished()));
+  if (!isPreview) {
+    ret = ret && connect(m_cameraSettings, SIGNAL(changed()), this,
+                         SLOT(onCameraSettingsChanged()));
+  } else {
+    ret = ret && connect(m_applyShrinkChk, SIGNAL(stateChanged(int)),
+                         SLOT(onApplyShrinkChecked(int)));
+  }
+
+  assert(ret);
+  return cameraSettingsBox;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
+  QFrame *advancedSettingsBox = new QFrame(this);
+  advancedSettingsBox->setObjectName("OutputSettingsBox");
+
+  // Resample Balance
+  m_resampleBalanceOm = new QComboBox();
+  // Channel Width
+  m_channelWidthOm = new QComboBox();
+  // Threads
+  m_threadsComboOm = new QComboBox();
+  // Granularity
+  m_rasterGranularityOm = new QComboBox();
 
   // Resample Balance
   translateResampleOptions();
@@ -296,63 +617,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     m_resampleBalanceOm->addItem(resampleInfoMap[(ResampleOption)i].uiString,
                                  resampleInfoMap[(ResampleOption)i].idString);
   }
-
   // Channel Width
   m_channelWidthOm->addItem(tr("8 bit"), "8 bit");
   m_channelWidthOm->addItem(tr("16 bit"), "16 bit");
-
-  if (!isPreview) {
-    showOtherSettingsButton->setObjectName("menuToggleButton");
-    showOtherSettingsButton->setFixedSize(15, 15);
-    showOtherSettingsButton->setIcon(createQIcon("menu_toggle"));
-    showOtherSettingsButton->setCheckable(true);
-    showOtherSettingsButton->setChecked(false);
-    showOtherSettingsButton->setFocusPolicy(Qt::NoFocus);
-    otherSettingsLabel->setObjectName("OutputSettingsLabel");
-    otherSettingsFrame->setObjectName("OutputSettingsBox");
-    otherSettingsFrame->setVisible(false);
-
-    // Dominant Field
-    QStringList dominantField;
-    dominantField << tr("Odd (NTSC)") << tr("Even (PAL)") << tr("None");
-    m_dominantFieldOm->addItems(dominantField);
-    m_stretchFromFld->setRange(1, 1000);
-    m_stretchToFld->setRange(1, 1000);
-    m_stretchFromFld->setDecimals(2);
-    m_stretchToFld->setDecimals(2);
-
-    // Multimedia rendering enum
-    QStringList multimediaTypes;
-    multimediaTypes << tr("None") << tr("Fx Schematic Flows")
-                    << tr("Fx Schematic Terminal Nodes");
-    m_multimediaOm->addItems(multimediaTypes);
-
-    showCameraSettingsButton->setObjectName("menuToggleButton");
-    showCameraSettingsButton->setFixedSize(15, 15);
-    showCameraSettingsButton->setIcon(createQIcon("menu_toggle"));
-    showCameraSettingsButton->setCheckable(true);
-    showCameraSettingsButton->setChecked(false);
-    showCameraSettingsButton->setFocusPolicy(Qt::NoFocus);
-
-    showAdvancedSettingsButton->setObjectName("OutputSettingsShowButton");
-    showAdvancedSettingsButton->setFixedSize(15, 15);
-    showAdvancedSettingsButton->setIcon(createQIcon("menu_toggle"));
-    showAdvancedSettingsButton->setCheckable(true);
-    showAdvancedSettingsButton->setChecked(false);
-    showAdvancedSettingsButton->setFocusPolicy(Qt::NoFocus);
-
-    addPresetButton->setObjectName("PushButton_NoPadding");
-    removePresetButton->setObjectName("PushButton_NoPadding");
-    /*-- OutputSettingsのプリセット登録の説 明--*/
-    QString tooltip =
-        tr("Save current output settings.\nThe parameters to be saved are:\n- "
-           "Camera settings\n- Project folder to be saved in\n- File format\n- "
-           "File options\n- Resample Balance\n- Channel width");
-    addPresetButton->setToolTip(tooltip);
-    /*-- プリセットフォルダを調べ、コンボボックスにアイテムを格納する --*/
-    updatePresetComboItems();
-    m_stereoShift->setEnabled(false);
-  }
 
   QStringList threadsChoices;
   threadsChoices << tr("Single") << tr("Half") << tr("All");
@@ -362,349 +629,51 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
                      << tr("Small");
   m_rasterGranularityOm->addItems(granularityChoices);
 
-  //----layout
+  //-----
 
-  m_topLayout->setMargin(5);
-  m_topLayout->setSpacing(3);
+  QVBoxLayout *lay = new QVBoxLayout();
+  lay->setMargin(10);
+  lay->setSpacing(10);
   {
-    if (!isPreview) {
-      QHBoxLayout *presetLay = new QHBoxLayout();
-      presetLay->setMargin(0);
-      presetLay->setSpacing(5);
-      {
-        presetLay->addStretch(1);
-        presetLay->addWidget(new QLabel(tr("Presets:"), this), 1,
-                             Qt::AlignRight | Qt::AlignVCenter);
-        presetLay->addWidget(m_presetCombo, 1);
-        presetLay->addWidget(addPresetButton, 0);
-        presetLay->addWidget(removePresetButton, 0);
-      }
-      m_topLayout->addLayout(presetLay, 0);
-      m_topLayout->addSpacing(10);
-
-      QVBoxLayout *basicSettingsBoxLay = new QVBoxLayout(this);
-      QFrame *basicSettingsBox         = new QFrame(this);
-      basicSettingsBox->setObjectName("OutputSettingsBox");
-
-      // Frame start/end
-      QHBoxLayout *topFrameLay = new QHBoxLayout();
-      topFrameLay->setMargin(0);
-      topFrameLay->setSpacing(5);
-      {
-        topFrameLay->addWidget(new QLabel(tr("Frame Start:"), this), 0);
-        topFrameLay->addWidget(m_startFld, 0);
-        topFrameLay->addSpacing(3);
-        topFrameLay->addWidget(new QLabel(tr("End:"), this), 0);
-        topFrameLay->addWidget(m_endFld, 0);
-        topFrameLay->addSpacing(10);
-        topFrameLay->addWidget(new QLabel(tr("Step:"), this), 0);
-        topFrameLay->addWidget(m_stepFld, 0);
-        topFrameLay->addStretch(1);
-      }
-      basicSettingsBoxLay->addLayout(topFrameLay);
-      basicSettingsBoxLay->addSpacing(10);
-
-      QGridLayout *upperGridLay = new QGridLayout();
-      upperGridLay->setContentsMargins(0, 5, 0, 0);
-      upperGridLay->setSpacing(5);
-      {
-        // Save In
-        upperGridLay->addWidget(new QLabel(tr("Save in:"), this), 0, 0,
-                                Qt::AlignRight | Qt::AlignVCenter);
-        upperGridLay->addWidget(m_saveInFileFld, 0, 1, 1, 3);
-        // File Name
-        upperGridLay->addWidget(new QLabel(tr("Name:"), this), 1, 0,
-                                Qt::AlignRight | Qt::AlignVCenter);
-        upperGridLay->addWidget(m_fileNameFld, 1, 1);
-        // File Format
-        upperGridLay->addWidget(m_fileFormat, 1, 2);
-        upperGridLay->addWidget(m_fileFormatButton, 1, 3);
-      }
-      upperGridLay->setColumnStretch(0, 0);
-      upperGridLay->setColumnStretch(1, 1);
-      upperGridLay->setColumnStretch(2, 0);
-      upperGridLay->setColumnStretch(3, 0);
-
-      basicSettingsBoxLay->addLayout(upperGridLay);
-      basicSettingsBox->setLayout(basicSettingsBoxLay);
-      basicSettingsBox->setContentsMargins(0, 5, 0, 5);
-      m_topLayout->addWidget(basicSettingsBox);
-      m_topLayout->addSpacing(10);
-    }
-
-    QHBoxLayout *cameraSettingsLabelLay = new QHBoxLayout();
-    cameraSettingsLabelLay->setMargin(0);
-    cameraSettingsLabelLay->setSpacing(3);
+    QGridLayout *bottomGridLay = new QGridLayout();
+    bottomGridLay->setMargin(0);
+    bottomGridLay->setHorizontalSpacing(5);
+    bottomGridLay->setVerticalSpacing(10);
     {
-      if (!isPreview)
-        cameraSettingsLabelLay->addWidget(showCameraSettingsButton, 0);
-      cameraSettingsLabelLay->addWidget(cameraSettingsLabel, 0);
-      cameraSettingsLabelLay->addStretch(1);
-    }
-    m_topLayout->addLayout(cameraSettingsLabelLay, 0);
-
-    QVBoxLayout *camSetBoxLay = new QVBoxLayout();
-    camSetBoxLay->setMargin(10);
-    camSetBoxLay->setSpacing(10);
-    {
-      // Output Camera
-      QHBoxLayout *outCamLay = new QHBoxLayout();
-      outCamLay->setMargin(0);
-      outCamLay->setSpacing(5);
-      {
-        outCamLay->addWidget(new QLabel(tr("Output Camera:"), this), 0);
-        outCamLay->addWidget(m_outputCameraOm, 1);
-      }
-      camSetBoxLay->addLayout(outCamLay);
-
-      if (!isPreview) {
-        QVBoxLayout *camParamLay = new QVBoxLayout();
-        camParamLay->setMargin(5);
-        camParamLay->setSpacing(0);
-        { camParamLay->addWidget(m_cameraSettings); }
-        cameraParametersBox->setLayout(camParamLay);
-
-        camSetBoxLay->addWidget(cameraParametersBox);
-      }
-      if (isPreview) {
-        // Frame start/end
-        QHBoxLayout *frameLay = new QHBoxLayout();
-        frameLay->setMargin(0);
-        frameLay->setSpacing(5);
-        {
-          frameLay->addWidget(new QLabel(tr("Frame Start:"), this), 0);
-          frameLay->addWidget(m_startFld, 0);
-          frameLay->addSpacing(3);
-          frameLay->addWidget(new QLabel(tr("End:"), this), 0);
-          frameLay->addWidget(m_endFld, 0);
-          frameLay->addSpacing(10);
-          frameLay->addWidget(new QLabel(tr("Step:"), this), 0);
-          frameLay->addWidget(m_stepFld, 0);
-          frameLay->addStretch(1);
-        }
-        camSetBoxLay->addLayout(frameLay);
-      }
-
-      // Frame Shrink
-      QHBoxLayout *shrinkLay = new QHBoxLayout();
-      shrinkLay->setMargin(0);
-      shrinkLay->setSpacing(5);
-      {
-        shrinkLay->addWidget(new QLabel(tr("Shrink:"), this), 0);
-        shrinkLay->addWidget(m_shrinkFld, 0);
-        shrinkLay->addStretch();
-        // Apply Shrink to MainViewer
-        if (isPreview) shrinkLay->addWidget(m_applyShrinkChk, 0);
-      }
-      camSetBoxLay->addLayout(shrinkLay);
-    }
-    cameraSettingsBox->setLayout(camSetBoxLay);
-    m_topLayout->addWidget(cameraSettingsBox, 0);
-
-    m_topLayout->addSpacing(10);
-
-    // Advanced Settings
-    QHBoxLayout *advancedSettingsLabelLay = new QHBoxLayout();
-    advancedSettingsLabelLay->setMargin(0);
-    advancedSettingsLabelLay->setSpacing(3);
-    {
-      if (!isPreview)
-        advancedSettingsLabelLay->addWidget(showAdvancedSettingsButton, 0);
-      advancedSettingsLabelLay->addWidget(advancedSettingsLabel, 0);
-      advancedSettingsLabelLay->addStretch(1);
-    }
-    m_topLayout->addLayout(advancedSettingsLabelLay, 0);
-
-    QVBoxLayout *fileSetBoxLay = new QVBoxLayout();
-    fileSetBoxLay->setMargin(10);
-    fileSetBoxLay->setSpacing(10);
-    {
-      QGridLayout *bottomGridLay = new QGridLayout();
-      bottomGridLay->setMargin(0);
-      bottomGridLay->setHorizontalSpacing(5);
-      bottomGridLay->setVerticalSpacing(10);
-      {
-        // Resample Balance
-        bottomGridLay->addWidget(new QLabel(tr("Resample Balance:"), this), 0,
-                                 0, Qt::AlignRight | Qt::AlignVCenter);
-        bottomGridLay->addWidget(m_resampleBalanceOm, 0, 1, 1, 2);
-        // Channel Width
-        bottomGridLay->addWidget(new QLabel(tr("Channel Width:"), this), 1, 0,
-                                 Qt::AlignRight | Qt::AlignVCenter);
-        bottomGridLay->addWidget(m_channelWidthOm, 1, 1, 1, 2);
-        // Threads
-        bottomGridLay->addWidget(new QLabel(tr("Dedicated CPUs:"), this), 2, 0,
-                                 Qt::AlignRight | Qt::AlignVCenter);
-        bottomGridLay->addWidget(m_threadsComboOm, 2, 1, 1, 2);
-        // Granularity
-        bottomGridLay->addWidget(new QLabel(tr("Render Tile:"), this), 3, 0,
-                                 Qt::AlignRight | Qt::AlignVCenter);
-        bottomGridLay->addWidget(m_rasterGranularityOm, 3, 1, 1, 2);
-        if (m_subcameraChk) {
-          bottomGridLay->addWidget(m_subcameraChk, 4, 1, 1, 2);
-        }
-      }
-      bottomGridLay->setColumnStretch(0, 0);
-      bottomGridLay->setColumnStretch(1, 1);
-
-      fileSetBoxLay->addLayout(bottomGridLay);
-
-      // shrinkable settings
-      if (!isPreview) {
-        fileSetBoxLay->addSpacing(5);
-
-        QHBoxLayout *otherSettingsLabelLay = new QHBoxLayout();
-        otherSettingsLabelLay->setMargin(0);
-        otherSettingsLabelLay->setSpacing(3);
-        {
-          otherSettingsLabelLay->addWidget(showOtherSettingsButton, 0);
-          otherSettingsLabelLay->addWidget(otherSettingsLabel, 0);
-          otherSettingsLabelLay->addStretch(1);
-        }
-        fileSetBoxLay->addLayout(otherSettingsLabelLay, 0);
-
-        QGridLayout *otherSettingsLay = new QGridLayout();
-        otherSettingsLay->setMargin(5);
-        otherSettingsLay->setHorizontalSpacing(5);
-        otherSettingsLay->setVerticalSpacing(10);
-        {
-          // clapperboard
-          otherSettingsLay->addWidget(m_addBoard, 0, 0);
-          otherSettingsLay->addWidget(m_boardSettingsBtn, 0, 2, 1, 2);
-
-          // Gamma
-          otherSettingsLay->addWidget(new QLabel(tr("Gamma:"), this), 1, 0,
-                                      Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_gammaFld, 1, 1, 1, 3);
-          // Dominant Field
-          otherSettingsLay->addWidget(new QLabel(tr("Dominant Field:"), this),
-                                      2, 0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_dominantFieldOm, 2, 1, 1, 4);
-          // Scene Settings' FPS
-          otherSettingsLay->addWidget(
-              new QLabel(tr("Frame Rate (linked to Scene Settings):"), this), 3,
-              0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_frameRateFld, 3, 1, 1, 3);
-          // Strech
-          otherSettingsLay->addWidget(new QLabel(tr("Stretch from FPS:"), this),
-                                      4, 0, Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stretchFromFld, 4, 1);
-          otherSettingsLay->addWidget(new QLabel(tr("  To:"), this), 4, 2,
-                                      Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stretchToFld, 4, 3);
-          // new in V6.1
-          // Multimedia rendering enum
-          otherSettingsLay->addWidget(
-              new QLabel(tr("Multiple Rendering:"), this), 5, 0,
-              Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_multimediaOm, 5, 1, 1, 4);
-
-          otherSettingsLay->addWidget(m_doStereoscopy, 6, 0);
-          otherSettingsLay->addWidget(new QLabel(tr("Camera Shift:")), 6, 1,
-                                      Qt::AlignRight | Qt::AlignVCenter);
-          otherSettingsLay->addWidget(m_stereoShift, 6, 2);
-
-          otherSettingsLay->addLayout(bottomGridLay, 7, 0, 4, 5);
-        }
-        otherSettingsLay->setColumnStretch(0, 0);
-        otherSettingsLay->setColumnStretch(1, 0);
-        otherSettingsLay->setColumnStretch(2, 0);
-        otherSettingsLay->setColumnStretch(3, 0);
-        otherSettingsLay->setColumnStretch(4, 1);
-
-        otherSettingsFrame->setLayout(otherSettingsLay);
-        fileSetBoxLay->addWidget(otherSettingsFrame, 0);
+      // Resample Balance
+      bottomGridLay->addWidget(new QLabel(tr("Resample Balance:"), this), 0, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+      bottomGridLay->addWidget(m_resampleBalanceOm, 0, 1, 1, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+      // Channel Width
+      bottomGridLay->addWidget(new QLabel(tr("Channel Width:"), this), 1, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+      bottomGridLay->addWidget(m_channelWidthOm, 1, 1);
+      // Threads
+      bottomGridLay->addWidget(new QLabel(tr("Dedicated CPUs:"), this), 2, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+      bottomGridLay->addWidget(m_threadsComboOm, 2, 1);
+      // Granularity
+      bottomGridLay->addWidget(new QLabel(tr("Render Tile:"), this), 3, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+      bottomGridLay->addWidget(m_rasterGranularityOm, 3, 1);
+      if (m_subcameraChk) {
+        bottomGridLay->addWidget(m_subcameraChk, 4, 1, 1, 2);
       }
     }
-    advancedSettingsBox->setLayout(fileSetBoxLay);
-    m_topLayout->addWidget(advancedSettingsBox, 0);
+    bottomGridLay->setColumnStretch(2, 1);
 
-    QHBoxLayout *renderButtonLayout = new QHBoxLayout(this);
-    renderButtonLayout->addWidget(m_renderButton);
-    renderButtonLayout->addWidget(m_saveAndRenderButton);
-    m_topLayout->addLayout(renderButtonLayout);
-    m_topLayout->addStretch(1);
+    lay->addLayout(bottomGridLay);
   }
+  advancedSettingsBox->setLayout(lay);
 
-  //----signal-slot connections
+  //-----
+
   bool ret = true;
-
-  if (!isPreview) {
-    ret = ret && connect(m_saveInFileFld, SIGNAL(pathChanged()), this,
-                         SLOT(onPathChanged()));
-    ret = ret && connect(m_fileNameFld, SIGNAL(editingFinished()),
-                         SLOT(onNameChanged()));
-    ret = ret &&
-          connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
-                  SLOT(onFormatChanged(const QString &)));
-    ret = ret && connect(m_fileFormatButton, SIGNAL(pressed()), this,
-                         SLOT(openSettingsPopup()));
-  }
-  ret = ret && connect(m_renderButton, SIGNAL(pressed()), this,
-                       SLOT(onRenderClicked()));
-  ret = ret && connect(m_saveAndRenderButton, SIGNAL(pressed()), this,
-                       SLOT(onSaveAndRenderClicked()));
-  ret = ret &&
-        connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
-                SLOT(onCameraChanged(const QString &)));
-  ret = ret && connect(m_startFld, SIGNAL(editingFinished()),
-                       SLOT(onFrameFldEditFinished()));
-  ret = ret && connect(m_endFld, SIGNAL(editingFinished()),
-                       SLOT(onFrameFldEditFinished()));
-  ret = ret && connect(m_stepFld, SIGNAL(editingFinished()),
-                       SLOT(onFrameFldEditFinished()));
-  ret = ret && connect(m_shrinkFld, SIGNAL(editingFinished()),
-                       SLOT(onFrameFldEditFinished()));
-
-  if (isPreview) {
-    ret = ret && connect(m_applyShrinkChk, SIGNAL(stateChanged(int)),
-                         SLOT(onApplyShrinkChecked(int)));
-  }
-
   ret = ret && connect(m_resampleBalanceOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onResampleChanged(int)));
   ret = ret && connect(m_channelWidthOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onChannelWidthChanged(int)));
-
-  if (!isPreview) {
-    // clapperboard
-    ret = ret && connect(m_addBoard, SIGNAL(stateChanged(int)), this,
-                         SLOT(onAddBoardChecked(int)));
-    ret = ret && connect(m_boardSettingsBtn, SIGNAL(clicked()), this,
-                         SLOT(onBoardSettingsBtnClicked()));
-
-    ret = ret && connect(m_gammaFld, SIGNAL(editingFinished()),
-                         SLOT(onGammaFldEditFinished()));
-    ret = ret && connect(m_dominantFieldOm, SIGNAL(currentIndexChanged(int)),
-                         SLOT(onDominantFieldChanged(int)));
-    ret = ret && connect(m_frameRateFld, SIGNAL(editingFinished()), this,
-                         SLOT(onFrameRateEditingFinished()));
-    ret = ret && connect(m_stretchFromFld, SIGNAL(editingFinished()),
-                         SLOT(onStretchFldEditFinished()));
-    ret = ret && connect(m_stretchToFld, SIGNAL(editingFinished()),
-                         SLOT(onStretchFldEditFinished()));
-    ret = ret && connect(m_multimediaOm, SIGNAL(currentIndexChanged(int)), this,
-                         SLOT(onMultimediaChanged(int)));
-    ret = ret && connect(showOtherSettingsButton, SIGNAL(toggled(bool)),
-                         otherSettingsFrame, SLOT(setVisible(bool)));
-    ret = ret && connect(showCameraSettingsButton, SIGNAL(toggled(bool)),
-                         cameraSettingsBox, SLOT(setVisible(bool)));
-    ret = ret && connect(showAdvancedSettingsButton, SIGNAL(toggled(bool)),
-                         advancedSettingsBox, SLOT(setVisible(bool)));
-    ret = ret && connect(addPresetButton, SIGNAL(pressed()), this,
-                         SLOT(onAddPresetButtonPressed()));
-    ret = ret && connect(removePresetButton, SIGNAL(pressed()), this,
-                         SLOT(onRemovePresetButtonPressed()));
-    ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
-                         this, SLOT(onPresetSelected(const QString &)));
-    ret = ret && connect(m_cameraSettings, SIGNAL(changed()), this,
-                         SLOT(onCameraSettingsChanged()));
-    ret = ret && connect(m_doStereoscopy, SIGNAL(stateChanged(int)),
-                         SLOT(onStereoChecked(int)));
-    ret = ret && connect(m_stereoShift, SIGNAL(editingFinished()),
-                         SLOT(onStereoChanged()));
-  }
-
   ret = ret && connect(m_threadsComboOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onThreadsComboChanged(int)));
   ret = ret && connect(m_rasterGranularityOm, SIGNAL(currentIndexChanged(int)),
@@ -713,17 +682,133 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   if (m_subcameraChk)
     ret = ret && connect(m_subcameraChk, SIGNAL(stateChanged(int)),
                          SLOT(onSubcameraChecked(int)));
-  if (!isPreview) {
-    cameraSettingsBox->setVisible(false);
-    advancedSettingsBox->setVisible(false);
-  }
-
   assert(ret);
+  return advancedSettingsBox;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *OutputSettingsPopup::createOtherSettingsBox() {
+  QFrame *otherSettingsBox = new QFrame(this);
+  otherSettingsBox->setObjectName("OutputSettingsBox");
+
+  // Board
+  m_addBoard         = new DVGui::CheckBox(tr("Add Clapperboard"), this);
+  m_boardSettingsBtn = new QPushButton(tr("Edit Clapperboard..."), this);
+  // Gamma
+  m_gammaFld = new DVGui::DoubleLineEdit();
+  // Dominant Field
+  m_dominantFieldOm = new QComboBox();
+
+  // Stretch
+  TRenderSettings rs = getProperties()->getRenderSettings();
+
+  // Scene Settings FPS
+  double frameRate = getProperties()->getFrameRate();
+  m_frameRateFld   = new DVGui::DoubleLineEdit(this, frameRate);
+  m_stretchFromFld = new DVGui::DoubleLineEdit(this, rs.m_timeStretchFrom);
+  m_stretchToFld   = new DVGui::DoubleLineEdit(this, rs.m_timeStretchTo);
+  m_multimediaOm   = new QComboBox(this);
+  m_doStereoscopy  = new DVGui::CheckBox(tr("Do stereoscopy"), this);
+  m_stereoShift    = new DVGui::DoubleLineEdit(this, 0.05);
+
+  // Dominant Field
+  QStringList dominantField;
+  dominantField << tr("Odd (NTSC)") << tr("Even (PAL)") << tr("None");
+  m_dominantFieldOm->addItems(dominantField);
+  m_stretchFromFld->setRange(1, 1000);
+  m_stretchToFld->setRange(1, 1000);
+  m_stretchFromFld->setDecimals(2);
+  m_stretchToFld->setDecimals(2);
+  // Multimedia rendering enum
+  QStringList multimediaTypes;
+  multimediaTypes << tr("None") << tr("Fx Schematic Flows")
+                  << tr("Fx Schematic Terminal Nodes");
+  m_multimediaOm->addItems(multimediaTypes);
+  m_stereoShift->setEnabled(false);
+
+  //-----
+
+  QGridLayout *lay = new QGridLayout();
+  lay->setMargin(5);
+  lay->setHorizontalSpacing(5);
+  lay->setVerticalSpacing(10);
+  {
+    // clapperboard
+    lay->addWidget(m_addBoard, 0, 0);
+    lay->addWidget(m_boardSettingsBtn, 0, 1, 1, 3,
+                   Qt::AlignLeft | Qt::AlignVCenter);
+
+    // Gamma
+    lay->addWidget(new QLabel(tr("Gamma:"), this), 1, 0,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_gammaFld, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
+    // Dominant Field
+    lay->addWidget(new QLabel(tr("Dominant Field:"), this), 2, 0,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_dominantFieldOm, 2, 1, 1, 2,
+                   Qt::AlignLeft | Qt::AlignVCenter);
+    // Scene Settings' FPS
+    lay->addWidget(new QLabel(tr("Frame Rate:"), this), 3, 0,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_frameRateFld, 3, 1, Qt::AlignLeft | Qt::AlignVCenter);
+    lay->addWidget(new QLabel(tr("(linked to Scene Settings)"), this), 3, 2, 1,
+                   2, Qt::AlignLeft | Qt::AlignVCenter);
+    // Strech
+    lay->addWidget(new QLabel(tr("Stretch from FPS:"), this), 4, 0,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_stretchFromFld, 4, 1, Qt::AlignLeft | Qt::AlignVCenter);
+    lay->addWidget(new QLabel(tr("  To:"), this), 4, 2,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_stretchToFld, 4, 3, Qt::AlignLeft | Qt::AlignVCenter);
+    // new in V6.1
+    // Multimedia rendering enum
+    lay->addWidget(new QLabel(tr("Multiple Rendering:"), this), 5, 0,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_multimediaOm, 5, 1, 1, 3,
+                   Qt::AlignLeft | Qt::AlignVCenter);
+
+    lay->addWidget(m_doStereoscopy, 6, 0);
+    lay->addWidget(new QLabel(tr("Camera Shift:")), 6, 1, 1, 2,
+                   Qt::AlignRight | Qt::AlignVCenter);
+    lay->addWidget(m_stereoShift, 6, 3, Qt::AlignLeft | Qt::AlignVCenter);
+  }
+  lay->setColumnStretch(4, 1);
+
+  otherSettingsBox->setLayout(lay);
+
+  //-----
+
+  bool ret = true;
+  // clapperboard
+  ret = ret && connect(m_addBoard, SIGNAL(stateChanged(int)), this,
+                       SLOT(onAddBoardChecked(int)));
+  ret = ret && connect(m_boardSettingsBtn, SIGNAL(clicked()), this,
+                       SLOT(onBoardSettingsBtnClicked()));
+
+  ret = ret && connect(m_gammaFld, SIGNAL(editingFinished()),
+                       SLOT(onGammaFldEditFinished()));
+  ret = ret && connect(m_dominantFieldOm, SIGNAL(currentIndexChanged(int)),
+                       SLOT(onDominantFieldChanged(int)));
+  ret = ret && connect(m_frameRateFld, SIGNAL(editingFinished()), this,
+                       SLOT(onFrameRateEditingFinished()));
+  ret = ret && connect(m_stretchFromFld, SIGNAL(editingFinished()),
+                       SLOT(onStretchFldEditFinished()));
+  ret = ret && connect(m_stretchToFld, SIGNAL(editingFinished()),
+                       SLOT(onStretchFldEditFinished()));
+  ret = ret && connect(m_multimediaOm, SIGNAL(currentIndexChanged(int)), this,
+                       SLOT(onMultimediaChanged(int)));
+  ret = ret && connect(m_doStereoscopy, SIGNAL(stateChanged(int)),
+                       SLOT(onStereoChecked(int)));
+  ret = ret && connect(m_stereoShift, SIGNAL(editingFinished()),
+                       SLOT(onStereoChanged()));
+  assert(ret);
+  return otherSettingsBox;
 }
 
 //-----------------------------------------------------------------------------
 /*! Return current \b ToonzScene scene.
-*/
+ */
 ToonzScene *OutputSettingsPopup::getCurrentScene() const {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   return scene;
@@ -809,7 +894,7 @@ void OutputSettingsPopup::onSaveAndRenderClicked() {
 //-----------------------------------------------------------------------------
 
 /*!	Update all field value take care current scene output properties.
-*/
+ */
 void OutputSettingsPopup::updateField() {
   ToonzScene *scene       = getCurrentScene();
   TOutputProperties *prop = getProperties();
@@ -896,8 +981,8 @@ void OutputSettingsPopup::updateField() {
   int r0 = 0, r1 = -1, step;
   prop->getRange(r0, r1, step);
   if (r0 > r1) {
-    r0             = 0;
-    r1             = scene->getFrameCount() - 1;
+    r0 = 0;
+    r1 = scene->getFrameCount() - 1;
     if (r1 < 0) r1 = 0;
   }
   m_startFld->setValue(r0 + 1);
@@ -970,7 +1055,7 @@ void OutputSettingsPopup::updateField() {
 
 //-----------------------------------------------------------------------------
 /*! Set current scene output path to new path modified in popup field.
-*/
+ */
 void OutputSettingsPopup::onPathChanged() {
   if (!getCurrentScene()) return;
 
@@ -992,7 +1077,7 @@ void OutputSettingsPopup::onPathChanged() {
 
 //-----------------------------------------------------------------------------
 /*! Set current scene output name to new name modified in popup field.
-*/
+ */
 void OutputSettingsPopup::onNameChanged() {
   ToonzScene *scene = getCurrentScene();
   if (!scene) return;
@@ -1056,7 +1141,7 @@ void OutputSettingsPopup::onNameChanged() {
 
 //-----------------------------------------------------------------------------
 /*! Set current scene output format to new format set in popup field.
-*/
+ */
 void OutputSettingsPopup::onFormatChanged(const QString &str) {
   auto isMultiRenderInvalid = [](std::string ext) -> bool {
     return ext == "mp4" || ext == "gif" || ext == "webm" ||
@@ -1102,7 +1187,7 @@ void OutputSettingsPopup::openSettingsPopup() {
 
 //-----------------------------------------------------------------------------
 /*! Set current scene output camera to camera set in popup field.
-*/
+ */
 void OutputSettingsPopup::onCameraChanged(const QString &str) {
   ToonzScene *scene = getCurrentScene();
   if (!scene) return;
@@ -1258,7 +1343,7 @@ void OutputSettingsPopup::onChannelWidthChanged(int type) {
 
 //-----------------------------------------------------------------------------
 /*! Set current scene output gamma value to current value in popup gamma field.
-*/
+ */
 void OutputSettingsPopup::onGammaFldEditFinished() {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
@@ -1357,7 +1442,7 @@ void OutputSettingsPopup::onRasterGranularityChanged(int type) {
 
 //-----------------------------------------------------------------------------
 /*! OutputSettingsのPreset登録
-*/
+ */
 void OutputSettingsPopup::onAddPresetButtonPressed() {
   //*-- プリセット名を取得 --*/
   bool ok;
@@ -1456,7 +1541,7 @@ void OutputSettingsPopup::onAddPresetButtonPressed() {
 
 //-----------------------------------------------------------------------------
 /*! プリセットフォルダを調べ、コンボボックスにアイテムを格納する
-*/
+ */
 void OutputSettingsPopup::updatePresetComboItems() {
   m_presetCombo->clear();
   m_presetCombo->addItem(tr("<custom>"));
@@ -1498,14 +1583,15 @@ void OutputSettingsPopup::translateResampleOptions() {
 
 //-----------------------------------------------------------------------------
 /*! OutputSettingsのPreset削除
-*/
+ */
 void OutputSettingsPopup::onRemovePresetButtonPressed() {
   int index = m_presetCombo->currentIndex();
   if (index <= 0) return;
-  int ret = QMessageBox::question(
-      this, tr("Remove preset"), QString("Deleting \"%1\".\nAre you sure?")
-                                     .arg(m_presetCombo->currentText()),
-      QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+  int ret = QMessageBox::question(this, tr("Remove preset"),
+                                  QString("Deleting \"%1\".\nAre you sure?")
+                                      .arg(m_presetCombo->currentText()),
+                                  QMessageBox::Ok | QMessageBox::Cancel,
+                                  QMessageBox::Ok);
   if (ret == QMessageBox::Cancel) return;
 
   TFilePath fp =

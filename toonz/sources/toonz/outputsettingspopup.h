@@ -7,9 +7,12 @@
 
 #include "toonz/sceneproperties.h"
 
+#include <QLabel>
 // forward declaration
 class ToonzScene;
 class QComboBox;
+class QScrollArea;
+class QListWidgetItem;
 
 namespace DVGui {
 class FileField;
@@ -17,13 +20,31 @@ class LineEdit;
 class IntLineEdit;
 class CheckBox;
 class DoubleLineEdit;
-}
+}  // namespace DVGui
 
 class CameraSettingsPopup;
 
 //=============================================================================
 // OutputSettingsPopup
 //-----------------------------------------------------------------------------
+
+class AnimatedLabel : public QLabel {
+  Q_OBJECT
+  Q_PROPERTY(QColor color READ color WRITE setColor)
+public:
+  AnimatedLabel(const QString &text, QWidget *parent = 0)
+      : QLabel(text, parent) {
+    setObjectName("OutputSettingsLabel");
+  }
+  void setColor(QColor color) {
+    setStyleSheet(QString("background-color: rgba(%1,%2,%3,%4);")
+                      .arg(color.red())
+                      .arg(color.green())
+                      .arg(color.blue())
+                      .arg(color.alpha()));
+  }
+  QColor color() { return Qt::black; }
+};
 
 class OutputSettingsPopup : public DVGui::Dialog {
   Q_OBJECT
@@ -49,8 +70,6 @@ class OutputSettingsPopup : public DVGui::Dialog {
 
   DVGui::DoubleLineEdit *m_frameRateFld;
   QPushButton *m_fileFormatButton;
-  QPushButton *m_renderButton;
-  QPushButton *m_saveAndRenderButton;
   CameraSettingsPopup *m_cameraSettings;
   QComboBox *m_presetCombo;
 
@@ -58,11 +77,21 @@ class OutputSettingsPopup : public DVGui::Dialog {
   DVGui::CheckBox *m_addBoard;
   QPushButton *m_boardSettingsBtn;
 
+  QScrollArea *m_scrollArea;
+  AnimatedLabel *m_generalLabel, *m_cameraLabel, *m_advancedLabel, *m_othersLabel;
+  QFrame *m_generalBox, *m_cameraBox, *m_advancedBox, *m_othersBox;
+
   bool m_isPreviewSettings;
   bool m_hideAlreadyCalled = false;
 
   void updatePresetComboItems();
   void translateResampleOptions();
+
+  QFrame *createPanel(bool isPreview);
+  QFrame *createGeneralSettingsBox(bool isPreview);
+  QFrame *createCameraSettingsBox(bool isPreview);
+  QFrame *createAdvancedSettingsBox(bool isPreview);
+  QFrame *createOtherSettingsBox();
 
 public:
   OutputSettingsPopup(bool isPreview = false);
@@ -108,6 +137,8 @@ protected slots:
   // clapperboard
   void onAddBoardChecked(int state);
   void onBoardSettingsBtnClicked();
+
+  void onCategoryActivated(QListWidgetItem *);
 };
 
 class PreviewSettingsPopup final : public OutputSettingsPopup {
