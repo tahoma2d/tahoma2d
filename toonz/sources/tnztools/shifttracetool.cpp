@@ -450,8 +450,7 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_gadget = RotateGadget;
     }
 
-    int row = getViewer()->posToRow(e.m_pos, getPixelSize() * getPixelSize(),
-                                    false, true);
+    int row = getViewer()->posToRow(e.m_pos, 5.0, false, true);
     if (row >= 0) {
       int index         = -1;
       TApplication *app = TTool::getApplication();

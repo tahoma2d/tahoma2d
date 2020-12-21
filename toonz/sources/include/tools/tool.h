@@ -466,8 +466,9 @@ return true if the method execution can have changed the current tool
   const TAffine &getMatrix() const { return m_matrix; }
   void setMatrix(const TAffine &matrix) { m_matrix = matrix; }
 
-  TAffine getCurrentColumnMatrix()
+  TAffine getCurrentColumnMatrix(int frame = -1)
       const;  //!< Returns the current column matrix transformation.
+              //!  if frame = -1 then it uses the current frame
               //!  \sa  TXsheet::getPlacement.
 
   TAffine getCurrentColumnParentMatrix()
@@ -480,9 +481,10 @@ return true if the method execution can have changed the current tool
           Returns the matrix transformation of the stage object with column
   index equal to \p index
           and frame as the current frame.
-  \sa TXsheet::getPlacement.
+          if frame = -1 then it uses the current frame
+\sa TXsheet::getPlacement.
   */
-  TAffine getColumnMatrix(int index) const;
+  TAffine getColumnMatrix(int index, int frame = -1) const;
 
   /*!
    Updates the current matrix transformation with the actual column matrix

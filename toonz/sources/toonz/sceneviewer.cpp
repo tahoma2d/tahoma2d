@@ -3117,8 +3117,9 @@ void SceneViewer::posToColumnIndexes(const TPointD &p,
   OnionSkinMask osm      = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
-  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
-  picker.setDistance(distance);
+  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings,
+                       getDevPixRatio());
+  picker.setMinimumDistance(distance);
 
   TXshSimpleLevel::m_rasterizePli = 0;
 
@@ -3156,8 +3157,9 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
   OnionSkinMask osm   = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
-  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
-  picker.setDistance(distance);
+  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings,
+                       getDevPixRatio());
+  picker.setMinimumDistance(distance);
 
   if (app->getCurrentFrame()->isEditingLevel()) {
     Stage::visit(picker, app->getCurrentLevel()->getLevel(),

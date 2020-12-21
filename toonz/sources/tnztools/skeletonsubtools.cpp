@@ -180,7 +180,7 @@ DragPositionTool::DragPositionTool(SkeletonTool *tool)
 
 void DragPositionTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
   start();
-  m_firstPos = pos;
+  m_firstPos  = pos;
   m_firstDrag = true;
 }
 
@@ -190,9 +190,9 @@ void DragPositionTool::leftButtonDrag(const TPointD &pos,
                                       const TMouseEvent &e) {
   TPointD delta = pos - m_firstPos;
   if (m_firstDrag && (delta.x > 2.0 || delta.y > 2.0)) {
-      m_firstPos = pos;
-      delta = TPointD(0.0, 0.0);
-      m_firstDrag = false;
+    m_firstPos  = pos;
+    delta       = TPointD(0.0, 0.0);
+    m_firstDrag = false;
   }
   if (e.isShiftPressed()) {
     if (fabs(delta.x) > fabs(delta.y))
@@ -300,10 +300,10 @@ void ParentChangeTool::leftButtonDown(const TPointD &pos,
     // registro alcune informazioni relative a colId:
     // placement, bbox, centro, hooks, name, ecc.
     Element element;
-    element.m_columnIndex   = col;
-    TImageP img             = cell.getImage(false);
+    element.m_columnIndex = col;
+    TImageP img           = cell.getImage(false);
     if (img) element.m_bbox = img->getBBox();
-    element.m_aff           = xsh->getPlacement(colId, currentFrame);
+    element.m_aff = xsh->getPlacement(colId, currentFrame);
     Peer peer;
     peer.m_columnIndex = col;
     peer.m_handle      = 0;
@@ -352,7 +352,7 @@ void ParentChangeTool::leftButtonDrag(const TPointD &pos,
   if (m_snapped) return;
   getTool()->setParentProbe(getTool()->getCurrentColumnParentMatrix() * pos);
 
-  m_index = m_viewer->posToColumnIndex(e.m_pos, m_pixelSize * 5, false);
+  m_index = m_viewer->posToColumnIndex(e.m_pos, 5.0, false);
 
   m_lastPos = m_viewer->winToWorld(e.m_pos);
 
@@ -425,15 +425,12 @@ void ParentChangeTool::draw() { getTool()->drawHooks(); }
 //
 //------------------------------------------------------------
 
-
 // This needs some clarification.
 namespace {
 class Graph {
-
   // local variables defined below are:
   // Nodes m_nodes;
   // std::map<int, int> m_leaves;
-
 
 public:
   typedef std::set<int> Links;
@@ -455,7 +452,7 @@ public:
 
   // check if a node is found in m_nodes
   bool isNode(int id) const { return m_nodes.count(id) > 0; }
-  
+
   int getNodeCount() const { return (int)m_nodes.size(); }
 
   void link(int a, int b) {
@@ -468,7 +465,7 @@ public:
     NodeIter it = m_nodes.find(a);
     return it == m_nodes.end() ? false : it->second.count(b);
   }
-  
+
   const Links &getLinks(int id) const {
     static const Links empty;
     NodeIter it = m_nodes.find(id);
@@ -501,7 +498,7 @@ public:
     LeaveIter it = m_leaves.find(id);
     return it == m_leaves.end() ? 0 : it->second;
   }
-  
+
   void setLeaveType(int id, int type) { m_leaves[id] = type; }
   
 
@@ -509,7 +506,7 @@ public:
   void remove(int id) {
     NodeIter it = m_nodes.find(id);
     if (it != m_nodes.end()) {
-        // iterate over the links
+      // iterate over the links
       for (LinkIter j = it->second.begin(); j != it->second.end(); ++j)
         m_nodes[*j].erase(id);
       m_nodes.erase(it->first);
@@ -536,15 +533,15 @@ bool hasPinned(const Skeleton::Bone *bone, const Skeleton::Bone *prevBone) {
 
   if (bone->getParent() && bone->getParent() != prevBone &&
       hasPinned(bone->getParent(), bone)) {
-      return true;
+    return true;
   }
 
   for (int i = 0; i < bone->getChildCount(); i++) {
-      if (bone->getChild(i) != prevBone) {
-          if (hasPinned(bone->getChild(i), bone)) {
-              return true;
-          }
+    if (bone->getChild(i) != prevBone) {
+      if (hasPinned(bone->getChild(i), bone)) {
+        return true;
       }
+    }
   }
 
   return false;
@@ -556,9 +553,9 @@ bool hasPinned(const Skeleton::Bone *bone, const Skeleton::Bone *prevBone) {
 bool addToActiveChain(Graph &tree, const Skeleton::Bone *bone,
                       const Skeleton::Bone *prevBone) {
   if (!bone) return false;
-  
+
   // The handle is what you grabbed
-  bool isHandle    = prevBone == 0;
+  bool isHandle = prevBone == 0;
 
   bool isChild     = prevBone != 0 && prevBone == bone->getParent();
   bool isParent    = prevBone != 0 && prevBone->getParent() == bone;
@@ -571,19 +568,19 @@ bool addToActiveChain(Graph &tree, const Skeleton::Bone *bone,
 
   // Go up the chain from what you grabbed and add bones
   if (!isChild && isFree) {
-      if (bone->getParent()) {
-          propagate |= addToActiveChain(tree, bone->getParent(), bone);
-      }
+    if (bone->getParent()) {
+        propagate |= addToActiveChain(tree, bone->getParent(), bone);
+    }
   }
 
   std::vector<int> children;
   // Once you reach the top parent, add the other children
   if (isHandle || isFree) {
-      for (int i = 0; i < bone->getChildCount(); i++) {
-          if (bone->getChild(i) != prevBone) {
-              propagate |= addToActiveChain(tree, bone->getChild(i), bone);
-          }
+    for (int i = 0; i < bone->getChildCount(); i++) {
+      if (bone->getChild(i) != prevBone) {
+        propagate |= addToActiveChain(tree, bone->getChild(i), bone);
       }
+    }
   }
 
   bool insert = false;
@@ -856,8 +853,9 @@ void IKTool::initEngine(const TPointD &pos) {
         Skeleton::Bone *next = m_skeleton->getBoneByColumnIndex(*it++);
         for (; it != links.end(); ++it)
           stack.push_back(std::make_pair(*it, prev));
-        if (links.size() > 1 || (prev && next && (prev->getParent() == bone &&
-                                                  next->getParent() == bone))) {
+        if (links.size() > 1 ||
+            (prev && next &&
+             (prev->getParent() == bone && next->getParent() == bone))) {
           bone = next;
         } else {
           m_joints.push_back(Joint(bone, prev, sign));
@@ -918,11 +916,12 @@ void IKTool::computeIHateIK() {
   int n     = (int)objs.size();
   int frame = TTool::getApplication()->getCurrentFrame()->getFrame();
   m_foot = m_firstFoot = 0;
-  m_frameOnNewPin            = false;
+  m_frameOnNewPin      = false;
 
   // this just finds the first pin
   int i;
-  for (i = 0; i < n && !objs[i]->getPinnedRangeSet()->isPinned(frame); i++) {}
+  for (i = 0; i < n && !objs[i]->getPinnedRangeSet()->isPinned(frame); i++) {
+  }
   if (i == n) return;
 
   // this makes m_foot to be the current pin
@@ -940,7 +939,8 @@ void IKTool::computeIHateIK() {
   // the frame is the start of a new pinned frame, find the previous pin
   for (;;) {
     for (i = 0; i < n && !objs[i]->getPinnedRangeSet()->isPinned(firstFrame);
-         i++) {}
+         i++) {
+    }
 
     if (i == n) break;
     m_firstFoot = objs[i];

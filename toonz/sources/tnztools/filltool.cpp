@@ -1812,6 +1812,8 @@ void AreaFillTool::onEnter() {
   // getApplication()->editImage();
 }
 
+bool descending(int i, int j) { return (i > j); }
+
 }  // namespace
 
 //=============================================================================
@@ -2457,14 +2459,30 @@ void FillTool::draw() {
 
 //-----------------------------------------------------------------------------
 
-int FillTool::pick(const TImageP &image, const TPointD &pos) {
+int FillTool::pick(const TImageP &image, const TPointD &pos, const int frame) {
   TToonzImageP ti  = image;
   TVectorImageP vi = image;
   if (!ti && !vi) return 0;
 
   StylePicker picker(image);
-  double pixelSize2 = getPixelSize() * getPixelSize();
-  return picker.pickStyleId(pos, pixelSize2);
+  double scale2 = 1.0;
+  if (vi) {
+    TAffine aff = getViewer()->getViewMatrix() * getCurrentColumnMatrix(frame);
+    scale2 = aff.det();
+  }
+  TPointD pickPos = pos;
+  // in case that the column is animated in scene-editing mode
+  if (frame > 0) {
+    TPointD dpiScale = getViewer()->getDpiScale();
+    pickPos.x *= dpiScale.x;
+    pickPos.y *= dpiScale.y;
+    TPointD worldPos = getCurrentColumnMatrix() * pickPos;
+    pickPos = getCurrentColumnMatrix(frame).inv() * worldPos;
+    pickPos.x /= dpiScale.x;
+    pickPos.y /= dpiScale.y;
+  }
+  // thin stroke can be picked with 10 pixel range
+  return picker.pickStyleId(pickPos, 10.0, scale2);
 }
 
 //-----------------------------------------------------------------------------
@@ -2481,32 +2499,53 @@ int FillTool::pickOnionColor(const TPointD &pos) {
   if (!sl) return 0;
 
   std::vector<int> rows;
-  osMask.getAll(sl->guessIndex(fid), rows);
+  // level editing case
+  if (app->getCurrentFrame()->isEditingLevel()) {
+    osMask.getAll(sl->guessIndex(fid), rows);
+    int i, j;
+    for (i = 0; i < (int)rows.size(); i++)
+      if (sl->index2fid(rows[i]) > fid) break;
 
-  int i, j;
-
-  for (i = 0; i < (int)rows.size(); i++)
-    if (sl->index2fid(rows[i]) > fid) break;
-
-  int onionStyleId = 0;
-  for (j = i - 1; j >= 0; j--) {
-    TFrameId onionFid = sl->index2fid(rows[j]);
-    if (onionFid != fid &&
-        ((onionStyleId =
-              pick(m_level->getFrame(onionFid, ImageManager::none, 1), pos)) >
-         0))  // subsabling must be 1, otherwise onionfill does  not work
-      break;
-  }
-  if (onionStyleId == 0)
-    for (j = i; j < (int)rows.size(); j++) {
+    int onionStyleId = 0;
+    for (j = i - 1; j >= 0; j--) {
       TFrameId onionFid = sl->index2fid(rows[j]);
       if (onionFid != fid &&
           ((onionStyleId =
                 pick(m_level->getFrame(onionFid, ImageManager::none, 1), pos)) >
-           0))  // subsabling must be 1, otherwise onionfill does  not work
+           0))  // subsampling must be 1, otherwise onionfill does  not work
         break;
     }
-  return onionStyleId;
+    if (onionStyleId == 0)
+      for (j = i; j < (int)rows.size(); j++) {
+        TFrameId onionFid = sl->index2fid(rows[j]);
+        if (onionFid != fid &&
+            ((onionStyleId = pick(
+                  m_level->getFrame(onionFid, ImageManager::none, 1), pos)) >
+             0))  // subsampling must be 1, otherwise onionfill does  not work
+          break;
+    }
+    return onionStyleId;
+  } else {  // scene editing case
+    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+    int colId = app->getCurrentColumn()->getColumnIndex();
+    int row = app->getCurrentFrame()->getFrame();
+    osMask.getAll(row, rows);
+    std::vector<int>::iterator it = rows.begin();
+    while (it != rows.end() && *it < row) it++;
+    std::sort(rows.begin(), it, descending);
+    int onionStyleId = 0;
+    for (int i = 0; i < (int)rows.size(); i++) {
+      if (rows[i] == row) continue;
+      TXshCell cell = xsh->getCell(rows[i], colId);
+      TXshLevel *xl = cell.m_level.getPointer();
+      if (!xl || xl->getSimpleLevel() != sl) continue;
+      TFrameId onionFid = cell.getFrameId();
+      onionStyleId = pick(m_level->getFrame(onionFid, ImageManager::none, 1),
+                          pos, rows[i]);
+      if (onionStyleId > 0) break;
+    }
+    return onionStyleId;
+  }
 }
 
 //-----------------------------------------------------------------------------

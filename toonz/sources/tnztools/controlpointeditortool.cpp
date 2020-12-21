@@ -576,8 +576,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
     if (m_autoSelectDrawing.getValue()) {
       // Non sono in nessun gadget
       std::vector<int> columnIndexes;
-      getViewer()->posToColumnIndexes(e.m_pos, columnIndexes,
-                                      getPixelSize() * 5, false);
+      getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, 5.0, false);
       getNearestStrokeColumnIndexes(columnIndexes, pos);
       if (!columnIndexes.empty()) {
         int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();

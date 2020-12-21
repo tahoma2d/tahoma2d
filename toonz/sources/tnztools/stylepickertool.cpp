@@ -9,6 +9,7 @@
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/styleselection.h"
+#include "toonzqt/gutil.h"
 
 // TnzLib includes
 #include "toonz/txshsimplelevel.h"
@@ -86,13 +87,13 @@ void StylePickerTool::pick(const TPointD &pos, const TMouseEvent &e,
   ---*/
   if (Preferences::instance()->isMultiLayerStylePickerEnabled() &&
       getApplication()->getCurrentFrame()->isEditingScene()) {
-    int superPickedColumnId = getViewer()->posToColumnIndex(
-        e.m_pos, getPixelSize() * getPixelSize(), false);
+    double pickRange = 10.0;
+    int superPickedColumnId =
+        getViewer()->posToColumnIndex(e.m_pos, pickRange, false);
 
     if (superPickedColumnId >= 0 /*-- 何かColumnに当たった場合 --*/
-        &&
-        getApplication()->getCurrentColumn()->getColumnIndex() !=
-            superPickedColumnId) /*-- かつ、Current Columnでない場合 --*/
+        && getApplication()->getCurrentColumn()->getColumnIndex() !=
+               superPickedColumnId) /*-- かつ、Current Columnでない場合 --*/
     {
       /*-- そのColumnからPickを試みる --*/
       int currentFrame = getApplication()->getCurrentFrame()->getFrame();
@@ -112,13 +113,16 @@ void StylePickerTool::pick(const TPointD &pos, const TMouseEvent &e,
         tmpMousePosition.x /= tmpDpiScale.x;
         tmpMousePosition.y /= tmpDpiScale.y;
 
+        TAffine aff =
+            getViewer()->getViewMatrix() * getColumnMatrix(superPickedColumnId);
+        double scale2 = aff.det();
         StylePicker superPicker(pickedImage);
         int picked_subsampling =
             picked_level->getImageSubsampling(pickedCell.getFrameId());
         int superPicked_StyleId = superPicker.pickStyleId(
             TScale(1.0 / picked_subsampling) * tmpMousePosition +
                 TPointD(-0.5, -0.5),
-            getPixelSize() * getPixelSize(), modeValue);
+            pickRange, scale2, modeValue);
         /*-- 何かStyleが拾えて、Transparentでない場合 --*/
         if (superPicked_StyleId > 0) {
           /*-- Levelの移動 --*/
@@ -152,25 +156,26 @@ void StylePickerTool::pick(const TPointD &pos, const TMouseEvent &e,
   /*-- 画面外をpickしても拾えないようにする --*/
   if (!m_viewer->getGeometry().contains(pos)) return;
 
+  TAffine aff = getViewer()->getViewMatrix() * getCurrentColumnMatrix();
+  double scale2 = aff.det();
   int subsampling = level->getImageSubsampling(getCurrentFid());
   StylePicker picker(image);
   int styleId =
       picker.pickStyleId(TScale(1.0 / subsampling) * pos + TPointD(-0.5, -0.5),
-                         getPixelSize() * getPixelSize(), modeValue);
+                         10.0, scale2, modeValue);
 
   if (styleId < 0) return;
 
   if (modeValue == 1)  // LINES
   {
     /*-- pickLineモードのとき、取得Styleが0の場合はカレントStyleを変えない。
-      * --*/
+     * --*/
     if (styleId == 0) return;
     /*--
-      * pickLineモードのとき、PurePaintの部分をクリックしてもカレントStyleを変えない
-      * --*/
-    if (ti &&
-        picker.pickTone(TScale(1.0 / subsampling) * pos +
-                        TPointD(-0.5, -0.5)) == 255)
+     * pickLineモードのとき、PurePaintの部分をクリックしてもカレントStyleを変えない
+     * --*/
+    if (ti && picker.pickTone(TScale(1.0 / subsampling) * pos +
+                              TPointD(-0.5, -0.5)) == 255)
       return;
   }
 
@@ -207,13 +212,13 @@ void StylePickerTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     return;
   }
 
+  TAffine aff = getViewer()->getViewMatrix() * getCurrentColumnMatrix();
+  double scale2 = aff.det();
   int subsampling = level->getImageSubsampling(getCurrentFid());
   StylePicker picker(image);
   TPointD pickPos(TScale(1.0 / subsampling) * pos + TPointD(-0.5, -0.5));
-  int inkStyleId =
-      picker.pickStyleId(pickPos, getPixelSize() * getPixelSize(), 1);
-  int paintStyleId =
-      picker.pickStyleId(pickPos, getPixelSize() * getPixelSize(), 0);
+  int inkStyleId = picker.pickStyleId(pickPos, 10.0, scale2, 1);
+  int paintStyleId = picker.pickStyleId(pickPos, 10.0, scale2, 0);
   int tone = picker.pickTone(pickPos);
   controller->notifyStylePassivePicked(inkStyleId, paintStyleId, tone);
 }

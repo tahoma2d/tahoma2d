@@ -11,6 +11,7 @@
 #include "toonz/dpiscale.h"
 #include "tpixelutils.h"
 #include "tregion.h"
+#include "toonzqt/gutil.h"
 
 #include <QRect>
 
@@ -44,7 +45,7 @@ TPoint StylePicker::getRasterPoint(const TPointD &p) const {
 //---------------------------------------------------------
 /*-- (StylePickerTool内で)LineとAreaを切り替えてPickできる。mode: 0=Area,
  * 1=Line, 2=Line&Areas(default)  --*/
-int StylePicker::pickStyleId(const TPointD &pos, double radius2,
+int StylePicker::pickStyleId(const TPointD &pos, double radius, double scale2,
                              int mode) const {
   int styleId = 0;
   if (TToonzImageP ti = m_image) {
@@ -78,11 +79,6 @@ int StylePicker::pickStyleId(const TPointD &pos, double radius2,
     // prima cerca lo stile della regione piu' vicina
     TRegion *r = vi->getRegion(pos);
     if (r) styleId = r->getStyle();
-    // poi cerca quello della stroke, ma se prima aveva trovato una regione,
-    // richiede che
-    // il click sia proprio sopra la stroke, altrimenti cerca la stroke piu'
-    // vicina (max circa 10 pixel)
-    const double maxDist2 = (styleId == 0) ? 100.0 * radius2 : 0;
     bool strokeFound;
     double dist2, w, thick;
     UINT index;
@@ -90,9 +86,16 @@ int StylePicker::pickStyleId(const TPointD &pos, double radius2,
     // la thickness, cioe' la min distance dalla outline e non dalla centerLine
     strokeFound = vi->getNearestStroke(pos, w, index, dist2);
     if (strokeFound) {
+      int devPixRatio = getDevPixRatio();
+      dist2 *= scale2;
       TStroke *stroke = vi->getStroke(index);
       thick           = stroke->getThickPoint(w).thick;
-      if (dist2 - thick * thick < maxDist2) {
+      double len2 = thick * thick * scale2;
+      const double minDist2 =
+          (styleId == 0) ? radius * radius * (double)(devPixRatio * devPixRatio)
+                         : 0;
+      double checkDist = std::max(minDist2, len2);
+      if (dist2 < checkDist) {
         assert(stroke);
         styleId = stroke->getStyle();
       }
@@ -118,7 +121,8 @@ int StylePicker::pickTone(const TPointD &pos) const {
 
 //---------------------------------------------------------
 
-TPixel32 StylePicker::pickColor(const TPointD &pos, double radius2) const {
+TPixel32 StylePicker::pickColor(const TPointD &pos, double radius,
+                                double scale2) const {
   TToonzImageP ti  = m_image;
   TRasterImageP ri = m_image;
   TVectorImageP vi = m_image;
@@ -141,14 +145,14 @@ TPixel32 StylePicker::pickColor(const TPointD &pos, double radius2) const {
   } else if (vi) {
     const TPalette *palette = m_palette.getPointer();
     if (!palette) return TPixel32::Transparent;
-    int styleId = pickStyleId(pos, radius2);
+    int styleId = pickStyleId(pos, radius, scale2);
     if (0 <= styleId && styleId < palette->getStyleCount())
       return palette->getStyle(styleId)->getAverageColor();
   } else if (ti) {
     const TPalette *palette = m_palette.getPointer();
     if (!palette) return TPixel32::Transparent;
-    int paintId = pickStyleId(pos, radius2, 0);
-    int inkId   = pickStyleId(pos, radius2, 1);
+    int paintId = pickStyleId(pos, radius, scale2, 0);
+    int inkId = pickStyleId(pos, radius, scale2, 1);
     int tone    = pickTone(pos);
     TPixel32 ink, paint;
     if (0 <= inkId && inkId < palette->getStyleCount())
