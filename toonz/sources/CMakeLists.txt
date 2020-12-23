@@ -102,6 +102,7 @@ endif()
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
 option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
+option(WITH_TRANSLATION "Generate translation projects as well" ON)
 option(WITH_CRASHRPT "Build CrashRpt support - Requires CrashRpt Library" OFF)
 
 # avoid using again
@@ -609,26 +610,28 @@ if(BUILD_ENV_MSVC AND MSVC_VERSION EQUAL 1800)
     add_compile_options("/wd4819")
 endif()
 
-# generate Qt translations and messages
-set(LANGUAGES japanese italian french spanish chinese german russian korean czech)
+if(WITH_TRANSLATION)
+    # generate Qt translations and messages
+    set(LANGUAGES japanese italian french spanish chinese german russian korean czech)
 
-function(add_translation module)
-    set(translation)
-    foreach(lang ${LANGUAGES})
-        set(name "${CMAKE_SOURCE_DIR}/translations/${lang}/${module}.ts")
-        list(APPEND translation ${name})
-        set_source_files_properties(${name} PROPERTIES
-            OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/loc/${lang}"
+    function(add_translation module)
+        set(translation)
+        foreach(lang ${LANGUAGES})
+            set(name "${CMAKE_SOURCE_DIR}/translations/${lang}/${module}.ts")
+            list(APPEND translation ${name})
+            set_source_files_properties(${name} PROPERTIES
+                OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/loc/${lang}"
+            )
+        endforeach()
+
+        qt5_create_translation(message ${translation} ${ARGN})
+
+        add_custom_target("translation_${module}" DEPENDS ${message})
+        set_target_properties("translation_${module}" PROPERTIES
+            EXCLUDE_FROM_DEFAULT_BUILD TRUE
         )
-    endforeach()
-
-    qt5_create_translation(message ${translation} ${ARGN})
-
-    add_custom_target("translation_${module}" DEPENDS ${message})
-    set_target_properties("translation_${module}" PROPERTIES
-        EXCLUDE_FROM_DEFAULT_BUILD TRUE
-    )
-endfunction()
+    endfunction()
+endif()
 
 set(CMAKE_C_FLAGS "${C_WARNINGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CXX_WARNINGS} ${CMAKE_CXX_FLAGS}")

@@ -16,8 +16,10 @@ set(SOURCES
     zigzagstyles.cpp
 )
 
-add_translation(colorfx ${HEADERS} ${SOURCES})
-
+if(WITH_TRANSLATION)
+    add_translation(colorfx ${HEADERS} ${SOURCES})
+endif()
+ 
 add_library(colorfx SHARED ${HEADERS} ${SOURCES})
 add_definitions(
     -D_USRDLL

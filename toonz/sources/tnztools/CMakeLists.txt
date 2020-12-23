@@ -109,7 +109,9 @@ set(RESOURCES tnztools.qrc)
 
 qt5_add_resources(SOURCES ${RESOURCES})
 
-add_translation(tnztools ${HEADERS} ${SOURCES})
+if(WITH_TRANSLATION)
+    add_translation(tnztools ${HEADERS} ${SOURCES})
+endif()
 
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
