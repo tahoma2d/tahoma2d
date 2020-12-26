@@ -623,6 +623,9 @@ bool ExpressionReferenceManager::doCheckReferenceDeletion(
 bool ExpressionReferenceManager::checkReferenceDeletion(
     const QSet<int>& columnIdsToBeDeleted, const QSet<TFx*>& fxsToBeDeleted,
     const QList<TStageObjectId>& objIdsToBeDuplicated, bool checkInvert) {
+  bool on =
+      Preferences::instance()->isModifyExpressionOnMovingReferencesEnabled();
+  if (!on) return true;
   QList<TStageObjectId> objectIdsToBeDeleted;
   for (auto colId : columnIdsToBeDeleted)
     objectIdsToBeDeleted.append(TStageObjectId::ColumnId(colId));
@@ -636,6 +639,9 @@ bool ExpressionReferenceManager::checkReferenceDeletion(
 // check on deleting stage objects
 bool ExpressionReferenceManager::checkReferenceDeletion(
     const QList<TStageObjectId>& objectIdsToBeDeleted) {
+  bool on =
+      Preferences::instance()->isModifyExpressionOnMovingReferencesEnabled();
+  if (!on) return true;
   QSet<int> columnIdsToBeDeleted;
   QSet<TFx*> fxsToBeDeleted;
 
