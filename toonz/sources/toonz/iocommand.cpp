@@ -3025,7 +3025,7 @@ public:
 
     if (sl && sl->getPath().getType() == "pli")
       sl->save(palettePath, TFilePath(), true);
-    else if (sl->getType() & FULLCOLOR_TYPE)
+    else if (sl && sl->getType() & FULLCOLOR_TYPE)
       FullColorPalette::instance()->savePalette(scene);
     else
       StudioPalette::instance()->save(palettePath, palette);
