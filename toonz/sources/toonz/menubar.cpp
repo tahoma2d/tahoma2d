@@ -654,6 +654,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenFilmStrip);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenFileBrowser);
+  addMenuItem(windowsMenu, MI_OpenPreproductionBoard);
   addMenuItem(windowsMenu, MI_OpenFileBrowser2);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenCleanupSettings);
