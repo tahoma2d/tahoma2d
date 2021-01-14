@@ -37,9 +37,10 @@ public:
   }
   int getUndoCount() const { return (int)m_undos.size(); }
   void setLast() {
-    for (UINT i                   = 1; i < m_undos.size(); i++)
-      m_undos[i]->m_isLastInBlock = false;
-    m_undos[0]->m_isLastInBlock   = true;
+    for (UINT i = 0; i < m_undos.size(); i++) {
+      m_undos[i]->m_isLastInBlock     = (i == 0);
+      m_undos[i]->m_isLastInRedoBlock = (i == m_undos.size() - 1);
+    }
   }
 
   void undo() const override {
@@ -65,7 +66,8 @@ public:
   //}
   void onAdd() override {}
   void add(TUndo *undo) {
-    undo->m_isLastInBlock = true;
+    undo->m_isLastInBlock     = true;
+    undo->m_isLastInRedoBlock = true;
     m_undos.push_back(undo);
   }
 
@@ -97,7 +99,7 @@ public:
       return m_undos.back()->getHistoryType();
   }
 };
-}
+}  // namespace
 
 typedef std::deque<TUndo *> UndoList;
 typedef UndoList::iterator UndoListIterator;
@@ -186,9 +188,8 @@ void TUndoManager::TUndoManagerImp::doAdd(TUndo *undo) {
   int i, memorySize = 0, count = m_undoList.size();
   for (i = 0; i < count; i++) memorySize += m_undoList[i]->getSize();
 
-  while (
-      count > 100 ||
-      (count != 0 && memorySize + undo->getSize() > m_undoMemorySize))  // 20MB
+  while (count > 100 || (count != 0 && memorySize + undo->getSize() >
+                                           m_undoMemorySize))  // 20MB
   {
     --count;
     TUndo *undo = m_undoList.front();
@@ -197,7 +198,8 @@ void TUndoManager::TUndoManagerImp::doAdd(TUndo *undo) {
     delete undo;
   }
 
-  undo->m_isLastInBlock = true;
+  undo->m_isLastInBlock     = true;
+  undo->m_isLastInRedoBlock = true;
   m_undoList.push_back(undo);
   m_current = m_undoList.end();
 }
