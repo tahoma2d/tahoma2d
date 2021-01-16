@@ -40,6 +40,7 @@ $ sudo apt-get install -y libopencv-dev
 Notes:
 * It's possible we also need `libgsl2` (or maybe `libopenblas-dev`)
 * For Qt, MyPaint and OpenCV, you can alternatively build and install from source.
+* On Ubuntu qt59serialport can be found under the name of libqt5serialport5 and libqt5serialport5-dev
 
 ### Installing Dependencies on Fedora
 (it may include some useless packages)
