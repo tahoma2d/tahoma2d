@@ -1430,6 +1430,15 @@
   <item>"STD_iwa_BloomFx.alpha_mode"	"Alpha Mode"		</item>
   <item>"STD_iwa_BloomFx.alpha_rendering"	"Alpha Rendering"		</item>
 
+  <item>"STD_iwa_RainbowFx" 			"Rainbow Iwa" 	</item>
+  <item>"STD_iwa_RainbowFx.center"	"Center"		</item>
+  <item>"STD_iwa_RainbowFx.radius"	"Radius"		</item>
+  <item>"STD_iwa_RainbowFx.intensity"	"Intensity"		</item>
+  <item>"STD_iwa_RainbowFx.width_scale"	"Width Scale"		</item>
+  <item>"STD_iwa_RainbowFx.inside"	"Inside Intensity"		</item>
+  <item>"STD_iwa_RainbowFx.secondary_rainbow"	"Secondary Rainbow Intesity"		</item>
+  <item>"STD_iwa_RainbowFx.alpha_rendering"	"Alpha Rendering"		</item>
+ 
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->
 
   <item>STD_iwa_TiledParticlesFx "Tiled Particles Iwa" </item>

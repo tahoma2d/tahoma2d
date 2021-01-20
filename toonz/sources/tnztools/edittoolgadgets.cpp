@@ -1699,6 +1699,101 @@ void RayLitFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   m_handle = None;
 }
 
+//=============================================================================
+
+class RainbowWidthFxGadget final : public FxGadget {
+  TDoubleParamP m_widthScale;
+  TDoubleParamP m_radius;
+  TPointParamP m_center;
+
+  enum HANDLE { Outside = 0, Inside, None } m_handle = None;
+
+public:
+  RainbowWidthFxGadget(FxGadgetController *controller,
+                       const TDoubleParamP &widthScale,
+                       const TDoubleParamP &radius, const TPointParamP &center)
+      : FxGadget(controller, 2)
+      , m_widthScale(widthScale)
+      , m_radius(radius)
+      , m_center(center) {
+    addParam(widthScale);
+  }
+
+  void draw(bool picking) override;
+
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+};
+
+//---------------------------------------------------------------------------
+
+void RainbowWidthFxGadget::draw(bool picking) {
+  setPixelSize();
+  if (isSelected())
+    glColor3dv(m_selectedColor);
+  else
+    glColor3d(0, 0, 1);
+  double radius     = getValue(m_radius);
+  TPointD center    = getValue(m_center);
+  double widthScale = getValue(m_widthScale);
+  double w          = widthScale * radius / 41.3;
+
+  glPushName(getId() + Outside);
+  glLineStipple(1, 0x1C47);
+  glEnable(GL_LINE_STIPPLE);
+  tglDrawCircle(center, radius + w);
+  glDisable(GL_LINE_STIPPLE);
+  drawDot(center + TPointD(0.707, 0.707) * (radius + w));
+  glPopName();
+
+  if (isSelected(Outside)) {
+    drawTooltip(center + TPointD(0.707, 0.707) * (radius + w), getLabel());
+  }
+
+  glPushName(getId() + Inside);
+  glLineStipple(1, 0x1C47);
+  glEnable(GL_LINE_STIPPLE);
+  tglDrawCircle(center, radius - w);
+  glDisable(GL_LINE_STIPPLE);
+  drawDot(center + TPointD(0.707, 0.707) * (radius - w));
+  glPopName();
+
+  if (isSelected(Inside)) {
+    drawTooltip(center + TPointD(0.707, 0.707) * (radius - w), getLabel());
+  }
+}
+
+//---------------------------------------------------------------------------
+
+void RainbowWidthFxGadget::leftButtonDown(const TPointD &pos,
+                                          const TMouseEvent &) {
+  m_handle = (HANDLE)m_selected;
+}
+
+//---------------------------------------------------------------------------
+
+void RainbowWidthFxGadget::leftButtonDrag(const TPointD &pos,
+                                          const TMouseEvent &) {
+  if (m_handle == None) return;
+
+  double radius = getValue(m_radius);
+  double wpos   = norm(pos - getValue(m_center));
+  double width  = (m_handle == Outside) ? wpos - radius : radius - wpos;
+
+  double scale = (width * 41.3) / (radius * 1.0);
+
+  double min, max, step;
+  m_widthScale->getValueRange(min, max, step);
+
+  setValue(m_widthScale, std::min(max, std::max(min, scale)));
+}
+
+//---------------------------------------------------------------------------
+
+void RainbowWidthFxGadget::leftButtonUp(const TPointD &pos,
+                                        const TMouseEvent &) {}
+
 //*************************************************************************************
 //    FxGadgetController  implementation
 //*************************************************************************************
@@ -1887,6 +1982,14 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
   case TParamUIConcept::RAYLIT: {
     assert(uiConcept.m_params.size() == 1);
     gadget = new RayLitFxGadget(this, uiConcept.m_params[0]);
+    break;
+  }
+
+  case TParamUIConcept::RAINBOW_WIDTH: {
+    assert(uiConcept.m_params.size() == 3);
+    gadget =
+        new RainbowWidthFxGadget(this, uiConcept.m_params[0],
+                                 uiConcept.m_params[1], uiConcept.m_params[2]);
     break;
   }
   default:

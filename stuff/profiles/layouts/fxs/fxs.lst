@@ -126,6 +126,7 @@
     STD_targetSpotFx
     STD_iwa_GlareFx
     STD_iwa_BloomFx
+    STD_iwa_RainbowFx
   </Light>
   <Matte>
     STD_erodeDilateFx

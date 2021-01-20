@@ -68,6 +68,8 @@ public:
 
     RAYLIT,
 
+    RAINBOW_WIDTH,
+
     TYPESCOUNT
   };
 
