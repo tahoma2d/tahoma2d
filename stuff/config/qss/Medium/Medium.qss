@@ -1496,9 +1496,6 @@ QStatusBar #StatusBarLabel {
 /* -----------------------------------------------------------------------------
    Style Editor
 ----------------------------------------------------------------------------- */
-#StyleEditor #TabBarContainer {
-  margin-left: -5px;
-}
 #StyleEditor #bottomWidget {
   border-top: 1 solid #2c2c2c;
   padding: 3 2 8 3;
