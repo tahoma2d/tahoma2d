@@ -1,4 +1,4 @@
-name: Tahoma2D Build
+name: Tahoma2D Linux Build
 
 on: [push, pull_request]
 
@@ -28,22 +28,3 @@ jobs:
         with:
           name: Tahoma2D-linux.tar.gz
           path: toonz/build/Tahoma2D-linux.tar.gz
-
-  macOS:
-    runs-on: macos-10.15
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: bash ./ci-scripts/osx/tahoma-install.sh
-      - name: Build ffmpeg
-        run: bash ./ci-scripts/osx/tahoma-buildffmpeg.sh
-      - name: Build OpenCV
-        run: bash ./ci-scripts/osx/tahoma-buildopencv.sh
-      - name: Build Tahoma2D
-        run: bash ./ci-scripts/osx/tahoma-build.sh
-      - name: Create Package
-        run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Tahoma2D-osx.dmg
-          path: toonz/build/Tahoma2D-osx.dmg
