@@ -199,9 +199,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   }
 
   // outputsettings with category list & scrollable panel
-  QPushButton *addPresetButton    = new QPushButton(tr("Add"), this);
-  QPushButton *removePresetButton = new QPushButton(tr("Remove"), this);
-  m_presetCombo                   = new QComboBox(this);
+  QPushButton *addPresetButton            = new QPushButton(tr("Add"), this);
+  QPushButton *removePresetButton         = new QPushButton(tr("Remove"), this);
+  m_presetCombo                           = new QComboBox(this);
 
   addPresetButton->setObjectName("PushButton_NoPadding");
   removePresetButton->setObjectName("PushButton_NoPadding");
@@ -213,12 +213,12 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   /*-- プリセットフォルダを調べ、コンボボックスにアイテムを格納する --*/
   updatePresetComboItems();
 
-  QListWidget *categoryList = new QListWidget(this);
-  QStringList categories;
-  categories << tr("General") << tr("Camera") << tr("Advanced") << tr("More");
-  categoryList->addItems(categories);
-  categoryList->setFixedWidth(100);
-  categoryList->setCurrentRow(0);
+//  QListWidget *categoryList = new QListWidget(this);
+//  QStringList categories;
+//  categories << tr("General") << tr("Camera") << tr("Advanced") << tr("More");
+//  categoryList->addItems(categories);
+//  categoryList->setFixedWidth(100);
+//  categoryList->setCurrentRow(0);
 
   m_scrollArea = new QScrollArea(this);
   m_scrollArea->setWidgetResizable(true);
@@ -247,8 +247,9 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     middleLay->setMargin(0);
     middleLay->setSpacing(5);
     {
-      middleLay->addWidget(categoryList, 0);
-      middleLay->addWidget(m_scrollArea, 1);
+//      middleLay->addWidget(categoryList, 0);
+//      middleLay->addWidget(m_scrollArea, 1);
+      middleLay->addWidget(m_scrollArea, 0);
     }
     m_topLayout->addLayout(middleLay, 1);
 
@@ -273,15 +274,15 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
                        SLOT(onRemovePresetButtonPressed()));
   ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)), this,
                        SLOT(onPresetSelected(const QString &)));
-  ret = ret && connect(categoryList, SIGNAL(itemClicked(QListWidgetItem *)),
-                       this, SLOT(onCategoryActivated(QListWidgetItem *)));
+//  ret = ret && connect(categoryList, SIGNAL(itemClicked(QListWidgetItem *)),
+//                       this, SLOT(onCategoryActivated(QListWidgetItem *)));
   assert(ret);
 }
 
 //-----------------------------------------------------------------------------
 
 void OutputSettingsPopup::onCategoryActivated(QListWidgetItem *item) {
-  AnimatedLabel *label;
+  QLabel *label;
   QFrame *frame;
   if (item->text() == tr("General")) {
     label = m_generalLabel;
@@ -313,17 +314,44 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
   QFrame *panel = new QFrame(this);
 
   if (!isPreview) {
-    m_generalLabel = new AnimatedLabel(tr("General Settings"), this);
+    m_generalLabel = new QLabel(tr("General Settings"), this);
     m_generalBox = createGeneralSettingsBox(isPreview);
   }
-  m_cameraLabel = new AnimatedLabel(tr("Camera Settings"), this);
+  m_cameraLabel = new QLabel(tr("Camera Settings"), this);
   m_cameraBox = createCameraSettingsBox(isPreview);
-  m_advancedLabel   = new AnimatedLabel(tr("Advanced Settings"), this);
+  m_advancedLabel   = new QLabel(tr("Advanced Settings"), this);
   m_advancedBox     = createAdvancedSettingsBox(isPreview);
   if (!isPreview) {
-    m_moreLabel = new AnimatedLabel(tr("More Settings"), this);
+    m_moreLabel = new QLabel(tr("More Settings"), this);
     m_moreBox   = createMoreSettingsBox();
   }
+
+  if (!isPreview) {
+    m_showCameraSettingsButton = new QPushButton("", this);
+    m_showCameraSettingsButton->setObjectName("menuToggleButton");
+    m_showCameraSettingsButton->setFixedSize(15, 15);
+    m_showCameraSettingsButton->setIcon(createQIcon("menu_toggle"));
+    m_showCameraSettingsButton->setCheckable(true);
+    m_showCameraSettingsButton->setChecked(false);
+    m_showCameraSettingsButton->setFocusPolicy(Qt::NoFocus);
+
+    m_showAdvancedSettingsButton = new QPushButton("", this);
+    m_showAdvancedSettingsButton->setObjectName("OutputSettingsShowButton");
+    m_showAdvancedSettingsButton->setFixedSize(15, 15);
+    m_showAdvancedSettingsButton->setIcon(createQIcon("menu_toggle"));
+    m_showAdvancedSettingsButton->setCheckable(true);
+    m_showAdvancedSettingsButton->setChecked(false);
+    m_showAdvancedSettingsButton->setFocusPolicy(Qt::NoFocus);
+
+    m_showMoreSettingsButton = new QPushButton("", this);
+    m_showMoreSettingsButton->setObjectName("OutputSettingsShowButton");
+    m_showMoreSettingsButton->setFixedSize(15, 15);
+    m_showMoreSettingsButton->setIcon(createQIcon("menu_toggle"));
+    m_showMoreSettingsButton->setCheckable(true);
+    m_showMoreSettingsButton->setChecked(false);
+    m_showMoreSettingsButton->setFocusPolicy(Qt::NoFocus);
+  }
+
   QVBoxLayout *lay = new QVBoxLayout();
   lay->setMargin(5);
   lay->setSpacing(3);
@@ -334,21 +362,66 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
       lay->addSpacing(10);
     }
 
-    lay->addWidget(m_cameraLabel, 0);
+    QHBoxLayout *cameraSettingsLabelLay = new QHBoxLayout();
+    cameraSettingsLabelLay->setMargin(0);
+    cameraSettingsLabelLay->setSpacing(3);
+    {
+      if (!isPreview)
+        cameraSettingsLabelLay->addWidget(m_showCameraSettingsButton, 0);
+      cameraSettingsLabelLay->addWidget(m_cameraLabel, 0);
+      cameraSettingsLabelLay->addStretch(1);
+    }
+    lay->addLayout(cameraSettingsLabelLay, 0);
     lay->addWidget(m_cameraBox, 0);
     lay->addSpacing(10);
 
-    lay->addWidget(m_advancedLabel, 0);
+    QHBoxLayout *advancedSettingsLabelLay = new QHBoxLayout();
+    advancedSettingsLabelLay->setMargin(0);
+    advancedSettingsLabelLay->setSpacing(3);
+    {
+      if (!isPreview)
+        advancedSettingsLabelLay->addWidget(m_showAdvancedSettingsButton, 0);
+      advancedSettingsLabelLay->addWidget(m_advancedLabel, 0);
+      advancedSettingsLabelLay->addStretch(1);
+    }
+    lay->addLayout(advancedSettingsLabelLay, 0);
     lay->addWidget(m_advancedBox, 0);
 
     if (!isPreview) {
       lay->addSpacing(10);
-      lay->addWidget(m_moreLabel, 0);
+
+      QHBoxLayout *moreSettingsLabelLay = new QHBoxLayout();
+      moreSettingsLabelLay->setMargin(0);
+      moreSettingsLabelLay->setSpacing(3);
+      {
+        moreSettingsLabelLay->addWidget(m_showMoreSettingsButton, 0);
+        moreSettingsLabelLay->addWidget(m_moreLabel, 0);
+        moreSettingsLabelLay->addStretch(1);
+      }
+      lay->addLayout(moreSettingsLabelLay, 0);
       lay->addWidget(m_moreBox, 0);
     }
     lay->addStretch(1);
   }
   panel->setLayout(lay);
+
+  if (!isPreview) {
+    bool ret = true;
+    ret = ret && connect(m_showCameraSettingsButton, SIGNAL(toggled(bool)),
+      m_cameraBox, SLOT(setVisible(bool)));
+    ret = ret && connect(m_showAdvancedSettingsButton, SIGNAL(toggled(bool)),
+      m_advancedBox, SLOT(setVisible(bool)));
+    ret = ret && connect(m_showMoreSettingsButton, SIGNAL(toggled(bool)),
+      m_moreBox, SLOT(setVisible(bool)));
+    assert(ret);
+  }
+
+  if (!isPreview) {
+    m_cameraBox->setVisible(false);
+    m_advancedBox->setVisible(false);
+    m_moreBox->setVisible(false);
+  }
+
   return panel;
 }
 
