@@ -316,7 +316,11 @@ bool TFilePath::operator==(const TFilePath &fp) const {
 #ifdef _WIN32
   return _wcsicmp(m_path.c_str(), fp.m_path.c_str()) == 0;
 #else
-  return m_path == fp.m_path;
+  // On case insensitive systems like OSX, we need to
+  // compare using all the same case to confirm it is unique
+  // We'll force this for Linux as well since the project might
+  // be shared on other platforms.
+  return toLower(m_path) == toLower(fp.m_path);
 #endif
 }
 

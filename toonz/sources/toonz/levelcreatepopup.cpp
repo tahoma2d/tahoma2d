@@ -482,10 +482,27 @@ bool LevelCreatePopup::apply() {
       scene->getDefaultLevelPath(lType, levelName).withParentDir(parentDir);
 
   TFilePath actualFp = scene->decodeFilePath(fp);
-  if (TSystem::doesExistFileOrLevel(actualFp)) {
+  bool fileExists    = TSystem::doesExistFileOrLevel(actualFp);
+  if (!fileExists) {
+    // File may not have been written yet. Let's scan all existing levels
+    // and check files
+    TLevelSet *levelSet = scene->getLevelSet();
+    for (int i = 0; i < levelSet->getLevelCount(); i++) {
+      TXshLevel *tmpLvl = levelSet->getLevel(i);
+      if (!tmpLvl) continue;
+      TXshSimpleLevelP tmpSl = tmpLvl->getSimpleLevel();
+      if (!tmpSl) continue;
+      TFilePath tmpPath = scene->decodeFilePath(tmpSl->getPath());
+      if (tmpPath == actualFp) {
+        fileExists = true;
+        break;
+      }
+    }
+  }
+  if (fileExists) {
     error(
-        tr("The level name specified is already used: please choose a "
-           "different level name"));
+        tr("The level name specified is already used as a file by another "
+           "level: please choose a different level name"));
     m_nameFld->selectAll();
     return false;
   }
@@ -512,7 +529,7 @@ bool LevelCreatePopup::apply() {
       scene->createNewLevel(lType, levelName, TDimension(), 0, fp);
   TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
   assert(sl);
-  sl->setPath(fp, true);
+  //  sl->setPath(fp, true);
   if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
     sl->getProperties()->setDpiPolicy(LevelProperties::DP_ImageDpi);
     sl->getProperties()->setDpi(dpi);
@@ -579,10 +596,10 @@ bool LevelCreatePopup::apply() {
     for (j = 0; j < step; j++) xsh->setCell(row++, col, cell);
   }
 
-  if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
-    sl->save(fp);
-    DvDirModel::instance()->refreshFolder(fp.getParentDir());
-  }
+  //  if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
+  //  sl->save(fp);
+  //  DvDirModel::instance()->refreshFolder(fp.getParentDir());
+  //  }
 
   undo->onAdd(sl);
 

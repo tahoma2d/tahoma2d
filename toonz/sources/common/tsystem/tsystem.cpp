@@ -805,6 +805,18 @@ bool TSystem::doesExistFileOrLevel(const TFilePath &fp) {
     TFilePathSet::iterator it, end = files.end();
     for (it = files.begin(); it != end; ++it) {
       if (it->getLevelNameW() == fp.getLevelNameW()) return true;
+// On case insensitive systems like Windows/OSX, we need to
+// compare using all the same case to confirm it is unique
+// We'll force this for Linux as well since the project might
+// be shared on other platforms.
+#ifdef _WIN32
+      if (_wcsicmp(it->getLevelNameW().c_str(), fp.getLevelNameW().c_str()) ==
+          0)
+        return true;
+#else
+      if (toLower(it->getLevelNameW()) == toLower(fp.getLevelNameW()))
+        return true;
+#endif
     }
   } else if (fp.getType() == "psd") {
     QString name(QString::fromStdWString(fp.getWideName()));
