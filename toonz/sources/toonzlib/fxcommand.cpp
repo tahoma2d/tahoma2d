@@ -2051,6 +2051,7 @@ static void deleteLinks(const std::list<TFxCommand::Link> &links,
                         TXsheetHandle *xshHandle) {
   std::unique_ptr<FxCommandUndo> undo(new DeleteLinksUndo(links, xshHandle));
   if (undo->isConsistent()) {
+    undo->m_isLastInRedoBlock = false;
     undo->redo();
     TUndoManager::manager()->add(undo.release());
   }
@@ -2337,9 +2338,6 @@ static void deleteFxs(const std::list<TFxP> &fxs, TXsheetHandle *xshHandle,
   }
 
   undoManager->endBlock();
-
-  // emit xsheetChanged once here
-  xshHandle->notifyXsheetChanged();
 }
 
 //**********************************************************************
@@ -2393,9 +2391,6 @@ static void deleteColumns(const std::list<int> &columns,
   }
 
   undoManager->endBlock();
-
-  // emit xsheetChanged once here
-  xshHandle->notifyXsheetChanged();
 }
 
 //**********************************************************************
@@ -2408,8 +2403,7 @@ void TFxCommand::deleteSelection(const std::list<TFxP> &fxs,
                                  TXsheetHandle *xshHandle,
                                  TFxHandle *fxHandle) {
   // Prepare selected fxs - column fxs would be done twice if the corresponding
-  // columns have
-  // been supplied for deletion too
+  // columns have been supplied for deletion too
   ::FilterColumnFxs filterColumnFxs;
 
   std::list<TFxP> filteredFxs(fxs);
@@ -2425,6 +2419,8 @@ void TFxCommand::deleteSelection(const std::list<TFxP> &fxs,
   if (!links.empty()) deleteLinks(links, xshHandle);
 
   TUndoManager::manager()->endBlock();
+  // emit xsheetChanged once here
+  xshHandle->notifyXsheetChanged();
 }
 
 //**********************************************************************
