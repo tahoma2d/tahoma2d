@@ -21,7 +21,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - This will be used to create the `MSVC` project file.
 - [ ] If CMake was installed with Qt, no additional installation is required. 
 - - Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
-- [ ] If necessasry, install CMake, https://cmake.org/download/
+- [ ] If necessary, install CMake, https://cmake.org/download/
 
 ### boost
 - Boost 1.55.0 or later is required (tested up to 1.75.0).
