@@ -41,8 +41,8 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - [ ] From a command line navigate to your local Git repository for Tahoma2D and execute: `git config core.safecrlf true`
 - **or**
 - Acquire a copy only, without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
-- [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
-- [ ] Expand to a folder in your local environment.
+- - [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
+- - [ ] Expand to a folder in your local environment.
 
 ### lib and dll
 - Perform these steps if you are using the Git command line to acquire the code.
