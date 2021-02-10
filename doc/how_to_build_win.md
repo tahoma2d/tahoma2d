@@ -7,12 +7,12 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ### Visual Studio Express 2015 or higher for Windows Desktop
 - [ ] Install Visual Studio Express 2015 or higher for Windows Desktop, https://www.visualstudio.com/vs/older-downloads/
-- - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
 - - Community and Professional versions of Visual Studio for Windows Desktop also work.
+- - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
 - - [ ] During the installation, make sure to select all the Visual C++ packages.
 
 ### Qt - cross-platform GUI framework.
-- [ ] Install via **one** of the following methods.
+- Install via **one** of the following methods.
 - - [ ] Install Qt from here: https://www.qt.io/download-open-source/
 - **or**
 - - [ ] Install Qt 5.9 (64-bit version, tested up to 5.9.9) with the [Qt Online Installer for Windows](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe).
@@ -30,17 +30,20 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - [ ] If you use Boost 1.55.0 with Visual Studio 2013 then install the following patch (Make the changes listed in the patch file).
 - - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
+### OpenCV
+- [ ] Instal OpenCV. (https://opencv.org/) (v4.4.1 and later)
+- - OpenCV version 4.4.1 is currently what is distributed with Tahoma2D 1.1.
+
 ## Acquire the Source Code
-- Note: You can also perform these next commands with GitHub Desktop https://desktop.github.com/.
+- You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - [ ] Fork the base repository to your own GitHub account.
 - [ ] Clone the base repository to your local environment.
-- :pushpin: Throughout these instructions `$tahoma2d` will represent the root for the base repository.
-- Visual Studio cannot recognize UTF-8 without BOM (Byte Order Mark) source code properly. 
-- - Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`.
-- - In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
-- - [ ] From a command line navigate to your local Git repository for Tahoma2D and execute: `git config core.safecrlf true`
-- **or**
-- Acquire a copy only, without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
+- :pushpin: Throughout these instructions `$tahoma2d` will represent your local Git repository for Tahoma2D.
+- :warning: Visual Studio cannot recognize UTF-8 without BOM (Byte Order Mark) source code properly. Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
+- - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
+### Alternative Method to Aquire the Source Code
+- Acquire a local copy without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
+-- This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
 - - [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
 - - [ ] Expand to a folder in your local environment.
 
@@ -55,10 +58,10 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - - [ ] `git lfs pull`
 
 ### Use CMake to Create a Visual Studio Project
-- [ ] Launch CMake GUI. You can find it in the Qt subfolder. C:\\Qt\\Tools\\CMake_64\\bin\\cmake-gui.exe
+- [ ] Launch CMake GUI. You can find it in this Qt subfolder; C:\\Qt\\Tools\\CMake_64\\bin\\cmake-gui.exe, or wherever you installed it.
 - [ ] In `Where is the source code`, navigate to `$tahoma2d/toonz/sources`
 - [ ] In `Where to build the binaries`, navigate to `$tahoma2d/toonz/build` or to wherever you usually build to.
-- [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore
+- [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore.
 - [ ] If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
 - [ ] Click on Configure.
 - [ ] In the pop-up that appears:
@@ -67,14 +70,16 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - - [ ] Click on Configure, the pop-up should now appear.
 - - [ ] Select the version of Visual Studio you are using. 
 - - [ ] Select the x64 Target Environment.
-- If Qt was installed to a directory other than the default, and the error Specify QT_PATH properly appears:
+- If Qt was installed to a directory other than the default, and the error 'Specify QT_PATH properly' appears:
+- - Click on that line in the top half of the CMake window.
 - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
 - - [ ] Rerun Configure.
-- If OpenCV was installed to a directory other than the default, and the error Specify OpenCV_DIR properly appears:
-- - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. example: `C:\opencv_4.4.0\build`
+- If OpenCV was installed to a directory other than the default, and the error 'Specify OpenCV_DIR properly' appears:
+- - Click on that line in the top half of the CMake window.
+- - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
 - - [ ] Rerun Configure.
 - If red warning lines appear in the bottom box, you can safely ignore them.
-- [ ] Click Generate
+- [ ] Click Generate.
 - :bulb: Should the CMakeLists.txt file change, such as during automatic build cleanup in Visual Studio, there is no need to rerun CMake.
 
 ## Set Up Libraries
@@ -95,22 +100,20 @@ Rename the following files:
 - [ ] Find the output in the folder `$tahoma2d/toonz/build/`
 
 ## Build with extended stop motion support for webcams and Canon DSLR cameras.
- You will need three additional libraries.
-- [OpenCV](https://opencv.org/) (v4.1.0 and later)
-  - [libjpeg-turbo](https://www.libjpeg-turbo.org/)
-  - The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
+You will need two additional libraries.
+ - [ ] [libjpeg-turbo](https://www.libjpeg-turbo.org/)
+ - [ ] The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
 Copy the following folders into the `$tahoma2d/thirdparty` folder.
-  - Copy the Header and library folders from the Canon SDK to `$tahoma2d/thirdparty/canon`
-    - Make sure that the library is the one from the EDSDK_64 folder.
-  - Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
+ - [ ] Copy the Header and library folders from the Canon SDK to `$tahoma2d/thirdparty/canon`
+ - - Make sure that the library is the one from the EDSDK_64 folder.
+ - [ ] Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
+ - [ ] Check the checkbox in CMake to build with stop motion support.
 
-Check the checkbox in CMake to build with stop motion support.
-On configuring with CMake or in the environmental variables, specify `OpenCV_DIR` to the `build` folder in the install folder of OpenCV (like `C:/opencv/build`).
 
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 
-## Run the Program
+## Run the Program (see also Alternative below)
 ### Set Up the Program's Path
 1. - [ ] Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
 2. - [ ] Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. 
@@ -156,12 +159,13 @@ To run the program with stop motion support, you will need to copy the .dll file
 ### Run
 `Tahoma2D.exe` can now be run.  Congratulations!
 
-## Setup and Run in Debug Mode
-- [ ] Start with a local working Tahoma2D installation.
+## Alternative to Run the Program - Setup and Run in Debug Mode
+- Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
+- [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
 - - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
 - - - Paste to the build folder where the compiler generates output.
-- - - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and are based on the `Solution Configuration` choice you will make in the build option below.
-- - - If the Debug or RelWithDebug subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders.
+- - - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and are based on the `Solution Configuration` choice you make in the build option below.
+- - - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders.
 - - - The Tahoma2d dlls and exe in those folders will be replaced when the next build is run.
 - - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to have this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
 - [ ] Start Visual Studio and load the solution.
@@ -171,7 +175,7 @@ To run the program with stop motion support, you will need to copy the .dll file
 - - - This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
 - [ ] Build the solution. 
 - [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
-- Set breakpoints, checkpoints, view the output window, do typical debug stuff.
+- Set breakpoints, checkpoints, view the output window, do step-through debugging, typical debugging stuff.
 - To stop the debugging session exit Tahoma2D from its menu or stop the debugger in Visual Studio.
 
 ## Create Translation Files
