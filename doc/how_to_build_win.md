@@ -14,7 +14,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 ### Qt - cross-platform GUI framework.
 - Install via **one** of the following methods.
 - - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should reccommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
-- - - On the install screen filter, tick the Archive checkbox to see older verions. In the Qt list, choose version `Qt 5.9.9`. 
+- - On the install screen filter, tick the Archive checkbox to see older verions. In the Qt list, choose version `Qt 5.9.9`. 
 - - [ ] Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
 - From the site: *"We recommend you use the Qt Online Installer for first time installations and the Qt Maintenance Tool for changes to a current install."*
 - The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
@@ -22,7 +22,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 ### CMake
 - This will be used to create the `MSVC` project file.
 - [ ] If CMake was installed with Qt, no additional installation is required. 
-- - Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
+- Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
 - [ ] If necessary, install CMake, https://cmake.org/download/
 
 ### boost
@@ -30,11 +30,11 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - [ ] Download boost_1_75_0.zip from http://www.boost.org/users/history/version_1_75_0.html
 - [ ] Extract all contents to the - '$tahoma2d/thirdparty/boost' directory.
 - [ ] If you use Boost 1.55.0 with Visual Studio 2013 then install the following patch (Make the changes listed in the patch file).
-- - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
+- https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 ### OpenCV
 - [ ] Instal OpenCV. (https://opencv.org/) (v4.4.0 and later)
-- - OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
+- OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
 
 ## Acquire the Source Code
 - You can use GitHub Desktop https://desktop.github.com/ or Git command line.
@@ -45,7 +45,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
 ### Alternative Method to Aquire the Source Code
 - Acquire a local copy without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
--- This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
+- - This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
 - - [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
 - - [ ] Expand to a folder in your local environment.
 
@@ -67,19 +67,19 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - [ ] If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
 - [ ] Click on Configure.
 - [ ] In the pop-up that appears:
-- - :warning: No pop-up? Then a cached version from a prior run of CMake was found at the locations you selected above. 
+- :warning: No pop-up? Then a cached version from a prior run of CMake was found at the locations you selected above. 
 - - - [ ] Clear the cache using: File -> Delete Cache.
 - - - [ ] Click on Configure, the pop-up should now appear.
 - - [ ] Select the version of Visual Studio you are using. 
 - - [ ] Select the x64 Target Environment.
 - If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears:
 - - Click on that line in the top half of the CMake window.
-- - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
-- - [ ] Rerun Configure.
+- - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
+- - - [ ] Rerun Configure.
 - If OpenCV was installed to a directory other than the default, and the error `Specify OpenCV_DIR properly` appears:
 - - Click on that line in the top half of the CMake window.
-- - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
-- - [ ] Rerun Configure.
+- - - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
+- - - [ ] Rerun Configure.
 - If red warning lines appear in the bottom box, you can safely ignore them.
 - [ ] Click Generate.
 - :bulb: Should the CMakeLists.txt file change, such as during automatic build cleanup in Visual Studio, there is no need to rerun CMake.
@@ -165,19 +165,19 @@ To run the program with stop motion support, you will need to copy the .dll file
 - Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
 - [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
 - - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
-- - - Paste to the build folder where the compiler generates output.
-- - - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and are based on the `Solution Configuration` choice you make in the build option below.
-- - - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders.
-- - - The Tahoma2d dlls and exe in those folders will be replaced when the next build is run.
-- - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to have this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
+- - Paste to the build folder where the compiler generates output.
+- - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and are based on the `Solution Configuration` choice you make in the build option below.
+- - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders.
+- - The Tahoma2d dlls and exe in those folders will be replaced when the next build is run.
+- - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to get this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
 - [ ] Start Visual Studio and load the solution.
 - [ ] In Visual Studio set the `Solution Configuration` to `Debug` or `RelWithDebInfo` using the drop-down at the top of the screen.
 - [ ] In the Solution Explorer window, right click on the `Tahoma2D` project.
 - - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
-- - This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
+- This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
 - [ ] Build the solution. 
 - [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
-- Set breakpoints, checkpoints, view the output window, do step-through debugging, typical debugging stuff.
+- Set breakpoints, checkpoints, view the output window, do step-through debugging.
 - To stop the debugging session exit Tahoma2D from its menu or stop the debugger in Visual Studio.
 
 ## Create Translation Files
