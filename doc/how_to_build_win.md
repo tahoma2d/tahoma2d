@@ -13,8 +13,9 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ### Qt - cross-platform GUI framework.
 Install via **one** of the following methods.
-- - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should reccommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
-- - On the install screen filter, tick the Archive checkbox to see older verions. In the Qt list, choose version `Qt 5.9.9`. 
+- - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should recommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
+- - - [ ] Run the the downloaded file. 
+- - - [ ] On the filter tick the Archive checkbox to see older verions and in the Qt list, choose version `Qt 5.9.9`. 
 - - [ ] Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
 - From the site: *"We recommend you use the Qt Online Installer for first time installations and the Qt Maintenance Tool for changes to a current install."*
 - The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
