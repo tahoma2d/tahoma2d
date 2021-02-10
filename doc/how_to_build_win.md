@@ -30,8 +30,6 @@ Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake
 Boost 1.55.0 or later is required (tested up to 1.75.0).
 - [ ] Download boost_1_75_0.zip from http://www.boost.org/users/history/version_1_75_0.html
 - [ ] Extract all contents to the - '$tahoma2d/thirdparty/boost' directory.
-- [ ] If you use Boost 1.55.0 with Visual Studio 2013 then install the following patch (Make the changes listed in the patch file).
-- https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 ### OpenCV
 - [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later)
