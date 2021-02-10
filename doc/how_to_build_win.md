@@ -103,12 +103,12 @@ Rename the following files:
 
 ## Build with extended stop motion support for webcams and Canon DSLR cameras.
 You will need two additional libraries.
- - [ ] [libjpeg-turbo](https://www.libjpeg-turbo.org/)
- - [ ] The Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
+ - [ ] Get [libjpeg-turbo](https://www.libjpeg-turbo.org/)
+ - [ ] Get the Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
 Copy the following folders into the `$tahoma2d/thirdparty` folder.
  - [ ] Copy the Header and library folders from the Canon SDK to `$tahoma2d/thirdparty/canon`
- - - Make sure that the library is the one from the EDSDK_64 folder.
+ - Make sure that the library is the one from the EDSDK_64 folder.
  - [ ] Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
  - [ ] Check the checkbox in CMake to build with stop motion support.
 
