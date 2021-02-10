@@ -65,9 +65,9 @@ Acquire a local copy without expecting to upload any changes to GitHub. No GitHu
 - [ ] In `Where is the source code`, navigate to `$tahoma2d/toonz/sources`
 - [ ] In `Where to build the binaries`, navigate to `$tahoma2d/toonz/build` or to wherever you usually build to.
 - [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore.
-- [ ] If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
+- If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
 - [ ] Click on Configure.
-- [ ] In the pop-up that appears:
+- In the pop-up that appears:
 - :warning: No pop-up? Then a cached version from a prior run of CMake was found at the locations you selected above. 
 - - - [ ] Clear the cache using: File -> Delete Cache.
 - - - [ ] Click on Configure, the pop-up should now appear.
