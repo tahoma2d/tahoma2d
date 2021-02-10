@@ -7,7 +7,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ### Visual Studio Express 2015 or higher for Windows Desktop
 - [ ] Install Visual Studio Express 2015 or higher for Windows Desktop, https://www.visualstudio.com/vs/older-downloads/
-- - Community and Professional versions of Visual Studio for Windows Desktop also work.
+- Community and Professional versions of Visual Studio for Windows Desktop also work.
 - - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
 - - [ ] During the installation, make sure to select all the Visual C++ packages.
 
