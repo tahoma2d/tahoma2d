@@ -12,7 +12,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - [ ] During the installation, make sure to select all the Visual C++ packages.
 
 ### Qt - cross-platform GUI framework.
-- Install via **one** of the following methods.
+Install via **one** of the following methods.
 - - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should reccommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
 - - On the install screen filter, tick the Archive checkbox to see older verions. In the Qt list, choose version `Qt 5.9.9`. 
 - - [ ] Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
@@ -20,32 +20,33 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
 
 ### CMake
-- This will be used to create the `MSVC` project file.
+This will be used to create the `MSVC` project file.
 - [ ] If CMake was installed with Qt, no additional installation is required. 
-- Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
+Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
 - [ ] If necessary, install CMake, https://cmake.org/download/
 
 ### boost
-- Boost 1.55.0 or later is required (tested up to 1.75.0).
+Boost 1.55.0 or later is required (tested up to 1.75.0).
 - [ ] Download boost_1_75_0.zip from http://www.boost.org/users/history/version_1_75_0.html
 - [ ] Extract all contents to the - '$tahoma2d/thirdparty/boost' directory.
 - [ ] If you use Boost 1.55.0 with Visual Studio 2013 then install the following patch (Make the changes listed in the patch file).
 - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 ### OpenCV
-- [ ] Instal OpenCV. (https://opencv.org/) (v4.4.0 and later)
-- OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
+- [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later)
+OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
 
 ## Acquire the Source Code
-- You can use GitHub Desktop https://desktop.github.com/ or Git command line.
+You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - [ ] Fork the base repository to your own GitHub account.
 - [ ] Clone the base repository to your local environment.
 - :pushpin: Throughout these instructions `$tahoma2d` will represent your local Git repository for Tahoma2D.
-- :warning: Visual Studio cannot recognize UTF-8 without BOM (Byte Order Mark) source code properly. Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
+- :warning: Visual Studio cannot properly recognize source code which is UTF-8 without BOM (Byte Order Mark). Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
 - - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
+
 ### Alternative Method to Aquire the Source Code
-- Acquire a local copy without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
-- - This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
+Acquire a local copy without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
+- This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
 - - [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
 - - [ ] Expand to a folder in your local environment.
 
