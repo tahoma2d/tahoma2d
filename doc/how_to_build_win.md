@@ -113,7 +113,7 @@ Copy the following folders into the `$tahoma2d/thirdparty` folder.
 
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 
-## Run the Program (see also Alternative below)
+## Run the Program - see also Alternative below
 ### Set Up the Program's Path
 1. - [ ] Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
 2. - [ ] Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. 
@@ -159,7 +159,7 @@ To run the program with stop motion support, you will need to copy the .dll file
 ### Run
 `Tahoma2D.exe` can now be run.  Congratulations!
 
-## Alternative to Run the Program - Setup and Run in Debug Mode
+## Alternative - Setup and Run in Debug Mode
 - Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
 - [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
 - - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
