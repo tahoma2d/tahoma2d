@@ -43,12 +43,6 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - :warning: Visual Studio cannot properly recognize source code which is UTF-8 without BOM (Byte Order Mark). Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
 - - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
 
-### Alternative Method to Aquire the Source Code
-Acquire a local copy without expecting to upload any changes to GitHub. No GitHub Fork or Clone required.
-- This method is appropriate if you only want to analyze the code and you are not expecting to contribute changes back to the codebase.
-- - [ ] Click the Code button in GitHub and select `Download ZIP` to download a zip file.
-- - [ ] Expand to a folder in your local environment.
-
 ### lib and dll
 - Perform these steps if you are using the Git command line to acquire the code.
 - - If you used the GitHub Desktop UI or downloaded the zip to acquire the Source Code, the lib and dll files will already be downloaded and you can skip these steps.
