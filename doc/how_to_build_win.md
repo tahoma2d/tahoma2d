@@ -44,14 +44,14 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
 
 ### lib and dll
+- If you used the GitHub Desktop UI to clone to your local environment the lib and dll files will already be downloaded and you can skip these steps.
 - Perform these steps if you are using the Git command line to acquire the code.
-- - If you used the GitHub Desktop UI or downloaded the zip to acquire the Source Code, the lib and dll files will already be downloaded and you can skip these steps.
 - `lib` and `dll` files are tracked by [Git Large File Storage](https://git-lfs.github.com/).
-- git-lfs is installed with Github Desktop.
-- Download the 'lib' and 'dll' files
-- - From Git command line execute: 
-- - - [ ] `git clone`
-- - - [ ] `git lfs pull`
+- git-lfs is installed with Github Desktop, otherwise it must be installed to your local Git environment.
+- https://docs.github.com/en/github/managing-large-files/installing-git-large-file-storage
+- To download the 'lib' and 'dll' files, from Git command line execute: 
+- - [ ] `git clone`
+- - [ ] `git lfs pull`
 
 ### Use CMake to Create a Visual Studio Project
 - [ ] Launch CMake GUI. You can find it in this Qt subfolder; `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`, or wherever you installed it.
