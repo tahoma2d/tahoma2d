@@ -174,7 +174,7 @@ To run the program with stop motion support, you will need to copy the .dll file
 - [ ] In Visual Studio set the `Solution Configuration` to `Debug` or `RelWithDebInfo` using the drop-down at the top of the screen.
 - [ ] In the Solution Explorer window, right click on the `Tahoma2D` project.
 - - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
-- - - This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
+- - This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
 - [ ] Build the solution. 
 - [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
 - Set breakpoints, checkpoints, view the output window, do step-through debugging, typical debugging stuff.
