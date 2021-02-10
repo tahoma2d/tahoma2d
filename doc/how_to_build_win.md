@@ -76,11 +76,11 @@ Acquire a local copy without expecting to upload any changes to GitHub. No GitHu
 - If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears:
 - - Click on that line in the top half of the CMake window.
 - - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
-- - - [ ] Rerun Configure.
+- - [ ] Rerun Configure.
 - If OpenCV was installed to a directory other than the default, and the error `Specify OpenCV_DIR properly` appears:
 - - Click on that line in the top half of the CMake window.
 - - - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
-- - - [ ] Rerun Configure.
+- - [ ] Rerun Configure.
 - If red warning lines appear in the bottom box, you can safely ignore them.
 - [ ] Click Generate.
 - :bulb: Should the CMakeLists.txt file change, such as during automatic build cleanup in Visual Studio, there is no need to rerun CMake.
@@ -124,7 +124,7 @@ To run the program with stop motion support, you will need to copy the .dll file
 - OR
 2. - [ ] Another way to do this is to use Windows Explorer to navigate to the exe that was created in your Release folder and drag and drop the Tahoma2D.exe on top of  `windeployqt.exe`
 - - This will automatically generate the QT files and folders you will need.
-3. - [ ] Confirm the result.
+3. Confirm the result.
 - These necessary Qt library files should be in the same folder as `Tahoma2D.exe`
     - [ ] `Qt5Core.dll`
     - [ ] `Qt5Gui.dll`
