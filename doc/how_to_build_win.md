@@ -13,9 +13,11 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 
 ### Qt - cross-platform GUI framework.
 - Install via **one** of the following methods.
-- - [ ] Install Qt from here: https://www.qt.io/download-open-source/
-- **or**
-- - [ ] Install Qt 5.9 (64-bit version, tested up to 5.9.9) with the [Qt Online Installer for Windows](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe).
+- - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should reccommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
+- - - On the install screen filter, tick the Archive checkbox to see older verions. In the Qt list, choose version `Qt 5.9.9`. 
+- - [ ] Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
+- From the site: *"We recommend you use the Qt Online Installer for first time installations and the Qt Maintenance Tool for changes to a current install."*
+- The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
 
 ### CMake
 - This will be used to create the `MSVC` project file.
@@ -31,8 +33,8 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - https://svn.boost.org/trac/boost/attachment/ticket/9369/vc12_fix_has_member_function_callable_with.patch
 
 ### OpenCV
-- [ ] Instal OpenCV. (https://opencv.org/) (v4.4.1 and later)
-- - OpenCV version 4.4.1 is currently what is distributed with Tahoma2D 1.1.
+- [ ] Instal OpenCV. (https://opencv.org/) (v4.4.0 and later)
+- - OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
 
 ## Acquire the Source Code
 - You can use GitHub Desktop https://desktop.github.com/ or Git command line.
@@ -58,7 +60,7 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - - [ ] `git lfs pull`
 
 ### Use CMake to Create a Visual Studio Project
-- [ ] Launch CMake GUI. You can find it in this Qt subfolder; C:\\Qt\\Tools\\CMake_64\\bin\\cmake-gui.exe, or wherever you installed it.
+- [ ] Launch CMake GUI. You can find it in this Qt subfolder; `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`, or wherever you installed it.
 - [ ] In `Where is the source code`, navigate to `$tahoma2d/toonz/sources`
 - [ ] In `Where to build the binaries`, navigate to `$tahoma2d/toonz/build` or to wherever you usually build to.
 - [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore.
@@ -70,11 +72,11 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - - - [ ] Click on Configure, the pop-up should now appear.
 - - [ ] Select the version of Visual Studio you are using. 
 - - [ ] Select the x64 Target Environment.
-- If Qt was installed to a directory other than the default, and the error 'Specify QT_PATH properly' appears:
+- If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears:
 - - Click on that line in the top half of the CMake window.
 - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
 - - [ ] Rerun Configure.
-- If OpenCV was installed to a directory other than the default, and the error 'Specify OpenCV_DIR properly' appears:
+- If OpenCV was installed to a directory other than the default, and the error `Specify OpenCV_DIR properly` appears:
 - - Click on that line in the top half of the CMake window.
 - - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
 - - [ ] Rerun Configure.
