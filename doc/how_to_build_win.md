@@ -32,13 +32,14 @@ This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Q
 - Clone the base repository.
 - Throughout the explanation `$tahoma2d` will represent the root for the base repository.
 
+- Visual Studio cannot recognize UTF-8 without BOM source code properly. Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to be treated as a comment by `MSVS` as well.
+- In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
+- `git config core.safecrlf true`
+
 ### lib and dll
 
 - `lib` and `dll` files are tracked by [Git Large File Storage](https://git-lfs.github.com/).
 - Note: git-lfs is also installed with Github Desktop.
-- Visual Studio cannot recognize UTF-8 without BOM source code properly. Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to be treated as a comment by `MSVS` as well.
-- In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
-- `git config core.safecrlf true`
 - Execute `git lfs pull` after `git clone` by using the lfs client.
 
 ### Using CMake to Create a Visual Studio Project
