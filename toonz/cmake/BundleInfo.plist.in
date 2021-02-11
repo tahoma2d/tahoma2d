@@ -11,7 +11,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Tahoma2D.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.turtletooth.Tahoma2D</string>
+	<string>io.github.tahoma2d.Tahoma2D</string>
     <key>NSCameraUsageDescription</key>
     <string>Tahoma2D needs access to the camera in order to use Camera Capture</string>
     <key>NSMicrophoneUsageDescription</key>

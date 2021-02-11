@@ -101,7 +101,7 @@ $ cd ..
 ### Cloning the GIT Tree
 
 ```
-$ git clone https://github.com/turtletooth/tahoma2d
+$ git clone https://github.com/tahoma2d/tahoma2d
 ```
 
 ### Copying the 'stuff' Directory
