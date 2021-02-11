@@ -1,4 +1,7 @@
 // Soli Deo gloria
+#ifdef WITH_CRASHRPT
+#include <tchar.h>
+#endif
 
 // Tnz6 includes
 #include "mainwindow.h"
@@ -63,6 +66,10 @@
 #include "tfont.h"
 
 #include "kis_tablet_support_win8.h"
+
+#ifdef WITH_CRASHRPT
+#include "CrashRpt.h"
+#endif
 
 #ifdef MACOSX
 #include "tipc.h"
@@ -243,6 +250,12 @@ static void script_output(int type, const QString &value) {
 }
 
 //-----------------------------------------------------------------------------
+#ifdef WITH_CRASHRPT
+LPCWSTR convertToLPCWSTR(std::string str) {
+  std::wstring stemp = std::wstring(str.begin(), str.end());
+  return stemp.c_str();
+}
+#endif
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_WIN
@@ -314,6 +327,26 @@ int main(int argc, char *argv[]) {
 
     argc = 1;
   }
+
+  // Toonz environment
+  initToonzEnv(argumentPathValues);
+
+#ifdef WITH_CRASHRPT
+  CR_INSTALL_INFO pInfo;
+  memset(&pInfo, 0, sizeof(CR_INSTALL_INFO));
+  pInfo.cb            = sizeof(CR_INSTALL_INFO);
+  pInfo.pszAppName    = convertToLPCWSTR(TEnv::getApplicationName());
+  pInfo.pszAppVersion = convertToLPCWSTR(TEnv::getApplicationVersion());
+  TFilePath crashrptCache =
+      ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
+  pInfo.pszErrorReportSaveDir =
+      convertToLPCWSTR(crashrptCache.getQString().toStdString());
+  // Install all available exception handlers.
+  // Don't send reports automaticall, store locally
+  pInfo.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_DONT_SEND_REPORT;
+
+  crInstall(&pInfo);
+#endif
 
 // Enables high-DPI scaling. This attribute must be set before QApplication is
 // constructed. Available from Qt 5.6.
@@ -477,9 +510,6 @@ int main(int argc, char *argv[]) {
   // Install run out of contiguous memory callback
   TBigMemoryManager::instance()->setRunOutOfContiguousMemoryHandler(
       &toonzRunOutOfContMemHandler);
-
-  // Toonz environment
-  initToonzEnv(argumentPathValues);
 
   // Initialize thread components
   TThread::init();
@@ -818,6 +848,10 @@ int main(int argc, char *argv[]) {
   if (consoleAttached) {
     ::FreeConsole();
   }
+#endif
+
+#ifdef WITH_CRASHRPT
+  crUninstall();
 #endif
 
   return ret;
