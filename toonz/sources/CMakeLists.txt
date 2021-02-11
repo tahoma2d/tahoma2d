@@ -102,6 +102,7 @@ endif()
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
 option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
+option(WITH_CRASHRPT "Build CrashRpt support - Requires CrashRpt Library" OFF)
 
 # avoid using again
 option_defaults_clear()
@@ -277,6 +278,12 @@ if(BUILD_ENV_MSVC)
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
     )
+
+	if(WITH_CRASHRPT)
+		include_directories(
+			${SDKROOT}/crashrpt/include
+		)
+	endif()
 endif()
 
 if(BUILD_ENV_MSVC)
@@ -370,6 +377,10 @@ if(BUILD_ENV_MSVC)
     endif()
     set(MYPAINT_LIB_INCLUDE_DIRS ${SDKROOT}/libmypaint/dist/${PLATFORM}/include/libmypaint)
     set(MYPAINT_LIB_LDFLAGS ${SDKROOT}/libmypaint/dist/${PLATFORM}/libmypaint.lib)
+
+	if(WITH_CRASHRPT)
+		set(CRASHRPT_LIB ${SDKROOT}/crashrpt/CrashRpt1500.lib)
+	endif()
 elseif(BUILD_ENV_APPLE)
     find_library(GLUT_LIB GLUT)
     find_library(GL_LIB OpenGL)
