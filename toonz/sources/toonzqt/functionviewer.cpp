@@ -171,11 +171,11 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
   bool ret = true;
   ret      = ret && connect(m_toolbar, SIGNAL(numericalColumnToggled()), this,
                        SLOT(toggleMode()));
-  ret = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
+  ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
                        m_functionGraph, SLOT(update()));
-  ret = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
+  ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
                        m_numericalColumns, SLOT(updateAll()));
-  ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_treeView,
+  ret      = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_treeView,
                        SLOT(update()));
   ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_functionGraph,
                        SLOT(update()));
@@ -388,6 +388,7 @@ void FunctionViewer::setXsheetHandle(TXsheetHandle *xshHandle) {
 
   m_xshHandle = xshHandle;
   m_segmentViewer->setXsheetHandle(xshHandle);
+  m_treeView->setXsheetHandle(xshHandle);
 
   if (m_xshHandle && isVisible()) {
     TXsheet *xsh = m_xshHandle->getXsheet();
@@ -610,7 +611,7 @@ void FunctionViewer::onStageObjectChanged(bool isDragging) {
 void FunctionViewer::onFxSwitched() {
   TFx *fx              = m_fxHandle->getFx();
   TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zfx) fx          = zfx->getZeraryFx();
+  if (zfx) fx = zfx->getZeraryFx();
   static_cast<FunctionTreeModel *>(m_treeView->model())->setCurrentFx(fx);
   m_treeView->updateAll();
   m_functionGraph->update();

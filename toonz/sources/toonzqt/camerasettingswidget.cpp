@@ -591,9 +591,14 @@ void CameraSettingsWidget::setFields(const TCamera *camera) {
   updatePresetListOm();
 }
 
-void CameraSettingsWidget::getFields(TCamera *camera) {
+bool CameraSettingsWidget::getFields(TCamera *camera) {
+  TDimensionD old_sz = camera->getSize();
+  TDimension old_res = camera->getRes();
+
+  if (old_sz == getSize() && old_res == getRes()) return false;
   camera->setSize(getSize());
   camera->setRes(getRes());
+  return true;
 }
 
 TDimensionD CameraSettingsWidget::getSize() const {
@@ -954,8 +959,8 @@ double CameraSettingsWidget::aspectRatioStringToValue(const QString &s) {
   }
   int i = s.indexOf("/");
   if (i <= 0 || i + 1 >= s.length()) return s.toDouble();
-  int num           = s.left(i).toInt();
-  int den           = s.mid(i + 1).toInt();
+  int num = s.left(i).toInt();
+  int den = s.mid(i + 1).toInt();
   if (den <= 0) den = 1;
   return (double)num / (double)den;
 }

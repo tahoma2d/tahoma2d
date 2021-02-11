@@ -1496,9 +1496,6 @@ QStatusBar #StatusBarLabel {
 /* -----------------------------------------------------------------------------
    Style Editor
 ----------------------------------------------------------------------------- */
-#StyleEditor #TabBarContainer {
-  margin-left: -5px;
-}
 #StyleEditor #bottomWidget {
   border-top: 1 solid #a8a8a8;
   padding: 3 2 8 3;
@@ -2365,9 +2362,13 @@ SpreadsheetViewer {
   qproperty-KeyFrameColor: #edaa64;
   qproperty-KeyFrameBorderColor: #bb6a16;
   qproperty-SelectedKeyFrameColor: #c9a278;
+  qproperty-IgnoredKeyFrameColor: #cb5765;
+  qproperty-SelectedIgnoredKeyFrameColor: #eb96ad;
   qproperty-InBetweenColor: #e2dbcc;
   qproperty-InBetweenBorderColor: #ac9f82;
   qproperty-SelectedInBetweenColor: #c2c4c0;
+  qproperty-IgnoredInBetweenColor: #c29c92;
+  qproperty-SelectedIgnoredInBetweenColor: #ab9898;
   qproperty-SelectedEmptyColor: rgba(146, 153, 158, 0.5);
   qproperty-SelectedSceneRangeEmptyColor: rgba(146, 153, 158, 0.5);
   qproperty-TextColor: #000;

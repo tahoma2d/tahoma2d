@@ -397,6 +397,9 @@ public:
   // Animation  tab
   int getKeyframeType() const { return getIntValue(keyframeType); }
   int getAnimationStep() const { return getIntValue(animationStep); }
+  bool isModifyExpressionOnMovingReferencesEnabled() const {
+    return getBoolValue(modifyExpressionOnMovingReferences);
+  }
 
   // Preview  tab
   void getBlankValues(int &bCount, TPixel32 &bColor) const {

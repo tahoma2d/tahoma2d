@@ -121,6 +121,7 @@ public:
   bool columnsOrGraphHasFocus();
   void setSceneHandle(TSceneHandle *sceneHandle);
   TSceneHandle *getSceneHandle() const { return m_sceneHandle; }
+  TXsheetHandle *getXsheetHandle() const { return m_xshHandle; }
 
   // SaveLoadQSettings
   virtual void save(QSettings &settings) const override;

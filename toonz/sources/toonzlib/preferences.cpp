@@ -532,6 +532,8 @@ void Preferences::definePreferenceItems() {
   // Animation
   define(keyframeType, "keyframeType", QMetaType::Int, 2);  // Linear
   define(animationStep, "animationStep", QMetaType::Int, 1, 1, 500);
+  define(modifyExpressionOnMovingReferences,
+         "modifyExpressionOnMovingReferences", QMetaType::Bool, false);
 
   // Preview
   define(blanksCount, "blanksCount", QMetaType::Int, 0, 0, 1000);

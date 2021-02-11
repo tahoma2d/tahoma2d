@@ -721,8 +721,9 @@ TFrameId TTool::getCurrentFid() const {
 
 //-----------------------------------------------------------------------------
 
-TAffine TTool::getCurrentColumnMatrix() const {
-  return getColumnMatrix(m_application->getCurrentColumn()->getColumnIndex());
+TAffine TTool::getCurrentColumnMatrix(int frame) const {
+  return getColumnMatrix(m_application->getCurrentColumn()->getColumnIndex(),
+                         frame);
 }
 
 //-----------------------------------------------------------------------------
@@ -759,12 +760,12 @@ TAffine TTool::getCurrentObjectParentMatrix() const {
 
 //-----------------------------------------------------------------------------
 
-TAffine TTool::getColumnMatrix(int columnIndex) const {
+TAffine TTool::getColumnMatrix(int columnIndex, int frame) const {
   if (!m_application) return TAffine();
 
   TFrameHandle *fh = m_application->getCurrentFrame();
   if (fh->isEditingLevel()) return TAffine();
-  int frame    = fh->getFrame();
+  if (frame < 0) frame = fh->getFrame();
   TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
   TStageObjectId columnObjId =
       (columnIndex >= 0)

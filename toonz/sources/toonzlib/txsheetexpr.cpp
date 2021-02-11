@@ -10,6 +10,8 @@
 #include "texpression.h"
 #include "tparser.h"
 #include "tfx.h"
+#include "tzeraryfx.h"
+#include "tcolumnset.h"
 
 #include "tw/stringtable.h"
 #include "tunit.h"
@@ -20,6 +22,9 @@
 #include "toonz/tstageobjectid.h"
 #include "toonz/tstageobject.h"
 #include "toonz/fxdag.h"
+#include "toonz/tstageobjecttree.h"
+#include "toonz/tcolumnfxset.h"
+#include "toonz/tcolumnfx.h"
 
 // Boost includes
 #include "boost/noncopyable.hpp"
@@ -57,16 +62,49 @@ public:
 };
 
 //===================================================================
+/*
+class ColumnReferenceFinder final : public TSyntax::CalculatorNodeVisitor {
+  QSet<int> m_indices;
+
+public:
+  ColumnReferenceFinder() {}
+
+  void registerColumnIndex(int columnIndex) { m_indices.insert(columnIndex); }
+
+  QSet<int> indices() const { return m_indices; }
+};
+*/
+//===================================================================
+
+class ParamReferenceFinder final : public TSyntax::CalculatorNodeVisitor {
+  QSet<TDoubleParam *> m_refParams;
+  QSet<int> m_columnIndices;
+
+public:
+  ParamReferenceFinder() {}
+
+  void registerRefParam(TDoubleParam *param) { m_refParams.insert(param); }
+  void registerColumnIndex(int columnIndex) {
+    m_columnIndices.insert(columnIndex);
+  }
+
+  QSet<int> columnIndices() const { return m_columnIndices; }
+  QSet<TDoubleParam *> refParams() const { return m_refParams; }
+};
+
+//===================================================================
 //
 // Calculator Nodes
 //
 //-------------------------------------------------------------------
 
-class ParamCalculatorNode final : public CalculatorNode,
-                                  public TParamObserver,
-                                  public boost::noncopyable {
-  TDoubleParamP m_param;
+class ParamCalculatorNode : public CalculatorNode,
+                            public TParamObserver,
+                            public boost::noncopyable {
   std::unique_ptr<CalculatorNode> m_frame;
+
+protected:
+  TDoubleParamP m_param;
 
 public:
   ParamCalculatorNode(Calculator *calculator, const TDoubleParamP &param,
@@ -88,10 +126,18 @@ public:
   }
 
   void accept(TSyntax::CalculatorNodeVisitor &visitor) override {
+    ParamReferenceFinder *prf = dynamic_cast<ParamReferenceFinder *>(&visitor);
+    if (prf) {
+      prf->registerRefParam(m_param.getPointer());
+      return;
+    }
+
     ParamDependencyFinder *pdf =
         dynamic_cast<ParamDependencyFinder *>(&visitor);
-    pdf->check(m_param.getPointer());
-    m_param->accept(visitor);
+    if (pdf) {
+      pdf->check(m_param.getPointer());
+      if (!pdf->found()) m_param->accept(visitor);
+    }
   }
 
   void onChange(const TParamChange &paramChange) override {
@@ -111,6 +157,36 @@ public:
       std::set<TParamObserver *>::const_iterator ot, oEnd = observers.end();
       for (ot = observers.begin(); ot != oEnd; ++ot)
         (*ot)->onChange(propagatedChange);
+    }
+  }
+
+  bool hasReference() const override { return true; }
+};
+
+// ParamCalculatorNode subclass to monitor referenced columns
+class ColumnParamCalculatorNode final : public ParamCalculatorNode {
+  int m_columnIndex;
+
+public:
+  ColumnParamCalculatorNode(Calculator *calculator, const TDoubleParamP &param,
+                            std::unique_ptr<CalculatorNode> frame,
+                            int columnIndex)
+      : ParamCalculatorNode(calculator, param, std::move(frame))
+      , m_columnIndex(columnIndex) {}
+
+  void accept(TSyntax::CalculatorNodeVisitor &visitor) override {
+    ParamReferenceFinder *prf = dynamic_cast<ParamReferenceFinder *>(&visitor);
+    if (prf) {
+      prf->registerRefParam(m_param.getPointer());
+      prf->registerColumnIndex(m_columnIndex);
+      return;
+    }
+
+    ParamDependencyFinder *pdf =
+        dynamic_cast<ParamDependencyFinder *>(&visitor);
+    if (pdf) {
+      pdf->check(m_param.getPointer());
+      if (!pdf->found()) m_param->accept(visitor);
     }
   }
 };
@@ -145,7 +221,12 @@ public:
     return d;
   }
 
-  void accept(TSyntax::CalculatorNodeVisitor &) override {}
+  void accept(TSyntax::CalculatorNodeVisitor &visitor) override {
+    ParamReferenceFinder *prf = dynamic_cast<ParamReferenceFinder *>(&visitor);
+    if (prf) prf->registerColumnIndex(m_columnIndex);
+  }
+
+  bool hasReference() const override { return true; }
 };
 
 //===================================================================
@@ -191,6 +272,15 @@ public:
       return TStageObjectId::NoneId;
   }
 
+  TStageObjectId matchExistingObjectName(const Token &token) const {
+    TStageObjectId objId = matchObjectName(token);
+    if (objId != TStageObjectId::NoneId &&
+        m_xsh->getStageObjectTree()->getStageObject(objId, false))
+      return objId;
+    else
+      return TStageObjectId::NoneId;
+  }
+
   TStageObject::Channel matchChannelName(const Token &token) const {
     std::string s = toLower(token.getText());
     if (s == "ns" || s == "y")
@@ -227,7 +317,7 @@ public:
                   const Token &token) const override {
     int i = (int)previousTokens.size();
     if (i == 0)
-      return matchObjectName(token) != TStageObjectId::NoneId;
+      return matchExistingObjectName(token) != TStageObjectId::NoneId;
     else if ((i == 1 && token.getText() == ".") ||
              (i == 3 && token.getText() == "(") ||
              (i == 5 && token.getText() == ")"))
@@ -237,7 +327,7 @@ public:
         return true;
       else
         return token.getText() == "cell" &&
-               matchObjectName(previousTokens[0]).isColumn();
+               matchExistingObjectName(previousTokens[0]).isColumn();
     } else
       return false;
   }
@@ -276,12 +366,20 @@ public:
       stack.push_back(new XsheetDrawingCalculatorNode(calc, m_xsh, columnIndex,
                                                       std::move(frameNode)));
     } else {
-      TStageObject *object              = m_xsh->getStageObject(objectId);
+      // do not create object if it does not exist
+      TStageObject *object =
+          m_xsh->getStageObjectTree()->getStageObject(objectId, false);
+      if (!object) return;
       TStageObject::Channel channelName = matchChannelName(tokens[2]);
       TDoubleParam *channel             = object->getParam(channelName);
-      if (channel)
-        stack.push_back(
-            new ParamCalculatorNode(calc, channel, std::move(frameNode)));
+      if (channel) {
+        if (objectId.isColumn())
+          stack.push_back(new ColumnParamCalculatorNode(
+              calc, channel, std::move(frameNode), objectId.getIndex()));
+        else
+          stack.push_back(
+              new ParamCalculatorNode(calc, channel, std::move(frameNode)));
+      }
     }
   }
 };
@@ -295,7 +393,20 @@ public:
   FxReferencePattern(TXsheet *xsh) : m_xsh(xsh) {}
 
   TFx *getFx(const Token &token) const {
-    return m_xsh->getFxDag()->getFxById(::to_wstring(toLower(token.getText())));
+    TFx *fx =
+        m_xsh->getFxDag()->getFxById(::to_wstring(toLower(token.getText())));
+    // removed fx cannot be referenced
+    if (!fx)
+      return nullptr;
+    else if (fx->isZerary()) {
+      TZeraryFx *zFx = dynamic_cast<TZeraryFx *>(fx);
+      // For now we cannot use zFx->getColumnFx()->getColumnIndex() < 0 to check
+      // existence of the column. See a comment in tcolumnset.h for details.
+      if (!zFx || !zFx->getColumnFx()->getXshColumn()->inColumnsSet())
+        return nullptr;
+    } else if (!m_xsh->getFxDag()->getInternalFxs()->containsFx(fx))
+      return nullptr;
+    return fx;
   }
   TParam *getParam(const TFx *fx, const Token &token) const {
     int i;
@@ -606,4 +717,12 @@ bool dependsOn(TDoubleParam *param, TDoubleParam *possiblyDependentParam) {
   ParamDependencyFinder pdf(possiblyDependentParam);
   param->accept(pdf);
   return pdf.found();
+}
+
+void referenceParams(TExpression &expr, QSet<int> &columnIndices,
+                     QSet<TDoubleParam *> &params) {
+  ParamReferenceFinder prf;
+  expr.accept(prf);
+  columnIndices = prf.columnIndices();
+  params        = prf.refParams();
 }

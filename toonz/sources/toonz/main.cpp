@@ -8,6 +8,7 @@
 #include "previewfxmanager.h"
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
+#include "expressionreferencemanager.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -467,11 +468,7 @@ int main(int argc, char *argv[]) {
   fmt.setStencil(true);
   QGLFormat::setDefaultFormat(fmt);
 
-// seems this function should be called at all systems
-// perhaps in some GLUT-implementations initalization is mere formality
-#if defined(LINUX) || defined(_WIN32)
   glutInit(&argc, argv);
-#endif
 
   splash.showMessage(offsetStr + "Initializing environment...",
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
@@ -709,6 +706,8 @@ int main(int argc, char *argv[]) {
   TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
   w.restoreGeometry(settings.value("MainWindowGeometry").toByteArray());
+
+  ExpressionReferenceManager::instance()->init();
 
 #ifndef MACOSX
   // Workaround for the maximized window case: Qt delivers two resize events,

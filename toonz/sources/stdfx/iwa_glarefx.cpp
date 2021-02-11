@@ -12,11 +12,15 @@
 #include "iwa_xyz.h"
 #include "iwa_simplexnoise.h"
 
+#include <random>
+
 #include <QPair>
 #include <QVector>
 #include <QReadWriteLock>
 #include <QMutexLocker>
 #include <QMap>
+#include <QImage>
+#include <QPainter>
 
 namespace {
 // FFT coordinate -> Normal corrdinate
@@ -38,25 +42,55 @@ inline int getCoord(int i, int j, int lx, int ly) {
 
 Iwa_GlareFx::Iwa_GlareFx()
     : m_renderMode(new TIntEnumParam(RendeMode_FilterPreview, "Filter Preview"))
+    , m_irisMode(new TIntEnumParam(Iris_InputImage, "Input Image"))
+    , m_irisScale(0.2)
+    , m_irisGearEdgeCount(10)
+    , m_irisRandomSeed(0)
+    , m_irisSymmetry(1.0)
+    , m_irisAppearance(new TIntEnumParam())
     , m_intensity(0.0)
     , m_size(100.0)
     , m_rotation(0.0)
+    , m_aberration(1.0)
     , m_noise_factor(0.0)
     , m_noise_size(0.5)
     , m_noise_octave(new TIntEnumParam(1, "1"))
     , m_noise_evolution(0.0)
     , m_noise_offset(TPointD(0, 0)) {
+  // Version 1 : lights had been constantly summed in all wavelength
+  // Version 2 : intensities are weighted proportional to 1/(rambda^2)
+  setFxVersion(2);
+
   // Bind the common parameters
   addInputPort("Source", m_source);
   addInputPort("Iris", m_iris);
 
   bindParam(this, "renderMode", m_renderMode);
   m_renderMode->addItem(RendeMode_Render, "Render");
+  m_renderMode->addItem(RenderMode_Iris, "Iris");
+
+  bindParam(this, "irisMode", m_irisMode);
+  m_irisMode->addItem(Iris_Square, "4 Streaks");
+  m_irisMode->addItem(Iris_Hexagon, "6 Streaks");
+  m_irisMode->addItem(Iris_Octagon, "8 Streaks");
+  m_irisMode->addItem(Iris_GearShape, "Multiple Streaks");
+
+  bindParam(this, "irisScale", m_irisScale);
+  bindParam(this, "irisGearEdgeCount", m_irisGearEdgeCount);
+  bindParam(this, "irisRandomSeed", m_irisRandomSeed);
+  bindParam(this, "irisSymmetry", m_irisSymmetry);
+  bindParam(this, "irisAppearance", m_irisAppearance);
+  m_irisAppearance->addItem(Appearance_ThinLine, "Thin Line");
+  m_irisAppearance->addItem(Appearance_MediumLine, "Medium Line");
+  m_irisAppearance->addItem(Appearance_ThickLine, "Thick Line");
+  m_irisAppearance->addItem(Appearance_Fill, "Filled");
+  m_irisAppearance->setValue(Appearance_MediumLine);
 
   bindParam(this, "intensity", m_intensity, false);
   bindParam(this, "size", m_size, false);
   m_size->setMeasureName("fxLength");
   bindParam(this, "rotation", m_rotation, false);
+  bindParam(this, "aberration", m_aberration, false);
 
   bindParam(this, "noise_factor", m_noise_factor, false);
   bindParam(this, "noise_size", m_noise_size, false);
@@ -69,9 +103,15 @@ Iwa_GlareFx::Iwa_GlareFx()
   m_noise_offset->getX()->setMeasureName("fxLength");
   m_noise_offset->getY()->setMeasureName("fxLength");
 
+  m_irisScale->setValueRange(0.1, 0.8);
+  m_irisGearEdgeCount->setValueRange(3, 50);
+  m_irisSymmetry->setValueRange(0.1, 1.0);
+  m_irisRandomSeed->setValueRange(0, (std::numeric_limits<int>::max)());
+
   m_intensity->setValueRange(-5.0, 5.0);
-  m_size->setValueRange(10.0, 500.0);
+  m_size->setValueRange(10.0, 1500.0);
   m_rotation->setValueRange(-1800, 1800);
+  m_aberration->setValueRange(-2.0, 2.0);
   m_noise_factor->setValueRange(0.0, 1.0);
   m_noise_size->setValueRange(0.01, 3.0);
 }
@@ -91,12 +131,149 @@ double Iwa_GlareFx::getSizePixelAmount(const double val, const TAffine affine) {
   /*--- return the length of the vector ---*/
   return sqrt(vect.x * vect.x + vect.y * vect.y);
 }
+
+//--------------------------------------------------------------
+
+void Iwa_GlareFx::drawPresetIris(TRaster32P irisRas, double irisSize,
+                                 const double frame) {
+  QImage img(irisRas->getLx(), irisRas->getLy(),
+             QImage::Format_ARGB32_Premultiplied);
+  img.fill(Qt::black);
+  QPainter painter(&img);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.translate(
+      QPointF((float)irisRas->getLx() / 2.0, (float)irisRas->getLy() / 2.0));
+  painter.scale(irisSize, irisSize);
+  // shrink a bit
+  painter.scale(0.9, 0.9);
+
+  QPen pen(Qt::white);
+  double lineWidthRatio;
+  int appearance = m_irisAppearance->getValue();
+  if (appearance == Appearance_Fill) {
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(Qt::white);
+  } else {
+    assert(appearance >= 0 && appearance <= 2);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::MiterJoin);
+    double ratio[3] = {0.05, 0.1, 0.2};
+    lineWidthRatio  = ratio[appearance];
+    pen.setWidthF(lineWidthRatio);
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+  }
+
+  double symmetry = m_irisSymmetry->getValue(frame);
+
+  switch (m_irisMode->getValue()) {
+  case Iris_Square:
+    painter.scale(1.0, symmetry);
+    painter.drawRect(QRectF(-1.0, -1.0, 2.0, 2.0));
+    break;
+  case Iris_Hexagon: {
+    QPointF p(1.0 - 0.5 * symmetry, symmetry * std::sqrt(3) * 0.5);
+    const QPointF points[6] = {-p, QPointF(-1.0, 0.0), QPointF(-p.x(), p.y()),
+                               p,  QPointF(1.0, 0.0),  QPointF(p.x(), -p.y())};
+    if (appearance != Appearance_Fill) {
+      if (symmetry < 1.0) {
+        painter.drawPolyline(points, 3);
+        painter.drawPolyline(&points[3], 3);
+      }
+      pen.setWidthF(lineWidthRatio * symmetry);
+      painter.setPen(pen);
+    }
+    painter.drawPolygon(points, 6);
+    if (appearance != Appearance_Fill && symmetry < 1.0) {
+      pen.setColor(Qt::black);
+      painter.setPen(pen);
+      painter.setBrush(Qt::NoBrush);
+      painter.drawRect(
+          QRectF(-1.2, -p.y() - symmetry, 2.4, (p.y() + symmetry) * 2.0));
+    }
+  } break;
+  case Iris_Octagon: {
+    double u = (2 + std::sqrt(2) * (1 - symmetry)) / (2 * std::sqrt(2) + 2);
+    double v = (2 + std::sqrt(2) * (1 + symmetry)) / (2 * std::sqrt(2) + 2);
+    const QPointF points[8] = {QPointF(u, v),  QPointF(v, u),   QPointF(v, -u),
+                               QPointF(u, -v), QPointF(-u, -v), QPointF(-v, -u),
+                               QPointF(-v, u), QPointF(-u, v)};
+    if (appearance != Appearance_Fill) {
+      if (symmetry < 1.0) {
+        painter.drawLine(points[0], points[1]);
+        painter.drawLine(points[2], points[3]);
+        painter.drawLine(points[4], points[5]);
+        painter.drawLine(points[6], points[7]);
+      }
+      pen.setWidthF(lineWidthRatio * symmetry);
+      painter.setPen(pen);
+    }
+    painter.drawPolygon(points, 8);
+    if (appearance != Appearance_Fill && symmetry < 1.0) {
+      pen.setColor(Qt::black);
+      painter.setPen(pen);
+      painter.setBrush(Qt::NoBrush);
+      painter.drawRect(QRectF(-v - symmetry, -v - symmetry,
+                              (v + symmetry) * 2.0, (v + symmetry) * 2.0));
+    }
+  } break;
+  case Iris_GearShape: {
+    int edgeCount   = (int)std::round(m_irisGearEdgeCount->getValue(frame));
+    QPointF* points = new QPointF[edgeCount * 2];
+    QList<double> thickness;
+    double angleUnit = M_PI / (double)edgeCount;
+    std::mt19937_64 mt;
+    mt.seed(m_irisRandomSeed->getValue());
+    std::uniform_real_distribution<> random_plusminus1(-1.0, 1.0);
+    std::uniform_real_distribution<> random_thickness(symmetry * lineWidthRatio,
+                                                      lineWidthRatio);
+    for (int e = 0; e < edgeCount; e++) {
+      double baseAngle = angleUnit * e * 2.0;
+      double theta =
+          baseAngle + random_plusminus1(mt) * angleUnit * (1.0 - symmetry);
+      points[e * 2] = QPointF(std::cos(theta), std::sin(theta));
+      thickness.append(random_thickness(mt));
+      baseAngle += angleUnit;
+      theta = baseAngle + random_plusminus1(mt) * angleUnit * (1.0 - symmetry);
+      points[e * 2 + 1] = QPointF(0.5 * std::cos(theta), 0.5 * std::sin(theta));
+      thickness.append(random_thickness(mt));
+    }
+
+    if (appearance != Appearance_Fill) {
+      for (int v = 0; v < edgeCount * 2; v++) {
+        int next_v = (v == edgeCount * 2 - 1) ? 0 : v + 1;
+        pen.setWidthF(thickness.at(v));
+        painter.setPen(pen);
+        painter.drawLine(points[v], points[next_v]);
+      }
+    } else {
+      painter.drawPolygon(points, edgeCount * 2);
+    }
+    delete[] points;
+  } break;
+  default:
+    break;
+  }
+
+  for (int j = 0; j < img.height(); j++) {
+    TPixel32* pix = irisRas->pixels(j);
+    QRgb* img_p   = (QRgb*)img.scanLine(img.height() - j - 1);
+    for (int i = 0; i < img.width(); i++, img_p++, pix++) {
+      pix->r = (unsigned char)(qRed(*img_p));
+      pix->g = (unsigned char)(qGreen(*img_p));
+      pix->b = (unsigned char)(qBlue(*img_p));
+      pix->m = (unsigned char)(qAlpha(*img_p));
+    }
+  }
+}
+
 //--------------------------------------------------------------
 
 void Iwa_GlareFx::doCompute(TTile& tile, double frame,
                             const TRenderSettings& settings) {
+  int irisMode = m_irisMode->getValue();
   // If the iris is not connected, then do nothing
-  if (!m_iris.isConnected()) {
+  if (irisMode == Iris_InputImage && !m_iris.isConnected()) {
     tile.getRaster()->clear();
     return;
   }
@@ -110,16 +287,35 @@ void Iwa_GlareFx::doCompute(TTile& tile, double frame,
 
   // Get the original size of Iris image
   TRectD irisBBox;
-  m_iris->getBBox(frame, irisBBox, settings);
-  // Compute the iris tile.
   TTile irisTile;
-  m_iris->allocateAndCompute(
-      irisTile, irisBBox.getP00(),
-      TDimension(static_cast<int>(irisBBox.getLx() + 0.5),
-                 static_cast<int>(irisBBox.getLy() + 0.5)),
-      tile.getRaster(), frame, settings);
-
+  TRasterP irisRas;
   double size = getSizePixelAmount(m_size->getValue(frame), settings.m_affine);
+  if (irisMode == Iris_InputImage) {
+    m_iris->getBBox(frame, irisBBox, settings);
+    // Compute the iris tile.
+    m_iris->allocateAndCompute(
+        irisTile, irisBBox.getP00(),
+        TDimension(static_cast<int>(irisBBox.getLx() + 0.5),
+                   static_cast<int>(irisBBox.getLy() + 0.5)),
+        tile.getRaster(), frame, settings);
+    irisRas = irisTile.getRaster();
+  } else {
+    // obtain iris bbox based on the glare pattern size
+    double irisSize = size * m_irisScale->getValue(frame);
+    irisBBox        = TRectD(-irisSize, -irisSize, irisSize, irisSize);
+    int dimIrisRas  = int(std::ceil(irisSize) * 2.0);
+    irisRas         = TRaster32P(dimIrisRas, dimIrisRas);
+    drawPresetIris(irisRas, irisSize, frame);
+  }
+
+  if (renderMode == RenderMode_Iris) {
+    TTranslation aff(
+        (double)(tile.getRaster()->getLx() - irisRas->getLx()) * 0.5,
+        (double)(tile.getRaster()->getLy() - irisRas->getLy()) * 0.5);
+    TRop::quickPut(tile.getRaster(), irisRas, aff);
+    return;
+  }
+
   int dimIris = int(std::ceil(size) * 2.0);
   dimIris     = kiss_fft_next_fast_size(dimIris);
   while ((tile.getRaster()->getSize().lx - dimIris) % 2 != 0)
@@ -140,7 +336,8 @@ void Iwa_GlareFx::doCompute(TTile& tile, double frame,
     kissfft_comp_iris_before_ras->lock();
     kissfft_comp_iris_before =
         (kiss_fft_cpx*)kissfft_comp_iris_before_ras->getRawData();
-    convertIris(kissfft_comp_iris_before, dimIris, irisBBox, irisTile);
+
+    convertIris(kissfft_comp_iris_before, dimIris, irisBBox, irisRas);
 
     // Create the FFT plan for the iris image.
     kiss_fftnd_cfg iris_kissfft_plan;
@@ -349,10 +546,20 @@ void Iwa_GlareFx::powerSpectrum2GlarePattern(
   glare_xyz_ras->clear();
 
   double irisRadius = double(dimIris / 2);
+  double aberration = m_aberration->getValue(frame);
+
+  // old version had summed each wavelength constantly.
+  // it was not physically-collect but keep it in order to maintain backward
+  // compatibility.
+  bool isOldVersion = getFxVersion() < 2;
+
   // accumurate xyz values for each optical wavelength
   for (int ram = 0; ram < 34; ram++) {
     double rambda = 0.38 + 0.01 * (double)ram;
-    double scale  = 0.55 / rambda;
+    // double scale = 0.55 / rambda;
+    double scale = std::pow(0.55 / rambda, aberration);
+    double intensity_scale =
+        (isOldVersion) ? 1.0 : std::pow(0.55 / rambda, 2.0 * aberration);
     scale *= irisResizeFactor;
     for (int j = 0; j < dimIris; j++) {
       double j_scaled = (double(j) - irisRadius) * scale + irisRadius;
@@ -369,7 +576,8 @@ void Iwa_GlareFx::powerSpectrum2GlarePattern(
         else if (i_scaled > double(dimIris - 1))
           break;
 
-        double gl = lerpGlarePtn(i_scaled, j_scaled, glarePattern_p);
+        double gl =
+            lerpGlarePtn(i_scaled, j_scaled, glarePattern_p) * intensity_scale;
         g_xyz_p->x += gl * cie_d65[ram] * xyz[ram * 3 + 0];
         g_xyz_p->y += gl * cie_d65[ram] * xyz[ram * 3 + 1];
         g_xyz_p->z += gl * cie_d65[ram] * xyz[ram * 3 + 2];
@@ -634,7 +842,7 @@ bool Iwa_GlareFx::canHandle(const TRenderSettings& info, double frame) {
 // Enlarge the iris to the output size.
 void Iwa_GlareFx::convertIris(kiss_fft_cpx* kissfft_comp_iris_before,
                               const int& dimIris, const TRectD& irisBBox,
-                              const TTile& irisTile) {
+                              const TRasterP irisRaster) {
   // the original size of iris image
   double2 irisOrgSize = {irisBBox.getLx(), irisBBox.getLy()};
 
@@ -655,10 +863,10 @@ void Iwa_GlareFx::convertIris(kiss_fft_cpx* kissfft_comp_iris_before,
   if (dimIris % 2 == 1) affOffset += TPointD(0.5, 0.5);
 
   aff = TTranslation(resizedIris->getCenterD() + affOffset);
-  aff *= TTranslation(-(irisTile.getRaster()->getCenterD() + affOffset));
+  aff *= TTranslation(-(irisRaster->getCenterD() + affOffset));
 
   // resample the iris
-  TRop::resample(resizedIris, irisTile.getRaster(), aff);
+  TRop::resample(resizedIris, irisRaster, aff);
 
   // accumulated value
   float irisValAmount = 0.0;

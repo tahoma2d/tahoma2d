@@ -171,7 +171,7 @@ TreeModel::~TreeModel() { delete m_rootItem; }
 //------------------------------------------------------------------------------------------------------------------
 
 void TreeModel::setExpandedItem(const QModelIndex &index, bool expanded) {
-  m_view->setExpanded(index, expanded);
+  if (m_view) m_view->setExpanded(index, expanded);
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ void TreeModel::setRootItem_NoFree(Item *rootItem) {
 //---------------------------------------------------------------------------------------------------------------
 
 void TreeModel::setRowHidden(int row, const QModelIndex &parent, bool hide) {
-  m_view->setRowHidden(row, parent, hide);
+  if (m_view) m_view->setRowHidden(row, parent, hide);
 }
 
 //====================================================================================================

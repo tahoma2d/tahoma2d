@@ -5,6 +5,8 @@
 // -----------------------------------------------------------------------------
 // This inherits from NEUTRAL theme, when updating NEUTRAL make sure to check
 // changes against LIGHT.
+//
+// NOTE: Compile Neutral.less before this.
 // -----------------------------------------------------------------------------
 
 // Override
@@ -234,7 +236,10 @@
 @function-panel-bg-color: @schematic-viewer-bg-color;
 @function-panel-OtherCurves-color: rgb(218, 218, 218);
 @function-panel-Text-color: @text-color;
+
 @function-panel-Sub-color: #fff;
 @function-panel-Selected-color: #ffe033;
+@function-IgnoredKeyFrame-color: rgb(203,87,101);
+@function-IgnoredInbetween-color: rgb(194,156,146);
 
 @function-SelectedKeyFrame-color:  mix(shade(@function-KeyFrame-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);

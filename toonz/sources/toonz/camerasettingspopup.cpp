@@ -224,11 +224,12 @@ void CameraSettingsPopup::updateWindowTitle() {
 void CameraSettingsPopup::onChanged() {
   TCamera *camera = getCamera();
   if (!camera) return;
-  m_cameraSettingsWidget->getFields(camera);
-  TApp::instance()->getCurrentScene()->notifySceneChanged();
-  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  if (m_cameraSettingsWidget->getFields(camera)) {
+    TApp::instance()->getCurrentScene()->notifySceneChanged();
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 
-  emit changed();
+    emit changed();
+  }
 }
 
 void CameraSettingsPopup::onNameChanged() {

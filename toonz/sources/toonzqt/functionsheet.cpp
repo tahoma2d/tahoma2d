@@ -12,6 +12,8 @@
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
 #include "toonz/tstageobject.h"
+#include "toonz/txsheethandle.h"
+#include "toonz/txsheet.h"
 
 // TnzBase includes
 #include "tunit.h"
@@ -360,6 +362,14 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
                      Qt::TextWrapAnywhere | Qt::AlignLeft | Qt::AlignVCenter,
                      text);
 
+    // warning of losing expression reference
+    TXsheet *xsh = m_sheet->getViewer()->getXsheetHandle()->getXsheet();
+    if (xsh->isReferenceManagementIgnored(channel->getParam())) {
+      static QIcon paramIgnoredIcon(":Resources/paramignored_on.svg");
+      painter.drawPixmap(QPoint(x0 + 30, y1 + 20),
+                         paramIgnoredIcon.pixmap(21, 17));
+    }
+
     // group name
     if (firstGroupColumn) {
       int tmpwidth = (lastGroupColumn) ? width : width * 2;
@@ -389,13 +399,23 @@ void FunctionSheetColumnHeadViewer::mouseMoveEvent(QMouseEvent *e) {
     Qt::DropAction dropAction = drag->exec();
     return;
   }
+
   // get the column under the cursor
   int col = getViewer()->xyToPosition(e->pos()).layer();
   FunctionTreeModel::Channel *channel = m_sheet->getChannel(col);
   if (!channel) {
     setToolTip(QString(""));
-  } else
-    setToolTip(channel->getExprRefName());
+  } else {
+    QString tooltip = channel->getExprRefName();
+    TXsheet *xsh    = m_sheet->getViewer()->getXsheetHandle()->getXsheet();
+    if (xsh->isReferenceManagementIgnored(channel->getParam()))
+      tooltip +=
+          "\n" + tr("Some key(s) in this parameter loses original reference in "
+                    "expression.\nManually changing any keyframe will clear "
+                    "the warning.");
+
+    setToolTip(tooltip);
+  }
 
   // modify selected channel by left dragging
   if (m_clickedColumn >= 0 && channel && e->buttons() & Qt::LeftButton) {
@@ -616,15 +636,24 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
   QColor KeyFrameColor         = getViewer()->getKeyFrameColor();
   QColor KeyFrameBorderColor   = getViewer()->getKeyFrameBorderColor();
   QColor SelectedKeyFrameColor = getViewer()->getSelectedKeyFrameColor();
+  QColor IgnoredKeyFrameColor  = getViewer()->getIgnoredKeyFrameColor();
+  QColor SelectedIgnoredKeyFrameColor =
+      getViewer()->getSelectedIgnoredKeyFrameColor();
   // inbetween
   QColor InBetweenColor         = getViewer()->getInBetweenColor();
   QColor InBetweenBorderColor   = getViewer()->getInBetweenBorderColor();
   QColor SelectedInBetweenColor = getViewer()->getSelectedInBetweenColor();
+  QColor IgnoredInBetweenColor  = getViewer()->getIgnoredInBetweenColor();
+  QColor SelectedIgnoredInBetweenColor =
+      getViewer()->getSelectedIgnoredInBetweenColor();
+
   // empty cells
   QColor SelectedEmptyColor = getViewer()->getSelectedEmptyColor();
   // empty cells in scene frame range
   QColor SelectedSceneRangeEmptyColor =
       getViewer()->getSelectedSceneRangeEmptyColor();
+
+  TXsheet *xsh = m_sheet->getViewer()->getXsheetHandle()->getXsheet();
 
   // top and bottom pos
   int y0 = getViewer()->rowToY(r0);
@@ -656,6 +685,8 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
     bool isParamCycled = curve->isCycleEnabled();
     int rowCount       = getViewer()->getRowCount();
 
+    bool isRefMngIgnored = xsh->isReferenceManagementIgnored(curve);
+
     // draw each cell
     for (int row = r0; row <= r1; row++) {
       int ya = m_sheet->rowToY(row);
@@ -676,10 +707,18 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
       /*--- キーフレーム間の範囲だけ色をつける ---*/
       if (kr0 <= row && row <= kr1) {
         if (curve->isKeyframe(row)) {
-          cellColor   = (isSelected) ? SelectedKeyFrameColor : KeyFrameColor;
+          cellColor =
+              (isRefMngIgnored)
+                  ? ((isSelected) ? SelectedIgnoredKeyFrameColor
+                                  : IgnoredKeyFrameColor)
+                  : ((isSelected) ? SelectedKeyFrameColor : KeyFrameColor);
           borderColor = KeyFrameBorderColor;
         } else {
-          cellColor   = (isSelected) ? SelectedInBetweenColor : InBetweenColor;
+          cellColor =
+              (isRefMngIgnored)
+                  ? ((isSelected) ? SelectedIgnoredInBetweenColor
+                                  : IgnoredInBetweenColor)
+                  : ((isSelected) ? SelectedInBetweenColor : InBetweenColor);
           borderColor = InBetweenBorderColor;
 
           // when the inbetween values are hidden, change the cell colors to

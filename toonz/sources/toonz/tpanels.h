@@ -30,6 +30,8 @@ class ComboViewerPanel;
 class SceneViewerPanel;
 class FxSettings;
 class VectorGuidedDrawingPane;
+class FxSelection;
+class StageObjectSelection;
 
 //=========================================================
 // PaletteViewerPanel
@@ -187,6 +189,8 @@ protected slots:
   void onExplodeChild(const QList<TFxP> &);
   void onExplodeChild(QList<TStageObjectId>);
   void onEditObject();
+  void onDeleteFxs(const FxSelection *);
+  void onDeleteStageObjects(const StageObjectSelection *);
 };
 
 //=========================================================

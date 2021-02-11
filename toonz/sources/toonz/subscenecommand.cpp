@@ -30,6 +30,7 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/tstageobjectspline.h"
 #include "toonz/tcamera.h"
+#include "toonz/expressionreferencemonitor.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -47,6 +48,7 @@
 #include "tapp.h"
 #include "columnselection.h"
 #include "cellselection.h"
+#include "expressionreferencemanager.h"
 
 #include "subscenecommand.h"
 
@@ -625,12 +627,10 @@ std::set<int> explodeStageObjects(
     const GroupData &fxGroupData, QList<TStageObject *> &pegObjects,
     QMap<TFx *, QPair<TFx *, int>> &fxs,
     QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
-    bool onlyColumn) {
+    QMap<TStageObjectId, TStageObjectId> &ids, bool onlyColumn) {
   /*- SubXsheet, 親Xsheet両方のツリーを取得 -*/
   TStageObjectTree *innerTree = subXsh->getStageObjectTree();
   TStageObjectTree *outerTree = xsh->getStageObjectTree();
-  // inner id->outer id
-  QMap<TStageObjectId, TStageObjectId> ids;
   // innerSpline->outerSpline
   int groupId = -1;  // outerTree->getNewGroupId();
   /*- Pegbarも持ち出す場合 -*/
@@ -927,20 +927,58 @@ void explodeFxs(TXsheet *xsh, TXsheet *subXsh, const GroupData &fxGroupData,
 
 //-----------------------------------------------------------------------------
 
+template <typename ParamCont>
+void setGrammerToParams(const ParamCont *cont,
+                        const TSyntax::Grammar *grammer) {
+  for (int p = 0; p != cont->getParamCount(); ++p) {
+    TParam &param = *cont->getParam(p);
+    if (TDoubleParam *dp = dynamic_cast<TDoubleParam *>(&param))
+      dp->setGrammar(grammer);
+    else if (TParamSet *paramSet = dynamic_cast<TParamSet *>(&param))
+      setGrammerToParams(paramSet, grammer);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 std::set<int> explode(TXsheet *xsh, TXsheet *subXsh, int index,
-                      const TStageObjectId &parentId,
-                      const GroupData &objGroupData, const TPointD &stageSubPos,
-                      const GroupData &fxGroupData, const TPointD &fxSubPos,
-                      QList<TStageObject *> &pegObjects,
-                      QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
-                      const std::vector<TFxPort *> &outPorts, bool onlyColumn,
-                      bool linkToXsheet) {
+                 const TStageObjectId &parentId, const GroupData &objGroupData,
+                 const TPointD &stageSubPos, const GroupData &fxGroupData,
+                 const TPointD &fxSubPos, QList<TStageObject *> &pegObjects,
+                 QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
+                 const std::vector<TFxPort *> &outPorts, bool onlyColumn,
+                 bool linkToXsheet) {
   // innerFx->outerFxs
   QMap<TFx *, QPair<TFx *, int>> fxs;
+  // inner id->outer id
+  QMap<TStageObjectId, TStageObjectId> objIds;
   std::set<int> indexes = explodeStageObjects(
       xsh, subXsh, index, parentId, objGroupData, stageSubPos, fxGroupData,
-      pegObjects, fxs, splines, onlyColumn);
+      pegObjects, fxs, splines, objIds, onlyColumn);
   explodeFxs(xsh, subXsh, fxGroupData, fxs, fxSubPos, outPorts, linkToXsheet);
+
+  assert(TApp::instance()->getCurrentXsheet()->getXsheet() == xsh);
+
+  // reset grammers for all parameters brought out to the parent xsheet
+  TSyntax::Grammar *grammer = xsh->getStageObjectTree()->getGrammar();
+  for (auto id : objIds.values()) {
+    TStageObject *obj = xsh->getStageObject(id);
+    for (int c = 0; c != TStageObject::T_ChannelCount; ++c)
+      obj->getParam((TStageObject::Channel)c)->setGrammar(grammer);
+    if (const PlasticSkeletonDeformationP &sd =
+            obj->getPlasticSkeletonDeformation())
+      sd->setGrammar(grammer);
+  }
+
+  QMap<TFx *, TFx *> fxMap;
+  for (auto it = fxs.constBegin(); it != fxs.constEnd(); ++it) {
+    setGrammerToParams(it.value().first->getParams(), grammer);
+    fxMap.insert(it.key(), it.value().first);
+  }
+
+  ExpressionReferenceManager::instance()->transferReference(subXsh, xsh, objIds,
+                                                            fxMap);
+
   return indexes;
 }
 
@@ -1160,9 +1198,9 @@ bool hasPegbarsToBringInsideChildXsheet(TXsheet *xsh,
 
 //-----------------------------------------------------------------------------
 
-void bringPegbarsInsideChildXsheet(TXsheet *xsh, TXsheet *childXsh,
-                                   std::set<int> indices,
-                                   std::set<int> newIndices) {
+void bringPegbarsInsideChildXsheet(
+    TXsheet *xsh, TXsheet *childXsh, std::set<int> indices,
+    std::set<int> newIndices, QMap<TStageObjectId, TStageObjectId> &idTable) {
   // columns in the child xsheet are all connected to the table for now.
   // so we need to take parental connection information from the parent xsheet.
 
@@ -1201,6 +1239,9 @@ void bringPegbarsInsideChildXsheet(TXsheet *xsh, TXsheet *childXsh,
     for (int c = 0; c != TStageObject::T_ChannelCount; ++c)
       childXsh->getStageObjectTree()->setGrammar(
           obj->getParam((TStageObject::Channel)c));
+
+    // register pegbars to the table
+    idTable.insert(id, id);
   }
 }
 
@@ -1249,10 +1290,14 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
   TApp *app    = TApp::instance();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
+  std::set<int> oldIndices = indices;
+
   StageObjectsData *data = new StageObjectsData();
   // store xsheet data to be collapsed
   data->storeColumns(indices, xsh, StageObjectsData::eDoClone);
   data->storeColumnFxs(indices, xsh, StageObjectsData::eDoClone);
+
+  ExpressionReferenceMonitor *monitor = xsh->getExpRefMonitor()->clone();
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXshLevel *xl     = scene->createNewLevel(CHILD_XSHLEVEL);
@@ -1265,12 +1310,18 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
 
   std::set<int> newIndices;
   std::list<int> restoredSplineIds;
+  QMap<TStageObjectId, TStageObjectId> idTable;
+  QMap<TFx *, TFx *> fxTable;
   // restore data into sub xsheet
-  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0);
+  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
+                       fxTable);
 
   // bring pegbars into sub xsheet
   if (!columnsOnly)
-    bringPegbarsInsideChildXsheet(xsh, childXsh, indices, newIndices);
+    bringPegbarsInsideChildXsheet(xsh, childXsh, indices, newIndices, idTable);
+
+  ExpressionReferenceManager::instance()->transferReference(xsh, childXsh,
+                                                            idTable, fxTable);
 
   childXsh->updateFrameCount();
 
@@ -1339,8 +1390,9 @@ void collapseColumns(std::set<int> indices,
                      const QList<TStageObjectId> &objIds) {
   if (indices.empty()) return;
 
-  TApp *app    = TApp::instance();
-  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+  TApp *app                = TApp::instance();
+  TXsheet *xsh             = app->getCurrentXsheet()->getXsheet();
+  std::set<int> oldIndices = indices;
 
   int index = *indices.begin();
 
@@ -1356,13 +1408,7 @@ void collapseColumns(std::set<int> indices,
                      StageObjectsData::eDoClone);
   data->storeColumnFxs(indices, xsh, StageObjectsData::eDoClone);
 
-  app->getCurrentXsheet()->blockSignals(true);
-  app->getCurrentObject()->blockSignals(true);
-  ColumnCmd::deleteColumns(indices, false, true);
-  app->getCurrentXsheet()->blockSignals(false);
-  app->getCurrentObject()->blockSignals(false);
-
-  xsh->insertColumn(index);
+  ExpressionReferenceMonitor *monitor = xsh->getExpRefMonitor()->clone();
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXshLevel *xl     = scene->createNewLevel(CHILD_XSHLEVEL);
@@ -1375,8 +1421,22 @@ void collapseColumns(std::set<int> indices,
 
   std::set<int> newIndices;
   std::list<int> restoredSplineIds;
-  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0);
+  QMap<TStageObjectId, TStageObjectId> idTable;
+  QMap<TFx *, TFx *> fxTable;
+  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
+                       fxTable);
   childXsh->updateFrameCount();
+
+  ExpressionReferenceManager::instance()->transferReference(xsh, childXsh,
+                                                            idTable, fxTable);
+
+  app->getCurrentXsheet()->blockSignals(true);
+  app->getCurrentObject()->blockSignals(true);
+  ColumnCmd::deleteColumns(indices, false, true);
+  app->getCurrentXsheet()->blockSignals(false);
+  app->getCurrentObject()->blockSignals(false);
+
+  xsh->insertColumn(index);
 
   int r, rowCount = childXsh->getFrameCount();
   for (r = 0; r < rowCount; r++)
@@ -1405,11 +1465,14 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
   TApp *app    = TApp::instance();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
+  std::set<int> oldIndices = indices;
   //++++++++++++++++++++++++++++++
 
   StageObjectsData *data = new StageObjectsData();
   data->storeColumns(indices, xsh, StageObjectsData::eDoClone);
   data->storeFxs(fxs, xsh, StageObjectsData::eDoClone);
+
+  ExpressionReferenceMonitor *monitor = xsh->getExpRefMonitor()->clone();
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXshLevel *xl     = scene->createNewLevel(CHILD_XSHLEVEL);
@@ -1420,10 +1483,16 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
 
   std::set<int> newIndices;
   std::list<int> restoredSplineIds;
-  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0);
+  QMap<TStageObjectId, TStageObjectId> idTable;
+  QMap<TFx *, TFx *> fxTable;
+  data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
+                       fxTable);
 
   if (!columnsOnly)
-    bringPegbarsInsideChildXsheet(xsh, childXsh, indices, newIndices);
+    bringPegbarsInsideChildXsheet(xsh, childXsh, indices, newIndices, idTable);
+
+  ExpressionReferenceManager::instance()->transferReference(xsh, childXsh,
+                                                            idTable, fxTable);
 
   childXsh->updateFrameCount();
 
@@ -2224,6 +2293,7 @@ void SubsceneCmd::collapse(std::set<int> &indices) {
     if (ret == 0) return;
     onlyColumns = (ret == 2);
   }
+  if (!ColumnCmd::checkExpressionReferences(indices, onlyColumns, true)) return;
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
@@ -2271,6 +2341,8 @@ void SubsceneCmd::collapse(const QList<TStageObjectId> &objects) {
 
   std::set<int> indices;
   getColumnIndexes(objects, indices);
+
+  if (!ColumnCmd::checkExpressionReferences(objects)) return;
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
@@ -2320,6 +2392,7 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
   TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
   bool onlyColumns = true;
   if (hasPegbarsToBringInsideChildXsheet(xsh, indices)) {
+    // User must decide if pegbars must be collapsed too
     QString question(QObject::tr("Collapsing columns: what you want to do?"));
     QList<QString> list;
     list.append(QObject::tr(
@@ -2331,6 +2404,10 @@ void SubsceneCmd::collapse(const QList<TFxP> &fxs) {
     if (ret == 0) return;
     onlyColumns = (ret == 2);
   }
+
+  if (!ColumnCmd::checkExpressionReferences(indices, internalFx, onlyColumns,
+                                            true))
+    return;
 
   std::set<int> oldIndices = indices;
   int index                = *indices.begin();
@@ -2385,6 +2462,15 @@ void SubsceneCmd::explode(int index) {
   TXshChildLevel *childLevel = cell.getChildLevel();
   if (!childLevel) return;
 
+  // Cannot remove the column if it contains frames of a TXshSimpleLevel.
+  int from, to;
+
+  // removeColumn is true if the column contains only one subXsheetLevel (i.e.
+  // the column will be removed) removeColumn is false if there is another level
+  // in the same column (i.e. the column will remain)
+  bool removeColumn =
+      mustRemoveColumn(from, to, childLevel, xsh, index, frameIndex);
+
   /*- Pegbarを親Sheetに持って出るか？の質問ダイアログ -*/
   QString question(QObject::tr("Exploding Sub-Scene: what you want to do?"));
   QList<QString> list;
@@ -2394,6 +2480,11 @@ void SubsceneCmd::explode(int index) {
       QObject::tr("Bring columns in the main scene without parenting."));
   int ret = DVGui::RadioButtonMsgBox(DVGui::WARNING, question, list);
   if (ret == 0) return;
+
+  if (!ExpressionReferenceManager::instance()->checkExplode(
+          childLevel->getXsheet(), index, removeColumn, ret == 2))
+    return;
+
   // Collect column stage object informations
   TStageObjectId colId    = TStageObjectId::ColumnId(index);
   TStageObjectId parentId = xsh->getStageObjectParent(colId);
@@ -2450,14 +2541,6 @@ void SubsceneCmd::explode(int index) {
 
   std::vector<TFxPort *> outPorts;
 
-  // Cannot remove the column if it contains frames of a TXshSimpleLevel.
-  int from, to;
-  /*--
-  このカラムがsubXsheetLevelしか入っていない場合は、カラムを消去できるのでremoveColumnはtrue
-          何か別のLevelが入っていた場合は、カラムを消去しないので、removeColumnはfalse
-  --*/
-  bool removeColumn =
-      mustRemoveColumn(from, to, childLevel, xsh, index, frameIndex);
   QList<TStageObject *> pegObjects;
   QMap<TStageObjectSpline *, TStageObjectSpline *> splines;
 
@@ -2519,7 +2602,7 @@ void SubsceneCmd::explode(int index) {
         objGroupNames);
     TUndoManager::manager()->add(undo);
   } else {
-    // keep outPorts empty since the exploded node will be re-cocnected to the
+    // keep outPorts empty since the exploded node will be re-connected to the
     // xsheet node
 
     // Collect information for undo

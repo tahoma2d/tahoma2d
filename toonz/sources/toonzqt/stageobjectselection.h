@@ -76,6 +76,7 @@ public:
   const QList<QPair<TStageObjectId, TStageObjectId>> &getLinks() const {
     return m_selectedLinks;
   }
+  const QList<int> &getSplines() const { return m_selectedSplines; }
 
   void setXsheetHandle(TXsheetHandle *xshHandle) { m_xshHandle = xshHandle; }
   void setObjectHandle(TObjectHandle *objHandle) { m_objHandle = objHandle; }
@@ -96,6 +97,7 @@ private:
 signals:
   void doCollapse(QList<TStageObjectId>);
   void doExplodeChild(QList<TStageObjectId>);
+  void doDelete();
 };
 
 #endif

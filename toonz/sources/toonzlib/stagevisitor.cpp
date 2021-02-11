@@ -215,16 +215,20 @@ void onPlasticDeformedImage(TStageObject *playerObj,
 //**********************************************************************************************
 
 Picker::Picker(const TAffine &viewAff, const TPointD &point,
-               const ImagePainter::VisualSettings &vs)
+               const ImagePainter::VisualSettings &vs, int devPixRatio)
     : Visitor(vs)
     , m_viewAff(viewAff)
     , m_point(point)
     , m_columnIndexes()
-    , m_minDist2(1.0e10) {}
+    , m_minDist2(25.0)
+    , m_devPixRatio(devPixRatio) {}
 
 //-----------------------------------------------------------------------------
 
-void Picker::setDistance(double d) { m_minDist2 = d * d; }
+void Picker::setMinimumDistance(double d) {
+  m_minDist2 = (double)(m_devPixRatio * m_devPixRatio) * d * d;
+
+}
 
 //-----------------------------------------------------------------------------
 
@@ -251,21 +255,12 @@ void Picker::onImage(const Stage::Player &player) {
     if (styleId != 0)
       picked = true;
     else if (vi->getNearestStroke(point, w, strokeIndex, dist2)) {
-      // based on TTool::Viewer::doPickGuideStroke
-
-      // m_minDist2 seems to be the pixel size to the power 4, so take the
-      // square root of the square root.
-      // Use abs() just in case m_minDist2 is negative, to avoid math errors.
-      double pixelSize = sqrt(sqrt(abs(m_minDist2)));
-      double maxDist   = 5 * pixelSize;
-      double maxDist2  = maxDist * maxDist;
-      double checkDist = maxDist2 * 4;
+      dist2 *= aff.det();
 
       TStroke *stroke        = vi->getStroke(strokeIndex);
       TThickPoint thickPoint = stroke->getThickPoint(w);
-      double thickness       = thickPoint.thick;
-      double len             = thickness * pixelSize * sqrt(m_viewAff.det());
-      checkDist              = std::max(checkDist, (len * len));
+      double len2 = thickPoint.thick * thickPoint.thick * aff.det();
+      double checkDist = std::max(m_minDist2, len2);
       if (dist2 < checkDist) picked = true;
     }
   } else if (TRasterImageP ri = img) {

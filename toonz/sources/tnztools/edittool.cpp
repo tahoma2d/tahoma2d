@@ -1059,8 +1059,7 @@ void EditTool::onEditAllLeftButtonDown(TPointD &pos, const TMouseEvent &e) {
 
   if (selectedDevice < 0 && m_autoSelect.getValue() != L"None") {
     pos = getMatrix() * pos;
-    int columnIndex =
-        getViewer()->posToColumnIndex(e.m_pos, 5 * getPixelSize(), false);
+    int columnIndex = getViewer()->posToColumnIndex(e.m_pos, 5.0, false);
     if (columnIndex >= 0) {
       TStageObjectId id      = TStageObjectId::ColumnId(columnIndex);
       int currentColumnIndex = getColumnIndex();
