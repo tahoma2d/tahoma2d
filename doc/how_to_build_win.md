@@ -29,11 +29,10 @@ Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake
 ### boost
 Boost 1.55.0 or later is required (tested up to 1.75.0).
 - [ ] Download boost_1_75_0.zip from http://www.boost.org/users/history/version_1_75_0.html
-- [ ] Extract all contents to the - '$tahoma2d/thirdparty/boost' directory.
+- [ ] Extract all contents to the - '$tahoma2d\thirdparty\boost' directory. The result will be something like this: `$tahoma2d\thirdparty\boost\boost_1_75_0`
 
 ### OpenCV
-- [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later)
-OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
+- [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later). OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
 
 ## Acquire the Source Code
 You can use GitHub Desktop https://desktop.github.com/ or Git command line.
@@ -67,11 +66,11 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - - [ ] Select the version of Visual Studio you are using. 
 - - [ ] Select the x64 Target Environment.
 - If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears:
-- - Click on that line in the top half of the CMake window.
+- - Click on the value for `QT_PATH` in the top half of the CMake window.
 - - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
 - - [ ] Rerun Configure.
-- If OpenCV was installed to a directory other than the default, and the error `Specify OpenCV_DIR properly` appears:
-- - Click on that line in the top half of the CMake window.
+- If OpenCV was installed to a directory other than the default, and a message about `set "OpenCV_DIR"` appears:
+- - Click on the value for `OpenCV_DIR` in the top half of the CMake window.
 - - - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
 - - [ ] Rerun Configure.
 - If red warning lines appear in the bottom box, you can safely ignore them.
@@ -91,8 +90,8 @@ Rename the following files:
 
 ## Build
 - [ ] Start Visual Studio and open the solution `$tahoma2d/toonz/build/Tahoma2D.sln`.
-- [ ] Change to `Debug` or `Release` in the top bar.
-- [ ] Compile the build.
+- [ ] Change to `Debug`, `RelWithDebInfo`, or `Release` in the top bar.
+- [ ] Build the solution.
 - [ ] Find the output in the folder `$tahoma2d/toonz/build/`
 
 ## Build with extended stop motion support for webcams and Canon DSLR cameras.
@@ -109,7 +108,7 @@ Copy the following folders into the `$tahoma2d/thirdparty` folder.
 
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 
-## Run the Program - see also Alternative below
+## Run the Program - see also: Alternative - Setup and Run in Debug Mode
 ### Set Up the Program's Path
 1. - [ ] Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
 2. - [ ] Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. 
@@ -121,13 +120,15 @@ To run the program with stop motion support, you will need to copy the .dll file
 - These necessary Qt library files should be in the same folder as `Tahoma2D.exe`
     - [ ] `Qt5Core.dll`
     - [ ] `Qt5Gui.dll`
+    - [ ] `Qt5Multimedia.dll`
     - [ ] `Qt5Network.dll`
     - [ ] `Qt5OpenGL.dll`
     - [ ] `Qt5PrintSupport.dll`
     - [ ] `Qt5Script.dll`
+    - [ ] `Qt5SerialPort.dll`
     - [ ] `Qt5Svg.dll`
     - [ ] `Qt5Widgets.dll`
-    - [ ] `Qt5Multimedia.dll`
+    - [ ] `Qt5Xml.dll`
   - and these files should be in corresponding sub-folders
     - [ ] `/bearer/qgenericbearer.dll`
     - [ ] `/bearer/qnativewifibearer.dll`
