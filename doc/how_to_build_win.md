@@ -43,13 +43,13 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - :warning: Visual Studio cannot properly recognize source code which is UTF-8 without BOM (Byte Order Mark). Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
 - - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
 
-### lib and dll
-- If you used the GitHub Desktop UI to clone to your local environment the lib and dll files will already be downloaded and you can skip these steps.
+### Download the 'lib' and 'dll' files stored with Large File Storage (LFS)
+- If you used the GitHub Desktop UI to clone to your local environment the lib and dll files will already be downloaded and you can skip this section.
 - Perform these steps if you are using the Git command line to acquire the code.
 - `lib` and `dll` files are tracked by [Git Large File Storage](https://git-lfs.github.com/).
-- git-lfs is installed with Github Desktop, otherwise it must be installed to your local Git environment.
-- https://docs.github.com/en/github/managing-large-files/installing-git-large-file-storage
-- To download the 'lib' and 'dll' files, from Git command line execute: 
+- [ ] Ensure git-lfs is installed in your local Git environment. The command `git lfs` should return Git LFS information.
+- Installation instructions for git-lfs: https://docs.github.com/en/github/managing-large-files/installing-git-large-file-storage
+- From Git command line execute: 
 - - [ ] `git clone`
 - - [ ] `git lfs pull`
 
