@@ -105,17 +105,34 @@ Copy the following folders into the `$tahoma2d/thirdparty` folder.
  - [ ] Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
  - [ ] Check the checkbox in CMake to build with stop motion support.
 
-
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 
-## Run the Program - see also: Alternative - Setup and Run in Debug Mode
-### Set Up the Program's Path
+## Quick Setup and Run in Debug Mode - suitable for most people
+- Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
+- [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
+- - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
+- - Paste to the build folder where the compiler generates output. 
+- - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and the name is based on the `Solution Configuration` choice you make in the build option below.
+- - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders. The Tahoma2d dlls and exe in the folder will be replaced when the next build is run.
+- - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to get this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
+- [ ] Start Visual Studio and load the solution.
+- [ ] In Visual Studio set the `Solution Configuration` to `Debug` or `RelWithDebInfo` using the drop-down at the top of the screen.
+- [ ] In the Solution Explorer window, right click on the `Tahoma2D` project.
+- - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
+- This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
+- [ ] Build the solution. 
+- [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
+- Set breakpoints, checkpoints, view the output window, do step-through debugging.
+- To stop the debugging session exit Tahoma2D from its menu or stop the debugger in Visual Studio.
+
+## Run the Program - More Steps, Individual File Copying - more awareness over which files are used
 1. - [ ] Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
 2. - [ ] Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. 
 - - [ ] Run the Qt program `windeployqt.exe` with the path for `Tahoma2D.exe` as an argument. 
 - OR
-2. - [ ] Another way to do this is to use Windows Explorer to navigate to the exe that was created in your Release folder and drag and drop the Tahoma2D.exe on top of  `windeployqt.exe`
+2. - [ ] Another way to do this is to open two windows in Windows Explorer. In the first window navigate to the folder containing `windeployqt.exe`. In a second window navigate to the Release folder contining the Tahoma2D.exe you built. Drag and drop Tahoma2D.exe onto `windeployqt.exe` in the other window.
 - - This will automatically generate the QT files and folders you will need.
+
 3. Confirm the result.
 - These necessary Qt library files should be in the same folder as `Tahoma2D.exe`
     - [ ] `Qt5Core.dll`
@@ -131,9 +148,7 @@ To run the program with stop motion support, you will need to copy the .dll file
     - [ ] `Qt5Xml.dll`
   - and these files should be in corresponding sub-folders
     - [ ] `/bearer/qgenericbearer.dll`
-    - [ ] `/bearer/qnativewifibearer.dll`
     - [ ] `/iconengines/qsvgicon.dll`
-    - [ ] `/imageformats/qdds.dll`
     - [ ] `/imageformats/qgif.dll`
     - [ ] `/imageformats/qicns.dll`
     - [ ] `/imageformats/qico.dll`
@@ -148,6 +163,22 @@ To run the program with stop motion support, you will need to copy the .dll file
 4. Copy the following files to the same folder as `Tahoma2D.exe`
   - [ ] `$tahoma2d/thirdparty/freeglut/bin/x64/freeglut.dll`
   - [ ] `$tahoma2d/thirdparty/glew/glew-1.9.0/bin/64bit/glew32.dll`
+  - [ ] `$tahoma2d/thirdparty/libjpeg-turbo64/dist/turbojpeg.dll`
+  - [ ] `$tahoma2d/thirdparty/libmypaint/dist/64/libjson-c-2.dll`
+  - [ ] `$tahoma2d/thirdparty/libmypaint/dist/64/libmypaint-1-4-0.dll`
+  - [ ] `$OpenCV_DIR/build/x64/vc15/bin/opencv_world440.dll` Use the same OpenCV that was used to build the solution.
+  
+5. Copy the following files from a downloaded release copy of Tahoma2D to the same folder as `Tahoma2D.exe`. The latest release version is available here: https://tahoma2d.org/.
+  - [ ] `concrt140.dll`
+  - [ ] `EDSDK.dll`
+  - [ ] `EdsImage.dll`
+  - [ ] `ffmpeg.exe`
+  - [ ] `ffprobe.exe`
+  - [ ] `libiconv-2.dll`
+  - [ ] `libintl-8.dll`
+  - [ ] `msvcp140.dll`
+  - [ ] `vcruntime140.dll`
+  - [ ] `vcruntime140_1.dll`
 
 ### Create the stuff Folder
 - [ ] Create a `tahomastuff` folder inside the folder where `Tahoma2D.exe` is located.
@@ -155,25 +186,6 @@ To run the program with stop motion support, you will need to copy the .dll file
 
 ### Run
 `Tahoma2D.exe` can now be run.  Congratulations!
-
-## Alternative - Setup and Run in Debug Mode
-- Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
-- [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
-- - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
-- - Paste to the build folder where the compiler generates output.
-- - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and are based on the `Solution Configuration` choice you make in the build option below.
-- - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders.
-- - The Tahoma2d dlls and exe in those folders will be replaced when the next build is run.
-- - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to get this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
-- [ ] Start Visual Studio and load the solution.
-- [ ] In Visual Studio set the `Solution Configuration` to `Debug` or `RelWithDebInfo` using the drop-down at the top of the screen.
-- [ ] In the Solution Explorer window, right click on the `Tahoma2D` project.
-- - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
-- This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
-- [ ] Build the solution. 
-- [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
-- Set breakpoints, checkpoints, view the output window, do step-through debugging.
-- To stop the debugging session exit Tahoma2D from its menu or stop the debugger in Visual Studio.
 
 ## Create Translation Files
 Qt translation files are generated first from the source code to .ts files, then from .ts files to a .qm file.  These files can be created in Visual Studio if the `translation_` project and `Build translation_??? only` (`translation_???`のみをビルド」) is used.  These files are not created in the default `Build Project Solution`.
