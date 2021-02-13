@@ -1195,7 +1195,7 @@ void MainWindow::onOpenReportABug() {
   int ret = DVGui::MsgBox(DVGui::INFORMATION, str, buttons, 1);
   if (ret == 1)
     QDesktopServices::openUrl(
-        QUrl("https://github.com/turtletooth/tahoma2d/issues"));
+        QUrl("https://github.com/tahoma2d/tahoma2d/issues"));
 }
 //-----------------------------------------------------------------------------
 
@@ -1481,7 +1481,7 @@ void MainWindow::onUpdateCheckerDone(bool error) {
     if (ret == 1) {
       // Write the new last date to file
       QDesktopServices::openUrl(QObject::tr(
-          "https://github.com/turtletooth/tahoma2d/releases/latest"));
+          "https://github.com/tahoma2d/tahoma2d/releases/latest"));
     }
   }
 
