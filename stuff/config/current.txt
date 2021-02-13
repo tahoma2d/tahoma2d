@@ -1191,6 +1191,7 @@
   <item>"STD_iwa_PNPerspectiveFx.eyeLevel"		"Eye Level"</item>
   <item>"STD_iwa_PNPerspectiveFx.alpha_rendering"	"Alpha Rendering"</item>
   <item>"STD_iwa_PNPerspectiveFx.waveHeight"		"Wave Height"</item>
+  <item>"STD_iwa_PNPerspectiveFx.normalize_fresnel"		"Normalize Intensity"</item>
   
   <item>"STD_iwa_SoapBubbleFx"	"SoapBubble Iwa"	</item>
   <item>"STD_iwa_SoapBubbleFx.renderMode"	"Render Mode"	</item>
