@@ -131,6 +131,8 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
             port->setFx(0);
           }
         }
+        xsh->getStageObjectTree()->removeStageObject(
+            TStageObjectId::ColumnId(c));
       }
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -156,6 +158,7 @@ void cutCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
         TFxPort *port = fx->getOutputConnection(i);
         port->setFx(0);
       }
+      xsh->getStageObjectTree()->removeStageObject(TStageObjectId::ColumnId(c));
     }
   }
 
@@ -242,6 +245,8 @@ class DeleteCellsUndo final : public TUndo {
   QMimeData *m_data;
   QMap<int, QList<TFxPort *>> m_outputConnections;
   QMap<int, TXshColumn *> m_columns;
+  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
+  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   DeleteCellsUndo(TCellSelection *selection, QMimeData *data) : m_data(data) {
@@ -263,6 +268,26 @@ public:
         m_columns[i] = col;
         col->addRef();
       }
+
+      // Store TStageObject children in case column is emptied and we need to
+      // restore it
+      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
+      TStageObjectId id    = TStageObjectId::ColumnId(i);
+      TStageObject *pegbar = xsh->getStageObject(id);
+      for (int k = 0; k < pegbarsCount; ++k) {
+        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
+        if (other == pegbar) continue;
+
+        if (other->getParent() == id) {
+          // other->setParent(pegbar->getParent());
+          m_columnObjChildren[id].append(other->getId());
+        }
+      }
+
+      // Store TStageObject parent in case column is emptied and we need to
+      // restore it
+      m_columnObjParents[id] = pegbar->getParent();
+
       TFx *fx = col->getFx();
       if (!fx) continue;
       int j;
@@ -304,10 +329,35 @@ public:
       for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
     }
 
+    // Restore TStageObject parent
+    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
+    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
+         it2++) {  // Parents
+      TStageObject *obj = xsh->getStageObject(it2.key());
+      if (obj) {
+        obj->setParent(it2.value());
+      }
+    }
+
+    // Restore TStageObject children
+    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
+    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
+         it3++) {  // Children
+      QList<TStageObjectId> children = it3.value();
+      int i;
+      for (i = 0; i < children.size(); i++) {
+        TStageObject *child = xsh->getStageObject(children[i]);
+        if (child) {
+          child->setParent(it3.key());
+        }
+      }
+    }
+
     const TCellData *cellData = dynamic_cast<const TCellData *>(m_data);
     pasteCellsWithoutUndo(cellData, r0, c0, r1, c1, false, false);
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
@@ -330,6 +380,8 @@ class CutCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   TCellData *m_data;
   QMap<int, QList<TFxPort *>> m_outputConnections;
+  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
+  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   CutCellsUndo(TCellSelection *selection) : m_data() {
@@ -344,6 +396,26 @@ public:
     for (i = c0; i <= c1; i++) {
       TXshColumn *col = xsh->getColumn(i);
       if (!col || col->isEmpty()) continue;
+
+      // Store TStageObject children in case column is emptied and we need to
+      // restore it
+      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
+      TStageObjectId id    = TStageObjectId::ColumnId(i);
+      TStageObject *pegbar = xsh->getStageObject(id);
+      for (int k = 0; k < pegbarsCount; ++k) {
+        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
+        if (other == pegbar) continue;
+
+        if (other->getParent() == id) {
+          // other->setParent(pegbar->getParent());
+          m_columnObjChildren[id].append(other->getId());
+        }
+      }
+
+      // Store TStageObject parent in case column is emptied and we need to
+      // restore it
+      m_columnObjParents[id] = pegbar->getParent();
+
       TFx *fx = col->getFx();
       if (!fx) continue;
       int j;
@@ -380,8 +452,33 @@ public:
       for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
     }
 
+    // Restore TStageObject parent
+    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
+    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
+         it2++) {  // Parents
+      TStageObject *obj = xsh->getStageObject(it2.key());
+      if (obj) {
+        obj->setParent(it2.value());
+      }
+    }
+
+    // Restore TStageObject children
+    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
+    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
+         it3++) {  // Children
+      QList<TStageObjectId> children = it3.value();
+      int i;
+      for (i = 0; i < children.size(); i++) {
+        TStageObject *child = xsh->getStageObject(children[i]);
+        if (child) {
+          child->setParent(it3.key());
+        }
+      }
+    }
+
     pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
