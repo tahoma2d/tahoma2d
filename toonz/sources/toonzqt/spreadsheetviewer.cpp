@@ -7,6 +7,9 @@
 #include "toonz/tframehandle.h"
 #include "orientation.h"
 
+#include "toonzqt/menubarcommand.h"
+#include "tools/toolcommandids.h"
+
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QLabel>
@@ -833,10 +836,6 @@ m_dragTool->onDrag(&mouseEvent);
 void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
   int frameCount = m_rowCount;
   int row        = m_frameHandle->getFrame();
-  if (e->key() == Qt::Key_Space) {
-    m_panningArmed = true;
-    return;
-  }
   if (e->key() == Qt::Key_Up &&
       row > 0) {  // Row = frame precedente a quello settato
     m_frameHandle->setFrame(row - 1);
@@ -884,13 +883,6 @@ void SpreadsheetViewer::keyPressEvent(QKeyEvent *e) {
   else
     deltaY = y - visibleRect.bottom();
   scroll(QPoint(0, deltaY));
-}
-
-//-----------------------------------------------------------------------------
-
-void SpreadsheetViewer::keyReleaseEvent(QKeyEvent *event) {
-  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
-    m_panningArmed = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -952,4 +944,33 @@ void SpreadsheetViewer::ensureVisibleCol(int col) {
 
   int vertValue = m_cellScrollArea->verticalScrollBar()->value();
   m_cellScrollArea->ensureVisible(x, vertValue, m_columnWidth / 2, 0);
+}
+
+//-----------------------------------------------------------------------------
+
+bool SpreadsheetViewer::event(QEvent *e) {
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QDialog::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QDialog::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    e->accept();
+    return true;
+  }
+  return QDialog::event(e);
 }
