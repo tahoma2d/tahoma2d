@@ -37,6 +37,8 @@
 
 #include "tenv.h"
 
+#include "tools/toolcommandids.h"
+
 #include <QPainter>
 #include <QScrollBar>
 #include <QMouseEvent>
@@ -1285,9 +1287,6 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
         locals.scrollHorizTo(x, visibleRect);
       }
       break;
-    case Qt::Key_Space:
-      m_panningArmed = true;
-      break;
     }
     break;
   }
@@ -1302,8 +1301,6 @@ void XsheetViewer::keyReleaseEvent(QKeyEvent *event) {
     m_columnArea->onControlPressed(false);
     m_layerFooterPanel->onControlPressed(false);
   }
-  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
-    m_panningArmed = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -1833,6 +1830,36 @@ QColor XsheetViewer::getSelectedColumnTextColor() const {
                             (int)currentColumnPixel.g,
                             (int)currentColumnPixel.b, 255);
   return currentColumnColor;
+}
+
+//-----------------------------------------------------------------------------
+
+bool XsheetViewer::event(QEvent *e) {
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QFrame::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QFrame::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat())
+      m_panningArmed = false;
+    e->accept();
+    return true;
+  }
+  return QFrame::event(e);
 }
 
 //=============================================================================
