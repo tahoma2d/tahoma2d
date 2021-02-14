@@ -35,6 +35,7 @@
 
 #include "tools/cursormanager.h"
 #include "tools/cursors.h"
+#include "tools/toolcommandids.h"
 
 // Qt includes
 #include <QGraphicsSceneMouseEvent>
@@ -350,9 +351,6 @@ void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
-  if (ke->key() == Qt::Key_Space) {
-    m_panningArmed = true;
-  }
   ke->ignore();
   QGraphicsView::keyPressEvent(ke);
   if (!ke->isAccepted()) SchematicZoomer(this).exec(ke);
@@ -361,10 +359,6 @@ void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::keyReleaseEvent(QKeyEvent *ke) {
-  if (ke->key() == Qt::Key_Space && !ke->isAutoRepeat()) {
-    m_panningArmed = false;
-  }
-
   QGraphicsView::keyReleaseEvent(ke);
 }
 
@@ -719,6 +713,31 @@ bool SchematicSceneViewer::event(QEvent *e) {
     m_gestureActive = true;
     return true;
   }
+
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QGraphicsView::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QGraphicsView::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    e->accept();
+    return true;
+  }
+
   return QGraphicsView::event(e);
 }
 
