@@ -133,7 +133,7 @@ void StatusBar::updateInfoText() {
 void StatusBar::makeMap() {
   QString spacer = "                    ";
   // tools
-  m_infoMap.insert({"T_Hand", "<b>Hand Tool:</b> Pans the workspace (Space)"});
+  m_infoMap.insert({"T_Hand", "<b>Hand Tool:</b> Pans the workspace"});
   m_infoMap.insert(
       {"T_Selection",
        "Selection Tool: Select parts of your image to transform it."});

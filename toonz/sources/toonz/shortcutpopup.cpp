@@ -142,11 +142,11 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
       modifiers = 0;
   }
 
-  // Block the arrows and space
+  // Block the arrows
   int ctl = modifiers | Qt::CTRL;
-  if (key == Qt::Key_Space || ((modifiers == Qt::NoModifier) &&
-                               (key == Qt::Key_Left || key == Qt::Key_Right ||
-                                key == Qt::Key_Up || key == Qt::Key_Down))) {
+  if ((modifiers == Qt::NoModifier) &&
+      (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
+       key == Qt::Key_Down)) {
     event->ignore();
     return;
   }

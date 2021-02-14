@@ -1295,8 +1295,28 @@ bool SceneViewer::event(QEvent *e) {
     break;
 
   case QEvent::MouseButtonDblClick:
-    qDebug() << "[enter] ============================== MouseButtonDblClick";
+    qDebug() << "[enter] ************************** MouseButtonDblClick";
     break;
+
+  case QEvent::KeyPress: {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    QString keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+      .toString();
+    qDebug() << "[enter] ************************** KeyPress key=" <<
+  keyStr;
+  }
+    break;
+
+  case QEvent::KeyRelease: {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    QString keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+      .toString();
+    qDebug() << "[enter] ************************** KeyRelease key=" <<
+  keyStr;
+  }
+    break;
+  default:
+    qDebug() << "[enter] ************************** Event: "<< e;
   }
   */
 
@@ -1378,20 +1398,32 @@ bool SceneViewer::event(QEvent *e) {
   if (!isTyping && !m_dragging && (e->type() == QEvent::ShortcutOverride ||
                                    e->type() == QEvent::KeyPress)) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
-    if (keyEvent->key() == Qt::Key_Space) {
-      if (keyEvent->modifiers() & Qt::ControlModifier) {
-        if (m_mouseRotating == 0) {
-          m_mouseRotating = 1;
-          setToolCursor(this, ToolCursor::RotateCursor);
-        }
-      } else if (keyEvent->modifiers() & Qt::ShiftModifier) {
-        if (m_mouseZooming == 0) {
-          m_mouseZooming = 1;
-          setToolCursor(this, ToolCursor::ZoomCursor);
-        }
-      } else if (m_mousePanning == 0) {
+    std::string keyStr  = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                             .toString()
+                             .toStdString();
+    QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+    std::string actionId = CommandManager::instance()->getIdFromAction(action);
+    if (actionId == T_Hand) {
+      if (m_mousePanning == 0) {
         m_mousePanning = 1;
+        m_keyAction    = action;
         setToolCursor(this, ToolCursor::PanCursor);
+      }
+      e->accept();
+      return true;
+    } else if (actionId == T_Zoom) {
+      if (m_mouseZooming == 0) {
+        m_mouseZooming = 1;
+        m_keyAction    = action;
+        setToolCursor(this, ToolCursor::ZoomCursor);
+      }
+      e->accept();
+      return true;
+    } else if (actionId == T_Rotate) {
+      if (m_mouseRotating == 0) {
+        m_mouseRotating = 1;
+        m_keyAction     = action;
+        setToolCursor(this, ToolCursor::RotateCursor);
       }
       e->accept();
       return true;
@@ -1399,7 +1431,7 @@ bool SceneViewer::event(QEvent *e) {
   }
   if (!isTyping && e->type() == QEvent::KeyRelease) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
-    if (keyEvent->key() == Qt::Key_Space) {
+    if (m_keyAction) {
       if (keyEvent->isAutoRepeat()) {
         e->accept();
         return true;
@@ -1410,6 +1442,7 @@ bool SceneViewer::event(QEvent *e) {
           m_mousePanning  = 0;
           m_mouseZooming  = 0;
           m_mouseRotating = 0;
+          m_keyAction     = 0;
           if (tool) setToolCursor(this, tool->getCursorId());
         }
         e->accept();
@@ -1440,6 +1473,8 @@ bool SceneViewer::event(QEvent *e) {
                  ->isEventAcceptable(e)) {
       e->accept();
     }
+    else if (m_keyAction)
+      e->accept();
 
     // Disable keyboard shortcuts while the tool is busy with a mouse drag
     // operation.
@@ -1450,8 +1485,7 @@ bool SceneViewer::event(QEvent *e) {
     return true;
   }
   if (e->type() == QEvent::KeyRelease) {
-    if (!((QKeyEvent *)e)->isAutoRepeat() &&
-        ((QKeyEvent *)e)->key() != Qt::Key_Space) {
+    if (!((QKeyEvent *)e)->isAutoRepeat() && !m_keyAction) {
       QWidget *focusWidget = QApplication::focusWidget();
       if (focusWidget == 0 ||
           QString(focusWidget->metaObject()->className()) == "SceneViewer")
@@ -1991,5 +2025,9 @@ void SceneViewer::resetNavigation() {
     m_mousePanning  = 0;
     m_mouseZooming  = 0;
     m_mouseRotating = 0;
+    if (m_keyAction) {
+      m_keyAction->setEnabled(true);
+      m_keyAction = 0;
+    }
   }
 }

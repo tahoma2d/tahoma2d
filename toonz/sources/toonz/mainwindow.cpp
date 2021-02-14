@@ -2764,12 +2764,12 @@ void MainWindow::defineActions() {
       T_Tracker, "radar", tr("Tracker Tool"), "",
       tr("Tracker Tool: Tracks specific regions in a sequence of images"));
   createToolAction(T_Hook, "hook", tr("Hook Tool"), "O");
-  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "",
+  createToolAction(T_Zoom, "zoom", tr("Zoom Tool"), "Shift+Space",
                    tr("Zoom Tool: Zooms viewer"));
-  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "",
+  createToolAction(T_Rotate, "rotate", tr("Rotate Tool"), "Ctrl+Space",
                    tr("Rotate Tool: Rotate the viewer"));
-  createToolAction(T_Hand, "hand", tr("Hand Tool"), "",
-                   tr("Hand Tool: Pans the workspace (Space)"));
+  createToolAction(T_Hand, "hand", tr("Hand Tool"), "Space",
+                   tr("Hand Tool: Pans the workspace"));
   createToolAction(T_Plastic, "plastic", tr("Plastic Tool"), "X",
                    tr("Plastic Tool: Builds a mesh that allows to deform and "
                       "animate a level"));
