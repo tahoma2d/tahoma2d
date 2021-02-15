@@ -473,8 +473,9 @@
 		<file>icons/dark/actions/48/colorchiporder_lowleft.svg</file>
 		<file>icons/dark/actions/48/colorchiporder_upleft.svg</file>
 		<file>icons/dark/misc/startup.png</file>
+    <file>icons/dark/actions/20/touch.svg</file>
 
-		<!-- Keyframe -->
+    <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
 		<file>icons/dark/actions/20/key_on.svg</file>
 		<file>icons/dark/actions/20/key_modified.svg</file>
@@ -561,7 +562,6 @@
 		<file>Resources/startup.svg</file>
 		<file>Resources/stroke_select.png</file>
 		<file>Resources/tape.png</file>
-		<file>Resources/touch.svg</file>
 		<file>Resources/type_in.png</file>
 		<file>Resources/type_out.png</file>
 		<file>Resources/work.png</file>
