@@ -446,20 +446,20 @@ endif()
 
 if(BUILD_ENV_MSVC)
     if(WITH_CANON) 
-       set(EXTRA_LIBS ${EXTRA_LIBS} ${CANON_LIB})
-	endif()
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${CANON_LIB})
+    endif()
 
-	if(WITH_CRASHRPT)
-       set(EXTRA_LIBS ${EXTRA_LIBS} ${CRASHRPT_LIB})
-	endif()
+    if(WITH_CRASHRPT)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${CRASHRPT_LIB})
+    endif()
 
-	target_link_libraries(Tahoma2D
-		Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-		Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
-		${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} ${EXTRA_LIBS} strmiids
-		tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
-	)
-elseif(BUILD_ENV_APPLE)
+    target_link_libraries(Tahoma2D
+        Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
+        ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} ${EXTRA_LIBS} strmiids
+        tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
+    )
+elseif(BUILD_ENV_APPLE AND WITH_CANON)
     find_library(COCOA_LIB Cocoa)
 
     _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
@@ -467,9 +467,22 @@ elseif(BUILD_ENV_APPLE)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
-	if(WITH_CANON)
-	    set(EXTRA_LIBS ${EXTRA_LIBS} ${CANON_LIB})
-	endif()
+    add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+
+    target_link_libraries(Tahoma2D
+        Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
+        ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
+        ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
+    )
+
+elseif(BUILD_ENV_APPLE)
+    find_library(COCOA_LIB Cocoa)
+
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
+
+    # 変なところにライブラリ生成するカスども
+    set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
     add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
