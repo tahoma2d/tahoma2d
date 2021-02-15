@@ -3,7 +3,7 @@
 #ifndef STATUSBAR_H
 #define STATUSBAR_H
 
-#include <QStatusBar>;
+#include <QStatusBar>
 #include <unordered_map>
 #include <QLabel>
 
