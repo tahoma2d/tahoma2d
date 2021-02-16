@@ -1656,13 +1656,16 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   // insertUI(DefLevelDpi, lay);
+  QGridLayout* creationLay = insertGroupBox(
+    tr("Frame Creation Options"), lay);
+  {
+    insertUI(NumberingSystem, creationLay, getComboItemList(NumberingSystem));
+    insertUI(EnableAutoStretch, creationLay);
+    insertUI(EnableAutoRenumber, creationLay);
+  }
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
   {
-    insertUI(NumberingSystem, autoCreationLay,
-             getComboItemList(NumberingSystem));
-    insertUI(EnableAutoStretch, autoCreationLay);
     insertUI(EnableCreationInHoldCells, autoCreationLay);
-    insertUI(EnableAutoRenumber, autoCreationLay);
   }
   insertUI(vectorSnappingTarget, lay, getComboItemList(vectorSnappingTarget));
   insertUI(saveUnpaintedInCleanup, lay);

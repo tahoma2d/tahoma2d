@@ -2613,6 +2613,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
+  //----- Going to cheat a little. Use autocreate rules to help create what we
+  // need
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
@@ -2622,6 +2624,7 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
       Preferences::instance()->isCreationInHoldCellsEnabled();
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
+  //------------------
 
   TImage *img = toolHandle->getTool()->touchImage();
 
@@ -2629,11 +2632,13 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (!img || !sl) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to create a blank drawing on the current column"));
@@ -2641,11 +2646,13 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   }
 
   if (!toolHandle->getTool()->m_isFrameCreated) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to replace the current drawing with a blank drawing"));
@@ -2663,11 +2670,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   IconGenerator::instance()->invalidate(sl, frame);
 
-  // Reset back to what these were
+  //----- Restore previous states of autocreation
   if (!isAutoCreateEnabled)
     Preferences::instance()->setValue(EnableAutocreation, false, false);
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
+  //------------------
 }
 
 //-----------------------------------------------------------------------------
@@ -2764,6 +2772,8 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
+  //----- Going to cheat a little. Use autocreate rules to help create what we
+  // need
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
@@ -2773,14 +2783,17 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       Preferences::instance()->isCreationInHoldCellsEnabled();
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
+  //------------------
 
   TImage *img = toolHandle->getTool()->touchImage();
   if (!img) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to duplicate a drawing on the current column"));
@@ -2789,11 +2802,13 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   bool frameCreated = toolHandle->getTool()->m_isFrameCreated;
   if (!frameCreated) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to replace the current or next drawing with a "
@@ -2815,10 +2830,12 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       new DuplicateDrawingUndo(sl, srcFrame, targetFrame);
   TUndoManager::manager()->add(undo);
 
+  //----- Restore previous states of autocreation
   if (!isAutoCreateEnabled)
     Preferences::instance()->setValue(EnableAutocreation, false, false);
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
+  //------------------
 }
 
 //-----------------------------------------------------------------------------
