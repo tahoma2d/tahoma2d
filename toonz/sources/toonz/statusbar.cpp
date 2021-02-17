@@ -56,7 +56,7 @@ StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
   assert(ret);
 
   m_infoMap = makeMap(tr("              "), tr(" - "), tr(" - "));
-  m_hintMap = makeMap(tr("\n    "), tr("\t- "), tr("\t\t-"));
+  m_hintMap = makeMap(tr("\n    "), tr("\t- "), tr("\t\t- "));
   updateInfoText();
 }
 
