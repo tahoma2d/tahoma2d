@@ -180,14 +180,18 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
            spacer +
            tr("%1%2Scale / Directional scale")
                .arg(trModKey("Shift"))
-               .arg(cmdTextSeparator) +
+               .arg(cmd2TextSeparator) +
            spacer +
            tr("%1%2Distort / Shear")
                .arg(trModKey("Ctrl"))
-               .arg(cmdTextSeparator) +
+               .arg(cmd2TextSeparator) +
            spacer +
-           tr("%1%2Scale symmetrically from center point")
+           tr("%1%2Scale Symmetrically from Center")
                .arg(trModKey("Alt"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Scale Symmetrically from Center w/ Proportion Lock")
+               .arg(trModKey("Shift") + "+" + trModKey("Alt"))
                .arg(cmdTextSeparator)});
   lMap.insert({"T_Edit", tr("Animate Tool: Modifies the position, "
                             "rotation and size of the current column")});
