@@ -38,6 +38,8 @@
 #include "tenv.h"
 
 #include "tools/toolcommandids.h"
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
 
 #include <QPainter>
 #include <QScrollBar>
@@ -1854,8 +1856,7 @@ bool XsheetViewer::event(QEvent *e) {
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
-    if (!keyEvent->isAutoRepeat())
-      m_panningArmed = false;
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
     e->accept();
     return true;
   }

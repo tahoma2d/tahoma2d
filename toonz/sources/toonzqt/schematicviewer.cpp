@@ -730,10 +730,22 @@ bool SchematicSceneViewer::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    setToolCursor(this, ToolCursor::PanCursor);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    switch (m_cursorMode) {
+    case CursorMode::Hand:
+      setToolCursor(this, ToolCursor::PanCursor);
+      break;
+    case CursorMode::Zoom:
+      setToolCursor(this, ToolCursor::ZoomCursor);
+      break;
+    default:
+      setToolCursor(this, ToolCursor::StrokeSelectCursor);
+      break;
+    }
     e->accept();
     return true;
   }

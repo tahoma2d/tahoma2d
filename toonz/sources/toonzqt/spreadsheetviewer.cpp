@@ -8,7 +8,10 @@
 #include "orientation.h"
 
 #include "toonzqt/menubarcommand.h"
+
 #include "tools/toolcommandids.h"
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
 
 #include <QKeyEvent>
 #include <QWheelEvent>
@@ -891,7 +894,10 @@ void SpreadsheetViewer::enterEvent(QEvent *) { m_panningArmed = false; }
 
 //-----------------------------------------------------------------------------
 
-void SpreadsheetViewer::leaveEvent(QEvent *) { m_panningArmed = false; }
+void SpreadsheetViewer::leaveEvent(QEvent *) {
+  m_panningArmed = false;
+  setCursor(Qt::ArrowCursor);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -965,10 +971,12 @@ bool SpreadsheetViewer::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    setToolCursor(this, ToolCursor::PanCursor);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    setCursor(Qt::ArrowCursor);
     e->accept();
     return true;
   }

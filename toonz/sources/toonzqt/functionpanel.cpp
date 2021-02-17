@@ -23,6 +23,8 @@
 #include "tcommon.h"
 
 #include "tools/toolcommandids.h"
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
 
 // Qt includes
 #include <QPainter>
@@ -1443,6 +1445,7 @@ void FunctionPanel::enterEvent(QEvent *) {
 void FunctionPanel::leaveEvent(QEvent *) {
   m_cursor.visible = false;
   m_panningArmed   = false;
+  setCursor(Qt::ArrowCursor);
   update();
 }
 
@@ -1810,10 +1813,12 @@ bool FunctionPanel::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    setToolCursor(this, ToolCursor::PanCursor);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    setCursor(Qt::ArrowCursor);
     e->accept();
     return true;
   }

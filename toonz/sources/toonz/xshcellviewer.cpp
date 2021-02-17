@@ -19,7 +19,9 @@
 #include "orientation.h"
 
 // TnzTools includes
+#include "tools/toolcommandids.h"
 #include "tools/cursormanager.h"
+#include "tools/cursors.h"
 #include "tools/toolhandle.h"
 
 // TnzQt includes
@@ -2867,7 +2869,10 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
   int frameAdj         = m_viewer->getFrameZoomAdjustment();
 
   m_viewer->setQtModifiers(event->modifiers());
-  setCursor(Qt::ArrowCursor);
+  if (m_viewer->m_panningArmed)
+    setToolCursor(this, ToolCursor::PanCursor);
+  else
+    setCursor(Qt::ArrowCursor);
   QPoint pos        = event->pos();
   QRect visibleRect = visibleRegion().boundingRect();
   if (m_isPanning) {
