@@ -35,8 +35,11 @@ public:
 protected:
   StatusLabel *m_currentFrameLabel, *m_infoLabel;
   std::unordered_map<std::string, QString> m_infoMap;
+  std::unordered_map<std::string, QString> m_hintMap;
   void showEvent(QShowEvent*) override;
-  void makeMap();
+  std::unordered_map<std::string, QString> makeMap(QString spacer,
+                                                   QString cmdTextSeparator,
+                                                   QString cmd2TextSeparator);
 
 protected slots:
   void updateInfoText();
