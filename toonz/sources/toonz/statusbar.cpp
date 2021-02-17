@@ -21,6 +21,8 @@
 
 #include "tools/toolhandle.h"
 
+#include "tproperty.h"
+
 #include <QLayout>
 #include <QLabel>
 
@@ -97,32 +99,46 @@ void StatusBar::updateInfoText() {
   if (level) {
     type = level->getType();
   }
-  bool isRaster        = false;
-  bool isVector        = false;
-  bool isSmartRaster   = false;
-  std::string namePlus = "";
+  bool isRaster         = false;
+  bool isVector         = false;
+  bool isSmartRaster    = false;
+  std::string nameLevel = "";
+  std::string nameMode  = "";
   if (type >= 0) {
     if (type == TXshLevelType::PLI_XSHLEVEL) {
-      isVector = true;
-      namePlus = "Vector";
+      isVector  = true;
+      nameLevel = "Vector";
     } else if (type == TXshLevelType::TZP_XSHLEVEL) {
       isSmartRaster = true;
-      namePlus      = "SmartRaster";
+      nameLevel     = "SmartRaster";
     } else if (type == TXshLevelType::OVL_XSHLEVEL) {
-      isRaster = true;
-      namePlus = "Raster";
+      isRaster  = true;
+      nameLevel = "Raster";
     }
   }
 
+  if (name == "T_Geometric") {
+    TPropertyGroup* props = tool->getProperties(0);
+    nameMode              = props->getProperty("Shape:")->getValueAsString();
+  }
+
   QString text = "";
-  if (m_infoMap.find(name + namePlus) != m_infoMap.end())
-    text += m_infoMap[name + namePlus];
+  if (m_infoMap.find(name + nameLevel + nameMode) != m_infoMap.end())
+    text += m_infoMap[name + nameLevel + nameMode];
+  else if (m_infoMap.find(name + nameLevel) != m_infoMap.end())
+    text += m_infoMap[name + nameLevel];
+  else if (m_infoMap.find(name + nameMode) != m_infoMap.end())
+    text += m_infoMap[name + nameMode];
   else if (m_infoMap.find(name) != m_infoMap.end())
     text += m_infoMap[name];
 
   QString hintText = "";
-  if (m_hintMap.find(name + namePlus) != m_hintMap.end())
-    hintText += m_hintMap[name + namePlus];
+  if (m_hintMap.find(name + nameLevel + nameMode) != m_hintMap.end())
+    hintText += m_hintMap[name + nameLevel + nameMode];
+  else if (m_hintMap.find(name + nameLevel) != m_hintMap.end())
+    hintText += m_hintMap[name + nameLevel];
+  else if (m_hintMap.find(name + nameMode) != m_hintMap.end())
+    hintText += m_hintMap[name + nameMode];
   else if (m_hintMap.find(name) != m_hintMap.end())
     hintText += m_hintMap[name];
 
@@ -232,11 +248,83 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Alt"))
                        .arg(cmd2TextSeparator)});
   lMap.insert({"T_Geometric", tr("Geometry Tool: Draws geometric shapes")});
+  lMap.insert({"T_GeometricRectangle",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricEllipse",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert(
+      {"T_GeometricPolyline",
+       tr("Geometry Tool: Draws geometric shapes") + spacer +
+           tr("%1%2Create Curve").arg(tr("Click+Drag")).arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Return to Straight Line")
+               .arg(trModKey("Ctrl"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Snap to Angle")
+               .arg(trModKey("Shift"))
+               .arg(cmd2TextSeparator)});
   lMap.insert({"T_GeometricVector",
                tr("Geometry Tool: Draws geometric shapes") + spacer +
                    tr("%1%2Allow or Disallow Snapping")
                        .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
                        .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricVectorRectangle",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricVectorEllipse",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert(
+      {"T_GeometricVectorPolyline",
+       tr("Geometry Tool: Draws geometric shapes") + spacer +
+           tr("%1%2Create Curve").arg(tr("Click+Drag")).arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Return to Straight Line")
+               .arg(trModKey("Ctrl"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Snap to Angle")
+               .arg(trModKey("Shift"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Allow or Disallow Snapping")
+               .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+               .arg(cmdTextSeparator)});
   lMap.insert({"T_Type", tr("Type Tool: Adds text")});
   lMap.insert({"T_PaintBrush",
                tr("Smart Raster Painter: Paints areas in Smart Raster leves")});

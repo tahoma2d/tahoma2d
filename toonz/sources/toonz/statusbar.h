@@ -32,6 +32,8 @@ public:
 
   void updateFrameText(QString text);
 
+  void refreshStatusBar() { updateInfoText(); }
+
 protected:
   StatusLabel *m_currentFrameLabel, *m_infoLabel;
   std::unordered_map<std::string, QString> m_infoMap;

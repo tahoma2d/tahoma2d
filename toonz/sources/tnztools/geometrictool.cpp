@@ -1172,6 +1172,7 @@ public:
       if (typeCode != m_typeCode) {
         m_typeCode = typeCode;
         changeType(typeCode);
+        TTool::getApplication()->refreshStatusBar();
       }
     } else if (propertyName == m_param.m_edgeCount.getName())
       GeometricEdgeCount = m_param.m_edgeCount.getValue();

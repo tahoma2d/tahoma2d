@@ -20,6 +20,7 @@ class TPaletteHandle;
 class TFxHandle;
 class PaletteController;
 class TColorStyle;
+class StatusBar;
 
 //====================================================
 
@@ -51,6 +52,7 @@ public:
   virtual int getCurrentLevelStyleIndex() const     = 0;
   virtual void setCurrentLevelStyleIndex(int index,
                                          bool forceUpdate = false) = 0;
+  virtual void refreshStatusBar()                                  = 0;
 };
 
 #endif  // TAPPLICATION_H

@@ -216,6 +216,8 @@ public:
   void setStatusBar(StatusBar *statusBar);
   void setStatusBarFrameInfo(QString text);
 
+  void refreshStatusBar() override;
+
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
   bool m_showTitleBars    = true;
