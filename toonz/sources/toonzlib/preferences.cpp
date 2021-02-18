@@ -456,6 +456,9 @@ void Preferences::definePreferenceItems() {
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
          (int)LoadAtOnce);
+  define(autoRemoveUnusedLevels, "autoRemoveUnusedLevels", QMetaType::Bool,
+         false);
+
   //"levelFormats" need to be handle separately
 
   // Saving

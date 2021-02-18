@@ -269,6 +269,9 @@ public:
   int matchLevelFormat(const TFilePath &fp)
       const;  //!< Returns the \a nonnegative index of the first level format
               //!  matching the specified file path, <I>or \p -1 if none</I>.
+  bool isAutoRemoveUnusedLevelsEnabled() const {
+    return isAutoExposeEnabled() && getBoolValue(autoRemoveUnusedLevels);
+  }
 
   // Saving tab
   TPixel getRasterBackgroundColor() const {

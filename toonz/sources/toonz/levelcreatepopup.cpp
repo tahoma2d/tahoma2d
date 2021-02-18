@@ -5,6 +5,7 @@
 // Tnz6 includes
 #include "menubarcommandids.h"
 #include "tapp.h"
+#include "levelcommand.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -34,6 +35,7 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/tproject.h"
 #include "toonz/namebuilder.h"
+#include "toonz/childstack.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -327,9 +329,16 @@ bool LevelCreatePopup::levelExists(std::wstring levelName) {
            .withParentDir(parentDir);
   actualFp = scene->decodeFilePath(fp);
 
-  if (levelSet->getLevel(levelName) != 0 ||
-      TSystem::doesExistFileOrLevel(actualFp)) {
+  if (TSystem::doesExistFileOrLevel(actualFp))
     return true;
+  else if (TXshLevel *level = levelSet->getLevel(levelName)) {
+    // even if the level exists in the scene cast, it can be replaced if it is
+    // unused
+    if (Preferences::instance()->isAutoRemoveUnusedLevelsEnabled() &&
+        !scene->getChildStack()->getTopXsheet()->isLevelUsed(level))
+      return false;
+    else
+      return true;
   } else
     return false;
 }
@@ -469,12 +478,18 @@ bool LevelCreatePopup::apply() {
 
   int numFrames = step * (((to - from) / inc) + 1);
 
-  if (scene->getLevelSet()->getLevel(levelName)) {
-    error(
-        tr("The level name specified is already used: please choose a "
-           "different level name"));
-    m_nameFld->selectAll();
-    return false;
+  TXshLevel *existingLevel = scene->getLevelSet()->getLevel(levelName);
+  if (existingLevel) {
+    // check if the existing level can be removed
+    if (!Preferences::instance()->isAutoRemoveUnusedLevelsEnabled() ||
+        scene->getChildStack()->getTopXsheet()->isLevelUsed(existingLevel)) {
+      error(
+          tr("The level name specified is already used: please choose a "
+             "different level name"));
+      m_nameFld->selectAll();
+      return false;
+    }
+    // if the exitingLevel is not null, it will be removed afterwards
   }
 
   TFilePath parentDir(m_pathFld->getPath().toStdWString());
@@ -525,6 +540,18 @@ bool LevelCreatePopup::apply() {
     }
   }
 
+  TUndoManager::manager()->beginBlock();
+
+  // existingLevel is not nullptr only if the level is unused AND
+  // the preference option AutoRemoveUnusedLevels is ON
+  if (existingLevel) {
+    bool ok = LevelCmd::removeLevelFromCast(existingLevel, scene, false);
+    assert(ok);
+    DVGui::info(QObject::tr("Removed unused level %1 from the scene cast. "
+                            "(This behavior can be disabled in Preferences.)")
+                    .arg(QString::fromStdWString(levelName)));
+  }
+
   /*-- これからLevelを配置しようとしているセルが空いているかどうかのチェック
    * --*/
   bool areColumnsShifted = false;
@@ -560,6 +587,7 @@ bool LevelCreatePopup::apply() {
   TXshLevel *level =
       scene->createNewLevel(lType, levelName, TDimension(), 0, fp);
   TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+
   assert(sl);
   //  sl->setPath(fp, true);
   if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
@@ -602,6 +630,8 @@ bool LevelCreatePopup::apply() {
   //  }
 
   undo->onAdd(sl);
+
+  TUndoManager::manager()->endBlock();
 
   app->getCurrentScene()->notifySceneChanged();
   app->getCurrentScene()->notifyCastChange();

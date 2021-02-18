@@ -21,6 +21,7 @@
 #include "cachefxcommand.h"
 #include "xdtsio.h"
 #include "expressionreferencemanager.h"
+#include "levelcommand.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -354,6 +355,37 @@ int getLevelType(const TFilePath &actualPath) {
     return PLI_XSHLEVEL;
   } else
     return UNKNOWN_XSHLEVEL;
+}
+
+//===========================================================================
+// removeSameNamedUnusedLevel(scene, actualPath, levelName);
+//---------------------------------------------------------------------------
+
+void removeSameNamedUnusedLevel(ToonzScene *scene, const TFilePath actualPath,
+                                std::wstring levelName) {
+  if (QString::fromStdWString(levelName).isEmpty()) {
+    // if the option is set in the preferences,
+    // remove the scene numbers("c####_") from the file name
+    levelName = scene->getLevelNameWithoutSceneNumber(actualPath.getWideName());
+  }
+
+  TLevelSet *levelSet = scene->getLevelSet();
+  NameModifier nm(levelName);
+  levelName = nm.getNext();
+  while (1) {
+    TXshLevel *existingLevel = levelSet->getLevel(levelName);
+    // if the level name is not used in the cast, nothing to do
+    if (!existingLevel) return;
+    // try if the existing level is unused in the xsheet and remove from the
+    // cast
+    else if (LevelCmd::removeLevelFromCast(existingLevel, scene, false)) {
+      DVGui::info(QObject::tr("Removed unused level %1 from the scene cast. "
+                              "(This behavior can be disabled in Preferences.)")
+                      .arg(QString::fromStdWString(levelName)));
+      return;
+    }
+    levelName = nm.getNext();
+  }
 }
 
 //===========================================================================
@@ -875,6 +907,11 @@ TXshLevel *loadLevel(ToonzScene *scene,
   TXshLevel *xl     = getLevelByPath(scene, actualPath);
   bool isFirstTime  = !xl;
   std::wstring name = actualPath.getWideName();
+
+  if (isFirstTime && expose &&
+      Preferences::instance()->isAutoRemoveUnusedLevelsEnabled()) {
+    removeSameNamedUnusedLevel(scene, actualPath, levelName);
+  }
 
   IoCmd::ConvertingPopup *convertingPopup = new IoCmd::ConvertingPopup(
       TApp::instance()->getMainWindow(),
@@ -1403,6 +1440,15 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 
   TXsheet *xsheet           = 0;
   if (saveSubxsheet) xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  // Automatically remove unused levels
+  if (!saveSubxsheet &&
+      Preferences::instance()->isAutoRemoveUnusedLevelsEnabled()) {
+    if (LevelCmd::removeUnusedLevelsFromCast(false))
+      DVGui::info(
+          QObject::tr("Removed unused levels from the scene cast. (This "
+                      "behavior can be disabled in Preferences.)"));
+  }
 
   // If the scene will be saved in the different folder, check out the scene
   // cast.
