@@ -7,6 +7,10 @@
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/gutil.h"
 
+// Qt Includes:
+#include <QScreen>
+#include <QWindow>
+
 // TnzLib includes
 #include "toonz/preferences.h"
 #include "toonz/namebuilder.h"
@@ -900,29 +904,166 @@ void FullScreenWidget::setWidget(QWidget *widget) {
   if ((m_widget = widget)) layout->addWidget(m_widget);
 }
 
-//---------------------------------------------------------------------------------
 
-bool FullScreenWidget::toggleFullScreen(bool quit) {
-  if (windowState() & Qt::WindowFullScreen) {
-    hide();
-    setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-    showNormal();
-    m_widget->setFocus();
+//====================================================
+	bool				FullScreenWidget::toggleFullScreen(
+//====================================================
 
-    return true;
-  } else if (!quit) {
-    setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-#ifdef _WIN32
-    // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
-    winId();
-    QWindowsWindowFunctions::setHasBorderInFullScreen(windowHandle(), true);
-#endif
-    showFullScreen();
+		bool				quit )		// .
 
-    return true;
-  }
-
-  return false;
+/*
+ *	DESCRIPTION:
+ *
+ *		.
+ */
+{
+	// Initialize the return value.
+	bool			fFullScreenStateToggled = false;
+	
+	
+	// Define some constants for setting and clearing window flags.
+	const Qt::WindowFlags		kwfFullScreenWidgetFlags = Qt::Window                |
+																			Qt::WindowStaysOnTopHint  |
+																			Qt::FramelessWindowHint;
+	
+	const Qt::WindowFlags		kwfFullScreenWidgetExcludedFlags = Qt::WindowTitleHint;
+	
+	
+	// Determine whether to enter or leave full screen mode
+	if (this->windowState() & Qt::WindowFullScreen)
+	{
+		this->hide();
+		
+		this->setWindowFlags( this->windowFlags() & ~kwfFullScreenWidgetFlags );
+		
+		this->showNormal();
+		
+		this->m_widget->setFocus();
+		
+		
+		// Set teh return value to indicate that the full screen mode has been changed.
+		fFullScreenStateToggled = true;
+	}
+	else if (!quit)
+	{
+		//==============================================================
+		//
+		//	NOTE:
+		//	
+		//		This new way of going into full screen mode does
+		//		things manually in order to bypass Qt's incorrect
+		//		policy of always relocating a widget to desktop
+		//		coordinates (0,0) when the widget becomes a window
+		//		via setting the Qt::Window flag.
+		//		
+		//		This makes full screen mode work MUCH better on X11
+		//		systems with multiple displays.
+		//
+		//
+		
+		// Get the window widget that contains this widget.
+		QWidget *			ptrWindowWidget = this->window();
+		if (ptrWindowWidget)
+		{
+			// Get the access to the QWindow object of the containing window.
+			QWindow *		ptrContainingQWindow = ptrWindowWidget->windowHandle();
+			if (ptrContainingQWindow)
+			{
+				// Get access to the screen the window is on.
+				QScreen *		ptrScreenThisWindowIsOn = ptrContainingQWindow->screen();
+				if (ptrScreenThisWindowIsOn)
+				{
+					// Get the geometry rect for the correct screen.
+					QRect				qrcScreen = ptrScreenThisWindowIsOn->geometry();
+					
+					
+					// Set the window flags to be frameless and with no titlebar.
+					this->setWindowFlags( (this->windowFlags() & ~kwfFullScreenWidgetExcludedFlags)  |  kwfFullScreenWidgetFlags );
+					
+					// Set the window state flag to indicate that it's now in fullscreen mode.
+					this->setWindowState( Qt::WindowFullScreen );
+					
+					
+					// Set the window to the geometry rect of the correct screen.
+					this->setGeometry( qrcScreen );
+					
+					
+					// Ensure the window is visible before doing anything else.
+					this->show();
+				}
+			}
+		}
+		
+		
+		// Set teh return value to indicate that the full screen mode has been changed.
+		fFullScreenStateToggled = true;
+	}
+	
+	
+	return( fFullScreenStateToggled );
 }
 
-}  // namespace ImageUtils
+}  // imageutils
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
