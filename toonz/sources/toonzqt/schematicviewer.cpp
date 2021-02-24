@@ -243,15 +243,15 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
   m_oldScenePos = mapToScene(m_oldWinPos);
 
   if (m_buttonState == Qt::LeftButton) {
-    if (m_cursorMode == CursorMode::Zoom) {
+    if (m_cursorMode == CursorMode::Hand || m_panningArmed) {
+      m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
+        ? mapToScene(me->pos())
+        : me->pos() * getDevPixRatio();
+      m_panning = true;
+      return;
+    } else if (m_cursorMode == CursorMode::Zoom) {
       m_zoomPoint = me->pos();
       m_zooming   = true;
-      return;
-    } else if (m_cursorMode == CursorMode::Hand || m_panningArmed) {
-      m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
-                            ? mapToScene(me->pos())
-                            : me->pos() * getDevPixRatio();
-      m_panning = true;
       return;
     }
   } else if (m_buttonState == Qt::MidButton) {
@@ -730,11 +730,13 @@ bool SchematicSceneViewer::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    action->setEnabled(false);
     setToolCursor(this, ToolCursor::PanCursor);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
     switch (m_cursorMode) {
     case CursorMode::Hand:
       setToolCursor(this, ToolCursor::PanCursor);

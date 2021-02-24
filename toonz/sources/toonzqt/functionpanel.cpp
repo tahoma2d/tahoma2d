@@ -1813,11 +1813,13 @@ bool FunctionPanel::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    action->setEnabled(false);
     setToolCursor(this, ToolCursor::PanCursor);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
     setCursor(Qt::ArrowCursor);
     e->accept();
     return true;

@@ -1853,10 +1853,12 @@ bool XsheetViewer::event(QEvent *e) {
 
   if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
     m_panningArmed = true;
+    action->setEnabled(false);
     e->accept();
     return true;
   } else if (e->type() == QEvent::KeyRelease) {
     if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
     e->accept();
     return true;
   }
