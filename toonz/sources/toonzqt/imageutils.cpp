@@ -953,7 +953,7 @@ void FullScreenWidget::setWidget(QWidget *widget) {
 	}
 	else
 	{
-		// There's no need to switch out of full screen if the
+		// There's no point to switching into full screen if the
 		// application is in the process of quiting.
 		if (!kfApplicationQuitInProgress)
 		{
