@@ -74,6 +74,7 @@
 #include <QToolTip>
 #include <QApplication>
 #include <QClipboard>
+#include <QKeyEvent>
 
 namespace {
 
@@ -556,7 +557,11 @@ namespace XsheetGUI {
 //-----------------------------------------------------------------------------
 
 RenameCellField::RenameCellField(QWidget *parent, XsheetViewer *viewer)
-    : QLineEdit(parent), m_viewer(viewer), m_row(-1), m_col(-1) {
+    : QLineEdit(parent)
+    , m_viewer(viewer)
+    , m_row(-1)
+    , m_col(-1)
+    , m_isRenamingCell(false) {
   connect(this, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
   setContextMenuPolicy(Qt::PreventContextMenu);
   setObjectName("RenameCellField");
@@ -882,21 +887,36 @@ void RenameCellField::renameCell() {
 
 //-----------------------------------------------------------------------------
 
-void RenameCellField::onReturnPressed() {
-  renameCell();
-
+void RenameCellField::moveCellSelection(int direction) {
   // move the cell selection
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
   if (!cellSelection) return;
   TCellSelection::Range range = cellSelection->getSelectedCells();
-  int offset                  = range.m_r1 - range.m_r0 + 1;
+  int offset                  = range.m_r1 - range.m_r0 + direction;
+  if ((m_row + offset) < 0) return;
   cellSelection->selectCells(range.m_r0 + offset, range.m_c0,
                              range.m_r1 + offset, range.m_c1);
   showInRowCol(m_row + offset, m_col, range.getColCount() > 1);
   m_viewer->updateCells();
+  m_viewer->setCurrentRow(m_row);
   TApp::instance()->getCurrentSelection()->notifySelectionChanged();
 }
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::onReturnPressed() {
+  renameCell();
+  moveCellSelection(1);
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::onTabPressed() { moveCellSelection(1); }
+
+//-----------------------------------------------------------------------------
+
+void RenameCellField::onBacktabPressed() { moveCellSelection(-1); }
 
 //-----------------------------------------------------------------------------
 
@@ -910,8 +930,33 @@ void RenameCellField::focusOutEvent(QFocusEvent *e) {
 // Override shortcut keys for cell selection commands
 
 bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
+  if (e->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    int key             = keyEvent->key();
+    switch (key) {
+    case Qt::Key_Tab:
+      onTabPressed();
+      return true;
+      break;
+    case Qt::Key_Backtab:
+      onBacktabPressed();
+      return true;
+      break;
+    }
+  }
+
   if (e->type() != QEvent::ShortcutOverride)
     return QLineEdit::eventFilter(obj, e);  // return false;
+
+  // If we aren't allowing any shortcuts while renaming, use default editing
+  // commands.
+  if (!Preferences::instance()->isShortcutCommandsWhileRenamingCellEnabled())
+    return QLineEdit::eventFilter(obj, e);
+
+  // No shortcuts in Note Levels
+  TXshColumn *col  = m_viewer->getXsheet()->getColumn(m_col);
+  bool noShortcuts = (col && col->getSoundTextColumn()) ? true : false;
+  if (noShortcuts) return QLineEdit::eventFilter(obj, e);
 
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
@@ -923,19 +968,13 @@ bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
   QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
   if (!action) return QLineEdit::eventFilter(obj, e);
 
-  std::string actionId = CommandManager::instance()->getIdFromAction(action);
-
   // These are usally standard ctrl/command strokes for text editing.
   // Default to standard behavior and don't execute OT's action while renaming
   // cell if users prefer to do so.
-  // Or, always invoke OT's commands when renaming cell even the standard
-  // command strokes for text editing.
-  // The latter option is demanded by Japanese animation industry in order to
-  // gain efficiency for inputting xsheet.
-  if (!Preferences::instance()->isShortcutCommandsWhileRenamingCellEnabled() &&
-      (actionId == "MI_Undo" || actionId == "MI_Redo" ||
-       actionId == "MI_Clear" || actionId == "MI_Copy" ||
-       actionId == "MI_Paste" || actionId == "MI_Cut"))
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+  if (actionId == "MI_Undo" || actionId == "MI_Redo" ||
+      actionId == "MI_Clear" || actionId == "MI_Copy" ||
+      actionId == "MI_Paste" || actionId == "MI_Cut")
     return QLineEdit::eventFilter(obj, e);
 
   return TCellSelection::isEnabledCommand(actionId);
@@ -946,6 +985,7 @@ bool RenameCellField::eventFilter(QObject *obj, QEvent *e) {
 void RenameCellField::keyPressEvent(QKeyEvent *event) {
   if (event->key() == Qt::Key_Escape) {
     clearFocus();
+    m_viewer->setFocus();
     return;
   }
 
@@ -963,7 +1003,8 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
   stride.setFrame(cellSelection->getSelectedCells().getRowCount());
 
   CellPosition offset;
-  switch (int key = event->key()) {
+  int key = event->key();
+  switch (key) {
   case Qt::Key_Up:
   case Qt::Key_Down:
     offset = m_viewer->orientation()->arrowShift(key);
@@ -971,10 +1012,16 @@ void RenameCellField::keyPressEvent(QKeyEvent *event) {
   case Qt::Key_Left:
   case Qt::Key_Right:
     // ctrl+left/right arrow for moving cursor to the end in the field
-    if (isCtrlPressed &&
+    if (!isCtrlPressed ||
         !Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled()) {
-      QLineEdit::keyPressEvent(event);
-      return;
+      // Allow left/right movement inside field. If you go too far, you will
+      // shift cells
+      int curPos = cursorPosition();
+      if ((key == Qt::Key_Left && curPos > 0) ||
+          (key == Qt::Key_Right && curPos < text().size())) {
+        QLineEdit::keyPressEvent(event);
+        return;
+      }
     }
     offset = m_viewer->orientation()->arrowShift(key);
     break;
@@ -1017,6 +1064,8 @@ void RenameCellField::showEvent(QShowEvent *) {
   bool ret = connect(TApp::instance()->getCurrentXsheet(),
                      SIGNAL(xsheetChanged()), this, SLOT(onXsheetChanged()));
   assert(ret);
+
+  m_isRenamingCell = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1024,6 +1073,7 @@ void RenameCellField::showEvent(QShowEvent *) {
 void RenameCellField::hideEvent(QHideEvent *) {
   disconnect(TApp::instance()->getCurrentXsheet(), SIGNAL(xsheetChanged()),
              this, SLOT(onXsheetChanged()));
+  m_isRenamingCell = false;
 }
 
 //-----------------------------------------------------------------------------
