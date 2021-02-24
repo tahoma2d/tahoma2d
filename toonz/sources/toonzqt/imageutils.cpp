@@ -905,16 +905,21 @@ void FullScreenWidget::setWidget(QWidget *widget) {
 }
 
 
-//====================================================
-	bool				FullScreenWidget::toggleFullScreen(
-//====================================================
+//=============================================================
+	bool							FullScreenWidget::toggleFullScreen(
+//=============================================================
 
-		bool				quit )		// .
+		const bool					kfApplicationQuitInProgress )		// Indicates whether the application is quiting.
 
 /*
  *	DESCRIPTION:
  *
- *		.
+ *		Sets the size and location of the widget to either full
+ *		screen or normal.
+ *		
+ *		Entering full screen has to be done manually in order to
+ *		avoid having the window placed on the wrong monitor on
+ *		systems running X11 with multiple monitors.
  */
 {
 	// Initialize the return value.
@@ -922,11 +927,13 @@ void FullScreenWidget::setWidget(QWidget *widget) {
 	
 	
 	// Define some constants for setting and clearing window flags.
-	const Qt::WindowFlags		kwfFullScreenWidgetFlags = Qt::Window                |
-																			Qt::WindowStaysOnTopHint  |
-																			Qt::FramelessWindowHint;
+	const Qt::WindowFlags		kwfFullScreenWidgetFlags =
+											Qt::Window                |	// <-- Make the widget become a window.
+											Qt::WindowStaysOnTopHint  |	// <-- Ensure the window stays on top.
+											Qt::FramelessWindowHint;		// <-- Full screen windows have no border.
 	
-	const Qt::WindowFlags		kwfFullScreenWidgetExcludedFlags = Qt::WindowTitleHint;
+	const Qt::WindowFlags		kwfFullScreenWidgetExcludedFlagsMask =
+											(Qt::WindowFlags)~Qt::WindowTitleHint;	// <-- Full screen windows have no titlebar.
 	
 	
 	// Determine whether to enter or leave full screen mode
@@ -941,62 +948,107 @@ void FullScreenWidget::setWidget(QWidget *widget) {
 		this->m_widget->setFocus();
 		
 		
-		// Set teh return value to indicate that the full screen mode has been changed.
+		// Set the return value to indicate that the full screen mode has been changed.
 		fFullScreenStateToggled = true;
 	}
-	else if (!quit)
+	else
 	{
-		//==============================================================
-		//
-		//	NOTE:
-		//	
-		//		This new way of going into full screen mode does
-		//		things manually in order to bypass Qt's incorrect
-		//		policy of always relocating a widget to desktop
-		//		coordinates (0,0) when the widget becomes a window
-		//		via setting the Qt::Window flag.
-		//		
-		//		This makes full screen mode work MUCH better on X11
-		//		systems with multiple displays.
-		//
-		//
-		
-		// Get the window widget that contains this widget.
-		QWidget *			ptrWindowWidget = this->window();
-		if (ptrWindowWidget)
+		// There's no need to switch out of full screen if the
+		// application is in the process of quiting.
+		if (!kfApplicationQuitInProgress)
 		{
-			// Get the access to the QWindow object of the containing window.
-			QWindow *		ptrContainingQWindow = ptrWindowWidget->windowHandle();
-			if (ptrContainingQWindow)
+			//==============================================================
+			//
+			//	NOTE:
+			//	
+			//		This new way of going into full screen mode does
+			//		things manually in order to bypass Qt's incorrect
+			//		policy of always relocating a widget to desktop
+			//		coordinates (0,0) when the widget becomes a window
+			//		via setting the Qt::Window flag.
+			//		
+			//		This makes full screen mode work MUCH better on X11
+			//		systems with multiple displays.
+			//
+			//==============================================================
+			//	
+			//	STRATEGY:
+			//
+			//		1.		Obtain the rectangle of the screen that the widgets host window is on.
+			//				This has to be done first, otherwise the CORRECT screen info can
+			//				potentially become unavailable in the following steps.
+			//
+			//		2.		Manually set all the necessary flags for the full screen window
+			//				attributes and state. Qt WILL hide the widget/window when this is done.
+			//		
+			//		3.		Set the window geometry/rect to be the same as the screen from Step 1.
+			//		
+			//		4.		Make the window visible again.
+			//
+			//
+			
+			
+			//---------------------------------------------------
+			// STEP 1:
+			
+			// Get the window widget that contains this widget.
+			QWidget *			ptrWindowWidget = this->window();
+			if (ptrWindowWidget)
 			{
-				// Get access to the screen the window is on.
-				QScreen *		ptrScreenThisWindowIsOn = ptrContainingQWindow->screen();
-				if (ptrScreenThisWindowIsOn)
+				// Get the access to the QWindow object of the containing window.
+				QWindow *		ptrContainingQWindow = ptrWindowWidget->windowHandle();
+				if (ptrContainingQWindow)
 				{
-					// Get the geometry rect for the correct screen.
-					QRect				qrcScreen = ptrScreenThisWindowIsOn->geometry();
-					
-					
-					// Set the window flags to be frameless and with no titlebar.
-					this->setWindowFlags( (this->windowFlags() & ~kwfFullScreenWidgetExcludedFlags)  |  kwfFullScreenWidgetFlags );
-					
-					// Set the window state flag to indicate that it's now in fullscreen mode.
-					this->setWindowState( Qt::WindowFullScreen );
-					
-					
-					// Set the window to the geometry rect of the correct screen.
-					this->setGeometry( qrcScreen );
-					
-					
-					// Ensure the window is visible before doing anything else.
-					this->show();
+					// Get access to the screen the window is on.
+					QScreen *		ptrScreenThisWindowIsOn = ptrContainingQWindow->screen();
+					if (ptrScreenThisWindowIsOn)
+					{
+						// Get the geometry rect for the correct screen.
+						QRect				qrcScreen = ptrScreenThisWindowIsOn->geometry();
+						
+						
+						//---------------------------------------------------
+						// STEP 2:
+						
+						// Set the window flags to be frameless and with no titlebar.
+						// 
+						// This call will turn the widget into a "window", and HIDE it. This
+						// is because Qt always hides a widget when it transforms a widget
+						//	into a window, or turns a window into a widget.
+						//
+						this->setWindowFlags(
+							(this->windowFlags() & kwfFullScreenWidgetExcludedFlagsMask)  |
+							kwfFullScreenWidgetFlags
+						);
+						
+						// Set the window state flag to indicate that it's now in fullscreen mode.
+						//
+						// If this state flag isn't set, the test for whether to enter or leave
+						//	full screen mode won't work correctly.
+						this->setWindowState( Qt::WindowFullScreen );
+						
+						
+						//---------------------------------------------------
+						// STEP 3:
+						
+						// Set the window to the geometry rect of the correct screen.
+						this->setGeometry( qrcScreen );
+						
+						
+						//---------------------------------------------------
+						// STEP 4:
+						
+						// Make the window visible. This also causes all the changes to the widget's
+						//	flags, state and geometry that was just set to take effect.
+						this->show();
+					}
 				}
 			}
+			
+			
+			// Set the return value to indicate that the full screen mode has been changed.
+			fFullScreenStateToggled = true;
 		}
-		
-		
-		// Set teh return value to indicate that the full screen mode has been changed.
-		fFullScreenStateToggled = true;
 	}
 	
 	
