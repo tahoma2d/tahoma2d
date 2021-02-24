@@ -864,6 +864,12 @@ void TApp::showMessage(QString message) {
 
 //-----------------------------------------------------------------------------
 
+void TApp::refreshStatusBar() {
+  if (m_statusBar) m_statusBar->refreshStatusBar();
+}
+
+//-----------------------------------------------------------------------------
+
 QString TApp::getCurrentRoomName() const {
   Room *currentRoom = dynamic_cast<Room *>(getCurrentRoom());
   if (!currentRoom) return QString();

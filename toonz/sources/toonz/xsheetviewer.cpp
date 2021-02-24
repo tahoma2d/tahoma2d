@@ -1668,8 +1668,8 @@ void XsheetViewer::changeWindowTitle() {
   QString sceneName = QString::fromStdWString(scene->getSceneName());
   if (sceneName.isEmpty()) sceneName = tr("Untitled");
   if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-  QString name      = tr("Scene: ") + sceneName;
   QString separator = "   |   ";
+  QString name      = tr("Scene: ") + sceneName;
   int frameCount    = scene->getFrameCount();
   name = name + separator + tr(std::to_string(frameCount).c_str()) +
          (frameCount == 1 ? tr(" Frame") : tr(" Frames"));
@@ -1683,7 +1683,7 @@ void XsheetViewer::changeWindowTitle() {
   TXshLevel *level = app->getCurrentLevel()->getLevel();
   if (level) {
     QString levelName = QString::fromStdWString(level->getName());
-    name += separator + tr("  Level: ") + levelName;
+    name += separator + tr("Level: ") + levelName;
   }
   // cell selection range
   if ((TSelection *)getCellSelection() ==
@@ -1691,12 +1691,12 @@ void XsheetViewer::changeWindowTitle() {
       !getCellSelection()->isEmpty()) {
     int r0, r1, c0, c1;
     getCellSelection()->getSelectedCells(r0, c0, r1, c1);
-    name += separator + tr("   Selected: ") + QString::number(r1 - r0 + 1) +
+    name += separator + tr("Selected: ") + QString::number(r1 - r0 + 1) +
             ((r1 - r0 + 1 == 1) ? tr(" frame : ") : tr(" frames * ")) +
             QString::number(c1 - c0 + 1) +
             ((c1 - c0 + 1 == 1) ? tr(" column") : tr(" columns"));
   }
-  TApp::instance()->setStatusBarFrameInfo(name);
+  TApp::instance()->setStatusBarFrameInfo("|   " + name);
   parentWidget()->setWindowTitle(name);
 }
 
