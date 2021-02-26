@@ -1002,7 +1002,9 @@ void OutputSettingsPopup::updateField() {
 
   if (!m_isPreviewSettings) {
     TFilePath path = prop->getPath();
-    QString name   = QString::fromStdWString(path.getWideName());
+    QString name   = path.withoutParentDir().getQString();
+    name           = QString::fromStdString(name.toStdString().substr(
+        0, name.length() - path.getDottedType().length()));
     if (name.isEmpty())
       name = QString::fromStdString(scene->getScenePath().getName());
     m_saveInFileFld->setPath(toQString(path.getParentDir()));
@@ -1204,7 +1206,7 @@ void OutputSettingsPopup::onNameChanged() {
 
   if (fp.getWideName() == wname) return;  // Already had the right name
 
-  fp = fp.withName(wname);
+  fp = fp.getParentDir() + TFilePath(wname).withType(fp.getType());
   prop->setPath(fp);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
