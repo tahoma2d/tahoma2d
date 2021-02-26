@@ -382,17 +382,42 @@
 		<file>icons/dark/actions/20/mode_areas.svg</file>
 		<file>icons/dark/actions/20/mode_areas_lines.svg</file>
 
-		<file>icons/dark/actions/16/fill_rectangular.svg</file>
-		<file>icons/dark/actions/16/fill_normal.svg</file>
-		<file>icons/dark/actions/16/fill_freehand.svg</file>
-		<file>icons/dark/actions/16/fill_polyline.svg</file>
+		<file>icons/dark/actions/20/fill_rectangular.svg</file>
+		<file>icons/dark/actions/20/fill_normal.svg</file>
+		<file>icons/dark/actions/20/fill_freehand.svg</file>
+		<file>icons/dark/actions/20/fill_polyline.svg</file>
+		<file>icons/dark/actions/20/fill_mode_areas.svg</file>
+		<file>icons/dark/actions/20/fill_mode_lines.svg</file>
+		<file>icons/dark/actions/20/fill_mode_lines_areas.svg</file>
 		<file>icons/dark/actions/16/fill_auto.svg</file>
 
-		<file>icons/dark/actions/16/type_lasso.svg</file>
-		<file>icons/dark/actions/16/type_rectangular.svg</file>
-		<file>icons/dark/actions/16/type_polyline.svg</file>
-		<file>icons/dark/actions/16/type_normal.svg</file>
-		<file>icons/dark/actions/16/type_erase_segment.svg</file>
+		<file>icons/dark/actions/20/paintbrush_mode_areas.svg</file>
+		<file>icons/dark/actions/20/paintbrush_mode_lines.svg</file>
+		<file>icons/dark/actions/20/paintbrush_mode_lines_areas.svg</file>
+
+		<file>icons/dark/actions/20/eraser_normal.svg</file>
+		<file>icons/dark/actions/20/eraser_polyline.svg</file>
+		<file>icons/dark/actions/20/eraser_rectangular.svg</file>
+		<file>icons/dark/actions/20/eraser_freehand.svg</file>
+    <file>icons/dark/actions/20/eraser_segment.svg</file>
+
+    <file>icons/dark/actions/20/geometric_arc.svg</file>
+		<file>icons/dark/actions/20/geometric_circle.svg</file>
+		<file>icons/dark/actions/20/geometric_ellipse.svg</file>
+		<file>icons/dark/actions/20/geometric_line.svg</file>
+		<file>icons/dark/actions/20/geometric_multiarc.svg</file>
+		<file>icons/dark/actions/20/geometric_polygon.svg</file>
+		<file>icons/dark/actions/20/geometric_rectangle.svg</file>
+
+		<file>icons/dark/actions/20/selection_rectangular.svg</file>
+		<file>icons/dark/actions/20/selection_polyline.svg</file>
+		<file>icons/dark/actions/20/selection_normal.svg</file>
+		<file>icons/dark/actions/20/selection_freehand.svg</file>
+
+    <file>icons/dark/actions/20/type_lasso.svg</file>
+		<file>icons/dark/actions/20/type_rectangular.svg</file>
+		<file>icons/dark/actions/20/type_polyline.svg</file>
+		<file>icons/dark/actions/20/type_normal.svg</file>
 
 		<file>icons/dark/actions/16/shift_and_trace.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_edit.svg</file>
