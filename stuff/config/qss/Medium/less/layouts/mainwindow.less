@@ -167,7 +167,7 @@ QMenu {
   &::icon {
     border-radius: 2;
     position: absolute;
-    left: 5;
+    left: 7;
     padding: 0;
     margin: 0;
     qproperty-icon: url('@{img-url}/none');
@@ -183,13 +183,7 @@ QMenu {
     &:exclusive {
       &:extend(.RadioButton::indicator all);
     }
-    margin-left: 7;
-    &:non-exclusive {
-      &:extend(.CheckBox::indicator all);
-    }
-    &:exclusive {
-      &:extend(.RadioButton::indicator all);
-    }
+    margin-left: 8;
   }
 }
 
@@ -575,14 +569,17 @@ QTabBar {
   }
   
   &::branch {
+    /* A blank URL may not hide the Qt branch style in Linux, so we add
+       a transparent PNG which does. */
+    @blank_img: '@{img-url}/transparent_16x16.png';
+
     &:adjoins-item {
-      /* blank URL hides default Qt branch icons where it is not wanted */
-      border-image: url('');
+      border-image: url('@{blank_img}');
     }
     &:has-siblings {
-      border-image: url('');
+      border-image: url('@{blank_img}');
       &:adjoins-item {
-        border-image: url('');
+        border-image: url('@{blank_img}');
       }
     }
     &:has-children {
