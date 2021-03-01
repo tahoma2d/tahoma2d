@@ -107,6 +107,7 @@ enum PreferencesItemId {
   cursorOutlineEnabled,
   levelBasedToolsDisplay,
   useCtrlAltToResizeBrush,
+  temptoolswitchtimer,
 
   //----------
   // Xsheet

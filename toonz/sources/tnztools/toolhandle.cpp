@@ -7,6 +7,7 @@
 #include "timage.h"
 //#include "tapp.h"
 #include "toonzqt/menubarcommand.h"
+#include "toonz/preferences.h"
 #include <QAction>
 #include <QMap>
 #include <QDebug>
@@ -70,9 +71,10 @@ void ToolHandle::storeTool() {
 //-----------------------------------------------------------------------------
 
 void ToolHandle::restoreTool() {
-  // qDebug() << m_storedToolTime.elapsed();
+  //qDebug() << m_storedToolTime.elapsed();
   if (m_storedToolName != m_toolName && m_storedToolName != "" &&
-      m_storedToolTime.elapsed() > 500) {
+      m_storedToolTime.elapsed() >
+          Preferences::instance()->getTempToolSwitchtimer()) {
     setTool(m_storedToolName);
   }
 }

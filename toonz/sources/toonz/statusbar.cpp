@@ -15,11 +15,13 @@
 #include "toonz/tobjecthandle.h"
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/selection.h"
-#include "toonz/tstageobjecttree.h"
+#include "toonzqt/gutil.h"
 
 #include "tools/tool.h"
 
 #include "tools/toolhandle.h"
+
+#include "tproperty.h"
 
 #include <QLayout>
 #include <QLabel>
@@ -32,7 +34,7 @@ StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
   m_infoLabel = new StatusLabel(tr("Info goes here."), this);
   m_infoLabel->setObjectName("MainWindowPlainLabel");
   m_infoLabel->setMinimumWidth(1);
-  addWidget(m_infoLabel, 0);
+  addWidget(m_infoLabel, 1);
   addPermanentWidget(m_currentFrameLabel, 0);
 
   TApp* app                    = TApp::instance();
@@ -53,7 +55,8 @@ StatusBar::StatusBar(QWidget* parent) : QStatusBar(parent) {
 
   assert(ret);
 
-  makeMap();
+  m_infoMap = makeMap(tr("              "), tr(" - "), tr(" - "));
+  m_hintMap = makeMap(tr("\n    "), tr("\t- "), tr("\t\t- "));
   updateInfoText();
 }
 
@@ -96,137 +99,273 @@ void StatusBar::updateInfoText() {
   if (level) {
     type = level->getType();
   }
-  bool isRaster        = false;
-  bool isVector        = false;
-  bool isSmartRaster   = false;
-  bool isEmpty         = false;
-  std::string namePlus = "";
+  bool isRaster         = false;
+  bool isVector         = false;
+  bool isSmartRaster    = false;
+  std::string nameLevel = "";
+  std::string nameMode  = "";
   if (type >= 0) {
     if (type == TXshLevelType::PLI_XSHLEVEL) {
-      isVector = true;
-      namePlus = "Vector";
+      isVector  = true;
+      nameLevel = "Vector";
     } else if (type == TXshLevelType::TZP_XSHLEVEL) {
       isSmartRaster = true;
-      namePlus      = "SmartRaster";
+      nameLevel     = "SmartRaster";
     } else if (type == TXshLevelType::OVL_XSHLEVEL) {
-      isRaster = true;
-      namePlus = "Raster";
-    } else if (type == NO_XSHLEVEL)
-      isEmpty = true;
-  }
-  QString text = "";
-  if (m_infoMap.find(name + namePlus) != m_infoMap.end()) {
-    text += m_infoMap[name + namePlus];
-    int i = 0;
-    i++;
-  } else if (m_infoMap.find(name) != m_infoMap.end()) {
-    text += m_infoMap[name];
-    int i = 0;
-    i++;
+      isRaster  = true;
+      nameLevel = "Raster";
+    }
   }
 
+  if (name == "T_Geometric") {
+    TPropertyGroup* props = tool->getProperties(0);
+    nameMode              = props->getProperty("Shape:")->getValueAsString();
+  }
+
+  QString text = "";
+  if (m_infoMap.find(name + nameLevel + nameMode) != m_infoMap.end())
+    text += m_infoMap[name + nameLevel + nameMode];
+  else if (m_infoMap.find(name + nameLevel) != m_infoMap.end())
+    text += m_infoMap[name + nameLevel];
+  else if (m_infoMap.find(name + nameMode) != m_infoMap.end())
+    text += m_infoMap[name + nameMode];
+  else if (m_infoMap.find(name) != m_infoMap.end())
+    text += m_infoMap[name];
+
+  QString hintText = "";
+  if (m_hintMap.find(name + nameLevel + nameMode) != m_hintMap.end())
+    hintText += m_hintMap[name + nameLevel + nameMode];
+  else if (m_hintMap.find(name + nameLevel) != m_hintMap.end())
+    hintText += m_hintMap[name + nameLevel];
+  else if (m_hintMap.find(name + nameMode) != m_hintMap.end())
+    hintText += m_hintMap[name + nameMode];
+  else if (m_hintMap.find(name) != m_hintMap.end())
+    hintText += m_hintMap[name];
+
+  m_infoLabel->setToolTip(hintText);
   m_infoLabel->setText(text);
 }
 
 //-----------------------------------------------------------------------------
+QString trModKey(QString key) {
+#ifdef MACOSX
+  // Convert Windows key modifier to macOS modifier
+  if (key == "Ctrl")  // Command
+    return QString::fromStdWString(L"\u2318");
+  else if (key == "Shift")
+    return QString::fromStdWString(L"\u21e7");
+  else if (key == "Alt")
+    return QString::fromStdWString(L"\u2325");
+//  else if (key == "???") // Control
+//    return QString::fromStdWString(L"\u2303");
+#endif
 
-void StatusBar::makeMap() {
-  QString spacer = "                    ";
+  return key;
+}
+
+std::unordered_map<std::string, QString> StatusBar::makeMap(
+    QString spacer, QString cmdTextSeparator, QString cmd2TextSeparator) {
+  std::unordered_map<std::string, QString> lMap;
+
+#ifdef MACOSX
+  // on macOS, we display symbols. No need to space differently
+  cmd2TextSeparator = cmdTextSeparator;
+#endif
+
   // tools
-  m_infoMap.insert({"T_Hand", "<b>Hand Tool:</b> Pans the workspace"});
-  m_infoMap.insert(
+  lMap.insert({"T_Hand", tr("Hand Tool: Pans the workspace")});
+  lMap.insert(
       {"T_Selection",
-       "Selection Tool: Select parts of your image to transform it."});
-  m_infoMap.insert({"T_Edit",
-                    "Animate Tool: Modifies the position, rotation and size of "
-                    "the current column"});
-  m_infoMap.insert({"T_Brush", "Brush Tool: Draws in the work area freehand"});
-  m_infoMap.insert(
-      {"T_BrushVector", "Brush Tool: Draws in the work area freehand" + spacer +
-                            "Shift - Straight Lines" + spacer +
-#ifdef MACOSX
-                            "Cmd - Straight Lines Snapped to Angles" + spacer +
-                            "Cmd + Opt - Add / Remove Vanishing Point" +
-                            spacer + "Opt - Draw to Vanishing Point" + spacer +
-                            "Hold Cmd + Shift - Toggle Snapping"});
-#else
-                            "Control - Straight Lines Snapped to Angles" +
-                            spacer +
-                            "Ctrl + Alt - Add / Remove Vanishing Point" +
-                            spacer + "Alt - Draw to Vanishing Point" + spacer +
-                            "Hold Ctrl + Shift - Toggle Snapping"});
-#endif
-  m_infoMap.insert({"T_BrushSmartRaster",
-                    "Brush Tool: Draws in the work area freehand" + spacer +
-                        "Shift - Straight Lines" + spacer +
-#ifdef MACOSX
-                        "Cmd - Straight Lines Snapped to Angles" + spacer +
-                        "Cmd + Opt - Add / Remove Vanishing Point" + spacer +
-                        "Opt - Draw to Vanishing Point"});
-#else
-                        "Control - Straight Lines Snapped to Angles" + spacer +
-                        "Ctrl + Alt - Add / Remove Vanishing Point" + spacer +
-                        "Alt - Draw to Vanishing Point"});
-#endif
-  m_infoMap.insert(
-      {"T_BrushRaster", "Brush Tool: Draws in the work area freehand" + spacer +
-                            "Shift - Straight Lines" + spacer +
-#ifdef MACOSX
-                            "Cmd - Straight Lines Snapped to Angles" + spacer +
-                            "Cmd + Opt - Add / Remove Vanishing Point" +
-                            spacer + "Opt - Draw to Vanishing Point"});
-#else
-                            "Control - Straight Lines Snapped to Angles" +
-                            spacer +
-                            "Ctrl + Alt - Add / Remove Vanishing Point" +
-                            spacer + "Alt - Draw to Vanishing Point"});
-#endif
-  m_infoMap.insert({"T_Geometric", "Geometry Tool: Draws geometric shapes"});
-  m_infoMap.insert(
-      {"T_GeometricVector", "Geometry Tool: Draws geometric shapes" + spacer +
-#ifdef MACOSX
-                                "Hold Cmd + Shift - Toggle Snapping"});
-#else
-                                "Hold Ctrl + Shift - Toggle Snapping"});
-#endif
-  m_infoMap.insert({"T_Type", "Type Tool: Adds text"});
-  m_infoMap.insert(
-      {"T_PaintBrush",
-       "Smart Raster Painter: Paints areas in Smart Raster leves"});
-  m_infoMap.insert(
-      {"T_Fill", "Fill Tool: Fills drawing areas with the current style"});
-  m_infoMap.insert({"T_Eraser", "Eraser: Erases lines and areas"});
-  m_infoMap.insert(
-      {"T_Tape", "Tape Tool: Closes gaps in raster, joins edges in vector"});
-  m_infoMap.insert(
-      {"T_StylePicker", "Style Picker: Selects style on current drawing"});
-  m_infoMap.insert(
+       tr("Selection Tool: Select parts of your image to transform it") +
+           spacer +
+           tr("%1%2Scale / Directional scale")
+               .arg(trModKey("Shift"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Distort / Shear")
+               .arg(trModKey("Ctrl"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Scale Symmetrically from Center")
+               .arg(trModKey("Alt"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Scale Symmetrically from Center w/ Proportion Lock")
+               .arg(trModKey("Shift") + "+" + trModKey("Alt"))
+               .arg(cmdTextSeparator)});
+  lMap.insert({"T_Edit", tr("Animate Tool: Modifies the position, "
+                            "rotation and size of the current column")});
+  lMap.insert({"T_Brush", tr("Brush Tool: Draws in the work area freehand")});
+  lMap.insert({"T_BrushVector",
+               tr("Brush Tool : Draws in the work area freehand") + spacer +
+                   tr("%1%2Straight Lines")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Straight Lines Snapped to Angles")
+                       .arg(trModKey("Ctrl"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Add / Remove Vanishing Point")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Draw to Vanishing Point")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_BrushSmartRaster",
+               tr("Brush Tool : Draws in the work area freehand") + spacer +
+                   tr("%1%2Straight Lines")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Straight Lines Snapped to Angles")
+                       .arg(trModKey("Ctrl"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Add / Remove Vanishing Point")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Draw to Vanishing Point")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator)});
+  lMap.insert({"T_BrushRaster",
+               tr("Brush Tool : Draws in the work area freehand") + spacer +
+                   tr("%1%2Straight Lines")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Straight Lines Snapped to Angles")
+                       .arg(trModKey("Ctrl"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Add / Remove Vanishing Point")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Draw to Vanishing Point")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator)});
+  lMap.insert({"T_Geometric", tr("Geometry Tool: Draws geometric shapes")});
+  lMap.insert({"T_GeometricRectangle",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricEllipse",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert(
+      {"T_GeometricPolyline",
+       tr("Geometry Tool: Draws geometric shapes") + spacer +
+           tr("%1%2Create Curve").arg(tr("Click+Drag")).arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Return to Straight Line")
+               .arg(trModKey("Ctrl"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Snap to Angle")
+               .arg(trModKey("Shift"))
+               .arg(cmd2TextSeparator)});
+  lMap.insert({"T_GeometricVector",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricVectorRectangle",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert({"T_GeometricVectorEllipse",
+               tr("Geometry Tool: Draws geometric shapes") + spacer +
+                   tr("%1%2Proportion Lock")
+                       .arg(trModKey("Shift"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Create From Center")
+                       .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Allow or Disallow Snapping")
+                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(cmdTextSeparator)});
+  lMap.insert(
+      {"T_GeometricVectorPolyline",
+       tr("Geometry Tool: Draws geometric shapes") + spacer +
+           tr("%1%2Create Curve").arg(tr("Click+Drag")).arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Return to Straight Line")
+               .arg(trModKey("Ctrl"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Snap to Angle")
+               .arg(trModKey("Shift"))
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Allow or Disallow Snapping")
+               .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+               .arg(cmdTextSeparator)});
+  lMap.insert({"T_Type", tr("Type Tool: Adds text")});
+  lMap.insert({"T_PaintBrush",
+               tr("Smart Raster Painter: Paints areas in Smart Raster leves")});
+  lMap.insert(
+      {"T_Fill", tr("Fill Tool: Fills drawing areas with the current style")});
+  lMap.insert({"T_Eraser", tr("Eraser: Erases lines and areas")});
+  lMap.insert({"T_Tape",
+               tr("Tape Tool: Closes gaps in raster, joins edges in vector")});
+  lMap.insert(
+      {"T_StylePicker", tr("Style Picker: Selects style on current drawing")});
+  lMap.insert(
       {"T_RGBPicker",
-       "RGB Picker: Picks color on screen and applies to current style"});
-  m_infoMap.insert({"T_ControlPointEditor",
-                    "Control Point Editor: Modifies vector lines by editing "
-                    "its control points"});
-  m_infoMap.insert({"T_Pinch", "Pinch Tool: Pulls vector drawings"});
-  m_infoMap.insert({"T_Pump", "Pump Tool: Changes vector thickness"});
-  m_infoMap.insert({"T_Magnet", "Magnet Tool: Deforms vector lines"});
-  m_infoMap.insert(
-      {"T_Bender", "Bend Tool: Bends vector shapes around the first click"});
-  m_infoMap.insert({"T_Iron", "Iron Tool: Smooths vector lines"});
-  m_infoMap.insert({"T_Cutter", "Cutter Tool: Splits vector lines"});
-  m_infoMap.insert({"T_Hook", ""});
-  m_infoMap.insert({"T_Skeleton",
-                    "Skeleton Tool: Allows to build a skeleton and animate in "
-                    "a cut-out workflow"});
-  m_infoMap.insert(
-      {"T_Tracker",
-       "Tracker: Tracks specific regions in a sequence of images"});
-  m_infoMap.insert({"T_Plastic",
-                    "Plastic Tool: Builds a mesh that allows to deform and "
-                    "animate a level"});
-  m_infoMap.insert({"T_Zoom", "Zoom Tool: Zooms viewer"});
-  m_infoMap.insert({"T_Rotate", "Rotate Tool: Rotate the workspace"});
-  m_infoMap.insert({"T_Ruler", ""});
-  m_infoMap.insert(
-      {"T_Finger", "Finger Tool: Smudges small areas to cover with line"});
-  m_infoMap.insert({"T_Dummy", "This tool doesn't work on this layer type."});
+       tr("RGB Picker: Picks color on screen and applies to current style")});
+  lMap.insert(
+      {"T_ControlPointEditor", tr("Control Point Editor: Modifies vector lines "
+                                  "by editing its control points")});
+  lMap.insert({"T_Pinch", tr("Pinch Tool: Pulls vector drawings")});
+  lMap.insert({"T_Pump", tr("Pump Tool: Changes vector thickness")});
+  lMap.insert({"T_Magnet", tr("Magnet Tool: Deforms vector lines")});
+  lMap.insert({"T_Bender",
+               tr("Bend Tool: Bends vector shapes around the first click")});
+  lMap.insert({"T_Iron", tr("Iron Tool: Smooths vector lines")});
+  lMap.insert({"T_Cutter", tr("Cutter Tool: Splits vector lines")});
+  lMap.insert({"T_Hook", ""});
+  lMap.insert(
+      {"T_Skeleton", tr("Skeleton Tool: Allows to build a skeleton and animate "
+                        "in a cut-out workflow")});
+  lMap.insert({"T_Tracker",
+               tr("Tracker: Tracks specific regions in a sequence of images")});
+  lMap.insert({"T_Plastic", tr("Plastic Tool: Builds a mesh that allows "
+                               "to deform and animate a level")});
+  lMap.insert({"T_Zoom", tr("Zoom Tool: Zooms viewer")});
+  lMap.insert({"T_Rotate", tr("Rotate Tool: Rotate the workspace")});
+  lMap.insert({"T_Ruler", tr("Ruler Tool: Measures distances on the canvas")});
+  lMap.insert(
+      {"T_Finger", tr("Finger Tool: Smudges small areas to cover with line")});
+  lMap.insert({"T_Dummy", tr("This tool doesn't work on this layer type.")});
+
+  return lMap;
 }

@@ -10,11 +10,11 @@ I will first review the request, then I'll accept it, add comments for rework, o
 
 ### Workflow
 
-0. `fork` Tahoma2D to your GitHub account from `turtletooth/tahoma2d`.
-  - (use the `fork` button at the https://github.com/turtletooth/tahoma2d)
+0. `fork` Tahoma2D to your GitHub account from `tahoma2d/tahoma2d`.
+  - (use the `fork` button at the https://github.com/tahoma2d/tahoma2d)
 0. `clone` the repository.
   - `git clone git@github.com:your-github-account/tahoma2d.git`
-  - `git remote add upstream https://github.com/turtletooth/tahoma2d.git`, additionally.
+  - `git remote add upstream https://github.com/tahoma2d/tahoma2d.git`, additionally.
 0. modify the codes.
   - `git checkout -b your-branch-name`
     - `your-branch-name` is a name of your modifications, for example,
@@ -32,7 +32,7 @@ I will first review the request, then I'll accept it, add comments for rework, o
 
 ## Bugs
 
-If you find bugs, please report details about them using [issues](https://github.com/turtletooth/tahoma2d/issues).
+If you find bugs, please report details about them using [issues](https://github.com/tahoma2d/tahoma2d/issues).
 Please include information needed to reproduce the bug, including the operating system 
 and information directly relating to the issue. Links to screen captures of what is 
 observed on screen or video of specific steps to produce the problem are very helpful.  

@@ -131,6 +131,8 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
             port->setFx(0);
           }
         }
+        xsh->getStageObjectTree()->removeStageObject(
+            TStageObjectId::ColumnId(c));
       }
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -156,6 +158,7 @@ void cutCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
         TFxPort *port = fx->getOutputConnection(i);
         port->setFx(0);
       }
+      xsh->getStageObjectTree()->removeStageObject(TStageObjectId::ColumnId(c));
     }
   }
 
@@ -242,6 +245,8 @@ class DeleteCellsUndo final : public TUndo {
   QMimeData *m_data;
   QMap<int, QList<TFxPort *>> m_outputConnections;
   QMap<int, TXshColumn *> m_columns;
+  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
+  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   DeleteCellsUndo(TCellSelection *selection, QMimeData *data) : m_data(data) {
@@ -263,6 +268,26 @@ public:
         m_columns[i] = col;
         col->addRef();
       }
+
+      // Store TStageObject children in case column is emptied and we need to
+      // restore it
+      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
+      TStageObjectId id    = TStageObjectId::ColumnId(i);
+      TStageObject *pegbar = xsh->getStageObject(id);
+      for (int k = 0; k < pegbarsCount; ++k) {
+        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
+        if (other == pegbar) continue;
+
+        if (other->getParent() == id) {
+          // other->setParent(pegbar->getParent());
+          m_columnObjChildren[id].append(other->getId());
+        }
+      }
+
+      // Store TStageObject parent in case column is emptied and we need to
+      // restore it
+      m_columnObjParents[id] = pegbar->getParent();
+
       TFx *fx = col->getFx();
       if (!fx) continue;
       int j;
@@ -304,10 +329,35 @@ public:
       for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
     }
 
+    // Restore TStageObject parent
+    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
+    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
+         it2++) {  // Parents
+      TStageObject *obj = xsh->getStageObject(it2.key());
+      if (obj) {
+        obj->setParent(it2.value());
+      }
+    }
+
+    // Restore TStageObject children
+    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
+    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
+         it3++) {  // Children
+      QList<TStageObjectId> children = it3.value();
+      int i;
+      for (i = 0; i < children.size(); i++) {
+        TStageObject *child = xsh->getStageObject(children[i]);
+        if (child) {
+          child->setParent(it3.key());
+        }
+      }
+    }
+
     const TCellData *cellData = dynamic_cast<const TCellData *>(m_data);
     pasteCellsWithoutUndo(cellData, r0, c0, r1, c1, false, false);
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
@@ -330,6 +380,8 @@ class CutCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   TCellData *m_data;
   QMap<int, QList<TFxPort *>> m_outputConnections;
+  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
+  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   CutCellsUndo(TCellSelection *selection) : m_data() {
@@ -344,6 +396,26 @@ public:
     for (i = c0; i <= c1; i++) {
       TXshColumn *col = xsh->getColumn(i);
       if (!col || col->isEmpty()) continue;
+
+      // Store TStageObject children in case column is emptied and we need to
+      // restore it
+      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
+      TStageObjectId id    = TStageObjectId::ColumnId(i);
+      TStageObject *pegbar = xsh->getStageObject(id);
+      for (int k = 0; k < pegbarsCount; ++k) {
+        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
+        if (other == pegbar) continue;
+
+        if (other->getParent() == id) {
+          // other->setParent(pegbar->getParent());
+          m_columnObjChildren[id].append(other->getId());
+        }
+      }
+
+      // Store TStageObject parent in case column is emptied and we need to
+      // restore it
+      m_columnObjParents[id] = pegbar->getParent();
+
       TFx *fx = col->getFx();
       if (!fx) continue;
       int j;
@@ -380,8 +452,33 @@ public:
       for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
     }
 
+    // Restore TStageObject parent
+    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
+    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
+         it2++) {  // Parents
+      TStageObject *obj = xsh->getStageObject(it2.key());
+      if (obj) {
+        obj->setParent(it2.value());
+      }
+    }
+
+    // Restore TStageObject children
+    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
+    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
+         it3++) {  // Children
+      QList<TStageObjectId> children = it3.value();
+      int i;
+      for (i = 0; i < children.size(); i++) {
+        TStageObject *child = xsh->getStageObject(children[i]);
+        if (child) {
+          child->setParent(it3.key());
+        }
+      }
+    }
+
     pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
@@ -2613,6 +2710,8 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
+  //----- Going to cheat a little. Use autocreate rules to help create what we
+  // need
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
@@ -2622,6 +2721,7 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
       Preferences::instance()->isCreationInHoldCellsEnabled();
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
+  //------------------
 
   TImage *img = toolHandle->getTool()->touchImage();
 
@@ -2629,11 +2729,13 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (!img || !sl) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to create a blank drawing on the current column"));
@@ -2641,11 +2743,13 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   }
 
   if (!toolHandle->getTool()->m_isFrameCreated) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(QObject::tr(
           "Unable to replace the current drawing with a blank drawing"));
@@ -2663,11 +2767,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   IconGenerator::instance()->invalidate(sl, frame);
 
-  // Reset back to what these were
+  //----- Restore previous states of autocreation
   if (!isAutoCreateEnabled)
     Preferences::instance()->setValue(EnableAutocreation, false, false);
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
+  //------------------
 }
 
 //-----------------------------------------------------------------------------
@@ -2764,6 +2869,8 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 
+  //----- Going to cheat a little. Use autocreate rules to help create what we
+  // need
   // If autocreate disabled, let's turn it on temporarily
   bool isAutoCreateEnabled = Preferences::instance()->isAutoCreateEnabled();
   if (!isAutoCreateEnabled)
@@ -2773,14 +2880,17 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       Preferences::instance()->isCreationInHoldCellsEnabled();
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
+  //------------------
 
   TImage *img = toolHandle->getTool()->touchImage();
   if (!img) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to duplicate a drawing on the current column"));
@@ -2789,11 +2899,13 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   bool frameCreated = toolHandle->getTool()->m_isFrameCreated;
   if (!frameCreated) {
+    //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
     if (!isCreationInHoldCellsEnabled)
       Preferences::instance()->setValue(EnableCreationInHoldCells, false,
                                         false);
+    //------------------
     if (!multiple)
       DVGui::warning(
           QObject::tr("Unable to replace the current or next drawing with a "
@@ -2815,10 +2927,12 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       new DuplicateDrawingUndo(sl, srcFrame, targetFrame);
   TUndoManager::manager()->add(undo);
 
+  //----- Restore previous states of autocreation
   if (!isAutoCreateEnabled)
     Preferences::instance()->setValue(EnableAutocreation, false, false);
   if (!isCreationInHoldCellsEnabled)
     Preferences::instance()->setValue(EnableCreationInHoldCells, false, false);
+  //------------------
 }
 
 //-----------------------------------------------------------------------------

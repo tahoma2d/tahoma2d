@@ -4,6 +4,7 @@
 #include "menubarcommandids.h"
 #include "tapp.h"
 #include "sceneviewer.h"
+#include "stopmotion.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -143,6 +144,10 @@ public:
         TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
 
     int stopFrame = std::min(currentFrame, maxFrame);
+
+    StopMotion *stopMotion = StopMotion::instance();
+    if (stopMotion->getPlaceOnXSheet() && stopMotion->m_liveViewStatus > 0)
+      stopFrame = StopMotion::instance()->getXSheetFrameNumber() - 1;
 
     int startFrame = std::max(0, stopFrame - shortPlayFrameCount);
 

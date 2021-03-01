@@ -301,7 +301,8 @@ TImage *TTool::touchImage() {
   bool animationSheetEnabled      = pref->isAnimationSheetEnabled();
   bool isAutoStretchEnabled       = pref->isAutoStretchEnabled();
   bool isAutoRenumberEnabled      = pref->isAutorenumberEnabled();
-  bool isCreateInHoldCellsEnabled = pref->isCreationInHoldCellsEnabled();
+  bool isCreateInHoldCellsEnabled =
+      isAutoCreateEnabled && pref->isCreationInHoldCellsEnabled();
 
   TFrameHandle *currentFrame    = m_application->getCurrentFrame();
   TXshLevelHandle *currentLevel = m_application->getCurrentLevel();
