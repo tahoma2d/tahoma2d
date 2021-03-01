@@ -279,7 +279,8 @@ if(BUILD_ENV_MSVC)
         SYSTEM
         ${SDKROOT}/freeglut/include
         ${SDKROOT}/zlib-1.2.8
-        ${SDKROOT}/LibJPEG/jpeg-9
+        #${SDKROOT}/LibJPEG/jpeg-9
+        ${SDKROOT}/libjpeg-turbo/include
     )
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
@@ -303,7 +304,7 @@ else()
 endif()
 
 include_directories(
-    ${SDKROOT}/libjpeg-turbo64/include
+#    ${SDKROOT}/libjpeg-turbo64/include
     ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -358,7 +359,9 @@ if(BUILD_ENV_MSVC)
         optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}.lib
         debug ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}d.lib
     )
-    set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    #set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    set(JPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/jpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/turbojpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
     set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.0.3/libtiff)
     set(TIFF_LIB
         optimized ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3_${MSVC_LIB_VERSION}${PLATFORM2}.lib
@@ -373,7 +376,6 @@ if(BUILD_ENV_MSVC)
     set(SUPERLU_LIB ${SDKROOT}/superlu/SuperLU_${MSVC_LIB_VERSION}_${PLATFORM}.lib)
     set(OPENBLAS_LIB ${SDKROOT}/openblas/libopenblas_${PLATFORM}.lib)
     set(USB_LIB)  # unused
-    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
     if (WITH_CANON)
         if(BUILD_ENV_APPLE)
             set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
