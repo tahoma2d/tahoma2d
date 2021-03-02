@@ -113,6 +113,10 @@ QPixmap DVAPI recolorPixmap(
     QPixmap pixmap, QColor color = Preferences::instance()->getIconTheme()
                                        ? Qt::black
                                        : Qt::white);
+QPixmap DVAPI compositePixmap(QPixmap pixmap, qreal opacity,
+                              int canvasWidth = 20, int canvasHeight = 20,
+                              int iconWidth = 16, int iconHeight = 16,
+                              int offset = 0);
 QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
 QIcon DVAPI createQIconOnOffPNG(const char *iconPNGName, bool withOver = true);
