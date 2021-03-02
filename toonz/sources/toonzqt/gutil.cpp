@@ -437,8 +437,11 @@ QIcon createQIconOnOffPNG(const char *iconPNGName, bool withOver) {
 //-----------------------------------------------------------------------------
 
 QIcon createTemporaryIconFromName(const char *commandName) {
-  const int visibleIconSize = 20;
-  const int menubarIconSize = 16;
+  const int visibleIconSize   = 20;
+  const int menubarIconSize   = 16;
+  const qreal normalOpacity   = 0.8;
+  const qreal disabledOpacity = 0.15;
+  const qreal onOpacity       = 1;
   QString name(commandName);
   QList<QChar> iconChar;
 
@@ -494,8 +497,18 @@ QIcon createTemporaryIconFromName(const char *commandName) {
 
     icon.addPixmap(transparentPm);
     icon.addPixmap(transparentPm, QIcon::Disabled);
-    icon.addPixmap(pixmap);
-    icon.addPixmap(setOpacity(pixmap, 0.15), QIcon::Disabled);
+    icon.addPixmap(compositePixmap(pixmap, normalOpacity, pxSize, pxSize,
+                                   pixmap.width(), pixmap.height()),
+                   QIcon::Normal, QIcon::Off);
+    icon.addPixmap(compositePixmap(pixmap, onOpacity, pxSize, pxSize,
+                                   pixmap.width(), pixmap.height()),
+                   QIcon::Normal, QIcon::On);
+    icon.addPixmap(compositePixmap(pixmap, onOpacity, pxSize, pxSize,
+                                   pixmap.width(), pixmap.height()),
+                   QIcon::Active);
+    icon.addPixmap(compositePixmap(pixmap, disabledOpacity, pxSize, pxSize,
+                                   pixmap.width(), pixmap.height()),
+                   QIcon::Disabled);
   }
   return icon;
 }
