@@ -1,5 +1,6 @@
 
 
+#include "levelcommand.h"
 #include "toonzqt/menubarcommand.h"
 #include "menubarcommandids.h"
 #include "tapp.h"
@@ -19,6 +20,7 @@
 #include "toonz/levelset.h"
 #include "toonz/txshcell.h"
 #include "toonz/childstack.h"
+#include "toonz/txshchildlevel.h"
 
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/icongenerator.h"
@@ -30,6 +32,7 @@
 #include "tsystem.h"
 
 #include "toonzqt/gutil.h"
+#include "toonz/namebuilder.h"
 
 namespace {
 
@@ -426,3 +429,119 @@ public:
   void execute() override { revertTo(false); }
 
 } revertToLastSaveCommand;
+
+//-----------------------------------------------------------------------------
+namespace {
+class addLevelToCastUndo final : public TUndo {
+  TXshLevelP m_xl;
+  std::wstring m_newName, m_oldName;
+
+public:
+  addLevelToCastUndo(TXshLevel *xl, const std::wstring newName = L"",
+                     const std::wstring oldName = L"")
+      : m_xl(xl), m_newName(newName), m_oldName(oldName) {}
+
+  void undo() const override {
+    TLevelSet *levelSet =
+        TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+    levelSet->removeLevel(m_xl.getPointer());
+    if (m_oldName != L"") m_xl->setName(m_oldName);
+    if (m_isLastInBlock)
+      TApp::instance()->getCurrentScene()->notifyCastChange();
+  }
+  void redo() const override {
+    TLevelSet *levelSet =
+        TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+    if (m_newName != L"") m_xl->setName(m_newName);
+    levelSet->insertLevel(m_xl.getPointer());
+    if (m_isLastInRedoBlock)
+      TApp::instance()->getCurrentScene()->notifyCastChange();
+  }
+
+  int getSize() const override { return sizeof *this + 100; }
+
+  QString getHistoryString() override {
+    return QObject::tr("Add Level to Scene Cast : %1")
+        .arg(QString::fromStdWString(m_xl->getName()));
+  }
+};
+
+};  // namespace
+
+void LevelCmd::addMissingLevelsToCast(const QList<TXshColumnP> &columns) {
+  // make sure that the levels contained in the pasted columns are registered in
+  // the scene cast it may rename the level if there is another level with the
+  // same name
+  std::set<TXshLevel *> levels;
+  // obtain level set contained in the specified columns
+  // it is used for checking and updating the scene cast when pasting
+  // based on TXsheet::getUsedLevels
+  for (auto column : columns) {
+    if (!column) continue;
+
+    TXshCellColumn *cellColumn = column->getCellColumn();
+    if (!cellColumn) continue;
+
+    int r0, r1;
+    if (!cellColumn->getRange(r0, r1)) continue;
+
+    TXshLevel *level = 0;
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = cellColumn->getCell(r);
+      if (cell.isEmpty() || !cell.m_level) continue;
+
+      if (level != cell.m_level.getPointer()) {
+        level = cell.m_level.getPointer();
+        levels.insert(level);
+        if (level->getChildLevel()) {
+          TXsheet *childXsh = level->getChildLevel()->getXsheet();
+          childXsh->getUsedLevels(levels);
+        }
+      }
+    }
+  }
+  LevelCmd::addMissingLevelsToCast(levels);
+}
+
+void LevelCmd::addMissingLevelsToCast(std::set<TXshLevel *> &levels) {
+  if (levels.empty()) return;
+  TUndoManager::manager()->beginBlock();
+  TLevelSet *levelSet =
+      TApp::instance()->getCurrentScene()->getScene()->getLevelSet();
+  bool castChanged = false;
+  // for each level
+  for (auto level : levels) {
+    std::wstring levelName = level->getName();
+
+    // search by level name
+    if (TXshLevel *levelInCast = levelSet->getLevel(levelName)) {
+      // continue if it is the same level. This should be in most cases
+      if (level == levelInCast) continue;
+
+      // if the the name is occupied by another level, then rename and register
+      // it
+      std::wstring oldName = levelName;
+      NameModifier nm(levelName);
+      levelName = nm.getNext();
+      while (levelSet->hasLevel(levelName)) levelName = nm.getNext();
+      addLevelToCastUndo *undo =
+          new addLevelToCastUndo(level, levelName, oldName);
+      undo->m_isLastInRedoBlock = false;  // prevent to emit signal
+      undo->redo();
+      TUndoManager::manager()->add(undo);
+      castChanged = true;
+    }
+    // if not found
+    else {
+      // register the level
+      addLevelToCastUndo *undo = new addLevelToCastUndo(level);
+      undo->redo();
+      TUndoManager::manager()->add(undo);
+      castChanged = true;
+    }
+  }
+
+  TUndoManager::manager()->endBlock();
+
+  if (castChanged) TApp::instance()->getCurrentScene()->notifyCastChange();
+}

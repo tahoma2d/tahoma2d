@@ -211,9 +211,21 @@ void FxSelection::pasteSelection() {
             TPointD(ssv->getOldScenePos().x(), ssv->getOldScenePos().y());
     }
 
+    if (!columns.isEmpty()) {
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      TUndoManager::manager()->beginBlock();
+      emit columnPasted(columns);
+    }
+
     TFxCommand::pasteFxs(fxs.toStdList(), zeraryFxColumnSize.toStdMap(),
                          columns.toStdList(), m_pastePosition, m_xshHandle,
                          m_fxHandle);
+
+    if (!columns.isEmpty()) {
+      TUndoManager::manager()->endBlock();
+    }
 
     if (m_schematicScene) {
       selectNone();
@@ -263,6 +275,10 @@ bool FxSelection::insertPasteSelection() {
     if (!auto_.m_destruct) {
         auto_.m_destruct = true;
         TUndoManager::manager()->beginBlock();
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      emit columnPasted(columns);
     }
 
     TFxCommand::insertPasteFxs(selectedLinks[i], fxs.toStdList(),
@@ -349,8 +365,13 @@ bool FxSelection::replacePasteSelection() {
     if (fxs.empty() && columns.empty()) return true;
 
     // auto ends the undo block in its destructor
-    if (!auto_.m_destruct)
+    if (!auto_.m_destruct) {
       auto_.m_destruct = true, TUndoManager::manager()->beginBlock();
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      emit columnPasted(columns);
+    }
 
     TFx *inFx = m_selectedFxs[i].getPointer();
     TFxCommand::replacePasteFxs(inFx, fxs.toStdList(),

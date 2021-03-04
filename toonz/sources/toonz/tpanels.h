@@ -191,6 +191,7 @@ protected slots:
   void onEditObject();
   void onDeleteFxs(const FxSelection *);
   void onDeleteStageObjects(const StageObjectSelection *);
+  void onColumnPaste(const QList<TXshColumnP> &);
 };
 
 //=========================================================

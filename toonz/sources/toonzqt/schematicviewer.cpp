@@ -800,6 +800,13 @@ SchematicViewer::SchematicViewer(QWidget *parent)
   connect(m_stageScene->getStageSelection(), SIGNAL(doDelete()), this,
           SLOT(deleteStageObjects()));
 
+  connect(m_fxScene->getFxSelection(),
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)), this,
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)));
+  connect(m_stageScene->getStageSelection(),
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)), this,
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)));
+
   m_viewer->setScene(m_stageScene);
   m_fxToolbar->hide();
 
