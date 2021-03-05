@@ -893,6 +893,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
       if (m_keyAction) {
         m_keyAction->setEnabled(true);
         m_keyAction = 0;
+        invalidateToolStatus();
       }
       m_resetOnRelease = false;
     } else if (m_mousePanning > 0)
@@ -1491,7 +1492,7 @@ bool SceneViewer::event(QEvent *e) {
         m_mouseRotating = 0;
         m_keyAction->setEnabled(true);
         m_keyAction = 0;
-        if (tool) setToolCursor(this, tool->getCursorId());
+        invalidateToolStatus();
         e->accept();
         return true;
       }
@@ -2033,6 +2034,7 @@ void SceneViewer::resetNavigation() {
     if (m_keyAction) {
       m_keyAction->setEnabled(true);
       m_keyAction = 0;
+      invalidateToolStatus();
     }
   }
 }

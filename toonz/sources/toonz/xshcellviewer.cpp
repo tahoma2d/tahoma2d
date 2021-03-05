@@ -3765,4 +3765,13 @@ void CellArea::onStepChanged(QAction *act) {
 
 //-----------------------------------------------------------------------------
 
+void CellArea::updateCursor() {
+  if (m_viewer->m_panningArmed)
+    setToolCursor(this, ToolCursor::PanCursor);
+  else
+    setCursor(Qt::ArrowCursor);
+}
+
+//-----------------------------------------------------------------------------
+
 }  // namespace XsheetGUI
