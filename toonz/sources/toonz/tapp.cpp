@@ -745,9 +745,9 @@ void TApp::autosave() {
   // pb.show();
   Preferences *pref = Preferences::instance();
   if (pref->isAutosaveSceneEnabled() && pref->isAutosaveOtherFilesEnabled()) {
-    IoCmd::saveAll();
+    IoCmd::saveAll(IoCmd::AUTO_SAVE);
   } else if (pref->isAutosaveSceneEnabled()) {
-    IoCmd::saveScene();
+    IoCmd::saveScene(IoCmd::AUTO_SAVE);
   } else if (pref->isAutosaveOtherFilesEnabled()) {
     IoCmd::saveNonSceneFiles();
   }
