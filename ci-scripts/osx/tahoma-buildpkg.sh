@@ -1,5 +1,10 @@
 #!/bin/bash
-export QTDIR=/usr/local/opt/qt
+if [ -d /usr/local/Cellar/qt@5 ]
+then
+   export QTDIR=/usr/local/opt/qt@5
+else
+   export QTDIR=/usr/local/opt/qt
+fi
 export TOONZDIR=toonz/build/toonz
 
 # If found, use Xcode Release build
