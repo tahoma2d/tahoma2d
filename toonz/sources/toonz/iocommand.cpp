@@ -671,6 +671,16 @@ void ChildLevelResourceImporter::process(TXshSimpleLevel *sl) {
     sl->load();
   } catch (...) {
   }
+
+  // Check if the scene saved with the previous version AND the premultiply
+  // option is set to PNG level setting
+  if (m_childScene->getVersionNumber() <
+      VersionNumber(71, 1)) {  // V1.4 = 71.0 , V1.5 = 71.1
+    if (!path.isEmpty() && path.getType() == "png" &&
+        sl->getProperties()->doPremultiply())
+      sl->getProperties()->setDoPremultiply(false);
+  }
+
   sl->release();
 }
 
@@ -1991,6 +2001,31 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->getCurrentCamera()->setRes(camRes);
       app->getCurrentScene()->setDirtyFlag(true);
       app->getCurrentXsheet()->notifyXsheetChanged();
+    }
+  }
+
+  // Check if the scene saved with the previous version AND the premultiply
+  // option is set to PNG level setting
+  if (scene->getVersionNumber() <
+      VersionNumber(71, 1)) {  // V1.4 = 71.0 , V1.5 = 71.1
+    QStringList modifiedPNGLevelNames;
+    std::vector<TXshLevel *> levels;
+    scene->getLevelSet()->listLevels(levels);
+    for (auto level : levels) {
+      if (!level || !level->getSimpleLevel()) continue;
+      TFilePath path = level->getPath();
+      if (path.isEmpty() || path.getType() != "png") continue;
+      if (level->getSimpleLevel()->getProperties()->doPremultiply()) {
+        level->getSimpleLevel()->getProperties()->setDoPremultiply(false);
+        modifiedPNGLevelNames.append(QString::fromStdWString(level->getName()));
+      }
+    }
+    if (!modifiedPNGLevelNames.isEmpty()) {
+      DVGui::info(QObject::tr("The Premultiply options in the following levels "
+                              "are disabled, since PNG files are premultiplied "
+                              "on loading in the current version: %1")
+                      .arg(modifiedPNGLevelNames.join(", ")));
+      app->getCurrentScene()->setDirtyFlag(true);
     }
   }
 
