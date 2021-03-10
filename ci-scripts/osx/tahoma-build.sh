@@ -11,7 +11,15 @@ then
 fi
 cd build
 
-QTVERSION=`ls /usr/local/Cellar/qt`
+if [ -d /usr/local/Cellar/qt@5 ]
+then
+   QTVERSION=`ls /usr/local/Cellar/qt@5`
+   USEQTLIB="/usr/local/opt/qt@5/lib/"
+else
+   QTVERSION=`ls /usr/local/Cellar/qt`
+   USEQTLIB="/usr/local/opt/qt/lib/"
+fi
+
 echo "QT Version detected: $QTVERSION"
 
 if [ -d ../../thirdparty/canon/Header ]
@@ -22,7 +30,7 @@ fi
 export MACOSX_DEPLOYMENT_TARGET=10.13
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
 cmake ../sources  $CANON_FLAG \
-      -DQT_PATH=/usr/local/opt/qt/lib/ \
+      -DQT_PATH=$USEQTLIB \
       -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.0.3/libtiff/ \
       -DSUPERLU_INCLUDE_DIR=../../thirdparty/superlu/SuperLU_4.1/include/
 
