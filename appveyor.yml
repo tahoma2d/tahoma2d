@@ -54,7 +54,7 @@ after_build:
 
     copy /Y ..\..\thirdparty\libjpeg-turbo64\dist\turbojpeg.dll %CONFIGURATION%\Tahoma2D
 
-    copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world412.dll" %CONFIGURATION%\Tahoma2D
+    copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world451.dll" %CONFIGURATION%\Tahoma2D
 
     mkdir "%CONFIGURATION%\Tahoma2D\tahomastuff"
 
