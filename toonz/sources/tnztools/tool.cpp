@@ -350,6 +350,13 @@ TImage *TTool::touchImage() {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
+    // For Single Frame levels, don't create anything
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+    if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                             fids[0].getNumber() == TFrameId::NO_FRAME))
+      return 0;
+
     // If for some reason there is no palette, try and set a default one now.
     if (!sl->getPalette() &&
         (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
@@ -1072,6 +1079,20 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 
         return (enable(false),
                 QObject::tr("The current level is not editable."));
+
+      // For Single Frame raster levels, don't allow new levels to be created
+      if (levelType == OVL_XSHLEVEL && !filmstrip) {
+        std::vector<TFrameId> fids;
+        sl->getFids(fids);
+        if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                                 fids[0].getNumber() == TFrameId::NO_FRAME)) {
+          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+          if (cell.isEmpty())
+            return (enable(false),
+                    QObject::tr("The current tool cannot be used on empty "
+                                "frames of a Single Frame level."));
+        }
+      }
     }
   }
 
