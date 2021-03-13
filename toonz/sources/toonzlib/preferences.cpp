@@ -449,6 +449,7 @@ void Preferences::definePreferenceItems() {
   define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 600, 1,
          std::numeric_limits<int>::max());
   define(fastRenderPath, "fastRenderPath", QMetaType::QString, "desktop");
+  define(rhubarbPath, "rhubarbPath", QMetaType::QString, "");
 
   // Drawing
   define(scanLevelType, "scanLevelType", QMetaType::QString, "tif");
