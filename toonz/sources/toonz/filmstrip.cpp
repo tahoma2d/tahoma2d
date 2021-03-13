@@ -486,14 +486,19 @@ void FilmstripFrames::hideEvent(QHideEvent *) {
   // active viewer change
   disconnect(app, SIGNAL(activeViewerChanged()), this, SLOT(getViewer()));
 
-  // if the level strip is floating during shutting down Tahoma2D
-  // it can cause a crash disconnecting from the viewer which was already
-  // destroyed.
-  if (m_viewer && m_viewer->isValid()) {
-    disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
-    disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
-    m_viewer = nullptr;
-  }
+  disconnectViewer();
+}
+
+//-----------------------------------------------------------------------------
+
+void FilmstripFrames::disconnectViewer() {
+  if (!m_viewer) return;
+
+  disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
+  disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
+  disconnect(m_viewer, SIGNAL(viewerDestructing()), this,
+             SLOT(disconnectViewer()));
+  m_viewer = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -501,10 +506,7 @@ void FilmstripFrames::hideEvent(QHideEvent *) {
 void FilmstripFrames::getViewer() {
   bool viewerChanged = false;
   if (m_viewer != TApp::instance()->getActiveViewer()) {
-    if (m_viewer) {
-      disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
-      disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
-    }
+    disconnectViewer();
     viewerChanged = true;
   }
 
@@ -513,6 +515,8 @@ void FilmstripFrames::getViewer() {
   if (m_viewer && viewerChanged) {
     connect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
     connect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
+    connect(m_viewer, SIGNAL(viewerDestructing()), this,
+            SLOT(disconnectViewer()));
     update();
   }
 }
@@ -1675,7 +1679,7 @@ void Filmstrip::updateCurrentLevelComboItem() {
   }
 
   for (int i = 0; i < m_levels.size(); i++) {
-    TXshSimpleLevel* tempLevel = m_levels[i];
+    TXshSimpleLevel *tempLevel = m_levels[i];
       std::wstring currName = currentLevel->getName();
       int type = tempLevel->getType();
       if (type < 0 || type > MESH_XSHLEVEL) break;

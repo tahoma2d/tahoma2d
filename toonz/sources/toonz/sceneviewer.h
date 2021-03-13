@@ -484,7 +484,7 @@ public slots:
   void onContextAboutToBeDestroyed();
   void onNewStopMotionImageReady();
   void onStopMotionLiveViewStopped();
-  void onPreferenceChanged(const QString& prefName);
+  void onPreferenceChanged(const QString &prefName);
 
 signals:
 
@@ -498,6 +498,7 @@ signals:
   void refreshNavi();
   // for updating the titlebar
   void previewToggled();
+  void viewerDestructing();
 };
 
 // Functions
