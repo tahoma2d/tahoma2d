@@ -507,10 +507,12 @@ void FunctionViewer::toggleMode() {
     if (m_functionGraph->isVisible()) {
       m_functionGraph->hide();
       m_numericalColumns->show();
+      m_numericalColumns->setFocus();
       m_leftLayout->setSpacing(m_spacing);
       m_toggleStatus = 0;
     } else {
       m_functionGraph->show();
+      m_functionGraph->setFocus();
       m_numericalColumns->hide();
       m_leftLayout->setSpacing(0);
       m_toggleStatus = 1;
@@ -697,7 +699,21 @@ void FunctionViewer::addParameter(TParam *parameter, const TFilePath &folder) {
 //-----------------------------------------------------------------------------
 
 void FunctionViewer::setFocusColumnsOrGraph() {
-  m_numericalColumns->setFocus();
+  if (m_toggleStart ==
+      Preferences::FunctionEditorToggle::ToggleBetweenGraphAndSpreadsheet) {
+    if (m_toggleStatus ==
+        Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
+      m_functionGraph->setFocus();
+    else if (m_toggleStatus ==
+             Preferences::FunctionEditorToggle::ShowGraphEditorInPopup)
+      m_numericalColumns->setFocus();
+
+  } else if (m_toggleStart ==
+             Preferences::FunctionEditorToggle::ShowGraphEditorInPopup)
+    m_numericalColumns->setFocus();
+  else if (m_toggleStart ==
+           Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
+    m_functionGraph->setFocus();
 }
 
 //-----------------------------------------------------------------------------

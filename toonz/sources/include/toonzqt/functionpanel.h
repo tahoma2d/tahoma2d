@@ -76,7 +76,7 @@ private:
   QPoint m_startPos, m_oldPos;  // mouse click position, last mouse click/drag
                                 // position (window coords)
   bool m_isFloating   = true;
-  bool m_spacePressed = false;
+  bool m_panningArmed = false;
   struct Gadget {
     Handle m_handle;
     int m_kIndex;
@@ -213,6 +213,7 @@ protected:
   void drawCurrentCurve(QPainter &);
   void drawGroupKeyframes(QPainter &);
 
+  bool event(QEvent *e) override;
   void paintEvent(QPaintEvent *e) override;
   void mousePressEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
@@ -222,7 +223,6 @@ protected:
   void openContextMenu(QMouseEvent *e);
 
   void keyPressEvent(QKeyEvent *e) override;
-  void keyReleaseEvent(QKeyEvent *e) override;
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
 

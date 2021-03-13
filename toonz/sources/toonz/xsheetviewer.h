@@ -1291,6 +1291,7 @@ protected:
   void leaveEvent(QEvent *) override;
   void wheelEvent(QWheelEvent *event) override;
   void timerEvent(QTimerEvent *) override;
+  bool event(QEvent *) override;
 
   void disconnectScrollBars();
   void connectScrollBars();

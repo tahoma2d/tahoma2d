@@ -149,8 +149,8 @@ void CommandManager::define(CommandId id, CommandType type,
 
 bool CommandManager::canUseShortcut(QString shortcut) {
   shortcut = shortcut.toLower();
-  if (shortcut == "space" || shortcut == "left" || shortcut == "up" ||
-      shortcut == "right" || shortcut == "down") {
+  if (shortcut == "left" || shortcut == "up" || shortcut == "right" ||
+      shortcut == "down") {
     return false;
   }
   return true;
