@@ -433,7 +433,7 @@ LipSyncPopup::LipSyncPopup()
   QHBoxLayout *optionsLay = new QHBoxLayout(this);
   optionsLay->setMargin(10);
   optionsLay->setSpacing(15);
-  QHBoxLayout* insertAtLay = new QHBoxLayout(this);
+  QHBoxLayout *insertAtLay = new QHBoxLayout(this);
   insertAtLay->setMargin(0);
   insertAtLay->setSpacing(4);
   m_insertAtLabel = new QLabel(tr("Insert at Frame: "));
@@ -477,6 +477,8 @@ LipSyncPopup::LipSyncPopup()
                        SLOT(setPage(int)));
 
   assert(ret);
+
+  m_rhubarbPath = "";
 }
 
 //-----------------------------------------------------------------------------
@@ -515,6 +517,9 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   m_isEditingLevel = app->getCurrentFrame()->isEditingLevel();
   m_startAt->setValue(row + 1);
   m_startAt->clearFocus();
+
+  if (checkRhubarb()) m_rhubarbPath = Preferences::instance()->getRhubarbPath();
+
   TXshLevelHandle *level = app->getCurrentLevel();
   m_sl                   = level->getSimpleLevel();
   if (!m_sl) {
@@ -548,7 +553,6 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   }
   refreshSoundLevels();
   onLevelChanged(-1);
-  findRhubarb();
 }
 
 //-----------------------------------------------------------------------------
@@ -686,53 +690,47 @@ void LipSyncPopup::saveAudio() {
 
 //-----------------------------------------------------------------------------
 
-QString LipSyncPopup::findRhubarb() {
-  QString path = QDir::currentPath() + "/rhubarb/rhubarb";
-  bool found   = false;
+bool LipSyncPopup::checkRhubarb() {
+  QString exe = "rhubarb";
 #if defined(_WIN32)
-  path = path + ".exe";
+  exe = exe + ".exe";
 #endif
+
+  // check the user defined path in preferences first
+  QString path = Preferences::instance()->getRhubarbPath() + "/" + exe;
+  if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
+
+  // Let's try and autodetect the exe included with release
+  QStringList folderList;
+
+  folderList.append(".");
+  folderList.append("./rhubarb");  // rhubarb folder
 
 #ifdef MACOSX
-  path = QDir::currentPath() + "/" +
-         QString::fromStdString(TEnv::getApplicationFileName()) +
-         ".app/rhubarb/rhubarb";
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    found = true;
-  }
-
+  // Look inside app
+  folderList.append("./" +
+                    QString::fromStdString(TEnv::getApplicationFileName()) +
+                    ".app/rhubarb");  // rhubarb folder
+#elif defined LINUX
+  // Need to account for symbolic links
+  folderList.append(TEnv::getWorkingDirectory().getQString() +
+                    "/rhubarb");  // rhubarb folder
 #endif
 
-  std::string sPath = path.toStdString();
-  if (!found && TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    found = true;
+  QString exePath = TSystem::findFileLocation(folderList, exe);
+
+  if (!exePath.isEmpty()) {
+    Preferences::instance()->setValue(rhubarbPath, exePath);
+    return true;
   }
 
-  if (found) {
-    m_tabBarContainer->show();
-    if (m_tabBar->currentIndex() != m_stackedChooser->currentIndex())
-      m_tabBar->setCurrentIndex(m_stackedChooser->currentIndex());
-    int index = m_soundLevels->currentIndex();
-    int count = m_soundLevels->count();
-    if (index == count - 1) {
-      m_audioFile->show();
-    } else {
-      m_audioFile->hide();
-    }
-    setPage(m_stackedChooser->currentIndex());
-    return path;
-  } else {
-    m_tabBarContainer->hide();
-    setPage(1);
-    return QString("");
-  }
+  // give up
+  return false;
 }
 
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::runRhubarb() {
-  QString path = findRhubarb();
-
   QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
   if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/rhubarb"))) {
     TSystem::mkDir(TFilePath(cacheRoot + "/rhubarb"));
@@ -772,7 +770,12 @@ void LipSyncPopup::runRhubarb() {
   m_progressDialog->show();
   connect(m_rhubarb, &QProcess::readyReadStandardError, this,
           &LipSyncPopup::onOutputReady);
-  m_rhubarb->start(path, args);
+
+  QString rhubarbExe = m_rhubarbPath + "/rhubarb";
+#ifdef _WIN32
+  rhubarbExe = rhubarbExe + ".exe";
+#endif
+  m_rhubarb->start(rhubarbExe, args);
 }
 
 //-----------------------------------------------------------------------------
@@ -811,6 +814,12 @@ void LipSyncPopup::onApplyButton() {
   if (m_stackedChooser->currentIndex() == 0) {
     bool hasAudio = setAudioFile();
     if (!hasAudio) return;
+    if (m_rhubarbPath.isEmpty() || m_rhubarbPath.isNull()) {
+      DVGui::warning(
+          tr("Rhubarb not found, please set the location in Preferences and "
+             "restart."));
+      return;
+    }
     runRhubarb();
     m_rhubarb->waitForFinished();
     m_progressDialog->hide();

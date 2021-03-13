@@ -1044,6 +1044,18 @@ bool TSystem::showDocument(const TFilePath &path) {
 #endif
 }
 
+QString TSystem::findFileLocation(QStringList folderList, QString fileName) {
+  if (folderList.isEmpty()) return "";
+
+  QStringList::iterator it;
+  for (it = folderList.begin(); it != folderList.end(); it++) {
+    QString path = *it + "/" + fileName;
+    if (TSystem::doesExistFileOrLevel(TFilePath(path))) return *it;
+  }
+
+  return "";
+}
+
 #else
 
 #include <windows.h>
