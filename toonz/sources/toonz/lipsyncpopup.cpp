@@ -781,11 +781,24 @@ void LipSyncPopup::runRhubarb() {
 //-----------------------------------------------------------------------------
 
 void LipSyncPopup::onOutputReady() {
-  QString output    = m_rhubarb->readAllStandardError().simplified();
-  int index         = output.lastIndexOf("%");
-  QString newString = output.mid(index - 2, 2);
-  m_progressDialog->setValue(newString.toInt());
-  qDebug() << "output: " << output;
+  QString output = m_rhubarb->readAllStandardError().simplified();
+  output         = output.replace("\\n", "\n")
+               .replace("\\\\", "\\")
+               .replace("\\\"", "")
+               .replace("\"", "");
+  QStringList outputList =
+      output.mid(2, (output.size() - 4)).split(", ", QString::SkipEmptyParts);
+  if (outputList.size()) {
+    QStringList outputType = outputList.at(0).split(": ");
+    if (outputType.at(1) == "progress") {
+      QStringList outputValue = outputList.at(1).split(": ");
+      double progress         = outputValue.at(1).toDouble() * 100.0;
+      m_progressDialog->setValue(progress);
+    } else if (outputType.at(1) == "failure") {
+      QStringList outputReason = outputList.at(1).split(": ");
+      DVGui::warning(tr("Rhubarb Processing Error:\n\n") + outputReason.at(1));
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -829,12 +842,8 @@ void LipSyncPopup::onApplyButton() {
     int exitCode = -1;
     if (m_rhubarb->exitStatus() == QProcess::NormalExit) {
       exitCode = m_rhubarb->exitCode();
-      if (exitCode != 0) {
-        DVGui::warning(
-            tr("An error occurred processing the audio. Please check the audio "
-               "and try again."));
-        return;
-      }
+      // onOuputReady will handle displaying any error messages from rhubarb
+      if (exitCode != 0) return;
     }
     std::string strResults = results.toStdString();
     m_startAt->setValue(std::max(1, m_startFrame));
