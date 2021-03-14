@@ -446,7 +446,7 @@ void Preferences::definePreferenceItems() {
 
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
-  define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 600, 1,
+  define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, -1, -1,
          std::numeric_limits<int>::max());
   define(fastRenderPath, "fastRenderPath", QMetaType::QString, "desktop");
   define(rhubarbPath, "rhubarbPath", QMetaType::QString, "");

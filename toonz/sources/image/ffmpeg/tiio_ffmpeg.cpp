@@ -13,8 +13,9 @@
 #include "tmsgcore.h"
 
 Ffmpeg::Ffmpeg() {
-  m_ffmpegPath         = Preferences::instance()->getFfmpegPath();
-  m_ffmpegTimeout      = Preferences::instance()->getFfmpegTimeout() * 1000;
+  m_ffmpegPath    = Preferences::instance()->getFfmpegPath();
+  m_ffmpegTimeout = Preferences::instance()->getFfmpegTimeout();
+  if (m_ffmpegTimeout > 0) m_ffmpegTimeout * 1000;
   std::string strPath  = m_ffmpegPath.toStdString();
   m_intermediateFormat = "png";
 }
