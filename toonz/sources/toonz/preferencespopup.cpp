@@ -1271,7 +1271,7 @@ PreferencesPopup::PreferencesPopup()
   m_categoryList = new QListWidget(this);
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
-             << tr("Loading") << tr("Saving") << tr("Import/Export")
+             << tr("Loading") << tr("Saving") << tr("3rd Party Apps")
              << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
              << tr("Preview") << tr("Onion Skin") << tr("Colors")
              << tr("Version Control") << tr("Touch/Tablet Settings");
