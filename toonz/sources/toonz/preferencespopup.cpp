@@ -1605,6 +1605,8 @@ QWidget* PreferencesPopup::createSavingPage() {
   insertUI(resetUndoOnSavingLevel, lay);
   insertUI(doNotShowPopupSaveScene, lay);
 
+  insertUI(fastRenderPath, lay);
+
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
   return widget;
@@ -1629,8 +1631,6 @@ QWidget* PreferencesPopup::createImportExportPage() {
   {
     insertUI(ffmpegPath, ffmpegOptionsLay);
     insertUI(ffmpegTimeout, ffmpegOptionsLay);
-
-    insertUI(fastRenderPath, ffmpegOptionsLay);
   }
 
   QGridLayout* rhubarbOptionsLay = insertGroupBox(tr("Rhubarb Lip Sync"), lay);
