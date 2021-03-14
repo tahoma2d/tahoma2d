@@ -33,6 +33,17 @@ then
    cp -R thirdparty/ffmpeg/bin $TOONZDIR/Tahoma2D.app/ffmpeg
 fi
 
+if [ -d thirdparty/rhubarb ]
+then
+   echo ">>> Copying Rhubarb Lip Sync to $TOONZDIR/Tahoma2D.app/rhubarb"
+   if [ -d $TOONZDIR/Tahoma2D.app/rhubarb ]
+   then
+      # In case of prior builds, replace rhubarb folder
+      rm -rf $TOONZDIR/Tahoma2D.app/rhubarb
+   fi
+   cp -R thirdparty/rhubarb $TOONZDIR/Tahoma2D.app/rhubarb
+fi
+
 if [ -d thirdparty/canon/Framework ]
 then
    echo ">>> Copying canon framework to $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.Framework"

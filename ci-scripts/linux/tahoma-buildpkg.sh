@@ -45,6 +45,16 @@ then
    cp -R ../../thirdparty/ffmpeg/bin Tahoma2D/ffmpeg
 fi
 
+if [ -d ../../thirdparty/rhubarb ]
+then
+   echo ">>> Copying Rhubarb Lip Sync to Tahoma2D/rhubarb"
+   if [ -d Tahoma2D/rhubarb ]
+   then
+      rm -rf Tahoma2D/rhubarb
+   fi
+   cp -R ../../thirdparty/rhubarb Tahoma2D/rhubarb
+fi
+
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"
 
 if [ ! -f linuxdeployqt*.AppImage ]
