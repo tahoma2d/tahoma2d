@@ -1046,6 +1046,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {ffmpegTimeout, tr("Process Timeout:")},
       {fastRenderPath, tr("Fast Render Output Directory:")},
       {rhubarbPath, tr("Executable Directory:")},
+      {rhubarbTimeout, tr("Analyze Audio Timeout (sec; -1 = no timeout):") },
 
       // Drawing
       {scanLevelType, tr("Scan File Format:")},
@@ -1641,7 +1642,10 @@ QWidget* PreferencesPopup::createImportExportPage() {
   }
 
   QGridLayout* rhubarbOptionsLay = insertGroupBox(tr("Rhubarb Lip Sync"), lay);
-  { insertUI(rhubarbPath, rhubarbOptionsLay); }
+  {
+    insertUI(rhubarbPath, rhubarbOptionsLay); 
+    insertUI(rhubarbTimeout, rhubarbOptionsLay);
+  }
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);

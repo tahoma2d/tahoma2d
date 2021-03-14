@@ -75,6 +75,7 @@ enum PreferencesItemId {
   ffmpegTimeout,
   fastRenderPath,
   rhubarbPath,
+  rhubarbTimeout,
 
   //----------
   // Drawing

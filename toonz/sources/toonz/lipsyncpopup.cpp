@@ -834,7 +834,9 @@ void LipSyncPopup::onApplyButton() {
       return;
     }
     runRhubarb();
-    m_rhubarb->waitForFinished();
+    int rhubarbTimeout = Preferences::instance()->getRhubarbTimeout();
+    if (rhubarbTimeout > 0) rhubarbTimeout * 1000;
+    m_rhubarb->waitForFinished(rhubarbTimeout);
     m_progressDialog->hide();
     QString results = m_rhubarb->readAllStandardError();
     results += m_rhubarb->readAllStandardOutput();

@@ -450,6 +450,8 @@ void Preferences::definePreferenceItems() {
          std::numeric_limits<int>::max());
   define(fastRenderPath, "fastRenderPath", QMetaType::QString, "desktop");
   define(rhubarbPath, "rhubarbPath", QMetaType::QString, "");
+  define(rhubarbTimeout, "rhubarbTimeout", QMetaType::Int, -1, -1,
+    std::numeric_limits<int>::max());
 
   // Drawing
   define(scanLevelType, "scanLevelType", QMetaType::QString, "tif");
