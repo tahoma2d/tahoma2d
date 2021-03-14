@@ -1043,7 +1043,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Import / Export
       {ffmpegPath, tr("Executable Directory:")},
-      {ffmpegTimeout, tr("Process Timeout:")},
+      {ffmpegTimeout, tr("Import/Export Timeout (sec; -1 = no timeout):")},
       {fastRenderPath, tr("Fast Render Output Directory:")},
       {rhubarbPath, tr("Executable Directory:")},
       {rhubarbTimeout, tr("Analyze Audio Timeout (sec; -1 = no timeout):") },
@@ -1628,14 +1628,6 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QGridLayout* ffmpegOptionsLay = insertGroupBox(tr("FFmpeg"), lay);
   {
     insertUI(ffmpegPath, ffmpegOptionsLay);
-
-    putLabel(
-        tr("Number of seconds to wait for FFmpeg to complete processing the "
-           "output:"),
-        ffmpegOptionsLay);
-    putLabel(
-        tr("Note: FFmpeg begins working once all images have been processed."),
-        ffmpegOptionsLay);
     insertUI(ffmpegTimeout, ffmpegOptionsLay);
 
     insertUI(fastRenderPath, ffmpegOptionsLay);
