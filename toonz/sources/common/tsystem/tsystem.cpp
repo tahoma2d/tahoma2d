@@ -1050,7 +1050,9 @@ QString TSystem::findFileLocation(QStringList folderList, QString fileName) {
   QStringList::iterator it;
   for (it = folderList.begin(); it != folderList.end(); it++) {
     QString path = *it + "/" + fileName;
-    if (TSystem::doesExistFileOrLevel(TFilePath(path))) return *it;
+    TFilePath fp(path);
+    if (TSystem::doesExistFileOrLevel(fp) && !TFileStatus(fp).isDirectory())
+      return *it;
   }
 
   return "";
