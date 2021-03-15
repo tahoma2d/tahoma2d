@@ -145,6 +145,8 @@ public:
     return m_renameCell && m_renameCell->isRenamingCell();
   }
 
+  void updateCursor();
+
 protected:
   void paintEvent(QPaintEvent *) override;
 

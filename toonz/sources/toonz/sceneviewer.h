@@ -215,6 +215,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   bool m_firstInitialized = true;
 
+  QAction *m_keyAction;
+
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
@@ -484,7 +486,7 @@ public slots:
   void onContextAboutToBeDestroyed();
   void onNewStopMotionImageReady();
   void onStopMotionLiveViewStopped();
-  void onPreferenceChanged(const QString& prefName);
+  void onPreferenceChanged(const QString &prefName);
 
 signals:
 

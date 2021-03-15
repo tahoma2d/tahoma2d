@@ -470,11 +470,11 @@ public:
   void ensureVisibleCol(int col);
 
 protected:
+  bool event(QEvent *e) override;
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
   void resizeEvent(QResizeEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
-  void keyReleaseEvent(QKeyEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
   void timerEvent(QTimerEvent *) override;
   void enterEvent(QEvent *) override;

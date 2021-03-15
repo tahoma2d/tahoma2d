@@ -2629,12 +2629,12 @@ void MainWindow::defineActions() {
   createToolAction(T_Tracker, "radar", QT_TR_NOOP("Tracker Tool"), "",
                    tr("Tracker Tool: Tracks specific regions in a sequence of images"));
   createToolAction(T_Hook, "hook", QT_TR_NOOP("Hook Tool"), "O");
-  createToolAction(T_Zoom, "zoom", QT_TR_NOOP("Zoom Tool"), "",
+  createToolAction(T_Zoom, "zoom", QT_TR_NOOP("Zoom Tool"), "Shift+Space",
                    tr("Zoom Tool: Zooms viewer"));
-  createToolAction(T_Rotate, "rotate", QT_TR_NOOP("Rotate Tool"), "",
+  createToolAction(T_Rotate, "rotate", QT_TR_NOOP("Rotate Tool"), "Ctrl+Space",
                    tr("Rotate Tool: Rotate the viewer"));
-  createToolAction(T_Hand, "hand", QT_TR_NOOP("Hand Tool"), "",
-                   tr("Hand Tool: Pans the workspace (Space)"));
+  createToolAction(T_Hand, "hand", QT_TR_NOOP("Hand Tool"), "Space",
+                   tr("Hand Tool: Pans the workspace"));
   createToolAction(T_Plastic, "plastic", QT_TR_NOOP("Plastic Tool"), "X",
                    tr("Plastic Tool: Builds a mesh that allows to deform and "
                    "animate a level"));
