@@ -924,9 +924,8 @@ bool FullScreenWidget::toggleFullScreen(
 
   // Define some constants for setting and clearing window flags.
   const Qt::WindowFlags kwfFullScreenWidgetFlags =
-      Qt::Window |                // <-- Make the widget become a window.
-      Qt::WindowStaysOnTopHint |  // <-- Ensure the window stays on top.
-      Qt::FramelessWindowHint;    // <-- Full screen windows have no border.
+      Qt::Window |              // <-- Make the widget become a window.
+      Qt::FramelessWindowHint;  // <-- Full screen windows have no border.
 
   const Qt::WindowFlags kwfFullScreenWidgetExcludedFlagsMask =
       (Qt::WindowFlags)~Qt::WindowTitleHint;  // <-- Full screen windows have no
@@ -1028,8 +1027,7 @@ bool FullScreenWidget::toggleFullScreen(
             // effect.
             this->show();
 #else
-            this->setWindowFlags(this->windowFlags() | Qt::Window |
-                                 Qt::WindowStaysOnTopHint);
+            this->setWindowFlags(this->windowFlags() | Qt::Window);
             this->window()->windowHandle()->setScreen(ptrScreenThisWindowIsOn);
 
             // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
