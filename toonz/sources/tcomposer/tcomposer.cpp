@@ -663,6 +663,7 @@ int main(int argc, char *argv[]) {
   // questo definisce la registry root e inizializza TEnv
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
+  TEnv::setApplicationFileName(argv[0]);
 
   QCoreApplication::setOrganizationName("Tahoma2D");
   QCoreApplication::setOrganizationDomain("");
