@@ -58,7 +58,6 @@ export SDKROOT=`xcrun --show-sdk-path`
       --enable-static \
       --disable-shared \
       --enable-pic \
-      --disable-shared \
       --enable-pthreads \
       --enable-version3 \
       --enable-videotoolbox \
@@ -69,6 +68,7 @@ export SDKROOT=`xcrun --show-sdk-path`
       --disable-ffplay \
       --disable-sdl2 \
       --disable-libjack \
+	  --disable-libxcb \
       --disable-indev=jack
 
 echo ">>> Building ffmpeg (static)"
