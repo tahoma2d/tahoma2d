@@ -463,6 +463,8 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
 
   // obtain level names
   QStringList levelNames = xdtsData.getLevelNames();
+  // in case multiple columns have the same name
+  levelNames.removeDuplicates();
 
   scene->clear();
 
