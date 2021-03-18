@@ -407,8 +407,9 @@ void Preferences::definePreferenceItems() {
   // (QTBUG-90242) Since the current OT is made to handle such issue, so we need
   // to apply an extra adjustment when it is run on the older versions (5.9.x)
   // of Qt
+  // Update: confirmed that the bug does not appear at least in Qt 5.12.8
   QString defaultAditionalSheet = "";
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 9)
   defaultAditionalSheet = "QMenu::Item{ padding: 3 28 3 28; }";
 #endif
 
