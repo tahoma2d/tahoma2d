@@ -591,7 +591,7 @@ void StudioPaletteCmd::mergeIntoCurrentPalette(TPaletteHandle *paletteHandle,
   TUndoManager::manager()->add(
       new PaletteAssignUndo(current, old, current->clone(), paletteHandle));
 
-  palette->setDirtyFlag(true);
+  current->setDirtyFlag(true);
   paletteHandle->notifyPaletteChanged();
 }
 
