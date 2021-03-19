@@ -8,13 +8,32 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: bash ./ci-scripts/osx/tahoma-install.sh
+        run: |
+          ci-scripts/osx/tahoma-install.sh
+          brew install ccache
+          mkdir /Users/runner/.ccache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /Users/runner/.ccache
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg_shared
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-
       - name: Build ffmpeg
-        run: bash ./ci-scripts/osx/tahoma-buildffmpeg.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-buildffmpeg.sh
       - name: Build OpenCV
-        run: bash ./ci-scripts/osx/tahoma-buildopencv.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-buildopencv.sh
       - name: Build Tahoma2D
-        run: bash ./ci-scripts/osx/tahoma-build.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-build.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1

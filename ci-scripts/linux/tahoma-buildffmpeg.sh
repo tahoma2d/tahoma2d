@@ -16,8 +16,9 @@ cd ..
 
 echo ">>> Cloning ffmpeg"
 git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+cp -R ffmpeg ffmpeg_shared
 
-cd ffmpeg
+cd ffmpeg_shared
 echo "*" >| .gitignore
 
 echo ">>> Configuring to build ffmpeg (shared)"
@@ -64,6 +65,8 @@ sudo make install
 sudo ldconfig
 
 echo ">>> Configuring to build ffmpeg (static)"
+cd ../ffmpeg
+echo "*" >| .gitignore
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
