@@ -66,7 +66,7 @@ double tglGetPixelSize2() {
   glMatrixMode(GL_MODELVIEW);
   glGetDoublev(GL_MODELVIEW_MATRIX, mat);
 
-  double det                      = fabs(mat[0] * mat[5] - mat[1] * mat[4]);
+  double det = fabs(mat[0] * mat[5] - mat[1] * mat[4]);
   if (det < TConsts::epsilon) det = TConsts::epsilon;
   return 1.0 / det;
 }
@@ -245,6 +245,7 @@ void tglEnableBlending(GLenum src, GLenum dst) {
 
 void tglEnableLineSmooth(bool enable, double lineSize) {
   if (enable) {
+    tglEnableBlending();
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(lineSize);
@@ -431,7 +432,7 @@ void tglDraw(const TRectD &rect, const std::vector<TRaster32P> &textures,
   unsigned int level = 1;
   while (pixelSize2 * level * level <= 1.0) level <<= 1;
 
-  unsigned int texturesCount       = (int)textures.size();
+  unsigned int texturesCount = (int)textures.size();
   if (level > texturesCount) level = texturesCount;
 
   level = texturesCount - level;
@@ -467,8 +468,8 @@ void tglDraw(const TRectD &rect, const TRaster32P &tex, bool blending) {
     texture = TRaster32P(texWidth, texHeight);
     texture->fill(TPixel32(0, 0, 0, 0));
     texture->copy(tex);
-    lwTex                  = (texLx) / (double)(texWidth);
-    lhTex                  = (texLy) / (double)(texHeight);
+    lwTex = (texLx) / (double)(texWidth);
+    lhTex = (texLy) / (double)(texHeight);
     if (lwTex > 1.0) lwTex = 1.0;
     if (lhTex > 1.0) lhTex = 1.0;
   } else
@@ -587,10 +588,10 @@ void tglBuildMipmaps(std::vector<TRaster32P> &rasters,
     ly >>= 1;
     if (lx < 1) lx = 1;
     if (ly < 1) ly = 1;
-    rasters[i]     = TRaster32P(lx, ly);
-    sx             = (double)lx / (double)ras2Lx;
-    sy             = (double)ly / (double)ras2Ly;
-    rasters[i]     = TRaster32P(lx, ly);
+    rasters[i] = TRaster32P(lx, ly);
+    sx         = (double)lx / (double)ras2Lx;
+    sy         = (double)ly / (double)ras2Ly;
+    rasters[i] = TRaster32P(lx, ly);
 #ifndef SCALE_BY_GLU
     TRop::resample(rasters[i], ras2, TScale(sx, sy), resampleFilter);
 #else
