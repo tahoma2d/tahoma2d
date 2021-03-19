@@ -245,7 +245,6 @@ void tglEnableBlending(GLenum src, GLenum dst) {
 
 void tglEnableLineSmooth(bool enable, double lineSize) {
   if (enable) {
-    tglEnableBlending();
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(lineSize);
