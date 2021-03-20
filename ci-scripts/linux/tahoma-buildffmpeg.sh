@@ -25,6 +25,8 @@ echo ">>> Configuring to build ffmpeg (shared)"
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
+      --cc="$CC" \
+      --cxx="$CXX" \
       --toolchain=hardened \
       --pkg-config-flags="--static" \
       --extra-cflags="-I/usr/local/include" \
@@ -71,6 +73,8 @@ echo "*" >| .gitignore
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
+      --cc="$CC" \
+      --cxx="$CXX" \
       --pkg-config-flags="--static" \
       --extra-cflags="-I/usr/local/include -static" \
       --extra-ldflags="-L/usr/local/lib -static" \
