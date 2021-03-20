@@ -172,6 +172,7 @@ protected slots:
   void comboBoxToggled(bool);
   void navigatorToggled(bool);
   void levelSelected(int);
+  void disconnectViewer();
 
 private:
   // QSS Properties

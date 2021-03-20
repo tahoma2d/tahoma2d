@@ -856,6 +856,8 @@ SceneViewer::~SceneViewer() {
 
   int ret = l_contexts.erase(m_currentContext);
   if (ret) TGLDisplayListsManager::instance()->releaseContext(m_currentContext);
+
+  emit viewerDestructing();
 }
 
 //-------------------------------------------------------------------------------

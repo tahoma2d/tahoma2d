@@ -500,6 +500,7 @@ signals:
   void refreshNavi();
   // for updating the titlebar
   void previewToggled();
+  void viewerDestructing();
 };
 
 // Functions
