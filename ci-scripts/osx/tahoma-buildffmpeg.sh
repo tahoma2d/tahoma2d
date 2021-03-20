@@ -1,5 +1,29 @@
 cd thirdparty
 
+echo ">>> Cloning aom"
+mkdir aom
+cd aom
+echo "*" >| .gitignore
+
+git clone https://aomedia.googlesource.com/aom
+
+if [ ! -d build ]
+then
+   mkdir build
+fi
+cd build
+
+echo ">>> CMaking aom"
+cmake ../aom
+
+echo ">>> Making aom"
+make
+
+echo ">>> Installing aom"
+sudo make install
+
+cd ../..
+
 echo ">>> Cloning ffmpeg"
 git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 
@@ -58,7 +82,6 @@ export SDKROOT=`xcrun --show-sdk-path`
       --enable-static \
       --disable-shared \
       --enable-pic \
-      --disable-shared \
       --enable-pthreads \
       --enable-version3 \
       --enable-videotoolbox \
@@ -69,6 +92,7 @@ export SDKROOT=`xcrun --show-sdk-path`
       --disable-ffplay \
       --disable-sdl2 \
       --disable-libjack \
+	  --disable-libxcb \
       --disable-indev=jack
 
 echo ">>> Building ffmpeg (static)"
