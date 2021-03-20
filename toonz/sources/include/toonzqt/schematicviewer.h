@@ -5,6 +5,7 @@
 
 // TnzLib includes
 #include "toonz/tstageobjectid.h"
+#include "toonz/txshcolumn.h"
 
 // TnzBase includes
 #include "tfx.h"
@@ -571,6 +572,7 @@ signals:
   void doDeleteFxs(const FxSelection *);
   void doDeleteStageObjects(const StageObjectSelection *);
 
+  void columnPasted(const QList<TXshColumnP> &);
 protected slots:
 
   void onSceneChanged();

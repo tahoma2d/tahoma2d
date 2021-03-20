@@ -7,8 +7,7 @@ QToolButton,
 #CameraSettingsRadioButton::indicator,
 #ForceSquaredPixelButton,
 #EditToolLockButton::indicator,
-#flipCustomize,
-#SceneCast QToolBar QToolButton {
+#flipCustomize {
   background-color: transparent;
   border: 1 solid transparent;
   border-radius: 2;
@@ -22,8 +21,7 @@ QToolButton:hover,
 #colorSliderAddButton:hover,
 #colorSliderSubButton:hover,
 #EditToolLockButton::indicator:hover,
-#flipCustomize:hover,
-#SceneCast QToolBar QToolButton:hover {
+#flipCustomize:hover {
   background-color: #494949;
   border-color: #494949;
   color: #f3f3f3;
@@ -36,8 +34,7 @@ QToolButton:pressed,
 #colorSliderAddButton:pressed,
 #colorSliderSubButton:pressed,
 #EditToolLockButton::indicator:pressed,
-#flipCustomize:pressed,
-#SceneCast QToolBar QToolButton:pressed {
+#flipCustomize:pressed {
   background-color: #040404;
   border-color: #000000;
   color: #f3f3f3;
@@ -48,8 +45,7 @@ QToolButton:checked,
 #CameraSettingsRadioButton::indicator:checked,
 #ForceSquaredPixelButton:checked,
 #EditToolLockButton::indicator:checked,
-#flipCustomize:checked,
-#SceneCast QToolBar QToolButton:checked {
+#flipCustomize:checked {
   background-color: #5385a6;
   border-color: #5385a6;
   color: #ffffff;
@@ -60,8 +56,7 @@ QToolButton:checked:hover,
 #CameraSettingsRadioButton::indicator:checked:hover,
 #ForceSquaredPixelButton:checked:hover,
 #EditToolLockButton::indicator:checked:hover,
-#flipCustomize:checked:hover,
-#SceneCast QToolBar QToolButton:checked:hover {
+#flipCustomize:checked:hover {
   background-color: #6c98b6;
   border-color: #6c98b6;
 }
@@ -71,8 +66,7 @@ QToolButton:disabled,
 #CameraSettingsRadioButton::indicator:disabled,
 #ForceSquaredPixelButton:disabled,
 #EditToolLockButton::indicator:disabled,
-#flipCustomize:disabled,
-#SceneCast QToolBar QToolButton:disabled {
+#flipCustomize:disabled {
   color: rgba(230, 230, 230, 0.4);
 }
 .button-tool:disabled:checked,
@@ -81,8 +75,7 @@ QToolButton:disabled:checked,
 #CameraSettingsRadioButton::indicator:disabled:checked,
 #ForceSquaredPixelButton:disabled:checked,
 #EditToolLockButton::indicator:disabled:checked,
-#flipCustomize:disabled:checked,
-#SceneCast QToolBar QToolButton:disabled:checked {
+#flipCustomize:disabled:checked {
   background-color: rgba(83, 133, 166, 0.4);
   border-color: rgba(83, 133, 166, 0.4);
 }
@@ -316,7 +309,7 @@ QMenu {
 }
 QMenu::item {
   border: 0;
-  padding: 3 28;
+  padding: 3 28 3 40;
 }
 QMenu::item:selected {
   background-color: #5385a6;
@@ -345,7 +338,7 @@ QMenu::separator {
 QMenu::icon {
   border-radius: 2;
   position: absolute;
-  left: 5;
+  left: 7;
   padding: 0;
   margin: 0;
   qproperty-icon: url('../Medium/imgs/white/none');
@@ -355,7 +348,7 @@ QMenu::icon:checked {
   border: 1 solid #5385a6;
 }
 QMenu::indicator {
-  margin-left: 7;
+  margin-left: 8;
 }
 /* -----------------------------------------------------------------------------
    Titlebars
@@ -714,24 +707,30 @@ QTreeView::item:selected,
   background-color: #5385a6;
   color: #ffffff;
 }
+.treeview::branch,
+QTreeWidget::branch,
+QTreeView::branch,
+#FunctionEditorTree::branch {
+  /* A blank URL may not hide the Qt branch style in Linux, so we add
+       a transparent PNG which does. */
+}
 .treeview::branch:adjoins-item,
 QTreeWidget::branch:adjoins-item,
 QTreeView::branch:adjoins-item,
 #FunctionEditorTree::branch:adjoins-item {
-  /* blank URL hides default Qt branch icons where it is not wanted */
-  border-image: url('');
+  border-image: url('../Medium/imgs/white/transparent_16x16.png');
 }
 .treeview::branch:has-siblings,
 QTreeWidget::branch:has-siblings,
 QTreeView::branch:has-siblings,
 #FunctionEditorTree::branch:has-siblings {
-  border-image: url('');
+  border-image: url('../Medium/imgs/white/transparent_16x16.png');
 }
 .treeview::branch:has-siblings:adjoins-item,
 QTreeWidget::branch:has-siblings:adjoins-item,
 QTreeView::branch:has-siblings:adjoins-item,
 #FunctionEditorTree::branch:has-siblings:adjoins-item {
-  border-image: url('');
+  border-image: url('../Medium/imgs/white/transparent_16x16.png');
 }
 .treeview::branch:has-children:closed,
 QTreeWidget::branch:has-children:closed,
@@ -1015,7 +1014,6 @@ QCheckBox:disabled {
 }
 .CheckBox::indicator,
 QMenu::indicator:non-exclusive,
-QMenu::indicator:non-exclusive,
 QCheckBox::indicator,
 .GroupBox::indicator,
 QGroupBox::indicator {
@@ -1030,13 +1028,10 @@ QGroupBox::indicator {
 }
 .CheckBox::indicator:hover,
 QMenu::indicator:non-exclusive:hover,
-QMenu::indicator:non-exclusive:hover,
 .CheckBox::indicator:checked:hover,
 .CheckBox::indicator:indeterminate:hover,
 QCheckBox::indicator:hover,
 .GroupBox::indicator:hover,
-QMenu::indicator:non-exclusive:checked:hover,
-QMenu::indicator:non-exclusive:indeterminate:hover,
 QMenu::indicator:non-exclusive:checked:hover,
 QMenu::indicator:non-exclusive:indeterminate:hover,
 QCheckBox::indicator:checked:hover,
@@ -1051,7 +1046,6 @@ QGroupBox::indicator:indeterminate:hover {
 }
 .CheckBox::indicator:checked,
 QMenu::indicator:non-exclusive:checked,
-QMenu::indicator:non-exclusive:checked,
 QCheckBox::indicator:checked,
 .GroupBox::indicator:checked,
 QGroupBox::indicator:checked {
@@ -1061,7 +1055,6 @@ QGroupBox::indicator:checked {
 }
 .CheckBox::indicator:checked:hover,
 QMenu::indicator:non-exclusive:checked:hover,
-QMenu::indicator:non-exclusive:checked:hover,
 QCheckBox::indicator:checked:hover,
 .GroupBox::indicator:checked:hover,
 QGroupBox::indicator:checked:hover {
@@ -1069,7 +1062,6 @@ QGroupBox::indicator:checked:hover {
   border-color: #d3d3d3;
 }
 .CheckBox::indicator:checked:disabled,
-QMenu::indicator:non-exclusive:checked:disabled,
 QMenu::indicator:non-exclusive:checked:disabled,
 QCheckBox::indicator:checked:disabled,
 .GroupBox::indicator:checked:disabled,
@@ -1080,7 +1072,6 @@ QGroupBox::indicator:checked:disabled {
 }
 .CheckBox::indicator:indeterminate,
 QMenu::indicator:non-exclusive:indeterminate,
-QMenu::indicator:non-exclusive:indeterminate,
 QCheckBox::indicator:indeterminate,
 .GroupBox::indicator:indeterminate,
 QGroupBox::indicator:indeterminate {
@@ -1090,7 +1081,6 @@ QGroupBox::indicator:indeterminate {
 }
 .CheckBox::indicator:indeterminate:disabled,
 QMenu::indicator:non-exclusive:indeterminate:disabled,
-QMenu::indicator:non-exclusive:indeterminate:disabled,
 QCheckBox::indicator:indeterminate:disabled,
 .GroupBox::indicator:indeterminate:disabled,
 QGroupBox::indicator:indeterminate:disabled {
@@ -1099,7 +1089,6 @@ QGroupBox::indicator:indeterminate:disabled {
   image: url('../Medium/imgs/white/checkpartially_disabled.svg');
 }
 .CheckBox::indicator:disabled,
-QMenu::indicator:non-exclusive:disabled,
 QMenu::indicator:non-exclusive:disabled,
 QCheckBox::indicator:disabled,
 .GroupBox::indicator:disabled,
@@ -1130,7 +1119,6 @@ QRadioButton:disabled {
 }
 .RadioButton::indicator,
 QMenu::indicator:exclusive,
-QMenu::indicator:exclusive,
 QRadioButton::indicator,
 #CameraSettingsRadioButton_Small::indicator {
   width: 13;
@@ -1141,13 +1129,11 @@ QRadioButton::indicator,
 }
 .RadioButton::indicator:unchecked,
 QMenu::indicator:exclusive:unchecked,
-QMenu::indicator:exclusive:unchecked,
 QRadioButton::indicator:unchecked,
 #CameraSettingsRadioButton_Small::indicator:unchecked {
   image: url('../Medium/imgs/white/radiobutton-dark_unchecked.svg');
 }
 .RadioButton::indicator:unchecked:hover,
-QMenu::indicator:exclusive:unchecked:hover,
 QMenu::indicator:exclusive:unchecked:hover,
 QRadioButton::indicator:unchecked:hover,
 #CameraSettingsRadioButton_Small::indicator:unchecked:hover {
@@ -1155,13 +1141,11 @@ QRadioButton::indicator:unchecked:hover,
 }
 .RadioButton::indicator:checked,
 QMenu::indicator:exclusive:checked,
-QMenu::indicator:exclusive:checked,
 QRadioButton::indicator:checked,
 #CameraSettingsRadioButton_Small::indicator:checked {
   image: url('../Medium/imgs/white/radiobutton_checked.svg');
 }
 .RadioButton::indicator:checked:disabled,
-QMenu::indicator:exclusive:checked:disabled,
 QMenu::indicator:exclusive:checked:disabled,
 QRadioButton::indicator:checked:disabled,
 #CameraSettingsRadioButton_Small::indicator:checked:disabled {
@@ -1169,7 +1153,6 @@ QRadioButton::indicator:checked:disabled,
   image: url('../Medium/imgs/white/radiobutton_checked_disabled.svg');
 }
 .RadioButton::indicator:disabled,
-QMenu::indicator:exclusive:disabled,
 QMenu::indicator:exclusive:disabled,
 QRadioButton::indicator:disabled,
 #CameraSettingsRadioButton_Small::indicator:disabled {
@@ -1293,20 +1276,16 @@ DvItemViewerTitleBar {
   qproperty-ColTextColor: #e6e6e6;
   qproperty-ColBorderColor: #060606;
 }
-#FileBrowser,
-#SceneCast {
+#FileBrowser {
   background-color: #202020;
 }
-#FileBrowser QLabel,
-#SceneCast QLabel {
+#FileBrowser QLabel {
   background-color: transparent;
 }
-#FileBrowser QToolBar,
-#SceneCast QToolBar {
+#FileBrowser QToolBar {
   background-color: #202020;
 }
-#FileBrowser #castFrame,
-#SceneCast #castFrame {
+#FileBrowser #castFrame {
   border-top: 1 solid #060606;
   border-right: 1 solid #060606;
   border-bottom: 1 solid #060606;
@@ -1708,7 +1687,7 @@ SchematicViewer {
   qproperty-FullcolorColumnColor: #527097;
   qproperty-FxColumnColor: #8a674b;
   qproperty-PaletteColumnColor: #42756e;
-  qproperty-MeshColumnColor: #5e4d72;
+  qproperty-MeshColumnColor: #594d75;
   qproperty-ReferenceColumnColor: #2d2d2d;
   qproperty-TableColor: #62628c;
   qproperty-ActiveCameraColor: #4073a3;
@@ -2250,9 +2229,9 @@ XsheetViewer {
   qproperty-PaletteColumnColor: #42756e;
   qproperty-PaletteColumnBorderColor: #30544f;
   qproperty-SelectedPaletteColumnColor: #508b8c;
-  qproperty-MeshColumnColor: #5e4d72;
-  qproperty-MeshColumnBorderColor: #453854;
-  qproperty-SelectedMeshColumnColor: #6a6690;
+  qproperty-MeshColumnColor: #594d75;
+  qproperty-MeshColumnBorderColor: #423956;
+  qproperty-SelectedMeshColumnColor: #656692;
   qproperty-SoundTextColumnColor: #a7a7a7;
   qproperty-SoundTextColumnBorderColor: #8e8e8e;
   qproperty-SelectedSoundTextColumnColor: #adb9c0;

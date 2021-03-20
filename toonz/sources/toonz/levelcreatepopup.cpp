@@ -275,8 +275,8 @@ LevelCreatePopup::LevelCreatePopup()
   bool ret = true;
   ret      = ret && connect(m_levelTypeOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onLevelTypeChanged(int)));
-  ret = ret && connect(okBtn, SIGNAL(clicked()), this, SLOT(onOkBtn()));
-  ret = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+  ret      = ret && connect(okBtn, SIGNAL(clicked()), this, SLOT(onOkBtn()));
+  ret      = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
   ret =
       ret && connect(applyBtn, SIGNAL(clicked()), this, SLOT(onApplyButton()));
 
@@ -525,23 +525,6 @@ bool LevelCreatePopup::apply() {
     }
   }
 
-  TXshLevel *level =
-      scene->createNewLevel(lType, levelName, TDimension(), 0, fp);
-  TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
-  assert(sl);
-  //  sl->setPath(fp, true);
-  if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
-    sl->getProperties()->setDpiPolicy(LevelProperties::DP_ImageDpi);
-    sl->getProperties()->setDpi(dpi);
-    sl->getProperties()->setImageDpi(TPointD(dpi, dpi));
-    sl->getProperties()->setImageRes(TDimension(xres, yres));
-  }
-  if (lType == TZP_XSHLEVEL || lType == PLI_XSHLEVEL) {
-    TPalette *defaultPalette =
-        TApp::instance()->getPaletteController()->getDefaultPalette(lType);
-    if (defaultPalette) sl->setPalette(defaultPalette->clone());
-  }
-
   /*-- これからLevelを配置しようとしているセルが空いているかどうかのチェック
    * --*/
   bool areColumnsShifted = false;
@@ -573,6 +556,23 @@ bool LevelCreatePopup::apply() {
   CreateLevelUndo *undo =
       new CreateLevelUndo(row, col, numFrames, step, areColumnsShifted);
   TUndoManager::manager()->add(undo);
+
+  TXshLevel *level =
+      scene->createNewLevel(lType, levelName, TDimension(), 0, fp);
+  TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+  assert(sl);
+  //  sl->setPath(fp, true);
+  if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
+    sl->getProperties()->setDpiPolicy(LevelProperties::DP_ImageDpi);
+    sl->getProperties()->setDpi(dpi);
+    sl->getProperties()->setImageDpi(TPointD(dpi, dpi));
+    sl->getProperties()->setImageRes(TDimension(xres, yres));
+  }
+  if (lType == TZP_XSHLEVEL || lType == PLI_XSHLEVEL) {
+    TPalette *defaultPalette =
+      TApp::instance()->getPaletteController()->getDefaultPalette(lType);
+    if (defaultPalette) sl->setPalette(defaultPalette->clone());
+  }
 
   for (i = from; i <= to; i += inc) {
     TFrameId fid(i);

@@ -13,6 +13,7 @@
 #include "timestretchpopup.h"
 #include "tapp.h"
 #include "xsheetviewer.h"
+#include "levelcommand.h"
 
 // TnzTools includes
 #include "tools/toolutils.h"
@@ -1512,6 +1513,26 @@ public:
   //-----------------------------------------------------------------------------
 };
 
+//-----------------------------------------------------------------------------
+// obtain level set contained in the cellData
+// it is used for checking and updating the scene cast when pasting
+void getLevelSetFromData(const TCellData *cellData,
+                         std::set<TXshLevel *> &levelSet) {
+  for (int c = 0; c < cellData->getCellCount(); c++) {
+    TXshCell cell = cellData->getCell(c);
+    if (cell.isEmpty()) continue;
+    TXshLevelP tmpLevel = cell.m_level;
+    if (levelSet.count(tmpLevel.getPointer()) == 0) {
+      // gather levels in subxsheet
+      if (tmpLevel->getChildLevel()) {
+        TXsheet *childXsh = tmpLevel->getChildLevel()->getXsheet();
+        childXsh->getUsedLevels(levelSet);
+      }
+      levelSet.insert(tmpLevel.getPointer());
+    }
+  }
+}
+
 }  // namespace
 //-----------------------------------------------------------------------------
 
@@ -1886,8 +1907,16 @@ void TCellSelection::pasteCells() {
                                 (newCr0 == r0 && newCr1 == r1));
     }
     if (!isPaste) return;
+
     initUndo = true;
     TUndoManager::manager()->beginBlock();
+
+    // make sure that the pasting levels are registered in the scene cast
+    // it may rename the level if there is another level with the same name
+    std::set<TXshLevel *> pastedLevels;
+    getLevelSetFromData(cellData, pastedLevels);
+    LevelCmd::addMissingLevelsToCast(pastedLevels);
+
     TUndoManager::manager()->add(new PasteCellsUndo(
         r0, c0, r1, c1, oldR0, oldC0, oldR1, oldC1, areColumnsEmpty));
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -2489,6 +2518,12 @@ void TCellSelection::pasteDuplicateCells() {
       }
       return;
     }
+ 
+    // make sure that the pasting levels are registered in the scene cast
+    // it may rename the level if there is another level with the same name
+    std::set<TXshLevel *> pastedLevels;
+    getLevelSetFromData(newCellData, pastedLevels);
+    LevelCmd::addMissingLevelsToCast(pastedLevels);
 
     TUndoManager::manager()->add(new PasteCellsUndo(
         r0, c0, r1, c1, oldR0, oldC0, oldR1, oldC1, areColumnsEmpty));
@@ -3353,10 +3388,19 @@ void TCellSelection::overWritePasteCells() {
       areColumnsEmpty.push_back(!column || column->isEmpty() ||
                                 (newCr0 == r0 && newCr1 == r1));
     }
+    TUndoManager::manager()->beginBlock();
+
+    // make sure that the pasting levels are registered in the scene cast
+    // it may rename the level if there is another level with the same name
+    std::set<TXshLevel *> pastedLevels;
+    getLevelSetFromData(cellData, pastedLevels);
+    LevelCmd::addMissingLevelsToCast(pastedLevels);
+
     /*-- r0,c0,r1,c1はペーストされた範囲　old付きはペースト前の選択範囲 --*/
     TUndoManager::manager()->add(
         new OverwritePasteCellsUndo(r0, c0, r1, c1, oldR0, oldC0, oldR1, oldC1,
                                     areColumnsEmpty, beforeData));
+    TUndoManager::manager()->endBlock();
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 
     delete beforeData;
