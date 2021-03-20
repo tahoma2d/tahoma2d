@@ -2741,6 +2741,19 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
         DVGui::warning(QObject::tr("The current level is not editable"));
       return;
     }
+
+    // Do not duplicate frames on Single Frame levels
+    if (level->getSimpleLevel()) {
+      std::vector<TFrameId> fids;
+      level->getSimpleLevel()->getFids(fids);
+      if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                               fids[0].getNumber() == TFrameId::NO_FRAME)) {
+        if (!multiple)
+          DVGui::warning(QObject::tr(
+              "Unable to create a blank drawing on a Single Frame level"));
+        return;
+      }
+    }
   }
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
@@ -2901,6 +2914,19 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   TXshSimpleLevel *sl = prevCell.getSimpleLevel();
   if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
+
+  // Do not duplicate frames on Single Frame levels
+  if (sl) {
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+    if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                             fids[0].getNumber() == TFrameId::NO_FRAME)) {
+      if (!multiple)
+        DVGui::warning(QObject::tr(
+            "Unable to duplicate a drawing on a Single Frame level"));
+      return;
+    }
+  }
 
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
 

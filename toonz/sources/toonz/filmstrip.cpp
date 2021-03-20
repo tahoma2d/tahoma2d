@@ -850,6 +850,18 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
   TFrameId fid = index2fid(index);
 
   TXshSimpleLevel *sl = getLevel();
+
+  // If accessed after 1st frame on a Single Frame level
+  // Block movement so we can't create new images
+  if (index > 0) {
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+    if (fids.empty() ||
+        (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                              fids[0].getNumber() == TFrameId::NO_FRAME)))
+      return;
+  }
+
   int frameHeight = m_iconSize.height() + fs_frameSpacing + fs_iconMarginTop +
                     fs_iconMarginBottom;
   int frameWidth = m_iconSize.width() + fs_frameSpacing + fs_iconMarginLR +
@@ -1130,6 +1142,11 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
   std::vector<TFrameId> fids;
   level->getFids(fids);
   if (fids.empty()) return;
+  // Do not allow movement on Single Frame levels
+  if (fids.empty() ||
+      (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                            fids[0].getNumber() == TFrameId::NO_FRAME)))
+    return;
 
   // If on a level frame pass the frame id after the last frame to allow
   // creating a new frame with the down arrow key
