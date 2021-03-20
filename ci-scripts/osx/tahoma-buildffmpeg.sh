@@ -26,8 +26,9 @@ cd ../..
 
 echo ">>> Cloning ffmpeg"
 git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+cp -R ffmpeg ffmpeg_shared
 
-cd ffmpeg
+cd ffmpeg_shared
 echo "*" >| .gitignore
 
 echo ">>> Configuring to build ffmpeg (shared)"
@@ -73,7 +74,8 @@ echo ">>> Installing ffmpeg (shared)"
 sudo make install
 
 echo ">>> Configuring to build ffmpeg (static)"
-make clean
+cd ../ffmpeg
+echo "*" >| .gitignore
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 export SDKROOT=`xcrun --show-sdk-path`

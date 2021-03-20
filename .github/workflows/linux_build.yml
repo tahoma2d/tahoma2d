@@ -7,24 +7,52 @@ jobs:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
-        compiler: [ clang ]
+        compiler: [ gcc, clang ]
         include:
+          - compiler: gcc
+            cc: gcc
+            cxx: g++
           - compiler: clang
             cc: clang
             cxx: clang++
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: bash ./ci-scripts/linux/tahoma-install.sh
+        run: |
+          ci-scripts/linux/tahoma-install.sh
+          sudo apt-get install ccache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/.ccache
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg_shared
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.compiler }}-
+            ${{ runner.os }}-
       - name: Build ffmpeg
-        run: bash ./ci-scripts/linux/tahoma-buildffmpeg.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildffmpeg.sh
       - name: Build OpenCV
-        run: bash ./ci-scripts/linux/tahoma-buildopencv.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildopencv.sh
       - name: Build Tahoma2D
-        run: bash ./ci-scripts/linux/tahoma-build.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-build.sh
       - name: Create Package
-        run: bash ./ci-scripts/linux/tahoma-buildpkg.sh
+        run: |
+          ci-scripts/linux/tahoma-buildpkg.sh
+          mv toonz/build/Tahoma2D-linux.tar.gz toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
       - uses: actions/upload-artifact@v1
         with:
-          name: Tahoma2D-linux.tar.gz
-          path: toonz/build/Tahoma2D-linux.tar.gz
+          name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz

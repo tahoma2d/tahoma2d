@@ -16,14 +16,17 @@ cd ..
 
 echo ">>> Cloning ffmpeg"
 git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+cp -R ffmpeg ffmpeg_shared
 
-cd ffmpeg
+cd ffmpeg_shared
 echo "*" >| .gitignore
 
 echo ">>> Configuring to build ffmpeg (shared)"
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
+      --cc="$CC" \
+      --cxx="$CXX" \
       --toolchain=hardened \
       --pkg-config-flags="--static" \
       --extra-cflags="-I/usr/local/include" \
@@ -64,10 +67,14 @@ sudo make install
 sudo ldconfig
 
 echo ">>> Configuring to build ffmpeg (static)"
+cd ../ffmpeg
+echo "*" >| .gitignore
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
+      --cc="$CC" \
+      --cxx="$CXX" \
       --pkg-config-flags="--static" \
       --extra-cflags="-I/usr/local/include -static" \
       --extra-ldflags="-L/usr/local/lib -static" \
