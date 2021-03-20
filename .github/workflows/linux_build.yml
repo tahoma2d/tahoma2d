@@ -25,7 +25,7 @@ jobs:
         with:
           path: |
             /home/runner/.ccache
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/aom
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
             /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
             /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg_shared
             /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
