@@ -783,21 +783,21 @@ void FilmstripFrames::drawFrameIcon(QPainter &p, const QRect &r, int index,
         p.setPen(Qt::black);
         p.drawLine(x0 - 1, y0, x0 - 1, y1);
 
-        QPixmap inbetweenPixmap(
-            svgToPixmap(":Resources/filmstrip_inbetween.svg"));
+          QRectF txtRect(y0 + 1, -x1, y1 - y0 - 1, x1 - x0 + 1);
+                 QFontMetricsF tmpFm(p.font());
+                 QRectF bbox = tmpFm.boundingRect(
+                     txtRect, Qt::AlignBottom | Qt::AlignHCenter, tr("INBETWEEN"));
+                 double ratio = std::min(1.0, txtRect.width() / bbox.width());
 
-        if (r.height() - 6 < inbetweenPixmap.height()) {
-          QSize rectSize(inbetweenPixmap.size());
-          rectSize.setHeight(r.height() - 6);
-          inbetweenPixmap = inbetweenPixmap.scaled(
-              rectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        }
-
-        p.drawPixmap(
-            x0 + 2,
-            y1 - inbetweenPixmap.height() / inbetweenPixmap.devicePixelRatio() -
-                3,
-            inbetweenPixmap);
+                 p.save();
+                 p.setRenderHint(QPainter::TextAntialiasing);
+                 p.rotate(90.0);
+                 p.scale(ratio, 1.0);
+                 p.drawText(QRectF(txtRect.left() / ratio, txtRect.top(),
+                                   txtRect.width() / ratio, txtRect.height()),
+                            tr("INBETWEEN"),
+                            QTextOption(Qt::AlignBottom | Qt::AlignHCenter));
+                 p.restore();
       } else {
         int x1 = r.right();
         int x0 = r.left();
