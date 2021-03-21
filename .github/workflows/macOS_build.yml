@@ -34,6 +34,9 @@ jobs:
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           ci-scripts/osx/tahoma-build.sh
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/osx/tahoma-get3rdpartyapps.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1
