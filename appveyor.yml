@@ -64,9 +64,11 @@ after_build:
     
     7z x ffmpeg-4.3.1-win64-static-lgpl.zip
     
-    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffmpeg.exe %CONFIGURATION%\Tahoma2D
+    mkdir %CONFIGURATION%\Tahoma2D\ffmpeg
+
+    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffmpeg.exe %CONFIGURATION%\Tahoma2D\ffmpeg
     
-    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffprobe.exe %CONFIGURATION%\Tahoma2D
+    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffprobe.exe %CONFIGURATION%\Tahoma2D\ffmpeg
 
     curl -fsSL -o rhubarb-lip-sync-tahoma2d-win.zip https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.2/rhubarb-lip-sync-tahoma2d-win.zip
     
