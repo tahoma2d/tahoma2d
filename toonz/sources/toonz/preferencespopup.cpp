@@ -1042,9 +1042,11 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {defaultProjectPath, tr("Default Project Path:")},
 
       // Import / Export
-      {ffmpegPath, tr("FFmpeg Path:")},
-      {ffmpegTimeout, tr("FFmpeg Timeout:")},
-      {fastRenderPath, tr("Fast Render Path:")},
+      {ffmpegPath, tr("Executable Directory:")},
+      {ffmpegTimeout, tr("Import/Export Timeout (seconds):")},
+      {fastRenderPath, tr("Fast Render Output Directory:")},
+      {rhubarbPath, tr("Executable Directory:")},
+      {rhubarbTimeout, tr("Analyze Audio Timeout (seconds):")},
 
       // Drawing
       {scanLevelType, tr("Scan File Format:")},
@@ -1269,9 +1271,9 @@ PreferencesPopup::PreferencesPopup()
   m_categoryList = new QListWidget(this);
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
-             << tr("Loading") << tr("Saving") << tr("Import/Export")
-             << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
-             << tr("Preview") << tr("Onion Skin") << tr("Colors")
+             << tr("Loading") << tr("Saving") << tr("Drawing") << tr("Tools")
+             << tr("Scene") << tr("Animation") << tr("Preview")
+             << tr("Onion Skin") << tr("Colors") << tr("3rd Party Apps")
              << tr("Version Control") << tr("Touch/Tablet Settings");
   m_categoryList->addItems(categories);
   m_categoryList->setFixedWidth(160);
@@ -1284,7 +1286,6 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createVisualizationPage());
   m_stackedWidget->addWidget(createLoadingPage());
   m_stackedWidget->addWidget(createSavingPage());
-  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createDrawingPage());
   m_stackedWidget->addWidget(createToolsPage());
   m_stackedWidget->addWidget(createXsheetPage());
@@ -1292,6 +1293,7 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createPreviewPage());
   m_stackedWidget->addWidget(createOnionSkinPage());
   m_stackedWidget->addWidget(createColorsPage());
+  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createVersionControlPage());
   m_stackedWidget->addWidget(createTouchTabletPage());
   // createImportPrefsPage() must always be last
@@ -1603,6 +1605,8 @@ QWidget* PreferencesPopup::createSavingPage() {
   insertUI(resetUndoOnSavingLevel, lay);
   insertUI(doNotShowPopupSaveScene, lay);
 
+  insertUI(fastRenderPath, lay);
+
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
   return widget;
@@ -1619,26 +1623,21 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
-
-  putLabel(
-      tr("Tahoma2D can use FFmpeg for additional file formats.\n") +
-          tr("FFmpeg is bundled with Tahoma2D,\n") +
-          tr("but you can provide the path to a different ffmpeg location."),
-      lay);
-  insertUI(ffmpegPath, lay);
-
-  putLabel(tr("Number of seconds to wait for FFmpeg to complete processing the "
-              "output:"),
+  putLabel(tr("External applications used by Tahoma2D.\nThese come bundled "
+              "with Tahoma2D, but you can set path to a different version."),
            lay);
-  putLabel(
-      tr("Note: FFmpeg begins working once all images have been processed."),
-      lay);
-  insertUI(ffmpegTimeout, lay);
 
-  putLabel(tr("Please indicate where you would like exports from Fast "
-              "Render (MP4) to go."),
-           lay);
-  insertUI(fastRenderPath, lay);
+  QGridLayout* ffmpegOptionsLay = insertGroupBox(tr("FFmpeg"), lay);
+  {
+    insertUI(ffmpegPath, ffmpegOptionsLay);
+    insertUI(ffmpegTimeout, ffmpegOptionsLay);
+  }
+
+  QGridLayout* rhubarbOptionsLay = insertGroupBox(tr("Rhubarb Lip Sync"), lay);
+  {
+    insertUI(rhubarbPath, rhubarbOptionsLay);
+    insertUI(rhubarbTimeout, rhubarbOptionsLay);
+  }
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
@@ -2134,7 +2133,8 @@ void PreferencesPopup::onImport() {
       DVGui::warning("Failed to process Settings.\nCould not find " +
                      srcDir.getQString());
     else {
-      QString origFfmpegPath = Preferences::instance()->getFfmpegPath();
+      QString origFfmpegPath  = Preferences::instance()->getFfmpegPath();
+      QString origRhubarbPath = Preferences::instance()->getRhubarbPath();
 
       QFileInfoList fil = QDir(toQString(srcDir)).entryInfoList();
       int i;
@@ -2155,6 +2155,7 @@ void PreferencesPopup::onImport() {
       // it to find it again otherwise it will point to old location
       Preferences::instance()->load();
       Preferences::instance()->setValue(ffmpegPath, origFfmpegPath);
+      Preferences::instance()->setValue(rhubarbPath, origRhubarbPath);
     }
 
     if (useLegacy) {

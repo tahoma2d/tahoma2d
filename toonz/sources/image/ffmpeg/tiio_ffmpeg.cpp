@@ -13,95 +13,88 @@
 #include "tmsgcore.h"
 
 Ffmpeg::Ffmpeg() {
-  m_ffmpegPath         = Preferences::instance()->getFfmpegPath();
-  m_ffmpegTimeout      = Preferences::instance()->getFfmpegTimeout() * 1000;
+  m_ffmpegPath    = Preferences::instance()->getFfmpegPath();
+  m_ffmpegTimeout = Preferences::instance()->getFfmpegTimeout();
+  if (m_ffmpegTimeout > 0)
+    m_ffmpegTimeout * 1000;
+  else
+    m_ffmpegTimeout    = -1;
   std::string strPath  = m_ffmpegPath.toStdString();
   m_intermediateFormat = "png";
 }
 Ffmpeg::~Ffmpeg() {}
 
 bool Ffmpeg::checkFfmpeg() {
-  // check the user defined path in preferences first
-  QString path = Preferences::instance()->getFfmpegPath() + "/ffmpeg";
+  QString exe = "ffmpeg";
 #if defined(_WIN32)
-  path = path + ".exe";
+  exe = exe + ".exe";
 #endif
+
+  // check the user defined path in preferences first
+  QString path = Preferences::instance()->getFfmpegPath() + "/" + exe;
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
 
-  // check the Tahoma root directory next
-  path = QDir::currentPath() + "/ffmpeg";
-#if defined(_WIN32)
-  path = path + ".exe";
-#endif
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
-    return true;
-  }
+  // Let's try and autodetect the exe included with release
+  QStringList folderList;
+
+  folderList.append(".");
+  folderList.append("./ffmpeg");  // ffmpeg folder
 
 #ifdef MACOSX
-  path = QDir::currentPath() + "/" +
-         QString::fromStdString(TEnv::getApplicationFileName()) +
-         ".app/ffmpeg/ffmpeg";
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(
-        ffmpegPath, QDir::currentPath() + "/" +
-                        QString::fromStdString(TEnv::getApplicationFileName()) +
-                        ".app/ffmpeg/");
-    return true;
-  }
+  // Look inside app
+  folderList.append("./" +
+                    QString::fromStdString(TEnv::getApplicationFileName()) +
+                    ".app/ffmpeg");  // ffmpeg folder
+#elif defined LINUX
+  // Need to account for symbolic links
+  folderList.append(TEnv::getWorkingDirectory().getQString() +
+                    "/ffmpeg");  // ffmpeg folder
 #endif
 
-#ifdef LINUX
-  QString currentPath = TEnv::getWorkingDirectory().getQString();
-  path                = currentPath + "/ffmpeg/ffmpeg";
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(ffmpegPath, currentPath + "/ffmpeg/");
+  QString exePath = TSystem::findFileLocation(folderList, exe);
+
+  if (!exePath.isEmpty()) {
+    Preferences::instance()->setValue(ffmpegPath, exePath);
     return true;
   }
-#endif
+
   // give up
   return false;
 }
 
 bool Ffmpeg::checkFfprobe() {
-  // check the user defined path in preferences first
-  QString path = Preferences::instance()->getFfmpegPath() + "/ffprobe";
+  QString exe = "ffprobe";
 #if defined(_WIN32)
-  path = path + ".exe";
+  exe = exe + ".exe";
 #endif
+
+  // check the user defined path in preferences first
+  QString path = Preferences::instance()->getFfmpegPath() + "/" + exe;
   if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
 
-  // check the Tahoma root directory next
-  path = QDir::currentPath() + "/ffprobe";
-#if defined(_WIN32)
-  path = path + ".exe";
-#endif
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(ffmpegPath, QDir::currentPath());
-    return true;
-  }
+  // Let's try and autodetect the exe included with release
+  QStringList folderList;
+
+  folderList.append(".");
+  folderList.append("./ffmpeg");  // ffmpeg folder
 
 #ifdef MACOSX
-  path = QDir::currentPath() + "/" +
-         QString::fromStdString(TEnv::getApplicationFileName()) +
-         ".app/ffmpeg/ffprobe";
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(
-        ffmpegPath, QDir::currentPath() + "/" +
-                        QString::fromStdString(TEnv::getApplicationFileName()) +
-                        ".app/ffmpeg/");
-    return true;
-  }
+  // Look inside app
+  folderList.append("./" +
+                    QString::fromStdString(TEnv::getApplicationFileName()) +
+                    ".app/ffmpeg");  // ffmpeg folder
+#elif defined LINUX
+  // Need to account for symbolic links
+  folderList.append(TEnv::getWorkingDirectory().getQString() +
+                    "/ffmpeg");  // ffmpeg folder
 #endif
 
-#ifdef LINUX
-  QString currentPath = TEnv::getWorkingDirectory().getQString();
-  path                = currentPath + "/ffmpeg/ffprobe";
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) {
-    Preferences::instance()->setValue(ffmpegPath, currentPath + "/ffmpeg/");
+  QString exePath = TSystem::findFileLocation(folderList, exe);
+
+  if (!exePath.isEmpty()) {
+    Preferences::instance()->setValue(ffmpegPath, exePath);
     return true;
   }
-#endif
 
   // give up
   return false;

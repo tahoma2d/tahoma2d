@@ -78,6 +78,7 @@ class LipSyncPopup final : public DVGui::Dialog {
   bool m_deleteFile = false;
   DVGui::ProgressDialog *m_progressDialog;
   QProcess *m_rhubarb;
+  QString m_rhubarbPath;
   QFrame *m_audioFrame;
   QFrame *m_dataFrame;
   QStackedWidget *m_stackedChooser;
@@ -93,7 +94,7 @@ protected:
   void refreshSoundLevels();
   void saveAudio();
   void runRhubarb();
-  QString findRhubarb();
+  bool checkRhubarb();
 
 public slots:
   void onApplyButton();

@@ -263,6 +263,8 @@ DVAPI TFilePath toLocalPath(const TFilePath &fp);
 
 DVAPI bool showDocument(const TFilePath &fp);
 
+DVAPI QString findFileLocation(QStringList folderList, QString fileName);
+
 #ifndef TNZCORE_LIGHT
 DVAPI QDateTime getFileTime(const TFilePath &path);
 DVAPI QString getHostName();

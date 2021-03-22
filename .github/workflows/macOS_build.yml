@@ -18,7 +18,6 @@ jobs:
             /Users/runner/.ccache
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
-            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg_shared
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}-
@@ -34,6 +33,9 @@ jobs:
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           ci-scripts/osx/tahoma-build.sh
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/osx/tahoma-get3rdpartyapps.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1
