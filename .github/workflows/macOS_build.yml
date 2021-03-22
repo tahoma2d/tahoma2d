@@ -18,7 +18,6 @@ jobs:
             /Users/runner/.ccache
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
-            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg_shared
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}-
