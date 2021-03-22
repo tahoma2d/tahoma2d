@@ -1,3 +1,4 @@
+#!/bin/bash
 cd thirdparty
 
 echo ">>> Cloning aom"
@@ -25,7 +26,7 @@ sudo make install
 cd ../..
 
 echo ">>> Cloning ffmpeg"
-git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+git clone https://github.com/tahoma2d/ffmpeg
 
 cd ffmpeg
 echo "*" >| .gitignore
