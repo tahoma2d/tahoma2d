@@ -4,16 +4,16 @@ For licenses of third party libraries exploited in this software, please see the
 
 Tahoma2D
 
-All contributions by Jeremy Bullock:
-Copyright (c) 2016 - 2020, Jeremy Bullock
+All contributions by John Dancel:
+Copyright (c) 2016 - 2021, John Dancel
 All rights reserved.
 
 All contributions by DWANGO:
-Copyright (c) 2016 - 2020, DWANGO Co., Ltd.
+Copyright (c) 2016 - 2021, DWANGO Co., Ltd.
 All rights reserved.
 
 All other contributions:
-Copyright (c) 2016 - 2020, the respective contributors.
+Copyright (c) 2016 - 2021, the respective contributors.
 All rights reserved.
 
 Each contributor holds copyright over their respective contributions.
