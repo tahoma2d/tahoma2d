@@ -1271,9 +1271,9 @@ PreferencesPopup::PreferencesPopup()
   m_categoryList = new QListWidget(this);
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
-             << tr("Loading") << tr("Saving") << tr("3rd Party Apps")
-             << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
-             << tr("Preview") << tr("Onion Skin") << tr("Colors")
+             << tr("Loading") << tr("Saving") << tr("Drawing") << tr("Tools")
+             << tr("Scene") << tr("Animation") << tr("Preview")
+             << tr("Onion Skin") << tr("Colors") << tr("3rd Party Apps")
              << tr("Version Control") << tr("Touch/Tablet Settings");
   m_categoryList->addItems(categories);
   m_categoryList->setFixedWidth(160);
@@ -1286,7 +1286,6 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createVisualizationPage());
   m_stackedWidget->addWidget(createLoadingPage());
   m_stackedWidget->addWidget(createSavingPage());
-  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createDrawingPage());
   m_stackedWidget->addWidget(createToolsPage());
   m_stackedWidget->addWidget(createXsheetPage());
@@ -1294,6 +1293,7 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createPreviewPage());
   m_stackedWidget->addWidget(createOnionSkinPage());
   m_stackedWidget->addWidget(createColorsPage());
+  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createVersionControlPage());
   m_stackedWidget->addWidget(createTouchTabletPage());
   // createImportPrefsPage() must always be last
