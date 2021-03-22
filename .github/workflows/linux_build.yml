@@ -48,6 +48,9 @@ jobs:
           export CC="ccache ${{ matrix.cc }}"
           export CXX="ccache ${{ matrix.cxx }}"
           ci-scripts/linux/tahoma-build.sh
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/linux/tahoma-get3rdpartyapps.sh
       - name: Create Package
         run: |
           ci-scripts/linux/tahoma-buildpkg.sh

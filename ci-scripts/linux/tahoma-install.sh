@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo add-apt-repository --yes ppa:beineri/opt-qt597-xenial
 sudo add-apt-repository --yes ppa:achadwick/mypaint-testing
 sudo apt-get update

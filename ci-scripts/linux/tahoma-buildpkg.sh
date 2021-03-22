@@ -35,24 +35,26 @@ mv appdir/usr/share/tahoma2d/stuff Tahoma2D/tahomastuff
 chmod -R 777 Tahoma2D/tahomastuff
 rmdir appdir/usr/share/tahoma2d
 
-if [ -d ../../thirdparty/ffmpeg/bin ]
+if [ -d ../../thirdparty/apps/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to Tahoma2D/ffmpeg"
    if [ -d Tahoma2D/ffmpeg ]
    then
       rm -rf Tahoma2D/ffmpeg
    fi
-   cp -R ../../thirdparty/ffmpeg/bin Tahoma2D/ffmpeg
+   mkdir -p Tahoma2D/ffmpeg
+   cp -R ../../thirdparty/apps/ffmpeg/bin/ffmpeg ../../thirdparty/apps/ffmpeg/bin/ffprobe Tahoma2D/ffmpeg
 fi
 
-if [ -d ../../thirdparty/rhubarb ]
+if [ -d ../../thirdparty/apps/rhubarb ]
 then
    echo ">>> Copying Rhubarb Lip Sync to Tahoma2D/rhubarb"
    if [ -d Tahoma2D/rhubarb ]
    then
       rm -rf Tahoma2D/rhubarb
    fi
-   cp -R ../../thirdparty/rhubarb Tahoma2D/rhubarb
+   mkdir -p Tahoma2D/rhubarb
+   cp -R ../../thirdparty/apps/rhubarb/rhubarb ../../thirdparty/apps/rhubarb/res Tahoma2D/rhubarb
 fi
 
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"

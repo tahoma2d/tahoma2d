@@ -1,7 +1,8 @@
+#!/bin/bash
 cd thirdparty
 
 echo ">>> Cloning opencv"
-git clone https://github.com/opencv/opencv.git
+git clone https://github.com/tahoma2d/opencv
 
 cd opencv
 echo "*" >| .gitignore
