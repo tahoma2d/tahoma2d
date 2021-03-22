@@ -1209,6 +1209,9 @@ void SceneViewer::onStopMotionLiveViewStopped() {
 void SceneViewer::onPreferenceChanged(const QString &prefName) {
   if (prefName == "ColorCalibration") {
     if (Preferences::instance()->isColorCalibrationEnabled()) {
+      // if the window is so shriked that the gl widget is empty,
+      // showEvent can be called before creating the context.
+      if (!context()) return;
       makeCurrent();
       if (!m_lutCalibrator)
         m_lutCalibrator = new LutCalibrator();
@@ -3555,6 +3558,8 @@ void SceneViewer::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+  disconnect(context(), SIGNAL(aboutToBeDestroyed()), this,
+             SLOT(onContextAboutToBeDestroyed()));
 }
 
 //-----------------------------------------------------------------------------
