@@ -16,6 +16,8 @@
 #include "comboviewerpane.h"
 #include "locatorpopup.h"
 #include "cellselection.h"
+#include "styleshortcutswitchablepanel.h"
+
 #include "stopmotion.h"
 #include "tstopwatch.h"
 
@@ -1634,6 +1636,15 @@ void SceneViewer::keyPressEvent(QKeyEvent *event) {
            event->modifiers() == Qt::KeypadModifier) &&
           ((Qt::Key_0 <= key && key <= Qt::Key_9) || key == Qt::Key_Tab ||
            key == Qt::Key_Backtab)) {
+        // When the viewer is in full screen mode, directly call the style
+        // shortcut function since the viewer is retrieved from the parent
+        // panel.
+        if (parentWidget() &&
+            parentWidget()->windowState() & Qt::WindowFullScreen) {
+          StyleShortcutSwitchablePanel::onKeyPress(event);
+          return true;
+        }
+
         event->ignore();
         return true;
       }
