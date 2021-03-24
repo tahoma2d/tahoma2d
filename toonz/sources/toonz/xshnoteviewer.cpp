@@ -474,15 +474,12 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_layerHeaderPanel       = new LayerHeaderPanel(m_viewer, this);
 
   //-----
-
+  //
   // m_flipOrientationButton->setObjectName("flipOrientationButton");
   // m_flipOrientationButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
   // m_flipOrientationButton->setFixedSize(QSize(70, 23));
-  // m_flipOrientationButton->setIconSize(QSize(40, 20));
-  // QIcon flipOrientationIcon;
-  // flipOrientationIcon.addFile(QString(":Resources/xsheet2timeline.svg"),
-  //                            QSize(), QIcon::Normal);
-  // m_flipOrientationButton->setIcon(flipOrientationIcon);
+  // m_flipOrientationButton->setIconSize(QSize(20, 20));
+  // m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
   // m_flipOrientationButton->setToolTip(tr("Toggle Xsheet/Timeline"));
 
   m_newLevelButton->setObjectName("ToolbarToolButton");
@@ -646,12 +643,8 @@ void NoteArea::updateButtons() {
 void NoteArea::onXsheetOrientationChanged(const Orientation *newOrientation) {
   //  m_flipOrientationButton->setText(newOrientation->caption());
 
-  // QIcon flipOrientationIcon;
-  // QString iconFile          = newOrientation->isVerticalTimeline()
-  //                       ? QString(":Resources/xsheet2timeline.svg")
-  //                       : QString(":Resources/timeline2xsheet.svg");
-  // flipOrientationIcon.addFile(iconFile, QSize(), QIcon::Normal);
-  // m_flipOrientationButton->setIcon(flipOrientationIcon);
+  // m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
+  // m_flipOrientationButton->setIconSize(QSize(20, 20));
 
   removeLayout();
   createLayout();
