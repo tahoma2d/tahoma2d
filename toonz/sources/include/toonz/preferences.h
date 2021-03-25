@@ -483,7 +483,10 @@ public:
 
   // Tablet tab
   bool isWinInkEnabled() const { return getBoolValue(winInkEnabled); }
-
+  bool isQtNativeWinInkEnabled() const {
+    return getBoolValue(useQtNativeWinInk);
+  }
+ 
   // Others (not appeared in the popup)
   // Shortcut popup settings
   QString getShortcutPreset() { return getStringValue(shortcutPreset); }
