@@ -585,7 +585,8 @@ centralWidget->setLayout(centralWidgetLayout);*/
 
   setCommandHandler(MI_About, this, &MainWindow::onAbout);
   setCommandHandler(MI_OpenOnlineManual, this, &MainWindow::onOpenOnlineManual);
-  setCommandHandler(MI_SupportTahoma2D, this, &MainWindow::onSupportTahoma2D);
+  //  setCommandHandler(MI_SupportTahoma2D, this,
+  //  &MainWindow::onSupportTahoma2D);
   setCommandHandler(MI_OpenWhatsNew, this, &MainWindow::onOpenWhatsNew);
   setCommandHandler(MI_OpenCommunityForum, this,
                     &MainWindow::onOpenCommunityForum);
@@ -1165,15 +1166,15 @@ void MainWindow::onOpenOnlineManual() {
 
 //-----------------------------------------------------------------------------
 
-void MainWindow::onSupportTahoma2D() {
-  QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
-}
+// void MainWindow::onSupportTahoma2D() {
+//  QDesktopServices::openUrl(QUrl("http://patreon.com/jeremybullock"));
+//}
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onOpenWhatsNew() {
   QDesktopServices::openUrl(
-      QUrl(tr("https://tahoma.readthedocs.io/en/latest/whats_new.html")));
+      QUrl(tr("https://tahoma2d.readthedocs.io/en/latest/whats_new.html")));
 }
 
 //-----------------------------------------------------------------------------
@@ -2385,8 +2386,9 @@ void MainWindow::defineActions() {
   createMenuHelpAction(MI_OpenReportABug, QT_TR_NOOP("&Report a Bug..."), "",
                        "web");
   createMenuHelpAction(MI_About, QT_TR_NOOP("&About Tahoma2D..."), "", "info");
-  createMenuHelpAction(MI_SupportTahoma2D, QT_TR_NOOP("&Support Tahoma2D..."), "",
-                       "web");
+  //  createMenuHelpAction(MI_SupportTahoma2D, QT_TR_NOOP("&Support
+  //  Tahoma2D..."), "",
+  //                       "web");
 
   // Fill
 

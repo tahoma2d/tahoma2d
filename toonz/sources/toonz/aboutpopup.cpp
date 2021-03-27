@@ -86,20 +86,23 @@ AboutPopup::AboutPopup(QWidget* parent)
   mainLayout->addWidget(
       new QLabel(tr("Tahoma2D is made possible with the help of "
                     "patrons.\nSpecial thanks to:")));
-  mainLayout->addWidget(new QLabel("Rodney Baker"));
-  mainLayout->addWidget(new QLabel("Hans Jacob Wagner"));
-  mainLayout->addWidget(new QLabel("Pierre Coffin"));
-  mainLayout->addWidget(new QLabel("Adam Earle"));
+  QLabel* patrons = new QLabel(
+      "<i>Rodney Baker, Hans Jacob Wagner, Pierre Coffin, Adam Earle</i>");
+  patrons->setTextFormat(Qt::TextFormat::RichText);
+  mainLayout->addWidget(patrons);
   mainLayout->addWidget(new QLabel("  "));
 
-  AboutClickableLabel* supportLink = new AboutClickableLabel(this);
-  supportLink->setText(tr("Please consider supporting Tahoma2D on Patreon."));
-  connect(supportLink, &AboutClickableLabel::clicked, [=]() {
-    QDesktopServices::openUrl(QUrl("https://patreon.com/jeremybullock"));
-    ;
-  });
-  supportLink->setToolTip("https://patreon.com/jeremybullock");
-  mainLayout->addWidget(supportLink);
+  //  AboutClickableLabel* supportLink = new AboutClickableLabel(this);
+  //  supportLink->setText(tr("Please consider supporting Tahoma2D on
+  //  Patreon."));
+  //  connect(supportLink, &AboutClickableLabel::clicked, [=]() {
+  //    QDesktopServices::openUrl(QUrl("https://patreon.com/jeremybullock"));
+  //    ;
+  //  });
+  //  supportLink->setToolTip("https://patreon.com/jeremybullock");
+  //  mainLayout->addWidget(supportLink);
+  mainLayout->addWidget(new QLabel(
+      tr("Please consider sponsoring Tahoma2D developers on GitHub.")));
   mainLayout->addStretch();
 
   QFrame* mainFrame = new QFrame(this);
