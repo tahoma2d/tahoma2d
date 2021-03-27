@@ -1032,19 +1032,23 @@ public:
     }
   }
 
+  bool preLeftButtonDown() override {
+    if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
+
+    if (!getApplication()->getCurrentObject()->isSpline())
+      // NEEDS to be done even if(m_active), due
+      // to the HORRIBLE m_frameCreated / m_levelCreated
+      // mechanism. touchImage() is the ONLY function
+      // resetting them to false...                       >_<
+      m_active = !!touchImage();
+    return true;
+  }
+
   void leftButtonDown(const TPointD &p, const TMouseEvent &e) override {
     if (getViewer() && getViewer()->getGuidedStrokePickerMode()) {
       getViewer()->doPickGuideStroke(p);
       return;
     }
-
-    /* m_active = getApplication()->getCurrentObject()->isSpline() ||
-   (bool) getImage(true);*/
-    if (!getApplication()->getCurrentObject()->isSpline())
-      m_active = touchImage();  // NEEDS to be done even if(m_active), due
-    if (!m_active)  // to the HORRIBLE m_frameCreated / m_levelCreated
-      return;       // mechanism. touchImage() is the ONLY function
-    // resetting them to false...                       >_<
     if (m_primitive) m_primitive->leftButtonDown(p, e);
     invalidate();
   }

@@ -358,6 +358,7 @@ public:
   void setCursorIndexFromPoint(TPointD point);
 
   void mouseMove(const TPointD &pos, const TMouseEvent &) override;
+  bool preLeftButtonDown() override;
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void rightButtonDown(const TPointD &pos, const TMouseEvent &) override;
   bool keyDown(QKeyEvent *event) override;
@@ -1201,6 +1202,16 @@ void TypeTool::mouseMove(const TPointD &pos, const TMouseEvent &) {
 
 //---------------------------------------------------------
 
+bool TypeTool::preLeftButtonDown() {
+  if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
+
+  if (m_validFonts && !m_active)
+    touchImage();
+  return true;
+}
+
+//---------------------------------------------------------
+
 void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
   TSelection::setCurrent(0);
 
@@ -1211,11 +1222,7 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
 
   if (!m_validFonts) return;
 
-  TImageP img;
-  if (!m_active)
-    img = touchImage();
-  else
-    img = getImage(true);
+  TImageP img = getImage(true);
   TVectorImageP vi = img;
   TToonzImageP ti  = img;
 
