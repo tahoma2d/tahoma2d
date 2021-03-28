@@ -501,7 +501,7 @@ ExportScenePopup::ExportScenePopup(std::vector<TFilePath> scenes)
 
   bool ret = true;
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  QVBoxLayout *layout = new QVBoxLayout();
 
   //  m_command = new QLabel(this);
   //  layout->addWidget(m_command);

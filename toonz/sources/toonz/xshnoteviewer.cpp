@@ -62,7 +62,7 @@ NotePopup::NotePopup(XsheetViewer *viewer, int noteIndex)
 
   beginVLayout();
 
-  QGridLayout *layout = new QGridLayout(this);
+  QGridLayout *layout = new QGridLayout();
   layout->setMargin(1);
   layout->setColumnStretch(7, 10);
   layout->setColumnStretch(8, 10);

@@ -441,7 +441,7 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
 
   QWidgetAction *gridsAction = new QWidgetAction(this);
   QWidget *gridWidget        = new QWidget(this);
-  QGridLayout *gridLayout    = new QGridLayout(this);
+  QGridLayout *gridLayout    = new QGridLayout();
 
   QCheckBox *thirdsCheckbox = new QCheckBox(tr("Rule of Thirds"), this);
   thirdsCheckbox->setChecked(ShowRuleOfThirds != 0);

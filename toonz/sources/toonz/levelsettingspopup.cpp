@@ -492,7 +492,7 @@ LevelSettingsPopup::LevelSettingsPopup()
     m_topLayout->addWidget(dpiBox);
     dpiBox->hide();
 
-    QHBoxLayout* resLayout = new QHBoxLayout(this);
+    QHBoxLayout* resLayout = new QHBoxLayout();
     resLayout->addWidget(imageResTitle);
     resLayout->addWidget(m_imageResLabel);
     resLayout->addStretch();

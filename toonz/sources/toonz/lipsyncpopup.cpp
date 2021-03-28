@@ -244,7 +244,7 @@ LipSyncPopup::LipSyncPopup()
   m_playButton->setIcon(m_playIcon);
 
   m_columnLabel            = new QLabel(tr("Audio Source: "), this);
-  QHBoxLayout *soundLayout = new QHBoxLayout(this);
+  QHBoxLayout *soundLayout = new QHBoxLayout();
   soundLayout->addWidget(m_columnLabel);
   soundLayout->addWidget(m_soundLevels);
   soundLayout->addWidget(m_playButton);
@@ -267,7 +267,7 @@ LipSyncPopup::LipSyncPopup()
   m_scriptEdit->setFixedHeight(80);
   m_scriptEdit->setFixedWidth(840);
 
-  QGridLayout *rhubarbLayout = new QGridLayout(this);
+  QGridLayout *rhubarbLayout = new QGridLayout();
   rhubarbLayout->addLayout(soundLayout, 0, 0, 1, 5);
   rhubarbLayout->addWidget(m_audioFile, 1, 0, 1, 5);
   rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
@@ -285,7 +285,7 @@ LipSyncPopup::LipSyncPopup()
   m_file->setFixedWidth(840);
   QLabel *pathLabel    = new QLabel(tr("Lip Sync Data File: "), this);
 
-  QGridLayout *fileLay = new QGridLayout(this);
+  QGridLayout *fileLay = new QGridLayout();
   fileLay->setSpacing(4);
   fileLay->setMargin(10);
   fileLay->addWidget(pathLabel, 0, 0, Qt::AlignLeft);
@@ -430,10 +430,10 @@ LipSyncPopup::LipSyncPopup()
     m_topLayout->addLayout(phonemeLay, 0);
   }
 
-  QHBoxLayout *optionsLay = new QHBoxLayout(this);
+  QHBoxLayout *optionsLay = new QHBoxLayout();
   optionsLay->setMargin(10);
   optionsLay->setSpacing(15);
-  QHBoxLayout *insertAtLay = new QHBoxLayout(this);
+  QHBoxLayout *insertAtLay = new QHBoxLayout();
   insertAtLay->setMargin(0);
   insertAtLay->setSpacing(4);
   m_insertAtLabel = new QLabel(tr("Insert at Frame: "));

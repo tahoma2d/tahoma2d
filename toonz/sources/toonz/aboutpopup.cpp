@@ -31,7 +31,7 @@ AboutPopup::AboutPopup(QWidget* parent)
   TFilePath baseLicensePath   = TEnv::getStuffDir() + "doc/LICENSE";
   TFilePath tahomaLicensePath = baseLicensePath + "LICENSE.txt";
 
-  QVBoxLayout* mainLayout = new QVBoxLayout(this);
+  QVBoxLayout* mainLayout = new QVBoxLayout();
 
   QLabel* logo = new QLabel(this);
 
