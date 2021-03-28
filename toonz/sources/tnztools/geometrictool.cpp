@@ -567,6 +567,7 @@ public:
   bool getSmooth() { return m_param->m_smooth.getValue(); }
 
   virtual TStroke *makeStroke() const = 0;
+  virtual bool canTouchImageOnPreLeftClick() { return true; }
 };
 
 //-----------------------------------------------------------------------------
@@ -739,6 +740,9 @@ public:
   void onImageChanged() override;
   void setVertexes(const std::vector<TPointD> &vertex) { m_vertex = vertex; };
   void setSpeedMoved(bool speedMoved) { m_speedMoved = speedMoved; };
+
+  // Only execute touchImage when clicking the first point of the polyline
+  bool canTouchImageOnPreLeftClick() override { return m_vertex.empty(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -849,6 +853,7 @@ public:
 
   TStroke *makeStroke() const override;
   void draw() override;
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDoubleClick(const TPointD &, const TMouseEvent &e) override;
@@ -879,6 +884,9 @@ public:
   void decreaseUndo() { --m_undoCount; }
 
   void increaseUndo() { ++m_undoCount; }
+
+  // Only execute touchImage when clicking the first point of the multi arc
+  bool canTouchImageOnPreLeftClick() override { return m_clickNumber == 0; }
 };
 
 //-----------------------------------------------------------------------------
@@ -1034,13 +1042,17 @@ public:
 
   bool preLeftButtonDown() override {
     if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
+    if (getApplication()->getCurrentObject()->isSpline()) return true;
 
-    if (!getApplication()->getCurrentObject()->isSpline())
-      // NEEDS to be done even if(m_active), due
-      // to the HORRIBLE m_frameCreated / m_levelCreated
-      // mechanism. touchImage() is the ONLY function
-      // resetting them to false...                       >_<
-      m_active = !!touchImage();
+    // in the halfway through the drawing of Polyline / MultiArc primitive, OT
+    // should not call touchImage or the m_frameCreated / m_levelCreated flags
+    // will be reset.
+    if (m_primitive && !m_primitive->canTouchImageOnPreLeftClick()) return true;
+    // NEEDS to be done even if(m_active), due
+    // to the HORRIBLE m_frameCreated / m_levelCreated
+    // mechanism. touchImage() is the ONLY function
+    // resetting them to false...                       >_<
+    m_active = !!touchImage();
     return true;
   }
 
@@ -2397,6 +2409,17 @@ void MultiArcPrimitive::draw() {
 
 TStroke *MultiArcPrimitive::makeStroke() const {
   return new TStroke(*m_stroke);
+}
+
+//-----------------------------------------------------------------------------
+
+void MultiArcPrimitive::leftButtonDown(const TPointD &pos,
+                                       const TMouseEvent &) {
+  if (m_clickNumber == 0) {
+    TPointD newPos = calculateSnap(pos);
+    newPos         = checkGuideSnapping(pos);
+    m_startPoint   = newPos;
+  }
 }
 
 //-----------------------------------------------------------------------------
