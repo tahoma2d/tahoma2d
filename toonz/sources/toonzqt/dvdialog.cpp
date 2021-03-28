@@ -376,12 +376,14 @@ void Dialog::hideEvent(QHideEvent *event) {
   if (y < screen.top()) y         = screen.top();
   move(QPoint(x, y));
   resize(size());
-  QRect r = geometry();
-  QSettings settings(settingsPath, QSettings::IniFormat);
-  settings.setValue(m_name, QString::number(r.left()) + " " +
-                                QString::number(r.top()) + " " +
-                                QString::number(r.width()) + " " +
-                                QString::number(r.height()));
+  if (m_name != QString()) {
+    QRect r = geometry();
+    QSettings settings(settingsPath, QSettings::IniFormat);
+    settings.setValue(m_name, QString::number(r.left()) + " " +
+      QString::number(r.top()) + " " +
+      QString::number(r.width()) + " " +
+      QString::number(r.height()));
+  }
   emit dialogClosed();
 }
 
