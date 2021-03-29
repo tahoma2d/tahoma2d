@@ -853,7 +853,7 @@ public:
 
   TStroke *makeStroke() const override;
   void draw() override;
-  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDoubleClick(const TPointD &, const TMouseEvent &e) override;
@@ -2414,10 +2414,10 @@ TStroke *MultiArcPrimitive::makeStroke() const {
 //-----------------------------------------------------------------------------
 
 void MultiArcPrimitive::leftButtonDown(const TPointD &pos,
-                                       const TMouseEvent &) {
+                                       const TMouseEvent &e) {
   if (m_clickNumber == 0) {
-    TPointD newPos = calculateSnap(pos);
-    newPos         = checkGuideSnapping(pos);
+    TPointD newPos = calculateSnap(pos, e);
+    newPos         = checkGuideSnapping(pos, e);
     m_startPoint   = newPos;
   }
 }
