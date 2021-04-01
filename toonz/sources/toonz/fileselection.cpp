@@ -29,6 +29,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/sceneresources.h"
 #include "toonz/preferences.h"
+#include "toonz/tscenehandle.h"
 
 // TnzCore includes
 #include "tfiletype.h"
@@ -589,6 +590,20 @@ void FileSelection::exportScenes() {
 
 //------------------------------------------------------------------------
 
+void FileSelection::exportScene(TFilePath scenePath) {
+  if (scenePath.isEmpty()) return;
+
+  std::vector<TFilePath> files;
+  files.push_back(scenePath);
+  if (!m_exportScenePopup)
+    m_exportScenePopup = new ExportScenePopup(files);
+  else
+    m_exportScenePopup->setScenes(files);
+  m_exportScenePopup->show();
+}
+
+//------------------------------------------------------------------------
+
 void FileSelection::selectAll() {
   DvItemSelection::selectAll();
   const std::set<int> &indices = getSelectedIndices();
@@ -601,3 +616,27 @@ void FileSelection::selectAll() {
     FileBrowser::updateItemViewerPanel();
   }
 }
+
+//-----------------------------------------------------------------------------
+
+class ExportCurrentSceneCommandHandler final : public MenuItemHandler {
+public:
+  ExportCurrentSceneCommandHandler() : MenuItemHandler(MI_ExportCurrentScene) {}
+  void execute() override {
+    TApp *app                 = TApp::instance();
+    TSceneHandle *sceneHandle = app->getCurrentScene();
+    if (!sceneHandle) return;
+    ToonzScene *scene = sceneHandle->getScene();
+    if (!scene) return;
+    TFilePath fp = scene->getScenePath();
+
+    if (sceneHandle->getDirtyFlag() || scene->isUntitled() ||
+        !TSystem::doesExistFileOrLevel(fp)) {
+      DVGui::warning(tr("You must save the current scene first."));
+      return;
+    }
+
+    FileSelection *fs = new FileSelection();
+    fs->exportScene(fp);
+  }
+} ExportCurrentSceneCommandHandler;
