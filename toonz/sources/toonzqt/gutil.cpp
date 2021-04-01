@@ -318,31 +318,47 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
 
   QIcon icon;
 
-  // Base icon
-  icon.addPixmap(compositePixmap(themeIconPixmap, baseOpacity), QIcon::Normal,
-                 QIcon::Off);
-  icon.addPixmap(compositePixmap(themeIconPixmap, disabledOpacity),
-                 QIcon::Disabled, QIcon::Off);
+#ifdef _WIN32
+  bool showIconInMenu = Preferences::instance()->getBoolValue(showIconsInMenu);
+  // set transparent icon
+  if (themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio) &&
+      !showIconInMenu) {
+    static QPixmap emptyPm(16 * devPixRatio, 16 * devPixRatio);
+    emptyPm.fill(Qt::transparent);
 
-  // Over icon
-  icon.addPixmap(!overPixmap.isNull()
-                     ? compositePixmap(overPixmap, activeOpacity)
-                     : compositePixmap(themeIconPixmap, activeOpacity),
-                 QIcon::Active);
-
-  // On icon
-  if (!onPixmap.isNull()) {
-    icon.addPixmap(compositePixmap(onPixmap, activeOpacity), QIcon::Normal,
-                   QIcon::On);
-    icon.addPixmap(compositePixmap(onPixmap, disabledOpacity), QIcon::Disabled,
-                   QIcon::On);
-  } else {
-    icon.addPixmap(compositePixmap(themeIconPixmap, activeOpacity),
-                   QIcon::Normal, QIcon::On);
+    icon.addPixmap(emptyPm, QIcon::Normal, QIcon::Off);
+    icon.addPixmap(emptyPm, QIcon::Normal, QIcon::On);
+    icon.addPixmap(emptyPm, QIcon::Disabled, QIcon::Off);
+    icon.addPixmap(emptyPm, QIcon::Disabled, QIcon::On);
+    icon.addPixmap(emptyPm, QIcon::Active);
+  } else
+#endif
+  {
+    // Base icon
+    icon.addPixmap(compositePixmap(themeIconPixmap, baseOpacity), QIcon::Normal,
+                   QIcon::Off);
     icon.addPixmap(compositePixmap(themeIconPixmap, disabledOpacity),
-                   QIcon::Disabled, QIcon::On);
-  }
+                   QIcon::Disabled, QIcon::Off);
+ 
+    // Over icon
+    icon.addPixmap(!overPixmap.isNull()
+                       ? compositePixmap(overPixmap, activeOpacity)
+                       : compositePixmap(themeIconPixmap, activeOpacity),
+                   QIcon::Active);
 
+    // On icon
+    if (!onPixmap.isNull()) {
+      icon.addPixmap(compositePixmap(onPixmap, activeOpacity), QIcon::Normal,
+                     QIcon::On);
+      icon.addPixmap(compositePixmap(onPixmap, disabledOpacity),
+                     QIcon::Disabled, QIcon::On);
+    } else {
+      icon.addPixmap(compositePixmap(themeIconPixmap, activeOpacity),
+                     QIcon::Normal, QIcon::On);
+      icon.addPixmap(compositePixmap(themeIconPixmap, disabledOpacity),
+                     QIcon::Disabled, QIcon::On);
+    }
+  }
   //----------
 
   // For icons intended for menus that are 16x16 in dimensions, to repurpose

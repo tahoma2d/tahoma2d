@@ -1413,6 +1413,12 @@ QAction *MainWindow::createAction(const char *id, const char *name,
                                   QString newStatusTip, CommandType type,
                                   const char *iconSVGName) {
   QAction *action = new DVAction(tr(name), this);
+
+#if !defined(_WIN32)
+  bool visible = Preferences::instance()->getBoolValue(showIconsInMenu);
+  action->setIconVisibleInMenu(visible);
+#endif
+
   // In Qt5.15.2 - Windows, QMenu stylesheet has alignment issue when one item
   // has icon and another has not one. (See
   // https://bugreports.qt.io/browse/QTBUG-90242 for details.) To avoid the
