@@ -1411,26 +1411,6 @@ void MainWindow::onMenuCheckboxChanged() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::showEvent(QShowEvent *event) {
-  //  QTimer *nt = new QTimer(this);
-  //
-  //  nt->setSingleShot(true);
-  //  nt->setInterval(100);
-  //
-  //  connect(nt, &QTimer::timeout, [=]() {
-  //#ifdef WIN32
-  //    if (!m_shownOnce && windowState() == Qt::WindowMaximized) {
-  //      int roomsSize = m_panelStates.size();
-  //      for (auto iter : m_panelStates) {
-  //        iter.first->restoreState(iter.second);
-  //      }
-  //      m_shownOnce = true;
-  //    }
-  //#endif
-  //  });
-  //  nt->connect(nt, SIGNAL(timeout()), SLOT(deleteLater()));
-  //
-  //  nt->start();
-
   getCurrentRoom()->layout()->setEnabled(true);  // See main function in
                                                  // main.cpp
   if (Preferences::instance()->isStartupPopupEnabled() &&

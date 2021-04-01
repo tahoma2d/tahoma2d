@@ -667,7 +667,10 @@ int main(int argc, char *argv[]) {
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
-  w.setWindowState(Qt::WindowMaximized);
+
+  TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
+  QSettings settings(toQString(fp), QSettings::IniFormat);
+  w.restoreGeometry(settings.value("MainWindowGeometry").toByteArray());
 
   if (isRunScript) {
     // load script
@@ -733,10 +736,6 @@ int main(int argc, char *argv[]) {
   }
   a.processEvents();
 
-  TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
-  QSettings settings(toQString(fp), QSettings::IniFormat);
-  w.restoreGeometry(settings.value("MainWindowGeometry").toByteArray());
-
   ExpressionReferenceManager::instance()->init();
 
 #ifndef MACOSX
@@ -760,6 +759,11 @@ int main(int argc, char *argv[]) {
   if (Preferences::instance()->isLatestVersionCheckEnabled())
     w.checkForUpdates();
   DvDirModel::instance()->forceRefresh();
+
+  // Disable the layout temporarily to avoid redistribution of panes that is
+  // executed during resizeEvents that are being called. It will reenable when
+  // the resizeEvent() is called
+  w.getCurrentRoom()->dockLayout()->setEnabled(false);
   w.show();
 
   // Show floating panels only after the main window has been shown
@@ -839,6 +843,10 @@ int main(int argc, char *argv[]) {
 
   a.installEventFilter(TApp::instance());
 
+  // Disable the layout temporarily to avoid redistribution of panes that is
+  // executed during resizeEvents that are being called. It will reenable when
+  // the resizeEvent() is called
+  w.getCurrentRoom()->dockLayout()->setEnabled(false);
   int ret = a.exec();
 
   TUndoManager::manager()->reset();
