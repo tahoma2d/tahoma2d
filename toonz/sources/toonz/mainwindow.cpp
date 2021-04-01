@@ -55,6 +55,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QMessageBox>
+#ifdef _WIN32
+#include <QtPlatformHeaders/QWindowsWindowFunctions>
+#endif
 
 TEnv::IntVar ViewCameraToggleAction("ViewCameraToggleAction", 1);
 TEnv::IntVar ViewTableToggleAction("ViewTableToggleAction", 0);
@@ -1264,9 +1267,16 @@ void MainWindow::maximizePanel() {
 
 void MainWindow::fullScreenWindow() {
   if (isFullScreen())
-    setWindowState(Qt::WindowMaximized);
-  else
-    setWindowState(Qt::WindowFullScreen);
+    showNormal();
+  else {
+#if defined(_WIN32)
+    // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
+    this->winId();
+    QWindowsWindowFunctions::setHasBorderInFullScreen(this->windowHandle(),
+                                                      true);
+#endif
+    this->showFullScreen();
+  }
 }
 
 //-----------------------------------------------------------------------------

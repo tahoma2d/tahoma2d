@@ -539,10 +539,13 @@ class DeleteColumnsUndo final : public TUndo {
   QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
   mutable std::unique_ptr<StageObjectsData> m_data;
+  bool m_onlyColumns;
 
 public:
-  DeleteColumnsUndo(const std::set<int> &indices)
-      : m_indices(indices), m_data(new StageObjectsData) {
+  DeleteColumnsUndo(const std::set<int> &indices, bool onlyColumns)
+      : m_indices(indices)
+      , m_data(new StageObjectsData)
+      , m_onlyColumns(onlyColumns) {
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -597,7 +600,7 @@ public:
     m_data->storeColumnFxs(m_indices, xsh, 0);
 
     std::set<int> indices = m_indices;
-    deleteColumnsWithoutUndo(&indices);
+    deleteColumnsWithoutUndo(&indices, m_onlyColumns);
   }
 
   void undo() const override {
@@ -816,8 +819,8 @@ void ColumnCmd::deleteColumns(std::set<int> &indices, bool onlyColumns,
   indices.erase(-1);  // Ignore camera column
   if (indices.empty()) return;
 
-  if (!withoutUndo && !onlyColumns)
-    TUndoManager::manager()->add(new DeleteColumnsUndo(indices));
+  if (!withoutUndo)
+    TUndoManager::manager()->add(new DeleteColumnsUndo(indices, onlyColumns));
 
   deleteColumnsWithoutUndo(&indices, onlyColumns);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -827,10 +830,10 @@ void ColumnCmd::deleteColumns(std::set<int> &indices, bool onlyColumns,
 // deleteColumn
 //=============================================================================
 
-void ColumnCmd::deleteColumn(int index) {
+void ColumnCmd::deleteColumn(int index, bool onlyColumns) {
   std::set<int> ii;
   ii.insert(index);
-  ColumnCmd::deleteColumns(ii, false, false);
+  ColumnCmd::deleteColumns(ii, onlyColumns, false);
 }
 
 //=============================================================================
@@ -845,7 +848,7 @@ static void cutColumnsWithoutUndo(std::set<int> *indices) {
 void ColumnCmd::cutColumns(std::set<int> &indices) {
   if (indices.empty()) return;
 
-  TUndoManager::manager()->add(new DeleteColumnsUndo(indices));
+  TUndoManager::manager()->add(new DeleteColumnsUndo(indices, false));
 
   cutColumnsWithoutUndo(&indices);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);

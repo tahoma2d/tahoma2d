@@ -24,7 +24,7 @@ void cutColumns(std::set<int> &indices);
 //! deleted
 void deleteColumns(std::set<int> &indices, bool onlyColumns, bool withoutUndo);
 //! helper function: deletes a single column, with undo
-void deleteColumn(int index);
+void deleteColumn(int index, bool onlyColumns = false);
 //! if data==0 then uses clipboard
 void pasteColumns(std::set<int> &indices, const StageObjectsData *data = 0);
 //! helper function: copies srcIndex column and pastes it before dstIndex. Does

@@ -175,11 +175,11 @@ AudioRecordingPopup::AudioRecordingPopup()
   m_probe->setSource(m_audioRecorder);
   QAudioEncoderSettings audioSettings;
   audioSettings.setCodec("audio/PCM");
-#ifdef MACOSX
-   audioSettings.setSampleRate(-1);
- #else
-   audioSettings.setSampleRate(44100);
- #endif
+  // setting the sample rate to some value (like 44100)
+  // may cause divide-by-zero crash in QAudioDeviceInfo::nearestFormat()
+  // so here we set the value to -1, as the documentation says;
+  // "A value of -1 indicates the encoder should make an optimal choice"
+  audioSettings.setSampleRate(-1);
   audioSettings.setChannelCount(1);
   audioSettings.setBitRate(16);
   audioSettings.setEncodingMode(QMultimedia::ConstantBitRateEncoding);

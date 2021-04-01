@@ -60,8 +60,11 @@ TOfflineGL *currentOfflineGL = 0;
 // Utility functions
 //=============================================================================
 namespace {
-
-const VersionNumber l_currentVersion(71, 0);
+// tentatively update the scene file version from 71.0 to 71.1 in order to
+// manage PNG level settings
+const VersionNumber l_currentVersion(71, 1);
+// TODO: Revise VersionNumber with OT version (converting 71.0 -> 14.0 , 71.1
+// -> 15.0)
 
 //-----------------------------------------------------------------------------
 
@@ -345,12 +348,9 @@ bool ToonzScene::isUntitled() const {
 //-----------------------------------------------------------------------------
 
 void ToonzScene::load(const TFilePath &path, bool withProgressDialog) {
-  loadNoResources(path);              // This loads a version number ..
-  loadResources(withProgressDialog);  // .. this uses the version number ..
-
-  setVersionNumber(
-      VersionNumber());  // .. but scene instances in memory do not retain
-}  // a version number beyond resource loading
+  loadNoResources(path);
+  loadResources(withProgressDialog);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -456,7 +456,9 @@ void ToonzScene::loadTnzFile(const TFilePath &fp) {
       while (is.matchTag(tagName)) {
         if (tagName == "generator") {
           std::string program = is.getString();
-          reading22           = program.find("2.2") != std::string::npos;
+          // TODO: This obsolete condition should be removed before releasing OT
+          // v2.2 !
+          reading22 = program.find("2.2") != std::string::npos;
         } else if (tagName == "properties")
           m_properties->loadData(is, false);
         else if (tagName == "palette")  // per compatibilita' beta1
@@ -685,6 +687,8 @@ void ToonzScene::save(const TFilePath &fp, TXsheet *subxsh) {
   } else {
     if (wasUntitled) deleteUntitledScene(oldScenePath.getParentDir());
   }
+  // update the last saved version
+  setVersionNumber(l_currentVersion);
 }
 
 //-----------------------------------------------------------------------------

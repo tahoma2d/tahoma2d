@@ -840,10 +840,15 @@ void TXshSimpleLevel::eraseFrame(const TFrameId &fid) {
   getHookSet()->eraseFrame(fid);
 
   ImageManager *im = ImageManager::instance();
+  TImageCache *ic  = TImageCache::instance();
   {
     im->unbind(getImageId(fid, Normal));
     im->unbind(getImageId(fid, Scanned));
     im->unbind(getImageId(fid, CleanupPreview));
+    // remove icon cache as well
+    ic->remove(getIconId(fid, Normal));
+    ic->remove(getIconId(fid, Scanned));
+    ic->remove(getIconId(fid, CleanupPreview));
 
     if (m_type == PLI_XSHLEVEL) im->unbind(rasterized(getImageId(fid)));
 
@@ -858,13 +863,17 @@ void TXshSimpleLevel::eraseFrame(const TFrameId &fid) {
 
 void TXshSimpleLevel::clearFrames() {
   ImageManager *im = ImageManager::instance();
-
+  TImageCache *ic  = TImageCache::instance();
   // Unbind frames
   FramesSet::iterator ft, fEnd = m_frames.end();
   for (ft = m_frames.begin(); ft != fEnd; ++ft) {
     im->unbind(getImageId(*ft, Scanned));
     im->unbind(getImageId(*ft, Cleanupped));
     im->unbind(getImageId(*ft, CleanupPreview));
+    // remove icon cache as well
+    ic->remove(getIconId(*ft, Normal));
+    ic->remove(getIconId(*ft, Scanned));
+    ic->remove(getIconId(*ft, CleanupPreview));
 
     if (m_type == PLI_XSHLEVEL) im->unbind(rasterized(getImageId(*ft)));
 

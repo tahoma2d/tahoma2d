@@ -14,6 +14,7 @@
 #include "tapp.h"
 #include "xsheetviewer.h"
 #include "levelcommand.h"
+#include "columncommand.h"
 
 // TnzTools includes
 #include "tools/toolutils.h"
@@ -120,8 +121,13 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int c;
     for (c = c0; c <= c1; c++) {
+      if (xsh->isColumnEmpty(c)) continue;
       xsh->clearCells(r0, c, r1 - r0 + 1);
-      TXshColumn *column = xsh->getColumn(c);
+      // when the column becomes empty after deletion,
+      // ColumnCmd::DeleteColumn() will take care of column related operations
+      // like disconnecting from fx nodes etc.
+      /*
+      TXshColumn* column = xsh->getColumn(c);
       if (column && column->isEmpty()) {
         column->resetColumnProperties();
         TFx *fx = column->getFx();
@@ -135,8 +141,8 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
         xsh->getStageObjectTree()->removeStageObject(
             TStageObjectId::ColumnId(c));
       }
+      */
     }
-    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   } catch (...) {
     DVGui::error(QObject::tr("It is not possible to delete the selection."));
   }
@@ -149,25 +155,52 @@ void cutCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1) {
   int c;
   for (c = c0; c <= c1; c++) {
     xsh->removeCells(r0, c, r1 - r0 + 1);
-    TXshColumn *column = xsh->getColumn(c);
+    // when the column becomes empty after deletion,
+    // ColumnCmd::DeleteColumn() will take care of column related operations
+    // like disconnecting from fx nodes etc.
+    /*
+    TXshColumn* column = xsh->getColumn(c);
     if (column && column->isEmpty()) {
       column->resetColumnProperties();
-      TFx *fx = column->getFx();
+      TFx* fx = column->getFx();
       if (!fx) continue;
       int i;
       for (i = fx->getOutputConnectionCount() - 1; i >= 0; i--) {
-        TFxPort *port = fx->getOutputConnection(i);
+        TFxPort* port = fx->getOutputConnection(i);
         port->setFx(0);
       }
       xsh->getStageObjectTree()->removeStageObject(TStageObjectId::ColumnId(c));
     }
+    */
   }
 
   // Se la selezione corrente e' TCellSelection svuoto la selezione.
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
   if (cellSelection) cellSelection->selectNone();
-  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+// check if the operation may remove expression reference as column becomes
+// empty and deleted after the operation. return true to continue the operation.
+
+bool checkColumnRemoval(const int r0, const int c0, const int r1, const int c1,
+                        std::set<int> &removedColIds) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  // std::set<int> colIndicesToBeRemoved;
+  for (int c = c0; c <= c1; c++) {
+    TXshColumnP column = xsh->getColumn(c);
+    if (!column || column->isEmpty() || column->isLocked()) continue;
+    int tmp_r0, tmp_r1;
+    xsh->getCellRange(c, tmp_r0, tmp_r1);
+    if (r0 <= tmp_r0 && r1 >= tmp_r1) removedColIds.insert(c);
+  }
+
+  if (removedColIds.empty() ||
+      !Preferences::instance()->isModifyExpressionOnMovingReferencesEnabled())
+    return true;
+  std::set<TFx *> dummy_fxs;
+  return ColumnCmd::checkExpressionReferences(removedColIds, dummy_fxs, true);
 }
 
 //=============================================================================
@@ -239,15 +272,15 @@ public:
 
 //=============================================================================
 //  DeleteCellsUndo
+//  Recovering the column information (such as reconnecting nodes) when
+//  undoing deletion of entire column will be done by DeleteColumnsUndo which
+//  will be called in the same undo block. So here we only need to recover the
+//  cell arrangement.
 //-----------------------------------------------------------------------------
 
 class DeleteCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   QMimeData *m_data;
-  QMap<int, QList<TFxPort *>> m_outputConnections;
-  QMap<int, TXshColumn *> m_columns;
-  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
-  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   DeleteCellsUndo(TCellSelection *selection, QMimeData *data) : m_data(data) {
@@ -256,115 +289,26 @@ public:
     if (c0 < 0) c0 = 0;  // Ignore camera column
     m_selection    = new TCellSelection();
     m_selection->selectCells(r0, c0, r1, c1);
-
-    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    int i;
-    for (i = c0; i <= c1; i++) {
-      TXshColumn *col = xsh->getColumn(i);
-      if (!col || col->isEmpty()) continue;
-      int colr0, colr1;
-      col->getRange(colr0, colr1);
-      if (r0 <= colr0 && r1 >= colr1 && !col->getLevelColumn()) {
-        // la colonna verra' rimossa dall'xsheet
-        m_columns[i] = col;
-        col->addRef();
-      }
-
-      // Store TStageObject children in case column is emptied and we need to
-      // restore it
-      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
-      TStageObjectId id    = TStageObjectId::ColumnId(i);
-      TStageObject *pegbar = xsh->getStageObject(id);
-      for (int k = 0; k < pegbarsCount; ++k) {
-        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
-        if (other == pegbar) continue;
-
-        if (other->getParent() == id) {
-          // other->setParent(pegbar->getParent());
-          m_columnObjChildren[id].append(other->getId());
-        }
-      }
-
-      // Store TStageObject parent in case column is emptied and we need to
-      // restore it
-      m_columnObjParents[id] = pegbar->getParent();
-
-      TFx *fx = col->getFx();
-      if (!fx) continue;
-      int j;
-      QList<TFxPort *> fxPorts;
-      for (j = 0; j < fx->getOutputConnectionCount(); j++)
-        fxPorts.append(fx->getOutputConnection(j));
-      if (fxPorts.isEmpty()) continue;
-      m_outputConnections[i] = fxPorts;
-    }
   }
 
-  ~DeleteCellsUndo() {
-    delete m_selection;
-    QMap<int, TXshColumn *>::iterator it;
-    for (it = m_columns.begin(); it != m_columns.end(); it++)
-      it.value()->release();
-  }
+  ~DeleteCellsUndo() { delete m_selection; }
 
   void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-    // devo rimettere le colonne che ho rimosso dall'xsheet
-    QMap<int, TXshColumn *>::const_iterator colIt;
-    for (colIt = m_columns.begin(); colIt != m_columns.end(); colIt++) {
-      int index          = colIt.key();
-      TXshColumn *column = colIt.value();
-      xsh->removeColumn(index);
-      xsh->insertColumn(index, column);
-    }
-
     int r0, c0, r1, c1;
     m_selection->getSelectedCells(r0, c0, r1, c1);
-    QMap<int, QList<TFxPort *>>::const_iterator it;
-    for (it = m_outputConnections.begin(); it != m_outputConnections.end();
-         it++) {
-      TXshColumn *col          = xsh->getColumn(it.key());
-      QList<TFxPort *> fxPorts = it.value();
-      int i;
-      for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
-    }
-
-    // Restore TStageObject parent
-    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
-    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
-         it2++) {  // Parents
-      TStageObject *obj = xsh->getStageObject(it2.key());
-      if (obj) {
-        obj->setParent(it2.value());
-      }
-    }
-
-    // Restore TStageObject children
-    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
-    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
-         it3++) {  // Children
-      QList<TStageObjectId> children = it3.value();
-      int i;
-      for (i = 0; i < children.size(); i++) {
-        TStageObject *child = xsh->getStageObject(children[i]);
-        if (child) {
-          child->setParent(it3.key());
-        }
-      }
-    }
 
     const TCellData *cellData = dynamic_cast<const TCellData *>(m_data);
     pasteCellsWithoutUndo(cellData, r0, c0, r1, c1, false, false);
-
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
     int r0, c0, r1, c1;
     m_selection->getSelectedCells(r0, c0, r1, c1);
     deleteCellsWithoutUndo(r0, c0, r1, c1);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -375,14 +319,14 @@ public:
 
 //=============================================================================
 //  CutCellsUndo
+//  Just like DeleteCellsUndo, recovering the column information (such as
+//  reconnecting nodes) when undoing deletion of entire column will be done
+//  by DeleteColumnsUndo which will be called in the same undo block.
 //-----------------------------------------------------------------------------
 
 class CutCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   TCellData *m_data;
-  QMap<int, QList<TFxPort *>> m_outputConnections;
-  QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
-  QMap<TStageObjectId, TStageObjectId> m_columnObjParents;
 
 public:
   CutCellsUndo(TCellSelection *selection) : m_data() {
@@ -391,41 +335,6 @@ public:
     if (c0 < 0) c0 = 0;  // Ignore camera column
     m_selection    = new TCellSelection();
     m_selection->selectCells(r0, c0, r1, c1);
-
-    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    int i;
-    for (i = c0; i <= c1; i++) {
-      TXshColumn *col = xsh->getColumn(i);
-      if (!col || col->isEmpty()) continue;
-
-      // Store TStageObject children in case column is emptied and we need to
-      // restore it
-      int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
-      TStageObjectId id    = TStageObjectId::ColumnId(i);
-      TStageObject *pegbar = xsh->getStageObject(id);
-      for (int k = 0; k < pegbarsCount; ++k) {
-        TStageObject *other = xsh->getStageObjectTree()->getStageObject(k);
-        if (other == pegbar) continue;
-
-        if (other->getParent() == id) {
-          // other->setParent(pegbar->getParent());
-          m_columnObjChildren[id].append(other->getId());
-        }
-      }
-
-      // Store TStageObject parent in case column is emptied and we need to
-      // restore it
-      m_columnObjParents[id] = pegbar->getParent();
-
-      TFx *fx = col->getFx();
-      if (!fx) continue;
-      int j;
-      QList<TFxPort *> fxPorts;
-      for (j = 0; j < fx->getOutputConnectionCount(); j++)
-        fxPorts.append(fx->getOutputConnection(j));
-      if (fxPorts.isEmpty()) continue;
-      m_outputConnections[i] = fxPorts;
-    }
   }
 
   void setCurrentData(int r0, int c0, int r1, int c1) {
@@ -443,43 +352,8 @@ public:
     int r0, c0, r1, c1;
     m_selection->getSelectedCells(r0, c0, r1, c1);
 
-    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    QMap<int, QList<TFxPort *>>::const_iterator it;
-    for (it = m_outputConnections.begin(); it != m_outputConnections.end();
-         it++) {
-      TXshColumn *col          = xsh->getColumn(it.key());
-      QList<TFxPort *> fxPorts = it.value();
-      int i;
-      for (i = 0; i < fxPorts.size(); i++) fxPorts[i]->setFx(col->getFx());
-    }
-
-    // Restore TStageObject parent
-    QMap<TStageObjectId, TStageObjectId>::const_iterator it2;
-    for (it2 = m_columnObjParents.begin(); it2 != m_columnObjParents.end();
-         it2++) {  // Parents
-      TStageObject *obj = xsh->getStageObject(it2.key());
-      if (obj) {
-        obj->setParent(it2.value());
-      }
-    }
-
-    // Restore TStageObject children
-    QMap<TStageObjectId, QList<TStageObjectId>>::const_iterator it3;
-    for (it3 = m_columnObjChildren.begin(); it3 != m_columnObjChildren.end();
-         it3++) {  // Children
-      QList<TStageObjectId> children = it3.value();
-      int i;
-      for (i = 0; i < children.size(); i++) {
-        TStageObject *child = xsh->getStageObject(children[i]);
-        if (child) {
-          child->setParent(it3.key());
-        }
-      }
-    }
-
     pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-    TApp::instance()->getCurrentObject()->notifyObjectIdSwitched();
   }
 
   void redo() const override {
@@ -491,6 +365,7 @@ public:
     cutCellsWithoutUndo(r0, c0, r1, c1);
 
     clipboard->setMimeData(currentData, QClipboard::Clipboard);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -779,6 +654,8 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
       app->getCurrentLevel()->setLevel(sl);
       app->getCurrentLevel()->notifyLevelChange();
       sl->save();
+      // after saving you need to obtain the image again
+      img = sl->getFrame(fid, true);
     } else {
       img = sl->createEmptyFrame();
       assert(img);
@@ -788,6 +665,8 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
       sl->setFrame(fid, img);
     }
     xsh->setCell(row, col, TXshCell(sl, fid));
+    // to let the undo to know which frame is edited
+    TTool::m_cellsData.push_back({row, row, TTool::CellOps::BlankToNew});
   } else {
     sl  = cell.getSimpleLevel();
     fid = cell.getFrameId();
@@ -1785,6 +1664,8 @@ static void pasteRasterImageInCell(int row, int col,
                                    bool newLevel = false) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
+  // to let the undo to know which frame is edited
+  TTool::m_cellsData.clear();
   bool createdFrame    = false;
   bool isLevelCreated  = false;
   TPaletteP oldPalette = 0;
@@ -2599,12 +2480,36 @@ void TCellSelection::deleteCells() {
   TXsheet *xsh   = TApp::instance()->getCurrentXsheet()->getXsheet();
   // if all the selected cells are already empty, then do nothing
   if (xsh->isRectEmpty(CellPosition(r0, c0), CellPosition(r1, c1))) return;
+
+  std::set<int> removedColIds;
+  // check if the operation may remove expression reference as column becomes
+  // empty and deleted after the operation.
+  if (!checkColumnRemoval(r0, c0, r1, c1, removedColIds)) return;
+
   TCellData *data = new TCellData();
   data->setCells(xsh, r0, c0, r1, c1);
+
+  // clear empty column
+  if (!removedColIds.empty()) {
+    TUndoManager::manager()->beginBlock();
+    // remove, then insert empty column
+    for (auto colId : removedColIds) {
+      ColumnCmd::deleteColumn(colId, true);
+      ColumnCmd::insertEmptyColumn(colId);
+    }
+  }
+
   DeleteCellsUndo *undo =
       new DeleteCellsUndo(new TCellSelection(m_range), data);
 
   deleteCellsWithoutUndo(r0, c0, r1, c1);
+
+  TUndoManager::manager()->add(undo);
+
+  if (!removedColIds.empty()) {
+    TUndoManager::manager()->endBlock();
+  }
+
   // emit selectionChanged() signal so that the rename field will update
   // accordingly
   if (Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled())
@@ -2612,8 +2517,8 @@ void TCellSelection::deleteCells() {
   else
     selectNone();
 
-  TUndoManager::manager()->add(undo);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -2631,11 +2536,32 @@ void TCellSelection::cutCells(bool withoutCopy) {
   getSelectedCells(r0, c0, r1, c1);
   if (c0 < 0) c0 = 0;  // Ignore camera column
 
+  std::set<int> removedColIds;
+  // check if the operation may remove expression reference as column becomes
+  // empty and deleted after the operation.
+  if (!checkColumnRemoval(r0, c0, r1, c1, removedColIds)) return;
+
   undo->setCurrentData(r0, c0, r1, c1);
   if (!withoutCopy) copyCellsWithoutUndo(r0, c0, r1, c1);
+
+  // clear empty column
+  if (!removedColIds.empty()) {
+    TUndoManager::manager()->beginBlock();
+    // remove, then insert empty column
+    for (auto colId : removedColIds) {
+      ColumnCmd::deleteColumn(colId, true);
+      ColumnCmd::insertEmptyColumn(colId);
+    }
+  }
+
   cutCellsWithoutUndo(r0, c0, r1, c1);
 
   TUndoManager::manager()->add(undo);
+
+  if (!removedColIds.empty()) {
+    TUndoManager::manager()->endBlock();
+  }
+
   // cutCellsWithoutUndo will clear the selection, so select cells again
   if (Preferences::instance()->isUseArrowKeyToShiftCellSelectionEnabled()) {
     selectCells(r0, c0, r1, c1);

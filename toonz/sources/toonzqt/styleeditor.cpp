@@ -989,6 +989,8 @@ void HexagonalColorWheel::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+  disconnect(context(), SIGNAL(aboutToBeDestroyed()), this,
+             SLOT(onContextAboutToBeDestroyed()));
 }
 
 //*****************************************************************************

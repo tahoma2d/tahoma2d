@@ -1973,9 +1973,8 @@ void PlasticTool::drawOnionSkinSkeletons_animate(double pixelSize) {
     PlasticSkeleton skel;
     m_sd->storeDeformedSkeleton(m_sd->skeletonId(sdFrame), sdFrame, skel);
 
-    UCHAR alpha =
-        255 -
-        255.0 * OnionSkinMask::getOnionSkinFade(abs(osRows[r] - currentRow));
+    UCHAR alpha = 255 - 255.0 * OnionSkinMask::getOnionSkinFade(
+                                    abs(osRows[r] - currentRow));
     drawSkeleton(skel, pixelSize, alpha);
   }
 }
@@ -2114,6 +2113,7 @@ void PlasticTool::draw() {
   glPushAttrib(GL_LINE_BIT | GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 
   glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_LINE_SMOOTH);
 
   switch (m_mode.getIndex()) {

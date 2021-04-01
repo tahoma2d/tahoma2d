@@ -490,7 +490,7 @@ void FxSchematicScene::updateEditedGroups(
     const QMap<int, QList<SchematicNode *>> &editedGroup) {
   QMap<int, QList<SchematicNode *>>::const_iterator it;
   for (it = editedGroup.begin(); it != editedGroup.end(); it++) {
-    int zValue = 2;
+    int zValue                                            = 2;
     QMap<int, QList<SchematicNode *>>::const_iterator it2 = editedGroup.begin();
     while (it2 != editedGroup.end()) {
       FxSchematicNode *placedFxNode =
@@ -626,7 +626,7 @@ void FxSchematicScene::updatePosition(FxSchematicNode *node,
 
 //------------------------------------------------------------------
 /*! create node depends on the fx type
-*/
+ */
 FxSchematicNode *FxSchematicScene::createFxSchematicNode(TFx *fx) {
   if (TLevelColumnFx *lcFx = dynamic_cast<TLevelColumnFx *>(fx))
     return new FxSchematicColumnNode(this, lcFx);
@@ -644,7 +644,7 @@ FxSchematicNode *FxSchematicScene::createFxSchematicNode(TFx *fx) {
 
 //------------------------------------------------------------------
 /*! place nodes of which positions are not specified manually
-*/
+ */
 void FxSchematicScene::placeNode(FxSchematicNode *node) {
   if (!node) return;
   int step        = m_gridDimension == eLarge ? 100 : 50;
@@ -872,7 +872,7 @@ void FxSchematicScene::updateLink() {
       }
 
       TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx);
-      if (zfx) fx          = zfx->getZeraryFx();
+      if (zfx) fx = zfx->getZeraryFx();
       if (fx) {
         int j;
         for (j = 0; j < fx->getInputPortCount(); j++) {
@@ -1026,7 +1026,7 @@ QPointF FxSchematicScene::nearestPoint(const QPointF &point) {
   if (item) return rect.bottomRight();
   item = itemAt(rect.topLeft());
   if (item) return rect.topLeft();
-  item = itemAt(rect.topRight());
+  item                = itemAt(rect.topRight());
 #endif
   if (item) return rect.topRight();
   return QPointF();
@@ -1471,8 +1471,8 @@ void FxSchematicScene::setEnableCache(bool toggle) {
   for (int i = 0; i < selectedFxs.size(); i++) {
     TFx *fx               = selectedFxs[i].getPointer();
     TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx);
-    if (zcfx) fx          = zcfx->getZeraryFx();
-    TFxAttributes *attr   = fx->getAttributes();
+    if (zcfx) fx = zcfx->getZeraryFx();
+    TFxAttributes *attr = fx->getAttributes();
     if (!attr->isGrouped() || attr->isGroupEditing()) {
       if (toggle) {
         TPassiveCacheManager::instance()->enableCache(fx);
@@ -1490,9 +1490,9 @@ void FxSchematicScene::setEnableCache(bool toggle) {
               TPassiveCacheManager::instance()->enableCache(fx);
             } else {
               TPassiveCacheManager::instance()->disableCache(fx);
-	    }
-	  }
-	}
+            }
+          }
+        }
         group->update();
       }
     }
@@ -1589,7 +1589,7 @@ void FxSchematicScene::mousePressEvent(QGraphicsSceneMouseEvent *me) {
 #if QT_VERSION >= 0x050000
   QGraphicsItem *item = itemAt(me->scenePos(), QTransform());
 #else
-  QGraphicsItem *item     = itemAt(me->scenePos());
+  QGraphicsItem *item = itemAt(me->scenePos());
 #endif
   FxSchematicPort *port = dynamic_cast<FxSchematicPort *>(item);
   FxSchematicLink *link = dynamic_cast<FxSchematicLink *>(item);
@@ -1646,7 +1646,7 @@ void FxSchematicScene::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
     SchematicLink *link =
         dynamic_cast<SchematicLink *>(itemAt(m_lastPos, QTransform()));
 #else
-    SchematicLink *link   = dynamic_cast<SchematicLink *>(itemAt(m_lastPos));
+    SchematicLink *link = dynamic_cast<SchematicLink *>(itemAt(m_lastPos));
 #endif
     if (link && (link->getEndPort() && link->getStartPort())) {
       TFxCommand::Link fxLink = m_selection->getBoundingFxs(link);
@@ -1710,8 +1710,8 @@ void FxSchematicScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
             if (port == outputNode->getInputPort(i)) break;
 
           TFxCommand::Link fxLink;
-          fxLink.m_outputFx                               = outputNode->getFx();
-          fxLink.m_inputFx                                = inputNode->getFx();
+          fxLink.m_outputFx = outputNode->getFx();
+          fxLink.m_inputFx  = inputNode->getFx();
           if (!outputNode->isA(eXSheetFx)) fxLink.m_index = i;
 
           TFxCommand::connectFxs(fxLink, m_selection->getFxs().toStdList(),
@@ -1880,7 +1880,7 @@ void FxSchematicScene::simulateDisconnectSelection(bool disconnect) {
     if (selectedFxs.isEmpty()) return;
     QMap<TFx *, bool> visitedFxs;
     int i;
-    for (i                                    = 0; i < selectedFxs.size(); i++)
+    for (i = 0; i < selectedFxs.size(); i++)
       visitedFxs[selectedFxs[i].getPointer()] = false;
 
     TFx *inputFx = 0, *outputFx = 0;
@@ -1935,61 +1935,62 @@ void FxSchematicScene::simulateDisconnectSelection(bool disconnect) {
 
 void FxSchematicScene::simulateInsertSelection(SchematicLink *link,
                                                bool connect) {
-  if (!link || !connect) {
-    m_connectionLinks.showBridgeLinks();
-    m_connectionLinks.hideInputLinks();
-    m_connectionLinks.hideOutputLinks();
-    m_connectionLinks.removeBridgeLinks();
-    m_connectionLinks.removeInputLinks(true);
-    m_connectionLinks.removeOutputLinks(true);
-  } else {
-    if (m_disconnectionLinks.isABridgeLink(link) || m_selection->isEmpty())
-      return;
+  // first, remove all connected links
+  m_connectionLinks.showBridgeLinks();
+  m_connectionLinks.hideInputLinks();
+  m_connectionLinks.hideOutputLinks();
+  m_connectionLinks.removeBridgeLinks();
+  m_connectionLinks.removeInputLinks(true);
+  m_connectionLinks.removeOutputLinks(true);
+  if (!link || !connect) return;
 
-    m_connectionLinks.addBridgeLink(link);
-    m_connectionLinks.hideBridgeLinks();
+  if (m_disconnectionLinks.isABridgeLink(link) || m_selection->isEmpty())
+    return;
 
-    SchematicPort *inputPort = 0, *outputPort = 0;
-    if (link) {
-      if (link->getStartPort()->getType() == eFxInputPort) {
-        inputPort  = link->getStartPort();
-        outputPort = link->getEndPort();
-      } else {
-        inputPort  = link->getEndPort();
-        outputPort = link->getStartPort();
-      }
+  m_connectionLinks.addBridgeLink(link);
+  m_connectionLinks.hideBridgeLinks();
+
+  SchematicPort *inputPort = 0, *outputPort = 0;
+  if (link) {
+    if (link->getStartPort()->getType() == eFxInputPort) {
+      inputPort  = link->getStartPort();
+      outputPort = link->getEndPort();
+    } else {
+      inputPort  = link->getEndPort();
+      outputPort = link->getStartPort();
     }
-
-    QMap<TFx *, bool> visitedFxs;
-    QList<TFxP> selectedFxs = m_selection->getFxs();
-    if (selectedFxs.isEmpty()) return;
-    int i;
-    for (i                                    = 0; i < selectedFxs.size(); i++)
-      visitedFxs[selectedFxs[i].getPointer()] = false;
-
-    TFx *inputFx = 0, *outputFx = 0;
-    findBoundariesFxs(inputFx, outputFx, visitedFxs);
-    FxSchematicNode *inputNode  = m_table[inputFx];
-    FxSchematicNode *outputNode = m_table[outputFx];
-    assert(inputNode && outputNode);
-
-    if (inputNode->getInputPortCount() > 0) {
-      SchematicPort *inputNodePort = inputNode->getInputPort(0);
-      if (inputNodePort && outputPort)
-        m_connectionLinks.addInputLink(inputNodePort->makeLink(outputPort));
-    }
-
-    SchematicPort *outputNodePort = outputNode->getOutputPort();
-    if (outputNodePort && inputPort)
-      m_connectionLinks.addOutputLink(inputPort->makeLink(outputNodePort));
-
-    m_connectionLinks.showInputLinks();
-    m_connectionLinks.showOutputLinks();
   }
+
+  QMap<TFx *, bool> visitedFxs;
+  QList<TFxP> selectedFxs = m_selection->getFxs();
+  if (selectedFxs.isEmpty()) return;
+  int i;
+  for (i = 0; i < selectedFxs.size(); i++)
+    visitedFxs[selectedFxs[i].getPointer()] = false;
+
+  TFx *inputFx = 0, *outputFx = 0;
+  findBoundariesFxs(inputFx, outputFx, visitedFxs);
+  FxSchematicNode *inputNode  = m_table[inputFx];
+  FxSchematicNode *outputNode = m_table[outputFx];
+  assert(inputNode && outputNode);
+
+  if (inputNode->getInputPortCount() > 0) {
+    SchematicPort *inputNodePort = inputNode->getInputPort(0);
+    if (inputNodePort && outputPort)
+      m_connectionLinks.addInputLink(inputNodePort->makeLink(outputPort));
+  }
+
+  SchematicPort *outputNodePort = outputNode->getOutputPort();
+  if (outputNodePort && inputPort)
+    m_connectionLinks.addOutputLink(inputPort->makeLink(outputNodePort));
+
+  m_connectionLinks.showInputLinks();
+  m_connectionLinks.showOutputLinks();
 }
+
 //------------------------------------------------------------
 /*! in order to select nods after pasting the copied fx nodes from FxSelection
-*/
+ */
 void FxSchematicScene::selectNodes(QList<TFxP> &fxs) {
   clearSelection();
   for (int i = 0; i < (int)fxs.size(); i++) {
@@ -2021,7 +2022,7 @@ void FxSchematicScene::updateNestedGroupEditors(FxSchematicNode *node,
 #if QT_VERSION >= 0x050000
         rect = rect.united(app);
 #else
-        rect              = rect.unite(app);
+        rect = rect.unite(app);
 #endif
     }
   }
@@ -2035,7 +2036,7 @@ void FxSchematicScene::updateNestedGroupEditors(FxSchematicNode *node,
 #if QT_VERSION >= 0x050000
         rect = rect.united(app);
 #else
-        rect              = rect.unite(app);
+        rect = rect.unite(app);
 #endif
     }
   }
@@ -2046,7 +2047,7 @@ void FxSchematicScene::updateNestedGroupEditors(FxSchematicNode *node,
     rect =
         rect.united(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
 #else
-    rect                  = rect.unite(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
+    rect = rect.unite(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
 #endif
     QRectF app = m_groupEditorTable[groupIdStack[i]]->boundingSceneRect();
     if (m_groupEditorTable[groupIdStack[i]]->scenePos() != app.topLeft())
@@ -2059,7 +2060,7 @@ void FxSchematicScene::updateNestedGroupEditors(FxSchematicNode *node,
 #if QT_VERSION >= 0x050000
       rect = rect.united(app);
 #else
-      rect                = rect.unite(app);
+      rect = rect.unite(app);
 #endif
       app = editor->boundingSceneRect();
       if (editor->scenePos() != app.topLeft()) editor->setPos(app.topLeft());

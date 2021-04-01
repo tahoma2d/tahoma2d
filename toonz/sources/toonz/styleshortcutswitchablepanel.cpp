@@ -21,7 +21,7 @@
 
 //-----------------------------------------------------------------------------
 
-void StyleShortcutSwitchablePanel::keyPressEvent(QKeyEvent *event) {
+void StyleShortcutSwitchablePanel::onKeyPress(QKeyEvent *event) {
   if (!Preferences::instance()->isUseNumpadForSwitchingStylesEnabled()) return;
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool) return;
@@ -56,6 +56,11 @@ void StyleShortcutSwitchablePanel::keyPressEvent(QKeyEvent *event) {
     }
     event->accept();
   }
+}
+//-----------------------------------------------------------------------------
+
+void StyleShortcutSwitchablePanel::keyPressEvent(QKeyEvent *event) {
+  StyleShortcutSwitchablePanel::onKeyPress(event);
 }
 
 //-----------------------------------------------------------------------------

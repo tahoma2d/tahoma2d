@@ -185,6 +185,10 @@ void TreeModel::endRefresh() {
   int i;
   QList<Item *>::iterator it;
 
+  // comment out as no subclass of TreeModel reimplement removeRows() for now
+  // and it causes assertion failure on calling beginRemoveRows() when deleting
+  // the last column in the xsheet
+  /*
   for (i = m_itemsToDelete.size() - 1; i >= 0; i--) {
     int row          = m_itemsToDelete[i]->getRow();
     Item *parentItem = m_itemsToDelete[i]->getParent();
@@ -192,10 +196,11 @@ void TreeModel::endRefresh() {
         parentItem ? parentItem->createIndex() : QModelIndex();
 
     beginRemoveRows(parentIndex, row, row);
-    removeRow(row, parentIndex);  // NOTE: This is currently doing NOTHING? (see
+    removeRows(row, 1, parentIndex);  // NOTE: This is currently doing NOTHING?
+  (see
                                   // Qt's manual)
     endRemoveRows();
-  }
+  }*/
 
   qDeleteAll(m_itemsToDelete);
   m_itemsToDelete.clear();

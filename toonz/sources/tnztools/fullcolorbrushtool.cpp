@@ -19,6 +19,7 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tobjecthandle.h"
+#include "toonz/tframehandle.h"
 #include "toonz/ttileset.h"
 #include "toonz/ttilesaver.h"
 #include "toonz/strokegenerator.h"
@@ -291,7 +292,13 @@ bool FullColorBrushTool::askWrite(const TRect &rect) {
 bool FullColorBrushTool::preLeftButtonDown() {
   touchImage();
 
-  if (m_isFrameCreated) setWorkAndBackupImages();
+  if (m_isFrameCreated) {
+    setWorkAndBackupImages();
+    // When the xsheet frame is selected, whole viewer will be updated from
+    // SceneViewer::onXsheetChanged() on adding a new frame.
+    // We need to take care of a case when the level frame is selected.
+    if (m_application->getCurrentFrame()->isEditingLevel()) invalidate();
+  }
 
   return true;
 }
@@ -308,7 +315,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   if (!viewer) return;
 
   TRasterImageP ri = (TRasterImageP)getImage(true);
-  if (!ri) ri      = (TRasterImageP)touchImage();
+  if (!ri) ri = (TRasterImageP)touchImage();
 
   if (!ri) return;
 
