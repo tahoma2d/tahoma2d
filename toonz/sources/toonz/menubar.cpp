@@ -667,7 +667,7 @@ void TopBar::loadMenubar() {
   addMenuItem(helpMenu, MI_OpenWhatsNew);
   addMenuItem(helpMenu, MI_OpenCommunityForum);
   helpMenu->addSeparator();
-  addMenuItem(helpMenu, MI_SupportTahoma2D);
+  //  addMenuItem(helpMenu, MI_SupportTahoma2D);
   addMenuItem(helpMenu, MI_OpenReportABug);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);
