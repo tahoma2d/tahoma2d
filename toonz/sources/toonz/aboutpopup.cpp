@@ -21,7 +21,7 @@ void AboutClickableLabel::mousePressEvent(QMouseEvent* event) {
 }
 
 AboutPopup::AboutPopup(QWidget* parent)
-    : DVGui::Dialog(parent, true, "About Tahoma2D") {
+    : DVGui::Dialog(parent, true, true, "About Tahoma2D") {
   setFixedWidth(360);
   setFixedHeight(350);
 
@@ -31,7 +31,7 @@ AboutPopup::AboutPopup(QWidget* parent)
   TFilePath baseLicensePath   = TEnv::getStuffDir() + "doc/LICENSE";
   TFilePath tahomaLicensePath = baseLicensePath + "LICENSE.txt";
 
-  QVBoxLayout* mainLayout = new QVBoxLayout(this);
+  QVBoxLayout* mainLayout = new QVBoxLayout();
 
   QLabel* logo = new QLabel(this);
 

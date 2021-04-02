@@ -3799,8 +3799,8 @@ void MainWindow::makeTransparencyDialog() {
     toggleTransparency(true);
   });
 
-  QVBoxLayout *togglerLayout       = new QVBoxLayout(this);
-  QHBoxLayout *togglerSliderLayout = new QHBoxLayout(this);
+  QVBoxLayout *togglerLayout       = new QVBoxLayout();
+  QHBoxLayout *togglerSliderLayout = new QHBoxLayout();
   togglerSliderLayout->addWidget(new QLabel(tr("Amount: "), this));
   togglerSliderLayout->addWidget(m_transparencySlider);
   togglerLayout->addLayout(togglerSliderLayout);

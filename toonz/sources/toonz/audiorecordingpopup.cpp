@@ -129,7 +129,7 @@ AudioRecordingPopup::AudioRecordingPopup()
       recordGridLay->addWidget(new QLabel(tr(" ")), 1, 0, Qt::AlignCenter);
       recordGridLay->addWidget(m_audioLevelsDisplay, 2, 0, 1, 4,
                                Qt::AlignCenter);
-      QHBoxLayout *recordLay = new QHBoxLayout(this);
+      QHBoxLayout *recordLay = new QHBoxLayout();
       recordLay->setSpacing(4);
       recordLay->setContentsMargins(0, 0, 0, 0);
       {
@@ -140,7 +140,7 @@ AudioRecordingPopup::AudioRecordingPopup()
         recordLay->addStretch();
       }
       recordGridLay->addLayout(recordLay, 3, 0, 1, 4, Qt::AlignCenter);
-      QHBoxLayout *playLay = new QHBoxLayout(this);
+      QHBoxLayout *playLay = new QHBoxLayout();
       playLay->setSpacing(4);
       playLay->setContentsMargins(0, 0, 0, 0);
       {

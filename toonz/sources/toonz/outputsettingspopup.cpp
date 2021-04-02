@@ -255,7 +255,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
 
     m_topLayout->addSpacing(5);
 
-    QHBoxLayout *renderButtonLayout = new QHBoxLayout(this);
+    QHBoxLayout *renderButtonLayout = new QHBoxLayout();
     renderButtonLayout->addWidget(renderButton);
     if (!isPreview)
       renderButtonLayout->addWidget(saveAndRenderButton);

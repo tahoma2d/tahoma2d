@@ -60,7 +60,7 @@ ProjectPopup::ProjectPopup(bool isModal)
   m_prjNameLabel        = new QLabel(tr("Project Name:"), this);
   m_pathFieldLabel      = new QLabel(tr("Create Project In:"), this);
   m_nameFld             = new LineEdit();
-  m_recentProjectLayout = new QGridLayout(this);
+  m_recentProjectLayout = new QGridLayout();
   m_recentProjectLayout->setSpacing(2);
   m_recentProjectLayout->setMargin(4);
   m_projectLocationFld =

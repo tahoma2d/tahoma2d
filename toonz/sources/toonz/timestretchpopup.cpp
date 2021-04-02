@@ -221,7 +221,7 @@ TimeStretchPopup::TimeStretchPopup()
           SLOT(setCurrentStretchType(int)));
   addWidget(tr("Stretch:"), m_stretchType);
 
-  QHBoxLayout *rangeLayout = new QHBoxLayout(this);
+  QHBoxLayout *rangeLayout = new QHBoxLayout();
   m_oldRange               = new QLabel("0", this);
   m_oldRange->setFixedSize(43, DVGui::WidgetHeight);
   rangeLayout->addWidget(m_oldRange);

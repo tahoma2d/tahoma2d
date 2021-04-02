@@ -52,15 +52,15 @@ double distanceSquared(QPoint p1, QPoint p2) {
 
 MotionPathPanel::MotionPathPanel(QWidget* parent)
     : QWidget(parent), m_currentSpline(0), m_playbackExecutor() {
-  m_outsideLayout = new QVBoxLayout(this);
+  m_outsideLayout = new QVBoxLayout();
   m_outsideLayout->setMargin(0);
   m_outsideLayout->setSpacing(0);
 
-  m_insideLayout = new QVBoxLayout(this);
+  m_insideLayout = new QVBoxLayout();
   m_insideLayout->setMargin(0);
   m_insideLayout->setSpacing(0);
 
-  m_pathsLayout = new QGridLayout(this);
+  m_pathsLayout = new QGridLayout();
   m_pathsLayout->setContentsMargins(0, 3, 2, 3);
   m_pathsLayout->setSpacing(2);
 
@@ -75,10 +75,10 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   QSizePolicy policy(QSizePolicy::Expanding, QSizePolicy::Maximum);
   pathFrame->setSizePolicy(policy);
 
-  m_mainControlsPage = new QFrame(this);
+  m_mainControlsPage = new QFrame();
   m_mainControlsPage->setLayout(m_insideLayout);
 
-  m_graphArea = new GraphWidget(this);
+  m_graphArea = new GraphWidget();
   m_graphArea->setMaxXValue(1000);
   m_graphArea->setMaxYValue(1000);
 
@@ -101,7 +101,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_toolbar->addAction(CommandManager::instance()->getAction("T_Geometric"));
   m_toolbar->setFixedHeight(18);
   m_toolbar->setIconSize(QSize(16, 16));
-  m_toolLayout = new QHBoxLayout(this);
+  m_toolLayout = new QHBoxLayout();
   m_toolLayout->setSpacing(2);
   m_toolLayout->setMargin(2);
   m_toolLayout->addWidget(m_toolbar);
@@ -134,11 +134,11 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   container->setObjectName("MotionPathToolbar");
   container->setLayout(m_toolLayout);
 
-  m_controlsLayout = new QVBoxLayout(this);
+  m_controlsLayout = new QVBoxLayout();
   m_controlsLayout->setMargin(10);
   m_controlsLayout->setSpacing(3);
 
-  QHBoxLayout* graphLayout = new QHBoxLayout(this);
+  QHBoxLayout* graphLayout = new QHBoxLayout();
   graphLayout->setMargin(0);
   graphLayout->setSpacing(0);
   graphLayout->addWidget(m_graphArea);
@@ -294,7 +294,7 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   QComboBox* colorCombo = new QComboBox(this);
   fillCombo(colorCombo, spline);
 
-  QHBoxLayout* nameLayout = new QHBoxLayout(this);
+  QHBoxLayout* nameLayout = new QHBoxLayout();
   nameLayout->addWidget(nameLabel);
   nameLayout->addWidget(nameEdit);
   nameEdit->hide();
