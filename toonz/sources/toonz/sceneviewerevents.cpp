@@ -247,8 +247,13 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   if (m_freezedStatus != NO_FREEZED) return;
 
   m_tabletEvent = true;
-  m_pressure    = e->pressure();
-  m_tabletMove  = false;
+#ifdef LINUX
+  // For Linux, ignore pressure when not actively pressing
+  // Means we are hovering
+  if (m_tabletState != None)
+#endif
+    m_pressure = e->pressure();
+  m_tabletMove = false;
   // Management of the Eraser pointer
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
   if (e->pointerType() == QTabletEvent::Eraser) {
@@ -346,7 +351,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         !rect().marginsRemoved(QMargins(5, 5, 5, 5)).contains(e->pos());
     // call the fake enter event
     if (isHoveringInsideViewer) onEnter();
-#else
+#elif defined(_WIN32)
     // for Windowsm, use tabletEvent only for the left Button
     if (m_tabletState != StartStroke && m_tabletState != OnStroke) {
       m_tabletEvent = false;
@@ -358,7 +363,9 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So I fire the interval timer in order to limit the following process
     // to be called in 50fps in maximum.
     if (curPos != m_lastMousePos && !m_isBusyOnTabletMove) {
+#ifndef LINUX
       m_isBusyOnTabletMove = true;
+#endif
       TMouseEvent mouseEvent;
       initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
       QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
@@ -908,26 +915,15 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     GLInvalidateAll();
     invalidateToolStatus();
 
-    // duplicate quit from below
-    m_mouseButton = Qt::NoButton;
-    // Leave m_tabletEvent as-is in order to check whether the onRelease is
-    // called
-    // from tabletEvent or not in mouseReleaseEvent.
-    if (m_tabletState == Released)  // only clear if tabletRelease event
-      m_tabletEvent = false;
-    // If m_tabletState is "Touched", we've been called by tabletPress event.
-    // Don't clear it out table state so the tablePress event will process
-    // correctly.
-    if (m_tabletState != Touched) m_tabletState = None;
-    m_mouseState                                = None;
-    m_tabletMove                                = false;
-    m_pressure                                  = 0;
-    m_buttonClicked                             = false;
+    doQuit();
     return;
   }
 
   // evita i release ripetuti
-  if (!m_buttonClicked) return;
+  if (!m_buttonClicked) {
+    doQuit();
+    return;
+  }
   m_buttonClicked = false;
 
   // tool is declared up here to prevent an error with jumping to goto before
@@ -941,7 +937,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     canonJumpToQuit = true;
   }
 #endif
-  if (canonJumpToQuit) goto quit;
+  if (canonJumpToQuit) {
+    doQuit();
+    return;
+  }
 
   if (!tool || !tool->isEnabled()) {
     if (!m_toolDisableReason.isEmpty() && m_mouseButton == Qt::LeftButton &&
@@ -967,17 +966,23 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   }
 
   if (m_mouseButton == Qt::LeftButton && m_editPreviewSubCamera) {
-    if (!PreviewSubCameraManager::instance()->mouseReleaseEvent(this))
-      goto quit;
+    if (!PreviewSubCameraManager::instance()->mouseReleaseEvent(this)) {
+      doQuit();
+      return;
+    }
   }
 
   if (m_compareSettings.m_dragCompareX || m_compareSettings.m_dragCompareY) {
     m_compareSettings.m_dragCompareX = m_compareSettings.m_dragCompareY = false;
-    goto quit;
+    doQuit();
+    return;
   }
 
   m_pos = QPointF();
-  if (!tool || !tool->isEnabled()) goto quit;
+  if (!tool || !tool->isEnabled()) {
+    doQuit();
+    return;
+  }
 
   tool->setViewer(this);
 
@@ -997,7 +1002,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     }
   }
 
-quit:
+  doQuit();
+}
+
+void SceneViewer::doQuit() {
   m_mouseButton = Qt::NoButton;
   // Leave m_tabletEvent as-is in order to check whether the onRelease is called
   // from tabletEvent or not in mouseReleaseEvent.

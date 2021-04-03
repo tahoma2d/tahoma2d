@@ -441,6 +441,9 @@ protected:
 
   void registerContext();
 
+private:
+  void doQuit();
+
 public slots:
 
   void resetSceneViewer();
