@@ -1434,7 +1434,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
 #endif
     // do nothing for other platforms
   } else
-    action->setIcon(createQIcon(iconSVGName));
+    action->setIcon(createQIcon(iconSVGName, false, true));
   action->setIconVisibleInMenu(false);
   addAction(action);
 #ifdef MACOSX
@@ -2984,7 +2984,7 @@ void MainWindow::defineActions() {
   menuAct =
       createMiscAction(MI_RefreshTree, QT_TR_NOOP("Refresh Folder Tree"), "");
   menuAct->setIconText(tr("Refresh"));
-  menuAct->setIcon(createQIcon("refresh"));
+  menuAct->setIcon(createQIcon("refresh", false, true));
   createMiscAction("A_FxSchematicToggle",
                    QT_TR_NOOP("Toggle FX/Stage schematic"), "");
   // createAction(MI_SavePreview, QT_TR_NOOP("&Save Preview"), "");

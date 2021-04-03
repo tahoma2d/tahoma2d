@@ -267,7 +267,8 @@ QPixmap recolorPixmap(QPixmap pixmap, QColor color) {
 
 //-----------------------------------------------------------------------------
 
-QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
+QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
+                  bool isForMenuItem) {
   static int devPixRatio = getDevPixRatio();
 
   QIcon themeIcon = QIcon::fromTheme(iconSVGName);
@@ -321,7 +322,8 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
 #ifdef _WIN32
   bool showIconInMenu = Preferences::instance()->getBoolValue(showIconsInMenu);
   // set transparent icon
-  if (themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio) &&
+  if (isForMenuItem &&
+      themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio) &&
       !showIconInMenu) {
     static QPixmap emptyPm(16 * devPixRatio, 16 * devPixRatio);
     emptyPm.fill(Qt::transparent);
