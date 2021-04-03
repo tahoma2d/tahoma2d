@@ -339,6 +339,7 @@ void TopBar::loadMenubar() {
   { addMenuItem(importMenu, MI_ImportMagpieFile); }
   QMenu *exportMenu = fileMenu->addMenu(tr("Export"));
   {
+    addMenuItem(exportMenu, MI_ExportCurrentScene);
     addMenuItem(exportMenu, MI_SoundTrack);
     addMenuItem(exportMenu, MI_ExportXDTS);
     addMenuItem(exportMenu, MI_StopMotionExportImageSequence);
