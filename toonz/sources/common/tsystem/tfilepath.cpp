@@ -814,8 +814,12 @@ TFilePath TFilePath::withFrame(const TFrameId &frame,
   int k = str.substr(0, j).rfind(L'.');
 
   bool hasValidFrameNum = false;
-  if (!isFfmpegType() && checkForSeqNum(type) && isNumbers(str, k, j))
-    hasValidFrameNum = true;
+  if (!isFfmpegType() && checkForSeqNum(type)) {
+    if (isNumbers(str, k, j))
+      hasValidFrameNum = true;
+    else
+      k = (int)std::wstring::npos;
+  }
   std::string frameString;
   if (frame.isNoFrame())
     frameString = "";
