@@ -418,7 +418,17 @@ int main(int argc, char *argv[]) {
   a.setAttribute(Qt::AA_CompressHighFrequencyEvents);
   a.setAttribute(Qt::AA_CompressTabletEvents);
 #endif
-  // Set the app's locale for numeric stuff to standard C. This is important for
+
+#ifdef _WIN32
+  // This attribute is set to make menubar icon to be always (16 x devPixRatio).
+  // Without this attribute the menu bar icon size becomes the same as tool bar
+  // when Windows scale is in 125%. Currently hiding the menu bar icon is done
+  // by setting transparent pixmap only in menu bar icon size. So the size must
+  // be different between for menu bar and for tool bar.
+  a.setAttribute(Qt::AA_Use96Dpi);
+#endif
+
+ // Set the app's locale for numeric stuff to standard C. This is important for
   // atof() and similar
   // calls that are locale-dependent.
   setlocale(LC_NUMERIC, "C");
