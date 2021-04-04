@@ -19,7 +19,7 @@ Building Tahoma2D from source requires the following dependencies:
 ### Dependencies example with OpenBSD
 
 ```
-# pkg_add git cmake freeglut3 boost freetype6 glew glib2 jpeg json-c-dev lz4 lzo2 png pkg-conf qt5
+# pkg_add git cmake freeglut3 boost freetype6 glew glib2 jpeg json-c-dev lz4 libmypaint lzo2 png pkg-conf qt5
 ```
 It's possible we also need `libgsl2` (or maybe `libopenblas-dev`). `libgsl2` is called just gsl in BSD and `libopenblas-dev` is just blas.
 
