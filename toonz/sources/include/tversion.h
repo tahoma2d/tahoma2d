@@ -18,9 +18,9 @@ public:
 
 private:
   const char *applicationName     = "Tahoma2D";
-  const float applicationVersion  = 1.1;
+  const float applicationVersion  = 1.2;
   const float applicationRevision = 0;
-  const char *applicationNote     = "";
+  const char *applicationNote     = "(alpha)";
 };
 
 std::string ToonzVersion::getAppName(void) {
