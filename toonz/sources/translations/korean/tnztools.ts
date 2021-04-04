@@ -12,14 +12,6 @@
         <translation>이동:</translation>
     </message>
     <message>
-        <source>E/W:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>N/S:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>SO:</source>
         <translation></translation>
     </message>
@@ -78,6 +70,14 @@
     <message>
         <source>Pick:</source>
         <translation>선택:</translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">가로좌표:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">세로좌표:</translation>
     </message>
 </context>
 <context>
@@ -191,15 +191,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation>사전설정 이름</translation>
+        <translation type="vanished">사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>네</translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>취소</translation>
+        <translation type="vanished">취소</translation>
     </message>
 </context>
 <context>
@@ -207,6 +207,34 @@
     <message>
         <source>Auto Select Drawing</source>
         <translation>자동 그리기 선택</translation>
+    </message>
+    <message>
+        <source>Snap</source>
+        <translation type="unfinished">스냅</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">유형:</translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished">직사각형</translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished">올가미</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished">낮은</translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation type="unfinished">중간</translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation type="unfinished">높은</translation>
     </message>
 </context>
 <context>
@@ -224,7 +252,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>현재</translation>
+        <translation type="vanished">현재</translation>
     </message>
 </context>
 <context>
@@ -263,19 +291,19 @@
     </message>
     <message>
         <source>Lock Center E/W</source>
-        <translation>중심점 좌우 잠금</translation>
+        <translation type="vanished">중심점 좌우 잠금</translation>
     </message>
     <message>
         <source>Lock Center N/S</source>
-        <translation>중심점 위아래 잠금</translation>
+        <translation type="vanished">중심점 위아래 잠금</translation>
     </message>
     <message>
         <source>Lock Position E/W</source>
-        <translation>위치 좌우 잠금</translation>
+        <translation type="vanished">위치 좌우 잠금</translation>
     </message>
     <message>
         <source>Lock Position N/S</source>
-        <translation>위치 위아래 잠금</translation>
+        <translation type="vanished">위치 위아래 잠금</translation>
     </message>
     <message>
         <source>Lock Rotation</source>
@@ -303,7 +331,7 @@
     </message>
     <message>
         <source>E/W and N/S Positions</source>
-        <translation>좌우/상하 위치</translation>
+        <translation type="vanished">좌우/상하 위치</translation>
     </message>
     <message>
         <source>Z Position</source>
@@ -352,6 +380,26 @@
     <message>
         <source>All</source>
         <translation>전체</translation>
+    </message>
+    <message>
+        <source>Lock Center X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Center Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Position X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Position Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X and Y Positions</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -415,6 +463,26 @@
     <message>
         <source>Pencil Mode</source>
         <translation>연필 모드</translation>
+    </message>
+    <message>
+        <source>Segment</source>
+        <translation type="unfinished">세그먼트</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -482,6 +550,30 @@
     <message>
         <source>Autopaint Lines</source>
         <translation>자동 색칠</translation>
+    </message>
+    <message>
+        <source>Distance:</source>
+        <translation type="unfinished">거리:</translation>
+    </message>
+    <message>
+        <source>Style Index:</source>
+        <translation type="unfinished">스타일 인덱스:</translation>
+    </message>
+    <message>
+        <source>Gaps:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ingore Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close and Fill</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -931,6 +1023,18 @@ Do you want to proceed?</source>
         <source>High</source>
         <translation>높은</translation>
     </message>
+    <message>
+        <source>MultiArc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation type="unfinished">부드러운</translation>
+    </message>
+    <message>
+        <source>Draw Under</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1011,11 +1115,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation>네</translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>아니오</translation>
+        <translation type="vanished">아니오</translation>
     </message>
     <message>
         <source>Modify Fx Gadget  </source>
@@ -1091,15 +1195,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1 레벨 : %2 프레임 : %3</translation>
+        <translation type="vanished">%1 레벨 : %2 프레임 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation>선 수정도구</translation>
+        <translation type="vanished">선 수정도구</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation>스플라인 수정</translation>
+        <translation type="vanished">스플라인 수정</translation>
     </message>
     <message>
         <source>The selection cannot be updated. It is not editable.</source>
@@ -1128,6 +1232,18 @@ Do you want to proceed?</source>
     <message>
         <source>The selection cannot be moved. It is not editable.</source>
         <translation>선택을 이동할 수 없습니다. 편집 할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Snap At Intersection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to animate unlinked motion paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current tool cannot be used on empty frames of a Single Frame level.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1307,14 +1423,6 @@ Do you want to proceed?</source>
         <translation>회전</translation>
     </message>
     <message>
-        <source>E/W:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>N/S:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Scale</source>
         <translation>비율</translation>
     </message>
@@ -1325,6 +1433,14 @@ Do you want to proceed?</source>
     <message>
         <source>Thickness</source>
         <translation>굵기</translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">가로좌표:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">세로좌표:</translation>
     </message>
 </context>
 <context>
@@ -1381,7 +1497,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">현재</translation>
+        <translation>현재</translation>
     </message>
 </context>
 <context>
@@ -1584,6 +1700,22 @@ moved to the end of the first page of the palette.</source>
         <source>Bevel join</source>
         <translation>베벨 결합</translation>
     </message>
+    <message>
+        <source>Draw Under</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Fill</source>
+        <translation type="unfinished">자동 채우기</translation>
+    </message>
+    <message>
+        <source>Auto Group</source>
+        <translation type="unfinished">자동 그룹</translation>
+    </message>
 </context>
 <context>
     <name>TrackerTool</name>
@@ -1704,6 +1836,10 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Miter:</source>
         <translation>마이터:</translation>
+    </message>
+    <message>
+        <source>Include Intersection</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

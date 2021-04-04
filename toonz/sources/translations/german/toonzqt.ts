@@ -169,12 +169,12 @@ Possibly the preset file has been corrupted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A/R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;custom&gt;</source>
         <translation type="unfinished">&lt;Eigene&gt;</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -243,11 +243,66 @@ Possibly the preset file has been corrupted</source>
         <translation type="vanished">Fertige Ebenen-Information</translation>
     </message>
     <message>
-        <source>N/S</source>
+        <source>Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>E/W</source>
+        <source>X</source>
+        <translation type="unfinished">X</translation>
+    </message>
+</context>
+<context>
+    <name>ColorChannelControl</name>
+    <message>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -335,118 +390,7 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
-    <name>DVGui::ColorField</name>
-    <message>
-        <source>R:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>DVGui::DvTextEdit</name>
-    <message>
-        <source>Bold</source>
-        <translation>Fett</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Kursiv</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Unterstrichen</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation>Linksbündig</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation>Zentriert</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation>Rechtsbündig</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::FileField</name>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::LineEdit</name>
-    <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>Der Dateiname darf folgende Zeichen nicht enthalten:  /\:*?&quot;&lt;&gt;|</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ProgressDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::RadioButtonDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ToneCurveField</name>
-    <message>
-        <source>Channel:</source>
-        <translation>Kanal:</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ValidatedChoiceDialog</name>
-    <message>
-        <source>Apply</source>
-        <translation>Anwenden</translation>
-    </message>
-    <message>
-        <source>Apply to All</source>
-        <translation>Auf alle Anwenden</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
-    </message>
-</context>
-<context>
-    <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
         <translation type="vanished">Fett</translation>
@@ -470,6 +414,83 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Align Right</source>
         <translation type="vanished">Rechtsbündig</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::FileField</name>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::LineEdit</name>
+    <message>
+        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">Der Dateiname darf folgende Zeichen nicht enthalten:  /\:*?&quot;&lt;&gt;|</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ProgressDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::RadioButtonDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ToneCurveField</name>
+    <message>
+        <source>Channel:</source>
+        <translation type="vanished">Kanal:</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ValidatedChoiceDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>Apply to All</source>
+        <translation>Auf alle Anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+</context>
+<context>
+    <name>DvTextEdit</name>
+    <message>
+        <source>Bold</source>
+        <translation>Fett</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Kursiv</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Unterstrichen</translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation>Linksbündig</translation>
+    </message>
+    <message>
+        <source>Align Center</source>
+        <translation>Zentriert</translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation>Rechtsbündig</translation>
     </message>
 </context>
 <context>
@@ -498,7 +519,7 @@ Possibly the preset file has been corrupted</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -612,7 +633,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Next frame</source>
-        <translation>Nächster Frame (&amp;N)</translation>
+        <translation type="vanished">Nächster Frame (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Last Frame</source>
@@ -720,6 +741,27 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Reset View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This value is different than the scene framerate.
+Control click to reset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot set the scene fps to a negative value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Next Frame</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -973,6 +1015,10 @@ Possibly the preset file has been corrupted</source>
         <source>Step</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Link/Unlink Handles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FunctionSelection</name>
@@ -1076,6 +1122,14 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>FunctionSheetColumnHeadViewer</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionToolbar</name>
     <message>
         <source>Value</source>
@@ -1102,6 +1156,14 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Plastic Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FunctionTreeModel::Channel</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1140,11 +1202,11 @@ Possibly the preset file has been corrupted</source>
     <name>FxColumnPainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>Von Xsheet trennen (&amp;D)</translation>
+        <translation type="vanished">Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>Mit Xsheet verbinden (&amp;C)</translation>
+        <translation type="vanished">Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
@@ -1165,6 +1227,14 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&amp;Cache FX</source>
         <translation>Cache für Effekte erstellen (&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1206,11 +1276,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>Von Xsheet trennen (&amp;D)</translation>
+        <translation type="vanished">Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>Mit Xsheet verbinden (&amp;C)</translation>
+        <translation type="vanished">Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Create Linked FX</source>
@@ -1248,20 +1318,36 @@ Possibly the preset file has been corrupted</source>
         <source>&amp;Cache FX</source>
         <translation>Cache für Effekt erstellen (&amp;C)</translation>
     </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FxPalettePainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>Von Xsheet trennen (&amp;D)</translation>
+        <translation type="vanished">Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>Mit Xsheet verbinden (&amp;C)</translation>
+        <translation type="vanished">Mit Xsheet verbinden (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
         <translation>Vorschau (&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1286,11 +1372,19 @@ Possibly the preset file has been corrupted</source>
     <name>FxSchematicPort</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>Von Xsheet trennen (&amp;D)</translation>
+        <translation type="vanished">Von Xsheet trennen (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>Mit Xsheet verbinden (&amp;C)</translation>
+        <translation type="vanished">Mit Xsheet verbinden (&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1318,7 +1412,11 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <name>FxSchematicXSheetNode</name>
     <message>
         <source>XSheet</source>
-        <translation type="unfinished">XSheet</translation>
+        <translation type="obsolete">XSheet</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1364,11 +1462,15 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>XSheet</source>
-        <translation>XSheet</translation>
+        <translation type="vanished">XSheet</translation>
     </message>
     <message>
         <source>X</source>
         <translation type="vanished">X</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1435,7 +1537,7 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">Ein Datei-Name darf nicht die folgenden Zeichen enthalten: /\:*?&quot;&lt;&gt;|. --- </translation>
+        <translation>Ein Datei-Name darf nicht die folgenden Zeichen enthalten: /\:*?&quot;&lt;&gt;|. --- </translation>
     </message>
 </context>
 <context>
@@ -1472,11 +1574,28 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">Neuer Stil</translation>
+        <translation>Neuer Stil</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Neue Seite</translation>
+        <translation>Neue Seite</translation>
+    </message>
+    <message>
+        <source>- No Styles -</source>
+        <translation type="unfinished">- Keine Stile -</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished">Stil-Name-Editor</translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1567,15 +1686,15 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>Style Name</source>
-        <translation>Stil-Name</translation>
+        <translation type="vanished">Stil-Name</translation>
     </message>
     <message>
         <source>StudioPalette Name</source>
-        <translation>Name der Studio-Palette</translation>
+        <translation type="vanished">Name der Studio-Palette</translation>
     </message>
     <message>
         <source>Both Names</source>
-        <translation>Beide Namen</translation>
+        <translation type="vanished">Beide Namen</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -1601,12 +1720,64 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
         <source>)</source>
         <translation>)</translation>
     </message>
+    <message>
+        <source>&amp;Save As Default Vector Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Smart Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stay on Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag this icon to a Studio or Project palette to add it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Style Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save palette with a different name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette as the default for new levels of the current level type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation>- Keine Stile -</translation>
+        <translation type="vanished">- Keine Stile -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -1614,15 +1785,15 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>New Style</source>
-        <translation>Neuer Stil</translation>
+        <translation type="vanished">Neuer Stil</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Neue Seite</translation>
+        <translation type="vanished">Neue Seite</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="unfinished">Stil-Name-Editor</translation>
+        <translation type="obsolete">Stil-Name-Editor</translation>
     </message>
 </context>
 <context>
@@ -1643,6 +1814,10 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
         <source>&lt;files&gt;</source>
         <translation>&lt;Datei&gt;</translation>
     </message>
+    <message>
+        <source>Failed to import palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ParamViewer</name>
@@ -1655,7 +1830,11 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <name>ParamsPageSet</name>
     <message>
         <source>Fx Help</source>
-        <translation>Hilfe</translation>
+        <translation type="vanished">Hilfe</translation>
+    </message>
+    <message>
+        <source>View help page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1692,6 +1871,10 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <message>
         <source>Toonz</source>
         <translation type="vanished">Toonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1804,7 +1987,7 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>Palette</source>
-        <translation>Palette</translation>
+        <translation type="vanished">Palette</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -2159,11 +2342,11 @@ Sind Sie sicher?</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation>Effekt-Parameter ändern : Key %1 : %2  Frame %3</translation>
+        <translation type="vanished">Effekt-Parameter ändern : Key %1 : %2  Frame %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation>Einstellen</translation>
+        <translation type="vanished">Einstellen</translation>
     </message>
     <message>
         <source>FX Schematic</source>
@@ -2266,6 +2449,38 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>That is a reserved file name and cannot be used.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>CustomStyleChooserPage</comment>
+        <translation type="unfinished">Normale Farbe</translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>TextureStyleChooserPage</comment>
+        <translation type="unfinished">Normale Farbe</translation>
+    </message>
+    <message>
+        <source>There are no unused styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>and %1 more styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erasing unused styles with following indices. Are you sure?
+
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2283,6 +2498,10 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>Toonz</source>
         <translation type="vanished">Toonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2364,6 +2583,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>&amp;Close Editor</source>
         <translation>Editor schließen (&amp;C)</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsPage</name>
+    <message>
+        <source>Autopaint for Lines</source>
+        <translation type="unfinished">Automatisches Malen für Linien</translation>
+    </message>
+    <message>
+        <source>Reset to default</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2578,6 +2808,10 @@ Are you sure ?</source>
         <source>Convert</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -2675,18 +2909,6 @@ anwenden</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[CLEANUP]  </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[STUDIO]  </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[LEVEL]  </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show or hide parts of the Color Page.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2722,35 +2944,16 @@ anwenden</translation>
         <source>Palette</source>
         <translation type="unfinished">Palette</translation>
     </message>
-</context>
-<context>
-    <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
-        <source>R</source>
+        <source>Cleanup </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>G</source>
+        <source>Studio </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>V</source>
+        <source>Level </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2781,10 +2984,13 @@ anwenden</translation>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>Automatisches Malen für Linien</translation>
+        <translation type="vanished">Automatisches Malen für Linien</translation>
     </message>
+</context>
+<context>
+    <name>StyleIndexLineEdit</name>
     <message>
-        <source>Reset to default</source>
+        <source>current</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2880,7 +3086,19 @@ anwenden</translation>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">Kanal:</translation>
+        <translation>Kanal:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">Bereich:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
