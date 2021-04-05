@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
   // qDebug() << "All icon theme search paths:" << QIcon::themeSearchPaths();
 
   // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
-  QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, true);
 
   TEnv::setApplicationFileName(argv[0]);
 

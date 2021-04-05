@@ -309,7 +309,7 @@ QMenu {
 }
 QMenu::item {
   border: 0;
-  padding: 3 28 3 40;
+  padding: 3 28;
 }
 QMenu::item:selected {
   background-color: #a0c1dd;
