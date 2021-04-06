@@ -214,6 +214,10 @@ public:
 
   QString getLayoutName() { return m_layoutName; }
 
+  void setSaveSettingsOnQuit(bool allowSave) {
+    m_saveSettingsOnQuit = allowSave;
+  }
+
 protected:
   void showEvent(QShowEvent *) override;
   void closeEvent(QCloseEvent *) override;

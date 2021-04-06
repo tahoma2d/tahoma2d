@@ -2124,11 +2124,11 @@ void PreferencesPopup::onImport() {
     // -- Settings
     destDir = ToonzFolder::getMyModuleDir();
     if (useLegacy)
-      srcDir = oldStuffPath + (L"profiles/layouts/settings." +
-                               TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/layouts/settings." +
+                                        TSystem::getUserName().toStdWString());
     else
-      srcDir = oldStuffPath +
-               (L"profiles/users/" + TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/users/" +
+                                        TSystem::getUserName().toStdWString());
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Settings.\nCould not find " +
                      srcDir.getQString());
@@ -2160,7 +2160,7 @@ void PreferencesPopup::onImport() {
 
     if (useLegacy) {
       // -- Environment variables
-      srcDir = oldStuffPath + L"profiles/env";
+      srcDir = oldStuffPath + TFilePath("profiles/env");
       if (!TFileStatus(srcDir).doesExist())
         DVGui::warning("Failed to process Env.\nCould not find " +
                        srcDir.getQString());
@@ -2218,14 +2218,14 @@ void PreferencesPopup::onImport() {
   // --- Room Layouts
   //-------------------
   if (m_importRoomsCB->isChecked()) {
-    destDir = ToonzFolder::getMyModuleDir() + L"layouts/Default";
+    destDir = ToonzFolder::getMyModuleDir() + TFilePath("layouts/Default");
     if (useLegacy)
-      srcDir = oldStuffPath + (L"profiles/layouts/personal/Default." +
-                               TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/layouts/personal/Default." +
+                                        TSystem::getUserName().toStdWString());
     else
-      srcDir = oldStuffPath +
-               (L"profiles/users/" + TSystem::getUserName().toStdWString() +
-                L"/layouts/Default");
+      srcDir = oldStuffPath + TFilePath(L"profiles/users/" +
+                                        TSystem::getUserName().toStdWString() +
+                                        L"/layouts/Default");
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Room Layouts.\nCould not find " +
                      srcDir.getQString());
@@ -2233,8 +2233,9 @@ void PreferencesPopup::onImport() {
       MainWindow* mainWin =
           qobject_cast<MainWindow*>(TApp::instance()->getMainWindow());
 
-      mainWin->resetRoomsLayout();
-
+      mainWin->setSaveSettingsOnQuit(false);
+      TSystem::rmDirTree(destDir);
+      TSystem::mkDir(destDir);
       TSystem::copyDir(destDir, srcDir, true);
     }
   }
