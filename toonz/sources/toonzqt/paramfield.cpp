@@ -847,6 +847,16 @@ void MeasuredDoubleParamField::onChange(bool dragging) {
 
 void MeasuredDoubleParamField::onKeyToggled() { onKeyToggle(); }
 
+//-----------------------------------------------------------------------------
+
+void MeasuredDoubleParamField::setPrecision(int precision) {
+  double min, max;
+  m_measuredDoubleField->getRange(min, max);
+  m_measuredDoubleField->setDecimals(precision);
+  // update slider
+  m_measuredDoubleField->setRange(min, max);
+}
+
 //=============================================================================
 // MeasuredRangeParamField
 //-----------------------------------------------------------------------------

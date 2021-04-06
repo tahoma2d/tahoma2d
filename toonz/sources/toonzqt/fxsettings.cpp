@@ -151,7 +151,7 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
     if (tagName == "control") {
       /*--- 設定ファイルからインタフェースの桁数を決める (PairSliderのみ実装。)
        * ---*/
-      int decimals            = 0;
+      int decimals            = -1;
       std::string decimalsStr = is.getTagAttribute("decimals");
       if (decimalsStr != "") {
         decimals = QString::fromStdString(decimalsStr).toInt();
@@ -168,7 +168,7 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
             QString::fromStdWString(TStringTable::translate(paramName));
         ParamField *field = ParamField::create(this, str, param);
         if (field) {
-          if (decimals) field->setPrecision(decimals);
+          if (decimals >= 0) field->setPrecision(decimals);
           m_fields.push_back(field);
           /*-- hboxタグに挟まれているとき --*/
           if (isVertical == false) {
@@ -919,7 +919,7 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   std::string tagName;
   if (!is.matchTag(tagName) || tagName != "page")
     throw TException("expected <page>");
-  std::string pageName         = is.getTagAttribute("name");
+  std::string pageName = is.getTagAttribute("name");
   if (pageName == "") pageName = "page";
 
   ParamsPage *paramsPage = new ParamsPage(this, m_parent);
@@ -1197,7 +1197,7 @@ FxSettings::FxSettings(QWidget *parent, const TPixel32 &checkCol1,
   bool ret = true;
   ret      = ret && connect(m_paramViewer, SIGNAL(currentFxParamChanged()),
                        SLOT(updateViewer()));
-  ret = ret &&
+  ret      = ret &&
         connect(m_viewer, SIGNAL(pointPositionChanged(int, const TPointD &)),
                 SLOT(onPointChanged(int, const TPointD &)));
   ret = ret && connect(m_paramViewer, SIGNAL(preferredSizeChanged(QSize)), this,
@@ -1345,10 +1345,10 @@ void FxSettings::setFx(const TFxP &currentFx, const TFxP &actualFx) {
     TFxUtil::setKeyframe(currentFxWithoutCamera, m_frameHandle->getFrameIndex(),
                          actualFx, m_frameHandle->getFrameIndex());
 
-  ToonzScene *scene        = 0;
+  ToonzScene *scene = 0;
   if (m_sceneHandle) scene = m_sceneHandle->getScene();
 
-  int frameIndex                = 0;
+  int frameIndex = 0;
   if (m_frameHandle) frameIndex = m_frameHandle->getFrameIndex();
 
   m_paramViewer->setFx(currentFxWithoutCamera, actualFx, frameIndex, scene);
@@ -1408,7 +1408,7 @@ void FxSettings::setCurrentFx() {
   if (TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx.getPointer()))
     fx = zfx->getZeraryFx();
   else
-    hasEmptyInput   = hasEmptyInputPort(fx);
+    hasEmptyInput = hasEmptyInputPort(fx);
   int frame         = m_frameHandle->getFrame();
   ToonzScene *scene = m_sceneHandle->getScene();
   actualFx          = fx;

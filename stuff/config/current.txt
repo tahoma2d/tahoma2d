@@ -1359,8 +1359,12 @@
   
   <item>"STD_iwa_BloomFx" 			"Bloom Iwa" 	</item>
   <item>"STD_iwa_BloomFx.gamma"	"Gamma"		</item>
+  <item>"STD_iwa_BloomFx.auto_gain"	"Auto Gain"		</item>
+  <item>"STD_iwa_BloomFx.gain_adjust"	"Gain Adjustment"		</item>
   <item>"STD_iwa_BloomFx.gain"	"Gain"		</item>
+  <item>"STD_iwa_BloomFx.decay"	"Decay"		</item>
   <item>"STD_iwa_BloomFx.size"	"Size"		</item>
+  <item>"STD_iwa_BloomFx.alpha_mode"	"Alpha Mode"		</item>
   <item>"STD_iwa_BloomFx.alpha_rendering"	"Alpha Rendering"		</item>
 
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->

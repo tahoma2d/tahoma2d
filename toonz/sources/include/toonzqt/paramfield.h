@@ -389,6 +389,7 @@ public:
   void updateField(double value) override;
 
   QSize getPreferedSize() override { return QSize(260, 28); }
+  void setPrecision(int precision) override;
 
 protected slots:
   void onChange(bool);
