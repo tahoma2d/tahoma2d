@@ -1550,6 +1550,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
     // do nothing for other platforms
   } else
     action->setIcon(createQIcon(iconSVGName));
+  action->setIconVisibleInMenu(false);
   addAction(action);
 #ifdef MACOSX
   // To prevent the wrong menu items (due to MacOS menu naming conventions),
