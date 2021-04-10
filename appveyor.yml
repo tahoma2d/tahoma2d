@@ -10,7 +10,7 @@ clone_depth: 1
 # C:\Qt\5.9 is mapped to C:\Qt\5.9.n for backward compatibility
 install:
 - cmd: >-
-    choco install opencv
+    choco install opencv --version=4.5.1
     
     cd thirdparty
 
