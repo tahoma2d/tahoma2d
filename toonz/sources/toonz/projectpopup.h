@@ -9,6 +9,7 @@
 #include <QList>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QPushButton>
 
 // forward declaration
 namespace DVGui {
@@ -31,16 +32,19 @@ class ProjectPopup : public DVGui::Dialog, public TProjectManager::Listener {
 protected:
   DVGui::LineEdit *m_nameFld;
   QList<QPair<std::string, DVGui::FileField *>> m_folderFlds;
-  QList<QPair<std::string, DVGui::CheckBox *>> m_useScenePathCbs;
+  //  QList<QPair<std::string, DVGui::CheckBox *>> m_useScenePathCbs;
+  DVGui::CheckBox *m_useSubSceneCbs;
 
   QLabel *m_prjNameLabel;
   QLabel *m_choosePrjLabel;
   QLabel *m_pathFieldLabel;
+  QLabel *m_nameAsLabel;
 
   DVGui::FileField *m_projectLocationFld;
 
-  QGridLayout *m_recentProjectLayout;
-  QGroupBox *m_projectGB;
+  QLabel *m_settingsLabel;
+  QFrame *m_settingsBox;
+  QPushButton *m_showSettingsButton;
 
 public:
   ProjectPopup(bool isModal);
@@ -51,6 +55,8 @@ public:
 
   void updateProjectFromFields(TProject *);
   void updateFieldsFromProject(TProject *);
+
+  QFrame *createSettingsBox();
 
 protected:
   void showEvent(QShowEvent *) override;

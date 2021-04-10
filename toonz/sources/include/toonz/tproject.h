@@ -25,6 +25,7 @@ class DVAPI TProject final : public TSmartObject {
   std::vector<std::string> m_folderNames;
   std::map<std::string, TFilePath> m_folders;
   std::map<std::string, bool> m_useScenePathFlags;
+  bool m_useSubScenePath;
   TSceneProperties *m_sprop;
 
 public:
@@ -73,6 +74,9 @@ public:
   void setUseScenePath(std::string folderName, bool on);
   //?????????????????????????????????????????????
   bool getUseScenePath(std::string folderName) const;
+
+  void setUseSubScenePath(bool on);
+  bool getUseSubScenePath() { return m_useSubScenePath; }
 
   // nei due metodi seguenti fp e' un path assoluto (possibilmente con
   // $scenepath)

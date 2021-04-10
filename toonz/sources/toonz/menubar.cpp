@@ -328,11 +328,13 @@ void TopBar::loadMenubar() {
   QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
   {
     addMenuItem(projectManagementMenu, MI_NewProject);
+    addMenuItem(projectManagementMenu, MI_LoadProject);
+    addMenuItem(projectManagementMenu, MI_OpenRecentProject);
+    projectManagementMenu->addSeparator();
     addMenuItem(projectManagementMenu, MI_ProjectSettings);
-    projectManagementMenu->addSeparator();
     addMenuItem(projectManagementMenu, MI_SaveDefaultSettings);
-    projectManagementMenu->addSeparator();
-    addMenuItem(projectManagementMenu, MI_ClearRecentProject);
+    // projectManagementMenu->addSeparator();
+    // addMenuItem(projectManagementMenu, MI_ClearRecentProject);
   }
   fileMenu->addSeparator();
   QMenu *importMenu = fileMenu->addMenu(tr("Import"));
