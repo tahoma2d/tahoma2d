@@ -45,6 +45,8 @@
 #define MI_NewNoteLevel "MI_NewNoteLevel"
 #define MI_RemoveEmptyColumns "MI_RemoveEmptyColumns"
 #define MI_NewProject "MI_NewProject"
+#define MI_OpenRecentProject "MI_OpenRecentProject"
+#define MI_LoadProject "MI_LoadProject"
 #define MI_ProjectSettings "MI_ProjectSettings"
 #define MI_SaveDefaultSettings "MI_SaveDefaultSettings"
 #define MI_OutputSettings "MI_OutputSettings"

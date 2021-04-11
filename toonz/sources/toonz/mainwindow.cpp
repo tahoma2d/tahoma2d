@@ -1877,7 +1877,12 @@ void MainWindow::defineActions() {
                        "", tr("Create a new project.") + separator +
                        tr("A project is a container for a collection of "
                        "related scenes and drawings."));
-  createMenuFileAction(MI_ProjectSettings, QT_TR_NOOP("&Switch Project"), "");
+  createMenuAction(MI_OpenRecentProject, QT_TR_NOOP("&Open Recent Project"),
+                   files, "");
+  createMenuFileAction(MI_LoadProject, QT_TR_NOOP("&Load Project..."), "", "",
+                       tr("Load an existing project."));
+  createMenuFileAction(MI_ProjectSettings, QT_TR_NOOP("&Project Settings..."),
+                       "");
   createMenuFileAction(MI_SaveDefaultSettings, QT_TR_NOOP("&Save Default Settings"), "",
                        "", tr("Use the current scene's settings as a template for "
                        "all new scenes in the current project."));
@@ -4100,9 +4105,12 @@ QList<QString> RecentFiles::getFilesNameList(FileType fileType) {
 //-----------------------------------------------------------------------------
 
 void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
-  CommandId id = (fileType == Scene) ? MI_OpenRecentScene
-                                     : (fileType == Level) ? MI_OpenRecentLevel
-                                                           : MI_LoadRecentImage;
+  CommandId id = (fileType == Scene)
+                     ? MI_OpenRecentScene
+                     : (fileType == Level)
+                           ? MI_OpenRecentLevel
+                           : (fileType == Project) ? MI_OpenRecentProject
+                                                   : MI_LoadRecentImage;
   QAction *act = CommandManager::instance()->getAction(id);
   if (!act) return;
   DVMenuAction *menu = dynamic_cast<DVMenuAction *>(act->menu());
@@ -4112,9 +4120,21 @@ void RecentFiles::refreshRecentFilesMenu(FileType fileType) {
     menu->setEnabled(false);
   else {
     CommandId clearActionId =
-        (fileType == Scene) ? MI_ClearRecentScene : (fileType == Level)
-                                                        ? MI_ClearRecentLevel
+        (fileType == Scene) ? MI_ClearRecentScene
+                            : (fileType == Level) ? MI_ClearRecentLevel
+                                                  : (fileType == Project)
+                                                        ? MI_ClearRecentProject
                                                         : MI_ClearRecentImage;
+    if (fileType == Project) {
+      QString number;
+      QList<QString> prjNames;
+      TProjectManager *pm = TProjectManager::instance();
+      for (int i = 0; i < names.size(); i++)
+        prjNames.push_back(
+            number.number(i + 1) + QString(". ") +
+            TFilePath(names.at(i)).withoutParentDir().getQString());
+      names = prjNames;
+    }
     menu->setActions(names);
     menu->addSeparator();
     QAction *clearAction = CommandManager::instance()->getAction(clearActionId);

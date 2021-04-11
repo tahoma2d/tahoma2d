@@ -484,6 +484,16 @@ bool TProject::getUseScenePath(string folderName) const {
 }
 
 //-------------------------------------------------------------------
+
+void TProject::setUseSubScenePath(bool on) {
+  m_useSubScenePath = on;
+
+  setUseScenePath("drawings", m_useSubScenePath);
+  setUseScenePath("extras", m_useSubScenePath);
+  setUseScenePath("inputs", m_useSubScenePath);
+}
+
+//-------------------------------------------------------------------
 /*! Returns the index of the folder specified in the path \b folderDir.
         Returns -1 if \b folderDir isn't a folder of the project.
 */
@@ -674,6 +684,7 @@ void TProject::load(const TFilePath &projectPath) {
   m_folderNames.clear();
   m_folders.clear();
   m_useScenePathFlags.clear();
+  m_useSubScenePath = false;
   delete m_sprop;
   m_sprop = new TSceneProperties();
 
@@ -684,6 +695,7 @@ void TProject::load(const TFilePath &projectPath) {
   string tagName;
   if (!is.matchTag(tagName) || tagName != "project") return;
 
+  bool useSubScenePath = false;
   while (is.matchTag(tagName)) {
     if (tagName == "folders") {
       while (is.matchTag(tagName)) {
@@ -693,6 +705,9 @@ void TProject::load(const TFilePath &projectPath) {
           setFolder(name, path);
           string useScenePath = is.getTagAttribute("useScenePath");
           setUseScenePath(name, useScenePath == "yes");
+          if (useScenePath == "yes" &&
+              (name == "drawings" || name == "extras" || name == "inputs"))
+            useSubScenePath = true;
         } else
           throw TException("expected <folder>");
       }
@@ -712,6 +727,8 @@ void TProject::load(const TFilePath &projectPath) {
       is.matchEndTag();
     }
   }
+
+  setUseSubScenePath(useSubScenePath);
 }
 
 //-------------------------------------------------------------------
