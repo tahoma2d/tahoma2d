@@ -990,8 +990,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   tool->setViewer(this);
 
   {
-    TPointD pos = tool->getMatrix().inv() *
-                  winToWorld(event.mousePos() * getDevPixRatio());
+    TPointD pos = tool->getMatrix().inv() * winToWorld(m_lastMousePos);
 
     TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
     if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
