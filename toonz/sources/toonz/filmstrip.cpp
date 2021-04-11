@@ -855,6 +855,8 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
 
   TXshSimpleLevel *sl = getLevel();
 
+  if (!sl) return;
+
   // If accessed after 1st frame on a Single Frame level
   // Block movement so we can't create new images
   if (index > 0) {
