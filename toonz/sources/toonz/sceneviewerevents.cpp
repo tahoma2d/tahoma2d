@@ -917,6 +917,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     GLInvalidateAll();
     invalidateToolStatus();
 
+    m_buttonClicked = false;
     doQuit();
     return;
   }
