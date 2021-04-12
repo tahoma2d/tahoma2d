@@ -836,7 +836,7 @@ void LipSyncPopup::onApplyButton() {
     runRhubarb();
     int rhubarbTimeout = Preferences::instance()->getRhubarbTimeout();
     if (rhubarbTimeout > 0)
-      rhubarbTimeout * 1000;
+      rhubarbTimeout *= 1000;
     else
       rhubarbTimeout = -1;
     m_rhubarb->waitForFinished(rhubarbTimeout);
