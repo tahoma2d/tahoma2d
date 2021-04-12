@@ -16,7 +16,7 @@ Ffmpeg::Ffmpeg() {
   m_ffmpegPath    = Preferences::instance()->getFfmpegPath();
   m_ffmpegTimeout = Preferences::instance()->getFfmpegTimeout();
   if (m_ffmpegTimeout > 0)
-    m_ffmpegTimeout * 1000;
+    m_ffmpegTimeout *= 1000;
   else
     m_ffmpegTimeout    = -1;
   std::string strPath  = m_ffmpegPath.toStdString();
