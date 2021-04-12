@@ -756,8 +756,8 @@ int main(int argc, char *argv[]) {
 
   a.setQuitOnLastWindowClosed(false);
   // a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-  if (Preferences::instance()->isLatestVersionCheckEnabled())
-    w.checkForUpdates();
+//  if (Preferences::instance()->isLatestVersionCheckEnabled())
+//    w.checkForUpdates();
   DvDirModel::instance()->forceRefresh();
 
   // Disable the layout temporarily to avoid redistribution of panes that is
