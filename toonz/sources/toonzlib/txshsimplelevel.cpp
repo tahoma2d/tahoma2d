@@ -1177,8 +1177,10 @@ void TXshSimpleLevel::load() {
   } else {
     // Not a scan + cleanup level
 
-    if (m_path.getType() == "psd" &&
-        this->getScene()->getVersionNumber().first < 71)
+    // Loading PSD files via load level command needs to convert layerID in the
+    // file path to layer name here. The conversion is not needed on loading
+    // scene as the file path loaded from the scene file is already converted.
+    if (m_path.getType() == "psd" && !this->getScene()->isLoading())
       m_path = getLevelPathAndSetNameWithPsdLevelName(this);
 
     TFilePath path = getScene()->decodeFilePath(m_path);
