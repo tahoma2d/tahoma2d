@@ -347,6 +347,7 @@ struct RaylitParams {
   double m_scale;
   bool m_invert;
   bool m_includeInput;
+  double m_radius;
 };
 
 //! Make raylit effect on \b srcRas raster and put the result in \b dstRas.

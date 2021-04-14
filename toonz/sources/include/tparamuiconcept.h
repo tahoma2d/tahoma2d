@@ -66,6 +66,8 @@ public:
     LINEAR_RANGE,  // A band-like range between two points.
                    // { [2 TPointParamP] }
 
+    RAYLIT,
+
     TYPESCOUNT
   };
 

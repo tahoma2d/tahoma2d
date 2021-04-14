@@ -1529,6 +1529,176 @@ void LinearRangeFxGadget::leftButtonUp(const TPointD &pos,
                                        const TMouseEvent &) {
   m_handle = None;
 }
+
+//=============================================================================
+
+class RayLitFxGadget final : public FxGadget {
+  TPointParamP m_center;
+
+  enum HANDLE { Body = 0, Near, Far, None } m_handle = None;
+
+  TPointD m_clickedPos, m_mousePos;
+  TPointD m_targetPos, m_anotherPos;
+
+public:
+  RayLitFxGadget(FxGadgetController *controller,
+                 const TPointParamP &centerPoint);
+
+  void draw(bool picking) override;
+
+  void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+};
+
+//---------------------------------------------------------------------------
+
+RayLitFxGadget::RayLitFxGadget(FxGadgetController *controller,
+                               const TPointParamP &centerPoint)
+    : FxGadget(controller, 3), m_center(centerPoint) {
+  addParam(centerPoint->getX());
+  addParam(centerPoint->getY());
+}
+
+//---------------------------------------------------------------------------
+
+void RayLitFxGadget::draw(bool picking) {
+  auto setColorById = [&](int id) {
+    if (isSelected(id))
+      glColor3dv(m_selectedColor);
+    else
+      glColor3d(0, 0, 1);
+  };
+
+  auto drawArrow = [&]() {
+    double arrowLength = getPixelSize() * 20;
+    double arrowTip    = getPixelSize() * 5;
+
+    glBegin(GL_LINES);
+    glVertex2d(-arrowLength, 0.0);
+    glVertex2d(arrowLength, 0.0);
+
+    glVertex2d(-arrowLength + arrowTip, arrowTip);
+    glVertex2d(-arrowLength, 0.0);
+
+    glVertex2d(-arrowLength + arrowTip, -arrowTip);
+    glVertex2d(-arrowLength, 0.0);
+
+    glVertex2d(arrowLength - arrowTip, arrowTip);
+    glVertex2d(arrowLength, 0.0);
+
+    glVertex2d(arrowLength - arrowTip, -arrowTip);
+    glVertex2d(arrowLength, 0.0);
+    glEnd();
+  };
+
+  setPixelSize();
+  double lineHalf     = getPixelSize() * 100;
+  double lineInterval = getPixelSize() * 50;
+  double r            = getPixelSize() * 3;
+
+  glPushMatrix();
+
+  TPointD center = getValue(m_center);
+  double dCenter = norm(center);
+  TPointD handleVec;
+  if (dCenter > lineHalf) {
+    handleVec = normalize(center) * lineHalf;
+    setColorById(Body);
+    glPushName(getId() + Body);
+    glBegin(GL_LINES);
+    glVertex2d(handleVec.x * 0.95, handleVec.y * 0.95);
+    glVertex2d(-handleVec.x * 0.95, -handleVec.y * 0.95);
+    glEnd();
+    glPopName();
+
+    double angle = std::atan2(-center.y, -center.x) * M_180_PI;
+    double theta = M_180_PI * lineInterval / dCenter;
+
+    glColor3d(0, 0, 1);
+    glLineStipple(1, 0x00FF);
+    glEnable(GL_LINE_STIPPLE);
+    glPushMatrix();
+    glTranslated(center.x, center.y, 0);
+    glRotated(angle, 0, 0, 1);
+    for (int i = -3; i <= 3; i++) {
+      if (i == 0) continue;
+      glPushMatrix();
+      glRotated(theta * (double)i, 0, 0, 1);
+      glBegin(GL_LINES);
+      glVertex2d(dCenter - lineHalf, 0.0);
+      glVertex2d(dCenter + lineHalf, 0.0);
+      glEnd();
+      glPopMatrix();
+    }
+
+    glPopMatrix();
+    glDisable(GL_LINE_STIPPLE);
+
+    for (int id = Near; id <= Far; id++) {
+      TPointD hPos = (id == Near) ? handleVec : -handleVec;
+      setColorById(id);
+      glPushName(getId() + id);
+      glPushMatrix();
+      glTranslated(hPos.x, hPos.y, 0);
+      tglDrawRect(-r, -r, r, r);
+      glPopMatrix();
+      glPopName();
+    }
+  }
+
+  if (m_handle == Body) {
+    glPushMatrix();
+    TPointD centerOffset = center - m_targetPos;
+    handleVec            = normalize(m_targetPos) * lineHalf;
+    glTranslated(centerOffset.x, centerOffset.y, 0);
+    glBegin(GL_LINES);
+    glVertex2d(handleVec.x, handleVec.y);
+    glVertex2d(-handleVec.x, -handleVec.y);
+    glEnd();
+    glPopMatrix();
+  }
+  glPopMatrix();
+}
+
+//---------------------------------------------------------------------------
+
+void RayLitFxGadget::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
+  m_handle = (HANDLE)m_selected;
+  if (m_handle == None) return;
+  m_clickedPos = pos;
+  m_targetPos  = getValue(m_center);
+}
+
+//---------------------------------------------------------------------------
+
+void RayLitFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
+  if (m_handle == None) return;
+  TPointD d = pos - m_clickedPos;
+
+  if (m_handle == Body) {
+    setValue(m_center, m_targetPos + d);
+    return;
+  }
+
+  double angle =
+      std::atan2(pos.y, pos.x) - std::atan2(m_clickedPos.y, m_clickedPos.x);
+  double scale = norm(pos) / norm(m_clickedPos);
+
+  QTransform transform;
+  QPointF p = transform.rotateRadians(angle)
+                  .scale(scale, scale)
+                  .map(QPointF(m_targetPos.x, m_targetPos.y));
+
+  setValue(m_center, TPointD(p.x(), p.y()));
+}
+
+//---------------------------------------------------------------------------
+
+void RayLitFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
+  m_handle = None;
+}
+
 //*************************************************************************************
 //    FxGadgetController  implementation
 //*************************************************************************************
@@ -1711,6 +1881,12 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
     assert(uiConcept.m_params.size() == 2);
     gadget = new LinearRangeFxGadget(this, uiConcept.m_params[0],
                                      uiConcept.m_params[1]);
+    break;
+  }
+
+  case TParamUIConcept::RAYLIT: {
+    assert(uiConcept.m_params.size() == 1);
+    gadget = new RayLitFxGadget(this, uiConcept.m_params[0]);
     break;
   }
   default:
