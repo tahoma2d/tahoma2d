@@ -20,7 +20,7 @@ private:
   const char *applicationName     = "Tahoma2D";
   const float applicationVersion  = 1.2;
   const float applicationRevision = 0;
-  const char *applicationNote     = "(alpha)";
+  const char *applicationNote     = "(beta)";
 };
 
 std::string ToonzVersion::getAppName(void) {
