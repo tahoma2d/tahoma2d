@@ -276,7 +276,8 @@ static void deleteAllUntitledScenes() {
 //=============================================================================
 // ToonzScene
 
-ToonzScene::ToonzScene() : m_contentHistory(0), m_isUntitled(true) {
+ToonzScene::ToonzScene()
+    : m_contentHistory(0), m_isUntitled(true), m_isLoading(false) {
   m_childStack = new ChildStack(this);
   m_properties = new TSceneProperties();
   m_levelSet   = new TLevelSet();
@@ -348,8 +349,15 @@ bool ToonzScene::isUntitled() const {
 //-----------------------------------------------------------------------------
 
 void ToonzScene::load(const TFilePath &path, bool withProgressDialog) {
-  loadNoResources(path);
-  loadResources(withProgressDialog);
+  setIsLoading(true);
+  try {
+    loadNoResources(path);
+    loadResources(withProgressDialog);
+  } catch (...) {
+    setIsLoading(false);
+    throw;
+  }
+  setIsLoading(false);
 }
 
 //-----------------------------------------------------------------------------

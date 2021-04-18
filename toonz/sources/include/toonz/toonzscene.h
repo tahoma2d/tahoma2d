@@ -259,6 +259,9 @@ If \b scene is in +scenes/name.tnz return name,
   // if the path is codable with $scenefolder alias, replace it and return true
   bool codeFilePathWithSceneFolder(TFilePath &path) const;
 
+  bool isLoading() { return m_isLoading; }
+  void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
+
 private:
   TFilePath m_scenePath;  //!< Full path to the scene file (.tnz).
 
@@ -272,6 +275,11 @@ private:
   VersionNumber m_versionNumber;  // last saved scene file version. Note that
                                   // currently it is not match with OT version.
                                   // TODO: Revise VersionNumber with OT version
+
+  bool m_isLoading;  // Set to true while loading the scene. Currently this flag
+                     // is used when loading PSD levels, for defining whether to
+                     // convert a layerId in the path to the layer name. See
+                     // TXshSimpleLevel::load().
 
 private:
   // noncopyable
