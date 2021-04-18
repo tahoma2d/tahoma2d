@@ -1,0 +1,29 @@
+name: Tahoma2D Windows Build
+
+on: [push, pull_request]
+
+jobs:
+  Windows:
+    runs-on: windows-2016
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Install Dependencies
+        run: |
+          ci-scripts\windows\tahoma-install.bat
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts\windows\tahoma-get3rdpartyapps.bat
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build Tahoma2D
+        run: |
+          ci-scripts\windows\tahoma-build.bat
+      - name: Create Package
+        run: |
+          ci-scripts\windows\tahoma-buildpkg.bat
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Tahoma2D-win.zip
+          path: toonz\build\Tahoma2D-win.zip
