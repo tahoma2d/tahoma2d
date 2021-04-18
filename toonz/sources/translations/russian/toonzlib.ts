@@ -305,7 +305,7 @@
     <message>
         <location filename="../../toonzlib/studiopalettecmd.cpp" line="47"/>
         <source>Failed to save palette.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сохранить палитру.</translation>
     </message>
     <message>
         <location filename="../../toonzlib/studiopalettecmd.cpp" line="85"/>
@@ -565,12 +565,12 @@
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="167"/>
         <source>Move X</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемещение X</translation>
     </message>
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="170"/>
         <source>Move Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемещение Y</translation>
     </message>
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="173"/>
@@ -676,7 +676,7 @@
     <message>
         <location filename="../../toonzlib/sceneresources.cpp" line="519"/>
         <source>and %1 more item(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>и еще%1 элемент (ов).</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneresources.cpp" line="522"/>

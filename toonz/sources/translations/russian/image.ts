@@ -6,12 +6,12 @@
     <message>
         <location filename="../../image/avi/tiio_avi.cpp" line="1182"/>
         <source>Codec</source>
-        <translation type="unfinished">Кодек</translation>
+        <translation>Кодек</translation>
     </message>
     <message>
         <location filename="../../image/avi/tiio_avi.cpp" line="1183"/>
         <source>Uncompressed</source>
-        <translation type="unfinished">Без сжатия</translation>
+        <translation>Без сжатия</translation>
     </message>
 </context>
 <context>
@@ -50,7 +50,7 @@
     <message>
         <location filename="../../image/png/tiio_png.cpp" line="746"/>
         <source>Alpha Channel</source>
-        <translation type="unfinished">Альфа канал</translation>
+        <translation>Альфа канал</translation>
     </message>
 </context>
 <context>
@@ -72,52 +72,52 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1229"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Битов на пиксель</translation>
+        <translation>Битов на пиксель</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1230"/>
         <source>24 bits</source>
-        <translation type="unfinished">24 бита</translation>
+        <translation>24 бита</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
         <source>32 bits</source>
-        <translation type="unfinished">32 бита</translation>
+        <translation>32 бита</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
         <source>48 bits</source>
-        <translation type="unfinished">48 бита</translation>
+        <translation>48 бита</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
         <source>64 bits</source>
-        <translation type="unfinished">64 бита</translation>
+        <translation>64 бита</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8 бита (оттенки серого)</translation>
+        <translation>8 бита (оттенки серого)</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
         <source>Endianess</source>
-        <translation type="unfinished">Порядок байтов</translation>
+        <translation>Порядок байтов</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
         <source>Big Endian</source>
-        <translation type="unfinished">От старшего к младшему</translation>
+        <translation>От старшего к младшему</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
         <source>Little Endian</source>
-        <translation type="unfinished">От младшего к старшему</translation>
+        <translation>От младшего к старшему</translation>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
         <source>RLE-Compressed</source>
-        <translation type="unfinished">RLE-сжатие</translation>
+        <translation>RLE-сжатие</translation>
     </message>
 </context>
 <context>
@@ -183,37 +183,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1969"/>
         <source>Stroke Mode</source>
-        <translation type="unfinished">Режим обводки</translation>
+        <translation>Режим обводки</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1970"/>
         <source>Outline Quality</source>
-        <translation type="unfinished">Качество контура</translation>
+        <translation>Качество контура</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1971"/>
         <source>Centerline</source>
-        <translation type="unfinished">Осевая линия</translation>
+        <translation>Осевая линия</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1972"/>
         <source>Outline</source>
-        <translation type="unfinished">Контур</translation>
+        <translation>Контур</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1973"/>
         <source>High</source>
-        <translation type="unfinished">Высокая</translation>
+        <translation>Высокая</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1974"/>
         <source>Medium</source>
-        <translation type="unfinished">Средняя</translation>
+        <translation>Средняя</translation>
     </message>
     <message>
         <location filename="../../image/svg/tiio_svg.cpp" line="1975"/>
         <source>Low</source>
-        <translation type="unfinished">Низкая</translation>
+        <translation>Низкая</translation>
     </message>
 </context>
 <context>
@@ -221,27 +221,27 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/tga/tiio_tga.cpp" line="523"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Битов на пиксель</translation>
+        <translation>Битов на пиксель</translation>
     </message>
     <message>
         <location filename="../../image/tga/tiio_tga.cpp" line="524"/>
         <source>16 bits</source>
-        <translation type="unfinished">16 битов</translation>
+        <translation>16 битов</translation>
     </message>
     <message>
         <location filename="../../image/tga/tiio_tga.cpp" line="525"/>
         <source>24 bits</source>
-        <translation type="unfinished">24 бита</translation>
+        <translation>24 бита</translation>
     </message>
     <message>
         <location filename="../../image/tga/tiio_tga.cpp" line="526"/>
         <source>32 bits</source>
-        <translation type="unfinished">32 бита</translation>
+        <translation>32 бита</translation>
     </message>
     <message>
         <location filename="../../image/tga/tiio_tga.cpp" line="527"/>
         <source>Compression</source>
-        <translation type="unfinished">Сжатие</translation>
+        <translation>Сжатие</translation>
     </message>
 </context>
 <context>
@@ -249,37 +249,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="730"/>
         <source>Byte Ordering</source>
-        <translation type="unfinished">Порядок следования байтов</translation>
+        <translation>Порядок следования байтов</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
         <source>Compression Type</source>
-        <translation type="unfinished">Тип сжатия</translation>
+        <translation>Тип сжатия</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Битов на пиксель</translation>
+        <translation>Битов на пиксель</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
         <source>24(RGB)</source>
-        <translation type="unfinished">24(RGB)</translation>
+        <translation>24(RGB)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
         <source>48(RGB)</source>
-        <translation type="unfinished">48(RGB)</translation>
+        <translation>48(RGB)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
         <source> 1(BW)</source>
-        <translation type="unfinished"> 1(ЧБ)</translation>
+        <translation> 1(ЧБ)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
         <source> 8(GREYTONES)</source>
-        <translation type="unfinished"> 8(ОТТЕНКИСЕРОГО)</translation>
+        <translation> 8(ОТТЕНКИСЕРОГО)</translation>
     </message>
     <message>
         <source>32(RGBM)</source>
@@ -292,57 +292,57 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
         <source>32(RGBA)</source>
-        <translation type="unfinished"></translation>
+        <translation>32(RGBA)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
         <source>64(RGBA)</source>
-        <translation type="unfinished"></translation>
+        <translation>64(RGBA)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
         <source>Orientation</source>
-        <translation type="unfinished">Ориентация</translation>
+        <translation>Ориентация</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
         <source>Top Left</source>
-        <translation type="unfinished">Сверху слева</translation>
+        <translation>Сверху слева</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
         <source>Top Right</source>
-        <translation type="unfinished">Сверху справа</translation>
+        <translation>Сверху справа</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
         <source>Bottom Right</source>
-        <translation type="unfinished">Снизу справа</translation>
+        <translation>Снизу справа</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
         <source>Bottom Left</source>
-        <translation type="unfinished">Снизу слева</translation>
+        <translation>Снизу слева</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
         <source>Left Top</source>
-        <translation type="unfinished">Слева сверху</translation>
+        <translation>Слева сверху</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
         <source>Left Bottom</source>
-        <translation type="unfinished">Слева снизу</translation>
+        <translation>Слева снизу</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
         <source>Right Top</source>
-        <translation type="unfinished">Справа снизу</translation>
+        <translation>Справа снизу</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
         <source>Right Bottom</source>
-        <translation type="unfinished">Справа снизу</translation>
+        <translation>Справа снизу</translation>
     </message>
 </context>
 <context>
