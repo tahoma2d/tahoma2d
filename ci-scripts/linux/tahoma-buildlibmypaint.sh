@@ -13,7 +13,7 @@ echo ">>> Generating libmypaint environment"
 ./autogen.sh
 
 echo ">>> Configuring libmypaint build"
-./configure
+sudo ./configure
 
 echo ">>> Building libmypaint"
 sudo make
