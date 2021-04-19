@@ -76,15 +76,8 @@ IF EXIST Tahoma2D-win.zip del Tahoma2D-win.zip
 
 IF EXIST ..\..\..\tahoma2d_symbols (
    echo ">>> Saving debugging symbols"
-   for /f "tokens=1-4 delims=/ " %%i in ("%date%") do (
-     set dow=%%i
-     set month=%%j
-     set day=%%k
-     set year=%%l
-   )
-   set DATEDIR="%year%-%month%-%day%"
-   mkdir ..\..\..\tahoma2d_symbols\%DATEDIR%
-   copy /y RelWithDebInfo\*.* ..\..\..\tahoma2d_symbols\%DATEDIR%
+   mkdir ..\..\..\tahoma2d_symbols\%date:~10,4%-%date:~4,2%-%date:~7,2%
+   copy /y RelWithDebInfo\*.* ..\..\..\tahoma2d_symbols\%date:~10,4%-%date:~4,2%-%date:~7,2%
 ) else (
    echo ">>> Creating debugging symbols package"
    IF EXIST debug-symbols.zip del debug-symbols.zip
