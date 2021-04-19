@@ -10,6 +10,10 @@ echo ">>> Copy and configure Tahoma2D installation"
 
 copy /y RelWithDebInfo\*.* Tahoma2D
 
+REM Remove PDB and ILK files
+del Tahoma2D\*.pdb
+del Tahoma2D\*.ilk
+
 copy /Y ..\..\thirdparty\freeglut\bin\x64\freeglut.dll Tahoma2D
 copy /Y ..\..\thirdparty\glew\glew-1.9.0\bin\64bit\glew32.dll Tahoma2D
 copy /Y ..\..\thirdparty\libmypaint\dist\64\libiconv-2.dll Tahoma2D
@@ -69,5 +73,22 @@ echo ">>> Creating Tahoma2D Windows package"
 
 IF EXIST Tahoma2D-win.zip del Tahoma2D-win.zip
 7z a Tahoma2D-win.zip Tahoma2D
+
+IF EXIST ..\..\..\tahoma2d_symbols (
+   echo ">>> Saving debugging symbols"
+   for /f "tokens=1-4 delims=/ " %%i in ("%date%") do (
+     set dow=%%i
+     set month=%%j
+     set day=%%k
+     set year=%%l
+   )
+   set DATEDIR="%year%-%month%-%day%"
+   mkdir ..\..\..\tahoma2d_symbols\%DATEDIR%
+   copy /y RelWithDebInfo\*.* ..\..\..\tahoma2d_symbols\%DATEDIR%
+) else (
+   echo ">>> Creating debugging symbols package"
+   IF EXIST debug-symbols.zip del debug-symbols.zip
+   7z a debug-symbols.zip RelWithDebInfo\*.*
+)
 
 cd ../..

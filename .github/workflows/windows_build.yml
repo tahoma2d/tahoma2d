@@ -27,3 +27,7 @@ jobs:
         with:
           name: Tahoma2D-win.zip
           path: toonz\build\Tahoma2D-win.zip
+      - uses: actions/upload-artifact@v1
+        with:
+          name: debug-symbols.zip
+          path: toonz\build\debug-symbols.zip
