@@ -5,170 +5,170 @@
     <name>CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="vanished">Impossible de vectoriser un niveau %1 </translation>
+        <translation>Impossible de vectoriser un niveau %1 </translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="vanished">Impossible de vectoriser un niveau sans trames</translation>
+        <translation>Impossible de vectoriser un niveau sans trames</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="vanished">Impossible de vectoriser une  image %1</translation>
+        <translation>Impossible de vectoriser une  image %1</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="vanished">Bad argument (%1): doit être une image ou un niveau</translation>
+        <translation>Bad argument (%1): doit être une image ou un niveau</translation>
     </message>
 </context>
 <context>
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="vanished">&quot;%1&quot;</translation>
+        <translation>&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="vanished">Impossible de concaténer un chemin absolu: %1</translation>
+        <translation>Impossible de concaténer un chemin absolu: %1</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="vanished">%1 n&apos;est pas un répertoire</translation>
+        <translation>%1 n&apos;est pas un répertoire</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="vanished">Impossible de lire le répertoire %1</translation>
+        <translation>Impossible de lire le répertoire %1</translation>
     </message>
 </context>
 <context>
     <name>Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">Le fichier %1 n&apos;existe pas</translation>
+        <translation>Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="vanished">Chargé première image de %1</translation>
+        <translation>Chargé première image de %1</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="vanished">Erreur inattendue lors de la lecture d&apos;image</translation>
+        <translation>Erreur inattendue lors de la lecture d&apos;image</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="vanished">Type de fichier non reconnu:</translation>
+        <translation>Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="vanished">Vous ne pouvez pas enregistrer une%1 image  pour ce type de fichier: %2</translation>
+        <translation>Vous ne pouvez pas enregistrer une%1 image  pour ce type de fichier: %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="vanished">Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
+        <translation>Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
     </message>
 </context>
 <context>
     <name>ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="vanished">Bad argument (%1): doit être &apos;Raster&apos; ou &apos;ToonzRaster &apos;</translation>
+        <translation>Bad argument (%1): doit être &apos;Raster&apos; ou &apos;ToonzRaster &apos;</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="vanished">ImageBuilder (%1 image)</translation>
+        <translation>ImageBuilder (%1 image)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="vanished">%1 : %2</translation>
+        <translation>%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="vanished">Bad argument (%1): il doit être une Transformation</translation>
+        <translation>Bad argument (%1): il doit être une Transformation</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="vanished">deuxième argument (%1) n&apos;est pas une image</translation>
+        <translation>deuxième argument (%1) n&apos;est pas une image</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="vanished">Impossible insérer une %1 image dans un niveau %2</translation>
+        <translation>Impossible insérer une %1 image dans un niveau %2</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="vanished">indice de cadre (%1) doit être un nombre</translation>
+        <translation>indice de cadre (%1) doit être un nombre</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="vanished">indice de cadre (%1) est hors limites (0 - %2)</translation>
+        <translation>indice de cadre (%1) est hors limites (0 - %2)</translation>
     </message>
     <message>
         <source>%1 frames</source>
-        <translation type="vanished">%1 cadres</translation>
+        <translation>%1 cadres</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="vanished">Bad argument (%1). Il devrait être FilePath ou string</translation>
+        <translation>Bad argument (%1). Il devrait être FilePath ou string</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="vanished">Exception pendant le chargement du niveau (%1)</translation>
+        <translation>Exception pendant le chargement du niveau (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">Le fichier %1 n&apos;existe pas</translation>
+        <translation>Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="vanished">Le fichier %1 n&apos;est pas supporté</translation>
+        <translation>Le fichier %1 n&apos;est pas supporté</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="vanished">Exception pendant la lecture du niveau (%1)</translation>
+        <translation>Exception pendant la lecture du niveau (%1)</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="vanished">Impossible d&apos;enregistrer un niveau vide</translation>
+        <translation>Impossible d&apos;enregistrer un niveau vide</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="vanished">Type de fichier non reconnu:</translation>
+        <translation>Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="vanished">Impossible d&apos;enregistrer un %1  niveau à ce type de fichier: %2</translation>
+        <translation>Impossible d&apos;enregistrer un %1  niveau à ce type de fichier: %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="vanished">Exception lors de l&apos;écriture de %1</translation>
+        <translation>Exception lors de l&apos;écriture de %1</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="vanished">Impossible insérer une image %1 dans un niveau</translation>
+        <translation>Impossible insérer une image %1 dans un niveau</translation>
     </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="vanished">Impossible vectoriser un %1  niveau</translation>
+        <translation>Impossible vectoriser un %1  niveau</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="vanished">Impossible vectoriser un niveau sans cadres</translation>
+        <translation>Impossible vectoriser un niveau sans cadres</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="vanished">Impossible vectoriser une %1  image</translation>
+        <translation>Impossible vectoriser une %1  image</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="vanished">Bad argument (%1): il doit être une image ou un niveau</translation>
+        <translation>Bad argument (%1): il doit être une image ou un niveau</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="vanished">Couleur non valide :</translation>
+        <translation>Couleur non valide :</translation>
     </message>
 </context>
 <context>
@@ -451,14 +451,6 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Move E/W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move N/S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Move Z</source>
         <translation type="unfinished"></translation>
     </message>
@@ -492,18 +484,6 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
     </message>
     <message>
         <source>%1  %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Keyframe   %1 at frame %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move Center   %1  Frame %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -611,391 +591,372 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>and %1 more item(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="vanished">Attendu une image vectorielle: %1</translation>
+        <translation>Attendu une image vectorielle: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="vanished">Attendu un niveau vectorielle: %1</translation>
+        <translation>Attendu un niveau vectorielle: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="vanished">L&apos;argument doit être un niveau ou un image vectorielle :</translation>
+        <translation>L&apos;argument doit être un niveau ou un image vectorielle :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="vanished">%1  n&apos;a pas de palette</translation>
+        <translation>%1  n&apos;a pas de palette</translation>
     </message>
 </context>
 <context>
     <name>Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="vanished">Le fichier %1 n&apos;existe pas</translation>
+        <translation>Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="vanished">Exception pendant la lecture du niveau (%1)</translation>
+        <translation>Exception pendant la lecture du niveau (%1)</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="vanished">Exception lors de l&apos;écriture de %1</translation>
+        <translation>Exception lors de l&apos;écriture de %1</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="vanished">Bad level type (%1): doit être Vecteur, Raster ou ToonzRaster</translation>
+        <translation>Bad level type (%1): doit être Vecteur, Raster ou ToonzRaster</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="vanished">Impossible ajouter le niveau: nom(%1) est déjà utilisé</translation>
+        <translation>Impossible ajouter le niveau: nom(%1) est déjà utilisé</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="vanished">Impossible charger ce type de fichier comme un niveau: %1</translation>
+        <translation>Impossible charger ce type de fichier comme un niveau: %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="vanished">Impossible de charger niveau %1</translation>
+        <translation>Impossible de charger niveau %1</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="vanished">Le niveau n&apos;est pas inclus dans la scène: %1</translation>
+        <translation>Le niveau n&apos;est pas inclus dans la scène: %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="vanished">%1 : Attendu une instance de niveau ou un nom de niveau</translation>
+        <translation>%1 : Attendu une instance de niveau ou un nom de niveau</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="vanished">Niveau &apos;%1&apos; n&apos;est pas inclus dans la scène</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::CenterlineVectorizer</name>
-    <message>
-        <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Niveau &apos;%1&apos; n&apos;est pas inclus dans la scène</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="unfinished">&quot;%1&quot;</translation>
+        <translation type="obsolete">&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="unfinished">Impossible de concaténer un chemin absolu: %1</translation>
+        <translation type="obsolete">Impossible de concaténer un chemin absolu: %1</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="unfinished">%1 n&apos;est pas un répertoire</translation>
+        <translation type="obsolete">%1 n&apos;est pas un répertoire</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="unfinished">Impossible de lire le répertoire %1</translation>
+        <translation type="obsolete">Impossible de lire le répertoire %1</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">Le fichier %1 n&apos;existe pas</translation>
+        <translation type="obsolete">Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="unfinished">Chargé première image de %1</translation>
+        <translation type="obsolete">Chargé première image de %1</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="unfinished">Erreur inattendue lors de la lecture d&apos;image</translation>
+        <translation type="obsolete">Erreur inattendue lors de la lecture d&apos;image</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">Type de fichier non reconnu:</translation>
+        <translation type="obsolete">Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="unfinished">Vous ne pouvez pas enregistrer une%1 image  pour ce type de fichier: %2</translation>
+        <translation type="obsolete">Vous ne pouvez pas enregistrer une%1 image  pour ce type de fichier: %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="unfinished">Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
+        <translation type="obsolete">Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="unfinished">Bad argument (%1): doit être &apos;Raster&apos; ou &apos;ToonzRaster &apos;</translation>
+        <translation type="obsolete">Bad argument (%1): doit être &apos;Raster&apos; ou &apos;ToonzRaster &apos;</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="unfinished">ImageBuilder (%1 image)</translation>
+        <translation type="obsolete">ImageBuilder (%1 image)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="unfinished">%1 : %2</translation>
+        <translation type="obsolete">%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="unfinished">Bad argument (%1): il doit être une Transformation</translation>
+        <translation type="obsolete">Bad argument (%1): il doit être une Transformation</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="unfinished">%1 cadres</translation>
+        <translation type="obsolete">%1 cadres</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="unfinished">Bad argument (%1). Il devrait être FilePath ou string</translation>
+        <translation type="obsolete">Bad argument (%1). Il devrait être FilePath ou string</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="unfinished">Exception pendant le chargement du niveau (%1)</translation>
+        <translation type="obsolete">Exception pendant le chargement du niveau (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">Le fichier %1 n&apos;existe pas</translation>
+        <translation type="obsolete">Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="unfinished">Le fichier %1 n&apos;est pas supporté</translation>
+        <translation type="obsolete">Le fichier %1 n&apos;est pas supporté</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">Exception pendant la lecture du niveau (%1)</translation>
+        <translation type="obsolete">Exception pendant la lecture du niveau (%1)</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="unfinished">Impossible d&apos;enregistrer un niveau vide</translation>
+        <translation type="obsolete">Impossible d&apos;enregistrer un niveau vide</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">Type de fichier non reconnu:</translation>
+        <translation type="obsolete">Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="unfinished">Impossible d&apos;enregistrer un %1  niveau à ce type de fichier: %2</translation>
+        <translation type="obsolete">Impossible d&apos;enregistrer un %1  niveau à ce type de fichier: %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">Exception lors de l&apos;écriture de %1</translation>
+        <translation type="obsolete">Exception lors de l&apos;écriture de %1</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="unfinished">indice de cadre (%1) doit être un nombre</translation>
+        <translation type="obsolete">indice de cadre (%1) doit être un nombre</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="unfinished">indice de cadre (%1) est hors limites (0 - %2)</translation>
+        <translation type="obsolete">indice de cadre (%1) est hors limites (0 - %2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="unfinished">deuxième argument (%1) n&apos;est pas une image</translation>
+        <translation type="obsolete">deuxième argument (%1) n&apos;est pas une image</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="unfinished">Impossible insérer une image %1 dans un niveau</translation>
+        <translation type="obsolete">Impossible insérer une image %1 dans un niveau</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="unfinished">Impossible insérer une %1 image dans un niveau %2</translation>
+        <translation type="obsolete">Impossible insérer une %1 image dans un niveau %2</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::OutlineVectorizer</name>
     <message>
-        <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid color : </source>
-        <translation type="unfinished">Couleur non valide :</translation>
+        <translation type="obsolete">Couleur non valide :</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="unfinished">Attendu une image vectorielle: %1</translation>
+        <translation type="obsolete">Attendu une image vectorielle: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="unfinished">Attendu un niveau vectorielle: %1</translation>
+        <translation type="obsolete">Attendu un niveau vectorielle: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="unfinished">L&apos;argument doit être un niveau ou un image vectorielle :</translation>
+        <translation type="obsolete">L&apos;argument doit être un niveau ou un image vectorielle :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="unfinished">%1  n&apos;a pas de palette</translation>
+        <translation type="obsolete">%1  n&apos;a pas de palette</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">Le fichier %1 n&apos;existe pas</translation>
+        <translation type="obsolete">Le fichier %1 n&apos;existe pas</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">Exception pendant la lecture du niveau (%1)</translation>
+        <translation type="obsolete">Exception pendant la lecture du niveau (%1)</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">Exception lors de l&apos;écriture de %1</translation>
+        <translation type="obsolete">Exception lors de l&apos;écriture de %1</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="unfinished">Bad level type (%1): doit être Vecteur, Raster ou ToonzRaster</translation>
+        <translation type="obsolete">Bad level type (%1): doit être Vecteur, Raster ou ToonzRaster</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="unfinished">Impossible ajouter le niveau: nom(%1) est déjà utilisé</translation>
+        <translation type="obsolete">Impossible ajouter le niveau: nom(%1) est déjà utilisé</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="unfinished">Impossible charger ce type de fichier comme un niveau: %1</translation>
+        <translation type="obsolete">Impossible charger ce type de fichier comme un niveau: %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="unfinished">Impossible de charger niveau %1</translation>
+        <translation type="obsolete">Impossible de charger niveau %1</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="unfinished">Le niveau n&apos;est pas inclus dans la scène: %1</translation>
+        <translation type="obsolete">Le niveau n&apos;est pas inclus dans la scène: %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="unfinished">%1 : Attendu une instance de niveau ou un nom de niveau</translation>
+        <translation type="obsolete">%1 : Attendu une instance de niveau ou un nom de niveau</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="unfinished">Niveau &apos;%1&apos; n&apos;est pas inclus dans la scène</translation>
+        <translation type="obsolete">Niveau &apos;%1&apos; n&apos;est pas inclus dans la scène</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="unfinished">Impossible convertir un %1 niveau</translation>
+        <translation type="obsolete">Impossible convertir un %1 niveau</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="unfinished">Impossible convertir un niveau sans cadres</translation>
+        <translation type="obsolete">Impossible convertir un niveau sans cadres</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="unfinished">Impossible convertir une %1  image</translation>
+        <translation type="obsolete">Impossible convertir une %1  image</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="unfinished">Bad argument (%1): il doit être un niveau Raster ou une  image Raster</translation>
+        <translation type="obsolete">Bad argument (%1): il doit être un niveau Raster ou une  image Raster</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="unfinished">Identité</translation>
+        <translation type="obsolete">Identité</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="unfinished">Translation(%1,%2)</translation>
+        <translation type="obsolete">Translation(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="unfinished">Rotation(%1)</translation>
+        <translation type="obsolete">Rotation(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="unfinished">Echelle(%1%)</translation>
+        <translation type="obsolete">Echelle(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="unfinished">Echelle(%1%, %2%)</translation>
+        <translation type="obsolete">Echelle(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="unfinished">Transformer(%1, %2, %3;  %4, %5, %6)</translation>
+        <translation type="obsolete">Transformer(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 <context>
     <name>ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="vanished">Impossible convertir un %1 niveau</translation>
+        <translation>Impossible convertir un %1 niveau</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="vanished">Impossible convertir un niveau sans cadres</translation>
+        <translation>Impossible convertir un niveau sans cadres</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="vanished">Impossible convertir une %1  image</translation>
+        <translation>Impossible convertir une %1  image</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="vanished">Bad argument (%1): il doit être un niveau Raster ou une  image Raster</translation>
+        <translation>Bad argument (%1): il doit être un niveau Raster ou une  image Raster</translation>
     </message>
 </context>
 <context>
     <name>Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="vanished">Identité</translation>
+        <translation>Identité</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="vanished">Translation(%1,%2)</translation>
+        <translation>Translation(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="vanished">Rotation(%1)</translation>
+        <translation>Rotation(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="vanished">Echelle(%1%)</translation>
+        <translation>Echelle(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="vanished">Echelle(%1%, %2%)</translation>
+        <translation>Echelle(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="vanished">Transformer(%1, %2, %3;  %4, %5, %6)</translation>
+        <translation>Transformer(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 </TS>

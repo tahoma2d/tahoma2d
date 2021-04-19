@@ -167,11 +167,15 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>A/R</source>
-        <translation>縦横比</translation>
+        <translation type="vanished">縦横比</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
         <translation>&lt;カスタム&gt;</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -241,11 +245,74 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>N/S</source>
-        <translation>Y</translation>
+        <translation type="vanished">Y</translation>
     </message>
     <message>
         <source>E/W</source>
-        <translation>X</translation>
+        <translation type="vanished">X</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished">X</translation>
+    </message>
+</context>
+<context>
+    <name>ColorChannelControl</name>
+    <message>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -332,63 +399,44 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
-    <name>DVGui::ColorField</name>
-    <message>
-        <source>R:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>G:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>B:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A:</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation>太字</translation>
+        <translation type="vanished">太字</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>斜体</translation>
+        <translation type="vanished">斜体</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>下線</translation>
+        <translation type="vanished">下線</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation>左揃え</translation>
+        <translation type="vanished">左揃え</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation>中央揃え</translation>
+        <translation type="vanished">中央揃え</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation>右揃え</translation>
+        <translation type="vanished">右揃え</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>ファイル名は次の記号を含むことができません： /\:*?&quot;&lt;&gt;|</translation>
+        <translation type="vanished">ファイル名は次の記号を含むことができません： /\:*?&quot;&lt;&gt;|</translation>
     </message>
 </context>
 <context>
@@ -397,10 +445,6 @@ Possibly the preset file has been corrupted</source>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
@@ -408,23 +452,19 @@ Possibly the preset file has been corrupted</source>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>選択色</translation>
+        <translation type="vanished">選択色</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation>チャンネル：</translation>
+        <translation type="vanished">チャンネル：</translation>
     </message>
 </context>
 <context>
@@ -446,27 +486,27 @@ Possibly the preset file has been corrupted</source>
     <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="vanished">太字</translation>
+        <translation>太字</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="vanished">斜体</translation>
+        <translation>斜体</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="vanished">下線</translation>
+        <translation>下線</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="vanished">左揃</translation>
+        <translation>左揃</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="vanished">中央揃</translation>
+        <translation>中央揃</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="vanished">右揃</translation>
+        <translation>右揃</translation>
     </message>
 </context>
 <context>
@@ -495,7 +535,7 @@ Possibly the preset file has been corrupted</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -609,7 +649,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Next frame</source>
-        <translation>次のフレーム (&amp;N)</translation>
+        <translation type="vanished">次のフレーム (&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Last Frame</source>
@@ -718,6 +758,27 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&amp;Reset View</source>
         <translation>表示をリセット (&amp;R)</translation>
+    </message>
+    <message>
+        <source>This value is different than the scene framerate.
+Control click to reset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot set the scene fps to a negative value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Next Frame</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -970,6 +1031,10 @@ Possibly the preset file has been corrupted</source>
         <source>Step</source>
         <translation>ステップ</translation>
     </message>
+    <message>
+        <source>Link/Unlink Handles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FunctionSelection</name>
@@ -1073,6 +1138,14 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>FunctionSheetColumnHeadViewer</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionToolbar</name>
     <message>
         <source>Value</source>
@@ -1100,6 +1173,14 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Plastic Skeleton</source>
         <translation>プラスチックのボーン</translation>
+    </message>
+</context>
+<context>
+    <name>FunctionTreeModel::Channel</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1137,11 +1218,11 @@ Possibly the preset file has been corrupted</source>
     <name>FxColumnPainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートノードから切り離す (&amp;D)</translation>
+        <translation type="vanished">タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートノードに接続 (&amp;C)</translation>
+        <translation type="vanished">タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
@@ -1162,6 +1243,14 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&amp;Cache FX</source>
         <translation>キャッシュ (&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1203,11 +1292,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートノードから切り離す (&amp;D)</translation>
+        <translation type="vanished">タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートノードに接続 (&amp;C)</translation>
+        <translation type="vanished">タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Create Linked FX</source>
@@ -1245,20 +1334,36 @@ Possibly the preset file has been corrupted</source>
         <source>&amp;Cache FX</source>
         <translation>キャッシュ (&amp;C)</translation>
     </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FxPalettePainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートノードから切り離す (&amp;D)</translation>
+        <translation type="vanished">タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートノードに接続 (&amp;C)</translation>
+        <translation type="vanished">タイムシートノードに接続 (&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
         <translation>プレビュー (&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1283,11 +1388,19 @@ Possibly the preset file has been corrupted</source>
     <name>FxSchematicPort</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>タイムシートノードから切り離す (&amp;D)</translation>
+        <translation type="vanished">タイムシートノードから切り離す (&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>タイムシートノードに接続 (&amp;C)</translation>
+        <translation type="vanished">タイムシートノードに接続 (&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1315,7 +1428,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>FxSchematicXSheetNode</name>
     <message>
         <source>XSheet</source>
-        <translation>タイムシート</translation>
+        <translation type="vanished">タイムシート</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1361,11 +1478,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>XSheet</source>
-        <translation>XSheet</translation>
+        <translation type="vanished">XSheet</translation>
     </message>
     <message>
         <source>X</source>
         <translation type="vanished">X</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1432,7 +1553,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">ファイル名は次の記号のどれかを含むことができません： --- \ / : ? &quot; | --- </translation>
+        <translation>ファイル名は次の記号のどれかを含むことができません： --- \ / : ? &quot; | --- </translation>
     </message>
 </context>
 <context>
@@ -1469,11 +1590,28 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">新規スタイル</translation>
+        <translation>新規スタイル</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">新規ページ</translation>
+        <translation>新規ページ</translation>
+    </message>
+    <message>
+        <source>- No Styles -</source>
+        <translation type="unfinished">- スタイルがありません -</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished">スタイル名エディタ</translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1564,15 +1702,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Style Name</source>
-        <translation>スタイル名</translation>
+        <translation type="vanished">スタイル名</translation>
     </message>
     <message>
         <source>StudioPalette Name</source>
-        <translation>リンク元のスタイル名</translation>
+        <translation type="vanished">リンク元のスタイル名</translation>
     </message>
     <message>
         <source>Both Names</source>
-        <translation>両方の名前</translation>
+        <translation type="vanished">両方の名前</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -1598,12 +1736,64 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>)</source>
         <translation>)</translation>
     </message>
+    <message>
+        <source>&amp;Save As Default Vector Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Smart Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stay on Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag this icon to a Studio or Project palette to add it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Style Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save palette with a different name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette as the default for new levels of the current level type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation>- スタイルがありません -</translation>
+        <translation type="vanished">- スタイルがありません -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -1611,15 +1801,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation>新規スタイル</translation>
+        <translation type="vanished">新規スタイル</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>新規ページ</translation>
+        <translation type="vanished">新規ページ</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation>スタイル名エディタ</translation>
+        <translation type="vanished">スタイル名エディタ</translation>
     </message>
 </context>
 <context>
@@ -1640,6 +1830,10 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>&lt;files&gt;</source>
         <translation>&lt;ファイル&gt;</translation>
     </message>
+    <message>
+        <source>Failed to import palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ParamViewer</name>
@@ -1652,7 +1846,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>ParamsPageSet</name>
     <message>
         <source>Fx Help</source>
-        <translation>ヘルプ</translation>
+        <translation type="vanished">ヘルプ</translation>
+    </message>
+    <message>
+        <source>View help page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1689,6 +1887,10 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <source>Toonz</source>
         <translation type="vanished">TOONZ</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1806,7 +2008,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Palette</source>
-        <translation>パレット</translation>
+        <translation type="vanished">パレット</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -2151,11 +2353,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation>エフェクトパラメータを変更 : キーフレームを%1 : %2  フレーム %3</translation>
+        <translation type="vanished">エフェクトパラメータを変更 : キーフレームを%1 : %2  フレーム %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation>設定</translation>
+        <translation type="vanished">設定</translation>
     </message>
     <message>
         <source>Remove Reference  in Palette : %1</source>
@@ -2256,6 +2458,38 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>That is a reserved file name and cannot be used.</source>
         <translation>システムの予約語のため、使用できません。</translation>
     </message>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>CustomStyleChooserPage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>TextureStyleChooserPage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no unused styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>and %1 more styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erasing unused styles with following indices. Are you sure?
+
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2269,6 +2503,10 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>Toonz</source>
         <translation type="vanished">TOONZ</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2350,6 +2588,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>&amp;Close Editor</source>
         <translation>エディタを閉じる (&amp;C)</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsPage</name>
+    <message>
+        <source>Autopaint for Lines</source>
+        <translation type="unfinished">色トレース線として、含み塗りを行う</translation>
+    </message>
+    <message>
+        <source>Reset to default</source>
+        <translation type="unfinished">リセット</translation>
     </message>
 </context>
 <context>
@@ -2568,6 +2817,10 @@ Are you sure ?</source>
         <source>Convert</source>
         <translation>変換する</translation>
     </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -2654,15 +2907,15 @@ Apply</source>
     </message>
     <message>
         <source>[CLEANUP]  </source>
-        <translation>[トレース]  </translation>
+        <translation type="vanished">[トレース]  </translation>
     </message>
     <message>
         <source>[STUDIO]  </source>
-        <translation>[スタジオ]  </translation>
+        <translation type="vanished">[スタジオ]  </translation>
     </message>
     <message>
         <source>[LEVEL]  </source>
-        <translation>[レベル]  </translation>
+        <translation type="vanished">[レベル]  </translation>
     </message>
     <message>
         <source>- Style is Not Valid -</source>
@@ -2724,36 +2977,17 @@ Apply</source>
         <source>Palette</source>
         <translation>パレット</translation>
     </message>
-</context>
-<context>
-    <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
-        <source>R</source>
-        <translation></translation>
+        <source>Cleanup </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>G</source>
-        <translation></translation>
+        <source>Studio </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>B</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation></translation>
+        <source>Level </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2783,11 +3017,18 @@ Apply</source>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>色トレース線として、含み塗りを行う</translation>
+        <translation type="vanished">色トレース線として、含み塗りを行う</translation>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation>リセット</translation>
+        <translation type="vanished">リセット</translation>
+    </message>
+</context>
+<context>
+    <name>StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished">選択色</translation>
     </message>
 </context>
 <context>
@@ -2878,7 +3119,19 @@ Apply</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">チャンネル：</translation>
+        <translation>チャンネル：</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">範囲：</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

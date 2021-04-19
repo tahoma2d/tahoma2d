@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation>Bits por píxel</translation>
+        <translation type="vanished">Bits por píxel</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation>24 bits</translation>
+        <translation type="vanished">24 bits</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation>8 bits (escala de grises)</translation>
+        <translation type="vanished">8 bits (escala de grises)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation>Calidad</translation>
+        <translation type="vanished">Calidad</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation>Suavizado</translation>
+        <translation type="vanished">Suavizado</translation>
     </message>
 </context>
 <context>
@@ -35,7 +35,7 @@
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation>Acción no identificada</translation>
+        <translation type="vanished">Acción no identificada</translation>
     </message>
     <message>
         <source>Skipping frame.</source>
@@ -77,6 +77,32 @@
     <message>
         <source>Rotation</source>
         <translation>Rotación</translation>
+    </message>
+</context>
+<context>
+    <name>Tiio::BmpWriterProperties</name>
+    <message>
+        <source>Bits Per Pixel</source>
+        <translation type="unfinished">Bits por píxel</translation>
+    </message>
+    <message>
+        <source>24 bits</source>
+        <translation type="unfinished">24 bits</translation>
+    </message>
+    <message>
+        <source>8 bits (Greyscale)</source>
+        <translation type="unfinished">8 bits (escala de grises)</translation>
+    </message>
+</context>
+<context>
+    <name>Tiio::JpgWriterProperties</name>
+    <message>
+        <source>Quality</source>
+        <translation type="unfinished">Calidad</translation>
+    </message>
+    <message>
+        <source>Smoothing</source>
+        <translation type="unfinished">Suavizado</translation>
     </message>
 </context>
 </TS>

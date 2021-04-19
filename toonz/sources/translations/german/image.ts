@@ -48,7 +48,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="738"/>
+        <location filename="../../image/png/tiio_png.cpp" line="746"/>
         <source>Alpha Channel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -56,7 +56,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="177"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="214"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 
@@ -67,52 +67,52 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SgiWriterProperties</name>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1229"/>
         <source>Bits Per Pixel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1230"/>
         <source>24 bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
         <source>32 bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
         <source>48 bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
         <source>64 bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
         <source>8 bits (Greyscale)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
         <source>Endianess</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
         <source>Big Endian</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1239"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
         <source>Little Endian</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1240"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
         <source>RLE-Compressed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -280,12 +280,12 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
-        <source>32(RGBM)</source>
+        <source>32(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
-        <source>64(RGBM)</source>
+        <source>64(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
