@@ -32,7 +32,7 @@
 
 using namespace DVGui;
 
-QString DialogTitle = "Tahoma2D 1.2 (alpha)";
+QString DialogTitle = "Tahoma2D 1.2 (beta)";
 
 //=============================================================================
 namespace {
