@@ -579,7 +579,8 @@ DragSelectionTool::VectorDeformTool::~VectorDeformTool() {
 
 //-----------------------------------------------------------------------------
 
-void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox) {
+void DragSelectionTool::VectorDeformTool::applyTransform(FourPoints bbox,
+                                                         bool onFastDragging) {
   SelectionTool *tool = getTool();
 
   std::unique_ptr<VFDScopedBlock> localVfdScopedBlock;
@@ -852,8 +853,8 @@ DragSelectionTool::VectorScaleTool::VectorScaleTool(VectorSelectionTool *tool,
 
 //-----------------------------------------------------------------------------
 
-TPointD DragSelectionTool::VectorScaleTool::transform(int index,
-                                                      TPointD newPos) {
+TPointD DragSelectionTool::VectorScaleTool::transform(int index, TPointD newPos,
+                                                      bool onFastDragging) {
   SelectionTool *tool = getTool();
   TPointD scaleValue  = tool->m_deformValues.m_scaleValue;
 
