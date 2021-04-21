@@ -171,7 +171,7 @@ bool RenderController::addScene(MovieGenerator &g, ToonzScene *scene) {
   }
   if (r1 < r0) return false;
   TPixel color = scene->getProperties()->getBgColor();
-  if (m_movieExt == "mp4" || m_movieExt == "webm") color.m = 255;
+  if (m_movieExt == "mp4" || m_movieExt == "webm" || m_movieExt == "mov") color.m = 255;
   g.setBackgroundColor(color);
   g.addScene(*scene, r0, r1);
   return true;

@@ -1220,7 +1220,7 @@ void OutputSettingsPopup::onNameChanged() {
 void OutputSettingsPopup::onFormatChanged(const QString &str) {
   auto isMultiRenderInvalid = [](std::string ext) -> bool {
     return ext == "mp4" || ext == "gif" || ext == "webm" ||
-           ext == "spritesheet";
+           ext == "spritesheet" || ext == "mov";
   };
 
   TOutputProperties *prop    = getProperties();
