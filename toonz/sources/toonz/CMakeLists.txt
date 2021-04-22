@@ -121,6 +121,7 @@ set(MOC_HEADERS
     quicktoolbar.h
 	xdtsimportpopup.h
 	expressionreferencemanager.h
+    tooloptionsshortcutinvoker.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -348,6 +349,7 @@ set(SOURCES
     xdtsio.cpp
 	xdtsimportpopup.cpp
 	expressionreferencemanager.cpp
+    tooloptionsshortcutinvoker.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

@@ -515,9 +515,10 @@ void Preferences::definePreferenceItems() {
          QMetaType::Bool, false);
 
   // Tools
-  define(dropdownShortcutsCycleOptions, "dropdownShortcutsCycleOptions",
-         QMetaType::Int,
-         1);  // Cycle through the available options (changed from bool to int)
+  // define(dropdownShortcutsCycleOptions, "dropdownShortcutsCycleOptions",
+  //       QMetaType::Int,
+  //       1);  // Cycle through the available options (changed from bool to
+  //       int)
   define(FillOnlysavebox, "FillOnlysavebox", QMetaType::Bool, false);
   define(multiLayerStylePickerEnabled, "multiLayerStylePickerEnabled",
          QMetaType::Bool, false);
