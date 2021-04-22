@@ -163,7 +163,7 @@ void initImageIo(bool lightVersion) {
       Tiio::defineWriterProperties("mp4", new Tiio::Mp4WriterProperties());
     }
     if (Ffmpeg::checkFormat("mov")) {
-      TLevelWriter::define("mov", TLevelWriterMp4::create, true);
+      TLevelWriter::define("mov", TLevelWriterMov::create, true);
       if (ffprobe) TLevelReader::define("mov", TLevelReaderMov::create);
       TFileType::declare("mov", TFileType::RASTER_LEVEL);
       Tiio::defineWriterProperties("mov", new Tiio::MovWriterProperties());
