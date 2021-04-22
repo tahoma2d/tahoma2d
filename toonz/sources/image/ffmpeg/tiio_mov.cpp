@@ -84,8 +84,8 @@ TLevelWriterMov::~TLevelWriterMov() {
   preIArgs << "-framerate";
   preIArgs << QString::number(m_frameRate);
 
-  postIArgs << "-pix_fmt";
-  postIArgs << "rgba";
+//  postIArgs << "-pix_fmt";
+//  postIArgs << "rgba";
   postIArgs << "-c:v";
   postIArgs << "png";
   postIArgs << "-s";
