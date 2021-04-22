@@ -439,7 +439,7 @@ void RenderCommand::rasterRender(bool isPreview) {
   // depth). I tried to make OT to detect the mov settings and adaptively switch
   // the behavior, but ended in vain :-(
   // So I just omitted every mov from applying solid background as a quick fix.
-  if (isMovieType(ext)) {
+  if (isMovieType(ext) && ext != "mov" && ext != "webm") {
     scene->getProperties()->setBgColor(currBgColor);
   }
   // for non alpha-enabled images (like jpg), background color will be inserted
