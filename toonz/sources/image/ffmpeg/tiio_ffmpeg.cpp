@@ -474,6 +474,11 @@ void Ffmpeg::getFramesFromMovie(int frame) {
     // frameArgs << "-accurate_seek";
     // frameArgs << "-ss";
     // frameArgs << "0" + QString::number(frameIndex / m_info->m_frameRate);
+    if (m_path.getType() == "webm") {
+      // To load in webm transparency
+      preIFrameArgs << "-vcodec";
+      preIFrameArgs << "libvpx";
+    }
     preIFrameArgs << "-i";
     preIFrameArgs << m_path.getQString();
     postIFrameArgs << "-y";
