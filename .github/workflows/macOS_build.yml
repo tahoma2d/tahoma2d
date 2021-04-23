@@ -21,6 +21,17 @@ jobs:
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}-
+      - name: Get CanonSDK
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          wget --header="Authorization: token ${{ secrets.CANONSDK_TOKEN }}" --header="Accept:application/octet-stream" -O EDSDK_v131231_Macintosh.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267390
+          unzip EDSDK_v131231_Macintosh.zip -d EDSDK_v131231_Macintosh
+          unzip EDSDK_v131231_Macintosh/Macintosh.dmg.zip -d EDSDK_v131231_Macintosh
+          7z x EDSDK_v131231_Macintosh/Macintosh.dmg -oEDSDK_v131231_Macintosh
+          mv EDSDK_v131231_Macintosh/Macintosh/EDSDK/* thirdparty/canon
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/osx/tahoma-get3rdpartyapps.sh
       - name: Build ffmpeg
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
@@ -33,9 +44,6 @@ jobs:
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           ci-scripts/osx/tahoma-build.sh
-      - name: Get 3rd Party Apps
-        run: |
-          ci-scripts/osx/tahoma-get3rdpartyapps.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1
