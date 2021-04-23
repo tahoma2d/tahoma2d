@@ -29,6 +29,13 @@ jobs:
           unzip EDSDK_v131231_Macintosh/Macintosh.dmg.zip -d EDSDK_v131231_Macintosh
           7z x EDSDK_v131231_Macintosh/Macintosh.dmg -oEDSDK_v131231_Macintosh
           mv EDSDK_v131231_Macintosh/Macintosh/EDSDK/* thirdparty/canon
+          cd thirdparty/canon/framework/EDSDK.framework/Versions
+          rm Current
+          ln -s A Current
+          cd ..
+          rm Resources EDSDK
+          ln -s Versions/Current/Resources Resources
+          ln -s Versions/Current/EDSDK EDSDK
       - name: Get 3rd Party Apps
         run: |
           ci-scripts/osx/tahoma-get3rdpartyapps.sh
