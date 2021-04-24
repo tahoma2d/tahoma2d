@@ -63,3 +63,38 @@ jobs:
         with:
           name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+      - name: Get Nightly Release Date
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        run: |
+          echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
+          echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
+      - name: Update Latest Nightly Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: Lastest Nightly ${{ env.NIGHTLYDATE }}
+          prerelease: true
+          replacesArtifacts: true
+          tag: nightly
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Nightlies Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: ${{ env.NIGHTLYDATETIME }}
+          owner: tahoma2d	  
+          prerelease: true
+          replacesArtifacts: true
+          repo: tahoma2d_nightlies
+          tag: nightly-${{ github.sha }}
+          token: ${{ secrets.TAHOMA2D_TOKEN }}
