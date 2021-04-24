@@ -86,6 +86,8 @@ jobs:
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
           owner: tahoma2d	  
           prerelease: true
           replacesArtifacts: true

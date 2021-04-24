@@ -42,8 +42,9 @@ jobs:
       - name: Get Nightly Release Date
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
-          echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
-          echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
+          chcp 65001 #set code page to utf-8
+          echo ("NIGHTLYDATE=" + (Get-Date -format "yyyy-MM-dd")) >> $env:GITHUB_ENV
+          echo ("NIGHTLYDATETIME=" + (Get-Date -format "yyyy-MM-dd HH:mm:ss UTC")) >> $env:GITHUB_ENV
       - name: Update Latest Nightly Release
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
@@ -68,6 +69,8 @@ jobs:
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
           owner: tahoma2d	  
           prerelease: true
           replacesArtifacts: true
