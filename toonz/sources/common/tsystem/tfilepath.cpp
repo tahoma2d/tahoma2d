@@ -709,7 +709,7 @@ TFrameId TFilePath::getFrame() const {
 
 bool TFilePath::isFfmpegType() const {
   QString type = QString::fromStdString(getType()).toLower();
-  if (type == "gif" || type == "mp4" || type == "webm")
+  if (type == "gif" || type == "mp4" || type == "webm" || type == "mov")
     return true;
   else
     return false;

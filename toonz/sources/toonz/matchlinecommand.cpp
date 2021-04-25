@@ -339,7 +339,8 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
           cell.getSimpleLevel()->getPath().getType() == "psd" ||
           cell.getSimpleLevel()->getPath().getType() == "gif" ||
           cell.getSimpleLevel()->getPath().getType() == "mp4" ||
-          cell.getSimpleLevel()->getPath().getType() == "webm")
+          cell.getSimpleLevel()->getPath().getType() == "webm" ||
+          cell.getSimpleLevel()->getPath().getType() == "mov")
         continue;
 
       std::map<TXshSimpleLevel *, TXshLevelP>::iterator it =

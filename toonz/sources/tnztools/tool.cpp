@@ -1071,6 +1071,7 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
           sl->getPath().getType() == "gif" ||
           sl->getPath().getType() == "mp4" ||
           sl->getPath().getType() == "webm" ||
+          sl->getPath().getType() == "mov" ||
           sl->is16BitChannelLevel() ||  // Inherited by previous
                                         // implementation.
                                         // Could be fixed?

@@ -1293,7 +1293,8 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
   if (sl &&
       (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
        (sl->getType() == OVL_XSHLEVEL && sl->getPath().getType() != "gif" &&
-        sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm")))
+        sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm" &&
+        sl->getPath().getType() != "mov")))
     menu->addAction(cm->getAction(MI_RevertToLastSaved));
   menu->addSeparator();
   createSelectLevelMenu(menu);

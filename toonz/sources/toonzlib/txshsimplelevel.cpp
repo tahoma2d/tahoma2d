@@ -119,7 +119,8 @@ bool isAreadOnlyLevel(const TFilePath &path) {
       (path.getDots() == ".." &&
        (path.getType() == "tlv" || path.getType() == "tpl"))) {
     if (path.getType() == "psd" || path.getType() == "gif" ||
-        path.getType() == "mp4" || path.getType() == "webm")
+        path.getType() == "mp4" || path.getType() == "webm" ||
+        path.getType() == "mov")
       return true;
     if (!TSystem::doesExistFileOrLevel(path)) return false;
     TFileStatus fs(path);
@@ -2466,7 +2467,7 @@ bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
     TFilePath fullPath   = getScene()->decodeFilePath(m_path);
     std::string fileType = fullPath.getType();
     if (fileType == "psd" || fileType == "gif" || fileType == "mp4" ||
-        fileType == "webm")
+        fileType == "webm" || fileType == "mov")
       return true;
     TFilePath path =
         fullPath.getDots() == ".." ? fullPath.withFrame(fid) : fullPath;
