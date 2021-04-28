@@ -3,33 +3,28 @@
 
 This software can be built using Visual Studio 2015 or above and Qt 5.9 (later Qt versions still not working correctly.)
 
-Throughout these instructions `$tahoma2d` represents the full path to your local Git repository for Tahoma2D.
-
 ## Required Software
 
 ### Visual Studio Express 2015 or higher for Windows Desktop
 - [ ] Install Visual Studio Express 2015 or higher for Windows Desktop, https://www.visualstudio.com/vs/older-downloads/
-  - Community and Professional versions of Visual Studio for Windows Desktop also work.
-  - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
-  - [ ] During the installation, make sure to select all the Visual C++ packages.
+- Community and Professional versions of Visual Studio for Windows Desktop also work.
+- - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
+- - [ ] During the installation, make sure to select all the Visual C++ packages.
 
 ### Qt - cross-platform GUI framework.
-- [ ] Install via **one** of the following methods.
-  - (option 1) Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should recommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
-    - [ ] Run the the downloaded file. 
-    - [ ] On the filter tick the Archive checkbox to see older verions in the list. In the list choose version `Qt 5.9.9`. 
-
-  - (option 2) Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
-
-From the site: *"We recommend you use the Qt Online Installer for first time installations and the Qt Maintenance Tool for changes to a current install."*
-The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
+Install via **one** of the following methods.
+- - [ ] Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should recommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
+- - - [ ] Run the the downloaded file. 
+- - - [ ] On the filter tick the Archive checkbox to see older verions and in the Qt list, choose version `Qt 5.9.9`. 
+- - [ ] Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
+- From the site: *"We recommend you use the Qt Online Installer for first time installations and the Qt Maintenance Tool for changes to a current install."*
+- The Maintenance Tool for Qt is in the Qt installation folder, `C:\Qt\MaintenanceTool.exe`,
 
 ### CMake
 This will be used to create the `MSVC` project file.
-- [ ] If CMake was installed with Qt, no additional installation is required.
-
-  The typical location of CMake installed with Qt is: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
-- [ ] If CMake was not installed then get it here and install it: https://cmake.org/download/
+- [ ] If CMake was installed with Qt, no additional installation is required. 
+Typical location of the CMake installed with Qt: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`
+- [ ] If necessary, install CMake, https://cmake.org/download/
 
 ### boost
 Boost 1.55.0 or later is required (tested up to 1.75.0).
@@ -37,16 +32,15 @@ Boost 1.55.0 or later is required (tested up to 1.75.0).
 - [ ] Extract all contents to the - '$tahoma2d\thirdparty\boost' directory. The result will be something like this: `$tahoma2d\thirdparty\boost\boost_1_75_0`
 
 ### OpenCV
-- [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later). 
-
-  OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
+- [ ] Install OpenCV. (https://opencv.org/) (v4.4.0 and later). OpenCV version 4.4.0 is the version distributed with Tahoma2D 1.1.
 
 ## Acquire the Source Code
 You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - [ ] Fork the base repository to your own GitHub account.
 - [ ] Clone the base repository to your local environment.
-- Visual Studio cannot properly recognize source code which is UTF-8 without BOM (Byte Order Mark). Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
-  - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
+- :pushpin: Throughout these instructions `$tahoma2d` will represent your local Git repository for Tahoma2D.
+- :warning: Visual Studio cannot properly recognize source code which is UTF-8 without BOM (Byte Order Mark). Furthermore, since the endline character is represented with only the LF character, one line comments in Japanese will often cause the following line to also be treated as a comment by `Microsoft Visual Studio`. In order to prevent this, please change the following setting in git so that it will preserve the proper endline characters:
+- - [ ] From a command line navigate to `$tahoma2d` and execute: `git config core.safecrlf true`
 
 ### Download the 'lib' and 'dll' files stored with Large File Storage (LFS)
 - If you used the GitHub Desktop UI to clone to your local environment the lib and dll files will already be downloaded and you can skip this section.
@@ -55,45 +49,44 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - [ ] Ensure git-lfs is installed in your local Git environment. The command `git lfs` should return Git LFS information.
 - Installation instructions for git-lfs: https://docs.github.com/en/github/managing-large-files/installing-git-large-file-storage
 - From Git command line execute: 
-  - [ ] `git clone`
-  - [ ] `git lfs pull`
+- - [ ] `git clone`
+- - [ ] `git lfs pull`
 
 ### Use CMake to Create a Visual Studio Project
-- [ ] Launch CMake GUI. You can find it in this Qt subfolder: `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`, or wherever you installed it.
+- [ ] Launch CMake GUI. You can find it in this Qt subfolder; `C:\Qt\Tools\CMake_64\bin\cmake-gui.exe`, or wherever you installed it.
 - [ ] In `Where is the source code`, navigate to `$tahoma2d/toonz/sources`
 - [ ] In `Where to build the binaries`, navigate to `$tahoma2d/toonz/build` or to wherever you usually build to.
-  - [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore.
-  - If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
-- [ ] Click on Configure, a pop-up should appear the first time this is done.
-- If no pop-up appears then a cached version from a prior run of CMake was found at the locations you selected above. 
-  - [ ] Clear the cache using: File -> Delete Cache.
-  - [ ] Click on Configure, the pop-up should now appear.
+- [ ] If the build directory is in the git repository, be sure to add the directory to .gitignore.
+- If the build directory is different from the one above, be sure to change to the specified directory where appropriate below.
+- [ ] Click on Configure.
 - In the pop-up that appears:
-  - [ ] Select the version of Visual Studio you are using. 
-  - [ ] Select the x64 Target Environment.
+- :warning: No pop-up? Then a cached version from a prior run of CMake was found at the locations you selected above. 
+- - - [ ] Clear the cache using: File -> Delete Cache.
+- - - [ ] Click on Configure, the pop-up should now appear.
+- - [ ] Select the version of Visual Studio you are using. 
+- - [ ] Select the x64 Target Environment.
 - If Qt was installed to a directory other than the default, and the error `Specify QT_PATH properly` appears:
-  - Click on the value for `QT_PATH` in the top half of the CMake window.
-  - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
-  - [ ] Rerun Configure.
-- If OpenCV was installed to a directory other than the default and a message about `set "OpenCV_DIR"` appears:
-  - Click on the value for `OpenCV_DIR` in the top half of the CMake window.
-  - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
-  - [ ] Rerun Configure.
+- - Click on the value for `QT_PATH` in the top half of the CMake window.
+- - - [ ] navigate to the `QT_DIR` install folder and down to the subfolder that most closely matches your version of Visual Studio, for example: `C:\Qt\5.9.9\msvc2017_64` for Visual Studio 2017. 
+- - [ ] Rerun Configure.
+- If OpenCV was installed to a directory other than the default, and a message about `set "OpenCV_DIR"` appears:
+- - Click on the value for `OpenCV_DIR` in the top half of the CMake window.
+- - - [ ] navigate to the OpenCV install folder and down to the level of the `build` folder. Example: `C:\opencv_4.4.0\build`.
+- - [ ] Rerun Configure.
 - If red warning lines appear in the bottom box, you can safely ignore them.
 - [ ] Click Generate.
-- Should the CMakeLists.txt file change, such as during automatic build cleanup in Visual Studio, there is no need to rerun CMake.
+- :bulb: Should the CMakeLists.txt file change, such as during automatic build cleanup in Visual Studio, there is no need to rerun CMake.
 
 ## Set Up Libraries
 Rename the following files:
 - [ ] `$tahoma2d/thirdparty/LibJPEG/jpeg-9/jconfig.vc` to
-  - `$tahoma2d/thirdparty/LibJPEG/jpeg-9/jconfig.h`
+- `$tahoma2d/thirdparty/LibJPEG/jpeg-9/jconfig.h`
 - [ ] `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tif_config.vc.h` to
-  - `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tif_config.h`
+- `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tif_config.h`
 - [ ] `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tiffconf.vc.h` to
-  - `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tiffconf.h`
+- `$tahoma2d/thirdparty/tiff-4.0.3/libtiff/tiffconf.h`
 - [ ] `$tahoma2d/thirdparty/libpng-1.6.21/scripts/pnglibconf.h.prebuilt` to
-  - `$tahoma2d/thirdparty/libpng-1.6.21/pnglibconf.h` 
-  - Note that the destination folder is different for this file.
+- `$tahoma2d/thirdparty/libpng-1.6.21/pnglibconf.h` :warning: Note that the destination is a different folder for this file.
 
 ## Build
 - [ ] Start Visual Studio and open the solution `$tahoma2d/toonz/build/Tahoma2D.sln`.
@@ -115,18 +108,18 @@ Copy the following folders into the `$tahoma2d/thirdparty` folder.
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
 
 ## Quick Setup and Run in Debug Mode - suitable for most people
-- Use this method if you are interested in analyzing Tahoma2D rather than just creating a running copy.
+- Use this method if you are interested in analysing Tahoma2D rather than just creating a running copy.
 - [ ] Start with a local working Tahoma2D installation. The latest release version is available here: https://tahoma2d.org/
-  - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
-  - Paste to the build folder where the compiler generates output. 
-    - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and the name is based on the `Solution Configuration` choice you make in Visual Studio during build.
-  - If the `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders. The Tahoma2d dlls and exe in the folder will be replaced when the next build is run.
-  - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to get this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
+- - [ ] Copy all files and subfolders from the working Tahoma2D folder, except `tahomastuff` and `ffmpeg`.
+- - Paste to the build folder where the compiler generates output. 
+- - `$tahoma2d/toonz/build/Debug` or `$tahoma2d/toonz/build/RelWithDebug` are typical build folders and the name is based on the `Solution Configuration` choice you make in the build option below.
+- - If a `Debug` or `RelWithDebug` subfolder does not already exist then create that folder manually or skip this step and come back to it after doing at least one build to create one of those folders. The Tahoma2d dlls and exe in the folder will be replaced when the next build is run.
+- - [ ] Copy the `tahomastuff` folder to `$tahoma2d/toonz/build/toonz` to get this result: `$tahoma2d/toonz/build/toonz/tahomastuff`.
 - [ ] Start Visual Studio and load the solution.
 - [ ] In Visual Studio set the `Solution Configuration` to `Debug` or `RelWithDebInfo` using the drop-down at the top of the screen.
 - [ ] In the Solution Explorer window, right click on the `Tahoma2D` project.
-  - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
-  - This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
+- - [ ] In the pop-up context menu that appears, choose `Set as StartUp Project`.
+- This is a one time step. The `Tahoma2D` project will now show in bold indicating it is the startup project for the solution.
 - [ ] Build the solution. 
 - [ ] Click the `Local Windows Debugger` to start Tahoma2D in debug mode.
 - Set breakpoints, checkpoints, view the output window, do step-through debugging.
@@ -134,11 +127,11 @@ To run the program with stop motion support, you will need to copy the .dll file
 
 ## Run the Program - More Steps, Individual File Copying - more awareness over which files are used
 1. - [ ] Copy the entire contents of $tahoma2d/toonz/build/Release to an appropriate folder.
-2. - [ ] Do **one** of:
-      - (option 1) Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. Run the Qt program `windeployqt.exe` with the path for `Tahoma2D.exe` as an argument. 
-
-      - (option 2) Another way to do this is to open two windows in Windows Explorer. In the first window navigate to the folder containing `windeployqt.exe`. In a second window navigate to the Release folder contining the Tahoma2D.exe you built. Drag and drop Tahoma2D.exe onto `windeployqt.exe` in the other window.
-    - This will automatically generate the QT files and folders you will need.
+2. - [ ] Open a Command Prompt and navigate to `QT_DIR/msvc2015_64/bin`. 
+- - [ ] Run the Qt program `windeployqt.exe` with the path for `Tahoma2D.exe` as an argument. 
+- OR
+2. - [ ] Another way to do this is to open two windows in Windows Explorer. In the first window navigate to the folder containing `windeployqt.exe`. In a second window navigate to the Release folder contining the Tahoma2D.exe you built. Drag and drop Tahoma2D.exe onto `windeployqt.exe` in the other window.
+- - This will automatically generate the QT files and folders you will need.
 
 3. Confirm the result.
 - These necessary Qt library files should be in the same folder as `Tahoma2D.exe`
@@ -153,7 +146,7 @@ To run the program with stop motion support, you will need to copy the .dll file
     - [ ] `Qt5Svg.dll`
     - [ ] `Qt5Widgets.dll`
     - [ ] `Qt5Xml.dll`
-    - and these files should be in corresponding sub-folders
+  - and these files should be in corresponding sub-folders
     - [ ] `/bearer/qgenericbearer.dll`
     - [ ] `/iconengines/qsvgicon.dll`
     - [ ] `/imageformats/qgif.dll`
@@ -188,7 +181,7 @@ To run the program with stop motion support, you will need to copy the .dll file
   - [ ] `vcruntime140_1.dll`
 
 ### Create the stuff Folder
-- [ ] Create an empty `tahomastuff` folder inside the folder where `Tahoma2D.exe` is located.
+- [ ] Create a `tahomastuff` folder inside the folder where `Tahoma2D.exe` is located.
 - [ ] Copy the files from `$tahoma2d/stuff` to the new folder.
 
 ### Run
