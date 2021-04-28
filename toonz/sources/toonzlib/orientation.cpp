@@ -42,11 +42,12 @@ class TopToBottomOrientation : public Orientation {
   const int FRAME_HEADER_WIDTH         = CELL_WIDTH;
   const int PLAY_RANGE_X = FRAME_HEADER_WIDTH / 2 - PLAY_MARKER_SIZE;
   const int ONION_X = 0, ONION_Y = 0;
-  const int ICON_WIDTH            = 18;
-  const int ICON_HEIGHT           = 18;
-  const int TRACKLEN              = 60;
-  const int SHIFTTRACE_DOT_OFFSET = 3;
-  const int CAMERA_CELL_WIDTH     = 22;
+  const int ICON_WIDTH               = 18;
+  const int ICON_HEIGHT              = 18;
+  const int TRACKLEN                 = 60;
+  const int SHIFTTRACE_DOT_OFFSET    = 3;
+  const int CAMERA_CELL_WIDTH        = 22;
+  const int LAYER_FOOTER_PANEL_WIDTH = 16;
 
 public:
   TopToBottomOrientation();
@@ -56,8 +57,8 @@ public:
                                     const ColumnFan *fan) const override;
   virtual QPoint positionToXY(const CellPosition &position,
                               const ColumnFan *fan) const override;
-  virtual CellPositionRatio xyToPositionRatio(const QPoint &xy) const override;
-  virtual QPoint positionRatioToXY(
+  virtual CellPositionRatio xyToPositionRatio(const QPointF &xy) const override;
+  virtual QPointF positionRatioToXY(
       const CellPositionRatio &ratio) const override;
 
   virtual int colToLayerAxis(int layer, const ColumnFan *fan) const override;
@@ -122,8 +123,8 @@ public:
                                     const ColumnFan *fan) const override;
   virtual QPoint positionToXY(const CellPosition &position,
                               const ColumnFan *fan) const override;
-  virtual CellPositionRatio xyToPositionRatio(const QPoint &xy) const override;
-  virtual QPoint positionRatioToXY(
+  virtual CellPositionRatio xyToPositionRatio(const QPointF &xy) const override;
+  virtual QPointF positionRatioToXY(
       const CellPositionRatio &ratio) const override;
 
   virtual int colToLayerAxis(int layer, const ColumnFan *fan) const override;
@@ -329,7 +330,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addRect(PredefinedRect::LOOP_ICON, QRect(keyRect.left(), 0, 10, 11));
   addRect(PredefinedRect::CAMERA_LOOP_ICON,
           QRect(cameraKeyRect.left(), 0, 10, 11));
-  addRect(PredefinedRect::FRAME_MARKER_AREA, QRect(0, 0, -1, -1));  // hide
+  QRect frameMarker(CELL_WIDTH - FRAME_MARKER_SIZE - 6,
+                    (CELL_HEIGHT - FRAME_MARKER_SIZE) / 2, FRAME_MARKER_SIZE,
+                    FRAME_MARKER_SIZE);
+  addRect(PredefinedRect::FRAME_MARKER_AREA, frameMarker);
+  addRect(PredefinedRect::CAMERA_FRAME_MARKER_AREA,
+          cameraKeyRect.translated(-3, 0));
 
   // Note viewer
   addRect(
@@ -347,7 +353,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
   // Row viewer
   addRect(PredefinedRect::FRAME_LABEL,
-          QRect(CELL_WIDTH / 2, 1, CELL_WIDTH / 2, CELL_HEIGHT - 2));
+          QRect(0, 0, CELL_WIDTH - 4, CELL_HEIGHT));
   addRect(PredefinedRect::FRAME_HEADER,
           QRect(0, 0, FRAME_HEADER_WIDTH, CELL_HEIGHT));
   addRect(PredefinedRect::PLAY_RANGE,
@@ -745,10 +751,34 @@ TopToBottomOrientation::TopToBottomOrientation() {
   }
 
   // Layer footer panel
+  QRect layerFooterPanel(
+      QRect(0, 0, LAYER_FOOTER_PANEL_WIDTH + 2, use_header_height));
+  addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
+
+  QRect zoomSlider, zoomIn, zoomOut, noteArea;
+
+  zoomSlider = QRect(0, 17, LAYER_FOOTER_PANEL_WIDTH, use_header_height - 34);
+  addRect(PredefinedRect::ZOOM_SLIDER_AREA, zoomSlider);
+  addRect(PredefinedRect::ZOOM_SLIDER, zoomSlider.adjusted(0, 1, 0, 0));
+
+  zoomIn = QRect(0, zoomSlider.bottom() + 1, LAYER_FOOTER_PANEL_WIDTH, 16);
+  addRect(PredefinedRect::ZOOM_IN_AREA, zoomIn);
+  addRect(PredefinedRect::ZOOM_IN, zoomIn.adjusted(1, 1, 0, 0));
+
+  zoomOut = QRect(0, zoomSlider.top() - 17, LAYER_FOOTER_PANEL_WIDTH, 16);
+  addRect(PredefinedRect::ZOOM_OUT_AREA, zoomOut);
+  addRect(PredefinedRect::ZOOM_OUT, zoomOut.adjusted(1, 1, 0, 0));
+  /*
+  // Layer footer panel
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, QRect(0, 0, -1, -1));  // hide
   addRect(PredefinedRect::ZOOM_SLIDER, QRect(0, 0, -1, -1));
   addRect(PredefinedRect::ZOOM_IN, QRect(0, 0, -1, -1));
   addRect(PredefinedRect::ZOOM_OUT, QRect(0, 0, -1, -1));
+  */
+
+  noteArea = QRect(0, 0, 0, 0);
+  addRect(PredefinedRect::FOOTER_NOTE_AREA, noteArea);
+  addRect(PredefinedRect::FOOTER_NOTE_OBJ_AREA, noteArea.adjusted(1, 0, 0, 0));
 
   //
   // Lines
@@ -772,12 +802,14 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addDimension(PredefinedDimension::INDEX, 0);
   addDimension(PredefinedDimension::SOUND_AMPLITUDE,
                int(sqrt(CELL_HEIGHT * soundRect.width()) / 2));
-  addDimension(PredefinedDimension::FRAME_LABEL_ALIGN, Qt::AlignCenter);
+  addDimension(PredefinedDimension::FRAME_LABEL_ALIGN,
+               Qt::AlignVCenter | Qt::AlignRight);
   addDimension(PredefinedDimension::ONION_TURN, 0);
   addDimension(PredefinedDimension::QBOXLAYOUT_DIRECTION,
                QBoxLayout::Direction::TopToBottom);
   addDimension(PredefinedDimension::CENTER_ALIGN, Qt::AlignHCenter);
   addDimension(PredefinedDimension::CAMERA_LAYER, CAMERA_CELL_WIDTH);
+  addDimension(PredefinedDimension::SCALE_THRESHOLD, 57);
 
   //
   // Paths
@@ -787,6 +819,13 @@ TopToBottomOrientation::TopToBottomOrientation() {
   corner.lineTo(QPointF(CELL_DRAG_WIDTH, CELL_HEIGHT - CELL_DRAG_WIDTH));
   corner.lineTo(QPointF(0, CELL_HEIGHT));
   addPath(PredefinedPath::DRAG_HANDLE_CORNER, corner);
+
+  QPainterPath diamond(QPointF(0, -4));
+  diamond.lineTo(4, 0);
+  diamond.lineTo(0, 4);
+  diamond.lineTo(-4, 0);
+  diamond.lineTo(0, -4);
+  addPath(PredefinedPath::FRAME_MARKER_DIAMOND, diamond);
 
   QPainterPath fromTriangle(QPointF(0, EASE_TRIANGLE_SIZE / 2));
   fromTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE, -EASE_TRIANGLE_SIZE / 2));
@@ -882,16 +921,16 @@ QPoint TopToBottomOrientation::positionToXY(const CellPosition &position,
   return QPoint(x, y);
 }
 CellPositionRatio TopToBottomOrientation::xyToPositionRatio(
-    const QPoint &xy) const {
-  Ratio frame{xy.y(), CELL_HEIGHT};
-  Ratio layer{xy.x(), CELL_WIDTH};
+    const QPointF &xy) const {
+  double frame = xy.y() / (double)CELL_HEIGHT;
+  double layer = xy.x() / (double)CELL_WIDTH;
   return CellPositionRatio{frame, layer};
 }
-QPoint TopToBottomOrientation::positionRatioToXY(
+QPointF TopToBottomOrientation::positionRatioToXY(
     const CellPositionRatio &ratio) const {
-  int x = ratio.layer() * CELL_WIDTH;
-  int y = ratio.frame() * CELL_HEIGHT;
-  return QPoint(x, y);
+  double x = ratio.layer() * (double)CELL_WIDTH;
+  double y = ratio.frame() * (double)CELL_HEIGHT;
+  return QPointF(x, y);
 }
 
 int TopToBottomOrientation::colToLayerAxis(int layer,
@@ -977,6 +1016,8 @@ LeftToRightOrientation::LeftToRightOrientation() {
                     CELL_HEIGHT - FRAME_MARKER_SIZE - 7, FRAME_MARKER_SIZE,
                     FRAME_MARKER_SIZE);
   addRect(PredefinedRect::FRAME_MARKER_AREA, frameMarker);
+  addRect(PredefinedRect::CAMERA_FRAME_MARKER_AREA,
+          rect(PredefinedRect::FRAME_MARKER_AREA));
 
   // Notes viewer
   addRect(
@@ -1192,6 +1233,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
                QBoxLayout::Direction::LeftToRight);
   addDimension(PredefinedDimension::CENTER_ALIGN, Qt::AlignVCenter);
   addDimension(PredefinedDimension::CAMERA_LAYER, CAMERA_CELL_HEIGHT);
+  addDimension(PredefinedDimension::SCALE_THRESHOLD, 50);
 
   //
   // Paths
@@ -1289,16 +1331,16 @@ QPoint LeftToRightOrientation::positionToXY(const CellPosition &position,
   return QPoint(x, y);
 }
 CellPositionRatio LeftToRightOrientation::xyToPositionRatio(
-    const QPoint &xy) const {
-  Ratio frame{xy.x(), CELL_WIDTH};
-  Ratio layer{xy.y(), CELL_HEIGHT};
+    const QPointF &xy) const {
+  double frame = xy.x() / (double)CELL_WIDTH;
+  double layer = xy.y() / (double)CELL_HEIGHT;
   return CellPositionRatio{frame, layer};
 }
-QPoint LeftToRightOrientation::positionRatioToXY(
+QPointF LeftToRightOrientation::positionRatioToXY(
     const CellPositionRatio &ratio) const {
-  int x = ratio.frame() * CELL_WIDTH;
-  int y = ratio.layer() * CELL_HEIGHT;
-  return QPoint(x, y);
+  double x = ratio.frame() * (double)CELL_WIDTH;
+  double y = ratio.layer() * (double)CELL_HEIGHT;
+  return QPointF(x, y);
 }
 
 int LeftToRightOrientation::colToLayerAxis(int layer,

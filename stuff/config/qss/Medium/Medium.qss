@@ -1194,29 +1194,48 @@ QGroupBox:disabled {
 /* -----------------------------------------------------------------------------
    Slider
 ----------------------------------------------------------------------------- */
-.Slider::groove:horizontal,
-QSlider::groove:horizontal {
+.Slider::groove,
+QSlider::groove {
   background-color: transparent;
   background-image: url('imgs/white/slider-groove.svg');
   background-position: center center;
-  background-repeat: repeat-x;
   margin: 0;
+}
+.Slider::groove:horizontal,
+QSlider::groove:horizontal {
+  background-repeat: repeat-x;
   height: 20;
   min-height: 20;
 }
-.Slider::groove:horizontal:disabled,
-QSlider::groove:horizontal:disabled {
+.Slider::groove:vertical,
+QSlider::groove:vertical {
+  background-repeat: repeat-y;
+  width: 20;
+  min-width: 20;
+}
+.Slider::groove:disabled,
+QSlider::groove:disabled {
   background-image: url('imgs/white/slider-groove_disabled.svg');
 }
 .Slider::handle:horizontal,
 QSlider::handle:horizontal {
-  width: 10;
   margin: -2 -1;
+  width: 10;
   image: url('imgs/white/slider-handle.svg');
 }
 .Slider::handle:horizontal:disabled,
 QSlider::handle:horizontal:disabled {
   image: url('imgs/white/slider-handle_disabled.svg');
+}
+.Slider::handle:vertical,
+QSlider::handle:vertical {
+  margin: -1 -2;
+  height: 10;
+  image: url('imgs/white/slider-v-handle.svg');
+}
+.Slider::handle:vertical:disabled,
+QSlider::handle:vertical:disabled {
+  image: url('imgs/white/slider-v-handle_disabled.svg');
 }
 /* -----------------------------------------------------------------------------
    Double Slider

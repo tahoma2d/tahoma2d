@@ -59,12 +59,14 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   bool event(QEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *) override;
 
   void keyPressEvent(QKeyEvent *event) override { event->ignore(); }
   void wheelEvent(QWheelEvent *event) override { event->ignore(); }
 
 public slots:
   void onFrameZoomSliderValueChanged(int val);
+  void onFramesPerPageSelected();
 };
 #endif
 #pragma once

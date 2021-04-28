@@ -538,6 +538,7 @@
 		<file>icons/dark/actions/16/tool_options.svg</file>
 		<file>icons/dark/actions/16/view_file.svg</file>
 		<file>icons/dark/actions/16/level_strip.svg</file>
+    <file>icons/dark/actions/17/syncscale.svg</file>
 
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
