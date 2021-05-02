@@ -95,6 +95,7 @@
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
 
+#include <QDebug>
 using namespace DVGui;
 
 TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
@@ -850,6 +851,10 @@ int main(int argc, char *argv[]) {
   myFont->setKerning(hasKerning);
 
   a.setFont(*myFont);
+
+  // Switch layout directions for RTL languages
+  if(Preferences::instance()->getCurrentLanguage() == "فارسی")
+    a.setLayoutDirection(Qt::RightToLeft);
 
   QAction *action = CommandManager::instance()->getAction("MI_OpenTMessage");
   if (action)
