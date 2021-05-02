@@ -4221,7 +4221,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1878"/>
-        <source>Convert an existing file or image sequnce to another format.</source>
+        <source>Convert an existing file or image sequence to another format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4571,7 +4571,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1996"/>
-        <source>Raster levels are traditonal drawing levels</source>
+        <source>Raster levels are traditional drawing levels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6109,7 +6109,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2608"/>
-        <source>RBG Picker: Picks color on screen and applies to current style</source>
+        <source>RGB Picker: Picks color on screen and applies to current style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

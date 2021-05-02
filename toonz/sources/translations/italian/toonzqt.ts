@@ -249,61 +249,6 @@ E&apos; possibile che il file sia corrotto.</translation>
     </message>
 </context>
 <context>
-    <name>ColorChannelControl</name>
-    <message>
-        <source>R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alpha controls the transparency. 
-Zero is fully transparent.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ColorField</name>
-    <message>
-        <source>R:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ColumnPainter</name>
     <message>
         <source>&amp;Reset Center</source>
@@ -387,44 +332,63 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="obsolete">Grassetto</translation>
+        <translation type="unfinished">Grassetto</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="obsolete">Corsivo</translation>
+        <translation type="unfinished">Corsivo</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="obsolete">Sottolineato</translation>
+        <translation type="unfinished">Sottolineato</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="obsolete">Allinea a Sinistra</translation>
+        <translation type="unfinished">Allinea a Sinistra</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="obsolete">Allinea al centro</translation>
+        <translation type="unfinished">Allinea al centro</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="obsolete">Allinea a Destra</translation>
+        <translation type="unfinished">Allinea a Destra</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation type="obsolete">...</translation>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="obsolete">Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="unfinished">Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
     </message>
 </context>
 <context>
@@ -433,6 +397,10 @@ Zero is fully transparent.</source>
         <source>Toonz</source>
         <translation type="obsolete">Toonz</translation>
     </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
@@ -440,12 +408,35 @@ Zero is fully transparent.</source>
         <source>Toonz</source>
         <translation type="obsolete">Toonz</translation>
     </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="obsolete">È possibile caricare solo i file TNZBAT.</translation>
+        <translation type="unfinished">È possibile caricare solo i file TNZBAT.</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">Intervallo:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -467,27 +458,27 @@ Zero is fully transparent.</source>
     <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation>Grassetto</translation>
+        <translation type="vanished">Grassetto</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Corsivo</translation>
+        <translation type="vanished">Corsivo</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Sottolineato</translation>
+        <translation type="vanished">Sottolineato</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation>Allinea a Sinistra</translation>
+        <translation type="vanished">Allinea a Sinistra</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation>Allinea al centro</translation>
+        <translation type="vanished">Allinea al centro</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation>Allinea a Destra</translation>
+        <translation type="vanished">Allinea a Destra</translation>
     </message>
 </context>
 <context>
@@ -516,7 +507,7 @@ Zero is fully transparent.</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
@@ -1155,9 +1146,6 @@ Manually changing any keyframe will clear the warning.</source>
         <source>Plastic Skeleton</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>FunctionTreeModel::Channel</name>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
@@ -1517,8 +1505,8 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
 <context>
     <name>LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">Il nome di un file non può contenere i seguenti caratteri: /\:*?&quot;|.</translation>
     </message>
 </context>
 <context>
@@ -1555,28 +1543,11 @@ Seleziona i nodi Effetto ed i relativi collegamenti prima di copiare o tagliare 
     </message>
     <message>
         <source>New Style</source>
-        <translation>Nuovo Stile</translation>
+        <translation type="vanished">Nuovo Stile</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Nuova Pagina</translation>
-    </message>
-    <message>
-        <source>- No Styles -</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style 0 is set to full transparent. 
-It can&apos;t be changed.  Ever.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nuova Pagina</translation>
     </message>
 </context>
 <context>
@@ -1738,11 +1709,28 @@ It can&apos;t be changed.  Ever.</source>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>New Style</source>
-        <translation type="obsolete">Nuovo Stile</translation>
+        <translation type="unfinished">Nuovo Stile</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="obsolete">Nuova Pagina</translation>
+        <translation type="unfinished">Nuova Pagina</translation>
+    </message>
+    <message>
+        <source>- No Styles -</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1816,10 +1804,6 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <source>Toonz</source>
         <translation type="vanished">Toonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2397,6 +2381,14 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>Erase</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2410,10 +2402,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>Toonz</source>
         <translation type="vanished">Toonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2501,11 +2489,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <name>SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="unfinished">Colorazione Automatica per le Linee</translation>
-    </message>
-    <message>
-        <source>Reset to default</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Colorazione Automatica per le Linee</translation>
     </message>
 </context>
 <context>
@@ -2864,16 +2848,49 @@ Are you sure ?</source>
     </message>
 </context>
 <context>
-    <name>StyleEditorGUI::SettingsPage</name>
+    <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
-        <source>Autopaint for Lines</source>
-        <translation type="vanished">Colorazione Automatica per le Linee</translation>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>StyleIndexLineEdit</name>
+    <name>StyleEditorGUI::SettingsPage</name>
     <message>
-        <source>current</source>
+        <source>Autopaint for Lines</source>
+        <translation>Colorazione Automatica per le Linee</translation>
+    </message>
+    <message>
+        <source>Reset to default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2965,19 +2982,11 @@ Are you sure ?</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation>È possibile caricare solo i file TNZBAT.</translation>
+        <translation type="vanished">È possibile caricare solo i file TNZBAT.</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="unfinished">Intervallo:</translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Intervallo:</translation>
     </message>
 </context>
 <context>
