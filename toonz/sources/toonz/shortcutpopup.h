@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QTreeWidget>
 #include <QComboBox>
+#include <QKeySequenceEdit>
 #include "filebrowserpopup.h"
 #include "toonzqt/dvdialog.h"
 
@@ -22,7 +23,7 @@ class ShortcutItem;
 // Per cancellarlo bisogna chiamare removeShortcut()
 //-----------------------------------------------------------------------------
 
-class ShortcutViewer final : public QWidget {
+class ShortcutViewer final : public QKeySequenceEdit {
   Q_OBJECT
   QAction *m_action;
 
@@ -31,15 +32,13 @@ public:
   ~ShortcutViewer();
 
 protected:
-  void paintEvent(QPaintEvent *) override;
-  bool event(QEvent *event) override;
-  void keyPressEvent(QKeyEvent *event) override;
   void enterEvent(QEvent *event) override;
   void leaveEvent(QEvent *event) override;
-
+  void keyPressEvent(QKeyEvent *event) override;
 public slots:
   void setAction(QAction *action);
   void removeShortcut();
+  void onEditingFinished();
 
 signals:
   void shortcutChanged();

@@ -101,7 +101,7 @@ enum PreferencesItemId {
 
   //----------
   // Tools
-  dropdownShortcutsCycleOptions,
+  // dropdownShortcutsCycleOptions, // removed
   FillOnlysavebox,
   multiLayerStylePickerEnabled,
   cursorBrushType,

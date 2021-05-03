@@ -324,9 +324,9 @@ public:
   }
 
   // Tools Tab
-  bool getDropdownShortcutsCycleOptions() {
-    return getIntValue(dropdownShortcutsCycleOptions) == 1;
-  }
+  // bool getDropdownShortcutsCycleOptions() {
+  //  return getIntValue(dropdownShortcutsCycleOptions) == 1;
+  //}
   bool getFillOnlySavebox() const { return getBoolValue(FillOnlysavebox); }
   bool isMultiLayerStylePickerEnabled() const {
     return getBoolValue(multiLayerStylePickerEnabled);

@@ -1075,7 +1075,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Use higher DPI for calculations - Slower but more accurate")},
 
       // Tools
-      {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")},
+      // {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")}, // removed
       {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")},
       {multiLayerStylePickerEnabled,
        tr("Multi Layer Style Picker: Switch Levels by Picking")},
@@ -1214,9 +1214,9 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
       {NumberingSystem, {{tr("Incremental"), 0}, {tr("Animation Sheet"), 1}}},
       {vectorSnappingTarget,
        {{tr("Strokes"), 0}, {tr("Guides"), 1}, {tr("All"), 2}}},
-      {dropdownShortcutsCycleOptions,
-       {{tr("Open the dropdown to display all options"), 0},
-        {tr("Cycle through the available options"), 1}}},
+      //{dropdownShortcutsCycleOptions,
+      // {{tr("Open the dropdown to display all options"), 0},
+      //  {tr("Cycle through the available options"), 1}}},
       {cursorBrushType,
        {{tr("Small"), "Small"},
         {tr("Large"), "Large"},
@@ -1705,8 +1705,8 @@ QWidget* PreferencesPopup::createToolsPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  insertUI(dropdownShortcutsCycleOptions, lay,
-           getComboItemList(dropdownShortcutsCycleOptions));
+  // insertUI(dropdownShortcutsCycleOptions, lay,
+  //         getComboItemList(dropdownShortcutsCycleOptions));
   insertUI(FillOnlysavebox, lay);
   insertUI(multiLayerStylePickerEnabled, lay);
   QGridLayout* cursorOptionsLay = insertGroupBox(tr("Cursor Options"), lay);

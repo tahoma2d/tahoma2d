@@ -72,8 +72,11 @@ public:
 // ShortcutViewer
 //-----------------------------------------------------------------------------
 
-ShortcutViewer::ShortcutViewer(QWidget *parent) : QWidget(parent), m_action(0) {
+ShortcutViewer::ShortcutViewer(QWidget *parent)
+    : QKeySequenceEdit(parent), m_action(0) {
+  setObjectName("ShortcutViewer");
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  connect(this, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
 }
 
 //-----------------------------------------------------------------------------
@@ -82,64 +85,23 @@ ShortcutViewer::~ShortcutViewer() {}
 
 //-----------------------------------------------------------------------------
 
-void ShortcutViewer::paintEvent(QPaintEvent *) {
-  QPainter p(this);
-  // sfondo azzurro se il widget ha il focus (e quindi si accorge dei tasti
-  // premuti)
-  p.fillRect(1, 1, width() - 1, height() - 1,
-             QBrush(hasFocus() ? QColor(171, 206, 255) : Qt::white));
-  // bordo
-  p.setPen(QColor(184, 188, 127));
-  p.drawRect(0, 0, width() - 1, height() - 1);
-  if (m_action) {
-    // lo shortcut corrente
-    p.setPen(Qt::black);
-    p.drawText(10, 13, m_action->shortcut().toString());
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 void ShortcutViewer::setAction(QAction *action) {
   m_action = action;
-  update();
+  setKeySequence(m_action->shortcut());
   setFocus();
 }
 
 //-----------------------------------------------------------------------------
 
-bool ShortcutViewer::event(QEvent *event) {
-  // quando si vuole assegnare una combinazione che gia' assegnata bisogna
-  // evitare che lo shortcut relativo agisca.
-  if (event->type() == QEvent::ShortcutOverride) {
-    event->accept();
-    return true;
-  } else
-    return QWidget::event(event);
-}
-
-//-----------------------------------------------------------------------------
-
 void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
-  int key = event->key();
-  if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Alt) {
-    event->ignore();
-    return;
-  }
+  int key                         = event->key();
   Qt::KeyboardModifiers modifiers = event->modifiers();
 
-  // Keys that cannot be used as shortcuts
-  if ((modifiers | (Qt::CTRL | Qt::SHIFT | Qt::ALT)) !=
-          (Qt::CTRL | Qt::SHIFT | Qt::ALT) ||
-      key == Qt::Key_Home || key == Qt::Key_End || key == Qt::Key_PageDown ||
+  if (key == Qt::Key_Home || key == Qt::Key_End || key == Qt::Key_PageDown ||
       key == Qt::Key_PageUp || key == Qt::Key_Escape || key == Qt::Key_Print ||
       key == Qt::Key_Pause || key == Qt::Key_ScrollLock) {
-    if (key != Qt::Key_Plus && key != Qt::Key_Minus &&
-        key != Qt::Key_Asterisk && key != Qt::Key_Slash) {
-      event->ignore();
-      return;
-    } else
-      modifiers = 0;
+    event->ignore();
+    return;
   }
 
   // Block the arrows
@@ -158,28 +120,40 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
     event->ignore();
     return;
   }
+  QKeySequenceEdit::keyPressEvent(event);
+}
 
+//-----------------------------------------------------------------------------
+
+void ShortcutViewer::onEditingFinished() {
+  // limit to one shortcut key input
+  QKeySequence keys = (keySequence().isEmpty())
+                          ? QKeySequence()
+                          : QKeySequence(keySequence()[0]);
+ 
   if (m_action) {
-    CommandManager *cm = CommandManager::instance();
-    QKeySequence keySequence(key + modifiers);
-    std::string shortcutString = keySequence.toString().toStdString();
+    CommandManager *cm         = CommandManager::instance();
+    std::string shortcutString = keys.toString().toStdString();
     QAction *oldAction =
-        cm->getActionFromShortcut(keySequence.toString().toStdString());
+        cm->getActionFromShortcut(keys.toString().toStdString());
     if (oldAction == m_action) return;
     if (oldAction) {
       QString msg = tr("%1 is already assigned to '%2'\nAssign to '%3'?")
-                        .arg(keySequence.toString())
+                        .arg(keys.toString())
                         .arg(oldAction->iconText())
                         .arg(m_action->iconText());
       int ret = DVGui::MsgBox(msg, tr("Yes"), tr("No"), 1);
       activateWindow();
-      if (ret == 2 || ret == 0) return;
+      if (ret == 2 || ret == 0) {
+        setKeySequence(m_action->shortcut());
+        setFocus();
+        return;
+      }
     }
     CommandManager::instance()->setShortcut(m_action, shortcutString);
     emit shortcutChanged();
   }
-  event->accept();
-  update();
+  setKeySequence(keys);
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +162,7 @@ void ShortcutViewer::removeShortcut() {
   if (m_action) {
     CommandManager::instance()->setShortcut(m_action, "", false);
     emit shortcutChanged();
-    update();
+    clear();
   }
 }
 

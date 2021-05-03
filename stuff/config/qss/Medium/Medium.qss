@@ -1655,6 +1655,17 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
   width: 16;
   margin-right: -1;
 }
+#ShortcutViewer {
+  font-size: 17px;
+}
+#ShortcutViewer QLineEdit {
+  color: black;
+  border-color: #b8bc7f;
+  background-color: white;
+}
+#ShortcutViewer QLineEdit:focus {
+  background-color: #abceff;
+}
 /* -----------------------------------------------------------------------------
    New Project / Configure Project Window
 ----------------------------------------------------------------------------- */
