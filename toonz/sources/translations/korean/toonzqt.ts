@@ -183,56 +183,8 @@ Possibly the preset file has been corrupted</source>
 <context>
     <name>ColorChannelControl</name>
     <message>
-        <source>R</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>G</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>H</source>
-        <translation>수평</translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Alpha controls the transparency. 
-Zero is fully transparent.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ColorField</name>
-    <message>
-        <source>R:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>G:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>B:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>A:</source>
-        <translation></translation>
+        <translation type="vanished">수평</translation>
     </message>
 </context>
 <context>
@@ -307,84 +259,26 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DVGui::DvTextEdit</name>
-    <message>
-        <source>Bold</source>
-        <translation type="vanished">볼드</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="vanished">이탤릭체</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="vanished">밑줄</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation type="vanished">왼쪽 정렬</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation type="vanished">중심 정렬</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation type="vanished">오른쪽 정렬</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::LineEdit</name>
-    <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ProgressDialog</name>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">오픈툰즈</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::RadioButtonDialog</name>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">오픈툰즈</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="vanished">현재</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ToneCurveField</name>
-    <message>
-        <source>Channel:</source>
-        <translation type="vanished">채널:</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ValidatedChoiceDialog</name>
-    <message>
-        <source>Apply</source>
-        <translation>적용</translation>
-    </message>
-    <message>
-        <source>Apply to All</source>
-        <translation>모두 적용</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
-    </message>
-</context>
-<context>
-    <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
         <translation>볼드</translation>
@@ -411,6 +305,110 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::FileField</name>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::LineEdit</name>
+    <message>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation>파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ProgressDialog</name>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">오픈툰즈</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::RadioButtonDialog</name>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">오픈툰즈</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation>현재</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ToneCurveField</name>
+    <message>
+        <source>Channel:</source>
+        <translation>채널:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ValidatedChoiceDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>적용</translation>
+    </message>
+    <message>
+        <source>Apply to All</source>
+        <translation>모두 적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+</context>
+<context>
+    <name>DvTextEdit</name>
+    <message>
+        <source>Bold</source>
+        <translation type="vanished">볼드</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation type="vanished">이탤릭체</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation type="vanished">밑줄</translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation type="vanished">왼쪽 정렬</translation>
+    </message>
+    <message>
+        <source>Align Center</source>
+        <translation type="vanished">중심 정렬</translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation type="vanished">오른쪽 정렬</translation>
+    </message>
+</context>
+<context>
     <name>EaseInOutSegmentPage</name>
     <message>
         <source>Ease In:</source>
@@ -430,13 +428,6 @@ Zero is fully transparent.</source>
     <message>
         <source>%1 is already registered</source>
         <translation>%1은 이미등록되어 있음</translation>
-    </message>
-</context>
-<context>
-    <name>FileField</name>
-    <message>
-        <source>...</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -1059,9 +1050,6 @@ Manually changing any keyframe will clear the warning.</source>
         <source>Plastic Skeleton</source>
         <translation>플라스틱 골격</translation>
     </message>
-</context>
-<context>
-    <name>FunctionTreeModel::Channel</name>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
@@ -1425,8 +1413,8 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">파일 이름에는 다음 문자 중 어느 것도 포함될 수 없음: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -1455,28 +1443,19 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation>- 스타일 없음 -</translation>
+        <translation type="vanished">- 스타일 없음 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation>이름 편집기</translation>
+        <translation type="vanished">이름 편집기</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation>새로운 스타일</translation>
+        <translation type="vanished">새로운 스타일</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>새로운 페이지</translation>
-    </message>
-    <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style 0 is set to full transparent. 
-It can&apos;t be changed.  Ever.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">새로운 페이지</translation>
     </message>
 </context>
 <context>
@@ -1642,19 +1621,28 @@ It can&apos;t be changed.  Ever.</source>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="vanished">- 스타일 없음 -</translation>
+        <translation>- 스타일 없음 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">이름 편집기</translation>
+        <translation>이름 편집기</translation>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">새로운 스타일</translation>
+        <translation>새로운 스타일</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">새로운 페이지</translation>
+        <translation>새로운 페이지</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1732,10 +1720,6 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">오픈툰즈</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2269,11 +2253,11 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="vanished">Fx 매개변수 수정: %1 키 : %2 프레임 %3</translation>
+        <translation>Fx 매개변수 수정: %1 키 : %2 프레임 %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation type="vanished">설정</translation>
+        <translation>설정</translation>
     </message>
     <message>
         <source>That is a reserved file name and cannot be used.</source>
@@ -2326,10 +2310,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">오픈툰즈</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2413,11 +2393,11 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <name>SettingsPage</name>
     <message>
         <source>Reset to default</source>
-        <translation>기본값으로 재설정</translation>
+        <translation type="vanished">기본값으로 재설정</translation>
     </message>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="unfinished">선 자동 페인트</translation>
+        <translation type="obsolete">선 자동 페인트</translation>
     </message>
 </context>
 <context>
@@ -2744,25 +2724,54 @@ Are you sure ?</source>
     <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
         <source>H</source>
-        <translation type="vanished">수평</translation>
+        <translation>수평</translation>
+    </message>
+    <message>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="vanished">선 자동 페인트</translation>
+        <translation>선 자동 페인트</translation>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation type="vanished">기본값으로 재설정</translation>
+        <translation>기본값으로 재설정</translation>
     </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>현재</translation>
+        <translation type="vanished">현재</translation>
     </message>
 </context>
 <context>
@@ -2845,19 +2854,7 @@ Are you sure ?</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation>채널:</translation>
-    </message>
-    <message>
-        <source>Range:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">채널:</translation>
     </message>
 </context>
 <context>

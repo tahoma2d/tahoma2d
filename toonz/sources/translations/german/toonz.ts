@@ -30,12 +30,12 @@ Special thanks to:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please consider supporting Tahoma2D on Patreon.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Close</source>
         <translation type="unfinished">Schließen</translation>
+    </message>
+    <message>
+        <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -536,10 +536,6 @@ Halten Sie sie an oder warten Sie auf ihre Beendung bevor Sie sie entwenden.</tr
 <context>
     <name>CameraCaptureLevelHistogram</name>
     <message>
-        <source>Click to Update Histogram</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Drag to Move White Point</source>
         <translation type="unfinished"></translation>
     </message>
@@ -569,6 +565,21 @@ Halten Sie sie an oder warten Sie auf ihre Beendung bevor Sie sie entwenden.</tr
     <message>
         <source>Current Camera Settings</source>
         <translation>Aktuelle Kamera-Einstellung</translation>
+    </message>
+</context>
+<context>
+    <name>Canon</name>
+    <message>
+        <source>AC Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred.  Please try again.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1908,6 +1919,13 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
 </context>
 <context>
+    <name>ExportCurrentSceneCommandHandler</name>
+    <message>
+        <source>You must save the current scene first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExportCurvePopup</name>
     <message>
         <source>Export Curve</source>
@@ -2169,12 +2187,16 @@ contain the dpi information, then the current camera dpi will be used.
         <translation type="unfinished">Neues Projekt</translation>
     </message>
     <message>
-        <source>Create a new project in </source>
+        <source>Scene exported to: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Scene exported to: </source>
+        <source>Create In:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project &apos;%1&apos; already exists</source>
+        <translation type="unfinished">Projekt &apos;%1&apos; existiert bereits</translation>
     </message>
 </context>
 <context>
@@ -2483,7 +2505,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="unfinished">Betrachter</translation>
+        <translation type="obsolete">Betrachter</translation>
     </message>
 </context>
 <context>
@@ -3709,6 +3731,13 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
 </context>
 <context>
+    <name>LoadProjectCommandHandler</name>
+    <message>
+        <source>No project found at this location. Please select another location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoadScenePopup</name>
     <message>
         <source>Load Scene</source>
@@ -3725,13 +3754,6 @@ Please choose a valid lip sync data file to continue.</source>
     <message>
         <source> does not exist.</source>
         <translation> existiert nicht.</translation>
-    </message>
-</context>
-<context>
-    <name>LoadScriptPopup</name>
-    <message>
-        <source>Load script</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3972,7 +3994,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;Project Settings...</source>
-        <translation type="vanished">Projekt-Einstellungen (&amp;P)...</translation>
+        <translation>Projekt-Einstellungen (&amp;P)...</translation>
     </message>
     <message>
         <source>&amp;Save Default Settings</source>
@@ -5949,10 +5971,6 @@ Please choose a valid lip sync data file to continue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>https://tahoma.readthedocs.io/en/latest/whats_new.html</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>https://groups.google.com/g/tahoma2d</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6026,7 +6044,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Convert an existing file or image sequnce to another format.</source>
+        <source>Convert an existing file or image sequence to another format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6043,10 +6061,6 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>A project is a container for a collection of related scenes and drawings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Switch Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6150,7 +6164,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Raster levels are traditonal drawing levels</source>
+        <source>Raster levels are traditional drawing levels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6334,10 +6348,6 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Support Tahoma2D...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save the current style palette as a separate file with a new name.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6430,7 +6440,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RBG Picker: Picks color on screen and applies to current style</source>
+        <source>RGB Picker: Picks color on screen and applies to current style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6889,6 +6899,30 @@ or you may delete necessary files for it.</source>
         <source>Amount: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>https://tahoma2d.readthedocs.io/en/latest/whats_new.html</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Recent Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Load Project...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load an existing project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export Current Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export the current scene to another project.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7145,6 +7179,13 @@ Was möchten Sie tun?</translation>
     <message>
         <source>The pixel type is not supported.</source>
         <translation type="vanished">Das Pixel-Format wird nicht unterstützt.</translation>
+    </message>
+</context>
+<context>
+    <name>OpenRecentProjectCommandHandler</name>
+    <message>
+        <source>Project could not be found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8997,15 +9038,15 @@ Möchte Sie sie überschreiben?</translation>
     </message>
     <message>
         <source>Append $scenepath to +drawings</source>
-        <translation>$scenepath an +drawings hinzufügen</translation>
+        <translation type="vanished">$scenepath an +drawings hinzufügen</translation>
     </message>
     <message>
         <source>Append $scenepath to +inputs</source>
-        <translation>$scenepath an +inputs hinzufügen</translation>
+        <translation type="vanished">$scenepath an +inputs hinzufügen</translation>
     </message>
     <message>
         <source>Append $scenepath to +extras</source>
-        <translation>$scenepath an +extras hinzufügen</translation>
+        <translation type="vanished">$scenepath an +extras hinzufügen</translation>
     </message>
     <message>
         <source>Project:</source>
@@ -9016,23 +9057,19 @@ Möchte Sie sie überschreiben?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recent Projects</source>
-        <translation type="unfinished"></translation>
+        <source>Settings</source>
+        <translation type="unfinished">Einstellungen</translation>
     </message>
 </context>
 <context>
     <name>ProjectSettingsPopup</name>
     <message>
         <source>Project Settings</source>
-        <translation type="vanished">Projekt-Einstellungen</translation>
-    </message>
-    <message>
-        <source>Switch Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt-Einstellungen</translation>
     </message>
     <message>
         <source>Project:</source>
-        <translation type="unfinished">Projekt:</translation>
+        <translation type="obsolete">Projekt:</translation>
     </message>
     <message>
         <source>This is not a valid folder.  Please choose an existing location.</source>
@@ -9686,7 +9723,7 @@ Bitte verbinden Sie sich mit support@toonz.com für Ünterstützung.</translatio
     </message>
     <message>
         <source>Change project</source>
-        <translation>Projekt ändern</translation>
+        <translation type="vanished">Projekt ändern</translation>
     </message>
     <message>
         <source>It is not possible to delete the selection.</source>
@@ -11309,14 +11346,6 @@ Allow duplicate?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Don&apos;t Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Close Sub-Scene</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11362,6 +11391,26 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>Toggle vector column as mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Premultiply options in the following levels are disabled, since PNG files are premultiplied on loading in the current version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Recent Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cannot save a scene outside of the current project&apos;s folder.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13792,60 +13841,236 @@ What would you like to do?</source>
     <message>
         <source>No</source>
         <comment>frame id</comment>
-        <translation type="obsolete">Nein</translation>
+        <translation type="unfinished">Nein</translation>
     </message>
     <message>
         <source>No level name specified: please choose a valid level name</source>
-        <translation type="obsolete">Der Name der Ebene wurde nicht festgelegt: Bitte einen gültigen Namen wählen.</translation>
+        <translation type="unfinished">Der Name der Ebene wurde nicht festgelegt: Bitte einen gültigen Namen wählen.</translation>
     </message>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation type="obsolete">Ordner %1 existiert nicht.
+        <translation type="unfinished">Ordner %1 existiert nicht.
 Möchten Sie einen erstellen?</translation>
     </message>
     <message>
         <source>Unable to create</source>
-        <translation type="obsolete">Es konnte nicht erstellt werden.</translation>
+        <translation type="unfinished">Es konnte nicht erstellt werden.</translation>
+    </message>
+    <message>
+        <source>Please start live view before using time lapse.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The level name specified is already used: please choose a different level name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The save in path specified does not match with the existing level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The captured image size does not match with the existing level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 already exists.
+Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture image unless live view is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please start live view before capturing an image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t capture an image with focus check on.
+Please click the Check button in the Settings tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No level exists with the current name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is not an image level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is not a stop motion level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find an xsheet level with  the current level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No export path given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find the source file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite existing files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred.  Aborting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Successfully exported </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> images.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UNDEFINED WARNING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The level is not registered in the scene, but exists in the file system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+Frame %1 exists.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+Frames %1 exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OVERWRITE 1 of</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ADD to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %1 frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %1 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The level will be newly created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NEW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The level is already registered in the scene.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+NOTE : The level is not saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+WARNING : Failed to get image size of the existing level %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+WARNING : Image size mismatch. The existing level size is %1 x %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING : Level name conflicts. There already is a level %1 in the scene with the path                        
+          %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+WARNING : Image size mismatch. The size of level with the same name is is %1 x %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING : Level path conflicts. There already is a level with the path %1                        
+          in the scene with the name %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+WARNING : Image size mismatch. The size of level with the same path is %1 x %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No camera selected.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StopMotionController</name>
     <message>
         <source>Settings</source>
-        <translation type="obsolete">Einstellungen</translation>
+        <translation type="unfinished">Einstellungen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Optionen</translation>
+        <translation type="unfinished">Optionen</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="obsolete">Aktualisieren</translation>
+        <translation type="unfinished">Aktualisieren</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="obsolete">Datei</translation>
+        <translation type="unfinished">Datei</translation>
     </message>
     <message>
         <source>Capture</source>
-        <translation type="obsolete">Einfangen</translation>
+        <translation type="unfinished">Einfangen</translation>
     </message>
     <message>
         <source>Next Frame</source>
-        <translation type="obsolete">Nächster Frame</translation>
+        <translation type="unfinished">Nächster Frame</translation>
     </message>
     <message>
         <source>Last Frame</source>
-        <translation type="obsolete">Letzter Frame</translation>
+        <translation type="unfinished">Letzter Frame</translation>
     </message>
     <message>
         <source>Previous Frame</source>
-        <translation type="obsolete">Vorheriger Frame</translation>
+        <translation type="unfinished">Vorheriger Frame</translation>
     </message>
     <message>
         <source>Current Frame</source>
-        <translation type="obsolete">Aktueller Frame</translation>
+        <translation type="unfinished">Aktueller Frame</translation>
     </message>
     <message>
         <source>Save In:</source>
@@ -13853,77 +14078,480 @@ Möchten Sie einen erstellen?</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="obsolete">Automatisch</translation>
+        <translation type="unfinished">Automatisch</translation>
     </message>
     <message>
         <source>Disabled</source>
-        <translation type="obsolete">Deaktiviert</translation>
+        <translation type="unfinished">Deaktiviert</translation>
+    </message>
+    <message>
+        <source>Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paths</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resolution: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next XSheet Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous XSheet Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set to the Current Playhead Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Live View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show original live view images in timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom in to check focus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set focus check location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expose as: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scene Frame:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a camera to change settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Live View Offset: 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>White Balance: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Picture Style: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image Quality: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exposure: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test Shot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Farbe</translation>
+    </message>
+    <message>
+        <source>Grayscale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black &amp; White</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual Focus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Focus: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brightness: </source>
+        <translation type="unfinished">Helligkeit</translation>
+    </message>
+    <message>
+        <source>Contrast: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gain: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saturation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webcam Settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webcam Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DSLR Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Lapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use time lapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Place the frame in the Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Direct Show Webcam Drivers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use MJPG with Webcam</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interval(sec):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Numpad Shortcuts When Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture Review Time: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blackout all Screens</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use current frame as overlay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the current scene frame as an overlay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Motion Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No camera detected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No camera detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>- Select camera -</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aperture: Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aperture: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shutter Speed: Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shutter Speed: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iso: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Live View Offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop Live View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Capturing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop Capturing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StopMotionSaveInFolderPopup</name>
+    <message>
+        <source>Create the Destination Subfolder to Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set As Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set the current &quot;Save In&quot; path as the default.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Subfolder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Infomation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subfolder Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show This on Launch of the Camera Capture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Scene in Subfolder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <source>C- + Sequence + Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sequence + Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Episode + Sequence + Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project + Episode + Sequence + Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the current scene in the subfolder.
+Set the output folder path to the subfolder as well.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save In:</source>
+        <translation type="unfinished">Speichern in:</translation>
+    </message>
+    <message>
+        <source>Project:</source>
+        <translation type="unfinished">Projekt:</translation>
+    </message>
+    <message>
+        <source>Episode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sequence:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scene:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subfolder Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subfolder name should not be empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subfolder name should not contain following characters:  * . &quot; / \ [ ] : ; | = , </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder %1 already exists.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to create the %1 folder.</source>
+        <translation type="unfinished">Der Ordner %1 kann nicht erstellt werden.</translation>
+    </message>
+</context>
+<context>
+    <name>StopMotionSerial</name>
+    <message>
+        <source>No Device</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteTreeViewer</name>
     <message>
-        <source>This folder is not empty. Delete anyway?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>New Folder</source>
-        <translation type="unfinished">Neuer Ordner</translation>
-    </message>
-    <message>
-        <source>New Cleanup Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Merge to Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search for Palettes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Neuer Ordner</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
-        <source>&amp;New Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished">Löschen (&amp;D)</translation>
+        <translation type="obsolete">Löschen (&amp;D)</translation>
     </message>
 </context>
 <context>

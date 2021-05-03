@@ -30,12 +30,12 @@ Special thanks to:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please consider supporting Tahoma2D on Patreon.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Close</source>
         <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -546,7 +546,7 @@ Stop it or wait for its completion before removing it.</source>
     <name>CameraCaptureLevelHistogram</name>
     <message>
         <source>Click to Update Histogram</source>
-        <translation>［クリック］ヒストグラムを更新</translation>
+        <translation type="vanished">［クリック］ヒストグラムを更新</translation>
     </message>
     <message>
         <source>Drag to Move White Point</source>
@@ -578,6 +578,21 @@ Stop it or wait for its completion before removing it.</source>
     <message>
         <source>Current Camera Settings</source>
         <translation>現在のカメラ設定</translation>
+    </message>
+</context>
+<context>
+    <name>Canon</name>
+    <message>
+        <source>AC Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred.  Please try again.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1937,6 +1952,13 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
 </context>
 <context>
+    <name>ExportCurrentSceneCommandHandler</name>
+    <message>
+        <source>You must save the current scene first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExportCurvePopup</name>
     <message>
         <source>Export Curve</source>
@@ -2131,12 +2153,16 @@ contain the dpi information, then the current camera dpi will be used.
         <translation type="unfinished">新規プロジェクト</translation>
     </message>
     <message>
-        <source>Create a new project in </source>
+        <source>Scene exported to: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Scene exported to: </source>
+        <source>Create In:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project &apos;%1&apos; already exists</source>
+        <translation type="unfinished">プロジェクト &apos;%1&apos; は、既に存在します</translation>
     </message>
 </context>
 <context>
@@ -2441,7 +2467,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="unfinished">メインビューア</translation>
+        <translation type="obsolete">メインビューア</translation>
     </message>
 </context>
 <context>
@@ -3656,6 +3682,13 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
 </context>
 <context>
+    <name>LoadProjectCommandHandler</name>
+    <message>
+        <source>No project found at this location. Please select another location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoadScenePopup</name>
     <message>
         <source>Load Scene</source>
@@ -3672,13 +3705,6 @@ Please choose a valid lip sync data file to continue.</source>
     <message>
         <source> does not exist.</source>
         <translation> は存在しません。</translation>
-    </message>
-</context>
-<context>
-    <name>LoadScriptPopup</name>
-    <message>
-        <source>Load script</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3919,7 +3945,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;Project Settings...</source>
-        <translation type="vanished">プロジェクト設定 (&amp;P)...</translation>
+        <translation>プロジェクト設定 (&amp;P)...</translation>
     </message>
     <message>
         <source>&amp;Save Default Settings</source>
@@ -5968,10 +5994,6 @@ or you may delete necessary files for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>https://tahoma.readthedocs.io/en/latest/whats_new.html</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>https://groups.google.com/g/tahoma2d</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6045,7 +6067,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Convert an existing file or image sequnce to another format.</source>
+        <source>Convert an existing file or image sequence to another format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6062,10 +6084,6 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>A project is a container for a collection of related scenes and drawings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Switch Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6169,7 +6187,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Raster levels are traditonal drawing levels</source>
+        <source>Raster levels are traditional drawing levels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6353,10 +6371,6 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Support Tahoma2D...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save the current style palette as a separate file with a new name.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6449,7 +6463,7 @@ Custom rooms will not be touched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RBG Picker: Picks color on screen and applies to current style</source>
+        <source>RGB Picker: Picks color on screen and applies to current style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6908,6 +6922,30 @@ or you may delete necessary files for it.</source>
         <source>Amount: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>https://tahoma2d.readthedocs.io/en/latest/whats_new.html</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Recent Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Load Project...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load an existing project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export Current Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export the current scene to another project.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7221,6 +7259,13 @@ What do you want to do?</source>
     <message>
         <source>Camera is not available</source>
         <translation type="vanished">使用できるカメラがありません</translation>
+    </message>
+</context>
+<context>
+    <name>OpenRecentProjectCommandHandler</name>
+    <message>
+        <source>Project could not be found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9570,15 +9615,15 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Append $scenepath to +drawings</source>
-        <translation>$scenepath を +drawings パスに追加</translation>
+        <translation type="vanished">$scenepath を +drawings パスに追加</translation>
     </message>
     <message>
         <source>Append $scenepath to +inputs</source>
-        <translation>$scenepath を +inputs パスに追加</translation>
+        <translation type="vanished">$scenepath を +inputs パスに追加</translation>
     </message>
     <message>
         <source>Append $scenepath to +extras</source>
-        <translation>$scenepath を +extras パスに追加</translation>
+        <translation type="vanished">$scenepath を +extras パスに追加</translation>
     </message>
     <message>
         <source>Project:</source>
@@ -9589,23 +9634,15 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recent Projects</source>
-        <translation type="unfinished"></translation>
+        <source>Settings</source>
+        <translation type="unfinished">設定</translation>
     </message>
 </context>
 <context>
     <name>ProjectSettingsPopup</name>
     <message>
         <source>Project Settings</source>
-        <translation type="vanished">プロジェクト設定</translation>
-    </message>
-    <message>
-        <source>Switch Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Project:</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト設定</translation>
     </message>
     <message>
         <source>This is not a valid folder.  Please choose an existing location.</source>
@@ -10254,7 +10291,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Change project</source>
-        <translation>プロジェクトを変更</translation>
+        <translation type="vanished">プロジェクトを変更</translation>
     </message>
     <message>
         <source>It is not possible to delete the selection.</source>
@@ -11947,14 +11984,6 @@ Allow duplicate?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Don&apos;t Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Close Sub-Scene</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12000,6 +12029,26 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>Toggle vector column as mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Premultiply options in the following levels are disabled, since PNG files are premultiplied on loading in the current version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Recent Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cannot save a scene outside of the current project&apos;s folder.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14562,238 +14611,291 @@ What would you like to do?</source>
     <message>
         <source>No</source>
         <comment>frame id</comment>
-        <translation type="vanished">フレームなし</translation>
+        <translation>フレームなし</translation>
     </message>
     <message>
         <source>No level name specified: please choose a valid level name</source>
-        <translation type="vanished">レベル名は指定されていません。有効なレベル名を指定して下さい</translation>
+        <translation>レベル名は指定されていません。有効なレベル名を指定して下さい</translation>
     </message>
     <message>
         <source>The level name specified is already used: please choose a different level name.</source>
-        <translation type="vanished">指定されたレベル名はすでに使用中です：別の名前を指定してください。</translation>
+        <translation>指定されたレベル名はすでに使用中です：別の名前を指定してください。</translation>
     </message>
     <message>
         <source>The save in path specified does not match with the existing level.</source>
-        <translation type="vanished">指定された保存先パスが既存のレベルと異なります。</translation>
+        <translation>指定された保存先パスが既存のレベルと異なります。</translation>
     </message>
     <message>
         <source>The captured image size does not match with the existing level.</source>
-        <translation type="vanished">取り込まれた画像サイズが既存のレベルと異なります。</translation>
+        <translation>取り込まれた画像サイズが既存のレベルと異なります。</translation>
     </message>
     <message>
         <source>File %1 already exists.
 Do you want to overwrite it?</source>
-        <translation type="vanished">ファイル %1 は既に存在します。
+        <translation>ファイル %1 は既に存在します。
 上書きしてもよろしいですか？</translation>
     </message>
     <message>
         <source>Failed to load %1.</source>
-        <translation type="vanished">ファイル %1 の読み込みに失敗しました。</translation>
+        <translation>ファイル %1 の読み込みに失敗しました。</translation>
     </message>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation type="vanished">フォルダー %1 は存在しません。
+        <translation>フォルダー %1 は存在しません。
 作成しますか？</translation>
     </message>
     <message>
         <source>Unable to create</source>
-        <translation type="vanished">作成できません</translation>
+        <translation>作成できません</translation>
     </message>
     <message>
         <source>UNDEFINED WARNING</source>
-        <translation type="vanished">※ 未定義の警告 ※</translation>
+        <translation>※ 未定義の警告 ※</translation>
     </message>
     <message>
         <source>The level is not registered in the scene, but exists in the file system.</source>
-        <translation type="vanished">このレベルは現在のシーンに読み込まれていませんが、ファイルは存在します。</translation>
+        <translation>このレベルは現在のシーンに読み込まれていませんが、ファイルは存在します。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
-        <translation type="vanished">
+        <translation>
 警告： 画像サイズの不一致。保存されている画像のサイズは %1 x %2 ピクセルです。</translation>
     </message>
     <message>
         <source>WARNING </source>
-        <translation type="vanished">警告 </translation>
+        <translation>警告 </translation>
     </message>
     <message>
         <source>
 Frame %1 exists.</source>
-        <translation type="vanished">
+        <translation>
 以下のコマが撮り込み済です： %1</translation>
     </message>
     <message>
         <source>
 Frames %1 exist.</source>
-        <translation type="vanished">
+        <translation>
 以下のコマが撮り込み済です： %1</translation>
     </message>
     <message>
         <source>OVERWRITE 1 of</source>
-        <translation type="vanished">上書き ：</translation>
+        <translation>上書き ：</translation>
     </message>
     <message>
         <source>ADD to</source>
-        <translation type="vanished">追加 ：</translation>
+        <translation>追加 ：</translation>
     </message>
     <message>
         <source> %1 frame</source>
-        <translation type="vanished"> %1 コマ撮り込み済</translation>
+        <translation> %1 コマ撮り込み済</translation>
     </message>
     <message>
         <source> %1 frames</source>
-        <translation type="vanished"> %1 コマ撮り込み済</translation>
+        <translation> %1 コマ撮り込み済</translation>
     </message>
     <message>
         <source>The level will be newly created.</source>
-        <translation type="vanished">レベルは新規作成されます。</translation>
+        <translation>レベルは新規作成されます。</translation>
     </message>
     <message>
         <source>NEW</source>
-        <translation type="vanished">新規作成</translation>
+        <translation>新規作成</translation>
     </message>
     <message>
         <source>The level is already registered in the scene.</source>
-        <translation type="vanished">このレベルは既にシーンに読み込まれています。</translation>
+        <translation>このレベルは既にシーンに読み込まれています。</translation>
     </message>
     <message>
         <source>
 NOTE : The level is not saved.</source>
-        <translation type="vanished">
+        <translation>
 注意： このレベルはまだファイルに保存されていません。</translation>
     </message>
     <message>
         <source>
 WARNING : Failed to get image size of the existing level %1.</source>
-        <translation type="vanished">
+        <translation>
 警告： 既存のレベル %1 の画像サイズの取得に失敗しました。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The existing level size is %1 x %2.</source>
-        <translation type="vanished">
+        <translation>
 警告： 画像サイズの不一致。既存のレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING : Level name conflicts. There already is a level %1 in the scene with the path                        
           %2.</source>
-        <translation type="vanished">警告： レベル名の重複。このシーンには、既に %1 という名前のレベルが存在します。
+        <translation>警告： レベル名の重複。このシーンには、既に %1 という名前のレベルが存在します。
 既存のレベルのファイルパスは %2 です。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The size of level with the same name is is %1 x %2.</source>
-        <translation type="vanished">
+        <translation>
 警告： 画像サイズの不一致。既存の同名のレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING : Level path conflicts. There already is a level with the path %1                        
           in the scene with the name %2.</source>
-        <translation type="vanished">警告： ファイルパスの重複。既にこのシーンには %1 から読み込まれている
+        <translation>警告： ファイルパスの重複。既にこのシーンには %1 から読み込まれている
 別名のレベル %2 があります。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The size of level with the same path is %1 x %2.</source>
-        <translation type="vanished">
+        <translation>
 警告： 画像サイズの不一致。 既存の同じファイルパスのレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING</source>
-        <translation type="vanished">警告</translation>
+        <translation>警告</translation>
     </message>
     <message>
         <source>No camera selected.</source>
-        <translation type="vanished">カメラが選択されていません。</translation>
+        <translation>カメラが選択されていません。</translation>
     </message>
     <message>
         <source>Please start live view before capturing an image.</source>
-        <translation type="vanished">画像取り込みの前にライブビューを開始してください。</translation>
+        <translation>画像取り込みの前にライブビューを開始してください。</translation>
     </message>
     <message>
         <source>Cannot capture webcam image unless live view is active.</source>
         <translation type="vanished">ライブビューが有効でないと、Webカメラの画像を取り込むことはできません。</translation>
+    </message>
+    <message>
+        <source>Please start live view before using time lapse.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture image unless live view is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t capture an image with focus check on.
+Please click the Check button in the Settings tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No level exists with the current name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is not an image level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is not a stop motion level.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find an xsheet level with  the current level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No export path given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find the source file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite existing files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred.  Aborting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Successfully exported </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> images.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StopMotionController</name>
     <message>
         <source>Controls</source>
-        <translation type="vanished">コントロール</translation>
+        <translation>コントロール</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="vanished">設定</translation>
+        <translation>設定</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="vanished">オプション</translation>
+        <translation>オプション</translation>
     </message>
     <message>
         <source>Resolution: </source>
-        <translation type="vanished">ピクセルサイズ： </translation>
+        <translation>ピクセルサイズ： </translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="vanished">更新</translation>
+        <translation>更新</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="vanished">ファイル</translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <source>Webcam Settings...</source>
-        <translation type="vanished">ウェブカメラ設定...</translation>
+        <translation>ウェブカメラ設定...</translation>
     </message>
     <message>
         <source>Capture</source>
-        <translation type="vanished">取り込み</translation>
+        <translation>取り込み</translation>
     </message>
     <message>
         <source>Next Level</source>
-        <translation type="vanished">次のレベル</translation>
+        <translation>次のレベル</translation>
     </message>
     <message>
         <source>Next New</source>
-        <translation type="vanished">次の新規レベル</translation>
+        <translation>次の新規レベル</translation>
     </message>
     <message>
         <source>Previous Level</source>
-        <translation type="vanished">前のレベル</translation>
+        <translation>前のレベル</translation>
     </message>
     <message>
         <source>Next Frame</source>
-        <translation type="vanished">次のフレーム</translation>
+        <translation>次のフレーム</translation>
     </message>
     <message>
         <source>Last Frame</source>
-        <translation type="vanished">最後のフレーム</translation>
+        <translation>最後のフレーム</translation>
     </message>
     <message>
         <source>Previous Frame</source>
-        <translation type="vanished">前のフレーム</translation>
+        <translation>前のフレーム</translation>
     </message>
     <message>
         <source>Next XSheet Frame</source>
-        <translation type="vanished">タイムシートの次のフレーム</translation>
+        <translation>タイムシートの次のフレーム</translation>
     </message>
     <message>
         <source>Previous XSheet Frame</source>
-        <translation type="vanished">タイムシートの前のフレーム</translation>
+        <translation>タイムシートの前のフレーム</translation>
     </message>
     <message>
         <source>Current Frame</source>
-        <translation type="vanished">現在のフレーム</translation>
+        <translation>現在のフレーム</translation>
     </message>
     <message>
         <source>Set to the Current Playhead Location</source>
-        <translation type="vanished">現在のフレームに設定</translation>
+        <translation>現在のフレームに設定</translation>
     </message>
     <message>
         <source>Start Live View</source>
-        <translation type="vanished">ライブビューを開始</translation>
+        <translation>ライブビューを開始</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -14805,15 +14907,15 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Camera:</source>
-        <translation type="vanished">カメラ：</translation>
+        <translation>カメラ：</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="vanished">レベル名：</translation>
+        <translation>レベル名：</translation>
     </message>
     <message>
         <source>Frame:</source>
-        <translation type="vanished">フレーム：</translation>
+        <translation>フレーム：</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -14829,51 +14931,51 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Camera Model</source>
-        <translation type="vanished">カメラ型番</translation>
+        <translation>カメラ型番</translation>
     </message>
     <message>
         <source>Camera Mode</source>
-        <translation type="vanished">カメラモード</translation>
+        <translation>カメラモード</translation>
     </message>
     <message>
         <source>Temperature: </source>
-        <translation type="vanished">色温度： </translation>
+        <translation>色温度： </translation>
     </message>
     <message>
         <source>Shutter Speed: </source>
-        <translation type="vanished">シャッタースピード： </translation>
+        <translation>シャッタースピード： </translation>
     </message>
     <message>
         <source>Iso: </source>
-        <translation type="vanished">ISO： </translation>
+        <translation>ISO： </translation>
     </message>
     <message>
         <source>Aperture: </source>
-        <translation type="vanished">絞り： </translation>
+        <translation>絞り： </translation>
     </message>
     <message>
         <source>Exposure: </source>
-        <translation type="vanished">露出： </translation>
+        <translation>露出： </translation>
     </message>
     <message>
         <source>Image Quality: </source>
-        <translation type="vanished">画質： </translation>
+        <translation>画質： </translation>
     </message>
     <message>
         <source>Picture Style: </source>
-        <translation type="vanished">ピクチャスタイル： </translation>
+        <translation>ピクチャスタイル： </translation>
     </message>
     <message>
         <source>White Balance: </source>
-        <translation type="vanished">ホワイトバランス： </translation>
+        <translation>ホワイトバランス： </translation>
     </message>
     <message>
         <source>Webcam Options</source>
-        <translation type="vanished">ウェブカメラ設定</translation>
+        <translation>ウェブカメラ設定</translation>
     </message>
     <message>
         <source>DSLR Options</source>
-        <translation type="vanished">デジタル一眼レフ設定</translation>
+        <translation>デジタル一眼レフ設定</translation>
     </message>
     <message>
         <source>Place the frame in the XSheet</source>
@@ -14881,7 +14983,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Use Direct Show Webcam Drivers</source>
-        <translation type="vanished">DirectShowデバイスドライバを使用する</translation>
+        <translation>DirectShowデバイスドライバを使用する</translation>
     </message>
     <message>
         <source>Black Screen for Capture</source>
@@ -14893,7 +14995,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Use MJPG with Webcam</source>
-        <translation type="vanished">ウェブカメラの取り込みにMJPGを用いる</translation>
+        <translation>ウェブカメラの取り込みにMJPGを用いる</translation>
     </message>
     <message>
         <source>Place on XSheet</source>
@@ -14901,7 +15003,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Use Numpad Shortcuts When Active</source>
-        <translation type="vanished">テンキーのショートカットを用いる</translation>
+        <translation>テンキーのショートカットを用いる</translation>
     </message>
     <message>
         <source>Show Live View on All Frames</source>
@@ -14909,7 +15011,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Capture Review Time: </source>
-        <translation type="vanished">画像を確認する時間： </translation>
+        <translation>画像を確認する時間： </translation>
     </message>
     <message>
         <source>Level Subsampling: </source>
@@ -14917,101 +15019,365 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="vanished">不透明度：</translation>
+        <translation>不透明度：</translation>
     </message>
     <message>
         <source>No camera detected.</source>
-        <translation type="vanished">カメラが認識されていません。</translation>
+        <translation>カメラが認識されていません。</translation>
     </message>
     <message>
         <source>No camera detected</source>
-        <translation type="vanished">カメラが認識されていません</translation>
+        <translation>カメラが認識されていません</translation>
     </message>
     <message>
         <source>- Select camera -</source>
-        <translation type="vanished">- カメラを選択してください -</translation>
+        <translation>- カメラを選択してください -</translation>
     </message>
     <message>
         <source>Mode: </source>
-        <translation type="vanished">モード： </translation>
+        <translation>モード： </translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="vanished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <source>Disabled</source>
-        <translation type="vanished">無効</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <source>Stop Live View</source>
-        <translation type="vanished">ライブビューを停止</translation>
+        <translation>ライブビューを停止</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paths</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show original live view images in timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom in to check focus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set focus check location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expose as: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scene Frame:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a camera to change settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Live View Offset: 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test Shot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image adjust</source>
+        <translation type="unfinished">画像調整</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grayscale</source>
+        <translation type="unfinished">グレースケール</translation>
+    </message>
+    <message>
+        <source>Black &amp; White</source>
+        <translation type="unfinished">白黒二値</translation>
+    </message>
+    <message>
+        <source>Manual Focus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Focus: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brightness: </source>
+        <translation type="unfinished">明るさ：</translation>
+    </message>
+    <message>
+        <source>Contrast: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gain: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saturation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color type:</source>
+        <translation type="unfinished">タイプ：</translation>
+    </message>
+    <message>
+        <source>Time Lapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use time lapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Place the frame in the Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interval(sec):</source>
+        <translation type="unfinished">間隔（秒）：</translation>
+    </message>
+    <message>
+        <source>Blackout all Screens</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use current frame as overlay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the current scene frame as an overlay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Motion Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aperture: Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shutter Speed: Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Live View Offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Capturing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop Capturing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StopMotionSaveInFolderPopup</name>
+    <message>
+        <source>Create the Destination Subfolder to Save</source>
+        <translation type="unfinished">カットフォルダの作成</translation>
+    </message>
+    <message>
+        <source>Set As Default</source>
+        <translation type="unfinished">既定値に設定</translation>
+    </message>
+    <message>
+        <source>Set the current &quot;Save In&quot; path as the default.</source>
+        <translation type="unfinished">現在の「作成場所」のパスを既定にします。</translation>
+    </message>
+    <message>
+        <source>Create Subfolder</source>
+        <translation type="unfinished">カットフォルダを作成する</translation>
+    </message>
+    <message>
+        <source>Infomation</source>
+        <translation type="unfinished">基本情報</translation>
+    </message>
+    <message>
+        <source>Subfolder Name</source>
+        <translation type="unfinished">フォルダ名</translation>
+    </message>
+    <message>
+        <source>Auto Format:</source>
+        <translation type="unfinished">自動生成：</translation>
+    </message>
+    <message>
+        <source>Show This on Launch of the Camera Capture</source>
+        <translation type="unfinished">”カメラから取り込む”起動時にこのポップアップを表示する</translation>
+    </message>
+    <message>
+        <source>Save Scene in Subfolder</source>
+        <translation type="unfinished">カットフォルダ内にシーンを保存する</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <source>C- + Sequence + Scene</source>
+        <translation type="unfinished">C- + シーン + カット</translation>
+    </message>
+    <message>
+        <source>Sequence + Scene</source>
+        <translation type="unfinished">シーン + カット</translation>
+    </message>
+    <message>
+        <source>Episode + Sequence + Scene</source>
+        <translation type="unfinished">話数 + シーン + カット</translation>
+    </message>
+    <message>
+        <source>Project + Episode + Sequence + Scene</source>
+        <translation type="unfinished">作品名 + 話数 + シーン + カット</translation>
+    </message>
+    <message>
+        <source>Save the current scene in the subfolder.
+Set the output folder path to the subfolder as well.</source>
+        <translation type="unfinished">カットフォルダ内にシーンファイルを保存します。同時に、
+出力設定の保存先をカットフォルダのパスに設定します。</translation>
+    </message>
+    <message>
+        <source>Save In:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Episode:</source>
+        <translation type="unfinished">話数：</translation>
+    </message>
+    <message>
+        <source>Sequence:</source>
+        <translation type="unfinished">シーン：</translation>
+    </message>
+    <message>
+        <source>Scene:</source>
+        <translation type="unfinished">カット番号：</translation>
+    </message>
+    <message>
+        <source>Subfolder Name:</source>
+        <translation type="unfinished">フォルダ名：</translation>
+    </message>
+    <message>
+        <source>Subfolder name should not be empty.</source>
+        <translation type="unfinished">フォルダ名を入力してください。</translation>
+    </message>
+    <message>
+        <source>Subfolder name should not contain following characters:  * . &quot; / \ [ ] : ; | = , </source>
+        <translation type="unfinished">フォルダ名に次のいずれかを含む事はできません：  * . &quot; / \ [ ] : ; | = , </translation>
+    </message>
+    <message>
+        <source>Folder %1 already exists.</source>
+        <translation type="unfinished">フォルダ %1 は既に存在します。</translation>
+    </message>
+    <message>
+        <source>It is not possible to create the %1 folder.</source>
+        <translation type="unfinished">%1 フォルダを作成できません。</translation>
+    </message>
+</context>
+<context>
+    <name>StopMotionSerial</name>
+    <message>
+        <source>No Device</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteTreeViewer</name>
     <message>
-        <source>This folder is not empty. Delete anyway?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>New Folder</source>
-        <translation type="unfinished">新規フォルダ</translation>
-    </message>
-    <message>
-        <source>New Cleanup Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Merge to Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search for Palettes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">新規フォルダ</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
-        <source>&amp;New Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished">削除 (&amp;D)</translation>
+        <translation type="obsolete">削除 (&amp;D)</translation>
     </message>
 </context>
 <context>

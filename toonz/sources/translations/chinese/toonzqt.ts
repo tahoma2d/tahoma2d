@@ -267,58 +267,22 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
-    <name>ColorChannelControl</name>
-    <message>
-        <source>R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alpha controls the transparency. 
-Zero is fully transparent.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ColorField</name>
     <message>
         <source>R:</source>
-        <translation type="unfinished">R:</translation>
+        <translation type="obsolete">R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation type="unfinished">G:</translation>
+        <translation type="obsolete">G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="unfinished">B:</translation>
+        <translation type="obsolete">B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="unfinished">A:</translation>
+        <translation type="obsolete">A:</translation>
     </message>
 </context>
 <context>
@@ -408,115 +372,23 @@ Zero is fully transparent.</source>
     <name>DVGui::ColorField</name>
     <message>
         <source>R:</source>
-        <translation type="vanished">R:</translation>
+        <translation>R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation type="vanished">G:</translation>
+        <translation>G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="vanished">B:</translation>
+        <translation>B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="vanished">A:</translation>
+        <translation>A:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
-    <message>
-        <source>Bold</source>
-        <translation type="vanished">粗体</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="vanished">斜体</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="vanished">下划线</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation type="vanished">左对齐</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation type="vanished">居中对齐</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation type="vanished">右对齐</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::FileField</name>
-    <message>
-        <source>...</source>
-        <translation type="vanished">...</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::LineEdit</name>
-    <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">文件名不能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ProgressDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::RadioButtonDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="vanished">当前</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ToneCurveField</name>
-    <message>
-        <source>Channel:</source>
-        <translation type="vanished">通道:</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ValidatedChoiceDialog</name>
-    <message>
-        <source>Apply</source>
-        <translation>应用</translation>
-    </message>
-    <message>
-        <source>Apply to All</source>
-        <translation>全部应用</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-</context>
-<context>
-    <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
         <translation>粗体</translation>
@@ -540,6 +412,118 @@ Zero is fully transparent.</source>
     <message>
         <source>Align Right</source>
         <translation>右对齐</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::FileField</name>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::LineEdit</name>
+    <message>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation>文件名不能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ProgressDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::RadioButtonDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation>当前</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ToneCurveField</name>
+    <message>
+        <source>Channel:</source>
+        <translation>通道:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">范围:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ValidatedChoiceDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Apply to All</source>
+        <translation>全部应用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>DvTextEdit</name>
+    <message>
+        <source>Bold</source>
+        <translation type="vanished">粗体</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation type="vanished">斜体</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation type="vanished">下划线</translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation type="vanished">左对齐</translation>
+    </message>
+    <message>
+        <source>Align Center</source>
+        <translation type="vanished">居中对齐</translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation type="vanished">右对齐</translation>
     </message>
 </context>
 <context>
@@ -568,7 +552,7 @@ Zero is fully transparent.</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
@@ -1207,9 +1191,6 @@ Manually changing any keyframe will clear the warning.</source>
         <source>Plastic Skeleton</source>
         <translation>塑料骨架</translation>
     </message>
-</context>
-<context>
-    <name>FunctionTreeModel::Channel</name>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
@@ -1585,8 +1566,8 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>文件名能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">文件名能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -1623,28 +1604,19 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation>新建样式</translation>
+        <translation type="vanished">新建样式</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>新建页</translation>
+        <translation type="vanished">新建页</translation>
     </message>
     <message>
         <source>- No Styles -</source>
-        <translation>- 无样式 -</translation>
+        <translation type="vanished">- 无样式 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation>名字编辑器</translation>
-    </message>
-    <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style 0 is set to full transparent. 
-It can&apos;t be changed.  Ever.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">名字编辑器</translation>
     </message>
 </context>
 <context>
@@ -1826,7 +1798,7 @@ It can&apos;t be changed.  Ever.</source>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="vanished">- 无样式 -</translation>
+        <translation>- 无样式 -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -1834,15 +1806,24 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">新建样式</translation>
+        <translation>新建样式</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">新建页</translation>
+        <translation>新建页</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">名字编辑器</translation>
+        <translation>名字编辑器</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1943,10 +1924,6 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2407,11 +2384,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="vanished">修改特效参数: 关键帧 %1 : %2  帧 %3</translation>
+        <translation>修改特效参数: 关键帧 %1 : %2  帧 %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation type="vanished">设置</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <source>OpenToonz 1.1</source>
@@ -2574,10 +2551,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>OpenToonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>RgbLinkButtons</name>
@@ -2664,11 +2637,11 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <name>SettingsPage</name>
     <message>
         <source>Reset to default</source>
-        <translation>重新初始化</translation>
+        <translation type="vanished">重新初始化</translation>
     </message>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="unfinished">线自动上色</translation>
+        <translation type="obsolete">线自动上色</translation>
     </message>
 </context>
 <context>
@@ -3067,6 +3040,42 @@ Apply</source>
     </message>
 </context>
 <context>
+    <name>StyleEditorGUI::ColorChannelControl</name>
+    <message>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StyleEditorGUI::PlainColorPage</name>
     <message>
         <source>Wheel</source>
@@ -3093,18 +3102,18 @@ Apply</source>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="vanished">线自动上色</translation>
+        <translation>线自动上色</translation>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation type="vanished">重新初始化</translation>
+        <translation>重新初始化</translation>
     </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">当前</translation>
+        <translation type="obsolete">当前</translation>
     </message>
 </context>
 <context>
@@ -3195,19 +3204,11 @@ Apply</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation>通道:</translation>
+        <translation type="vanished">通道:</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="unfinished">范围:</translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">范围:</translation>
     </message>
 </context>
 <context>

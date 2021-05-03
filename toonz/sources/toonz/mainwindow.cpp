@@ -1867,7 +1867,7 @@ void MainWindow::defineActions() {
                        QT_TR_NOOP("&Clear Recent level File List"), "", "",
                        tr("Remove everything from the recent level list."));
   createMenuFileAction(MI_ConvertFileWithInput, QT_TR_NOOP("&Convert File..."), "",
-                       "convert", tr("Convert an existing file or image sequnce to another format."));
+                       "convert", tr("Convert an existing file or image sequence to another format."));
   createMenuFileAction(MI_LoadColorModel, QT_TR_NOOP("&Load Color Model..."),
                        "", "load_colormodel", tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,
@@ -1994,7 +1994,7 @@ void MainWindow::defineActions() {
                         "adjust at any time."));
   createMenuLevelAction(MI_NewRasterLevel, QT_TR_NOOP("&New Raster Level"), "",
                         "new_raster_level", tr("Create a new raster level") + separator +
-                        tr("Raster levels are traditonal drawing levels") + separator +
+                        tr("Raster levels are traditional drawing levels") + separator +
                         tr("Imported images will be imported as raster levels."));
   createMenuLevelAction(MI_LoadLevel, QT_TR_NOOP("&Load Level..."), "",
                         "load_level", tr("Load an existing level."));
@@ -2607,7 +2607,7 @@ void MainWindow::defineActions() {
                    QT_TR_NOOP("Style Picker Tool"), "K",
                    tr("Style Picker: Selects style on current drawing"));
   createToolAction(T_RGBPicker, "rgbpicker", QT_TR_NOOP("RGB Picker Tool"),
-                   "R", tr("RBG Picker: Picks color on screen and applies to current style"));
+                   "R", tr("RGB Picker: Picks color on screen and applies to current style"));
   createToolAction(T_ControlPointEditor, "controlpointeditor",
                    QT_TR_NOOP("Control Point Editor Tool"), "C",
                    tr("Control Point Editor: Modifies vector lines by editing "

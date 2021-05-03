@@ -239,70 +239,57 @@ Possibly the preset file has been corrupted</source>
 <context>
     <name>ColorChannelControl</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>R</source>
-        <translation>R</translation>
+        <translation type="vanished">R</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>G</source>
-        <translation>G</translation>
+        <translation type="vanished">G</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="vanished">B</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>A</source>
-        <translation>A</translation>
+        <translation type="vanished">A</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>H</source>
-        <translation>H</translation>
+        <translation type="vanished">H</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>S</source>
-        <translation>S</translation>
+        <translation type="vanished">S</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1365"/>
         <source>V</source>
-        <translation>V</translation>
+        <translation type="vanished">V</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1382"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1384"/>
         <source>Alpha controls the transparency. 
 Zero is fully transparent.</source>
-        <translation>Альфа контролирует прозрачность.
+        <translation type="vanished">Альфа контролирует прозрачность.
 Ноль полностью прозрачен.</translation>
     </message>
 </context>
 <context>
     <name>ColorField</name>
     <message>
-        <location filename="../../toonzqt/colorfield.cpp" line="368"/>
         <source>R:</source>
-        <translation>R:</translation>
+        <translation type="vanished">R:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/colorfield.cpp" line="372"/>
         <source>G:</source>
-        <translation>G:</translation>
+        <translation type="vanished">G:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/colorfield.cpp" line="376"/>
         <source>B:</source>
-        <translation>B:</translation>
+        <translation type="vanished">B:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/colorfield.cpp" line="380"/>
         <source>A:</source>
-        <translation>A:</translation>
+        <translation type="vanished">A:</translation>
     </message>
 </context>
 <context>
@@ -395,61 +382,73 @@ Zero is fully transparent.</source>
 <context>
     <name>DVGui::ColorField</name>
     <message>
+        <location filename="../../toonzqt/colorfield.cpp" line="368"/>
         <source>R:</source>
-        <translation type="obsolete">R:</translation>
+        <translation type="unfinished">R:</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/colorfield.cpp" line="372"/>
         <source>G:</source>
-        <translation type="obsolete">G:</translation>
+        <translation type="unfinished">G:</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/colorfield.cpp" line="376"/>
         <source>B:</source>
-        <translation type="obsolete">B:</translation>
+        <translation type="unfinished">B:</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/colorfield.cpp" line="380"/>
         <source>A:</source>
-        <translation type="obsolete">A:</translation>
+        <translation type="unfinished">A:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="152"/>
         <source>Bold</source>
-        <translation type="obsolete">Bold</translation>
+        <translation type="unfinished">Bold</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="156"/>
         <source>Italic</source>
-        <translation type="obsolete">Italic</translation>
+        <translation type="unfinished">Italic</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="161"/>
         <source>Underline</source>
-        <translation type="obsolete">Подчеркивание</translation>
+        <translation type="unfinished">Подчеркивание</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="175"/>
         <source>Align Left</source>
-        <translation type="obsolete">Выровнять по левому краю</translation>
+        <translation type="unfinished">Выровнять по левому краю</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="179"/>
         <source>Align Center</source>
-        <translation type="obsolete">Выровнять по центру</translation>
+        <translation type="unfinished">Выровнять по центру</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/dvtextedit.cpp" line="182"/>
         <source>Align Right</source>
-        <translation type="obsolete">Выровнять по правому краю</translation>
+        <translation type="unfinished">Выровнять по правому краю</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
+        <location filename="../../toonzqt/filefield.cpp" line="31"/>
         <source>...</source>
-        <translation type="obsolete">...</translation>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="obsolete">Имя файла не может содержать ни одного из следующих символов: / \: *? &quot;&lt;&gt; |.</translation>
+        <location filename="../../toonzqt/lineedit.cpp" line="62"/>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="unfinished">Имя файла не может содержать ни одного из следующих символов: / \: *? &quot;&lt;&gt; |.</translation>
     </message>
 </context>
 <context>
@@ -457,6 +456,11 @@ Zero is fully transparent.</source>
     <message>
         <source>OpenToonz</source>
         <translation type="obsolete">OpenToonz</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/dvdialog.cpp" line="893"/>
+        <source>Tahoma2D</source>
+        <translation type="unfinished">Tahoma2D</translation>
     </message>
 </context>
 <context>
@@ -469,19 +473,42 @@ Zero is fully transparent.</source>
         <source>OpenToonz</source>
         <translation type="obsolete">OpenToonz</translation>
     </message>
+    <message>
+        <location filename="../../toonzqt/dvdialog.cpp" line="823"/>
+        <source>Tahoma2D</source>
+        <translation type="unfinished">Tahoma2D</translation>
+    </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
+        <location filename="../../toonzqt/styleindexlineedit.cpp" line="19"/>
+        <location filename="../../toonzqt/styleindexlineedit.cpp" line="37"/>
         <source>current</source>
-        <translation type="obsolete">текущий</translation>
+        <translation type="unfinished">текущий</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
+        <location filename="../../toonzqt/tonecurvefield.cpp" line="902"/>
         <source>Channel:</source>
-        <translation type="obsolete">Канал:</translation>
+        <translation type="unfinished">Канал:</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/tonecurvefield.cpp" line="905"/>
+        <source>Range:</source>
+        <translation type="unfinished">Диапазон:</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/tonecurvefield.cpp" line="923"/>
+        <source>Output:</source>
+        <translation type="unfinished">Вывод:</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/tonecurvefield.cpp" line="926"/>
+        <source>Input:</source>
+        <translation type="unfinished">Ввод:</translation>
     </message>
 </context>
 <context>
@@ -505,34 +532,28 @@ Zero is fully transparent.</source>
 <context>
     <name>DvTextEdit</name>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="152"/>
         <source>Bold</source>
-        <translation>Жирный</translation>
+        <translation type="vanished">Жирный</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="156"/>
         <source>Italic</source>
-        <translation>Курсив</translation>
+        <translation type="vanished">Курсив</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="161"/>
         <source>Underline</source>
-        <translation>Подчеркнутый</translation>
+        <translation type="vanished">Подчеркнутый</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="175"/>
         <source>Align Left</source>
-        <translation>Выровнять по левому краю</translation>
+        <translation type="vanished">Выровнять по левому краю</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="179"/>
         <source>Align Center</source>
-        <translation>Выровнять по центру</translation>
+        <translation type="vanished">Выровнять по центру</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvtextedit.cpp" line="182"/>
         <source>Align Right</source>
-        <translation>Выровнять по правому краю</translation>
+        <translation type="vanished">Выровнять по правому краю</translation>
     </message>
 </context>
 <context>
@@ -564,9 +585,8 @@ Zero is fully transparent.</source>
 <context>
     <name>FileField</name>
     <message>
-        <location filename="../../toonzqt/filefield.cpp" line="31"/>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
@@ -1333,6 +1353,13 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FunctionTreeModel</name>
     <message>
+        <location filename="../../toonzqt/functiontreeviewer.cpp" line="668"/>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished">Некоторые ключи в этом параметре теряют исходную ссылку в выражении.
+Если вручную изменить любой ключевой кадр, предупреждение будет снято.</translation>
+    </message>
+    <message>
         <location filename="../../toonzqt/functiontreeviewer.cpp" line="891"/>
         <source>Stage</source>
         <translation>Сцена</translation>
@@ -1351,10 +1378,9 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FunctionTreeModel::Channel</name>
     <message>
-        <location filename="../../toonzqt/functiontreeviewer.cpp" line="668"/>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
-        <translation>Некоторые ключи в этом параметре теряют исходную ссылку в выражении.
+        <translation type="vanished">Некоторые ключи в этом параметре теряют исходную ссылку в выражении.
 Если вручную изменить любой ключевой кадр, предупреждение будет снято.</translation>
     </message>
 </context>
@@ -1381,14 +1407,14 @@ Manually changing any keyframe will clear the warning.</source>
         <translation>Экспорт данных</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="538"/>
         <location filename="../../toonzqt/functiontreeviewer.cpp" line="1673"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="538"/>
         <source>Show Animated Only</source>
         <translation>Показать только анимированные</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="539"/>
         <location filename="../../toonzqt/functiontreeviewer.cpp" line="1674"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="539"/>
         <source>Show All</source>
         <translation>Показать все</translation>
     </message>
@@ -1788,9 +1814,8 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>LineEdit</name>
     <message>
-        <location filename="../../toonzqt/lineedit.cpp" line="62"/>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>Имя файла не может содержать ни одного из следующих символов: / \: *? &quot;&lt;&gt; |.</translation>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">Имя файла не может содержать ни одного из следующих символов: / \: *? &quot;&lt;&gt; |.</translation>
     </message>
 </context>
 <context>
@@ -1821,37 +1846,29 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>PageViewer</name>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="600"/>
         <source>- No Styles -</source>
-        <translation>- Нет стилей -</translation>
+        <translation type="vanished">- Нет стилей -</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="677"/>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="923"/>
         <source> + </source>
-        <translation> + </translation>
+        <translation type="vanished"> + </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1160"/>
         <source>Name Editor</source>
-        <translation>Редактор имен</translation>
+        <translation type="vanished">Редактор имен</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1214"/>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1398"/>
         <source>New Style</source>
-        <translation>Новый стиль</translation>
+        <translation type="vanished">Новый стиль</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1216"/>
         <source>New Page</source>
-        <translation>Новая страница</translation>
+        <translation type="vanished">Новая страница</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1384"/>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
-        <translation>Стиль 0 установлен на полную прозрачность.
+        <translation type="vanished">Стиль 0 установлен на полную прозрачность.
 Это не может быть изменено. Всегда.</translation>
     </message>
 </context>
@@ -2076,20 +2093,38 @@ It can&apos;t be changed.  Ever.</source>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="600"/>
         <source>- No Styles -</source>
-        <translation type="obsolete">- Нет стилей -</translation>
+        <translation type="unfinished">- Нет стилей -</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="677"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="923"/>
+        <source> + </source>
+        <translation type="unfinished"> + </translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1160"/>
         <source>Name Editor</source>
-        <translation type="obsolete">Редактор имен</translation>
+        <translation type="unfinished">Редактор имен</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1214"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1398"/>
         <source>New Style</source>
-        <translation type="obsolete">Новый стиль</translation>
+        <translation type="unfinished">Новый стиль</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1216"/>
         <source>New Page</source>
-        <translation type="obsolete">Новая страница</translation>
+        <translation type="unfinished">Новая страница</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1384"/>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished">Стиль 0 установлен на полную прозрачность.
+Это не может быть изменено. Всегда.</translation>
     </message>
 </context>
 <context>
@@ -2181,9 +2216,8 @@ It can&apos;t be changed.  Ever.</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="891"/>
         <source>Tahoma2D</source>
-        <translation>Tahoma2D</translation>
+        <translation type="vanished">Tahoma2D</translation>
     </message>
 </context>
 <context>
@@ -2201,17 +2235,18 @@ Are you sure?</source>
     </message>
     <message>
         <location filename="../../toonzqt/camerasettingswidget.cpp" line="947"/>
+        <location filename="../../include/toonzqt/paramfield.h" line="276"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/camerasettingswidget.cpp" line="947"/>
-        <location filename="../../toonzqt/dvdialog.cpp" line="850"/>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1344"/>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1430"/>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1437"/>
         <location filename="../../toonzqt/styleselection.cpp" line="773"/>
         <location filename="../../toonzqt/styleselection.cpp" line="1076"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="852"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1346"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1432"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1439"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -2397,37 +2432,37 @@ Are you sure?</source>
         <translation>Изменить стиль   Палитра : %1  Стиль#%2  [R%3 G%4 B%5] -&gt; [R%6 G%7 B%8]</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2071"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2073"/>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation>Простой цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2168"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2170"/>
         <source>Plain color</source>
         <comment>VectorBrushStyleChooserPage</comment>
         <translation>Простой цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2356"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2358"/>
         <source>Plain color</source>
         <comment>TextureStyleChooserPage</comment>
         <translation>Простой цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2364"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2366"/>
         <source>Custom Texture</source>
         <comment>TextureStyleChooserPage</comment>
         <translation>Пользовательская текстура</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2430"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2432"/>
         <source>Plain color</source>
         <comment>MyPaintBrushStyleChooserPage</comment>
         <translation>Простой цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2579"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2581"/>
         <source>Plain color</source>
         <comment>SpecialStyleChooserPage</comment>
         <translation>Простой цвет</translation>
@@ -2758,12 +2793,12 @@ Are you sure?</source>
         <translation>Исходное изображение кажется непригодным для такой конверсии</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/gutil.cpp" line="552"/>
+        <location filename="../../toonzqt/gutil.cpp" line="542"/>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
         <translation>Имя файла не может быть пустым или содержать любой из следующих символов: (новая строка) \ /: *? &quot;|</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/gutil.cpp" line="579"/>
+        <location filename="../../toonzqt/gutil.cpp" line="569"/>
         <source>That is a reserved file name and cannot be used.</source>
         <translation>Это зарезервированное имя файла, его нельзя использовать.</translation>
     </message>
@@ -2800,56 +2835,58 @@ Are you sure?</source>
         <translation>Подтверждение</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="848"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="850"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1342"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1344"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1423"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1425"/>
         <source>Styles you are going to delete are used to paint lines and areas in the animation level.
 </source>
         <translation>Стили, которые вы собираетесь удалить, используются для рисования линий и областей на уровне анимации.
 </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1426"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1428"/>
         <source>How do you want to proceed?</source>
         <translation>Как вы хотите поступить?</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1428"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1430"/>
         <source>Delete Styles Only</source>
         <translation>Удалить только стили</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1429"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1431"/>
         <source>Delete Styles, Lines and Areas</source>
         <translation>Удалить стили, линии и области</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1437"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1439"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1440"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1442"/>
         <source>Deletion of Lines and Areas from raster-based levels is not undoable.
 Are you sure?</source>
         <translation>Удаление строк и областей из растровых уровней не отменяется.
 Вы уверены?</translation>
     </message>
     <message>
+        <location filename="../../include/toonzqt/paramfield.h" line="275"/>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="obsolete">Изменить Fx Параметр : %1 Ключ : %2  Кадр %3</translation>
+        <translation type="unfinished">Изменить Fx Параметр : %1 Ключ : %2  Кадр %3</translation>
     </message>
     <message>
+        <location filename="../../include/toonzqt/paramfield.h" line="276"/>
         <source>Set</source>
-        <translation type="obsolete">Установить</translation>
+        <translation type="unfinished">Установить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/lutcalibrator.cpp" line="252"/>
@@ -2930,7 +2967,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
 <context>
     <name>QPushButton</name>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="1060"/>
+        <location filename="../../toonzqt/dvdialog.cpp" line="1062"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -2942,9 +2979,8 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="vanished">OpenToonz</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/dvdialog.cpp" line="821"/>
         <source>Tahoma2D</source>
-        <translation>Tahoma2D</translation>
+        <translation type="vanished">Tahoma2D</translation>
     </message>
 </context>
 <context>
@@ -3048,14 +3084,12 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2716"/>
         <source>Autopaint for Lines</source>
-        <translation>Автозаливка линий</translation>
+        <translation type="vanished">Автозаливка линий</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2869"/>
         <source>Reset to default</source>
-        <translation>Сбросить по умолчанию</translation>
+        <translation type="vanished">Сбросить по умолчанию</translation>
     </message>
 </context>
 <context>
@@ -3332,12 +3366,12 @@ Are you sure ?</source>
 <context>
     <name>StyleEditor</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3365"/>
         <source>Generated</source>
         <translation>Сформирован</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3364"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3366"/>
         <source>Trail</source>
         <translation>Хвост</translation>
     </message>
@@ -3348,72 +3382,72 @@ Apply</source>
 применение</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3176"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3178"/>
         <source>Show or hide parts of the Color Page.</source>
         <translation>Показать или скрыть части цветовой страницы.</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3181"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3183"/>
         <source>Toggle orientation of the Color Page.</source>
         <translation>Переключить ориентацию цветовой страницы.</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3283"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3285"/>
         <source>Auto</source>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3286"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3288"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3292"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3294"/>
         <source>Apply changes to current style</source>
         <translation>Применить изменения к текущему стилю</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3297"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3299"/>
         <source>Automatically update style changes</source>
         <translation>Автообновление изменений стиля</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3301"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3303"/>
         <source>Return To Previous Style</source>
         <translation>Вернуться в предыдущий стиль</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3304"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3306"/>
         <source>Current Style</source>
         <translation>Текущий стиль</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3506"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3508"/>
         <source>No Style Selected</source>
         <translation>Стиль не выбран</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3523"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3525"/>
         <source>Cleanup </source>
         <translation>Очистка </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3525"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3527"/>
         <source>Studio </source>
         <translation>Studio </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3527"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3529"/>
         <source>Level </source>
         <translation>Уровень </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3530"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3532"/>
         <source>Palette</source>
         <translation>Палитра</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3544"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3546"/>
         <source>Style Editor - No Valid Style Selected</source>
         <translation>Редактор стилей - не выбран правильный стиль</translation>
     </message>
@@ -3422,22 +3456,22 @@ Apply</source>
         <translation type="vanished">[ОЧИСТКА]  </translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3141"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3143"/>
         <source>Wheel</source>
         <translation>Круг</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3142"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3144"/>
         <source>HSV</source>
         <translation>HSV</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3143"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3145"/>
         <source>Alpha</source>
         <translation>Альфа</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3144"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3146"/>
         <source>RGB</source>
         <translation>RGB</translation>
     </message>
@@ -3454,7 +3488,7 @@ Apply</source>
         <translation type="obsolete">Простой</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3425"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3427"/>
         <source>Texture</source>
         <translation>Текстура</translation>
     </message>
@@ -3467,30 +3501,30 @@ Apply</source>
         <translation type="obsolete">Пользовательский</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3365"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3367"/>
         <source>Vector Brush</source>
         <translation>Векторная кисть</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3424"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3430"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3426"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="3432"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3434"/>
         <source>Color</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3426"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3428"/>
         <source>Vector</source>
         <translation>Вектор</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3427"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3429"/>
         <source>Raster</source>
         <translation>Растр</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3428"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3433"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3430"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3435"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
@@ -3498,32 +3532,47 @@ Apply</source>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>R</source>
-        <translation type="obsolete">R</translation>
+        <translation type="unfinished">R</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>G</source>
-        <translation type="obsolete">G</translation>
+        <translation type="unfinished">G</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>B</source>
-        <translation type="obsolete">B</translation>
+        <translation type="unfinished">B</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>A</source>
-        <translation type="obsolete">A</translation>
+        <translation type="unfinished">A</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>H</source>
-        <translation type="obsolete">H</translation>
+        <translation type="unfinished">H</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1366"/>
         <source>S</source>
-        <translation type="obsolete">S</translation>
+        <translation type="unfinished">S</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1367"/>
         <source>V</source>
-        <translation type="obsolete">V</translation>
+        <translation type="unfinished">V</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1384"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1386"/>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished">Альфа контролирует прозрачность.
+Ноль полностью прозрачен.</translation>
     </message>
 </context>
 <context>
@@ -3552,21 +3601,21 @@ Apply</source>
 <context>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2718"/>
         <source>Autopaint for Lines</source>
-        <translation type="vanished">Автозаливка линий</translation>
+        <translation>Автозаливка линий</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2871"/>
         <source>Reset to default</source>
-        <translation type="obsolete">Сбросить по умолчанию</translation>
+        <translation type="unfinished">Сбросить по умолчанию</translation>
     </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
-        <location filename="../../toonzqt/styleindexlineedit.cpp" line="19"/>
-        <location filename="../../toonzqt/styleindexlineedit.cpp" line="37"/>
         <source>current</source>
-        <translation>текущий</translation>
+        <translation type="vanished">текущий</translation>
     </message>
 </context>
 <context>
@@ -3668,24 +3717,20 @@ Apply</source>
 <context>
     <name>ToneCurveField</name>
     <message>
-        <location filename="../../toonzqt/tonecurvefield.cpp" line="902"/>
         <source>Channel:</source>
-        <translation>Канал:</translation>
+        <translation type="vanished">Канал:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/tonecurvefield.cpp" line="905"/>
         <source>Range:</source>
-        <translation>Диапазон:</translation>
+        <translation type="vanished">Диапазон:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/tonecurvefield.cpp" line="923"/>
         <source>Output:</source>
-        <translation>Вывод:</translation>
+        <translation type="vanished">Вывод:</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/tonecurvefield.cpp" line="926"/>
         <source>Input:</source>
-        <translation>Ввод:</translation>
+        <translation type="vanished">Ввод:</translation>
     </message>
 </context>
 <context>
