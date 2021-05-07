@@ -91,6 +91,7 @@ jobs:
           artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
+          commit: ${{ github.sha }}
           name: ${{ env.NIGHTLYDATETIME }}
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
